@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` top child topology direction size-entry lock
+- New batch slice 153/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_recovers_child_directions_from_link_topology` now asserts child renderable `(+size ...)` entries consume graph-backed link-topology directions for `producer_core.output_data`, `consumer_core.input_data`, and `consumer_core.result_data`.
+- This locks top-composition child link-topology direction recovery through child target emission, not just module inventory: recovered child ports lower with output/input/output roles and width 8 while flat child-module direction hints remain absent.
+- Focused top-composition child link-topology direction size-entry coverage, the adapter suite, fmt, docs CI, KG bench (`148/148` fixtures), and full CI passed; user-requested `cargo sweep --time 1` remains deferred until no target-tree process is active.
+
 ## 2026-05-06 `.fsm` top child actor direction size-entry lock
 - New batch slice 152/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_recovers_child_directions_from_actor_ports` now asserts child renderable `(+size ...)` entries consume graph-backed actor-port directions for `producer_core.output_data`, `consumer_core.input_data`, and `consumer_core.result_data`.

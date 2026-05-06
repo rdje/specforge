@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `6548c1457ddbd7897bbf1c7fb7f55c1348c52fa0`
-- latest_commit_brief_message: `test(adapter): lock module width size entry`
-- note: new local `N=200` batch is active; slice 151 is committed, slice 152 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `cd694989a49c894af0d8ac41b046456d2b815836`
+- latest_commit_brief_message: `test(adapter): lock child actor size entries`
+- note: new local `N=200` batch is active; slice 152 is committed, slice 153 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `cd69498` test(adapter): lock child actor size entries
 - `6548c14` test(adapter): lock module width size entry
 - `612d584` test(adapter): lock direct width size entry
 - `eea6bf6` test(adapter): lock direct graph size entry
 - `72b8134` test(adapter): lock module graph size entries
 - `af3db8c` test(adapter): lock fsm graph size entries
-- `c20bb6a` test(adapter): lock graph size-entry directions
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 152]`
-- files in flight for new batch slice 152:
+- branch state before the next commit: `main...origin/main [ahead 153]`
+- files in flight for new batch slice 153:
   - `crates/specforge/src/ir/adapters.rs`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `ROADMAP.md`
@@ -49,21 +49,21 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `151`
+- completed_count: `152`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - lock top-composition child renderable `.fsm` size entries as consumers of graph-recovered actor-port directions for child module ports when flat child-module direction hints are absent
+  - lock top-composition child renderable `.fsm` size entries as consumers of graph-recovered link-topology directions for child module ports when flat child-module direction hints are absent
   - prove `producer_core.output_data`, `consumer_core.input_data`, and `consumer_core.result_data` lower with expected output/input/output roles and width 8
-  - sync the live tracker, roadmap, mdBook, Rust analysis, and continuity docs with the top child actor-port direction size-entry guarantee
+  - sync the live tracker, roadmap, mdBook, Rust analysis, and continuity docs with the top child link-topology direction size-entry guarantee
 - tracker effect:
-  - live-status tracker changed; new row marks `.fsm` top child renderable size entries consuming graph-backed actor-port directions as `Done`
+  - live-status tracker changed; new row marks `.fsm` top child renderable size entries consuming graph-backed link-topology directions as `Done`
 - verification status:
   - implementation and live-doc sync are complete
-  - focused top-composition child actor-port direction size-entry regression passed (`1` test)
+  - focused top-composition child link-topology direction size-entry regression passed (`1` test)
   - adapter suite passed (`92` tests)
   - formatting passed
   - docs CI passed
@@ -74,9 +74,9 @@
 - current known local CI baseline:
   - current in-flight slice passed `614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - current in-flight slice passed `148/148` tracked KG fixtures
-  - current slice has passed focused top-composition child actor-port direction size-entry regression, adapter suite, formatting, docs CI, KG bench, and full CI
+  - current slice has passed focused top-composition child link-topology direction size-entry regression, adapter suite, formatting, docs CI, KG bench, and full CI
   - latest `cargo sweep --time 1` attempt was deferred because `target/release/tool_matrix` is active
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- run final commit guards and commit slice 152 without pushing
+- run final commit guards and commit slice 153 without pushing

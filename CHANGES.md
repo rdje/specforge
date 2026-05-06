@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` top child topology direction size-entry lock)
+
+### Added: top child size entries lock graph-backed link-topology directions
+- Tightened `top_composition_recovers_child_directions_from_link_topology` so renderable child module `.fsm` size entries must consume link-topology graph directions for recovered child ports.
+- The regression now proves `producer_core.output_data`, `consumer_core.input_data`, and `consumer_core.result_data` lower into width-8 size entries with recovered output/input/output roles when flat child-module direction hints are absent.
+- Synced the live tracker, roadmap, and mdBook with the top-composition child link-topology direction size-entry guarantee.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_child_directions_from_link_topology` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148/148` fixtures)
+- `bash scripts/run_ci.sh` -> passed (`614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation)
+- Deferred: user-requested `cargo sweep --time 1` until safe because a `target/release/tool_matrix` process is active.
+
 ## 2026-05-06 (`.fsm` top child actor direction size-entry lock)
 
 ### Added: top child size entries lock graph-backed actor-port directions

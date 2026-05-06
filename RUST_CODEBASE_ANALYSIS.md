@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` top child topology direction size-entry lock)
+- Tightened `top_composition_recovers_child_directions_from_link_topology` in `crates/specforge/src/ir/adapters.rs`.
+- The test now proves child renderable `.fsm` size entries consume graph-recovered link-topology directions for producer output and consumer input/output ports when flat child-module `direction_hint` values are absent.
+- This locks the downstream child size-entry consumer for top-composition link-topology direction recovery; focused adapter coverage, full adapter coverage, fmt, docs CI, KG bench, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 `.fsm` top child actor direction size-entry lock)
 - Tightened `top_composition_recovers_child_directions_from_actor_ports` in `crates/specforge/src/ir/adapters.rs`.
 - The test now proves child renderable `.fsm` size entries consume graph-recovered actor-port directions for producer output and consumer input/output ports when flat child-module `direction_hint` values are absent.
