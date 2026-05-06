@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` child topology-direction blocker guidance lock
+- New batch slice 18/200 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_conflicting_child_link_topology_directions` now asserts the blocked child module candidate and aggregate `.fsm` renderability both carry `resolve conflicting actor-relative graph direction evidence before lowering .fsm` enrichment guidance.
+- Existing checks still prove child signal declaration support IDs, contradictory topology-link support IDs, high automation confidence, and conflicted graph-direction inventory state survive together.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` child actor-direction blocker guidance lock
 - New batch slice 17/200 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `analyze_top_renderability(...)` now extends the aggregate top required-enrichment set with the required enrichments from any blocked explicit child module before it continues past that child.

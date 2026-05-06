@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` child topology-direction blocker guidance lock)
+- Tightened `top_composition_blocks_conflicting_child_link_topology_directions` in `crates/specforge/src/ir/adapters.rs` so blocked child topology-link direction conflicts retain actor-relative graph-direction enrichment guidance on the blocked module candidate and aggregate `.fsm` renderability.
+- Existing assertions still cover child declaration support IDs, contradictory topology-link support IDs, high automation confidence, and conflicted graph-direction inventory state.
+- This mirrors the actor-port conflict guidance lock for topology-derived child graph-direction conflicts.
+
 ## Session update (2026-05-06 `.fsm` child actor-direction blocker guidance lock)
 - `analyze_top_renderability(...)` now propagates required-enrichment guidance from blocked explicit child modules into the aggregate top renderability surface.
 - Tightened `top_composition_blocks_conflicting_actor_port_directions` in `crates/specforge/src/ir/adapters.rs` so blocked child actor-port direction conflicts retain actor-relative graph-direction enrichment guidance on the blocked module candidate and aggregate `.fsm` renderability.

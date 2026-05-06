@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `f87f33670bce854db45afaf2c491cca47e6ce1b3`
-- latest_commit_brief_message: `test(adapter): lock child actor-direction provenance`
-- note: new local `N=200` batch is active; slice 16 is committed, slice 17 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `5d66d54b0a215472febf20f00aac3ae5e29dd339`
+- latest_commit_brief_message: `test(adapter): bubble child conflict guidance`
+- note: new local `N=200` batch is active; slice 17 is committed, slice 18 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `5d66d54` test(adapter): bubble child conflict guidance
 - `f87f336` test(adapter): lock child actor-direction provenance
 - `e98a122` test(adapter): lock child topology-direction provenance
 - `66bf470` test(adapter): lock transitive child-width provenance
 - `48e34f6` test(adapter): lock source child-width provenance
 - `166f3c6` test(adapter): lock sibling child-width provenance
-- `ceeb653` test(adapter): lock top-link child-width provenance
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 17]`
-- files in flight for new batch slice 17:
+- branch state before the next commit: `main...origin/main [ahead 18]`
+- files in flight for new batch slice 18:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -49,21 +49,21 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `16`
+- completed_count: `17`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - regression-lock child actor-port direction conflict repair guidance
-  - prove blocked child module and aggregate `.fsm` renderability both preserve actor-relative graph-direction enrichment guidance
-  - preserve existing child signal declaration support IDs, graph actor-port support IDs, high automation confidence, and conflicted graph-direction inventory state
+  - regression-lock child topology-link direction conflict repair guidance
+  - prove blocked child module and aggregate `.fsm` renderability both preserve actor-relative graph-direction enrichment guidance for topology-derived conflicts
+  - preserve existing child signal declaration support IDs, contradictory topology-link support IDs, high automation confidence, and conflicted graph-direction inventory state
   - keep live docs and mdBook aligned with this blocked-artifact guidance surface
 - tracker effect:
-  - expected live-status tracker gain: `.fsm child actor-port direction conflicts now preserve actor-relative enrichment guidance: Done`
+  - expected live-status tracker gain: `.fsm child topology direction conflicts now preserve actor-relative enrichment guidance: Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_actor_port_directions` passed with `1` test
+  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_child_link_topology_directions` passed with `1` test
   - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `80` tests
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed after live-doc/mdBook sync
@@ -74,4 +74,4 @@
   - `148/148` tracked KG fixtures
 
 ## Next exact steps
-- run final guards, commit slice 17 without pushing, and continue slice 18
+- run final guards, commit slice 18 without pushing, and continue slice 19
