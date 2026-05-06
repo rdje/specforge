@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` explicit-module width residual guidance
+- New batch slice 110/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `standalone_explicit_module_blocks_conflicting_control_input_actor_port_widths` now asserts explicit-module actor-port width conflicts keep the `fsm_adapter_signal_inventory` residual packet with low confidence and the upstream interface-inventory enrichment candidate.
+- This keeps both graph-backed width support IDs, high automation confidence, blocked module/root renderability, and signal-inventory repair guidance tied together.
+- Focused explicit-module width-conflict residual-guidance regression, adapter suite, fmt, docs, KG bench, and full CI all passed; user-requested `cargo sweep --time 1` is deferred until no target-tree process is active.
+
 ## 2026-05-06 `.fsm` explicit-module control-read residual guidance
 - New batch slice 109/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `standalone_explicit_module_blocks_conflicting_module_control_read_direction` now asserts explicit-module control-read direction conflicts keep the `fsm_adapter_signal_inventory` residual packet with low confidence and the upstream interface-inventory enrichment candidate.

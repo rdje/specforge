@@ -9751,6 +9751,27 @@ mod tests {
                 .any(|reason| reason.contains("conflicting width evidence"))
         );
         assert!(!fsm.renderability.is_renderable);
+        let signal_inventory_residual = adapter
+            .residual_decisions
+            .iter()
+            .find(|packet| packet.packet_id == "fsm_adapter_signal_inventory")
+            .expect("explicit module width conflict should surface signal guidance");
+        assert_eq!(
+            signal_inventory_residual.automation_confidence,
+            AutomationConfidence::Low
+        );
+        assert!(
+            signal_inventory_residual
+                .why_unresolved
+                .contains("render-critical signal roles")
+        );
+        assert!(
+            signal_inventory_residual
+                .candidate_interpretations
+                .iter()
+                .any(|interpretation| interpretation.interpretation_id
+                    == "enrich_intent_ir_interface_inventory")
+        );
 
         Ok(())
     }

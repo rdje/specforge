@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` explicit-module width residual guidance)
+- Added signal-inventory residual-guidance assertions to `standalone_explicit_module_blocks_conflicting_control_input_actor_port_widths` in `crates/specforge/src/ir/adapters.rs`.
+- Explicit-module actor-port width conflicts now prove both graph-backed width support IDs, high automation confidence, blocked module/root renderability, and low-confidence `fsm_adapter_signal_inventory` repair guidance stay visible together.
+- The live tracker and roadmap now mark explicit-module width-conflict residual guidance as closed; focused adapter coverage, full adapter coverage, KG bench, docs, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 `.fsm` explicit-module control-read residual guidance)
 - Added signal-inventory residual-guidance assertions to `standalone_explicit_module_blocks_conflicting_module_control_read_direction` in `crates/specforge/src/ir/adapters.rs`.
 - Explicit-module control-read direction conflicts now prove actor-port/control-read provenance categories, unresolved conflicting graph direction, blocked module/root renderability, and low-confidence `fsm_adapter_signal_inventory` repair guidance stay visible together.
