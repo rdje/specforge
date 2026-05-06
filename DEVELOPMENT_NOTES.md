@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` direct actor-width residual cleanliness
+- New batch slice 96/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `standalone_dt_recovers_control_input_width_from_actor_port_graph` now asserts no stale signal-inventory residual remains after actor-port width evidence recovers direct-root input width and the standalone DT root emits.
+- This keeps direct-control-input provenance, actor-port-width provenance, graph support IDs, high automation confidence, emitted width text, and signal-inventory residual cleanliness paired once the direct root is renderable.
+- Focused direct actor-port width residual-clean regression, adapter suite, fmt, docs, KG bench, and full CI all passed; user-requested `cargo sweep --time 1` is deferred until no target-tree process is active.
+
 ## 2026-05-06 `.fsm` direct control-read residual cleanliness
 - New batch slice 95/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `standalone_dt_derives_target_inputs_from_control_reads_after_output_actor_selection` now asserts no stale signal-inventory residual remains after control-read evidence recovers direct-root input direction and the standalone DT root emits.

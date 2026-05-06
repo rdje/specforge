@@ -7331,6 +7331,12 @@ mod tests {
         assert!(fsm.renderability.is_renderable);
         assert!(emitted_text.contains("(DATA_IN 8)"));
         assert!(emitted_text.contains("(<DATA_IN==8'0"));
+        assert!(
+            adapter
+                .residual_decisions
+                .iter()
+                .all(|packet| packet.packet_id != "fsm_adapter_signal_inventory")
+        );
 
         Ok(())
     }

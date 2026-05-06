@@ -51,6 +51,7 @@
 - `.fsm` standalone direct actor-port direction recovery now stays signal-inventory-residual clean when renderable: Done
 - `.fsm` standalone output actor selection now stays signal-inventory-residual clean when renderable: Done
 - `.fsm` standalone direct control-read input recovery now stays signal-inventory-residual clean when renderable: Done
+- `.fsm` standalone direct actor-port width recovery now stays signal-inventory-residual clean when renderable: Done
 - `.fsm` top-link width mismatch blockers now preserve width-compatible repair guidance: Done
 - `.fsm` top-target boundary role conflicts now preserve endpoint-role repair guidance: Done
 - `.fsm` top-boundary top-link role conflicts now preserve endpoint-role repair guidance: Done
@@ -404,6 +405,7 @@
 - `.fsm` canonical parametric width blockers now regression-lock interface provenance, support IDs, and automation confidence: Done
 - `.fsm` numeric-over-symbolic width precedence now regression-locks interface provenance while dropping stale parametric hints: Done
 - `.fsm` direct-root actor-port width recovery now regression-locks support IDs and automation confidence: Done
+- `.fsm` standalone direct actor-port width recovery now stays signal-inventory-residual clean when renderable: Done
 - `.fsm` unambiguous direct actor-port direction recovery now regression-locks support IDs and automation confidence: Done
 - `.fsm` standalone direct actor-port direction recovery now stays signal-inventory-residual clean when renderable: Done
 - `.fsm` unrelated actor-port graph context now regression-locks selected support IDs while excluding side-band evidence: Done

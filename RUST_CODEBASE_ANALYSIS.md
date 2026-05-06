@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` direct actor-width residual cleanliness)
+- Added a signal-inventory residual-clean assertion to `standalone_dt_recovers_control_input_width_from_actor_port_graph` in `crates/specforge/src/ir/adapters.rs`.
+- Direct actor-port width recovery now proves recovered graph-backed control-input width evidence leaves no stale `fsm_adapter_signal_inventory` packet once the standalone DT root is renderable.
+- The live tracker and roadmap now mark the direct actor-port width recovery residual-clean guarantee as closed; focused adapter coverage, full adapter coverage, KG bench, docs, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 `.fsm` direct control-read residual cleanliness)
 - Added a signal-inventory residual-clean assertion to `standalone_dt_derives_target_inputs_from_control_reads_after_output_actor_selection` in `crates/specforge/src/ir/adapters.rs`.
 - Direct control-read input recovery now proves recovered graph-backed read inputs leave no stale `fsm_adapter_signal_inventory` packet once the standalone DT root is renderable.

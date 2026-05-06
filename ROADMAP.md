@@ -255,7 +255,7 @@
   - single FSM-child top-composition lowering preserves child, top-port, and topology-link support IDs while preserving FSM child root kind and staying composition-residual clean once renderable
   - renderable top-before-child source-document emission preserves child, top-port, and topology-link support IDs while keeping top-first output order and staying composition-residual clean once renderable
   - child sibling-link target width recovery preserves explicit top-link support IDs and high automation confidence in recovered consumer child module inventories
-  - direct-root actor-port width recovery preserves graph-backed support IDs and automation confidence while avoiding import of the external actor's direction
+  - direct-root actor-port width recovery preserves graph-backed support IDs and automation confidence while avoiding import of the external actor's direction and staying signal-inventory-residual clean once renderable
   - unambiguous direct actor-port direction recovery preserves graph-backed support IDs and high automation confidence for direct inputs and outputs while staying signal-inventory-residual clean once renderable
   - standalone sequential system-contract actor-port direction recovery preserves graph-backed support IDs and high automation confidence for clock/reset inputs
   - standalone sequential system-contract flat-vs-graph direction disagreement preserves conflicting actor-port support IDs and high automation confidence while blocking `.fsm` emission
