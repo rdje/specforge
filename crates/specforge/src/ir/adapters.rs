@@ -13340,7 +13340,7 @@ mod tests {
             "child_width_from_sibling_child_link.md",
             "# Child Width From Sibling Child Link\nTop datapath.\n\nTop datapath port result_data is output width 8.\n\nTop datapath child producer uses module producer_core.\n\nTop datapath child consumer uses module consumer_core.\n\nTop datapath link producer.output_data -> consumer.input_data.\n\nTop datapath link consumer.result_data -> result_data.\n\nModule producer_core signal output_data is output width 8.\n\nModule producer_core block produce: output_data = 8'3.\n\nModule consumer_core signal input_data is input.\n\nModule consumer_core signal result_data is output width 8.\n\nModule consumer_core block route: result_data = input_data.\n",
         )?;
-        let topology_support_ids = {
+        let (child_signal_support_ids, topology_support_ids) = {
             let explicit_top = intent_ir
                 .explicit_tops
                 .iter()
@@ -13356,7 +13356,27 @@ mod tests {
                         && link.target.signal_name == "input_data"
                 })
                 .expect("producer to consumer topology link should be present");
-            super::explicit_top_link_supporting_ids(topology_link)
+            let child_signal = intent_ir
+                .explicit_modules
+                .iter()
+                .find(|module| module.module_name == "consumer_core")
+                .and_then(|module| {
+                    module
+                        .interfaces
+                        .iter()
+                        .flat_map(|interface| interface.signal_records.iter())
+                        .find(|signal| signal.signal_name == "input_data")
+                })
+                .expect("consumer input_data declaration should be present");
+            assert_eq!(
+                child_signal.direction_hint,
+                Some(InterfaceSignalDirection::Input)
+            );
+            assert_eq!(child_signal.width_hint, None);
+            (
+                child_signal.supporting_statement_ids.clone(),
+                super::explicit_top_link_supporting_ids(topology_link),
+            )
         };
 
         let artifact_base = tempdir.path().join("generated").join("adapters");
@@ -13399,6 +13419,11 @@ mod tests {
         );
         assert!(
             topology_support_ids
+                .iter()
+                .any(|id| input_data.supporting_canonical_ids.contains(id))
+        );
+        assert!(
+            child_signal_support_ids
                 .iter()
                 .any(|id| input_data.supporting_canonical_ids.contains(id))
         );

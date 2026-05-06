@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` sibling child-width provenance lock
+- New batch slice 12/200 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_recovers_child_width_from_sibling_child_link_topology` now asserts the recovered `consumer_core.input_data` child width keeps the original child signal declaration support IDs in the selected child module inventory.
+- Existing checks still prove topology-link support IDs, high automation confidence, selected child signal-inventory topology provenance, and emitted `(input_data 8)` text.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` top-link child-width provenance lock
 - New batch slice 11/200 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_recovers_child_width_from_top_link_topology` now asserts the recovered `producer_core.output_data` child width keeps the original child signal declaration support IDs in the selected child module inventory.
