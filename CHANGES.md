@@ -1,5 +1,16 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` child actor-port direction residual diagnostics)
+
+### Added: child actor-port direction residuals lock topology-detail diagnostics
+- Tightened `top_composition_blocks_conflicting_actor_port_directions` so child actor-port direction conflicts retain low-confidence `fsm_adapter_composition_topology` diagnostics.
+- The regression now pairs actor-relative graph-direction repair guidance, explicit child signal and graph actor-port support IDs, renderable-child repair context, and explicit topology-detail residual text.
+- Updated the live tracker, roadmap, and mdBook to mark child actor-port direction residual diagnostics as closed.
+
+### Validation
+- Passed: focused child actor-port direction residual-diagnostics regression (`1` test), adapter suite (`92` tests), rustfmt check, docs CI/mdBook, KG bench (`148/148` fixtures), and full CI (`613` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation).
+- Deferred: user-requested `cargo sweep --time 1` until safe because a `target/release/tool_matrix` process is active.
+
 ## 2026-05-06 (`.fsm` child topology direction residual diagnostics)
 
 ### Added: child topology direction residuals lock topology-detail diagnostics

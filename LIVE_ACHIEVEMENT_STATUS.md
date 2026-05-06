@@ -34,6 +34,7 @@
 - `.fsm` child topology direction residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` top child-link width residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` child actor-port direction conflicts now preserve composition topology residual decisions: Done
+- `.fsm` child actor-port direction residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` widthless top-port blockers now preserve composition topology residual decisions: Done
 - `.fsm` widthless top-port residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` parametric top-port blockers now preserve composition topology residual decisions: Done

@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` child actor-port direction residual diagnostics)
+- Added composition residual confidence and blocker-text assertions to `top_composition_blocks_conflicting_actor_port_directions` in `crates/specforge/src/ir/adapters.rs`.
+- Child actor-port direction conflicts now prove actor-relative graph-direction repair guidance, explicit child signal and graph actor-port support IDs, low-confidence `fsm_adapter_composition_topology` diagnostics, topology-detail blocker text, and renderable-child repair context stay visible together.
+- The live tracker and roadmap now mark child actor-port direction residual diagnostics as closed; focused adapter coverage, full adapter coverage, KG bench, docs, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 `.fsm` child topology direction residual diagnostics)
 - Added composition residual confidence and blocker-text assertions to `top_composition_blocks_conflicting_child_link_topology_directions` in `crates/specforge/src/ir/adapters.rs`.
 - Child link-topology direction conflicts now prove actor-relative graph-direction repair guidance, contradictory topology-link support IDs, low-confidence `fsm_adapter_composition_topology` diagnostics, topology-detail blocker text, and renderable-child repair context stay visible together.
