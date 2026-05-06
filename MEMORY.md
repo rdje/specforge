@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `fd128240186c76da17d96f1086af36b0064111ce`
-- latest_commit_brief_message: `test(adapter): lock actor-port direction provenance`
-- note: new local `N=200` batch is active; slice 7 is committed, slice 8 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `049e0f697b2f0e78fcdbf4c420c92dc19e74bc29`
+- latest_commit_brief_message: `test(adapter): lock actor-port width provenance`
+- note: new local `N=200` batch is active; slice 8 is committed, slice 9 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `049e0f6` test(adapter): lock actor-port width provenance
 - `fd12824` test(adapter): lock actor-port direction provenance
 - `f1fe9c9` test(adapter): lock top-link direction provenance
 - `54ded67` test(adapter): lock mixed child top provenance
 - `ccaa28f` test(adapter): lock reused FSM child top provenance
 - `8a6daa7` test(adapter): lock single FSM child top provenance
-- `7e765e5` test(adapter): lock top-before-child provenance
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 8]`
-- files in flight for new batch slice 8:
+- branch state before the next commit: `main...origin/main [ahead 9]`
+- files in flight for new batch slice 9:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -49,21 +49,21 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `7`
+- completed_count: `8`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - regression-lock actor-port width recovery top-port declaration provenance
-  - prove actor-port recovered public top-port width keeps original top-port declaration support IDs as well as graph actor-port width support IDs
-  - preserve existing actor-port-width inventory provenance and renderable `ext_data>8` emission
+  - regression-lock child-link width recovery top-port declaration provenance
+  - prove topology-recovered public top-port width keeps original top-port declaration support IDs as well as topology-link width support IDs
+  - preserve existing topology-backed inventory provenance and renderable `result_data>8` emission
   - keep the mdBook adapter artifact description aligned with this provenance surface
 - tracker effect:
-  - expected live-status tracker gain: `.fsm actor-port width recovery now preserves top-port declaration support alongside graph width support: Done`
+  - expected live-status tracker gain: `.fsm child-link width recovery now preserves top-port declaration support alongside topology width support: Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_top_port_width_from_actor_ports` passed with `1` test
+  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_top_port_width_from_child_link_topology` passed with `1` test
   - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `80` tests
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed after live-doc/mdBook sync
@@ -74,4 +74,4 @@
   - `148/148` tracked KG fixtures
 
 ## Next exact steps
-- run final guards, commit slice 8 without pushing, and continue slice 9
+- run final guards, commit slice 9 without pushing, and continue slice 10
