@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` top-link width residual lock)
+- Tightened `top_composition_blocks_width_mismatched_top_link_guidance` in `crates/specforge/src/ir/adapters.rs` so width-mismatched top links also prove the adapter emits `fsm_adapter_composition_topology`.
+- The regression now checks the residual interpretation that tells upstream canonicalization to carry width-compatible top links with explicit top ports, child-module references, and renderable children.
+- This keeps the width-compatible link blocker visible through both renderability enrichment and the structured residual-decision channel.
+
 ## Session update (2026-05-06 `.fsm` top-link width guidance lock)
 - Added `top_composition_blocks_width_mismatched_top_link_guidance` in `crates/specforge/src/ir/adapters.rs` so explicit top links with incompatible endpoint widths preserve width-compatible repair guidance.
 - The regression proves the blocked top candidate and aggregate `.fsm` renderability carry `keep first-slice top-link endpoints width-compatible` while retaining topology-link support IDs and high automation confidence.

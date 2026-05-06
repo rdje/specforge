@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `9f61d51b380073a6b0e3ab62481129be5c4b44d7`
-- latest_commit_brief_message: `test(adapter): lock top-target boundary role guidance`
-- note: new local `N=200` batch is active; slice 44 is committed, slice 45 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `d3d569f3b3f0f97aa9295a32944894af4b3c3444`
+- latest_commit_brief_message: `test(adapter): lock top-link width guidance`
+- note: new local `N=200` batch is active; slice 45 is committed, slice 46 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `d3d569f` test(adapter): lock top-link width guidance
 - `9f61d51` test(adapter): lock top-target boundary role guidance
 - `e517e9b` fix(adapter): surface top-boundary role guidance
 - `ec5436a` test(adapter): lock top-link target role guidance
 - `a64aaa1` fix(adapter): surface top-link role guidance
 - `f2dfb42` test(adapter): lock unemitted child-source guidance
-- `45d3cbe` test(adapter): lock unemitted child-target guidance
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 45]`
-- files in flight for new batch slice 45:
+- branch state before the next commit: `main...origin/main [ahead 46]`
+- files in flight for new batch slice 46:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -49,19 +49,19 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `44`
+- completed_count: `45`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - regression-lock explicit top-link width mismatch blockers carrying width-compatible repair guidance
-  - prove a mismatched explicit top-link endpoint pair keeps `keep first-slice top-link endpoints width-compatible` guidance on blocked top and aggregate `.fsm` renderability
-  - preserve topology-link support IDs and high-confidence link provenance while the child module remains independently renderable
+  - regression-lock explicit top-link width mismatch blockers carrying the composition topology residual decision
+  - prove the `fsm_adapter_composition_topology` residual interpretation still tells upstream repair to carry width-compatible top links
+  - keep the same width-compatible repair lane visible through required enrichments and structured residual decisions
   - keep live docs and mdBook aligned with this blocked-artifact guidance surface
 - tracker effect:
-  - expected live-status tracker gain: `.fsm top-link width mismatch blockers now preserve width-compatible repair guidance: Done`
+  - expected live-status tracker gain: `.fsm top-link width mismatch blockers now preserve composition topology residual decisions: Done`
 - verification status:
   - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_width_mismatched_top_link_guidance` passed with `1` test
   - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `92` tests
@@ -74,4 +74,4 @@
   - current slice passed `148/148` tracked KG fixtures
 
 ## Next exact steps
-- commit slice 45 without pushing, run post-commit checks, and continue slice 46
+- commit slice 46 without pushing, run post-commit checks, and continue slice 47

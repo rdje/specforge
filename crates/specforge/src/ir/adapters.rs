@@ -14655,6 +14655,19 @@ mod tests {
                 .any(|enrichment| enrichment
                     == "keep first-slice top-link endpoints width-compatible")
         );
+        let composition_residual = adapter
+            .residual_decisions
+            .iter()
+            .find(|packet| packet.packet_id == "fsm_adapter_composition_topology")
+            .expect("blocked top-link widths should surface a composition residual");
+        assert!(
+            composition_residual
+                .candidate_interpretations
+                .iter()
+                .any(|interpretation| interpretation
+                    .description
+                    .contains("width-compatible top links"))
+        );
 
         Ok(())
     }
