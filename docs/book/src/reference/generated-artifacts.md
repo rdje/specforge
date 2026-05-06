@@ -139,7 +139,7 @@ High-confidence top-link evidence follows the same residual-clean rule once the 
 Actor-port-backed top direction recovery follows the same rule: the graph evidence is added without dropping the public top-port declaration support IDs, and renderable recovery leaves no composition-topology residual.
 Actor-port-backed top width recovery also retains public top-port declaration support while adding the graph width evidence, and renderable recovery leaves no composition-topology residual.
 Child-link-backed top width recovery likewise retains public top-port declaration support while adding the topology width evidence, and renderable recovery leaves no composition-topology residual.
-Child-system-contract-backed top width recovery retains the clock/reset top-port declaration support while adding topology-link and system-contract evidence.
+Child-system-contract-backed top width recovery retains the clock/reset top-port declaration support while adding topology-link and system-contract evidence, and renderable recovery leaves no composition-topology residual.
 Top-link-backed child width recovery retains the child signal declaration support while adding topology width evidence.
 Sibling-link-backed child width recovery follows the same rule for recovered child inputs.
 Source-side sibling-link child width recovery follows it for recovered child outputs.

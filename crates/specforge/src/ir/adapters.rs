@@ -12136,6 +12136,12 @@ mod tests {
         assert!(emitted_text.contains("/rst_n/controller.rst_n/"));
         assert!(emitted_text.contains("(clock clk)"));
         assert!(emitted_text.contains("(asreset rst_n)"));
+        assert!(
+            adapter
+                .residual_decisions
+                .iter()
+                .all(|packet| packet.packet_id != "fsm_adapter_composition_topology")
+        );
 
         Ok(())
     }
