@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `5f4c355658486719ad4200c7fae8e23cf869e041`
-- latest_commit_brief_message: `test(adapter): lock child width conflict guidance`
-- note: new local `N=200` batch is active; slice 19 is committed, slice 20 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `acffd234cf1775064221b236d8b0bfdea86452f0`
+- latest_commit_brief_message: `test(adapter): lock sibling width guidance`
+- note: new local `N=200` batch is active; slice 20 is committed, slice 21 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `acffd23` test(adapter): lock sibling width guidance
 - `5f4c355` test(adapter): lock child width conflict guidance
 - `04bf4a3` test(adapter): lock topology conflict guidance
 - `5d66d54` test(adapter): bubble child conflict guidance
 - `f87f336` test(adapter): lock child actor-direction provenance
 - `e98a122` test(adapter): lock child topology-direction provenance
-- `66bf470` test(adapter): lock transitive child-width provenance
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 20]`
-- files in flight for new batch slice 20:
+- branch state before the next commit: `main...origin/main [ahead 21]`
+- files in flight for new batch slice 21:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -49,21 +49,21 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `19`
+- completed_count: `20`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - regression-lock sibling child-link width conflict repair guidance
-  - prove blocked child module and aggregate `.fsm` renderability both preserve canonical width-conflict enrichment guidance
-  - preserve both conflicting topology-link support-ID sets, high automation confidence, and width-conflict inventory state
+  - regression-lock top-boundary child-link width conflict repair guidance
+  - prove blocked top candidate and aggregate `.fsm` renderability both preserve top-boundary width-conflict enrichment guidance
+  - preserve both conflicting child-link support-ID sets, high automation confidence, and selected top signal-inventory width-conflict state
   - keep live docs and mdBook aligned with this blocked-artifact guidance surface
 - tracker effect:
-  - expected live-status tracker gain: `.fsm sibling child-link width conflicts now preserve canonical width enrichment guidance: Done`
+  - expected live-status tracker gain: `.fsm top child-link width conflicts now preserve top-boundary width enrichment guidance: Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_sibling_child_link_widths` passed with `1` test
+  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_top_port_widths_from_child_links` passed with `1` test
   - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `80` tests
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed after live-doc/mdBook sync
@@ -74,4 +74,4 @@
   - `148/148` tracked KG fixtures
 
 ## Next exact steps
-- run final guards, commit slice 20 without pushing, and continue slice 21
+- run final guards, commit slice 21 without pushing, and continue slice 22

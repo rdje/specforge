@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` top child-width blocker guidance lock)
+
+### Added: top child-link width conflict enrichment coverage
+- Tightened `top_composition_blocks_conflicting_top_port_widths_from_child_links` so top-boundary child-link width conflicts prove top-port width repair guidance survives on both the blocked top candidate and aggregate `.fsm` renderability.
+- The regression keeps both conflicting child-link support-ID sets, high automation confidence, and selected top signal-inventory width-conflict state intact.
+- This completes the current child-link width conflict guidance trio across top-boundary, child-module, and sibling-link blockers.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_top_port_widths_from_child_links` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` sibling child-width blocker guidance lock)
 
 ### Added: sibling child-link width conflict enrichment coverage
