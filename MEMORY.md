@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `c8a139c113f830605cf70c02adeecee8e813ef3c`
-- latest_commit_brief_message: `test(nlp): reject source-label aliases`
-- note: new local `N=200` batch is active; slice 145 is committed, slice 146 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `c20bb6af1ab447aa4a4c7cdcc806b65b4995def8`
+- latest_commit_brief_message: `test(adapter): lock graph size-entry directions`
+- note: new local `N=200` batch is active; slice 146 is committed, slice 147 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `c20bb6a` test(adapter): lock graph size-entry directions
 - `c8a139c` test(nlp): reject source-label aliases
 - `1de996e` test(adapter): lock child source guidance diagnostics
 - `3685077` test(adapter): lock child actor direction diagnostics
 - `8d4b0f4` test(adapter): lock child topology direction diagnostics
 - `f6ff199` test(adapter): lock top-link width diagnostics
-- `56f6d2e` test(adapter): lock top child-link width diagnostics
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 146]`
-- files in flight for new batch slice 146:
+- branch state before the next commit: `main...origin/main [ahead 147]`
+- files in flight for new batch slice 147:
   - `crates/specforge/src/ir/adapters.rs`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `ROADMAP.md`
@@ -49,21 +49,21 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `145`
+- completed_count: `146`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - lock standalone DT renderable `.fsm` size entries as consumers of graph-backed actor-port direction recovery when flat direct-interface `direction_hint` values are absent
-  - prove `DATA_IN`, `DATA_OUT`, and `ZERO_FLAG` lower with expected input/output roles and widths from graph-backed signal inventory
-  - sync the live tracker, roadmap, mdBook, Rust analysis, and continuity docs with the graph-backed size-entry guarantee
+  - lock structured FSM renderable `.fsm` size entries as consumers of graph-recovered target-actor input directions when flat direct-interface `direction_hint` values are absent
+  - prove `DATA_IN`, `GO`, and `DONE` lower with expected input roles and widths from structured FSM control-read recovery
+  - sync the live tracker, roadmap, mdBook, Rust analysis, and continuity docs with the structured-FSM size-entry guarantee
 - tracker effect:
-  - live-status tracker changed; new row marks standalone `.fsm` DT renderable size entries consuming graph-backed actor-port directions as `Done`
+  - live-status tracker changed; new row marks structured `.fsm` renderable size entries consuming graph-backed control-read directions as `Done`
 - verification status:
   - implementation and live-doc sync are complete
-  - focused graph-backed standalone DT regression passed (`1` test)
+  - focused structured-FSM graph-backed size-entry regression passed (`1` test)
   - adapter suite passed (`92` tests)
   - formatting passed
   - docs CI passed
@@ -74,9 +74,9 @@
 - current known local CI baseline:
   - current in-flight slice passed `614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - current in-flight slice passed `148/148` tracked KG fixtures
-  - current slice has passed focused graph-backed standalone DT regression, adapter suite, and formatting
+  - current slice has passed focused structured-FSM graph-backed size-entry regression, adapter suite, and formatting
   - latest `cargo sweep --time 1` attempt was deferred because `target/release/tool_matrix` is active
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- run final commit guards and commit slice 146 without pushing
+- run final commit guards and commit slice 147 without pushing

@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` graph-backed FSM size-entry direction lock
+- New batch slice 147/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `structured_fsm_derives_guard_inputs_from_control_reads_after_output_actor_selection` now asserts the renderable module `(+size ...)` entries consume graph-recovered target-actor input directions for guard/control-read signals when flat direct-interface `direction_hint` values are absent.
+- This locks `DATA_IN`, `GO`, and `DONE` as renderable input size entries backed by structured FSM control-read recovery rather than flat compatibility hints.
+- Focused structured-FSM graph-backed size-entry coverage, the adapter suite, fmt, docs CI, KG bench, and full CI passed; user-requested `cargo sweep --time 1` remains deferred until no target-tree process is active.
+
 ## 2026-05-06 `.fsm` graph-backed DT size-entry direction lock
 - New batch slice 146/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `standalone_dt_recovers_directions_from_unambiguous_actor_ports` now asserts the renderable module `(+size ...)` entries consume graph-backed actor-port direction recovery when flat direct-interface `direction_hint` values are absent.
