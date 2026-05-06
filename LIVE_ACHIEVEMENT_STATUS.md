@@ -29,6 +29,7 @@
 - `.fsm` top child-link width conflicts now preserve composition topology residual decisions: Done
 - `.fsm` sibling child-link width conflicts now preserve composition topology residual decisions: Done
 - `.fsm` child topology width conflicts now preserve composition topology residual decisions: Done
+- `.fsm` child topology width residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` child topology direction conflicts now preserve composition topology residual decisions: Done
 - `.fsm` child actor-port direction conflicts now preserve composition topology residual decisions: Done
 - `.fsm` widthless top-port blockers now preserve composition topology residual decisions: Done

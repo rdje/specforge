@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` child topology width residual diagnostics)
+- Added composition residual confidence and blocker-text assertions to `top_composition_blocks_conflicting_child_topology_widths` in `crates/specforge/src/ir/adapters.rs`.
+- Child topology width conflicts now prove width-conflict repair guidance, signal-declaration and topology-link support IDs, low-confidence `fsm_adapter_composition_topology` diagnostics, topology-detail blocker text, and renderable-child repair context stay visible together.
+- The live tracker and roadmap now mark child topology width residual diagnostics as closed; focused adapter coverage, full adapter coverage, KG bench, docs, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 `.fsm` undeclared top-source residual diagnostics)
 - Added composition residual confidence and blocker-text assertions to `top_composition_blocks_link_from_undeclared_top_source_guidance` in `crates/specforge/src/ir/adapters.rs`.
 - Top links originating from undeclared top-boundary ports now prove source-endpoint enrichment guidance, top-port/child/link provenance, low-confidence `fsm_adapter_composition_topology` diagnostics, topology-detail blocker text, and explicit-top-port repair context stay visible together.
