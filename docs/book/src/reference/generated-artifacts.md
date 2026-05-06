@@ -175,6 +175,7 @@ Child-link-backed top width recovery likewise retains public top-port declaratio
 Conflicting child-link top widths keep the selected top unresolved with no renderable top root or aggregate source document, so stale `?top` output cannot leak past the blocked topology decision.
 Child-system-contract-backed top width recovery retains the clock/reset top-port declaration support while adding topology-link and system-contract evidence, and renderable recovery leaves no composition-topology residual.
 Unresolved parametric top widths keep the selected top unresolved with no renderable top root or aggregate source document, so stale `?top` output cannot leak before numeric width resolution.
+Top ports that still lack numeric width evidence keep the selected top unresolved with no renderable top root or aggregate source document, so stale `?top` output cannot leak before width recovery.
 Top-link-backed child width recovery retains the child signal declaration support while adding topology width evidence, and renderable recovery leaves no composition-topology residual.
 Recovered top-link child widths also feed child renderable `(+size ...)` entries, so emitted child widths do not depend on an original child-local numeric declaration.
 Conflicting direct child/topology widths keep the child unresolved with no renderable child module or aggregate source document, so stale `(+size ...)` child output cannot leak past the blocked topology decision.

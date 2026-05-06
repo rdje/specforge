@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` widthless top-port renderable block)
+
+### Added: widthless top ports cannot leak renderable top output
+- Tightened `top_composition_blocks_widthless_top_port_without_width_recovery` so a public top port missing numeric width recovery leaves the selected top without a renderable top root and the aggregate `.fsm` artifact without a renderable source document.
+- This locks the unresolved widthless top-boundary blocker against stale `?top` output until width evidence is recovered from declaration, actor-port graph, or top-link topology.
+- Synced the live tracker, roadmap, and mdBook with the widthless top-port renderable-block guarantee.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_widthless_top_port_without_width_recovery` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148/148` fixtures)
+- `bash scripts/run_ci.sh` -> passed (`614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation)
+
 ## 2026-05-06 (`.fsm` parametric top-width renderable block)
 
 ### Added: parametric top widths cannot leak renderable top output
