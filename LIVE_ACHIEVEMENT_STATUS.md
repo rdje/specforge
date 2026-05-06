@@ -28,6 +28,7 @@
 - `.fsm` links from undeclared top sources now preserve composition topology residual decisions: Done
 - `.fsm` links to undeclared top targets now preserve composition topology residual decisions: Done
 - `.fsm` links to unemitted child targets now preserve composition topology residual decisions: Done
+- `.fsm` multi-child no-link top blockers now preserve composition topology residual decisions: Done
 - `specforge inspect` command created: Done
 - `specforge doctor` command created: Done
 - `specforge ingest` SourceIR command created: Done
@@ -433,6 +434,7 @@
 - `.fsm` duplicate top-direction blockers now preserve top-port deduplication enrichment guidance: Done
 - `.fsm` duplicate top-width blockers now preserve top-port deduplication enrichment guidance: Done
 - `.fsm` multi-child no-link top blockers now preserve top-link enrichment guidance: Done
+- `.fsm` multi-child no-link top blockers now preserve composition topology residual decisions: Done
 - `.fsm` no-child top blockers now preserve child-module enrichment guidance: Done
 - `.fsm` no-top-port blockers now preserve top-port enrichment guidance: Done
 - `.fsm` links to undeclared top targets now preserve target-endpoint enrichment guidance: Done

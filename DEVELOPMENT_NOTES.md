@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` multi-child no-link residual lock
+- New batch slice 55/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_multi_child_without_links_guidance` now asserts `fsm_adapter_composition_topology` and checks that its interpretation keeps width-compatible top-link repair visible.
+- This pairs the no-link multi-child top enrichment guidance with structured residual diagnostics.
+- Focused multi-child no-link regression, adapter suite, fmt, docs, KG bench, full CI, and the user-requested `cargo sweep --time 1` all passed.
+
 ## 2026-05-06 `.fsm` top-source residual alignment
 - New batch slice 54/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_link_from_undeclared_top_source_guidance` now carries a composition residual assertion tied to explicit top ports.

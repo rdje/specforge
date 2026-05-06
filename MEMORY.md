@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `7e87a612bbb13db3287151b6e632b5b1faefe810`
-- latest_commit_brief_message: `test(adapter): align top target residuals`
-- note: new local `N=200` batch is active; slice 53 is committed, slice 54 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `49ad0b9024ab1cf59af6801eafbda055f8d0d2c4`
+- latest_commit_brief_message: `test(adapter): align top source residuals`
+- note: new local `N=200` batch is active; slice 54 is committed, slice 55 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `49ad0b9` test(adapter): align top source residuals
 - `7e87a61` test(adapter): align top target residuals
 - `eb66b18` test(adapter): lock child source residual
 - `dc64387` test(adapter): lock child target residual
 - `28d4899` test(adapter): lock child target link confidence
 - `4328bc0` test(adapter): align child role residuals
-- `c251a84` test(adapter): lock top-link target residual
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 54]`
-- files in flight for new batch slice 54:
+- branch state before the next commit: `main...origin/main [ahead 55]`
+- files in flight for new batch slice 55:
   - `crates/specforge/src/ir/adapters.rs`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `ROADMAP.md`
@@ -49,33 +49,27 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `53`
+- completed_count: `54`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - add source-side composition residual assertions to the dedicated top-source tests
-  - prove undeclared top-source blockers point at explicit-top-port repair
-  - prove unemitted child-source blockers point at renderable-child repair in their named regression
-  - sync the live tracker, roadmap, and mdBook with the undeclared top-source residual guarantee
+  - lock structured composition residual diagnostics for multi-child top roots without explicit top-link records
+  - prove `top_composition_blocks_multi_child_without_links_guidance` carries `fsm_adapter_composition_topology`
+  - keep width-compatible top-link repair visible while existing no-link enrichment guidance and child provenance remain intact
+  - sync the live tracker, roadmap, and mdBook with the multi-child no-link residual guarantee
 - tracker effect:
-  - live-status tracker changed; new row marks `.fsm` links from undeclared top sources preserving composition topology residual decisions as `Done`
+  - live-status tracker changed; new row marks `.fsm` multi-child no-link top blockers preserving composition topology residual decisions as `Done`
 - verification status:
   - implementation and live-doc sync are complete
-  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_link_from_undeclared_top_source_guidance` passed with `1` test
-  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_link_from_unemitted_child_source_guidance` passed with `1` test
-  - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `92` tests
-  - `cargo fmt --manifest-path Cargo.toml -- --check` passed
-  - `bash scripts/run_docs_ci.sh` passed
-  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `148/148` fixtures
-  - `bash scripts/run_ci.sh` passed with `613` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
-  - user-requested `cargo sweep --time 1` completed after full CI and cleaned nothing
+  - focused regression, adapter suite, fmt, docs, KG bench, full CI, and `cargo sweep --time 1` have passed
 - current known local CI baseline:
   - current slice passed `613` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - current slice passed `148/148` tracked KG fixtures
+  - user-requested `cargo sweep --time 1` cleaned nothing after the full CI gate
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- run final commit guards, then commit slice 54 without pushing
+- run final commit guards, commit slice 55 without pushing, clear `git_message_brief.txt`, record post-commit checks, then continue slice 56

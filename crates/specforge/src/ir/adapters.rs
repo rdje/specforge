@@ -15264,6 +15264,19 @@ mod tests {
                 .any(|enrichment| enrichment
                     == "carry explicit top-link records for multi-child compositions before lowering `?top:name`")
         );
+        let composition_residual = adapter
+            .residual_decisions
+            .iter()
+            .find(|packet| packet.packet_id == "fsm_adapter_composition_topology")
+            .expect("multi-child top without links should surface a composition residual");
+        assert!(
+            composition_residual
+                .candidate_interpretations
+                .iter()
+                .any(|interpretation| interpretation
+                    .description
+                    .contains("width-compatible top links"))
+        );
 
         Ok(())
     }
