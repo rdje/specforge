@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` system-contract direction residual guidance)
+- Added system-contract residual-guidance assertions to `standalone_sequential_dt_blocks_conflicting_system_contract_signal_direction` in `crates/specforge/src/ir/adapters.rs`.
+- Clock direction conflicts now prove system-contract support IDs, high signal confidence, exact clock-direction conflict text, low-confidence `fsm_adapter_system_contract` guidance, and the upstream system-surface enrichment candidate stay visible together.
+- The live tracker and roadmap now mark system-contract direction residual guidance as closed; focused adapter coverage, full adapter coverage, KG bench, docs, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 `.fsm` explicit-module width residual guidance)
 - Added signal-inventory residual-guidance assertions to `standalone_explicit_module_blocks_conflicting_control_input_actor_port_widths` in `crates/specforge/src/ir/adapters.rs`.
 - Explicit-module actor-port width conflicts now prove both graph-backed width support IDs, high automation confidence, blocked module/root renderability, and low-confidence `fsm_adapter_signal_inventory` repair guidance stay visible together.

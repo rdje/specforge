@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` system-contract direction residual guidance
+- New batch slice 111/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `standalone_sequential_dt_blocks_conflicting_system_contract_signal_direction` now asserts clock direction conflicts keep the `fsm_adapter_system_contract` residual packet with low confidence and the upstream system-surface enrichment candidate.
+- This keeps system-contract support IDs, high signal confidence, exact clock-direction conflict text, and system-surface repair guidance tied together.
+- Focused system-contract direction residual-guidance regression, adapter suite, fmt, docs, KG bench, and full CI all passed; user-requested `cargo sweep --time 1` is deferred until no target-tree process is active.
+
 ## 2026-05-06 `.fsm` explicit-module width residual guidance
 - New batch slice 110/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `standalone_explicit_module_blocks_conflicting_control_input_actor_port_widths` now asserts explicit-module actor-port width conflicts keep the `fsm_adapter_signal_inventory` residual packet with low confidence and the upstream interface-inventory enrichment candidate.
