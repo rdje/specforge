@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `c4f57e9adf01e3e370a4d85b8ec0958d199d2cd3`
-- latest_commit_brief_message: `test(adapter): lock top-first residual cleanliness`
-- note: new local `N=200` batch is active; slice 78 is committed, slice 79 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `920aa2c2ab6a9fc3fecf3bc27aaefa43b2ffa4ed`
+- latest_commit_brief_message: `test(adapter): lock single fsm child residual cleanliness`
+- note: new local `N=200` batch is active; slice 79 is committed, slice 80 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `920aa2c` test(adapter): lock single fsm child residual cleanliness
 - `c4f57e9` test(adapter): lock top-first residual cleanliness
 - `a3aee24` test(adapter): lock reused-child residual cleanliness
 - `9c97627` test(adapter): lock link confidence residual cleanliness
 - `8aa87f1` test(adapter): lock child confidence residual cleanliness
 - `991d882` test(adapter): lock root confidence residual
-- `fbc7192` test(adapter): lock recovered top residual
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 79]`
-- files in flight for new batch slice 79:
+- branch state before the next commit: `main...origin/main [ahead 80]`
+- files in flight for new batch slice 80:
   - `crates/specforge/src/ir/adapters.rs`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `ROADMAP.md`
@@ -49,21 +49,21 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `78`
+- completed_count: `79`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - lock residual-clean behavior for renderable single-FSM-child top documents
-  - prove `renderable_top_document_preserves_fsm_child_root_kind` leaves no stale `fsm_adapter_composition_topology` residual while preserving typed FSM child references
-  - sync the live tracker, roadmap, and mdBook with the single-FSM-child residual-clean guarantee
+  - lock residual-clean behavior for renderable reused-FSM-child top documents
+  - prove `renderable_top_document_deduplicates_reused_fsm_child_roots` leaves no stale `fsm_adapter_composition_topology` residual after shared FSM root de-duplication
+  - sync the live tracker, roadmap, and mdBook with the reused-FSM-child residual-clean guarantee
 - tracker effect:
-  - live-status tracker changed; new row marks `.fsm` single-FSM-child top documents staying composition-residual clean while preserving FSM child root kind as `Done`
+  - live-status tracker changed; new row marks `.fsm` reused-FSM-child top documents staying composition-residual clean after deduplicating the shared FSM root as `Done`
 - verification status:
   - implementation and live-doc sync are complete
-  - focused single-FSM-child residual-clean regression passed (`1` test)
+  - focused reused-FSM-child residual-clean regression passed (`1` test)
   - adapter suite passed (`92` tests)
   - formatting, docs CI, KG bench (`148/148` fixtures), full CI (`613` Rust tests plus warning-deny Clippy/rustdoc and mdBook), and `cargo sweep --time 1` all passed
 - current known local CI baseline:
@@ -73,4 +73,4 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- run final commit guards, commit slice 79 without pushing, then start slice 80 of the active `N=200` batch
+- run final commit guards, commit slice 80 without pushing, then start slice 81 of the active `N=200` batch

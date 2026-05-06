@@ -35,6 +35,7 @@
 - `.fsm` reused-child top documents now stay composition-residual clean after deduplicating child roots: Done
 - `.fsm` top-before-child source documents now stay composition-residual clean after top-first emission: Done
 - `.fsm` single-FSM-child top documents now stay composition-residual clean while preserving FSM child root kind: Done
+- `.fsm` reused-FSM-child top documents now stay composition-residual clean after deduplicating the shared FSM root: Done
 - `.fsm` top-link width mismatch blockers now preserve width-compatible repair guidance: Done
 - `.fsm` top-target boundary role conflicts now preserve endpoint-role repair guidance: Done
 - `.fsm` top-boundary top-link role conflicts now preserve endpoint-role repair guidance: Done
@@ -456,6 +457,7 @@
 - `.fsm` reused-child top documents now stay composition-residual clean after deduplicating child roots: Done
 - `.fsm` reused-FSM-child top lowering now regression-locks per-instance child support IDs: Done
 - `.fsm` reused-FSM-child top emission now preserves top-port and topology-link provenance while deduplicating the shared FSM root: Done
+- `.fsm` reused-FSM-child top documents now stay composition-residual clean after deduplicating the shared FSM root: Done
 - `.fsm` mixed-child top lowering now regression-locks DT/FSM child support IDs: Done
 - `.fsm` mixed-child top emission now preserves top-port and topology-link provenance alongside DT/FSM root order: Done
 - `.fsm` single FSM-child top lowering now regression-locks child support IDs: Done

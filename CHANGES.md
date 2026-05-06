@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` reused-FSM-child residual cleanliness)
+
+### Added: renderable reused-FSM-child top documents stay residual-clean
+- Tightened `renderable_top_document_deduplicates_reused_fsm_child_roots` so reused-FSM-child top documents prove no stale `fsm_adapter_composition_topology` residual remains after shared FSM root de-duplication.
+- The regression now pairs per-output top-port provenance, topology-link provenance, and per-instance FSM child references with a clean aggregate residual surface.
+- Updated the live tracker, roadmap, and mdBook to mark the reused-FSM-child residual-clean guarantee as closed.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge renderable_top_document_deduplicates_reused_fsm_child_roots` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`613` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo sweep --time 1` -> completed (`Cleaned nothing`)
+
 ## 2026-05-06 (`.fsm` single-FSM-child residual cleanliness)
 
 ### Added: renderable single-FSM-child top documents stay residual-clean
