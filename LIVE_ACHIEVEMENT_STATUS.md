@@ -362,6 +362,7 @@
 - `.fsm` actor-port width recovery now preserves top-port declaration support alongside graph width support: Done
 - `.fsm` child-link width recovery now preserves top-port declaration support alongside topology width support: Done
 - `.fsm` child-system-contract width recovery now preserves top-port declaration support alongside topology and system-contract support: Done
+- `.fsm` top-link child-width recovery now preserves child signal declaration support alongside topology support: Done
 - `.fsm` top actor-port direction conflicts now regression-lock support IDs and automation confidence: Done
 - `.fsm` top actor-port width conflicts now regression-lock support IDs and automation confidence: Done
 - `.fsm` top-link direction conflicts now regression-lock support IDs and automation confidence: Done

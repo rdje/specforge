@@ -13232,7 +13232,7 @@ mod tests {
             "child_width_from_top_link.md",
             "# Child Width From Top Link\nTop datapath.\n\nTop datapath port result_data is output width 8.\n\nTop datapath child producer uses module producer_core.\n\nTop datapath link producer.output_data -> result_data.\n\nModule producer_core signal output_data is output.\n\nModule producer_core block produce: output_data = 8'3.\n",
         )?;
-        let topology_support_ids = {
+        let (child_signal_support_ids, topology_support_ids) = {
             let explicit_top = intent_ir
                 .explicit_tops
                 .iter()
@@ -13248,7 +13248,27 @@ mod tests {
                         && link.target.signal_name == "result_data"
                 })
                 .expect("topology link into result_data should be present");
-            super::explicit_top_link_supporting_ids(topology_link)
+            let child_signal = intent_ir
+                .explicit_modules
+                .iter()
+                .find(|module| module.module_name == "producer_core")
+                .and_then(|module| {
+                    module
+                        .interfaces
+                        .iter()
+                        .flat_map(|interface| interface.signal_records.iter())
+                        .find(|signal| signal.signal_name == "output_data")
+                })
+                .expect("producer output_data declaration should be present");
+            assert_eq!(
+                child_signal.direction_hint,
+                Some(InterfaceSignalDirection::Output)
+            );
+            assert_eq!(child_signal.width_hint, None);
+            (
+                child_signal.supporting_statement_ids.clone(),
+                super::explicit_top_link_supporting_ids(topology_link),
+            )
         };
 
         let artifact_base = tempdir.path().join("generated").join("adapters");
@@ -13291,6 +13311,11 @@ mod tests {
         );
         assert!(
             topology_support_ids
+                .iter()
+                .any(|id| output_data.supporting_canonical_ids.contains(id))
+        );
+        assert!(
+            child_signal_support_ids
                 .iter()
                 .any(|id| output_data.supporting_canonical_ids.contains(id))
         );

@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` top-link child-width provenance lock)
+
+### Added: child-signal declaration provenance for recovered child widths
+- Tightened `top_composition_recovers_child_width_from_top_link_topology` so top-link-backed child-width recovery preserves the original child signal declaration support IDs.
+- The regression keeps existing topology-link support IDs, high-confidence recovered width, selected child signal-inventory provenance, and emitted `(output_data 8)` checks intact.
+- This makes recovered child width evidence auditable back to both the widthless child declaration and the topology link that supplied the width.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_child_width_from_top_link_topology` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` child-system width provenance lock)
 
 ### Added: system-contract recovered top-width declaration provenance

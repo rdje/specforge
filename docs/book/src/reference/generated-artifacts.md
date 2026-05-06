@@ -136,6 +136,7 @@ Actor-port-backed top direction recovery follows the same rule: the graph eviden
 Actor-port-backed top width recovery also retains public top-port declaration support while adding the graph width evidence.
 Child-link-backed top width recovery likewise retains public top-port declaration support while adding the topology width evidence.
 Child-system-contract-backed top width recovery retains the clock/reset top-port declaration support while adding topology-link and system-contract evidence.
+Top-link-backed child width recovery retains the child signal declaration support while adding topology width evidence.
 For blocked composition roots, the same artifact shape is useful for diagnostics: a missing child can block emission while the surviving top-port provenance remains available for review.
 
 For structured FSM roots, the artifact preserves the graph surface that led to renderability or blocking.
