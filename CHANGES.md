@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` child role residual assertion alignment)
+
+### Changed: child role residual coverage now backs the tracker rows
+- Added the missing residual assertions directly to `top_composition_blocks_child_source_direction_role_guidance` and `top_composition_blocks_child_target_direction_role_guidance`.
+- The source and target child endpoint role regressions now both prove `fsm_adapter_composition_topology` remains present with the renderable-child repair interpretation.
+- This aligns the committed residual-decision tracker rows with the dedicated child endpoint role tests while retaining the already-added public top-boundary residual assertions.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_child_source_direction_role_guidance` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_child_target_direction_role_guidance` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`613` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` top-link target-role residual lock)
 
 ### Added: target-side composition residual coverage

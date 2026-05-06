@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` child role residual assertion alignment)
+- Added the missing `fsm_adapter_composition_topology` assertions to `top_composition_blocks_child_source_direction_role_guidance` and `top_composition_blocks_child_target_direction_role_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- This keeps the dedicated child endpoint role regressions aligned with the live tracker rows for source/target composition residual coverage.
+- The public top-boundary source/target residual assertions remain in place, so both public-boundary and child-endpoint role blockers now carry structured composition diagnostics.
+
 ## Session update (2026-05-06 `.fsm` top-link target-role residual lock)
 - Tightened `top_composition_blocks_child_target_direction_role_guidance` in `crates/specforge/src/ir/adapters.rs` so target-side top-link direction-role blockers also prove `fsm_adapter_composition_topology` is emitted.
 - The regression mirrors the source-side residual lock and checks that the structured interpretation keeps renderable-child repair visible while endpoint-role enrichment stays on child, top, and aggregate renderability.

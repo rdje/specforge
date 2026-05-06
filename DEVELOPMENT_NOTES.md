@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` child role residual assertion alignment
+- New batch slice 49/200 updates `crates/specforge/src/ir/adapters.rs`.
+- The missing composition-residual assertions are now attached to the dedicated child source and child target endpoint role regressions, not only the public top-boundary direction conflict regressions.
+- Both child endpoint role tests prove `fsm_adapter_composition_topology` remains present with the renderable-child repair interpretation.
+- Full adapter coverage remains `92` adapter tests, full CI remains `613` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` top-link target-role residual lock
 - New batch slice 48/200 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_child_target_direction_role_guidance` now proves target-side top-link direction-role blockers emit the `fsm_adapter_composition_topology` residual decision.
