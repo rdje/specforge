@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` top-link direction blocker guidance lock)
+
+### Added: top-link direction conflict enrichment coverage
+- Tightened `top_composition_keeps_conflicting_top_port_direction_unresolved` so top-link direction conflicts prove top-boundary direction repair guidance survives on the blocked top candidate and aggregate `.fsm` renderability.
+- Existing checks still prove explicit top-port support IDs, topology-link support IDs, high automation confidence, and selected top signal-inventory graph-direction disagreement survive together.
+- This extends top-boundary direction guidance coverage from graph actor-port conflicts to topology-derived top-link conflicts.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_keeps_conflicting_top_port_direction_unresolved` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` top actor-direction blocker guidance lock)
 
 ### Added: top actor-port direction conflict enrichment coverage

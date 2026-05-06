@@ -373,6 +373,7 @@
 - `.fsm` top actor-port width conflicts now regression-lock support IDs and automation confidence: Done
 - `.fsm` top actor-port width conflicts now preserve top-boundary width enrichment guidance: Done
 - `.fsm` top-link direction conflicts now regression-lock support IDs and automation confidence: Done
+- `.fsm` top-link direction conflicts now preserve top-boundary direction enrichment guidance: Done
 - `.fsm` duplicate top-port direction conflicts now regression-lock support IDs and automation confidence: Done
 - `.fsm` duplicate top-port width conflicts now regression-lock support IDs and automation confidence: Done
 - `.fsm` duplicate top-port width conflicts now preserve top-boundary width enrichment guidance: Done

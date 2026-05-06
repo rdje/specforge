@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `d53c40f1dbe6efc2eeb17a07d2cd99d93490c63d`
-- latest_commit_brief_message: `test(adapter): lock top width guidance family`
-- note: new local `N=200` batch is active; slice 22 is committed, slice 23 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `0b4802af6b07020dacf21aa06b70bfe3eafe0599`
+- latest_commit_brief_message: `test(adapter): lock top actor direction guidance`
+- note: new local `N=200` batch is active; slice 23 is committed, slice 24 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `0b4802a` test(adapter): lock top actor direction guidance
 - `d53c40f` test(adapter): lock top width guidance family
 - `d01133a` test(adapter): lock top width guidance
 - `acffd23` test(adapter): lock sibling width guidance
 - `5f4c355` test(adapter): lock child width conflict guidance
 - `04bf4a3` test(adapter): lock topology conflict guidance
-- `5d66d54` test(adapter): bubble child conflict guidance
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 23]`
-- files in flight for new batch slice 23:
+- branch state before the next commit: `main...origin/main [ahead 24]`
+- files in flight for new batch slice 24:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -49,21 +49,21 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `22`
+- completed_count: `23`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - regression-lock top-boundary actor-port direction conflict repair guidance
+  - regression-lock top-boundary top-link direction conflict repair guidance
   - prove blocked top candidate and aggregate `.fsm` renderability both preserve top-boundary direction-conflict enrichment guidance
-  - preserve explicit top-port support IDs, graph actor-port support IDs, high automation confidence, and selected inventory direction disagreement
+  - preserve explicit top-port support IDs, topology-link support IDs, high automation confidence, and selected inventory graph-direction disagreement
   - keep live docs and mdBook aligned with this blocked-artifact guidance surface
 - tracker effect:
-  - expected live-status tracker gain: `.fsm top actor-port direction conflicts now preserve top-boundary direction enrichment guidance: Done`
+  - expected live-status tracker gain: `.fsm top-link direction conflicts now preserve top-boundary direction enrichment guidance: Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_top_actor_port_direction` passed with `1` test
+  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_keeps_conflicting_top_port_direction_unresolved` passed with `1` test
   - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `80` tests
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed after live-doc/mdBook sync
@@ -74,4 +74,4 @@
   - `148/148` tracked KG fixtures
 
 ## Next exact steps
-- run final guards, commit slice 23 without pushing, and continue slice 24
+- run final guards, commit slice 24 without pushing, and continue slice 25

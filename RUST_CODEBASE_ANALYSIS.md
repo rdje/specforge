@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` top-link direction blocker guidance lock)
+- Tightened `top_composition_keeps_conflicting_top_port_direction_unresolved` in `crates/specforge/src/ir/adapters.rs` so top-link direction conflicts retain top-boundary direction repair guidance on the blocked top candidate and aggregate `.fsm` renderability.
+- Existing assertions still cover explicit top-port support IDs, topology-link support IDs, high automation confidence, and selected top signal-inventory graph-direction disagreement.
+- This proves topology-derived top-boundary direction conflicts expose the same actionable repair guidance as graph actor-port conflicts.
+
 ## Session update (2026-05-06 `.fsm` top actor-direction blocker guidance lock)
 - Tightened `top_composition_blocks_conflicting_top_actor_port_direction` in `crates/specforge/src/ir/adapters.rs` so actor-port graph direction conflicts retain top-boundary direction repair guidance on the blocked top candidate and aggregate `.fsm` renderability.
 - Existing assertions still cover explicit top-port support IDs, graph actor-port support ID, high automation confidence, and selected top signal-inventory direction disagreement.

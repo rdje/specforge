@@ -12776,7 +12776,22 @@ mod tests {
                 .iter()
                 .any(|reason| reason.contains("implies top port `drive_data` is `input`"))
         );
+        assert!(
+            top_candidate
+                .renderability
+                .required_canonical_enrichments
+                .iter()
+                .any(|enrichment| enrichment
+                    == "resolve conflicting top boundary port direction evidence before lowering `?top:name`")
+        );
         assert!(!fsm.renderability.is_renderable);
+        assert!(
+            fsm.renderability
+                .required_canonical_enrichments
+                .iter()
+                .any(|enrichment| enrichment
+                    == "resolve conflicting top boundary port direction evidence before lowering `?top:name`")
+        );
 
         Ok(())
     }
