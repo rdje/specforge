@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `66bf4700a9fd07948eee28f57634cfbcddd82f61`
-- latest_commit_brief_message: `test(adapter): lock transitive child-width provenance`
-- note: new local `N=200` batch is active; slice 14 is committed, slice 15 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `e98a1225145a3b7849bd1e9ab2289a30f64026d9`
+- latest_commit_brief_message: `test(adapter): lock child topology-direction provenance`
+- note: new local `N=200` batch is active; slice 15 is committed, slice 16 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `e98a122` test(adapter): lock child topology-direction provenance
 - `66bf470` test(adapter): lock transitive child-width provenance
 - `48e34f6` test(adapter): lock source child-width provenance
 - `166f3c6` test(adapter): lock sibling child-width provenance
 - `ceeb653` test(adapter): lock top-link child-width provenance
 - `3ba14b5` test(adapter): lock child-system width provenance
-- `aaf4830` test(adapter): lock child-link width provenance
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 15]`
-- files in flight for new batch slice 15:
+- branch state before the next commit: `main...origin/main [ahead 16]`
+- files in flight for new batch slice 16:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -49,21 +49,21 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `14`
+- completed_count: `15`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - regression-lock child link-topology direction recovery child-signal declaration provenance
-  - prove topology-recovered producer and consumer child signal directions keep original child signal declaration support IDs as well as topology-link support IDs
-  - preserve existing child signal-inventory topology provenance and emitted topology text
+  - regression-lock child actor-port direction recovery child-signal declaration provenance
+  - prove actor-port-recovered producer and consumer child signal directions keep original child signal declaration support IDs as well as graph actor-port support IDs
+  - preserve existing child signal-inventory graph provenance and emitted topology text
   - keep the mdBook adapter artifact description aligned with this provenance surface
 - tracker effect:
-  - expected live-status tracker gain: `.fsm child link-topology direction recovery now preserves child signal declaration support alongside topology support: Done`
+  - expected live-status tracker gain: `.fsm child actor-port direction recovery now preserves child signal declaration support alongside graph support: Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_child_directions_from_link_topology` passed with `1` test
+  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_child_directions_from_actor_ports` passed with `1` test
   - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `80` tests
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed after live-doc/mdBook sync
@@ -74,4 +74,4 @@
   - `148/148` tracked KG fixtures
 
 ## Next exact steps
-- run final guards, commit slice 15 without pushing, and continue slice 16
+- run final guards, commit slice 16 without pushing, and continue slice 17

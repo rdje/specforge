@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` child actor-direction provenance lock)
+- Tightened `top_composition_recovers_child_directions_from_actor_ports` in `crates/specforge/src/ir/adapters.rs` so actor-port-recovered child signal directions keep original child signal declaration support IDs in selected child module inventories.
+- Existing assertions still cover actor-port support IDs, high automation confidence, graph-backed child signal-inventory provenance, and emitted topology text.
+- This pairs with child link-topology direction recovery so both child direction recovery sources preserve declaration provenance.
+
 ## Session update (2026-05-06 `.fsm` child topology-direction provenance lock)
 - Tightened `top_composition_recovers_child_directions_from_link_topology` in `crates/specforge/src/ir/adapters.rs` so topology-recovered child signal directions keep original child signal declaration support IDs in selected child module inventories.
 - Existing assertions still cover topology-link support IDs, high automation confidence, topology-backed child signal-inventory provenance, and emitted topology text.

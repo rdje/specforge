@@ -367,6 +367,7 @@
 - `.fsm` source-side sibling child-width recovery now preserves child signal declaration support alongside topology support: Done
 - `.fsm` transitive child-width recovery now preserves child signal declaration support alongside topology support: Done
 - `.fsm` child link-topology direction recovery now preserves child signal declaration support alongside topology support: Done
+- `.fsm` child actor-port direction recovery now preserves child signal declaration support alongside graph support: Done
 - `.fsm` top actor-port direction conflicts now regression-lock support IDs and automation confidence: Done
 - `.fsm` top actor-port width conflicts now regression-lock support IDs and automation confidence: Done
 - `.fsm` top-link direction conflicts now regression-lock support IDs and automation confidence: Done

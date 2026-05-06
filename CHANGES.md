@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` child actor-direction provenance lock)
+
+### Added: child-signal declaration provenance for actor-recovered directions
+- Tightened `top_composition_recovers_child_directions_from_actor_ports` so actor-port-backed child-direction recovery preserves the original child signal declaration support IDs.
+- The regression keeps existing actor-port support IDs, high-confidence recovered graph directions, selected child signal-inventory provenance, and emitted topology checks intact.
+- This pairs with child link-topology direction recovery so graph and topology child-direction recovery both retain declaration provenance.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_child_directions_from_actor_ports` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` child topology-direction provenance lock)
 
 ### Added: child-signal declaration provenance for topology-recovered directions

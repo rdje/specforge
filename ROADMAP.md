@@ -196,6 +196,7 @@
   - duplicate top-port direction conflicts preserve both duplicate declaration support-ID sets and high automation confidence while blocking `.fsm` emission
   - duplicate top-port width conflicts preserve both duplicate declaration support-ID sets, width-conflict inventory state, and high automation confidence while blocking `.fsm` emission
   - child actor-port direction recovery preserves graph-backed support IDs and high automation confidence across producer and consumer child module inventories
+  - child actor-port direction recovery preserves original child signal declaration support IDs alongside graph actor-port support IDs in recovered child module inventories
   - child actor-port direction conflicts preserve explicit child signal declaration support IDs and graph actor-port support IDs while blocking `.fsm` emission
   - child link-topology direction recovery preserves explicit top-link support IDs and high automation confidence across producer and consumer child module inventories
   - child link-topology direction recovery preserves original child signal declaration support IDs alongside topology-link support IDs in recovered child module inventories
@@ -256,6 +257,7 @@
   - source-side sibling child-width recovery augments child signal declarations with topology width support without dropping declaration support IDs
   - transitive child-width recovery augments producer and consumer child signal declarations with topology width support without dropping declaration support IDs
   - child link-topology direction recovery augments child signal declarations with topology direction support without dropping declaration support IDs
+  - child actor-port direction recovery augments child signal declarations with graph direction support without dropping declaration support IDs
   - unrelated direct actor-port graph context keeps selected support IDs auditable while excluding unrelated side-band evidence from `.fsm` inventories
   - ambiguous direct actor-port graph context leaves graph direction, actor-port category, and support IDs unselected instead of guessing a target actor
   - standalone DT graph-backed undriven output blockers preserve selected actor support IDs and high automation confidence while blocking `.fsm` emission

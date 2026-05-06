@@ -12977,6 +12977,60 @@ mod tests {
         let tempdir = tempdir()?;
         let mut intent_ir = build_explicit_top_composition_intent_ir(tempdir.path())?;
         clear_explicit_module_direction_hints(&mut intent_ir);
+        let (
+            producer_output_signal_support_ids,
+            consumer_input_signal_support_ids,
+            consumer_result_signal_support_ids,
+        ) = {
+            let producer_output_signal = intent_ir
+                .explicit_modules
+                .iter()
+                .find(|module| module.module_name == "producer_core")
+                .and_then(|module| {
+                    module
+                        .interfaces
+                        .iter()
+                        .flat_map(|interface| interface.signal_records.iter())
+                        .find(|signal| signal.signal_name == "output_data")
+                })
+                .expect("producer output_data declaration should be present");
+            let consumer_input_signal = intent_ir
+                .explicit_modules
+                .iter()
+                .find(|module| module.module_name == "consumer_core")
+                .and_then(|module| {
+                    module
+                        .interfaces
+                        .iter()
+                        .flat_map(|interface| interface.signal_records.iter())
+                        .find(|signal| signal.signal_name == "input_data")
+                })
+                .expect("consumer input_data declaration should be present");
+            let consumer_result_signal = intent_ir
+                .explicit_modules
+                .iter()
+                .find(|module| module.module_name == "consumer_core")
+                .and_then(|module| {
+                    module
+                        .interfaces
+                        .iter()
+                        .flat_map(|interface| interface.signal_records.iter())
+                        .find(|signal| signal.signal_name == "result_data")
+                })
+                .expect("consumer result_data declaration should be present");
+            for signal in [
+                producer_output_signal,
+                consumer_input_signal,
+                consumer_result_signal,
+            ] {
+                assert_eq!(signal.direction_hint, None);
+            }
+            (
+                producer_output_signal.supporting_statement_ids.clone(),
+                consumer_input_signal.supporting_statement_ids.clone(),
+                consumer_result_signal.supporting_statement_ids.clone(),
+            )
+        };
         intent_ir.actor_ports = vec![
             actor_port(
                 "producer_core",
@@ -13090,6 +13144,17 @@ mod tests {
                     .any(|id| signal.supporting_canonical_ids.contains(id))
             );
             assert_eq!(signal.automation_confidence, AutomationConfidence::High);
+        }
+        for (signal, signal_support_ids) in [
+            (output_data, &producer_output_signal_support_ids),
+            (input_data, &consumer_input_signal_support_ids),
+            (result_data, &consumer_result_signal_support_ids),
+        ] {
+            assert!(
+                signal_support_ids
+                    .iter()
+                    .any(|id| signal.supporting_canonical_ids.contains(id))
+            );
         }
         assert!(fsm.renderability.is_renderable);
         assert!(emitted_text.contains("/producer.output_data/consumer.input_data/"));
