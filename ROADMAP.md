@@ -246,6 +246,7 @@
   - transitive child-width recovery preserves original producer and consumer child signal declaration support IDs alongside topology-link support IDs
   - recovered top-port evidence preserves graph-backed support IDs while raising top-root selection confidence and preserving composition-topology residual diagnostics when topology is still incomplete
   - recovered child-declaration evidence preserves child support IDs while raising top-root selection confidence and staying composition-residual clean once the single-child topology is renderable
+  - recovered top-link evidence preserves link support IDs while raising top-root selection confidence and staying composition-residual clean once the linked topology is renderable
   - baseline renderable top-composition lowering preserves top port, child declaration, and explicit topology-link support IDs in selected top candidates
   - missing-child top-composition blockers preserve unresolved child declaration support IDs and confidence while blocking `.fsm` emission
   - reused-child top-composition lowering preserves per-instance child support IDs while deduplicating the shared emitted module root

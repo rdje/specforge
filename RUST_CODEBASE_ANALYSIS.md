@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` top-link confidence residual cleanliness)
+- Added aggregate renderability and residual-clean assertions to `top_root_kind_confidence_follows_top_link_evidence` in `crates/specforge/src/ir/adapters.rs`.
+- Top-link evidence now raises selected top-root confidence without leaving `fsm_adapter_composition_topology` behind when the linked top is renderable.
+- The live tracker and roadmap now mark the top-link confidence residual-clean guarantee as closed; focused adapter coverage, full adapter coverage, KG bench, docs, full CI, and `cargo sweep --time 1` all passed.
+
 ## Session update (2026-05-06 `.fsm` child-confidence residual cleanliness)
 - Added renderability and residual-clean assertions to `top_root_kind_confidence_follows_child_declaration_evidence` in `crates/specforge/src/ir/adapters.rs`.
 - Child-declaration evidence now raises selected top-root confidence without leaving `fsm_adapter_composition_topology` behind when the single-child top is renderable.
