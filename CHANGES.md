@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` recovered top-root confidence provenance lock)
+
+### Added: recovered top-port root-kind confidence provenance coverage
+- Tightened `top_root_kind_confidence_follows_recovered_top_port_evidence` so top-root selection confidence now proves the recovered top-port evidence keeps graph-backed support IDs.
+- This is coverage-only over the existing adapter behavior: graph-backed top-port direction recovery can raise top-root confidence to high.
+- The slice keeps the actor-port support record auditable on the recovered top port that drives the root-kind confidence.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_root_kind_confidence_follows_recovered_top_port_evidence` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-05 (`.fsm` transitive child-width provenance lock)
 
 ### Added: transitive child-width recovery provenance coverage

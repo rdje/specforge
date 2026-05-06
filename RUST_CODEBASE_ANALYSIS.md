@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 `.fsm` recovered top-root confidence provenance lock)
+- Tightened `top_root_kind_confidence_follows_recovered_top_port_evidence` in `crates/specforge/src/ir/adapters.rs` so graph-backed recovered top-port evidence retains support IDs while top-root confidence rises to high.
+- The adapter already used recovered top-boundary evidence in top-root confidence folding; this regression now proves the recovered port keeps the actor-port support record that explains that confidence.
+- This starts the root-kind confidence provenance lane after the child-topology width coverage.
+
 ## Session update (2026-05-05 `.fsm` transitive child-width provenance lock)
 - Tightened `top_composition_recovers_child_width_through_transitive_topology` in `crates/specforge/src/ir/adapters.rs` so transitive child width recovery retains support IDs and automation confidence across producer and consumer inventories.
 - The adapter already rendered top compositions when producer width recovered from a top link flowed through a sibling link into a consumer input; this regression now proves both contributing topology links remain inspectable.

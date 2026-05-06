@@ -10460,6 +10460,16 @@ mod tests {
             AutomationConfidence::High
         );
         assert_eq!(
+            recovered_port.direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert!(
+            recovered_port
+                .supporting_statement_ids
+                .iter()
+                .any(|id| id == "graph_wrapper_ext_data")
+        );
+        assert_eq!(
             fsm.root_kind_decision.automation_confidence,
             AutomationConfidence::High
         );
