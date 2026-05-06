@@ -221,6 +221,7 @@
   - standalone DT graph-backed undriven output blockers preserve selected actor support IDs and high automation confidence while blocking `.fsm` emission
   - structured-FSM graph-backed undriven output blockers preserve selected actor support IDs and high automation confidence while blocking `.fsm` emission
   - structured-FSM missing-initial blockers preserve state declaration support IDs and confidence while blocking `.fsm` emission
+  - structured-FSM undeclared-transition blockers preserve transition support IDs and confidence while blocking `.fsm` emission
   - direct-root actor-port direction conflicts preserve both conflicting graph-backed support IDs and automation confidence while blocking `.fsm` emission
   - explicit-module flat-vs-graph direction disagreement preserves interface and actor-port provenance while blocking `.fsm` emission
   - structured-FSM flat-vs-graph direction disagreement preserves interface and actor-port provenance while blocking `.fsm` emission

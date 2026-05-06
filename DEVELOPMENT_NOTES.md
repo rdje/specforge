@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` structured-FSM undeclared-transition support lock
+- New batch slice 85/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `keeps_structured_fsm_blocked_when_transition_target_is_undeclared` now asserts the blocked FSM-root transition candidate keeps its source/target state names, declaration support IDs, and high automation confidence while the undeclared target-state blocker remains active.
+- This is a coverage-only lock for the blocked structured-FSM path where the canonical transition names a target state that was never declared.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` structured-FSM missing-initial support lock
 - New batch slice 84/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `keeps_structured_fsm_blocked_without_exactly_one_initial_state` now asserts the blocked FSM-root state candidates keep their declaration support IDs, high automation confidence, and non-initial status while the initial-state cardinality blocker remains active.

@@ -13633,6 +13633,16 @@ mod tests {
     fn keeps_structured_fsm_blocked_when_transition_target_is_undeclared() -> Result<()> {
         let tempdir = tempdir()?;
         let intent_ir = build_unknown_target_fsm_intent_ir(tempdir.path())?;
+        let transition_support_ids = intent_ir
+            .state_transitions
+            .iter()
+            .find(|transition| transition.target_state == "missing_state")
+            .map(|transition| transition.supporting_statement_ids.clone())
+            .expect("missing-target transition should be present");
+        assert!(
+            !transition_support_ids.is_empty(),
+            "transition declaration provenance should be present"
+        );
         let artifact_base = tempdir.path().join("generated").join("adapters");
 
         let adapter = AdapterArtifact::build(
@@ -13646,6 +13656,22 @@ mod tests {
         let fsm = adapter.fsm.expect("fsm artifact should be present");
         assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Fsm);
         assert_eq!(fsm.transition_candidates.len(), 1);
+        let transition_candidate = fsm
+            .transition_candidates
+            .iter()
+            .find(|transition| transition.target_state == "missing_state")
+            .expect("missing-target transition should remain visible");
+        assert_eq!(transition_candidate.source_state, "idle");
+        assert_eq!(transition_candidate.target_state, "missing_state");
+        assert!(
+            transition_support_ids
+                .iter()
+                .any(|id| transition_candidate.supporting_canonical_ids.contains(id))
+        );
+        assert_eq!(
+            transition_candidate.automation_confidence,
+            AutomationConfidence::High
+        );
         assert!(!fsm.renderability.is_renderable);
         assert!(fsm.renderability.blocking_reasons.iter().any(|reason| {
             reason.contains("Transition target `missing_state` is not declared")

@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` structured-FSM undeclared-transition support lock)
+- Tightened `keeps_structured_fsm_blocked_when_transition_target_is_undeclared` in `crates/specforge/src/ir/adapters.rs` so the blocked FSM-root transition candidate retains source/target state names, declaration support IDs, and high confidence.
+- The adapter already blocked `.fsm` emission when a transition target was undeclared; this regression now proves the transition remains visible for review.
+- This pairs with the missing-initial blocker lock to cover structured-FSM state-graph cardinality and endpoint blockers.
+
 ## Session update (2026-05-06 `.fsm` structured-FSM missing-initial support lock)
 - Tightened `keeps_structured_fsm_blocked_without_exactly_one_initial_state` in `crates/specforge/src/ir/adapters.rs` so blocked FSM-root state candidates retain declaration support IDs and high confidence.
 - The adapter already blocked `.fsm` emission when the explicit state graph had no initial state; this regression now proves those state declarations remain visible for review.
