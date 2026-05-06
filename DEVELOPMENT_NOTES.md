@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` child topology direction residual diagnostics
+- New batch slice 142/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_conflicting_child_link_topology_directions` now asserts child link-topology direction conflicts keep low-confidence `fsm_adapter_composition_topology` diagnostics with explicit topology-detail blocker text.
+- This keeps actor-relative graph-direction repair guidance, contradictory topology-link support IDs, and renderable-child residual context tied together.
+- Focused child topology direction residual-diagnostics regression, adapter suite, fmt, docs, KG bench, and full CI all passed; user-requested `cargo sweep --time 1` is deferred until no target-tree process is active.
+
 ## 2026-05-06 `.fsm` top-link width mismatch residual diagnostics
 - New batch slice 141/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_width_mismatched_top_link_guidance` now asserts top-link endpoint width mismatches keep low-confidence `fsm_adapter_composition_topology` diagnostics with explicit topology-detail blocker text.

@@ -186,6 +186,7 @@ When child actor-port direction evidence conflicts, blocked module renderability
 Child actor-port direction conflicts also emit the composition-topology residual decision so renderable-child repair remains visible in structured diagnostics.
 Child topology direction conflicts preserve the same repair-guidance channel while retaining the contradictory topology-link support IDs that caused the graph-direction conflict.
 Child topology direction conflicts also emit the composition-topology residual decision so renderable-child repair remains visible in structured diagnostics.
+That child topology direction residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
 Child topology width conflicts likewise preserve canonical width repair guidance on blocked module and aggregate renderability surfaces while retaining signal-declaration and topology-link support IDs.
 Child topology width conflicts also emit the composition-topology residual decision so renderable-child repair remains visible in structured diagnostics.
 That child topology width residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
