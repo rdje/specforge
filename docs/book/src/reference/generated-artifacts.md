@@ -128,7 +128,7 @@ For renderable `.fsm` top-composition roots, inspect the selected top candidate 
 The adapter artifact keeps the declared top-port direction and numeric width, the top-port automation confidence, child declaration support IDs, topology-link support IDs, and the renderable top root.
 When multiple child instances reuse the same module, the top candidate still keeps per-instance child support IDs plus top-port and link provenance, while the renderable source document emits the shared child module root only once without leaving composition-topology residuals.
 When a renderable source document emits the `?top` root before producer/consumer child direct roots, the selected top candidate and renderable top root still carry the public top-port and topology-link support IDs without leaving composition-topology residuals.
-Single-FSM-child top documents preserve the same top-port and topology-link provenance while keeping the child reference typed as an FSM child root.
+Single-FSM-child top documents preserve the same top-port and topology-link provenance while keeping the child reference typed as an FSM child root and leaving no composition-topology residual once renderable.
 Reused-FSM-child top documents also preserve per-output top-port and link provenance while emitting the shared FSM direct root only once.
 Mixed DT/FSM child top documents preserve public top-port and topology-link provenance while retaining child root kinds and direct-root order.
 When explicit top-link topology recovers a public top-port direction, the recovered top records retain the original top-port declaration support IDs as well as the topology evidence that supplied the direction.

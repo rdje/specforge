@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` single-FSM-child residual cleanliness
+- New batch slice 79/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `renderable_top_document_preserves_fsm_child_root_kind` now asserts no stale composition topology residual remains after the renderable source document emits a top root with a typed `?fsmc` child reference.
+- This keeps FSM child-root-kind, top-port, and topology-link provenance paired with a clean aggregate residual surface once the composition is renderable.
+- Focused single-FSM-child residual-clean regression, adapter suite, fmt, docs, KG bench, full CI, and the user-requested `cargo sweep --time 1` all passed.
+
 ## 2026-05-06 `.fsm` top-before-child residual cleanliness
 - New batch slice 78/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `renderable_top_document_emits_top_before_child_direct_roots` now asserts no stale composition topology residual remains after the renderable source document emits the `?top` root before child direct roots.

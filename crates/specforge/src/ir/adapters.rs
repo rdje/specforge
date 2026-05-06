@@ -10590,6 +10590,12 @@ mod tests {
         assert!(emitted_text.contains("(+system"));
         assert!(emitted_text.contains("\n  (idle\n"));
         assert!(emitted_text.contains("\n  (busy\n"));
+        assert!(
+            adapter
+                .residual_decisions
+                .iter()
+                .all(|packet| packet.packet_id != "fsm_adapter_composition_topology")
+        );
 
         Ok(())
     }
