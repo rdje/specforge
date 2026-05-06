@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` top child actor direction size-entry lock)
+- Tightened `top_composition_recovers_child_directions_from_actor_ports` in `crates/specforge/src/ir/adapters.rs`.
+- The test now proves child renderable `.fsm` size entries consume graph-recovered actor-port directions for producer output and consumer input/output ports when flat child-module `direction_hint` values are absent.
+- This locks the downstream child size-entry consumer for top-composition actor-port direction recovery; focused adapter coverage, full adapter coverage, fmt, docs CI, KG bench, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 `.fsm` explicit-module control-input width size-entry lock)
 - Tightened `standalone_explicit_module_recovers_control_input_width_from_actor_port_graph` in `crates/specforge/src/ir/adapters.rs`.
 - The test now proves the explicit-module renderable `.fsm` size entry for `DATA_IN` consumes graph-recovered actor-port width together with module-control input direction when flat module-local `direction_hint` is absent.

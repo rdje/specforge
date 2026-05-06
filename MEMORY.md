@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `612d584aaf5f7a25f952bde247460425ab322191`
-- latest_commit_brief_message: `test(adapter): lock direct width size entry`
-- note: new local `N=200` batch is active; slice 150 is committed, slice 151 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `6548c1457ddbd7897bbf1c7fb7f55c1348c52fa0`
+- latest_commit_brief_message: `test(adapter): lock module width size entry`
+- note: new local `N=200` batch is active; slice 151 is committed, slice 152 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `6548c14` test(adapter): lock module width size entry
 - `612d584` test(adapter): lock direct width size entry
 - `eea6bf6` test(adapter): lock direct graph size entry
 - `72b8134` test(adapter): lock module graph size entries
 - `af3db8c` test(adapter): lock fsm graph size entries
 - `c20bb6a` test(adapter): lock graph size-entry directions
-- `c8a139c` test(nlp): reject source-label aliases
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 151]`
-- files in flight for new batch slice 151:
+- branch state before the next commit: `main...origin/main [ahead 152]`
+- files in flight for new batch slice 152:
   - `crates/specforge/src/ir/adapters.rs`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `ROADMAP.md`
@@ -49,21 +49,21 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `150`
+- completed_count: `151`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - lock explicit-module renderable `.fsm` size entries as consumers of graph-recovered actor-port widths for module-local control inputs alongside module-control input direction recovery
-  - prove `DATA_IN` lowers with expected input role and width after explicit-module control-input width recovery while flat module-local `direction_hint` remains absent
-  - sync the live tracker, roadmap, mdBook, Rust analysis, and continuity docs with the explicit-module control-input width size-entry guarantee
+  - lock top-composition child renderable `.fsm` size entries as consumers of graph-recovered actor-port directions for child module ports when flat child-module direction hints are absent
+  - prove `producer_core.output_data`, `consumer_core.input_data`, and `consumer_core.result_data` lower with expected output/input/output roles and width 8
+  - sync the live tracker, roadmap, mdBook, Rust analysis, and continuity docs with the top child actor-port direction size-entry guarantee
 - tracker effect:
-  - live-status tracker changed; new row marks explicit-module `.fsm` renderable size entries consuming graph-backed control-input widths as `Done`
+  - live-status tracker changed; new row marks `.fsm` top child renderable size entries consuming graph-backed actor-port directions as `Done`
 - verification status:
   - implementation and live-doc sync are complete
-  - focused explicit-module control-input width size-entry regression passed (`1` test)
+  - focused top-composition child actor-port direction size-entry regression passed (`1` test)
   - adapter suite passed (`92` tests)
   - formatting passed
   - docs CI passed
@@ -74,9 +74,9 @@
 - current known local CI baseline:
   - current in-flight slice passed `614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - current in-flight slice passed `148/148` tracked KG fixtures
-  - current slice has passed focused explicit-module control-input width size-entry regression, adapter suite, formatting, docs CI, KG bench, and full CI
+  - current slice has passed focused top-composition child actor-port direction size-entry regression, adapter suite, formatting, docs CI, KG bench, and full CI
   - latest `cargo sweep --time 1` attempt was deferred because `target/release/tool_matrix` is active
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- run final commit guards and commit slice 151 without pushing
+- run final commit guards and commit slice 152 without pushing
