@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` unemitted child-target guidance lock)
+
+### Added: unemitted child-target endpoint coverage
+- Added `top_composition_blocks_link_to_unemitted_child_target_guidance` so top links that target a child endpoint absent from the renderable child module prove target-endpoint enrichment guidance survives on the blocked top candidate and aggregate `.fsm` renderability.
+- The regression also proves the declared top port, consumer child declaration, and blocked top-link support IDs remain visible while the child resolves to a renderable DT root.
+- This pairs child-target endpoint coverage with the existing child-source endpoint blocker.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_link_to_unemitted_child_target_guidance` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`87` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`608` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` undeclared top-source guidance lock)
 
 ### Added: undeclared top-source endpoint coverage

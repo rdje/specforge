@@ -15398,6 +15398,142 @@ mod tests {
     }
 
     #[test]
+    fn top_composition_blocks_link_to_unemitted_child_target_guidance() -> Result<()> {
+        let tempdir = tempdir()?;
+        let intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "link_to_unemitted_child_target.md",
+            "# Link To Unemitted Child Target\nTop datapath.\n\nTop datapath port result_data is output width 8.\n\nTop datapath child producer uses module producer_core.\n\nTop datapath child consumer uses module consumer_core.\n\nTop datapath link producer.output_data -> consumer.missing_input.\n\nModule producer_core signal output_data is output width 8.\n\nModule producer_core block produce: output_data = 8'3.\n\nModule consumer_core signal input_data is input width 8.\n\nModule consumer_core signal result_data is output width 8.\n\nModule consumer_core block route: result_data = input_data.\n",
+        )?;
+        let (top_port_support_ids, consumer_child_support_ids, link_support_ids) = {
+            let explicit_top = intent_ir
+                .explicit_tops
+                .iter()
+                .find(|top| top.top_name == "datapath")
+                .expect("explicit top should be present");
+            let result_port = explicit_top
+                .ports
+                .iter()
+                .find(|port| port.port_name == "result_data")
+                .expect("declared result_data top port should be present");
+            let consumer_child = explicit_top
+                .children
+                .iter()
+                .find(|child| child.instance_name == "consumer")
+                .expect("consumer child should be present");
+            let missing_target_link = explicit_top
+                .links
+                .iter()
+                .find(|link| {
+                    link.source.instance_name.as_deref() == Some("producer")
+                        && link.source.signal_name == "output_data"
+                        && link.target.instance_name.as_deref() == Some("consumer")
+                        && link.target.signal_name == "missing_input"
+                })
+                .expect("producer to missing consumer input link should be present");
+            (
+                result_port.supporting_statement_ids.clone(),
+                consumer_child.supporting_statement_ids.clone(),
+                super::explicit_top_link_supporting_ids(missing_target_link),
+            )
+        };
+        assert!(
+            !top_port_support_ids.is_empty()
+                && !consumer_child_support_ids.is_empty()
+                && !link_support_ids.is_empty(),
+            "top port, child, and link provenance should be present"
+        );
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "blocked");
+        assert!(adapter.artifact_layout.emitted_target_path.is_none());
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Top);
+        let top_candidate = fsm
+            .top_candidates
+            .iter()
+            .find(|top| top.top_name == "datapath")
+            .expect("top candidate should remain visible");
+        let result_port = top_candidate
+            .ports
+            .iter()
+            .find(|port| port.port_name == "result_data")
+            .expect("declared result_data top port should remain visible");
+        assert_eq!(
+            result_port.direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert_eq!(result_port.width_hint, Some(WidthHint::Numeric(8)));
+        assert!(
+            top_port_support_ids
+                .iter()
+                .any(|id| result_port.supporting_statement_ids.contains(id))
+        );
+        let consumer_child = top_candidate
+            .children
+            .iter()
+            .find(|child| child.instance_name == "consumer")
+            .expect("consumer child candidate should remain visible");
+        assert_eq!(consumer_child.source_module_name, "consumer_core");
+        assert_eq!(consumer_child.resolved_root_kind, Some(FsmRootKind::Dt));
+        assert!(
+            consumer_child_support_ids
+                .iter()
+                .any(|id| consumer_child.supporting_canonical_ids.contains(id))
+        );
+        let link = top_candidate
+            .links
+            .iter()
+            .find(|link| {
+                link.source.instance_name.as_deref() == Some("producer")
+                    && link.source.signal_name == "output_data"
+                    && link.target.instance_name.as_deref() == Some("consumer")
+                    && link.target.signal_name == "missing_input"
+            })
+            .expect("blocked top-link should remain visible");
+        for support_id in &link_support_ids {
+            assert!(
+                super::explicit_top_link_supporting_ids(link).contains(support_id),
+                "top-link support id should remain visible"
+            );
+        }
+        assert!(!top_candidate.renderability.is_renderable);
+        assert!(
+            top_candidate
+                .renderability
+                .blocking_reasons
+                .iter()
+                .any(|reason| reason.contains(
+                    "Top link target `consumer.missing_input` does not resolve to an emitted child port"
+                ))
+        );
+        assert!(
+            top_candidate
+                .renderability
+                .required_canonical_enrichments
+                .iter()
+                .any(|enrichment| enrichment
+                    == "declare and emit every top-link target endpoint before lowering `?top:name`")
+        );
+        assert!(!fsm.renderability.is_renderable);
+        assert!(
+            fsm.renderability
+                .required_canonical_enrichments
+                .iter()
+                .any(|enrichment| enrichment
+                    == "declare and emit every top-link target endpoint before lowering `?top:name`")
+        );
+
+        Ok(())
+    }
+
+    #[test]
     fn keeps_top_composition_blocked_when_child_module_is_missing() -> Result<()> {
         let tempdir = tempdir()?;
         let intent_ir = build_missing_child_module_top_intent_ir(tempdir.path())?;

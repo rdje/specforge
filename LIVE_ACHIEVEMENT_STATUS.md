@@ -424,6 +424,7 @@
 - `.fsm` no-top-port blockers now preserve top-port enrichment guidance: Done
 - `.fsm` links to undeclared top targets now preserve target-endpoint enrichment guidance: Done
 - `.fsm` links from undeclared top sources now preserve source-endpoint enrichment guidance: Done
+- `.fsm` links to unemitted child targets now preserve target-endpoint enrichment guidance: Done
 - `.fsm` standalone DT/FSM renderability now blocks graph-backed output inventory entries that have no typed driving action instead of silently omitting them: Done
 - `.fsm` standalone DT graph-backed undriven output blockers now regression-lock support IDs and automation confidence: Done
 - `.fsm` structured FSM renderability now regression-locks graph-backed undriven output blocking: Done
