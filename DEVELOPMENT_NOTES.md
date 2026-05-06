@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` output actor selection residual cleanliness
+- New batch slice 94/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `standalone_dt_selects_output_actor_when_external_actors_share_signals` now asserts no stale signal-inventory residual remains after the standalone direct-root path selects the local output actor and excludes shared external actor evidence.
+- This keeps selected output actor support IDs, excluded external actor support, high automation confidence, emitted DT assignments, and signal-inventory residual cleanliness paired once the direct root is renderable.
+- Focused output actor selection residual-clean regression, adapter suite, fmt, docs, KG bench, and full CI all passed; user-requested `cargo sweep --time 1` is deferred until no target-tree process is active.
+
 ## 2026-05-06 `.fsm` direct actor direction residual cleanliness
 - New batch slice 93/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `standalone_dt_recovers_directions_from_unambiguous_actor_ports` now asserts no stale signal-inventory residual remains after unambiguous actor-port graph evidence recovers direct-root signal directions and the standalone DT root emits.

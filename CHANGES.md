@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` output actor selection residual cleanliness)
+
+### Added: renderable output actor selection stays signal-inventory-residual clean
+- Tightened `standalone_dt_selects_output_actor_when_external_actors_share_signals` so target-actor-backed direct output recovery proves no stale `fsm_adapter_signal_inventory` residual remains once the standalone DT root is renderable.
+- The regression now pairs selected output actor support IDs, excluded shared external actor evidence, high automation confidence, emitted DT assignments, and a clean signal-inventory residual surface.
+- Updated the live tracker, roadmap, and mdBook to mark the output actor selection residual-clean guarantee as closed.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge standalone_dt_selects_output_actor_when_external_actors_share_signals` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`613` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo sweep --time 1` -> deferred until safe because another shell still had a `target/release/tool_matrix` process running from this repository
+
 ## 2026-05-06 (`.fsm` direct actor direction residual cleanliness)
 
 ### Added: renderable direct actor-port direction recovery stays signal-inventory-residual clean
