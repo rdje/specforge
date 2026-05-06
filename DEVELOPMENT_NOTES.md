@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` top child-link width residual lock
+- New batch slice 64/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_conflicting_top_port_widths_from_child_links` now asserts that conflicting child-link width evidence for a top boundary port emits the composition topology residual.
+- This pairs top-boundary child-link width-conflict guidance with structured residual diagnostics while preserving conflicting topology-link support IDs and high automation confidence.
+- Focused top child-link width regression, adapter suite, fmt, docs, KG bench, full CI, and the user-requested `cargo sweep --time 1` all passed.
+
 ## 2026-05-06 `.fsm` top-link direction residual alignment
 - New batch slice 63/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_keeps_conflicting_top_port_direction_unresolved` now checks that the existing composition residual also keeps explicit top-port repair visible.
