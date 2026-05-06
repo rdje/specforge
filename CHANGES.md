@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` actor-port direction provenance lock)
+
+### Added: actor-backed recovered top-port declaration provenance
+- Tightened `top_composition_recovers_top_port_direction_from_actor_ports` so actor-port direction recovery preserves the original `ext_data` top-port declaration support IDs.
+- The regression keeps existing graph actor-port support, high-confidence recovered direction, selected signal-inventory provenance, and emitted `ext_data>8` checks intact.
+- This pairs with the topology direction recovery lock so both public-top direction recovery lanes retain declaration provenance.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_top_port_direction_from_actor_ports` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` top-link direction provenance lock)
 
 ### Added: recovered top-port declaration provenance

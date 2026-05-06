@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` actor-port direction provenance lock)
+- Tightened `top_composition_recovers_top_port_direction_from_actor_ports` in `crates/specforge/src/ir/adapters.rs` so actor-port-recovered public top-port direction keeps the original top-port declaration support IDs in selected and renderable records.
+- Existing assertions still cover graph actor-port support IDs, high automation confidence, actor-port signal-inventory provenance, and emitted `ext_data>8` text.
+- This mirrors the topology direction recovery provenance lock for the graph-backed public-top direction path.
+
 ## Session update (2026-05-06 `.fsm` top-link direction provenance lock)
 - Tightened `top_composition_recovers_top_port_direction_from_link_topology` in `crates/specforge/src/ir/adapters.rs` so topology-recovered public top-port direction keeps the original top-port declaration support IDs in selected and renderable records.
 - Existing assertions still cover topology-link support IDs, high automation confidence, graph-backed signal-inventory provenance, and emitted `result_data>8` text.

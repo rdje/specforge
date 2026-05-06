@@ -11126,7 +11126,7 @@ mod tests {
             "top_actor_port_direction.md",
             "# Top Actor Port Direction\nTop wrapper.\n\nTop wrapper port ext_data is width 8.\n\nTop wrapper child producer uses module producer_core.\n\nModule producer_core signal output_data is output width 8.\n\nModule producer_core block produce: output_data = 8'3.\n",
         )?;
-        {
+        let top_port_support_ids = {
             let raw_top = intent_ir
                 .explicit_tops
                 .iter_mut()
@@ -11139,7 +11139,8 @@ mod tests {
                 .expect("width-only top port should be preserved");
             assert_eq!(raw_port.direction_hint, None);
             raw_port.automation_confidence = AutomationConfidence::Low;
-        }
+            raw_port.supporting_statement_ids.clone()
+        };
 
         intent_ir.actor_ports = vec![actor_port(
             "wrapper",
@@ -11196,6 +11197,11 @@ mod tests {
             Some(InterfaceSignalDirection::Output)
         );
         assert!(
+            top_port_support_ids
+                .iter()
+                .any(|id| recovered_port.supporting_statement_ids.contains(id))
+        );
+        assert!(
             recovered_port
                 .supporting_statement_ids
                 .iter()
@@ -11208,6 +11214,11 @@ mod tests {
         assert_eq!(
             renderable_top_port.direction_hint,
             Some(InterfaceSignalDirection::Output)
+        );
+        assert!(
+            top_port_support_ids
+                .iter()
+                .any(|id| renderable_top_port.supporting_statement_ids.contains(id))
         );
         assert!(
             renderable_top_port
