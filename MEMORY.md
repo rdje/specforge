@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `8d514b32f144a113e2e10a133ef6fa7ba2def97b`
-- latest_commit_brief_message: `test(adapter): lock structured FSM candidates`
+- latest_commit_hash: `6a18f9df2f45fa93504980565e44af3078c76293`
+- latest_commit_brief_message: `test(adapter): lock reset FSM renderable graph`
 - note: new local `N=100` batch is active; push remains deferred until all 100 slices complete
 
 ## Recent commit chain (last 6)
+- `6a18f9d` test(adapter): lock reset FSM renderable graph
 - `8d514b3` test(adapter): lock structured FSM candidates
 - `8382ee5` test(adapter): lock sequential DT support
 - `da04f05` test(adapter): lock standalone DT inventory support
 - `fa770b5` test(adapter): lock symbolic DT support
 - `441f863` test(adapter): lock compound update support
-- `ade1157` test(adapter): lock computed selector support
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 95]`
-- files in flight for new batch slice 96:
+- branch state before the next commit: `main...origin/main [ahead 96]`
+- files in flight for new batch slice 97:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -47,19 +47,19 @@
 
 ## Active N-slice batch
 - requested_count: `100`
-- completed_count: `95`
+- completed_count: `96`
 - push_policy: defer push until all `100` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - regression-lock renderable reset-block structured-FSM provenance
-  - prove reset-block artifacts keep renderable state transitions plus synchronous and asynchronous reset block roles
-  - keep the reset-block state graph auditable while emitted `.fsm` text remains unchanged
+  - regression-lock missing-initial structured-FSM graph provenance
+  - prove blocked artifacts keep transition candidates, support IDs, and high automation confidence alongside state candidates
+  - keep the state-graph blocker auditable while `.fsm` emission remains blocked
 - tracker effect:
-  - live-status tracker gains `.fsm reset-block structured-FSM lowering now preserves renderable state transitions and reset block roles: Done`
+  - live-status tracker gains `.fsm missing-initial structured-FSM blockers now preserve transition candidate provenance: Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge builds_renderable_structured_fsm_with_reset_blocks` passed with `1` test
+  - `cargo test --manifest-path Cargo.toml -p specforge keeps_structured_fsm_blocked_without_exactly_one_initial_state` passed with `1` test
   - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `80` tests
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed before the final live-doc refresh
@@ -70,4 +70,4 @@
   - `148/148` tracked KG fixtures
 
 ## Next exact steps
-- run final docs CI and guards, commit slice 96 without pushing, and continue slice 97
+- run final docs CI and guards, commit slice 97 without pushing, and continue slice 98

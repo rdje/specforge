@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` missing-initial graph support lock
+- New batch slice 97/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `keeps_structured_fsm_blocked_without_exactly_one_initial_state` now asserts blocked structured-FSM artifacts retain transition candidates for `idle -> busy` and `busy -> idle` with support IDs and high automation confidence.
+- This is a coverage-only lock for the missing-initial-state blocker that already preserved state candidate provenance and the `fsm_adapter_state_graph` residual decision.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` reset-block renderable-module support lock
 - New batch slice 96/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `builds_renderable_structured_fsm_with_reset_blocks` now asserts the renderable module keeps `idle` and `busy` states, transition actions between them, and both synchronous and asynchronous reset block roles.

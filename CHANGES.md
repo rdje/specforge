@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` missing-initial graph support lock)
+
+### Added: blocked state-graph transition provenance
+- Tightened `keeps_structured_fsm_blocked_without_exactly_one_initial_state` so missing-initial structured FSM blockers now preserve transition candidates as well as state candidates.
+- The test locks `idle -> busy` and `busy -> idle` transition support IDs and high automation confidence while keeping the one-initial-state blocker intact.
+- This keeps blocked structured-FSM graph diagnostics auditable even when renderability is stopped before emission.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge keeps_structured_fsm_blocked_without_exactly_one_initial_state` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` reset-block renderable-module support lock)
 
 ### Added: reset-block renderable graph coverage

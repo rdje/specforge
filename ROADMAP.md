@@ -227,6 +227,7 @@
   - renderable standalone sequential DT lowering preserves canonical DT candidate identity and system signal inventory
   - renderable structured-FSM lowering preserves named state and transition candidates
   - renderable reset-block structured-FSM lowering preserves state transitions and reset block roles in the renderable module
+  - missing-initial structured-FSM blockers preserve transition candidate provenance alongside state candidates
   - unrelated direct actor-port graph context keeps selected support IDs auditable while excluding unrelated side-band evidence from `.fsm` inventories
   - ambiguous direct actor-port graph context leaves graph direction, actor-port category, and support IDs unselected instead of guessing a target actor
   - standalone DT graph-backed undriven output blockers preserve selected actor support IDs and high automation confidence while blocking `.fsm` emission

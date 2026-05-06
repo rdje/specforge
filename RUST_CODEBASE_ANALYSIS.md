@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` missing-initial graph support lock)
+- Tightened `keeps_structured_fsm_blocked_without_exactly_one_initial_state` in `crates/specforge/src/ir/adapters.rs` so the blocked state graph retains transition-candidate provenance for both `idle -> busy` and `busy -> idle`.
+- The test now proves transition support IDs and high automation confidence survive alongside the existing state-candidate provenance and `fsm_adapter_state_graph` residual decision.
+- This strengthens blocked structured-FSM diagnostics before any emitted `.fsm` target exists.
+
 ## Session update (2026-05-06 `.fsm` reset-block renderable-module support lock)
 - Tightened `builds_renderable_structured_fsm_with_reset_blocks` in `crates/specforge/src/ir/adapters.rs` so the reset-block structured-FSM artifact retains auditable renderable-module state coverage for `idle` and `busy`.
 - The renderable state bodies now explicitly prove transition actions back and forth while module-level reset blocks preserve both `ResetSynchronous` and `ResetAsynchronous` roles.

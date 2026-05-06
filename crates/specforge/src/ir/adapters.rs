@@ -13828,6 +13828,24 @@ mod tests {
                 "state declaration provenance should be present"
             );
         }
+        let transition_support_ids = intent_ir
+            .state_transitions
+            .iter()
+            .map(|transition| {
+                (
+                    transition.source_state.clone(),
+                    transition.target_state.clone(),
+                    transition.supporting_statement_ids.clone(),
+                )
+            })
+            .collect::<Vec<_>>();
+        assert_eq!(transition_support_ids.len(), 2);
+        for (_, _, support_ids) in &transition_support_ids {
+            assert!(
+                !support_ids.is_empty(),
+                "transition declaration provenance should be present"
+            );
+        }
         let artifact_base = tempdir.path().join("generated").join("adapters");
 
         let adapter = AdapterArtifact::build(
@@ -13855,6 +13873,26 @@ mod tests {
             );
             assert_eq!(
                 state_candidate.automation_confidence,
+                AutomationConfidence::High
+            );
+        }
+        assert_eq!(fsm.transition_candidates.len(), 2);
+        for (source_state, target_state, support_ids) in &transition_support_ids {
+            let transition_candidate = fsm
+                .transition_candidates
+                .iter()
+                .find(|transition| {
+                    &transition.source_state == source_state
+                        && &transition.target_state == target_state
+                })
+                .expect("transition candidate should remain visible");
+            assert!(
+                support_ids
+                    .iter()
+                    .any(|id| transition_candidate.supporting_canonical_ids.contains(id))
+            );
+            assert_eq!(
+                transition_candidate.automation_confidence,
                 AutomationConfidence::High
             );
         }
