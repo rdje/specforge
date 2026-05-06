@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` undriven output residual guidance)
+- Added signal-inventory residual-guidance assertions to `standalone_dt_blocks_graph_backed_undriven_output_inventory` in `crates/specforge/src/ir/adapters.rs`.
+- Standalone graph-backed undriven output blockers now prove selected actor support IDs, high inventory confidence, exact undriven-output blocking text, and low-confidence `fsm_adapter_signal_inventory` repair guidance stay visible together.
+- The live tracker and roadmap now mark standalone undriven-output residual guidance as closed; focused adapter coverage, full adapter coverage, KG bench, docs, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 `.fsm` flat-graph residual guidance)
 - Added signal-inventory residual-guidance assertions to `standalone_dt_blocks_flat_graph_direction_disagreement` in `crates/specforge/src/ir/adapters.rs`.
 - Direct-root flat/graph direction disagreements now prove interface direction, graph-backed actor direction, graph support provenance, high inventory confidence, blocked renderability, and low-confidence `fsm_adapter_signal_inventory` repair guidance stay visible together.

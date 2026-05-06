@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` undriven output residual guidance
+- New batch slice 103/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `standalone_dt_blocks_graph_backed_undriven_output_inventory` now asserts graph-backed undriven output inventory keeps the `fsm_adapter_signal_inventory` residual packet while preserving selected actor support.
+- This keeps graph-backed output provenance, high inventory confidence, exact undriven-output blocker text, and low-confidence signal-inventory repair guidance tied together.
+- Focused undriven output residual-guidance regression, adapter suite, fmt, docs, KG bench, and full CI all passed; user-requested `cargo sweep --time 1` is deferred until no target-tree process is active.
+
 ## 2026-05-06 `.fsm` flat-graph residual guidance
 - New batch slice 102/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `standalone_dt_blocks_flat_graph_direction_disagreement` now asserts direct-root flat/graph direction disagreements keep the `fsm_adapter_signal_inventory` residual packet while preserving interface and actor-port provenance.
