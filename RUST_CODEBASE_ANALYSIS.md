@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` sibling child-link width residual lock)
+- Added a composition residual assertion to `top_composition_blocks_conflicting_sibling_child_link_widths` in `crates/specforge/src/ir/adapters.rs`.
+- Sibling child-link width conflicts now keep renderable-child repair visible in `fsm_adapter_composition_topology` while retaining existing child-module canonical width-conflict enrichment guidance.
+- The live tracker and roadmap now mark the sibling child-link width residual guarantee as closed; focused adapter coverage, full adapter coverage, KG bench, docs, full CI, and `cargo sweep --time 1` all passed.
+
 ## Session update (2026-05-06 `.fsm` top child-link width residual lock)
 - Added a composition residual assertion to `top_composition_blocks_conflicting_top_port_widths_from_child_links` in `crates/specforge/src/ir/adapters.rs`.
 - Top child-link width conflicts now keep explicit top-port repair visible in `fsm_adapter_composition_topology` while retaining existing top-boundary width-conflict enrichment guidance.
