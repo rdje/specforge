@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` top-without-port renderable block)
+
+### Added: top roots without top ports cannot leak renderable top output
+- Tightened `top_composition_blocks_top_without_port_guidance` so an explicit top with child-module references but no top-port records leaves the selected top without a renderable top root and the aggregate `.fsm` artifact without a renderable source document.
+- This locks the missing-top-port composition blocker against stale `?top` output until explicit top-port records are present.
+- Synced the live tracker, roadmap, and mdBook with the top-without-port renderable-block guarantee.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_top_without_port_guidance` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148/148` fixtures)
+- `bash scripts/run_ci.sh` -> passed (`614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation)
+- `cargo sweep --time 1` -> deferred because `target/release/tool_matrix` is active
+
 ## 2026-05-06 (`.fsm` top-without-child renderable block)
 
 ### Added: top roots without child references cannot leak renderable top output
