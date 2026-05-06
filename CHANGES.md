@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` unemitted child-link aggregate guidance lock)
+
+### Added: aggregate source-endpoint guidance coverage
+- Tightened `top_composition_blocks_link_to_unemitted_child_port` so top links to child endpoints that are not emitted prove source-endpoint repair guidance survives on aggregate `.fsm` renderability.
+- Existing checks still prove the blocked top candidate carries the same guidance, explicit top-link support IDs, high automation confidence, and the precise unemitted-child-port diagnostic.
+- This keeps aggregate blocked artifacts actionable when a renderable child module omits the referenced endpoint.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_link_to_unemitted_child_port` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` parametric top-port guidance lock)
 
 ### Added: parametric top-port width resolution guidance coverage

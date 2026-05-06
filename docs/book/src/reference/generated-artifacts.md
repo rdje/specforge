@@ -152,6 +152,7 @@ Sibling child-link width conflicts keep that width repair guidance while preserv
 Top-boundary actor-port, duplicate declaration, and child-link width conflicts preserve top-port width repair guidance on the blocked top candidate and aggregate adapter renderability.
 Widthless public top ports preserve top-boundary width recovery guidance on the same blocked renderability surfaces while keeping missing numeric width distinct from symbolic and conflicted width evidence.
 Parametric public top ports preserve top-boundary width resolution guidance while keeping symbolic width evidence inspectable in the selected top signal inventory.
+Top links to child endpoints that are not emitted preserve source-endpoint repair guidance on both the blocked top candidate and aggregate renderability surfaces.
 For blocked composition roots, the same artifact shape is useful for diagnostics: a missing child can block emission while the surviving top-port provenance remains available for review.
 
 For structured FSM roots, the artifact preserves the graph surface that led to renderability or blocking.

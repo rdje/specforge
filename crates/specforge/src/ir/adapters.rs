@@ -12344,6 +12344,13 @@ mod tests {
                     == "declare and emit every top-link source endpoint before lowering `?top:name`")
         );
         assert!(!fsm.renderability.is_renderable);
+        assert!(
+            fsm.renderability
+                .required_canonical_enrichments
+                .iter()
+                .any(|enrichment| enrichment
+                    == "declare and emit every top-link source endpoint before lowering `?top:name`")
+        );
 
         Ok(())
     }

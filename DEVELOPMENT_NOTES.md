@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` unemitted child-link aggregate guidance lock
+- New batch slice 28/200 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_link_to_unemitted_child_port` now asserts top links to child endpoints that are not emitted keep `declare and emit every top-link source endpoint before lowering ?top:name` guidance on aggregate `.fsm` renderability.
+- Existing checks still prove the blocked top candidate carries the same guidance, explicit top-link support IDs, high automation confidence, and the precise unemitted-child-port diagnostic.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` parametric top-port guidance lock
 - New batch slice 27/200 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_parametric_top_port_width_for_fsm_public_io` now asserts symbolic public IO width blockers keep `resolve parametric top boundary widths to numeric widths before lowering ?top:name` guidance on the blocked top candidate and aggregate `.fsm` renderability.

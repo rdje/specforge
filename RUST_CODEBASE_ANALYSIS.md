@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` unemitted child-link aggregate guidance lock)
+- Tightened `top_composition_blocks_link_to_unemitted_child_port` in `crates/specforge/src/ir/adapters.rs` so top links to child endpoints that are not emitted retain source-endpoint repair guidance on aggregate `.fsm` renderability.
+- Existing assertions still cover the blocked top candidate guidance, explicit top-link support IDs, high automation confidence, and the precise unemitted-child-port diagnostic.
+- This keeps the aggregate blocked artifact actionable when the referenced endpoint is present in topology evidence but absent from the emitted child module surface.
+
 ## Session update (2026-05-06 `.fsm` parametric top-port guidance lock)
 - Tightened `top_composition_blocks_parametric_top_port_width_for_fsm_public_io` in `crates/specforge/src/ir/adapters.rs` so symbolic public IO width blockers retain parametric-width resolution guidance on the blocked top candidate and aggregate `.fsm` renderability.
 - Existing assertions still cover explicit top-port support IDs, high automation confidence, and selected top signal-inventory `parametric_width_hint`.

@@ -182,7 +182,7 @@
   - widthless public top-port blockers preserve top-boundary width recovery guidance on blocked top and aggregate `.fsm` renderability surfaces
   - parametric public top-port blockers preserve explicit top-port support IDs and high automation confidence while `.fsm` lowering remains blocked until numeric width evidence exists
   - parametric public top-port blockers preserve top-boundary width resolution guidance on blocked top and aggregate `.fsm` renderability surfaces
-  - top-link blockers for unemitted child endpoints preserve explicit link support IDs, high automation confidence, and source-endpoint enrichment guidance while blocking `.fsm` emission
+  - top-link blockers for unemitted child endpoints preserve explicit link support IDs, high automation confidence, and source-endpoint enrichment guidance on blocked top and aggregate `.fsm` renderability surfaces while blocking `.fsm` emission
   - actor-port parametric width blockers preserve graph-backed provenance category, support IDs, and automation confidence while `.fsm` lowering remains blocked until numeric width evidence exists
   - canonical parametric width blockers preserve interface provenance category, support IDs, and automation confidence while `.fsm` lowering remains blocked until numeric width evidence exists
   - explicit numeric interface width evidence stays provenance-auditable and takes precedence over graph-backed actor-port symbolic widths for `.fsm` emission
