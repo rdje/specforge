@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` undeclared top source renderable block)
+
+### Added: undeclared top-link sources cannot leak renderable top output
+- Tightened `top_composition_blocks_link_from_undeclared_top_source_guidance` so top links originating from an undeclared top-boundary port leave the selected top without a renderable top root and the aggregate `.fsm` artifact without a renderable source document.
+- This locks the missing top-link source endpoint blocker against stale `?top` output until the source top port is declared and emitted.
+- Synced the live tracker, roadmap, and mdBook with the undeclared top-link source renderable-block guarantee.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_link_from_undeclared_top_source_guidance` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148/148` fixtures)
+- `bash scripts/run_ci.sh` -> passed (`614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation)
+- `cargo sweep --time 1` -> deferred because `target/release/tool_matrix` is active
+
 ## 2026-05-06 (`.fsm` undeclared top target renderable block)
 
 ### Added: undeclared top-link targets cannot leak renderable top output
