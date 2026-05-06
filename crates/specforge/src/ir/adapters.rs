@@ -7825,6 +7825,19 @@ mod tests {
         let fsm = adapter.fsm.expect("fsm artifact should be present");
 
         assert!(fsm.renderability.is_renderable);
+        assert_eq!(fsm.decision_tree_candidates.len(), 1);
+        assert!(
+            fsm.decision_tree_candidates
+                .iter()
+                .any(|candidate| candidate.candidate_id == "dt_primary_intent_cone")
+        );
+        for signal_name in ["clk", "rst_n", "DATA_IN", "ACC"] {
+            assert!(
+                fsm.signal_inventory
+                    .iter()
+                    .any(|signal| signal.signal_name == signal_name)
+            );
+        }
         let system_contract = fsm
             .system_contract
             .as_ref()

@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` standalone sequential DT support lock)
+- Tightened `builds_renderable_standalone_sequential_dt_fsm_adapter_artifact` in `crates/specforge/src/ir/adapters.rs` so the renderable sequential DT artifact retains the canonical `dt_primary_intent_cone` candidate id.
+- The selected signal inventory now explicitly covers `clk`, `rst_n`, `DATA_IN`, and `ACC` while system-contract, init-assignment, size, and sequential assignment emission stay unchanged.
+- This gives the clock/reset-backed standalone DT path the same adapter-artifact audit surface as the combinational baseline path.
+
 ## Session update (2026-05-06 `.fsm` standalone DT inventory support lock)
 - Tightened `builds_renderable_standalone_dt_fsm_adapter_artifact` in `crates/specforge/src/ir/adapters.rs` so the baseline renderable DT artifact retains the canonical `dt_primary_intent_cone` candidate id.
 - The selected signal inventory now explicitly covers `DATA_IN`, `DATA_OUT`, and `ZERO_FLAG` while the emitted `.fsm` size and control-block text stays unchanged.

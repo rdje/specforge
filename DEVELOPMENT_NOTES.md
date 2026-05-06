@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` standalone sequential DT support lock
+- New batch slice 94/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `builds_renderable_standalone_sequential_dt_fsm_adapter_artifact` now asserts the renderable standalone sequential DT keeps the canonical `dt_primary_intent_cone` candidate and selected inventory for `clk`, `rst_n`, `DATA_IN`, and `ACC`.
+- This is a coverage-only lock for the clock/reset-backed renderable DT path that already emits system-contract, init-assignment, size, and sequential assignment text.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` standalone DT inventory support lock
 - New batch slice 93/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `builds_renderable_standalone_dt_fsm_adapter_artifact` now asserts the renderable baseline standalone DT keeps the canonical `dt_primary_intent_cone` candidate and selected inventory for `DATA_IN`, `DATA_OUT`, and `ZERO_FLAG`.

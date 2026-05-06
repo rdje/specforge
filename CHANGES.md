@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` standalone sequential DT support lock)
+
+### Added: sequential DT provenance coverage
+- Tightened `builds_renderable_standalone_sequential_dt_fsm_adapter_artifact` so the renderable standalone sequential DT now proves its canonical decision-tree candidate remains visible.
+- The test locks selected signal inventory for `clk`, `rst_n`, `DATA_IN`, and `ACC` while preserving system-contract, init-assignment, size, and sequential assignment emission.
+- This keeps the clock/reset-backed renderable DT path auditable through the adapter artifact, not only emitted text.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge builds_renderable_standalone_sequential_dt_fsm_adapter_artifact` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` standalone DT inventory support lock)
 
 ### Added: baseline DT provenance coverage

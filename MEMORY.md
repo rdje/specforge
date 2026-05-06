@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `fa770b56891aa256a833b77f06bdfe2e1466fab3`
-- latest_commit_brief_message: `test(adapter): lock symbolic DT support`
+- latest_commit_hash: `da04f058de46bd36e2c9168ac9afa8b7731c7afe`
+- latest_commit_brief_message: `test(adapter): lock standalone DT inventory support`
 - note: new local `N=100` batch is active; push remains deferred until all 100 slices complete
 
 ## Recent commit chain (last 6)
+- `da04f05` test(adapter): lock standalone DT inventory support
 - `fa770b5` test(adapter): lock symbolic DT support
 - `441f863` test(adapter): lock compound update support
 - `ade1157` test(adapter): lock computed selector support
 - `f51d512` test(adapter): lock renderable selector support
 - `ad4c263` test(adapter): lock selector blocker support
-- `52becca` test(adapter): lock missing system contract support
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 92]`
-- files in flight for new batch slice 93:
+- branch state before the next commit: `main...origin/main [ahead 93]`
+- files in flight for new batch slice 94:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -47,19 +47,19 @@
 
 ## Active N-slice batch
 - requested_count: `100`
-- completed_count: `92`
+- completed_count: `93`
 - push_policy: defer push until all `100` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - regression-lock baseline renderable standalone DT provenance
-  - prove standalone DT artifacts keep the canonical DT candidate id and baseline signal inventory
-  - keep the baseline DT path auditable while emitted `.fsm` size and block text remains unchanged
+  - regression-lock renderable standalone sequential DT provenance
+  - prove sequential DT artifacts keep the canonical DT candidate id and system/control signal inventory
+  - keep the clock/reset-backed DT path auditable while emitted `.fsm` system, init, and assignment text remains unchanged
 - tracker effect:
-  - live-status tracker gains `.fsm standalone DT lowering now preserves canonical DT candidate identity and baseline signal inventory: Done`
+  - live-status tracker gains `.fsm standalone sequential DT lowering now preserves canonical DT candidate identity and system signal inventory: Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge builds_renderable_standalone_dt_fsm_adapter_artifact` passed with `1` test
+  - `cargo test --manifest-path Cargo.toml -p specforge builds_renderable_standalone_sequential_dt_fsm_adapter_artifact` passed with `1` test
   - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `80` tests
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed before the final live-doc refresh
@@ -70,4 +70,4 @@
   - `148/148` tracked KG fixtures
 
 ## Next exact steps
-- run final docs CI and guards, commit slice 93 without pushing, and continue slice 94
+- run final docs CI and guards, commit slice 94 without pushing, and continue slice 95
