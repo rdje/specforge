@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` top-boundary width blocker guidance lock)
+
+### Added: top-boundary width conflict enrichment coverage
+- Tightened duplicate top-port width and child-link-derived top-port width blockers so both prove top-port width repair guidance survives on the blocked top candidate and aggregate `.fsm` renderability.
+- Rechecked the previously landed top actor-port width blocker so actor, duplicate declaration, and child-link top-boundary width conflicts now carry the same actionable enrichment surface.
+- The regressions keep existing support-ID, high-confidence, and selected signal-inventory width-conflict coverage intact.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_keeps_duplicate_top_port_width_conflict_unresolved` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_top_port_widths_from_child_links` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_top_actor_port_width` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` top child-width blocker guidance lock)
 
 ### Added: top child-link width conflict enrichment coverage

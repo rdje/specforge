@@ -370,9 +370,11 @@
 - `.fsm` child actor-port direction recovery now preserves child signal declaration support alongside graph support: Done
 - `.fsm` top actor-port direction conflicts now regression-lock support IDs and automation confidence: Done
 - `.fsm` top actor-port width conflicts now regression-lock support IDs and automation confidence: Done
+- `.fsm` top actor-port width conflicts now preserve top-boundary width enrichment guidance: Done
 - `.fsm` top-link direction conflicts now regression-lock support IDs and automation confidence: Done
 - `.fsm` duplicate top-port direction conflicts now regression-lock support IDs and automation confidence: Done
 - `.fsm` duplicate top-port width conflicts now regression-lock support IDs and automation confidence: Done
+- `.fsm` duplicate top-port width conflicts now preserve top-boundary width enrichment guidance: Done
 - `.fsm` child actor-port direction recovery now regression-locks support IDs and automation confidence: Done
 - `.fsm` child actor-port direction conflicts now preserve signal and graph support IDs: Done
 - `.fsm` child actor-port direction conflicts now preserve actor-relative enrichment guidance: Done

@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` top-boundary width blocker guidance lock)
+- Tightened `top_composition_keeps_duplicate_top_port_width_conflict_unresolved` in `crates/specforge/src/ir/adapters.rs` so duplicate top-port width conflicts retain top-boundary width repair guidance on the blocked top candidate and aggregate `.fsm` renderability.
+- Tightened `top_composition_blocks_conflicting_top_port_widths_from_child_links` so child-link-derived top-port width conflicts carry the same repair guidance, and rechecked the top actor-port width blocker still covers that guidance surface.
+- This aligns the top-boundary width blocker family: actor-port graph evidence, duplicate declarations, and child-link topology evidence now all preserve actionable repair guidance alongside their provenance and width-conflict inventory state.
+
 ## Session update (2026-05-06 `.fsm` top child-width blocker guidance lock)
 - Tightened `top_composition_blocks_conflicting_top_port_widths_from_child_links` in `crates/specforge/src/ir/adapters.rs` so blocked top-boundary child-link width conflicts retain top-port width repair guidance on the selected top candidate and aggregate `.fsm` renderability.
 - Existing assertions still cover both conflicting child-link support-ID sets, high automation confidence, and selected top signal-inventory width-conflict state.

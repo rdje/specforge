@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` top-boundary width blocker guidance lock
+- New batch slice 22/200 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_keeps_duplicate_top_port_width_conflict_unresolved` now asserts duplicate top-port width conflicts keep `resolve conflicting top boundary port width evidence before lowering ?top:name` guidance on the blocked top candidate and aggregate `.fsm` renderability.
+- `top_composition_blocks_conflicting_top_port_widths_from_child_links` now carries the same guidance assertion for child-link-derived top-port width conflicts, while the top actor-port width guidance assertion remains covered by `top_composition_blocks_conflicting_top_actor_port_width`.
+- Existing checks still prove duplicate declaration support IDs, child-link support IDs, high automation confidence, and selected signal-inventory width-conflict state survive together.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` top child-width blocker guidance lock
 - New batch slice 21/200 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_conflicting_top_port_widths_from_child_links` now asserts the blocked top candidate and aggregate `.fsm` renderability both carry `resolve conflicting top boundary port width evidence before lowering ?top:name` enrichment guidance.
