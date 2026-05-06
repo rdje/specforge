@@ -13041,6 +13041,19 @@ mod tests {
                 .iter()
                 .any(|enrichment| enrichment == super::TOP_LINK_ENDPOINT_DIRECTION_ROLE_ENRICHMENT)
         );
+        let composition_residual = adapter
+            .residual_decisions
+            .iter()
+            .find(|packet| packet.packet_id == "fsm_adapter_composition_topology")
+            .expect("blocked top-link target role mismatch should surface a composition residual");
+        assert!(
+            composition_residual
+                .candidate_interpretations
+                .iter()
+                .any(|interpretation| interpretation
+                    .description
+                    .contains("renderable child modules"))
+        );
 
         Ok(())
     }

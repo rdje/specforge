@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` top-link target-role residual lock)
+
+### Added: target-side composition residual coverage
+- Tightened `top_composition_blocks_child_target_direction_role_guidance` so target-side top-link direction-role blockers also prove the adapter emits the `fsm_adapter_composition_topology` residual decision.
+- The regression mirrors the source-side role residual lock by asserting the residual interpretation keeps repair tied to renderable child modules while endpoint-role guidance remains visible on child, top, and aggregate renderability.
+- This completes the source/target residual coverage pair for top-link endpoint role blockers.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_child_target_direction_role_guidance` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`613` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` top-link role residual lock)
 
 ### Added: composition residual coverage for role blockers

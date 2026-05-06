@@ -15,6 +15,7 @@
 - IntentIR canonical endpoint contract established: Done
 - SpecForge CLI/crate rename completed: Done
 - Explicit `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters` architecture defined: Done
+- `.fsm` top-link target-role blockers now preserve composition topology residual decisions: Done
 - `.fsm` top-link direction-role blockers now preserve composition topology residual decisions: Done
 - `.fsm` top-link width mismatch blockers now preserve composition topology residual decisions: Done
 - `.fsm` top-link width mismatch blockers now preserve width-compatible repair guidance: Done

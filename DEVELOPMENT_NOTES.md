@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` top-link target-role residual lock
+- New batch slice 48/200 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_child_target_direction_role_guidance` now proves target-side top-link direction-role blockers emit the `fsm_adapter_composition_topology` residual decision.
+- The residual interpretation mirrors the source-side lock by keeping upstream repair tied to renderable child modules while endpoint-role enrichment remains visible on child, top, and aggregate `.fsm` renderability.
+- Full adapter coverage remains `92` adapter tests, full CI remains `613` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` top-link role residual lock
 - New batch slice 47/200 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_child_source_direction_role_guidance` now proves source-side top-link direction-role blockers emit the `fsm_adapter_composition_topology` residual decision.

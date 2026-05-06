@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `5c2b2b698b6f68b00263003797dc06054890eef6`
-- latest_commit_brief_message: `test(adapter): lock top-link width residual`
-- note: new local `N=200` batch is active; slice 46 is committed, slice 47 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `92c88a8fb259ec182ddfb9f4c833648a6b6b3ece`
+- latest_commit_brief_message: `test(adapter): lock top-link role residual`
+- note: new local `N=200` batch is active; slice 47 is committed, slice 48 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `92c88a8` test(adapter): lock top-link role residual
 - `5c2b2b6` test(adapter): lock top-link width residual
 - `d3d569f` test(adapter): lock top-link width guidance
 - `9f61d51` test(adapter): lock top-target boundary role guidance
 - `e517e9b` fix(adapter): surface top-boundary role guidance
 - `ec5436a` test(adapter): lock top-link target role guidance
-- `a64aaa1` fix(adapter): surface top-link role guidance
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 47]`
-- files in flight for new batch slice 47:
+- branch state before the next commit: `main...origin/main [ahead 48]`
+- files in flight for new batch slice 48:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -49,21 +49,21 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `46`
+- completed_count: `47`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - regression-lock top-link direction-role blockers carrying the composition topology residual decision
-  - prove the `fsm_adapter_composition_topology` residual interpretation stays visible for source-side endpoint role mismatches
-  - keep endpoint-role enrichment and renderable-child/topology repair visible through structured diagnostics
+  - regression-lock target-side top-link direction-role blockers carrying the composition topology residual decision
+  - prove the `fsm_adapter_composition_topology` residual interpretation stays visible for target-side endpoint role mismatches
+  - complete symmetric source/target residual coverage for endpoint-role blockers
   - keep live docs and mdBook aligned with this blocked-artifact guidance surface
 - tracker effect:
-  - expected live-status tracker gain: `.fsm top-link direction-role blockers now preserve composition topology residual decisions: Done`
+  - expected live-status tracker gain: `.fsm top-link target-role blockers now preserve composition topology residual decisions: Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_child_source_direction_role_guidance` passed with `1` test
+  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_child_target_direction_role_guidance` passed with `1` test
   - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `92` tests
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed after live-doc/mdBook sync
@@ -74,4 +74,4 @@
   - current slice passed `148/148` tracked KG fixtures
 
 ## Next exact steps
-- commit slice 47 without pushing, run post-commit checks, and continue slice 48
+- commit slice 48 without pushing, run post-commit checks, and continue slice 49
