@@ -17,6 +17,7 @@
 - Explicit `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters` architecture defined: Done
 - `.fsm` top-link target-role blockers now preserve composition topology residual decisions: Done
 - `.fsm` top-link direction-role blockers now preserve composition topology residual decisions: Done
+- `.fsm` source-side child direction-role residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` top-link width mismatch blockers now preserve composition topology residual decisions: Done
 - `.fsm` top actor-port direction conflicts now preserve composition topology residual decisions: Done
 - `.fsm` top actor-port direction residuals now lock low-confidence topology-detail diagnostics: Done

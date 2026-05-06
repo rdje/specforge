@@ -16817,6 +16817,15 @@ mod tests {
             .iter()
             .find(|packet| packet.packet_id == "fsm_adapter_composition_topology")
             .expect("blocked child source role mismatch should surface a composition residual");
+        assert_eq!(
+            composition_residual.automation_confidence,
+            AutomationConfidence::Low
+        );
+        assert!(
+            composition_residual
+                .why_unresolved
+                .contains("child source, top port, or top link detail")
+        );
         assert!(
             composition_residual
                 .candidate_interpretations

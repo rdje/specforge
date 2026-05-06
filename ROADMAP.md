@@ -206,6 +206,7 @@
   - top-link direction conflict blockers preserve top-boundary direction-conflict enrichment guidance and low-confidence composition-topology residual diagnostics on blocked top and aggregate `.fsm` renderability surfaces
   - top-link endpoint direction-role blockers preserve source/output and target/input repair guidance on blocked child, top, and aggregate `.fsm` renderability surfaces
   - top-link endpoint direction-role blockers preserve the composition-topology residual decision so renderable-child and topology repair remains visible in structured adapter diagnostics
+  - source-side top-link direction-role blockers preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output
   - top-link target endpoint direction-role blockers preserve source/output and target/input repair guidance across topology-backed flat/graph disagreements
   - top-link target endpoint direction-role blockers preserve the same composition-topology residual decision as the source-side role blockers
   - top-boundary top-link direction conflicts preserve source/output and target/input repair guidance alongside boundary direction-conflict guidance

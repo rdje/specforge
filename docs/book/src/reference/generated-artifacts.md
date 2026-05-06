@@ -205,6 +205,7 @@ Parametric public top-port blockers also emit the composition-topology residual 
 That parametric top-port residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
 Top-link direction-role mismatches preserve source/output and target/input repair guidance on blocked child, top, and aggregate renderability surfaces while keeping topology-link provenance visible.
 Source-side top-link direction-role mismatches also emit the composition-topology residual decision so renderable-child repair remains visible in structured adapter diagnostics.
+That source-side direction-role residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
 Target-side top-link direction-role mismatches now mirror that residual decision coverage.
 Dedicated child endpoint role regressions back those source/target residual guarantees alongside the public top-boundary role conflict checks.
 Topology-backed child target direction-role mismatches preserve the same role guidance even when the blocker is a flat/graph direction disagreement rather than a graph-only conflict.

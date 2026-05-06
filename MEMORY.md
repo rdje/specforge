@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `b4019ce6505166936240b535bcc82d9f9b16abea`
-- latest_commit_brief_message: `test(adapter): lock top-link direction diagnostics`
-- note: new local `N=200` batch is active; slice 125 is committed, slice 126 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `8ee672a89a4a5e20835c4f1753d4830ba78976bd`
+- latest_commit_brief_message: `test(adapter): lock top target role diagnostics`
+- note: new local `N=200` batch is active; slice 126 is committed, slice 127 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `8ee672a` test(adapter): lock top target role diagnostics
 - `b4019ce` test(adapter): lock top-link direction diagnostics
 - `a211248` test(adapter): lock top actor width diagnostics
 - `b857f45` test(adapter): lock top actor direction diagnostics
 - `915ff1b` test(adapter): lock recovered direction diagnostics
 - `e411bdb` test(adapter): lock unemitted target diagnostics
-- `6b69709` test(adapter): lock unemitted source diagnostics
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 126]`
-- files in flight for new batch slice 126:
+- branch state before the next commit: `main...origin/main [ahead 127]`
+- files in flight for new batch slice 127:
   - `crates/specforge/src/ir/adapters.rs`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `ROADMAP.md`
@@ -49,21 +49,21 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `125`
+- completed_count: `126`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - lock composition-topology residual diagnostics for top-target boundary role conflicts
-  - prove `top_composition_blocks_top_target_direction_role_guidance` keeps low-confidence `fsm_adapter_composition_topology` diagnostics and topology-detail blocker text while preserving boundary direction-conflict and endpoint-role guidance
-  - sync the live tracker, roadmap, and mdBook with the top-target role residual-diagnostics guarantee
+  - lock composition-topology residual diagnostics for source-side child endpoint direction-role blockers
+  - prove `top_composition_blocks_child_source_direction_role_guidance` keeps low-confidence `fsm_adapter_composition_topology` diagnostics and topology-detail blocker text while preserving child-module and top-level endpoint-role guidance
+  - sync the live tracker, roadmap, and mdBook with the source-side child role residual-diagnostics guarantee
 - tracker effect:
-  - live-status tracker changed; new row marks `.fsm` top-target boundary role residuals locking low-confidence topology-detail diagnostics as `Done`
+  - live-status tracker changed; new row marks `.fsm` source-side child direction-role residuals locking low-confidence topology-detail diagnostics as `Done`
 - verification status:
   - implementation and live-doc sync are complete
-  - focused top-target role residual-diagnostics regression passed (`1` test)
+  - focused source-side child role residual-diagnostics regression passed (`1` test)
   - adapter suite (`92` tests), formatting, docs CI, KG bench (`148/148` fixtures), and full CI (`613` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation) passed
   - final commit guards pending
   - user-requested `cargo sweep --time 1` remains deferred until no target-tree process is active because another shell still has `target/release/tool_matrix` running from this repository
@@ -74,6 +74,6 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish slice 126 docs sync
+- finish slice 127 docs sync
 - run focused regression, adapter suite, fmt, docs CI, KG bench, full CI, and sweep safety gate
-- run final commit guards and commit slice 126 without pushing
+- run final commit guards and commit slice 127 without pushing
