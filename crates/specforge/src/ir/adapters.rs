@@ -15367,6 +15367,19 @@ mod tests {
                 .any(|enrichment| enrichment
                     == "carry explicit child-module references before lowering `?top:name`")
         );
+        let composition_residual = adapter
+            .residual_decisions
+            .iter()
+            .find(|packet| packet.packet_id == "fsm_adapter_composition_topology")
+            .expect("top without child references should surface a composition residual");
+        assert!(
+            composition_residual
+                .candidate_interpretations
+                .iter()
+                .any(|interpretation| interpretation
+                    .description
+                    .contains("child-module references"))
+        );
 
         Ok(())
     }
