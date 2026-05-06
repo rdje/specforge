@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` selector-branch blocker support lock)
+
+### Added: selector-blocker provenance coverage
+- Tightened `keeps_selector_based_dt_blocked_when_branch_predicate_is_not_relative_to_selector` so a blocked selector-based DT now proves its decision-tree candidate remains visible.
+- The test locks control-fragment support IDs, referenced guard/action signals, and high automation confidence while the selector branch predicate remains unsupported for `.fsm` emission.
+- The selected signal inventory also keeps the selector head plus guard/action signals visible, preserving reviewability without rendering an unsafe branch token.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge keeps_selector_based_dt_blocked_when_branch_predicate_is_not_relative_to_selector` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` missing-system-contract DT support lock)
 
 ### Added: control provenance coverage for missing system/init blockers

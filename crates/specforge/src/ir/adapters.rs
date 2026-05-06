@@ -8547,6 +8547,12 @@ mod tests {
     -> Result<()> {
         let tempdir = tempdir()?;
         let intent_ir = build_selector_predicate_mismatch_intent_ir(tempdir.path())?;
+        let control_fragment_ids = intent_ir
+            .decision_tree_fragments
+            .iter()
+            .map(|fragment| fragment.fragment_id.clone())
+            .collect::<Vec<_>>();
+        assert_eq!(control_fragment_ids.len(), 1);
         let artifact_base = tempdir.path().join("generated").join("adapters");
 
         let adapter = AdapterArtifact::build(
@@ -8559,6 +8565,35 @@ mod tests {
         assert!(adapter.artifact_layout.emitted_target_path.is_none());
         let fsm = adapter.fsm.expect("fsm artifact should be present");
         assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Dt);
+        assert_eq!(fsm.decision_tree_candidates.len(), 1);
+        let dt_candidate = fsm
+            .decision_tree_candidates
+            .iter()
+            .find(|candidate| candidate.candidate_id == "dt_primary_intent_cone")
+            .expect("decision-tree candidate should remain visible");
+        for fragment_id in &control_fragment_ids {
+            assert!(dt_candidate.supporting_fragment_ids.contains(fragment_id));
+        }
+        assert_eq!(dt_candidate.blocks.len(), 1);
+        for signal_name in ["GO", "OUT"] {
+            assert!(
+                dt_candidate
+                    .referenced_signal_names
+                    .iter()
+                    .any(|signal| signal == signal_name)
+            );
+        }
+        assert_eq!(
+            dt_candidate.automation_confidence,
+            AutomationConfidence::High
+        );
+        for signal_name in ["MODE", "GO", "OUT"] {
+            assert!(
+                fsm.signal_inventory
+                    .iter()
+                    .any(|signal| signal.signal_name == signal_name)
+            );
+        }
         assert!(!fsm.renderability.is_renderable);
         assert!(fsm.renderability.blocking_reasons.iter().any(|reason| {
             reason.contains("does not map to an explicit `.fsm` test selector token")

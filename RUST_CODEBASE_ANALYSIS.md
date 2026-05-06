@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` selector-branch blocker support lock)
+- Tightened `keeps_selector_based_dt_blocked_when_branch_predicate_is_not_relative_to_selector` in `crates/specforge/src/ir/adapters.rs` so the blocked selector-based DT artifact retains its decision-tree candidate, control-fragment support IDs, referenced guard/action signals, and high confidence.
+- The adapter already blocked `.fsm` emission when a branch predicate could not be rendered relative to the selector token; this regression now proves the selected control cone remains auditable.
+- The selected signal inventory also keeps the selector head and branch guard/action signals visible, covering the unsupported selector-predicate branch without fabricating target syntax.
+
 ## Session update (2026-05-06 `.fsm` missing-system-contract DT support lock)
 - Tightened `keeps_standalone_sequential_dt_blocked_without_system_contract` in `crates/specforge/src/ir/adapters.rs` so the blocked sequential-DT artifact retains its decision-tree candidate, control-fragment support IDs, referenced signals, and high confidence.
 - The adapter already blocked `.fsm` emission when clock/reset/init evidence was missing; this regression now proves the explicit control cone remains auditable.

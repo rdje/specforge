@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` selector-branch blocker support lock
+- New batch slice 88/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `keeps_selector_based_dt_blocked_when_branch_predicate_is_not_relative_to_selector` now asserts the blocked selector DT keeps its decision-tree candidate, control-fragment support IDs, referenced guard/action signals, and high automation confidence while the unsupported branch predicate keeps `.fsm` emission blocked.
+- The selected signal inventory also keeps the selector head and branch guard/action signals visible for review.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` missing-system-contract DT support lock
 - New batch slice 87/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `keeps_standalone_sequential_dt_blocked_without_system_contract` now asserts the blocked sequential DT keeps its decision-tree candidate, control-fragment support IDs, referenced signals, and high automation confidence while system/init evidence remains missing.

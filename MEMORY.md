@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `01f1f9c06376219067dc1cb9d3e4d63436781163`
-- latest_commit_brief_message: `test(adapter): lock reset polarity blocker support`
+- latest_commit_hash: `52becca6b2202e1ffff698310c0c8aec6aae1614`
+- latest_commit_brief_message: `test(adapter): lock missing system contract support`
 - note: new local `N=100` batch is active; push remains deferred until all 100 slices complete
 
 ## Recent commit chain (last 6)
+- `52becca` test(adapter): lock missing system contract support
 - `01f1f9c` test(adapter): lock reset polarity blocker support
 - `4347324` test(adapter): lock structured transition target support
 - `d8a51e9` test(adapter): lock structured missing initial support
 - `5562165` test(adapter): lock missing child top support
 - `ab770f2` test(adapter): lock child actor-port conflict support
-- `072591d` test(adapter): lock child topology direction conflict support
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 86]`
-- files in flight for new batch slice 87:
+- branch state before the next commit: `main...origin/main [ahead 87]`
+- files in flight for new batch slice 88:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -47,19 +47,19 @@
 
 ## Active N-slice batch
 - requested_count: `100`
-- completed_count: `86`
+- completed_count: `87`
 - push_policy: defer push until all `100` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - regression-lock missing-system-contract DT control provenance
-  - prove blocked sequential DT artifacts keep decision-tree support IDs and confidence
-  - keep explicit control evidence auditable while missing clock/reset/init structure blocks `.fsm` emission
+  - regression-lock selector-branch blocker control provenance
+  - prove blocked selector DT artifacts keep decision-tree support IDs, referenced signals, and confidence
+  - keep selector and branch evidence auditable while unsupported selector predicate shapes block `.fsm` emission
 - tracker effect:
-  - live-status tracker gains `.fsm missing-system-contract blockers now preserve DT control support IDs and confidence: Done`
+  - live-status tracker gains `.fsm selector-branch blockers now preserve DT control support IDs and selector inventory: Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge keeps_standalone_sequential_dt_blocked_without_system_contract` passed with `1` test
+  - `cargo test --manifest-path Cargo.toml -p specforge keeps_selector_based_dt_blocked_when_branch_predicate_is_not_relative_to_selector` passed with `1` test
   - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `80` tests
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed before the final live-doc refresh
@@ -70,4 +70,4 @@
   - `148/148` tracked KG fixtures
 
 ## Next exact steps
-- run final docs CI and guards, commit slice 87 without pushing, and continue slice 88
+- run final docs CI and guards, commit slice 88 without pushing, and continue slice 89
