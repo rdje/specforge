@@ -40,6 +40,7 @@
 - `.fsm` top-link direction recovery now stays composition-residual clean when renderable: Done
 - `.fsm` actor-port direction recovery now stays composition-residual clean when renderable: Done
 - `.fsm` actor-port width recovery now stays composition-residual clean when renderable: Done
+- `.fsm` child-link top-width recovery now stays composition-residual clean when renderable: Done
 - `.fsm` top-link width mismatch blockers now preserve width-compatible repair guidance: Done
 - `.fsm` top-target boundary role conflicts now preserve endpoint-role repair guidance: Done
 - `.fsm` top-boundary top-link role conflicts now preserve endpoint-role repair guidance: Done
@@ -347,6 +348,7 @@
 - `.fsm` renderable top-root ports now preserve recovered top-boundary direction/width supporting IDs and automation confidence from actor-port direction/width, top-link direction/width, and child system-contract width evidence: Done
 - `.fsm` actor-port direction recovery now stays composition-residual clean when renderable: Done
 - `.fsm` actor-port width recovery now stays composition-residual clean when renderable: Done
+- `.fsm` child-link top-width recovery now stays composition-residual clean when renderable: Done
 - `.fsm` renderability diagnostics now distinguish graph-direction conflicts from missing direction hints: Done
 - `.fsm` adapter signal inventory now preserves width-conflict provenance and reports conflicted widths distinctly: Done
 - `.fsm` adapter signal inventory now preserves flat direction-conflict provenance and blocks graph recovery from overriding contradictory canonical direction hints: Done
@@ -411,6 +413,7 @@
 - `.fsm` actor-port direction recovery now preserves top-port declaration support alongside graph support: Done
 - `.fsm` actor-port width recovery now preserves top-port declaration support alongside graph width support: Done
 - `.fsm` child-link width recovery now preserves top-port declaration support alongside topology width support: Done
+- `.fsm` child-link top-width recovery now stays composition-residual clean when renderable: Done
 - `.fsm` child-system-contract width recovery now preserves top-port declaration support alongside topology and system-contract support: Done
 - `.fsm` top-link child-width recovery now preserves child signal declaration support alongside topology support: Done
 - `.fsm` sibling-link child-width recovery now preserves child signal declaration support alongside topology support: Done

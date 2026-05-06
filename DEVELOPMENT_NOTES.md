@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` child-link top-width residual cleanliness
+- New batch slice 85/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_recovers_top_port_width_from_child_link_topology` now asserts no stale composition topology residual remains after topology-link evidence recovers a numeric public top-port width and the top emits.
+- This keeps top-port declaration support, topology-link width support, selected inventory provenance, emitted topology text, and aggregate residual cleanliness paired once the top is renderable.
+- Focused child-link top-width recovery residual-clean regression, adapter suite, fmt, docs, KG bench, full CI, and the user-requested `cargo sweep --time 1` all passed.
+
 ## 2026-05-06 `.fsm` actor-port width residual cleanliness
 - New batch slice 84/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_recovers_top_port_width_from_actor_ports` now asserts no stale composition topology residual remains after graph actor-port evidence recovers a numeric public top-port width and the top emits.
