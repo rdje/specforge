@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` source endpoint renderable block
+- New batch slice 170/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_link_from_undeclared_top_source_guidance` and `top_composition_blocks_link_from_unemitted_child_source_guidance` now assert source-side top-link endpoint blockers have no renderable top root and no aggregate renderable source document.
+- This anchors both undeclared top-boundary source ports and unemitted child source ports against stale `?top` output before those endpoints are declared and emitted.
+- Focused source-endpoint coverage, the adapter suite, fmt, docs CI, KG bench, and full CI passed; user-requested `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is active.
+
 ## 2026-05-06 `.fsm` undeclared top source renderable block
 - New batch slice 169/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_link_from_undeclared_top_source_guidance` now asserts top links originating from an undeclared top-boundary port leave the selected top without a renderable top root and the aggregate `.fsm` artifact without a renderable source document.
