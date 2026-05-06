@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` undeclared top target renderable block)
+- Tightened `top_composition_blocks_link_to_undeclared_top_target_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- The test now proves top links targeting undeclared top-boundary ports leave the selected top without a renderable top root and leave the aggregate `.fsm` artifact without a renderable source document.
+- This locks the missing target endpoint blocker against stale renderable top output; focused adapter coverage, full adapter coverage, fmt, docs CI, KG bench, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 `.fsm` duplicate child renderable block)
 - Tightened `top_composition_blocks_duplicate_child_instance_guidance` in `crates/specforge/src/ir/adapters.rs`.
 - The test now proves duplicate explicit child-instance records leave the selected top without a renderable top root and leave the aggregate `.fsm` artifact without a renderable source document.

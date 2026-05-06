@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` undeclared top target renderable block
+- New batch slice 168/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_link_to_undeclared_top_target_guidance` now asserts top links targeting an undeclared top-boundary port leave the selected top without a renderable top root and the aggregate `.fsm` artifact without a renderable source document.
+- This locks the missing top-link target endpoint blocker against stale `?top` output before the target top port is declared and emitted.
+- Focused undeclared top-target coverage, the adapter suite, fmt, docs CI, KG bench, and full CI passed; user-requested `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is active.
+
 ## 2026-05-06 `.fsm` duplicate child renderable block
 - New batch slice 167/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_duplicate_child_instance_guidance` now asserts duplicate explicit child-instance records leave the selected top without a renderable top root and the aggregate `.fsm` artifact without a renderable source document.
