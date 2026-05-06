@@ -14027,6 +14027,12 @@ mod tests {
         assert!(emitted_text.contains("(+size"));
         assert!(emitted_text.contains("(output_data 8)"));
         assert!(emitted_text.contains("/producer.output_data/result_data/"));
+        assert!(
+            adapter
+                .residual_decisions
+                .iter()
+                .all(|packet| packet.packet_id != "fsm_adapter_composition_topology")
+        );
 
         Ok(())
     }
