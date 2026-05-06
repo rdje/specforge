@@ -13103,7 +13103,13 @@ mod tests {
         let tempdir = tempdir()?;
         let mut intent_ir = build_explicit_top_composition_intent_ir(tempdir.path())?;
         clear_explicit_module_direction_hints(&mut intent_ir);
-        let (producer_to_consumer_support_ids, consumer_to_top_support_ids) = {
+        let (
+            producer_output_signal_support_ids,
+            consumer_input_signal_support_ids,
+            consumer_result_signal_support_ids,
+            producer_to_consumer_support_ids,
+            consumer_to_top_support_ids,
+        ) = {
             let explicit_top = intent_ir
                 .explicit_tops
                 .iter()
@@ -13129,7 +13135,53 @@ mod tests {
                         && link.target.signal_name == "result_data"
                 })
                 .expect("consumer to top topology link should be present");
+            let producer_output_signal = intent_ir
+                .explicit_modules
+                .iter()
+                .find(|module| module.module_name == "producer_core")
+                .and_then(|module| {
+                    module
+                        .interfaces
+                        .iter()
+                        .flat_map(|interface| interface.signal_records.iter())
+                        .find(|signal| signal.signal_name == "output_data")
+                })
+                .expect("producer output_data declaration should be present");
+            let consumer_input_signal = intent_ir
+                .explicit_modules
+                .iter()
+                .find(|module| module.module_name == "consumer_core")
+                .and_then(|module| {
+                    module
+                        .interfaces
+                        .iter()
+                        .flat_map(|interface| interface.signal_records.iter())
+                        .find(|signal| signal.signal_name == "input_data")
+                })
+                .expect("consumer input_data declaration should be present");
+            let consumer_result_signal = intent_ir
+                .explicit_modules
+                .iter()
+                .find(|module| module.module_name == "consumer_core")
+                .and_then(|module| {
+                    module
+                        .interfaces
+                        .iter()
+                        .flat_map(|interface| interface.signal_records.iter())
+                        .find(|signal| signal.signal_name == "result_data")
+                })
+                .expect("consumer result_data declaration should be present");
+            for signal in [
+                producer_output_signal,
+                consumer_input_signal,
+                consumer_result_signal,
+            ] {
+                assert_eq!(signal.direction_hint, None);
+            }
             (
+                producer_output_signal.supporting_statement_ids.clone(),
+                consumer_input_signal.supporting_statement_ids.clone(),
+                consumer_result_signal.supporting_statement_ids.clone(),
                 super::explicit_top_link_supporting_ids(producer_to_consumer_link),
                 super::explicit_top_link_supporting_ids(consumer_to_top_link),
             )
@@ -13210,8 +13262,23 @@ mod tests {
                     .any(|id| signal.supporting_canonical_ids.contains(id))
             );
         }
+        for (signal, signal_support_ids) in [
+            (output_data, &producer_output_signal_support_ids),
+            (input_data, &consumer_input_signal_support_ids),
+        ] {
+            assert!(
+                signal_support_ids
+                    .iter()
+                    .any(|id| signal.supporting_canonical_ids.contains(id))
+            );
+        }
         assert!(
             consumer_to_top_support_ids
+                .iter()
+                .any(|id| result_data.supporting_canonical_ids.contains(id))
+        );
+        assert!(
+            consumer_result_signal_support_ids
                 .iter()
                 .any(|id| result_data.supporting_canonical_ids.contains(id))
         );
