@@ -23,6 +23,8 @@ use crate::ir::source::{
     AutomationConfidence, CandidateInterpretation, ResidualDecisionPacket, WidthHint, document_key,
 };
 
+const TOP_LINK_ENDPOINT_DIRECTION_ROLE_ENRICHMENT: &str = "align top-link endpoint directions with source/output and target/input roles before lowering `?top:name`";
+
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum AdapterTarget {
@@ -2848,6 +2850,8 @@ fn analyze_top_renderability(
                         render_top_link_endpoint(&link.source)
                     ),
                 );
+                required_canonical_enrichments
+                    .insert(TOP_LINK_ENDPOINT_DIRECTION_ROLE_ENRICHMENT.to_string());
             }
         } else if !matches!(source_port.direction_hint, InterfaceSignalDirection::Output) {
             push_unique_message(
@@ -2857,6 +2861,8 @@ fn analyze_top_renderability(
                     render_top_link_endpoint(&link.source)
                 ),
             );
+            required_canonical_enrichments
+                .insert(TOP_LINK_ENDPOINT_DIRECTION_ROLE_ENRICHMENT.to_string());
         }
 
         if target_is_top {
@@ -2868,6 +2874,8 @@ fn analyze_top_renderability(
                         render_top_link_endpoint(&link.target)
                     ),
                 );
+                required_canonical_enrichments
+                    .insert(TOP_LINK_ENDPOINT_DIRECTION_ROLE_ENRICHMENT.to_string());
             }
         } else if !matches!(target_port.direction_hint, InterfaceSignalDirection::Input) {
             push_unique_message(
@@ -2877,6 +2885,8 @@ fn analyze_top_renderability(
                     render_top_link_endpoint(&link.target)
                 ),
             );
+            required_canonical_enrichments
+                .insert(TOP_LINK_ENDPOINT_DIRECTION_ROLE_ENRICHMENT.to_string());
         }
 
         if let (Some(source_width), Some(target_width)) =
@@ -5142,6 +5152,14 @@ fn register_renderable_signal(
                 "resolve conflicting actor-relative graph direction evidence before lowering `.fsm`"
                     .to_string(),
             );
+            if signal
+                .mention_categories
+                .iter()
+                .any(|category| category == "module_topology_link")
+            {
+                required_canonical_enrichments
+                    .insert(TOP_LINK_ENDPOINT_DIRECTION_ROLE_ENRICHMENT.to_string());
+            }
         } else if direction_hints_disagree(signal) {
             push_unique_message(
                 blocking_reasons,
@@ -15544,6 +15562,182 @@ mod tests {
                 .iter()
                 .any(|enrichment| enrichment
                     == "declare and emit every top-link source endpoint before lowering `?top:name`")
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn top_composition_blocks_child_source_direction_role_guidance() -> Result<()> {
+        let tempdir = tempdir()?;
+        let intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "child_source_direction_role.md",
+            "# Child Source Direction Role\nTop datapath.\n\nTop datapath port result_data is output width 8.\n\nTop datapath child producer uses module producer_core.\n\nTop datapath link producer.side_data -> result_data.\n\nModule producer_core signal side_data is input width 8.\n\nModule producer_core signal output_data is output width 8.\n\nModule producer_core block produce: output_data = side_data.\n",
+        )?;
+        let (top_port_support_ids, producer_child_support_ids, link_support_ids) = {
+            let explicit_top = intent_ir
+                .explicit_tops
+                .iter()
+                .find(|top| top.top_name == "datapath")
+                .expect("explicit top should be present");
+            let result_port = explicit_top
+                .ports
+                .iter()
+                .find(|port| port.port_name == "result_data")
+                .expect("declared result_data top port should be present");
+            let producer_child = explicit_top
+                .children
+                .iter()
+                .find(|child| child.instance_name == "producer")
+                .expect("producer child should be present");
+            let role_mismatch_link = explicit_top
+                .links
+                .iter()
+                .find(|link| {
+                    link.source.instance_name.as_deref() == Some("producer")
+                        && link.source.signal_name == "side_data"
+                        && link.target.instance_name.is_none()
+                        && link.target.signal_name == "result_data"
+                })
+                .expect("producer side_data to top result link should be present");
+            (
+                result_port.supporting_statement_ids.clone(),
+                producer_child.supporting_statement_ids.clone(),
+                super::explicit_top_link_supporting_ids(role_mismatch_link),
+            )
+        };
+        assert!(
+            !top_port_support_ids.is_empty()
+                && !producer_child_support_ids.is_empty()
+                && !link_support_ids.is_empty(),
+            "top port, child, and link provenance should be present"
+        );
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "blocked");
+        assert!(adapter.artifact_layout.emitted_target_path.is_none());
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Top);
+        let producer = fsm
+            .module_candidates
+            .iter()
+            .find(|candidate| candidate.module_name == "producer_core")
+            .expect("producer module candidate should remain visible");
+        let side_data = producer
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "side_data")
+            .expect("producer side_data should stay in the module inventory");
+        assert_eq!(
+            side_data.direction_hint,
+            Some(InterfaceSignalDirection::Input)
+        );
+        assert_eq!(side_data.graph_direction_hint, None);
+        assert!(side_data.graph_direction_hint_conflicted);
+        assert!(
+            side_data
+                .mention_categories
+                .iter()
+                .any(|category| category == "module_topology_link")
+        );
+        assert!(
+            link_support_ids
+                .iter()
+                .any(|id| side_data.supporting_canonical_ids.contains(id))
+        );
+        assert!(!producer.renderability.is_renderable);
+        assert!(
+            producer
+                .renderability
+                .blocking_reasons
+                .iter()
+                .any(|reason| reason.contains("conflicting graph-backed direction evidence"))
+        );
+        assert!(
+            producer
+                .renderability
+                .required_canonical_enrichments
+                .iter()
+                .any(|enrichment| enrichment == super::TOP_LINK_ENDPOINT_DIRECTION_ROLE_ENRICHMENT)
+        );
+        let top_candidate = fsm
+            .top_candidates
+            .iter()
+            .find(|top| top.top_name == "datapath")
+            .expect("top candidate should remain visible");
+        let result_port = top_candidate
+            .ports
+            .iter()
+            .find(|port| port.port_name == "result_data")
+            .expect("declared result_data top port should remain visible");
+        assert_eq!(
+            result_port.direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert_eq!(result_port.width_hint, Some(WidthHint::Numeric(8)));
+        assert!(
+            top_port_support_ids
+                .iter()
+                .any(|id| result_port.supporting_statement_ids.contains(id))
+        );
+        let producer_child = top_candidate
+            .children
+            .iter()
+            .find(|child| child.instance_name == "producer")
+            .expect("producer child candidate should remain visible");
+        assert_eq!(producer_child.source_module_name, "producer_core");
+        assert_eq!(producer_child.resolved_root_kind, None);
+        assert!(
+            producer_child_support_ids
+                .iter()
+                .any(|id| producer_child.supporting_canonical_ids.contains(id))
+        );
+        let link = top_candidate
+            .links
+            .iter()
+            .find(|link| {
+                link.source.instance_name.as_deref() == Some("producer")
+                    && link.source.signal_name == "side_data"
+                    && link.target.instance_name.is_none()
+                    && link.target.signal_name == "result_data"
+            })
+            .expect("blocked top-link should remain visible");
+        for support_id in &link_support_ids {
+            assert!(
+                super::explicit_top_link_supporting_ids(link).contains(support_id),
+                "top-link support id should remain visible"
+            );
+        }
+        assert!(!top_candidate.renderability.is_renderable);
+        assert!(
+            top_candidate
+                .renderability
+                .blocking_reasons
+                .iter()
+                .any(|reason| reason.contains(
+                    "Top link source `producer.side_data` does not resolve to an emitted child port"
+                ))
+        );
+        assert!(
+            top_candidate
+                .renderability
+                .required_canonical_enrichments
+                .iter()
+                .any(|enrichment| enrichment == super::TOP_LINK_ENDPOINT_DIRECTION_ROLE_ENRICHMENT)
+        );
+        assert!(!fsm.renderability.is_renderable);
+        assert!(
+            fsm.renderability
+                .required_canonical_enrichments
+                .iter()
+                .any(|enrichment| enrichment == super::TOP_LINK_ENDPOINT_DIRECTION_ROLE_ENRICHMENT)
         );
 
         Ok(())

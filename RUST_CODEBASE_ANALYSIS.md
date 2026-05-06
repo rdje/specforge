@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` top-link direction-role guidance)
+- Added shared top-link endpoint direction-role guidance in `crates/specforge/src/ir/adapters.rs` so source/target role mismatches now produce canonical repair advice instead of only blocking text.
+- Added `top_composition_blocks_child_source_direction_role_guidance` to prove a child source declared as an input, while used as a top-link source, keeps the role repair guidance on the blocked child module, blocked top candidate, and aggregate `.fsm` renderability.
+- The regression also keeps declared top-port provenance, child declaration provenance, and topology-link support IDs visible for review.
+
 ## Session update (2026-05-06 `.fsm` unemitted child-source guidance lock)
 - Added `top_composition_blocks_link_from_unemitted_child_source_guidance` in `crates/specforge/src/ir/adapters.rs` so top links originating from child endpoints absent from renderable child modules retain source-endpoint enrichment guidance on the blocked top candidate and aggregate `.fsm` renderability.
 - The regression also proves declared top-port provenance, producer child declaration provenance, high-confidence topology-link state, and top-link support IDs survive while the producer module resolves to a renderable DT root.

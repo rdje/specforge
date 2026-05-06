@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` top-link direction-role guidance
+- New batch slice 41/200 updates `crates/specforge/src/ir/adapters.rs`.
+- Top-link source/target direction mismatches now add `align top-link endpoint directions with source/output and target/input roles before lowering ?top:name` guidance to blocked renderability.
+- `top_composition_blocks_child_source_direction_role_guidance` proves a child source declared as an input but used as a top-link source carries the new role guidance through the blocked child module, blocked top candidate, aggregate `.fsm` renderability, and surviving topology provenance.
+- Full adapter coverage is now `89` adapter tests, full CI is now `610` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` unemitted child-source guidance lock
 - New batch slice 40/200 adds coverage in `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_link_from_unemitted_child_source_guidance` asserts top links that originate from a child endpoint absent from the renderable child module keep `declare and emit every top-link source endpoint before lowering ?top:name` guidance on the blocked top candidate and aggregate `.fsm` renderability.

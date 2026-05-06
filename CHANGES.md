@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` top-link direction-role guidance)
+
+### Changed: top-link direction role blockers surface canonical repair guidance
+- Added shared endpoint-role guidance for top-link source/target direction mismatches so blocked `.fsm` artifacts now tell upstream canonical repair to align source/output and target/input roles before lowering `?top:name`.
+- Added `top_composition_blocks_child_source_direction_role_guidance` for a child source declared as an input while top-link topology needs it as a source/output endpoint.
+- The regression proves the blocked child module, blocked top candidate, aggregate renderability, declared top port, child declaration, and top-link support IDs all preserve the new role guidance.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_child_source_direction_role_guidance` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`89` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`610` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` unemitted child-source guidance lock)
 
 ### Added: unemitted child-source endpoint coverage

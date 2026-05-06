@@ -154,6 +154,7 @@ Top-boundary actor-port, duplicate declaration, and child-link width conflicts p
 Duplicate top-boundary width blockers also preserve explicit top-port deduplication guidance alongside the width repair guidance.
 Widthless public top ports preserve top-boundary width recovery guidance on the same blocked renderability surfaces while keeping missing numeric width distinct from symbolic and conflicted width evidence.
 Parametric public top ports preserve top-boundary width resolution guidance while keeping symbolic width evidence inspectable in the selected top signal inventory.
+Top-link direction-role mismatches preserve source/output and target/input repair guidance on blocked child, top, and aggregate renderability surfaces while keeping topology-link provenance visible.
 Top links to child endpoints that are not emitted preserve source-endpoint repair guidance on both the blocked top candidate and aggregate renderability surfaces.
 For blocked composition roots, the same artifact shape is useful for diagnostics: a missing child can block emission while the surviving top-port provenance remains available for review.
 Missing-child top blockers also preserve child-source declaration guidance on both blocked renderability surfaces.
