@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` transitive child-width size-entry lock
+- New batch slice 157/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_recovers_child_width_through_transitive_topology` now asserts producer and consumer child renderable `(+size ...)` entries consume widths propagated through top-link and sibling-link topology.
+- This locks transitive topology width recovery through child target emission, not just module inventory: `producer_core.output_data` and `consumer_core.input_data` lower as output/input width-8 size entries.
+- Focused transitive child-width size-entry coverage, the adapter suite, fmt, docs CI, KG bench, and full CI passed; user-requested `cargo sweep --time 1` remains deferred until no target-tree process is active.
+
 ## 2026-05-06 `.fsm` source sibling child-width size-entry lock
 - New batch slice 156/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_recovers_source_child_width_from_sibling_child_link_topology` now asserts the producer child renderable `(+size ...)` entry for `output_data` consumes width recovered from sibling child-link topology.

@@ -14974,6 +14974,22 @@ mod tests {
         assert!(producer.renderability.is_renderable);
         assert!(consumer.renderability.is_renderable);
         assert!(fsm.renderability.is_renderable);
+        for (module, signal_name, direction_hint) in [
+            (producer, "output_data", InterfaceSignalDirection::Output),
+            (consumer, "input_data", InterfaceSignalDirection::Input),
+        ] {
+            let renderable_module = module
+                .renderable_module
+                .as_ref()
+                .unwrap_or_else(|| panic!("{} should be renderable", module.module_name));
+            let size_entry = renderable_module
+                .size_entries
+                .iter()
+                .find(|entry| entry.signal_name == signal_name)
+                .unwrap_or_else(|| panic!("{signal_name} should have a renderable size entry"));
+            assert_eq!(size_entry.direction_hint, direction_hint);
+            assert_eq!(size_entry.width, 8);
+        }
         assert!(emitted_text.contains("(output_data 8)"));
         assert!(emitted_text.contains("(input_data 8)"));
         assert!(emitted_text.contains("/producer.output_data/consumer.input_data/"));

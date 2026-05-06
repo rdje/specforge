@@ -179,6 +179,7 @@ Recovered sibling child-link widths also feed child renderable `(+size ...)` ent
 Source-side sibling-link child width recovery follows it for recovered child outputs, and renderable recovery leaves no composition-topology residual.
 Recovered source-side sibling child-link widths also feed child renderable `(+size ...)` entries, so emitted child output widths do not depend on an original child-local numeric declaration.
 Transitive child width recovery keeps declaration support for each recovered child signal while recording the topology links that propagated the width, and renderable recovery leaves no composition-topology residual.
+Recovered transitive topology widths also feed child renderable `(+size ...)` entries for each affected child module, so propagated widths are visible in emitted child surfaces.
 Child link-topology direction recovery keeps declaration support for each recovered child signal while recording the topology links that supplied graph directions, and renderable recovery leaves no composition-topology residual.
 Those topology-recovered child directions also feed child renderable `(+size ...)` entries, so emitted child roles do not require flat child-module direction hints.
 Child actor-port direction recovery keeps declaration support for each recovered child signal while recording the graph actor-port evidence that supplied directions, and renderable recovery leaves no composition-topology residual.

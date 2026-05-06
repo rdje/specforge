@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` transitive child-width size-entry lock)
+
+### Added: child size entries lock transitive topology width recovery
+- Tightened `top_composition_recovers_child_width_through_transitive_topology` so producer and consumer child renderable `.fsm` size entries must consume widths propagated through top-link and sibling-link topology.
+- The regression now proves `producer_core.output_data` and `consumer_core.input_data` lower into output/input width-8 size entries after transitive topology width recovery.
+- Synced the live tracker, roadmap, and mdBook with the transitive child-width size-entry guarantee.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_child_width_through_transitive_topology` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148/148` fixtures)
+- `bash scripts/run_ci.sh` -> passed (`614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation)
+
 ## 2026-05-06 (`.fsm` source sibling child-width size-entry lock)
 
 ### Added: source child size entries lock graph-backed sibling-link width recovery
