@@ -32,6 +32,7 @@
 - `.fsm` no-child top blockers now preserve composition topology residual decisions: Done
 - `.fsm` no-top-port blockers now preserve composition topology residual decisions: Done
 - `.fsm` duplicate child-instance top blockers now preserve composition topology residual decisions: Done
+- `.fsm` duplicate top-direction blockers now preserve composition topology residual decisions: Done
 - `specforge inspect` command created: Done
 - `specforge doctor` command created: Done
 - `specforge ingest` SourceIR command created: Done
@@ -436,6 +437,7 @@
 - `.fsm` duplicate child-instance top blockers now preserve deduplication enrichment guidance: Done
 - `.fsm` duplicate child-instance top blockers now preserve composition topology residual decisions: Done
 - `.fsm` duplicate top-direction blockers now preserve top-port deduplication enrichment guidance: Done
+- `.fsm` duplicate top-direction blockers now preserve composition topology residual decisions: Done
 - `.fsm` duplicate top-width blockers now preserve top-port deduplication enrichment guidance: Done
 - `.fsm` multi-child no-link top blockers now preserve top-link enrichment guidance: Done
 - `.fsm` multi-child no-link top blockers now preserve composition topology residual decisions: Done
