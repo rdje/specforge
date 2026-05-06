@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `6e770d9f58deaf55db755815e6fd9bc2ab1dfdbc`
-- latest_commit_brief_message: `test(adapter): lock sibling output residual cleanliness`
-- note: new local `N=200` batch is active; slice 91 is committed, slice 92 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `6ad1cab0abaf57e0d0f0151425a7a5cce7bad9fb`
+- latest_commit_brief_message: `test(adapter): lock transitive width residual cleanliness`
+- note: new local `N=200` batch is active; slice 92 is committed, slice 93 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `6ad1cab` test(adapter): lock transitive width residual cleanliness
 - `6e770d9` test(adapter): lock sibling output residual cleanliness
 - `33c8f48` test(adapter): lock sibling input residual cleanliness
 - `48dc612` test(adapter): lock top-link child-width residual cleanliness
 - `202d0f2` test(adapter): lock child link residual cleanliness
 - `c33e68d` test(adapter): lock child actor residual cleanliness
-- `7418e58` test(adapter): lock system top-width residual cleanliness
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 92]`
-- files in flight for new batch slice 92:
+- branch state before the next commit: `main...origin/main [ahead 93]`
+- files in flight for new batch slice 93:
   - `crates/specforge/src/ir/adapters.rs`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `ROADMAP.md`
@@ -49,21 +49,21 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `91`
+- completed_count: `92`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - lock residual-clean behavior for renderable transitive child-width recovery
-  - prove `top_composition_recovers_child_width_through_transitive_topology` leaves no stale `fsm_adapter_composition_topology` residual once topology-backed producer and consumer child widths render
-  - sync the live tracker, roadmap, and mdBook with the transitive child-width recovery residual-clean guarantee
+  - lock signal-inventory residual-clean behavior for renderable direct actor-port direction recovery
+  - prove `standalone_dt_recovers_directions_from_unambiguous_actor_ports` leaves no stale `fsm_adapter_signal_inventory` residual once graph-backed direct-root directions render
+  - sync the live tracker, roadmap, and mdBook with the direct actor-port direction recovery residual-clean guarantee
 - tracker effect:
-  - live-status tracker changed; new row marks `.fsm` transitive child-width recovery staying composition-residual clean when renderable as `Done`
+  - live-status tracker changed; new row marks `.fsm` standalone direct actor-port direction recovery staying signal-inventory-residual clean when renderable as `Done`
 - verification status:
   - implementation and live-doc sync are complete
-  - focused transitive child-width recovery residual-clean regression passed (`1` test)
+  - focused direct actor-port direction residual-clean regression passed (`1` test)
   - adapter suite passed (`92` tests)
   - formatting, docs CI, KG bench (`148/148` fixtures), and full CI (`613` Rust tests plus warning-deny Clippy/rustdoc and mdBook) passed
   - user-requested `cargo sweep --time 1` is deferred until no target-tree process is active
@@ -74,4 +74,4 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- run final commit guards, commit slice 92 without pushing, retry `cargo sweep --time 1` when the target tree is idle, then start slice 93 of the active `N=200` batch
+- run final commit guards, commit slice 93 without pushing, retry `cargo sweep --time 1` when the target tree is idle, then start slice 94 of the active `N=200` batch

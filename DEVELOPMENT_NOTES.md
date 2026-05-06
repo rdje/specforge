@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` direct actor direction residual cleanliness
+- New batch slice 93/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `standalone_dt_recovers_directions_from_unambiguous_actor_ports` now asserts no stale signal-inventory residual remains after unambiguous actor-port graph evidence recovers direct-root signal directions and the standalone DT root emits.
+- This keeps graph direction hints, actor-port provenance categories, graph support IDs, high automation confidence, emitted DT text, and signal-inventory residual cleanliness paired once the direct root is renderable.
+- Focused direct actor-port direction residual-clean regression, adapter suite, fmt, docs, KG bench, and full CI all passed; user-requested `cargo sweep --time 1` is deferred until no target-tree process is active.
+
 ## 2026-05-06 `.fsm` transitive child-width residual cleanliness
 - New batch slice 92/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_recovers_child_width_through_transitive_topology` now asserts no stale composition topology residual remains after topology evidence recovers producer and consumer child widths through transitive links and the top emits.

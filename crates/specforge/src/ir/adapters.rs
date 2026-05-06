@@ -6902,6 +6902,12 @@ mod tests {
         assert!(emitted_text.contains("(?dt:comb_dt"));
         assert!(emitted_text.contains("(DATA_OUT = DATA_IN)"));
         assert!(emitted_text.contains("(ZERO_FLAG = 1)"));
+        assert!(
+            adapter
+                .residual_decisions
+                .iter()
+                .all(|packet| packet.packet_id != "fsm_adapter_signal_inventory")
+        );
 
         Ok(())
     }

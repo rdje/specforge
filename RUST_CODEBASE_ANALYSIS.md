@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` direct actor direction residual cleanliness)
+- Added a signal-inventory residual-clean assertion to `standalone_dt_recovers_directions_from_unambiguous_actor_ports` in `crates/specforge/src/ir/adapters.rs`.
+- Direct-root actor-port direction recovery now proves graph-backed direct signal directions leave no stale `fsm_adapter_signal_inventory` packet once the standalone DT root is renderable.
+- The live tracker and roadmap now mark the direct actor-port direction recovery residual-clean guarantee as closed; focused adapter coverage, full adapter coverage, KG bench, docs, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 `.fsm` transitive child-width residual cleanliness)
 - Added a residual-clean assertion to `top_composition_recovers_child_width_through_transitive_topology` in `crates/specforge/src/ir/adapters.rs`.
 - Transitive child-width recovery now proves topology-backed producer and consumer child signal width recovery leaves no stale `fsm_adapter_composition_topology` packet once the top is renderable.
