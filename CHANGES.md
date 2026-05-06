@@ -1,5 +1,16 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` missing-child residual diagnostics)
+
+### Added: missing-child residuals lock topology-detail diagnostics
+- Tightened `keeps_top_composition_blocked_when_child_module_is_missing` so primary missing-child top-composition blockers retain low-confidence `fsm_adapter_composition_topology` diagnostics.
+- The regression now pairs child-source declaration guidance, missing-module blocker text, preserved top-port/child provenance, explicit topology-detail residual text, and child-module-reference repair guidance.
+- Updated the live tracker, roadmap, and mdBook to mark missing-child residual diagnostics as closed.
+
+### Validation
+- Passed: focused missing-child residual-diagnostics regression (`1` test), adapter suite (`92` tests), rustfmt check, docs CI/mdBook, KG bench (`148/148` fixtures), and full CI (`613` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation).
+- Deferred: user-requested `cargo sweep --time 1` until safe because another shell still had a `target/release/tool_matrix` process running from this repository.
+
 ## 2026-05-06 (`.fsm` child target role residual diagnostics)
 
 ### Added: child target role residuals lock topology-detail diagnostics

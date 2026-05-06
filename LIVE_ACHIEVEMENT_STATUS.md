@@ -96,6 +96,7 @@
 - `.fsm` links to unemitted child targets now preserve composition topology residual decisions: Done
 - `.fsm` target-side unemitted child residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` missing-child top blockers now preserve composition topology residual decisions: Done
+- `.fsm` missing-child top residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` multi-child no-link top blockers now preserve composition topology residual decisions: Done
 - `.fsm` no-child top blockers now preserve composition topology residual decisions: Done
 - `.fsm` no-top-port blockers now preserve composition topology residual decisions: Done

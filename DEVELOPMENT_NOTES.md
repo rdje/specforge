@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` missing-child residual diagnostics
+- New batch slice 129/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `keeps_top_composition_blocked_when_child_module_is_missing` now asserts primary missing-child top-composition blockers keep low-confidence `fsm_adapter_composition_topology` diagnostics with explicit topology-detail blocker text.
+- This keeps child-source declaration guidance, missing-module blocker text, top-port/child provenance, and child-module-reference residual guidance tied together.
+- Focused missing-child residual-diagnostics regression, adapter suite, fmt, docs, KG bench, and full CI all passed; user-requested `cargo sweep --time 1` is deferred until no target-tree process is active.
+
 ## 2026-05-06 `.fsm` child target role residual diagnostics
 - New batch slice 128/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_child_target_direction_role_guidance` now asserts target-side child endpoint direction-role blockers keep low-confidence `fsm_adapter_composition_topology` diagnostics with explicit topology-detail blocker text.
