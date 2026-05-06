@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` missing-child top-port support lock)
+- Tightened `keeps_top_composition_blocked_when_child_module_is_missing` in `crates/specforge/src/ir/adapters.rs` so the blocked composition artifact retains the declared `result_data` top-port surface.
+- The test now proves the top port keeps output direction, numeric width, supporting statement IDs, and high automation confidence alongside the unresolved child candidate.
+- This makes missing-child composition diagnostics preserve the usable top boundary while still blocking `.fsm` document emission.
+
 ## Session update (2026-05-06 `.fsm` undeclared-target state support lock)
 - Tightened `keeps_structured_fsm_blocked_when_transition_target_is_undeclared` in `crates/specforge/src/ir/adapters.rs` so the blocked undeclared-target graph retains declared state-candidate provenance for `idle` and `busy`.
 - The test now proves state support IDs, initial-state flags, and high automation confidence survive alongside the existing missing-target transition candidate.

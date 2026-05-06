@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` missing-child top-port support lock)
+
+### Added: blocked composition top-port provenance
+- Tightened `keeps_top_composition_blocked_when_child_module_is_missing` so the missing-child composition blocker now preserves the declared `result_data` top port.
+- The test locks the top port direction, numeric width, support IDs, and high automation confidence while keeping the missing child module blocker intact.
+- This keeps blocked composition diagnostics tied to the surviving top surface as well as the missing child declaration.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge keeps_top_composition_blocked_when_child_module_is_missing` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` undeclared-target state support lock)
 
 ### Added: blocked undeclared-target state provenance

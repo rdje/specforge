@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `1d6dc595a5e260aaebe7988b23b792afdfa3cde8`
-- latest_commit_brief_message: `test(adapter): lock missing initial FSM graph`
+- latest_commit_hash: `9c70a207414d04e67fe3a20ef54c9b9fbd5cfd3f`
+- latest_commit_brief_message: `test(adapter): lock undeclared target FSM states`
 - note: new local `N=100` batch is active; push remains deferred until all 100 slices complete
 
 ## Recent commit chain (last 6)
+- `9c70a20` test(adapter): lock undeclared target FSM states
 - `1d6dc59` test(adapter): lock missing initial FSM graph
 - `6a18f9d` test(adapter): lock reset FSM renderable graph
 - `8d514b3` test(adapter): lock structured FSM candidates
 - `8382ee5` test(adapter): lock sequential DT support
 - `da04f05` test(adapter): lock standalone DT inventory support
-- `fa770b5` test(adapter): lock symbolic DT support
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 97]`
-- files in flight for new batch slice 98:
+- branch state before the next commit: `main...origin/main [ahead 98]`
+- files in flight for new batch slice 99:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -47,19 +47,19 @@
 
 ## Active N-slice batch
 - requested_count: `100`
-- completed_count: `97`
+- completed_count: `98`
 - push_policy: defer push until all `100` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - regression-lock undeclared-target structured-FSM state provenance
-  - prove blocked artifacts keep declared state candidates, support IDs, initial flags, and high automation confidence alongside the rejected transition
-  - keep the missing-target blocker auditable while `.fsm` emission remains blocked
+  - regression-lock missing-child composition top-port provenance
+  - prove blocked artifacts keep the declared top port direction, numeric width, support IDs, and high automation confidence alongside the unresolved child candidate
+  - keep the composition blocker auditable while `.fsm` document emission remains blocked
 - tracker effect:
-  - live-status tracker gains `.fsm undeclared-target structured-FSM blockers now preserve declared state candidate provenance: Done`
+  - live-status tracker gains `.fsm missing-child composition blockers now preserve top-port provenance: Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge keeps_structured_fsm_blocked_when_transition_target_is_undeclared` passed with `1` test
+  - `cargo test --manifest-path Cargo.toml -p specforge keeps_top_composition_blocked_when_child_module_is_missing` passed with `1` test
   - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `80` tests
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed before the final live-doc refresh
@@ -70,4 +70,4 @@
   - `148/148` tracked KG fixtures
 
 ## Next exact steps
-- run final docs CI and guards, commit slice 98 without pushing, and continue slice 99
+- run final docs CI and guards, commit slice 99 without pushing, and continue slice 100

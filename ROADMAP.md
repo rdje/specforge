@@ -229,6 +229,7 @@
   - renderable reset-block structured-FSM lowering preserves state transitions and reset block roles in the renderable module
   - missing-initial structured-FSM blockers preserve transition candidate provenance alongside state candidates
   - undeclared-target structured-FSM blockers preserve declared state candidate provenance alongside the rejected transition
+  - missing-child composition blockers preserve declared top-port provenance alongside unresolved child candidates
   - unrelated direct actor-port graph context keeps selected support IDs auditable while excluding unrelated side-band evidence from `.fsm` inventories
   - ambiguous direct actor-port graph context leaves graph direction, actor-port category, and support IDs unselected instead of guessing a target actor
   - standalone DT graph-backed undriven output blockers preserve selected actor support IDs and high automation confidence while blocking `.fsm` emission

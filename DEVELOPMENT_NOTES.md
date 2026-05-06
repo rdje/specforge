@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` missing-child top-port support lock
+- New batch slice 99/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `keeps_top_composition_blocked_when_child_module_is_missing` now asserts blocked composition artifacts retain the `result_data` top port with direction, numeric width, support IDs, and high automation confidence.
+- This is a coverage-only lock for the missing-child-module blocker that already preserved the unresolved child candidate and `fsm_adapter_composition_topology` residual decision.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` undeclared-target state support lock
 - New batch slice 98/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `keeps_structured_fsm_blocked_when_transition_target_is_undeclared` now asserts blocked structured-FSM artifacts retain declared `idle` and `busy` state candidates with support IDs, initial-state flags, and high automation confidence.

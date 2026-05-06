@@ -13741,6 +13741,21 @@ mod tests {
     fn keeps_top_composition_blocked_when_child_module_is_missing() -> Result<()> {
         let tempdir = tempdir()?;
         let intent_ir = build_missing_child_module_top_intent_ir(tempdir.path())?;
+        let top_port_support_ids = intent_ir
+            .explicit_tops
+            .iter()
+            .find(|top| top.top_name == "datapath")
+            .and_then(|top| {
+                top.ports
+                    .iter()
+                    .find(|port| port.port_name == "result_data")
+            })
+            .map(|port| port.supporting_statement_ids.clone())
+            .expect("top output port declaration should be present");
+        assert!(
+            !top_port_support_ids.is_empty(),
+            "top output port provenance should be present"
+        );
         let child_support_ids = intent_ir
             .explicit_tops
             .iter()
@@ -13774,6 +13789,23 @@ mod tests {
             .iter()
             .find(|top| top.top_name == "datapath")
             .expect("top candidate should remain visible");
+        assert_eq!(top_candidate.ports.len(), 1);
+        let top_port = top_candidate
+            .ports
+            .iter()
+            .find(|port| port.port_name == "result_data")
+            .expect("top output port should remain visible");
+        assert_eq!(
+            top_port.direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert_eq!(top_port.width_hint, Some(WidthHint::Numeric(8)));
+        assert!(
+            top_port_support_ids
+                .iter()
+                .any(|id| top_port.supporting_statement_ids.contains(id))
+        );
+        assert_eq!(top_port.automation_confidence, AutomationConfidence::High);
         let child_candidate = top_candidate
             .children
             .iter()
@@ -13790,6 +13822,7 @@ mod tests {
             child_candidate.automation_confidence,
             AutomationConfidence::High
         );
+        assert!(!top_candidate.renderability.is_renderable);
         assert!(!fsm.renderability.is_renderable);
         assert!(
             fsm.renderability
