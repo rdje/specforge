@@ -1,5 +1,16 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` unemitted child source guidance residual diagnostics)
+
+### Added: unemitted child source guidance residuals lock topology-detail diagnostics
+- Tightened `top_composition_blocks_link_from_unemitted_child_source_guidance` so source-side child endpoints absent from emitted child modules retain low-confidence `fsm_adapter_composition_topology` diagnostics.
+- The regression now pairs source-endpoint enrichment guidance, top-port, child, and link provenance, renderable-child repair context, and explicit topology-detail residual text.
+- Updated the live tracker, roadmap, and mdBook to mark unemitted child source guidance residual diagnostics as closed.
+
+### Validation
+- Passed: focused unemitted child source guidance residual-diagnostics regression (`1` test), adapter suite (`92` tests), rustfmt check, docs CI/mdBook, KG bench (`148/148` fixtures), and full CI (`613` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation).
+- Deferred: user-requested `cargo sweep --time 1` until safe because a `target/release/tool_matrix` process is active.
+
 ## 2026-05-06 (`.fsm` child actor-port direction residual diagnostics)
 
 ### Added: child actor-port direction residuals lock topology-detail diagnostics

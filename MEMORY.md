@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `8d4b0f4e5b02eff4b4a7c49a6c405d9172581987`
-- latest_commit_brief_message: `test(adapter): lock child topology direction diagnostics`
-- note: new local `N=200` batch is active; slice 142 is committed, slice 143 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `3685077af60ce8cfd52c3f52302e25f599af078c`
+- latest_commit_brief_message: `test(adapter): lock child actor direction diagnostics`
+- note: new local `N=200` batch is active; slice 143 is committed, slice 144 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `3685077` test(adapter): lock child actor direction diagnostics
 - `8d4b0f4` test(adapter): lock child topology direction diagnostics
 - `f6ff199` test(adapter): lock top-link width diagnostics
 - `56f6d2e` test(adapter): lock top child-link width diagnostics
 - `19f3926` test(adapter): lock sibling link width diagnostics
 - `c5c7099` test(adapter): lock child topology width diagnostics
-- `55f52c8` test(adapter): lock undeclared top source diagnostics
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 143]`
-- files in flight for new batch slice 143:
+- branch state before the next commit: `main...origin/main [ahead 144]`
+- files in flight for new batch slice 144:
   - `crates/specforge/src/ir/adapters.rs`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `ROADMAP.md`
@@ -49,21 +49,21 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `142`
+- completed_count: `143`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - lock composition-topology residual diagnostics for child actor-port direction conflicts
-  - prove `top_composition_blocks_conflicting_actor_port_directions` keeps low-confidence `fsm_adapter_composition_topology` diagnostics and topology-detail blocker text while preserving actor-relative graph-direction repair guidance, explicit child signal and graph actor-port support IDs, and renderable-child context
-  - sync the live tracker, roadmap, and mdBook with the child actor-port direction residual-diagnostics guarantee
+  - lock composition-topology residual diagnostics for source-side child endpoints absent from emitted child modules in the provenance-rich guidance regression
+  - prove `top_composition_blocks_link_from_unemitted_child_source_guidance` keeps low-confidence `fsm_adapter_composition_topology` diagnostics and topology-detail blocker text while preserving source-endpoint enrichment guidance, top-port, child, link provenance, and renderable-child context
+  - sync the live tracker, roadmap, and mdBook with the unemitted child source guidance residual-diagnostics guarantee
 - tracker effect:
-  - live-status tracker changed; new row marks `.fsm` child actor-port direction residuals locking low-confidence topology-detail diagnostics as `Done`
+  - live-status tracker changed; new row marks `.fsm` source-side unemitted child guidance residuals locking low-confidence topology-detail diagnostics as `Done`
 - verification status:
   - implementation and live-doc sync are complete
-  - focused child actor-port direction residual-diagnostics regression passed (`1` test)
+  - focused unemitted child source guidance residual-diagnostics regression passed (`1` test)
   - adapter suite (`92` tests), formatting, docs CI, KG bench (`148/148` fixtures), and full CI (`613` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation) passed
   - user-requested `cargo sweep --time 1` is deferred until no target-tree process is active because `target/release/tool_matrix` is active
   - final commit guards pending
@@ -74,4 +74,4 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- run final commit guards and commit slice 143 without pushing
+- run final commit guards and commit slice 144 without pushing

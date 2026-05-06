@@ -249,6 +249,7 @@ Top links that originate from child endpoints absent from emitted child modules 
 Top links that target child endpoints absent from emitted child modules preserve target-endpoint enrichment guidance while keeping the declared top-port, child, and high-confidence link provenance visible.
 Source-side unemitted child endpoint blockers also emit the composition-topology residual decision, mirroring the target-side residual lock.
 That source-side residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
+The provenance-rich source-side guidance regression keeps the same low-confidence topology-detail diagnostic contract.
 Target-side unemitted child endpoint blockers also emit the composition-topology residual decision so renderable-child repair remains visible in structured adapter diagnostics.
 That target-side residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
 
