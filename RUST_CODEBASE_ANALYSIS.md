@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` no-top-port residual lock)
+- Added a composition residual assertion to `top_composition_blocks_top_without_port_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- Top roots that omit explicit top-port records now keep explicit top-port repair visible in `fsm_adapter_composition_topology` while retaining existing renderability enrichment guidance.
+- The live tracker and roadmap now mark the no-top-port residual guarantee as closed; focused adapter coverage, full adapter coverage, KG bench, docs, full CI, and `cargo sweep --time 1` all passed.
+
 ## Session update (2026-05-06 `.fsm` no-child residual lock)
 - Added a composition residual assertion to `top_composition_blocks_top_without_child_guidance` in `crates/specforge/src/ir/adapters.rs`.
 - Top roots that omit explicit child-module references now keep child-module reference repair visible in `fsm_adapter_composition_topology` while retaining existing renderability enrichment guidance.

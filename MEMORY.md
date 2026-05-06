@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `d8d4d2d50b48a532ce4954f83a5eb0f84fc89ccd`
-- latest_commit_brief_message: `test(adapter): lock multi-child residual`
-- note: new local `N=200` batch is active; slice 55 is committed, slice 56 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `ba50656c9dd5cebf1f2b3706c534007882f67fb9`
+- latest_commit_brief_message: `test(adapter): lock no-child residual`
+- note: new local `N=200` batch is active; slice 56 is committed, slice 57 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `ba50656` test(adapter): lock no-child residual
 - `d8d4d2d` test(adapter): lock multi-child residual
 - `49ad0b9` test(adapter): align top source residuals
 - `7e87a61` test(adapter): align top target residuals
 - `eb66b18` test(adapter): lock child source residual
 - `dc64387` test(adapter): lock child target residual
-- `28d4899` test(adapter): lock child target link confidence
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 56]`
-- files in flight for new batch slice 56:
+- branch state before the next commit: `main...origin/main [ahead 57]`
+- files in flight for new batch slice 57:
   - `crates/specforge/src/ir/adapters.rs`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `ROADMAP.md`
@@ -49,19 +49,19 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `55`
+- completed_count: `56`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - lock structured composition residual diagnostics for top roots without explicit child-module references
-  - prove `top_composition_blocks_top_without_child_guidance` carries `fsm_adapter_composition_topology`
-  - keep child-module reference repair visible while existing no-child enrichment guidance and top-port provenance remain intact
-  - sync the live tracker, roadmap, and mdBook with the no-child top residual guarantee
+  - lock structured composition residual diagnostics for top roots without explicit top-port records
+  - prove `top_composition_blocks_top_without_port_guidance` carries `fsm_adapter_composition_topology`
+  - keep explicit top-port repair visible while existing no-top-port enrichment guidance and child provenance remain intact
+  - sync the live tracker, roadmap, and mdBook with the no-top-port residual guarantee
 - tracker effect:
-  - live-status tracker changed; new row marks `.fsm` no-child top blockers preserving composition topology residual decisions as `Done`
+  - live-status tracker changed; new row marks `.fsm` no-top-port blockers preserving composition topology residual decisions as `Done`
 - verification status:
   - implementation and live-doc sync are complete
   - focused regression, adapter suite, fmt, docs, KG bench, full CI, and `cargo sweep --time 1` have passed
@@ -72,4 +72,4 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- run final commit guards, commit slice 56 without pushing, clear `git_message_brief.txt`, record post-commit checks, then continue slice 57
+- run final commit guards, commit slice 57 without pushing, clear `git_message_brief.txt`, record post-commit checks, then continue slice 58

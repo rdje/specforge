@@ -217,7 +217,7 @@
   - duplicate top-port width blockers preserve explicit top-port deduplication guidance alongside width-conflict guidance
   - multi-child top roots without explicit top-link records preserve top-link enrichment guidance and composition-topology residual diagnostics while retaining child declaration provenance and resolved child root kinds
   - top roots without child-module references preserve child-module enrichment guidance and composition-topology residual diagnostics while retaining top-port provenance
-  - top roots without top-port records preserve top-port enrichment guidance while retaining child declaration provenance and resolved child root kind
+  - top roots without top-port records preserve top-port enrichment guidance and composition-topology residual diagnostics while retaining child declaration provenance and resolved child root kind
   - top links targeting undeclared top-boundary ports preserve target-endpoint enrichment guidance, composition-topology residual diagnostics, and top-port, child, and link provenance
   - top links originating from undeclared top-boundary ports preserve source-endpoint enrichment guidance, composition-topology residual diagnostics, and top-port, child, and link provenance
   - top links originating from child endpoints absent from emitted child modules preserve source-endpoint enrichment guidance, composition-topology residual diagnostics, and top-port, child, and link provenance
