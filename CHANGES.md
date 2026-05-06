@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` duplicate top-width residual lock)
+
+### Added: duplicate top-width blockers now lock residual diagnostics
+- Tightened `top_composition_keeps_duplicate_top_port_width_conflict_unresolved` so duplicate top-port width blockers prove `fsm_adapter_composition_topology` remains present.
+- The residual assertion keeps explicit top-port repair visible while the blocked top candidate and aggregate renderability still preserve top-port deduplication and width-conflict guidance.
+- Updated the live tracker, roadmap, and mdBook to mark the duplicate top-width residual guarantee as closed.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_keeps_duplicate_top_port_width_conflict_unresolved` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`613` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo sweep --time 1` -> completed (`Cleaned nothing`)
+
 ## 2026-05-06 (`.fsm` duplicate top-direction residual lock)
 
 ### Added: duplicate top-direction blockers now lock residual diagnostics
