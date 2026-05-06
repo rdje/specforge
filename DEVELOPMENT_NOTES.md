@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` reset-polarity blocker support lock
+- New batch slice 86/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `keeps_reset_polarity_blocked_when_signal_name_cannot_preserve_it` now asserts the blocked sequential DT keeps its system contract visible with reset signal name, active-low polarity, support IDs, and high automation confidence.
+- This is a coverage-only lock for the blocked path where `.fsm` syntax would otherwise lose active-low reset polarity because the reset signal is named `rst`.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` structured-FSM undeclared-transition support lock
 - New batch slice 85/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `keeps_structured_fsm_blocked_when_transition_target_is_undeclared` now asserts the blocked FSM-root transition candidate keeps its source/target state names, declaration support IDs, and high automation confidence while the undeclared target-state blocker remains active.

@@ -8353,6 +8353,15 @@ mod tests {
     fn keeps_reset_polarity_blocked_when_signal_name_cannot_preserve_it() -> Result<()> {
         let tempdir = tempdir()?;
         let intent_ir = build_reset_polarity_name_mismatch_intent_ir(tempdir.path())?;
+        let system_contract_support_ids = intent_ir
+            .system_contract
+            .as_ref()
+            .map(|system_contract| system_contract.supporting_statement_ids.clone())
+            .expect("system contract should be present");
+        assert!(
+            !system_contract_support_ids.is_empty(),
+            "system-contract provenance should be present"
+        );
         let artifact_base = tempdir.path().join("generated").join("adapters");
 
         let adapter = AdapterArtifact::build(
@@ -8363,6 +8372,24 @@ mod tests {
 
         assert_eq!(adapter.lowering_status.as_str(), "blocked");
         let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let system_contract = fsm
+            .system_contract
+            .as_ref()
+            .expect("blocked sequential DT should keep system contract visible");
+        assert_eq!(system_contract.reset_signal, "rst");
+        assert_eq!(
+            system_contract.reset_polarity,
+            SystemResetPolarity::ActiveLow
+        );
+        assert!(
+            system_contract_support_ids
+                .iter()
+                .any(|id| system_contract.supporting_statement_ids.contains(id))
+        );
+        assert_eq!(
+            system_contract.automation_confidence,
+            AutomationConfidence::High
+        );
         assert!(!fsm.renderability.is_renderable);
         assert!(
             fsm.renderability

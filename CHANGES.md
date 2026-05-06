@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` reset-polarity blocker support lock)
+
+### Added: system-contract provenance coverage for reset polarity blockers
+- Tightened `keeps_reset_polarity_blocked_when_signal_name_cannot_preserve_it` so a blocked sequential DT now proves its system contract remains visible in the `.fsm` adapter artifact.
+- The test locks reset signal name, active-low reset polarity, system-contract support IDs, and high automation confidence while `.fsm` emission stays blocked because the reset name cannot preserve polarity.
+- This keeps reset evidence auditable without rendering target syntax that would misrepresent active-low behavior.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge keeps_reset_polarity_blocked_when_signal_name_cannot_preserve_it` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` structured-FSM undeclared-transition support lock)
 
 ### Added: transition provenance coverage for undeclared-target blockers

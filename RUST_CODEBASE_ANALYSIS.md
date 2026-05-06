@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` reset-polarity blocker support lock)
+- Tightened `keeps_reset_polarity_blocked_when_signal_name_cannot_preserve_it` in `crates/specforge/src/ir/adapters.rs` so the blocked sequential-DT artifact retains system-contract support IDs, reset signal name, active-low polarity, and high confidence.
+- The adapter already blocked `.fsm` emission when active-low polarity could not be preserved through the reset signal name; this regression now proves the rejected system contract remains auditable.
+- This complements the system-contract direction/width blocker locks with the reset-semantics blocker branch.
+
 ## Session update (2026-05-06 `.fsm` structured-FSM undeclared-transition support lock)
 - Tightened `keeps_structured_fsm_blocked_when_transition_target_is_undeclared` in `crates/specforge/src/ir/adapters.rs` so the blocked FSM-root transition candidate retains source/target state names, declaration support IDs, and high confidence.
 - The adapter already blocked `.fsm` emission when a transition target was undeclared; this regression now proves the transition remains visible for review.
