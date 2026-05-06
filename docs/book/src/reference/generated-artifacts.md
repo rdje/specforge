@@ -127,6 +127,7 @@ For `.fsm` top roots, a top-port direction can be unresolved for rendering while
 For renderable `.fsm` top-composition roots, inspect the selected top candidate as well as the emitted target text.
 The adapter artifact keeps the declared top-port direction and numeric width, the top-port automation confidence, child declaration support IDs, topology-link support IDs, and the renderable top root.
 When multiple child instances reuse the same module, the top candidate still keeps per-instance child support IDs plus top-port and link provenance, while the renderable source document emits the shared child module root only once.
+When a renderable source document emits the `?top` root before producer/consumer child direct roots, the selected top candidate and renderable top root still carry the public top-port and topology-link support IDs.
 For blocked composition roots, the same artifact shape is useful for diagnostics: a missing child can block emission while the surviving top-port provenance remains available for review.
 
 For structured FSM roots, the artifact preserves the graph surface that led to renderability or blocking.

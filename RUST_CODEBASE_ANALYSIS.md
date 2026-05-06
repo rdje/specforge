@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` top-before-child provenance lock)
+- Tightened `renderable_top_document_emits_top_before_child_direct_roots` in `crates/specforge/src/ir/adapters.rs` so top-before-child source-document emission keeps public top-port support IDs in the selected top candidate.
+- The renderable top root now also proves both explicit topology-link support-ID sets survive while the existing child support-ID and top-first order guarantees remain intact.
+- This keeps source-document ordering coverage tied to the same provenance surface as the other renderable top-composition paths.
+
 ## Session update (2026-05-06 `.fsm` reused-child top provenance lock)
 - Tightened `renderable_top_document_deduplicates_reused_child_module_roots` in `crates/specforge/src/ir/adapters.rs` so reused-child top composition preserves the public `result_data` top-port shape and support IDs.
 - The test now also proves both topology-link support-ID sets survive while the shared `stage_core` direct root is still emitted exactly once.

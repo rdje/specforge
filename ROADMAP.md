@@ -208,7 +208,7 @@
   - reused-FSM-child top-composition lowering preserves per-instance child support IDs while deduplicating the shared emitted FSM module root
   - mixed-child top-composition lowering preserves DT and FSM child support IDs while preserving emitted root order and kind
   - single FSM-child top-composition lowering preserves child support IDs while preserving FSM child root kind
-  - renderable top-before-child source-document emission preserves child support IDs while keeping top-first output order
+  - renderable top-before-child source-document emission preserves child, top-port, and topology-link support IDs while keeping top-first output order
   - child sibling-link target width recovery preserves explicit top-link support IDs and high automation confidence in recovered consumer child module inventories
   - direct-root actor-port width recovery preserves graph-backed support IDs and automation confidence while avoiding import of the external actor's direction
   - unambiguous direct actor-port direction recovery preserves graph-backed support IDs and high automation confidence for direct inputs and outputs
@@ -232,6 +232,7 @@
   - missing-child composition blockers preserve declared top-port provenance alongside unresolved child candidates
   - renderable top-composition lowering preserves top-port shape and renderable-top provenance alongside child/link support IDs
   - reused-child top-composition lowering preserves top-port shape and topology-link support IDs while deduplicating the shared emitted child root
+  - renderable top-before-child source-document emission preserves top-port and topology-link provenance alongside child support IDs
   - unrelated direct actor-port graph context keeps selected support IDs auditable while excluding unrelated side-band evidence from `.fsm` inventories
   - ambiguous direct actor-port graph context leaves graph direction, actor-port category, and support IDs unselected instead of guessing a target actor
   - standalone DT graph-backed undriven output blockers preserve selected actor support IDs and high automation confidence while blocking `.fsm` emission

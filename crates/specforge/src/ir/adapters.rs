@@ -10258,12 +10258,23 @@ mod tests {
     fn renderable_top_document_emits_top_before_child_direct_roots() -> Result<()> {
         let tempdir = tempdir()?;
         let intent_ir = build_explicit_top_composition_intent_ir(tempdir.path())?;
-        let (producer_child_support_ids, consumer_child_support_ids) = {
+        let (
+            top_port_support_ids,
+            producer_child_support_ids,
+            consumer_child_support_ids,
+            producer_to_consumer_link_support_ids,
+            consumer_to_top_link_support_ids,
+        ) = {
             let explicit_top = intent_ir
                 .explicit_tops
                 .iter()
                 .find(|top| top.top_name == "datapath")
                 .expect("explicit top should be present");
+            let top_port = explicit_top
+                .ports
+                .iter()
+                .find(|port| port.port_name == "result_data")
+                .expect("result_data top port should be present");
             let producer_child = explicit_top
                 .children
                 .iter()
@@ -10274,9 +10285,32 @@ mod tests {
                 .iter()
                 .find(|child| child.instance_name == "consumer")
                 .expect("consumer child should be present");
+            let producer_to_consumer_link = explicit_top
+                .links
+                .iter()
+                .find(|link| {
+                    link.source.instance_name.as_deref() == Some("producer")
+                        && link.source.signal_name == "output_data"
+                        && link.target.instance_name.as_deref() == Some("consumer")
+                        && link.target.signal_name == "input_data"
+                })
+                .expect("producer to consumer topology link should be present");
+            let consumer_to_top_link = explicit_top
+                .links
+                .iter()
+                .find(|link| {
+                    link.source.instance_name.as_deref() == Some("consumer")
+                        && link.source.signal_name == "result_data"
+                        && link.target.instance_name.is_none()
+                        && link.target.signal_name == "result_data"
+                })
+                .expect("consumer to top topology link should be present");
             (
+                top_port.supporting_statement_ids.clone(),
                 producer_child.supporting_statement_ids.clone(),
                 consumer_child.supporting_statement_ids.clone(),
+                super::explicit_top_link_supporting_ids(producer_to_consumer_link),
+                super::explicit_top_link_supporting_ids(consumer_to_top_link),
             )
         };
         let artifact_base = tempdir.path().join("generated").join("adapters");
@@ -10305,6 +10339,11 @@ mod tests {
             .iter()
             .find(|top| top.top_name == "datapath")
             .expect("datapath top candidate should be present");
+        let result_port = top_candidate
+            .ports
+            .iter()
+            .find(|port| port.port_name == "result_data")
+            .expect("result_data top port should be present");
         let producer_child = top_candidate
             .children
             .iter()
@@ -10319,6 +10358,11 @@ mod tests {
         assert!(renderable_document.top_root.is_some());
         assert_eq!(renderable_document.direct_roots.len(), 2);
         assert!(
+            top_port_support_ids
+                .iter()
+                .any(|id| result_port.supporting_statement_ids.contains(id))
+        );
+        assert!(
             producer_child_support_ids
                 .iter()
                 .any(|id| producer_child.supporting_canonical_ids.contains(id))
@@ -10328,6 +10372,22 @@ mod tests {
                 .iter()
                 .any(|id| consumer_child.supporting_canonical_ids.contains(id))
         );
+        let renderable_top = renderable_document
+            .top_root
+            .as_ref()
+            .expect("renderable top should remain present");
+        assert!(producer_to_consumer_link_support_ids.iter().any(|id| {
+            renderable_top
+                .links
+                .iter()
+                .any(|link| link.supporting_statement_ids.contains(id))
+        }));
+        assert!(consumer_to_top_link_support_ids.iter().any(|id| {
+            renderable_top
+                .links
+                .iter()
+                .any(|link| link.supporting_statement_ids.contains(id))
+        }));
         let top_index = emitted_text
             .find("(?top:datapath")
             .expect("emitted text should contain top root");

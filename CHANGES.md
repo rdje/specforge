@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` top-before-child provenance lock)
+
+### Added: top-before-child source-document provenance
+- Tightened `renderable_top_document_emits_top_before_child_direct_roots` so source documents that emit a `?top` root before child direct roots now preserve the public `result_data` top-port support IDs.
+- The regression also locks both explicit topology-link support-ID sets on the renderable top root while preserving the existing producer/consumer child support-ID and top-first order checks.
+- This extends the renderable composition provenance lane from child ordering into the public top boundary and wiring records.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge renderable_top_document_emits_top_before_child_direct_roots` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` reused-child top provenance lock)
 
 ### Added: reused-child composition top/link provenance
