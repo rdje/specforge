@@ -11264,7 +11264,7 @@ mod tests {
             "top_actor_port_width.md",
             "# Top Actor Port Width\nTop wrapper.\n\nTop wrapper port ext_data is output.\n\nTop wrapper child producer uses module producer_core.\n\nModule producer_core signal output_data is output width 8.\n\nModule producer_core block produce: output_data = 8'3.\n",
         )?;
-        {
+        let top_port_support_ids = {
             let raw_top = intent_ir
                 .explicit_tops
                 .iter_mut()
@@ -11281,7 +11281,8 @@ mod tests {
             );
             assert_eq!(raw_port.width_hint, None);
             raw_port.automation_confidence = AutomationConfidence::Low;
-        }
+            raw_port.supporting_statement_ids.clone()
+        };
 
         intent_ir.actor_ports = vec![actor_port_with_numeric_width(
             "wrapper",
@@ -11342,6 +11343,11 @@ mod tests {
             Some(8)
         );
         assert!(
+            top_port_support_ids
+                .iter()
+                .any(|id| recovered_port.supporting_statement_ids.contains(id))
+        );
+        assert!(
             recovered_port
                 .supporting_statement_ids
                 .iter()
@@ -11357,6 +11363,11 @@ mod tests {
                 .as_ref()
                 .and_then(|width| width.as_numeric()),
             Some(8)
+        );
+        assert!(
+            top_port_support_ids
+                .iter()
+                .any(|id| renderable_top_port.supporting_statement_ids.contains(id))
         );
         assert!(
             renderable_top_port

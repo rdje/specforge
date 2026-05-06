@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` actor-port width provenance lock)
+
+### Added: actor-backed recovered top-width declaration provenance
+- Tightened `top_composition_recovers_top_port_width_from_actor_ports` so actor-port width recovery preserves the original `ext_data` top-port declaration support IDs.
+- The regression keeps existing graph actor-port width support, high-confidence recovered width, selected signal-inventory provenance, and emitted `ext_data>8` checks intact.
+- This pairs with actor-port direction recovery so both graph-backed public-top recovery dimensions retain declaration provenance.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_top_port_width_from_actor_ports` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` actor-port direction provenance lock)
 
 ### Added: actor-backed recovered top-port declaration provenance

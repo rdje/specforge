@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` actor-port width provenance lock
+- New batch slice 8/200 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_recovers_top_port_width_from_actor_ports` now asserts actor-port-recovered `ext_data` top-port width keeps the original top-port declaration support IDs in selected and renderable top records.
+- Existing checks still prove graph actor-port width support IDs, high automation confidence, selected signal-inventory actor-port-width provenance, and `ext_data>8` emission.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` actor-port direction provenance lock
 - New batch slice 7/200 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_recovers_top_port_direction_from_actor_ports` now asserts actor-port-recovered `ext_data` top-port direction keeps the original top-port declaration support IDs in selected and renderable top records.
