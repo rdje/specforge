@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` sibling child-width size-entry lock)
+
+### Added: child size entries lock graph-backed sibling-link width recovery
+- Tightened `top_composition_recovers_child_width_from_sibling_child_link_topology` so the consumer child renderable `.fsm` size entry for `input_data` must consume the width recovered from sibling child-link topology.
+- The regression now proves a child input can retain its input role, recover width from a producer-to-consumer child link, and still lower into an input width-8 size entry.
+- Synced the live tracker, roadmap, and mdBook with the sibling child-link width size-entry guarantee.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_child_width_from_sibling_child_link_topology` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148/148` fixtures)
+- `bash scripts/run_ci.sh` -> passed (`614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation)
+- Deferred: user-requested `cargo sweep --time 1` until safe because a `target/release/tool_matrix` process is active.
+
 ## 2026-05-06 (`.fsm` top-link child-width size-entry lock)
 
 ### Added: child size entries lock graph-backed top-link width recovery

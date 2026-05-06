@@ -175,6 +175,7 @@ Child-system-contract-backed top width recovery retains the clock/reset top-port
 Top-link-backed child width recovery retains the child signal declaration support while adding topology width evidence, and renderable recovery leaves no composition-topology residual.
 Recovered top-link child widths also feed child renderable `(+size ...)` entries, so emitted child widths do not depend on an original child-local numeric declaration.
 Sibling-link-backed child width recovery follows the same rule for recovered child inputs, and renderable recovery leaves no composition-topology residual.
+Recovered sibling child-link widths also feed child renderable `(+size ...)` entries, so emitted child input widths do not depend on an original child-local numeric declaration.
 Source-side sibling-link child width recovery follows it for recovered child outputs, and renderable recovery leaves no composition-topology residual.
 Transitive child width recovery keeps declaration support for each recovered child signal while recording the topology links that propagated the width, and renderable recovery leaves no composition-topology residual.
 Child link-topology direction recovery keeps declaration support for each recovered child signal while recording the topology links that supplied graph directions, and renderable recovery leaves no composition-topology residual.

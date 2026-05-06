@@ -14670,6 +14670,17 @@ mod tests {
         assert_eq!(input_data.automation_confidence, AutomationConfidence::High);
         assert!(consumer.renderability.is_renderable);
         assert!(fsm.renderability.is_renderable);
+        let renderable_module = consumer
+            .renderable_module
+            .as_ref()
+            .expect("sibling-link-width-backed consumer should be renderable");
+        let input_size = renderable_module
+            .size_entries
+            .iter()
+            .find(|entry| entry.signal_name == "input_data")
+            .expect("input_data should have a renderable size entry");
+        assert_eq!(input_size.direction_hint, InterfaceSignalDirection::Input);
+        assert_eq!(input_size.width, 8);
         assert!(emitted_text.contains("(input_data 8)"));
         assert!(emitted_text.contains("/producer.output_data/consumer.input_data/"));
         assert!(emitted_text.contains("/consumer.result_data/result_data/"));
