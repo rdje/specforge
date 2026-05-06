@@ -12302,12 +12302,12 @@ mod tests {
     }
 
     #[test]
-    fn top_composition_blocks_link_to_unemitted_child_port() -> Result<()> {
+    fn top_composition_blocks_link_from_unemitted_child_port() -> Result<()> {
         let tempdir = tempdir()?;
         let intent_ir = build_intent_ir_from_markdown(
             tempdir.path(),
-            "link_to_unemitted_child_port.md",
-            "# Link To Unemitted Child Port\nTop datapath.\n\nTop datapath port result_data is output width 8.\n\nTop datapath child producer uses module producer_core.\n\nTop datapath link producer.side_data -> result_data.\n\nModule producer_core signal output_data is output width 8.\n\nModule producer_core signal side_data is output width 8.\n\nModule producer_core block produce: output_data = 8'3.\n",
+            "link_from_unemitted_child_port.md",
+            "# Link From Unemitted Child Port\nTop datapath.\n\nTop datapath port result_data is output width 8.\n\nTop datapath child producer uses module producer_core.\n\nTop datapath link producer.side_data -> result_data.\n\nModule producer_core signal output_data is output width 8.\n\nModule producer_core signal side_data is output width 8.\n\nModule producer_core block produce: output_data = 8'3.\n",
         )?;
         let top_link_support_ids = intent_ir
             .explicit_tops
@@ -12338,6 +12338,7 @@ mod tests {
         assert_eq!(adapter.lowering_status.as_str(), "blocked");
         assert!(adapter.artifact_layout.emitted_target_path.is_none());
         let fsm = adapter.fsm.expect("fsm artifact should be present");
+        assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Top);
         let producer = fsm
             .module_candidates
             .iter()
@@ -12357,7 +12358,7 @@ mod tests {
                     && link.target.instance_name.is_none()
                     && link.target.signal_name == "result_data"
             })
-            .expect("blocked child link should stay on the top candidate");
+            .expect("blocked source-side child link should stay on the top candidate");
 
         assert!(producer.renderability.is_renderable);
         assert!(producer.renderable_module.is_some());

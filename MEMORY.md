@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `4890d6b5403c64bcda8b72f343dd5d3fd267294c`
-- latest_commit_brief_message: `test(adapter): lock widthless top residual`
-- note: new local `N=200` batch is active; slice 69 is committed, slice 70 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `af8584dd9483e71e61547ae3bb6d6d94f7cd1534`
+- latest_commit_brief_message: `test(adapter): lock parametric top residual`
+- note: new local `N=200` batch is active; slice 70 is committed, slice 71 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `af8584d` test(adapter): lock parametric top residual
 - `4890d6b` test(adapter): lock widthless top residual
 - `dbd8d2e` test(adapter): lock actor direction residual
 - `7a6a7d4` test(adapter): lock child topology direction residual
 - `dd44c58` test(adapter): lock child topology width residual
 - `1a03b5b` test(adapter): lock sibling width residual
-- `e1f9b42` test(adapter): lock child-link width residual
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 70]`
-- files in flight for new batch slice 70:
+- branch state before the next commit: `main...origin/main [ahead 71]`
+- files in flight for new batch slice 71:
   - `crates/specforge/src/ir/adapters.rs`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `ROADMAP.md`
@@ -49,22 +49,22 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `69`
+- completed_count: `70`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - lock structured composition residual diagnostics for parametric public top-port blockers
-  - prove `top_composition_blocks_parametric_top_port_width_for_fsm_public_io` keeps explicit top-port repair visible in `fsm_adapter_composition_topology`
-  - preserve existing top-boundary width-resolution guidance plus explicit top-port support IDs and high automation confidence
-  - sync the live tracker, roadmap, and mdBook with the parametric top-port residual guarantee
+  - align unemitted child endpoint guidance across the legacy source-side regression, roadmap, and mdBook
+  - rename `top_composition_blocks_link_to_unemitted_child_port` to the source-side blocker it actually covers
+  - assert explicit top-root selection in that legacy regression
+  - sync the live tracker, roadmap, and mdBook with source- and target-endpoint repair guidance wording
 - tracker effect:
-  - live-status tracker changed; new row marks `.fsm` parametric top-port blockers preserving composition topology residual decisions as `Done`
+  - live-status tracker changed; new row marks `.fsm` unemitted child endpoint guidance naming source and target repair lanes consistently as `Done`
 - verification status:
   - implementation and live-doc sync are complete
-  - focused parametric top-port residual regression passed (`1` test)
+  - focused source-side unemitted child endpoint regression passed (`1` test)
   - adapter suite passed (`92` tests)
   - formatting, docs CI, KG bench (`148/148` fixtures), full CI (`613` Rust tests plus warning-deny Clippy/rustdoc and mdBook), and `cargo sweep --time 1` all passed
 - current known local CI baseline:
@@ -74,4 +74,4 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- run final commit guards, commit slice 70 without pushing, then start slice 71 of the active `N=200` batch
+- run final commit guards, commit slice 71 without pushing, then start slice 72 of the active `N=200` batch

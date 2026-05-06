@@ -33,6 +33,7 @@
 - `.fsm` top-boundary top-link role conflicts now preserve endpoint-role repair guidance: Done
 - `.fsm` top-link target-role mismatches now preserve endpoint-role repair guidance: Done
 - `.fsm` top-link direction-role mismatches now preserve endpoint-role repair guidance: Done
+- `.fsm` unemitted child endpoint guidance now names source and target repair lanes consistently: Done
 - `.fsm` links from unemitted child sources now preserve source-endpoint enrichment guidance: Done
 - `.fsm` links from unemitted child sources now preserve composition topology residual decisions: Done
 - `.fsm` links from undeclared top sources now preserve composition topology residual decisions: Done
@@ -452,7 +453,8 @@
 - `.fsm` parametric top-port blockers now regression-lock support IDs and automation confidence: Done
 - `.fsm` explicit top-link lowering now requires child endpoints to resolve to emitted child module ports: Done
 - `.fsm` top-link blockers for unemitted child endpoints now regression-lock support IDs and automation confidence: Done
-- `.fsm` top-link blockers for unemitted child endpoints now preserve aggregate source-endpoint enrichment guidance: Done
+- `.fsm` top-link blockers for unemitted child endpoints now preserve aggregate source- and target-endpoint enrichment guidance: Done
+- `.fsm` unemitted child endpoint guidance now names source and target repair lanes consistently: Done
 - `.fsm` missing-child top blockers now preserve child-source enrichment guidance: Done
 - `.fsm` primary missing-child top blockers now regression-lock child-source enrichment guidance: Done
 - `.fsm` duplicate child-instance top blockers now preserve deduplication enrichment guidance: Done

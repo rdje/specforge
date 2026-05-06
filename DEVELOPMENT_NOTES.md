@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` unemitted child endpoint guidance alignment
+- New batch slice 71/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_link_to_unemitted_child_port` is renamed to `top_composition_blocks_link_from_unemitted_child_port` so the legacy regression matches the source-side blocker it covers.
+- The test now also asserts explicit top-root selection, and the roadmap/book wording names both source- and target-endpoint repair guidance for unemitted child endpoints.
+- Focused source-side unemitted child endpoint regression, adapter suite, fmt, docs, KG bench, full CI, and the user-requested `cargo sweep --time 1` all passed.
+
 ## 2026-05-06 `.fsm` parametric top-port residual lock
 - New batch slice 70/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_parametric_top_port_width_for_fsm_public_io` now asserts that parametric top-port blockers emit the composition topology residual.

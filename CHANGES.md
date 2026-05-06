@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` unemitted child endpoint guidance alignment)
+
+### Changed: source and target endpoint guidance are named consistently
+- Renamed the legacy source-side unemitted child-port regression so the test name matches the blocked source endpoint it exercises.
+- Added a root-kind assertion to keep that legacy regression tied to explicit top composition rather than an accidental direct-root path.
+- Updated the live tracker, roadmap, and mdBook wording so unemitted child endpoint blockers advertise both source- and target-side repair lanes.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_link_from_unemitted_child_port` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`613` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo sweep --time 1` -> completed (`Cleaned nothing`)
+
 ## 2026-05-06 (`.fsm` parametric top-port residual lock)
 
 ### Added: parametric top-port blockers now lock residual diagnostics
