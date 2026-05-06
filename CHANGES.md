@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` unemitted child-source guidance lock)
+
+### Added: unemitted child-source endpoint coverage
+- Added `top_composition_blocks_link_from_unemitted_child_source_guidance` so top links that originate from a child endpoint absent from the renderable child module prove source-endpoint enrichment guidance survives on the blocked top candidate and aggregate `.fsm` renderability.
+- The regression also proves the declared top port, producer child declaration, blocked top-link support IDs, and high-confidence topology link remain visible while the child resolves to a renderable DT root.
+- This tightens the source-side child endpoint blocker to match the target-side provenance coverage.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_link_from_unemitted_child_source_guidance` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`88` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`609` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` unemitted child-target guidance lock)
 
 ### Added: unemitted child-target endpoint coverage

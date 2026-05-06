@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` unemitted child-source guidance lock
+- New batch slice 40/200 adds coverage in `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_link_from_unemitted_child_source_guidance` asserts top links that originate from a child endpoint absent from the renderable child module keep `declare and emit every top-link source endpoint before lowering ?top:name` guidance on the blocked top candidate and aggregate `.fsm` renderability.
+- The regression also proves the declared `result_data` top port, producer child, blocked topology link, and high-confidence link provenance remain visible while the child source resolves as a renderable DT root.
+- Full adapter coverage is now `88` adapter tests, full CI is now `609` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` unemitted child-target guidance lock
 - New batch slice 39/200 adds coverage in `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_link_to_unemitted_child_target_guidance` asserts top links that target a child endpoint absent from the renderable child module keep `declare and emit every top-link target endpoint before lowering ?top:name` guidance on the blocked top candidate and aggregate `.fsm` renderability.
