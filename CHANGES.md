@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` explicit-module control-input width size-entry lock)
+
+### Added: explicit-module size entries lock graph-backed control-input width recovery
+- Tightened `standalone_explicit_module_recovers_control_input_width_from_actor_port_graph` so the renderable module-local `.fsm` size entry for `DATA_IN` must consume actor-port graph width recovery together with the module-local input direction.
+- The regression now proves an explicit-module control input can remain free of flat compatibility direction evidence, recover width from actor-port shape provenance, and still lower into an input width-8 size entry.
+- Synced the live tracker, roadmap, and mdBook with the explicit-module control-input width size-entry guarantee.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge standalone_explicit_module_recovers_control_input_width_from_actor_port_graph` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148/148` fixtures)
+- `bash scripts/run_ci.sh` -> passed (`614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation)
+- Deferred: user-requested `cargo sweep --time 1` until safe because a `target/release/tool_matrix` process is active.
+
 ## 2026-05-06 (`.fsm` direct control-input width size-entry lock)
 
 ### Added: direct DT size entries lock graph-backed control-input width recovery

@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` explicit-module control-input width size-entry lock
+- New batch slice 151/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `standalone_explicit_module_recovers_control_input_width_from_actor_port_graph` now asserts the renderable module-local `(+size ...)` entry for `DATA_IN` consumes actor-port graph width recovery together with graph-recovered module-control input direction.
+- This locks explicit-module control-input width recovery through target emission, not just module inventory: `DATA_IN` remains flat-direction-free but still lowers as an input width-8 size entry.
+- Focused explicit-module control-input width size-entry coverage, the adapter suite, fmt, docs CI, KG bench (`148/148` fixtures), and full CI passed; user-requested `cargo sweep --time 1` remains deferred until no target-tree process is active.
+
 ## 2026-05-06 `.fsm` direct control-input width size-entry lock
 - New batch slice 150/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `standalone_dt_recovers_control_input_width_from_actor_port_graph` now asserts the renderable `(+size ...)` entry for `DATA_IN` consumes actor-port graph width recovery together with the graph-recovered target-actor input direction.

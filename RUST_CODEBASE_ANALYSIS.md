@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` explicit-module control-input width size-entry lock)
+- Tightened `standalone_explicit_module_recovers_control_input_width_from_actor_port_graph` in `crates/specforge/src/ir/adapters.rs`.
+- The test now proves the explicit-module renderable `.fsm` size entry for `DATA_IN` consumes graph-recovered actor-port width together with module-control input direction when flat module-local `direction_hint` is absent.
+- This locks the downstream size-entry consumer for explicit-module control-input width recovery; focused adapter coverage, full adapter coverage, fmt, docs CI, KG bench, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 `.fsm` direct control-input width size-entry lock)
 - Tightened `standalone_dt_recovers_control_input_width_from_actor_port_graph` in `crates/specforge/src/ir/adapters.rs`.
 - The test now proves the direct-DT renderable `.fsm` size entry for `DATA_IN` consumes graph-recovered actor-port width together with target-actor input direction when flat direct-interface `direction_hint` is absent.

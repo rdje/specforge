@@ -9834,6 +9834,17 @@ mod tests {
         );
         assert!(module.renderability.is_renderable);
         assert!(fsm.renderability.is_renderable);
+        let renderable_module = module
+            .renderable_module
+            .as_ref()
+            .expect("module-control-input-width-backed module should be renderable");
+        let data_in_size = renderable_module
+            .size_entries
+            .iter()
+            .find(|entry| entry.signal_name == "DATA_IN")
+            .expect("DATA_IN should have a renderable size entry");
+        assert_eq!(data_in_size.direction_hint, InterfaceSignalDirection::Input);
+        assert_eq!(data_in_size.width, 8);
         assert!(emitted_text.contains("(DATA_IN 8)"));
         assert!(emitted_text.contains("(ACC <= DATA_IN)"));
 
