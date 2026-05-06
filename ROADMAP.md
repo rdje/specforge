@@ -251,7 +251,7 @@
   - missing-child top-composition blockers preserve unresolved child declaration support IDs and confidence while blocking `.fsm` emission
   - reused-child top-composition lowering preserves per-instance child support IDs while deduplicating the shared emitted module root and staying composition-residual clean once renderable
   - reused-FSM-child top-composition lowering preserves per-instance child, top-port, and topology-link support IDs while deduplicating the shared emitted FSM module root and staying composition-residual clean once renderable
-  - mixed-child top-composition lowering preserves DT/FSM child, top-port, and topology-link support IDs while preserving emitted root order and kind
+  - mixed-child top-composition lowering preserves DT/FSM child, top-port, and topology-link support IDs while preserving emitted root order and kind and staying composition-residual clean once renderable
   - single FSM-child top-composition lowering preserves child, top-port, and topology-link support IDs while preserving FSM child root kind and staying composition-residual clean once renderable
   - renderable top-before-child source-document emission preserves child, top-port, and topology-link support IDs while keeping top-first output order and staying composition-residual clean once renderable
   - child sibling-link target width recovery preserves explicit top-link support IDs and high automation confidence in recovered consumer child module inventories
@@ -280,7 +280,7 @@
   - renderable top-before-child source-document emission preserves top-port and topology-link provenance alongside child support IDs without leaving composition-topology residuals once renderable
   - single-FSM-child top source-document emission preserves top-port and topology-link provenance alongside child root-kind support without leaving composition-topology residuals once renderable
   - reused-FSM-child top source-document emission preserves top-port and topology-link provenance while deduplicating the shared FSM root without leaving composition-topology residuals once renderable
-  - mixed-child top source-document emission preserves top-port and topology-link provenance while preserving DT/FSM direct-root order
+  - mixed-child top source-document emission preserves top-port and topology-link provenance while preserving DT/FSM direct-root order without leaving composition-topology residuals once renderable
   - top-link direction recovery augments public top-port declarations with topology support without dropping declaration support IDs
   - actor-port direction recovery augments public top-port declarations with graph support without dropping declaration support IDs
   - actor-port width recovery augments public top-port declarations with graph width support without dropping declaration support IDs

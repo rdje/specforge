@@ -130,7 +130,7 @@ When multiple child instances reuse the same module, the top candidate still kee
 When a renderable source document emits the `?top` root before producer/consumer child direct roots, the selected top candidate and renderable top root still carry the public top-port and topology-link support IDs without leaving composition-topology residuals.
 Single-FSM-child top documents preserve the same top-port and topology-link provenance while keeping the child reference typed as an FSM child root and leaving no composition-topology residual once renderable.
 Reused-FSM-child top documents also preserve per-output top-port and link provenance while emitting the shared FSM direct root only once without leaving composition-topology residuals.
-Mixed DT/FSM child top documents preserve public top-port and topology-link provenance while retaining child root kinds and direct-root order.
+Mixed DT/FSM child top documents preserve public top-port and topology-link provenance while retaining child root kinds and direct-root order without leaving composition-topology residuals.
 When explicit top-link topology recovers a public top-port direction, the recovered top records retain the original top-port declaration support IDs as well as the topology evidence that supplied the direction.
 If that recovered top-port direction is still blocked by another composition gate, the adapter also emits the composition-topology residual decision so child-module reference repair remains visible.
 Recovered top-port evidence can also raise the selected top root-kind confidence while keeping that same residual decision visible when topology is still incomplete.

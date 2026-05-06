@@ -11033,6 +11033,12 @@ mod tests {
         assert!(emitted_text.contains("(?dtc:producer producer_core)"));
         assert!(emitted_text.contains("(?fsmc:controller controller_core)"));
         assert!(emitted_text.contains("/producer.output_data/controller.DATA_IN/"));
+        assert!(
+            adapter
+                .residual_decisions
+                .iter()
+                .all(|packet| packet.packet_id != "fsm_adapter_composition_topology")
+        );
 
         Ok(())
     }

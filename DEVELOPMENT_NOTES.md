@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` mixed-child residual cleanliness
+- New batch slice 81/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `renderable_top_document_preserves_mixed_child_root_order_and_kind` now asserts no stale composition topology residual remains after the renderable source document emits mixed DT/FSM child direct roots.
+- This keeps mixed root-kind order, top-port, and topology-link provenance paired with a clean aggregate residual surface once the composition is renderable.
+- Focused mixed-child residual-clean regression, adapter suite, fmt, docs, KG bench, full CI, and the user-requested `cargo sweep --time 1` all passed.
+
 ## 2026-05-06 `.fsm` reused-FSM-child residual cleanliness
 - New batch slice 80/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `renderable_top_document_deduplicates_reused_fsm_child_roots` now asserts no stale composition topology residual remains after the renderable source document deduplicates the shared `controller_core` FSM child root.
