@@ -227,8 +227,8 @@
   - child actor-port direction recovery preserves original child signal declaration support IDs alongside graph actor-port support IDs in recovered child module inventories while staying composition-residual clean once renderable
   - child actor-port direction conflicts preserve explicit child signal declaration support IDs and graph actor-port support IDs while blocking `.fsm` emission
   - child actor-port direction conflict blockers preserve actor-relative graph-direction enrichment guidance and composition-topology residual diagnostics on blocked module and aggregate `.fsm` renderability surfaces
-  - child link-topology direction recovery preserves explicit top-link support IDs and high automation confidence across producer and consumer child module inventories
-  - child link-topology direction recovery preserves original child signal declaration support IDs alongside topology-link support IDs in recovered child module inventories
+  - child link-topology direction recovery preserves explicit top-link support IDs and high automation confidence across producer and consumer child module inventories while staying composition-residual clean once renderable
+  - child link-topology direction recovery preserves original child signal declaration support IDs alongside topology-link support IDs in recovered child module inventories while staying composition-residual clean once renderable
   - child top-link width recovery preserves explicit top-link support IDs and high automation confidence in recovered child module inventories
   - child top-link width recovery preserves original child signal declaration support IDs alongside topology-link support IDs in recovered child module inventories
   - sibling child-link width recovery preserves explicit top-link support IDs and high automation confidence in both source-side and target-side recovered child module inventories
@@ -290,7 +290,7 @@
   - sibling-link child-width recovery augments child signal declarations with topology width support without dropping declaration support IDs
   - source-side sibling child-width recovery augments child signal declarations with topology width support without dropping declaration support IDs
   - transitive child-width recovery augments producer and consumer child signal declarations with topology width support without dropping declaration support IDs
-  - child link-topology direction recovery augments child signal declarations with topology direction support without dropping declaration support IDs
+  - child link-topology direction recovery augments child signal declarations with topology direction support without dropping declaration support IDs or leaving composition-topology residuals once renderable
   - child actor-port direction recovery augments child signal declarations with graph direction support without dropping declaration support IDs or leaving composition-topology residuals once renderable
   - unrelated direct actor-port graph context keeps selected support IDs auditable while excluding unrelated side-band evidence from `.fsm` inventories
   - ambiguous direct actor-port graph context leaves graph direction, actor-port category, and support IDs unselected instead of guessing a target actor

@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` child link-direction residual cleanliness)
+- Added a residual-clean assertion to `top_composition_recovers_child_directions_from_link_topology` in `crates/specforge/src/ir/adapters.rs`.
+- Child link-topology direction recovery now proves topology-backed child signal direction recovery leaves no stale `fsm_adapter_composition_topology` packet once the top is renderable.
+- The live tracker and roadmap now mark the child link-topology direction recovery residual-clean guarantee as closed; focused adapter coverage, full adapter coverage, KG bench, docs, full CI, and `cargo sweep --time 1` all passed.
+
 ## Session update (2026-05-06 `.fsm` child actor direction residual cleanliness)
 - Added a residual-clean assertion to `top_composition_recovers_child_directions_from_actor_ports` in `crates/specforge/src/ir/adapters.rs`.
 - Child actor-port direction recovery now proves graph-backed child signal direction recovery leaves no stale `fsm_adapter_composition_topology` packet once the top is renderable.
