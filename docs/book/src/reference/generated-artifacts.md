@@ -143,6 +143,7 @@ Explicit-module control-read direction conflicts keep the actor-port/control-rea
 Explicit-module actor-port width conflicts keep both graph-backed width support IDs plus signal-inventory repair guidance while blocked.
 Standalone sequential system-contract direction conflicts keep clock/reset provenance and system-surface repair guidance while blocked.
 Standalone sequential system-contract width conflicts keep clock/reset provenance and the same system-surface repair guidance while blocked.
+Standalone sequential system-contract flat/graph direction disagreements keep actor-port support and system-surface repair guidance while blocked.
 
 For renderable `.fsm` top-composition roots, inspect the selected top candidate as well as the emitted target text.
 The adapter artifact keeps the declared top-port direction and numeric width, the top-port automation confidence, child declaration support IDs, topology-link support IDs, and the renderable top root.

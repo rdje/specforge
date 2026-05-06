@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `9f736305df48f29a01fd17cf88b53dfeb6d323ca`
-- latest_commit_brief_message: `test(adapter): lock system contract direction guidance`
-- note: new local `N=200` batch is active; slice 111 is committed, slice 112 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `7e7c201e43560395f7a8a6c049ad238214d1eef4`
+- latest_commit_brief_message: `test(adapter): lock system contract width guidance`
+- note: new local `N=200` batch is active; slice 112 is committed, slice 113 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `7e7c201` test(adapter): lock system contract width guidance
 - `9f73630` test(adapter): lock system contract direction guidance
 - `561c4f0` test(adapter): lock explicit module width guidance
 - `55b3c53` test(adapter): lock explicit module control guidance
 - `b6b4048` test(adapter): lock explicit module flat graph guidance
 - `a23381a` test(adapter): lock structured flat graph guidance
-- `82602cf` test(adapter): lock undeclared-target residual guidance
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 112]`
-- files in flight for new batch slice 112:
+- branch state before the next commit: `main...origin/main [ahead 113]`
+- files in flight for new batch slice 113:
   - `crates/specforge/src/ir/adapters.rs`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `ROADMAP.md`
@@ -49,21 +49,21 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `111`
+- completed_count: `112`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - lock system-contract residual guidance for standalone sequential clock width conflict blockers
-  - prove `standalone_sequential_dt_blocks_conflicting_system_contract_signal_width` keeps the `fsm_adapter_system_contract` residual packet and upstream enrichment candidate while preserving clock/reset provenance
-  - sync the live tracker, roadmap, and mdBook with the system-contract width residual-guidance guarantee
+  - lock system-contract residual guidance for standalone sequential clock flat/graph direction disagreement blockers
+  - prove `standalone_sequential_dt_blocks_system_contract_flat_graph_direction_disagreement` keeps the `fsm_adapter_system_contract` residual packet and upstream enrichment candidate while preserving actor-port support provenance
+  - sync the live tracker, roadmap, and mdBook with the system-contract flat/graph residual-guidance guarantee
 - tracker effect:
-  - live-status tracker changed; new row marks `.fsm` system-contract width conflicts retaining system-surface repair guidance when blocked as `Done`
+  - live-status tracker changed; new row marks `.fsm` system-contract flat/graph direction disagreements retaining system-surface repair guidance when blocked as `Done`
 - verification status:
   - implementation and live-doc sync are complete
-  - focused system-contract width residual-guidance regression passed (`1` test)
+  - focused system-contract flat/graph residual-guidance regression passed (`1` test)
   - adapter suite passed (`92` tests)
   - formatting, docs CI, KG bench (`148/148` fixtures), and full CI (`613` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation) passed
   - user-requested `cargo sweep --time 1` was deferred because another shell still had `target/release/tool_matrix` running from this repository
@@ -74,4 +74,4 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- run final commit guards and commit slice 112 without pushing
+- run final commit guards and commit slice 113 without pushing

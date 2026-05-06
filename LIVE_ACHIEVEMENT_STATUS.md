@@ -68,6 +68,7 @@
 - `.fsm` explicit-module actor-port width conflicts now retain signal-inventory repair guidance when blocked: Done
 - `.fsm` system-contract direction conflicts now retain system-surface repair guidance when blocked: Done
 - `.fsm` system-contract width conflicts now retain system-surface repair guidance when blocked: Done
+- `.fsm` system-contract flat/graph direction disagreements now retain system-surface repair guidance when blocked: Done
 - `.fsm` top-link width mismatch blockers now preserve width-compatible repair guidance: Done
 - `.fsm` top-target boundary role conflicts now preserve endpoint-role repair guidance: Done
 - `.fsm` top-boundary top-link role conflicts now preserve endpoint-role repair guidance: Done
@@ -569,6 +570,7 @@
 - `.fsm` explicit-module actor-port width conflicts now retain signal-inventory repair guidance when blocked: Done
 - `.fsm` system-contract direction conflicts now retain system-surface repair guidance when blocked: Done
 - `.fsm` system-contract width conflicts now retain system-surface repair guidance when blocked: Done
+- `.fsm` system-contract flat/graph direction disagreements now retain system-surface repair guidance when blocked: Done
 - Initial typed `temporal_rules` surface in `SemanticIR` / `IntentIR` implemented: Done
 - Cycle-window recovery for typed temporal rules, including idiomatic one-cycle phrases like `next cycle` / `next tick`, implemented: Done
 - Built-in temporal parser now recognizes explicit later and ordinal edge phrases: Done

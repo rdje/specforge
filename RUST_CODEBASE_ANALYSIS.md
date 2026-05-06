@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` system-contract flat/graph residual guidance)
+- Added system-contract residual-guidance assertions to `standalone_sequential_dt_blocks_system_contract_flat_graph_direction_disagreement` in `crates/specforge/src/ir/adapters.rs`.
+- Clock flat/graph direction disagreements now prove conflicting system/actor-port direction evidence, graph support IDs, high signal confidence, exact flat/graph conflict text, low-confidence `fsm_adapter_system_contract` guidance, and the upstream system-surface enrichment candidate stay visible together.
+- The live tracker and roadmap now mark system-contract flat/graph residual guidance as closed; focused adapter coverage, full adapter coverage, KG bench, docs, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 `.fsm` system-contract width residual guidance)
 - Added system-contract residual-guidance assertions to `standalone_sequential_dt_blocks_conflicting_system_contract_signal_width` in `crates/specforge/src/ir/adapters.rs`.
 - Clock width conflicts now prove system-contract support IDs, high signal confidence, exact clock-width conflict text, low-confidence `fsm_adapter_system_contract` guidance, and the upstream system-surface enrichment candidate stay visible together.

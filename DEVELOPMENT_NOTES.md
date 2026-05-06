@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` system-contract flat/graph residual guidance
+- New batch slice 113/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `standalone_sequential_dt_blocks_system_contract_flat_graph_direction_disagreement` now asserts clock flat/graph direction disagreements keep the `fsm_adapter_system_contract` residual packet with low confidence and the upstream system-surface enrichment candidate.
+- This keeps conflicting system/actor-port direction evidence, graph support IDs, high signal confidence, exact flat/graph conflict text, and system-surface repair guidance tied together.
+- Focused system-contract flat/graph residual-guidance regression, adapter suite, fmt, docs, KG bench, and full CI all passed; user-requested `cargo sweep --time 1` is deferred until no target-tree process is active.
+
 ## 2026-05-06 `.fsm` system-contract width residual guidance
 - New batch slice 112/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `standalone_sequential_dt_blocks_conflicting_system_contract_signal_width` now asserts clock width conflicts keep the `fsm_adapter_system_contract` residual packet with low confidence and the upstream system-surface enrichment candidate.
