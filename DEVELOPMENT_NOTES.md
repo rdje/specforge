@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` single FSM-child top support lock
+- New batch slice 76/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `renderable_top_document_preserves_fsm_child_root_kind` now asserts the selected top candidate preserves the single `controller` FSM child declaration support ID while root kind and emitted direct-root order remain unchanged.
+- This is a coverage-only lock for the single-FSM-child top-composition document path.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-05 `.fsm` mixed-child top support lock
 - New batch slice 75/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `renderable_top_document_preserves_mixed_child_root_order_and_kind` now asserts mixed producer DT and controller FSM child declarations keep support IDs in the selected top candidate while emitted root order and kind remain unchanged.

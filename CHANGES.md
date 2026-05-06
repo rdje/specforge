@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` single FSM-child top support lock)
+
+### Added: single FSM-child root-kind provenance coverage
+- Tightened `renderable_top_document_preserves_fsm_child_root_kind` so single FSM child declarations now prove their support IDs survive in the selected top candidate.
+- This is coverage-only over the existing adapter behavior: the explicit top still emits before the FSM child root while preserving FSM child root kind.
+- The slice keeps the child declaration evidence auditable on the `.fsm` top path that carries a single FSM child.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge renderable_top_document_preserves_fsm_child_root_kind` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-05 (`.fsm` mixed-child top support lock)
 
 ### Added: mixed child root-order provenance coverage
