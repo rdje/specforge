@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` duplicate top-width residual diagnostics
+- New batch slice 131/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_keeps_duplicate_top_port_width_conflict_unresolved` now asserts duplicate top-boundary width blockers keep low-confidence `fsm_adapter_composition_topology` diagnostics with explicit topology-detail blocker text.
+- This keeps duplicate top-port declaration blocking, top-boundary width-conflict guidance, duplicate support-ID sets, and explicit-top-port residual guidance tied together.
+- Focused duplicate top-width residual-diagnostics regression, adapter suite, fmt, docs, KG bench, and full CI all passed; user-requested `cargo sweep --time 1` ran safely and cleaned nothing from `target/`.
+
 ## 2026-05-06 `.fsm` duplicate top-direction residual diagnostics
 - New batch slice 130/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_keeps_duplicate_top_port_direction_conflict_unresolved` now asserts duplicate top-boundary direction blockers keep low-confidence `fsm_adapter_composition_topology` diagnostics with explicit topology-detail blocker text.

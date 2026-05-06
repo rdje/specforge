@@ -104,6 +104,7 @@
 - `.fsm` duplicate top-direction blockers now preserve composition topology residual decisions: Done
 - `.fsm` duplicate top-direction residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` duplicate top-width blockers now preserve composition topology residual decisions: Done
+- `.fsm` duplicate top-width residuals now lock low-confidence topology-detail diagnostics: Done
 - `specforge inspect` command created: Done
 - `specforge doctor` command created: Done
 - `specforge ingest` SourceIR command created: Done

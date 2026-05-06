@@ -1,5 +1,16 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` duplicate top-width residual diagnostics)
+
+### Added: duplicate top-width residuals lock topology-detail diagnostics
+- Tightened `top_composition_keeps_duplicate_top_port_width_conflict_unresolved` so duplicate top-boundary width blockers retain low-confidence `fsm_adapter_composition_topology` diagnostics.
+- The regression now pairs duplicate top-port declaration blocking, top-boundary width-conflict guidance, preserved duplicate support-ID sets, explicit topology-detail residual text, and explicit-top-port repair guidance.
+- Updated the live tracker, roadmap, and mdBook to mark duplicate top-width residual diagnostics as closed.
+
+### Validation
+- Passed: focused duplicate top-width residual-diagnostics regression (`1` test), adapter suite (`92` tests), rustfmt check, docs CI/mdBook, KG bench (`148/148` fixtures), and full CI (`613` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation).
+- Swept: user-requested `cargo sweep --time 1` ran at a safe idle point and cleaned nothing from `target/`.
+
 ## 2026-05-06 (`.fsm` duplicate top-direction residual diagnostics)
 
 ### Added: duplicate top-direction residuals lock topology-detail diagnostics

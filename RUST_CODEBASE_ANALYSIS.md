@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` duplicate top-width residual diagnostics)
+- Added composition residual confidence and blocker-text assertions to `top_composition_keeps_duplicate_top_port_width_conflict_unresolved` in `crates/specforge/src/ir/adapters.rs`.
+- Duplicate top-boundary width blockers now prove duplicate declaration blocking, top-boundary width-conflict guidance, duplicate support-ID sets, low-confidence `fsm_adapter_composition_topology` diagnostics, topology-detail blocker text, and explicit-top-port repair guidance stay visible together.
+- The live tracker and roadmap now mark duplicate top-width residual diagnostics as closed; focused adapter coverage, full adapter coverage, KG bench, docs, full CI, and the user-requested safe `cargo sweep --time 1` passed.
+
 ## Session update (2026-05-06 `.fsm` duplicate top-direction residual diagnostics)
 - Added composition residual confidence and blocker-text assertions to `top_composition_keeps_duplicate_top_port_direction_conflict_unresolved` in `crates/specforge/src/ir/adapters.rs`.
 - Duplicate top-boundary direction blockers now prove duplicate declaration blocking, top-boundary direction-conflict guidance, duplicate support-ID sets, low-confidence `fsm_adapter_composition_topology` diagnostics, topology-detail blocker text, and explicit-top-port repair guidance stay visible together.
