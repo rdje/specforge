@@ -11705,12 +11705,27 @@ mod tests {
             "top_system_contract_distribution.md",
             "# Top System Contract Distribution\nTop soc.\n\nTop soc port clk is input.\n\nTop soc port rst_n is input.\n\nTop soc port result_data is output width 8.\n\nTop soc child controller uses module controller_core.\n\nTop soc link clk -> controller.clk.\n\nTop soc link rst_n -> controller.rst_n.\n\nTop soc link controller.ACC -> result_data.\n\nModule controller_core signal ACC is output width 8.\n\nModule controller_core Clock clk.\n\nModule controller_core Reset rst_n is asynchronous active low.\n\nModule controller_core Init ACC = 8'0.\n\nModule controller_core Block tick: ACC <- 8'1.\n",
         )?;
-        let (clk_topology_support_ids, rst_topology_support_ids) = {
+        let (
+            clk_top_port_support_ids,
+            rst_top_port_support_ids,
+            clk_topology_support_ids,
+            rst_topology_support_ids,
+        ) = {
             let explicit_top = intent_ir
                 .explicit_tops
                 .iter()
                 .find(|top| top.top_name == "soc")
                 .expect("explicit top should be present");
+            let clk_top_port = explicit_top
+                .ports
+                .iter()
+                .find(|port| port.port_name == "clk")
+                .expect("clock top port should be present");
+            let rst_top_port = explicit_top
+                .ports
+                .iter()
+                .find(|port| port.port_name == "rst_n")
+                .expect("reset top port should be present");
             let clk_link = explicit_top
                 .links
                 .iter()
@@ -11732,6 +11747,8 @@ mod tests {
                 })
                 .expect("reset topology link should be present");
             (
+                clk_top_port.supporting_statement_ids.clone(),
+                rst_top_port.supporting_statement_ids.clone(),
                 super::explicit_top_link_supporting_ids(clk_link),
                 super::explicit_top_link_supporting_ids(rst_link),
             )
@@ -11881,9 +11898,17 @@ mod tests {
         );
         assert_eq!(renderable_child.source_module_name, "controller_core");
         assert_eq!(renderable_child.child_root_kind, FsmRootKind::Dt);
-        for (recovered_port, topology_support_ids) in [
-            (recovered_clk, &clk_topology_support_ids),
-            (recovered_rst_n, &rst_topology_support_ids),
+        for (recovered_port, topology_support_ids, top_port_support_ids) in [
+            (
+                recovered_clk,
+                &clk_topology_support_ids,
+                &clk_top_port_support_ids,
+            ),
+            (
+                recovered_rst_n,
+                &rst_topology_support_ids,
+                &rst_top_port_support_ids,
+            ),
         ] {
             assert_eq!(
                 recovered_port
@@ -11894,6 +11919,11 @@ mod tests {
             );
             assert!(
                 topology_support_ids
+                    .iter()
+                    .any(|id| recovered_port.supporting_statement_ids.contains(id))
+            );
+            assert!(
+                top_port_support_ids
                     .iter()
                     .any(|id| recovered_port.supporting_statement_ids.contains(id))
             );
@@ -11933,6 +11963,11 @@ mod tests {
                 .iter()
                 .any(|id| renderable_clk.supporting_statement_ids.contains(id))
         );
+        assert!(
+            clk_top_port_support_ids
+                .iter()
+                .any(|id| renderable_clk.supporting_statement_ids.contains(id))
+        );
         assert_eq!(
             renderable_clk.automation_confidence,
             AutomationConfidence::High
@@ -11946,6 +11981,11 @@ mod tests {
         );
         assert!(
             rst_topology_support_ids
+                .iter()
+                .any(|id| renderable_rst_n.supporting_statement_ids.contains(id))
+        );
+        assert!(
+            rst_top_port_support_ids
                 .iter()
                 .any(|id| renderable_rst_n.supporting_statement_ids.contains(id))
         );

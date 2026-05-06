@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` child-system width provenance lock)
+
+### Added: system-contract recovered top-width declaration provenance
+- Tightened `top_composition_recovers_top_system_port_widths_from_child_system_contract` so child-system-contract top-width recovery preserves the original `clk` and `rst_n` top-port declaration support IDs.
+- The regression keeps existing topology-link support, high-confidence recovered width, child system-contract provenance, and emitted clock/reset topology checks intact.
+- This closes the current public-top width recovery provenance set across graph actor-port, child-link topology, and child system-contract sources.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_top_system_port_widths_from_child_system_contract` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` child-link width provenance lock)
 
 ### Added: topology-backed recovered top-width declaration provenance

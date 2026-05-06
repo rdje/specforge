@@ -189,6 +189,7 @@
   - actor-port direction recovery preserves original public top-port declaration support IDs alongside graph actor-port support IDs
   - actor-port width recovery preserves original public top-port declaration support IDs alongside graph actor-port width support IDs
   - child-link width recovery preserves original public top-port declaration support IDs alongside topology-link width support IDs
+  - child-system-contract width recovery preserves original public top-port declaration support IDs alongside topology-link and system-contract support IDs
   - top actor-port direction conflicts preserve explicit top-port support IDs, graph actor-port support IDs, and high automation confidence while blocking `.fsm` emission
   - top actor-port width conflicts preserve explicit top-port support IDs, graph actor-port width support IDs, width-conflict inventory state, and high automation confidence while blocking `.fsm` emission
   - top-link direction conflicts preserve explicit top-port support IDs, topology-link support IDs, graph-direction inventory state, and high automation confidence while blocking `.fsm` emission
@@ -244,6 +245,7 @@
   - actor-port direction recovery augments public top-port declarations with graph support without dropping declaration support IDs
   - actor-port width recovery augments public top-port declarations with graph width support without dropping declaration support IDs
   - child-link width recovery augments public top-port declarations with topology width support without dropping declaration support IDs
+  - child-system-contract width recovery augments public top-port declarations with topology and child system-contract support without dropping declaration support IDs
   - unrelated direct actor-port graph context keeps selected support IDs auditable while excluding unrelated side-band evidence from `.fsm` inventories
   - ambiguous direct actor-port graph context leaves graph direction, actor-port category, and support IDs unselected instead of guessing a target actor
   - standalone DT graph-backed undriven output blockers preserve selected actor support IDs and high automation confidence while blocking `.fsm` emission

@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` child-system width provenance lock)
+- Tightened `top_composition_recovers_top_system_port_widths_from_child_system_contract` in `crates/specforge/src/ir/adapters.rs` so child-system-contract-recovered public clock/reset top-port widths keep the original top-port declaration support IDs in selected and renderable records.
+- Existing assertions still cover topology-link support IDs, high automation confidence, child system-contract signal provenance, and emitted clock/reset topology text.
+- This complements the graph actor-port and child-link topology width provenance locks for public top ports.
+
 ## Session update (2026-05-06 `.fsm` child-link width provenance lock)
 - Tightened `top_composition_recovers_top_port_width_from_child_link_topology` in `crates/specforge/src/ir/adapters.rs` so topology-recovered public top-port width keeps the original top-port declaration support IDs in selected and renderable records.
 - Existing assertions still cover topology-link width support IDs, high automation confidence, topology-backed signal-inventory provenance, and emitted `result_data>8` text.
