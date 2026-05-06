@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` undeclared-transition residual guidance)
+- Added state-graph residual-guidance assertions to `keeps_structured_fsm_blocked_when_transition_target_is_undeclared` in `crates/specforge/src/ir/adapters.rs`.
+- Undeclared-target structured-FSM blockers now prove state support IDs, rejected-transition support IDs, high candidate confidence, exact undeclared-target blocking text, low-confidence `fsm_adapter_state_graph` guidance, and the upstream state-graph enrichment candidate stay visible together.
+- The live tracker and roadmap now mark undeclared-transition residual guidance as closed; focused adapter coverage, full adapter coverage, KG bench, docs, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 `.fsm` missing-initial residual guidance)
 - Added state-graph residual-guidance assertions to `keeps_structured_fsm_blocked_without_exactly_one_initial_state` in `crates/specforge/src/ir/adapters.rs`.
 - Missing-initial structured-FSM blockers now prove state/transition support IDs, high candidate confidence, exact missing-initial blocking text, low-confidence `fsm_adapter_state_graph` guidance, and the upstream state-graph enrichment candidate stay visible together.

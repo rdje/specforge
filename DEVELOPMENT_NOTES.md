@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` undeclared-transition residual guidance
+- New batch slice 106/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `keeps_structured_fsm_blocked_when_transition_target_is_undeclared` now asserts undeclared transition-target blockers keep the `fsm_adapter_state_graph` residual packet with low confidence and the upstream state-graph enrichment candidate.
+- This keeps declared state support IDs, rejected transition support IDs, high candidate confidence, exact undeclared-target blocker text, and state-graph repair guidance tied together.
+- Focused undeclared-transition residual-guidance regression, adapter suite, fmt, docs, KG bench, and full CI all passed; user-requested `cargo sweep --time 1` is deferred until no target-tree process is active.
+
 ## 2026-05-06 `.fsm` missing-initial residual guidance
 - New batch slice 105/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `keeps_structured_fsm_blocked_without_exactly_one_initial_state` now asserts missing initial-state blockers keep the `fsm_adapter_state_graph` residual packet with low confidence and the upstream state-graph enrichment candidate.
