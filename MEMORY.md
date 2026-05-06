@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `ac97421321c2eaf3cad760db28d9df2e85d3a800`
-- latest_commit_brief_message: `test(adapter): lock top-link direction residual cleanliness`
-- note: new local `N=200` batch is active; slice 82 is committed, slice 83 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `4933d9b863be40ba3a44a66c4b0e8baf367c3a01`
+- latest_commit_brief_message: `test(adapter): lock actor direction residual cleanliness`
+- note: new local `N=200` batch is active; slice 83 is committed, slice 84 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `4933d9b` test(adapter): lock actor direction residual cleanliness
 - `ac97421` test(adapter): lock top-link direction residual cleanliness
 - `c2b50c3` test(adapter): lock mixed-child residual cleanliness
 - `cda2943` test(adapter): lock reused fsm residual cleanliness
 - `920aa2c` test(adapter): lock single fsm child residual cleanliness
 - `c4f57e9` test(adapter): lock top-first residual cleanliness
-- `a3aee24` test(adapter): lock reused-child residual cleanliness
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 83]`
-- files in flight for new batch slice 83:
+- branch state before the next commit: `main...origin/main [ahead 84]`
+- files in flight for new batch slice 84:
   - `crates/specforge/src/ir/adapters.rs`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `ROADMAP.md`
@@ -49,21 +49,21 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `82`
+- completed_count: `83`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - lock residual-clean behavior for renderable actor-port direction recovery
-  - prove `top_composition_recovers_top_port_direction_from_actor_ports` leaves no stale `fsm_adapter_composition_topology` residual once graph-backed direction recovery renders
-  - sync the live tracker, roadmap, and mdBook with the actor-port direction recovery residual-clean guarantee
+  - lock residual-clean behavior for renderable actor-port width recovery
+  - prove `top_composition_recovers_top_port_width_from_actor_ports` leaves no stale `fsm_adapter_composition_topology` residual once graph-backed width recovery renders
+  - sync the live tracker, roadmap, and mdBook with the actor-port width recovery residual-clean guarantee
 - tracker effect:
-  - live-status tracker changed; new row marks `.fsm` actor-port direction recovery staying composition-residual clean when renderable as `Done`
+  - live-status tracker changed; new row marks `.fsm` actor-port width recovery staying composition-residual clean when renderable as `Done`
 - verification status:
   - implementation and live-doc sync are complete
-  - focused actor-port direction recovery residual-clean regression passed (`1` test)
+  - focused actor-port width recovery residual-clean regression passed (`1` test)
   - adapter suite passed (`92` tests)
   - formatting, docs CI, KG bench (`148/148` fixtures), full CI (`613` Rust tests plus warning-deny Clippy/rustdoc and mdBook), and `cargo sweep --time 1` all passed
 - current known local CI baseline:
@@ -73,4 +73,4 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- run final commit guards, commit slice 83 without pushing, then start slice 84 of the active `N=200` batch
+- run final commit guards, commit slice 84 without pushing, then start slice 85 of the active `N=200` batch

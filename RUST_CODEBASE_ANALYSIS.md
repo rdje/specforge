@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` actor-port width residual cleanliness)
+- Added a residual-clean assertion to `top_composition_recovers_top_port_width_from_actor_ports` in `crates/specforge/src/ir/adapters.rs`.
+- Actor-port width recovery now proves graph-backed public top-port width recovery leaves no stale `fsm_adapter_composition_topology` packet once the top is renderable.
+- The live tracker and roadmap now mark the actor-port width recovery residual-clean guarantee as closed; focused adapter coverage, full adapter coverage, KG bench, docs, full CI, and `cargo sweep --time 1` all passed.
+
 ## Session update (2026-05-06 `.fsm` actor-port direction residual cleanliness)
 - Added a residual-clean assertion to `top_composition_recovers_top_port_direction_from_actor_ports` in `crates/specforge/src/ir/adapters.rs`.
 - Actor-port direction recovery now proves graph-backed public top-port direction recovery leaves no stale `fsm_adapter_composition_topology` packet once the top is renderable.

@@ -195,7 +195,7 @@
   - blocked top-composition recovered top-port direction preserves top-link support IDs, high automation confidence, and composition-topology residual diagnostics even when another composition gate blocks `.fsm` emission
   - top-link direction recovery preserves original public top-port declaration support IDs alongside topology-link support IDs and stays composition-residual clean once renderable
   - actor-port direction recovery preserves original public top-port declaration support IDs alongside graph actor-port support IDs and stays composition-residual clean once renderable
-  - actor-port width recovery preserves original public top-port declaration support IDs alongside graph actor-port width support IDs
+  - actor-port width recovery preserves original public top-port declaration support IDs alongside graph actor-port width support IDs and stays composition-residual clean once renderable
   - child-link width recovery preserves original public top-port declaration support IDs alongside topology-link width support IDs
   - child-system-contract width recovery preserves original public top-port declaration support IDs alongside topology-link and system-contract support IDs
   - top actor-port direction conflicts preserve explicit top-port support IDs, graph actor-port support IDs, and high automation confidence while blocking `.fsm` emission
@@ -283,7 +283,7 @@
   - mixed-child top source-document emission preserves top-port and topology-link provenance while preserving DT/FSM direct-root order without leaving composition-topology residuals once renderable
   - top-link direction recovery augments public top-port declarations with topology support without dropping declaration support IDs or leaving composition-topology residuals once renderable
   - actor-port direction recovery augments public top-port declarations with graph support without dropping declaration support IDs or leaving composition-topology residuals once renderable
-  - actor-port width recovery augments public top-port declarations with graph width support without dropping declaration support IDs
+  - actor-port width recovery augments public top-port declarations with graph width support without dropping declaration support IDs or leaving composition-topology residuals once renderable
   - child-link width recovery augments public top-port declarations with topology width support without dropping declaration support IDs
   - child-system-contract width recovery augments public top-port declarations with topology and child system-contract support without dropping declaration support IDs
   - top-link child-width recovery augments child signal declarations with topology width support without dropping declaration support IDs

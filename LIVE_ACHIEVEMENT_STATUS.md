@@ -39,6 +39,7 @@
 - `.fsm` mixed-child top documents now stay composition-residual clean while preserving DT/FSM root order: Done
 - `.fsm` top-link direction recovery now stays composition-residual clean when renderable: Done
 - `.fsm` actor-port direction recovery now stays composition-residual clean when renderable: Done
+- `.fsm` actor-port width recovery now stays composition-residual clean when renderable: Done
 - `.fsm` top-link width mismatch blockers now preserve width-compatible repair guidance: Done
 - `.fsm` top-target boundary role conflicts now preserve endpoint-role repair guidance: Done
 - `.fsm` top-boundary top-link role conflicts now preserve endpoint-role repair guidance: Done
@@ -345,6 +346,7 @@
 - `.fsm` renderable top source documents now preserve mixed DT/FSM child root order and emitted `?dtc`/`?fsmc` spellings: Done
 - `.fsm` renderable top-root ports now preserve recovered top-boundary direction/width supporting IDs and automation confidence from actor-port direction/width, top-link direction/width, and child system-contract width evidence: Done
 - `.fsm` actor-port direction recovery now stays composition-residual clean when renderable: Done
+- `.fsm` actor-port width recovery now stays composition-residual clean when renderable: Done
 - `.fsm` renderability diagnostics now distinguish graph-direction conflicts from missing direction hints: Done
 - `.fsm` adapter signal inventory now preserves width-conflict provenance and reports conflicted widths distinctly: Done
 - `.fsm` adapter signal inventory now preserves flat direction-conflict provenance and blocks graph recovery from overriding contradictory canonical direction hints: Done
