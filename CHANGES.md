@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` explicit-module graph size-entry lock)
+
+### Added: explicit-module size entries lock graph-backed control-input directions
+- Tightened `standalone_explicit_module_recovers_inputs_from_module_control_reads` so renderable module-local `.fsm` size entries must use graph-recovered input directions for module control-read signals.
+- The regression now proves `DATA_IN`, `GO`, and `DONE` stay free of flat compatibility `direction_hint` values while still lowering into module-local renderable size entries with input roles and expected widths.
+- Synced the live tracker, roadmap, and mdBook with the explicit-module graph-backed size-entry guarantee.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge standalone_explicit_module_recovers_inputs_from_module_control_reads` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148/148` fixtures)
+- `bash scripts/run_ci.sh` -> passed (`614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation)
+- Deferred: user-requested `cargo sweep --time 1` until safe because a `target/release/tool_matrix` process is active.
+
 ## 2026-05-06 (`.fsm` graph-backed FSM size-entry direction lock)
 
 ### Added: structured FSM size entries lock graph-backed control-input directions

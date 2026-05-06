@@ -9715,6 +9715,19 @@ mod tests {
 
         assert!(fsm.renderability.is_renderable);
         assert!(module.renderability.is_renderable);
+        let renderable_module = module
+            .renderable_module
+            .as_ref()
+            .expect("graph-backed explicit module should produce a renderable module");
+        for (signal_name, width) in [("DATA_IN", 8), ("GO", 1), ("DONE", 1)] {
+            let size_entry = renderable_module
+                .size_entries
+                .iter()
+                .find(|entry| entry.signal_name == signal_name)
+                .unwrap_or_else(|| panic!("{signal_name} should have a renderable size entry"));
+            assert_eq!(size_entry.direction_hint, InterfaceSignalDirection::Input);
+            assert_eq!(size_entry.width, width);
+        }
         assert!(emitted_text.contains("(?fsm:controller"));
         assert!(emitted_text.contains("(ACC <= DATA_IN)"));
         assert!(emitted_text.contains("(<GO"));
