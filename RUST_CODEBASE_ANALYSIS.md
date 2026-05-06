@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` actor direction conflict residual guidance)
+- Added signal-inventory residual-guidance assertions to `standalone_dt_keeps_conflicting_actor_port_direction_unresolved` in `crates/specforge/src/ir/adapters.rs`.
+- Same-signal actor-port direction conflicts now prove graph direction remains unresolved while conflicting support IDs, high inventory confidence, blocked renderability, and low-confidence `fsm_adapter_signal_inventory` repair guidance stay visible.
+- The live tracker and roadmap now mark the actor-port direction conflict residual-guidance guarantee as closed; focused adapter coverage, full adapter coverage, KG bench, docs, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 `.fsm` ambiguous actor residual guidance)
 - Added signal-inventory residual-guidance assertions to `standalone_dt_ignores_ambiguous_actor_port_context` in `crates/specforge/src/ir/adapters.rs`.
 - Ambiguous direct actor-port graph context now proves graph direction/category/support evidence stays unselected while the blocked adapter retains low-confidence `fsm_adapter_signal_inventory` repair guidance and the upstream interface-inventory enrichment candidate.
