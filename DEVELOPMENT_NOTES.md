@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` structured flat/graph residual guidance
+- New batch slice 107/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `structured_fsm_blocks_flat_graph_direction_disagreement` now asserts structured-FSM flat/graph direction disagreements keep the `fsm_adapter_signal_inventory` residual packet with low confidence and the upstream interface-inventory enrichment candidate.
+- This keeps explicit interface direction, graph-backed actor direction, graph support provenance, high inventory confidence, blocked renderability, and signal-inventory repair guidance tied together.
+- Focused structured flat/graph residual-guidance regression, adapter suite, fmt, docs, KG bench, and full CI all passed; user-requested `cargo sweep --time 1` is deferred until no target-tree process is active.
+
 ## 2026-05-06 `.fsm` undeclared-transition residual guidance
 - New batch slice 106/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `keeps_structured_fsm_blocked_when_transition_target_is_undeclared` now asserts undeclared transition-target blockers keep the `fsm_adapter_state_graph` residual packet with low confidence and the upstream state-graph enrichment candidate.

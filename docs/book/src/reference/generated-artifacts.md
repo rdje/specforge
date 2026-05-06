@@ -137,6 +137,7 @@ Graph-backed undriven standalone outputs keep selected actor support and signal-
 Structured-FSM graph-backed undriven outputs keep the same residual guidance alongside FSM-state blocker text.
 Missing-initial structured-FSM blockers keep state and transition provenance plus state-graph residual guidance for upstream enrichment.
 Undeclared-target structured-FSM blockers keep declared-state and rejected-transition provenance plus the same state-graph repair guidance.
+Structured-FSM flat/graph direction disagreements keep interface and actor-port provenance plus signal-inventory residual guidance while blocked.
 
 For renderable `.fsm` top-composition roots, inspect the selected top candidate as well as the emitted target text.
 The adapter artifact keeps the declared top-port direction and numeric width, the top-port automation confidence, child declaration support IDs, topology-link support IDs, and the renderable top root.

@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` structured flat/graph residual guidance)
+
+### Added: structured flat/graph direction disagreements keep signal-inventory repair guidance
+- Tightened `structured_fsm_blocks_flat_graph_direction_disagreement` so structured-FSM flat/graph direction disagreements retain the `fsm_adapter_signal_inventory` residual packet.
+- The regression now pairs explicit interface direction, graph-backed actor direction, graph support provenance, high inventory confidence, blocked renderability, and low-confidence repair guidance.
+- Updated the live tracker, roadmap, and mdBook to mark the structured-FSM flat/graph residual-guidance guarantee as closed.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge structured_fsm_blocks_flat_graph_direction_disagreement` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`613` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo sweep --time 1` -> deferred until safe because another shell still had a `target/release/tool_matrix` process running from this repository
+
 ## 2026-05-06 (`.fsm` undeclared-transition residual guidance)
 
 ### Added: undeclared transition targets keep state-graph repair guidance

@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `e1efddc10e3c0cada249814115375f80f805c48c`
-- latest_commit_brief_message: `test(adapter): lock missing-initial residual guidance`
-- note: new local `N=200` batch is active; slice 105 is committed, slice 106 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `82602cf4ca00fe245c812e5a59d1213312383f6b`
+- latest_commit_brief_message: `test(adapter): lock undeclared-target residual guidance`
+- note: new local `N=200` batch is active; slice 106 is committed, slice 107 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `82602cf` test(adapter): lock undeclared-target residual guidance
 - `e1efddc` test(adapter): lock missing-initial residual guidance
 - `7f7ca69` test(adapter): lock structured undriven residual guidance
 - `8d003c2` test(adapter): lock undriven output residual guidance
 - `0a4f8bf` test(adapter): lock flat graph residual guidance
 - `790a1ec` test(adapter): align conflict residual guidance
-- `024876d` test(adapter): lock actor width residual guidance
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 106]`
-- files in flight for new batch slice 106:
+- branch state before the next commit: `main...origin/main [ahead 107]`
+- files in flight for new batch slice 107:
   - `crates/specforge/src/ir/adapters.rs`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `ROADMAP.md`
@@ -49,21 +49,21 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `105`
+- completed_count: `106`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - lock state-graph residual guidance for structured-FSM undeclared transition-target blockers
-  - prove `keeps_structured_fsm_blocked_when_transition_target_is_undeclared` keeps the `fsm_adapter_state_graph` residual packet and upstream enrichment candidate while preserving declared-state and rejected-transition provenance
-  - sync the live tracker, roadmap, and mdBook with the undeclared-transition residual-guidance guarantee
+  - lock signal-inventory residual guidance for structured-FSM flat/graph direction disagreement blockers
+  - prove `structured_fsm_blocks_flat_graph_direction_disagreement` keeps the `fsm_adapter_signal_inventory` residual packet and upstream enrichment candidate while preserving interface and actor-port provenance
+  - sync the live tracker, roadmap, and mdBook with the structured flat/graph residual-guidance guarantee
 - tracker effect:
-  - live-status tracker changed; new row marks `.fsm` undeclared-target structured-FSM blockers retaining state-graph repair guidance when blocked as `Done`
+  - live-status tracker changed; new row marks `.fsm` structured-FSM flat/graph direction disagreements retaining signal-inventory repair guidance when blocked as `Done`
 - verification status:
   - implementation and live-doc sync are complete
-  - focused undeclared-transition residual-guidance regression passed (`1` test)
+  - focused structured flat/graph residual-guidance regression passed (`1` test)
   - adapter suite passed (`92` tests)
   - formatting, docs CI, KG bench (`148/148` fixtures), and full CI (`613` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation) passed
   - user-requested `cargo sweep --time 1` was deferred because another shell still had `target/release/tool_matrix` running from this repository
@@ -74,4 +74,4 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- run final commit guards and commit slice 106 without pushing
+- run final commit guards and commit slice 107 without pushing
