@@ -1,5 +1,16 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` multi-child no-link residual diagnostics)
+
+### Added: multi-child no-link residuals lock topology-detail diagnostics
+- Tightened `top_composition_blocks_multi_child_without_links_guidance` so multi-child top roots without explicit top-link records retain low-confidence `fsm_adapter_composition_topology` diagnostics.
+- The regression now pairs top-link enrichment guidance, child declaration provenance, resolved child root kinds, width-compatible-link repair context, and explicit topology-detail residual text.
+- Updated the live tracker, roadmap, and mdBook to mark multi-child no-link residual diagnostics as closed.
+
+### Validation
+- Passed: focused multi-child no-link residual-diagnostics regression (`1` test), adapter suite (`92` tests), rustfmt check, docs CI/mdBook, KG bench (`148/148` fixtures), and full CI (`613` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation).
+- Deferred: user-requested `cargo sweep --time 1` until safe because a `target/release/tool_matrix` process is active.
+
 ## 2026-05-06 (`.fsm` duplicate top-width residual diagnostics)
 
 ### Added: duplicate top-width residuals lock topology-detail diagnostics

@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` multi-child no-link residual diagnostics
+- New batch slice 132/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_multi_child_without_links_guidance` now asserts multi-child top roots without explicit top-link records keep low-confidence `fsm_adapter_composition_topology` diagnostics with explicit topology-detail blocker text.
+- This keeps top-link enrichment guidance, child declaration provenance, resolved child root kinds, and width-compatible-link residual guidance tied together.
+- Focused multi-child no-link residual-diagnostics regression, adapter suite, fmt, docs, KG bench, and full CI all passed; user-requested `cargo sweep --time 1` is deferred until no target-tree process is active.
+
 ## 2026-05-06 `.fsm` duplicate top-width residual diagnostics
 - New batch slice 131/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_keeps_duplicate_top_port_width_conflict_unresolved` now asserts duplicate top-boundary width blockers keep low-confidence `fsm_adapter_composition_topology` diagnostics with explicit topology-detail blocker text.
