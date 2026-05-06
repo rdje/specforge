@@ -206,6 +206,7 @@
   - duplicate top-port direction blockers preserve explicit top-port deduplication guidance alongside direction-conflict guidance
   - duplicate top-port width conflicts preserve both duplicate declaration support-ID sets, width-conflict inventory state, and high automation confidence while blocking `.fsm` emission
   - duplicate top-port width conflict blockers preserve top-boundary width-conflict enrichment guidance on blocked top and aggregate `.fsm` renderability surfaces
+  - duplicate top-port width blockers preserve explicit top-port deduplication guidance alongside width-conflict guidance
   - child actor-port direction recovery preserves graph-backed support IDs and high automation confidence across producer and consumer child module inventories
   - child actor-port direction recovery preserves original child signal declaration support IDs alongside graph actor-port support IDs in recovered child module inventories
   - child actor-port direction conflicts preserve explicit child signal declaration support IDs and graph actor-port support IDs while blocking `.fsm` emission

@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` duplicate top-width dedup guidance lock)
+- Tightened `top_composition_keeps_duplicate_top_port_width_conflict_unresolved` in `crates/specforge/src/ir/adapters.rs` so duplicate top-port width blockers retain explicit top-port deduplication guidance on the blocked top candidate and aggregate `.fsm` renderability.
+- Existing assertions still cover width-conflict repair guidance, both duplicate declaration support-ID sets, unresolved recovered width, selected signal-inventory width conflict state, and high automation confidence.
+- This completes the duplicate top-port deduplication guidance pair across direction and width blockers.
+
 ## Session update (2026-05-06 `.fsm` duplicate top-direction dedup guidance lock)
 - Tightened `top_composition_keeps_duplicate_top_port_direction_conflict_unresolved` in `crates/specforge/src/ir/adapters.rs` so duplicate top-port direction blockers retain explicit top-port deduplication guidance on the blocked top candidate and aggregate `.fsm` renderability.
 - Existing assertions still cover direction-conflict repair guidance, both duplicate declaration support-ID sets, unresolved recovered direction, selected signal-inventory provenance, and high automation confidence.

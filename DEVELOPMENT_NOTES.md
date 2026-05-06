@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` duplicate top-width dedup guidance lock
+- New batch slice 33/200 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_keeps_duplicate_top_port_width_conflict_unresolved` now asserts duplicate top-port width blockers keep `deduplicate explicit top-port records before lowering ?top:name` guidance on the blocked top candidate and aggregate `.fsm` renderability.
+- Existing checks still prove width-conflict repair guidance, both duplicate declaration support-ID sets, unresolved recovered width, selected signal-inventory width conflict state, and high automation confidence.
+- Full adapter coverage remains `81` adapter tests, full CI remains `602` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` duplicate top-direction dedup guidance lock
 - New batch slice 32/200 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_keeps_duplicate_top_port_direction_conflict_unresolved` now asserts duplicate top-port direction blockers keep `deduplicate explicit top-port records before lowering ?top:name` guidance on the blocked top candidate and aggregate `.fsm` renderability.
