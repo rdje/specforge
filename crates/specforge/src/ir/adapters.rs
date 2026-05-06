@@ -6740,6 +6740,18 @@ mod tests {
             vec![FsmRootKind::Fsm, FsmRootKind::Top]
         );
         assert_eq!(fsm.decision_tree_candidates.len(), 1);
+        assert!(
+            fsm.decision_tree_candidates
+                .iter()
+                .any(|candidate| candidate.candidate_id == "dt_primary_intent_cone")
+        );
+        for signal_name in ["DATA_IN", "DATA_OUT", "ZERO_FLAG"] {
+            assert!(
+                fsm.signal_inventory
+                    .iter()
+                    .any(|signal| signal.signal_name == signal_name)
+            );
+        }
         assert!(fsm.signal_inventory.iter().any(|signal| {
             signal.signal_name == "DATA_IN"
                 && signal.width_hint == Some(8)

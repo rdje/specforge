@@ -323,6 +323,7 @@
 - `.fsm` computed selector/test-node lowering now preserves DT candidate confidence and computed signal inventory: Done
 - `.fsm` compound-update lowering now preserves DT candidate confidence and reset/update signal inventory: Done
 - `.fsm` symbolic DT lowering now preserves DT candidate visibility and symbolic signal inventory: Done
+- `.fsm` standalone DT lowering now preserves canonical DT candidate identity and baseline signal inventory: Done
 - `.fsm` top-root signal inventory now preserves flat-vs-graph top-port direction disagreement without mislabeling graph provenance as conflicted: Done
 - mdBook now documents blocked `.fsm` adapter renderability together with flat/graph signal-inventory provenance: Done
 - `.fsm` adapter signal inventory now preserves parametric width provenance and reports symbolic widths distinctly from missing numeric width evidence: Done

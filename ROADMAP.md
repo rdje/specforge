@@ -223,6 +223,7 @@
   - renderable computed selector/test-node lowering preserves DT candidate confidence and computed selector/action signal inventory
   - renderable compound-update lowering preserves DT candidate confidence and reset/update signal inventory
   - renderable symbolic DT lowering preserves DT candidate visibility and symbolic assignment signal inventory
+  - renderable standalone DT lowering preserves canonical DT candidate identity and baseline signal inventory
   - unrelated direct actor-port graph context keeps selected support IDs auditable while excluding unrelated side-band evidence from `.fsm` inventories
   - ambiguous direct actor-port graph context leaves graph direction, actor-port category, and support IDs unselected instead of guessing a target actor
   - standalone DT graph-backed undriven output blockers preserve selected actor support IDs and high automation confidence while blocking `.fsm` emission

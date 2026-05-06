@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` standalone DT inventory support lock)
+- Tightened `builds_renderable_standalone_dt_fsm_adapter_artifact` in `crates/specforge/src/ir/adapters.rs` so the baseline renderable DT artifact retains the canonical `dt_primary_intent_cone` candidate id.
+- The selected signal inventory now explicitly covers `DATA_IN`, `DATA_OUT`, and `ZERO_FLAG` while the emitted `.fsm` size and control-block text stays unchanged.
+- This anchors the narrower renderable symbolic, selector, computed-selector, and compound-update coverage against the baseline standalone DT path.
+
 ## Session update (2026-05-06 `.fsm` symbolic DT support lock)
 - Tightened `builds_renderable_symbolic_dt_fsm_adapter_artifact` in `crates/specforge/src/ir/adapters.rs` so the renderable symbolic DT artifact retains one visible decision-tree candidate.
 - The selected signal inventory now proves the selector plus symbolic assignment outputs remain visible while constants, defines, params, enums, and symbolic assignments still render unchanged.

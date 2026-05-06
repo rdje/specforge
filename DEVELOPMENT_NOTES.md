@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` standalone DT inventory support lock
+- New batch slice 93/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `builds_renderable_standalone_dt_fsm_adapter_artifact` now asserts the renderable baseline standalone DT keeps the canonical `dt_primary_intent_cone` candidate and selected inventory for `DATA_IN`, `DATA_OUT`, and `ZERO_FLAG`.
+- This is a coverage-only lock for the baseline renderable DT path that already emits the canonical `.fsm` signal sizes and control blocks.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` symbolic DT support lock
 - New batch slice 92/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `builds_renderable_symbolic_dt_fsm_adapter_artifact` now asserts the renderable symbolic DT keeps one visible decision-tree candidate and selected signal inventory for `SEL`, `DATA_OUT`, `PARAM_OUT`, and `ENUM_OUT`.

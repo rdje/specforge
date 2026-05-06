@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` standalone DT inventory support lock)
+
+### Added: baseline DT provenance coverage
+- Tightened `builds_renderable_standalone_dt_fsm_adapter_artifact` so the renderable baseline standalone DT now proves its selected decision-tree candidate keeps the canonical candidate id.
+- The test also locks selected signal inventory for `DATA_IN`, `DATA_OUT`, and `ZERO_FLAG` while preserving emitted `.fsm` block and signal-size text.
+- This anchors the narrower symbolic, selector, and compound-update renderable locks against the baseline DT path.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge builds_renderable_standalone_dt_fsm_adapter_artifact` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` symbolic DT support lock)
 
 ### Added: symbolic DT provenance coverage
