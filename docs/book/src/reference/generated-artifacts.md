@@ -168,6 +168,7 @@ For blocked composition roots, the same artifact shape is useful for diagnostics
 Missing-child top blockers also preserve child-source declaration guidance on both blocked renderability surfaces.
 The primary missing-child composition fixture locks the same guidance beside top-port and child-declaration provenance.
 Duplicate top child-instance blockers preserve deduplication guidance while keeping both child declaration support-ID sets visible.
+Duplicate top child-instance blockers also emit the composition-topology residual decision so child-module reference context remains visible in structured diagnostics.
 Multi-child top roots that omit explicit top-link records preserve top-link enrichment guidance while keeping child declaration provenance and resolved child root kinds visible.
 Multi-child top roots that omit explicit top-link records also emit the composition-topology residual decision so width-compatible-link repair remains visible in structured diagnostics.
 Top roots that omit child-module references preserve child-module enrichment guidance while keeping the declared top-port provenance visible.

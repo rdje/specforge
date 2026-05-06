@@ -187,7 +187,7 @@
   - top-link blockers for unemitted child endpoints preserve explicit link support IDs, high automation confidence, and source-endpoint enrichment guidance on blocked top and aggregate `.fsm` renderability surfaces while blocking `.fsm` emission
   - missing-child top blockers preserve child-source declaration guidance on blocked top and aggregate `.fsm` renderability surfaces while keeping recovered top-boundary evidence inspectable
   - primary missing-child composition blockers preserve child-source declaration guidance alongside top-port and child-declaration provenance
-  - duplicate top child-instance blockers preserve child-instance deduplication guidance alongside both duplicate child declaration support-ID sets
+  - duplicate top child-instance blockers preserve child-instance deduplication guidance, composition-topology residual diagnostics, and both duplicate child declaration support-ID sets
   - actor-port parametric width blockers preserve graph-backed provenance category, support IDs, and automation confidence while `.fsm` lowering remains blocked until numeric width evidence exists
   - canonical parametric width blockers preserve interface provenance category, support IDs, and automation confidence while `.fsm` lowering remains blocked until numeric width evidence exists
   - explicit numeric interface width evidence stays provenance-auditable and takes precedence over graph-backed actor-port symbolic widths for `.fsm` emission

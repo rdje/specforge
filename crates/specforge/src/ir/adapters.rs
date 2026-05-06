@@ -15153,6 +15153,19 @@ mod tests {
                 .any(|enrichment| enrichment
                     == "deduplicate explicit child-instance records before lowering `?top:name`")
         );
+        let composition_residual = adapter
+            .residual_decisions
+            .iter()
+            .find(|packet| packet.packet_id == "fsm_adapter_composition_topology")
+            .expect("duplicate child-instance top should surface a composition residual");
+        assert!(
+            composition_residual
+                .candidate_interpretations
+                .iter()
+                .any(|interpretation| interpretation
+                    .description
+                    .contains("child-module references"))
+        );
 
         Ok(())
     }

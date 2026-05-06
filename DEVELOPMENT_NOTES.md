@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` duplicate child-instance residual lock
+- New batch slice 58/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_duplicate_child_instance_guidance` now asserts `fsm_adapter_composition_topology` and checks that its interpretation keeps child-module reference context visible.
+- This pairs duplicate child-instance deduplication guidance with structured residual diagnostics while preserving both child declaration support-ID sets.
+- Focused duplicate child-instance regression, adapter suite, fmt, docs, KG bench, full CI, and the user-requested `cargo sweep --time 1` all passed.
+
 ## 2026-05-06 `.fsm` no-top-port residual lock
 - New batch slice 57/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_top_without_port_guidance` now asserts `fsm_adapter_composition_topology` and checks that its interpretation keeps explicit top-port repair visible.
