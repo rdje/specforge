@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` reset-polarity residual guidance)
+- Added system-contract residual-guidance assertions to `keeps_reset_polarity_blocked_when_signal_name_cannot_preserve_it` in `crates/specforge/src/ir/adapters.rs`.
+- Reset-polarity blockers now prove reset signal name, active-low polarity, system-contract support IDs, high system confidence, exact reset-name blocker text, low-confidence `fsm_adapter_system_contract` guidance, and the upstream system-surface enrichment candidate stay visible together.
+- The live tracker and roadmap now mark reset-polarity residual guidance as closed; focused adapter coverage, full adapter coverage, KG bench, docs, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 `.fsm` missing system-contract residual guidance)
 - Added system-contract residual-guidance assertions to `keeps_standalone_sequential_dt_blocked_without_system_contract` in `crates/specforge/src/ir/adapters.rs`.
 - Missing clock/reset system contracts now prove DT control-fragment support IDs, referenced signal inventory, high DT candidate confidence, missing-contract blocker text, low-confidence `fsm_adapter_system_contract` guidance, and the upstream system-surface enrichment candidate stay visible together.

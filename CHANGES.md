@@ -1,5 +1,16 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` reset-polarity residual guidance)
+
+### Added: reset-polarity blockers keep system-surface repair guidance
+- Tightened `keeps_reset_polarity_blocked_when_signal_name_cannot_preserve_it` so reset-polarity blockers retain the `fsm_adapter_system_contract` residual packet with explicit repair guidance.
+- The regression now pairs reset signal name, active-low polarity, system-contract support IDs, high system confidence, exact reset-name blocker text, low residual confidence, and the upstream system-surface enrichment candidate.
+- Updated the live tracker, roadmap, and mdBook to mark the reset-polarity residual-guidance guarantee as closed.
+
+### Validation
+- Passed: focused reset-polarity residual-guidance regression (`1` test), adapter suite (`92` tests), rustfmt check, docs CI/mdBook, KG bench (`148/148` fixtures), and full CI (`613` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation).
+- Deferred: user-requested `cargo sweep --time 1` until safe because another shell still had a `target/release/tool_matrix` process running from this repository.
+
 ## 2026-05-06 (`.fsm` missing system-contract residual guidance)
 
 ### Added: missing system-contract blockers keep system-surface repair guidance

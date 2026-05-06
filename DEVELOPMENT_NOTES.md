@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` reset-polarity residual guidance
+- New batch slice 115/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `keeps_reset_polarity_blocked_when_signal_name_cannot_preserve_it` now asserts reset-polarity blockers keep the `fsm_adapter_system_contract` residual packet with low confidence and the upstream system-surface enrichment candidate.
+- This keeps reset signal name, active-low polarity, system-contract support IDs, high system confidence, exact reset-name blocker text, and system-surface repair guidance tied together.
+- Focused reset-polarity residual-guidance regression, adapter suite, fmt, docs, KG bench, and full CI all passed; user-requested `cargo sweep --time 1` is deferred until no target-tree process is active.
+
 ## 2026-05-06 `.fsm` missing system-contract residual guidance
 - New batch slice 114/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `keeps_standalone_sequential_dt_blocked_without_system_contract` now asserts missing clock/reset system contracts keep the `fsm_adapter_system_contract` residual packet with low confidence and the upstream system-surface enrichment candidate.

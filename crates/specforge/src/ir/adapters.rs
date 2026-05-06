@@ -8713,6 +8713,27 @@ mod tests {
                 .iter()
                 .any(|reason| { reason.contains("reset polarity through the reset signal name") })
         );
+        let system_contract_residual = adapter
+            .residual_decisions
+            .iter()
+            .find(|packet| packet.packet_id == "fsm_adapter_system_contract")
+            .expect("reset polarity blocker should surface system guidance");
+        assert_eq!(
+            system_contract_residual.automation_confidence,
+            AutomationConfidence::Low
+        );
+        assert!(
+            system_contract_residual
+                .why_unresolved
+                .contains("explicit clock/reset facts")
+        );
+        assert!(
+            system_contract_residual
+                .candidate_interpretations
+                .iter()
+                .any(|interpretation| interpretation.interpretation_id
+                    == "enrich_intent_ir_system_surface")
+        );
 
         Ok(())
     }

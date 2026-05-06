@@ -145,6 +145,7 @@ Standalone sequential system-contract direction conflicts keep clock/reset prove
 Standalone sequential system-contract width conflicts keep clock/reset provenance and the same system-surface repair guidance while blocked.
 Standalone sequential system-contract flat/graph direction disagreements keep actor-port support and system-surface repair guidance while blocked.
 Missing standalone sequential system contracts keep DT candidate provenance plus system-surface repair guidance while blocked.
+Reset-polarity blockers keep system-contract provenance plus the same system-surface repair guidance while blocked.
 
 For renderable `.fsm` top-composition roots, inspect the selected top candidate as well as the emitted target text.
 The adapter artifact keeps the declared top-port direction and numeric width, the top-port automation confidence, child declaration support IDs, topology-link support IDs, and the renderable top root.
