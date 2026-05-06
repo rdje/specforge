@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` symbolic DT support lock
+- New batch slice 92/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `builds_renderable_symbolic_dt_fsm_adapter_artifact` now asserts the renderable symbolic DT keeps one visible decision-tree candidate and selected signal inventory for `SEL`, `DATA_OUT`, `PARAM_OUT`, and `ENUM_OUT`.
+- This is a coverage-only lock for the symbol-definition lowering path that already emits constants, defines, params, enums, and symbolic assignments.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` compound-update support lock
 - New batch slice 91/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `builds_renderable_compound_update_dt_fsm_adapter_artifact` now asserts the renderable compound-update DT keeps its decision-tree candidate visible at low automation confidence while selected signal inventory includes `clk`, `rst_n`, and `ACC`.

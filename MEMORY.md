@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `ade1157b7d66caa48c2ba0562946b34fec08a64d`
-- latest_commit_brief_message: `test(adapter): lock computed selector support`
+- latest_commit_hash: `441f86307ec515996830903f2822ad291a71605e`
+- latest_commit_brief_message: `test(adapter): lock compound update support`
 - note: new local `N=100` batch is active; push remains deferred until all 100 slices complete
 
 ## Recent commit chain (last 6)
+- `441f863` test(adapter): lock compound update support
 - `ade1157` test(adapter): lock computed selector support
 - `f51d512` test(adapter): lock renderable selector support
 - `ad4c263` test(adapter): lock selector blocker support
 - `52becca` test(adapter): lock missing system contract support
 - `01f1f9c` test(adapter): lock reset polarity blocker support
-- `4347324` test(adapter): lock structured transition target support
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 90]`
-- files in flight for new batch slice 91:
+- branch state before the next commit: `main...origin/main [ahead 91]`
+- files in flight for new batch slice 92:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -47,20 +47,19 @@
 
 ## Active N-slice batch
 - requested_count: `100`
-- completed_count: `90`
+- completed_count: `91`
 - push_policy: defer push until all `100` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - regression-lock renderable compound-update control provenance
-  - prove compound-update DT artifacts keep a visible DT candidate, low confidence, and reset/update signal inventory
-  - keep the lower-confidence compound-update fallback path auditable while emitted `.fsm` text remains unchanged
+  - regression-lock renderable symbolic DT provenance
+  - prove symbolic DT artifacts keep one visible DT candidate and symbolic assignment signal inventory
+  - keep constants, defines, params, enums, and symbolic assignments auditable while emitted `.fsm` text remains unchanged
 - tracker effect:
-  - live-status tracker gains `.fsm compound-update lowering now preserves DT candidate confidence and reset/update signal inventory: Done`
+  - live-status tracker gains `.fsm symbolic DT lowering now preserves DT candidate visibility and symbolic signal inventory: Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge builds_renderable_compound_update_dt_fsm_adapter_artifact` passed with `1` test
-  - `cargo test --manifest-path Cargo.toml -p specforge keeps_standalone_sequential_dt_blocked_without_system_contract` passed with `1` test after restoring its high-confidence expectation
+  - `cargo test --manifest-path Cargo.toml -p specforge builds_renderable_symbolic_dt_fsm_adapter_artifact` passed with `1` test
   - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `80` tests
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed before the final live-doc refresh
@@ -71,4 +70,4 @@
   - `148/148` tracked KG fixtures
 
 ## Next exact steps
-- run final docs CI and guards, commit slice 91 without pushing, and continue slice 92
+- run final docs CI and guards, commit slice 92 without pushing, and continue slice 93

@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` symbolic DT support lock)
+- Tightened `builds_renderable_symbolic_dt_fsm_adapter_artifact` in `crates/specforge/src/ir/adapters.rs` so the renderable symbolic DT artifact retains one visible decision-tree candidate.
+- The selected signal inventory now proves the selector plus symbolic assignment outputs remain visible while constants, defines, params, enums, and symbolic assignments still render unchanged.
+- This pins the symbol-definition lowering path to an auditable adapter artifact rather than only checking emitted text.
+
 ## Session update (2026-05-06 `.fsm` compound-update support lock)
 - Tightened `builds_renderable_compound_update_dt_fsm_adapter_artifact` in `crates/specforge/src/ir/adapters.rs` so the renderable compound-update DT artifact retains a visible decision-tree candidate at low confidence.
 - The fixture is renderable through fallback lowering and does not carry canonical control-fragment support IDs, so the regression keeps the confidence contract explicit rather than overstating provenance.

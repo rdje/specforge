@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` symbolic DT support lock)
+
+### Added: symbolic DT provenance coverage
+- Tightened `builds_renderable_symbolic_dt_fsm_adapter_artifact` so the renderable symbolic DT now proves its decision-tree candidate remains visible.
+- The test locks selected signal inventory for the selector and symbolic assignment outputs while preserving emitted `.fsm` constants, defines, params, enums, and symbolic assignments.
+- This keeps the symbol-definition lowering path auditable without changing emitted target text.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge builds_renderable_symbolic_dt_fsm_adapter_artifact` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` compound-update support lock)
 
 ### Added: compound-update provenance coverage

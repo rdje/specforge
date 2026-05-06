@@ -8456,6 +8456,19 @@ mod tests {
 
         assert!(fsm.renderability.is_renderable);
         assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Dt);
+        assert_eq!(fsm.decision_tree_candidates.len(), 1);
+        assert!(
+            fsm.decision_tree_candidates
+                .iter()
+                .any(|candidate| candidate.candidate_id == "dt_primary_intent_cone")
+        );
+        for signal_name in ["SEL", "DATA_OUT", "PARAM_OUT", "ENUM_OUT"] {
+            assert!(
+                fsm.signal_inventory
+                    .iter()
+                    .any(|signal| signal.signal_name == signal_name)
+            );
+        }
         assert!(emitted_text.contains("(?dt:symbolic_dt"));
         assert!(emitted_text.contains("(+constants"));
         assert!(emitted_text.contains("(C0 8'3)"));
