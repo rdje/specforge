@@ -14932,6 +14932,96 @@ mod tests {
     }
 
     #[test]
+    fn top_composition_blocks_top_without_child_guidance() -> Result<()> {
+        let tempdir = tempdir()?;
+        let intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "top_without_child.md",
+            "# Top Without Child\nTop wrapper.\n\nTop wrapper port result_data is output width 8.\n",
+        )?;
+        let top_port_support_ids = intent_ir
+            .explicit_tops
+            .iter()
+            .find(|top| top.top_name == "wrapper")
+            .and_then(|top| {
+                assert!(
+                    top.children.is_empty(),
+                    "fixture should expose the no-child top blocker"
+                );
+                top.ports
+                    .iter()
+                    .find(|port| port.port_name == "result_data")
+            })
+            .map(|port| port.supporting_statement_ids.clone())
+            .expect("top output port declaration should be present");
+        assert!(
+            !top_port_support_ids.is_empty(),
+            "top output port provenance should be present"
+        );
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "blocked");
+        assert!(adapter.artifact_layout.emitted_target_path.is_none());
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Top);
+        assert_eq!(fsm.top_candidates.len(), 1);
+        let top_candidate = fsm
+            .top_candidates
+            .iter()
+            .find(|top| top.top_name == "wrapper")
+            .expect("top candidate should remain visible");
+        assert!(top_candidate.children.is_empty());
+        let top_port = top_candidate
+            .ports
+            .iter()
+            .find(|port| port.port_name == "result_data")
+            .expect("top output port should remain visible");
+        assert_eq!(
+            top_port.direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert_eq!(top_port.width_hint, Some(WidthHint::Numeric(8)));
+        assert!(
+            top_port_support_ids
+                .iter()
+                .any(|id| top_port.supporting_statement_ids.contains(id))
+        );
+        assert_eq!(top_port.automation_confidence, AutomationConfidence::High);
+        assert!(!top_candidate.renderability.is_renderable);
+        assert!(
+            top_candidate
+                .renderability
+                .blocking_reasons
+                .iter()
+                .any(|reason| reason.contains("at least one explicit child module reference"))
+        );
+        assert!(
+            top_candidate
+                .renderability
+                .required_canonical_enrichments
+                .iter()
+                .any(|enrichment| enrichment
+                    == "carry explicit child-module references before lowering `?top:name`")
+        );
+        assert!(!fsm.renderability.is_renderable);
+        assert!(
+            fsm.renderability
+                .required_canonical_enrichments
+                .iter()
+                .any(|enrichment| enrichment
+                    == "carry explicit child-module references before lowering `?top:name`")
+        );
+
+        Ok(())
+    }
+
+    #[test]
     fn keeps_top_composition_blocked_when_child_module_is_missing() -> Result<()> {
         let tempdir = tempdir()?;
         let intent_ir = build_missing_child_module_top_intent_ir(tempdir.path())?;

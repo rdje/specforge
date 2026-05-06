@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` no-child top guidance lock
+- New batch slice 35/200 adds coverage in `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_top_without_child_guidance` asserts top roots with explicit ports but no child-module references keep `carry explicit child-module references before lowering ?top:name` guidance on the blocked top candidate and aggregate `.fsm` renderability.
+- The regression also proves the top port keeps output direction, numeric width, support IDs, and high automation confidence while the child list remains empty.
+- Full adapter coverage is now `83` adapter tests, full CI is now `604` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` multi-child top-link guidance lock
 - New batch slice 34/200 adds coverage in `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_multi_child_without_links_guidance` asserts multi-child top roots with no explicit top-link records keep `carry explicit top-link records for multi-child compositions before lowering ?top:name` guidance on the blocked top candidate and aggregate `.fsm` renderability.

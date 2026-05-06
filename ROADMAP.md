@@ -208,6 +208,7 @@
   - duplicate top-port width conflict blockers preserve top-boundary width-conflict enrichment guidance on blocked top and aggregate `.fsm` renderability surfaces
   - duplicate top-port width blockers preserve explicit top-port deduplication guidance alongside width-conflict guidance
   - multi-child top roots without explicit top-link records preserve top-link enrichment guidance while retaining child declaration provenance and resolved child root kinds
+  - top roots without child-module references preserve child-module enrichment guidance while retaining top-port provenance
   - child actor-port direction recovery preserves graph-backed support IDs and high automation confidence across producer and consumer child module inventories
   - child actor-port direction recovery preserves original child signal declaration support IDs alongside graph actor-port support IDs in recovered child module inventories
   - child actor-port direction conflicts preserve explicit child signal declaration support IDs and graph actor-port support IDs while blocking `.fsm` emission
