@@ -47,6 +47,7 @@
 - `.fsm` top-link child-width recovery now stays composition-residual clean when renderable: Done
 - `.fsm` sibling-link child-input width recovery now stays composition-residual clean when renderable: Done
 - `.fsm` source-side sibling child-width recovery now stays composition-residual clean when renderable: Done
+- `.fsm` transitive child-width recovery now stays composition-residual clean when renderable: Done
 - `.fsm` top-link width mismatch blockers now preserve width-compatible repair guidance: Done
 - `.fsm` top-target boundary role conflicts now preserve endpoint-role repair guidance: Done
 - `.fsm` top-boundary top-link role conflicts now preserve endpoint-role repair guidance: Done
@@ -433,6 +434,7 @@
 - `.fsm` source-side sibling child-width recovery now preserves child signal declaration support alongside topology support: Done
 - `.fsm` child actor-port direction recovery now stays composition-residual clean when renderable: Done
 - `.fsm` transitive child-width recovery now preserves child signal declaration support alongside topology support: Done
+- `.fsm` transitive child-width recovery now stays composition-residual clean when renderable: Done
 - `.fsm` child link-topology direction recovery now preserves child signal declaration support alongside topology support: Done
 - `.fsm` child link-topology direction recovery now stays composition-residual clean when renderable: Done
 - `.fsm` child actor-port direction recovery now preserves child signal declaration support alongside graph support: Done

@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `33c8f4862adeda85f1be872e71b67b13a72d05da`
-- latest_commit_brief_message: `test(adapter): lock sibling input residual cleanliness`
-- note: new local `N=200` batch is active; slice 90 is committed, slice 91 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `6e770d9f58deaf55db755815e6fd9bc2ab1dfdbc`
+- latest_commit_brief_message: `test(adapter): lock sibling output residual cleanliness`
+- note: new local `N=200` batch is active; slice 91 is committed, slice 92 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `6e770d9` test(adapter): lock sibling output residual cleanliness
 - `33c8f48` test(adapter): lock sibling input residual cleanliness
 - `48dc612` test(adapter): lock top-link child-width residual cleanliness
 - `202d0f2` test(adapter): lock child link residual cleanliness
 - `c33e68d` test(adapter): lock child actor residual cleanliness
 - `7418e58` test(adapter): lock system top-width residual cleanliness
-- `b2c34c7` test(adapter): lock child-link top-width residual cleanliness
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 91]`
-- files in flight for new batch slice 91:
+- branch state before the next commit: `main...origin/main [ahead 92]`
+- files in flight for new batch slice 92:
   - `crates/specforge/src/ir/adapters.rs`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `ROADMAP.md`
@@ -49,28 +49,29 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `90`
+- completed_count: `91`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - lock residual-clean behavior for renderable source-side sibling child-width recovery
-  - prove `top_composition_recovers_source_child_width_from_sibling_child_link_topology` leaves no stale `fsm_adapter_composition_topology` residual once topology-backed source child width recovery renders
-  - sync the live tracker, roadmap, and mdBook with the source-side sibling child-width recovery residual-clean guarantee
+  - lock residual-clean behavior for renderable transitive child-width recovery
+  - prove `top_composition_recovers_child_width_through_transitive_topology` leaves no stale `fsm_adapter_composition_topology` residual once topology-backed producer and consumer child widths render
+  - sync the live tracker, roadmap, and mdBook with the transitive child-width recovery residual-clean guarantee
 - tracker effect:
-  - live-status tracker changed; new row marks `.fsm` source-side sibling child-width recovery staying composition-residual clean when renderable as `Done`
+  - live-status tracker changed; new row marks `.fsm` transitive child-width recovery staying composition-residual clean when renderable as `Done`
 - verification status:
   - implementation and live-doc sync are complete
-  - focused source-side sibling child-width recovery residual-clean regression passed (`1` test)
+  - focused transitive child-width recovery residual-clean regression passed (`1` test)
   - adapter suite passed (`92` tests)
-  - formatting, docs CI, KG bench (`148/148` fixtures), full CI (`613` Rust tests plus warning-deny Clippy/rustdoc and mdBook), and `cargo sweep --time 1` all passed
+  - formatting, docs CI, KG bench (`148/148` fixtures), and full CI (`613` Rust tests plus warning-deny Clippy/rustdoc and mdBook) passed
+  - user-requested `cargo sweep --time 1` is deferred until no target-tree process is active
 - current known local CI baseline:
   - current slice passed `613` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - current slice passed `148/148` tracked KG fixtures
-  - user-requested `cargo sweep --time 1` cleaned nothing after the current full CI gate
+  - current `cargo sweep --time 1` was deferred because another shell still had `target/release/tool_matrix` running from this repository
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- run final commit guards, commit slice 91 without pushing, then start slice 92 of the active `N=200` batch
+- run final commit guards, commit slice 92 without pushing, retry `cargo sweep --time 1` when the target tree is idle, then start slice 93 of the active `N=200` batch

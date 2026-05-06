@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` transitive child-width residual cleanliness)
+
+### Added: renderable transitive child-width recovery stays residual-clean
+- Tightened `top_composition_recovers_child_width_through_transitive_topology` so transitive topology-backed child width recovery proves no stale `fsm_adapter_composition_topology` residual remains once the top is renderable.
+- The regression now pairs producer and consumer child signal declaration support, topology-link width support, selected child inventories, emitted size text, and a clean aggregate residual surface.
+- Updated the live tracker, roadmap, and mdBook to mark the transitive child-width recovery residual-clean guarantee as closed.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_child_width_through_transitive_topology` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`613` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo sweep --time 1` -> deferred until safe because another shell still had a `target/release/tool_matrix` process running from this repository
+
 ## 2026-05-06 (`.fsm` source-side sibling width residual cleanliness)
 
 ### Added: renderable source-side sibling width recovery stays residual-clean

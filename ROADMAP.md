@@ -242,8 +242,8 @@
   - child topology width conflict blockers preserve canonical width-conflict enrichment guidance and composition-topology residual diagnostics on blocked module and aggregate `.fsm` renderability surfaces
   - child topology direction conflicts preserve both explicit child signal declaration support IDs and contradictory topology-link support IDs while blocking `.fsm` emission
   - child topology direction conflict blockers preserve actor-relative graph-direction enrichment guidance and composition-topology residual diagnostics on blocked module and aggregate `.fsm` renderability surfaces
-  - transitive child-width recovery preserves each contributing topology-link support ID and high automation confidence as width evidence flows from top link through sibling child link
-  - transitive child-width recovery preserves original producer and consumer child signal declaration support IDs alongside topology-link support IDs
+  - transitive child-width recovery preserves each contributing topology-link support ID and high automation confidence as width evidence flows from top link through sibling child link while staying composition-residual clean once renderable
+  - transitive child-width recovery preserves original producer and consumer child signal declaration support IDs alongside topology-link support IDs while staying composition-residual clean once renderable
   - recovered top-port evidence preserves graph-backed support IDs while raising top-root selection confidence and preserving composition-topology residual diagnostics when topology is still incomplete
   - recovered child-declaration evidence preserves child support IDs while raising top-root selection confidence and staying composition-residual clean once the single-child topology is renderable
   - recovered top-link evidence preserves link support IDs while raising top-root selection confidence and staying composition-residual clean once the linked topology is renderable
@@ -289,7 +289,7 @@
   - top-link child-width recovery augments child signal declarations with topology width support without dropping declaration support IDs or leaving composition-topology residuals once renderable
   - sibling-link child-width recovery augments child signal declarations with topology width support without dropping declaration support IDs or leaving composition-topology residuals once renderable
   - source-side sibling child-width recovery augments child signal declarations with topology width support without dropping declaration support IDs or leaving composition-topology residuals once renderable
-  - transitive child-width recovery augments producer and consumer child signal declarations with topology width support without dropping declaration support IDs
+  - transitive child-width recovery augments producer and consumer child signal declarations with topology width support without dropping declaration support IDs or leaving composition-topology residuals once renderable
   - child link-topology direction recovery augments child signal declarations with topology direction support without dropping declaration support IDs or leaving composition-topology residuals once renderable
   - child actor-port direction recovery augments child signal declarations with graph direction support without dropping declaration support IDs or leaving composition-topology residuals once renderable
   - unrelated direct actor-port graph context keeps selected support IDs auditable while excluding unrelated side-band evidence from `.fsm` inventories
