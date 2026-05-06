@@ -1,5 +1,16 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` top-link width mismatch residual diagnostics)
+
+### Added: top-link width mismatch residuals lock topology-detail diagnostics
+- Tightened `top_composition_blocks_width_mismatched_top_link_guidance` so top-link endpoint width mismatches retain low-confidence `fsm_adapter_composition_topology` diagnostics.
+- The regression now pairs width-compatible top-link repair guidance, mismatched topology-link support IDs, explicit-top-port repair context, and explicit topology-detail residual text.
+- Updated the live tracker, roadmap, and mdBook to mark top-link width mismatch residual diagnostics as closed.
+
+### Validation
+- Passed: focused top-link width mismatch residual-diagnostics regression (`1` test), adapter suite (`92` tests), rustfmt check, docs CI/mdBook, KG bench (`148/148` fixtures), and full CI (`613` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation).
+- Deferred: user-requested `cargo sweep --time 1` until safe because a `target/release/tool_matrix` process is active.
+
 ## 2026-05-06 (`.fsm` top child-link width residual diagnostics)
 
 ### Added: top child-link width residuals lock topology-detail diagnostics

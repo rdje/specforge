@@ -90,6 +90,7 @@
 - `.fsm` top-boundary top-link role conflicts now preserve endpoint-role repair guidance: Done
 - `.fsm` top-link target-role mismatches now preserve endpoint-role repair guidance: Done
 - `.fsm` top-link direction-role mismatches now preserve endpoint-role repair guidance: Done
+- `.fsm` top-link width mismatch residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` unemitted child endpoint guidance now names source and target repair lanes consistently: Done
 - `.fsm` links from unemitted child sources now preserve source-endpoint enrichment guidance: Done
 - `.fsm` links from unemitted child sources now preserve composition topology residual decisions: Done
