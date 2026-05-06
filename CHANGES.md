@@ -1,5 +1,16 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` child target role residual diagnostics)
+
+### Added: child target role residuals lock topology-detail diagnostics
+- Tightened `top_composition_blocks_child_target_direction_role_guidance` so target-side child endpoint direction-role blockers retain low-confidence `fsm_adapter_composition_topology` diagnostics.
+- The regression now pairs child-module flat/graph direction-role guidance, top and aggregate endpoint-role guidance, preserved top-port/child/link provenance, explicit topology-detail residual text, and renderable-child repair guidance.
+- Updated the live tracker, roadmap, and mdBook to mark target-side child role residual diagnostics as closed.
+
+### Validation
+- Passed: focused target-side child role residual-diagnostics regression (`1` test), adapter suite (`92` tests), rustfmt check, docs CI/mdBook, KG bench (`148/148` fixtures), and full CI (`613` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation).
+- Deferred: user-requested `cargo sweep --time 1` until safe because another shell still had a `target/release/tool_matrix` process running from this repository.
+
 ## 2026-05-06 (`.fsm` child source role residual diagnostics)
 
 ### Added: child source role residuals lock topology-detail diagnostics
