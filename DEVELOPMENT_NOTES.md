@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` single-FSM-child top provenance lock
+- New batch slice 3/200 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `renderable_top_document_preserves_fsm_child_root_kind` now asserts the `ACC` top-port support IDs survive in both the selected top candidate and renderable top root.
+- The test also locks the `controller.ACC -> ACC` topology-link support IDs on the renderable top root while preserving the existing FSM child root-kind and direct-root checks.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` top-before-child provenance lock
 - New batch slice 2/200 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `renderable_top_document_emits_top_before_child_direct_roots` now asserts the selected top candidate retains `result_data` top-port support IDs and that the renderable top root retains both producer-to-consumer and consumer-to-top topology-link support-ID sets.

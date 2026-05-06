@@ -10412,18 +10412,37 @@ mod tests {
             "top_with_fsm_child.md",
             "# Top With FSM Child\nTop wrapper.\n\nTop wrapper port clk is input width 1.\n\nTop wrapper port rst_n is input width 1.\n\nTop wrapper port GO is input width 1.\n\nTop wrapper port DONE is input width 1.\n\nTop wrapper port DATA_IN is input width 8.\n\nTop wrapper port ACC is output width 8.\n\nTop wrapper port TRACE is output width 1.\n\nTop wrapper child controller uses module controller_core.\n\nTop wrapper link clk -> controller.clk.\n\nTop wrapper link rst_n -> controller.rst_n.\n\nTop wrapper link GO -> controller.GO.\n\nTop wrapper link DONE -> controller.DONE.\n\nTop wrapper link DATA_IN -> controller.DATA_IN.\n\nTop wrapper link controller.ACC -> ACC.\n\nTop wrapper link controller.TRACE -> TRACE.\n\nModule controller_core Signal clk is input width 1.\n\nModule controller_core Signal rst_n is input width 1.\n\nModule controller_core Signal GO is input width 1.\n\nModule controller_core Signal DONE is input width 1.\n\nModule controller_core Signal DATA_IN is input width 8.\n\nModule controller_core Signal ACC is output width 8.\n\nModule controller_core Signal TRACE is output width 1.\n\nModule controller_core Clock clk.\n\nModule controller_core Reset rst_n is asynchronous active low.\n\nModule controller_core Init ACC = 8'0.\n\nModule controller_core State idle is initial.\n\nModule controller_core State busy.\n\nModule controller_core Block idle: ACC <- DATA_IN.\n\nModule controller_core Transition idle -> busy when GO.\n\nModule controller_core Block busy: ACC <- DATA_IN.\n\nModule controller_core Transition busy -> idle when DONE.\n\nModule controller_core Block trace when DONE: TRACE = 1.\n",
         )?;
-        let child_support_ids = {
+        let (acc_top_port_support_ids, child_support_ids, acc_link_support_ids) = {
             let explicit_top = intent_ir
                 .explicit_tops
                 .iter()
                 .find(|top| top.top_name == "wrapper")
                 .expect("explicit top should be present");
+            let acc_top_port = explicit_top
+                .ports
+                .iter()
+                .find(|port| port.port_name == "ACC")
+                .expect("ACC top port should be present");
             let child = explicit_top
                 .children
                 .iter()
                 .find(|child| child.instance_name == "controller")
                 .expect("controller child should be present");
-            child.supporting_statement_ids.clone()
+            let acc_link = explicit_top
+                .links
+                .iter()
+                .find(|link| {
+                    link.source.instance_name.as_deref() == Some("controller")
+                        && link.source.signal_name == "ACC"
+                        && link.target.instance_name.is_none()
+                        && link.target.signal_name == "ACC"
+                })
+                .expect("controller ACC top link should be present");
+            (
+                acc_top_port.supporting_statement_ids.clone(),
+                child.supporting_statement_ids.clone(),
+                super::explicit_top_link_supporting_ids(acc_link),
+            )
         };
         let artifact_base = tempdir.path().join("generated").join("adapters");
 
@@ -10447,6 +10466,11 @@ mod tests {
             .iter()
             .find(|top| top.top_name == "wrapper")
             .expect("top candidate should be present");
+        let acc_top_port = top_candidate
+            .ports
+            .iter()
+            .find(|port| port.port_name == "ACC")
+            .expect("ACC top port should be present");
         let child = top_candidate
             .children
             .iter()
@@ -10456,14 +10480,29 @@ mod tests {
             .renderable_document
             .as_ref()
             .expect("renderable top should carry a source document");
-        let renderable_child = renderable_document
+        let renderable_top = renderable_document
             .top_root
             .as_ref()
-            .and_then(|top| {
-                top.children
-                    .iter()
-                    .find(|child| child.instance_name == "controller")
+            .expect("renderable top root should be present");
+        let renderable_acc_port = renderable_top
+            .ports
+            .iter()
+            .find(|port| port.port_name == "ACC")
+            .expect("renderable top should preserve the ACC port");
+        let renderable_acc_link = renderable_top
+            .links
+            .iter()
+            .find(|link| {
+                link.source.instance_name.as_deref() == Some("controller")
+                    && link.source.signal_name == "ACC"
+                    && link.target.instance_name.is_none()
+                    && link.target.signal_name == "ACC"
             })
+            .expect("renderable top should preserve the ACC link");
+        let renderable_child = renderable_top
+            .children
+            .iter()
+            .find(|child| child.instance_name == "controller")
             .expect("renderable top should preserve the FSM child");
         let direct_root = renderable_document
             .direct_roots
@@ -10474,9 +10513,24 @@ mod tests {
         assert!(top_candidate.renderability.is_renderable);
         assert_eq!(child.resolved_root_kind, Some(FsmRootKind::Fsm));
         assert!(
+            acc_top_port_support_ids
+                .iter()
+                .any(|id| acc_top_port.supporting_statement_ids.contains(id))
+        );
+        assert!(
+            acc_top_port_support_ids
+                .iter()
+                .any(|id| renderable_acc_port.supporting_statement_ids.contains(id))
+        );
+        assert!(
             child_support_ids
                 .iter()
                 .any(|id| child.supporting_canonical_ids.contains(id))
+        );
+        assert!(
+            acc_link_support_ids
+                .iter()
+                .any(|id| renderable_acc_link.supporting_statement_ids.contains(id))
         );
         assert_eq!(renderable_child.child_root_kind, FsmRootKind::Fsm);
         assert_eq!(direct_root.root_kind, FsmRootKind::Fsm);

@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` single-FSM-child top provenance lock)
+- Tightened `renderable_top_document_preserves_fsm_child_root_kind` in `crates/specforge/src/ir/adapters.rs` so the single-FSM-child top-document path keeps `ACC` top-port support IDs in both selected and renderable top records.
+- The renderable top root now also proves the `controller.ACC -> ACC` topology-link support IDs survive while the FSM child root-kind and direct-root checks remain unchanged.
+- This closes the same top-boundary provenance gap for the single-FSM-child source-document fixture after the top-before-child ordering fixture.
+
 ## Session update (2026-05-06 `.fsm` top-before-child provenance lock)
 - Tightened `renderable_top_document_emits_top_before_child_direct_roots` in `crates/specforge/src/ir/adapters.rs` so top-before-child source-document emission keeps public top-port support IDs in the selected top candidate.
 - The renderable top root now also proves both explicit topology-link support-ID sets survive while the existing child support-ID and top-first order guarantees remain intact.

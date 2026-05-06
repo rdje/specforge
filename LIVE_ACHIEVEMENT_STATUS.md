@@ -381,6 +381,7 @@
 - `.fsm` reused-FSM-child top lowering now regression-locks per-instance child support IDs: Done
 - `.fsm` mixed-child top lowering now regression-locks DT/FSM child support IDs: Done
 - `.fsm` single FSM-child top lowering now regression-locks child support IDs: Done
+- `.fsm` single FSM-child top emission now preserves top-port and topology-link provenance: Done
 - `.fsm` renderable top-before-child emission now regression-locks child support IDs: Done
 - `.fsm` renderable top-before-child emission now preserves top-port and topology-link provenance: Done
 - `.fsm` widthless top-port blockers now regression-lock support IDs and automation confidence: Done

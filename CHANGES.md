@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` single-FSM-child top provenance lock)
+
+### Added: single-FSM-child top/link provenance
+- Tightened `renderable_top_document_preserves_fsm_child_root_kind` so the selected `wrapper` top candidate and renderable top root preserve the `ACC` top-port support IDs.
+- The regression also locks the `controller.ACC -> ACC` topology-link support IDs while preserving the FSM child root-kind, child support-ID, direct-root, and emitted text checks.
+- This keeps the single-FSM-child top-document path aligned with the richer renderable top-composition provenance surface.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge renderable_top_document_preserves_fsm_child_root_kind` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` top-before-child provenance lock)
 
 ### Added: top-before-child source-document provenance
