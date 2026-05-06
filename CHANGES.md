@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` source child-width provenance lock)
+
+### Added: child-signal declaration provenance for source-side sibling widths
+- Tightened `top_composition_recovers_source_child_width_from_sibling_child_link_topology` so source-side sibling-link child-width recovery preserves the original producer child signal declaration support IDs.
+- The regression keeps existing topology-link support IDs, high-confidence recovered width, selected child signal-inventory provenance, and emitted `(output_data 8)` checks intact.
+- This completes direct sibling-link child-width declaration coverage for both target-side and source-side recovered child signals.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_source_child_width_from_sibling_child_link_topology` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` sibling child-width provenance lock)
 
 ### Added: child-signal declaration provenance for sibling-link recovered widths
