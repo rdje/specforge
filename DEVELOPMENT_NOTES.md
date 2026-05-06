@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` conflict residual guidance alignment
+- New batch slice 101/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `standalone_dt_keeps_conflicting_actor_port_width_unresolved` now carries the actor-port width conflict residual-guidance assertion directly, and `standalone_dt_blocks_conflicting_flat_direction_even_with_actor_graph` keeps its own flat-direction conflict guidance assertion with an accurate diagnostic message.
+- This keeps direct-root flat direction conflicts and same-actor width conflicts tied to their signal-inventory repair guidance without mixing the regression names.
+- Focused flat direction conflict residual-guidance regression, focused width conflict residual-guidance regression, adapter suite, fmt, docs, KG bench, and full CI all passed; user-requested `cargo sweep --time 1` is deferred until no target-tree process is active.
+
 ## 2026-05-06 `.fsm` actor width conflict residual guidance
 - New batch slice 100/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `standalone_dt_keeps_conflicting_actor_port_width_unresolved` now asserts same-signal actor-port width conflicts keep the `fsm_adapter_signal_inventory` residual packet while width remains unresolved.

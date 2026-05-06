@@ -56,6 +56,7 @@
 - `.fsm` ambiguous actor-port context now retains signal-inventory repair guidance when blocked: Done
 - `.fsm` actor-port direction conflicts now retain signal-inventory repair guidance when blocked: Done
 - `.fsm` actor-port width conflicts now retain signal-inventory repair guidance when blocked: Done
+- `.fsm` direct-root flat direction conflicts now retain signal-inventory repair guidance when blocked: Done
 - `.fsm` top-link width mismatch blockers now preserve width-compatible repair guidance: Done
 - `.fsm` top-target boundary role conflicts now preserve endpoint-role repair guidance: Done
 - `.fsm` top-boundary top-link role conflicts now preserve endpoint-role repair guidance: Done
@@ -422,6 +423,7 @@
 - `.fsm` actor-port width conflicts now retain signal-inventory repair guidance when blocked: Done
 - `.fsm` direct-root flat/graph direction disagreement now regression-locks interface and actor-port provenance: Done
 - `.fsm` direct-root flat direction conflicts now regression-lock interface and graph provenance together: Done
+- `.fsm` direct-root flat direction conflicts now retain signal-inventory repair guidance when blocked: Done
 - `.fsm` direct-root output actor selection now regression-locks support IDs and automation confidence: Done
 - `.fsm` standalone output actor selection now stays signal-inventory-residual clean when renderable: Done
 - `.fsm` direct-root control-read input recovery now regression-locks support IDs and automation confidence: Done

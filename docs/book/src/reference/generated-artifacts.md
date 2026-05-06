@@ -131,6 +131,7 @@ Unrelated actor-port graph context follows the same residual-clean rule while ke
 Ambiguous actor-port graph context remains blocked instead of selecting graph provenance, and the artifact keeps signal-inventory residual guidance for upstream enrichment.
 Actor-port direction conflicts also remain blocked while preserving both conflicting support IDs and signal-inventory residual guidance.
 Actor-port width conflicts follow the same blocked guidance pattern while preserving both conflicting width support IDs.
+Flat direction conflicts with graph-backed actor provenance remain blocked and keep signal-inventory residual guidance on the flat-conflict regression itself.
 
 For renderable `.fsm` top-composition roots, inspect the selected top candidate as well as the emitted target text.
 The adapter artifact keeps the declared top-port direction and numeric width, the top-port automation confidence, child declaration support IDs, topology-link support IDs, and the renderable top root.

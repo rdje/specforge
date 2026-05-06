@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `face78351bff9cf324e0b89fd27ead3a7e2418ad`
-- latest_commit_brief_message: `test(adapter): lock actor direction residual guidance`
-- note: new local `N=200` batch is active; slice 99 is committed, slice 100 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `024876de67d0ebff01629fa7f45ac3b9c44d4b5d`
+- latest_commit_brief_message: `test(adapter): lock actor width residual guidance`
+- note: new local `N=200` batch is active; slice 100 is committed, slice 101 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `024876d` test(adapter): lock actor width residual guidance
 - `face783` test(adapter): lock actor direction residual guidance
 - `f2a8c3a` test(adapter): lock ambiguous actor residual guidance
 - `87477b2` test(adapter): lock unrelated actor residual cleanliness
 - `fa06421` test(adapter): lock direct width residual cleanliness
 - `36ceab5` test(adapter): lock control-read residual cleanliness
-- `7696d64` test(adapter): lock output actor residual cleanliness
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 100]`
-- files in flight for new batch slice 100:
+- branch state before the next commit: `main...origin/main [ahead 101]`
+- files in flight for new batch slice 101:
   - `crates/specforge/src/ir/adapters.rs`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `ROADMAP.md`
@@ -49,21 +49,22 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `99`
+- completed_count: `100`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - lock signal-inventory residual guidance for blocked actor-port width conflicts
-  - prove `standalone_dt_keeps_conflicting_actor_port_width_unresolved` keeps the `fsm_adapter_signal_inventory` residual packet when width remains conflicted
-  - sync the live tracker, roadmap, and mdBook with the actor-port width conflict residual-guidance guarantee
+  - align blocked conflict residual guidance across direct-root flat direction and actor-port width conflict regressions
+  - prove `standalone_dt_keeps_conflicting_actor_port_width_unresolved` carries the width-conflict residual-guidance assertion directly while `standalone_dt_blocks_conflicting_flat_direction_even_with_actor_graph` retains its own accurately named guidance assertion
+  - sync the live tracker, roadmap, and mdBook with the flat direction conflict residual-guidance guarantee and width assertion placement
 - tracker effect:
-  - live-status tracker changed; new row marks `.fsm` actor-port width conflicts retaining signal-inventory repair guidance when blocked as `Done`
+  - live-status tracker changed; new row marks `.fsm` direct-root flat direction conflicts retaining signal-inventory repair guidance when blocked as `Done`
 - verification status:
   - implementation and live-doc sync are complete
-  - focused actor width conflict residual-guidance regression passed (`1` test)
+  - focused flat direction conflict residual-guidance regression passed (`1` test)
+  - focused width conflict residual-guidance regression passed (`1` test)
   - adapter suite passed (`92` tests)
   - formatting, docs CI, KG bench (`148/148` fixtures), and full CI (`613` Rust tests plus warning-deny Clippy/rustdoc and mdBook) passed
   - user-requested `cargo sweep --time 1` is deferred until no target-tree process is active
@@ -74,4 +75,4 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- run final commit guards, commit slice 100 without pushing, retry `cargo sweep --time 1` when the target tree is idle, then start slice 101 of the active `N=200` batch
+- run final commit guards, commit slice 101 without pushing, retry `cargo sweep --time 1` when the target tree is idle, then start slice 102 of the active `N=200` batch
