@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` sibling-link child-input width residual cleanliness)
+- Added a residual-clean assertion to `top_composition_recovers_child_width_from_sibling_child_link_topology` in `crates/specforge/src/ir/adapters.rs`.
+- Sibling-link child-input width recovery now proves topology-backed consumer child signal width recovery leaves no stale `fsm_adapter_composition_topology` packet once the top is renderable.
+- The live tracker and roadmap now mark the sibling-link child-input width recovery residual-clean guarantee as closed; focused adapter coverage, full adapter coverage, KG bench, docs, full CI, and `cargo sweep --time 1` all passed.
+
 ## Session update (2026-05-06 `.fsm` top-link child-width residual cleanliness)
 - Added a residual-clean assertion to `top_composition_recovers_child_width_from_top_link_topology` in `crates/specforge/src/ir/adapters.rs`.
 - Top-link child-width recovery now proves topology-backed child signal width recovery leaves no stale `fsm_adapter_composition_topology` packet once the top is renderable.

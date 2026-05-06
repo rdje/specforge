@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `202d0f2d2787de8533fa45d0077253f42335d931`
-- latest_commit_brief_message: `test(adapter): lock child link residual cleanliness`
-- note: new local `N=200` batch is active; slice 88 is committed, slice 89 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `48dc612a4bd5b2e0140997c1fedb32deb07b0501`
+- latest_commit_brief_message: `test(adapter): lock top-link child-width residual cleanliness`
+- note: new local `N=200` batch is active; slice 89 is committed, slice 90 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `48dc612` test(adapter): lock top-link child-width residual cleanliness
 - `202d0f2` test(adapter): lock child link residual cleanliness
 - `c33e68d` test(adapter): lock child actor residual cleanliness
 - `7418e58` test(adapter): lock system top-width residual cleanliness
 - `b2c34c7` test(adapter): lock child-link top-width residual cleanliness
 - `cb20d22` test(adapter): lock actor width residual cleanliness
-- `4933d9b` test(adapter): lock actor direction residual cleanliness
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 89]`
-- files in flight for new batch slice 89:
+- branch state before the next commit: `main...origin/main [ahead 90]`
+- files in flight for new batch slice 90:
   - `crates/specforge/src/ir/adapters.rs`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `ROADMAP.md`
@@ -49,21 +49,21 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `88`
+- completed_count: `89`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - lock residual-clean behavior for renderable top-link child-width recovery
-  - prove `top_composition_recovers_child_width_from_top_link_topology` leaves no stale `fsm_adapter_composition_topology` residual once topology-backed child width recovery renders
-  - sync the live tracker, roadmap, and mdBook with the top-link child-width recovery residual-clean guarantee
+  - lock residual-clean behavior for renderable sibling-link child-input width recovery
+  - prove `top_composition_recovers_child_width_from_sibling_child_link_topology` leaves no stale `fsm_adapter_composition_topology` residual once topology-backed child input width recovery renders
+  - sync the live tracker, roadmap, and mdBook with the sibling-link child-input width recovery residual-clean guarantee
 - tracker effect:
-  - live-status tracker changed; new row marks `.fsm` top-link child-width recovery staying composition-residual clean when renderable as `Done`
+  - live-status tracker changed; new row marks `.fsm` sibling-link child-input width recovery staying composition-residual clean when renderable as `Done`
 - verification status:
   - implementation and live-doc sync are complete
-  - focused top-link child-width recovery residual-clean regression passed (`1` test)
+  - focused sibling-link child-input width recovery residual-clean regression passed (`1` test)
   - adapter suite passed (`92` tests)
   - formatting, docs CI, KG bench (`148/148` fixtures), full CI (`613` Rust tests plus warning-deny Clippy/rustdoc and mdBook), and `cargo sweep --time 1` all passed
 - current known local CI baseline:
@@ -73,4 +73,4 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- run final commit guards, commit slice 89 without pushing, then start slice 90 of the active `N=200` batch
+- run final commit guards, commit slice 90 without pushing, then start slice 91 of the active `N=200` batch

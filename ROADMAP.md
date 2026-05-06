@@ -231,8 +231,8 @@
   - child link-topology direction recovery preserves original child signal declaration support IDs alongside topology-link support IDs in recovered child module inventories while staying composition-residual clean once renderable
   - child top-link width recovery preserves explicit top-link support IDs and high automation confidence in recovered child module inventories while staying composition-residual clean once renderable
   - child top-link width recovery preserves original child signal declaration support IDs alongside topology-link support IDs in recovered child module inventories while staying composition-residual clean once renderable
-  - sibling child-link width recovery preserves explicit top-link support IDs and high automation confidence in both source-side and target-side recovered child module inventories
-  - sibling child-link width recovery preserves original child signal declaration support IDs alongside topology-link support IDs in recovered child module inventories
+  - sibling child-link width recovery preserves explicit top-link support IDs and high automation confidence in both source-side and target-side recovered child module inventories while staying composition-residual clean once renderable
+  - sibling child-link width recovery preserves original child signal declaration support IDs alongside topology-link support IDs in recovered child module inventories while staying composition-residual clean once renderable
   - source-side sibling child-link width recovery preserves original child signal declaration support IDs alongside topology-link support IDs in recovered child module inventories
   - sibling child-link width conflicts preserve both conflicting topology-link support-ID sets and high automation confidence while blocking `.fsm` emission
   - sibling child-link width conflict blockers preserve canonical width-conflict enrichment guidance and composition-topology residual diagnostics on blocked module and aggregate `.fsm` renderability surfaces
@@ -287,7 +287,7 @@
   - child-link width recovery augments public top-port declarations with topology width support without dropping declaration support IDs or leaving composition-topology residuals once renderable
   - child-system-contract width recovery augments public top-port declarations with topology and child system-contract support without dropping declaration support IDs or leaving composition-topology residuals once renderable
   - top-link child-width recovery augments child signal declarations with topology width support without dropping declaration support IDs or leaving composition-topology residuals once renderable
-  - sibling-link child-width recovery augments child signal declarations with topology width support without dropping declaration support IDs
+  - sibling-link child-width recovery augments child signal declarations with topology width support without dropping declaration support IDs or leaving composition-topology residuals once renderable
   - source-side sibling child-width recovery augments child signal declarations with topology width support without dropping declaration support IDs
   - transitive child-width recovery augments producer and consumer child signal declarations with topology width support without dropping declaration support IDs
   - child link-topology direction recovery augments child signal declarations with topology direction support without dropping declaration support IDs or leaving composition-topology residuals once renderable

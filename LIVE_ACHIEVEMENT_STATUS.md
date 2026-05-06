@@ -45,6 +45,7 @@
 - `.fsm` child actor-port direction recovery now stays composition-residual clean when renderable: Done
 - `.fsm` child link-topology direction recovery now stays composition-residual clean when renderable: Done
 - `.fsm` top-link child-width recovery now stays composition-residual clean when renderable: Done
+- `.fsm` sibling-link child-input width recovery now stays composition-residual clean when renderable: Done
 - `.fsm` top-link width mismatch blockers now preserve width-compatible repair guidance: Done
 - `.fsm` top-target boundary role conflicts now preserve endpoint-role repair guidance: Done
 - `.fsm` top-boundary top-link role conflicts now preserve endpoint-role repair guidance: Done
@@ -357,6 +358,7 @@
 - `.fsm` child actor-port direction recovery now stays composition-residual clean when renderable: Done
 - `.fsm` child link-topology direction recovery now stays composition-residual clean when renderable: Done
 - `.fsm` top-link child-width recovery now stays composition-residual clean when renderable: Done
+- `.fsm` sibling-link child-input width recovery now stays composition-residual clean when renderable: Done
 - `.fsm` renderability diagnostics now distinguish graph-direction conflicts from missing direction hints: Done
 - `.fsm` adapter signal inventory now preserves width-conflict provenance and reports conflicted widths distinctly: Done
 - `.fsm` adapter signal inventory now preserves flat direction-conflict provenance and blocks graph recovery from overriding contradictory canonical direction hints: Done
@@ -433,6 +435,7 @@
 - `.fsm` child link-topology direction recovery now stays composition-residual clean when renderable: Done
 - `.fsm` child actor-port direction recovery now preserves child signal declaration support alongside graph support: Done
 - `.fsm` top-link child-width recovery now stays composition-residual clean when renderable: Done
+- `.fsm` sibling-link child-input width recovery now stays composition-residual clean when renderable: Done
 - `.fsm` top actor-port direction conflicts now regression-lock support IDs and automation confidence: Done
 - `.fsm` top actor-port direction conflicts now preserve top-boundary direction enrichment guidance: Done
 - `.fsm` top actor-port direction conflicts now preserve composition topology residual decisions: Done
