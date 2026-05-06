@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` recovered top-root residual diagnostics
+- New batch slice 117/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_root_kind_confidence_follows_recovered_top_port_evidence` now asserts recovered top-root confidence blockers keep low-confidence `fsm_adapter_composition_topology` diagnostics with explicit topology-detail blocker text.
+- This keeps graph-backed top-port support, high selected top-root confidence, child-module repair guidance, and topology-detail residual diagnostics tied together.
+- Focused recovered top-root residual-diagnostics regression, adapter suite, fmt, docs, KG bench, and full CI all passed; user-requested `cargo sweep --time 1` is deferred until no target-tree process is active.
+
 ## 2026-05-06 `.fsm` blocked DT signal-inventory guidance
 - New batch slice 116/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `builds_blocked_dt_centric_fsm_adapter_artifact` now asserts baseline blocked DT-centric artifacts keep the `fsm_adapter_signal_inventory` residual packet with low confidence and the upstream interface-inventory enrichment candidate.

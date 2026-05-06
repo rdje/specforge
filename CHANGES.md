@@ -1,5 +1,16 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` recovered top-root residual diagnostics)
+
+### Added: recovered top-root residuals lock topology-detail diagnostics
+- Tightened `top_root_kind_confidence_follows_recovered_top_port_evidence` so recovered top-port confidence blockers retain low-confidence `fsm_adapter_composition_topology` diagnostics.
+- The regression now pairs graph-backed top-port support, high selected top-root confidence, composition residual presence, explicit topology-detail blocker text, and child-module repair guidance.
+- Updated the live tracker, roadmap, and mdBook to mark recovered top-root residual diagnostics as closed.
+
+### Validation
+- Passed: focused recovered top-root residual-diagnostics regression (`1` test), adapter suite (`92` tests), rustfmt check, docs CI/mdBook, KG bench (`148/148` fixtures), and full CI (`613` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation).
+- Deferred: user-requested `cargo sweep --time 1` until safe because another shell still had a `target/release/tool_matrix` process running from this repository.
+
 ## 2026-05-06 (`.fsm` blocked DT signal-inventory guidance)
 
 ### Added: blocked DT-centric adapters keep signal-inventory repair guidance

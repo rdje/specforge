@@ -30,6 +30,7 @@
 - `.fsm` parametric top-port blockers now preserve composition topology residual decisions: Done
 - `.fsm` blocked recovered top-port direction now preserves composition topology residual decisions: Done
 - `.fsm` recovered top-root confidence blockers now preserve composition topology residual decisions: Done
+- `.fsm` recovered top-root confidence residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` child-declaration top-root confidence now stays composition-residual clean when renderable: Done
 - `.fsm` top-link top-root confidence now stays composition-residual clean when renderable: Done
 - `.fsm` reused-child top documents now stay composition-residual clean after deduplicating child roots: Done
@@ -513,6 +514,7 @@
 - `.fsm` transitive child-width recovery now regression-locks support IDs and automation confidence: Done
 - `.fsm` recovered top-root confidence now regression-locks graph-backed top-port support IDs: Done
 - `.fsm` recovered top-root confidence blockers now preserve composition topology residual decisions: Done
+- `.fsm` recovered top-root confidence residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` child-declaration top-root confidence now regression-locks child support IDs: Done
 - `.fsm` child-declaration top-root confidence now stays composition-residual clean when renderable: Done
 - `.fsm` top-link top-root confidence now stays composition-residual clean when renderable: Done

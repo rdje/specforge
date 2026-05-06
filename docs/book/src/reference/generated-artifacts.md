@@ -158,6 +158,7 @@ Mixed DT/FSM child top documents preserve public top-port and topology-link prov
 When explicit top-link topology recovers a public top-port direction, the recovered top records retain the original top-port declaration support IDs as well as the topology evidence that supplied the direction, and renderable recovery leaves no composition-topology residual.
 If that recovered top-port direction is still blocked by another composition gate, the adapter also emits the composition-topology residual decision so child-module reference repair remains visible.
 Recovered top-port evidence can also raise the selected top root-kind confidence while keeping that same residual decision visible when topology is still incomplete.
+That residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
 High-confidence child declarations can raise the selected top root-kind confidence without emitting composition residuals once the single-child topology is renderable.
 High-confidence top-link evidence follows the same residual-clean rule once the linked topology is renderable.
 Actor-port-backed top direction recovery follows the same rule: the graph evidence is added without dropping the public top-port declaration support IDs, and renderable recovery leaves no composition-topology residual.

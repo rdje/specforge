@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `d164027fe80a76fdad847e46053dd5936c6d7cf2`
-- latest_commit_brief_message: `test(adapter): lock reset polarity guidance`
-- note: new local `N=200` batch is active; slice 115 is committed, slice 116 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `36f4b94ad1fb6c84af2c16f81901d5070f15cddb`
+- latest_commit_brief_message: `test(adapter): lock blocked dt guidance`
+- note: new local `N=200` batch is active; slice 116 is committed, slice 117 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `36f4b94` test(adapter): lock blocked dt guidance
 - `d164027` test(adapter): lock reset polarity guidance
 - `ab3c45f` test(adapter): lock missing system guidance
 - `1a96408` test(adapter): lock system contract graph guidance
 - `7e7c201` test(adapter): lock system contract width guidance
 - `9f73630` test(adapter): lock system contract direction guidance
-- `561c4f0` test(adapter): lock explicit module width guidance
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 116]`
-- files in flight for new batch slice 116:
+- branch state before the next commit: `main...origin/main [ahead 117]`
+- files in flight for new batch slice 117:
   - `crates/specforge/src/ir/adapters.rs`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `ROADMAP.md`
@@ -49,21 +49,21 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `115`
+- completed_count: `116`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - lock signal-inventory residual guidance for baseline blocked DT-centric adapter artifacts
-  - prove `builds_blocked_dt_centric_fsm_adapter_artifact` keeps the `fsm_adapter_signal_inventory` residual packet and upstream enrichment candidate while preserving selected signal inventory
-  - sync the live tracker, roadmap, and mdBook with the blocked-DT signal-inventory residual-guidance guarantee
+  - lock composition-topology residual diagnostics for recovered top-root confidence blockers
+  - prove `top_root_kind_confidence_follows_recovered_top_port_evidence` keeps low-confidence `fsm_adapter_composition_topology` diagnostics and topology-detail blocker text while preserving graph-backed top-port support
+  - sync the live tracker, roadmap, and mdBook with the recovered top-root residual-diagnostics guarantee
 - tracker effect:
-  - live-status tracker changed; new row marks `.fsm` blocked DT-centric adapters retaining signal-inventory repair guidance when blocked as `Done`
+  - live-status tracker changed; new row marks `.fsm` recovered top-root confidence residuals locking low-confidence topology-detail diagnostics as `Done`
 - verification status:
   - implementation and live-doc sync are complete
-  - focused blocked-DT signal-inventory residual-guidance regression passed (`1` test)
+  - focused recovered top-root residual-diagnostics regression passed (`1` test)
   - adapter suite passed (`92` tests)
   - formatting, docs CI, KG bench (`148/148` fixtures), and full CI (`613` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation) passed
   - user-requested `cargo sweep --time 1` was deferred because another shell still had `target/release/tool_matrix` running from this repository
@@ -74,4 +74,4 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- run final commit guards and commit slice 116 without pushing
+- run final commit guards and commit slice 117 without pushing
