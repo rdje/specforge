@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` actor width conflict residual guidance
+- New batch slice 100/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `standalone_dt_keeps_conflicting_actor_port_width_unresolved` now asserts same-signal actor-port width conflicts keep the `fsm_adapter_signal_inventory` residual packet while width remains unresolved.
+- This keeps conflicting actor-port-width support IDs, high inventory confidence, the blocked renderability reason, and low-confidence signal-inventory repair guidance tied together.
+- Focused actor width conflict residual-guidance regression, adapter suite, fmt, docs, KG bench, and full CI all passed; user-requested `cargo sweep --time 1` is deferred until no target-tree process is active.
+
 ## 2026-05-06 `.fsm` actor direction conflict residual guidance
 - New batch slice 99/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `standalone_dt_keeps_conflicting_actor_port_direction_unresolved` now asserts same-signal actor-port direction conflicts keep the `fsm_adapter_signal_inventory` residual packet while graph direction remains unresolved.

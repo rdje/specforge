@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` actor width conflict residual guidance)
+
+### Added: actor-port width conflicts keep signal-inventory repair guidance
+- Tightened `standalone_dt_keeps_conflicting_actor_port_width_unresolved` so blocked same-signal actor-port width conflicts retain the `fsm_adapter_signal_inventory` residual packet.
+- The regression now pairs unresolved width, conflicting actor-port-width support IDs, high inventory confidence, and low-confidence repair guidance instead of dropping the repair lane.
+- Updated the live tracker, roadmap, and mdBook to mark the actor-port width conflict residual-guidance guarantee as closed.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge standalone_dt_keeps_conflicting_actor_port_width_unresolved` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`613` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo sweep --time 1` -> deferred until safe because another shell still had a `target/release/tool_matrix` process running from this repository
+
 ## 2026-05-06 (`.fsm` actor direction conflict residual guidance)
 
 ### Added: actor-port direction conflicts keep signal-inventory repair guidance

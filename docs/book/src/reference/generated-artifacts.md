@@ -130,6 +130,7 @@ Direct actor-port width recovery keeps actor-port width provenance on the recove
 Unrelated actor-port graph context follows the same residual-clean rule while keeping side-band graph evidence out of the selected inventory.
 Ambiguous actor-port graph context remains blocked instead of selecting graph provenance, and the artifact keeps signal-inventory residual guidance for upstream enrichment.
 Actor-port direction conflicts also remain blocked while preserving both conflicting support IDs and signal-inventory residual guidance.
+Actor-port width conflicts follow the same blocked guidance pattern while preserving both conflicting width support IDs.
 
 For renderable `.fsm` top-composition roots, inspect the selected top candidate as well as the emitted target text.
 The adapter artifact keeps the declared top-port direction and numeric width, the top-port automation confidence, child declaration support IDs, topology-link support IDs, and the renderable top root.
