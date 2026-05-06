@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `87ff7ed38764cd9260b795666a827c506cc16bd8`
-- latest_commit_brief_message: `test(adapter): lock baseline top composition support`
+- latest_commit_hash: `1d3e2bcd22cfcdb28f23b5d875efa30036f678c1`
+- latest_commit_brief_message: `test(adapter): lock reused child top support`
 - note: new local `N=100` batch is active; push remains deferred until all 100 slices complete
 
 ## Recent commit chain (last 6)
+- `1d3e2bc` test(adapter): lock reused child top support
 - `87ff7ed` test(adapter): lock baseline top composition support
 - `73b0c96` test(adapter): lock child top-root confidence support
 - `57e29a6` test(adapter): lock recovered top-root confidence support
 - `1074bea` test(adapter): lock transitive child width support
 - `aa6d80d` test(adapter): lock child sibling source width support
-- `1090d6e` test(adapter): lock child sibling target width support
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 72]`
-- files in flight for new batch slice 73:
+- branch state before the next commit: `main...origin/main [ahead 73]`
+- files in flight for new batch slice 74:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -47,19 +47,19 @@
 
 ## Active N-slice batch
 - requested_count: `100`
-- completed_count: `72`
+- completed_count: `73`
 - push_policy: defer push until all `100` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - regression-lock reused-child top-composition child provenance
-  - prove selected top candidates preserve distinct child support IDs even when two child instances reuse one emitted module root
-  - keep per-instance top child evidence auditable while direct-root deduplication remains intact
+  - regression-lock reused-FSM-child top-composition child provenance
+  - prove selected top candidates preserve distinct child support IDs even when two FSM child instances reuse one emitted FSM module root
+  - keep per-instance top child evidence auditable while FSM direct-root deduplication remains intact
 - tracker effect:
-  - live-status tracker gains `.fsm reused-child top lowering now regression-locks per-instance child support IDs: Done`
+  - live-status tracker gains `.fsm reused-FSM-child top lowering now regression-locks per-instance child support IDs: Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge renderable_top_document_deduplicates_reused_child_module_roots` passed with `1` test
+  - `cargo test --manifest-path Cargo.toml -p specforge renderable_top_document_deduplicates_reused_fsm_child_roots` passed with `1` test
   - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `80` tests
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed before the final live-doc refresh
@@ -70,4 +70,4 @@
   - `148/148` tracked KG fixtures
 
 ## Next exact steps
-- run final docs CI and guards, commit slice 73 without pushing, and continue slice 74
+- run final docs CI and guards, commit slice 74 without pushing, and continue slice 75

@@ -10029,6 +10029,27 @@ mod tests {
             "top_with_reused_fsm_child.md",
             "# Top With Reused FSM Child\nTop wrapper.\n\nTop wrapper port clk is input width 1.\n\nTop wrapper port rst_n is input width 1.\n\nTop wrapper port GO is input width 1.\n\nTop wrapper port DONE is input width 1.\n\nTop wrapper port DATA_IN is input width 8.\n\nTop wrapper port ACC_A is output width 8.\n\nTop wrapper port ACC_B is output width 8.\n\nTop wrapper child first uses module controller_core.\n\nTop wrapper child second uses module controller_core.\n\nTop wrapper link clk -> first.clk.\n\nTop wrapper link rst_n -> first.rst_n.\n\nTop wrapper link GO -> first.GO.\n\nTop wrapper link DONE -> first.DONE.\n\nTop wrapper link DATA_IN -> first.DATA_IN.\n\nTop wrapper link first.ACC -> ACC_A.\n\nTop wrapper link clk -> second.clk.\n\nTop wrapper link rst_n -> second.rst_n.\n\nTop wrapper link GO -> second.GO.\n\nTop wrapper link DONE -> second.DONE.\n\nTop wrapper link DATA_IN -> second.DATA_IN.\n\nTop wrapper link second.ACC -> ACC_B.\n\nModule controller_core Signal clk is input width 1.\n\nModule controller_core Signal rst_n is input width 1.\n\nModule controller_core Signal GO is input width 1.\n\nModule controller_core Signal DONE is input width 1.\n\nModule controller_core Signal DATA_IN is input width 8.\n\nModule controller_core Signal ACC is output width 8.\n\nModule controller_core Clock clk.\n\nModule controller_core Reset rst_n is asynchronous active low.\n\nModule controller_core Init ACC = 8'0.\n\nModule controller_core State idle is initial.\n\nModule controller_core State busy.\n\nModule controller_core Block idle: ACC <- DATA_IN.\n\nModule controller_core Transition idle -> busy when GO.\n\nModule controller_core Block busy: ACC <- DATA_IN.\n\nModule controller_core Transition busy -> idle when DONE.\n",
         )?;
+        let (first_child_support_ids, second_child_support_ids) = {
+            let explicit_top = intent_ir
+                .explicit_tops
+                .iter()
+                .find(|top| top.top_name == "wrapper")
+                .expect("explicit top should be present");
+            let first_child = explicit_top
+                .children
+                .iter()
+                .find(|child| child.instance_name == "first")
+                .expect("first child should be present");
+            let second_child = explicit_top
+                .children
+                .iter()
+                .find(|child| child.instance_name == "second")
+                .expect("second child should be present");
+            (
+                first_child.supporting_statement_ids.clone(),
+                second_child.supporting_statement_ids.clone(),
+            )
+        };
         let artifact_base = tempdir.path().join("generated").join("adapters");
 
         let adapter = AdapterArtifact::build(
@@ -10070,6 +10091,26 @@ mod tests {
                 .iter()
                 .all(|child| child.source_module_name == "controller_core"
                     && child.resolved_root_kind == Some(FsmRootKind::Fsm))
+        );
+        let first_child = top_candidate
+            .children
+            .iter()
+            .find(|child| child.instance_name == "first")
+            .expect("first child should be present");
+        let second_child = top_candidate
+            .children
+            .iter()
+            .find(|child| child.instance_name == "second")
+            .expect("second child should be present");
+        assert!(
+            first_child_support_ids
+                .iter()
+                .any(|id| first_child.supporting_canonical_ids.contains(id))
+        );
+        assert!(
+            second_child_support_ids
+                .iter()
+                .any(|id| second_child.supporting_canonical_ids.contains(id))
         );
         assert_eq!(renderable_top.children.len(), 2);
         assert!(
