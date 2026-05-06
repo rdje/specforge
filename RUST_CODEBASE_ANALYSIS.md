@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` unemitted child-source residual lock)
+- Tightened `top_composition_blocks_link_from_unemitted_child_source_guidance` in `crates/specforge/src/ir/adapters.rs` so source-side links from child endpoints absent from emitted child modules explicitly preserve `fsm_adapter_composition_topology`.
+- This mirrors the target-side residual lock and keeps renderable-child repair visible alongside source-endpoint guidance, support IDs, and high automation confidence.
+- The live tracker and roadmap now mark the source-side unemitted child residual guarantee as closed; focused adapter coverage, full adapter coverage, KG bench, docs, full CI, and `cargo sweep --time 1` all passed.
+
 ## Session update (2026-05-06 `.fsm` unemitted child-target residual lock)
 - Tightened `top_composition_blocks_link_to_unemitted_child_target_guidance` in `crates/specforge/src/ir/adapters.rs` so target-side links to child endpoints absent from emitted child modules explicitly preserve `fsm_adapter_composition_topology`.
 - The assertion keeps repair tied to renderable child modules while the same blocked top-link artifact also preserves target-endpoint guidance, support IDs, and high automation confidence.
