@@ -10043,12 +10043,23 @@ mod tests {
             "reused_child_module_top.md",
             "# Reused Child Module Top\nTop pipe.\n\nTop pipe port result_data is output width 8.\n\nTop pipe child first uses module stage_core.\n\nTop pipe child second uses module stage_core.\n\nTop pipe link first.output_data -> second.input_data.\n\nTop pipe link second.output_data -> result_data.\n\nModule stage_core signal input_data is input width 8.\n\nModule stage_core signal output_data is output width 8.\n\nModule stage_core block route: output_data = input_data.\n",
         )?;
-        let (first_child_support_ids, second_child_support_ids) = {
+        let (
+            top_port_support_ids,
+            first_child_support_ids,
+            second_child_support_ids,
+            first_to_second_link_support_ids,
+            second_to_top_link_support_ids,
+        ) = {
             let explicit_top = intent_ir
                 .explicit_tops
                 .iter()
                 .find(|top| top.top_name == "pipe")
                 .expect("explicit top should be present");
+            let top_port = explicit_top
+                .ports
+                .iter()
+                .find(|port| port.port_name == "result_data")
+                .expect("result_data top port should be present");
             let first_child = explicit_top
                 .children
                 .iter()
@@ -10059,9 +10070,32 @@ mod tests {
                 .iter()
                 .find(|child| child.instance_name == "second")
                 .expect("second child should be present");
+            let first_to_second_link = explicit_top
+                .links
+                .iter()
+                .find(|link| {
+                    link.source.instance_name.as_deref() == Some("first")
+                        && link.source.signal_name == "output_data"
+                        && link.target.instance_name.as_deref() == Some("second")
+                        && link.target.signal_name == "input_data"
+                })
+                .expect("first to second topology link should be present");
+            let second_to_top_link = explicit_top
+                .links
+                .iter()
+                .find(|link| {
+                    link.source.instance_name.as_deref() == Some("second")
+                        && link.source.signal_name == "output_data"
+                        && link.target.instance_name.is_none()
+                        && link.target.signal_name == "result_data"
+                })
+                .expect("second to top topology link should be present");
             (
+                top_port.supporting_statement_ids.clone(),
                 first_child.supporting_statement_ids.clone(),
                 second_child.supporting_statement_ids.clone(),
+                super::explicit_top_link_supporting_ids(first_to_second_link),
+                super::explicit_top_link_supporting_ids(second_to_top_link),
             )
         };
         let artifact_base = tempdir.path().join("generated").join("adapters");
@@ -10098,6 +10132,26 @@ mod tests {
             .expect("renderable source document should be present");
 
         assert!(top_candidate.renderability.is_renderable);
+        assert_eq!(top_candidate.ports.len(), 1);
+        let result_port = top_candidate
+            .ports
+            .iter()
+            .find(|port| port.port_name == "result_data")
+            .expect("result_data top port should be present");
+        assert_eq!(
+            result_port.direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert_eq!(result_port.width_hint, Some(WidthHint::Numeric(8)));
+        assert!(
+            top_port_support_ids
+                .iter()
+                .any(|id| result_port.supporting_statement_ids.contains(id))
+        );
+        assert_eq!(
+            result_port.automation_confidence,
+            AutomationConfidence::High
+        );
         assert_eq!(top_candidate.children.len(), 2);
         assert!(
             top_candidate
@@ -10125,6 +10179,37 @@ mod tests {
                 .iter()
                 .any(|id| second_child.supporting_canonical_ids.contains(id))
         );
+        let first_to_second_link = top_candidate
+            .links
+            .iter()
+            .find(|link| {
+                link.source.instance_name.as_deref() == Some("first")
+                    && link.source.signal_name == "output_data"
+                    && link.target.instance_name.as_deref() == Some("second")
+                    && link.target.signal_name == "input_data"
+            })
+            .expect("first to second topology link should remain visible");
+        let second_to_top_link = top_candidate
+            .links
+            .iter()
+            .find(|link| {
+                link.source.instance_name.as_deref() == Some("second")
+                    && link.source.signal_name == "output_data"
+                    && link.target.instance_name.is_none()
+                    && link.target.signal_name == "result_data"
+            })
+            .expect("second to top topology link should remain visible");
+        assert!(
+            first_to_second_link_support_ids
+                .iter()
+                .any(|id| { first_to_second_link.supporting_statement_ids.contains(id) })
+        );
+        assert!(
+            second_to_top_link_support_ids
+                .iter()
+                .any(|id| second_to_top_link.supporting_statement_ids.contains(id))
+        );
+        assert_eq!(renderable_top.ports.len(), 1);
         assert_eq!(renderable_top.children.len(), 2);
         assert!(
             renderable_top

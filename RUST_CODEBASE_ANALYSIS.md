@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` reused-child top provenance lock)
+- Tightened `renderable_top_document_deduplicates_reused_child_module_roots` in `crates/specforge/src/ir/adapters.rs` so reused-child top composition preserves the public `result_data` top-port shape and support IDs.
+- The test now also proves both topology-link support-ID sets survive while the shared `stage_core` direct root is still emitted exactly once.
+- This starts the `N=200` batch by expanding renderable top-composition provenance from child deduplication to the top boundary and wiring surface.
+
 ## Session update (2026-05-06 `.fsm` renderable top-port support lock)
 - Tightened `builds_renderable_top_composition_fsm_adapter_artifact` in `crates/specforge/src/ir/adapters.rs` so the renderable composition artifact retains explicit `result_data` top-port shape and confidence.
 - The test now proves output direction, numeric width, high automation confidence, and the renderable top root survive alongside existing child and topology support-ID checks.

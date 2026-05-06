@@ -331,6 +331,7 @@
 - `.fsm` undeclared-target structured-FSM blockers now preserve declared state candidate provenance: Done
 - `.fsm` missing-child composition blockers now preserve top-port provenance: Done
 - `.fsm` renderable top-composition lowering now preserves top-port shape and renderable-top provenance: Done
+- `.fsm` reused-child top-composition lowering now preserves top-port and topology-link provenance while deduplicating the shared child root: Done
 - `.fsm` top-root signal inventory now preserves flat-vs-graph top-port direction disagreement without mislabeling graph provenance as conflicted: Done
 - mdBook now documents blocked `.fsm` adapter renderability together with flat/graph signal-inventory provenance: Done
 - `.fsm` adapter signal inventory now preserves parametric width provenance and reports symbolic widths distinctly from missing numeric width evidence: Done

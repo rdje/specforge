@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` reused-child top provenance lock)
+
+### Added: reused-child composition top/link provenance
+- Tightened `renderable_top_document_deduplicates_reused_child_module_roots` so reused-child top composition now preserves the public `result_data` top-port shape and support IDs.
+- The test also locks both topology-link support-ID sets while preserving per-instance child support IDs and single emitted shared child root behavior.
+- This starts the `N=200` batch by extending renderable composition provenance from child deduplication to the top boundary and wiring surface.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge renderable_top_document_deduplicates_reused_child_module_roots` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (live docs and mdBook sync)
 
 ### Changed: post-batch documentation state
