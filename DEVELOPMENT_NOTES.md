@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` top-link direction provenance lock
+- New batch slice 6/200 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_recovers_top_port_direction_from_link_topology` now asserts topology-recovered `result_data` top-port direction keeps the original top-port declaration support IDs in selected and renderable top records.
+- Existing checks still prove the topology-link support IDs, high automation confidence, graph-backed signal-inventory provenance, and `result_data>8` emission.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` mixed-child top provenance lock
 - New batch slice 5/200 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `renderable_top_document_preserves_mixed_child_root_order_and_kind` now asserts the public `ACC` top-port support IDs survive in both selected and renderable top records.

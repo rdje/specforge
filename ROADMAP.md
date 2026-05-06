@@ -185,6 +185,7 @@
   - canonical parametric width blockers preserve interface provenance category, support IDs, and automation confidence while `.fsm` lowering remains blocked until numeric width evidence exists
   - explicit numeric interface width evidence stays provenance-auditable and takes precedence over graph-backed actor-port symbolic widths for `.fsm` emission
   - blocked top-composition recovered top-port direction preserves top-link support IDs and high automation confidence even when another composition gate blocks `.fsm` emission
+  - top-link direction recovery preserves original public top-port declaration support IDs alongside topology-link support IDs
   - top actor-port direction conflicts preserve explicit top-port support IDs, graph actor-port support IDs, and high automation confidence while blocking `.fsm` emission
   - top actor-port width conflicts preserve explicit top-port support IDs, graph actor-port width support IDs, width-conflict inventory state, and high automation confidence while blocking `.fsm` emission
   - top-link direction conflicts preserve explicit top-port support IDs, topology-link support IDs, graph-direction inventory state, and high automation confidence while blocking `.fsm` emission
@@ -236,6 +237,7 @@
   - single-FSM-child top source-document emission preserves top-port and topology-link provenance alongside child root-kind support
   - reused-FSM-child top source-document emission preserves top-port and topology-link provenance while deduplicating the shared FSM root
   - mixed-child top source-document emission preserves top-port and topology-link provenance while preserving DT/FSM direct-root order
+  - top-link direction recovery augments public top-port declarations with topology support without dropping declaration support IDs
   - unrelated direct actor-port graph context keeps selected support IDs auditable while excluding unrelated side-band evidence from `.fsm` inventories
   - ambiguous direct actor-port graph context leaves graph direction, actor-port category, and support IDs unselected instead of guessing a target actor
   - standalone DT graph-backed undriven output blockers preserve selected actor support IDs and high automation confidence while blocking `.fsm` emission

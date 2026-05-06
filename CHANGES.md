@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` top-link direction provenance lock)
+
+### Added: recovered top-port declaration provenance
+- Tightened `top_composition_recovers_top_port_direction_from_link_topology` so top-link direction recovery preserves the original `result_data` top-port declaration support IDs.
+- The regression keeps existing topology-link support-ID, high-confidence recovered direction, signal-inventory graph provenance, and emitted `result_data>8` checks intact.
+- This proves topology-based recovery augments the public top-port evidence trail rather than replacing the declaration that it recovered.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_top_port_direction_from_link_topology` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` mixed-child top provenance lock)
 
 ### Added: mixed DT/FSM top/link provenance

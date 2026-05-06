@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` top-link direction provenance lock)
+- Tightened `top_composition_recovers_top_port_direction_from_link_topology` in `crates/specforge/src/ir/adapters.rs` so topology-recovered public top-port direction keeps the original top-port declaration support IDs in selected and renderable records.
+- Existing assertions still cover topology-link support IDs, high automation confidence, graph-backed signal-inventory provenance, and emitted `result_data>8` text.
+- This locks the recovery contract that topology evidence augments public IO declarations instead of erasing their declaration provenance.
+
 ## Session update (2026-05-06 `.fsm` mixed-child top provenance lock)
 - Tightened `renderable_top_document_preserves_mixed_child_root_order_and_kind` in `crates/specforge/src/ir/adapters.rs` so mixed DT/FSM top documents keep the public `ACC` top-port support IDs in selected and renderable top records.
 - The renderable top root now also proves producer-to-controller data-link and controller-to-top `ACC` link support IDs survive while mixed child root kinds and direct-root order remain unchanged.

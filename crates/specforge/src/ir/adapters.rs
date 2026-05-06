@@ -10980,7 +10980,7 @@ mod tests {
     fn top_composition_recovers_top_port_direction_from_link_topology() -> Result<()> {
         let tempdir = tempdir()?;
         let mut intent_ir = build_width_only_top_port_composition_intent_ir(tempdir.path())?;
-        let topology_support_ids = {
+        let (top_port_support_ids, topology_support_ids) = {
             let explicit_top = intent_ir
                 .explicit_tops
                 .iter_mut()
@@ -10998,6 +10998,7 @@ mod tests {
                 Some(8)
             );
             raw_port.automation_confidence = AutomationConfidence::Low;
+            let top_port_support_ids = raw_port.supporting_statement_ids.clone();
             let topology_link = explicit_top
                 .links
                 .iter_mut()
@@ -11006,7 +11007,10 @@ mod tests {
                 })
                 .expect("topology link into result_data should be present");
             topology_link.automation_confidence = AutomationConfidence::High;
-            super::explicit_top_link_supporting_ids(topology_link)
+            (
+                top_port_support_ids,
+                super::explicit_top_link_supporting_ids(topology_link),
+            )
         };
         intent_ir.write_to_disk()?;
 
@@ -11058,6 +11062,11 @@ mod tests {
             Some(InterfaceSignalDirection::Output)
         );
         assert!(
+            top_port_support_ids
+                .iter()
+                .any(|id| recovered_port.supporting_statement_ids.contains(id))
+        );
+        assert!(
             topology_support_ids
                 .iter()
                 .any(|id| recovered_port.supporting_statement_ids.contains(id))
@@ -11069,6 +11078,11 @@ mod tests {
         assert_eq!(
             renderable_top_port.direction_hint,
             Some(InterfaceSignalDirection::Output)
+        );
+        assert!(
+            top_port_support_ids
+                .iter()
+                .any(|id| renderable_top_port.supporting_statement_ids.contains(id))
         );
         assert!(
             topology_support_ids
