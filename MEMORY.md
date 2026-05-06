@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `8d4ed8a761d0094d0cd90d9a95d09805c990f97e`
-- latest_commit_brief_message: `test(adapter): lock single FSM child top support`
+- latest_commit_hash: `63892f9ea5dd62644fa23a344035ce611a74b1f0`
+- latest_commit_brief_message: `test(adapter): lock top-before-child support`
 - note: new local `N=100` batch is active; push remains deferred until all 100 slices complete
 
 ## Recent commit chain (last 6)
+- `63892f9` test(adapter): lock top-before-child support
 - `8d4ed8a` test(adapter): lock single FSM child top support
 - `92022ba` test(adapter): lock mixed child top support
 - `f18a8eb` test(adapter): lock reused FSM child top support
 - `1d3e2bc` test(adapter): lock reused child top support
 - `87ff7ed` test(adapter): lock baseline top composition support
-- `73b0c96` test(adapter): lock child top-root confidence support
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 76]`
-- files in flight for new batch slice 77:
+- branch state before the next commit: `main...origin/main [ahead 77]`
+- files in flight for new batch slice 78:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -47,19 +47,19 @@
 
 ## Active N-slice batch
 - requested_count: `100`
-- completed_count: `76`
+- completed_count: `77`
 - push_policy: defer push until all `100` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - regression-lock renderable top-before-child source-document child provenance
-  - prove selected top candidates preserve producer and consumer child support IDs while emitted top-first direct-root order stays stable
-  - keep child declaration evidence auditable in the ordering fixture
+  - regression-lock sibling child-link width-conflict provenance
+  - prove blocked consumer input inventory preserves both conflicting topology-link support-ID sets
+  - keep both producer-to-consumer link evidence trails auditable while width conflict blocks `.fsm` emission
 - tracker effect:
-  - live-status tracker gains `.fsm renderable top-before-child emission now regression-locks child support IDs: Done`
+  - live-status tracker gains `.fsm sibling child-link width conflicts now regression-lock both topology-link support ID sets: Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge renderable_top_document_emits_top_before_child_direct_roots` passed with `1` test
+  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_sibling_child_link_widths` passed with `1` test
   - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `80` tests
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed before the final live-doc refresh
@@ -70,4 +70,4 @@
   - `148/148` tracked KG fixtures
 
 ## Next exact steps
-- run final docs CI and guards, commit slice 77 without pushing, and continue slice 78
+- run final docs CI and guards, commit slice 78 without pushing, and continue slice 79

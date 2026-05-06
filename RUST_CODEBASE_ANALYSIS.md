@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` sibling child-link width conflict support lock)
+- Tightened `top_composition_blocks_conflicting_sibling_child_link_widths` in `crates/specforge/src/ir/adapters.rs` so the blocked consumer `input_data` inventory entry retains both conflicting topology-link support-ID sets.
+- The adapter already left incompatible sibling-link width evidence unresolved and blocked renderability; this regression now proves both conflicting link records remain auditable.
+- This starts a blocked topology-width conflict provenance lane after the renderable top-composition child support locks.
+
 ## Session update (2026-05-06 `.fsm` top-before-child support lock)
 - Tightened `renderable_top_document_emits_top_before_child_direct_roots` in `crates/specforge/src/ir/adapters.rs` so producer and consumer child declarations retain support IDs in the selected top candidate.
 - The adapter already emitted renderable source documents with the top root before child direct roots; this regression now proves the same order fixture keeps child evidence auditable.

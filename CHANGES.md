@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` sibling child-link width conflict support lock)
+
+### Added: conflicting sibling-link width provenance coverage
+- Tightened `top_composition_blocks_conflicting_sibling_child_link_widths` so the blocked consumer input now proves both conflicting sibling topology-link support-ID sets survive in the selected signal inventory.
+- This is coverage-only over the existing adapter behavior: incompatible sibling child-link widths still block `.fsm` emission instead of selecting one width.
+- The slice keeps both producer-to-consumer link evidence trails auditable while the consumer input remains width-conflicted.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_sibling_child_link_widths` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` top-before-child support lock)
 
 ### Added: renderable top document child provenance coverage

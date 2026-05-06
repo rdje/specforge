@@ -12860,6 +12860,30 @@ mod tests {
             "conflicting_sibling_child_link_widths.md",
             "# Conflicting Sibling Child Link Widths\nTop datapath.\n\nTop datapath port result_data is output width 8.\n\nTop datapath child producer8 uses module producer8_core.\n\nTop datapath child producer16 uses module producer16_core.\n\nTop datapath child consumer uses module consumer_core.\n\nTop datapath link producer8.output_data -> consumer.input_data.\n\nTop datapath link producer16.output_data -> consumer.input_data.\n\nTop datapath link consumer.result_data -> result_data.\n\nModule producer8_core signal output_data is output width 8.\n\nModule producer8_core block produce: output_data = 8'3.\n\nModule producer16_core signal output_data is output width 16.\n\nModule producer16_core block produce: output_data = 16'3.\n\nModule consumer_core signal input_data is input.\n\nModule consumer_core signal result_data is output width 8.\n\nModule consumer_core block route: result_data = input_data.\n",
         )?;
+        let sibling_link_support_id_sets = {
+            let explicit_top = intent_ir
+                .explicit_tops
+                .iter()
+                .find(|top| top.top_name == "datapath")
+                .expect("explicit top should be present");
+            let link_support_id_sets = explicit_top
+                .links
+                .iter()
+                .filter(|link| {
+                    link.target.instance_name.as_deref() == Some("consumer")
+                        && link.target.signal_name == "input_data"
+                })
+                .map(super::explicit_top_link_supporting_ids)
+                .collect::<Vec<_>>();
+            assert_eq!(link_support_id_sets.len(), 2);
+            assert!(
+                link_support_id_sets
+                    .iter()
+                    .all(|support_ids| !support_ids.is_empty()),
+                "conflicting sibling-link provenance should be present"
+            );
+            link_support_id_sets
+        };
 
         let artifact_base = tempdir.path().join("generated").join("adapters");
         let adapter = AdapterArtifact::build(
@@ -12890,6 +12914,14 @@ mod tests {
                 .iter()
                 .any(|category| category == "module_topology_link")
         );
+        for support_ids in &sibling_link_support_id_sets {
+            assert!(
+                support_ids
+                    .iter()
+                    .any(|id| input_data.supporting_canonical_ids.contains(id))
+            );
+        }
+        assert_eq!(input_data.automation_confidence, AutomationConfidence::High);
         assert!(!consumer.renderability.is_renderable);
         assert!(
             consumer
