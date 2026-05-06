@@ -179,6 +179,7 @@
   - real explicit `?top:name` target text is emitted only when the canonical model carries explicit top ports, child modules, renderable child roots, and width-compatible links
   - selected top signal inventory preserves symbolic public IO width provenance while `.fsm` lowering remains blocked until numeric width evidence exists
   - widthless public top-port blockers preserve explicit top-port support IDs and high automation confidence while `.fsm` lowering remains blocked until numeric width evidence exists
+  - widthless public top-port blockers preserve top-boundary width recovery guidance on blocked top and aggregate `.fsm` renderability surfaces
   - parametric public top-port blockers preserve explicit top-port support IDs and high automation confidence while `.fsm` lowering remains blocked until numeric width evidence exists
   - top-link blockers for unemitted child endpoints preserve explicit link support IDs, high automation confidence, and source-endpoint enrichment guidance while blocking `.fsm` emission
   - actor-port parametric width blockers preserve graph-backed provenance category, support IDs, and automation confidence while `.fsm` lowering remains blocked until numeric width evidence exists

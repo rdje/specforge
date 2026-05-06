@@ -356,6 +356,7 @@
 - `.fsm` explicit-module actor-port width conflicts now regression-lock support IDs and automation confidence: Done
 - `.fsm` direct-root actor-port width conflicts now regression-lock support IDs and automation confidence: Done
 - `.fsm` explicit top-root lowering now blocks missing or parametric public IO widths instead of rendering implicit 1-bit top ports: Done
+- `.fsm` widthless top-port blockers now preserve top-boundary width recovery guidance: Done
 - `.fsm` blocked recovered top-port direction now regression-locks support IDs and automation confidence: Done
 - `.fsm` top-link direction recovery now preserves top-port declaration support alongside topology support: Done
 - `.fsm` actor-port direction recovery now preserves top-port declaration support alongside graph support: Done

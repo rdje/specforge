@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` widthless top-port guidance lock)
+- Tightened `top_composition_blocks_widthless_top_port_without_width_recovery` in `crates/specforge/src/ir/adapters.rs` so missing numeric public IO width blockers retain top-boundary width recovery guidance on the blocked top candidate and aggregate `.fsm` renderability.
+- Existing assertions still cover explicit top-port support IDs, high automation confidence, and selected top signal-inventory missing-width state.
+- This keeps widthless public top-port blockers actionable without confusing them with parametric-width or width-conflict repair lanes.
+
 ## Session update (2026-05-06 `.fsm` duplicate top-direction blocker guidance lock)
 - Tightened `top_composition_keeps_duplicate_top_port_direction_conflict_unresolved` in `crates/specforge/src/ir/adapters.rs` so duplicate top-port direction conflicts retain top-boundary direction repair guidance on the blocked top candidate and aggregate `.fsm` renderability.
 - Existing assertions still cover both duplicate declaration support-ID sets and high automation confidence on duplicate recovered top ports and selected top signal-inventory entries.

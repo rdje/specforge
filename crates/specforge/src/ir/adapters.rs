@@ -12118,7 +12118,22 @@ mod tests {
                 .iter()
                 .any(|reason| reason.contains("missing numeric width evidence"))
         );
+        assert!(
+            top_candidate
+                .renderability
+                .required_canonical_enrichments
+                .iter()
+                .any(|enrichment| enrichment
+                    == "recover each top boundary port width from explicit declaration, actor-port graph, or top-link topology before lowering `?top:name`")
+        );
         assert!(!fsm.renderability.is_renderable);
+        assert!(
+            fsm.renderability
+                .required_canonical_enrichments
+                .iter()
+                .any(|enrichment| enrichment
+                    == "recover each top boundary port width from explicit declaration, actor-port graph, or top-link topology before lowering `?top:name`")
+        );
 
         Ok(())
     }

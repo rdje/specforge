@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` widthless top-port guidance lock)
+
+### Added: widthless top-port recovery guidance coverage
+- Tightened `top_composition_blocks_widthless_top_port_without_width_recovery` so missing numeric public IO width blockers prove top-boundary width recovery guidance survives on the blocked top candidate and aggregate `.fsm` renderability.
+- Existing checks still prove explicit top-port support IDs, high automation confidence, and selected top signal-inventory missing-width state remain distinct from symbolic and conflict states.
+- This locks the actionable repair hint for widthless public top ports before `.fsm` emission.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_widthless_top_port_without_width_recovery` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` duplicate top-direction blocker guidance lock)
 
 ### Added: duplicate top-port direction conflict enrichment coverage
