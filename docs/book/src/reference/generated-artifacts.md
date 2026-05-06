@@ -132,6 +132,7 @@ Single-FSM-child top documents preserve the same top-port and topology-link prov
 Reused-FSM-child top documents also preserve per-output top-port and link provenance while emitting the shared FSM direct root only once.
 Mixed DT/FSM child top documents preserve public top-port and topology-link provenance while retaining child root kinds and direct-root order.
 When explicit top-link topology recovers a public top-port direction, the recovered top records retain the original top-port declaration support IDs as well as the topology evidence that supplied the direction.
+If that recovered top-port direction is still blocked by another composition gate, the adapter also emits the composition-topology residual decision so child-module reference repair remains visible.
 Actor-port-backed top direction recovery follows the same rule: the graph evidence is added without dropping the public top-port declaration support IDs.
 Actor-port-backed top width recovery also retains public top-port declaration support while adding the graph width evidence.
 Child-link-backed top width recovery likewise retains public top-port declaration support while adding the topology width evidence.

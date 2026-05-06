@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` blocked recovered top residual lock
+- New batch slice 73/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_preserves_recovered_top_port_direction_when_still_blocked` now asserts that a missing child-module gate emits the composition topology residual even after top-link topology recovers the public direction.
+- This pairs recovered top-port support-ID coverage with structured residual diagnostics for child-module repair.
+- Focused blocked recovered top-port regression, adapter suite, fmt, docs, KG bench, full CI, and the user-requested `cargo sweep --time 1` all passed.
+
 ## 2026-05-06 `.fsm` missing-child residual lock
 - New batch slice 72/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `keeps_top_composition_blocked_when_child_module_is_missing` now asserts that missing child-module references emit the composition topology residual.

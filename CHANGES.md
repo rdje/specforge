@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` blocked recovered top residual lock)
+
+### Added: recovered top-port blockers now lock residual diagnostics
+- Tightened `top_composition_preserves_recovered_top_port_direction_when_still_blocked` so missing child-module references still prove `fsm_adapter_composition_topology` remains present.
+- The residual assertion keeps child-module reference repair visible while the blocked top candidate and selected signal inventory preserve the topology-recovered public direction.
+- Updated the live tracker, roadmap, and mdBook to mark the blocked recovered top-port residual guarantee as closed.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_preserves_recovered_top_port_direction_when_still_blocked` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`613` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo sweep --time 1` -> completed (`Cleaned nothing`)
+
 ## 2026-05-06 (`.fsm` missing-child residual lock)
 
 ### Added: missing-child blockers now lock residual diagnostics
