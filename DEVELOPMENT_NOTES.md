@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` child topology width conflict support lock
+- New batch slice 80/100 tightens behavior and coverage in `crates/specforge/src/ir/adapters.rs`.
+- Adapter signal-inventory registration now carries signal-record supporting statement IDs alongside the enclosing interface id, so module-local signal declarations remain auditable after later topology overlays.
+- `top_composition_blocks_conflicting_child_topology_widths` now asserts a blocked producer `output_data` inventory entry preserves both explicit child signal support and topology-link support while staying width-conflicted.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` top child-link width conflict support lock
 - New batch slice 79/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_conflicting_top_port_widths_from_child_links` now asserts both conflicting child-to-top topology-link support-ID sets survive on the blocked recovered top port and selected `result_data` signal inventory entry.

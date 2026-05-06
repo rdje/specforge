@@ -196,6 +196,7 @@
   - sibling child-link width recovery preserves explicit top-link support IDs and high automation confidence in both source-side and target-side recovered child module inventories
   - sibling child-link width conflicts preserve both conflicting topology-link support-ID sets and high automation confidence while blocking `.fsm` emission
   - top child-link width conflicts preserve both conflicting topology-link support-ID sets and high automation confidence while blocking `.fsm` emission
+  - child topology width conflicts preserve both explicit child signal declaration support IDs and topology-link support IDs while blocking `.fsm` emission
   - transitive child-width recovery preserves each contributing topology-link support ID and high automation confidence as width evidence flows from top link through sibling child link
   - recovered top-port evidence preserves graph-backed support IDs while raising top-root selection confidence
   - recovered child-declaration evidence preserves child support IDs while raising top-root selection confidence

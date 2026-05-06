@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `85bb047b29dae3c57161c594d45e976317b91e65`
-- latest_commit_brief_message: `test(adapter): lock sibling child link width conflict support`
+- latest_commit_hash: `70bef05fa8b9619510aca3d646a88bf0026c2d46`
+- latest_commit_brief_message: `test(adapter): lock top child link width conflict support`
 - note: new local `N=100` batch is active; push remains deferred until all 100 slices complete
 
 ## Recent commit chain (last 6)
+- `70bef05` test(adapter): lock top child link width conflict support
 - `85bb047` test(adapter): lock sibling child link width conflict support
 - `63892f9` test(adapter): lock top-before-child support
 - `8d4ed8a` test(adapter): lock single FSM child top support
 - `92022ba` test(adapter): lock mixed child top support
 - `f18a8eb` test(adapter): lock reused FSM child top support
-- `1d3e2bc` test(adapter): lock reused child top support
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 78]`
-- files in flight for new batch slice 79:
+- branch state before the next commit: `main...origin/main [ahead 79]`
+- files in flight for new batch slice 80:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -47,19 +47,19 @@
 
 ## Active N-slice batch
 - requested_count: `100`
-- completed_count: `78`
+- completed_count: `79`
 - push_policy: defer push until all `100` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - regression-lock top child-link width-conflict provenance
-  - prove blocked recovered top port and selected signal inventory preserve both conflicting child-to-top topology-link support-ID sets
-  - keep both public top-port width evidence trails auditable while width conflict blocks `.fsm` emission
+  - fix and regression-lock child topology width-conflict provenance
+  - preserve signal-record supporting statement IDs in adapter signal inventory alongside interface ids
+  - prove blocked child output inventory preserves both explicit child signal support and conflicting topology-link support
 - tracker effect:
-  - live-status tracker gains `.fsm top child-link width conflicts now regression-lock both topology-link support ID sets: Done`
+  - live-status tracker gains `.fsm child topology width conflicts now preserve signal and topology support IDs: Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_top_port_widths_from_child_links` passed with `1` test
+  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_child_topology_widths` passed with `1` test
   - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `80` tests
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed before the final live-doc refresh
@@ -70,4 +70,4 @@
   - `148/148` tracked KG fixtures
 
 ## Next exact steps
-- run final docs CI and guards, commit slice 79 without pushing, and continue slice 80
+- run final docs CI and guards, commit slice 80 without pushing, and continue slice 81

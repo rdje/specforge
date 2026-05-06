@@ -1332,14 +1332,18 @@ fn build_signal_inventory_map_from_surface(
             // Adapters currently use numeric widths only for port declarations (e.g. +size in FSM).
             // Parametric widths (ADDR_WIDTH, DATA_WIDTH) are user-configurable and kept as None here;
             // the SystemVerilog adapter (future) will emit them as parameter references.
-            register_canonical_signal(
+            let supporting_ids = std::iter::once(interface.interface_id.clone())
+                .chain(signal.supporting_statement_ids.iter().cloned())
+                .collect::<Vec<_>>();
+            register_canonical_signal_with_supporting_ids(
                 &mut inventory,
                 &signal.signal_name,
                 signal.direction_hint,
                 signal.width_hint.as_ref().and_then(|w| w.as_numeric()),
-                &interface.interface_id,
+                supporting_ids,
                 "interface",
                 signal.automation_confidence,
+                false,
             );
             if let Some(WidthHint::Parametric(parametric_width)) = signal.width_hint.as_ref() {
                 register_parametric_width_hint(
@@ -13184,6 +13188,48 @@ mod tests {
             "conflicting_child_topology_width.md",
             "# Conflicting Child Topology Width\nTop datapath.\n\nTop datapath port result_data is output width 8.\n\nTop datapath child producer uses module producer_core.\n\nTop datapath link producer.output_data -> result_data.\n\nModule producer_core signal output_data is output width 16.\n\nModule producer_core block produce: output_data = 16'3.\n",
         )?;
+        let (topology_support_ids, output_data_support_ids) = {
+            let explicit_top = intent_ir
+                .explicit_tops
+                .iter()
+                .find(|top| top.top_name == "datapath")
+                .expect("explicit top should be present");
+            let topology_link = explicit_top
+                .links
+                .iter()
+                .find(|link| {
+                    link.source.instance_name.as_deref() == Some("producer")
+                        && link.source.signal_name == "output_data"
+                        && link.target.instance_name.is_none()
+                        && link.target.signal_name == "result_data"
+                })
+                .expect("producer output_data topology link should be present");
+            let output_data = intent_ir
+                .explicit_modules
+                .iter()
+                .find(|module| module.module_name == "producer_core")
+                .and_then(|module| {
+                    module.interfaces.iter().find_map(|interface| {
+                        interface
+                            .signal_records
+                            .iter()
+                            .find(|signal| signal.signal_name == "output_data")
+                    })
+                })
+                .expect("producer output_data signal declaration should be present");
+            (
+                super::explicit_top_link_supporting_ids(topology_link),
+                output_data.supporting_statement_ids.clone(),
+            )
+        };
+        assert!(
+            !topology_support_ids.is_empty(),
+            "topology-link provenance should be present"
+        );
+        assert!(
+            !output_data_support_ids.is_empty(),
+            "child output signal provenance should be present"
+        );
 
         let artifact_base = tempdir.path().join("generated").join("adapters");
         let adapter = AdapterArtifact::build(
@@ -13213,6 +13259,20 @@ mod tests {
                 .mention_categories
                 .iter()
                 .any(|category| category == "module_topology_link")
+        );
+        assert!(
+            topology_support_ids
+                .iter()
+                .any(|id| output_data.supporting_canonical_ids.contains(id))
+        );
+        assert!(
+            output_data_support_ids
+                .iter()
+                .any(|id| output_data.supporting_canonical_ids.contains(id))
+        );
+        assert_eq!(
+            output_data.automation_confidence,
+            AutomationConfidence::High
         );
         assert!(!producer.renderability.is_renderable);
         assert!(

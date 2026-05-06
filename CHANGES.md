@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` child topology width conflict support lock)
+
+### Fixed: signal-level support preservation in adapter inventories
+- Updated adapter signal-inventory registration so interface signal records carry both the enclosing interface id and the signal record's own supporting statement IDs.
+- Tightened `top_composition_blocks_conflicting_child_topology_widths` so a blocked child output now proves both the explicit child signal declaration support and conflicting topology-link support survive in the selected module inventory.
+- The slice keeps child-local width evidence and top-link width evidence auditable when they disagree and block `.fsm` emission.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_child_topology_widths` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` top child-link width conflict support lock)
 
 ### Added: conflicting child-link top-port width provenance coverage

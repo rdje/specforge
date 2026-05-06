@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` child topology width conflict support lock)
+- Updated adapter signal-inventory registration in `crates/specforge/src/ir/adapters.rs` so interface signal records contribute their own supporting statement IDs in addition to the enclosing interface id.
+- Tightened `top_composition_blocks_conflicting_child_topology_widths` so the blocked producer `output_data` inventory entry retains both explicit signal declaration support and topology-link support when width evidence conflicts.
+- This fixes a real provenance gap exposed by the regression: topology conflict overlays must not erase the local declaration evidence they conflict with.
+
 ## Session update (2026-05-06 `.fsm` top child-link width conflict support lock)
 - Tightened `top_composition_blocks_conflicting_top_port_widths_from_child_links` in `crates/specforge/src/ir/adapters.rs` so the blocked recovered top port and selected `result_data` inventory entry retain both conflicting child-link support-ID sets.
 - The adapter already left incompatible child-to-top width evidence unresolved and blocked top renderability; this regression now proves both link evidence records remain auditable.
