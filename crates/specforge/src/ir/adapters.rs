@@ -8551,11 +8551,26 @@ mod tests {
                 .iter()
                 .any(|reason| reason.contains("clock signal `clk` has conflicting width evidence"))
         );
+        let system_contract_residual = adapter
+            .residual_decisions
+            .iter()
+            .find(|packet| packet.packet_id == "fsm_adapter_system_contract")
+            .expect("system contract width conflict should surface system guidance");
+        assert_eq!(
+            system_contract_residual.automation_confidence,
+            AutomationConfidence::Low
+        );
         assert!(
-            adapter
-                .residual_decisions
+            system_contract_residual
+                .why_unresolved
+                .contains("explicit clock/reset facts")
+        );
+        assert!(
+            system_contract_residual
+                .candidate_interpretations
                 .iter()
-                .any(|packet| packet.packet_id == "fsm_adapter_system_contract")
+                .any(|interpretation| interpretation.interpretation_id
+                    == "enrich_intent_ir_system_surface")
         );
 
         Ok(())
