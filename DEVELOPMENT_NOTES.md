@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` undeclared top-target guidance lock
+- New batch slice 37/200 adds coverage in `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_link_to_undeclared_top_target_guidance` asserts top links that target an undeclared top-boundary port keep `declare and emit every top-link target endpoint before lowering ?top:name` guidance on the blocked top candidate and aggregate `.fsm` renderability.
+- The regression also proves the declared `status` top port, producer child, and blocked topology link keep support IDs while the child source resolves as a renderable DT root.
+- Full adapter coverage is now `85` adapter tests, full CI is now `606` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` no-top-port guidance lock
 - New batch slice 36/200 adds coverage in `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_top_without_port_guidance` asserts explicit top roots with a child but no top-port records keep `carry explicit top-port records before lowering ?top:name` guidance on the blocked top candidate and aggregate `.fsm` renderability.

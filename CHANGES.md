@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` undeclared top-target guidance lock)
+
+### Added: undeclared top-target endpoint coverage
+- Added `top_composition_blocks_link_to_undeclared_top_target_guidance` so top links that target an undeclared top-boundary port prove target-endpoint enrichment guidance survives on the blocked top candidate and aggregate `.fsm` renderability.
+- The regression also proves the declared top port, child declaration, and blocked top-link support IDs remain visible while the child resolves to a renderable DT root.
+- This locks the top-boundary target sibling of the existing unemitted child-endpoint blocker.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_link_to_undeclared_top_target_guidance` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`85` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`606` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` no-top-port guidance lock)
 
 ### Added: no-top-port enrichment coverage
