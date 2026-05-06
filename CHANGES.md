@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` top-link target-role guidance lock)
+
+### Changed: target-side top-link role guidance is regression-locked
+- Extended topology-backed flat/graph direction disagreements to carry the same top-link endpoint-role guidance as graph-only topology conflicts.
+- Added `top_composition_blocks_child_target_direction_role_guidance` for a child target declared as an output while top-link topology needs it as a target/input endpoint.
+- The regression proves the blocked child module, blocked top candidate, aggregate renderability, declared top port, child declaration, and top-link support IDs all preserve the role guidance.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_child_target_direction_role_guidance` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`90` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`611` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` top-link direction-role guidance)
 
 ### Changed: top-link direction role blockers surface canonical repair guidance

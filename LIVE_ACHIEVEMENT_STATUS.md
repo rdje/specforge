@@ -15,6 +15,7 @@
 - IntentIR canonical endpoint contract established: Done
 - SpecForge CLI/crate rename completed: Done
 - Explicit `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters` architecture defined: Done
+- `.fsm` top-link target-role mismatches now preserve endpoint-role repair guidance: Done
 - `.fsm` top-link direction-role mismatches now preserve endpoint-role repair guidance: Done
 - `.fsm` links from unemitted child sources now preserve source-endpoint enrichment guidance: Done
 - `specforge inspect` command created: Done
