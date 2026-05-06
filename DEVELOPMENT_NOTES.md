@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` top child-link width conflict support lock
+- New batch slice 79/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_conflicting_top_port_widths_from_child_links` now asserts both conflicting child-to-top topology-link support-ID sets survive on the blocked recovered top port and selected `result_data` signal inventory entry.
+- This is a coverage-only lock for the blocked top-port width conflict path where two child links infer incompatible public top widths.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` sibling child-link width conflict support lock
 - New batch slice 78/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_conflicting_sibling_child_link_widths` now asserts both conflicting producer-to-consumer topology-link support-ID sets survive on the blocked consumer `input_data` inventory entry.

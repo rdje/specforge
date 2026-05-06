@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` top child-link width conflict support lock)
+
+### Added: conflicting child-link top-port width provenance coverage
+- Tightened `top_composition_blocks_conflicting_top_port_widths_from_child_links` so a blocked public top port now proves both conflicting child-link support-ID sets survive on the recovered top port and selected signal inventory.
+- This is coverage-only over the existing adapter behavior: incompatible child-link-derived top-port widths still block `.fsm` emission instead of selecting one width.
+- The slice keeps both child-to-top link evidence trails auditable while the public port remains width-conflicted.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_top_port_widths_from_child_links` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` sibling child-link width conflict support lock)
 
 ### Added: conflicting sibling-link width provenance coverage

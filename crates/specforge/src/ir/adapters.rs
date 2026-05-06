@@ -13084,6 +13084,29 @@ mod tests {
             "conflicting_top_port_width_from_child_links.md",
             "# Conflicting Top Port Width From Child Links\nTop datapath.\n\nTop datapath port result_data is output.\n\nTop datapath child producer8 uses module producer8_core.\n\nTop datapath child producer16 uses module producer16_core.\n\nTop datapath link producer8.output_data -> result_data.\n\nTop datapath link producer16.output_data -> result_data.\n\nModule producer8_core signal output_data is output width 8.\n\nModule producer8_core block produce: output_data = 8'3.\n\nModule producer16_core signal output_data is output width 16.\n\nModule producer16_core block produce: output_data = 16'3.\n",
         )?;
+        let child_link_support_id_sets = {
+            let explicit_top = intent_ir
+                .explicit_tops
+                .iter()
+                .find(|top| top.top_name == "datapath")
+                .expect("explicit top should be present");
+            let link_support_id_sets = explicit_top
+                .links
+                .iter()
+                .filter(|link| {
+                    link.target.instance_name.is_none() && link.target.signal_name == "result_data"
+                })
+                .map(super::explicit_top_link_supporting_ids)
+                .collect::<Vec<_>>();
+            assert_eq!(link_support_id_sets.len(), 2);
+            assert!(
+                link_support_id_sets
+                    .iter()
+                    .all(|support_ids| !support_ids.is_empty()),
+                "conflicting child-link top-port provenance should be present"
+            );
+            link_support_id_sets
+        };
 
         let artifact_base = tempdir.path().join("generated").join("adapters");
         let adapter = AdapterArtifact::build(
@@ -13114,6 +13137,26 @@ mod tests {
         assert_eq!(recovered_port.width_hint, None);
         assert_eq!(signal_inventory_port.width_hint, None);
         assert!(signal_inventory_port.width_hint_conflicted);
+        for support_ids in &child_link_support_id_sets {
+            assert!(
+                support_ids
+                    .iter()
+                    .any(|id| { recovered_port.supporting_statement_ids.contains(id) })
+            );
+            assert!(
+                support_ids
+                    .iter()
+                    .any(|id| signal_inventory_port.supporting_canonical_ids.contains(id))
+            );
+        }
+        assert_eq!(
+            recovered_port.automation_confidence,
+            AutomationConfidence::High
+        );
+        assert_eq!(
+            signal_inventory_port.automation_confidence,
+            AutomationConfidence::High
+        );
         assert!(
             top_candidate
                 .renderability
