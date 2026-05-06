@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` recovered top-root confidence residual lock
+- New batch slice 74/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_root_kind_confidence_follows_recovered_top_port_evidence` now asserts that recovered top-port confidence blockers emit the composition topology residual.
+- This pairs graph-backed top-port support-ID confidence with structured residual diagnostics for incomplete topology repair.
+- Focused recovered top-root confidence regression, adapter suite, fmt, docs, KG bench, full CI, and the user-requested `cargo sweep --time 1` all passed.
+
 ## 2026-05-06 `.fsm` blocked recovered top residual lock
 - New batch slice 73/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_preserves_recovered_top_port_direction_when_still_blocked` now asserts that a missing child-module gate emits the composition topology residual even after top-link topology recovers the public direction.

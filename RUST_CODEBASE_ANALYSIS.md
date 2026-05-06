@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` recovered top-root confidence residual lock)
+- Added a composition residual interpretation assertion to `top_root_kind_confidence_follows_recovered_top_port_evidence` in `crates/specforge/src/ir/adapters.rs`.
+- Recovered top-port evidence now keeps child-module repair visible in `fsm_adapter_composition_topology` while raising selected top-root confidence.
+- The live tracker and roadmap now mark the recovered top-root confidence residual guarantee as closed; focused adapter coverage, full adapter coverage, KG bench, docs, full CI, and `cargo sweep --time 1` all passed.
+
 ## Session update (2026-05-06 `.fsm` blocked recovered top residual lock)
 - Added a composition residual interpretation assertion to `top_composition_preserves_recovered_top_port_direction_when_still_blocked` in `crates/specforge/src/ir/adapters.rs`.
 - Blocked recovered top-port direction cases now keep child-module repair visible in `fsm_adapter_composition_topology` while retaining topology-recovered direction provenance.

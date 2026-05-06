@@ -29,6 +29,7 @@
 - `.fsm` widthless top-port blockers now preserve composition topology residual decisions: Done
 - `.fsm` parametric top-port blockers now preserve composition topology residual decisions: Done
 - `.fsm` blocked recovered top-port direction now preserves composition topology residual decisions: Done
+- `.fsm` recovered top-root confidence blockers now preserve composition topology residual decisions: Done
 - `.fsm` top-link width mismatch blockers now preserve width-compatible repair guidance: Done
 - `.fsm` top-target boundary role conflicts now preserve endpoint-role repair guidance: Done
 - `.fsm` top-boundary top-link role conflicts now preserve endpoint-role repair guidance: Done
@@ -440,6 +441,7 @@
 - `.fsm` child topology direction conflicts now preserve composition topology residual decisions: Done
 - `.fsm` transitive child-width recovery now regression-locks support IDs and automation confidence: Done
 - `.fsm` recovered top-root confidence now regression-locks graph-backed top-port support IDs: Done
+- `.fsm` recovered top-root confidence blockers now preserve composition topology residual decisions: Done
 - `.fsm` child-declaration top-root confidence now regression-locks child support IDs: Done
 - `.fsm` baseline top-composition lowering now regression-locks top port, child, and link support IDs: Done
 - `.fsm` missing-child top blockers now preserve unresolved child support IDs and confidence: Done

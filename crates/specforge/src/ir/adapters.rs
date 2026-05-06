@@ -11513,6 +11513,19 @@ mod tests {
             fsm.root_kind_decision.automation_confidence,
             AutomationConfidence::High
         );
+        let composition_residual = adapter
+            .residual_decisions
+            .iter()
+            .find(|packet| packet.packet_id == "fsm_adapter_composition_topology")
+            .expect("recovered top-root confidence should surface a composition residual");
+        assert!(
+            composition_residual
+                .candidate_interpretations
+                .iter()
+                .any(|interpretation| interpretation
+                    .description
+                    .contains("child-module references"))
+        );
 
         Ok(())
     }
