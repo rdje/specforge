@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` structured-FSM missing-initial support lock)
+
+### Added: state declaration provenance coverage for initial-state blockers
+- Tightened `keeps_structured_fsm_blocked_without_exactly_one_initial_state` so a blocked structured-FSM root now proves its declared states remain visible in `fsm.state_candidates`.
+- The test locks state declaration support IDs, high automation confidence, and non-initial status while the missing-initial cardinality blocker remains active.
+- This keeps the unsafe state graph auditable without inventing an initial state or emitting `.fsm` output.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge keeps_structured_fsm_blocked_without_exactly_one_initial_state` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` missing-child top support lock)
 
 ### Added: missing child declaration provenance coverage

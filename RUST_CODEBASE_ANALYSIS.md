@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` structured-FSM missing-initial support lock)
+- Tightened `keeps_structured_fsm_blocked_without_exactly_one_initial_state` in `crates/specforge/src/ir/adapters.rs` so blocked FSM-root state candidates retain declaration support IDs and high confidence.
+- The adapter already blocked `.fsm` emission when the explicit state graph had no initial state; this regression now proves those state declarations remain visible for review.
+- This complements structured-FSM control/read and blocker provenance coverage with the state-graph cardinality branch.
+
 ## Session update (2026-05-06 `.fsm` missing-child top support lock)
 - Tightened `keeps_top_composition_blocked_when_child_module_is_missing` in `crates/specforge/src/ir/adapters.rs` so the blocked top candidate retains the unresolved child declaration support IDs and high confidence.
 - The adapter already blocked `.fsm` emission when a top child referenced `missing_module`; this regression now proves the child candidate remains inspectable with no resolved root kind.

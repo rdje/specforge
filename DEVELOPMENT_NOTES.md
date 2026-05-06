@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` structured-FSM missing-initial support lock
+- New batch slice 84/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `keeps_structured_fsm_blocked_without_exactly_one_initial_state` now asserts the blocked FSM-root state candidates keep their declaration support IDs, high automation confidence, and non-initial status while the initial-state cardinality blocker remains active.
+- This is a coverage-only lock for the blocked structured-FSM path where the state graph is explicit but has no initial state.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` missing-child top support lock
 - New batch slice 83/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `keeps_top_composition_blocked_when_child_module_is_missing` now asserts the unresolved `producer` child keeps its declaration support IDs, high automation confidence, and `None` resolved root kind while the missing-module blocker remains active.

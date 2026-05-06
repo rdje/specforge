@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `ab770f28fd05a646f06ed480383672f513ab8b46`
-- latest_commit_brief_message: `test(adapter): lock child actor-port conflict support`
+- latest_commit_hash: `5562165452c4e7624f5e809cc203004370ed321b`
+- latest_commit_brief_message: `test(adapter): lock missing child top support`
 - note: new local `N=100` batch is active; push remains deferred until all 100 slices complete
 
 ## Recent commit chain (last 6)
+- `5562165` test(adapter): lock missing child top support
 - `ab770f2` test(adapter): lock child actor-port conflict support
 - `072591d` test(adapter): lock child topology direction conflict support
 - `e78e4e8` fix(adapter): preserve child topology width conflict support
 - `70bef05` test(adapter): lock top child link width conflict support
 - `85bb047` test(adapter): lock sibling child link width conflict support
-- `63892f9` test(adapter): lock top-before-child support
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 82]`
-- files in flight for new batch slice 83:
+- branch state before the next commit: `main...origin/main [ahead 83]`
+- files in flight for new batch slice 84:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -47,19 +47,19 @@
 
 ## Active N-slice batch
 - requested_count: `100`
-- completed_count: `82`
+- completed_count: `83`
 - push_policy: defer push until all `100` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - regression-lock missing-child top-composition provenance
-  - prove the unresolved child declaration remains visible in the selected top candidate
-  - keep child declaration support IDs and confidence auditable while missing-module resolution blocks `.fsm` emission
+  - regression-lock structured-FSM missing-initial state provenance
+  - prove blocked FSM-root state candidates keep declaration support IDs and confidence
+  - keep explicit non-initial states auditable while initial-state cardinality blocks `.fsm` emission
 - tracker effect:
-  - live-status tracker gains `.fsm missing-child top blockers now preserve unresolved child support IDs and confidence: Done`
+  - live-status tracker gains `.fsm structured-FSM missing-initial blockers now preserve state support IDs and confidence: Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge keeps_top_composition_blocked_when_child_module_is_missing` passed with `1` test
+  - `cargo test --manifest-path Cargo.toml -p specforge keeps_structured_fsm_blocked_without_exactly_one_initial_state` passed with `1` test
   - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `80` tests
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed before the final live-doc refresh
@@ -70,4 +70,4 @@
   - `148/148` tracked KG fixtures
 
 ## Next exact steps
-- run final docs CI and guards, commit slice 83 without pushing, and continue slice 84
+- run final docs CI and guards, commit slice 84 without pushing, and continue slice 85

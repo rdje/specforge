@@ -13565,6 +13565,23 @@ mod tests {
     fn keeps_structured_fsm_blocked_without_exactly_one_initial_state() -> Result<()> {
         let tempdir = tempdir()?;
         let intent_ir = build_missing_initial_fsm_intent_ir(tempdir.path())?;
+        let state_support_ids = intent_ir
+            .regular_states
+            .iter()
+            .map(|state| {
+                (
+                    state.state_name.clone(),
+                    state.supporting_statement_ids.clone(),
+                )
+            })
+            .collect::<Vec<_>>();
+        assert_eq!(state_support_ids.len(), 2);
+        for (_, support_ids) in &state_support_ids {
+            assert!(
+                !support_ids.is_empty(),
+                "state declaration provenance should be present"
+            );
+        }
         let artifact_base = tempdir.path().join("generated").join("adapters");
 
         let adapter = AdapterArtifact::build(
@@ -13577,6 +13594,24 @@ mod tests {
         assert!(adapter.artifact_layout.emitted_target_path.is_none());
         let fsm = adapter.fsm.expect("fsm artifact should be present");
         assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Fsm);
+        assert_eq!(fsm.state_candidates.len(), 2);
+        for (state_name, support_ids) in &state_support_ids {
+            let state_candidate = fsm
+                .state_candidates
+                .iter()
+                .find(|state| &state.state_name == state_name)
+                .expect("state candidate should remain visible");
+            assert!(!state_candidate.is_initial);
+            assert!(
+                support_ids
+                    .iter()
+                    .any(|id| state_candidate.supporting_canonical_ids.contains(id))
+            );
+            assert_eq!(
+                state_candidate.automation_confidence,
+                AutomationConfidence::High
+            );
+        }
         assert!(!fsm.renderability.is_renderable);
         assert!(
             fsm.renderability
