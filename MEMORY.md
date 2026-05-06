@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `148529c25148a8b4d84d3f5f6ebe0566bf3dda96`
-- latest_commit_brief_message: `test(adapter): lock source child width entry`
-- note: new local `N=200` batch is active; slice 156 is committed, slice 157 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `fc6804526fb7722245747f9bc1e1e201b905711c`
+- latest_commit_brief_message: `test(adapter): lock transitive child width entries`
+- note: new local `N=200` batch is active; slice 157 is committed, slice 158 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `fc68045` test(adapter): lock transitive child width entries
 - `148529c` test(adapter): lock source child width entry
 - `8d9a593` test(adapter): lock child sibling width entry
 - `5b5c704` test(adapter): lock child top-link width entry
 - `b1aca9f` test(adapter): lock child topology size entries
 - `cd69498` test(adapter): lock child actor size entries
-- `6548c14` test(adapter): lock module width size entry
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 157]`
-- files in flight for new batch slice 157:
+- branch state before the next commit: `main...origin/main [ahead 158]`
+- files in flight for new batch slice 158:
   - `crates/specforge/src/ir/adapters.rs`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `ROADMAP.md`
@@ -49,21 +49,21 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `156`
+- completed_count: `157`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - lock top-composition child renderable `.fsm` size entries as consumers of graph-recovered transitive topology widths for child module ports
-  - prove `producer_core.output_data` and `consumer_core.input_data` lower as output/input width-8 size entries after transitive topology width recovery
-  - sync the live tracker, roadmap, mdBook, Rust analysis, and continuity docs with the transitive child-width size-entry guarantee
+  - lock the blocked sibling child-link width-conflict path against stale renderable child output
+  - prove a width-conflicted consumer child has no renderable module and the aggregate `.fsm` artifact has no renderable source document
+  - sync the live tracker, roadmap, mdBook, Rust analysis, and continuity docs with the child-width conflict renderable-block guarantee
 - tracker effect:
-  - live-status tracker changed; new row marks `.fsm` top child renderable size entries consuming graph-backed transitive topology widths as `Done`
+  - live-status tracker changed; new row marks `.fsm` top child width conflicts blocking stale renderable child output as `Done`
 - verification status:
   - implementation and live-doc sync are complete
-  - focused transitive child-width size-entry regression passed (`1` test)
+  - focused sibling child-width conflict renderable-block regression passed (`1` test)
   - adapter suite passed (`92` tests)
   - formatting passed
   - docs CI passed
@@ -74,9 +74,9 @@
 - current known local CI baseline:
   - current in-flight slice passed `614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - current in-flight slice passed `148/148` tracked KG fixtures
-  - current slice has passed focused transitive child-width size-entry regression, adapter suite, formatting, docs CI, KG bench, and full CI
+  - current slice has passed focused sibling child-width conflict renderable-block regression, adapter suite, formatting, docs CI, KG bench, and full CI
   - latest `cargo sweep --time 1` attempt was deferred because `target/release/tool_matrix` is active
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- run final commit guards and commit slice 157 without pushing
+- run final commit guards and commit slice 158 without pushing

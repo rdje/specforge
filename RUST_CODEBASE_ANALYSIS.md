@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` sibling child-width conflict renderable block)
+- Tightened `top_composition_blocks_conflicting_sibling_child_link_widths` in `crates/specforge/src/ir/adapters.rs`.
+- The test now proves conflicting sibling child-link width evidence leaves the consumer child without a renderable module and leaves the aggregate `.fsm` artifact without a renderable source document.
+- This locks the blocked child-width path against stale renderable child output; focused adapter coverage, full adapter coverage, fmt, docs CI, KG bench, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 `.fsm` transitive child-width size-entry lock)
 - Tightened `top_composition_recovers_child_width_through_transitive_topology` in `crates/specforge/src/ir/adapters.rs`.
 - The test now proves producer and consumer child renderable `.fsm` size entries consume graph-recovered widths propagated through top-link and sibling-link topology while retaining output/input directions.

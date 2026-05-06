@@ -15076,6 +15076,8 @@ mod tests {
         }
         assert_eq!(input_data.automation_confidence, AutomationConfidence::High);
         assert!(!consumer.renderability.is_renderable);
+        assert!(consumer.renderable_module.is_none());
+        assert!(fsm.renderable_document.is_none());
         assert!(
             consumer
                 .renderability

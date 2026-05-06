@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` sibling child-width conflict renderable block
+- New batch slice 158/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_conflicting_sibling_child_link_widths` now asserts the width-conflicted consumer child has no renderable module and the aggregate `.fsm` artifact has no renderable source document.
+- This locks the negative path opposite the child size-entry recovery work: incompatible sibling child-link widths cannot leak stale child `(+size ...)` output after renderability is blocked.
+- Focused sibling child-width conflict coverage, the adapter suite, fmt, docs CI, KG bench, and full CI passed; user-requested `cargo sweep --time 1` remains deferred until no target-tree process is active.
+
 ## 2026-05-06 `.fsm` transitive child-width size-entry lock
 - New batch slice 157/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_recovers_child_width_through_transitive_topology` now asserts producer and consumer child renderable `(+size ...)` entries consume widths propagated through top-link and sibling-link topology.
