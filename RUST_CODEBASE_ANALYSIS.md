@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` duplicate top-direction residual diagnostics)
+- Added composition residual confidence and blocker-text assertions to `top_composition_keeps_duplicate_top_port_direction_conflict_unresolved` in `crates/specforge/src/ir/adapters.rs`.
+- Duplicate top-boundary direction blockers now prove duplicate declaration blocking, top-boundary direction-conflict guidance, duplicate support-ID sets, low-confidence `fsm_adapter_composition_topology` diagnostics, topology-detail blocker text, and explicit-top-port repair guidance stay visible together.
+- The live tracker and roadmap now mark duplicate top-direction residual diagnostics as closed; focused adapter coverage, full adapter coverage, KG bench, docs, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 `.fsm` missing-child residual diagnostics)
 - Added composition residual confidence and blocker-text assertions to `keeps_top_composition_blocked_when_child_module_is_missing` in `crates/specforge/src/ir/adapters.rs`.
 - Primary missing-child top-composition blockers now prove child-source declaration guidance, missing-module blocker text, top-port/child provenance, low-confidence `fsm_adapter_composition_topology` diagnostics, topology-detail blocker text, and child-module-reference repair guidance stay visible together.

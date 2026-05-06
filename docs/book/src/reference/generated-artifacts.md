@@ -181,6 +181,7 @@ That top-link direction residual remains low-confidence and anchored to incomple
 Duplicate top-boundary direction declarations also preserve that direction repair guidance while retaining both duplicate declaration support-ID sets.
 Duplicate top-boundary direction blockers also preserve explicit top-port deduplication guidance on both blocked renderability surfaces.
 Duplicate top-boundary direction blockers also emit the composition-topology residual decision so explicit-top-port repair remains visible in structured diagnostics.
+That duplicate direction residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
 When child actor-port direction evidence conflicts, blocked module renderability preserves actor-relative graph-direction repair guidance and top aggregate renderability carries that child-module guidance upward alongside the conflicting evidence.
 Child actor-port direction conflicts also emit the composition-topology residual decision so renderable-child repair remains visible in structured diagnostics.
 Child topology direction conflicts preserve the same repair-guidance channel while retaining the contradictory topology-link support IDs that caused the graph-direction conflict.
