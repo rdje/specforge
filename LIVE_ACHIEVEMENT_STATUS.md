@@ -419,6 +419,7 @@
 - `.fsm` duplicate child-instance top blockers now preserve deduplication enrichment guidance: Done
 - `.fsm` duplicate top-direction blockers now preserve top-port deduplication enrichment guidance: Done
 - `.fsm` duplicate top-width blockers now preserve top-port deduplication enrichment guidance: Done
+- `.fsm` multi-child no-link top blockers now preserve top-link enrichment guidance: Done
 - `.fsm` standalone DT/FSM renderability now blocks graph-backed output inventory entries that have no typed driving action instead of silently omitting them: Done
 - `.fsm` standalone DT graph-backed undriven output blockers now regression-lock support IDs and automation confidence: Done
 - `.fsm` structured FSM renderability now regression-locks graph-backed undriven output blocking: Done

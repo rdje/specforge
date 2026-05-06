@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` multi-child top-link guidance lock)
+- Added `top_composition_blocks_multi_child_without_links_guidance` in `crates/specforge/src/ir/adapters.rs` so multi-child top roots with no explicit top-link records retain top-link enrichment guidance on the blocked top candidate and aggregate `.fsm` renderability.
+- The regression also proves producer/consumer child declaration support IDs survive, both child modules resolve to DT roots, and the adapter blocks rather than inferring composition wiring.
+- This locks the composition-topology blocker that keeps first-slice `?top:name` lowering honest for multi-child designs.
+
 ## Session update (2026-05-06 `.fsm` duplicate top-width dedup guidance lock)
 - Tightened `top_composition_keeps_duplicate_top_port_width_conflict_unresolved` in `crates/specforge/src/ir/adapters.rs` so duplicate top-port width blockers retain explicit top-port deduplication guidance on the blocked top candidate and aggregate `.fsm` renderability.
 - Existing assertions still cover width-conflict repair guidance, both duplicate declaration support-ID sets, unresolved recovered width, selected signal-inventory width conflict state, and high automation confidence.

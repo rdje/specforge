@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` multi-child top-link guidance lock)
+
+### Added: multi-child no-link enrichment coverage
+- Added `top_composition_blocks_multi_child_without_links_guidance` so multi-child top roots without explicit top-link records prove top-link enrichment guidance survives on the blocked top candidate and aggregate `.fsm` renderability.
+- The regression also proves both child declarations keep support IDs, both child modules resolve to renderable DT roots, and the top candidate stays blocked until explicit composition wiring exists.
+- This locks the first-composition-slice topology guidance for multi-child `?top:name` lowering.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_multi_child_without_links_guidance` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`82` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`603` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` duplicate top-width dedup guidance lock)
 
 ### Added: duplicate top-width deduplication guidance coverage

@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` multi-child top-link guidance lock
+- New batch slice 34/200 adds coverage in `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_multi_child_without_links_guidance` asserts multi-child top roots with no explicit top-link records keep `carry explicit top-link records for multi-child compositions before lowering ?top:name` guidance on the blocked top candidate and aggregate `.fsm` renderability.
+- The regression also proves producer and consumer child declaration support IDs survive, both child modules resolve as renderable DT child roots, and the no-link top candidate remains blocked instead of guessing wiring.
+- Full adapter coverage is now `82` adapter tests, full CI is now `603` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` duplicate top-width dedup guidance lock
 - New batch slice 33/200 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_keeps_duplicate_top_port_width_conflict_unresolved` now asserts duplicate top-port width blockers keep `deduplicate explicit top-port records before lowering ?top:name` guidance on the blocked top candidate and aggregate `.fsm` renderability.
