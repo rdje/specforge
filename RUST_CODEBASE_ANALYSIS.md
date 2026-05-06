@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` explicit-module flat/graph residual guidance)
+- Added signal-inventory residual-guidance assertions to `standalone_explicit_module_blocks_flat_graph_direction_disagreement` in `crates/specforge/src/ir/adapters.rs`.
+- Explicit-module flat/graph direction disagreements now prove module interface direction, graph-backed actor direction, graph support provenance, high inventory confidence, blocked renderability, and low-confidence `fsm_adapter_signal_inventory` repair guidance stay visible together.
+- The live tracker and roadmap now mark explicit-module flat/graph residual guidance as closed; focused adapter coverage, full adapter coverage, KG bench, docs, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 `.fsm` structured flat/graph residual guidance)
 - Added signal-inventory residual-guidance assertions to `structured_fsm_blocks_flat_graph_direction_disagreement` in `crates/specforge/src/ir/adapters.rs`.
 - Structured-FSM flat/graph direction disagreements now prove interface direction, graph-backed actor direction, graph support provenance, high inventory confidence, blocked renderability, and low-confidence `fsm_adapter_signal_inventory` repair guidance stay visible together.

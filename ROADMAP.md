@@ -299,7 +299,7 @@
   - structured-FSM missing-initial blockers preserve state declaration support IDs, confidence, and state-graph repair guidance while blocking `.fsm` emission
   - structured-FSM undeclared-transition blockers preserve transition support IDs, confidence, and state-graph repair guidance while blocking `.fsm` emission
   - direct-root actor-port direction conflicts preserve both conflicting graph-backed support IDs, automation confidence, and signal-inventory repair guidance while blocking `.fsm` emission
-  - explicit-module flat-vs-graph direction disagreement preserves interface and actor-port provenance while blocking `.fsm` emission
+  - explicit-module flat-vs-graph direction disagreement preserves interface and actor-port provenance plus signal-inventory repair guidance while blocking `.fsm` emission
   - structured-FSM flat-vs-graph direction disagreement preserves interface and actor-port provenance plus signal-inventory repair guidance while blocking `.fsm` emission
   - direct-root same-actor actor-port width conflicts preserve both conflicting graph-backed support IDs, automation confidence, and signal-inventory repair guidance while blocking `.fsm` emission
   - direct-root flat-vs-graph direction disagreement preserves interface and actor-port provenance plus signal-inventory repair guidance while blocking `.fsm` emission
