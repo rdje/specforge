@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (NLP alias source-label prefix filter)
+
+### Fixed: Form 2 alias learning rejects source-layout labels
+- Hardened `extract_alias_phrase()` so source-layout prefixes such as `Table 3:`, `Figure 4.2`, and `Section 3.1` cannot become learned Form 2 alias text.
+- Added focused coverage proving those labels are rejected before they can pollute `signal_alias_map`, while existing prose alias learning and markdown/link cleanup behavior remain intact.
+- Synced the live tracker, roadmap, mdBook, and Rust analysis notes with this R12 alias-garbage hardening slice.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge extract_alias_phrase` -> passed (`10` tests)
+- `cargo test --manifest-path Cargo.toml -p specforge commands::nlp_enrich::tests` -> passed (`22` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148/148` fixtures)
+- `bash scripts/run_ci.sh` -> passed (`614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation)
+- Deferred: user-requested `cargo sweep --time 1` until safe because a `target/release/tool_matrix` process is active.
+
 ## 2026-05-06 (`.fsm` unemitted child source guidance residual diagnostics)
 
 ### Added: unemitted child source guidance residuals lock topology-detail diagnostics

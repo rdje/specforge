@@ -744,6 +744,7 @@
 - NLP alias learning now trims wrapper punctuation from Form 2 alias words: Done
 - NLP alias learning now uses markdown link labels for Form 2 aliases: Done
 - NLP alias learning now uses reference-style markdown link labels for Form 2 aliases: Done
+- NLP alias learning now rejects source-layout labels before storing Form 2 aliases: Done
 - Cross-document typed prior memory (`R15f`): In Progress
 
 ## Highest-priority remaining gap

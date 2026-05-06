@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 NLP alias source-label prefix filter
+- New batch slice 145/200 updates `crates/specforge/src/commands/nlp_enrich.rs`.
+- `extract_alias_phrase()` now rejects source-layout label prefixes such as `Table 3:`, `Figure 4.2`, and `Section 3.1` before Form 2 alias normalization.
+- This prevents captions, section headers, and layout-derived prefixes from entering `signal_alias_map` as aliases like `table 3 the address`, while preserving ordinary prose aliases such as `address bus`.
+- Focused alias parser coverage, the full `commands::nlp_enrich::tests` module, fmt, docs CI, KG bench, and full CI passed; user-requested `cargo sweep --time 1` remains deferred until no target-tree process is active.
+
 ## 2026-05-06 `.fsm` unemitted child source guidance residual diagnostics
 - New batch slice 144/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_link_from_unemitted_child_source_guidance` now asserts source-side child endpoints absent from emitted child modules keep low-confidence `fsm_adapter_composition_topology` diagnostics with explicit topology-detail blocker text.

@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 NLP alias source-label prefix filter)
+- Added a bounded source-layout label guard to `extract_alias_phrase()` in `crates/specforge/src/commands/nlp_enrich.rs`.
+- Form 2 alias learning now rejects subjects prefixed by labels such as `Table 3:`, `Figure 4.2`, and `Section 3.1`, preventing source-region layout text from entering `signal_alias_map`.
+- Added `extract_alias_phrase_rejects_source_label_prefixes`, bringing focused alias parser coverage to `10` tests and NLP-enrich module coverage to `22` tests; focused parser coverage, module coverage, fmt, docs CI, KG bench, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 `.fsm` unemitted child source guidance residual diagnostics)
 - Added composition residual confidence and blocker-text assertions to `top_composition_blocks_link_from_unemitted_child_source_guidance` in `crates/specforge/src/ir/adapters.rs`.
 - Source-side child endpoints absent from emitted child modules now prove source-endpoint enrichment guidance, top-port/child/link provenance, low-confidence `fsm_adapter_composition_topology` diagnostics, topology-detail blocker text, and renderable-child repair context stay visible together.

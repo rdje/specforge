@@ -575,6 +575,10 @@ fn subject_has_markup_prefix(subject: &str) -> bool {
         return true;
     }
 
+    if subject_has_source_label_prefix(subject) {
+        return true;
+    }
+
     if let Some((marker, _rest)) = subject
         .split_once(['.', ')'])
         .filter(|(_, rest)| rest.starts_with(char::is_whitespace))
@@ -583,6 +587,38 @@ fn subject_has_markup_prefix(subject: &str) -> bool {
     }
 
     false
+}
+
+fn subject_has_source_label_prefix(subject: &str) -> bool {
+    let mut tokens = subject.split_whitespace();
+    let Some(first_token) = tokens.next() else {
+        return false;
+    };
+
+    let label = first_token
+        .trim_end_matches([':', '.', ')'])
+        .to_ascii_lowercase();
+    if !matches!(
+        label.as_str(),
+        "table" | "figure" | "fig" | "section" | "sec" | "clause" | "example"
+    ) {
+        return false;
+    }
+
+    if first_token.ends_with(':') {
+        return true;
+    }
+
+    let Some(marker_token) = tokens.next() else {
+        return false;
+    };
+    let marker = marker_token.trim_end_matches([':', ')']);
+    let numeric_marker = marker.trim_end_matches('.');
+    is_numeric_outline_marker(marker)
+        || (!numeric_marker.is_empty()
+            && numeric_marker
+                .chars()
+                .all(|character| character.is_ascii_digit()))
 }
 
 fn is_numeric_outline_marker(token: &str) -> bool {
@@ -1273,6 +1309,27 @@ mod tests {
         assert!(
             extract_alias_phrase("b) the address bus shall remain stable", "HADDR").is_none(),
             "lettered list prefixes must not become learned aliases"
+        );
+    }
+
+    #[test]
+    fn extract_alias_phrase_rejects_source_label_prefixes() {
+        assert!(
+            extract_alias_phrase("Table 3: The address bus shall remain stable", "HADDR").is_none(),
+            "table labels must not become learned aliases"
+        );
+        assert!(
+            extract_alias_phrase(
+                "Figure 4.2 the write enable control must be stable",
+                "HWRITE"
+            )
+            .is_none(),
+            "figure labels must not become learned aliases"
+        );
+        assert!(
+            extract_alias_phrase("Section 3.1 the address bus shall remain stable", "HADDR")
+                .is_none(),
+            "section labels must not become learned aliases"
         );
     }
 

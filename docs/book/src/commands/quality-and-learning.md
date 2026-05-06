@@ -239,3 +239,5 @@ The boundary is strict:
 These are narrower enrichment entrypoints used when you want to operate on the staged pipeline more manually.
 
 They are still valuable, but `converge` is the preferred user-facing path when you want the full loop.
+
+`nlp-enrich` can learn prose aliases for signals during Form 2 reclassification, but it treats that alias map as evidence-sensitive state: markdown/list prefixes, link targets, and source-layout labels such as table, figure, and section markers are filtered before they can become reusable aliases.

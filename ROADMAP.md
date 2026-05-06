@@ -493,6 +493,7 @@
   - `extract_alias_phrase()` now trims wrapper punctuation from candidate alias words, so inline-code delimiters and punctuation before modal boundaries do not pollute learned Form 2 aliases
   - `extract_alias_phrase()` now normalizes markdown links in candidate aliases to their visible labels before word cleanup, so link targets do not pollute learned Form 2 aliases
   - `extract_alias_phrase()` now also normalizes reference-style markdown links in candidate aliases to their visible labels, so reference ids do not pollute learned Form 2 aliases
+  - `extract_alias_phrase()` now also rejects source-layout label prefixes such as `Table 3:`, `Figure 4.2`, and `Section 3.1` before alias normalization, so captions and headers do not pollute learned Form 2 aliases
   - representative local APB/AHB/AXI validation snapshots were refreshed from the current semantic/intent stack:
     - APB 94/100 EXCELLENT
     - AHB 94/100 EXCELLENT
