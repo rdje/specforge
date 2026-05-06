@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` parametric top-port residual diagnostics
+- New batch slice 119/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_parametric_top_port_width_for_fsm_public_io` now asserts parametric public top-port blockers keep low-confidence `fsm_adapter_composition_topology` diagnostics with explicit topology-detail blocker text.
+- This keeps parametric-width blocker text, top-boundary width resolution guidance, preserved parametric width support/confidence, and explicit-top-ports repair guidance tied together.
+- Focused parametric top-port residual-diagnostics regression, adapter suite, fmt, docs, KG bench, and full CI all passed; user-requested `cargo sweep --time 1` is deferred until no target-tree process is active.
+
 ## 2026-05-06 `.fsm` widthless top-port residual diagnostics
 - New batch slice 118/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_widthless_top_port_without_width_recovery` now asserts widthless top-port blockers keep low-confidence `fsm_adapter_composition_topology` diagnostics with explicit topology-detail blocker text.

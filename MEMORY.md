@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `aeb49308629e1ce961a34c469ce47d8144ed45b8`
-- latest_commit_brief_message: `test(adapter): lock top root diagnostics`
-- note: new local `N=200` batch is active; slice 117 is committed, slice 118 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `81d025ce9925d683adab00f5b8f6d27b6e022742`
+- latest_commit_brief_message: `test(adapter): lock widthless top diagnostics`
+- note: new local `N=200` batch is active; slice 118 is committed, slice 119 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `81d025c` test(adapter): lock widthless top diagnostics
 - `aeb4930` test(adapter): lock top root diagnostics
 - `36f4b94` test(adapter): lock blocked dt guidance
 - `d164027` test(adapter): lock reset polarity guidance
 - `ab3c45f` test(adapter): lock missing system guidance
 - `1a96408` test(adapter): lock system contract graph guidance
-- `7e7c201` test(adapter): lock system contract width guidance
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 118]`
-- files in flight for new batch slice 118:
+- branch state before the next commit: `main...origin/main [ahead 119]`
+- files in flight for new batch slice 119:
   - `crates/specforge/src/ir/adapters.rs`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `ROADMAP.md`
@@ -49,24 +49,23 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `117`
+- completed_count: `118`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - lock composition-topology residual diagnostics for widthless top-port blockers
-  - prove `top_composition_blocks_widthless_top_port_without_width_recovery` keeps low-confidence `fsm_adapter_composition_topology` diagnostics and topology-detail blocker text while preserving top-boundary width recovery guidance
-  - sync the live tracker, roadmap, and mdBook with the widthless top-port residual-diagnostics guarantee
+  - lock composition-topology residual diagnostics for parametric top-port blockers
+  - prove `top_composition_blocks_parametric_top_port_width_for_fsm_public_io` keeps low-confidence `fsm_adapter_composition_topology` diagnostics and topology-detail blocker text while preserving top-boundary width resolution guidance
+  - sync the live tracker, roadmap, and mdBook with the parametric top-port residual-diagnostics guarantee
 - tracker effect:
-  - live-status tracker changed; new row marks `.fsm` widthless top-port residuals locking low-confidence topology-detail diagnostics as `Done`
+  - live-status tracker changed; new row marks `.fsm` parametric top-port residuals locking low-confidence topology-detail diagnostics as `Done`
 - verification status:
   - implementation and live-doc sync are complete
-  - focused widthless top-port residual-diagnostics regression passed (`1` test)
-  - adapter suite passed (`92` tests)
-  - formatting, docs CI, KG bench (`148/148` fixtures), and full CI (`613` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation) passed
-  - user-requested `cargo sweep --time 1` was deferred because another shell still had `target/release/tool_matrix` running from this repository
+  - focused parametric top-port residual-diagnostics regression passed (`1` test)
+  - adapter suite (`92` tests), formatting, docs CI, KG bench (`148/148` fixtures), and full CI (`613` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation) passed
+  - user-requested `cargo sweep --time 1` is deferred until no target-tree process is active because another shell still had `target/release/tool_matrix` running from this repository
 - current known local CI baseline:
   - last committed slice passed `613` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - last committed slice passed `148/148` tracked KG fixtures
@@ -74,4 +73,4 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- run final commit guards and commit slice 118 without pushing
+- run final commit guards and commit slice 119 without pushing

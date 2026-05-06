@@ -1,5 +1,16 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` parametric top-port residual diagnostics)
+
+### Added: parametric top-port residuals lock topology-detail diagnostics
+- Tightened `top_composition_blocks_parametric_top_port_width_for_fsm_public_io` so symbolic public top-port width blockers retain low-confidence `fsm_adapter_composition_topology` diagnostics.
+- The regression now pairs parametric-width blocker text, top-boundary width resolution guidance, preserved parametric width support/confidence, explicit topology-detail residual text, and explicit-top-ports repair guidance.
+- Updated the live tracker, roadmap, and mdBook to mark parametric top-port residual diagnostics as closed.
+
+### Validation
+- Passed: focused parametric top-port residual-diagnostics regression (`1` test), adapter suite (`92` tests), rustfmt check, docs CI/mdBook, KG bench (`148/148` fixtures), and full CI (`613` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation).
+- Deferred: user-requested `cargo sweep --time 1` until safe because another shell still had a `target/release/tool_matrix` process running from this repository.
+
 ## 2026-05-06 (`.fsm` widthless top-port residual diagnostics)
 
 ### Added: widthless top-port residuals lock topology-detail diagnostics
