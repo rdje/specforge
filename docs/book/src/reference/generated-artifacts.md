@@ -142,7 +142,7 @@ Child-link-backed top width recovery likewise retains public top-port declaratio
 Child-system-contract-backed top width recovery retains the clock/reset top-port declaration support while adding topology-link and system-contract evidence, and renderable recovery leaves no composition-topology residual.
 Top-link-backed child width recovery retains the child signal declaration support while adding topology width evidence, and renderable recovery leaves no composition-topology residual.
 Sibling-link-backed child width recovery follows the same rule for recovered child inputs, and renderable recovery leaves no composition-topology residual.
-Source-side sibling-link child width recovery follows it for recovered child outputs.
+Source-side sibling-link child width recovery follows it for recovered child outputs, and renderable recovery leaves no composition-topology residual.
 Transitive child width recovery keeps declaration support for each recovered child signal while recording the topology links that propagated the width.
 Child link-topology direction recovery keeps declaration support for each recovered child signal while recording the topology links that supplied graph directions, and renderable recovery leaves no composition-topology residual.
 Child actor-port direction recovery keeps declaration support for each recovered child signal while recording the graph actor-port evidence that supplied directions, and renderable recovery leaves no composition-topology residual.

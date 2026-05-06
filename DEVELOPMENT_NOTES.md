@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` source-side sibling width residual cleanliness
+- New batch slice 91/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_recovers_source_child_width_from_sibling_child_link_topology` now asserts no stale composition topology residual remains after sibling-link topology evidence recovers a source child output width and the top emits.
+- This keeps child signal declaration support, topology-link width support, selected producer inventory, emitted size text, and aggregate residual cleanliness paired once the top is renderable.
+- Focused source-side sibling child-width recovery residual-clean regression, adapter suite, fmt, docs, KG bench, full CI, and the user-requested `cargo sweep --time 1` all passed.
+
 ## 2026-05-06 `.fsm` sibling-link child-input width residual cleanliness
 - New batch slice 90/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_recovers_child_width_from_sibling_child_link_topology` now asserts no stale composition topology residual remains after sibling-link topology evidence recovers a child input width and the top emits.
