@@ -14796,6 +14796,17 @@ mod tests {
         );
         assert!(producer.renderability.is_renderable);
         assert!(fsm.renderability.is_renderable);
+        let renderable_module = producer
+            .renderable_module
+            .as_ref()
+            .expect("source-sibling-link-width-backed producer should be renderable");
+        let output_size = renderable_module
+            .size_entries
+            .iter()
+            .find(|entry| entry.signal_name == "output_data")
+            .expect("output_data should have a renderable size entry");
+        assert_eq!(output_size.direction_hint, InterfaceSignalDirection::Output);
+        assert_eq!(output_size.width, 8);
         assert!(emitted_text.contains("(output_data 8)"));
         assert!(emitted_text.contains("/producer.output_data/consumer.input_data/"));
         assert!(emitted_text.contains("/consumer.result_data/result_data/"));

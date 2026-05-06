@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` source sibling child-width size-entry lock
+- New batch slice 156/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_recovers_source_child_width_from_sibling_child_link_topology` now asserts the producer child renderable `(+size ...)` entry for `output_data` consumes width recovered from sibling child-link topology.
+- This locks source-side sibling child-link width recovery through child target emission, not just module inventory: `output_data` lowers as an output width-8 size entry while its width originates from the producer-to-consumer topology link.
+- Focused source-side sibling child-link width size-entry coverage, the adapter suite, fmt, docs CI, KG bench (`148/148` fixtures), and full CI passed; user-requested `cargo sweep --time 1` remains deferred until no target-tree process is active.
+
 ## 2026-05-06 `.fsm` sibling child-width size-entry lock
 - New batch slice 155/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_recovers_child_width_from_sibling_child_link_topology` now asserts the consumer child renderable `(+size ...)` entry for `input_data` consumes width recovered from sibling child-link topology.

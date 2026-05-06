@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` source sibling child-width size-entry lock)
+- Tightened `top_composition_recovers_source_child_width_from_sibling_child_link_topology` in `crates/specforge/src/ir/adapters.rs`.
+- The test now proves the producer child renderable `.fsm` size entry for `output_data` consumes graph-recovered sibling child-link width while retaining output direction.
+- This locks the downstream child size-entry consumer for source-side sibling child-link width recovery; focused adapter coverage, full adapter coverage, fmt, docs CI, KG bench, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 `.fsm` sibling child-width size-entry lock)
 - Tightened `top_composition_recovers_child_width_from_sibling_child_link_topology` in `crates/specforge/src/ir/adapters.rs`.
 - The test now proves the consumer child renderable `.fsm` size entry for `input_data` consumes graph-recovered sibling child-link width while retaining input direction.
