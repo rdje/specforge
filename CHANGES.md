@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` undeclared-target state support lock)
+
+### Added: blocked undeclared-target state provenance
+- Tightened `keeps_structured_fsm_blocked_when_transition_target_is_undeclared` so undeclared-target structured FSM blockers now preserve declared state candidates as well as the rejected transition candidate.
+- The test locks `idle` and `busy` state support IDs, initial-state flags, and high automation confidence while keeping the missing-target blocker intact.
+- This keeps undeclared-transition diagnostics tied to the full declared state graph before `.fsm` emission is allowed.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge keeps_structured_fsm_blocked_when_transition_target_is_undeclared` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` missing-initial graph support lock)
 
 ### Added: blocked state-graph transition provenance

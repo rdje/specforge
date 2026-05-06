@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` undeclared-target state support lock)
+- Tightened `keeps_structured_fsm_blocked_when_transition_target_is_undeclared` in `crates/specforge/src/ir/adapters.rs` so the blocked undeclared-target graph retains declared state-candidate provenance for `idle` and `busy`.
+- The test now proves state support IDs, initial-state flags, and high automation confidence survive alongside the existing missing-target transition candidate.
+- This makes undeclared-transition diagnostics explain both the rejected edge and the declared graph surface that caused it to be rejected.
+
 ## Session update (2026-05-06 `.fsm` missing-initial graph support lock)
 - Tightened `keeps_structured_fsm_blocked_without_exactly_one_initial_state` in `crates/specforge/src/ir/adapters.rs` so the blocked state graph retains transition-candidate provenance for both `idle -> busy` and `busy -> idle`.
 - The test now proves transition support IDs and high automation confidence survive alongside the existing state-candidate provenance and `fsm_adapter_state_graph` residual decision.

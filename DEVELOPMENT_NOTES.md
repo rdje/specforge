@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` undeclared-target state support lock
+- New batch slice 98/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `keeps_structured_fsm_blocked_when_transition_target_is_undeclared` now asserts blocked structured-FSM artifacts retain declared `idle` and `busy` state candidates with support IDs, initial-state flags, and high automation confidence.
+- This is a coverage-only lock for the undeclared-transition-target blocker that already preserved the rejected transition candidate and `fsm_adapter_state_graph` residual decision.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` missing-initial graph support lock
 - New batch slice 97/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `keeps_structured_fsm_blocked_without_exactly_one_initial_state` now asserts blocked structured-FSM artifacts retain transition candidates for `idle -> busy` and `busy -> idle` with support IDs and high automation confidence.
