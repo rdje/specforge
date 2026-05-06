@@ -139,6 +139,7 @@ Child-system-contract-backed top width recovery retains the clock/reset top-port
 Top-link-backed child width recovery retains the child signal declaration support while adding topology width evidence.
 Sibling-link-backed child width recovery follows the same rule for recovered child inputs.
 Source-side sibling-link child width recovery follows it for recovered child outputs.
+Transitive child width recovery keeps declaration support for each recovered child signal while recording the topology links that propagated the width.
 For blocked composition roots, the same artifact shape is useful for diagnostics: a missing child can block emission while the surviving top-port provenance remains available for review.
 
 For structured FSM roots, the artifact preserves the graph surface that led to renderability or blocking.

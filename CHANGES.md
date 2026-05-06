@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` transitive child-width provenance lock)
+
+### Added: child-signal declaration provenance for transitive recovered widths
+- Tightened `top_composition_recovers_child_width_through_transitive_topology` so transitive topology child-width recovery preserves the original producer and consumer child signal declaration support IDs.
+- The regression keeps existing topology-link support IDs, high-confidence recovered widths, selected child signal-inventory provenance, and emitted `(output_data 8)` / `(input_data 8)` checks intact.
+- This closes the current direct and transitive child-width recovery declaration-provenance set.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_child_width_through_transitive_topology` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` source child-width provenance lock)
 
 ### Added: child-signal declaration provenance for source-side sibling widths

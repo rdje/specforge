@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` transitive child-width provenance lock)
+- Tightened `top_composition_recovers_child_width_through_transitive_topology` in `crates/specforge/src/ir/adapters.rs` so transitive topology-recovered child signal widths keep the original producer and consumer child signal declaration support IDs in selected child module inventories.
+- Existing assertions still cover both contributing topology-link support IDs, high automation confidence, topology-backed child signal-inventory provenance, and emitted `(output_data 8)` / `(input_data 8)` text.
+- This closes the direct and transitive child-width declaration-provenance set.
+
 ## Session update (2026-05-06 `.fsm` source child-width provenance lock)
 - Tightened `top_composition_recovers_source_child_width_from_sibling_child_link_topology` in `crates/specforge/src/ir/adapters.rs` so source-side sibling-link-recovered child signal width keeps the original child signal declaration support IDs in the selected child module inventory.
 - Existing assertions still cover topology-link support IDs, high automation confidence, topology-backed child signal-inventory provenance, and emitted `(output_data 8)` text.

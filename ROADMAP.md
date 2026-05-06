@@ -208,6 +208,7 @@
   - child topology width conflicts preserve both explicit child signal declaration support IDs and topology-link support IDs while blocking `.fsm` emission
   - child topology direction conflicts preserve both explicit child signal declaration support IDs and contradictory topology-link support IDs while blocking `.fsm` emission
   - transitive child-width recovery preserves each contributing topology-link support ID and high automation confidence as width evidence flows from top link through sibling child link
+  - transitive child-width recovery preserves original producer and consumer child signal declaration support IDs alongside topology-link support IDs
   - recovered top-port evidence preserves graph-backed support IDs while raising top-root selection confidence
   - recovered child-declaration evidence preserves child support IDs while raising top-root selection confidence
   - baseline renderable top-composition lowering preserves top port, child declaration, and explicit topology-link support IDs in selected top candidates
@@ -252,6 +253,7 @@
   - top-link child-width recovery augments child signal declarations with topology width support without dropping declaration support IDs
   - sibling-link child-width recovery augments child signal declarations with topology width support without dropping declaration support IDs
   - source-side sibling child-width recovery augments child signal declarations with topology width support without dropping declaration support IDs
+  - transitive child-width recovery augments producer and consumer child signal declarations with topology width support without dropping declaration support IDs
   - unrelated direct actor-port graph context keeps selected support IDs auditable while excluding unrelated side-band evidence from `.fsm` inventories
   - ambiguous direct actor-port graph context leaves graph direction, actor-port category, and support IDs unselected instead of guessing a target actor
   - standalone DT graph-backed undriven output blockers preserve selected actor support IDs and high automation confidence while blocking `.fsm` emission
