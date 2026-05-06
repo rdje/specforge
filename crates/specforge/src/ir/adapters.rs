@@ -9274,6 +9274,20 @@ mod tests {
 
         assert_eq!(adapter.lowering_status.as_str(), "blocked");
         assert!(adapter.artifact_layout.emitted_target_path.is_none());
+        let signal_inventory_residual = adapter
+            .residual_decisions
+            .iter()
+            .find(|packet| packet.packet_id == "fsm_adapter_signal_inventory")
+            .expect("structured undriven graph-backed outputs should retain signal guidance");
+        assert_eq!(
+            signal_inventory_residual.automation_confidence,
+            AutomationConfidence::Low
+        );
+        assert!(
+            signal_inventory_residual
+                .why_unresolved
+                .contains("render-critical signal roles unresolved")
+        );
         let fsm = adapter.fsm.expect("fsm artifact should be present");
         let unused_trace = fsm
             .signal_inventory

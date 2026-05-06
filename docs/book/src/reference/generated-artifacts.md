@@ -134,6 +134,7 @@ Actor-port width conflicts follow the same blocked guidance pattern while preser
 Flat direction conflicts with graph-backed actor provenance remain blocked and keep signal-inventory residual guidance on the flat-conflict regression itself.
 Flat/graph direction disagreements likewise keep interface and actor-port provenance plus signal-inventory residual guidance while blocked.
 Graph-backed undriven standalone outputs keep selected actor support and signal-inventory residual guidance while blocked.
+Structured-FSM graph-backed undriven outputs keep the same residual guidance alongside FSM-state blocker text.
 
 For renderable `.fsm` top-composition roots, inspect the selected top candidate as well as the emitted target text.
 The adapter artifact keeps the declared top-port direction and numeric width, the top-port automation confidence, child declaration support IDs, topology-link support IDs, and the renderable top root.
