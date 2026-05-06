@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` parametric top-port residual lock
+- New batch slice 70/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_parametric_top_port_width_for_fsm_public_io` now asserts that parametric top-port blockers emit the composition topology residual.
+- This pairs top-boundary symbolic-width resolution guidance with structured residual diagnostics while preserving explicit top-port support IDs and high automation confidence.
+- Focused parametric top-port regression, adapter suite, fmt, docs, KG bench, full CI, and the user-requested `cargo sweep --time 1` all passed.
+
 ## 2026-05-06 `.fsm` widthless top-port residual lock
 - New batch slice 69/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_widthless_top_port_without_width_recovery` now asserts that widthless top-port blockers emit the composition topology residual.
