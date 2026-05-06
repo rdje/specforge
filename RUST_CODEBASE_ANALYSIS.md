@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` unemitted child-target confidence alignment)
+- Tightened `top_composition_blocks_link_to_unemitted_child_target_guidance` in `crates/specforge/src/ir/adapters.rs` so target-side links to child endpoints absent from emitted child modules explicitly preserve high automation confidence.
+- This matches the source-side unemitted child endpoint regression and keeps the live tracker's support/confidence claim backed on both source and target topology blockers.
+- The slice is regression-only: blocked renderability behavior and emitted `.fsm` output remain unchanged; after rebuilding the stale target cache, focused adapter coverage, full adapter coverage, KG bench, docs, and full CI all passed.
+
 ## Session update (2026-05-06 `.fsm` child role residual assertion alignment)
 - Added the missing `fsm_adapter_composition_topology` assertions to `top_composition_blocks_child_source_direction_role_guidance` and `top_composition_blocks_child_target_direction_role_guidance` in `crates/specforge/src/ir/adapters.rs`.
 - This keeps the dedicated child endpoint role regressions aligned with the live tracker rows for source/target composition residual coverage.

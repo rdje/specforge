@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` unemitted child-target confidence alignment
+- New batch slice 50/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_link_to_unemitted_child_target_guidance` now asserts the blocked target-side top-link record keeps high automation confidence, matching the source-side unemitted child endpoint regression.
+- This closes a test/documentation alignment gap for the existing live-status row that says unemitted child endpoint blockers preserve support IDs and automation confidence.
+- The stale `target/debug/deps` cache was rebuilt with `cargo clean --manifest-path Cargo.toml`; focused target-side regression, adapter suite, fmt, docs, KG bench, and full CI then passed.
+- The user-requested `cargo sweep --time 1` was run after full CI and cleaned nothing from the fresh target tree.
+
 ## 2026-05-06 `.fsm` child role residual assertion alignment
 - New batch slice 49/200 updates `crates/specforge/src/ir/adapters.rs`.
 - The missing composition-residual assertions are now attached to the dedicated child source and child target endpoint role regressions, not only the public top-boundary direction conflict regressions.

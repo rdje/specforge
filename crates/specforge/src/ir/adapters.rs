@@ -16361,6 +16361,7 @@ mod tests {
                 "top-link support id should remain visible"
             );
         }
+        assert_eq!(link.automation_confidence, AutomationConfidence::High);
         assert!(!top_candidate.renderability.is_renderable);
         assert!(
             top_candidate
