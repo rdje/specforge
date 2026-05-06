@@ -9904,6 +9904,15 @@ mod tests {
             .iter()
             .find(|port| port.port_name == "result_data")
             .expect("result_data top port should be present");
+        assert_eq!(
+            result_port.direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert_eq!(result_port.width_hint, Some(WidthHint::Numeric(8)));
+        assert_eq!(
+            result_port.automation_confidence,
+            AutomationConfidence::High
+        );
         let producer_child = top_candidate
             .children
             .iter()
@@ -9959,6 +9968,8 @@ mod tests {
                 .iter()
                 .any(|id| consumer_to_top_link.supporting_statement_ids.contains(id))
         );
+        assert!(top_candidate.renderability.is_renderable);
+        assert!(top_candidate.renderable_top.is_some());
         assert!(fsm.renderability.is_renderable);
         assert!(fsm.renderable_module.is_none());
         let renderable_document = fsm

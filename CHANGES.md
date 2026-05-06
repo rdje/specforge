@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` renderable top-port support lock)
+
+### Added: renderable composition top-port shape coverage
+- Tightened `builds_renderable_top_composition_fsm_adapter_artifact` so the renderable top-composition path now preserves the `result_data` top-port shape, confidence, and renderability metadata.
+- The test locks output direction, numeric width, high automation confidence, and the presence of a renderable top root while preserving existing child and topology support-ID checks.
+- This aligns renderable composition coverage with the blocked composition provenance locks added in the same batch.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge builds_renderable_top_composition_fsm_adapter_artifact` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` missing-child top-port support lock)
 
 ### Added: blocked composition top-port provenance

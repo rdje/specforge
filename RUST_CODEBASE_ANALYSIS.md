@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` renderable top-port support lock)
+- Tightened `builds_renderable_top_composition_fsm_adapter_artifact` in `crates/specforge/src/ir/adapters.rs` so the renderable composition artifact retains explicit `result_data` top-port shape and confidence.
+- The test now proves output direction, numeric width, high automation confidence, and the renderable top root survive alongside existing child and topology support-ID checks.
+- This pairs the blocked missing-child top-port lock with the renderable top-composition path, keeping the public top boundary auditable in both outcomes.
+
 ## Session update (2026-05-06 `.fsm` missing-child top-port support lock)
 - Tightened `keeps_top_composition_blocked_when_child_module_is_missing` in `crates/specforge/src/ir/adapters.rs` so the blocked composition artifact retains the declared `result_data` top-port surface.
 - The test now proves the top port keeps output direction, numeric width, supporting statement IDs, and high automation confidence alongside the unresolved child candidate.

@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` renderable top-port support lock
+- New batch slice 100/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `builds_renderable_top_composition_fsm_adapter_artifact` now asserts the renderable top-composition path retains the `result_data` top-port direction, numeric width, high automation confidence, and renderable top root.
+- This is a coverage-only lock for the renderable composition path that already preserved child and topology support IDs and emitted top/document text.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` missing-child top-port support lock
 - New batch slice 99/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `keeps_top_composition_blocked_when_child_module_is_missing` now asserts blocked composition artifacts retain the `result_data` top port with direction, numeric width, support IDs, and high automation confidence.
