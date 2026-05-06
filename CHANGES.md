@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` baseline top-composition provenance lock)
+
+### Added: baseline top-composition provenance coverage
+- Tightened `builds_renderable_top_composition_fsm_adapter_artifact` so the baseline renderable top-composition `.fsm` path now proves top port, child declaration, and topology-link support IDs survive in the selected top candidate.
+- This is coverage-only over the existing adapter behavior: the canonical two-child datapath composition still renders, but its top-level evidence is now directly auditable in the test.
+- The slice keeps public IO, child module references, and both top links tied to their originating support IDs.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge builds_renderable_top_composition_fsm_adapter_artifact` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-05 (`.fsm` child-declaration top-root confidence provenance lock)
 
 ### Added: child-declaration root-kind confidence provenance coverage

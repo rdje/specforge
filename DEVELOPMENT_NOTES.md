@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 `.fsm` baseline top-composition provenance lock
+- New batch slice 72/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `builds_renderable_top_composition_fsm_adapter_artifact` now asserts the selected top candidate preserves support IDs for its public `result_data` port, producer/consumer child declarations, and both explicit topology links.
+- This is a coverage-only lock for the canonical renderable top-composition `.fsm` path.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-05 `.fsm` child-declaration top-root confidence provenance lock
 - New batch slice 71/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `top_root_kind_confidence_follows_child_declaration_evidence` now asserts recovered top children preserve child-declaration support IDs while high-confidence child evidence raises top-root selection confidence.

@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 `.fsm` baseline top-composition provenance lock)
+- Tightened `builds_renderable_top_composition_fsm_adapter_artifact` in `crates/specforge/src/ir/adapters.rs` so the baseline renderable top-composition path retains support IDs for top ports, child declarations, and topology links.
+- The adapter already rendered the canonical producer/consumer datapath composition; this regression now proves the selected top candidate keeps the core composition evidence auditable.
+- This anchors the narrower top-composition recovery and conflict provenance locks against the baseline renderable fixture.
+
 ## Session update (2026-05-05 `.fsm` child-declaration top-root confidence provenance lock)
 - Tightened `top_root_kind_confidence_follows_child_declaration_evidence` in `crates/specforge/src/ir/adapters.rs` so recovered top children retain child-declaration support IDs while top-root confidence rises to high.
 - The adapter already folded child declaration confidence into top-root selection; this regression now proves the recovered child candidate keeps the declaration support record that explains that confidence.

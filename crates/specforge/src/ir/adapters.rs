@@ -9564,6 +9564,61 @@ mod tests {
     fn builds_renderable_top_composition_fsm_adapter_artifact() -> Result<()> {
         let tempdir = tempdir()?;
         let intent_ir = build_explicit_top_composition_intent_ir(tempdir.path())?;
+        let (
+            top_port_support_ids,
+            producer_child_support_ids,
+            consumer_child_support_ids,
+            producer_to_consumer_link_support_ids,
+            consumer_to_top_link_support_ids,
+        ) = {
+            let explicit_top = intent_ir
+                .explicit_tops
+                .iter()
+                .find(|top| top.top_name == "datapath")
+                .expect("explicit top should be present");
+            let top_port = explicit_top
+                .ports
+                .iter()
+                .find(|port| port.port_name == "result_data")
+                .expect("result_data top port should be present");
+            let producer_child = explicit_top
+                .children
+                .iter()
+                .find(|child| child.instance_name == "producer")
+                .expect("producer child should be present");
+            let consumer_child = explicit_top
+                .children
+                .iter()
+                .find(|child| child.instance_name == "consumer")
+                .expect("consumer child should be present");
+            let producer_to_consumer_link = explicit_top
+                .links
+                .iter()
+                .find(|link| {
+                    link.source.instance_name.as_deref() == Some("producer")
+                        && link.source.signal_name == "output_data"
+                        && link.target.instance_name.as_deref() == Some("consumer")
+                        && link.target.signal_name == "input_data"
+                })
+                .expect("producer to consumer topology link should be present");
+            let consumer_to_top_link = explicit_top
+                .links
+                .iter()
+                .find(|link| {
+                    link.source.instance_name.as_deref() == Some("consumer")
+                        && link.source.signal_name == "result_data"
+                        && link.target.instance_name.is_none()
+                        && link.target.signal_name == "result_data"
+                })
+                .expect("consumer to top topology link should be present");
+            (
+                top_port.supporting_statement_ids.clone(),
+                producer_child.supporting_statement_ids.clone(),
+                consumer_child.supporting_statement_ids.clone(),
+                super::explicit_top_link_supporting_ids(producer_to_consumer_link),
+                super::explicit_top_link_supporting_ids(consumer_to_top_link),
+            )
+        };
         let artifact_base = tempdir.path().join("generated").join("adapters");
 
         let adapter = AdapterArtifact::build(
@@ -9589,6 +9644,71 @@ mod tests {
         );
         assert_eq!(fsm.top_candidates.len(), 1);
         assert_eq!(fsm.module_candidates.len(), 2);
+        let top_candidate = fsm
+            .top_candidates
+            .iter()
+            .find(|top| top.top_name == "datapath")
+            .expect("datapath top candidate should be present");
+        let result_port = top_candidate
+            .ports
+            .iter()
+            .find(|port| port.port_name == "result_data")
+            .expect("result_data top port should be present");
+        let producer_child = top_candidate
+            .children
+            .iter()
+            .find(|child| child.instance_name == "producer")
+            .expect("producer child should be present");
+        let consumer_child = top_candidate
+            .children
+            .iter()
+            .find(|child| child.instance_name == "consumer")
+            .expect("consumer child should be present");
+        let producer_to_consumer_link = top_candidate
+            .links
+            .iter()
+            .find(|link| {
+                link.source.instance_name.as_deref() == Some("producer")
+                    && link.source.signal_name == "output_data"
+                    && link.target.instance_name.as_deref() == Some("consumer")
+                    && link.target.signal_name == "input_data"
+            })
+            .expect("producer to consumer topology link should be present");
+        let consumer_to_top_link = top_candidate
+            .links
+            .iter()
+            .find(|link| {
+                link.source.instance_name.as_deref() == Some("consumer")
+                    && link.source.signal_name == "result_data"
+                    && link.target.instance_name.is_none()
+                    && link.target.signal_name == "result_data"
+            })
+            .expect("consumer to top topology link should be present");
+        assert!(
+            top_port_support_ids
+                .iter()
+                .any(|id| result_port.supporting_statement_ids.contains(id))
+        );
+        assert!(
+            producer_child_support_ids
+                .iter()
+                .any(|id| producer_child.supporting_canonical_ids.contains(id))
+        );
+        assert!(
+            consumer_child_support_ids
+                .iter()
+                .any(|id| consumer_child.supporting_canonical_ids.contains(id))
+        );
+        assert!(producer_to_consumer_link_support_ids.iter().any(|id| {
+            producer_to_consumer_link
+                .supporting_statement_ids
+                .contains(id)
+        }));
+        assert!(
+            consumer_to_top_link_support_ids
+                .iter()
+                .any(|id| consumer_to_top_link.supporting_statement_ids.contains(id))
+        );
         assert!(fsm.renderability.is_renderable);
         assert!(fsm.renderable_module.is_none());
         let renderable_document = fsm
