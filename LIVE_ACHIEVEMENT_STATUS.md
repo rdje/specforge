@@ -27,6 +27,7 @@
 - `.fsm` child topology direction conflicts now preserve composition topology residual decisions: Done
 - `.fsm` child actor-port direction conflicts now preserve composition topology residual decisions: Done
 - `.fsm` widthless top-port blockers now preserve composition topology residual decisions: Done
+- `.fsm` widthless top-port residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` parametric top-port blockers now preserve composition topology residual decisions: Done
 - `.fsm` blocked recovered top-port direction now preserves composition topology residual decisions: Done
 - `.fsm` recovered top-root confidence blockers now preserve composition topology residual decisions: Done
@@ -455,6 +456,7 @@
 - `.fsm` explicit top-root lowering now blocks missing or parametric public IO widths instead of rendering implicit 1-bit top ports: Done
 - `.fsm` widthless top-port blockers now preserve top-boundary width recovery guidance: Done
 - `.fsm` widthless top-port blockers now preserve composition topology residual decisions: Done
+- `.fsm` widthless top-port residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` parametric top-port blockers now preserve top-boundary width resolution guidance: Done
 - `.fsm` parametric top-port blockers now preserve composition topology residual decisions: Done
 - `.fsm` blocked recovered top-port direction now regression-locks support IDs and automation confidence: Done

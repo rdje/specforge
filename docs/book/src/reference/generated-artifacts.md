@@ -195,6 +195,7 @@ Duplicate top-boundary width blockers also preserve explicit top-port deduplicat
 Duplicate top-boundary width blockers also emit the composition-topology residual decision so explicit-top-port repair remains visible in structured diagnostics.
 Widthless public top ports preserve top-boundary width recovery guidance on the same blocked renderability surfaces while keeping missing numeric width distinct from symbolic and conflicted width evidence.
 Widthless public top-port blockers also emit the composition-topology residual decision so explicit-top-port repair remains visible in structured diagnostics.
+That widthless top-port residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
 Parametric public top ports preserve top-boundary width resolution guidance while keeping symbolic width evidence inspectable in the selected top signal inventory.
 Parametric public top-port blockers also emit the composition-topology residual decision so explicit-top-port repair remains visible in structured diagnostics.
 Top-link direction-role mismatches preserve source/output and target/input repair guidance on blocked child, top, and aggregate renderability surfaces while keeping topology-link provenance visible.

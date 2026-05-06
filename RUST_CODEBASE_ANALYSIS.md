@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` widthless top-port residual diagnostics)
+- Added composition residual confidence and blocker-text assertions to `top_composition_blocks_widthless_top_port_without_width_recovery` in `crates/specforge/src/ir/adapters.rs`.
+- Widthless top-port blockers now prove missing-width blocker text, top-boundary width recovery guidance, preserved top-port support/confidence, low-confidence `fsm_adapter_composition_topology` diagnostics, topology-detail blocker text, and explicit-top-ports repair guidance stay visible together.
+- The live tracker and roadmap now mark widthless top-port residual diagnostics as closed; focused adapter coverage, full adapter coverage, KG bench, docs, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 `.fsm` recovered top-root residual diagnostics)
 - Added composition residual confidence and blocker-text assertions to `top_root_kind_confidence_follows_recovered_top_port_evidence` in `crates/specforge/src/ir/adapters.rs`.
 - Recovered top-port evidence now proves graph-backed support, high selected top-root confidence, low-confidence `fsm_adapter_composition_topology` diagnostics, topology-detail blocker text, and child-module repair guidance stay visible together.
