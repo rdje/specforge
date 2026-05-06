@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` no-top-port guidance lock)
+- Added `top_composition_blocks_top_without_port_guidance` in `crates/specforge/src/ir/adapters.rs` so explicit top roots without top-port records retain top-port enrichment guidance on the blocked top candidate and aggregate `.fsm` renderability.
+- The regression also proves the declared child remains visible with support IDs, high automation confidence, and a resolved DT root kind while no top port is invented.
+- This completes the basic explicit-top shape guidance trio: no children, no top ports, and multi-child/no-link composition blockers.
+
 ## Session update (2026-05-06 `.fsm` no-child top guidance lock)
 - Added `top_composition_blocks_top_without_child_guidance` in `crates/specforge/src/ir/adapters.rs` so explicit top roots without child-module references retain child-module enrichment guidance on the blocked top candidate and aggregate `.fsm` renderability.
 - The regression also proves the surviving top port keeps direction, numeric width, support IDs, and high automation confidence while no child candidate is fabricated.

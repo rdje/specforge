@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` no-top-port guidance lock)
+
+### Added: no-top-port enrichment coverage
+- Added `top_composition_blocks_top_without_port_guidance` so explicit top roots with a child but no top-port records prove top-port enrichment guidance survives on the blocked top candidate and aggregate `.fsm` renderability.
+- The regression also proves the child declaration keeps support IDs, resolves to a DT child root, and remains visible while no top port is fabricated.
+- This locks the top-port sibling of the no-child and multi-child no-link topology blockers.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_top_without_port_guidance` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`84` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`605` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` no-child top guidance lock)
 
 ### Added: no-child top enrichment coverage

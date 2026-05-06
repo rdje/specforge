@@ -161,6 +161,7 @@ The primary missing-child composition fixture locks the same guidance beside top
 Duplicate top child-instance blockers preserve deduplication guidance while keeping both child declaration support-ID sets visible.
 Multi-child top roots that omit explicit top-link records preserve top-link enrichment guidance while keeping child declaration provenance and resolved child root kinds visible.
 Top roots that omit child-module references preserve child-module enrichment guidance while keeping the declared top-port provenance visible.
+Top roots that omit top-port records preserve top-port enrichment guidance while keeping child declaration provenance visible.
 
 For structured FSM roots, the artifact preserves the graph surface that led to renderability or blocking.
 Renderable structured-FSM cases keep named state and transition candidates, and reset-block cases keep renderable state bodies plus synchronous/asynchronous reset block roles.
