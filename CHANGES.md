@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-06 (live docs and mdBook sync)
+
+### Changed: post-batch documentation state
+- Synchronized `MEMORY.md` after the completed and pushed `N=100` batch so crash recovery no longer treats slice 100 as in flight.
+- Updated the mdBook adapter documentation to describe the current `.fsm` artifact provenance surface for renderable top composition, blocked composition, and structured-FSM graph diagnostics.
+- Kept the roadmap and live-status tracker unchanged because they already recorded the final slice-100 `.fsm` adapter progress.
+
+### Validation
+- `bash scripts/run_docs_ci.sh` -> passed
+- `git diff --check` -> passed
+- absolute-path markdown guard -> passed
+
 ## 2026-05-06 (`.fsm` renderable top-port support lock)
 
 ### Added: renderable composition top-port shape coverage

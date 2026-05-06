@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 live docs and mdBook sync
+- Documentation-only slice after the pushed `N=100` batch.
+- `MEMORY.md` now reflects the actual pushed baseline `b07a28000de1c847dc5495bfd73075a96e08ff23` instead of the pre-commit slice-100 handoff state.
+- The mdBook `adapt` and generated-artifact reference pages now explain the current `.fsm` adapter provenance surface for renderable top composition, blocked composition, and structured-FSM graph blockers.
+- `ROADMAP.md` and `LIVE_ACHIEVEMENT_STATUS.md` were reviewed and left unchanged because they already contain the latest renderable top-composition and blocker provenance entries.
+
 ## 2026-05-06 `.fsm` renderable top-port support lock
 - New batch slice 100/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `builds_renderable_top_composition_fsm_adapter_artifact` now asserts the renderable top-composition path retains the `result_data` top-port direction, numeric width, high automation confidence, and renderable top root.

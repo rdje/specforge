@@ -124,6 +124,14 @@ If an adapter needs meaning that is not present in `IntentIR`, the fix should us
 When an adapter artifact is blocked, inspect both the renderability reasons and the signal inventory provenance.
 For `.fsm` top roots, a top-port direction can be unresolved for rendering while the inventory still shows the declared `direction_hint` and the actor/topology-derived `graph_direction_hint` separately.
 
+For renderable `.fsm` top-composition roots, inspect the selected top candidate as well as the emitted target text.
+The adapter artifact keeps the declared top-port direction and numeric width, the top-port automation confidence, child declaration support IDs, topology-link support IDs, and the renderable top root.
+For blocked composition roots, the same artifact shape is useful for diagnostics: a missing child can block emission while the surviving top-port provenance remains available for review.
+
+For structured FSM roots, the artifact preserves the graph surface that led to renderability or blocking.
+Renderable structured-FSM cases keep named state and transition candidates, and reset-block cases keep renderable state bodies plus synchronous/asynchronous reset block roles.
+Blocked state-graph cases preserve the declared states, rejected transitions, support IDs, and automation confidence so a missing initial state or undeclared transition target can be corrected upstream without guessing what the adapter saw.
+
 ## Prior memory
 
 The cross-document learning plane writes:

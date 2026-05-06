@@ -16,58 +16,54 @@
 - `git_message_brief.txt` must stay untracked and be truncated to `0` bytes after each commit
 - every completion message must report the commit id, exact commit message, full tracked-file list, current live-status snapshot, and whether that snapshot changed
 - outside explicit batch runs, do not push unless the user asks or the branch reaches `25` local commits since the last push
-- active batch-run rule: for the new `N=100` batch, commit after every slice but defer push until all 100 slices complete; do not push at the `25`-commit threshold during the batch
+- latest batch-run rule used: the `N=100` batch committed each slice independently, deferred push until all 100 slices were complete, and was pushed after slice 100
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `f30991f4ae1598ce7af6ff938c1addaf97b26b83`
-- latest_commit_brief_message: `test(adapter): lock missing child top port`
-- note: final slice of the local `N=100` batch is in flight; push is due after slice 100 is committed and post-commit checks pass
+- latest_commit_hash: `b07a28000de1c847dc5495bfd73075a96e08ff23`
+- latest_commit_brief_message: `test(adapter): lock renderable top port shape`
+- note: local `N=100` batch completed and was pushed to `origin/main`; current task is a documentation sync slice
 
 ## Recent commit chain (last 6)
+- `b07a280` test(adapter): lock renderable top port shape
 - `f30991f` test(adapter): lock missing child top port
 - `9c70a20` test(adapter): lock undeclared target FSM states
 - `1d6dc59` test(adapter): lock missing initial FSM graph
 - `6a18f9d` test(adapter): lock reset FSM renderable graph
 - `8d514b3` test(adapter): lock structured FSM candidates
-- `8382ee5` test(adapter): lock sequential DT support
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 99]`
-- files in flight for new batch slice 100:
-  - `crates/specforge/src/ir/adapters.rs`
+- branch state before this docs-sync commit: `main...origin/main`
+- files in flight for documentation sync:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
-  - `LIVE_ACHIEVEMENT_STATUS.md`
-  - `ROADMAP.md`
-  - `RUST_CODEBASE_ANALYSIS.md`
   - `MEMORY.md`
+  - `docs/book/src/commands/pipeline.md`
+  - `docs/book/src/reference/generated-artifacts.md`
 
-## Active N-slice batch
+## Last N-slice batch
 - requested_count: `100`
-- completed_count: `99`
-- push_policy: defer push until all `100` new-batch slices are committed; slice 100 is the final slice and should be pushed after commit and post-commit checks
-- slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
+- completed_count: `100`
+- push_status: pushed to `origin/main`
+- final_commit_hash: `b07a28000de1c847dc5495bfd73075a96e08ff23`
+- slice_rule_observed: each slice received verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice started
 
 ## Current in-flight slice
 - objective:
-  - regression-lock renderable top-composition top-port provenance
-  - prove renderable artifacts keep the declared top port direction, numeric width, high automation confidence, and renderable top root alongside child/link support IDs
-  - complete the requested `N=100` batch and push after the slice 100 commit workflow finishes
+  - synchronize live docs and mdBook after the completed `N=100` batch
+  - correct the stale slice-100 in-flight continuity state
+  - document current `.fsm` adapter provenance behavior in the public mdBook
 - tracker effect:
-  - live-status tracker gains `.fsm renderable top-composition lowering now preserves top-port shape and renderable-top provenance: Done`
+  - no `LIVE_ACHIEVEMENT_STATUS.md` status row change expected; tracker already includes the latest renderable top-composition and blocker provenance rows
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge builds_renderable_top_composition_fsm_adapter_artifact` passed with `1` test
-  - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `80` tests
-  - `cargo fmt --manifest-path Cargo.toml -- --check` passed
-  - `bash scripts/run_docs_ci.sh` passed before the final live-doc refresh
-  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `148/148` tracked fixtures
-  - `bash scripts/run_ci.sh` passed with formatting, warning-deny Clippy, `601` Rust tests, warning-deny Rust docs, and mdBook build
+  - pending `bash scripts/run_docs_ci.sh`
+  - pending `git diff --check`
+  - pending markdown absolute-path guard
 - current known local CI baseline:
-  - `601` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation expected after this slice
-  - `148/148` tracked KG fixtures
+  - last code slice passed `601` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - last code slice passed `148/148` tracked KG fixtures
 
 ## Next exact steps
-- run final docs CI and guards, commit slice 100, run post-commit checks, then push the completed `N=100` batch
+- run docs CI and guards, commit the docs sync, truncate `git_message_brief.txt`, and report the unchanged live-status snapshot

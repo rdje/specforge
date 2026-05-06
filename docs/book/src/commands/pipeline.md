@@ -103,6 +103,9 @@ When `.fsm` lowering is blocked, the adapter artifact can still preserve recover
 For top roots, flat `direction_hint` and graph-backed `graph_direction_hint` remain separate in the signal inventory when they disagree; the renderable top port is blocked, but the artifact does not pretend the graph itself conflicted unless graph evidence disagreed with graph evidence.
 For standalone DT/FSM roots, renderability also checks graph-backed output roles across the full signal inventory: an output recovered from actor-relative graph evidence still needs a typed driving action before target text is emitted.
 Top-linked child endpoints remain composition diagnostics, so a child port referenced by a top link must resolve to an emitted child module port before a `?top:name` document is renderable.
+Renderable top-composition artifacts now also preserve the public top-port shape in the selected top candidate.
+That means direction, numeric width, automation confidence, and renderable-top presence stay inspectable alongside child declaration and topology-link support IDs.
+The matching blocked composition and structured-FSM paths preserve their own state, transition, top-port, or child-candidate provenance even when no target text is emitted.
 
 ## `converge`
 
