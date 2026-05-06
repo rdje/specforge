@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` top-link role residual lock)
+- Tightened `top_composition_blocks_child_source_direction_role_guidance` in `crates/specforge/src/ir/adapters.rs` so source-side top-link direction-role blockers also prove `fsm_adapter_composition_topology` is emitted.
+- The regression now checks the residual interpretation that keeps upstream repair tied to renderable child modules while endpoint-role enrichment remains visible on child, top, and aggregate renderability.
+- This keeps top-link role mismatches visible through both renderability enrichments and structured residual decisions.
+
 ## Session update (2026-05-06 `.fsm` top-link width residual lock)
 - Tightened `top_composition_blocks_width_mismatched_top_link_guidance` in `crates/specforge/src/ir/adapters.rs` so width-mismatched top links also prove the adapter emits `fsm_adapter_composition_topology`.
 - The regression now checks the residual interpretation that tells upstream canonicalization to carry width-compatible top links with explicit top ports, child-module references, and renderable children.
