@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` top-before-child residual cleanliness)
+- Added a residual-clean assertion to `renderable_top_document_emits_top_before_child_direct_roots` in `crates/specforge/src/ir/adapters.rs`.
+- Top-first source-document emission now proves its renderable `?top` before child-root output path leaves no stale `fsm_adapter_composition_topology` packet.
+- The live tracker and roadmap now mark the top-before-child residual-clean guarantee as closed; focused adapter coverage, full adapter coverage, KG bench, docs, full CI, and `cargo sweep --time 1` all passed.
+
 ## Session update (2026-05-06 `.fsm` reused-child residual cleanliness)
 - Added a residual-clean assertion to `renderable_top_document_deduplicates_reused_child_module_roots` in `crates/specforge/src/ir/adapters.rs`.
 - Reused-child top documents now prove the shared child-root de-duplication path leaves no stale `fsm_adapter_composition_topology` packet once the `?top` document is renderable.

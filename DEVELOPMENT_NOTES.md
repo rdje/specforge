@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` top-before-child residual cleanliness
+- New batch slice 78/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `renderable_top_document_emits_top_before_child_direct_roots` now asserts no stale composition topology residual remains after the renderable source document emits the `?top` root before child direct roots.
+- This keeps child, top-port, topology-link, and top-first emission provenance paired with a clean aggregate residual surface once the composition is renderable.
+- Focused top-before-child residual-clean regression, adapter suite, fmt, docs, KG bench, full CI, and the user-requested `cargo sweep --time 1` all passed.
+
 ## 2026-05-06 `.fsm` reused-child residual cleanliness
 - New batch slice 77/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `renderable_top_document_deduplicates_reused_child_module_roots` now asserts no stale composition topology residual remains after the renderable source document deduplicates the shared `stage_core` child root.

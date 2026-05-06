@@ -10443,6 +10443,12 @@ mod tests {
 
         assert!(top_index < producer_index);
         assert!(producer_index < consumer_index);
+        assert!(
+            adapter
+                .residual_decisions
+                .iter()
+                .all(|packet| packet.packet_id != "fsm_adapter_composition_topology")
+        );
 
         Ok(())
     }

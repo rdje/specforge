@@ -33,6 +33,7 @@
 - `.fsm` child-declaration top-root confidence now stays composition-residual clean when renderable: Done
 - `.fsm` top-link top-root confidence now stays composition-residual clean when renderable: Done
 - `.fsm` reused-child top documents now stay composition-residual clean after deduplicating child roots: Done
+- `.fsm` top-before-child source documents now stay composition-residual clean after top-first emission: Done
 - `.fsm` top-link width mismatch blockers now preserve width-compatible repair guidance: Done
 - `.fsm` top-target boundary role conflicts now preserve endpoint-role repair guidance: Done
 - `.fsm` top-boundary top-link role conflicts now preserve endpoint-role repair guidance: Done
@@ -460,6 +461,7 @@
 - `.fsm` single FSM-child top emission now preserves top-port and topology-link provenance: Done
 - `.fsm` renderable top-before-child emission now regression-locks child support IDs: Done
 - `.fsm` renderable top-before-child emission now preserves top-port and topology-link provenance: Done
+- `.fsm` top-before-child source documents now stay composition-residual clean after top-first emission: Done
 - `.fsm` widthless top-port blockers now regression-lock support IDs and automation confidence: Done
 - `.fsm` parametric top-port blockers now regression-lock support IDs and automation confidence: Done
 - `.fsm` explicit top-link lowering now requires child endpoints to resolve to emitted child module ports: Done
