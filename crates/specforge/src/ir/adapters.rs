@@ -10553,12 +10553,29 @@ mod tests {
             "top_with_reused_fsm_child.md",
             "# Top With Reused FSM Child\nTop wrapper.\n\nTop wrapper port clk is input width 1.\n\nTop wrapper port rst_n is input width 1.\n\nTop wrapper port GO is input width 1.\n\nTop wrapper port DONE is input width 1.\n\nTop wrapper port DATA_IN is input width 8.\n\nTop wrapper port ACC_A is output width 8.\n\nTop wrapper port ACC_B is output width 8.\n\nTop wrapper child first uses module controller_core.\n\nTop wrapper child second uses module controller_core.\n\nTop wrapper link clk -> first.clk.\n\nTop wrapper link rst_n -> first.rst_n.\n\nTop wrapper link GO -> first.GO.\n\nTop wrapper link DONE -> first.DONE.\n\nTop wrapper link DATA_IN -> first.DATA_IN.\n\nTop wrapper link first.ACC -> ACC_A.\n\nTop wrapper link clk -> second.clk.\n\nTop wrapper link rst_n -> second.rst_n.\n\nTop wrapper link GO -> second.GO.\n\nTop wrapper link DONE -> second.DONE.\n\nTop wrapper link DATA_IN -> second.DATA_IN.\n\nTop wrapper link second.ACC -> ACC_B.\n\nModule controller_core Signal clk is input width 1.\n\nModule controller_core Signal rst_n is input width 1.\n\nModule controller_core Signal GO is input width 1.\n\nModule controller_core Signal DONE is input width 1.\n\nModule controller_core Signal DATA_IN is input width 8.\n\nModule controller_core Signal ACC is output width 8.\n\nModule controller_core Clock clk.\n\nModule controller_core Reset rst_n is asynchronous active low.\n\nModule controller_core Init ACC = 8'0.\n\nModule controller_core State idle is initial.\n\nModule controller_core State busy.\n\nModule controller_core Block idle: ACC <- DATA_IN.\n\nModule controller_core Transition idle -> busy when GO.\n\nModule controller_core Block busy: ACC <- DATA_IN.\n\nModule controller_core Transition busy -> idle when DONE.\n",
         )?;
-        let (first_child_support_ids, second_child_support_ids) = {
+        let (
+            acc_a_top_port_support_ids,
+            acc_b_top_port_support_ids,
+            first_child_support_ids,
+            second_child_support_ids,
+            first_acc_link_support_ids,
+            second_acc_link_support_ids,
+        ) = {
             let explicit_top = intent_ir
                 .explicit_tops
                 .iter()
                 .find(|top| top.top_name == "wrapper")
                 .expect("explicit top should be present");
+            let acc_a_top_port = explicit_top
+                .ports
+                .iter()
+                .find(|port| port.port_name == "ACC_A")
+                .expect("ACC_A top port should be present");
+            let acc_b_top_port = explicit_top
+                .ports
+                .iter()
+                .find(|port| port.port_name == "ACC_B")
+                .expect("ACC_B top port should be present");
             let first_child = explicit_top
                 .children
                 .iter()
@@ -10569,9 +10586,33 @@ mod tests {
                 .iter()
                 .find(|child| child.instance_name == "second")
                 .expect("second child should be present");
+            let first_acc_link = explicit_top
+                .links
+                .iter()
+                .find(|link| {
+                    link.source.instance_name.as_deref() == Some("first")
+                        && link.source.signal_name == "ACC"
+                        && link.target.instance_name.is_none()
+                        && link.target.signal_name == "ACC_A"
+                })
+                .expect("first ACC top link should be present");
+            let second_acc_link = explicit_top
+                .links
+                .iter()
+                .find(|link| {
+                    link.source.instance_name.as_deref() == Some("second")
+                        && link.source.signal_name == "ACC"
+                        && link.target.instance_name.is_none()
+                        && link.target.signal_name == "ACC_B"
+                })
+                .expect("second ACC top link should be present");
             (
+                acc_a_top_port.supporting_statement_ids.clone(),
+                acc_b_top_port.supporting_statement_ids.clone(),
                 first_child.supporting_statement_ids.clone(),
                 second_child.supporting_statement_ids.clone(),
+                super::explicit_top_link_supporting_ids(first_acc_link),
+                super::explicit_top_link_supporting_ids(second_acc_link),
             )
         };
         let artifact_base = tempdir.path().join("generated").join("adapters");
@@ -10596,11 +10637,51 @@ mod tests {
             .iter()
             .find(|top| top.top_name == "wrapper")
             .expect("top candidate should be present");
+        let acc_a_top_port = top_candidate
+            .ports
+            .iter()
+            .find(|port| port.port_name == "ACC_A")
+            .expect("ACC_A top port should be present");
+        let acc_b_top_port = top_candidate
+            .ports
+            .iter()
+            .find(|port| port.port_name == "ACC_B")
+            .expect("ACC_B top port should be present");
         let renderable_top = fsm
             .renderable_document
             .as_ref()
             .and_then(|document| document.top_root.as_ref())
             .expect("renderable top root should be present");
+        let renderable_acc_a_port = renderable_top
+            .ports
+            .iter()
+            .find(|port| port.port_name == "ACC_A")
+            .expect("renderable top should preserve ACC_A");
+        let renderable_acc_b_port = renderable_top
+            .ports
+            .iter()
+            .find(|port| port.port_name == "ACC_B")
+            .expect("renderable top should preserve ACC_B");
+        let renderable_first_acc_link = renderable_top
+            .links
+            .iter()
+            .find(|link| {
+                link.source.instance_name.as_deref() == Some("first")
+                    && link.source.signal_name == "ACC"
+                    && link.target.instance_name.is_none()
+                    && link.target.signal_name == "ACC_A"
+            })
+            .expect("renderable top should preserve first ACC link");
+        let renderable_second_acc_link = renderable_top
+            .links
+            .iter()
+            .find(|link| {
+                link.source.instance_name.as_deref() == Some("second")
+                    && link.source.signal_name == "ACC"
+                    && link.target.instance_name.is_none()
+                    && link.target.signal_name == "ACC_B"
+            })
+            .expect("renderable top should preserve second ACC link");
         let direct_roots = fsm
             .renderable_document
             .as_ref()
@@ -10609,6 +10690,26 @@ mod tests {
 
         assert!(top_candidate.renderability.is_renderable);
         assert_eq!(top_candidate.children.len(), 2);
+        assert!(
+            acc_a_top_port_support_ids
+                .iter()
+                .any(|id| acc_a_top_port.supporting_statement_ids.contains(id))
+        );
+        assert!(
+            acc_a_top_port_support_ids
+                .iter()
+                .any(|id| renderable_acc_a_port.supporting_statement_ids.contains(id))
+        );
+        assert!(
+            acc_b_top_port_support_ids
+                .iter()
+                .any(|id| acc_b_top_port.supporting_statement_ids.contains(id))
+        );
+        assert!(
+            acc_b_top_port_support_ids
+                .iter()
+                .any(|id| renderable_acc_b_port.supporting_statement_ids.contains(id))
+        );
         assert!(
             top_candidate
                 .children
@@ -10636,6 +10737,16 @@ mod tests {
                 .iter()
                 .any(|id| second_child.supporting_canonical_ids.contains(id))
         );
+        assert!(first_acc_link_support_ids.iter().any(|id| {
+            renderable_first_acc_link
+                .supporting_statement_ids
+                .contains(id)
+        }));
+        assert!(second_acc_link_support_ids.iter().any(|id| {
+            renderable_second_acc_link
+                .supporting_statement_ids
+                .contains(id)
+        }));
         assert_eq!(renderable_top.children.len(), 2);
         assert!(
             renderable_top

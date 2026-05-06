@@ -205,7 +205,7 @@
   - baseline renderable top-composition lowering preserves top port, child declaration, and explicit topology-link support IDs in selected top candidates
   - missing-child top-composition blockers preserve unresolved child declaration support IDs and confidence while blocking `.fsm` emission
   - reused-child top-composition lowering preserves per-instance child support IDs while deduplicating the shared emitted module root
-  - reused-FSM-child top-composition lowering preserves per-instance child support IDs while deduplicating the shared emitted FSM module root
+  - reused-FSM-child top-composition lowering preserves per-instance child, top-port, and topology-link support IDs while deduplicating the shared emitted FSM module root
   - mixed-child top-composition lowering preserves DT and FSM child support IDs while preserving emitted root order and kind
   - single FSM-child top-composition lowering preserves child, top-port, and topology-link support IDs while preserving FSM child root kind
   - renderable top-before-child source-document emission preserves child, top-port, and topology-link support IDs while keeping top-first output order
@@ -234,6 +234,7 @@
   - reused-child top-composition lowering preserves top-port shape and topology-link support IDs while deduplicating the shared emitted child root
   - renderable top-before-child source-document emission preserves top-port and topology-link provenance alongside child support IDs
   - single-FSM-child top source-document emission preserves top-port and topology-link provenance alongside child root-kind support
+  - reused-FSM-child top source-document emission preserves top-port and topology-link provenance while deduplicating the shared FSM root
   - unrelated direct actor-port graph context keeps selected support IDs auditable while excluding unrelated side-band evidence from `.fsm` inventories
   - ambiguous direct actor-port graph context leaves graph direction, actor-port category, and support IDs unselected instead of guessing a target actor
   - standalone DT graph-backed undriven output blockers preserve selected actor support IDs and high automation confidence while blocking `.fsm` emission

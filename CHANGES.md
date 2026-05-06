@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` reused-FSM-child top provenance lock)
+
+### Added: reused-FSM-child top/link provenance
+- Tightened `renderable_top_document_deduplicates_reused_fsm_child_roots` so reused FSM child top documents preserve the `ACC_A` and `ACC_B` top-port support IDs in both selected and renderable top records.
+- The regression also locks both first/second child `ACC` topology-link support-ID sets while preserving per-instance child support IDs and single emitted shared FSM direct-root behavior.
+- This mirrors the reused-DT-child provenance lock across the reused FSM child root path.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge renderable_top_document_deduplicates_reused_fsm_child_roots` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed after applying formatter output
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` single-FSM-child top provenance lock)
 
 ### Added: single-FSM-child top/link provenance

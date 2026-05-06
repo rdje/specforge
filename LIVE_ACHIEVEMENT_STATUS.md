@@ -379,6 +379,7 @@
 - `.fsm` missing-child top blockers now preserve unresolved child support IDs and confidence: Done
 - `.fsm` reused-child top lowering now regression-locks per-instance child support IDs: Done
 - `.fsm` reused-FSM-child top lowering now regression-locks per-instance child support IDs: Done
+- `.fsm` reused-FSM-child top emission now preserves top-port and topology-link provenance while deduplicating the shared FSM root: Done
 - `.fsm` mixed-child top lowering now regression-locks DT/FSM child support IDs: Done
 - `.fsm` single FSM-child top lowering now regression-locks child support IDs: Done
 - `.fsm` single FSM-child top emission now preserves top-port and topology-link provenance: Done

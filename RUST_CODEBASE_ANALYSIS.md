@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` reused-FSM-child top provenance lock)
+- Tightened `renderable_top_document_deduplicates_reused_fsm_child_roots` in `crates/specforge/src/ir/adapters.rs` so reused FSM child top documents keep `ACC_A` and `ACC_B` top-port support IDs in selected and renderable top records.
+- The renderable top root now also proves both first/second child `ACC` topology-link support-ID sets survive while the shared `controller_core` FSM direct root is still emitted once.
+- This mirrors the reused-DT-child top-boundary provenance lock across the reused FSM child-root path.
+
 ## Session update (2026-05-06 `.fsm` single-FSM-child top provenance lock)
 - Tightened `renderable_top_document_preserves_fsm_child_root_kind` in `crates/specforge/src/ir/adapters.rs` so the single-FSM-child top-document path keeps `ACC` top-port support IDs in both selected and renderable top records.
 - The renderable top root now also proves the `controller.ACC -> ACC` topology-link support IDs survive while the FSM child root-kind and direct-root checks remain unchanged.
