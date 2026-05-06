@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` top child-link width conflict renderable block
+- New batch slice 160/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_conflicting_top_port_widths_from_child_links` now asserts a top port with conflicting child-link widths has no renderable top root and the aggregate `.fsm` artifact has no renderable source document.
+- This locks the top-boundary child-link width-conflict path against stale `?top` output after renderability is blocked.
+- Focused top child-link width-conflict coverage, the adapter suite, fmt, docs CI, KG bench, and full CI passed; user-requested `cargo sweep --time 1` remains deferred until no target-tree process is active.
+
 ## 2026-05-06 `.fsm` child topology-width conflict renderable block
 - New batch slice 159/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_conflicting_child_topology_widths` now asserts a producer child with conflicting declared/topology widths has no renderable module and the aggregate `.fsm` artifact has no renderable source document.
