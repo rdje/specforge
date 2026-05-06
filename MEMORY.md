@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `1abe186b6c1090448cf5d0ba2183064d9ec0483e`
-- latest_commit_brief_message: `test(adapter): lock duplicate top width diagnostics`
-- note: new local `N=200` batch is active; slice 131 is committed, slice 132 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `0b2d5a413f6d9315c8fdab7aa0e64056300b5965`
+- latest_commit_brief_message: `test(adapter): lock multi-child no-link diagnostics`
+- note: new local `N=200` batch is active; slice 132 is committed, slice 133 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `0b2d5a4` test(adapter): lock multi-child no-link diagnostics
 - `1abe186` test(adapter): lock duplicate top width diagnostics
 - `370789f` test(adapter): lock duplicate top direction diagnostics
 - `52796d0` test(adapter): lock missing child diagnostics
 - `0a1ba30` test(adapter): lock child target role diagnostics
 - `a12dac0` test(adapter): lock child source role diagnostics
-- `8ee672a` test(adapter): lock top target role diagnostics
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 132]`
-- files in flight for new batch slice 132:
+- branch state before the next commit: `main...origin/main [ahead 133]`
+- files in flight for new batch slice 133:
   - `crates/specforge/src/ir/adapters.rs`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `ROADMAP.md`
@@ -49,21 +49,21 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `131`
+- completed_count: `132`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - lock composition-topology residual diagnostics for multi-child top roots without explicit top-link records
-  - prove `top_composition_blocks_multi_child_without_links_guidance` keeps low-confidence `fsm_adapter_composition_topology` diagnostics and topology-detail blocker text while preserving top-link enrichment guidance, child provenance, resolved child root kinds, and width-compatible-link repair context
-  - sync the live tracker, roadmap, and mdBook with the multi-child no-link residual-diagnostics guarantee
+  - lock composition-topology residual diagnostics for top roots without child-module references
+  - prove `top_composition_blocks_top_without_child_guidance` keeps low-confidence `fsm_adapter_composition_topology` diagnostics and topology-detail blocker text while preserving child-module enrichment guidance, declared top-port provenance, and child-module reference repair context
+  - sync the live tracker, roadmap, and mdBook with the no-child top residual-diagnostics guarantee
 - tracker effect:
-  - live-status tracker changed; new row marks `.fsm` multi-child no-link residuals locking low-confidence topology-detail diagnostics as `Done`
+  - live-status tracker changed; new row marks `.fsm` no-child top residuals locking low-confidence topology-detail diagnostics as `Done`
 - verification status:
   - implementation and live-doc sync are complete
-  - focused multi-child no-link residual-diagnostics regression passed (`1` test)
+  - focused no-child top residual-diagnostics regression passed (`1` test)
   - adapter suite (`92` tests), formatting, docs CI, KG bench (`148/148` fixtures), and full CI (`613` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation) passed
   - user-requested `cargo sweep --time 1` is deferred until no target-tree process is active because `target/release/tool_matrix` is active
   - final commit guards pending
@@ -74,4 +74,4 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- run final commit guards and commit slice 132 without pushing
+- run final commit guards and commit slice 133 without pushing

@@ -228,6 +228,7 @@ Multi-child top roots that omit explicit top-link records also emit the composit
 That multi-child no-link residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
 Top roots that omit child-module references preserve child-module enrichment guidance while keeping the declared top-port provenance visible.
 Top roots that omit child-module references also emit the composition-topology residual decision so child-module reference repair remains visible in structured diagnostics.
+That no-child top residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
 Top roots that omit top-port records preserve top-port enrichment guidance while keeping child declaration provenance visible.
 Top roots that omit top-port records also emit the composition-topology residual decision so explicit-top-port repair remains visible in structured diagnostics.
 Top links that target undeclared top-boundary ports preserve target-endpoint enrichment guidance while keeping the declared top-port, child, and link provenance visible.
