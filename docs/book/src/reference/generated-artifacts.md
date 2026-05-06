@@ -145,6 +145,7 @@ Child actor-port direction recovery keeps declaration support for each recovered
 Top-boundary actor-port direction conflicts preserve top-port direction repair guidance on the blocked top candidate and aggregate adapter renderability while retaining graph-backed support.
 Top-boundary actor-port direction conflicts also emit the composition-topology residual decision so explicit-top-port repair remains visible in structured diagnostics.
 Top-boundary top-link direction conflicts preserve the same direction repair guidance while retaining topology-link support.
+Top-boundary top-link direction conflicts also emit the composition-topology residual decision so explicit-top-port repair remains visible in structured diagnostics.
 Duplicate top-boundary direction declarations also preserve that direction repair guidance while retaining both duplicate declaration support-ID sets.
 Duplicate top-boundary direction blockers also preserve explicit top-port deduplication guidance on both blocked renderability surfaces.
 Duplicate top-boundary direction blockers also emit the composition-topology residual decision so explicit-top-port repair remains visible in structured diagnostics.

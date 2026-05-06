@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` top-link direction residual alignment
+- New batch slice 63/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_keeps_conflicting_top_port_direction_unresolved` now checks that the existing composition residual also keeps explicit top-port repair visible.
+- This aligns the top-link direction conflict lane with structured residual diagnostics while preserving topology-link support IDs, graph-direction inventory state, role guidance, and confidence.
+- Focused top-link direction regression, adapter suite, fmt, docs, KG bench, full CI, and the user-requested `cargo sweep --time 1` all passed.
+
 ## 2026-05-06 `.fsm` top actor-width residual lock
 - New batch slice 62/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_conflicting_top_actor_port_width` now asserts `fsm_adapter_composition_topology` and checks that its interpretation keeps explicit top-port repair visible.

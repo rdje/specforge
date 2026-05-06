@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` top-link direction residual alignment)
+
+### Added: top-link direction conflicts now lock top-boundary residual diagnostics
+- Tightened `top_composition_keeps_conflicting_top_port_direction_unresolved` so top-link direction conflicts prove `fsm_adapter_composition_topology` also keeps explicit top-port repair visible.
+- The regression already checked renderable-child repair for the endpoint-role mismatch; the new assertion ties the same residual packet to top-boundary direction-conflict repair.
+- Updated the live tracker, roadmap, and mdBook to mark the top-link direction conflict residual guarantee as closed.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_keeps_conflicting_top_port_direction_unresolved` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`613` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo sweep --time 1` -> completed (`Cleaned nothing`)
+
 ## 2026-05-06 (`.fsm` top actor-width residual lock)
 
 ### Added: top actor-port width conflicts now lock residual diagnostics

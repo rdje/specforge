@@ -20,6 +20,7 @@
 - `.fsm` top-link width mismatch blockers now preserve composition topology residual decisions: Done
 - `.fsm` top actor-port direction conflicts now preserve composition topology residual decisions: Done
 - `.fsm` top actor-port width conflicts now preserve composition topology residual decisions: Done
+- `.fsm` top-link direction conflicts now preserve composition topology residual decisions: Done
 - `.fsm` top-link width mismatch blockers now preserve width-compatible repair guidance: Done
 - `.fsm` top-target boundary role conflicts now preserve endpoint-role repair guidance: Done
 - `.fsm` top-boundary top-link role conflicts now preserve endpoint-role repair guidance: Done
@@ -399,6 +400,7 @@
 - `.fsm` top actor-port width conflicts now preserve composition topology residual decisions: Done
 - `.fsm` top-link direction conflicts now regression-lock support IDs and automation confidence: Done
 - `.fsm` top-link direction conflicts now preserve top-boundary direction enrichment guidance: Done
+- `.fsm` top-link direction conflicts now preserve composition topology residual decisions: Done
 - `.fsm` duplicate top-port direction conflicts now regression-lock support IDs and automation confidence: Done
 - `.fsm` duplicate top-port direction conflicts now preserve top-boundary direction enrichment guidance: Done
 - `.fsm` duplicate top-port width conflicts now regression-lock support IDs and automation confidence: Done

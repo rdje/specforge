@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `779fae2af875d3fd5903bb086c02d00fada71955`
-- latest_commit_brief_message: `test(adapter): lock actor direction residual`
-- note: new local `N=200` batch is active; slice 61 is committed, slice 62 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `1e88286f38ef78d397e93cd0115d16936231823c`
+- latest_commit_brief_message: `test(adapter): lock actor width residual`
+- note: new local `N=200` batch is active; slice 62 is committed, slice 63 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `1e88286` test(adapter): lock actor width residual
 - `779fae2` test(adapter): lock actor direction residual
 - `10fd8f7` test(adapter): lock duplicate width residual
 - `7aa7d0e` test(adapter): lock duplicate direction residual
 - `99f2de3` test(adapter): lock duplicate child residual
 - `a7f9a95` test(adapter): lock no-top-port residual
-- `ba50656` test(adapter): lock no-child residual
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 62]`
-- files in flight for new batch slice 62:
+- branch state before the next commit: `main...origin/main [ahead 63]`
+- files in flight for new batch slice 63:
   - `crates/specforge/src/ir/adapters.rs`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `ROADMAP.md`
@@ -49,27 +49,28 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `61`
+- completed_count: `62`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - lock structured composition residual diagnostics for top actor-port width conflicts
-  - prove `top_composition_blocks_conflicting_top_actor_port_width` carries `fsm_adapter_composition_topology`
-  - keep explicit top-port repair visible while existing top-boundary width-conflict guidance and graph-backed width provenance remain intact
-  - sync the live tracker, roadmap, and mdBook with the top actor-port width residual guarantee
+  - align structured composition residual diagnostics for top-link direction conflicts
+  - prove `top_composition_keeps_conflicting_top_port_direction_unresolved` keeps explicit top-port repair visible in `fsm_adapter_composition_topology`
+  - preserve the existing renderable-child residual assertion while adding the top-boundary direction repair interpretation
+  - sync the live tracker, roadmap, and mdBook with the top-link direction conflict residual guarantee
 - tracker effect:
-  - live-status tracker changed; new row marks `.fsm` top actor-port width conflicts preserving composition topology residual decisions as `Done`
+  - live-status tracker changed; new row marks `.fsm` top-link direction conflicts preserving composition topology residual decisions as `Done`
 - verification status:
   - implementation and live-doc sync are complete
-  - focused regression, adapter suite, fmt, docs, KG bench, full CI, and `cargo sweep --time 1` have passed
+  - focused regression, adapter suite, fmt, docs, KG bench, full CI, and `cargo sweep --time 1` passed
+  - final docs build, whitespace guard, and markdown absolute-path guard passed; slice 63 is ready to commit
 - current known local CI baseline:
   - current slice passed `613` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - current slice passed `148/148` tracked KG fixtures
-  - user-requested `cargo sweep --time 1` cleaned nothing after the full CI gate
+  - user-requested `cargo sweep --time 1` cleaned nothing after the current full CI gate
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- run final commit guards, commit slice 62 without pushing, clear `git_message_brief.txt`, record post-commit checks, then continue slice 63
+- run final commit guards, commit slice 63 without pushing, then start slice 64
