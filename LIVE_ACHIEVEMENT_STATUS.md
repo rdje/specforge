@@ -381,6 +381,7 @@
 - `.fsm` child sibling-link target width recovery now regression-locks support IDs and automation confidence: Done
 - `.fsm` child sibling-link source width recovery now regression-locks support IDs and automation confidence: Done
 - `.fsm` sibling child-link width conflicts now regression-lock both topology-link support ID sets: Done
+- `.fsm` sibling child-link width conflicts now preserve canonical width enrichment guidance: Done
 - `.fsm` top child-link width conflicts now regression-lock both topology-link support ID sets: Done
 - `.fsm` child topology width conflicts now preserve signal and topology support IDs: Done
 - `.fsm` child topology width conflicts now preserve canonical width enrichment guidance: Done

@@ -207,6 +207,7 @@
   - sibling child-link width recovery preserves original child signal declaration support IDs alongside topology-link support IDs in recovered child module inventories
   - source-side sibling child-link width recovery preserves original child signal declaration support IDs alongside topology-link support IDs in recovered child module inventories
   - sibling child-link width conflicts preserve both conflicting topology-link support-ID sets and high automation confidence while blocking `.fsm` emission
+  - sibling child-link width conflict blockers preserve canonical width-conflict enrichment guidance on blocked module and aggregate `.fsm` renderability surfaces
   - top child-link width conflicts preserve both conflicting topology-link support-ID sets and high automation confidence while blocking `.fsm` emission
   - child topology width conflicts preserve both explicit child signal declaration support IDs and topology-link support IDs while blocking `.fsm` emission
   - child topology width conflict blockers preserve canonical width-conflict enrichment guidance on blocked module and aggregate `.fsm` renderability surfaces

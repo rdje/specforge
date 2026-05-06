@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` sibling child-width blocker guidance lock
+- New batch slice 20/200 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_conflicting_sibling_child_link_widths` now asserts the blocked child module candidate and aggregate `.fsm` renderability both carry `resolve conflicting canonical signal width evidence before lowering .fsm` enrichment guidance.
+- Existing checks still prove both conflicting topology-link support-ID sets, high automation confidence, and width-conflict inventory state survive together.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` child topology-width blocker guidance lock
 - New batch slice 19/200 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_conflicting_child_topology_widths` now asserts the blocked child module candidate and aggregate `.fsm` renderability both carry `resolve conflicting canonical signal width evidence before lowering .fsm` enrichment guidance.

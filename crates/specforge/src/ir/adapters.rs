@@ -13927,12 +13927,27 @@ mod tests {
                 .any(|reason| reason.contains("conflicting width evidence"))
         );
         assert!(
+            consumer
+                .renderability
+                .required_canonical_enrichments
+                .iter()
+                .any(|enrichment| enrichment
+                    == "resolve conflicting canonical signal width evidence before lowering `.fsm`")
+        );
+        assert!(
             fsm.renderability
                 .blocking_reasons
                 .iter()
                 .any(|reason| reason.contains("explicit module `consumer_core`"))
         );
         assert!(!fsm.renderability.is_renderable);
+        assert!(
+            fsm.renderability
+                .required_canonical_enrichments
+                .iter()
+                .any(|enrichment| enrichment
+                    == "resolve conflicting canonical signal width evidence before lowering `.fsm`")
+        );
 
         Ok(())
     }

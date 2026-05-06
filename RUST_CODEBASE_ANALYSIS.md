@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` sibling child-width blocker guidance lock)
+- Tightened `top_composition_blocks_conflicting_sibling_child_link_widths` in `crates/specforge/src/ir/adapters.rs` so blocked sibling child-link width conflicts retain canonical width-conflict enrichment guidance on the blocked module candidate and aggregate `.fsm` renderability.
+- Existing assertions still cover both conflicting topology-link support-ID sets, high automation confidence, and width-conflict inventory state.
+- This extends aggregate child-module guidance coverage to sibling-link-propagated child width blockers.
+
 ## Session update (2026-05-06 `.fsm` child topology-width blocker guidance lock)
 - Tightened `top_composition_blocks_conflicting_child_topology_widths` in `crates/specforge/src/ir/adapters.rs` so blocked child topology width conflicts retain canonical width-conflict enrichment guidance on the blocked module candidate and aggregate `.fsm` renderability.
 - Existing assertions still cover child declaration support IDs, topology-link support IDs, high automation confidence, and width-conflict inventory state.
