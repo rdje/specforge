@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` no-top-port residual diagnostics)
+- Added composition residual confidence and blocker-text assertions to `top_composition_blocks_top_without_port_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- Top roots without explicit top-port records now prove top-port enrichment guidance, child declaration provenance, resolved child root kind, low-confidence `fsm_adapter_composition_topology` diagnostics, topology-detail blocker text, and explicit-top-port repair guidance stay visible together.
+- The live tracker and roadmap now mark no-top-port residual diagnostics as closed; focused adapter coverage, full adapter coverage, KG bench, docs, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 `.fsm` no-child top residual diagnostics)
 - Added composition residual confidence and blocker-text assertions to `top_composition_blocks_top_without_child_guidance` in `crates/specforge/src/ir/adapters.rs`.
 - Top roots without child-module references now prove child-module enrichment guidance, declared top-port provenance, low-confidence `fsm_adapter_composition_topology` diagnostics, topology-detail blocker text, and child-module reference repair guidance stay visible together.

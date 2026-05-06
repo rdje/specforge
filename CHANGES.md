@@ -1,5 +1,16 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` no-top-port residual diagnostics)
+
+### Added: no-top-port residuals lock topology-detail diagnostics
+- Tightened `top_composition_blocks_top_without_port_guidance` so top roots without explicit top-port records retain low-confidence `fsm_adapter_composition_topology` diagnostics.
+- The regression now pairs top-port enrichment guidance, child declaration provenance, resolved child root kind, explicit-top-port repair context, and explicit topology-detail residual text.
+- Updated the live tracker, roadmap, and mdBook to mark no-top-port residual diagnostics as closed.
+
+### Validation
+- Passed: focused no-top-port residual-diagnostics regression (`1` test), adapter suite (`92` tests), rustfmt check, docs CI/mdBook, KG bench (`148/148` fixtures), and full CI (`613` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation).
+- Deferred: user-requested `cargo sweep --time 1` until safe because a `target/release/tool_matrix` process is active.
+
 ## 2026-05-06 (`.fsm` no-child top residual diagnostics)
 
 ### Added: no-child top residuals lock topology-detail diagnostics
