@@ -15163,6 +15163,19 @@ mod tests {
                 .any(|enrichment| enrichment
                     == "resolve conflicting actor-relative graph direction evidence before lowering `.fsm`")
         );
+        let composition_residual = adapter
+            .residual_decisions
+            .iter()
+            .find(|packet| packet.packet_id == "fsm_adapter_composition_topology")
+            .expect("child actor-port direction conflict should surface a composition residual");
+        assert!(
+            composition_residual
+                .candidate_interpretations
+                .iter()
+                .any(|interpretation| interpretation
+                    .description
+                    .contains("renderable child modules"))
+        );
 
         Ok(())
     }

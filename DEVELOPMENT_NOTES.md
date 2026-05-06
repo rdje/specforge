@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` child actor-port direction residual lock
+- New batch slice 68/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_conflicting_actor_port_directions` now asserts that child actor-port direction conflicts emit the composition topology residual.
+- This pairs child-module graph-direction conflict guidance with structured residual diagnostics while preserving child signal and graph actor-port support IDs.
+- Focused child actor-port direction regression, adapter suite, fmt, docs, KG bench, full CI, and the user-requested `cargo sweep --time 1` all passed.
+
 ## 2026-05-06 `.fsm` child topology direction residual lock
 - New batch slice 67/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_conflicting_child_link_topology_directions` now asserts that child topology direction conflicts emit the composition topology residual.

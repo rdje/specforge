@@ -25,6 +25,7 @@
 - `.fsm` sibling child-link width conflicts now preserve composition topology residual decisions: Done
 - `.fsm` child topology width conflicts now preserve composition topology residual decisions: Done
 - `.fsm` child topology direction conflicts now preserve composition topology residual decisions: Done
+- `.fsm` child actor-port direction conflicts now preserve composition topology residual decisions: Done
 - `.fsm` top-link width mismatch blockers now preserve width-compatible repair guidance: Done
 - `.fsm` top-target boundary role conflicts now preserve endpoint-role repair guidance: Done
 - `.fsm` top-boundary top-link role conflicts now preserve endpoint-role repair guidance: Done
@@ -412,6 +413,7 @@
 - `.fsm` child actor-port direction recovery now regression-locks support IDs and automation confidence: Done
 - `.fsm` child actor-port direction conflicts now preserve signal and graph support IDs: Done
 - `.fsm` child actor-port direction conflicts now preserve actor-relative enrichment guidance: Done
+- `.fsm` child actor-port direction conflicts now preserve composition topology residual decisions: Done
 - `.fsm` child link-topology direction recovery now regression-locks support IDs and automation confidence: Done
 - `.fsm` child top-link width recovery now regression-locks support IDs and automation confidence: Done
 - `.fsm` child sibling-link target width recovery now regression-locks support IDs and automation confidence: Done
