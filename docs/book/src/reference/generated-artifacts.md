@@ -175,6 +175,7 @@ Top links that target undeclared top-boundary ports preserve target-endpoint enr
 Top links that originate from undeclared top-boundary ports preserve source-endpoint enrichment guidance while keeping the declared top-port, child, and link provenance visible.
 Top links that originate from child endpoints absent from emitted child modules preserve source-endpoint enrichment guidance while keeping the declared top-port, child, and link provenance visible.
 Top links that target child endpoints absent from emitted child modules preserve target-endpoint enrichment guidance while keeping the declared top-port, child, and high-confidence link provenance visible.
+Target-side unemitted child endpoint blockers also emit the composition-topology residual decision so renderable-child repair remains visible in structured adapter diagnostics.
 
 For structured FSM roots, the artifact preserves the graph surface that led to renderability or blocking.
 Renderable structured-FSM cases keep named state and transition candidates, and reset-block cases keep renderable state bodies plus synchronous/asynchronous reset block roles.

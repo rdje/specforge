@@ -24,6 +24,7 @@
 - `.fsm` top-link target-role mismatches now preserve endpoint-role repair guidance: Done
 - `.fsm` top-link direction-role mismatches now preserve endpoint-role repair guidance: Done
 - `.fsm` links from unemitted child sources now preserve source-endpoint enrichment guidance: Done
+- `.fsm` links to unemitted child targets now preserve composition topology residual decisions: Done
 - `specforge inspect` command created: Done
 - `specforge doctor` command created: Done
 - `specforge ingest` SourceIR command created: Done
@@ -434,6 +435,7 @@
 - `.fsm` links to undeclared top targets now preserve target-endpoint enrichment guidance: Done
 - `.fsm` links from undeclared top sources now preserve source-endpoint enrichment guidance: Done
 - `.fsm` links to unemitted child targets now preserve target-endpoint enrichment guidance: Done
+- `.fsm` links to unemitted child targets now preserve composition topology residual decisions: Done
 - `.fsm` standalone DT/FSM renderability now blocks graph-backed output inventory entries that have no typed driving action instead of silently omitting them: Done
 - `.fsm` standalone DT graph-backed undriven output blockers now regression-lock support IDs and automation confidence: Done
 - `.fsm` structured FSM renderability now regression-locks graph-backed undriven output blocking: Done

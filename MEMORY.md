@@ -21,24 +21,26 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `4328bc013ad0a51ff63e629a71a557b6f86e2ec1`
-- latest_commit_brief_message: `test(adapter): align child role residuals`
-- note: new local `N=200` batch is active; slice 49 is committed, slice 50 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `28d48998f0c3047c96eaaac68182e22c8506bc4e`
+- latest_commit_brief_message: `test(adapter): lock child target link confidence`
+- note: new local `N=200` batch is active; slice 50 is committed, slice 51 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `28d4899` test(adapter): lock child target link confidence
 - `4328bc0` test(adapter): align child role residuals
 - `c251a84` test(adapter): lock top-link target residual
 - `92c88a8` test(adapter): lock top-link role residual
 - `5c2b2b6` test(adapter): lock top-link width residual
 - `d3d569f` test(adapter): lock top-link width guidance
-- `9f61d51` test(adapter): lock top-target boundary role guidance
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 50]`
-- files in flight for new batch slice 50:
+- branch state before the next commit: `main...origin/main [ahead 51]`
+- files in flight for new batch slice 51:
   - `crates/specforge/src/ir/adapters.rs`
+  - `LIVE_ACHIEVEMENT_STATUS.md`
+  - `ROADMAP.md`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
   - `MEMORY.md`
@@ -47,22 +49,21 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `49`
+- completed_count: `50`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - align target-side unemitted child endpoint confidence assertions with the existing source-side regression
-  - prove `top_composition_blocks_link_to_unemitted_child_target_guidance` keeps high automation confidence on the blocked topology link
-  - keep target-endpoint enrichment guidance and provenance visible on blocked top and aggregate `.fsm` renderability
-  - keep live docs and mdBook aligned with the existing unemitted-child endpoint support/confidence tracker row
+  - lock structured composition residual diagnostics for target-side unemitted child endpoint blockers
+  - prove `top_composition_blocks_link_to_unemitted_child_target_guidance` carries `fsm_adapter_composition_topology`
+  - keep renderable-child repair visible while target-endpoint enrichment guidance and high-confidence topology-link provenance stay intact
+  - sync the live tracker, roadmap, and mdBook with the new residual-decision guarantee
 - tracker effect:
-  - live-status tracker unchanged; the existing unemitted-child endpoint support/confidence row is now backed symmetrically for source and target blockers
+  - live-status tracker changed; new row marks `.fsm` links to unemitted child targets preserving composition topology residual decisions as `Done`
 - verification status:
-  - initial focused test attempt exposed stale/corrupt `target/debug/deps` artifacts with missing rlib/rmeta files
-  - `cargo clean --manifest-path Cargo.toml` completed and rebuilt the target tree
+  - implementation and live-doc sync are complete
   - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_link_to_unemitted_child_target_guidance` passed with `1` test
   - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `92` tests
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
@@ -76,4 +77,4 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- commit slice 50 without pushing, run post-commit checks, and continue slice 51
+- run final commit guards, then commit slice 51 without pushing

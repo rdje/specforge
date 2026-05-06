@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` unemitted child-target residual lock)
+
+### Added: target-side unemitted child links now lock residual diagnostics
+- Tightened `top_composition_blocks_link_to_unemitted_child_target_guidance` so target-side links to child endpoints absent from emitted child modules prove `fsm_adapter_composition_topology` remains present.
+- The residual assertion keeps the upstream repair lane tied to renderable child modules while the existing target-endpoint enrichment guidance and high-confidence link provenance remain visible.
+- Updated the live tracker, roadmap, and mdBook to mark the target-side unemitted child endpoint residual guarantee as closed.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_link_to_unemitted_child_target_guidance` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`613` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo sweep --time 1` -> completed (`Cleaned nothing`)
+
 ## 2026-05-06 (`.fsm` unemitted child-target confidence alignment)
 
 ### Changed: target-side unemitted child links now lock confidence explicitly

@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` unemitted child-target residual lock
+- New batch slice 51/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_link_to_unemitted_child_target_guidance` now asserts `fsm_adapter_composition_topology` and checks that its interpretation still points at renderable child modules.
+- This pairs target-endpoint enrichment guidance and high-confidence topology-link provenance with structured residual diagnostics for the target-side unemitted child endpoint blocker.
+- Focused target-side regression, adapter suite, fmt, docs, KG bench, full CI, and the user-requested `cargo sweep --time 1` all passed.
+
 ## 2026-05-06 `.fsm` unemitted child-target confidence alignment
 - New batch slice 50/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_link_to_unemitted_child_target_guidance` now asserts the blocked target-side top-link record keeps high automation confidence, matching the source-side unemitted child endpoint regression.
