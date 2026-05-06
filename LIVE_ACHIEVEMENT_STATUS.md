@@ -25,6 +25,7 @@
 - `.fsm` top-link direction-role mismatches now preserve endpoint-role repair guidance: Done
 - `.fsm` links from unemitted child sources now preserve source-endpoint enrichment guidance: Done
 - `.fsm` links from unemitted child sources now preserve composition topology residual decisions: Done
+- `.fsm` links to undeclared top targets now preserve composition topology residual decisions: Done
 - `.fsm` links to unemitted child targets now preserve composition topology residual decisions: Done
 - `specforge inspect` command created: Done
 - `specforge doctor` command created: Done
@@ -434,6 +435,7 @@
 - `.fsm` no-child top blockers now preserve child-module enrichment guidance: Done
 - `.fsm` no-top-port blockers now preserve top-port enrichment guidance: Done
 - `.fsm` links to undeclared top targets now preserve target-endpoint enrichment guidance: Done
+- `.fsm` links to undeclared top targets now preserve composition topology residual decisions: Done
 - `.fsm` links from undeclared top sources now preserve source-endpoint enrichment guidance: Done
 - `.fsm` links to unemitted child targets now preserve target-endpoint enrichment guidance: Done
 - `.fsm` links from unemitted child sources now preserve composition topology residual decisions: Done

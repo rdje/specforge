@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` undeclared top-target residual alignment)
+- Aligned `top_composition_blocks_link_to_undeclared_top_target_guidance` in `crates/specforge/src/ir/adapters.rs` so its composition residual assertion names explicit-top-port repair instead of child-module repair.
+- Added the missing dedicated residual assertion to `top_composition_blocks_link_to_unemitted_child_target_guidance`, where renderable-child repair is the correct interpretation.
+- The live tracker and roadmap now mark the undeclared top-target residual guarantee as closed while the child-target residual guarantee is backed by its own regression; focused adapter coverage, full adapter coverage, KG bench, docs, full CI, and `cargo sweep --time 1` all passed.
+
 ## Session update (2026-05-06 `.fsm` unemitted child-source residual lock)
 - Tightened `top_composition_blocks_link_from_unemitted_child_source_guidance` in `crates/specforge/src/ir/adapters.rs` so source-side links from child endpoints absent from emitted child modules explicitly preserve `fsm_adapter_composition_topology`.
 - This mirrors the target-side residual lock and keeps renderable-child repair visible alongside source-endpoint guidance, support IDs, and high automation confidence.
