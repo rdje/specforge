@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` unrelated actor context residual cleanliness
+- New batch slice 97/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `standalone_dt_ignores_unrelated_actor_ports_for_graph_context` now asserts no stale signal-inventory residual remains while the standalone direct-root path excludes unrelated side-band actor-port evidence from selected graph recovery.
+- This keeps selected actor-port support IDs, excluded unrelated graph support, absent side-band inventory rows, high automation confidence, and signal-inventory residual cleanliness paired once the direct root is renderable.
+- Focused unrelated actor context residual-clean regression, adapter suite, fmt, docs, KG bench, and full CI all passed; user-requested `cargo sweep --time 1` is deferred until no target-tree process is active.
+
 ## 2026-05-06 `.fsm` direct actor-width residual cleanliness
 - New batch slice 96/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `standalone_dt_recovers_control_input_width_from_actor_port_graph` now asserts no stale signal-inventory residual remains after actor-port width evidence recovers direct-root input width and the standalone DT root emits.

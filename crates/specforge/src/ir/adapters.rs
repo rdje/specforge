@@ -6979,6 +6979,12 @@ mod tests {
                 .iter()
                 .all(|signal| signal.signal_name != "SIDE_BAND")
         );
+        assert!(
+            adapter
+                .residual_decisions
+                .iter()
+                .all(|packet| packet.packet_id != "fsm_adapter_signal_inventory")
+        );
 
         Ok(())
     }
