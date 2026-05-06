@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` top-before-child support lock
+- New batch slice 77/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `renderable_top_document_emits_top_before_child_direct_roots` now asserts producer and consumer child declaration support IDs survive in the selected top candidate while emitted top-before-child root order remains unchanged.
+- This is a coverage-only lock for the renderable source-document path that emits a top root before child direct roots.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` single FSM-child top support lock
 - New batch slice 76/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `renderable_top_document_preserves_fsm_child_root_kind` now asserts the selected top candidate preserves the single `controller` FSM child declaration support ID while root kind and emitted direct-root order remain unchanged.

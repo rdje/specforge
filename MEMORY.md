@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `92022ba6befd4554250b313e9cf09cf989442146`
-- latest_commit_brief_message: `test(adapter): lock mixed child top support`
+- latest_commit_hash: `8d4ed8a761d0094d0cd90d9a95d09805c990f97e`
+- latest_commit_brief_message: `test(adapter): lock single FSM child top support`
 - note: new local `N=100` batch is active; push remains deferred until all 100 slices complete
 
 ## Recent commit chain (last 6)
+- `8d4ed8a` test(adapter): lock single FSM child top support
 - `92022ba` test(adapter): lock mixed child top support
 - `f18a8eb` test(adapter): lock reused FSM child top support
 - `1d3e2bc` test(adapter): lock reused child top support
 - `87ff7ed` test(adapter): lock baseline top composition support
 - `73b0c96` test(adapter): lock child top-root confidence support
-- `57e29a6` test(adapter): lock recovered top-root confidence support
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 75]`
-- files in flight for new batch slice 76:
+- branch state before the next commit: `main...origin/main [ahead 76]`
+- files in flight for new batch slice 77:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -47,19 +47,19 @@
 
 ## Active N-slice batch
 - requested_count: `100`
-- completed_count: `75`
+- completed_count: `76`
 - push_policy: defer push until all `100` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - regression-lock single FSM-child top-composition child provenance
-  - prove selected top candidates preserve the single FSM child support IDs while FSM root kind and top-first direct-root order stay stable
-  - keep child declaration evidence auditable on the simplest explicit top plus FSM-child document path
+  - regression-lock renderable top-before-child source-document child provenance
+  - prove selected top candidates preserve producer and consumer child support IDs while emitted top-first direct-root order stays stable
+  - keep child declaration evidence auditable in the ordering fixture
 - tracker effect:
-  - live-status tracker gains `.fsm single FSM-child top lowering now regression-locks child support IDs: Done`
+  - live-status tracker gains `.fsm renderable top-before-child emission now regression-locks child support IDs: Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge renderable_top_document_preserves_fsm_child_root_kind` passed with `1` test
+  - `cargo test --manifest-path Cargo.toml -p specforge renderable_top_document_emits_top_before_child_direct_roots` passed with `1` test
   - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `80` tests
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed before the final live-doc refresh
@@ -70,4 +70,4 @@
   - `148/148` tracked KG fixtures
 
 ## Next exact steps
-- run final docs CI and guards, commit slice 76 without pushing, and continue slice 77
+- run final docs CI and guards, commit slice 77 without pushing, and continue slice 78

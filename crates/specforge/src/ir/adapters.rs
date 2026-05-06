@@ -9912,6 +9912,27 @@ mod tests {
     fn renderable_top_document_emits_top_before_child_direct_roots() -> Result<()> {
         let tempdir = tempdir()?;
         let intent_ir = build_explicit_top_composition_intent_ir(tempdir.path())?;
+        let (producer_child_support_ids, consumer_child_support_ids) = {
+            let explicit_top = intent_ir
+                .explicit_tops
+                .iter()
+                .find(|top| top.top_name == "datapath")
+                .expect("explicit top should be present");
+            let producer_child = explicit_top
+                .children
+                .iter()
+                .find(|child| child.instance_name == "producer")
+                .expect("producer child should be present");
+            let consumer_child = explicit_top
+                .children
+                .iter()
+                .find(|child| child.instance_name == "consumer")
+                .expect("consumer child should be present");
+            (
+                producer_child.supporting_statement_ids.clone(),
+                consumer_child.supporting_statement_ids.clone(),
+            )
+        };
         let artifact_base = tempdir.path().join("generated").join("adapters");
 
         let adapter = AdapterArtifact::build(
@@ -9933,9 +9954,34 @@ mod tests {
             .renderable_document
             .as_ref()
             .expect("renderable top should carry a source document");
+        let top_candidate = fsm
+            .top_candidates
+            .iter()
+            .find(|top| top.top_name == "datapath")
+            .expect("datapath top candidate should be present");
+        let producer_child = top_candidate
+            .children
+            .iter()
+            .find(|child| child.instance_name == "producer")
+            .expect("producer child should be present");
+        let consumer_child = top_candidate
+            .children
+            .iter()
+            .find(|child| child.instance_name == "consumer")
+            .expect("consumer child should be present");
 
         assert!(renderable_document.top_root.is_some());
         assert_eq!(renderable_document.direct_roots.len(), 2);
+        assert!(
+            producer_child_support_ids
+                .iter()
+                .any(|id| producer_child.supporting_canonical_ids.contains(id))
+        );
+        assert!(
+            consumer_child_support_ids
+                .iter()
+                .any(|id| consumer_child.supporting_canonical_ids.contains(id))
+        );
         let top_index = emitted_text
             .find("(?top:datapath")
             .expect("emitted text should contain top root");

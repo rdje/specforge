@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` top-before-child support lock)
+- Tightened `renderable_top_document_emits_top_before_child_direct_roots` in `crates/specforge/src/ir/adapters.rs` so producer and consumer child declarations retain support IDs in the selected top candidate.
+- The adapter already emitted renderable source documents with the top root before child direct roots; this regression now proves the same order fixture keeps child evidence auditable.
+- This closes a narrow provenance gap in the ordering test without changing adapter lowering behavior.
+
 ## Session update (2026-05-06 `.fsm` single FSM-child top support lock)
 - Tightened `renderable_top_document_preserves_fsm_child_root_kind` in `crates/specforge/src/ir/adapters.rs` so a single FSM child declaration retains support IDs in the selected top candidate.
 - The adapter already preserved explicit top-first emission and FSM child root kind; this regression now proves the top child evidence remains auditable on that single-child path.

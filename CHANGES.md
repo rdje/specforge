@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` top-before-child support lock)
+
+### Added: renderable top document child provenance coverage
+- Tightened `renderable_top_document_emits_top_before_child_direct_roots` so producer and consumer top child declarations now prove their support IDs survive in the selected top candidate.
+- This is coverage-only over the existing adapter behavior: renderable `.fsm` top documents still emit the top root before child direct roots.
+- The slice keeps child declaration evidence auditable in the same test that locks emitted top-before-child ordering.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge renderable_top_document_emits_top_before_child_direct_roots` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` single FSM-child top support lock)
 
 ### Added: single FSM-child root-kind provenance coverage
