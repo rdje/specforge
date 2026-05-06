@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` compound-update support lock)
+
+### Added: compound-update provenance coverage
+- Tightened `builds_renderable_compound_update_dt_fsm_adapter_artifact` so the renderable compound-update DT now proves its decision-tree candidate remains visible.
+- The test locks the candidate's low automation confidence and selected clock/reset/update signal inventory while preserving emitted `.fsm` reset/init and compound-update shorthand.
+- This captures the fixture's honest renderable fallback shape without inventing canonical control-fragment support that is not present.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge builds_renderable_compound_update_dt_fsm_adapter_artifact` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge keeps_standalone_sequential_dt_blocked_without_system_contract` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` computed-selector support lock)
 
 ### Added: computed selector provenance coverage

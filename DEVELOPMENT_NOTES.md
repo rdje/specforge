@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` compound-update support lock
+- New batch slice 91/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `builds_renderable_compound_update_dt_fsm_adapter_artifact` now asserts the renderable compound-update DT keeps its decision-tree candidate visible at low automation confidence while selected signal inventory includes `clk`, `rst_n`, and `ACC`.
+- This is a coverage-only lock for the renderable fallback shape that emits reset/init and compound-update shorthand without canonical control-fragment support in the fixture.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` computed-selector support lock
 - New batch slice 90/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `builds_renderable_computed_selector_dt_fsm_adapter_artifact` now asserts the renderable computed-selector DT keeps its decision-tree candidate visible at medium automation confidence while selected signal inventory includes the computed selector inputs and action outputs.

@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` compound-update support lock)
+- Tightened `builds_renderable_compound_update_dt_fsm_adapter_artifact` in `crates/specforge/src/ir/adapters.rs` so the renderable compound-update DT artifact retains a visible decision-tree candidate at low confidence.
+- The fixture is renderable through fallback lowering and does not carry canonical control-fragment support IDs, so the regression keeps the confidence contract explicit rather than overstating provenance.
+- The selected signal inventory now proves `clk`, `rst_n`, and `ACC` remain visible while emitted `.fsm` reset/init and compound-update shorthand stay unchanged.
+
 ## Session update (2026-05-06 `.fsm` computed-selector support lock)
 - Tightened `builds_renderable_computed_selector_dt_fsm_adapter_artifact` in `crates/specforge/src/ir/adapters.rs` so the renderable computed-selector DT artifact retains a visible decision-tree candidate at medium confidence.
 - The fixture still has no canonical control-fragment support records, so the regression intentionally locks the honest computed-selector shape rather than implying high-confidence support provenance.
