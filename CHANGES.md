@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` parametric top-width renderable block)
+
+### Added: parametric top widths cannot leak renderable top output
+- Tightened `top_composition_blocks_parametric_top_port_width_for_fsm_public_io` so an unresolved parametric public top-port width leaves the selected top without a renderable top root and the aggregate `.fsm` artifact without a renderable source document.
+- This locks the parametric top-boundary blocker against stale `?top` output until the width is resolved to a numeric value.
+- Synced the live tracker, roadmap, and mdBook with the parametric top-width renderable-block guarantee.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_parametric_top_port_width_for_fsm_public_io` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148/148` fixtures)
+- `bash scripts/run_ci.sh` -> passed (`614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation)
+
 ## 2026-05-06 (`.fsm` top width-conflict renderable-block anchor)
 
 ### Added: child-link top width conflicts are anchored in the intended regression

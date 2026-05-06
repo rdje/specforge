@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` parametric top-width renderable block
+- New batch slice 162/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_parametric_top_port_width_for_fsm_public_io` now asserts an unresolved parametric public top-port width has no renderable top root and no aggregate renderable source document.
+- This locks the parametric top-boundary blocker against stale `?top` output before numeric width resolution.
+- Focused parametric top-width coverage, the adapter suite, fmt, docs CI, KG bench, and full CI passed; user-requested `cargo sweep --time 1` remains deferred until no target-tree process is active.
+
 ## 2026-05-06 `.fsm` top width-conflict renderable-block anchor
 - New batch slice 161/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_conflicting_top_port_widths_from_child_links` now carries the no-renderable-top-root and no-renderable-source-document assertions for child-link public top-port width conflicts.
