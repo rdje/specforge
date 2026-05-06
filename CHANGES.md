@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` child topology-width blocker guidance lock)
+
+### Added: child topology width conflict enrichment coverage
+- Tightened `top_composition_blocks_conflicting_child_topology_widths` so child topology width conflicts prove canonical width-conflict enrichment guidance survives on both the blocked child module candidate and aggregate `.fsm` renderability.
+- The regression keeps existing child signal declaration support IDs, topology-link support IDs, high automation confidence, and width-conflict inventory state intact.
+- This extends the aggregate child-module guidance locks from direction conflicts to width conflicts.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_child_topology_widths` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` child topology-direction blocker guidance lock)
 
 ### Added: child topology direction conflict enrichment coverage

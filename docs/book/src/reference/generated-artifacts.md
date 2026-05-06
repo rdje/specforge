@@ -144,6 +144,7 @@ Child link-topology direction recovery keeps declaration support for each recove
 Child actor-port direction recovery keeps declaration support for each recovered child signal while recording the graph actor-port evidence that supplied directions.
 When child actor-port direction evidence conflicts, blocked module renderability preserves actor-relative graph-direction repair guidance and top aggregate renderability carries that child-module guidance upward alongside the conflicting evidence.
 Child topology direction conflicts preserve the same repair-guidance channel while retaining the contradictory topology-link support IDs that caused the graph-direction conflict.
+Child topology width conflicts likewise preserve canonical width repair guidance on blocked module and aggregate renderability surfaces while retaining signal-declaration and topology-link support IDs.
 For blocked composition roots, the same artifact shape is useful for diagnostics: a missing child can block emission while the surviving top-port provenance remains available for review.
 
 For structured FSM roots, the artifact preserves the graph surface that led to renderability or blocking.

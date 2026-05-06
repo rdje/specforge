@@ -209,6 +209,7 @@
   - sibling child-link width conflicts preserve both conflicting topology-link support-ID sets and high automation confidence while blocking `.fsm` emission
   - top child-link width conflicts preserve both conflicting topology-link support-ID sets and high automation confidence while blocking `.fsm` emission
   - child topology width conflicts preserve both explicit child signal declaration support IDs and topology-link support IDs while blocking `.fsm` emission
+  - child topology width conflict blockers preserve canonical width-conflict enrichment guidance on blocked module and aggregate `.fsm` renderability surfaces
   - child topology direction conflicts preserve both explicit child signal declaration support IDs and contradictory topology-link support IDs while blocking `.fsm` emission
   - child topology direction conflict blockers preserve actor-relative graph-direction enrichment guidance on blocked module and aggregate `.fsm` renderability surfaces
   - transitive child-width recovery preserves each contributing topology-link support ID and high automation confidence as width evidence flows from top link through sibling child link

@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` child topology-width blocker guidance lock)
+- Tightened `top_composition_blocks_conflicting_child_topology_widths` in `crates/specforge/src/ir/adapters.rs` so blocked child topology width conflicts retain canonical width-conflict enrichment guidance on the blocked module candidate and aggregate `.fsm` renderability.
+- Existing assertions still cover child declaration support IDs, topology-link support IDs, high automation confidence, and width-conflict inventory state.
+- This proves the aggregate child-module guidance propagation also covers width blockers, not only graph-direction blockers.
+
 ## Session update (2026-05-06 `.fsm` child topology-direction blocker guidance lock)
 - Tightened `top_composition_blocks_conflicting_child_link_topology_directions` in `crates/specforge/src/ir/adapters.rs` so blocked child topology-link direction conflicts retain actor-relative graph-direction enrichment guidance on the blocked module candidate and aggregate `.fsm` renderability.
 - Existing assertions still cover child declaration support IDs, contradictory topology-link support IDs, high automation confidence, and conflicted graph-direction inventory state.

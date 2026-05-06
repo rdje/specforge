@@ -383,6 +383,7 @@
 - `.fsm` sibling child-link width conflicts now regression-lock both topology-link support ID sets: Done
 - `.fsm` top child-link width conflicts now regression-lock both topology-link support ID sets: Done
 - `.fsm` child topology width conflicts now preserve signal and topology support IDs: Done
+- `.fsm` child topology width conflicts now preserve canonical width enrichment guidance: Done
 - `.fsm` child topology direction conflicts now preserve signal and topology support IDs: Done
 - `.fsm` child topology direction conflicts now preserve actor-relative enrichment guidance: Done
 - `.fsm` transitive child-width recovery now regression-locks support IDs and automation confidence: Done

@@ -14288,7 +14288,22 @@ mod tests {
                 .iter()
                 .any(|reason| reason.contains("conflicting width evidence"))
         );
+        assert!(
+            producer
+                .renderability
+                .required_canonical_enrichments
+                .iter()
+                .any(|enrichment| enrichment
+                    == "resolve conflicting canonical signal width evidence before lowering `.fsm`")
+        );
         assert!(!fsm.renderability.is_renderable);
+        assert!(
+            fsm.renderability
+                .required_canonical_enrichments
+                .iter()
+                .any(|enrichment| enrichment
+                    == "resolve conflicting canonical signal width evidence before lowering `.fsm`")
+        );
 
         Ok(())
     }
