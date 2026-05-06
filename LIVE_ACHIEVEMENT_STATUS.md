@@ -59,6 +59,7 @@
 - `.fsm` source-side sibling child-width recovery now stays composition-residual clean when renderable: Done
 - `.fsm` transitive child-width recovery now stays composition-residual clean when renderable: Done
 - `.fsm` standalone direct actor-port direction recovery now stays signal-inventory-residual clean when renderable: Done
+- `.fsm` sibling child-link width residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` standalone output actor selection now stays signal-inventory-residual clean when renderable: Done
 - `.fsm` standalone direct control-read input recovery now stays signal-inventory-residual clean when renderable: Done
 - `.fsm` standalone direct actor-port width recovery now stays signal-inventory-residual clean when renderable: Done

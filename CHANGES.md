@@ -1,5 +1,16 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` sibling child-link width residual diagnostics)
+
+### Added: sibling child-link width residuals lock topology-detail diagnostics
+- Tightened `top_composition_blocks_conflicting_sibling_child_link_widths` so sibling child-link width conflicts retain low-confidence `fsm_adapter_composition_topology` diagnostics.
+- The regression now pairs width-conflict repair guidance, both conflicting topology-link support-ID sets, renderable-child repair context, and explicit topology-detail residual text.
+- Updated the live tracker, roadmap, and mdBook to mark sibling child-link width residual diagnostics as closed.
+
+### Validation
+- Passed: focused sibling child-link width residual-diagnostics regression (`1` test), adapter suite (`92` tests), rustfmt check, docs CI/mdBook, KG bench (`148/148` fixtures), and full CI (`613` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation).
+- Deferred: user-requested `cargo sweep --time 1` until safe because a `target/release/tool_matrix` process is active.
+
 ## 2026-05-06 (`.fsm` child topology width residual diagnostics)
 
 ### Added: child topology width residuals lock topology-detail diagnostics

@@ -191,6 +191,7 @@ Child topology width conflicts also emit the composition-topology residual decis
 That child topology width residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
 Sibling child-link width conflicts keep that width repair guidance while preserving both conflicting topology-link support-ID sets.
 Sibling child-link width conflicts also emit the composition-topology residual decision so renderable-child repair remains visible in structured diagnostics.
+That sibling child-link width residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
 Top-boundary actor-port, duplicate declaration, and child-link width conflicts preserve top-port width repair guidance on the blocked top candidate and aggregate adapter renderability.
 Top-boundary actor-port width conflicts also emit the composition-topology residual decision so explicit-top-port repair remains visible in structured diagnostics.
 That actor-port width residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.

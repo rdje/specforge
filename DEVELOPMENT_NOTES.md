@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` sibling child-link width residual diagnostics
+- New batch slice 139/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_conflicting_sibling_child_link_widths` now asserts sibling child-link width conflicts keep low-confidence `fsm_adapter_composition_topology` diagnostics with explicit topology-detail blocker text.
+- This keeps width-conflict repair guidance, both conflicting topology-link support-ID sets, and renderable-child residual context tied together.
+- Focused sibling child-link width residual-diagnostics regression, adapter suite, fmt, docs, KG bench, and full CI all passed; user-requested `cargo sweep --time 1` is deferred until no target-tree process is active.
+
 ## 2026-05-06 `.fsm` child topology width residual diagnostics
 - New batch slice 138/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_conflicting_child_topology_widths` now asserts child topology width conflicts keep low-confidence `fsm_adapter_composition_topology` diagnostics with explicit topology-detail blocker text.
