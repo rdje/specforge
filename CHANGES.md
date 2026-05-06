@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` reused-child top support lock)
+
+### Added: reused-child top declaration provenance coverage
+- Tightened `renderable_top_document_deduplicates_reused_child_module_roots` so reused child declarations now prove their distinct support IDs survive in the selected top candidate.
+- This is coverage-only over the existing adapter behavior: two child instances can still share one emitted direct module root while each top child remains separately auditable.
+- The slice keeps the deduplicated module-root path honest without collapsing instance-level child evidence.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge renderable_top_document_deduplicates_reused_child_module_roots` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-05 (`.fsm` baseline top-composition provenance lock)
 
 ### Added: baseline top-composition provenance coverage

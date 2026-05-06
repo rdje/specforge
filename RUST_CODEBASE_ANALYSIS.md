@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 `.fsm` reused-child top support lock)
+- Tightened `renderable_top_document_deduplicates_reused_child_module_roots` in `crates/specforge/src/ir/adapters.rs` so reused top child declarations retain distinct support IDs in the selected top candidate.
+- The adapter already deduplicated the shared child module root while preserving two top child instances; this regression now proves instance-level child evidence stays auditable.
+- This extends baseline top-composition provenance coverage into the reused-child deduplication path.
+
 ## Session update (2026-05-05 `.fsm` baseline top-composition provenance lock)
 - Tightened `builds_renderable_top_composition_fsm_adapter_artifact` in `crates/specforge/src/ir/adapters.rs` so the baseline renderable top-composition path retains support IDs for top ports, child declarations, and topology links.
 - The adapter already rendered the canonical producer/consumer datapath composition; this regression now proves the selected top candidate keeps the core composition evidence auditable.

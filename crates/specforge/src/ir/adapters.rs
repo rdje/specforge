@@ -9782,6 +9782,27 @@ mod tests {
             "reused_child_module_top.md",
             "# Reused Child Module Top\nTop pipe.\n\nTop pipe port result_data is output width 8.\n\nTop pipe child first uses module stage_core.\n\nTop pipe child second uses module stage_core.\n\nTop pipe link first.output_data -> second.input_data.\n\nTop pipe link second.output_data -> result_data.\n\nModule stage_core signal input_data is input width 8.\n\nModule stage_core signal output_data is output width 8.\n\nModule stage_core block route: output_data = input_data.\n",
         )?;
+        let (first_child_support_ids, second_child_support_ids) = {
+            let explicit_top = intent_ir
+                .explicit_tops
+                .iter()
+                .find(|top| top.top_name == "pipe")
+                .expect("explicit top should be present");
+            let first_child = explicit_top
+                .children
+                .iter()
+                .find(|child| child.instance_name == "first")
+                .expect("first child should be present");
+            let second_child = explicit_top
+                .children
+                .iter()
+                .find(|child| child.instance_name == "second")
+                .expect("second child should be present");
+            (
+                first_child.supporting_statement_ids.clone(),
+                second_child.supporting_statement_ids.clone(),
+            )
+        };
         let artifact_base = tempdir.path().join("generated").join("adapters");
 
         let adapter = AdapterArtifact::build(
@@ -9822,6 +9843,26 @@ mod tests {
                 .children
                 .iter()
                 .all(|child| child.source_module_name == "stage_core")
+        );
+        let first_child = top_candidate
+            .children
+            .iter()
+            .find(|child| child.instance_name == "first")
+            .expect("first child should be present");
+        let second_child = top_candidate
+            .children
+            .iter()
+            .find(|child| child.instance_name == "second")
+            .expect("second child should be present");
+        assert!(
+            first_child_support_ids
+                .iter()
+                .any(|id| first_child.supporting_canonical_ids.contains(id))
+        );
+        assert!(
+            second_child_support_ids
+                .iter()
+                .any(|id| second_child.supporting_canonical_ids.contains(id))
         );
         assert_eq!(renderable_top.children.len(), 2);
         assert!(

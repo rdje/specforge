@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 `.fsm` reused-child top support lock
+- New batch slice 73/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `renderable_top_document_deduplicates_reused_child_module_roots` now asserts reused top child declarations keep distinct support IDs in the selected top candidate while their shared `stage_core` direct root remains emitted once.
+- This is a coverage-only lock for the reused-child top-composition document path.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-05 `.fsm` baseline top-composition provenance lock
 - New batch slice 72/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `builds_renderable_top_composition_fsm_adapter_artifact` now asserts the selected top candidate preserves support IDs for its public `result_data` port, producer/consumer child declarations, and both explicit topology links.
