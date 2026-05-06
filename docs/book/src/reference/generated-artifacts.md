@@ -238,6 +238,7 @@ Top links that target undeclared top-boundary ports also emit the composition-to
 That undeclared top-target residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
 Top links that originate from undeclared top-boundary ports preserve source-endpoint enrichment guidance while keeping the declared top-port, child, and link provenance visible.
 Top links that originate from undeclared top-boundary ports also emit the composition-topology residual decision, mirroring target-side explicit-top-port repair diagnostics.
+That undeclared top-source residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
 Top links that originate from child endpoints absent from emitted child modules preserve source-endpoint enrichment guidance while keeping the declared top-port, child, and link provenance visible.
 Top links that target child endpoints absent from emitted child modules preserve target-endpoint enrichment guidance while keeping the declared top-port, child, and high-confidence link provenance visible.
 Source-side unemitted child endpoint blockers also emit the composition-topology residual decision, mirroring the target-side residual lock.

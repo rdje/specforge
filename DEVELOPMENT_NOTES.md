@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` undeclared top-source residual diagnostics
+- New batch slice 137/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_link_from_undeclared_top_source_guidance` now asserts top links originating from undeclared top-boundary ports keep low-confidence `fsm_adapter_composition_topology` diagnostics with explicit topology-detail blocker text.
+- This keeps source-endpoint enrichment guidance, top-port, child, link provenance, and explicit-top-port residual context tied together.
+- Focused undeclared top-source residual-diagnostics regression, adapter suite, fmt, docs, KG bench, and full CI all passed; user-requested `cargo sweep --time 1` is deferred until no target-tree process is active.
+
 ## 2026-05-06 `.fsm` undeclared top-target residual diagnostics
 - New batch slice 136/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_link_to_undeclared_top_target_guidance` now asserts top links targeting undeclared top-boundary ports keep low-confidence `fsm_adapter_composition_topology` diagnostics with explicit topology-detail blocker text.

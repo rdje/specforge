@@ -1,5 +1,16 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` undeclared top-source residual diagnostics)
+
+### Added: undeclared top-source residuals lock topology-detail diagnostics
+- Tightened `top_composition_blocks_link_from_undeclared_top_source_guidance` so top links originating from undeclared top-boundary ports retain low-confidence `fsm_adapter_composition_topology` diagnostics.
+- The regression now pairs source-endpoint enrichment guidance, top-port, child, and link provenance, explicit-top-port repair context, and explicit topology-detail residual text.
+- Updated the live tracker, roadmap, and mdBook to mark undeclared top-source residual diagnostics as closed.
+
+### Validation
+- Passed: focused undeclared top-source residual-diagnostics regression (`1` test), adapter suite (`92` tests), rustfmt check, docs CI/mdBook, KG bench (`148/148` fixtures), and full CI (`613` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation).
+- Deferred: user-requested `cargo sweep --time 1` until safe because a `target/release/tool_matrix` process is active.
+
 ## 2026-05-06 (`.fsm` undeclared top-target residual diagnostics)
 
 ### Added: undeclared top-target residuals lock topology-detail diagnostics
