@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` child source role renderable block
+- New batch slice 172/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_child_source_direction_role_guidance` now asserts child source endpoint direction-role mismatches leave the selected top without a renderable top root and the aggregate `.fsm` artifact without a renderable source document.
+- This locks the child-source direction-role blocker against stale `?top` output before endpoint direction evidence is made consistent with top-link source semantics.
+- Focused child-source role coverage, the adapter suite, fmt, docs CI, KG bench, and full CI passed; user-requested `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is active.
+
 ## 2026-05-06 `.fsm` unemitted child target renderable block
 - New batch slice 171/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_link_to_unemitted_child_target_guidance` now asserts target-side top links to child endpoints absent from emitted child modules leave the selected top without a renderable top root and the aggregate `.fsm` artifact without a renderable source document.

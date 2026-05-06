@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `a6110b9c17840e8a613f1c88d5905bcbc625bf20`
-- latest_commit_brief_message: `test(adapter): block source endpoint top output`
-- note: new local `N=200` batch is active; slice 170 is committed, slice 171 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `fbee4d07ca990cd246c41c0b1684b5678db306d4`
+- latest_commit_brief_message: `test(adapter): block target endpoint top output`
+- note: new local `N=200` batch is active; slice 171 is committed, slice 172 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `fbee4d0` test(adapter): block target endpoint top output
 - `a6110b9` test(adapter): block source endpoint top output
 - `8d88110` test(adapter): block undeclared top source output
 - `81f818a` test(adapter): block undeclared top target output
 - `e790baa` test(adapter): block duplicate child top output
 - `3f789aa` test(adapter): block portless top output
-- `d55bd35` test(adapter): block childless top output
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 171]`
-- files in flight for new batch slice 171:
+- branch state before the next commit: `main...origin/main [ahead 172]`
+- files in flight for new batch slice 172:
   - `crates/specforge/src/ir/adapters.rs`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `ROADMAP.md`
@@ -49,21 +49,21 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `170`
+- completed_count: `171`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - lock target-side unemitted child endpoint blockers against stale renderable top output
-  - prove top links targeting child endpoints absent from emitted child modules leave no renderable top root and no aggregate renderable source document
-  - sync the live tracker, roadmap, mdBook, Rust analysis, and continuity docs with the unemitted child-target renderable-block guarantee
+  - lock child source endpoint direction-role blockers against stale renderable top output
+  - prove child source endpoint role mismatches leave no renderable top root and no aggregate renderable source document
+  - sync the live tracker, roadmap, mdBook, Rust analysis, and continuity docs with the child-source role renderable-block guarantee
 - tracker effect:
-  - live-status tracker changed; new row marks `.fsm` unemitted child target endpoints blocking stale renderable top output as `Done`
+  - live-status tracker changed; new row marks `.fsm` child source direction-role blockers blocking stale renderable top output as `Done`
 - verification status:
   - implementation and live-doc sync are complete
-  - focused unemitted child-target renderable-block regression passed (`1` test)
+  - focused child-source role renderable-block regression passed (`1` test)
   - adapter suite passed (`92` tests)
   - formatting passed
   - docs CI passed
@@ -74,9 +74,9 @@
 - current known local CI baseline:
   - previous committed slice passed `614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - previous committed slice passed `148/148` tracked KG fixtures
-  - current slice has passed focused unemitted child-target renderable-block regression, adapter suite, formatting, docs CI, KG bench, and full CI
+  - current slice has passed focused child-source role renderable-block regression, adapter suite, formatting, docs CI, KG bench, and full CI
   - latest `cargo sweep --time 1` attempt was deferred because `target/release/tool_matrix` is active
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- run final commit guards and commit slice 171 without pushing
+- run final commit guards and commit slice 172 without pushing
