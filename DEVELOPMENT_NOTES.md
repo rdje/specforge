@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` child actor direction residual cleanliness
+- New batch slice 87/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_recovers_child_directions_from_actor_ports` now asserts no stale composition topology residual remains after graph actor-port evidence recovers child directions and the top emits.
+- This keeps child signal declaration support, graph actor-port support, selected child inventories, emitted topology text, and aggregate residual cleanliness paired once the top is renderable.
+- Focused child actor-port direction recovery residual-clean regression, adapter suite, fmt, docs, KG bench, full CI, and the user-requested `cargo sweep --time 1` all passed.
+
 ## 2026-05-06 `.fsm` child system-contract width residual cleanliness
 - New batch slice 86/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_recovers_top_system_port_widths_from_child_system_contract` now asserts no stale composition topology residual remains after child system-contract evidence recovers clock/reset top-port widths and the top emits.
