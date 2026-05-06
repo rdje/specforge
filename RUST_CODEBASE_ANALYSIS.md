@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` direct control-read residual cleanliness)
+- Added a signal-inventory residual-clean assertion to `standalone_dt_derives_target_inputs_from_control_reads_after_output_actor_selection` in `crates/specforge/src/ir/adapters.rs`.
+- Direct control-read input recovery now proves recovered graph-backed read inputs leave no stale `fsm_adapter_signal_inventory` packet once the standalone DT root is renderable.
+- The live tracker and roadmap now mark the direct control-read input recovery residual-clean guarantee as closed; focused adapter coverage, full adapter coverage, KG bench, docs, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 `.fsm` output actor selection residual cleanliness)
 - Added a signal-inventory residual-clean assertion to `standalone_dt_selects_output_actor_when_external_actors_share_signals` in `crates/specforge/src/ir/adapters.rs`.
 - Target-actor-backed direct output selection now proves selected output graph evidence leaves no stale `fsm_adapter_signal_inventory` packet once the standalone DT root is renderable.

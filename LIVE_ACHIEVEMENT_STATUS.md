@@ -50,6 +50,7 @@
 - `.fsm` transitive child-width recovery now stays composition-residual clean when renderable: Done
 - `.fsm` standalone direct actor-port direction recovery now stays signal-inventory-residual clean when renderable: Done
 - `.fsm` standalone output actor selection now stays signal-inventory-residual clean when renderable: Done
+- `.fsm` standalone direct control-read input recovery now stays signal-inventory-residual clean when renderable: Done
 - `.fsm` top-link width mismatch blockers now preserve width-compatible repair guidance: Done
 - `.fsm` top-target boundary role conflicts now preserve endpoint-role repair guidance: Done
 - `.fsm` top-boundary top-link role conflicts now preserve endpoint-role repair guidance: Done
@@ -414,6 +415,7 @@
 - `.fsm` direct-root output actor selection now regression-locks support IDs and automation confidence: Done
 - `.fsm` standalone output actor selection now stays signal-inventory-residual clean when renderable: Done
 - `.fsm` direct-root control-read input recovery now regression-locks support IDs and automation confidence: Done
+- `.fsm` standalone direct control-read input recovery now stays signal-inventory-residual clean when renderable: Done
 - `.fsm` structured-FSM control-read input recovery now regression-locks support IDs and automation confidence: Done
 - `.fsm` explicit-module control-read input recovery now regression-locks support IDs and automation confidence: Done
 - `.fsm` explicit-module actor-port width recovery now regression-locks support IDs and automation confidence: Done

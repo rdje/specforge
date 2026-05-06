@@ -125,6 +125,7 @@ When an adapter artifact is blocked, inspect both the renderability reasons and 
 For `.fsm` top roots, a top-port direction can be unresolved for rendering while the inventory still shows the declared `direction_hint` and the actor/topology-derived `graph_direction_hint` separately.
 Standalone DT actor-port direction recovery keeps graph-backed direct signal directions in `graph_direction_hint` with actor-port provenance, and renderable recovery leaves no signal-inventory residual.
 Target-actor-backed direct output selection follows the same rule while excluding shared external actor evidence from the selected inventory.
+Direct control-read input recovery also stays signal-inventory-residual clean while retaining control-branch support IDs and avoiding external actor direction import.
 
 For renderable `.fsm` top-composition roots, inspect the selected top candidate as well as the emitted target text.
 The adapter artifact keeps the declared top-port direction and numeric width, the top-port automation confidence, child declaration support IDs, topology-link support IDs, and the renderable top root.
