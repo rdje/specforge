@@ -219,7 +219,7 @@
   - top roots without child-module references preserve child-module enrichment guidance while retaining top-port provenance
   - top roots without top-port records preserve top-port enrichment guidance while retaining child declaration provenance and resolved child root kind
   - top links targeting undeclared top-boundary ports preserve target-endpoint enrichment guidance, composition-topology residual diagnostics, and top-port, child, and link provenance
-  - top links originating from undeclared top-boundary ports preserve source-endpoint enrichment guidance while retaining top-port, child, and link provenance
+  - top links originating from undeclared top-boundary ports preserve source-endpoint enrichment guidance, composition-topology residual diagnostics, and top-port, child, and link provenance
   - top links originating from child endpoints absent from emitted child modules preserve source-endpoint enrichment guidance, composition-topology residual diagnostics, and top-port, child, and link provenance
   - top links targeting child endpoints absent from emitted child modules preserve target-endpoint enrichment guidance, composition-topology residual diagnostics, and top-port, child, and link provenance
   - child actor-port direction recovery preserves graph-backed support IDs and high automation confidence across producer and consumer child module inventories

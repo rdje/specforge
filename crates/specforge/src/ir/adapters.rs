@@ -15741,6 +15741,17 @@ mod tests {
                 .any(|enrichment| enrichment
                     == "declare and emit every top-link source endpoint before lowering `?top:name`")
         );
+        let composition_residual = adapter
+            .residual_decisions
+            .iter()
+            .find(|packet| packet.packet_id == "fsm_adapter_composition_topology")
+            .expect("blocked undeclared top source should surface a composition residual");
+        assert!(
+            composition_residual
+                .candidate_interpretations
+                .iter()
+                .any(|interpretation| interpretation.description.contains("explicit top ports"))
+        );
 
         Ok(())
     }
@@ -15892,6 +15903,19 @@ mod tests {
                 .iter()
                 .any(|enrichment| enrichment
                     == "declare and emit every top-link source endpoint before lowering `?top:name`")
+        );
+        let composition_residual = adapter
+            .residual_decisions
+            .iter()
+            .find(|packet| packet.packet_id == "fsm_adapter_composition_topology")
+            .expect("blocked unemitted child source should surface a composition residual");
+        assert!(
+            composition_residual
+                .candidate_interpretations
+                .iter()
+                .any(|interpretation| interpretation
+                    .description
+                    .contains("renderable child modules"))
         );
 
         Ok(())

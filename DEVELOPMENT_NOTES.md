@@ -7,6 +7,13 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` top-source residual alignment
+- New batch slice 54/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_link_from_undeclared_top_source_guidance` now carries a composition residual assertion tied to explicit top ports.
+- `top_composition_blocks_link_from_unemitted_child_source_guidance` now carries the missing dedicated composition residual assertion tied to renderable child modules.
+- This mirrors the top-target/child-target residual alignment from slice 53 on the source side.
+- Focused top-source and child-source regressions, adapter suite, fmt, docs, KG bench, full CI, and the user-requested `cargo sweep --time 1` all passed.
+
 ## 2026-05-06 `.fsm` undeclared top-target residual alignment
 - New batch slice 53/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_link_to_undeclared_top_target_guidance` now checks that its existing `fsm_adapter_composition_topology` assertion points at explicit top ports.

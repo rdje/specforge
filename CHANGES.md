@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` top-source residual alignment)
+
+### Added: top-source residual checks now cover the source repair lanes
+- Added `fsm_adapter_composition_topology` assertions to `top_composition_blocks_link_from_undeclared_top_source_guidance` and `top_composition_blocks_link_from_unemitted_child_source_guidance`.
+- The undeclared top-source regression now checks the explicit-top-port repair interpretation, while the unemitted child-source regression checks the renderable-child repair interpretation.
+- Updated the live tracker, roadmap, and mdBook to mark the undeclared top-source residual guarantee as closed while backing the child-source residual row in its dedicated test.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_link_from_undeclared_top_source_guidance` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_link_from_unemitted_child_source_guidance` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`613` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo sweep --time 1` -> completed (`Cleaned nothing`)
+
 ## 2026-05-06 (`.fsm` undeclared top-target residual alignment)
 
 ### Changed: top-target residual checks now name the right repair lanes
