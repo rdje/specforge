@@ -11608,10 +11608,18 @@ mod tests {
                 .any(|id| recovered_child.supporting_canonical_ids.contains(id))
         );
         assert_eq!(recovered_child.resolved_root_kind, Some(FsmRootKind::Dt));
+        assert!(top_candidate.renderability.is_renderable);
+        assert!(fsm.renderability.is_renderable);
         assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Top);
         assert_eq!(
             fsm.root_kind_decision.automation_confidence,
             AutomationConfidence::High
+        );
+        assert!(
+            adapter
+                .residual_decisions
+                .iter()
+                .all(|packet| packet.packet_id != "fsm_adapter_composition_topology")
         );
 
         Ok(())

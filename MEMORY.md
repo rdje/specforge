@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `fbc7192eac539602dffd1cfe2a0b28b8b6bb791e`
-- latest_commit_brief_message: `test(adapter): lock recovered top residual`
-- note: new local `N=200` batch is active; slice 73 is committed, slice 74 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `991d88252940c2183c51a8e690c1ce72570589f0`
+- latest_commit_brief_message: `test(adapter): lock root confidence residual`
+- note: new local `N=200` batch is active; slice 74 is committed, slice 75 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `991d882` test(adapter): lock root confidence residual
 - `fbc7192` test(adapter): lock recovered top residual
 - `c668620` test(adapter): lock missing-child residual
 - `2de0b3a` test(adapter): align unemitted endpoint guidance
 - `af8584d` test(adapter): lock parametric top residual
 - `4890d6b` test(adapter): lock widthless top residual
-- `dbd8d2e` test(adapter): lock actor direction residual
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 74]`
-- files in flight for new batch slice 74:
+- branch state before the next commit: `main...origin/main [ahead 75]`
+- files in flight for new batch slice 75:
   - `crates/specforge/src/ir/adapters.rs`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `ROADMAP.md`
@@ -49,22 +49,22 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `73`
+- completed_count: `74`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - lock structured composition residual diagnostics for recovered top-root confidence blockers
-  - prove `top_root_kind_confidence_follows_recovered_top_port_evidence` keeps child-module reference repair visible in `fsm_adapter_composition_topology`
-  - preserve existing graph-backed top-port support IDs and high selected top-root confidence
-  - sync the live tracker, roadmap, and mdBook with the recovered top-root confidence residual guarantee
+  - lock residual-clean behavior for child-declaration top-root confidence cases
+  - prove `top_root_kind_confidence_follows_child_declaration_evidence` is renderable when a high-confidence child declaration raises selected top-root confidence
+  - prove no stale `fsm_adapter_composition_topology` residual remains for that renderable single-child topology
+  - sync the live tracker, roadmap, and mdBook with the child-declaration confidence residual-clean guarantee
 - tracker effect:
-  - live-status tracker changed; new row marks `.fsm` recovered top-root confidence blockers preserving composition topology residual decisions as `Done`
+  - live-status tracker changed; new row marks `.fsm` child-declaration top-root confidence staying composition-residual clean when renderable as `Done`
 - verification status:
   - implementation and live-doc sync are complete
-  - focused recovered top-root confidence residual regression passed (`1` test)
+  - focused child-declaration confidence residual-clean regression passed (`1` test)
   - adapter suite passed (`92` tests)
   - formatting, docs CI, KG bench (`148/148` fixtures), full CI (`613` Rust tests plus warning-deny Clippy/rustdoc and mdBook), and `cargo sweep --time 1` all passed
 - current known local CI baseline:
@@ -74,4 +74,4 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- run final commit guards, commit slice 74 without pushing, then start slice 75 of the active `N=200` batch
+- run final commit guards, commit slice 75 without pushing, then start slice 76 of the active `N=200` batch
