@@ -13495,6 +13495,21 @@ mod tests {
     fn keeps_top_composition_blocked_when_child_module_is_missing() -> Result<()> {
         let tempdir = tempdir()?;
         let intent_ir = build_missing_child_module_top_intent_ir(tempdir.path())?;
+        let child_support_ids = intent_ir
+            .explicit_tops
+            .iter()
+            .find(|top| top.top_name == "datapath")
+            .and_then(|top| {
+                top.children
+                    .iter()
+                    .find(|child| child.instance_name == "producer")
+            })
+            .map(|child| child.supporting_statement_ids.clone())
+            .expect("missing child declaration should be present");
+        assert!(
+            !child_support_ids.is_empty(),
+            "missing child declaration provenance should be present"
+        );
         let artifact_base = tempdir.path().join("generated").join("adapters");
 
         let adapter = AdapterArtifact::build(
@@ -13508,6 +13523,27 @@ mod tests {
         let fsm = adapter.fsm.expect("fsm artifact should be present");
         assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Top);
         assert_eq!(fsm.top_candidates.len(), 1);
+        let top_candidate = fsm
+            .top_candidates
+            .iter()
+            .find(|top| top.top_name == "datapath")
+            .expect("top candidate should remain visible");
+        let child_candidate = top_candidate
+            .children
+            .iter()
+            .find(|child| child.instance_name == "producer")
+            .expect("missing child candidate should remain visible");
+        assert_eq!(child_candidate.source_module_name, "missing_module");
+        assert_eq!(child_candidate.resolved_root_kind, None);
+        assert!(
+            child_support_ids
+                .iter()
+                .any(|id| child_candidate.supporting_canonical_ids.contains(id))
+        );
+        assert_eq!(
+            child_candidate.automation_confidence,
+            AutomationConfidence::High
+        );
         assert!(!fsm.renderability.is_renderable);
         assert!(
             fsm.renderability

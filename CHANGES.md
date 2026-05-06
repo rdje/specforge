@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` missing-child top support lock)
+
+### Added: missing child declaration provenance coverage
+- Tightened `keeps_top_composition_blocked_when_child_module_is_missing` so a blocked top composition now proves the unresolved child declaration remains visible in the selected top candidate.
+- The test locks preservation of the child declaration support IDs, high automation confidence, and absence of a resolved root kind when the referenced module is missing.
+- This keeps the missing-child blocker auditable without fabricating a child module or emitting `.fsm` output.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge keeps_top_composition_blocked_when_child_module_is_missing` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` child actor-port direction conflict support lock)
 
 ### Added: child actor-port direction conflict provenance coverage

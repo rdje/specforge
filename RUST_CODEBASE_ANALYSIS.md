@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` missing-child top support lock)
+- Tightened `keeps_top_composition_blocked_when_child_module_is_missing` in `crates/specforge/src/ir/adapters.rs` so the blocked top candidate retains the unresolved child declaration support IDs and high confidence.
+- The adapter already blocked `.fsm` emission when a top child referenced `missing_module`; this regression now proves the child candidate remains inspectable with no resolved root kind.
+- This complements renderable child-declaration support locks by covering the missing-module blocker branch.
+
 ## Session update (2026-05-06 `.fsm` child actor-port direction conflict support lock)
 - Tightened `top_composition_blocks_conflicting_actor_port_directions` in `crates/specforge/src/ir/adapters.rs` so the blocked producer `output_data` inventory entry retains local child signal declaration support and both conflicting graph actor-port support IDs.
 - The adapter already blocked `.fsm` emission when actor-port direction evidence for the child output disagreed; this regression now proves the graph conflict and declaration evidence remain inspectable together.

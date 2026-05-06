@@ -358,6 +358,7 @@
 - `.fsm` recovered top-root confidence now regression-locks graph-backed top-port support IDs: Done
 - `.fsm` child-declaration top-root confidence now regression-locks child support IDs: Done
 - `.fsm` baseline top-composition lowering now regression-locks top port, child, and link support IDs: Done
+- `.fsm` missing-child top blockers now preserve unresolved child support IDs and confidence: Done
 - `.fsm` reused-child top lowering now regression-locks per-instance child support IDs: Done
 - `.fsm` reused-FSM-child top lowering now regression-locks per-instance child support IDs: Done
 - `.fsm` mixed-child top lowering now regression-locks DT/FSM child support IDs: Done

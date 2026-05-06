@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` missing-child top support lock
+- New batch slice 83/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `keeps_top_composition_blocked_when_child_module_is_missing` now asserts the unresolved `producer` child keeps its declaration support IDs, high automation confidence, and `None` resolved root kind while the missing-module blocker remains active.
+- This is a coverage-only lock for the blocked top-composition path where a child references a missing explicit module.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` child actor-port direction conflict support lock
 - New batch slice 82/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_conflicting_actor_port_directions` now asserts the blocked producer `output_data` inventory entry preserves the child signal declaration support IDs plus both conflicting graph actor-port support IDs while graph-backed direction stays conflicted.

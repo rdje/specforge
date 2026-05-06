@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `072591d8a1f73c6b94643354b3c83db7f41ce96d`
-- latest_commit_brief_message: `test(adapter): lock child topology direction conflict support`
+- latest_commit_hash: `ab770f28fd05a646f06ed480383672f513ab8b46`
+- latest_commit_brief_message: `test(adapter): lock child actor-port conflict support`
 - note: new local `N=100` batch is active; push remains deferred until all 100 slices complete
 
 ## Recent commit chain (last 6)
+- `ab770f2` test(adapter): lock child actor-port conflict support
 - `072591d` test(adapter): lock child topology direction conflict support
 - `e78e4e8` fix(adapter): preserve child topology width conflict support
 - `70bef05` test(adapter): lock top child link width conflict support
 - `85bb047` test(adapter): lock sibling child link width conflict support
 - `63892f9` test(adapter): lock top-before-child support
-- `8d4ed8a` test(adapter): lock single FSM child top support
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 81]`
-- files in flight for new batch slice 82:
+- branch state before the next commit: `main...origin/main [ahead 82]`
+- files in flight for new batch slice 83:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -47,19 +47,19 @@
 
 ## Active N-slice batch
 - requested_count: `100`
-- completed_count: `81`
+- completed_count: `82`
 - push_policy: defer push until all `100` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - regression-lock child actor-port direction-conflict provenance
-  - prove blocked child output inventory preserves both conflicting graph actor-port support-ID sets
-  - keep local child signal declaration support auditable while graph-backed actor-port direction conflict blocks `.fsm` emission
+  - regression-lock missing-child top-composition provenance
+  - prove the unresolved child declaration remains visible in the selected top candidate
+  - keep child declaration support IDs and confidence auditable while missing-module resolution blocks `.fsm` emission
 - tracker effect:
-  - live-status tracker gains `.fsm child actor-port direction conflicts now preserve signal and graph support IDs: Done`
+  - live-status tracker gains `.fsm missing-child top blockers now preserve unresolved child support IDs and confidence: Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_actor_port_directions` passed with `1` test
+  - `cargo test --manifest-path Cargo.toml -p specforge keeps_top_composition_blocked_when_child_module_is_missing` passed with `1` test
   - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `80` tests
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed before the final live-doc refresh
@@ -70,4 +70,4 @@
   - `148/148` tracked KG fixtures
 
 ## Next exact steps
-- run final docs CI and guards, commit slice 82 without pushing, and continue slice 83
+- run final docs CI and guards, commit slice 83 without pushing, and continue slice 84

@@ -203,6 +203,7 @@
   - recovered top-port evidence preserves graph-backed support IDs while raising top-root selection confidence
   - recovered child-declaration evidence preserves child support IDs while raising top-root selection confidence
   - baseline renderable top-composition lowering preserves top port, child declaration, and explicit topology-link support IDs in selected top candidates
+  - missing-child top-composition blockers preserve unresolved child declaration support IDs and confidence while blocking `.fsm` emission
   - reused-child top-composition lowering preserves per-instance child support IDs while deduplicating the shared emitted module root
   - reused-FSM-child top-composition lowering preserves per-instance child support IDs while deduplicating the shared emitted FSM module root
   - mixed-child top-composition lowering preserves DT and FSM child support IDs while preserving emitted root order and kind
