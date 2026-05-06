@@ -153,6 +153,7 @@ Child topology direction conflicts preserve the same repair-guidance channel whi
 Child topology width conflicts likewise preserve canonical width repair guidance on blocked module and aggregate renderability surfaces while retaining signal-declaration and topology-link support IDs.
 Sibling child-link width conflicts keep that width repair guidance while preserving both conflicting topology-link support-ID sets.
 Top-boundary actor-port, duplicate declaration, and child-link width conflicts preserve top-port width repair guidance on the blocked top candidate and aggregate adapter renderability.
+Top-boundary actor-port width conflicts also emit the composition-topology residual decision so explicit-top-port repair remains visible in structured diagnostics.
 Top-link endpoint width mismatches preserve width-compatible repair guidance on the blocked top candidate and aggregate adapter renderability while keeping the mismatched topology-link support visible.
 Those width-mismatched top-link blockers also emit the composition-topology residual decision so the same repair lane remains visible in structured adapter diagnostics.
 Duplicate top-boundary width blockers also preserve explicit top-port deduplication guidance alongside the width repair guidance.

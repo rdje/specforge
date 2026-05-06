@@ -12759,6 +12759,17 @@ mod tests {
                 .any(|enrichment| enrichment
                     == "resolve conflicting top boundary port width evidence before lowering `?top:name`")
         );
+        let composition_residual = adapter
+            .residual_decisions
+            .iter()
+            .find(|packet| packet.packet_id == "fsm_adapter_composition_topology")
+            .expect("top actor-port width conflict should surface a composition residual");
+        assert!(
+            composition_residual
+                .candidate_interpretations
+                .iter()
+                .any(|interpretation| interpretation.description.contains("explicit top ports"))
+        );
 
         Ok(())
     }

@@ -200,7 +200,7 @@
   - top actor-port direction conflicts preserve explicit top-port support IDs, graph actor-port support IDs, and high automation confidence while blocking `.fsm` emission
   - top actor-port direction conflict blockers preserve top-boundary direction-conflict enrichment guidance and composition-topology residual diagnostics on blocked top and aggregate `.fsm` renderability surfaces
   - top actor-port width conflicts preserve explicit top-port support IDs, graph actor-port width support IDs, width-conflict inventory state, and high automation confidence while blocking `.fsm` emission
-  - top actor-port width conflict blockers preserve top-boundary width-conflict enrichment guidance on blocked top and aggregate `.fsm` renderability surfaces
+  - top actor-port width conflict blockers preserve top-boundary width-conflict enrichment guidance and composition-topology residual diagnostics on blocked top and aggregate `.fsm` renderability surfaces
   - top-link direction conflicts preserve explicit top-port support IDs, topology-link support IDs, graph-direction inventory state, and high automation confidence while blocking `.fsm` emission
   - top-link direction conflict blockers preserve top-boundary direction-conflict enrichment guidance on blocked top and aggregate `.fsm` renderability surfaces
   - top-link endpoint direction-role blockers preserve source/output and target/input repair guidance on blocked child, top, and aggregate `.fsm` renderability surfaces
