@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` duplicate child-instance guidance lock)
+- Added `top_composition_blocks_duplicate_child_instance_guidance` in `crates/specforge/src/ir/adapters.rs` so duplicate top child instance blockers retain child-instance deduplication guidance on the blocked top candidate and aggregate `.fsm` renderability.
+- The regression also proves both duplicate child declarations keep distinct support IDs while the resolved child root kind and source module remain visible.
+- This extends the blocked top-composition guidance surface from top-port and missing-child blockers into duplicate child-instance declarations.
+
 ## Session update (2026-05-06 `.fsm` primary missing-child guidance lock)
 - Tightened `keeps_top_composition_blocked_when_child_module_is_missing` in `crates/specforge/src/ir/adapters.rs` so the primary missing child module blocker retains child-source declaration guidance on the blocked top candidate and aggregate `.fsm` renderability.
 - Existing assertions still cover declared `result_data` top-port provenance, missing child declaration support IDs, high automation confidence, and the precise missing-module blocker.

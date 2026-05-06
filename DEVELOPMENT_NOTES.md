@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` duplicate child-instance guidance lock
+- New batch slice 31/200 adds coverage in `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_duplicate_child_instance_guidance` asserts duplicate top child instance blockers keep `deduplicate explicit child-instance records before lowering ?top:name` guidance on the blocked top candidate and aggregate `.fsm` renderability.
+- The regression also proves both duplicate child declarations keep support IDs while the resolved child root kind and source module stay visible.
+- Full adapter coverage is now `81` adapter tests, full CI is now `602` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` primary missing-child guidance lock
 - New batch slice 30/200 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `keeps_top_composition_blocked_when_child_module_is_missing` now asserts missing child module blockers keep `declare every top child source as an explicit module before lowering ?top:name` guidance on the blocked top candidate and aggregate `.fsm` renderability.

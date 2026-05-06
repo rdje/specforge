@@ -156,6 +156,7 @@ Top links to child endpoints that are not emitted preserve source-endpoint repai
 For blocked composition roots, the same artifact shape is useful for diagnostics: a missing child can block emission while the surviving top-port provenance remains available for review.
 Missing-child top blockers also preserve child-source declaration guidance on both blocked renderability surfaces.
 The primary missing-child composition fixture locks the same guidance beside top-port and child-declaration provenance.
+Duplicate top child-instance blockers preserve deduplication guidance while keeping both child declaration support-ID sets visible.
 
 For structured FSM roots, the artifact preserves the graph surface that led to renderability or blocking.
 Renderable structured-FSM cases keep named state and transition candidates, and reset-block cases keep renderable state bodies plus synchronous/asynchronous reset block roles.

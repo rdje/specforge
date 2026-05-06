@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` duplicate child-instance guidance lock)
+
+### Added: duplicate child-instance enrichment coverage
+- Added `top_composition_blocks_duplicate_child_instance_guidance` so duplicate top child instance blockers prove child-instance deduplication guidance survives on the blocked top candidate and aggregate `.fsm` renderability.
+- The regression also proves both duplicate child declarations keep distinct support IDs while the resolved child root kind and source module remain visible for review.
+- This locks the child-instance sibling of the duplicate top-port guidance paths.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_duplicate_child_instance_guidance` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`81` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`602` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` primary missing-child guidance lock)
 
 ### Added: primary missing-child enrichment coverage
