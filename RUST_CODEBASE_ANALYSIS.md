@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` duplicate top-direction blocker guidance lock)
+- Tightened `top_composition_keeps_duplicate_top_port_direction_conflict_unresolved` in `crates/specforge/src/ir/adapters.rs` so duplicate top-port direction conflicts retain top-boundary direction repair guidance on the blocked top candidate and aggregate `.fsm` renderability.
+- Existing assertions still cover both duplicate declaration support-ID sets and high automation confidence on duplicate recovered top ports and selected top signal-inventory entries.
+- This completes the top-boundary direction guidance trio for actor-port graph conflicts, top-link topology conflicts, and duplicate declaration conflicts.
+
 ## Session update (2026-05-06 `.fsm` top-link direction blocker guidance lock)
 - Tightened `top_composition_keeps_conflicting_top_port_direction_unresolved` in `crates/specforge/src/ir/adapters.rs` so top-link direction conflicts retain top-boundary direction repair guidance on the blocked top candidate and aggregate `.fsm` renderability.
 - Existing assertions still cover explicit top-port support IDs, topology-link support IDs, high automation confidence, and selected top signal-inventory graph-direction disagreement.

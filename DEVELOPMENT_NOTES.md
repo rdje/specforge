@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` duplicate top-direction blocker guidance lock
+- New batch slice 25/200 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_keeps_duplicate_top_port_direction_conflict_unresolved` now asserts duplicate top-port direction conflicts keep `resolve conflicting top boundary port direction evidence before lowering ?top:name` guidance on the blocked top candidate and aggregate `.fsm` renderability.
+- Existing checks still prove both duplicate declaration support-ID sets and high automation confidence survive on duplicate recovered top ports and selected top signal-inventory entries.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` top-link direction blocker guidance lock
 - New batch slice 24/200 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_keeps_conflicting_top_port_direction_unresolved` now asserts top-link direction conflicts keep `resolve conflicting top boundary port direction evidence before lowering ?top:name` guidance on the blocked top candidate and aggregate `.fsm` renderability.

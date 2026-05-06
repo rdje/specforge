@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` duplicate top-direction blocker guidance lock)
+
+### Added: duplicate top-port direction conflict enrichment coverage
+- Tightened `top_composition_keeps_duplicate_top_port_direction_conflict_unresolved` so duplicate top-port direction conflicts prove top-boundary direction repair guidance survives on the blocked top candidate and aggregate `.fsm` renderability.
+- Existing checks still prove both duplicate declaration support-ID sets and high automation confidence survive on duplicate recovered top ports and selected top signal-inventory entries.
+- This completes the current top-boundary direction guidance trio across actor-port graph, top-link topology, and duplicate declaration blockers.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_keeps_duplicate_top_port_direction_conflict_unresolved` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` top-link direction blocker guidance lock)
 
 ### Added: top-link direction conflict enrichment coverage
