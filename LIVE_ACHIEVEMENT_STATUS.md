@@ -768,6 +768,7 @@
 - `.fsm` source-side top-link endpoint blockers now block stale renderable top output: Done
 - `.fsm` unemitted child target endpoints now block stale renderable top output: Done
 - `.fsm` child source direction-role blockers now block stale renderable top output: Done
+- `.fsm` child target direction-role blockers now block stale renderable top output: Done
 - NLP alias learning now rejects outline/list marker prefixes before storing Form 2 aliases: Done
 - NLP alias learning now trims wrapper punctuation from Form 2 alias words: Done
 - NLP alias learning now uses markdown link labels for Form 2 aliases: Done
