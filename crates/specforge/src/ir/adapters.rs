@@ -16059,7 +16059,9 @@ mod tests {
                 .any(|enrichment| enrichment
                     == "deduplicate explicit child-instance records before lowering `?top:name`")
         );
+        assert!(top_candidate.renderable_top.is_none());
         assert!(!fsm.renderability.is_renderable);
+        assert!(fsm.renderable_document.is_none());
         assert!(
             fsm.renderability
                 .required_canonical_enrichments

@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` duplicate child renderable block
+- New batch slice 167/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_duplicate_child_instance_guidance` now asserts duplicate explicit child-instance records leave the selected top without a renderable top root and the aggregate `.fsm` artifact without a renderable source document.
+- This locks the duplicate-child composition blocker against stale `?top` output before child-instance records are deduplicated.
+- Focused duplicate-child coverage, the adapter suite, fmt, docs CI, KG bench, and full CI passed; user-requested `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is active.
+
 ## 2026-05-06 `.fsm` top-without-port renderable block
 - New batch slice 166/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_top_without_port_guidance` now asserts an explicit top with child-module references but no top-port records has no renderable top root and no aggregate renderable source document.

@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` duplicate child renderable block)
+
+### Added: duplicate child instances cannot leak renderable top output
+- Tightened `top_composition_blocks_duplicate_child_instance_guidance` so duplicate explicit child-instance records leave the selected top without a renderable top root and the aggregate `.fsm` artifact without a renderable source document.
+- This locks the duplicate-child composition blocker against stale `?top` output until child-instance records are deduplicated.
+- Synced the live tracker, roadmap, and mdBook with the duplicate-child renderable-block guarantee.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_duplicate_child_instance_guidance` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148/148` fixtures)
+- `bash scripts/run_ci.sh` -> passed (`614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation)
+- `cargo sweep --time 1` -> deferred because `target/release/tool_matrix` is active
+
 ## 2026-05-06 (`.fsm` top-without-port renderable block)
 
 ### Added: top roots without top ports cannot leak renderable top output
