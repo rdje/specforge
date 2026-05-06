@@ -8558,6 +8558,23 @@ mod tests {
 
         assert!(fsm.renderability.is_renderable);
         assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Dt);
+        assert_eq!(fsm.decision_tree_candidates.len(), 1);
+        let dt_candidate = fsm
+            .decision_tree_candidates
+            .iter()
+            .find(|candidate| candidate.candidate_id == "dt_primary_intent_cone")
+            .expect("decision-tree candidate should remain visible");
+        assert_eq!(
+            dt_candidate.automation_confidence,
+            AutomationConfidence::Medium
+        );
+        for signal_name in ["A", "B", "X", "Y"] {
+            assert!(
+                fsm.signal_inventory
+                    .iter()
+                    .any(|signal| signal.signal_name == signal_name)
+            );
+        }
         assert!(emitted_text.contains("(?dt:computed_selector_dt"));
         assert!(emitted_text.contains("(-choose"));
         assert!(emitted_text.contains("(?(| A B)"));

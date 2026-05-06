@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` computed-selector support lock)
+
+### Added: computed selector provenance coverage
+- Tightened `builds_renderable_computed_selector_dt_fsm_adapter_artifact` so the renderable computed-selector DT now proves its decision-tree candidate remains visible.
+- The test locks the candidate's medium automation confidence and selected signal inventory for the computed selector inputs plus action outputs while preserving emitted `.fsm` computed-selector text.
+- This captures the honest lower-confidence shape of computed selector lowering without inventing canonical control-fragment support where the fixture does not have it.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge builds_renderable_computed_selector_dt_fsm_adapter_artifact` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge builds_renderable_selector_based_dt_fsm_adapter_artifact` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` renderable selector support lock)
 
 ### Added: selector/test-node provenance coverage

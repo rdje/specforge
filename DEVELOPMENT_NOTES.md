@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` computed-selector support lock
+- New batch slice 90/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `builds_renderable_computed_selector_dt_fsm_adapter_artifact` now asserts the renderable computed-selector DT keeps its decision-tree candidate visible at medium automation confidence while selected signal inventory includes the computed selector inputs and action outputs.
+- This is a coverage-only lock for the computed selector path where emitted `.fsm` text is renderable but canonical control-fragment support is not present in the fixture.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` renderable selector support lock
 - New batch slice 89/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `builds_renderable_selector_based_dt_fsm_adapter_artifact` now asserts the renderable selector DT keeps its decision-tree candidate, control-fragment support IDs, single selector branch block, high automation confidence, and selector/output signal inventory while emitted `.fsm` selector/test-node text remains unchanged.

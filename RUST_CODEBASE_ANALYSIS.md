@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` computed-selector support lock)
+- Tightened `builds_renderable_computed_selector_dt_fsm_adapter_artifact` in `crates/specforge/src/ir/adapters.rs` so the renderable computed-selector DT artifact retains a visible decision-tree candidate at medium confidence.
+- The fixture still has no canonical control-fragment support records, so the regression intentionally locks the honest computed-selector shape rather than implying high-confidence support provenance.
+- The selected signal inventory now proves the computed selector inputs and action outputs remain visible while emitted `.fsm` text stays renderable.
+
 ## Session update (2026-05-06 `.fsm` renderable selector support lock)
 - Tightened `builds_renderable_selector_based_dt_fsm_adapter_artifact` in `crates/specforge/src/ir/adapters.rs` so the renderable selector-based DT artifact retains its decision-tree candidate, control-fragment support IDs, single branch block, and high confidence.
 - The adapter already emitted selector/test-node `.fsm` text for the supported `MODE == mode_t.idle` shape; this regression now proves the same renderable path keeps its selector and output signal inventory visible.
