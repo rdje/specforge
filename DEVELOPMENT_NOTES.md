@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-05 `.fsm` child-declaration top-root confidence provenance lock
+- New batch slice 71/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `top_root_kind_confidence_follows_child_declaration_evidence` now asserts recovered top children preserve child-declaration support IDs while high-confidence child evidence raises top-root selection confidence.
+- This is a coverage-only lock for the top-root selection path where child declarations, rather than recovered top-port evidence, supply the high-confidence root-kind signal.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-05 `.fsm` recovered top-root confidence provenance lock
 - New batch slice 70/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `top_root_kind_confidence_follows_recovered_top_port_evidence` now asserts graph-backed top-port direction recovery preserves `graph_wrapper_ext_data` support on the recovered top port while root-kind confidence rises to high.

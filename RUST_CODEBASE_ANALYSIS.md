@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 `.fsm` child-declaration top-root confidence provenance lock)
+- Tightened `top_root_kind_confidence_follows_child_declaration_evidence` in `crates/specforge/src/ir/adapters.rs` so recovered top children retain child-declaration support IDs while top-root confidence rises to high.
+- The adapter already folded child declaration confidence into top-root selection; this regression now proves the recovered child candidate keeps the declaration support record that explains that confidence.
+- This complements the recovered top-port root-kind confidence lock with the child-declaration confidence path.
+
 ## Session update (2026-05-05 `.fsm` recovered top-root confidence provenance lock)
 - Tightened `top_root_kind_confidence_follows_recovered_top_port_evidence` in `crates/specforge/src/ir/adapters.rs` so graph-backed recovered top-port evidence retains support IDs while top-root confidence rises to high.
 - The adapter already used recovered top-boundary evidence in top-root confidence folding; this regression now proves the recovered port keeps the actor-port support record that explains that confidence.

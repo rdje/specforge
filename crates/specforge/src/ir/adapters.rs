@@ -10485,7 +10485,7 @@ mod tests {
             "top_root_kind_child_confidence.md",
             "# Top Root Kind Child Confidence\nTop wrapper.\n\nTop wrapper port done is output width 1.\n\nTop wrapper child controller uses module controller_core.\n\nModule controller_core signal DONE is output width 1.\n\nModule controller_core block drive_done: DONE = 1.\n",
         )?;
-        {
+        let child_support_ids = {
             let raw_top = intent_ir
                 .explicit_tops
                 .iter_mut()
@@ -10512,7 +10512,8 @@ mod tests {
                 !raw_child.supporting_statement_ids.is_empty(),
                 "top child should carry concrete support IDs"
             );
-        }
+            raw_child.supporting_statement_ids.clone()
+        };
         intent_ir.write_to_disk()?;
 
         let artifact_base = tempdir.path().join("generated").join("adapters");
@@ -10547,6 +10548,11 @@ mod tests {
         assert_eq!(
             recovered_child.automation_confidence,
             AutomationConfidence::High
+        );
+        assert!(
+            child_support_ids
+                .iter()
+                .any(|id| recovered_child.supporting_canonical_ids.contains(id))
         );
         assert_eq!(recovered_child.resolved_root_kind, Some(FsmRootKind::Dt));
         assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Top);

@@ -20,23 +20,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `1074bea268539afece788194d1d0106fcc085d74`
-- latest_commit_brief_message: `test(adapter): lock transitive child width support`
+- latest_commit_hash: `57e29a68ab4ce8a37b7050c96e1367024d530e7d`
+- latest_commit_brief_message: `test(adapter): lock recovered top-root confidence support`
 - note: new local `N=100` batch is active; push remains deferred until all 100 slices complete
 
 ## Recent commit chain (last 6)
+- `57e29a6` test(adapter): lock recovered top-root confidence support
 - `1074bea` test(adapter): lock transitive child width support
 - `aa6d80d` test(adapter): lock child sibling source width support
 - `1090d6e` test(adapter): lock child sibling target width support
 - `a2d12f4` test(adapter): lock child top-link width support
 - `4745ce1` test(adapter): lock child link direction support
-- `a1372b7` test(adapter): lock child actor direction support
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 69]`
-- files in flight for new batch slice 70:
+- branch state before the next commit: `main...origin/main [ahead 70]`
+- files in flight for new batch slice 71:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -47,19 +47,19 @@
 
 ## Active N-slice batch
 - requested_count: `100`
-- completed_count: `69`
+- completed_count: `70`
 - push_policy: defer push until all `100` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice still receives its own verification, live-doc refresh, commit, message-file truncation, and post-commit checks before the next slice starts
 
 ## Current in-flight slice
 - objective:
-  - regression-lock recovered top-port root-kind confidence provenance
-  - prove graph-backed recovered top-port evidence preserves support IDs while top-root selection confidence rises to high
-  - keep the root-kind confidence path auditable when actor-port evidence recovers top-boundary direction
+  - regression-lock child-declaration top-root confidence provenance
+  - prove recovered top-child declarations preserve support IDs while top-root selection confidence rises to high
+  - keep the root-kind confidence path auditable when child declarations supply the high-confidence evidence
 - tracker effect:
-  - live-status tracker gains `.fsm recovered top-root confidence now regression-locks graph-backed top-port support IDs: Done`
+  - live-status tracker gains `.fsm child-declaration top-root confidence now regression-locks child support IDs: Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge top_root_kind_confidence_follows_recovered_top_port_evidence` passed with `1` test
+  - `cargo test --manifest-path Cargo.toml -p specforge top_root_kind_confidence_follows_child_declaration_evidence` passed with `1` test
   - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `80` tests
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed before the final live-doc refresh
@@ -70,4 +70,4 @@
   - `148/148` tracked KG fixtures
 
 ## Next exact steps
-- run final docs CI and guards, commit slice 70 without pushing, and continue slice 71
+- run final docs CI and guards, commit slice 71 without pushing, and continue slice 72

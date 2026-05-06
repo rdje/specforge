@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` child-declaration top-root confidence provenance lock)
+
+### Added: child-declaration root-kind confidence provenance coverage
+- Tightened `top_root_kind_confidence_follows_child_declaration_evidence` so top-root selection confidence now proves the recovered child candidate keeps its child-declaration support IDs.
+- This is coverage-only over the existing adapter behavior: high-confidence child declarations can raise top-root selection confidence even when top-port evidence is low-confidence.
+- The slice keeps the child declaration evidence auditable on the recovered top child that drives the root-kind confidence.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_root_kind_confidence_follows_child_declaration_evidence` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-05 (`.fsm` recovered top-root confidence provenance lock)
 
 ### Added: recovered top-port root-kind confidence provenance coverage
