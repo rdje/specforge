@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` undeclared top-source guidance lock)
+- Added `top_composition_blocks_link_from_undeclared_top_source_guidance` in `crates/specforge/src/ir/adapters.rs` so top links originating from undeclared top-boundary ports retain source-endpoint enrichment guidance on the blocked top candidate and aggregate `.fsm` renderability.
+- The regression also proves declared top-port provenance, child declaration provenance, and top-link support IDs survive while the child module resolves to a renderable DT root.
+- This pairs the undeclared top-source and top-target blockers so both public-boundary endpoint directions require canonical top-port declarations.
+
 ## Session update (2026-05-06 `.fsm` undeclared top-target guidance lock)
 - Added `top_composition_blocks_link_to_undeclared_top_target_guidance` in `crates/specforge/src/ir/adapters.rs` so top links targeting undeclared top-boundary ports retain target-endpoint enrichment guidance on the blocked top candidate and aggregate `.fsm` renderability.
 - The regression also proves declared top-port provenance, child declaration provenance, and top-link support IDs survive while the child module resolves to a renderable DT root.

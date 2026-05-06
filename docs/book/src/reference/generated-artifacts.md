@@ -163,6 +163,7 @@ Multi-child top roots that omit explicit top-link records preserve top-link enri
 Top roots that omit child-module references preserve child-module enrichment guidance while keeping the declared top-port provenance visible.
 Top roots that omit top-port records preserve top-port enrichment guidance while keeping child declaration provenance visible.
 Top links that target undeclared top-boundary ports preserve target-endpoint enrichment guidance while keeping the declared top-port, child, and link provenance visible.
+Top links that originate from undeclared top-boundary ports preserve source-endpoint enrichment guidance while keeping the declared top-port, child, and link provenance visible.
 
 For structured FSM roots, the artifact preserves the graph surface that led to renderability or blocking.
 Renderable structured-FSM cases keep named state and transition candidates, and reset-block cases keep renderable state bodies plus synchronous/asynchronous reset block roles.
