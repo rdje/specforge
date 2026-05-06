@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `8a6daa74e750ddda0045789ef6c6a8e1f642d6b4`
-- latest_commit_brief_message: `test(adapter): lock single FSM child top provenance`
-- note: new local `N=200` batch is active; slice 3 is committed, slice 4 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `ccaa28f58dd9b4d588639d09a3fbfe70909880b2`
+- latest_commit_brief_message: `test(adapter): lock reused FSM child top provenance`
+- note: new local `N=200` batch is active; slice 4 is committed, slice 5 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `ccaa28f` test(adapter): lock reused FSM child top provenance
 - `8a6daa7` test(adapter): lock single FSM child top provenance
 - `7e765e5` test(adapter): lock top-before-child provenance
 - `3b0e406` test(adapter): lock reused child top provenance
 - `acc1646` docs: sync post-batch roadmap state
 - `b07a280` test(adapter): lock renderable top port shape
-- `f30991f` test(adapter): lock missing child top port
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 4]`
-- files in flight for new batch slice 4:
+- branch state before the next commit: `main...origin/main [ahead 5]`
+- files in flight for new batch slice 5:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -49,21 +49,21 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `3`
+- completed_count: `4`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - regression-lock reused-FSM-child top source-document provenance
-  - prove reused-FSM-child top documents keep `ACC_A` / `ACC_B` top-port support IDs and first/second child output topology-link support IDs
-  - preserve the existing per-instance FSM child support IDs and single shared FSM direct-root emission
+  - regression-lock mixed DT/FSM child top source-document provenance
+  - prove mixed-child top documents keep `ACC` top-port support IDs plus producer-to-controller and controller-to-top topology-link support IDs
+  - preserve existing mixed DT/FSM child support IDs, root kinds, and top-first direct-root order
   - keep the mdBook adapter artifact description aligned with this provenance surface
 - tracker effect:
-  - expected live-status tracker gain: `.fsm reused-FSM-child top emission now preserves top-port and topology-link provenance while deduplicating the shared FSM root: Done`
+  - expected live-status tracker gain: `.fsm mixed-child top emission now preserves top-port and topology-link provenance alongside DT/FSM root order: Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge renderable_top_document_deduplicates_reused_fsm_child_roots` passed with `1` test
+  - `cargo test --manifest-path Cargo.toml -p specforge renderable_top_document_preserves_mixed_child_root_order_and_kind` passed with `1` test
   - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `80` tests
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed after applying formatter output
   - `bash scripts/run_docs_ci.sh` passed after live-doc/mdBook sync
@@ -74,4 +74,4 @@
   - `148/148` tracked KG fixtures
 
 ## Next exact steps
-- run final docs CI, KG bench, full CI, final guards, commit slice 4 without pushing, and continue slice 5
+- run final docs CI, KG bench, full CI, final guards, commit slice 5 without pushing, and continue slice 6

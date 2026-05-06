@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` mixed-child top provenance lock)
+
+### Added: mixed DT/FSM top/link provenance
+- Tightened `renderable_top_document_preserves_mixed_child_root_order_and_kind` so mixed DT/FSM child top documents preserve the public `ACC` top-port support IDs in both selected and renderable top records.
+- The regression also locks the producer-to-controller data link and controller-to-top `ACC` link support IDs while preserving mixed root kinds, child support IDs, and top-first direct-root order.
+- This closes the same top-boundary provenance coverage for mixed child source documents.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge renderable_top_document_preserves_mixed_child_root_order_and_kind` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed after applying formatter output
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` reused-FSM-child top provenance lock)
 
 ### Added: reused-FSM-child top/link provenance

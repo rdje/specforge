@@ -130,6 +130,7 @@ When multiple child instances reuse the same module, the top candidate still kee
 When a renderable source document emits the `?top` root before producer/consumer child direct roots, the selected top candidate and renderable top root still carry the public top-port and topology-link support IDs.
 Single-FSM-child top documents preserve the same top-port and topology-link provenance while keeping the child reference typed as an FSM child root.
 Reused-FSM-child top documents also preserve per-output top-port and link provenance while emitting the shared FSM direct root only once.
+Mixed DT/FSM child top documents preserve public top-port and topology-link provenance while retaining child root kinds and direct-root order.
 For blocked composition roots, the same artifact shape is useful for diagnostics: a missing child can block emission while the surviving top-port provenance remains available for review.
 
 For structured FSM roots, the artifact preserves the graph surface that led to renderability or blocking.

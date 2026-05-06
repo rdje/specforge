@@ -10778,12 +10778,23 @@ mod tests {
             "top_with_mixed_children.md",
             "# Top With Mixed Children\nTop wrapper.\n\nTop wrapper port clk is input width 1.\n\nTop wrapper port rst_n is input width 1.\n\nTop wrapper port GO is input width 1.\n\nTop wrapper port DONE is input width 1.\n\nTop wrapper port ACC is output width 8.\n\nTop wrapper child producer uses module producer_core.\n\nTop wrapper child controller uses module controller_core.\n\nTop wrapper link clk -> controller.clk.\n\nTop wrapper link rst_n -> controller.rst_n.\n\nTop wrapper link GO -> controller.GO.\n\nTop wrapper link DONE -> controller.DONE.\n\nTop wrapper link producer.output_data -> controller.DATA_IN.\n\nTop wrapper link controller.ACC -> ACC.\n\nModule producer_core signal output_data is output width 8.\n\nModule producer_core block produce: output_data = 8'3.\n\nModule controller_core Signal clk is input width 1.\n\nModule controller_core Signal rst_n is input width 1.\n\nModule controller_core Signal GO is input width 1.\n\nModule controller_core Signal DONE is input width 1.\n\nModule controller_core Signal DATA_IN is input width 8.\n\nModule controller_core Signal ACC is output width 8.\n\nModule controller_core Clock clk.\n\nModule controller_core Reset rst_n is asynchronous active low.\n\nModule controller_core Init ACC = 8'0.\n\nModule controller_core State idle is initial.\n\nModule controller_core State busy.\n\nModule controller_core Block idle: ACC <- DATA_IN.\n\nModule controller_core Transition idle -> busy when GO.\n\nModule controller_core Block busy: ACC <- DATA_IN.\n\nModule controller_core Transition busy -> idle when DONE.\n",
         )?;
-        let (producer_child_support_ids, controller_child_support_ids) = {
+        let (
+            acc_top_port_support_ids,
+            producer_child_support_ids,
+            controller_child_support_ids,
+            producer_to_controller_link_support_ids,
+            controller_to_top_link_support_ids,
+        ) = {
             let explicit_top = intent_ir
                 .explicit_tops
                 .iter()
                 .find(|top| top.top_name == "wrapper")
                 .expect("explicit top should be present");
+            let acc_top_port = explicit_top
+                .ports
+                .iter()
+                .find(|port| port.port_name == "ACC")
+                .expect("ACC top port should be present");
             let producer_child = explicit_top
                 .children
                 .iter()
@@ -10794,9 +10805,32 @@ mod tests {
                 .iter()
                 .find(|child| child.instance_name == "controller")
                 .expect("controller child should be present");
+            let producer_to_controller_link = explicit_top
+                .links
+                .iter()
+                .find(|link| {
+                    link.source.instance_name.as_deref() == Some("producer")
+                        && link.source.signal_name == "output_data"
+                        && link.target.instance_name.as_deref() == Some("controller")
+                        && link.target.signal_name == "DATA_IN"
+                })
+                .expect("producer to controller topology link should be present");
+            let controller_to_top_link = explicit_top
+                .links
+                .iter()
+                .find(|link| {
+                    link.source.instance_name.as_deref() == Some("controller")
+                        && link.source.signal_name == "ACC"
+                        && link.target.instance_name.is_none()
+                        && link.target.signal_name == "ACC"
+                })
+                .expect("controller ACC top link should be present");
             (
+                acc_top_port.supporting_statement_ids.clone(),
                 producer_child.supporting_statement_ids.clone(),
                 controller_child.supporting_statement_ids.clone(),
+                super::explicit_top_link_supporting_ids(producer_to_controller_link),
+                super::explicit_top_link_supporting_ids(controller_to_top_link),
             )
         };
         let artifact_base = tempdir.path().join("generated").join("adapters");
@@ -10821,6 +10855,11 @@ mod tests {
             .iter()
             .find(|top| top.top_name == "wrapper")
             .expect("top candidate should be present");
+        let acc_top_port = top_candidate
+            .ports
+            .iter()
+            .find(|port| port.port_name == "ACC")
+            .expect("ACC top port should be present");
         let producer_child = top_candidate
             .children
             .iter()
@@ -10839,6 +10878,31 @@ mod tests {
             .top_root
             .as_ref()
             .expect("renderable top root should be present");
+        let renderable_acc_port = renderable_top
+            .ports
+            .iter()
+            .find(|port| port.port_name == "ACC")
+            .expect("renderable top should preserve ACC");
+        let renderable_producer_to_controller_link = renderable_top
+            .links
+            .iter()
+            .find(|link| {
+                link.source.instance_name.as_deref() == Some("producer")
+                    && link.source.signal_name == "output_data"
+                    && link.target.instance_name.as_deref() == Some("controller")
+                    && link.target.signal_name == "DATA_IN"
+            })
+            .expect("renderable top should preserve producer to controller link");
+        let renderable_controller_to_top_link = renderable_top
+            .links
+            .iter()
+            .find(|link| {
+                link.source.instance_name.as_deref() == Some("controller")
+                    && link.source.signal_name == "ACC"
+                    && link.target.instance_name.is_none()
+                    && link.target.signal_name == "ACC"
+            })
+            .expect("renderable top should preserve controller ACC link");
         let child_kinds = renderable_top
             .children
             .iter()
@@ -10865,6 +10929,16 @@ mod tests {
             ]
         );
         assert!(
+            acc_top_port_support_ids
+                .iter()
+                .any(|id| acc_top_port.supporting_statement_ids.contains(id))
+        );
+        assert!(
+            acc_top_port_support_ids
+                .iter()
+                .any(|id| renderable_acc_port.supporting_statement_ids.contains(id))
+        );
+        assert!(
             producer_child_support_ids
                 .iter()
                 .any(|id| producer_child.supporting_canonical_ids.contains(id))
@@ -10874,6 +10948,16 @@ mod tests {
                 .iter()
                 .any(|id| controller_child.supporting_canonical_ids.contains(id))
         );
+        assert!(producer_to_controller_link_support_ids.iter().any(|id| {
+            renderable_producer_to_controller_link
+                .supporting_statement_ids
+                .contains(id)
+        }));
+        assert!(controller_to_top_link_support_ids.iter().any(|id| {
+            renderable_controller_to_top_link
+                .supporting_statement_ids
+                .contains(id)
+        }));
         let top_index = emitted_text
             .find("(?top:wrapper")
             .expect("emitted text should contain top root");

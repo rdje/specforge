@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` mixed-child top provenance lock)
+- Tightened `renderable_top_document_preserves_mixed_child_root_order_and_kind` in `crates/specforge/src/ir/adapters.rs` so mixed DT/FSM top documents keep the public `ACC` top-port support IDs in selected and renderable top records.
+- The renderable top root now also proves producer-to-controller data-link and controller-to-top `ACC` link support IDs survive while mixed child root kinds and direct-root order remain unchanged.
+- This rounds out the current top-document provenance lane across reused DT children, top-before-child ordering, single FSM children, reused FSM children, and mixed DT/FSM children.
+
 ## Session update (2026-05-06 `.fsm` reused-FSM-child top provenance lock)
 - Tightened `renderable_top_document_deduplicates_reused_fsm_child_roots` in `crates/specforge/src/ir/adapters.rs` so reused FSM child top documents keep `ACC_A` and `ACC_B` top-port support IDs in selected and renderable top records.
 - The renderable top root now also proves both first/second child `ACC` topology-link support-ID sets survive while the shared `controller_core` FSM direct root is still emitted once.
