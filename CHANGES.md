@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` actor-port direction residual cleanliness)
+
+### Added: renderable actor-port direction recovery stays residual-clean
+- Tightened `top_composition_recovers_top_port_direction_from_actor_ports` so actor-port-backed public top-port direction proves no stale `fsm_adapter_composition_topology` residual remains once the top is renderable.
+- The regression now pairs top-port declaration support, graph actor-port support, selected inventory provenance, and emitted `.fsm` text with a clean aggregate residual surface.
+- Updated the live tracker, roadmap, and mdBook to mark the actor-port direction recovery residual-clean guarantee as closed.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_top_port_direction_from_actor_ports` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`613` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+- `cargo sweep --time 1` -> completed (`Cleaned nothing`)
+
 ## 2026-05-06 (`.fsm` top-link direction residual cleanliness)
 
 ### Added: renderable top-link direction recovery stays residual-clean
