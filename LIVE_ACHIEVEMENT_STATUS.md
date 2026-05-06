@@ -355,6 +355,7 @@
 - `.fsm` baseline top-composition lowering now regression-locks top port, child, and link support IDs: Done
 - `.fsm` reused-child top lowering now regression-locks per-instance child support IDs: Done
 - `.fsm` reused-FSM-child top lowering now regression-locks per-instance child support IDs: Done
+- `.fsm` mixed-child top lowering now regression-locks DT/FSM child support IDs: Done
 - `.fsm` widthless top-port blockers now regression-lock support IDs and automation confidence: Done
 - `.fsm` parametric top-port blockers now regression-lock support IDs and automation confidence: Done
 - `.fsm` explicit top-link lowering now requires child endpoints to resolve to emitted child module ports: Done

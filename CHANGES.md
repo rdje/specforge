@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-05 (`.fsm` mixed-child top support lock)
+
+### Added: mixed child root-order provenance coverage
+- Tightened `renderable_top_document_preserves_mixed_child_root_order_and_kind` so mixed DT/FSM top child declarations now prove their support IDs survive in the selected top candidate.
+- This is coverage-only over the existing adapter behavior: mixed child roots still preserve top-first emission order and child root kinds.
+- The slice keeps both producer DT and controller FSM child declaration evidence auditable while order and kind checks remain intact.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge renderable_top_document_preserves_mixed_child_root_order_and_kind` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-05 (`.fsm` reused-FSM-child top support lock)
 
 ### Added: reused FSM-child top declaration provenance coverage

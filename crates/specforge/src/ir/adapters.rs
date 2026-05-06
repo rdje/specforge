@@ -10143,6 +10143,27 @@ mod tests {
             "top_with_mixed_children.md",
             "# Top With Mixed Children\nTop wrapper.\n\nTop wrapper port clk is input width 1.\n\nTop wrapper port rst_n is input width 1.\n\nTop wrapper port GO is input width 1.\n\nTop wrapper port DONE is input width 1.\n\nTop wrapper port ACC is output width 8.\n\nTop wrapper child producer uses module producer_core.\n\nTop wrapper child controller uses module controller_core.\n\nTop wrapper link clk -> controller.clk.\n\nTop wrapper link rst_n -> controller.rst_n.\n\nTop wrapper link GO -> controller.GO.\n\nTop wrapper link DONE -> controller.DONE.\n\nTop wrapper link producer.output_data -> controller.DATA_IN.\n\nTop wrapper link controller.ACC -> ACC.\n\nModule producer_core signal output_data is output width 8.\n\nModule producer_core block produce: output_data = 8'3.\n\nModule controller_core Signal clk is input width 1.\n\nModule controller_core Signal rst_n is input width 1.\n\nModule controller_core Signal GO is input width 1.\n\nModule controller_core Signal DONE is input width 1.\n\nModule controller_core Signal DATA_IN is input width 8.\n\nModule controller_core Signal ACC is output width 8.\n\nModule controller_core Clock clk.\n\nModule controller_core Reset rst_n is asynchronous active low.\n\nModule controller_core Init ACC = 8'0.\n\nModule controller_core State idle is initial.\n\nModule controller_core State busy.\n\nModule controller_core Block idle: ACC <- DATA_IN.\n\nModule controller_core Transition idle -> busy when GO.\n\nModule controller_core Block busy: ACC <- DATA_IN.\n\nModule controller_core Transition busy -> idle when DONE.\n",
         )?;
+        let (producer_child_support_ids, controller_child_support_ids) = {
+            let explicit_top = intent_ir
+                .explicit_tops
+                .iter()
+                .find(|top| top.top_name == "wrapper")
+                .expect("explicit top should be present");
+            let producer_child = explicit_top
+                .children
+                .iter()
+                .find(|child| child.instance_name == "producer")
+                .expect("producer child should be present");
+            let controller_child = explicit_top
+                .children
+                .iter()
+                .find(|child| child.instance_name == "controller")
+                .expect("controller child should be present");
+            (
+                producer_child.supporting_statement_ids.clone(),
+                controller_child.supporting_statement_ids.clone(),
+            )
+        };
         let artifact_base = tempdir.path().join("generated").join("adapters");
 
         let adapter = AdapterArtifact::build(
@@ -10160,6 +10181,21 @@ mod tests {
             .expect("renderable mixed-child top should emit target text");
         let emitted_text = fs::read_to_string(emitted_target_path)?;
         let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let top_candidate = fsm
+            .top_candidates
+            .iter()
+            .find(|top| top.top_name == "wrapper")
+            .expect("top candidate should be present");
+        let producer_child = top_candidate
+            .children
+            .iter()
+            .find(|child| child.instance_name == "producer")
+            .expect("producer child should be present");
+        let controller_child = top_candidate
+            .children
+            .iter()
+            .find(|child| child.instance_name == "controller")
+            .expect("controller child should be present");
         let renderable_document = fsm
             .renderable_document
             .as_ref()
@@ -10192,6 +10228,16 @@ mod tests {
                 ("producer_core", FsmRootKind::Dt),
                 ("controller_core", FsmRootKind::Fsm)
             ]
+        );
+        assert!(
+            producer_child_support_ids
+                .iter()
+                .any(|id| producer_child.supporting_canonical_ids.contains(id))
+        );
+        assert!(
+            controller_child_support_ids
+                .iter()
+                .any(|id| controller_child.supporting_canonical_ids.contains(id))
         );
         let top_index = emitted_text
             .find("(?top:wrapper")

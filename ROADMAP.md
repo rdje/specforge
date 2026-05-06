@@ -200,6 +200,7 @@
   - baseline renderable top-composition lowering preserves top port, child declaration, and explicit topology-link support IDs in selected top candidates
   - reused-child top-composition lowering preserves per-instance child support IDs while deduplicating the shared emitted module root
   - reused-FSM-child top-composition lowering preserves per-instance child support IDs while deduplicating the shared emitted FSM module root
+  - mixed-child top-composition lowering preserves DT and FSM child support IDs while preserving emitted root order and kind
   - child sibling-link target width recovery preserves explicit top-link support IDs and high automation confidence in recovered consumer child module inventories
   - direct-root actor-port width recovery preserves graph-backed support IDs and automation confidence while avoiding import of the external actor's direction
   - unambiguous direct actor-port direction recovery preserves graph-backed support IDs and high automation confidence for direct inputs and outputs

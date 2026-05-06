@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-05 `.fsm` mixed-child top support lock)
+- Tightened `renderable_top_document_preserves_mixed_child_root_order_and_kind` in `crates/specforge/src/ir/adapters.rs` so mixed producer DT and controller FSM child declarations retain support IDs in the selected top candidate.
+- The adapter already preserved mixed child root order and kind; this regression now proves both child declarations remain auditable while the emitted document order stays top-first.
+- This extends top child provenance coverage beyond reused-child deduplication into mixed-kind top documents.
+
 ## Session update (2026-05-05 `.fsm` reused-FSM-child top support lock)
 - Tightened `renderable_top_document_deduplicates_reused_fsm_child_roots` in `crates/specforge/src/ir/adapters.rs` so reused FSM top child declarations retain distinct support IDs in the selected top candidate.
 - The adapter already deduplicated the shared FSM child module root while preserving two top child instances; this regression now proves instance-level evidence stays auditable in the FSM-root variant as well.
