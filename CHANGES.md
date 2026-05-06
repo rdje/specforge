@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` top-link width guidance lock)
+
+### Added: width-compatible top-link guidance coverage
+- Added `top_composition_blocks_width_mismatched_top_link_guidance` so explicit top links with mismatched endpoint widths prove width-compatible repair guidance survives on the blocked top candidate and aggregate `.fsm` renderability.
+- The regression keeps the width-mismatched topology-link support IDs and high-confidence link record visible while the referenced child module remains independently renderable.
+- This locks the explicit top-link width compatibility gate separately from canonical child/top width-conflict blockers.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_width_mismatched_top_link_guidance` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`613` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` top-target boundary role guidance lock)
 
 ### Added: top-target boundary role coverage

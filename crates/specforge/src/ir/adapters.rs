@@ -14558,6 +14558,108 @@ mod tests {
     }
 
     #[test]
+    fn top_composition_blocks_width_mismatched_top_link_guidance() -> Result<()> {
+        let tempdir = tempdir()?;
+        let intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "width_mismatched_top_link.md",
+            "# Width Mismatched Top Link\nTop datapath.\n\nTop datapath port drive_data is input width 8.\n\nTop datapath port result_data is output width 16.\n\nTop datapath child producer uses module producer_core.\n\nTop datapath link drive_data -> result_data.\n\nModule producer_core signal output_data is output width 8.\n\nModule producer_core block produce: output_data = 8'3.\n",
+        )?;
+        let width_mismatch_support_ids = {
+            let explicit_top = intent_ir
+                .explicit_tops
+                .iter()
+                .find(|top| top.top_name == "datapath")
+                .expect("explicit top should be present");
+            let topology_link = explicit_top
+                .links
+                .iter()
+                .find(|link| {
+                    link.source.instance_name.is_none()
+                        && link.source.signal_name == "drive_data"
+                        && link.target.instance_name.is_none()
+                        && link.target.signal_name == "result_data"
+                })
+                .expect("width-mismatched topology link should be present");
+            super::explicit_top_link_supporting_ids(topology_link)
+        };
+        assert!(
+            !width_mismatch_support_ids.is_empty(),
+            "width-mismatched topology-link provenance should be present"
+        );
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "blocked");
+        assert!(adapter.artifact_layout.emitted_target_path.is_none());
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let producer = fsm
+            .module_candidates
+            .iter()
+            .find(|candidate| candidate.module_name == "producer_core")
+            .expect("producer module candidate should exist");
+        let top_candidate = fsm
+            .top_candidates
+            .iter()
+            .find(|top| top.top_name == "datapath")
+            .expect("top candidate should be present");
+        let blocked_link = top_candidate
+            .links
+            .iter()
+            .find(|link| {
+                link.source.instance_name.is_none()
+                    && link.source.signal_name == "drive_data"
+                    && link.target.instance_name.is_none()
+                    && link.target.signal_name == "result_data"
+            })
+            .expect("width-mismatched top link should remain visible");
+
+        assert!(producer.renderability.is_renderable);
+        let blocked_link_support_ids = super::explicit_top_link_supporting_ids(blocked_link);
+        assert!(
+            width_mismatch_support_ids
+                .iter()
+                .any(|id| blocked_link_support_ids.contains(id))
+        );
+        assert_eq!(
+            blocked_link.automation_confidence,
+            AutomationConfidence::High
+        );
+        assert!(
+            top_candidate
+                .renderability
+                .blocking_reasons
+                .iter()
+                .any(|reason| reason.contains(
+                    "Top link `drive_data` -> `result_data` connects width 8 to width 16"
+                ))
+        );
+        assert!(
+            top_candidate
+                .renderability
+                .required_canonical_enrichments
+                .iter()
+                .any(|enrichment| enrichment
+                    == "keep first-slice top-link endpoints width-compatible")
+        );
+        assert!(!fsm.renderability.is_renderable);
+        assert!(
+            fsm.renderability
+                .required_canonical_enrichments
+                .iter()
+                .any(|enrichment| enrichment
+                    == "keep first-slice top-link endpoints width-compatible")
+        );
+
+        Ok(())
+    }
+
+    #[test]
     fn top_composition_blocks_conflicting_child_topology_widths() -> Result<()> {
         let tempdir = tempdir()?;
         let intent_ir = build_intent_ir_from_markdown(

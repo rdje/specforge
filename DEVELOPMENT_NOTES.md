@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` top-link width guidance lock
+- New batch slice 45/200 adds coverage in `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_width_mismatched_top_link_guidance` proves explicit top links with mismatched endpoint widths keep `keep first-slice top-link endpoints width-compatible` guidance on the blocked top candidate and aggregate `.fsm` renderability.
+- The regression keeps topology-link support IDs and high-confidence link provenance visible while the child module remains independently renderable, separating the top-link compatibility gate from child/top width-conflict blockers.
+- Full adapter coverage is now `92` adapter tests, full CI is now `613` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` top-target boundary role guidance lock
 - New batch slice 44/200 adds coverage in `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_top_target_direction_role_guidance` proves a public top target declared as input but used as a top-link target keeps endpoint-role guidance beside top-boundary direction-conflict guidance.

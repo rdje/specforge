@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` top-link width guidance lock)
+- Added `top_composition_blocks_width_mismatched_top_link_guidance` in `crates/specforge/src/ir/adapters.rs` so explicit top links with incompatible endpoint widths preserve width-compatible repair guidance.
+- The regression proves the blocked top candidate and aggregate `.fsm` renderability carry `keep first-slice top-link endpoints width-compatible` while retaining topology-link support IDs and high automation confidence.
+- This separates the explicit top-link compatibility gate from child/top canonical width-conflict blockers and keeps R6 focused on honest `?top:name` emission boundaries.
+
 ## Session update (2026-05-06 `.fsm` top-target boundary role guidance lock)
 - Added `top_composition_blocks_top_target_direction_role_guidance` in `crates/specforge/src/ir/adapters.rs` so a top-boundary target declared as input, while topology needs output, preserves endpoint-role repair guidance.
 - The regression pairs the top-target conflict with the top-source boundary lock and keeps direction-conflict guidance on both blocked top and aggregate `.fsm` renderability.

@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `e517e9be4e963bc1aceddc1698ed7e03b863d178`
-- latest_commit_brief_message: `fix(adapter): surface top-boundary role guidance`
-- note: new local `N=200` batch is active; slice 43 is committed, slice 44 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `9f61d51b380073a6b0e3ab62481129be5c4b44d7`
+- latest_commit_brief_message: `test(adapter): lock top-target boundary role guidance`
+- note: new local `N=200` batch is active; slice 44 is committed, slice 45 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `9f61d51` test(adapter): lock top-target boundary role guidance
 - `e517e9b` fix(adapter): surface top-boundary role guidance
 - `ec5436a` test(adapter): lock top-link target role guidance
 - `a64aaa1` fix(adapter): surface top-link role guidance
 - `f2dfb42` test(adapter): lock unemitted child-source guidance
 - `45d3cbe` test(adapter): lock unemitted child-target guidance
-- `a21e282` test(adapter): lock undeclared top-source guidance
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 44]`
-- files in flight for new batch slice 44:
+- branch state before the next commit: `main...origin/main [ahead 45]`
+- files in flight for new batch slice 45:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -49,29 +49,29 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `43`
+- completed_count: `44`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - regression-lock top-target boundary role conflicts carrying endpoint-role guidance
-  - prove a public top target declared as input but used as a top-link target keeps role guidance beside boundary direction-conflict guidance
-  - preserve top-port declaration, topology-link support IDs, and selected top inventory evidence while the role conflict remains review-visible
+  - regression-lock explicit top-link width mismatch blockers carrying width-compatible repair guidance
+  - prove a mismatched explicit top-link endpoint pair keeps `keep first-slice top-link endpoints width-compatible` guidance on blocked top and aggregate `.fsm` renderability
+  - preserve topology-link support IDs and high-confidence link provenance while the child module remains independently renderable
   - keep live docs and mdBook aligned with this blocked-artifact guidance surface
 - tracker effect:
-  - expected live-status tracker gain: `.fsm top-target boundary role conflicts now preserve endpoint-role repair guidance: Done`
+  - expected live-status tracker gain: `.fsm top-link width mismatch blockers now preserve width-compatible repair guidance: Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_top_target_direction_role_guidance` passed with `1` test
-  - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `91` tests
+  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_width_mismatched_top_link_guidance` passed with `1` test
+  - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `92` tests
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed after live-doc/mdBook sync
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `148/148` fixtures
-  - `bash scripts/run_ci.sh` passed with `612` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - `bash scripts/run_ci.sh` passed with `613` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
 - current known local CI baseline:
-  - current slice passed `612` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - current slice passed `613` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - current slice passed `148/148` tracked KG fixtures
 
 ## Next exact steps
-- commit slice 44 without pushing, run post-commit checks, and continue slice 45
+- commit slice 45 without pushing, run post-commit checks, and continue slice 46
