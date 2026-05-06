@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` child topology direction conflict support lock)
+- Tightened `top_composition_blocks_conflicting_child_link_topology_directions` in `crates/specforge/src/ir/adapters.rs` so the blocked producer `output_data` inventory entry retains both contradictory topology-link support-ID sets and the local signal declaration support.
+- The adapter already blocked graph-backed direction conflict after module-local direction hints were cleared; this regression now proves the competing topology evidence and declaration evidence remain inspectable.
+- This pairs with the child topology width conflict lock so both topology conflict dimensions preserve evidence trails.
+
 ## Session update (2026-05-06 `.fsm` child topology width conflict support lock)
 - Updated adapter signal-inventory registration in `crates/specforge/src/ir/adapters.rs` so interface signal records contribute their own supporting statement IDs in addition to the enclosing interface id.
 - Tightened `top_composition_blocks_conflicting_child_topology_widths` so the blocked producer `output_data` inventory entry retains both explicit signal declaration support and topology-link support when width evidence conflicts.

@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` child topology direction conflict support lock
+- New batch slice 81/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_conflicting_child_link_topology_directions` now asserts the blocked producer `output_data` inventory entry preserves both contradictory topology-link support-ID sets and the child signal declaration support while graph-backed direction remains conflicted.
+- This is a coverage-only lock for the blocked child topology direction conflict path.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` child topology width conflict support lock
 - New batch slice 80/100 tightens behavior and coverage in `crates/specforge/src/ir/adapters.rs`.
 - Adapter signal-inventory registration now carries signal-record supporting statement IDs alongside the enclosing interface id, so module-local signal declarations remain auditable after later topology overlays.

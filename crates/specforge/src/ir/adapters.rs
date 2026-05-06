@@ -13291,6 +13291,52 @@ mod tests {
     fn top_composition_blocks_conflicting_child_link_topology_directions() -> Result<()> {
         let tempdir = tempdir()?;
         let mut intent_ir = build_conflicting_child_link_topology_intent_ir(tempdir.path())?;
+        let (topology_support_id_sets, output_data_support_ids) = {
+            let explicit_top = intent_ir
+                .explicit_tops
+                .iter()
+                .find(|top| top.top_name == "datapath")
+                .expect("explicit top should be present");
+            let topology_support_id_sets = explicit_top
+                .links
+                .iter()
+                .filter(|link| {
+                    (link.source.instance_name.as_deref() == Some("producer")
+                        && link.source.signal_name == "output_data")
+                        || (link.target.instance_name.as_deref() == Some("producer")
+                            && link.target.signal_name == "output_data")
+                })
+                .map(super::explicit_top_link_supporting_ids)
+                .collect::<Vec<_>>();
+            assert_eq!(topology_support_id_sets.len(), 2);
+            assert!(
+                topology_support_id_sets
+                    .iter()
+                    .all(|support_ids| !support_ids.is_empty()),
+                "conflicting topology-link provenance should be present"
+            );
+            let output_data = intent_ir
+                .explicit_modules
+                .iter()
+                .find(|module| module.module_name == "producer_core")
+                .and_then(|module| {
+                    module.interfaces.iter().find_map(|interface| {
+                        interface
+                            .signal_records
+                            .iter()
+                            .find(|signal| signal.signal_name == "output_data")
+                    })
+                })
+                .expect("producer output_data signal declaration should be present");
+            (
+                topology_support_id_sets,
+                output_data.supporting_statement_ids.clone(),
+            )
+        };
+        assert!(
+            !output_data_support_ids.is_empty(),
+            "child output signal provenance should be present"
+        );
         clear_explicit_module_direction_hints(&mut intent_ir);
         intent_ir.write_to_disk()?;
 
@@ -13323,6 +13369,22 @@ mod tests {
                 .mention_categories
                 .iter()
                 .any(|category| category == "module_topology_link")
+        );
+        for support_ids in &topology_support_id_sets {
+            assert!(
+                support_ids
+                    .iter()
+                    .any(|id| output_data.supporting_canonical_ids.contains(id))
+            );
+        }
+        assert!(
+            output_data_support_ids
+                .iter()
+                .any(|id| output_data.supporting_canonical_ids.contains(id))
+        );
+        assert_eq!(
+            output_data.automation_confidence,
+            AutomationConfidence::High
         );
         assert!(!producer.renderability.is_renderable);
         assert!(

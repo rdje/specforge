@@ -352,6 +352,7 @@
 - `.fsm` sibling child-link width conflicts now regression-lock both topology-link support ID sets: Done
 - `.fsm` top child-link width conflicts now regression-lock both topology-link support ID sets: Done
 - `.fsm` child topology width conflicts now preserve signal and topology support IDs: Done
+- `.fsm` child topology direction conflicts now preserve signal and topology support IDs: Done
 - `.fsm` transitive child-width recovery now regression-locks support IDs and automation confidence: Done
 - `.fsm` recovered top-root confidence now regression-locks graph-backed top-port support IDs: Done
 - `.fsm` child-declaration top-root confidence now regression-locks child support IDs: Done

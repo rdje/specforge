@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` child topology direction conflict support lock)
+
+### Added: conflicting child-link direction provenance coverage
+- Tightened `top_composition_blocks_conflicting_child_link_topology_directions` so a blocked child output now proves both contradictory topology-link support-ID sets survive in the selected module inventory.
+- The test also locks preservation of the child output signal declaration support after direction hints are cleared and topology evidence creates the conflict.
+- This keeps both link directions and the local signal declaration auditable while graph-backed direction conflict blocks `.fsm` emission.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_child_link_topology_directions` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` child topology width conflict support lock)
 
 ### Fixed: signal-level support preservation in adapter inventories
