@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` multi-child no-link renderable block
+- New batch slice 164/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_multi_child_without_links_guidance` now asserts a multi-child top with no explicit link records has no renderable top root and no aggregate renderable source document.
+- This locks the no-link composition blocker against stale `?top` output before topology links are supplied.
+- Focused multi-child no-link coverage, the adapter suite, fmt, docs CI, KG bench, and full CI passed; user-requested `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is active.
+
 ## 2026-05-06 `.fsm` widthless top-port renderable block
 - New batch slice 163/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_widthless_top_port_without_width_recovery` now asserts a public top port with no numeric width recovery has no renderable top root and no aggregate renderable source document.
