@@ -39,6 +39,7 @@
 - `.fsm` links from undeclared top sources now preserve composition topology residual decisions: Done
 - `.fsm` links to undeclared top targets now preserve composition topology residual decisions: Done
 - `.fsm` links to unemitted child targets now preserve composition topology residual decisions: Done
+- `.fsm` missing-child top blockers now preserve composition topology residual decisions: Done
 - `.fsm` multi-child no-link top blockers now preserve composition topology residual decisions: Done
 - `.fsm` no-child top blockers now preserve composition topology residual decisions: Done
 - `.fsm` no-top-port blockers now preserve composition topology residual decisions: Done
@@ -457,6 +458,7 @@
 - `.fsm` unemitted child endpoint guidance now names source and target repair lanes consistently: Done
 - `.fsm` missing-child top blockers now preserve child-source enrichment guidance: Done
 - `.fsm` primary missing-child top blockers now regression-lock child-source enrichment guidance: Done
+- `.fsm` missing-child top blockers now preserve composition topology residual decisions: Done
 - `.fsm` duplicate child-instance top blockers now preserve deduplication enrichment guidance: Done
 - `.fsm` duplicate child-instance top blockers now preserve composition topology residual decisions: Done
 - `.fsm` duplicate top-direction blockers now preserve top-port deduplication enrichment guidance: Done

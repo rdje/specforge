@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` missing-child residual lock
+- New batch slice 72/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `keeps_top_composition_blocked_when_child_module_is_missing` now asserts that missing child-module references emit the composition topology residual.
+- This pairs child-source declaration guidance with structured residual diagnostics while preserving top-port and unresolved child support IDs.
+- Focused missing-child regression, adapter suite, fmt, docs, KG bench, full CI, and the user-requested `cargo sweep --time 1` all passed.
+
 ## 2026-05-06 `.fsm` unemitted child endpoint guidance alignment
 - New batch slice 71/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_link_to_unemitted_child_port` is renamed to `top_composition_blocks_link_from_unemitted_child_port` so the legacy regression matches the source-side blocker it covers.

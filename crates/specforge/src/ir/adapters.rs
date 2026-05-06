@@ -16747,11 +16747,18 @@ mod tests {
                 .iter()
                 .any(|reason| { reason.contains("missing explicit module `missing_module`") })
         );
+        let composition_residual = adapter
+            .residual_decisions
+            .iter()
+            .find(|packet| packet.packet_id == "fsm_adapter_composition_topology")
+            .expect("missing-child top should surface a composition residual");
         assert!(
-            adapter
-                .residual_decisions
+            composition_residual
+                .candidate_interpretations
                 .iter()
-                .any(|packet| packet.packet_id == "fsm_adapter_composition_topology")
+                .any(|interpretation| interpretation
+                    .description
+                    .contains("child-module references"))
         );
 
         Ok(())

@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` missing-child residual lock)
+- Added a composition residual interpretation assertion to `keeps_top_composition_blocked_when_child_module_is_missing` in `crates/specforge/src/ir/adapters.rs`.
+- Missing child-module reference blockers now keep child-module repair visible in `fsm_adapter_composition_topology` while retaining existing child-source declaration guidance.
+- The live tracker and roadmap now mark the missing-child residual guarantee as closed; focused adapter coverage, full adapter coverage, KG bench, docs, full CI, and `cargo sweep --time 1` all passed.
+
 ## Session update (2026-05-06 `.fsm` unemitted child endpoint guidance alignment)
 - Renamed the legacy unemitted child-port composition regression in `crates/specforge/src/ir/adapters.rs` so its source-side endpoint blocker is explicit in the test name.
 - Added a top-root selection assertion to keep that regression anchored to explicit top composition.
