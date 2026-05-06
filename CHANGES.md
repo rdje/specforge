@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` graph-backed DT size-entry direction lock)
+
+### Added: standalone DT size entries lock graph-backed direction recovery
+- Tightened `standalone_dt_recovers_directions_from_unambiguous_actor_ports` so renderable `.fsm` size entries must use actor-port graph directions when flat direct-interface `direction_hint` values are absent.
+- The regression now proves `DATA_IN`, `DATA_OUT`, and `ZERO_FLAG` keep graph-backed signal-inventory provenance and also lower into renderable size entries with the expected input/output roles and widths.
+- Synced the live tracker, roadmap, and mdBook with the graph-backed renderable-size-entry guarantee.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge standalone_dt_recovers_directions_from_unambiguous_actor_ports` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148/148` fixtures)
+- `bash scripts/run_ci.sh` -> passed (`614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation)
+- Deferred: user-requested `cargo sweep --time 1` until safe because a `target/release/tool_matrix` process is active.
+
 ## 2026-05-06 (NLP alias source-label prefix filter)
 
 ### Fixed: Form 2 alias learning rejects source-layout labels

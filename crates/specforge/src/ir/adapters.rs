@@ -6914,6 +6914,23 @@ mod tests {
             );
             assert_eq!(signal.automation_confidence, AutomationConfidence::High);
         }
+        let renderable_module = fsm
+            .renderable_module
+            .as_ref()
+            .expect("graph-backed standalone DT should produce a renderable module");
+        for (signal_name, direction_hint, width) in [
+            ("DATA_IN", InterfaceSignalDirection::Input, 8),
+            ("DATA_OUT", InterfaceSignalDirection::Output, 8),
+            ("ZERO_FLAG", InterfaceSignalDirection::Output, 1),
+        ] {
+            let size_entry = renderable_module
+                .size_entries
+                .iter()
+                .find(|entry| entry.signal_name == signal_name)
+                .unwrap_or_else(|| panic!("{signal_name} should have a renderable size entry"));
+            assert_eq!(size_entry.direction_hint, direction_hint);
+            assert_eq!(size_entry.width, width);
+        }
         assert!(emitted_text.contains("(?dt:comb_dt"));
         assert!(emitted_text.contains("(DATA_OUT = DATA_IN)"));
         assert!(emitted_text.contains("(ZERO_FLAG = 1)"));

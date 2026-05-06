@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` graph-backed DT size-entry direction lock)
+- Tightened `standalone_dt_recovers_directions_from_unambiguous_actor_ports` in `crates/specforge/src/ir/adapters.rs`.
+- The test now proves graph-backed actor-port directions are consumed by renderable `.fsm` size entries for `DATA_IN`, `DATA_OUT`, and `ZERO_FLAG` when flat direct-interface `direction_hint` values are absent.
+- This locks the downstream size-entry consumer of `preferred_signal_direction_hint(...)` in the standalone DT path; focused adapter coverage, full adapter coverage, fmt, docs CI, KG bench, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 NLP alias source-label prefix filter)
 - Added a bounded source-layout label guard to `extract_alias_phrase()` in `crates/specforge/src/commands/nlp_enrich.rs`.
 - Form 2 alias learning now rejects subjects prefixed by labels such as `Table 3:`, `Figure 4.2`, and `Section 3.1`, preventing source-region layout text from entering `signal_alias_map`.

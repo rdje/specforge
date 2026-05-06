@@ -740,6 +740,7 @@
 - SystemVerilog/Verilog/VHDL adapter expansion: Horizon
 - Adapter validation (SystemVerilog/Verilog/VHDL targets): Horizon
 - Actor-relative direction model in `SemanticIR` / `IntentIR`: In Progress
+- Standalone `.fsm` DT renderable size entries now consume graph-backed actor-port directions: Done
 - NLP alias learning now rejects outline/list marker prefixes before storing Form 2 aliases: Done
 - NLP alias learning now trims wrapper punctuation from Form 2 alias words: Done
 - NLP alias learning now uses markdown link labels for Form 2 aliases: Done

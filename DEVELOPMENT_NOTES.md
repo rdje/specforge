@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` graph-backed DT size-entry direction lock
+- New batch slice 146/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `standalone_dt_recovers_directions_from_unambiguous_actor_ports` now asserts the renderable module `(+size ...)` entries consume graph-backed actor-port direction recovery when flat direct-interface `direction_hint` values are absent.
+- This locks the downstream renderable-size-entry consumer, not just the intermediate signal inventory: `DATA_IN`, `DATA_OUT`, and `ZERO_FLAG` must lower with the expected input/output roles and widths.
+- Focused graph-backed standalone DT coverage, the adapter suite, fmt, docs CI, KG bench, and full CI passed; user-requested `cargo sweep --time 1` remains deferred until no target-tree process is active.
+
 ## 2026-05-06 NLP alias source-label prefix filter
 - New batch slice 145/200 updates `crates/specforge/src/commands/nlp_enrich.rs`.
 - `extract_alias_phrase()` now rejects source-layout label prefixes such as `Table 3:`, `Figure 4.2`, and `Section 3.1` before Form 2 alias normalization.

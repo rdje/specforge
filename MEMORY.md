@@ -21,24 +21,24 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `1de996e3f03ad5b3738366cd431bced7e5d98146`
-- latest_commit_brief_message: `test(adapter): lock child source guidance diagnostics`
-- note: new local `N=200` batch is active; slice 144 is committed, slice 145 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `c8a139c113f830605cf70c02adeecee8e813ef3c`
+- latest_commit_brief_message: `test(nlp): reject source-label aliases`
+- note: new local `N=200` batch is active; slice 145 is committed, slice 146 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `c8a139c` test(nlp): reject source-label aliases
 - `1de996e` test(adapter): lock child source guidance diagnostics
 - `3685077` test(adapter): lock child actor direction diagnostics
 - `8d4b0f4` test(adapter): lock child topology direction diagnostics
 - `f6ff199` test(adapter): lock top-link width diagnostics
 - `56f6d2e` test(adapter): lock top child-link width diagnostics
-- `19f3926` test(adapter): lock sibling link width diagnostics
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 145]`
-- files in flight for new batch slice 145:
-  - `crates/specforge/src/commands/nlp_enrich.rs`
+- branch state before the next commit: `main...origin/main [ahead 146]`
+- files in flight for new batch slice 146:
+  - `crates/specforge/src/ir/adapters.rs`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `ROADMAP.md`
   - `CHANGES.md`
@@ -49,22 +49,22 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `144`
+- completed_count: `145`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - harden `extract_alias_phrase()` so Form 2 alias learning rejects source-layout label prefixes such as `Table 3:`, `Figure 4.2`, and `Section 3.1`
-  - prove those labels cannot enter `signal_alias_map` while existing prose alias, markdown marker, punctuation, and link-label behavior remains covered
-  - sync the live tracker, roadmap, mdBook, Rust analysis, and continuity docs with the alias source-label filter
+  - lock standalone DT renderable `.fsm` size entries as consumers of graph-backed actor-port direction recovery when flat direct-interface `direction_hint` values are absent
+  - prove `DATA_IN`, `DATA_OUT`, and `ZERO_FLAG` lower with expected input/output roles and widths from graph-backed signal inventory
+  - sync the live tracker, roadmap, mdBook, Rust analysis, and continuity docs with the graph-backed size-entry guarantee
 - tracker effect:
-  - live-status tracker changed; new row marks NLP alias learning source-layout label rejection as `Done`
+  - live-status tracker changed; new row marks standalone `.fsm` DT renderable size entries consuming graph-backed actor-port directions as `Done`
 - verification status:
   - implementation and live-doc sync are complete
-  - focused alias parser coverage passed (`10` tests)
-  - NLP-enrich module coverage passed (`22` tests)
+  - focused graph-backed standalone DT regression passed (`1` test)
+  - adapter suite passed (`92` tests)
   - formatting passed
   - docs CI passed
   - KG bench passed (`148/148` fixtures)
@@ -74,9 +74,9 @@
 - current known local CI baseline:
   - current in-flight slice passed `614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - current in-flight slice passed `148/148` tracked KG fixtures
-  - current slice has passed focused parser/module tests and formatting
+  - current slice has passed focused graph-backed standalone DT regression, adapter suite, and formatting
   - latest `cargo sweep --time 1` attempt was deferred because `target/release/tool_matrix` is active
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- run final commit guards and commit slice 145 without pushing
+- run final commit guards and commit slice 146 without pushing
