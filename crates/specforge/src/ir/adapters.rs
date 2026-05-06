@@ -12959,9 +12959,24 @@ mod tests {
                 .required_canonical_enrichments
                 .iter()
                 .any(|enrichment| enrichment
+                    == "deduplicate explicit top-port records before lowering `?top:name`")
+        );
+        assert!(
+            top_candidate
+                .renderability
+                .required_canonical_enrichments
+                .iter()
+                .any(|enrichment| enrichment
                     == "resolve conflicting top boundary port direction evidence before lowering `?top:name`")
         );
         assert!(!fsm.renderability.is_renderable);
+        assert!(
+            fsm.renderability
+                .required_canonical_enrichments
+                .iter()
+                .any(|enrichment| enrichment
+                    == "deduplicate explicit top-port records before lowering `?top:name`")
+        );
         assert!(
             fsm.renderability
                 .required_canonical_enrichments

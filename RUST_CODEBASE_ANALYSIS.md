@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` duplicate top-direction dedup guidance lock)
+- Tightened `top_composition_keeps_duplicate_top_port_direction_conflict_unresolved` in `crates/specforge/src/ir/adapters.rs` so duplicate top-port direction blockers retain explicit top-port deduplication guidance on the blocked top candidate and aggregate `.fsm` renderability.
+- Existing assertions still cover direction-conflict repair guidance, both duplicate declaration support-ID sets, unresolved recovered direction, selected signal-inventory provenance, and high automation confidence.
+- This keeps the duplicate top-port direction blocker actionable as both a duplicate-declaration repair lane and a direction-conflict repair lane.
+
 ## Session update (2026-05-06 `.fsm` duplicate child-instance guidance lock)
 - Added `top_composition_blocks_duplicate_child_instance_guidance` in `crates/specforge/src/ir/adapters.rs` so duplicate top child instance blockers retain child-instance deduplication guidance on the blocked top candidate and aggregate `.fsm` renderability.
 - The regression also proves both duplicate child declarations keep distinct support IDs while the resolved child root kind and source module remain visible.

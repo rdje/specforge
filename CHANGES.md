@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` duplicate top-direction dedup guidance lock)
+
+### Added: duplicate top-port deduplication guidance coverage
+- Tightened `top_composition_keeps_duplicate_top_port_direction_conflict_unresolved` so duplicate top-port direction blockers prove top-port deduplication guidance survives on the blocked top candidate and aggregate `.fsm` renderability.
+- Existing checks still prove direction-conflict repair guidance, both duplicate declaration support-ID sets, unresolved recovered direction, selected signal-inventory provenance, and high automation confidence.
+- This keeps duplicate top-port blockers actionable both as a deduplication problem and as a direction-conflict problem.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_keeps_duplicate_top_port_direction_conflict_unresolved` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`81` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`602` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` duplicate child-instance guidance lock)
 
 ### Added: duplicate child-instance enrichment coverage

@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `68f9ef7962a4321b1b144be61709c08e2d8b0ac9`
-- latest_commit_brief_message: `test(adapter): lock primary missing child guidance`
-- note: new local `N=200` batch is active; slice 30 is committed, slice 31 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `5f63f0d64936c88a26b1b9fa27dec0975f1dfb89`
+- latest_commit_brief_message: `test(adapter): lock duplicate child guidance`
+- note: new local `N=200` batch is active; slice 31 is committed, slice 32 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `5f63f0d` test(adapter): lock duplicate child guidance
 - `68f9ef7` test(adapter): lock primary missing child guidance
 - `1502073` test(adapter): lock missing child guidance
 - `1f863e5` test(adapter): lock unemitted child-link guidance
 - `a6753a1` test(adapter): lock parametric top guidance
 - `fa00af5` test(adapter): lock widthless top guidance
-- `3efa702` test(adapter): lock duplicate top direction guidance
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 31]`
-- files in flight for new batch slice 31:
+- branch state before the next commit: `main...origin/main [ahead 32]`
+- files in flight for new batch slice 32:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -49,21 +49,21 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `30`
+- completed_count: `31`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - regression-lock child-instance deduplication guidance for duplicate top child declarations
-  - prove blocked top candidate and aggregate `.fsm` renderability preserve the duplicate-child enrichment guidance
-  - preserve both duplicate child declaration support-ID sets, resolved source module, and resolved child root kind
+  - regression-lock explicit top-port deduplication guidance for duplicate top-port direction blockers
+  - prove blocked top candidate and aggregate `.fsm` renderability preserve deduplication guidance alongside direction-conflict guidance
+  - preserve both duplicate top-port declaration support-ID sets, unresolved recovered direction, selected signal-inventory provenance, and high automation confidence
   - keep live docs and mdBook aligned with this blocked-artifact guidance surface
 - tracker effect:
-  - expected live-status tracker gain: `.fsm duplicate child-instance top blockers now preserve deduplication enrichment guidance: Done`
+  - expected live-status tracker gain: `.fsm duplicate top-direction blockers now preserve top-port deduplication enrichment guidance: Done`
 - verification status:
-  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_duplicate_child_instance_guidance` passed with `1` test
+  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_keeps_duplicate_top_port_direction_conflict_unresolved` passed with `1` test
   - `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `81` tests
   - `cargo fmt --manifest-path Cargo.toml -- --check` passed
   - `bash scripts/run_docs_ci.sh` passed after live-doc/mdBook sync
@@ -74,4 +74,4 @@
   - current slice passed `148/148` tracked KG fixtures
 
 ## Next exact steps
-- run final guards, commit slice 31 without pushing, and continue slice 32
+- run final guards, commit slice 32 without pushing, and continue slice 33
