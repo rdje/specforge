@@ -177,6 +177,7 @@ Top-boundary actor-port direction conflicts also emit the composition-topology r
 That actor-port direction residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
 Top-boundary top-link direction conflicts preserve the same direction repair guidance while retaining topology-link support.
 Top-boundary top-link direction conflicts also emit the composition-topology residual decision so explicit-top-port repair remains visible in structured diagnostics.
+That top-link direction residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
 Duplicate top-boundary direction declarations also preserve that direction repair guidance while retaining both duplicate declaration support-ID sets.
 Duplicate top-boundary direction blockers also preserve explicit top-port deduplication guidance on both blocked renderability surfaces.
 Duplicate top-boundary direction blockers also emit the composition-topology residual decision so explicit-top-port repair remains visible in structured diagnostics.

@@ -23,6 +23,7 @@
 - `.fsm` top actor-port width conflicts now preserve composition topology residual decisions: Done
 - `.fsm` top actor-port width residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` top-link direction conflicts now preserve composition topology residual decisions: Done
+- `.fsm` top-link direction residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` top child-link width conflicts now preserve composition topology residual decisions: Done
 - `.fsm` sibling child-link width conflicts now preserve composition topology residual decisions: Done
 - `.fsm` child topology width conflicts now preserve composition topology residual decisions: Done
@@ -499,6 +500,7 @@
 - `.fsm` top-link direction conflicts now regression-lock support IDs and automation confidence: Done
 - `.fsm` top-link direction conflicts now preserve top-boundary direction enrichment guidance: Done
 - `.fsm` top-link direction conflicts now preserve composition topology residual decisions: Done
+- `.fsm` top-link direction residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` duplicate top-port direction conflicts now regression-lock support IDs and automation confidence: Done
 - `.fsm` duplicate top-port direction conflicts now preserve top-boundary direction enrichment guidance: Done
 - `.fsm` duplicate top-port width conflicts now regression-lock support IDs and automation confidence: Done

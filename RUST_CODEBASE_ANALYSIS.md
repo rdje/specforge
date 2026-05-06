@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` top-link direction residual diagnostics)
+- Added composition residual confidence and blocker-text assertions to `top_composition_keeps_conflicting_top_port_direction_unresolved` in `crates/specforge/src/ir/adapters.rs`.
+- Top-link-derived top-boundary direction conflicts now prove boundary direction-conflict guidance, endpoint-role guidance, top-port/topology-link support and confidence, low-confidence `fsm_adapter_composition_topology` diagnostics, topology-detail blocker text, and both repair interpretations stay visible together.
+- The live tracker and roadmap now mark top-link direction residual diagnostics as closed; focused adapter coverage, full adapter coverage, KG bench, docs, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 `.fsm` top actor width residual diagnostics)
 - Added composition residual confidence and blocker-text assertions to `top_composition_blocks_conflicting_top_actor_port_width` in `crates/specforge/src/ir/adapters.rs`.
 - Top actor-port width conflicts now prove top-boundary width-conflict guidance, top-port and graph actor-port support/confidence, low-confidence `fsm_adapter_composition_topology` diagnostics, topology-detail blocker text, and explicit-top-port repair guidance stay visible together.
