@@ -6212,8 +6212,9 @@ mod tests {
     use crate::ir::evidence::EvidenceIr;
     use crate::ir::intent::IntentIr;
     use crate::ir::semantic::{
-        ActorPortRecord, ActorRelativeDirection, InterfaceSignalDirection, SemanticIr,
-        SystemResetPolarity, SystemResetTargetKind, SystemResetTimingRelation,
+        ActorPortRecord, ActorRelativeDirection, ControlActionRecord, ControlBlockRole,
+        InterfaceSignalDirection, SemanticIr, SystemResetPolarity, SystemResetTargetKind,
+        SystemResetTimingRelation,
     };
     use crate::ir::source::{AutomationConfidence, SourceIr, WidthHint};
 
@@ -7783,6 +7784,47 @@ mod tests {
         assert_eq!(
             system_contract.target_kind,
             SystemResetTargetKind::DedicatedResetPin
+        );
+        let renderable_module = fsm
+            .renderable_module
+            .as_ref()
+            .expect("reset-block FSM should retain a renderable module");
+        assert_eq!(renderable_module.states.len(), 2);
+        let idle = renderable_module
+            .states
+            .iter()
+            .find(|state| state.state_name == "idle")
+            .expect("idle state should remain renderable");
+        assert!(idle.is_initial);
+        assert!(idle
+            .blocks
+            .iter()
+            .flat_map(|block| &block.branches)
+            .flat_map(|branch| &branch.actions)
+            .any(|action| matches!(action, ControlActionRecord::Transition { target_state } if target_state == "busy")));
+        let busy = renderable_module
+            .states
+            .iter()
+            .find(|state| state.state_name == "busy")
+            .expect("busy state should remain renderable");
+        assert!(!busy.is_initial);
+        assert!(busy
+            .blocks
+            .iter()
+            .flat_map(|block| &block.branches)
+            .flat_map(|branch| &branch.actions)
+            .any(|action| matches!(action, ControlActionRecord::Transition { target_state } if target_state == "idle")));
+        assert!(
+            renderable_module
+                .blocks
+                .iter()
+                .any(|block| block.role == ControlBlockRole::ResetSynchronous)
+        );
+        assert!(
+            renderable_module
+                .blocks
+                .iter()
+                .any(|block| block.role == ControlBlockRole::ResetAsynchronous)
         );
         assert!(emitted_text.contains("(?fsm:reset_fsm"));
         assert!(emitted_text.contains("(+system"));

@@ -326,6 +326,7 @@
 - `.fsm` standalone DT lowering now preserves canonical DT candidate identity and baseline signal inventory: Done
 - `.fsm` standalone sequential DT lowering now preserves canonical DT candidate identity and system signal inventory: Done
 - `.fsm` structured-FSM lowering now preserves named state and transition candidates: Done
+- `.fsm` reset-block structured-FSM lowering now preserves renderable state transitions and reset block roles: Done
 - `.fsm` top-root signal inventory now preserves flat-vs-graph top-port direction disagreement without mislabeling graph provenance as conflicted: Done
 - mdBook now documents blocked `.fsm` adapter renderability together with flat/graph signal-inventory provenance: Done
 - `.fsm` adapter signal inventory now preserves parametric width provenance and reports symbolic widths distinctly from missing numeric width evidence: Done

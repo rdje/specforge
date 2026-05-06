@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` reset-block renderable-module support lock)
+
+### Added: reset-block renderable graph coverage
+- Tightened `builds_renderable_structured_fsm_with_reset_blocks` so the reset-block structured FSM now proves its renderable module keeps `idle` and `busy` states.
+- The test locks renderable transition actions for `idle -> busy` and `busy -> idle` plus synchronous and asynchronous reset block roles.
+- This keeps the reset-block path auditable through the adapter artifact instead of relying only on emitted `.fsm` text checks.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge builds_renderable_structured_fsm_with_reset_blocks` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`80` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148` fixtures, `0` failures)
+- `bash scripts/run_ci.sh` -> passed (`601` Rust tests, warning-deny Clippy/rustdoc, mdBook validation)
+
 ## 2026-05-06 (`.fsm` structured FSM candidate support lock)
 
 ### Added: structured state-graph candidate coverage

@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` reset-block renderable-module support lock)
+- Tightened `builds_renderable_structured_fsm_with_reset_blocks` in `crates/specforge/src/ir/adapters.rs` so the reset-block structured-FSM artifact retains auditable renderable-module state coverage for `idle` and `busy`.
+- The renderable state bodies now explicitly prove transition actions back and forth while module-level reset blocks preserve both `ResetSynchronous` and `ResetAsynchronous` roles.
+- This records the important adapter distinction that this reset-block fixture is audited through its renderable module rather than through top-level state candidates.
+
 ## Session update (2026-05-06 `.fsm` structured FSM candidate support lock)
 - Tightened `builds_renderable_structured_fsm_adapter_artifact` in `crates/specforge/src/ir/adapters.rs` so the renderable structured-FSM artifact retains named `idle` and `busy` state candidates.
 - The transition candidate list now explicitly proves `idle -> busy` and `busy -> idle` survive in the adapter artifact while emitted system, state, transition, and action text remains unchanged.

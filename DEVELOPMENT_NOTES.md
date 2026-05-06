@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` reset-block renderable-module support lock
+- New batch slice 96/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
+- `builds_renderable_structured_fsm_with_reset_blocks` now asserts the renderable module keeps `idle` and `busy` states, transition actions between them, and both synchronous and asynchronous reset block roles.
+- This is a coverage-only lock for the reset-block structured-FSM path that already emits system, init, reset, state, and transition text.
+- Full adapter coverage remains `80` adapter tests, full CI remains `601` Rust tests, and KG bench remains `148/148`.
+
 ## 2026-05-06 `.fsm` structured FSM candidate support lock
 - New batch slice 95/100 tightens coverage in `crates/specforge/src/ir/adapters.rs`.
 - `builds_renderable_structured_fsm_adapter_artifact` now asserts the renderable structured FSM keeps named `idle` and `busy` state candidates plus `idle -> busy` and `busy -> idle` transition candidates.
