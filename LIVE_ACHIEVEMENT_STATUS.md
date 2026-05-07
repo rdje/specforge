@@ -331,6 +331,7 @@
 - KG benchmark harness now locks actorless temporal rule clock/cycle shape: Done
 - KG benchmark harness now locks unbounded temporal rule clock/actor shape: Done
 - KG benchmark harness now locks fully grounded temporal no-replay split: Done
+- KG benchmark harness now locks prior-guided temporal rule exact shape: Done
 - KG benchmark harness now includes AXI read-address timing coverage: Done
 - KG benchmark harness now includes AXI read-address ID stability coverage: Done
 - KG benchmark harness now includes AXI write-address ID stability coverage: Done

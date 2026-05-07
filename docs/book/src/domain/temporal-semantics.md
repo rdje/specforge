@@ -184,6 +184,7 @@ For example, `CS_N is asserted when LOW` is enough local evidence to treat `ASSE
 The cross-document prior store can help with timing phrase recovery.
 
 For example, if validated documents taught that a phrase like `one beat later` indicates a one-cycle window, a new document can use that prior when the same phrase appears locally.
+The KG benchmark now checks that prior-guided recovery as exact rule shape too: the recovered rule must keep local clock grounding, edge, one-cycle window, asserted-value predicate, and supporting statement id.
 
 The safety rule is still strict:
 

@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for prior-guided temporal rule shape)
+- Tightened `temporal_prior_guided_cycle_window_gold` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts exact `temporal_rules_include` shape for the prior-guided `one beat later` recovery, including local clock grounding, rising edge, one-cycle window, asserted-value predicate, and supporting statement id.
+- This is fixture-level prior-consumption hardening with no production code change; `kg-bench`, corpus-KB projection, and docs CI passed with `150/150` tracked fixtures.
+
 ## Session update (2026-05-07 KG fixture for fully grounded temporal no-replay)
 - Tightened `temporal_cycle_window_grounded_gold` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now explicitly excludes cycle-window, actor-grounding, and clock-grounding replay findings for the fully grounded bounded rule at both canonical validation stages.

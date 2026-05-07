@@ -1,5 +1,16 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for prior-guided temporal rule shape)
+
+### Improved: temporal priors lock exact canonical rule shape
+- Tightened `temporal_prior_guided_cycle_window_gold` with exact `temporal_rules_include` expectations at `SemanticIR` and `IntentIR`.
+- The fixture now proves the prior-guided `one beat later` recovery keeps the local `clk` rising-edge grounding, one-cycle window, asserted-value predicate, and supporting statement id.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for fully grounded temporal no-replay)
 
 ### Improved: bounded grounded rules exclude every temporal replay lane
