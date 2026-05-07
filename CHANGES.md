@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for cycle-qualified VLM timing total hint exclusion)
+
+### Improved: cycle-qualified value labels lock total semantic-hint absence
+- Tightened `vlm_timing_cycle_qualified_signal_value_annotation_negative` with total `signal_semantic_hints = 0` at `EvidenceIR`.
+- The fixture now proves cycle-qualified labels such as `XREQ HIGH at T1` emit no semantic-role hints from any source while waveform samples still survive as temporal evidence.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench vlm_timing_cycle_qualified_signal_value_annotation_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for indexed VLM timing total hint exclusion)
 
 ### Improved: indexed timing value labels lock total semantic-hint absence
