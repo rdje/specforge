@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` reset-polarity renderable block)
+
+### Added: reset-polarity blockers cannot leak output
+- Tightened `keeps_reset_polarity_blocked_when_signal_name_cannot_preserve_it` so reset-polarity blockers leave no renderable module and no aggregate `.fsm` source document.
+- This locks reset-name polarity mismatches against stale DT-root output while preserving system-contract provenance and system-surface repair guidance.
+- Synced the live tracker, roadmap, and mdBook with the reset-polarity renderable-block guarantee.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge keeps_reset_polarity_blocked_when_signal_name_cannot_preserve_it` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148/148` fixtures)
+- `bash scripts/run_ci.sh` -> passed (`614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation)
+- `cargo sweep --time 1` -> deferred because `target/release/tool_matrix` is active
+
 ## 2026-05-06 (`.fsm` missing system-contract renderable block)
 
 ### Added: missing system contracts cannot leak output

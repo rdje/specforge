@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` reset-polarity renderable block
+- New batch slice 195/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `keeps_reset_polarity_blocked_when_signal_name_cannot_preserve_it` now asserts reset-polarity blockers leave no renderable module and no aggregate `.fsm` source document.
+- This locks reset-name polarity mismatches against stale DT-root output while system-contract provenance and system-surface repair guidance remain visible.
+- Focused reset-polarity coverage, the adapter suite, fmt, docs CI, KG bench, and full CI passed; user-requested `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is active.
+
 ## 2026-05-06 `.fsm` missing system-contract renderable block
 - New batch slice 194/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `keeps_standalone_sequential_dt_blocked_without_system_contract` now asserts missing standalone sequential system contracts leave no renderable module and no aggregate `.fsm` source document.

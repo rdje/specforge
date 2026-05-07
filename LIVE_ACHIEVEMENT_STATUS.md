@@ -15,6 +15,7 @@
 - IntentIR canonical endpoint contract established: Done
 - SpecForge CLI/crate rename completed: Done
 - Explicit `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters` architecture defined: Done
+- `.fsm` reset-polarity blockers now block stale module and aggregate renderable output: Done
 - `.fsm` missing standalone sequential system contracts now block stale module and aggregate renderable output: Done
 - `.fsm` system-contract width conflicts now block stale module and aggregate renderable output: Done
 - `.fsm` system-contract direction conflicts now block stale module and aggregate renderable output: Done
