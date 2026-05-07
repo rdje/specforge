@@ -330,6 +330,7 @@
 - KG benchmark harness now locks prior-guided actor-taxonomy graph directions: Done
 - KG benchmark harness now locks negative-knowledge semantic-conflict shape: Done
 - KG benchmark harness now locks negative-knowledge family-mismatch arbitration: Done
+- KG benchmark harness now locks AMBA-generic semantic-modality finding payloads: Done
 - KG benchmark harness now locks prior-guided ready-like sink phrase recovery: Done
 - KG benchmark harness now locks prior-guided valid-like semantic phrase recovery: Done
 - KG benchmark harness now includes AXI write-response timing coverage: Done

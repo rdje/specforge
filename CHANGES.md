@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for AMBA-generic modality finding payloads)
+
+### Improved: AMBA-generic semantic-modality fallback locks validation details
+- Tightened `semantic_modality_reliability_amba_generic_fallback_gold` with exact `findings_include` payloads for prior-guided arbitration, consensus, and rescan guidance at `SemanticIR` and `IntentIR`.
+- The fixture now proves AMBA-generic modality memory emits the same signal-related validation details as exact-family modality memory while preserving local conflict shape and single-source grounding.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_modality_reliability_amba_generic_fallback_gold` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for negative-knowledge family-mismatch arbitration)
 
 ### Improved: unrelated caution priors keep semantic arbitration non-decisive

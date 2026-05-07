@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for AMBA-generic modality finding payloads)
+- Tightened `semantic_modality_reliability_amba_generic_fallback_gold` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts exact prior-guided arbitration, consensus, and rescan-guidance validation payloads for AMBA-generic modality fallback at both canonical stages.
+- This locks generic AMBA modality memory as validation-detail-equivalent to exact-family memory without changing production prior lookup behavior.
+
 ## Session update (2026-05-07 KG fixture for negative-knowledge family-mismatch arbitration)
 - Tightened `negative_knowledge_prior_protocol_family_mismatch_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts `XCTRL` enters semantic arbitration but remains explicitly non-decisive at both canonical stages when only an unrelated APB-scoped negative-knowledge prior is staged.
