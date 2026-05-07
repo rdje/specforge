@@ -1,5 +1,16 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for actorless temporal rule shape)
+
+### Improved: actor-gap rules carry exact clock and cycle structure
+- Tightened `temporal_actor_grounding_surface_negative` with exact `temporal_rules_include` expectations at `SemanticIR` and `IntentIR`.
+- The fixture now proves the actorless rule keeps its `clk` rising-edge grounding, `within 2 cycles` window, asserted-value predicate, and supporting statement id while still emitting only actor-grounding replay guidance.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for clockless temporal rule shape)
 
 ### Improved: clock-gap rules carry exact actor and cycle structure

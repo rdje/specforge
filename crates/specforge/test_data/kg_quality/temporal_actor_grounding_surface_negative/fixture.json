@@ -19,11 +19,51 @@
   "expectations": {
     "semantic": {
       "signal_names_include": ["PREADY"],
-      "temporal_rule_count": 1
+      "temporal_rule_count": 1,
+      "temporal_rules_include": [
+        {
+          "source_text": "PREADY must be asserted within 2 cycles.",
+          "clock_signal": "clk",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": null,
+            "max_cycles": 2
+          },
+          "supporting_statement_ids_include": ["stmt_actor_gap"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PREADY",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        }
+      ]
     },
     "intent": {
       "signal_names_include": ["PREADY"],
-      "temporal_rule_count": 1
+      "temporal_rule_count": 1,
+      "temporal_rules_include": [
+        {
+          "source_text": "PREADY must be asserted within 2 cycles.",
+          "clock_signal": "clk",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": null,
+            "max_cycles": 2
+          },
+          "supporting_statement_ids_include": ["stmt_actor_gap"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PREADY",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        }
+      ]
     },
     "validation": {
       "evidence": {
