@@ -22,22 +22,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `59233d33191658c869da8c029ddbd0a0e45c9573`
-- latest_commit_brief_message: `test(kg): lock ready-sink phrase timing absence`
-- note: this is the pre-slice-140 baseline for the current `BWFSC=200` batch; slices 1-139/200 are committed and push remains deferred
+- latest_commit_hash: `4d6e685f9d87ccd4b1d050a287bd3ec6c4c9eb83`
+- latest_commit_brief_message: `test(kg): lock valid-like phrase table exclusion`
+- note: this is the pre-slice-141 baseline for the current `BWFSC=200` batch; slices 1-140/200 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `4d6e68` test(kg): lock valid-like phrase table exclusion
 - `59233d3` test(kg): lock ready-sink phrase timing absence
 - `7b95502` test(kg): lock ready-sink phrase VLM exclusion
 - `e72cdba` test(kg): lock ready-sink phrase visual exclusion
 - `253b9ab` test(kg): lock ready-sink phrase alias exclusion
 - `605ed43` test(kg): lock ready-sink phrase table exclusion
-- `ca5ec49` test(kg): lock semantic phrase timing absence
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 140 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 141 and push is deferred
 - files in flight:
   - `crates/specforge/test_data/kg_quality/semantic_valid_prior_guided_phrase_gold/fixture.json`
   - live docs and mdBook files synced for the slice
@@ -52,13 +52,13 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `139`
-  - slice 140/200 tightens prior-guided valid-like semantic phrase table semantic-hint exclusion metrics
+  - completed_count before this commit: `140`
+  - slice 141/200 tightens prior-guided valid-like semantic phrase alias-grounded prose semantic-hint exclusion metrics
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks prior-guided valid-like semantic phrase table semantic-hint exclusion KG coverage as `Done`
+  - live-status tracker now marks prior-guided valid-like semantic phrase alias-grounded prose semantic-hint exclusion KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 140 before commit
+  - implementation and live-doc sync are complete for slice 141 before commit
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_valid_prior_guided_phrase_gold` passed with the requested fixture
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` fixtures
   - `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed with `150` fixtures projected and `0` failures
@@ -75,5 +75,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 140 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 141/200
+- finish the slice 141 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 142/200
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle
