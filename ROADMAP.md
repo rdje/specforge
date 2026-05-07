@@ -587,6 +587,7 @@
   - top roots without explicit child-module references now explicitly block renderable top roots and aggregate `.fsm` source documents, so stale `?top` output cannot survive before child references are supplied
   - top roots with child references to undeclared modules now explicitly block renderable top roots and aggregate `.fsm` source documents, so stale `?top` output cannot survive before child source modules are declared
   - top roots without explicit top-port records now explicitly block renderable top roots and aggregate `.fsm` source documents, so stale `?top` output cannot survive before top ports are supplied
+  - duplicate top-port direction conflicts now explicitly block renderable top roots and aggregate `.fsm` source documents, so stale `?top` output cannot survive before duplicate public direction evidence is resolved
   - duplicate top child-instance records now explicitly block renderable top roots and aggregate `.fsm` source documents, so stale `?top` output cannot survive before child references are deduplicated
   - top links targeting undeclared top-boundary ports now explicitly block renderable top roots and aggregate `.fsm` source documents, so stale `?top` output cannot survive before target endpoints are declared
   - top links originating from undeclared top-boundary ports now explicitly block renderable top roots and aggregate `.fsm` source documents, so stale `?top` output cannot survive before source endpoints are declared

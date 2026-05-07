@@ -15,6 +15,7 @@
 - IntentIR canonical endpoint contract established: Done
 - SpecForge CLI/crate rename completed: Done
 - Explicit `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters` architecture defined: Done
+- `.fsm` duplicate top-port direction blockers now block stale top and aggregate renderable output: Done
 - `.fsm` recovered top-port direction blockers now block stale top and aggregate renderable output: Done
 - `.fsm` actor-port parametric-width blockers now block stale module and aggregate renderable output: Done
 - `.fsm` canonical parametric-width blockers now block stale module and aggregate renderable output: Done

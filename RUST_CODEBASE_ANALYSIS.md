@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` duplicate top-port direction renderable block)
+- Tightened `top_composition_keeps_duplicate_top_port_direction_conflict_unresolved` in `crates/specforge/src/ir/adapters.rs`.
+- The test now proves duplicate/conflicting top-port direction blockers leave no renderable top root and no aggregate `.fsm` source document.
+- This locks duplicate public top-port direction evidence against stale renderable top output; focused adapter coverage, full adapter coverage, fmt, docs CI, KG bench, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 `.fsm` recovered top-port renderable block)
 - Tightened `top_composition_preserves_recovered_top_port_direction_when_still_blocked` in `crates/specforge/src/ir/adapters.rs`.
 - The test now proves recovered top-port direction evidence leaves no renderable top root and no aggregate `.fsm` source document while the child module is still missing.

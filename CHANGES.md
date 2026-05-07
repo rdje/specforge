@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` duplicate top-port direction renderable block)
+
+### Added: duplicate top-port directions cannot leak output
+- Tightened `top_composition_keeps_duplicate_top_port_direction_conflict_unresolved` so duplicate/conflicting top-port direction blockers leave no renderable top root and no aggregate `.fsm` source document.
+- This locks duplicate public top-port direction evidence against stale `?top` output while preserving both duplicate declarations, support IDs, selected signal inventory, and composition residual guidance.
+- Synced the live tracker, roadmap, and mdBook with the duplicate top-port direction renderable-block guarantee.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_keeps_duplicate_top_port_direction_conflict_unresolved` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148/148` fixtures)
+- `bash scripts/run_ci.sh` -> passed (`614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation)
+- `cargo sweep --time 1` -> deferred because `target/release/tool_matrix` is active
+
 ## 2026-05-06 (`.fsm` recovered top-port renderable block)
 
 ### Added: blocked recovered top ports cannot leak output

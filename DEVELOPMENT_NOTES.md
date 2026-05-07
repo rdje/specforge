@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` duplicate top-port direction renderable block
+- New batch slice 200/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_keeps_duplicate_top_port_direction_conflict_unresolved` now asserts duplicate/conflicting top-port direction blockers leave no renderable top root and no aggregate `.fsm` source document.
+- This locks duplicate public top-port direction evidence against stale `?top` output while both duplicate declarations, support IDs, selected signal inventory, and composition residual guidance remain visible.
+- Focused duplicate top-port direction coverage, the adapter suite, fmt, docs CI, KG bench, and full CI passed; user-requested `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is active.
+
 ## 2026-05-06 `.fsm` recovered top-port renderable block
 - New batch slice 199/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_preserves_recovered_top_port_direction_when_still_blocked` now asserts recovered top-port direction evidence leaves no renderable top root and no aggregate `.fsm` source document while the child module is still missing.
