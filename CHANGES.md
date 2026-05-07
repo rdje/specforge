@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for actor-taxonomy family-mismatch graph directions)
+
+### Improved: protocol-scoped actor priors stay graph-empty per signal
+- Tightened `actor_taxonomy_prior_protocol_family_mismatch_negative` with exact `graph_direction_signal_names_exclude` expectations for `XADDR` at `SemanticIR` and `IntentIR`.
+- The fixture now proves an APB-scoped `issuer` actor-taxonomy prior cannot recover graph-backed direction on an AXI-local `Issuer signals` section, while preserving local signal inventory.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench actor_taxonomy_prior_protocol_family_mismatch_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for no-prior actor-taxonomy graph directions)
 
 ### Improved: actor-taxonomy no-prior fixtures assert graph absence per signal

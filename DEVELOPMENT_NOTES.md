@@ -7,6 +7,17 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-07 KG fixture for actor-taxonomy family-mismatch graph directions
+- New batch slice 44/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Tightened `crates/specforge/test_data/kg_quality/actor_taxonomy_prior_protocol_family_mismatch_negative/fixture.json`.
+- The fixture now asserts per-signal graph-backed direction absence for `XADDR` at `SemanticIR` and `IntentIR` when an APB-scoped `issuer` actor-taxonomy prior is staged against an AXI-local section heading.
+- This strengthens the actor-taxonomy protocol-family mismatch guard from aggregate direction metrics to exact graph-direction absence.
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench actor_taxonomy_prior_protocol_family_mismatch_negative` passed with the requested fixture.
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` tracked fixtures.
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` refreshed tracked corpus-KB projections for `150` fixtures with `0` failures and no tracked projection diff.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-07 KG fixture for no-prior actor-taxonomy graph directions
 - New batch slice 43/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Tightened `crates/specforge/test_data/kg_quality/actor_taxonomy_prior_guided_section_direction_without_prior_negative/fixture.json`.

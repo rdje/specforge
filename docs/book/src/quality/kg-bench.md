@@ -42,6 +42,7 @@ That mismatch guard also checks `EvidenceIR` directly now: the unrelated APB pri
 The no-prior table-shape signal-table fixture locks the before side even more directly: without learned shape memory, a local `Name | Direction | Width` table stays out of table-signal provenance and canonical `XREQ`/`XACK` inventory.
 The prior-guided table-shape signal-table fixture locks the after side: learned shape memory can classify the same table, but recovered `XREQ`/`XACK` declarations must retain exact `table_0001` provenance and canonical table support.
 The actor-taxonomy no-prior section-heading fixture applies the same per-signal graph discipline to local vocabulary: `Issuer` and `Acceptor` section titles can preserve `XADDR`, `XCMD`, and `XRESP` inventory, but without learned actor memory those signals must stay graph-direction empty.
+The actor-taxonomy protocol-family mismatch fixture extends that fail-closed check: an APB-scoped `issuer` prior must not give AXI-local `XADDR` graph-backed direction.
 
 The `signal_table_inventory_authority_negative` fixture locks the positive side of that same boundary.
 It provides real signals only through a structured `Signal | Direction | Width | Description` table, then surrounds that table with uppercase implementation vocabulary in prose.

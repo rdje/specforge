@@ -74,10 +74,12 @@
   },
   "expectations": {
     "semantic": {
-      "signal_names_include": ["XADDR"]
+      "signal_names_include": ["XADDR"],
+      "graph_direction_signal_names_exclude": ["XADDR"]
     },
     "intent": {
-      "signal_names_include": ["XADDR"]
+      "signal_names_include": ["XADDR"],
+      "graph_direction_signal_names_exclude": ["XADDR"]
     },
     "validation": {
       "semantic": {
