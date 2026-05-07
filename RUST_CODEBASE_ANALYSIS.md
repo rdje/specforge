@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for semantic-modality source-kind mismatch timing-extraction absence)
+- Tightened `semantic_modality_reliability_source_kind_mismatch_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts evidence-stage `timing_diagram_extractions = 0` alongside its full semantic-hint source split.
+- This locks the local table/prose conflict as free of timing-diagram extraction support while the visual-caption-only modality prior stays non-authoritative for non-visual evidence.
+
 ## Session update (2026-05-07 KG fixture for semantic-modality source-kind mismatch VLM exclusion)
 - Tightened `semantic_modality_reliability_source_kind_mismatch_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts evidence-stage `signal_semantic_hints_from_vlm_timing_annotations = 0` alongside aggregate, table, prose, alias-grounded prose, and visual-caption hint metrics.

@@ -932,6 +932,7 @@
   - the semantic-modality source-kind mismatch fixture now asserts alias-grounded prose semantic hints stay zero, keeping alias recovery out of the source-kind guard
   - the semantic-modality source-kind mismatch fixture now asserts visual-caption semantic hints stay zero, preserving the table/prose-only conflict shape
   - the semantic-modality source-kind mismatch fixture now asserts VLM timing-annotation semantic hints stay zero, preserving the table/prose-only conflict shape
+  - the semantic-modality source-kind mismatch fixture now asserts timing-diagram extractions stay zero, preserving the non-visual table/prose conflict surface
   - the weak semantic-modality fixture now asserts the same exact table-versus-prose conflict while an underpowered modality prior remains non-decisive
   - the no-prior semantic-modality fixture now asserts the same exact table-versus-prose conflict while arbitration remains non-decisive without learned modality memory
   - the prior-guided semantic-modality gold fixture now asserts the exact resolved role and current-document grounding strength, proving modality memory guides arbitration without overstating grounding
