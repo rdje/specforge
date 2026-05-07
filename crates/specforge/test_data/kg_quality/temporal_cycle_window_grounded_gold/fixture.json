@@ -1,0 +1,126 @@
+{
+  "name": "temporal_cycle_window_grounded_gold",
+  "source": "bounded_temporal_rule.md",
+  "evidence_ir_patch": {
+    "signal_constraints": [
+      {
+        "constraint_id": "sigcon_pready_asserted_within_two_cycles",
+        "subject_signal": "PREADY",
+        "constraint_kind": { "kind": "must_be_asserted" },
+        "target_value": null,
+        "condition_text": null,
+        "negated": false,
+        "source_text": "PREADY must be asserted within 2 cycles.",
+        "supporting_statement_ids": ["stmt_cycle_window_grounded"],
+        "automation_confidence": "medium"
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "signal_names_include": ["PREADY"],
+      "actor_ports_include": [
+        {
+          "actor_name": "Completer",
+          "signal_name": "PREADY",
+          "direction": "output"
+        }
+      ],
+      "temporal_rule_count": 1,
+      "temporal_rules_include": [
+        {
+          "source_text": "PREADY must be asserted within 2 cycles.",
+          "clock_signal": "PCLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": null,
+            "max_cycles": 2
+          },
+          "supporting_statement_ids_include": ["stmt_cycle_window_grounded"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PREADY",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            },
+            {
+              "kind": "actor_drives_signal",
+              "actor_name": "Completer",
+              "signal_name": "PREADY",
+              "phase": "post_tick"
+            }
+          ]
+        }
+      ]
+    },
+    "intent": {
+      "signal_names_include": ["PREADY"],
+      "actor_ports_include": [
+        {
+          "actor_name": "Completer",
+          "signal_name": "PREADY",
+          "direction": "output"
+        }
+      ],
+      "temporal_rule_count": 1,
+      "temporal_rules_include": [
+        {
+          "source_text": "PREADY must be asserted within 2 cycles.",
+          "clock_signal": "PCLK",
+          "edge": "rising",
+          "cycle_window": {
+            "min_cycles": null,
+            "max_cycles": 2
+          },
+          "supporting_statement_ids_include": ["stmt_cycle_window_grounded"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PREADY",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            },
+            {
+              "kind": "actor_drives_signal",
+              "actor_name": "Completer",
+              "signal_name": "PREADY",
+              "phase": "post_tick"
+            }
+          ]
+        }
+      ]
+    },
+    "validation": {
+      "evidence": {
+        "metric_values": {
+          "signal_constraints": "1"
+        }
+      },
+      "semantic": {
+        "finding_ids_exclude": [
+          "semantic_temporal_rules_missing_cycle_windows",
+          "semantic_temporal_cycle_window_surface_rescan_guidance"
+        ],
+        "metric_values": {
+          "temporal_rules": "1",
+          "temporal_rules_with_actor_grounding": "1",
+          "temporal_rules_with_cycle_window": "1",
+          "temporal_rules_missing_clock_grounding": "0"
+        }
+      },
+      "intent": {
+        "finding_ids_exclude": [
+          "intent_temporal_rules_missing_cycle_windows",
+          "intent_temporal_cycle_window_surface_rescan_guidance"
+        ],
+        "metric_values": {
+          "temporal_rules": "1",
+          "temporal_rules_with_actor_grounding": "1",
+          "temporal_rules_with_cycle_window": "1",
+          "temporal_rules_missing_clock_grounding": "0"
+        }
+      }
+    }
+  }
+}

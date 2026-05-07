@@ -323,6 +323,7 @@
 - KG benchmark harness now includes default-clock generic clock-edge timing coverage: Done
 - KG benchmark harness now includes default-clock zero-cycle timing coverage: Done
 - KG benchmark harness now locks temporal cycle-window rescan guidance: Done
+- KG benchmark harness now locks bounded temporal cycle-window no-rescan behavior: Done
 - KG benchmark harness now includes AXI read-address timing coverage: Done
 - KG benchmark harness now includes AXI read-address ID stability coverage: Done
 - KG benchmark harness now includes AXI write-address ID stability coverage: Done

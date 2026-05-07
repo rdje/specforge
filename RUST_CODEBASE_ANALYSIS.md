@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for bounded temporal cycle-window no-rescan)
+- Added `temporal_cycle_window_grounded_gold` under `crates/specforge/test_data/kg_quality/`.
+- The fixture proves a `within 2 cycles` temporal rule with explicit clock and actor grounding carries its cycle-window and actor-drive predicate through `SemanticIR` and `IntentIR` without emitting cycle-window replay guidance.
+- This complements the unbounded-rule negative fixture by locking both sides of the validator boundary; `kg-bench`, corpus-KB fixture projection, and docs CI passed.
+
 ## Session update (2026-05-07 KG fixture for temporal cycle-window rescan guidance)
 - Added `temporal_cycle_window_surface_negative` under `crates/specforge/test_data/kg_quality/`.
 - The fixture proves clock-grounded and actor-grounded temporal rules that still lack explicit cycle-window bounds remain visible through `semantic_temporal_cycle_window_surface_rescan_guidance` and `intent_temporal_cycle_window_surface_rescan_guidance`.

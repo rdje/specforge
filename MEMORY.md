@@ -22,25 +22,25 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `24e8f6fdebbc94a223df51dfa30fa7ef328bc932`
-- latest_commit_brief_message: `docs: record completed batch state`
-- note: this is the pre-slice baseline for the current `BWFSC=200` batch; the previous `N=200` batch completed all 200 slices and was pushed to `origin/main`
+- latest_commit_hash: `5ba557100c2e3ab124ef9d3bf73b121a177d87f2`
+- latest_commit_brief_message: `test(kg): lock temporal cycle-window guidance`
+- note: this is the pre-slice-2 baseline for the current `BWFSC=200` batch; slice 1/200 is committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `5ba5571` test(kg): lock temporal cycle-window guidance
 - `24e8f6f` docs: record completed batch state
 - `6983c99` test(adapter): block duplicate top output
 - `a5e6fa3` test(adapter): block recovered top output
 - `2c71513` test(adapter): block parametric actor output
 - `9bf9fb6` test(adapter): block parametric signal output
-- `1f01a3e` test(adapter): block selector predicate output
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 1 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 2 and push is deferred
 - files in flight:
-  - `crates/specforge/test_data/kg_quality/temporal_cycle_window_surface_negative/fixture.json`
-  - `crates/specforge/test_data/kg_quality/temporal_cycle_window_surface_negative/cycle_windowless_temporal_rule.md`
+  - `crates/specforge/test_data/kg_quality/temporal_cycle_window_grounded_gold/fixture.json`
+  - `crates/specforge/test_data/kg_quality/temporal_cycle_window_grounded_gold/bounded_temporal_rule.md`
   - live docs and mdBook files synced for the slice
 
 ## Previous completed N-slice batch
@@ -53,23 +53,24 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - slice 1/200 adds a KG fixture for temporal cycle-window rescan guidance
+  - completed_count before this commit: `1`
+  - slice 2/200 adds a KG fixture for bounded temporal cycle-window no-rescan behavior
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks temporal cycle-window rescan-guidance KG coverage as `Done`
+  - live-status tracker now marks bounded temporal cycle-window no-rescan KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 1 before commit
-  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `149/149` fixtures
+  - implementation and live-doc sync are complete for slice 2 before commit
+  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` fixtures
   - `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed and refreshed tracked corpus-KB fixture projections
   - `bash scripts/run_docs_ci.sh` passed
   - user-requested `cargo sweep --time 1` is deferred until no target-tree process is active because `target/release/tool_matrix` is active
 - current known local CI baseline:
-  - current slice passed `149/149` tracked KG fixtures
+  - current slice passed `150/150` tracked KG fixtures
   - current slice passed docs CI
   - broader full CI has not yet been rerun for this data/docs-only slice; the previous full CI baseline remains the completed pushed `N=200` batch
   - latest `cargo sweep --time 1` attempt was deferred because `target/release/tool_matrix` is active
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 1 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 2/200
+- finish the slice 2 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 3/200
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle

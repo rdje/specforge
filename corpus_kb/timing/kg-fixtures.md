@@ -15,8 +15,8 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 
 - source: `kg-bench fixtures`
 - selected_family_labels: `temporal semantics`, `VLM timing diagrams`
-- fixtures_total: `71`
-- fixtures_passed: `71`
+- fixtures_total: `72`
+- fixtures_passed: `72`
 - fixtures_failed: `0`
 
 | fixture | status | matched families | path |
@@ -75,6 +75,7 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 | `temporal_actor_grounding_surface_negative` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/temporal_actor_grounding_surface_negative/fixture.json` |
 | `temporal_clock_grounding_surface_negative` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/temporal_clock_grounding_surface_negative/fixture.json` |
 | `temporal_conflict_negative` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/temporal_conflict_negative/fixture.json` |
+| `temporal_cycle_window_grounded_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/temporal_cycle_window_grounded_gold/fixture.json` |
 | `temporal_cycle_window_surface_negative` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/temporal_cycle_window_surface_negative/fixture.json` |
 | `temporal_prior_guided_cycle_window_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/temporal_prior_guided_cycle_window_gold/fixture.json` |
 | `temporal_prior_guided_cycle_window_without_prior_negative` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/temporal_prior_guided_cycle_window_without_prior_negative/fixture.json` |

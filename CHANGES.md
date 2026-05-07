@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for bounded temporal cycle-window no-rescan)
+
+### Added: bounded temporal rules do not trigger cycle-window replay
+- Added `temporal_cycle_window_grounded_gold`, a tracked KG fixture proving an actor-grounded and clock-grounded temporal rule with `within 2 cycles` carries its `cycle_window` and does not emit cycle-window rescan guidance.
+- The fixture asserts the exact `TemporalRuleRecord` shape at both `SemanticIR` and `IntentIR`, including `PCLK`, rising edge, max-cycle bound, `PREADY` value predicate, and `Completer` drive predicate.
+- This expands the KG truthfulness suite from `149` to `150` tracked fixtures.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for temporal cycle-window rescan guidance)
 
 ### Added: unbounded temporal rules stay replay-visible

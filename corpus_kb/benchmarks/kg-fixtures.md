@@ -13,8 +13,8 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 <!-- corpus_kb_kg_fixtures:start -->
 <!-- This block is refreshed by `specforge corpus-kb`. -->
 
-- fixtures_total: `149`
-- fixtures_passed: `149`
+- fixtures_total: `150`
+- fixtures_passed: `150`
 - fixtures_failed: `0`
 
 ### Fixture Family Summary
@@ -33,7 +33,7 @@ Fixtures can appear in more than one family because protocol semantics, modality
 | residuals and caveats | `4` | `4` | `0` |
 | semantic role arbitration | `30` | `30` | `0` |
 | table extraction and hygiene | `10` | `10` | `0` |
-| temporal semantics | `71` | `71` | `0` |
+| temporal semantics | `72` | `72` | `0` |
 | truthfulness negatives and cautions | `71` | `71` | `0` |
 | typed prior memory | `31` | `31` | `0` |
 
@@ -759,6 +759,12 @@ Fixtures can appear in more than one family because protocol semantics, modality
 
 ### temporal_conflict_negative
 - fixture_path: `crates/specforge/test_data/kg_quality/temporal_conflict_negative/fixture.json`
+- status: `pass`
+- failures:
+  - none
+
+### temporal_cycle_window_grounded_gold
+- fixture_path: `crates/specforge/test_data/kg_quality/temporal_cycle_window_grounded_gold/fixture.json`
 - status: `pass`
 - failures:
   - none
