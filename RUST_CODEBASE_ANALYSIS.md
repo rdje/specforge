@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for ready-sink phrase prior alias exclusion)
+- Tightened `semantic_ready_sink_prior_guided_phrase_gold` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts evidence-stage `signal_semantic_hints_from_alias_grounded_prose = 0` alongside aggregate, table, and prose hint metrics.
+- This locks the prior-guided `XACK can sink the transfer` semantic recovery as free of alias-grounded prose evidence.
+
 ## Session update (2026-05-07 KG fixture for ready-sink phrase prior table exclusion)
 - Tightened `semantic_ready_sink_prior_guided_phrase_gold` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts evidence-stage `signal_semantic_hints_from_tables = 0` alongside its total and prose hint metrics.

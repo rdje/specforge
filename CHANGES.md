@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for ready-sink phrase prior alias exclusion)
+
+### Improved: ready-sink phrase prior fixtures exclude alias-grounded prose hints
+- Tightened `semantic_ready_sink_prior_guided_phrase_gold` with `signal_semantic_hints_from_alias_grounded_prose = 0` at `EvidenceIR`.
+- The fixture now proves the prior-guided `XACK can sink the transfer` recovery does not use alias-grounded prose hints.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_ready_sink_prior_guided_phrase_gold` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for ready-sink phrase prior table exclusion)
 
 ### Improved: ready-sink phrase prior fixtures exclude table hints
