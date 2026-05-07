@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` explicit-module control-read direction renderable block
+- New batch slice 183/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `standalone_explicit_module_blocks_conflicting_module_control_read_direction` now asserts graph-backed module control-read direction conflicts leave the module without a renderable module and the aggregate `.fsm` artifact without a renderable source document.
+- This locks explicit-module control-read direction conflicts against stale `(+size ...)` output before actor-port/control-read direction evidence is resolved.
+- Focused explicit-module control-read direction coverage, the adapter suite, fmt, docs CI, KG bench, and full CI passed; user-requested `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is active.
+
 ## 2026-05-06 `.fsm` explicit-module width conflict renderable block
 - New batch slice 182/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `standalone_explicit_module_blocks_conflicting_control_input_actor_port_widths` now asserts graph-backed actor-port width conflicts in standalone explicit modules leave the module without a renderable module and the aggregate `.fsm` artifact without a renderable source document.

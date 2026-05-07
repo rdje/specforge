@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` explicit-module control-read direction renderable block)
+
+### Added: explicit-module control-read direction conflicts cannot leak output
+- Tightened `standalone_explicit_module_blocks_conflicting_module_control_read_direction` so graph-backed module control-read direction conflicts leave the module without a renderable module and the aggregate `.fsm` artifact without a renderable source document.
+- This locks explicit-module control-read direction conflicts against stale `(+size ...)` output until actor-port/control-read direction evidence is resolved.
+- Synced the live tracker, roadmap, and mdBook with the explicit-module control-read direction renderable-block guarantee.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge standalone_explicit_module_blocks_conflicting_module_control_read_direction` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148/148` fixtures)
+- `bash scripts/run_ci.sh` -> passed (`614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation)
+- `cargo sweep --time 1` -> deferred because `target/release/tool_matrix` is active
+
 ## 2026-05-06 (`.fsm` explicit-module width conflict renderable block)
 
 ### Added: explicit-module actor-port width conflicts cannot leak output
