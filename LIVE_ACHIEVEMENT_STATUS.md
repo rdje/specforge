@@ -461,6 +461,7 @@
 - KG benchmark harness now locks cross-modality semantic-conflict prose semantic-hint split: Done
 - KG benchmark harness now locks cross-modality semantic-conflict alias-grounded prose split: Done
 - KG benchmark harness now locks cross-modality semantic-conflict VLM timing-annotation split: Done
+- KG benchmark harness now locks cross-modality semantic-conflict timing-extraction absence: Done
 - KG benchmark harness now locks cross-modality grounding total evidence semantic hints: Done
 - KG benchmark harness now locks cross-modality grounding table semantic-hint split: Done
 - KG benchmark harness now locks cross-modality grounding visual-caption semantic-hint split: Done

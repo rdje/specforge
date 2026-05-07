@@ -758,6 +758,7 @@
     - the cross-modality semantic-conflict negative fixture now asserts the prose semantic-hint split stays zero, proving the conflict is table-plus-visual only
     - the cross-modality semantic-conflict negative fixture now asserts alias-grounded prose hints stay zero as well, keeping phrase-alias recovery out of this conflict
     - the cross-modality semantic-conflict negative fixture now asserts VLM timing-annotation hints stay zero, proving the visual side is caption-only
+    - the cross-modality semantic-conflict negative fixture now asserts timing-diagram extractions stay zero, keeping timing extraction support out of the table-plus-caption conflict
     - the cross-modality grounding gold fixture now asserts total evidence semantic hints equal the table plus visual-caption observations before decisive cross-modality grounding
     - the cross-modality grounding gold fixture now asserts exactly one table-sourced semantic hint, keeping source-split metrics aligned with the positive grounding evidence
     - the cross-modality grounding gold fixture now asserts exactly one visual-caption semantic hint, keeping the visual side of positive grounding source-locked
