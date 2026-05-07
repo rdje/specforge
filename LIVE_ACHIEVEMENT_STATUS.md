@@ -355,6 +355,7 @@
 - KG benchmark harness now locks semantic phrase prior resolved-role shape: Done
 - KG benchmark harness now locks semantic phrase prior table semantic-hint exclusion: Done
 - KG benchmark harness now locks semantic phrase prior alias-grounded prose semantic-hint exclusion: Done
+- KG benchmark harness now locks semantic phrase prior visual-caption semantic-hint exclusion: Done
 - KG benchmark harness now locks semantic phrase prior local phrase matching: Done
 - KG benchmark harness now locks semantic phrase prior source-kind scoping: Done
 - KG benchmark harness now locks semantic phrase source-kind mismatch signal shape: Done

@@ -130,6 +130,7 @@ That lets semantic gold fixtures prove `XREQ` is valid-like or `XACK` is ready-l
 The semantic phrase prior gold uses this for `XACK can receive the transfer`: prior-guided recovery must resolve exactly to ready-like with single-source grounding.
 That gold now also asserts table-sourced semantic hints stay zero, keeping the recovery prose-only.
 Alias-grounded prose stays zero there too, keeping alias recovery out of the direct phrase-prior proof.
+Visual-caption hints stay zero as well, keeping the direct phrase-prior proof prose-only.
 The protocol-family mismatch semantic phrase fixture complements that positive case by requiring the local `XREQ` output declaration to survive exactly while an unrelated APB phrase prior stays silent.
 The source-kind mismatch companion applies the same signal-shape discipline to `XSTAGE`: a visual-caption-only phrase prior stays silent for prose evidence while the local output declaration remains canonical.
 The exact-phrase mismatch companion does the same for `XFLOW`: an unmatched learned phrase prior stays silent while the local output declaration remains canonical.
