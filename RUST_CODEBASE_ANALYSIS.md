@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` top actor direction renderable block)
+- Tightened `top_composition_blocks_conflicting_top_actor_port_direction` in `crates/specforge/src/ir/adapters.rs`.
+- The test now proves graph-backed top actor-port direction conflicts leave the selected top without a renderable top root and leave the aggregate `.fsm` artifact without a renderable source document.
+- This locks conflicting top-boundary actor-port direction evidence against stale renderable top output; focused adapter coverage, full adapter coverage, fmt, docs CI, KG bench, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 `.fsm` dedicated child role renderable block)
 - Tightened the dedicated `top_composition_blocks_child_source_direction_role_guidance` and `top_composition_blocks_child_target_direction_role_guidance` tests in `crates/specforge/src/ir/adapters.rs`.
 - These tests now prove child-side source and target endpoint direction-role mismatches leave the selected top without a renderable top root and leave the aggregate `.fsm` artifact without a renderable source document.

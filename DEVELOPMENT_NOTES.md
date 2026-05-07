@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` top actor direction renderable block
+- New batch slice 175/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_conflicting_top_actor_port_direction` now asserts graph-backed top actor-port direction conflicts leave the selected top without a renderable top root and the aggregate `.fsm` artifact without a renderable source document.
+- This locks conflicting top-boundary actor-port direction evidence against stale `?top` output before the top port direction conflict is resolved.
+- Focused top actor-port direction coverage, the adapter suite, fmt, docs CI, KG bench, and full CI passed; user-requested `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is active.
+
 ## 2026-05-06 `.fsm` dedicated child role renderable block
 - New batch slice 174/200 updates `crates/specforge/src/ir/adapters.rs`.
 - The dedicated `top_composition_blocks_child_source_direction_role_guidance` and `top_composition_blocks_child_target_direction_role_guidance` tests now assert child endpoint direction-role mismatches leave the selected top without a renderable top root and the aggregate `.fsm` artifact without a renderable source document.

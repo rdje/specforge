@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` top actor direction renderable block)
+
+### Added: top actor-port direction conflicts cannot leak renderable top output
+- Tightened `top_composition_blocks_conflicting_top_actor_port_direction` so graph-backed top actor-port direction conflicts leave the selected top without a renderable top root and the aggregate `.fsm` artifact without a renderable source document.
+- This locks conflicting top-boundary actor-port direction evidence against stale `?top` output until the top port direction conflict is resolved.
+- Synced the live tracker, roadmap, and mdBook with the top actor-port direction renderable-block guarantee.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_top_actor_port_direction` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148/148` fixtures)
+- `bash scripts/run_ci.sh` -> passed (`614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation)
+- `cargo sweep --time 1` -> deferred because `target/release/tool_matrix` is active
+
 ## 2026-05-06 (`.fsm` dedicated child role renderable block)
 
 ### Added: dedicated child role tests now block renderable top output
