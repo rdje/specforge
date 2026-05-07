@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for no-prior actor-taxonomy graph directions)
+
+### Improved: actor-taxonomy no-prior fixtures assert graph absence per signal
+- Tightened `actor_taxonomy_prior_guided_section_direction_without_prior_negative` with exact `graph_direction_signal_names_exclude` expectations for `XADDR`, `XCMD`, and `XRESP` at `SemanticIR` and `IntentIR`.
+- The fixture now proves width-only `Issuer signals` / `Acceptor signals` tables keep their local signal inventory but do not gain graph-backed directions without learned actor-taxonomy memory.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench actor_taxonomy_prior_guided_section_direction_without_prior_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for table-shape family-mismatch provenance)
 
 ### Improved: protocol-scoped table-shape priors fail closed at evidence recovery

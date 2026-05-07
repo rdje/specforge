@@ -125,10 +125,12 @@
   },
   "expectations": {
     "semantic": {
-      "signal_names_include": ["XADDR", "XCMD", "XRESP"]
+      "signal_names_include": ["XADDR", "XCMD", "XRESP"],
+      "graph_direction_signal_names_exclude": ["XADDR", "XCMD", "XRESP"]
     },
     "intent": {
-      "signal_names_include": ["XADDR", "XCMD", "XRESP"]
+      "signal_names_include": ["XADDR", "XCMD", "XRESP"],
+      "graph_direction_signal_names_exclude": ["XADDR", "XCMD", "XRESP"]
     },
     "validation": {
       "semantic": {

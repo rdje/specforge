@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for no-prior actor-taxonomy graph directions)
+- Tightened `actor_taxonomy_prior_guided_section_direction_without_prior_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts per-signal graph-backed direction absence for `XADDR`, `XCMD`, and `XRESP` at both canonical stages while preserving the local signal inventory.
+- This locks the no-prior actor-taxonomy section-heading mirror as exact graph-direction absence without changing production prior lookup behavior.
+
 ## Session update (2026-05-07 KG fixture for table-shape family-mismatch provenance)
 - Tightened `table_shape_prior_protocol_family_mismatch_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts zero table-signal declaration provenance at `EvidenceIR` when an APB-scoped table-shape prior is staged against an AXI-local unknown signal-table shape.

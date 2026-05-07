@@ -853,6 +853,7 @@
   - the no-prior table-shape signal-table fixture now asserts zero table-signal provenance and excludes `XREQ`/`XACK` from canonical signal inventory when no learned table-shape prior is staged
   - the prior-guided table-shape signal-table fixture now asserts exact `XREQ`/`XACK` table-signal provenance from `table_0001` and canonical table-support carry-through when learned table-shape memory is staged
   - the table-shape protocol-family mismatch fixture now asserts zero table-signal provenance at `EvidenceIR` when an APB-scoped prior is staged against an AXI-local unknown table shape
+  - the no-prior actor-taxonomy section-heading fixture now asserts `XADDR`/`XCMD`/`XRESP` remain graph-direction empty without learned actor vocabulary
   - fixture expectations can now assert canonical semantic grounding strength directly, so single-source/multi-source/cross-modality grounding is checked as exact per-signal IR instead of only through validation metrics
   - fixture expectations can now assert canonical `temporal_rules` directly, so APB/AHB/AXI timing truthfulness is checked as typed clock/edge/cycle-window/predicate IR instead of only through validation metrics
   - the tracked temporal fixture set now also locks cycle-window rescan guidance directly: a temporal rule with clock and actor grounding but no explicit latency bound must keep emitting the stage-specific cycle-window replay finding at both `SemanticIR` and `IntentIR`

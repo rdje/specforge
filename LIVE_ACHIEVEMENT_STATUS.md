@@ -325,6 +325,7 @@
 - KG benchmark harness now locks no-prior table-shape signal inventory: Done
 - KG benchmark harness now locks prior-guided table-shape signal provenance: Done
 - KG benchmark harness now locks table-shape family-mismatch provenance: Done
+- KG benchmark harness now locks no-prior actor-taxonomy graph directions: Done
 - KG benchmark harness now locks prior-guided ready-like sink phrase recovery: Done
 - KG benchmark harness now locks prior-guided valid-like semantic phrase recovery: Done
 - KG benchmark harness now includes AXI write-response timing coverage: Done
