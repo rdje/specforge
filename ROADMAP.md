@@ -880,6 +880,7 @@
   - the semantic phrase exact-phrase mismatch fixture now asserts table-sourced semantic hints stay zero while the unmatched learned prior remains silent
   - the semantic phrase exact-phrase mismatch fixture now asserts alias-grounded prose semantic hints stay zero while the unmatched learned prior remains silent
   - the semantic phrase exact-phrase mismatch fixture now asserts visual-caption semantic hints stay zero while the unmatched learned prior remains silent
+  - the semantic phrase exact-phrase mismatch fixture now asserts VLM timing-annotation semantic hints stay zero while the unmatched learned prior remains silent
   - the broad semantic phrase negative fixture now asserts exact local `XFLOW` output direction while a one-token `transfer` prior remains silent
   - the conflicting semantic phrase negative fixture now asserts exact local `XCTRL` input direction while equal valid-like and ready-like priors for the same phrase fail closed
   - the no-prior semantic phrase mirror now asserts exact local `XACK` input direction while `can receive the transfer` remains unresolved without learned memory

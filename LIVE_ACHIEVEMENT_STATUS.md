@@ -159,6 +159,7 @@
 - KG benchmark harness now locks semantic phrase exact-phrase mismatch table-sourced semantic-hint exclusion: Done
 - KG benchmark harness now locks semantic phrase exact-phrase mismatch alias-grounded prose semantic-hint exclusion: Done
 - KG benchmark harness now locks semantic phrase exact-phrase mismatch visual-caption semantic-hint exclusion: Done
+- KG benchmark harness now locks semantic phrase exact-phrase mismatch VLM timing-annotation semantic-hint exclusion: Done
 - `.fsm` duplicate top-direction blockers now preserve composition topology residual decisions: Done
 - `.fsm` duplicate top-direction residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` duplicate top-width blockers now preserve composition topology residual decisions: Done

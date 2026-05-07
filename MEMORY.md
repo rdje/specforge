@@ -22,22 +22,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `f3e1110d6679598dc41c7d5cfe46bcc30538e167`
-- latest_commit_brief_message: `test(kg): lock semantic phrase mismatch alias exclusion`
-- note: this is the pre-slice-172 baseline for the current `BWFSC=200` batch; slices 1-171/200 are committed and push remains deferred
+- latest_commit_hash: `e1da39f5709bcec97e00c95a5d98a94e10b34992`
+- latest_commit_brief_message: `test(kg): lock semantic phrase mismatch visual exclusion`
+- note: this is the pre-slice-173 baseline for the current `BWFSC=200` batch; slices 1-172/200 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `e1da39f` test(kg): lock semantic phrase mismatch visual exclusion
 - `f3e1110` test(kg): lock semantic phrase mismatch alias exclusion
 - `e903dff` test(kg): lock semantic phrase mismatch table exclusion
 - `05d1445` test(kg): lock semantic phrase source-kind timing absence
 - `c971086` test(kg): lock semantic phrase source-kind VLM exclusion
 - `930fd5c` test(kg): lock semantic phrase source-kind visual exclusion
-- `ec08baf` test(kg): lock semantic phrase source-kind alias exclusion
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 172 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 173 and push is deferred
 - files in flight:
   - `crates/specforge/test_data/kg_quality/semantic_prior_phrase_mismatch_negative/fixture.json`
   - live docs and mdBook files synced for the slice
@@ -52,13 +52,13 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `171`
-  - slice 172/200 tightens semantic phrase exact-phrase mismatch visual-caption semantic-hint exclusion metrics
+  - completed_count before this commit: `172`
+  - slice 173/200 tightens semantic phrase exact-phrase mismatch VLM timing-annotation semantic-hint exclusion metrics
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks semantic phrase exact-phrase mismatch visual-caption semantic-hint exclusion KG coverage as `Done`
+  - live-status tracker now marks semantic phrase exact-phrase mismatch VLM timing-annotation semantic-hint exclusion KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 172 before commit
+  - implementation and live-doc sync are complete for slice 173 before commit
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_prior_phrase_mismatch_negative` passed with the requested fixture
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` fixtures
   - `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed with `150` fixtures projected and `0` failures
@@ -75,5 +75,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 172 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 173/200
+- finish the slice 173 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 174/200
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle
