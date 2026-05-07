@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` selector-predicate renderable block)
+
+### Added: selector-predicate blockers cannot leak output
+- Tightened `keeps_selector_based_dt_blocked_when_branch_predicate_is_not_relative_to_selector` so unsupported selector-branch predicates leave no renderable module and no aggregate `.fsm` source document.
+- This locks selector/test-node predicate mismatches against stale DT-root output while preserving DT candidate provenance, referenced signal inventory, and blocker diagnostics.
+- Synced the live tracker, roadmap, and mdBook with the selector-predicate renderable-block guarantee.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge keeps_selector_based_dt_blocked_when_branch_predicate_is_not_relative_to_selector` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148/148` fixtures)
+- `bash scripts/run_ci.sh` -> passed (`614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation)
+- `cargo sweep --time 1` -> deferred because `target/release/tool_matrix` is active
+
 ## 2026-05-06 (`.fsm` reset-polarity renderable block)
 
 ### Added: reset-polarity blockers cannot leak output

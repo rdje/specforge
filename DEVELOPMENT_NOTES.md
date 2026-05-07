@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` selector-predicate renderable block
+- New batch slice 196/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `keeps_selector_based_dt_blocked_when_branch_predicate_is_not_relative_to_selector` now asserts unsupported selector-branch predicates leave no renderable module and no aggregate `.fsm` source document.
+- This locks selector/test-node predicate mismatches against stale DT-root output while DT candidate provenance, referenced signal inventory, and blocker diagnostics remain visible.
+- Focused selector-predicate coverage, the adapter suite, fmt, docs CI, KG bench, and full CI passed; user-requested `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is active.
+
 ## 2026-05-06 `.fsm` reset-polarity renderable block
 - New batch slice 195/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `keeps_reset_polarity_blocked_when_signal_name_cannot_preserve_it` now asserts reset-polarity blockers leave no renderable module and no aggregate `.fsm` source document.

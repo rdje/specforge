@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` selector-predicate renderable block)
+- Tightened `keeps_selector_based_dt_blocked_when_branch_predicate_is_not_relative_to_selector` in `crates/specforge/src/ir/adapters.rs`.
+- The test now proves unsupported selector-branch predicates leave no renderable module and no aggregate `.fsm` source document.
+- This locks selector/test-node predicate mismatches against stale renderable DT output; focused adapter coverage, full adapter coverage, fmt, docs CI, KG bench, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 `.fsm` reset-polarity renderable block)
 - Tightened `keeps_reset_polarity_blocked_when_signal_name_cannot_preserve_it` in `crates/specforge/src/ir/adapters.rs`.
 - The test now proves reset-polarity blockers leave no renderable module and no aggregate `.fsm` source document.
