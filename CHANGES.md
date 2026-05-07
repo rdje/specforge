@@ -1,5 +1,16 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for unbounded temporal rule shape)
+
+### Improved: cycle-window-gap rules carry exact clock and actor structure
+- Tightened `temporal_cycle_window_surface_negative` with exact `temporal_rules_include` expectations at `SemanticIR` and `IntentIR`.
+- The fixture now proves the unbounded rule keeps its `PCLK` rising-edge grounding, `Completer` actor-drive predicate, asserted-value predicate, and supporting statement id while still emitting only cycle-window replay guidance.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for actorless temporal rule shape)
 
 ### Improved: actor-gap rules carry exact clock and cycle structure

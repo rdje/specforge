@@ -22,24 +22,24 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `91db4c7b015c07b20377e88be9ce7245b20019e7`
-- latest_commit_brief_message: `test(kg): lock clockless temporal rule shape`
-- note: this is the pre-slice-7 baseline for the current `BWFSC=200` batch; slices 1-6/200 are committed and push remains deferred
+- latest_commit_hash: `5ea829838c995e40b37eb51053c5ab802b11970e`
+- latest_commit_brief_message: `test(kg): lock actorless temporal rule shape`
+- note: this is the pre-slice-8 baseline for the current `BWFSC=200` batch; slices 1-7/200 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `5ea8298` test(kg): lock actorless temporal rule shape
 - `91db4c7` test(kg): lock clockless temporal rule shape
 - `eb70430` test(kg): lock temporal clock replay split
 - `393b343` test(kg): lock temporal actor replay split
 - `a4b4e81` test(kg): lock temporal replay lane split
 - `88b4943` test(kg): lock bounded cycle-window rule
-- `5ba5571` test(kg): lock temporal cycle-window guidance
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 7 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 8 and push is deferred
 - files in flight:
-  - `crates/specforge/test_data/kg_quality/temporal_actor_grounding_surface_negative/fixture.json`
+  - `crates/specforge/test_data/kg_quality/temporal_cycle_window_surface_negative/fixture.json`
   - live docs and mdBook files synced for the slice
 
 ## Previous completed N-slice batch
@@ -52,13 +52,13 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `6`
-  - slice 7/200 tightens exact actorless temporal rule-shape fixture expectations
+  - completed_count before this commit: `7`
+  - slice 8/200 tightens exact unbounded temporal rule-shape fixture expectations
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks actorless temporal rule clock/cycle shape KG coverage as `Done`
+  - live-status tracker now marks unbounded temporal rule clock/actor shape KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 7 before commit
+  - implementation and live-doc sync are complete for slice 8 before commit
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` fixtures
   - `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed with `150` fixtures projected and `0` failures
   - `bash scripts/run_docs_ci.sh` passed after the live-book sync
@@ -72,5 +72,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 7 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 8/200
+- finish the slice 8 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 9/200
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle

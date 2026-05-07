@@ -26,7 +26,29 @@
           "direction": "output"
         }
       ],
-      "temporal_rule_count": 1
+      "temporal_rule_count": 1,
+      "temporal_rules_include": [
+        {
+          "source_text": "PREADY must be asserted.",
+          "clock_signal": "PCLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_cycle_window_gap"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PREADY",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            },
+            {
+              "kind": "actor_drives_signal",
+              "actor_name": "Completer",
+              "signal_name": "PREADY",
+              "phase": "post_tick"
+            }
+          ]
+        }
+      ]
     },
     "intent": {
       "signal_names_include": ["PREADY"],
@@ -37,7 +59,29 @@
           "direction": "output"
         }
       ],
-      "temporal_rule_count": 1
+      "temporal_rule_count": 1,
+      "temporal_rules_include": [
+        {
+          "source_text": "PREADY must be asserted.",
+          "clock_signal": "PCLK",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_cycle_window_gap"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "PREADY",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            },
+            {
+              "kind": "actor_drives_signal",
+              "actor_name": "Completer",
+              "signal_name": "PREADY",
+              "phase": "post_tick"
+            }
+          ]
+        }
+      ]
     },
     "validation": {
       "evidence": {

@@ -100,6 +100,7 @@ The actor-grounding mirror fixture keeps the other side sharp too: a bounded, cl
 The clock-grounding mirror completes the split: a bounded, actor-grounded rule that lacks a clock reports clock replay guidance without also reporting cycle-window or actor-grounding debt.
 That clockless fixture also checks the canonical rule itself, so the unknown edge, actor-stability predicate, signal-stability predicate, max-cycle window, and support id are preserved through both canonical layers.
 The actorless fixture mirrors that exactness by preserving clock signal, edge, asserted-value predicate, max-cycle window, and support id while actor grounding remains unresolved.
+The unbounded fixture completes the shape checks by preserving clock signal, edge, actor-drive predicate, asserted-value predicate, and support id while the cycle window remains unresolved.
 
 ## Polarity-relative values
 

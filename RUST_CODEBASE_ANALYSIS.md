@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for unbounded temporal rule shape)
+- Tightened `temporal_cycle_window_surface_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts exact `temporal_rules_include` shape for the unbounded asserted-value rule, including `PCLK` rising-edge grounding, actor-drive predicate, asserted-value predicate, and supporting statement id while validation proves the missing cycle window remains visible.
+- This is fixture-level truthfulness hardening with no production code change; `kg-bench`, corpus-KB projection, and docs CI passed with `150/150` tracked fixtures.
+
 ## Session update (2026-05-07 KG fixture for actorless temporal rule shape)
 - Tightened `temporal_actor_grounding_surface_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts exact `temporal_rules_include` shape for the actorless bounded asserted-value rule, including `clk` rising-edge grounding, max-cycle window, asserted-value predicate, and supporting statement id.
