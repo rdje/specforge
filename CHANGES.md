@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for semantic phrase source-kind alias exclusion)
+
+### Improved: semantic phrase source-kind fixtures exclude alias-grounded prose hints
+- Tightened `semantic_prior_source_kind_mismatch_negative` with `signal_semantic_hints_from_alias_grounded_prose = 0` at `EvidenceIR`.
+- The fixture now proves a visual-caption-only semantic phrase prior remains free of alias-grounded prose hints for the prose-local `XSTAGE` phrase.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_prior_source_kind_mismatch_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for semantic phrase source-kind table exclusion)
 
 ### Improved: semantic phrase source-kind fixtures exclude table hints
