@@ -335,6 +335,7 @@ It also locks the total semantic-hint count at zero, matching the assertion fixt
 The deassertion fixture now checks zero table-sourced semantic hints too, keeping reset-release evidence out of table-driven role recovery.
 Ordinary prose hints are zero there as well, so text around reset release cannot backfill a handshake role.
 Alias-grounded prose is excluded too, preventing phrase-alias recovery from inventing a reset-release semantic role.
+Visual-caption hints are zero too, matching the assertion-side caption exclusion for reset-release evidence.
 That matters because `ASSERTED` and `DEASSERTED` are polarity-relative, not synonyms for fixed logic levels.
 
 Timing-annotation negative fixtures also protect against visual overreach.
