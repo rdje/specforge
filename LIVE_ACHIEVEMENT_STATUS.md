@@ -285,6 +285,7 @@
 - KG benchmark harness now locks actor-taxonomy prior protocol-family scoping: Done
 - KG benchmark harness now locks negative-knowledge prior protocol-family scoping: Done
 - KG benchmark harness now locks negative-knowledge family-mismatch conflict shape: Done
+- KG benchmark harness now locks negative-knowledge family-mismatch visual-caption semantic-hint split: Done
 - KG benchmark harness now locks semantic phrase prior protocol-family scoping: Done
 - KG benchmark harness now locks semantic phrase family-mismatch signal shape: Done
 - KG benchmark harness now locks temporal-prior protocol-family scoping: Done

@@ -908,6 +908,7 @@
   - the table-shape protocol-family mismatch fixture now asserts AXI-local unknown table rows stay out of canonical signal inventory and graph-backed direction coverage when only an unrelated APB table-shape prior is staged
   - the visual-motif protocol-family mismatch fixture now asserts the local table-derived signal direction/support remains canonical while an unrelated APB visual motif creates no semantic candidate or consensus
   - the negative-knowledge protocol-family mismatch fixture now asserts the exact local semantic-conflict observations while an unrelated APB caution prior still emits no prior-match or replay guidance
+  - the negative-knowledge protocol-family mismatch fixture now asserts the local visual-caption semantic-hint split, proving scoped-out APB caution memory does not erase AXI-local visual evidence
   - the semantic-modality protocol-family mismatch fixture now asserts exact table-versus-prose semantic-conflict observations while an unrelated APB modality prior still cannot make arbitration decisive
   - the semantic-modality source-kind mismatch fixture now asserts the same exact table-versus-prose conflict while a visual-only modality prior remains non-decisive
   - the weak semantic-modality fixture now asserts the same exact table-versus-prose conflict while an underpowered modality prior remains non-decisive

@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for negative-knowledge family-mismatch visual split)
+- Tightened `negative_knowledge_prior_protocol_family_mismatch_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts evidence-stage `signal_semantic_hints_from_visual_captions = 1` alongside the aggregate semantic-hint metric.
+- This locks the AXI-local visual-caption side of the semantic conflict while keeping unrelated APB negative-knowledge memory scoped out.
+
 ## Session update (2026-05-07 KG fixture for cross-modality grounding VLM exclusion)
 - Tightened `cross_modality_semantic_grounding_gold` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts evidence-stage `signal_semantic_hints_from_vlm_timing_annotations = 0` alongside the aggregate and other source semantic-hint metrics.

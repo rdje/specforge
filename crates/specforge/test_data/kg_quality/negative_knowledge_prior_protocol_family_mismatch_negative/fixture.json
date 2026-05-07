@@ -91,6 +91,7 @@
         ],
         "metric_values": {
           "signal_semantic_hints": "2",
+          "signal_semantic_hints_from_visual_captions": "1",
           "signal_semantic_conflicts": "1",
           "negative_knowledge_prior_matches": "0",
           "negative_knowledge_rescan_recommendations": "0",

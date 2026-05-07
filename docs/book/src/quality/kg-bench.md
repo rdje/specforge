@@ -211,6 +211,7 @@ Those fixtures require the matched local conflict or residual to remain present 
 They also assert the related ids carried by those validation findings, so a caution prior cannot silently drift from "this exact conflict/residual needs attention" into an ungrounded aggregate warning.
 The positive semantic-conflict caution fixture now checks the conflict shape directly too: `XCTRL` must still contain visual-caption valid-like evidence and VLM timing-annotation ready-like evidence after negative-knowledge guidance is applied.
 The negative-knowledge protocol-family mismatch fixture locks the other side of that contract: an unrelated APB caution prior stays silent while the local AXI `XCTRL` semantic conflict remains exact, including its visual-caption valid-like and VLM-annotation ready-like observations.
+That mismatch fixture also locks one visual-caption semantic hint, so protocol-family scoping cannot make the local AXI caption evidence disappear.
 It also keeps arbitration explicit: `XCTRL` still enters semantic arbitration, but the unrelated prior must not make that arbitration decisive.
 
 Timing-annotation fixtures also cover polarity-sensitive multimodal evidence.
