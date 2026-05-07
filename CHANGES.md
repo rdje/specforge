@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for waveform-motion VLM timing total hint exclusion)
+
+### Improved: waveform motion states lock total semantic-hint absence
+- Tightened `vlm_timing_waveform_motion_negative` with total `signal_semantic_hints = 0` at `EvidenceIR`.
+- The fixture now proves waveform motion states such as `rising` and `LOW_TO_HIGH` emit no semantic-role hints from any source while concrete samples still survive as temporal evidence.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench vlm_timing_waveform_motion_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for motion-only VLM timing total hint exclusion)
 
 ### Improved: motion-only timing annotations lock total semantic-hint absence

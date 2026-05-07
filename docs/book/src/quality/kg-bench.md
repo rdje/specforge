@@ -214,6 +214,7 @@ That matters because `ASSERTED` and `DEASSERTED` are polarity-relative, not syno
 
 Timing-annotation negative fixtures also protect against visual overreach.
 Low-value labels such as `T0`, `Addr 1`, `Cycle 2`, `D0`, `A1`, `DATA0`, `0xAA`, `D[0]`, `A[1]`, `DATA[3]`, and `ADDR[7]` do not become timing constraints, and waveform motion states such as `rising`, `stable`, `falling`, `UNCHANGED`, `RISING_EDGE`, `LOW_TO_HIGH`, `POS_EDGE`, `risingedge`, and `LOW2HIGH` do not become symbolic signal values.
+The waveform-motion fixture now locks total semantic hints at zero too, so rejected motion states cannot surface as semantic-role hints through another path.
 The spurious-annotation fixture now also locks total semantic hints at zero, so low-value labels and value-like annotations cannot invent roles through another evidence channel.
 The indexed signal-value fixture carries the same total zero-hint guard for labels such as `XREQ[0] HIGH`.
 The cycle-qualified signal-value fixture carries that guard for labels such as `XREQ HIGH at T1`.
