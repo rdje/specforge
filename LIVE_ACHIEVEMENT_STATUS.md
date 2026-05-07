@@ -372,6 +372,7 @@
 - KG benchmark harness now locks prior-guided valid-like semantic phrase table semantic-hint exclusion: Done
 - KG benchmark harness now locks prior-guided valid-like semantic phrase alias-grounded prose semantic-hint exclusion: Done
 - KG benchmark harness now locks prior-guided valid-like semantic phrase visual-caption semantic-hint exclusion: Done
+- KG benchmark harness now locks prior-guided valid-like semantic phrase VLM timing-annotation semantic-hint exclusion: Done
 - KG benchmark harness now locks prior-guided ready-sink semantic phrase signal shape: Done
 - KG benchmark harness now locks prior-guided ready-sink semantic phrase table semantic-hint exclusion: Done
 - KG benchmark harness now locks prior-guided ready-sink semantic phrase alias-grounded prose semantic-hint exclusion: Done
