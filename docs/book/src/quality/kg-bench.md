@@ -213,6 +213,7 @@ VLM timing-annotation hints are also zero, keeping the source-kind guard free of
 Timing-diagram extractions stay at zero as well, keeping the source-kind guard a non-visual table/prose conflict.
 The weak-prior companion applies the same check when the prior record is underpowered: weak memory stays non-decisive while the local conflict remains explicit and typed.
 It now locks two aggregate evidence semantic hints too, so weak memory cannot change the local table/prose evidence count before arbitration.
+The weak-prior guard now locks one table-sourced semantic hint as well, keeping the structured-table side explicit.
 That weak-prior fixture now also locks the non-decisive arbitration and rescan-guidance payloads, so insufficient support cannot hide the unresolved `XCTRL`/`semantic_conflict_0001` review target.
 The no-prior companion locks the before side of the same pair: absent modality memory means the local table/prose conflict remains explicit and non-decisive.
 That no-prior fixture now also checks the non-decisive arbitration and rescan-guidance finding payloads directly, so absent memory still leaves actionable `XCTRL` and `semantic_conflict_0001` validation debt.
