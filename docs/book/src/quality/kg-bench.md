@@ -144,6 +144,7 @@ The valid-like no-prior mirror does the same for `XREQ can publish the beat`, pr
 The valid-like prior-guided gold locks the after side: learned memory resolves `XREQ can publish the beat` as valid-like while preserving the local output declaration.
 That valid-like gold now also asserts table-sourced semantic hints stay zero, keeping the valid-like phrase recovery prose-only.
 Alias-grounded prose stays zero there too, keeping alias recovery out of the direct valid-like proof.
+Visual-caption hints stay zero as well, keeping the direct valid-like proof prose-only.
 The ready-sink prior-guided gold mirrors that after-side check: learned memory resolves `XACK can sink the transfer` as ready-like while preserving the local input declaration.
 That ready-sink gold now also asserts table-sourced semantic hints stay zero, keeping the ready-sink phrase recovery prose-only.
 Alias-grounded prose stays zero there too, keeping alias recovery out of the direct ready-sink proof.

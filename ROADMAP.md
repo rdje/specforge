@@ -875,6 +875,7 @@
   - the prior-guided valid-like semantic phrase fixture now asserts exact local `XREQ` output direction while resolving `can publish the beat` to `handshake_valid_like` with `single_source` grounding
   - the prior-guided valid-like semantic phrase fixture now asserts table-sourced semantic hints stay zero, keeping the valid-like phrase recovery prose-only
   - the prior-guided valid-like semantic phrase fixture now asserts alias-grounded prose semantic hints stay zero, keeping alias recovery out of the direct valid-like proof
+  - the prior-guided valid-like semantic phrase fixture now asserts visual-caption semantic hints stay zero, keeping the direct valid-like proof prose-only
   - the prior-guided ready-sink semantic phrase fixture now asserts exact local `XACK` input direction while resolving `can sink the transfer` to `handshake_ready_like` with `single_source` grounding
   - the prior-guided ready-sink semantic phrase fixture now asserts table-sourced semantic hints stay zero, keeping the ready-sink phrase recovery prose-only
   - the prior-guided ready-sink semantic phrase fixture now asserts alias-grounded prose semantic hints stay zero, keeping alias recovery out of the direct ready-sink proof
