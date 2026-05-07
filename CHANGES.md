@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for modality-prior gold alias exclusion)
+
+### Improved: modality-prior gold fixtures exclude alias-grounded prose hints
+- Tightened `semantic_modality_reliability_prior_guided_conflict_gold` with `signal_semantic_hints_from_alias_grounded_prose = 0` at `EvidenceIR`.
+- The fixture now proves alias-grounded prose does not participate in the prior-guided `XCTRL` arbitration path.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_modality_reliability_prior_guided_conflict_gold` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for modality-prior gold prose split)
 
 ### Improved: modality-prior gold fixtures lock prose semantic hints

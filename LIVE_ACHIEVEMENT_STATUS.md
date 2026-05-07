@@ -314,6 +314,7 @@
 - KG benchmark harness now locks semantic modality-prior total evidence semantic hints: Done
 - KG benchmark harness now locks semantic modality-prior table semantic-hint split: Done
 - KG benchmark harness now locks semantic modality-prior prose semantic-hint split: Done
+- KG benchmark harness now locks semantic modality-prior alias-grounded prose semantic-hint exclusion: Done
 - KG benchmark harness now locks semantic modality-prior source-kind scoping: Done
 - KG benchmark harness now locks semantic modality-prior source-kind conflict shape: Done
 - KG benchmark harness now locks semantic modality-prior source-kind mismatch total evidence semantic hints: Done
