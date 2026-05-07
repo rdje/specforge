@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for negative-knowledge caution prose exclusion)
+
+### Improved: caution fixtures exclude prose hints
+- Tightened `negative_knowledge_prior_guided_semantic_conflict_caution_gold` with `signal_semantic_hints_from_prose = 0` at `EvidenceIR`.
+- The fixture now proves the caution-guided `XCTRL` conflict remains visual-caption plus VLM timing evidence, without ordinary prose semantic hints.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench negative_knowledge_prior_guided_semantic_conflict_caution_gold` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for negative-knowledge caution table exclusion)
 
 ### Improved: caution fixtures exclude table hints
