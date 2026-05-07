@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `9bf9fb63852625df06b89bb3e4ef55f5d7c05cbe`
-- latest_commit_brief_message: `test(adapter): block parametric signal output`
-- note: new local `N=200` batch is active; slice 197 is committed, slice 198 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `2c715131855baed6e213dff0cbe8556cae45eca7`
+- latest_commit_brief_message: `test(adapter): block parametric actor output`
+- note: new local `N=200` batch is active; slice 198 is committed, slice 199 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `2c71513` test(adapter): block parametric actor output
 - `9bf9fb6` test(adapter): block parametric signal output
 - `1f01a3e` test(adapter): block selector predicate output
 - `90fd192` test(adapter): block reset polarity output
 - `637a76c` test(adapter): block missing system output
 - `f298b92` test(adapter): block system width output
-- `e8e4528` test(adapter): block system direction output
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 198]`
-- files in flight for new batch slice 198:
+- branch state before the next commit: `main...origin/main [ahead 199]`
+- files in flight for new batch slice 199:
   - `crates/specforge/src/ir/adapters.rs`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `ROADMAP.md`
@@ -49,34 +49,34 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `197`
+- completed_count: `198`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - lock actor-port parametric-width blockers against stale module and aggregate renderable output
-  - prove graph-backed symbolic actor-port width evidence leaves no renderable module and no aggregate renderable source document
-  - sync the live tracker, roadmap, mdBook, Rust analysis, and continuity docs with the actor-port parametric-width renderable-block guarantee
+  - lock recovered top-port direction blockers against stale top and aggregate renderable output
+  - prove topology-recovered top-port direction evidence leaves no renderable top root and no aggregate renderable source document while the child module is missing
+  - sync the live tracker, roadmap, mdBook, Rust analysis, and continuity docs with the recovered top-port renderable-block guarantee
 - tracker effect:
-  - live-status tracker changed; new row marks `.fsm` actor-port parametric-width blockers blocking stale module and aggregate renderable output as `Done`
+  - live-status tracker changed; new row marks `.fsm` recovered top-port direction blockers blocking stale top and aggregate renderable output as `Done`
 - verification status:
   - implementation and live-doc sync are complete
-  - focused actor-port parametric-width renderable-block regression passed (`1` test)
-  - adapter suite passed (`92` tests)
+  - focused recovered top-port renderable-block regression passed
+  - adapter suite passed
   - formatting passed
   - docs CI passed
-  - KG bench passed (`148/148` fixtures)
-  - full CI passed (`614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation)
+  - KG bench passed
+  - full CI passed
   - user-requested `cargo sweep --time 1` is deferred until no target-tree process is active because `target/release/tool_matrix` is active
   - final commit guards pending
 - current known local CI baseline:
-  - previous committed slice passed `614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
-  - previous committed slice passed `148/148` tracked KG fixtures
-  - current slice has passed focused actor-port parametric-width renderable-block regression, adapter suite, formatting, docs CI, KG bench, and full CI
+  - current slice passed `614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
+  - current slice passed `148/148` tracked KG fixtures
+  - current slice validation is complete
   - latest `cargo sweep --time 1` attempt was deferred because `target/release/tool_matrix` is active
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- run final docs CI, final commit guards, then commit slice 198 without pushing
+- run final commit guards, then commit slice 199 without pushing

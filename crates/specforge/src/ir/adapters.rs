@@ -13063,6 +13063,8 @@ mod tests {
                     == "declare every top child source as an explicit module before lowering `?top:name`")
         );
         assert!(!fsm.renderability.is_renderable);
+        assert!(top_candidate.renderable_top.is_none());
+        assert!(fsm.renderable_document.is_none());
         assert!(
             fsm.renderability
                 .required_canonical_enrichments

@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` recovered top-port renderable block
+- New batch slice 199/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_preserves_recovered_top_port_direction_when_still_blocked` now asserts recovered top-port direction evidence leaves no renderable top root and no aggregate `.fsm` source document while the child module is still missing.
+- This locks topology-recovered top-port direction evidence against stale `?top` output while the recovered port, selected top inventory, and composition residual guidance remain visible.
+- Focused recovered top-port coverage, the adapter suite, fmt, docs CI, KG bench, and full CI passed; user-requested `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is active.
+
 ## 2026-05-06 `.fsm` actor-port parametric-width renderable block
 - New batch slice 198/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `standalone_dt_blocks_parametric_actor_port_width_with_diagnostic` now asserts graph-backed actor-port parametric-width blockers leave no renderable module and no aggregate `.fsm` source document.

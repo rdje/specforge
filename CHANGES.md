@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` recovered top-port renderable block)
+
+### Added: blocked recovered top ports cannot leak output
+- Tightened `top_composition_preserves_recovered_top_port_direction_when_still_blocked` so recovered top-port direction evidence leaves no renderable top root and no aggregate `.fsm` source document while the child module is still missing.
+- This locks topology-recovered top-port direction evidence against stale `?top` output while preserving the recovered port, selected top inventory, and composition residual guidance.
+- Synced the live tracker, roadmap, and mdBook with the recovered top-port renderable-block guarantee.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_preserves_recovered_top_port_direction_when_still_blocked` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148/148` fixtures)
+- `bash scripts/run_ci.sh` -> passed (`614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation)
+- `cargo sweep --time 1` -> deferred because `target/release/tool_matrix` is active
+
 ## 2026-05-06 (`.fsm` actor-port parametric-width renderable block)
 
 ### Added: actor-port parametric widths cannot leak output
