@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for active-low VLM assertion table exclusion)
+
+### Improved: active-low VLM timing fixtures exclude table hints
+- Tightened `vlm_timing_active_low_assertion_equivalence_gold` with `signal_semantic_hints_from_tables = 0` at `EvidenceIR`.
+- The fixture now proves active-low reset assertion timing evidence remains free of table-sourced semantic-role hints.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench vlm_timing_active_low_assertion_equivalence_gold` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for cross-modality grounding timing-extraction absence)
 
 ### Improved: cross-modality grounding fixtures exclude timing extractions

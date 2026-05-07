@@ -325,6 +325,7 @@ Timing-annotation fixtures also cover polarity-sensitive multimodal evidence.
 For example, `vlm_timing_active_low_assertion_equivalence_gold` proves that an active-low reset observed by a VLM timing diagram as both `asserted` and `LOW` becomes typed temporal evidence without creating a false temporal conflict.
 That assertion fixture also checks zero VLM timing-annotation semantic hints, so reset assertion prose cannot accidentally become handshake valid/ready-like evidence.
 It now locks the total semantic-hint count at zero too, closing off alternate hint sources for the same reset evidence.
+It also checks zero table-sourced semantic hints, keeping active-low reset assertion evidence out of table-driven role recovery.
 The companion `vlm_timing_active_low_deassertion_equivalence_gold` fixture proves the reset-release mirror case: `deasserted` and `HIGH` are equivalent for the same active-low reset.
 That deassertion fixture now carries the same zero-hint guard, so reset-release prose stays temporal/polarity evidence only.
 It also locks the total semantic-hint count at zero, matching the assertion fixture's no-role-hint boundary.

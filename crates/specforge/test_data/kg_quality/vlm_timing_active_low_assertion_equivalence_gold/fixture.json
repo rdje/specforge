@@ -36,6 +36,7 @@
           "signal_polarity_conflicts": "0",
           "timing_diagram_extractions": "1",
           "signal_semantic_hints": "0",
+          "signal_semantic_hints_from_tables": "0",
           "signal_semantic_hints_from_vlm_timing_annotations": "0"
         }
       },
