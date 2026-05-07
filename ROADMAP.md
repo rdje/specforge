@@ -924,6 +924,7 @@
   - the semantic-modality protocol-family mismatch fixture now asserts alias-grounded prose semantic hints stay zero, keeping alias recovery out of the family-scoped guard
   - the semantic-modality protocol-family mismatch fixture now asserts visual-caption semantic hints stay zero, preserving the table/prose-only conflict shape
   - the semantic-modality protocol-family mismatch fixture now asserts VLM timing-annotation semantic hints stay zero, preserving the table/prose-only conflict shape
+  - the semantic-modality protocol-family mismatch fixture now asserts timing-diagram extractions stay zero, preserving the non-visual table/prose conflict surface
   - the semantic-modality source-kind mismatch fixture now asserts the same exact table-versus-prose conflict while a visual-only modality prior remains non-decisive
   - the weak semantic-modality fixture now asserts the same exact table-versus-prose conflict while an underpowered modality prior remains non-decisive
   - the no-prior semantic-modality fixture now asserts the same exact table-versus-prose conflict while arbitration remains non-decisive without learned modality memory
