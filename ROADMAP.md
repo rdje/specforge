@@ -872,6 +872,7 @@
   - the no-prior semantic phrase mirror now asserts exact local `XACK` input direction while `can receive the transfer` remains unresolved without learned memory
   - the no-prior ready-sink semantic phrase mirror now asserts exact local `XACK` input direction while `can sink the transfer` remains unresolved without learned memory
   - the no-prior valid-like semantic phrase mirror now asserts exact local `XREQ` output direction while `can publish the beat` remains unresolved without learned memory
+  - the no-prior valid-like semantic phrase mirror now asserts table-sourced semantic hints stay zero while learned memory is absent
   - the prior-guided valid-like semantic phrase fixture now asserts exact local `XREQ` output direction while resolving `can publish the beat` to `handshake_valid_like` with `single_source` grounding
   - the prior-guided valid-like semantic phrase fixture now asserts table-sourced semantic hints stay zero, keeping the valid-like phrase recovery prose-only
   - the prior-guided valid-like semantic phrase fixture now asserts alias-grounded prose semantic hints stay zero, keeping alias recovery out of the direct valid-like proof

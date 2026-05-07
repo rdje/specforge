@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for no-prior valid-like phrase table exclusion)
+- Tightened `semantic_valid_prior_guided_phrase_without_prior_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts evidence-stage `signal_semantic_hints_from_tables = 0` alongside total and prose hint metrics.
+- This locks the `XREQ can publish the beat` no-prior mirror as free of table semantic hints when learned memory is absent.
+
 ## Session update (2026-05-07 KG fixture for valid-like phrase prior timing-extraction absence)
 - Tightened `semantic_valid_prior_guided_phrase_gold` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts evidence-stage `timing_diagram_extractions = 0` alongside its full semantic-hint source split.
