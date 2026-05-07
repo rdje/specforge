@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for visual-motif corroboration finding payload)
+- Tightened `visual_motif_prior_guided_diagram_classification_gold` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts the exact evidence-stage corroboration guidance payload for prior-classified visual evidence, including related id `visual_0001`.
+- This locks visual-motif memory as a diagram-classification aid that preserves targeted multimodal corroboration debt instead of silently promoting semantic facts.
+
 ## Session update (2026-05-07 KG fixture for weak modality-prior finding payloads)
 - Tightened `semantic_modality_reliability_weak_prior_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts exact non-decisive arbitration plus role/conflict rescan-guidance validation payloads for `XCTRL` and `semantic_conflict_0001` at both canonical stages when modality-prior support is underpowered.

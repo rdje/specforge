@@ -113,6 +113,15 @@
     "validation": {
       "evidence": {
         "finding_ids_include": ["evidence_visual_motif_corroboration_guidance"],
+        "findings_include": [
+          {
+            "finding_id": "evidence_visual_motif_corroboration_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "prior memory did not rewrite SourceIR or create semantic facts",
+            "related_ids_include": ["visual_0001"]
+          }
+        ],
         "metric_values": {
           "visual_evidence_total": "1",
           "visual_classification_observations": "1",

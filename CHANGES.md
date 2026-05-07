@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for visual-motif corroboration finding payload)
+
+### Improved: prior-classified visual motifs lock corroboration guidance details
+- Tightened `visual_motif_prior_guided_diagram_classification_gold` with an exact `findings_include` payload for `evidence_visual_motif_corroboration_guidance`.
+- The fixture now proves prior-classified normative visual evidence remains a corroboration target tied to `visual_0001`, rather than becoming a silently promoted semantic fact.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench visual_motif_prior_guided_diagram_classification_gold` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for weak modality-prior finding payloads)
 
 ### Improved: weak modality priors preserve actionable arbitration debt
