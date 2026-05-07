@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for conflicting semantic phrase alias exclusion)
+
+### Improved: conflicting semantic phrase fixtures exclude alias-grounded prose hints
+- Tightened `semantic_prior_conflicting_roles_negative` with `signal_semantic_hints_from_alias_grounded_prose = 0` at `EvidenceIR`.
+- The fixture now proves equal valid-like and ready-like learned priors remain free of alias-grounded prose semantic hints for the local `XCTRL` phrase.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_prior_conflicting_roles_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for conflicting semantic phrase table exclusion)
 
 ### Improved: conflicting semantic phrase fixtures exclude table hints
