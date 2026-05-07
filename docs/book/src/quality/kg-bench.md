@@ -125,6 +125,7 @@ The broad-phrase guard adds the one-token case: a generic `transfer` prior stays
 The conflicting-role guard adds the ambiguity case: equal valid-like and ready-like priors for one phrase stay inert while the local `XCTRL` input declaration remains canonical.
 The no-prior mirror keeps the before side exact too: `XACK can receive the transfer` stays unresolved without learned memory while the local input declaration remains canonical.
 The ready-sink no-prior mirror extends that before-side check to `XACK can sink the transfer`, again preserving the local input declaration while learned memory is absent.
+The valid-like no-prior mirror does the same for `XREQ can publish the beat`, preserving the local output declaration while learned memory is absent.
 
 Fixtures can assert canonical semantic grounding strength directly as well.
 `semantic_grounding_strengths_include` checks the signal name and expected single-source, multi-source, or cross-modality grounding strength on the canonical interface signal record.
