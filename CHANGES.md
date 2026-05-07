@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for modality source-kind mismatch finding payloads)
+
+### Improved: source-kind scoped modality priors preserve actionable debt
+- Tightened `semantic_modality_reliability_source_kind_mismatch_negative` with exact validation `findings_include` payloads for non-decisive arbitration and semantic-conflict rescan guidance at `SemanticIR` and `IntentIR`.
+- The fixture now proves a visual-caption-only modality prior remains silent for table/prose evidence while the validator still emits targeted `XCTRL` and `semantic_conflict_0001` follow-up details.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_modality_reliability_source_kind_mismatch_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for modality family-mismatch finding payloads)
 
 ### Improved: unrelated modality priors preserve actionable arbitration debt

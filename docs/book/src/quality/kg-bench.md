@@ -184,6 +184,7 @@ The visual-motif protocol-family mismatch fixture locks the neighboring multimod
 The semantic-modality protocol-family mismatch fixture locks semantic arbitration itself: the local table valid-like and prose ready-like observations stay an explicit conflict, and an unrelated APB modality-reliability prior cannot make that conflict decisive.
 That mismatch fixture now also checks the non-decisive arbitration and rescan-guidance finding payloads directly, so a scoped-out APB prior cannot erase actionable AXI-local `XCTRL` and `semantic_conflict_0001` follow-up debt.
 The source-kind mismatch companion applies the same exact conflict-shape check when the prior is learned for visual captions but the current evidence is table plus prose.
+That source-kind guard now checks the same non-decisive arbitration and rescan-guidance payloads directly, proving a visual-caption-only prior cannot clear table/prose `XCTRL` follow-up debt.
 The weak-prior companion applies the same check when the prior record is underpowered: weak memory stays non-decisive while the local conflict remains explicit and typed.
 The no-prior companion locks the before side of the same pair: absent modality memory means the local table/prose conflict remains explicit and non-decisive.
 That no-prior fixture now also checks the non-decisive arbitration and rescan-guidance finding payloads directly, so absent memory still leaves actionable `XCTRL` and `semantic_conflict_0001` validation debt.

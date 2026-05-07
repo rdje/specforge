@@ -22,24 +22,24 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `e38058d2c76095fb4f10f05445d0170c9cf2842c`
-- latest_commit_brief_message: `test(kg): lock no-prior modality findings`
-- note: this is the pre-slice-50 baseline for the current `BWFSC=200` batch; slices 1-49/200 are committed and push remains deferred
+- latest_commit_hash: `ed3251e8962a5db53b0042deb7b25ee833f24d5a`
+- latest_commit_brief_message: `test(kg): lock modality mismatch findings`
+- note: this is the pre-slice-51 baseline for the current `BWFSC=200` batch; slices 1-50/200 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `ed3251e` test(kg): lock modality mismatch findings
 - `e38058d` test(kg): lock no-prior modality findings
 - `aaac406` test(kg): lock AMBA-generic modality findings
 - `dfa4392` test(kg): lock negative mismatch arbitration
 - `8384ce5` test(kg): lock negative semantic conflict shape
 - `6fb02d8` test(kg): lock prior-guided actor graph directions
-- `7215a9f` test(kg): lock actor mismatch graph directions
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 50 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 51 and push is deferred
 - files in flight:
-  - `crates/specforge/test_data/kg_quality/semantic_modality_reliability_protocol_family_mismatch_negative/fixture.json`
+  - `crates/specforge/test_data/kg_quality/semantic_modality_reliability_source_kind_mismatch_negative/fixture.json`
   - live docs and mdBook files synced for the slice
 
 ## Previous completed N-slice batch
@@ -52,18 +52,18 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `49`
-  - slice 50/200 tightens protocol-family mismatch semantic-modality validation payload expectations
+  - completed_count before this commit: `50`
+  - slice 51/200 tightens source-kind mismatch semantic-modality validation payload expectations
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks protocol-family mismatch semantic-modality finding-payload KG coverage as `Done`
+  - live-status tracker now marks source-kind mismatch semantic-modality finding-payload KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 50 before commit
-  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_modality_reliability_protocol_family_mismatch_negative` passed with the requested fixture
+  - implementation and live-doc sync are complete for slice 51 before commit
+  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_modality_reliability_source_kind_mismatch_negative` passed with the requested fixture
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` fixtures
   - `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed with `150` fixtures projected and `0` failures
   - `bash scripts/run_docs_ci.sh` passed after the live-book sync
-  - broader `bash scripts/run_ci.sh` passed for slice 50 with formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, and mdBook passing
+  - broader `bash scripts/run_ci.sh` last passed for slice 50 with formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, and mdBook passing
   - user-requested `cargo sweep --time 1` is deferred until no target-tree process is active because `target/release/tool_matrix` is active
 - current known local CI baseline:
   - focused current-slice KG fixture passed
@@ -75,5 +75,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 50 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 51/200
+- finish the slice 51 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 52/200
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle
