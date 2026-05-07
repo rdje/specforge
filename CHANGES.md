@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for spurious VLM timing total hint exclusion)
+
+### Improved: label-noise timing annotations lock total semantic-hint absence
+- Tightened `vlm_timing_spurious_annotation_negative` with total `signal_semantic_hints = 0` at `EvidenceIR`.
+- The fixture now proves low-value timing labels and value-like annotations emit no semantic-role hints from any source while the timing diagram extraction still remains visible.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench vlm_timing_spurious_annotation_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for active-low VLM deassertion total hint exclusion)
 
 ### Improved: reset-release fixtures lock total semantic-hint absence
