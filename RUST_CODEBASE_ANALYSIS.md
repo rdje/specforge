@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for no-prior temporal clock replay separation)
+- Tightened `temporal_prior_guided_cycle_window_without_prior_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now explicitly excludes clock-grounding replay findings while preserving cycle-window replay guidance for the locally clocked no-prior `one beat later` rule.
+- This is fixture-level prior-consumption guard hardening with no production code change; `kg-bench`, corpus-KB projection, and docs CI passed with `150/150` tracked fixtures.
+
 ## Session update (2026-05-07 KG fixture for prior-guided temporal no-replay)
 - Tightened `temporal_prior_guided_cycle_window_gold` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now explicitly excludes cycle-window and clock-grounding replay findings after the prior recovers the one-cycle window and local clock grounding.

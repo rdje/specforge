@@ -68,6 +68,10 @@
           "semantic_temporal_rules_missing_cycle_windows",
           "semantic_temporal_cycle_window_surface_rescan_guidance"
         ],
+        "finding_ids_exclude": [
+          "semantic_temporal_rules_missing_clock_grounding",
+          "semantic_temporal_clock_grounding_surface_rescan_guidance"
+        ],
         "findings_include": [
           {
             "finding_id": "semantic_temporal_cycle_window_surface_rescan_guidance",
@@ -86,6 +90,10 @@
         "finding_ids_include": [
           "intent_temporal_rules_missing_cycle_windows",
           "intent_temporal_cycle_window_surface_rescan_guidance"
+        ],
+        "finding_ids_exclude": [
+          "intent_temporal_rules_missing_clock_grounding",
+          "intent_temporal_clock_grounding_surface_rescan_guidance"
         ],
         "findings_include": [
           {

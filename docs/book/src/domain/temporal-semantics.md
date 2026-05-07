@@ -187,6 +187,7 @@ For example, if validated documents taught that a phrase like `one beat later` i
 The KG benchmark now checks that prior-guided recovery as exact rule shape too: the recovered rule must keep local clock grounding, edge, one-cycle window, asserted-value predicate, and supporting statement id.
 The paired no-prior fixture checks the negative side: the same local text still preserves clock, edge, asserted value, and support, but the cycle window stays unresolved without the learned phrase prior.
 The prior-guided fixture also locks validation behavior: once the prior supplies the one-cycle window on a locally clocked rule, cycle-window and clock-grounding replay guidance should not fire.
+The no-prior mirror keeps that validation lane split: the missing prior leaves cycle-window replay visible, but it must not become clock-grounding debt.
 
 The safety rule is still strict:
 
