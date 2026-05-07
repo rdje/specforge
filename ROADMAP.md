@@ -874,6 +874,7 @@
   - the no-prior semantic phrase mirror now asserts alias-grounded prose semantic hints stay zero while learned memory is absent
   - the no-prior semantic phrase mirror now asserts visual-caption semantic hints stay zero while learned memory is absent
   - the no-prior semantic phrase mirror now asserts VLM timing-annotation semantic hints stay zero while learned memory is absent
+  - the no-prior semantic phrase mirror now asserts timing-diagram extractions stay zero while learned memory is absent
   - the no-prior ready-sink semantic phrase mirror now asserts exact local `XACK` input direction while `can sink the transfer` remains unresolved without learned memory
   - the no-prior ready-sink semantic phrase mirror now asserts table-sourced semantic hints stay zero while learned memory is absent
   - the no-prior ready-sink semantic phrase mirror now asserts alias-grounded prose semantic hints stay zero while learned memory is absent
