@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for AMBA-generic modality fallback prose split)
+- Tightened `semantic_modality_reliability_amba_generic_fallback_gold` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts evidence-stage `signal_semantic_hints_from_prose = 1` alongside aggregate and table hint metrics.
+- This locks the local prose-side observation as counted EvidenceIR before AMBA-generic semantic arbitration resolves `XCTRL`.
+
 ## Session update (2026-05-07 KG fixture for AMBA-generic modality fallback table split)
 - Tightened `semantic_modality_reliability_amba_generic_fallback_gold` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts evidence-stage `signal_semantic_hints_from_tables = 1` alongside the aggregate hint metric.

@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for AMBA-generic modality fallback prose split)
+
+### Improved: AMBA-generic modality fallback fixtures lock prose semantic hints
+- Tightened `semantic_modality_reliability_amba_generic_fallback_gold` with `signal_semantic_hints_from_prose = 1` at `EvidenceIR`.
+- The fixture now proves AMBA-generic fallback arbitration includes one prose semantic observation before the generic learned prior decides the role.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_modality_reliability_amba_generic_fallback_gold` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for AMBA-generic modality fallback table split)
 
 ### Improved: AMBA-generic modality fallback fixtures lock table semantic hints
