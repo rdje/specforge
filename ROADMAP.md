@@ -830,6 +830,7 @@
     - the indexed signal-value VLM timing fixture now also asserts total semantic hints remain zero, proving indexed labels cannot invent semantic roles through any evidence path
     - a negative fixture proving cycle-qualified signal-value VLM timing-diagram labels like `XREQ HIGH at T1`, `XREQ LOW during T0`, and `XREQ asserted on T1` do not become timing constraints while the underlying waveform LOW/HIGH samples still survive as temporal evidence
     - the cycle-qualified signal-value VLM timing fixture now also asserts total semantic hints remain zero, proving cycle-scoped labels cannot invent semantic roles through any evidence path
+    - the cycle-qualified signal-value VLM timing fixture now asserts table semantic hints remain zero, proving table evidence cannot invent roles for cycle-scoped label noise
     - a negative fixture proving VLM timing-diagram waveform motion states like `rising`, `stable`, `falling`, `UNCHANGED`, `RISING_EDGE`, `LOW_TO_HIGH`, `POS_EDGE`, `risingedge`, and `LOW2HIGH` do not become symbolic signal values while concrete samples like `HIGH` still survive
     - the waveform-motion VLM timing fixture now also asserts total semantic hints remain zero, proving motion-state samples cannot invent semantic roles through any evidence path
     - a negative fixture proving motion-only VLM timing-diagram annotations like `XREQ rises, remains stable, then falls` do not become timing constraints while concrete document-grounded signal samples still survive as temporal evidence

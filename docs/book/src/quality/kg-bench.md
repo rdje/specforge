@@ -344,6 +344,7 @@ The waveform-motion fixture now locks total semantic hints at zero too, so rejec
 The spurious-annotation fixture now also locks total semantic hints at zero, so low-value labels and value-like annotations cannot invent roles through another evidence channel.
 The indexed signal-value fixture carries the same total zero-hint guard for labels such as `XREQ[0] HIGH`.
 The cycle-qualified signal-value fixture carries that guard for labels such as `XREQ HIGH at T1`.
+It now also excludes table-sourced semantic hints, so cycle-scoped label noise cannot be rescued through table evidence.
 Motion-only annotation prose such as `XREQ rises, remains stable, then falls` is filtered the same way unless it carries real timing/constraint indicators.
 The motion-only fixture now locks total semantic hints at zero, so motion prose cannot invent valid/ready-like roles through another evidence channel.
 Concrete sampled values such as `HIGH` can still become typed temporal evidence when the signal itself is document-grounded.
