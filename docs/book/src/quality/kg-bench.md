@@ -333,6 +333,7 @@ The companion `vlm_timing_active_low_deassertion_equivalence_gold` fixture prove
 That deassertion fixture now carries the same zero-hint guard, so reset-release prose stays temporal/polarity evidence only.
 It also locks the total semantic-hint count at zero, matching the assertion fixture's no-role-hint boundary.
 The deassertion fixture now checks zero table-sourced semantic hints too, keeping reset-release evidence out of table-driven role recovery.
+Ordinary prose hints are zero there as well, so text around reset release cannot backfill a handshake role.
 That matters because `ASSERTED` and `DEASSERTED` are polarity-relative, not synonyms for fixed logic levels.
 
 Timing-annotation negative fixtures also protect against visual overreach.
