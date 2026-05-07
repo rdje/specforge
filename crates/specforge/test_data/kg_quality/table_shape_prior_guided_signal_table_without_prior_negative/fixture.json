@@ -80,6 +80,15 @@
     ]
   },
   "expectations": {
+    "evidence": {
+      "table_signal_declaration_provenance_count": 0
+    },
+    "semantic": {
+      "signal_names_exclude": ["XREQ", "XACK"]
+    },
+    "intent": {
+      "signal_names_exclude": ["XREQ", "XACK"]
+    },
     "validation": {
       "semantic": {
         "metric_values": {

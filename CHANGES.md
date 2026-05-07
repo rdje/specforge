@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for no-prior table-shape signal inventory)
+
+### Improved: unknown signal tables stay inert without learned shape memory
+- Tightened `table_shape_prior_guided_signal_table_without_prior_negative` with exact `EvidenceIR` table-signal provenance absence and canonical `XREQ`/`XACK` signal exclusions at `SemanticIR` and `IntentIR`.
+- The fixture now proves a locally `unknown` `Name | Direction | Width` table cannot mint signal inventory without a matching learned table-shape prior, instead of relying only on resolved-direction validation counters.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench table_shape_prior_guided_signal_table_without_prior_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for prior-guided visual-motif signal shape)
 
 ### Improved: prior-guided visual motifs preserve local signal shape

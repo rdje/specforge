@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for no-prior table-shape signal inventory)
+- Tightened `table_shape_prior_guided_signal_table_without_prior_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts zero table-signal declaration provenance at `EvidenceIR` and excludes `XREQ`/`XACK` from canonical signal inventory at both later stages when no learned table-shape prior is staged.
+- This locks the no-prior table-shape signal-table path as exact provenance and inventory absence without changing production prior lookup behavior.
+
 ## Session update (2026-05-07 KG fixture for prior-guided visual-motif signal shape)
 - Tightened `visual_motif_prior_guided_diagram_classification_gold` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts exact table-derived `XREQ` output direction at both canonical stages while prior-guided motif classification makes the local diagram normative without creating semantic role evidence.
