@@ -7,6 +7,18 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-07 KG fixture for indexed VLM prose exclusion
+- New batch slice 200/200 uses active `BWFSC=200`; push runs only after this final slice's commit workflow is complete.
+- Tightened `crates/specforge/test_data/kg_quality/vlm_timing_indexed_signal_value_annotation_negative/fixture.json`.
+- The fixture now asserts `signal_semantic_hints_from_prose = 0` alongside total, table, VLM timing-annotation, and timing extraction metrics.
+- This strengthens indexed VLM timing label-noise coverage by proving labels such as `XREQ[0] HIGH` remain sample/value evidence only, not ordinary prose semantic-role evidence.
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench vlm_timing_indexed_signal_value_annotation_negative` passed with the requested fixture.
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` tracked fixtures.
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` refreshed tracked corpus-KB projections for `150` fixtures with `0` failures and no tracked projection diff.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- Broader `bash scripts/run_ci.sh` passed on slice 200 with formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, and mdBook.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-07 KG fixture for indexed VLM table exclusion
 - New batch slice 199/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Tightened `crates/specforge/test_data/kg_quality/vlm_timing_indexed_signal_value_annotation_negative/fixture.json`.
