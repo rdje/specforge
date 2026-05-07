@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` child-link direction renderable block)
+- Tightened `top_composition_blocks_conflicting_child_link_topology_directions` in `crates/specforge/src/ir/adapters.rs`.
+- The test now proves conflicting child-link topology direction evidence leaves the child module without a renderable module and leaves the aggregate `.fsm` artifact without a renderable source document.
+- This locks child-link direction conflicts against stale child module output; focused adapter coverage, full adapter coverage, fmt, docs CI, KG bench, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 `.fsm` top-link width mismatch renderable block)
 - Tightened `top_composition_blocks_width_mismatched_top_link_guidance` in `crates/specforge/src/ir/adapters.rs`.
 - The test now proves first-slice top links with incompatible endpoint widths leave the selected top without a renderable top root and leave the aggregate `.fsm` artifact without a renderable source document.

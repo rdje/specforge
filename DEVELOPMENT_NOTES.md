@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` child-link direction renderable block
+- New batch slice 177/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_conflicting_child_link_topology_directions` now asserts conflicting child-link topology direction evidence leaves the child module without a renderable module and the aggregate `.fsm` artifact without a renderable source document.
+- This locks child-link direction conflicts against stale child module output before actor-relative graph direction evidence is resolved.
+- Focused child-link direction coverage, the adapter suite, fmt, docs CI, KG bench, and full CI passed; user-requested `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is active.
+
 ## 2026-05-06 `.fsm` top-link width mismatch renderable block
 - New batch slice 176/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_width_mismatched_top_link_guidance` now asserts first-slice top links with incompatible endpoint widths leave the selected top without a renderable top root and the aggregate `.fsm` artifact without a renderable source document.

@@ -772,6 +772,7 @@
 - `.fsm` dedicated child source/target direction-role tests now block stale renderable top output: Done
 - `.fsm` top actor-port direction conflicts now block stale renderable top output: Done
 - `.fsm` top-link width mismatches now block stale renderable top output: Done
+- `.fsm` child-link direction conflicts now block stale child and aggregate renderable output: Done
 - NLP alias learning now rejects outline/list marker prefixes before storing Form 2 aliases: Done
 - NLP alias learning now trims wrapper punctuation from Form 2 alias words: Done
 - NLP alias learning now uses markdown link labels for Form 2 aliases: Done
