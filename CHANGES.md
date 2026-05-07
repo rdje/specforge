@@ -1,5 +1,16 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for clockless temporal rule shape)
+
+### Improved: clock-gap rules carry exact actor and cycle structure
+- Tightened `temporal_clock_grounding_surface_negative` with exact `temporal_rules_include` expectations at `SemanticIR` and `IntentIR`.
+- The fixture now proves the clockless rule keeps its unknown edge, `within 2 cycles` window, `Subordinate` actor-stability predicate, signal-stability predicate, and supporting statement id while still emitting only clock-grounding replay guidance.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for temporal clock-grounding replay lane separation)
 
 ### Improved: clock-grounding guidance stays lane-specific

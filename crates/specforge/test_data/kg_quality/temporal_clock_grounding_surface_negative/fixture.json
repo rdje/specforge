@@ -19,11 +19,63 @@
   "expectations": {
     "semantic": {
       "signal_names_include": ["HREADY"],
-      "temporal_rule_count": 1
+      "temporal_rule_count": 1,
+      "temporal_rules_include": [
+        {
+          "source_text": "HREADY must remain stable within 2 cycles.",
+          "edge": "unknown",
+          "cycle_window": {
+            "min_cycles": null,
+            "max_cycles": 2
+          },
+          "supporting_statement_ids_include": ["stmt_temporal_gap"],
+          "consequents_include": [
+            {
+              "kind": "actor_maintains_signal_stable",
+              "actor_name": "Subordinate",
+              "signal_name": "HREADY",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            },
+            {
+              "kind": "signal_stable",
+              "signal_name": "HREADY",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            }
+          ]
+        }
+      ]
     },
     "intent": {
       "signal_names_include": ["HREADY"],
-      "temporal_rule_count": 1
+      "temporal_rule_count": 1,
+      "temporal_rules_include": [
+        {
+          "source_text": "HREADY must remain stable within 2 cycles.",
+          "edge": "unknown",
+          "cycle_window": {
+            "min_cycles": null,
+            "max_cycles": 2
+          },
+          "supporting_statement_ids_include": ["stmt_temporal_gap"],
+          "consequents_include": [
+            {
+              "kind": "actor_maintains_signal_stable",
+              "actor_name": "Subordinate",
+              "signal_name": "HREADY",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            },
+            {
+              "kind": "signal_stable",
+              "signal_name": "HREADY",
+              "from_phase": "pre_tick",
+              "to_phase": "post_tick"
+            }
+          ]
+        }
+      ]
     },
     "validation": {
       "evidence": {

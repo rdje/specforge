@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for clockless temporal rule shape)
+- Tightened `temporal_clock_grounding_surface_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts exact `temporal_rules_include` shape for the clockless bounded stability rule, including unknown edge, max-cycle window, actor-stability predicate, signal-stability predicate, and supporting statement id.
+- This is fixture-level truthfulness hardening with no production code change; `kg-bench`, corpus-KB projection, and docs CI passed with `150/150` tracked fixtures.
+
 ## Session update (2026-05-07 KG fixture for temporal clock-grounding replay lane separation)
 - Tightened `temporal_clock_grounding_surface_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now proves a bounded rule with actor grounding emits only clock-grounding replay guidance, not cycle-window or actor-grounding replay findings.

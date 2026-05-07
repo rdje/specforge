@@ -98,6 +98,7 @@ The complementary bounded fixture proves the reverse too: once a local temporal 
 These checks keep the replay lanes separate: missing cycle bounds are not reported as missing actor or clock grounding when those dimensions are already known.
 The actor-grounding mirror fixture keeps the other side sharp too: a bounded, clock-grounded rule that lacks actor grounding reports actor replay guidance without also reporting cycle-window or clock-grounding debt.
 The clock-grounding mirror completes the split: a bounded, actor-grounded rule that lacks a clock reports clock replay guidance without also reporting cycle-window or actor-grounding debt.
+That clockless fixture also checks the canonical rule itself, so the unknown edge, actor-stability predicate, signal-stability predicate, max-cycle window, and support id are preserved through both canonical layers.
 
 ## Polarity-relative values
 
