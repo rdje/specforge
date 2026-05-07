@@ -199,6 +199,7 @@ It now locks one table-sourced semantic hint too, keeping the structured-table s
 It locks one prose-sourced semantic hint as well, keeping the text side explicit.
 Alias-grounded prose is explicitly zero there, so alias recovery cannot satisfy the family-scoped mismatch case.
 Visual-caption hints are zero there too, preserving the fixture as a table/prose conflict.
+VLM timing-annotation hints are also zero, keeping timing-note extraction from silently satisfying the family-scoped mismatch case.
 That mismatch fixture now also checks the non-decisive arbitration and rescan-guidance finding payloads directly, so a scoped-out APB prior cannot erase actionable AXI-local `XCTRL` and `semantic_conflict_0001` follow-up debt.
 The source-kind mismatch companion applies the same exact conflict-shape check when the prior is learned for visual captions but the current evidence is table plus prose.
 That source-kind guard now checks the same non-decisive arbitration and rescan-guidance payloads directly, proving a visual-caption-only prior cannot clear table/prose `XCTRL` follow-up debt.
