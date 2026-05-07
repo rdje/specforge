@@ -778,6 +778,7 @@
     - the active-low assertion VLM timing fixture now asserts ordinary prose semantic hints remain zero, proving no prose evidence source invents a reset semantic role
     - the active-low assertion VLM timing fixture now asserts alias-grounded prose semantic hints remain zero, proving phrase-alias recovery cannot invent a reset semantic role
     - the active-low assertion VLM timing fixture now asserts visual-caption semantic hints remain zero, proving captions cannot invent a reset semantic role
+    - the active-low deassertion VLM timing fixture now asserts table semantic hints remain zero, proving no table evidence source invents a reset-release semantic role
     - a first representative AMBA-style gold fixture proving `Source`-column signal tables recover driver-side actor ports, table-grounded semantic request/accept roles, and typed handshake completion from a guarded constraint
     - a representative AMBA-style gold fixture proving `Destination`-column signal tables recover consumer-side `Reads` relations and actor-relative input ports end-to-end through `SemanticIR` and `IntentIR`
     - a representative APB-style gold fixture proving `Requester` / `Completer` source roles survive canonically as driver-side actor relations, actor-relative ports, request/accept semantics, and typed handshake completion

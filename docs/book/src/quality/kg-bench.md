@@ -332,6 +332,7 @@ Visual-caption hints are zero too, so captions cannot turn reset polarity eviden
 The companion `vlm_timing_active_low_deassertion_equivalence_gold` fixture proves the reset-release mirror case: `deasserted` and `HIGH` are equivalent for the same active-low reset.
 That deassertion fixture now carries the same zero-hint guard, so reset-release prose stays temporal/polarity evidence only.
 It also locks the total semantic-hint count at zero, matching the assertion fixture's no-role-hint boundary.
+The deassertion fixture now checks zero table-sourced semantic hints too, keeping reset-release evidence out of table-driven role recovery.
 That matters because `ASSERTED` and `DEASSERTED` are polarity-relative, not synonyms for fixed logic levels.
 
 Timing-annotation negative fixtures also protect against visual overreach.
