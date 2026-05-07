@@ -885,6 +885,7 @@
   - the negative-knowledge semantic-conflict caution fixture now asserts exact local `XCTRL` visual-caption valid-like versus VLM timing-annotation ready-like conflict observations while adding caution guidance
   - the negative-knowledge semantic-conflict caution fixture now asserts table semantic hints stay zero, keeping caution-guided semantic conflict evidence visual-only
   - the negative-knowledge semantic-conflict caution fixture now asserts ordinary prose semantic hints stay zero, preventing text-only support from satisfying the caution case
+  - the negative-knowledge semantic-conflict caution fixture now asserts alias-grounded prose semantic hints stay zero, keeping alias recovery out of caution-guided semantic conflict evidence
   - the negative-knowledge protocol-family mismatch fixture now asserts local `XCTRL` semantic arbitration remains present but non-decisive while an unrelated APB caution prior stays silent
   - the AMBA-generic semantic-modality fallback fixture now asserts exact prior-guided arbitration, consensus, and rescan-guidance validation payloads for `XCTRL`
   - the no-prior semantic-modality mirror now asserts exact non-decisive arbitration and rescan-guidance validation payloads for `XCTRL` and `semantic_conflict_0001`

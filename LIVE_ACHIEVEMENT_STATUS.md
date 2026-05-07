@@ -337,6 +337,7 @@
 - KG benchmark harness now locks negative-knowledge semantic-conflict shape: Done
 - KG benchmark harness now locks negative-knowledge semantic-conflict table semantic-hint exclusion: Done
 - KG benchmark harness now locks negative-knowledge semantic-conflict prose semantic-hint exclusion: Done
+- KG benchmark harness now locks negative-knowledge semantic-conflict alias-grounded prose semantic-hint exclusion: Done
 - KG benchmark harness now locks negative-knowledge family-mismatch arbitration: Done
 - KG benchmark harness now locks AMBA-generic semantic-modality finding payloads: Done
 - KG benchmark harness now locks no-prior semantic-modality finding payloads: Done

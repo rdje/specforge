@@ -22,22 +22,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `d1b9bfdee893796d5e49c5f4589fce580ac01d19`
-- latest_commit_brief_message: `test(kg): lock neg-knowledge caution table hints`
-- note: this is the pre-slice-86 baseline for the current `BWFSC=200` batch; slices 1-85/200 are committed and push remains deferred
+- latest_commit_hash: `00bd03e83b3ae52977bc6bd58cc7d1b202a90001`
+- latest_commit_brief_message: `test(kg): lock neg-knowledge caution prose hints`
+- note: this is the pre-slice-87 baseline for the current `BWFSC=200` batch; slices 1-86/200 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `00bd03e` test(kg): lock neg-knowledge caution prose hints
 - `d1b9bfd` test(kg): lock neg-knowledge caution table hints
 - `4ff3fab` test(kg): lock neg-knowledge timing extraction
 - `f785fb9` test(kg): lock neg-knowledge alias hint exclusion
 - `d5a6708` test(kg): lock neg-knowledge prose hint exclusion
 - `6e1ab32` test(kg): lock neg-knowledge table hint exclusion
-- `555a4ef` test(kg): lock neg-knowledge VLM hint split
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 86 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 87 and push is deferred
 - files in flight:
   - `crates/specforge/test_data/kg_quality/negative_knowledge_prior_guided_semantic_conflict_caution_gold/fixture.json`
   - live docs and mdBook files synced for the slice
@@ -52,13 +52,13 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `85`
-  - slice 86/200 tightens negative-knowledge semantic-conflict caution prose semantic-hint exclusion metrics
+  - completed_count before this commit: `86`
+  - slice 87/200 tightens negative-knowledge semantic-conflict caution alias-grounded prose semantic-hint exclusion metrics
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks negative-knowledge semantic-conflict caution prose semantic-hint exclusion KG coverage as `Done`
+  - live-status tracker now marks negative-knowledge semantic-conflict caution alias-grounded prose semantic-hint exclusion KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 86 before commit
+  - implementation and live-doc sync are complete for slice 87 before commit
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench negative_knowledge_prior_guided_semantic_conflict_caution_gold` passed with the requested fixture
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` fixtures
   - `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed with `150` fixtures projected and `0` failures
@@ -75,5 +75,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 86 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 87/200
+- finish the slice 87 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 88/200
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle
