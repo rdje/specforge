@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for cross-modality grounding visual split)
+
+### Improved: multimodal grounding fixtures lock visual-caption hints
+- Tightened `cross_modality_semantic_grounding_gold` with `signal_semantic_hints_from_visual_captions = 1` at `EvidenceIR`.
+- The fixture now proves the second decisive `XREQ` cross-modality semantic hint comes from the visual-caption path.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench cross_modality_semantic_grounding_gold` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for cross-modality grounding table split)
 
 ### Improved: multimodal grounding fixtures lock table-source hints
