@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for undeclared-transition initial state shape)
+- Tightened `vlm_state_machine_undeclared_transition_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts `IDLE` remains the only canonical initial state and `initial_regular_states` remains `1` after undeclared transition endpoints are filtered.
+- This locks endpoint filtering as non-destructive to declared state truth at both canonical stages.
+
 ## Session update (2026-05-07 KG fixture for multiple-initial state-machine finding payloads)
 - Tightened `vlm_state_machine_multiple_initial_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts exact semantic and intent validation warning payloads for a VLM state-machine extraction with more than one canonical initial state.

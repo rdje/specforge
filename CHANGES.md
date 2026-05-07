@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for undeclared-transition initial state shape)
+
+### Improved: undeclared-transition VLM state machines preserve initial state truth
+- Tightened `vlm_state_machine_undeclared_transition_negative` with exact `initial_state_names_include`/`exclude` expectations and `initial_regular_states` metrics at `SemanticIR` and `IntentIR`.
+- The fixture now proves filtering undeclared `DONE`/`RESET` transition endpoints does not discard the declared `IDLE` initial marker or promote `BUSY`.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench vlm_state_machine_undeclared_transition_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for multiple-initial state-machine finding payloads)
 
 ### Improved: multiple initial-state warnings lock validation details
