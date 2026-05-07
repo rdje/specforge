@@ -162,6 +162,7 @@ They also keep the module unresolved with no renderable module or aggregate sour
 Standalone sequential system-contract direction conflicts keep clock/reset provenance and system-surface repair guidance while blocked.
 Standalone sequential system-contract width conflicts keep clock/reset provenance and the same system-surface repair guidance while blocked.
 Standalone sequential system-contract flat/graph direction disagreements keep actor-port support and system-surface repair guidance while blocked.
+They also keep renderable module and aggregate `.fsm` source documents absent, so stale DT-root output cannot leak before clock/reset direction evidence agrees.
 Missing standalone sequential system contracts keep DT candidate provenance plus system-surface repair guidance while blocked.
 Reset-polarity blockers keep system-contract provenance plus the same system-surface repair guidance while blocked.
 

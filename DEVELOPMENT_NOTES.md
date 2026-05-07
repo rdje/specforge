@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` system-contract flat/graph renderable block
+- New batch slice 191/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `standalone_sequential_dt_blocks_system_contract_flat_graph_direction_disagreement` now asserts standalone sequential clock/reset flat/graph direction disagreements leave no renderable module and no aggregate `.fsm` source document.
+- This locks system-contract clock/reset direction disagreements against stale DT-root output while system-contract repair guidance remains visible.
+- Focused system-contract flat/graph coverage, the adapter suite, fmt, docs CI, KG bench, and full CI passed; user-requested `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is active.
+
 ## 2026-05-06 `.fsm` direct flat/graph renderable block
 - New batch slice 190/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `standalone_dt_blocks_flat_graph_direction_disagreement` now asserts direct DT flat/graph direction disagreements leave no renderable module and no aggregate `.fsm` source document.

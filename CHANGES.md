@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` system-contract flat/graph renderable block)
+
+### Added: system-contract flat/graph disagreements cannot leak output
+- Tightened `standalone_sequential_dt_blocks_system_contract_flat_graph_direction_disagreement` so standalone sequential clock/reset flat/graph direction disagreements leave no renderable module and no aggregate `.fsm` source document.
+- This locks system-contract clock/reset direction disagreements against stale DT-root output while preserving system-contract repair guidance.
+- Synced the live tracker, roadmap, and mdBook with the system-contract flat/graph renderable-block guarantee.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge standalone_sequential_dt_blocks_system_contract_flat_graph_direction_disagreement` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148/148` fixtures)
+- `bash scripts/run_ci.sh` -> passed (`614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation)
+- `cargo sweep --time 1` -> deferred because `target/release/tool_matrix` is active
+
 ## 2026-05-06 (`.fsm` direct flat/graph renderable block)
 
 ### Added: direct DT flat/graph disagreements cannot leak output
