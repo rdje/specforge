@@ -207,6 +207,7 @@ That source-kind guard now checks the same non-decisive arbitration and rescan-g
 It also locks two aggregate evidence semantic hints, so the source-kind guard stays tied to the local table/prose observations rather than prior memory.
 The same source-kind guard now locks one table-sourced semantic hint, keeping the structured-table side explicit before arbitration.
 It locks one prose-sourced semantic hint too, keeping the text side explicit before arbitration.
+Alias-grounded prose is explicitly zero for the source-kind guard, so phrase-alias recovery cannot masquerade as the intended table/prose evidence.
 The weak-prior companion applies the same check when the prior record is underpowered: weak memory stays non-decisive while the local conflict remains explicit and typed.
 That weak-prior fixture now also locks the non-decisive arbitration and rescan-guidance payloads, so insufficient support cannot hide the unresolved `XCTRL`/`semantic_conflict_0001` review target.
 The no-prior companion locks the before side of the same pair: absent modality memory means the local table/prose conflict remains explicit and non-decisive.
