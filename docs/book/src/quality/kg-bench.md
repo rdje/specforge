@@ -145,6 +145,7 @@ That valid-like no-prior mirror now also asserts table-sourced semantic hints st
 Alias-grounded prose stays zero there too, keeping the no-prior valid-like mirror free of alias recovery.
 Visual-caption hints stay zero as well, keeping the no-prior valid-like mirror non-visual.
 VLM timing-annotation hints stay zero too, keeping timing-note evidence out of the no-prior valid-like mirror.
+Timing-diagram extractions stay zero too, keeping the no-prior valid-like mirror free of timing extraction support.
 The valid-like prior-guided gold locks the after side: learned memory resolves `XREQ can publish the beat` as valid-like while preserving the local output declaration.
 That valid-like gold now also asserts table-sourced semantic hints stay zero, keeping the valid-like phrase recovery prose-only.
 Alias-grounded prose stays zero there too, keeping alias recovery out of the direct valid-like proof.

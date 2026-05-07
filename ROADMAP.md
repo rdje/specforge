@@ -876,6 +876,7 @@
   - the no-prior valid-like semantic phrase mirror now asserts alias-grounded prose semantic hints stay zero while learned memory is absent
   - the no-prior valid-like semantic phrase mirror now asserts visual-caption semantic hints stay zero while learned memory is absent
   - the no-prior valid-like semantic phrase mirror now asserts VLM timing-annotation semantic hints stay zero while learned memory is absent
+  - the no-prior valid-like semantic phrase mirror now asserts timing-diagram extractions stay zero while learned memory is absent
   - the prior-guided valid-like semantic phrase fixture now asserts exact local `XREQ` output direction while resolving `can publish the beat` to `handshake_valid_like` with `single_source` grounding
   - the prior-guided valid-like semantic phrase fixture now asserts table-sourced semantic hints stay zero, keeping the valid-like phrase recovery prose-only
   - the prior-guided valid-like semantic phrase fixture now asserts alias-grounded prose semantic hints stay zero, keeping alias recovery out of the direct valid-like proof

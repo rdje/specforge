@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for no-prior valid-like phrase timing-extraction absence)
+
+### Improved: no-prior valid-like phrase fixtures exclude timing extractions
+- Tightened `semantic_valid_prior_guided_phrase_without_prior_negative` with `timing_diagram_extractions = 0` at `EvidenceIR`.
+- The fixture now proves `XREQ can publish the beat` remains free of timing-diagram extraction support when learned memory is absent.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_valid_prior_guided_phrase_without_prior_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for no-prior valid-like phrase VLM exclusion)
 
 ### Improved: no-prior valid-like phrase fixtures exclude VLM timing hints
