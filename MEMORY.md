@@ -22,22 +22,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `d4b6e66b4d12ea9ba08bcc281cdb450d520e7986`
-- latest_commit_brief_message: `test(kg): lock weak modality timing extraction absence`
-- note: this is the pre-slice-109 baseline for the current `BWFSC=200` batch; slices 1-108/200 are committed and push remains deferred
+- latest_commit_hash: `2e143ad4faeb176cc42d32c1f25f4f61cbf44d49`
+- latest_commit_brief_message: `test(kg): lock no-prior modality hint totals`
+- note: this is the pre-slice-110 baseline for the current `BWFSC=200` batch; slices 1-109/200 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `2e143ad` test(kg): lock no-prior modality hint totals
 - `d4b6e66` test(kg): lock weak modality timing extraction absence
 - `b9b980f` test(kg): lock weak modality VLM exclusion
 - `2842d33` test(kg): lock weak modality visual exclusion
 - `aec1d77` test(kg): lock weak modality alias exclusion
 - `7e51d10` test(kg): lock weak modality prose hints
-- `2bb6774` test(kg): lock weak modality table hints
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 109 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 110 and push is deferred
 - files in flight:
   - `crates/specforge/test_data/kg_quality/semantic_modality_reliability_prior_guided_conflict_without_prior_negative/fixture.json`
   - live docs and mdBook files synced for the slice
@@ -52,13 +52,13 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `108`
-  - slice 109/200 tightens no-prior semantic-modality total EvidenceIR semantic-hint metrics
+  - completed_count before this commit: `109`
+  - slice 110/200 tightens no-prior semantic-modality table semantic-hint split metrics
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks no-prior semantic-modality total evidence semantic-hint KG coverage as `Done`
+  - live-status tracker now marks no-prior semantic-modality table semantic-hint split KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 109 before commit
+  - implementation and live-doc sync are complete for slice 110 before commit
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_modality_reliability_prior_guided_conflict_without_prior_negative` passed with the requested fixture
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` fixtures
   - `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed with `150` fixtures projected and `0` failures
@@ -75,5 +75,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 109 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 110/200
+- finish the slice 110 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 111/200
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle
