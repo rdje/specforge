@@ -7,6 +7,17 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-07 KG fixture for no-prior modality finding payloads
+- New batch slice 49/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Tightened `crates/specforge/test_data/kg_quality/semantic_modality_reliability_prior_guided_conflict_without_prior_negative/fixture.json`.
+- The fixture now asserts exact validation payloads for non-decisive semantic-role arbitration, role-arbitration rescan guidance, and unresolved semantic-conflict rescan guidance at `SemanticIR` and `IntentIR` when no modality-reliability prior is staged.
+- This strengthens the no-prior semantic-modality mirror from finding-id presence to actionable `XCTRL`/`semantic_conflict_0001` validation details while continuing to exclude prior-guided arbitration and consensus findings.
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_modality_reliability_prior_guided_conflict_without_prior_negative` passed with the requested fixture.
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` tracked fixtures.
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` refreshed tracked corpus-KB projections for `150` fixtures with `0` failures and no tracked projection diff.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-07 KG fixture for AMBA-generic modality finding payloads
 - New batch slice 48/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Tightened `crates/specforge/test_data/kg_quality/semantic_modality_reliability_amba_generic_fallback_gold/fixture.json`.

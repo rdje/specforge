@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for no-prior modality finding payloads)
+
+### Improved: absent modality memory preserves actionable arbitration debt
+- Tightened `semantic_modality_reliability_prior_guided_conflict_without_prior_negative` with exact validation `findings_include` payloads for non-decisive arbitration and semantic-conflict rescan guidance at `SemanticIR` and `IntentIR`.
+- The fixture now proves a missing modality-reliability prior leaves the local `XCTRL` table/prose role conflict non-decisive while still surfacing targeted rescan details and unresolved `semantic_conflict_0001` debt.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_modality_reliability_prior_guided_conflict_without_prior_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for AMBA-generic modality finding payloads)
 
 ### Improved: AMBA-generic semantic-modality fallback locks validation details

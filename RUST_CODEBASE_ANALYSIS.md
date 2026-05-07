@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for no-prior modality finding payloads)
+- Tightened `semantic_modality_reliability_prior_guided_conflict_without_prior_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts exact non-decisive arbitration plus role/conflict rescan-guidance validation payloads for `XCTRL` and `semantic_conflict_0001` at both canonical stages.
+- This locks the no-prior semantic-modality mirror as actionable arbitration debt, not merely a conflict count or finding-id presence check.
+
 ## Session update (2026-05-07 KG fixture for AMBA-generic modality finding payloads)
 - Tightened `semantic_modality_reliability_amba_generic_fallback_gold` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts exact prior-guided arbitration, consensus, and rescan-guidance validation payloads for AMBA-generic modality fallback at both canonical stages.

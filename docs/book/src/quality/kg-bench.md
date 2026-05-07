@@ -185,6 +185,7 @@ The semantic-modality protocol-family mismatch fixture locks semantic arbitratio
 The source-kind mismatch companion applies the same exact conflict-shape check when the prior is learned for visual captions but the current evidence is table plus prose.
 The weak-prior companion applies the same check when the prior record is underpowered: weak memory stays non-decisive while the local conflict remains explicit and typed.
 The no-prior companion locks the before side of the same pair: absent modality memory means the local table/prose conflict remains explicit and non-decisive.
+That no-prior fixture now also checks the non-decisive arbitration and rescan-guidance finding payloads directly, so absent memory still leaves actionable `XCTRL` and `semantic_conflict_0001` validation debt.
 The prior-guided gold fixture locks the positive side without overstating provenance: the learned modality prior makes `XCTRL` resolve as valid-like, but canonical grounding strength remains `single_source` because the current document still supplies the grounded table observation.
 The AMBA-generic fallback gold applies that same exact shape to a generic prior used by an AXI-family document, proving generic memory can guide arbitration without widening grounding claims.
 That fallback fixture now also checks the prior-guided arbitration, consensus, and rescan-guidance finding payloads directly, so generic memory must produce the same `XCTRL`-related validation details as exact-family memory.
