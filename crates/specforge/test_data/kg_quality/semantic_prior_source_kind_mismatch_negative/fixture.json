@@ -19,12 +19,24 @@
   "expectations": {
     "semantic": {
       "signal_names_include": ["XSTAGE"],
+      "signal_directions_include": [
+        {
+          "signal_name": "XSTAGE",
+          "direction": "output"
+        }
+      ],
       "resolved_semantic_role_signal_names_exclude": ["XSTAGE"],
       "semantic_consensus_signal_names_exclude": ["XSTAGE"],
       "semantic_candidate_signal_names_exclude": ["XSTAGE"]
     },
     "intent": {
       "signal_names_include": ["XSTAGE"],
+      "signal_directions_include": [
+        {
+          "signal_name": "XSTAGE",
+          "direction": "output"
+        }
+      ],
       "resolved_semantic_role_signal_names_exclude": ["XSTAGE"],
       "semantic_consensus_signal_names_exclude": ["XSTAGE"],
       "semantic_candidate_signal_names_exclude": ["XSTAGE"]
