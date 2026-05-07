@@ -7,6 +7,18 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-07 KG fixture for broad semantic phrase alias exclusion
+- New batch slice 176/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Tightened `crates/specforge/test_data/kg_quality/semantic_prior_broad_phrase_negative/fixture.json`.
+- The fixture now asserts `signal_semantic_hints_from_alias_grounded_prose = 0` alongside total, table, and prose semantic-hint metrics.
+- This strengthens the broad semantic phrase guard by proving the one-token learned prior remains free of alias-grounded prose hints for the local `XFLOW` phrase.
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_prior_broad_phrase_negative` passed with the requested fixture.
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` tracked fixtures.
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` refreshed tracked corpus-KB projections for `150` fixtures with `0` failures and no tracked projection diff.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- Broader `bash scripts/run_ci.sh` passed on slice 170 with formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, and mdBook.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-07 KG fixture for broad semantic phrase table exclusion
 - New batch slice 175/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Tightened `crates/specforge/test_data/kg_quality/semantic_prior_broad_phrase_negative/fixture.json`.
