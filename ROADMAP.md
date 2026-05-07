@@ -835,6 +835,7 @@
   - fixture expectations can now assert canonical resolved signal polarity directly, so active-high/active-low recovery is checked as per-signal IR instead of only through validation metrics
   - fixture expectations can now assert canonical resolved semantic roles directly, so valid-like/ready-like recovery is checked as exact per-signal IR instead of only through role-presence validation metrics
   - the semantic phrase prior gold fixture now asserts exact ready-like role and single-source grounding for the prior-guided `can receive the transfer` phrase
+  - the semantic phrase protocol-family mismatch fixture now asserts exact local `XREQ` output direction while an unrelated APB semantic phrase prior remains silent
   - fixture expectations can now assert canonical semantic grounding strength directly, so single-source/multi-source/cross-modality grounding is checked as exact per-signal IR instead of only through validation metrics
   - fixture expectations can now assert canonical `temporal_rules` directly, so APB/AHB/AXI timing truthfulness is checked as typed clock/edge/cycle-window/predicate IR instead of only through validation metrics
   - the tracked temporal fixture set now also locks cycle-window rescan guidance directly: a temporal rule with clock and actor grounding but no explicit latency bound must keep emitting the stage-specific cycle-window replay finding at both `SemanticIR` and `IntentIR`

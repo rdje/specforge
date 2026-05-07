@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for semantic phrase family-mismatch signal shape)
+- Tightened `semantic_prior_protocol_family_mismatch_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts exact local `XREQ` output direction at both canonical stages while the unrelated APB semantic phrase prior stays silent.
+- Slice 25 also reran the broader local CI gate; formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, and mdBook passed.
+
 ## Session update (2026-05-07 KG fixture for semantic phrase resolved shape)
 - Tightened `semantic_prior_guided_phrase_gold` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts exact `XACK` role and grounding at both canonical stages: `handshake_ready_like` and `single_source`.

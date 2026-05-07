@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for semantic phrase family-mismatch signal shape)
+
+### Improved: cross-family semantic priors preserve local signal shape
+- Tightened `semantic_prior_protocol_family_mismatch_negative` with exact `signal_directions_include` expectations at `SemanticIR` and `IntentIR`.
+- The fixture now proves an unrelated APB semantic phrase prior cannot resolve the AXI-local `XREQ` role while the local `Signal XREQ is output width 1` declaration remains canonical.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_prior_protocol_family_mismatch_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_ci.sh` -> passed (formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, mdBook)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for semantic phrase resolved shape)
 
 ### Improved: semantic phrase priors lock exact ready-like role
