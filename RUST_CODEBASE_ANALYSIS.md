@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for semantic phrase family-mismatch alias exclusion)
+- Tightened `semantic_prior_protocol_family_mismatch_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts evidence-stage `signal_semantic_hints_from_alias_grounded_prose = 0` alongside aggregate, table, and prose hint metrics.
+- This locks the unrelated APB prior guard as free of alias-grounded prose hints for the AXI-local `XREQ` phrase.
+
 ## Session update (2026-05-07 KG fixture for semantic phrase family-mismatch table exclusion)
 - Tightened `semantic_prior_protocol_family_mismatch_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts evidence-stage `signal_semantic_hints_from_tables = 0` alongside total and prose hint metrics.
