@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` system-contract width renderable block
+- New batch slice 193/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `standalone_sequential_dt_blocks_conflicting_system_contract_signal_width` now asserts standalone sequential clock/reset width conflicts leave no renderable module and no aggregate `.fsm` source document.
+- This locks conflicting system-contract width evidence against stale DT-root output while clock/reset provenance and system-surface repair guidance remain visible.
+- Focused system-contract width coverage, the adapter suite, fmt, docs CI, KG bench, and full CI passed; user-requested `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is active.
+
 ## 2026-05-06 `.fsm` system-contract direction renderable block
 - New batch slice 192/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `standalone_sequential_dt_blocks_conflicting_system_contract_signal_direction` now asserts standalone sequential clock/reset direction conflicts leave no renderable module and no aggregate `.fsm` source document.
