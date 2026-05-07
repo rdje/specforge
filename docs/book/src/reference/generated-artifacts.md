@@ -141,6 +141,7 @@ Actor-port direction conflicts also remain blocked while preserving both conflic
 Actor-port width conflicts follow the same blocked guidance pattern while preserving both conflicting width support IDs.
 They also keep renderable module and aggregate `.fsm` source documents absent, so stale DT-root output cannot leak while the width evidence is conflicting.
 Flat direction conflicts with graph-backed actor provenance remain blocked and keep signal-inventory residual guidance on the flat-conflict regression itself.
+They also keep renderable module and aggregate `.fsm` source documents absent, so stale DT-root output cannot leak while canonical direction evidence is conflicting.
 Flat/graph direction disagreements likewise keep interface and actor-port provenance plus signal-inventory residual guidance while blocked.
 Graph-backed undriven standalone outputs keep selected actor support and signal-inventory residual guidance while blocked.
 Structured-FSM graph-backed undriven outputs keep the same residual guidance alongside FSM-state blocker text.

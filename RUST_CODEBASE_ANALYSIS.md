@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` direct flat-conflict renderable block)
+- Tightened `standalone_dt_blocks_conflicting_flat_direction_even_with_actor_graph` in `crates/specforge/src/ir/adapters.rs`.
+- The test now proves direct DT flat-direction conflicts leave no renderable module and no aggregate `.fsm` source document even when actor graph evidence exists.
+- This locks conflicting canonical direction evidence against stale renderable DT output; focused adapter coverage, full adapter coverage, fmt, docs CI, KG bench, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 `.fsm` direct width-conflict renderable block)
 - Tightened `standalone_dt_blocks_conflicting_control_input_actor_port_widths` in `crates/specforge/src/ir/adapters.rs`.
 - The test now proves direct DT actor-port width conflicts leave no renderable module and no aggregate `.fsm` source document.
