@@ -22,22 +22,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `6040a4d026967eff5108c2a4abd4d5c9eebf9bf8`
-- latest_commit_brief_message: `test(kg): lock cross-modality hint totals`
-- note: this is the pre-slice-70 baseline for the current `BWFSC=200` batch; slices 1-69/200 are committed and push remains deferred
+- latest_commit_hash: `090c96e9e0a47d2f4a098ec3f7b8a873b2112d66`
+- latest_commit_brief_message: `test(kg): lock cross-modality prose hint split`
+- note: this is the pre-slice-71 baseline for the current `BWFSC=200` batch; slices 1-70/200 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `090c96e` test(kg): lock cross-modality prose hint split
 - `6040a4d` test(kg): lock cross-modality hint totals
 - `b5e2869` test(kg): lock waveform-motion hint exclusion
 - `14423d1` test(kg): lock motion-only VLM hint exclusion
 - `e512e07` test(kg): lock cycle-qualified VLM hint exclusion
 - `e598894` test(kg): lock indexed VLM total hint exclusion
-- `53b08c5` test(kg): lock spurious VLM total hint exclusion
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 70 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 71 and push is deferred
 - files in flight:
   - `crates/specforge/test_data/kg_quality/cross_modality_semantic_conflict_negative/fixture.json`
   - live docs and mdBook files synced for the slice
@@ -52,13 +52,13 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `69`
-  - slice 70/200 tightens cross-modality semantic-conflict prose semantic-hint split metrics
+  - completed_count before this commit: `70`
+  - slice 71/200 tightens cross-modality semantic-conflict alias-grounded prose semantic-hint split metrics
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks cross-modality semantic-conflict prose-split semantic-hint KG coverage as `Done`
+  - live-status tracker now marks cross-modality semantic-conflict alias-grounded prose-split KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 70 before commit
+  - implementation and live-doc sync are complete for slice 71 before commit
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench cross_modality_semantic_conflict_negative` passed with the requested fixture
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` fixtures
   - `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed with `150` fixtures projected and `0` failures
@@ -75,5 +75,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 70 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 71/200
+- finish the slice 71 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 72/200
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle

@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for cross-modality semantic-conflict alias split)
+- Tightened `cross_modality_semantic_conflict_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts evidence-stage `signal_semantic_hints_from_alias_grounded_prose = 0` alongside total, table, prose, and visual-caption hint metrics.
+- This locks the unresolved `XCTRL` semantic-role conflict as free of alias-grounded prose participation.
+
 ## Session update (2026-05-07 KG fixture for cross-modality semantic-conflict prose split)
 - Tightened `cross_modality_semantic_conflict_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts evidence-stage `signal_semantic_hints_from_prose = 0` alongside the total, table, and visual-caption hint metrics.
