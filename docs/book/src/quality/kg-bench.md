@@ -117,6 +117,7 @@ That lets polarity gold fixtures prove `CS_N` is active-low or `ENABLE` is activ
 Fixtures can assert canonical resolved semantic roles directly as well.
 `resolved_semantic_roles_include` checks the signal name and expected valid-like or ready-like role on the canonical interface signal record.
 That lets semantic gold fixtures prove `XREQ` is valid-like or `XACK` is ready-like as typed IR shape, rather than only proving that some semantic role was resolved.
+The semantic phrase prior gold uses this for `XACK can receive the transfer`: prior-guided recovery must resolve exactly to ready-like with single-source grounding.
 
 Fixtures can assert canonical semantic grounding strength directly as well.
 `semantic_grounding_strengths_include` checks the signal name and expected single-source, multi-source, or cross-modality grounding strength on the canonical interface signal record.

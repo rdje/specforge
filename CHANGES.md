@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for semantic phrase resolved shape)
+
+### Improved: semantic phrase priors lock exact ready-like role
+- Tightened `semantic_prior_guided_phrase_gold` with exact `resolved_semantic_roles_include` and `semantic_grounding_strengths_include` expectations at `SemanticIR` and `IntentIR`.
+- The fixture now proves the prior-guided `XACK can receive the transfer` phrase resolves specifically to `handshake_ready_like` with `single_source` grounding, not just any semantic role.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_prior_guided_phrase_gold` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for AMBA-generic modality fallback shape)
 
 ### Improved: AMBA-generic modality fallback keeps exact role shape

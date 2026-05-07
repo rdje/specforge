@@ -303,6 +303,7 @@
 - KG benchmark harness now locks weak semantic modality-prior conflict shape: Done
 - KG benchmark harness now locks no-prior semantic modality conflict shape: Done
 - Semantic phrase prior lookup rejects one-token broad prior records: Done
+- KG benchmark harness now locks semantic phrase prior resolved-role shape: Done
 - KG benchmark harness now locks semantic phrase prior local phrase matching: Done
 - KG benchmark harness now locks semantic phrase prior source-kind scoping: Done
 - KG benchmark harness now locks conflicting semantic phrase priors fail closed: Done

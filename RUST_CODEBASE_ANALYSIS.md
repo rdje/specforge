@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for semantic phrase resolved shape)
+- Tightened `semantic_prior_guided_phrase_gold` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts exact `XACK` role and grounding at both canonical stages: `handshake_ready_like` and `single_source`.
+- This brings the older `can receive the transfer` semantic phrase prior gold up to the exact role/grounding expectation standard.
+
 ## Session update (2026-05-07 KG fixture for AMBA-generic modality fallback shape)
 - Tightened `semantic_modality_reliability_amba_generic_fallback_gold` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts exact AMBA-generic prior-guided `XCTRL` resolution: `handshake_valid_like`, `single_source` grounding strength, and explicit table/prose semantic-conflict observations at both canonical stages.
