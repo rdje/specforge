@@ -238,6 +238,7 @@ Visual-caption hints stay zero there too, preserving the positive modality-prior
 VLM timing-annotation hints stay zero as well, keeping timing-note evidence out of the positive modality-prior proof.
 Timing-diagram extractions stay zero too, preserving the positive modality-prior proof as a non-visual table/prose arbitration.
 The AMBA-generic fallback gold applies that same exact shape to a generic prior used by an AXI-family document, proving generic memory can guide arbitration without widening grounding claims.
+It now locks two aggregate evidence semantic hints too, proving AMBA-generic fallback starts from the same local table/prose conflict rather than extra hidden evidence.
 That fallback fixture now also checks the prior-guided arbitration, consensus, and rescan-guidance finding payloads directly, so generic memory must produce the same `XCTRL`-related validation details as exact-family memory.
 
 Negative-knowledge fixtures make that last rule executable.

@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for AMBA-generic modality fallback hint totals)
+- Tightened `semantic_modality_reliability_amba_generic_fallback_gold` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts evidence-stage `signal_semantic_hints = 2` for the AMBA-generic semantic-modality fallback.
+- This locks generic-prior role resolution as starting from exactly two counted local table/prose semantic hints before learned modality reliability breaks the tie.
+
 ## Session update (2026-05-07 KG fixture for modality-prior gold timing-extraction absence)
 - Tightened `semantic_modality_reliability_prior_guided_conflict_gold` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts evidence-stage `timing_diagram_extractions = 0` alongside its full semantic-hint source split.
