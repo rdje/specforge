@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for no-prior modality visual exclusion)
+
+### Improved: no-prior modality fixtures exclude visual-caption hints
+- Tightened `semantic_modality_reliability_prior_guided_conflict_without_prior_negative` with `signal_semantic_hints_from_visual_captions = 0` at `EvidenceIR`.
+- The fixture now proves visual-caption evidence does not participate in the local `XCTRL` conflict when no modality memory is available.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_modality_reliability_prior_guided_conflict_without_prior_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for no-prior modality alias exclusion)
 
 ### Improved: no-prior modality fixtures exclude alias-grounded prose hints

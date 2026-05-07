@@ -334,6 +334,7 @@
 - KG benchmark harness now locks no-prior semantic modality table semantic-hint split: Done
 - KG benchmark harness now locks no-prior semantic modality prose semantic-hint split: Done
 - KG benchmark harness now locks no-prior semantic modality alias-grounded prose semantic-hint exclusion: Done
+- KG benchmark harness now locks no-prior semantic modality visual-caption semantic-hint exclusion: Done
 - Semantic phrase prior lookup rejects one-token broad prior records: Done
 - KG benchmark harness now locks semantic phrase prior resolved-role shape: Done
 - KG benchmark harness now locks semantic phrase prior local phrase matching: Done
