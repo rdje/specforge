@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for semantic-modality family-mismatch table split)
+
+### Improved: modality-prior mismatch fixtures lock table hints
+- Tightened `semantic_modality_reliability_protocol_family_mismatch_negative` with `signal_semantic_hints_from_tables = 1` at `EvidenceIR`.
+- The fixture now proves one local AXI `XCTRL` semantic observation comes from the structured table path while the unrelated APB modality prior stays silent.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_modality_reliability_protocol_family_mismatch_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for semantic-modality family-mismatch hint totals)
 
 ### Improved: modality-prior mismatch fixtures lock aggregate hints

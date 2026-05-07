@@ -304,6 +304,7 @@
 - KG benchmark harness now locks semantic modality-prior protocol-family scoping: Done
 - KG benchmark harness now locks semantic modality-prior family-mismatch conflict shape: Done
 - KG benchmark harness now locks semantic modality-prior family-mismatch total evidence semantic hints: Done
+- KG benchmark harness now locks semantic modality-prior family-mismatch table semantic-hint split: Done
 - KG benchmark harness now locks semantic modality-prior resolved-role shape: Done
 - KG benchmark harness now locks semantic modality-prior source-kind scoping: Done
 - KG benchmark harness now locks semantic modality-prior source-kind conflict shape: Done

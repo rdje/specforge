@@ -22,22 +22,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `9709b6960363d4b278f622a0cc8f5d328bd0875e`
-- latest_commit_brief_message: `test(kg): lock neg-knowledge caution alias hints`
-- note: this is the pre-slice-88 baseline for the current `BWFSC=200` batch; slices 1-87/200 are committed and push remains deferred
+- latest_commit_hash: `87a6395aee5d4f5ad40e012b3aaf208f702c8fff`
+- latest_commit_brief_message: `test(kg): lock modality family hint totals`
+- note: this is the pre-slice-89 baseline for the current `BWFSC=200` batch; slices 1-88/200 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `87a6395` test(kg): lock modality family hint totals
 - `9709b69` test(kg): lock neg-knowledge caution alias hints
 - `00bd03e` test(kg): lock neg-knowledge caution prose hints
 - `d1b9bfd` test(kg): lock neg-knowledge caution table hints
 - `4ff3fab` test(kg): lock neg-knowledge timing extraction
 - `f785fb9` test(kg): lock neg-knowledge alias hint exclusion
-- `d5a6708` test(kg): lock neg-knowledge prose hint exclusion
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 88 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 89 and push is deferred
 - files in flight:
   - `crates/specforge/test_data/kg_quality/semantic_modality_reliability_protocol_family_mismatch_negative/fixture.json`
   - live docs and mdBook files synced for the slice
@@ -52,13 +52,13 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `87`
-  - slice 88/200 tightens semantic-modality protocol-family mismatch aggregate evidence semantic-hint metrics
+  - completed_count before this commit: `88`
+  - slice 89/200 tightens semantic-modality protocol-family mismatch table semantic-hint split metrics
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks semantic-modality protocol-family mismatch aggregate semantic-hint KG coverage as `Done`
+  - live-status tracker now marks semantic-modality protocol-family mismatch table semantic-hint split KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 88 before commit
+  - implementation and live-doc sync are complete for slice 89 before commit
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_modality_reliability_protocol_family_mismatch_negative` passed with the requested fixture
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` fixtures
   - `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed with `150` fixtures projected and `0` failures
@@ -75,5 +75,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 88 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 89/200
+- finish the slice 89 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 90/200
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle
