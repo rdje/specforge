@@ -838,6 +838,7 @@
   - the semantic phrase protocol-family mismatch fixture now asserts exact local `XREQ` output direction while an unrelated APB semantic phrase prior remains silent
   - the semantic phrase source-kind mismatch fixture now asserts exact local `XSTAGE` output direction while a visual-caption-only semantic phrase prior remains silent for prose evidence
   - the semantic phrase exact-phrase mismatch fixture now asserts exact local `XFLOW` output direction while a learned `can publish the beat` prior remains silent for the unmatched `can sequence the transfer` phrase
+  - the broad semantic phrase negative fixture now asserts exact local `XFLOW` output direction while a one-token `transfer` prior remains silent
   - fixture expectations can now assert canonical semantic grounding strength directly, so single-source/multi-source/cross-modality grounding is checked as exact per-signal IR instead of only through validation metrics
   - fixture expectations can now assert canonical `temporal_rules` directly, so APB/AHB/AXI timing truthfulness is checked as typed clock/edge/cycle-window/predicate IR instead of only through validation metrics
   - the tracked temporal fixture set now also locks cycle-window rescan guidance directly: a temporal rule with clock and actor grounding but no explicit latency bound must keep emitting the stage-specific cycle-window replay finding at both `SemanticIR` and `IntentIR`
