@@ -214,6 +214,7 @@ The negative-knowledge protocol-family mismatch fixture locks the other side of 
 That mismatch fixture also locks one visual-caption semantic hint, so protocol-family scoping cannot make the local AXI caption evidence disappear.
 It locks one VLM timing-annotation semantic hint too, preserving the other side of the local conflict while the APB caution prior remains scoped out.
 The same fixture excludes table semantic hints, keeping that local conflict visual-only.
+It excludes ordinary prose hints as well, so the mismatch case cannot be satisfied by text evidence.
 It also keeps arbitration explicit: `XCTRL` still enters semantic arbitration, but the unrelated prior must not make that arbitration decisive.
 
 Timing-annotation fixtures also cover polarity-sensitive multimodal evidence.

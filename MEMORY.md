@@ -22,22 +22,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `555a4ef5657de023b004c804549290e292b8a2e8`
-- latest_commit_brief_message: `test(kg): lock neg-knowledge VLM hint split`
-- note: this is the pre-slice-81 baseline for the current `BWFSC=200` batch; slices 1-80/200 are committed and push remains deferred
+- latest_commit_hash: `6e1ab32da4a5e7ecc311c26e65945ced6fff2301`
+- latest_commit_brief_message: `test(kg): lock neg-knowledge table hint exclusion`
+- note: this is the pre-slice-82 baseline for the current `BWFSC=200` batch; slices 1-81/200 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `6e1ab32` test(kg): lock neg-knowledge table hint exclusion
 - `555a4ef` test(kg): lock neg-knowledge VLM hint split
 - `4da48f3` test(kg): lock neg-knowledge visual hint split
 - `3a58c94` test(kg): lock grounding VLM hint exclusion
 - `cffe2f3` test(kg): lock grounding alias hint exclusion
 - `8f1b29f` test(kg): lock grounding prose hint exclusion
-- `59e003e` test(kg): lock grounding visual hint split
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 81 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 82 and push is deferred
 - files in flight:
   - `crates/specforge/test_data/kg_quality/negative_knowledge_prior_protocol_family_mismatch_negative/fixture.json`
   - live docs and mdBook files synced for the slice
@@ -52,13 +52,13 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `80`
-  - slice 81/200 tightens negative-knowledge protocol-family mismatch table semantic-hint exclusion metrics
+  - completed_count before this commit: `81`
+  - slice 82/200 tightens negative-knowledge protocol-family mismatch prose semantic-hint exclusion metrics
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks negative-knowledge protocol-family mismatch table semantic-hint exclusion KG coverage as `Done`
+  - live-status tracker now marks negative-knowledge protocol-family mismatch prose semantic-hint exclusion KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 81 before commit
+  - implementation and live-doc sync are complete for slice 82 before commit
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench negative_knowledge_prior_protocol_family_mismatch_negative` passed with the requested fixture
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` fixtures
   - `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed with `150` fixtures projected and `0` failures
@@ -75,5 +75,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 81 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 82/200
+- finish the slice 82 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 83/200
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle
