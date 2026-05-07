@@ -140,6 +140,7 @@ Visual-caption hints stay zero as well, keeping the family-mismatch guard non-vi
 VLM timing-annotation hints stay zero too, keeping timing-note evidence out of the family-mismatch guard.
 Timing-diagram extractions stay zero too, keeping the family-mismatch guard free of timing extraction support.
 The source-kind mismatch companion applies the same signal-shape discipline to `XSTAGE`: a visual-caption-only phrase prior stays silent for prose evidence while the local output declaration remains canonical.
+That source-kind guard now also asserts table-sourced semantic hints stay zero while the visual-caption-only prior remains silent for prose evidence.
 The exact-phrase mismatch companion does the same for `XFLOW`: an unmatched learned phrase prior stays silent while the local output declaration remains canonical.
 The broad-phrase guard adds the one-token case: a generic `transfer` prior stays inert while the same `XFLOW` declaration remains canonical.
 The conflicting-role guard adds the ambiguity case: equal valid-like and ready-like priors for one phrase stay inert while the local `XCTRL` input declaration remains canonical.

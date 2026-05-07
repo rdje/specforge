@@ -22,24 +22,24 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `61942f98a475ab4a838a5f3409624f38fbd1b0b9`
-- latest_commit_brief_message: `test(kg): lock semantic phrase family VLM exclusion`
-- note: this is the pre-slice-164 baseline for the current `BWFSC=200` batch; slices 1-163/200 are committed and push remains deferred
+- latest_commit_hash: `6103a1a6f63b069fad24767d323ee43cf6f803e0`
+- latest_commit_brief_message: `test(kg): lock semantic phrase family timing absence`
+- note: this is the pre-slice-165 baseline for the current `BWFSC=200` batch; slices 1-164/200 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `6103a1a` test(kg): lock semantic phrase family timing absence
 - `61942f9` test(kg): lock semantic phrase family VLM exclusion
 - `575e5e8` test(kg): lock semantic phrase family visual exclusion
 - `7366af2` test(kg): lock semantic phrase family alias exclusion
 - `cd40b57` test(kg): lock semantic phrase family table exclusion
 - `cc9fcfe` test(kg): lock no-prior semantic phrase timing absence
-- `41537ad` test(kg): lock no-prior semantic phrase VLM exclusion
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 164 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 165 and push is deferred
 - files in flight:
-  - `crates/specforge/test_data/kg_quality/semantic_prior_protocol_family_mismatch_negative/fixture.json`
+  - `crates/specforge/test_data/kg_quality/semantic_prior_source_kind_mismatch_negative/fixture.json`
   - live docs and mdBook files synced for the slice
 
 ## Previous completed N-slice batch
@@ -52,14 +52,14 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `163`
-  - slice 164/200 tightens semantic phrase family-mismatch timing-diagram extraction absence metrics
+  - completed_count before this commit: `164`
+  - slice 165/200 tightens semantic phrase source-kind mismatch table-sourced semantic-hint exclusion metrics
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks semantic phrase family-mismatch timing-extraction absence KG coverage as `Done`
+  - live-status tracker now marks semantic phrase source-kind mismatch table-sourced semantic-hint exclusion KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 164 before commit
-  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_prior_protocol_family_mismatch_negative` passed with the requested fixture
+  - implementation and live-doc sync are complete for slice 165 before commit
+  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_prior_source_kind_mismatch_negative` passed with the requested fixture
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` fixtures
   - `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed with `150` fixtures projected and `0` failures
   - `bash scripts/run_docs_ci.sh` passed after the live-book sync
@@ -75,5 +75,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 164 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 165/200
+- finish the slice 165 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 166/200
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle
