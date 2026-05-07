@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for negative-knowledge family-mismatch table exclusion)
+
+### Improved: protocol-family mismatch fixtures exclude table hints
+- Tightened `negative_knowledge_prior_protocol_family_mismatch_negative` with `signal_semantic_hints_from_tables = 0` at `EvidenceIR`.
+- The fixture now proves the local AXI `XCTRL` conflict is visual-caption plus VLM timing evidence, not table-derived semantic evidence.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench negative_knowledge_prior_protocol_family_mismatch_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for negative-knowledge family-mismatch VLM split)
 
 ### Improved: protocol-family mismatch fixtures lock local VLM hints
