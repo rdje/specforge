@@ -206,6 +206,7 @@ It also keeps arbitration explicit: `XCTRL` still enters semantic arbitration, b
 Timing-annotation fixtures also cover polarity-sensitive multimodal evidence.
 For example, `vlm_timing_active_low_assertion_equivalence_gold` proves that an active-low reset observed by a VLM timing diagram as both `asserted` and `LOW` becomes typed temporal evidence without creating a false temporal conflict.
 That assertion fixture also checks zero VLM timing-annotation semantic hints, so reset assertion prose cannot accidentally become handshake valid/ready-like evidence.
+It now locks the total semantic-hint count at zero too, closing off alternate hint sources for the same reset evidence.
 The companion `vlm_timing_active_low_deassertion_equivalence_gold` fixture proves the reset-release mirror case: `deasserted` and `HIGH` are equivalent for the same active-low reset.
 That deassertion fixture now carries the same zero-hint guard, so reset-release prose stays temporal/polarity evidence only.
 That matters because `ASSERTED` and `DEASSERTED` are polarity-relative, not synonyms for fixed logic levels.
