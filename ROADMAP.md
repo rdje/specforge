@@ -961,6 +961,7 @@
   - the AMBA-generic semantic-modality fallback gold fixture now asserts total evidence semantic hints equal the two local table/prose observations before generic-prior arbitration
   - the AMBA-generic semantic-modality fallback gold fixture now asserts one table-sourced semantic hint, keeping the structured-table side explicit before generic-prior arbitration
   - the AMBA-generic semantic-modality fallback gold fixture now asserts one prose-sourced semantic hint, keeping the text side explicit before generic-prior arbitration
+  - the AMBA-generic semantic-modality fallback gold fixture now asserts alias-grounded prose semantic hints stay zero, keeping alias recovery out of the generic fallback proof
   - fixture expectations can now assert canonical `temporal_conflicts` directly, so contradiction surfacing is checked as typed context/value/supporting-evidence IR instead of only a conflict count
   - fixture expectations can now assert canonical `infrastructure_signals` and `infrastructure_topology` records directly, so clock/reset topology truthfulness is checked as typed IR instead of only through validation metrics
   - fixture expectations can now assert validation finding payloads directly via `findings_include`, including severity, category, summary snippets, and related-id inclusion/exclusion, so validation-backed caution/rescan surfaces are checked as exact report content instead of only finding ids or metrics

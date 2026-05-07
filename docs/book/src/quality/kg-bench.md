@@ -241,6 +241,7 @@ The AMBA-generic fallback gold applies that same exact shape to a generic prior 
 It now locks two aggregate evidence semantic hints too, proving AMBA-generic fallback starts from the same local table/prose conflict rather than extra hidden evidence.
 It locks one table-sourced semantic hint too, keeping the structured-table side explicit before generic-prior arbitration.
 It locks one prose-sourced semantic hint too, keeping the text side explicit before generic-prior arbitration.
+Alias-grounded prose stays zero in the fallback gold too, keeping alias recovery out of the generic fallback proof.
 That fallback fixture now also checks the prior-guided arbitration, consensus, and rescan-guidance finding payloads directly, so generic memory must produce the same `XCTRL`-related validation details as exact-family memory.
 
 Negative-knowledge fixtures make that last rule executable.
