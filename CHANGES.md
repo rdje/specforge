@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for prior-guided receive signal shape)
+
+### Improved: prior-guided receive recovery preserves local signal shape
+- Tightened `semantic_prior_guided_phrase_gold` with exact `signal_directions_include` expectations at `SemanticIR` and `IntentIR`.
+- The fixture now proves prior-guided `XACK can receive the transfer` resolves as `handshake_ready_like` with `single_source` grounding while the local `Signal XACK is input width 1` declaration stays canonical.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_prior_guided_phrase_gold` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for prior-guided ready-sink signal shape)
 
 ### Improved: prior-guided ready-sink recovery preserves local signal shape

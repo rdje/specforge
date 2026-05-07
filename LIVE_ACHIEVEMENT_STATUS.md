@@ -317,6 +317,7 @@
 - KG benchmark harness now locks no-prior valid-like semantic phrase signal shape: Done
 - KG benchmark harness now locks prior-guided valid-like semantic phrase signal shape: Done
 - KG benchmark harness now locks prior-guided ready-sink semantic phrase signal shape: Done
+- KG benchmark harness now locks prior-guided receive semantic phrase signal shape: Done
 - KG benchmark harness now locks prior-guided ready-like sink phrase recovery: Done
 - KG benchmark harness now locks prior-guided valid-like semantic phrase recovery: Done
 - KG benchmark harness now includes AXI write-response timing coverage: Done
