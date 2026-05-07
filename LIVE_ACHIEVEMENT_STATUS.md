@@ -318,6 +318,7 @@
 - KG benchmark harness now locks semantic modality-prior source-kind mismatch prose semantic-hint split: Done
 - KG benchmark harness now locks semantic modality-prior source-kind mismatch alias-grounded prose semantic-hint exclusion: Done
 - KG benchmark harness now locks semantic modality-prior source-kind mismatch visual-caption semantic-hint exclusion: Done
+- KG benchmark harness now locks semantic modality-prior source-kind mismatch VLM timing-annotation semantic-hint exclusion: Done
 - KG benchmark harness now locks weak semantic modality priors as non-decisive: Done
 - KG benchmark harness now locks weak semantic modality-prior conflict shape: Done
 - KG benchmark harness now locks no-prior semantic modality conflict shape: Done

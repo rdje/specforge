@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for semantic-modality source-kind mismatch VLM exclusion)
+
+### Improved: source-kind mismatch fixtures exclude VLM timing hints
+- Tightened `semantic_modality_reliability_source_kind_mismatch_negative` with `signal_semantic_hints_from_vlm_timing_annotations = 0` at `EvidenceIR`.
+- The fixture now proves VLM timing annotations do not participate in the local `XCTRL` table/prose conflict while the visual-caption-only modality prior remains scoped out.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_modality_reliability_source_kind_mismatch_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_ci.sh` -> passed at batch midpoint (`614` Rust tests plus formatting, Clippy warning-deny, rustdoc warning-deny, mdBook)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for semantic-modality source-kind mismatch visual exclusion)
 
 ### Improved: source-kind mismatch fixtures exclude visual-caption hints
