@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for semantic-modality source-kind mismatch shape)
+- Tightened `semantic_modality_reliability_source_kind_mismatch_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts exact semantic-conflict observations for `XCTRL`: table-derived valid-like evidence and prose-derived ready-like evidence remain contested at both canonical stages.
+- This locks the wrong-source-kind prior guard as exact conflict-shape coverage without changing production prior lookup or arbitration behavior.
+
 ## Session update (2026-05-07 KG fixture for semantic-modality mismatch conflict shape)
 - Tightened `semantic_modality_reliability_protocol_family_mismatch_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts exact semantic-conflict observations for `XCTRL`: table-derived valid-like evidence and prose-derived ready-like evidence remain contested at both canonical stages.
