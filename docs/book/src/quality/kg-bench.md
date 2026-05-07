@@ -217,6 +217,7 @@ The weak-prior guard now locks one table-sourced semantic hint as well, keeping 
 It locks one prose-sourced semantic hint too, keeping the text side explicit.
 Alias-grounded prose stays zero in that guard, so alias recovery cannot hide the weak-prior boundary.
 Visual-caption hints are zero there too, preserving the guard as a table/prose conflict.
+VLM timing-annotation hints are also zero, keeping timing-note evidence out of the weak-prior guard.
 That weak-prior fixture now also locks the non-decisive arbitration and rescan-guidance payloads, so insufficient support cannot hide the unresolved `XCTRL`/`semantic_conflict_0001` review target.
 The no-prior companion locks the before side of the same pair: absent modality memory means the local table/prose conflict remains explicit and non-decisive.
 That no-prior fixture now also checks the non-decisive arbitration and rescan-guidance finding payloads directly, so absent memory still leaves actionable `XCTRL` and `semantic_conflict_0001` validation debt.
