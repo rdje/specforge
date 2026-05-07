@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` undeclared target renderable block
+- New batch slice 181/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `keeps_structured_fsm_blocked_when_transition_target_is_undeclared` now asserts structured FSMs with a transition targeting an undeclared state leave the aggregate `.fsm` artifact without a renderable source document.
+- This locks undeclared-target state-graph blockers against stale `?fsm` output before every transition target is declared.
+- Focused undeclared-target coverage, the adapter suite, fmt, docs CI, KG bench, and full CI passed; user-requested `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is active.
+
 ## 2026-05-06 `.fsm` missing initial state renderable block
 - New batch slice 180/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `keeps_structured_fsm_blocked_without_exactly_one_initial_state` now asserts structured FSMs without exactly one explicit initial state leave the aggregate `.fsm` artifact without a renderable source document.

@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` undeclared target renderable block)
+
+### Added: undeclared transition targets cannot leak aggregate FSM output
+- Tightened `keeps_structured_fsm_blocked_when_transition_target_is_undeclared` so structured FSMs with a transition targeting an undeclared state leave the aggregate `.fsm` artifact without a renderable source document.
+- This locks undeclared-target state-graph blockers against stale `?fsm` output until every transition target is declared.
+- Synced the live tracker, roadmap, and mdBook with the undeclared-target renderable-block guarantee.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge keeps_structured_fsm_blocked_when_transition_target_is_undeclared` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148/148` fixtures)
+- `bash scripts/run_ci.sh` -> passed (`614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation)
+- `cargo sweep --time 1` -> deferred because `target/release/tool_matrix` is active
+
 ## 2026-05-06 (`.fsm` missing initial state renderable block)
 
 ### Added: missing initial states cannot leak aggregate FSM output

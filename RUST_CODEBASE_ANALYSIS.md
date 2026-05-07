@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` undeclared target renderable block)
+- Tightened `keeps_structured_fsm_blocked_when_transition_target_is_undeclared` in `crates/specforge/src/ir/adapters.rs`.
+- The test now proves structured FSMs with a transition targeting an undeclared state leave the aggregate `.fsm` artifact without a renderable source document.
+- This locks undeclared-target state-graph blockers against stale renderable FSM output; focused adapter coverage, full adapter coverage, fmt, docs CI, KG bench, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 `.fsm` missing initial state renderable block)
 - Tightened `keeps_structured_fsm_blocked_without_exactly_one_initial_state` in `crates/specforge/src/ir/adapters.rs`.
 - The test now proves structured FSMs without exactly one explicit initial state leave the aggregate `.fsm` artifact without a renderable source document.

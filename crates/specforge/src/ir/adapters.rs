@@ -17879,6 +17879,7 @@ mod tests {
             AutomationConfidence::High
         );
         assert!(!fsm.renderability.is_renderable);
+        assert!(fsm.renderable_document.is_none());
         assert!(fsm.renderability.blocking_reasons.iter().any(|reason| {
             reason.contains("Transition target `missing_state` is not declared")
         }));
