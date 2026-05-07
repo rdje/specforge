@@ -878,6 +878,7 @@
   - the prior-guided ready-sink semantic phrase fixture now asserts alias-grounded prose semantic hints stay zero, keeping alias recovery out of the direct ready-sink proof
   - the prior-guided ready-sink semantic phrase fixture now asserts visual-caption semantic hints stay zero, keeping the direct ready-sink proof prose-only
   - the prior-guided ready-sink semantic phrase fixture now asserts VLM timing-annotation semantic hints stay zero, keeping timing-note evidence out of the direct ready-sink proof
+  - the prior-guided ready-sink semantic phrase fixture now asserts timing-diagram extractions stay zero, keeping the direct ready-sink proof free of timing extraction support
   - the prior-guided receive semantic phrase fixture now asserts exact local `XACK` input direction while resolving `can receive the transfer` to `handshake_ready_like` with `single_source` grounding
   - the no-prior visual-caption semantic phrase mirror now asserts exact local `XACK` input direction while the caption phrase remains unresolved without learned visual memory
   - the prior-guided visual-caption semantic phrase fixture now asserts exact local `XACK` input direction while resolving caption evidence to `handshake_ready_like` with `single_source` grounding
