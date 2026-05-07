@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for table-shape family-mismatch provenance)
+- Tightened `table_shape_prior_protocol_family_mismatch_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts zero table-signal declaration provenance at `EvidenceIR` when an APB-scoped table-shape prior is staged against an AXI-local unknown signal-table shape.
+- This locks the protocol-family mismatch guard at the earliest table-shape recovery boundary without changing production prior lookup behavior.
+
 ## Session update (2026-05-07 KG fixture for prior-guided table-shape signal provenance)
 - Tightened `table_shape_prior_guided_signal_table_gold` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts exact `XREQ`/`XACK` table-signal declaration provenance from `table_0001` at `EvidenceIR` and canonical table-support carry-through at both later stages.

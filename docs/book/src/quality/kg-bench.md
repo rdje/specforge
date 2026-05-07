@@ -38,6 +38,7 @@ Fixtures can assert canonical signal inventories directly.
 `signal_names_include` checks that required interface signals survive, while `signal_names_exclude` checks that tempting non-signals stay out.
 That second field is especially useful for protocol-PDF scope tests: uppercase engineering words such as `PDF`, `RTL`, `VIP`, `PLL`, `DFT`, or `SoC` may be important document context, but they are not automatically interface signals.
 The table-shape prior family-mismatch fixture uses the same exclusion surface for table rows: an AXI-local unknown table with `XREQ` and `XACK` rows must stay inert when the only matching `Name | Direction | Width` prior is APB-scoped, so unrelated table-shape memory cannot mint canonical signals or graph directions.
+That mismatch guard also checks `EvidenceIR` directly now: the unrelated APB prior must leave table-signal declaration provenance at zero before canonical inventory is even built.
 The no-prior table-shape signal-table fixture locks the before side even more directly: without learned shape memory, a local `Name | Direction | Width` table stays out of table-signal provenance and canonical `XREQ`/`XACK` inventory.
 The prior-guided table-shape signal-table fixture locks the after side: learned shape memory can classify the same table, but recovered `XREQ`/`XACK` declarations must retain exact `table_0001` provenance and canonical table support.
 
