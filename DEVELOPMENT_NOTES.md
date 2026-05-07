@@ -7,6 +7,18 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-07 KG fixture for active-low VLM assertion hint exclusion
+- New batch slice 60/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Tightened `crates/specforge/test_data/kg_quality/vlm_timing_active_low_assertion_equivalence_gold/fixture.json`.
+- The fixture now asserts `signal_semantic_hints_from_vlm_timing_annotations = 0` while retaining `timing_diagram_extractions = 1`.
+- This strengthens the active-low reset assertion VLM fixture by proving polarity-aware temporal evidence does not leak into handshake semantic-role hints.
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench vlm_timing_active_low_assertion_equivalence_gold` passed with the requested fixture.
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` tracked fixtures.
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` refreshed tracked corpus-KB projections for `150` fixtures with `0` failures and no tracked projection diff.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- Broader `bash scripts/run_ci.sh` last passed on slice 50 with formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, and mdBook.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-07 KG fixture for VLM timing semantic-grounding extraction metric
 - New batch slice 59/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Tightened `crates/specforge/test_data/kg_quality/vlm_timing_semantic_grounding_gold/fixture.json`.

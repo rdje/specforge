@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for active-low VLM assertion hint exclusion)
+
+### Improved: reset assertion timing annotations stay out of semantic-role hints
+- Tightened `vlm_timing_active_low_assertion_equivalence_gold` with `signal_semantic_hints_from_vlm_timing_annotations = 0`.
+- The fixture now proves active-low reset assertion evidence can produce polarity-aware temporal facts without being misread as valid/ready-like semantic role evidence.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench vlm_timing_active_low_assertion_equivalence_gold` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for VLM timing semantic-grounding extraction metric)
 
 ### Improved: VLM timing semantic recovery proves extraction-stage grounding
