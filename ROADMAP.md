@@ -947,6 +947,7 @@
   - the no-prior semantic-modality fixture now asserts one prose-sourced semantic hint, keeping the local prose side counted before arbitration
   - the no-prior semantic-modality fixture now asserts alias-grounded prose semantic hints stay zero, keeping alias recovery out of the no-prior mirror
   - the no-prior semantic-modality fixture now asserts visual-caption semantic hints stay zero, preserving the table/prose-only conflict shape
+  - the no-prior semantic-modality fixture now asserts VLM timing-annotation semantic hints stay zero, preserving the table/prose-only conflict shape
   - the prior-guided semantic-modality gold fixture now asserts the exact resolved role and current-document grounding strength, proving modality memory guides arbitration without overstating grounding
   - the AMBA-generic semantic-modality fallback gold fixture now asserts the same exact resolved role, grounding strength, and conflict observations for a generic prior applied to an AXI-family document
   - fixture expectations can now assert canonical `temporal_conflicts` directly, so contradiction surfacing is checked as typed context/value/supporting-evidence IR instead of only a conflict count

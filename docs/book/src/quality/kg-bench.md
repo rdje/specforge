@@ -226,6 +226,7 @@ It locks one table-sourced semantic hint too, keeping the structured-table side 
 It locks one prose-sourced semantic hint too, keeping the text side explicit before arbitration.
 Alias-grounded prose stays zero in the no-prior mirror, so alias recovery cannot hide the absent-memory boundary.
 Visual-caption hints stay zero there too, preserving the no-prior mirror as a table/prose-only conflict.
+VLM timing-annotation hints stay zero as well, keeping timing-note evidence out of the no-prior mirror.
 That no-prior fixture now also checks the non-decisive arbitration and rescan-guidance finding payloads directly, so absent memory still leaves actionable `XCTRL` and `semantic_conflict_0001` validation debt.
 The prior-guided gold fixture locks the positive side without overstating provenance: the learned modality prior makes `XCTRL` resolve as valid-like, but canonical grounding strength remains `single_source` because the current document still supplies the grounded table observation.
 The AMBA-generic fallback gold applies that same exact shape to a generic prior used by an AXI-family document, proving generic memory can guide arbitration without widening grounding claims.
