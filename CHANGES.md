@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for negative-knowledge mismatch conflict shape)
+
+### Improved: cross-family caution priors keep exact local conflicts
+- Tightened `negative_knowledge_prior_protocol_family_mismatch_negative` with exact `signal_semantic_conflicts_include` expectations at `SemanticIR` and `IntentIR`.
+- The fixture now proves the unrelated APB caution prior stays silent while the AXI-local `XCTRL` visual-caption versus VLM-annotation semantic conflict remains typed as valid-like versus ready-like evidence.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench negative_knowledge_prior_protocol_family_mismatch_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for visual-motif family-mismatch shape)
 
 ### Improved: unrelated visual motifs leave local table truth untouched

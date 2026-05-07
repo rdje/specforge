@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for negative-knowledge mismatch conflict shape)
+- Tightened `negative_knowledge_prior_protocol_family_mismatch_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts exact semantic-conflict observations for `XCTRL`: visual-caption valid-like evidence and VLM timing-annotation ready-like evidence remain contested at both canonical stages.
+- This keeps the unrelated APB negative-knowledge prior silent while making the local conflict surface exact instead of count-only.
+
 ## Session update (2026-05-07 KG fixture for visual-motif family-mismatch shape)
 - Tightened `visual_motif_prior_protocol_family_mismatch_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts table-backed `XREQ` direction/support at both canonical stages while excluding semantic candidates and semantic consensus for the same signal.

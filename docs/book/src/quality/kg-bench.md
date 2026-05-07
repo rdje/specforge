@@ -164,6 +164,7 @@ Negative-knowledge fixtures make that last rule executable.
 The suite now has prior-guided caution fixtures for signal-semantic conflicts, temporal conflicts, residual packets, signal-connectivity conflicts, and interface-signal conflicts.
 Those fixtures require the matched local conflict or residual to remain present while validation only adds `negative_knowledge_prior_matches`, rescan recommendations, corroboration requirements, and stage-specific rescan-guidance findings.
 They also assert the related ids carried by those validation findings, so a caution prior cannot silently drift from "this exact conflict/residual needs attention" into an ungrounded aggregate warning.
+The negative-knowledge protocol-family mismatch fixture locks the other side of that contract: an unrelated APB caution prior stays silent while the local AXI `XCTRL` semantic conflict remains exact, including its visual-caption valid-like and VLM-annotation ready-like observations.
 
 Timing-annotation fixtures also cover polarity-sensitive multimodal evidence.
 For example, `vlm_timing_active_low_assertion_equivalence_gold` proves that an active-low reset observed by a VLM timing diagram as both `asserted` and `LOW` becomes typed temporal evidence without creating a false temporal conflict.
