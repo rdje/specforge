@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for prior-guided visual semantic signal shape)
+
+### Improved: prior-guided visual semantic recovery preserves local signal shape
+- Tightened `visual_semantic_prior_guided_caption_gold` with exact `signal_directions_include` expectations at `SemanticIR` and `IntentIR`.
+- The fixture now proves prior-guided caption evidence for `XACK can sink the transfer` resolves as `handshake_ready_like` with `single_source` visual grounding while the local `Signal XACK is input width 1` declaration stays canonical.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench visual_semantic_prior_guided_caption_gold` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for no-prior visual semantic signal shape)
 
 ### Improved: no-prior visual semantic mirrors preserve local signal shape

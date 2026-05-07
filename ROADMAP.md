@@ -847,6 +847,7 @@
   - the prior-guided ready-sink semantic phrase fixture now asserts exact local `XACK` input direction while resolving `can sink the transfer` to `handshake_ready_like` with `single_source` grounding
   - the prior-guided receive semantic phrase fixture now asserts exact local `XACK` input direction while resolving `can receive the transfer` to `handshake_ready_like` with `single_source` grounding
   - the no-prior visual-caption semantic phrase mirror now asserts exact local `XACK` input direction while the caption phrase remains unresolved without learned visual memory
+  - the prior-guided visual-caption semantic phrase fixture now asserts exact local `XACK` input direction while resolving caption evidence to `handshake_ready_like` with `single_source` grounding
   - fixture expectations can now assert canonical semantic grounding strength directly, so single-source/multi-source/cross-modality grounding is checked as exact per-signal IR instead of only through validation metrics
   - fixture expectations can now assert canonical `temporal_rules` directly, so APB/AHB/AXI timing truthfulness is checked as typed clock/edge/cycle-window/predicate IR instead of only through validation metrics
   - the tracked temporal fixture set now also locks cycle-window rescan guidance directly: a temporal rule with clock and actor grounding but no explicit latency bound must keep emitting the stage-specific cycle-window replay finding at both `SemanticIR` and `IntentIR`

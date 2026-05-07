@@ -35,6 +35,12 @@
   "expectations": {
     "semantic": {
       "signal_names_include": ["XACK"],
+      "signal_directions_include": [
+        {
+          "signal_name": "XACK",
+          "direction": "input"
+        }
+      ],
       "resolved_semantic_role_signal_names_include": ["XACK"],
       "resolved_semantic_roles_include": [
         {
@@ -55,6 +61,12 @@
     },
     "intent": {
       "signal_names_include": ["XACK"],
+      "signal_directions_include": [
+        {
+          "signal_name": "XACK",
+          "direction": "input"
+        }
+      ],
       "resolved_semantic_role_signal_names_include": ["XACK"],
       "resolved_semantic_roles_include": [
         {
