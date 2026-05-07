@@ -15944,6 +15944,7 @@ mod tests {
             AutomationConfidence::High
         );
         assert!(!producer.renderability.is_renderable);
+        assert!(producer.renderable_module.is_none());
         assert!(
             producer
                 .renderability
@@ -15960,6 +15961,7 @@ mod tests {
                     == "resolve conflicting actor-relative graph direction evidence before lowering `.fsm`")
         );
         assert!(!fsm.renderability.is_renderable);
+        assert!(fsm.renderable_document.is_none());
         assert!(
             fsm.renderability
                 .required_canonical_enrichments

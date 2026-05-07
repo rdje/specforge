@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` child actor-port direction renderable block)
+
+### Added: conflicting child actor-port directions cannot leak child or aggregate output
+- Tightened `top_composition_blocks_conflicting_actor_port_directions` so graph-backed child actor-port direction conflicts leave the child module without a renderable module and the aggregate `.fsm` artifact without a renderable source document.
+- This locks child actor-port direction conflicts against stale child module output until actor-relative graph direction evidence is resolved.
+- Synced the live tracker, roadmap, and mdBook with the child actor-port direction renderable-block guarantee.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_actor_port_directions` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148/148` fixtures)
+- `bash scripts/run_ci.sh` -> passed (`614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation)
+- `cargo sweep --time 1` -> deferred because `target/release/tool_matrix` is active
+
 ## 2026-05-06 (`.fsm` child-link direction renderable block)
 
 ### Added: conflicting child-link directions cannot leak child or aggregate output
