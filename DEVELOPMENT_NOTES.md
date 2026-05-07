@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` direct width-conflict renderable block
+- New batch slice 188/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `standalone_dt_blocks_conflicting_control_input_actor_port_widths` now asserts direct DT actor-port width conflicts leave no renderable module and no aggregate `.fsm` source document.
+- This locks conflicting control-input width evidence against stale DT-root output while signal-inventory repair guidance remains visible.
+- Focused direct width-conflict coverage, the adapter suite, fmt, docs CI, KG bench, and full CI passed; user-requested `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is active.
+
 ## 2026-05-06 `.fsm` blocked DT-centric renderable block
 - New batch slice 187/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `builds_blocked_dt_centric_fsm_adapter_artifact` now asserts blocked DT-centric adapters leave no renderable module and no aggregate `.fsm` source document.

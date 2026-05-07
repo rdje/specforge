@@ -313,6 +313,7 @@
   - child actor-port direction recovery augments child signal declarations with graph direction support without dropping declaration support IDs or leaving composition-topology residuals once renderable
   - unrelated direct actor-port graph context keeps selected support IDs auditable while excluding unrelated side-band evidence from `.fsm` inventories and staying signal-inventory-residual clean once renderable
   - ambiguous direct actor-port graph context leaves graph direction, actor-port category, and support IDs unselected instead of guessing a target actor while retaining signal-inventory repair guidance when blocked
+  - direct DT actor-port width conflicts now explicitly block renderable modules and aggregate `.fsm` source documents before lowering DT-root output
   - blocked DT-centric adapter artifacts now explicitly block renderable modules and aggregate `.fsm` source documents before lowering DT-root output
   - blocked DT-centric adapter artifacts preserve selected signal-inventory visibility and signal-inventory repair guidance while blocking `.fsm` emission
   - standalone DT graph-backed undriven output blockers preserve selected actor support IDs, high automation confidence, and signal-inventory repair guidance while blocking `.fsm` emission
