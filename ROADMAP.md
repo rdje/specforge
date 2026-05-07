@@ -755,6 +755,7 @@
     - a stage-patched cross-modality gold fixture proving a semantic role can be grounded jointly by table and visual evidence while validation reports that stronger grounding explicitly
     - a stage-patched cross-modality negative fixture proving conflicting table and visual evidence stays contested, keeps visual grounding visible, and does not overclaim resolved cross-modality support
     - the cross-modality semantic-conflict negative fixture now asserts total evidence semantic hints equal the two conflicting observations, keeping aggregate metrics aligned with table and visual-caption splits
+    - the cross-modality semantic-conflict negative fixture now asserts the prose semantic-hint split stays zero, proving the conflict is table-plus-visual only
     - a stage-patched VLM timing-note gold fixture proving a semantic hint can come from `vlm_timing_diagram_extraction` itself rather than only from captions, tables, or prose
     - a stage-patched VLM timing-note negative fixture proving waveform/tick annotations on a handshake-shaped signal name do not create semantic-role hints by spelling alone while timing extraction still succeeds
     - a stage-patched visual-source conflict fixture proving a caption and a VLM timing note can disagree on the same signal role without collapsing into false visual consensus
