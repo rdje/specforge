@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for multiple-initial state-machine finding payloads)
+- Tightened `vlm_state_machine_multiple_initial_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts exact semantic and intent validation warning payloads for a VLM state-machine extraction with more than one canonical initial state.
+- This locks the multiple-initial state-machine guard as inspectable graph preservation plus warning-level validation details tied to `IDLE` and `BUSY`.
+
 ## Session update (2026-05-07 KG fixture for missing-initial state-machine finding payloads)
 - Tightened `vlm_state_machine_missing_initial_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts exact semantic and intent validation warning payloads for a VLM state-machine extraction with no canonical initial state.

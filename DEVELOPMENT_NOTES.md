@@ -7,6 +7,18 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-07 KG fixture for multiple-initial state-machine finding payloads
+- New batch slice 55/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Tightened `crates/specforge/test_data/kg_quality/vlm_state_machine_multiple_initial_negative/fixture.json`.
+- The fixture now asserts exact validation payloads for `semantic_state_machine_initial_cardinality` and `intent_state_machine_initial_cardinality`: severity `warning`, category `state_machine`, summary text requiring exactly one initial state, and related ids `IDLE`/`BUSY`.
+- This strengthens the multiple-initial VLM state-machine negative from finding-id presence to stage-specific warning details while preserving the inspectable state graph.
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench vlm_state_machine_multiple_initial_negative` passed with the requested fixture.
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` tracked fixtures.
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` refreshed tracked corpus-KB projections for `150` fixtures with `0` failures and no tracked projection diff.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- Broader `bash scripts/run_ci.sh` last passed on slice 50 with formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, and mdBook.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-07 KG fixture for missing-initial state-machine finding payloads
 - New batch slice 54/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Tightened `crates/specforge/test_data/kg_quality/vlm_state_machine_missing_initial_negative/fixture.json`.
