@@ -17,6 +17,7 @@
 - Explicit `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters` architecture defined: Done
 - `.fsm` top-link target-role blockers now preserve composition topology residual decisions: Done
 - `.fsm` top-link direction-role blockers now preserve composition topology residual decisions: Done
+- `.fsm` explicit-module flat/graph disagreements now block stale module and aggregate renderable output: Done
 - `.fsm` explicit-module control-read direction conflicts now block stale module and aggregate renderable output: Done
 - `.fsm` explicit-module actor-port width conflicts now block stale module and aggregate renderable output: Done
 - `.fsm` undeclared-target structured-FSM blockers now block stale aggregate renderable output: Done

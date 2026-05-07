@@ -10115,10 +10115,12 @@ mod tests {
         );
         assert_eq!(acc.automation_confidence, AutomationConfidence::High);
         assert!(!module.renderability.is_renderable);
+        assert!(module.renderable_module.is_none());
         assert!(module.renderability.blocking_reasons.iter().any(|reason| {
             reason.contains("conflicting canonical and graph-backed direction evidence")
         }));
         assert!(!fsm.renderability.is_renderable);
+        assert!(fsm.renderable_document.is_none());
         let signal_inventory_residual = adapter
             .residual_decisions
             .iter()

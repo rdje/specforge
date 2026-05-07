@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` explicit-module flat/graph renderable block)
+- Tightened `standalone_explicit_module_blocks_flat_graph_direction_disagreement` in `crates/specforge/src/ir/adapters.rs`.
+- The test now proves explicit-module flat/graph direction disagreements leave the module without a renderable module and leave the aggregate `.fsm` artifact without a renderable source document.
+- This locks explicit-module flat/graph direction disagreements against stale renderable module output; focused adapter coverage, full adapter coverage, fmt, docs CI, KG bench, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 `.fsm` explicit-module control-read direction renderable block)
 - Tightened `standalone_explicit_module_blocks_conflicting_module_control_read_direction` in `crates/specforge/src/ir/adapters.rs`.
 - The test now proves graph-backed module control-read direction conflicts leave the module without a renderable module and leave the aggregate `.fsm` artifact without a renderable source document.

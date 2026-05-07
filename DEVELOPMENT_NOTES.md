@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` explicit-module flat/graph renderable block
+- New batch slice 184/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `standalone_explicit_module_blocks_flat_graph_direction_disagreement` now asserts explicit-module flat/graph direction disagreements leave the module without a renderable module and the aggregate `.fsm` artifact without a renderable source document.
+- This locks explicit-module flat/graph direction disagreements against stale `(+size ...)` output before canonical and graph-backed direction evidence agree.
+- Focused explicit-module flat/graph coverage, the adapter suite, fmt, docs CI, KG bench, and full CI passed; user-requested `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is active.
+
 ## 2026-05-06 `.fsm` explicit-module control-read direction renderable block
 - New batch slice 183/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `standalone_explicit_module_blocks_conflicting_module_control_read_direction` now asserts graph-backed module control-read direction conflicts leave the module without a renderable module and the aggregate `.fsm` artifact without a renderable source document.
