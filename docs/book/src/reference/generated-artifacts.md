@@ -160,6 +160,7 @@ They also keep the module unresolved with no renderable module or aggregate sour
 Explicit-module actor-port width conflicts keep both graph-backed width support IDs plus signal-inventory repair guidance while blocked.
 They also keep the module unresolved with no renderable module or aggregate source document, so stale `(+size ...)` output cannot leak before the conflicting actor-port width evidence is resolved.
 Standalone sequential system-contract direction conflicts keep clock/reset provenance and system-surface repair guidance while blocked.
+They also keep renderable module and aggregate `.fsm` source documents absent, so stale DT-root output cannot leak while clock/reset direction evidence is conflicting.
 Standalone sequential system-contract width conflicts keep clock/reset provenance and the same system-surface repair guidance while blocked.
 Standalone sequential system-contract flat/graph direction disagreements keep actor-port support and system-surface repair guidance while blocked.
 They also keep renderable module and aggregate `.fsm` source documents absent, so stale DT-root output cannot leak before clock/reset direction evidence agrees.

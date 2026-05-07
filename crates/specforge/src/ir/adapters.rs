@@ -8548,6 +8548,8 @@ mod tests {
         );
         assert_eq!(clk.automation_confidence, AutomationConfidence::High);
         assert!(!fsm.renderability.is_renderable);
+        assert!(fsm.renderable_module.is_none());
+        assert!(fsm.renderable_document.is_none());
         assert!(fsm.renderability.blocking_reasons.iter().any(|reason| {
             reason.contains("clock signal `clk` has conflicting canonical direction evidence")
         }));

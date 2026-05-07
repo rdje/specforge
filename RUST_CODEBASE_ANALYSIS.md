@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` system-contract direction renderable block)
+- Tightened `standalone_sequential_dt_blocks_conflicting_system_contract_signal_direction` in `crates/specforge/src/ir/adapters.rs`.
+- The test now proves standalone sequential clock/reset direction conflicts leave no renderable module and no aggregate `.fsm` source document.
+- This locks conflicting system-contract direction evidence against stale renderable DT output; focused adapter coverage, full adapter coverage, fmt, docs CI, KG bench, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 `.fsm` system-contract flat/graph renderable block)
 - Tightened `standalone_sequential_dt_blocks_system_contract_flat_graph_direction_disagreement` in `crates/specforge/src/ir/adapters.rs`.
 - The test now proves standalone sequential clock/reset flat/graph direction disagreements leave no renderable module and no aggregate `.fsm` source document.
