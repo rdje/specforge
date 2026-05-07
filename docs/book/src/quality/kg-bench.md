@@ -243,6 +243,7 @@ It locks one table-sourced semantic hint too, keeping the structured-table side 
 It locks one prose-sourced semantic hint too, keeping the text side explicit before generic-prior arbitration.
 Alias-grounded prose stays zero in the fallback gold too, keeping alias recovery out of the generic fallback proof.
 Visual-caption hints stay zero there too, preserving the generic fallback proof as a table/prose arbitration.
+VLM timing-annotation hints stay zero as well, keeping timing-note evidence out of the generic fallback proof.
 That fallback fixture now also checks the prior-guided arbitration, consensus, and rescan-guidance finding payloads directly, so generic memory must produce the same `XCTRL`-related validation details as exact-family memory.
 
 Negative-knowledge fixtures make that last rule executable.
