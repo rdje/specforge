@@ -218,6 +218,7 @@ That label-noise fixture now also checks canonical initial-state shape, proving 
 `vlm_state_machine_undeclared_transition_negative` adds the graph-grounding guard: transition endpoints such as `DONE` and `RESET` stay out unless the same VLM observation also declared them as accepted states.
 That undeclared-transition fixture now also checks the canonical initial-state shape, proving accepted `IDLE` stays initial and `BUSY` stays non-initial after endpoint filtering.
 `vlm_state_machine_duplicate_initial_gold` locks the complementary positive case: duplicate state labels are merged, a later `is_initial: true` marker still makes `IDLE` the canonical initial state, and validation reports exactly one `initial_regular_states` record.
+That duplicate-initial gold now also excludes the initial-cardinality validation findings directly, proving the merge path stays warning-clean.
 `vlm_state_machine_multiple_initial_negative` locks the companion warning path: when VLM marks more than one canonical state initial, the graph remains inspectable but semantic and intent validation report state-machine initial-cardinality findings.
 That multiple-initial fixture now also checks exact warning payloads at both canonical stages, including the `state_machine` category and related `IDLE`/`BUSY` ids.
 `vlm_state_machine_missing_initial_negative` locks the other side of the same warning path: when VLM marks no canonical state initial, states and transitions remain inspectable while validation still reports unsafe initial-state cardinality.

@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for duplicate-initial warning exclusion)
+
+### Improved: duplicate-state merge stays validation-clean
+- Tightened `vlm_state_machine_duplicate_initial_gold` with explicit semantic and intent `finding_ids_exclude` expectations for initial-cardinality warnings.
+- The fixture now proves merging duplicate `IDLE` state observations preserves exactly one canonical initial state without emitting the warning path used by missing/multiple-initial negatives.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench vlm_state_machine_duplicate_initial_gold` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for state-machine label-noise initial shape)
 
 ### Improved: noisy VLM state labels preserve accepted initial state

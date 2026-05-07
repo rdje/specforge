@@ -340,6 +340,7 @@
 - KG benchmark harness now locks VLM state-machine multiple-initial finding payloads: Done
 - KG benchmark harness now locks VLM state-machine undeclared-transition initial state shape: Done
 - KG benchmark harness now locks VLM state-machine label-noise initial state shape: Done
+- KG benchmark harness now locks VLM state-machine duplicate-initial warning exclusion: Done
 - KG benchmark harness now locks prior-guided ready-like sink phrase recovery: Done
 - KG benchmark harness now locks prior-guided valid-like semantic phrase recovery: Done
 - KG benchmark harness now includes AXI write-response timing coverage: Done

@@ -47,6 +47,9 @@
         }
       },
       "semantic": {
+        "finding_ids_exclude": [
+          "semantic_state_machine_initial_cardinality"
+        ],
         "metric_values": {
           "regular_states": "2",
           "initial_regular_states": "1",
@@ -54,6 +57,9 @@
         }
       },
       "intent": {
+        "finding_ids_exclude": [
+          "intent_state_machine_initial_cardinality"
+        ],
         "metric_values": {
           "regular_states": "2",
           "initial_regular_states": "1",

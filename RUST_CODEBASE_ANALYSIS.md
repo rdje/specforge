@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for duplicate-initial warning exclusion)
+- Tightened `vlm_state_machine_duplicate_initial_gold` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now explicitly excludes semantic and intent state-machine initial-cardinality findings while keeping the merged canonical initial count at `1`.
+- This locks duplicate-state merging as both shape-correct and validation-clean.
+
 ## Session update (2026-05-07 KG fixture for state-machine label-noise initial shape)
 - Tightened `vlm_state_machine_label_noise_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts `IDLE` remains the only canonical initial state and `initial_regular_states` remains `1` after prose/OCR-like VLM labels are filtered.
