@@ -123,6 +123,7 @@ The source-kind mismatch companion applies the same signal-shape discipline to `
 The exact-phrase mismatch companion does the same for `XFLOW`: an unmatched learned phrase prior stays silent while the local output declaration remains canonical.
 The broad-phrase guard adds the one-token case: a generic `transfer` prior stays inert while the same `XFLOW` declaration remains canonical.
 The conflicting-role guard adds the ambiguity case: equal valid-like and ready-like priors for one phrase stay inert while the local `XCTRL` input declaration remains canonical.
+The no-prior mirror keeps the before side exact too: `XACK can receive the transfer` stays unresolved without learned memory while the local input declaration remains canonical.
 
 Fixtures can assert canonical semantic grounding strength directly as well.
 `semantic_grounding_strengths_include` checks the signal name and expected single-source, multi-source, or cross-modality grounding strength on the canonical interface signal record.

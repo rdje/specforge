@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for no-prior semantic phrase signal shape)
+
+### Improved: no-prior semantic phrase mirrors preserve local signal shape
+- Tightened `semantic_prior_guided_phrase_without_prior_negative` with exact `signal_directions_include` expectations at `SemanticIR` and `IntentIR`.
+- The fixture now proves the no-prior mirror for `XACK can receive the transfer` remains semantically unresolved while the local `Signal XACK is input width 1` declaration stays canonical.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_prior_guided_phrase_without_prior_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for conflicting semantic phrase signal shape)
 
 ### Improved: conflicting semantic priors preserve local signal shape
