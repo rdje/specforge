@@ -154,6 +154,7 @@ That matters because the learning plane must be tested with the same discipline 
 
 The temporal prior-guided fixture also asserts exact canonical rule shape: a learned `one beat later` phrase can recover a one-cycle window, but the resulting rule must still preserve the current document's local clock, edge, asserted-value predicate, and supporting statement id.
 The no-prior mirror fixture asserts the same local rule shape without the recovered window, so the benchmark distinguishes prior-enabled improvement from ordinary local temporal evidence.
+The prior-guided fixture also excludes cycle-window and clock-grounding replay findings after the recovered rule is fully bounded and locally clocked.
 
 Negative-knowledge fixtures make that last rule executable.
 The suite now has prior-guided caution fixtures for signal-semantic conflicts, temporal conflicts, residual packets, signal-connectivity conflicts, and interface-signal conflicts.

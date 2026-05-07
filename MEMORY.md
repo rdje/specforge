@@ -22,24 +22,24 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `47e8a3747e5b60b23e6092e22c07ab82c2eb0ded`
-- latest_commit_brief_message: `test(kg): lock prior temporal rule shape`
-- note: this is the pre-slice-11 baseline for the current `BWFSC=200` batch; slices 1-10/200 are committed and push remains deferred
+- latest_commit_hash: `4fd70cdfcf89ac94d8341c76b7a10b16cf0a4f61`
+- latest_commit_brief_message: `test(kg): lock no-prior temporal rule shape`
+- note: this is the pre-slice-12 baseline for the current `BWFSC=200` batch; slices 1-11/200 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `4fd70cd` test(kg): lock no-prior temporal rule shape
 - `47e8a37` test(kg): lock prior temporal rule shape
 - `0eb8023` test(kg): lock grounded temporal no-replay
 - `c3c0f55` test(kg): lock unbounded temporal rule shape
 - `5ea8298` test(kg): lock actorless temporal rule shape
 - `91db4c7` test(kg): lock clockless temporal rule shape
-- `eb70430` test(kg): lock temporal clock replay split
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 11 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 12 and push is deferred
 - files in flight:
-  - `crates/specforge/test_data/kg_quality/temporal_prior_guided_cycle_window_without_prior_negative/fixture.json`
+  - `crates/specforge/test_data/kg_quality/temporal_prior_guided_cycle_window_gold/fixture.json`
   - live docs and mdBook files synced for the slice
 
 ## Previous completed N-slice batch
@@ -52,13 +52,13 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `10`
-  - slice 11/200 tightens no-prior temporal rule-shape fixture expectations
+  - completed_count before this commit: `11`
+  - slice 12/200 tightens prior-guided temporal no-replay fixture expectations
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks no-prior temporal rule exact-shape KG coverage as `Done`
+  - live-status tracker now marks prior-guided temporal replay-exclusion KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 11 before commit
+  - implementation and live-doc sync are complete for slice 12 before commit
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` fixtures
   - `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed with `150` fixtures projected and `0` failures
   - `bash scripts/run_docs_ci.sh` passed after the live-book sync
@@ -72,5 +72,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 11 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 12/200
+- finish the slice 12 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 13/200
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle

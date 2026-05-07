@@ -90,12 +90,24 @@
         }
       },
       "semantic": {
+        "finding_ids_exclude": [
+          "semantic_temporal_rules_missing_cycle_windows",
+          "semantic_temporal_cycle_window_surface_rescan_guidance",
+          "semantic_temporal_rules_missing_clock_grounding",
+          "semantic_temporal_clock_grounding_surface_rescan_guidance"
+        ],
         "metric_values": {
           "temporal_rules": "1",
           "temporal_rules_with_cycle_window": "1"
         }
       },
       "intent": {
+        "finding_ids_exclude": [
+          "intent_temporal_rules_missing_cycle_windows",
+          "intent_temporal_cycle_window_surface_rescan_guidance",
+          "intent_temporal_rules_missing_clock_grounding",
+          "intent_temporal_clock_grounding_surface_rescan_guidance"
+        ],
         "metric_values": {
           "temporal_rules": "1",
           "temporal_rules_with_cycle_window": "1"

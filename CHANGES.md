@@ -1,5 +1,16 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for prior-guided temporal no-replay)
+
+### Improved: prior-guided timing avoids stale replay debt
+- Tightened `temporal_prior_guided_cycle_window_gold` so the prior-recovered one-cycle rule explicitly excludes cycle-window and clock-grounding replay findings at `SemanticIR` and `IntentIR`.
+- This locks the validation side of prior-enabled temporal recovery after the fixture already asserts the exact canonical rule shape.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for no-prior temporal rule shape)
 
 ### Improved: temporal prior absence keeps exact unbounded shape

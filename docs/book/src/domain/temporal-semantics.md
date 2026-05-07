@@ -186,6 +186,7 @@ The cross-document prior store can help with timing phrase recovery.
 For example, if validated documents taught that a phrase like `one beat later` indicates a one-cycle window, a new document can use that prior when the same phrase appears locally.
 The KG benchmark now checks that prior-guided recovery as exact rule shape too: the recovered rule must keep local clock grounding, edge, one-cycle window, asserted-value predicate, and supporting statement id.
 The paired no-prior fixture checks the negative side: the same local text still preserves clock, edge, asserted value, and support, but the cycle window stays unresolved without the learned phrase prior.
+The prior-guided fixture also locks validation behavior: once the prior supplies the one-cycle window on a locally clocked rule, cycle-window and clock-grounding replay guidance should not fire.
 
 The safety rule is still strict:
 
