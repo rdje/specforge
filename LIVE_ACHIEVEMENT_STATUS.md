@@ -302,6 +302,7 @@
 - KG benchmark harness now locks semantic modality-prior AMBA-generic fallback: Done
 - KG benchmark harness now locks semantic modality-prior AMBA-generic fallback shape: Done
 - KG benchmark harness now locks semantic modality-prior AMBA-generic fallback total evidence semantic hints: Done
+- KG benchmark harness now locks semantic modality-prior AMBA-generic fallback table semantic-hint split: Done
 - KG benchmark harness now locks semantic modality-prior protocol-family scoping: Done
 - KG benchmark harness now locks semantic modality-prior family-mismatch conflict shape: Done
 - KG benchmark harness now locks semantic modality-prior family-mismatch total evidence semantic hints: Done
