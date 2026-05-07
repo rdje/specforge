@@ -322,6 +322,7 @@
 - KG benchmark harness now locks semantic modality-prior source-kind mismatch timing-diagram extraction absence: Done
 - KG benchmark harness now locks weak semantic modality priors as non-decisive: Done
 - KG benchmark harness now locks weak semantic modality-prior conflict shape: Done
+- KG benchmark harness now locks weak semantic modality-prior total evidence semantic hints: Done
 - KG benchmark harness now locks no-prior semantic modality conflict shape: Done
 - Semantic phrase prior lookup rejects one-token broad prior records: Done
 - KG benchmark harness now locks semantic phrase prior resolved-role shape: Done

@@ -934,6 +934,7 @@
   - the semantic-modality source-kind mismatch fixture now asserts VLM timing-annotation semantic hints stay zero, preserving the table/prose-only conflict shape
   - the semantic-modality source-kind mismatch fixture now asserts timing-diagram extractions stay zero, preserving the non-visual table/prose conflict surface
   - the weak semantic-modality fixture now asserts the same exact table-versus-prose conflict while an underpowered modality prior remains non-decisive
+  - the weak semantic-modality fixture now asserts total evidence semantic hints equal the two local table/prose observations while underpowered prior memory stays non-decisive
   - the no-prior semantic-modality fixture now asserts the same exact table-versus-prose conflict while arbitration remains non-decisive without learned modality memory
   - the prior-guided semantic-modality gold fixture now asserts the exact resolved role and current-document grounding strength, proving modality memory guides arbitration without overstating grounding
   - the AMBA-generic semantic-modality fallback gold fixture now asserts the same exact resolved role, grounding strength, and conflict observations for a generic prior applied to an AXI-family document

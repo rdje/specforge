@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for weak modality-prior hint totals)
+- Tightened `semantic_modality_reliability_weak_prior_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts evidence-stage `signal_semantic_hints = 2` for the underpowered modality-prior case.
+- This locks the local table/prose conflict as two counted EvidenceIR semantic hints while weak modality memory stays non-authoritative.
+
 ## Session update (2026-05-07 KG fixture for semantic-modality source-kind mismatch timing-extraction absence)
 - Tightened `semantic_modality_reliability_source_kind_mismatch_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts evidence-stage `timing_diagram_extractions = 0` alongside its full semantic-hint source split.
