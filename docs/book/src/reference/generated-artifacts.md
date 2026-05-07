@@ -147,6 +147,7 @@ They also keep the aggregate `.fsm` source document absent, so stale `?fsm` outp
 Undeclared-target structured-FSM blockers keep declared-state and rejected-transition provenance plus the same state-graph repair guidance.
 They also keep the aggregate `.fsm` source document absent, so stale `?fsm` output cannot leak before every transition target is declared.
 Structured-FSM flat/graph direction disagreements keep interface and actor-port provenance plus signal-inventory residual guidance while blocked.
+They also keep the aggregate `.fsm` source document absent, so stale `?fsm` output cannot leak before canonical and graph-backed direction evidence agree.
 Explicit-module flat/graph direction disagreements retain module interface and actor-port provenance plus the same signal-inventory repair guidance.
 They also keep the module unresolved with no renderable module or aggregate source document, so stale `(+size ...)` output cannot leak before canonical and graph-backed direction evidence agree.
 Explicit-module control-read direction conflicts keep the actor-port/control-read provenance categories visible alongside signal-inventory repair guidance.

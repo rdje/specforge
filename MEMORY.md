@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `1788777852928231b1fbc1575a59ce841c08ace2`
-- latest_commit_brief_message: `test(adapter): block explicit module read output`
-- note: new local `N=200` batch is active; slice 183 is committed, slice 184 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `999beaa4f8c1df2f7e53688ab770a578fdd3131d`
+- latest_commit_brief_message: `test(adapter): block explicit module flat graph output`
+- note: new local `N=200` batch is active; slice 184 is committed, slice 185 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `999beaa` test(adapter): block explicit module flat graph output
 - `1788777` test(adapter): block explicit module read output
 - `3fb4b03` test(adapter): block explicit module width output
 - `e48c00a` test(adapter): block undeclared target output
 - `e85ee65` test(adapter): block missing initial output
 - `e7b5e02` test(adapter): block missing child module output
-- `4bf5030` test(adapter): block child actor direction output
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 184]`
-- files in flight for new batch slice 184:
+- branch state before the next commit: `main...origin/main [ahead 185]`
+- files in flight for new batch slice 185:
   - `crates/specforge/src/ir/adapters.rs`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `ROADMAP.md`
@@ -49,21 +49,21 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `183`
+- completed_count: `184`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - lock explicit-module flat/graph direction disagreements against stale module and aggregate renderable output
-  - prove explicit-module flat/graph direction disagreements leave no renderable module and no aggregate renderable source document
-  - sync the live tracker, roadmap, mdBook, Rust analysis, and continuity docs with the explicit-module flat/graph renderable-block guarantee
+  - lock structured-FSM flat/graph direction disagreements against stale aggregate renderable output
+  - prove structured-FSM flat/graph direction disagreements leave no aggregate renderable source document
+  - sync the live tracker, roadmap, mdBook, Rust analysis, and continuity docs with the structured-FSM flat/graph renderable-block guarantee
 - tracker effect:
-  - live-status tracker changed; new row marks `.fsm` explicit-module flat/graph disagreements blocking stale module and aggregate renderable output as `Done`
+  - live-status tracker changed; new row marks `.fsm` structured-FSM flat/graph disagreements blocking stale aggregate renderable output as `Done`
 - verification status:
   - implementation and live-doc sync are complete
-  - focused explicit-module flat/graph renderable-block regression passed (`1` test)
+  - focused structured-FSM flat/graph renderable-block regression passed (`1` test)
   - adapter suite passed (`92` tests)
   - formatting passed
   - docs CI passed
@@ -74,9 +74,9 @@
 - current known local CI baseline:
   - previous committed slice passed `614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - previous committed slice passed `148/148` tracked KG fixtures
-  - current slice has passed focused explicit-module flat/graph renderable-block regression, adapter suite, formatting, docs CI, KG bench, and full CI
+  - current slice has passed focused structured-FSM flat/graph renderable-block regression, adapter suite, formatting, docs CI, KG bench, and full CI
   - latest `cargo sweep --time 1` attempt was deferred because `target/release/tool_matrix` is active
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- run final commit guards and commit slice 184 without pushing
+- run final commit guards and commit slice 185 without pushing

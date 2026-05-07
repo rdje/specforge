@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` structured flat/graph renderable block)
+
+### Added: structured-FSM flat/graph disagreements cannot leak output
+- Tightened `structured_fsm_blocks_flat_graph_direction_disagreement` so structured-FSM flat/graph direction disagreements leave the aggregate `.fsm` artifact without a renderable source document.
+- This locks structured-FSM flat/graph direction disagreements against stale `?fsm` output until canonical and graph-backed direction evidence agree.
+- Synced the live tracker, roadmap, and mdBook with the structured-FSM flat/graph renderable-block guarantee.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge structured_fsm_blocks_flat_graph_direction_disagreement` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148/148` fixtures)
+- `bash scripts/run_ci.sh` -> passed (`614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation)
+- `cargo sweep --time 1` -> deferred because `target/release/tool_matrix` is active
+
 ## 2026-05-06 (`.fsm` explicit-module flat/graph renderable block)
 
 ### Added: explicit-module flat/graph disagreements cannot leak output
