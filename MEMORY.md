@@ -22,24 +22,24 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `cad0cbad76c4b7c2c979e05d1b9bd206fcc9c15d`
-- latest_commit_brief_message: `test(kg): lock no-prior semantic modality shape`
-- note: this is the pre-slice-22 baseline for the current `BWFSC=200` batch; slices 1-21/200 are committed and push remains deferred
+- latest_commit_hash: `956a4c8faa6899cdfd09eb3158dea8928a971199`
+- latest_commit_brief_message: `test(kg): lock prior semantic modality shape`
+- note: this is the pre-slice-23 baseline for the current `BWFSC=200` batch; slices 1-22/200 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `956a4c8` test(kg): lock prior semantic modality shape
 - `cad0cba` test(kg): lock no-prior semantic modality shape
 - `20113a2` test(kg): lock weak semantic modality shape
 - `6b16ba4` test(kg): lock semantic modality source-kind shape
 - `0d5c550` test(kg): lock semantic modality mismatch shape
 - `a24a851` test(kg): lock negative knowledge mismatch shape
-- `22ad163` test(kg): lock visual motif mismatch shape
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 22 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 23 and push is deferred
 - files in flight:
-  - `crates/specforge/test_data/kg_quality/semantic_modality_reliability_prior_guided_conflict_gold/fixture.json`
+  - `crates/specforge/test_data/kg_quality/semantic_modality_reliability_amba_generic_fallback_gold/fixture.json`
   - live docs and mdBook files synced for the slice
 
 ## Previous completed N-slice batch
@@ -52,14 +52,14 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `21`
-  - slice 22/200 tightens prior-guided semantic-modality resolved-role and conflict-shape expectations
+  - completed_count before this commit: `22`
+  - slice 23/200 tightens AMBA-generic semantic-modality fallback resolved-role and conflict-shape expectations
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks semantic modality-prior exact resolved-role KG coverage as `Done`
+  - live-status tracker now marks semantic modality-prior AMBA-generic fallback exact-shape KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 22 before commit
-  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_modality_reliability_prior_guided_conflict_gold` passed with the requested fixture
+  - implementation and live-doc sync are complete for slice 23 before commit
+  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_modality_reliability_amba_generic_fallback_gold` passed with the requested fixture
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` fixtures
   - `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed with `150` fixtures projected and `0` failures
   - `bash scripts/run_docs_ci.sh` passed after the live-book sync
@@ -74,5 +74,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 22 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 23/200
+- finish the slice 23 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 24/200
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle

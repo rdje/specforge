@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for AMBA-generic modality fallback shape)
+
+### Improved: AMBA-generic modality fallback keeps exact role shape
+- Tightened `semantic_modality_reliability_amba_generic_fallback_gold` with exact resolved-role, grounding-strength, and conflict-observation expectations at `SemanticIR` and `IntentIR`.
+- The fixture now proves an AMBA-generic modality prior resolves AXI-local `XCTRL` as `handshake_valid_like` while canonical grounding remains `single_source` and the table valid-like versus prose ready-like conflict remains explicit.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_modality_reliability_amba_generic_fallback_gold` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for prior-guided modality resolved shape)
 
 ### Improved: modality priors resolve role without overstating grounding

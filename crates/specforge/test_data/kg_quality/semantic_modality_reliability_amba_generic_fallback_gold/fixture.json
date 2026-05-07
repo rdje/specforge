@@ -70,8 +70,35 @@
       "decisive_semantic_arbitration_signal_names_include": ["XCTRL"],
       "non_decisive_semantic_arbitration_signal_names_exclude": ["XCTRL"],
       "resolved_semantic_role_signal_names_include": ["XCTRL"],
+      "resolved_semantic_roles_include": [
+        {
+          "signal_name": "XCTRL",
+          "role": "handshake_valid_like"
+        }
+      ],
+      "semantic_grounding_strengths_include": [
+        {
+          "signal_name": "XCTRL",
+          "strength": "single_source"
+        }
+      ],
       "semantic_consensus_signal_names_include": ["XCTRL"],
-      "signal_semantic_conflicts": 1
+      "signal_semantic_conflicts": 1,
+      "signal_semantic_conflicts_include": [
+        {
+          "signal_name": "XCTRL",
+          "observations_include": [
+            {
+              "semantic_tags_include": ["handshake_valid_like"],
+              "source_kind": "signal_description_table"
+            },
+            {
+              "semantic_tags_include": ["handshake_ready_like"],
+              "source_kind": "prose_statement"
+            }
+          ]
+        }
+      ]
     },
     "intent": {
       "signal_names_include": ["XCTRL"],
@@ -81,8 +108,35 @@
       "decisive_semantic_arbitration_signal_names_include": ["XCTRL"],
       "non_decisive_semantic_arbitration_signal_names_exclude": ["XCTRL"],
       "resolved_semantic_role_signal_names_include": ["XCTRL"],
+      "resolved_semantic_roles_include": [
+        {
+          "signal_name": "XCTRL",
+          "role": "handshake_valid_like"
+        }
+      ],
+      "semantic_grounding_strengths_include": [
+        {
+          "signal_name": "XCTRL",
+          "strength": "single_source"
+        }
+      ],
       "semantic_consensus_signal_names_include": ["XCTRL"],
-      "signal_semantic_conflicts": 1
+      "signal_semantic_conflicts": 1,
+      "signal_semantic_conflicts_include": [
+        {
+          "signal_name": "XCTRL",
+          "observations_include": [
+            {
+              "semantic_tags_include": ["handshake_valid_like"],
+              "source_kind": "signal_description_table"
+            },
+            {
+              "semantic_tags_include": ["handshake_ready_like"],
+              "source_kind": "prose_statement"
+            }
+          ]
+        }
+      ]
     },
     "validation": {
       "semantic": {

@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for AMBA-generic modality fallback shape)
+- Tightened `semantic_modality_reliability_amba_generic_fallback_gold` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts exact AMBA-generic prior-guided `XCTRL` resolution: `handshake_valid_like`, `single_source` grounding strength, and explicit table/prose semantic-conflict observations at both canonical stages.
+- This keeps generic prior fallback precise while preserving the current-document grounding boundary.
+
 ## Session update (2026-05-07 KG fixture for prior-guided modality resolved shape)
 - Tightened `semantic_modality_reliability_prior_guided_conflict_gold` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts exact prior-guided `XCTRL` resolution: `handshake_valid_like`, `single_source` grounding strength, and explicit table/prose semantic-conflict observations at both canonical stages.

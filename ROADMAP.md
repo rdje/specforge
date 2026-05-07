@@ -858,6 +858,7 @@
   - the weak semantic-modality fixture now asserts the same exact table-versus-prose conflict while an underpowered modality prior remains non-decisive
   - the no-prior semantic-modality fixture now asserts the same exact table-versus-prose conflict while arbitration remains non-decisive without learned modality memory
   - the prior-guided semantic-modality gold fixture now asserts the exact resolved role and current-document grounding strength, proving modality memory guides arbitration without overstating grounding
+  - the AMBA-generic semantic-modality fallback gold fixture now asserts the same exact resolved role, grounding strength, and conflict observations for a generic prior applied to an AXI-family document
   - fixture expectations can now assert canonical `temporal_conflicts` directly, so contradiction surfacing is checked as typed context/value/supporting-evidence IR instead of only a conflict count
   - fixture expectations can now assert canonical `infrastructure_signals` and `infrastructure_topology` records directly, so clock/reset topology truthfulness is checked as typed IR instead of only through validation metrics
   - fixture expectations can now assert validation finding payloads directly via `findings_include`, including severity, category, summary snippets, and related-id inclusion/exclusion, so validation-backed caution/rescan surfaces are checked as exact report content instead of only finding ids or metrics

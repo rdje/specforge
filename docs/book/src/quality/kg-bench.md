@@ -164,6 +164,7 @@ The source-kind mismatch companion applies the same exact conflict-shape check w
 The weak-prior companion applies the same check when the prior record is underpowered: weak memory stays non-decisive while the local conflict remains explicit and typed.
 The no-prior companion locks the before side of the same pair: absent modality memory means the local table/prose conflict remains explicit and non-decisive.
 The prior-guided gold fixture locks the positive side without overstating provenance: the learned modality prior makes `XCTRL` resolve as valid-like, but canonical grounding strength remains `single_source` because the current document still supplies the grounded table observation.
+The AMBA-generic fallback gold applies that same exact shape to a generic prior used by an AXI-family document, proving generic memory can guide arbitration without widening grounding claims.
 
 Negative-knowledge fixtures make that last rule executable.
 The suite now has prior-guided caution fixtures for signal-semantic conflicts, temporal conflicts, residual packets, signal-connectivity conflicts, and interface-signal conflicts.
