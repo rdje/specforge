@@ -118,7 +118,8 @@
       "evidence": {
         "metric_values": {
           "signal_semantic_hints": "2",
-          "signal_semantic_hints_from_tables": "1"
+          "signal_semantic_hints_from_tables": "1",
+          "signal_semantic_hints_from_prose": "1"
         }
       },
       "semantic": {

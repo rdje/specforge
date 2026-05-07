@@ -928,6 +928,7 @@
   - the semantic-modality source-kind mismatch fixture now asserts the same exact table-versus-prose conflict while a visual-only modality prior remains non-decisive
   - the semantic-modality source-kind mismatch fixture now asserts total evidence semantic hints equal the two local table/prose observations while the visual-only prior stays scoped out
   - the semantic-modality source-kind mismatch fixture now asserts one table-sourced semantic hint, keeping the local structured-table side counted before arbitration
+  - the semantic-modality source-kind mismatch fixture now asserts one prose-sourced semantic hint, keeping the local prose side counted before arbitration
   - the weak semantic-modality fixture now asserts the same exact table-versus-prose conflict while an underpowered modality prior remains non-decisive
   - the no-prior semantic-modality fixture now asserts the same exact table-versus-prose conflict while arbitration remains non-decisive without learned modality memory
   - the prior-guided semantic-modality gold fixture now asserts the exact resolved role and current-document grounding strength, proving modality memory guides arbitration without overstating grounding

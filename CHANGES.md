@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for semantic-modality source-kind mismatch prose split)
+
+### Improved: source-kind mismatch fixtures lock prose semantic hints
+- Tightened `semantic_modality_reliability_source_kind_mismatch_negative` with `signal_semantic_hints_from_prose = 1` at `EvidenceIR`.
+- The fixture now proves one local `XCTRL` semantic observation comes from prose while the visual-caption-only modality prior stays silent for table/prose evidence.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_modality_reliability_source_kind_mismatch_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for semantic-modality source-kind mismatch table split)
 
 ### Improved: source-kind mismatch fixtures lock table semantic hints
