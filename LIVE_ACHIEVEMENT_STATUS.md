@@ -313,6 +313,7 @@
 - KG benchmark harness now locks semantic modality-prior resolved-role shape: Done
 - KG benchmark harness now locks semantic modality-prior source-kind scoping: Done
 - KG benchmark harness now locks semantic modality-prior source-kind conflict shape: Done
+- KG benchmark harness now locks semantic modality-prior source-kind mismatch total evidence semantic hints: Done
 - KG benchmark harness now locks weak semantic modality priors as non-decisive: Done
 - KG benchmark harness now locks weak semantic modality-prior conflict shape: Done
 - KG benchmark harness now locks no-prior semantic modality conflict shape: Done

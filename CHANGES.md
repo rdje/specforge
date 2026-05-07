@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for semantic-modality source-kind mismatch hint totals)
+
+### Improved: source-kind mismatch fixtures lock aggregate semantic hints
+- Tightened `semantic_modality_reliability_source_kind_mismatch_negative` with total `signal_semantic_hints = 2` at `EvidenceIR`.
+- The fixture now proves the local table/prose `XCTRL` conflict remains exactly two semantic hints while the visual-caption-only modality prior stays silent for non-visual evidence.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_modality_reliability_source_kind_mismatch_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for semantic-modality family-mismatch timing-extraction absence)
 
 ### Improved: modality-prior mismatch fixtures exclude timing extractions

@@ -115,6 +115,11 @@
       ]
     },
     "validation": {
+      "evidence": {
+        "metric_values": {
+          "signal_semantic_hints": "2"
+        }
+      },
       "semantic": {
         "finding_ids_include": [
           "semantic_signal_semantic_conflicts_present",
