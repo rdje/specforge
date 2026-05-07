@@ -22,22 +22,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `db4ca7a016f5e149a20093b76e5d58b2c2d075b1`
-- latest_commit_brief_message: `test(kg): lock VLM timing deassert table exclusion`
-- note: this is the pre-slice-192 baseline for the current `BWFSC=200` batch; slices 1-191/200 are committed and push remains deferred
+- latest_commit_hash: `658feee2f19ceaade1aec1e1d93e31b6b42c6905`
+- latest_commit_brief_message: `test(kg): lock VLM timing deassert prose exclusion`
+- note: this is the pre-slice-193 baseline for the current `BWFSC=200` batch; slices 1-192/200 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `658feee` test(kg): lock VLM timing deassert prose exclusion
 - `db4ca7a` test(kg): lock VLM timing deassert table exclusion
 - `48f46bd` test(kg): lock VLM timing active-low visual exclusion
 - `395bc35` test(kg): lock VLM timing active-low alias exclusion
 - `eeccbc1` test(kg): lock VLM timing active-low prose exclusion
 - `e0eb530` test(kg): lock VLM timing active-low table exclusion
-- `b824be0` test(kg): lock cross-modality grounding timing absence
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 192 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 193 and push is deferred
 - files in flight:
   - `crates/specforge/test_data/kg_quality/vlm_timing_active_low_deassertion_equivalence_gold/fixture.json`
   - live docs and mdBook files synced for the slice
@@ -52,13 +52,13 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `191`
-  - slice 192/200 tightens active-low VLM deassertion prose semantic-hint exclusion metrics
+  - completed_count before this commit: `192`
+  - slice 193/200 tightens active-low VLM deassertion alias-grounded prose semantic-hint exclusion metrics
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks active-low VLM deassertion prose semantic-hint exclusion KG coverage as `Done`
+  - live-status tracker now marks active-low VLM deassertion alias-grounded prose semantic-hint exclusion KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 192 before commit
+  - implementation and live-doc sync are complete for slice 193 before commit
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench vlm_timing_active_low_deassertion_equivalence_gold` passed with the requested fixture
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` fixtures
   - `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed with `150` fixtures projected and `0` failures
@@ -75,5 +75,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 192 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 193/200
+- finish the slice 193 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 194/200
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle
