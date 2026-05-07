@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for no-prior ready-sink signal shape)
+- Tightened `semantic_ready_sink_prior_guided_phrase_without_prior_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts exact local `XACK` input direction at both canonical stages while the absent-prior ready-sink path stays semantically unresolved.
+- This locks the `can sink the transfer` no-prior mirror as exact local signal-shape preservation without changing production prior lookup behavior.
+
 ## Session update (2026-05-07 KG fixture for no-prior semantic phrase signal shape)
 - Tightened `semantic_prior_guided_phrase_without_prior_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts exact local `XACK` input direction at both canonical stages while the absent-prior path stays semantically unresolved.
