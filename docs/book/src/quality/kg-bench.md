@@ -132,6 +132,7 @@ That gold now also asserts table-sourced semantic hints stay zero, keeping the r
 Alias-grounded prose stays zero there too, keeping alias recovery out of the direct phrase-prior proof.
 Visual-caption hints stay zero as well, keeping the direct phrase-prior proof prose-only.
 VLM timing-annotation hints stay zero too, keeping timing-note evidence out of the direct phrase-prior proof.
+Timing-diagram extractions stay zero too, keeping the direct phrase-prior proof free of timing extraction support.
 The protocol-family mismatch semantic phrase fixture complements that positive case by requiring the local `XREQ` output declaration to survive exactly while an unrelated APB phrase prior stays silent.
 The source-kind mismatch companion applies the same signal-shape discipline to `XSTAGE`: a visual-caption-only phrase prior stays silent for prose evidence while the local output declaration remains canonical.
 The exact-phrase mismatch companion does the same for `XFLOW`: an unmatched learned phrase prior stays silent while the local output declaration remains canonical.

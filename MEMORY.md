@@ -22,22 +22,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `917e8c5ead73ce469705084adf956e77f839f68d`
-- latest_commit_brief_message: `test(kg): lock semantic phrase visual exclusion`
-- note: this is the pre-slice-133 baseline for the current `BWFSC=200` batch; slices 1-132/200 are committed and push remains deferred
+- latest_commit_hash: `df277f3ffcb6f362350460c9396e8601b7462cef`
+- latest_commit_brief_message: `test(kg): lock semantic phrase VLM exclusion`
+- note: this is the pre-slice-134 baseline for the current `BWFSC=200` batch; slices 1-133/200 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `df277f3` test(kg): lock semantic phrase VLM exclusion
 - `917e8c5` test(kg): lock semantic phrase visual exclusion
 - `221e8d2` test(kg): lock semantic phrase alias exclusion
 - `80148e3` test(kg): lock semantic phrase table exclusion
 - `8661406` test(kg): lock AMBA-generic modality timing absence
 - `cf880f2` test(kg): lock AMBA-generic modality VLM exclusion
-- `fd0a94e` test(kg): lock AMBA-generic modality visual exclusion
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 133 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 134 and push is deferred
 - files in flight:
   - `crates/specforge/test_data/kg_quality/semantic_prior_guided_phrase_gold/fixture.json`
   - live docs and mdBook files synced for the slice
@@ -52,13 +52,13 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `132`
-  - slice 133/200 tightens semantic phrase prior VLM timing-annotation semantic-hint exclusion metrics
+  - completed_count before this commit: `133`
+  - slice 134/200 tightens semantic phrase prior timing-diagram extraction absence metrics
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks semantic phrase prior VLM timing-annotation semantic-hint exclusion KG coverage as `Done`
+  - live-status tracker now marks semantic phrase prior timing-diagram extraction absence KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 133 before commit
+  - implementation and live-doc sync are complete for slice 134 before commit
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_prior_guided_phrase_gold` passed with the requested fixture
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` fixtures
   - `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed with `150` fixtures projected and `0` failures
@@ -75,5 +75,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 133 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 134/200
+- finish the slice 134 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 135/200
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle
