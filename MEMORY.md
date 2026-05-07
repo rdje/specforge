@@ -22,24 +22,24 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `307558c1bfaee5b2e16673e48d108c5172c3d942`
-- latest_commit_brief_message: `test(kg): lock no-prior visual semantic signal`
-- note: this is the pre-slice-37 baseline for the current `BWFSC=200` batch; slices 1-36/200 are committed and push remains deferred
+- latest_commit_hash: `de24504a94b211d00bb2e080c6f9f1f3b8198658`
+- latest_commit_brief_message: `test(kg): lock prior-guided visual semantic signal`
+- note: this is the pre-slice-38 baseline for the current `BWFSC=200` batch; slices 1-37/200 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `de24504` test(kg): lock prior-guided visual semantic signal
 - `307558c` test(kg): lock no-prior visual semantic signal
 - `886c7d0` test(kg): lock prior-guided receive signal
 - `2f57715` test(kg): lock prior-guided ready-sink signal
 - `b8887a5` test(kg): lock prior-guided valid-like signal
 - `8135aa7` test(kg): lock no-prior valid-like signal
-- `fd9b7be` test(kg): lock no-prior ready-sink signal
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 37 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 38 and push is deferred
 - files in flight:
-  - `crates/specforge/test_data/kg_quality/visual_semantic_prior_guided_caption_gold/fixture.json`
+  - `crates/specforge/test_data/kg_quality/visual_motif_prior_guided_diagram_classification_without_prior_negative/fixture.json`
   - live docs and mdBook files synced for the slice
 
 ## Previous completed N-slice batch
@@ -52,14 +52,14 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `36`
-  - slice 37/200 tightens prior-guided visual semantic phrase local signal-shape expectations
+  - completed_count before this commit: `37`
+  - slice 38/200 tightens no-prior visual-motif local signal-shape expectations
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks prior-guided visual semantic phrase signal-shape KG coverage as `Done`
+  - live-status tracker now marks no-prior visual-motif signal-shape KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 37 before commit
-  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench visual_semantic_prior_guided_caption_gold` passed with the requested fixture
+  - implementation and live-doc sync are complete for slice 38 before commit
+  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench visual_motif_prior_guided_diagram_classification_without_prior_negative` passed with the requested fixture
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` fixtures
   - `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed with `150` fixtures projected and `0` failures
   - `bash scripts/run_docs_ci.sh` passed after the live-book sync
@@ -75,5 +75,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 37 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 38/200
+- finish the slice 38 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 39/200
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle
