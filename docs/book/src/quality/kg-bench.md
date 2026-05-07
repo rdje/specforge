@@ -215,6 +215,7 @@ That mismatch fixture also locks one visual-caption semantic hint, so protocol-f
 It locks one VLM timing-annotation semantic hint too, preserving the other side of the local conflict while the APB caution prior remains scoped out.
 The same fixture excludes table semantic hints, keeping that local conflict visual-only.
 It excludes ordinary prose hints as well, so the mismatch case cannot be satisfied by text evidence.
+Alias-grounded prose is excluded too, keeping phrase-alias recovery out of this scoped-family guard.
 It also keeps arbitration explicit: `XCTRL` still enters semantic arbitration, but the unrelated prior must not make that arbitration decisive.
 
 Timing-annotation fixtures also cover polarity-sensitive multimodal evidence.

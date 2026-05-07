@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for negative-knowledge family-mismatch alias exclusion)
+- Tightened `negative_knowledge_prior_protocol_family_mismatch_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts evidence-stage `signal_semantic_hints_from_alias_grounded_prose = 0` alongside aggregate and visual source semantic-hint metrics.
+- This locks the semantic conflict as free of alias-grounded prose evidence while keeping unrelated APB negative-knowledge memory scoped out.
+
 ## Session update (2026-05-07 KG fixture for negative-knowledge family-mismatch prose exclusion)
 - Tightened `negative_knowledge_prior_protocol_family_mismatch_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts evidence-stage `signal_semantic_hints_from_prose = 0` alongside aggregate and visual source semantic-hint metrics.

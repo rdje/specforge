@@ -912,6 +912,7 @@
   - the negative-knowledge protocol-family mismatch fixture now asserts the local VLM timing-annotation semantic-hint split, proving scoped-out APB caution memory does not erase AXI-local timing-note evidence
   - the negative-knowledge protocol-family mismatch fixture now asserts table semantic hints stay zero, keeping the local conflict visual-only while the APB caution prior remains scoped out
   - the negative-knowledge protocol-family mismatch fixture now asserts ordinary prose semantic hints stay zero, keeping the local conflict free of text-only support
+  - the negative-knowledge protocol-family mismatch fixture now asserts alias-grounded prose semantic hints stay zero, keeping alias recovery out of the scoped-family mismatch guard
   - the semantic-modality protocol-family mismatch fixture now asserts exact table-versus-prose semantic-conflict observations while an unrelated APB modality prior still cannot make arbitration decisive
   - the semantic-modality source-kind mismatch fixture now asserts the same exact table-versus-prose conflict while a visual-only modality prior remains non-decisive
   - the weak semantic-modality fixture now asserts the same exact table-versus-prose conflict while an underpowered modality prior remains non-decisive
