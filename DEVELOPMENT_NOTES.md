@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` actor-port parametric-width renderable block
+- New batch slice 198/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `standalone_dt_blocks_parametric_actor_port_width_with_diagnostic` now asserts graph-backed actor-port parametric-width blockers leave no renderable module and no aggregate `.fsm` source document.
+- This locks symbolic actor-port width evidence against stale DT-root output while actor-port provenance, support IDs, confidence, and parametric-width diagnostics remain visible.
+- Focused actor-port parametric-width coverage, the adapter suite, fmt, docs CI, KG bench, and full CI passed; user-requested `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is active.
+
 ## 2026-05-06 `.fsm` canonical parametric-width renderable block
 - New batch slice 197/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `standalone_dt_blocks_parametric_signal_width_with_diagnostic` now asserts canonical parametric signal-width blockers leave no renderable module and no aggregate `.fsm` source document.

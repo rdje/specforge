@@ -173,6 +173,8 @@ Selector-branch predicate blockers keep DT candidate provenance, referenced sign
 They also keep renderable module and aggregate `.fsm` source documents absent, so stale DT-root output cannot leak while branch predicates cannot map relative to the selector token.
 Canonical parametric signal-width blockers keep interface provenance, support IDs, confidence, and symbolic-width diagnostics while blocked.
 They also keep renderable module and aggregate `.fsm` source documents absent, so stale DT-root output cannot leak while symbolic widths still need numeric resolution.
+Actor-port parametric-width blockers keep graph-backed actor-port provenance, support IDs, confidence, and symbolic-width diagnostics while blocked.
+They also keep renderable module and aggregate `.fsm` source documents absent, so stale DT-root output cannot leak while graph-backed symbolic widths still need numeric resolution.
 
 For renderable `.fsm` top-composition roots, inspect the selected top candidate as well as the emitted target text.
 The adapter artifact keeps the declared top-port direction and numeric width, the top-port automation confidence, child declaration support IDs, topology-link support IDs, and the renderable top root.
