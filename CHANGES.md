@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for negative-knowledge family-mismatch VLM split)
+
+### Improved: protocol-family mismatch fixtures lock local VLM hints
+- Tightened `negative_knowledge_prior_protocol_family_mismatch_negative` with `signal_semantic_hints_from_vlm_timing_annotations = 1` at `EvidenceIR`.
+- The fixture now proves an unrelated APB negative-knowledge prior stays silent while the AXI-local `XCTRL` VLM timing annotation still contributes exactly one semantic hint.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench negative_knowledge_prior_protocol_family_mismatch_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for negative-knowledge family-mismatch visual split)
 
 ### Improved: protocol-family mismatch fixtures lock local visual hints

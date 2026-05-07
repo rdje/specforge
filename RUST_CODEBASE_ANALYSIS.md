@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for negative-knowledge family-mismatch VLM split)
+- Tightened `negative_knowledge_prior_protocol_family_mismatch_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts evidence-stage `signal_semantic_hints_from_vlm_timing_annotations = 1` alongside aggregate and visual-caption semantic-hint metrics.
+- This locks the AXI-local VLM timing side of the semantic conflict while keeping unrelated APB negative-knowledge memory scoped out.
+
 ## Session update (2026-05-07 KG fixture for negative-knowledge family-mismatch visual split)
 - Tightened `negative_knowledge_prior_protocol_family_mismatch_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts evidence-stage `signal_semantic_hints_from_visual_captions = 1` alongside the aggregate semantic-hint metric.
