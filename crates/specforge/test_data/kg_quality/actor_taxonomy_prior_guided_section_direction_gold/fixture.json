@@ -150,6 +150,7 @@
   "expectations": {
     "semantic": {
       "signal_names_include": ["XADDR", "XCMD", "XRESP"],
+      "graph_direction_signal_names_include": ["XADDR", "XCMD", "XRESP"],
       "actor_signal_relations_include": [
         {
           "actor_name": "Issuer",
@@ -196,6 +197,7 @@
     },
     "intent": {
       "signal_names_include": ["XADDR", "XCMD", "XRESP"],
+      "graph_direction_signal_names_include": ["XADDR", "XCMD", "XRESP"],
       "actor_signal_relations_include": [
         {
           "actor_name": "Issuer",

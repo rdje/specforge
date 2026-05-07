@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for prior-guided actor-taxonomy graph directions)
+- Tightened `actor_taxonomy_prior_guided_section_direction_gold` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts per-signal graph-backed direction coverage for `XADDR`, `XCMD`, and `XRESP` at both canonical stages when learned `Issuer` and `Acceptor` actor priors are staged.
+- This locks the actor-taxonomy positive path as exact graph-direction coverage without changing production prior lookup behavior.
+
 ## Session update (2026-05-07 KG fixture for actor-taxonomy family-mismatch graph directions)
 - Tightened `actor_taxonomy_prior_protocol_family_mismatch_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts per-signal graph-backed direction absence for `XADDR` at both canonical stages when an APB-scoped actor-taxonomy prior is staged against an AXI-local `Issuer signals` heading.

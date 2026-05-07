@@ -22,24 +22,24 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `9d4fd0525783f60228f7382de02a74cc451101bc`
-- latest_commit_brief_message: `test(kg): lock no-prior actor graph directions`
-- note: this is the pre-slice-44 baseline for the current `BWFSC=200` batch; slices 1-43/200 are committed and push remains deferred
+- latest_commit_hash: `7215a9f7aaa9fd7131e8b86a730c019aac0557c0`
+- latest_commit_brief_message: `test(kg): lock actor mismatch graph directions`
+- note: this is the pre-slice-45 baseline for the current `BWFSC=200` batch; slices 1-44/200 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `7215a9f` test(kg): lock actor mismatch graph directions
 - `9d4fd05` test(kg): lock no-prior actor graph directions
 - `e966e38` test(kg): lock table-shape mismatch provenance
 - `2091f4e` test(kg): lock table-shape signal provenance
 - `1d327ec` test(kg): lock no-prior table-shape signals
 - `c192f72` test(kg): lock prior-guided visual motif signal
-- `54e8d84` test(kg): lock no-prior visual motif signal
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 44 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 45 and push is deferred
 - files in flight:
-  - `crates/specforge/test_data/kg_quality/actor_taxonomy_prior_protocol_family_mismatch_negative/fixture.json`
+  - `crates/specforge/test_data/kg_quality/actor_taxonomy_prior_guided_section_direction_gold/fixture.json`
   - live docs and mdBook files synced for the slice
 
 ## Previous completed N-slice batch
@@ -52,14 +52,14 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `43`
-  - slice 44/200 tightens actor-taxonomy protocol-family mismatch graph-direction expectations
+  - completed_count before this commit: `44`
+  - slice 45/200 tightens prior-guided actor-taxonomy graph-direction expectations
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks actor-taxonomy family-mismatch graph-direction KG coverage as `Done`
+  - live-status tracker now marks prior-guided actor-taxonomy graph-direction KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 44 before commit
-  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench actor_taxonomy_prior_protocol_family_mismatch_negative` passed with the requested fixture
+  - implementation and live-doc sync are complete for slice 45 before commit
+  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench actor_taxonomy_prior_guided_section_direction_gold` passed with the requested fixture
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` fixtures
   - `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed with `150` fixtures projected and `0` failures
   - `bash scripts/run_docs_ci.sh` passed after the live-book sync
@@ -75,5 +75,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 44 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 45/200
+- finish the slice 45 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 46/200
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle

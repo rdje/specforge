@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for prior-guided actor-taxonomy graph directions)
+
+### Improved: actor-taxonomy positives assert graph coverage per signal
+- Tightened `actor_taxonomy_prior_guided_section_direction_gold` with exact `graph_direction_signal_names_include` expectations for `XADDR`, `XCMD`, and `XRESP` at `SemanticIR` and `IntentIR`.
+- The fixture now proves learned `Issuer` / `Acceptor` actor vocabulary recovers graph-backed direction coverage for every local width-only signal row, alongside existing actor-relation and canonical direction checks.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench actor_taxonomy_prior_guided_section_direction_gold` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for actor-taxonomy family-mismatch graph directions)
 
 ### Improved: protocol-scoped actor priors stay graph-empty per signal
