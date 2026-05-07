@@ -921,6 +921,7 @@
   - the semantic-modality protocol-family mismatch fixture now asserts total evidence semantic hints equal the two local AXI table/prose observations while the APB prior stays scoped out
   - the semantic-modality protocol-family mismatch fixture now asserts one table-sourced semantic hint, keeping the local structured-table side counted before arbitration
   - the semantic-modality protocol-family mismatch fixture now asserts one prose-sourced semantic hint, keeping the local prose side counted before arbitration
+  - the semantic-modality protocol-family mismatch fixture now asserts alias-grounded prose semantic hints stay zero, keeping alias recovery out of the family-scoped guard
   - the semantic-modality source-kind mismatch fixture now asserts the same exact table-versus-prose conflict while a visual-only modality prior remains non-decisive
   - the weak semantic-modality fixture now asserts the same exact table-versus-prose conflict while an underpowered modality prior remains non-decisive
   - the no-prior semantic-modality fixture now asserts the same exact table-versus-prose conflict while arbitration remains non-decisive without learned modality memory
