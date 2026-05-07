@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for no-prior semantic phrase alias exclusion)
+- Tightened `semantic_prior_guided_phrase_without_prior_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts evidence-stage `signal_semantic_hints_from_alias_grounded_prose = 0` alongside aggregate, table, and prose hint metrics.
+- This locks the `XACK can receive the transfer` no-prior mirror as free of alias-grounded prose hints when learned memory is absent.
+
 ## Session update (2026-05-07 KG fixture for no-prior semantic phrase table exclusion)
 - Tightened `semantic_prior_guided_phrase_without_prior_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts evidence-stage `signal_semantic_hints_from_tables = 0` alongside total and prose hint metrics.
