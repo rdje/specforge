@@ -10,7 +10,7 @@
         "target_value": null,
         "condition_text": null,
         "negated": false,
-        "source_text": "HREADY must remain stable.",
+        "source_text": "HREADY must remain stable within 2 cycles.",
         "supporting_statement_ids": ["stmt_temporal_gap"],
         "automation_confidence": "medium"
       }
@@ -36,6 +36,12 @@
           "semantic_temporal_rules_missing_clock_grounding",
           "semantic_temporal_clock_grounding_surface_rescan_guidance"
         ],
+        "finding_ids_exclude": [
+          "semantic_temporal_rules_missing_cycle_windows",
+          "semantic_temporal_cycle_window_surface_rescan_guidance",
+          "semantic_temporal_rules_missing_actor_grounding",
+          "semantic_temporal_actor_grounding_surface_rescan_guidance"
+        ],
         "findings_include": [
           {
             "finding_id": "semantic_temporal_clock_grounding_surface_rescan_guidance",
@@ -47,6 +53,8 @@
         ],
         "metric_values": {
           "temporal_rules": "1",
+          "temporal_rules_with_actor_grounding": "1",
+          "temporal_rules_with_cycle_window": "1",
           "temporal_rules_missing_clock_grounding": "1"
         }
       },
@@ -54,6 +62,12 @@
         "finding_ids_include": [
           "intent_temporal_rules_missing_clock_grounding",
           "intent_temporal_clock_grounding_surface_rescan_guidance"
+        ],
+        "finding_ids_exclude": [
+          "intent_temporal_rules_missing_cycle_windows",
+          "intent_temporal_cycle_window_surface_rescan_guidance",
+          "intent_temporal_rules_missing_actor_grounding",
+          "intent_temporal_actor_grounding_surface_rescan_guidance"
         ],
         "findings_include": [
           {
@@ -66,6 +80,8 @@
         ],
         "metric_values": {
           "temporal_rules": "1",
+          "temporal_rules_with_actor_grounding": "1",
+          "temporal_rules_with_cycle_window": "1",
           "temporal_rules_missing_clock_grounding": "1"
         }
       }

@@ -326,6 +326,7 @@
 - KG benchmark harness now locks bounded temporal cycle-window no-rescan behavior: Done
 - KG benchmark harness now locks temporal grounding replay lane separation: Done
 - KG benchmark harness now locks temporal actor-grounding replay lane separation: Done
+- KG benchmark harness now locks temporal clock-grounding replay lane separation: Done
 - KG benchmark harness now includes AXI read-address timing coverage: Done
 - KG benchmark harness now includes AXI read-address ID stability coverage: Done
 - KG benchmark harness now includes AXI write-address ID stability coverage: Done

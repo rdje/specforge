@@ -97,6 +97,7 @@ The benchmark suite also locks the negative surface: a clock-grounded and actor-
 The complementary bounded fixture proves the reverse too: once a local temporal rule says `within 2 cycles`, the canonical rule keeps that max-cycle window and validation does not ask for cycle-window replay.
 These checks keep the replay lanes separate: missing cycle bounds are not reported as missing actor or clock grounding when those dimensions are already known.
 The actor-grounding mirror fixture keeps the other side sharp too: a bounded, clock-grounded rule that lacks actor grounding reports actor replay guidance without also reporting cycle-window or clock-grounding debt.
+The clock-grounding mirror completes the split: a bounded, actor-grounded rule that lacks a clock reports clock replay guidance without also reporting cycle-window or actor-grounding debt.
 
 ## Polarity-relative values
 

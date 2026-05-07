@@ -22,24 +22,25 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `a4b4e81f3dca8506333719f8a132b0b01b27e427`
-- latest_commit_brief_message: `test(kg): lock temporal replay lane split`
-- note: this is the pre-slice-4 baseline for the current `BWFSC=200` batch; slices 1-3/200 are committed and push remains deferred
+- latest_commit_hash: `393b343ac180d22bbc43cf8c49585b26b59b9704`
+- latest_commit_brief_message: `test(kg): lock temporal actor replay split`
+- note: this is the pre-slice-5 baseline for the current `BWFSC=200` batch; slices 1-4/200 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `393b343` test(kg): lock temporal actor replay split
 - `a4b4e81` test(kg): lock temporal replay lane split
 - `88b4943` test(kg): lock bounded cycle-window rule
 - `5ba5571` test(kg): lock temporal cycle-window guidance
 - `24e8f6f` docs: record completed batch state
 - `6983c99` test(adapter): block duplicate top output
-- `a5e6fa3` test(adapter): block recovered top output
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 4 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 5 and push is deferred
 - files in flight:
-  - `crates/specforge/test_data/kg_quality/temporal_actor_grounding_surface_negative/fixture.json`
+  - `crates/specforge/test_data/kg_quality/temporal_clock_grounding_surface_negative/fixture.json`
+  - `crates/specforge/test_data/kg_quality/temporal_clock_grounding_surface_negative/clockless_temporal_rule.md`
   - live docs and mdBook files synced for the slice
 
 ## Previous completed N-slice batch
@@ -52,13 +53,13 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `3`
-  - slice 4/200 tightens temporal actor-grounding replay lane-separation fixture expectations
+  - completed_count before this commit: `4`
+  - slice 5/200 tightens temporal clock-grounding replay lane-separation fixture expectations
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks temporal actor-grounding replay lane-separation KG coverage as `Done`
+  - live-status tracker now marks temporal clock-grounding replay lane-separation KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 4 before commit
+  - implementation and live-doc sync are complete for slice 5 before commit
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` fixtures
   - `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed with `150` fixtures projected and `0` failures
   - `bash scripts/run_docs_ci.sh` passed after the live-book sync
@@ -72,5 +73,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 4 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 5/200
+- finish the slice 5 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 6/200
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle
