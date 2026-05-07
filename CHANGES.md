@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for prior-guided valid-like signal shape)
+
+### Improved: prior-guided valid-like recovery preserves local signal shape
+- Tightened `semantic_valid_prior_guided_phrase_gold` with exact `signal_directions_include` expectations at `SemanticIR` and `IntentIR`.
+- The fixture now proves prior-guided `XREQ can publish the beat` resolves as `handshake_valid_like` with `single_source` grounding while the local `Signal XREQ is output width 1` declaration stays canonical.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_valid_prior_guided_phrase_gold` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for no-prior valid-like signal shape)
 
 ### Improved: no-prior valid-like mirrors preserve local signal shape

@@ -22,24 +22,24 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `fd9b7bee37aa3046e313affd3de6cf41b7f9a302`
-- latest_commit_brief_message: `test(kg): lock no-prior ready-sink signal`
-- note: this is the pre-slice-32 baseline for the current `BWFSC=200` batch; slices 1-31/200 are committed and push remains deferred
+- latest_commit_hash: `8135aa72aff83cd0d63160b51957c754426ac1bc`
+- latest_commit_brief_message: `test(kg): lock no-prior valid-like signal`
+- note: this is the pre-slice-33 baseline for the current `BWFSC=200` batch; slices 1-32/200 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `8135aa7` test(kg): lock no-prior valid-like signal
 - `fd9b7be` test(kg): lock no-prior ready-sink signal
 - `69c9f02` test(kg): lock no-prior semantic phrase signal
 - `9704536` test(kg): lock conflicting semantic phrase signal
 - `b256704` test(kg): lock broad semantic phrase signal
 - `0b77ba3` test(kg): lock semantic phrase mismatch signal shape
-- `9ff313f` test(kg): lock semantic phrase source-kind signal
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 32 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 33 and push is deferred
 - files in flight:
-  - `crates/specforge/test_data/kg_quality/semantic_valid_prior_guided_phrase_without_prior_negative/fixture.json`
+  - `crates/specforge/test_data/kg_quality/semantic_valid_prior_guided_phrase_gold/fixture.json`
   - live docs and mdBook files synced for the slice
 
 ## Previous completed N-slice batch
@@ -52,14 +52,14 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `31`
-  - slice 32/200 tightens no-prior valid-like semantic phrase local signal-shape expectations
+  - completed_count before this commit: `32`
+  - slice 33/200 tightens prior-guided valid-like semantic phrase local signal-shape expectations
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks no-prior valid-like semantic phrase signal-shape KG coverage as `Done`
+  - live-status tracker now marks prior-guided valid-like semantic phrase signal-shape KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 32 before commit
-  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_valid_prior_guided_phrase_without_prior_negative` passed with the requested fixture
+  - implementation and live-doc sync are complete for slice 33 before commit
+  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_valid_prior_guided_phrase_gold` passed with the requested fixture
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` fixtures
   - `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed with `150` fixtures projected and `0` failures
   - `bash scripts/run_docs_ci.sh` passed after the live-book sync
@@ -75,5 +75,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 32 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 33/200
+- finish the slice 33 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 34/200
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle

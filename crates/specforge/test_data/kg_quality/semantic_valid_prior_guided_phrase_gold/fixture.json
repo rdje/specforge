@@ -19,6 +19,12 @@
   "expectations": {
     "semantic": {
       "signal_names_include": ["XREQ"],
+      "signal_directions_include": [
+        {
+          "signal_name": "XREQ",
+          "direction": "output"
+        }
+      ],
       "resolved_semantic_role_signal_names_include": ["XREQ"],
       "resolved_semantic_roles_include": [
         {
@@ -39,6 +45,12 @@
     },
     "intent": {
       "signal_names_include": ["XREQ"],
+      "signal_directions_include": [
+        {
+          "signal_name": "XREQ",
+          "direction": "output"
+        }
+      ],
       "resolved_semantic_role_signal_names_include": ["XREQ"],
       "resolved_semantic_roles_include": [
         {
