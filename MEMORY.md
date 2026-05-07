@@ -22,24 +22,24 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `901386bcb2969a05cf3db0d6590fd7258756f7c9`
-- latest_commit_brief_message: `test(kg): lock semantic phrase mismatch signal`
-- note: this is the pre-slice-26 baseline for the current `BWFSC=200` batch; slices 1-25/200 are committed and push remains deferred
+- latest_commit_hash: `9ff313fb89e21b8d79ba988e79559312e00d05e3`
+- latest_commit_brief_message: `test(kg): lock semantic phrase source-kind signal`
+- note: this is the pre-slice-27 baseline for the current `BWFSC=200` batch; slices 1-26/200 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `9ff313f` test(kg): lock semantic phrase source-kind signal
 - `901386b` test(kg): lock semantic phrase mismatch signal
 - `9771b1d` test(kg): lock semantic phrase role shape
 - `604d016` test(kg): lock amba semantic modality shape
 - `956a4c8` test(kg): lock prior semantic modality shape
 - `cad0cba` test(kg): lock no-prior semantic modality shape
-- `20113a2` test(kg): lock weak semantic modality shape
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 26 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 27 and push is deferred
 - files in flight:
-  - `crates/specforge/test_data/kg_quality/semantic_prior_source_kind_mismatch_negative/fixture.json`
+  - `crates/specforge/test_data/kg_quality/semantic_prior_phrase_mismatch_negative/fixture.json`
   - live docs and mdBook files synced for the slice
 
 ## Previous completed N-slice batch
@@ -52,14 +52,14 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `25`
-  - slice 26/200 tightens semantic phrase prior source-kind mismatch local signal-shape expectations
+  - completed_count before this commit: `26`
+  - slice 27/200 tightens semantic phrase prior exact-phrase mismatch local signal-shape expectations
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks semantic phrase source-kind mismatch exact signal-shape KG coverage as `Done`
+  - live-status tracker now marks semantic phrase exact-phrase mismatch signal-shape KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 26 before commit
-  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_prior_source_kind_mismatch_negative` passed with the requested fixture
+  - implementation and live-doc sync are complete for slice 27 before commit
+  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_prior_phrase_mismatch_negative` passed with the requested fixture
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` fixtures
   - `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed with `150` fixtures projected and `0` failures
   - `bash scripts/run_docs_ci.sh` passed after the live-book sync
@@ -75,5 +75,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 26 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 27/200
+- finish the slice 27 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 28/200
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle

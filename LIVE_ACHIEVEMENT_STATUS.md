@@ -308,6 +308,7 @@
 - KG benchmark harness now locks semantic phrase prior local phrase matching: Done
 - KG benchmark harness now locks semantic phrase prior source-kind scoping: Done
 - KG benchmark harness now locks semantic phrase source-kind mismatch signal shape: Done
+- KG benchmark harness now locks semantic phrase exact-phrase mismatch signal shape: Done
 - KG benchmark harness now locks conflicting semantic phrase priors fail closed: Done
 - KG benchmark harness now locks prior-guided ready-like sink phrase recovery: Done
 - KG benchmark harness now locks prior-guided valid-like semantic phrase recovery: Done

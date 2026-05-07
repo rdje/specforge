@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for semantic phrase mismatch signal shape)
+
+### Improved: unmatched semantic priors preserve local signal shape
+- Tightened `semantic_prior_phrase_mismatch_negative` with exact `signal_directions_include` expectations at `SemanticIR` and `IntentIR`.
+- The fixture now proves an unmatched learned phrase (`can publish the beat`) cannot resolve the local `XFLOW can sequence the transfer` phrase while the local `Signal XFLOW is output width 1` declaration remains canonical.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_prior_phrase_mismatch_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for semantic phrase source-kind signal shape)
 
 ### Improved: wrong-source semantic priors preserve local signal shape

@@ -120,6 +120,7 @@ That lets semantic gold fixtures prove `XREQ` is valid-like or `XACK` is ready-l
 The semantic phrase prior gold uses this for `XACK can receive the transfer`: prior-guided recovery must resolve exactly to ready-like with single-source grounding.
 The protocol-family mismatch semantic phrase fixture complements that positive case by requiring the local `XREQ` output declaration to survive exactly while an unrelated APB phrase prior stays silent.
 The source-kind mismatch companion applies the same signal-shape discipline to `XSTAGE`: a visual-caption-only phrase prior stays silent for prose evidence while the local output declaration remains canonical.
+The exact-phrase mismatch companion does the same for `XFLOW`: an unmatched learned phrase prior stays silent while the local output declaration remains canonical.
 
 Fixtures can assert canonical semantic grounding strength directly as well.
 `semantic_grounding_strengths_include` checks the signal name and expected single-source, multi-source, or cross-modality grounding strength on the canonical interface signal record.

@@ -19,12 +19,24 @@
   "expectations": {
     "semantic": {
       "signal_names_include": ["XFLOW"],
+      "signal_directions_include": [
+        {
+          "signal_name": "XFLOW",
+          "direction": "output"
+        }
+      ],
       "resolved_semantic_role_signal_names_exclude": ["XFLOW"],
       "semantic_consensus_signal_names_exclude": ["XFLOW"],
       "semantic_candidate_signal_names_exclude": ["XFLOW"]
     },
     "intent": {
       "signal_names_include": ["XFLOW"],
+      "signal_directions_include": [
+        {
+          "signal_name": "XFLOW",
+          "direction": "output"
+        }
+      ],
       "resolved_semantic_role_signal_names_exclude": ["XFLOW"],
       "semantic_consensus_signal_names_exclude": ["XFLOW"],
       "semantic_candidate_signal_names_exclude": ["XFLOW"]

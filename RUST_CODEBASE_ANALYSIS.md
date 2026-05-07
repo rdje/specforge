@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for semantic phrase mismatch signal shape)
+- Tightened `semantic_prior_phrase_mismatch_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts exact local `XFLOW` output direction at both canonical stages while the unmatched learned semantic phrase prior stays silent.
+- This keeps exact-phrase matching conservative without changing production prior lookup or arbitration behavior.
+
 ## Session update (2026-05-07 KG fixture for semantic phrase source-kind signal shape)
 - Tightened `semantic_prior_source_kind_mismatch_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts exact local `XSTAGE` output direction at both canonical stages while the visual-caption-only semantic phrase prior stays silent.
