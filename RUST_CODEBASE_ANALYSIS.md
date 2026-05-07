@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for active-low VLM assertion alias exclusion)
+- Tightened `vlm_timing_active_low_assertion_equivalence_gold` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts evidence-stage `signal_semantic_hints_from_alias_grounded_prose = 0` alongside aggregate, table, prose, VLM timing-annotation, and timing extraction metrics.
+- This locks active-low reset assertion timing evidence as free of alias-grounded prose semantic-role hints.
+
 ## Session update (2026-05-07 KG fixture for active-low VLM assertion prose exclusion)
 - Tightened `vlm_timing_active_low_assertion_equivalence_gold` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts evidence-stage `signal_semantic_hints_from_prose = 0` alongside aggregate, table, VLM timing-annotation, and timing extraction metrics.

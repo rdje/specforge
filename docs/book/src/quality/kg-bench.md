@@ -327,6 +327,7 @@ That assertion fixture also checks zero VLM timing-annotation semantic hints, so
 It now locks the total semantic-hint count at zero too, closing off alternate hint sources for the same reset evidence.
 It also checks zero table-sourced semantic hints, keeping active-low reset assertion evidence out of table-driven role recovery.
 Ordinary prose hints stay zero as well, so text around the reset assertion cannot backfill a handshake role.
+Alias-grounded prose is excluded too, keeping phrase-alias recovery from inventing a reset semantic role.
 The companion `vlm_timing_active_low_deassertion_equivalence_gold` fixture proves the reset-release mirror case: `deasserted` and `HIGH` are equivalent for the same active-low reset.
 That deassertion fixture now carries the same zero-hint guard, so reset-release prose stays temporal/polarity evidence only.
 It also locks the total semantic-hint count at zero, matching the assertion fixture's no-role-hint boundary.
