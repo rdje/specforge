@@ -143,6 +143,7 @@ They also keep renderable module and aggregate `.fsm` source documents absent, s
 Flat direction conflicts with graph-backed actor provenance remain blocked and keep signal-inventory residual guidance on the flat-conflict regression itself.
 They also keep renderable module and aggregate `.fsm` source documents absent, so stale DT-root output cannot leak while canonical direction evidence is conflicting.
 Flat/graph direction disagreements likewise keep interface and actor-port provenance plus signal-inventory residual guidance while blocked.
+They also keep renderable module and aggregate `.fsm` source documents absent, so stale DT-root output cannot leak before canonical and graph-backed direction evidence agree.
 Graph-backed undriven standalone outputs keep selected actor support and signal-inventory residual guidance while blocked.
 Structured-FSM graph-backed undriven outputs keep the same residual guidance alongside FSM-state blocker text.
 They also keep the aggregate `.fsm` source document absent, so stale `?fsm` output cannot leak before every declared output is driven by typed FSM-state actions.

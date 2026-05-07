@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` direct flat/graph renderable block
+- New batch slice 190/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `standalone_dt_blocks_flat_graph_direction_disagreement` now asserts direct DT flat/graph direction disagreements leave no renderable module and no aggregate `.fsm` source document.
+- This locks canonical-vs-graph direction disagreements against stale DT-root output while interface and actor-port provenance plus signal-inventory repair guidance remain visible.
+- Focused direct flat/graph coverage, the adapter suite, fmt, docs CI, KG bench, and full CI passed; user-requested `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is active.
+
 ## 2026-05-06 `.fsm` direct flat-conflict renderable block
 - New batch slice 189/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `standalone_dt_blocks_conflicting_flat_direction_even_with_actor_graph` now asserts direct DT flat-direction conflicts leave no renderable module and no aggregate `.fsm` source document even when actor graph evidence exists.

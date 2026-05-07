@@ -15,6 +15,7 @@
 - IntentIR canonical endpoint contract established: Done
 - SpecForge CLI/crate rename completed: Done
 - Explicit `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters` architecture defined: Done
+- `.fsm` direct DT flat/graph disagreements now block stale module and aggregate renderable output: Done
 - `.fsm` direct DT flat-direction conflicts now block stale module and aggregate renderable output: Done
 - `.fsm` direct DT control-input width conflicts now block stale module and aggregate renderable output: Done
 - `.fsm` blocked DT-centric adapters now block stale module and aggregate renderable output: Done

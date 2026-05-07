@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` direct flat/graph renderable block)
+
+### Added: direct DT flat/graph disagreements cannot leak output
+- Tightened `standalone_dt_blocks_flat_graph_direction_disagreement` so direct DT flat/graph direction disagreements leave no renderable module and no aggregate `.fsm` source document.
+- This locks canonical-vs-graph direction disagreements against stale DT-root output while preserving interface and actor-port provenance plus signal-inventory repair guidance.
+- Synced the live tracker, roadmap, and mdBook with the direct flat/graph renderable-block guarantee.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge standalone_dt_blocks_flat_graph_direction_disagreement` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148/148` fixtures)
+- `bash scripts/run_ci.sh` -> passed (`614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation)
+- `cargo sweep --time 1` -> deferred because `target/release/tool_matrix` is active
+
 ## 2026-05-06 (`.fsm` direct flat-conflict renderable block)
 
 ### Added: direct DT flat-direction conflicts cannot leak output
