@@ -1,5 +1,16 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for no-prior temporal rule shape)
+
+### Improved: temporal prior absence keeps exact unbounded shape
+- Tightened `temporal_prior_guided_cycle_window_without_prior_negative` with exact `temporal_rules_include` expectations at `SemanticIR` and `IntentIR`.
+- The fixture now proves the same local `one beat later` sentence keeps clock, edge, asserted-value predicate, and supporting statement id while the cycle window remains unresolved without the matching prior.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for prior-guided temporal rule shape)
 
 ### Improved: temporal priors lock exact canonical rule shape
