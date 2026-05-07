@@ -7,6 +7,18 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-07 KG fixture for no-prior valid-like phrase alias exclusion
+- New batch slice 146/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Tightened `crates/specforge/test_data/kg_quality/semantic_valid_prior_guided_phrase_without_prior_negative/fixture.json`.
+- The fixture now asserts `signal_semantic_hints_from_alias_grounded_prose = 0` alongside total, table, and prose semantic-hint metrics.
+- This strengthens the no-prior valid-like semantic phrase mirror by proving `XREQ can publish the beat` remains free of alias-grounded prose hints when learned memory is absent.
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_valid_prior_guided_phrase_without_prior_negative` passed with the requested fixture.
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` tracked fixtures.
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` refreshed tracked corpus-KB projections for `150` fixtures with `0` failures and no tracked projection diff.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- Broader `bash scripts/run_ci.sh` passed on slice 140 with formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, and mdBook.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-07 KG fixture for no-prior valid-like phrase table exclusion
 - New batch slice 145/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Tightened `crates/specforge/test_data/kg_quality/semantic_valid_prior_guided_phrase_without_prior_negative/fixture.json`.
