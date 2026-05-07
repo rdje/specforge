@@ -358,6 +358,7 @@
 - KG benchmark harness now locks cross-modality grounding total evidence semantic hints: Done
 - KG benchmark harness now locks cross-modality grounding table semantic-hint split: Done
 - KG benchmark harness now locks cross-modality grounding visual-caption semantic-hint split: Done
+- KG benchmark harness now locks cross-modality grounding prose semantic-hint exclusion: Done
 - KG benchmark harness now locks prior-guided ready-like sink phrase recovery: Done
 - KG benchmark harness now locks prior-guided valid-like semantic phrase recovery: Done
 - KG benchmark harness now includes AXI write-response timing coverage: Done

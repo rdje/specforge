@@ -22,22 +22,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `d5284de1b30bbd1010e9d6c4b4c08544a05818f2`
-- latest_commit_brief_message: `test(kg): lock grounding table hint split`
-- note: this is the pre-slice-75 baseline for the current `BWFSC=200` batch; slices 1-74/200 are committed and push remains deferred
+- latest_commit_hash: `59e003e8ae29e214ecd37eed07fbae9d37a150a7`
+- latest_commit_brief_message: `test(kg): lock grounding visual hint split`
+- note: this is the pre-slice-76 baseline for the current `BWFSC=200` batch; slices 1-75/200 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `59e003e` test(kg): lock grounding visual hint split
 - `d5284de` test(kg): lock grounding table hint split
 - `f995310` test(kg): lock cross-modality grounding hints
 - `1fd0863` test(kg): lock cross-modality VLM hint split
 - `fd66f8a` test(kg): lock cross-modality alias hint split
 - `090c96e` test(kg): lock cross-modality prose hint split
-- `6040a4d` test(kg): lock cross-modality hint totals
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 75 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 76 and push is deferred
 - files in flight:
   - `crates/specforge/test_data/kg_quality/cross_modality_semantic_grounding_gold/fixture.json`
   - live docs and mdBook files synced for the slice
@@ -52,13 +52,13 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `74`
-  - slice 75/200 tightens positive cross-modality semantic-grounding visual-caption semantic-hint metrics
+  - completed_count before this commit: `75`
+  - slice 76/200 tightens positive cross-modality semantic-grounding prose semantic-hint exclusion metrics
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks cross-modality grounding visual-caption semantic-hint split KG coverage as `Done`
+  - live-status tracker now marks cross-modality grounding prose semantic-hint exclusion KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 75 before commit
+  - implementation and live-doc sync are complete for slice 76 before commit
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench cross_modality_semantic_grounding_gold` passed with the requested fixture
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` fixtures
   - `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed with `150` fixtures projected and `0` failures
@@ -75,5 +75,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 75 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 76/200
+- finish the slice 76 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 77/200
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle

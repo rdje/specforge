@@ -151,6 +151,7 @@ That lets semantic gold fixtures prove a multimodal `XREQ` role is really cross-
 The cross-modality grounding gold also locks total evidence semantic hints at two, tying decisive grounding to the table and visual-caption observations.
 It also locks one table-sourced semantic hint, so the aggregate count cannot drift away from its structured-table contribution.
 The same gold fixture locks one visual-caption semantic hint as the other half of that cross-modality evidence.
+It excludes ordinary prose hints too, preserving the fixture as a table plus visual-caption proof rather than a hidden text-only shortcut.
 The VLM timing semantic-grounding gold also checks `timing_diagram_extractions`, so ready-like `XACK` recovery from a timing annotation must remain tied to an evidence-stage timing diagram extraction.
 
 Fixtures can assert canonical interface-signal conflicts directly as well.
