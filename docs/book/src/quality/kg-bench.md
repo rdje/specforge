@@ -234,6 +234,7 @@ It now locks two aggregate evidence semantic hints as well, proving prior-guided
 It locks one table-sourced semantic hint too, keeping the structured-table side explicit before learned arbitration.
 It locks one prose-sourced semantic hint too, keeping the text side explicit before learned arbitration.
 Alias-grounded prose stays zero in the prior-guided gold too, keeping alias recovery out of the positive modality-prior proof.
+Visual-caption hints stay zero there too, preserving the positive modality-prior proof as a table/prose arbitration.
 The AMBA-generic fallback gold applies that same exact shape to a generic prior used by an AXI-family document, proving generic memory can guide arbitration without widening grounding claims.
 That fallback fixture now also checks the prior-guided arbitration, consensus, and rescan-guidance finding payloads directly, so generic memory must produce the same `XCTRL`-related validation details as exact-family memory.
 

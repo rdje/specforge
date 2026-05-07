@@ -22,22 +22,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `6bc2baf5b6f90f3b1d84db985cdf2e4b3307577e`
-- latest_commit_brief_message: `test(kg): lock modality-prior gold prose hints`
-- note: this is the pre-slice-119 baseline for the current `BWFSC=200` batch; slices 1-118/200 are committed and push remains deferred
+- latest_commit_hash: `2090c6707a2c4dc951b7c50fa676dc415625b0a9`
+- latest_commit_brief_message: `test(kg): lock modality-prior gold alias exclusion`
+- note: this is the pre-slice-120 baseline for the current `BWFSC=200` batch; slices 1-119/200 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `2090c67` test(kg): lock modality-prior gold alias exclusion
 - `6bc2baf` test(kg): lock modality-prior gold prose hints
 - `4c8a7b3` test(kg): lock modality-prior gold table hints
 - `993e9a7` test(kg): lock modality-prior gold hint totals
 - `461da13` test(kg): lock no-prior modality timing absence
 - `8dd04fb` test(kg): lock no-prior modality VLM exclusion
-- `8402112` test(kg): lock no-prior modality visual exclusion
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 119 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 120 and push is deferred
 - files in flight:
   - `crates/specforge/test_data/kg_quality/semantic_modality_reliability_prior_guided_conflict_gold/fixture.json`
   - live docs and mdBook files synced for the slice
@@ -52,28 +52,28 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `118`
-  - slice 119/200 tightens prior-guided semantic-modality alias-grounded prose semantic-hint exclusion metrics
+  - completed_count before this commit: `119`
+  - slice 120/200 tightens prior-guided semantic-modality visual-caption semantic-hint exclusion metrics
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks semantic-modality prior-guided alias-grounded prose semantic-hint exclusion KG coverage as `Done`
+  - live-status tracker now marks semantic-modality prior-guided visual-caption semantic-hint exclusion KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 119 before commit
+  - implementation and live-doc sync are complete for slice 120 before commit
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_modality_reliability_prior_guided_conflict_gold` passed with the requested fixture
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` fixtures
   - `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed with `150` fixtures projected and `0` failures
   - `bash scripts/run_docs_ci.sh` passed after the live-book sync
-  - broader `bash scripts/run_ci.sh` passed on slice 100 with formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, and mdBook passing
+  - broader `bash scripts/run_ci.sh` passed on slice 120 with formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, and mdBook passing
   - user-requested `cargo sweep --time 1` is deferred until no target-tree process is active because `target/release/tool_matrix` is active
 - current known local CI baseline:
   - focused current-slice KG fixture passed
   - current slice passed `150/150` tracked KG fixtures
   - current slice passed corpus-KB projection for `150` fixtures with `0` failures
   - current slice passed docs CI
-  - broader `bash scripts/run_ci.sh` passed on slice 100 with formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, and mdBook passing
+  - broader `bash scripts/run_ci.sh` passed on slice 120 with formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, and mdBook passing
   - latest `cargo sweep --time 1` attempt was deferred because `target/release/tool_matrix` is active
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 119 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 120/200
+- finish the slice 120 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 121/200
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle

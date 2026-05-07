@@ -954,6 +954,7 @@
   - the prior-guided semantic-modality gold fixture now asserts one table-sourced semantic hint, keeping the structured-table side explicit before learned arbitration
   - the prior-guided semantic-modality gold fixture now asserts one prose-sourced semantic hint, keeping the text side explicit before learned arbitration
   - the prior-guided semantic-modality gold fixture now asserts alias-grounded prose semantic hints stay zero, keeping alias recovery out of the positive modality-prior proof
+  - the prior-guided semantic-modality gold fixture now asserts visual-caption semantic hints stay zero, preserving the positive modality-prior proof as a table/prose arbitration
   - the AMBA-generic semantic-modality fallback gold fixture now asserts the same exact resolved role, grounding strength, and conflict observations for a generic prior applied to an AXI-family document
   - fixture expectations can now assert canonical `temporal_conflicts` directly, so contradiction surfacing is checked as typed context/value/supporting-evidence IR instead of only a conflict count
   - fixture expectations can now assert canonical `infrastructure_signals` and `infrastructure_topology` records directly, so clock/reset topology truthfulness is checked as typed IR instead of only through validation metrics

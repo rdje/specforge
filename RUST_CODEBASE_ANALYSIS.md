@@ -4,6 +4,12 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for modality-prior gold visual exclusion)
+- Tightened `semantic_modality_reliability_prior_guided_conflict_gold` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts evidence-stage `signal_semantic_hints_from_visual_captions = 0` alongside aggregate, table, prose, and alias-grounded prose hint metrics.
+- This locks the prior-guided gold path as free of visual-caption evidence before learned modality reliability resolves `XCTRL`.
+- A broader `bash scripts/run_ci.sh` checkpoint passed on slice 120 with formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, and mdBook.
+
 ## Session update (2026-05-07 KG fixture for modality-prior gold alias exclusion)
 - Tightened `semantic_modality_reliability_prior_guided_conflict_gold` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts evidence-stage `signal_semantic_hints_from_alias_grounded_prose = 0` alongside aggregate, table, and prose hint metrics.
