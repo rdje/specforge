@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for no-prior semantic phrase table exclusion)
+
+### Improved: no-prior semantic phrase fixtures exclude table hints
+- Tightened `semantic_prior_guided_phrase_without_prior_negative` with `signal_semantic_hints_from_tables = 0` at `EvidenceIR`.
+- The fixture now proves `XACK can receive the transfer` remains free of table semantic hints when learned memory is absent.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_prior_guided_phrase_without_prior_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for no-prior ready-sink phrase timing-extraction absence)
 
 ### Improved: no-prior ready-sink phrase fixtures exclude timing extractions
