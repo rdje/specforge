@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for temporal actor-grounding replay lane separation)
+- Tightened `temporal_actor_grounding_surface_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now proves a bounded rule with clock grounding emits only actor-grounding replay guidance, not cycle-window or clock-grounding replay findings.
+- This mirrors the cycle-window lane-separation fixture and remains validator expectation hardening with no production code change; `kg-bench`, corpus-KB projection, and docs CI passed with `150/150` tracked fixtures.
+
 ## Session update (2026-05-07 KG fixture for temporal grounding replay lane separation)
 - Tightened `temporal_cycle_window_surface_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now proves an unbounded rule with existing actor and clock grounding emits only cycle-window replay guidance, not actor-grounding or clock-grounding replay findings.

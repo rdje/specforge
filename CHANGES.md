@@ -1,5 +1,16 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for temporal actor-grounding replay lane separation)
+
+### Improved: actor-grounding guidance stays lane-specific
+- Tightened `temporal_actor_grounding_surface_negative` so a bounded and clock-grounded temporal rule must emit actor-grounding rescan guidance without also emitting cycle-window or clock-grounding replay findings.
+- This locks the mirror validator boundary where the rule already has a `within 2 cycles` latency bound and clock grounding, but still lacks an actor-grounded predicate.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for temporal grounding replay lane separation)
 
 ### Improved: cycle-window guidance stays lane-specific
