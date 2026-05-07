@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for visual-motif family-mismatch shape)
+
+### Improved: unrelated visual motifs leave local table truth untouched
+- Tightened `visual_motif_prior_protocol_family_mismatch_negative` with exact table-backed `XREQ` direction/support expectations at `SemanticIR` and `IntentIR`.
+- The fixture now also excludes semantic consensus and semantic candidates for `XREQ`, proving an unrelated APB visual-motif prior neither classifies the AXI-local visual nor leaks semantic role evidence while the local signal table remains canonical.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench visual_motif_prior_protocol_family_mismatch_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for table-shape family-mismatch inventory guard)
 
 ### Improved: unrelated table-shape priors cannot mint table signals

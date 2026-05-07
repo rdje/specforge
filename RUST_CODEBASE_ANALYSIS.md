@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for visual-motif family-mismatch shape)
+- Tightened `visual_motif_prior_protocol_family_mismatch_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts table-backed `XREQ` direction/support at both canonical stages while excluding semantic candidates and semantic consensus for the same signal.
+- This keeps the APB visual-motif family-mismatch guard exact: unrelated visual memory stays silent without disturbing current-document table truth.
+
 ## Session update (2026-05-07 KG fixture for table-shape family-mismatch inventory guard)
 - Tightened `table_shape_prior_protocol_family_mismatch_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts that `XREQ` and `XACK` stay out of canonical signal inventory and graph-backed direction coverage when an AXI-local unknown table is paired with an unrelated APB table-shape prior.

@@ -22,24 +22,24 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `73bfaba49caed5c059083e6c8c271e6ba87b6256`
-- latest_commit_brief_message: `test(kg): lock temporal prior mismatch shape`
-- note: this is the pre-slice-15 baseline for the current `BWFSC=200` batch; slices 1-14/200 are committed and push remains deferred
+- latest_commit_hash: `74542a478beb1588c43cadb5b2e1b4c016ccb970`
+- latest_commit_brief_message: `test(kg): lock table-shape mismatch inventory`
+- note: this is the pre-slice-16 baseline for the current `BWFSC=200` batch; slices 1-15/200 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `74542a4` test(kg): lock table-shape mismatch inventory
 - `73bfaba` test(kg): lock temporal prior mismatch shape
 - `ab854ac` test(kg): lock no-prior temporal clock split
 - `f22d2ac` test(kg): lock prior temporal no-replay
 - `4fd70cd` test(kg): lock no-prior temporal rule shape
 - `47e8a37` test(kg): lock prior temporal rule shape
-- `0eb8023` test(kg): lock grounded temporal no-replay
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 15 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 16 and push is deferred
 - files in flight:
-  - `crates/specforge/test_data/kg_quality/table_shape_prior_protocol_family_mismatch_negative/fixture.json`
+  - `crates/specforge/test_data/kg_quality/visual_motif_prior_protocol_family_mismatch_negative/fixture.json`
   - live docs and mdBook files synced for the slice
 
 ## Previous completed N-slice batch
@@ -52,14 +52,14 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `14`
-  - slice 15/200 tightens table-shape prior protocol-family mismatch no-inventory/no-graph expectations
+  - completed_count before this commit: `15`
+  - slice 16/200 tightens visual-motif prior protocol-family mismatch table-shape and semantic-silence expectations
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks table-shape family-mismatch no-inventory KG coverage as `Done`
+  - live-status tracker now marks visual-motif family-mismatch exact table-shape KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 15 before commit
-  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench table_shape_prior_protocol_family_mismatch_negative` passed with the requested fixture
+  - implementation and live-doc sync are complete for slice 16 before commit
+  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench visual_motif_prior_protocol_family_mismatch_negative` passed with the requested fixture
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` fixtures
   - `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed with `150` fixtures projected and `0` failures
   - `bash scripts/run_docs_ci.sh` passed after the live-book sync
@@ -74,5 +74,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 15 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 16/200
+- finish the slice 16 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 17/200
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle

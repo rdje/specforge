@@ -90,12 +90,38 @@
   "expectations": {
     "semantic": {
       "signal_names_include": ["XREQ"],
+      "signal_directions_include": [
+        {
+          "signal_name": "XREQ",
+          "direction": "output"
+        }
+      ],
+      "signal_supporting_table_ids_include": [
+        {
+          "signal_name": "XREQ",
+          "table_ids_include": ["table_0001"]
+        }
+      ],
       "resolved_semantic_role_signal_names_exclude": ["XREQ"],
+      "semantic_consensus_signal_names_exclude": ["XREQ"],
       "semantic_candidate_signal_names_exclude": ["XREQ"]
     },
     "intent": {
       "signal_names_include": ["XREQ"],
+      "signal_directions_include": [
+        {
+          "signal_name": "XREQ",
+          "direction": "output"
+        }
+      ],
+      "signal_supporting_table_ids_include": [
+        {
+          "signal_name": "XREQ",
+          "table_ids_include": ["table_0001"]
+        }
+      ],
       "resolved_semantic_role_signal_names_exclude": ["XREQ"],
+      "semantic_consensus_signal_names_exclude": ["XREQ"],
       "semantic_candidate_signal_names_exclude": ["XREQ"]
     },
     "validation": {
