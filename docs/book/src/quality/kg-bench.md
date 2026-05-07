@@ -186,6 +186,7 @@ That mismatch fixture now also checks the non-decisive arbitration and rescan-gu
 The source-kind mismatch companion applies the same exact conflict-shape check when the prior is learned for visual captions but the current evidence is table plus prose.
 That source-kind guard now checks the same non-decisive arbitration and rescan-guidance payloads directly, proving a visual-caption-only prior cannot clear table/prose `XCTRL` follow-up debt.
 The weak-prior companion applies the same check when the prior record is underpowered: weak memory stays non-decisive while the local conflict remains explicit and typed.
+That weak-prior fixture now also locks the non-decisive arbitration and rescan-guidance payloads, so insufficient support cannot hide the unresolved `XCTRL`/`semantic_conflict_0001` review target.
 The no-prior companion locks the before side of the same pair: absent modality memory means the local table/prose conflict remains explicit and non-decisive.
 That no-prior fixture now also checks the non-decisive arbitration and rescan-guidance finding payloads directly, so absent memory still leaves actionable `XCTRL` and `semantic_conflict_0001` validation debt.
 The prior-guided gold fixture locks the positive side without overstating provenance: the learned modality prior makes `XCTRL` resolve as valid-like, but canonical grounding strength remains `single_source` because the current document still supplies the grounded table observation.

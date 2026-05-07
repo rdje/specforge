@@ -334,6 +334,7 @@
 - KG benchmark harness now locks no-prior semantic-modality finding payloads: Done
 - KG benchmark harness now locks semantic-modality family-mismatch finding payloads: Done
 - KG benchmark harness now locks semantic-modality source-kind mismatch finding payloads: Done
+- KG benchmark harness now locks weak semantic-modality prior finding payloads: Done
 - KG benchmark harness now locks prior-guided ready-like sink phrase recovery: Done
 - KG benchmark harness now locks prior-guided valid-like semantic phrase recovery: Done
 - KG benchmark harness now includes AXI write-response timing coverage: Done

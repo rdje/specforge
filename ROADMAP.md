@@ -862,6 +862,7 @@
   - the no-prior semantic-modality mirror now asserts exact non-decisive arbitration and rescan-guidance validation payloads for `XCTRL` and `semantic_conflict_0001`
   - the semantic-modality protocol-family mismatch fixture now asserts the same non-decisive arbitration and rescan-guidance payloads while an unrelated APB prior remains silent
   - the semantic-modality source-kind mismatch fixture now asserts the same non-decisive arbitration and rescan-guidance payloads while a visual-caption-only prior remains silent for table/prose evidence
+  - the weak semantic-modality prior fixture now asserts the same non-decisive arbitration and rescan-guidance payloads while insufficient prior support remains non-decisive
   - fixture expectations can now assert canonical semantic grounding strength directly, so single-source/multi-source/cross-modality grounding is checked as exact per-signal IR instead of only through validation metrics
   - fixture expectations can now assert canonical `temporal_rules` directly, so APB/AHB/AXI timing truthfulness is checked as typed clock/edge/cycle-window/predicate IR instead of only through validation metrics
   - the tracked temporal fixture set now also locks cycle-window rescan guidance directly: a temporal rule with clock and actor grounding but no explicit latency bound must keep emitting the stage-specific cycle-window replay finding at both `SemanticIR` and `IntentIR`

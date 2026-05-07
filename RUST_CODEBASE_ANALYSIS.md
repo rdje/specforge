@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for weak modality-prior finding payloads)
+- Tightened `semantic_modality_reliability_weak_prior_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts exact non-decisive arbitration plus role/conflict rescan-guidance validation payloads for `XCTRL` and `semantic_conflict_0001` at both canonical stages when modality-prior support is underpowered.
+- This locks the weak semantic-modality prior guard as actionable arbitration debt while keeping the prior-guided resolution findings absent.
+
 ## Session update (2026-05-07 KG fixture for modality source-kind mismatch finding payloads)
 - Tightened `semantic_modality_reliability_source_kind_mismatch_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts exact non-decisive arbitration plus role/conflict rescan-guidance validation payloads for `XCTRL` and `semantic_conflict_0001` at both canonical stages when only a visual-caption modality prior is staged.
