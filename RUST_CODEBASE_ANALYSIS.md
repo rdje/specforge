@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for semantic-modality family-mismatch hint totals)
+- Tightened `semantic_modality_reliability_protocol_family_mismatch_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts evidence-stage `signal_semantic_hints = 2` for the scoped-out APB modality-prior mismatch case.
+- This locks the AXI-local table/prose semantic observations as counted evidence while keeping unrelated prior memory non-authoritative.
+
 ## Session update (2026-05-07 KG fixture for negative-knowledge caution alias exclusion)
 - Tightened `negative_knowledge_prior_guided_semantic_conflict_caution_gold` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts evidence-stage `signal_semantic_hints_from_alias_grounded_prose = 0` alongside its visual source semantic-hint metrics.

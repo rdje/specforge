@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for semantic-modality family-mismatch hint totals)
+
+### Improved: modality-prior mismatch fixtures lock aggregate hints
+- Tightened `semantic_modality_reliability_protocol_family_mismatch_negative` with total `signal_semantic_hints = 2` at `EvidenceIR`.
+- The fixture now proves an unrelated APB modality prior stays silent while the AXI-local `XCTRL` table plus prose observations remain counted.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_modality_reliability_protocol_family_mismatch_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for negative-knowledge caution alias exclusion)
 
 ### Improved: caution fixtures exclude alias-grounded prose hints

@@ -918,6 +918,7 @@
   - the negative-knowledge protocol-family mismatch fixture now asserts alias-grounded prose semantic hints stay zero, keeping alias recovery out of the scoped-family mismatch guard
   - the negative-knowledge protocol-family mismatch fixture now asserts one timing-diagram extraction, keeping the VLM-side semantic hint tied to extraction evidence
   - the semantic-modality protocol-family mismatch fixture now asserts exact table-versus-prose semantic-conflict observations while an unrelated APB modality prior still cannot make arbitration decisive
+  - the semantic-modality protocol-family mismatch fixture now asserts total evidence semantic hints equal the two local AXI table/prose observations while the APB prior stays scoped out
   - the semantic-modality source-kind mismatch fixture now asserts the same exact table-versus-prose conflict while a visual-only modality prior remains non-decisive
   - the weak semantic-modality fixture now asserts the same exact table-versus-prose conflict while an underpowered modality prior remains non-decisive
   - the no-prior semantic-modality fixture now asserts the same exact table-versus-prose conflict while arbitration remains non-decisive without learned modality memory
