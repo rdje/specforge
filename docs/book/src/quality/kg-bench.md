@@ -128,6 +128,7 @@ Fixtures can assert canonical resolved semantic roles directly as well.
 `resolved_semantic_roles_include` checks the signal name and expected valid-like or ready-like role on the canonical interface signal record.
 That lets semantic gold fixtures prove `XREQ` is valid-like or `XACK` is ready-like as typed IR shape, rather than only proving that some semantic role was resolved.
 The semantic phrase prior gold uses this for `XACK can receive the transfer`: prior-guided recovery must resolve exactly to ready-like with single-source grounding.
+That gold now also asserts table-sourced semantic hints stay zero, keeping the recovery prose-only.
 The protocol-family mismatch semantic phrase fixture complements that positive case by requiring the local `XREQ` output declaration to survive exactly while an unrelated APB phrase prior stays silent.
 The source-kind mismatch companion applies the same signal-shape discipline to `XSTAGE`: a visual-caption-only phrase prior stays silent for prose evidence while the local output declaration remains canonical.
 The exact-phrase mismatch companion does the same for `XFLOW`: an unmatched learned phrase prior stays silent while the local output declaration remains canonical.

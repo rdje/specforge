@@ -859,6 +859,7 @@
   - fixture expectations can now assert canonical resolved signal polarity directly, so active-high/active-low recovery is checked as per-signal IR instead of only through validation metrics
   - fixture expectations can now assert canonical resolved semantic roles directly, so valid-like/ready-like recovery is checked as exact per-signal IR instead of only through role-presence validation metrics
   - the semantic phrase prior gold fixture now asserts exact ready-like role and single-source grounding for the prior-guided `can receive the transfer` phrase
+  - the semantic phrase prior gold fixture now asserts table-sourced semantic hints stay zero, keeping the prior-guided phrase recovery prose-only
   - the semantic phrase protocol-family mismatch fixture now asserts exact local `XREQ` output direction while an unrelated APB semantic phrase prior remains silent
   - the semantic phrase source-kind mismatch fixture now asserts exact local `XSTAGE` output direction while a visual-caption-only semantic phrase prior remains silent for prose evidence
   - the semantic phrase exact-phrase mismatch fixture now asserts exact local `XFLOW` output direction while a learned `can publish the beat` prior remains silent for the unmatched `can sequence the transfer` phrase
