@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for cross-modality grounding hint totals)
+
+### Improved: multimodal grounding fixtures lock aggregate hint count
+- Tightened `cross_modality_semantic_grounding_gold` with total `signal_semantic_hints = 2` at `EvidenceIR`.
+- The fixture now proves decisive `XREQ` cross-modality semantic grounding is backed by the table plus visual-caption observations that feed the aggregate hint metric.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench cross_modality_semantic_grounding_gold` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for cross-modality semantic-conflict VLM split)
 
 ### Improved: caption/table conflict fixtures exclude VLM timing hints
