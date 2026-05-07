@@ -20,12 +20,24 @@
   "expectations": {
     "semantic": {
       "signal_names_include": ["XACK"],
+      "signal_directions_include": [
+        {
+          "signal_name": "XACK",
+          "direction": "input"
+        }
+      ],
       "resolved_semantic_role_signal_names_exclude": ["XACK"],
       "semantic_consensus_signal_names_exclude": ["XACK"],
       "semantic_candidate_signal_names_exclude": ["XACK"]
     },
     "intent": {
       "signal_names_include": ["XACK"],
+      "signal_directions_include": [
+        {
+          "signal_name": "XACK",
+          "direction": "input"
+        }
+      ],
       "resolved_semantic_role_signal_names_exclude": ["XACK"],
       "semantic_consensus_signal_names_exclude": ["XACK"],
       "semantic_candidate_signal_names_exclude": ["XACK"]

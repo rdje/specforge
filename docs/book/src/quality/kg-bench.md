@@ -129,6 +129,7 @@ The valid-like no-prior mirror does the same for `XREQ can publish the beat`, pr
 The valid-like prior-guided gold locks the after side: learned memory resolves `XREQ can publish the beat` as valid-like while preserving the local output declaration.
 The ready-sink prior-guided gold mirrors that after-side check: learned memory resolves `XACK can sink the transfer` as ready-like while preserving the local input declaration.
 The receive prior-guided gold keeps the older ready-like phrase equally exact: learned memory resolves `XACK can receive the transfer` while preserving the local input declaration.
+The visual-caption no-prior mirror carries the same discipline across modalities: the caption phrase stays unresolved without learned visual memory while the local `XACK` input declaration remains canonical.
 
 Fixtures can assert canonical semantic grounding strength directly as well.
 `semantic_grounding_strengths_include` checks the signal name and expected single-source, multi-source, or cross-modality grounding strength on the canonical interface signal record.
