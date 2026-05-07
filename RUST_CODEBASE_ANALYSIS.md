@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for negative-knowledge family-mismatch timing extraction)
+- Tightened `negative_knowledge_prior_protocol_family_mismatch_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts evidence-stage `timing_diagram_extractions = 1` alongside its semantic-hint metrics.
+- This locks the family-mismatch VLM timing semantic hint as extraction-backed while keeping unrelated APB negative-knowledge memory scoped out.
+
 ## Session update (2026-05-07 KG fixture for negative-knowledge family-mismatch alias exclusion)
 - Tightened `negative_knowledge_prior_protocol_family_mismatch_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts evidence-stage `signal_semantic_hints_from_alias_grounded_prose = 0` alongside aggregate and visual source semantic-hint metrics.

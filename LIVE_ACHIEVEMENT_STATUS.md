@@ -290,6 +290,7 @@
 - KG benchmark harness now locks negative-knowledge family-mismatch table semantic-hint exclusion: Done
 - KG benchmark harness now locks negative-knowledge family-mismatch prose semantic-hint exclusion: Done
 - KG benchmark harness now locks negative-knowledge family-mismatch alias-grounded prose semantic-hint exclusion: Done
+- KG benchmark harness now locks negative-knowledge family-mismatch timing-diagram extraction: Done
 - KG benchmark harness now locks semantic phrase prior protocol-family scoping: Done
 - KG benchmark harness now locks semantic phrase family-mismatch signal shape: Done
 - KG benchmark harness now locks temporal-prior protocol-family scoping: Done

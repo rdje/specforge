@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for negative-knowledge family-mismatch timing extraction)
+
+### Improved: protocol-family mismatch fixtures lock timing extraction
+- Tightened `negative_knowledge_prior_protocol_family_mismatch_negative` with `timing_diagram_extractions = 1` at `EvidenceIR`.
+- The fixture now proves the local AXI `XCTRL` VLM timing semantic hint remains tied to a concrete timing-diagram extraction while the unrelated APB caution prior stays silent.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench negative_knowledge_prior_protocol_family_mismatch_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for negative-knowledge family-mismatch alias exclusion)
 
 ### Improved: protocol-family mismatch fixtures exclude alias-grounded prose hints

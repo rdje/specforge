@@ -216,6 +216,7 @@ It locks one VLM timing-annotation semantic hint too, preserving the other side 
 The same fixture excludes table semantic hints, keeping that local conflict visual-only.
 It excludes ordinary prose hints as well, so the mismatch case cannot be satisfied by text evidence.
 Alias-grounded prose is excluded too, keeping phrase-alias recovery out of this scoped-family guard.
+The fixture also locks one timing-diagram extraction, tying the VLM-side semantic hint to extracted visual evidence.
 It also keeps arbitration explicit: `XCTRL` still enters semantic arbitration, but the unrelated prior must not make that arbitration decisive.
 
 Timing-annotation fixtures also cover polarity-sensitive multimodal evidence.
