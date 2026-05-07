@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for conflicting semantic phrase table exclusion)
+- Tightened `semantic_prior_conflicting_roles_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts evidence-stage `signal_semantic_hints_from_tables = 0` alongside total and prose hint metrics.
+- This locks the equal valid-like and ready-like learned-prior guard as free of table semantic hints for the local `XCTRL` phrase.
+
 ## Session update (2026-05-07 KG fixture for broad semantic phrase timing-extraction absence)
 - Tightened `semantic_prior_broad_phrase_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts evidence-stage `timing_diagram_extractions = 0` alongside its full semantic-hint source split.
