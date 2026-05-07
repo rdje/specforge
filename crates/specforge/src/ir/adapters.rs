@@ -17133,7 +17133,9 @@ mod tests {
                 .iter()
                 .any(|enrichment| enrichment == super::TOP_LINK_ENDPOINT_DIRECTION_ROLE_ENRICHMENT)
         );
+        assert!(top_candidate.renderable_top.is_none());
         assert!(!fsm.renderability.is_renderable);
+        assert!(fsm.renderable_document.is_none());
         assert!(
             fsm.renderability
                 .required_canonical_enrichments
@@ -17335,7 +17337,9 @@ mod tests {
                 .iter()
                 .any(|enrichment| enrichment == super::TOP_LINK_ENDPOINT_DIRECTION_ROLE_ENRICHMENT)
         );
+        assert!(top_candidate.renderable_top.is_none());
         assert!(!fsm.renderability.is_renderable);
+        assert!(fsm.renderable_document.is_none());
         assert!(
             fsm.renderability
                 .required_canonical_enrichments

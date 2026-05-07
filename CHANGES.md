@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` dedicated child role renderable block)
+
+### Added: dedicated child role tests now block renderable top output
+- Tightened the dedicated `top_composition_blocks_child_source_direction_role_guidance` and `top_composition_blocks_child_target_direction_role_guidance` tests so child endpoint direction-role mismatches leave the selected top without a renderable top root and the aggregate `.fsm` artifact without a renderable source document.
+- This anchors the child-side role blocker in the tests named for child endpoints, while the earlier top-boundary role tests remain covered by their own no-renderable-output assertions.
+- Synced the live tracker, roadmap, and mdBook with the dedicated child-side role renderable-block guarantee.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_child_source_direction_role_guidance` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_child_target_direction_role_guidance` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148/148` fixtures)
+- `bash scripts/run_ci.sh` -> passed (`614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation)
+- `cargo sweep --time 1` -> deferred because `target/release/tool_matrix` is active
+
 ## 2026-05-06 (`.fsm` child target role renderable block)
 
 ### Added: child target role blockers cannot leak renderable top output
