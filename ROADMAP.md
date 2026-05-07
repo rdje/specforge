@@ -806,6 +806,7 @@
     - a negative fixture proving VLM timing-diagram waveform motion states like `rising`, `stable`, `falling`, `UNCHANGED`, `RISING_EDGE`, `LOW_TO_HIGH`, `POS_EDGE`, `risingedge`, and `LOW2HIGH` do not become symbolic signal values while concrete samples like `HIGH` still survive
     - a negative fixture proving motion-only VLM timing-diagram annotations like `XREQ rises, remains stable, then falls` do not become timing constraints while concrete document-grounded signal samples still survive as temporal evidence
     - a negative fixture proving VLM state-machine prose labels like `IDLE state` and `ACCESS phase` do not become canonical FSM state names or transition endpoints while clean identifier labels and transitions still survive
+    - the label-noise VLM state-machine fixture now asserts the accepted `IDLE` initial marker survives prose/OCR label filtering and `BUSY` remains non-initial at both canonical stages
     - a negative fixture proving VLM state-machine transition endpoints must reference states declared in the same VLM observation, so identifier-shaped `DONE` / `RESET` endpoint guesses do not become canonical transition facts
     - the undeclared-transition VLM state-machine fixture now asserts the accepted `IDLE` initial marker survives endpoint filtering and `BUSY` remains non-initial at both canonical stages
     - a gold fixture proving duplicate VLM state-machine state labels merge by state name and preserve a later `is_initial: true` marker instead of losing initial-state truth by first-observation order

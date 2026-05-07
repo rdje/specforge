@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for state-machine label-noise initial shape)
+
+### Improved: noisy VLM state labels preserve accepted initial state
+- Tightened `vlm_state_machine_label_noise_negative` with exact `initial_state_names_include`/`exclude` expectations and `initial_regular_states` metrics at `SemanticIR` and `IntentIR`.
+- The fixture now proves filtering prose/OCR state labels such as `IDLE state` and `ACCESS phase` does not discard the accepted `IDLE` initial marker or promote `BUSY`.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench vlm_state_machine_label_noise_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for undeclared-transition initial state shape)
 
 ### Improved: undeclared-transition VLM state machines preserve initial state truth

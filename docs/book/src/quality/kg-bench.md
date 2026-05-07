@@ -214,6 +214,7 @@ Concrete sampled values such as `HIGH` can still become typed temporal evidence 
 
 State-machine visual fixtures protect the FSM side of the same boundary.
 `vlm_state_machine_label_noise_negative` proves identifier labels such as `IDLE` and `BUSY` survive into canonical state records and transition endpoints, while prose/OCR labels such as `IDLE state` and `ACCESS phase` stay out.
+That label-noise fixture now also checks canonical initial-state shape, proving accepted `IDLE` stays initial and `BUSY` stays non-initial after prose/OCR label filtering.
 `vlm_state_machine_undeclared_transition_negative` adds the graph-grounding guard: transition endpoints such as `DONE` and `RESET` stay out unless the same VLM observation also declared them as accepted states.
 That undeclared-transition fixture now also checks the canonical initial-state shape, proving accepted `IDLE` stays initial and `BUSY` stays non-initial after endpoint filtering.
 `vlm_state_machine_duplicate_initial_gold` locks the complementary positive case: duplicate state labels are merged, a later `is_initial: true` marker still makes `IDLE` the canonical initial state, and validation reports exactly one `initial_regular_states` record.

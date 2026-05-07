@@ -21,6 +21,8 @@
     "semantic": {
       "state_names_include": ["IDLE", "BUSY"],
       "state_names_exclude": ["IDLE state", "ACCESS phase"],
+      "initial_state_names_include": ["IDLE"],
+      "initial_state_names_exclude": ["BUSY"],
       "state_transitions_include": [
         {
           "source_state": "IDLE",
@@ -41,6 +43,8 @@
     "intent": {
       "state_names_include": ["IDLE", "BUSY"],
       "state_names_exclude": ["IDLE state", "ACCESS phase"],
+      "initial_state_names_include": ["IDLE"],
+      "initial_state_names_exclude": ["BUSY"],
       "state_transitions_include": [
         {
           "source_state": "IDLE",
@@ -67,12 +71,14 @@
       "semantic": {
         "metric_values": {
           "regular_states": "2",
+          "initial_regular_states": "1",
           "state_transitions": "1"
         }
       },
       "intent": {
         "metric_values": {
           "regular_states": "2",
+          "initial_regular_states": "1",
           "state_transitions": "1"
         }
       }
