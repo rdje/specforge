@@ -114,6 +114,7 @@ That lets multimodal disagreement fixtures prove, for example, that visual-capti
 The cross-modality semantic-conflict fixture also locks total evidence semantic hints at two, matching its table and visual-caption source splits.
 It also locks the prose split at zero, so the conflict stays attributable to the intended non-prose modalities.
 The alias-grounded prose split is zero too, preventing phrase-alias recovery from becoming a hidden third source.
+The VLM timing-annotation split is zero in that fixture as well, keeping the visual source caption-only.
 
 Fixtures can assert canonical signal-polarity conflicts directly as well.
 `signal_polarity_conflicts_include` checks the conflicted signal and included observations by polarity, source kind, and supporting statement or table ids.

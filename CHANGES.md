@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for cross-modality semantic-conflict VLM split)
+
+### Improved: caption/table conflict fixtures exclude VLM timing hints
+- Tightened `cross_modality_semantic_conflict_negative` with `signal_semantic_hints_from_vlm_timing_annotations = 0` at `EvidenceIR`.
+- The fixture now proves the unresolved `XCTRL` semantic-role conflict is table plus caption evidence, not a hidden VLM timing-note contribution.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench cross_modality_semantic_conflict_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for cross-modality semantic-conflict alias split)
 
 ### Improved: multimodal conflict fixtures exclude alias-grounded prose hints
