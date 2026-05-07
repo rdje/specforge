@@ -161,6 +161,7 @@ The protocol-family mismatch temporal fixture applies the same rule-shape and re
 The visual-motif protocol-family mismatch fixture locks the neighboring multimodal boundary: the local table-derived `XREQ` signal keeps its output direction and table support, but an unrelated APB visual motif creates no semantic candidate or consensus.
 The semantic-modality protocol-family mismatch fixture locks semantic arbitration itself: the local table valid-like and prose ready-like observations stay an explicit conflict, and an unrelated APB modality-reliability prior cannot make that conflict decisive.
 The source-kind mismatch companion applies the same exact conflict-shape check when the prior is learned for visual captions but the current evidence is table plus prose.
+The weak-prior companion applies the same check when the prior record is underpowered: weak memory stays non-decisive while the local conflict remains explicit and typed.
 
 Negative-knowledge fixtures make that last rule executable.
 The suite now has prior-guided caution fixtures for signal-semantic conflicts, temporal conflicts, residual packets, signal-connectivity conflicts, and interface-signal conflicts.
