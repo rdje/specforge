@@ -146,6 +146,7 @@ That valid-like gold now also asserts table-sourced semantic hints stay zero, ke
 Alias-grounded prose stays zero there too, keeping alias recovery out of the direct valid-like proof.
 Visual-caption hints stay zero as well, keeping the direct valid-like proof prose-only.
 VLM timing-annotation hints stay zero too, keeping timing-note evidence out of the direct valid-like proof.
+Timing-diagram extractions stay zero too, keeping the direct valid-like proof free of timing extraction support.
 The ready-sink prior-guided gold mirrors that after-side check: learned memory resolves `XACK can sink the transfer` as ready-like while preserving the local input declaration.
 That ready-sink gold now also asserts table-sourced semantic hints stay zero, keeping the ready-sink phrase recovery prose-only.
 Alias-grounded prose stays zero there too, keeping alias recovery out of the direct ready-sink proof.
