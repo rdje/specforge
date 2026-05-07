@@ -148,6 +148,7 @@ Timing-diagram extractions stay zero too, keeping the source-kind guard free of 
 The exact-phrase mismatch companion does the same for `XFLOW`: an unmatched learned phrase prior stays silent while the local output declaration remains canonical.
 That exact-phrase mismatch guard now also asserts table-sourced semantic hints stay zero while the unmatched prior remains silent.
 Alias-grounded prose stays zero there too, keeping alias recovery out of the exact-phrase mismatch guard.
+Visual-caption hints stay zero there as well, keeping visual evidence out of the exact-phrase mismatch guard.
 The broad-phrase guard adds the one-token case: a generic `transfer` prior stays inert while the same `XFLOW` declaration remains canonical.
 The conflicting-role guard adds the ambiguity case: equal valid-like and ready-like priors for one phrase stay inert while the local `XCTRL` input declaration remains canonical.
 The no-prior mirror keeps the before side exact too: `XACK can receive the transfer` stays unresolved without learned memory while the local input declaration remains canonical.
