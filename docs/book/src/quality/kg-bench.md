@@ -132,6 +132,7 @@ The receive prior-guided gold keeps the older ready-like phrase equally exact: l
 The visual-caption no-prior mirror carries the same discipline across modalities: the caption phrase stays unresolved without learned visual memory while the local `XACK` input declaration remains canonical.
 The visual-caption prior-guided gold locks the after side for that modality, resolving the caption phrase as ready-like while preserving the local input declaration.
 The visual-motif no-prior mirror keeps diagram-classification recovery separate from table truth: the unknown motif stays ambiguous while table-derived `XREQ` output remains canonical.
+The visual-motif prior-guided gold locks the after side for diagram classification: learned memory classifies the motif while table-derived `XREQ` output remains canonical and no semantic role is invented.
 
 Fixtures can assert canonical semantic grounding strength directly as well.
 `semantic_grounding_strengths_include` checks the signal name and expected single-source, multi-source, or cross-modality grounding strength on the canonical interface signal record.
