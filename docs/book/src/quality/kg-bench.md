@@ -155,6 +155,7 @@ The broad-phrase guard adds the one-token case: a generic `transfer` prior stays
 That broad-phrase guard now also asserts table-sourced semantic hints stay zero while the one-token prior remains silent.
 Alias-grounded prose stays zero there too, keeping alias recovery out of the broad-phrase guard.
 Visual-caption hints stay zero there as well, keeping visual evidence out of the broad-phrase guard.
+VLM timing-annotation hints stay zero there too, keeping timing-note evidence out of the broad-phrase guard.
 The conflicting-role guard adds the ambiguity case: equal valid-like and ready-like priors for one phrase stay inert while the local `XCTRL` input declaration remains canonical.
 The no-prior mirror keeps the before side exact too: `XACK can receive the transfer` stays unresolved without learned memory while the local input declaration remains canonical.
 That no-prior mirror now also asserts table-sourced semantic hints stay zero while learned memory is absent.
