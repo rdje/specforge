@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for semantic phrase prior VLM exclusion)
+
+### Improved: semantic phrase prior fixtures exclude VLM timing hints
+- Tightened `semantic_prior_guided_phrase_gold` with `signal_semantic_hints_from_vlm_timing_annotations = 0` at `EvidenceIR`.
+- The fixture now proves the prior-guided `XACK can receive the transfer` recovery does not use VLM timing annotations.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_prior_guided_phrase_gold` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for semantic phrase prior visual exclusion)
 
 ### Improved: semantic phrase prior fixtures exclude visual-caption hints
