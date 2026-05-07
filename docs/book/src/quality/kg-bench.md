@@ -159,6 +159,7 @@ The prior-guided fixture also excludes cycle-window and clock-grounding replay f
 The no-prior mirror fixture keeps clock-grounding replay absent while cycle-window replay remains present, so the missing prior cannot be misreported as a missing clock.
 The protocol-family mismatch temporal fixture applies the same rule-shape and replay-lane discipline to an AXI-local `XREADY` sentence with an unrelated APB prior: the local clocked asserted-value rule remains canonical, the APB prior cannot add the cycle window, and only cycle-window replay guidance remains.
 The visual-motif protocol-family mismatch fixture locks the neighboring multimodal boundary: the local table-derived `XREQ` signal keeps its output direction and table support, but an unrelated APB visual motif creates no semantic candidate or consensus.
+The semantic-modality protocol-family mismatch fixture locks semantic arbitration itself: the local table valid-like and prose ready-like observations stay an explicit conflict, and an unrelated APB modality-reliability prior cannot make that conflict decisive.
 
 Negative-knowledge fixtures make that last rule executable.
 The suite now has prior-guided caution fixtures for signal-semantic conflicts, temporal conflicts, residual packets, signal-connectivity conflicts, and interface-signal conflicts.

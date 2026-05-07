@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for semantic-modality mismatch conflict shape)
+- Tightened `semantic_modality_reliability_protocol_family_mismatch_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts exact semantic-conflict observations for `XCTRL`: table-derived valid-like evidence and prose-derived ready-like evidence remain contested at both canonical stages.
+- This makes the unrelated APB modality-reliability prior guard exact without changing production prior lookup or arbitration behavior.
+
 ## Session update (2026-05-07 KG fixture for negative-knowledge mismatch conflict shape)
 - Tightened `negative_knowledge_prior_protocol_family_mismatch_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts exact semantic-conflict observations for `XCTRL`: visual-caption valid-like evidence and VLM timing-annotation ready-like evidence remain contested at both canonical stages.

@@ -853,6 +853,7 @@
   - the table-shape protocol-family mismatch fixture now asserts AXI-local unknown table rows stay out of canonical signal inventory and graph-backed direction coverage when only an unrelated APB table-shape prior is staged
   - the visual-motif protocol-family mismatch fixture now asserts the local table-derived signal direction/support remains canonical while an unrelated APB visual motif creates no semantic candidate or consensus
   - the negative-knowledge protocol-family mismatch fixture now asserts the exact local semantic-conflict observations while an unrelated APB caution prior still emits no prior-match or replay guidance
+  - the semantic-modality protocol-family mismatch fixture now asserts exact table-versus-prose semantic-conflict observations while an unrelated APB modality prior still cannot make arbitration decisive
   - fixture expectations can now assert canonical `temporal_conflicts` directly, so contradiction surfacing is checked as typed context/value/supporting-evidence IR instead of only a conflict count
   - fixture expectations can now assert canonical `infrastructure_signals` and `infrastructure_topology` records directly, so clock/reset topology truthfulness is checked as typed IR instead of only through validation metrics
   - fixture expectations can now assert validation finding payloads directly via `findings_include`, including severity, category, summary snippets, and related-id inclusion/exclusion, so validation-backed caution/rescan surfaces are checked as exact report content instead of only finding ids or metrics
