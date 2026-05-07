@@ -865,6 +865,7 @@
   - the semantic phrase prior gold fixture now asserts VLM timing-annotation semantic hints stay zero, keeping timing-note evidence out of the direct phrase-prior proof
   - the semantic phrase prior gold fixture now asserts timing-diagram extractions stay zero, keeping the direct phrase-prior proof free of timing extraction support
   - the semantic phrase protocol-family mismatch fixture now asserts exact local `XREQ` output direction while an unrelated APB semantic phrase prior remains silent
+  - the semantic phrase protocol-family mismatch fixture now asserts table-sourced semantic hints stay zero while the unrelated APB prior remains silent
   - the semantic phrase source-kind mismatch fixture now asserts exact local `XSTAGE` output direction while a visual-caption-only semantic phrase prior remains silent for prose evidence
   - the semantic phrase exact-phrase mismatch fixture now asserts exact local `XFLOW` output direction while a learned `can publish the beat` prior remains silent for the unmatched `can sequence the transfer` phrase
   - the broad semantic phrase negative fixture now asserts exact local `XFLOW` output direction while a one-token `transfer` prior remains silent
