@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for no-prior modality conflict shape)
+- Tightened `semantic_modality_reliability_prior_guided_conflict_without_prior_negative` in `crates/specforge/test_data/kg_quality/`.
+- The no-prior mirror fixture now asserts exact semantic-conflict observations for `XCTRL`: table-derived valid-like evidence and prose-derived ready-like evidence remain contested at both canonical stages.
+- This makes the before side of modality-prior arbitration exact before the prior-guided gold path is hardened further.
+
 ## Session update (2026-05-07 KG fixture for weak modality-prior conflict shape)
 - Tightened `semantic_modality_reliability_weak_prior_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts exact semantic-conflict observations for `XCTRL`: table-derived valid-like evidence and prose-derived ready-like evidence remain contested at both canonical stages.

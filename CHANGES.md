@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for no-prior modality conflict shape)
+
+### Improved: absent modality priors preserve exact conflicts
+- Tightened `semantic_modality_reliability_prior_guided_conflict_without_prior_negative` with exact `signal_semantic_conflicts_include` expectations at `SemanticIR` and `IntentIR`.
+- The fixture now proves the no-prior mirror keeps `XCTRL` arbitration non-decisive while the table valid-like and prose ready-like observations remain an explicit typed conflict.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_modality_reliability_prior_guided_conflict_without_prior_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for weak modality-prior conflict shape)
 
 ### Improved: weak modality priors preserve exact conflicts
