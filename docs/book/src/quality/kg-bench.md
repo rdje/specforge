@@ -232,6 +232,7 @@ That no-prior fixture now also checks the non-decisive arbitration and rescan-gu
 The prior-guided gold fixture locks the positive side without overstating provenance: the learned modality prior makes `XCTRL` resolve as valid-like, but canonical grounding strength remains `single_source` because the current document still supplies the grounded table observation.
 It now locks two aggregate evidence semantic hints as well, proving prior-guided arbitration starts from the same local table/prose conflict rather than extra hidden evidence.
 It locks one table-sourced semantic hint too, keeping the structured-table side explicit before learned arbitration.
+It locks one prose-sourced semantic hint too, keeping the text side explicit before learned arbitration.
 The AMBA-generic fallback gold applies that same exact shape to a generic prior used by an AXI-family document, proving generic memory can guide arbitration without widening grounding claims.
 That fallback fixture now also checks the prior-guided arbitration, consensus, and rescan-guidance finding payloads directly, so generic memory must produce the same `XCTRL`-related validation details as exact-family memory.
 
