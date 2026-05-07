@@ -22,24 +22,24 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `f22d2acc1fb6ed0fa1d376abdcf46fd03a32bc24`
-- latest_commit_brief_message: `test(kg): lock prior temporal no-replay`
-- note: this is the pre-slice-13 baseline for the current `BWFSC=200` batch; slices 1-12/200 are committed and push remains deferred
+- latest_commit_hash: `ab854acee98ffebc1fb928d1e321b4068cb2a578`
+- latest_commit_brief_message: `test(kg): lock no-prior temporal clock split`
+- note: this is the pre-slice-14 baseline for the current `BWFSC=200` batch; slices 1-13/200 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `ab854ac` test(kg): lock no-prior temporal clock split
 - `f22d2ac` test(kg): lock prior temporal no-replay
 - `4fd70cd` test(kg): lock no-prior temporal rule shape
 - `47e8a37` test(kg): lock prior temporal rule shape
 - `0eb8023` test(kg): lock grounded temporal no-replay
 - `c3c0f55` test(kg): lock unbounded temporal rule shape
-- `5ea8298` test(kg): lock actorless temporal rule shape
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 13 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 14 and push is deferred
 - files in flight:
-  - `crates/specforge/test_data/kg_quality/temporal_prior_guided_cycle_window_without_prior_negative/fixture.json`
+  - `crates/specforge/test_data/kg_quality/temporal_prior_protocol_family_mismatch_negative/fixture.json`
   - live docs and mdBook files synced for the slice
 
 ## Previous completed N-slice batch
@@ -52,25 +52,27 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `12`
-  - slice 13/200 tightens no-prior temporal clock replay-separation expectations
+  - completed_count before this commit: `13`
+  - slice 14/200 tightens temporal-prior protocol-family mismatch rule-shape and replay-lane expectations
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks no-prior temporal clock replay-separation KG coverage as `Done`
+  - live-status tracker now marks temporal-prior family-mismatch exact rule-shape KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 13 before commit
+  - implementation and live-doc sync are complete for slice 14 before commit
+  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench temporal_prior_protocol_family_mismatch_negative` passed with the requested fixture
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` fixtures
   - `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed with `150` fixtures projected and `0` failures
   - `bash scripts/run_docs_ci.sh` passed after the live-book sync
   - user-requested `cargo sweep --time 1` is deferred until no target-tree process is active because `target/release/tool_matrix` is active
 - current known local CI baseline:
+  - focused current-slice KG fixture passed
   - current slice passed `150/150` tracked KG fixtures
   - current slice passed corpus-KB projection for `150` fixtures with `0` failures
   - current slice passed docs CI
-  - broader full CI has not yet been rerun for this data/docs-only slice; the previous full CI baseline remains the completed pushed `N=200` batch
+  - broader `bash scripts/run_ci.sh` passed after slice 13 on clean baseline `ab854acee98ffebc1fb928d1e321b4068cb2a578` with formatting, Clippy warning-deny, 614 Rust tests, rustdoc warning-deny, and mdBook passing
   - latest `cargo sweep --time 1` attempt was deferred because `target/release/tool_matrix` is active
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 13 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 14/200
+- finish the slice 14 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 15/200
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle

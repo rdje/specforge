@@ -156,6 +156,7 @@ The temporal prior-guided fixture also asserts exact canonical rule shape: a lea
 The no-prior mirror fixture asserts the same local rule shape without the recovered window, so the benchmark distinguishes prior-enabled improvement from ordinary local temporal evidence.
 The prior-guided fixture also excludes cycle-window and clock-grounding replay findings after the recovered rule is fully bounded and locally clocked.
 The no-prior mirror fixture keeps clock-grounding replay absent while cycle-window replay remains present, so the missing prior cannot be misreported as a missing clock.
+The protocol-family mismatch temporal fixture applies the same rule-shape and replay-lane discipline to an AXI-local `XREADY` sentence with an unrelated APB prior: the local clocked asserted-value rule remains canonical, the APB prior cannot add the cycle window, and only cycle-window replay guidance remains.
 
 Negative-knowledge fixtures make that last rule executable.
 The suite now has prior-guided caution fixtures for signal-semantic conflicts, temporal conflicts, residual packets, signal-connectivity conflicts, and interface-signal conflicts.

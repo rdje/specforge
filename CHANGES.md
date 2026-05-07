@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for temporal-prior family-mismatch rule shape)
+
+### Improved: cross-family temporal priors keep exact local shape
+- Tightened `temporal_prior_protocol_family_mismatch_negative` with exact `temporal_rules_include` expectations at `SemanticIR` and `IntentIR`.
+- The fixture now proves an unrelated APB temporal phrase prior cannot add an AXI-local cycle window while the local `XREADY` rule still preserves `clk` rising-edge grounding, asserted-value predicate, and supporting statement id.
+- It also excludes clock-grounding replay findings, so the remaining validation debt is specifically the missing cycle-window lane.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench temporal_prior_protocol_family_mismatch_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for no-prior temporal clock replay separation)
 
 ### Improved: no-prior timing keeps replay debt lane-specific

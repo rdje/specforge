@@ -37,11 +37,43 @@
   "expectations": {
     "semantic": {
       "signal_names_include": ["XREADY"],
-      "temporal_rule_count": 1
+      "temporal_rule_count": 1,
+      "temporal_rules_include": [
+        {
+          "source_text": "XREADY must be asserted one beat later.",
+          "clock_signal": "clk",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_xready_one_beat_later"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "XREADY",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        }
+      ]
     },
     "intent": {
       "signal_names_include": ["XREADY"],
-      "temporal_rule_count": 1
+      "temporal_rule_count": 1,
+      "temporal_rules_include": [
+        {
+          "source_text": "XREADY must be asserted one beat later.",
+          "clock_signal": "clk",
+          "edge": "rising",
+          "supporting_statement_ids_include": ["stmt_xready_one_beat_later"],
+          "consequents_include": [
+            {
+              "kind": "signal_value",
+              "signal_name": "XREADY",
+              "value": "ASSERTED",
+              "phase": "post_tick"
+            }
+          ]
+        }
+      ]
     },
     "validation": {
       "evidence": {
@@ -53,6 +85,10 @@
         "finding_ids_include": [
           "semantic_temporal_rules_missing_cycle_windows",
           "semantic_temporal_cycle_window_surface_rescan_guidance"
+        ],
+        "finding_ids_exclude": [
+          "semantic_temporal_rules_missing_clock_grounding",
+          "semantic_temporal_clock_grounding_surface_rescan_guidance"
         ],
         "findings_include": [
           {
@@ -72,6 +108,10 @@
         "finding_ids_include": [
           "intent_temporal_rules_missing_cycle_windows",
           "intent_temporal_cycle_window_surface_rescan_guidance"
+        ],
+        "finding_ids_exclude": [
+          "intent_temporal_rules_missing_clock_grounding",
+          "intent_temporal_clock_grounding_surface_rescan_guidance"
         ],
         "findings_include": [
           {
