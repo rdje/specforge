@@ -1,5 +1,16 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for fully grounded temporal no-replay)
+
+### Improved: bounded grounded rules exclude every temporal replay lane
+- Tightened `temporal_cycle_window_grounded_gold` so the fully grounded bounded rule explicitly excludes cycle-window, actor-grounding, and clock-grounding replay findings at `SemanticIR` and `IntentIR`.
+- This locks the no-replay side of the temporal validator boundary after the rule has clock, actor, and cycle-window grounding.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for unbounded temporal rule shape)
 
 ### Improved: cycle-window-gap rules carry exact clock and actor structure

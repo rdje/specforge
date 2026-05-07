@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for fully grounded temporal no-replay)
+- Tightened `temporal_cycle_window_grounded_gold` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now explicitly excludes cycle-window, actor-grounding, and clock-grounding replay findings for the fully grounded bounded rule at both canonical validation stages.
+- This is fixture-level validator-boundary hardening with no production code change; `kg-bench`, corpus-KB projection, and docs CI passed with `150/150` tracked fixtures.
+
 ## Session update (2026-05-07 KG fixture for unbounded temporal rule shape)
 - Tightened `temporal_cycle_window_surface_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts exact `temporal_rules_include` shape for the unbounded asserted-value rule, including `PCLK` rising-edge grounding, actor-drive predicate, asserted-value predicate, and supporting statement id while validation proves the missing cycle window remains visible.
