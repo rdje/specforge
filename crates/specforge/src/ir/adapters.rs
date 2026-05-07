@@ -6730,6 +6730,8 @@ mod tests {
             vec![FsmRootKind::Fsm, FsmRootKind::Top]
         );
         assert!(!fsm.renderability.is_renderable);
+        assert!(fsm.renderable_module.is_none());
+        assert!(fsm.renderable_document.is_none());
         assert_eq!(fsm.decision_tree_candidates.len(), 1);
         assert!(
             fsm.signal_inventory

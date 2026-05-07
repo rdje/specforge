@@ -15,6 +15,7 @@
 - IntentIR canonical endpoint contract established: Done
 - SpecForge CLI/crate rename completed: Done
 - Explicit `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters` architecture defined: Done
+- `.fsm` blocked DT-centric adapters now block stale module and aggregate renderable output: Done
 - `.fsm` top-link target-role blockers now preserve composition topology residual decisions: Done
 - `.fsm` top-link direction-role blockers now preserve composition topology residual decisions: Done
 - `.fsm` structured-FSM graph-backed undriven outputs now block stale aggregate renderable output: Done

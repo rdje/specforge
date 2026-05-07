@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` blocked DT-centric renderable block)
+
+### Added: blocked DT-centric adapters cannot leak output
+- Tightened `builds_blocked_dt_centric_fsm_adapter_artifact` so baseline blocked DT-centric adapters leave no renderable module and no aggregate `.fsm` source document.
+- This locks unresolved render-critical signal roles against stale DT-root output while preserving signal-inventory repair guidance.
+- Synced the live tracker, roadmap, and mdBook with the blocked DT-centric renderable-block guarantee.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge builds_blocked_dt_centric_fsm_adapter_artifact` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148/148` fixtures)
+- `bash scripts/run_ci.sh` -> passed (`614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation)
+- `cargo sweep --time 1` -> deferred because `target/release/tool_matrix` is active
+
 ## 2026-05-06 (`.fsm` structured undriven-output renderable block)
 
 ### Added: structured-FSM undriven outputs cannot leak output

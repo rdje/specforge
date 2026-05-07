@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` blocked DT-centric renderable block)
+- Tightened `builds_blocked_dt_centric_fsm_adapter_artifact` in `crates/specforge/src/ir/adapters.rs`.
+- The test now proves baseline blocked DT-centric adapters leave no renderable module and no aggregate `.fsm` source document.
+- This locks unresolved render-critical signal roles against stale renderable DT output; focused adapter coverage, full adapter coverage, fmt, docs CI, KG bench, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 `.fsm` structured undriven-output renderable block)
 - Tightened `structured_fsm_blocks_graph_backed_undriven_output_inventory` in `crates/specforge/src/ir/adapters.rs`.
 - The test now proves graph-backed structured-FSM undriven output blockers leave the aggregate `.fsm` artifact without a renderable source document.

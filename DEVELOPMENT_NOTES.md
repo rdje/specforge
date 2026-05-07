@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` blocked DT-centric renderable block
+- New batch slice 187/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `builds_blocked_dt_centric_fsm_adapter_artifact` now asserts blocked DT-centric adapters leave no renderable module and no aggregate `.fsm` source document.
+- This locks unresolved render-critical signal roles against stale DT-root output while signal-inventory repair guidance remains visible.
+- Focused blocked DT-centric coverage, the adapter suite, fmt, docs CI, KG bench, and full CI passed; user-requested `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is active.
+
 ## 2026-05-06 `.fsm` structured undriven-output renderable block
 - New batch slice 186/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `structured_fsm_blocks_graph_backed_undriven_output_inventory` now asserts graph-backed structured-FSM undriven output blockers leave the aggregate `.fsm` artifact without a renderable source document.
