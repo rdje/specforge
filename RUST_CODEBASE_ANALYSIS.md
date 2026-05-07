@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` canonical parametric-width renderable block)
+- Tightened `standalone_dt_blocks_parametric_signal_width_with_diagnostic` in `crates/specforge/src/ir/adapters.rs`.
+- The test now proves canonical parametric signal-width blockers leave no renderable module and no aggregate `.fsm` source document.
+- This locks symbolic interface width evidence against stale renderable DT output; focused adapter coverage, full adapter coverage, fmt, docs CI, KG bench, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 `.fsm` selector-predicate renderable block)
 - Tightened `keeps_selector_based_dt_blocked_when_branch_predicate_is_not_relative_to_selector` in `crates/specforge/src/ir/adapters.rs`.
 - The test now proves unsupported selector-branch predicates leave no renderable module and no aggregate `.fsm` source document.

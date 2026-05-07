@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` canonical parametric-width renderable block
+- New batch slice 197/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `standalone_dt_blocks_parametric_signal_width_with_diagnostic` now asserts canonical parametric signal-width blockers leave no renderable module and no aggregate `.fsm` source document.
+- This locks symbolic interface width evidence against stale DT-root output while interface provenance, support IDs, confidence, and parametric-width diagnostics remain visible.
+- Focused canonical parametric-width coverage, the adapter suite, fmt, docs CI, KG bench, and full CI passed; user-requested `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is active.
+
 ## 2026-05-06 `.fsm` selector-predicate renderable block
 - New batch slice 196/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `keeps_selector_based_dt_blocked_when_branch_predicate_is_not_relative_to_selector` now asserts unsupported selector-branch predicates leave no renderable module and no aggregate `.fsm` source document.
