@@ -143,6 +143,7 @@ Flat/graph direction disagreements likewise keep interface and actor-port proven
 Graph-backed undriven standalone outputs keep selected actor support and signal-inventory residual guidance while blocked.
 Structured-FSM graph-backed undriven outputs keep the same residual guidance alongside FSM-state blocker text.
 Missing-initial structured-FSM blockers keep state and transition provenance plus state-graph residual guidance for upstream enrichment.
+They also keep the aggregate `.fsm` source document absent, so stale `?fsm` output cannot leak before the canonical state graph declares exactly one initial regular state.
 Undeclared-target structured-FSM blockers keep declared-state and rejected-transition provenance plus the same state-graph repair guidance.
 Structured-FSM flat/graph direction disagreements keep interface and actor-port provenance plus signal-inventory residual guidance while blocked.
 Explicit-module flat/graph direction disagreements retain module interface and actor-port provenance plus the same signal-inventory repair guidance.

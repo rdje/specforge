@@ -21,23 +21,23 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `4bf503004349d9ebf1d57928a0af1da6dcbfee1d`
-- latest_commit_brief_message: `test(adapter): block child actor direction output`
-- note: new local `N=200` batch is active; slice 178 is committed, slice 179 is in flight, and push is deferred until all 200 slices complete
+- latest_commit_hash: `e7b5e02d817bb6bfec323f8c6af96733e86d7d21`
+- latest_commit_brief_message: `test(adapter): block missing child module output`
+- note: new local `N=200` batch is active; slice 179 is committed, slice 180 is in flight, and push is deferred until all 200 slices complete
 
 ## Recent commit chain (last 6)
+- `e7b5e02` test(adapter): block missing child module output
 - `4bf5030` test(adapter): block child actor direction output
 - `86ac449` test(adapter): block child link direction output
 - `a829b97` test(adapter): block top link width output
 - `6652d58` test(adapter): block top actor direction output
 - `157bac2` test(adapter): anchor child role top output
-- `7e40598` test(adapter): block child target top output
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before the next commit: `main...origin/main [ahead 179]`
-- files in flight for new batch slice 179:
+- branch state before the next commit: `main...origin/main [ahead 180]`
+- files in flight for new batch slice 180:
   - `crates/specforge/src/ir/adapters.rs`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `ROADMAP.md`
@@ -49,21 +49,21 @@
 
 ## Active N-slice batch
 - requested_count: `200`
-- completed_count: `178`
+- completed_count: `179`
 - push_policy: defer push until all `200` new-batch slices are committed; do not push at the `25`-commit threshold during this batch
 - slice_rule: each slice receives verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice starts
 - prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
 
 ## Current in-flight slice
 - objective:
-  - lock missing child-module top compositions against stale top and aggregate renderable output
-  - prove top compositions that reference an undeclared child source module leave no renderable top root and no aggregate renderable source document
-  - sync the live tracker, roadmap, mdBook, Rust analysis, and continuity docs with the missing child-module renderable-block guarantee
+  - lock missing-initial structured-FSM blockers against stale aggregate renderable output
+  - prove structured FSMs without exactly one explicit initial state leave no aggregate renderable source document
+  - sync the live tracker, roadmap, mdBook, Rust analysis, and continuity docs with the missing-initial renderable-block guarantee
 - tracker effect:
-  - live-status tracker changed; new row marks `.fsm` missing child-module top blockers blocking stale top and aggregate renderable output as `Done`
+  - live-status tracker changed; new row marks `.fsm` missing-initial structured-FSM blockers blocking stale aggregate renderable output as `Done`
 - verification status:
   - implementation and live-doc sync are complete
-  - focused missing child-module renderable-block regression passed (`1` test)
+  - focused missing-initial-state renderable-block regression passed (`1` test)
   - adapter suite passed (`92` tests)
   - formatting passed
   - docs CI passed
@@ -74,9 +74,9 @@
 - current known local CI baseline:
   - previous committed slice passed `614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
   - previous committed slice passed `148/148` tracked KG fixtures
-  - current slice has passed focused missing child-module renderable-block regression, adapter suite, formatting, docs CI, KG bench, and full CI
+  - current slice has passed focused missing-initial-state renderable-block regression, adapter suite, formatting, docs CI, KG bench, and full CI
   - latest `cargo sweep --time 1` attempt was deferred because `target/release/tool_matrix` is active
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- run final commit guards and commit slice 179 without pushing
+- run final commit guards and commit slice 180 without pushing

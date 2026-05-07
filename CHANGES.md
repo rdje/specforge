@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` missing initial state renderable block)
+
+### Added: missing initial states cannot leak aggregate FSM output
+- Tightened `keeps_structured_fsm_blocked_without_exactly_one_initial_state` so structured FSMs without exactly one explicit initial state leave the aggregate `.fsm` artifact without a renderable source document.
+- This locks missing-initial state-graph blockers against stale `?fsm` output until the canonical state graph declares exactly one initial regular state.
+- Synced the live tracker, roadmap, and mdBook with the missing-initial renderable-block guarantee.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge keeps_structured_fsm_blocked_without_exactly_one_initial_state` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148/148` fixtures)
+- `bash scripts/run_ci.sh` -> passed (`614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation)
+- `cargo sweep --time 1` -> deferred because `target/release/tool_matrix` is active
+
 ## 2026-05-06 (`.fsm` missing child module renderable block)
 
 ### Added: missing child modules cannot leak top or aggregate output
