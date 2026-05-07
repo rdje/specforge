@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for semantic phrase family-mismatch VLM exclusion)
+- Tightened `semantic_prior_protocol_family_mismatch_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts evidence-stage `signal_semantic_hints_from_vlm_timing_annotations = 0` alongside aggregate, table, prose, alias-grounded prose, and visual-caption hint metrics.
+- This locks the unrelated APB prior guard as free of VLM timing-annotation evidence for the AXI-local `XREQ` phrase.
+
 ## Session update (2026-05-07 KG fixture for semantic phrase family-mismatch visual exclusion)
 - Tightened `semantic_prior_protocol_family_mismatch_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts evidence-stage `signal_semantic_hints_from_visual_captions = 0` alongside aggregate, table, prose, and alias-grounded prose hint metrics.
