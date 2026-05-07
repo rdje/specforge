@@ -9451,6 +9451,8 @@ mod tests {
             unused_trace.automation_confidence,
             AutomationConfidence::High
         );
+        assert!(!fsm.renderability.is_renderable);
+        assert!(fsm.renderable_document.is_none());
         assert!(
             fsm.renderability
                 .blocking_reasons

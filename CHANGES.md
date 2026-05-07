@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` structured undriven-output renderable block)
+
+### Added: structured-FSM undriven outputs cannot leak output
+- Tightened `structured_fsm_blocks_graph_backed_undriven_output_inventory` so graph-backed structured-FSM undriven output blockers leave the aggregate `.fsm` artifact without a renderable source document.
+- This locks graph-backed undriven structured-FSM outputs against stale `?fsm` output until every declared output is driven by typed FSM-state actions.
+- Synced the live tracker, roadmap, and mdBook with the structured-FSM undriven-output renderable-block guarantee.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge structured_fsm_blocks_graph_backed_undriven_output_inventory` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148/148` fixtures)
+- `bash scripts/run_ci.sh` -> passed (`614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation)
+- `cargo sweep --time 1` -> deferred because `target/release/tool_matrix` is active
+
 ## 2026-05-06 (`.fsm` structured flat/graph renderable block)
 
 ### Added: structured-FSM flat/graph disagreements cannot leak output

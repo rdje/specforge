@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` structured undriven-output renderable block
+- New batch slice 186/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `structured_fsm_blocks_graph_backed_undriven_output_inventory` now asserts graph-backed structured-FSM undriven output blockers leave the aggregate `.fsm` artifact without a renderable source document.
+- This locks graph-backed undriven structured-FSM outputs against stale `?fsm` output before every declared output has a typed FSM-state action driver.
+- Focused structured undriven-output coverage, the adapter suite, fmt, docs CI, KG bench, and full CI passed; user-requested `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is active.
+
 ## 2026-05-06 `.fsm` structured flat/graph renderable block
 - New batch slice 185/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `structured_fsm_blocks_flat_graph_direction_disagreement` now asserts structured-FSM flat/graph direction disagreements leave the aggregate `.fsm` artifact without a renderable source document.
