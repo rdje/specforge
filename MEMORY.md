@@ -16,30 +16,34 @@
 - `git_message_brief.txt` must stay untracked and be truncated to `0` bytes after each commit
 - every completion message must report the commit id, exact commit message, full tracked-file list, current live-status snapshot, and whether that snapshot changed
 - outside explicit batch runs, do not push unless the user asks or the branch reaches `25` local commits since the last push
+- active batch-run rule: the current batch uses `BWFSC=200`, must commit after every slice, and must defer push until all 200 slices are complete unless the user explicitly instructs otherwise or a real blocker stops the batch
 - latest completed batch-run rule: the `N=200` batch committed each slice independently, synced live docs and mdBook at the end of every slice, deferred push until all 200 new-batch slices were complete, and was pushed after slice 200
 - previous batch-run rule used: the `N=100` batch committed each slice independently, deferred push until all 100 slices were complete, and was pushed after slice 100
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `6983c99b34c2b36f424ef7e7c17bbf5ccef07683`
-- latest_commit_brief_message: `test(adapter): block duplicate top output`
-- note: local `N=200` batch completed all 200 slices and was pushed to `origin/main`
+- latest_commit_hash: `24e8f6fdebbc94a223df51dfa30fa7ef328bc932`
+- latest_commit_brief_message: `docs: record completed batch state`
+- note: this is the pre-slice baseline for the current `BWFSC=200` batch; the previous `N=200` batch completed all 200 slices and was pushed to `origin/main`
 
 ## Recent commit chain (last 6)
+- `24e8f6f` docs: record completed batch state
 - `6983c99` test(adapter): block duplicate top output
 - `a5e6fa3` test(adapter): block recovered top output
 - `2c71513` test(adapter): block parametric actor output
 - `9bf9fb6` test(adapter): block parametric signal output
 - `1f01a3e` test(adapter): block selector predicate output
-- `90fd192` test(adapter): block reset polarity output
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state after batch push: `main...origin/main`
-- files in flight: none
+- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 1 and push is deferred
+- files in flight:
+  - `crates/specforge/test_data/kg_quality/temporal_cycle_window_surface_negative/fixture.json`
+  - `crates/specforge/test_data/kg_quality/temporal_cycle_window_surface_negative/cycle_windowless_temporal_rule.md`
+  - live docs and mdBook files synced for the slice
 
-## Latest N-slice batch
+## Previous completed N-slice batch
 - requested_count: `200`
 - completed_count: `200`
 - push_policy: completed; pushed once after all `200` new-batch slices were committed
@@ -48,30 +52,24 @@
 
 ## Current batch status
 - objective:
-  - no active in-flight batch slice remains
-  - latest completed slice locked duplicate/conflicting top-port direction blockers against stale top and aggregate renderable output
-  - live tracker, roadmap, mdBook, Rust analysis, and continuity docs were synced with the duplicate top-port direction renderable-block guarantee
+  - active `BWFSC=200` batch is in progress
+  - slice 1/200 adds a KG fixture for temporal cycle-window rescan guidance
+  - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker marks `.fsm` duplicate top-port direction blockers blocking stale top and aggregate renderable output as `Done`
-  - live-status tracker marks the `N=200` batch as completed and pushed
+  - live-status tracker now marks temporal cycle-window rescan-guidance KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 200
-  - focused duplicate top-port direction renderable-block regression passed
-  - adapter suite passed
-  - formatting passed
-  - docs CI passed
-  - KG bench passed
-  - full CI passed
+  - implementation and live-doc sync are complete for slice 1 before commit
+  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `149/149` fixtures
+  - `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed and refreshed tracked corpus-KB fixture projections
+  - `bash scripts/run_docs_ci.sh` passed
   - user-requested `cargo sweep --time 1` is deferred until no target-tree process is active because `target/release/tool_matrix` is active
-  - final commit guards passed before the slice 200 commit
-  - post-commit checks passed after the slice 200 commit
-  - completed-batch push to `origin/main` passed
 - current known local CI baseline:
-  - current slice passed `614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation
-  - current slice passed `148/148` tracked KG fixtures
-  - current slice validation is complete
+  - current slice passed `149/149` tracked KG fixtures
+  - current slice passed docs CI
+  - broader full CI has not yet been rerun for this data/docs-only slice; the previous full CI baseline remains the completed pushed `N=200` batch
   - latest `cargo sweep --time 1` attempt was deferred because `target/release/tool_matrix` is active
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
+- finish the slice 1 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 2/200
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle

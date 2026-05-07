@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for temporal cycle-window rescan guidance)
+
+### Added: unbounded temporal rules stay replay-visible
+- Added `temporal_cycle_window_surface_negative`, a tracked KG fixture proving a clock-grounded and actor-grounded temporal rule still emits cycle-window rescan guidance when it lacks an explicit latency bound.
+- The fixture locks both `SemanticIR` and `IntentIR` validation payloads for `*_temporal_cycle_window_surface_rescan_guidance`, including the exact temporal rule id.
+- This expands the KG truthfulness suite from `148` to `149` tracked fixtures.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`149/149` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`149` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-06 (`.fsm` duplicate top-port direction renderable block)
 
 ### Added: duplicate top-port directions cannot leak output

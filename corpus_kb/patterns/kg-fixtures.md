@@ -15,8 +15,8 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 
 - source: `kg-bench fixtures`
 - selected_family_labels: `actor connectivity`, `semantic role arbitration`, `negative knowledge`, `truthfulness negatives and cautions`, `residuals and caveats`
-- fixtures_total: `85`
-- fixtures_passed: `85`
+- fixtures_total: `86`
+- fixtures_passed: `86`
 - fixtures_failed: `0`
 
 | fixture | status | matched families | path |
@@ -88,6 +88,7 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 | `temporal_actor_grounding_surface_negative` | `pass` | `actor connectivity`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/temporal_actor_grounding_surface_negative/fixture.json` |
 | `temporal_clock_grounding_surface_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/temporal_clock_grounding_surface_negative/fixture.json` |
 | `temporal_conflict_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/temporal_conflict_negative/fixture.json` |
+| `temporal_cycle_window_surface_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/temporal_cycle_window_surface_negative/fixture.json` |
 | `temporal_prior_guided_cycle_window_without_prior_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/temporal_prior_guided_cycle_window_without_prior_negative/fixture.json` |
 | `temporal_prior_protocol_family_mismatch_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/temporal_prior_protocol_family_mismatch_negative/fixture.json` |
 | `visual_motif_prior_guided_diagram_classification_without_prior_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/visual_motif_prior_guided_diagram_classification_without_prior_negative/fixture.json` |

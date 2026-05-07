@@ -7,6 +7,16 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-07 KG fixture for temporal cycle-window rescan guidance
+- New batch slice 1/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Added `crates/specforge/test_data/kg_quality/temporal_cycle_window_surface_negative/`.
+- The fixture patches a grounded `PREADY must be asserted.` signal constraint while the local source supplies `PCLK` clock grounding and a `Completer drives PREADY` actor relation.
+- It proves validation still emits `semantic_temporal_cycle_window_surface_rescan_guidance` and `intent_temporal_cycle_window_surface_rescan_guidance` for the exact unbounded temporal rule id even when clock and actor grounding are already present.
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `149/149` tracked fixtures.
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` refreshed the tracked benchmark, pattern, and timing corpus-KB projections for `149` fixtures with `0` failures.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-06 `.fsm` duplicate top-port direction renderable block
 - New batch slice 200/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_keeps_duplicate_top_port_direction_conflict_unresolved` now asserts duplicate/conflicting top-port direction blockers leave no renderable top root and no aggregate `.fsm` source document.

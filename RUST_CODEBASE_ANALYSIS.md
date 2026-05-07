@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for temporal cycle-window rescan guidance)
+- Added `temporal_cycle_window_surface_negative` under `crates/specforge/test_data/kg_quality/`.
+- The fixture proves clock-grounded and actor-grounded temporal rules that still lack explicit cycle-window bounds remain visible through `semantic_temporal_cycle_window_surface_rescan_guidance` and `intent_temporal_cycle_window_surface_rescan_guidance`.
+- This is a test-surface hardening slice rather than a production architecture change; `kg-bench`, corpus-KB fixture projection, and docs CI passed, and `cargo sweep --time 1` remains deferred while `target/release/tool_matrix` is active.
+
 ## Session update (2026-05-06 `.fsm` duplicate top-port direction renderable block)
 - Tightened `top_composition_keeps_duplicate_top_port_direction_conflict_unresolved` in `crates/specforge/src/ir/adapters.rs`.
 - The test now proves duplicate/conflicting top-port direction blockers leave no renderable top root and no aggregate `.fsm` source document.
