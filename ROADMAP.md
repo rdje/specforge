@@ -759,6 +759,7 @@
     - a stage-patched visual-source conflict fixture proving a caption and a VLM timing note can disagree on the same signal role without collapsing into false visual consensus
     - stage-patched active-low VLM timing fixtures proving `asserted` and `LOW` observations, plus `deasserted` and `HIGH` observations, on an active-low reset stay equivalent temporal evidence rather than becoming false temporal conflicts
     - the active-low assertion VLM timing fixture now asserts zero VLM timing-annotation semantic hints, proving reset assertion text stays out of valid/ready-like role recovery
+    - the active-low deassertion VLM timing fixture now asserts zero VLM timing-annotation semantic hints, proving reset-release text stays out of valid/ready-like role recovery
     - a first representative AMBA-style gold fixture proving `Source`-column signal tables recover driver-side actor ports, table-grounded semantic request/accept roles, and typed handshake completion from a guarded constraint
     - a representative AMBA-style gold fixture proving `Destination`-column signal tables recover consumer-side `Reads` relations and actor-relative input ports end-to-end through `SemanticIR` and `IntentIR`
     - a representative APB-style gold fixture proving `Requester` / `Completer` source roles survive canonically as driver-side actor relations, actor-relative ports, request/accept semantics, and typed handshake completion
