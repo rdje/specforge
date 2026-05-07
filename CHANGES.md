@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` missing child module renderable block)
+
+### Added: missing child modules cannot leak top or aggregate output
+- Tightened `keeps_top_composition_blocked_when_child_module_is_missing` so top compositions that reference an undeclared child module leave the selected top without a renderable top root and the aggregate `.fsm` artifact without a renderable source document.
+- This locks missing child-module references against stale `?top` output until every top child source is declared as an explicit module.
+- Synced the live tracker, roadmap, and mdBook with the missing child-module renderable-block guarantee.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge keeps_top_composition_blocked_when_child_module_is_missing` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148/148` fixtures)
+- `bash scripts/run_ci.sh` -> passed (`614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation)
+- `cargo sweep --time 1` -> deferred because `target/release/tool_matrix` is active
+
 ## 2026-05-06 (`.fsm` child actor-port direction renderable block)
 
 ### Added: conflicting child actor-port directions cannot leak child or aggregate output

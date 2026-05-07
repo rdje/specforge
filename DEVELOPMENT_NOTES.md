@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` missing child module renderable block
+- New batch slice 179/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `keeps_top_composition_blocked_when_child_module_is_missing` now asserts top compositions that reference an undeclared child module leave the selected top without a renderable top root and the aggregate `.fsm` artifact without a renderable source document.
+- This locks missing child-module references against stale `?top` output before every top child source is declared as an explicit module.
+- Focused missing-child-module coverage, the adapter suite, fmt, docs CI, KG bench, and full CI passed; user-requested `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is active.
+
 ## 2026-05-06 `.fsm` child actor-port direction renderable block
 - New batch slice 178/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_conflicting_actor_port_directions` now asserts graph-backed child actor-port direction conflicts leave the child module without a renderable module and the aggregate `.fsm` artifact without a renderable source document.

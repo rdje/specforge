@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` missing child module renderable block)
+- Tightened `keeps_top_composition_blocked_when_child_module_is_missing` in `crates/specforge/src/ir/adapters.rs`.
+- The test now proves top compositions that reference an undeclared child module leave the selected top without a renderable top root and leave the aggregate `.fsm` artifact without a renderable source document.
+- This locks missing child-module references against stale renderable top output; focused adapter coverage, full adapter coverage, fmt, docs CI, KG bench, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 `.fsm` child actor-port direction renderable block)
 - Tightened `top_composition_blocks_conflicting_actor_port_directions` in `crates/specforge/src/ir/adapters.rs`.
 - The test now proves graph-backed child actor-port direction conflicts leave the child module without a renderable module and leave the aggregate `.fsm` artifact without a renderable source document.

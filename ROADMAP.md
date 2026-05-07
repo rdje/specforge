@@ -572,6 +572,7 @@
   - missing top-boundary width recovery now explicitly blocks renderable top roots and aggregate `.fsm` source documents, so stale `?top` output cannot survive before width evidence is recovered
   - multi-child tops without explicit top links now explicitly block renderable top roots and aggregate `.fsm` source documents, so stale `?top` output cannot survive before topology links are supplied
   - top roots without explicit child-module references now explicitly block renderable top roots and aggregate `.fsm` source documents, so stale `?top` output cannot survive before child references are supplied
+  - top roots with child references to undeclared modules now explicitly block renderable top roots and aggregate `.fsm` source documents, so stale `?top` output cannot survive before child source modules are declared
   - top roots without explicit top-port records now explicitly block renderable top roots and aggregate `.fsm` source documents, so stale `?top` output cannot survive before top ports are supplied
   - duplicate top child-instance records now explicitly block renderable top roots and aggregate `.fsm` source documents, so stale `?top` output cannot survive before child references are deduplicated
   - top links targeting undeclared top-boundary ports now explicitly block renderable top roots and aggregate `.fsm` source documents, so stale `?top` output cannot survive before target endpoints are declared
