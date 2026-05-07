@@ -146,6 +146,7 @@ Visual-caption hints stay zero as well, keeping the source-kind guard free of vi
 VLM timing-annotation hints stay zero too, keeping timing-note evidence out of the source-kind guard.
 Timing-diagram extractions stay zero too, keeping the source-kind guard free of timing extraction support.
 The exact-phrase mismatch companion does the same for `XFLOW`: an unmatched learned phrase prior stays silent while the local output declaration remains canonical.
+That exact-phrase mismatch guard now also asserts table-sourced semantic hints stay zero while the unmatched prior remains silent.
 The broad-phrase guard adds the one-token case: a generic `transfer` prior stays inert while the same `XFLOW` declaration remains canonical.
 The conflicting-role guard adds the ambiguity case: equal valid-like and ready-like priors for one phrase stay inert while the local `XCTRL` input declaration remains canonical.
 The no-prior mirror keeps the before side exact too: `XACK can receive the transfer` stays unresolved without learned memory while the local input declaration remains canonical.

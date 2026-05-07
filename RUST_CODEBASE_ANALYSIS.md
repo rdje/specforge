@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for semantic phrase mismatch table exclusion)
+- Tightened `semantic_prior_phrase_mismatch_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts evidence-stage `signal_semantic_hints_from_tables = 0` alongside total and prose hint metrics.
+- This locks the unmatched learned-prior guard as free of table semantic hints for the local `XFLOW` phrase.
+
 ## Session update (2026-05-07 KG fixture for semantic phrase source-kind timing-extraction absence)
 - Tightened `semantic_prior_source_kind_mismatch_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts evidence-stage `timing_diagram_extractions = 0` alongside its full semantic-hint source split.

@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for semantic phrase mismatch table exclusion)
+
+### Improved: semantic phrase mismatch fixtures exclude table hints
+- Tightened `semantic_prior_phrase_mismatch_negative` with `signal_semantic_hints_from_tables = 0` at `EvidenceIR`.
+- The fixture now proves the unmatched learned phrase prior remains free of table semantic hints for the local `XFLOW` phrase.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_prior_phrase_mismatch_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for semantic phrase source-kind timing-extraction absence)
 
 ### Improved: semantic phrase source-kind fixtures exclude timing extractions

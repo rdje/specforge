@@ -877,6 +877,7 @@
   - the semantic phrase source-kind mismatch fixture now asserts VLM timing-annotation semantic hints stay zero while the visual-caption-only prior remains silent for prose evidence
   - the semantic phrase source-kind mismatch fixture now asserts timing-diagram extractions stay zero while the visual-caption-only prior remains silent for prose evidence
   - the semantic phrase exact-phrase mismatch fixture now asserts exact local `XFLOW` output direction while a learned `can publish the beat` prior remains silent for the unmatched `can sequence the transfer` phrase
+  - the semantic phrase exact-phrase mismatch fixture now asserts table-sourced semantic hints stay zero while the unmatched learned prior remains silent
   - the broad semantic phrase negative fixture now asserts exact local `XFLOW` output direction while a one-token `transfer` prior remains silent
   - the conflicting semantic phrase negative fixture now asserts exact local `XCTRL` input direction while equal valid-like and ready-like priors for the same phrase fail closed
   - the no-prior semantic phrase mirror now asserts exact local `XACK` input direction while `can receive the transfer` remains unresolved without learned memory
