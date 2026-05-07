@@ -765,6 +765,7 @@
     - the cross-modality grounding gold fixture now asserts ordinary prose semantic hints stay zero, preserving table-plus-visual-only grounding
     - the cross-modality grounding gold fixture now asserts alias-grounded prose semantic hints stay zero, keeping alias recovery out of the positive multimodal proof
     - the cross-modality grounding gold fixture now asserts VLM timing-annotation semantic hints stay zero, keeping timing-note evidence out of this caption/table grounding proof
+    - the cross-modality grounding gold fixture now asserts timing-diagram extractions stay zero, keeping timing extraction support out of this caption/table grounding proof
     - a stage-patched VLM timing-note gold fixture proving a semantic hint can come from `vlm_timing_diagram_extraction` itself rather than only from captions, tables, or prose
     - a stage-patched VLM timing-note negative fixture proving waveform/tick annotations on a handshake-shaped signal name do not create semantic-role hints by spelling alone while timing extraction still succeeds
     - a stage-patched visual-source conflict fixture proving a caption and a VLM timing note can disagree on the same signal role without collapsing into false visual consensus

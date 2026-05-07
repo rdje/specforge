@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for cross-modality grounding timing-extraction absence)
+- Tightened `cross_modality_semantic_grounding_gold` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts evidence-stage `timing_diagram_extractions = 0` alongside its table-plus-visual-caption semantic-hint source split.
+- This locks decisive `XREQ` cross-modality semantic grounding as free of timing-diagram extraction support.
+
 ## Session update (2026-05-07 KG fixture for cross-modality semantic-conflict timing-extraction absence)
 - Tightened `cross_modality_semantic_conflict_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts evidence-stage `timing_diagram_extractions = 0` alongside its table-plus-visual-caption semantic-hint source split.
