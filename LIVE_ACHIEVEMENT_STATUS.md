@@ -139,6 +139,7 @@
 - `.fsm` duplicate child-instance top blockers now preserve composition topology residual decisions: Done
 - `.fsm` duplicate child-instance residuals now lock low-confidence topology-detail diagnostics: Done
 - KG benchmark harness now locks no-prior ready-sink semantic phrase visual-caption semantic-hint exclusion: Done
+- KG benchmark harness now locks no-prior ready-sink semantic phrase VLM timing-annotation semantic-hint exclusion: Done
 - `.fsm` duplicate top-direction blockers now preserve composition topology residual decisions: Done
 - `.fsm` duplicate top-direction residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` duplicate top-width blockers now preserve composition topology residual decisions: Done

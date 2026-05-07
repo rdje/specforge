@@ -143,6 +143,7 @@ The ready-sink no-prior mirror extends that before-side check to `XACK can sink 
 That ready-sink no-prior mirror now also asserts table-sourced semantic hints stay zero while learned memory is absent.
 Alias-grounded prose stays zero there too, keeping the no-prior ready-sink mirror free of alias recovery.
 Visual-caption hints stay zero as well, keeping the no-prior ready-sink mirror non-visual.
+VLM timing-annotation hints stay zero too, keeping timing-note evidence out of the no-prior ready-sink mirror.
 The valid-like no-prior mirror does the same for `XREQ can publish the beat`, preserving the local output declaration while learned memory is absent.
 That valid-like no-prior mirror now also asserts table-sourced semantic hints stay zero while learned memory is absent.
 Alias-grounded prose stays zero there too, keeping the no-prior valid-like mirror free of alias recovery.
