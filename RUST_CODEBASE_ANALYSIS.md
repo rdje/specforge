@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for cross-modality semantic-conflict hint totals)
+- Tightened `cross_modality_semantic_conflict_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts evidence-stage `signal_semantic_hints = 2` alongside the table and visual-caption source splits.
+- This locks aggregate semantic-hint metrics to the two conflicting observations used by the unresolved `XCTRL` semantic-role conflict.
+
 ## Session update (2026-05-07 KG fixture for waveform-motion VLM timing total hint exclusion)
 - Tightened `vlm_timing_waveform_motion_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts total evidence-stage `signal_semantic_hints = 0` in addition to the VLM timing-annotation source split.

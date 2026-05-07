@@ -351,6 +351,7 @@
 - KG benchmark harness now locks cycle-qualified VLM timing value-label total semantic-hint exclusion: Done
 - KG benchmark harness now locks motion-only VLM timing annotation total semantic-hint exclusion: Done
 - KG benchmark harness now locks waveform-motion VLM timing state total semantic-hint exclusion: Done
+- KG benchmark harness now locks cross-modality semantic-conflict total evidence semantic hints: Done
 - KG benchmark harness now locks prior-guided ready-like sink phrase recovery: Done
 - KG benchmark harness now locks prior-guided valid-like semantic phrase recovery: Done
 - KG benchmark harness now includes AXI write-response timing coverage: Done

@@ -111,6 +111,7 @@ That keeps conflict-surfacing benchmarks honest: a prior can add caution guidanc
 Fixtures can assert canonical signal-semantic conflicts directly as well.
 `signal_semantic_conflicts_include` checks the conflicted signal and included observations by semantic tag, source kind, source text, and supporting evidence ids.
 That lets multimodal disagreement fixtures prove, for example, that visual-caption evidence and VLM timing-diagram annotation evidence support different handshake roles without reducing the test to "one conflict exists."
+The cross-modality semantic-conflict fixture also locks total evidence semantic hints at two, matching its table and visual-caption source splits.
 
 Fixtures can assert canonical signal-polarity conflicts directly as well.
 `signal_polarity_conflicts_include` checks the conflicted signal and included observations by polarity, source kind, and supporting statement or table ids.
