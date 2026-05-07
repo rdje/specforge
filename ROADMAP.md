@@ -950,6 +950,7 @@
   - the no-prior semantic-modality fixture now asserts VLM timing-annotation semantic hints stay zero, preserving the table/prose-only conflict shape
   - the no-prior semantic-modality fixture now asserts timing-diagram extractions stay zero, preserving the non-visual table/prose conflict surface
   - the prior-guided semantic-modality gold fixture now asserts the exact resolved role and current-document grounding strength, proving modality memory guides arbitration without overstating grounding
+  - the prior-guided semantic-modality gold fixture now asserts total evidence semantic hints equal the two local table/prose observations before prior-guided arbitration
   - the AMBA-generic semantic-modality fallback gold fixture now asserts the same exact resolved role, grounding strength, and conflict observations for a generic prior applied to an AXI-family document
   - fixture expectations can now assert canonical `temporal_conflicts` directly, so contradiction surfacing is checked as typed context/value/supporting-evidence IR instead of only a conflict count
   - fixture expectations can now assert canonical `infrastructure_signals` and `infrastructure_topology` records directly, so clock/reset topology truthfulness is checked as typed IR instead of only through validation metrics
