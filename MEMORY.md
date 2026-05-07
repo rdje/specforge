@@ -22,22 +22,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `53c0ac19049bb02de34e4cf1c59107b325d10ab2`
-- latest_commit_brief_message: `test(kg): lock conflicting semantic phrase visual exclusion`
-- note: this is the pre-slice-183 baseline for the current `BWFSC=200` batch; slices 1-182/200 are committed and push remains deferred
+- latest_commit_hash: `1ebf114d40b3aa83d803565020b85835b9520f16`
+- latest_commit_brief_message: `test(kg): lock conflicting semantic phrase VLM exclusion`
+- note: this is the pre-slice-184 baseline for the current `BWFSC=200` batch; slices 1-183/200 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `1ebf114` test(kg): lock conflicting semantic phrase VLM exclusion
 - `53c0ac1` test(kg): lock conflicting semantic phrase visual exclusion
 - `1d9fa7a` test(kg): lock conflicting semantic phrase alias exclusion
 - `f59e7d6` test(kg): lock conflicting semantic phrase table exclusion
 - `e14acea` test(kg): lock broad semantic phrase timing absence
 - `8096b02` test(kg): lock broad semantic phrase VLM exclusion
-- `e9c42bb` test(kg): lock broad semantic phrase visual exclusion
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 183 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 184 and push is deferred
 - files in flight:
   - `crates/specforge/test_data/kg_quality/semantic_prior_conflicting_roles_negative/fixture.json`
   - live docs and mdBook files synced for the slice
@@ -52,13 +52,13 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `182`
-  - slice 183/200 tightens conflicting semantic phrase VLM timing-annotation semantic-hint exclusion metrics
+  - completed_count before this commit: `183`
+  - slice 184/200 tightens conflicting semantic phrase timing-diagram extraction absence metrics
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks conflicting semantic phrase VLM timing-annotation semantic-hint exclusion KG coverage as `Done`
+  - live-status tracker now marks conflicting semantic phrase timing-extraction absence KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 183 before commit
+  - implementation and live-doc sync are complete for slice 184 before commit
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_prior_conflicting_roles_negative` passed with the requested fixture
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` fixtures
   - `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed with `150` fixtures projected and `0` failures
@@ -75,5 +75,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 183 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 184/200
+- finish the slice 184 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 185/200
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle

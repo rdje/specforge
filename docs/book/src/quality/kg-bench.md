@@ -162,6 +162,7 @@ That conflicting-role guard now also asserts table-sourced semantic hints stay z
 Alias-grounded prose stays zero there too, keeping alias recovery out of the conflicting-role guard.
 Visual-caption hints stay zero there as well, keeping visual evidence out of the conflicting-role guard.
 VLM timing-annotation hints stay zero there too, keeping timing-note evidence out of the conflicting-role guard.
+Timing-diagram extractions stay zero there too, keeping timing extraction support out of the conflicting-role guard.
 The no-prior mirror keeps the before side exact too: `XACK can receive the transfer` stays unresolved without learned memory while the local input declaration remains canonical.
 That no-prior mirror now also asserts table-sourced semantic hints stay zero while learned memory is absent.
 Alias-grounded prose stays zero there too, keeping the no-prior semantic phrase mirror free of alias recovery.
