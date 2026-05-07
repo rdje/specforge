@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for VLM timing semantic-grounding extraction metric)
+- Tightened `vlm_timing_semantic_grounding_gold` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts the evidence-stage `timing_diagram_extractions = 1` metric alongside VLM timing-annotation semantic hints.
+- This locks VLM timing semantic recovery as extraction-backed evidence rather than a detached downstream role hint.
+
 ## Session update (2026-05-07 KG fixture for duplicate-initial warning exclusion)
 - Tightened `vlm_state_machine_duplicate_initial_gold` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now explicitly excludes semantic and intent state-machine initial-cardinality findings while keeping the merged canonical initial count at `1`.

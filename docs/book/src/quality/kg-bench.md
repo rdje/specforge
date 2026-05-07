@@ -144,6 +144,7 @@ That visual-motif gold now also checks the evidence-stage corroboration finding 
 Fixtures can assert canonical semantic grounding strength directly as well.
 `semantic_grounding_strengths_include` checks the signal name and expected single-source, multi-source, or cross-modality grounding strength on the canonical interface signal record.
 That lets semantic gold fixtures prove a multimodal `XREQ` role is really cross-modality grounded, or a VLM-only `XACK` role is really single-source grounded, rather than only proving that a validation counter changed.
+The VLM timing semantic-grounding gold also checks `timing_diagram_extractions`, so ready-like `XACK` recovery from a timing annotation must remain tied to an evidence-stage timing diagram extraction.
 
 Fixtures can assert canonical interface-signal conflicts directly as well.
 `interface_signal_conflicts_include` checks the conflicted signal, conflict kind, and included observation values plus supporting statement ids.
