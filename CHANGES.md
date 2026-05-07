@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for negative-knowledge semantic conflict shape)
+
+### Improved: caution memory preserves exact semantic-conflict observations
+- Tightened `negative_knowledge_prior_guided_semantic_conflict_caution_gold` with exact `signal_semantic_conflicts_include` expectations at `SemanticIR` and `IntentIR`.
+- The fixture now proves prior-guided caution memory keeps the local `XCTRL` visual-caption valid-like and VLM timing-annotation ready-like observations intact while adding caution/rescan guidance.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench negative_knowledge_prior_guided_semantic_conflict_caution_gold` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for prior-guided actor-taxonomy graph directions)
 
 ### Improved: actor-taxonomy positives assert graph coverage per signal

@@ -856,6 +856,7 @@
   - the no-prior actor-taxonomy section-heading fixture now asserts `XADDR`/`XCMD`/`XRESP` remain graph-direction empty without learned actor vocabulary
   - the actor-taxonomy protocol-family mismatch fixture now asserts AXI-local `XADDR` remains graph-direction empty when only an APB-scoped `issuer` prior is staged
   - the prior-guided actor-taxonomy section-heading fixture now asserts `XADDR`/`XCMD`/`XRESP` have graph-backed direction coverage when learned actor vocabulary is staged
+  - the negative-knowledge semantic-conflict caution fixture now asserts exact local `XCTRL` visual-caption valid-like versus VLM timing-annotation ready-like conflict observations while adding caution guidance
   - fixture expectations can now assert canonical semantic grounding strength directly, so single-source/multi-source/cross-modality grounding is checked as exact per-signal IR instead of only through validation metrics
   - fixture expectations can now assert canonical `temporal_rules` directly, so APB/AHB/AXI timing truthfulness is checked as typed clock/edge/cycle-window/predicate IR instead of only through validation metrics
   - the tracked temporal fixture set now also locks cycle-window rescan guidance directly: a temporal rule with clock and actor grounding but no explicit latency bound must keep emitting the stage-specific cycle-window replay finding at both `SemanticIR` and `IntentIR`

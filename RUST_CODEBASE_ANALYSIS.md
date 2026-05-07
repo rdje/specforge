@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for negative-knowledge semantic conflict shape)
+- Tightened `negative_knowledge_prior_guided_semantic_conflict_caution_gold` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts exact `XCTRL` semantic-conflict observations at both canonical stages: visual-caption valid-like evidence remains paired with VLM timing-annotation ready-like evidence.
+- This locks negative-knowledge caution memory as conflict-preserving guidance without changing production prior lookup behavior.
+
 ## Session update (2026-05-07 KG fixture for prior-guided actor-taxonomy graph directions)
 - Tightened `actor_taxonomy_prior_guided_section_direction_gold` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts per-signal graph-backed direction coverage for `XADDR`, `XCMD`, and `XRESP` at both canonical stages when learned `Issuer` and `Acceptor` actor priors are staged.
