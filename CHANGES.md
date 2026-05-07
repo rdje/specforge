@@ -1,5 +1,15 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for temporal grounding replay lane separation)
+
+### Improved: cycle-window guidance stays lane-specific
+- Tightened `temporal_cycle_window_surface_negative` so the unbounded temporal rule must emit cycle-window rescan guidance without also emitting actor-grounding or clock-grounding replay findings.
+- This locks the validator boundary where clock and actor grounding are already present but latency bounds are still missing.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for bounded temporal cycle-window no-rescan)
 
 ### Added: bounded temporal rules do not trigger cycle-window replay

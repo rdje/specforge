@@ -7,6 +7,14 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-07 KG fixture for temporal grounding replay lane separation
+- New batch slice 3/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Tightened `crates/specforge/test_data/kg_quality/temporal_cycle_window_surface_negative/fixture.json`.
+- The fixture now proves the same unbounded rule emits cycle-window replay guidance while excluding actor-grounding and clock-grounding replay findings because actor and clock grounding are already present.
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` tracked fixtures.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-07 KG fixture for bounded temporal cycle-window no-rescan
 - New batch slice 2/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Added `crates/specforge/test_data/kg_quality/temporal_cycle_window_grounded_gold/`.

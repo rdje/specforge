@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for temporal grounding replay lane separation)
+- Tightened `temporal_cycle_window_surface_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now proves an unbounded rule with existing actor and clock grounding emits only cycle-window replay guidance, not actor-grounding or clock-grounding replay findings.
+- This is validator expectation hardening with no production code change; `kg-bench` and docs CI passed with `150/150` tracked fixtures.
+
 ## Session update (2026-05-07 KG fixture for bounded temporal cycle-window no-rescan)
 - Added `temporal_cycle_window_grounded_gold` under `crates/specforge/test_data/kg_quality/`.
 - The fixture proves a `within 2 cycles` temporal rule with explicit clock and actor grounding carries its cycle-window and actor-drive predicate through `SemanticIR` and `IntentIR` without emitting cycle-window replay guidance.

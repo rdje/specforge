@@ -95,6 +95,7 @@ The KG benchmark harness can now assert this temporal shape directly.
 Representative AXI, APB, and AHB timing fixtures lock clock/edge grounding, cycle windows, actor-grounded consequents, compound antecedents, and `HandshakeComplete` predicates at the `SemanticIR` and `IntentIR` layers instead of relying only on aggregate validation metrics.
 The benchmark suite also locks the negative surface: a clock-grounded and actor-grounded temporal rule with no explicit cycle-window bound must still produce cycle-window rescan guidance, because actor and clock grounding do not imply a latency bound.
 The complementary bounded fixture proves the reverse too: once a local temporal rule says `within 2 cycles`, the canonical rule keeps that max-cycle window and validation does not ask for cycle-window replay.
+These checks keep the replay lanes separate: missing cycle bounds are not reported as missing actor or clock grounding when those dimensions are already known.
 
 ## Polarity-relative values
 

@@ -22,25 +22,24 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `5ba557100c2e3ab124ef9d3bf73b121a177d87f2`
-- latest_commit_brief_message: `test(kg): lock temporal cycle-window guidance`
-- note: this is the pre-slice-2 baseline for the current `BWFSC=200` batch; slice 1/200 is committed and push remains deferred
+- latest_commit_hash: `88b4943a4f99f7be9b098b4a1d22238f5eb5adee`
+- latest_commit_brief_message: `test(kg): lock bounded cycle-window rule`
+- note: this is the pre-slice-3 baseline for the current `BWFSC=200` batch; slices 1-2/200 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `88b4943` test(kg): lock bounded cycle-window rule
 - `5ba5571` test(kg): lock temporal cycle-window guidance
 - `24e8f6f` docs: record completed batch state
 - `6983c99` test(adapter): block duplicate top output
 - `a5e6fa3` test(adapter): block recovered top output
 - `2c71513` test(adapter): block parametric actor output
-- `9bf9fb6` test(adapter): block parametric signal output
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 2 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 3 and push is deferred
 - files in flight:
-  - `crates/specforge/test_data/kg_quality/temporal_cycle_window_grounded_gold/fixture.json`
-  - `crates/specforge/test_data/kg_quality/temporal_cycle_window_grounded_gold/bounded_temporal_rule.md`
+  - `crates/specforge/test_data/kg_quality/temporal_cycle_window_surface_negative/fixture.json`
   - live docs and mdBook files synced for the slice
 
 ## Previous completed N-slice batch
@@ -53,15 +52,14 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `1`
-  - slice 2/200 adds a KG fixture for bounded temporal cycle-window no-rescan behavior
+  - completed_count before this commit: `2`
+  - slice 3/200 tightens temporal replay lane-separation fixture expectations
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks bounded temporal cycle-window no-rescan KG coverage as `Done`
+  - live-status tracker now marks temporal grounding replay lane-separation KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 2 before commit
+  - implementation and live-doc sync are complete for slice 3 before commit
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` fixtures
-  - `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed and refreshed tracked corpus-KB fixture projections
   - `bash scripts/run_docs_ci.sh` passed
   - user-requested `cargo sweep --time 1` is deferred until no target-tree process is active because `target/release/tool_matrix` is active
 - current known local CI baseline:
@@ -72,5 +70,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 2 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 3/200
+- finish the slice 3 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 4/200
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle
