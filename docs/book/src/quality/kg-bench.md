@@ -141,6 +141,7 @@ The conflicting-role guard adds the ambiguity case: equal valid-like and ready-l
 The no-prior mirror keeps the before side exact too: `XACK can receive the transfer` stays unresolved without learned memory while the local input declaration remains canonical.
 The ready-sink no-prior mirror extends that before-side check to `XACK can sink the transfer`, again preserving the local input declaration while learned memory is absent.
 That ready-sink no-prior mirror now also asserts table-sourced semantic hints stay zero while learned memory is absent.
+Alias-grounded prose stays zero there too, keeping the no-prior ready-sink mirror free of alias recovery.
 The valid-like no-prior mirror does the same for `XREQ can publish the beat`, preserving the local output declaration while learned memory is absent.
 That valid-like no-prior mirror now also asserts table-sourced semantic hints stay zero while learned memory is absent.
 Alias-grounded prose stays zero there too, keeping the no-prior valid-like mirror free of alias recovery.
