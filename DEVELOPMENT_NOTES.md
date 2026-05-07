@@ -7,6 +7,18 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-07 KG fixture for ready-sink phrase prior table exclusion
+- New batch slice 135/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Tightened `crates/specforge/test_data/kg_quality/semantic_ready_sink_prior_guided_phrase_gold/fixture.json`.
+- The fixture now asserts `signal_semantic_hints_from_tables = 0` alongside total and prose semantic-hint metrics.
+- This strengthens the prior-guided ready-sink semantic phrase gold by proving the `XACK can sink the transfer` recovery remains prose-only before role resolution.
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_ready_sink_prior_guided_phrase_gold` passed with the requested fixture.
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` tracked fixtures.
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` refreshed tracked corpus-KB projections for `150` fixtures with `0` failures and no tracked projection diff.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- Broader `bash scripts/run_ci.sh` passed on slice 120 with formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, and mdBook.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-07 KG fixture for semantic phrase prior timing-extraction absence
 - New batch slice 134/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Tightened `crates/specforge/test_data/kg_quality/semantic_prior_guided_phrase_gold/fixture.json`.
