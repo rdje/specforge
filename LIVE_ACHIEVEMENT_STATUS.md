@@ -335,6 +335,7 @@
 - KG benchmark harness now locks actor-taxonomy family-mismatch graph directions: Done
 - KG benchmark harness now locks prior-guided actor-taxonomy graph directions: Done
 - KG benchmark harness now locks negative-knowledge semantic-conflict shape: Done
+- KG benchmark harness now locks negative-knowledge semantic-conflict table semantic-hint exclusion: Done
 - KG benchmark harness now locks negative-knowledge family-mismatch arbitration: Done
 - KG benchmark harness now locks AMBA-generic semantic-modality finding payloads: Done
 - KG benchmark harness now locks no-prior semantic-modality finding payloads: Done
