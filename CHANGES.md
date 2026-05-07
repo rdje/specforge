@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for valid-like phrase prior table exclusion)
+
+### Improved: valid-like phrase prior fixtures exclude table hints
+- Tightened `semantic_valid_prior_guided_phrase_gold` with `signal_semantic_hints_from_tables = 0` at `EvidenceIR`.
+- The fixture now proves the prior-guided `XREQ can publish the beat` recovery stays prose-only rather than using table semantic hints.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_valid_prior_guided_phrase_gold` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for ready-sink phrase prior timing-extraction absence)
 
 ### Improved: ready-sink phrase prior fixtures exclude timing extractions
