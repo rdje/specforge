@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for semantic-modality family-mismatch visual exclusion)
+
+### Improved: modality-prior mismatch fixtures exclude visual-caption hints
+- Tightened `semantic_modality_reliability_protocol_family_mismatch_negative` with `signal_semantic_hints_from_visual_captions = 0` at `EvidenceIR`.
+- The fixture now proves the local AXI `XCTRL` table/prose conflict is not supported by visual-caption evidence while the unrelated APB modality prior stays silent.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_modality_reliability_protocol_family_mismatch_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for semantic-modality family-mismatch alias exclusion)
 
 ### Improved: modality-prior mismatch fixtures exclude alias-grounded prose hints
