@@ -810,6 +810,7 @@
     - a gold fixture proving duplicate VLM state-machine state labels merge by state name and preserve a later `is_initial: true` marker instead of losing initial-state truth by first-observation order
     - a negative fixture proving VLM state-machine extractions with multiple initial markers keep their graph visible but emit semantic and intent initial-cardinality validation warnings
     - a negative fixture proving VLM state-machine extractions with no initial marker keep their graph visible but emit the same semantic and intent initial-cardinality validation warnings
+    - the missing-initial VLM state-machine fixture now asserts exact warning-level validation payloads and related `IDLE`/`BUSY` ids at both canonical stages
     - a gold fixture proving collective non-reset control polarity prose recovers multiple active-low control signals without duplicating canonical signal records
     - a gold fixture proving mixed clause-local non-reset control polarity prose recovers active-low and active-high controls without duplicating canonical signal records
     - a negative fixture proving detached mixed-polarity prose stays unresolved instead of borrowing an implicit active-level subject

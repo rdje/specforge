@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for missing-initial state-machine finding payloads)
+- Tightened `vlm_state_machine_missing_initial_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts exact semantic and intent validation warning payloads for a VLM state-machine extraction with no canonical initial state.
+- This locks the missing-initial state-machine guard as inspectable graph preservation plus warning-level validation details tied to `IDLE` and `BUSY`.
+
 ## Session update (2026-05-07 KG fixture for visual-motif corroboration finding payload)
 - Tightened `visual_motif_prior_guided_diagram_classification_gold` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts the exact evidence-stage corroboration guidance payload for prior-classified visual evidence, including related id `visual_0001`.

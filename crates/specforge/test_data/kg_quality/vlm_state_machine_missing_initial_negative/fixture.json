@@ -48,6 +48,15 @@
         "finding_ids_include": [
           "semantic_state_machine_initial_cardinality"
         ],
+        "findings_include": [
+          {
+            "finding_id": "semantic_state_machine_initial_cardinality",
+            "severity": "warning",
+            "category": "state_machine",
+            "summary_contains": "expected exactly one when regular states are present",
+            "related_ids_include": ["IDLE", "BUSY"]
+          }
+        ],
         "metric_values": {
           "regular_states": "2",
           "initial_regular_states": "0",
@@ -57,6 +66,15 @@
       "intent": {
         "finding_ids_include": [
           "intent_state_machine_initial_cardinality"
+        ],
+        "findings_include": [
+          {
+            "finding_id": "intent_state_machine_initial_cardinality",
+            "severity": "warning",
+            "category": "state_machine",
+            "summary_contains": "expected exactly one when regular states are present",
+            "related_ids_include": ["IDLE", "BUSY"]
+          }
         ],
         "metric_values": {
           "regular_states": "2",

@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for missing-initial state-machine finding payloads)
+
+### Improved: missing initial-state warnings lock validation details
+- Tightened `vlm_state_machine_missing_initial_negative` with exact `findings_include` payloads for semantic and intent initial-cardinality warnings.
+- The fixture now proves a VLM state-machine extraction with no canonical initial state keeps `IDLE`/`BUSY` graph facts inspectable while both validation stages report warning-level `state_machine` findings tied to those states.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench vlm_state_machine_missing_initial_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for visual-motif corroboration finding payload)
 
 ### Improved: prior-classified visual motifs lock corroboration guidance details
