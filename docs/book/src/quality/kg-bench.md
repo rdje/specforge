@@ -209,6 +209,7 @@ That assertion fixture also checks zero VLM timing-annotation semantic hints, so
 It now locks the total semantic-hint count at zero too, closing off alternate hint sources for the same reset evidence.
 The companion `vlm_timing_active_low_deassertion_equivalence_gold` fixture proves the reset-release mirror case: `deasserted` and `HIGH` are equivalent for the same active-low reset.
 That deassertion fixture now carries the same zero-hint guard, so reset-release prose stays temporal/polarity evidence only.
+It also locks the total semantic-hint count at zero, matching the assertion fixture's no-role-hint boundary.
 That matters because `ASSERTED` and `DEASSERTED` are polarity-relative, not synonyms for fixed logic levels.
 
 Timing-annotation negative fixtures also protect against visual overreach.

@@ -345,6 +345,7 @@
 - KG benchmark harness now locks active-low VLM assertion semantic-hint exclusion: Done
 - KG benchmark harness now locks active-low VLM deassertion semantic-hint exclusion: Done
 - KG benchmark harness now locks active-low VLM assertion total semantic-hint exclusion: Done
+- KG benchmark harness now locks active-low VLM deassertion total semantic-hint exclusion: Done
 - KG benchmark harness now locks prior-guided ready-like sink phrase recovery: Done
 - KG benchmark harness now locks prior-guided valid-like semantic phrase recovery: Done
 - KG benchmark harness now includes AXI write-response timing coverage: Done

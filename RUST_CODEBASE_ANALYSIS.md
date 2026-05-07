@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for active-low VLM deassertion total hint exclusion)
+- Tightened `vlm_timing_active_low_deassertion_equivalence_gold` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts total evidence-stage `signal_semantic_hints = 0` in addition to the VLM timing-annotation source split.
+- This locks active-low reset-release timing evidence as semantic-role silent across all evidence hint sources.
+
 ## Session update (2026-05-07 KG fixture for active-low VLM assertion total hint exclusion)
 - Tightened `vlm_timing_active_low_assertion_equivalence_gold` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts total evidence-stage `signal_semantic_hints = 0` in addition to the VLM timing-annotation source split.
