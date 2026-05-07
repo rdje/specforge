@@ -22,22 +22,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `3c90513aa5854ad8fa287f9e606f975f4156e298`
-- latest_commit_brief_message: `test(kg): lock cycle-qualified VLM prose exclusion`
-- note: this is the pre-slice-197 baseline for the current `BWFSC=200` batch; slices 1-196/200 are committed and push remains deferred
+- latest_commit_hash: `cd6b76934e966b2d6512116791e6e972ba88fdb3`
+- latest_commit_brief_message: `test(kg): lock cycle-qualified VLM alias exclusion`
+- note: this is the pre-slice-198 baseline for the current `BWFSC=200` batch; slices 1-197/200 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `cd6b769` test(kg): lock cycle-qualified VLM alias exclusion
 - `3c90513` test(kg): lock cycle-qualified VLM prose exclusion
 - `c8412f7` test(kg): lock cycle-qualified VLM table exclusion
 - `1001817` test(kg): lock VLM timing deassert visual exclusion
 - `381b7ec` test(kg): lock VLM timing deassert alias exclusion
 - `658feee` test(kg): lock VLM timing deassert prose exclusion
-- `db4ca7a` test(kg): lock VLM timing deassert table exclusion
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 197 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=200` slice 198 and push is deferred
 - files in flight:
   - `crates/specforge/test_data/kg_quality/vlm_timing_cycle_qualified_signal_value_annotation_negative/fixture.json`
   - live docs and mdBook files synced for the slice
@@ -52,13 +52,13 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `196`
-  - slice 197/200 tightens cycle-qualified VLM timing value-label alias-grounded prose semantic-hint exclusion metrics
+  - completed_count before this commit: `197`
+  - slice 198/200 tightens cycle-qualified VLM timing value-label visual-caption semantic-hint exclusion metrics
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks cycle-qualified VLM timing value-label alias-grounded prose semantic-hint exclusion KG coverage as `Done`
+  - live-status tracker now marks cycle-qualified VLM timing value-label visual-caption semantic-hint exclusion KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 197 before commit
+  - implementation and live-doc sync are complete for slice 198 before commit
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench vlm_timing_cycle_qualified_signal_value_annotation_negative` passed with the requested fixture
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` fixtures
   - `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed with `150` fixtures projected and `0` failures
@@ -75,5 +75,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 197 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 198/200
+- finish the slice 198 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 199/200
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle
