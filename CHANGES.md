@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for negative-knowledge family-mismatch arbitration)
+
+### Improved: unrelated caution priors keep semantic arbitration non-decisive
+- Tightened `negative_knowledge_prior_protocol_family_mismatch_negative` with explicit `semantic_arbitration_signal_names_include` and `decisive_semantic_arbitration_signal_names_exclude` expectations for `XCTRL`.
+- The fixture now proves an APB-scoped negative-knowledge prior remains silent while the local AXI semantic conflict still enters arbitration but does not resolve decisively.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench negative_knowledge_prior_protocol_family_mismatch_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for negative-knowledge semantic conflict shape)
 
 ### Improved: caution memory preserves exact semantic-conflict observations

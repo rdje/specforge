@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for negative-knowledge family-mismatch arbitration)
+- Tightened `negative_knowledge_prior_protocol_family_mismatch_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts `XCTRL` enters semantic arbitration but remains explicitly non-decisive at both canonical stages when only an unrelated APB-scoped negative-knowledge prior is staged.
+- This locks the negative-knowledge protocol-family mismatch path as prior-silent and arbitration-preserving without changing production prior lookup behavior.
+
 ## Session update (2026-05-07 KG fixture for negative-knowledge semantic conflict shape)
 - Tightened `negative_knowledge_prior_guided_semantic_conflict_caution_gold` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts exact `XCTRL` semantic-conflict observations at both canonical stages: visual-caption valid-like evidence remains paired with VLM timing-annotation ready-like evidence.
