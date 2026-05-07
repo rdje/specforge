@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` explicit-module width conflict renderable block)
+
+### Added: explicit-module actor-port width conflicts cannot leak output
+- Tightened `standalone_explicit_module_blocks_conflicting_control_input_actor_port_widths` so graph-backed actor-port width conflicts in standalone explicit modules leave the module without a renderable module and the aggregate `.fsm` artifact without a renderable source document.
+- This locks explicit-module width conflicts against stale `(+size ...)` output until the conflicting actor-port width evidence is resolved.
+- Synced the live tracker, roadmap, and mdBook with the explicit-module width-conflict renderable-block guarantee.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge standalone_explicit_module_blocks_conflicting_control_input_actor_port_widths` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148/148` fixtures)
+- `bash scripts/run_ci.sh` -> passed (`614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation)
+- `cargo sweep --time 1` -> deferred because `target/release/tool_matrix` is active
+
 ## 2026-05-06 (`.fsm` undeclared target renderable block)
 
 ### Added: undeclared transition targets cannot leak aggregate FSM output

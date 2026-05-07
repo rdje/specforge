@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` explicit-module width conflict renderable block)
+- Tightened `standalone_explicit_module_blocks_conflicting_control_input_actor_port_widths` in `crates/specforge/src/ir/adapters.rs`.
+- The test now proves graph-backed actor-port width conflicts in standalone explicit modules leave the module without a renderable module and leave the aggregate `.fsm` artifact without a renderable source document.
+- This locks explicit-module width conflicts against stale renderable module output; focused adapter coverage, full adapter coverage, fmt, docs CI, KG bench, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 `.fsm` undeclared target renderable block)
 - Tightened `keeps_structured_fsm_blocked_when_transition_target_is_undeclared` in `crates/specforge/src/ir/adapters.rs`.
 - The test now proves structured FSMs with a transition targeting an undeclared state leave the aggregate `.fsm` artifact without a renderable source document.

@@ -150,6 +150,7 @@ Structured-FSM flat/graph direction disagreements keep interface and actor-port 
 Explicit-module flat/graph direction disagreements retain module interface and actor-port provenance plus the same signal-inventory repair guidance.
 Explicit-module control-read direction conflicts keep the actor-port/control-read provenance categories visible alongside signal-inventory repair guidance.
 Explicit-module actor-port width conflicts keep both graph-backed width support IDs plus signal-inventory repair guidance while blocked.
+They also keep the module unresolved with no renderable module or aggregate source document, so stale `(+size ...)` output cannot leak before the conflicting actor-port width evidence is resolved.
 Standalone sequential system-contract direction conflicts keep clock/reset provenance and system-surface repair guidance while blocked.
 Standalone sequential system-contract width conflicts keep clock/reset provenance and the same system-surface repair guidance while blocked.
 Standalone sequential system-contract flat/graph direction disagreements keep actor-port support and system-surface repair guidance while blocked.
