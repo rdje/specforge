@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for cross-modality grounding VLM exclusion)
+- Tightened `cross_modality_semantic_grounding_gold` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts evidence-stage `signal_semantic_hints_from_vlm_timing_annotations = 0` alongside the aggregate and other source semantic-hint metrics.
+- This locks decisive `XREQ` cross-modality semantic grounding as free of VLM timing-note semantic-hint participation.
+
 ## Session update (2026-05-07 KG fixture for cross-modality grounding alias exclusion)
 - Tightened `cross_modality_semantic_grounding_gold` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts evidence-stage `signal_semantic_hints_from_alias_grounded_prose = 0` alongside the aggregate and direct source semantic-hint metrics.

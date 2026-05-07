@@ -153,6 +153,7 @@ It also locks one table-sourced semantic hint, so the aggregate count cannot dri
 The same gold fixture locks one visual-caption semantic hint as the other half of that cross-modality evidence.
 It excludes ordinary prose hints too, preserving the fixture as a table plus visual-caption proof rather than a hidden text-only shortcut.
 Alias-grounded prose hints are excluded as well, so alias recovery cannot silently satisfy the positive multimodal case.
+VLM timing-annotation hints are excluded too, keeping the fixture's visual side caption-grounded rather than timing-note-grounded.
 The VLM timing semantic-grounding gold also checks `timing_diagram_extractions`, so ready-like `XACK` recovery from a timing annotation must remain tied to an evidence-stage timing diagram extraction.
 
 Fixtures can assert canonical interface-signal conflicts directly as well.
