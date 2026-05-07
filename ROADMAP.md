@@ -812,6 +812,7 @@
     - the cycle-qualified signal-value VLM timing fixture now also asserts total semantic hints remain zero, proving cycle-scoped labels cannot invent semantic roles through any evidence path
     - a negative fixture proving VLM timing-diagram waveform motion states like `rising`, `stable`, `falling`, `UNCHANGED`, `RISING_EDGE`, `LOW_TO_HIGH`, `POS_EDGE`, `risingedge`, and `LOW2HIGH` do not become symbolic signal values while concrete samples like `HIGH` still survive
     - a negative fixture proving motion-only VLM timing-diagram annotations like `XREQ rises, remains stable, then falls` do not become timing constraints while concrete document-grounded signal samples still survive as temporal evidence
+    - the motion-only VLM timing annotation fixture now also asserts total semantic hints remain zero, proving motion prose cannot invent semantic roles through any evidence path
     - a negative fixture proving VLM state-machine prose labels like `IDLE state` and `ACCESS phase` do not become canonical FSM state names or transition endpoints while clean identifier labels and transitions still survive
     - the label-noise VLM state-machine fixture now asserts the accepted `IDLE` initial marker survives prose/OCR label filtering and `BUSY` remains non-initial at both canonical stages
     - a negative fixture proving VLM state-machine transition endpoints must reference states declared in the same VLM observation, so identifier-shaped `DONE` / `RESET` endpoint guesses do not become canonical transition facts

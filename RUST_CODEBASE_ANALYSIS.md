@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for motion-only VLM timing total hint exclusion)
+- Tightened `vlm_timing_motion_annotation_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts total evidence-stage `signal_semantic_hints = 0` in addition to the VLM timing-annotation source split.
+- This locks motion-only timing annotations as semantic-role silent across all evidence hint sources.
+
 ## Session update (2026-05-07 KG fixture for cycle-qualified VLM timing total hint exclusion)
 - Tightened `vlm_timing_cycle_qualified_signal_value_annotation_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts total evidence-stage `signal_semantic_hints = 0` in addition to the VLM timing-annotation source split.
