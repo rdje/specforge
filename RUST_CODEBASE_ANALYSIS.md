@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for conflicting semantic phrase signal shape)
+- Tightened `semantic_prior_conflicting_roles_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts exact local `XCTRL` input direction at both canonical stages while conflicting valid-like and ready-like semantic phrase priors stay silent.
+- This locks conflicting-prior fail-closed behavior as exact local signal-shape preservation without changing production prior lookup or arbitration behavior.
+
 ## Session update (2026-05-07 KG fixture for broad semantic phrase signal shape)
 - Tightened `semantic_prior_broad_phrase_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts exact local `XFLOW` output direction at both canonical stages while the one-token broad semantic phrase prior stays silent.

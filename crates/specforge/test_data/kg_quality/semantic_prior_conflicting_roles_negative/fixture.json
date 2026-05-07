@@ -30,12 +30,24 @@
   "expectations": {
     "semantic": {
       "signal_names_include": ["XCTRL"],
+      "signal_directions_include": [
+        {
+          "signal_name": "XCTRL",
+          "direction": "input"
+        }
+      ],
       "resolved_semantic_role_signal_names_exclude": ["XCTRL"],
       "semantic_consensus_signal_names_exclude": ["XCTRL"],
       "semantic_candidate_signal_names_exclude": ["XCTRL"]
     },
     "intent": {
       "signal_names_include": ["XCTRL"],
+      "signal_directions_include": [
+        {
+          "signal_name": "XCTRL",
+          "direction": "input"
+        }
+      ],
       "resolved_semantic_role_signal_names_exclude": ["XCTRL"],
       "semantic_consensus_signal_names_exclude": ["XCTRL"],
       "semantic_candidate_signal_names_exclude": ["XCTRL"]
