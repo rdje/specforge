@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for table-shape family-mismatch inventory guard)
+
+### Improved: unrelated table-shape priors cannot mint table signals
+- Tightened `table_shape_prior_protocol_family_mismatch_negative` with explicit `signal_names_exclude` and `graph_direction_signal_names_exclude` expectations at `SemanticIR` and `IntentIR`.
+- The fixture now proves an unrelated APB table-shape prior cannot classify an AXI-local unknown `Name | Direction | Width` table strongly enough to mint `XREQ` or `XACK` as canonical interface signals or graph-backed directions.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench table_shape_prior_protocol_family_mismatch_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for temporal-prior family-mismatch rule shape)
 
 ### Improved: cross-family temporal priors keep exact local shape

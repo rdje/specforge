@@ -93,6 +93,14 @@
     ]
   },
   "expectations": {
+    "semantic": {
+      "signal_names_exclude": ["XREQ", "XACK"],
+      "graph_direction_signal_names_exclude": ["XREQ", "XACK"]
+    },
+    "intent": {
+      "signal_names_exclude": ["XREQ", "XACK"],
+      "graph_direction_signal_names_exclude": ["XREQ", "XACK"]
+    },
     "validation": {
       "semantic": {
         "metric_values": {

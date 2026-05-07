@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for table-shape family-mismatch inventory guard)
+- Tightened `table_shape_prior_protocol_family_mismatch_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts that `XREQ` and `XACK` stay out of canonical signal inventory and graph-backed direction coverage when an AXI-local unknown table is paired with an unrelated APB table-shape prior.
+- This is fixture-level false-positive hardening with no production code change; it strengthens the existing direction-count guard into explicit no-inventory/no-graph expectations.
+
 ## Session update (2026-05-07 KG fixture for temporal-prior family-mismatch rule shape)
 - Tightened `temporal_prior_protocol_family_mismatch_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts exact `temporal_rules_include` shape for the AXI-local `XREADY` family-mismatch guard, including local clock grounding, rising edge, asserted-value predicate, and supporting statement id while the unrelated APB prior still cannot add a cycle window.

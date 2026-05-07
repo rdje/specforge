@@ -37,6 +37,7 @@ Without fixture coverage, the pipeline can drift in subtle ways:
 Fixtures can assert canonical signal inventories directly.
 `signal_names_include` checks that required interface signals survive, while `signal_names_exclude` checks that tempting non-signals stay out.
 That second field is especially useful for protocol-PDF scope tests: uppercase engineering words such as `PDF`, `RTL`, `VIP`, `PLL`, `DFT`, or `SoC` may be important document context, but they are not automatically interface signals.
+The table-shape prior family-mismatch fixture uses the same exclusion surface for table rows: an AXI-local unknown table with `XREQ` and `XACK` rows must stay inert when the only matching `Name | Direction | Width` prior is APB-scoped, so unrelated table-shape memory cannot mint canonical signals or graph directions.
 
 The `signal_table_inventory_authority_negative` fixture locks the positive side of that same boundary.
 It provides real signals only through a structured `Signal | Direction | Width | Description` table, then surrounds that table with uppercase implementation vocabulary in prose.

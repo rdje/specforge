@@ -289,6 +289,7 @@
 - KG benchmark harness now locks temporal-prior family-mismatch exact rule shape: Done
 - KG benchmark harness now locks visual-motif prior protocol-family scoping: Done
 - KG benchmark harness now locks table-shape prior protocol-family scoping: Done
+- KG benchmark harness now locks table-shape family-mismatch no-inventory control: Done
 - KG benchmark harness now locks semantic modality-prior AMBA-generic fallback: Done
 - KG benchmark harness now locks semantic modality-prior protocol-family scoping: Done
 - KG benchmark harness now locks semantic modality-prior source-kind scoping: Done
