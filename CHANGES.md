@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for weak modality-prior timing-extraction absence)
+
+### Improved: weak modality-prior fixtures exclude timing extractions
+- Tightened `semantic_modality_reliability_weak_prior_negative` with `timing_diagram_extractions = 0` at `EvidenceIR`.
+- The fixture now proves the local `XCTRL` table/prose conflict has no timing-diagram extraction support while underpowered modality memory stays non-decisive.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_modality_reliability_weak_prior_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for weak modality-prior VLM exclusion)
 
 ### Improved: weak modality-prior fixtures exclude VLM timing hints
