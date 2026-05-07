@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for conflicting semantic phrase visual exclusion)
+- Tightened `semantic_prior_conflicting_roles_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts evidence-stage `signal_semantic_hints_from_visual_captions = 0` alongside aggregate, table, prose, and alias-grounded prose hint metrics.
+- This locks the equal valid-like and ready-like learned-prior guard as free of visual-caption semantic hints for the local `XCTRL` phrase.
+
 ## Session update (2026-05-07 KG fixture for conflicting semantic phrase alias exclusion)
 - Tightened `semantic_prior_conflicting_roles_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts evidence-stage `signal_semantic_hints_from_alias_grounded_prose = 0` alongside aggregate, table, and prose hint metrics.
