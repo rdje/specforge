@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` missing system-contract renderable block
+- New batch slice 194/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `keeps_standalone_sequential_dt_blocked_without_system_contract` now asserts missing standalone sequential system contracts leave no renderable module and no aggregate `.fsm` source document.
+- This locks absent clock/reset system surfaces against stale DT-root output while DT candidate provenance and system-surface repair guidance remain visible.
+- Focused missing system-contract coverage, the adapter suite, fmt, docs CI, KG bench, and full CI passed; user-requested `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is active.
+
 ## 2026-05-06 `.fsm` system-contract width renderable block
 - New batch slice 193/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `standalone_sequential_dt_blocks_conflicting_system_contract_signal_width` now asserts standalone sequential clock/reset width conflicts leave no renderable module and no aggregate `.fsm` source document.

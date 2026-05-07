@@ -166,6 +166,7 @@ They also keep renderable module and aggregate `.fsm` source documents absent, s
 Standalone sequential system-contract flat/graph direction disagreements keep actor-port support and system-surface repair guidance while blocked.
 They also keep renderable module and aggregate `.fsm` source documents absent, so stale DT-root output cannot leak before clock/reset direction evidence agrees.
 Missing standalone sequential system contracts keep DT candidate provenance plus system-surface repair guidance while blocked.
+They also keep renderable module and aggregate `.fsm` source documents absent, so stale DT-root output cannot leak while the clock/reset system surface is absent.
 Reset-polarity blockers keep system-contract provenance plus the same system-surface repair guidance while blocked.
 
 For renderable `.fsm` top-composition roots, inspect the selected top candidate as well as the emitted target text.

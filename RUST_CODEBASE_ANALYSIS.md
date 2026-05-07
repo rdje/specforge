@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-06 `.fsm` missing system-contract renderable block)
+- Tightened `keeps_standalone_sequential_dt_blocked_without_system_contract` in `crates/specforge/src/ir/adapters.rs`.
+- The test now proves missing standalone sequential system contracts leave no renderable module and no aggregate `.fsm` source document.
+- This locks absent clock/reset system surfaces against stale renderable DT output; focused adapter coverage, full adapter coverage, fmt, docs CI, KG bench, and full CI passed, with `cargo sweep --time 1` deferred until no target-tree process is active.
+
 ## Session update (2026-05-06 `.fsm` system-contract width renderable block)
 - Tightened `standalone_sequential_dt_blocks_conflicting_system_contract_signal_width` in `crates/specforge/src/ir/adapters.rs`.
 - The test now proves standalone sequential clock/reset width conflicts leave no renderable module and no aggregate `.fsm` source document.

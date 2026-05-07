@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` missing system-contract renderable block)
+
+### Added: missing system contracts cannot leak output
+- Tightened `keeps_standalone_sequential_dt_blocked_without_system_contract` so missing standalone sequential system contracts leave no renderable module and no aggregate `.fsm` source document.
+- This locks absent clock/reset system surfaces against stale DT-root output while preserving DT candidate provenance and system-surface repair guidance.
+- Synced the live tracker, roadmap, and mdBook with the missing system-contract renderable-block guarantee.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge keeps_standalone_sequential_dt_blocked_without_system_contract` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148/148` fixtures)
+- `bash scripts/run_ci.sh` -> passed (`614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation)
+- `cargo sweep --time 1` -> deferred because `target/release/tool_matrix` is active
+
 ## 2026-05-06 (`.fsm` system-contract width renderable block)
 
 ### Added: system-contract width conflicts cannot leak output
