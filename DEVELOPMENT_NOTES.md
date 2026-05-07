@@ -7,6 +7,12 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-06 `.fsm` top-link width mismatch renderable block
+- New batch slice 176/200 updates `crates/specforge/src/ir/adapters.rs`.
+- `top_composition_blocks_width_mismatched_top_link_guidance` now asserts first-slice top links with incompatible endpoint widths leave the selected top without a renderable top root and the aggregate `.fsm` artifact without a renderable source document.
+- This locks width-mismatched top-boundary links against stale `?top` output before top-link endpoints are made width-compatible.
+- Focused width-mismatched top-link coverage, the adapter suite, fmt, docs CI, KG bench, and full CI passed; user-requested `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is active.
+
 ## 2026-05-06 `.fsm` top actor direction renderable block
 - New batch slice 175/200 updates `crates/specforge/src/ir/adapters.rs`.
 - `top_composition_blocks_conflicting_top_actor_port_direction` now asserts graph-backed top actor-port direction conflicts leave the selected top without a renderable top root and the aggregate `.fsm` artifact without a renderable source document.

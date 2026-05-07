@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-06 (`.fsm` top-link width mismatch renderable block)
+
+### Added: top-link width mismatches cannot leak renderable top output
+- Tightened `top_composition_blocks_width_mismatched_top_link_guidance` so first-slice top links with incompatible endpoint widths leave the selected top without a renderable top root and the aggregate `.fsm` artifact without a renderable source document.
+- This locks width-mismatched top-boundary links against stale `?top` output until top-link endpoints are made width-compatible.
+- Synced the live tracker, roadmap, and mdBook with the top-link width-mismatch renderable-block guarantee.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_width_mismatched_top_link_guidance` -> passed (`1` test)
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`92` tests)
+- `cargo fmt --manifest-path Cargo.toml -- --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`148/148` fixtures)
+- `bash scripts/run_ci.sh` -> passed (`614` Rust tests plus warning-deny Clippy/rustdoc and mdBook validation)
+- `cargo sweep --time 1` -> deferred because `target/release/tool_matrix` is active
+
 ## 2026-05-06 (`.fsm` top actor direction renderable block)
 
 ### Added: top actor-port direction conflicts cannot leak renderable top output
