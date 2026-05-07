@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for modality family-mismatch finding payloads)
+
+### Improved: unrelated modality priors preserve actionable arbitration debt
+- Tightened `semantic_modality_reliability_protocol_family_mismatch_negative` with exact validation `findings_include` payloads for non-decisive arbitration and semantic-conflict rescan guidance at `SemanticIR` and `IntentIR`.
+- The fixture now proves an APB-scoped modality-reliability prior remains silent for an AXI-local `XCTRL` conflict while the validator still surfaces targeted `XCTRL` and `semantic_conflict_0001` follow-up details.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench semantic_modality_reliability_protocol_family_mismatch_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for no-prior modality finding payloads)
 
 ### Improved: absent modality memory preserves actionable arbitration debt
