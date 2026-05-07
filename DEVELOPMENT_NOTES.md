@@ -7,6 +7,17 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-07 KG fixture for prior-guided table-shape signal provenance
+- New batch slice 41/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Tightened `crates/specforge/test_data/kg_quality/table_shape_prior_guided_signal_table_gold/fixture.json`.
+- The fixture now asserts `XREQ`/`XACK` table-signal declaration provenance from `table_0001` at `EvidenceIR` and table-support carry-through at `SemanticIR` and `IntentIR` when a matching learned table-shape prior classifies the unknown table.
+- This strengthens the prior-guided table-shape signal-table positive path from metric/direction checks to exact provenance and canonical table support.
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench table_shape_prior_guided_signal_table_gold` passed with the requested fixture.
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` tracked fixtures.
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` refreshed tracked corpus-KB projections for `150` fixtures with `0` failures and no tracked projection diff.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-07 KG fixture for no-prior table-shape signal inventory
 - New batch slice 40/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Tightened `crates/specforge/test_data/kg_quality/table_shape_prior_guided_signal_table_without_prior_negative/fixture.json`.

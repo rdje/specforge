@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-07 (KG fixture for prior-guided table-shape signal provenance)
+
+### Improved: learned table-shape signal recovery keeps table provenance exact
+- Tightened `table_shape_prior_guided_signal_table_gold` with exact `EvidenceIR` table-signal provenance and `signal_supporting_table_ids_include` expectations at `SemanticIR` and `IntentIR`.
+- The fixture now proves a matching learned `Name | Direction | Width` table-shape prior recovers `XREQ`/`XACK` signal declarations from `table_0001` and preserves that table support through canonical IR.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench table_shape_prior_guided_signal_table_gold` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-07 (KG fixture for no-prior table-shape signal inventory)
 
 ### Improved: unknown signal tables stay inert without learned shape memory

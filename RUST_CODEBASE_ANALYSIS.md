@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-07 KG fixture for prior-guided table-shape signal provenance)
+- Tightened `table_shape_prior_guided_signal_table_gold` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts exact `XREQ`/`XACK` table-signal declaration provenance from `table_0001` at `EvidenceIR` and canonical table-support carry-through at both later stages.
+- This locks the prior-guided table-shape signal-table path as exact provenance and support preservation without changing production prior lookup behavior.
+
 ## Session update (2026-05-07 KG fixture for no-prior table-shape signal inventory)
 - Tightened `table_shape_prior_guided_signal_table_without_prior_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts zero table-signal declaration provenance at `EvidenceIR` and excludes `XREQ`/`XACK` from canonical signal inventory at both later stages when no learned table-shape prior is staged.
