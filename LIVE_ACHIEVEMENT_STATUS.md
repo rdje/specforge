@@ -367,6 +367,7 @@
 - KG benchmark harness now locks conflicting semantic phrase prior signal shape: Done
 - KG benchmark harness now locks no-prior semantic phrase signal shape: Done
 - KG benchmark harness now locks no-prior ready-sink semantic phrase signal shape: Done
+- KG benchmark harness now locks no-prior ready-sink semantic phrase table semantic-hint exclusion: Done
 - KG benchmark harness now locks no-prior valid-like semantic phrase signal shape: Done
 - KG benchmark harness now locks no-prior valid-like semantic phrase table semantic-hint exclusion: Done
 - KG benchmark harness now locks no-prior valid-like semantic phrase alias-grounded prose semantic-hint exclusion: Done
