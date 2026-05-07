@@ -148,6 +148,7 @@
 - KG benchmark harness now locks no-prior semantic phrase timing-extraction absence: Done
 - KG benchmark harness now locks semantic phrase family-mismatch table-sourced semantic-hint exclusion: Done
 - KG benchmark harness now locks semantic phrase family-mismatch alias-grounded prose semantic-hint exclusion: Done
+- KG benchmark harness now locks semantic phrase family-mismatch visual-caption semantic-hint exclusion: Done
 - `.fsm` duplicate top-direction blockers now preserve composition topology residual decisions: Done
 - `.fsm` duplicate top-direction residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` duplicate top-width blockers now preserve composition topology residual decisions: Done

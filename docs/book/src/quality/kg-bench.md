@@ -136,6 +136,7 @@ Timing-diagram extractions stay zero too, keeping the direct phrase-prior proof 
 The protocol-family mismatch semantic phrase fixture complements that positive case by requiring the local `XREQ` output declaration to survive exactly while an unrelated APB phrase prior stays silent.
 That family-mismatch guard now also asserts table-sourced semantic hints stay zero while the APB prior remains silent.
 Alias-grounded prose stays zero there too, keeping alias recovery out of the family-mismatch guard.
+Visual-caption hints stay zero as well, keeping the family-mismatch guard non-visual.
 The source-kind mismatch companion applies the same signal-shape discipline to `XSTAGE`: a visual-caption-only phrase prior stays silent for prose evidence while the local output declaration remains canonical.
 The exact-phrase mismatch companion does the same for `XFLOW`: an unmatched learned phrase prior stays silent while the local output declaration remains canonical.
 The broad-phrase guard adds the one-token case: a generic `transfer` prior stays inert while the same `XFLOW` declaration remains canonical.
