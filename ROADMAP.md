@@ -882,6 +882,7 @@
     - a representative AXI read-data response stability fixture proving subordinate-owned `RRESP` remains graph-grounded and actor-owned when its stability is guarded by `RVALID` / `RREADY` completion
     - the AXI read-data response fixture now asserts prose semantic hints stay zero while request/accept role hints remain table-sourced
     - the AXI read-data response fixture now asserts alias-grounded prose semantic hints stay zero while request/accept role hints remain table-sourced
+    - the AXI read-data response fixture now asserts visual-caption semantic hints stay zero while request/accept role hints remain table-sourced
     - a representative AXI read-data last stability fixture proving subordinate-owned `RLAST` remains graph-grounded and actor-owned when its stability is guarded by `RVALID` / `RREADY` completion
     - the AXI read-data last stability fixture now asserts prose semantic hints stay zero while `RLAST` recovers through table-sourced semantic hints
     - the AXI read-data last stability fixture now asserts alias-grounded prose semantic hints stay zero while `RLAST` remains table-sourced
