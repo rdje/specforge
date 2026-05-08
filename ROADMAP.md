@@ -807,6 +807,7 @@
     - the AXI read-address sideband stability fixture now asserts VLM timing-annotation semantic hints stay zero while `ARSIZE` and `ARBURST` remain table-sourced
     - a representative AXI read-data timing gold fixture proving the same width-only plus prose actor-relation path works for `RVALID` / `RREADY` / `RDATA` / `RRESP`, including next-cycle read-data valid assertion and handshake-stable read-data payload semantics
     - a representative AXI read-data ID stability fixture proving subordinate-owned `RID` remains graph-grounded and actor-owned when its stability is guarded by `RVALID` / `RREADY` completion
+    - the AXI read-data ID stability fixture now asserts prose semantic hints stay zero while `RID` recovers through table-sourced semantic hints
     - a representative AXI read-data response stability fixture proving subordinate-owned `RRESP` remains graph-grounded and actor-owned when its stability is guarded by `RVALID` / `RREADY` completion
     - a representative AXI read-data last stability fixture proving subordinate-owned `RLAST` remains graph-grounded and actor-owned when its stability is guarded by `RVALID` / `RREADY` completion
     - a representative AXI data USER sideband stability fixture proving Manager-owned `WUSER` and Subordinate-owned `RUSER` stay actor-grounded under their matching data-channel handshakes

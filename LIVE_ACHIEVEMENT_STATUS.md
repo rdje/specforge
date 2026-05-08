@@ -564,6 +564,7 @@
 - KG benchmark harness now includes AXI read-address control sideband stability coverage: Done
 - KG benchmark harness now includes AXI read-data timing coverage: Done
 - KG benchmark harness now includes AXI read-data ID stability coverage: Done
+- KG benchmark harness now locks AXI read-data ID prose semantic-hint exclusion: Done
 - KG benchmark harness now includes AXI read-data response stability coverage: Done
 - KG benchmark harness now includes AXI write-data timing coverage: Done
 - KG benchmark harness now includes AXI sideband stability coverage: Done
