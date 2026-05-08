@@ -23,22 +23,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `70d5f3644f35bc5a3483ec5bb6aa9c393eb5e298`
-- latest_commit_brief_message: `test(adapter): keep multi-child confidence`
-- note: this is the pre-slice-126 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
+- latest_commit_hash: `954f951e0ee37113d47383da3e5ecf0bee0ff9d0`
+- latest_commit_brief_message: `test(adapter): keep undeclared target confidence`
+- note: this is the pre-slice-127 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
 
 ## Recent commit chain (last 6)
+- `954f951` test(adapter): keep undeclared target confidence
 - `70d5f36` test(adapter): keep multi-child confidence
 - `21bbc25` test(adapter): keep duplicate child confidence
 - `18287f7` test(adapter): keep top-link endpoint metadata
 - `bc93bb1` test(adapter): keep binary enum width casts signal-free
 - `6067294` test(adapter): keep unary enum width casts signal-free
-- `243a5a1` test(adapter): keep enum symbol width casts signal-free
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 126 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
+- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 127 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
 - files in flight:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
@@ -58,15 +58,15 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `125`
-  - slice 126/200 extends the undeclared top-link target blocker to prove the declared top port, producer child, and blocked top link retain high automation confidence alongside support IDs while emission stays blocked
+  - completed_count before this commit: `126`
+  - slice 127/200 extends the undeclared top-link source blocker to prove the declared top port, consumer child, and blocked top link retain high automation confidence alongside support IDs while emission stays blocked
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks undeclared top-link target retained-record confidence coverage as `Done`
+  - live-status tracker now marks undeclared top-link source retained-record confidence coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 126 before commit
+  - implementation and live-doc sync are complete for slice 127 before commit
   - `cargo fmt --all` applied rustfmt layout
-  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_link_to_undeclared_top_target_guidance` passed
+  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_link_from_undeclared_top_source_guidance` passed
   - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests
   - `cargo fmt --all --check` passed
   - `bash scripts/run_docs_ci.sh` passed after the final live-book sync
@@ -95,9 +95,9 @@
   - broader `bash scripts/run_ci.sh` passed on slice 30 with formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, and mdBook
   - user-requested `cargo sweep --time 1` is deferred until no target-tree process is active because `target/release/tool_matrix` is active
 - current known local CI baseline:
-  - slice 126 focused adapter test passed
-  - slice 126 adapter suite passed with `142/142` adapter-filtered tests
-  - slice 126 docs CI passed after live-doc sync
+  - slice 127 focused adapter test passed
+  - slice 127 adapter suite passed with `142/142` adapter-filtered tests
+  - slice 127 docs CI passed after live-doc sync
   - slice 3 passed `150/150` tracked KG fixtures
   - slice 3 passed corpus-KB projection for `150` fixtures with `0` failures and no tracked projection diff
   - slice 7 passed `150/150` tracked KG fixtures

@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter undeclared source confidence guard)
+- Extended `top_composition_blocks_link_from_undeclared_top_source_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- The test now locks high automation confidence on the declared top port, consumer child, and blocked top link while composition remains blocked on an undeclared source endpoint.
+- This complements existing support-ID coverage so blocked missing-source diagnostics keep the retained topology records intact.
+
 ## Session update (2026-05-08 adapter undeclared target confidence guard)
 - Extended `top_composition_blocks_link_to_undeclared_top_target_guidance` in `crates/specforge/src/ir/adapters.rs`.
 - The test now locks high automation confidence on the declared top port, producer child, and blocked top link while composition remains blocked on an undeclared target endpoint.
