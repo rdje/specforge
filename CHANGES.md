@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-09 (adapter top-without-child inventory confidence guard)
+
+### Improved: top-without-child blockers preserve selected inventory confidence
+- Extended the top-without-child regression to assert the retained top output port also stays visible in selected signal inventory with support IDs and high automation confidence.
+- The guard keeps top-only composition diagnostics tied to retained top-port inventory while top composition emission stays blocked.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_top_without_child_guidance` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-09 (adapter recovered top-port missing-module confidence guard)
 
 ### Improved: recovered top-port missing-module blockers preserve retained record confidence

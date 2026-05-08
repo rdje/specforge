@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter top-without-child inventory confidence guard)
+- Extended `top_composition_blocks_top_without_child_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- The top-without-child blocker now locks selected signal-inventory support IDs and high automation confidence for the retained top output port.
+- This keeps retained top-only records diagnostic-rich while top composition emission stays blocked until child references exist.
+
 ## Session update (2026-05-09 adapter recovered top-port missing-module confidence guard)
 - Extended `top_composition_preserves_recovered_top_port_direction_when_still_blocked` in `crates/specforge/src/ir/adapters.rs`.
 - The recovered top-port missing-module blocker now locks high automation confidence on the width-only top port, missing child declaration, and topology link.

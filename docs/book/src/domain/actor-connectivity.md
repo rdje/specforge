@@ -257,6 +257,7 @@ Duplicate top-port width blockers keep retained top-port and child confidence vi
 Widthless top-port blockers keep retained top-port and child confidence visible while boundary width evidence is recovered.
 Parametric top-port blockers keep retained top-port and child confidence visible while symbolic boundary widths are resolved.
 Recovered top-port missing-module blockers keep retained top-port, child, and link confidence visible while child modules are declared.
+Top-without-child blockers keep retained top-port inventory confidence visible while child references are added.
 For child outputs recovered only from top-link topology, local module renderability does not report a stale missing-drive blocker; composition validation owns the endpoint diagnostic because the top link may be the only reason that child port is visible.
 When a signal does reach renderable size-entry registration, graph-only direction evidence can emit the port role, but flat-vs-graph disagreement leaves no stale size entry behind.
 The same graph-first rule applies to system-contract clock/reset validation for `.fsm` `(+system ...)` lowering: graph-only input evidence can satisfy the role, while stale flat disagreement blocks.
