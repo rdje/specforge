@@ -22,22 +22,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `316d3458a9da324def5b0fb5c9692596c7be8476`
-- latest_commit_brief_message: `test(kg): lock AXI QoS region VLM exclusion`
-- note: this is the pre-slice-68 baseline for the current `BWFSC=100` batch; slices 1-67/100 are committed and push remains deferred
+- latest_commit_hash: `90ba9895a1fbd00d647717c70d078f3f75734510`
+- latest_commit_brief_message: `test(kg): lock AXI write-data last prose exclusion`
+- note: this is the pre-slice-69 baseline for the current `BWFSC=100` batch; slices 1-68/100 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `90ba989` test(kg): lock AXI write-data last prose exclusion
 - `316d345` test(kg): lock AXI QoS region VLM exclusion
 - `f5627d2` test(kg): lock AXI QoS region visual exclusion
 - `11709a5` test(kg): lock AXI QoS region alias exclusion
 - `e919f82` test(kg): lock AXI QoS region prose exclusion
 - `a4cb63b` test(kg): lock AXI read-address timing VLM exclusion
-- `b55d7c5` test(kg): lock AXI read-address timing visual exclusion
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=100` slice 68 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=100` slice 69 and push is deferred
 - files in flight:
   - `crates/specforge/test_data/kg_quality/axi_write_data_last_stability_gold/fixture.json`
   - live docs and mdBook files synced for the slice
@@ -52,13 +52,13 @@
 ## Current batch status
 - objective:
   - active `BWFSC=100` batch is in progress
-  - completed_count before this commit: `67`
-  - slice 68/100 tightens AXI write-data last prose semantic-hint exclusion metrics for positive table-backed source-split hardening
+  - completed_count before this commit: `68`
+  - slice 69/100 tightens AXI write-data last alias-grounded prose semantic-hint exclusion metrics for positive table-backed source-split hardening
   - push is deferred until all `100` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks AXI write-data last prose semantic-hint exclusion KG coverage as `Done`
+  - live-status tracker now marks AXI write-data last alias-grounded prose semantic-hint exclusion KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 68 before commit
+  - implementation and live-doc sync are complete for slice 69 before commit
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench axi_write_data_last_stability_gold` passed with the requested fixture
   - broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed on slice 67 with `150/150` fixtures
   - broader `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed on slice 67 with `150` fixtures projected, `0` failures, and no tracked projection diff

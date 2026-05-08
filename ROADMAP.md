@@ -841,6 +841,7 @@
     - a representative AXI write-data timing gold fixture proving the same width-only plus prose actor-relation path works for `WVALID` / `WREADY` / `WDATA` / `WSTRB`, including next-cycle write-data ready assertion and handshake-stable write-data payload semantics
     - a representative AXI write-data last stability fixture proving manager-owned `WLAST` remains graph-grounded and actor-owned when its stability is guarded by `WVALID` / `WREADY` completion
     - the AXI write-data last fixture now asserts prose semantic hints stay zero while request/accept role hints remain table-sourced
+    - the AXI write-data last fixture now asserts alias-grounded prose semantic hints stay zero while request/accept role hints remain table-sourced
     - a representative AXI sideband stability gold fixture proving non-handshake sideband fields like `ARLEN` and `WSTRB` remain graph-grounded and actor-owned when their stability is guarded by `ARVALID` / `ARREADY` or `WVALID` / `WREADY` completion
     - a representative AXI write-address sideband stability fixture proving `AWLEN`, `AWSIZE`, and `AWBURST` remain graph-grounded and actor-owned when their stability is guarded by `AWVALID` / `AWREADY` completion
     - a representative AHB-style gold fixture proving section-heading direction context like `Manager signals` / `Subordinate signals` recovers per-signal direction and width correctly even when the table itself only carries destination-side context
