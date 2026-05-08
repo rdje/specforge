@@ -140,6 +140,7 @@ The AXI address QoS/region fixture keeps prose-sourced semantic hints at zero to
 Alias-grounded prose hints are zero there too, so phrase-alias recovery cannot masquerade as table-backed QoS/region evidence.
 Visual-caption hints are zero there too, so diagram captions cannot masquerade as table-backed QoS/region evidence.
 VLM timing-annotation hints are zero there as well, so timing notes cannot masquerade as table-backed QoS/region evidence.
+The AXI write-data timing fixture keeps prose-sourced semantic hints at zero too, proving `WVALID` / `WREADY` role hints remain table-only while write-data timing obligations stay recovered.
 The AXI write-data last fixture keeps prose-sourced semantic hints at zero too, proving its `WVALID` / `WREADY` role hints remain table-only.
 Alias-grounded prose hints are zero there too, so phrase-alias recovery cannot masquerade as table-backed write-data last evidence.
 Visual-caption hints are zero there too, so diagram captions cannot masquerade as table-backed write-data last evidence.

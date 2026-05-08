@@ -1,5 +1,15 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for AXI write-data prose exclusion)
+
+### Improved: AXI write-data timing fixtures prove table-only hints
+- Tightened `axi_write_data_timing_gold` with `signal_semantic_hints_from_prose = 0` at `EvidenceIR`.
+- The fixture now proves `WVALID` / `WREADY` semantic hints are table-sourced rather than prose-derived while write-data ready timing and handshake-stable `WDATA` obligations remain recovered.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench axi_write_data_timing_gold` -> passed (`1/1` fixture)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for AXI write-response VLM exclusion)
 
 ### Improved: AXI write-response timing fixtures exclude VLM timing hints
