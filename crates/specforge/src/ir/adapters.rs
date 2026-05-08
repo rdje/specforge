@@ -9701,6 +9701,76 @@ mod tests {
     }
 
     #[test]
+    fn enum_symbol_width_cast_renderability_keeps_graph_signal_references_signal_free() {
+        let mut graph_input = signal_candidate_with_direction_evidence(
+            None,
+            false,
+            Some(InterfaceSignalDirection::Input),
+            false,
+        );
+        graph_input.signal_name = "STATE_IN".to_string();
+        graph_input.width_hint = Some(4);
+
+        let signals = [graph_input];
+        let signals_by_name = signals
+            .iter()
+            .map(|signal| (signal.signal_name.clone(), signal))
+            .collect::<std::collections::BTreeMap<_, _>>();
+        let mut size_entries = std::collections::BTreeMap::new();
+        let mut blocking_reasons = Vec::new();
+        let mut required_canonical_enrichments = std::collections::BTreeSet::new();
+
+        let definition = SymbolDefinitionRecord {
+            symbol_id: "enum_width_cast_from_signal".to_string(),
+            symbol_name: "STATE_ENUM".to_string(),
+            kind: SymbolDefinitionKind::Enum,
+            value: None,
+            members: vec![SymbolEnumMemberRecord {
+                member_name: "STATE_WIDTH_CAST_FROM_SIGNAL".to_string(),
+                value: ControlExpressionRecord::Reference {
+                    reference: ControlReferenceRecord {
+                        base_name: "STATE_IN".to_string(),
+                        kind_hint: ControlReferenceKind::Signal,
+                        suffixes: vec![ControlReferenceSuffix::WidthCast { width: 2 }],
+                        exposed_public_output: false,
+                    },
+                },
+                declaration_order: 0,
+                supporting_statement_ids: Vec::new(),
+                automation_confidence: AutomationConfidence::High,
+            }],
+            declaration_order: 0,
+            supporting_statement_ids: Vec::new(),
+            automation_confidence: AutomationConfidence::High,
+        };
+        super::validate_symbol_definitions_renderability(
+            &[definition],
+            &signals_by_name,
+            &mut size_entries,
+            &mut blocking_reasons,
+            &mut required_canonical_enrichments,
+        );
+        assert!(size_entries.is_empty());
+        assert!(blocking_reasons.iter().any(|reason| {
+            reason.contains(
+                "The active `.fsm` adapter slice does not yet lower width-cast signal references",
+            )
+        }));
+        assert!(blocking_reasons.iter().any(|reason| {
+            reason.contains(
+                "Symbol-definition expression `STATE_IN'2` currently resolves through signal `STATE_IN`",
+            )
+        }));
+        assert!(
+            required_canonical_enrichments
+                .contains("add width-cast reference lowering from canonical control expressions")
+        );
+        assert!(required_canonical_enrichments.contains(
+            "keep emitted `.fsm` symbol-definition values signal-free in the active slice"
+        ));
+    }
+
+    #[test]
     fn unary_enum_symbol_renderability_keeps_graph_signal_references_signal_free() {
         let mut graph_input = signal_candidate_with_direction_evidence(
             None,

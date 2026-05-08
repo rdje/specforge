@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-05-08 (adapter enum symbol width-cast guard)
+
+### Improved: enum symbol width-cast values remain signal-free
+- Added a direct regression for enum-member width-cast value renderability.
+- The guard proves graph-backed enum-member signal references remain outside renderable metadata, while the existing symbol-slice and width-cast blockers are reported.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge enum_symbol_width_cast_renderability_keeps_graph_signal_references_signal_free` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`140/140` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`663` Rust tests plus formatting, Clippy warning-deny, rustdoc warning-deny, and mdBook)
+
 ## 2026-05-08 (adapter binary symbol-definition width-cast guard)
 
 ### Improved: binary symbol-definition width-cast values remain signal-free

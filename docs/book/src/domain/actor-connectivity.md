@@ -263,6 +263,7 @@ Symbol definitions are intentionally stricter in the active `.fsm` slice: graph-
 Width-cast symbol-definition values follow the same signal-free symbol slice boundary and also report the width-cast suffix blocker.
 Unary symbol-definition width-cast operands follow that same signal-free recursive validation path.
 Binary symbol-definition width-cast operands remain signal-free under the same recursive rule for both sides.
+Enum-member width-cast values remain signal-free under that symbol slice boundary as well.
 
 ## What users should inspect
 
