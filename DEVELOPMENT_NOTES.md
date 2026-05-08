@@ -7,6 +7,19 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-08 KG fixture for AXI write-response VLM exclusion
+- New batch slice 23/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Tightened `crates/specforge/test_data/kg_quality/axi_write_response_timing_gold/fixture.json`.
+- The fixture now asserts `signal_semantic_hints_from_vlm_timing_annotations = 0` alongside aggregate semantic hints, table-sourced semantic hints, prose hints, alias-grounded prose hints, visual-caption hints, actor-signal relations, signal constraints, and existing semantic/intent temporal-rule metrics.
+- This completes AXI write-response timing source-split hardening by proving `BVALID` / `BREADY` request/accept semantic hints are not VLM timing-annotation recovered while next-cycle `BVALID` and handshake-stable `BRESP` obligations stay recovered.
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench axi_write_response_timing_gold` passed with the requested fixture.
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` tracked fixtures.
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` refreshed tracked corpus-KB projections for `150` fixtures with `0` failures and no tracked projection diff.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- Broader `bash scripts/run_ci.sh` passed on slice 20 with formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, and mdBook.
+- Push remains deferred for the active `BWFSC=200` batch.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-08 KG fixture for AXI write-response visual exclusion
 - New batch slice 22/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Tightened `crates/specforge/test_data/kg_quality/axi_write_response_timing_gold/fixture.json`.
