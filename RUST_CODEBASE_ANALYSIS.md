@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 KG fixture for visual-motif family-mismatch VLM exclusion)
+- Tightened `visual_motif_prior_protocol_family_mismatch_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts evidence-stage `signal_semantic_hints_from_vlm_timing_annotations = 0` alongside zero aggregate, table-sourced, prose, alias-grounded prose, and visual-caption semantic hints.
+- This locks visual-motif protocol-family mismatch as free of VLM timing-annotation role hints.
+
 ## Session update (2026-05-08 KG fixture for visual-motif family-mismatch alias exclusion)
 - Tightened `visual_motif_prior_protocol_family_mismatch_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts evidence-stage `signal_semantic_hints_from_alias_grounded_prose = 0` alongside zero aggregate, table-sourced, prose, and visual-caption semantic hints.

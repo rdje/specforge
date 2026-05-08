@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for visual-motif family-mismatch VLM exclusion)
+
+### Improved: visual-motif family-mismatch fixtures exclude VLM timing hints
+- Tightened `visual_motif_prior_protocol_family_mismatch_negative` with `signal_semantic_hints_from_vlm_timing_annotations = 0` at `EvidenceIR`.
+- The fixture now proves an APB-scoped visual-motif prior staged against AXI-local evidence cannot invent VLM timing-annotation semantic-role hints.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench visual_motif_prior_protocol_family_mismatch_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for visual-motif family-mismatch alias exclusion)
 
 ### Improved: visual-motif family-mismatch fixtures exclude alias-grounded prose hints

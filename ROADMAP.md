@@ -980,6 +980,7 @@
   - the visual-motif family-mismatch fixture now asserts table semantic hints stay zero when an APB-scoped motif prior is staged against AXI-local evidence
   - the visual-motif family-mismatch fixture now asserts ordinary prose semantic hints stay zero when an APB-scoped motif prior is staged against AXI-local evidence
   - the visual-motif family-mismatch fixture now asserts alias-grounded prose semantic hints stay zero when an APB-scoped motif prior is staged against AXI-local evidence
+  - the visual-motif family-mismatch fixture now asserts VLM timing-annotation semantic hints stay zero when an APB-scoped motif prior is staged against AXI-local evidence
   - the no-prior table-shape signal-table fixture now asserts zero table-signal provenance and excludes `XREQ`/`XACK` from canonical signal inventory when no learned table-shape prior is staged
   - the prior-guided table-shape signal-table fixture now asserts exact `XREQ`/`XACK` table-signal provenance from `table_0001` and canonical table-support carry-through when learned table-shape memory is staged
   - the table-shape protocol-family mismatch fixture now asserts zero table-signal provenance at `EvidenceIR` when an APB-scoped prior is staged against an AXI-local unknown table shape
