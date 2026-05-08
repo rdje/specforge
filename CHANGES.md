@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-08 (adapter system-signal graph direction guard)
+
+### Improved: system-contract signal validation has direct graph-first coverage
+- Added a direct regression for system-contract signal renderability.
+- The guard proves graph-only clock/reset input direction evidence can satisfy `.fsm` system-signal validation, while stale flat direction evidence that disagrees with graph-backed input evidence blocks with system-contract-specific conflict guidance.
+
+### Validation
+- `cargo fmt --all --check` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge system_signal_renderability_uses_graph_direction_without_stale_flat_override` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`98/98` adapter-filtered tests)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter renderable signal registration guard)
 
 ### Improved: renderable size entries now have direct graph-first regression coverage

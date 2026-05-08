@@ -7,6 +7,19 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-08 adapter system-signal graph direction guard
+- New batch slice 78/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Added `system_signal_renderability_uses_graph_direction_without_stale_flat_override` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks `validate_system_signal_renderability` directly: graph-only input evidence can satisfy clock/reset system-signal direction validation, while stale flat output evidence that disagrees with graph-backed input evidence blocks with system-contract-specific conflict guidance.
+- This protects the `.fsm` `(+system ...)` path from accepting stale flat direction hints over actor-relative graph recovery.
+- `cargo fmt --all --check` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge system_signal_renderability_uses_graph_direction_without_stale_flat_override` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `98/98` adapter-filtered tests.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- Broader `bash scripts/run_ci.sh` passed on slice 70 with formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, and mdBook.
+- Push remains deferred for the active `BWFSC=200` batch.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-08 adapter renderable signal registration guard
 - New batch slice 77/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Added `register_renderable_signal_uses_graph_direction_without_stale_disagreement_entries` in `crates/specforge/src/ir/adapters.rs`.

@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter system-signal graph direction guard)
+- Added `system_signal_renderability_uses_graph_direction_without_stale_flat_override` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks system-contract signal renderability so graph-only clock/reset input direction can pass, but stale flat evidence that disagrees with graph-backed input direction blocks with system-contract-specific guidance.
+- This anchors the `.fsm` `(+system ...)` consumer behind graph-first direction recovery without letting stale flat hints override it.
+
 ## Session update (2026-05-08 adapter renderable signal registration guard)
 - Added `register_renderable_signal_uses_graph_direction_without_stale_disagreement_entries` in `crates/specforge/src/ir/adapters.rs`.
 - The test locks the shared renderable size-entry registration path so graph-only direction evidence is accepted for emission, but flat-vs-graph disagreement leaves no stale renderable size entry.

@@ -6556,6 +6556,57 @@ mod tests {
         ));
     }
 
+    #[test]
+    fn system_signal_renderability_uses_graph_direction_without_stale_flat_override() {
+        let mut graph_clock = signal_candidate_with_direction_evidence(
+            None,
+            false,
+            Some(InterfaceSignalDirection::Input),
+            false,
+        );
+        graph_clock.signal_name = "clk".to_string();
+
+        let mut stale_reset = signal_candidate_with_direction_evidence(
+            Some(InterfaceSignalDirection::Output),
+            false,
+            Some(InterfaceSignalDirection::Input),
+            false,
+        );
+        stale_reset.signal_name = "rst_n".to_string();
+
+        let signals = vec![graph_clock, stale_reset];
+        let signals_by_name = signals
+            .iter()
+            .map(|signal| (signal.signal_name.clone(), signal))
+            .collect::<std::collections::BTreeMap<_, _>>();
+        let mut blocking_reasons = Vec::new();
+        let mut required_canonical_enrichments = std::collections::BTreeSet::new();
+
+        super::validate_system_signal_renderability(
+            "clk",
+            "clock",
+            &signals_by_name,
+            &mut blocking_reasons,
+            &mut required_canonical_enrichments,
+        );
+        assert!(blocking_reasons.is_empty());
+        assert!(required_canonical_enrichments.is_empty());
+
+        super::validate_system_signal_renderability(
+            "rst_n",
+            "reset",
+            &signals_by_name,
+            &mut blocking_reasons,
+            &mut required_canonical_enrichments,
+        );
+        assert!(blocking_reasons.iter().any(|reason| reason.contains(
+            "Canonical reset signal `rst_n` has conflicting canonical and graph-backed direction evidence"
+        )));
+        assert!(required_canonical_enrichments.contains(
+            "resolve conflicting canonical and graph-backed system-signal direction evidence before lowering `.fsm` system contracts"
+        ));
+    }
+
     fn build_handshake_intent_ir(base: &Path) -> Result<IntentIr> {
         let source = base.join("handshake.md");
         let source_artifact_base = base.join("generated").join("source_ir");
