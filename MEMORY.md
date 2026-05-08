@@ -22,24 +22,24 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `139c051bb71d41e2e91547f7302dd2da2bfecc66`
-- latest_commit_brief_message: `test(kg): lock AXI sideband visual exclusion`
-- note: this is the pre-slice-51 baseline for the current `BWFSC=100` batch; slices 1-50/100 are committed and push remains deferred
+- latest_commit_hash: `7fb66255155c9881c66e9c9cdb18ff295f05d25b`
+- latest_commit_brief_message: `test(kg): lock AXI sideband VLM exclusion`
+- note: this is the pre-slice-52 baseline for the current `BWFSC=100` batch; slices 1-51/100 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `7fb6625` test(kg): lock AXI sideband VLM exclusion
 - `139c051` test(kg): lock AXI sideband visual exclusion
 - `acf250d` test(kg): lock AXI sideband alias exclusion
 - `f404dcf` test(kg): lock AXI sideband prose exclusion
 - `5179721` test(kg): lock AXI read-data last VLM exclusion
 - `ce62e7d` test(kg): lock AXI read-data last visual exclusion
-- `8f1dffb` test(kg): lock AXI read-data last alias exclusion
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=100` slice 51 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=100` slice 52 and push is deferred
 - files in flight:
-  - `crates/specforge/test_data/kg_quality/axi_sideband_stability_gold/fixture.json`
+  - `crates/specforge/test_data/kg_quality/axi_next_cycle_timing_gold/fixture.json`
   - live docs and mdBook files synced for the slice
 
 ## Previous completed N-slice batch
@@ -52,14 +52,14 @@
 ## Current batch status
 - objective:
   - active `BWFSC=100` batch is in progress
-  - completed_count before this commit: `50`
-  - slice 51/100 tightens AXI sideband VLM timing-annotation semantic-hint exclusion metrics for positive table-backed source-split hardening
+  - completed_count before this commit: `51`
+  - slice 52/100 tightens AXI next-cycle prose semantic-hint exclusion metrics for positive table-backed source-split hardening
   - push is deferred until all `100` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks AXI sideband VLM timing-annotation semantic-hint exclusion KG coverage as `Done`
+  - live-status tracker now marks AXI next-cycle prose semantic-hint exclusion KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 51 before commit
-  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench axi_sideband_stability_gold` passed with the requested fixture
+  - implementation and live-doc sync are complete for slice 52 before commit
+  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench axi_next_cycle_timing_gold` passed with the requested fixture
   - broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed on slice 51 with `150/150` fixtures
   - broader `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed on slice 51 with `150` fixtures projected, `0` failures, and no tracked projection diff
   - `bash scripts/run_docs_ci.sh` passed after the live-book sync
@@ -74,9 +74,9 @@
   - user-requested `cargo sweep --time 1` is deferred until no target-tree process is active because `target/release/tool_matrix` is active
 - current known local CI baseline:
   - focused current-slice KG fixture passed
+  - docs CI passed for the current slice after live-doc sync
   - slice 51 passed `150/150` tracked KG fixtures
   - slice 51 passed corpus-KB projection for `150` fixtures with `0` failures and no tracked projection diff
-  - docs CI passed for the current slice after live-doc sync
   - slice 50 passed `bash scripts/run_ci.sh`
   - slice 43 passed `150/150` tracked KG fixtures
   - slice 43 passed corpus-KB projection for `150` fixtures with `0` failures
@@ -88,5 +88,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 51 commit workflow, clear and verify `git_message_brief.txt`, then scan for the next source-split fixture slice
+- finish the slice 52 commit workflow, clear and verify `git_message_brief.txt`, then continue source-split hardening on the next incomplete fixture
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle

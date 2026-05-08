@@ -1,5 +1,15 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for AXI next-cycle prose exclusion)
+
+### Improved: AXI next-cycle fixtures prove table-only semantic hints
+- Tightened `axi_next_cycle_timing_gold` with `signal_semantic_hints_from_prose = 0` at `EvidenceIR`.
+- The fixture now proves `AWVALID` / `AWREADY` semantic hints are table-sourced rather than prose-derived.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench axi_next_cycle_timing_gold` -> passed (`1/1` fixture)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for AXI sideband VLM exclusion)
 
 ### Improved: AXI sideband fixtures exclude VLM timing hints

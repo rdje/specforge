@@ -791,6 +791,7 @@
     - a representative APB response stability gold fixture proving `PRDATA` and `PSLVERR` remain actor-grounded stable completer outputs during `PSEL` / `PENABLE` / `PREADY HIGH` completed accesses with handshake completion preserved
     - a representative AXI-style gold fixture proving width-only channel tables plus prose drive/sample relations recover actor-relative direction, signal inventory, request/accept semantics, and typed handshake completion without any table direction column
     - a representative AXI-style timing gold fixture proving width-only channel tables plus prose actor relations can also recover next-cycle timing, actor-grounded temporal predicates, and handshake completion together
+    - the AXI next-cycle timing fixture now asserts prose semantic hints stay zero while request/accept role hints remain table-sourced
     - a representative AXI write-response timing gold fixture proving the same width-only plus prose actor-relation path works for `BVALID` / `BREADY` / `BRESP`, including next-cycle response assertion and handshake-stable response payload semantics
     - a representative AXI write-response ID stability fixture proving subordinate-owned `BID` remains graph-grounded and actor-owned when its stability is guarded by `BVALID` / `BREADY` completion
     - a representative AXI read-address timing gold fixture proving the same width-only plus prose actor-relation path works for `ARVALID` / `ARREADY` / `ARADDR` / `ARLEN`, including next-cycle read-address ready assertion and handshake-stable read-address payload semantics
