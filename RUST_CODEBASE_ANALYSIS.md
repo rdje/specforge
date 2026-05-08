@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 KG fixture for field-table visual-hint exclusion)
+- Tightened `table_misclassification_field_table_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts evidence-stage `signal_semantic_hints_from_visual_captions = 0` alongside zero aggregate semantic hints, zero table/prose/alias hints, and zero table-signal declaration provenance.
+- This locks misclassified field-table rows as free of visual-caption semantic-role hints.
+
 ## Session update (2026-05-08 KG fixture for field-table alias-hint exclusion)
 - Tightened `table_misclassification_field_table_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts evidence-stage `signal_semantic_hints_from_alias_grounded_prose = 0` alongside zero aggregate semantic hints, zero table/prose hints, and zero table-signal declaration provenance.
