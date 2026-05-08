@@ -980,6 +980,7 @@
 - Alias-dependent handshake completion now preserved as canonical residual/assumption state: Done
 - KG benchmark harness now locks alias-dependent handshake aggregate temporal-rule metric coverage: Done
 - KG benchmark harness now locks alias-dependent handshake-completion validation metric coverage: Done
+- KG benchmark harness now locks alias-dependent handshake-specific validation metric coverage: Done
 - KG benchmark harness now locks contested-handshake aggregate temporal-rule metric coverage: Done
 - SemanticIR / IntentIR per-signal semantic observation provenance implemented: Done
 - Canonical semantic-role consensus plus grounding-strength reporting implemented: Done

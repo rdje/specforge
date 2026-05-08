@@ -23,22 +23,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `e889e5a07e874b7b76bc5c0a43034d3a1c881eae`
-- latest_commit_brief_message: `test(kg): lock field-table temporal count metric`
-- note: this is the pre-slice-66 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
+- latest_commit_hash: `3a1b72f95e8b653ac608966628d9e4896a82f542`
+- latest_commit_brief_message: `test(kg): lock alias handshake completion metric`
+- note: this is the pre-slice-67 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
 
 ## Recent commit chain (last 6)
+- `3a1b72f` test(kg): lock alias handshake completion metric
 - `e889e5a` test(kg): lock field-table temporal count metric
 - `b796cdf` test(kg): lock contested fallback temporal count metric
 - `f2265e3` test(kg): lock alias caveat temporal count metric
 - `f91409d` test(kg): lock AXI width-only temporal count metric
 - `5dbc85e` test(kg): lock APB requester temporal count metric
-- `2f1f9d0` test(kg): lock AMBA source temporal count metric
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 66 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
+- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 67 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
 - files in flight:
   - `crates/specforge/test_data/kg_quality/alias_dependent_handshake_completion_caveat/fixture.json`
   - live docs and mdBook files synced for the slice
@@ -53,17 +53,17 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `65`
-  - slice 66/200 tightens alias-dependent generic handshake-completion temporal-rule validation metrics and completes the current generic handshake-completion metric pass
+  - completed_count before this commit: `66`
+  - slice 67/200 tightens alias-dependent specific handshake-completion temporal-rule validation metrics and completes the current alias-dependent handshake-completion metric pass
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks alias-dependent handshake-completion validation metric coverage as `Done`
+  - live-status tracker now marks alias-dependent handshake-specific validation metric coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 66 before commit
+  - implementation and live-doc sync are complete for slice 67 before commit
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench alias_dependent_handshake_completion_caveat` passed with the requested fixture
-  - broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed on slice 66 with `150/150` fixtures
-  - broader `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed on slice 66 with `150` fixtures projected, `0` failures, and no tracked projection diff
-  - generic handshake-completion metric coverage scan found no remaining fixtures that assert `temporal_rules_with_handshake_completion = 1` while missing the validation metric
+  - broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed on slice 67 with `150/150` fixtures
+  - broader `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed on slice 67 with `150` fixtures projected, `0` failures, and no tracked projection diff
+  - alias-dependent handshake-completion metric coverage scan found no remaining fixtures that assert `temporal_rules_with_alias_dependent_handshake_completion = 1` while missing the validation metric
   - `bash scripts/run_ci.sh` passed on slice 60 as a broader checkpoint gate
   - `bash scripts/run_ci.sh` passed on slice 50 as a broader checkpoint gate
   - `bash scripts/run_ci.sh` passed on slice 40 as a broader checkpoint gate
@@ -183,6 +183,8 @@
   - slice 65 passed corpus-KB projection for `150` fixtures with `0` failures and no tracked projection diff
   - slice 66 passed `150/150` tracked KG fixtures
   - slice 66 passed corpus-KB projection for `150` fixtures with `0` failures and no tracked projection diff
+  - slice 67 passed `150/150` tracked KG fixtures
+  - slice 67 passed corpus-KB projection for `150` fixtures with `0` failures and no tracked projection diff
   - slice 20 passed `bash scripts/run_ci.sh`
   - slice 100 passed `bash scripts/run_ci.sh`
   - slice 90 passed `bash scripts/run_ci.sh`
@@ -203,5 +205,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 66 commit workflow, clear and verify `git_message_brief.txt`, then continue alias-dependent handshake-completion validation metric hardening with `alias_dependent_handshake_completion_caveat`
+- finish the slice 67 commit workflow, clear and verify `git_message_brief.txt`, then select the next roadmap-aligned KG validation metric hardening slice
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle
