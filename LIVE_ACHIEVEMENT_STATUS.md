@@ -436,6 +436,7 @@
 - KG benchmark harness now locks prior-guided visual-motif table semantic-hint exclusion: Done
 - KG benchmark harness now locks prior-guided visual-motif prose semantic-hint exclusion: Done
 - KG benchmark harness now locks prior-guided visual-motif alias-grounded prose semantic-hint exclusion: Done
+- KG benchmark harness now locks prior-guided visual-motif VLM timing-annotation semantic-hint exclusion: Done
 - KG benchmark harness now locks no-prior table-shape signal inventory: Done
 - KG benchmark harness now locks prior-guided table-shape signal provenance: Done
 - KG benchmark harness now locks table-shape family-mismatch provenance: Done

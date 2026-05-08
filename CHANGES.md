@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for prior-guided visual-motif VLM exclusion)
+
+### Improved: prior-guided visual-motif fixtures exclude VLM timing hints
+- Tightened `visual_motif_prior_guided_diagram_classification_gold` with `signal_semantic_hints_from_vlm_timing_annotations = 0` at `EvidenceIR`.
+- The fixture now proves learned visual-motif classification still does not invent VLM timing-annotation semantic-role hints.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench visual_motif_prior_guided_diagram_classification_gold` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for prior-guided visual-motif alias exclusion)
 
 ### Improved: prior-guided visual-motif fixtures exclude alias-grounded prose hints

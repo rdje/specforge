@@ -214,6 +214,7 @@ The visual-motif prior-guided gold locks the after side for diagram classificati
 That motif gold also keeps table-sourced semantic hints at zero, proving learned classification does not create table-derived roles.
 Ordinary prose hints are zero too, proving learned motif classification does not invent text-derived roles.
 Alias-grounded prose hints are zero too, proving learned motif classification cannot create phrase-alias roles.
+VLM timing-annotation hints are zero as well, keeping timing-note evidence from masquerading as semantic roles.
 That visual-motif gold now also checks the evidence-stage corroboration finding payload, so prior-classified `visual_0001` remains targeted for VLM/multimodal follow-up instead of being silently promoted.
 
 Fixtures can assert canonical semantic grounding strength directly as well.
