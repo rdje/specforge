@@ -205,6 +205,7 @@ Alias-grounded prose hints are zero there too, so phrase-alias recovery cannot m
 Visual-caption hints are zero there too, so diagram captions cannot masquerade as table-backed APB requester/completer evidence.
 VLM timing-annotation hints are zero there as well, so timing notes cannot masquerade as table-backed APB requester/completer evidence.
 That fixture also locks one multi-predicate antecedent, proving the `PSEL` / `PREADY` guard remains visible as a compound temporal condition while requester/completer roles stay recovered.
+It now also locks one aggregate temporal rule, proving the counted temporal-rule surface stays aligned with that APB guarded payload-stability obligation.
 The APB setup/access timing fixture now keeps prose-sourced semantic hints at zero too, proving `PSEL` / `PREADY` role hints remain table-only.
 Alias-grounded prose hints are zero there too, so phrase-alias recovery cannot masquerade as table-backed APB setup/access evidence.
 Visual-caption hints are zero there too, so diagram captions cannot masquerade as table-backed APB setup/access evidence.

@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for APB requester/completer temporal-rule count)
+
+### Improved: APB requester/completer fixture locks aggregate temporal rules
+- Tightened `apb_requester_completer_handshake_gold` with `temporal_rules = 1` at both `SemanticIR` and `IntentIR` validation surfaces.
+- The fixture now proves the aggregate temporal-rule counter stays aligned with its single `PSEL` / `PREADY` guarded payload-stability rule while handshake completion and multi-predicate antecedent metrics remain locked.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench apb_requester_completer_handshake_gold` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for AMBA source-column temporal-rule count)
 
 ### Improved: AMBA source-column fixture locks aggregate temporal rules

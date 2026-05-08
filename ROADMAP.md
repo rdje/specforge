@@ -800,6 +800,7 @@
     - the APB requester/completer fixture now asserts visual-caption semantic hints stay zero while request/accept role hints remain table-sourced
     - the APB requester/completer fixture now asserts VLM timing-annotation semantic hints stay zero while request/accept role hints remain table-sourced
     - the APB requester/completer fixture now asserts multi-predicate antecedent temporal-rule coverage while requester/completer roles and typed handshake completion remain recovered
+    - the APB requester/completer fixture now asserts aggregate temporal-rule count coverage while requester/completer roles, handshake completion, and multi-predicate antecedent metrics remain recovered
     - a representative APB-style timing gold fixture proving `Requester` / `Completer` source roles can also recover setup/access timing, actor-grounded temporal predicates, multi-predicate guards, bounded next-cycle latency, and handshake completion together
     - the APB setup/access fixture now asserts prose semantic hints stay zero while request/accept role hints remain table-sourced
     - the APB setup/access fixture now asserts alias-grounded prose semantic hints stay zero while request/accept role hints remain table-sourced
