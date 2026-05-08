@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter sibling child-link width confidence guard)
+- Extended `top_composition_blocks_conflicting_sibling_child_link_widths` in `crates/specforge/src/ir/adapters.rs`.
+- The sibling child-link width conflict blocker now locks high automation confidence on the visible top port, all child declarations, and both conflicting links into `consumer.input_data`.
+- This keeps retained topology records diagnostic-rich while child renderability blocks top composition emission.
+
 ## Session update (2026-05-08 adapter top child-link width confidence guard)
 - Extended `top_composition_blocks_conflicting_top_port_widths_from_child_links` in `crates/specforge/src/ir/adapters.rs`.
 - The top-port width conflict from child links blocker now locks high automation confidence on the explicit top port, both producer children, and both conflicting child-to-top links.

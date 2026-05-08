@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (adapter sibling child-link width confidence guard)
+
+### Improved: sibling child-link width conflicts preserve retained record confidence
+- Extended the sibling child-link width conflict regression to assert the visible top port, all child declarations, and both conflicting links keep high automation confidence.
+- The guard keeps sibling-link width conflict diagnostics tied to retained topology records while child renderability blocks top composition emission.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_sibling_child_link_widths` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter top child-link width confidence guard)
 
 ### Improved: top child-link width conflicts preserve retained record confidence
