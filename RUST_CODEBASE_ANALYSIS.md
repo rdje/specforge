@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter unary symbol signal-free guard)
+- Added `unary_symbol_definition_renderability_keeps_graph_signal_references_signal_free` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks recursive unary symbol-definition validation so nested graph-backed signal references still trigger the active signal-free blocker and do not create size entries.
+- This covers unary symbol values separately from direct scalar symbol values.
+
 ## Session update (2026-05-08 adapter compound-update amount graph direction guard)
 - Added `compound_update_amount_renderability_uses_graph_direction_without_stale_flat_override` in `crates/specforge/src/ir/adapters.rs`.
 - The test locks compound-update amount expression renderability inside action validation so graph-backed input references create size entries, while stale flat-vs-graph disagreement leaves no stale entry.

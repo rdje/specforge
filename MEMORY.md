@@ -23,22 +23,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `68f0a8b0306d90a694ff1d0ec0b7c3663cf31965`
-- latest_commit_brief_message: `test(adapter): guard graph-backed assignment values`
-- note: this is the pre-slice-94 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
+- latest_commit_hash: `b6a8a213ba0a20621807934d4acd269938becdb4`
+- latest_commit_brief_message: `test(adapter): guard graph-backed compound amounts`
+- note: this is the pre-slice-95 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
 
 ## Recent commit chain (last 6)
+- `b6a8a21` test(adapter): guard graph-backed compound amounts
 - `68f0a8b` test(adapter): guard graph-backed assignment values
 - `bedb794` test(adapter): guard graph-backed binary expressions
 - `a9a57a7` test(adapter): guard graph-backed unary expressions
 - `2240299` test(adapter): keep enum symbols signal-free
 - `8463661` test(adapter): keep symbols signal-free
-- `5c18bcb` test(adapter): guard graph-backed comparisons
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 94 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
+- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 95 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
 - files in flight:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
@@ -58,16 +58,16 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `93`
-  - slice 94/200 adds a direct `.fsm` compound-update amount expression renderability guard for graph-backed amount reads and stale-flat disagreement blocking
+  - completed_count before this commit: `94`
+  - slice 95/200 adds a direct `.fsm` unary symbol-definition expression guard that keeps nested graph-backed signal references signal-free
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks compound-update amount expression renderability graph-first stale-flat regression coverage as `Done`
+  - live-status tracker now marks unary symbol-definition signal-free renderability coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 94 before commit
+  - implementation and live-doc sync are complete for slice 95 before commit
   - `cargo fmt --all` applied rustfmt layout
-  - `cargo test --manifest-path Cargo.toml -p specforge compound_update_amount_renderability_uses_graph_direction_without_stale_flat_override` passed
-  - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `114/114` adapter-filtered tests
+  - `cargo test --manifest-path Cargo.toml -p specforge unary_symbol_definition_renderability_keeps_graph_signal_references_signal_free` passed
+  - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `115/115` adapter-filtered tests
   - `cargo fmt --all --check` passed
   - `bash scripts/run_docs_ci.sh` passed after the final live-book sync
   - `bash scripts/run_ci.sh` passed on slice 90 as a broader checkpoint gate with formatting, Clippy warning-deny, `633` Rust tests, rustdoc warning-deny, and mdBook
@@ -272,6 +272,9 @@
   - slice 94 passed `cargo test --manifest-path Cargo.toml -p specforge compound_update_amount_renderability_uses_graph_direction_without_stale_flat_override`
   - slice 94 passed `cargo test --manifest-path Cargo.toml -p specforge adapters`
   - slice 94 passed `bash scripts/run_docs_ci.sh`
+  - slice 95 passed `cargo test --manifest-path Cargo.toml -p specforge unary_symbol_definition_renderability_keeps_graph_signal_references_signal_free`
+  - slice 95 passed `cargo test --manifest-path Cargo.toml -p specforge adapters`
+  - slice 95 passed `bash scripts/run_docs_ci.sh`
   - slice 20 passed `bash scripts/run_ci.sh`
   - slice 100 passed `bash scripts/run_ci.sh`
   - slice 90 passed `bash scripts/run_ci.sh`

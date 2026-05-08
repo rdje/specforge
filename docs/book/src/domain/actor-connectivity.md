@@ -243,7 +243,7 @@ Compound-update amounts use that same read-side rule when they reference signals
 Guard predicates, comparison guards, true-FSM transition guards, selector-bearing branch predicates, and non-selector branch predicates use the shared registration rule too: graph-backed guard, selector, or predicate signals create size entries, while stale flat disagreement blocks and does not create a stale entry.
 Typed control expressions follow that read-side path as well: graph-backed signal references can be sized for rendering, while stale flat disagreement remains blocking instead of creating stale renderable metadata.
 Unary and binary control expressions recurse through the same rule, so graph-backed operands are renderable and stale flat disagreement remains blocking.
-Symbol definitions are intentionally stricter in the active `.fsm` slice: graph-backed signal references inside scalar symbol values or enum member values still block and do not create renderable signal metadata until symbol expression lowering is deliberately widened.
+Symbol definitions are intentionally stricter in the active `.fsm` slice: graph-backed signal references inside scalar symbol values, unary symbol values, or enum member values still block and do not create renderable signal metadata until symbol expression lowering is deliberately widened.
 
 ## What users should inspect
 
