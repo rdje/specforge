@@ -1,5 +1,15 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for AMBA source-column alias exclusion)
+
+### Improved: AMBA source-column fixtures exclude alias-grounded prose
+- Tightened `amba_source_column_handshake_gold` with `signal_semantic_hints_from_alias_grounded_prose = 0` at `EvidenceIR`.
+- The fixture now proves `XREQ` / `XACK` semantic hints are not recovered through phrase-alias prose paths while `Source` roles still recover typed handshake completion.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench amba_source_column_handshake_gold` -> passed (`1/1` fixture)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for AMBA source-column prose exclusion)
 
 ### Improved: AMBA source-column fixtures prove table-only hints

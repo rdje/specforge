@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 KG fixture for AMBA source-column alias exclusion)
+- Tightened `amba_source_column_handshake_gold` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts evidence-stage `signal_semantic_hints_from_alias_grounded_prose = 0` alongside total, table-sourced, and prose semantic hints.
+- This locks AMBA source-column `XREQ` / `XACK` semantic hints as table-only rather than phrase-alias recovered while preserving typed handshake completion.
+
 ## Session update (2026-05-08 KG fixture for AMBA source-column prose exclusion)
 - Tightened `amba_source_column_handshake_gold` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts evidence-stage `signal_semantic_hints_from_prose = 0` alongside total and table-sourced semantic hints.

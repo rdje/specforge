@@ -986,6 +986,7 @@
 - KG benchmark harness now locks caption-vs-VLM visual semantic conflict behavior: Done
 - KG benchmark harness now includes a first representative AMBA-style gold fixture: Done
 - KG benchmark harness now locks AMBA source-column prose semantic-hint exclusion: Done
+- KG benchmark harness now locks AMBA source-column alias-grounded prose semantic-hint exclusion: Done
 - KG benchmark harness now includes an AMBA-style `Destination`-column gold fixture for receiver semantics: Done
 - KG benchmark harness now includes an APB-style `Requester` / `Completer` gold fixture: Done
 - KG benchmark harness now locks APB requester/completer prose semantic-hint exclusion: Done
