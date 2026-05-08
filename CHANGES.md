@@ -1,5 +1,15 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for AXI read-data ID visual exclusion)
+
+### Improved: AXI read-data ID fixtures exclude visual-caption hints
+- Tightened `axi_read_data_id_stability_gold` with `signal_semantic_hints_from_visual_captions = 0` at `EvidenceIR`.
+- The fixture now proves `RID` semantic hints are not recovered through visual-caption evidence.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench axi_read_data_id_stability_gold` -> passed (`1/1` fixture)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for AXI read-data ID alias exclusion)
 
 ### Improved: AXI read-data ID fixtures exclude alias-grounded prose

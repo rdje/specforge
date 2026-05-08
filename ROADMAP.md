@@ -809,6 +809,7 @@
     - a representative AXI read-data ID stability fixture proving subordinate-owned `RID` remains graph-grounded and actor-owned when its stability is guarded by `RVALID` / `RREADY` completion
     - the AXI read-data ID stability fixture now asserts prose semantic hints stay zero while `RID` recovers through table-sourced semantic hints
     - the AXI read-data ID stability fixture now asserts alias-grounded prose semantic hints stay zero while `RID` remains table-sourced
+    - the AXI read-data ID stability fixture now asserts visual-caption semantic hints stay zero while `RID` remains table-sourced
     - a representative AXI read-data response stability fixture proving subordinate-owned `RRESP` remains graph-grounded and actor-owned when its stability is guarded by `RVALID` / `RREADY` completion
     - a representative AXI read-data last stability fixture proving subordinate-owned `RLAST` remains graph-grounded and actor-owned when its stability is guarded by `RVALID` / `RREADY` completion
     - a representative AXI data USER sideband stability fixture proving Manager-owned `WUSER` and Subordinate-owned `RUSER` stay actor-grounded under their matching data-channel handshakes
