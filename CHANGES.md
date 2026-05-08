@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-09 (adapter undeclared source inventory confidence guard)
+
+### Improved: undeclared source blockers preserve selected inventory confidence
+- Extended the undeclared top-link source regression to assert the retained declared top port also stays visible in selected signal inventory with support IDs and high automation confidence.
+- The guard keeps missing source-endpoint diagnostics tied to retained top-port inventory while top composition emission stays blocked.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_link_from_undeclared_top_source_guidance` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-09 (adapter undeclared target inventory confidence guard)
 
 ### Improved: undeclared target blockers preserve selected inventory confidence
