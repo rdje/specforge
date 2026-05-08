@@ -983,6 +983,7 @@
 - KG benchmark harness now locks alias-dependent handshake-specific validation metric coverage: Done
 - KG benchmark harness now locks contested-handshake aggregate temporal-rule metric coverage: Done
 - KG benchmark harness now locks contested-handshake semantic-conflict validation metric coverage: Done
+- KG benchmark harness now locks contested-handshake zero handshake-completion metric coverage: Done
 - SemanticIR / IntentIR per-signal semantic observation provenance implemented: Done
 - Canonical semantic-role consensus plus grounding-strength reporting implemented: Done
 - Cross-modality semantic grounding distinction implemented: Done

@@ -173,7 +173,8 @@
         ],
         "metric_values": {
           "signal_semantic_conflicts": "1",
-          "temporal_rules": "1"
+          "temporal_rules": "1",
+          "temporal_rules_with_handshake_completion": "0"
         }
       },
       "intent": {
@@ -201,7 +202,8 @@
         ],
         "metric_values": {
           "signal_semantic_conflicts": "1",
-          "temporal_rules": "1"
+          "temporal_rules": "1",
+          "temporal_rules_with_handshake_completion": "0"
         }
       }
     }

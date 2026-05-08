@@ -105,6 +105,7 @@ It now locks the generic handshake-completion validation metric too, so the type
 The same fixture also locks the alias-dependent handshake-completion metric, proving the weaker grounding is counted explicitly instead of disappearing into the generic completion total.
 The contested handshake-name fallback negative fixture now also locks one aggregate temporal rule, proving the guarded `XVALID` / `XACK` payload-stability rule remains counted while typed `HandshakeComplete` fallback stays blocked.
 It also locks the semantic-conflict validation metric, so the contested `XVALID` role evidence remains visible as a counted conflict instead of only as finding text.
+It locks zero handshake-completion rules too, making the blocked fallback observable as a metric rather than only as absent typed predicate shape.
 The AMBA source-column handshake fixture keeps prose-sourced semantic hints at zero too, proving `XREQ` / `XACK` role hints remain table-only while `Source` roles still recover typed handshake completion.
 Alias-grounded prose hints are zero there too, so phrase-alias recovery cannot masquerade as table-backed AMBA source-column evidence.
 Visual-caption hints are zero there too, so diagram captions cannot masquerade as table-backed AMBA source-column evidence.

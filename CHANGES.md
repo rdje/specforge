@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for contested-handshake zero completion metric)
+
+### Improved: contested-handshake negative fixture locks absent completion metrics
+- Tightened `contested_handshake_name_fallback_negative` with `temporal_rules_with_handshake_completion = 0` at both `SemanticIR` and `IntentIR` validation surfaces.
+- The negative fixture now proves the guarded `XVALID` / `XACK` payload-stability rule stays counted while contested `XVALID` meaning blocks typed `HandshakeComplete` fallback.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench contested_handshake_name_fallback_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- Missing-validation-metric scan -> passed with only interface-signal and connectivity conflict count fixtures remaining
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for contested-handshake semantic-conflict metric)
 
 ### Improved: contested-handshake negative fixture locks semantic-conflict metrics
