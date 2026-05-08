@@ -1021,6 +1021,7 @@
 - KG benchmark harness now includes an AHB write-data stability gold fixture: Done
 - KG benchmark harness now includes an AXI width-only plus prose-direction gold fixture: Done
 - KG benchmark harness now locks AXI width-only prose semantic-hint exclusion: Done
+- KG benchmark harness now locks AXI width-only alias-grounded prose semantic-hint exclusion: Done
 - KG benchmark harness now includes an AXI next-cycle timing gold fixture: Done
 - KG benchmark harness now locks AXI next-cycle prose semantic-hint exclusion: Done
 - KG benchmark harness now locks AXI next-cycle alias-grounded prose semantic-hint exclusion: Done
