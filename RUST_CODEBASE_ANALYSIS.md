@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 KG fixture for alias-dependent temporal-rule count)
+- Tightened `alias_dependent_handshake_completion_caveat` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts `temporal_rules = 1` at both `SemanticIR` and `IntentIR` validation surfaces.
+- This continues aggregate temporal-rule metric hardening by proving the alias-dependent `XREQ` / `XACK` guarded payload-stability rule remains counted without hiding its weaker alias-grounded role evidence.
+
 ## Session update (2026-05-08 KG fixture for AXI width-only temporal-rule count)
 - Tightened `axi_width_only_prose_direction_gold` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts `temporal_rules = 1` at both `SemanticIR` and `IntentIR` validation surfaces.

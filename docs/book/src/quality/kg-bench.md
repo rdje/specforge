@@ -99,6 +99,7 @@ That clock-grounding fixture also asserts exact temporal-rule shape, so the cloc
 The actor-grounding fixture now asserts exact temporal-rule shape too, so the actorless rule keeps clock signal, edge, asserted-value predicate, max-cycle window, and supporting statement id through both canonical layers.
 The cycle-window fixture now asserts exact temporal-rule shape as well, so the unbounded rule keeps clock signal, edge, actor-drive predicate, asserted-value predicate, and supporting statement id while validation still reports the missing window.
 The bounded fully grounded fixture now also excludes every temporal replay lane, proving no cycle-window, actor-grounding, or clock-grounding guidance appears after all three surfaces are present.
+The alias-dependent handshake caveat fixture now also locks one aggregate temporal rule, proving weaker alias-grounded `XREQ` / `XACK` role evidence still produces a counted rule without hiding its residual and assumption trail.
 The AMBA source-column handshake fixture keeps prose-sourced semantic hints at zero too, proving `XREQ` / `XACK` role hints remain table-only while `Source` roles still recover typed handshake completion.
 Alias-grounded prose hints are zero there too, so phrase-alias recovery cannot masquerade as table-backed AMBA source-column evidence.
 Visual-caption hints are zero there too, so diagram captions cannot masquerade as table-backed AMBA source-column evidence.

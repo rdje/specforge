@@ -977,6 +977,7 @@
 - Alias-dependent semantic role candidates/consensus surfaced explicitly in canonical IR and validation: Done
 - Alias-dependent typed handshake completion surfaced explicitly in validation: Done
 - Alias-dependent handshake completion now preserved as canonical residual/assumption state: Done
+- KG benchmark harness now locks alias-dependent handshake aggregate temporal-rule metric coverage: Done
 - SemanticIR / IntentIR per-signal semantic observation provenance implemented: Done
 - Canonical semantic-role consensus plus grounding-strength reporting implemented: Done
 - Cross-modality semantic grounding distinction implemented: Done

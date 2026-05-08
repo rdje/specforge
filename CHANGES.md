@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for alias-dependent temporal-rule count)
+
+### Improved: alias-dependent caveat locks aggregate temporal rules
+- Tightened `alias_dependent_handshake_completion_caveat` with `temporal_rules = 1` at both `SemanticIR` and `IntentIR` validation surfaces.
+- The caveat fixture now proves its alias-dependent `XREQ` / `XACK` handshake still emits exactly one counted temporal rule while preserving the residual/assumption trail for weaker alias-grounded role evidence.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench alias_dependent_handshake_completion_caveat` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for AXI width-only temporal-rule count)
 
 ### Improved: AXI width-only fixture locks aggregate temporal rules
