@@ -255,13 +255,15 @@
       "semantic": {
         "metric_values": {
           "actor_ports": "4",
-          "temporal_rules_with_handshake_completion": "1"
+          "temporal_rules_with_handshake_completion": "1",
+          "temporal_rules_with_multi_predicate_antecedents": "1"
         }
       },
       "intent": {
         "metric_values": {
           "actor_ports": "4",
-          "temporal_rules_with_handshake_completion": "1"
+          "temporal_rules_with_handshake_completion": "1",
+          "temporal_rules_with_multi_predicate_antecedents": "1"
         }
       }
     }
