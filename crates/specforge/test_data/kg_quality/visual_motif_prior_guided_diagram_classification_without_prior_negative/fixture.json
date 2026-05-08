@@ -107,6 +107,7 @@
           "visual_motif_corroboration_targets": "0",
           "signal_semantic_hints": "0",
           "signal_semantic_hints_from_tables": "0",
+          "signal_semantic_hints_from_prose": "0",
           "signal_semantic_hints_from_visual_captions": "0"
         }
       }
