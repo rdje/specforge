@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter assignment graph output guard)
+- Added `control_assignment_renderability_uses_graph_output_without_stale_flat_override` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks typed assignment renderability so graph-backed output targets create renderable size entries and count as driven outputs, but stale flat-vs-graph disagreement emits conflict guidance, fails the target role check, and leaves no stale entry.
+- The slice also cleans test-only vectors to arrays after Clippy caught `clippy::useless_vec`, and the slice 80 full CI checkpoint passed.
+
 ## Session update (2026-05-08 adapter init assignment graph output guard)
 - Added `init_assignment_renderability_uses_graph_output_without_stale_flat_override` in `crates/specforge/src/ir/adapters.rs`.
 - The test locks init-assignment renderability so graph-backed output targets create renderable size entries, but stale flat-vs-graph disagreement emits conflict guidance, fails the output-role check, and leaves no stale entry.

@@ -237,6 +237,7 @@ For child outputs recovered only from top-link topology, local module renderabil
 When a signal does reach renderable size-entry registration, graph-only direction evidence can emit the port role, but flat-vs-graph disagreement leaves no stale size entry behind.
 The same graph-first rule applies to system-contract clock/reset validation for `.fsm` `(+system ...)` lowering: graph-only input evidence can satisfy the role, while stale flat disagreement blocks.
 Init assignments follow the same rule for reset/init lowering: graph-backed output targets can be rendered, but stale flat disagreement fails the target role check and does not leave a size entry behind.
+Typed control assignments use the same role rule: graph-backed output targets can be driven, while stale flat disagreement fails assignment-target renderability and does not create a stale size entry.
 
 ## What users should inspect
 

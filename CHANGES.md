@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-08 (adapter assignment graph output guard)
+
+### Improved: control assignment renderability has direct graph-first coverage
+- Added a direct regression for typed control assignment renderability.
+- The guard proves graph-backed output targets create renderable size entries and are counted as driven outputs, while flat-vs-graph disagreement blocks the target role and leaves no stale size entry.
+- Replaced temporary test-only `vec!` allocations with arrays so the broader warning-deny Clippy gate stays clean.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge control_assignment_renderability_uses_graph_output_without_stale_flat_override` -> passed
+- `cargo fmt --all --check` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`100/100` adapter-filtered tests)
+- `bash scripts/run_ci.sh` -> passed with formatting, Clippy warning-deny, `623` Rust tests, rustdoc warning-deny, and mdBook
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter init assignment graph output guard)
 
 ### Improved: init assignment renderability has direct graph-first coverage

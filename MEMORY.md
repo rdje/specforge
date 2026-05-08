@@ -23,22 +23,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `7358294f884041db1852d727c7f5326fc64d852b`
-- latest_commit_brief_message: `test(adapter): guard system graph directions`
-- note: this is the pre-slice-79 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
+- latest_commit_hash: `0b76a66716ff2c51c0c819d7972e9f4596a115cf`
+- latest_commit_brief_message: `test(adapter): guard init graph outputs`
+- note: this is the pre-slice-80 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
 
 ## Recent commit chain (last 6)
+- `0b76a66` test(adapter): guard init graph outputs
 - `7358294` test(adapter): guard system graph directions
 - `670b882` test(adapter): guard graph-backed size entries
 - `0f645ee` test(adapter): guard topology-linked output drives
 - `8abc9ce` test(adapter): guard top-port width conflicts
 - `a81ade3` test(adapter): guard top-port direction conflicts
-- `1961ab4` test(adapter): guard graph-first direction resolver
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 79 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
+- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 80 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
 - files in flight:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
@@ -58,19 +58,20 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `78`
-  - slice 79/200 adds a direct `.fsm` init-assignment renderability guard for graph-backed output targets and stale-flat disagreement blocking
+  - completed_count before this commit: `79`
+  - slice 80/200 adds a direct `.fsm` typed assignment renderability guard for graph-backed output targets and stale-flat disagreement blocking
+  - the slice also cleans Clippy-reported array opportunities in the new direct adapter helper tests before the full warning-deny gate
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks init-assignment renderability graph-backed output stale-flat regression coverage as `Done`
+  - live-status tracker now marks typed assignment renderability graph-backed output stale-flat regression coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 79 before commit
+  - implementation and live-doc sync are complete for slice 80 before commit
   - `cargo fmt --all` applied rustfmt layout
-  - `cargo test --manifest-path Cargo.toml -p specforge init_assignment_renderability_uses_graph_output_without_stale_flat_override` passed
+  - `cargo test --manifest-path Cargo.toml -p specforge control_assignment_renderability_uses_graph_output_without_stale_flat_override` passed
   - `cargo fmt --all --check` passed
-  - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `99/99` adapter-filtered tests
-  - `bash scripts/run_docs_ci.sh` passed after the live-book sync
-  - `bash scripts/run_ci.sh` passed on slice 70 as a broader checkpoint gate
+  - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `100/100` adapter-filtered tests
+  - `bash scripts/run_ci.sh` passed on slice 80 as a broader checkpoint gate with formatting, Clippy warning-deny, `623` Rust tests, rustdoc warning-deny, and mdBook
+  - `bash scripts/run_docs_ci.sh` passed after the final live-book sync
   - `bash scripts/run_ci.sh` passed on slice 60 as a broader checkpoint gate
   - `bash scripts/run_ci.sh` passed on slice 50 as a broader checkpoint gate
   - `bash scripts/run_ci.sh` passed on slice 40 as a broader checkpoint gate
@@ -224,6 +225,10 @@
   - slice 79 passed `cargo test --manifest-path Cargo.toml -p specforge init_assignment_renderability_uses_graph_output_without_stale_flat_override`
   - slice 79 passed `cargo test --manifest-path Cargo.toml -p specforge adapters`
   - slice 79 passed `bash scripts/run_docs_ci.sh`
+  - slice 80 passed `cargo test --manifest-path Cargo.toml -p specforge control_assignment_renderability_uses_graph_output_without_stale_flat_override`
+  - slice 80 passed `cargo test --manifest-path Cargo.toml -p specforge adapters`
+  - slice 80 passed `bash scripts/run_ci.sh`
+  - slice 80 passed `bash scripts/run_docs_ci.sh`
   - slice 20 passed `bash scripts/run_ci.sh`
   - slice 100 passed `bash scripts/run_ci.sh`
   - slice 90 passed `bash scripts/run_ci.sh`

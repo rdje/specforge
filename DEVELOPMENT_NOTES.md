@@ -7,6 +7,20 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-08 adapter assignment graph output guard
+- New batch slice 80/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Added `control_assignment_renderability_uses_graph_output_without_stale_flat_override` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks `validate_control_action_renderability` for typed assignments directly: graph-backed output targets create renderable size entries and enter `driven_outputs`, while stale flat input evidence that disagrees with graph-backed output evidence emits conflict guidance, fails the assignment target role check, and leaves no stale size entry.
+- Replaced short-lived test vectors with arrays after the broader warning-deny Clippy checkpoint caught `clippy::useless_vec`.
+- `cargo fmt --all` applied rustfmt layout.
+- `cargo test --manifest-path Cargo.toml -p specforge control_assignment_renderability_uses_graph_output_without_stale_flat_override` passed.
+- `cargo fmt --all --check` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `100/100` adapter-filtered tests.
+- `bash scripts/run_ci.sh` passed as the slice 80 broader checkpoint with formatting, Clippy warning-deny, `623` Rust tests, rustdoc warning-deny, and mdBook.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- Push remains deferred for the active `BWFSC=200` batch.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-08 adapter init assignment graph output guard
 - New batch slice 79/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Added `init_assignment_renderability_uses_graph_output_without_stale_flat_override` in `crates/specforge/src/ir/adapters.rs`.
