@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (adapter unemitted target confidence guard)
+
+### Improved: unemitted child-target blockers preserve retained record confidence
+- Extended the target-side unemitted child endpoint regression to assert the declared top port and consumer child keep high automation confidence alongside the already-checked blocked top link.
+- The guard completes retained-record confidence coverage for target-side unemitted child diagnostics while top composition stays blocked.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_link_to_unemitted_child_target_guidance` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter unemitted source confidence guard)
 
 ### Improved: unemitted child-source blockers preserve retained record confidence
