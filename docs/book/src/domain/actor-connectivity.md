@@ -238,6 +238,7 @@ When a signal does reach renderable size-entry registration, graph-only directio
 The same graph-first rule applies to system-contract clock/reset validation for `.fsm` `(+system ...)` lowering: graph-only input evidence can satisfy the role, while stale flat disagreement blocks.
 Init assignments follow the same rule for reset/init lowering: graph-backed output targets can be rendered, but stale flat disagreement fails the target role check and does not leave a size entry behind.
 Typed control assignments use the same role rule: graph-backed output targets can be driven, while stale flat disagreement fails assignment-target renderability and does not create a stale size entry.
+Guard predicates use the shared registration rule too: graph-backed guard signals create size entries, while stale flat disagreement blocks and does not create a stale entry.
 
 ## What users should inspect
 

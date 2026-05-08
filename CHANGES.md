@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (adapter guard graph direction guard)
+
+### Improved: guard renderability has direct graph-first coverage
+- Added a direct regression for `.fsm` guard renderability.
+- The guard proves graph-backed guard signals create renderable size entries, while flat-vs-graph disagreement blocks and leaves no stale size entry.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge guard_renderability_uses_graph_direction_without_stale_flat_override` -> passed
+- `cargo fmt --all --check` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`101/101` adapter-filtered tests)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter assignment graph output guard)
 
 ### Improved: control assignment renderability has direct graph-first coverage
