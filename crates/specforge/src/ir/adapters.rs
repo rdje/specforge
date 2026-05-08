@@ -21295,7 +21295,7 @@ mod tests {
             "multi_child_without_links.md",
             "# Multi Child Without Links\nTop datapath.\n\nTop datapath port result_data is output width 8.\n\nTop datapath child producer uses module producer_core.\n\nTop datapath child consumer uses module consumer_core.\n\nModule producer_core signal output_data is output width 8.\n\nModule producer_core block produce: output_data = 8'3.\n\nModule consumer_core signal input_data is input width 8.\n\nModule consumer_core signal result_data is output width 8.\n\nModule consumer_core block route: result_data = input_data.\n",
         )?;
-        let (producer_child_support_ids, consumer_child_support_ids) = {
+        let (top_port_support_ids, producer_child_support_ids, consumer_child_support_ids) = {
             let explicit_top = intent_ir
                 .explicit_tops
                 .iter()
@@ -21305,6 +21305,11 @@ mod tests {
                 explicit_top.links.is_empty(),
                 "fixture should expose the no-link multi-child blocker"
             );
+            let result_port = explicit_top
+                .ports
+                .iter()
+                .find(|port| port.port_name == "result_data")
+                .expect("result_data top port should be present");
             let producer_child = explicit_top
                 .children
                 .iter()
@@ -21316,13 +21321,16 @@ mod tests {
                 .find(|child| child.instance_name == "consumer")
                 .expect("consumer child should be present");
             (
+                result_port.supporting_statement_ids.clone(),
                 producer_child.supporting_statement_ids.clone(),
                 consumer_child.supporting_statement_ids.clone(),
             )
         };
         assert!(
-            !producer_child_support_ids.is_empty() && !consumer_child_support_ids.is_empty(),
-            "child declaration provenance should be present"
+            !top_port_support_ids.is_empty()
+                && !producer_child_support_ids.is_empty()
+                && !consumer_child_support_ids.is_empty(),
+            "top port and child declaration provenance should be present"
         );
         let artifact_base = tempdir.path().join("generated").join("adapters");
 
@@ -21343,6 +21351,44 @@ mod tests {
             .find(|top| top.top_name == "datapath")
             .expect("top candidate should remain visible");
 
+        let result_port = top_candidate
+            .ports
+            .iter()
+            .find(|port| port.port_name == "result_data")
+            .expect("result_data top port should remain visible");
+        assert_eq!(
+            result_port.direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert_eq!(result_port.width_hint, Some(WidthHint::Numeric(8)));
+        assert!(
+            top_port_support_ids
+                .iter()
+                .any(|id| result_port.supporting_statement_ids.contains(id))
+        );
+        assert_eq!(
+            result_port.automation_confidence,
+            AutomationConfidence::High
+        );
+        let signal_inventory_port = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "result_data")
+            .expect("declared result_data top port should remain in selected top inventory");
+        assert_eq!(
+            signal_inventory_port.direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert_eq!(signal_inventory_port.width_hint, Some(8));
+        assert!(
+            top_port_support_ids
+                .iter()
+                .any(|id| signal_inventory_port.supporting_canonical_ids.contains(id))
+        );
+        assert_eq!(
+            signal_inventory_port.automation_confidence,
+            AutomationConfidence::High
+        );
         assert_eq!(top_candidate.children.len(), 2);
         assert!(top_candidate.links.is_empty());
         let producer_child = top_candidate

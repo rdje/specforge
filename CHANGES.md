@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-09 (adapter missing-link inventory confidence guard)
+
+### Improved: missing-link multi-child blockers preserve selected inventory confidence
+- Extended the missing-link multi-child regression to assert the retained declared top output port also stays visible in selected signal inventory with support IDs and high automation confidence.
+- The guard keeps missing-link multi-child diagnostics tied to retained top-port inventory while top composition emission stays blocked.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_multi_child_without_links_guidance` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-09 (adapter duplicate-child inventory confidence guard)
 
 ### Improved: duplicate child blockers preserve selected inventory confidence

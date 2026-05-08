@@ -237,6 +237,7 @@ Width-incompatible top links stay blocked, but the selected top inventory still 
 Duplicate child-instance blockers keep each child declaration's source module, resolved root kind, support IDs, and automation confidence visible.
 They also keep the declared top port in selected top inventory with support IDs and high confidence while duplicate child instances are deduplicated.
 Missing-link multi-child blockers keep the same child declaration confidence visible while composition waits for explicit links.
+They also keep the declared top port in selected top inventory with support IDs and high confidence while missing links are added.
 Undeclared top-link target blockers keep retained top-port, child, and link confidence visible while composition waits for the missing endpoint declaration.
 They also keep the declared top port in selected top inventory with support IDs and high confidence while the missing target endpoint is repaired.
 Undeclared top-link source blockers keep the same retained confidence visible while composition waits for the missing source declaration.

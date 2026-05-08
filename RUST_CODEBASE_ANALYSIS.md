@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter missing-link inventory confidence guard)
+- Extended `top_composition_blocks_multi_child_without_links_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- The missing-link multi-child blocker now locks selected signal-inventory support IDs and high automation confidence for the retained declared `result_data` top port.
+- This keeps missing-link multi-child diagnostics tied to retained top inventory while top composition emission stays blocked.
+
 ## Session update (2026-05-09 adapter duplicate-child inventory confidence guard)
 - Extended `top_composition_blocks_duplicate_child_instance_guidance` in `crates/specforge/src/ir/adapters.rs`.
 - The duplicate child-instance blocker now locks selected signal-inventory support IDs and high automation confidence for the retained declared `result_data` top port.
