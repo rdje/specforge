@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter transition guard graph direction guard)
+- Added `transition_renderability_uses_graph_guard_direction_without_stale_flat_override` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks true-FSM transition guard renderability so graph-backed guard signals create size entries when state endpoints are valid, while stale flat-vs-graph disagreement leaves no stale entry.
+- This covers the transition path into `validate_guard_renderability` separately from DT branch guards.
+
 ## Session update (2026-05-08 adapter compound-update graph output guard)
 - Added `compound_update_renderability_uses_graph_output_without_stale_flat_override` in `crates/specforge/src/ir/adapters.rs`.
 - The test locks compound-update renderability so graph-backed output targets create size entries, count as driven outputs, and remain sequential targets, while stale flat-vs-graph disagreement leaves no stale entry.

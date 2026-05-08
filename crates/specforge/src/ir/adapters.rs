@@ -6247,6 +6247,7 @@ mod tests {
     use crate::error::{AppError, Result};
     use crate::ir::adapters::{
         AdapterArtifact, AdapterTarget, FsmRenderableModule, FsmRootKind, FsmSignalCandidate,
+        FsmTransitionCandidate,
     };
     use crate::ir::evidence::EvidenceIr;
     use crate::ir::intent::IntentIr;
@@ -7137,6 +7138,94 @@ mod tests {
                 "keep canonical compound-update targets aligned with explicit output roles"
             )
         );
+    }
+
+    #[test]
+    fn transition_renderability_uses_graph_guard_direction_without_stale_flat_override() {
+        let mut graph_input = signal_candidate_with_direction_evidence(
+            None,
+            false,
+            Some(InterfaceSignalDirection::Input),
+            false,
+        );
+        graph_input.signal_name = "GO".to_string();
+        graph_input.width_hint = Some(1);
+
+        let mut stale_input = signal_candidate_with_direction_evidence(
+            Some(InterfaceSignalDirection::Output),
+            false,
+            Some(InterfaceSignalDirection::Input),
+            false,
+        );
+        stale_input.signal_name = "STALE_GO".to_string();
+        stale_input.width_hint = Some(1);
+
+        let signals = [graph_input, stale_input];
+        let signals_by_name = signals
+            .iter()
+            .map(|signal| (signal.signal_name.clone(), signal))
+            .collect::<std::collections::BTreeMap<_, _>>();
+        let state_names = ["idle".to_string(), "busy".to_string()]
+            .into_iter()
+            .collect::<std::collections::BTreeSet<_>>();
+        let mut size_entries = std::collections::BTreeMap::new();
+        let mut blocking_reasons = Vec::new();
+        let mut required_canonical_enrichments = std::collections::BTreeSet::new();
+
+        let graph_transition = FsmTransitionCandidate {
+            transition_id: "transition_go".to_string(),
+            source_state: "idle".to_string(),
+            target_state: "busy".to_string(),
+            guard: Some(DecisionTreeGuardRecord::SignalIsHigh {
+                signal_name: "GO".to_string(),
+            }),
+            declaration_order: 0,
+            supporting_canonical_ids: Vec::new(),
+            automation_confidence: AutomationConfidence::High,
+        };
+        super::validate_transition_renderability(
+            &graph_transition,
+            &state_names,
+            &signals_by_name,
+            &mut size_entries,
+            &mut blocking_reasons,
+            &mut required_canonical_enrichments,
+        );
+        let graph_entry = size_entries
+            .get("GO")
+            .expect("graph-backed transition guard should create a size entry");
+        assert_eq!(graph_entry.direction_hint, InterfaceSignalDirection::Input);
+        assert_eq!(graph_entry.width, 1);
+        assert!(blocking_reasons.is_empty());
+
+        let stale_transition = FsmTransitionCandidate {
+            transition_id: "transition_stale".to_string(),
+            source_state: "idle".to_string(),
+            target_state: "busy".to_string(),
+            guard: Some(DecisionTreeGuardRecord::SignalIsHigh {
+                signal_name: "STALE_GO".to_string(),
+            }),
+            declaration_order: 1,
+            supporting_canonical_ids: Vec::new(),
+            automation_confidence: AutomationConfidence::High,
+        };
+        super::validate_transition_renderability(
+            &stale_transition,
+            &state_names,
+            &signals_by_name,
+            &mut size_entries,
+            &mut blocking_reasons,
+            &mut required_canonical_enrichments,
+        );
+        assert!(!size_entries.contains_key("STALE_GO"));
+        assert!(blocking_reasons.iter().any(|reason| {
+            reason.contains(
+                "Signal `STALE_GO` has conflicting canonical and graph-backed direction evidence",
+            )
+        }));
+        assert!(required_canonical_enrichments.contains(
+            "resolve conflicting canonical and actor-relative graph direction evidence before lowering `.fsm`"
+        ));
     }
 
     fn build_handshake_intent_ir(base: &Path) -> Result<IntentIr> {

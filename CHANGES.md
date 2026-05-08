@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (adapter transition guard graph direction guard)
+
+### Improved: transition guard renderability has direct graph-first coverage
+- Added a direct regression for true-FSM transition guard renderability.
+- The guard proves graph-backed transition guard signals create renderable size entries when state endpoints are valid, while flat-vs-graph disagreement blocks and leaves no stale size entry.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge transition_renderability_uses_graph_guard_direction_without_stale_flat_override` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`105/105` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter compound-update graph output guard)
 
 ### Improved: compound-update renderability has direct graph-first coverage
