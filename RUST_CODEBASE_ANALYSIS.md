@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter sibling child-link inventory confidence guard)
+- Extended `top_composition_blocks_conflicting_sibling_child_link_widths` in `crates/specforge/src/ir/adapters.rs`.
+- The sibling child-link width blocker now locks selected signal-inventory support IDs and high automation confidence for the retained declared `result_data` top port.
+- This keeps child input width-conflict diagnostics tied to retained top inventory while top composition emission stays blocked.
+
 ## Session update (2026-05-09 adapter legacy-unemitted inventory confidence guard)
 - Extended `top_composition_blocks_link_from_unemitted_child_port` in `crates/specforge/src/ir/adapters.rs`.
 - The legacy source-side unemitted child-port blocker now locks selected signal-inventory support IDs and high automation confidence for the retained declared `result_data` top port.
