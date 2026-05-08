@@ -602,6 +602,7 @@
 - KG benchmark harness now locks AXI write-data prose semantic-hint exclusion: Done
 - KG benchmark harness now locks AXI write-data alias-grounded prose semantic-hint exclusion: Done
 - KG benchmark harness now locks AXI write-data visual-caption semantic-hint exclusion: Done
+- KG benchmark harness now locks AXI write-data VLM timing-annotation semantic-hint exclusion: Done
 - KG benchmark harness now includes AXI sideband stability coverage: Done
 - KG benchmark harness now locks AXI sideband prose semantic-hint exclusion: Done
 - KG benchmark harness now locks AXI sideband alias-grounded prose semantic-hint exclusion: Done
