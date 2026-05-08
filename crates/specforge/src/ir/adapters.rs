@@ -21665,6 +21665,7 @@ mod tests {
                 .iter()
                 .any(|id| drive_port.supporting_statement_ids.contains(id))
         );
+        assert_eq!(drive_port.automation_confidence, AutomationConfidence::High);
         let consumer_child = top_candidate
             .children
             .iter()
@@ -21676,6 +21677,10 @@ mod tests {
             consumer_child_support_ids
                 .iter()
                 .any(|id| consumer_child.supporting_canonical_ids.contains(id))
+        );
+        assert_eq!(
+            consumer_child.automation_confidence,
+            AutomationConfidence::High
         );
         let link = top_candidate
             .links
@@ -21693,6 +21698,7 @@ mod tests {
                 "top-link support id should remain visible"
             );
         }
+        assert_eq!(link.automation_confidence, AutomationConfidence::High);
         assert!(!top_candidate.renderability.is_renderable);
         assert!(
             top_candidate
