@@ -1,5 +1,15 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for visual-motif family-mismatch prose exclusion)
+
+### Improved: visual-motif family-mismatch fixtures exclude prose hints
+- Tightened `visual_motif_prior_protocol_family_mismatch_negative` with `signal_semantic_hints_from_prose = 0` at `EvidenceIR`.
+- The fixture now proves an APB-scoped visual-motif prior staged against AXI-local evidence cannot invent ordinary prose semantic-role hints.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench visual_motif_prior_protocol_family_mismatch_negative` -> passed (`1/1` fixture)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for visual-motif family-mismatch table exclusion)
 
 ### Improved: visual-motif family-mismatch fixtures exclude table hints

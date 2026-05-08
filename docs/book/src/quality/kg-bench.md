@@ -217,6 +217,7 @@ Alias-grounded prose hints are zero too, proving learned motif classification ca
 VLM timing-annotation hints are zero as well, keeping timing-note evidence from masquerading as semantic roles.
 That visual-motif gold now also checks the evidence-stage corroboration finding payload, so prior-classified `visual_0001` remains targeted for VLM/multimodal follow-up instead of being silently promoted.
 The visual-motif family-mismatch negative keeps table-sourced semantic hints at zero too, so an APB-scoped motif prior cannot add table-derived roles to AXI-local evidence.
+Ordinary prose hints stay zero there as well, preventing unrelated motif memory from creating text-derived roles.
 
 Fixtures can assert canonical semantic grounding strength directly as well.
 `semantic_grounding_strengths_include` checks the signal name and expected single-source, multi-source, or cross-modality grounding strength on the canonical interface signal record.
