@@ -149,6 +149,7 @@ Its address/protection wait-state mirror checks `PADDR` and `PPROT` as Requester
 That mirror keeps prose-sourced semantic hints at zero too, proving `PSEL` / `PREADY` role hints remain table-only.
 Alias-grounded prose hints are zero there too, so phrase-alias recovery cannot masquerade as table-backed APB address/protection evidence.
 Visual-caption hints are zero there too, so diagram captions cannot masquerade as table-backed APB address/protection evidence.
+VLM timing-annotation hints are zero there as well, so timing notes cannot masquerade as table-backed APB address/protection evidence.
 Its response-stability mirror checks the completed-access side: `PRDATA` and `PSLVERR` must remain completer-owned stable outputs when `PSEL`, `PENABLE`, and `PREADY` are high, and the same rule must preserve `HandshakeComplete(PSEL, PREADY)`.
 The AHB timing family now includes a control-stability wait-state path too: `HADDR`, `HWRITE`, `HSIZE`, `HBURST`, and `HPROT` must remain manager-owned stable outputs while `HREADY` is low and `HSEL` is high, with no false handshake-completion predicate.
 Its transfer/lock mirror checks `HTRANS` and `HMASTLOCK` as manager-owned stable outputs under the same `HREADY LOW` / `HSEL HIGH` wait-state guard, proving transfer-type and locked-transfer attributes remain owned protocol obligations without promoting the stall to handshake completion.

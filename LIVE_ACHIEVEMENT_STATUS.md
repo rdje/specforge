@@ -1007,6 +1007,7 @@
 - KG benchmark harness now locks APB address/protection prose semantic-hint exclusion: Done
 - KG benchmark harness now locks APB address/protection alias-grounded prose semantic-hint exclusion: Done
 - KG benchmark harness now locks APB address/protection visual-caption semantic-hint exclusion: Done
+- KG benchmark harness now locks APB address/protection VLM timing-annotation semantic-hint exclusion: Done
 - KG benchmark harness now includes an AHB-style section-heading gold fixture for direction recovery: Done
 - KG benchmark harness now includes an AHB wait-state timing gold fixture: Done
 - KG benchmark harness now locks bogus actor-attribution rejection for `Source`-column infrastructure rows: Done
