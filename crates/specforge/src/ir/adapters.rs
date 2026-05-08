@@ -17245,17 +17245,41 @@ mod tests {
             "width_only_top_port_missing_child.md",
             "# Blocked Composition With Recovered Port\nTop datapath.\n\nTop datapath port result_data is width 8.\n\nTop datapath child consumer uses module missing_module.\n\nTop datapath link consumer.result_data -> result_data.\n",
         )?;
-        let topology_support_ids = intent_ir
-            .explicit_tops
-            .iter()
-            .find(|top| top.top_name == "datapath")
-            .and_then(|top| {
-                top.links.iter().find(|link| {
+        let (top_port_support_ids, child_support_ids, topology_support_ids) = {
+            let explicit_top = intent_ir
+                .explicit_tops
+                .iter()
+                .find(|top| top.top_name == "datapath")
+                .expect("explicit top should be present");
+            let raw_port = explicit_top
+                .ports
+                .iter()
+                .find(|port| port.port_name == "result_data")
+                .expect("result_data top port should be present");
+            let consumer_child = explicit_top
+                .children
+                .iter()
+                .find(|child| child.instance_name == "consumer")
+                .expect("consumer child declaration should be present");
+            let topology_link = explicit_top
+                .links
+                .iter()
+                .find(|link| {
                     link.target.instance_name.is_none() && link.target.signal_name == "result_data"
                 })
-            })
-            .map(super::explicit_top_link_supporting_ids)
-            .expect("topology link into result_data should be present");
+                .expect("topology link into result_data should be present");
+            (
+                raw_port.supporting_statement_ids.clone(),
+                consumer_child.supporting_statement_ids.clone(),
+                super::explicit_top_link_supporting_ids(topology_link),
+            )
+        };
+        assert!(
+            !top_port_support_ids.is_empty()
+                && !child_support_ids.is_empty()
+                && !topology_support_ids.is_empty(),
+            "top port, child, and link provenance should be present"
+        );
         let artifact_base = tempdir.path().join("generated").join("adapters");
 
         let adapter = AdapterArtifact::build(
@@ -17292,6 +17316,11 @@ mod tests {
                 .iter()
                 .any(|id| recovered_port.supporting_statement_ids.contains(id))
         );
+        assert!(
+            top_port_support_ids
+                .iter()
+                .any(|id| recovered_port.supporting_statement_ids.contains(id))
+        );
         assert_eq!(
             recovered_port.automation_confidence,
             AutomationConfidence::High
@@ -17314,6 +17343,21 @@ mod tests {
         );
         assert_eq!(
             signal_inventory_port.automation_confidence,
+            AutomationConfidence::High
+        );
+        let consumer_child = top_candidate
+            .children
+            .iter()
+            .find(|child| child.instance_name == "consumer")
+            .expect("consumer child candidate should remain visible");
+        assert_eq!(consumer_child.source_module_name, "missing_module");
+        assert!(
+            child_support_ids
+                .iter()
+                .any(|id| consumer_child.supporting_canonical_ids.contains(id))
+        );
+        assert_eq!(
+            consumer_child.automation_confidence,
             AutomationConfidence::High
         );
         assert!(

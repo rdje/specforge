@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-09 (adapter recovered top-port missing-module confidence guard)
+
+### Improved: recovered top-port missing-module blockers preserve retained record confidence
+- Extended the recovered top-port direction regression to assert the width-only top port, missing child declaration, and topology link remain high-confidence retained records while the missing module blocks composition.
+- The guard keeps recovered boundary direction diagnostics tied to retained top, child, and link records while top composition emission stays blocked.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_preserves_recovered_top_port_direction_when_still_blocked` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-09 (adapter parametric top-port confidence guard)
 
 ### Improved: parametric top-port blockers preserve retained record confidence
