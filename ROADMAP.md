@@ -810,6 +810,7 @@
     - a representative AXI write-address ID stability fixture proving manager-owned `AWID` remains graph-grounded and actor-owned when its stability is guarded by `AWVALID` / `AWREADY` completion
     - the AXI write-address ID fixture now asserts prose semantic hints stay zero while request/accept role hints remain table-sourced
     - the AXI write-address ID fixture now asserts alias-grounded prose semantic hints stay zero while request/accept role hints remain table-sourced
+    - the AXI write-address ID fixture now asserts visual-caption semantic hints stay zero while request/accept role hints remain table-sourced
     - a representative AXI write-address control sideband stability fixture proving `AWPROT`, `AWCACHE`, and `AWLOCK` remain graph-grounded and actor-owned when their stability is guarded by `AWVALID` / `AWREADY` completion
     - a representative AXI read-address control sideband stability fixture proving `ARPROT`, `ARCACHE`, and `ARLOCK` remain graph-grounded and actor-owned when their stability is guarded by `ARVALID` / `ARREADY` completion
     - the AXI read-address control sideband fixture now asserts prose semantic hints stay zero while `ARPROT`, `ARCACHE`, and `ARLOCK` remain table-sourced

@@ -566,6 +566,7 @@
 - KG benchmark harness now includes AXI write-address ID stability coverage: Done
 - KG benchmark harness now locks AXI write-address ID prose semantic-hint exclusion: Done
 - KG benchmark harness now locks AXI write-address ID alias-grounded prose semantic-hint exclusion: Done
+- KG benchmark harness now locks AXI write-address ID visual-caption semantic-hint exclusion: Done
 - KG benchmark harness now includes AXI write-address control sideband stability coverage: Done
 - KG benchmark harness now includes AXI read-address control sideband stability coverage: Done
 - KG benchmark harness now locks AXI read-address control sideband prose semantic-hint exclusion: Done
