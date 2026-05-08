@@ -264,6 +264,7 @@ Width-cast symbol-definition values follow the same signal-free symbol slice bou
 Unary symbol-definition width-cast operands follow that same signal-free recursive validation path.
 Binary symbol-definition width-cast operands remain signal-free under the same recursive rule for both sides.
 Enum-member width-cast values remain signal-free under that symbol slice boundary as well.
+Unary enum-member width-cast operands stay signal-free through the recursive enum validation path.
 
 ## What users should inspect
 
