@@ -89,6 +89,7 @@
       "evidence": {
         "metric_values": {
           "signal_semantic_hints": "1",
+          "signal_semantic_hints_from_tables": "0",
           "signal_semantic_hints_from_visual_captions": "1"
         }
       },

@@ -22,24 +22,24 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `8e000807ae06dfba7de6d9c81a0e9b3e5168cced`
-- latest_commit_brief_message: `test(kg): lock APB address protection visual exclusion`
-- note: this is the pre-slice-83 baseline for the current `BWFSC=100` batch; slices 1-82/100 are committed and push remains deferred
+- latest_commit_hash: `9de4a8b5c18bb4669d87db3d5e90ceae26e7f310`
+- latest_commit_brief_message: `test(kg): lock APB address protection VLM exclusion`
+- note: this is the pre-slice-84 baseline for the current `BWFSC=100` batch; slices 1-83/100 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `9de4a8b` test(kg): lock APB address protection VLM exclusion
 - `8e00080` test(kg): lock APB address protection visual exclusion
 - `d5443f1` test(kg): lock APB address protection alias exclusion
 - `43124ee` test(kg): lock APB address protection prose exclusion
 - `84fa262` test(kg): lock AXI read-data timing VLM exclusion
 - `1e29504` test(kg): lock AXI read-data timing visual exclusion
-- `9d234a8` test(kg): lock AXI read-data timing alias exclusion
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=100` slice 83 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=100` slice 84 and push is deferred
 - files in flight:
-  - `crates/specforge/test_data/kg_quality/apb_address_protection_stability_gold/fixture.json`
+  - `crates/specforge/test_data/kg_quality/visual_semantic_prior_guided_caption_gold/fixture.json`
   - live docs and mdBook files synced for the slice
 
 ## Previous completed N-slice batch
@@ -52,14 +52,14 @@
 ## Current batch status
 - objective:
   - active `BWFSC=100` batch is in progress
-  - completed_count before this commit: `82`
-  - slice 83/100 tightens APB address/protection VLM timing-annotation semantic-hint exclusion metrics for positive table-backed source-split hardening
+  - completed_count before this commit: `83`
+  - slice 84/100 tightens prior-guided visual semantic phrase table semantic-hint exclusion metrics for source-split hardening
   - push is deferred until all `100` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks APB address/protection VLM timing-annotation semantic-hint exclusion KG coverage as `Done`
+  - live-status tracker now marks prior-guided visual semantic phrase table semantic-hint exclusion KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 83 before commit
-  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench apb_address_protection_stability_gold` passed with the requested fixture
+  - implementation and live-doc sync are complete for slice 84 before commit
+  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench visual_semantic_prior_guided_caption_gold` passed with the requested fixture
   - broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed on slice 83 with `150/150` fixtures
   - broader `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed on slice 83 with `150` fixtures projected, `0` failures, and no tracked projection diff
   - `bash scripts/run_docs_ci.sh` passed after the live-book sync

@@ -1,5 +1,15 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for visual semantic prior table exclusion)
+
+### Improved: visual semantic-prior fixtures exclude table hints
+- Tightened `visual_semantic_prior_guided_caption_gold` with `signal_semantic_hints_from_tables = 0` at `EvidenceIR`.
+- The fixture now proves `XACK` ready-like recovery comes from visual-caption evidence rather than table evidence.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench visual_semantic_prior_guided_caption_gold` -> passed (`1/1` fixture)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for APB address/protection VLM exclusion)
 
 ### Improved: APB address/protection fixtures exclude VLM timing hints
