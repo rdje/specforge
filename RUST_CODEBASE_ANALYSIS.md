@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 KG fixture for source-column bogus actor prose exclusion)
+- Tightened `source_column_bogus_actor_attribution_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts evidence-stage `signal_semantic_hints_from_prose = 0` alongside aggregate and table-sourced semantic hints.
+- This begins negative source-column source-split hardening by proving bogus actor-attribution coverage does not rely on prose-recovered semantic hints.
+
 ## Session update (2026-05-08 KG fixture for AMBA source-column VLM exclusion)
 - Tightened `amba_source_column_handshake_gold` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts evidence-stage `signal_semantic_hints_from_vlm_timing_annotations = 0` alongside total, table-sourced, prose, alias-grounded prose, and visual-caption semantic hints.
