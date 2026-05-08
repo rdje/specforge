@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter duplicate child confidence guard)
+- Extended `top_composition_blocks_duplicate_child_instance_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- The test now locks high automation confidence on each duplicate child declaration while the top candidate remains blocked on duplicate instance names.
+- This complements existing duplicate-child support-ID and root-kind coverage so blocked composition diagnostics keep full declaration metadata.
+
 ## Session update (2026-05-08 adapter top-link endpoint metadata guard)
 - Extended `top_composition_blocks_width_mismatched_top_link_guidance` in `crates/specforge/src/ir/adapters.rs`.
 - The test now locks selected top signal-inventory metadata for both width-mismatched top-link endpoints while the adapter remains blocked on width compatibility.

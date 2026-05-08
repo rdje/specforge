@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (adapter duplicate child confidence guard)
+
+### Improved: duplicate child blockers preserve child confidence
+- Extended the duplicate child-instance top-composition regression to assert each blocked child declaration keeps high automation confidence.
+- The guard complements existing support-ID and root-kind checks so duplicate child diagnostics retain declaration confidence instead of degrading blocked metadata.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_duplicate_child_instance_guidance` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter top-link endpoint metadata guard)
 
 ### Improved: width-mismatched top links preserve endpoint metadata

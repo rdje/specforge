@@ -234,6 +234,7 @@ The shared adapter direction resolver is regression-tested directly for that con
 The top-boundary direction merger uses the same fail-closed posture: once explicit top declarations, top actor-port graph evidence, or link-topology evidence disagree, that boundary role stays unresolved even if later evidence repeats one side of the conflict.
 The same sticky-conflict rule applies to top-boundary widths recovered from explicit declarations, actor-port widths, or topology propagation.
 Width-incompatible top links stay blocked, but the selected top inventory still preserves each explicit endpoint's direction, width, provenance, support IDs, and confidence.
+Duplicate child-instance blockers keep each child declaration's source module, resolved root kind, support IDs, and automation confidence visible.
 For child outputs recovered only from top-link topology, local module renderability does not report a stale missing-drive blocker; composition validation owns the endpoint diagnostic because the top link may be the only reason that child port is visible.
 When a signal does reach renderable size-entry registration, graph-only direction evidence can emit the port role, but flat-vs-graph disagreement leaves no stale size entry behind.
 The same graph-first rule applies to system-contract clock/reset validation for `.fsm` `(+system ...)` lowering: graph-only input evidence can satisfy the role, while stale flat disagreement blocks.

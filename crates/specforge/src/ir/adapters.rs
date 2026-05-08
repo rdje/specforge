@@ -20324,6 +20324,11 @@ mod tests {
             child.source_module_name == "producer_core"
                 && child.resolved_root_kind == Some(FsmRootKind::Dt)
         }));
+        assert!(
+            duplicate_children
+                .iter()
+                .all(|child| child.automation_confidence == AutomationConfidence::High)
+        );
         for support_ids in &child_support_id_sets {
             assert!(duplicate_children.iter().any(|child| {
                 support_ids
