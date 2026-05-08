@@ -578,6 +578,7 @@
 - KG benchmark harness now locks AXI read-address sideband VLM timing-annotation semantic-hint exclusion: Done
 - KG benchmark harness now includes AXI write-address sideband stability coverage: Done
 - KG benchmark harness now includes AXI read-data last stability coverage: Done
+- KG benchmark harness now locks AXI read-data last prose semantic-hint exclusion: Done
 - KG benchmark harness now includes AXI write-data last stability coverage: Done
 - KG benchmark harness now includes APB write-control stability coverage: Done
 - KG benchmark harness now includes APB response stability coverage: Done

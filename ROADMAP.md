@@ -813,6 +813,7 @@
     - the AXI read-data ID stability fixture now asserts VLM timing-annotation semantic hints stay zero while `RID` remains table-sourced
     - a representative AXI read-data response stability fixture proving subordinate-owned `RRESP` remains graph-grounded and actor-owned when its stability is guarded by `RVALID` / `RREADY` completion
     - a representative AXI read-data last stability fixture proving subordinate-owned `RLAST` remains graph-grounded and actor-owned when its stability is guarded by `RVALID` / `RREADY` completion
+    - the AXI read-data last stability fixture now asserts prose semantic hints stay zero while `RLAST` recovers through table-sourced semantic hints
     - a representative AXI data USER sideband stability fixture proving Manager-owned `WUSER` and Subordinate-owned `RUSER` stay actor-grounded under their matching data-channel handshakes
     - a representative AXI write-data timing gold fixture proving the same width-only plus prose actor-relation path works for `WVALID` / `WREADY` / `WDATA` / `WSTRB`, including next-cycle write-data ready assertion and handshake-stable write-data payload semantics
     - a representative AXI write-data last stability fixture proving manager-owned `WLAST` remains graph-grounded and actor-owned when its stability is guarded by `WVALID` / `WREADY` completion

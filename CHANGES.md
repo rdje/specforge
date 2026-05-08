@@ -1,5 +1,15 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for AXI read-data last prose exclusion)
+
+### Improved: AXI read-data last fixtures prove table-only hints
+- Tightened `axi_read_data_last_stability_gold` with `signal_semantic_hints_from_prose = 0` at `EvidenceIR`.
+- The fixture now proves `RLAST` semantic hints remain table-sourced rather than prose-derived.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench axi_read_data_last_stability_gold` -> passed (`1/1` fixture)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for AXI read-data ID VLM exclusion)
 
 ### Improved: AXI read-data ID fixtures exclude VLM timing hints
