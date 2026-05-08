@@ -7,6 +7,17 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-08 KG fixture for AXI write-data last visual exclusion
+- New batch slice 70/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
+- Tightened `crates/specforge/test_data/kg_quality/axi_write_data_last_stability_gold/fixture.json`.
+- The fixture now asserts `signal_semantic_hints_from_visual_captions = 0` alongside aggregate semantic hints, table-sourced semantic hints, prose hints, alias-grounded prose hints, actor-signal relations, signal constraints, and the existing semantic/intent temporal-rule metrics.
+- This continues positive table-backed source-split hardening by proving AXI write-data last-beat request/accept semantic hints are not visual-caption recovered.
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench axi_write_data_last_stability_gold` passed with the requested fixture.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- `bash scripts/run_ci.sh` passed with formatting, Clippy warning-deny, Rust tests, rustdoc warning-deny, and mdBook.
+- Broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` and `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed on slice 67 with `150/150` tracked fixtures and `0` corpus-KB projection failures.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-08 KG fixture for AXI write-data last alias exclusion
 - New batch slice 69/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
 - Tightened `crates/specforge/test_data/kg_quality/axi_write_data_last_stability_gold/fixture.json`.
