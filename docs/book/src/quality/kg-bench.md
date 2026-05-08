@@ -155,6 +155,7 @@ VLM timing-annotation hints are zero there as well, so timing notes cannot masqu
 The APB timing family now also includes a write-control stability path: `PWRITE`, `PWDATA`, and `PSTRB` must remain requester-owned stable outputs while `PSEL` and `PENABLE` are high and `PREADY` is low, without treating that wait-state guard as a completed handshake.
 The write-control fixture keeps prose-sourced semantic hints at zero too, proving `PSEL` / `PREADY` role hints remain table-only while the write-control sidebands stay requester-owned.
 Alias-grounded prose hints are zero there too, so phrase-alias recovery cannot masquerade as table-backed APB write-control evidence.
+Visual-caption hints are zero there too, so diagram captions cannot masquerade as table-backed APB write-control evidence.
 Its address/protection wait-state mirror checks `PADDR` and `PPROT` as Requester-owned stable outputs under the same `PSEL HIGH` / `PENABLE HIGH` / `PREADY LOW` stalled-access guard, again without promoting the wait state to handshake completion.
 That mirror keeps prose-sourced semantic hints at zero too, proving `PSEL` / `PREADY` role hints remain table-only.
 Alias-grounded prose hints are zero there too, so phrase-alias recovery cannot masquerade as table-backed APB address/protection evidence.

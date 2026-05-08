@@ -994,6 +994,7 @@
 - KG benchmark harness now includes an APB write-control stability gold fixture: Done
 - KG benchmark harness now locks APB write-control prose semantic-hint exclusion: Done
 - KG benchmark harness now locks APB write-control alias-grounded prose semantic-hint exclusion: Done
+- KG benchmark harness now locks APB write-control visual-caption semantic-hint exclusion: Done
 - KG benchmark harness now includes an APB response stability gold fixture: Done
 - KG benchmark harness now includes an AHB control stability gold fixture: Done
 - KG benchmark harness now includes an AHB transfer/lock stability gold fixture: Done

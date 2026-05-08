@@ -1,5 +1,15 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for APB write-control visual exclusion)
+
+### Improved: APB write-control fixtures exclude visual-caption hints
+- Tightened `apb_write_control_stability_gold` with `signal_semantic_hints_from_visual_captions = 0` at `EvidenceIR`.
+- The fixture now proves `PSEL` / `PREADY` semantic hints are not recovered through visual-caption evidence while `PWRITE`, `PWDATA`, and `PSTRB` remain requester-owned stable outputs.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench apb_write_control_stability_gold` -> passed (`1/1` fixture)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for APB write-control alias exclusion)
 
 ### Improved: APB write-control fixtures exclude alias-grounded prose
