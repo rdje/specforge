@@ -171,7 +171,8 @@
           "actor_ports": "4",
           "with_semantic_consensus": "4",
           "with_decisive_semantic_arbitration": "4",
-          "temporal_rules_with_handshake_completion": "1"
+          "temporal_rules_with_handshake_completion": "1",
+          "temporal_rules_with_multi_predicate_antecedents": "1"
         }
       },
       "intent": {
@@ -179,7 +180,8 @@
           "actor_ports": "4",
           "with_semantic_consensus": "4",
           "with_decisive_semantic_arbitration": "4",
-          "temporal_rules_with_handshake_completion": "1"
+          "temporal_rules_with_handshake_completion": "1",
+          "temporal_rules_with_multi_predicate_antecedents": "1"
         }
       }
     }

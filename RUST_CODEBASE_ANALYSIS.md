@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 KG fixture for AMBA source-column temporal metrics)
+- Tightened `amba_source_column_handshake_gold` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts `temporal_rules_with_multi_predicate_antecedents = 1` at both `SemanticIR` and `IntentIR` validation surfaces.
+- This completes the current R15b/R15e temporal multi-predicate metric hardening pass: a scan found no remaining fixtures that assert `temporal_rules_with_handshake_completion = 1` while missing `temporal_rules_with_multi_predicate_antecedents`.
+
 ## Session update (2026-05-08 KG fixture for APB requester/completer temporal metrics)
 - Tightened `apb_requester_completer_handshake_gold` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts `temporal_rules_with_multi_predicate_antecedents = 1` at both `SemanticIR` and `IntentIR` validation surfaces.

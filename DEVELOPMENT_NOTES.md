@@ -7,6 +7,19 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-08 KG fixture for AMBA source-column temporal metrics
+- New batch slice 59/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Tightened `crates/specforge/test_data/kg_quality/amba_source_column_handshake_gold/fixture.json`.
+- The fixture now asserts `temporal_rules_with_multi_predicate_antecedents = 1` for both `SemanticIR` and `IntentIR` validation metrics alongside handshake-completion temporal-rule coverage.
+- This completes the current R15b/R15e temporal multi-predicate metric hardening pass: a scan found no remaining fixtures that assert `temporal_rules_with_handshake_completion = 1` while missing `temporal_rules_with_multi_predicate_antecedents`.
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench amba_source_column_handshake_gold` passed with the requested fixture.
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` tracked fixtures.
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` refreshed tracked corpus-KB projections for `150` fixtures with `0` failures and no tracked projection diff.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- Broader `bash scripts/run_ci.sh` passed on slice 50 with formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, and mdBook.
+- Push remains deferred for the active `BWFSC=200` batch.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-08 KG fixture for APB requester/completer temporal metrics
 - New batch slice 58/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Tightened `crates/specforge/test_data/kg_quality/apb_requester_completer_handshake_gold/fixture.json`.

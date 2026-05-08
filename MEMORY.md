@@ -23,24 +23,24 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `29c30c0874da73d1d2ccad321527cbd263e1c720`
-- latest_commit_brief_message: `test(kg): lock AXI width-only multi-predicate metrics`
-- note: this is the pre-slice-58 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
+- latest_commit_hash: `f41b738e26ddad4f85c4fe094f9240663816c647`
+- latest_commit_brief_message: `test(kg): lock APB requester multi-predicate metrics`
+- note: this is the pre-slice-59 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
 
 ## Recent commit chain (last 6)
+- `f41b738` test(kg): lock APB requester multi-predicate metrics
 - `29c30c0` test(kg): lock AXI width-only multi-predicate metrics
 - `43a1b78` test(kg): lock AXI write-response multi-predicate metrics
 - `7352e23` test(kg): lock AXI write-data multi-predicate metrics
 - `a587d71` test(kg): lock AXI read-data multi-predicate metrics
 - `90c7ea6` test(kg): lock AXI read-address multi-predicate metrics
-- `305eaca` test(kg): lock AXI next-cycle multi-predicate metrics
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 58 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
+- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 59 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
 - files in flight:
-  - `crates/specforge/test_data/kg_quality/apb_requester_completer_handshake_gold/fixture.json`
+  - `crates/specforge/test_data/kg_quality/amba_source_column_handshake_gold/fixture.json`
   - live docs and mdBook files synced for the slice
 
 ## Latest completed N-slice batch
@@ -53,16 +53,17 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `57`
-  - slice 58/200 tightens APB requester/completer multi-predicate antecedent temporal validation metrics for R15b/R15e hardening
+  - completed_count before this commit: `58`
+  - slice 59/200 tightens AMBA source-column multi-predicate antecedent temporal validation metrics and completes the current multi-predicate metric pass
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks APB requester/completer multi-predicate antecedent temporal metric coverage as `Done`
+  - live-status tracker now marks AMBA source-column multi-predicate antecedent temporal metric coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 58 before commit
-  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench apb_requester_completer_handshake_gold` passed with the requested fixture
-  - broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed on slice 58 with `150/150` fixtures
-  - broader `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed on slice 58 with `150` fixtures projected, `0` failures, and no tracked projection diff
+  - implementation and live-doc sync are complete for slice 59 before commit
+  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench amba_source_column_handshake_gold` passed with the requested fixture
+  - broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed on slice 59 with `150/150` fixtures
+  - broader `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed on slice 59 with `150` fixtures projected, `0` failures, and no tracked projection diff
+  - multi-predicate metric coverage scan found no remaining fixtures that assert `temporal_rules_with_handshake_completion = 1` while missing `temporal_rules_with_multi_predicate_antecedents`
   - `bash scripts/run_ci.sh` passed on slice 50 as a broader checkpoint gate
   - `bash scripts/run_ci.sh` passed on slice 40 as a broader checkpoint gate
   - `bash scripts/run_ci.sh` passed on slice 30 as a broader checkpoint gate
@@ -164,6 +165,8 @@
   - slice 57 passed corpus-KB projection for `150` fixtures with `0` failures and no tracked projection diff
   - slice 58 passed `150/150` tracked KG fixtures
   - slice 58 passed corpus-KB projection for `150` fixtures with `0` failures and no tracked projection diff
+  - slice 59 passed `150/150` tracked KG fixtures
+  - slice 59 passed corpus-KB projection for `150` fixtures with `0` failures and no tracked projection diff
   - slice 20 passed `bash scripts/run_ci.sh`
   - slice 100 passed `bash scripts/run_ci.sh`
   - slice 90 passed `bash scripts/run_ci.sh`
@@ -184,5 +187,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 58 commit workflow, clear and verify `git_message_brief.txt`, then continue temporal multi-predicate metric hardening with `amba_source_column_handshake_gold`
+- finish the slice 59 commit workflow, clear and verify `git_message_brief.txt`, then continue temporal metric hardening with aggregate `temporal_rules = 1` coverage in `amba_source_column_handshake_gold`
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle

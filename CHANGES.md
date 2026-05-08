@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for AMBA source-column temporal metrics)
+
+### Improved: AMBA source-column fixture locks multi-predicate guards
+- Tightened `amba_source_column_handshake_gold` with `temporal_rules_with_multi_predicate_antecedents = 1` at both `SemanticIR` and `IntentIR` validation surfaces.
+- The fixture now proves the `XREQ` / `XACK` guard remains counted as a multi-predicate antecedent while source-column actor recovery and typed handshake completion stay recovered.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench amba_source_column_handshake_gold` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- Multi-predicate metric coverage scan -> passed with no remaining fixtures that assert `temporal_rules_with_handshake_completion = 1` while missing `temporal_rules_with_multi_predicate_antecedents`
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for APB requester/completer temporal metrics)
 
 ### Improved: APB requester/completer fixture locks multi-predicate guards

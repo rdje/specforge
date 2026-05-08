@@ -103,6 +103,7 @@ The AMBA source-column handshake fixture keeps prose-sourced semantic hints at z
 Alias-grounded prose hints are zero there too, so phrase-alias recovery cannot masquerade as table-backed AMBA source-column evidence.
 Visual-caption hints are zero there too, so diagram captions cannot masquerade as table-backed AMBA source-column evidence.
 VLM timing-annotation hints are zero there as well, so timing notes cannot masquerade as table-backed AMBA source-column evidence.
+That fixture also locks one multi-predicate antecedent, proving the `XREQ` / `XACK` guard remains visible as a compound temporal condition while source-column actors stay recovered.
 The source-column bogus actor-attribution fixture now also keeps prose-sourced semantic hints at zero, proving its negative actor-attribution coverage stays table-grounded.
 Alias-grounded prose hints are zero for that negative fixture too, so phrase-alias recovery cannot masquerade as source-column actor attribution.
 Visual-caption hints are zero for that negative fixture too, so diagram captions cannot masquerade as source-column actor attribution.
