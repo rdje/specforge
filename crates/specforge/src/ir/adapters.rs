@@ -16752,7 +16752,7 @@ mod tests {
             "widthless_top_port_without_recovery.md",
             "# Widthless Top Port Without Recovery\nTop wrapper.\n\nTop wrapper port ext_data is output.\n\nTop wrapper child producer uses module producer_core.\n\nModule producer_core signal output_data is output width 8.\n\nModule producer_core block produce: output_data = 8'3.\n",
         )?;
-        let top_port_support_ids = {
+        let (top_port_support_ids, child_support_ids) = {
             let raw_top = intent_ir
                 .explicit_tops
                 .iter()
@@ -16767,8 +16767,20 @@ mod tests {
                 !raw_port.supporting_statement_ids.is_empty(),
                 "raw top-port provenance should be present"
             );
-            raw_port.supporting_statement_ids.clone()
+            let producer_child = raw_top
+                .children
+                .iter()
+                .find(|child| child.instance_name == "producer")
+                .expect("producer child declaration should be present");
+            (
+                raw_port.supporting_statement_ids.clone(),
+                producer_child.supporting_statement_ids.clone(),
+            )
         };
+        assert!(
+            !child_support_ids.is_empty(),
+            "producer child provenance should be present"
+        );
 
         let artifact_base = tempdir.path().join("generated").join("adapters");
         let adapter = AdapterArtifact::build(
@@ -16819,6 +16831,21 @@ mod tests {
         );
         assert_eq!(
             signal_inventory_port.automation_confidence,
+            AutomationConfidence::High
+        );
+        let producer_child = top_candidate
+            .children
+            .iter()
+            .find(|child| child.instance_name == "producer")
+            .expect("producer child candidate should remain visible");
+        assert_eq!(producer_child.source_module_name, "producer_core");
+        assert!(
+            child_support_ids
+                .iter()
+                .any(|id| producer_child.supporting_canonical_ids.contains(id))
+        );
+        assert_eq!(
+            producer_child.automation_confidence,
             AutomationConfidence::High
         );
         assert!(

@@ -23,22 +23,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `0d4bd951db5eef2e1eae5a112cfb2c746c644ecd`
-- latest_commit_brief_message: `test(adapter): keep duplicate top-port direction confidence`
-- note: this is the pre-slice-143 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
+- latest_commit_hash: `b79be27c87d37e990c92838121048cc63f94b74a`
+- latest_commit_brief_message: `test(adapter): keep duplicate top-port width confidence`
+- note: this is the pre-slice-144 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
 
 ## Recent commit chain (last 6)
+- `b79be27` test(adapter): keep duplicate top-port width confidence
 - `0d4bd95` test(adapter): keep duplicate top-port direction confidence
 - `d020bcc` test(adapter): keep top actor-port width confidence
 - `d00975b` test(adapter): keep top actor-port confidence
 - `5ac0776` test(adapter): keep top-target role confidence
 - `4499a69` test(adapter): keep top-link direction confidence
-- `75235c1` test(adapter): keep sibling width confidence
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 143 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
+- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 144 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
 - files in flight:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
@@ -58,15 +58,15 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `142`
-  - slice 143/200 extends the duplicate top-port width blocker to prove the producer child declaration retains high automation confidence alongside support IDs while emission stays blocked
+  - completed_count before this commit: `143`
+  - slice 144/200 extends the widthless top-port blocker to prove the producer child declaration retains high automation confidence alongside support IDs while emission stays blocked
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks duplicate top-port width retained-record confidence coverage as `Done`
+  - live-status tracker now marks widthless top-port retained-record confidence coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 143 before commit
+  - implementation and live-doc sync are complete for slice 144 before commit
   - `cargo fmt --all` applied rustfmt layout
-  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_keeps_duplicate_top_port_width_conflict_unresolved` passed
+  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_widthless_top_port_without_width_recovery` passed
   - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests
   - `cargo fmt --all --check` passed after live-doc sync
   - `bash scripts/run_docs_ci.sh` passed after live-book sync
@@ -97,9 +97,9 @@
   - broader `bash scripts/run_ci.sh` passed on slice 30 with formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, and mdBook
   - user-requested `cargo sweep --time 1` is deferred until no target-tree process is active because `target/release/tool_matrix` is active
 - current known local CI baseline:
-  - slice 143 focused adapter test passed
-  - slice 143 adapter suite passed with `142/142` adapter-filtered tests
-  - slice 143 docs CI passed after live-book sync
+  - slice 144 focused adapter test passed
+  - slice 144 adapter suite passed with `142/142` adapter-filtered tests
+  - slice 144 docs CI passed after live-book sync
   - slice 140 broader `bash scripts/run_ci.sh` checkpoint passed with formatting, Clippy warning-deny, `665` Rust tests, rustdoc warning-deny, and mdBook
   - slice 130 passed `bash scripts/run_ci.sh`
   - slice 3 passed `150/150` tracked KG fixtures
