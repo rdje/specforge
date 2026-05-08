@@ -471,6 +471,7 @@
 - KG benchmark harness now locks spurious VLM timing annotation total semantic-hint exclusion: Done
 - KG benchmark harness now locks spurious VLM timing annotation table semantic-hint exclusion: Done
 - KG benchmark harness now locks spurious VLM timing annotation prose semantic-hint exclusion: Done
+- KG benchmark harness now locks spurious VLM timing annotation alias-grounded prose semantic-hint exclusion: Done
 - KG benchmark harness now locks indexed VLM timing value-label total semantic-hint exclusion: Done
 - KG benchmark harness now locks cycle-qualified VLM timing value-label total semantic-hint exclusion: Done
 - KG benchmark harness now locks motion-only VLM timing annotation total semantic-hint exclusion: Done

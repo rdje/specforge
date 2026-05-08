@@ -828,6 +828,7 @@
     - the spurious VLM timing annotation fixture now also asserts total semantic hints remain zero, proving label/value noise cannot invent a semantic role through any evidence path
     - the spurious VLM timing annotation fixture now asserts table semantic hints remain zero, proving table evidence cannot invent roles for low-value label noise
     - the spurious VLM timing annotation fixture now asserts ordinary prose semantic hints remain zero, proving text evidence cannot invent roles for low-value label noise
+    - the spurious VLM timing annotation fixture now asserts alias-grounded prose semantic hints remain zero, proving phrase-alias recovery cannot invent roles for low-value label noise
     - a negative fixture proving indexed signal-value VLM timing-diagram labels like `XREQ[0] HIGH`, `XREQ<1> LOW`, and `XREQ[3:0] asserted` do not become timing constraints while the underlying waveform LOW/HIGH samples still survive as temporal evidence
     - the indexed signal-value VLM timing fixture now also asserts total semantic hints remain zero, proving indexed labels cannot invent semantic roles through any evidence path
     - the indexed signal-value VLM timing fixture now asserts table semantic hints remain zero, proving table evidence cannot invent roles for indexed label noise
