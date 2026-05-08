@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (adapter unary expression graph direction guard)
+
+### Improved: unary control-expression renderability has direct graph-first coverage
+- Added a direct regression for unary control-expression renderability.
+- The guard proves graph-backed unary operands create renderable size entries, while flat-vs-graph disagreement blocks and leaves no stale size entry.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge unary_expression_renderability_uses_graph_direction_without_stale_flat_override` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`111/111` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter enum symbol signal-free guard)
 
 ### Improved: enum symbol renderability stays signal-free

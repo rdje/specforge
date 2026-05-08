@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter unary expression graph direction guard)
+- Added `unary_expression_renderability_uses_graph_direction_without_stale_flat_override` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks unary control-expression renderability so graph-backed operands create size entries, while stale flat-vs-graph disagreement leaves no stale entry.
+- This covers the unary branch of `validate_control_expression_renderability` separately from plain references.
+
 ## Session update (2026-05-08 adapter enum symbol signal-free guard)
 - Added `enum_symbol_renderability_keeps_graph_signal_references_signal_free` in `crates/specforge/src/ir/adapters.rs`.
 - The test locks enum symbol-definition member renderability so graph-backed signal references still block under the active signal-free symbol-definition slice and do not create size entries.
