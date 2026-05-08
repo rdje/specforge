@@ -801,6 +801,7 @@
     - a representative AXI address QoS/region sideband stability fixture proving `AWQOS`, `AWREGION`, `ARQOS`, and `ARREGION` remain graph-grounded and actor-owned when their stability is guarded by the matching address-channel handshake completion
     - a representative AXI address/response USER sideband stability fixture proving Manager-owned `AWUSER` / `ARUSER` and Subordinate-owned `BUSER` stay actor-grounded under their matching channel handshakes
     - a representative AXI read-address sideband stability fixture proving `ARSIZE` and `ARBURST` remain graph-grounded and actor-owned when their stability is guarded by `ARVALID` / `ARREADY` completion
+    - the AXI read-address sideband stability fixture now asserts prose semantic hints stay zero while `ARSIZE` and `ARBURST` recover through table-sourced semantic hints
     - a representative AXI read-data timing gold fixture proving the same width-only plus prose actor-relation path works for `RVALID` / `RREADY` / `RDATA` / `RRESP`, including next-cycle read-data valid assertion and handshake-stable read-data payload semantics
     - a representative AXI read-data ID stability fixture proving subordinate-owned `RID` remains graph-grounded and actor-owned when its stability is guarded by `RVALID` / `RREADY` completion
     - a representative AXI read-data response stability fixture proving subordinate-owned `RRESP` remains graph-grounded and actor-owned when its stability is guarded by `RVALID` / `RREADY` completion
