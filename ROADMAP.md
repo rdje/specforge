@@ -843,6 +843,7 @@
     - the AXI write-data last fixture now asserts prose semantic hints stay zero while request/accept role hints remain table-sourced
     - the AXI write-data last fixture now asserts alias-grounded prose semantic hints stay zero while request/accept role hints remain table-sourced
     - the AXI write-data last fixture now asserts visual-caption semantic hints stay zero while request/accept role hints remain table-sourced
+    - the AXI write-data last fixture now asserts VLM timing-annotation semantic hints stay zero while request/accept role hints remain table-sourced
     - a representative AXI sideband stability gold fixture proving non-handshake sideband fields like `ARLEN` and `WSTRB` remain graph-grounded and actor-owned when their stability is guarded by `ARVALID` / `ARREADY` or `WVALID` / `WREADY` completion
     - a representative AXI write-address sideband stability fixture proving `AWLEN`, `AWSIZE`, and `AWBURST` remain graph-grounded and actor-owned when their stability is guarded by `AWVALID` / `AWREADY` completion
     - a representative AHB-style gold fixture proving section-heading direction context like `Manager signals` / `Subordinate signals` recovers per-signal direction and width correctly even when the table itself only carries destination-side context

@@ -119,6 +119,7 @@ VLM timing-annotation hints are zero there as well, so timing notes cannot masqu
 The AXI write-data last fixture keeps prose-sourced semantic hints at zero too, proving its `WVALID` / `WREADY` role hints remain table-only.
 Alias-grounded prose hints are zero there too, so phrase-alias recovery cannot masquerade as table-backed write-data last evidence.
 Visual-caption hints are zero there too, so diagram captions cannot masquerade as table-backed write-data last evidence.
+VLM timing-annotation hints are zero there as well, so timing notes cannot masquerade as table-backed write-data last evidence.
 The AXI read-address sideband fixture now also keeps prose-sourced semantic hints at zero, proving `ARSIZE` and `ARBURST` role hints are table-only in that gold path.
 Alias-grounded prose hints are zero there too, so phrase-alias recovery cannot masquerade as table-backed sideband evidence.
 Visual-caption hints are zero there too, so diagram captions cannot masquerade as table-backed sideband evidence.
