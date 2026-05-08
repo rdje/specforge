@@ -1018,6 +1018,7 @@
 - KG benchmark harness now locks AMBA source-column visual-caption semantic-hint exclusion: Done
 - KG benchmark harness now locks AMBA source-column VLM timing-annotation semantic-hint exclusion: Done
 - KG benchmark harness now locks AMBA source-column multi-predicate antecedent temporal metric coverage: Done
+- KG benchmark harness now locks AMBA source-column aggregate temporal-rule metric coverage: Done
 - KG benchmark harness now locks source-column bogus actor prose semantic-hint exclusion: Done
 - KG benchmark harness now locks source-column bogus actor alias-grounded prose semantic-hint exclusion: Done
 - KG benchmark harness now locks source-column bogus actor visual-caption semantic-hint exclusion: Done

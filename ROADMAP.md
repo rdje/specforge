@@ -788,6 +788,7 @@
     - the AMBA source-column fixture now asserts visual-caption semantic hints stay zero while request/accept role hints remain table-sourced
     - the AMBA source-column fixture now asserts VLM timing-annotation semantic hints stay zero while request/accept role hints remain table-sourced
     - the AMBA source-column fixture now asserts multi-predicate antecedent temporal-rule coverage while source-column actor recovery and typed handshake completion remain recovered
+    - the AMBA source-column fixture now asserts aggregate temporal-rule count coverage while handshake completion and multi-predicate antecedent metrics remain recovered
     - the source-column bogus actor-attribution fixture now asserts prose semantic hints stay zero while actor attribution remains table-grounded
     - the source-column bogus actor-attribution fixture now asserts alias-grounded prose semantic hints stay zero while actor attribution remains table-grounded
     - the source-column bogus actor-attribution fixture now asserts visual-caption semantic hints stay zero while actor attribution remains table-grounded

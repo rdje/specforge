@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 KG fixture for AMBA source-column temporal-rule count)
+- Tightened `amba_source_column_handshake_gold` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts `temporal_rules = 1` at both `SemanticIR` and `IntentIR` validation surfaces.
+- This starts aggregate temporal-rule metric hardening by proving the single `XREQ` / `XACK` guarded payload-stability rule remains visible as a counted temporal rule while handshake completion and multi-predicate antecedent metrics stay locked.
+
 ## Session update (2026-05-08 KG fixture for AMBA source-column temporal metrics)
 - Tightened `amba_source_column_handshake_gold` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts `temporal_rules_with_multi_predicate_antecedents = 1` at both `SemanticIR` and `IntentIR` validation surfaces.
