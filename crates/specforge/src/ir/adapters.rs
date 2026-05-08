@@ -17500,16 +17500,34 @@ mod tests {
             ActorRelativeDirection::Output,
             16,
         )];
-        let top_port_support_ids = intent_ir
-            .explicit_tops
-            .iter()
-            .find(|top| top.top_name == "wrapper")
-            .and_then(|top| top.ports.iter().find(|port| port.port_name == "ext_data"))
-            .map(|port| port.supporting_statement_ids.clone())
-            .expect("top port should be present");
+        let (top_port_support_ids, child_support_ids) = {
+            let explicit_top = intent_ir
+                .explicit_tops
+                .iter()
+                .find(|top| top.top_name == "wrapper")
+                .expect("explicit top should be present");
+            let top_port = explicit_top
+                .ports
+                .iter()
+                .find(|port| port.port_name == "ext_data")
+                .expect("top port should be present");
+            let producer_child = explicit_top
+                .children
+                .iter()
+                .find(|child| child.instance_name == "producer")
+                .expect("producer child declaration should be present");
+            (
+                top_port.supporting_statement_ids.clone(),
+                producer_child.supporting_statement_ids.clone(),
+            )
+        };
         assert!(
             !top_port_support_ids.is_empty(),
             "top-port provenance should be present"
+        );
+        assert!(
+            !child_support_ids.is_empty(),
+            "producer child provenance should be present"
         );
         intent_ir.write_to_disk()?;
 
@@ -17580,6 +17598,21 @@ mod tests {
         );
         assert_eq!(
             signal_inventory_port.automation_confidence,
+            AutomationConfidence::High
+        );
+        let producer_child = top_candidate
+            .children
+            .iter()
+            .find(|child| child.instance_name == "producer")
+            .expect("producer child candidate should remain visible");
+        assert_eq!(producer_child.source_module_name, "producer_core");
+        assert!(
+            child_support_ids
+                .iter()
+                .any(|id| producer_child.supporting_canonical_ids.contains(id))
+        );
+        assert_eq!(
+            producer_child.automation_confidence,
             AutomationConfidence::High
         );
         assert!(

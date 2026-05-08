@@ -23,22 +23,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `5ac07763949036d7d8050d62fb73dbe94971f6bc`
-- latest_commit_brief_message: `test(adapter): keep top-target role confidence`
-- note: this is the pre-slice-140 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
+- latest_commit_hash: `d00975b559ded3641f2ba6b3c55260fb776721ce`
+- latest_commit_brief_message: `test(adapter): keep top actor-port confidence`
+- note: this is the pre-slice-141 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
 
 ## Recent commit chain (last 6)
+- `d00975b` test(adapter): keep top actor-port confidence
 - `5ac0776` test(adapter): keep top-target role confidence
 - `4499a69` test(adapter): keep top-link direction confidence
 - `75235c1` test(adapter): keep sibling width confidence
 - `908658e` test(adapter): keep top width conflict confidence
 - `107e73c` test(adapter): keep child width conflict confidence
-- `4164115` test(adapter): keep topology conflict confidence
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 140 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
+- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 141 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
 - files in flight:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
@@ -58,15 +58,15 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `139`
-  - slice 140/200 extends the top actor-port direction conflict blocker to prove the producer child declaration retains high automation confidence alongside support IDs while emission stays blocked
+  - completed_count before this commit: `140`
+  - slice 141/200 extends the top actor-port width conflict blocker to prove the producer child declaration retains high automation confidence alongside support IDs while emission stays blocked
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks top actor-port direction conflict retained-record confidence coverage as `Done`
+  - live-status tracker now marks top actor-port width conflict retained-record confidence coverage as `Done`
 - verification status:
-  - implementation, focused checks, broader checkpoint, and live-doc sync are complete for slice 140 before commit
+  - implementation and live-doc sync are complete for slice 141 before commit
   - `cargo fmt --all` applied rustfmt layout
-  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_top_actor_port_direction` passed
+  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_top_actor_port_width` passed
   - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests
   - `cargo fmt --all --check` passed after live-doc sync
   - `bash scripts/run_docs_ci.sh` passed after live-book sync
@@ -97,9 +97,9 @@
   - broader `bash scripts/run_ci.sh` passed on slice 30 with formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, and mdBook
   - user-requested `cargo sweep --time 1` is deferred until no target-tree process is active because `target/release/tool_matrix` is active
 - current known local CI baseline:
-  - slice 140 focused adapter test passed
-  - slice 140 adapter suite passed with `142/142` adapter-filtered tests
-  - slice 140 docs CI passed after live-book sync
+  - slice 141 focused adapter test passed
+  - slice 141 adapter suite passed with `142/142` adapter-filtered tests
+  - slice 141 docs CI passed after live-book sync
   - slice 140 broader `bash scripts/run_ci.sh` checkpoint passed with formatting, Clippy warning-deny, `665` Rust tests, rustdoc warning-deny, and mdBook
   - slice 130 passed `bash scripts/run_ci.sh`
   - slice 3 passed `150/150` tracked KG fixtures

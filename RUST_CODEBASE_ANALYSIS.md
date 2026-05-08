@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter top actor-port width confidence guard)
+- Extended `top_composition_blocks_conflicting_top_actor_port_width` in `crates/specforge/src/ir/adapters.rs`.
+- The top actor-port width conflict blocker now locks high automation confidence on the producer child declaration alongside the conflicting top port.
+- This keeps retained topology records diagnostic-rich while top composition emission stays blocked on unresolved top actor-port width evidence.
+
 ## Session update (2026-05-08 adapter top actor-port direction confidence guard)
 - Extended `top_composition_blocks_conflicting_top_actor_port_direction` in `crates/specforge/src/ir/adapters.rs`.
 - The top actor-port direction conflict blocker now locks high automation confidence on the producer child declaration alongside the conflicting top port.
