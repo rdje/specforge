@@ -23,22 +23,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `76f6af089d1f22a5a5a5a3187f7c36e462bd81be`
-- latest_commit_brief_message: `test(kg): lock source-column bogus alias exclusion`
-- note: this is the pre-slice-14 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
+- latest_commit_hash: `c4d2cf44b9f5ab7c65a50120802f4e73347bf198`
+- latest_commit_brief_message: `test(kg): lock source-column bogus visual exclusion`
+- note: this is the pre-slice-15 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
 
 ## Recent commit chain (last 6)
+- `c4d2cf4` test(kg): lock source-column bogus visual exclusion
 - `76f6af0` test(kg): lock source-column bogus alias exclusion
 - `c3b64d4` test(kg): lock source-column bogus prose exclusion
 - `16faa4c` test(kg): lock AMBA source-column VLM exclusion
 - `706a4d9` test(kg): lock AMBA source-column visual exclusion
 - `dcf17a4` test(kg): lock AMBA source-column alias exclusion
-- `704efec` test(kg): lock AMBA source-column prose exclusion
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 14 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
+- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 15 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
 - files in flight:
   - `crates/specforge/test_data/kg_quality/source_column_bogus_actor_attribution_negative/fixture.json`
   - live docs and mdBook files synced for the slice
@@ -53,16 +53,16 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `13`
-  - slice 14/200 tightens source-column bogus actor-attribution visual-caption semantic-hint exclusion metrics for negative table-backed source-split hardening
+  - completed_count before this commit: `14`
+  - slice 15/200 tightens source-column bogus actor-attribution VLM timing-annotation semantic-hint exclusion metrics for negative table-backed source-split hardening
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks source-column bogus actor-attribution visual-caption semantic-hint exclusion KG coverage as `Done`
+  - live-status tracker now marks source-column bogus actor-attribution VLM timing-annotation semantic-hint exclusion KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 14 before commit
+  - implementation and live-doc sync are complete for slice 15 before commit
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench source_column_bogus_actor_attribution_negative` passed with the requested fixture
-  - broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed on slice 11 with `150/150` fixtures
-  - broader `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed on slice 11 with `150` fixtures projected, `0` failures, and no tracked projection diff
+  - broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed on slice 15 with `150/150` fixtures
+  - broader `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed on slice 15 with `150` fixtures projected, `0` failures, and no tracked projection diff
   - `bash scripts/run_ci.sh` passed after the slice 100 live-doc and live-book sync
   - previous batch `git push` completed from `2921ba8e` to `051e4ee9` on `main`
   - `bash scripts/run_ci.sh` passed on slice 90 with formatting, Clippy warning-deny, Rust tests, rustdoc warning-deny, and mdBook
@@ -87,6 +87,8 @@
   - slice 7 passed corpus-KB projection for `150` fixtures with `0` failures and no tracked projection diff
   - slice 11 passed `150/150` tracked KG fixtures
   - slice 11 passed corpus-KB projection for `150` fixtures with `0` failures and no tracked projection diff
+  - slice 15 passed `150/150` tracked KG fixtures
+  - slice 15 passed corpus-KB projection for `150` fixtures with `0` failures and no tracked projection diff
   - slice 100 passed `bash scripts/run_ci.sh`
   - slice 90 passed `bash scripts/run_ci.sh`
   - slice 80 passed `bash scripts/run_ci.sh`
@@ -106,5 +108,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 14 commit workflow, clear and verify `git_message_brief.txt`, then continue source-column bogus actor-attribution VLM timing-annotation source-split hardening
+- finish the slice 15 commit workflow, clear and verify `git_message_brief.txt`, then select the next remaining source-split hardening fixture
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle

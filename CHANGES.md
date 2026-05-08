@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for source-column bogus actor VLM exclusion)
+
+### Improved: source-column negative fixtures exclude VLM timing hints
+- Tightened `source_column_bogus_actor_attribution_negative` with `signal_semantic_hints_from_vlm_timing_annotations = 0` at `EvidenceIR`.
+- The fixture now proves `XREQ` / `XACK` semantic hints are not recovered through VLM timing annotations while the source-column actor attribution path remains explicitly covered.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench source_column_bogus_actor_attribution_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for source-column bogus actor visual exclusion)
 
 ### Improved: source-column negative fixtures exclude visual-caption hints
