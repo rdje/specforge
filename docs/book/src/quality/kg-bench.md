@@ -343,6 +343,7 @@ Low-value labels such as `T0`, `Addr 1`, `Cycle 2`, `D0`, `A1`, `DATA0`, `0xAA`,
 The waveform-motion fixture now locks total semantic hints at zero too, so rejected motion states cannot surface as semantic-role hints through another path.
 It also excludes table-sourced semantic hints, so table evidence cannot rescue rejected motion-state labels.
 Ordinary prose hints are zero for waveform-motion labels too, so text evidence cannot backfill a semantic role for rejected motion states.
+Alias-grounded prose is excluded as well, keeping phrase-alias recovery from inventing roles for rejected motion-state labels.
 The spurious-annotation fixture now also locks total semantic hints at zero, so low-value labels and value-like annotations cannot invent roles through another evidence channel.
 It also excludes table-sourced semantic hints, so low-value annotation noise cannot be rescued through table evidence.
 Ordinary prose hints are zero for spurious annotations too, so text evidence cannot backfill a semantic role for label/value noise.
