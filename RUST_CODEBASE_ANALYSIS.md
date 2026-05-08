@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 KG fixture for APB write-control alias exclusion)
+- Tightened `apb_write_control_stability_gold` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts evidence-stage `signal_semantic_hints_from_alias_grounded_prose = 0` alongside total, table-sourced, and prose semantic hints.
+- This locks APB write-control request/accept semantic hints as table-only rather than phrase-alias recovered while preserving requester-owned stability for `PWRITE`, `PWDATA`, and `PSTRB`.
+
 ## Session update (2026-05-08 KG fixture for APB write-control prose exclusion)
 - Tightened `apb_write_control_stability_gold` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts evidence-stage `signal_semantic_hints_from_prose = 0` alongside total and table-sourced semantic hints.

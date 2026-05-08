@@ -22,22 +22,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `80bc0727fbe0d0b1aed098c2042a774de8267530`
-- latest_commit_brief_message: `test(kg): lock APB setup access VLM exclusion`
-- note: this is the pre-slice-96 baseline for the current `BWFSC=100` batch; slices 1-95/100 are committed and push remains deferred
+- latest_commit_hash: `78979fb2f0781724b77de5172f86c4ffd94d7a6b`
+- latest_commit_brief_message: `test(kg): lock APB write-control prose exclusion`
+- note: this is the pre-slice-97 baseline for the current `BWFSC=100` batch; slices 1-96/100 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `78979fb` test(kg): lock APB write-control prose exclusion
 - `80bc072` test(kg): lock APB setup access VLM exclusion
 - `b045d6e` test(kg): lock APB setup access visual exclusion
 - `4f8b4b9` test(kg): lock APB setup access alias exclusion
 - `696e20f` test(kg): lock APB setup access prose exclusion
 - `7a93390` test(kg): lock AXI write-address control VLM exclusion
-- `f8e6e3e` test(kg): lock AXI write-address control visual exclusion
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=100` slice 96 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=100` slice 97 and push is deferred
 - files in flight:
   - `crates/specforge/test_data/kg_quality/apb_write_control_stability_gold/fixture.json`
   - live docs and mdBook files synced for the slice
@@ -52,17 +52,17 @@
 ## Current batch status
 - objective:
   - active `BWFSC=100` batch is in progress
-  - completed_count before this commit: `95`
-  - slice 96/100 tightens APB write-control prose semantic-hint exclusion metrics for positive table-backed source-split hardening
+  - completed_count before this commit: `96`
+  - slice 97/100 tightens APB write-control alias-grounded prose semantic-hint exclusion metrics for positive table-backed source-split hardening
   - push is deferred until all `100` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks APB write-control prose semantic-hint exclusion KG coverage as `Done`
+  - live-status tracker now marks APB write-control alias-grounded prose semantic-hint exclusion KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 96 before commit
+  - implementation and live-doc sync are complete for slice 97 before commit
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench apb_write_control_stability_gold` passed with the requested fixture
   - broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed on slice 95 with `150/150` fixtures
   - broader `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed on slice 95 with `150` fixtures projected, `0` failures, and no tracked projection diff
-  - `bash scripts/run_docs_ci.sh` passed after the slice 96 live-book sync
+  - `bash scripts/run_docs_ci.sh` passed after the slice 97 live-book sync
   - `bash scripts/run_ci.sh` passed on slice 90 with formatting, Clippy warning-deny, Rust tests, rustdoc warning-deny, and mdBook
   - `bash scripts/run_ci.sh` passed on slice 80 with formatting, Clippy warning-deny, Rust tests, rustdoc warning-deny, and mdBook
   - `bash scripts/run_ci.sh` passed on slice 70 with formatting, Clippy warning-deny, Rust tests, rustdoc warning-deny, and mdBook
@@ -95,5 +95,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 96 commit workflow, clear and verify `git_message_brief.txt`, then continue APB write-control alias source-split hardening
+- finish the slice 97 commit workflow, clear and verify `git_message_brief.txt`, then continue APB write-control visual-caption source-split hardening
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle
