@@ -1,5 +1,16 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for AXI sideband visual exclusion)
+
+### Improved: AXI sideband fixtures exclude visual-caption hints
+- Tightened `axi_sideband_stability_gold` with `signal_semantic_hints_from_visual_captions = 0` at `EvidenceIR`.
+- The fixture now proves the AXI sideband semantic hints are not recovered through visual-caption evidence.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench axi_sideband_stability_gold` -> passed (`1/1` fixture)
+- `bash scripts/run_ci.sh` -> passed (formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, mdBook)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for AXI sideband alias exclusion)
 
 ### Improved: AXI sideband fixtures exclude alias-grounded prose

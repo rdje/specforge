@@ -114,6 +114,7 @@ Visual-caption hints are zero there too, so diagram captions cannot masquerade a
 VLM timing-annotation hints are zero there as well, so timing notes cannot masquerade as table-backed last-beat evidence.
 The AXI sideband stability fixture keeps prose-sourced semantic hints at zero too, proving its sideband role hints are table-only in that gold path.
 Alias-grounded prose hints are zero there too, so phrase-alias recovery cannot masquerade as table-backed sideband evidence.
+Visual-caption hints are zero there too, so diagram captions cannot masquerade as table-backed sideband evidence.
 The APB timing family now also includes a write-control stability path: `PWRITE`, `PWDATA`, and `PSTRB` must remain requester-owned stable outputs while `PSEL` and `PENABLE` are high and `PREADY` is low, without treating that wait-state guard as a completed handshake.
 Its address/protection wait-state mirror checks `PADDR` and `PPROT` as Requester-owned stable outputs under the same `PSEL HIGH` / `PENABLE HIGH` / `PREADY LOW` stalled-access guard, again without promoting the wait state to handshake completion.
 Its response-stability mirror checks the completed-access side: `PRDATA` and `PSLVERR` must remain completer-owned stable outputs when `PSEL`, `PENABLE`, and `PREADY` are high, and the same rule must preserve `HandshakeComplete(PSEL, PREADY)`.
