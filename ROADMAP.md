@@ -914,6 +914,7 @@
     - the AXI write-data timing fixture now asserts alias-grounded prose semantic hints stay zero while request/accept role hints remain table-sourced
     - the AXI write-data timing fixture now asserts visual-caption semantic hints stay zero while request/accept role hints remain table-sourced
     - the AXI write-data timing fixture now asserts VLM timing-annotation semantic hints stay zero while request/accept role hints remain table-sourced
+    - the AXI write-data timing fixture now asserts multi-predicate antecedent temporal-rule coverage while next-cycle timing and handshake-stable payload semantics remain recovered
     - a representative AXI write-data last stability fixture proving manager-owned `WLAST` remains graph-grounded and actor-owned when its stability is guarded by `WVALID` / `WREADY` completion
     - the AXI write-data last fixture now asserts prose semantic hints stay zero while request/accept role hints remain table-sourced
     - the AXI write-data last fixture now asserts alias-grounded prose semantic hints stay zero while request/accept role hints remain table-sourced

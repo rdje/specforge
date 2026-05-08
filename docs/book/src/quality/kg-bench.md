@@ -154,6 +154,7 @@ The AXI write-data timing fixture keeps prose-sourced semantic hints at zero too
 Alias-grounded prose hints are zero there too, so phrase-alias recovery cannot masquerade as table-backed write-data timing evidence.
 Visual-caption hints are zero there too, so diagram captions cannot masquerade as table-backed write-data timing evidence.
 VLM timing-annotation hints are zero there too, so timing notes cannot masquerade as table-backed write-data timing evidence.
+That fixture also locks one multi-predicate antecedent, proving the `WVALID` / `WREADY` guard remains visible as a compound temporal condition.
 The AXI write-data last fixture keeps prose-sourced semantic hints at zero too, proving its `WVALID` / `WREADY` role hints remain table-only.
 Alias-grounded prose hints are zero there too, so phrase-alias recovery cannot masquerade as table-backed write-data last evidence.
 Visual-caption hints are zero there too, so diagram captions cannot masquerade as table-backed write-data last evidence.
