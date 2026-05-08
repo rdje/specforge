@@ -18315,18 +18315,26 @@ mod tests {
             "duplicate_top_port_width.md",
             "# Duplicate Top Port Width\nTop datapath.\n\nTop datapath port drive_data is output width 8.\n\nTop datapath port drive_data is output width 16.\n\nTop datapath child producer uses module producer_core.\n\nModule producer_core signal output_data is output width 8.\n\nModule producer_core block produce: output_data = 8'3.\n",
         )?;
-        let top_port_support_id_sets = {
+        let (top_port_support_id_sets, child_support_ids) = {
             let explicit_top = intent_ir
                 .explicit_tops
                 .iter()
                 .find(|top| top.top_name == "datapath")
                 .expect("explicit top should be present");
-            explicit_top
-                .ports
+            let producer_child = explicit_top
+                .children
                 .iter()
-                .filter(|port| port.port_name == "drive_data")
-                .map(|port| port.supporting_statement_ids.clone())
-                .collect::<Vec<_>>()
+                .find(|child| child.instance_name == "producer")
+                .expect("producer child declaration should be present");
+            (
+                explicit_top
+                    .ports
+                    .iter()
+                    .filter(|port| port.port_name == "drive_data")
+                    .map(|port| port.supporting_statement_ids.clone())
+                    .collect::<Vec<_>>(),
+                producer_child.supporting_statement_ids.clone(),
+            )
         };
         assert_eq!(top_port_support_id_sets.len(), 2);
         assert!(
@@ -18334,6 +18342,10 @@ mod tests {
                 .iter()
                 .all(|support_ids| !support_ids.is_empty()),
             "duplicate top-port provenance should be present"
+        );
+        assert!(
+            !child_support_ids.is_empty(),
+            "producer child provenance should be present"
         );
         let artifact_base = tempdir.path().join("generated").join("adapters");
 
@@ -18407,6 +18419,21 @@ mod tests {
                     .any(|id| signal.supporting_canonical_ids.contains(id))
             }));
         }
+        let producer_child = top_candidate
+            .children
+            .iter()
+            .find(|child| child.instance_name == "producer")
+            .expect("producer child candidate should remain visible");
+        assert_eq!(producer_child.source_module_name, "producer_core");
+        assert!(
+            child_support_ids
+                .iter()
+                .any(|id| producer_child.supporting_canonical_ids.contains(id))
+        );
+        assert_eq!(
+            producer_child.automation_confidence,
+            AutomationConfidence::High
+        );
         assert!(
             top_candidate
                 .renderability

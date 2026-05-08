@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (adapter duplicate top-port width confidence guard)
+
+### Improved: duplicate top-port width blockers preserve retained record confidence
+- Extended the duplicate top-port width regression to assert the producer child declaration keeps high automation confidence alongside both conflicting top-port records.
+- The guard keeps duplicate top-port width diagnostics tied to retained top and child records while top composition emission stays blocked.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_keeps_duplicate_top_port_width_conflict_unresolved` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter duplicate top-port direction confidence guard)
 
 ### Improved: duplicate top-port direction blockers preserve retained record confidence

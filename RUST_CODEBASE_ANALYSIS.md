@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter duplicate top-port width confidence guard)
+- Extended `top_composition_keeps_duplicate_top_port_width_conflict_unresolved` in `crates/specforge/src/ir/adapters.rs`.
+- The duplicate top-port width blocker now locks high automation confidence on the producer child declaration alongside both conflicting top-port records.
+- This keeps retained topology records diagnostic-rich while top composition emission stays blocked on unresolved duplicate top-port width evidence.
+
 ## Session update (2026-05-08 adapter duplicate top-port direction confidence guard)
 - Extended `top_composition_keeps_duplicate_top_port_direction_conflict_unresolved` in `crates/specforge/src/ir/adapters.rs`.
 - The duplicate top-port direction blocker now locks high automation confidence on the producer child declaration alongside both conflicting top-port records.
