@@ -7,6 +7,19 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-08 adapter binary symbol-definition width-cast guard
+- New batch slice 119/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Added `binary_symbol_definition_width_cast_keeps_graph_signal_references_signal_free` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks binary symbol-definition validation with width-cast operands: both graph-backed signal references remain signal-free under the active `.fsm` symbol slice, while the width-cast suffix blocker and both symbol-value blockers are reported.
+- This keeps graph-first signal recovery out of recursive binary symbol-definition emission until symbol expression lowering is deliberately widened.
+- `cargo fmt --all` applied rustfmt layout.
+- `cargo test --manifest-path Cargo.toml -p specforge binary_symbol_definition_width_cast_keeps_graph_signal_references_signal_free` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `139/139` adapter-filtered tests.
+- `cargo fmt --all --check` passed.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- Push remains deferred for the active `BWFSC=200` batch.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-08 adapter unary symbol-definition width-cast guard
 - New batch slice 118/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Added `unary_symbol_definition_width_cast_keeps_graph_signal_references_signal_free` in `crates/specforge/src/ir/adapters.rs`.
