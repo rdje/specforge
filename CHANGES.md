@@ -1,5 +1,15 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for AXI write-address control prose exclusion)
+
+### Improved: AXI write-address control fixtures prove table-only hints
+- Tightened `axi_write_address_control_sideband_stability_gold` with `signal_semantic_hints_from_prose = 0` at `EvidenceIR`.
+- The fixture now proves `AWVALID` / `AWREADY` semantic hints are table-sourced rather than prose-derived.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench axi_write_address_control_sideband_stability_gold` -> passed (`1/1` fixture)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for visual semantic prior VLM exclusion)
 
 ### Improved: visual semantic-prior fixtures exclude VLM timing hints
