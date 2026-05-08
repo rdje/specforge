@@ -990,6 +990,7 @@
 - KG benchmark harness now locks AMBA source-column visual-caption semantic-hint exclusion: Done
 - KG benchmark harness now locks AMBA source-column VLM timing-annotation semantic-hint exclusion: Done
 - KG benchmark harness now locks source-column bogus actor prose semantic-hint exclusion: Done
+- KG benchmark harness now locks source-column bogus actor alias-grounded prose semantic-hint exclusion: Done
 - KG benchmark harness now includes an AMBA-style `Destination`-column gold fixture for receiver semantics: Done
 - KG benchmark harness now includes an APB-style `Requester` / `Completer` gold fixture: Done
 - KG benchmark harness now locks APB requester/completer prose semantic-hint exclusion: Done

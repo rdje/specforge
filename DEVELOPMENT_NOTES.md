@@ -7,6 +7,17 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-08 KG fixture for source-column bogus actor alias exclusion
+- New batch slice 13/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Tightened `crates/specforge/test_data/kg_quality/source_column_bogus_actor_attribution_negative/fixture.json`.
+- The fixture now asserts `signal_semantic_hints_from_alias_grounded_prose = 0` alongside aggregate semantic hints, table-sourced semantic hints, prose hints, and actor-signal relations.
+- This continues negative source-column source-split hardening by proving the bogus actor-attribution fixture does not recover request/accept semantic hints through phrase-alias prose.
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench source_column_bogus_actor_attribution_negative` passed with the requested fixture.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- Broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` and `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed on slice 11 with `150/150` tracked fixtures and `0` corpus-KB projection failures.
+- Push remains deferred for the active `BWFSC=200` batch.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-08 KG fixture for source-column bogus actor prose exclusion
 - New batch slice 12/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Tightened `crates/specforge/test_data/kg_quality/source_column_bogus_actor_attribution_negative/fixture.json`.

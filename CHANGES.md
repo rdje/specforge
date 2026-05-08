@@ -1,5 +1,15 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for source-column bogus actor alias exclusion)
+
+### Improved: source-column negative fixtures exclude alias-grounded prose
+- Tightened `source_column_bogus_actor_attribution_negative` with `signal_semantic_hints_from_alias_grounded_prose = 0` at `EvidenceIR`.
+- The fixture now proves `XREQ` / `XACK` semantic hints are not recovered through phrase-alias prose while the source-column actor attribution path remains explicitly covered.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench source_column_bogus_actor_attribution_negative` -> passed (`1/1` fixture)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for source-column bogus actor prose exclusion)
 
 ### Improved: source-column negative fixtures prove table-only hints
