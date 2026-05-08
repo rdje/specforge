@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (adapter comparison guard graph direction guard)
+
+### Improved: comparison guard renderability has direct graph-first coverage
+- Added a direct regression for comparison guard renderability.
+- The guard proves graph-backed equality guard left/right signal references create renderable size entries, while flat-vs-graph disagreement on the right-hand signal blocks and leaves no stale size entry.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge comparison_guard_renderability_uses_graph_direction_without_stale_flat_override` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`108/108` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter branch predicate graph direction guard)
 
 ### Improved: branch-predicate renderability has direct graph-first coverage

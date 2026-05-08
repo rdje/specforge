@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter comparison guard graph direction guard)
+- Added `comparison_guard_renderability_uses_graph_direction_without_stale_flat_override` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks comparison guard renderability so graph-backed left and right signal references create size entries, while stale flat-vs-graph disagreement on the right-hand signal leaves no stale entry.
+- This covers the comparison branch of `validate_guard_renderability` separately from truthy guard lowering.
+
 ## Session update (2026-05-08 adapter branch predicate graph direction guard)
 - Added `control_branch_predicate_renderability_uses_graph_direction_without_stale_flat_override` in `crates/specforge/src/ir/adapters.rs`.
 - The test locks non-selector control-branch predicate renderability so graph-backed predicate signals create size entries through `validate_control_block_branches`, while stale flat-vs-graph disagreement leaves no stale entry.

@@ -6256,9 +6256,9 @@ mod tests {
         ControlAssignmentTargetRecord, ControlBinaryOperator, ControlBlockRecord, ControlBlockRole,
         ControlBranchRecord, ControlCompoundUpdateOperation, ControlExpressionRecord,
         ControlReferenceKind, ControlReferenceRecord, DecisionTreeAssignmentKind,
-        DecisionTreeGuardRecord, DecisionTreeValueRecord, InitAssignmentRecord,
-        InterfaceSignalDirection, SemanticIr, SystemResetPolarity, SystemResetTargetKind,
-        SystemResetTimingRelation,
+        DecisionTreeComparisonOperator, DecisionTreeGuardRecord, DecisionTreeValueRecord,
+        InitAssignmentRecord, InterfaceSignalDirection, SemanticIr, SystemResetPolarity,
+        SystemResetTargetKind, SystemResetTimingRelation,
     };
     use crate::ir::source::{AutomationConfidence, SourceIr, WidthHint};
 
@@ -7492,6 +7492,95 @@ mod tests {
         assert!(blocking_reasons.iter().any(|reason| {
             reason.contains(
                 "Signal `STALE_VALID` has conflicting canonical and graph-backed direction evidence",
+            )
+        }));
+        assert!(required_canonical_enrichments.contains(
+            "resolve conflicting canonical and actor-relative graph direction evidence before lowering `.fsm`"
+        ));
+    }
+
+    #[test]
+    fn comparison_guard_renderability_uses_graph_direction_without_stale_flat_override() {
+        let mut graph_left = signal_candidate_with_direction_evidence(
+            None,
+            false,
+            Some(InterfaceSignalDirection::Input),
+            false,
+        );
+        graph_left.signal_name = "MATCH".to_string();
+        graph_left.width_hint = Some(2);
+
+        let mut graph_right = signal_candidate_with_direction_evidence(
+            None,
+            false,
+            Some(InterfaceSignalDirection::Input),
+            false,
+        );
+        graph_right.signal_name = "EXPECTED".to_string();
+        graph_right.width_hint = Some(2);
+
+        let mut stale_right = signal_candidate_with_direction_evidence(
+            Some(InterfaceSignalDirection::Output),
+            false,
+            Some(InterfaceSignalDirection::Input),
+            false,
+        );
+        stale_right.signal_name = "STALE_EXPECTED".to_string();
+        stale_right.width_hint = Some(2);
+
+        let signals = [graph_left, graph_right, stale_right];
+        let signals_by_name = signals
+            .iter()
+            .map(|signal| (signal.signal_name.clone(), signal))
+            .collect::<std::collections::BTreeMap<_, _>>();
+        let mut size_entries = std::collections::BTreeMap::new();
+        let mut blocking_reasons = Vec::new();
+        let mut required_canonical_enrichments = std::collections::BTreeSet::new();
+
+        let graph_guard = DecisionTreeGuardRecord::Comparison {
+            left_signal: "MATCH".to_string(),
+            operator: DecisionTreeComparisonOperator::Eq,
+            right: DecisionTreeValueRecord::SignalRef {
+                signal_name: "EXPECTED".to_string(),
+            },
+        };
+        super::validate_guard_renderability(
+            &graph_guard,
+            &signals_by_name,
+            &mut size_entries,
+            &mut blocking_reasons,
+            &mut required_canonical_enrichments,
+        );
+        let left_entry = size_entries
+            .get("MATCH")
+            .expect("graph-backed comparison lhs should create a size entry");
+        let right_entry = size_entries
+            .get("EXPECTED")
+            .expect("graph-backed comparison rhs should create a size entry");
+        assert_eq!(left_entry.direction_hint, InterfaceSignalDirection::Input);
+        assert_eq!(left_entry.width, 2);
+        assert_eq!(right_entry.direction_hint, InterfaceSignalDirection::Input);
+        assert_eq!(right_entry.width, 2);
+        assert!(blocking_reasons.is_empty());
+
+        let stale_guard = DecisionTreeGuardRecord::Comparison {
+            left_signal: "MATCH".to_string(),
+            operator: DecisionTreeComparisonOperator::Eq,
+            right: DecisionTreeValueRecord::SignalRef {
+                signal_name: "STALE_EXPECTED".to_string(),
+            },
+        };
+        super::validate_guard_renderability(
+            &stale_guard,
+            &signals_by_name,
+            &mut size_entries,
+            &mut blocking_reasons,
+            &mut required_canonical_enrichments,
+        );
+        assert!(!size_entries.contains_key("STALE_EXPECTED"));
+        assert!(blocking_reasons.iter().any(|reason| {
+            reason.contains(
+                "Signal `STALE_EXPECTED` has conflicting canonical and graph-backed direction evidence",
             )
         }));
         assert!(required_canonical_enrichments.contains(
