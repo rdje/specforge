@@ -23,22 +23,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `f9f027f9fafe5008afe92ee0a4716be7da11b65a`
-- latest_commit_brief_message: `test(kg): lock AXI write-data prose exclusion`
-- note: this is the pre-slice-25 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
+- latest_commit_hash: `46bc2720735627a1ac6930e12a9a91692519373d`
+- latest_commit_brief_message: `test(kg): lock AXI write-data alias exclusion`
+- note: this is the pre-slice-26 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
 
 ## Recent commit chain (last 6)
+- `46bc272` test(kg): lock AXI write-data alias exclusion
 - `f9f027f` test(kg): lock AXI write-data prose exclusion
 - `13bb28a` test(kg): lock AXI write-response VLM exclusion
 - `4372918` test(kg): lock AXI write-response visual exclusion
 - `6b1d1ba` test(kg): lock AXI write-response alias exclusion
 - `6d2f21c` test(kg): lock AXI write-response prose exclusion
-- `e54104a` test(kg): lock AXI width-only VLM exclusion
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 25 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
+- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 26 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
 - files in flight:
   - `crates/specforge/test_data/kg_quality/axi_write_data_timing_gold/fixture.json`
   - live docs and mdBook files synced for the slice
@@ -53,13 +53,13 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `24`
-  - slice 25/200 tightens AXI write-data timing alias-grounded prose semantic-hint exclusion metrics for positive table-backed source-split hardening
+  - completed_count before this commit: `25`
+  - slice 26/200 tightens AXI write-data timing visual-caption semantic-hint exclusion metrics for positive table-backed source-split hardening
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks AXI write-data timing alias-grounded prose semantic-hint exclusion KG coverage as `Done`
+  - live-status tracker now marks AXI write-data timing visual-caption semantic-hint exclusion KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 25 before commit
+  - implementation and live-doc sync are complete for slice 26 before commit
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench axi_write_data_timing_gold` passed with the requested fixture
   - broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed on slice 23 with `150/150` fixtures
   - broader `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed on slice 23 with `150` fixtures projected, `0` failures, and no tracked projection diff
@@ -114,5 +114,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 25 commit workflow, clear and verify `git_message_brief.txt`, then continue AXI write-data timing visual-caption source-split hardening
+- finish the slice 26 commit workflow, clear and verify `git_message_brief.txt`, then continue AXI write-data timing VLM timing-annotation source-split hardening
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle
