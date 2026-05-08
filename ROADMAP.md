@@ -797,6 +797,7 @@
     - the AXI sideband stability fixture now asserts prose semantic hints stay zero while its sideband obligations recover through table-sourced semantic hints
     - the AXI sideband stability fixture now asserts alias-grounded prose semantic hints stay zero while its sideband obligations remain table-sourced
     - the AXI sideband stability fixture now asserts visual-caption semantic hints stay zero while its sideband obligations remain table-sourced
+    - the AXI sideband stability fixture now asserts VLM timing-annotation semantic hints stay zero while its sideband obligations remain table-sourced
     - a representative AXI read-address ID stability fixture proving manager-owned `ARID` remains graph-grounded and actor-owned when its stability is guarded by `ARVALID` / `ARREADY` completion
     - a representative AXI write-address ID stability fixture proving manager-owned `AWID` remains graph-grounded and actor-owned when its stability is guarded by `AWVALID` / `AWREADY` completion
     - a representative AXI write-address control sideband stability fixture proving `AWPROT`, `AWCACHE`, and `AWLOCK` remain graph-grounded and actor-owned when their stability is guarded by `AWVALID` / `AWREADY` completion
