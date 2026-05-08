@@ -246,6 +246,7 @@ Target-side unemitted child endpoint blockers keep the same retained confidence 
 They also keep the declared top port in selected top inventory with support IDs and high confidence while the child target endpoint is emitted.
 The legacy source-side unemitted child-port blocker now exercises the same retained top-port, child, and link confidence contract.
 Source-side child direction-role blockers keep retained top-port, child, and link confidence visible while role evidence is repaired.
+They also keep the declared top port in selected top inventory with support IDs and high confidence while child source role evidence is repaired.
 Target-side child direction-role blockers keep the same retained confidence visible while target role evidence is repaired.
 Child actor-port direction conflicts keep retained top-port, child, and child-to-child link confidence visible while graph-role evidence is repaired.
 Child topology direction conflicts keep retained top-port, child, and conflicting-link confidence visible while topology evidence is repaired.
