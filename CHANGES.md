@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (adapter symbol definition signal-free guard)
+
+### Improved: symbol-definition renderability stays signal-free
+- Added a direct regression for symbol-definition renderability.
+- The guard proves graph-backed signal references inside symbol-definition values still block in the active `.fsm` slice and do not create renderable signal size entries.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge symbol_definition_renderability_keeps_graph_signal_references_signal_free` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`109/109` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter comparison guard graph direction guard)
 
 ### Improved: comparison guard renderability has direct graph-first coverage

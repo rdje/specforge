@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter symbol definition signal-free guard)
+- Added `symbol_definition_renderability_keeps_graph_signal_references_signal_free` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks symbol-definition renderability so graph-backed signal references still block under the active signal-free symbol-definition slice and do not create size entries.
+- This keeps graph-backed signal recovery from leaking into backend expression semantics before symbol lowering is explicitly widened.
+
 ## Session update (2026-05-08 adapter comparison guard graph direction guard)
 - Added `comparison_guard_renderability_uses_graph_direction_without_stale_flat_override` in `crates/specforge/src/ir/adapters.rs`.
 - The test locks comparison guard renderability so graph-backed left and right signal references create size entries, while stale flat-vs-graph disagreement on the right-hand signal leaves no stale entry.
