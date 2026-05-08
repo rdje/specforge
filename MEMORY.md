@@ -22,22 +22,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `49af81f76e25b37e14c96a452c707cbe817b307c`
-- latest_commit_brief_message: `test(kg): lock visual semantic prior table exclusion`
-- note: this is the pre-slice-85 baseline for the current `BWFSC=100` batch; slices 1-84/100 are committed and push remains deferred
+- latest_commit_hash: `5318a5949997f1a30cebc8576f22756d3d900b6f`
+- latest_commit_brief_message: `test(kg): lock visual semantic prior prose exclusion`
+- note: this is the pre-slice-86 baseline for the current `BWFSC=100` batch; slices 1-85/100 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `5318a59` test(kg): lock visual semantic prior prose exclusion
 - `49af81f` test(kg): lock visual semantic prior table exclusion
 - `9de4a8b` test(kg): lock APB address protection VLM exclusion
 - `8e00080` test(kg): lock APB address protection visual exclusion
 - `d5443f1` test(kg): lock APB address protection alias exclusion
 - `43124ee` test(kg): lock APB address protection prose exclusion
-- `84fa262` test(kg): lock AXI read-data timing VLM exclusion
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=100` slice 85 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=100` slice 86 and push is deferred
 - files in flight:
   - `crates/specforge/test_data/kg_quality/visual_semantic_prior_guided_caption_gold/fixture.json`
   - live docs and mdBook files synced for the slice
@@ -52,13 +52,13 @@
 ## Current batch status
 - objective:
   - active `BWFSC=100` batch is in progress
-  - completed_count before this commit: `84`
-  - slice 85/100 tightens prior-guided visual semantic phrase prose semantic-hint exclusion metrics for source-split hardening
+  - completed_count before this commit: `85`
+  - slice 86/100 tightens prior-guided visual semantic phrase alias-grounded prose semantic-hint exclusion metrics for source-split hardening
   - push is deferred until all `100` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks prior-guided visual semantic phrase prose semantic-hint exclusion KG coverage as `Done`
+  - live-status tracker now marks prior-guided visual semantic phrase alias-grounded prose semantic-hint exclusion KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 85 before commit
+  - implementation and live-doc sync are complete for slice 86 before commit
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench visual_semantic_prior_guided_caption_gold` passed with the requested fixture
   - broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed on slice 83 with `150/150` fixtures
   - broader `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed on slice 83 with `150` fixtures projected, `0` failures, and no tracked projection diff

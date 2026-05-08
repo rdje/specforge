@@ -256,6 +256,7 @@ VLM timing-annotation hints stay zero too, so timing notes cannot stand in for a
 The visual-caption prior-guided gold locks the after side for that modality, resolving the caption phrase as ready-like while preserving the local input declaration.
 That positive visual-caption fixture also keeps table-sourced semantic hints at zero, so learned visual memory cannot be mistaken for table evidence.
 Ordinary prose hints are zero there too, keeping the positive visual-caption proof out of text-only recovery.
+Alias-grounded prose hints are zero as well, so phrase aliases cannot masquerade as the learned visual-caption prior.
 The visual-motif no-prior mirror keeps diagram-classification recovery separate from table truth: the unknown motif stays ambiguous while table-derived `XREQ` output remains canonical.
 That no-prior motif mirror also keeps table-sourced semantic hints at zero, so table evidence cannot rescue absent motif memory.
 Ordinary prose hints are zero too, so text evidence cannot backfill absent motif memory.
