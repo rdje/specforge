@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter control-expression width-cast guard)
+- Added `control_expression_width_cast_blocks_after_graph_signal` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks width-cast reference validation so graph-backed input signals still produce size entries, while the active `.fsm` expression suffix lowering blocks width casts.
+- This keeps graph-first signal recovery independent from the unsupported width-cast suffix gate.
+
 ## Session update (2026-05-08 adapter compound-update public-output guard)
 - Added `compound_update_public_output_blocks_after_graph_target` in `crates/specforge/src/ir/adapters.rs`.
 - The test locks compound-update public-output validation so graph-backed output targets still produce size entries, while the active shorthand lowering blocks explicit public-output exposure.

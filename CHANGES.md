@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (adapter control-expression width-cast guard)
+
+### Improved: width-cast blockers preserve graph-backed signal metadata
+- Added a direct regression for control-expression width-cast renderability.
+- The guard proves graph-backed width-cast signal references still create input metadata, while unsupported width-cast lowering remains blocked.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge control_expression_width_cast_blocks_after_graph_signal` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`127/127` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter compound-update public-output guard)
 
 ### Improved: compound-update public-output blocking preserves graph-backed targets

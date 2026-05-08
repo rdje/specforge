@@ -6256,10 +6256,10 @@ mod tests {
         ControlAssignmentTargetRecord, ControlBinaryOperator, ControlBlockRecord, ControlBlockRole,
         ControlBranchRecord, ControlCompoundUpdateOperation, ControlDualOutputKind,
         ControlExpressionRecord, ControlReferenceKind, ControlReferenceRecord,
-        ControlUnaryOperator, DecisionTreeAssignmentKind, DecisionTreeComparisonOperator,
-        DecisionTreeGuardRecord, DecisionTreeValueRecord, InitAssignmentRecord,
-        InterfaceSignalDirection, SemanticIr, SymbolDefinitionKind, SymbolDefinitionRecord,
-        SymbolEnumMemberRecord, SystemResetPolarity, SystemResetTargetKind,
+        ControlReferenceSuffix, ControlUnaryOperator, DecisionTreeAssignmentKind,
+        DecisionTreeComparisonOperator, DecisionTreeGuardRecord, DecisionTreeValueRecord,
+        InitAssignmentRecord, InterfaceSignalDirection, SemanticIr, SymbolDefinitionKind,
+        SymbolDefinitionRecord, SymbolEnumMemberRecord, SystemResetPolarity, SystemResetTargetKind,
         SystemResetTimingRelation,
     };
     use crate::ir::source::{AutomationConfidence, SourceIr, WidthHint};
@@ -7583,6 +7583,58 @@ mod tests {
         assert!(required_canonical_enrichments.contains(
             "resolve conflicting canonical and actor-relative graph direction evidence before lowering `.fsm`"
         ));
+    }
+
+    #[test]
+    fn control_expression_width_cast_blocks_after_graph_signal() {
+        let mut graph_input = signal_candidate_with_direction_evidence(
+            None,
+            false,
+            Some(InterfaceSignalDirection::Input),
+            false,
+        );
+        graph_input.signal_name = "DATA_IN".to_string();
+        graph_input.width_hint = Some(8);
+
+        let signals = [graph_input];
+        let signals_by_name = signals
+            .iter()
+            .map(|signal| (signal.signal_name.clone(), signal))
+            .collect::<std::collections::BTreeMap<_, _>>();
+        let mut size_entries = std::collections::BTreeMap::new();
+        let mut blocking_reasons = Vec::new();
+        let mut required_canonical_enrichments = std::collections::BTreeSet::new();
+
+        let graph_expression = ControlExpressionRecord::Reference {
+            reference: ControlReferenceRecord {
+                base_name: "DATA_IN".to_string(),
+                kind_hint: ControlReferenceKind::Signal,
+                suffixes: vec![ControlReferenceSuffix::WidthCast { width: 4 }],
+                exposed_public_output: false,
+            },
+        };
+        super::validate_control_expression_renderability(
+            &graph_expression,
+            true,
+            &signals_by_name,
+            &mut size_entries,
+            &mut blocking_reasons,
+            &mut required_canonical_enrichments,
+        );
+        let graph_entry = size_entries
+            .get("DATA_IN")
+            .expect("graph-backed width-cast reference should still create a size entry");
+        assert_eq!(graph_entry.direction_hint, InterfaceSignalDirection::Input);
+        assert_eq!(graph_entry.width, 8);
+        assert!(blocking_reasons.iter().any(|reason| {
+            reason.contains(
+                "The active `.fsm` adapter slice does not yet lower width-cast signal references",
+            )
+        }));
+        assert!(
+            required_canonical_enrichments
+                .contains("add width-cast reference lowering from canonical control expressions")
+        );
     }
 
     #[test]
