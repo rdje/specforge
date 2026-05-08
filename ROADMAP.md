@@ -819,6 +819,7 @@
     - a representative AXI write-address control sideband stability fixture proving `AWPROT`, `AWCACHE`, and `AWLOCK` remain graph-grounded and actor-owned when their stability is guarded by `AWVALID` / `AWREADY` completion
     - the AXI write-address control sideband fixture now asserts prose semantic hints stay zero while `AWPROT`, `AWCACHE`, and `AWLOCK` remain table-sourced
     - the AXI write-address control sideband fixture now asserts alias-grounded prose semantic hints stay zero while `AWPROT`, `AWCACHE`, and `AWLOCK` remain table-sourced
+    - the AXI write-address control sideband fixture now asserts visual-caption semantic hints stay zero while `AWPROT`, `AWCACHE`, and `AWLOCK` remain table-sourced
     - a representative AXI read-address control sideband stability fixture proving `ARPROT`, `ARCACHE`, and `ARLOCK` remain graph-grounded and actor-owned when their stability is guarded by `ARVALID` / `ARREADY` completion
     - the AXI read-address control sideband fixture now asserts prose semantic hints stay zero while `ARPROT`, `ARCACHE`, and `ARLOCK` remain table-sourced
     - the AXI read-address control sideband fixture now asserts alias-grounded prose semantic hints stay zero while `ARPROT`, `ARCACHE`, and `ARLOCK` remain table-sourced
