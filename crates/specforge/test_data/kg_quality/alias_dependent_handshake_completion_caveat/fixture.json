@@ -90,7 +90,8 @@
           }
         ],
         "metric_values": {
-          "temporal_rules": "1"
+          "temporal_rules": "1",
+          "temporal_rules_with_handshake_completion": "1"
         }
       },
       "intent": {
@@ -123,7 +124,8 @@
           }
         ],
         "metric_values": {
-          "temporal_rules": "1"
+          "temporal_rules": "1",
+          "temporal_rules_with_handshake_completion": "1"
         }
       }
     }

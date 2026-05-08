@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 KG fixture for alias-dependent handshake-completion metric)
+- Tightened `alias_dependent_handshake_completion_caveat` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts `temporal_rules_with_handshake_completion = 1` at both `SemanticIR` and `IntentIR` validation surfaces.
+- This completes generic handshake-completion validation metric hardening by proving the alias-dependent `XREQ` / `XACK` completion still counts as a typed handshake while its residual/assumption trail remains explicit.
+
 ## Session update (2026-05-08 KG fixture for field-table temporal-rule count)
 - Tightened `table_misclassification_field_table_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts `temporal_rules = 0` at both `SemanticIR` and `IntentIR` validation surfaces.

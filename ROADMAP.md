@@ -754,6 +754,7 @@
     - the contested handshake negative fixture now asserts aggregate temporal-rule count coverage while keeping typed handshake fallback blocked
     - a stage-patched caveat fixture proving alias-dependent handshake completion stays usable while preserving its canonical residual/assumption trail
     - the alias-dependent handshake caveat fixture now asserts aggregate temporal-rule count coverage while preserving its residual/assumption trail
+    - the alias-dependent handshake caveat fixture now asserts generic handshake-completion validation metric coverage while preserving its residual/assumption trail
     - a stage-patched cross-modality gold fixture proving a semantic role can be grounded jointly by table and visual evidence while validation reports that stronger grounding explicitly
     - a stage-patched cross-modality negative fixture proving conflicting table and visual evidence stays contested, keeps visual grounding visible, and does not overclaim resolved cross-modality support
     - the cross-modality semantic-conflict negative fixture now asserts total evidence semantic hints equal the two conflicting observations, keeping aggregate metrics aligned with table and visual-caption splits
