@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (adapter top-link direction confidence guard)
+
+### Improved: top-link direction conflicts preserve retained record confidence
+- Extended the top-link direction conflict regression to assert the affected consumer child and blocked top link keep high automation confidence alongside the conflicting top port.
+- The guard keeps top-link direction conflict diagnostics tied to retained topology records while top composition emission stays blocked.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_keeps_conflicting_top_port_direction_unresolved` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter sibling child-link width confidence guard)
 
 ### Improved: sibling child-link width conflicts preserve retained record confidence
