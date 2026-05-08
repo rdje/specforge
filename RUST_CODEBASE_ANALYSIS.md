@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 KG fixture for AXI write-address ID prose exclusion)
+- Tightened `axi_write_address_id_stability_gold` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts evidence-stage `signal_semantic_hints_from_prose = 0` alongside total and table-sourced semantic hints.
+- This locks the AXI write-address ID request/accept semantic hints as table-only rather than prose-derived.
+
 ## Session update (2026-05-08 KG fixture for AXI write-data last VLM exclusion)
 - Tightened `axi_write_data_last_stability_gold` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts evidence-stage `signal_semantic_hints_from_vlm_timing_annotations = 0` alongside total, table-sourced, prose, alias-grounded prose, and visual-caption semantic hints.

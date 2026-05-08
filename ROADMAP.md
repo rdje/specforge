@@ -808,6 +808,7 @@
     - the AXI sideband stability fixture now asserts VLM timing-annotation semantic hints stay zero while its sideband obligations remain table-sourced
     - a representative AXI read-address ID stability fixture proving manager-owned `ARID` remains graph-grounded and actor-owned when its stability is guarded by `ARVALID` / `ARREADY` completion
     - a representative AXI write-address ID stability fixture proving manager-owned `AWID` remains graph-grounded and actor-owned when its stability is guarded by `AWVALID` / `AWREADY` completion
+    - the AXI write-address ID fixture now asserts prose semantic hints stay zero while request/accept role hints remain table-sourced
     - a representative AXI write-address control sideband stability fixture proving `AWPROT`, `AWCACHE`, and `AWLOCK` remain graph-grounded and actor-owned when their stability is guarded by `AWVALID` / `AWREADY` completion
     - a representative AXI read-address control sideband stability fixture proving `ARPROT`, `ARCACHE`, and `ARLOCK` remain graph-grounded and actor-owned when their stability is guarded by `ARVALID` / `ARREADY` completion
     - the AXI read-address control sideband fixture now asserts prose semantic hints stay zero while `ARPROT`, `ARCACHE`, and `ARLOCK` remain table-sourced
