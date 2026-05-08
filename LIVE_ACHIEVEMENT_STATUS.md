@@ -479,6 +479,7 @@
 - KG benchmark harness now locks motion-only VLM timing annotation table semantic-hint exclusion: Done
 - KG benchmark harness now locks motion-only VLM timing annotation prose semantic-hint exclusion: Done
 - KG benchmark harness now locks motion-only VLM timing annotation alias-grounded prose semantic-hint exclusion: Done
+- KG benchmark harness now locks motion-only VLM timing annotation visual-caption semantic-hint exclusion: Done
 - KG benchmark harness now locks waveform-motion VLM timing state total semantic-hint exclusion: Done
 - KG benchmark harness now locks waveform-motion VLM timing state table semantic-hint exclusion: Done
 - KG benchmark harness now locks waveform-motion VLM timing state prose semantic-hint exclusion: Done

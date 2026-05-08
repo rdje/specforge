@@ -22,22 +22,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `af9351601063c67e9ef958c2f6506500ff5d98d7`
-- latest_commit_brief_message: `test(kg): lock motion-only VLM prose exclusion`
-- note: this is the pre-slice-13 baseline for the current `BWFSC=100` batch; slices 1-12/100 are committed and push remains deferred
+- latest_commit_hash: `85d9b73b2082c53cca6f84676547f1173e3de834`
+- latest_commit_brief_message: `test(kg): lock motion-only VLM alias exclusion`
+- note: this is the pre-slice-14 baseline for the current `BWFSC=100` batch; slices 1-13/100 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `85d9b73` test(kg): lock motion-only VLM alias exclusion
 - `af93516` test(kg): lock motion-only VLM prose exclusion
 - `361adc5` test(kg): lock motion-only VLM table exclusion
 - `c07e625` test(kg): lock waveform-motion VLM visual exclusion
 - `9926472` test(kg): lock waveform-motion VLM alias exclusion
 - `994ea5c` test(kg): lock waveform-motion VLM prose exclusion
-- `7fe2c98` test(kg): lock waveform-motion VLM table exclusion
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=100` slice 13 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=100` slice 14 and push is deferred
 - files in flight:
   - `crates/specforge/test_data/kg_quality/vlm_timing_motion_annotation_negative/fixture.json`
   - live docs and mdBook files synced for the slice
@@ -52,28 +52,28 @@
 ## Current batch status
 - objective:
   - active `BWFSC=100` batch is in progress
-  - completed_count before this commit: `12`
-  - slice 13/100 tightens motion-only VLM timing annotation alias-grounded prose semantic-hint exclusion metrics
+  - completed_count before this commit: `13`
+  - slice 14/100 tightens motion-only VLM timing annotation visual-caption semantic-hint exclusion metrics
   - push is deferred until all `100` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks motion-only VLM timing annotation alias-grounded prose semantic-hint exclusion KG coverage as `Done`
+  - live-status tracker now marks motion-only VLM timing annotation visual-caption semantic-hint exclusion KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 13 before commit
+  - implementation and live-doc sync are complete for slice 14 before commit
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench vlm_timing_motion_annotation_negative` passed with the requested fixture
+  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` fixtures
+  - `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed with `150` fixtures projected and `0` failures
   - `bash scripts/run_docs_ci.sh` passed after the live-book sync
-  - broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed on slice 10 with `150/150` fixtures
-  - broader `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed on slice 10 with `150` fixtures projected and `0` failures
   - broader `bash scripts/run_ci.sh` passed on slice 10 with formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, and mdBook
   - user-requested `cargo sweep --time 1` is deferred until no target-tree process is active because `target/release/tool_matrix` is active
 - current known local CI baseline:
   - focused current-slice KG fixture passed
+  - current slice passed `150/150` tracked KG fixtures
+  - current slice passed corpus-KB projection for `150` fixtures with `0` failures
   - current slice passed docs CI
-  - slice 10 passed `150/150` tracked KG fixtures
-  - slice 10 passed corpus-KB projection for `150` fixtures with `0` failures
   - slice 10 passed `bash scripts/run_ci.sh`
   - latest `cargo sweep --time 1` attempt was deferred because `target/release/tool_matrix` is active
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 13 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 14/100
+- finish the slice 14 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 15/100
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle

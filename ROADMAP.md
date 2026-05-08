@@ -853,6 +853,7 @@
     - the motion-only VLM timing annotation fixture now asserts table semantic hints remain zero, proving table evidence cannot invent roles for rejected motion prose
     - the motion-only VLM timing annotation fixture now asserts ordinary prose semantic hints remain zero, proving text evidence cannot invent roles for rejected motion prose
     - the motion-only VLM timing annotation fixture now asserts alias-grounded prose semantic hints remain zero, proving phrase-alias recovery cannot invent roles for rejected motion prose
+    - the motion-only VLM timing annotation fixture now asserts visual-caption semantic hints remain zero, proving captions cannot invent roles for rejected motion prose
     - a negative fixture proving VLM state-machine prose labels like `IDLE state` and `ACCESS phase` do not become canonical FSM state names or transition endpoints while clean identifier labels and transitions still survive
     - the label-noise VLM state-machine fixture now asserts the accepted `IDLE` initial marker survives prose/OCR label filtering and `BUSY` remains non-initial at both canonical stages
     - a negative fixture proving VLM state-machine transition endpoints must reference states declared in the same VLM observation, so identifier-shaped `DONE` / `RESET` endpoint guesses do not become canonical transition facts

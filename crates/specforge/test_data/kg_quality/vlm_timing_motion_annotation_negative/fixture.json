@@ -36,6 +36,7 @@
           "signal_semantic_hints_from_tables": "0",
           "signal_semantic_hints_from_prose": "0",
           "signal_semantic_hints_from_alias_grounded_prose": "0",
+          "signal_semantic_hints_from_visual_captions": "0",
           "signal_semantic_hints_from_vlm_timing_annotations": "0"
         }
       },
