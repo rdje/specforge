@@ -1,5 +1,15 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for AXI read-address control alias exclusion)
+
+### Improved: AXI read-address control fixtures exclude alias-grounded prose
+- Tightened `axi_read_address_control_sideband_stability_gold` with `signal_semantic_hints_from_alias_grounded_prose = 0` at `EvidenceIR`.
+- The fixture now proves `ARPROT` / `ARCACHE` / `ARLOCK` semantic hints are not recovered through phrase-alias prose paths.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench axi_read_address_control_sideband_stability_gold` -> passed (`1/1` fixture)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for AXI read-address control prose exclusion)
 
 ### Improved: AXI read-address control fixtures prove table-only hints
