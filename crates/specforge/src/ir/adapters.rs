@@ -12219,6 +12219,20 @@ mod tests {
                 .iter()
                 .any(|block| block.role == ControlBlockRole::ResetAsynchronous)
         );
+        for signal_name in ["clk", "rst_n", "GO", "ACC", "PULSE_OUT"] {
+            let signal = fsm
+                .signal_inventory
+                .iter()
+                .find(|signal| signal.signal_name == signal_name)
+                .unwrap_or_else(|| {
+                    panic!("{signal_name} should stay in reset-block FSM signal inventory")
+                });
+            assert!(
+                !signal.supporting_canonical_ids.is_empty(),
+                "{signal_name} should retain canonical support ids"
+            );
+            assert_eq!(signal.automation_confidence, AutomationConfidence::High);
+        }
         assert!(emitted_text.contains("(?fsm:reset_fsm"));
         assert!(emitted_text.contains("(+system"));
         assert!(emitted_text.contains("(clock clk)"));

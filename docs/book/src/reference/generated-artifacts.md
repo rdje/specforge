@@ -134,6 +134,7 @@ Renderable standalone DT roots also keep baseline signal-inventory support IDs a
 Renderable standalone sequential-DT roots keep the same support/confidence contract for emitted clock, reset, input, and accumulator inventory.
 Renderable symbolic-DT roots keep the same support/confidence contract for emitted selector, data, parameter, and enum-output inventory.
 Renderable structured-FSM roots keep the same support/confidence contract for emitted system, guard, data, accumulator, and trace inventory.
+Renderable reset-block structured-FSM roots keep the same support/confidence contract for emitted clock, reset, guard, accumulator, and pulse-output inventory.
 Direct control-input width recovery is part of that emitted surface too: an actor-port width recovered for a direct control input feeds the renderable `(+size ...)` entry alongside the target-actor input direction.
 Explicit-module control-input width recovery follows the same rule for module-local `(+size ...)` entries, combining module-control input direction with actor-port width provenance without requiring a flat module-local direction hint.
 Target-actor-backed direct output selection follows the same rule while excluding shared external actor evidence from the selected inventory.
