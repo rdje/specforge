@@ -348,7 +348,8 @@
           "signal_constraints": "2",
           "signal_semantic_hints": "4",
           "signal_semantic_hints_from_tables": "4",
-          "signal_semantic_hints_from_prose": "0"
+          "signal_semantic_hints_from_prose": "0",
+          "signal_semantic_hints_from_alias_grounded_prose": "0"
         }
       },
       "semantic": {

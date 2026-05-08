@@ -795,6 +795,7 @@
     - a representative AXI write-response ID stability fixture proving subordinate-owned `BID` remains graph-grounded and actor-owned when its stability is guarded by `BVALID` / `BREADY` completion
     - a representative AXI read-address timing gold fixture proving the same width-only plus prose actor-relation path works for `ARVALID` / `ARREADY` / `ARADDR` / `ARLEN`, including next-cycle read-address ready assertion and handshake-stable read-address payload semantics
     - the AXI sideband stability fixture now asserts prose semantic hints stay zero while its sideband obligations recover through table-sourced semantic hints
+    - the AXI sideband stability fixture now asserts alias-grounded prose semantic hints stay zero while its sideband obligations remain table-sourced
     - a representative AXI read-address ID stability fixture proving manager-owned `ARID` remains graph-grounded and actor-owned when its stability is guarded by `ARVALID` / `ARREADY` completion
     - a representative AXI write-address ID stability fixture proving manager-owned `AWID` remains graph-grounded and actor-owned when its stability is guarded by `AWVALID` / `AWREADY` completion
     - a representative AXI write-address control sideband stability fixture proving `AWPROT`, `AWCACHE`, and `AWLOCK` remain graph-grounded and actor-owned when their stability is guarded by `AWVALID` / `AWREADY` completion

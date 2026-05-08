@@ -22,22 +22,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `5179721bd975d6ded6af97da232968d9214026ed`
-- latest_commit_brief_message: `test(kg): lock AXI read-data last VLM exclusion`
-- note: this is the pre-slice-48 baseline for the current `BWFSC=100` batch; slices 1-47/100 are committed and push remains deferred
+- latest_commit_hash: `f404dcf2233991baaad47afadc60268e635dbd9f`
+- latest_commit_brief_message: `test(kg): lock AXI sideband prose exclusion`
+- note: this is the pre-slice-49 baseline for the current `BWFSC=100` batch; slices 1-48/100 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `f404dcf` test(kg): lock AXI sideband prose exclusion
 - `5179721` test(kg): lock AXI read-data last VLM exclusion
 - `ce62e7d` test(kg): lock AXI read-data last visual exclusion
 - `8f1dffb` test(kg): lock AXI read-data last alias exclusion
 - `87450cc` test(kg): lock AXI read-data last prose exclusion
 - `36d15b3` test(kg): lock AXI read-data ID VLM exclusion
-- `740cd57` test(kg): lock AXI read-data ID visual exclusion
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=100` slice 48 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=100` slice 49 and push is deferred
 - files in flight:
   - `crates/specforge/test_data/kg_quality/axi_sideband_stability_gold/fixture.json`
   - live docs and mdBook files synced for the slice
@@ -52,13 +52,13 @@
 ## Current batch status
 - objective:
   - active `BWFSC=100` batch is in progress
-  - completed_count before this commit: `47`
-  - slice 48/100 tightens AXI sideband prose semantic-hint exclusion metrics for positive table-backed source-split hardening
+  - completed_count before this commit: `48`
+  - slice 49/100 tightens AXI sideband alias-grounded prose semantic-hint exclusion metrics for positive table-backed source-split hardening
   - push is deferred until all `100` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks AXI sideband prose semantic-hint exclusion KG coverage as `Done`
+  - live-status tracker now marks AXI sideband alias-grounded prose semantic-hint exclusion KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 48 before commit
+  - implementation and live-doc sync are complete for slice 49 before commit
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench axi_sideband_stability_gold` passed with the requested fixture
   - `bash scripts/run_docs_ci.sh` passed after the live-book sync
   - broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed on slice 47 with `150/150` fixtures
@@ -86,5 +86,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 48 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 49/100
+- finish the slice 49 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 50/100
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle

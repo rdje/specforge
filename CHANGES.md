@@ -1,5 +1,15 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for AXI sideband alias exclusion)
+
+### Improved: AXI sideband fixtures exclude alias-grounded prose
+- Tightened `axi_sideband_stability_gold` with `signal_semantic_hints_from_alias_grounded_prose = 0` at `EvidenceIR`.
+- The fixture now proves the AXI sideband semantic hints are not recovered through phrase-alias prose paths.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench axi_sideband_stability_gold` -> passed (`1/1` fixture)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for AXI sideband prose exclusion)
 
 ### Improved: AXI sideband fixtures prove table-only hints
