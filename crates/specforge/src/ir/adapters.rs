@@ -21659,6 +21659,25 @@ mod tests {
             status_port.automation_confidence,
             AutomationConfidence::High
         );
+        let signal_inventory_port = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "status")
+            .expect("declared status top port should remain in selected top inventory");
+        assert_eq!(
+            signal_inventory_port.direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert_eq!(signal_inventory_port.width_hint, Some(1));
+        assert!(
+            top_port_support_ids
+                .iter()
+                .any(|id| signal_inventory_port.supporting_canonical_ids.contains(id))
+        );
+        assert_eq!(
+            signal_inventory_port.automation_confidence,
+            AutomationConfidence::High
+        );
         let child = top_candidate
             .children
             .iter()

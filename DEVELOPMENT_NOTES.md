@@ -7,6 +7,19 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-09 adapter undeclared target inventory confidence guard
+- New batch slice 148/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Extended `top_composition_blocks_link_to_undeclared_top_target_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- The undeclared top-link target blocker now locks selected signal-inventory support IDs and high automation confidence for the retained declared `status` top port.
+- This keeps missing target-endpoint diagnostics recoverable without letting incomplete top composition emit stale text.
+- `cargo fmt --all` applied rustfmt layout.
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_link_to_undeclared_top_target_guidance` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests.
+- `cargo fmt --all --check` passed.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- Push remains deferred for the active `BWFSC=200` batch.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-09 adapter top-without-child inventory confidence guard
 - New batch slice 147/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Extended `top_composition_blocks_top_without_child_guidance` in `crates/specforge/src/ir/adapters.rs`.
