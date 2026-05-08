@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for AXI write-response ID VLM exclusion)
+
+### Improved: AXI write-response ID fixtures exclude VLM timing hints
+- Tightened `axi_write_response_id_stability_gold` with `signal_semantic_hints_from_vlm_timing_annotations = 0` at `EvidenceIR`.
+- The fixture now proves `BVALID` / `BREADY` semantic hints are not recovered through VLM timing annotations while subordinate-owned `BID` handshake-stability obligations remain recovered.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench axi_write_response_id_stability_gold` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for AXI write-response ID visual exclusion)
 
 ### Improved: AXI write-response ID fixtures exclude visual-caption hints

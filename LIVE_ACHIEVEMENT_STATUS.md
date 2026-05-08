@@ -534,6 +534,7 @@
 - KG benchmark harness now locks AXI write-response ID prose semantic-hint exclusion: Done
 - KG benchmark harness now locks AXI write-response ID alias-grounded prose semantic-hint exclusion: Done
 - KG benchmark harness now locks AXI write-response ID visual-caption semantic-hint exclusion: Done
+- KG benchmark harness now locks AXI write-response ID VLM timing-annotation semantic-hint exclusion: Done
 - KG benchmark harness now includes generic `clock edge(s) of <clock>` timing coverage: Done
 - KG benchmark harness now includes plural `edge(s) of <clock>` timing coverage: Done
 - KG benchmark harness now includes trailing shorthand-edge timing coverage: Done

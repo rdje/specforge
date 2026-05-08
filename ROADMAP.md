@@ -836,6 +836,7 @@
     - the AXI write-response ID fixture now asserts prose semantic hints stay zero while `BID` recovers through table-sourced semantic hints
     - the AXI write-response ID fixture now asserts alias-grounded prose semantic hints stay zero while `BID` remains table-sourced
     - the AXI write-response ID fixture now asserts visual-caption semantic hints stay zero while `BID` remains table-sourced
+    - the AXI write-response ID fixture now asserts VLM timing-annotation semantic hints stay zero while `BID` remains table-sourced
     - a representative AXI read-address timing gold fixture proving the same width-only plus prose actor-relation path works for `ARVALID` / `ARREADY` / `ARADDR` / `ARLEN`, including next-cycle read-address ready assertion and handshake-stable read-address payload semantics
     - the AXI read-address timing fixture now asserts prose semantic hints stay zero while request/accept role hints remain table-sourced
     - the AXI read-address timing fixture now asserts alias-grounded prose semantic hints stay zero while request/accept role hints remain table-sourced

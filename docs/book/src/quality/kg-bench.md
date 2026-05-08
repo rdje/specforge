@@ -119,6 +119,7 @@ The tracked suite now includes AXI write-address, write-address-id-stability, wr
 The AXI write-response ID fixture keeps prose-sourced semantic hints at zero too, proving `BVALID` / `BREADY` role hints remain table-only while subordinate-owned `BID` stability stays recovered.
 Alias-grounded prose hints are zero there too, so phrase-alias recovery cannot masquerade as table-backed write-response ID evidence.
 Visual-caption hints are zero there too, so diagram captions cannot masquerade as table-backed write-response ID evidence.
+VLM timing-annotation hints are zero there too, so timing notes cannot masquerade as table-backed write-response ID evidence.
 The AXI write-address ID fixture keeps prose-sourced semantic hints at zero too, proving its `AWVALID` / `AWREADY` role hints remain table-only.
 Alias-grounded prose hints are zero there too, so phrase-alias recovery cannot masquerade as table-backed write-address ID evidence.
 Visual-caption hints are zero there too, so diagram captions cannot masquerade as table-backed write-address ID evidence.
