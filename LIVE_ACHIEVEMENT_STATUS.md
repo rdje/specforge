@@ -575,6 +575,7 @@
 - KG benchmark harness now locks AXI read-address timing alias-grounded prose semantic-hint exclusion: Done
 - KG benchmark harness now locks AXI read-address timing visual-caption semantic-hint exclusion: Done
 - KG benchmark harness now locks AXI read-address timing VLM timing-annotation semantic-hint exclusion: Done
+- KG benchmark harness now locks AXI read-address multi-predicate antecedent temporal metric coverage: Done
 - KG benchmark harness now includes AXI read-address ID stability coverage: Done
 - KG benchmark harness now locks AXI read-address ID prose semantic-hint exclusion: Done
 - KG benchmark harness now locks AXI read-address ID alias-grounded prose semantic-hint exclusion: Done

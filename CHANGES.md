@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for AXI read-address temporal metrics)
+
+### Improved: AXI read-address fixture locks multi-predicate guards
+- Tightened `axi_read_address_timing_gold` with `temporal_rules_with_multi_predicate_antecedents = 1` at both `SemanticIR` and `IntentIR` validation surfaces.
+- The fixture now proves the `ARVALID` / `ARREADY` handshake guard remains counted as a multi-predicate antecedent while next-cycle `ARREADY` assertion and actor-grounded `ARADDR` stability stay recovered.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench axi_read_address_timing_gold` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for AXI next-cycle temporal metrics)
 
 ### Improved: AXI next-cycle fixture locks multi-predicate guards
