@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 KG fixture for AXI read-data response prose exclusion)
+- Tightened `axi_read_data_response_stability_gold` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts evidence-stage `signal_semantic_hints_from_prose = 0` alongside aggregate and table-sourced semantic hints.
+- This starts AXI read-data response stability source-split hardening by proving `RVALID` / `RREADY` request/accept hints stay table-sourced while subordinate-owned `RRESP` handshake stability remains recovered.
+
 ## Session update (2026-05-08 KG fixture for AXI write-data VLM exclusion)
 - Tightened `axi_write_data_timing_gold` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts evidence-stage `signal_semantic_hints_from_vlm_timing_annotations = 0` alongside aggregate, table-sourced, prose, alias-grounded prose, and visual-caption semantic hints.

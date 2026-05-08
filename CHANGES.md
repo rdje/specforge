@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for AXI read-data response prose exclusion)
+
+### Improved: AXI read-data response fixtures prove table-only hints
+- Tightened `axi_read_data_response_stability_gold` with `signal_semantic_hints_from_prose = 0` at `EvidenceIR`.
+- The fixture now proves `RVALID` / `RREADY` semantic hints are table-sourced rather than prose-derived while subordinate-owned `RRESP` handshake-stability obligations remain recovered.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench axi_read_data_response_stability_gold` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for AXI write-data VLM exclusion)
 
 ### Improved: AXI write-data timing fixtures exclude VLM timing hints
