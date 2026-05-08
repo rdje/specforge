@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-08 (adapter renderable signal registration guard)
+
+### Improved: renderable size entries now have direct graph-first regression coverage
+- Added a direct regression for `register_renderable_signal`.
+- The guard proves graph-only direction evidence creates a renderable size entry with the graph-backed direction, while flat-vs-graph disagreement returns unresolved and does not leave a stale size entry behind.
+
+### Validation
+- `cargo fmt --all --check` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge register_renderable_signal_uses_graph_direction_without_stale_disagreement_entries` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`97/97` adapter-filtered tests)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter topology-linked output guard)
 
 ### Improved: top-linked child outputs no longer regress into local undriven blockers

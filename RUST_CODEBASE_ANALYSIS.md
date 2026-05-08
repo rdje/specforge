@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter renderable signal registration guard)
+- Added `register_renderable_signal_uses_graph_direction_without_stale_disagreement_entries` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks the shared renderable size-entry registration path so graph-only direction evidence is accepted for emission, but flat-vs-graph disagreement leaves no stale renderable size entry.
+- This anchors the main `.fsm` signal registration consumer behind the graph-first/conflict-sticky direction resolver.
+
 ## Session update (2026-05-08 adapter topology-linked output guard)
 - Added `output_inventory_drive_check_skips_topology_linked_child_outputs` in `crates/specforge/src/ir/adapters.rs`.
 - The test locks `validate_output_inventory_is_driven` so graph-backed ordinary outputs still require typed drives, but child endpoints recovered from `module_topology_link` evidence remain under composition validation instead of becoming local undriven-output blockers.

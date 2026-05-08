@@ -6490,6 +6490,72 @@ mod tests {
         );
     }
 
+    #[test]
+    fn register_renderable_signal_uses_graph_direction_without_stale_disagreement_entries() {
+        let mut graph_only = signal_candidate_with_direction_evidence(
+            None,
+            false,
+            Some(InterfaceSignalDirection::Output),
+            false,
+        );
+        graph_only.signal_name = "GRAPH_OUT".to_string();
+        graph_only.width_hint = Some(8);
+
+        let mut flat_graph_disagreement = signal_candidate_with_direction_evidence(
+            Some(InterfaceSignalDirection::Input),
+            false,
+            Some(InterfaceSignalDirection::Output),
+            false,
+        );
+        flat_graph_disagreement.signal_name = "STALE_OUT".to_string();
+        flat_graph_disagreement.width_hint = Some(8);
+
+        let signals = vec![graph_only, flat_graph_disagreement];
+        let signals_by_name = signals
+            .iter()
+            .map(|signal| (signal.signal_name.clone(), signal))
+            .collect::<std::collections::BTreeMap<_, _>>();
+        let mut size_entries = std::collections::BTreeMap::new();
+        let mut blocking_reasons = Vec::new();
+        let mut required_canonical_enrichments = std::collections::BTreeSet::new();
+
+        assert_eq!(
+            super::register_renderable_signal(
+                "GRAPH_OUT",
+                &signals_by_name,
+                &mut size_entries,
+                &mut blocking_reasons,
+                &mut required_canonical_enrichments,
+            ),
+            Some(InterfaceSignalDirection::Output)
+        );
+        let graph_entry = size_entries
+            .get("GRAPH_OUT")
+            .expect("graph-only signal should create a renderable size entry");
+        assert_eq!(graph_entry.direction_hint, InterfaceSignalDirection::Output);
+        assert_eq!(graph_entry.width, 8);
+
+        assert_eq!(
+            super::register_renderable_signal(
+                "STALE_OUT",
+                &signals_by_name,
+                &mut size_entries,
+                &mut blocking_reasons,
+                &mut required_canonical_enrichments,
+            ),
+            None
+        );
+        assert!(!size_entries.contains_key("STALE_OUT"));
+        assert!(blocking_reasons.iter().any(|reason| {
+            reason.contains(
+                "Signal `STALE_OUT` has conflicting canonical and graph-backed direction evidence",
+            )
+        }));
+        assert!(required_canonical_enrichments.contains(
+            "resolve conflicting canonical and actor-relative graph direction evidence before lowering `.fsm`"
+        ));
+    }
+
     fn build_handshake_intent_ir(base: &Path) -> Result<IntentIr> {
         let source = base.join("handshake.md");
         let source_artifact_base = base.join("generated").join("source_ir");
