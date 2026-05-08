@@ -22,22 +22,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `1d787740ffc72395a1ecf34d982c41e91b33fa38`
-- latest_commit_brief_message: `test(kg): lock field-table table-hint exclusion`
-- note: this is the pre-slice-16 baseline for the current `BWFSC=100` batch; slices 1-15/100 are committed and push remains deferred
+- latest_commit_hash: `c81415ced25bac99982e124de54410fe810a4597`
+- latest_commit_brief_message: `test(kg): lock field-table prose-hint exclusion`
+- note: this is the pre-slice-17 baseline for the current `BWFSC=100` batch; slices 1-16/100 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `c81415c` test(kg): lock field-table prose-hint exclusion
 - `1d78774` test(kg): lock field-table table-hint exclusion
 - `f74ba40` test(kg): lock motion-only VLM visual exclusion
 - `85d9b73` test(kg): lock motion-only VLM alias exclusion
 - `af93516` test(kg): lock motion-only VLM prose exclusion
 - `361adc5` test(kg): lock motion-only VLM table exclusion
-- `c07e625` test(kg): lock waveform-motion VLM visual exclusion
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=100` slice 16 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=100` slice 17 and push is deferred
 - files in flight:
   - `crates/specforge/test_data/kg_quality/table_misclassification_field_table_negative/fixture.json`
   - live docs and mdBook files synced for the slice
@@ -52,13 +52,13 @@
 ## Current batch status
 - objective:
   - active `BWFSC=100` batch is in progress
-  - completed_count before this commit: `15`
-  - slice 16/100 tightens field-table misclassification ordinary prose semantic-hint exclusion metrics
+  - completed_count before this commit: `16`
+  - slice 17/100 tightens field-table misclassification alias-grounded prose semantic-hint exclusion metrics
   - push is deferred until all `100` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks field-table misclassification ordinary prose semantic-hint exclusion KG coverage as `Done`
+  - live-status tracker now marks field-table misclassification alias-grounded prose semantic-hint exclusion KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 16 before commit
+  - implementation and live-doc sync are complete for slice 17 before commit
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench table_misclassification_field_table_negative` passed with the requested fixture
   - `bash scripts/run_docs_ci.sh` passed after the live-book sync
   - broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed on slice 14 with `150/150` fixtures
@@ -75,5 +75,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 16 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 17/100
+- finish the slice 17 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 18/100
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle

@@ -7,6 +7,17 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-08 KG fixture for field-table alias-hint exclusion
+- New batch slice 17/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
+- Tightened `crates/specforge/test_data/kg_quality/table_misclassification_field_table_negative/fixture.json`.
+- The fixture now asserts `signal_semantic_hints_from_alias_grounded_prose = 0` alongside zero actor relations, table-signal provenance, aggregate semantic hints, table-sourced hints, and prose hints.
+- This strengthens field-table truthfulness coverage by proving misclassified `Bits | Name | Description` field rows such as `REQ` and `ACK` do not create alias-grounded prose semantic-role hints.
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench table_misclassification_field_table_negative` passed with the requested fixture.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- Broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` and `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed on slice 14 with `150/150` tracked fixtures and `0` corpus-KB projection failures.
+- Broader `bash scripts/run_ci.sh` passed on slice 10 with formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, and mdBook.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-08 KG fixture for field-table prose-hint exclusion
 - New batch slice 16/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
 - Tightened `crates/specforge/test_data/kg_quality/table_misclassification_field_table_negative/fixture.json`.

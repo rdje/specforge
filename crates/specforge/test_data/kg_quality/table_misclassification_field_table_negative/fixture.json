@@ -104,7 +104,8 @@
           "table_signal_declaration_provenance": "0",
           "signal_semantic_hints": "0",
           "signal_semantic_hints_from_tables": "0",
-          "signal_semantic_hints_from_prose": "0"
+          "signal_semantic_hints_from_prose": "0",
+          "signal_semantic_hints_from_alias_grounded_prose": "0"
         }
       },
       "semantic": {

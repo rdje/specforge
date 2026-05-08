@@ -1,5 +1,15 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for field-table alias-hint exclusion)
+
+### Improved: field-table negatives exclude alias-grounded prose hints
+- Tightened `table_misclassification_field_table_negative` with `signal_semantic_hints_from_alias_grounded_prose = 0` at `EvidenceIR`.
+- The fixture now proves misclassified register-field tables cannot synthesize alias-grounded prose semantic-role hints from field names like `REQ` and `ACK`.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench table_misclassification_field_table_negative` -> passed (`1/1` fixture)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for field-table prose-hint exclusion)
 
 ### Improved: field-table negatives exclude prose semantic hints
