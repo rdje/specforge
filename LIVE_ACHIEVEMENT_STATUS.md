@@ -1059,6 +1059,7 @@
 - KG benchmark harness now locks AXI address/response USER prose semantic-hint exclusion: Done
 - KG benchmark harness now locks AXI address/response USER alias-grounded prose semantic-hint exclusion: Done
 - KG benchmark harness now locks AXI address/response USER visual-caption semantic-hint exclusion: Done
+- KG benchmark harness now locks AXI address/response USER VLM timing-annotation semantic-hint exclusion: Done
 - KG benchmark harness now includes APB address/protection wait-state stability coverage: Done
 - KG benchmark harness now locks APB address/protection prose semantic-hint exclusion: Done
 - KG benchmark harness now locks APB address/protection alias-grounded prose semantic-hint exclusion: Done

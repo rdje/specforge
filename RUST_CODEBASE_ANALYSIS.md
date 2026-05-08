@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 KG fixture for AXI address/response USER VLM exclusion)
+- Tightened `axi_address_response_user_sideband_stability_gold` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts evidence-stage `signal_semantic_hints_from_vlm_timing_annotations = 0` alongside aggregate, table-sourced, prose, alias-grounded prose, and visual-caption semantic hints.
+- This completes AXI address/response USER sideband source-split hardening by proving address-channel and write-response request/accept hints do not rely on VLM timing annotations.
+
 ## Session update (2026-05-08 KG fixture for AXI address/response USER visual exclusion)
 - Tightened `axi_address_response_user_sideband_stability_gold` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts evidence-stage `signal_semantic_hints_from_visual_captions = 0` alongside aggregate, table-sourced, prose, and alias-grounded prose semantic hints.

@@ -867,6 +867,7 @@
     - the AXI address/response USER sideband fixture now asserts prose semantic hints stay zero while address/write-response request and accept role hints remain table-sourced
     - the AXI address/response USER sideband fixture now asserts alias-grounded prose semantic hints stay zero while address/write-response request and accept role hints remain table-sourced
     - the AXI address/response USER sideband fixture now asserts visual-caption semantic hints stay zero while address/write-response request and accept role hints remain table-sourced
+    - the AXI address/response USER sideband fixture now asserts VLM timing-annotation semantic hints stay zero while address/write-response request and accept role hints remain table-sourced
     - a representative AXI read-address sideband stability fixture proving `ARSIZE` and `ARBURST` remain graph-grounded and actor-owned when their stability is guarded by `ARVALID` / `ARREADY` completion
     - the AXI read-address sideband stability fixture now asserts prose semantic hints stay zero while `ARSIZE` and `ARBURST` recover through table-sourced semantic hints
     - the AXI read-address sideband stability fixture now asserts alias-grounded prose semantic hints stay zero while `ARSIZE` and `ARBURST` remain table-sourced
