@@ -13505,6 +13505,20 @@ mod tests {
                 transition.source_state == source_state && transition.target_state == target_state
             }));
         }
+        for signal_name in ["clk", "rst_n", "GO", "DONE", "DATA_IN", "ACC", "TRACE"] {
+            let signal = fsm
+                .signal_inventory
+                .iter()
+                .find(|signal| signal.signal_name == signal_name)
+                .unwrap_or_else(|| {
+                    panic!("{signal_name} should stay in structured FSM signal inventory")
+                });
+            assert!(
+                !signal.supporting_canonical_ids.is_empty(),
+                "{signal_name} should retain canonical support ids"
+            );
+            assert_eq!(signal.automation_confidence, AutomationConfidence::High);
+        }
         assert!(fsm.renderable_module.is_some());
         assert!(emitted_text.contains("(?fsm:explicit_fsm"));
         assert!(emitted_text.contains("(+system"));

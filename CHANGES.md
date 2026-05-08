@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-09 (adapter structured FSM baseline inventory confidence guard)
+
+### Improved: renderable structured FSM roots preserve baseline inventory confidence
+- Extended the renderable structured-FSM baseline regression to assert `clk`, `rst_n`, `GO`, `DONE`, `DATA_IN`, `ACC`, and `TRACE` signal-inventory records retain canonical support IDs and high automation confidence.
+- The guard keeps emitted structured FSM artifacts tied to explainable system/control/data inventory provenance instead of only checking that states, transitions, and text render.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge builds_renderable_structured_fsm_adapter_artifact` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-09 (adapter symbolic DT baseline inventory confidence guard)
 
 ### Improved: renderable symbolic DT roots preserve baseline inventory confidence

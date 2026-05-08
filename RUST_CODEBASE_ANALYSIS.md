@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter structured FSM baseline inventory confidence guard)
+- Extended `builds_renderable_structured_fsm_adapter_artifact` in `crates/specforge/src/ir/adapters.rs`.
+- The renderable structured-FSM baseline now locks canonical support IDs and high automation confidence for retained `clk`, `rst_n`, `GO`, `DONE`, `DATA_IN`, `ACC`, and `TRACE` signal-inventory records.
+- This keeps emitted structured FSM artifacts tied to explainable system/control/data inventory provenance instead of only checking that states, transitions, and text render.
+
 ## Session update (2026-05-09 adapter symbolic DT baseline inventory confidence guard)
 - Extended `builds_renderable_symbolic_dt_fsm_adapter_artifact` in `crates/specforge/src/ir/adapters.rs`.
 - The renderable symbolic-DT baseline now locks canonical support IDs and high automation confidence for retained `SEL`, `DATA_OUT`, `PARAM_OUT`, and `ENUM_OUT` signal-inventory records.
