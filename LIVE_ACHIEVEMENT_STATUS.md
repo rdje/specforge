@@ -580,6 +580,7 @@
 - KG benchmark harness now includes AXI read-data last stability coverage: Done
 - KG benchmark harness now locks AXI read-data last prose semantic-hint exclusion: Done
 - KG benchmark harness now locks AXI read-data last alias-grounded prose semantic-hint exclusion: Done
+- KG benchmark harness now locks AXI read-data last visual-caption semantic-hint exclusion: Done
 - KG benchmark harness now includes AXI write-data last stability coverage: Done
 - KG benchmark harness now includes APB write-control stability coverage: Done
 - KG benchmark harness now includes APB response stability coverage: Done
