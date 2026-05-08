@@ -118,6 +118,7 @@
 - `.fsm` transitive child-width recovery now stays composition-residual clean when renderable: Done
 - `.fsm` renderable standalone DT baseline now preserves signal-inventory support and confidence: Done
 - `.fsm` renderable standalone sequential DT baseline now preserves signal-inventory support and confidence: Done
+- `.fsm` renderable symbolic DT baseline now preserves signal-inventory support and confidence: Done
 - `.fsm` standalone direct actor-port direction recovery now stays signal-inventory-residual clean when renderable: Done
 - `.fsm` sibling child-link width residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` standalone output actor selection now stays signal-inventory-residual clean when renderable: Done
@@ -819,6 +820,7 @@
 - `.fsm` missing-child composition blockers now preserve top-port provenance: Done
 - `.fsm` renderable standalone DT lowering now preserves baseline signal-inventory support and confidence: Done
 - `.fsm` renderable standalone sequential DT lowering now preserves baseline signal-inventory support and confidence: Done
+- `.fsm` renderable symbolic DT lowering now preserves baseline signal-inventory support and confidence: Done
 - `.fsm` missing-child top blockers now preserve retained top-port inventory confidence: Done
 - `.fsm` renderable top-composition lowering now preserves top-port shape and renderable-top provenance: Done
 - `.fsm` reused-child top-composition lowering now preserves top-port and topology-link provenance while deduplicating the shared child root: Done

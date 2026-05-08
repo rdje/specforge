@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-09 (adapter symbolic DT baseline inventory confidence guard)
+
+### Improved: renderable symbolic DT roots preserve baseline inventory confidence
+- Extended the renderable symbolic-DT baseline regression to assert `SEL`, `DATA_OUT`, `PARAM_OUT`, and `ENUM_OUT` signal-inventory records retain canonical support IDs and high automation confidence.
+- The guard keeps emitted symbolic DT artifacts tied to explainable inventory provenance instead of only checking that the signals exist and render.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge builds_renderable_symbolic_dt_fsm_adapter_artifact` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-09 (adapter sequential DT baseline inventory confidence guard)
 
 ### Improved: renderable standalone sequential DT roots preserve baseline inventory confidence

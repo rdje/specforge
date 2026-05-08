@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter symbolic DT baseline inventory confidence guard)
+- Extended `builds_renderable_symbolic_dt_fsm_adapter_artifact` in `crates/specforge/src/ir/adapters.rs`.
+- The renderable symbolic-DT baseline now locks canonical support IDs and high automation confidence for retained `SEL`, `DATA_OUT`, `PARAM_OUT`, and `ENUM_OUT` signal-inventory records.
+- This keeps emitted symbolic DT artifacts tied to explainable inventory provenance instead of only checking that the signals exist and render.
+
 ## Session update (2026-05-09 adapter sequential DT baseline inventory confidence guard)
 - Extended `builds_renderable_standalone_sequential_dt_fsm_adapter_artifact` in `crates/specforge/src/ir/adapters.rs`.
 - The renderable standalone sequential-DT baseline now locks canonical support IDs and high automation confidence for retained `clk`, `rst_n`, `DATA_IN`, and `ACC` signal-inventory records.
