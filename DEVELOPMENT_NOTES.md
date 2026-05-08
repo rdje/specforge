@@ -7,6 +7,17 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-08 KG fixture for prior-guided visual-motif prose exclusion
+- New batch slice 28/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
+- Tightened `crates/specforge/test_data/kg_quality/visual_motif_prior_guided_diagram_classification_gold/fixture.json`.
+- The fixture now asserts `signal_semantic_hints_from_prose = 0` alongside aggregate semantic hints, table-sourced semantic hints, visual-caption hints, normative visual evidence, and motif corroboration targets.
+- This strengthens the prior-guided visual-motif gold by proving learned motif classification can produce corroboration guidance without inventing ordinary prose semantic-role hints.
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench visual_motif_prior_guided_diagram_classification_gold` passed with the requested fixture.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- Broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` and `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed on slice 26 with `150/150` tracked fixtures and `0` corpus-KB projection failures.
+- Broader `bash scripts/run_ci.sh` passed on slice 20 with formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, and mdBook.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-08 KG fixture for prior-guided visual-motif table exclusion
 - New batch slice 27/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
 - Tightened `crates/specforge/test_data/kg_quality/visual_motif_prior_guided_diagram_classification_gold/fixture.json`.

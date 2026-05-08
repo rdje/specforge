@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 KG fixture for prior-guided visual-motif prose exclusion)
+- Tightened `visual_motif_prior_guided_diagram_classification_gold` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts evidence-stage `signal_semantic_hints_from_prose = 0` alongside zero aggregate, table-sourced, and visual-caption semantic hints.
+- This locks prior-guided visual-motif classification as free of ordinary prose role hints.
+
 ## Session update (2026-05-08 KG fixture for prior-guided visual-motif table exclusion)
 - Tightened `visual_motif_prior_guided_diagram_classification_gold` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts evidence-stage `signal_semantic_hints_from_tables = 0` alongside zero aggregate and visual-caption semantic hints.
