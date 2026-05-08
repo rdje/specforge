@@ -7,6 +7,19 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-08 adapter dual-output assignment kind guard
+- New batch slice 102/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Added `dual_output_assignment_kind_blocks_nonsequential_graph_target` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks the dual-output assignment-kind branch of `validate_control_action_renderability`: graph-backed output targets still create renderable size entries, but dual-output lowering remains blocked unless the canonical assignment kind is sequential.
+- This keeps graph-first target recovery separate from the active `.fsm` dual-output lowering contract.
+- `cargo fmt --all` applied rustfmt layout.
+- `cargo test --manifest-path Cargo.toml -p specforge dual_output_assignment_kind_blocks_nonsequential_graph_target` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `122/122` adapter-filtered tests.
+- `cargo fmt --all --check` passed.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- Push remains deferred for the active `BWFSC=200` batch.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-08 adapter delayed-pulse value signal-free guard
 - New batch slice 101/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Added `delayed_pulse_value_renderability_keeps_graph_signal_references_signal_free` in `crates/specforge/src/ir/adapters.rs`.

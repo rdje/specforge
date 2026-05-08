@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter dual-output assignment kind guard)
+- Added `dual_output_assignment_kind_blocks_nonsequential_graph_target` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks nonsequential dual-output assignment validation so graph-backed output targets still produce size entries, while the dual-output lowering contract blocks unless assignment intent is sequential.
+- This keeps target role recovery independent from the `.fsm` dual-output assignment-kind gate.
+
 ## Session update (2026-05-08 adapter delayed-pulse value signal-free guard)
 - Added `delayed_pulse_value_renderability_keeps_graph_signal_references_signal_free` in `crates/specforge/src/ir/adapters.rs`.
 - The test locks delayed-pulse pulse-level values so graph-backed signal references do not create size entries while literal-only delayed-pulse lowering remains active.

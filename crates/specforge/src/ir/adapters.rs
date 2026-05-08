@@ -7014,6 +7014,67 @@ mod tests {
     }
 
     #[test]
+    fn dual_output_assignment_kind_blocks_nonsequential_graph_target() {
+        let mut graph_output = signal_candidate_with_direction_evidence(
+            None,
+            false,
+            Some(InterfaceSignalDirection::Output),
+            false,
+        );
+        graph_output.signal_name = "COMB_NEXT".to_string();
+        graph_output.width_hint = Some(8);
+
+        let signals = [graph_output];
+        let signals_by_name = signals
+            .iter()
+            .map(|signal| (signal.signal_name.clone(), signal))
+            .collect::<std::collections::BTreeMap<_, _>>();
+        let mut size_entries = std::collections::BTreeMap::new();
+        let mut driven_outputs = std::collections::BTreeSet::new();
+        let mut sequential_targets = std::collections::BTreeSet::new();
+        let mut blocking_reasons = Vec::new();
+        let mut required_canonical_enrichments = std::collections::BTreeSet::new();
+
+        let graph_action = ControlActionRecord::Assign {
+            target: ControlAssignmentTargetRecord {
+                signal_name: "COMB_NEXT".to_string(),
+                exposed_public_output: false,
+            },
+            assignment_kind: DecisionTreeAssignmentKind::Combinational,
+            dual_output: Some(ControlDualOutputKind::NextSignal),
+            value: ControlExpressionRecord::Literal {
+                literal: "8'1".to_string(),
+            },
+        };
+        super::validate_control_action_renderability(
+            &graph_action,
+            false,
+            None,
+            &signals_by_name,
+            &mut size_entries,
+            &mut driven_outputs,
+            &mut sequential_targets,
+            &mut blocking_reasons,
+            &mut required_canonical_enrichments,
+        );
+        let graph_entry = size_entries
+            .get("COMB_NEXT")
+            .expect("graph-backed dual-output target should still create a size entry");
+        assert_eq!(graph_entry.direction_hint, InterfaceSignalDirection::Output);
+        assert_eq!(graph_entry.width, 8);
+        assert!(driven_outputs.contains("COMB_NEXT"));
+        assert!(!sequential_targets.contains("COMB_NEXT"));
+        assert!(blocking_reasons.iter().any(|reason| {
+            reason.contains(
+                "Dual-output assignment lowering currently requires canonical sequential assignment intent",
+            )
+        }));
+        assert!(required_canonical_enrichments.contains(
+            "keep dual-output canonical assignments explicitly sequential in the active `.fsm` slice"
+        ));
+    }
+
+    #[test]
     fn control_assignment_value_renderability_uses_graph_direction_without_stale_flat_override() {
         let mut graph_output = signal_candidate_with_direction_evidence(
             None,

@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (adapter dual-output assignment kind guard)
+
+### Improved: dual-output assignments still require sequential intent
+- Added a direct regression for nonsequential dual-output assignment renderability.
+- The guard proves graph-backed dual-output targets still create output metadata, while dual-output lowering blocks when canonical assignment intent is not sequential.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge dual_output_assignment_kind_blocks_nonsequential_graph_target` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`122/122` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter delayed-pulse value signal-free guard)
 
 ### Improved: delayed-pulse values stay literal-only
