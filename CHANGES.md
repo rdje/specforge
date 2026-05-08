@@ -1,5 +1,16 @@
 # CHANGES
 
+## 2026-05-08 (Batch status live-doc reconciliation)
+
+### Improved: completed BWFSC=100 status is explicit
+- Updated live continuity docs to record the completed and pushed `BWFSC=100` batch after final post-push verification.
+- The repository status now reflects `main` aligned with `origin/main`, no active batch in progress, and `git_message_brief.txt` verified at `0` bytes.
+
+### Validation
+- `git status --short --branch` -> clean and aligned with `origin/main`
+- `wc -c git_message_brief.txt` -> `0`
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for APB response prose exclusion)
 
 ### Improved: APB response fixtures prove table-only hints

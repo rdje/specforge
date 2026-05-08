@@ -7,6 +7,14 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-08 Batch status live-doc reconciliation
+- Reconciled live continuity docs after the completed `BWFSC=100` run was pushed.
+- The latest pushed batch ended at commit `051e4ee98f6892409551e69828e633b546759a96` with `test(kg): lock APB response prose exclusion`.
+- `main` is aligned with `origin/main`, `git_message_brief.txt` is verified at `0` bytes, and no batch workflow is currently active.
+- This is a docs-only correction to the post-batch operational state; the code and fixture changes remain in the per-slice commits.
+- `bash scripts/run_docs_ci.sh` passed after the live-doc sync.
+- The batch-end `bash scripts/run_ci.sh` gate passed on slice 100 before the batch push.
+
 ## 2026-05-08 KG fixture for APB response prose exclusion
 - New batch slice 100/100 uses active `BWFSC=100`; push will run after this slice commit workflow completes and `git_message_brief.txt` is verified empty.
 - Tightened `crates/specforge/test_data/kg_quality/apb_response_stability_gold/fixture.json`.

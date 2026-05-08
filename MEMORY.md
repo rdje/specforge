@@ -16,53 +16,53 @@
 - `git_message_brief.txt` must stay untracked and be truncated to `0` bytes after each commit
 - every completion message must report the commit id, exact commit message, full tracked-file list, current live-status snapshot, and whether that snapshot changed
 - outside explicit batch runs, do not push unless the user asks or the branch reaches `25` local commits since the last push
-- active batch-run rule: the current batch uses `BWFSC=100`, must commit after every slice, and must defer push until all 100 slices are complete unless the user explicitly instructs otherwise or a real blocker stops the batch
-- latest completed batch-run rule: the `N=200` batch committed each slice independently, synced live docs and mdBook at the end of every slice, deferred push until all 200 new-batch slices were complete, and was pushed after slice 200
+- no active batch run is currently in progress
+- latest completed batch-run rule: the `BWFSC=100` batch committed each slice independently, synced live docs and mdBook at the end of every slice, deferred push until all 100 slices were complete, and was pushed after slice 100
+- previous completed batch-run rule: the `N=200` batch committed each slice independently, synced live docs and mdBook at the end of every slice, deferred push until all 200 new-batch slices were complete, and was pushed after slice 200
 - previous batch-run rule used: the `N=100` batch committed each slice independently, deferred push until all 100 slices were complete, and was pushed after slice 100
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
-## Latest committed baseline
-- latest_commit_hash: `1140fd4e3fb95f0a0856c008ef6c543604dbd343`
-- latest_commit_brief_message: `test(kg): lock APB write-control VLM exclusion`
-- note: this is the pre-slice-100 baseline for the current `BWFSC=100` batch; slices 1-99/100 are committed and push remains deferred until this final slice commit workflow completes
+## Latest completed batch baseline
+- latest_batch_final_commit_hash: `051e4ee98f6892409551e69828e633b546759a96`
+- latest_batch_final_commit_brief_message: `test(kg): lock APB response prose exclusion`
+- note: this is the pushed post-`BWFSC=100` baseline; slices 1-100/100 are committed and `main` is aligned with `origin/main`
 
-## Recent commit chain (last 6)
+## Recent batch commit chain (last 6)
+- `051e4ee` test(kg): lock APB response prose exclusion
 - `1140fd4` test(kg): lock APB write-control VLM exclusion
 - `4aeb62a` test(kg): lock APB write-control visual exclusion
 - `f38aee6` test(kg): lock APB write-control alias exclusion
 - `78979fb` test(kg): lock APB write-control prose exclusion
 - `80bc072` test(kg): lock APB setup access VLM exclusion
-- `b045d6e` test(kg): lock APB setup access visual exclusion
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=100` slice 100 and push is deferred until this slice commit workflow completes
-- files in flight:
-  - `crates/specforge/test_data/kg_quality/apb_response_stability_gold/fixture.json`
-  - live docs and mdBook files synced for the slice
+- branch state: `main` is aligned with `origin/main` after the completed `BWFSC=100` push
+- files in flight: none
 
-## Previous completed N-slice batch
-- requested_count: `200`
-- completed_count: `200`
-- push_policy: completed; pushed once after all `200` new-batch slices were committed
+## Latest completed N-slice batch
+- requested_count: `100`
+- completed_count: `100`
+- push_policy: completed; pushed once after all `100` batch slices were committed
 - slice_rule: each slice received verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice started
-- prior_unpushed_baseline: branch started the batch with one docs-sync commit already ahead of `origin/main`
+- final_commit: `051e4ee98f6892409551e69828e633b546759a96`
 
 ## Current batch status
 - objective:
-  - active `BWFSC=100` batch is in progress
-  - completed_count before this commit: `99`
-  - slice 100/100 tightens APB response prose semantic-hint exclusion metrics for positive table-backed source-split hardening
-  - push is deferred only until this final slice commit workflow completes, then `git push` must run
+  - no active batch workflow is currently in progress
+  - latest `BWFSC=100` batch completed `100/100` slices
+  - final slice tightened APB response prose semantic-hint exclusion metrics for positive table-backed source-split hardening
+  - push completed after the final slice commit workflow
 - tracker effect:
   - live-status tracker now marks APB response prose semantic-hint exclusion KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 100 before commit
+  - final slice implementation and live-doc sync are complete and pushed
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench apb_response_stability_gold` passed with the requested fixture
   - broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed on slice 99 with `150/150` fixtures
   - broader `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed on slice 99 with `150` fixtures projected, `0` failures, and no tracked projection diff
   - `bash scripts/run_ci.sh` passed after the slice 100 live-doc and live-book sync
+  - `git push` completed from `2921ba8e` to `051e4ee9` on `main`
   - `bash scripts/run_ci.sh` passed on slice 90 with formatting, Clippy warning-deny, Rust tests, rustdoc warning-deny, and mdBook
   - `bash scripts/run_ci.sh` passed on slice 80 with formatting, Clippy warning-deny, Rust tests, rustdoc warning-deny, and mdBook
   - `bash scripts/run_ci.sh` passed on slice 70 with formatting, Clippy warning-deny, Rust tests, rustdoc warning-deny, and mdBook
@@ -98,5 +98,6 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 100 commit workflow, clear and verify `git_message_brief.txt`, then run `git push` for the completed `BWFSC=100` batch
+- report current roadmap status from `ROADMAP.md` and `LIVE_ACHIEVEMENT_STATUS.md`
+- if a new batch is requested, pick the next roadmap-aligned source-split hardening slice and follow `COMMIT.md`
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle
