@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-09 (adapter parametric top-port confidence guard)
+
+### Improved: parametric top-port blockers preserve retained record confidence
+- Extended the parametric top-port width regression to assert the producer child declaration keeps high automation confidence alongside the retained top-port and inventory evidence.
+- The guard keeps parametric top-boundary width diagnostics tied to retained top and child records while top composition emission stays blocked.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_parametric_top_port_width_for_fsm_public_io` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter widthless top-port confidence guard)
 
 ### Improved: widthless top-port blockers preserve retained record confidence

@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter parametric top-port confidence guard)
+- Extended `top_composition_blocks_parametric_top_port_width_for_fsm_public_io` in `crates/specforge/src/ir/adapters.rs`.
+- The parametric top-port blocker now locks high automation confidence on the producer child declaration alongside retained top-port evidence.
+- This keeps retained topology records diagnostic-rich while top composition emission stays blocked on unresolved parametric top-boundary width evidence.
+
 ## Session update (2026-05-08 adapter widthless top-port confidence guard)
 - Extended `top_composition_blocks_widthless_top_port_without_width_recovery` in `crates/specforge/src/ir/adapters.rs`.
 - The widthless top-port blocker now locks high automation confidence on the producer child declaration alongside retained top-port evidence.
