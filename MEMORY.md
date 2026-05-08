@@ -23,24 +23,24 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `0238a87b2693c139bffcf2cd20d6cf76a3b5789d`
-- latest_commit_brief_message: `test(kg): lock APB response visual exclusion`
-- note: this is the pre-slice-3 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
+- latest_commit_hash: `456a4361f0aa6f9459480c51d90824cd190e7216`
+- latest_commit_brief_message: `test(kg): lock APB response VLM exclusion`
+- note: this is the pre-slice-4 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
 
 ## Recent commit chain (last 6)
+- `456a436` test(kg): lock APB response VLM exclusion
 - `0238a87` test(kg): lock APB response visual exclusion
 - `6359333` test(kg): lock APB response alias exclusion
 - `5b47582` docs: reconcile completed BWFSC status
 - `051e4ee` test(kg): lock APB response prose exclusion
 - `1140fd4` test(kg): lock APB write-control VLM exclusion
-- `4aeb62a` test(kg): lock APB write-control visual exclusion
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 3 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
+- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 4 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
 - files in flight:
-  - `crates/specforge/test_data/kg_quality/apb_response_stability_gold/fixture.json`
+  - `crates/specforge/test_data/kg_quality/apb_requester_completer_handshake_gold/fixture.json`
   - live docs and mdBook files synced for the slice
 
 ## Latest completed N-slice batch
@@ -53,14 +53,14 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `2`
-  - slice 3/200 tightens APB response VLM timing-annotation semantic-hint exclusion metrics for positive table-backed source-split hardening
+  - completed_count before this commit: `3`
+  - slice 4/200 tightens APB requester/completer prose semantic-hint exclusion metrics for positive table-backed source-split hardening
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks APB response VLM timing-annotation semantic-hint exclusion KG coverage as `Done`
+  - live-status tracker now marks APB requester/completer prose semantic-hint exclusion KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 3 before commit
-  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench apb_response_stability_gold` passed with the requested fixture
+  - implementation and live-doc sync are complete for slice 4 before commit
+  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench apb_requester_completer_handshake_gold` passed with the requested fixture
   - broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed on slice 3 with `150/150` fixtures
   - broader `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed on slice 3 with `150` fixtures projected, `0` failures, and no tracked projection diff
   - `bash scripts/run_ci.sh` passed after the slice 100 live-doc and live-book sync
@@ -102,5 +102,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 3 commit workflow, clear and verify `git_message_brief.txt`, then select the next roadmap-aligned source-split hardening target
+- finish the slice 4 commit workflow, clear and verify `git_message_brief.txt`, then continue APB requester/completer alias source-split hardening
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle

@@ -245,7 +245,8 @@
           "actor_signal_relations": "4",
           "signal_constraints": "1",
           "signal_semantic_hints": "2",
-          "signal_semantic_hints_from_tables": "2"
+          "signal_semantic_hints_from_tables": "2",
+          "signal_semantic_hints_from_prose": "0"
         }
       },
       "semantic": {

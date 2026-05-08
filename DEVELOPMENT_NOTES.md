@@ -7,6 +7,17 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-08 KG fixture for APB requester/completer prose exclusion
+- New batch slice 4/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Tightened `crates/specforge/test_data/kg_quality/apb_requester_completer_handshake_gold/fixture.json`.
+- The fixture now asserts `signal_semantic_hints_from_prose = 0` alongside aggregate semantic hints, table-sourced semantic hints, actor-signal relations, signal constraints, and the existing semantic/intent temporal-rule metrics.
+- This extends positive table-backed source-split hardening to the APB requester/completer handshake fixture by proving its request/accept semantic hints remain table-only while typed handshake completion stays recovered.
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench apb_requester_completer_handshake_gold` passed with the requested fixture.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- Broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` and `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed on slice 3 with `150/150` tracked fixtures and `0` corpus-KB projection failures.
+- Push remains deferred for the active `BWFSC=200` batch.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-08 KG fixture for APB response VLM exclusion
 - New batch slice 3/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Tightened `crates/specforge/test_data/kg_quality/apb_response_stability_gold/fixture.json`.
