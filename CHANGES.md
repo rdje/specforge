@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-05-09 (adapter unemitted source inventory confidence guard)
+
+### Improved: source-side unemitted child blockers preserve selected inventory confidence
+- Extended the source-side unemitted child endpoint regression to assert the retained declared top port also stays visible in selected signal inventory with support IDs and high automation confidence.
+- The guard keeps missing emitted-child-source diagnostics tied to retained top-port inventory while top composition emission stays blocked.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_link_from_unemitted_child_source_guidance` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`665` Rust tests plus formatting, Clippy warning-deny, rustdoc warning-deny, and mdBook)
+
 ## 2026-05-09 (adapter undeclared source inventory confidence guard)
 
 ### Improved: undeclared source blockers preserve selected inventory confidence

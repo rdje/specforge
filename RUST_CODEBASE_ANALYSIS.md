@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter unemitted source inventory confidence guard)
+- Extended `top_composition_blocks_link_from_unemitted_child_source_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- The source-side unemitted child endpoint blocker now locks selected signal-inventory support IDs and high automation confidence for the retained declared `result_data` top port.
+- This keeps missing emitted-child-source diagnostics tied to retained top inventory while top composition emission stays blocked.
+
 ## Session update (2026-05-09 adapter undeclared source inventory confidence guard)
 - Extended `top_composition_blocks_link_from_undeclared_top_source_guidance` in `crates/specforge/src/ir/adapters.rs`.
 - The undeclared top-link source blocker now locks selected signal-inventory support IDs and high automation confidence for the retained declared `result_data` top port.

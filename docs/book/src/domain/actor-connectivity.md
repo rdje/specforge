@@ -241,6 +241,7 @@ They also keep the declared top port in selected top inventory with support IDs 
 Undeclared top-link source blockers keep the same retained confidence visible while composition waits for the missing source declaration.
 They also keep the declared top port in selected top inventory with support IDs and high confidence while the missing source endpoint is repaired.
 Source-side unemitted child endpoint blockers keep retained top-port, child, and link confidence visible while composition waits for the child port to become renderable.
+They also keep the declared top port in selected top inventory with support IDs and high confidence while the child source endpoint is emitted.
 Target-side unemitted child endpoint blockers keep the same retained confidence visible while composition waits for the target child port to become renderable.
 The legacy source-side unemitted child-port blocker now exercises the same retained top-port, child, and link confidence contract.
 Source-side child direction-role blockers keep retained top-port, child, and link confidence visible while role evidence is repaired.
