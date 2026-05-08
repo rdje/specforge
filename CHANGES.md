@@ -1,5 +1,15 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for APB setup/access visual exclusion)
+
+### Improved: APB setup/access fixtures exclude visual-caption hints
+- Tightened `apb_setup_access_timing_gold` with `signal_semantic_hints_from_visual_captions = 0` at `EvidenceIR`.
+- The fixture now proves `PSEL` / `PREADY` semantic hints are not recovered through visual-caption evidence.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench apb_setup_access_timing_gold` -> passed (`1/1` fixture)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for APB setup/access alias exclusion)
 
 ### Improved: APB setup/access fixtures exclude alias-grounded prose

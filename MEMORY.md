@@ -22,22 +22,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `696e20f33ca49521af313fdcae82de4e82cbd59b`
-- latest_commit_brief_message: `test(kg): lock APB setup access prose exclusion`
-- note: this is the pre-slice-93 baseline for the current `BWFSC=100` batch; slices 1-92/100 are committed and push remains deferred
+- latest_commit_hash: `4f8b4b99b8d860bb3be0e4782de9c8d65ad906f8`
+- latest_commit_brief_message: `test(kg): lock APB setup access alias exclusion`
+- note: this is the pre-slice-94 baseline for the current `BWFSC=100` batch; slices 1-93/100 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `4f8b4b9` test(kg): lock APB setup access alias exclusion
 - `696e20f` test(kg): lock APB setup access prose exclusion
 - `7a93390` test(kg): lock AXI write-address control VLM exclusion
 - `f8e6e3e` test(kg): lock AXI write-address control visual exclusion
 - `7648a7c` test(kg): lock AXI write-address control alias exclusion
 - `d1e18d2` test(kg): lock AXI write-address control prose exclusion
-- `884e394` test(kg): lock visual semantic prior VLM exclusion
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=100` slice 93 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=100` slice 94 and push is deferred
 - files in flight:
   - `crates/specforge/test_data/kg_quality/apb_setup_access_timing_gold/fixture.json`
   - live docs and mdBook files synced for the slice
@@ -52,13 +52,13 @@
 ## Current batch status
 - objective:
   - active `BWFSC=100` batch is in progress
-  - completed_count before this commit: `92`
-  - slice 93/100 tightens APB setup/access alias-grounded prose semantic-hint exclusion metrics for positive table-backed source-split hardening
+  - completed_count before this commit: `93`
+  - slice 94/100 tightens APB setup/access visual-caption semantic-hint exclusion metrics for positive table-backed source-split hardening
   - push is deferred until all `100` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks APB setup/access alias-grounded prose semantic-hint exclusion KG coverage as `Done`
+  - live-status tracker now marks APB setup/access visual-caption semantic-hint exclusion KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 93 before commit
+  - implementation and live-doc sync are complete for slice 94 before commit
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench apb_setup_access_timing_gold` passed with the requested fixture
   - broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed on slice 91 with `150/150` fixtures
   - broader `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed on slice 91 with `150` fixtures projected, `0` failures, and no tracked projection diff
