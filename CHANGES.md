@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (adapter dual-output value width-cast guard)
+
+### Improved: dual-output value width-cast blockers preserve graph-backed metadata
+- Added a direct regression for next-signal dual-output assignment value width-cast renderability.
+- The guard proves graph-backed dual-output targets and width-cast value references still create metadata, while unsupported width-cast lowering remains blocked.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge dual_output_assignment_value_width_cast_blocks_after_graph_signals` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`133/133` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter assignment-value width-cast guard)
 
 ### Improved: assignment-value width-cast blockers preserve graph-backed metadata

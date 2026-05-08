@@ -7,6 +7,19 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-08 adapter dual-output value width-cast guard
+- New batch slice 113/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Added `dual_output_assignment_value_width_cast_blocks_after_graph_signals` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks next-signal dual-output assignment validation with a width-cast value: graph-backed output targets and graph-backed value references still create renderable size entries, while unsupported width-cast lowering remains blocked.
+- This keeps graph-first dual-output value recovery separate from the active `.fsm` expression-suffix lowering boundary.
+- `cargo fmt --all` applied rustfmt layout.
+- `cargo test --manifest-path Cargo.toml -p specforge dual_output_assignment_value_width_cast_blocks_after_graph_signals` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `133/133` adapter-filtered tests.
+- `cargo fmt --all --check` passed.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- Push remains deferred for the active `BWFSC=200` batch.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-08 adapter assignment-value width-cast guard
 - New batch slice 112/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Added `control_assignment_value_width_cast_blocks_after_graph_signals` in `crates/specforge/src/ir/adapters.rs`.

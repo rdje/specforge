@@ -23,22 +23,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `ec14fc8e2ca01caf30b115537a1eb1441438a204`
-- latest_commit_brief_message: `test(adapter): guard binary width casts`
-- note: this is the pre-slice-112 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
+- latest_commit_hash: `f1d12b0485aaef0d9ef0e26d17ed60ede329ded2`
+- latest_commit_brief_message: `test(adapter): guard assignment value width casts`
+- note: this is the pre-slice-113 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
 
 ## Recent commit chain (last 6)
+- `f1d12b0` test(adapter): guard assignment value width casts
 - `ec14fc8` test(adapter): guard binary width casts
 - `296c251` test(adapter): guard unary width casts
 - `cdfed45` test(adapter): guard predicate width casts
 - `8040923` test(adapter): guard selector width casts
 - `9009819` test(adapter): guard width cast expressions
-- `290fca0` test(adapter): guard compound public output
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 112 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
+- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 113 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
 - files in flight:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
@@ -58,16 +58,16 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `111`
-  - slice 112/200 adds a direct `.fsm` assignment-value width-cast guard proving graph-backed output targets and value references remain visible while unsupported width-cast lowering blocks
+  - completed_count before this commit: `112`
+  - slice 113/200 adds a direct `.fsm` next-signal dual-output assignment-value width-cast guard proving graph-backed output targets and value references remain visible while unsupported width-cast lowering blocks
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks assignment-value width-cast graph-backed target/value and unsupported-cast blocking coverage as `Done`
+  - live-status tracker now marks dual-output assignment-value width-cast graph-backed target/value and unsupported-cast blocking coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 112 before commit
+  - implementation and live-doc sync are complete for slice 113 before commit
   - `cargo fmt --all` applied rustfmt layout
-  - `cargo test --manifest-path Cargo.toml -p specforge control_assignment_value_width_cast_blocks_after_graph_signals` passed
-  - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `132/132` adapter-filtered tests
+  - `cargo test --manifest-path Cargo.toml -p specforge dual_output_assignment_value_width_cast_blocks_after_graph_signals` passed
+  - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `133/133` adapter-filtered tests
   - `cargo fmt --all --check` passed
   - `bash scripts/run_docs_ci.sh` passed after the final live-book sync
   - `bash scripts/run_ci.sh` passed as the slice 100 broader checkpoint gate with formatting, Clippy warning-deny, `643` Rust tests, rustdoc warning-deny, and mdBook
@@ -327,6 +327,9 @@
   - slice 112 passed `cargo test --manifest-path Cargo.toml -p specforge control_assignment_value_width_cast_blocks_after_graph_signals`
   - slice 112 passed `cargo test --manifest-path Cargo.toml -p specforge adapters`
   - slice 112 passed `bash scripts/run_docs_ci.sh`
+  - slice 113 passed `cargo test --manifest-path Cargo.toml -p specforge dual_output_assignment_value_width_cast_blocks_after_graph_signals`
+  - slice 113 passed `cargo test --manifest-path Cargo.toml -p specforge adapters`
+  - slice 113 passed `bash scripts/run_docs_ci.sh`
   - slice 20 passed `bash scripts/run_ci.sh`
   - slice 100 passed `bash scripts/run_ci.sh`
   - slice 90 passed `bash scripts/run_ci.sh`
