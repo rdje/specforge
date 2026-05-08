@@ -161,6 +161,7 @@ Alias-grounded prose hints are zero there too, so phrase-alias recovery cannot m
 Visual-caption hints are zero there too, so diagram captions cannot masquerade as table-backed ID evidence.
 VLM timing-annotation hints are zero there as well, so timing notes cannot masquerade as table-backed ID evidence.
 The AXI read-data response fixture keeps prose-sourced semantic hints at zero too, proving its `RVALID` / `RREADY` role hints remain table-only while `RRESP` stability stays recovered.
+Alias-grounded prose hints are zero there too, so phrase-alias recovery cannot masquerade as table-backed read-data response evidence.
 The AXI read-data last fixture keeps prose-sourced semantic hints at zero too, proving `RLAST` role hints are table-only in that gold path.
 Alias-grounded prose hints are zero there too, so phrase-alias recovery cannot masquerade as table-backed last-beat evidence.
 Visual-caption hints are zero there too, so diagram captions cannot masquerade as table-backed last-beat evidence.
