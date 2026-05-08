@@ -203,6 +203,7 @@ The visual-caption no-prior mirror carries the same discipline across modalities
 That no-prior caption mirror also keeps table-sourced semantic hints at zero, so table evidence cannot rescue the missing visual prior.
 Ordinary prose hints are zero too, so text evidence cannot backfill the missing visual prior.
 Alias-grounded prose is excluded as well, keeping phrase-alias recovery from bypassing the missing visual prior.
+VLM timing-annotation hints stay zero too, so timing notes cannot stand in for absent visual prior memory.
 The visual-caption prior-guided gold locks the after side for that modality, resolving the caption phrase as ready-like while preserving the local input declaration.
 The visual-motif no-prior mirror keeps diagram-classification recovery separate from table truth: the unknown motif stays ambiguous while table-derived `XREQ` output remains canonical.
 The visual-motif prior-guided gold locks the after side for diagram classification: learned memory classifies the motif while table-derived `XREQ` output remains canonical and no semantic role is invented.
