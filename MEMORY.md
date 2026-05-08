@@ -23,22 +23,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `635933327d559668c7a87f63a936ed82ccd53b22`
-- latest_commit_brief_message: `test(kg): lock APB response alias exclusion`
-- note: this is the pre-slice-2 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
+- latest_commit_hash: `0238a87b2693c139bffcf2cd20d6cf76a3b5789d`
+- latest_commit_brief_message: `test(kg): lock APB response visual exclusion`
+- note: this is the pre-slice-3 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
 
 ## Recent commit chain (last 6)
+- `0238a87` test(kg): lock APB response visual exclusion
 - `6359333` test(kg): lock APB response alias exclusion
 - `5b47582` docs: reconcile completed BWFSC status
 - `051e4ee` test(kg): lock APB response prose exclusion
 - `1140fd4` test(kg): lock APB write-control VLM exclusion
 - `4aeb62a` test(kg): lock APB write-control visual exclusion
-- `f38aee6` test(kg): lock APB write-control alias exclusion
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 2 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
+- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 3 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
 - files in flight:
   - `crates/specforge/test_data/kg_quality/apb_response_stability_gold/fixture.json`
   - live docs and mdBook files synced for the slice
@@ -53,16 +53,16 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `1`
-  - slice 2/200 tightens APB response visual-caption semantic-hint exclusion metrics for positive table-backed source-split hardening
+  - completed_count before this commit: `2`
+  - slice 3/200 tightens APB response VLM timing-annotation semantic-hint exclusion metrics for positive table-backed source-split hardening
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks APB response visual-caption semantic-hint exclusion KG coverage as `Done`
+  - live-status tracker now marks APB response VLM timing-annotation semantic-hint exclusion KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 2 before commit
+  - implementation and live-doc sync are complete for slice 3 before commit
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench apb_response_stability_gold` passed with the requested fixture
-  - broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed on slice 99 with `150/150` fixtures
-  - broader `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed on slice 99 with `150` fixtures projected, `0` failures, and no tracked projection diff
+  - broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed on slice 3 with `150/150` fixtures
+  - broader `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed on slice 3 with `150` fixtures projected, `0` failures, and no tracked projection diff
   - `bash scripts/run_ci.sh` passed after the slice 100 live-doc and live-book sync
   - previous batch `git push` completed from `2921ba8e` to `051e4ee9` on `main`
   - `bash scripts/run_ci.sh` passed on slice 90 with formatting, Clippy warning-deny, Rust tests, rustdoc warning-deny, and mdBook
@@ -81,6 +81,8 @@
 - current known local CI baseline:
   - focused current-slice KG fixture passed
   - docs CI passed for the current slice after live-doc sync
+  - slice 3 passed `150/150` tracked KG fixtures
+  - slice 3 passed corpus-KB projection for `150` fixtures with `0` failures and no tracked projection diff
   - slice 100 passed `bash scripts/run_ci.sh`
   - slice 90 passed `bash scripts/run_ci.sh`
   - slice 80 passed `bash scripts/run_ci.sh`
@@ -100,5 +102,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 2 commit workflow, clear and verify `git_message_brief.txt`, then continue APB response VLM timing-annotation source-split hardening
+- finish the slice 3 commit workflow, clear and verify `git_message_brief.txt`, then select the next roadmap-aligned source-split hardening target
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle
