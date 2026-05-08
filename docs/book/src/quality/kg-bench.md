@@ -166,6 +166,7 @@ The AXI read-data timing fixture keeps prose-sourced semantic hints at zero too,
 Alias-grounded prose hints are zero there too, so phrase-alias recovery cannot masquerade as table-backed read-data timing evidence.
 Visual-caption hints are zero there too, so diagram captions cannot masquerade as table-backed read-data timing evidence.
 VLM timing-annotation hints are zero there as well, so timing notes cannot masquerade as table-backed read-data timing evidence.
+That fixture also locks one multi-predicate antecedent, proving the `RVALID` / `RREADY` guard remains visible as a compound temporal condition.
 The AXI read-data ID fixture also keeps prose-sourced semantic hints at zero, proving `RID` role hints are table-only in that gold path.
 Alias-grounded prose hints are zero there too, so phrase-alias recovery cannot masquerade as table-backed ID evidence.
 Visual-caption hints are zero there too, so diagram captions cannot masquerade as table-backed ID evidence.
