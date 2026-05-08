@@ -345,6 +345,7 @@ The spurious-annotation fixture now also locks total semantic hints at zero, so 
 The indexed signal-value fixture carries the same total zero-hint guard for labels such as `XREQ[0] HIGH`.
 It now also excludes table-sourced semantic hints, keeping indexed label noise from being rescued through table evidence.
 Ordinary prose hints are zero for indexed labels too, so text evidence cannot backfill a role for bit-select label noise.
+Alias-grounded prose is excluded as well, keeping phrase-alias recovery from inventing roles for indexed label noise.
 The cycle-qualified signal-value fixture carries that guard for labels such as `XREQ HIGH at T1`.
 It now also excludes table-sourced semantic hints, so cycle-scoped label noise cannot be rescued through table evidence.
 Ordinary prose hints are zero too, keeping text evidence from inventing a role for cycle-scoped label noise.
