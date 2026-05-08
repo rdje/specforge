@@ -345,6 +345,7 @@ The spurious-annotation fixture now also locks total semantic hints at zero, so 
 It also excludes table-sourced semantic hints, so low-value annotation noise cannot be rescued through table evidence.
 Ordinary prose hints are zero for spurious annotations too, so text evidence cannot backfill a semantic role for label/value noise.
 Alias-grounded prose is excluded as well, keeping phrase-alias recovery from inventing roles for low-value annotation noise.
+Visual-caption hints are zero too, so captions cannot backfill a role for low-value annotation noise.
 The indexed signal-value fixture carries the same total zero-hint guard for labels such as `XREQ[0] HIGH`.
 It now also excludes table-sourced semantic hints, keeping indexed label noise from being rescued through table evidence.
 Ordinary prose hints are zero for indexed labels too, so text evidence cannot backfill a role for bit-select label noise.
