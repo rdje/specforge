@@ -505,6 +505,7 @@
 - KG benchmark harness now locks field-table misclassification prose semantic-hint exclusion: Done
 - KG benchmark harness now locks field-table misclassification alias-grounded prose semantic-hint exclusion: Done
 - KG benchmark harness now locks field-table misclassification visual-caption semantic-hint exclusion: Done
+- KG benchmark harness now locks field-table misclassification VLM timing-annotation semantic-hint exclusion: Done
 - KG benchmark harness now locks cross-modality semantic-conflict total evidence semantic hints: Done
 - KG benchmark harness now locks cross-modality semantic-conflict prose semantic-hint split: Done
 - KG benchmark harness now locks cross-modality semantic-conflict alias-grounded prose split: Done

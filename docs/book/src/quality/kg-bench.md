@@ -60,6 +60,7 @@ The field-table misclassification fixture also locks table-sourced semantic hint
 Ordinary prose hints are zero too, so text recovery cannot backfill roles from field names while provenance stays empty.
 Alias-grounded prose is excluded as well, preventing phrase-alias recovery from turning field names into semantic roles.
 Visual-caption hints are zero too, keeping captions from backfilling roles for field names while provenance stays empty.
+VLM timing-annotation hints are zero as well, keeping timing notes from turning field names into semantic roles while provenance stays empty.
 The harness has focused regression tests for the count, missing-record, and synthesized-statement mismatch diagnostics around this EvidenceIR provenance surface.
 The same fixture family can also assert persisted validation metrics such as EvidenceIR `table_signal_declaration_provenance` and canonical `with_table_support`, so the user-visible validator surface stays aligned with both the evidence-stage table bridge and the exact canonical provenance checks.
 
