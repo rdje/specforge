@@ -7,6 +7,19 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-08 adapter unary width-cast guard
+- New batch slice 110/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Added `unary_expression_width_cast_blocks_after_graph_signal` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks unary control-expression recursion with a width-cast operand: graph-backed base signals still create renderable size entries, while unsupported width-cast lowering remains blocked.
+- This keeps graph-first unary operand recovery separate from the active `.fsm` expression-suffix lowering boundary.
+- `cargo fmt --all` applied rustfmt layout.
+- `cargo test --manifest-path Cargo.toml -p specforge unary_expression_width_cast_blocks_after_graph_signal` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `130/130` adapter-filtered tests.
+- `cargo fmt --all --check` passed.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- Push remains deferred for the active `BWFSC=200` batch.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-08 adapter branch-predicate width-cast guard
 - New batch slice 109/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Added `branch_predicate_width_cast_blocks_after_graph_signal` in `crates/specforge/src/ir/adapters.rs`.

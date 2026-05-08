@@ -9299,6 +9299,61 @@ mod tests {
     }
 
     #[test]
+    fn unary_expression_width_cast_blocks_after_graph_signal() {
+        let mut graph_input = signal_candidate_with_direction_evidence(
+            None,
+            false,
+            Some(InterfaceSignalDirection::Input),
+            false,
+        );
+        graph_input.signal_name = "FLAG".to_string();
+        graph_input.width_hint = Some(1);
+
+        let signals = [graph_input];
+        let signals_by_name = signals
+            .iter()
+            .map(|signal| (signal.signal_name.clone(), signal))
+            .collect::<std::collections::BTreeMap<_, _>>();
+        let mut size_entries = std::collections::BTreeMap::new();
+        let mut blocking_reasons = Vec::new();
+        let mut required_canonical_enrichments = std::collections::BTreeSet::new();
+
+        let graph_expression = ControlExpressionRecord::Unary {
+            operator: ControlUnaryOperator::Not,
+            operand: Box::new(ControlExpressionRecord::Reference {
+                reference: ControlReferenceRecord {
+                    base_name: "FLAG".to_string(),
+                    kind_hint: ControlReferenceKind::Signal,
+                    suffixes: vec![ControlReferenceSuffix::WidthCast { width: 1 }],
+                    exposed_public_output: false,
+                },
+            }),
+        };
+        super::validate_control_expression_renderability(
+            &graph_expression,
+            true,
+            &signals_by_name,
+            &mut size_entries,
+            &mut blocking_reasons,
+            &mut required_canonical_enrichments,
+        );
+        let graph_entry = size_entries
+            .get("FLAG")
+            .expect("graph-backed unary width-cast operand should still create a size entry");
+        assert_eq!(graph_entry.direction_hint, InterfaceSignalDirection::Input);
+        assert_eq!(graph_entry.width, 1);
+        assert!(blocking_reasons.iter().any(|reason| {
+            reason.contains(
+                "The active `.fsm` adapter slice does not yet lower width-cast signal references",
+            )
+        }));
+        assert!(
+            required_canonical_enrichments
+                .contains("add width-cast reference lowering from canonical control expressions")
+        );
+    }
+
+    #[test]
     fn binary_expression_renderability_uses_graph_direction_without_stale_flat_override() {
         let mut graph_left = signal_candidate_with_direction_evidence(
             None,
