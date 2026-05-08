@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for AXI address/response USER visual exclusion)
+
+### Improved: AXI address/response USER fixtures exclude visual-caption hints
+- Tightened `axi_address_response_user_sideband_stability_gold` with `signal_semantic_hints_from_visual_captions = 0` at `EvidenceIR`.
+- The fixture now proves `AWVALID` / `AWREADY`, `ARVALID` / `ARREADY`, and `BVALID` / `BREADY` semantic hints are not recovered through diagram captions while `AWUSER`, `ARUSER`, and `BUSER` sideband stability obligations remain recovered.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench axi_address_response_user_sideband_stability_gold` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for AXI address/response USER alias exclusion)
 
 ### Improved: AXI address/response USER fixtures exclude alias-grounded prose

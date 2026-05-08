@@ -7,6 +7,19 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-08 KG fixture for AXI address/response USER visual exclusion
+- New batch slice 38/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Tightened `crates/specforge/test_data/kg_quality/axi_address_response_user_sideband_stability_gold/fixture.json`.
+- The fixture now asserts `signal_semantic_hints_from_visual_captions = 0` alongside aggregate semantic hints, table-sourced semantic hints, prose hints, alias-grounded prose hints, actor-signal relations, signal constraints, and existing semantic/intent temporal-rule metrics.
+- This continues AXI address/response USER sideband source-split hardening by proving address-channel and write-response request/accept semantic hints are not visual-caption recovered while Manager-owned `AWUSER` / `ARUSER` and Subordinate-owned `BUSER` stability remains handshake-grounded.
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench axi_address_response_user_sideband_stability_gold` passed with the requested fixture.
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` tracked fixtures.
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` refreshed tracked corpus-KB projections for `150` fixtures with `0` failures and no tracked projection diff.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- Broader `bash scripts/run_ci.sh` passed on slice 30 with formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, and mdBook.
+- Push remains deferred for the active `BWFSC=200` batch.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-08 KG fixture for AXI address/response USER alias exclusion
 - New batch slice 37/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Tightened `crates/specforge/test_data/kg_quality/axi_address_response_user_sideband_stability_gold/fixture.json`.
