@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (adapter binary width-cast guard)
+
+### Improved: nested binary width-cast blockers preserve graph-backed signal metadata
+- Added a direct regression for binary control-expression width-cast renderability.
+- The guard proves graph-backed width-cast operands still create input metadata through binary recursion, while unsupported width-cast lowering remains blocked.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge binary_expression_width_cast_blocks_after_graph_signals` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`131/131` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter unary width-cast guard)
 
 ### Improved: nested unary width-cast blockers preserve graph-backed signal metadata

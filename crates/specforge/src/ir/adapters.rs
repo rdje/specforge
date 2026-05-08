@@ -9468,6 +9468,83 @@ mod tests {
         ));
     }
 
+    #[test]
+    fn binary_expression_width_cast_blocks_after_graph_signals() {
+        let mut graph_left = signal_candidate_with_direction_evidence(
+            None,
+            false,
+            Some(InterfaceSignalDirection::Input),
+            false,
+        );
+        graph_left.signal_name = "LEFT_FLAG".to_string();
+        graph_left.width_hint = Some(1);
+
+        let mut graph_right = signal_candidate_with_direction_evidence(
+            None,
+            false,
+            Some(InterfaceSignalDirection::Input),
+            false,
+        );
+        graph_right.signal_name = "RIGHT_FLAG".to_string();
+        graph_right.width_hint = Some(1);
+
+        let signals = [graph_left, graph_right];
+        let signals_by_name = signals
+            .iter()
+            .map(|signal| (signal.signal_name.clone(), signal))
+            .collect::<std::collections::BTreeMap<_, _>>();
+        let mut size_entries = std::collections::BTreeMap::new();
+        let mut blocking_reasons = Vec::new();
+        let mut required_canonical_enrichments = std::collections::BTreeSet::new();
+
+        let graph_expression = ControlExpressionRecord::Binary {
+            operator: ControlBinaryOperator::BitAnd,
+            left: Box::new(ControlExpressionRecord::Reference {
+                reference: ControlReferenceRecord {
+                    base_name: "LEFT_FLAG".to_string(),
+                    kind_hint: ControlReferenceKind::Signal,
+                    suffixes: vec![ControlReferenceSuffix::WidthCast { width: 1 }],
+                    exposed_public_output: false,
+                },
+            }),
+            right: Box::new(ControlExpressionRecord::Reference {
+                reference: ControlReferenceRecord {
+                    base_name: "RIGHT_FLAG".to_string(),
+                    kind_hint: ControlReferenceKind::Signal,
+                    suffixes: vec![ControlReferenceSuffix::WidthCast { width: 1 }],
+                    exposed_public_output: false,
+                },
+            }),
+        };
+        super::validate_control_expression_renderability(
+            &graph_expression,
+            true,
+            &signals_by_name,
+            &mut size_entries,
+            &mut blocking_reasons,
+            &mut required_canonical_enrichments,
+        );
+        let left_entry = size_entries
+            .get("LEFT_FLAG")
+            .expect("graph-backed binary left width-cast operand should still create a size entry");
+        assert_eq!(left_entry.direction_hint, InterfaceSignalDirection::Input);
+        assert_eq!(left_entry.width, 1);
+        let right_entry = size_entries.get("RIGHT_FLAG").expect(
+            "graph-backed binary right width-cast operand should still create a size entry",
+        );
+        assert_eq!(right_entry.direction_hint, InterfaceSignalDirection::Input);
+        assert_eq!(right_entry.width, 1);
+        assert!(blocking_reasons.iter().any(|reason| {
+            reason.contains(
+                "The active `.fsm` adapter slice does not yet lower width-cast signal references",
+            )
+        }));
+        assert!(
+            required_canonical_enrichments
+                .contains("add width-cast reference lowering from canonical control expressions")
+        );
+    }
+
     fn build_handshake_intent_ir(base: &Path) -> Result<IntentIr> {
         let source = base.join("handshake.md");
         let source_artifact_base = base.join("generated").join("source_ir");
