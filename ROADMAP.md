@@ -1017,6 +1017,7 @@
   - the prior-guided visual-caption semantic phrase fixture now asserts table semantic hints stay zero while resolving caption evidence through visual-caption memory
   - the prior-guided visual-caption semantic phrase fixture now asserts ordinary prose semantic hints stay zero while resolving caption evidence through visual-caption memory
   - the prior-guided visual-caption semantic phrase fixture now asserts alias-grounded prose semantic hints stay zero while resolving caption evidence through visual-caption memory
+  - the prior-guided visual-caption semantic phrase fixture now asserts VLM timing-annotation semantic hints stay zero while resolving caption evidence through visual-caption memory
   - the VLM timing semantic-grounding fixture now asserts the timing-diagram extraction metric as well as the VLM timing-annotation semantic hint, proving ready-like `XACK` recovery remains evidence-backed
   - the no-prior visual-motif fixture now asserts exact table-derived `XREQ` output direction while the local diagram remains motif-ambiguous without learned memory
   - the no-prior visual-motif fixture now asserts table semantic hints stay zero while learned visual-motif memory is absent

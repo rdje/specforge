@@ -22,22 +22,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `5318a5949997f1a30cebc8576f22756d3d900b6f`
-- latest_commit_brief_message: `test(kg): lock visual semantic prior prose exclusion`
-- note: this is the pre-slice-86 baseline for the current `BWFSC=100` batch; slices 1-85/100 are committed and push remains deferred
+- latest_commit_hash: `f6b95c7c274ee017ca20869f374ba2c37f369c58`
+- latest_commit_brief_message: `test(kg): lock visual semantic prior alias exclusion`
+- note: this is the pre-slice-87 baseline for the current `BWFSC=100` batch; slices 1-86/100 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `f6b95c7` test(kg): lock visual semantic prior alias exclusion
 - `5318a59` test(kg): lock visual semantic prior prose exclusion
 - `49af81f` test(kg): lock visual semantic prior table exclusion
 - `9de4a8b` test(kg): lock APB address protection VLM exclusion
 - `8e00080` test(kg): lock APB address protection visual exclusion
 - `d5443f1` test(kg): lock APB address protection alias exclusion
-- `43124ee` test(kg): lock APB address protection prose exclusion
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=100` slice 86 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=100` slice 87 and push is deferred
 - files in flight:
   - `crates/specforge/test_data/kg_quality/visual_semantic_prior_guided_caption_gold/fixture.json`
   - live docs and mdBook files synced for the slice
@@ -52,16 +52,16 @@
 ## Current batch status
 - objective:
   - active `BWFSC=100` batch is in progress
-  - completed_count before this commit: `85`
-  - slice 86/100 tightens prior-guided visual semantic phrase alias-grounded prose semantic-hint exclusion metrics for source-split hardening
+  - completed_count before this commit: `86`
+  - slice 87/100 tightens prior-guided visual semantic phrase VLM timing-annotation semantic-hint exclusion metrics for source-split hardening
   - push is deferred until all `100` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks prior-guided visual semantic phrase alias-grounded prose semantic-hint exclusion KG coverage as `Done`
+  - live-status tracker now marks prior-guided visual semantic phrase VLM timing-annotation semantic-hint exclusion KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 86 before commit
+  - implementation and live-doc sync are complete for slice 87 before commit
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench visual_semantic_prior_guided_caption_gold` passed with the requested fixture
-  - broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed on slice 83 with `150/150` fixtures
-  - broader `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed on slice 83 with `150` fixtures projected, `0` failures, and no tracked projection diff
+  - broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed on slice 87 with `150/150` fixtures
+  - broader `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed on slice 87 with `150` fixtures projected, `0` failures, and no tracked projection diff
   - `bash scripts/run_docs_ci.sh` passed after the live-book sync
   - `bash scripts/run_ci.sh` passed on slice 80 with formatting, Clippy warning-deny, Rust tests, rustdoc warning-deny, and mdBook
   - `bash scripts/run_ci.sh` passed on slice 70 with formatting, Clippy warning-deny, Rust tests, rustdoc warning-deny, and mdBook
@@ -80,8 +80,8 @@
   - docs CI passed for the current slice after live-doc sync
   - slice 80 passed `bash scripts/run_ci.sh`
   - slice 70 passed `bash scripts/run_ci.sh`
-  - slice 83 passed `150/150` tracked KG fixtures
-  - slice 83 passed corpus-KB projection for `150` fixtures with `0` failures and no tracked projection diff
+  - slice 87 passed `150/150` tracked KG fixtures
+  - slice 87 passed corpus-KB projection for `150` fixtures with `0` failures and no tracked projection diff
   - slice 60 passed `bash scripts/run_ci.sh`
   - slice 43 passed `150/150` tracked KG fixtures
   - slice 43 passed corpus-KB projection for `150` fixtures with `0` failures
