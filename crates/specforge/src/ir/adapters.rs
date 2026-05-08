@@ -11725,6 +11725,7 @@ mod tests {
                     .iter()
                     .any(|id| id == support_id)
             );
+            assert_eq!(signal.automation_confidence, AutomationConfidence::High);
         }
         assert!(
             fsm.renderability

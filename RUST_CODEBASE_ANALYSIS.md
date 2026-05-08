@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter ambiguous actor-context inventory confidence guard)
+- Extended `standalone_dt_ignores_ambiguous_actor_port_context` in `crates/specforge/src/ir/adapters.rs`.
+- The ambiguous standalone direct-DT actor-port context blocker now locks high automation confidence on retained `DATA_IN` / `DATA_OUT` direct signal-inventory records while excluding ambiguous graph provenance.
+- This keeps graph-context ambiguity recoverable without letting blocked `.fsm` emission downgrade direct signal inventory.
+
 ## Session update (2026-05-09 adapter sibling child-link inventory confidence guard)
 - Extended `top_composition_blocks_conflicting_sibling_child_link_widths` in `crates/specforge/src/ir/adapters.rs`.
 - The sibling child-link width blocker now locks selected signal-inventory support IDs and high automation confidence for the retained declared `result_data` top port.

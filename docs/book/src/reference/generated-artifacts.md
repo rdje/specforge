@@ -137,6 +137,7 @@ Direct control-read input recovery also stays signal-inventory-residual clean wh
 Direct actor-port width recovery keeps actor-port width provenance on the recovered control input without importing external actor direction, and renderable recovery leaves no signal-inventory residual.
 Unrelated actor-port graph context follows the same residual-clean rule while keeping side-band graph evidence out of the selected inventory.
 Ambiguous actor-port graph context remains blocked instead of selecting graph provenance, and the artifact keeps signal-inventory residual guidance for upstream enrichment.
+The retained direct signal entries also stay high-confidence while that ambiguous graph provenance is excluded.
 Actor-port direction conflicts also remain blocked while preserving both conflicting support IDs and signal-inventory residual guidance.
 Actor-port width conflicts follow the same blocked guidance pattern while preserving both conflicting width support IDs.
 They also keep renderable module and aggregate `.fsm` source documents absent, so stale DT-root output cannot leak while the width evidence is conflicting.

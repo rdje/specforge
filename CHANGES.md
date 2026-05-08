@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-09 (adapter ambiguous actor-context inventory confidence guard)
+
+### Improved: ambiguous actor-port blockers preserve direct inventory confidence
+- Extended the standalone direct-DT ambiguous actor-port context regression to assert retained `DATA_IN` / `DATA_OUT` direct signal-inventory records stay high-confidence while ambiguous graph provenance is excluded.
+- The guard keeps graph-context ambiguity blockers from downgrading direct signal inventory while `.fsm` emission remains blocked for missing canonical directions.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge standalone_dt_ignores_ambiguous_actor_port_context` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-09 (adapter sibling child-link inventory confidence guard)
 
 ### Improved: sibling child-link width blockers preserve selected inventory confidence
