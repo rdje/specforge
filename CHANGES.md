@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (adapter delayed-pulse width-cast value guard)
+
+### Improved: delayed-pulse width-cast values remain signal-free
+- Added a direct regression for delayed-pulse width-cast value renderability.
+- The guard proves graph-backed delayed-pulse targets still create metadata, while width-cast value references remain outside renderable signal metadata under the active literal-only pulse-level slice.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge delayed_pulse_width_cast_value_keeps_graph_signal_references_signal_free` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`136/136` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter compound-update amount width-cast guard)
 
 ### Improved: compound-update amount width-cast blockers preserve graph-backed metadata

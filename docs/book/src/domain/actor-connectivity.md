@@ -245,6 +245,7 @@ Next-signal dual-output width-cast values retain graph-backed target and value m
 Registered-signal dual-output width-cast values follow the same blocked-but-metadata-preserving path.
 Delayed-pulse actions still require positive cycle delays; zero-delay pulse intent remains blocking even when the graph-backed output target is recoverable.
 Delayed-pulse pulse-level values remain literal-only in the active adapter slice, so graph-backed signal references there do not create renderable signal metadata until that lowering is deliberately widened.
+Delayed-pulse width-cast pulse-level values stay on that signal-free literal-only path.
 Typed assignment values use the read-side rule too: graph-backed value references create input size entries, while stale flat disagreement remains blocking.
 Width-cast assignment values retain both graph-backed target and value metadata while the suffix-lowering gate remains blocking.
 Compound-update amounts use that same read-side rule when they reference signals.

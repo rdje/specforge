@@ -7,6 +7,19 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-08 adapter delayed-pulse width-cast value guard
+- New batch slice 116/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Added `delayed_pulse_width_cast_value_keeps_graph_signal_references_signal_free` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks delayed-pulse validation with a width-cast pulse-level value: graph-backed output targets still create renderable size entries, while graph-backed value references remain signal-free under the active literal-only pulse-level slice.
+- This keeps graph-first target recovery separate from delayed-pulse value lowering, which is still literal-only.
+- `cargo fmt --all` applied rustfmt layout.
+- `cargo test --manifest-path Cargo.toml -p specforge delayed_pulse_width_cast_value_keeps_graph_signal_references_signal_free` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `136/136` adapter-filtered tests.
+- `cargo fmt --all --check` passed.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- Push remains deferred for the active `BWFSC=200` batch.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-08 adapter compound-update amount width-cast guard
 - New batch slice 115/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Added `compound_update_amount_width_cast_blocks_after_graph_signals` in `crates/specforge/src/ir/adapters.rs`.

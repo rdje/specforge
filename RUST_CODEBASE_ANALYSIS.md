@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter delayed-pulse width-cast value guard)
+- Added `delayed_pulse_width_cast_value_keeps_graph_signal_references_signal_free` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks delayed-pulse validation so graph-backed output targets still produce size entries, while width-cast value references stay signal-free under the active literal-only pulse-level gate.
+- This keeps graph-first delayed-pulse target recovery independent from pulse-level expression lowering.
+
 ## Session update (2026-05-08 adapter compound-update amount width-cast guard)
 - Added `compound_update_amount_width_cast_blocks_after_graph_signals` in `crates/specforge/src/ir/adapters.rs`.
 - The test locks compound-update validation so graph-backed output targets and width-cast amount references still produce size entries, while the active `.fsm` suffix-lowering gate blocks width casts.
