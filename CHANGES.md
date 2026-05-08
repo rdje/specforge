@@ -1,5 +1,15 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for field-table table-hint exclusion)
+
+### Improved: field-table negatives exclude table semantic hints
+- Tightened `table_misclassification_field_table_negative` with `signal_semantic_hints_from_tables = 0` at `EvidenceIR`.
+- The fixture now proves misclassified register-field tables cannot synthesize table-sourced semantic-role hints from field names like `REQ` and `ACK`.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench table_misclassification_field_table_negative` -> passed (`1/1` fixture)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for motion-only VLM visual exclusion)
 
 ### Improved: motion-only VLM timing fixtures exclude visual-caption hints

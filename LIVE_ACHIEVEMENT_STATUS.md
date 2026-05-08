@@ -485,6 +485,7 @@
 - KG benchmark harness now locks waveform-motion VLM timing state prose semantic-hint exclusion: Done
 - KG benchmark harness now locks waveform-motion VLM timing state alias-grounded prose semantic-hint exclusion: Done
 - KG benchmark harness now locks waveform-motion VLM timing state visual-caption semantic-hint exclusion: Done
+- KG benchmark harness now locks field-table misclassification table semantic-hint exclusion: Done
 - KG benchmark harness now locks cross-modality semantic-conflict total evidence semantic hints: Done
 - KG benchmark harness now locks cross-modality semantic-conflict prose semantic-hint split: Done
 - KG benchmark harness now locks cross-modality semantic-conflict alias-grounded prose split: Done

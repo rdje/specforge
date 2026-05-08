@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 KG fixture for field-table table-hint exclusion)
+- Tightened `table_misclassification_field_table_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts evidence-stage `signal_semantic_hints_from_tables = 0` alongside zero aggregate semantic hints and zero table-signal declaration provenance.
+- This locks misclassified field-table rows as free of table-sourced semantic-role hints.
+
 ## Session update (2026-05-08 KG fixture for motion-only VLM visual exclusion)
 - Tightened `vlm_timing_motion_annotation_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts evidence-stage `signal_semantic_hints_from_visual_captions = 0` alongside aggregate, table, prose, alias-grounded prose, VLM timing-annotation, and timing extraction metrics.
