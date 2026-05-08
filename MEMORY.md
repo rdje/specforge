@@ -22,22 +22,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `ac2a1407fb217ea5c4e200ec502540a38311dab9`
-- latest_commit_brief_message: `test(kg): lock AXI read-address control alias exclusion`
-- note: this is the pre-slice-58 baseline for the current `BWFSC=100` batch; slices 1-57/100 are committed and push remains deferred
+- latest_commit_hash: `7fd4ee2534197b607c5f676240c94a50dd189033`
+- latest_commit_brief_message: `test(kg): lock AXI read-address control visual exclusion`
+- note: this is the pre-slice-59 baseline for the current `BWFSC=100` batch; slices 1-58/100 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `7fd4ee2` test(kg): lock AXI read-address control visual exclusion
 - `ac2a140` test(kg): lock AXI read-address control alias exclusion
 - `dabc674` test(kg): lock AXI read-address control prose exclusion
 - `124cac1` test(kg): lock AXI next-cycle VLM exclusion
 - `fcf4724` test(kg): lock AXI next-cycle visual exclusion
 - `2e11758` test(kg): lock AXI next-cycle alias exclusion
-- `309e5bb` test(kg): lock AXI next-cycle prose exclusion
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=100` slice 58 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=100` slice 59 and push is deferred
 - files in flight:
   - `crates/specforge/test_data/kg_quality/axi_read_address_control_sideband_stability_gold/fixture.json`
   - live docs and mdBook files synced for the slice
@@ -52,16 +52,16 @@
 ## Current batch status
 - objective:
   - active `BWFSC=100` batch is in progress
-  - completed_count before this commit: `57`
-  - slice 58/100 tightens AXI read-address control sideband visual-caption semantic-hint exclusion metrics for positive table-backed source-split hardening
+  - completed_count before this commit: `58`
+  - slice 59/100 tightens AXI read-address control sideband VLM timing-annotation semantic-hint exclusion metrics for positive table-backed source-split hardening
   - push is deferred until all `100` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks AXI read-address control sideband visual-caption semantic-hint exclusion KG coverage as `Done`
+  - live-status tracker now marks AXI read-address control sideband VLM timing-annotation semantic-hint exclusion KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 58 before commit
+  - implementation and live-doc sync are complete for slice 59 before commit
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench axi_read_address_control_sideband_stability_gold` passed with the requested fixture
-  - broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed on slice 55 with `150/150` fixtures
-  - broader `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed on slice 55 with `150` fixtures projected, `0` failures, and no tracked projection diff
+  - broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed on slice 59 with `150/150` fixtures
+  - broader `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed on slice 59 with `150` fixtures projected, `0` failures, and no tracked projection diff
   - `bash scripts/run_docs_ci.sh` passed after the live-book sync
   - broader `bash scripts/run_ci.sh` passed on slice 50 with formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, and mdBook
   - broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed on slice 43 with `150/150` fixtures
@@ -74,9 +74,9 @@
   - user-requested `cargo sweep --time 1` is deferred until no target-tree process is active because `target/release/tool_matrix` is active
 - current known local CI baseline:
   - focused current-slice KG fixture passed
+  - slice 59 passed `150/150` tracked KG fixtures
+  - slice 59 passed corpus-KB projection for `150` fixtures with `0` failures and no tracked projection diff
   - docs CI passed for the current slice after live-doc sync
-  - slice 55 passed `150/150` tracked KG fixtures
-  - slice 55 passed corpus-KB projection for `150` fixtures with `0` failures and no tracked projection diff
   - slice 50 passed `bash scripts/run_ci.sh`
   - slice 43 passed `150/150` tracked KG fixtures
   - slice 43 passed corpus-KB projection for `150` fixtures with `0` failures
@@ -88,5 +88,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 58 commit workflow, clear and verify `git_message_brief.txt`, then continue AXI read-address control sideband source-split hardening
+- finish the slice 59 commit workflow, clear and verify `git_message_brief.txt`, then continue source-split hardening on the next incomplete fixture
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle

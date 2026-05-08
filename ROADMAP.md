@@ -809,6 +809,7 @@
     - the AXI read-address control sideband fixture now asserts prose semantic hints stay zero while `ARPROT`, `ARCACHE`, and `ARLOCK` remain table-sourced
     - the AXI read-address control sideband fixture now asserts alias-grounded prose semantic hints stay zero while `ARPROT`, `ARCACHE`, and `ARLOCK` remain table-sourced
     - the AXI read-address control sideband fixture now asserts visual-caption semantic hints stay zero while `ARPROT`, `ARCACHE`, and `ARLOCK` remain table-sourced
+    - the AXI read-address control sideband fixture now asserts VLM timing-annotation semantic hints stay zero while `ARPROT`, `ARCACHE`, and `ARLOCK` remain table-sourced
     - a representative AXI address QoS/region sideband stability fixture proving `AWQOS`, `AWREGION`, `ARQOS`, and `ARREGION` remain graph-grounded and actor-owned when their stability is guarded by the matching address-channel handshake completion
     - a representative AXI address/response USER sideband stability fixture proving Manager-owned `AWUSER` / `ARUSER` and Subordinate-owned `BUSER` stay actor-grounded under their matching channel handshakes
     - a representative AXI read-address sideband stability fixture proving `ARSIZE` and `ARBURST` remain graph-grounded and actor-owned when their stability is guarded by `ARVALID` / `ARREADY` completion
