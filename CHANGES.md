@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-08 (KG bench guards validation metric coverage)
+
+### Improved: tracked fixtures now regression-lock count metric coverage
+- Added a KG bench regression that scans tracked fixtures for canonical count-style expectations and requires matching validation `metric_values` at both `SemanticIR` and `IntentIR`.
+- The guard covers temporal-rule counts, handshake-completion counts, alias-dependent handshake counts, conflict counts, and temporal-conflict counts so future fixture additions cannot silently omit the user-visible validation metric surface.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge tracked_count_expectations_are_locked_as_validation_metrics` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge kg_bench_runs_tracked_fixtures` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for multi-producer connectivity metric)
 
 ### Improved: multi-producer fixture locks connectivity conflict metrics

@@ -289,6 +289,7 @@
 - KG benchmark harness self-tests IntentIR signal table-provenance diagnostics: Done
 - KG benchmark harness self-tests missing canonical signal table-provenance diagnostics: Done
 - KG benchmark harness self-tests missing IntentIR signal table-provenance diagnostics: Done
+- KG benchmark harness now regression-locks count-style validation metric coverage: Done
 - KG benchmark harness can now assert validation finding payloads and related IDs directly: Done
 - Negative-knowledge prior-guided fixtures now lock exact validation finding related IDs: Done
 - `specforge validate` now reports EvidenceIR table-signal declaration provenance: Done

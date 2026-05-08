@@ -2484,7 +2484,8 @@ mod tests {
 
     use super::{
         CanonicalStageExpectations, ExpectedValidationFinding, ValidationStageExpectations,
-        evaluate_canonical_expectations, evaluate_validation_expectations, run,
+        discover_fixture_paths, evaluate_canonical_expectations, evaluate_validation_expectations,
+        load_fixture, run,
     };
     use crate::cli::KgBenchArgs;
     use crate::error::AppError;
@@ -2641,6 +2642,145 @@ mod tests {
             fixtures_root,
             fixtures: Vec::new(),
         })
+    }
+
+    #[test]
+    fn tracked_count_expectations_are_locked_as_validation_metrics() -> crate::error::Result<()> {
+        let fixtures_root = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("test_data")
+            .join("kg_quality");
+        let mut failures = Vec::new();
+
+        for fixture_path in discover_fixture_paths(&fixtures_root)? {
+            let fixture = load_fixture(&fixture_path)?;
+            assert_count_metrics_for_stage(
+                &fixture.name,
+                &fixture_path,
+                "semantic",
+                fixture.expectations.semantic.as_ref(),
+                fixture
+                    .expectations
+                    .validation
+                    .as_ref()
+                    .and_then(|validation| validation.semantic.as_ref()),
+                &mut failures,
+            );
+            assert_count_metrics_for_stage(
+                &fixture.name,
+                &fixture_path,
+                "intent",
+                fixture.expectations.intent.as_ref(),
+                fixture
+                    .expectations
+                    .validation
+                    .as_ref()
+                    .and_then(|validation| validation.intent.as_ref()),
+                &mut failures,
+            );
+        }
+
+        assert!(
+            failures.is_empty(),
+            "tracked KG fixtures with canonical count-style expectations must lock matching validation metric_values:\n{}",
+            failures.join("\n")
+        );
+        Ok(())
+    }
+
+    fn assert_count_metrics_for_stage(
+        fixture_name: &str,
+        fixture_path: &Path,
+        stage_label: &str,
+        canonical: Option<&CanonicalStageExpectations>,
+        validation: Option<&ValidationStageExpectations>,
+        failures: &mut Vec<String>,
+    ) {
+        let Some(canonical) = canonical else {
+            return;
+        };
+        let expected_metrics = count_style_metric_expectations(canonical);
+        if expected_metrics.is_empty() {
+            return;
+        }
+
+        let Some(validation) = validation else {
+            failures.push(format!(
+                "{} ({fixture_name}) {stage_label}: missing validation expectations for count-style metrics",
+                fixture_path.display()
+            ));
+            return;
+        };
+
+        for (metric_name, expected_value) in expected_metrics {
+            match validation.metric_values.get(metric_name) {
+                Some(actual_value) if actual_value == &expected_value => {}
+                Some(actual_value) => failures.push(format!(
+                    "{} ({fixture_name}) {stage_label}: metric `{metric_name}` expected `{expected_value}` but fixture locks `{actual_value}`",
+                    fixture_path.display()
+                )),
+                None => failures.push(format!(
+                    "{} ({fixture_name}) {stage_label}: missing validation metric `{metric_name}` with value `{expected_value}`",
+                    fixture_path.display()
+                )),
+            }
+        }
+    }
+
+    fn count_style_metric_expectations(
+        canonical: &CanonicalStageExpectations,
+    ) -> Vec<(&'static str, String)> {
+        let mut expected = Vec::new();
+        push_count_metric(
+            &mut expected,
+            "temporal_rules",
+            canonical.temporal_rule_count,
+        );
+        push_count_metric(
+            &mut expected,
+            "temporal_rules_with_handshake_completion",
+            canonical.temporal_rules_with_handshake_completion,
+        );
+        push_count_metric(
+            &mut expected,
+            "temporal_rules_with_alias_dependent_handshake_completion",
+            canonical.temporal_rules_with_alias_dependent_handshake_completion,
+        );
+        push_count_metric(
+            &mut expected,
+            "signal_polarity_conflicts",
+            canonical.signal_polarity_conflicts,
+        );
+        push_count_metric(
+            &mut expected,
+            "signal_semantic_conflicts",
+            canonical.signal_semantic_conflicts,
+        );
+        push_count_metric(
+            &mut expected,
+            "signal_connectivity_conflicts",
+            canonical.signal_connectivity_conflicts,
+        );
+        push_count_metric(
+            &mut expected,
+            "interface_signal_conflicts",
+            canonical.interface_signal_conflicts,
+        );
+        push_count_metric(
+            &mut expected,
+            "temporal_conflicts",
+            canonical.temporal_conflicts,
+        );
+        expected
+    }
+
+    fn push_count_metric(
+        expected: &mut Vec<(&'static str, String)>,
+        metric_name: &'static str,
+        value: Option<usize>,
+    ) {
+        if let Some(value) = value {
+            expected.push((metric_name, value.to_string()));
+        }
     }
 
     #[test]

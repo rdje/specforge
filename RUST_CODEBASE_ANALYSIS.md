@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 KG bench count-metric coverage guard)
+- Added `tracked_count_expectations_are_locked_as_validation_metrics` in `crates/specforge/src/commands/kg_bench.rs`.
+- The test scans tracked KG fixtures and requires canonical count-style expectations to lock matching validation `metric_values` entries at the same canonical stage.
+- This makes the just-completed count-style validation metric hardening pass non-regressive for future fixtures.
+
 ## Session update (2026-05-08 KG fixture for multi-producer connectivity metric)
 - Tightened `multi_producer_conflict_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts `signal_connectivity_conflicts = 1` at both `SemanticIR` and `IntentIR` validation surfaces.

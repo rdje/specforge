@@ -16,6 +16,7 @@ The fixture set is used to lock:
 - prior-guided before/after behavior
 - graph-backed direction coverage without falling back to flat compatibility hints
 - compatibility-direction gaps that have no actor-relative graph coverage
+- validation metric coverage for count-style canonical expectations
 
 This lets the project protect individual truthfulness properties instead of relying only on broad integration runs.
 
@@ -29,8 +30,12 @@ Without fixture coverage, the pipeline can drift in subtle ways:
 - integration vocabulary like `VIP`, `PLL`, or `DFT` might become fake signals
 - a learned prior might start overreaching
 - a table-shape rule might begin misclassifying field tables as real signal tables
+- a new count expectation might forget to lock the validation metric users actually see
 
 `kg-bench` exists to catch exactly that kind of drift.
+
+The harness also has a tracked-fixture self-test that scans canonical count-style expectations and requires matching validation `metric_values` entries at the same stage.
+That keeps temporal-rule, handshake, conflict, and temporal-conflict counts visible in user-facing validation output instead of only in fixture-local IR shape checks.
 
 ## Graph-Backed Direction Expectations
 

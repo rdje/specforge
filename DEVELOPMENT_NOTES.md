@@ -7,6 +7,19 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-08 KG bench count-metric coverage guard
+- New batch slice 72/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Added `tracked_count_expectations_are_locked_as_validation_metrics` in `crates/specforge/src/commands/kg_bench.rs`.
+- The test loads tracked KG fixtures and requires every canonical count-style expectation to have a matching validation `metric_values` entry with the same value at the same stage.
+- Covered mappings include `temporal_rule_count -> temporal_rules`, handshake-completion counters, alias-dependent handshake counters, polarity/semantic/connectivity/interface conflict counters, and temporal conflict counters.
+- `cargo fmt --all` applied rustfmt layout.
+- `cargo test --manifest-path Cargo.toml -p specforge tracked_count_expectations_are_locked_as_validation_metrics` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge kg_bench_runs_tracked_fixtures` passed.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- Broader `bash scripts/run_ci.sh` passed on slice 70 with formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, and mdBook.
+- Push remains deferred for the active `BWFSC=200` batch.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-08 KG fixture for multi-producer connectivity metric
 - New batch slice 71/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Tightened `crates/specforge/test_data/kg_quality/multi_producer_conflict_negative/fixture.json`.
