@@ -7371,6 +7371,134 @@ mod tests {
         ));
     }
 
+    #[test]
+    fn control_branch_predicate_renderability_uses_graph_direction_without_stale_flat_override() {
+        let mut graph_predicate = signal_candidate_with_direction_evidence(
+            None,
+            false,
+            Some(InterfaceSignalDirection::Input),
+            false,
+        );
+        graph_predicate.signal_name = "VALID".to_string();
+        graph_predicate.width_hint = Some(1);
+
+        let mut stale_predicate = signal_candidate_with_direction_evidence(
+            Some(InterfaceSignalDirection::Output),
+            false,
+            Some(InterfaceSignalDirection::Input),
+            false,
+        );
+        stale_predicate.signal_name = "STALE_VALID".to_string();
+        stale_predicate.width_hint = Some(1);
+
+        let signals = [graph_predicate, stale_predicate];
+        let signals_by_name = signals
+            .iter()
+            .map(|signal| (signal.signal_name.clone(), signal))
+            .collect::<std::collections::BTreeMap<_, _>>();
+        let state_names = ["busy".to_string()]
+            .into_iter()
+            .collect::<std::collections::BTreeSet<_>>();
+        let mut size_entries = std::collections::BTreeMap::new();
+        let mut driven_outputs = std::collections::BTreeSet::new();
+        let mut sequential_targets = std::collections::BTreeSet::new();
+        let mut blocking_reasons = Vec::new();
+        let mut required_canonical_enrichments = std::collections::BTreeSet::new();
+
+        let graph_block = ControlBlockRecord {
+            block_id: "predicate_block".to_string(),
+            block_name: "predicate_block".to_string(),
+            role: ControlBlockRole::StandaloneDecisionTree,
+            declaration_order: 0,
+            selector: None,
+            branches: vec![ControlBranchRecord {
+                branch_id: "predicate_branch".to_string(),
+                declaration_order: 0,
+                predicate: Some(ControlExpressionRecord::Reference {
+                    reference: ControlReferenceRecord {
+                        base_name: "VALID".to_string(),
+                        kind_hint: ControlReferenceKind::Signal,
+                        suffixes: Vec::new(),
+                        exposed_public_output: false,
+                    },
+                }),
+                actions: vec![ControlActionRecord::Transition {
+                    target_state: "busy".to_string(),
+                }],
+                supporting_statement_ids: Vec::new(),
+                automation_confidence: AutomationConfidence::High,
+            }],
+            referenced_signal_names: vec!["VALID".to_string()],
+            supporting_statement_ids: Vec::new(),
+            automation_confidence: AutomationConfidence::High,
+        };
+        super::validate_control_block_branches(
+            &graph_block,
+            true,
+            Some(&state_names),
+            &signals_by_name,
+            &mut size_entries,
+            &mut driven_outputs,
+            &mut sequential_targets,
+            &mut blocking_reasons,
+            &mut required_canonical_enrichments,
+        );
+        let graph_entry = size_entries
+            .get("VALID")
+            .expect("graph-backed branch predicate should create a size entry");
+        assert_eq!(graph_entry.direction_hint, InterfaceSignalDirection::Input);
+        assert_eq!(graph_entry.width, 1);
+        assert!(blocking_reasons.is_empty());
+
+        let stale_block = ControlBlockRecord {
+            block_id: "stale_predicate_block".to_string(),
+            block_name: "stale_predicate_block".to_string(),
+            role: ControlBlockRole::StandaloneDecisionTree,
+            declaration_order: 1,
+            selector: None,
+            branches: vec![ControlBranchRecord {
+                branch_id: "stale_predicate_branch".to_string(),
+                declaration_order: 0,
+                predicate: Some(ControlExpressionRecord::Reference {
+                    reference: ControlReferenceRecord {
+                        base_name: "STALE_VALID".to_string(),
+                        kind_hint: ControlReferenceKind::Signal,
+                        suffixes: Vec::new(),
+                        exposed_public_output: false,
+                    },
+                }),
+                actions: vec![ControlActionRecord::Transition {
+                    target_state: "busy".to_string(),
+                }],
+                supporting_statement_ids: Vec::new(),
+                automation_confidence: AutomationConfidence::High,
+            }],
+            referenced_signal_names: vec!["STALE_VALID".to_string()],
+            supporting_statement_ids: Vec::new(),
+            automation_confidence: AutomationConfidence::High,
+        };
+        super::validate_control_block_branches(
+            &stale_block,
+            true,
+            Some(&state_names),
+            &signals_by_name,
+            &mut size_entries,
+            &mut driven_outputs,
+            &mut sequential_targets,
+            &mut blocking_reasons,
+            &mut required_canonical_enrichments,
+        );
+        assert!(!size_entries.contains_key("STALE_VALID"));
+        assert!(blocking_reasons.iter().any(|reason| {
+            reason.contains(
+                "Signal `STALE_VALID` has conflicting canonical and graph-backed direction evidence",
+            )
+        }));
+        assert!(required_canonical_enrichments.contains(
+            "resolve conflicting canonical and actor-relative graph direction evidence before lowering `.fsm`"
+        ));
+    }
+
     fn build_handshake_intent_ir(base: &Path) -> Result<IntentIr> {
         let source = base.join("handshake.md");
         let source_artifact_base = base.join("generated").join("source_ir");

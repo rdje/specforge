@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (adapter branch predicate graph direction guard)
+
+### Improved: branch-predicate renderability has direct graph-first coverage
+- Added a direct regression for non-selector control-branch predicate renderability.
+- The guard proves graph-backed branch predicate signals create renderable size entries through `validate_control_block_branches`, while flat-vs-graph disagreement blocks and leaves no stale size entry.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge control_branch_predicate_renderability_uses_graph_direction_without_stale_flat_override` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`107/107` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter selector graph direction guard)
 
 ### Improved: selector-block renderability has direct graph-first coverage

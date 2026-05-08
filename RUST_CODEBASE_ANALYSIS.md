@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter branch predicate graph direction guard)
+- Added `control_branch_predicate_renderability_uses_graph_direction_without_stale_flat_override` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks non-selector control-branch predicate renderability so graph-backed predicate signals create size entries through `validate_control_block_branches`, while stale flat-vs-graph disagreement leaves no stale entry.
+- This covers the branch-predicate path separately from selector branches and transition guards.
+
 ## Session update (2026-05-08 adapter selector graph direction guard)
 - Added `selector_block_renderability_uses_graph_direction_without_stale_flat_override` in `crates/specforge/src/ir/adapters.rs`.
 - The test locks selector-bearing block renderability so graph-backed selector signals create size entries through both selector and branch-predicate validation, while stale flat-vs-graph disagreement leaves no stale entry.
