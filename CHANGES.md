@@ -1,5 +1,15 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for AMBA source-column prose exclusion)
+
+### Improved: AMBA source-column fixtures prove table-only hints
+- Tightened `amba_source_column_handshake_gold` with `signal_semantic_hints_from_prose = 0` at `EvidenceIR`.
+- The fixture now proves `XREQ` / `XACK` semantic hints are table-sourced rather than prose-derived while `Source` roles still recover typed handshake completion.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench amba_source_column_handshake_gold` -> passed (`1/1` fixture)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for APB requester/completer VLM exclusion)
 
 ### Improved: APB requester/completer fixtures exclude VLM timing hints
