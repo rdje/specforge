@@ -364,6 +364,7 @@ Motion-only annotation prose such as `XREQ rises, remains stable, then falls` is
 The motion-only fixture now locks total semantic hints at zero, so motion prose cannot invent valid/ready-like roles through another evidence channel.
 It also excludes table-sourced semantic hints, so table evidence cannot rescue rejected motion-only prose.
 Ordinary prose hints are zero too, keeping text evidence from inventing roles for rejected motion-only prose.
+Alias-grounded prose is excluded too, preventing phrase-alias recovery from inventing roles for rejected motion-only prose.
 Concrete sampled values such as `HIGH` can still become typed temporal evidence when the signal itself is document-grounded.
 
 State-machine visual fixtures protect the FSM side of the same boundary.

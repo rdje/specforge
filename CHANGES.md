@@ -1,5 +1,15 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for motion-only VLM alias exclusion)
+
+### Improved: motion-only VLM timing fixtures exclude alias-grounded prose hints
+- Tightened `vlm_timing_motion_annotation_negative` with `signal_semantic_hints_from_alias_grounded_prose = 0` at `EvidenceIR`.
+- The fixture now proves motion-only timing annotation prose remains free of alias-grounded prose semantic-role hints.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench vlm_timing_motion_annotation_negative` -> passed (`1/1` fixture)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for motion-only VLM prose exclusion)
 
 ### Improved: motion-only VLM timing fixtures exclude prose hints
