@@ -23,24 +23,24 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `f2265e353e49f0b49c32f2a76b51e74b88850a6d`
-- latest_commit_brief_message: `test(kg): lock alias caveat temporal count metric`
-- note: this is the pre-slice-64 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
+- latest_commit_hash: `b796cdfec277907af4159df3d9585fc4ad373a43`
+- latest_commit_brief_message: `test(kg): lock contested fallback temporal count metric`
+- note: this is the pre-slice-65 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
 
 ## Recent commit chain (last 6)
+- `b796cdf` test(kg): lock contested fallback temporal count metric
 - `f2265e3` test(kg): lock alias caveat temporal count metric
 - `f91409d` test(kg): lock AXI width-only temporal count metric
 - `5dbc85e` test(kg): lock APB requester temporal count metric
 - `2f1f9d0` test(kg): lock AMBA source temporal count metric
 - `9c39e9d` test(kg): lock AMBA source multi-predicate metrics
-- `f41b738` test(kg): lock APB requester multi-predicate metrics
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 64 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
+- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 65 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
 - files in flight:
-  - `crates/specforge/test_data/kg_quality/contested_handshake_name_fallback_negative/fixture.json`
+  - `crates/specforge/test_data/kg_quality/table_misclassification_field_table_negative/fixture.json`
   - live docs and mdBook files synced for the slice
 
 ## Latest completed N-slice batch
@@ -53,16 +53,17 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `63`
-  - slice 64/200 tightens contested-handshake negative aggregate temporal-rule validation metrics
+  - completed_count before this commit: `64`
+  - slice 65/200 tightens field-table misclassification zero aggregate temporal-rule validation metrics and completes the current aggregate temporal-rule metric pass
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks contested-handshake aggregate temporal-rule metric coverage as `Done`
+  - live-status tracker now marks field-table misclassification aggregate temporal-rule absence coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 64 before commit
-  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench contested_handshake_name_fallback_negative` passed with the requested fixture
-  - broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed on slice 64 with `150/150` fixtures
-  - broader `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed on slice 64 with `150` fixtures projected, `0` failures, and no tracked projection diff
+  - implementation and live-doc sync are complete for slice 65 before commit
+  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench table_misclassification_field_table_negative` passed with the requested fixture
+  - broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed on slice 65 with `150/150` fixtures
+  - broader `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed on slice 65 with `150` fixtures projected, `0` failures, and no tracked projection diff
+  - aggregate temporal-rule count coverage scan found no remaining fixtures that assert `temporal_rule_count` while missing `temporal_rules`
   - `bash scripts/run_ci.sh` passed on slice 60 as a broader checkpoint gate
   - `bash scripts/run_ci.sh` passed on slice 50 as a broader checkpoint gate
   - `bash scripts/run_ci.sh` passed on slice 40 as a broader checkpoint gate
@@ -178,6 +179,8 @@
   - slice 63 passed corpus-KB projection for `150` fixtures with `0` failures and no tracked projection diff
   - slice 64 passed `150/150` tracked KG fixtures
   - slice 64 passed corpus-KB projection for `150` fixtures with `0` failures and no tracked projection diff
+  - slice 65 passed `150/150` tracked KG fixtures
+  - slice 65 passed corpus-KB projection for `150` fixtures with `0` failures and no tracked projection diff
   - slice 20 passed `bash scripts/run_ci.sh`
   - slice 100 passed `bash scripts/run_ci.sh`
   - slice 90 passed `bash scripts/run_ci.sh`
@@ -198,5 +201,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 64 commit workflow, clear and verify `git_message_brief.txt`, then continue aggregate temporal-rule metric hardening with `table_misclassification_field_table_negative`
+- finish the slice 65 commit workflow, clear and verify `git_message_brief.txt`, then continue handshake-completion validation metric hardening with `alias_dependent_handshake_completion_caveat`
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle

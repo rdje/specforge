@@ -954,6 +954,7 @@
     - the field-table misclassification fixture now asserts alias-grounded prose semantic hints remain zero, proving phrase-alias recovery cannot invent roles while the field table stays out of signal provenance
     - the field-table misclassification fixture now asserts visual-caption semantic hints remain zero, proving captions cannot invent roles while the field table stays out of signal provenance
     - the field-table misclassification fixture now asserts VLM timing-annotation semantic hints remain zero, proving timing notes cannot invent roles while the field table stays out of signal provenance
+    - the field-table misclassification fixture now asserts aggregate temporal-rule count stays zero while field rows remain out of signal provenance and semantic-role recovery
     - a negative fixture proving low-value VLM timing-diagram annotation labels like `T0`, `Addr 1`, `Cycle 2`, `D0`, `A1`, `DATA0`, `0xAA`, `D[0]`, `A[1]`, `DATA[3]`, and `ADDR[7]` do not become timing constraints or temporal rules while the underlying timing extraction still remains visible at the evidence stage
     - the spurious VLM timing annotation fixture now also asserts total semantic hints remain zero, proving label/value noise cannot invent a semantic role through any evidence path
     - the spurious VLM timing annotation fixture now asserts table semantic hints remain zero, proving table evidence cannot invent roles for low-value label noise

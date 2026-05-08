@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for field-table temporal-rule count)
+
+### Improved: field-table negative fixture locks zero temporal rules
+- Tightened `table_misclassification_field_table_negative` with `temporal_rules = 0` at both `SemanticIR` and `IntentIR` validation surfaces.
+- The negative fixture now proves misclassified `Bits | Name | Description` field rows such as `REQ` and `ACK` do not create temporal rules while signal provenance and semantic-role hint surfaces stay empty.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench table_misclassification_field_table_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- Aggregate temporal-rule count coverage scan -> passed with no remaining fixtures that assert `temporal_rule_count` while missing `temporal_rules`
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for contested-handshake temporal-rule count)
 
 ### Improved: contested-handshake negative fixture locks aggregate temporal rules

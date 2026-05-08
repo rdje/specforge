@@ -114,14 +114,16 @@
         "metric_values": {
           "total_signal_records": "1",
           "with_semantic_consensus": "0",
-          "semantic_candidates": "0"
+          "semantic_candidates": "0",
+          "temporal_rules": "0"
         }
       },
       "intent": {
         "metric_values": {
           "declared_signal_records": "1",
           "with_semantic_consensus": "0",
-          "semantic_candidates": "0"
+          "semantic_candidates": "0",
+          "temporal_rules": "0"
         }
       }
     }
