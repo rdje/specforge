@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter topology-linked output guard)
+- Added `output_inventory_drive_check_skips_topology_linked_child_outputs` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks `validate_output_inventory_is_driven` so graph-backed ordinary outputs still require typed drives, but child endpoints recovered from `module_topology_link` evidence remain under composition validation instead of becoming local undriven-output blockers.
+- This hardens the boundary between child-module renderability and top-composition endpoint diagnostics.
+
 ## Session update (2026-05-08 adapter top-port width merger guard)
 - Added `top_port_width_evidence_merge_keeps_conflict_sticky` in `crates/specforge/src/ir/adapters.rs`.
 - The test locks the top-boundary width evidence merger so contradictory width hints clear the resolved width, record conflict guidance, and remain sticky even if later evidence repeats one side.

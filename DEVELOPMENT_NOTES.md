@@ -7,6 +7,20 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-08 adapter topology-linked output guard
+- New batch slice 76/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Added `output_inventory_drive_check_skips_topology_linked_child_outputs` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks `validate_output_inventory_is_driven` directly: graph-backed local outputs still produce missing-drive guidance, while graph-backed child outputs carrying `module_topology_link` evidence are skipped so composition validation remains the owner of top-link endpoint diagnostics.
+- This protects `.fsm` top-composition child-link recovery from being converted into stale child-local undriven-output blockers.
+- `cargo fmt --all` applied rustfmt layout.
+- `cargo test --manifest-path Cargo.toml -p specforge output_inventory_drive_check_skips_topology_linked_child_outputs` passed.
+- `cargo fmt --all --check` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `96/96` adapter-filtered tests.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- Broader `bash scripts/run_ci.sh` passed on slice 70 with formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, and mdBook.
+- Push remains deferred for the active `BWFSC=200` batch.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-08 adapter top-port width merger guard
 - New batch slice 75/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Added `top_port_width_evidence_merge_keeps_conflict_sticky` in `crates/specforge/src/ir/adapters.rs`.

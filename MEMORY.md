@@ -23,22 +23,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `a81ade3ebc16b53e39e24ca1c8c906cc3fe6f71c`
-- latest_commit_brief_message: `test(adapter): guard top-port direction conflicts`
-- note: this is the pre-slice-75 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
+- latest_commit_hash: `8abc9ce0c2e1890e4af189550695548807f701a9`
+- latest_commit_brief_message: `test(adapter): guard top-port width conflicts`
+- note: this is the pre-slice-76 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
 
 ## Recent commit chain (last 6)
+- `8abc9ce` test(adapter): guard top-port width conflicts
 - `a81ade3` test(adapter): guard top-port direction conflicts
 - `1961ab4` test(adapter): guard graph-first direction resolver
 - `a182a9a` test(kg): guard validation metric coverage
 - `d50eed7` test(kg): lock connectivity conflict metric
 - `2bd9c42` test(kg): lock interface conflict metric
-- `715acd0` test(kg): lock contested zero completion metric
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 75 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
+- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 76 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
 - files in flight:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
@@ -58,17 +58,17 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `74`
-  - slice 75/200 adds a direct `.fsm` top-boundary width merger regression guard that keeps width conflicts sticky after contradictory evidence
+  - completed_count before this commit: `75`
+  - slice 76/200 adds a direct `.fsm` renderability guard so topology-linked child outputs stay under composition diagnostics instead of stale local missing-drive blockers
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks top-boundary width evidence merger sticky-conflict regression coverage as `Done`
+  - live-status tracker now marks topology-linked child outputs skipping stale local undriven-output blockers as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 75 before commit
+  - implementation and live-doc sync are complete for slice 76 before commit
   - `cargo fmt --all` applied rustfmt layout
-  - `cargo test --manifest-path Cargo.toml -p specforge top_port_width_evidence_merge_keeps_conflict_sticky` passed
+  - `cargo test --manifest-path Cargo.toml -p specforge output_inventory_drive_check_skips_topology_linked_child_outputs` passed
   - `cargo fmt --all --check` passed
-  - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `95/95` adapter-filtered tests
+  - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `96/96` adapter-filtered tests
   - `bash scripts/run_docs_ci.sh` passed after the live-book sync
   - `bash scripts/run_ci.sh` passed on slice 70 as a broader checkpoint gate
   - `bash scripts/run_ci.sh` passed on slice 60 as a broader checkpoint gate
@@ -212,6 +212,9 @@
   - slice 75 passed `cargo test --manifest-path Cargo.toml -p specforge top_port_width_evidence_merge_keeps_conflict_sticky`
   - slice 75 passed `cargo test --manifest-path Cargo.toml -p specforge adapters`
   - slice 75 passed `bash scripts/run_docs_ci.sh`
+  - slice 76 passed `cargo test --manifest-path Cargo.toml -p specforge output_inventory_drive_check_skips_topology_linked_child_outputs`
+  - slice 76 passed `cargo test --manifest-path Cargo.toml -p specforge adapters`
+  - slice 76 passed `bash scripts/run_docs_ci.sh`
   - slice 20 passed `bash scripts/run_ci.sh`
   - slice 100 passed `bash scripts/run_ci.sh`
   - slice 90 passed `bash scripts/run_ci.sh`
@@ -232,5 +235,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 75 commit workflow, clear and verify `git_message_brief.txt`, then select the next roadmap-aligned graph-first downstream signal-model slice
+- finish the slice 76 commit workflow, clear and verify `git_message_brief.txt`, then select the next roadmap-aligned graph-first downstream signal-model slice
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle

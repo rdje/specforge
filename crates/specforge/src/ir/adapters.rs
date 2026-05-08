@@ -6441,6 +6441,55 @@ mod tests {
         assert_eq!(blocking_reasons.len(), blocking_reason_count_after_conflict);
     }
 
+    #[test]
+    fn output_inventory_drive_check_skips_topology_linked_child_outputs() {
+        let mut local_output = signal_candidate_with_direction_evidence(
+            None,
+            false,
+            Some(InterfaceSignalDirection::Output),
+            false,
+        );
+        local_output.signal_name = "LOCAL_OUT".to_string();
+
+        let mut topology_output = signal_candidate_with_direction_evidence(
+            None,
+            false,
+            Some(InterfaceSignalDirection::Output),
+            false,
+        );
+        topology_output.signal_name = "LINKED_OUT".to_string();
+        topology_output
+            .mention_categories
+            .push("module_topology_link".to_string());
+
+        let mut blocking_reasons = Vec::new();
+        let mut required_canonical_enrichments = std::collections::BTreeSet::new();
+
+        super::validate_output_inventory_is_driven(
+            &[local_output, topology_output],
+            &std::collections::BTreeSet::new(),
+            &mut blocking_reasons,
+            &mut required_canonical_enrichments,
+            "typed control action",
+            "recover graph-backed child endpoint drives before lowering `.fsm`",
+        );
+
+        assert!(
+            blocking_reasons
+                .iter()
+                .any(|reason| reason.contains("`LOCAL_OUT` is not driven"))
+        );
+        assert!(
+            !blocking_reasons
+                .iter()
+                .any(|reason| reason.contains("`LINKED_OUT` is not driven"))
+        );
+        assert!(
+            required_canonical_enrichments
+                .contains("recover graph-backed child endpoint drives before lowering `.fsm`")
+        );
+    }
+
     fn build_handshake_intent_ir(base: &Path) -> Result<IntentIr> {
         let source = base.join("handshake.md");
         let source_artifact_base = base.join("generated").join("source_ir");

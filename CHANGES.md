@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (adapter topology-linked output guard)
+
+### Improved: top-linked child outputs no longer regress into local undriven blockers
+- Added a direct regression for `validate_output_inventory_is_driven`.
+- The guard proves graph-backed local outputs still require a typed drive, while graph-backed child outputs whose evidence comes from `module_topology_link` are left to composition validation instead of producing stale local undriven-output blockers.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge output_inventory_drive_check_skips_topology_linked_child_outputs` -> passed
+- `cargo fmt --all --check` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`96/96` adapter-filtered tests)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter top-port width merger guard)
 
 ### Improved: top-boundary width conflicts are regression-locked as sticky
