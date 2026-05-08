@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 KG fixture for AXI width-only prose exclusion)
+- Tightened `axi_width_only_prose_direction_gold` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts evidence-stage `signal_semantic_hints_from_prose = 0` alongside aggregate and table-sourced semantic hints.
+- This starts AXI width-only source-split hardening by proving `AWVALID` / `AWREADY` request/accept hints stay table-sourced while prose actor relations recover direction.
+
 ## Session update (2026-05-08 KG fixture for source-column bogus actor VLM exclusion)
 - Tightened `source_column_bogus_actor_attribution_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts evidence-stage `signal_semantic_hints_from_vlm_timing_annotations = 0` alongside aggregate, table-sourced, prose, alias-grounded prose, and visual-caption semantic hints.

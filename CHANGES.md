@@ -1,5 +1,15 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for AXI width-only prose exclusion)
+
+### Improved: AXI width-only fixtures prove table-only hints
+- Tightened `axi_width_only_prose_direction_gold` with `signal_semantic_hints_from_prose = 0` at `EvidenceIR`.
+- The fixture now proves `AWVALID` / `AWREADY` semantic hints are table-sourced rather than prose-derived while width-only channel tables plus prose actor relations still recover typed handshake completion.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench axi_width_only_prose_direction_gold` -> passed (`1/1` fixture)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for source-column bogus actor VLM exclusion)
 
 ### Improved: source-column negative fixtures exclude VLM timing hints
