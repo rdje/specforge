@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter branch-predicate width-cast guard)
+- Added `branch_predicate_width_cast_blocks_after_graph_signal` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks non-selector branch-predicate width-cast validation so graph-backed predicate base signals still produce size entries, while the active `.fsm` suffix-lowering gate blocks width casts.
+- This keeps graph-first predicate recovery independent from unsupported width-cast lowering.
+
 ## Session update (2026-05-08 adapter selector width-cast guard)
 - Added `selector_width_cast_blocks_after_graph_signal` in `crates/specforge/src/ir/adapters.rs`.
 - The test locks selector-bearing width-cast validation so graph-backed selector base signals still produce size entries, while width-cast selector heads stay blocked by suffix and test-node encoding gates.

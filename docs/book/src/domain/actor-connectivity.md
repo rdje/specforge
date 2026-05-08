@@ -250,6 +250,7 @@ Guard predicates, comparison guards, true-FSM transition guards, selector-bearin
 Typed control expressions follow that read-side path as well: graph-backed signal references can be sized for rendering, while stale flat disagreement remains blocking instead of creating stale renderable metadata.
 Width-cast control-expression references still block under the active suffix-lowering boundary, but their graph-backed base signal is retained in renderable metadata for diagnostics.
 Selector width-casts follow the same rule and also remain blocked at the test-node selector-head encoding boundary.
+Non-selector branch-predicate width-casts retain the same base-signal metadata while staying behind the suffix-lowering gate.
 Unary and binary control expressions recurse through the same rule, so graph-backed operands are renderable and stale flat disagreement remains blocking.
 Symbol definitions are intentionally stricter in the active `.fsm` slice: graph-backed signal references inside scalar symbol values, unary or binary symbol values, enum member values, or unary or binary enum member values still block and do not create renderable signal metadata until symbol expression lowering is deliberately widened.
 

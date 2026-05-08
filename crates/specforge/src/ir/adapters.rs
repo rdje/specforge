@@ -8642,6 +8642,85 @@ mod tests {
     }
 
     #[test]
+    fn branch_predicate_width_cast_blocks_after_graph_signal() {
+        let mut graph_predicate = signal_candidate_with_direction_evidence(
+            None,
+            false,
+            Some(InterfaceSignalDirection::Input),
+            false,
+        );
+        graph_predicate.signal_name = "VALID".to_string();
+        graph_predicate.width_hint = Some(1);
+
+        let signals = [graph_predicate];
+        let signals_by_name = signals
+            .iter()
+            .map(|signal| (signal.signal_name.clone(), signal))
+            .collect::<std::collections::BTreeMap<_, _>>();
+        let state_names = ["busy".to_string()]
+            .into_iter()
+            .collect::<std::collections::BTreeSet<_>>();
+        let mut size_entries = std::collections::BTreeMap::new();
+        let mut driven_outputs = std::collections::BTreeSet::new();
+        let mut sequential_targets = std::collections::BTreeSet::new();
+        let mut blocking_reasons = Vec::new();
+        let mut required_canonical_enrichments = std::collections::BTreeSet::new();
+
+        let graph_block = ControlBlockRecord {
+            block_id: "predicate_width_cast_block".to_string(),
+            block_name: "predicate_width_cast_block".to_string(),
+            role: ControlBlockRole::StandaloneDecisionTree,
+            declaration_order: 0,
+            selector: None,
+            branches: vec![ControlBranchRecord {
+                branch_id: "predicate_width_cast_branch".to_string(),
+                declaration_order: 0,
+                predicate: Some(ControlExpressionRecord::Reference {
+                    reference: ControlReferenceRecord {
+                        base_name: "VALID".to_string(),
+                        kind_hint: ControlReferenceKind::Signal,
+                        suffixes: vec![ControlReferenceSuffix::WidthCast { width: 1 }],
+                        exposed_public_output: false,
+                    },
+                }),
+                actions: vec![ControlActionRecord::Transition {
+                    target_state: "busy".to_string(),
+                }],
+                supporting_statement_ids: Vec::new(),
+                automation_confidence: AutomationConfidence::High,
+            }],
+            referenced_signal_names: vec!["VALID".to_string()],
+            supporting_statement_ids: Vec::new(),
+            automation_confidence: AutomationConfidence::High,
+        };
+        super::validate_control_block_branches(
+            &graph_block,
+            true,
+            Some(&state_names),
+            &signals_by_name,
+            &mut size_entries,
+            &mut driven_outputs,
+            &mut sequential_targets,
+            &mut blocking_reasons,
+            &mut required_canonical_enrichments,
+        );
+        let graph_entry = size_entries
+            .get("VALID")
+            .expect("graph-backed width-cast predicate should still create a size entry");
+        assert_eq!(graph_entry.direction_hint, InterfaceSignalDirection::Input);
+        assert_eq!(graph_entry.width, 1);
+        assert!(blocking_reasons.iter().any(|reason| {
+            reason.contains(
+                "The active `.fsm` adapter slice does not yet lower width-cast signal references",
+            )
+        }));
+        assert!(
+            required_canonical_enrichments
+                .contains("add width-cast reference lowering from canonical control expressions")
+        );
+    }
+
+    #[test]
     fn comparison_guard_renderability_uses_graph_direction_without_stale_flat_override() {
         let mut graph_left = signal_candidate_with_direction_evidence(
             None,
