@@ -1,5 +1,15 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for waveform-motion VLM table exclusion)
+
+### Improved: waveform-motion VLM timing fixtures exclude table hints
+- Tightened `vlm_timing_waveform_motion_negative` with `signal_semantic_hints_from_tables = 0` at `EvidenceIR`.
+- The fixture now proves rejected waveform-motion states remain free of table-sourced semantic-role hints.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench vlm_timing_waveform_motion_negative` -> passed (`1/1` fixture)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for spurious VLM visual exclusion)
 
 ### Improved: spurious VLM timing fixtures exclude visual-caption hints
