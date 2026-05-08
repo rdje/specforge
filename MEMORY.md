@@ -23,22 +23,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `4b3132ea21acfafab9ad55c5cd55ced53eef5689`
-- latest_commit_brief_message: `test(adapter): keep source-role inventory confidence`
-- note: this is the pre-slice-153 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
+- latest_commit_hash: `4491c264aef7890aceab4c75b91579cdc5de9d6d`
+- latest_commit_brief_message: `test(adapter): keep target-role inventory confidence`
+- note: this is the pre-slice-154 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
 
 ## Recent commit chain (last 6)
+- `4491c26` test(adapter): keep target-role inventory confidence
 - `4b3132e` test(adapter): keep source-role inventory confidence
 - `204fc45` test(adapter): keep unemitted target inventory confidence
 - `8faa549` test(adapter): keep unemitted source inventory confidence
 - `be42c24` test(adapter): keep undeclared source inventory confidence
 - `ca0506b` test(adapter): keep undeclared target inventory confidence
-- `c1b936b` test(adapter): keep top-without-child inventory confidence
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 153 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
+- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 154 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
 - files in flight:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
@@ -58,15 +58,15 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `152`
-  - slice 153/200 extends the target-side child direction-role blocker to prove the retained declared `drive_data` top port stays in selected signal inventory with high automation confidence while emission stays blocked
+  - completed_count before this commit: `153`
+  - slice 154/200 extends the child topology width-conflict blocker to prove the retained declared `result_data` top port stays in selected signal inventory with high automation confidence while emission stays blocked
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks target-side child direction-role selected-inventory confidence coverage as `Done`
+  - live-status tracker now marks child topology width selected-inventory confidence coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 153 before commit
+  - implementation and live-doc sync are complete for slice 154 before commit
   - `cargo fmt --all` applied rustfmt layout
-  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_child_target_direction_role_guidance` passed
+  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_child_topology_widths` passed
   - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests
   - `cargo fmt --all --check` passed after live-doc sync
   - `bash scripts/run_docs_ci.sh` passed after live-book sync
@@ -98,6 +98,9 @@
   - broader `bash scripts/run_ci.sh` passed on slice 30 with formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, and mdBook
   - user-requested `cargo sweep --time 1` is deferred until no target-tree process is active because `target/release/tool_matrix` is active
 - current known local CI baseline:
+  - slice 154 focused adapter test passed
+  - slice 154 adapter suite passed with `142/142` adapter-filtered tests
+  - slice 154 docs CI passed after live-book sync
   - slice 153 focused adapter test passed
   - slice 153 adapter suite passed with `142/142` adapter-filtered tests
   - slice 153 docs CI passed after live-book sync

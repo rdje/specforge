@@ -252,6 +252,7 @@ They also keep the declared top port in selected top inventory with support IDs 
 Child actor-port direction conflicts keep retained top-port, child, and child-to-child link confidence visible while graph-role evidence is repaired.
 Child topology direction conflicts keep retained top-port, child, and conflicting-link confidence visible while topology evidence is repaired.
 Child topology width conflicts keep the same retained confidence visible while width evidence is repaired.
+They also keep the declared top port in selected top inventory with support IDs and high confidence while child topology width evidence is repaired.
 Top child-link width conflicts keep retained top-port, child, and conflicting-link confidence visible while top-boundary width evidence is repaired.
 Sibling child-link width conflicts keep retained top-port, child, and conflicting-link confidence visible while child input width evidence is repaired.
 Top-link direction conflicts keep retained top-port, child, and link confidence visible while boundary direction evidence is repaired.
