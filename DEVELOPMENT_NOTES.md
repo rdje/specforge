@@ -7,6 +7,20 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-08 adapter registered dual-output assignment graph direction guard
+- New batch slice 100/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Added `registered_dual_output_assignment_renderability_uses_graph_output_without_stale_flat_override` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks the registered sequential dual-output assignment branch of `validate_control_action_renderability`: graph-backed output targets create renderable size entries and stale flat-vs-graph disagreement on the target blocks without creating stale target metadata.
+- This complements the next-signal dual-output assignment guard so both `.fsm` dual-output assignment spellings use the same graph-first target role rule.
+- `cargo fmt --all` applied rustfmt layout.
+- `cargo test --manifest-path Cargo.toml -p specforge registered_dual_output_assignment_renderability_uses_graph_output_without_stale_flat_override` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `120/120` adapter-filtered tests.
+- `cargo fmt --all --check` passed.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- Broader `bash scripts/run_ci.sh` passed on slice 100 with formatting, Clippy warning-deny, Rust tests, rustdoc warning-deny, and mdBook.
+- Push remains deferred for the active `BWFSC=200` batch.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-08 adapter dual-output assignment graph direction guard
 - New batch slice 99/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Added `dual_output_assignment_renderability_uses_graph_output_without_stale_flat_override` in `crates/specforge/src/ir/adapters.rs`.

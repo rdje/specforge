@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter registered dual-output assignment graph direction guard)
+- Added `registered_dual_output_assignment_renderability_uses_graph_output_without_stale_flat_override` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks registered sequential dual-output assignment targets so graph-backed output targets create size entries, while stale flat-vs-graph target disagreement leaves no stale entry.
+- This covers the registered-signal dual-output branch separately from next-signal dual-output assignment targets.
+
 ## Session update (2026-05-08 adapter dual-output assignment graph direction guard)
 - Added `dual_output_assignment_renderability_uses_graph_output_without_stale_flat_override` in `crates/specforge/src/ir/adapters.rs`.
 - The test locks sequential dual-output assignment targets so graph-backed output targets create size entries, while stale flat-vs-graph target disagreement leaves no stale entry.

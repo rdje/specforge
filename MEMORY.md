@@ -23,22 +23,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `92b18e5c2645644b6ed533af305925df77855e2f`
-- latest_commit_brief_message: `test(adapter): keep binary enum symbols signal-free`
-- note: this is the pre-slice-99 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
+- latest_commit_hash: `f4a1409d8808e269bfd6a1532d2d8286e0d1f95d`
+- latest_commit_brief_message: `test(adapter): guard graph-backed dual outputs`
+- note: this is the pre-slice-100 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
 
 ## Recent commit chain (last 6)
+- `f4a1409` test(adapter): guard graph-backed dual outputs
 - `92b18e5` test(adapter): keep binary enum symbols signal-free
 - `62ff66d` test(adapter): keep unary enum symbols signal-free
 - `a1cbae5` test(adapter): keep binary symbols signal-free
 - `9c54392` test(adapter): keep unary symbols signal-free
 - `b6a8a21` test(adapter): guard graph-backed compound amounts
-- `68f0a8b` test(adapter): guard graph-backed assignment values
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 99 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
+- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 100 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
 - files in flight:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
@@ -58,18 +58,19 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `98`
-  - slice 99/200 adds a direct `.fsm` sequential dual-output assignment renderability guard for graph-backed output targets and stale-flat disagreement blocking
+  - completed_count before this commit: `99`
+  - slice 100/200 adds a direct `.fsm` registered sequential dual-output assignment renderability guard for graph-backed output targets and stale-flat disagreement blocking
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks dual-output assignment renderability graph-backed output stale-flat regression coverage as `Done`
+  - live-status tracker now marks registered dual-output assignment renderability graph-backed output stale-flat regression coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 99 before commit
+  - implementation and live-doc sync are complete for slice 100 before commit
   - `cargo fmt --all` applied rustfmt layout
-  - `cargo test --manifest-path Cargo.toml -p specforge dual_output_assignment_renderability_uses_graph_output_without_stale_flat_override` passed
-  - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `119/119` adapter-filtered tests
+  - `cargo test --manifest-path Cargo.toml -p specforge registered_dual_output_assignment_renderability_uses_graph_output_without_stale_flat_override` passed
+  - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `120/120` adapter-filtered tests
   - `cargo fmt --all --check` passed
   - `bash scripts/run_docs_ci.sh` passed after the final live-book sync
+  - `bash scripts/run_ci.sh` passed as the slice 100 broader checkpoint gate with formatting, Clippy warning-deny, `643` Rust tests, rustdoc warning-deny, and mdBook
   - `bash scripts/run_ci.sh` passed on slice 90 as a broader checkpoint gate with formatting, Clippy warning-deny, `633` Rust tests, rustdoc warning-deny, and mdBook
   - `bash scripts/run_ci.sh` passed on slice 80 as a broader checkpoint gate with formatting, Clippy warning-deny, `623` Rust tests, rustdoc warning-deny, and mdBook
   - `bash scripts/run_ci.sh` passed on slice 60 as a broader checkpoint gate
@@ -287,6 +288,9 @@
   - slice 99 passed `cargo test --manifest-path Cargo.toml -p specforge dual_output_assignment_renderability_uses_graph_output_without_stale_flat_override`
   - slice 99 passed `cargo test --manifest-path Cargo.toml -p specforge adapters`
   - slice 99 passed `bash scripts/run_docs_ci.sh`
+  - slice 100 passed `cargo test --manifest-path Cargo.toml -p specforge registered_dual_output_assignment_renderability_uses_graph_output_without_stale_flat_override`
+  - slice 100 passed `cargo test --manifest-path Cargo.toml -p specforge adapters`
+  - slice 100 passed `bash scripts/run_docs_ci.sh`
   - slice 20 passed `bash scripts/run_ci.sh`
   - slice 100 passed `bash scripts/run_ci.sh`
   - slice 90 passed `bash scripts/run_ci.sh`
