@@ -20040,12 +20040,27 @@ mod tests {
     fn top_composition_blocks_conflicting_child_link_topology_directions() -> Result<()> {
         let tempdir = tempdir()?;
         let mut intent_ir = build_conflicting_child_link_topology_intent_ir(tempdir.path())?;
-        let (topology_support_id_sets, output_data_support_ids) = {
+        let (
+            top_port_support_ids,
+            child_support_ids,
+            topology_support_id_sets,
+            output_data_support_ids,
+        ) = {
             let explicit_top = intent_ir
                 .explicit_tops
                 .iter()
                 .find(|top| top.top_name == "datapath")
                 .expect("explicit top should be present");
+            let drive_port = explicit_top
+                .ports
+                .iter()
+                .find(|port| port.port_name == "drive_data")
+                .expect("drive_data top port should be present");
+            let producer_child = explicit_top
+                .children
+                .iter()
+                .find(|child| child.instance_name == "producer")
+                .expect("producer child declaration should be present");
             let topology_support_id_sets = explicit_top
                 .links
                 .iter()
@@ -20078,13 +20093,17 @@ mod tests {
                 })
                 .expect("producer output_data signal declaration should be present");
             (
+                drive_port.supporting_statement_ids.clone(),
+                producer_child.supporting_statement_ids.clone(),
                 topology_support_id_sets,
                 output_data.supporting_statement_ids.clone(),
             )
         };
         assert!(
-            !output_data_support_ids.is_empty(),
-            "child output signal provenance should be present"
+            !top_port_support_ids.is_empty()
+                && !child_support_ids.is_empty()
+                && !output_data_support_ids.is_empty(),
+            "top port, child, and child output signal provenance should be present"
         );
         clear_explicit_module_direction_hints(&mut intent_ir);
         intent_ir.write_to_disk()?;
@@ -20152,6 +20171,66 @@ mod tests {
                 .any(|enrichment| enrichment
                     == "resolve conflicting actor-relative graph direction evidence before lowering `.fsm`")
         );
+        let top_candidate = fsm
+            .top_candidates
+            .iter()
+            .find(|top| top.top_name == "datapath")
+            .expect("top candidate should remain visible");
+        let drive_port = top_candidate
+            .ports
+            .iter()
+            .find(|port| port.port_name == "drive_data")
+            .expect("drive top port should remain visible");
+        assert_eq!(
+            drive_port.direction_hint,
+            Some(InterfaceSignalDirection::Input)
+        );
+        assert_eq!(drive_port.width_hint, Some(WidthHint::Numeric(8)));
+        assert!(
+            top_port_support_ids
+                .iter()
+                .any(|id| drive_port.supporting_statement_ids.contains(id))
+        );
+        assert_eq!(drive_port.automation_confidence, AutomationConfidence::High);
+        let producer_child = top_candidate
+            .children
+            .iter()
+            .find(|child| child.instance_name == "producer")
+            .expect("producer child candidate should remain visible");
+        assert_eq!(producer_child.source_module_name, "producer_core");
+        assert_eq!(producer_child.resolved_root_kind, None);
+        assert!(
+            child_support_ids
+                .iter()
+                .any(|id| producer_child.supporting_canonical_ids.contains(id))
+        );
+        assert_eq!(
+            producer_child.automation_confidence,
+            AutomationConfidence::High
+        );
+        let conflicting_links = top_candidate
+            .links
+            .iter()
+            .filter(|link| {
+                (link.source.instance_name.as_deref() == Some("producer")
+                    && link.source.signal_name == "output_data")
+                    || (link.target.instance_name.as_deref() == Some("producer")
+                        && link.target.signal_name == "output_data")
+            })
+            .collect::<Vec<_>>();
+        assert_eq!(conflicting_links.len(), 2);
+        assert!(
+            conflicting_links
+                .iter()
+                .all(|link| link.automation_confidence == AutomationConfidence::High)
+        );
+        for support_ids in &topology_support_id_sets {
+            assert!(conflicting_links.iter().any(|link| {
+                support_ids
+                    .iter()
+                    .any(|id| super::explicit_top_link_supporting_ids(link).contains(id))
+            }));
+        }
         assert!(!fsm.renderability.is_renderable);
         assert!(fsm.renderable_document.is_none());
         assert!(
