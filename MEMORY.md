@@ -23,22 +23,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `80fd4285d361cd8ee47ff5f57f8b25f10ace9198`
-- latest_commit_brief_message: `test(kg): lock AXI data USER alias exclusion`
-- note: this is the pre-slice-34 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
+- latest_commit_hash: `f3dbe7728c5e9e32471ee7099154f573807508c9`
+- latest_commit_brief_message: `test(kg): lock AXI data USER visual exclusion`
+- note: this is the pre-slice-35 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
 
 ## Recent commit chain (last 6)
+- `f3dbe77` test(kg): lock AXI data USER visual exclusion
 - `80fd428` test(kg): lock AXI data USER alias exclusion
 - `f39c9f3` test(kg): lock AXI data USER prose exclusion
 - `d4efcd4` test(kg): lock AXI read-data response VLM exclusion
 - `f4ed5ac` test(kg): lock AXI read-data response visual exclusion
 - `4b34497` test(kg): lock AXI read-data response alias exclusion
-- `8883c38` test(kg): lock AXI read-data response prose exclusion
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 34 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
+- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 35 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
 - files in flight:
   - `crates/specforge/test_data/kg_quality/axi_data_user_sideband_stability_gold/fixture.json`
   - live docs and mdBook files synced for the slice
@@ -53,16 +53,16 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `33`
-  - slice 34/200 tightens AXI data USER sideband visual-caption semantic-hint exclusion metrics for positive table-backed source-split hardening
+  - completed_count before this commit: `34`
+  - slice 35/200 tightens AXI data USER sideband VLM timing-annotation semantic-hint exclusion metrics for positive table-backed source-split hardening
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks AXI data USER sideband visual-caption semantic-hint exclusion KG coverage as `Done`
+  - live-status tracker now marks AXI data USER sideband VLM timing-annotation semantic-hint exclusion KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 34 before commit
+  - implementation and live-doc sync are complete for slice 35 before commit
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench axi_data_user_sideband_stability_gold` passed with the requested fixture
-  - broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed on slice 34 with `150/150` fixtures
-  - broader `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed on slice 34 with `150` fixtures projected, `0` failures, and no tracked projection diff
+  - broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed on slice 35 with `150/150` fixtures
+  - broader `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed on slice 35 with `150` fixtures projected, `0` failures, and no tracked projection diff
   - `bash scripts/run_ci.sh` passed on slice 30 as a broader checkpoint gate
   - `bash scripts/run_ci.sh` passed on slice 20 as a broader checkpoint gate
   - `bash scripts/run_ci.sh` passed after the slice 100 live-doc and live-book sync
@@ -112,6 +112,8 @@
   - slice 33 passed corpus-KB projection for `150` fixtures with `0` failures and no tracked projection diff
   - slice 34 passed `150/150` tracked KG fixtures
   - slice 34 passed corpus-KB projection for `150` fixtures with `0` failures and no tracked projection diff
+  - slice 35 passed `150/150` tracked KG fixtures
+  - slice 35 passed corpus-KB projection for `150` fixtures with `0` failures and no tracked projection diff
   - slice 20 passed `bash scripts/run_ci.sh`
   - slice 100 passed `bash scripts/run_ci.sh`
   - slice 90 passed `bash scripts/run_ci.sh`
@@ -132,5 +134,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 34 commit workflow, clear and verify `git_message_brief.txt`, then continue AXI data USER sideband source-split hardening
+- finish the slice 35 commit workflow, clear and verify `git_message_brief.txt`, then select the next roadmap-aligned source-split hardening fixture
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle
