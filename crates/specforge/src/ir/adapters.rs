@@ -6252,11 +6252,11 @@ mod tests {
     use crate::ir::intent::IntentIr;
     use crate::ir::semantic::{
         ActorPortRecord, ActorRelativeDirection, ControlActionRecord,
-        ControlAssignmentTargetRecord, ControlBlockRole, ControlExpressionRecord,
-        ControlReferenceKind, ControlReferenceRecord, DecisionTreeAssignmentKind,
-        DecisionTreeGuardRecord, DecisionTreeValueRecord, InitAssignmentRecord,
-        InterfaceSignalDirection, SemanticIr, SystemResetPolarity, SystemResetTargetKind,
-        SystemResetTimingRelation,
+        ControlAssignmentTargetRecord, ControlBlockRole, ControlCompoundUpdateOperation,
+        ControlExpressionRecord, ControlReferenceKind, ControlReferenceRecord,
+        DecisionTreeAssignmentKind, DecisionTreeGuardRecord, DecisionTreeValueRecord,
+        InitAssignmentRecord, InterfaceSignalDirection, SemanticIr, SystemResetPolarity,
+        SystemResetTargetKind, SystemResetTimingRelation,
     };
     use crate::ir::source::{AutomationConfidence, SourceIr, WidthHint};
 
@@ -7039,6 +7039,104 @@ mod tests {
         assert!(required_canonical_enrichments.contains(
             "resolve conflicting canonical and actor-relative graph direction evidence before lowering `.fsm`"
         ));
+    }
+
+    #[test]
+    fn compound_update_renderability_uses_graph_output_without_stale_flat_override() {
+        let mut graph_output = signal_candidate_with_direction_evidence(
+            None,
+            false,
+            Some(InterfaceSignalDirection::Output),
+            false,
+        );
+        graph_output.signal_name = "COUNT".to_string();
+        graph_output.width_hint = Some(8);
+
+        let mut stale_output = signal_candidate_with_direction_evidence(
+            Some(InterfaceSignalDirection::Input),
+            false,
+            Some(InterfaceSignalDirection::Output),
+            false,
+        );
+        stale_output.signal_name = "STALE_COUNT".to_string();
+        stale_output.width_hint = Some(8);
+
+        let signals = [graph_output, stale_output];
+        let signals_by_name = signals
+            .iter()
+            .map(|signal| (signal.signal_name.clone(), signal))
+            .collect::<std::collections::BTreeMap<_, _>>();
+        let mut size_entries = std::collections::BTreeMap::new();
+        let mut driven_outputs = std::collections::BTreeSet::new();
+        let mut sequential_targets = std::collections::BTreeSet::new();
+        let mut blocking_reasons = Vec::new();
+        let mut required_canonical_enrichments = std::collections::BTreeSet::new();
+
+        let graph_action = ControlActionRecord::CompoundUpdate {
+            target: ControlAssignmentTargetRecord {
+                signal_name: "COUNT".to_string(),
+                exposed_public_output: false,
+            },
+            operation: ControlCompoundUpdateOperation::Increment,
+            amount: None,
+        };
+        super::validate_control_action_renderability(
+            &graph_action,
+            false,
+            None,
+            &signals_by_name,
+            &mut size_entries,
+            &mut driven_outputs,
+            &mut sequential_targets,
+            &mut blocking_reasons,
+            &mut required_canonical_enrichments,
+        );
+        let graph_entry = size_entries
+            .get("COUNT")
+            .expect("graph-backed compound-update target should create a size entry");
+        assert_eq!(graph_entry.direction_hint, InterfaceSignalDirection::Output);
+        assert_eq!(graph_entry.width, 8);
+        assert!(driven_outputs.contains("COUNT"));
+        assert!(sequential_targets.contains("COUNT"));
+        assert!(blocking_reasons.is_empty());
+
+        let stale_action = ControlActionRecord::CompoundUpdate {
+            target: ControlAssignmentTargetRecord {
+                signal_name: "STALE_COUNT".to_string(),
+                exposed_public_output: false,
+            },
+            operation: ControlCompoundUpdateOperation::Increment,
+            amount: None,
+        };
+        super::validate_control_action_renderability(
+            &stale_action,
+            false,
+            None,
+            &signals_by_name,
+            &mut size_entries,
+            &mut driven_outputs,
+            &mut sequential_targets,
+            &mut blocking_reasons,
+            &mut required_canonical_enrichments,
+        );
+        assert!(!size_entries.contains_key("STALE_COUNT"));
+        assert!(!driven_outputs.contains("STALE_COUNT"));
+        assert!(blocking_reasons.iter().any(|reason| {
+            reason.contains(
+                "Signal `STALE_COUNT` has conflicting canonical and graph-backed direction evidence",
+            )
+        }));
+        assert!(blocking_reasons.iter().any(|reason| {
+            reason.contains("Compound-update target `STALE_COUNT` is not declared")
+        }));
+        assert!(required_canonical_enrichments.contains(
+            "resolve conflicting canonical and actor-relative graph direction evidence before lowering `.fsm`"
+        ));
+        assert!(
+            required_canonical_enrichments.contains(
+                "keep canonical compound-update targets aligned with explicit output roles"
+            )
+        );
     }
 
     fn build_handshake_intent_ir(base: &Path) -> Result<IntentIr> {

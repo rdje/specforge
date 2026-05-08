@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter compound-update graph output guard)
+- Added `compound_update_renderability_uses_graph_output_without_stale_flat_override` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks compound-update renderability so graph-backed output targets create size entries, count as driven outputs, and remain sequential targets, while stale flat-vs-graph disagreement leaves no stale entry.
+- This covers the compound-update output consumer in `validate_control_action_renderability` under the same graph-first/conflict-sticky contract as assignment and delayed-pulse actions.
+
 ## Session update (2026-05-08 adapter delayed-pulse graph output guard)
 - Added `delayed_pulse_renderability_uses_graph_output_without_stale_flat_override` in `crates/specforge/src/ir/adapters.rs`.
 - The test locks delayed-pulse renderability so graph-backed output targets create size entries, count as driven outputs, and remain sequential targets, while stale flat-vs-graph disagreement leaves no stale entry.

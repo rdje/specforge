@@ -7,6 +7,20 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-08 adapter compound-update graph output guard
+- New batch slice 84/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Added `compound_update_renderability_uses_graph_output_without_stale_flat_override` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks `validate_control_action_renderability` for compound-update actions directly: graph-backed output targets create renderable size entries, enter `driven_outputs`, and are recorded as sequential targets, while stale flat input evidence that disagrees with graph-backed output evidence emits conflict guidance, fails the target role check, and leaves no stale size entry.
+- This protects compound-update lowering through the same graph-first output-role contract as assignment and delayed-pulse actions.
+- `cargo fmt --all` applied rustfmt layout.
+- `cargo test --manifest-path Cargo.toml -p specforge compound_update_renderability_uses_graph_output_without_stale_flat_override` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `104/104` adapter-filtered tests.
+- `cargo fmt --all --check` passed.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- Broader `bash scripts/run_ci.sh` passed on slice 80 with formatting, Clippy warning-deny, `623` Rust tests, rustdoc warning-deny, and mdBook; slice 84 is a focused test-only follow-up.
+- Push remains deferred for the active `BWFSC=200` batch.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-08 adapter delayed-pulse graph output guard
 - New batch slice 83/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Added `delayed_pulse_renderability_uses_graph_output_without_stale_flat_override` in `crates/specforge/src/ir/adapters.rs`.

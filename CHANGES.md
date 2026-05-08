@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (adapter compound-update graph output guard)
+
+### Improved: compound-update renderability has direct graph-first coverage
+- Added a direct regression for `.fsm` compound-update target renderability.
+- The guard proves graph-backed compound-update output targets create renderable size entries and are counted as driven sequential outputs, while flat-vs-graph disagreement blocks and leaves no stale size entry.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge compound_update_renderability_uses_graph_output_without_stale_flat_override` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`104/104` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter delayed-pulse graph output guard)
 
 ### Improved: delayed-pulse renderability has direct graph-first coverage
