@@ -7,6 +7,19 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-09 adapter standalone DT baseline inventory confidence guard
+- New batch slice 163/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Extended `builds_renderable_standalone_dt_fsm_adapter_artifact` in `crates/specforge/src/ir/adapters.rs`.
+- The renderable standalone direct-DT baseline now locks canonical support IDs and high automation confidence for retained `DATA_IN`, `DATA_OUT`, and `ZERO_FLAG` signal-inventory records.
+- This keeps emitted baseline DT artifacts tied to explainable inventory provenance instead of only checking that the signals exist and render.
+- `cargo fmt --all` applied rustfmt layout.
+- `cargo test --manifest-path Cargo.toml -p specforge builds_renderable_standalone_dt_fsm_adapter_artifact` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests.
+- `cargo fmt --all --check` passed.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- Push remains deferred for the active `BWFSC=200` batch.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-09 adapter ambiguous actor-context inventory confidence guard
 - New batch slice 162/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Extended `standalone_dt_ignores_ambiguous_actor_port_context` in `crates/specforge/src/ir/adapters.rs`.

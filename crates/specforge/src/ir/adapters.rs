@@ -10966,11 +10966,18 @@ mod tests {
                 .any(|candidate| candidate.candidate_id == "dt_primary_intent_cone")
         );
         for signal_name in ["DATA_IN", "DATA_OUT", "ZERO_FLAG"] {
+            let signal = fsm
+                .signal_inventory
+                .iter()
+                .find(|signal| signal.signal_name == signal_name)
+                .unwrap_or_else(|| {
+                    panic!("{signal_name} should stay in baseline signal inventory")
+                });
             assert!(
-                fsm.signal_inventory
-                    .iter()
-                    .any(|signal| signal.signal_name == signal_name)
+                !signal.supporting_canonical_ids.is_empty(),
+                "{signal_name} should retain canonical support ids"
             );
+            assert_eq!(signal.automation_confidence, AutomationConfidence::High);
         }
         assert!(fsm.signal_inventory.iter().any(|signal| {
             signal.signal_name == "DATA_IN"
