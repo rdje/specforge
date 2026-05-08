@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 KG fixture for APB write-control VLM exclusion)
+- Tightened `apb_write_control_stability_gold` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts evidence-stage `signal_semantic_hints_from_vlm_timing_annotations = 0` alongside total, table-sourced, prose, alias-grounded prose, and visual-caption semantic hints.
+- This locks APB write-control request/accept semantic hints as table-only rather than VLM timing-annotation recovered while preserving requester-owned stability for `PWRITE`, `PWDATA`, and `PSTRB`.
+
 ## Session update (2026-05-08 KG fixture for APB write-control visual exclusion)
 - Tightened `apb_write_control_stability_gold` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts evidence-stage `signal_semantic_hints_from_visual_captions = 0` alongside total, table-sourced, prose, and alias-grounded prose semantic hints.
