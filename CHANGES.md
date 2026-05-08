@@ -1,5 +1,15 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for AXI read-data timing visual exclusion)
+
+### Improved: AXI read-data timing fixtures exclude visual-caption hints
+- Tightened `axi_read_data_timing_gold` with `signal_semantic_hints_from_visual_captions = 0` at `EvidenceIR`.
+- The fixture now proves `RVALID` / `RREADY` semantic hints are not recovered through visual-caption evidence.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench axi_read_data_timing_gold` -> passed (`1/1` fixture)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for AXI read-data timing alias exclusion)
 
 ### Improved: AXI read-data timing fixtures exclude alias-grounded prose

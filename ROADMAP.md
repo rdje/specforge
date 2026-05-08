@@ -832,6 +832,7 @@
     - a representative AXI read-data timing gold fixture proving the same width-only plus prose actor-relation path works for `RVALID` / `RREADY` / `RDATA` / `RRESP`, including next-cycle read-data valid assertion and handshake-stable read-data payload semantics
     - the AXI read-data timing fixture now asserts prose semantic hints stay zero while request/accept role hints remain table-sourced
     - the AXI read-data timing fixture now asserts alias-grounded prose semantic hints stay zero while request/accept role hints remain table-sourced
+    - the AXI read-data timing fixture now asserts visual-caption semantic hints stay zero while request/accept role hints remain table-sourced
     - a representative AXI read-data ID stability fixture proving subordinate-owned `RID` remains graph-grounded and actor-owned when its stability is guarded by `RVALID` / `RREADY` completion
     - the AXI read-data ID stability fixture now asserts prose semantic hints stay zero while `RID` recovers through table-sourced semantic hints
     - the AXI read-data ID stability fixture now asserts alias-grounded prose semantic hints stay zero while `RID` remains table-sourced
