@@ -243,6 +243,7 @@ Target-side unemitted child endpoint blockers keep the same retained confidence 
 The legacy source-side unemitted child-port blocker now exercises the same retained top-port, child, and link confidence contract.
 Source-side child direction-role blockers keep retained top-port, child, and link confidence visible while role evidence is repaired.
 Target-side child direction-role blockers keep the same retained confidence visible while target role evidence is repaired.
+Child actor-port direction conflicts keep retained top-port, child, and child-to-child link confidence visible while graph-role evidence is repaired.
 For child outputs recovered only from top-link topology, local module renderability does not report a stale missing-drive blocker; composition validation owns the endpoint diagnostic because the top link may be the only reason that child port is visible.
 When a signal does reach renderable size-entry registration, graph-only direction evidence can emit the port role, but flat-vs-graph disagreement leaves no stale size entry behind.
 The same graph-first rule applies to system-contract clock/reset validation for `.fsm` `(+system ...)` lowering: graph-only input evidence can satisfy the role, while stale flat disagreement blocks.

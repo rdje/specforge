@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter child actor-port conflict confidence guard)
+- Extended `top_composition_blocks_conflicting_actor_port_directions` in `crates/specforge/src/ir/adapters.rs`.
+- The child actor-port direction conflict blocker now locks high automation confidence on the declared top port, affected child, and blocked child-to-child top link alongside the conflicting child signal.
+- This keeps retained topology records diagnostic-rich while child renderability blocks top composition emission.
+
 ## Session update (2026-05-08 adapter target role confidence guard)
 - Extended `top_composition_blocks_child_target_direction_role_guidance` in `crates/specforge/src/ir/adapters.rs`.
 - The target-side child direction-role blocker now locks high automation confidence on the declared top port, consumer child, and blocked top link.

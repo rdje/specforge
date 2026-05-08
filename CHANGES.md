@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (adapter child actor-port conflict confidence guard)
+
+### Improved: child actor-port direction conflicts preserve retained record confidence
+- Extended the child actor-port direction conflict regression to assert the declared top port, affected child, and blocked child-to-child top link keep high automation confidence.
+- The guard keeps actor-port conflict diagnostics tied to retained topology records while child renderability blocks top composition emission.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_actor_port_directions` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter target role confidence guard)
 
 ### Improved: target-side child role blockers preserve retained record confidence
