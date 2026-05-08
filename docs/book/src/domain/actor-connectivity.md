@@ -236,6 +236,7 @@ The same sticky-conflict rule applies to top-boundary widths recovered from expl
 Width-incompatible top links stay blocked, but the selected top inventory still preserves each explicit endpoint's direction, width, provenance, support IDs, and confidence.
 Duplicate child-instance blockers keep each child declaration's source module, resolved root kind, support IDs, and automation confidence visible.
 Missing-link multi-child blockers keep the same child declaration confidence visible while composition waits for explicit links.
+Undeclared top-link target blockers keep retained top-port, child, and link confidence visible while composition waits for the missing endpoint declaration.
 For child outputs recovered only from top-link topology, local module renderability does not report a stale missing-drive blocker; composition validation owns the endpoint diagnostic because the top link may be the only reason that child port is visible.
 When a signal does reach renderable size-entry registration, graph-only direction evidence can emit the port role, but flat-vs-graph disagreement leaves no stale size entry behind.
 The same graph-first rule applies to system-contract clock/reset validation for `.fsm` `(+system ...)` lowering: graph-only input evidence can satisfy the role, while stale flat disagreement blocks.
