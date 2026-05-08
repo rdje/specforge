@@ -1,5 +1,16 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for AXI write-response prose exclusion)
+
+### Improved: AXI write-response timing fixtures prove table-only hints
+- Tightened `axi_write_response_timing_gold` with `signal_semantic_hints_from_prose = 0` at `EvidenceIR`.
+- The fixture now proves `BVALID` / `BREADY` semantic hints are table-sourced rather than prose-derived while write-response timing and handshake-stable `BRESP` obligations remain recovered.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench axi_write_response_timing_gold` -> passed (`1/1` fixture)
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for AXI width-only VLM exclusion)
 
 ### Improved: AXI width-only fixtures exclude VLM timing hints

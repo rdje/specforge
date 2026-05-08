@@ -7,6 +7,17 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-08 KG fixture for AXI write-response prose exclusion
+- New batch slice 20/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Tightened `crates/specforge/test_data/kg_quality/axi_write_response_timing_gold/fixture.json`.
+- The fixture now asserts `signal_semantic_hints_from_prose = 0` alongside aggregate semantic hints, table-sourced semantic hints, actor-signal relations, signal constraints, and existing semantic/intent temporal-rule metrics.
+- This starts AXI write-response timing source-split hardening by proving `BVALID` / `BREADY` request/accept semantic hints are table-sourced rather than prose-derived while next-cycle `BVALID` and handshake-stable `BRESP` obligations stay recovered.
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench axi_write_response_timing_gold` passed with the requested fixture.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- `bash scripts/run_ci.sh` passed as the slice 20 broader checkpoint gate.
+- Push remains deferred for the active `BWFSC=200` batch.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-08 KG fixture for AXI width-only VLM exclusion
 - New batch slice 19/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Tightened `crates/specforge/test_data/kg_quality/axi_width_only_prose_direction_gold/fixture.json`.

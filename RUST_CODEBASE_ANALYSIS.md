@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 KG fixture for AXI write-response prose exclusion)
+- Tightened `axi_write_response_timing_gold` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts evidence-stage `signal_semantic_hints_from_prose = 0` alongside aggregate and table-sourced semantic hints.
+- This starts AXI write-response timing source-split hardening by proving `BVALID` / `BREADY` request/accept hints stay table-sourced while temporal response obligations remain recovered.
+
 ## Session update (2026-05-08 KG fixture for AXI width-only VLM exclusion)
 - Tightened `axi_width_only_prose_direction_gold` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts evidence-stage `signal_semantic_hints_from_vlm_timing_annotations = 0` alongside aggregate, table-sourced, prose, alias-grounded prose, and visual-caption semantic hints.
