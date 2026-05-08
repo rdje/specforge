@@ -19898,12 +19898,27 @@ mod tests {
             "conflicting_child_topology_width.md",
             "# Conflicting Child Topology Width\nTop datapath.\n\nTop datapath port result_data is output width 8.\n\nTop datapath child producer uses module producer_core.\n\nTop datapath link producer.output_data -> result_data.\n\nModule producer_core signal output_data is output width 16.\n\nModule producer_core block produce: output_data = 16'3.\n",
         )?;
-        let (topology_support_ids, output_data_support_ids) = {
+        let (
+            top_port_support_ids,
+            child_support_ids,
+            topology_support_ids,
+            output_data_support_ids,
+        ) = {
             let explicit_top = intent_ir
                 .explicit_tops
                 .iter()
                 .find(|top| top.top_name == "datapath")
                 .expect("explicit top should be present");
+            let result_port = explicit_top
+                .ports
+                .iter()
+                .find(|port| port.port_name == "result_data")
+                .expect("result_data top port should be present");
+            let producer_child = explicit_top
+                .children
+                .iter()
+                .find(|child| child.instance_name == "producer")
+                .expect("producer child declaration should be present");
             let topology_link = explicit_top
                 .links
                 .iter()
@@ -19928,17 +19943,18 @@ mod tests {
                 })
                 .expect("producer output_data signal declaration should be present");
             (
+                result_port.supporting_statement_ids.clone(),
+                producer_child.supporting_statement_ids.clone(),
                 super::explicit_top_link_supporting_ids(topology_link),
                 output_data.supporting_statement_ids.clone(),
             )
         };
         assert!(
-            !topology_support_ids.is_empty(),
-            "topology-link provenance should be present"
-        );
-        assert!(
-            !output_data_support_ids.is_empty(),
-            "child output signal provenance should be present"
+            !top_port_support_ids.is_empty()
+                && !child_support_ids.is_empty()
+                && !topology_support_ids.is_empty()
+                && !output_data_support_ids.is_empty(),
+            "top port, child, topology-link, and child output signal provenance should be present"
         );
 
         let artifact_base = tempdir.path().join("generated").join("adapters");
@@ -20009,6 +20025,65 @@ mod tests {
                 .iter()
                 .any(|enrichment| enrichment
                     == "resolve conflicting canonical signal width evidence before lowering `.fsm`")
+        );
+        let top_candidate = fsm
+            .top_candidates
+            .iter()
+            .find(|top| top.top_name == "datapath")
+            .expect("top candidate should remain visible");
+        let result_port = top_candidate
+            .ports
+            .iter()
+            .find(|port| port.port_name == "result_data")
+            .expect("result_data top port should remain visible");
+        assert_eq!(
+            result_port.direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert_eq!(result_port.width_hint, Some(WidthHint::Numeric(8)));
+        assert!(
+            top_port_support_ids
+                .iter()
+                .any(|id| result_port.supporting_statement_ids.contains(id))
+        );
+        assert_eq!(
+            result_port.automation_confidence,
+            AutomationConfidence::High
+        );
+        let producer_child = top_candidate
+            .children
+            .iter()
+            .find(|child| child.instance_name == "producer")
+            .expect("producer child candidate should remain visible");
+        assert_eq!(producer_child.source_module_name, "producer_core");
+        assert_eq!(producer_child.resolved_root_kind, None);
+        assert!(
+            child_support_ids
+                .iter()
+                .any(|id| producer_child.supporting_canonical_ids.contains(id))
+        );
+        assert_eq!(
+            producer_child.automation_confidence,
+            AutomationConfidence::High
+        );
+        let topology_link = top_candidate
+            .links
+            .iter()
+            .find(|link| {
+                link.source.instance_name.as_deref() == Some("producer")
+                    && link.source.signal_name == "output_data"
+                    && link.target.instance_name.is_none()
+                    && link.target.signal_name == "result_data"
+            })
+            .expect("blocked topology link should remain visible");
+        assert!(
+            topology_support_ids
+                .iter()
+                .any(|id| super::explicit_top_link_supporting_ids(topology_link).contains(id))
+        );
+        assert_eq!(
+            topology_link.automation_confidence,
+            AutomationConfidence::High
         );
         let composition_residual = adapter
             .residual_decisions
