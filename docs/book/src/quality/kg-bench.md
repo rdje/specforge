@@ -103,6 +103,7 @@ The tracked suite now includes AXI write-address, write-address-id-stability, wr
 The AXI next-cycle timing fixture now keeps prose-sourced semantic hints at zero too, proving its `AWVALID` / `AWREADY` role hints remain table-only.
 Alias-grounded prose hints are zero there too, so phrase-alias recovery cannot masquerade as table-backed next-cycle evidence.
 Visual-caption hints are zero there too, so diagram captions cannot masquerade as table-backed next-cycle evidence.
+VLM timing-annotation hints are zero there as well, so timing notes cannot masquerade as table-backed next-cycle evidence.
 The AXI read-address sideband fixture now also keeps prose-sourced semantic hints at zero, proving `ARSIZE` and `ARBURST` role hints are table-only in that gold path.
 Alias-grounded prose hints are zero there too, so phrase-alias recovery cannot masquerade as table-backed sideband evidence.
 Visual-caption hints are zero there too, so diagram captions cannot masquerade as table-backed sideband evidence.
