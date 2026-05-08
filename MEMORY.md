@@ -23,22 +23,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `08aee3fe5dc9127c500d33ffcd1b4df8b5c4a08e`
-- latest_commit_brief_message: `test(kg): lock APB requester/completer prose exclusion`
-- note: this is the pre-slice-5 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
+- latest_commit_hash: `ff8638b34e0e62e034e370baa501c73567babffe`
+- latest_commit_brief_message: `test(kg): lock APB requester/completer alias exclusion`
+- note: this is the pre-slice-6 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
 
 ## Recent commit chain (last 6)
+- `ff8638b` test(kg): lock APB requester/completer alias exclusion
 - `08aee3f` test(kg): lock APB requester/completer prose exclusion
 - `456a436` test(kg): lock APB response VLM exclusion
 - `0238a87` test(kg): lock APB response visual exclusion
 - `6359333` test(kg): lock APB response alias exclusion
 - `5b47582` docs: reconcile completed BWFSC status
-- `051e4ee` test(kg): lock APB response prose exclusion
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 5 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
+- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 6 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
 - files in flight:
   - `crates/specforge/test_data/kg_quality/apb_requester_completer_handshake_gold/fixture.json`
   - live docs and mdBook files synced for the slice
@@ -53,13 +53,13 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `4`
-  - slice 5/200 tightens APB requester/completer alias-grounded prose semantic-hint exclusion metrics for positive table-backed source-split hardening
+  - completed_count before this commit: `5`
+  - slice 6/200 tightens APB requester/completer visual-caption semantic-hint exclusion metrics for positive table-backed source-split hardening
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks APB requester/completer alias-grounded prose semantic-hint exclusion KG coverage as `Done`
+  - live-status tracker now marks APB requester/completer visual-caption semantic-hint exclusion KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 5 before commit
+  - implementation and live-doc sync are complete for slice 6 before commit
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench apb_requester_completer_handshake_gold` passed with the requested fixture
   - broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed on slice 3 with `150/150` fixtures
   - broader `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed on slice 3 with `150` fixtures projected, `0` failures, and no tracked projection diff
@@ -102,5 +102,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 5 commit workflow, clear and verify `git_message_brief.txt`, then continue APB requester/completer visual-caption source-split hardening
+- finish the slice 6 commit workflow, clear and verify `git_message_brief.txt`, then continue APB requester/completer VLM timing-annotation source-split hardening
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle

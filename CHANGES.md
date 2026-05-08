@@ -1,5 +1,15 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for APB requester/completer visual exclusion)
+
+### Improved: APB requester/completer fixtures exclude visual-caption hints
+- Tightened `apb_requester_completer_handshake_gold` with `signal_semantic_hints_from_visual_captions = 0` at `EvidenceIR`.
+- The fixture now proves `PSEL` / `PREADY` semantic hints are not recovered through visual-caption evidence while `Requester` / `Completer` source roles still recover typed handshake completion.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench apb_requester_completer_handshake_gold` -> passed (`1/1` fixture)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for APB requester/completer alias exclusion)
 
 ### Improved: APB requester/completer fixtures exclude alias-grounded prose
