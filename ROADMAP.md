@@ -914,6 +914,7 @@
     - the AXI write-data last fixture now asserts VLM timing-annotation semantic hints stay zero while request/accept role hints remain table-sourced
     - a representative AXI sideband stability gold fixture proving non-handshake sideband fields like `ARLEN` and `WSTRB` remain graph-grounded and actor-owned when their stability is guarded by `ARVALID` / `ARREADY` or `WVALID` / `WREADY` completion
     - a representative AXI write-address sideband stability fixture proving `AWLEN`, `AWSIZE`, and `AWBURST` remain graph-grounded and actor-owned when their stability is guarded by `AWVALID` / `AWREADY` completion
+    - the AXI write-address sideband fixture now asserts prose semantic hints stay zero while `AWLEN`, `AWSIZE`, and `AWBURST` remain table-sourced
     - a representative AHB-style gold fixture proving section-heading direction context like `Manager signals` / `Subordinate signals` recovers per-signal direction and width correctly even when the table itself only carries destination-side context
     - a representative AHB-style timing gold fixture proving section-heading context plus destination-column signal tables and explicit actor relations can also recover wait-state timing, actor-grounded temporal predicates, bounded next-cycle latency, and multi-predicate guards together
     - a representative AHB control stability fixture proving manager-owned address/control outputs stay actor-grounded stable under `HREADY LOW` / `HSEL HIGH` wait-state guards without false handshake completion
