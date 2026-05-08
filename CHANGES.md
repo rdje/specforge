@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (adapter binary expression graph direction guard)
+
+### Improved: binary control-expression renderability has direct graph-first coverage
+- Added a direct regression for binary control-expression renderability.
+- The guard proves both graph-backed binary operands create renderable size entries, while flat-vs-graph disagreement on either operand blocks and leaves no stale size entry.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge binary_expression_renderability_uses_graph_direction_without_stale_flat_override` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`112/112` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter unary expression graph direction guard)
 
 ### Improved: unary control-expression renderability has direct graph-first coverage
