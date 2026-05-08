@@ -1,5 +1,15 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for AXI read-data ID alias exclusion)
+
+### Improved: AXI read-data ID fixtures exclude alias-grounded prose
+- Tightened `axi_read_data_id_stability_gold` with `signal_semantic_hints_from_alias_grounded_prose = 0` at `EvidenceIR`.
+- The fixture now proves `RID` semantic hints are not recovered through phrase-alias prose paths.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench axi_read_data_id_stability_gold` -> passed (`1/1` fixture)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for AXI read-data ID prose exclusion)
 
 ### Improved: AXI read-data ID fixtures prove table-only hints
