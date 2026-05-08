@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter binary enum symbol width-cast guard)
+- Added `binary_enum_symbol_width_cast_renderability_keeps_graph_signal_references_signal_free` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks binary enum-member validation so graph-backed width-cast operands stay signal-free, while the active `.fsm` symbol slice still reports width-cast and per-signal symbol-value blockers.
+- This keeps recursive binary enum symbol-expression recovery out of renderable metadata until symbol lowering is explicitly widened.
+
 ## Session update (2026-05-08 adapter unary enum symbol width-cast guard)
 - Added `unary_enum_symbol_width_cast_renderability_keeps_graph_signal_references_signal_free` in `crates/specforge/src/ir/adapters.rs`.
 - The test locks unary enum-member validation so graph-backed width-cast operands stay signal-free, while the active `.fsm` symbol slice still reports symbol-value and width-cast blockers.
