@@ -111,6 +111,7 @@ The AXI width-only prose-direction fixture now keeps prose-sourced semantic hint
 Alias-grounded prose hints are zero for that fixture too, so phrase-alias recovery cannot masquerade as table-backed AXI width-only evidence.
 Visual-caption hints are zero for that fixture too, so diagram captions cannot masquerade as table-backed AXI width-only evidence.
 VLM timing-annotation hints are zero for that fixture too, so timing notes cannot masquerade as table-backed AXI width-only evidence.
+That fixture also locks one multi-predicate antecedent, proving the `AWVALID` / `AWREADY` guard remains visible as a compound temporal condition while prose actor directions stay recovered.
 The AXI write-response timing fixture now keeps prose-sourced semantic hints at zero too, proving `BVALID` / `BREADY` role hints remain table-only while response timing obligations stay recovered.
 Alias-grounded prose hints are zero there too, so phrase-alias recovery cannot masquerade as table-backed AXI write-response timing evidence.
 Visual-caption hints are zero there too, so diagram captions cannot masquerade as table-backed AXI write-response timing evidence.

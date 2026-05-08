@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for AXI width-only temporal metrics)
+
+### Improved: AXI width-only fixture locks multi-predicate guards
+- Tightened `axi_width_only_prose_direction_gold` with `temporal_rules_with_multi_predicate_antecedents = 1` at both `SemanticIR` and `IntentIR` validation surfaces.
+- The fixture now proves the `AWVALID` / `AWREADY` handshake guard remains counted as a multi-predicate antecedent while width-only table role hints and prose actor-direction recovery stay intact.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench axi_width_only_prose_direction_gold` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for AXI write-response temporal metrics)
 
 ### Improved: AXI write-response fixture locks multi-predicate guards
