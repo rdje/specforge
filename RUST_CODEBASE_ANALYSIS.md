@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter top-port width merger guard)
+- Added `top_port_width_evidence_merge_keeps_conflict_sticky` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks the top-boundary width evidence merger so contradictory width hints clear the resolved width, record conflict guidance, and remain sticky even if later evidence repeats one side.
+- This hardens the shared `.fsm` top-composition path that reconciles explicit top width declarations, top actor-port width evidence, and top-link topology-derived widths.
+
 ## Session update (2026-05-08 adapter top-port direction merger guard)
 - Added `top_port_direction_hint_merge_keeps_conflict_sticky` in `crates/specforge/src/ir/adapters.rs`.
 - The test locks the top-boundary direction evidence merger so contradictory direction hints clear the resolved role and remain sticky even if later evidence repeats one side.

@@ -7,6 +7,20 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-08 adapter top-port width merger guard
+- New batch slice 75/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Added `top_port_width_evidence_merge_keeps_conflict_sticky` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks the top-boundary width merge helper directly: first numeric width evidence is accepted, contradictory width evidence clears the resolved width, records conflict guidance, and later matching width evidence cannot resurrect the width after conflict.
+- This protects `.fsm` top actor-port width and top-link topology width recovery from stale last-writer behavior.
+- `cargo fmt --all` applied rustfmt layout.
+- `cargo test --manifest-path Cargo.toml -p specforge top_port_width_evidence_merge_keeps_conflict_sticky` passed.
+- `cargo fmt --all --check` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `95/95` adapter-filtered tests.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- Broader `bash scripts/run_ci.sh` passed on slice 70 with formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, and mdBook.
+- Push remains deferred for the active `BWFSC=200` batch.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-08 adapter top-port direction merger guard
 - New batch slice 74/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Added `top_port_direction_hint_merge_keeps_conflict_sticky` in `crates/specforge/src/ir/adapters.rs`.

@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (adapter top-port width merger guard)
+
+### Improved: top-boundary width conflicts are regression-locked as sticky
+- Added a direct unit regression for the top-port width evidence merger used by `.fsm` top composition.
+- The guard proves a first numeric width is accepted, contradictory width evidence clears the top-boundary width and emits conflict guidance, and later matching width evidence cannot resurrect the value after conflict.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge top_port_width_evidence_merge_keeps_conflict_sticky` -> passed
+- `cargo fmt --all --check` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`95/95` adapter-filtered tests)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter top-port direction merger guard)
 
 ### Improved: top-boundary direction conflicts are regression-locked as sticky

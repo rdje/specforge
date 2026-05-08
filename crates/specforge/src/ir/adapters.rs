@@ -6380,6 +6380,67 @@ mod tests {
         assert!(evidence.direction_conflicted);
     }
 
+    fn top_port_width_recovery(
+        width: u32,
+        evidence_description: &str,
+    ) -> super::TopPortWidthRecovery {
+        super::TopPortWidthRecovery {
+            width_hint: WidthHint::Numeric(width),
+            mention_category: "top_port",
+            supporting_canonical_ids: vec![format!("width_{width}")],
+            automation_confidence: AutomationConfidence::High,
+            evidence_description: evidence_description.to_string(),
+        }
+    }
+
+    #[test]
+    fn top_port_width_evidence_merge_keeps_conflict_sticky() {
+        let mut evidence = super::TopPortWidthEvidence::new(None, AutomationConfidence::Low);
+        let mut blocking_reasons = Vec::new();
+        let mut required_canonical_enrichments = std::collections::BTreeSet::new();
+
+        super::merge_top_port_width_evidence(
+            &mut evidence,
+            "DATA",
+            top_port_width_recovery(8, "First top port declaration"),
+            &mut blocking_reasons,
+            &mut required_canonical_enrichments,
+        );
+        assert_eq!(evidence.width_hint, Some(WidthHint::Numeric(8)));
+        assert!(!evidence.width_conflicted);
+        assert!(blocking_reasons.is_empty());
+
+        super::merge_top_port_width_evidence(
+            &mut evidence,
+            "DATA",
+            top_port_width_recovery(16, "Conflicting top port declaration"),
+            &mut blocking_reasons,
+            &mut required_canonical_enrichments,
+        );
+        assert_eq!(evidence.width_hint, None);
+        assert!(evidence.width_conflicted);
+        assert!(
+            blocking_reasons.iter().any(|reason| reason.contains(
+                "Conflicting top port declaration implies top port `DATA` has width `16`"
+            ))
+        );
+        assert!(required_canonical_enrichments.contains(
+            "resolve conflicting top boundary port width evidence before lowering `?top:name`"
+        ));
+        let blocking_reason_count_after_conflict = blocking_reasons.len();
+
+        super::merge_top_port_width_evidence(
+            &mut evidence,
+            "DATA",
+            top_port_width_recovery(16, "Later matching top port declaration"),
+            &mut blocking_reasons,
+            &mut required_canonical_enrichments,
+        );
+        assert_eq!(evidence.width_hint, None);
+        assert!(evidence.width_conflicted);
+        assert_eq!(blocking_reasons.len(), blocking_reason_count_after_conflict);
+    }
+
     fn build_handshake_intent_ir(base: &Path) -> Result<IntentIr> {
         let source = base.join("handshake.md");
         let source_artifact_base = base.join("generated").join("source_ir");
