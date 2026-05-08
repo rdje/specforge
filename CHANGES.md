@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (adapter dual-output assignment value graph direction guard)
+
+### Improved: dual-output assignment values have graph-first coverage
+- Added a direct regression for sequential dual-output assignment value renderability.
+- The guard proves graph-backed value references create input size entries for dual-output assignments, while flat-vs-graph disagreement leaves no stale value metadata.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge dual_output_assignment_values_use_graph_direction` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`123/123` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter dual-output assignment kind guard)
 
 ### Improved: dual-output assignments still require sequential intent

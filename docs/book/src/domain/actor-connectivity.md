@@ -240,6 +240,7 @@ Init assignments follow the same rule for reset/init lowering: graph-backed outp
 Typed control assignments, delayed-pulse actions, and compound updates use the same role rule: graph-backed output targets can be driven, while stale flat disagreement fails target renderability and does not create a stale size entry.
 Sequential dual-output assignments use that same target role rule before emitting either `.fsm` next-signal or registered-signal dual-output assignment syntax.
 Dual-output assignments still require sequential canonical intent; nonsequential dual-output metadata remains blocking even when the graph-backed target role is recoverable.
+Dual-output assignment values use the same read-side rule as ordinary assignment values: graph-backed input references can be sized, while stale flat disagreement remains blocking.
 Delayed-pulse pulse-level values remain literal-only in the active adapter slice, so graph-backed signal references there do not create renderable signal metadata until that lowering is deliberately widened.
 Typed assignment values use the read-side rule too: graph-backed value references create input size entries, while stale flat disagreement remains blocking.
 Compound-update amounts use that same read-side rule when they reference signals.

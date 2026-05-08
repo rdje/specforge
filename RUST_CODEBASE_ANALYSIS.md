@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter dual-output assignment value graph direction guard)
+- Added `dual_output_assignment_values_use_graph_direction` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks dual-output assignment value references so graph-backed inputs create size entries, while stale flat-vs-graph disagreement leaves no stale entry.
+- This covers the read-side branch inside sequential dual-output assignment validation separately from ordinary assignment values.
+
 ## Session update (2026-05-08 adapter dual-output assignment kind guard)
 - Added `dual_output_assignment_kind_blocks_nonsequential_graph_target` in `crates/specforge/src/ir/adapters.rs`.
 - The test locks nonsequential dual-output assignment validation so graph-backed output targets still produce size entries, while the dual-output lowering contract blocks unless assignment intent is sequential.
