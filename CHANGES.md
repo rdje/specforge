@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for no-prior visual-caption prose exclusion)
+
+### Improved: no-prior visual-caption fixtures exclude prose hints
+- Tightened `visual_semantic_prior_guided_caption_without_prior_negative` with `signal_semantic_hints_from_prose = 0` at `EvidenceIR`.
+- The fixture now proves a visual-caption phrase without learned visual memory cannot be rescued through ordinary prose semantic-role hints.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench visual_semantic_prior_guided_caption_without_prior_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for no-prior visual-caption table exclusion)
 
 ### Improved: no-prior visual-caption fixtures exclude table hints
