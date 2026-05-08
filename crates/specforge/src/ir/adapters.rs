@@ -12267,11 +12267,18 @@ mod tests {
                 .any(|candidate| candidate.candidate_id == "dt_primary_intent_cone")
         );
         for signal_name in ["clk", "rst_n", "DATA_IN", "ACC"] {
+            let signal = fsm
+                .signal_inventory
+                .iter()
+                .find(|signal| signal.signal_name == signal_name)
+                .unwrap_or_else(|| {
+                    panic!("{signal_name} should stay in sequential DT signal inventory")
+                });
             assert!(
-                fsm.signal_inventory
-                    .iter()
-                    .any(|signal| signal.signal_name == signal_name)
+                !signal.supporting_canonical_ids.is_empty(),
+                "{signal_name} should retain canonical support ids"
             );
+            assert_eq!(signal.automation_confidence, AutomationConfidence::High);
         }
         let system_contract = fsm
             .system_contract

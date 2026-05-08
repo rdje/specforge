@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter sequential DT baseline inventory confidence guard)
+- Extended `builds_renderable_standalone_sequential_dt_fsm_adapter_artifact` in `crates/specforge/src/ir/adapters.rs`.
+- The renderable standalone sequential-DT baseline now locks canonical support IDs and high automation confidence for retained `clk`, `rst_n`, `DATA_IN`, and `ACC` signal-inventory records.
+- This keeps emitted sequential DT artifacts tied to explainable system/data inventory provenance instead of only checking that the signals exist and render.
+
 ## Session update (2026-05-09 adapter standalone DT baseline inventory confidence guard)
 - Extended `builds_renderable_standalone_dt_fsm_adapter_artifact` in `crates/specforge/src/ir/adapters.rs`.
 - The renderable standalone direct-DT baseline now locks canonical support IDs and high automation confidence for retained `DATA_IN`, `DATA_OUT`, and `ZERO_FLAG` signal-inventory records.

@@ -131,6 +131,7 @@ Structured FSM roots follow the same rule for graph-recovered guard and control-
 Explicit-module roots also keep that contract for module-local control-read recovery, so module `(+size ...)` entries can consume graph-backed input roles while the flat module-local `direction_hint` remains absent.
 Standalone DT roots also preserve it for direct control-read recovery: a target-actor input recovered from the control graph can feed the emitted `(+size ...)` entry while the flat direct-interface hint remains absent.
 Renderable standalone DT roots also keep baseline signal-inventory support IDs and high confidence attached to emitted direct signals.
+Renderable standalone sequential-DT roots keep the same support/confidence contract for emitted clock, reset, input, and accumulator inventory.
 Direct control-input width recovery is part of that emitted surface too: an actor-port width recovered for a direct control input feeds the renderable `(+size ...)` entry alongside the target-actor input direction.
 Explicit-module control-input width recovery follows the same rule for module-local `(+size ...)` entries, combining module-control input direction with actor-port width provenance without requiring a flat module-local direction hint.
 Target-actor-backed direct output selection follows the same rule while excluding shared external actor evidence from the selected inventory.
