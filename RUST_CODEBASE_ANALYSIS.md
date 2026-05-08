@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter top-port direction merger guard)
+- Added `top_port_direction_hint_merge_keeps_conflict_sticky` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks the top-boundary direction evidence merger so contradictory direction hints clear the resolved role and remain sticky even if later evidence repeats one side.
+- This hardens the shared `.fsm` top-composition path that reconciles explicit top declarations, top actor-port graph evidence, and top-link topology-derived roles.
+
 ## Session update (2026-05-08 adapter direction resolver guard)
 - Added `preferred_signal_direction_hint_is_graph_first_and_conflict_sticky` in `crates/specforge/src/ir/adapters.rs`.
 - The test locks the shared `.fsm` adapter direction resolver as graph-first and conflict-sticky: graph-only evidence can satisfy direction resolution, matching flat/graph evidence remains accepted, and flat conflicts, graph conflicts, or flat-vs-graph disagreement all fail closed.

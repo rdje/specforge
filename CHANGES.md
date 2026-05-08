@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (adapter top-port direction merger guard)
+
+### Improved: top-boundary direction conflicts are regression-locked as sticky
+- Added a direct unit regression for the top-port direction evidence merger used by `.fsm` top composition.
+- The guard proves a first direction hint is accepted, contradictory direction evidence collapses the top-boundary direction to unresolved, and later matching hints cannot resurrect the value after the conflict is marked.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge top_port_direction_hint_merge_keeps_conflict_sticky` -> passed
+- `cargo fmt --all --check` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`94/94` adapter-filtered tests)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter direction resolver guard)
 
 ### Improved: graph-first `.fsm` direction resolution is regression-locked directly

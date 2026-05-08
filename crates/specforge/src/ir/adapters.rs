@@ -6347,6 +6347,39 @@ mod tests {
         );
     }
 
+    #[test]
+    fn top_port_direction_hint_merge_keeps_conflict_sticky() {
+        let mut evidence = super::TopPortDirectionEvidence::new(None, AutomationConfidence::Low);
+
+        assert_eq!(
+            super::merge_top_port_direction_hint(&mut evidence, InterfaceSignalDirection::Input),
+            None
+        );
+        assert_eq!(
+            evidence.direction_hint,
+            Some(InterfaceSignalDirection::Input)
+        );
+        assert!(!evidence.direction_conflicted);
+
+        assert_eq!(
+            super::merge_top_port_direction_hint(&mut evidence, InterfaceSignalDirection::Output),
+            Some(InterfaceSignalDirection::Input)
+        );
+        assert_eq!(evidence.direction_hint, None);
+        assert!(evidence.direction_conflicted);
+
+        assert_eq!(
+            super::merge_top_port_direction_hint(&mut evidence, InterfaceSignalDirection::Output),
+            None
+        );
+        assert_eq!(
+            super::merge_top_port_direction_hint(&mut evidence, InterfaceSignalDirection::Input),
+            None
+        );
+        assert_eq!(evidence.direction_hint, None);
+        assert!(evidence.direction_conflicted);
+    }
+
     fn build_handshake_intent_ir(base: &Path) -> Result<IntentIr> {
         let source = base.join("handshake.md");
         let source_artifact_base = base.join("generated").join("source_ir");
