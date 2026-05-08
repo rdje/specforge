@@ -1,5 +1,16 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for AXI read-address timing prose exclusion)
+
+### Improved: AXI read-address timing fixtures prove table-only hints
+- Tightened `axi_read_address_timing_gold` with `signal_semantic_hints_from_prose = 0` at `EvidenceIR`.
+- The fixture now proves `ARVALID` / `ARREADY` semantic hints are table-sourced rather than prose-derived.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench axi_read_address_timing_gold` -> passed (`1/1` fixture)
+- `bash scripts/run_ci.sh` -> passed (formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, mdBook)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for AXI read-address control VLM exclusion)
 
 ### Improved: AXI read-address control fixtures exclude VLM timing hints

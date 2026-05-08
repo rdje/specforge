@@ -558,6 +558,7 @@
 - KG benchmark harness now locks prior-guided temporal replay exclusions: Done
 - KG benchmark harness now locks no-prior temporal clock replay separation: Done
 - KG benchmark harness now includes AXI read-address timing coverage: Done
+- KG benchmark harness now locks AXI read-address timing prose semantic-hint exclusion: Done
 - KG benchmark harness now includes AXI read-address ID stability coverage: Done
 - KG benchmark harness now includes AXI write-address ID stability coverage: Done
 - KG benchmark harness now includes AXI write-address control sideband stability coverage: Done

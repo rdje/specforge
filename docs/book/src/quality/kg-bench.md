@@ -104,6 +104,7 @@ The AXI next-cycle timing fixture now keeps prose-sourced semantic hints at zero
 Alias-grounded prose hints are zero there too, so phrase-alias recovery cannot masquerade as table-backed next-cycle evidence.
 Visual-caption hints are zero there too, so diagram captions cannot masquerade as table-backed next-cycle evidence.
 VLM timing-annotation hints are zero there as well, so timing notes cannot masquerade as table-backed next-cycle evidence.
+The AXI read-address timing fixture now keeps prose-sourced semantic hints at zero too, proving its `ARVALID` / `ARREADY` role hints remain table-only.
 The AXI read-address control sideband fixture keeps prose-sourced semantic hints at zero too, proving `ARPROT`, `ARCACHE`, and `ARLOCK` role hints are table-only in that gold path.
 Alias-grounded prose hints are zero there too, so phrase-alias recovery cannot masquerade as table-backed read-address control evidence.
 Visual-caption hints are zero there too, so diagram captions cannot masquerade as table-backed read-address control evidence.
