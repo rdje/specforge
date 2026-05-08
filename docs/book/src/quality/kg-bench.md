@@ -132,6 +132,7 @@ The AXI read-address timing fixture now keeps prose-sourced semantic hints at ze
 Alias-grounded prose hints are zero there too, so phrase-alias recovery cannot masquerade as table-backed read-address timing evidence.
 Visual-caption hints are zero there too, so diagram captions cannot masquerade as table-backed read-address timing evidence.
 VLM timing-annotation hints are zero there as well, so timing notes cannot masquerade as table-backed read-address timing evidence.
+The AXI read-address ID fixture keeps prose-sourced semantic hints at zero too, proving `ARVALID` / `ARREADY` role hints remain table-only while `ARID` stability stays recovered.
 The AXI read-address control sideband fixture keeps prose-sourced semantic hints at zero too, proving `ARPROT`, `ARCACHE`, and `ARLOCK` role hints are table-only in that gold path.
 Alias-grounded prose hints are zero there too, so phrase-alias recovery cannot masquerade as table-backed read-address control evidence.
 Visual-caption hints are zero there too, so diagram captions cannot masquerade as table-backed read-address control evidence.

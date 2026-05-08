@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for AXI read-address ID prose exclusion)
+
+### Improved: AXI read-address ID fixtures prove table-only hints
+- Tightened `axi_read_address_id_stability_gold` with `signal_semantic_hints_from_prose = 0` at `EvidenceIR`.
+- The fixture now proves `ARVALID` / `ARREADY` semantic hints are table-sourced rather than prose-derived while manager-owned `ARID` handshake-stability obligations remain recovered.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench axi_read_address_id_stability_gold` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for AXI address/response USER VLM exclusion)
 
 ### Improved: AXI address/response USER fixtures exclude VLM timing hints
