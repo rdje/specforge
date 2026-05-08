@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (adapter expression graph direction guard)
+
+### Improved: control-expression renderability has direct graph-first coverage
+- Added a direct regression for typed control-expression reference renderability.
+- The guard proves graph-backed signal references create renderable size entries, while flat-vs-graph disagreement blocks and leaves no stale size entry.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge control_expression_renderability_uses_graph_direction_without_stale_flat_override` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`102/102` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter guard graph direction guard)
 
 ### Improved: guard renderability has direct graph-first coverage

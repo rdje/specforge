@@ -7,6 +7,20 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-08 adapter expression graph direction guard
+- New batch slice 82/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Added `control_expression_renderability_uses_graph_direction_without_stale_flat_override` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks `validate_control_expression_renderability` directly: graph-backed signal references create renderable size entries with graph-derived direction, while stale flat evidence that disagrees with graph evidence emits conflict guidance and leaves no stale size entry.
+- This protects typed assignment values, computed selectors, and nested control expressions through the shared graph-first renderable-signal path.
+- `cargo fmt --all` applied rustfmt layout.
+- `cargo test --manifest-path Cargo.toml -p specforge control_expression_renderability_uses_graph_direction_without_stale_flat_override` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `102/102` adapter-filtered tests.
+- `cargo fmt --all --check` passed.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- Broader `bash scripts/run_ci.sh` passed on slice 80 with formatting, Clippy warning-deny, `623` Rust tests, rustdoc warning-deny, and mdBook; slice 82 is a focused test-only follow-up.
+- Push remains deferred for the active `BWFSC=200` batch.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-08 adapter guard graph direction guard
 - New batch slice 81/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Added `guard_renderability_uses_graph_direction_without_stale_flat_override` in `crates/specforge/src/ir/adapters.rs`.

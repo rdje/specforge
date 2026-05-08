@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter expression graph direction guard)
+- Added `control_expression_renderability_uses_graph_direction_without_stale_flat_override` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks typed control-expression reference renderability so graph-backed signal references create size entries, while stale flat-vs-graph disagreement leaves no stale entry.
+- This covers expression values, selectors, and nested expression consumers that flow through the shared graph-first signal registration path.
+
 ## Session update (2026-05-08 adapter guard graph direction guard)
 - Added `guard_renderability_uses_graph_direction_without_stale_flat_override` in `crates/specforge/src/ir/adapters.rs`.
 - The test locks guard renderability so graph-backed guard signals can create size entries through the shared graph-first signal registration path, while stale flat-vs-graph disagreement leaves no stale entry.

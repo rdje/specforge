@@ -6253,9 +6253,10 @@ mod tests {
     use crate::ir::semantic::{
         ActorPortRecord, ActorRelativeDirection, ControlActionRecord,
         ControlAssignmentTargetRecord, ControlBlockRole, ControlExpressionRecord,
-        DecisionTreeAssignmentKind, DecisionTreeGuardRecord, DecisionTreeValueRecord,
-        InitAssignmentRecord, InterfaceSignalDirection, SemanticIr, SystemResetPolarity,
-        SystemResetTargetKind, SystemResetTimingRelation,
+        ControlReferenceKind, ControlReferenceRecord, DecisionTreeAssignmentKind,
+        DecisionTreeGuardRecord, DecisionTreeValueRecord, InitAssignmentRecord,
+        InterfaceSignalDirection, SemanticIr, SystemResetPolarity, SystemResetTargetKind,
+        SystemResetTimingRelation,
     };
     use crate::ir::source::{AutomationConfidence, SourceIr, WidthHint};
 
@@ -6857,6 +6858,85 @@ mod tests {
         assert!(blocking_reasons.iter().any(|reason| {
             reason.contains(
                 "Signal `STALE_READY` has conflicting canonical and graph-backed direction evidence",
+            )
+        }));
+        assert!(required_canonical_enrichments.contains(
+            "resolve conflicting canonical and actor-relative graph direction evidence before lowering `.fsm`"
+        ));
+    }
+
+    #[test]
+    fn control_expression_renderability_uses_graph_direction_without_stale_flat_override() {
+        let mut graph_input = signal_candidate_with_direction_evidence(
+            None,
+            false,
+            Some(InterfaceSignalDirection::Input),
+            false,
+        );
+        graph_input.signal_name = "DATA_IN".to_string();
+        graph_input.width_hint = Some(8);
+
+        let mut stale_input = signal_candidate_with_direction_evidence(
+            Some(InterfaceSignalDirection::Output),
+            false,
+            Some(InterfaceSignalDirection::Input),
+            false,
+        );
+        stale_input.signal_name = "STALE_DATA".to_string();
+        stale_input.width_hint = Some(8);
+
+        let signals = [graph_input, stale_input];
+        let signals_by_name = signals
+            .iter()
+            .map(|signal| (signal.signal_name.clone(), signal))
+            .collect::<std::collections::BTreeMap<_, _>>();
+        let mut size_entries = std::collections::BTreeMap::new();
+        let mut blocking_reasons = Vec::new();
+        let mut required_canonical_enrichments = std::collections::BTreeSet::new();
+
+        let graph_expression = ControlExpressionRecord::Reference {
+            reference: ControlReferenceRecord {
+                base_name: "DATA_IN".to_string(),
+                kind_hint: ControlReferenceKind::Signal,
+                suffixes: Vec::new(),
+                exposed_public_output: false,
+            },
+        };
+        super::validate_control_expression_renderability(
+            &graph_expression,
+            true,
+            &signals_by_name,
+            &mut size_entries,
+            &mut blocking_reasons,
+            &mut required_canonical_enrichments,
+        );
+        let graph_entry = size_entries
+            .get("DATA_IN")
+            .expect("graph-backed expression signal should create a size entry");
+        assert_eq!(graph_entry.direction_hint, InterfaceSignalDirection::Input);
+        assert_eq!(graph_entry.width, 8);
+        assert!(blocking_reasons.is_empty());
+
+        let stale_expression = ControlExpressionRecord::Reference {
+            reference: ControlReferenceRecord {
+                base_name: "STALE_DATA".to_string(),
+                kind_hint: ControlReferenceKind::Signal,
+                suffixes: Vec::new(),
+                exposed_public_output: false,
+            },
+        };
+        super::validate_control_expression_renderability(
+            &stale_expression,
+            true,
+            &signals_by_name,
+            &mut size_entries,
+            &mut blocking_reasons,
+            &mut required_canonical_enrichments,
+        );
+        assert!(!size_entries.contains_key("STALE_DATA"));
+        assert!(blocking_reasons.iter().any(|reason| {
+            reason.contains(
+                "Signal `STALE_DATA` has conflicting canonical and graph-backed direction evidence",
             )
         }));
         assert!(required_canonical_enrichments.contains(
