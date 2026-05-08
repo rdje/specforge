@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (adapter binary symbol signal-free guard)
+
+### Improved: binary symbol-definition values stay signal-free
+- Added a direct regression for binary symbol-definition expression renderability.
+- The guard proves graph-backed signal references nested on both sides of binary symbol values still block and do not create renderable signal size entries in the active `.fsm` slice.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge binary_symbol_definition_renderability_keeps_graph_signal_references_signal_free` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`116/116` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter unary symbol signal-free guard)
 
 ### Improved: unary symbol-definition values stay signal-free

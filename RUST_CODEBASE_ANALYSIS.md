@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter binary symbol signal-free guard)
+- Added `binary_symbol_definition_renderability_keeps_graph_signal_references_signal_free` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks recursive binary symbol-definition validation so nested graph-backed signal references on both sides still trigger the active signal-free blocker and do not create size entries.
+- This covers binary symbol values separately from direct scalar and unary symbol values.
+
 ## Session update (2026-05-08 adapter unary symbol signal-free guard)
 - Added `unary_symbol_definition_renderability_keeps_graph_signal_references_signal_free` in `crates/specforge/src/ir/adapters.rs`.
 - The test locks recursive unary symbol-definition validation so nested graph-backed signal references still trigger the active signal-free blocker and do not create size entries.

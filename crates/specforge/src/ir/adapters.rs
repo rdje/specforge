@@ -7944,6 +7944,86 @@ mod tests {
     }
 
     #[test]
+    fn binary_symbol_definition_renderability_keeps_graph_signal_references_signal_free() {
+        let mut graph_left = signal_candidate_with_direction_evidence(
+            None,
+            false,
+            Some(InterfaceSignalDirection::Input),
+            false,
+        );
+        graph_left.signal_name = "LEFT_IN".to_string();
+        graph_left.width_hint = Some(8);
+
+        let mut graph_right = signal_candidate_with_direction_evidence(
+            None,
+            false,
+            Some(InterfaceSignalDirection::Input),
+            false,
+        );
+        graph_right.signal_name = "RIGHT_IN".to_string();
+        graph_right.width_hint = Some(8);
+
+        let signals = [graph_left, graph_right];
+        let signals_by_name = signals
+            .iter()
+            .map(|signal| (signal.signal_name.clone(), signal))
+            .collect::<std::collections::BTreeMap<_, _>>();
+        let mut size_entries = std::collections::BTreeMap::new();
+        let mut blocking_reasons = Vec::new();
+        let mut required_canonical_enrichments = std::collections::BTreeSet::new();
+
+        let definition = SymbolDefinitionRecord {
+            symbol_id: "binary_symbol_from_signals".to_string(),
+            symbol_name: "COMBINED_SYMBOL_FROM_SIGNALS".to_string(),
+            kind: SymbolDefinitionKind::Constant,
+            value: Some(ControlExpressionRecord::Binary {
+                operator: ControlBinaryOperator::Add,
+                left: Box::new(ControlExpressionRecord::Reference {
+                    reference: ControlReferenceRecord {
+                        base_name: "LEFT_IN".to_string(),
+                        kind_hint: ControlReferenceKind::Signal,
+                        suffixes: Vec::new(),
+                        exposed_public_output: false,
+                    },
+                }),
+                right: Box::new(ControlExpressionRecord::Reference {
+                    reference: ControlReferenceRecord {
+                        base_name: "RIGHT_IN".to_string(),
+                        kind_hint: ControlReferenceKind::Signal,
+                        suffixes: Vec::new(),
+                        exposed_public_output: false,
+                    },
+                }),
+            }),
+            members: Vec::new(),
+            declaration_order: 0,
+            supporting_statement_ids: Vec::new(),
+            automation_confidence: AutomationConfidence::High,
+        };
+        super::validate_symbol_definitions_renderability(
+            &[definition],
+            &signals_by_name,
+            &mut size_entries,
+            &mut blocking_reasons,
+            &mut required_canonical_enrichments,
+        );
+        assert!(size_entries.is_empty());
+        assert!(blocking_reasons.iter().any(|reason| {
+            reason.contains(
+                "Symbol-definition expression `LEFT_IN` currently resolves through signal `LEFT_IN`",
+            )
+        }));
+        assert!(blocking_reasons.iter().any(|reason| {
+            reason.contains(
+                "Symbol-definition expression `RIGHT_IN` currently resolves through signal `RIGHT_IN`",
+            )
+        }));
+        assert!(required_canonical_enrichments.contains(
+            "keep emitted `.fsm` symbol-definition values signal-free in the active slice"
+        ));
+    }
+
+    #[test]
     fn enum_symbol_renderability_keeps_graph_signal_references_signal_free() {
         let mut graph_input = signal_candidate_with_direction_evidence(
             None,
