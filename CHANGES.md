@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for contested-handshake temporal-rule count)
+
+### Improved: contested-handshake negative fixture locks aggregate temporal rules
+- Tightened `contested_handshake_name_fallback_negative` with `temporal_rules = 1` at both `SemanticIR` and `IntentIR` validation surfaces.
+- The negative fixture now proves its guarded payload-stability rule remains counted while non-decisive `XVALID` semantics still block typed `HandshakeComplete` fallback.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench contested_handshake_name_fallback_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for alias-dependent temporal-rule count)
 
 ### Improved: alias-dependent caveat locks aggregate temporal rules

@@ -170,7 +170,10 @@
             "summary_contains": "should trigger targeted NLP rescans plus downstream rebuild",
             "related_ids_include": ["XVALID"]
           }
-        ]
+        ],
+        "metric_values": {
+          "temporal_rules": "1"
+        }
       },
       "intent": {
         "finding_ids_include": [
@@ -194,7 +197,10 @@
             "summary_contains": "should trigger targeted NLP rescans plus downstream rebuild",
             "related_ids_include": ["XVALID"]
           }
-        ]
+        ],
+        "metric_values": {
+          "temporal_rules": "1"
+        }
       }
     }
   }

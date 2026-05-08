@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 KG fixture for contested-handshake temporal-rule count)
+- Tightened `contested_handshake_name_fallback_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts `temporal_rules = 1` at both `SemanticIR` and `IntentIR` validation surfaces.
+- This continues aggregate temporal-rule metric hardening by proving the guarded `XVALID` / `XACK` payload-stability rule remains counted while contested `XVALID` semantics still block typed `HandshakeComplete` fallback.
+
 ## Session update (2026-05-08 KG fixture for alias-dependent temporal-rule count)
 - Tightened `alias_dependent_handshake_completion_caveat` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts `temporal_rules = 1` at both `SemanticIR` and `IntentIR` validation surfaces.

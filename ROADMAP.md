@@ -751,6 +751,7 @@
     - a negative fixture for surfacing multi-producer structural conflicts through validation
     - a residual-quality fixture for actor-boundary ambiguity
     - a stage-patched negative fixture proving contested handshake-shaped signal names do not leak into typed `HandshakeComplete` predicates
+    - the contested handshake negative fixture now asserts aggregate temporal-rule count coverage while keeping typed handshake fallback blocked
     - a stage-patched caveat fixture proving alias-dependent handshake completion stays usable while preserving its canonical residual/assumption trail
     - the alias-dependent handshake caveat fixture now asserts aggregate temporal-rule count coverage while preserving its residual/assumption trail
     - a stage-patched cross-modality gold fixture proving a semantic role can be grounded jointly by table and visual evidence while validation reports that stronger grounding explicitly
