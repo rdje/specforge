@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (adapter dual-output assignment graph direction guard)
+
+### Improved: dual-output assignment targets have graph-first coverage
+- Added a direct regression for sequential dual-output assignment renderability.
+- The guard proves graph-backed dual-output targets create output size entries, while flat-vs-graph disagreement blocks and leaves no stale target entry.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge dual_output_assignment_renderability_uses_graph_output_without_stale_flat_override` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`119/119` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter binary enum symbol signal-free guard)
 
 ### Improved: binary enum member values stay signal-free

@@ -7,6 +7,20 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-08 adapter dual-output assignment graph direction guard
+- New batch slice 99/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Added `dual_output_assignment_renderability_uses_graph_output_without_stale_flat_override` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks the sequential dual-output assignment branch of `validate_control_action_renderability`: graph-backed output targets create renderable size entries and stale flat-vs-graph disagreement on the target blocks without creating stale target metadata.
+- This complements the ordinary assignment-target guard so the `.fsm` dual-output assignment spellings use the same graph-first target role rule.
+- `cargo fmt --all` applied rustfmt layout.
+- `cargo test --manifest-path Cargo.toml -p specforge dual_output_assignment_renderability_uses_graph_output_without_stale_flat_override` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `119/119` adapter-filtered tests.
+- `cargo fmt --all --check` passed.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- Broader `bash scripts/run_ci.sh` passed on slice 90 with formatting, Clippy warning-deny, `633` Rust tests, rustdoc warning-deny, and mdBook.
+- Push remains deferred for the active `BWFSC=200` batch.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-08 adapter binary enum symbol signal-free guard
 - New batch slice 98/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Added `binary_enum_symbol_renderability_keeps_graph_signal_references_signal_free` in `crates/specforge/src/ir/adapters.rs`.

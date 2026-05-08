@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter dual-output assignment graph direction guard)
+- Added `dual_output_assignment_renderability_uses_graph_output_without_stale_flat_override` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks sequential dual-output assignment targets so graph-backed output targets create size entries, while stale flat-vs-graph target disagreement leaves no stale entry.
+- This covers the dual-output assignment branch separately from ordinary assignment targets.
+
 ## Session update (2026-05-08 adapter binary enum symbol signal-free guard)
 - Added `binary_enum_symbol_renderability_keeps_graph_signal_references_signal_free` in `crates/specforge/src/ir/adapters.rs`.
 - The test locks recursive binary enum-member validation so nested graph-backed signal references on both sides still trigger the active signal-free blocker and do not create size entries.
