@@ -7,6 +7,17 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-08 KG fixture for spurious VLM prose exclusion
+- New batch slice 4/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
+- Tightened `crates/specforge/test_data/kg_quality/vlm_timing_spurious_annotation_negative/fixture.json`.
+- The fixture now asserts `signal_semantic_hints_from_prose = 0` alongside total, table, VLM timing-annotation, and timing extraction metrics.
+- This strengthens spurious VLM timing label-noise coverage by proving labels such as `T0`, `Addr 1`, `Cycle 2`, `D0`, `A1`, `DATA0`, `0xAA`, and bit-select labels remain timing extraction evidence only, not ordinary prose semantic-role evidence.
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench vlm_timing_spurious_annotation_negative` passed with the requested fixture.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- Broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` and `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` last passed on slice 2 with `150/150` tracked fixtures and `0` corpus-KB projection failures.
+- Broader `bash scripts/run_ci.sh` last passed on the prior batch's slice 200 with formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, and mdBook.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-08 KG fixture for spurious VLM table exclusion
 - New batch slice 3/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
 - Tightened `crates/specforge/test_data/kg_quality/vlm_timing_spurious_annotation_negative/fixture.json`.

@@ -343,6 +343,7 @@ Low-value labels such as `T0`, `Addr 1`, `Cycle 2`, `D0`, `A1`, `DATA0`, `0xAA`,
 The waveform-motion fixture now locks total semantic hints at zero too, so rejected motion states cannot surface as semantic-role hints through another path.
 The spurious-annotation fixture now also locks total semantic hints at zero, so low-value labels and value-like annotations cannot invent roles through another evidence channel.
 It also excludes table-sourced semantic hints, so low-value annotation noise cannot be rescued through table evidence.
+Ordinary prose hints are zero for spurious annotations too, so text evidence cannot backfill a semantic role for label/value noise.
 The indexed signal-value fixture carries the same total zero-hint guard for labels such as `XREQ[0] HIGH`.
 It now also excludes table-sourced semantic hints, keeping indexed label noise from being rescued through table evidence.
 Ordinary prose hints are zero for indexed labels too, so text evidence cannot backfill a role for bit-select label noise.
