@@ -22,22 +22,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `309e5bb91d4b448f272c1590bf0e258d76ae57bc`
-- latest_commit_brief_message: `test(kg): lock AXI next-cycle prose exclusion`
-- note: this is the pre-slice-53 baseline for the current `BWFSC=100` batch; slices 1-52/100 are committed and push remains deferred
+- latest_commit_hash: `2e11758b797462c7ca9778566fafa96c19c1cb0c`
+- latest_commit_brief_message: `test(kg): lock AXI next-cycle alias exclusion`
+- note: this is the pre-slice-54 baseline for the current `BWFSC=100` batch; slices 1-53/100 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `2e11758` test(kg): lock AXI next-cycle alias exclusion
 - `309e5bb` test(kg): lock AXI next-cycle prose exclusion
 - `7fb6625` test(kg): lock AXI sideband VLM exclusion
 - `139c051` test(kg): lock AXI sideband visual exclusion
 - `acf250d` test(kg): lock AXI sideband alias exclusion
 - `f404dcf` test(kg): lock AXI sideband prose exclusion
-- `5179721` test(kg): lock AXI read-data last VLM exclusion
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=100` slice 53 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=100` slice 54 and push is deferred
 - files in flight:
   - `crates/specforge/test_data/kg_quality/axi_next_cycle_timing_gold/fixture.json`
   - live docs and mdBook files synced for the slice
@@ -52,13 +52,13 @@
 ## Current batch status
 - objective:
   - active `BWFSC=100` batch is in progress
-  - completed_count before this commit: `52`
-  - slice 53/100 tightens AXI next-cycle alias-grounded prose semantic-hint exclusion metrics for positive table-backed source-split hardening
+  - completed_count before this commit: `53`
+  - slice 54/100 tightens AXI next-cycle visual-caption semantic-hint exclusion metrics for positive table-backed source-split hardening
   - push is deferred until all `100` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks AXI next-cycle alias-grounded prose semantic-hint exclusion KG coverage as `Done`
+  - live-status tracker now marks AXI next-cycle visual-caption semantic-hint exclusion KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 53 before commit
+  - implementation and live-doc sync are complete for slice 54 before commit
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench axi_next_cycle_timing_gold` passed with the requested fixture
   - broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed on slice 51 with `150/150` fixtures
   - broader `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed on slice 51 with `150` fixtures projected, `0` failures, and no tracked projection diff
@@ -88,5 +88,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 53 commit workflow, clear and verify `git_message_brief.txt`, then continue AXI next-cycle source-split hardening
+- finish the slice 54 commit workflow, clear and verify `git_message_brief.txt`, then continue AXI next-cycle source-split hardening
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle

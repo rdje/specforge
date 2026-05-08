@@ -1,5 +1,15 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for AXI next-cycle visual exclusion)
+
+### Improved: AXI next-cycle fixtures exclude visual-caption hints
+- Tightened `axi_next_cycle_timing_gold` with `signal_semantic_hints_from_visual_captions = 0` at `EvidenceIR`.
+- The fixture now proves `AWVALID` / `AWREADY` semantic hints are not recovered through visual-caption evidence.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench axi_next_cycle_timing_gold` -> passed (`1/1` fixture)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for AXI next-cycle alias exclusion)
 
 ### Improved: AXI next-cycle fixtures exclude alias-grounded prose
