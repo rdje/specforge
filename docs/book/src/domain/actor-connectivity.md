@@ -235,6 +235,7 @@ The top-boundary direction merger uses the same fail-closed posture: once explic
 The same sticky-conflict rule applies to top-boundary widths recovered from explicit declarations, actor-port widths, or topology propagation.
 Width-incompatible top links stay blocked, but the selected top inventory still preserves each explicit endpoint's direction, width, provenance, support IDs, and confidence.
 Duplicate child-instance blockers keep each child declaration's source module, resolved root kind, support IDs, and automation confidence visible.
+They also keep the declared top port in selected top inventory with support IDs and high confidence while duplicate child instances are deduplicated.
 Missing-link multi-child blockers keep the same child declaration confidence visible while composition waits for explicit links.
 Undeclared top-link target blockers keep retained top-port, child, and link confidence visible while composition waits for the missing endpoint declaration.
 They also keep the declared top port in selected top inventory with support IDs and high confidence while the missing target endpoint is repaired.

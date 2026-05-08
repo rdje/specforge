@@ -21128,25 +21128,35 @@ mod tests {
             "duplicate_top_child_instance.md",
             "# Duplicate Top Child Instance\nTop datapath.\n\nTop datapath port result_data is output width 8.\n\nTop datapath child producer uses module producer_core.\n\nTop datapath child producer uses module producer_core.\n\nTop datapath link producer.output_data -> result_data.\n\nModule producer_core signal output_data is output width 8.\n\nModule producer_core block produce: output_data = 8'3.\n",
         )?;
-        let child_support_id_sets = {
+        let (top_port_support_ids, child_support_id_sets) = {
             let explicit_top = intent_ir
                 .explicit_tops
                 .iter()
                 .find(|top| top.top_name == "datapath")
                 .expect("explicit top should be present");
-            explicit_top
+            let result_port = explicit_top
+                .ports
+                .iter()
+                .find(|port| port.port_name == "result_data")
+                .expect("result_data top port should be present");
+            let child_support_id_sets = explicit_top
                 .children
                 .iter()
                 .filter(|child| child.instance_name == "producer")
                 .map(|child| child.supporting_statement_ids.clone())
-                .collect::<Vec<_>>()
+                .collect::<Vec<_>>();
+            (
+                result_port.supporting_statement_ids.clone(),
+                child_support_id_sets,
+            )
         };
         assert_eq!(child_support_id_sets.len(), 2);
         assert!(
-            child_support_id_sets
-                .iter()
-                .all(|support_ids| !support_ids.is_empty()),
-            "duplicate child-instance provenance should be present"
+            !top_port_support_ids.is_empty()
+                && child_support_id_sets
+                    .iter()
+                    .all(|support_ids| !support_ids.is_empty()),
+            "top port and duplicate child-instance provenance should be present"
         );
         let artifact_base = tempdir.path().join("generated").join("adapters");
 
@@ -21164,6 +21174,44 @@ mod tests {
             .iter()
             .find(|top| top.top_name == "datapath")
             .expect("top candidate should be present");
+        let result_port = top_candidate
+            .ports
+            .iter()
+            .find(|port| port.port_name == "result_data")
+            .expect("result_data top port should remain visible");
+        assert_eq!(
+            result_port.direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert_eq!(result_port.width_hint, Some(WidthHint::Numeric(8)));
+        assert!(
+            top_port_support_ids
+                .iter()
+                .any(|id| result_port.supporting_statement_ids.contains(id))
+        );
+        assert_eq!(
+            result_port.automation_confidence,
+            AutomationConfidence::High
+        );
+        let signal_inventory_port = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "result_data")
+            .expect("declared result_data top port should remain in selected top inventory");
+        assert_eq!(
+            signal_inventory_port.direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert_eq!(signal_inventory_port.width_hint, Some(8));
+        assert!(
+            top_port_support_ids
+                .iter()
+                .any(|id| signal_inventory_port.supporting_canonical_ids.contains(id))
+        );
+        assert_eq!(
+            signal_inventory_port.automation_confidence,
+            AutomationConfidence::High
+        );
         let duplicate_children = top_candidate
             .children
             .iter()
