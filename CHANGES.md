@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (adapter binary enum symbol signal-free guard)
+
+### Improved: binary enum member values stay signal-free
+- Added a direct regression for binary enum member expression renderability.
+- The guard proves graph-backed signal references nested on both sides of binary enum member values still block and do not create renderable signal size entries in the active `.fsm` slice.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge binary_enum_symbol_renderability_keeps_graph_signal_references_signal_free` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`118/118` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter unary enum symbol signal-free guard)
 
 ### Improved: unary enum member values stay signal-free

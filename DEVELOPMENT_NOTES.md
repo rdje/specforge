@@ -7,6 +7,20 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-08 adapter binary enum symbol signal-free guard
+- New batch slice 98/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Added `binary_enum_symbol_renderability_keeps_graph_signal_references_signal_free` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks recursive binary enum-member expression validation: graph-backed signal references nested on both sides of binary enum member values still trigger the signal-free active-slice blocker and do not create renderable size entries.
+- This complements the direct and unary enum member guards so binary recursion cannot accidentally make signal-backed enum members renderable before symbol lowering is deliberately widened.
+- `cargo fmt --all` applied rustfmt layout.
+- `cargo test --manifest-path Cargo.toml -p specforge binary_enum_symbol_renderability_keeps_graph_signal_references_signal_free` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `118/118` adapter-filtered tests.
+- `cargo fmt --all --check` passed.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- Broader `bash scripts/run_ci.sh` passed on slice 90 with formatting, Clippy warning-deny, `633` Rust tests, rustdoc warning-deny, and mdBook.
+- Push remains deferred for the active `BWFSC=200` batch.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-08 adapter unary enum symbol signal-free guard
 - New batch slice 97/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Added `unary_enum_symbol_renderability_keeps_graph_signal_references_signal_free` in `crates/specforge/src/ir/adapters.rs`.
