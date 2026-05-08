@@ -845,6 +845,7 @@
     - a representative AXI read-address ID stability fixture proving manager-owned `ARID` remains graph-grounded and actor-owned when its stability is guarded by `ARVALID` / `ARREADY` completion
     - the AXI read-address ID fixture now asserts prose semantic hints stay zero while `ARID` remains table-sourced
     - the AXI read-address ID fixture now asserts alias-grounded prose semantic hints stay zero while `ARID` remains table-sourced
+    - the AXI read-address ID fixture now asserts visual-caption semantic hints stay zero while `ARID` remains table-sourced
     - a representative AXI write-address ID stability fixture proving manager-owned `AWID` remains graph-grounded and actor-owned when its stability is guarded by `AWVALID` / `AWREADY` completion
     - the AXI write-address ID fixture now asserts prose semantic hints stay zero while request/accept role hints remain table-sourced
     - the AXI write-address ID fixture now asserts alias-grounded prose semantic hints stay zero while request/accept role hints remain table-sourced
