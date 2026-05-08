@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (adapter selector graph direction guard)
+
+### Improved: selector-block renderability has direct graph-first coverage
+- Added a direct regression for selector-bearing control block renderability.
+- The guard proves graph-backed selector signals create renderable size entries through the combined selector and branch-predicate path, while flat-vs-graph disagreement blocks and leaves no stale size entry.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge selector_block_renderability_uses_graph_direction_without_stale_flat_override` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`106/106` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter transition guard graph direction guard)
 
 ### Improved: transition guard renderability has direct graph-first coverage

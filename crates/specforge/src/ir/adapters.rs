@@ -6253,11 +6253,12 @@ mod tests {
     use crate::ir::intent::IntentIr;
     use crate::ir::semantic::{
         ActorPortRecord, ActorRelativeDirection, ControlActionRecord,
-        ControlAssignmentTargetRecord, ControlBlockRole, ControlCompoundUpdateOperation,
-        ControlExpressionRecord, ControlReferenceKind, ControlReferenceRecord,
-        DecisionTreeAssignmentKind, DecisionTreeGuardRecord, DecisionTreeValueRecord,
-        InitAssignmentRecord, InterfaceSignalDirection, SemanticIr, SystemResetPolarity,
-        SystemResetTargetKind, SystemResetTimingRelation,
+        ControlAssignmentTargetRecord, ControlBinaryOperator, ControlBlockRecord, ControlBlockRole,
+        ControlBranchRecord, ControlCompoundUpdateOperation, ControlExpressionRecord,
+        ControlReferenceKind, ControlReferenceRecord, DecisionTreeAssignmentKind,
+        DecisionTreeGuardRecord, DecisionTreeValueRecord, InitAssignmentRecord,
+        InterfaceSignalDirection, SemanticIr, SystemResetPolarity, SystemResetTargetKind,
+        SystemResetTimingRelation,
     };
     use crate::ir::source::{AutomationConfidence, SourceIr, WidthHint};
 
@@ -7221,6 +7222,148 @@ mod tests {
         assert!(blocking_reasons.iter().any(|reason| {
             reason.contains(
                 "Signal `STALE_GO` has conflicting canonical and graph-backed direction evidence",
+            )
+        }));
+        assert!(required_canonical_enrichments.contains(
+            "resolve conflicting canonical and actor-relative graph direction evidence before lowering `.fsm`"
+        ));
+    }
+
+    #[test]
+    fn selector_block_renderability_uses_graph_direction_without_stale_flat_override() {
+        let mut graph_selector = signal_candidate_with_direction_evidence(
+            None,
+            false,
+            Some(InterfaceSignalDirection::Input),
+            false,
+        );
+        graph_selector.signal_name = "SEL".to_string();
+        graph_selector.width_hint = Some(2);
+
+        let mut stale_selector = signal_candidate_with_direction_evidence(
+            Some(InterfaceSignalDirection::Output),
+            false,
+            Some(InterfaceSignalDirection::Input),
+            false,
+        );
+        stale_selector.signal_name = "STALE_SEL".to_string();
+        stale_selector.width_hint = Some(2);
+
+        let signals = [graph_selector, stale_selector];
+        let signals_by_name = signals
+            .iter()
+            .map(|signal| (signal.signal_name.clone(), signal))
+            .collect::<std::collections::BTreeMap<_, _>>();
+        let state_names = ["busy".to_string()]
+            .into_iter()
+            .collect::<std::collections::BTreeSet<_>>();
+        let mut size_entries = std::collections::BTreeMap::new();
+        let mut driven_outputs = std::collections::BTreeSet::new();
+        let mut sequential_targets = std::collections::BTreeSet::new();
+        let mut blocking_reasons = Vec::new();
+        let mut required_canonical_enrichments = std::collections::BTreeSet::new();
+
+        let graph_selector_expr = ControlExpressionRecord::Reference {
+            reference: ControlReferenceRecord {
+                base_name: "SEL".to_string(),
+                kind_hint: ControlReferenceKind::Signal,
+                suffixes: Vec::new(),
+                exposed_public_output: false,
+            },
+        };
+        let graph_block = ControlBlockRecord {
+            block_id: "selector_block".to_string(),
+            block_name: "selector_block".to_string(),
+            role: ControlBlockRole::StandaloneDecisionTree,
+            declaration_order: 0,
+            selector: Some(graph_selector_expr.clone()),
+            branches: vec![ControlBranchRecord {
+                branch_id: "selector_branch".to_string(),
+                declaration_order: 0,
+                predicate: Some(ControlExpressionRecord::Binary {
+                    operator: ControlBinaryOperator::Eq,
+                    left: Box::new(graph_selector_expr),
+                    right: Box::new(ControlExpressionRecord::Literal {
+                        literal: "2'd1".to_string(),
+                    }),
+                }),
+                actions: vec![ControlActionRecord::Transition {
+                    target_state: "busy".to_string(),
+                }],
+                supporting_statement_ids: Vec::new(),
+                automation_confidence: AutomationConfidence::High,
+            }],
+            referenced_signal_names: vec!["SEL".to_string()],
+            supporting_statement_ids: Vec::new(),
+            automation_confidence: AutomationConfidence::High,
+        };
+        super::validate_control_block_branches(
+            &graph_block,
+            true,
+            Some(&state_names),
+            &signals_by_name,
+            &mut size_entries,
+            &mut driven_outputs,
+            &mut sequential_targets,
+            &mut blocking_reasons,
+            &mut required_canonical_enrichments,
+        );
+        let graph_entry = size_entries
+            .get("SEL")
+            .expect("graph-backed selector should create a size entry");
+        assert_eq!(graph_entry.direction_hint, InterfaceSignalDirection::Input);
+        assert_eq!(graph_entry.width, 2);
+        assert!(blocking_reasons.is_empty());
+
+        let stale_selector_expr = ControlExpressionRecord::Reference {
+            reference: ControlReferenceRecord {
+                base_name: "STALE_SEL".to_string(),
+                kind_hint: ControlReferenceKind::Signal,
+                suffixes: Vec::new(),
+                exposed_public_output: false,
+            },
+        };
+        let stale_block = ControlBlockRecord {
+            block_id: "stale_selector_block".to_string(),
+            block_name: "stale_selector_block".to_string(),
+            role: ControlBlockRole::StandaloneDecisionTree,
+            declaration_order: 1,
+            selector: Some(stale_selector_expr.clone()),
+            branches: vec![ControlBranchRecord {
+                branch_id: "stale_selector_branch".to_string(),
+                declaration_order: 0,
+                predicate: Some(ControlExpressionRecord::Binary {
+                    operator: ControlBinaryOperator::Eq,
+                    left: Box::new(stale_selector_expr),
+                    right: Box::new(ControlExpressionRecord::Literal {
+                        literal: "2'd1".to_string(),
+                    }),
+                }),
+                actions: vec![ControlActionRecord::Transition {
+                    target_state: "busy".to_string(),
+                }],
+                supporting_statement_ids: Vec::new(),
+                automation_confidence: AutomationConfidence::High,
+            }],
+            referenced_signal_names: vec!["STALE_SEL".to_string()],
+            supporting_statement_ids: Vec::new(),
+            automation_confidence: AutomationConfidence::High,
+        };
+        super::validate_control_block_branches(
+            &stale_block,
+            true,
+            Some(&state_names),
+            &signals_by_name,
+            &mut size_entries,
+            &mut driven_outputs,
+            &mut sequential_targets,
+            &mut blocking_reasons,
+            &mut required_canonical_enrichments,
+        );
+        assert!(!size_entries.contains_key("STALE_SEL"));
+        assert!(blocking_reasons.iter().any(|reason| {
+            reason.contains(
+                "Signal `STALE_SEL` has conflicting canonical and graph-backed direction evidence",
             )
         }));
         assert!(required_canonical_enrichments.contains(
