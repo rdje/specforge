@@ -7378,6 +7378,126 @@ mod tests {
     }
 
     #[test]
+    fn delayed_pulse_value_renderability_keeps_graph_signal_references_signal_free() {
+        let mut graph_output = signal_candidate_with_direction_evidence(
+            None,
+            false,
+            Some(InterfaceSignalDirection::Output),
+            false,
+        );
+        graph_output.signal_name = "PULSE_OUT".to_string();
+        graph_output.width_hint = Some(1);
+
+        let mut graph_value = signal_candidate_with_direction_evidence(
+            None,
+            false,
+            Some(InterfaceSignalDirection::Input),
+            false,
+        );
+        graph_value.signal_name = "PULSE_LEVEL".to_string();
+        graph_value.width_hint = Some(1);
+
+        let mut stale_value = signal_candidate_with_direction_evidence(
+            Some(InterfaceSignalDirection::Output),
+            false,
+            Some(InterfaceSignalDirection::Input),
+            false,
+        );
+        stale_value.signal_name = "STALE_LEVEL".to_string();
+        stale_value.width_hint = Some(1);
+
+        let signals = [graph_output, graph_value, stale_value];
+        let signals_by_name = signals
+            .iter()
+            .map(|signal| (signal.signal_name.clone(), signal))
+            .collect::<std::collections::BTreeMap<_, _>>();
+        let mut size_entries = std::collections::BTreeMap::new();
+        let mut driven_outputs = std::collections::BTreeSet::new();
+        let mut sequential_targets = std::collections::BTreeSet::new();
+        let mut blocking_reasons = Vec::new();
+        let mut required_canonical_enrichments = std::collections::BTreeSet::new();
+
+        let graph_action = ControlActionRecord::DelayedPulse {
+            target: ControlAssignmentTargetRecord {
+                signal_name: "PULSE_OUT".to_string(),
+                exposed_public_output: false,
+            },
+            delay: 1,
+            value: ControlExpressionRecord::Reference {
+                reference: ControlReferenceRecord {
+                    base_name: "PULSE_LEVEL".to_string(),
+                    kind_hint: ControlReferenceKind::Signal,
+                    suffixes: Vec::new(),
+                    exposed_public_output: false,
+                },
+            },
+        };
+        super::validate_control_action_renderability(
+            &graph_action,
+            false,
+            None,
+            &signals_by_name,
+            &mut size_entries,
+            &mut driven_outputs,
+            &mut sequential_targets,
+            &mut blocking_reasons,
+            &mut required_canonical_enrichments,
+        );
+        let target_entry = size_entries
+            .get("PULSE_OUT")
+            .expect("graph-backed delayed-pulse target should still create a size entry");
+        assert_eq!(
+            target_entry.direction_hint,
+            InterfaceSignalDirection::Output
+        );
+        assert_eq!(target_entry.width, 1);
+        assert!(!size_entries.contains_key("PULSE_LEVEL"));
+        assert!(driven_outputs.contains("PULSE_OUT"));
+        assert!(sequential_targets.contains("PULSE_OUT"));
+        assert!(blocking_reasons.iter().any(|reason| {
+            reason.contains(
+                "The active `.fsm` delayed-pulse lowering only supports literal `0` or `1` pulse levels",
+            )
+        }));
+        assert!(required_canonical_enrichments.contains(
+            "keep the first delayed-pulse adapter slice limited to literal 0/1 pulse levels"
+        ));
+
+        let stale_action = ControlActionRecord::DelayedPulse {
+            target: ControlAssignmentTargetRecord {
+                signal_name: "PULSE_OUT".to_string(),
+                exposed_public_output: false,
+            },
+            delay: 1,
+            value: ControlExpressionRecord::Reference {
+                reference: ControlReferenceRecord {
+                    base_name: "STALE_LEVEL".to_string(),
+                    kind_hint: ControlReferenceKind::Signal,
+                    suffixes: Vec::new(),
+                    exposed_public_output: false,
+                },
+            },
+        };
+        super::validate_control_action_renderability(
+            &stale_action,
+            false,
+            None,
+            &signals_by_name,
+            &mut size_entries,
+            &mut driven_outputs,
+            &mut sequential_targets,
+            &mut blocking_reasons,
+            &mut required_canonical_enrichments,
+        );
+        assert!(!size_entries.contains_key("STALE_LEVEL"));
+        assert!(
+            !blocking_reasons
+                .iter()
+                .any(|reason| reason.contains("STALE_LEVEL"))
+        );
+    }
+
+    #[test]
     fn compound_update_renderability_uses_graph_output_without_stale_flat_override() {
         let mut graph_output = signal_candidate_with_direction_evidence(
             None,

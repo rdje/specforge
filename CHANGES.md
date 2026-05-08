@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (adapter delayed-pulse value signal-free guard)
+
+### Improved: delayed-pulse values stay literal-only
+- Added a direct regression for delayed-pulse value renderability.
+- The guard proves graph-backed signal references used as pulse levels do not create renderable signal metadata while the active `.fsm` delayed-pulse lowering remains limited to literal `0` / `1` pulse levels.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge delayed_pulse_value_renderability_keeps_graph_signal_references_signal_free` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`121/121` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter registered dual-output assignment graph direction guard)
 
 ### Improved: registered dual-output assignment targets have graph-first coverage

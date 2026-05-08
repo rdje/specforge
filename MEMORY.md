@@ -23,22 +23,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `f4a1409d8808e269bfd6a1532d2d8286e0d1f95d`
-- latest_commit_brief_message: `test(adapter): guard graph-backed dual outputs`
-- note: this is the pre-slice-100 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
+- latest_commit_hash: `a42e546e890c74b469fcc20e981a977a667a12ad`
+- latest_commit_brief_message: `test(adapter): guard registered dual outputs`
+- note: this is the pre-slice-101 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
 
 ## Recent commit chain (last 6)
+- `a42e546` test(adapter): guard registered dual outputs
 - `f4a1409` test(adapter): guard graph-backed dual outputs
 - `92b18e5` test(adapter): keep binary enum symbols signal-free
 - `62ff66d` test(adapter): keep unary enum symbols signal-free
 - `a1cbae5` test(adapter): keep binary symbols signal-free
 - `9c54392` test(adapter): keep unary symbols signal-free
-- `b6a8a21` test(adapter): guard graph-backed compound amounts
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 100 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
+- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 101 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
 - files in flight:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
@@ -58,16 +58,16 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `99`
-  - slice 100/200 adds a direct `.fsm` registered sequential dual-output assignment renderability guard for graph-backed output targets and stale-flat disagreement blocking
+  - completed_count before this commit: `100`
+  - slice 101/200 adds a direct `.fsm` delayed-pulse value renderability guard proving graph-backed pulse-level signal references remain signal-free while literal-only lowering is active
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks registered dual-output assignment renderability graph-backed output stale-flat regression coverage as `Done`
+  - live-status tracker now marks delayed-pulse value renderability graph-backed signal-free regression coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 100 before commit
+  - implementation and live-doc sync are complete for slice 101 before commit
   - `cargo fmt --all` applied rustfmt layout
-  - `cargo test --manifest-path Cargo.toml -p specforge registered_dual_output_assignment_renderability_uses_graph_output_without_stale_flat_override` passed
-  - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `120/120` adapter-filtered tests
+  - `cargo test --manifest-path Cargo.toml -p specforge delayed_pulse_value_renderability_keeps_graph_signal_references_signal_free` passed
+  - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `121/121` adapter-filtered tests
   - `cargo fmt --all --check` passed
   - `bash scripts/run_docs_ci.sh` passed after the final live-book sync
   - `bash scripts/run_ci.sh` passed as the slice 100 broader checkpoint gate with formatting, Clippy warning-deny, `643` Rust tests, rustdoc warning-deny, and mdBook
@@ -291,6 +291,9 @@
   - slice 100 passed `cargo test --manifest-path Cargo.toml -p specforge registered_dual_output_assignment_renderability_uses_graph_output_without_stale_flat_override`
   - slice 100 passed `cargo test --manifest-path Cargo.toml -p specforge adapters`
   - slice 100 passed `bash scripts/run_docs_ci.sh`
+  - slice 101 passed `cargo test --manifest-path Cargo.toml -p specforge delayed_pulse_value_renderability_keeps_graph_signal_references_signal_free`
+  - slice 101 passed `cargo test --manifest-path Cargo.toml -p specforge adapters`
+  - slice 101 passed `bash scripts/run_docs_ci.sh`
   - slice 20 passed `bash scripts/run_ci.sh`
   - slice 100 passed `bash scripts/run_ci.sh`
   - slice 90 passed `bash scripts/run_ci.sh`
