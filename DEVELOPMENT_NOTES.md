@@ -7,6 +7,18 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-08 KG fixture for waveform-motion VLM visual exclusion
+- New batch slice 10/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
+- Tightened `crates/specforge/test_data/kg_quality/vlm_timing_waveform_motion_negative/fixture.json`.
+- The fixture now asserts `signal_semantic_hints_from_visual_captions = 0` alongside total, table, prose, alias-grounded prose, VLM timing-annotation, and timing extraction metrics.
+- This strengthens waveform-motion VLM timing state coverage by proving states such as `rising`, `stable`, `falling`, `UNCHANGED`, `RISING_EDGE`, `LOW_TO_HIGH`, `POS_EDGE`, `risingedge`, and `LOW2HIGH` remain rejected motion evidence only, not visual-caption semantic-role evidence.
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench vlm_timing_waveform_motion_negative` passed with the requested fixture.
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` tracked fixtures.
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` refreshed tracked corpus-KB projections for `150` fixtures with `0` failures and no tracked projection diff.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- `bash scripts/run_ci.sh` passed for the slice-10 broader gate with formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, and mdBook.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-08 KG fixture for waveform-motion VLM alias exclusion
 - New batch slice 9/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
 - Tightened `crates/specforge/test_data/kg_quality/vlm_timing_waveform_motion_negative/fixture.json`.

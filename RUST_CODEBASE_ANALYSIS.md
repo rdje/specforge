@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 KG fixture for waveform-motion VLM visual exclusion)
+- Tightened `vlm_timing_waveform_motion_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts evidence-stage `signal_semantic_hints_from_visual_captions = 0` alongside aggregate, table, prose, alias-grounded prose, VLM timing-annotation, and timing extraction metrics.
+- This locks rejected waveform-motion state labels as free of visual-caption semantic-role hints.
+
 ## Session update (2026-05-08 KG fixture for waveform-motion VLM alias exclusion)
 - Tightened `vlm_timing_waveform_motion_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts evidence-stage `signal_semantic_hints_from_alias_grounded_prose = 0` alongside aggregate, table, prose, VLM timing-annotation, and timing extraction metrics.

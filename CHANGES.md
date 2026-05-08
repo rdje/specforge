@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for waveform-motion VLM visual exclusion)
+
+### Improved: waveform-motion VLM timing fixtures exclude visual-caption hints
+- Tightened `vlm_timing_waveform_motion_negative` with `signal_semantic_hints_from_visual_captions = 0` at `EvidenceIR`.
+- The fixture now proves rejected waveform-motion states remain free of visual-caption semantic-role hints.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench vlm_timing_waveform_motion_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for waveform-motion VLM alias exclusion)
 
 ### Improved: waveform-motion VLM timing fixtures exclude alias-grounded prose hints

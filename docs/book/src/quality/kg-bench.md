@@ -344,6 +344,7 @@ The waveform-motion fixture now locks total semantic hints at zero too, so rejec
 It also excludes table-sourced semantic hints, so table evidence cannot rescue rejected motion-state labels.
 Ordinary prose hints are zero for waveform-motion labels too, so text evidence cannot backfill a semantic role for rejected motion states.
 Alias-grounded prose is excluded as well, keeping phrase-alias recovery from inventing roles for rejected motion-state labels.
+Visual-caption hints are zero too, so captions cannot backfill a semantic role for rejected motion states.
 The spurious-annotation fixture now also locks total semantic hints at zero, so low-value labels and value-like annotations cannot invent roles through another evidence channel.
 It also excludes table-sourced semantic hints, so low-value annotation noise cannot be rescued through table evidence.
 Ordinary prose hints are zero for spurious annotations too, so text evidence cannot backfill a semantic role for label/value noise.
