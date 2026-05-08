@@ -294,6 +294,7 @@
 - `specforge validate` now reports EvidenceIR table-signal declaration provenance: Done
 - `specforge validate` now reports table-backed canonical signal coverage: Done
 - KG benchmark harness can now assert canonical signal-connectivity conflict shape directly: Done
+- KG benchmark harness now locks signal-connectivity conflict validation metric coverage: Done
 - KG benchmark harness can now assert canonical signal-semantic conflict shape directly: Done
 - KG benchmark harness can now assert canonical interface-signal conflict shape directly: Done
 - KG benchmark harness now locks interface-signal conflict validation metric coverage: Done

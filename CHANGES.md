@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for multi-producer connectivity metric)
+
+### Improved: multi-producer fixture locks connectivity conflict metrics
+- Tightened `multi_producer_conflict_negative` with `signal_connectivity_conflicts = 1` at both `SemanticIR` and `IntentIR` validation surfaces.
+- The negative fixture now proves the `PREADY` `Completer` / `Monitor` producer ambiguity stays counted as a validation metric while exact conflict shape remains asserted.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench multi_producer_conflict_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- Missing-validation-metric scan -> passed with no remaining targeted metric gaps
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for interface-signal conflict metric)
 
 ### Improved: interface-signal conflict fixture locks conflict metrics

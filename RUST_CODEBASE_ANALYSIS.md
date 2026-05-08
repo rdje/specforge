@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 KG fixture for multi-producer connectivity metric)
+- Tightened `multi_producer_conflict_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts `signal_connectivity_conflicts = 1` at both `SemanticIR` and `IntentIR` validation surfaces.
+- This completes the current count-style validation metric hardening pass by proving multi-producer `PREADY` ambiguity is covered as both typed conflict shape and aggregate validation metrics.
+
 ## Session update (2026-05-08 KG fixture for interface-signal conflict metric)
 - Tightened `interface_signal_conflict_negative` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts `interface_signal_conflicts = 2` at both `SemanticIR` and `IntentIR` validation surfaces.

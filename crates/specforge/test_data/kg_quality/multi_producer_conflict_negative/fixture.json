@@ -36,7 +36,10 @@
             "summary_contains": "unresolved producer ambiguity",
             "related_ids_include": ["signal_connectivity_conflict_0001"]
           }
-        ]
+        ],
+        "metric_values": {
+          "signal_connectivity_conflicts": "1"
+        }
       },
       "intent": {
         "finding_ids_include": [
@@ -51,7 +54,10 @@
             "summary_contains": "unresolved producer ambiguity",
             "related_ids_include": ["signal_connectivity_conflict_0001"]
           }
-        ]
+        ],
+        "metric_values": {
+          "signal_connectivity_conflicts": "1"
+        }
       }
     }
   }

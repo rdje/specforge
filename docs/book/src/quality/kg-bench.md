@@ -87,6 +87,7 @@ The flat-hint-present conflict fixture locks the converse boundary: graph covera
 Fixtures can assert canonical signal-connectivity conflicts directly.
 `signal_connectivity_conflicts_include` checks the conflicted signal, conflict kind, conflicting actor ids or names, and optional supporting statement ids.
 That lets graph-conflict fixtures prove the actual multi-producer actor set rather than reducing the test to "one connectivity conflict exists."
+The multi-producer conflict fixture also locks the aggregate validation metric at one conflict for both canonical stages, so producer ambiguity remains visible in summary output.
 
 Fixtures can assert canonical temporal rules directly too.
 `temporal_rules_include` checks typed clock/edge grounding, cycle windows, supporting statement ids, antecedent predicates, and consequent predicates.
