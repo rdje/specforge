@@ -22506,6 +22506,25 @@ mod tests {
                 .any(|id| drive_port.supporting_statement_ids.contains(id))
         );
         assert_eq!(drive_port.automation_confidence, AutomationConfidence::High);
+        let signal_inventory_port = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "drive_data")
+            .expect("declared drive_data top port should remain in selected top inventory");
+        assert_eq!(
+            signal_inventory_port.direction_hint,
+            Some(InterfaceSignalDirection::Input)
+        );
+        assert_eq!(signal_inventory_port.width_hint, Some(8));
+        assert!(
+            top_port_support_ids
+                .iter()
+                .any(|id| signal_inventory_port.supporting_canonical_ids.contains(id))
+        );
+        assert_eq!(
+            signal_inventory_port.automation_confidence,
+            AutomationConfidence::High
+        );
         let consumer_child = top_candidate
             .children
             .iter()
