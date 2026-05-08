@@ -831,6 +831,7 @@
     - the indexed signal-value VLM timing fixture now asserts table semantic hints remain zero, proving table evidence cannot invent roles for indexed label noise
     - the indexed signal-value VLM timing fixture now asserts ordinary prose semantic hints remain zero, proving prose cannot invent roles for indexed label noise
     - the indexed signal-value VLM timing fixture now asserts alias-grounded prose semantic hints remain zero, proving phrase-alias recovery cannot invent roles for indexed label noise
+    - the indexed signal-value VLM timing fixture now asserts visual-caption semantic hints remain zero, proving captions cannot invent roles for indexed label noise
     - a negative fixture proving cycle-qualified signal-value VLM timing-diagram labels like `XREQ HIGH at T1`, `XREQ LOW during T0`, and `XREQ asserted on T1` do not become timing constraints while the underlying waveform LOW/HIGH samples still survive as temporal evidence
     - the cycle-qualified signal-value VLM timing fixture now also asserts total semantic hints remain zero, proving cycle-scoped labels cannot invent semantic roles through any evidence path
     - the cycle-qualified signal-value VLM timing fixture now asserts table semantic hints remain zero, proving table evidence cannot invent roles for cycle-scoped label noise
