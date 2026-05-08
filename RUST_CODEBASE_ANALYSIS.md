@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter multi-child confidence guard)
+- Extended `top_composition_blocks_multi_child_without_links_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- The test now locks high automation confidence on each visible child declaration while the top candidate remains blocked on missing explicit links.
+- This complements child support-ID and root-kind coverage so incomplete multi-child composition diagnostics keep full declaration metadata.
+
 ## Session update (2026-05-08 adapter duplicate child confidence guard)
 - Extended `top_composition_blocks_duplicate_child_instance_guidance` in `crates/specforge/src/ir/adapters.rs`.
 - The test now locks high automation confidence on each duplicate child declaration while the top candidate remains blocked on duplicate instance names.

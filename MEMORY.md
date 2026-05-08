@@ -23,22 +23,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `18287f7797a7c48ec8a6e4b86fd16dbb3f23b73d`
-- latest_commit_brief_message: `test(adapter): keep top-link endpoint metadata`
-- note: this is the pre-slice-124 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
+- latest_commit_hash: `21bbc258bee0f597657abf56f916059ed1cfeb70`
+- latest_commit_brief_message: `test(adapter): keep duplicate child confidence`
+- note: this is the pre-slice-125 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
 
 ## Recent commit chain (last 6)
+- `21bbc25` test(adapter): keep duplicate child confidence
 - `18287f7` test(adapter): keep top-link endpoint metadata
 - `bc93bb1` test(adapter): keep binary enum width casts signal-free
 - `6067294` test(adapter): keep unary enum width casts signal-free
 - `243a5a1` test(adapter): keep enum symbol width casts signal-free
 - `a4cbb88` test(adapter): keep binary symbol width casts signal-free
-- `78698b6` test(adapter): keep unary symbol width casts signal-free
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 124 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
+- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 125 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
 - files in flight:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
@@ -58,15 +58,15 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `123`
-  - slice 124/200 extends the duplicate child-instance blocker to prove each duplicate child declaration keeps high automation confidence alongside support IDs and resolved root kind while emission stays blocked
+  - completed_count before this commit: `124`
+  - slice 125/200 extends the multi-child-without-links blocker to prove each visible child declaration keeps high automation confidence alongside support IDs and resolved root kind while emission stays blocked
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks duplicate child-instance confidence coverage as `Done`
+  - live-status tracker now marks missing-link multi-child confidence coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 124 before commit
+  - implementation and live-doc sync are complete for slice 125 before commit
   - `cargo fmt --all` applied rustfmt layout
-  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_duplicate_child_instance_guidance` passed
+  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_multi_child_without_links_guidance` passed
   - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests
   - `cargo fmt --all --check` passed
   - `bash scripts/run_docs_ci.sh` passed after the final live-book sync
@@ -365,6 +365,9 @@
   - slice 124 passed `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_duplicate_child_instance_guidance`
   - slice 124 passed `cargo test --manifest-path Cargo.toml -p specforge adapters`
   - slice 124 passed `bash scripts/run_docs_ci.sh`
+  - slice 125 passed `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_multi_child_without_links_guidance`
+  - slice 125 passed `cargo test --manifest-path Cargo.toml -p specforge adapters`
+  - slice 125 passed `bash scripts/run_docs_ci.sh`
   - slice 20 passed `bash scripts/run_ci.sh`
   - slice 100 passed `bash scripts/run_ci.sh`
   - slice 90 passed `bash scripts/run_ci.sh`

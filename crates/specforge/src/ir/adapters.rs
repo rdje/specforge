@@ -20453,6 +20453,10 @@ mod tests {
             .expect("producer child candidate should remain visible");
         assert_eq!(producer_child.source_module_name, "producer_core");
         assert_eq!(producer_child.resolved_root_kind, Some(FsmRootKind::Dt));
+        assert_eq!(
+            producer_child.automation_confidence,
+            AutomationConfidence::High
+        );
         assert!(
             producer_child_support_ids
                 .iter()
@@ -20465,6 +20469,10 @@ mod tests {
             .expect("consumer child candidate should remain visible");
         assert_eq!(consumer_child.source_module_name, "consumer_core");
         assert_eq!(consumer_child.resolved_root_kind, Some(FsmRootKind::Dt));
+        assert_eq!(
+            consumer_child.automation_confidence,
+            AutomationConfidence::High
+        );
         assert!(
             consumer_child_support_ids
                 .iter()
