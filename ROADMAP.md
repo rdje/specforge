@@ -888,6 +888,7 @@
     - a representative AXI data USER sideband stability fixture proving Manager-owned `WUSER` and Subordinate-owned `RUSER` stay actor-grounded under their matching data-channel handshakes
     - a representative AXI write-data timing gold fixture proving the same width-only plus prose actor-relation path works for `WVALID` / `WREADY` / `WDATA` / `WSTRB`, including next-cycle write-data ready assertion and handshake-stable write-data payload semantics
     - the AXI write-data timing fixture now asserts prose semantic hints stay zero while request/accept role hints remain table-sourced
+    - the AXI write-data timing fixture now asserts alias-grounded prose semantic hints stay zero while request/accept role hints remain table-sourced
     - a representative AXI write-data last stability fixture proving manager-owned `WLAST` remains graph-grounded and actor-owned when its stability is guarded by `WVALID` / `WREADY` completion
     - the AXI write-data last fixture now asserts prose semantic hints stay zero while request/accept role hints remain table-sourced
     - the AXI write-data last fixture now asserts alias-grounded prose semantic hints stay zero while request/accept role hints remain table-sourced
