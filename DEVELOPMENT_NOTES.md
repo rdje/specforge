@@ -7,6 +7,20 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-08 adapter legacy unemitted source confidence guard
+- New batch slice 130/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Extended `top_composition_blocks_link_from_unemitted_child_port` in `crates/specforge/src/ir/adapters.rs`.
+- The legacy source-side unemitted child-port blocker now locks high automation confidence on the declared top port and producer child alongside the blocked top link.
+- This keeps the legacy regression aligned with the newer source-side guidance test without changing `.fsm` lowering behavior.
+- `cargo fmt --all` applied rustfmt layout.
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_link_from_unemitted_child_port` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests.
+- `cargo fmt --all --check` passed.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- `bash scripts/run_ci.sh` passed as the slice 130 broader checkpoint with formatting, Clippy warning-deny, `665` Rust tests, rustdoc warning-deny, and mdBook.
+- Push remains deferred for the active `BWFSC=200` batch.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-08 adapter unemitted target confidence guard
 - New batch slice 129/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Extended `top_composition_blocks_link_to_unemitted_child_target_guidance` in `crates/specforge/src/ir/adapters.rs`.

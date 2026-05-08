@@ -17011,23 +17011,37 @@ mod tests {
             "link_from_unemitted_child_port.md",
             "# Link From Unemitted Child Port\nTop datapath.\n\nTop datapath port result_data is output width 8.\n\nTop datapath child producer uses module producer_core.\n\nTop datapath link producer.side_data -> result_data.\n\nModule producer_core signal output_data is output width 8.\n\nModule producer_core signal side_data is output width 8.\n\nModule producer_core block produce: output_data = 8'3.\n",
         )?;
-        let top_link_support_ids = intent_ir
+        let (top_port_support_ids, child_support_ids, top_link_support_ids) = intent_ir
             .explicit_tops
             .iter()
             .find(|top| top.top_name == "datapath")
             .and_then(|top| {
-                top.links.iter().find(|link| {
+                let result_port = top
+                    .ports
+                    .iter()
+                    .find(|port| port.port_name == "result_data")?;
+                let producer_child = top
+                    .children
+                    .iter()
+                    .find(|child| child.instance_name == "producer")?;
+                let blocked_link = top.links.iter().find(|link| {
                     link.source.instance_name.as_deref() == Some("producer")
                         && link.source.signal_name == "side_data"
                         && link.target.instance_name.is_none()
                         && link.target.signal_name == "result_data"
-                })
+                })?;
+                Some((
+                    result_port.supporting_statement_ids.clone(),
+                    producer_child.supporting_statement_ids.clone(),
+                    super::explicit_top_link_supporting_ids(blocked_link),
+                ))
             })
-            .map(super::explicit_top_link_supporting_ids)
             .expect("topology link from producer.side_data should be present");
         assert!(
-            !top_link_support_ids.is_empty(),
-            "top-link provenance should be present"
+            !top_port_support_ids.is_empty()
+                && !child_support_ids.is_empty()
+                && !top_link_support_ids.is_empty(),
+            "top port, child, and link provenance should be present"
         );
 
         let artifact_base = tempdir.path().join("generated").join("adapters");
@@ -17051,6 +17065,41 @@ mod tests {
             .iter()
             .find(|top| top.top_name == "datapath")
             .expect("top candidate should be present");
+        let result_port = top_candidate
+            .ports
+            .iter()
+            .find(|port| port.port_name == "result_data")
+            .expect("top output port should remain visible");
+        assert_eq!(
+            result_port.direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert_eq!(result_port.width_hint, Some(WidthHint::Numeric(8)));
+        assert!(
+            top_port_support_ids
+                .iter()
+                .any(|id| result_port.supporting_statement_ids.contains(id))
+        );
+        assert_eq!(
+            result_port.automation_confidence,
+            AutomationConfidence::High
+        );
+        let producer_child = top_candidate
+            .children
+            .iter()
+            .find(|child| child.instance_name == "producer")
+            .expect("producer child candidate should remain visible");
+        assert_eq!(producer_child.source_module_name, "producer_core");
+        assert_eq!(producer_child.resolved_root_kind, Some(FsmRootKind::Dt));
+        assert!(
+            child_support_ids
+                .iter()
+                .any(|id| producer_child.supporting_canonical_ids.contains(id))
+        );
+        assert_eq!(
+            producer_child.automation_confidence,
+            AutomationConfidence::High
+        );
         let blocked_link = top_candidate
             .links
             .iter()

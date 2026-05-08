@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter legacy unemitted source confidence guard)
+- Extended `top_composition_blocks_link_from_unemitted_child_port` in `crates/specforge/src/ir/adapters.rs`.
+- The legacy source-side unemitted child-port blocker now locks high automation confidence on the declared top port and producer child alongside the blocked top link.
+- This aligns the older regression with the newer source-side guidance test while keeping blocked top composition emission disabled.
+
 ## Session update (2026-05-08 adapter unemitted target confidence guard)
 - Extended `top_composition_blocks_link_to_unemitted_child_target_guidance` in `crates/specforge/src/ir/adapters.rs`.
 - The test now locks high automation confidence on the declared top port and consumer child while the existing blocked-link confidence check remains in place.

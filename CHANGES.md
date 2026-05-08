@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-05-08 (adapter legacy unemitted source confidence guard)
+
+### Improved: legacy unemitted child-source blockers preserve retained record confidence
+- Extended the legacy source-side unemitted child-port regression to assert the declared top port and producer child keep high automation confidence alongside the blocked top link.
+- The guard keeps retained-record confidence coverage aligned across the legacy blocker and the newer guidance-specific source-side regression.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_link_from_unemitted_child_port` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed (`665` Rust tests plus formatting, Clippy warning-deny, rustdoc warning-deny, and mdBook)
+
 ## 2026-05-08 (adapter unemitted target confidence guard)
 
 ### Improved: unemitted child-target blockers preserve retained record confidence
