@@ -752,6 +752,7 @@
     - a residual-quality fixture for actor-boundary ambiguity
     - a stage-patched negative fixture proving contested handshake-shaped signal names do not leak into typed `HandshakeComplete` predicates
     - the contested handshake negative fixture now asserts aggregate temporal-rule count coverage while keeping typed handshake fallback blocked
+    - the contested handshake negative fixture now asserts semantic-conflict validation metric coverage while keeping typed handshake fallback blocked
     - a stage-patched caveat fixture proving alias-dependent handshake completion stays usable while preserving its canonical residual/assumption trail
     - the alias-dependent handshake caveat fixture now asserts aggregate temporal-rule count coverage while preserving its residual/assumption trail
     - the alias-dependent handshake caveat fixture now asserts generic handshake-completion validation metric coverage while preserving its residual/assumption trail

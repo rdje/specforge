@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for contested-handshake semantic-conflict metric)
+
+### Improved: contested-handshake negative fixture locks semantic-conflict metrics
+- Tightened `contested_handshake_name_fallback_negative` with `signal_semantic_conflicts = 1` at both `SemanticIR` and `IntentIR` validation surfaces.
+- The negative fixture now proves contested `XVALID` role evidence stays counted as a semantic conflict while the guarded payload-stability rule remains visible.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench contested_handshake_name_fallback_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- Signal-semantic conflict metric coverage scan -> passed with no remaining fixtures that assert `signal_semantic_conflicts` while missing the validation metric
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for alias-dependent handshake-caveat metric)
 
 ### Improved: alias-dependent caveat locks its specific handshake metric

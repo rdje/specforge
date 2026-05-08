@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 KG fixture for contested-handshake semantic-conflict metric)
+- Tightened `contested_handshake_name_fallback_negative` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts `signal_semantic_conflicts = 1` at both `SemanticIR` and `IntentIR` validation surfaces.
+- This completes signal-semantic conflict validation metric hardening by proving contested `XVALID` role evidence remains counted while typed `HandshakeComplete` fallback stays blocked.
+
 ## Session update (2026-05-08 KG fixture for alias-dependent handshake-caveat metric)
 - Tightened `alias_dependent_handshake_completion_caveat` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts `temporal_rules_with_alias_dependent_handshake_completion = 1` at both `SemanticIR` and `IntentIR` validation surfaces.

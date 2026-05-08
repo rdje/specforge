@@ -172,6 +172,7 @@
           }
         ],
         "metric_values": {
+          "signal_semantic_conflicts": "1",
           "temporal_rules": "1"
         }
       },
@@ -199,6 +200,7 @@
           }
         ],
         "metric_values": {
+          "signal_semantic_conflicts": "1",
           "temporal_rules": "1"
         }
       }
