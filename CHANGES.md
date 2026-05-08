@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for AMBA source-column VLM exclusion)
+
+### Improved: AMBA source-column fixtures exclude VLM timing hints
+- Tightened `amba_source_column_handshake_gold` with `signal_semantic_hints_from_vlm_timing_annotations = 0` at `EvidenceIR`.
+- The fixture now proves `XREQ` / `XACK` semantic hints are not recovered through VLM timing-annotation evidence while `Source` roles still recover typed handshake completion.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench amba_source_column_handshake_gold` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for AMBA source-column visual exclusion)
 
 ### Improved: AMBA source-column fixtures exclude visual-caption hints
