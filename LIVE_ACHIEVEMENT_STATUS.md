@@ -1052,6 +1052,7 @@
 - KG benchmark harness now locks AXI address QoS/region sideband VLM timing-annotation semantic-hint exclusion: Done
 - KG benchmark harness now includes AXI data USER sideband stability coverage: Done
 - KG benchmark harness now locks AXI data USER prose semantic-hint exclusion: Done
+- KG benchmark harness now locks AXI data USER alias-grounded prose semantic-hint exclusion: Done
 - KG benchmark harness now includes AXI address/response USER sideband stability coverage: Done
 - KG benchmark harness now includes APB address/protection wait-state stability coverage: Done
 - KG benchmark harness now locks APB address/protection prose semantic-hint exclusion: Done

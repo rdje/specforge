@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for AXI data USER alias exclusion)
+
+### Improved: AXI data USER sideband fixtures exclude alias-grounded prose
+- Tightened `axi_data_user_sideband_stability_gold` with `signal_semantic_hints_from_alias_grounded_prose = 0` at `EvidenceIR`.
+- The fixture now proves `WVALID` / `WREADY` and `RVALID` / `RREADY` semantic hints are not recovered through phrase-alias prose while `WUSER` and `RUSER` sideband stability obligations remain recovered.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench axi_data_user_sideband_stability_gold` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for AXI data USER prose exclusion)
 
 ### Improved: AXI data USER sideband fixtures prove table-only hints

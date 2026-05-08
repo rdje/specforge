@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 KG fixture for AXI data USER alias exclusion)
+- Tightened `axi_data_user_sideband_stability_gold` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts evidence-stage `signal_semantic_hints_from_alias_grounded_prose = 0` alongside aggregate, table-sourced, and prose semantic hints.
+- This continues AXI data USER sideband source-split hardening by proving `WVALID` / `WREADY` and `RVALID` / `RREADY` request/accept hints do not rely on phrase-alias prose recovery.
+
 ## Session update (2026-05-08 KG fixture for AXI data USER prose exclusion)
 - Tightened `axi_data_user_sideband_stability_gold` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts evidence-stage `signal_semantic_hints_from_prose = 0` alongside aggregate and table-sourced semantic hints.
