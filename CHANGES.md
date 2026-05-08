@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (adapter delayed-pulse delay guard)
+
+### Improved: delayed-pulse zero-delay blocking preserves graph-backed targets
+- Added a direct regression for delayed-pulse delay renderability.
+- The guard proves graph-backed delayed-pulse targets still create output metadata, while zero-delay pulse lowering remains blocked by the positive-delay contract.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge delayed_pulse_zero_delay_blocks_after_graph_target` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`125/125` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter registered dual-output assignment value graph direction guard)
 
 ### Improved: registered dual-output assignment values have graph-first coverage

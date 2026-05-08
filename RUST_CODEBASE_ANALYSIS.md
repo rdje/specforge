@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter delayed-pulse delay guard)
+- Added `delayed_pulse_zero_delay_blocks_after_graph_target` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks zero-delay delayed-pulse validation so graph-backed output targets still produce size entries, while the delayed-pulse lowering contract blocks zero-cycle pulse intent.
+- This keeps graph-first target role recovery independent from the positive-delay timing gate.
+
 ## Session update (2026-05-08 adapter registered dual-output assignment value graph direction guard)
 - Added `registered_dual_output_assignment_values_use_graph_direction` in `crates/specforge/src/ir/adapters.rs`.
 - The test locks registered dual-output assignment value references so graph-backed inputs create size entries, while stale flat-vs-graph disagreement leaves no stale entry.

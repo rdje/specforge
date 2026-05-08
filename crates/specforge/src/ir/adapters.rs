@@ -7683,6 +7683,67 @@ mod tests {
     }
 
     #[test]
+    fn delayed_pulse_zero_delay_blocks_after_graph_target() {
+        let mut graph_output = signal_candidate_with_direction_evidence(
+            None,
+            false,
+            Some(InterfaceSignalDirection::Output),
+            false,
+        );
+        graph_output.signal_name = "PULSE_OUT".to_string();
+        graph_output.width_hint = Some(1);
+
+        let signals = [graph_output];
+        let signals_by_name = signals
+            .iter()
+            .map(|signal| (signal.signal_name.clone(), signal))
+            .collect::<std::collections::BTreeMap<_, _>>();
+        let mut size_entries = std::collections::BTreeMap::new();
+        let mut driven_outputs = std::collections::BTreeSet::new();
+        let mut sequential_targets = std::collections::BTreeSet::new();
+        let mut blocking_reasons = Vec::new();
+        let mut required_canonical_enrichments = std::collections::BTreeSet::new();
+
+        let graph_action = ControlActionRecord::DelayedPulse {
+            target: ControlAssignmentTargetRecord {
+                signal_name: "PULSE_OUT".to_string(),
+                exposed_public_output: false,
+            },
+            delay: 0,
+            value: ControlExpressionRecord::Literal {
+                literal: "1".to_string(),
+            },
+        };
+        super::validate_control_action_renderability(
+            &graph_action,
+            false,
+            None,
+            &signals_by_name,
+            &mut size_entries,
+            &mut driven_outputs,
+            &mut sequential_targets,
+            &mut blocking_reasons,
+            &mut required_canonical_enrichments,
+        );
+        let graph_entry = size_entries
+            .get("PULSE_OUT")
+            .expect("graph-backed delayed-pulse target should still create a size entry");
+        assert_eq!(graph_entry.direction_hint, InterfaceSignalDirection::Output);
+        assert_eq!(graph_entry.width, 1);
+        assert!(driven_outputs.contains("PULSE_OUT"));
+        assert!(sequential_targets.contains("PULSE_OUT"));
+        assert!(blocking_reasons.iter().any(|reason| {
+            reason.contains(
+                "The active `.fsm` delayed-pulse lowering requires a strictly positive delay",
+            )
+        }));
+        assert!(
+            required_canonical_enrichments
+                .contains("keep canonical delayed-pulse actions on positive cycle delays")
+        );
+    }
+
+    #[test]
     fn delayed_pulse_value_renderability_keeps_graph_signal_references_signal_free() {
         let mut graph_output = signal_candidate_with_direction_evidence(
             None,

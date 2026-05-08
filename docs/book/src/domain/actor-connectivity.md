@@ -241,6 +241,7 @@ Typed control assignments, delayed-pulse actions, and compound updates use the s
 Sequential dual-output assignments use that same target role rule before emitting either `.fsm` next-signal or registered-signal dual-output assignment syntax.
 Dual-output assignments still require sequential canonical intent; nonsequential dual-output metadata remains blocking even when the graph-backed target role is recoverable.
 Next-signal and registered-signal dual-output assignment values use the same read-side rule as ordinary assignment values: graph-backed input references can be sized, while stale flat disagreement remains blocking.
+Delayed-pulse actions still require positive cycle delays; zero-delay pulse intent remains blocking even when the graph-backed output target is recoverable.
 Delayed-pulse pulse-level values remain literal-only in the active adapter slice, so graph-backed signal references there do not create renderable signal metadata until that lowering is deliberately widened.
 Typed assignment values use the read-side rule too: graph-backed value references create input size entries, while stale flat disagreement remains blocking.
 Compound-update amounts use that same read-side rule when they reference signals.
