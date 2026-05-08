@@ -800,6 +800,7 @@
     - a representative AXI read-address timing gold fixture proving the same width-only plus prose actor-relation path works for `ARVALID` / `ARREADY` / `ARADDR` / `ARLEN`, including next-cycle read-address ready assertion and handshake-stable read-address payload semantics
     - the AXI read-address timing fixture now asserts prose semantic hints stay zero while request/accept role hints remain table-sourced
     - the AXI read-address timing fixture now asserts alias-grounded prose semantic hints stay zero while request/accept role hints remain table-sourced
+    - the AXI read-address timing fixture now asserts visual-caption semantic hints stay zero while request/accept role hints remain table-sourced
     - the AXI sideband stability fixture now asserts prose semantic hints stay zero while its sideband obligations recover through table-sourced semantic hints
     - the AXI sideband stability fixture now asserts alias-grounded prose semantic hints stay zero while its sideband obligations remain table-sourced
     - the AXI sideband stability fixture now asserts visual-caption semantic hints stay zero while its sideband obligations remain table-sourced
