@@ -230,6 +230,7 @@ For example, if the same child signal is used as both a link source and a link t
 This is still conservative.
 Graph `input` and `output` directions can fill the module-local port role, but `in_out` and `unknown` are not turned into fake `.fsm` directions.
 Conflicts between flat hints and graph evidence still collapse the renderable port role to unresolved and block lowering instead of silently choosing a winner, while artifact provenance keeps the two evidence planes inspectable.
+The shared adapter direction resolver is regression-tested directly for that contract: flat-only evidence remains usable, graph-only evidence can carry a lagging compatibility surface, matching flat/graph evidence is accepted, and any flat conflict, graph conflict, or flat-vs-graph disagreement fails closed.
 
 ## What users should inspect
 

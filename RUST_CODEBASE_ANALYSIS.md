@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter direction resolver guard)
+- Added `preferred_signal_direction_hint_is_graph_first_and_conflict_sticky` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks the shared `.fsm` adapter direction resolver as graph-first and conflict-sticky: graph-only evidence can satisfy direction resolution, matching flat/graph evidence remains accepted, and flat conflicts, graph conflicts, or flat-vs-graph disagreement all fail closed.
+- This reinforces the adapter boundary so future renderability callers keep using actor-relative graph semantics without overriding contradictory compatibility hints.
+
 ## Session update (2026-05-08 KG bench count-metric coverage guard)
 - Added `tracked_count_expectations_are_locked_as_validation_metrics` in `crates/specforge/src/commands/kg_bench.rs`.
 - The test scans tracked KG fixtures and requires canonical count-style expectations to lock matching validation `metric_values` entries at the same canonical stage.

@@ -7,6 +7,20 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-08 adapter direction resolver guard
+- New batch slice 73/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Added `preferred_signal_direction_hint_is_graph_first_and_conflict_sticky` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks the central `.fsm` signal-direction resolver directly: flat-only evidence still works, graph-only evidence can drive lowering when flat compatibility hints lag, matching flat/graph evidence stays renderable, and flat conflicts, graph conflicts, or flat-vs-graph disagreement all return unresolved.
+- This protects the graph-first adapter policy at the shared helper rather than relying only on end-to-end adapter integration tests.
+- `cargo fmt --all` applied rustfmt layout.
+- `cargo test --manifest-path Cargo.toml -p specforge preferred_signal_direction_hint_is_graph_first_and_conflict_sticky` passed.
+- `cargo fmt --all --check` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `93/93` adapter-filtered tests.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- Broader `bash scripts/run_ci.sh` passed on slice 70 with formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, and mdBook.
+- Push remains deferred for the active `BWFSC=200` batch.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-08 KG bench count-metric coverage guard
 - New batch slice 72/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Added `tracked_count_expectations_are_locked_as_validation_metrics` in `crates/specforge/src/commands/kg_bench.rs`.

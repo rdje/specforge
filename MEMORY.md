@@ -23,25 +23,30 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `d50eed7c1e0e24946ea0ed0f066da065386bcc11`
-- latest_commit_brief_message: `test(kg): lock connectivity conflict metric`
-- note: this is the pre-slice-72 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
+- latest_commit_hash: `a182a9a6d1e44d2c20939cd98995abecf58eccef`
+- latest_commit_brief_message: `test(kg): guard validation metric coverage`
+- note: this is the pre-slice-73 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
 
 ## Recent commit chain (last 6)
+- `a182a9a` test(kg): guard validation metric coverage
 - `d50eed7` test(kg): lock connectivity conflict metric
 - `2bd9c42` test(kg): lock interface conflict metric
 - `715acd0` test(kg): lock contested zero completion metric
 - `2db75d8` test(kg): lock contested semantic conflict metric
 - `139d910` test(kg): lock alias-dependent handshake metric
-- `3a1b72f` test(kg): lock alias handshake completion metric
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 72 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
+- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 73 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
 - files in flight:
-  - `crates/specforge/src/commands/kg_bench.rs`
-  - live docs and mdBook files synced for the slice
+  - `crates/specforge/src/ir/adapters.rs`
+  - `CHANGES.md`
+  - `DEVELOPMENT_NOTES.md`
+  - `LIVE_ACHIEVEMENT_STATUS.md`
+  - `RUST_CODEBASE_ANALYSIS.md`
+  - `MEMORY.md`
+  - `docs/book/src/domain/actor-connectivity.md`
 
 ## Latest completed N-slice batch
 - requested_count: `100`
@@ -53,16 +58,18 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `71`
-  - slice 72/200 adds a KG bench regression guard that keeps canonical count-style expectations aligned with validation `metric_values`
+  - completed_count before this commit: `72`
+  - slice 73/200 adds a direct `.fsm` adapter regression guard for graph-first, conflict-sticky preferred signal-direction resolution
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks count-style validation metric regression coverage as `Done`
+  - live-status tracker now marks central preferred direction resolver graph-first/conflict-sticky regression coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 72 before commit
+  - implementation and live-doc sync are complete for slice 73 before commit
   - `cargo fmt --all` applied rustfmt layout
-  - `cargo test --manifest-path Cargo.toml -p specforge tracked_count_expectations_are_locked_as_validation_metrics` passed
-  - `cargo test --manifest-path Cargo.toml -p specforge kg_bench_runs_tracked_fixtures` passed
+  - `cargo test --manifest-path Cargo.toml -p specforge preferred_signal_direction_hint_is_graph_first_and_conflict_sticky` passed
+  - `cargo fmt --all --check` passed
+  - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `93/93` adapter-filtered tests
+  - `bash scripts/run_docs_ci.sh` passed after the live-book sync
   - `bash scripts/run_ci.sh` passed on slice 70 as a broader checkpoint gate
   - `bash scripts/run_ci.sh` passed on slice 60 as a broader checkpoint gate
   - `bash scripts/run_ci.sh` passed on slice 50 as a broader checkpoint gate
@@ -196,6 +203,9 @@
   - slice 71 passed corpus-KB projection for `150` fixtures with `0` failures and no tracked projection diff
   - slice 72 passed `cargo test --manifest-path Cargo.toml -p specforge tracked_count_expectations_are_locked_as_validation_metrics`
   - slice 72 passed `cargo test --manifest-path Cargo.toml -p specforge kg_bench_runs_tracked_fixtures`
+  - slice 73 passed `cargo test --manifest-path Cargo.toml -p specforge preferred_signal_direction_hint_is_graph_first_and_conflict_sticky`
+  - slice 73 passed `cargo test --manifest-path Cargo.toml -p specforge adapters`
+  - slice 73 passed `bash scripts/run_docs_ci.sh`
   - slice 20 passed `bash scripts/run_ci.sh`
   - slice 100 passed `bash scripts/run_ci.sh`
   - slice 90 passed `bash scripts/run_ci.sh`
@@ -216,5 +226,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 72 commit workflow, clear and verify `git_message_brief.txt`, then select the next roadmap-aligned graph-first downstream signal-model slice
+- finish the slice 73 commit workflow, clear and verify `git_message_brief.txt`, then select the next roadmap-aligned graph-first downstream signal-model slice
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle

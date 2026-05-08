@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (adapter direction resolver guard)
+
+### Improved: graph-first `.fsm` direction resolution is regression-locked directly
+- Added a direct adapter unit regression for `preferred_signal_direction_hint`.
+- The guard proves flat-only directions still work, graph-only directions are preferred when flat compatibility hints lag, matching flat/graph evidence remains renderable, and any flat conflict, graph conflict, or flat-vs-graph disagreement collapses to unresolved instead of silently choosing a winner.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge preferred_signal_direction_hint_is_graph_first_and_conflict_sticky` -> passed
+- `cargo fmt --all --check` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`93/93` adapter-filtered tests)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG bench guards validation metric coverage)
 
 ### Improved: tracked fixtures now regression-lock count metric coverage

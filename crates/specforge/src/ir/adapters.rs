@@ -6245,7 +6245,9 @@ mod tests {
     use tempfile::tempdir;
 
     use crate::error::{AppError, Result};
-    use crate::ir::adapters::{AdapterArtifact, AdapterTarget, FsmRenderableModule, FsmRootKind};
+    use crate::ir::adapters::{
+        AdapterArtifact, AdapterTarget, FsmRenderableModule, FsmRootKind, FsmSignalCandidate,
+    };
     use crate::ir::evidence::EvidenceIr;
     use crate::ir::intent::IntentIr;
     use crate::ir::semantic::{
@@ -6254,6 +6256,96 @@ mod tests {
         SystemResetTimingRelation,
     };
     use crate::ir::source::{AutomationConfidence, SourceIr, WidthHint};
+
+    fn signal_candidate_with_direction_evidence(
+        direction_hint: Option<InterfaceSignalDirection>,
+        direction_hint_conflicted: bool,
+        graph_direction_hint: Option<InterfaceSignalDirection>,
+        graph_direction_hint_conflicted: bool,
+    ) -> FsmSignalCandidate {
+        FsmSignalCandidate {
+            signal_name: "DATA".to_string(),
+            direction_hint,
+            direction_hint_conflicted,
+            graph_direction_hint,
+            graph_direction_hint_conflicted,
+            width_hint: Some(1),
+            parametric_width_hint: None,
+            width_hint_conflicted: false,
+            supporting_canonical_ids: Vec::new(),
+            mention_categories: Vec::new(),
+            automation_confidence: AutomationConfidence::High,
+        }
+    }
+
+    #[test]
+    fn preferred_signal_direction_hint_is_graph_first_and_conflict_sticky() {
+        let flat_only = signal_candidate_with_direction_evidence(
+            Some(InterfaceSignalDirection::Input),
+            false,
+            None,
+            false,
+        );
+        assert_eq!(
+            super::preferred_signal_direction_hint(&flat_only),
+            Some(InterfaceSignalDirection::Input)
+        );
+
+        let graph_only = signal_candidate_with_direction_evidence(
+            None,
+            false,
+            Some(InterfaceSignalDirection::Output),
+            false,
+        );
+        assert_eq!(
+            super::preferred_signal_direction_hint(&graph_only),
+            Some(InterfaceSignalDirection::Output)
+        );
+
+        let matching_flat_and_graph = signal_candidate_with_direction_evidence(
+            Some(InterfaceSignalDirection::Output),
+            false,
+            Some(InterfaceSignalDirection::Output),
+            false,
+        );
+        assert_eq!(
+            super::preferred_signal_direction_hint(&matching_flat_and_graph),
+            Some(InterfaceSignalDirection::Output)
+        );
+
+        let conflicting_flat = signal_candidate_with_direction_evidence(
+            Some(InterfaceSignalDirection::Input),
+            true,
+            Some(InterfaceSignalDirection::Input),
+            false,
+        );
+        assert_eq!(
+            super::preferred_signal_direction_hint(&conflicting_flat),
+            None
+        );
+
+        let conflicting_graph = signal_candidate_with_direction_evidence(
+            Some(InterfaceSignalDirection::Input),
+            false,
+            Some(InterfaceSignalDirection::Input),
+            true,
+        );
+        assert_eq!(
+            super::preferred_signal_direction_hint(&conflicting_graph),
+            None
+        );
+
+        let flat_graph_disagreement = signal_candidate_with_direction_evidence(
+            Some(InterfaceSignalDirection::Input),
+            false,
+            Some(InterfaceSignalDirection::Output),
+            false,
+        );
+        assert_eq!(
+            super::preferred_signal_direction_hint(&flat_graph_disagreement),
+            None
+        );
+    }
 
     fn build_handshake_intent_ir(base: &Path) -> Result<IntentIr> {
         let source = base.join("handshake.md");
