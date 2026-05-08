@@ -17840,7 +17840,7 @@ mod tests {
             "top_target_direction_role.md",
             "# Top Target Direction Role\nTop datapath.\n\nTop datapath port drive_data is input width 8.\n\nTop datapath port result_data is input width 8.\n\nTop datapath child producer uses module producer_core.\n\nTop datapath link drive_data -> producer.input_data.\n\nTop datapath link producer.output_data -> result_data.\n\nModule producer_core signal input_data is input width 8.\n\nModule producer_core signal output_data is output width 8.\n\nModule producer_core block produce: output_data = input_data.\n",
         )?;
-        let (top_port_support_ids, topology_support_ids) = {
+        let (top_port_support_ids, child_support_ids, topology_support_ids) = {
             let explicit_top = intent_ir
                 .explicit_tops
                 .iter()
@@ -17851,6 +17851,11 @@ mod tests {
                 .iter()
                 .find(|port| port.port_name == "result_data")
                 .expect("conflicting top target port should be preserved");
+            let producer_child = explicit_top
+                .children
+                .iter()
+                .find(|child| child.instance_name == "producer")
+                .expect("producer child declaration should be present");
             let topology_link = explicit_top
                 .links
                 .iter()
@@ -17863,6 +17868,7 @@ mod tests {
                 .expect("topology link to result_data should be present");
             (
                 raw_port.supporting_statement_ids.clone(),
+                producer_child.supporting_statement_ids.clone(),
                 super::explicit_top_link_supporting_ids(topology_link),
             )
         };
@@ -17873,6 +17879,10 @@ mod tests {
         assert!(
             !topology_support_ids.is_empty(),
             "top-link provenance should be present"
+        );
+        assert!(
+            !child_support_ids.is_empty(),
+            "producer child provenance should be present"
         );
         let artifact_base = tempdir.path().join("generated").join("adapters");
 
@@ -17913,6 +17923,10 @@ mod tests {
                 .any(|id| recovered_port.supporting_statement_ids.contains(id))
         );
         assert_eq!(
+            recovered_port.automation_confidence,
+            AutomationConfidence::High
+        );
+        assert_eq!(
             signal_inventory_port.direction_hint,
             Some(InterfaceSignalDirection::Input)
         );
@@ -17931,6 +17945,49 @@ mod tests {
             topology_support_ids
                 .iter()
                 .any(|id| signal_inventory_port.supporting_canonical_ids.contains(id))
+        );
+        assert!(
+            top_port_support_ids
+                .iter()
+                .any(|id| signal_inventory_port.supporting_canonical_ids.contains(id))
+        );
+        assert_eq!(
+            signal_inventory_port.automation_confidence,
+            AutomationConfidence::High
+        );
+        let producer_child = top_candidate
+            .children
+            .iter()
+            .find(|child| child.instance_name == "producer")
+            .expect("producer child candidate should remain visible");
+        assert_eq!(producer_child.source_module_name, "producer_core");
+        assert!(
+            child_support_ids
+                .iter()
+                .any(|id| producer_child.supporting_canonical_ids.contains(id))
+        );
+        assert_eq!(
+            producer_child.automation_confidence,
+            AutomationConfidence::High
+        );
+        let topology_link = top_candidate
+            .links
+            .iter()
+            .find(|link| {
+                link.source.instance_name.as_deref() == Some("producer")
+                    && link.source.signal_name == "output_data"
+                    && link.target.instance_name.is_none()
+                    && link.target.signal_name == "result_data"
+            })
+            .expect("top target role link should remain visible");
+        assert!(
+            topology_support_ids
+                .iter()
+                .any(|id| super::explicit_top_link_supporting_ids(topology_link).contains(id))
+        );
+        assert_eq!(
+            topology_link.automation_confidence,
+            AutomationConfidence::High
         );
         assert!(
             top_candidate

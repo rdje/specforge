@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (adapter top-target role confidence guard)
+
+### Improved: top-target direction-role blockers preserve retained record confidence
+- Extended the top-target direction-role regression to assert the producer child and blocked top link keep high automation confidence alongside the conflicting top port and selected inventory evidence.
+- The guard keeps top-target role diagnostics tied to retained topology records while top composition emission stays blocked.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_top_target_direction_role_guidance` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter top-link direction confidence guard)
 
 ### Improved: top-link direction conflicts preserve retained record confidence

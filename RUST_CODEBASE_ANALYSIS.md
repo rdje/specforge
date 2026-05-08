@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter top-target role confidence guard)
+- Extended `top_composition_blocks_top_target_direction_role_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- The top-target direction-role blocker now locks high automation confidence on the producer child and blocked top link alongside the conflicting top port.
+- This keeps retained topology records diagnostic-rich while top composition emission stays blocked on unresolved target boundary role evidence.
+
 ## Session update (2026-05-08 adapter top-link direction confidence guard)
 - Extended `top_composition_keeps_conflicting_top_port_direction_unresolved` in `crates/specforge/src/ir/adapters.rs`.
 - The top-link direction conflict blocker now locks high automation confidence on the affected consumer child and blocked top link alongside the conflicting top port.
