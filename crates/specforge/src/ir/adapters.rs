@@ -7440,6 +7440,90 @@ mod tests {
     }
 
     #[test]
+    fn control_assignment_value_width_cast_blocks_after_graph_signals() {
+        let mut graph_output = signal_candidate_with_direction_evidence(
+            None,
+            false,
+            Some(InterfaceSignalDirection::Output),
+            false,
+        );
+        graph_output.signal_name = "DATA_OUT".to_string();
+        graph_output.width_hint = Some(8);
+
+        let mut graph_value = signal_candidate_with_direction_evidence(
+            None,
+            false,
+            Some(InterfaceSignalDirection::Input),
+            false,
+        );
+        graph_value.signal_name = "VALUE_IN".to_string();
+        graph_value.width_hint = Some(8);
+
+        let signals = [graph_output, graph_value];
+        let signals_by_name = signals
+            .iter()
+            .map(|signal| (signal.signal_name.clone(), signal))
+            .collect::<std::collections::BTreeMap<_, _>>();
+        let mut size_entries = std::collections::BTreeMap::new();
+        let mut driven_outputs = std::collections::BTreeSet::new();
+        let mut sequential_targets = std::collections::BTreeSet::new();
+        let mut blocking_reasons = Vec::new();
+        let mut required_canonical_enrichments = std::collections::BTreeSet::new();
+
+        let graph_action = ControlActionRecord::Assign {
+            target: ControlAssignmentTargetRecord {
+                signal_name: "DATA_OUT".to_string(),
+                exposed_public_output: false,
+            },
+            assignment_kind: DecisionTreeAssignmentKind::Combinational,
+            dual_output: None,
+            value: ControlExpressionRecord::Reference {
+                reference: ControlReferenceRecord {
+                    base_name: "VALUE_IN".to_string(),
+                    kind_hint: ControlReferenceKind::Signal,
+                    suffixes: vec![ControlReferenceSuffix::WidthCast { width: 4 }],
+                    exposed_public_output: false,
+                },
+            },
+        };
+        super::validate_control_action_renderability(
+            &graph_action,
+            false,
+            None,
+            &signals_by_name,
+            &mut size_entries,
+            &mut driven_outputs,
+            &mut sequential_targets,
+            &mut blocking_reasons,
+            &mut required_canonical_enrichments,
+        );
+        let target_entry = size_entries
+            .get("DATA_OUT")
+            .expect("graph-backed assignment target should create a size entry");
+        assert_eq!(
+            target_entry.direction_hint,
+            InterfaceSignalDirection::Output
+        );
+        assert_eq!(target_entry.width, 8);
+        let value_entry = size_entries
+            .get("VALUE_IN")
+            .expect("graph-backed width-cast assignment value should still create a size entry");
+        assert_eq!(value_entry.direction_hint, InterfaceSignalDirection::Input);
+        assert_eq!(value_entry.width, 8);
+        assert!(driven_outputs.contains("DATA_OUT"));
+        assert!(!sequential_targets.contains("DATA_OUT"));
+        assert!(blocking_reasons.iter().any(|reason| {
+            reason.contains(
+                "The active `.fsm` adapter slice does not yet lower width-cast signal references",
+            )
+        }));
+        assert!(
+            required_canonical_enrichments
+                .contains("add width-cast reference lowering from canonical control expressions")
+        );
+    }
+
+    #[test]
     fn guard_renderability_uses_graph_direction_without_stale_flat_override() {
         let mut graph_input = signal_candidate_with_direction_evidence(
             None,

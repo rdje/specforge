@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter assignment-value width-cast guard)
+- Added `control_assignment_value_width_cast_blocks_after_graph_signals` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks assignment action validation so graph-backed output targets and width-cast value references still produce size entries, while the active `.fsm` suffix-lowering gate blocks width casts.
+- This keeps graph-first assignment value recovery independent from unsupported width-cast lowering.
+
 ## Session update (2026-05-08 adapter binary width-cast guard)
 - Added `binary_expression_width_cast_blocks_after_graph_signals` in `crates/specforge/src/ir/adapters.rs`.
 - The test locks recursive binary expression validation so graph-backed width-cast operands still produce size entries, while the active `.fsm` suffix-lowering gate blocks width casts.
