@@ -238,6 +238,7 @@ When a signal does reach renderable size-entry registration, graph-only directio
 The same graph-first rule applies to system-contract clock/reset validation for `.fsm` `(+system ...)` lowering: graph-only input evidence can satisfy the role, while stale flat disagreement blocks.
 Init assignments follow the same rule for reset/init lowering: graph-backed output targets can be rendered, but stale flat disagreement fails the target role check and does not leave a size entry behind.
 Typed control assignments, delayed-pulse actions, and compound updates use the same role rule: graph-backed output targets can be driven, while stale flat disagreement fails target renderability and does not create a stale size entry.
+Typed assignment values use the read-side rule too: graph-backed value references create input size entries, while stale flat disagreement remains blocking.
 Guard predicates, comparison guards, true-FSM transition guards, selector-bearing branch predicates, and non-selector branch predicates use the shared registration rule too: graph-backed guard, selector, or predicate signals create size entries, while stale flat disagreement blocks and does not create a stale entry.
 Typed control expressions follow that read-side path as well: graph-backed signal references can be sized for rendering, while stale flat disagreement remains blocking instead of creating stale renderable metadata.
 Unary and binary control expressions recurse through the same rule, so graph-backed operands are renderable and stale flat disagreement remains blocking.
