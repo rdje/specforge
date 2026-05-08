@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter selector width-cast guard)
+- Added `selector_width_cast_blocks_after_graph_signal` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks selector-bearing width-cast validation so graph-backed selector base signals still produce size entries, while width-cast selector heads stay blocked by suffix and test-node encoding gates.
+- This keeps graph-first selector recovery independent from the active `.fsm` selector-head encoding boundary.
+
 ## Session update (2026-05-08 adapter control-expression width-cast guard)
 - Added `control_expression_width_cast_blocks_after_graph_signal` in `crates/specforge/src/ir/adapters.rs`.
 - The test locks width-cast reference validation so graph-backed input signals still produce size entries, while the active `.fsm` expression suffix lowering blocks width casts.

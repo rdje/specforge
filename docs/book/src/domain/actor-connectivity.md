@@ -249,6 +249,7 @@ Compound-update public-output exposure remains blocked in the active shorthand p
 Guard predicates, comparison guards, true-FSM transition guards, selector-bearing branch predicates, and non-selector branch predicates use the shared registration rule too: graph-backed guard, selector, or predicate signals create size entries, while stale flat disagreement blocks and does not create a stale entry.
 Typed control expressions follow that read-side path as well: graph-backed signal references can be sized for rendering, while stale flat disagreement remains blocking instead of creating stale renderable metadata.
 Width-cast control-expression references still block under the active suffix-lowering boundary, but their graph-backed base signal is retained in renderable metadata for diagnostics.
+Selector width-casts follow the same rule and also remain blocked at the test-node selector-head encoding boundary.
 Unary and binary control expressions recurse through the same rule, so graph-backed operands are renderable and stale flat disagreement remains blocking.
 Symbol definitions are intentionally stricter in the active `.fsm` slice: graph-backed signal references inside scalar symbol values, unary or binary symbol values, enum member values, or unary or binary enum member values still block and do not create renderable signal metadata until symbol expression lowering is deliberately widened.
 

@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (adapter selector width-cast guard)
+
+### Improved: selector width-cast blockers preserve graph-backed signal metadata
+- Added a direct regression for selector-bearing control-block width-cast renderability.
+- The guard proves graph-backed selector base signals still create input metadata, while unsupported width-cast selector heads remain blocked.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge selector_width_cast_blocks_after_graph_signal` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`128/128` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter control-expression width-cast guard)
 
 ### Improved: width-cast blockers preserve graph-backed signal metadata
