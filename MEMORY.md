@@ -23,22 +23,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `07471b8d1e2a31a7dbc0ccab57485d6def6e91c9`
-- latest_commit_brief_message: `test(adapter): guard registered dual output values`
-- note: this is the pre-slice-105 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
+- latest_commit_hash: `6fe185de1b2c9092218240f8e735abeab756bbab`
+- latest_commit_brief_message: `test(adapter): guard delayed pulse delay`
+- note: this is the pre-slice-106 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
 
 ## Recent commit chain (last 6)
+- `6fe185d` test(adapter): guard delayed pulse delay
 - `07471b8` test(adapter): guard registered dual output values
 - `eae8877` test(adapter): guard dual output assignment values
 - `0647195` test(adapter): guard dual output assignment kind
 - `39ff157` test(adapter): keep delayed pulse values signal-free
 - `a42e546` test(adapter): guard registered dual outputs
-- `f4a1409` test(adapter): guard graph-backed dual outputs
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 105 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
+- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 106 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
 - files in flight:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
@@ -58,16 +58,16 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `104`
-  - slice 105/200 adds a direct `.fsm` delayed-pulse delay guard proving graph-backed targets remain visible while zero-delay pulse intent blocks lowering
+  - completed_count before this commit: `105`
+  - slice 106/200 adds a direct `.fsm` compound-update public-output guard proving graph-backed targets remain visible while explicit public-output exposure blocks shorthand lowering
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks delayed-pulse delay graph-backed target/zero-delay blocking coverage as `Done`
+  - live-status tracker now marks compound-update public-output graph-backed target/shorthand-exposure blocking coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 105 before commit
+  - implementation and live-doc sync are complete for slice 106 before commit
   - `cargo fmt --all` applied rustfmt layout
-  - `cargo test --manifest-path Cargo.toml -p specforge delayed_pulse_zero_delay_blocks_after_graph_target` passed
-  - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `125/125` adapter-filtered tests
+  - `cargo test --manifest-path Cargo.toml -p specforge compound_update_public_output_blocks_after_graph_target` passed
+  - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `126/126` adapter-filtered tests
   - `cargo fmt --all --check` passed
   - `bash scripts/run_docs_ci.sh` passed after the final live-book sync
   - `bash scripts/run_ci.sh` passed as the slice 100 broader checkpoint gate with formatting, Clippy warning-deny, `643` Rust tests, rustdoc warning-deny, and mdBook
@@ -306,6 +306,9 @@
   - slice 105 passed `cargo test --manifest-path Cargo.toml -p specforge delayed_pulse_zero_delay_blocks_after_graph_target`
   - slice 105 passed `cargo test --manifest-path Cargo.toml -p specforge adapters`
   - slice 105 passed `bash scripts/run_docs_ci.sh`
+  - slice 106 passed `cargo test --manifest-path Cargo.toml -p specforge compound_update_public_output_blocks_after_graph_target`
+  - slice 106 passed `cargo test --manifest-path Cargo.toml -p specforge adapters`
+  - slice 106 passed `bash scripts/run_docs_ci.sh`
   - slice 20 passed `bash scripts/run_ci.sh`
   - slice 100 passed `bash scripts/run_ci.sh`
   - slice 90 passed `bash scripts/run_ci.sh`

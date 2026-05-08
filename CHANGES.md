@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (adapter compound-update public-output guard)
+
+### Improved: compound-update public-output blocking preserves graph-backed targets
+- Added a direct regression for compound-update public-output renderability.
+- The guard proves graph-backed compound-update targets still create output metadata, while explicit public-output exposure remains blocked in the active shorthand lowering.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge compound_update_public_output_blocks_after_graph_target` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`126/126` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter delayed-pulse delay guard)
 
 ### Improved: delayed-pulse zero-delay blocking preserves graph-backed targets

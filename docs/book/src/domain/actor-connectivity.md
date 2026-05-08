@@ -245,6 +245,7 @@ Delayed-pulse actions still require positive cycle delays; zero-delay pulse inte
 Delayed-pulse pulse-level values remain literal-only in the active adapter slice, so graph-backed signal references there do not create renderable signal metadata until that lowering is deliberately widened.
 Typed assignment values use the read-side rule too: graph-backed value references create input size entries, while stale flat disagreement remains blocking.
 Compound-update amounts use that same read-side rule when they reference signals.
+Compound-update public-output exposure remains blocked in the active shorthand path even when the graph-backed target role is recoverable.
 Guard predicates, comparison guards, true-FSM transition guards, selector-bearing branch predicates, and non-selector branch predicates use the shared registration rule too: graph-backed guard, selector, or predicate signals create size entries, while stale flat disagreement blocks and does not create a stale entry.
 Typed control expressions follow that read-side path as well: graph-backed signal references can be sized for rendering, while stale flat disagreement remains blocking instead of creating stale renderable metadata.
 Unary and binary control expressions recurse through the same rule, so graph-backed operands are renderable and stale flat disagreement remains blocking.

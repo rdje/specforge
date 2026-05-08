@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter compound-update public-output guard)
+- Added `compound_update_public_output_blocks_after_graph_target` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks compound-update public-output validation so graph-backed output targets still produce size entries, while the active shorthand lowering blocks explicit public-output exposure.
+- This keeps graph-first target role recovery independent from the scalar-name shorthand constraint.
+
 ## Session update (2026-05-08 adapter delayed-pulse delay guard)
 - Added `delayed_pulse_zero_delay_blocks_after_graph_target` in `crates/specforge/src/ir/adapters.rs`.
 - The test locks zero-delay delayed-pulse validation so graph-backed output targets still produce size entries, while the delayed-pulse lowering contract blocks zero-cycle pulse intent.
