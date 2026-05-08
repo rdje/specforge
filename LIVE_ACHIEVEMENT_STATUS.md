@@ -1004,6 +1004,7 @@
 - KG benchmark harness now includes AXI data USER sideband stability coverage: Done
 - KG benchmark harness now includes AXI address/response USER sideband stability coverage: Done
 - KG benchmark harness now includes APB address/protection wait-state stability coverage: Done
+- KG benchmark harness now locks APB address/protection prose semantic-hint exclusion: Done
 - KG benchmark harness now includes an AHB-style section-heading gold fixture for direction recovery: Done
 - KG benchmark harness now includes an AHB wait-state timing gold fixture: Done
 - KG benchmark harness now locks bogus actor-attribution rejection for `Source`-column infrastructure rows: Done

@@ -1,5 +1,16 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for APB address/protection prose exclusion)
+
+### Improved: APB address/protection fixtures prove table-only hints
+- Tightened `apb_address_protection_stability_gold` with `signal_semantic_hints_from_prose = 0` at `EvidenceIR`.
+- The fixture now proves `PSEL` / `PREADY` semantic hints are table-sourced rather than prose-derived.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench apb_address_protection_stability_gold` -> passed (`1/1` fixture)
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for AXI read-data timing VLM exclusion)
 
 ### Improved: AXI read-data timing fixtures exclude VLM timing hints
