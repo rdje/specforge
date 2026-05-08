@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (adapter compound-update amount width-cast guard)
+
+### Improved: compound-update amount width-cast blockers preserve graph-backed metadata
+- Added a direct regression for compound-update amount width-cast renderability.
+- The guard proves graph-backed compound-update targets and width-cast amount references still create metadata, while unsupported width-cast lowering remains blocked.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge compound_update_amount_width_cast_blocks_after_graph_signals` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`135/135` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter registered dual-output value width-cast guard)
 
 ### Improved: registered dual-output value width-cast blockers preserve graph-backed metadata

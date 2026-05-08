@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter compound-update amount width-cast guard)
+- Added `compound_update_amount_width_cast_blocks_after_graph_signals` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks compound-update validation so graph-backed output targets and width-cast amount references still produce size entries, while the active `.fsm` suffix-lowering gate blocks width casts.
+- This keeps graph-first compound-update amount recovery independent from unsupported width-cast lowering.
+
 ## Session update (2026-05-08 adapter registered dual-output value width-cast guard)
 - Added `registered_dual_output_assignment_value_width_cast_blocks_after_graph_signals` in `crates/specforge/src/ir/adapters.rs`.
 - The test locks registered-signal dual-output assignment validation so graph-backed output targets and width-cast value references still produce size entries, while the active `.fsm` suffix-lowering gate blocks width casts.
