@@ -22,22 +22,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `771cafb2a6bf7e43d640b83be460a2329b1195ee`
-- latest_commit_brief_message: `test(kg): lock spurious VLM visual exclusion`
-- note: this is the pre-slice-7 baseline for the current `BWFSC=100` batch; slices 1-6/100 are committed and push remains deferred
+- latest_commit_hash: `7fe2c98d851f7e3fa3194552e0d8c1d765fce749`
+- latest_commit_brief_message: `test(kg): lock waveform-motion VLM table exclusion`
+- note: this is the pre-slice-8 baseline for the current `BWFSC=100` batch; slices 1-7/100 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `7fe2c98` test(kg): lock waveform-motion VLM table exclusion
 - `771cafb` test(kg): lock spurious VLM visual exclusion
 - `0b88e68` test(kg): lock spurious VLM alias exclusion
 - `092dfee` test(kg): lock spurious VLM prose exclusion
 - `8f91f9e` test(kg): lock spurious VLM table exclusion
 - `4ce9c2c` test(kg): lock indexed VLM visual exclusion
-- `6add1b7` test(kg): lock indexed VLM alias exclusion
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=100` slice 7 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=100` slice 8 and push is deferred
 - files in flight:
   - `crates/specforge/test_data/kg_quality/vlm_timing_waveform_motion_negative/fixture.json`
   - live docs and mdBook files synced for the slice
@@ -52,13 +52,13 @@
 ## Current batch status
 - objective:
   - active `BWFSC=100` batch is in progress
-  - completed_count before this commit: `6`
-  - slice 7/100 tightens waveform-motion VLM timing state table semantic-hint exclusion metrics
+  - completed_count before this commit: `7`
+  - slice 8/100 tightens waveform-motion VLM timing state ordinary prose semantic-hint exclusion metrics
   - push is deferred until all `100` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks waveform-motion VLM timing state table semantic-hint exclusion KG coverage as `Done`
+  - live-status tracker now marks waveform-motion VLM timing state ordinary prose semantic-hint exclusion KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 7 before commit
+  - implementation and live-doc sync are complete for slice 8 before commit
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench vlm_timing_waveform_motion_negative` passed with the requested fixture
   - `bash scripts/run_docs_ci.sh` passed after the live-book sync
   - broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed on slice 6 with `150/150` fixtures
@@ -75,5 +75,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 7 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 8/100
+- finish the slice 8 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 9/100
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle

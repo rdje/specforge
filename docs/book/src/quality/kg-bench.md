@@ -342,6 +342,7 @@ Timing-annotation negative fixtures also protect against visual overreach.
 Low-value labels such as `T0`, `Addr 1`, `Cycle 2`, `D0`, `A1`, `DATA0`, `0xAA`, `D[0]`, `A[1]`, `DATA[3]`, and `ADDR[7]` do not become timing constraints, and waveform motion states such as `rising`, `stable`, `falling`, `UNCHANGED`, `RISING_EDGE`, `LOW_TO_HIGH`, `POS_EDGE`, `risingedge`, and `LOW2HIGH` do not become symbolic signal values.
 The waveform-motion fixture now locks total semantic hints at zero too, so rejected motion states cannot surface as semantic-role hints through another path.
 It also excludes table-sourced semantic hints, so table evidence cannot rescue rejected motion-state labels.
+Ordinary prose hints are zero for waveform-motion labels too, so text evidence cannot backfill a semantic role for rejected motion states.
 The spurious-annotation fixture now also locks total semantic hints at zero, so low-value labels and value-like annotations cannot invent roles through another evidence channel.
 It also excludes table-sourced semantic hints, so low-value annotation noise cannot be rescued through table evidence.
 Ordinary prose hints are zero for spurious annotations too, so text evidence cannot backfill a semantic role for label/value noise.
