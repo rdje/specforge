@@ -79,7 +79,10 @@
               "interface_signal_conflict_0002"
             ]
           }
-        ]
+        ],
+        "metric_values": {
+          "interface_signal_conflicts": "2"
+        }
       },
       "intent": {
         "finding_ids_include": [
@@ -97,7 +100,10 @@
               "interface_signal_conflict_0002"
             ]
           }
-        ]
+        ],
+        "metric_values": {
+          "interface_signal_conflicts": "2"
+        }
       }
     }
   }

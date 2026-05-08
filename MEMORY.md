@@ -23,24 +23,24 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `2db75d847a017c4c09fb251af12e8079d23f0e3c`
-- latest_commit_brief_message: `test(kg): lock contested semantic conflict metric`
-- note: this is the pre-slice-69 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
+- latest_commit_hash: `715acd07515b4043d5caf7dd031b63d148fe00b5`
+- latest_commit_brief_message: `test(kg): lock contested zero completion metric`
+- note: this is the pre-slice-70 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
 
 ## Recent commit chain (last 6)
+- `715acd0` test(kg): lock contested zero completion metric
 - `2db75d8` test(kg): lock contested semantic conflict metric
 - `139d910` test(kg): lock alias-dependent handshake metric
 - `3a1b72f` test(kg): lock alias handshake completion metric
 - `e889e5a` test(kg): lock field-table temporal count metric
 - `b796cdf` test(kg): lock contested fallback temporal count metric
-- `f2265e3` test(kg): lock alias caveat temporal count metric
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 69 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
+- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 70 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
 - files in flight:
-  - `crates/specforge/test_data/kg_quality/contested_handshake_name_fallback_negative/fixture.json`
+  - `crates/specforge/test_data/kg_quality/interface_signal_conflict_negative/fixture.json`
   - live docs and mdBook files synced for the slice
 
 ## Latest completed N-slice batch
@@ -53,17 +53,18 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `68`
-  - slice 69/200 tightens contested-handshake zero handshake-completion validation metrics
+  - completed_count before this commit: `69`
+  - slice 70/200 tightens interface-signal conflict validation metrics and runs the broader checkpoint gate
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks contested-handshake zero handshake-completion metric coverage as `Done`
+  - live-status tracker now marks interface-signal conflict validation metric coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 69 before commit
-  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench contested_handshake_name_fallback_negative` passed with the requested fixture
-  - broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed on slice 69 with `150/150` fixtures
-  - broader `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed on slice 69 with `150` fixtures projected, `0` failures, and no tracked projection diff
-  - missing-validation-metric scan now leaves only interface-signal and connectivity conflict count fixtures
+  - implementation and live-doc sync are complete for slice 70 before commit
+  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench interface_signal_conflict_negative` passed with the requested fixture
+  - broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed on slice 70 with `150/150` fixtures
+  - broader `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed on slice 70 with `150` fixtures projected, `0` failures, and no tracked projection diff
+  - missing-validation-metric scan now leaves only `multi_producer_conflict_negative` connectivity conflict metrics
+  - `bash scripts/run_ci.sh` passed on slice 70 as a broader checkpoint gate
   - `bash scripts/run_ci.sh` passed on slice 60 as a broader checkpoint gate
   - `bash scripts/run_ci.sh` passed on slice 50 as a broader checkpoint gate
   - `bash scripts/run_ci.sh` passed on slice 40 as a broader checkpoint gate
@@ -189,6 +190,9 @@
   - slice 68 passed corpus-KB projection for `150` fixtures with `0` failures and no tracked projection diff
   - slice 69 passed `150/150` tracked KG fixtures
   - slice 69 passed corpus-KB projection for `150` fixtures with `0` failures and no tracked projection diff
+  - slice 70 passed `150/150` tracked KG fixtures
+  - slice 70 passed corpus-KB projection for `150` fixtures with `0` failures and no tracked projection diff
+  - slice 70 passed `bash scripts/run_ci.sh`
   - slice 20 passed `bash scripts/run_ci.sh`
   - slice 100 passed `bash scripts/run_ci.sh`
   - slice 90 passed `bash scripts/run_ci.sh`
@@ -209,5 +213,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 69 commit workflow, clear and verify `git_message_brief.txt`, then continue validation metric hardening with `interface_signal_conflict_negative`
+- finish the slice 70 commit workflow, clear and verify `git_message_brief.txt`, then continue validation metric hardening with `multi_producer_conflict_negative`
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle

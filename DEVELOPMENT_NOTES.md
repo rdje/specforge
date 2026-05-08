@@ -7,6 +7,20 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-08 KG fixture for interface-signal conflict metric
+- New batch slice 70/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Tightened `crates/specforge/test_data/kg_quality/interface_signal_conflict_negative/fixture.json`.
+- The fixture now asserts `interface_signal_conflicts = 2` for both `SemanticIR` and `IntentIR` validation metrics alongside exact direction- and width-mismatch conflict shape.
+- This proves the `DATA` direction and width disagreements stay visible both as typed conflict records and as aggregate validation metrics.
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench interface_signal_conflict_negative` passed with the requested fixture.
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` tracked fixtures.
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` refreshed tracked corpus-KB projections for `150` fixtures with `0` failures and no tracked projection diff.
+- Missing-validation-metric scan now leaves only `multi_producer_conflict_negative` connectivity conflict metrics.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- `bash scripts/run_ci.sh` passed as the slice 70 broader checkpoint gate.
+- Push remains deferred for the active `BWFSC=200` batch.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-08 KG fixture for contested-handshake zero completion metric
 - New batch slice 69/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Tightened `crates/specforge/test_data/kg_quality/contested_handshake_name_fallback_negative/fixture.json`.

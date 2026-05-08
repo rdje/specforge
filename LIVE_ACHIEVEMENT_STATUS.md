@@ -296,6 +296,7 @@
 - KG benchmark harness can now assert canonical signal-connectivity conflict shape directly: Done
 - KG benchmark harness can now assert canonical signal-semantic conflict shape directly: Done
 - KG benchmark harness can now assert canonical interface-signal conflict shape directly: Done
+- KG benchmark harness now locks interface-signal conflict validation metric coverage: Done
 - KG benchmark harness can now assert canonical signal-polarity conflict shape directly: Done
 - KG benchmark harness can now assert canonical resolved signal polarity directly: Done
 - Carried signal-polarity conflicts now emit replayable rescan guidance: Done

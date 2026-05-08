@@ -1020,6 +1020,7 @@
   - fixture expectations can now assert canonical `signal_connectivity_conflicts` directly, so multi-producer graph conflicts are checked as typed signal/kind/actor-set IR instead of only a conflict count
   - fixture expectations can now assert canonical `signal_semantic_conflicts` directly, so multimodal semantic disagreement is checked as typed conflict observations instead of only a conflict count
   - fixture expectations can now assert canonical `interface_signal_conflicts` directly, so interface direction/width disagreement is checked as typed signal/kind/observation IR instead of only a conflict count
+  - the interface-signal conflict fixture now asserts validation metric counts for both canonical stages, so direction/width disagreement remains visible in aggregate validation output as well as typed conflict shape
   - fixture expectations can now assert canonical `signal_polarity_conflicts` directly, so active-level disagreement is checked as typed signal/polarity/source-kind observation IR instead of only a conflict count
   - fixture expectations can now assert canonical resolved signal polarity directly, so active-high/active-low recovery is checked as per-signal IR instead of only through validation metrics
   - fixture expectations can now assert canonical resolved semantic roles directly, so valid-like/ready-like recovery is checked as exact per-signal IR instead of only through role-presence validation metrics

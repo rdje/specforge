@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for interface-signal conflict metric)
+
+### Improved: interface-signal conflict fixture locks conflict metrics
+- Tightened `interface_signal_conflict_negative` with `interface_signal_conflicts = 2` at both `SemanticIR` and `IntentIR` validation surfaces.
+- The negative fixture now proves `DATA` direction and width disagreement stay counted as validation metrics while exact conflict shape remains asserted.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench interface_signal_conflict_negative` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- Missing-validation-metric scan -> passed with only `multi_producer_conflict_negative` connectivity conflict metrics remaining
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for contested-handshake zero completion metric)
 
 ### Improved: contested-handshake negative fixture locks absent completion metrics

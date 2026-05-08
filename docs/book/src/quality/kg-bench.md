@@ -371,6 +371,7 @@ The VLM timing semantic-grounding gold also checks `timing_diagram_extractions`,
 Fixtures can assert canonical interface-signal conflicts directly as well.
 `interface_signal_conflicts_include` checks the conflicted signal, conflict kind, and included observation values plus supporting statement ids.
 That lets direction/width disagreement fixtures prove that the canonical layers preserved the exact contested shape, such as `input` versus `output` or width `8` versus `16`, rather than only counting that some interface conflict exists.
+The interface-signal conflict fixture also locks the aggregate validation metric at two conflicts for both canonical stages, keeping direction and width disagreement visible in summary output.
 
 Fixtures can also assert canonical clock/reset infrastructure records directly.
 `infrastructure_signals_include` checks the typed infrastructure signal surface, and `infrastructure_topologies_include` checks explicit current-document topology such as clock-gated branches, reset synchronizer stages, and reset-tree targets.
