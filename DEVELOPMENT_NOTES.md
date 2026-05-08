@@ -7,6 +7,20 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-08 KG fixture for AXI width-only temporal-rule count
+- New batch slice 62/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Tightened `crates/specforge/test_data/kg_quality/axi_width_only_prose_direction_gold/fixture.json`.
+- The fixture now asserts `temporal_rules = 1` for both `SemanticIR` and `IntentIR` validation metrics alongside handshake-completion and multi-predicate antecedent coverage.
+- This continues aggregate temporal-rule metric hardening by proving the single `AWVALID` / `AWREADY` guarded payload-stability rule remains visible as a counted temporal rule.
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench axi_width_only_prose_direction_gold` passed with the requested fixture.
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed with `150/150` tracked fixtures.
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` refreshed tracked corpus-KB projections for `150` fixtures with `0` failures and no tracked projection diff.
+- Aggregate temporal-rule count coverage scan now leaves only `alias_dependent_handshake_completion_caveat`, `contested_handshake_name_fallback_negative`, and `table_misclassification_field_table_negative` among fixtures with `temporal_rule_count`.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- Broader `bash scripts/run_ci.sh` passed on slice 60 with formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, and mdBook.
+- Push remains deferred for the active `BWFSC=200` batch.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-08 KG fixture for APB requester/completer temporal-rule count
 - New batch slice 61/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Tightened `crates/specforge/test_data/kg_quality/apb_requester_completer_handshake_gold/fixture.json`.

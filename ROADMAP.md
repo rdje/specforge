@@ -827,6 +827,7 @@
     - the AXI width-only fixture now asserts visual-caption semantic hints stay zero while request/accept role hints remain table-sourced
     - the AXI width-only fixture now asserts VLM timing-annotation semantic hints stay zero while request/accept role hints remain table-sourced
     - the AXI width-only fixture now asserts multi-predicate antecedent temporal-rule coverage while width-only table role hints and prose actor-direction recovery remain intact
+    - the AXI width-only fixture now asserts aggregate temporal-rule count coverage while width-only table role hints, handshake completion, and multi-predicate antecedent metrics remain recovered
     - a representative AXI-style timing gold fixture proving width-only channel tables plus prose actor relations can also recover next-cycle timing, actor-grounded temporal predicates, and handshake completion together
     - the AXI next-cycle timing fixture now asserts prose semantic hints stay zero while request/accept role hints remain table-sourced
     - the AXI next-cycle timing fixture now asserts alias-grounded prose semantic hints stay zero while request/accept role hints remain table-sourced

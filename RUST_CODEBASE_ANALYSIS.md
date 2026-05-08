@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 KG fixture for AXI width-only temporal-rule count)
+- Tightened `axi_width_only_prose_direction_gold` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts `temporal_rules = 1` at both `SemanticIR` and `IntentIR` validation surfaces.
+- This continues aggregate temporal-rule metric hardening by proving the single `AWVALID` / `AWREADY` guarded payload-stability rule remains visible as a counted temporal rule while handshake completion and multi-predicate antecedent metrics stay locked.
+
 ## Session update (2026-05-08 KG fixture for APB requester/completer temporal-rule count)
 - Tightened `apb_requester_completer_handshake_gold` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts `temporal_rules = 1` at both `SemanticIR` and `IntentIR` validation surfaces.
