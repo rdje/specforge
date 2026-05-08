@@ -23,22 +23,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `d4d8418d76412471ca7a725423a76d02c84fd985`
-- latest_commit_brief_message: `test(adapter): guard graph-backed guards`
-- note: this is the pre-slice-82 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
+- latest_commit_hash: `ea4c059a3f14b3bbb4477ad1061d0cef10764985`
+- latest_commit_brief_message: `test(adapter): guard graph-backed expressions`
+- note: this is the pre-slice-83 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
 
 ## Recent commit chain (last 6)
+- `ea4c059` test(adapter): guard graph-backed expressions
 - `d4d8418` test(adapter): guard graph-backed guards
 - `dc01c2a` test(adapter): guard control graph outputs
 - `0b76a66` test(adapter): guard init graph outputs
 - `7358294` test(adapter): guard system graph directions
 - `670b882` test(adapter): guard graph-backed size entries
-- `0f645ee` test(adapter): guard topology-linked output drives
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 82 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
+- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 83 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
 - files in flight:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
@@ -58,17 +58,17 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `81`
-  - slice 82/200 adds a direct `.fsm` control-expression renderability guard for graph-backed signal references and stale-flat disagreement blocking
+  - completed_count before this commit: `82`
+  - slice 83/200 adds a direct `.fsm` delayed-pulse renderability guard for graph-backed output targets and stale-flat disagreement blocking
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks control-expression renderability graph-first stale-flat regression coverage as `Done`
+  - live-status tracker now marks delayed-pulse renderability graph-backed output stale-flat regression coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 82 before commit
+  - implementation and live-doc sync are complete for slice 83 before commit
   - `cargo fmt --all` applied rustfmt layout
-  - `cargo test --manifest-path Cargo.toml -p specforge control_expression_renderability_uses_graph_direction_without_stale_flat_override` passed
+  - `cargo test --manifest-path Cargo.toml -p specforge delayed_pulse_renderability_uses_graph_output_without_stale_flat_override` passed
   - `cargo fmt --all --check` passed
-  - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `102/102` adapter-filtered tests
+  - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `103/103` adapter-filtered tests
   - `bash scripts/run_docs_ci.sh` passed after the final live-book sync
   - `bash scripts/run_ci.sh` passed on slice 80 as a broader checkpoint gate with formatting, Clippy warning-deny, `623` Rust tests, rustdoc warning-deny, and mdBook
   - `bash scripts/run_ci.sh` passed on slice 60 as a broader checkpoint gate
@@ -234,6 +234,9 @@
   - slice 82 passed `cargo test --manifest-path Cargo.toml -p specforge control_expression_renderability_uses_graph_direction_without_stale_flat_override`
   - slice 82 passed `cargo test --manifest-path Cargo.toml -p specforge adapters`
   - slice 82 passed `bash scripts/run_docs_ci.sh`
+  - slice 83 passed `cargo test --manifest-path Cargo.toml -p specforge delayed_pulse_renderability_uses_graph_output_without_stale_flat_override`
+  - slice 83 passed `cargo test --manifest-path Cargo.toml -p specforge adapters`
+  - slice 83 passed `bash scripts/run_docs_ci.sh`
   - slice 20 passed `bash scripts/run_ci.sh`
   - slice 100 passed `bash scripts/run_ci.sh`
   - slice 90 passed `bash scripts/run_ci.sh`

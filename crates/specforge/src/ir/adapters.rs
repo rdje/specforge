@@ -6944,6 +6944,103 @@ mod tests {
         ));
     }
 
+    #[test]
+    fn delayed_pulse_renderability_uses_graph_output_without_stale_flat_override() {
+        let mut graph_output = signal_candidate_with_direction_evidence(
+            None,
+            false,
+            Some(InterfaceSignalDirection::Output),
+            false,
+        );
+        graph_output.signal_name = "PULSE_OUT".to_string();
+        graph_output.width_hint = Some(1);
+
+        let mut stale_output = signal_candidate_with_direction_evidence(
+            Some(InterfaceSignalDirection::Input),
+            false,
+            Some(InterfaceSignalDirection::Output),
+            false,
+        );
+        stale_output.signal_name = "STALE_PULSE".to_string();
+        stale_output.width_hint = Some(1);
+
+        let signals = [graph_output, stale_output];
+        let signals_by_name = signals
+            .iter()
+            .map(|signal| (signal.signal_name.clone(), signal))
+            .collect::<std::collections::BTreeMap<_, _>>();
+        let mut size_entries = std::collections::BTreeMap::new();
+        let mut driven_outputs = std::collections::BTreeSet::new();
+        let mut sequential_targets = std::collections::BTreeSet::new();
+        let mut blocking_reasons = Vec::new();
+        let mut required_canonical_enrichments = std::collections::BTreeSet::new();
+
+        let graph_action = ControlActionRecord::DelayedPulse {
+            target: ControlAssignmentTargetRecord {
+                signal_name: "PULSE_OUT".to_string(),
+                exposed_public_output: false,
+            },
+            delay: 1,
+            value: ControlExpressionRecord::Literal {
+                literal: "1".to_string(),
+            },
+        };
+        super::validate_control_action_renderability(
+            &graph_action,
+            false,
+            None,
+            &signals_by_name,
+            &mut size_entries,
+            &mut driven_outputs,
+            &mut sequential_targets,
+            &mut blocking_reasons,
+            &mut required_canonical_enrichments,
+        );
+        let graph_entry = size_entries
+            .get("PULSE_OUT")
+            .expect("graph-backed delayed-pulse target should create a size entry");
+        assert_eq!(graph_entry.direction_hint, InterfaceSignalDirection::Output);
+        assert_eq!(graph_entry.width, 1);
+        assert!(driven_outputs.contains("PULSE_OUT"));
+        assert!(sequential_targets.contains("PULSE_OUT"));
+        assert!(blocking_reasons.is_empty());
+
+        let stale_action = ControlActionRecord::DelayedPulse {
+            target: ControlAssignmentTargetRecord {
+                signal_name: "STALE_PULSE".to_string(),
+                exposed_public_output: false,
+            },
+            delay: 1,
+            value: ControlExpressionRecord::Literal {
+                literal: "1".to_string(),
+            },
+        };
+        super::validate_control_action_renderability(
+            &stale_action,
+            false,
+            None,
+            &signals_by_name,
+            &mut size_entries,
+            &mut driven_outputs,
+            &mut sequential_targets,
+            &mut blocking_reasons,
+            &mut required_canonical_enrichments,
+        );
+        assert!(!size_entries.contains_key("STALE_PULSE"));
+        assert!(!driven_outputs.contains("STALE_PULSE"));
+        assert!(blocking_reasons.iter().any(|reason| {
+            reason.contains(
+                "Signal `STALE_PULSE` has conflicting canonical and graph-backed direction evidence",
+            )
+        }));
+        assert!(blocking_reasons.iter().any(|reason| {
+            reason.contains("Delayed-pulse target `STALE_PULSE` is not declared")
+        }));
+        assert!(required_canonical_enrichments.contains(
+            "resolve conflicting canonical and actor-relative graph direction evidence before lowering `.fsm`"
+        ));
+    }
+
     fn build_handshake_intent_ir(base: &Path) -> Result<IntentIr> {
         let source = base.join("handshake.md");
         let source_artifact_base = base.join("generated").join("source_ir");

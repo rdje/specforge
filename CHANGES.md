@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (adapter delayed-pulse graph output guard)
+
+### Improved: delayed-pulse renderability has direct graph-first coverage
+- Added a direct regression for `.fsm` delayed-pulse target renderability.
+- The guard proves graph-backed delayed-pulse output targets create renderable size entries and are counted as driven sequential outputs, while flat-vs-graph disagreement blocks and leaves no stale size entry.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge delayed_pulse_renderability_uses_graph_output_without_stale_flat_override` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`103/103` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter expression graph direction guard)
 
 ### Improved: control-expression renderability has direct graph-first coverage

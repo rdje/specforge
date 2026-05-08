@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter delayed-pulse graph output guard)
+- Added `delayed_pulse_renderability_uses_graph_output_without_stale_flat_override` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks delayed-pulse renderability so graph-backed output targets create size entries, count as driven outputs, and remain sequential targets, while stale flat-vs-graph disagreement leaves no stale entry.
+- This covers the pulse-specific output consumer in `validate_control_action_renderability` without widening backend syntax.
+
 ## Session update (2026-05-08 adapter expression graph direction guard)
 - Added `control_expression_renderability_uses_graph_direction_without_stale_flat_override` in `crates/specforge/src/ir/adapters.rs`.
 - The test locks typed control-expression reference renderability so graph-backed signal references create size entries, while stale flat-vs-graph disagreement leaves no stale entry.
