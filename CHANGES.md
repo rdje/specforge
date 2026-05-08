@@ -1,5 +1,15 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for APB setup/access alias exclusion)
+
+### Improved: APB setup/access fixtures exclude alias-grounded prose
+- Tightened `apb_setup_access_timing_gold` with `signal_semantic_hints_from_alias_grounded_prose = 0` at `EvidenceIR`.
+- The fixture now proves `PSEL` / `PREADY` semantic hints are not recovered through phrase-alias prose paths.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench apb_setup_access_timing_gold` -> passed (`1/1` fixture)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for APB setup/access prose exclusion)
 
 ### Improved: APB setup/access fixtures prove table-only hints
