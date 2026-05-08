@@ -988,6 +988,7 @@
 - KG benchmark harness now includes an AMBA-style `Destination`-column gold fixture for receiver semantics: Done
 - KG benchmark harness now includes an APB-style `Requester` / `Completer` gold fixture: Done
 - KG benchmark harness now locks APB requester/completer prose semantic-hint exclusion: Done
+- KG benchmark harness now locks APB requester/completer alias-grounded prose semantic-hint exclusion: Done
 - KG benchmark harness now includes an APB setup/access timing gold fixture: Done
 - KG benchmark harness now locks APB setup/access prose semantic-hint exclusion: Done
 - KG benchmark harness now locks APB setup/access alias-grounded prose semantic-hint exclusion: Done
