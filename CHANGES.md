@@ -1,5 +1,15 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for prior-guided visual-motif table exclusion)
+
+### Improved: prior-guided visual-motif fixtures exclude table hints
+- Tightened `visual_motif_prior_guided_diagram_classification_gold` with `signal_semantic_hints_from_tables = 0` at `EvidenceIR`.
+- The fixture now proves learned visual-motif classification still does not invent table-sourced semantic-role hints.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench visual_motif_prior_guided_diagram_classification_gold` -> passed (`1/1` fixture)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for no-prior visual-motif VLM exclusion)
 
 ### Improved: no-prior visual-motif fixtures exclude VLM timing hints

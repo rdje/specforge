@@ -211,6 +211,7 @@ Ordinary prose hints are zero too, so text evidence cannot backfill absent motif
 Alias-grounded prose is excluded too, keeping phrase-alias recovery from bypassing absent motif memory.
 VLM timing-annotation hints stay zero too, keeping timing notes from standing in for absent motif memory.
 The visual-motif prior-guided gold locks the after side for diagram classification: learned memory classifies the motif while table-derived `XREQ` output remains canonical and no semantic role is invented.
+That motif gold also keeps table-sourced semantic hints at zero, proving learned classification does not create table-derived roles.
 That visual-motif gold now also checks the evidence-stage corroboration finding payload, so prior-classified `visual_0001` remains targeted for VLM/multimodal follow-up instead of being silently promoted.
 
 Fixtures can assert canonical semantic grounding strength directly as well.
