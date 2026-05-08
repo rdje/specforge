@@ -1023,6 +1023,7 @@
 - KG benchmark harness now locks AXI width-only prose semantic-hint exclusion: Done
 - KG benchmark harness now locks AXI width-only alias-grounded prose semantic-hint exclusion: Done
 - KG benchmark harness now locks AXI width-only visual-caption semantic-hint exclusion: Done
+- KG benchmark harness now locks AXI width-only VLM timing-annotation semantic-hint exclusion: Done
 - KG benchmark harness now includes an AXI next-cycle timing gold fixture: Done
 - KG benchmark harness now locks AXI next-cycle prose semantic-hint exclusion: Done
 - KG benchmark harness now locks AXI next-cycle alias-grounded prose semantic-hint exclusion: Done
