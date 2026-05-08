@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter child-topology-direction inventory confidence guard)
+- Extended `top_composition_blocks_conflicting_child_link_topology_directions` in `crates/specforge/src/ir/adapters.rs`.
+- The child topology direction-conflict blocker now locks selected signal-inventory support IDs and high automation confidence for the retained declared `drive_data` top port.
+- This keeps child topology direction diagnostics tied to retained top inventory while top composition emission stays blocked.
+
 ## Session update (2026-05-09 adapter child-topology-width inventory confidence guard)
 - Extended `top_composition_blocks_conflicting_child_topology_widths` in `crates/specforge/src/ir/adapters.rs`.
 - The child topology width-conflict blocker now locks selected signal-inventory support IDs and high automation confidence for the retained declared `result_data` top port.
