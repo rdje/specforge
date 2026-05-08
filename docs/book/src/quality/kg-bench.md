@@ -186,6 +186,7 @@ Visual-caption hints are zero there too, so diagram captions cannot masquerade a
 VLM timing-annotation hints are zero there too, so timing notes cannot masquerade as table-backed address/response USER sideband evidence.
 The AXI write-address sideband fixture keeps prose-sourced semantic hints at zero too, proving `AWVALID` / `AWREADY` role hints remain table-only while `AWLEN`, `AWSIZE`, and `AWBURST` stability stays recovered.
 Alias-grounded prose hints are zero there too, so phrase-alias recovery cannot masquerade as table-backed write-address sideband evidence.
+Visual-caption hints are zero there too, so diagram captions cannot masquerade as table-backed write-address sideband evidence.
 The APB requester/completer handshake fixture keeps prose-sourced semantic hints at zero too, proving `PSEL` / `PREADY` role hints remain table-only while `Requester` / `Completer` source roles still recover typed handshake completion.
 Alias-grounded prose hints are zero there too, so phrase-alias recovery cannot masquerade as table-backed APB requester/completer evidence.
 Visual-caption hints are zero there too, so diagram captions cannot masquerade as table-backed APB requester/completer evidence.
