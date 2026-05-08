@@ -801,6 +801,7 @@
     - the AXI read-address timing fixture now asserts prose semantic hints stay zero while request/accept role hints remain table-sourced
     - the AXI read-address timing fixture now asserts alias-grounded prose semantic hints stay zero while request/accept role hints remain table-sourced
     - the AXI read-address timing fixture now asserts visual-caption semantic hints stay zero while request/accept role hints remain table-sourced
+    - the AXI read-address timing fixture now asserts VLM timing-annotation semantic hints stay zero while request/accept role hints remain table-sourced
     - the AXI sideband stability fixture now asserts prose semantic hints stay zero while its sideband obligations recover through table-sourced semantic hints
     - the AXI sideband stability fixture now asserts alias-grounded prose semantic hints stay zero while its sideband obligations remain table-sourced
     - the AXI sideband stability fixture now asserts visual-caption semantic hints stay zero while its sideband obligations remain table-sourced
