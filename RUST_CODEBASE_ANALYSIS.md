@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter unary symbol-definition width-cast guard)
+- Added `unary_symbol_definition_width_cast_keeps_graph_signal_references_signal_free` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks unary symbol-definition validation so graph-backed width-cast operands stay signal-free, while the active `.fsm` symbol slice still reports both symbol-value and width-cast blockers.
+- This keeps recursive unary symbol-expression recovery out of renderable metadata until symbol lowering is explicitly widened.
+
 ## Session update (2026-05-08 adapter symbol-definition width-cast guard)
 - Added `symbol_definition_width_cast_keeps_graph_signal_references_signal_free` in `crates/specforge/src/ir/adapters.rs`.
 - The test locks symbol-definition validation so graph-backed width-cast values stay signal-free, while the active `.fsm` symbol slice still reports both symbol-value and width-cast blockers.

@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (adapter unary symbol-definition width-cast guard)
+
+### Improved: unary symbol-definition width-cast values remain signal-free
+- Added a direct regression for unary symbol-definition width-cast operand renderability.
+- The guard proves graph-backed signal references remain outside renderable metadata inside unary symbol definitions, while the existing symbol-slice and width-cast blockers are both reported.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge unary_symbol_definition_width_cast_keeps_graph_signal_references_signal_free` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`138/138` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter symbol-definition width-cast guard)
 
 ### Improved: symbol-definition width-cast values remain signal-free

@@ -261,6 +261,7 @@ Binary expression width-cast operands follow the same recursive validation rule.
 Unary and binary control expressions recurse through the same rule, so graph-backed operands are renderable and stale flat disagreement remains blocking.
 Symbol definitions are intentionally stricter in the active `.fsm` slice: graph-backed signal references inside scalar symbol values, unary or binary symbol values, enum member values, or unary or binary enum member values still block and do not create renderable signal metadata until symbol expression lowering is deliberately widened.
 Width-cast symbol-definition values follow the same signal-free symbol slice boundary and also report the width-cast suffix blocker.
+Unary symbol-definition width-cast operands follow that same signal-free recursive validation path.
 
 ## What users should inspect
 
