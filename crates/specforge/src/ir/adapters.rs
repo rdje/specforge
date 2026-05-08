@@ -19651,12 +19651,22 @@ mod tests {
             "width_mismatched_top_link.md",
             "# Width Mismatched Top Link\nTop datapath.\n\nTop datapath port drive_data is input width 8.\n\nTop datapath port result_data is output width 16.\n\nTop datapath child producer uses module producer_core.\n\nTop datapath link drive_data -> result_data.\n\nModule producer_core signal output_data is output width 8.\n\nModule producer_core block produce: output_data = 8'3.\n",
         )?;
-        let width_mismatch_support_ids = {
+        let (width_mismatch_support_ids, drive_data_support_ids, result_data_support_ids) = {
             let explicit_top = intent_ir
                 .explicit_tops
                 .iter()
                 .find(|top| top.top_name == "datapath")
                 .expect("explicit top should be present");
+            let drive_data_port = explicit_top
+                .ports
+                .iter()
+                .find(|port| port.port_name == "drive_data")
+                .expect("drive_data top port should be present");
+            let result_data_port = explicit_top
+                .ports
+                .iter()
+                .find(|port| port.port_name == "result_data")
+                .expect("result_data top port should be present");
             let topology_link = explicit_top
                 .links
                 .iter()
@@ -19667,11 +19677,23 @@ mod tests {
                         && link.target.signal_name == "result_data"
                 })
                 .expect("width-mismatched topology link should be present");
-            super::explicit_top_link_supporting_ids(topology_link)
+            (
+                super::explicit_top_link_supporting_ids(topology_link),
+                drive_data_port.supporting_statement_ids.clone(),
+                result_data_port.supporting_statement_ids.clone(),
+            )
         };
         assert!(
             !width_mismatch_support_ids.is_empty(),
             "width-mismatched topology-link provenance should be present"
+        );
+        assert!(
+            !drive_data_support_ids.is_empty(),
+            "drive_data top-port provenance should be present"
+        );
+        assert!(
+            !result_data_support_ids.is_empty(),
+            "result_data top-port provenance should be present"
         );
 
         let artifact_base = tempdir.path().join("generated").join("adapters");
@@ -19704,6 +19726,16 @@ mod tests {
                     && link.target.signal_name == "result_data"
             })
             .expect("width-mismatched top link should remain visible");
+        let drive_inventory = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "drive_data")
+            .expect("drive_data top endpoint should stay in selected inventory");
+        let result_inventory = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "result_data")
+            .expect("result_data top endpoint should stay in selected inventory");
 
         assert!(producer.renderability.is_renderable);
         let blocked_link_support_ids = super::explicit_top_link_supporting_ids(blocked_link);
@@ -19714,6 +19746,46 @@ mod tests {
         );
         assert_eq!(
             blocked_link.automation_confidence,
+            AutomationConfidence::High
+        );
+        assert_eq!(
+            drive_inventory.direction_hint,
+            Some(InterfaceSignalDirection::Input)
+        );
+        assert_eq!(drive_inventory.width_hint, Some(8));
+        assert!(
+            drive_inventory
+                .mention_categories
+                .iter()
+                .any(|category| category == "top_port")
+        );
+        assert!(
+            drive_data_support_ids
+                .iter()
+                .any(|id| drive_inventory.supporting_canonical_ids.contains(id))
+        );
+        assert_eq!(
+            drive_inventory.automation_confidence,
+            AutomationConfidence::High
+        );
+        assert_eq!(
+            result_inventory.direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert_eq!(result_inventory.width_hint, Some(16));
+        assert!(
+            result_inventory
+                .mention_categories
+                .iter()
+                .any(|category| category == "top_port")
+        );
+        assert!(
+            result_data_support_ids
+                .iter()
+                .any(|id| result_inventory.supporting_canonical_ids.contains(id))
+        );
+        assert_eq!(
+            result_inventory.automation_confidence,
             AutomationConfidence::High
         );
         assert!(
