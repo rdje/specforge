@@ -969,6 +969,7 @@
 - KG benchmark harness now includes an AXI width-only plus prose-direction gold fixture: Done
 - KG benchmark harness now includes an AXI next-cycle timing gold fixture: Done
 - KG benchmark harness now locks AXI next-cycle prose semantic-hint exclusion: Done
+- KG benchmark harness now locks AXI next-cycle alias-grounded prose semantic-hint exclusion: Done
 - KG benchmark harness now includes an AXI write-address sideband stability gold fixture: Done
 - KG benchmark harness can now assert canonical temporal-rule shape directly: Done
 - KG benchmark harness can now assert canonical temporal-conflict shape directly: Done
