@@ -23,22 +23,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `704efec8291bf2e3762c41cbfeb6743263888269`
-- latest_commit_brief_message: `test(kg): lock AMBA source-column prose exclusion`
-- note: this is the pre-slice-9 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
+- latest_commit_hash: `dcf17a4d50143c96ea0331537e2242489a9332d2`
+- latest_commit_brief_message: `test(kg): lock AMBA source-column alias exclusion`
+- note: this is the pre-slice-10 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
 
 ## Recent commit chain (last 6)
+- `dcf17a4` test(kg): lock AMBA source-column alias exclusion
 - `704efec` test(kg): lock AMBA source-column prose exclusion
 - `cb9506b` test(kg): lock APB requester/completer VLM exclusion
 - `36fd53f` test(kg): lock APB requester/completer visual exclusion
 - `ff8638b` test(kg): lock APB requester/completer alias exclusion
 - `08aee3f` test(kg): lock APB requester/completer prose exclusion
-- `456a436` test(kg): lock APB response VLM exclusion
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 9 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
+- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 10 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
 - files in flight:
   - `crates/specforge/test_data/kg_quality/amba_source_column_handshake_gold/fixture.json`
   - live docs and mdBook files synced for the slice
@@ -53,13 +53,13 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `8`
-  - slice 9/200 tightens AMBA source-column alias-grounded prose semantic-hint exclusion metrics for positive table-backed source-split hardening
+  - completed_count before this commit: `9`
+  - slice 10/200 tightens AMBA source-column visual-caption semantic-hint exclusion metrics for positive table-backed source-split hardening
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks AMBA source-column alias-grounded prose semantic-hint exclusion KG coverage as `Done`
+  - live-status tracker now marks AMBA source-column visual-caption semantic-hint exclusion KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 9 before commit
+  - implementation and live-doc sync are complete for slice 10 before commit
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench amba_source_column_handshake_gold` passed with the requested fixture
   - broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed on slice 7 with `150/150` fixtures
   - broader `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed on slice 7 with `150` fixtures projected, `0` failures, and no tracked projection diff
@@ -104,5 +104,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 9 commit workflow, clear and verify `git_message_brief.txt`, then continue AMBA source-column visual-caption source-split hardening
+- finish the slice 10 commit workflow, clear and verify `git_message_brief.txt`, then continue AMBA source-column VLM timing-annotation source-split hardening
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle
