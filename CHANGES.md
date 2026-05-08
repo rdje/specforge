@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (adapter enum symbol signal-free guard)
+
+### Improved: enum symbol renderability stays signal-free
+- Added a direct regression for enum symbol-definition member renderability.
+- The guard proves graph-backed signal references inside enum member values still block in the active `.fsm` slice and do not create renderable signal size entries.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge enum_symbol_renderability_keeps_graph_signal_references_signal_free` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`110/110` adapter-filtered tests)
+- `bash scripts/run_ci.sh` -> passed with formatting, Clippy warning-deny, `633` Rust tests, rustdoc warning-deny, and mdBook
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter symbol definition signal-free guard)
 
 ### Improved: symbol-definition renderability stays signal-free

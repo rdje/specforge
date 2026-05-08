@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter enum symbol signal-free guard)
+- Added `enum_symbol_renderability_keeps_graph_signal_references_signal_free` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks enum symbol-definition member renderability so graph-backed signal references still block under the active signal-free symbol-definition slice and do not create size entries.
+- Slice 90 also passed the full CI checkpoint with formatting, Clippy warning-deny, `633` Rust tests, rustdoc warning-deny, and mdBook.
+
 ## Session update (2026-05-08 adapter symbol definition signal-free guard)
 - Added `symbol_definition_renderability_keeps_graph_signal_references_signal_free` in `crates/specforge/src/ir/adapters.rs`.
 - The test locks symbol-definition renderability so graph-backed signal references still block under the active signal-free symbol-definition slice and do not create size entries.
