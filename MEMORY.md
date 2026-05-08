@@ -22,24 +22,24 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `f8e6e3e8a84b3fd4670517ead35957b2facdea5e`
-- latest_commit_brief_message: `test(kg): lock AXI write-address control visual exclusion`
-- note: this is the pre-slice-91 baseline for the current `BWFSC=100` batch; slices 1-90/100 are committed and push remains deferred
+- latest_commit_hash: `7a93390216e3a34591589a0bb5140ae0534e95f4`
+- latest_commit_brief_message: `test(kg): lock AXI write-address control VLM exclusion`
+- note: this is the pre-slice-92 baseline for the current `BWFSC=100` batch; slices 1-91/100 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `7a93390` test(kg): lock AXI write-address control VLM exclusion
 - `f8e6e3e` test(kg): lock AXI write-address control visual exclusion
 - `7648a7c` test(kg): lock AXI write-address control alias exclusion
 - `d1e18d2` test(kg): lock AXI write-address control prose exclusion
 - `884e394` test(kg): lock visual semantic prior VLM exclusion
 - `f6b95c7` test(kg): lock visual semantic prior alias exclusion
-- `5318a59` test(kg): lock visual semantic prior prose exclusion
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=100` slice 91 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=100` slice 92 and push is deferred
 - files in flight:
-  - `crates/specforge/test_data/kg_quality/axi_write_address_control_sideband_stability_gold/fixture.json`
+  - `crates/specforge/test_data/kg_quality/apb_setup_access_timing_gold/fixture.json`
   - live docs and mdBook files synced for the slice
 
 ## Previous completed N-slice batch
@@ -52,14 +52,14 @@
 ## Current batch status
 - objective:
   - active `BWFSC=100` batch is in progress
-  - completed_count before this commit: `90`
-  - slice 91/100 tightens AXI write-address control sideband VLM timing-annotation semantic-hint exclusion metrics for positive table-backed source-split hardening
+  - completed_count before this commit: `91`
+  - slice 92/100 tightens APB setup/access prose semantic-hint exclusion metrics for positive table-backed source-split hardening
   - push is deferred until all `100` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks AXI write-address control sideband VLM timing-annotation semantic-hint exclusion KG coverage as `Done`
+  - live-status tracker now marks APB setup/access prose semantic-hint exclusion KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 91 before commit
-  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench axi_write_address_control_sideband_stability_gold` passed with the requested fixture
+  - implementation and live-doc sync are complete for slice 92 before commit
+  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench apb_setup_access_timing_gold` passed with the requested fixture
   - broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed on slice 91 with `150/150` fixtures
   - broader `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed on slice 91 with `150` fixtures projected, `0` failures, and no tracked projection diff
   - `bash scripts/run_docs_ci.sh` passed after the live-book sync
