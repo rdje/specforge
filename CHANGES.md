@@ -1,5 +1,15 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for visual semantic prior prose exclusion)
+
+### Improved: visual semantic-prior fixtures exclude prose hints
+- Tightened `visual_semantic_prior_guided_caption_gold` with `signal_semantic_hints_from_prose = 0` at `EvidenceIR`.
+- The fixture now proves `XACK` ready-like recovery comes from visual-caption evidence rather than ordinary prose evidence.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench visual_semantic_prior_guided_caption_gold` -> passed (`1/1` fixture)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for visual semantic prior table exclusion)
 
 ### Improved: visual semantic-prior fixtures exclude table hints

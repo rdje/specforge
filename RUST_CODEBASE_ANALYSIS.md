@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 KG fixture for visual semantic prior prose exclusion)
+- Tightened `visual_semantic_prior_guided_caption_gold` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts evidence-stage `signal_semantic_hints_from_prose = 0` alongside total, table-sourced, and visual-caption semantic hints.
+- This locks prior-guided `XACK` ready-like recovery as visual-caption backed rather than ordinary-prose backed.
+
 ## Session update (2026-05-08 KG fixture for visual semantic prior table exclusion)
 - Tightened `visual_semantic_prior_guided_caption_gold` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts evidence-stage `signal_semantic_hints_from_tables = 0` alongside total and visual-caption semantic hints.
