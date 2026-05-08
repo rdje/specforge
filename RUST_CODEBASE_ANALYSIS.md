@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter compound-update amount graph direction guard)
+- Added `compound_update_amount_renderability_uses_graph_direction_without_stale_flat_override` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks compound-update amount expression renderability inside action validation so graph-backed input references create size entries, while stale flat-vs-graph disagreement leaves no stale entry.
+- This covers the compound-update action's amount-expression path separately from the output-target guard and direct expression tests.
+
 ## Session update (2026-05-08 adapter assignment value graph direction guard)
 - Added `control_assignment_value_renderability_uses_graph_direction_without_stale_flat_override` in `crates/specforge/src/ir/adapters.rs`.
 - The test locks assignment value expression renderability inside action validation so graph-backed input references create size entries, while stale flat-vs-graph disagreement leaves no stale entry.

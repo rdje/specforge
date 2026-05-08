@@ -7264,6 +7264,126 @@ mod tests {
     }
 
     #[test]
+    fn compound_update_amount_renderability_uses_graph_direction_without_stale_flat_override() {
+        let mut graph_output = signal_candidate_with_direction_evidence(
+            None,
+            false,
+            Some(InterfaceSignalDirection::Output),
+            false,
+        );
+        graph_output.signal_name = "COUNT".to_string();
+        graph_output.width_hint = Some(8);
+
+        let mut graph_amount = signal_candidate_with_direction_evidence(
+            None,
+            false,
+            Some(InterfaceSignalDirection::Input),
+            false,
+        );
+        graph_amount.signal_name = "STEP_IN".to_string();
+        graph_amount.width_hint = Some(8);
+
+        let mut stale_amount = signal_candidate_with_direction_evidence(
+            Some(InterfaceSignalDirection::Output),
+            false,
+            Some(InterfaceSignalDirection::Input),
+            false,
+        );
+        stale_amount.signal_name = "STALE_STEP".to_string();
+        stale_amount.width_hint = Some(8);
+
+        let signals = [graph_output, graph_amount, stale_amount];
+        let signals_by_name = signals
+            .iter()
+            .map(|signal| (signal.signal_name.clone(), signal))
+            .collect::<std::collections::BTreeMap<_, _>>();
+        let mut size_entries = std::collections::BTreeMap::new();
+        let mut driven_outputs = std::collections::BTreeSet::new();
+        let mut sequential_targets = std::collections::BTreeSet::new();
+        let mut blocking_reasons = Vec::new();
+        let mut required_canonical_enrichments = std::collections::BTreeSet::new();
+
+        let graph_action = ControlActionRecord::CompoundUpdate {
+            target: ControlAssignmentTargetRecord {
+                signal_name: "COUNT".to_string(),
+                exposed_public_output: false,
+            },
+            operation: ControlCompoundUpdateOperation::Increment,
+            amount: Some(ControlExpressionRecord::Reference {
+                reference: ControlReferenceRecord {
+                    base_name: "STEP_IN".to_string(),
+                    kind_hint: ControlReferenceKind::Signal,
+                    suffixes: Vec::new(),
+                    exposed_public_output: false,
+                },
+            }),
+        };
+        super::validate_control_action_renderability(
+            &graph_action,
+            false,
+            None,
+            &signals_by_name,
+            &mut size_entries,
+            &mut driven_outputs,
+            &mut sequential_targets,
+            &mut blocking_reasons,
+            &mut required_canonical_enrichments,
+        );
+        let target_entry = size_entries
+            .get("COUNT")
+            .expect("graph-backed compound-update target should create a size entry");
+        assert_eq!(
+            target_entry.direction_hint,
+            InterfaceSignalDirection::Output
+        );
+        assert_eq!(target_entry.width, 8);
+        let amount_entry = size_entries
+            .get("STEP_IN")
+            .expect("graph-backed compound-update amount should create a size entry");
+        assert_eq!(amount_entry.direction_hint, InterfaceSignalDirection::Input);
+        assert_eq!(amount_entry.width, 8);
+        assert!(driven_outputs.contains("COUNT"));
+        assert!(sequential_targets.contains("COUNT"));
+        assert!(blocking_reasons.is_empty());
+
+        let stale_action = ControlActionRecord::CompoundUpdate {
+            target: ControlAssignmentTargetRecord {
+                signal_name: "COUNT".to_string(),
+                exposed_public_output: false,
+            },
+            operation: ControlCompoundUpdateOperation::Increment,
+            amount: Some(ControlExpressionRecord::Reference {
+                reference: ControlReferenceRecord {
+                    base_name: "STALE_STEP".to_string(),
+                    kind_hint: ControlReferenceKind::Signal,
+                    suffixes: Vec::new(),
+                    exposed_public_output: false,
+                },
+            }),
+        };
+        super::validate_control_action_renderability(
+            &stale_action,
+            false,
+            None,
+            &signals_by_name,
+            &mut size_entries,
+            &mut driven_outputs,
+            &mut sequential_targets,
+            &mut blocking_reasons,
+            &mut required_canonical_enrichments,
+        );
+        assert!(!size_entries.contains_key("STALE_STEP"));
+        assert!(blocking_reasons.iter().any(|reason| {
+            reason.contains(
+                "Signal `STALE_STEP` has conflicting canonical and graph-backed direction evidence",
+            )
+        }));
+        assert!(required_canonical_enrichments.contains(
+            "resolve conflicting canonical and actor-relative graph direction evidence before lowering `.fsm`"
+        ));
+    }
+
+    #[test]
     fn transition_renderability_uses_graph_guard_direction_without_stale_flat_override() {
         let mut graph_input = signal_candidate_with_direction_evidence(
             None,

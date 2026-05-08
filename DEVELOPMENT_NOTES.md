@@ -7,6 +7,20 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-08 adapter compound-update amount graph direction guard
+- New batch slice 94/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Added `compound_update_amount_renderability_uses_graph_direction_without_stale_flat_override` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks the compound-update amount branch of `validate_control_action_renderability`: a graph-backed output target can still drive, a graph-backed amount reference creates an input size entry, and stale flat-vs-graph disagreement on the amount reference blocks without creating stale metadata.
+- This complements the compound-update target guard and protects the action-level amount-expression call path separately from direct expression tests.
+- `cargo fmt --all` applied rustfmt layout.
+- `cargo test --manifest-path Cargo.toml -p specforge compound_update_amount_renderability_uses_graph_direction_without_stale_flat_override` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `114/114` adapter-filtered tests.
+- `cargo fmt --all --check` passed.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- Broader `bash scripts/run_ci.sh` passed on slice 90 with formatting, Clippy warning-deny, `633` Rust tests, rustdoc warning-deny, and mdBook.
+- Push remains deferred for the active `BWFSC=200` batch.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-08 adapter assignment value graph direction guard
 - New batch slice 93/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Added `control_assignment_value_renderability_uses_graph_direction_without_stale_flat_override` in `crates/specforge/src/ir/adapters.rs`.

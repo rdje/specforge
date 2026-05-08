@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (adapter compound-update amount graph direction guard)
+
+### Improved: compound-update amounts have action-level graph-first coverage
+- Added a direct regression for compound-update amount expression renderability inside control-action validation.
+- The guard proves graph-backed amount references create input size entries while flat-vs-graph disagreement blocks and leaves no stale amount entry.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge compound_update_amount_renderability_uses_graph_direction_without_stale_flat_override` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`114/114` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter assignment value graph direction guard)
 
 ### Improved: typed assignment values have action-level graph-first coverage
