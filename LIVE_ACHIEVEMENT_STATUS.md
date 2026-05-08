@@ -476,6 +476,7 @@
 - KG benchmark harness now locks indexed VLM timing value-label total semantic-hint exclusion: Done
 - KG benchmark harness now locks cycle-qualified VLM timing value-label total semantic-hint exclusion: Done
 - KG benchmark harness now locks motion-only VLM timing annotation total semantic-hint exclusion: Done
+- KG benchmark harness now locks motion-only VLM timing annotation table semantic-hint exclusion: Done
 - KG benchmark harness now locks waveform-motion VLM timing state total semantic-hint exclusion: Done
 - KG benchmark harness now locks waveform-motion VLM timing state table semantic-hint exclusion: Done
 - KG benchmark harness now locks waveform-motion VLM timing state prose semantic-hint exclusion: Done
