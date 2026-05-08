@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for AXI write-address sideband alias exclusion)
+
+### Improved: AXI write-address sideband fixtures exclude alias-grounded prose
+- Tightened `axi_write_address_sideband_stability_gold` with `signal_semantic_hints_from_alias_grounded_prose = 0` at `EvidenceIR`.
+- The fixture now proves `AWVALID` / `AWREADY` semantic hints are not recovered through phrase-alias prose while `AWLEN`, `AWSIZE`, and `AWBURST` handshake-stability obligations remain recovered.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench axi_write_address_sideband_stability_gold` -> passed (`1/1` fixture)
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed (`150/150` fixtures)
+- `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` -> passed (`150` fixtures projected, `0` failed)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for AXI write-address sideband prose exclusion)
 
 ### Improved: AXI write-address sideband fixtures prove table-only hints
