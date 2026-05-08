@@ -22,22 +22,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `e47894122475856a8c252b8d4d1b28680ff8e0d7`
-- latest_commit_brief_message: `test(kg): lock prior-guided visual-motif table exclusion`
-- note: this is the pre-slice-28 baseline for the current `BWFSC=100` batch; slices 1-27/100 are committed and push remains deferred
+- latest_commit_hash: `b73b6924a5c342fd2634bb05d18cdc23c14f8ec8`
+- latest_commit_brief_message: `test(kg): lock prior-guided visual-motif prose exclusion`
+- note: this is the pre-slice-29 baseline for the current `BWFSC=100` batch; slices 1-28/100 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `b73b692` test(kg): lock prior-guided visual-motif prose exclusion
 - `e478941` test(kg): lock prior-guided visual-motif table exclusion
 - `f06b512` test(kg): lock no-prior visual-motif VLM exclusion
 - `b0ffc85` test(kg): lock no-prior visual-motif alias exclusion
 - `530d901` test(kg): lock no-prior visual-motif prose exclusion
 - `b551fda` test(kg): lock no-prior visual-motif table exclusion
-- `3200811` test(kg): lock no-prior visual-caption VLM exclusion
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=100` slice 28 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=100` slice 29 and push is deferred
 - files in flight:
   - `crates/specforge/test_data/kg_quality/visual_motif_prior_guided_diagram_classification_gold/fixture.json`
   - live docs and mdBook files synced for the slice
@@ -52,13 +52,13 @@
 ## Current batch status
 - objective:
   - active `BWFSC=100` batch is in progress
-  - completed_count before this commit: `27`
-  - slice 28/100 tightens prior-guided visual-motif ordinary prose semantic-hint exclusion metrics
+  - completed_count before this commit: `28`
+  - slice 29/100 tightens prior-guided visual-motif alias-grounded prose semantic-hint exclusion metrics
   - push is deferred until all `100` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks prior-guided visual-motif ordinary prose semantic-hint exclusion KG coverage as `Done`
+  - live-status tracker now marks prior-guided visual-motif alias-grounded prose semantic-hint exclusion KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 28 before commit
+  - implementation and live-doc sync are complete for slice 29 before commit
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench visual_motif_prior_guided_diagram_classification_gold` passed with the requested fixture
   - `bash scripts/run_docs_ci.sh` passed after the live-book sync
   - broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed on slice 26 with `150/150` fixtures
@@ -75,5 +75,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 28 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 29/100
+- finish the slice 29 commit workflow, clear and verify `git_message_brief.txt`, then continue to slice 30/100
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle

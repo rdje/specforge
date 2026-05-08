@@ -1,5 +1,15 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for prior-guided visual-motif alias exclusion)
+
+### Improved: prior-guided visual-motif fixtures exclude alias-grounded prose hints
+- Tightened `visual_motif_prior_guided_diagram_classification_gold` with `signal_semantic_hints_from_alias_grounded_prose = 0` at `EvidenceIR`.
+- The fixture now proves learned visual-motif classification still does not invent alias-grounded prose semantic-role hints.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench visual_motif_prior_guided_diagram_classification_gold` -> passed (`1/1` fixture)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for prior-guided visual-motif prose exclusion)
 
 ### Improved: prior-guided visual-motif fixtures exclude prose hints
