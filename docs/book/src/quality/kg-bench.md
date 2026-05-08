@@ -172,6 +172,7 @@ The AXI sideband stability fixture keeps prose-sourced semantic hints at zero to
 Alias-grounded prose hints are zero there too, so phrase-alias recovery cannot masquerade as table-backed sideband evidence.
 Visual-caption hints are zero there too, so diagram captions cannot masquerade as table-backed sideband evidence.
 VLM timing-annotation hints are zero there as well, so timing notes cannot masquerade as table-backed sideband evidence.
+The AXI data USER sideband fixture keeps prose-sourced semantic hints at zero too, proving write/read data request and accept role hints remain table-only while `WUSER` / `RUSER` stability stays recovered.
 The APB requester/completer handshake fixture keeps prose-sourced semantic hints at zero too, proving `PSEL` / `PREADY` role hints remain table-only while `Requester` / `Completer` source roles still recover typed handshake completion.
 Alias-grounded prose hints are zero there too, so phrase-alias recovery cannot masquerade as table-backed APB requester/completer evidence.
 Visual-caption hints are zero there too, so diagram captions cannot masquerade as table-backed APB requester/completer evidence.
