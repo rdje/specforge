@@ -22,22 +22,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `9d234a89428d984c6419eb533d24f2730a3cfc17`
-- latest_commit_brief_message: `test(kg): lock AXI read-data timing alias exclusion`
-- note: this is the pre-slice-78 baseline for the current `BWFSC=100` batch; slices 1-77/100 are committed and push remains deferred
+- latest_commit_hash: `1e295044b40a0194b35430d10cf76628014a6ab6`
+- latest_commit_brief_message: `test(kg): lock AXI read-data timing visual exclusion`
+- note: this is the pre-slice-79 baseline for the current `BWFSC=100` batch; slices 1-78/100 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `1e29504` test(kg): lock AXI read-data timing visual exclusion
 - `9d234a8` test(kg): lock AXI read-data timing alias exclusion
 - `78289a7` test(kg): lock AXI read-data timing prose exclusion
 - `923121f` test(kg): lock AXI write-address ID VLM exclusion
 - `a0b5504` test(kg): lock AXI write-address ID visual exclusion
 - `78a167c` test(kg): lock AXI write-address ID alias exclusion
-- `1cdf6a6` test(kg): lock AXI write-address ID prose exclusion
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=100` slice 78 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=100` slice 79 and push is deferred
 - files in flight:
   - `crates/specforge/test_data/kg_quality/axi_read_data_timing_gold/fixture.json`
   - live docs and mdBook files synced for the slice
@@ -52,16 +52,16 @@
 ## Current batch status
 - objective:
   - active `BWFSC=100` batch is in progress
-  - completed_count before this commit: `77`
-  - slice 78/100 tightens AXI read-data timing visual-caption semantic-hint exclusion metrics for positive table-backed source-split hardening
+  - completed_count before this commit: `78`
+  - slice 79/100 tightens AXI read-data timing VLM timing-annotation semantic-hint exclusion metrics for positive table-backed source-split hardening
   - push is deferred until all `100` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks AXI read-data timing visual-caption semantic-hint exclusion KG coverage as `Done`
+  - live-status tracker now marks AXI read-data timing VLM timing-annotation semantic-hint exclusion KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 78 before commit
+  - implementation and live-doc sync are complete for slice 79 before commit
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench axi_read_data_timing_gold` passed with the requested fixture
-  - broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed on slice 75 with `150/150` fixtures
-  - broader `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed on slice 75 with `150` fixtures projected, `0` failures, and no tracked projection diff
+  - broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed on slice 79 with `150/150` fixtures
+  - broader `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed on slice 79 with `150` fixtures projected, `0` failures, and no tracked projection diff
   - `bash scripts/run_docs_ci.sh` passed after the live-book sync
   - `bash scripts/run_ci.sh` passed on slice 70 with formatting, Clippy warning-deny, Rust tests, rustdoc warning-deny, and mdBook
   - `bash scripts/run_ci.sh` passed on slice 60 with formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, and mdBook
@@ -78,8 +78,8 @@
   - focused current-slice KG fixture passed
   - docs CI passed for the current slice after live-doc sync
   - slice 70 passed `bash scripts/run_ci.sh`
-  - slice 75 passed `150/150` tracked KG fixtures
-  - slice 75 passed corpus-KB projection for `150` fixtures with `0` failures and no tracked projection diff
+  - slice 79 passed `150/150` tracked KG fixtures
+  - slice 79 passed corpus-KB projection for `150` fixtures with `0` failures and no tracked projection diff
   - slice 60 passed `bash scripts/run_ci.sh`
   - slice 43 passed `150/150` tracked KG fixtures
   - slice 43 passed corpus-KB projection for `150` fixtures with `0` failures
