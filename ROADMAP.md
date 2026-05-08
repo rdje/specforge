@@ -825,6 +825,7 @@
     - a negative fixture proving structured signal-description tables author real signal inventory while uppercase prose context such as `PDF`, `VIP`, `PLL`, `DFT`, `CDC`, `CTS`, and `SoC` does not become fake interface signals
     - a negative fixture proving a misclassified `Bits | Name | Description` field table does not synthesize fake top-level signals or semantic roles from field names like `REQ` / `ACK`
     - the field-table misclassification fixture now asserts table semantic hints remain zero, proving table rows cannot invent roles while the field table stays out of signal provenance
+    - the field-table misclassification fixture now asserts ordinary prose semantic hints remain zero, proving text recovery cannot invent roles while the field table stays out of signal provenance
     - a negative fixture proving low-value VLM timing-diagram annotation labels like `T0`, `Addr 1`, `Cycle 2`, `D0`, `A1`, `DATA0`, `0xAA`, `D[0]`, `A[1]`, `DATA[3]`, and `ADDR[7]` do not become timing constraints or temporal rules while the underlying timing extraction still remains visible at the evidence stage
     - the spurious VLM timing annotation fixture now also asserts total semantic hints remain zero, proving label/value noise cannot invent a semantic role through any evidence path
     - the spurious VLM timing annotation fixture now asserts table semantic hints remain zero, proving table evidence cannot invent roles for low-value label noise

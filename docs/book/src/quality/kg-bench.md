@@ -57,6 +57,7 @@ Fixtures can also assert the EvidenceIR side directly with `table_signal_declara
 That checks the table-synthesized declaration before canonical carry-through: the signal name, source table id, and optionally the generated statement text must match.
 For negative fixtures, `table_signal_declaration_provenance_count` can require zero evidence-stage provenance records, which is how field-table false positives stay blocked before they reach canonical signal inventory.
 The field-table misclassification fixture also locks table-sourced semantic hints at zero, proving those rows cannot invent roles while provenance stays empty.
+Ordinary prose hints are zero too, so text recovery cannot backfill roles from field names while provenance stays empty.
 The harness has focused regression tests for the count, missing-record, and synthesized-statement mismatch diagnostics around this EvidenceIR provenance surface.
 The same fixture family can also assert persisted validation metrics such as EvidenceIR `table_signal_declaration_provenance` and canonical `with_table_support`, so the user-visible validator surface stays aligned with both the evidence-stage table bridge and the exact canonical provenance checks.
 
