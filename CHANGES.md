@@ -1,5 +1,15 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for AXI write-response alias exclusion)
+
+### Improved: AXI write-response timing fixtures exclude alias-grounded prose
+- Tightened `axi_write_response_timing_gold` with `signal_semantic_hints_from_alias_grounded_prose = 0` at `EvidenceIR`.
+- The fixture now proves `BVALID` / `BREADY` semantic hints are not recovered through phrase-alias prose while write-response timing and handshake-stable `BRESP` obligations remain recovered.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench axi_write_response_timing_gold` -> passed (`1/1` fixture)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for AXI write-response prose exclusion)
 
 ### Improved: AXI write-response timing fixtures prove table-only hints
