@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter init assignment graph output guard)
+- Added `init_assignment_renderability_uses_graph_output_without_stale_flat_override` in `crates/specforge/src/ir/adapters.rs`.
+- The test locks init-assignment renderability so graph-backed output targets create renderable size entries, but stale flat-vs-graph disagreement emits conflict guidance, fails the output-role check, and leaves no stale entry.
+- This anchors the `.fsm` reset/init assignment consumer behind graph-first signal direction recovery.
+
 ## Session update (2026-05-08 adapter system-signal graph direction guard)
 - Added `system_signal_renderability_uses_graph_direction_without_stale_flat_override` in `crates/specforge/src/ir/adapters.rs`.
 - The test locks system-contract signal renderability so graph-only clock/reset input direction can pass, but stale flat evidence that disagrees with graph-backed input direction blocks with system-contract-specific guidance.

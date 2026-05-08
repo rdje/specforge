@@ -23,22 +23,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `670b882ba31b8b67468179a55b913830182af965`
-- latest_commit_brief_message: `test(adapter): guard graph-backed size entries`
-- note: this is the pre-slice-78 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
+- latest_commit_hash: `7358294f884041db1852d727c7f5326fc64d852b`
+- latest_commit_brief_message: `test(adapter): guard system graph directions`
+- note: this is the pre-slice-79 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
 
 ## Recent commit chain (last 6)
+- `7358294` test(adapter): guard system graph directions
 - `670b882` test(adapter): guard graph-backed size entries
 - `0f645ee` test(adapter): guard topology-linked output drives
 - `8abc9ce` test(adapter): guard top-port width conflicts
 - `a81ade3` test(adapter): guard top-port direction conflicts
 - `1961ab4` test(adapter): guard graph-first direction resolver
-- `a182a9a` test(kg): guard validation metric coverage
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 78 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
+- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 79 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
 - files in flight:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
@@ -58,16 +58,17 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `77`
-  - slice 78/200 adds a direct `.fsm` system-contract signal validation guard for graph-only clock/reset input evidence and stale-flat disagreement blocking
+  - completed_count before this commit: `78`
+  - slice 79/200 adds a direct `.fsm` init-assignment renderability guard for graph-backed output targets and stale-flat disagreement blocking
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks system-contract signal validation graph-first stale-flat regression coverage as `Done`
+  - live-status tracker now marks init-assignment renderability graph-backed output stale-flat regression coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 78 before commit
+  - implementation and live-doc sync are complete for slice 79 before commit
+  - `cargo fmt --all` applied rustfmt layout
+  - `cargo test --manifest-path Cargo.toml -p specforge init_assignment_renderability_uses_graph_output_without_stale_flat_override` passed
   - `cargo fmt --all --check` passed
-  - `cargo test --manifest-path Cargo.toml -p specforge system_signal_renderability_uses_graph_direction_without_stale_flat_override` passed
-  - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `98/98` adapter-filtered tests
+  - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `99/99` adapter-filtered tests
   - `bash scripts/run_docs_ci.sh` passed after the live-book sync
   - `bash scripts/run_ci.sh` passed on slice 70 as a broader checkpoint gate
   - `bash scripts/run_ci.sh` passed on slice 60 as a broader checkpoint gate
@@ -220,6 +221,9 @@
   - slice 78 passed `cargo test --manifest-path Cargo.toml -p specforge system_signal_renderability_uses_graph_direction_without_stale_flat_override`
   - slice 78 passed `cargo test --manifest-path Cargo.toml -p specforge adapters`
   - slice 78 passed `bash scripts/run_docs_ci.sh`
+  - slice 79 passed `cargo test --manifest-path Cargo.toml -p specforge init_assignment_renderability_uses_graph_output_without_stale_flat_override`
+  - slice 79 passed `cargo test --manifest-path Cargo.toml -p specforge adapters`
+  - slice 79 passed `bash scripts/run_docs_ci.sh`
   - slice 20 passed `bash scripts/run_ci.sh`
   - slice 100 passed `bash scripts/run_ci.sh`
   - slice 90 passed `bash scripts/run_ci.sh`
@@ -240,5 +244,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 78 commit workflow, clear and verify `git_message_brief.txt`, then select the next roadmap-aligned graph-first downstream signal-model slice
+- finish the slice 79 commit workflow, clear and verify `git_message_brief.txt`, then select the next roadmap-aligned graph-first downstream signal-model slice; run the broader `bash scripts/run_ci.sh` checkpoint after slice 80 completes
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle

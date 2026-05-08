@@ -6252,8 +6252,8 @@ mod tests {
     use crate::ir::intent::IntentIr;
     use crate::ir::semantic::{
         ActorPortRecord, ActorRelativeDirection, ControlActionRecord, ControlBlockRole,
-        InterfaceSignalDirection, SemanticIr, SystemResetPolarity, SystemResetTargetKind,
-        SystemResetTimingRelation,
+        DecisionTreeValueRecord, InitAssignmentRecord, InterfaceSignalDirection, SemanticIr,
+        SystemResetPolarity, SystemResetTargetKind, SystemResetTimingRelation,
     };
     use crate::ir::source::{AutomationConfidence, SourceIr, WidthHint};
 
@@ -6605,6 +6605,90 @@ mod tests {
         assert!(required_canonical_enrichments.contains(
             "resolve conflicting canonical and graph-backed system-signal direction evidence before lowering `.fsm` system contracts"
         ));
+    }
+
+    #[test]
+    fn init_assignment_renderability_uses_graph_output_without_stale_flat_override() {
+        let mut graph_output = signal_candidate_with_direction_evidence(
+            None,
+            false,
+            Some(InterfaceSignalDirection::Output),
+            false,
+        );
+        graph_output.signal_name = "ACC".to_string();
+        graph_output.width_hint = Some(8);
+
+        let mut stale_output = signal_candidate_with_direction_evidence(
+            Some(InterfaceSignalDirection::Input),
+            false,
+            Some(InterfaceSignalDirection::Output),
+            false,
+        );
+        stale_output.signal_name = "STALE_ACC".to_string();
+        stale_output.width_hint = Some(8);
+
+        let signals = vec![graph_output, stale_output];
+        let signals_by_name = signals
+            .iter()
+            .map(|signal| (signal.signal_name.clone(), signal))
+            .collect::<std::collections::BTreeMap<_, _>>();
+        let mut size_entries = std::collections::BTreeMap::new();
+        let mut blocking_reasons = Vec::new();
+        let mut required_canonical_enrichments = std::collections::BTreeSet::new();
+
+        let graph_init = InitAssignmentRecord {
+            target_signal: "ACC".to_string(),
+            value: DecisionTreeValueRecord::Literal {
+                literal: "8'0".to_string(),
+            },
+            supporting_statement_ids: Vec::new(),
+            automation_confidence: AutomationConfidence::High,
+        };
+        super::validate_init_assignment_renderability(
+            &graph_init,
+            &signals_by_name,
+            &mut size_entries,
+            &mut blocking_reasons,
+            &mut required_canonical_enrichments,
+        );
+        let graph_entry = size_entries
+            .get("ACC")
+            .expect("graph-backed init target should create a size entry");
+        assert_eq!(graph_entry.direction_hint, InterfaceSignalDirection::Output);
+        assert_eq!(graph_entry.width, 8);
+        assert!(blocking_reasons.is_empty());
+
+        let stale_init = InitAssignmentRecord {
+            target_signal: "STALE_ACC".to_string(),
+            value: DecisionTreeValueRecord::Literal {
+                literal: "8'0".to_string(),
+            },
+            supporting_statement_ids: Vec::new(),
+            automation_confidence: AutomationConfidence::High,
+        };
+        super::validate_init_assignment_renderability(
+            &stale_init,
+            &signals_by_name,
+            &mut size_entries,
+            &mut blocking_reasons,
+            &mut required_canonical_enrichments,
+        );
+        assert!(!size_entries.contains_key("STALE_ACC"));
+        assert!(blocking_reasons.iter().any(|reason| {
+            reason.contains(
+                "Signal `STALE_ACC` has conflicting canonical and graph-backed direction evidence",
+            )
+        }));
+        assert!(blocking_reasons.iter().any(|reason| {
+            reason.contains("Init assignment target `STALE_ACC` is not declared")
+        }));
+        assert!(required_canonical_enrichments.contains(
+            "resolve conflicting canonical and actor-relative graph direction evidence before lowering `.fsm`"
+        ));
+        assert!(
+            required_canonical_enrichments
+                .contains("keep first-slice init targets aligned with explicit output roles")
+        );
     }
 
     fn build_handshake_intent_ir(base: &Path) -> Result<IntentIr> {

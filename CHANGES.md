@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-08 (adapter init assignment graph output guard)
+
+### Improved: init assignment renderability has direct graph-first coverage
+- Added a direct regression for init-assignment renderability.
+- The guard proves graph-backed output targets create renderable size entries for init lowering, while flat-vs-graph disagreement blocks the target role and leaves no stale size entry.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge init_assignment_renderability_uses_graph_output_without_stale_flat_override` -> passed
+- `cargo fmt --all --check` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`99/99` adapter-filtered tests)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (adapter system-signal graph direction guard)
 
 ### Improved: system-contract signal validation has direct graph-first coverage
