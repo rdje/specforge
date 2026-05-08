@@ -818,6 +818,7 @@
     - the AXI address QoS/region sideband fixture now asserts prose semantic hints stay zero while `AWQOS`, `AWREGION`, `ARQOS`, and `ARREGION` remain table-sourced
     - the AXI address QoS/region sideband fixture now asserts alias-grounded prose semantic hints stay zero while `AWQOS`, `AWREGION`, `ARQOS`, and `ARREGION` remain table-sourced
     - the AXI address QoS/region sideband fixture now asserts visual-caption semantic hints stay zero while `AWQOS`, `AWREGION`, `ARQOS`, and `ARREGION` remain table-sourced
+    - the AXI address QoS/region sideband fixture now asserts VLM timing-annotation semantic hints stay zero while `AWQOS`, `AWREGION`, `ARQOS`, and `ARREGION` remain table-sourced
     - a representative AXI address/response USER sideband stability fixture proving Manager-owned `AWUSER` / `ARUSER` and Subordinate-owned `BUSER` stay actor-grounded under their matching channel handshakes
     - a representative AXI read-address sideband stability fixture proving `ARSIZE` and `ARBURST` remain graph-grounded and actor-owned when their stability is guarded by `ARVALID` / `ARREADY` completion
     - the AXI read-address sideband stability fixture now asserts prose semantic hints stay zero while `ARSIZE` and `ARBURST` recover through table-sourced semantic hints
