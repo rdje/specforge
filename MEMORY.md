@@ -23,22 +23,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `8b72f799fd6685f691bcfa548a65db6936f0bdf0`
-- latest_commit_brief_message: `test(adapter): guard compound amount width casts`
-- note: this is the pre-slice-116 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
+- latest_commit_hash: `d932d0415bb747a4614d119473f0e22de74055f2`
+- latest_commit_brief_message: `test(adapter): keep pulse width casts signal-free`
+- note: this is the pre-slice-117 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
 
 ## Recent commit chain (last 6)
+- `d932d04` test(adapter): keep pulse width casts signal-free
 - `8b72f79` test(adapter): guard compound amount width casts
 - `f57a6ac` test(adapter): guard registered dual value width casts
 - `0273b87` test(adapter): guard dual output value width casts
 - `f1d12b0` test(adapter): guard assignment value width casts
 - `ec14fc8` test(adapter): guard binary width casts
-- `296c251` test(adapter): guard unary width casts
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 116 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
+- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 117 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
 - files in flight:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
@@ -58,16 +58,16 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `115`
-  - slice 116/200 adds a direct `.fsm` delayed-pulse width-cast value guard proving graph-backed output targets remain visible while graph-backed pulse-level references stay signal-free under literal-only lowering
+  - completed_count before this commit: `116`
+  - slice 117/200 adds a direct `.fsm` symbol-definition width-cast guard proving graph-backed signal references stay signal-free while symbol-value and width-cast blockers are both reported
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks delayed-pulse width-cast value signal-free coverage as `Done`
+  - live-status tracker now marks symbol-definition width-cast signal-free coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 116 before commit
+  - implementation and live-doc sync are complete for slice 117 before commit
   - `cargo fmt --all` applied rustfmt layout
-  - `cargo test --manifest-path Cargo.toml -p specforge delayed_pulse_width_cast_value_keeps_graph_signal_references_signal_free` passed
-  - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `136/136` adapter-filtered tests
+  - `cargo test --manifest-path Cargo.toml -p specforge symbol_definition_width_cast_keeps_graph_signal_references_signal_free` passed
+  - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `137/137` adapter-filtered tests
   - `cargo fmt --all --check` passed
   - `bash scripts/run_docs_ci.sh` passed after the final live-book sync
   - `bash scripts/run_ci.sh` passed as the slice 100 broader checkpoint gate with formatting, Clippy warning-deny, `643` Rust tests, rustdoc warning-deny, and mdBook
@@ -339,6 +339,9 @@
   - slice 116 passed `cargo test --manifest-path Cargo.toml -p specforge delayed_pulse_width_cast_value_keeps_graph_signal_references_signal_free`
   - slice 116 passed `cargo test --manifest-path Cargo.toml -p specforge adapters`
   - slice 116 passed `bash scripts/run_docs_ci.sh`
+  - slice 117 passed `cargo test --manifest-path Cargo.toml -p specforge symbol_definition_width_cast_keeps_graph_signal_references_signal_free`
+  - slice 117 passed `cargo test --manifest-path Cargo.toml -p specforge adapters`
+  - slice 117 passed `bash scripts/run_docs_ci.sh`
   - slice 20 passed `bash scripts/run_ci.sh`
   - slice 100 passed `bash scripts/run_ci.sh`
   - slice 90 passed `bash scripts/run_ci.sh`
