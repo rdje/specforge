@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 KG fixture for AXI QoS/region visual exclusion)
+- Tightened `axi_address_qos_region_sideband_stability_gold` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts evidence-stage `signal_semantic_hints_from_visual_captions = 0` alongside total, table-sourced, prose, and alias-grounded prose semantic hints.
+- This locks the `AWQOS` / `AWREGION` / `ARQOS` / `ARREGION` semantic hints as table-only rather than visual-caption recovered.
+
 ## Session update (2026-05-08 KG fixture for AXI QoS/region alias exclusion)
 - Tightened `axi_address_qos_region_sideband_stability_gold` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts evidence-stage `signal_semantic_hints_from_alias_grounded_prose = 0` alongside total, table-sourced, and prose semantic hints.

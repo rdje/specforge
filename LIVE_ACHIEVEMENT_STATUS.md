@@ -987,6 +987,7 @@
 - KG benchmark harness now includes AXI address QoS/region sideband stability coverage: Done
 - KG benchmark harness now locks AXI address QoS/region sideband prose semantic-hint exclusion: Done
 - KG benchmark harness now locks AXI address QoS/region sideband alias-grounded prose semantic-hint exclusion: Done
+- KG benchmark harness now locks AXI address QoS/region sideband visual-caption semantic-hint exclusion: Done
 - KG benchmark harness now includes AXI data USER sideband stability coverage: Done
 - KG benchmark harness now includes AXI address/response USER sideband stability coverage: Done
 - KG benchmark harness now includes APB address/protection wait-state stability coverage: Done

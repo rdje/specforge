@@ -22,22 +22,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `e919f8239e42e151e21510a6decd8abe7d1cc452`
-- latest_commit_brief_message: `test(kg): lock AXI QoS region prose exclusion`
-- note: this is the pre-slice-65 baseline for the current `BWFSC=100` batch; slices 1-64/100 are committed and push remains deferred
+- latest_commit_hash: `11709a561d047c8f1c28e2765982a4e0fb395b4f`
+- latest_commit_brief_message: `test(kg): lock AXI QoS region alias exclusion`
+- note: this is the pre-slice-66 baseline for the current `BWFSC=100` batch; slices 1-65/100 are committed and push remains deferred
 
 ## Recent commit chain (last 6)
+- `11709a5` test(kg): lock AXI QoS region alias exclusion
 - `e919f82` test(kg): lock AXI QoS region prose exclusion
 - `a4cb63b` test(kg): lock AXI read-address timing VLM exclusion
 - `b55d7c5` test(kg): lock AXI read-address timing visual exclusion
 - `4e428ae` test(kg): lock AXI read-address timing alias exclusion
 - `ba432a1` test(kg): lock AXI read-address timing prose exclusion
-- `d6a17cb` test(kg): lock AXI read-address control VLM exclusion
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=100` slice 65 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=100` slice 66 and push is deferred
 - files in flight:
   - `crates/specforge/test_data/kg_quality/axi_address_qos_region_sideband_stability_gold/fixture.json`
   - live docs and mdBook files synced for the slice
@@ -52,13 +52,13 @@
 ## Current batch status
 - objective:
   - active `BWFSC=100` batch is in progress
-  - completed_count before this commit: `64`
-  - slice 65/100 tightens AXI address QoS/region sideband alias-grounded prose semantic-hint exclusion metrics for positive table-backed source-split hardening
+  - completed_count before this commit: `65`
+  - slice 66/100 tightens AXI address QoS/region sideband visual-caption semantic-hint exclusion metrics for positive table-backed source-split hardening
   - push is deferred until all `100` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks AXI address QoS/region sideband alias-grounded prose semantic-hint exclusion KG coverage as `Done`
+  - live-status tracker now marks AXI address QoS/region sideband visual-caption semantic-hint exclusion KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 65 before commit
+  - implementation and live-doc sync are complete for slice 66 before commit
   - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench axi_address_qos_region_sideband_stability_gold` passed with the requested fixture
   - broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed on slice 63 with `150/150` fixtures
   - broader `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed on slice 63 with `150` fixtures projected, `0` failures, and no tracked projection diff
@@ -89,5 +89,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 65 commit workflow, clear and verify `git_message_brief.txt`, then continue AXI address QoS/region source-split hardening
+- finish the slice 66 commit workflow, clear and verify `git_message_brief.txt`, then continue AXI address QoS/region source-split hardening
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle
