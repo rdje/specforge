@@ -1,5 +1,15 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for APB response prose exclusion)
+
+### Improved: APB response fixtures prove table-only hints
+- Tightened `apb_response_stability_gold` with `signal_semantic_hints_from_prose = 0` at `EvidenceIR`.
+- The fixture now proves `PSEL` / `PREADY` semantic hints are table-sourced rather than prose-derived while `PRDATA` and `PSLVERR` remain completer-owned stable outputs through completed accesses.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench apb_response_stability_gold` -> passed (`1/1` fixture)
+- `bash scripts/run_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for APB write-control VLM exclusion)
 
 ### Improved: APB write-control fixtures exclude VLM timing hints

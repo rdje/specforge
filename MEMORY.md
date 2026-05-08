@@ -22,24 +22,24 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `4aeb62a497064fdf555a256488a4315aada5501f`
-- latest_commit_brief_message: `test(kg): lock APB write-control visual exclusion`
-- note: this is the pre-slice-99 baseline for the current `BWFSC=100` batch; slices 1-98/100 are committed and push remains deferred
+- latest_commit_hash: `1140fd4e3fb95f0a0856c008ef6c543604dbd343`
+- latest_commit_brief_message: `test(kg): lock APB write-control VLM exclusion`
+- note: this is the pre-slice-100 baseline for the current `BWFSC=100` batch; slices 1-99/100 are committed and push remains deferred until this final slice commit workflow completes
 
 ## Recent commit chain (last 6)
+- `1140fd4` test(kg): lock APB write-control VLM exclusion
 - `4aeb62a` test(kg): lock APB write-control visual exclusion
 - `f38aee6` test(kg): lock APB write-control alias exclusion
 - `78979fb` test(kg): lock APB write-control prose exclusion
 - `80bc072` test(kg): lock APB setup access VLM exclusion
 - `b045d6e` test(kg): lock APB setup access visual exclusion
-- `4f8b4b9` test(kg): lock APB setup access alias exclusion
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for current `BWFSC=100` slice 99 and push is deferred
+- branch state before current slice commit: `main` has local work for current `BWFSC=100` slice 100 and push is deferred until this slice commit workflow completes
 - files in flight:
-  - `crates/specforge/test_data/kg_quality/apb_write_control_stability_gold/fixture.json`
+  - `crates/specforge/test_data/kg_quality/apb_response_stability_gold/fixture.json`
   - live docs and mdBook files synced for the slice
 
 ## Previous completed N-slice batch
@@ -52,17 +52,17 @@
 ## Current batch status
 - objective:
   - active `BWFSC=100` batch is in progress
-  - completed_count before this commit: `98`
-  - slice 99/100 tightens APB write-control VLM timing-annotation semantic-hint exclusion metrics for positive table-backed source-split hardening
-  - push is deferred until all `100` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
+  - completed_count before this commit: `99`
+  - slice 100/100 tightens APB response prose semantic-hint exclusion metrics for positive table-backed source-split hardening
+  - push is deferred only until this final slice commit workflow completes, then `git push` must run
 - tracker effect:
-  - live-status tracker now marks APB write-control VLM timing-annotation semantic-hint exclusion KG coverage as `Done`
+  - live-status tracker now marks APB response prose semantic-hint exclusion KG coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 99 before commit
-  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench apb_write_control_stability_gold` passed with the requested fixture
+  - implementation and live-doc sync are complete for slice 100 before commit
+  - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench apb_response_stability_gold` passed with the requested fixture
   - broader `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` passed on slice 99 with `150/150` fixtures
   - broader `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed on slice 99 with `150` fixtures projected, `0` failures, and no tracked projection diff
-  - `bash scripts/run_docs_ci.sh` passed after the slice 99 live-book sync
+  - `bash scripts/run_ci.sh` passed after the slice 100 live-doc and live-book sync
   - `bash scripts/run_ci.sh` passed on slice 90 with formatting, Clippy warning-deny, Rust tests, rustdoc warning-deny, and mdBook
   - `bash scripts/run_ci.sh` passed on slice 80 with formatting, Clippy warning-deny, Rust tests, rustdoc warning-deny, and mdBook
   - `bash scripts/run_ci.sh` passed on slice 70 with formatting, Clippy warning-deny, Rust tests, rustdoc warning-deny, and mdBook
@@ -78,7 +78,8 @@
   - user-requested `cargo sweep --time 1` is deferred until no target-tree process is active because `target/release/tool_matrix` is active
 - current known local CI baseline:
   - focused current-slice KG fixture passed
-  - docs CI passed for the current slice after live-doc sync
+  - full local CI passed for the current slice after live-doc sync
+  - slice 100 passed `bash scripts/run_ci.sh`
   - slice 90 passed `bash scripts/run_ci.sh`
   - slice 80 passed `bash scripts/run_ci.sh`
   - slice 70 passed `bash scripts/run_ci.sh`
@@ -97,5 +98,5 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 99 commit workflow, clear and verify `git_message_brief.txt`, then select the final slice 100 roadmap-aligned source-split hardening target and run the full batch-end gate before pushing
+- finish the slice 100 commit workflow, clear and verify `git_message_brief.txt`, then run `git push` for the completed `BWFSC=100` batch
 - keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle

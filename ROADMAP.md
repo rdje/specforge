@@ -801,6 +801,7 @@
     - the APB write-control fixture now asserts visual-caption semantic hints stay zero while request/accept role hints remain table-sourced
     - the APB write-control fixture now asserts VLM timing-annotation semantic hints stay zero while request/accept role hints remain table-sourced
     - a representative APB response stability gold fixture proving `PRDATA` and `PSLVERR` remain actor-grounded stable completer outputs during `PSEL` / `PENABLE` / `PREADY HIGH` completed accesses with handshake completion preserved
+    - the APB response fixture now asserts prose semantic hints stay zero while request/accept role hints remain table-sourced
     - a representative AXI-style gold fixture proving width-only channel tables plus prose drive/sample relations recover actor-relative direction, signal inventory, request/accept semantics, and typed handshake completion without any table direction column
     - a representative AXI-style timing gold fixture proving width-only channel tables plus prose actor relations can also recover next-cycle timing, actor-grounded temporal predicates, and handshake completion together
     - the AXI next-cycle timing fixture now asserts prose semantic hints stay zero while request/accept role hints remain table-sourced
