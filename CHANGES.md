@@ -1,5 +1,15 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for AXI width-only visual exclusion)
+
+### Improved: AXI width-only fixtures exclude visual-caption hints
+- Tightened `axi_width_only_prose_direction_gold` with `signal_semantic_hints_from_visual_captions = 0` at `EvidenceIR`.
+- The fixture now proves `AWVALID` / `AWREADY` semantic hints are not recovered through diagram captions while width-only channel tables plus prose actor relations still recover typed handshake completion.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench axi_width_only_prose_direction_gold` -> passed (`1/1` fixture)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for AXI width-only alias exclusion)
 
 ### Improved: AXI width-only fixtures exclude alias-grounded prose
