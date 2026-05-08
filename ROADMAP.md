@@ -826,6 +826,7 @@
     - a negative fixture proving a misclassified `Bits | Name | Description` field table does not synthesize fake top-level signals or semantic roles from field names like `REQ` / `ACK`
     - a negative fixture proving low-value VLM timing-diagram annotation labels like `T0`, `Addr 1`, `Cycle 2`, `D0`, `A1`, `DATA0`, `0xAA`, `D[0]`, `A[1]`, `DATA[3]`, and `ADDR[7]` do not become timing constraints or temporal rules while the underlying timing extraction still remains visible at the evidence stage
     - the spurious VLM timing annotation fixture now also asserts total semantic hints remain zero, proving label/value noise cannot invent a semantic role through any evidence path
+    - the spurious VLM timing annotation fixture now asserts table semantic hints remain zero, proving table evidence cannot invent roles for low-value label noise
     - a negative fixture proving indexed signal-value VLM timing-diagram labels like `XREQ[0] HIGH`, `XREQ<1> LOW`, and `XREQ[3:0] asserted` do not become timing constraints while the underlying waveform LOW/HIGH samples still survive as temporal evidence
     - the indexed signal-value VLM timing fixture now also asserts total semantic hints remain zero, proving indexed labels cannot invent semantic roles through any evidence path
     - the indexed signal-value VLM timing fixture now asserts table semantic hints remain zero, proving table evidence cannot invent roles for indexed label noise
