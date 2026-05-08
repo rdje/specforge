@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 KG fixture for AXI write-response temporal metrics)
+- Tightened `axi_write_response_timing_gold` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts `temporal_rules_with_multi_predicate_antecedents = 1` at both `SemanticIR` and `IntentIR` validation surfaces.
+- This continues R15b/R15e temporal metric hardening by proving the `BVALID` / `BREADY` handshake guard stays counted as a multi-predicate antecedent while next-cycle timing and actor-grounded stability remain recovered.
+
 ## Session update (2026-05-08 KG fixture for AXI write-data temporal metrics)
 - Tightened `axi_write_data_timing_gold` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts `temporal_rules_with_multi_predicate_antecedents = 1` at both `SemanticIR` and `IntentIR` validation surfaces.

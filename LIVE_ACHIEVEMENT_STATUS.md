@@ -530,6 +530,7 @@
 - KG benchmark harness now locks AXI write-response alias-grounded prose semantic-hint exclusion: Done
 - KG benchmark harness now locks AXI write-response visual-caption semantic-hint exclusion: Done
 - KG benchmark harness now locks AXI write-response VLM timing-annotation semantic-hint exclusion: Done
+- KG benchmark harness now locks AXI write-response multi-predicate antecedent temporal metric coverage: Done
 - KG benchmark harness now includes AXI write-response ID stability coverage: Done
 - KG benchmark harness now locks AXI write-response ID prose semantic-hint exclusion: Done
 - KG benchmark harness now locks AXI write-response ID alias-grounded prose semantic-hint exclusion: Done
