@@ -132,6 +132,7 @@ The AXI next-cycle timing fixture now keeps prose-sourced semantic hints at zero
 Alias-grounded prose hints are zero there too, so phrase-alias recovery cannot masquerade as table-backed next-cycle evidence.
 Visual-caption hints are zero there too, so diagram captions cannot masquerade as table-backed next-cycle evidence.
 VLM timing-annotation hints are zero there as well, so timing notes cannot masquerade as table-backed next-cycle evidence.
+That fixture also locks one multi-predicate antecedent, proving the `AWVALID` / `AWREADY` guard remains visible as a compound temporal condition.
 The AXI read-address timing fixture now keeps prose-sourced semantic hints at zero too, proving its `ARVALID` / `ARREADY` role hints remain table-only.
 Alias-grounded prose hints are zero there too, so phrase-alias recovery cannot masquerade as table-backed read-address timing evidence.
 Visual-caption hints are zero there too, so diagram captions cannot masquerade as table-backed read-address timing evidence.

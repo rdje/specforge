@@ -249,7 +249,8 @@
           "temporal_rules": "2",
           "temporal_rules_with_handshake_completion": "1",
           "temporal_rules_with_cycle_window": "1",
-          "temporal_rules_with_actor_grounding": "2"
+          "temporal_rules_with_actor_grounding": "2",
+          "temporal_rules_with_multi_predicate_antecedents": "1"
         }
       },
       "intent": {
@@ -258,7 +259,8 @@
           "temporal_rules": "2",
           "temporal_rules_with_handshake_completion": "1",
           "temporal_rules_with_cycle_window": "1",
-          "temporal_rules_with_actor_grounding": "2"
+          "temporal_rules_with_actor_grounding": "2",
+          "temporal_rules_with_multi_predicate_antecedents": "1"
         }
       }
     }
