@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 adapter source role confidence guard)
+- Extended `top_composition_blocks_child_source_direction_role_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- The source-side child direction-role blocker now locks high automation confidence on the declared top port, producer child, and blocked top link.
+- This keeps retained topology records diagnostic-rich while endpoint direction-role evidence blocks top composition emission.
+
 ## Session update (2026-05-08 adapter legacy unemitted source confidence guard)
 - Extended `top_composition_blocks_link_from_unemitted_child_port` in `crates/specforge/src/ir/adapters.rs`.
 - The legacy source-side unemitted child-port blocker now locks high automation confidence on the declared top port and producer child alongside the blocked top link.
