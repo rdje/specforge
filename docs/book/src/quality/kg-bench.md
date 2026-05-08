@@ -208,6 +208,7 @@ The visual-caption prior-guided gold locks the after side for that modality, res
 The visual-motif no-prior mirror keeps diagram-classification recovery separate from table truth: the unknown motif stays ambiguous while table-derived `XREQ` output remains canonical.
 That no-prior motif mirror also keeps table-sourced semantic hints at zero, so table evidence cannot rescue absent motif memory.
 Ordinary prose hints are zero too, so text evidence cannot backfill absent motif memory.
+Alias-grounded prose is excluded too, keeping phrase-alias recovery from bypassing absent motif memory.
 The visual-motif prior-guided gold locks the after side for diagram classification: learned memory classifies the motif while table-derived `XREQ` output remains canonical and no semantic role is invented.
 That visual-motif gold now also checks the evidence-stage corroboration finding payload, so prior-classified `visual_0001` remains targeted for VLM/multimodal follow-up instead of being silently promoted.
 

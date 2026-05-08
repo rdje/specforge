@@ -1,5 +1,15 @@
 # CHANGES
 
+## 2026-05-08 (KG fixture for no-prior visual-motif alias exclusion)
+
+### Improved: no-prior visual-motif fixtures exclude alias-grounded prose hints
+- Tightened `visual_motif_prior_guided_diagram_classification_without_prior_negative` with `signal_semantic_hints_from_alias_grounded_prose = 0` at `EvidenceIR`.
+- The fixture now proves an ambiguous visual motif without learned memory cannot be rescued through alias-grounded prose semantic-role hints.
+
+### Validation
+- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench visual_motif_prior_guided_diagram_classification_without_prior_negative` -> passed (`1/1` fixture)
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-08 (KG fixture for no-prior visual-motif prose exclusion)
 
 ### Improved: no-prior visual-motif fixtures exclude prose hints
