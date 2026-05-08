@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-08 KG fixture for APB requester/completer VLM exclusion)
+- Tightened `apb_requester_completer_handshake_gold` in `crates/specforge/test_data/kg_quality/`.
+- The fixture now asserts evidence-stage `signal_semantic_hints_from_vlm_timing_annotations = 0` alongside total, table-sourced, prose, alias-grounded prose, and visual-caption semantic hints.
+- This locks APB requester/completer request/accept semantic hints as table-only rather than VLM timing-annotation recovered while preserving typed `PSEL` / `PREADY` handshake completion.
+
 ## Session update (2026-05-08 KG fixture for APB requester/completer visual exclusion)
 - Tightened `apb_requester_completer_handshake_gold` in `crates/specforge/test_data/kg_quality/`.
 - The fixture now asserts evidence-stage `signal_semantic_hints_from_visual_captions = 0` alongside total, table-sourced, prose, and alias-grounded prose semantic hints.

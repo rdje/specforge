@@ -990,6 +990,7 @@
 - KG benchmark harness now locks APB requester/completer prose semantic-hint exclusion: Done
 - KG benchmark harness now locks APB requester/completer alias-grounded prose semantic-hint exclusion: Done
 - KG benchmark harness now locks APB requester/completer visual-caption semantic-hint exclusion: Done
+- KG benchmark harness now locks APB requester/completer VLM timing-annotation semantic-hint exclusion: Done
 - KG benchmark harness now includes an APB setup/access timing gold fixture: Done
 - KG benchmark harness now locks APB setup/access prose semantic-hint exclusion: Done
 - KG benchmark harness now locks APB setup/access alias-grounded prose semantic-hint exclusion: Done
