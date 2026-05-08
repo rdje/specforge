@@ -970,6 +970,7 @@
   - the no-prior visual-motif fixture now asserts table semantic hints stay zero while learned visual-motif memory is absent
   - the no-prior visual-motif fixture now asserts ordinary prose semantic hints stay zero while learned visual-motif memory is absent
   - the no-prior visual-motif fixture now asserts alias-grounded prose semantic hints stay zero while learned visual-motif memory is absent
+  - the no-prior visual-motif fixture now asserts VLM timing-annotation semantic hints stay zero while learned visual-motif memory is absent
   - the prior-guided visual-motif fixture now asserts exact table-derived `XREQ` output direction while learned memory classifies the diagram without inventing semantic role evidence
   - the prior-guided visual-motif fixture now also asserts exact evidence-stage corroboration guidance for `visual_0001`, proving prior-classified visuals still require VLM/multimodal follow-up
   - the no-prior table-shape signal-table fixture now asserts zero table-signal provenance and excludes `XREQ`/`XACK` from canonical signal inventory when no learned table-shape prior is staged
