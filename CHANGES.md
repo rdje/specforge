@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-09 (adapter source child direction-role inventory provenance guard)
+
+### Improved: source-side child direction-role blockers preserve conflicted child inventory provenance
+- Extended `top_composition_blocks_child_source_direction_role_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- The source-side child direction-role blocker regression now locks conflicted `side_data` child inventory to retained `interface` provenance alongside topology-link provenance, link support IDs, graph direction conflict state, and blocked renderability guidance.
+- This keeps source-side child direction-role blockers tied to the original child interface while endpoint role disagreement prevents stale `.fsm` emission.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_child_source_direction_role_guidance` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-09 (adapter child topology-direction conflict inventory provenance guard)
 
 ### Improved: child topology direction conflicts preserve conflicted child inventory provenance
