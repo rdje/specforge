@@ -7,6 +7,16 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-09 adapter top-link width residual explicit-port diagnostic guard
+- New batch slice 24/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
+- Extended `top_composition_blocks_width_mismatched_top_link_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- The top-link width mismatch regression now locks the composition residual to include explicit top-port diagnostics alongside width-compatible top-link diagnostics, low confidence, width repair guidance, retained top-port/link provenance, and blocked `.fsm` output.
+- This keeps width-mismatched top-link blockers explainable at both the top-link compatibility and explicit top-port repair surfaces.
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_width_mismatched_top_link_guidance` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests.
+- `cargo fmt --all --check` passed.
+- `bash scripts/run_docs_ci.sh` passed after the live-doc/book sync check.
+
 ## 2026-05-09 adapter child topology-direction residual explicit-port diagnostic guard
 - New batch slice 23/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
 - Extended `top_composition_blocks_conflicting_child_link_topology_directions` in `crates/specforge/src/ir/adapters.rs`.

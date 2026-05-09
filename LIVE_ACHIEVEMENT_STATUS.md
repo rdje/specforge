@@ -56,6 +56,7 @@
 - `.fsm` target-side child direction-role blockers now preserve retained record confidence: Done
 - `.fsm` target-side child direction-role blockers now preserve conflicted child inventory provenance: Done
 - `.fsm` top-link width mismatch blockers now preserve composition topology residual decisions: Done
+- `.fsm` top-link width mismatch residuals now preserve explicit top-port diagnostics: Done
 - `.fsm` top actor-port direction conflicts now preserve composition topology residual decisions: Done
 - `.fsm` top actor-port direction residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` top actor-port direction conflicts now preserve retained record confidence: Done

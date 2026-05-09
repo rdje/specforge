@@ -21107,6 +21107,12 @@ mod tests {
                     .description
                     .contains("width-compatible top links"))
         );
+        assert!(
+            composition_residual
+                .candidate_interpretations
+                .iter()
+                .any(|interpretation| interpretation.description.contains("explicit top ports"))
+        );
 
         Ok(())
     }
