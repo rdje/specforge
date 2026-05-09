@@ -22486,6 +22486,12 @@ mod tests {
         );
         assert_eq!(signal_inventory_port.width_hint, Some(1));
         assert!(
+            signal_inventory_port
+                .mention_categories
+                .iter()
+                .any(|category| category == "top_port")
+        );
+        assert!(
             top_port_support_ids
                 .iter()
                 .any(|id| signal_inventory_port.supporting_canonical_ids.contains(id))
