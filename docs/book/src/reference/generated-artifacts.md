@@ -324,6 +324,7 @@ Top-boundary actor-port width conflicts also emit the composition-topology resid
 That actor-port width residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
 Top actor-port width residuals keep child-module reference diagnostics alongside explicit top-port diagnostics so both repair surfaces remain visible.
 Top actor-port width residuals also keep renderable child-module diagnostics alongside explicit top-port and child-module reference surfaces.
+The top actor-port width conflict regression directly asserts that three-surface residual contract before `.fsm` top emission is allowed.
 Top child-link width conflicts keep selected inventory provenance for the declared top port and conflicting topology-link evidence while output direction stays visible and width remains conflicted.
 Top child-link width conflicts also emit the composition-topology residual decision so explicit-top-port repair remains visible in structured diagnostics.
 That top child-link width residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.

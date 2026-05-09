@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-05-09 (adapter top actor-width residual live-status alignment)
+
+### Improved: top actor-port width residual status matches existing coverage
+- Synced live docs and mdBook with existing `top_composition_blocks_conflicting_top_actor_port_width` coverage in `crates/specforge/src/ir/adapters.rs`.
+- The top actor-port width conflict regression already locks the composition residual to include explicit top-port diagnostics alongside renderable child-module and child-module reference diagnostics, low confidence, width-conflict repair guidance, retained top-port/child provenance, and blocked `.fsm` output.
+- This keeps graph-backed public top-width blockers documented across all three repair surfaces.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_top_actor_port_width` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `git diff --check` -> passed after live-doc/book sync
+- `bash scripts/run_docs_ci.sh` -> passed after live-doc/book sync
+
 ## 2026-05-09 (adapter top child-link residual live-status alignment)
 
 ### Improved: top child-link width residual status matches existing coverage
