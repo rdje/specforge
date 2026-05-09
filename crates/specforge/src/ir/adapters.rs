@@ -16023,6 +16023,7 @@ mod tests {
             signal_inventory_port.graph_direction_hint,
             Some(InterfaceSignalDirection::Output)
         );
+        assert_eq!(signal_inventory_port.width_hint, Some(8));
         assert!(
             signal_inventory_port
                 .mention_categories
@@ -16030,7 +16031,18 @@ mod tests {
                 .any(|category| category == "module_topology_link")
         );
         assert!(
+            signal_inventory_port
+                .mention_categories
+                .iter()
+                .any(|category| category == "top_port")
+        );
+        assert!(
             topology_support_ids
+                .iter()
+                .any(|id| signal_inventory_port.supporting_canonical_ids.contains(id))
+        );
+        assert!(
+            top_port_support_ids
                 .iter()
                 .any(|id| signal_inventory_port.supporting_canonical_ids.contains(id))
         );

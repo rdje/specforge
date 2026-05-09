@@ -7,6 +7,19 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-09 adapter top-link direction inventory provenance guard
+- New batch slice 182/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Extended `top_composition_recovers_top_port_direction_from_link_topology` in `crates/specforge/src/ir/adapters.rs`.
+- The top-link direction recovery regression now locks selected `result_data` inventory to numeric width, `top_port` provenance, original top-port support IDs, topology support IDs, graph direction, and high confidence.
+- This keeps renderable top-link-backed direction recovery tied to both public top-port declarations and topology evidence at the selected inventory surface.
+- `cargo fmt --all` applied rustfmt layout.
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_top_port_direction_from_link_topology` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests.
+- `cargo fmt --all --check` passed.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- Push remains deferred for the active `BWFSC=200` batch.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-09 adapter unemitted child-source inventory provenance guard
 - New batch slice 181/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Extended `top_composition_blocks_link_from_unemitted_child_port` in `crates/specforge/src/ir/adapters.rs`.

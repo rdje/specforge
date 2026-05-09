@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-09 (adapter top-link direction inventory provenance guard)
+
+### Improved: top-link direction recovery preserves selected inventory provenance
+- Extended the top-link direction recovery regression to assert selected `result_data` inventory keeps numeric width, `top_port` provenance, original top-port support IDs, topology support IDs, graph direction, and high confidence.
+- The guard keeps renderable top-link-backed direction recovery tied to both public top-port declarations and topology evidence at the selected inventory surface.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_top_port_direction_from_link_topology` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-09 (adapter unemitted child-source inventory provenance guard)
 
 ### Improved: unemitted child-source blockers preserve selected inventory provenance
