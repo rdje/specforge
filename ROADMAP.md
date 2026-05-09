@@ -260,6 +260,7 @@
   - source-side unemitted child guidance residuals preserve explicit top-port diagnostics alongside renderable child-module diagnostics so the provenance-rich endpoint regression matches the documented repair surfaces
   - source-side unemitted child endpoint residuals preserve explicit top-port diagnostics alongside renderable child-module diagnostics so both repair surfaces remain visible
   - top links targeting child endpoints absent from emitted child modules preserve target-endpoint enrichment guidance, low-confidence composition-topology residual diagnostics, and top-port, child, and link provenance
+  - target-side unemitted child guidance residuals preserve explicit top-port diagnostics alongside renderable child-module diagnostics so the provenance-rich endpoint regression matches the documented repair surfaces
   - target-side unemitted child endpoint residuals preserve explicit top-port diagnostics alongside renderable child-module diagnostics so both repair surfaces remain visible
   - child actor-port direction recovery preserves graph-backed support IDs and high automation confidence across producer and consumer child module inventories while staying composition-residual clean once renderable
   - child actor-port direction recovery preserves original child signal declaration support IDs alongside graph actor-port support IDs in recovered child module inventories while staying composition-residual clean once renderable

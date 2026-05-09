@@ -228,6 +228,7 @@
 - `.fsm` undeclared top-link source blockers now preserve retained record confidence: Done
 - `.fsm` links to unemitted child targets now preserve composition topology residual decisions: Done
 - `.fsm` target-side unemitted child residuals now lock low-confidence topology-detail diagnostics: Done
+- `.fsm` target-side unemitted child guidance residuals now preserve explicit top-port diagnostics: Done
 - `.fsm` target-side unemitted child residuals now preserve explicit top-port diagnostics: Done
 - `.fsm` target-side unemitted child blockers now preserve retained record confidence: Done
 - `.fsm` missing-child top blockers now preserve composition topology residual decisions: Done
