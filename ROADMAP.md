@@ -210,6 +210,7 @@
   - missing-child top blockers preserve composition-topology residual diagnostics so child-module reference repair remains visible in structured adapter output
   - missing-child top blockers preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output
   - primary missing-child residuals preserve explicit top-port diagnostics alongside child-module reference diagnostics so both repair surfaces remain visible
+  - primary missing-child residuals preserve renderable child-module diagnostics alongside explicit top-port and child-module reference diagnostics so all repair surfaces remain visible
   - duplicate top child-instance blockers preserve child-instance deduplication guidance, composition-topology residual diagnostics, and both duplicate child declaration support-ID sets
   - actor-port parametric width blockers preserve graph-backed provenance category, support IDs, and automation confidence while `.fsm` lowering remains blocked until numeric width evidence exists
   - canonical parametric width blockers preserve interface provenance category, support IDs, and automation confidence while `.fsm` lowering remains blocked until numeric width evidence exists

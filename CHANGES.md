@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-05-09 (adapter missing-child residual renderable-child diagnostic guard)
+
+### Improved: missing-child residuals preserve renderable child diagnostics
+- Extended `keeps_top_composition_blocked_when_child_module_is_missing` in `crates/specforge/src/ir/adapters.rs`.
+- The primary missing child-module top regression now locks the composition residual to include renderable child-module diagnostics alongside explicit top-port and child-module reference diagnostics, low confidence, child-source declaration guidance, retained top-port/child provenance, and blocked `.fsm` output.
+- This keeps missing child-source blockers explainable across renderable-child, top-port, and child-reference repair surfaces.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge keeps_top_composition_blocked_when_child_module_is_missing` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed after live-doc/book sync
+
 ## 2026-05-09 (adapter recovered direction residual renderable-child diagnostic guard)
 
 ### Improved: recovered top-port direction residuals preserve renderable child diagnostics
