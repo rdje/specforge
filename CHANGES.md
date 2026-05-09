@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-05-09 (adapter duplicate child reference residual live-status alignment)
+
+### Improved: duplicate child-instance residual status matches existing coverage
+- Synced live docs and mdBook with existing `top_composition_blocks_duplicate_child_instance_guidance` coverage in `crates/specforge/src/ir/adapters.rs`.
+- The duplicate child-instance regression already locks the composition residual to include child-module reference diagnostics alongside explicit top-port and renderable child-module diagnostics, low confidence, child deduplication guidance, retained top-port/child provenance, and blocked `.fsm` output.
+- This keeps duplicate child-instance top blockers documented across all three repair surfaces.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_duplicate_child_instance_guidance` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `git diff --check` -> passed after live-doc/book sync
+- `bash scripts/run_docs_ci.sh` -> passed after live-doc/book sync
+
 ## 2026-05-09 (adapter parametric top-port residual live-status alignment)
 
 ### Improved: parametric top-port residual status matches existing coverage
