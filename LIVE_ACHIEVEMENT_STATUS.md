@@ -71,6 +71,7 @@
 - `.fsm` recovered top-port missing-module blockers now preserve retained record confidence: Done
 - `.fsm` top-without-child blockers now preserve selected inventory confidence: Done
 - `.fsm` missing child-module top blockers now preserve selected inventory confidence: Done
+- `.fsm` missing child-module top blockers now preserve selected inventory provenance: Done
 - `.fsm` duplicate child-instance blockers now preserve selected inventory confidence: Done
 - `.fsm` duplicate child-instance blockers now preserve selected inventory provenance: Done
 - `.fsm` missing-link multi-child blockers now preserve selected inventory confidence: Done

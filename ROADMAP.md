@@ -193,6 +193,7 @@
   - source-side child direction-role blockers preserve selected top signal-inventory provenance, direction, width, support IDs, and high confidence while composition stays blocked
   - target-side child direction-role blockers preserve selected top signal-inventory provenance, direction, width, support IDs, and high confidence while composition stays blocked
   - missing-child top blockers preserve child-source declaration guidance on blocked top and aggregate `.fsm` renderability surfaces while keeping recovered top-boundary evidence inspectable
+  - missing-child top blockers preserve selected top signal-inventory provenance, direction, width, support IDs, and high confidence while composition stays blocked
   - primary missing-child composition blockers preserve child-source declaration guidance alongside top-port and child-declaration provenance
   - missing-child top blockers preserve composition-topology residual diagnostics so child-module reference repair remains visible in structured adapter output
   - missing-child top blockers preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output

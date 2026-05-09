@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-09 (adapter missing child-module inventory provenance guard)
+
+### Improved: missing child-module blockers preserve selected inventory provenance
+- Extended `keeps_top_composition_blocked_when_child_module_is_missing` in `crates/specforge/src/ir/adapters.rs`.
+- The missing child-module blocker regression now locks retained selected `result_data` top inventory to `top_port` provenance alongside direction, width, support IDs, and high confidence.
+- This keeps missing child-module blockers tied to explainable public top inventory while unresolved child-module references remain the renderability blocker.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge keeps_top_composition_blocked_when_child_module_is_missing` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-09 (adapter target-side child direction-role inventory provenance guard)
 
 ### Improved: target-side child direction-role blockers preserve selected inventory provenance
