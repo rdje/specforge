@@ -251,6 +251,7 @@
   - top links originating from undeclared top-boundary ports preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output
   - top links originating from child endpoints absent from emitted child modules preserve source-endpoint enrichment guidance, low-confidence composition-topology residual diagnostics, and top-port, child, and link provenance
   - source-side child endpoints absent from emitted child modules preserve low-confidence composition-topology residual diagnostics in the provenance-rich guidance regression
+  - source-side unemitted child endpoint residuals preserve explicit top-port diagnostics alongside renderable child-module diagnostics so both repair surfaces remain visible
   - top links targeting child endpoints absent from emitted child modules preserve target-endpoint enrichment guidance, low-confidence composition-topology residual diagnostics, and top-port, child, and link provenance
   - child actor-port direction recovery preserves graph-backed support IDs and high automation confidence across producer and consumer child module inventories while staying composition-residual clean once renderable
   - child actor-port direction recovery preserves original child signal declaration support IDs alongside graph actor-port support IDs in recovered child module inventories while staying composition-residual clean once renderable
