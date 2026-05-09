@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter source child-role guidance explicit-port diagnostic guard)
+- Extended `top_composition_blocks_child_source_direction_role_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- The source-side child direction-role guidance regression now locks the composition residual to include explicit top-port diagnostics alongside renderable child-module diagnostics, low confidence, endpoint role repair guidance, retained top-port/child/link provenance, and blocked `.fsm` output.
+- This is a test-surface/code-doc alignment hardening slice for `R6` `.fsm` adapter diagnostics, not a production architecture change.
+
 ## Session update (2026-05-09 adapter target unemitted guidance explicit-port diagnostic guard)
 - Extended `top_composition_blocks_link_to_unemitted_child_target_guidance` in `crates/specforge/src/ir/adapters.rs`.
 - The provenance-rich target-side unemitted child guidance regression now locks the composition residual to include explicit top-port diagnostics alongside renderable child-module diagnostics, low confidence, target-endpoint repair guidance, retained top-port/child/link provenance, and blocked `.fsm` output.

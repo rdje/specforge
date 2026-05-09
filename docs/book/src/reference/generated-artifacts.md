@@ -235,6 +235,7 @@ Top links targeting child endpoints absent from emitted child modules keep the s
 Child source endpoint direction-role mismatches keep the selected top unresolved with no renderable top root or aggregate source document, so stale `?top` output cannot leak before source endpoint direction evidence matches top-link semantics.
 Child target endpoint direction-role mismatches keep the selected top unresolved with no renderable top root or aggregate source document, so stale `?top` output cannot leak before target endpoint direction evidence matches top-link semantics.
 Source-side child direction-role blockers retain conflicted child inventory provenance from the original interface while carrying topology-link support and role repair guidance.
+The source-side child direction-role guidance regression now keeps explicit top-port diagnostics alongside renderable child-module diagnostics so both endpoint-role repair surfaces remain visible.
 Source-side child direction-role residuals keep explicit top-port diagnostics alongside renderable child-module diagnostics so both repair surfaces remain visible.
 Target-side child direction-role blockers retain conflicted child inventory provenance from the original interface while carrying topology-link support and role repair guidance.
 Target-side child direction-role residuals keep explicit top-port diagnostics alongside renderable child-module diagnostics so both repair surfaces remain visible.
