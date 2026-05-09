@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-09 (adapter target-side child direction-role inventory provenance guard)
+
+### Improved: target-side child direction-role blockers preserve selected inventory provenance
+- Extended `top_composition_blocks_child_target_direction_role_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- The target-side child direction-role blocker regression now locks retained selected `drive_data` top inventory to `top_port` provenance alongside direction, width, support IDs, and high confidence.
+- This keeps target-side child direction-role blockers tied to explainable public top inventory while the child endpoint role mismatch remains the renderability blocker.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_child_target_direction_role_guidance` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-09 (adapter source-side child direction-role inventory provenance guard)
 
 ### Improved: source-side child direction-role blockers preserve selected inventory provenance

@@ -89,6 +89,7 @@
 - `.fsm` source-side child direction-role blockers now preserve selected inventory confidence: Done
 - `.fsm` source-side child direction-role blockers now preserve selected inventory provenance: Done
 - `.fsm` target-side child direction-role blockers now preserve selected inventory confidence: Done
+- `.fsm` target-side child direction-role blockers now preserve selected inventory provenance: Done
 - `.fsm` child actor-port direction conflicts now preserve selected inventory confidence: Done
 - `.fsm` child topology direction conflicts now preserve selected inventory confidence: Done
 - `.fsm` child topology width conflicts now preserve selected inventory confidence: Done
