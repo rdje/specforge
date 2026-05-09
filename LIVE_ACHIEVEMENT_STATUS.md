@@ -764,6 +764,7 @@
 - `.fsm` explicit top-root lowering now recovers width-only top boundary port directions from matching top actor ports: Done
 - `.fsm` top actor-port direction recovery now preserves selected child confidence: Done
 - `.fsm` explicit top-root lowering now recovers missing top boundary port widths from matching top actor ports: Done
+- `.fsm` top actor-port width recovery now preserves selected child confidence: Done
 - `.fsm` selected top signal inventory now preserves recovered top-boundary directions as graph-backed hints instead of flat compatibility hints: Done
 - `.fsm` selected top signal inventory now preserves explicit top directions while marking contradictory graph/topology recovery as graph-conflicted: Done
 - `.fsm` selected top signal inventory now preserves recovered top-boundary width provenance categories from actor-port and top-link topology evidence: Done
@@ -945,6 +946,7 @@
 - `.fsm` top-link direction recovery now stays composition-residual clean when renderable: Done
 - `.fsm` top-link direction recovery now regression-locks renderable topology-link confidence: Done
 - `.fsm` top actor-port direction recovery now regression-locks child declaration confidence: Done
+- `.fsm` top actor-port width recovery now regression-locks child declaration confidence: Done
 - `.fsm` baseline top-composition lowering now regression-locks top port, child, and link support IDs: Done
 - `.fsm` missing-child top blockers now preserve unresolved child support IDs and confidence: Done
 - `.fsm` reused-child top lowering now regression-locks per-instance child support IDs: Done

@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter actor-port width child confidence guard)
+- Extended `top_composition_recovers_top_port_width_from_actor_ports` in `crates/specforge/src/ir/adapters.rs`.
+- The top actor-port width recovery regression now locks support IDs and high automation confidence on the selected `producer` child declaration while the public top port width is recovered from graph evidence.
+- This keeps actor-port-backed top-boundary width recovery tied to the explicit child provenance needed for renderable top composition.
+
 ## Session update (2026-05-09 adapter actor-port direction child confidence guard)
 - Extended `top_composition_recovers_top_port_direction_from_actor_ports` in `crates/specforge/src/ir/adapters.rs`.
 - The top actor-port direction recovery regression now locks support IDs and high automation confidence on the selected `producer` child declaration while the public top port is recovered from graph evidence.

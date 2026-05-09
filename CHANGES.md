@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-09 (adapter actor-port width child confidence guard)
+
+### Improved: actor-port width recovery preserves child confidence
+- Extended the top actor-port width recovery regression to assert the selected producer child declaration retains support IDs and high automation confidence while the public top port width is recovered from graph evidence.
+- The guard keeps actor-port-backed top-boundary width recovery tied to the explicit child provenance needed for renderable top composition.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_top_port_width_from_actor_ports` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-09 (adapter actor-port direction child confidence guard)
 
 ### Improved: actor-port direction recovery preserves child confidence
