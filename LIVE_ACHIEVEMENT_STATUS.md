@@ -70,6 +70,7 @@
 - `.fsm` duplicate child-instance blockers now preserve selected inventory confidence: Done
 - `.fsm` duplicate child-instance blockers now preserve selected inventory provenance: Done
 - `.fsm` missing-link multi-child blockers now preserve selected inventory confidence: Done
+- `.fsm` missing-link multi-child blockers now preserve selected inventory provenance: Done
 - `.fsm` undeclared top-link target blockers now preserve selected inventory confidence: Done
 - `.fsm` undeclared top-link source blockers now preserve selected inventory confidence: Done
 - `.fsm` source-side unemitted child blockers now preserve selected inventory confidence: Done
