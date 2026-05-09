@@ -226,6 +226,7 @@ Their selected inventory still keeps the declared direction, `top_port` provenan
 Multi-child tops that still lack explicit top links keep the selected top unresolved with no renderable top root or aggregate source document, so stale `?top` output cannot leak before topology links are supplied.
 Top roots that still lack explicit child-module references keep the selected top unresolved with no renderable top root or aggregate source document, so stale `?top` output cannot leak before child references are supplied.
 Top roots that reference undeclared child source modules keep the selected top unresolved with no renderable top root or aggregate source document, so stale `?top` output cannot leak before child source modules are declared.
+Primary missing child-module residuals keep explicit top-port diagnostics alongside child-module reference diagnostics so both repair surfaces remain visible.
 Top roots that still lack explicit top-port records keep the selected top unresolved with no renderable top root or aggregate source document, so stale `?top` output cannot leak before top ports are supplied.
 Duplicate top-port direction records keep the selected top unresolved with no renderable top root or aggregate source document, so stale `?top` output cannot leak before duplicate public direction evidence is resolved.
 Duplicate top child-instance records keep the selected top unresolved with no renderable top root or aggregate source document, so stale `?top` output cannot leak before child references are deduplicated.

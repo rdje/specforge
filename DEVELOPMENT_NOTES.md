@@ -7,6 +7,17 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-09 adapter missing child residual explicit-port diagnostic guard
+- New batch slice 39/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
+- Extended `keeps_top_composition_blocked_when_child_module_is_missing` in `crates/specforge/src/ir/adapters.rs`.
+- The primary missing child-module top regression now locks the composition residual to include explicit top-port diagnostics alongside child-module reference diagnostics, low confidence, retained top-port/child provenance, and blocked `.fsm` output.
+- This keeps undeclared child-module blockers explainable at both the explicit top-port and child-reference repair surfaces.
+- `cargo test --manifest-path Cargo.toml -p specforge keeps_top_composition_blocked_when_child_module_is_missing` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests.
+- `cargo fmt --all --check` passed.
+- `git diff --check` passed.
+- `bash scripts/run_docs_ci.sh` passed after the live-doc/book sync check.
+
 ## 2026-05-09 adapter recovered top-port residual explicit-port diagnostic guard
 - New batch slice 38/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
 - Extended `top_composition_preserves_recovered_top_port_direction_when_still_blocked` in `crates/specforge/src/ir/adapters.rs`.
