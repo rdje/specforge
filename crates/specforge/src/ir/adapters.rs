@@ -18213,8 +18213,18 @@ mod tests {
             recovered_port.automation_confidence,
             AutomationConfidence::High
         );
+        assert_eq!(
+            signal_inventory_port.direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
         assert_eq!(signal_inventory_port.width_hint, None);
         assert!(signal_inventory_port.width_hint_conflicted);
+        assert!(
+            signal_inventory_port
+                .mention_categories
+                .iter()
+                .any(|category| category == "top_port")
+        );
         assert!(
             signal_inventory_port
                 .mention_categories

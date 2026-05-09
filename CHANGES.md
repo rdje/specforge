@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-09 (adapter top actor-width inventory provenance guard)
+
+### Improved: top actor-port width conflicts preserve selected inventory provenance
+- Extended the top actor-port width conflict regression to assert selected `ext_data` inventory keeps output direction and `top_port` provenance while width remains conflicted with actor-port width evidence.
+- The guard keeps conflicting top-boundary actor width evidence explainable at the selected inventory surface alongside support IDs and high confidence.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_top_actor_port_width` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-09 (adapter top actor-direction inventory provenance guard)
 
 ### Improved: top actor-port direction conflicts preserve selected inventory provenance
