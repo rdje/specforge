@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-09 (adapter undeclared top-source residual live-status alignment)
+
+### Improved: undeclared top-source residual status matches existing coverage
+- Synced live docs and mdBook with existing `top_composition_blocks_link_from_undeclared_top_source_guidance` coverage in `crates/specforge/src/ir/adapters.rs`.
+- The undeclared top-source regression already locks the composition residual to include explicit top-port diagnostics alongside child-module reference and renderable child-module diagnostics, low confidence, source-endpoint repair guidance, retained top-port/child/link provenance, and blocked `.fsm` output.
+- This keeps source-side undeclared top-boundary endpoint blockers documented across all three repair surfaces.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_link_from_undeclared_top_source_guidance` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- tracked markdown/mdBook absolute-path scan -> passed after live-doc/book sync
+- `git diff --check` -> passed after live-doc/book sync
+- `bash scripts/run_docs_ci.sh` -> passed after live-doc/book sync
+
 ## 2026-05-09 (adapter undeclared top-target residual live-status alignment)
 
 ### Improved: undeclared top-target residual status matches existing coverage

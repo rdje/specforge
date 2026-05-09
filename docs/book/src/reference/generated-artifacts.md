@@ -416,6 +416,7 @@ Undeclared top-source blockers keep retained selected top inventory tied to `top
 The undeclared top-source fixture now asserts that provenance on the owning unresolved-source regression.
 Top links that originate from undeclared top-boundary ports also emit the composition-topology residual decision, mirroring target-side explicit-top-port repair diagnostics.
 That undeclared top-source residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
+The undeclared top-source regression asserts explicit top-port diagnostics alongside child-module reference and renderable child-module surfaces before `.fsm` top emission is allowed.
 Undeclared top-source residuals keep child-module reference diagnostics alongside explicit top-port diagnostics so both repair surfaces remain visible.
 Undeclared top-source residuals also keep renderable child-module diagnostics alongside explicit top-port and child-module reference surfaces.
 Top links that originate from child endpoints absent from emitted child modules preserve source-endpoint enrichment guidance while keeping the declared top-port, child, and link provenance visible.
