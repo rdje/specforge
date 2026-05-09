@@ -194,6 +194,7 @@
   - the widthless public top-port residual guard is asserted directly in the widthless blocker regression, not through adjacent recovered-root confidence coverage
   - parametric public top-port blockers preserve explicit top-port support IDs and high automation confidence while `.fsm` lowering remains blocked until numeric width evidence exists
   - parametric public top-port blockers preserve top-boundary width resolution guidance and low-confidence composition-topology residual diagnostics on blocked top and aggregate `.fsm` renderability surfaces
+  - parametric public top-port residuals preserve explicit top-port diagnostics alongside renderable child-module and child-module reference diagnostics so all repair surfaces remain visible
   - parametric public top-port residuals preserve child-module reference diagnostics alongside explicit top-port diagnostics so both repair surfaces remain visible
   - parametric public top-port residuals preserve renderable child-module diagnostics alongside explicit top-port and child-module reference diagnostics so all repair surfaces remain visible
   - top-link blockers for unemitted child endpoints preserve explicit link support IDs, high automation confidence, and source- and target-endpoint enrichment guidance on blocked top and aggregate `.fsm` renderability surfaces while blocking `.fsm` emission

@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-05-09 (adapter parametric top-port residual live-status alignment)
+
+### Improved: parametric top-port residual status matches existing coverage
+- Synced live docs and mdBook with existing `top_composition_blocks_parametric_top_port_width_for_fsm_public_io` coverage in `crates/specforge/src/ir/adapters.rs`.
+- The parametric public top-port regression already locks the composition residual to include explicit top-port diagnostics alongside renderable child-module and child-module reference diagnostics, low confidence, width-resolution guidance, retained top-port/child provenance, and blocked `.fsm` output.
+- This keeps symbolic-width public top-port blockers documented across all three repair surfaces.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_parametric_top_port_width_for_fsm_public_io` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `git diff --check` -> passed after live-doc/book sync
+- `bash scripts/run_docs_ci.sh` -> passed after live-doc/book sync
+
 ## 2026-05-09 (adapter widthless top-port residual live-status alignment)
 
 ### Improved: widthless top-port residual status matches existing coverage

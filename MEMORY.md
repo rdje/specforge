@@ -24,22 +24,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `cdc0b273b9c8d07a3cc5c3dabcfbd8e7279d6e50`
-- latest_commit_brief_message: `docs(adapter): align duplicate top-width diagnostics`
-- note: this is the pre-slice-93 baseline for the active `BWFSC=100` batch; `main` is ninety-four local commits ahead of `origin/main`, and push is deferred until the 100-slice batch completes unless the user explicitly redirects or a real blocker stops the batch
+- latest_commit_hash: `f74509aeaf22a7256951e325a5495cb270d1dd47`
+- latest_commit_brief_message: `docs(adapter): align widthless top-port diagnostics`
+- note: this is the pre-slice-94 baseline for the active `BWFSC=100` batch; `main` is ninety-five local commits ahead of `origin/main`, and push is deferred until the 100-slice batch completes unless the user explicitly redirects or a real blocker stops the batch
 
 ## Recent commit chain (last 6)
+- `f74509a` docs(adapter): align widthless top-port diagnostics
 - `cdc0b27` docs(adapter): align duplicate top-width diagnostics
 - `4642dce` docs(adapter): align duplicate top-direction diagnostics
 - `5ca7e2e` docs(adapter): align top-link direction diagnostics
 - `d0710c7` docs(adapter): align top actor-direction diagnostics
 - `bb8704a` docs(adapter): align top actor-width diagnostics
-- `8033491` docs(adapter): align top child-link diagnostics
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state: `main` has local work for active `BWFSC=100` slice 93 and push is deferred until all 100 slices complete
+- branch state: `main` has local work for active `BWFSC=100` slice 94 and push is deferred until all 100 slices complete
 - files in flight:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -58,8 +58,8 @@
 ## Current batch status
 - objective:
   - active `BWFSC=100` batch is in progress
-  - completed_count before this commit: `92`
-  - slice 93/100 syncs widthless top-port residual live status/book with existing regression coverage that proves explicit top-port diagnostics remain visible alongside renderable child-module and child-module reference diagnostics while stale `.fsm` emission remains blocked
+  - completed_count before this commit: `93`
+  - slice 94/100 syncs parametric top-port residual live status/book with existing regression coverage that proves explicit top-port diagnostics remain visible alongside renderable child-module and child-module reference diagnostics while stale `.fsm` emission remains blocked
   - push remains deferred until all 100 batch slices are committed unless the user explicitly redirects or a real blocker stops the batch
   - `R6` remains the active `.fsm` adapter hardening lane; SystemVerilog, Verilog, and VHDL adapter expansion remains not started
 - tracker effect:
@@ -152,6 +152,7 @@
   - live-status tracker now marks duplicate top-port width child-module reference residual diagnostics as `Done`
   - live-status tracker now marks duplicate top-port width renderable child-module residual diagnostics as `Done`
   - live-status tracker now marks widthless top-port explicit top-port residual diagnostics as `Done`
+  - live-status tracker now marks parametric top-port explicit top-port residual diagnostics as `Done`
   - live-status tracker now marks source-side unemitted child child-module reference residual diagnostics as `Done`
   - live-status tracker now marks source-side unemitted child guidance child-module reference residual diagnostics as `Done`
   - live-status tracker now marks source-side child direction-role child-module reference residual diagnostics as `Done`
@@ -168,6 +169,12 @@
   - live-status tracker marks the tightened current-state live-doc/mdBook drift audit requirement as `Done`
   - README and mdBook command surfaces were reconciled with the live clap command set for enrichment, validation, rescan, learning, corpus-KB, cleanup options, and the `project-validation --rescan-vlm-provider lm-studio` spelling
 - verification status:
+  - implementation and live-doc/book sync are complete for slice 94 before commit
+  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_parametric_top_port_width_for_fsm_public_io` passed
+  - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests
+  - `cargo fmt --all --check` passed
+  - `git diff --check` passed after the live-doc/book sync check
+  - `bash scripts/run_docs_ci.sh` passed after the live-doc/book sync check
   - implementation and live-doc/book sync are complete for slice 93 before commit
   - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_widthless_top_port_without_width_recovery` passed
   - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests

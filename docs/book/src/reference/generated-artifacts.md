@@ -356,6 +356,7 @@ That widthless residual guard is asserted directly in the widthless blocker regr
 Parametric public top ports preserve top-boundary width resolution guidance while keeping symbolic width evidence inspectable in the selected top signal inventory.
 Parametric public top-port blockers also emit the composition-topology residual decision so explicit-top-port repair remains visible in structured diagnostics.
 That parametric top-port residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
+The parametric top-port blocker regression asserts explicit top-port diagnostics alongside renderable child-module and child-module reference diagnostics before `.fsm` top emission is allowed.
 Parametric top-port residuals keep child-module reference diagnostics alongside explicit top-port diagnostics so both repair surfaces remain visible.
 Parametric top-port residuals also keep renderable child-module diagnostics alongside explicit top-port and child-module reference surfaces.
 Top-link direction-role mismatches preserve source/output and target/input repair guidance on blocked child, top, and aggregate renderability surfaces while keeping topology-link provenance visible.
