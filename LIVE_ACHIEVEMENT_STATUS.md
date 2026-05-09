@@ -229,6 +229,7 @@
 - `.fsm` source-side unemitted child residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` source-side unemitted child guidance residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` source-side unemitted child guidance residuals now preserve explicit top-port diagnostics: Done
+- `.fsm` source-side unemitted child guidance residuals now preserve child-module reference diagnostics: Done
 - `.fsm` source-side unemitted child residuals now preserve explicit top-port diagnostics: Done
 - `.fsm` source-side unemitted child blockers now preserve retained record confidence: Done
 - `.fsm` legacy source-side unemitted child-port blockers now preserve retained record confidence: Done

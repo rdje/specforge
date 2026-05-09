@@ -386,6 +386,7 @@ Source-side unemitted child endpoint blockers also emit the composition-topology
 That source-side residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
 The provenance-rich source-side guidance regression keeps the same low-confidence topology-detail diagnostic contract.
 That provenance-rich guidance regression also keeps explicit top-port diagnostics alongside renderable child-module diagnostics so both source-endpoint repair surfaces remain visible.
+That provenance-rich source-side guidance regression also keeps child-module reference diagnostics alongside renderable child-module and explicit-top-port surfaces.
 Source-side unemitted child endpoint residuals keep explicit top-port diagnostics alongside renderable child-module diagnostics so both repair surfaces remain visible.
 Source-side unemitted child endpoint residuals also keep child-module reference diagnostics alongside those renderable-child and explicit-top-port surfaces.
 Target-side unemitted child endpoint blockers also emit the composition-topology residual decision so renderable-child repair remains visible in structured adapter diagnostics.
