@@ -312,6 +312,7 @@
   - actor-port direction recovery augments public top-port declarations with graph support without dropping declaration support IDs or leaving composition-topology residuals once renderable
   - actor-port width recovery augments public top-port declarations with graph width support without dropping declaration support IDs or leaving composition-topology residuals once renderable
   - child-link width recovery augments public top-port declarations with topology width support without dropping declaration support IDs or leaving composition-topology residuals once renderable
+  - child-link top-width recovery preserves selected top signal-inventory provenance, topology support, recovered width, and high confidence once renderable
   - child-system-contract width recovery augments public top-port declarations with topology and child system-contract support without dropping declaration support IDs or leaving composition-topology residuals once renderable
   - top-link child-width recovery augments child signal declarations with topology width support without dropping declaration support IDs or leaving composition-topology residuals once renderable
   - sibling-link child-width recovery augments child signal declarations with topology width support without dropping declaration support IDs or leaving composition-topology residuals once renderable

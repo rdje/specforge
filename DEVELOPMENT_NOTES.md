@@ -7,6 +7,16 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-09 adapter child-link top-width inventory provenance guard
+- New batch slice 6/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
+- Extended `top_composition_recovers_top_port_width_from_child_link_topology` in `crates/specforge/src/ir/adapters.rs`.
+- The child-link-backed top-width recovery regression now locks selected `result_data` top inventory to `top_port` provenance alongside topology-link provenance, recovered width, support IDs, and high confidence.
+- This keeps renderable child-link width recovery tied to both public top-port declarations and topology evidence at the selected inventory surface.
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_top_port_width_from_child_link_topology` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests.
+- `cargo fmt --all --check` passed.
+- `bash scripts/run_docs_ci.sh` passed after the live-doc/book sync check.
+
 ## 2026-05-09 adapter recovered top-root inventory provenance guard
 - New batch slice 5/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
 - Extended `top_root_kind_confidence_follows_recovered_top_port_evidence` in `crates/specforge/src/ir/adapters.rs`.

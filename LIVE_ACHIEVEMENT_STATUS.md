@@ -147,6 +147,7 @@
 - `.fsm` child actor-port direction recovery now stays composition-residual clean when renderable: Done
 - `.fsm` child link-topology direction recovery now stays composition-residual clean when renderable: Done
 - `.fsm` top-link child-width recovery now stays composition-residual clean when renderable: Done
+- `.fsm` child-link top-width recovery now preserves selected inventory provenance: Done
 - `.fsm` sibling-link child-input width recovery now stays composition-residual clean when renderable: Done
 - `.fsm` source-side sibling child-width recovery now stays composition-residual clean when renderable: Done
 - `.fsm` transitive child-width recovery now stays composition-residual clean when renderable: Done

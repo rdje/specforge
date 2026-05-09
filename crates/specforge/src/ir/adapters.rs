@@ -20568,6 +20568,12 @@ mod tests {
                 .any(|category| category == "module_topology_link")
         );
         assert!(
+            signal_inventory_port
+                .mention_categories
+                .iter()
+                .any(|category| category == "top_port")
+        );
+        assert!(
             topology_support_ids
                 .iter()
                 .any(|id| signal_inventory_port.supporting_canonical_ids.contains(id))
