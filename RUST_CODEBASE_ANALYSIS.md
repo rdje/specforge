@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter duplicate top-port direction inventory provenance guard)
+- Extended `top_composition_keeps_duplicate_top_port_direction_conflict_unresolved` in `crates/specforge/src/ir/adapters.rs`.
+- The duplicate top-port direction regression now locks each selected `drive_data` inventory entry to numeric width, non-conflicted width state, and `top_port` provenance while direction remains unresolved.
+- This keeps duplicate direction blockers explainable at the selected inventory surface alongside both duplicate declaration support-ID sets and high confidence.
+
 ## Session update (2026-05-09 adapter top-target role inventory provenance guard)
 - Extended `top_composition_blocks_top_target_direction_role_guidance` in `crates/specforge/src/ir/adapters.rs`.
 - The top-target direction-role blocker regression now locks selected `result_data` inventory to numeric width and `top_port` provenance while declared input direction, graph output direction, top-port support, topology support, and high confidence remain visible.
