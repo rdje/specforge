@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-05-09 (adapter source unemitted guidance explicit-port diagnostic guard)
+
+### Improved: source-side unemitted guidance residuals preserve explicit top-port diagnostics
+- Extended `top_composition_blocks_link_from_unemitted_child_source_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- The provenance-rich source-side unemitted child guidance regression now locks the composition residual to include explicit top-port diagnostics alongside renderable child-module diagnostics, low confidence, source-endpoint repair guidance, retained top-port/child/link provenance, and blocked `.fsm` output.
+- This closes the code/doc alignment gap for the source-side unemitted child endpoint claim in the live docs and mdBook.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_link_from_unemitted_child_source_guidance` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-09 (adapter undeclared top-source residual child-reference diagnostic guard)
 
 ### Improved: undeclared top-source residuals preserve child-module reference diagnostics

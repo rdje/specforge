@@ -7,6 +7,17 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-09 adapter source unemitted guidance explicit-port diagnostic guard
+- New batch slice 33/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
+- Extended `top_composition_blocks_link_from_unemitted_child_source_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- The provenance-rich source-side unemitted child guidance regression now locks the composition residual to include explicit top-port diagnostics alongside renderable child-module diagnostics, low confidence, source-endpoint repair guidance, retained top-port/child/link provenance, and blocked `.fsm` output.
+- This brings the regression surface back into alignment with the live docs/book claim that source-side unemitted child endpoint residuals expose both repair surfaces.
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_link_from_unemitted_child_source_guidance` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests.
+- `cargo fmt --all --check` passed.
+- `git diff --check` passed.
+- `bash scripts/run_docs_ci.sh` passed after the live-doc/book sync check.
+
 ## 2026-05-09 adapter undeclared top-source residual child-reference diagnostic guard
 - New batch slice 32/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
 - Extended `top_composition_blocks_link_from_undeclared_top_source_guidance` in `crates/specforge/src/ir/adapters.rs`.
