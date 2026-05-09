@@ -21363,6 +21363,12 @@ mod tests {
                     .description
                     .contains("renderable child modules"))
         );
+        assert!(
+            composition_residual
+                .candidate_interpretations
+                .iter()
+                .any(|interpretation| interpretation.description.contains("explicit top ports"))
+        );
 
         Ok(())
     }

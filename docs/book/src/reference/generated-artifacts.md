@@ -248,6 +248,7 @@ Recovered top-link child widths also feed child renderable `(+size ...)` entries
 Conflicting direct child/topology widths keep the child unresolved with no renderable child module or aggregate source document, so stale `(+size ...)` child output cannot leak past the blocked topology decision.
 Those blocked child topology width conflicts retain conflicted child inventory provenance from the original interface while carrying topology-link support, unresolved width, output direction, and high confidence.
 Conflicting child-link topology directions retain conflicted child inventory provenance from the original interface while carrying contradictory topology-link support, conflicted graph direction, width, and high confidence.
+Child topology direction residuals keep explicit top-port diagnostics alongside renderable child-module diagnostics so both repair surfaces remain visible.
 Sibling-link-backed child width recovery follows the same rule for recovered child inputs, and renderable recovery leaves no composition-topology residual.
 Recovered sibling child-link input widths retain selected child inventory provenance from the original child interface while adding topology-link evidence, recovered width, support IDs, and high confidence.
 Recovered sibling child-link widths also feed child renderable `(+size ...)` entries, so emitted child input widths do not depend on an original child-local numeric declaration.
