@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter undeclared top-target residual child-reference diagnostic guard)
+- Extended `top_composition_blocks_link_to_undeclared_top_target_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- The undeclared top-target regression now locks the composition residual to include child-module reference diagnostics alongside explicit top-port diagnostics, low confidence, target-endpoint repair guidance, retained top-port/child/link provenance, and blocked `.fsm` output.
+- This is a test-surface hardening slice for `R6` `.fsm` adapter diagnostics, not a production architecture change.
+
 ## Session update (2026-05-09 adapter duplicate child residual explicit-port diagnostic guard)
 - Extended `top_composition_blocks_duplicate_child_instance_guidance` in `crates/specforge/src/ir/adapters.rs`.
 - The duplicate child-instance regression now locks the composition residual to include explicit top-port diagnostics alongside child-module reference diagnostics, low confidence, child deduplication guidance, retained top-port/child provenance, and blocked `.fsm` output.
