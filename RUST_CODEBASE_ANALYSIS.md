@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter topology residual live-status alignment)
+- Synced live docs and mdBook with existing topology residual coverage in `crates/specforge/src/ir/adapters.rs`.
+- The top-link direction, top-target role, sibling child-link width, child topology width, and child topology direction regressions already lock composition residuals to include renderable child-module diagnostics alongside explicit top-port and child-module reference diagnostics, low confidence, retained topology/child provenance, and blocked `.fsm` output.
+- This is a documentation alignment slice for existing `R6` `.fsm` adapter diagnostics, not a production architecture change.
+
 ## Session update (2026-05-09 adapter child direction-role residual live-status alignment)
 - Synced live docs and mdBook with existing `top_composition_blocks_child_source_direction_role_guidance` and `top_composition_blocks_child_target_direction_role_guidance` coverage in `crates/specforge/src/ir/adapters.rs`.
 - The source- and target-side child direction-role regressions already lock composition residuals to include renderable child-module diagnostics alongside explicit top-port and child-module reference diagnostics, low confidence, endpoint-role repair guidance, retained child/link provenance, and blocked `.fsm` output.

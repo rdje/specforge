@@ -24,28 +24,27 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `4732603a3ace058ef6c952aab95004a82c46142d`
-- latest_commit_brief_message: `docs(adapter): align no-top-port diagnostics`
-- note: this is the pre-slice-79 baseline for the active `BWFSC=100` batch; `main` is eighty local commits ahead of `origin/main`, and push is deferred until the 100-slice batch completes unless the user explicitly redirects or a real blocker stops the batch
+- latest_commit_hash: `f855f96e5beeb25b75f9a58673c899d5df025dec`
+- latest_commit_brief_message: `docs(adapter): align child role diagnostics`
+- note: this is the pre-slice-80 baseline for the active `BWFSC=100` batch; `main` is eighty-one local commits ahead of `origin/main`, and push is deferred until the 100-slice batch completes unless the user explicitly redirects or a real blocker stops the batch
 
 ## Recent commit chain (last 6)
+- `f855f96` docs(adapter): align child role diagnostics
 - `4732603` docs(adapter): align no-top-port diagnostics
 - `7a50c3f` test(adapter): keep missing child diagnostics
 - `42c2ef7` test(adapter): keep recovered direction diagnostics
 - `b2f9948` test(adapter): keep recovered root diagnostics
 - `bd2eb75` test(adapter): keep multi-child no-link diagnostics
-- `c07acc9` test(adapter): keep no-child top diagnostics
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state: `main` has local work for active `BWFSC=100` slice 79 and push is deferred until all 100 slices complete
+- branch state: `main` has local work for active `BWFSC=100` slice 80 and push is deferred until all 100 slices complete
 - files in flight:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `MEMORY.md`
-  - `ROADMAP.md`
   - `RUST_CODEBASE_ANALYSIS.md`
   - `docs/book/src/reference/generated-artifacts.md`
 
@@ -59,8 +58,8 @@
 ## Current batch status
 - objective:
   - active `BWFSC=100` batch is in progress
-  - completed_count before this commit: `78`
-  - slice 79/100 syncs the source- and target-side child direction-role residual live status/book with existing regression coverage that proves renderable child-module diagnostics remain visible alongside explicit top-port and child-module reference diagnostics while stale `.fsm` emission remains blocked
+  - completed_count before this commit: `79`
+  - slice 80/100 syncs topology residual live status/book with existing regression coverage for top-link direction, top-target role, sibling child-link width, child topology width, and child topology direction renderable child-module diagnostics while stale `.fsm` emission remains blocked
   - push remains deferred until all 100 batch slices are committed unless the user explicitly redirects or a real blocker stops the batch
   - `R6` remains the active `.fsm` adapter hardening lane; SystemVerilog, Verilog, and VHDL adapter expansion remains not started
 - tracker effect:
@@ -88,6 +87,7 @@
   - live-status tracker now marks primary missing child-module renderable child-module residual diagnostics as `Done`
   - live-status tracker now marks no-top-port explicit top-port residual diagnostics as `Done`
   - live-status tracker now marks source- and target-side child direction-role renderable child-module residual diagnostics as `Done`
+  - live-status tracker now marks top-link direction, top-target role, sibling child-link width, child topology width, and child topology direction renderable child-module residual diagnostics as `Done`
   - live-status tracker now marks actor-port direction recovery selected inventory provenance coverage as `Done`
   - live-status tracker now marks actor-port width recovery selected inventory provenance coverage as `Done`
   - live-status tracker now marks child actor-port direction recovery selected child inventory provenance coverage as `Done`
@@ -150,6 +150,17 @@
   - live-status tracker marks the tightened current-state live-doc/mdBook drift audit requirement as `Done`
   - README and mdBook command surfaces were reconciled with the live clap command set for enrichment, validation, rescan, learning, corpus-KB, cleanup options, and the `project-validation --rescan-vlm-provider lm-studio` spelling
 - verification status:
+  - implementation and live-doc/book sync are complete for slice 80 before commit
+  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_keeps_conflicting_top_port_direction_unresolved` passed
+  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_top_target_direction_role_guidance` passed
+  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_sibling_child_link_widths` passed
+  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_child_topology_widths` passed
+  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_child_link_topology_directions` passed
+  - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests
+  - `cargo fmt --all --check` passed
+  - `git diff --check` passed
+  - `bash scripts/run_docs_ci.sh` passed after the live-doc/book sync check
+  - `bash scripts/run_ci.sh` passed as the slice 80 broader checkpoint gate
   - implementation and live-doc/book sync are complete for slice 79 before commit
   - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_child_source_direction_role_guidance` passed
   - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_child_target_direction_role_guidance` passed

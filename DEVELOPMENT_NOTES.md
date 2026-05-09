@@ -7,6 +7,22 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-09 adapter topology residual live-status alignment
+- New batch slice 80/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
+- Synced live docs and mdBook with existing topology residual coverage in `crates/specforge/src/ir/adapters.rs`.
+- The top-link direction, top-target role, sibling child-link width, child topology width, and child topology direction regressions already lock composition residuals to include renderable child-module diagnostics alongside explicit top-port and child-module reference diagnostics, low confidence, retained topology/child provenance, and blocked `.fsm` output.
+- This keeps topology residual blockers documented across renderable-child, top-port, and child-reference repair surfaces.
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_keeps_conflicting_top_port_direction_unresolved` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_top_target_direction_role_guidance` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_sibling_child_link_widths` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_child_topology_widths` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_child_link_topology_directions` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests.
+- `cargo fmt --all --check` passed.
+- `git diff --check` passed.
+- `bash scripts/run_docs_ci.sh` passed after the live-doc/book sync check.
+- `bash scripts/run_ci.sh` passed as the slice 80 broader checkpoint gate.
+
 ## 2026-05-09 adapter child direction-role residual live-status alignment
 - New batch slice 79/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
 - Synced live docs and mdBook with existing `top_composition_blocks_child_source_direction_role_guidance` and `top_composition_blocks_child_target_direction_role_guidance` coverage in `crates/specforge/src/ir/adapters.rs`.

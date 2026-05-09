@@ -116,6 +116,7 @@
 - `.fsm` top-link direction conflicts now preserve composition topology residual decisions: Done
 - `.fsm` top-link direction residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` top-link direction residuals now preserve child-module reference diagnostics: Done
+- `.fsm` top-link direction residuals now preserve renderable child-module diagnostics: Done
 - `.fsm` top-link direction conflicts now preserve retained record confidence: Done
 - `.fsm` top-link direction conflicts now preserve selected inventory provenance: Done
 - `.fsm` top child-link width conflicts now preserve composition topology residual decisions: Done
@@ -130,6 +131,7 @@
 - `.fsm` child topology width conflicts now preserve composition topology residual decisions: Done
 - `.fsm` child topology width residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` child topology width residuals now preserve child-module reference diagnostics: Done
+- `.fsm` child topology width residuals now preserve renderable child-module diagnostics: Done
 - `.fsm` child topology width conflicts now preserve retained record confidence: Done
 - `.fsm` child topology width conflicts now preserve selected inventory provenance: Done
 - `.fsm` child topology width conflicts now preserve conflicted child inventory provenance: Done
@@ -137,6 +139,7 @@
 - `.fsm` child topology direction residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` child topology direction residuals now preserve explicit top-port diagnostics: Done
 - `.fsm` child topology direction residuals now preserve child-module reference diagnostics: Done
+- `.fsm` child topology direction residuals now preserve renderable child-module diagnostics: Done
 - `.fsm` child topology direction conflicts now preserve retained record confidence: Done
 - `.fsm` child topology direction conflicts now preserve selected inventory provenance: Done
 - `.fsm` child topology direction conflicts now preserve conflicted child inventory provenance: Done
@@ -199,6 +202,7 @@
 - `.fsm` standalone direct actor-port direction recovery now stays signal-inventory-residual clean when renderable: Done
 - `.fsm` sibling child-link width residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` sibling child-link width residuals now preserve child-module reference diagnostics: Done
+- `.fsm` sibling child-link width residuals now preserve renderable child-module diagnostics: Done
 - `.fsm` standalone output actor selection now stays signal-inventory-residual clean when renderable: Done
 - `.fsm` standalone direct control-read input recovery now stays signal-inventory-residual clean when renderable: Done
 - `.fsm` standalone direct actor-port width recovery now stays signal-inventory-residual clean when renderable: Done
@@ -228,6 +232,7 @@
 - `.fsm` top-target boundary role residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` top-target boundary role residuals now preserve explicit top-port diagnostics: Done
 - `.fsm` top-target boundary role residuals now preserve child-module reference diagnostics: Done
+- `.fsm` top-target boundary role residuals now preserve renderable child-module diagnostics: Done
 - `.fsm` top-target direction-role blockers now preserve retained record confidence: Done
 - `.fsm` top-target direction-role blockers now preserve selected inventory provenance: Done
 - `.fsm` top-boundary top-link role conflicts now preserve endpoint-role repair guidance: Done

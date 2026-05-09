@@ -304,6 +304,7 @@ They also keep selected inventory provenance visible: the conflicted child outpu
 Child topology direction conflicts also emit the composition-topology residual decision so renderable-child repair remains visible in structured diagnostics.
 That child topology direction residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
 Child topology direction residuals keep child-module reference diagnostics alongside renderable child-module and explicit top-port diagnostics so all three repair surfaces remain visible.
+Top-link direction, top-target boundary role, sibling child-link width, child topology width, and child topology direction residuals all keep renderable child-module diagnostics alongside explicit top-port and child-module reference repair surfaces.
 Child topology width conflicts likewise preserve canonical width repair guidance on blocked module and aggregate renderability surfaces while retaining signal-declaration and topology-link support IDs.
 They also keep selected inventory provenance visible: the conflicted child output retains its output direction and topology-link provenance, while the surviving selected top inventory keeps `top_port` provenance.
 Child topology width conflicts also emit the composition-topology residual decision so renderable-child repair remains visible in structured diagnostics.
