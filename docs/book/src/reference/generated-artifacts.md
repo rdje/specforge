@@ -315,6 +315,7 @@ Top actor-port width residuals keep child-module reference diagnostics alongside
 Top child-link width conflicts keep selected inventory provenance for the declared top port and conflicting topology-link evidence while output direction stays visible and width remains conflicted.
 Top child-link width conflicts also emit the composition-topology residual decision so explicit-top-port repair remains visible in structured diagnostics.
 That top child-link width residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
+Top child-link width residuals keep child-module reference diagnostics alongside renderable child-module and explicit top-port surfaces.
 Top-link endpoint width mismatches preserve width-compatible repair guidance on the blocked top candidate and aggregate adapter renderability while keeping the mismatched topology-link support visible.
 Those width-mismatched top-link blockers also emit the composition-topology residual decision so the same repair lane remains visible in structured adapter diagnostics.
 That top-link width mismatch residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
