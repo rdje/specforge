@@ -246,6 +246,7 @@ Sibling-link-backed child width recovery follows the same rule for recovered chi
 Recovered sibling child-link input widths retain selected child inventory provenance from the original child interface while adding topology-link evidence, recovered width, support IDs, and high confidence.
 Recovered sibling child-link widths also feed child renderable `(+size ...)` entries, so emitted child input widths do not depend on an original child-local numeric declaration.
 Conflicting sibling child-link widths keep the child unresolved with no renderable child module or aggregate source document, so stale `(+size ...)` child output cannot leak past the blocked topology decision.
+Those blocked sibling child-link width conflicts retain conflicted child inventory provenance from the original interface while recording both topology-link support sets and high confidence.
 Source-side sibling-link child width recovery follows it for recovered child outputs, and renderable recovery leaves no composition-topology residual.
 Recovered source-side sibling child-link output widths retain selected child inventory provenance from the original child interface while adding topology-link evidence, recovered width, support IDs, and high confidence.
 Recovered source-side sibling child-link widths also feed child renderable `(+size ...)` entries, so emitted child output widths do not depend on an original child-local numeric declaration.

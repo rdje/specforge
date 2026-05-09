@@ -24,22 +24,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `3429129c59660ad56cb26a2927f1a952c1c90213`
-- latest_commit_brief_message: `test(adapter): keep source sibling width provenance`
-- note: this is the pre-slice-14 baseline for the active `BWFSC=100` batch; `main` is fifteen local commits ahead of `origin/main`, and push is deferred until the 100-slice batch completes unless the user explicitly redirects or a real blocker stops the batch
+- latest_commit_hash: `5d86ad7254842f46f13943ca5ff6e602c4ecc79f`
+- latest_commit_brief_message: `test(adapter): keep transitive child width provenance`
+- note: this is the pre-slice-15 baseline for the active `BWFSC=100` batch; `main` is sixteen local commits ahead of `origin/main`, and push is deferred until the 100-slice batch completes unless the user explicitly redirects or a real blocker stops the batch
 
 ## Recent commit chain (last 6)
+- `5d86ad7` test(adapter): keep transitive child width provenance
 - `3429129` test(adapter): keep source sibling width provenance
 - `7b10936` test(adapter): keep sibling child width provenance
 - `0977595` test(adapter): keep top-link child width provenance
 - `c7902e5` test(adapter): keep child link provenance
 - `f52d2aa` test(adapter): keep child actor provenance
-- `badec1c` test(adapter): keep actor width provenance
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state: `main` has local work for active `BWFSC=100` slice 14 and push is deferred until all 100 slices complete
+- branch state: `main` has local work for active `BWFSC=100` slice 15 and push is deferred until all 100 slices complete
 - files in flight:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -59,8 +59,8 @@
 ## Current batch status
 - objective:
   - active `BWFSC=100` batch is in progress
-  - completed_count before this commit: `13`
-  - slice 14/100 extends the transitive child-width recovery regression to prove selected producer and consumer child inventories keep retained interface provenance while renderable recovery stays residual-clean
+  - completed_count before this commit: `14`
+  - slice 15/100 extends the sibling child-link width conflict regression to prove the conflicted child input inventory keeps retained interface provenance while stale `.fsm` emission remains blocked
   - push remains deferred until all 100 batch slices are committed unless the user explicitly redirects or a real blocker stops the batch
   - `R6` remains the active `.fsm` adapter hardening lane; SystemVerilog, Verilog, and VHDL adapter expansion remains not started
 - tracker effect:
@@ -79,12 +79,18 @@
   - live-status tracker now marks sibling child-link child-width recovery selected child inventory provenance coverage as `Done`
   - live-status tracker now marks source-side sibling child-width recovery selected child inventory provenance coverage as `Done`
   - live-status tracker now marks transitive child-width recovery selected child inventory provenance coverage as `Done`
+  - live-status tracker now marks sibling child-link width conflict conflicted child inventory provenance coverage as `Done`
   - live-status tracker marks the completed `BWFSC=200` batch as `Done`
   - live-status tracker marks `R6` `.fsm` adapter hardening as `In Progress`
   - live-status tracker marks SystemVerilog/Verilog/VHDL adapter expansion and validation as `Not Started`
   - live-status tracker marks the tightened current-state live-doc/mdBook drift audit requirement as `Done`
   - README and mdBook command surfaces were reconciled with the live clap command set for enrichment, validation, rescan, learning, corpus-KB, cleanup options, and the `project-validation --rescan-vlm-provider lm-studio` spelling
 - verification status:
+  - implementation and live-doc/book sync are complete for slice 15 before commit
+  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_sibling_child_link_widths` passed
+  - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests
+  - `cargo fmt --all --check` passed
+  - `bash scripts/run_docs_ci.sh` passed after the live-doc/book sync check
   - implementation and live-doc/book sync are complete for slice 14 before commit
   - `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_child_width_through_transitive_topology` passed
   - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests
