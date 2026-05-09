@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter blocked recovered-direction inventory provenance guard)
+- Extended `top_composition_preserves_recovered_top_port_direction_when_still_blocked` in `crates/specforge/src/ir/adapters.rs`.
+- The blocked recovered top-port direction regression now locks selected `result_data` inventory to numeric width, `top_port` provenance, original declaration support IDs, topology support IDs, graph direction, and high confidence.
+- This keeps missing-child blockers from dropping selected inventory provenance after topology has recovered the public top-port direction.
+
 ## Session update (2026-05-09 adapter top-link direction inventory provenance guard)
 - Extended `top_composition_recovers_top_port_direction_from_link_topology` in `crates/specforge/src/ir/adapters.rs`.
 - The top-link direction recovery regression now locks selected `result_data` inventory to numeric width, `top_port` provenance, original top-port support IDs, topology support IDs, graph direction, and high confidence.

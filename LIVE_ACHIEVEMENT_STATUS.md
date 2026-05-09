@@ -99,6 +99,7 @@
 - `.fsm` parametric top-port residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` blocked recovered top-port direction now preserves composition topology residual decisions: Done
 - `.fsm` blocked recovered top-port direction residuals now lock low-confidence topology-detail diagnostics: Done
+- `.fsm` blocked recovered top-port direction now preserves selected inventory provenance: Done
 - `.fsm` recovered top-root confidence blockers now preserve composition topology residual decisions: Done
 - `.fsm` recovered top-root confidence residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` recovered top-root confidence now preserves selected inventory confidence: Done
