@@ -7,6 +7,16 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-09 adapter actor-port width inventory provenance guard
+- New batch slice 8/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
+- Extended `top_composition_recovers_top_port_width_from_actor_ports` in `crates/specforge/src/ir/adapters.rs`.
+- The actor-port-backed top-width recovery regression now locks selected `ext_data` top inventory to `top_port` provenance alongside actor-port-width provenance, recovered width, top-port support IDs, graph support IDs, and high confidence.
+- This completes the adjacent actor-port direction/width selected-inventory provenance pair while keeping the slice limited to regression coverage.
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_top_port_width_from_actor_ports` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests.
+- `cargo fmt --all --check` passed.
+- `bash scripts/run_docs_ci.sh` passed after the live-doc/book sync check.
+
 ## 2026-05-09 adapter actor-port direction inventory provenance guard
 - New batch slice 7/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
 - Extended `top_composition_recovers_top_port_direction_from_actor_ports` in `crates/specforge/src/ir/adapters.rs`.

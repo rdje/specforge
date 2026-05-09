@@ -24,22 +24,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `c5370882c24c3896c071172a01276b4c533ca2f2`
-- latest_commit_brief_message: `test(adapter): keep child-link width provenance`
-- note: this is the pre-slice-7 baseline for the active `BWFSC=100` batch; `main` is eight local commits ahead of `origin/main`, and push is deferred until the 100-slice batch completes unless the user explicitly redirects or a real blocker stops the batch
+- latest_commit_hash: `34610d3761e58402adefa39a54b07f79d2c378df`
+- latest_commit_brief_message: `test(adapter): keep actor direction provenance`
+- note: this is the pre-slice-8 baseline for the active `BWFSC=100` batch; `main` is nine local commits ahead of `origin/main`, and push is deferred until the 100-slice batch completes unless the user explicitly redirects or a real blocker stops the batch
 
 ## Recent commit chain (last 6)
+- `34610d3` test(adapter): keep actor direction provenance
 - `c537088` test(adapter): keep child-link width provenance
 - `6d29dc8` test(adapter): keep recovered-root inventory provenance
 - `ee352b0` test(adapter): keep missing-child inventory provenance
 - `41978af` test(adapter): keep target-role inventory provenance
 - `9a45bb7` test(adapter): keep source-role inventory provenance
-- `10180f6` test(adapter): keep unemitted target inventory provenance
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state: `main` has local work for active `BWFSC=100` slice 7 and push is deferred until all 100 slices complete
+- branch state: `main` has local work for active `BWFSC=100` slice 8 and push is deferred until all 100 slices complete
 - files in flight:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -59,8 +59,8 @@
 ## Current batch status
 - objective:
   - active `BWFSC=100` batch is in progress
-  - completed_count before this commit: `6`
-  - slice 7/100 extends the actor-port-backed top-direction recovery regression to prove selected `ext_data` top inventory keeps top-port provenance while renderable recovery stays residual-clean
+  - completed_count before this commit: `7`
+  - slice 8/100 extends the actor-port-backed top-width recovery regression to prove selected `ext_data` top inventory keeps top-port provenance while renderable recovery stays residual-clean
   - push remains deferred until all 100 batch slices are committed unless the user explicitly redirects or a real blocker stops the batch
   - `R6` remains the active `.fsm` adapter hardening lane; SystemVerilog, Verilog, and VHDL adapter expansion remains not started
 - tracker effect:
@@ -72,13 +72,18 @@
   - live-status tracker now marks recovered top-root confidence selected inventory provenance coverage as `Done`
   - live-status tracker now marks child-link top-width recovery selected inventory provenance coverage as `Done`
   - live-status tracker now marks actor-port direction recovery selected inventory provenance coverage as `Done`
+  - live-status tracker now marks actor-port width recovery selected inventory provenance coverage as `Done`
   - live-status tracker marks the completed `BWFSC=200` batch as `Done`
   - live-status tracker marks `R6` `.fsm` adapter hardening as `In Progress`
   - live-status tracker marks SystemVerilog/Verilog/VHDL adapter expansion and validation as `Not Started`
   - live-status tracker marks the tightened current-state live-doc/mdBook drift audit requirement as `Done`
   - README and mdBook command surfaces were reconciled with the live clap command set for enrichment, validation, rescan, learning, corpus-KB, cleanup options, and the `project-validation --rescan-vlm-provider lm-studio` spelling
 - verification status:
-  - implementation and live-doc sync are complete for slice 7 before commit
+  - implementation and live-doc sync are complete for slice 8 before commit
+  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_top_port_width_from_actor_ports` passed
+  - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests
+  - `cargo fmt --all --check` passed
+  - `bash scripts/run_docs_ci.sh` passed after the live-doc/book sync check
   - `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_top_port_direction_from_actor_ports` passed
   - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests
   - `cargo fmt --all --check` passed
@@ -605,8 +610,8 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- complete the slice 7 commit workflow, clear and verify `git_message_brief.txt`, then continue to `BWFSC=100` slice 8/100
-- slice 8/100 should be the next roadmap-aligned `R6` `.fsm` adapter hardening slice
-- likely slice 8 target: the actor-port width recovery selected-inventory provenance guard or the next adjacent top-composition provenance gap that is not already locked
+- complete the slice 8 commit workflow, clear and verify `git_message_brief.txt`, then continue to `BWFSC=100` slice 9/100
+- slice 9/100 should be the next roadmap-aligned `R6` `.fsm` adapter hardening slice
+- likely slice 9 target: scan the selected-inventory provenance tracker for the next blocked or renderable top-composition gap that is not already locked
 - keep SystemVerilog, Verilog, and VHDL adapter expansion at `Not Started` until the `.fsm` hardening lane and canonical truthfulness surface are ready
 - `cargo sweep --time 1` is no longer blocked by an observed `target/release/tool_matrix` process; run it only when explicitly requested or when it becomes part of a safe cleanup slice

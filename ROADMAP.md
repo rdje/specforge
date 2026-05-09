@@ -206,6 +206,7 @@
   - actor-port direction recovery preserves original public top-port declaration support IDs alongside graph actor-port support IDs and stays composition-residual clean once renderable
   - actor-port direction recovery preserves selected top signal-inventory provenance, graph direction, top-port support, graph support, and high confidence once renderable
   - actor-port width recovery preserves original public top-port declaration support IDs alongside graph actor-port width support IDs and stays composition-residual clean once renderable
+  - actor-port width recovery preserves selected top signal-inventory provenance, graph-backed width, top-port support, graph support, and high confidence once renderable
   - child-link width recovery preserves original public top-port declaration support IDs alongside topology-link width support IDs and stays composition-residual clean once renderable
   - child-system-contract width recovery preserves original public top-port declaration support IDs alongside topology-link and system-contract support IDs and stays composition-residual clean once renderable
   - top actor-port direction conflicts preserve explicit top-port support IDs, graph actor-port support IDs, and high automation confidence while blocking `.fsm` emission
