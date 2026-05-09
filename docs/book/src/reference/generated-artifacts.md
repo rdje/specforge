@@ -237,6 +237,7 @@ Child target endpoint direction-role mismatches keep the selected top unresolved
 Source-side child direction-role blockers retain conflicted child inventory provenance from the original interface while carrying topology-link support and role repair guidance.
 Source-side child direction-role residuals keep explicit top-port diagnostics alongside renderable child-module diagnostics so both repair surfaces remain visible.
 Target-side child direction-role blockers retain conflicted child inventory provenance from the original interface while carrying topology-link support and role repair guidance.
+Target-side child direction-role residuals keep explicit top-port diagnostics alongside renderable child-module diagnostics so both repair surfaces remain visible.
 The dedicated child source and target direction-role blocker tests carry those no-renderable top root and aggregate source-document assertions directly, keeping child-side role regressions visible at the endpoint level.
 Graph-backed top actor-port direction conflicts keep the selected top unresolved with no renderable top root or aggregate source document, so stale `?top` output cannot leak before the top-boundary direction conflict is resolved.
 First-slice top links with incompatible endpoint widths keep the selected top unresolved with no renderable top root or aggregate source document, so stale `?top` output cannot leak before top-link endpoints are made width-compatible.
