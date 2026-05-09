@@ -21452,6 +21452,12 @@ mod tests {
                 .iter()
                 .any(|category| category == "module_topology_link")
         );
+        assert!(
+            output_data
+                .mention_categories
+                .iter()
+                .any(|category| category == "interface")
+        );
         for support_ids in &topology_support_id_sets {
             assert!(
                 support_ids

@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-09 (adapter child topology-direction conflict inventory provenance guard)
+
+### Improved: child topology direction conflicts preserve conflicted child inventory provenance
+- Extended `top_composition_blocks_conflicting_child_link_topology_directions` in `crates/specforge/src/ir/adapters.rs`.
+- The blocked child topology direction conflict regression now locks conflicted `output_data` child inventory to retained `interface` provenance alongside contradictory topology-link provenance, child signal support IDs, topology support ID sets, conflicted graph direction, width, and high confidence.
+- This keeps blocked child topology direction conflicts tied to the original child interface while contradictory topology direction evidence prevents stale `.fsm` emission.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_child_link_topology_directions` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-09 (adapter child topology-width conflict inventory provenance guard)
 
 ### Improved: child topology width conflicts preserve conflicted child inventory provenance

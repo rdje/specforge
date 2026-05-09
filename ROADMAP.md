@@ -275,6 +275,7 @@
   - child topology width conflict blockers preserve canonical width-conflict enrichment guidance and composition-topology residual diagnostics on blocked module and aggregate `.fsm` renderability surfaces
   - child topology width conflict blockers preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output
   - child topology direction conflicts preserve both explicit child signal declaration support IDs and contradictory topology-link support IDs while blocking `.fsm` emission
+  - child topology direction conflicts preserve conflicted child inventory interface provenance, child signal support, contradictory topology support, conflicted graph direction, width, and high confidence while blocking `.fsm` emission
   - child topology direction conflict blockers preserve actor-relative graph-direction enrichment guidance and composition-topology residual diagnostics on blocked module and aggregate `.fsm` renderability surfaces
   - child topology direction conflict blockers preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output
   - transitive child-width recovery preserves each contributing topology-link support ID and high automation confidence as width evidence flows from top link through sibling child link while staying composition-residual clean once renderable
