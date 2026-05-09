@@ -315,6 +315,7 @@ That source-side direction-role residual remains low-confidence and anchored to 
 Target-side top-link direction-role mismatches now mirror that residual decision coverage.
 That target-side direction-role residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
 Dedicated child endpoint role regressions back those source/target residual guarantees alongside the public top-boundary role conflict checks.
+Top-target boundary role residuals keep explicit top-port diagnostics alongside renderable child-module diagnostics so both repair surfaces remain visible.
 Topology-backed child target direction-role mismatches preserve the same role guidance even when the blocker is a flat/graph direction disagreement rather than a graph-only conflict.
 Top-boundary top-link direction conflicts preserve the same endpoint-role guidance alongside boundary direction-conflict guidance while keeping top-port and topology-link provenance visible.
 Top-target boundary role conflicts preserve that role guidance with boundary direction-conflict guidance while retaining the selected top signal-inventory evidence.

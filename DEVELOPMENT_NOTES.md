@@ -7,6 +7,17 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-09 adapter top-target residual explicit-port diagnostic guard
+- New batch slice 20/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
+- Extended `top_composition_blocks_top_target_direction_role_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- The top-target boundary role blocker regression now locks the composition residual to include explicit top-port diagnostics alongside renderable child-module diagnostics, low confidence, endpoint role repair guidance, retained top-port/link/child provenance, and blocked `.fsm` output.
+- This keeps target-side top-boundary role mismatches explainable at both the child-module and explicit top-port repair surfaces.
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_top_target_direction_role_guidance` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests.
+- `cargo fmt --all --check` passed.
+- `bash scripts/run_docs_ci.sh` passed after the live-doc/book sync check.
+- `bash scripts/run_ci.sh` passed as the slice 20 broader checkpoint gate.
+
 ## 2026-05-09 adapter target child direction-role inventory provenance guard
 - New batch slice 19/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
 - Extended `top_composition_blocks_child_target_direction_role_guidance` in `crates/specforge/src/ir/adapters.rs`.

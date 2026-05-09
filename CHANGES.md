@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-05-09 (adapter top-target residual explicit-port diagnostic guard)
+
+### Improved: top-target role residuals preserve explicit top-port diagnostics
+- Extended `top_composition_blocks_top_target_direction_role_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- The top-target boundary role blocker regression now locks the composition residual to include explicit top-port diagnostics alongside renderable child-module diagnostics, low confidence, endpoint role repair guidance, retained top-port/link/child provenance, and blocked `.fsm` output.
+- This keeps target-side top-boundary role mismatches explainable at both the child-module and explicit top-port repair surfaces.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_top_target_direction_role_guidance` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed slice 20 broader checkpoint gate
+
 ## 2026-05-09 (adapter target child direction-role inventory provenance guard)
 
 ### Improved: target-side child direction-role blockers preserve conflicted child inventory provenance

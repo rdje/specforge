@@ -24,22 +24,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `919b94fad0109bc9b94f195be6b38f60ae779956`
-- latest_commit_brief_message: `test(adapter): keep source role child provenance`
-- note: this is the pre-slice-19 baseline for the active `BWFSC=100` batch; `main` is twenty local commits ahead of `origin/main`, and push is deferred until the 100-slice batch completes unless the user explicitly redirects or a real blocker stops the batch
+- latest_commit_hash: `a0e82665809f97513b2747c31b9c6d35ad154b10`
+- latest_commit_brief_message: `test(adapter): keep target role child provenance`
+- note: this is the pre-slice-20 baseline for the active `BWFSC=100` batch; `main` is twenty-one local commits ahead of `origin/main`, and push is deferred until the 100-slice batch completes unless the user explicitly redirects or a real blocker stops the batch
 
 ## Recent commit chain (last 6)
+- `a0e8266` test(adapter): keep target role child provenance
 - `919b94f` test(adapter): keep source role child provenance
 - `53b97aa` test(adapter): keep child direction conflict provenance
 - `80b95a6` test(adapter): keep child width conflict provenance
 - `3371bf6` test(adapter): keep sibling width conflict provenance
 - `5d86ad7` test(adapter): keep transitive child width provenance
-- `3429129` test(adapter): keep source sibling width provenance
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state: `main` has local work for active `BWFSC=100` slice 19 and push is deferred until all 100 slices complete
+- branch state: `main` has local work for active `BWFSC=100` slice 20 and push is deferred until all 100 slices complete
 - files in flight:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -59,8 +59,8 @@
 ## Current batch status
 - objective:
   - active `BWFSC=100` batch is in progress
-  - completed_count before this commit: `18`
-  - slice 19/100 extends the target-side child direction-role blocker regression to prove the conflicted child signal inventory keeps retained interface provenance while stale `.fsm` emission remains blocked
+  - completed_count before this commit: `19`
+  - slice 20/100 extends the top-target boundary role residual regression to prove explicit top-port diagnostics remain visible alongside child-module diagnostics while stale `.fsm` emission remains blocked
   - push remains deferred until all 100 batch slices are committed unless the user explicitly redirects or a real blocker stops the batch
   - `R6` remains the active `.fsm` adapter hardening lane; SystemVerilog, Verilog, and VHDL adapter expansion remains not started
 - tracker effect:
@@ -84,12 +84,19 @@
   - live-status tracker now marks child topology direction conflict conflicted child inventory provenance coverage as `Done`
   - live-status tracker now marks source-side child direction-role conflicted child inventory provenance coverage as `Done`
   - live-status tracker now marks target-side child direction-role conflicted child inventory provenance coverage as `Done`
+  - live-status tracker now marks top-target boundary role explicit top-port residual diagnostics as `Done`
   - live-status tracker marks the completed `BWFSC=200` batch as `Done`
   - live-status tracker marks `R6` `.fsm` adapter hardening as `In Progress`
   - live-status tracker marks SystemVerilog/Verilog/VHDL adapter expansion and validation as `Not Started`
   - live-status tracker marks the tightened current-state live-doc/mdBook drift audit requirement as `Done`
   - README and mdBook command surfaces were reconciled with the live clap command set for enrichment, validation, rescan, learning, corpus-KB, cleanup options, and the `project-validation --rescan-vlm-provider lm-studio` spelling
 - verification status:
+  - implementation and live-doc/book sync are complete for slice 20 before commit
+  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_top_target_direction_role_guidance` passed
+  - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests
+  - `cargo fmt --all --check` passed
+  - `bash scripts/run_docs_ci.sh` passed after the live-doc/book sync check
+  - `bash scripts/run_ci.sh` passed as the slice 20 broader checkpoint gate
   - implementation and live-doc/book sync are complete for slice 19 before commit
   - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_child_target_direction_role_guidance` passed
   - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests
