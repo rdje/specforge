@@ -24,22 +24,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `2fb70cec1850b8f06422ef970a7914bf35b47839`
-- latest_commit_brief_message: `docs: start BWFSC 100 batch`
-- note: this is the pre-slice-1 baseline for the active `BWFSC=100` batch; `main` is two local commits ahead of `origin/main`, and push is deferred until the 100-slice batch completes unless the user explicitly redirects or a real blocker stops the batch
+- latest_commit_hash: `10180f6206bdced235259addbe708ba096416d9f`
+- latest_commit_brief_message: `test(adapter): keep unemitted target inventory provenance`
+- note: this is the pre-slice-2 baseline for the active `BWFSC=100` batch; `main` is three local commits ahead of `origin/main`, and push is deferred until the 100-slice batch completes unless the user explicitly redirects or a real blocker stops the batch
 
 ## Recent commit chain (last 6)
+- `10180f6` test(adapter): keep unemitted target inventory provenance
 - `2fb70ce` docs: start BWFSC 100 batch
 - `2ed2370` docs: sync roadmap and live docs
 - `147468a` test(adapter): keep unemitted source inventory provenance
 - `d9800be` test(adapter): target undeclared source provenance fixture
 - `a99d5d1` test(adapter): keep undeclared source inventory provenance
-- `6bce353` test(adapter): keep undeclared target inventory provenance
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state: `main` has local work for active `BWFSC=100` slice 1 and push is deferred until all 100 slices complete
+- branch state: `main` has local work for active `BWFSC=100` slice 2 and push is deferred until all 100 slices complete
 - files in flight:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -58,21 +58,26 @@
 
 ## Current batch status
 - objective:
-  - active `BWFSC=100` batch is starting
-  - completed_count before this commit: `0`
-  - slice 1/100 extends the target-side unemitted child endpoint blocker regression to prove retained selected `result_data` top inventory keeps top-port provenance while the absent emitted child endpoint remains the renderability blocker
+  - active `BWFSC=100` batch is in progress
+  - completed_count before this commit: `1`
+  - slice 2/100 extends the source-side child direction-role blocker regression to prove retained selected `result_data` top inventory keeps top-port provenance while the child endpoint role mismatch remains the renderability blocker
   - push remains deferred until all 100 batch slices are committed unless the user explicitly redirects or a real blocker stops the batch
   - `R6` remains the active `.fsm` adapter hardening lane; SystemVerilog, Verilog, and VHDL adapter expansion remains not started
 - tracker effect:
   - live-status tracker marks the new `BWFSC=100` batch as `In Progress`
   - live-status tracker now marks target-side unemitted child selected inventory provenance coverage as `Done`
+  - live-status tracker now marks source-side child direction-role selected inventory provenance coverage as `Done`
   - live-status tracker marks the completed `BWFSC=200` batch as `Done`
   - live-status tracker marks `R6` `.fsm` adapter hardening as `In Progress`
   - live-status tracker marks SystemVerilog/Verilog/VHDL adapter expansion and validation as `Not Started`
   - live-status tracker marks the tightened current-state live-doc/mdBook drift audit requirement as `Done`
   - README and mdBook command surfaces were reconciled with the live clap command set for enrichment, validation, rescan, learning, corpus-KB, cleanup options, and the `project-validation --rescan-vlm-provider lm-studio` spelling
 - verification status:
-  - implementation and live-doc sync are complete for slice 1 before commit
+  - implementation and live-doc sync are complete for slice 2 before commit
+  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_child_source_direction_role_guidance` passed
+  - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests
+  - `cargo fmt --all --check` passed
+  - `bash scripts/run_docs_ci.sh` passed after the live-doc/book sync check
   - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_link_to_unemitted_child_target_guidance` passed
   - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests
   - `cargo fmt --all --check` passed
@@ -575,8 +580,8 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- complete the slice 1 commit workflow, clear and verify `git_message_brief.txt`, then continue to `BWFSC=100` slice 2/100
-- slice 2/100 should be the next roadmap-aligned `R6` `.fsm` adapter hardening slice
-- likely slice 2 target: the next adjacent blocked top-composition selected-inventory provenance/residual gap that is not already locked
+- complete the slice 2 commit workflow, clear and verify `git_message_brief.txt`, then continue to `BWFSC=100` slice 3/100
+- slice 3/100 should be the next roadmap-aligned `R6` `.fsm` adapter hardening slice
+- likely slice 3 target: the target-side child direction-role selected-inventory provenance gap or the next adjacent blocked top-composition selected-inventory provenance/residual gap that is not already locked
 - keep SystemVerilog, Verilog, and VHDL adapter expansion at `Not Started` until the `.fsm` hardening lane and canonical truthfulness surface are ready
 - `cargo sweep --time 1` is no longer blocked by an observed `target/release/tool_matrix` process; run it only when explicitly requested or when it becomes part of a safe cleanup slice

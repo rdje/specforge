@@ -7,6 +7,16 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-09 adapter source-side child direction-role inventory provenance guard
+- New batch slice 2/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
+- Extended `top_composition_blocks_child_source_direction_role_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- The source-side child direction-role blocker regression now locks retained selected `result_data` top inventory to `top_port` provenance alongside direction, width, support IDs, and high confidence.
+- This mirrors the adjacent top-composition blocker provenance guards while keeping the slice limited to regression coverage.
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_child_source_direction_role_guidance` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests.
+- `cargo fmt --all --check` passed.
+- `bash scripts/run_docs_ci.sh` passed after the live-doc/book sync check.
+
 ## 2026-05-09 adapter target-side unemitted child inventory provenance guard
 - New batch slice 1/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
 - Extended `top_composition_blocks_link_to_unemitted_child_target_guidance` in `crates/specforge/src/ir/adapters.rs`.
