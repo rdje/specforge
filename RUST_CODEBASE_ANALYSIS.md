@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter recovered top-root residual explicit-port diagnostic guard)
+- Extended `top_root_kind_confidence_follows_recovered_top_port_evidence` in `crates/specforge/src/ir/adapters.rs`.
+- The recovered top-root confidence regression now locks the composition residual to include explicit top-port diagnostics alongside child-module reference diagnostics, low confidence, recovered top-port evidence, retained selected inventory provenance, and blocked `.fsm` output.
+- This is a test-surface hardening slice for `R6` `.fsm` adapter diagnostics, not a production architecture change.
+
 ## Session update (2026-05-09 adapter target child-role guidance explicit-port diagnostic guard)
 - Extended `top_composition_blocks_child_target_direction_role_guidance` in `crates/specforge/src/ir/adapters.rs`.
 - The target-side child direction-role guidance regression now locks the composition residual to include explicit top-port diagnostics alongside renderable child-module diagnostics, low confidence, endpoint role repair guidance, retained top-port/child/link provenance, and blocked `.fsm` output.

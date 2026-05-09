@@ -204,6 +204,7 @@ The selected signal inventory still keeps numeric width, `top_port` provenance, 
 That recovered-direction residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
 Recovered top-port evidence can also raise the selected top root-kind confidence while keeping that same residual decision visible when topology is still incomplete.
 The selected top signal inventory keeps the recovered public top-port width, graph direction, original declaration support, actor-port graph support, and high confidence attached to that top-root confidence path.
+That recovered top-root confidence residual keeps explicit top-port diagnostics alongside child-module reference diagnostics so both repair surfaces remain visible.
 That residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
 High-confidence child declarations can raise the selected top root-kind confidence without emitting composition residuals once the single-child topology is renderable.
 That path preserves the selected public top-port inventory support, width, direction, provenance category, and original low confidence instead of letting child confidence rewrite top-port inventory.

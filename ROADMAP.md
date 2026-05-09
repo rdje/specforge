@@ -301,6 +301,7 @@
   - transitive child-width recovery preserves original producer and consumer child signal declaration support IDs alongside topology-link support IDs while staying composition-residual clean once renderable
   - transitive child-width recovery preserves selected producer and consumer child inventory provenance, recovered widths, declaration support, topology support, and high confidence once renderable
   - recovered top-port evidence preserves graph-backed support IDs while raising top-root selection confidence and preserving low-confidence composition-topology residual diagnostics when topology is still incomplete
+  - recovered top-root confidence residuals preserve explicit top-port diagnostics alongside child-module reference diagnostics so both repair surfaces remain visible
   - recovered top-root confidence preserves selected top signal-inventory provenance, graph direction, width, support IDs, and high confidence while composition stays blocked
   - recovered child-declaration evidence preserves child support IDs while raising top-root selection confidence and staying composition-residual clean once the single-child topology is renderable
   - recovered top-link evidence preserves link support IDs while raising top-root selection confidence and staying composition-residual clean once the linked topology is renderable

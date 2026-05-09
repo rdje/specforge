@@ -16563,6 +16563,12 @@ mod tests {
                     .description
                     .contains("child-module references"))
         );
+        assert!(
+            composition_residual
+                .candidate_interpretations
+                .iter()
+                .any(|interpretation| interpretation.description.contains("explicit top ports"))
+        );
 
         Ok(())
     }
