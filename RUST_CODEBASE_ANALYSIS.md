@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter renderable top-order confidence guard)
+- Extended `renderable_top_document_emits_top_before_child_direct_roots` in `crates/specforge/src/ir/adapters.rs`.
+- The renderable top-document ordering regression now locks high automation confidence on the retained `result_data` top port, producer/consumer child declarations, and renderable top links.
+- This keeps emitted top-before-child documents tied to explainable topology provenance instead of only checking order and support IDs.
+
 ## Session update (2026-05-09 adapter reset-block FSM inventory confidence guard)
 - Extended `builds_renderable_structured_fsm_with_reset_blocks` in `crates/specforge/src/ir/adapters.rs`.
 - The renderable reset-block structured-FSM baseline now locks canonical support IDs and high automation confidence for retained `clk`, `rst_n`, `GO`, `ACC`, and `PULSE_OUT` signal-inventory records.

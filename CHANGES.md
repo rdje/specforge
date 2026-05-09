@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-09 (adapter renderable top-order confidence guard)
+
+### Improved: renderable top documents preserve retained topology confidence
+- Extended the renderable top-document ordering regression to assert the retained top port, child declarations, and renderable top links keep high automation confidence alongside their support IDs.
+- The guard keeps emitted top-before-child documents tied to explainable topology provenance instead of only checking order and support IDs.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge renderable_top_document_emits_top_before_child_direct_roots` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-09 (adapter reset-block FSM inventory confidence guard)
 
 ### Improved: renderable reset-block FSM roots preserve baseline inventory confidence

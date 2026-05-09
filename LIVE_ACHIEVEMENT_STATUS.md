@@ -827,6 +827,7 @@
 - `.fsm` renderable reset-block FSM lowering now preserves baseline signal-inventory support and confidence: Done
 - `.fsm` missing-child top blockers now preserve retained top-port inventory confidence: Done
 - `.fsm` renderable top-composition lowering now preserves top-port shape and renderable-top provenance: Done
+- `.fsm` renderable top documents now preserve retained topology confidence while ordering roots: Done
 - `.fsm` reused-child top-composition lowering now preserves top-port and topology-link provenance while deduplicating the shared child root: Done
 - `.fsm` top-root signal inventory now preserves flat-vs-graph top-port direction disagreement without mislabeling graph provenance as conflicted: Done
 - mdBook now documents blocked `.fsm` adapter renderability together with flat/graph signal-inventory provenance: Done
@@ -952,6 +953,7 @@
 - `.fsm` single-FSM-child top documents now stay composition-residual clean while preserving FSM child root kind: Done
 - `.fsm` renderable top-before-child emission now regression-locks child support IDs: Done
 - `.fsm` renderable top-before-child emission now preserves top-port and topology-link provenance: Done
+- `.fsm` renderable top-document ordering now preserves retained top-port, child, and link confidence: Done
 - `.fsm` top-before-child source documents now stay composition-residual clean after top-first emission: Done
 - `.fsm` widthless top-port blockers now regression-lock support IDs and automation confidence: Done
 - `.fsm` parametric top-port blockers now regression-lock support IDs and automation confidence: Done

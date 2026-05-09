@@ -15044,15 +15044,27 @@ mod tests {
                 .iter()
                 .any(|id| result_port.supporting_statement_ids.contains(id))
         );
+        assert_eq!(
+            result_port.automation_confidence,
+            AutomationConfidence::High
+        );
         assert!(
             producer_child_support_ids
                 .iter()
                 .any(|id| producer_child.supporting_canonical_ids.contains(id))
         );
+        assert_eq!(
+            producer_child.automation_confidence,
+            AutomationConfidence::High
+        );
         assert!(
             consumer_child_support_ids
                 .iter()
                 .any(|id| consumer_child.supporting_canonical_ids.contains(id))
+        );
+        assert_eq!(
+            consumer_child.automation_confidence,
+            AutomationConfidence::High
         );
         let renderable_top = renderable_document
             .top_root
@@ -15070,6 +15082,12 @@ mod tests {
                 .iter()
                 .any(|link| link.supporting_statement_ids.contains(id))
         }));
+        assert!(
+            renderable_top
+                .links
+                .iter()
+                .all(|link| link.automation_confidence == AutomationConfidence::High)
+        );
         let top_index = emitted_text
             .find("(?top:datapath")
             .expect("emitted text should contain top root");
