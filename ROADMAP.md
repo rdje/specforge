@@ -287,6 +287,7 @@
   - sibling child-link width conflicts preserve conflicted child inventory interface provenance, both conflicting topology-link support-ID sets, unresolved width, input direction, and high confidence while blocking `.fsm` emission
   - sibling child-link width conflict blockers preserve canonical width-conflict enrichment guidance and composition-topology residual diagnostics on blocked module and aggregate `.fsm` renderability surfaces
   - sibling child-link width conflict blockers preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output
+  - sibling child-link width residuals preserve child-module reference diagnostics alongside renderable child-module and explicit top-port diagnostics so all three repair surfaces remain visible
   - top child-link width conflicts preserve both conflicting topology-link support-ID sets and high automation confidence while blocking `.fsm` emission
   - top child-link width conflict blockers preserve top-boundary width-conflict enrichment guidance and composition-topology residual diagnostics on blocked top and aggregate `.fsm` renderability surfaces
   - top child-link width conflict blockers preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output

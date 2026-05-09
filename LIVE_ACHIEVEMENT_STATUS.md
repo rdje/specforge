@@ -182,6 +182,7 @@
 - `.fsm` renderable reset-block FSM baseline now preserves signal-inventory support and confidence: Done
 - `.fsm` standalone direct actor-port direction recovery now stays signal-inventory-residual clean when renderable: Done
 - `.fsm` sibling child-link width residuals now lock low-confidence topology-detail diagnostics: Done
+- `.fsm` sibling child-link width residuals now preserve child-module reference diagnostics: Done
 - `.fsm` standalone output actor selection now stays signal-inventory-residual clean when renderable: Done
 - `.fsm` standalone direct control-read input recovery now stays signal-inventory-residual clean when renderable: Done
 - `.fsm` standalone direct actor-port width recovery now stays signal-inventory-residual clean when renderable: Done
