@@ -266,6 +266,7 @@
   - multi-child top roots without explicit top-link records preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output
   - multi-child no-link residuals preserve explicit top-port diagnostics alongside width-compatible top-link diagnostics so both repair surfaces remain visible
   - multi-child no-link residuals preserve child-module reference diagnostics alongside width-compatible top-link and explicit top-port diagnostics so all repair surfaces remain visible
+  - multi-child no-link residuals preserve renderable child-module diagnostics alongside width-compatible top-link, explicit top-port, and child-module reference diagnostics so all repair surfaces remain visible
   - top roots without child-module references preserve child-module enrichment guidance and composition-topology residual diagnostics while retaining top-port provenance
   - top roots without child-module references preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output
   - no-child top residuals preserve explicit top-port diagnostics alongside child-module reference diagnostics so both repair surfaces remain visible
