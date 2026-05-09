@@ -23,22 +23,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `7bca43214c9dce04e895131e24d2564585d49172`
-- latest_commit_brief_message: `test(adapter): keep child topology direction inventory provenance`
-- note: this is the pre-slice-194 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
+- latest_commit_hash: `7939ad322d9527dfa4d0fc86ca6f607fb2354d36`
+- latest_commit_brief_message: `test(adapter): keep child actor direction inventory provenance`
+- note: this is the pre-slice-195 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
 
 ## Recent commit chain (last 6)
+- `7939ad3` test(adapter): keep child actor direction inventory provenance
 - `7bca432` test(adapter): keep child topology direction inventory provenance
 - `7259653` test(adapter): keep child topology width inventory provenance
 - `b76098e` test(adapter): keep sibling child-link inventory provenance
 - `f253c1f` test(adapter): keep top child-link width inventory provenance
 - `3c25df6` test(adapter): keep duplicate top width inventory provenance
-- `1e73b2d` test(adapter): keep duplicate top direction inventory provenance
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 194 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
+- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 195 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
 - files in flight:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
@@ -58,15 +58,15 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `193`
-  - slice 194/200 extends the child actor-port direction conflict regression to prove conflicted child `output_data` inventory keeps numeric width and actor-port provenance while graph direction remains conflicted and retained selected `result_data` top inventory keeps top-port provenance
+  - completed_count before this commit: `194`
+  - slice 195/200 extends the duplicate child-instance blocker regression to prove retained selected `result_data` top inventory keeps top-port provenance while duplicate child records remain the renderability blocker
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks child actor-port direction conflict selected inventory provenance coverage as `Done`
+  - live-status tracker now marks duplicate child-instance selected inventory provenance coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 194 before commit
+  - implementation and live-doc sync are complete for slice 195 before commit
   - `cargo fmt --all` applied rustfmt layout
-  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_actor_port_directions` passed
+  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_duplicate_child_instance_guidance` passed
   - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests
   - `bash scripts/run_ci.sh` passed as the slice 190 broader checkpoint gate with formatting, Clippy warning-deny, `665` Rust tests, rustdoc warning-deny, and mdBook
   - `cargo fmt --all --check` passed after live-doc sync
@@ -102,6 +102,9 @@
   - broader `bash scripts/run_ci.sh` passed on slice 30 with formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, and mdBook
   - user-requested `cargo sweep --time 1` is deferred until no target-tree process is active because `target/release/tool_matrix` is active
 - current known local CI baseline:
+  - slice 195 focused adapter test passed
+  - slice 195 adapter suite passed with `142/142` adapter-filtered tests
+  - slice 195 docs CI passed after live-book sync
   - slice 194 focused adapter test passed
   - slice 194 adapter suite passed with `142/142` adapter-filtered tests
   - slice 194 docs CI passed after live-book sync

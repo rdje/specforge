@@ -319,6 +319,7 @@ The primary missing-child composition fixture locks the same guidance beside top
 Missing-child top blockers also emit the composition-topology residual decision so child-module reference repair remains visible in structured diagnostics.
 That missing-child residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
 Duplicate top child-instance blockers preserve deduplication guidance while keeping both child declaration support-ID sets visible.
+Duplicate child-instance blockers keep retained selected top inventory tied to `top_port` provenance while duplicate child records remain the renderability blocker.
 Duplicate top child-instance blockers also emit the composition-topology residual decision so child-module reference context remains visible in structured diagnostics.
 That duplicate child-instance residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
 Multi-child top roots that omit explicit top-link records preserve top-link enrichment guidance while keeping child declaration provenance and resolved child root kinds visible.

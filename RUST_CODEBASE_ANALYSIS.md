@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter duplicate child inventory provenance guard)
+- Extended `top_composition_blocks_duplicate_child_instance_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- The duplicate child-instance blocker regression now locks retained selected `result_data` top inventory to `top_port` provenance alongside direction, width, support IDs, and high confidence.
+- This keeps duplicate child-instance blockers tied to explainable public top inventory while duplicate child records remain the renderability blocker.
+
 ## Session update (2026-05-09 adapter child actor-port direction inventory provenance guard)
 - Extended `top_composition_blocks_conflicting_actor_port_directions` in `crates/specforge/src/ir/adapters.rs`.
 - The child actor-port direction conflict regression now locks conflicted child `output_data` inventory to numeric width and actor-port provenance while graph direction remains conflicted.
