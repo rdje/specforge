@@ -48,7 +48,8 @@ When the user explicitly authorizes an automatic batch of `N` tasks, slices, or 
 - `questions_keep_untracked.txt` (must remain untracked)
   - User backlog/questions for future UG work.
 - Markdown path policy
-  - Repo-internal paths mentioned in tracked `.md` files must be relative paths, never checkout-specific absolute paths.
+  - File paths mentioned in tracked `.md` files and mdBook sources must be repo-root-relative when they point inside the repository, never checkout-specific absolute paths.
+  - Host-local or private external input paths must not be recorded as absolute filesystem paths; use non-host-specific placeholders such as `<local AXI protocol PDF>` or a repo-local generated artifact path when available.
 
 ## Required Commit Workflow (Exact Order)
 1. Ensure task is complete and tested.
@@ -105,7 +106,8 @@ When the user explicitly authorizes an automatic batch of `N` tasks, slices, or 
      - markdown documentation map/ramp-up order changes.
    - While reviewing/updating markdown docs:
      - convert any repo-internal absolute checkout path to a relative path before commit,
-     - do not leave checkout-specific absolute repo paths in tracked `.md` files.
+     - replace host-local absolute external input paths with non-host-specific placeholders when a repo-relative path does not exist,
+     - do not leave checkout-specific absolute filesystem paths in tracked `.md` files or mdBook sources.
 4. Write concise commit message to `git_message_brief.txt`.
 5. Stage only intended tracked files (`git add <files>`).
 6. Commit with:

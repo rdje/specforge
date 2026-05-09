@@ -3,6 +3,7 @@
 - Git repository initialized: Done
 - Commit workflow document present and reviewed: Done
 - Commit workflow now requires explicit current-state live-doc/mdBook drift audit before commit: Done
+- Tracked live docs and mdBook now reject checkout-specific absolute filesystem paths: Done
 - Batch-run deferred-push policy documented while preserving per-slice commits: Done
 - GitHub Actions CI workflow present but temporarily manual-only to conserve Actions minutes: Done
 - Canonical CI entrypoint runnable locally and reused by GitHub Actions: Done
@@ -272,6 +273,7 @@
 - `.fsm` undeclared top-source residuals now preserve renderable child-module diagnostics: Done
 - `.fsm` links to undeclared top targets now preserve composition topology residual decisions: Done
 - `.fsm` undeclared top-target residuals now lock low-confidence topology-detail diagnostics: Done
+- `.fsm` undeclared top-target residuals now preserve explicit top-port diagnostics: Done
 - `.fsm` undeclared top-target residuals now preserve child-module reference diagnostics: Done
 - `.fsm` undeclared top-target residuals now preserve renderable child-module diagnostics: Done
 - `.fsm` undeclared top-link target blockers now preserve retained record confidence: Done

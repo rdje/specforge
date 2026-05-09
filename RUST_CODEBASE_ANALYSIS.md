@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter undeclared top-target residual live-status alignment)
+- Synced live docs and mdBook with existing `top_composition_blocks_link_to_undeclared_top_target_guidance` coverage in `crates/specforge/src/ir/adapters.rs`.
+- The undeclared top-target regression already locks the composition residual to include explicit top-port diagnostics alongside child-module reference and renderable child-module diagnostics, low confidence, target-endpoint repair guidance, retained top-port/child/link provenance, and blocked `.fsm` output.
+- This is a documentation alignment slice for existing `R6` `.fsm` adapter diagnostics, not a production architecture change.
+
 ## Session update (2026-05-09 adapter duplicate child reference residual live-status alignment)
 - Synced live docs and mdBook with existing `top_composition_blocks_duplicate_child_instance_guidance` coverage in `crates/specforge/src/ir/adapters.rs`.
 - The duplicate child-instance regression already locks the composition residual to include child-module reference diagnostics alongside explicit top-port and renderable child-module diagnostics, low confidence, child deduplication guidance, retained top-port/child provenance, and blocked `.fsm` output.

@@ -7,6 +7,20 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-09 adapter undeclared top-target residual live-status alignment
+- New batch slice 96/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
+- Synced live docs and mdBook with existing `top_composition_blocks_link_to_undeclared_top_target_guidance` coverage in `crates/specforge/src/ir/adapters.rs`.
+- The undeclared top-target regression already locks the composition residual to include explicit top-port diagnostics alongside child-module reference and renderable child-module diagnostics, low confidence, target-endpoint repair guidance, retained top-port/child/link provenance, and blocked `.fsm` output.
+- This keeps target-side undeclared top-boundary endpoint blockers documented across all three repair surfaces.
+- Tightened `COMMIT.md` path policy so tracked markdown and mdBook sources must use repo-root-relative paths for repository files and non-host-specific placeholders for external local inputs.
+- Scrubbed stale checkout-specific absolute filesystem paths from older `CHANGES.md` entries.
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_link_to_undeclared_top_target_guidance` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests.
+- `cargo fmt --all --check` passed.
+- tracked markdown/mdBook absolute-path scan passed after the live-doc/book sync check.
+- `git diff --check` passed after the live-doc/book sync check.
+- `bash scripts/run_docs_ci.sh` passed after the live-doc/book sync check.
+
 ## 2026-05-09 adapter duplicate child reference residual live-status alignment
 - New batch slice 95/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
 - Synced live docs and mdBook with existing `top_composition_blocks_duplicate_child_instance_guidance` coverage in `crates/specforge/src/ir/adapters.rs`.

@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-09 (adapter undeclared top-target residual live-status alignment)
+
+### Improved: undeclared top-target residual status matches existing coverage
+- Synced live docs and mdBook with existing `top_composition_blocks_link_to_undeclared_top_target_guidance` coverage in `crates/specforge/src/ir/adapters.rs`.
+- The undeclared top-target regression already locks the composition residual to include explicit top-port diagnostics alongside child-module reference and renderable child-module diagnostics, low confidence, target-endpoint repair guidance, retained top-port/child/link provenance, and blocked `.fsm` output.
+- This keeps target-side undeclared top-boundary endpoint blockers documented across all three repair surfaces.
+- Scrubbed stale checkout-specific absolute filesystem paths from older live-doc entries, replacing repo-local references with repo-root-relative paths and external/private local inputs with non-host-specific placeholders.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_link_to_undeclared_top_target_guidance` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- tracked markdown/mdBook absolute-path scan -> passed after live-doc/book sync
+- `git diff --check` -> passed after live-doc/book sync
+- `bash scripts/run_docs_ci.sh` -> passed after live-doc/book sync
+
 ## 2026-05-09 (adapter duplicate child reference residual live-status alignment)
 
 ### Improved: duplicate child-instance residual status matches existing coverage
@@ -20256,12 +20272,12 @@
 ### Added: supported repo-local Docling bootstrap path
 - Added [bootstrap_docling.sh](scripts/bootstrap_docling.sh) as the supported repository-local Docling runtime bootstrap entrypoint.
 - The script creates `.venv-docling`, installs the known-good `docling==2.84.0` runtime family by default, and prints the resulting interpreter/version state.
-- Added `/.venv-docling/` to [.gitignore](.gitignore) so that runtime stays local and untracked.
+- Added `.venv-docling/` to [.gitignore](.gitignore) so that runtime stays local and untracked.
 
 ### Changed: the local runtime issue is now concretely verified, not just documented
 - `cargo run --manifest-path Cargo.toml -- doctor --strict` now succeeds locally and selects `python3.11` with `docling 2.84.0`, while explicitly reporting that the ambient `python3` probe is still broken because it resolves to Python `3.14.3` without `docling`.
 - A fresh original-PDF ingest rerun on the AHB spec now succeeds again:
-  - `cargo run --manifest-path Cargo.toml -- ingest /Users/richarddje/Documents/livework/chipdoc/arm/amba/core/ahb/current/IHI0033_C_2021-09_AMBA_5_AHB_Protocol_Specification.pdf`
+  - `cargo run --manifest-path Cargo.toml -- ingest <local AHB protocol PDF>`
   - result: `normalization_status: ready`, `page_artifact_count: 104`, `visual_asset_count: 70`
 
 ### Validation
@@ -20269,7 +20285,7 @@
 - `cargo test --manifest-path Cargo.toml inspect_docling_runtime_prefers_repo_local_venv -- --nocapture` → passed
 - `cargo test --manifest-path Cargo.toml inspect_docling_runtime_prefers_python311_path_probe_over_generic_python3 -- --nocapture` → passed
 - `cargo run --manifest-path Cargo.toml -- doctor --strict` → passed
-- `cargo run --manifest-path Cargo.toml -- ingest /Users/richarddje/Documents/livework/chipdoc/arm/amba/core/ahb/current/IHI0033_C_2021-09_AMBA_5_AHB_Protocol_Specification.pdf` → passed
+- `cargo run --manifest-path Cargo.toml -- ingest <local AHB protocol PDF>` → passed
 
 
 ## 2026-04-08 (system-contract infrastructure signals now populate canonical interfaces)
@@ -20350,7 +20366,7 @@
   - end-to-end temporal-rule derivation from a same-cycle signal constraint
 
 ### Changed: AXI-Stream timing semantics are now more explicit without changing the score
-- Re-ran full `specforge converge` with Ollama VLM + NLP Level 3 on [IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf](/Users/richarddje/Documents/livework/chipdoc/arm/amba/supporting/axi-stream/current/IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf).
+- Re-ran full `specforge converge` with Ollama VLM + NLP Level 3 on the AXI-Stream protocol PDF (`IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf`).
 - Re-validated the rebuilt artifact and refreshed the tracked four-document projection.
 - The score stayed at `90/100 EXCELLENT`, but six AXI-Stream temporal rules now carry explicit `0`-cycle windows for same-cycle handshake/timing language, so the old `intent_temporal_rules_missing_cycle_windows` warning is gone.
 - The timing surface also got cleaner as a side effect: AXI-Stream now carries `1` typed temporal conflict instead of `2`.
@@ -20374,7 +20390,7 @@
 - Extended [validate.rs](crates/specforge/src/commands/validate.rs) so missing producers on infrastructure connectivity no longer emit the generic `[warning:signal_connectivity]` finding; they now surface as a dedicated `[info:system_contract]` note that keeps canonical sourcing on the system-contract side of the model.
 
 ### Changed: AXI-Stream still validates at `90/100 EXCELLENT`, but the remaining gap is now represented more honestly
-- Re-ran full `specforge converge` with Ollama VLM + NLP Level 3 on [IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf](/Users/richarddje/Documents/livework/chipdoc/arm/amba/supporting/axi-stream/current/IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf).
+- Re-ran full `specforge converge` with Ollama VLM + NLP Level 3 on the AXI-Stream protocol PDF (`IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf`).
 - Re-validated the rebuilt artifact and refreshed the tracked four-document projection.
 - The score stayed at `90/100 EXCELLENT`, with declared graph-direction and width coverage still at `22/22`, but `ACLK` and `ARESETN` now surface under `infrastructure_signal_connectivity: 2` with an `[info:system_contract]` finding instead of a generic missing-producer warning.
 - The dominant remaining honest gaps are now:
@@ -20414,7 +20430,7 @@
 - Tightened graph-derived declaration synthesis so width-only statements no longer block stronger relation-grounded `Signal X is output width ...` declarations for the same signal.
 
 ### Changed: AXI-Stream now validates at `90/100 EXCELLENT`
-- Re-ran full `specforge converge` with Ollama VLM + NLP Level 3 on [IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf](/Users/richarddje/Documents/livework/chipdoc/arm/amba/supporting/axi-stream/current/IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf).
+- Re-ran full `specforge converge` with Ollama VLM + NLP Level 3 on the AXI-Stream protocol PDF (`IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf`).
 - The run still converged in `2` pipeline iterations, but the carried `*CHK` surface is now complete enough to count honestly: declared signal records rose from `21` to `22`, actor-signal relations rose from `38` to `40`, actor ports rose from `42` to `44`, signal connectivity rose from `21` to `22`, compatibility direction hints reached `22/22`, width coverage reached `22/22`, and the projected score improved from `88/100 GOOD` to `90/100 EXCELLENT`.
 - The remaining dominant gaps are now:
   - unresolved producer attribution for infrastructure signals `ACLK` and `ARESETN`
@@ -20436,7 +20452,7 @@
 - Added the focused regression `check_signal_tables_inherit_relations_from_covered_signals`.
 
 ### Changed: AXI-Stream now validates at `88/100 GOOD`
-- Re-ran full `specforge converge` with Ollama VLM + NLP Level 3 on [IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf](/Users/richarddje/Documents/livework/chipdoc/arm/amba/supporting/axi-stream/current/IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf).
+- Re-ran full `specforge converge` with Ollama VLM + NLP Level 3 on the AXI-Stream protocol PDF (`IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf`).
 - The run still converged in `2` pipeline iterations, but parity-check ownership now survives end to end: declared signal records rose from `16` to `21`, graph-direction coverage rose from `12/16` to `21/21`, actor ports rose from `24` to `42`, signal connectivity rose from `12` to `21`, and the projected score improved from `84/100 GOOD` to `88/100 GOOD`.
 - The remaining dominant gaps are now:
   - missing widths on `TDESTCHK`, `TIDCHK`, `TSTRBCHK`, `TUSERCHK`, and `TWAKEUPCHK`
@@ -20468,7 +20484,7 @@
 - Added the regression `clock_and_reset_gain_input_actor_ports_for_relation_actors`, which locks that actor-relative clock/reset carry-through path.
 
 ### Changed: AXI-Stream now validates at `84/100 GOOD`
-- Re-ran full `specforge converge` with Ollama VLM + NLP Level 3 on [IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf](/Users/richarddje/Documents/livework/chipdoc/arm/amba/supporting/axi-stream/current/IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf).
+- Re-ran full `specforge converge` with Ollama VLM + NLP Level 3 on the AXI-Stream protocol PDF (`IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf`).
 - The run still converged in `2` pipeline iterations, but the canonical denominator is now more honest: declared interface signals dropped from `20` to `16`, graph-direction coverage rose from `10/20` to `12/16`, and the projected score improved from `80/100 GOOD` to `84/100 GOOD`.
 - The remaining dominant gaps are now narrower and clearer:
   - the four `*CHK` signals still lack graph-derived direction coverage
@@ -20491,7 +20507,7 @@
 - Updated the tracked KG fixtures whose expected graph shape now honestly includes these complementary consumer edges.
 
 ### Changed: AXI-Stream now keeps consumer-side structural connectivity without changing its score
-- Re-ran full `specforge converge` with Ollama VLM + NLP Level 3 on [IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf](/Users/richarddje/Documents/livework/chipdoc/arm/amba/supporting/axi-stream/current/IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf).
+- Re-ran full `specforge converge` with Ollama VLM + NLP Level 3 on the AXI-Stream protocol PDF (`IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf`).
 - The run still converged in `2` pipeline iterations and still validates at `80/100 GOOD`, but `IntentIR` now carries the missing consumer-side structural KG edges:
   - `Receiver reads TVALID`
   - `Transmitter reads TREADY`
@@ -20530,7 +20546,7 @@
 - Added the regression `coordinated_active_drive_extracts_real_actor_not_payload_phrase`, which locks the AXI-Stream-style sentence shape that previously leaked `control information` into the structural KG.
 
 ### Changed: AXI-Stream structural truthfulness improved without score inflation
-- Re-ran full `specforge converge` with Ollama VLM + NLP Level 3 on [IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf](/Users/richarddje/Documents/livework/chipdoc/arm/amba/supporting/axi-stream/current/IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf).
+- Re-ran full `specforge converge` with Ollama VLM + NLP Level 3 on the AXI-Stream protocol PDF (`IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf`).
 - The artifact still converges in `2` pipeline iterations and still validates at `80/100 GOOD`, but the carried multi-producer conflict on `TVALID` is now gone: `control information` no longer appears as an actor in `EvidenceIR`, `SemanticIR`, or `IntentIR`, and `signal_connectivity_conflicts` for AXI-Stream dropped from `1` to `0`.
 - The remaining honest AXI-Stream gap is now clearer: unresolved consumer actors and graph-direction coverage, not bogus producer attribution.
 
@@ -20542,7 +20558,7 @@
 ## 2026-04-07 (AXI-Stream unseen-protocol run populates semantic priors)
 
 ### Added: first unseen-protocol full converge + learning refresh
-- Ran full `specforge converge` with Ollama VLM + NLP Level 3 on [IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf](/Users/richarddje/Documents/livework/chipdoc/arm/amba/supporting/axi-stream/current/IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf).
+- Ran full `specforge converge` with Ollama VLM + NLP Level 3 on the AXI-Stream protocol PDF (`IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf`).
 - The AXI-Stream artifact converged in `2` pipeline iterations and validates at `80/100 GOOD`; it is now included in the tracked [VALIDATION_SNAPSHOT.md](VALIDATION_SNAPSHOT.md) projection and the managed validation block in [LIVE_ACHIEVEMENT_STATUS.md](LIVE_ACHIEVEMENT_STATUS.md).
 - Refreshing `specforge learn-priors` across AXI/APB/AHB/AXI-Stream now yields `16` actor-taxonomy priors, `5` semantic phrase priors, `4` semantic modality-reliability priors, `266` temporal phrase priors, and `99` table-shape priors in local `CorpusMemory`.
 
@@ -22110,7 +22126,7 @@
 - `cargo fmt --all` → passed
 - `cargo test --manifest-path Cargo.toml` → 110/110 passed
 - Full original-PDF AXI converge:
-  - `cargo run -p specforge -- converge /Users/richarddje/Documents/livework/chipdoc/arm/amba/core/axi/current/IHI0022_L_2025-08_AMBA_AXI_Protocol_Specification.pdf --target fsm --max-iterations 5 --vlm-provider ollama --vlm-model qwen2.5vl:7b --nlp-provider ollama --nlp-model qwen2.5vl:7b` → converged in 2 passes
+  - `cargo run -p specforge -- converge <local AXI protocol PDF> --target fsm --max-iterations 5 --vlm-provider ollama --vlm-model qwen2.5vl:7b --nlp-provider ollama --nlp-model qwen2.5vl:7b` → converged in 2 passes
 - Refreshed projected AMBA validation snapshot:
   - APB `IHI0024_D`: 95/100 EXCELLENT
   - AHB `IHI0033_C`: 95/100 EXCELLENT
@@ -22697,7 +22713,7 @@
   - verifies Manager-section rows are extracted as Output with correct numeric widths
   - verifies Subordinate-section rows are extracted as Input with correct numeric widths
   - total tests: 48 passing, 0 failing
-- installed Docling 2.84.0 globally into Python 3.11 (`/opt/homebrew/lib/python3.11/site-packages/`) to enable PDF processing
+- installed Docling 2.84.0 into a local Python 3.11 environment to enable PDF processing
 - all `cargo fmt` and `cargo test` checks pass
 ## 2026-04-02
 - widened `SemanticIR` so it now preserves canonical `.fsm`-relevant symbol-definition and structured-control surface rather than relying only on legacy decision-tree fragments:
@@ -22983,7 +22999,7 @@
   - `cargo fmt --all --manifest-path Cargo.toml`
   - `cargo test`
   - `cargo run -p specforge -- ingest README.md`
-  - `SPECFORGE_DOCLING_PYTHON=/tmp/specforge-docling-venv/bin/python cargo run -p specforge -- ingest /tmp/specforge-docling-sample.pdf`
+  - `SPECFORGE_DOCLING_PYTHON=<docling-venv>/bin/python cargo run -p specforge -- ingest <docling-sample.pdf>`
 - updated the live status tracker so the remaining top-priority gap is now the first real `EvidenceIR` extractor rather than the SourceIR PDF-normalization backend
 - implemented the first real `EvidenceIR` extractor on top of persisted `SourceIR` artifacts
 - added `specforge evidence <source-ir> [--dry-run]` to preview or materialize `generated/evidence_ir/<document_key>/evidence_ir.json`
@@ -23004,7 +23020,7 @@
   - `cargo run -p specforge -- ingest README.md`
   - `cargo run -p specforge -- evidence generated/source_ir/readme/source_ir.json --dry-run`
   - `cargo run -p specforge -- evidence generated/source_ir/readme/source_ir.json`
-  - `SPECFORGE_DOCLING_PYTHON=/tmp/specforge-docling-venv/bin/python cargo run -p specforge -- ingest /tmp/specforge-docling-sample.pdf`
+  - `SPECFORGE_DOCLING_PYTHON=<docling-venv>/bin/python cargo run -p specforge -- ingest <docling-sample.pdf>`
   - `cargo run -p specforge -- evidence generated/source_ir/specforge_docling_sample/source_ir.json`
 - confirmed live execute-mode outputs for validation:
   - markdown-backed `EvidenceIR`: 14 section anchors, 167 evidence spans, 167 extracted statements
@@ -23028,7 +23044,7 @@
   - `cargo run -p specforge -- evidence generated/source_ir/readme/source_ir.json`
   - `cargo run -p specforge -- semantic generated/evidence_ir/readme/evidence_ir.json --dry-run`
   - `cargo run -p specforge -- semantic generated/evidence_ir/readme/evidence_ir.json`
-  - `SPECFORGE_DOCLING_PYTHON=/tmp/specforge-docling-venv/bin/python cargo run -p specforge -- ingest /tmp/specforge-docling-sample.pdf`
+  - `SPECFORGE_DOCLING_PYTHON=<docling-venv>/bin/python cargo run -p specforge -- ingest <docling-sample.pdf>`
   - `cargo run -p specforge -- evidence generated/source_ir/specforge_docling_sample/source_ir.json`
   - `cargo run -p specforge -- semantic generated/evidence_ir/specforge_docling_sample/evidence_ir.json`
 - confirmed live execute-mode outputs for validation:
@@ -23053,7 +23069,7 @@
   - `cargo run -p specforge -- semantic generated/evidence_ir/readme/evidence_ir.json`
   - `cargo run -p specforge -- intent generated/semantic_ir/readme/semantic_ir.json --dry-run`
   - `cargo run -p specforge -- intent generated/semantic_ir/readme/semantic_ir.json`
-  - `SPECFORGE_DOCLING_PYTHON=/tmp/specforge-docling-venv/bin/python cargo run -p specforge -- ingest /tmp/specforge-docling-sample.pdf`
+  - `SPECFORGE_DOCLING_PYTHON=<docling-venv>/bin/python cargo run -p specforge -- ingest <docling-sample.pdf>`
   - `cargo run -p specforge -- evidence generated/source_ir/specforge_docling_sample/source_ir.json`
   - `cargo run -p specforge -- semantic generated/evidence_ir/specforge_docling_sample/evidence_ir.json`
   - `cargo run -p specforge -- intent generated/semantic_ir/specforge_docling_sample/semantic_ir.json`
