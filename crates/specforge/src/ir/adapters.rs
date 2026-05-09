@@ -19394,6 +19394,12 @@ mod tests {
             (result_data, &consumer_result_signal_support_ids),
         ] {
             assert!(
+                signal
+                    .mention_categories
+                    .iter()
+                    .any(|category| category == "interface")
+            );
+            assert!(
                 signal_support_ids
                     .iter()
                     .any(|id| signal.supporting_canonical_ids.contains(id))

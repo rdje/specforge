@@ -248,6 +248,7 @@
   - top links targeting child endpoints absent from emitted child modules preserve target-endpoint enrichment guidance, low-confidence composition-topology residual diagnostics, and top-port, child, and link provenance
   - child actor-port direction recovery preserves graph-backed support IDs and high automation confidence across producer and consumer child module inventories while staying composition-residual clean once renderable
   - child actor-port direction recovery preserves original child signal declaration support IDs alongside graph actor-port support IDs in recovered child module inventories while staying composition-residual clean once renderable
+  - child actor-port direction recovery preserves selected child inventory provenance, graph directions, declaration support, graph support, and high confidence once renderable
   - child actor-port direction conflicts preserve explicit child signal declaration support IDs and graph actor-port support IDs while blocking `.fsm` emission
   - child actor-port direction conflict blockers preserve actor-relative graph-direction enrichment guidance and composition-topology residual diagnostics on blocked module and aggregate `.fsm` renderability surfaces
   - child actor-port direction conflict blockers preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output

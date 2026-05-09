@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter child actor-port direction inventory provenance guard)
+- Extended `top_composition_recovers_child_directions_from_actor_ports` in `crates/specforge/src/ir/adapters.rs`.
+- The child actor-port direction recovery regression now locks selected child inventories to retained `interface` provenance alongside actor-port provenance, child signal support IDs, actor-port support IDs, graph directions, and high confidence.
+- This is a test-surface hardening slice for `R6` `.fsm` adapter provenance, not a production architecture change.
+
 ## Session update (2026-05-09 adapter actor-port width inventory provenance guard)
 - Extended `top_composition_recovers_top_port_width_from_actor_ports` in `crates/specforge/src/ir/adapters.rs`.
 - The actor-port-backed top-width recovery regression now locks selected `ext_data` top inventory to `top_port` provenance alongside actor-port-width provenance, recovered width, top-port support IDs, graph support IDs, and high confidence.
