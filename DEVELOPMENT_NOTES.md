@@ -7,6 +7,16 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-09 adapter multi-child no-link residual explicit-port diagnostic guard
+- New batch slice 27/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
+- Extended `top_composition_blocks_multi_child_without_links_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- The multi-child no-link regression now locks the composition residual to include explicit top-port diagnostics alongside width-compatible top-link diagnostics, low confidence, top-link repair guidance, retained top-port/child provenance, and blocked `.fsm` output.
+- This keeps missing-link multi-child blockers explainable at both the explicit top-port and width-compatible top-link repair surfaces.
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_multi_child_without_links_guidance` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests.
+- `cargo fmt --all --check` passed.
+- `bash scripts/run_docs_ci.sh` passed after the live-doc/book sync check.
+
 ## 2026-05-09 adapter target unemitted residual explicit-port diagnostic guard
 - New batch slice 26/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
 - Extended `top_composition_blocks_link_to_unemitted_child_target_guidance` in `crates/specforge/src/ir/adapters.rs`.
