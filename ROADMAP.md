@@ -264,6 +264,7 @@
   - duplicate top-port width conflict blockers preserve top-boundary width-conflict enrichment guidance on blocked top and aggregate `.fsm` renderability surfaces
   - duplicate top-port width blockers preserve explicit top-port deduplication guidance, composition-topology residual diagnostics, and width-conflict guidance
   - duplicate top-port width blockers preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output
+  - duplicate top-port width residuals preserve explicit top-port diagnostics alongside renderable child-module and child-module reference diagnostics so all repair surfaces remain visible
   - duplicate top-port width residuals preserve child-module reference diagnostics alongside explicit top-port diagnostics so both repair surfaces remain visible
   - duplicate top-port width residuals preserve renderable child-module diagnostics alongside explicit top-port and child-module reference diagnostics so all repair surfaces remain visible
   - multi-child top roots without explicit top-link records preserve top-link enrichment guidance and composition-topology residual diagnostics while retaining child declaration provenance and resolved child root kinds
