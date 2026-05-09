@@ -70,6 +70,7 @@
 - `.fsm` top actor-port width conflicts now preserve composition topology residual decisions: Done
 - `.fsm` top actor-port width residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` top actor-port width residuals now preserve child-module reference diagnostics: Done
+- `.fsm` top actor-port width residuals now preserve renderable child-module diagnostics: Done
 - `.fsm` top actor-port width conflicts now preserve retained record confidence: Done
 - `.fsm` top actor-port width conflicts now preserve selected inventory provenance: Done
 - `.fsm` duplicate top-port direction blockers now preserve retained record confidence: Done
