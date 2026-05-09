@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter top-target role residual child-reference diagnostic guard)
+- Extended `top_composition_blocks_top_target_direction_role_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- The top-target boundary role regression now locks the composition residual to include child-module reference diagnostics alongside renderable child-module and explicit top-port diagnostics, low confidence, endpoint-role repair guidance, retained top-port/child/link provenance, and blocked `.fsm` output.
+- This is a test-surface hardening slice for `R6` `.fsm` adapter diagnostics, not a production architecture change.
+
 ## Session update (2026-05-09 adapter top-link direction residual child-reference diagnostic guard)
 - Extended `top_composition_keeps_conflicting_top_port_direction_unresolved` in `crates/specforge/src/ir/adapters.rs`.
 - The top-link-driven top-boundary direction conflict regression now locks the composition residual to include child-module reference diagnostics alongside renderable child-module and explicit top-port diagnostics, low confidence, direction-conflict repair guidance, retained top-port/child/link provenance, and blocked `.fsm` output.

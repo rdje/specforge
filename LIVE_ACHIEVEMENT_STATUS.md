@@ -216,6 +216,7 @@
 - `.fsm` top-target boundary role conflicts now preserve endpoint-role repair guidance: Done
 - `.fsm` top-target boundary role residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` top-target boundary role residuals now preserve explicit top-port diagnostics: Done
+- `.fsm` top-target boundary role residuals now preserve child-module reference diagnostics: Done
 - `.fsm` top-target direction-role blockers now preserve retained record confidence: Done
 - `.fsm` top-target direction-role blockers now preserve selected inventory provenance: Done
 - `.fsm` top-boundary top-link role conflicts now preserve endpoint-role repair guidance: Done

@@ -338,6 +338,7 @@ Top-boundary top-link direction conflicts preserve the same endpoint-role guidan
 Top-target boundary role conflicts preserve that role guidance with boundary direction-conflict guidance while retaining the selected top signal-inventory evidence.
 They also keep selected inventory provenance for the declared top target and topology evidence, including declared direction, graph direction, width, support IDs, and high confidence.
 That top-target role residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
+Top-target boundary role residuals keep child-module reference diagnostics alongside renderable child-module and explicit top-port diagnostics so all three repair surfaces remain visible.
 Top links to child endpoints that are not emitted preserve source- or target-endpoint repair guidance on both the blocked top candidate and aggregate renderability surfaces.
 For blocked composition roots, the same artifact shape is useful for diagnostics: a missing child can block emission while the surviving top-port provenance remains available for review.
 Missing-child top blockers also preserve child-source declaration guidance on both blocked renderability surfaces.

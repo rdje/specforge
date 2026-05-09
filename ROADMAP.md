@@ -236,6 +236,7 @@
   - top-target boundary role conflicts preserve source/output and target/input repair guidance alongside boundary direction-conflict guidance
   - top-target boundary role conflicts preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output
   - top-target boundary role residuals preserve explicit top-port diagnostics alongside renderable child-module diagnostics so both repair surfaces remain visible
+  - top-target boundary role residuals preserve child-module reference diagnostics alongside renderable child-module and explicit top-port diagnostics so all three repair surfaces remain visible
   - width-mismatched top-link residuals preserve explicit top-port diagnostics alongside width-compatible top-link diagnostics so both repair surfaces remain visible
   - duplicate top-port direction conflicts preserve both duplicate declaration support-ID sets and high automation confidence while blocking `.fsm` emission
   - duplicate top-port direction conflict blockers preserve top-boundary direction-conflict enrichment guidance on blocked top and aggregate `.fsm` renderability surfaces
