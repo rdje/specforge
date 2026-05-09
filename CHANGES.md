@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-09 (adapter duplicate top-port width inventory provenance guard)
+
+### Improved: duplicate top-port width blockers preserve selected inventory provenance
+- Extended the duplicate top-port width regression to assert each selected `drive_data` inventory entry keeps `top_port` provenance while output direction remains known and width remains conflicted.
+- The guard keeps duplicate width blockers explainable at the selected inventory surface alongside both duplicate declaration support-ID sets and high confidence.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_keeps_duplicate_top_port_width_conflict_unresolved` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-09 (adapter duplicate top-port direction inventory provenance guard)
 
 ### Improved: duplicate top-port direction blockers preserve selected inventory provenance

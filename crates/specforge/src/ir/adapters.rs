@@ -19078,6 +19078,12 @@ mod tests {
                 .iter()
                 .all(|signal| signal.width_hint_conflicted)
         );
+        assert!(duplicate_inventory_entries.iter().all(|signal| {
+            signal
+                .mention_categories
+                .iter()
+                .any(|category| category == "top_port")
+        }));
         assert!(
             duplicate_inventory_entries
                 .iter()
