@@ -216,6 +216,7 @@ Child-system-contract-backed top width recovery retains the clock/reset top-port
 The selected top clock/reset inventory also keeps input direction, `top_port` provenance, original top-port support, topology support, recovered width, and high confidence.
 Unresolved parametric top widths keep the selected top unresolved with no renderable top root or aggregate source document, so stale `?top` output cannot leak before numeric width resolution.
 Top ports that still lack numeric width evidence keep the selected top unresolved with no renderable top root or aggregate source document, so stale `?top` output cannot leak before width recovery.
+Their selected inventory still keeps the declared direction, `top_port` provenance, support IDs, and confidence while leaving numeric width absent and non-conflicted.
 Multi-child tops that still lack explicit top links keep the selected top unresolved with no renderable top root or aggregate source document, so stale `?top` output cannot leak before topology links are supplied.
 Top roots that still lack explicit child-module references keep the selected top unresolved with no renderable top root or aggregate source document, so stale `?top` output cannot leak before child references are supplied.
 Top roots that reference undeclared child source modules keep the selected top unresolved with no renderable top root or aggregate source document, so stale `?top` output cannot leak before child source modules are declared.

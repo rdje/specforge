@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter widthless top inventory provenance guard)
+- Extended `top_composition_blocks_widthless_top_port_without_width_recovery` in `crates/specforge/src/ir/adapters.rs`.
+- The widthless top-port blocker regression now locks selected `ext_data` inventory to output direction and `top_port` provenance while width remains unresolved and non-conflicted.
+- This keeps widthless top-boundary blockers tied to explainable public top-port inventory rather than only support IDs and confidence.
+
 ## Session update (2026-05-09 adapter system-contract top inventory confidence guard)
 - Extended `top_composition_recovers_top_system_port_widths_from_child_system_contract` in `crates/specforge/src/ir/adapters.rs`.
 - The child system-contract top-width recovery regression now locks selected `clk` and `rst_n` top inventory to input direction, `top_port` provenance, original top-port support IDs, topology support IDs, recovered width, and high automation confidence.

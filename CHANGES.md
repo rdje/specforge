@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-09 (adapter widthless top inventory provenance guard)
+
+### Improved: widthless top-port blockers preserve selected inventory provenance
+- Extended the widthless top-port blocker regression to assert selected `ext_data` inventory keeps output direction and `top_port` provenance while width remains unresolved and non-conflicted.
+- The guard keeps widthless top-boundary blockers tied to explainable public top-port inventory rather than only support IDs and confidence.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_widthless_top_port_without_width_recovery` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-09 (adapter system-contract top inventory confidence guard)
 
 ### Improved: child system-contract top-width recovery preserves selected inventory confidence
