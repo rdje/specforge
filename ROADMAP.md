@@ -184,6 +184,7 @@
   - top-link width mismatch blockers preserve the composition-topology residual decision so width-compatible link repair remains visible in structured adapter diagnostics
   - top-link width mismatch blockers preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output
   - top-link width mismatch residuals preserve child-module reference diagnostics alongside width-compatible top-link and explicit top-port diagnostics so all repair surfaces remain visible
+  - top-link width mismatch residuals preserve renderable child-module diagnostics alongside width-compatible top-link, explicit top-port, and child-module reference diagnostics so all repair surfaces remain visible
   - selected top signal inventory preserves symbolic public IO width provenance while `.fsm` lowering remains blocked until numeric width evidence exists
   - widthless public top-port blockers preserve explicit top-port support IDs and high automation confidence while `.fsm` lowering remains blocked until numeric width evidence exists
   - widthless public top-port blockers preserve top-boundary width recovery guidance and low-confidence composition-topology residual diagnostics on blocked top and aggregate `.fsm` renderability surfaces

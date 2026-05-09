@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-05-09 (adapter top-link width residual renderable-child diagnostic guard)
+
+### Improved: top-link width residuals preserve renderable child diagnostics
+- Extended `top_composition_blocks_width_mismatched_top_link_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- The top-link width-mismatch regression now locks the composition residual to include renderable child-module diagnostics alongside width-compatible top-link, explicit top-port, and child-module reference diagnostics, low confidence, width-compatible repair guidance, retained endpoint/top-port provenance, and blocked `.fsm` output.
+- This keeps width-mismatched top-link blockers explainable across renderable-child, top-link, top-port, and child-reference repair surfaces.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_width_mismatched_top_link_guidance` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed after live-doc/book sync
+
 ## 2026-05-09 (adapter parametric top-port residual renderable-child diagnostic guard)
 
 ### Improved: parametric top-port residuals preserve renderable child diagnostics

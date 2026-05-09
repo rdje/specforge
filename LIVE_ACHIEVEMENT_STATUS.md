@@ -318,6 +318,7 @@
 - `.fsm` parametric top-port residuals now preserve child-module reference diagnostics: Done
 - `.fsm` parametric top-port residuals now preserve renderable child-module diagnostics: Done
 - `.fsm` top-link width mismatch residuals now preserve child-module reference diagnostics: Done
+- `.fsm` top-link width mismatch residuals now preserve renderable child-module diagnostics: Done
 - `.fsm` source-side unemitted child residuals now preserve child-module reference diagnostics: Done
 - `specforge inspect` command created: Done
 - `specforge doctor` command created: Done
