@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter single-FSM-child topology confidence guard)
+- Extended `renderable_top_document_preserves_fsm_child_root_kind` in `crates/specforge/src/ir/adapters.rs`.
+- The single-FSM-child renderable top-document regression now locks high automation confidence on selected/renderable `ACC` top ports, the selected `controller` child declaration, and selected/renderable `controller.ACC -> ACC` topology links.
+- This keeps `?fsmc` top documents tied to explainable topology provenance instead of only checking root kind, emitted text, and support IDs.
+
 ## Session update (2026-05-09 adapter renderable top-order confidence guard)
 - Extended `renderable_top_document_emits_top_before_child_direct_roots` in `crates/specforge/src/ir/adapters.rs`.
 - The renderable top-document ordering regression now locks high automation confidence on the retained `result_data` top port, producer/consumer child declarations, and renderable top links.

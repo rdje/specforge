@@ -15182,6 +15182,16 @@ mod tests {
             .iter()
             .find(|child| child.instance_name == "controller")
             .expect("controller child should be present");
+        let top_acc_link = top_candidate
+            .links
+            .iter()
+            .find(|link| {
+                link.source.instance_name.as_deref() == Some("controller")
+                    && link.source.signal_name == "ACC"
+                    && link.target.instance_name.is_none()
+                    && link.target.signal_name == "ACC"
+            })
+            .expect("top candidate should preserve the ACC link");
         let renderable_document = fsm
             .renderable_document
             .as_ref()
@@ -15223,20 +15233,42 @@ mod tests {
                 .iter()
                 .any(|id| acc_top_port.supporting_statement_ids.contains(id))
         );
+        assert_eq!(
+            acc_top_port.automation_confidence,
+            AutomationConfidence::High
+        );
         assert!(
             acc_top_port_support_ids
                 .iter()
                 .any(|id| renderable_acc_port.supporting_statement_ids.contains(id))
+        );
+        assert_eq!(
+            renderable_acc_port.automation_confidence,
+            AutomationConfidence::High
         );
         assert!(
             child_support_ids
                 .iter()
                 .any(|id| child.supporting_canonical_ids.contains(id))
         );
+        assert_eq!(child.automation_confidence, AutomationConfidence::High);
+        assert!(
+            acc_link_support_ids
+                .iter()
+                .any(|id| top_acc_link.supporting_statement_ids.contains(id))
+        );
+        assert_eq!(
+            top_acc_link.automation_confidence,
+            AutomationConfidence::High
+        );
         assert!(
             acc_link_support_ids
                 .iter()
                 .any(|id| renderable_acc_link.supporting_statement_ids.contains(id))
+        );
+        assert_eq!(
+            renderable_acc_link.automation_confidence,
+            AutomationConfidence::High
         );
         assert_eq!(renderable_child.child_root_kind, FsmRootKind::Fsm);
         assert_eq!(direct_root.root_kind, FsmRootKind::Fsm);

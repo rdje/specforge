@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-09 (adapter single-FSM-child topology confidence guard)
+
+### Improved: single-FSM-child top documents preserve topology confidence
+- Extended the single-FSM-child renderable top-document regression to assert selected and renderable top-port confidence, selected child confidence, and selected/renderable topology-link confidence stay high alongside support IDs and FSM child-root kind.
+- The guard keeps `?fsmc` top documents tied to explainable topology provenance instead of only checking root kind, emitted text, and support IDs.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge renderable_top_document_preserves_fsm_child_root_kind` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-09 (adapter renderable top-order confidence guard)
 
 ### Improved: renderable top documents preserve retained topology confidence
