@@ -18029,7 +18029,20 @@ mod tests {
             signal_inventory_port.graph_direction_hint,
             Some(InterfaceSignalDirection::Output)
         );
+        assert_eq!(signal_inventory_port.width_hint, Some(8));
         assert!(!signal_inventory_port.graph_direction_hint_conflicted);
+        assert!(
+            signal_inventory_port
+                .mention_categories
+                .iter()
+                .any(|category| category == "top_port")
+        );
+        assert!(
+            signal_inventory_port
+                .mention_categories
+                .iter()
+                .any(|category| category == "actor_port")
+        );
         assert!(
             top_port_support_ids
                 .iter()

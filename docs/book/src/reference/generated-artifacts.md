@@ -253,6 +253,7 @@ Those topology-recovered child directions also feed child renderable `(+size ...
 Child actor-port direction recovery keeps declaration support for each recovered child signal while recording the graph actor-port evidence that supplied directions, and renderable recovery leaves no composition-topology residual.
 Those actor-port-recovered child directions also feed child renderable `(+size ...)` entries, so emitted child roles do not require flat child-module direction hints.
 Top-boundary actor-port direction conflicts preserve top-port direction repair guidance on the blocked top candidate and aggregate adapter renderability while retaining graph-backed support.
+They also keep selected inventory provenance for the declared top port and actor-port graph evidence, including declared direction, graph direction, width, support IDs, and high confidence.
 Top-boundary actor-port direction conflicts also emit the composition-topology residual decision so explicit-top-port repair remains visible in structured diagnostics.
 That actor-port direction residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
 Top-boundary top-link direction conflicts preserve the same direction repair guidance while retaining topology-link support.

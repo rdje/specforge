@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter top actor-direction inventory provenance guard)
+- Extended `top_composition_blocks_conflicting_top_actor_port_direction` in `crates/specforge/src/ir/adapters.rs`.
+- The top actor-port direction conflict regression now locks selected `ext_data` inventory to numeric width, `top_port` provenance, actor-port provenance, declared input direction, graph output direction, support IDs, and high confidence.
+- This keeps conflicting top-boundary actor direction evidence explainable at the selected inventory surface.
+
 ## Session update (2026-05-09 adapter blocked recovered-direction inventory provenance guard)
 - Extended `top_composition_preserves_recovered_top_port_direction_when_still_blocked` in `crates/specforge/src/ir/adapters.rs`.
 - The blocked recovered top-port direction regression now locks selected `result_data` inventory to numeric width, `top_port` provenance, original declaration support IDs, topology support IDs, graph direction, and high confidence.
