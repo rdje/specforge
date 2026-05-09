@@ -102,6 +102,7 @@
 - `.fsm` child-declaration top-root confidence now stays composition-residual clean when renderable: Done
 - `.fsm` child-declaration top-root confidence now preserves selected inventory confidence: Done
 - `.fsm` top-link top-root confidence now stays composition-residual clean when renderable: Done
+- `.fsm` top-link top-root confidence now preserves selected inventory confidence: Done
 - `.fsm` reused-child top documents now stay composition-residual clean after deduplicating child roots: Done
 - `.fsm` top-before-child source documents now stay composition-residual clean after top-first emission: Done
 - `.fsm` single-FSM-child top documents now stay composition-residual clean while preserving FSM child root kind: Done

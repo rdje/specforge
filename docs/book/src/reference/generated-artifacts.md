@@ -206,6 +206,7 @@ That residual remains low-confidence and anchored to incomplete child-source, to
 High-confidence child declarations can raise the selected top root-kind confidence without emitting composition residuals once the single-child topology is renderable.
 That path preserves the selected public top-port inventory support, width, direction, provenance category, and original low confidence instead of letting child confidence rewrite top-port inventory.
 High-confidence top-link evidence follows the same residual-clean rule once the linked topology is renderable.
+That path preserves selected and renderable top-port support IDs plus low top-port confidence while the selected signal inventory keeps its own direction, width, provenance, support, and low confidence.
 Actor-port-backed top direction recovery follows the same rule: the graph evidence is added without dropping the public top-port declaration support IDs, and renderable recovery leaves no composition-topology residual.
 Actor-port-backed top width recovery also retains public top-port declaration support while adding the graph width evidence, and renderable recovery leaves no composition-topology residual.
 Conflicting actor-port top widths keep the selected top unresolved with no renderable top root or aggregate source document, so stale `?top` output cannot leak past the blocked graph-width decision.

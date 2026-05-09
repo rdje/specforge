@@ -16664,7 +16664,7 @@ mod tests {
             "top_root_kind_link_confidence.md",
             "# Top Root Kind Link Confidence\nTop datapath.\n\nTop datapath port status is output width 1.\n\nTop datapath child producer uses module producer_core.\n\nTop datapath child consumer uses module consumer_core.\n\nTop datapath link producer.output_data -> consumer.input_data.\n\nModule producer_core signal output_data is output width 8.\n\nModule producer_core block produce: output_data = 8'3.\n\nModule consumer_core signal input_data is input width 8.\n\nModule consumer_core signal result_data is output width 8.\n\nModule consumer_core block route: result_data = input_data.\n",
         )?;
-        let link_support_ids = {
+        let (top_port_support_ids, link_support_ids) = {
             let raw_top = intent_ir
                 .explicit_tops
                 .iter_mut()
@@ -16676,6 +16676,7 @@ mod tests {
                 .find(|port| port.port_name == "status")
                 .expect("top port should be present");
             raw_port.automation_confidence = AutomationConfidence::Low;
+            let top_port_support_ids = raw_port.supporting_statement_ids.clone();
 
             for child in &mut raw_top.children {
                 child.automation_confidence = AutomationConfidence::Low;
@@ -16700,7 +16701,10 @@ mod tests {
                 "top link should carry concrete support IDs"
             );
             raw_link.automation_confidence = AutomationConfidence::High;
-            super::explicit_top_link_supporting_ids(raw_link)
+            (
+                top_port_support_ids,
+                super::explicit_top_link_supporting_ids(raw_link),
+            )
         };
         intent_ir.write_to_disk()?;
 
@@ -16732,11 +16736,21 @@ mod tests {
                     && link.target.signal_name == "input_data"
             })
             .expect("child-to-child top link should be present");
+        let signal_inventory_port = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "status")
+            .expect("top port should stay in selected top inventory");
         let renderable_top = fsm
             .renderable_document
             .as_ref()
             .and_then(|document| document.top_root.as_ref())
             .expect("renderable top root should be present");
+        let renderable_top_port = renderable_top
+            .ports
+            .iter()
+            .find(|port| port.port_name == "status")
+            .expect("top port should stay in renderable top root");
         let renderable_link = renderable_top
             .links
             .iter()
@@ -16751,6 +16765,40 @@ mod tests {
         assert!(top_candidate.renderability.is_renderable);
         assert_eq!(
             recovered_port.automation_confidence,
+            AutomationConfidence::Low
+        );
+        assert!(
+            top_port_support_ids
+                .iter()
+                .any(|id| recovered_port.supporting_statement_ids.contains(id))
+        );
+        assert_eq!(
+            renderable_top_port.automation_confidence,
+            AutomationConfidence::Low
+        );
+        assert!(
+            top_port_support_ids
+                .iter()
+                .any(|id| renderable_top_port.supporting_statement_ids.contains(id))
+        );
+        assert_eq!(
+            signal_inventory_port.direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert_eq!(signal_inventory_port.width_hint, Some(1));
+        assert!(
+            signal_inventory_port
+                .mention_categories
+                .iter()
+                .any(|category| category == "top_port")
+        );
+        assert!(
+            top_port_support_ids
+                .iter()
+                .any(|id| signal_inventory_port.supporting_canonical_ids.contains(id))
+        );
+        assert_eq!(
+            signal_inventory_port.automation_confidence,
             AutomationConfidence::Low
         );
         assert!(
