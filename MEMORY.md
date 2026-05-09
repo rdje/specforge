@@ -23,22 +23,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `82f517424652a0bdaa202a6a47df7db1e076839c`
-- latest_commit_brief_message: `test(adapter): keep single FSM child topology confidence`
-- note: this is the pre-slice-170 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
+- latest_commit_hash: `82e19efe9f108ba91eb88bffcb527ea4ca44accd`
+- latest_commit_brief_message: `test(adapter): keep reused FSM topology confidence`
+- note: this is the pre-slice-171 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
 
 ## Recent commit chain (last 6)
+- `82e19ef` test(adapter): keep reused FSM topology confidence
 - `82f5174` test(adapter): keep single FSM child topology confidence
 - `cf4f439` test(adapter): keep top-order topology confidence
 - `587e548` test(adapter): keep reset-block FSM inventory confidence
 - `515b594` test(adapter): keep structured FSM inventory confidence
 - `f224812` test(adapter): keep symbolic DT inventory confidence
-- `9dbbbe0` test(adapter): keep sequential DT inventory confidence
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 170 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
+- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 171 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
 - files in flight:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
@@ -58,15 +58,15 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `169`
-  - slice 170/200 extends the reused-FSM-child renderable top-document regression to prove selected/renderable top ports, selected child declarations, and selected/renderable per-instance topology links keep high automation confidence while deduplicating the shared FSM direct root
+  - completed_count before this commit: `170`
+  - slice 171/200 extends the mixed DT/FSM renderable top-document regression to prove selected/renderable top ports, selected child declarations, and selected/renderable topology links keep high automation confidence while preserving child root kinds and direct-root order
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks reused-FSM-child top-document retained topology confidence coverage as `Done`
+  - live-status tracker now marks mixed DT/FSM top-document retained topology confidence coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 170 before commit
+  - implementation and live-doc sync are complete for slice 171 before commit
   - `cargo fmt --all` applied rustfmt layout
-  - `cargo test --manifest-path Cargo.toml -p specforge renderable_top_document_deduplicates_reused_fsm_child_roots` passed
+  - `cargo test --manifest-path Cargo.toml -p specforge renderable_top_document_preserves_mixed_child_root_order_and_kind` passed
   - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests
   - `cargo fmt --all --check` passed after live-doc sync
   - `bash scripts/run_docs_ci.sh` passed after live-book sync
@@ -100,6 +100,9 @@
   - broader `bash scripts/run_ci.sh` passed on slice 30 with formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, and mdBook
   - user-requested `cargo sweep --time 1` is deferred until no target-tree process is active because `target/release/tool_matrix` is active
 - current known local CI baseline:
+  - slice 171 focused adapter test passed
+  - slice 171 adapter suite passed with `142/142` adapter-filtered tests
+  - slice 171 docs CI passed after live-book sync
   - slice 170 focused adapter test passed
   - slice 170 adapter suite passed with `142/142` adapter-filtered tests
   - slice 170 docs CI passed after live-book sync

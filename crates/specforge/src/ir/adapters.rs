@@ -15690,6 +15690,26 @@ mod tests {
             .iter()
             .find(|child| child.instance_name == "controller")
             .expect("controller child should be present");
+        let top_producer_to_controller_link = top_candidate
+            .links
+            .iter()
+            .find(|link| {
+                link.source.instance_name.as_deref() == Some("producer")
+                    && link.source.signal_name == "output_data"
+                    && link.target.instance_name.as_deref() == Some("controller")
+                    && link.target.signal_name == "DATA_IN"
+            })
+            .expect("top candidate should preserve producer to controller link");
+        let top_controller_to_acc_link = top_candidate
+            .links
+            .iter()
+            .find(|link| {
+                link.source.instance_name.as_deref() == Some("controller")
+                    && link.source.signal_name == "ACC"
+                    && link.target.instance_name.is_none()
+                    && link.target.signal_name == "ACC"
+            })
+            .expect("top candidate should preserve controller ACC link");
         let renderable_document = fsm
             .renderable_document
             .as_ref()
@@ -15753,31 +15773,73 @@ mod tests {
                 .iter()
                 .any(|id| acc_top_port.supporting_statement_ids.contains(id))
         );
+        assert_eq!(
+            acc_top_port.automation_confidence,
+            AutomationConfidence::High
+        );
         assert!(
             acc_top_port_support_ids
                 .iter()
                 .any(|id| renderable_acc_port.supporting_statement_ids.contains(id))
+        );
+        assert_eq!(
+            renderable_acc_port.automation_confidence,
+            AutomationConfidence::High
         );
         assert!(
             producer_child_support_ids
                 .iter()
                 .any(|id| producer_child.supporting_canonical_ids.contains(id))
         );
+        assert_eq!(
+            producer_child.automation_confidence,
+            AutomationConfidence::High
+        );
         assert!(
             controller_child_support_ids
                 .iter()
                 .any(|id| controller_child.supporting_canonical_ids.contains(id))
+        );
+        assert_eq!(
+            controller_child.automation_confidence,
+            AutomationConfidence::High
+        );
+        assert!(producer_to_controller_link_support_ids.iter().any(|id| {
+            top_producer_to_controller_link
+                .supporting_statement_ids
+                .contains(id)
+        }));
+        assert_eq!(
+            top_producer_to_controller_link.automation_confidence,
+            AutomationConfidence::High
+        );
+        assert!(controller_to_top_link_support_ids.iter().any(|id| {
+            top_controller_to_acc_link
+                .supporting_statement_ids
+                .contains(id)
+        }));
+        assert_eq!(
+            top_controller_to_acc_link.automation_confidence,
+            AutomationConfidence::High
         );
         assert!(producer_to_controller_link_support_ids.iter().any(|id| {
             renderable_producer_to_controller_link
                 .supporting_statement_ids
                 .contains(id)
         }));
+        assert_eq!(
+            renderable_producer_to_controller_link.automation_confidence,
+            AutomationConfidence::High
+        );
         assert!(controller_to_top_link_support_ids.iter().any(|id| {
             renderable_controller_to_top_link
                 .supporting_statement_ids
                 .contains(id)
         }));
+        assert_eq!(
+            renderable_controller_to_top_link.automation_confidence,
+            AutomationConfidence::High
+        );
         let top_index = emitted_text
             .find("(?top:wrapper")
             .expect("emitted text should contain top root");

@@ -831,6 +831,7 @@
 - `.fsm` reused-child top-composition lowering now preserves top-port and topology-link provenance while deduplicating the shared child root: Done
 - `.fsm` single-FSM-child top documents now preserve selected/renderable topology confidence: Done
 - `.fsm` reused-FSM-child top documents now preserve selected/renderable topology confidence while deduplicating the shared root: Done
+- `.fsm` mixed DT/FSM top documents now preserve selected/renderable topology confidence while retaining root order: Done
 - `.fsm` top-root signal inventory now preserves flat-vs-graph top-port direction disagreement without mislabeling graph provenance as conflicted: Done
 - mdBook now documents blocked `.fsm` adapter renderability together with flat/graph signal-inventory provenance: Done
 - `.fsm` adapter signal inventory now preserves parametric width provenance and reports symbolic widths distinctly from missing numeric width evidence: Done
@@ -950,6 +951,7 @@
 - `.fsm` reused-FSM-child top documents now stay composition-residual clean after deduplicating the shared FSM root: Done
 - `.fsm` mixed-child top lowering now regression-locks DT/FSM child support IDs: Done
 - `.fsm` mixed-child top emission now preserves top-port and topology-link provenance alongside DT/FSM root order: Done
+- `.fsm` mixed-child top emission now preserves top-port, child, and link confidence: Done
 - `.fsm` mixed-child top documents now stay composition-residual clean while preserving DT/FSM root order: Done
 - `.fsm` single FSM-child top lowering now regression-locks child support IDs: Done
 - `.fsm` single FSM-child top emission now preserves top-port and topology-link provenance: Done

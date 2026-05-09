@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter mixed-child topology confidence guard)
+- Extended `renderable_top_document_preserves_mixed_child_root_order_and_kind` in `crates/specforge/src/ir/adapters.rs`.
+- The mixed DT/FSM renderable top-document regression now locks high automation confidence on the selected/renderable `ACC` top port, both selected child declarations, and both selected/renderable topology links.
+- This keeps mixed `?dtc`/`?fsmc` top documents tied to explainable topology provenance while preserving child root kinds and direct-root order.
+
 ## Session update (2026-05-09 adapter reused-FSM-child topology confidence guard)
 - Extended `renderable_top_document_deduplicates_reused_fsm_child_roots` in `crates/specforge/src/ir/adapters.rs`.
 - The reused-FSM-child renderable top-document regression now locks high automation confidence on both selected/renderable `ACC_A`/`ACC_B` top ports, both selected child declarations, and both selected/renderable per-instance topology links.

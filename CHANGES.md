@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-09 (adapter mixed-child topology confidence guard)
+
+### Improved: mixed DT/FSM top documents preserve retained confidence
+- Extended the mixed DT/FSM renderable top-document regression to assert the selected/renderable top port, both selected child declarations, and both selected/renderable topology links keep high automation confidence alongside support IDs.
+- The guard keeps mixed `?dtc`/`?fsmc` top documents tied to explainable topology provenance while preserving child root kinds and direct-root order.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge renderable_top_document_preserves_mixed_child_root_order_and_kind` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-09 (adapter reused-FSM-child topology confidence guard)
 
 ### Improved: reused-FSM-child top documents preserve retained confidence
