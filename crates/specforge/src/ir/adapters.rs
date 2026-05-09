@@ -21620,6 +21620,7 @@ mod tests {
         );
         assert_eq!(output_data.graph_direction_hint, None);
         assert!(output_data.graph_direction_hint_conflicted);
+        assert_eq!(output_data.width_hint, Some(8));
         assert!(
             output_data
                 .mention_categories
@@ -21689,6 +21690,12 @@ mod tests {
             Some(InterfaceSignalDirection::Output)
         );
         assert_eq!(signal_inventory_port.width_hint, Some(8));
+        assert!(
+            signal_inventory_port
+                .mention_categories
+                .iter()
+                .any(|category| category == "top_port")
+        );
         assert!(
             top_port_support_ids
                 .iter()
