@@ -241,6 +241,7 @@
 - `.fsm` links to undeclared top targets now preserve composition topology residual decisions: Done
 - `.fsm` undeclared top-target residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` undeclared top-target residuals now preserve child-module reference diagnostics: Done
+- `.fsm` undeclared top-target residuals now preserve renderable child-module diagnostics: Done
 - `.fsm` undeclared top-link target blockers now preserve retained record confidence: Done
 - `.fsm` undeclared top-link source blockers now preserve retained record confidence: Done
 - `.fsm` links to unemitted child targets now preserve composition topology residual decisions: Done

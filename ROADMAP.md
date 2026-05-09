@@ -272,6 +272,7 @@
   - top links targeting undeclared top-boundary ports preserve target-endpoint enrichment guidance, composition-topology residual diagnostics, and top-port, child, and link provenance
   - top links targeting undeclared top-boundary ports preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output
   - undeclared top-target residuals preserve child-module reference diagnostics alongside explicit top-port diagnostics so both repair surfaces remain visible
+  - undeclared top-target residuals preserve renderable child-module diagnostics alongside explicit top-port and child-module reference diagnostics so all repair surfaces remain visible
   - top links originating from undeclared top-boundary ports preserve source-endpoint enrichment guidance, composition-topology residual diagnostics, and top-port, child, and link provenance
   - top links originating from undeclared top-boundary ports preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output
   - undeclared top-source residuals preserve child-module reference diagnostics alongside explicit top-port diagnostics so both repair surfaces remain visible
