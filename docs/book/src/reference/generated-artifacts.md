@@ -326,6 +326,7 @@ Widthless public top ports preserve top-boundary width recovery guidance on the 
 Widthless public top-port blockers also emit the composition-topology residual decision so explicit-top-port repair remains visible in structured diagnostics.
 That widthless top-port residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
 Widthless top-port residuals keep child-module reference diagnostics alongside explicit top-port diagnostics so both repair surfaces remain visible.
+That widthless residual guard is asserted directly in the widthless blocker regression, not through adjacent recovered-root confidence coverage.
 Parametric public top ports preserve top-boundary width resolution guidance while keeping symbolic width evidence inspectable in the selected top signal inventory.
 Parametric public top-port blockers also emit the composition-topology residual decision so explicit-top-port repair remains visible in structured diagnostics.
 That parametric top-port residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.

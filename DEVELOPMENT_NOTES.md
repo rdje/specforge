@@ -7,6 +7,18 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-09 adapter widthless top-port residual guard placement correction
+- New batch slice 52/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
+- Moved the child-module reference residual assertion from the adjacent recovered top-root confidence regression into `top_composition_blocks_widthless_top_port_without_width_recovery`.
+- The widthless public top-port blocker now directly proves child-module reference diagnostics remain visible alongside explicit top-port diagnostics while stale `.fsm` output remains blocked.
+- This corrects the previous slice's guard placement without changing production adapter behavior.
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_widthless_top_port_without_width_recovery` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge top_root_kind_confidence_follows_recovered_top_port_evidence` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests.
+- `cargo fmt --all --check` passed.
+- `git diff --check` passed.
+- `bash scripts/run_docs_ci.sh` passed after the live-doc/book sync check.
+
 ## 2026-05-09 adapter widthless top-port residual child-reference diagnostic guard
 - New batch slice 51/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
 - Extended `top_composition_blocks_widthless_top_port_without_width_recovery` in `crates/specforge/src/ir/adapters.rs`.
