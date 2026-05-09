@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-09 (adapter top-target role inventory provenance guard)
+
+### Improved: top-target direction-role blockers preserve selected inventory provenance
+- Extended the top-target direction-role blocker regression to assert selected `result_data` inventory keeps numeric width and `top_port` provenance while the declared input direction, graph output direction, topology support, top-port support, and high confidence remain visible.
+- The guard keeps top-target role blockers explainable at the selected inventory surface alongside endpoint-role guidance and topology provenance.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_top_target_direction_role_guidance` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-09 (adapter top-link direction conflict inventory provenance guard)
 
 ### Improved: top-link direction conflicts preserve selected inventory provenance

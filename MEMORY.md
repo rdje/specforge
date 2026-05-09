@@ -23,22 +23,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `b6f3680b436e9e01a9cbcd1d84b6640310df6c21`
-- latest_commit_brief_message: `test(adapter): keep top actor width inventory provenance`
-- note: this is the pre-slice-186 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
+- latest_commit_hash: `a8af0abfe95be0eabce6812f4e7ae5b2ce4d4489`
+- latest_commit_brief_message: `test(adapter): keep top-link direction conflict inventory provenance`
+- note: this is the pre-slice-187 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
 
 ## Recent commit chain (last 6)
+- `a8af0ab` test(adapter): keep top-link direction conflict inventory provenance
 - `b6f3680` test(adapter): keep top actor width inventory provenance
 - `c156fa9` test(adapter): keep top actor direction inventory provenance
 - `7cb124b` test(adapter): keep blocked recovered direction inventory provenance
 - `f25e319` test(adapter): keep top-link direction inventory provenance
 - `c83062a` test(adapter): keep unemitted child-source inventory provenance
-- `e6d7c7b` test(adapter): keep parametric top inventory provenance
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 186 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
+- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 187 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
 - files in flight:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
@@ -58,15 +58,15 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `185`
-  - slice 186/200 extends the top-link direction conflict regression to prove selected `drive_data` inventory keeps numeric width and top-port provenance while declared output direction, graph input direction, top-port support, topology support, and high confidence remain visible
+  - completed_count before this commit: `186`
+  - slice 187/200 extends the top-target direction-role blocker regression to prove selected `result_data` inventory keeps numeric width and top-port provenance while declared input direction, graph output direction, top-port support, topology support, and high confidence remain visible
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks top-link direction conflict selected inventory provenance coverage as `Done`
+  - live-status tracker now marks top-target direction-role selected inventory provenance coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 186 before commit
+  - implementation and live-doc sync are complete for slice 187 before commit
   - `cargo fmt --all` applied rustfmt layout
-  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_keeps_conflicting_top_port_direction_unresolved` passed
+  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_top_target_direction_role_guidance` passed
   - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests
   - `cargo fmt --all --check` passed after live-doc sync
   - `bash scripts/run_docs_ci.sh` passed after live-book sync
@@ -101,6 +101,9 @@
   - broader `bash scripts/run_ci.sh` passed on slice 30 with formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, and mdBook
   - user-requested `cargo sweep --time 1` is deferred until no target-tree process is active because `target/release/tool_matrix` is active
 - current known local CI baseline:
+  - slice 187 focused adapter test passed
+  - slice 187 adapter suite passed with `142/142` adapter-filtered tests
+  - slice 187 docs CI passed after live-book sync
   - slice 186 focused adapter test passed
   - slice 186 adapter suite passed with `142/142` adapter-filtered tests
   - slice 186 docs CI passed after live-book sync

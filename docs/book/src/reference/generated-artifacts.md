@@ -303,6 +303,7 @@ Dedicated child endpoint role regressions back those source/target residual guar
 Topology-backed child target direction-role mismatches preserve the same role guidance even when the blocker is a flat/graph direction disagreement rather than a graph-only conflict.
 Top-boundary top-link direction conflicts preserve the same endpoint-role guidance alongside boundary direction-conflict guidance while keeping top-port and topology-link provenance visible.
 Top-target boundary role conflicts preserve that role guidance with boundary direction-conflict guidance while retaining the selected top signal-inventory evidence.
+They also keep selected inventory provenance for the declared top target and topology evidence, including declared direction, graph direction, width, support IDs, and high confidence.
 That top-target role residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
 Top links to child endpoints that are not emitted preserve source- or target-endpoint repair guidance on both the blocked top candidate and aggregate renderability surfaces.
 For blocked composition roots, the same artifact shape is useful for diagnostics: a missing child can block emission while the surviving top-port provenance remains available for review.
