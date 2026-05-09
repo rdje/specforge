@@ -301,6 +301,7 @@
 - `.fsm` widthless top-port residuals now preserve child-module reference diagnostics: Done
 - `.fsm` widthless top-port residual guard placement is corrected: Done
 - `.fsm` parametric top-port residuals now preserve child-module reference diagnostics: Done
+- `.fsm` source-side unemitted child residuals now preserve child-module reference diagnostics: Done
 - `specforge inspect` command created: Done
 - `specforge doctor` command created: Done
 - `specforge ingest` SourceIR command created: Done
