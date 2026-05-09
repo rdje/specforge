@@ -342,6 +342,7 @@ The undeclared top-source fixture now asserts that provenance on the owning unre
 Top links that originate from undeclared top-boundary ports also emit the composition-topology residual decision, mirroring target-side explicit-top-port repair diagnostics.
 That undeclared top-source residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
 Top links that originate from child endpoints absent from emitted child modules preserve source-endpoint enrichment guidance while keeping the declared top-port, child, and link provenance visible.
+Source-side unemitted child endpoint blockers keep retained selected top inventory tied to `top_port` provenance while absent emitted child endpoints remain unresolved.
 Top links that target child endpoints absent from emitted child modules preserve target-endpoint enrichment guidance while keeping the declared top-port, child, and high-confidence link provenance visible.
 Source-side unemitted child endpoint blockers also emit the composition-topology residual decision, mirroring the target-side residual lock.
 That source-side residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.

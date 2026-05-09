@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter unemitted source inventory provenance guard)
+- Extended `top_composition_blocks_link_from_unemitted_child_source_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- The source-side unemitted child endpoint blocker regression now locks retained selected `result_data` top inventory to `top_port` provenance alongside direction, width, support IDs, and high confidence.
+- This keeps source-side unemitted child blockers tied to explainable public top inventory while the absent emitted child endpoint remains the renderability blocker.
+
 ## Session update (2026-05-09 adapter undeclared source fixture provenance correction)
 - Corrected `top_composition_blocks_link_from_undeclared_top_source_guidance` in `crates/specforge/src/ir/adapters.rs`.
 - The intended undeclared top-link source blocker regression now locks retained selected `result_data` top inventory to `top_port` provenance alongside direction, width, support IDs, and high confidence.

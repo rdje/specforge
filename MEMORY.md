@@ -23,22 +23,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `a99d5d104242be71a75b1cb4789eb3910010c461`
-- latest_commit_brief_message: `test(adapter): keep undeclared source inventory provenance`
-- note: this is the pre-slice-199 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
+- latest_commit_hash: `d9800be8d1caea994ce109e233a1005e83c7eed1`
+- latest_commit_brief_message: `test(adapter): target undeclared source provenance fixture`
+- note: this is the pre-slice-200 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until the final slice commit workflow completes
 
 ## Recent commit chain (last 6)
+- `d9800be` test(adapter): target undeclared source provenance fixture
 - `a99d5d1` test(adapter): keep undeclared source inventory provenance
 - `6bce353` test(adapter): keep undeclared target inventory provenance
 - `f63a96f` test(adapter): keep missing-link inventory provenance
 - `1aa5a7b` test(adapter): keep duplicate child inventory provenance
 - `7939ad3` test(adapter): keep child actor direction inventory provenance
-- `7bca432` test(adapter): keep child topology direction inventory provenance
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 199 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
+- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 200 and push is deferred until the final slice commit workflow completes; branch started this batch one docs-only commit ahead of `origin/main`
 - files in flight:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
@@ -58,16 +58,17 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `198`
-  - slice 199/200 corrects the undeclared top-link source blocker regression so the intended fixture proves retained selected `result_data` top inventory keeps top-port provenance while unresolved top-link sources remain the renderability blocker
-  - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
+  - completed_count before this commit: `199`
+  - slice 200/200 extends the source-side unemitted child endpoint blocker regression to prove retained selected `result_data` top inventory keeps top-port provenance while the absent emitted child endpoint remains the renderability blocker
+  - push remains deferred until this final slice commit workflow completes, then the batch policy requires the deferred push
 - tracker effect:
-  - live-status tracker now marks the intended undeclared top-link source fixture provenance assertion as `Done`
+  - live-status tracker now marks source-side unemitted child selected inventory provenance coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 199 before commit
+  - implementation and live-doc sync are complete for slice 200 before commit
   - `cargo fmt --all` applied rustfmt layout
-  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_link_from_undeclared_top_source_guidance` passed
+  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_link_from_unemitted_child_source_guidance` passed
   - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests
+  - `bash scripts/run_ci.sh` passed as the final slice 200 broader checkpoint gate with formatting, Clippy warning-deny, `665` Rust tests, rustdoc warning-deny, and mdBook
   - `bash scripts/run_ci.sh` passed as the slice 190 broader checkpoint gate with formatting, Clippy warning-deny, `665` Rust tests, rustdoc warning-deny, and mdBook
   - `cargo fmt --all --check` passed after live-doc sync
   - `bash scripts/run_docs_ci.sh` passed after live-book sync
@@ -102,6 +103,10 @@
   - broader `bash scripts/run_ci.sh` passed on slice 30 with formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, and mdBook
   - user-requested `cargo sweep --time 1` is deferred until no target-tree process is active because `target/release/tool_matrix` is active
 - current known local CI baseline:
+  - slice 200 focused adapter test passed
+  - slice 200 adapter suite passed with `142/142` adapter-filtered tests
+  - slice 200 full CI passed after live-book sync
+  - slice 200 docs CI passed after live-book sync
   - slice 199 focused adapter test passed
   - slice 199 adapter suite passed with `142/142` adapter-filtered tests
   - slice 199 docs CI passed after live-book sync

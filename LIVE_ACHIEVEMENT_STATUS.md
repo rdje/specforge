@@ -77,6 +77,7 @@
 - `.fsm` undeclared top-link source blockers now preserve selected inventory provenance: Done
 - `.fsm` undeclared top-link source fixture now asserts selected inventory provenance in the intended regression: Done
 - `.fsm` source-side unemitted child blockers now preserve selected inventory confidence: Done
+- `.fsm` source-side unemitted child blockers now preserve selected inventory provenance: Done
 - `.fsm` target-side unemitted child blockers now preserve selected inventory confidence: Done
 - `.fsm` legacy source-side unemitted child blockers now preserve selected inventory confidence: Done
 - `.fsm` legacy source-side unemitted child blockers now preserve selected inventory provenance: Done

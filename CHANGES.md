@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-05-09 (adapter unemitted source inventory provenance guard)
+
+### Improved: source-side unemitted child blockers preserve selected inventory provenance
+- Extended the source-side unemitted child endpoint blocker regression to assert retained selected `result_data` top inventory exposes `top_port` provenance alongside direction, width, support IDs, and high confidence.
+- The guard keeps source-side unemitted child blockers tied to explainable public top inventory while the absent emitted child endpoint remains the renderability blocker.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_link_from_unemitted_child_source_guidance` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed final slice 200 broader checkpoint gate
+
 ## 2026-05-09 (adapter undeclared source fixture provenance correction)
 
 ### Fixed: undeclared top-source provenance guard now targets the intended fixture
