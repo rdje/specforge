@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-09 (adapter unemitted child source residual live-status alignment)
+
+### Improved: source-side unemitted child residual status is clustered with existing coverage
+- Synced live docs and mdBook with existing `top_composition_blocks_link_from_unemitted_child_port` coverage in `crates/specforge/src/ir/adapters.rs`.
+- The non-guidance source-side unemitted child regression already locks the composition residual to include child-module reference diagnostics alongside explicit top-port and renderable child-module diagnostics, low confidence, source-endpoint repair guidance, retained top-port/child/link provenance, and blocked `.fsm` output.
+- Moved the source-side unemitted child child-module-reference live-status row into the primary residual cluster instead of leaving it separated later in the tracker.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_link_from_unemitted_child_port` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- tracked markdown/mdBook absolute-path scan -> passed after live-doc/book sync
+- `git diff --check` -> passed after live-doc/book sync
+- `bash scripts/run_docs_ci.sh` -> passed after live-doc/book sync
+
 ## 2026-05-09 (adapter undeclared top-source residual live-status alignment)
 
 ### Improved: undeclared top-source residual status matches existing coverage

@@ -429,6 +429,7 @@ That provenance-rich guidance regression also keeps explicit top-port diagnostic
 That provenance-rich source-side guidance regression also keeps child-module reference diagnostics alongside renderable child-module and explicit-top-port surfaces.
 Source-side unemitted child endpoint residuals keep explicit top-port diagnostics alongside renderable child-module diagnostics so both repair surfaces remain visible.
 Source-side unemitted child endpoint residuals also keep child-module reference diagnostics alongside those renderable-child and explicit-top-port surfaces.
+The primary source-side unemitted child regression directly asserts the child-module reference residual surface alongside explicit-top-port and renderable-child diagnostics.
 Target-side unemitted child endpoint blockers also emit the composition-topology residual decision so renderable-child repair remains visible in structured adapter diagnostics.
 That target-side residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
 The provenance-rich target-side guidance regression also keeps explicit top-port diagnostics alongside renderable child-module diagnostics so both target-endpoint repair surfaces remain visible.

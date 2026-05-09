@@ -264,6 +264,7 @@
 - `.fsm` source-side unemitted child guidance residuals now preserve child-module reference diagnostics: Done
 - `.fsm` source-side unemitted child guidance residuals now preserve renderable child-module diagnostics: Done
 - `.fsm` source-side unemitted child residuals now preserve explicit top-port diagnostics: Done
+- `.fsm` source-side unemitted child residuals now preserve child-module reference diagnostics: Done
 - `.fsm` source-side unemitted child residuals now preserve renderable child-module diagnostics: Done
 - `.fsm` source-side unemitted child blockers now preserve retained record confidence: Done
 - `.fsm` legacy source-side unemitted child-port blockers now preserve retained record confidence: Done
@@ -359,7 +360,6 @@
 - `.fsm` parametric top-port residuals now preserve renderable child-module diagnostics: Done
 - `.fsm` top-link width mismatch residuals now preserve child-module reference diagnostics: Done
 - `.fsm` top-link width mismatch residuals now preserve renderable child-module diagnostics: Done
-- `.fsm` source-side unemitted child residuals now preserve child-module reference diagnostics: Done
 - `specforge inspect` command created: Done
 - `specforge doctor` command created: Done
 - `specforge ingest` SourceIR command created: Done
