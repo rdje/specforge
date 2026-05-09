@@ -7,6 +7,18 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-09 adapter no-child top residual live-status alignment
+- New batch slice 99/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
+- Synced live docs and mdBook with existing `top_composition_blocks_top_without_child_guidance` coverage in `crates/specforge/src/ir/adapters.rs`.
+- The no-child top regression already locks the composition residual to include renderable child-module diagnostics alongside explicit top-port and child-module reference diagnostics, low confidence, child-reference repair guidance, retained top-port provenance, and blocked `.fsm` output.
+- Moved the no-child top renderable-child live-status row into the primary no-child residual cluster instead of leaving it separated earlier in the tracker.
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_top_without_child_guidance` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests.
+- `cargo fmt --all --check` passed.
+- tracked markdown/mdBook absolute-path scan passed after the live-doc/book sync check.
+- `git diff --check` passed after the live-doc/book sync check.
+- `bash scripts/run_docs_ci.sh` passed after the live-doc/book sync check.
+
 ## 2026-05-09 adapter unemitted child source residual live-status alignment
 - New batch slice 98/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
 - Synced live docs and mdBook with existing `top_composition_blocks_link_from_unemitted_child_port` coverage in `crates/specforge/src/ir/adapters.rs`.
