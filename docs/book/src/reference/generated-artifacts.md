@@ -337,6 +337,7 @@ Undeclared top-target blockers keep retained selected top inventory tied to `top
 Top links that target undeclared top-boundary ports also emit the composition-topology residual decision so explicit-top-port repair remains visible in structured diagnostics.
 That undeclared top-target residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
 Top links that originate from undeclared top-boundary ports preserve source-endpoint enrichment guidance while keeping the declared top-port, child, and link provenance visible.
+Undeclared top-source blockers keep retained selected top inventory tied to `top_port` provenance while source endpoints remain unresolved.
 Top links that originate from undeclared top-boundary ports also emit the composition-topology residual decision, mirroring target-side explicit-top-port repair diagnostics.
 That undeclared top-source residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
 Top links that originate from child endpoints absent from emitted child modules preserve source-endpoint enrichment guidance while keeping the declared top-port, child, and link provenance visible.

@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-09 (adapter undeclared source inventory provenance guard)
+
+### Improved: undeclared top-link source blockers preserve selected inventory provenance
+- Extended the undeclared top-link source blocker regression to assert retained selected `result_data` top inventory exposes `top_port` provenance alongside direction, width, support IDs, and high confidence.
+- The guard keeps undeclared source blockers tied to explainable public top inventory while unresolved top-link sources remain the renderability blocker.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_link_from_undeclared_top_source_guidance` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-09 (adapter undeclared target inventory provenance guard)
 
 ### Improved: undeclared top-link target blockers preserve selected inventory provenance

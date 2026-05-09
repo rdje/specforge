@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter undeclared source inventory provenance guard)
+- Extended `top_composition_blocks_link_from_undeclared_top_source_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- The undeclared top-link source blocker regression now locks retained selected `result_data` top inventory to `top_port` provenance alongside direction, width, support IDs, and high confidence.
+- This keeps undeclared source blockers tied to explainable public top inventory while unresolved top-link sources remain the renderability blocker.
+
 ## Session update (2026-05-09 adapter undeclared target inventory provenance guard)
 - Extended `top_composition_blocks_link_to_undeclared_top_target_guidance` in `crates/specforge/src/ir/adapters.rs`.
 - The undeclared top-link target blocker regression now locks retained selected `status` top inventory to `top_port` provenance alongside direction, width, support IDs, and high confidence.
