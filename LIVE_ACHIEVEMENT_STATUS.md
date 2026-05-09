@@ -307,6 +307,7 @@
 - `.fsm` duplicate top-direction blockers now preserve composition topology residual decisions: Done
 - `.fsm` duplicate top-direction residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` duplicate top-direction residuals now preserve child-module reference diagnostics: Done
+- `.fsm` duplicate top-direction residuals now preserve renderable child-module diagnostics: Done
 - `.fsm` duplicate top-width blockers now preserve composition topology residual decisions: Done
 - `.fsm` duplicate top-width residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` duplicate top-width residuals now preserve child-module reference diagnostics: Done
