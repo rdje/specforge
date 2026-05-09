@@ -237,6 +237,7 @@
 - `.fsm` no-child top residuals now preserve explicit top-port diagnostics: Done
 - `.fsm` no-top-port blockers now preserve composition topology residual decisions: Done
 - `.fsm` no-top-port residuals now lock low-confidence topology-detail diagnostics: Done
+- `.fsm` no-top-port residuals now preserve child-module reference diagnostics: Done
 - `.fsm` duplicate child-instance top blockers now preserve composition topology residual decisions: Done
 - `.fsm` duplicate child-instance residuals now lock low-confidence topology-detail diagnostics: Done
 - KG benchmark harness now locks no-prior ready-sink semantic phrase visual-caption semantic-hint exclusion: Done
