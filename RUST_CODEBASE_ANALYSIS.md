@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter source-side sibling child-width inventory provenance guard)
+- Extended `top_composition_recovers_source_child_width_from_sibling_child_link_topology` in `crates/specforge/src/ir/adapters.rs`.
+- The source-side sibling child-link-backed width recovery regression now locks selected `output_data` child inventory to retained `interface` provenance alongside topology-link provenance, child signal support IDs, topology support IDs, recovered width, and high confidence.
+- This is a test-surface hardening slice for `R6` `.fsm` adapter provenance, not a production architecture change.
+
 ## Session update (2026-05-09 adapter sibling child-width inventory provenance guard)
 - Extended `top_composition_recovers_child_width_from_sibling_child_link_topology` in `crates/specforge/src/ir/adapters.rs`.
 - The sibling child-link-backed width recovery regression now locks selected `input_data` child inventory to retained `interface` provenance alongside topology-link provenance, child signal support IDs, topology support IDs, recovered width, and high confidence.
