@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter target-side unemitted child inventory provenance guard)
+- Extended `top_composition_blocks_link_to_unemitted_child_target_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- The target-side unemitted child endpoint blocker regression now locks retained selected `result_data` top inventory to `top_port` provenance alongside direction, width, support IDs, and high confidence.
+- This is a test-surface hardening slice for `R6` `.fsm` adapter provenance, not a production architecture change.
+
 ## Session update (2026-05-09 BWFSC=100 bootstrap)
 - Re-executed the `README.md` / `SESSION_BOOTSTRAP.md` startup path before the user-authorized `BWFSC=100` batch.
 - Direct survey still shows a single active `specforge` workspace package, the expected command modules, the staged `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters` crate structure, and the pinned `subs/fsmgen` reference at `32aa318`.

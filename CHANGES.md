@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-09 (adapter target-side unemitted child inventory provenance guard)
+
+### Improved: target-side unemitted child blockers preserve selected inventory provenance
+- Extended `top_composition_blocks_link_to_unemitted_child_target_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- The target-side unemitted child endpoint blocker regression now locks retained selected `result_data` top inventory to `top_port` provenance alongside direction, width, support IDs, and high confidence.
+- This keeps target-side unemitted child blockers tied to explainable public top inventory while the absent emitted child endpoint remains the renderability blocker.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_link_to_unemitted_child_target_guidance` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-09 (BWFSC=100 bootstrap and batch-start checkpoint)
 
 ### Changed: batch state is explicit before slice 1

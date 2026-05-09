@@ -83,6 +83,7 @@
 - `.fsm` source-side unemitted child blockers now preserve selected inventory confidence: Done
 - `.fsm` source-side unemitted child blockers now preserve selected inventory provenance: Done
 - `.fsm` target-side unemitted child blockers now preserve selected inventory confidence: Done
+- `.fsm` target-side unemitted child blockers now preserve selected inventory provenance: Done
 - `.fsm` legacy source-side unemitted child blockers now preserve selected inventory confidence: Done
 - `.fsm` legacy source-side unemitted child blockers now preserve selected inventory provenance: Done
 - `.fsm` source-side child direction-role blockers now preserve selected inventory confidence: Done

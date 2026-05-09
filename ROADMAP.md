@@ -189,6 +189,7 @@
   - parametric public top-port blockers preserve explicit top-port support IDs and high automation confidence while `.fsm` lowering remains blocked until numeric width evidence exists
   - parametric public top-port blockers preserve top-boundary width resolution guidance and low-confidence composition-topology residual diagnostics on blocked top and aggregate `.fsm` renderability surfaces
   - top-link blockers for unemitted child endpoints preserve explicit link support IDs, high automation confidence, and source- and target-endpoint enrichment guidance on blocked top and aggregate `.fsm` renderability surfaces while blocking `.fsm` emission
+  - target-side unemitted child blockers preserve selected top signal-inventory provenance, direction, width, support IDs, and high confidence while composition stays blocked
   - missing-child top blockers preserve child-source declaration guidance on blocked top and aggregate `.fsm` renderability surfaces while keeping recovered top-boundary evidence inspectable
   - primary missing-child composition blockers preserve child-source declaration guidance alongside top-port and child-declaration provenance
   - missing-child top blockers preserve composition-topology residual diagnostics so child-module reference repair remains visible in structured adapter output

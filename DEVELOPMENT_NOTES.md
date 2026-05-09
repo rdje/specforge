@@ -7,6 +7,16 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-09 adapter target-side unemitted child inventory provenance guard
+- New batch slice 1/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
+- Extended `top_composition_blocks_link_to_unemitted_child_target_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- The target-side unemitted child endpoint blocker regression now locks retained selected `result_data` top inventory to `top_port` provenance alongside direction, width, support IDs, and high confidence.
+- This mirrors the source-side unemitted child selected-inventory provenance guard while keeping the slice limited to regression coverage.
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_link_to_unemitted_child_target_guidance` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests.
+- `cargo fmt --all --check` passed.
+- `bash scripts/run_docs_ci.sh` passed after the live-doc/book sync.
+
 ## 2026-05-09 BWFSC=100 bootstrap and batch-start checkpoint
 - Re-executed the `README.md` entry path for the new user-authorized batch, including `SESSION_BOOTSTRAP.md`, the fast-ramp live docs, mdBook command/pipeline/validation/continuity pages, corpus-KB policy docs, and FSMGEN feedback.
 - Directly surveyed the Rust surface with `cargo metadata --no-deps --format-version 1`, `rg --files crates/specforge/src`, `cargo run -p specforge -- --help`, and `git submodule status --recursive`.
