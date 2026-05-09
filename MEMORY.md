@@ -23,22 +23,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `8695c7dae5574c9a480879099d5e7cb2c3068082`
-- latest_commit_brief_message: `test(adapter): keep mixed child topology confidence`
-- note: this is the pre-slice-172 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
+- latest_commit_hash: `b8a9d45b59c3070a615c323f23b75311f496fe71`
+- latest_commit_brief_message: `test(adapter): keep top-link direction link confidence`
+- note: this is the pre-slice-173 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
 
 ## Recent commit chain (last 6)
+- `b8a9d45` test(adapter): keep top-link direction link confidence
 - `8695c7d` test(adapter): keep mixed child topology confidence
 - `82e19ef` test(adapter): keep reused FSM topology confidence
 - `82f5174` test(adapter): keep single FSM child topology confidence
 - `cf4f439` test(adapter): keep top-order topology confidence
 - `587e548` test(adapter): keep reset-block FSM inventory confidence
-- `515b594` test(adapter): keep structured FSM inventory confidence
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 172 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
+- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 173 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
 - files in flight:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
@@ -58,15 +58,15 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `171`
-  - slice 172/200 extends the top-link direction recovery regression to prove selected and renderable topology links keep high automation confidence alongside support IDs after top-boundary direction recovery
+  - completed_count before this commit: `172`
+  - slice 173/200 extends the top actor-port direction recovery regression to prove the selected child declaration keeps support IDs and high automation confidence while the public top port is recovered from graph evidence
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks top-link direction recovery retained topology-link confidence coverage as `Done`
+  - live-status tracker now marks top actor-port direction recovery child confidence coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 172 before commit
+  - implementation and live-doc sync are complete for slice 173 before commit
   - `cargo fmt --all` applied rustfmt layout
-  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_top_port_direction_from_link_topology` passed
+  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_top_port_direction_from_actor_ports` passed
   - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests
   - `cargo fmt --all --check` passed after live-doc sync
   - `bash scripts/run_docs_ci.sh` passed after live-book sync
@@ -100,6 +100,9 @@
   - broader `bash scripts/run_ci.sh` passed on slice 30 with formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, and mdBook
   - user-requested `cargo sweep --time 1` is deferred until no target-tree process is active because `target/release/tool_matrix` is active
 - current known local CI baseline:
+  - slice 173 focused adapter test passed
+  - slice 173 adapter suite passed with `142/142` adapter-filtered tests
+  - slice 173 docs CI passed after live-book sync
   - slice 172 focused adapter test passed
   - slice 172 adapter suite passed with `142/142` adapter-filtered tests
   - slice 172 docs CI passed after live-book sync

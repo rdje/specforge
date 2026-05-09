@@ -195,6 +195,7 @@ Mixed DT/FSM child top documents preserve public top-port and topology-link prov
 They now keep selected/renderable top-port confidence, both selected child confidence values, and both selected/renderable topology-link confidence values while preserving `?dtc`/`?fsmc` order.
 When explicit top-link topology recovers a public top-port direction, the recovered top records retain the original top-port declaration support IDs as well as the topology evidence that supplied the direction, and renderable recovery leaves no composition-topology residual.
 The selected top and renderable top root also keep the recovered topology link support IDs and high automation confidence attached to that direction-recovery link.
+When matching top actor-port graph evidence recovers a public top-port direction, the selected top still keeps the explicit child declaration support IDs and high confidence needed for renderable composition.
 If that recovered top-port direction is still blocked by another composition gate, the adapter also emits the composition-topology residual decision so child-module reference repair remains visible.
 It also keeps the selected top without a renderable top root and the aggregate `.fsm` source document absent, so stale `?top` output cannot leak while the child module is missing.
 That recovered-direction residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.

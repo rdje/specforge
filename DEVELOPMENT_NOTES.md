@@ -7,6 +7,19 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-09 adapter actor-port direction child confidence guard
+- New batch slice 173/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Extended `top_composition_recovers_top_port_direction_from_actor_ports` in `crates/specforge/src/ir/adapters.rs`.
+- The top actor-port direction recovery regression now locks support IDs and high automation confidence on the selected `producer` child declaration while the public top port is recovered from graph evidence.
+- This keeps actor-port-backed top-boundary direction recovery tied to the explicit child provenance needed for renderable top composition.
+- `cargo fmt --all` applied rustfmt layout.
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_top_port_direction_from_actor_ports` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests.
+- `cargo fmt --all --check` passed.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- Push remains deferred for the active `BWFSC=200` batch.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-09 adapter top-link direction topology confidence guard
 - New batch slice 172/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Extended `top_composition_recovers_top_port_direction_from_link_topology` in `crates/specforge/src/ir/adapters.rs`.

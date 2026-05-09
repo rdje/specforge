@@ -16057,7 +16057,7 @@ mod tests {
             "top_actor_port_direction.md",
             "# Top Actor Port Direction\nTop wrapper.\n\nTop wrapper port ext_data is width 8.\n\nTop wrapper child producer uses module producer_core.\n\nModule producer_core signal output_data is output width 8.\n\nModule producer_core block produce: output_data = 8'3.\n",
         )?;
-        let top_port_support_ids = {
+        let (top_port_support_ids, child_support_ids) = {
             let raw_top = intent_ir
                 .explicit_tops
                 .iter_mut()
@@ -16070,7 +16070,15 @@ mod tests {
                 .expect("width-only top port should be preserved");
             assert_eq!(raw_port.direction_hint, None);
             raw_port.automation_confidence = AutomationConfidence::Low;
-            raw_port.supporting_statement_ids.clone()
+            let child = raw_top
+                .children
+                .iter()
+                .find(|child| child.instance_name == "producer")
+                .expect("producer child should be preserved");
+            (
+                raw_port.supporting_statement_ids.clone(),
+                child.supporting_statement_ids.clone(),
+            )
         };
 
         intent_ir.actor_ports = vec![actor_port(
@@ -16106,6 +16114,11 @@ mod tests {
             .iter()
             .find(|port| port.port_name == "ext_data")
             .expect("recovered top port should be present");
+        let producer_child = top_candidate
+            .children
+            .iter()
+            .find(|child| child.instance_name == "producer")
+            .expect("producer child should remain selected");
         let renderable_top_port = fsm
             .renderable_document
             .as_ref()
@@ -16159,6 +16172,15 @@ mod tests {
         );
         assert_eq!(
             renderable_top_port.automation_confidence,
+            AutomationConfidence::High
+        );
+        assert!(
+            child_support_ids
+                .iter()
+                .any(|id| producer_child.supporting_canonical_ids.contains(id))
+        );
+        assert_eq!(
+            producer_child.automation_confidence,
             AutomationConfidence::High
         );
         assert_eq!(signal_inventory_port.direction_hint, None);
