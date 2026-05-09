@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter child topology-width conflict inventory provenance guard)
+- Extended `top_composition_blocks_conflicting_child_topology_widths` in `crates/specforge/src/ir/adapters.rs`.
+- The blocked child topology width conflict regression now locks conflicted `output_data` child inventory to retained `interface` provenance alongside topology-link provenance, child signal support IDs, topology support IDs, unresolved width, output direction, and high confidence.
+- This is a test-surface hardening slice for `R6` `.fsm` adapter provenance, not a production architecture change.
+
 ## Session update (2026-05-09 adapter sibling child-width conflict inventory provenance guard)
 - Extended `top_composition_blocks_conflicting_sibling_child_link_widths` in `crates/specforge/src/ir/adapters.rs`.
 - The blocked sibling child-link width conflict regression now locks conflicted `input_data` child inventory to retained `interface` provenance alongside topology-link provenance, both conflicting topology-link support ID sets, unresolved width, input direction, and high confidence.
