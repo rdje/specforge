@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-05-09 (adapter child source role residual child-reference diagnostic guard)
+
+### Improved: source-side child role residuals preserve child-module reference diagnostics
+- Extended `top_composition_blocks_child_source_direction_role_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- The source-side child direction-role regression now locks the composition residual to include child-module reference diagnostics alongside renderable child-module and explicit top-port diagnostics, low confidence, endpoint-role repair guidance, retained top-port/child/link provenance, and blocked `.fsm` output.
+- This keeps child-source role blockers explainable at all three repair surfaces.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_child_source_direction_role_guidance` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-09 (adapter unemitted child source guidance residual child-reference diagnostic guard)
 
 ### Improved: provenance-rich unemitted child-source residuals preserve child-module reference diagnostics
