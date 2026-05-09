@@ -231,6 +231,7 @@ Top roots that still lack explicit child-module references keep the selected top
 Top roots that reference undeclared child source modules keep the selected top unresolved with no renderable top root or aggregate source document, so stale `?top` output cannot leak before child source modules are declared.
 Primary missing child-module residuals keep explicit top-port diagnostics alongside child-module reference diagnostics so both repair surfaces remain visible.
 Primary missing child-module residuals also keep renderable child-module diagnostics alongside explicit top-port and child-module reference surfaces.
+The missing-child top regression directly asserts that three-surface residual contract before `.fsm` emission is allowed.
 Top roots that still lack explicit top-port records keep the selected top unresolved with no renderable top root or aggregate source document, so stale `?top` output cannot leak before top ports are supplied.
 Duplicate top-port direction records keep the selected top unresolved with no renderable top root or aggregate source document, so stale `?top` output cannot leak before duplicate public direction evidence is resolved.
 Duplicate top child-instance records keep the selected top unresolved with no renderable top root or aggregate source document, so stale `?top` output cannot leak before child references are deduplicated.

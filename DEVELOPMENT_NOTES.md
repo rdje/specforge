@@ -7,6 +7,17 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-09 adapter missing-child residual live-status alignment
+- New batch slice 83/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
+- Synced live docs and mdBook with existing `keeps_top_composition_blocked_when_child_module_is_missing` coverage in `crates/specforge/src/ir/adapters.rs`.
+- The primary missing child-module top regression already locks the composition residual to include child-module reference diagnostics alongside renderable child-module and explicit top-port diagnostics, low confidence, child-source declaration guidance, retained top-port/child provenance, and blocked `.fsm` output.
+- This keeps missing child-source blockers documented across all three repair surfaces.
+- `cargo test --manifest-path Cargo.toml -p specforge keeps_top_composition_blocked_when_child_module_is_missing` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests.
+- `cargo fmt --all --check` passed.
+- `git diff --check` passed after the live-doc/book sync check.
+- `bash scripts/run_docs_ci.sh` passed after the live-doc/book sync check.
+
 ## 2026-05-09 adapter child actor residual live-status alignment
 - New batch slice 82/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
 - Synced live docs and mdBook with existing `top_composition_blocks_conflicting_actor_port_directions` coverage in `crates/specforge/src/ir/adapters.rs`.

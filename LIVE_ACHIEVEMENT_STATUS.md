@@ -89,6 +89,7 @@
 - `.fsm` missing child-module top blockers now preserve selected inventory confidence: Done
 - `.fsm` missing child-module top blockers now preserve selected inventory provenance: Done
 - `.fsm` primary missing child-module residuals now preserve explicit top-port diagnostics: Done
+- `.fsm` primary missing child-module residuals now preserve child-module reference diagnostics: Done
 - `.fsm` primary missing child-module residuals now preserve renderable child-module diagnostics: Done
 - `.fsm` duplicate child-instance blockers now preserve selected inventory confidence: Done
 - `.fsm` duplicate child-instance blockers now preserve selected inventory provenance: Done

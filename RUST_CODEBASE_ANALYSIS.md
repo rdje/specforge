@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter missing-child residual live-status alignment)
+- Synced live docs and mdBook with existing `keeps_top_composition_blocked_when_child_module_is_missing` coverage in `crates/specforge/src/ir/adapters.rs`.
+- The primary missing child-module top regression already locks the composition residual to include child-module reference diagnostics alongside renderable child-module and explicit top-port diagnostics, low confidence, child-source declaration guidance, retained top-port/child provenance, and blocked `.fsm` output.
+- This is a documentation alignment slice for existing `R6` `.fsm` adapter diagnostics, not a production architecture change.
+
 ## Session update (2026-05-09 adapter child actor residual live-status alignment)
 - Synced live docs and mdBook with existing `top_composition_blocks_conflicting_actor_port_directions` coverage in `crates/specforge/src/ir/adapters.rs`.
 - The child actor-port direction conflict regression already locks the composition residual to include renderable child-module diagnostics, explicit top-port diagnostics, and child-module reference diagnostics with low confidence, actor-relative graph-direction repair guidance, retained top-port/child/link provenance, and blocked `.fsm` output.
