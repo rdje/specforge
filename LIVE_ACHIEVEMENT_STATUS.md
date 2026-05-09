@@ -110,6 +110,7 @@
 - `.fsm` top child-link width conflicts now preserve composition topology residual decisions: Done
 - `.fsm` top child-link width conflicts now preserve retained record confidence: Done
 - `.fsm` top child-link width conflicts now preserve selected inventory provenance: Done
+- `.fsm` top child-link width residuals now preserve child-module reference diagnostics: Done
 - `.fsm` sibling child-link width conflicts now preserve composition topology residual decisions: Done
 - `.fsm` sibling child-link width conflicts now preserve retained record confidence: Done
 - `.fsm` sibling child-link width conflicts now preserve selected inventory provenance: Done
