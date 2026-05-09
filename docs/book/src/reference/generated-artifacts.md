@@ -213,6 +213,7 @@ Conflicting actor-port top widths keep the selected top unresolved with no rende
 Child-link-backed top width recovery likewise retains public top-port declaration support while adding the topology width evidence, and renderable recovery leaves no composition-topology residual.
 Conflicting child-link top widths keep the selected top unresolved with no renderable top root or aggregate source document, so stale `?top` output cannot leak past the blocked topology decision.
 Child-system-contract-backed top width recovery retains the clock/reset top-port declaration support while adding topology-link and system-contract evidence, and renderable recovery leaves no composition-topology residual.
+The selected top clock/reset inventory also keeps input direction, `top_port` provenance, original top-port support, topology support, recovered width, and high confidence.
 Unresolved parametric top widths keep the selected top unresolved with no renderable top root or aggregate source document, so stale `?top` output cannot leak before numeric width resolution.
 Top ports that still lack numeric width evidence keep the selected top unresolved with no renderable top root or aggregate source document, so stale `?top` output cannot leak before width recovery.
 Multi-child tops that still lack explicit top links keep the selected top unresolved with no renderable top root or aggregate source document, so stale `?top` output cannot leak before topology links are supplied.

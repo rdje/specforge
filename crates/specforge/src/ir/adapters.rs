@@ -17078,10 +17078,22 @@ mod tests {
         }
         assert_eq!(top_clk.width_hint, Some(1));
         assert_eq!(top_rst_n.width_hint, Some(1));
-        for (top_signal, topology_support_ids) in [
-            (top_clk, &clk_topology_support_ids),
-            (top_rst_n, &rst_topology_support_ids),
+        for (top_signal, topology_support_ids, top_port_support_ids) in [
+            (
+                top_clk,
+                &clk_topology_support_ids,
+                &clk_top_port_support_ids,
+            ),
+            (
+                top_rst_n,
+                &rst_topology_support_ids,
+                &rst_top_port_support_ids,
+            ),
         ] {
+            assert_eq!(
+                top_signal.direction_hint,
+                Some(InterfaceSignalDirection::Input)
+            );
             assert!(
                 top_signal
                     .mention_categories
@@ -17089,7 +17101,18 @@ mod tests {
                     .any(|category| category == "module_topology_link")
             );
             assert!(
+                top_signal
+                    .mention_categories
+                    .iter()
+                    .any(|category| category == "top_port")
+            );
+            assert!(
                 topology_support_ids
+                    .iter()
+                    .any(|id| top_signal.supporting_canonical_ids.contains(id))
+            );
+            assert!(
+                top_port_support_ids
                     .iter()
                     .any(|id| top_signal.supporting_canonical_ids.contains(id))
             );

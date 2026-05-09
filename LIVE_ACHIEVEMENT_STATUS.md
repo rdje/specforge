@@ -113,6 +113,7 @@
 - `.fsm` actor-port width recovery now stays composition-residual clean when renderable: Done
 - `.fsm` child-link top-width recovery now stays composition-residual clean when renderable: Done
 - `.fsm` child system-contract top-width recovery now stays composition-residual clean when renderable: Done
+- `.fsm` child system-contract top-width recovery now preserves selected inventory confidence: Done
 - `.fsm` child actor-port direction recovery now stays composition-residual clean when renderable: Done
 - `.fsm` child link-topology direction recovery now stays composition-residual clean when renderable: Done
 - `.fsm` top-link child-width recovery now stays composition-residual clean when renderable: Done

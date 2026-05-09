@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter system-contract top inventory confidence guard)
+- Extended `top_composition_recovers_top_system_port_widths_from_child_system_contract` in `crates/specforge/src/ir/adapters.rs`.
+- The child system-contract top-width recovery regression now locks selected `clk` and `rst_n` top inventory to input direction, `top_port` provenance, original top-port support IDs, topology support IDs, recovered width, and high automation confidence.
+- This keeps system-contract-backed top-boundary width recovery tied to both public top-port declarations and topology evidence in the selected inventory.
+
 ## Session update (2026-05-09 adapter top-link root inventory confidence guard)
 - Extended `top_root_kind_confidence_follows_top_link_evidence` in `crates/specforge/src/ir/adapters.rs`.
 - The top-link root-kind confidence regression now locks selected and renderable `status` top-port support IDs and low confidence while the child-to-child top link raises root-kind confidence.

@@ -7,6 +7,19 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-09 adapter system-contract top inventory confidence guard
+- New batch slice 178/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Extended `top_composition_recovers_top_system_port_widths_from_child_system_contract` in `crates/specforge/src/ir/adapters.rs`.
+- The child system-contract top-width recovery regression now locks selected `clk` and `rst_n` top inventory to input direction, `top_port` provenance, original top-port support IDs, topology support IDs, recovered width, and high automation confidence.
+- This keeps system-contract-backed top-boundary width recovery tied to both public top-port declarations and topology evidence in the selected inventory.
+- `cargo fmt --all` applied rustfmt layout.
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_top_system_port_widths_from_child_system_contract` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests.
+- `cargo fmt --all --check` passed.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- Push remains deferred for the active `BWFSC=200` batch.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-09 adapter top-link root inventory confidence guard
 - New batch slice 177/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Extended `top_root_kind_confidence_follows_top_link_evidence` in `crates/specforge/src/ir/adapters.rs`.

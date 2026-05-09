@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-09 (adapter system-contract top inventory confidence guard)
+
+### Improved: child system-contract top-width recovery preserves selected inventory confidence
+- Extended the child system-contract top-width recovery regression to assert selected `clk` and `rst_n` top inventory keep input direction, `top_port` provenance, original top-port support IDs, topology support IDs, recovered width, and high automation confidence.
+- The guard keeps system-contract-backed top-boundary width recovery tied to both public top-port declarations and topology evidence in the selected inventory.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_top_system_port_widths_from_child_system_contract` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-09 (adapter top-link root inventory confidence guard)
 
 ### Improved: top-link top-root confidence preserves selected inventory confidence
