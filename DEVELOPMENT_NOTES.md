@@ -7,6 +7,17 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-09 BWFSC=100 batch completion gate
+- Final batch slice 100/100 uses active `BWFSC=100`; push remains deferred until this slice's commit workflow, message-file truncation, and postconditions pass.
+- Synced live docs and mdBook to mark the `BWFSC=100` batch complete while preserving `R6` `.fsm` adapter hardening as `In Progress`.
+- This is a documentation and verification closure slice; it does not alter Rust production code or adapter behavior.
+- Tracked markdown/mdBook path hygiene remains enforced: repo-internal file references must be repo-root-relative, and host-local external inputs must use non-host-specific placeholders.
+- `bash scripts/run_ci.sh` passed.
+- `bash scripts/run_docs_ci.sh` passed.
+- tracked markdown/mdBook absolute-path scan passed.
+- current-state stale-doc scan passed.
+- `git diff --check` passed.
+
 ## 2026-05-09 adapter no-child top residual live-status alignment
 - New batch slice 99/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
 - Synced live docs and mdBook with existing `top_composition_blocks_top_without_child_guidance` coverage in `crates/specforge/src/ir/adapters.rs`.

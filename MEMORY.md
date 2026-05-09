@@ -16,7 +16,7 @@
 - `git_message_brief.txt` must stay untracked and be truncated to `0` bytes after each commit
 - every completion message must report the commit id, exact commit message, full tracked-file list, current live-status snapshot, and whether that snapshot changed
 - outside explicit batch runs, do not push unless the user asks or the branch reaches `25` local commits since the last push
-- active batch-run rule: the current user-authorized batch uses `BWFSC=100`, must commit after every completed slice, and must defer push until all 100 slices are complete unless the user explicitly instructs otherwise or a real blocker stops the batch
+- active batch-run rule: the current user-authorized batch uses `BWFSC=100`, must commit after every completed slice, and must defer push until all 100 slices are complete; slice 100/100 is the closure slice and the final push runs only after the slice-100 commit workflow postconditions pass
 - latest completed batch-run rule: the `BWFSC=200` batch committed each slice independently, synced live docs and mdBook at the end of every slice, deferred push until all 200 slices were complete, passed the final full CI gate, and was pushed after slice 200
 - previous completed batch-run rule: the `BWFSC=100` batch committed each slice independently, synced live docs and mdBook at the end of every slice, deferred push until all 100 slices were complete, and was pushed after slice 100
 - earlier completed batch-run rule: the `N=200` batch committed each slice independently, synced live docs and mdBook at the end of every slice, deferred push until all 200 new-batch slices were complete, and was pushed after slice 200
@@ -24,22 +24,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `1718b92927096be7ee3d24ea6296f6b3f5a53ce9`
-- latest_commit_brief_message: `docs(adapter): cluster unemitted source residual`
-- note: this is the pre-slice-99 baseline for the active `BWFSC=100` batch; `main` is one hundred local commits ahead of `origin/main`, and push is deferred until the 100-slice batch completes unless the user explicitly redirects or a real blocker stops the batch
+- latest_commit_hash: `47fee4610edd34d3b1c1d4717ba33f47e4a874e8`
+- latest_commit_brief_message: `docs(adapter): cluster no-child residual`
+- note: this is the pre-slice-100 baseline for the active `BWFSC=100` batch; `main` is one hundred one local commits ahead of `origin/main`, and push remains deferred until this final slice's commit workflow, message-file truncation, and postconditions pass
 
 ## Recent commit chain (last 6)
+- `47fee46` docs(adapter): cluster no-child residual
 - `1718b92` docs(adapter): cluster unemitted source residual
 - `28d7777` docs(adapter): align undeclared source diagnostics
 - `294a5a3` docs(adapter): align undeclared target diagnostics
 - `48f43e4` docs(adapter): align duplicate child references
 - `6303514` docs(adapter): align parametric top-port diagnostics
-- `f74509a` docs(adapter): align widthless top-port diagnostics
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state: `main` has local work for active `BWFSC=100` slice 99 and push is deferred until all 100 slices complete
+- branch state: `main` has local work for active `BWFSC=100` slice 100 closure and push is deferred until the final commit workflow postconditions pass
 - files in flight:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -58,13 +58,13 @@
 
 ## Current batch status
 - objective:
-  - active `BWFSC=100` batch is in progress
-  - completed_count before this commit: `98`
-  - slice 99/100 clusters no-child top renderable-child residual status with existing regression coverage that proves renderable child-module diagnostics remain visible alongside explicit top-port and child-module reference diagnostics while stale `.fsm` emission remains blocked
-  - push remains deferred until all 100 batch slices are committed unless the user explicitly redirects or a real blocker stops the batch
+  - active `BWFSC=100` batch is at slice 100/100 closure
+  - completed_count before this commit: `99`
+  - slice 100/100 documents final batch completion, runs the full gate, verifies tracked markdown/mdBook path hygiene, and prepares the required post-commit push closure
+  - push remains deferred until this final slice's commit workflow, message-file truncation, and postconditions pass
   - `R6` remains the active `.fsm` adapter hardening lane; SystemVerilog, Verilog, and VHDL adapter expansion remains not started
 - tracker effect:
-  - live-status tracker marks the new `BWFSC=100` batch as `In Progress`
+  - live-status tracker marks the current `BWFSC=100` batch as `Done` at slice 100/100 closure
   - live-status tracker now marks checkout-specific absolute filesystem path rejection in tracked live docs/mdBook as `Done`
   - live-status tracker now marks target-side unemitted child selected inventory provenance coverage as `Done`
   - live-status tracker now marks source-side child direction-role selected inventory provenance coverage as `Done`
@@ -176,6 +176,12 @@
   - live-status tracker marks the tightened current-state live-doc/mdBook drift audit requirement as `Done`
   - README and mdBook command surfaces were reconciled with the live clap command set for enrichment, validation, rescan, learning, corpus-KB, cleanup options, and the `project-validation --rescan-vlm-provider lm-studio` spelling
 - verification status:
+  - implementation and live-doc/book sync are complete for slice 100 before commit
+  - `bash scripts/run_ci.sh` passed for slice 100 final full gate
+  - `bash scripts/run_docs_ci.sh` passed for slice 100 final docs gate
+  - tracked markdown/mdBook absolute-path scan passed for slice 100 final path-hygiene gate
+  - current-state stale-doc scan passed for slice 100 final drift gate
+  - `git diff --check` passed for slice 100 final whitespace gate
   - implementation and live-doc/book sync are complete for slice 99 before commit
   - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_top_without_child_guidance` passed
   - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests
@@ -1246,8 +1252,8 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- complete the slice 11 commit workflow, clear and verify `git_message_brief.txt`, then continue to `BWFSC=100` slice 12/100
-- slice 12/100 should be the next roadmap-aligned `R6` `.fsm` adapter hardening slice
-- likely slice 12 target: sibling child-link width recovery selected child-inventory provenance or the next adjacent top-composition provenance gap that is not already locked
+- write the slice 100 commit message, stage only the intended tracked docs, commit, then clear and verify `git_message_brief.txt`
+- after the slice 100 commit workflow postconditions pass, push because all 100 batch slices are complete
+- after push, verify `main` is aligned with `origin/main` and `git_message_brief.txt` remains untracked and `0` bytes
 - keep SystemVerilog, Verilog, and VHDL adapter expansion at `Not Started` until the `.fsm` hardening lane and canonical truthfulness surface are ready
 - `cargo sweep --time 1` is no longer blocked by an observed `target/release/tool_matrix` process; run it only when explicitly requested or when it becomes part of a safe cleanup slice

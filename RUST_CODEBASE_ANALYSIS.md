@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 BWFSC=100 batch completion gate)
+- Closed the active `BWFSC=100` batch at slice 100/100 with live-doc and mdBook synchronization before the deferred push.
+- No Rust production code changed in this closure slice; `R6` `.fsm` adapter hardening remains active and SystemVerilog/Verilog/VHDL adapter expansion remains `Not Started`.
+- The final gate rechecks full CI, mdBook, tracked markdown/mdBook path hygiene, and stale current-state claims before commit.
+
 ## Session update (2026-05-09 adapter no-child top residual live-status alignment)
 - Synced live docs and mdBook with existing `top_composition_blocks_top_without_child_guidance` coverage in `crates/specforge/src/ir/adapters.rs`.
 - The no-child top regression already locks the composition residual to include renderable child-module diagnostics alongside explicit top-port and child-module reference diagnostics, low confidence, child-reference repair guidance, retained top-port provenance, and blocked `.fsm` output.

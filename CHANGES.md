@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-09 (BWFSC=100 batch completion gate)
+
+### Changed: final batch closure is documented before the deferred push
+- Synced live docs and mdBook for slice 100/100 of the active `BWFSC=100` batch.
+- Recorded the batch as complete after 100 independently committed slices, with the required final push handled only after this slice's commit workflow and message-file verification.
+- Kept `R6` `.fsm` adapter hardening marked `In Progress`; SystemVerilog, Verilog, and VHDL adapter expansion remain `Not Started`.
+- Re-audited tracked markdown/mdBook path hygiene so repo-internal file references remain repo-root-relative rather than checkout-specific absolute paths.
+
+### Validation
+- `bash scripts/run_ci.sh` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- tracked markdown/mdBook absolute-path scan -> passed
+- current-state stale-doc scan -> passed
+- `git diff --check` -> passed
+
 ## 2026-05-09 (adapter no-child top residual live-status alignment)
 
 ### Improved: no-child top residual status is clustered with existing coverage

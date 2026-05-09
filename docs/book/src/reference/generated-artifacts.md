@@ -399,6 +399,7 @@ No-child top residuals keep explicit top-port diagnostics alongside child-module
 No-child top residuals also keep renderable child-module diagnostics alongside explicit top-port and child-module reference surfaces.
 The no-child top regression directly asserts that three-surface residual contract before `.fsm` top emission is allowed.
 The live tracker clusters that no-child renderable-child residual status beside the explicit-top-port and child-module-reference residual rows.
+The live residual tracker keeps each top-composition residual family adjacent to its owning blocker surface, so explicit top-port, child-module reference, and renderable-child diagnostics can be audited together.
 Top roots that omit top-port records preserve top-port enrichment guidance while keeping child declaration provenance visible.
 Top roots that omit top-port records also emit the composition-topology residual decision so explicit-top-port repair remains visible in structured diagnostics.
 That no-top-port residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
