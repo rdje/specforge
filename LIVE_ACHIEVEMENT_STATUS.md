@@ -238,6 +238,7 @@
 - `.fsm` links from undeclared top sources now preserve composition topology residual decisions: Done
 - `.fsm` undeclared top-source residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` undeclared top-source residuals now preserve child-module reference diagnostics: Done
+- `.fsm` undeclared top-source residuals now preserve renderable child-module diagnostics: Done
 - `.fsm` links to undeclared top targets now preserve composition topology residual decisions: Done
 - `.fsm` undeclared top-target residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` undeclared top-target residuals now preserve child-module reference diagnostics: Done
