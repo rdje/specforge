@@ -298,6 +298,7 @@
 - `.fsm` duplicate top-width blockers now preserve composition topology residual decisions: Done
 - `.fsm` duplicate top-width residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` duplicate top-width residuals now preserve child-module reference diagnostics: Done
+- `.fsm` widthless top-port residuals now preserve child-module reference diagnostics: Done
 - `specforge inspect` command created: Done
 - `specforge doctor` command created: Done
 - `specforge ingest` SourceIR command created: Done
