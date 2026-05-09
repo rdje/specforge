@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-09 (adapter top-link direction topology confidence guard)
+
+### Improved: top-link direction recovery preserves link confidence
+- Extended the top-link direction recovery regression to assert the selected and renderable `consumer.result_data -> result_data` topology links retain high automation confidence alongside topology support IDs.
+- The guard keeps top-boundary direction recovery tied to explainable topology-link provenance at both the selected top and final renderable top-root surfaces.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_top_port_direction_from_link_topology` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-09 (adapter mixed-child topology confidence guard)
 
 ### Improved: mixed DT/FSM top documents preserve retained confidence

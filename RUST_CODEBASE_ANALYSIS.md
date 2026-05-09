@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter top-link direction topology confidence guard)
+- Extended `top_composition_recovers_top_port_direction_from_link_topology` in `crates/specforge/src/ir/adapters.rs`.
+- The top-link direction recovery regression now locks high automation confidence on the selected and renderable `consumer.result_data -> result_data` topology links alongside topology support IDs.
+- This keeps top-boundary direction recovery tied to explainable topology-link provenance at both the selected top and final renderable top-root surfaces.
+
 ## Session update (2026-05-09 adapter mixed-child topology confidence guard)
 - Extended `renderable_top_document_preserves_mixed_child_root_order_and_kind` in `crates/specforge/src/ir/adapters.rs`.
 - The mixed DT/FSM renderable top-document regression now locks high automation confidence on the selected/renderable `ACC` top port, both selected child declarations, and both selected/renderable topology links.

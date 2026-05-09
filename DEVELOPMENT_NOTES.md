@@ -7,6 +7,19 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-09 adapter top-link direction topology confidence guard
+- New batch slice 172/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Extended `top_composition_recovers_top_port_direction_from_link_topology` in `crates/specforge/src/ir/adapters.rs`.
+- The top-link direction recovery regression now locks high automation confidence on the selected and renderable `consumer.result_data -> result_data` topology links alongside topology support IDs.
+- This keeps top-boundary direction recovery tied to explainable topology-link provenance at both the selected top and final renderable top-root surfaces.
+- `cargo fmt --all` applied rustfmt layout.
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_top_port_direction_from_link_topology` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests.
+- `cargo fmt --all --check` passed.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- Push remains deferred for the active `BWFSC=200` batch.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-09 adapter mixed-child topology confidence guard
 - New batch slice 171/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Extended `renderable_top_document_preserves_mixed_child_root_order_and_kind` in `crates/specforge/src/ir/adapters.rs`.

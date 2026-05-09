@@ -760,6 +760,7 @@
 - `.fsm` explicit top-link topology now propagates numeric child/top endpoint widths through the explicit top-link graph before module lowering: Done
 - `.fsm` explicit top-link topology now recovers missing child module port widths from the opposite numeric top-boundary endpoint: Done
 - `.fsm` explicit top-root lowering now recovers width-only top boundary port directions from explicit top-link topology: Done
+- `.fsm` top-link direction recovery now preserves selected/renderable topology-link confidence: Done
 - `.fsm` explicit top-root lowering now recovers width-only top boundary port directions from matching top actor ports: Done
 - `.fsm` explicit top-root lowering now recovers missing top boundary port widths from matching top actor ports: Done
 - `.fsm` selected top signal inventory now preserves recovered top-boundary directions as graph-backed hints instead of flat compatibility hints: Done
@@ -941,6 +942,7 @@
 - `.fsm` child-declaration top-root confidence now stays composition-residual clean when renderable: Done
 - `.fsm` top-link top-root confidence now stays composition-residual clean when renderable: Done
 - `.fsm` top-link direction recovery now stays composition-residual clean when renderable: Done
+- `.fsm` top-link direction recovery now regression-locks renderable topology-link confidence: Done
 - `.fsm` baseline top-composition lowering now regression-locks top port, child, and link support IDs: Done
 - `.fsm` missing-child top blockers now preserve unresolved child support IDs and confidence: Done
 - `.fsm` reused-child top lowering now regression-locks per-instance child support IDs: Done

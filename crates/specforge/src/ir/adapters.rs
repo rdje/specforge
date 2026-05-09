@@ -15928,17 +15928,36 @@ mod tests {
             .iter()
             .find(|port| port.port_name == "result_data")
             .expect("recovered top port should be present");
-        let renderable_top_port = fsm
+        let top_recovered_link = top_candidate
+            .links
+            .iter()
+            .find(|link| {
+                link.source.instance_name.as_deref() == Some("consumer")
+                    && link.source.signal_name == "result_data"
+                    && link.target.instance_name.is_none()
+                    && link.target.signal_name == "result_data"
+            })
+            .expect("top candidate should preserve recovered topology link");
+        let renderable_top = fsm
             .renderable_document
             .as_ref()
             .and_then(|document| document.top_root.as_ref())
-            .and_then(|top_root| {
-                top_root
-                    .ports
-                    .iter()
-                    .find(|port| port.port_name == "result_data")
-            })
+            .expect("renderable top root should be present");
+        let renderable_top_port = renderable_top
+            .ports
+            .iter()
+            .find(|port| port.port_name == "result_data")
             .expect("recovered top port should be present in renderable top root");
+        let renderable_recovered_link = renderable_top
+            .links
+            .iter()
+            .find(|link| {
+                link.source.instance_name.as_deref() == Some("consumer")
+                    && link.source.signal_name == "result_data"
+                    && link.target.instance_name.is_none()
+                    && link.target.signal_name == "result_data"
+            })
+            .expect("renderable top should preserve recovered topology link");
         let signal_inventory_port = fsm
             .signal_inventory
             .iter()
@@ -15979,6 +15998,24 @@ mod tests {
         );
         assert_eq!(
             renderable_top_port.automation_confidence,
+            AutomationConfidence::High
+        );
+        assert!(
+            topology_support_ids
+                .iter()
+                .any(|id| top_recovered_link.supporting_statement_ids.contains(id))
+        );
+        assert_eq!(
+            top_recovered_link.automation_confidence,
+            AutomationConfidence::High
+        );
+        assert!(topology_support_ids.iter().any(|id| {
+            renderable_recovered_link
+                .supporting_statement_ids
+                .contains(id)
+        }));
+        assert_eq!(
+            renderable_recovered_link.automation_confidence,
             AutomationConfidence::High
         );
         assert_eq!(signal_inventory_port.direction_hint, None);
