@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 BWFSC=100 bootstrap)
+- Re-executed the `README.md` / `SESSION_BOOTSTRAP.md` startup path before the user-authorized `BWFSC=100` batch.
+- Direct survey still shows a single active `specforge` workspace package, the expected command modules, the staged `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters` crate structure, and the pinned `subs/fsmgen` reference at `32aa318`.
+- No Rust architecture change was needed for the bootstrap checkpoint; the next implementation work remains `R6` `.fsm` adapter hardening, specifically continuing graph-first/renderability/provenance hardening before any non-`.fsm` adapter expansion.
+
 ## Session update (2026-05-09 roadmap and live-doc status sync)
 - Corrected the current project steering documents to reflect the implemented codebase state: `R6` is an active `.fsm` adapter hardening lane.
 - The active adapter risk remains `.fsm` renderability/provenance/residual rigor; SystemVerilog, Verilog, and VHDL targets remain planned but not started.

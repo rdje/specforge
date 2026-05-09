@@ -7,6 +7,15 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-09 BWFSC=100 bootstrap and batch-start checkpoint
+- Re-executed the `README.md` entry path for the new user-authorized batch, including `SESSION_BOOTSTRAP.md`, the fast-ramp live docs, mdBook command/pipeline/validation/continuity pages, corpus-KB policy docs, and FSMGEN feedback.
+- Directly surveyed the Rust surface with `cargo metadata --no-deps --format-version 1`, `rg --files crates/specforge/src`, `cargo run -p specforge -- --help`, and `git submodule status --recursive`.
+- The active implementation lane remains `R6` `.fsm` adapter hardening; SystemVerilog, Verilog, and VHDL target names remain reserved but not started.
+- Started the user-requested `BWFSC=100` batch bookkeeping with `0/100` implementation slices complete and push deferred until all 100 batch slices complete unless a real blocker stops the run.
+- Updated continuity baseline context to the current local `HEAD`, `2ed2370620b442ea56f8787c4c04b77c6a051502` (`docs: sync roadmap and live docs`), which is ahead of `origin/main` and will remain unpushed until batch completion.
+- `cargo fmt --all --check`, `git diff --check`, and targeted current-state drift scans passed.
+- `bash scripts/run_docs_ci.sh` passed for this docs/book checkpoint.
+
 ## 2026-05-09 roadmap and live-doc status sync
 - User correctly identified that `ROADMAP.md` still labeled `R6` as future-only even though current work has been active `.fsm` adapter hardening.
 - Updated `ROADMAP.md` so `R6 Adapter layer` is `In Progress`, with `.fsm` hardening as the active lane and SystemVerilog/Verilog/VHDL expansion explicitly deferred.

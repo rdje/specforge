@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-09 (BWFSC=100 bootstrap and batch-start checkpoint)
+
+### Changed: batch state is explicit before slice 1
+- Re-read `README.md`, followed `SESSION_BOOTSTRAP.md`, reviewed the referenced live-doc and mdBook surfaces, and surveyed the live Rust crate/CLI surface before starting the next batch.
+- Recorded the user-authorized `BWFSC=100` batch as active with `0/100` implementation slices complete and push deferred until all 100 batch slices complete unless a real blocker stops the run.
+- Updated continuity state to use `2ed2370620b442ea56f8787c4c04b77c6a051502` as the pre-batch baseline; that commit remains local and unpushed until the batch policy permits the deferred push.
+
+### Validation
+- `cargo metadata --no-deps --format-version 1` -> passed
+- `cargo run -p specforge -- --help` -> passed
+- `git submodule status --recursive` -> passed
+- `cargo fmt --all --check` -> passed
+- `git diff --check` -> passed
+- targeted current-state drift scan -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-09 (roadmap and live-doc status sync)
 
 ### Fixed: R6 and batch state now match the current project state
