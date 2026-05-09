@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-05-09 (adapter parametric top-port residual renderable-child diagnostic guard)
+
+### Improved: parametric top-port residuals preserve renderable child diagnostics
+- Extended `top_composition_blocks_parametric_top_port_width_for_fsm_public_io` in `crates/specforge/src/ir/adapters.rs`.
+- The parametric public top-port regression now locks the composition residual to include renderable child-module diagnostics alongside explicit top-port and child-module reference diagnostics, low confidence, width-resolution guidance, retained top-port/child provenance, and blocked `.fsm` output.
+- This keeps symbolic public-width blockers explainable across renderable-child, top-port, and child-reference repair surfaces.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_parametric_top_port_width_for_fsm_public_io` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed after live-doc/book sync
+
 ## 2026-05-09 (adapter widthless top-port residual renderable-child diagnostic guard)
 
 ### Improved: widthless top-port residuals preserve renderable child diagnostics
