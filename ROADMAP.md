@@ -267,6 +267,7 @@
   - no-top-port residuals preserve child-module reference diagnostics alongside explicit top-port diagnostics so both repair surfaces remain visible
   - duplicate child-instance top blockers preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output
   - duplicate child-instance residuals preserve explicit top-port diagnostics alongside child-module reference diagnostics so both repair surfaces remain visible
+  - duplicate child-instance residuals preserve renderable child-module diagnostics alongside explicit top-port and child-module reference diagnostics so all repair surfaces remain visible
   - top links targeting undeclared top-boundary ports preserve target-endpoint enrichment guidance, composition-topology residual diagnostics, and top-port, child, and link provenance
   - top links targeting undeclared top-boundary ports preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output
   - undeclared top-target residuals preserve child-module reference diagnostics alongside explicit top-port diagnostics so both repair surfaces remain visible
