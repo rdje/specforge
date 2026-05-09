@@ -299,6 +299,7 @@ They also keep selected inventory provenance visible: the conflicted child outpu
 Child actor-port direction conflicts also emit the composition-topology residual decision so renderable-child repair remains visible in structured diagnostics.
 That child actor-port direction residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
 Child actor-port direction residuals keep child-module reference diagnostics alongside renderable child-module and explicit top-port diagnostics so all three repair surfaces remain visible.
+The child actor-port direction conflict regression backs that three-surface residual contract directly.
 Child topology direction conflicts preserve the same repair-guidance channel while retaining the contradictory topology-link support IDs that caused the graph-direction conflict.
 They also keep selected inventory provenance visible: the conflicted child output retains width and topology-link provenance, while the surviving selected top inventory keeps `top_port` provenance.
 Child topology direction conflicts also emit the composition-topology residual decision so renderable-child repair remains visible in structured diagnostics.

@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-05-09 (adapter child actor residual live-status alignment)
+
+### Improved: child actor-port direction residual status matches existing coverage
+- Synced live docs and mdBook with existing `top_composition_blocks_conflicting_actor_port_directions` coverage in `crates/specforge/src/ir/adapters.rs`.
+- The child actor-port direction conflict regression already locks the composition residual to include renderable child-module diagnostics, explicit top-port diagnostics, and child-module reference diagnostics with low confidence, actor-relative graph-direction repair guidance, retained top-port/child/link provenance, and blocked `.fsm` output.
+- This keeps child actor-port direction blockers documented across all three repair surfaces.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_actor_port_directions` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `git diff --check` -> passed after live-doc/book sync
+- `bash scripts/run_docs_ci.sh` -> passed after live-doc/book sync
+
 ## 2026-05-09 (adapter unemitted child residual live-status alignment)
 
 ### Improved: unemitted child residual status matches existing coverage
