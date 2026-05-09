@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-05-09 (adapter no-top-port residual live-doc alignment)
+
+### Improved: no-top-port residual docs match existing code coverage
+- Synced live docs and mdBook with existing `top_composition_blocks_top_without_port_guidance` coverage in `crates/specforge/src/ir/adapters.rs`.
+- The no-top-port regression already locks the composition residual to include explicit top-port diagnostics alongside renderable child-module and child-module reference diagnostics, low confidence, top-port enrichment guidance, retained child provenance, and blocked `.fsm` output.
+- This keeps missing top-port blockers documented across top-port, renderable-child, and child-reference repair surfaces.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_top_without_port_guidance` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed after live-doc/book sync
+
 ## 2026-05-09 (adapter missing-child residual renderable-child diagnostic guard)
 
 ### Improved: missing-child residuals preserve renderable child diagnostics
