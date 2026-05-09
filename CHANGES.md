@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-05-09 (adapter recovered top-port residual explicit-port diagnostic guard)
+
+### Improved: recovered top-port residuals preserve explicit top-port diagnostics
+- Extended `top_composition_preserves_recovered_top_port_direction_when_still_blocked` in `crates/specforge/src/ir/adapters.rs`.
+- The blocked recovered top-port direction regression now locks the composition residual to include explicit top-port diagnostics alongside child-module reference diagnostics, low confidence, topology-recovered top-port evidence, retained selected inventory provenance, and blocked `.fsm` output.
+- This keeps recovered top-port blockers explainable at both the explicit top-port and child-reference repair surfaces.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_preserves_recovered_top_port_direction_when_still_blocked` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-09 (adapter recovered top-root residual explicit-port diagnostic guard)
 
 ### Improved: recovered top-root residuals preserve explicit top-port diagnostics

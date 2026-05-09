@@ -201,6 +201,7 @@ When matching actor-port graph width evidence recovers a public top-port width, 
 If that recovered top-port direction is still blocked by another composition gate, the adapter also emits the composition-topology residual decision so child-module reference repair remains visible.
 It also keeps the selected top without a renderable top root and the aggregate `.fsm` source document absent, so stale `?top` output cannot leak while the child module is missing.
 The selected signal inventory still keeps numeric width, `top_port` provenance, original declaration support, topology support, graph direction, and high confidence while that missing-child blocker is active.
+That recovered top-port direction residual keeps explicit top-port diagnostics alongside child-module reference diagnostics so both repair surfaces remain visible.
 That recovered-direction residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
 Recovered top-port evidence can also raise the selected top root-kind confidence while keeping that same residual decision visible when topology is still incomplete.
 The selected top signal inventory keeps the recovered public top-port width, graph direction, original declaration support, actor-port graph support, and high confidence attached to that top-root confidence path.
