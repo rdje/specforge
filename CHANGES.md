@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-09 (adapter target unemitted residual explicit-port diagnostic guard)
+
+### Improved: target-side unemitted child residuals preserve explicit top-port diagnostics
+- Extended `top_composition_blocks_link_to_unemitted_child_target_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- The target-side unemitted child endpoint regression now locks the composition residual to include explicit top-port diagnostics alongside renderable child-module diagnostics, low confidence, target-endpoint repair guidance, retained top-port/link/child provenance, and blocked `.fsm` output.
+- This keeps absent emitted child target endpoints explainable at both the child-module and explicit top-port repair surfaces.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_link_to_unemitted_child_target_guidance` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-09 (adapter source unemitted residual explicit-port diagnostic guard)
 
 ### Improved: source-side unemitted child residuals preserve explicit top-port diagnostics

@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter target unemitted residual explicit-port diagnostic guard)
+- Extended `top_composition_blocks_link_to_unemitted_child_target_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- The target-side unemitted child endpoint regression now locks the composition residual to include explicit top-port diagnostics alongside renderable child-module diagnostics, low confidence, target-endpoint repair guidance, retained top-port/link/child provenance, and blocked `.fsm` output.
+- This is a test-surface hardening slice for `R6` `.fsm` adapter diagnostics, not a production architecture change.
+
 ## Session update (2026-05-09 adapter source unemitted residual explicit-port diagnostic guard)
 - Extended `top_composition_blocks_link_from_unemitted_child_source_guidance` in `crates/specforge/src/ir/adapters.rs`.
 - The source-side unemitted child endpoint regression now locks the composition residual to include explicit top-port diagnostics alongside renderable child-module diagnostics, low confidence, source-endpoint repair guidance, retained top-port/link/child provenance, and blocked `.fsm` output.
