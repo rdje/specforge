@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-09 (adapter actor-port direction inventory provenance guard)
+
+### Improved: actor-port direction recovery preserves selected inventory provenance
+- Extended `top_composition_recovers_top_port_direction_from_actor_ports` in `crates/specforge/src/ir/adapters.rs`.
+- The actor-port-backed top-direction recovery regression now locks selected `ext_data` top inventory to `top_port` provenance alongside actor-port provenance, graph direction, top-port support IDs, graph support IDs, and high confidence.
+- This keeps renderable actor-port direction recovery tied to both public top-port declarations and graph actor-port evidence at the selected inventory surface.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_top_port_direction_from_actor_ports` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-09 (adapter child-link top-width inventory provenance guard)
 
 ### Improved: child-link top-width recovery preserves selected inventory provenance
