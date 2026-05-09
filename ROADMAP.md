@@ -225,6 +225,7 @@
   - top-link target endpoint direction-role blockers preserve source/output and target/input repair guidance across topology-backed flat/graph disagreements
   - top-link target endpoint direction-role blockers preserve the same composition-topology residual decision as the source-side role blockers
   - target-side top-link direction-role blockers preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output
+  - target-side child direction-role guidance residuals preserve explicit top-port diagnostics alongside renderable child-module diagnostics so the endpoint-role regression matches the documented repair surfaces
   - target-side child direction-role residuals preserve explicit top-port diagnostics alongside renderable child-module diagnostics so both repair surfaces remain visible
   - top-boundary top-link direction conflicts preserve source/output and target/input repair guidance alongside boundary direction-conflict guidance
   - top-target boundary role conflicts preserve source/output and target/input repair guidance alongside boundary direction-conflict guidance
