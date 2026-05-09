@@ -193,6 +193,7 @@
   - source-side child direction-role blockers preserve selected top signal-inventory provenance, direction, width, support IDs, and high confidence while composition stays blocked
   - source-side child direction-role blockers preserve conflicted child inventory interface provenance, topology-link support, graph direction conflict state, and repair guidance while composition stays blocked
   - target-side child direction-role blockers preserve selected top signal-inventory provenance, direction, width, support IDs, and high confidence while composition stays blocked
+  - target-side child direction-role blockers preserve conflicted child inventory interface provenance, topology-link support, graph-backed direction state, and repair guidance while composition stays blocked
   - missing-child top blockers preserve child-source declaration guidance on blocked top and aggregate `.fsm` renderability surfaces while keeping recovered top-boundary evidence inspectable
   - missing-child top blockers preserve selected top signal-inventory provenance, direction, width, support IDs, and high confidence while composition stays blocked
   - primary missing-child composition blockers preserve child-source declaration guidance alongside top-port and child-declaration provenance

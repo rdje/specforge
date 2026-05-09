@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter target child direction-role inventory provenance guard)
+- Extended `top_composition_blocks_child_target_direction_role_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- The target-side child direction-role blocker regression now locks conflicted `result_data` child inventory to retained `interface` provenance alongside topology-link provenance, link support IDs, graph-backed direction state, and blocked renderability guidance.
+- This is a test-surface hardening slice for `R6` `.fsm` adapter provenance, not a production architecture change.
+
 ## Session update (2026-05-09 adapter source child direction-role inventory provenance guard)
 - Extended `top_composition_blocks_child_source_direction_role_guidance` in `crates/specforge/src/ir/adapters.rs`.
 - The source-side child direction-role blocker regression now locks conflicted `side_data` child inventory to retained `interface` provenance alongside topology-link provenance, link support IDs, graph direction conflict state, and blocked renderability guidance.

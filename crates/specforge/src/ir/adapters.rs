@@ -23405,6 +23405,12 @@ mod tests {
                 .any(|category| category == "module_topology_link")
         );
         assert!(
+            result_data
+                .mention_categories
+                .iter()
+                .any(|category| category == "interface")
+        );
+        assert!(
             link_support_ids
                 .iter()
                 .any(|id| result_data.supporting_canonical_ids.contains(id))
