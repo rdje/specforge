@@ -254,6 +254,7 @@
   - child actor-port direction conflict blockers preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output
   - child link-topology direction recovery preserves explicit top-link support IDs and high automation confidence across producer and consumer child module inventories while staying composition-residual clean once renderable
   - child link-topology direction recovery preserves original child signal declaration support IDs alongside topology-link support IDs in recovered child module inventories while staying composition-residual clean once renderable
+  - child link-topology direction recovery preserves selected child inventory provenance, graph directions, declaration support, topology support, and high confidence once renderable
   - child top-link width recovery preserves explicit top-link support IDs and high automation confidence in recovered child module inventories while staying composition-residual clean once renderable
   - child top-link width recovery preserves original child signal declaration support IDs alongside topology-link support IDs in recovered child module inventories while staying composition-residual clean once renderable
   - sibling child-link width recovery preserves explicit top-link support IDs and high automation confidence in both source-side and target-side recovered child module inventories while staying composition-residual clean once renderable

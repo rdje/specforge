@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-05-09 (adapter child link-topology direction inventory provenance guard)
+
+### Improved: child link-topology direction recovery preserves selected child inventory provenance
+- Extended `top_composition_recovers_child_directions_from_link_topology` in `crates/specforge/src/ir/adapters.rs`.
+- The child link-topology direction recovery regression now locks selected child inventories to retained `interface` provenance alongside topology-link provenance, child signal support IDs, topology support IDs, graph directions, and high confidence.
+- This keeps renderable child direction recovery tied to both explicit child signal declarations and topology-link evidence at the selected child inventory surface.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_child_directions_from_link_topology` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed slice 10 broader checkpoint gate
+
 ## 2026-05-09 (adapter child actor-port direction inventory provenance guard)
 
 ### Improved: child actor-port direction recovery preserves selected child inventory provenance

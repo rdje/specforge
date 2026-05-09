@@ -7,6 +7,17 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-09 adapter child link-topology direction inventory provenance guard
+- New batch slice 10/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
+- Extended `top_composition_recovers_child_directions_from_link_topology` in `crates/specforge/src/ir/adapters.rs`.
+- The child link-topology direction recovery regression now locks selected child inventories to retained `interface` provenance alongside topology-link provenance, child signal support IDs, topology support IDs, graph directions, and high confidence.
+- This keeps renderable child direction recovery tied to both explicit child signal declarations and topology-link evidence at the selected child inventory surface.
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_child_directions_from_link_topology` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests.
+- `cargo fmt --all --check` passed.
+- `bash scripts/run_docs_ci.sh` passed after the live-doc/book sync check.
+- `bash scripts/run_ci.sh` passed as the slice 10 broader checkpoint gate.
+
 ## 2026-05-09 adapter child actor-port direction inventory provenance guard
 - New batch slice 9/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
 - Extended `top_composition_recovers_child_directions_from_actor_ports` in `crates/specforge/src/ir/adapters.rs`.
