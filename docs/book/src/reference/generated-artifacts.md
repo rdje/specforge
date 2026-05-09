@@ -283,6 +283,7 @@ Top-boundary actor-port direction conflicts preserve top-port direction repair g
 They also keep selected inventory provenance for the declared top port and actor-port graph evidence, including declared direction, graph direction, width, support IDs, and high confidence.
 Top-boundary actor-port direction conflicts also emit the composition-topology residual decision so explicit-top-port repair remains visible in structured diagnostics.
 That actor-port direction residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
+The dedicated top actor-port direction conflict regression asserts explicit top-port diagnostics alongside renderable child-module and child-module reference diagnostics before `.fsm` top emission is allowed.
 Top actor-port direction residuals keep child-module reference diagnostics alongside explicit top-port diagnostics so both repair surfaces remain visible.
 Top actor-port direction residuals also keep renderable child-module diagnostics alongside explicit top-port and child-module reference surfaces.
 Top-boundary top-link direction conflicts preserve the same direction repair guidance while retaining topology-link support.

@@ -226,6 +226,7 @@
   - child-system-contract width recovery preserves original public top-port declaration support IDs alongside topology-link and system-contract support IDs and stays composition-residual clean once renderable
   - top actor-port direction conflicts preserve explicit top-port support IDs, graph actor-port support IDs, and high automation confidence while blocking `.fsm` emission
   - top actor-port direction conflict blockers preserve top-boundary direction-conflict enrichment guidance and low-confidence composition-topology residual diagnostics on blocked top and aggregate `.fsm` renderability surfaces
+  - top actor-port direction residuals preserve explicit top-port diagnostics alongside renderable child-module and child-module reference diagnostics so all repair surfaces remain visible
   - top actor-port direction residuals preserve child-module reference diagnostics alongside explicit top-port diagnostics so both repair surfaces remain visible
   - top actor-port direction residuals preserve renderable child-module diagnostics alongside explicit top-port and child-module reference diagnostics so all repair surfaces remain visible
   - top actor-port width conflicts preserve explicit top-port support IDs, graph actor-port width support IDs, width-conflict inventory state, and high automation confidence while blocking `.fsm` emission
