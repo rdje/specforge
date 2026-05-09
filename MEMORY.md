@@ -23,22 +23,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `3ffdbef75ce0e34a8e74fa56b7c367ac1b88d993`
-- latest_commit_brief_message: `test(adapter): keep actor-port direction child confidence`
-- note: this is the pre-slice-174 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
+- latest_commit_hash: `44e31b4c3597f79130ed3c172db4186db9068ec4`
+- latest_commit_brief_message: `test(adapter): keep actor-port width child confidence`
+- note: this is the pre-slice-175 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until all 200 batch slices complete
 
 ## Recent commit chain (last 6)
+- `44e31b4` test(adapter): keep actor-port width child confidence
 - `3ffdbef` test(adapter): keep actor-port direction child confidence
 - `b8a9d45` test(adapter): keep top-link direction link confidence
 - `8695c7d` test(adapter): keep mixed child topology confidence
 - `82e19ef` test(adapter): keep reused FSM topology confidence
 - `82f5174` test(adapter): keep single FSM child topology confidence
-- `cf4f439` test(adapter): keep top-order topology confidence
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 174 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
+- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 175 and push is deferred; branch started this batch one docs-only commit ahead of `origin/main`
 - files in flight:
   - `crates/specforge/src/ir/adapters.rs`
   - `CHANGES.md`
@@ -58,15 +58,15 @@
 ## Current batch status
 - objective:
   - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `173`
-  - slice 174/200 extends the top actor-port width recovery regression to prove the selected child declaration keeps support IDs and high automation confidence while the public top port width is recovered from graph evidence
+  - completed_count before this commit: `174`
+  - slice 175/200 extends the recovered top-root confidence regression to prove selected `ext_data` inventory keeps original top-port support, actor-port graph support, graph direction, width, and high automation confidence
   - push is deferred until all `200` slices complete unless explicitly instructed otherwise or a real blocker stops the batch
 - tracker effect:
-  - live-status tracker now marks top actor-port width recovery child confidence coverage as `Done`
+  - live-status tracker now marks recovered top-root selected inventory confidence coverage as `Done`
 - verification status:
-  - implementation and live-doc sync are complete for slice 174 before commit
+  - implementation and live-doc sync are complete for slice 175 before commit
   - `cargo fmt --all` applied rustfmt layout
-  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_top_port_width_from_actor_ports` passed
+  - `cargo test --manifest-path Cargo.toml -p specforge top_root_kind_confidence_follows_recovered_top_port_evidence` passed
   - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests
   - `cargo fmt --all --check` passed after live-doc sync
   - `bash scripts/run_docs_ci.sh` passed after live-book sync
@@ -100,6 +100,9 @@
   - broader `bash scripts/run_ci.sh` passed on slice 30 with formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, and mdBook
   - user-requested `cargo sweep --time 1` is deferred until no target-tree process is active because `target/release/tool_matrix` is active
 - current known local CI baseline:
+  - slice 175 focused adapter test passed
+  - slice 175 adapter suite passed with `142/142` adapter-filtered tests
+  - slice 175 docs CI passed after live-book sync
   - slice 174 focused adapter test passed
   - slice 174 adapter suite passed with `142/142` adapter-filtered tests
   - slice 174 docs CI passed after live-book sync

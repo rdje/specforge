@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-09 (adapter recovered top-root inventory confidence guard)
+
+### Improved: recovered top-root confidence preserves selected inventory confidence
+- Extended the recovered top-root confidence regression to assert the selected `ext_data` signal inventory keeps the original top-port support IDs, actor-port graph support, graph direction, width, and high automation confidence.
+- The guard keeps root-kind confidence uplift from recovered public top-port evidence tied to explainable selected inventory, not only the recovered top-port record.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge top_root_kind_confidence_follows_recovered_top_port_evidence` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-09 (adapter actor-port width child confidence guard)
 
 ### Improved: actor-port width recovery preserves child confidence

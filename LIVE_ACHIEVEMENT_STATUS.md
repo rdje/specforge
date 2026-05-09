@@ -98,6 +98,7 @@
 - `.fsm` blocked recovered top-port direction residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` recovered top-root confidence blockers now preserve composition topology residual decisions: Done
 - `.fsm` recovered top-root confidence residuals now lock low-confidence topology-detail diagnostics: Done
+- `.fsm` recovered top-root confidence now preserves selected inventory confidence: Done
 - `.fsm` child-declaration top-root confidence now stays composition-residual clean when renderable: Done
 - `.fsm` top-link top-root confidence now stays composition-residual clean when renderable: Done
 - `.fsm` reused-child top documents now stay composition-residual clean after deduplicating child roots: Done

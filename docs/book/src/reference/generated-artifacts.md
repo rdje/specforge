@@ -201,6 +201,7 @@ If that recovered top-port direction is still blocked by another composition gat
 It also keeps the selected top without a renderable top root and the aggregate `.fsm` source document absent, so stale `?top` output cannot leak while the child module is missing.
 That recovered-direction residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
 Recovered top-port evidence can also raise the selected top root-kind confidence while keeping that same residual decision visible when topology is still incomplete.
+The selected top signal inventory keeps the recovered public top-port width, graph direction, original declaration support, actor-port graph support, and high confidence attached to that top-root confidence path.
 That residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
 High-confidence child declarations can raise the selected top root-kind confidence without emitting composition residuals once the single-child topology is renderable.
 High-confidence top-link evidence follows the same residual-clean rule once the linked topology is renderable.

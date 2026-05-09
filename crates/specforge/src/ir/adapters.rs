@@ -16396,7 +16396,7 @@ mod tests {
             "top_root_kind_recovered_confidence.md",
             "# Top Root Kind Recovered Confidence\nTop wrapper.\n\nTop wrapper port ext_data is width 8.\n",
         )?;
-        {
+        let top_port_support_ids = {
             let raw_top = intent_ir
                 .explicit_tops
                 .iter_mut()
@@ -16416,7 +16416,8 @@ mod tests {
                 Some(8)
             );
             raw_port.automation_confidence = AutomationConfidence::Low;
-        }
+            raw_port.supporting_statement_ids.clone()
+        };
 
         intent_ir.actor_ports = vec![actor_port(
             "wrapper",
@@ -16443,6 +16444,11 @@ mod tests {
             .iter()
             .find(|port| port.port_name == "ext_data")
             .expect("recovered top port should be present");
+        let signal_inventory_port = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "ext_data")
+            .expect("recovered top port should stay in selected top inventory");
 
         assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Top);
         assert_eq!(
@@ -16454,10 +16460,42 @@ mod tests {
             Some(InterfaceSignalDirection::Output)
         );
         assert!(
+            top_port_support_ids
+                .iter()
+                .any(|id| recovered_port.supporting_statement_ids.contains(id))
+        );
+        assert!(
             recovered_port
                 .supporting_statement_ids
                 .iter()
                 .any(|id| id == "graph_wrapper_ext_data")
+        );
+        assert_eq!(signal_inventory_port.width_hint, Some(8));
+        assert_eq!(signal_inventory_port.direction_hint, None);
+        assert_eq!(
+            signal_inventory_port.graph_direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert!(
+            signal_inventory_port
+                .mention_categories
+                .iter()
+                .any(|category| category == "actor_port")
+        );
+        assert!(
+            top_port_support_ids
+                .iter()
+                .any(|id| signal_inventory_port.supporting_canonical_ids.contains(id))
+        );
+        assert!(
+            signal_inventory_port
+                .supporting_canonical_ids
+                .iter()
+                .any(|id| id == "graph_wrapper_ext_data")
+        );
+        assert_eq!(
+            signal_inventory_port.automation_confidence,
+            AutomationConfidence::High
         );
         assert_eq!(
             fsm.root_kind_decision.automation_confidence,
