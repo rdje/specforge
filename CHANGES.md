@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-09 (adapter child direction-role residual live-status alignment)
+
+### Improved: child direction-role residual status matches existing coverage
+- Synced live docs and mdBook with existing `top_composition_blocks_child_source_direction_role_guidance` and `top_composition_blocks_child_target_direction_role_guidance` coverage in `crates/specforge/src/ir/adapters.rs`.
+- The source- and target-side child direction-role regressions already lock composition residuals to include renderable child-module diagnostics alongside explicit top-port and child-module reference diagnostics, low confidence, endpoint-role repair guidance, retained child/link provenance, and blocked `.fsm` output.
+- This keeps child endpoint role blockers documented across renderable-child, top-port, and child-reference repair surfaces.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_child_source_direction_role_guidance` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_child_target_direction_role_guidance` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed after live-doc/book sync
+
 ## 2026-05-09 (adapter no-top-port residual live-doc alignment)
 
 ### Improved: no-top-port residual docs match existing code coverage

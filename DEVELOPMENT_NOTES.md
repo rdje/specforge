@@ -7,6 +7,18 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-09 adapter child direction-role residual live-status alignment
+- New batch slice 79/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
+- Synced live docs and mdBook with existing `top_composition_blocks_child_source_direction_role_guidance` and `top_composition_blocks_child_target_direction_role_guidance` coverage in `crates/specforge/src/ir/adapters.rs`.
+- The source- and target-side child direction-role regressions already lock composition residuals to include renderable child-module diagnostics alongside explicit top-port and child-module reference diagnostics, low confidence, endpoint-role repair guidance, retained child/link provenance, and blocked `.fsm` output.
+- This keeps child endpoint role blockers documented across renderable-child, top-port, and child-reference repair surfaces.
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_child_source_direction_role_guidance` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_child_target_direction_role_guidance` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests.
+- `cargo fmt --all --check` passed.
+- `git diff --check` passed.
+- `bash scripts/run_docs_ci.sh` passed after the live-doc/book sync check.
+
 ## 2026-05-09 adapter no-top-port residual live-doc alignment
 - New batch slice 78/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
 - Synced live docs and mdBook with existing `top_composition_blocks_top_without_port_guidance` coverage in `crates/specforge/src/ir/adapters.rs`.
