@@ -302,6 +302,7 @@
   - child topology direction conflict blockers preserve actor-relative graph-direction enrichment guidance and composition-topology residual diagnostics on blocked module and aggregate `.fsm` renderability surfaces
   - child topology direction conflict blockers preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output
   - child topology direction residuals preserve explicit top-port diagnostics alongside renderable child-module diagnostics so both repair surfaces remain visible
+  - child topology direction residuals preserve child-module reference diagnostics alongside renderable child-module and explicit top-port diagnostics so all three repair surfaces remain visible
   - transitive child-width recovery preserves each contributing topology-link support ID and high automation confidence as width evidence flows from top link through sibling child link while staying composition-residual clean once renderable
   - transitive child-width recovery preserves original producer and consumer child signal declaration support IDs alongside topology-link support IDs while staying composition-residual clean once renderable
   - transitive child-width recovery preserves selected producer and consumer child inventory provenance, recovered widths, declaration support, topology support, and high confidence once renderable

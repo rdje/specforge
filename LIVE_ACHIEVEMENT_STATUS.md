@@ -124,6 +124,7 @@
 - `.fsm` child topology direction conflicts now preserve composition topology residual decisions: Done
 - `.fsm` child topology direction residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` child topology direction residuals now preserve explicit top-port diagnostics: Done
+- `.fsm` child topology direction residuals now preserve child-module reference diagnostics: Done
 - `.fsm` child topology direction conflicts now preserve retained record confidence: Done
 - `.fsm` child topology direction conflicts now preserve selected inventory provenance: Done
 - `.fsm` child topology direction conflicts now preserve conflicted child inventory provenance: Done
