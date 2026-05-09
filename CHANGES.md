@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-05-09 (adapter duplicate child residual explicit-port diagnostic guard)
+
+### Improved: duplicate child-instance residuals preserve explicit top-port diagnostics
+- Extended `top_composition_blocks_duplicate_child_instance_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- The duplicate child-instance regression now locks the composition residual to include explicit top-port diagnostics alongside child-module reference diagnostics, low confidence, child deduplication guidance, retained top-port/child provenance, and blocked `.fsm` output.
+- This keeps duplicate child-instance blockers explainable at both the explicit top-port and child-reference repair surfaces.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_duplicate_child_instance_guidance` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed slice 30 broader checkpoint gate
+
 ## 2026-05-09 (adapter no-top-port residual child-reference diagnostic guard)
 
 ### Improved: no-top-port residuals preserve child-module reference diagnostics

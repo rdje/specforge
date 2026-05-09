@@ -335,6 +335,7 @@ Duplicate top child-instance blockers preserve deduplication guidance while keep
 Duplicate child-instance blockers keep retained selected top inventory tied to `top_port` provenance while duplicate child records remain the renderability blocker.
 Duplicate top child-instance blockers also emit the composition-topology residual decision so child-module reference context remains visible in structured diagnostics.
 That duplicate child-instance residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
+Duplicate child-instance residuals keep explicit top-port diagnostics alongside child-module reference diagnostics so both repair surfaces remain visible.
 Multi-child top roots that omit explicit top-link records preserve top-link enrichment guidance while keeping child declaration provenance and resolved child root kinds visible.
 Missing-link multi-child blockers keep retained selected top inventory tied to `top_port` provenance while absent topology links remain the renderability blocker.
 Multi-child top roots that omit explicit top-link records also emit the composition-topology residual decision so width-compatible-link repair remains visible in structured diagnostics.
