@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-09 (adapter top-link direction conflict inventory provenance guard)
+
+### Improved: top-link direction conflicts preserve selected inventory provenance
+- Extended the top-link direction conflict regression to assert selected `drive_data` inventory keeps numeric width and `top_port` provenance while the declared output direction, graph input direction, topology support, top-port support, and high confidence remain visible.
+- The guard keeps blocked top-link-derived direction conflicts explainable at the selected inventory surface alongside the existing renderability blockers and topology provenance.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_keeps_conflicting_top_port_direction_unresolved` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-09 (adapter top actor-width inventory provenance guard)
 
 ### Improved: top actor-port width conflicts preserve selected inventory provenance
