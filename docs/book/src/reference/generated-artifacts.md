@@ -349,6 +349,7 @@ Duplicate top-port width residuals also keep renderable child-module diagnostics
 Widthless public top ports preserve top-boundary width recovery guidance on the same blocked renderability surfaces while keeping missing numeric width distinct from symbolic and conflicted width evidence.
 Widthless public top-port blockers also emit the composition-topology residual decision so explicit-top-port repair remains visible in structured diagnostics.
 That widthless top-port residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
+The widthless top-port blocker regression asserts explicit top-port diagnostics alongside renderable child-module and child-module reference diagnostics before `.fsm` top emission is allowed.
 Widthless top-port residuals keep child-module reference diagnostics alongside explicit top-port diagnostics so both repair surfaces remain visible.
 Widthless top-port residuals also keep renderable child-module diagnostics alongside explicit top-port and child-module reference surfaces.
 That widthless residual guard is asserted directly in the widthless blocker regression, not through adjacent recovered-root confidence coverage.

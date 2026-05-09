@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-05-09 (adapter widthless top-port residual live-status alignment)
+
+### Improved: widthless top-port residual status matches existing coverage
+- Synced live docs and mdBook with existing `top_composition_blocks_widthless_top_port_without_width_recovery` coverage in `crates/specforge/src/ir/adapters.rs`.
+- The widthless public top-port regression already locks the composition residual to include explicit top-port diagnostics alongside renderable child-module and child-module reference diagnostics, low confidence, width-recovery guidance, retained top-port/child provenance, and blocked `.fsm` output.
+- This keeps missing-width public top-port blockers documented across all three repair surfaces.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_widthless_top_port_without_width_recovery` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `git diff --check` -> passed after live-doc/book sync
+- `bash scripts/run_docs_ci.sh` -> passed after live-doc/book sync
+
 ## 2026-05-09 (adapter duplicate top-width residual live-status alignment)
 
 ### Improved: duplicate top-port width residual status matches existing coverage
