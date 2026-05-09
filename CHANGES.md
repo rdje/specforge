@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-05-09 (adapter reused-FSM-child topology confidence guard)
+
+### Improved: reused-FSM-child top documents preserve retained confidence
+- Extended the reused-FSM-child renderable top-document regression to assert both selected/renderable top ports, both selected child declarations, and both selected/renderable topology links keep high automation confidence alongside per-instance support IDs.
+- The guard keeps reused `?fsmc` top documents tied to explainable topology provenance while still proving the shared FSM direct root is emitted only once.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge renderable_top_document_deduplicates_reused_fsm_child_roots` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed slice 170 broader checkpoint gate with formatting, Clippy warning-deny, `665` Rust tests, rustdoc warning-deny, and mdBook
+
 ## 2026-05-09 (adapter single-FSM-child topology confidence guard)
 
 ### Improved: single-FSM-child top documents preserve topology confidence

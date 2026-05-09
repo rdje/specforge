@@ -15391,6 +15391,26 @@ mod tests {
             .iter()
             .find(|port| port.port_name == "ACC_B")
             .expect("ACC_B top port should be present");
+        let top_first_acc_link = top_candidate
+            .links
+            .iter()
+            .find(|link| {
+                link.source.instance_name.as_deref() == Some("first")
+                    && link.source.signal_name == "ACC"
+                    && link.target.instance_name.is_none()
+                    && link.target.signal_name == "ACC_A"
+            })
+            .expect("top candidate should preserve first ACC link");
+        let top_second_acc_link = top_candidate
+            .links
+            .iter()
+            .find(|link| {
+                link.source.instance_name.as_deref() == Some("second")
+                    && link.source.signal_name == "ACC"
+                    && link.target.instance_name.is_none()
+                    && link.target.signal_name == "ACC_B"
+            })
+            .expect("top candidate should preserve second ACC link");
         let renderable_top = fsm
             .renderable_document
             .as_ref()
@@ -15439,20 +15459,36 @@ mod tests {
                 .iter()
                 .any(|id| acc_a_top_port.supporting_statement_ids.contains(id))
         );
+        assert_eq!(
+            acc_a_top_port.automation_confidence,
+            AutomationConfidence::High
+        );
         assert!(
             acc_a_top_port_support_ids
                 .iter()
                 .any(|id| renderable_acc_a_port.supporting_statement_ids.contains(id))
+        );
+        assert_eq!(
+            renderable_acc_a_port.automation_confidence,
+            AutomationConfidence::High
         );
         assert!(
             acc_b_top_port_support_ids
                 .iter()
                 .any(|id| acc_b_top_port.supporting_statement_ids.contains(id))
         );
+        assert_eq!(
+            acc_b_top_port.automation_confidence,
+            AutomationConfidence::High
+        );
         assert!(
             acc_b_top_port_support_ids
                 .iter()
                 .any(|id| renderable_acc_b_port.supporting_statement_ids.contains(id))
+        );
+        assert_eq!(
+            renderable_acc_b_port.automation_confidence,
+            AutomationConfidence::High
         );
         assert!(
             top_candidate
@@ -15476,21 +15512,55 @@ mod tests {
                 .iter()
                 .any(|id| first_child.supporting_canonical_ids.contains(id))
         );
+        assert_eq!(
+            first_child.automation_confidence,
+            AutomationConfidence::High
+        );
         assert!(
             second_child_support_ids
                 .iter()
                 .any(|id| second_child.supporting_canonical_ids.contains(id))
+        );
+        assert_eq!(
+            second_child.automation_confidence,
+            AutomationConfidence::High
+        );
+        assert!(
+            first_acc_link_support_ids
+                .iter()
+                .any(|id| { top_first_acc_link.supporting_statement_ids.contains(id) })
+        );
+        assert_eq!(
+            top_first_acc_link.automation_confidence,
+            AutomationConfidence::High
+        );
+        assert!(
+            second_acc_link_support_ids
+                .iter()
+                .any(|id| { top_second_acc_link.supporting_statement_ids.contains(id) })
+        );
+        assert_eq!(
+            top_second_acc_link.automation_confidence,
+            AutomationConfidence::High
         );
         assert!(first_acc_link_support_ids.iter().any(|id| {
             renderable_first_acc_link
                 .supporting_statement_ids
                 .contains(id)
         }));
+        assert_eq!(
+            renderable_first_acc_link.automation_confidence,
+            AutomationConfidence::High
+        );
         assert!(second_acc_link_support_ids.iter().any(|id| {
             renderable_second_acc_link
                 .supporting_statement_ids
                 .contains(id)
         }));
+        assert_eq!(
+            renderable_second_acc_link.automation_confidence,
+            AutomationConfidence::High
+        );
         assert_eq!(renderable_top.children.len(), 2);
         assert!(
             renderable_top

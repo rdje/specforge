@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter reused-FSM-child topology confidence guard)
+- Extended `renderable_top_document_deduplicates_reused_fsm_child_roots` in `crates/specforge/src/ir/adapters.rs`.
+- The reused-FSM-child renderable top-document regression now locks high automation confidence on both selected/renderable `ACC_A`/`ACC_B` top ports, both selected child declarations, and both selected/renderable per-instance topology links.
+- This keeps reused `?fsmc` top documents tied to explainable topology provenance while still proving the shared FSM direct root is emitted only once.
+
 ## Session update (2026-05-09 adapter single-FSM-child topology confidence guard)
 - Extended `renderable_top_document_preserves_fsm_child_root_kind` in `crates/specforge/src/ir/adapters.rs`.
 - The single-FSM-child renderable top-document regression now locks high automation confidence on selected/renderable `ACC` top ports, the selected `controller` child declaration, and selected/renderable `controller.ACC -> ACC` topology links.
