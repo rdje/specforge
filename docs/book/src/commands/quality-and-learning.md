@@ -74,7 +74,7 @@ Temporal clock-grounding guidance now feeds it too, so already-typed but still-c
 Temporal cycle-window guidance now feeds it too, so already-typed but still-unbounded temporal rules can be replayed for explicit bound recovery through the same local pipeline.
 For visual-motif corroboration, that sequence now starts with a local VLM `enrich_source_ir` hint, then rebuilds `EvidenceIR`, then validates the current artifact.
 By default, `--rescan-vlm-provider auto-local` prefers a ready local Ollama `qwen2.5vl:7b` model and falls back to a ready local LM Studio `qwen2.5vl:7b` model before emitting the install-guiding Ollama hint.
-Use `--rescan-vlm-provider ollama`, `--rescan-vlm-provider lmstudio`, or `--rescan-vlm-provider skip` to force the generated hint, and `--rescan-vlm-model <model>` to bake a model override into the plan.
+Use `--rescan-vlm-provider ollama`, `--rescan-vlm-provider lm-studio`, or `--rescan-vlm-provider skip` to force the generated hint, and `--rescan-vlm-model <model>` to bake a model override into the plan.
 The command hints are there so `rescan-plan` and opt-in `converge --rescan-plan <plan>` runs can rebuild the right stage safely from machine-readable args instead of scraping a prose note.
 The compact live-status queue now also projects the replay-input kind chain plus a concise action summary for each pending recommendation, so the first review surface already tells operators what will be replayed.
 

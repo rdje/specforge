@@ -4,6 +4,13 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 roadmap and live-doc status sync)
+- Corrected the current project steering documents to reflect the implemented codebase state: `R6` is an active `.fsm` adapter hardening lane.
+- The active adapter risk remains `.fsm` renderability/provenance/residual rigor; SystemVerilog, Verilog, and VHDL targets remain planned but not started.
+- The CLI already reserves non-`.fsm` target names, but `AdapterArtifact::build` still returns `FeatureNotYetImplemented` for SystemVerilog, Verilog, and VHDL; the user-facing docs now make that code boundary explicit.
+- The documented command surface was also reconciled with the live clap command set, including enrichment, validation, rescan-plan, learning, corpus-KB, cleanup options, and the `project-validation --rescan-vlm-provider lm-studio` spelling.
+- No Rust code changed in this sync; the update aligns roadmap, continuity, live-status, README, and mdBook statements with the already-validated `147468a3` baseline.
+
 ## Session update (2026-05-09 adapter unemitted source inventory provenance guard)
 - Extended `top_composition_blocks_link_from_unemitted_child_source_guidance` in `crates/specforge/src/ir/adapters.rs`.
 - The source-side unemitted child endpoint blocker regression now locks retained selected `result_data` top inventory to `top_port` provenance alongside direction, width, support IDs, and high confidence.
@@ -5791,7 +5798,7 @@
 - the local runtime boundary is now operationally stronger too: `specforge doctor` reports Docling readiness, the default Ollama loopback readiness, and LM Studio fallback readiness directly, repo-local `.venv-docling` auto-discovery is supported, and the backend now probes versioned Python candidates like `python3.11` before giving up on fresh ingest
 - GitHub Actions CI is part of the repo baseline and still runs `cargo fmt --all --check`, warning-deny Clippy, warning-deny Rust tests, warning-deny rustdoc, and the mdBook build when launched manually, but automatic `push` / `pull_request` triggers are temporarily paused to conserve account Actions minutes
 - that CI path still has a single checked-in entrypoint at `scripts/run_ci.sh`, and the GitHub workflow calls that script directly so local and hosted Rust validation do not drift apart
-- the remaining dominant gaps are semantic-truthfulness gaps: finishing the remaining graph-first consumers, deepening the temporal-rule layer into richer actor-relative and contradiction-aware clocked semantics, KG-guided rescans, evidence arbitration, benchmark-quality evaluation, and deepening the now-started `R15g` corpus knowledge base beside the already-live typed prior-memory plane; adapter expansion is now horizon work
+- the remaining dominant gaps are semantic-truthfulness gaps: finishing the remaining graph-first consumers, deepening the temporal-rule layer into richer actor-relative and contradiction-aware clocked semantics, KG-guided rescans, evidence arbitration, benchmark-quality evaluation, and deepening the now-started `R15g` corpus knowledge base beside the already-live typed prior-memory plane; adapter expansion is deferred future work outside the active `.fsm` hardening lane
 - the workspace currently validates through `bash scripts/run_ci.sh`, which runs Rust formatting, Clippy with `-D warnings`, Rust tests with `RUSTFLAGS="-D warnings"`, rustdoc with `RUSTDOCFLAGS="-D warnings"`, and the mdBook docs build; after the signal-polarity conflict replay/caution slice the full local CI path reports clean formatting, clean Clippy, `414` passing Rust tests, clean Rust API docs, and a successful mdBook build
 
 ## Session update (2026-04-21 polarity-conflict replay and caution)
@@ -6761,7 +6768,7 @@
 - AXI `IHI0022_L` was re-run from the original PDF through full `specforge converge` with Ollama VLM + NLP Level 3, converged in 2 passes, and recovered timing to reach 94/100 EXCELLENT
 - `extract_alias_phrase()` now rejects markdown/table/list marker prefixes such as `-`, `|`, `#`, `*`, `+`, `>`, `1.`, and `2)`, closing the last small R12 cleanup in the NLP alias-learning loop
 - the documented README staged flow was re-executed on `README.md` through `inspect -> ingest -> evidence -> semantic -> intent -> adapt --dry-run`, confirming the current entry path still runs end-to-end
-- the roadmap now explicitly treats adapter expansion as horizon work; the next structural gaps are making the actor-relative graph primary, broadening the new table/prose/alias-grounded role inference into richer multimodal grounding, adding deeper explicit temporal semantics, and hardening KG quality/evaluation
+- the roadmap now explicitly treats adapter expansion as deferred future work outside the active `.fsm` hardening lane; the next structural gaps are making the actor-relative graph primary, broadening the new table/prose/alias-grounded role inference into richer multimodal grounding, adding deeper explicit temporal semantics, and hardening KG quality/evaluation
 - the current architecture is still intentionally document-local, which is correct for truthfulness, but the next strategic expansion after the current semantic-truthfulness work should be a separate cross-document learning plane that stores reusable extraction priors rather than cross-document facts
 - the local Rust test suite is now at `288/288` passing in the latest full CI run after the KG-bench graph-direction expectation surface landed
 - `specforge kg-bench` now provides the first tracked KG-quality fixture harness under `crates/specforge/test_data/kg_quality`, including:

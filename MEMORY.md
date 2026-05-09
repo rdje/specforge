@@ -16,59 +16,54 @@
 - `git_message_brief.txt` must stay untracked and be truncated to `0` bytes after each commit
 - every completion message must report the commit id, exact commit message, full tracked-file list, current live-status snapshot, and whether that snapshot changed
 - outside explicit batch runs, do not push unless the user asks or the branch reaches `25` local commits since the last push
-- active batch-run rule: the current batch uses `BWFSC=200`, must commit after every slice, and must defer push until all 200 slices are complete unless the user explicitly instructs otherwise or a real blocker stops the batch
-- latest completed batch-run rule: the `BWFSC=100` batch committed each slice independently, synced live docs and mdBook at the end of every slice, deferred push until all 100 slices were complete, and was pushed after slice 100
-- previous completed batch-run rule: the `N=200` batch committed each slice independently, synced live docs and mdBook at the end of every slice, deferred push until all 200 new-batch slices were complete, and was pushed after slice 200
+- no batch run is active after the completed `BWFSC=200` run; a future batch requires a fresh user request and must again commit after every slice, then defer push until the requested count completes unless the user explicitly instructs otherwise or a real blocker stops the batch
+- latest completed batch-run rule: the `BWFSC=200` batch committed each slice independently, synced live docs and mdBook at the end of every slice, deferred push until all 200 slices were complete, passed the final full CI gate, and was pushed after slice 200
+- previous completed batch-run rule: the `BWFSC=100` batch committed each slice independently, synced live docs and mdBook at the end of every slice, deferred push until all 100 slices were complete, and was pushed after slice 100
+- earlier completed batch-run rule: the `N=200` batch committed each slice independently, synced live docs and mdBook at the end of every slice, deferred push until all 200 new-batch slices were complete, and was pushed after slice 200
 - previous batch-run rule used: the `N=100` batch committed each slice independently, deferred push until all 100 slices were complete, and was pushed after slice 100
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `d9800be8d1caea994ce109e233a1005e83c7eed1`
-- latest_commit_brief_message: `test(adapter): target undeclared source provenance fixture`
-- note: this is the pre-slice-200 baseline for the active `BWFSC=200` batch; local commits are ahead of `origin/main`, and push is deferred until the final slice commit workflow completes
+- latest_commit_hash: `147468a3038606ca875f4265f8d0c5da45440611`
+- latest_commit_brief_message: `test(adapter): keep unemitted source inventory provenance`
+- note: this is the post-`BWFSC=200` baseline; `main` is aligned with `origin/main`, the batch push is complete, and no batch run is currently active
 
 ## Recent commit chain (last 6)
+- `147468a` test(adapter): keep unemitted source inventory provenance
 - `d9800be` test(adapter): target undeclared source provenance fixture
 - `a99d5d1` test(adapter): keep undeclared source inventory provenance
 - `6bce353` test(adapter): keep undeclared target inventory provenance
 - `f63a96f` test(adapter): keep missing-link inventory provenance
 - `1aa5a7b` test(adapter): keep duplicate child inventory provenance
-- `7939ad3` test(adapter): keep child actor direction inventory provenance
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state before current slice commit: `main` has local work for active `BWFSC=200` slice 200 and push is deferred until the final slice commit workflow completes; branch started this batch one docs-only commit ahead of `origin/main`
+- branch state: `main` is clean and aligned with `origin/main`
 - files in flight:
-  - `crates/specforge/src/ir/adapters.rs`
-  - `CHANGES.md`
-  - `DEVELOPMENT_NOTES.md`
-  - `LIVE_ACHIEVEMENT_STATUS.md`
-  - `RUST_CODEBASE_ANALYSIS.md`
-  - `MEMORY.md`
-  - `docs/book/src/reference/generated-artifacts.md`
+  - none
 
 ## Latest completed N-slice batch
-- requested_count: `100`
-- completed_count: `100`
-- push_policy: completed; pushed once after all `100` batch slices were committed
+- requested_count: `200`
+- completed_count: `200`
+- push_policy: completed; pushed once after all `200` batch slices were committed
 - slice_rule: each slice received verification, live-doc refresh, mdBook sync, commit, message-file truncation, and post-commit checks before the next slice started
-- final_commit: `051e4ee98f6892409551e69828e633b546759a96`
+- final_commit: `147468a3038606ca875f4265f8d0c5da45440611`
 
 ## Current batch status
 - objective:
-  - active `BWFSC=200` batch is in progress
-  - completed_count before this commit: `199`
-  - slice 200/200 extends the source-side unemitted child endpoint blocker regression to prove retained selected `result_data` top inventory keeps top-port provenance while the absent emitted child endpoint remains the renderability blocker
-  - push remains deferred until this final slice commit workflow completes, then the batch policy requires the deferred push
+  - no batch run is active
+  - completed `BWFSC=200` batch closed at slice 200/200 and pushed `main` to `origin/main`
+  - `R6` is now explicitly an active `.fsm` adapter hardening lane; SystemVerilog, Verilog, and VHDL adapter expansion remains not started
 - tracker effect:
-  - live-status tracker now marks source-side unemitted child selected inventory provenance coverage as `Done`
+  - live-status tracker marks the completed `BWFSC=200` batch as `Done`
+  - live-status tracker marks `R6` `.fsm` adapter hardening as `In Progress`
+  - live-status tracker marks SystemVerilog/Verilog/VHDL adapter expansion and validation as `Not Started`
+  - live-status tracker marks the tightened current-state live-doc/mdBook drift audit requirement as `Done`
+  - README and mdBook command surfaces were reconciled with the live clap command set for enrichment, validation, rescan, learning, corpus-KB, cleanup options, and the `project-validation --rescan-vlm-provider lm-studio` spelling
 - verification status:
-  - implementation and live-doc sync are complete for slice 200 before commit
-  - `cargo fmt --all` applied rustfmt layout
-  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_link_from_unemitted_child_source_guidance` passed
-  - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests
-  - `bash scripts/run_ci.sh` passed as the final slice 200 broader checkpoint gate with formatting, Clippy warning-deny, `665` Rust tests, rustdoc warning-deny, and mdBook
+  - latest full gate: `bash scripts/run_ci.sh` passed on slice 200 with formatting, Clippy warning-deny, `665` Rust tests, rustdoc warning-deny, and mdBook
+  - final batch push completed from `051e4ee9` to `147468a3` on `main`
   - `bash scripts/run_ci.sh` passed as the slice 190 broader checkpoint gate with formatting, Clippy warning-deny, `665` Rust tests, rustdoc warning-deny, and mdBook
   - `cargo fmt --all --check` passed after live-doc sync
   - `bash scripts/run_docs_ci.sh` passed after live-book sync
@@ -101,7 +96,7 @@
   - broader `cargo run --manifest-path Cargo.toml -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality` passed on slice 39 with `150` fixtures projected and `0` failures
   - source-split metric scan for fixtures with `signal_semantic_hints = 0` produced no remaining fixtures missing split metrics on slice 35
   - broader `bash scripts/run_ci.sh` passed on slice 30 with formatting, Clippy warning-deny, `614` Rust tests, rustdoc warning-deny, and mdBook
-  - user-requested `cargo sweep --time 1` is deferred until no target-tree process is active because `target/release/tool_matrix` is active
+  - a plain `ps -axo pid,command` check found no active `target/release/tool_matrix` process during this live-doc sync; the old cargo-sweep deferral note was stale
 - current known local CI baseline:
   - slice 200 focused adapter test passed
   - slice 200 adapter suite passed with `142/142` adapter-filtered tests
@@ -560,9 +555,11 @@
   - slice 39 passed `150/150` tracked KG fixtures
   - slice 39 passed corpus-KB projection for `150` fixtures with `0` failures
   - zero-total semantic-hint source-split scan is complete with no missing split metrics
-  - latest `cargo sweep --time 1` attempt was deferred because `target/release/tool_matrix` is active
+  - latest `cargo sweep --time 1` attempt was historically deferred by a `target/release/tool_matrix` process-blocking condition; a fresh process check during the 2026-05-09 doc sync found no running `target/release/tool_matrix` process
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- finish the slice 79 commit workflow, clear and verify `git_message_brief.txt`, then select the next roadmap-aligned graph-first downstream signal-model slice; run the broader `bash scripts/run_ci.sh` checkpoint after slice 80 completes
-- keep `cargo sweep --time 1` deferred until the active `target/release/tool_matrix` process exits, then run it when the target tree is idle
+- if the user requests another batch, start from the next roadmap-aligned `R6` `.fsm` adapter hardening slice and run the full per-slice commit workflow again
+- likely next `R6` slice: target-side unemitted child endpoint selected-inventory provenance, followed by remaining blocked top-composition provenance/residual gaps before broadening adapter targets
+- keep SystemVerilog, Verilog, and VHDL adapter expansion at `Not Started` until the `.fsm` hardening lane and canonical truthfulness surface are ready
+- `cargo sweep --time 1` is no longer blocked by an observed `target/release/tool_matrix` process; run it only when explicitly requested or when it becomes part of a safe cleanup slice

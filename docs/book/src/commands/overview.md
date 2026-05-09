@@ -6,21 +6,24 @@ Current surface:
 
 - `inspect <path>`
 - `doctor [--strict]`
-- `converge <source> --target fsm [--rescan-plan <plan>]`
-- `ingest <source>`
-- `evidence <source-ir>`
-- `semantic <evidence-ir>`
-- `intent <semantic-ir>`
-- `adapt <intent-ir> --target fsm`
-- `enrich <source-ir>`
-- `nlp-enrich <evidence-ir>`
+- `converge <source> [--target fsm] [--vlm-provider ollama|open-ai|lm-studio|skip] [--nlp-provider ollama|open-ai|lm-studio|skip] [--rescan-plan <plan>] [--execute-rescan-plan]`
+- `ingest <source> [--dry-run]`
+- `evidence <source-ir> [--prior-memory <path>] [--dry-run]`
+- `semantic <evidence-ir> [--dry-run]`
+- `intent <semantic-ir> [--dry-run]`
+- `adapt <intent-ir> --target fsm [--dry-run]`
+- `enrich <source-ir> [--vlm-provider ollama|open-ai|lm-studio|skip] [--classify-only] [--dry-run]`
+- `nlp-enrich <evidence-ir> [--vlm-provider ollama|open-ai|lm-studio|skip] [--dry-run]`
 - `validate <artifact>`
 - `kg-bench`
-- `project-validation <artifact>...`
-- `rescan-plan [--execute]`
-- `learn-priors <intent-ir>...`
-- `corpus-kb [validation-report]... [--kg-fixtures-root <fixture-root>]`
-- `clean [--execute] [--scope <scope>]`
+- `project-validation <artifact>... [--rescan-vlm-provider auto-local|ollama|lm-studio|skip]`
+- `rescan-plan [--plan <plan>] [--execute] [--limit <n>] [--document-key <key>]`
+- `learn-priors <intent-ir>... [--dry-run]`
+- `corpus-kb [validation-report]... [--kg-fixtures-root <fixture-root>] [--kg-fixture <fixture>]`
+- `clean [--generated-root <root>] [--scope source-normalized|document|all-generated] [--document-key <key>] [--execute]`
+
+Only `--target fsm` currently materializes adapter artifacts.
+The CLI reserves SystemVerilog, Verilog, and VHDL target names for planned adapter work, but those lowering paths are not started and currently report feature-not-yet-implemented behavior.
 
 The commands fall into three groups:
 

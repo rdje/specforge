@@ -2,6 +2,7 @@
 ## Current snapshot
 - Git repository initialized: Done
 - Commit workflow document present and reviewed: Done
+- Commit workflow now requires explicit current-state live-doc/mdBook drift audit before commit: Done
 - Batch-run deferred-push policy documented while preserving per-slice commits: Done
 - GitHub Actions CI workflow present but temporarily manual-only to conserve Actions minutes: Done
 - Canonical CI entrypoint runnable locally and reused by GitHub Actions: Done
@@ -17,6 +18,8 @@
 - Explicit `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters` architecture defined: Done
 - `BWFSC=100` batch run completed, committed per slice, and pushed after completion: Done
 - `N=200` batch run completed, committed per slice, and pushed after completion: Done
+- `BWFSC=200` batch run completed, committed per slice, passed final full CI, and pushed after completion: Done
+- `R6` `.fsm` adapter hardening lane is active: In Progress
 - `.fsm` duplicate top-port direction blockers now block stale top and aggregate renderable output: Done
 - `.fsm` recovered top-port direction blockers now block stale top and aggregate renderable output: Done
 - `.fsm` actor-port parametric-width blockers now block stale module and aggregate renderable output: Done
@@ -1223,8 +1226,8 @@
 - KG-quality evaluation with gold fixtures and negative fixtures: In Progress
 - Cross-document extraction learning plane with typed reusable priors: In Progress
 - Corpus knowledge base plane beside KG + typed priors: In Progress
-- SystemVerilog/Verilog/VHDL adapter expansion: Horizon
-- Adapter validation (SystemVerilog/Verilog/VHDL targets): Horizon
+- SystemVerilog/Verilog/VHDL adapter expansion: Not Started
+- Adapter validation (SystemVerilog/Verilog/VHDL targets): Not Started
 - Actor-relative direction model in `SemanticIR` / `IntentIR`: In Progress
 - Standalone `.fsm` DT renderable size entries now consume graph-backed actor-port directions: Done
 - Structured `.fsm` renderable size entries now consume graph-backed control-read directions: Done

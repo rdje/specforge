@@ -159,7 +159,10 @@
   - assumptions, abstractions, and residual decisions remain explicit
 
 ### R6 Adapter layer
-- status: Horizon (minimal `.fsm` slice landed; further adapter expansion is intentionally deferred)
+- status: In Progress
+- current lane:
+  - `.fsm` adapter hardening is active, with renderable standalone/top paths, blocked renderability diagnostics, residual decisions, support/confidence preservation, and selected-inventory provenance under continuing regression coverage.
+  - SystemVerilog, Verilog, and VHDL expansion remains intentionally deferred until the `.fsm` lane and canonical IR truthfulness surface are strong enough to avoid semantic invention.
 - goals:
   - define target-specific lowering boundaries for:
     - `.fsm`
@@ -402,7 +405,7 @@
 - remaining:
   - extend validation into the upcoming semantic-truthfulness surfaces (temporal rules, arbitration/conflict records, and KG-quality benchmarks)
   - design tracked approval evidence only if canonical IR mutation is explicitly introduced later
-  - keep adapter validation (SystemVerilog/Verilog/VHDL targets) as horizon work until the semantic pipeline is materially harder to fool
+  - keep adapter validation (SystemVerilog/Verilog/VHDL targets) as not-started future work until the semantic pipeline is materially harder to fool
 
 ### R8 SourceIR SOTA capture (Tier 1 of EXTRACTION_ARCHITECTURE.md)
 - status: Done
@@ -1361,8 +1364,8 @@
   - add further specialized page families beyond the current semantic/truthfulness, typed-prior-memory, table, visual, state-machine, timing, infrastructure, protocol, and prior-candidate pages when new evidence families need their own durable corpus synthesis surfaces
   - continue deepening the prior-candidate bridge only through typed schemas, KG-bench fixtures, and validation gates; do not let corpus-KB candidates directly write `CorpusMemory` or canonical IR
 
-### R16 SystemVerilog adapter (Horizon)
-- status: Horizon
+### R16 SystemVerilog adapter (Not Started)
+- status: Not Started
 - prerequisites:
   - `R15`, `R15b`, `R15c`, `R15d`, `R15e`, `R15f`, `R15g`, and `R14` are materially complete
 - goals:
@@ -1380,7 +1383,7 @@
 7. Add a separate cross-document learning plane for typed extraction priors while keeping canonical document truth local (`R15f`)
 8. Add a corpus knowledge base plane beside the KG and prior memory so compiled cross-document synthesis becomes persistent and reviewable (`R15g`)
 9. Extend relation extraction for harder prose with Tier 3 support only after the graph/temporal/eval/corpus-memory surfaces are ready (`R14`)
-10. Treat new adapter families and adapter validation as horizon work until the semantic pipeline is materially harder to fool (`R16`)
+10. Treat new adapter families and adapter validation as not-started future work until the semantic pipeline is materially harder to fool (`R16`)
 
 ## Immediate next milestone
 - `R15`: finish the transition from compatibility `direction_hint` fields to actor-relative graph-first downstream semantics

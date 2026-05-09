@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-05-09 (roadmap and live-doc status sync)
+
+### Fixed: R6 and batch state now match the current project state
+- Updated the roadmap, live status tracker, continuity memory, README, and mdBook pipeline page so `R6` is documented as an active `.fsm` adapter hardening lane rather than future-only work.
+- Recorded the completed `BWFSC=200` batch and final push state, and marked SystemVerilog/Verilog/VHDL adapter expansion and validation as `Not Started` instead of using the stale future-only label in the live tracker.
+- Changed the future SystemVerilog roadmap lane from future-only wording to `Not Started` so roadmap terminology matches the live-status tracker.
+- Audited CLI adapter target behavior against the docs: `.fsm` is the only materializing adapter target, while SystemVerilog/Verilog/VHDL target names are reserved but currently report feature-not-yet-implemented behavior.
+- Audited the current clap command surface and synced the README/mdBook command overview for implemented `enrich`, `nlp-enrich`, `validate`, rescan, learning, corpus-KB, cleanup options, and the `project-validation --rescan-vlm-provider lm-studio` spelling.
+- Removed the stale continuity claim that `cargo sweep --time 1` is blocked by an active `target/release/tool_matrix` process after a fresh process check found no such active process.
+- Tightened `COMMIT.md` so every future commit workflow must explicitly audit current-state drift across live docs and mdBook before staging.
+
+### Validation
+- `cargo run -p specforge -- --help` -> passed
+- `target/debug/specforge converge --help` / `adapt --help` / `project-validation --help` / `rescan-plan --help` / `enrich --help` / `nlp-enrich --help` / `clean --help` -> passed
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-09 (adapter unemitted source inventory provenance guard)
 
 ### Improved: source-side unemitted child blockers preserve selected inventory provenance
@@ -17979,7 +17996,7 @@
 
 ### Added: explicit visual corroboration replay command
 - Updated [project_validation.rs](crates/specforge/src/commands/project_validation.rs) so `evidence_visual_motif_corroboration_guidance` recommendations now emit `enrich_source_ir` before the downstream `rebuild_evidence_ir` and `validate_current_artifact` hints.
-- Added `project-validation --rescan-vlm-provider auto-local|ollama|lmstudio|skip` and optional `--rescan-vlm-model <model>` so generated visual-motif enrichment hints can prefer ready local Ollama, fall back to ready local LM Studio, or be forced by policy instead of always emitting Ollama.
+- Added `project-validation --rescan-vlm-provider auto-local|ollama|lm-studio|skip` and optional `--rescan-vlm-model <model>` so generated visual-motif enrichment hints can prefer ready local Ollama, fall back to ready local LM Studio, or be forced by policy instead of always emitting Ollama.
 - Updated [doctor.rs](crates/specforge/src/commands/doctor.rs) with a reusable local default-model presence helper and bounded curl timeouts for readiness probes.
 - Updated [rescan_plan.rs](crates/specforge/src/commands/rescan_plan.rs) so `rescan-plan --execute` can parse and run whitelisted local `enrich` hints in-process.
 - The enrich replay parser accepts local Ollama, local LM Studio, or `skip`, supports an optional model and `--classify-only`, and intentionally rejects OpenAI replay hints so generated rescans stay local-first.
@@ -20732,7 +20749,7 @@
   - KG-guided multimodal rescans
   - cross-modality evidence arbitration
   - KG-quality evaluation with gold and negative fixtures
-- Demoted SystemVerilog/Verilog/VHDL adapter expansion and adapter validation to horizon work until the semantic pipeline is materially harder to fool.
+- Demoted SystemVerilog/Verilog/VHDL adapter expansion and adapter validation to deferred future work until the semantic pipeline is materially harder to fool.
 
 ### Changed: continuity docs now steer future sessions toward the truth-model program
 - Updated `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `README.md`, and `USER_GUIDE.md` so they no longer imply that adapter validation is the next priority.

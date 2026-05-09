@@ -7,6 +7,22 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-09 roadmap and live-doc status sync
+- User correctly identified that `ROADMAP.md` still labeled `R6` as future-only even though current work has been active `.fsm` adapter hardening.
+- Updated `ROADMAP.md` so `R6 Adapter layer` is `In Progress`, with `.fsm` hardening as the active lane and SystemVerilog/Verilog/VHDL expansion explicitly deferred.
+- Updated the future SystemVerilog roadmap lane from future-only wording to `Not Started` so roadmap terminology matches the live-status tracker.
+- Updated `LIVE_ACHIEVEMENT_STATUS.md` with the completed `BWFSC=200` batch, the active `R6` `.fsm` hardening lane, and `Not Started` statuses for SystemVerilog/Verilog/VHDL expansion and validation.
+- Updated `MEMORY.md` from stale pre-final-slice batch wording to the post-batch baseline `147468a3038606ca875f4265f8d0c5da45440611`, clean `main` aligned with `origin/main`, no active batch, and next `R6` slice guidance.
+- Updated `README.md` and `docs/book/src/commands/pipeline.md` so user-facing docs describe active `.fsm` adapter hardening and keep non-`.fsm` adapters as planned but not started.
+- Audited `crates/specforge/src/cli.rs` and `crates/specforge/src/ir/adapters.rs`: `AdapterTargetArg` reserves `systemverilog`, `verilog`, and `vhdl`, while `AdapterArtifact::build` returns `FeatureNotYetImplemented` for those targets. `README.md`, `docs/book/src/commands/overview.md`, and `docs/book/src/commands/pipeline.md` now state that boundary explicitly.
+- Audited `specforge --help` and focused subcommand help for `converge`, `adapt`, `project-validation`, `rescan-plan`, `enrich`, `nlp-enrich`, and `clean`; synced the README/mdBook current command surface for implemented enrichment, validation, rescan, learning, corpus-KB, cleanup options, and the `project-validation --rescan-vlm-provider lm-studio` spelling.
+- Verified the stale `target/release/tool_matrix` blocker claim with `ps -axo pid,command`; no active `target/release/tool_matrix` process was present, so `MEMORY.md` now says the old cargo-sweep deferral note is stale rather than still blocked.
+- Tightened `COMMIT.md` to make current-state drift a pre-commit blocker and require explicit reconciliation of live docs and mdBook before staging.
+- `cargo run -p specforge -- --help` passed.
+- Focused subcommand help checks for `converge`, `adapt`, `project-validation`, `rescan-plan`, `enrich`, `nlp-enrich`, and `clean` passed.
+- `cargo fmt --all --check` passed.
+- `bash scripts/run_docs_ci.sh` passed after the mdBook sync.
+
 ## 2026-05-09 adapter unemitted source inventory provenance guard
 - New batch slice 200/200 uses active `BWFSC=200`; this is the final planned slice, and push remains deferred until this slice's commit workflow completes.
 - Extended `top_composition_blocks_link_from_unemitted_child_source_guidance` in `crates/specforge/src/ir/adapters.rs`.
@@ -12163,7 +12179,7 @@
   - add typed evidence arbitration for cross-modality disagreement
   - add gold fixtures, negative fixtures, and false-positive tracking for the KG
   - only then push harder Tier 3 relation extraction
-- adapter expansion and adapter validation should be treated as horizon work until the semantic truthfulness program above is materially complete
+- adapter expansion and adapter validation should be treated as not-started future work until the semantic truthfulness program above is materially complete
 - the key principle is that adapters should consume truth, not compensate for missing truth; when the pipeline struggles, the right fix is usually better evidence lifting, better temporal modeling, or better KG evaluation rather than smarter lowering
 
 ## Programming semantic intent without a black-box PDF-to-code pipeline
@@ -12701,7 +12717,7 @@
 - when a prior-classified visual becomes normative but still lacks VLM timing/state extraction observations, validation now emits `evidence_visual_motif_corroboration_guidance` and increments `visual_motif_corroboration_targets`
 - `project-validation` consumes that finding as generic `rescan_guidance`, so visual-motif priors can route attention to targeted VLM/multimodal corroboration without becoming a truth-promotion channel
 - visual-motif corroboration recommendations now carry an explicit replay sequence: local VLM `enrich_source_ir`, then `rebuild_evidence_ir`, then `validate_current_artifact`
-- their provider hint is no longer hardcoded to Ollama: `project-validation --rescan-vlm-provider auto-local` prefers ready local Ollama, falls back to ready local LM Studio, and still allows explicit `ollama`, `lmstudio`, `skip`, and `--rescan-vlm-model <model>` overrides
+- their provider hint is no longer hardcoded to Ollama: `project-validation --rescan-vlm-provider auto-local` prefers ready local Ollama, falls back to ready local LM Studio, and still allows explicit `ollama`, `lm-studio`, `skip`, and `--rescan-vlm-model <model>` overrides
 - the tracked visual-motif fixture set now has the before/after shape:
   - `visual_motif_prior_guided_diagram_classification_gold` proves a staged prior creates a classification observation, normative role, corroboration target, and zero semantic hints
   - `visual_motif_prior_guided_diagram_classification_without_prior_negative` proves the same current caption stays ambiguous and unclassified when the prior is absent

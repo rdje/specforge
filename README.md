@@ -36,7 +36,7 @@ Use it first for the project objective, document navigation, and the current imp
 - the current `specforge` CLI surface supports:
   - `inspect <path>`
   - `doctor [--strict]`
-  - `converge <source> --target fsm [--rescan-plan <plan>]`
+  - `converge <source> [--target fsm] [--vlm-provider ollama|open-ai|lm-studio|skip] [--nlp-provider ollama|open-ai|lm-studio|skip] [--rescan-plan <plan>] [--execute-rescan-plan]`
   - `ingest <source> --dry-run`
   - `ingest <source>`
   - `evidence <source-ir> --dry-run`
@@ -45,14 +45,17 @@ Use it first for the project objective, document navigation, and the current imp
   - `semantic <evidence-ir>`
   - `intent <semantic-ir> --dry-run`
   - `intent <semantic-ir>`
+  - `enrich <source-ir> [--vlm-provider ollama|open-ai|lm-studio|skip] [--classify-only] [--dry-run]`
+  - `nlp-enrich <evidence-ir> [--vlm-provider ollama|open-ai|lm-studio|skip] [--dry-run]`
+  - `validate <artifact>`
   - `adapt <intent-ir> --target fsm --dry-run`
   - `adapt <intent-ir> --target fsm`
   - `kg-bench`
-  - `project-validation <artifact>...`
-  - `rescan-plan [--execute]`
-  - `learn-priors <intent-ir>...`
-  - `corpus-kb [validation-report]... [--kg-fixtures-root <fixture-root>]`
-  - `clean [--execute] [--scope <scope>]`
+  - `project-validation <artifact>... [--rescan-vlm-provider auto-local|ollama|lm-studio|skip]`
+  - `rescan-plan [--plan <plan>] [--execute] [--limit <n>] [--document-key <key>]`
+  - `learn-priors <intent-ir>... [--dry-run]`
+  - `corpus-kb [validation-report]... [--kg-fixtures-root <fixture-root>] [--kg-fixture <fixture>]`
+  - `clean [--generated-root <root>] [--scope source-normalized|document|all-generated] [--document-key <key>] [--execute]`
 - `specforge ingest` now computes and materializes `SourceIR` at `generated/source_ir/<document_key>/source_ir.json`
 - PDF re-ingest now stages normalization into `generated/source_ir/<document_key>/normalized.staging` and only swaps it into `normalized/` after backend success, so stale page/image leftovers from older runs do not accumulate and a failed rerun does not destroy the last good normalized bundle
 - `specforge evidence` now computes and materializes `EvidenceIR` at `generated/evidence_ir/<document_key>/evidence_ir.json`
@@ -256,17 +259,15 @@ Use it first for the project objective, document navigation, and the current imp
   - `IntentIR`
   - typed adapter lowering
 - the first real `.fsm` adapter slices now materialize typed adapter artifacts, emit explicit standalone `?dt:name` text for honest canonical DT cases, emit structured `?fsm:name` text when the canonical state graph is explicit, emit explicit `?top:name` source documents when module/top composition facts are explicit, lower canonical symbol-definition sections, structured reset-role blocks, selector/test-node branches, and compound-update shorthand from the widened semantic model when those canonical shapes map directly into `.fsm`, keep reset polarity honest through the reset signal name because emitted `.fsm` text still carries only `sreset` / `asreset` plus the signal, keep unsupported selector predicates and other unsafe broader-root cases blocked with explicit residual decisions instead of fabricating target syntax, and intentionally keep compatibility-level `?mod:name` / `?module:name` spellings outside the current canonical root-kind model until a real backend-neutral direct-module distinction exists
-- the next implementation milestone is semantic-truthfulness hardening: finish the remaining graph-first direction migration, broaden the new meaning-based role inference beyond signal-description tables plus initial prose/alias grounding into richer multimodal grounding, deepen the temporal-rule surface into richer temporal arbitration across modalities and actors, add KG-guided rescans and evidence arbitration, and now broaden the first cross-document learning plane so the extractor can accumulate reusable priors without contaminating per-document canonical truth; adapter expansion remains horizon work until the canonical four-layer pipeline is top-notch
+- the next implementation milestone is semantic-truthfulness plus active `.fsm` adapter hardening: finish the remaining graph-first direction migration, broaden the new meaning-based role inference beyond signal-description tables plus initial prose/alias grounding into richer multimodal grounding, deepen the temporal-rule surface into richer temporal arbitration across modalities and actors, add KG-guided rescans and evidence arbitration, broaden the first cross-document learning plane so the extractor can accumulate reusable priors without contaminating per-document canonical truth, and keep tightening `.fsm` adapter renderability/provenance diagnostics; SystemVerilog, Verilog, and VHDL adapter expansion remains not started until the `.fsm` lane and canonical truthfulness surface are strong enough
 - that truthfulness program now includes a tracked KG benchmark surface under `crates/specforge/test_data/kg_quality/`, with seed gold and negative fixtures for actor ports, graph-backed direction coverage, compatibility-direction lag versus genuinely unresolved direction gaps, name-only semantic noise rejection, multi-producer conflict surfacing, actor-boundary residual quality, contested handshake-name fallback blocking, alias-dependent handshake-completion caveats, both positive and negative direct VLM timing-note semantic grounding, same-asset visual semantic conflict surfacing, collective and mixed clause-local non-reset control polarity recovery plus detached mixed-polarity rejection, AMBA-style `Source`-column and `Destination`-column gold fixtures, representative APB `Requester` / `Completer`, setup/access timing, address-protection-stability, write-control stability, and response-stability gold fixtures, representative AXI width-only plus prose-direction, write-address next-cycle timing, write-response timing, address-response-user-sideband-stability, read-address timing, address-qos-region-sideband-stability, read-address-control-sideband-stability, read-address-sideband-stability, data-user-sideband-stability, read-data timing, read-data-last-stability, write-data timing, write-data-last-stability, sideband-stability, write-address-control-sideband-stability, and write-address-sideband-stability gold fixtures, representative AHB section-heading, wait-state timing, control-stability, transfer-lock-stability, exclusive-security-stability, response-stability, and write-data-stability gold fixtures, a bogus-actor-attribution negative fixture for `Source`-column infrastructure rows, explicit clock/reset topology gold plus generic-advice negative fixtures, a field-table misclassification negative fixture, spurious-timing negative fixtures proving low-value VLM annotation labels and motion-only VLM annotation prose do not become timing constraints, and prior-guided gold/negative pairs for actor-taxonomy direction recovery, bounded temporal recovery, semantic-role recovery, and visual-caption semantic recovery
 
 ## Working naming
 - repository / project / CLI / crate name: `specforge`
 - canonical output: `IntentIR`
 - adapter targets:
-  - `.fsm`
-  - SystemVerilog
-  - Verilog
-  - VHDL
+  - `.fsm` is the active implemented/hardening lane
+  - SystemVerilog, Verilog, and VHDL are planned adapter targets; their CLI target names are reserved, but lowering currently returns `FeatureNotYetImplemented`
 
 ## Fast ramp-up order
 1. `README.md`
@@ -480,7 +481,7 @@ cargo run -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_dat
 - `specforge adapt <intent-ir> --target fsm` materializes `generated/adapters/fsm/<document_key>/adapter.json` and writes an emitted `.fsm` file when the canonical interface/control/system/init/state surface or explicit module/top composition surface is explicit enough for honest standalone DT, structured FSM, or first-slice `?top:name` lowering
 - `specforge converge <source> --target fsm` materializes the loop-backed pipeline entrypoint, defaults to full Ollama VLM + NLP Level 3 enrichment, and stops when `SourceIR`/`EvidenceIR`/`SemanticIR`/`IntentIR`/adapter facts stop changing; add `--rescan-plan generated/validation/rescan_plan.json` to dry-run the targeted validation queue after stability, and add `--execute-rescan-plan` only when you intentionally want whitelisted replay hints executed
 - `specforge project-validation <artifact>...` validates the passed artifacts, persists their latest reports, refreshes `VALIDATION_SNAPSHOT.md`, and updates the managed validation projection block in `LIVE_ACHIEVEMENT_STATUS.md`
-- `specforge project-validation` also materializes `generated/validation/rescan_plan.json`, a local-only replay-oriented target list with typed inputs and structured command hints; visual-motif corroboration entries include an explicit local VLM `enrich_source_ir` hint before `EvidenceIR` rebuild/validation, and `--rescan-vlm-provider auto-local|ollama|lmstudio|skip` plus optional `--rescan-vlm-model <model>` controls the generated local provider hint without executing rescans automatically
+- `specforge project-validation` also materializes `generated/validation/rescan_plan.json`, a local-only replay-oriented target list with typed inputs and structured command hints; visual-motif corroboration entries include an explicit local VLM `enrich_source_ir` hint before `EvidenceIR` rebuild/validation, and `--rescan-vlm-provider auto-local|ollama|lm-studio|skip` plus optional `--rescan-vlm-model <model>` controls the generated local provider hint without executing rescans automatically
 - `specforge rescan-plan [--execute]` consumes that local plan; without `--execute` it only prints pending work, and with `--execute` it dispatches only whitelisted local enrichment/stage rebuild/validate hints from structured args rather than shell text, then records whether validation changed plus the before/after validation delta and conservative arbitration verdict; `--document-key <key>` scopes multi-document queues, and the same engine is available through `converge --rescan-plan <plan>` after the fixed-point loop stabilizes
 - `specforge kg-bench` runs the tracked fixture set under `crates/specforge/test_data/kg_quality/` and fails if any gold/negative KG expectation drifts
 - `specforge clean [--execute]` reclaims local generated artifacts; by default it dry-runs `generated/source_ir/*/normalized`, `--scope document [--document-key <key>]` removes full per-document generated stage trees, and `--scope all-generated` sweeps the full local `generated/` root when you intentionally want to rebuild everything from scratch

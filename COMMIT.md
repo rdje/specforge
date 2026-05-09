@@ -57,6 +57,10 @@ When the user explicitly authorizes an automatic batch of `N` tasks, slices, or 
      - always review the tracked continuity/workflow markdown surface before commit,
      - always update every relevant tracked `.md` file touched by the task or affected by its workflow/policy/command/documentation impact,
      - do not leave a relevant markdown file stale just because code/tests already passed.
+   - Treat current-state drift as a blocker before commit:
+     - explicitly compare the codebase and just-completed work against `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `MEMORY.md`, `RUST_CODEBASE_ANALYSIS.md`, and the mdBook source,
+     - reconcile active/in-progress/not-started terminology, batch state, push state, command surfaces, adapter targets, and validation claims before staging,
+     - do not proceed to commit while a current-facing live doc or live-book page still describes a stale project state.
    - For long-running or multi-step tasks:
      - do not wait until the very end to refresh live docs,
      - update `MEMORY.md` and any other impacted live documents at meaningful checkpoints,
