@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-09 (adapter multi-child no-link residual child-reference diagnostic guard)
+
+### Improved: multi-child no-link residuals preserve child-module reference diagnostics
+- Extended `top_composition_blocks_multi_child_without_links_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- The multi-child top-without-links regression now locks the composition residual to include child-module reference diagnostics alongside width-compatible top-link and explicit top-port diagnostics, low confidence, top-link repair guidance, retained top-port/child provenance, and blocked `.fsm` output.
+- This keeps missing-link multi-child top blockers explainable across link, top-port, and child-reference repair surfaces.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_multi_child_without_links_guidance` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed as the slice 60 broader checkpoint gate
+
 ## 2026-05-09 (adapter top-link width residual child-reference diagnostic guard)
 
 ### Improved: top-link width residuals preserve child-module reference diagnostics

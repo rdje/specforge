@@ -254,6 +254,7 @@
 - `.fsm` multi-child no-link top blockers now preserve composition topology residual decisions: Done
 - `.fsm` multi-child no-link residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` multi-child no-link residuals now preserve explicit top-port diagnostics: Done
+- `.fsm` multi-child no-link residuals now preserve child-module reference diagnostics: Done
 - `.fsm` no-child top blockers now preserve composition topology residual decisions: Done
 - `.fsm` no-child top residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` no-child top residuals now preserve explicit top-port diagnostics: Done
