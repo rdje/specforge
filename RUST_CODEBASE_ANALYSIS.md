@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter no-child top residual renderable-child diagnostic guard)
+- Extended `top_composition_blocks_top_without_child_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- The no-child top regression now locks the composition residual to include renderable child-module diagnostics alongside explicit top-port and child-module reference diagnostics, low confidence, child-reference enrichment guidance, retained top-port provenance, and blocked `.fsm` output.
+- This is a test-surface hardening slice for `R6` `.fsm` adapter diagnostics, not a production architecture change.
+
 ## Session update (2026-05-09 adapter top-link width residual renderable-child diagnostic guard)
 - Extended `top_composition_blocks_width_mismatched_top_link_guidance` in `crates/specforge/src/ir/adapters.rs`.
 - The top-link width-mismatch regression now locks the composition residual to include renderable child-module diagnostics alongside width-compatible top-link, explicit top-port, and child-module reference diagnostics, low confidence, width-compatible repair guidance, retained endpoint/top-port provenance, and blocked `.fsm` output.
