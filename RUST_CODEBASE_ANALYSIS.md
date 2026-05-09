@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter recovered top-root residual live-status alignment)
+- Synced live docs and mdBook with existing `top_root_kind_confidence_follows_recovered_top_port_evidence` coverage in `crates/specforge/src/ir/adapters.rs`.
+- The recovered top-root confidence regression already locks the composition residual to include child-module reference diagnostics alongside renderable child-module and explicit top-port diagnostics, low confidence, recovered top-port evidence, retained selected inventory provenance, and blocked `.fsm` output.
+- This is a documentation alignment slice for existing `R6` `.fsm` adapter diagnostics, not a production architecture change.
+
 ## Session update (2026-05-09 adapter missing-child residual live-status alignment)
 - Synced live docs and mdBook with existing `keeps_top_composition_blocked_when_child_module_is_missing` coverage in `crates/specforge/src/ir/adapters.rs`.
 - The primary missing child-module top regression already locks the composition residual to include child-module reference diagnostics alongside renderable child-module and explicit top-port diagnostics, low confidence, child-source declaration guidance, retained top-port/child provenance, and blocked `.fsm` output.

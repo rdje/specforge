@@ -208,6 +208,7 @@ Recovered top-port evidence can also raise the selected top root-kind confidence
 The selected top signal inventory keeps the recovered public top-port width, graph direction, original declaration support, actor-port graph support, and high confidence attached to that top-root confidence path.
 That recovered top-root confidence residual keeps explicit top-port diagnostics alongside child-module reference diagnostics so both repair surfaces remain visible.
 That recovered top-root confidence residual also keeps renderable child-module diagnostics alongside explicit top-port and child-module reference surfaces.
+The recovered top-root confidence regression directly asserts that three-surface residual contract while topology remains blocked.
 That residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
 High-confidence child declarations can raise the selected top root-kind confidence without emitting composition residuals once the single-child topology is renderable.
 That path preserves the selected public top-port inventory support, width, direction, provenance category, and original low confidence instead of letting child confidence rewrite top-port inventory.

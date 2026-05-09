@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-05-09 (adapter recovered top-root residual live-status alignment)
+
+### Improved: recovered top-root residual status matches existing coverage
+- Synced live docs and mdBook with existing `top_root_kind_confidence_follows_recovered_top_port_evidence` coverage in `crates/specforge/src/ir/adapters.rs`.
+- The recovered top-root confidence regression already locks the composition residual to include child-module reference diagnostics alongside renderable child-module and explicit top-port diagnostics, low confidence, recovered top-port evidence, retained selected inventory provenance, and blocked `.fsm` output.
+- This keeps recovered top-boundary evidence blockers documented across all three repair surfaces.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_root_kind_confidence_follows_recovered_top_port_evidence` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `git diff --check` -> passed after live-doc/book sync
+- `bash scripts/run_docs_ci.sh` -> passed after live-doc/book sync
+
 ## 2026-05-09 (adapter missing-child residual live-status alignment)
 
 ### Improved: missing-child residual status matches existing coverage
