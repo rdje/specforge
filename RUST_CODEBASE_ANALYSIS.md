@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter child topology width inventory provenance guard)
+- Extended `top_composition_blocks_conflicting_child_topology_widths` in `crates/specforge/src/ir/adapters.rs`.
+- The direct child topology width conflict regression now locks conflicted child `output_data` inventory to output direction and topology-link provenance while width remains conflicted.
+- The same guard locks retained selected `result_data` top inventory to `top_port` provenance alongside direction, width, support IDs, and high confidence.
+
 ## Session update (2026-05-09 adapter sibling child-link inventory provenance guard)
 - Extended `top_composition_blocks_conflicting_sibling_child_link_widths` in `crates/specforge/src/ir/adapters.rs`.
 - The sibling child-link width conflict regression now locks the conflicted child `input_data` inventory to input direction and topology-link provenance while width remains conflicted.
