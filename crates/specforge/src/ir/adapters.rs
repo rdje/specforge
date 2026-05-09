@@ -17449,7 +17449,17 @@ mod tests {
             signal_inventory_port.parametric_width_hint.as_deref(),
             Some("DATA_WIDTH")
         );
+        assert_eq!(
+            signal_inventory_port.direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
         assert!(!signal_inventory_port.width_hint_conflicted);
+        assert!(
+            signal_inventory_port
+                .mention_categories
+                .iter()
+                .any(|category| category == "top_port")
+        );
         assert!(
             top_port_support_ids
                 .iter()

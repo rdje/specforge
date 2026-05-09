@@ -59,6 +59,7 @@
 - `.fsm` widthless top-port blockers now preserve retained record confidence: Done
 - `.fsm` widthless top-port blockers now preserve selected inventory direction/provenance: Done
 - `.fsm` parametric top-port blockers now preserve retained record confidence: Done
+- `.fsm` parametric top-port blockers now preserve selected inventory direction/provenance: Done
 - `.fsm` recovered top-port missing-module blockers now preserve retained record confidence: Done
 - `.fsm` top-without-child blockers now preserve selected inventory confidence: Done
 - `.fsm` missing child-module top blockers now preserve selected inventory confidence: Done

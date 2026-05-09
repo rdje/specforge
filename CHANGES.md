@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-05-09 (adapter parametric top inventory provenance guard)
+
+### Improved: parametric top-port blockers preserve selected inventory provenance
+- Extended the parametric top-port blocker regression to assert selected `ext_data` inventory keeps output direction and `top_port` provenance while numeric width remains absent, the parametric width hint remains `DATA_WIDTH`, and width conflict stays false.
+- The guard keeps parametric top-boundary blockers tied to explainable public top-port inventory rather than only support IDs and confidence.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_parametric_top_port_width_for_fsm_public_io` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed slice 180 broader checkpoint gate
+
 ## 2026-05-09 (adapter widthless top inventory provenance guard)
 
 ### Improved: widthless top-port blockers preserve selected inventory provenance
