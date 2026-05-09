@@ -418,6 +418,7 @@ That target-side residual remains low-confidence and anchored to incomplete chil
 The provenance-rich target-side guidance regression also keeps explicit top-port diagnostics alongside renderable child-module diagnostics so both target-endpoint repair surfaces remain visible.
 That provenance-rich target-side guidance regression also keeps child-module reference diagnostics alongside renderable child-module and explicit-top-port surfaces.
 Target-side unemitted child endpoint residuals keep explicit top-port diagnostics alongside renderable child-module diagnostics so both repair surfaces remain visible.
+Target-side unemitted child endpoint residuals also keep child-module reference diagnostics alongside those renderable-child and explicit-top-port surfaces.
 
 For structured FSM roots, the artifact preserves the graph surface that led to renderability or blocking.
 Renderable structured-FSM cases keep named state and transition candidates, and reset-block cases keep renderable state bodies plus synchronous/asynchronous reset block roles.

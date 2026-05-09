@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-09 (adapter unemitted child residual live-status alignment)
+
+### Improved: unemitted child residual status matches existing coverage
+- Synced live docs and mdBook with existing source- and target-side unemitted child endpoint residual coverage in `crates/specforge/src/ir/adapters.rs`.
+- The source- and target-side regressions already lock composition residuals to include renderable child-module diagnostics, explicit top-port diagnostics, and child-module reference diagnostics with low confidence, endpoint repair guidance, retained top-port/child/link provenance, and blocked `.fsm` output.
+- This keeps absent emitted child endpoint blockers documented across all three repair surfaces.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_link_from_unemitted_child_source_guidance` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_link_to_unemitted_child_target_guidance` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `git diff --check` -> passed after live-doc/book sync
+- `bash scripts/run_docs_ci.sh` -> passed after live-doc/book sync
+
 ## 2026-05-09 (adapter topology residual live-status alignment)
 
 ### Improved: topology residual status matches existing renderable-child coverage
