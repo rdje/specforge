@@ -373,6 +373,7 @@ Top roots that omit top-port records preserve top-port enrichment guidance while
 Top roots that omit top-port records also emit the composition-topology residual decision so explicit-top-port repair remains visible in structured diagnostics.
 That no-top-port residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
 No-top-port residuals keep child-module reference diagnostics alongside explicit top-port diagnostics so both repair surfaces remain visible.
+No-top-port residuals also keep renderable child-module diagnostics alongside explicit top-port and child-module reference surfaces.
 Top links that target undeclared top-boundary ports preserve target-endpoint enrichment guidance while keeping the declared top-port, child, and link provenance visible.
 Undeclared top-target blockers keep retained selected top inventory tied to `top_port` provenance while target endpoints remain unresolved.
 Top links that target undeclared top-boundary ports also emit the composition-topology residual decision so explicit-top-port repair remains visible in structured diagnostics.

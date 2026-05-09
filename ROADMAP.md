@@ -265,6 +265,7 @@
   - top roots without top-port records preserve top-port enrichment guidance and composition-topology residual diagnostics while retaining child declaration provenance and resolved child root kind
   - top roots without top-port records preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output
   - no-top-port residuals preserve child-module reference diagnostics alongside explicit top-port diagnostics so both repair surfaces remain visible
+  - no-top-port residuals preserve renderable child-module diagnostics alongside explicit top-port and child-module reference diagnostics so all repair surfaces remain visible
   - duplicate child-instance top blockers preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output
   - duplicate child-instance residuals preserve explicit top-port diagnostics alongside child-module reference diagnostics so both repair surfaces remain visible
   - duplicate child-instance residuals preserve renderable child-module diagnostics alongside explicit top-port and child-module reference diagnostics so all repair surfaces remain visible

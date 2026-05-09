@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-05-09 (adapter no-top-port residual renderable-child diagnostic guard)
+
+### Improved: no-top-port residuals preserve renderable child diagnostics
+- Extended `top_composition_blocks_top_without_port_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- The no-top-port regression now locks the composition residual to include renderable child-module diagnostics alongside explicit top-port and child-module reference diagnostics, low confidence, top-port repair guidance, retained child provenance, and blocked `.fsm` output.
+- This keeps missing top-port blockers explainable across renderable-child, top-port, and child-reference repair surfaces.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_top_without_port_guidance` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-09 (adapter duplicate child residual renderable-child diagnostic guard)
 
 ### Improved: duplicate child-instance residuals preserve renderable child diagnostics
