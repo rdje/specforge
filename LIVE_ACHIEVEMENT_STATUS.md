@@ -158,6 +158,7 @@
 - `.fsm` source-side sibling child-width recovery now stays composition-residual clean when renderable: Done
 - `.fsm` source-side sibling child-width recovery now preserves selected child inventory provenance: Done
 - `.fsm` transitive child-width recovery now stays composition-residual clean when renderable: Done
+- `.fsm` transitive child-width recovery now preserves selected child inventory provenance: Done
 - `.fsm` renderable standalone DT baseline now preserves signal-inventory support and confidence: Done
 - `.fsm` renderable standalone sequential DT baseline now preserves signal-inventory support and confidence: Done
 - `.fsm` renderable symbolic DT baseline now preserves signal-inventory support and confidence: Done

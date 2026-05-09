@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-09 (adapter transitive child-width inventory provenance guard)
+
+### Improved: transitive child-width recovery preserves selected child inventory provenance
+- Extended `top_composition_recovers_child_width_through_transitive_topology` in `crates/specforge/src/ir/adapters.rs`.
+- The transitive topology-backed child-width recovery regression now locks both selected `output_data` and `input_data` child inventories to retained `interface` provenance alongside topology-link provenance, child signal support IDs, topology support IDs, recovered widths, and high confidence.
+- This keeps renderable transitive child-width recovery tied to both explicit child signal declarations and every contributing topology-link evidence surface.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_child_width_through_transitive_topology` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-09 (adapter source-side sibling child-width inventory provenance guard)
 
 ### Improved: source-side sibling child-link width recovery preserves selected child inventory provenance

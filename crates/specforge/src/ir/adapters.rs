@@ -20174,6 +20174,12 @@ mod tests {
                 .iter()
                 .any(|category| category == "module_topology_link")
         }));
+        assert!([output_data, input_data].iter().all(|signal| {
+            signal
+                .mention_categories
+                .iter()
+                .any(|category| category == "interface")
+        }));
         assert!(
             producer_to_top_support_ids
                 .iter()

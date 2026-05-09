@@ -250,6 +250,7 @@ Source-side sibling-link child width recovery follows it for recovered child out
 Recovered source-side sibling child-link output widths retain selected child inventory provenance from the original child interface while adding topology-link evidence, recovered width, support IDs, and high confidence.
 Recovered source-side sibling child-link widths also feed child renderable `(+size ...)` entries, so emitted child output widths do not depend on an original child-local numeric declaration.
 Transitive child width recovery keeps declaration support for each recovered child signal while recording the topology links that propagated the width, and renderable recovery leaves no composition-topology residual.
+Recovered transitive topology widths retain selected child inventory provenance on each affected producer and consumer signal while carrying topology-link evidence, recovered width, support IDs, and high confidence.
 Recovered transitive topology widths also feed child renderable `(+size ...)` entries for each affected child module, so propagated widths are visible in emitted child surfaces.
 Child link-topology direction recovery keeps declaration support for each recovered child signal while recording the topology links that supplied graph directions, and renderable recovery leaves no composition-topology residual.
 Those topology-recovered child directions also feed child renderable `(+size ...)` entries, so emitted child roles do not require flat child-module direction hints.
