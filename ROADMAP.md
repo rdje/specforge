@@ -257,6 +257,7 @@
   - child link-topology direction recovery preserves selected child inventory provenance, graph directions, declaration support, topology support, and high confidence once renderable
   - child top-link width recovery preserves explicit top-link support IDs and high automation confidence in recovered child module inventories while staying composition-residual clean once renderable
   - child top-link width recovery preserves original child signal declaration support IDs alongside topology-link support IDs in recovered child module inventories while staying composition-residual clean once renderable
+  - top-link child-width recovery preserves selected child inventory provenance, recovered width, declaration support, topology support, and high confidence once renderable
   - sibling child-link width recovery preserves explicit top-link support IDs and high automation confidence in both source-side and target-side recovered child module inventories while staying composition-residual clean once renderable
   - sibling child-link width recovery preserves original child signal declaration support IDs alongside topology-link support IDs in recovered child module inventories while staying composition-residual clean once renderable
   - source-side sibling child-link width recovery preserves original child signal declaration support IDs alongside topology-link support IDs in recovered child module inventories while staying composition-residual clean once renderable

@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-09 (adapter top-link child-width inventory provenance guard)
+
+### Improved: top-link child-width recovery preserves selected child inventory provenance
+- Extended `top_composition_recovers_child_width_from_top_link_topology` in `crates/specforge/src/ir/adapters.rs`.
+- The top-link-backed child-width recovery regression now locks selected `output_data` child inventory to retained `interface` provenance alongside topology-link provenance, child signal support IDs, topology support IDs, recovered width, and high confidence.
+- This keeps renderable child-width recovery tied to both explicit child signal declarations and top-link topology evidence at the selected child inventory surface.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_recovers_child_width_from_top_link_topology` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-09 (adapter child link-topology direction inventory provenance guard)
 
 ### Improved: child link-topology direction recovery preserves selected child inventory provenance
