@@ -290,6 +290,7 @@ Top-boundary top-link direction conflicts preserve the same direction repair gui
 They also keep selected inventory provenance for the declared top port and topology evidence, including declared direction, graph direction, width, support IDs, and high confidence.
 Top-boundary top-link direction conflicts also emit the composition-topology residual decision so explicit-top-port repair remains visible in structured diagnostics.
 That top-link direction residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
+The dedicated top-link direction conflict regression asserts explicit top-port diagnostics alongside renderable child-module and child-module reference diagnostics before `.fsm` top emission is allowed.
 Top-link direction residuals keep child-module reference diagnostics alongside renderable child-module and explicit top-port diagnostics so all three repair surfaces remain visible.
 Duplicate top-boundary direction declarations also preserve that direction repair guidance while retaining both duplicate declaration support-ID sets.
 They also keep selected duplicate inventory provenance for the declared top ports, including width, non-conflicted width state, top-port provenance, support IDs, and high confidence while direction remains unresolved.

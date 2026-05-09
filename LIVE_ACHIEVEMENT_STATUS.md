@@ -118,6 +118,7 @@
 - `.fsm` sibling child-link width conflicts now preserve selected inventory confidence: Done
 - `.fsm` top-link direction conflicts now preserve composition topology residual decisions: Done
 - `.fsm` top-link direction residuals now lock low-confidence topology-detail diagnostics: Done
+- `.fsm` top-link direction residuals now preserve explicit top-port diagnostics: Done
 - `.fsm` top-link direction residuals now preserve child-module reference diagnostics: Done
 - `.fsm` top-link direction residuals now preserve renderable child-module diagnostics: Done
 - `.fsm` top-link direction conflicts now preserve retained record confidence: Done

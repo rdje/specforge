@@ -7,6 +7,18 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-09 adapter top-link direction residual live-status alignment
+- New batch slice 90/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
+- Synced live docs and mdBook with existing `top_composition_keeps_conflicting_top_port_direction_unresolved` coverage in `crates/specforge/src/ir/adapters.rs`.
+- The top-link direction conflict regression already locks the composition residual to include explicit top-port diagnostics alongside renderable child-module and child-module reference diagnostics, low confidence, top-boundary direction-conflict repair guidance, retained top-port/child/link provenance, and blocked `.fsm` output.
+- This keeps topology-backed public top-direction blockers documented across all three repair surfaces.
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_keeps_conflicting_top_port_direction_unresolved` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests.
+- `cargo fmt --all --check` passed.
+- `git diff --check` passed after the live-doc/book sync check.
+- `bash scripts/run_docs_ci.sh` passed after the live-doc/book sync check.
+- `bash scripts/run_ci.sh` passed as the slice 90 broader checkpoint gate.
+
 ## 2026-05-09 adapter top actor-direction residual live-status alignment
 - New batch slice 89/100 uses active `BWFSC=100`; push remains deferred until all 100 slices complete unless a documented blocker stops the batch.
 - Synced live docs and mdBook with existing `top_composition_blocks_conflicting_top_actor_port_direction` coverage in `crates/specforge/src/ir/adapters.rs`.
