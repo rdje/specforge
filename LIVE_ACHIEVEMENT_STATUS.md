@@ -149,6 +149,7 @@
 - `.fsm` blocked recovered top-port direction now preserves composition topology residual decisions: Done
 - `.fsm` blocked recovered top-port direction residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` blocked recovered top-port direction residuals now preserve explicit top-port diagnostics: Done
+- `.fsm` blocked recovered top-port direction residuals now preserve renderable child-module diagnostics: Done
 - `.fsm` blocked recovered top-port direction now preserves selected inventory provenance: Done
 - `.fsm` recovered top-root confidence blockers now preserve composition topology residual decisions: Done
 - `.fsm` recovered top-root confidence residuals now lock low-confidence topology-detail diagnostics: Done

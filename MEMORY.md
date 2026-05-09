@@ -24,22 +24,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `bd2eb7534aa6d4c63c0d7538d827808848391971`
-- latest_commit_brief_message: `test(adapter): keep multi-child no-link diagnostics`
-- note: this is the pre-slice-75 baseline for the active `BWFSC=100` batch; `main` is seventy-six local commits ahead of `origin/main`, and push is deferred until the 100-slice batch completes unless the user explicitly redirects or a real blocker stops the batch
+- latest_commit_hash: `b2f9948f8381bb4fb199a644d55fa55b377dbc4a`
+- latest_commit_brief_message: `test(adapter): keep recovered root diagnostics`
+- note: this is the pre-slice-76 baseline for the active `BWFSC=100` batch; `main` is seventy-seven local commits ahead of `origin/main`, and push is deferred until the 100-slice batch completes unless the user explicitly redirects or a real blocker stops the batch
 
 ## Recent commit chain (last 6)
+- `b2f9948` test(adapter): keep recovered root diagnostics
 - `bd2eb75` test(adapter): keep multi-child no-link diagnostics
 - `c07acc9` test(adapter): keep no-child top diagnostics
 - `0531aa9` test(adapter): keep top-link width diagnostics
 - `9800191` test(adapter): keep parametric top diagnostics
 - `cd7c175` test(adapter): keep widthless top diagnostics
-- `edbcdd4` test(adapter): keep duplicate top width diagnostics
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state: `main` has local work for active `BWFSC=100` slice 75 and push is deferred until all 100 slices complete
+- branch state: `main` has local work for active `BWFSC=100` slice 76 and push is deferred until all 100 slices complete
 - files in flight:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -60,8 +60,8 @@
 ## Current batch status
 - objective:
   - active `BWFSC=100` batch is in progress
-  - completed_count before this commit: `74`
-  - slice 75/100 extends the recovered top-root confidence residual regression to prove renderable child-module diagnostics remain visible alongside explicit top-port and child-module reference diagnostics while stale `.fsm` emission remains blocked
+  - completed_count before this commit: `75`
+  - slice 76/100 extends the blocked recovered top-port direction residual regression to prove renderable child-module diagnostics remain visible alongside explicit top-port and child-module reference diagnostics while stale `.fsm` emission remains blocked
   - push remains deferred until all 100 batch slices are committed unless the user explicitly redirects or a real blocker stops the batch
   - `R6` remains the active `.fsm` adapter hardening lane; SystemVerilog, Verilog, and VHDL adapter expansion remains not started
 - tracker effect:
@@ -85,6 +85,7 @@
   - live-status tracker now marks no-child top renderable child-module residual diagnostics as `Done`
   - live-status tracker now marks multi-child no-link renderable child-module residual diagnostics as `Done`
   - live-status tracker now marks recovered top-root confidence renderable child-module residual diagnostics as `Done`
+  - live-status tracker now marks blocked recovered top-port direction renderable child-module residual diagnostics as `Done`
   - live-status tracker now marks actor-port direction recovery selected inventory provenance coverage as `Done`
   - live-status tracker now marks actor-port width recovery selected inventory provenance coverage as `Done`
   - live-status tracker now marks child actor-port direction recovery selected child inventory provenance coverage as `Done`
@@ -147,6 +148,12 @@
   - live-status tracker marks the tightened current-state live-doc/mdBook drift audit requirement as `Done`
   - README and mdBook command surfaces were reconciled with the live clap command set for enrichment, validation, rescan, learning, corpus-KB, cleanup options, and the `project-validation --rescan-vlm-provider lm-studio` spelling
 - verification status:
+  - implementation and live-doc/book sync are complete for slice 76 before commit
+  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_preserves_recovered_top_port_direction_when_still_blocked` passed
+  - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests
+  - `cargo fmt --all --check` passed
+  - `git diff --check` passed
+  - `bash scripts/run_docs_ci.sh` passed after the live-doc/book sync check
   - implementation and live-doc/book sync are complete for slice 75 before commit
   - `cargo test --manifest-path Cargo.toml -p specforge top_root_kind_confidence_follows_recovered_top_port_evidence` passed
   - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests
