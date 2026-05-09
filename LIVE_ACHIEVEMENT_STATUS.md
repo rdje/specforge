@@ -311,6 +311,7 @@
 - `.fsm` duplicate top-width blockers now preserve composition topology residual decisions: Done
 - `.fsm` duplicate top-width residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` duplicate top-width residuals now preserve child-module reference diagnostics: Done
+- `.fsm` duplicate top-width residuals now preserve renderable child-module diagnostics: Done
 - `.fsm` widthless top-port residuals now preserve child-module reference diagnostics: Done
 - `.fsm` widthless top-port residual guard placement is corrected: Done
 - `.fsm` parametric top-port residuals now preserve child-module reference diagnostics: Done
