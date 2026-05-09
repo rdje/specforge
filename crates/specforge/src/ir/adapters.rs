@@ -16535,7 +16535,7 @@ mod tests {
             "top_root_kind_child_confidence.md",
             "# Top Root Kind Child Confidence\nTop wrapper.\n\nTop wrapper port done is output width 1.\n\nTop wrapper child controller uses module controller_core.\n\nModule controller_core signal DONE is output width 1.\n\nModule controller_core block drive_done: DONE = 1.\n",
         )?;
-        let child_support_ids = {
+        let (top_port_support_ids, child_support_ids) = {
             let raw_top = intent_ir
                 .explicit_tops
                 .iter_mut()
@@ -16551,6 +16551,7 @@ mod tests {
                 .find(|port| port.port_name == "done")
                 .expect("top port should be present");
             raw_port.automation_confidence = AutomationConfidence::Low;
+            let top_port_support_ids = raw_port.supporting_statement_ids.clone();
 
             let raw_child = raw_top
                 .children
@@ -16562,7 +16563,10 @@ mod tests {
                 !raw_child.supporting_statement_ids.is_empty(),
                 "top child should carry concrete support IDs"
             );
-            raw_child.supporting_statement_ids.clone()
+            (
+                top_port_support_ids,
+                raw_child.supporting_statement_ids.clone(),
+            )
         };
         intent_ir.write_to_disk()?;
 
@@ -16589,10 +16593,40 @@ mod tests {
             .iter()
             .find(|child| child.instance_name == "controller")
             .expect("controller child should be present");
+        let signal_inventory_port = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "done")
+            .expect("top port should stay in selected top inventory");
 
         assert_eq!(top_candidate.links.len(), 0);
         assert_eq!(
             recovered_port.automation_confidence,
+            AutomationConfidence::Low
+        );
+        assert!(
+            top_port_support_ids
+                .iter()
+                .any(|id| recovered_port.supporting_statement_ids.contains(id))
+        );
+        assert_eq!(
+            signal_inventory_port.direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert_eq!(signal_inventory_port.width_hint, Some(1));
+        assert!(
+            signal_inventory_port
+                .mention_categories
+                .iter()
+                .any(|category| category == "top_port")
+        );
+        assert!(
+            top_port_support_ids
+                .iter()
+                .any(|id| signal_inventory_port.supporting_canonical_ids.contains(id))
+        );
+        assert_eq!(
+            signal_inventory_port.automation_confidence,
             AutomationConfidence::Low
         );
         assert_eq!(

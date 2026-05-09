@@ -7,6 +7,19 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-09 adapter child-declaration root inventory confidence guard
+- New batch slice 176/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Extended `top_root_kind_confidence_follows_child_declaration_evidence` in `crates/specforge/src/ir/adapters.rs`.
+- The child-declaration top-root confidence regression now locks the selected `done` signal inventory to its top-port support IDs, output direction, width, `top_port` provenance, and low automation confidence while the child declaration raises root-kind confidence.
+- This keeps child-backed root-kind confidence uplift from fabricating higher public top-port inventory confidence.
+- `cargo fmt --all` applied rustfmt layout.
+- `cargo test --manifest-path Cargo.toml -p specforge top_root_kind_confidence_follows_child_declaration_evidence` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests.
+- `cargo fmt --all --check` passed.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- Push remains deferred for the active `BWFSC=200` batch.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-09 adapter recovered top-root inventory confidence guard
 - New batch slice 175/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Extended `top_root_kind_confidence_follows_recovered_top_port_evidence` in `crates/specforge/src/ir/adapters.rs`.

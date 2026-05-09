@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter child-declaration root inventory confidence guard)
+- Extended `top_root_kind_confidence_follows_child_declaration_evidence` in `crates/specforge/src/ir/adapters.rs`.
+- The child-declaration top-root confidence regression now locks the selected `done` signal inventory to its top-port support IDs, output direction, width, `top_port` provenance, and low automation confidence while the child declaration raises root-kind confidence.
+- This keeps child-backed root-kind confidence uplift from fabricating higher public top-port inventory confidence.
+
 ## Session update (2026-05-09 adapter recovered top-root inventory confidence guard)
 - Extended `top_root_kind_confidence_follows_recovered_top_port_evidence` in `crates/specforge/src/ir/adapters.rs`.
 - The recovered top-root confidence regression now locks the selected `ext_data` signal inventory to the original top-port support IDs, actor-port graph support, graph direction, width, and high automation confidence.

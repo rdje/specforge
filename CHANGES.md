@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-09 (adapter child-declaration root inventory confidence guard)
+
+### Improved: child-declaration top-root confidence preserves selected inventory confidence
+- Extended the child-declaration top-root confidence regression to assert the selected `done` signal inventory keeps its top-port support IDs, output direction, width, `top_port` provenance, and low automation confidence while the child declaration raises root-kind confidence.
+- The guard keeps child-backed root-kind confidence uplift from fabricating higher public top-port inventory confidence.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge top_root_kind_confidence_follows_child_declaration_evidence` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-09 (adapter recovered top-root inventory confidence guard)
 
 ### Improved: recovered top-root confidence preserves selected inventory confidence
