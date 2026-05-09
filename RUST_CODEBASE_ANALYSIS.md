@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter duplicate top-port width residual child-reference diagnostic guard)
+- Extended `top_composition_keeps_duplicate_top_port_width_conflict_unresolved` in `crates/specforge/src/ir/adapters.rs`.
+- The duplicate top-port width conflict regression now locks the composition residual to include child-module reference diagnostics alongside explicit top-port diagnostics, low confidence, deduplication repair guidance, retained top-port/child provenance, and blocked `.fsm` output.
+- This is a test-surface hardening slice for `R6` `.fsm` adapter diagnostics, not a production architecture change.
+
 ## Session update (2026-05-09 adapter duplicate top-port direction residual child-reference diagnostic guard)
 - Extended `top_composition_keeps_duplicate_top_port_direction_conflict_unresolved` in `crates/specforge/src/ir/adapters.rs`.
 - The duplicate top-port direction conflict regression now locks the composition residual to include child-module reference diagnostics alongside explicit top-port diagnostics, low confidence, deduplication repair guidance, retained top-port/child provenance, and blocked `.fsm` output.

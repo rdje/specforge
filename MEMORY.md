@@ -24,22 +24,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `3f8339198aaf7658eb6fa7faf05cc8e13ec05f0d`
-- latest_commit_brief_message: `test(adapter): keep top target role diagnostics`
-- note: this is the pre-slice-49 baseline for the active `BWFSC=100` batch; `main` is fifty local commits ahead of `origin/main`, and push is deferred until the 100-slice batch completes unless the user explicitly redirects or a real blocker stops the batch
+- latest_commit_hash: `7784ded3795ebdb532fc9e6d86c4aae6d5ebc19e`
+- latest_commit_brief_message: `test(adapter): keep duplicate top direction diagnostics`
+- note: this is the pre-slice-50 baseline for the active `BWFSC=100` batch; `main` is fifty-one local commits ahead of `origin/main`, and push is deferred until the 100-slice batch completes unless the user explicitly redirects or a real blocker stops the batch
 
 ## Recent commit chain (last 6)
+- `7784ded` test(adapter): keep duplicate top direction diagnostics
 - `3f83391` test(adapter): keep top target role diagnostics
 - `7fc8bdd` test(adapter): keep top link direction diagnostics
 - `ccbb23b` test(adapter): keep top actor width diagnostics
 - `03e9683` test(adapter): keep top actor direction diagnostics
 - `ea018f9` test(adapter): keep child actor direction diagnostics
-- `6b80ae5` test(adapter): keep child topology direction diagnostics
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state: `main` has local work for active `BWFSC=100` slice 49 and push is deferred until all 100 slices complete
+- branch state: `main` has local work for active `BWFSC=100` slice 50 and push is deferred until all 100 slices complete
 - files in flight:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -60,8 +60,8 @@
 ## Current batch status
 - objective:
   - active `BWFSC=100` batch is in progress
-  - completed_count before this commit: `48`
-  - slice 49/100 extends the duplicate top-port direction residual regression to prove child-module reference diagnostics remain visible alongside explicit top-port diagnostics while stale `.fsm` emission remains blocked
+  - completed_count before this commit: `49`
+  - slice 50/100 extends the duplicate top-port width residual regression to prove child-module reference diagnostics remain visible alongside explicit top-port diagnostics while stale `.fsm` emission remains blocked
   - push remains deferred until all 100 batch slices are committed unless the user explicitly redirects or a real blocker stops the batch
   - `R6` remains the active `.fsm` adapter hardening lane; SystemVerilog, Verilog, and VHDL adapter expansion remains not started
 - tracker effect:
@@ -113,6 +113,7 @@
   - live-status tracker now marks no-top-port child-module reference residual diagnostics as `Done`
   - live-status tracker now marks duplicate child-instance explicit top-port residual diagnostics as `Done`
   - live-status tracker now marks duplicate top-port direction child-module reference residual diagnostics as `Done`
+  - live-status tracker now marks duplicate top-port width child-module reference residual diagnostics as `Done`
   - live-status tracker now marks undeclared top-target child-module reference residual diagnostics as `Done`
   - live-status tracker now marks undeclared top-source child-module reference residual diagnostics as `Done`
   - live-status tracker marks the completed `BWFSC=200` batch as `Done`
@@ -121,6 +122,13 @@
   - live-status tracker marks the tightened current-state live-doc/mdBook drift audit requirement as `Done`
   - README and mdBook command surfaces were reconciled with the live clap command set for enrichment, validation, rescan, learning, corpus-KB, cleanup options, and the `project-validation --rescan-vlm-provider lm-studio` spelling
 - verification status:
+  - implementation and live-doc/book sync are complete for slice 50 before commit
+  - `cargo test --manifest-path Cargo.toml -p specforge top_composition_keeps_duplicate_top_port_width_conflict_unresolved` passed
+  - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests
+  - `cargo fmt --all --check` passed
+  - `git diff --check` passed
+  - `bash scripts/run_docs_ci.sh` passed after the live-doc/book sync check
+  - `bash scripts/run_ci.sh` passed as the slice 50 broader checkpoint gate
   - implementation and live-doc/book sync are complete for slice 49 before commit
   - `cargo test --manifest-path Cargo.toml -p specforge top_composition_keeps_duplicate_top_port_direction_conflict_unresolved` passed
   - `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests

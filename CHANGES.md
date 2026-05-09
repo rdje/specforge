@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-09 (adapter duplicate top-port width residual child-reference diagnostic guard)
+
+### Improved: duplicate top-port width residuals preserve child-module reference diagnostics
+- Extended `top_composition_keeps_duplicate_top_port_width_conflict_unresolved` in `crates/specforge/src/ir/adapters.rs`.
+- The duplicate top-port width conflict regression now locks the composition residual to include child-module reference diagnostics alongside explicit top-port diagnostics, low confidence, deduplication repair guidance, retained top-port/child provenance, and blocked `.fsm` output.
+- This keeps duplicate public width blockers explainable at both the explicit top-port and child-reference repair surfaces.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_keeps_duplicate_top_port_width_conflict_unresolved` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- `bash scripts/run_ci.sh` -> passed as the slice 50 broader checkpoint gate
+
 ## 2026-05-09 (adapter duplicate top-port direction residual child-reference diagnostic guard)
 
 ### Improved: duplicate top-port direction residuals preserve child-module reference diagnostics
