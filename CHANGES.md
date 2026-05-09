@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-05-09 (adapter duplicate top-direction residual live-status alignment)
+
+### Improved: duplicate top-port direction residual status matches existing coverage
+- Synced live docs and mdBook with existing `top_composition_keeps_duplicate_top_port_direction_conflict_unresolved` coverage in `crates/specforge/src/ir/adapters.rs`.
+- The duplicate top-port direction regression already locks the composition residual to include explicit top-port diagnostics alongside renderable child-module and child-module reference diagnostics, low confidence, deduplication/direction repair guidance, retained top-port/child provenance, and blocked `.fsm` output.
+- This keeps duplicate public top-direction blockers documented across all three repair surfaces.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_keeps_duplicate_top_port_direction_conflict_unresolved` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `git diff --check` -> passed after live-doc/book sync
+- `bash scripts/run_docs_ci.sh` -> passed after live-doc/book sync
+
 ## 2026-05-09 (adapter top-link direction residual live-status alignment)
 
 ### Improved: top-link direction residual status matches existing coverage

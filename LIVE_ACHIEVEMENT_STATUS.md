@@ -79,6 +79,9 @@
 - `.fsm` top actor-port width conflicts now preserve selected inventory provenance: Done
 - `.fsm` duplicate top-port direction blockers now preserve retained record confidence: Done
 - `.fsm` duplicate top-port direction blockers now preserve selected inventory provenance: Done
+- `.fsm` duplicate top-port direction residuals now preserve explicit top-port diagnostics: Done
+- `.fsm` duplicate top-port direction residuals now preserve child-module reference diagnostics: Done
+- `.fsm` duplicate top-port direction residuals now preserve renderable child-module diagnostics: Done
 - `.fsm` duplicate top-port width blockers now preserve retained record confidence: Done
 - `.fsm` duplicate top-port width blockers now preserve selected inventory provenance: Done
 - `.fsm` widthless top-port blockers now preserve retained record confidence: Done

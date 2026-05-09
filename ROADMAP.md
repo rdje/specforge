@@ -257,6 +257,7 @@
   - duplicate top-port direction conflict blockers preserve top-boundary direction-conflict enrichment guidance on blocked top and aggregate `.fsm` renderability surfaces
   - duplicate top-port direction blockers preserve explicit top-port deduplication guidance, composition-topology residual diagnostics, and direction-conflict guidance
   - duplicate top-port direction blockers preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output
+  - duplicate top-port direction residuals preserve explicit top-port diagnostics alongside renderable child-module and child-module reference diagnostics so all repair surfaces remain visible
   - duplicate top-port direction residuals preserve child-module reference diagnostics alongside explicit top-port diagnostics so both repair surfaces remain visible
   - duplicate top-port direction residuals preserve renderable child-module diagnostics alongside explicit top-port and child-module reference diagnostics so all repair surfaces remain visible
   - duplicate top-port width conflicts preserve both duplicate declaration support-ID sets, width-conflict inventory state, and high automation confidence while blocking `.fsm` emission
