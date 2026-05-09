@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-05-09 (adapter unemitted child target guidance residual child-reference diagnostic guard)
+
+### Improved: provenance-rich unemitted child-target residuals preserve child-module reference diagnostics
+- Extended `top_composition_blocks_link_to_unemitted_child_target_guidance` in `crates/specforge/src/ir/adapters.rs`.
+- The target-side unemitted child endpoint regression now locks the composition residual to include child-module reference diagnostics alongside renderable child-module and explicit top-port diagnostics, low confidence, target-endpoint repair guidance, retained top-port/child/link provenance, and blocked `.fsm` output.
+- This keeps target-side unemitted child endpoint blockers explainable at all three repair surfaces.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_link_to_unemitted_child_target_guidance` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-09 (adapter child target role residual child-reference diagnostic guard)
 
 ### Improved: target-side child role residuals preserve child-module reference diagnostics
