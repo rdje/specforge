@@ -221,6 +221,7 @@
   - top actor-port width residuals preserve child-module reference diagnostics alongside explicit top-port diagnostics so both repair surfaces remain visible
   - top-link direction conflicts preserve explicit top-port support IDs, topology-link support IDs, graph-direction inventory state, and high automation confidence while blocking `.fsm` emission
   - top-link direction conflict blockers preserve top-boundary direction-conflict enrichment guidance and low-confidence composition-topology residual diagnostics on blocked top and aggregate `.fsm` renderability surfaces
+  - top-link direction residuals preserve child-module reference diagnostics alongside renderable child-module and explicit top-port diagnostics so all three repair surfaces remain visible
   - top-link endpoint direction-role blockers preserve source/output and target/input repair guidance on blocked child, top, and aggregate `.fsm` renderability surfaces
   - top-link endpoint direction-role blockers preserve the composition-topology residual decision so renderable-child and topology repair remains visible in structured adapter diagnostics
   - source-side top-link direction-role blockers preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output
