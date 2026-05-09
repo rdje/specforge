@@ -20670,6 +20670,22 @@ mod tests {
         assert_eq!(recovered_port.width_hint, None);
         assert_eq!(signal_inventory_port.width_hint, None);
         assert!(signal_inventory_port.width_hint_conflicted);
+        assert_eq!(
+            signal_inventory_port.direction_hint,
+            Some(InterfaceSignalDirection::Output)
+        );
+        assert!(
+            signal_inventory_port
+                .mention_categories
+                .iter()
+                .any(|category| category == "top_port")
+        );
+        assert!(
+            signal_inventory_port
+                .mention_categories
+                .iter()
+                .any(|category| category == "module_topology_link")
+        );
         assert!(
             top_port_support_ids
                 .iter()

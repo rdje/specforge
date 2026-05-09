@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-05-09 (adapter top child-link width inventory provenance guard)
+
+### Improved: top child-link width conflicts preserve selected inventory provenance
+- Extended the child-link-derived top-port width conflict regression to assert selected `result_data` inventory keeps output direction, `top_port` provenance, and topology-link provenance while width remains conflicted.
+- The guard keeps top child-link width conflicts explainable at the selected inventory surface alongside top-port support, both conflicting topology-link support-ID sets, and high confidence.
+
+### Validation
+- `cargo fmt --all` -> applied rustfmt layout
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_top_port_widths_from_child_links` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `bash scripts/run_ci.sh` -> passed slice 190 broader checkpoint gate (`665` Rust tests plus formatting, Clippy, rustdoc, and mdBook)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-09 (adapter duplicate top-port width inventory provenance guard)
 
 ### Improved: duplicate top-port width blockers preserve selected inventory provenance

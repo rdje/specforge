@@ -7,6 +7,20 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-09 adapter top child-link width inventory provenance guard
+- New batch slice 190/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
+- Extended `top_composition_blocks_conflicting_top_port_widths_from_child_links` in `crates/specforge/src/ir/adapters.rs`.
+- The child-link-derived top-port width conflict regression now locks selected `result_data` inventory to output direction, `top_port` provenance, and topology-link provenance while width remains conflicted.
+- This keeps top child-link width conflicts explainable at the selected inventory surface alongside top-port support, both conflicting topology-link support-ID sets, and high confidence.
+- `cargo fmt --all` applied rustfmt layout.
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_blocks_conflicting_top_port_widths_from_child_links` passed.
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `142/142` adapter-filtered tests.
+- `bash scripts/run_ci.sh` passed as the slice 190 broader checkpoint gate with formatting, Clippy warning-deny, `665` Rust tests, rustdoc warning-deny, and mdBook.
+- `cargo fmt --all --check` passed.
+- `bash scripts/run_docs_ci.sh` passed after the live-book sync.
+- Push remains deferred for the active `BWFSC=200` batch.
+- `cargo sweep --time 1` remains deferred because `target/release/tool_matrix` is still active.
+
 ## 2026-05-09 adapter duplicate top-port width inventory provenance guard
 - New batch slice 189/200 uses active `BWFSC=200`; push remains deferred until all 200 slices complete unless a documented blocker stops the batch.
 - Extended `top_composition_keeps_duplicate_top_port_width_conflict_unresolved` in `crates/specforge/src/ir/adapters.rs`.
