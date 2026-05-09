@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter parametric top-port residual child-reference diagnostic guard)
+- Extended `top_composition_blocks_parametric_top_port_width_for_fsm_public_io` in `crates/specforge/src/ir/adapters.rs`.
+- The parametric public top-port blocker regression now locks the composition residual to include child-module reference diagnostics alongside explicit top-port diagnostics, low confidence, width-resolution guidance, retained top-port/child provenance, and blocked `.fsm` output.
+- This is a test-surface hardening slice for `R6` `.fsm` adapter diagnostics, not a production architecture change.
+
 ## Session update (2026-05-09 adapter widthless top-port residual guard placement correction)
 - Moved the child-module reference residual assertion from the adjacent recovered top-root confidence regression into `top_composition_blocks_widthless_top_port_without_width_recovery`.
 - The widthless public top-port blocker now directly proves child-module reference diagnostics remain visible alongside explicit top-port diagnostics while stale `.fsm` output remains blocked.
