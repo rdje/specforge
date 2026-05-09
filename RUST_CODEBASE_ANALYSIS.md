@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter child topology width residual child-reference diagnostic guard)
+- Extended `top_composition_blocks_conflicting_child_topology_widths` in `crates/specforge/src/ir/adapters.rs`.
+- The child topology width conflict regression now locks the composition residual to include child-module reference diagnostics alongside renderable child-module and explicit top-port diagnostics, low confidence, width-conflict repair guidance, retained top-port/child/link provenance, and blocked `.fsm` output.
+- This is a test-surface hardening slice for `R6` `.fsm` adapter diagnostics, not a production architecture change.
+
 ## Session update (2026-05-09 adapter top child-link width residual child-reference diagnostic guard)
 - Extended `top_composition_blocks_conflicting_top_port_widths_from_child_links` in `crates/specforge/src/ir/adapters.rs`.
 - The top child-link width conflict regression now locks the composition residual to include child-module reference diagnostics alongside explicit top-port diagnostics, low confidence, width-conflict repair guidance, retained top-port/link provenance, and blocked `.fsm` output.
