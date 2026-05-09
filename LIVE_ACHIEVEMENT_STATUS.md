@@ -127,6 +127,7 @@
 - `.fsm` recovered top-root confidence blockers now preserve composition topology residual decisions: Done
 - `.fsm` recovered top-root confidence residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` recovered top-root confidence now preserves selected inventory confidence: Done
+- `.fsm` recovered top-root confidence now preserves selected inventory provenance: Done
 - `.fsm` child-declaration top-root confidence now stays composition-residual clean when renderable: Done
 - `.fsm` child-declaration top-root confidence now preserves selected inventory confidence: Done
 - `.fsm` top-link top-root confidence now stays composition-residual clean when renderable: Done

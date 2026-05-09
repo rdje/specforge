@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-09 (adapter recovered top-root inventory provenance guard)
+
+### Improved: recovered top-root confidence preserves selected inventory provenance
+- Extended `top_root_kind_confidence_follows_recovered_top_port_evidence` in `crates/specforge/src/ir/adapters.rs`.
+- The recovered top-root confidence regression now locks selected `ext_data` top inventory to `top_port` provenance alongside actor-port provenance, graph direction, width, support IDs, and high confidence.
+- This keeps recovered public top-port evidence explainable in selected inventory while topology remains incomplete and `.fsm` emission stays blocked.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_root_kind_confidence_follows_recovered_top_port_evidence` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-09 (adapter missing child-module inventory provenance guard)
 
 ### Improved: missing child-module blockers preserve selected inventory provenance

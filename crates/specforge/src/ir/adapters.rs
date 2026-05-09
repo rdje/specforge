@@ -16495,6 +16495,12 @@ mod tests {
                 .any(|category| category == "actor_port")
         );
         assert!(
+            signal_inventory_port
+                .mention_categories
+                .iter()
+                .any(|category| category == "top_port")
+        );
+        assert!(
             top_port_support_ids
                 .iter()
                 .any(|id| signal_inventory_port.supporting_canonical_ids.contains(id))

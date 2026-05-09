@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter recovered top-root inventory provenance guard)
+- Extended `top_root_kind_confidence_follows_recovered_top_port_evidence` in `crates/specforge/src/ir/adapters.rs`.
+- The recovered top-root confidence regression now locks selected `ext_data` top inventory to `top_port` provenance alongside actor-port provenance, graph direction, width, support IDs, and high confidence.
+- This is a test-surface hardening slice for `R6` `.fsm` adapter provenance, not a production architecture change.
+
 ## Session update (2026-05-09 adapter missing child-module inventory provenance guard)
 - Extended `keeps_top_composition_blocked_when_child_module_is_missing` in `crates/specforge/src/ir/adapters.rs`.
 - The missing child-module blocker regression now locks retained selected `result_data` top inventory to `top_port` provenance alongside direction, width, support IDs, and high confidence.
