@@ -21943,6 +21943,14 @@ mod tests {
                 .iter()
                 .any(|interpretation| interpretation.description.contains("explicit top ports"))
         );
+        assert!(
+            composition_residual
+                .candidate_interpretations
+                .iter()
+                .any(|interpretation| interpretation
+                    .description
+                    .contains("child-module references"))
+        );
 
         Ok(())
     }
