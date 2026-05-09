@@ -319,6 +319,7 @@ Top-link endpoint width mismatches preserve width-compatible repair guidance on 
 Those width-mismatched top-link blockers also emit the composition-topology residual decision so the same repair lane remains visible in structured adapter diagnostics.
 That top-link width mismatch residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
 Top-link width mismatch residuals keep explicit top-port diagnostics alongside width-compatible top-link diagnostics so both repair surfaces remain visible.
+Top-link width mismatch residuals also keep child-module reference diagnostics alongside width-compatible top-link and explicit-top-port surfaces.
 Duplicate top-boundary width blockers also preserve explicit top-port deduplication guidance alongside the width repair guidance.
 They also keep selected duplicate inventory provenance for the declared top ports while output direction remains known and width remains conflicted.
 Duplicate top-boundary width blockers also emit the composition-topology residual decision so explicit-top-port repair remains visible in structured diagnostics.
