@@ -48,6 +48,7 @@
 - `.fsm` child actor-port direction conflicts now block stale child and aggregate renderable output: Done
 - `.fsm` child actor-port direction conflicts now preserve retained record confidence: Done
 - `.fsm` source-side child direction-role residuals now lock low-confidence topology-detail diagnostics: Done
+- `.fsm` source-side child direction-role residuals now preserve explicit top-port diagnostics: Done
 - `.fsm` source-side child direction-role blockers now preserve retained record confidence: Done
 - `.fsm` source-side child direction-role blockers now preserve conflicted child inventory provenance: Done
 - `.fsm` target-side child direction-role residuals now lock low-confidence topology-detail diagnostics: Done
