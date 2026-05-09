@@ -203,6 +203,7 @@ It also keeps the selected top without a renderable top root and the aggregate `
 The selected signal inventory still keeps numeric width, `top_port` provenance, original declaration support, topology support, graph direction, and high confidence while that missing-child blocker is active.
 That recovered top-port direction residual keeps explicit top-port diagnostics alongside child-module reference diagnostics so both repair surfaces remain visible.
 That recovered top-port direction residual also keeps renderable child-module diagnostics alongside explicit top-port and child-module reference surfaces.
+The blocked recovered top-port direction regression directly asserts that three-surface residual contract while the missing-child gate blocks emission.
 That recovered-direction residual remains low-confidence and anchored to incomplete child-source, top-port, or top-link detail.
 Recovered top-port evidence can also raise the selected top root-kind confidence while keeping that same residual decision visible when topology is still incomplete.
 The selected top signal inventory keeps the recovered public top-port width, graph direction, original declaration support, actor-port graph support, and high confidence attached to that top-root confidence path.

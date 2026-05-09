@@ -1,5 +1,19 @@
 # CHANGES
 
+## 2026-05-09 (adapter recovered direction residual live-status alignment)
+
+### Improved: recovered top-port direction residual status matches existing coverage
+- Synced live docs and mdBook with existing `top_composition_preserves_recovered_top_port_direction_when_still_blocked` coverage in `crates/specforge/src/ir/adapters.rs`.
+- The blocked recovered top-port direction regression already locks the composition residual to include child-module reference diagnostics alongside renderable child-module and explicit top-port diagnostics, low confidence, recovered top-port direction evidence, retained selected inventory provenance, and blocked `.fsm` output.
+- This keeps recovered top-port direction blockers documented across all three repair surfaces.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge top_composition_preserves_recovered_top_port_direction_when_still_blocked` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`142/142` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `git diff --check` -> passed after live-doc/book sync
+- `bash scripts/run_docs_ci.sh` -> passed after live-doc/book sync
+
 ## 2026-05-09 (adapter recovered top-root residual live-status alignment)
 
 ### Improved: recovered top-root residual status matches existing coverage
