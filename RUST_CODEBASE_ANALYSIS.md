@@ -4,6 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-09 adapter unemitted child-source inventory provenance guard)
+- Extended `top_composition_blocks_link_from_unemitted_child_port` in `crates/specforge/src/ir/adapters.rs`.
+- The legacy unemitted child-source blocker regression now locks selected `result_data` inventory to `top_port` provenance alongside output direction, width, support IDs, and high confidence.
+- This keeps source-endpoint composition blockers tied to explainable public top-port inventory while the blocked child source remains unresolved.
+
 ## Session update (2026-05-09 adapter parametric top inventory provenance guard)
 - Extended `top_composition_blocks_parametric_top_port_width_for_fsm_public_io` in `crates/specforge/src/ir/adapters.rs`.
 - The parametric top-port blocker regression now locks selected `ext_data` inventory to output direction and `top_port` provenance while numeric width remains absent, the parametric width hint remains `DATA_WIDTH`, and width conflict stays false.
