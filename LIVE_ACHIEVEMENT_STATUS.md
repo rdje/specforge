@@ -56,6 +56,7 @@
 - `.fsm` target-side child direction-role residuals now lock low-confidence topology-detail diagnostics: Done
 - `.fsm` target-side child direction-role guidance residuals now preserve explicit top-port diagnostics: Done
 - `.fsm` target-side child direction-role residuals now preserve explicit top-port diagnostics: Done
+- `.fsm` target-side child direction-role residuals now preserve child-module reference diagnostics: Done
 - `.fsm` target-side child direction-role blockers now preserve retained record confidence: Done
 - `.fsm` target-side child direction-role blockers now preserve conflicted child inventory provenance: Done
 - `.fsm` top-link width mismatch blockers now preserve composition topology residual decisions: Done
