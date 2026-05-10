@@ -24,22 +24,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `470681d91f35a5969af9fdd610962dd3323a15af`
-- latest_commit_brief_message: `test(adapter): preserve structured fsm control graph signals`
-- note: slice 3/100 of the active `BWFSC=100` batch is committed locally; push remains deferred until the full batch completes
+- latest_commit_hash: `e665b3d822ee9d6aa1e23016afdeb9098b154ca4`
+- latest_commit_brief_message: `Add reset-block FSM provenance regression`
+- note: slice 4/100 of the active `BWFSC=100` batch is committed locally; push remains deferred until the full batch completes
 
 ## Recent commit chain (last 6)
+- `e665b3d` Add reset-block FSM provenance regression
 - `470681d` test(adapter): preserve structured fsm control graph signals
 - `9ef8815` test(adapter): preserve structured fsm system graph signals
 - `82661e1` docs(bootstrap): correct active batch continuity
 - `6dece31` docs(batch): complete BWFSC 100 gate
 - `47fee46` docs(adapter): cluster no-child residual
-- `1718b92` docs(adapter): cluster unemitted source residual
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state: locally ahead of `origin/main` by three committed active-batch slices before slice 4 changes; push remains deferred
+- branch state: locally ahead of `origin/main` by four committed active-batch slices before slice 5 changes; push remains deferred
 - files in flight for the current slice:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -61,18 +61,18 @@
 ## Current batch status
 - objective:
   - active user-authorized batch uses default `BWFSC=100`
-  - current slice is slice 4/100 and adds reset-block structured-FSM control-block/branch provenance regression coverage
-  - completed_count after this commit: `4`
+  - current slice is slice 5/100 and adds renderable structured-FSM state/transition candidate provenance regression coverage
+  - completed_count after this commit: `5`
   - push remains deferred until all `100` slices are complete unless a real blocker stops the batch or the user explicitly changes the policy
   - `R6` remains the active `.fsm` adapter hardening lane; SystemVerilog, Verilog, and VHDL adapter expansion remains not started
 - tracker effect:
-  - live-status tracker now marks reset-block structured-FSM control-block provenance as `Done`
-  - live-status tracker now marks reset-block structured-FSM branch provenance as `Done`
-  - live docs now record slice 4/100 as an `R6`/`R15` regression-only reset-block `.fsm` provenance hardening slice
-  - `RUST_CODEBASE_ANALYSIS.md` now records the reset-block control-block provenance regression while keeping the refreshed test count at `666` listed Rust tests
+  - live-status tracker now marks renderable structured-FSM state candidate provenance as `Done`
+  - live-status tracker now marks renderable structured-FSM transition candidate provenance as `Done`
+  - live docs now record slice 5/100 as an `R6`/`R15` regression-only structured-FSM state graph provenance hardening slice
+  - `RUST_CODEBASE_ANALYSIS.md` now records the structured-FSM state graph provenance regression while keeping the refreshed test count at `666` listed Rust tests
 - verification status:
-  - focused test `cargo test --manifest-path Cargo.toml -p specforge builds_renderable_structured_fsm_with_reset_blocks` passed
-  - adapter suite `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `143/143` adapter-filtered tests
+  - focused test `cargo test --manifest-path Cargo.toml -p specforge builds_renderable_structured_fsm_adapter_artifact` passed
+  - adapter suite `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `143/143` adapter-filtered tests
   - `cargo fmt --all --check` passed
   - `cargo test --manifest-path Cargo.toml -p specforge -- --list` listed `666` Rust tests
   - `git diff --check` passed

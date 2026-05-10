@@ -21,7 +21,7 @@
 - `N=200` batch run completed, committed per slice, and pushed after completion: Done
 - `BWFSC=200` batch run completed, committed per slice, passed final full CI, and pushed after completion: Done
 - `BWFSC=100` batch run completed with final post-commit push closure: Done
-- Active `BWFSC=100` batch run advanced through slice 4 reset-block structured-FSM control-block provenance coverage with deferred push policy: In Progress
+- Active `BWFSC=100` batch run advanced through slice 5 renderable structured-FSM state graph provenance coverage with deferred push policy: In Progress
 - `R6` `.fsm` adapter hardening lane is active: In Progress
 - `.fsm` duplicate top-port direction blockers now block stale top and aggregate renderable output: Done
 - `.fsm` recovered top-port direction blockers now block stale top and aggregate renderable output: Done
@@ -44,6 +44,8 @@
 - `.fsm` structured-FSM control/action signal inventory now preserves graph-backed actor-port provenance: Done
 - `.fsm` reset-block structured-FSM control-block provenance now preserves canonical support IDs and confidence: Done
 - `.fsm` reset-block structured-FSM branch provenance now preserves canonical support IDs and confidence: Done
+- `.fsm` renderable structured-FSM state candidate provenance now preserves canonical support IDs and confidence: Done
+- `.fsm` renderable structured-FSM transition candidate provenance now preserves canonical support IDs, guards, declaration order, and confidence: Done
 - `.fsm` structured-FSM flat/graph disagreements now block stale aggregate renderable output: Done
 - `.fsm` explicit-module flat/graph disagreements now block stale module and aggregate renderable output: Done
 - `.fsm` explicit-module control-read direction conflicts now block stale module and aggregate renderable output: Done

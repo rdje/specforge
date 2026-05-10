@@ -6247,8 +6247,8 @@ mod tests {
 
     use crate::error::{AppError, Result};
     use crate::ir::adapters::{
-        AdapterArtifact, AdapterTarget, FsmRenderableModule, FsmRootKind, FsmSignalCandidate,
-        FsmTransitionCandidate,
+        AdapterArtifact, AdapterTarget, FsmAdapterArtifact, FsmRenderableModule, FsmRootKind,
+        FsmSignalCandidate, FsmTransitionCandidate,
     };
     use crate::ir::evidence::EvidenceIr;
     use crate::ir::intent::IntentIr;
@@ -10862,6 +10862,72 @@ mod tests {
             }
         }
     }
+
+    fn assert_state_graph_candidate_provenance(fsm: &FsmAdapterArtifact, intent_ir: &IntentIr) {
+        let expected_states = intent_ir
+            .regular_states
+            .iter()
+            .map(|state| (state.state_id.as_str(), state))
+            .collect::<BTreeMap<_, _>>();
+        assert_eq!(fsm.state_candidates.len(), expected_states.len());
+        for state in &fsm.state_candidates {
+            let expected = *expected_states
+                .get(state.state_id.as_str())
+                .unwrap_or_else(|| {
+                    panic!(
+                        "state candidate {} should preserve a canonical source state",
+                        state.state_id
+                    )
+                });
+            assert_eq!(&state.state_name, &expected.state_name);
+            assert_eq!(state.is_initial, expected.is_initial);
+            assert_eq!(state.declaration_order, expected.declaration_order);
+            assert!(
+                !state.supporting_canonical_ids.is_empty(),
+                "{} should retain state support IDs",
+                state.state_id
+            );
+            assert_eq!(
+                state.supporting_canonical_ids,
+                expected.supporting_statement_ids
+            );
+            assert_eq!(state.automation_confidence, expected.automation_confidence);
+        }
+
+        let expected_transitions = intent_ir
+            .state_transitions
+            .iter()
+            .map(|transition| (transition.transition_id.as_str(), transition))
+            .collect::<BTreeMap<_, _>>();
+        assert_eq!(fsm.transition_candidates.len(), expected_transitions.len());
+        for transition in &fsm.transition_candidates {
+            let expected = *expected_transitions
+                .get(transition.transition_id.as_str())
+                .unwrap_or_else(|| {
+                    panic!(
+                        "transition candidate {} should preserve a canonical source transition",
+                        transition.transition_id
+                    )
+                });
+            assert_eq!(&transition.source_state, &expected.source_state);
+            assert_eq!(&transition.target_state, &expected.target_state);
+            assert_eq!(&transition.guard, &expected.guard);
+            assert_eq!(transition.declaration_order, expected.declaration_order);
+            assert!(
+                !transition.supporting_canonical_ids.is_empty(),
+                "{} should retain transition support IDs",
+                transition.transition_id
+            );
+            assert_eq!(
+                transition.supporting_canonical_ids,
+                expected.supporting_statement_ids
+            );
+            assert_eq!(
+                transition.automation_confidence,
+                expected.automation_confidence
+            );
+        }
+    }
     fn set_direct_signal_direction_hint(
         intent_ir: &mut IntentIr,
         signal_name: &str,
@@ -13769,6 +13835,7 @@ mod tests {
                 transition.source_state == source_state && transition.target_state == target_state
             }));
         }
+        assert_state_graph_candidate_provenance(&fsm, &intent_ir);
         for signal_name in ["clk", "rst_n", "GO", "DONE", "DATA_IN", "ACC", "TRACE"] {
             let signal = fsm
                 .signal_inventory

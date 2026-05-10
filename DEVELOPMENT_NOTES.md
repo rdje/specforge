@@ -6,6 +6,15 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-10 `.fsm` renderable structured-FSM state graph provenance
+- New batch slice 5/100 stays in the `R6`/`R15` graph-first `.fsm` hardening lane.
+- Extended `builds_renderable_structured_fsm_adapter_artifact` in `crates/specforge/src/ir/adapters.rs` so renderable structured-FSM state and transition candidates prove exact provenance preservation from `IntentIR` to the adapter artifact.
+- The helper now checks state IDs, state names, initial-state flags, declaration order, state support IDs, transition IDs, transition source/target pairs, guards, transition declaration order, transition support IDs, and automation confidence.
+- The slice is regression-only: no production lowering behavior changed, and the existing structured-FSM path remains renderable.
+- Focused validation passed, adapter-filtered validation passed with `143/143` tests, formatting passed, and the refreshed Rust test listing remains `666` tests.
+- `git diff --check` passed before commit.
+- `bash scripts/run_docs_ci.sh` passed before commit.
+- tracked markdown/mdBook absolute-path scan passed across `217` tracked markdown/mdBook files.
 ## 2026-05-10 `.fsm` reset-block structured-FSM control-block provenance
 - New batch slice 4/100 stays in the `R6`/`R15` graph-first `.fsm` hardening lane.
 - Extended `builds_renderable_structured_fsm_with_reset_blocks` in `crates/specforge/src/ir/adapters.rs` so reset-block structured-FSM renderable modules and aggregate source-document roots both prove canonical control-block and branch provenance survives lowering.
