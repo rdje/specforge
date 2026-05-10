@@ -12252,6 +12252,114 @@ mod tests {
     }
 
     #[test]
+    fn structured_fsm_preserves_graph_backed_system_signal_inventory() -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_explicit_reset_fsm_intent_ir(tempdir.path())?;
+        clear_direct_interface_direction_hints(&mut intent_ir);
+        let system_contract_support_ids = intent_ir
+            .system_contract
+            .as_ref()
+            .map(|system_contract| system_contract.supporting_statement_ids.clone())
+            .expect("structured FSM system contract should be present");
+        intent_ir.actor_ports = vec![
+            actor_port("controller", "clk", ActorRelativeDirection::Input),
+            actor_port("controller", "rst_n", ActorRelativeDirection::Input),
+            actor_port("controller", "GO", ActorRelativeDirection::Input),
+            actor_port("controller", "ACC", ActorRelativeDirection::Output),
+            actor_port("controller", "PULSE_OUT", ActorRelativeDirection::Output),
+        ];
+        intent_ir.write_to_disk()?;
+
+        let artifact_base = tempdir.path().join("generated").join("adapters");
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Fsm,
+            &artifact_base,
+        )?;
+        adapter.write_to_disk()?;
+
+        assert_eq!(adapter.lowering_status.as_str(), "renderable");
+        let emitted_target_path = adapter
+            .artifact_layout
+            .emitted_target_path
+            .as_ref()
+            .expect("graph-backed structured FSM should emit target text");
+        let emitted_text = fs::read_to_string(emitted_target_path)?;
+        let fsm = adapter.fsm.expect("fsm artifact should be present");
+        let clk = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "clk")
+            .expect("clock should remain in structured FSM signal inventory");
+        let rst_n = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "rst_n")
+            .expect("reset should remain in structured FSM signal inventory");
+        let renderable_module = fsm
+            .renderable_module
+            .as_ref()
+            .expect("graph-backed structured FSM should retain a renderable module");
+        let renderable_document_module = fsm
+            .renderable_document
+            .as_ref()
+            .and_then(|document| document.direct_roots.first())
+            .map(|root| &root.module)
+            .expect("renderable source document should contain structured FSM root");
+
+        for (signal, support_id) in [
+            (clk, "graph_controller_clk"),
+            (rst_n, "graph_controller_rst_n"),
+        ] {
+            assert_eq!(signal.direction_hint, Some(InterfaceSignalDirection::Input));
+            assert_eq!(
+                signal.graph_direction_hint,
+                Some(InterfaceSignalDirection::Input)
+            );
+            assert!(
+                signal
+                    .mention_categories
+                    .iter()
+                    .any(|category| category == "system_contract_signal")
+            );
+            assert!(
+                signal
+                    .mention_categories
+                    .iter()
+                    .any(|category| category == "actor_port")
+            );
+            assert!(
+                signal
+                    .supporting_canonical_ids
+                    .iter()
+                    .any(|id| id == support_id)
+            );
+            assert_eq!(signal.width_hint, Some(1));
+            assert_eq!(signal.automation_confidence, AutomationConfidence::High);
+        }
+        assert_renderable_system_contract_provenance(
+            renderable_module,
+            &system_contract_support_ids,
+        );
+        assert_renderable_system_contract_provenance(
+            renderable_document_module,
+            &system_contract_support_ids,
+        );
+        assert!(fsm.renderability.is_renderable);
+        assert!(emitted_text.contains("(?fsm:reset_fsm"));
+        assert!(emitted_text.contains("(+system"));
+        assert!(emitted_text.contains("(clock clk)"));
+        assert!(emitted_text.contains("(asreset rst_n)"));
+        assert!(
+            adapter
+                .residual_decisions
+                .iter()
+                .all(|packet| packet.packet_id != "fsm_adapter_system_contract")
+        );
+
+        Ok(())
+    }
+    #[test]
     fn builds_renderable_standalone_sequential_dt_fsm_adapter_artifact() -> Result<()> {
         let tempdir = tempdir()?;
         let intent_ir = build_explicit_sequential_control_intent_ir(tempdir.path())?;

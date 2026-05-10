@@ -1,5 +1,21 @@
 # CHANGES
 
+## 2026-05-10 (`.fsm` structured-FSM graph-backed system signals)
+
+### Improved: structured-FSM system signal inventory keeps graph-backed provenance
+- Added a focused `.fsm` adapter regression for a renderable structured FSM whose direct interface directions are cleared while actor-port graph evidence supplies the clock/reset/input/output roles.
+- The new regression proves `clk` and `rst_n` retain system-contract provenance, actor-port graph provenance, graph-backed input direction, 1-bit width, and high confidence while the structured FSM remains renderable.
+- This extends the existing standalone sequential system-contract actor-port coverage to the true `?fsm:name` path without changing production lowering behavior.
+- The Rust test listing now reports `666` tests after adding the regression.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge structured_fsm_preserves_graph_backed_system_signal_inventory` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`143/143` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge -- --list` -> listed `666` Rust tests
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+
 ## 2026-05-10 (bootstrap continuity correction)
 
 ### Changed: live handoff state now matches the pushed baseline

@@ -7,6 +7,14 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-10 `.fsm` structured-FSM graph-backed system signal inventory
+- New batch slice 2/100 stays in the `R6`/`R15` graph-first `.fsm` hardening lane.
+- Added `structured_fsm_preserves_graph_backed_system_signal_inventory` in `crates/specforge/src/ir/adapters.rs` so true `?fsm:name` lowering has direct regression coverage for actor-port graph evidence on system clock/reset signals.
+- The slice is regression-only: no production lowering behavior changed, and the structured FSM still emits when graph-backed clock/reset evidence agrees with the canonical system contract.
+- Focused validation passed, adapter-filtered validation passed with `143/143` tests, formatting passed, and the refreshed Rust test listing is `666` tests.
+- `git diff --check` passed before commit.
+- `bash scripts/run_docs_ci.sh` passed before commit.
+
 ## 2026-05-10 README/bootstrap continuity correction
 - New default `BWFSC=100` batch started with a continuity slice before any Rust behavior change, because the README/SESSION_BOOTSTRAP ramp-up found stale current-facing handoff state.
 - The important correction is factual, not architectural: `HEAD` and `origin/main` are aligned at `6dece317f061a4e473b31ca5e2a7afdfbd70d7c8`, while `MEMORY.md` still described the prior pre-closure `47fee4610edd34d3b1c1d4717ba33f47e4a874e8` state.

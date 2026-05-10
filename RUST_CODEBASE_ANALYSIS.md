@@ -4,6 +4,12 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-10 `.fsm` structured-FSM graph-backed system signals)
+- Added `structured_fsm_preserves_graph_backed_system_signal_inventory` in `crates/specforge/src/ir/adapters.rs`.
+- This is a regression-only `R6`/`R15` hardening slice: structured-FSM lowering now has direct test coverage proving actor-port graph evidence for `clk` and `rst_n` is preserved alongside system-contract provenance, numeric width, high confidence, and renderable `?fsm:name` output.
+- Production adapter behavior did not change; the new test closes a coverage asymmetry between standalone sequential system-contract recovery and true structured-FSM system-signal inventory.
+- The Rust test listing now reports `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
+
 ## Session update (2026-05-10 README/bootstrap continuity correction)
 - Re-executed the README/SESSION_BOOTSTRAP ramp-up for the new default `BWFSC=100` batch before selecting the first slice.
 - No Rust production code changed; this slice corrects stale continuity state that still described the pre-closure `47fee4610edd34d3b1c1d4717ba33f47e4a874e8` baseline even though `HEAD` and `origin/main` are aligned at `6dece317f061a4e473b31ca5e2a7afdfbd70d7c8`.
@@ -7636,8 +7642,8 @@
 
 ## Testing implications
 - current full local CI path: `bash scripts/run_ci.sh`
-- current active Rust surface after the README/bootstrap refresh: `31` Rust source files and `96,170` Rust source lines under `crates/specforge/src`
-- current Rust test count observed through the bootstrap listing path: `665` Rust tests listed by `cargo test --manifest-path Cargo.toml -p specforge -- --list`
+- current active Rust surface after the slice 2 refresh: `31` Rust source files and `96,170` Rust source lines under `crates/specforge/src`
+- current Rust test count observed through the slice 2 listing path: `666` Rust tests listed by `cargo test --manifest-path Cargo.toml -p specforge -- --list`
 - current tracked KG-quality fixture count: 150
 - current tests cover:
   - source-kind detection
@@ -7667,7 +7673,7 @@
   - markdown/table/list marker alias rejection for Form 2 alias learning
   - actor-signal relation extraction from prose and table roles
   - AMBA `Source` / `Driver` / `Destination` signal-direction handling
-  - `.fsm` adapter renderability, including graph-backed top-composition child direction recovery, bidirectional top-link boundary/child and sibling-child width recovery, unambiguous standalone direct direction recovery, direct and explicit-module control-input width recovery from actor-port shape, sticky actor-port direction/width conflict blocking, graph-backed sequential system-contract direction recovery, graph-only direct-context filtering, top-link boundary direction recovery, top actor-port boundary direction/width recovery, and conflict/ambiguity blocking
+  - `.fsm` adapter renderability, including graph-backed top-composition child direction recovery, bidirectional top-link boundary/child and sibling-child width recovery, unambiguous standalone direct direction recovery, direct and explicit-module control-input width recovery from actor-port shape, sticky actor-port direction/width conflict blocking, graph-backed sequential and structured-FSM system-contract direction recovery, graph-only direct-context filtering, top-link boundary direction recovery, top actor-port boundary direction/width recovery, and conflict/ambiguity blocking
   - SourceIR PDF materialization tests sharing one process-global environment lock with Docling runtime tests
   - `specforge validate` for all four IR stages
   - project-level validation projection and schema-v2 rescan-plan generation
@@ -7681,12 +7687,16 @@
   - future adapter targets beyond the current `.fsm` slice
 
 ## Latest validation completed in this refresh
+- `cargo test --manifest-path Cargo.toml -p specforge structured_fsm_preserves_graph_backed_system_signal_inventory`
+  - passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters`
+  - passed with `143/143` adapter-filtered tests
+- `cargo fmt --all --check`
+  - passed
 - `cargo test --manifest-path Cargo.toml -p specforge -- --list`
-  - listed `665` Rust tests during the README/bootstrap survey
+  - listed `666` Rust tests
 - `bash scripts/run_docs_ci.sh`
   - passed
-- tracked markdown/mdBook absolute-path scan
-  - passed across `217` tracked markdown/mdBook files
 - `git diff --check`
   - passed
 

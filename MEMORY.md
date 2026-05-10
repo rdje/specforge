@@ -24,28 +24,30 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `6dece317f061a4e473b31ca5e2a7afdfbd70d7c8`
-- latest_commit_brief_message: `docs(batch): complete BWFSC 100 gate`
-- note: `HEAD` and `origin/main` are aligned at this pushed batch-closure commit before the new user-authorized `BWFSC=100` batch starts
+- latest_commit_hash: `82661e1580dbe0972afc30ef1018ca6ad55ce873`
+- latest_commit_brief_message: `docs(bootstrap): correct active batch continuity`
+- note: slice 1/100 of the active `BWFSC=100` batch is committed locally; push remains deferred until the full batch completes
 
 ## Recent commit chain (last 6)
+- `82661e1` docs(bootstrap): correct active batch continuity
 - `6dece31` docs(batch): complete BWFSC 100 gate
 - `47fee46` docs(adapter): cluster no-child residual
 - `1718b92` docs(adapter): cluster unemitted source residual
 - `28d7777` docs(adapter): align undeclared source diagnostics
 - `294a5a3` docs(adapter): align undeclared target diagnostics
-- `48f43e4` docs(adapter): align duplicate child references
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state: clean and aligned with `origin/main` before the new `BWFSC=100` batch's first slice changes
+- branch state: locally ahead of `origin/main` by one slice-1 commit before slice 2 changes; push remains deferred
 - files in flight for the current slice:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `MEMORY.md`
+  - `ROADMAP.md`
   - `RUST_CODEBASE_ANALYSIS.md`
+  - `crates/specforge/src/ir/adapters.rs`
 
 ## Latest completed batch run
 - requested_count: `100`
@@ -58,18 +60,21 @@
 ## Current batch status
 - objective:
   - active user-authorized batch uses default `BWFSC=100`
-  - current slice is slice 1/100 and corrects stale continuity state discovered during the README/SESSION_BOOTSTRAP ramp-up
-  - completed_count after this commit: `1`
+  - current slice is slice 2/100 and adds structured-FSM graph-backed system signal inventory regression coverage
+  - completed_count after this commit: `2`
   - push remains deferred until all `100` slices are complete unless a real blocker stops the batch or the user explicitly changes the policy
   - `R6` remains the active `.fsm` adapter hardening lane; SystemVerilog, Verilog, and VHDL adapter expansion remains not started
 - tracker effect:
-  - live-status tracker now marks the new `BWFSC=100` batch as `In Progress`
-  - live docs now align with the pushed `6dece317f061a4e473b31ca5e2a7afdfbd70d7c8` baseline instead of the stale pre-closure `47fee4610edd34d3b1c1d4717ba33f47e4a874e8` baseline
-  - `RUST_CODEBASE_ANALYSIS.md` now records the current README/bootstrap survey counts: `31` Rust source files, `96,170` Rust source lines, `665` listed Rust tests, and `150` tracked KG-quality fixtures
+  - live-status tracker now marks structured-FSM system signal inventory graph-backed actor-port provenance as `Done`
+  - live docs now record slice 2/100 as an `R6`/`R15` regression-only graph-first `.fsm` hardening slice
+  - `RUST_CODEBASE_ANALYSIS.md` now records the refreshed test count of `666` listed Rust tests
 - verification status:
-  - README/SESSION_BOOTSTRAP ramp-up completed for the current session before selecting this slice
-  - `cargo test --manifest-path Cargo.toml -p specforge -- --list` listed `665` Rust tests during the bootstrap survey
-  - validation gates for this slice passed: `git diff --check`, `bash scripts/run_docs_ci.sh`, and tracked markdown/mdBook absolute-path scan
+  - focused test `cargo test --manifest-path Cargo.toml -p specforge structured_fsm_preserves_graph_backed_system_signal_inventory` passed
+  - adapter suite `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `143/143` adapter-filtered tests
+  - `cargo fmt --all --check` passed
+  - `cargo test --manifest-path Cargo.toml -p specforge -- --list` listed `666` Rust tests
+  - `git diff --check` passed
+  - `bash scripts/run_docs_ci.sh` passed
   - message file remains required to be untracked and `0` bytes after each commit workflow
 
 ## Historical previous batch status retained from pre-slice-1 handoff
@@ -1269,8 +1274,8 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- complete the slice 1 commit workflow: write `git_message_brief.txt`, stage only intended tracked docs, commit, then clear and verify `git_message_brief.txt`
-- after slice 1 commits, continue with slice 2/100 by selecting the next bounded roadmap-aligned `R6`/`R15` `.fsm` graph-first hardening task
+- complete the slice 2 commit workflow: write `git_message_brief.txt`, stage only intended tracked files, commit, then clear and verify `git_message_brief.txt`
+- after slice 2 commits, continue with slice 3/100 by selecting the next bounded roadmap-aligned `R6`/`R15` `.fsm` graph-first hardening task
 - keep push deferred until all 100 slices are complete, unless a real blocker stops the batch or the user explicitly changes the policy
 - keep SystemVerilog, Verilog, and VHDL adapter expansion at `Not Started` until the `.fsm` hardening lane and canonical truthfulness surface are ready
 - `cargo sweep --time 1` is no longer blocked by an observed `target/release/tool_matrix` process; run it only when explicitly requested or when it becomes part of a safe cleanup slice
