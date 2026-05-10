@@ -3,6 +3,11 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-10 `.fsm` renderable structured-FSM module/source-document state graph provenance)
+- Extended `builds_renderable_structured_fsm_adapter_artifact` in `crates/specforge/src/ir/adapters.rs`.
+- This is a regression-only `R6`/`R15` hardening slice: renderable structured-FSM modules and emitted source-document direct roots now prove canonical state ordering, initial-state flags, transition grouping, transition IDs, source/target pairs, guards, declaration order, transition support IDs, and automation confidence survive projection from `IntentIR`.
+- Production adapter behavior did not change; the existing structured-FSM regression now covers renderable module/source-document state graph provenance in addition to candidate provenance, signal inventory, control/action graph, emitted text, and reset-block provenance behavior.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
 ## Session update (2026-05-10 `.fsm` renderable structured-FSM state graph provenance)
 - Extended `builds_renderable_structured_fsm_adapter_artifact` in `crates/specforge/src/ir/adapters.rs`.
 - This is a regression-only `R6`/`R15` hardening slice: renderable structured-FSM state and transition candidates now prove state IDs, state names, initial-state flags, declaration order, support IDs, guards, source/target pairs, and automation confidence survive lowering from `IntentIR` to `FsmAdapterArtifact`.

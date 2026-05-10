@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-05-10 (`.fsm` renderable structured-FSM module/source-document state graph provenance)
+
+### Improved: renderable structured-FSM projections keep canonical state graph provenance
+- Extended `builds_renderable_structured_fsm_adapter_artifact` so the renderable `?fsm:name` regression now proves the selected renderable module and emitted source-document direct root preserve the canonical state graph projection, not only the adapter candidates.
+- Added focused assertions that compare renderable state order, initial-state flags, transition grouping, transition IDs, source/target pairs, guards, declaration order, support IDs, and automation confidence against the source `IntentIR`.
+- This is regression-only hardening for the existing `.fsm` adapter behavior; no production lowering behavior intentionally changed.
+- The Rust test listing remains `666` tests after tightening the existing regression.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge builds_renderable_structured_fsm_adapter_artifact` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`143/143` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge -- --list` -> listed `666` Rust tests
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- tracked markdown/mdBook absolute-path scan -> passed (`217` tracked markdown/mdBook files checked)
+
 ## 2026-05-10 (`.fsm` renderable structured-FSM state graph provenance)
 
 ### Improved: renderable structured-FSM candidates keep canonical state graph provenance

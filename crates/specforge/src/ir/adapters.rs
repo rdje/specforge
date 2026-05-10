@@ -10928,6 +10928,87 @@ mod tests {
             );
         }
     }
+
+    fn assert_renderable_state_graph_provenance(
+        module: &FsmRenderableModule,
+        intent_ir: &IntentIr,
+    ) {
+        let mut expected_states = intent_ir.regular_states.iter().collect::<Vec<_>>();
+        expected_states.sort_by_key(|state| (!state.is_initial, state.declaration_order));
+        assert_eq!(module.states.len(), expected_states.len());
+        for (state, expected) in module.states.iter().zip(expected_states.iter()) {
+            assert_eq!(&state.state_name, &expected.state_name);
+            assert_eq!(state.is_initial, expected.is_initial);
+        }
+
+        let mut expected_transitions_by_source = BTreeMap::<&str, Vec<_>>::new();
+        for transition in &intent_ir.state_transitions {
+            expected_transitions_by_source
+                .entry(transition.source_state.as_str())
+                .or_default()
+                .push(transition);
+        }
+        for transitions in expected_transitions_by_source.values_mut() {
+            transitions.sort_by_key(|transition| transition.declaration_order);
+        }
+
+        let actual_transition_count = module
+            .states
+            .iter()
+            .map(|state| state.transitions.len())
+            .sum::<usize>();
+        assert_eq!(actual_transition_count, intent_ir.state_transitions.len());
+        for state in &module.states {
+            let expected_transitions = expected_transitions_by_source
+                .get(state.state_name.as_str())
+                .map(Vec::as_slice)
+                .unwrap_or(&[]);
+            assert_eq!(state.transitions.len(), expected_transitions.len());
+            for (transition, expected) in state.transitions.iter().zip(expected_transitions.iter())
+            {
+                assert_eq!(&transition.transition_id, &expected.transition_id);
+                assert_eq!(&transition.source_state, &expected.source_state);
+                assert_eq!(&transition.target_state, &expected.target_state);
+                assert_eq!(&transition.guard, &expected.guard);
+                assert_eq!(transition.declaration_order, expected.declaration_order);
+                assert!(
+                    !transition.supporting_statement_ids.is_empty(),
+                    "{} should retain renderable transition support IDs",
+                    transition.transition_id
+                );
+                assert_eq!(
+                    transition.supporting_statement_ids,
+                    expected.supporting_statement_ids
+                );
+                assert_eq!(
+                    transition.automation_confidence,
+                    expected.automation_confidence
+                );
+            }
+        }
+    }
+
+    fn assert_renderable_document_state_graph_provenance(
+        fsm: &FsmAdapterArtifact,
+        intent_ir: &IntentIr,
+    ) {
+        let renderable_module = fsm
+            .renderable_module
+            .as_ref()
+            .expect("renderable FSM should carry a renderable module");
+        assert_renderable_state_graph_provenance(renderable_module, intent_ir);
+
+        let renderable_document = fsm
+            .renderable_document
+            .as_ref()
+            .expect("renderable FSM should carry a source document");
+        assert!(renderable_document.top_root.is_none());
+        assert_eq!(renderable_document.direct_roots.len(), 1);
+        let direct_root = &renderable_document.direct_roots[0];
+        assert_eq!(direct_root.root_kind, FsmRootKind::Fsm);
+        assert_eq!(&direct_root.module, renderable_module);
+        assert_renderable_state_graph_provenance(&direct_root.module, intent_ir);
+    }
     fn set_direct_signal_direction_hint(
         intent_ir: &mut IntentIr,
         signal_name: &str,
@@ -13836,6 +13917,7 @@ mod tests {
             }));
         }
         assert_state_graph_candidate_provenance(&fsm, &intent_ir);
+        assert_renderable_document_state_graph_provenance(&fsm, &intent_ir);
         for signal_name in ["clk", "rst_n", "GO", "DONE", "DATA_IN", "ACC", "TRACE"] {
             let signal = fsm
                 .signal_inventory

@@ -162,7 +162,7 @@
 - status: In Progress
 - current lane:
   - `.fsm` adapter hardening is active, with renderable standalone/top paths, blocked renderability diagnostics, residual decisions, support/confidence preservation, and selected-inventory provenance under continuing regression coverage.
-  - the active `BWFSC=100` batch has reached slice 5/100 with renderable structured-FSM state graph provenance coverage; `R6` remains active and push remains deferred until the batch completes.
+  - the active `BWFSC=100` batch has reached slice 6/100 with renderable structured-FSM module/source-document state graph projection provenance coverage; `R6` remains active and push remains deferred until the batch completes.
   - SystemVerilog, Verilog, and VHDL expansion remains intentionally deferred until the `.fsm` lane and canonical IR truthfulness surface are strong enough to avoid semantic invention.
 - goals:
   - define target-specific lowering boundaries for:
@@ -181,6 +181,7 @@
   - explicit standalone sequential DT cases can lower with `(+system ...)` and `(:= ...)` without promoting a true FSM root
   - real structured `?fsm:name` target text is emitted only when the canonical state graph, state-body control, transition targets, and system/init surface are explicit enough to avoid semantic invention
   - renderable structured-FSM state graph candidates preserve state and transition support IDs, guards, declaration order, and automation confidence
+  - renderable structured-FSM module and source-document state graph projections preserve canonical state order, transition support IDs, guards, declaration order, and automation confidence
   - real explicit `?top:name` target text is emitted only when the canonical model carries explicit top ports, child modules, renderable child roots, and width-compatible links
   - top-link width mismatch blockers preserve width-compatible repair guidance on blocked top and aggregate `.fsm` renderability surfaces while retaining the mismatched link provenance
   - top-link width mismatch blockers preserve the composition-topology residual decision so width-compatible link repair remains visible in structured adapter diagnostics
