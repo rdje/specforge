@@ -7,6 +7,16 @@
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
+## 2026-05-10 README/bootstrap continuity correction
+- New default `BWFSC=100` batch started with a continuity slice before any Rust behavior change, because the README/SESSION_BOOTSTRAP ramp-up found stale current-facing handoff state.
+- The important correction is factual, not architectural: `HEAD` and `origin/main` are aligned at `6dece317f061a4e473b31ca5e2a7afdfbd70d7c8`, while `MEMORY.md` still described the prior pre-closure `47fee4610edd34d3b1c1d4717ba33f47e4a874e8` state.
+- The next code slice should continue the existing `R6`/`R15` graph-first `.fsm` hardening lane rather than opening SystemVerilog, Verilog, or VHDL adapter expansion.
+- The current survey counts are `31` Rust source files, `96,170` Rust source lines, `665` listed Rust tests, and `150` tracked KG-quality fixtures.
+- No Rust source behavior or mdBook user-facing contract changed in this slice.
+- `git diff --check` passed.
+- `bash scripts/run_docs_ci.sh` passed.
+- tracked markdown/mdBook absolute-path scan passed across `217` tracked markdown/mdBook files.
+
 ## 2026-05-09 BWFSC=100 batch completion gate
 - Final batch slice 100/100 uses active `BWFSC=100`; push remains deferred until this slice's commit workflow, message-file truncation, and postconditions pass.
 - Synced live docs and mdBook to mark the `BWFSC=100` batch complete while preserving `R6` `.fsm` adapter hardening as `In Progress`.

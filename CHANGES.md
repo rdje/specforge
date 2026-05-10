@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-10 (bootstrap continuity correction)
+
+### Changed: live handoff state now matches the pushed baseline
+- Re-executed the README/SESSION_BOOTSTRAP ramp-up before selecting the first slice of the new default `BWFSC=100` batch.
+- Corrected `MEMORY.md` from the stale pre-closure `47fee4610edd34d3b1c1d4717ba33f47e4a874e8` baseline to the pushed `6dece317f061a4e473b31ca5e2a7afdfbd70d7c8` baseline.
+- Recorded the new active batch as slice 1/100 with push deferred until all 100 slices are complete unless a real blocker or explicit user instruction changes the policy.
+- Refreshed the Rust analysis continuity counts to `31` Rust source files, `96,170` Rust source lines, `665` listed Rust tests, and `150` tracked KG-quality fixtures.
+- No Rust source behavior or mdBook user-facing contract changed in this slice.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge -- --list` -> listed `665` Rust tests during the bootstrap survey
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- tracked markdown/mdBook absolute-path scan -> passed (`217` tracked markdown/mdBook files checked)
+
 ## 2026-05-09 (BWFSC=100 batch completion gate)
 
 ### Changed: final batch closure is documented before the deferred push

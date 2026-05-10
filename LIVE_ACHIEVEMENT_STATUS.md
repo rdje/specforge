@@ -21,6 +21,7 @@
 - `N=200` batch run completed, committed per slice, and pushed after completion: Done
 - `BWFSC=200` batch run completed, committed per slice, passed final full CI, and pushed after completion: Done
 - `BWFSC=100` batch run completed with final post-commit push closure: Done
+- Active `BWFSC=100` batch run started with slice 1 continuity correction and deferred push policy: In Progress
 - `R6` `.fsm` adapter hardening lane is active: In Progress
 - `.fsm` duplicate top-port direction blockers now block stale top and aggregate renderable output: Done
 - `.fsm` recovered top-port direction blockers now block stale top and aggregate renderable output: Done

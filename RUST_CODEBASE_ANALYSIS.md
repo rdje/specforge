@@ -4,6 +4,13 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-10 README/bootstrap continuity correction)
+- Re-executed the README/SESSION_BOOTSTRAP ramp-up for the new default `BWFSC=100` batch before selecting the first slice.
+- No Rust production code changed; this slice corrects stale continuity state that still described the pre-closure `47fee4610edd34d3b1c1d4717ba33f47e4a874e8` baseline even though `HEAD` and `origin/main` are aligned at `6dece317f061a4e473b31ca5e2a7afdfbd70d7c8`.
+- The refreshed codebase survey measured `31` Rust source files and `96,170` Rust source lines under `crates/specforge/src`, with `665` Rust tests listed by `cargo test --manifest-path Cargo.toml -p specforge -- --list`.
+- The tracked KG-quality fixture surface remains `150` fixtures with no immediate rescan recommendations in the current validation snapshot.
+- The next implementation slice should remain in the `R6`/`R15` graph-first `.fsm` hardening lane; SystemVerilog, Verilog, and VHDL adapter expansion remains premature until the canonical direction truthfulness surface is stable.
+
 ## Session update (2026-05-09 BWFSC=100 batch completion gate)
 - Closed the active `BWFSC=100` batch at slice 100/100 with live-doc and mdBook synchronization before the deferred push.
 - No Rust production code changed in this closure slice; `R6` `.fsm` adapter hardening remains active and SystemVerilog/Verilog/VHDL adapter expansion remains `Not Started`.
@@ -7629,9 +7636,9 @@
 
 ## Testing implications
 - current full local CI path: `bash scripts/run_ci.sh`
-- current active Rust surface after the README/bootstrap refresh: `31` Rust source files and `80,456` Rust source lines under `crates/specforge/src`
-- current Rust test count observed through the canonical local CI path after the latest slice: `518` Rust tests, all passing under warning-deny Clippy/rustdoc plus the mdBook build
-- current tracked KG-quality fixture count: 127
+- current active Rust surface after the README/bootstrap refresh: `31` Rust source files and `96,170` Rust source lines under `crates/specforge/src`
+- current Rust test count observed through the bootstrap listing path: `665` Rust tests listed by `cargo test --manifest-path Cargo.toml -p specforge -- --list`
+- current tracked KG-quality fixture count: 150
 - current tests cover:
   - source-kind detection
   - deterministic source key naming
@@ -7674,14 +7681,12 @@
   - future adapter targets beyond the current `.fsm` slice
 
 ## Latest validation completed in this refresh
-- `cargo fmt --manifest-path Cargo.toml -- --check`
-  - passed
+- `cargo test --manifest-path Cargo.toml -p specforge -- --list`
+  - listed `665` Rust tests during the README/bootstrap survey
 - `bash scripts/run_docs_ci.sh`
-  - passed and rebuilt the mdBook into `generated/mdbook/specforge`
-- `bash scripts/run_ci.sh`
-  - passed with `518` Rust tests, `0` failures, warning-deny Clippy/rustdoc, and a successful mdBook build
-- `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench`
-  - passed with `127` fixtures and `0` failures
+  - passed
+- tracked markdown/mdBook absolute-path scan
+  - passed across `217` tracked markdown/mdBook files
 - `git diff --check`
   - passed
 
