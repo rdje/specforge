@@ -12296,6 +12296,21 @@ mod tests {
             .iter()
             .find(|signal| signal.signal_name == "rst_n")
             .expect("reset should remain in structured FSM signal inventory");
+        let go = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "GO")
+            .expect("guard input should remain in structured FSM signal inventory");
+        let acc = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "ACC")
+            .expect("state output should remain in structured FSM signal inventory");
+        let pulse_out = fsm
+            .signal_inventory
+            .iter()
+            .find(|signal| signal.signal_name == "PULSE_OUT")
+            .expect("reset pulse output should remain in structured FSM signal inventory");
         let renderable_module = fsm
             .renderable_module
             .as_ref()
@@ -12337,6 +12352,43 @@ mod tests {
             assert_eq!(signal.width_hint, Some(1));
             assert_eq!(signal.automation_confidence, AutomationConfidence::High);
         }
+        for (signal, direction_hint, support_id, width) in [
+            (
+                go,
+                InterfaceSignalDirection::Input,
+                "graph_controller_GO",
+                1,
+            ),
+            (
+                acc,
+                InterfaceSignalDirection::Output,
+                "graph_controller_ACC",
+                8,
+            ),
+            (
+                pulse_out,
+                InterfaceSignalDirection::Output,
+                "graph_controller_PULSE_OUT",
+                1,
+            ),
+        ] {
+            assert_eq!(signal.direction_hint, None);
+            assert_eq!(signal.graph_direction_hint, Some(direction_hint));
+            assert!(
+                signal
+                    .mention_categories
+                    .iter()
+                    .any(|category| category == "actor_port")
+            );
+            assert!(
+                signal
+                    .supporting_canonical_ids
+                    .iter()
+                    .any(|id| id == support_id)
+            );
+            assert_eq!(signal.width_hint, Some(width));
+            assert_eq!(signal.automation_confidence, AutomationConfidence::High);
+        }
         assert_renderable_system_contract_provenance(
             renderable_module,
             &system_contract_support_ids,
@@ -12355,6 +12407,18 @@ mod tests {
                 .residual_decisions
                 .iter()
                 .all(|packet| packet.packet_id != "fsm_adapter_system_contract")
+        );
+        assert!(
+            adapter
+                .residual_decisions
+                .iter()
+                .all(|packet| packet.packet_id != "fsm_adapter_signal_inventory")
+        );
+        assert!(
+            adapter
+                .residual_decisions
+                .iter()
+                .all(|packet| packet.packet_id != "fsm_adapter_dt_action_graph")
         );
 
         Ok(())

@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-05-10 (`.fsm` structured-FSM graph-backed control/action signals)
+
+### Improved: structured-FSM control/action inventory keeps graph-backed provenance
+- Extended the structured-FSM graph-backed regression so the reset-block `?fsm:name` path now checks non-system control/action signals in addition to clock/reset signals.
+- The tightened coverage proves `GO`, `ACC`, and `PULSE_OUT` preserve actor-port graph provenance, graph-backed directions, numeric widths, high confidence, and residual-clean renderability when direct interface directions are cleared.
+- This is regression-only hardening for the existing `.fsm` adapter behavior; no production lowering behavior intentionally changed.
+- The Rust test listing remains `666` tests after tightening the existing regression.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge structured_fsm_preserves_graph_backed_system_signal_inventory` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`143/143` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed after formatting the tightened assertions
+- `cargo test --manifest-path Cargo.toml -p specforge -- --list` -> listed `666` Rust tests
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- tracked markdown/mdBook absolute-path scan -> passed (`218` tracked markdown/mdBook files checked)
+
 ## 2026-05-10 (`.fsm` structured-FSM graph-backed system signals)
 
 ### Improved: structured-FSM system signal inventory keeps graph-backed provenance

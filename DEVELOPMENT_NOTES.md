@@ -6,6 +6,15 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-10 `.fsm` structured-FSM graph-backed control/action signal inventory
+- New batch slice 3/100 stays in the `R6`/`R15` graph-first `.fsm` hardening lane.
+- Extended `structured_fsm_preserves_graph_backed_system_signal_inventory` in `crates/specforge/src/ir/adapters.rs` so the reset-block `?fsm:name` path now checks graph-backed non-system control/action signal inventory, not just clock/reset system contracts.
+- `GO`, `ACC`, and `PULSE_OUT` intentionally keep no direct direction hints after interface directions are cleared, while actor-port graph evidence supplies input/output roles, canonical graph support IDs, numeric widths, and high automation confidence.
+- The slice is regression-only: no production lowering behavior changed, and the renderable structured FSM remains residual-clean for both signal inventory and action graph residuals.
+- Focused validation passed, adapter-filtered validation passed with `143/143` tests, formatting passed after `cargo fmt`, and the refreshed Rust test listing remains `666` tests.
+- `git diff --check` passed before commit.
+- `bash scripts/run_docs_ci.sh` passed before commit.
+- tracked markdown/mdBook absolute-path scan passed across `218` tracked markdown/mdBook files.
 
 ## 2026-05-10 `.fsm` structured-FSM graph-backed system signal inventory
 - New batch slice 2/100 stays in the `R6`/`R15` graph-first `.fsm` hardening lane.

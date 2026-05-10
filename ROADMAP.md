@@ -371,6 +371,7 @@
   - unambiguous direct actor-port direction recovery preserves graph-backed support IDs and high automation confidence for direct inputs and outputs while staying signal-inventory-residual clean once renderable
   - standalone sequential system-contract actor-port direction recovery preserves graph-backed support IDs and high automation confidence for clock/reset inputs
   - structured-FSM system-contract actor-port direction recovery preserves graph-backed support IDs and high automation confidence for clock/reset inputs while staying system-residual clean once renderable
+  - structured-FSM reset-block control/action actor-port direction recovery preserves graph-backed support IDs, numeric widths, and high automation confidence for guard and driven output signals while staying signal-inventory and action-graph residual clean once renderable
   - standalone sequential system-contract flat-vs-graph direction disagreement preserves conflicting actor-port support IDs, high automation confidence, and system-surface repair guidance while blocking `.fsm` emission
   - standalone sequential system-contract direction conflicts preserve system-contract support IDs, high automation confidence, and system-surface repair guidance while blocking `.fsm` emission
   - standalone sequential system-contract width conflicts preserve system-contract support IDs, high automation confidence, and system-surface repair guidance while blocking `.fsm` emission

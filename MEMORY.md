@@ -24,22 +24,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `82661e1580dbe0972afc30ef1018ca6ad55ce873`
-- latest_commit_brief_message: `docs(bootstrap): correct active batch continuity`
-- note: slice 1/100 of the active `BWFSC=100` batch is committed locally; push remains deferred until the full batch completes
+- latest_commit_hash: `9ef881568e7c47cd941f4eb0508ba776031711c4`
+- latest_commit_brief_message: `test(adapter): preserve structured fsm system graph signals`
+- note: slice 2/100 of the active `BWFSC=100` batch is committed locally; push remains deferred until the full batch completes
 
 ## Recent commit chain (last 6)
+- `9ef8815` test(adapter): preserve structured fsm system graph signals
 - `82661e1` docs(bootstrap): correct active batch continuity
 - `6dece31` docs(batch): complete BWFSC 100 gate
 - `47fee46` docs(adapter): cluster no-child residual
 - `1718b92` docs(adapter): cluster unemitted source residual
 - `28d7777` docs(adapter): align undeclared source diagnostics
-- `294a5a3` docs(adapter): align undeclared target diagnostics
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state: locally ahead of `origin/main` by one slice-1 commit before slice 2 changes; push remains deferred
+- branch state: locally ahead of `origin/main` by two committed active-batch slices before slice 3 changes; push remains deferred
 - files in flight for the current slice:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -60,21 +60,22 @@
 ## Current batch status
 - objective:
   - active user-authorized batch uses default `BWFSC=100`
-  - current slice is slice 2/100 and adds structured-FSM graph-backed system signal inventory regression coverage
-  - completed_count after this commit: `2`
+  - current slice is slice 3/100 and adds structured-FSM graph-backed control/action signal inventory regression coverage
+  - completed_count after this commit: `3`
   - push remains deferred until all `100` slices are complete unless a real blocker stops the batch or the user explicitly changes the policy
   - `R6` remains the active `.fsm` adapter hardening lane; SystemVerilog, Verilog, and VHDL adapter expansion remains not started
 - tracker effect:
-  - live-status tracker now marks structured-FSM system signal inventory graph-backed actor-port provenance as `Done`
-  - live docs now record slice 2/100 as an `R6`/`R15` regression-only graph-first `.fsm` hardening slice
-  - `RUST_CODEBASE_ANALYSIS.md` now records the refreshed test count of `666` listed Rust tests
+  - live-status tracker now marks structured-FSM control/action signal inventory graph-backed actor-port provenance as `Done`
+  - live docs now record slice 3/100 as an `R6`/`R15` regression-only graph-first `.fsm` hardening slice
+  - `RUST_CODEBASE_ANALYSIS.md` now records the graph-backed control/action inventory regression while keeping the refreshed test count at `666` listed Rust tests
 - verification status:
   - focused test `cargo test --manifest-path Cargo.toml -p specforge structured_fsm_preserves_graph_backed_system_signal_inventory` passed
   - adapter suite `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `143/143` adapter-filtered tests
-  - `cargo fmt --all --check` passed
+  - `cargo fmt --all --check` passed after applying `cargo fmt`
   - `cargo test --manifest-path Cargo.toml -p specforge -- --list` listed `666` Rust tests
   - `git diff --check` passed
   - `bash scripts/run_docs_ci.sh` passed
+  - tracked markdown/mdBook absolute-path scan passed across `218` tracked markdown/mdBook files
   - message file remains required to be untracked and `0` bytes after each commit workflow
 
 ## Historical previous batch status retained from pre-slice-1 handoff
