@@ -6239,6 +6239,7 @@ struct StageProbe {
 
 #[cfg(test)]
 mod tests {
+    use std::collections::BTreeMap;
     use std::fs;
     use std::path::Path;
 
@@ -10795,6 +10796,72 @@ mod tests {
         );
     }
 
+    fn assert_renderable_control_block_provenance(
+        module: &FsmRenderableModule,
+        expected_blocks: &[ControlBlockRecord],
+    ) {
+        let expected_by_id = expected_blocks
+            .iter()
+            .map(|block| (block.block_id.as_str(), block))
+            .collect::<BTreeMap<_, _>>();
+        let actual_blocks = module
+            .blocks
+            .iter()
+            .chain(module.states.iter().flat_map(|state| state.blocks.iter()))
+            .collect::<Vec<_>>();
+
+        assert_eq!(actual_blocks.len(), expected_blocks.len());
+        for block in actual_blocks {
+            let expected = expected_by_id
+                .get(block.block_id.as_str())
+                .unwrap_or_else(|| {
+                    panic!(
+                        "renderable block {} should preserve a canonical source block",
+                        block.block_id
+                    )
+                });
+            assert!(
+                !block.supporting_statement_ids.is_empty(),
+                "{} should retain block support IDs",
+                block.block_id
+            );
+            assert_eq!(
+                block.supporting_statement_ids,
+                expected.supporting_statement_ids
+            );
+            assert_eq!(block.automation_confidence, expected.automation_confidence);
+            assert_eq!(block.branches.len(), expected.branches.len());
+
+            let expected_branches = expected
+                .branches
+                .iter()
+                .map(|branch| (branch.branch_id.as_str(), branch))
+                .collect::<BTreeMap<_, _>>();
+            for branch in &block.branches {
+                let expected_branch = expected_branches
+                    .get(branch.branch_id.as_str())
+                    .unwrap_or_else(|| {
+                        panic!(
+                            "renderable branch {} should preserve a canonical source branch",
+                            branch.branch_id
+                        )
+                    });
+                assert!(
+                    !branch.supporting_statement_ids.is_empty(),
+                    "{} should retain branch support IDs",
+                    branch.branch_id
+                );
+                assert_eq!(
+                    branch.supporting_statement_ids,
+                    expected_branch.supporting_statement_ids
+                );
+                assert_eq!(
+                    branch.automation_confidence,
+                    expected_branch.automation_confidence
+                );
+            }
+        }
+    }
     fn set_direct_signal_direction_hint(
         intent_ir: &mut IntentIr,
         signal_name: &str,
@@ -12182,6 +12249,12 @@ mod tests {
             .renderable_module
             .as_ref()
             .expect("reset-block FSM should retain a renderable module");
+        let renderable_document_module = fsm
+            .renderable_document
+            .as_ref()
+            .and_then(|document| document.direct_roots.first())
+            .map(|root| &root.module)
+            .expect("renderable source document should contain reset-block FSM root");
         assert_eq!(renderable_module.states.len(), 2);
         let idle = renderable_module
             .states
@@ -12218,6 +12291,11 @@ mod tests {
                 .blocks
                 .iter()
                 .any(|block| block.role == ControlBlockRole::ResetAsynchronous)
+        );
+        assert_renderable_control_block_provenance(renderable_module, &intent_ir.control_blocks);
+        assert_renderable_control_block_provenance(
+            renderable_document_module,
+            &intent_ir.control_blocks,
         );
         for signal_name in ["clk", "rst_n", "GO", "ACC", "PULSE_OUT"] {
             let signal = fsm

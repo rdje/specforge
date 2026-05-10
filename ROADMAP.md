@@ -162,7 +162,7 @@
 - status: In Progress
 - current lane:
   - `.fsm` adapter hardening is active, with renderable standalone/top paths, blocked renderability diagnostics, residual decisions, support/confidence preservation, and selected-inventory provenance under continuing regression coverage.
-  - the latest `BWFSC=100` batch has reached slice 100/100 closure; `R6` remains active after the batch gate rather than switching adapter families.
+  - the active `BWFSC=100` batch has reached slice 4/100 with reset-block structured-FSM control-block provenance coverage; `R6` remains active and push remains deferred until the batch completes.
   - SystemVerilog, Verilog, and VHDL expansion remains intentionally deferred until the `.fsm` lane and canonical IR truthfulness surface are strong enough to avoid semantic invention.
 - goals:
   - define target-specific lowering boundaries for:
@@ -386,6 +386,7 @@
   - renderable standalone sequential DT lowering preserves canonical DT candidate identity and system signal inventory
   - renderable structured-FSM lowering preserves named state and transition candidates
   - renderable reset-block structured-FSM lowering preserves state transitions and reset block roles in the renderable module
+  - renderable reset-block structured-FSM roots preserve control-block and branch support IDs plus automation confidence across the selected renderable module and emitted source-document root
   - missing-initial structured-FSM blockers preserve transition candidate provenance alongside state candidates
   - undeclared-target structured-FSM blockers preserve declared state candidate provenance alongside the rejected transition
   - missing-child composition blockers preserve declared top-port provenance alongside unresolved child candidates

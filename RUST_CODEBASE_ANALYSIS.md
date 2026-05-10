@@ -3,6 +3,11 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-10 `.fsm` reset-block structured-FSM control-block provenance)
+- Extended `builds_renderable_structured_fsm_with_reset_blocks` in `crates/specforge/src/ir/adapters.rs`.
+- This is a regression-only `R6`/`R15` hardening slice: reset-block structured-FSM renderable modules and emitted source-document roots now prove canonical control-block and branch support IDs plus automation confidence survive lowering.
+- Production adapter behavior did not change; the existing reset-block structured-FSM regression now covers reset-synchronous, reset-asynchronous, and state-body control-block provenance in addition to state graph, system, signal-inventory, and emitted-text behavior.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
 ## Session update (2026-05-10 `.fsm` structured-FSM graph-backed control/action signals)
 - Extended `structured_fsm_preserves_graph_backed_system_signal_inventory` in `crates/specforge/src/ir/adapters.rs`.
 - This is a regression-only `R6`/`R15` hardening slice: the renderable reset-block structured-FSM path now proves graph-backed non-system control/action inventory for `GO`, `ACC`, and `PULSE_OUT` keeps actor-port provenance, canonical graph support IDs, graph directions, numeric widths, high confidence, and residual-clean output.

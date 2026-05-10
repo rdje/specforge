@@ -136,6 +136,7 @@ Renderable symbolic-DT roots keep the same support/confidence contract for emitt
 Renderable structured-FSM roots keep the same support/confidence contract for emitted system, guard, data, accumulator, and trace inventory.
 Renderable reset-block structured-FSM roots keep the same support/confidence contract for emitted clock, reset, guard, accumulator, and pulse-output inventory.
 For reset-block structured-FSM roots, graph-backed guard and driven-output actor ports keep actor-port provenance, canonical graph support IDs, graph directions, numeric widths, and high confidence while renderable artifacts stay signal-inventory and action-graph residual clean.
+Those reset-block roots also keep canonical control-block and branch support IDs plus automation confidence attached to both the selected renderable module and the emitted source-document root.
 Direct control-input width recovery is part of that emitted surface too: an actor-port width recovered for a direct control input feeds the renderable `(+size ...)` entry alongside the target-actor input direction.
 Explicit-module control-input width recovery follows the same rule for module-local `(+size ...)` entries, combining module-control input direction with actor-port width provenance without requiring a flat module-local direction hint.
 Target-actor-backed direct output selection follows the same rule while excluding shared external actor evidence from the selected inventory.

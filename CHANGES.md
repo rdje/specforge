@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-05-10 (`.fsm` reset-block structured-FSM control-block provenance)
+
+### Improved: reset-block structured-FSM renderable blocks keep canonical provenance
+- Extended the reset-block `?fsm:name` renderability regression so selected renderable modules and emitted source-document roots both preserve canonical control-block and branch provenance.
+- The tightened coverage proves reset-synchronous, reset-asynchronous, and state-body blocks retain support IDs, branch support IDs, and automation confidence through the renderable adapter surfaces.
+- This is regression-only hardening for the existing `.fsm` adapter behavior; no production lowering behavior intentionally changed.
+- The Rust test listing remains `666` tests after tightening the existing regression.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge builds_renderable_structured_fsm_with_reset_blocks` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`143/143` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge -- --list` -> listed `666` Rust tests
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- tracked markdown/mdBook absolute-path scan -> passed (`217` tracked markdown/mdBook files checked)
+
 ## 2026-05-10 (`.fsm` structured-FSM graph-backed control/action signals)
 
 ### Improved: structured-FSM control/action inventory keeps graph-backed provenance
