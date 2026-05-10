@@ -24,22 +24,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `13f843ed6505738aa003f3b9757bd649853576ed`
-- latest_commit_brief_message: `Add structured FSM state graph provenance regression`
-- note: slice 5/100 of the active `BWFSC=100` batch is committed locally; push remains deferred until the full batch completes
+- latest_commit_hash: `d96a4aa84cbc55886f747364f24daef3346c7f74`
+- latest_commit_brief_message: `Add structured FSM renderable projection provenance regression`
+- note: slice 6/100 of the active `BWFSC=100` batch is committed locally; push remains deferred until the full batch completes
 
 ## Recent commit chain (last 6)
+- `d96a4aa` Add structured FSM renderable projection provenance regression
 - `13f843e` Add structured FSM state graph provenance regression
 - `e665b3d` Add reset-block FSM provenance regression
 - `470681d` test(adapter): preserve structured fsm control graph signals
 - `9ef8815` test(adapter): preserve structured fsm system graph signals
 - `82661e1` docs(bootstrap): correct active batch continuity
-- `6dece31` docs(batch): complete BWFSC 100 gate
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state: locally ahead of `origin/main` by five committed active-batch slices before slice 6 changes; push remains deferred
+- branch state: locally ahead of `origin/main` by six committed active-batch slices before slice 7 changes; push remains deferred
 - files in flight for the current slice:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -61,17 +61,19 @@
 ## Current batch status
 - objective:
   - active user-authorized batch uses default `BWFSC=100`
-  - current slice is slice 6/100 and adds renderable structured-FSM module/source-document state graph projection provenance regression coverage
-  - completed_count after this commit: `6`
+  - current slice is slice 7/100 and adds standalone explicit-module `?fsm:name` state graph provenance coverage across module candidates, selected renderable modules, and emitted source-document direct roots
+  - completed_count after this commit: `7`
   - push remains deferred until all `100` slices are complete unless a real blocker stops the batch or the user explicitly changes the policy
   - `R6` remains the active `.fsm` adapter hardening lane; SystemVerilog, Verilog, and VHDL adapter expansion remains not started
 - tracker effect:
-  - live-status tracker now marks renderable structured-FSM module state graph projection provenance as `Done`
-  - live-status tracker now marks renderable structured-FSM source-document state graph projection provenance as `Done`
-  - live docs now record slice 6/100 as an `R6`/`R15` regression-only structured-FSM renderable projection provenance hardening slice
-  - `RUST_CODEBASE_ANALYSIS.md` now records the structured-FSM renderable projection provenance regression while keeping the refreshed test count at `666` listed Rust tests
+  - live-status tracker now marks standalone explicit-module state candidate provenance as `Done`
+  - live-status tracker now marks standalone explicit-module transition candidate provenance as `Done`
+  - live-status tracker now marks standalone explicit-module selected module state graph projection provenance as `Done`
+  - live-status tracker now marks standalone explicit-module source-document direct-root state graph projection provenance as `Done`
+  - live docs now record slice 7/100 as an `R6`/`R15` regression-only standalone explicit-module state graph provenance hardening slice
+  - `RUST_CODEBASE_ANALYSIS.md` now records the explicit-module renderable projection provenance regression while keeping the refreshed test count at `666` listed Rust tests
 - verification status:
-  - focused test `cargo test --manifest-path Cargo.toml -p specforge builds_renderable_structured_fsm_adapter_artifact` passed
+  - focused test `cargo test --manifest-path Cargo.toml -p specforge standalone_explicit_module_recovers_inputs_from_module_control_reads` passed
   - adapter suite `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `143/143` adapter-filtered tests
   - `cargo fmt --all --check` passed
   - `cargo test --manifest-path Cargo.toml -p specforge -- --list` listed `666` Rust tests

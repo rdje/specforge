@@ -6247,8 +6247,9 @@ mod tests {
 
     use crate::error::{AppError, Result};
     use crate::ir::adapters::{
-        AdapterArtifact, AdapterTarget, FsmAdapterArtifact, FsmRenderableModule, FsmRootKind,
-        FsmSignalCandidate, FsmTransitionCandidate,
+        AdapterArtifact, AdapterTarget, FsmAdapterArtifact, FsmExplicitModuleCandidate,
+        FsmRenderableModule, FsmRootKind, FsmSignalCandidate, FsmStateCandidate,
+        FsmTransitionCandidate,
     };
     use crate::ir::evidence::EvidenceIr;
     use crate::ir::intent::IntentIr;
@@ -6259,8 +6260,9 @@ mod tests {
         ControlExpressionRecord, ControlReferenceKind, ControlReferenceRecord,
         ControlReferenceSuffix, ControlUnaryOperator, DecisionTreeAssignmentKind,
         DecisionTreeComparisonOperator, DecisionTreeGuardRecord, DecisionTreeValueRecord,
-        InitAssignmentRecord, InterfaceSignalDirection, SemanticIr, SymbolDefinitionKind,
-        SymbolDefinitionRecord, SymbolEnumMemberRecord, SystemResetPolarity, SystemResetTargetKind,
+        InitAssignmentRecord, InterfaceSignalDirection, RegularStateRecord, SemanticIr,
+        StateTransitionRecord, SymbolDefinitionKind, SymbolDefinitionRecord,
+        SymbolEnumMemberRecord, SystemResetPolarity, SystemResetTargetKind,
         SystemResetTimingRelation,
     };
     use crate::ir::source::{AutomationConfidence, SourceIr, WidthHint};
@@ -10863,14 +10865,18 @@ mod tests {
         }
     }
 
-    fn assert_state_graph_candidate_provenance(fsm: &FsmAdapterArtifact, intent_ir: &IntentIr) {
-        let expected_states = intent_ir
-            .regular_states
+    fn assert_state_graph_candidates_provenance(
+        state_candidates: &[FsmStateCandidate],
+        transition_candidates: &[FsmTransitionCandidate],
+        regular_states: &[RegularStateRecord],
+        state_transitions: &[StateTransitionRecord],
+    ) {
+        let expected_states = regular_states
             .iter()
             .map(|state| (state.state_id.as_str(), state))
             .collect::<BTreeMap<_, _>>();
-        assert_eq!(fsm.state_candidates.len(), expected_states.len());
-        for state in &fsm.state_candidates {
+        assert_eq!(state_candidates.len(), expected_states.len());
+        for state in state_candidates {
             let expected = *expected_states
                 .get(state.state_id.as_str())
                 .unwrap_or_else(|| {
@@ -10894,13 +10900,12 @@ mod tests {
             assert_eq!(state.automation_confidence, expected.automation_confidence);
         }
 
-        let expected_transitions = intent_ir
-            .state_transitions
+        let expected_transitions = state_transitions
             .iter()
             .map(|transition| (transition.transition_id.as_str(), transition))
             .collect::<BTreeMap<_, _>>();
-        assert_eq!(fsm.transition_candidates.len(), expected_transitions.len());
-        for transition in &fsm.transition_candidates {
+        assert_eq!(transition_candidates.len(), expected_transitions.len());
+        for transition in transition_candidates {
             let expected = *expected_transitions
                 .get(transition.transition_id.as_str())
                 .unwrap_or_else(|| {
@@ -10929,11 +10934,43 @@ mod tests {
         }
     }
 
-    fn assert_renderable_state_graph_provenance(
-        module: &FsmRenderableModule,
+    fn assert_state_graph_candidate_provenance(fsm: &FsmAdapterArtifact, intent_ir: &IntentIr) {
+        assert_state_graph_candidates_provenance(
+            &fsm.state_candidates,
+            &fsm.transition_candidates,
+            &intent_ir.regular_states,
+            &intent_ir.state_transitions,
+        );
+    }
+
+    fn assert_module_state_graph_candidate_provenance(
+        module: &FsmExplicitModuleCandidate,
         intent_ir: &IntentIr,
     ) {
-        let mut expected_states = intent_ir.regular_states.iter().collect::<Vec<_>>();
+        let expected_module = intent_ir
+            .explicit_modules
+            .iter()
+            .find(|candidate| candidate.module_name == module.module_name)
+            .unwrap_or_else(|| {
+                panic!(
+                    "module candidate {} should preserve a canonical explicit module",
+                    module.module_name
+                )
+            });
+        assert_state_graph_candidates_provenance(
+            &module.state_candidates,
+            &module.transition_candidates,
+            &expected_module.regular_states,
+            &expected_module.state_transitions,
+        );
+    }
+
+    fn assert_renderable_state_graph_provenance_from_records(
+        module: &FsmRenderableModule,
+        regular_states: &[RegularStateRecord],
+        state_transitions: &[StateTransitionRecord],
+    ) {
+        let mut expected_states = regular_states.iter().collect::<Vec<_>>();
         expected_states.sort_by_key(|state| (!state.is_initial, state.declaration_order));
         assert_eq!(module.states.len(), expected_states.len());
         for (state, expected) in module.states.iter().zip(expected_states.iter()) {
@@ -10942,7 +10979,7 @@ mod tests {
         }
 
         let mut expected_transitions_by_source = BTreeMap::<&str, Vec<_>>::new();
-        for transition in &intent_ir.state_transitions {
+        for transition in state_transitions {
             expected_transitions_by_source
                 .entry(transition.source_state.as_str())
                 .or_default()
@@ -10957,7 +10994,7 @@ mod tests {
             .iter()
             .map(|state| state.transitions.len())
             .sum::<usize>();
-        assert_eq!(actual_transition_count, intent_ir.state_transitions.len());
+        assert_eq!(actual_transition_count, state_transitions.len());
         for state in &module.states {
             let expected_transitions = expected_transitions_by_source
                 .get(state.state_name.as_str())
@@ -10988,6 +11025,42 @@ mod tests {
         }
     }
 
+    fn assert_renderable_state_graph_provenance(
+        module: &FsmRenderableModule,
+        intent_ir: &IntentIr,
+    ) {
+        assert_renderable_state_graph_provenance_from_records(
+            module,
+            &intent_ir.regular_states,
+            &intent_ir.state_transitions,
+        );
+    }
+
+    fn assert_module_renderable_state_graph_provenance(
+        module: &FsmExplicitModuleCandidate,
+        intent_ir: &IntentIr,
+    ) {
+        let expected_module = intent_ir
+            .explicit_modules
+            .iter()
+            .find(|candidate| candidate.module_name == module.module_name)
+            .unwrap_or_else(|| {
+                panic!(
+                    "renderable module {} should preserve a canonical explicit module",
+                    module.module_name
+                )
+            });
+        let renderable_module = module
+            .renderable_module
+            .as_ref()
+            .expect("renderable explicit module should carry a renderable module");
+        assert_renderable_state_graph_provenance_from_records(
+            renderable_module,
+            &expected_module.regular_states,
+            &expected_module.state_transitions,
+        );
+    }
+
     fn assert_renderable_document_state_graph_provenance(
         fsm: &FsmAdapterArtifact,
         intent_ir: &IntentIr,
@@ -11009,6 +11082,45 @@ mod tests {
         assert_eq!(&direct_root.module, renderable_module);
         assert_renderable_state_graph_provenance(&direct_root.module, intent_ir);
     }
+
+    fn assert_standalone_module_state_graph_provenance(
+        fsm: &FsmAdapterArtifact,
+        module: &FsmExplicitModuleCandidate,
+        intent_ir: &IntentIr,
+    ) {
+        assert_module_state_graph_candidate_provenance(module, intent_ir);
+        assert_module_renderable_state_graph_provenance(module, intent_ir);
+        let expected_module = intent_ir
+            .explicit_modules
+            .iter()
+            .find(|candidate| candidate.module_name == module.module_name)
+            .expect("source explicit module should be present");
+
+        let renderable_module = module
+            .renderable_module
+            .as_ref()
+            .expect("standalone explicit module should carry a renderable module");
+        assert_eq!(fsm.renderable_module.as_ref(), Some(renderable_module));
+        let renderable_document = fsm
+            .renderable_document
+            .as_ref()
+            .expect("standalone explicit module should carry a source document");
+        assert!(renderable_document.top_root.is_none());
+        assert_eq!(renderable_document.direct_roots.len(), 1);
+        let direct_root = &renderable_document.direct_roots[0];
+        assert_eq!(&direct_root.module_name, &module.module_name);
+        assert_eq!(
+            direct_root.root_kind,
+            module.root_kind_decision.selected_root_kind
+        );
+        assert_eq!(&direct_root.module, renderable_module);
+        assert_renderable_state_graph_provenance_from_records(
+            &direct_root.module,
+            &expected_module.regular_states,
+            &expected_module.state_transitions,
+        );
+    }
+
     fn set_direct_signal_direction_hint(
         intent_ir: &mut IntentIr,
         signal_name: &str,
@@ -14338,6 +14450,7 @@ mod tests {
 
         assert_eq!(fsm.root_name, "controller");
         assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Fsm);
+        assert_standalone_module_state_graph_provenance(&fsm, module, &intent_ir);
         for signal_name in ["DATA_IN", "GO", "DONE"] {
             let signal = module
                 .signal_inventory

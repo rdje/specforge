@@ -6,6 +6,15 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-10 `.fsm` standalone explicit-module state graph provenance
+- New batch slice 7/100 stays in the `R6`/`R15` graph-first `.fsm` hardening lane.
+- Extended `standalone_explicit_module_recovers_inputs_from_module_control_reads` in `crates/specforge/src/ir/adapters.rs` so standalone explicit-module `?fsm:name` module candidates, selected renderable modules, and emitted source-document direct roots prove exact state-graph projection preservation from the source explicit module.
+- The shared helper coverage checks state IDs, names, initial flags, declaration order, support IDs, transition IDs, source/target pairs, guards, transition support IDs, and automation confidence across explicit-module candidate and renderable projection surfaces.
+- The slice is regression-only: no production lowering behavior changed, and the existing standalone explicit-module path remains renderable.
+- Focused validation passed, adapter-filtered validation passed with `143/143` tests, formatting passed, and the refreshed Rust test listing remains `666` tests.
+- `git diff --check` passed before commit.
+- `bash scripts/run_docs_ci.sh` passed before commit.
+- tracked markdown/mdBook absolute-path scan passed across `217` tracked markdown/mdBook files.
 ## 2026-05-10 `.fsm` renderable structured-FSM module/source-document state graph provenance
 - New batch slice 6/100 stays in the `R6`/`R15` graph-first `.fsm` hardening lane.
 - Extended `builds_renderable_structured_fsm_adapter_artifact` in `crates/specforge/src/ir/adapters.rs` so renderable structured-FSM modules and emitted source-document direct roots prove exact state-graph projection preservation from `IntentIR`.

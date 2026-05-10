@@ -3,6 +3,11 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-10 `.fsm` standalone explicit-module state graph provenance)
+- Extended `standalone_explicit_module_recovers_inputs_from_module_control_reads` in `crates/specforge/src/ir/adapters.rs`.
+- This is a regression-only `R6`/`R15` hardening slice: standalone explicit-module `?fsm:name` module candidates, selected renderable modules, and emitted source-document direct roots now prove source explicit-module state IDs, state names, initial flags, declaration order, support IDs, transition IDs, source/target pairs, guards, transition support IDs, and automation confidence survive projection.
+- Production adapter behavior did not change; the existing standalone explicit-module regression now covers state-graph provenance in addition to control-read graph recovery, emitted `(+size ...)` behavior, and residual-clean renderability.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
 ## Session update (2026-05-10 `.fsm` renderable structured-FSM module/source-document state graph provenance)
 - Extended `builds_renderable_structured_fsm_adapter_artifact` in `crates/specforge/src/ir/adapters.rs`.
 - This is a regression-only `R6`/`R15` hardening slice: renderable structured-FSM modules and emitted source-document direct roots now prove canonical state ordering, initial-state flags, transition grouping, transition IDs, source/target pairs, guards, declaration order, transition support IDs, and automation confidence survive projection from `IntentIR`.

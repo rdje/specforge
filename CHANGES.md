@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-05-10 (`.fsm` standalone explicit-module state graph provenance)
+
+### Improved: standalone explicit-module FSM roots keep canonical state graph provenance
+- Extended `standalone_explicit_module_recovers_inputs_from_module_control_reads` so the standalone explicit-module `?fsm:name` regression now proves module candidate, selected renderable module, and emitted source-document direct-root state graph provenance.
+- Reused the structured-FSM state graph provenance assertions for explicit modules, covering state IDs, names, initial flags, declaration order, support IDs, transition IDs, source/target pairs, guards, transition support IDs, and automation confidence against the source explicit module.
+- The selected renderable module and source-document direct root now prove they project the explicit module's canonical state ordering and transition grouping rather than only proving module-local control-input recovery.
+- This is regression-only hardening for the existing `.fsm` adapter behavior; no production lowering behavior intentionally changed.
+- The Rust test listing remains `666` tests after tightening the existing regression.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge standalone_explicit_module_recovers_inputs_from_module_control_reads` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` -> passed (`143/143` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge -- --list` -> listed `666` Rust tests
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- tracked markdown/mdBook absolute-path scan -> passed (`217` tracked markdown/mdBook files checked)
+
 ## 2026-05-10 (`.fsm` renderable structured-FSM module/source-document state graph provenance)
 
 ### Improved: renderable structured-FSM projections keep canonical state graph provenance
