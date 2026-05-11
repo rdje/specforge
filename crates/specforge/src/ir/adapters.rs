@@ -11005,6 +11005,26 @@ mod tests {
         module: &FsmExplicitModuleCandidate,
         expected_module: &ExplicitModuleRecord,
     ) {
+        assert_eq!(module.module_name, expected_module.module_name);
+        assert_eq!(module.declaration_order, expected_module.declaration_order);
+        assert_eq!(
+            module.root_kind_decision.selected_root_kind,
+            FsmRootKind::Fsm
+        );
+        assert_eq!(
+            module.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Top]
+        );
+        assert_eq!(
+            module.root_kind_decision.automation_confidence,
+            AutomationConfidence::High
+        );
+        assert!(
+            module
+                .root_kind_decision
+                .rationale
+                .contains("explicit regular-state facts")
+        );
         assert_eq!(module.system_contract, expected_module.system_contract);
         assert_eq!(
             module.init_assignments.len(),

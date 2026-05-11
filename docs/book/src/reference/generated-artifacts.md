@@ -141,6 +141,7 @@ Those structured-FSM roots also keep canonical state and transition candidate su
 Their renderable module and emitted source-document direct root also preserve the canonical state ordering, initial-state flags, transition grouping, transition IDs, source/target pairs, guards, declaration order, support IDs, and automation confidence used for generated `?fsm:name` output.
 Standalone explicit-module `?fsm:name` roots follow the same state-graph contract across module candidates, selected renderable modules, and emitted source-document direct roots, preserving source explicit-module state and transition provenance rather than rebuilding it from emitted text.
 The module-candidate surface also preserves source explicit-module system-contract and init-assignment provenance before the adapter selects a renderable module.
+It preserves the explicit-module root-kind decision too, including selected kind, deferred top root, confidence, and explicit-state rationale.
 Their selected renderable modules and emitted source-document direct roots also preserve source explicit-module control-block support IDs, branch support IDs, and automation confidence.
 They preserve source explicit-module system-contract clock/reset support IDs and automation confidence on those same renderable projection surfaces.
 They also preserve source explicit-module init-assignment targets, values, support IDs, and automation confidence on those same surfaces.

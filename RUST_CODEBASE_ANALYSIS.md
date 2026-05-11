@@ -3,6 +3,11 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-11 `.fsm` standalone explicit-module root-kind provenance)
+- Extended `standalone_explicit_module_recovers_inputs_from_module_control_reads` in `crates/specforge/src/ir/adapters.rs`.
+- This is a regression-only `R6`/`R15` hardening slice: standalone explicit-module candidates now prove root identity, declaration order, selected `?fsm:name` root kind, deferred top root, root-kind confidence, and explicit-state rationale before renderable projection.
+- Production adapter behavior did not change; the existing standalone explicit-module regression now covers root-kind decision provenance in addition to module-candidate system/init and renderable projection provenance.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
 ## Session update (2026-05-11 `.fsm` standalone explicit-module candidate surface provenance)
 - Extended `standalone_explicit_module_recovers_inputs_from_module_control_reads` in `crates/specforge/src/ir/adapters.rs`.
 - This is a regression-only `R6`/`R15` hardening slice: standalone explicit-module candidates now prove source explicit-module system-contract equality plus init-assignment target, value, support IDs, and automation confidence before renderable projection.

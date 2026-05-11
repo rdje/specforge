@@ -24,22 +24,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `9365052ae7c92837d5451c1fba9a14f23ee42661`
-- latest_commit_brief_message: `Document PNT push checkpoint policy`
-- note: PNT workflow-policy slice 3 is committed locally; push remains deferred because the branch is below the around-`30` local-commit checkpoint threshold
+- latest_commit_hash: `2fe27c22bf3beb3f50445f20f512f67c0883c0a5`
+- latest_commit_brief_message: `Add explicit module candidate provenance regression`
+- note: PNT slice 4 is committed locally; push remains deferred because the branch is below the around-`30` local-commit checkpoint threshold
 
 ## Recent commit chain (last 6)
+- `2fe27c2` Add explicit module candidate provenance regression
 - `9365052` Document PNT push checkpoint policy
 - `eb6baaf` Add explicit module init provenance regression
 - `e353fce` Add explicit module system provenance regression
 - `75b0fa3` Add explicit module control provenance regression
 - `85c7c82` Add explicit FSM state graph provenance regression
-- `d96a4aa` Add structured FSM renderable projection provenance regression
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state: locally ahead of `origin/main` by eleven committed active-batch/PNT slices before this PNT slice; push remains deferred because the around-`30` local-commit checkpoint has not been reached
+- branch state: locally ahead of `origin/main` by twelve committed active-batch/PNT slices before this PNT slice; push remains deferred because the around-`30` local-commit checkpoint has not been reached
 - files in flight for the current PNT slice:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -62,14 +62,14 @@
 ## Current batch status
 - objective:
   - active user-authorized run uses PNT with undefined BWFSC
-  - current PNT slice adds standalone explicit-module candidate-surface system-contract and init-assignment provenance coverage before selected renderable module and source-document direct-root projection
-  - completed_count after this PNT commit: `4`
+  - current PNT slice adds standalone explicit-module candidate root-kind provenance coverage before selected renderable module and source-document direct-root projection
+  - completed_count after this PNT commit: `5`
   - push remains deferred until the branch reaches around `30` local commits since the last push or the user explicitly changes the policy
   - `R6` remains the active `.fsm` adapter hardening lane; SystemVerilog, Verilog, and VHDL adapter expansion remains not started
 - tracker effect:
-  - live-status tracker now marks standalone explicit-module candidate surface system/init provenance as `Done`
-  - live docs now record the active PNT cycle as an `R6`/`R15` regression-only standalone explicit-module candidate-surface provenance hardening run
-  - `RUST_CODEBASE_ANALYSIS.md` now records the explicit-module candidate-surface provenance regression while keeping the refreshed test count at `666` listed Rust tests
+  - live-status tracker now marks standalone explicit-module candidate root-kind decision provenance as `Done`
+  - live docs now record the active PNT cycle as an `R6`/`R15` regression-only standalone explicit-module root-kind provenance hardening run
+  - `RUST_CODEBASE_ANALYSIS.md` now records the explicit-module root-kind provenance regression while keeping the refreshed test count at `666` listed Rust tests
 - verification status:
   - focused test `cargo test --manifest-path Cargo.toml -p specforge standalone_explicit_module_recovers_inputs_from_module_control_reads` passed
   - adapter suite `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `143/143` adapter-filtered tests

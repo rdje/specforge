@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-05-11 (`.fsm` standalone explicit-module root-kind provenance)
+
+### Improved: standalone explicit-module candidates lock root-kind decisions
+- Extended `standalone_explicit_module_recovers_inputs_from_module_control_reads` so the standalone explicit-module module-candidate surface now proves root identity, declaration order, selected `?fsm:name` root kind, deferred top root, root-kind confidence, and explicit-state rationale.
+- This keeps the adapter's selected module-candidate root plan tied to source explicit state evidence instead of only checking the later renderable projection.
+- This is regression-only hardening for the existing `.fsm` adapter behavior; no production lowering behavior intentionally changed.
+- The Rust test listing remains `666` tests after tightening the existing regression.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge standalone_explicit_module_recovers_inputs_from_module_control_reads` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`143/143` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge -- --list` -> listed `666` Rust tests
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- tracked markdown/mdBook absolute-path scan -> passed (`217` tracked markdown/mdBook files checked)
+
 ## 2026-05-11 (`.fsm` standalone explicit-module candidate surface provenance)
 
 ### Improved: standalone explicit-module candidates keep system and init provenance
