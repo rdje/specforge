@@ -144,6 +144,7 @@ The module-candidate surface also preserves source explicit-module system-contra
 It preserves the explicit-module root-kind decision too, including selected kind, deferred top root, confidence, and explicit-state rationale.
 Output-side module-candidate inventory preserves graph-backed direction, module-control support, external actor-port support, and confidence before selected renderable size entries preserve output direction and width.
 Renderable standalone explicit-module aggregate and module-candidate surfaces also keep blocker and required-enrichment diagnostics empty when the module is truly renderable.
+Actor-port width recovery for standalone explicit-module control inputs is preserved through the selected aggregate renderable module and emitted source-document direct root.
 Their selected renderable modules and emitted source-document direct roots also preserve source explicit-module control-block support IDs, branch support IDs, and automation confidence.
 They preserve source explicit-module system-contract clock/reset support IDs and automation confidence on those same renderable projection surfaces.
 They also preserve source explicit-module init-assignment targets, values, support IDs, and automation confidence on those same surfaces.

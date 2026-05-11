@@ -14762,6 +14762,11 @@ mod tests {
             .renderable_module
             .as_ref()
             .expect("module-control-input-width-backed module should be renderable");
+        assert_eq!(
+            fsm.renderable_module.as_ref(),
+            Some(renderable_module),
+            "selected aggregate module should preserve recovered width projection"
+        );
         let data_in_size = renderable_module
             .size_entries
             .iter()
@@ -14769,6 +14774,26 @@ mod tests {
             .expect("DATA_IN should have a renderable size entry");
         assert_eq!(data_in_size.direction_hint, InterfaceSignalDirection::Input);
         assert_eq!(data_in_size.width, 8);
+        let renderable_document = fsm
+            .renderable_document
+            .as_ref()
+            .expect("renderable width-backed module should carry a source document");
+        assert!(renderable_document.top_root.is_none());
+        assert_eq!(renderable_document.direct_roots.len(), 1);
+        let direct_root = &renderable_document.direct_roots[0];
+        assert_eq!(direct_root.module_name, "controller");
+        assert_eq!(direct_root.root_kind, FsmRootKind::Fsm);
+        let direct_root_data_in_size = direct_root
+            .module
+            .size_entries
+            .iter()
+            .find(|entry| entry.signal_name == "DATA_IN")
+            .expect("source-document direct root should keep DATA_IN size entry");
+        assert_eq!(
+            direct_root_data_in_size.direction_hint,
+            InterfaceSignalDirection::Input
+        );
+        assert_eq!(direct_root_data_in_size.width, 8);
         assert!(emitted_text.contains("(DATA_IN 8)"));
         assert!(emitted_text.contains("(ACC <= DATA_IN)"));
 

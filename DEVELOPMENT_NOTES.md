@@ -6,6 +6,12 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-11 `.fsm` standalone explicit-module width projection provenance
+- Continued the user-requested PNT cycle with another `R6`/`R15` graph-first `.fsm` hardening slice.
+- Extended `standalone_explicit_module_recovers_control_input_width_from_actor_port_graph` in `crates/specforge/src/ir/adapters.rs` so recovered `DATA_IN` actor-port width evidence is proven on the selected aggregate renderable module and emitted source-document direct root.
+- Added direct-root checks for root name, root kind, recovered input direction, and recovered width so width recovery is proven through final renderable projection.
+- The slice is regression-only: no production lowering behavior changed, and the existing standalone explicit-module path remains renderable.
+- Focused validation passed and adapter-filtered validation passed with `143/143` tests; formatting, test-list, docs, diff, and tracked markdown path-hygiene checks are recorded in `CHANGES.md`.
 ## 2026-05-11 PNT post-commit continuation
 - User clarified that a post-commit report shall lead directly to picking the next task and rolling with it.
 - Updated `COMMIT.md` so PNT post-commit reporting is explicitly a continuity checkpoint, not a pause.

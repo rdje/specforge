@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-05-11 (`.fsm` standalone explicit-module width projection provenance)
+
+### Improved: explicit-module width recovery reaches all renderable projections
+- Extended `standalone_explicit_module_recovers_control_input_width_from_actor_port_graph` so recovered actor-port width evidence for `DATA_IN` is proven on the selected aggregate renderable module and emitted source-document direct root, not only the module candidate.
+- Added source-document direct-root checks for root name, root kind, recovered input direction, and recovered width.
+- This is regression-only hardening for the existing `.fsm` adapter behavior; no production lowering behavior intentionally changed.
+- The Rust test listing remains `666` tests after tightening the existing regression.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge standalone_explicit_module_recovers_control_input_width_from_actor_port_graph` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`143/143` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge -- --list` -> listed `666` Rust tests
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- tracked markdown/mdBook absolute-path scan -> passed (`217` tracked markdown/mdBook files checked)
+
 ## 2026-05-11 (PNT post-commit continuation)
 
 ### Changed: PNT reports now explicitly continue into the next slice

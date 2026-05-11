@@ -3,6 +3,11 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-11 `.fsm` standalone explicit-module width projection provenance)
+- Extended `standalone_explicit_module_recovers_control_input_width_from_actor_port_graph` in `crates/specforge/src/ir/adapters.rs`.
+- This is a regression-only `R6`/`R15` hardening slice: recovered actor-port width evidence for standalone explicit-module control input `DATA_IN` is now proven on the selected aggregate renderable module and emitted source-document direct root.
+- Production adapter behavior did not change; the existing standalone explicit-module width-recovery regression now proves final renderable projection in addition to module-candidate recovery.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
 ## Session update (2026-05-11 `.fsm` standalone explicit-module clean renderability)
 - Extended `standalone_explicit_module_recovers_inputs_from_module_control_reads` in `crates/specforge/src/ir/adapters.rs`.
 - This is a regression-only `R6`/`R15` hardening slice: standalone explicit-module aggregate and module-candidate renderability now prove empty blocker and required-enrichment diagnostics while renderable.
