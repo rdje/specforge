@@ -24,28 +24,32 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `eb6baaf21acdffdf41baa7dde87bcbf36ca8374e`
-- latest_commit_brief_message: `Add explicit module init provenance regression`
-- note: PNT slice 2 is committed locally; push remains deferred because the branch is below the around-`30` local-commit checkpoint threshold
+- latest_commit_hash: `9365052ae7c92837d5451c1fba9a14f23ee42661`
+- latest_commit_brief_message: `Document PNT push checkpoint policy`
+- note: PNT workflow-policy slice 3 is committed locally; push remains deferred because the branch is below the around-`30` local-commit checkpoint threshold
 
 ## Recent commit chain (last 6)
+- `9365052` Document PNT push checkpoint policy
 - `eb6baaf` Add explicit module init provenance regression
 - `e353fce` Add explicit module system provenance regression
 - `75b0fa3` Add explicit module control provenance regression
 - `85c7c82` Add explicit FSM state graph provenance regression
 - `d96a4aa` Add structured FSM renderable projection provenance regression
-- `13f843e` Add structured FSM state graph provenance regression
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state: locally ahead of `origin/main` by ten committed active-batch/PNT slices before this workflow-policy slice; push remains deferred because the around-`30` local-commit checkpoint has not been reached
-- files in flight for the current workflow-policy slice:
+- branch state: locally ahead of `origin/main` by eleven committed active-batch/PNT slices before this PNT slice; push remains deferred because the around-`30` local-commit checkpoint has not been reached
+- files in flight for the current PNT slice:
   - `CHANGES.md`
-  - `COMMIT.md`
   - `DEVELOPMENT_NOTES.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
   - `MEMORY.md`
+  - `README.md`
+  - `ROADMAP.md`
+  - `RUST_CODEBASE_ANALYSIS.md`
+  - `crates/specforge/src/ir/adapters.rs`
+  - `docs/book/src/reference/generated-artifacts.md`
 
 ## Latest completed batch run
 - requested_count: `100`
@@ -58,15 +62,19 @@
 ## Current batch status
 - objective:
   - active user-authorized run uses PNT with undefined BWFSC
-  - current PNT workflow-policy slice documents that PNT has no fixed end, keeps selecting tasks/slices/lanes until none remain or the user explicitly pauses/stops, and checkpoint-pushes around every `30` local commits since the last push
-  - completed_count after this PNT workflow-policy commit: `3`
+  - current PNT slice adds standalone explicit-module candidate-surface system-contract and init-assignment provenance coverage before selected renderable module and source-document direct-root projection
+  - completed_count after this PNT commit: `4`
   - push remains deferred until the branch reaches around `30` local commits since the last push or the user explicitly changes the policy
   - `R6` remains the active `.fsm` adapter hardening lane; SystemVerilog, Verilog, and VHDL adapter expansion remains not started
 - tracker effect:
-  - live-status tracker now marks PNT no-fixed-end policy with around-30-commit push checkpoints as `Done`
-  - live docs now record the active PNT cycle as open-ended until no task/slice/lane remains or the user explicitly pauses/stops
-  - this slice is workflow/documentation-only; no Rust architecture changed
+  - live-status tracker now marks standalone explicit-module candidate surface system/init provenance as `Done`
+  - live docs now record the active PNT cycle as an `R6`/`R15` regression-only standalone explicit-module candidate-surface provenance hardening run
+  - `RUST_CODEBASE_ANALYSIS.md` now records the explicit-module candidate-surface provenance regression while keeping the refreshed test count at `666` listed Rust tests
 - verification status:
+  - focused test `cargo test --manifest-path Cargo.toml -p specforge standalone_explicit_module_recovers_inputs_from_module_control_reads` passed
+  - adapter suite `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `143/143` adapter-filtered tests
+  - `cargo fmt --all --check` passed
+  - `cargo test --manifest-path Cargo.toml -p specforge -- --list` listed `666` Rust tests
   - `git diff --check` passed
   - `bash scripts/run_docs_ci.sh` passed
   - tracked markdown/mdBook absolute-path scan passed across `217` tracked markdown/mdBook files

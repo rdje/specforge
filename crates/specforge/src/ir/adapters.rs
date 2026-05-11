@@ -6260,8 +6260,8 @@ mod tests {
         ControlExpressionRecord, ControlReferenceKind, ControlReferenceRecord,
         ControlReferenceSuffix, ControlUnaryOperator, DecisionTreeAssignmentKind,
         DecisionTreeComparisonOperator, DecisionTreeGuardRecord, DecisionTreeValueRecord,
-        InitAssignmentRecord, InterfaceSignalDirection, RegularStateRecord, SemanticIr,
-        StateTransitionRecord, SymbolDefinitionKind, SymbolDefinitionRecord,
+        ExplicitModuleRecord, InitAssignmentRecord, InterfaceSignalDirection, RegularStateRecord,
+        SemanticIr, StateTransitionRecord, SymbolDefinitionKind, SymbolDefinitionRecord,
         SymbolEnumMemberRecord, SystemResetPolarity, SystemResetTargetKind,
         SystemResetTimingRelation,
     };
@@ -11001,6 +11001,35 @@ mod tests {
         );
     }
 
+    fn assert_module_candidate_surface_provenance(
+        module: &FsmExplicitModuleCandidate,
+        expected_module: &ExplicitModuleRecord,
+    ) {
+        assert_eq!(module.system_contract, expected_module.system_contract);
+        assert_eq!(
+            module.init_assignments.len(),
+            expected_module.init_assignments.len()
+        );
+        for (actual, expected) in module
+            .init_assignments
+            .iter()
+            .zip(expected_module.init_assignments.iter())
+        {
+            assert_eq!(&actual.target_signal, &expected.target_signal);
+            assert_eq!(&actual.value, &expected.value);
+            assert!(
+                !actual.supporting_statement_ids.is_empty(),
+                "{} module candidate init assignment should retain support IDs",
+                actual.target_signal
+            );
+            assert_eq!(
+                actual.supporting_statement_ids,
+                expected.supporting_statement_ids
+            );
+            assert_eq!(actual.automation_confidence, expected.automation_confidence);
+        }
+    }
+
     fn assert_renderable_state_graph_provenance_from_records(
         module: &FsmRenderableModule,
         regular_states: &[RegularStateRecord],
@@ -11131,6 +11160,7 @@ mod tests {
             .iter()
             .find(|candidate| candidate.module_name == module.module_name)
             .expect("source explicit module should be present");
+        assert_module_candidate_surface_provenance(module, expected_module);
 
         let renderable_module = module
             .renderable_module

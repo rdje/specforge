@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-05-11 (`.fsm` standalone explicit-module candidate surface provenance)
+
+### Improved: standalone explicit-module candidates keep system and init provenance
+- Extended `standalone_explicit_module_recovers_inputs_from_module_control_reads` so the standalone explicit-module module-candidate surface now proves source explicit-module system-contract and init-assignment provenance before renderable projection.
+- Added module-candidate checks for system-contract equality plus init-assignment target, value, support IDs, and automation confidence.
+- This is regression-only hardening for the existing `.fsm` adapter behavior; no production lowering behavior intentionally changed.
+- The Rust test listing remains `666` tests after tightening the existing regression.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge standalone_explicit_module_recovers_inputs_from_module_control_reads` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`143/143` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge -- --list` -> listed `666` Rust tests
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- tracked markdown/mdBook absolute-path scan -> passed (`217` tracked markdown/mdBook files checked)
+
 ## 2026-05-11 (PNT push cadence)
 
 ### Changed: active PNT run now checkpoints pushes around every 30 commits

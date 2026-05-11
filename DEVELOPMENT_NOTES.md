@@ -6,6 +6,12 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-11 `.fsm` standalone explicit-module candidate surface provenance
+- Continued the user-requested PNT cycle with another `R6`/`R15` graph-first `.fsm` hardening slice.
+- Extended `standalone_explicit_module_recovers_inputs_from_module_control_reads` in `crates/specforge/src/ir/adapters.rs` so standalone explicit-module candidates prove system-contract and init-assignment provenance before selected renderable module/source-document projection.
+- Added module-candidate checks for system-contract equality and init-assignment target, value, support IDs, and automation confidence against the source explicit module.
+- The slice is regression-only: no production lowering behavior changed, and the existing standalone explicit-module path remains renderable.
+- Focused validation passed and adapter-filtered validation passed with `143/143` tests; formatting, test-list, docs, diff, and tracked markdown path-hygiene checks are recorded in `CHANGES.md`.
 ## 2026-05-11 PNT push cadence
 - User changed the active push cadence to "push around every 30 commits."
 - Updated `COMMIT.md` so PNT mode is explicitly treated as an open-ended batch with per-slice commits and push checkpoints around every `30` local commits since the last push.
