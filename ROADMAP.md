@@ -162,7 +162,7 @@
 - status: In Progress
 - current lane:
   - `.fsm` adapter hardening is active, with renderable standalone/top paths, blocked renderability diagnostics, residual decisions, support/confidence preservation, and selected-inventory provenance under continuing regression coverage.
-  - the active PNT cycle is continuing with top FSM-child cleanliness coverage; `R6` remains active and push checkpoints are around every 30 local commits.
+  - the active PNT cycle is continuing with reused FSM-child top cleanliness coverage; `R6` remains active and push checkpoints are around every 30 local commits.
   - SystemVerilog, Verilog, and VHDL expansion remains intentionally deferred until the `.fsm` lane and canonical IR truthfulness surface are strong enough to avoid semantic invention.
 - goals:
   - define target-specific lowering boundaries for:

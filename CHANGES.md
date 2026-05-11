@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-05-11 (`.fsm` reused FSM-child top cleanliness)
+
+### Improved: reused FSM-child top compositions stay clean while deduplicating roots
+- Extended `renderable_top_document_deduplicates_reused_fsm_child_roots` so reused-FSM-child top candidates and aggregate `.fsm` surfaces prove empty blocker/enrichment diagnostics.
+- Added candidate/source-document top-root equality and aggregate no-direct-module assertions while preserving the single deduplicated FSM direct root.
+- This is regression-only hardening for the existing `.fsm` adapter behavior; no production lowering behavior intentionally changed.
+- The Rust test listing remains `666` tests after tightening the existing regression.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge renderable_top_document_deduplicates_reused_fsm_child_roots` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`143/143` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge -- --list` -> listed `666` Rust tests
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- tracked markdown/mdBook absolute-path scan -> passed (`217` tracked markdown/mdBook files checked)
+
 ## 2026-05-11 (`.fsm` top FSM-child cleanliness)
 
 ### Improved: top compositions preserve FSM-child root cleanliness
