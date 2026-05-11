@@ -3,6 +3,11 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-11 `.fsm` reused-child top-composition cleanliness)
+- Extended `renderable_top_document_deduplicates_reused_child_module_roots` in `crates/specforge/src/ir/adapters.rs`.
+- This is a regression-only `R6`/`R15` hardening slice: reused-child top candidates and aggregate `.fsm` surfaces now prove empty blocker/enrichment diagnostics, and the candidate renderable top root is proven equal to the emitted source-document top root while the shared child direct root remains deduplicated.
+- Production adapter behavior did not change; the existing reused-child top-composition regression now covers clean emitted topology in addition to deduplication.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
 ## Session update (2026-05-11 `.fsm` top-composition root identity)
 - Extended `builds_renderable_top_composition_fsm_adapter_artifact` in `crates/specforge/src/ir/adapters.rs`.
 - This is a regression-only `R6`/`R15` hardening slice: renderable top candidates and aggregate `.fsm` surfaces now prove empty blocker/enrichment diagnostics, and the renderable top root proves top name, port/child/link counts, child order, child source modules, child root kinds, and equality with the emitted source-document top root.

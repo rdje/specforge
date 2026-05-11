@@ -6,6 +6,12 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-11 `.fsm` reused-child top-composition cleanliness
+- Continued the user-requested PNT cycle with another `R6`/`R15` graph-first `.fsm` top-composition hardening slice.
+- Extended `renderable_top_document_deduplicates_reused_child_module_roots` in `crates/specforge/src/ir/adapters.rs` so reused-child top candidates and aggregate `.fsm` surfaces prove empty blocker/enrichment diagnostics.
+- Added equality between the candidate renderable top root and emitted source-document top root while retaining the existing single deduplicated child direct-root assertion.
+- The slice is regression-only: no production lowering behavior changed, and the existing reused-child top-composition path remains renderable.
+- Focused validation passed and adapter-filtered validation passed with `143/143` tests; formatting, test-list, docs, diff, and tracked markdown path-hygiene checks are recorded in `CHANGES.md`.
 ## 2026-05-11 `.fsm` top-composition root identity
 - Continued the user-requested PNT cycle with another `R6`/`R15` graph-first `.fsm` hardening slice, moving from standalone explicit modules into top-composition coverage.
 - Extended `builds_renderable_top_composition_fsm_adapter_artifact` in `crates/specforge/src/ir/adapters.rs` so renderable top candidates and aggregate `.fsm` surfaces prove empty blocker/enrichment diagnostics.

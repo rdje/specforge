@@ -15581,6 +15581,18 @@ mod tests {
             .expect("renderable source document should be present");
 
         assert!(top_candidate.renderability.is_renderable);
+        assert!(top_candidate.renderability.blocking_reasons.is_empty());
+        assert!(
+            top_candidate
+                .renderability
+                .required_canonical_enrichments
+                .is_empty()
+        );
+        assert_eq!(top_candidate.renderable_top.as_ref(), Some(renderable_top));
+        assert!(fsm.renderability.is_renderable);
+        assert!(fsm.renderability.blocking_reasons.is_empty());
+        assert!(fsm.renderability.required_canonical_enrichments.is_empty());
+        assert!(fsm.renderable_module.is_none());
         assert_eq!(top_candidate.ports.len(), 1);
         let result_port = top_candidate
             .ports
