@@ -14602,6 +14602,44 @@ mod tests {
                 "external actor ports must not define the module actor perspective for {signal_name}"
             );
         }
+        for signal_name in ["ACC", "TRACE"] {
+            let signal = module
+                .signal_inventory
+                .iter()
+                .find(|signal| signal.signal_name == signal_name)
+                .unwrap_or_else(|| panic!("{signal_name} should stay in module inventory"));
+            assert_eq!(
+                signal.direction_hint, None,
+                "{signal_name} should not fabricate a compatibility direction hint"
+            );
+            assert_eq!(
+                signal.graph_direction_hint,
+                Some(InterfaceSignalDirection::Output),
+                "{signal_name} should stay graph-backed as a module-local output"
+            );
+            assert!(
+                signal
+                    .mention_categories
+                    .iter()
+                    .any(|category| category == "control_block"),
+                "{signal_name} should retain module-control output provenance"
+            );
+            assert!(
+                signal
+                    .supporting_canonical_ids
+                    .iter()
+                    .any(|id| id.starts_with("control_block_")),
+                "{signal_name} should retain canonical module-control output support"
+            );
+            assert_eq!(signal.automation_confidence, AutomationConfidence::High);
+            assert!(
+                signal
+                    .mention_categories
+                    .iter()
+                    .any(|category| category == "actor_port"),
+                "{signal_name} should retain external actor-port support alongside module-control output provenance"
+            );
+        }
 
         assert!(fsm.renderability.is_renderable);
         assert!(module.renderability.is_renderable);
@@ -14616,6 +14654,15 @@ mod tests {
                 .find(|entry| entry.signal_name == signal_name)
                 .unwrap_or_else(|| panic!("{signal_name} should have a renderable size entry"));
             assert_eq!(size_entry.direction_hint, InterfaceSignalDirection::Input);
+            assert_eq!(size_entry.width, width);
+        }
+        for (signal_name, width) in [("ACC", 8), ("TRACE", 1)] {
+            let size_entry = renderable_module
+                .size_entries
+                .iter()
+                .find(|entry| entry.signal_name == signal_name)
+                .unwrap_or_else(|| panic!("{signal_name} should have a renderable size entry"));
+            assert_eq!(size_entry.direction_hint, InterfaceSignalDirection::Output);
             assert_eq!(size_entry.width, width);
         }
         assert!(emitted_text.contains("(?fsm:controller"));
