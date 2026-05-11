@@ -15855,6 +15855,13 @@ mod tests {
             .top_root
             .as_ref()
             .expect("renderable top should remain present");
+        assert_eq!(top_candidate.renderable_top.as_ref(), Some(renderable_top));
+        let direct_root_names = renderable_document
+            .direct_roots
+            .iter()
+            .map(|root| root.module_name.as_str())
+            .collect::<Vec<_>>();
+        assert_eq!(direct_root_names, vec!["producer_core", "consumer_core"]);
         assert!(producer_to_consumer_link_support_ids.iter().any(|id| {
             renderable_top
                 .links

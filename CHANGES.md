@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-05-11 (`.fsm` top-before-child source-document ordering)
+
+### Improved: top-before-child emission preserves direct-root order
+- Extended `renderable_top_document_emits_top_before_child_direct_roots` so the candidate renderable top root is proven equal to the emitted source-document top root.
+- Added source-document direct-root order checks for `producer_core` before `consumer_core`, alongside the existing emitted-text ordering assertions.
+- This is regression-only hardening for the existing `.fsm` adapter behavior; no production lowering behavior intentionally changed.
+- The Rust test listing remains `666` tests after tightening the existing regression.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge renderable_top_document_emits_top_before_child_direct_roots` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`143/143` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge -- --list` -> listed `666` Rust tests
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- tracked markdown/mdBook absolute-path scan -> passed (`217` tracked markdown/mdBook files checked)
+
 ## 2026-05-11 (`.fsm` reused-child top-composition cleanliness)
 
 ### Improved: reused-child top compositions preserve clean emitted topology

@@ -23,7 +23,7 @@
 - `N=200` batch run completed, committed per slice, and pushed after completion: Done
 - `BWFSC=200` batch run completed, committed per slice, passed final full CI, and pushed after completion: Done
 - `BWFSC=100` batch run completed with final post-commit push closure: Done
-- Active PNT cycle advanced through reused-child top-composition clean emitted-topology coverage with around-30-commit push checkpoint policy: In Progress
+- Active PNT cycle advanced through top-before-child source-document ordering coverage with around-30-commit push checkpoint policy: In Progress
 - `R6` `.fsm` adapter hardening lane is active: In Progress
 - `.fsm` duplicate top-port direction blockers now block stale top and aggregate renderable output: Done
 - `.fsm` recovered top-port direction blockers now block stale top and aggregate renderable output: Done
@@ -71,6 +71,7 @@
 - `.fsm` standalone explicit-module system-contract recovery now preserves source-document direct-root identity and selected module equality: Done
 - `.fsm` renderable top compositions now preserve top-root identity, child order, child root kinds, and clean diagnostics: Done
 - `.fsm` reused-child top compositions now preserve clean diagnostics and candidate/source-document top-root equality while deduplicating child roots: Done
+- `.fsm` top-before-child source documents now preserve candidate/source-document top-root equality and direct-root order: Done
 - `.fsm` structured-FSM flat/graph disagreements now block stale aggregate renderable output: Done
 - `.fsm` explicit-module flat/graph disagreements now block stale module and aggregate renderable output: Done
 - `.fsm` explicit-module control-read direction conflicts now block stale module and aggregate renderable output: Done

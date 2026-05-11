@@ -3,6 +3,11 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-11 `.fsm` top-before-child source-document ordering)
+- Extended `renderable_top_document_emits_top_before_child_direct_roots` in `crates/specforge/src/ir/adapters.rs`.
+- This is a regression-only `R6`/`R15` hardening slice: the candidate renderable top root is proven equal to the emitted source-document top root, and the source-document direct-root order is explicitly checked as `producer_core` before `consumer_core`.
+- Production adapter behavior did not change; the existing top-before-child source-document regression now covers direct-root ordering before emitted text rendering.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
 ## Session update (2026-05-11 `.fsm` reused-child top-composition cleanliness)
 - Extended `renderable_top_document_deduplicates_reused_child_module_roots` in `crates/specforge/src/ir/adapters.rs`.
 - This is a regression-only `R6`/`R15` hardening slice: reused-child top candidates and aggregate `.fsm` surfaces now prove empty blocker/enrichment diagnostics, and the candidate renderable top root is proven equal to the emitted source-document top root while the shared child direct root remains deduplicated.
