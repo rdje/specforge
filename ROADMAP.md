@@ -162,7 +162,7 @@
 - status: In Progress
 - current lane:
   - `.fsm` adapter hardening is active, with renderable standalone/top paths, blocked renderability diagnostics, residual decisions, support/confidence preservation, and selected-inventory provenance under continuing regression coverage.
-  - the active PNT cycle is continuing with top-before-child source-document ordering coverage; `R6` remains active and push checkpoints are around every 30 local commits.
+  - the active PNT cycle is continuing with top FSM-child cleanliness coverage; `R6` remains active and push checkpoints are around every 30 local commits.
   - SystemVerilog, Verilog, and VHDL expansion remains intentionally deferred until the `.fsm` lane and canonical IR truthfulness surface are strong enough to avoid semantic invention.
 - goals:
   - define target-specific lowering boundaries for:
@@ -198,6 +198,7 @@
   - renderable top compositions preserve top-root identity, child order, child root kinds, and empty blocker/enrichment diagnostics before source-document emission
   - reused-child top compositions preserve candidate/source-document top-root equality and clean diagnostics while deduplicating shared child roots
   - top-before-child source documents preserve candidate/source-document top-root equality and direct-root order alongside emitted-text ordering
+  - top compositions with FSM children preserve clean diagnostics, candidate/source-document top-root equality, aggregate no-direct-module state, and exactly one FSM direct root
   - real explicit `?top:name` target text is emitted only when the canonical model carries explicit top ports, child modules, renderable child roots, and width-compatible links
   - top-link width mismatch blockers preserve width-compatible repair guidance on blocked top and aggregate `.fsm` renderability surfaces while retaining the mismatched link provenance
   - top-link width mismatch blockers preserve the composition-topology residual decision so width-compatible link repair remains visible in structured adapter diagnostics

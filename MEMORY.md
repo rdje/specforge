@@ -24,22 +24,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `8909ac17269c970e6a537d83941c857c7751f17c`
-- latest_commit_brief_message: `Add reused child top cleanliness regression`
-- note: PNT slice 15 is committed locally; push remains deferred because the branch is below the around-`30` local-commit checkpoint threshold
+- latest_commit_hash: `8ee6a6ac5c3418e95166d3f828b557179cde126e`
+- latest_commit_brief_message: `Add top before child ordering regression`
+- note: PNT slice 16 is committed locally; push remains deferred because the branch is below the around-`30` local-commit checkpoint threshold
 
 ## Recent commit chain (last 6)
+- `8ee6a6a` Add top before child ordering regression
 - `8909ac1` Add reused child top cleanliness regression
 - `dde3d7c` Add top composition root identity regression
 - `ab38754` Add explicit module system direct root regression
 - `d6f0ce2` Add explicit module flat graph aggregate regression
 - `06050de` Add explicit module direction conflict aggregate regression
-- `821f781` Add explicit module width conflict aggregate regression
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state: locally ahead of `origin/main` by twenty-three committed active-batch/PNT slices before this PNT slice; push remains deferred because the around-`30` local-commit checkpoint has not been reached
+- branch state: locally ahead of `origin/main` by twenty-four committed active-batch/PNT slices before this PNT slice; push remains deferred because the around-`30` local-commit checkpoint has not been reached
 - files in flight for the current PNT slice:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -62,16 +62,16 @@
 ## Current batch status
 - objective:
   - active user-authorized run uses PNT with undefined BWFSC
-  - current PNT slice adds top-before-child source-document candidate/source-document top-root equality and direct-root order coverage
-  - completed_count after this PNT commit: `16`
+  - current PNT slice adds top-with-FSM-child clean diagnostics, candidate/source-document top-root equality, aggregate no-direct-module state, and exactly-one-FSM-direct-root coverage
+  - completed_count after this PNT commit: `17`
   - push remains deferred until the branch reaches around `30` local commits since the last push or the user explicitly changes the policy
   - `R6` remains the active `.fsm` adapter hardening lane; SystemVerilog, Verilog, and VHDL adapter expansion remains not started
 - tracker effect:
-  - live-status tracker now marks top-before-child source-document ordering coverage as `Done`
-  - live docs now record the active PNT cycle as an `R6`/`R15` regression-only top-before-child source-document ordering hardening run
-  - `RUST_CODEBASE_ANALYSIS.md` now records the top-before-child source-document ordering regression while keeping the refreshed test count at `666` listed Rust tests
+  - live-status tracker now marks top FSM-child cleanliness coverage as `Done`
+  - live docs now record the active PNT cycle as an `R6`/`R15` regression-only top-with-FSM-child cleanliness hardening run
+  - `RUST_CODEBASE_ANALYSIS.md` now records the top-with-FSM-child cleanliness regression while keeping the refreshed test count at `666` listed Rust tests
 - verification status:
-  - focused test `cargo test --manifest-path Cargo.toml -p specforge renderable_top_document_emits_top_before_child_direct_roots` passed
+  - focused test `cargo test --manifest-path Cargo.toml -p specforge renderable_top_document_preserves_fsm_child_root_kind` passed
   - adapter suite `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `143/143` adapter-filtered tests
   - `cargo fmt --all --check` passed
   - `cargo test --manifest-path Cargo.toml -p specforge -- --list` listed `666` Rust tests

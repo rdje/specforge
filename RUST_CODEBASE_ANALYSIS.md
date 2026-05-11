@@ -3,6 +3,11 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-11 `.fsm` top FSM-child cleanliness)
+- Extended `renderable_top_document_preserves_fsm_child_root_kind` in `crates/specforge/src/ir/adapters.rs`.
+- This is a regression-only `R6`/`R15` hardening slice: top-with-FSM-child candidates and aggregate `.fsm` surfaces now prove empty blocker/enrichment diagnostics, candidate/source-document top-root equality, aggregate no-direct-module state, and exactly one FSM direct root while preserving the FSM child root kind.
+- Production adapter behavior did not change; the existing top-with-FSM-child regression now covers clean topology and direct-root cardinality in addition to root-kind preservation.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
 ## Session update (2026-05-11 `.fsm` top-before-child source-document ordering)
 - Extended `renderable_top_document_emits_top_before_child_direct_roots` in `crates/specforge/src/ir/adapters.rs`.
 - This is a regression-only `R6`/`R15` hardening slice: the candidate renderable top root is proven equal to the emitted source-document top root, and the source-document direct-root order is explicitly checked as `producer_core` before `consumer_core`.

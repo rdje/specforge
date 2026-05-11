@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-05-11 (`.fsm` top FSM-child cleanliness)
+
+### Improved: top compositions preserve FSM-child root cleanliness
+- Extended `renderable_top_document_preserves_fsm_child_root_kind` so top-with-FSM-child candidates and aggregate `.fsm` surfaces prove empty blocker/enrichment diagnostics.
+- Added candidate/source-document top-root equality, aggregate no-direct-module assertion, and exactly-one direct-root coverage while preserving the FSM child root kind and emitted FSM root.
+- This is regression-only hardening for the existing `.fsm` adapter behavior; no production lowering behavior intentionally changed.
+- The Rust test listing remains `666` tests after tightening the existing regression.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge renderable_top_document_preserves_fsm_child_root_kind` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`143/143` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge -- --list` -> listed `666` Rust tests
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- tracked markdown/mdBook absolute-path scan -> passed (`217` tracked markdown/mdBook files checked)
+
 ## 2026-05-11 (`.fsm` top-before-child source-document ordering)
 
 ### Improved: top-before-child emission preserves direct-root order

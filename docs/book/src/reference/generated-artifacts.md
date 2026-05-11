@@ -155,6 +155,7 @@ They also preserve source explicit-module init-assignment targets, values, suppo
 Renderable top compositions preserve top-root identity, child order, child root kinds, and clean blocker/enrichment diagnostics before source-document emission.
 Reused-child top compositions preserve candidate/source-document top-root equality and clean diagnostics while deduplicating the shared child direct root.
 Top-before-child source documents preserve candidate/source-document top-root equality and direct-root order before emitted text is rendered.
+Top compositions with FSM children preserve clean diagnostics, candidate/source-document top-root equality, aggregate no-direct-module state, and exactly one FSM direct root.
 Direct control-input width recovery is part of that emitted surface too: an actor-port width recovered for a direct control input feeds the renderable `(+size ...)` entry alongside the target-actor input direction.
 Explicit-module control-input width recovery follows the same rule for module-local `(+size ...)` entries, combining module-control input direction with actor-port width provenance without requiring a flat module-local direction hint.
 Target-actor-backed direct output selection follows the same rule while excluding shared external actor evidence from the selected inventory.
