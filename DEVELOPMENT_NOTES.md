@@ -6,6 +6,12 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-11 `.fsm` standalone explicit-module system direct-root identity
+- Continued the user-requested PNT cycle with another `R6`/`R15` graph-first `.fsm` hardening slice.
+- Extended `standalone_explicit_module_recovers_system_signals_from_system_contract` in `crates/specforge/src/ir/adapters.rs` so the emitted source-document direct root is proven to be the selected `controller` `?fsm:name` root.
+- Added checks for absent top root, exactly one direct root, preserved direct-root module name, preserved root kind, and equality with the selected aggregate renderable module.
+- The slice is regression-only: no production lowering behavior changed, and the existing standalone explicit-module system recovery path remains renderable.
+- Focused validation passed and adapter-filtered validation passed with `143/143` tests; formatting, test-list, docs, diff, and tracked markdown path-hygiene checks are recorded in `CHANGES.md`.
 ## 2026-05-11 `.fsm` standalone explicit-module flat-graph aggregate blockers
 - Continued the user-requested PNT cycle with another `R6`/`R15` graph-first `.fsm` hardening slice.
 - Extended `standalone_explicit_module_blocks_flat_graph_direction_disagreement` in `crates/specforge/src/ir/adapters.rs` so conflicting canonical and graph-backed direction evidence blocks the aggregate `.fsm` renderable module and source document, not only the module-candidate surface.

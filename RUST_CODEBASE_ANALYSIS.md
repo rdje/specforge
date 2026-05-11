@@ -3,6 +3,11 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-11 `.fsm` standalone explicit-module system direct-root identity)
+- Extended `standalone_explicit_module_recovers_system_signals_from_system_contract` in `crates/specforge/src/ir/adapters.rs`.
+- This is a regression-only `R6`/`R15` hardening slice: emitted source-document direct roots now prove standalone explicit-module system-contract recovery keeps no top root, exactly one direct root, the `controller` module name, `Fsm` root kind, and equality with the selected aggregate renderable module.
+- Production adapter behavior did not change; the existing standalone explicit-module system recovery regression now covers direct-root identity in addition to system-contract provenance.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
 ## Session update (2026-05-11 `.fsm` standalone explicit-module flat-graph aggregate blockers)
 - Extended `standalone_explicit_module_blocks_flat_graph_direction_disagreement` in `crates/specforge/src/ir/adapters.rs`.
 - This is a regression-only `R6`/`R15` hardening slice: conflicting canonical and graph-backed direction evidence now proves the aggregate `.fsm` renderable module and source document are absent, with canonical/graph repair guidance retained on the aggregate surface.

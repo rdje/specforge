@@ -15190,12 +15190,17 @@ mod tests {
             .renderable_module
             .as_ref()
             .expect("renderable module should be present");
-        let renderable_document_module = fsm
+        let renderable_document = fsm
             .renderable_document
             .as_ref()
-            .and_then(|document| document.direct_roots.first())
-            .map(|root| &root.module)
             .expect("renderable source document should contain explicit module root");
+        assert!(renderable_document.top_root.is_none());
+        assert_eq!(renderable_document.direct_roots.len(), 1);
+        let direct_root = &renderable_document.direct_roots[0];
+        assert_eq!(direct_root.module_name, "controller");
+        assert_eq!(direct_root.root_kind, FsmRootKind::Fsm);
+        assert_eq!(&direct_root.module, renderable_module);
+        let renderable_document_module = &direct_root.module;
 
         for signal in [clk, rst_n] {
             assert_eq!(signal.direction_hint, Some(InterfaceSignalDirection::Input));

@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-05-11 (`.fsm` standalone explicit-module system direct-root identity)
+
+### Improved: explicit-module system recovery keeps direct-root identity
+- Extended `standalone_explicit_module_recovers_system_signals_from_system_contract` so the emitted source-document direct root is proven to be the selected `controller` `?fsm:name` root.
+- Added checks that the direct root has no top root, has exactly one direct root, preserves the `controller` module name and `Fsm` root kind, and matches the selected aggregate renderable module.
+- This is regression-only hardening for the existing `.fsm` adapter behavior; no production lowering behavior intentionally changed.
+- The Rust test listing remains `666` tests after tightening the existing regression.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge standalone_explicit_module_recovers_system_signals_from_system_contract` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`143/143` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge -- --list` -> listed `666` Rust tests
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- tracked markdown/mdBook absolute-path scan -> passed (`217` tracked markdown/mdBook files checked)
+
 ## 2026-05-11 (`.fsm` standalone explicit-module flat-graph aggregate blockers)
 
 ### Improved: explicit-module flat/graph disagreements block aggregate renderable output
