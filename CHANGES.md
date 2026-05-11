@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-05-11 (`.fsm` standalone explicit-module flat-graph aggregate blockers)
+
+### Improved: explicit-module flat/graph disagreements block aggregate renderable output
+- Extended `standalone_explicit_module_blocks_flat_graph_direction_disagreement` so the aggregate `.fsm` surface proves no renderable module/source document survives conflicting canonical and graph-backed direction evidence.
+- Added aggregate blocking-reason and required-enrichment assertions for conflicting canonical/actor-relative graph direction evidence.
+- This is regression-only hardening for the existing `.fsm` adapter behavior; no production lowering behavior intentionally changed.
+- The Rust test listing remains `666` tests after tightening the existing regression.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge standalone_explicit_module_blocks_flat_graph_direction_disagreement` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`143/143` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge -- --list` -> listed `666` Rust tests
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- tracked markdown/mdBook absolute-path scan -> passed (`217` tracked markdown/mdBook files checked)
+
 ## 2026-05-11 (`.fsm` standalone explicit-module direction-conflict aggregate blockers)
 
 ### Improved: explicit-module direction conflicts block aggregate renderable output

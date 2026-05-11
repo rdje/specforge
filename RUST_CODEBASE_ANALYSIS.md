@@ -3,6 +3,11 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-11 `.fsm` standalone explicit-module flat-graph aggregate blockers)
+- Extended `standalone_explicit_module_blocks_flat_graph_direction_disagreement` in `crates/specforge/src/ir/adapters.rs`.
+- This is a regression-only `R6`/`R15` hardening slice: conflicting canonical and graph-backed direction evidence now proves the aggregate `.fsm` renderable module and source document are absent, with canonical/graph repair guidance retained on the aggregate surface.
+- Production adapter behavior did not change; the existing blocked explicit-module flat/graph regression now covers aggregate stale-renderable prevention in addition to module-candidate diagnostics.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
 ## Session update (2026-05-11 `.fsm` standalone explicit-module direction-conflict aggregate blockers)
 - Extended `standalone_explicit_module_blocks_conflicting_module_control_read_direction` in `crates/specforge/src/ir/adapters.rs`.
 - This is a regression-only `R6`/`R15` hardening slice: conflicting graph-backed direction evidence now proves the aggregate `.fsm` renderable module and source document are absent, with conflicting-direction blocking and repair guidance retained on the aggregate surface.

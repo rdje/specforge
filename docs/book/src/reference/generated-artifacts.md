@@ -147,6 +147,7 @@ Renderable standalone explicit-module aggregate and module-candidate surfaces al
 Actor-port width recovery for standalone explicit-module control inputs is preserved through the selected aggregate renderable module and emitted source-document direct root.
 Conflicting actor-port width evidence blocks the aggregate renderable module and source document while preserving conflicting-width repair guidance.
 Conflicting graph-backed direction evidence for explicit-module control reads blocks those aggregate renderable projections while preserving conflicting-direction repair guidance.
+Conflicting canonical and graph-backed direction evidence blocks those aggregate renderable projections while preserving canonical/graph repair guidance.
 Their selected renderable modules and emitted source-document direct roots also preserve source explicit-module control-block support IDs, branch support IDs, and automation confidence.
 They preserve source explicit-module system-contract clock/reset support IDs and automation confidence on those same renderable projection surfaces.
 They also preserve source explicit-module init-assignment targets, values, support IDs, and automation confidence on those same surfaces.

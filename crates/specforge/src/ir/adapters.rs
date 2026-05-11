@@ -15097,7 +15097,17 @@ mod tests {
             reason.contains("conflicting canonical and graph-backed direction evidence")
         }));
         assert!(!fsm.renderability.is_renderable);
+        assert!(fsm.renderable_module.is_none());
         assert!(fsm.renderable_document.is_none());
+        assert!(fsm.renderability.blocking_reasons.iter().any(|reason| {
+            reason.contains("conflicting canonical and graph-backed direction evidence")
+        }));
+        assert!(fsm
+            .renderability
+            .required_canonical_enrichments
+            .iter()
+            .any(|enrichment| enrichment
+                == "resolve conflicting canonical and actor-relative graph direction evidence before lowering `.fsm`"));
         let signal_inventory_residual = adapter
             .residual_decisions
             .iter()
