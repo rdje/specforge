@@ -14564,6 +14564,17 @@ mod tests {
 
         assert_eq!(fsm.root_name, "controller");
         assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Fsm);
+        assert!(fsm.renderability.is_renderable);
+        assert!(fsm.renderability.blocking_reasons.is_empty());
+        assert!(fsm.renderability.required_canonical_enrichments.is_empty());
+        assert!(module.renderability.is_renderable);
+        assert!(module.renderability.blocking_reasons.is_empty());
+        assert!(
+            module
+                .renderability
+                .required_canonical_enrichments
+                .is_empty()
+        );
         assert_standalone_module_renderable_projection_provenance(&fsm, module, &intent_ir);
         for signal_name in ["DATA_IN", "GO", "DONE"] {
             let signal = module
@@ -14641,8 +14652,6 @@ mod tests {
             );
         }
 
-        assert!(fsm.renderability.is_renderable);
-        assert!(module.renderability.is_renderable);
         let renderable_module = module
             .renderable_module
             .as_ref()

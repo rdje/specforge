@@ -24,22 +24,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `576b7a82daf7c5c976fad2e9fe016848288ef2a6`
-- latest_commit_brief_message: `Add explicit module root provenance regression`
-- note: PNT slice 5 is committed locally; push remains deferred because the branch is below the around-`30` local-commit checkpoint threshold
+- latest_commit_hash: `d672ddcf1a1492eacda1966e1a52bcae92319345`
+- latest_commit_brief_message: `Add explicit module output provenance regression`
+- note: PNT slice 6 is committed locally; push remains deferred because the branch is below the around-`30` local-commit checkpoint threshold
 
 ## Recent commit chain (last 6)
+- `d672ddc` Add explicit module output provenance regression
 - `576b7a8` Add explicit module root provenance regression
 - `2fe27c2` Add explicit module candidate provenance regression
 - `9365052` Document PNT push checkpoint policy
 - `eb6baaf` Add explicit module init provenance regression
 - `e353fce` Add explicit module system provenance regression
-- `75b0fa3` Add explicit module control provenance regression
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state: locally ahead of `origin/main` by thirteen committed active-batch/PNT slices before this PNT slice; push remains deferred because the around-`30` local-commit checkpoint has not been reached
+- branch state: locally ahead of `origin/main` by fourteen committed active-batch/PNT slices before this PNT slice; push remains deferred because the around-`30` local-commit checkpoint has not been reached
 - files in flight for the current PNT slice:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -62,14 +62,14 @@
 ## Current batch status
 - objective:
   - active user-authorized run uses PNT with undefined BWFSC
-  - current PNT slice adds standalone explicit-module output-side module-candidate inventory and renderable size-entry provenance coverage
-  - completed_count after this PNT commit: `6`
+  - current PNT slice adds standalone explicit-module aggregate and module-candidate clean-renderability diagnostics coverage
+  - completed_count after this PNT commit: `7`
   - push remains deferred until the branch reaches around `30` local commits since the last push or the user explicitly changes the policy
   - `R6` remains the active `.fsm` adapter hardening lane; SystemVerilog, Verilog, and VHDL adapter expansion remains not started
 - tracker effect:
-  - live-status tracker now marks standalone explicit-module output inventory/renderable size-entry provenance as `Done`
-  - live docs now record the active PNT cycle as an `R6`/`R15` regression-only standalone explicit-module output-side provenance hardening run
-  - `RUST_CODEBASE_ANALYSIS.md` now records the explicit-module output inventory provenance regression while keeping the refreshed test count at `666` listed Rust tests
+  - live-status tracker now marks standalone explicit-module clean-renderability diagnostics as `Done`
+  - live docs now record the active PNT cycle as an `R6`/`R15` regression-only standalone explicit-module clean-renderability hardening run
+  - `RUST_CODEBASE_ANALYSIS.md` now records the explicit-module clean-renderability regression while keeping the refreshed test count at `666` listed Rust tests
 - verification status:
   - focused test `cargo test --manifest-path Cargo.toml -p specforge standalone_explicit_module_recovers_inputs_from_module_control_reads` passed
   - adapter suite `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `143/143` adapter-filtered tests

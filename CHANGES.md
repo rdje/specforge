@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-05-11 (`.fsm` standalone explicit-module clean renderability)
+
+### Improved: standalone explicit-module renderability is explicitly clean
+- Extended `standalone_explicit_module_recovers_inputs_from_module_control_reads` so the selected aggregate `.fsm` surface and the standalone explicit-module candidate both prove renderability has no hidden blockers or required canonical enrichments.
+- This catches regressions where a stale renderable module might survive while diagnostics still report unresolved blocking state.
+- This is regression-only hardening for the existing `.fsm` adapter behavior; no production lowering behavior intentionally changed.
+- The Rust test listing remains `666` tests after tightening the existing regression.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge standalone_explicit_module_recovers_inputs_from_module_control_reads` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`143/143` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge -- --list` -> listed `666` Rust tests
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- tracked markdown/mdBook absolute-path scan -> passed (`217` tracked markdown/mdBook files checked)
+
 ## 2026-05-11 (`.fsm` standalone explicit-module output inventory provenance)
 
 ### Improved: standalone explicit-module outputs keep graph and renderable provenance

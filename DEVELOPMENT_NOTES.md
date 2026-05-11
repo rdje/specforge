@@ -6,6 +6,12 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-11 `.fsm` standalone explicit-module clean renderability
+- Continued the user-requested PNT cycle with another `R6`/`R15` graph-first `.fsm` hardening slice.
+- Extended `standalone_explicit_module_recovers_inputs_from_module_control_reads` in `crates/specforge/src/ir/adapters.rs` so both the selected aggregate `.fsm` surface and standalone explicit-module candidate prove `is_renderable` while retaining empty blocking-reason and required-enrichment lists.
+- This is intended to catch stale/sticky diagnostics or enrichment requirements surviving alongside a supposedly renderable explicit-module path.
+- The slice is regression-only: no production lowering behavior changed, and the existing standalone explicit-module path remains renderable.
+- Focused validation passed and adapter-filtered validation passed with `143/143` tests; formatting, test-list, docs, diff, and tracked markdown path-hygiene checks are recorded in `CHANGES.md`.
 ## 2026-05-11 `.fsm` standalone explicit-module output inventory provenance
 - Continued the user-requested PNT cycle with another `R6`/`R15` graph-first `.fsm` hardening slice.
 - Extended `standalone_explicit_module_recovers_inputs_from_module_control_reads` in `crates/specforge/src/ir/adapters.rs` so standalone explicit-module output-side `ACC`/`TRACE` signals prove graph-backed output direction, control-block support IDs, retained external actor-port support, and automation confidence on the module-candidate surface.

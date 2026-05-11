@@ -3,6 +3,11 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-11 `.fsm` standalone explicit-module clean renderability)
+- Extended `standalone_explicit_module_recovers_inputs_from_module_control_reads` in `crates/specforge/src/ir/adapters.rs`.
+- This is a regression-only `R6`/`R15` hardening slice: standalone explicit-module aggregate and module-candidate renderability now prove empty blocker and required-enrichment diagnostics while renderable.
+- Production adapter behavior did not change; the existing standalone explicit-module regression now catches stale blocking diagnostics surviving on a supposedly renderable surface.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
 ## Session update (2026-05-11 `.fsm` standalone explicit-module output inventory provenance)
 - Extended `standalone_explicit_module_recovers_inputs_from_module_control_reads` in `crates/specforge/src/ir/adapters.rs`.
 - This is a regression-only `R6`/`R15` hardening slice: standalone explicit-module output-side `ACC`/`TRACE` signals now prove graph-backed output direction, control-block support IDs, retained external actor-port support, and automation confidence on the module-candidate surface.

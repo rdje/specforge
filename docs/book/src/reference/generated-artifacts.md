@@ -143,6 +143,7 @@ Standalone explicit-module `?fsm:name` roots follow the same state-graph contrac
 The module-candidate surface also preserves source explicit-module system-contract and init-assignment provenance before the adapter selects a renderable module.
 It preserves the explicit-module root-kind decision too, including selected kind, deferred top root, confidence, and explicit-state rationale.
 Output-side module-candidate inventory preserves graph-backed direction, module-control support, external actor-port support, and confidence before selected renderable size entries preserve output direction and width.
+Renderable standalone explicit-module aggregate and module-candidate surfaces also keep blocker and required-enrichment diagnostics empty when the module is truly renderable.
 Their selected renderable modules and emitted source-document direct roots also preserve source explicit-module control-block support IDs, branch support IDs, and automation confidence.
 They preserve source explicit-module system-contract clock/reset support IDs and automation confidence on those same renderable projection surfaces.
 They also preserve source explicit-module init-assignment targets, values, support IDs, and automation confidence on those same surfaces.
