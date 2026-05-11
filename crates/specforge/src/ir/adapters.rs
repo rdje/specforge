@@ -11100,6 +11100,12 @@ mod tests {
             .renderable_module
             .as_ref()
             .expect("standalone explicit module should carry a renderable module");
+        if let Some(system_contract) = expected_module.system_contract.as_ref() {
+            assert_renderable_system_contract_provenance(
+                renderable_module,
+                &system_contract.supporting_statement_ids,
+            );
+        }
         assert_renderable_control_block_provenance(
             renderable_module,
             &expected_module.control_blocks,
@@ -11123,6 +11129,12 @@ mod tests {
             &expected_module.regular_states,
             &expected_module.state_transitions,
         );
+        if let Some(system_contract) = expected_module.system_contract.as_ref() {
+            assert_renderable_system_contract_provenance(
+                &direct_root.module,
+                &system_contract.supporting_statement_ids,
+            );
+        }
         assert_renderable_control_block_provenance(
             &direct_root.module,
             &expected_module.control_blocks,

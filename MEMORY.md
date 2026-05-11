@@ -16,7 +16,7 @@
 - `git_message_brief.txt` must stay untracked and be truncated to `0` bytes after each commit
 - every completion message must report the commit id, exact commit message, full tracked-file list, current live-status snapshot, and whether that snapshot changed
 - outside explicit batch runs, do not push unless the user asks or the branch reaches `25` local commits since the last push
-- active batch-run rule: the current user-authorized batch uses `BWFSC=100`, must commit after every completed slice, and must defer push until all 100 slices are complete; slice 100/100 is the closure slice and the final push runs only after the slice-100 commit workflow postconditions pass
+- active batch-run rule: the current user-authorized run is PNT, must keep picking the next roadmap-aligned slice until tasks run out or the user explicitly pauses/stops, must commit after every completed slice, and must defer push until the PNT cycle ends or the user explicitly asks
 - latest completed batch-run rule: the `BWFSC=200` batch committed each slice independently, synced live docs and mdBook at the end of every slice, deferred push until all 200 slices were complete, passed the final full CI gate, and was pushed after slice 200
 - previous completed batch-run rule: the `BWFSC=100` batch committed each slice independently, synced live docs and mdBook at the end of every slice, deferred push until all 100 slices were complete, and was pushed after slice 100
 - earlier completed batch-run rule: the `N=200` batch committed each slice independently, synced live docs and mdBook at the end of every slice, deferred push until all 200 new-batch slices were complete, and was pushed after slice 200
@@ -24,22 +24,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `85c7c829df626c2cf6e921c314e720500a7e0cf6`
-- latest_commit_brief_message: `Add explicit FSM state graph provenance regression`
-- note: slice 7/100 of the active `BWFSC=100` batch is committed locally; push remains deferred until the full batch completes
+- latest_commit_hash: `75b0fa397b18999432a1c2f945c493fd76e25420`
+- latest_commit_brief_message: `Add explicit module control provenance regression`
+- note: the prior active `BWFSC=100` run reached slice 8/100 locally; the user then switched the active run to PNT, and push remains deferred
 
 ## Recent commit chain (last 6)
+- `75b0fa3` Add explicit module control provenance regression
 - `85c7c82` Add explicit FSM state graph provenance regression
 - `d96a4aa` Add structured FSM renderable projection provenance regression
 - `13f843e` Add structured FSM state graph provenance regression
 - `e665b3d` Add reset-block FSM provenance regression
 - `470681d` test(adapter): preserve structured fsm control graph signals
-- `9ef8815` test(adapter): preserve structured fsm system graph signals
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state: locally ahead of `origin/main` by seven committed active-batch slices before slice 8 changes; push remains deferred
+- branch state: locally ahead of `origin/main` by eight committed active-batch/PNT-prelude slices before this PNT slice; push remains deferred
 - files in flight for the current slice:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -60,16 +60,16 @@
 
 ## Current batch status
 - objective:
-  - active user-authorized batch uses default `BWFSC=100`
-  - current slice is slice 8/100 and adds standalone explicit-module `?fsm:name` control-block and branch provenance coverage across selected renderable modules and emitted source-document direct roots
-  - completed_count after this commit: `8`
-  - push remains deferred until all `100` slices are complete unless a real blocker stops the batch or the user explicitly changes the policy
+  - active user-authorized run uses PNT with undefined BWFSC
+  - current PNT slice adds standalone explicit-module `?fsm:name` system-contract provenance coverage across selected renderable modules and emitted source-document direct roots
+  - completed_count after this PNT commit: `1`
+  - push remains deferred until the PNT cycle ends, tasks run out, or the user explicitly changes the policy
   - `R6` remains the active `.fsm` adapter hardening lane; SystemVerilog, Verilog, and VHDL adapter expansion remains not started
 - tracker effect:
-  - live-status tracker now marks standalone explicit-module selected module control-block provenance as `Done`
-  - live-status tracker now marks standalone explicit-module source-document direct-root control-block provenance as `Done`
-  - live docs now record slice 8/100 as an `R6`/`R15` regression-only standalone explicit-module control-block provenance hardening slice
-  - `RUST_CODEBASE_ANALYSIS.md` now records the explicit-module control-block projection provenance regression while keeping the refreshed test count at `666` listed Rust tests
+  - live-status tracker now marks standalone explicit-module selected module system-contract provenance as `Done`
+  - live-status tracker now marks standalone explicit-module source-document direct-root system-contract provenance as `Done`
+  - live docs now record the active PNT cycle as an `R6`/`R15` regression-only standalone explicit-module system-contract provenance hardening run
+  - `RUST_CODEBASE_ANALYSIS.md` now records the explicit-module system-contract projection provenance regression while keeping the refreshed test count at `666` listed Rust tests
 - verification status:
   - focused test `cargo test --manifest-path Cargo.toml -p specforge standalone_explicit_module_recovers_inputs_from_module_control_reads` passed
   - adapter suite `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `143/143` adapter-filtered tests
@@ -1277,8 +1277,8 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- complete the slice 8 commit workflow: write `git_message_brief.txt`, stage only intended tracked files, commit, then clear and verify `git_message_brief.txt`
-- after slice 8 commits, continue with slice 9/100 by selecting the next bounded roadmap-aligned `R6`/`R15` `.fsm` graph-first hardening task
-- keep push deferred until all 100 slices are complete, unless a real blocker stops the batch or the user explicitly changes the policy
+- complete the current PNT slice commit workflow: write `git_message_brief.txt`, stage only intended tracked files, commit, then clear and verify `git_message_brief.txt`
+- after this PNT slice commits, continue the PNT cycle by selecting the next bounded roadmap-aligned `R6`/`R15` `.fsm` graph-first hardening task
+- keep push deferred until the PNT cycle ends, tasks run out, or the user explicitly changes the policy
 - keep SystemVerilog, Verilog, and VHDL adapter expansion at `Not Started` until the `.fsm` hardening lane and canonical truthfulness surface are ready
 - `cargo sweep --time 1` is no longer blocked by an observed `target/release/tool_matrix` process; run it only when explicitly requested or when it becomes part of a safe cleanup slice

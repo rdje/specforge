@@ -6,6 +6,12 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-11 `.fsm` standalone explicit-module system-contract provenance
+- Started the user-requested PNT cycle as an unbounded `R6`/`R15` graph-first `.fsm` hardening run with per-slice commits and deferred push.
+- Extended `standalone_explicit_module_recovers_inputs_from_module_control_reads` in `crates/specforge/src/ir/adapters.rs` so standalone explicit-module `?fsm:name` selected renderable modules and emitted source-document direct roots prove exact system-contract provenance preservation from the source explicit module.
+- The shared standalone explicit-module renderable projection helper now checks clock/reset identity, system-contract support IDs, and automation confidence alongside state-graph and control-block provenance.
+- The slice is regression-only: no production lowering behavior changed, and the existing standalone explicit-module path remains renderable.
+- Focused validation passed and adapter-filtered validation passed with `143/143` tests; formatting, test-list, docs, diff, and tracked markdown path-hygiene checks are recorded in `CHANGES.md`.
 ## 2026-05-11 `.fsm` standalone explicit-module control-block provenance
 - New batch slice 8/100 stays in the `R6`/`R15` graph-first `.fsm` hardening lane.
 - Extended `standalone_explicit_module_recovers_inputs_from_module_control_reads` in `crates/specforge/src/ir/adapters.rs` so standalone explicit-module `?fsm:name` selected renderable modules and emitted source-document direct roots prove exact control-block and branch provenance preservation from the source explicit module.
