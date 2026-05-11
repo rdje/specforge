@@ -13,9 +13,16 @@ Run this workflow after each completed task/activity.
 When the user explicitly authorizes an automatic batch of `N` tasks, slices, or lanes:
 - still run this full commit workflow after every completed task, slice, or lane in the batch
 - do not defer task-scoped commits until the end of the batch
-- push only after the full defined `N`-item batch is complete, unless the user explicitly gives a different push instruction or a blocker requires stopping and asking
+- push only after the full defined `N`-item batch is complete, unless the user explicitly gives a different push instruction or the branch is around `30` local commits ahead and the current active-run policy allows checkpoint pushes
 - if the user-defined batch ends early because of a blocker, do not push automatically unless the user explicitly approves that early-batch push
 - record the active batch size, completed count, and push deferral status in `MEMORY.md` during the batch so crash recovery is explicit
+
+When the user authorizes PNT (`Pick the Next Task`) mode:
+- treat PNT as an open-ended batch with no fixed `BWFSC`
+- still run the full commit workflow after every completed slice
+- continue selecting bounded roadmap-aligned slices until no task, slice, or lane remains to pick from or the user explicitly pauses/stops
+- push around every `30` local commits since the last push, unless the user gives a different push instruction
+- record the active PNT completed count, current ahead count when known, and push threshold in `MEMORY.md`
 
 ## Files Involved
 - `README.md` (tracked)

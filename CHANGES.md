@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-11 (PNT push cadence)
+
+### Changed: active PNT run now checkpoints pushes around every 30 commits
+- Updated the commit workflow so PNT mode records an open-ended batch policy with per-slice commits and push checkpoints around every `30` local commits since the last push.
+- Updated live continuity state to replace the earlier PNT push-deferral wording with the new around-30-commit threshold.
+- Clarified that PNT has no fixed end: it keeps selecting new tasks, slices, or lanes until none remain or the user explicitly pauses/stops.
+- No code behavior changed.
+
+### Validation
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- tracked markdown/mdBook absolute-path scan -> passed (`217` tracked markdown/mdBook files checked)
+
 ## 2026-05-11 (`.fsm` standalone explicit-module init-assignment provenance)
 
 ### Improved: standalone explicit-module FSM roots keep init-assignment provenance

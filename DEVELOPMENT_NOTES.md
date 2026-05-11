@@ -6,6 +6,12 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-11 PNT push cadence
+- User changed the active push cadence to "push around every 30 commits."
+- Updated `COMMIT.md` so PNT mode is explicitly treated as an open-ended batch with per-slice commits and push checkpoints around every `30` local commits since the last push.
+- Clarified that PNT has no fixed end and must keep selecting the next task, slice, or lane until none remain or the user explicitly pauses/stops.
+- Updated `MEMORY.md` to record that the active PNT run is currently below the threshold and should continue deferring push until roughly `30` local commits ahead unless the user gives a different instruction.
+- This is workflow/documentation-only; no Rust code behavior changed.
 ## 2026-05-11 `.fsm` standalone explicit-module init-assignment provenance
 - Continued the user-requested PNT cycle with a second unbounded `R6`/`R15` graph-first `.fsm` hardening slice.
 - Extended `standalone_explicit_module_recovers_inputs_from_module_control_reads` in `crates/specforge/src/ir/adapters.rs` so standalone explicit-module `?fsm:name` selected renderable modules and emitted source-document direct roots prove exact init-assignment provenance preservation from the source explicit module.
