@@ -24,22 +24,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `75b0fa397b18999432a1c2f945c493fd76e25420`
-- latest_commit_brief_message: `Add explicit module control provenance regression`
-- note: the prior active `BWFSC=100` run reached slice 8/100 locally; the user then switched the active run to PNT, and push remains deferred
+- latest_commit_hash: `e353fce45cee7db9d6c17162be9b17a388f54750`
+- latest_commit_brief_message: `Add explicit module system provenance regression`
+- note: PNT slice 1 is committed locally; push remains deferred until the PNT cycle ends, tasks run out, or the user explicitly asks
 
 ## Recent commit chain (last 6)
+- `e353fce` Add explicit module system provenance regression
 - `75b0fa3` Add explicit module control provenance regression
 - `85c7c82` Add explicit FSM state graph provenance regression
 - `d96a4aa` Add structured FSM renderable projection provenance regression
 - `13f843e` Add structured FSM state graph provenance regression
 - `e665b3d` Add reset-block FSM provenance regression
-- `470681d` test(adapter): preserve structured fsm control graph signals
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state: locally ahead of `origin/main` by eight committed active-batch/PNT-prelude slices before this PNT slice; push remains deferred
+- branch state: locally ahead of `origin/main` by nine committed active-batch/PNT slices before this PNT slice; push remains deferred
 - files in flight for the current slice:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -61,15 +61,15 @@
 ## Current batch status
 - objective:
   - active user-authorized run uses PNT with undefined BWFSC
-  - current PNT slice adds standalone explicit-module `?fsm:name` system-contract provenance coverage across selected renderable modules and emitted source-document direct roots
-  - completed_count after this PNT commit: `1`
+  - current PNT slice adds standalone explicit-module `?fsm:name` init-assignment provenance coverage across selected renderable modules and emitted source-document direct roots
+  - completed_count after this PNT commit: `2`
   - push remains deferred until the PNT cycle ends, tasks run out, or the user explicitly changes the policy
   - `R6` remains the active `.fsm` adapter hardening lane; SystemVerilog, Verilog, and VHDL adapter expansion remains not started
 - tracker effect:
-  - live-status tracker now marks standalone explicit-module selected module system-contract provenance as `Done`
-  - live-status tracker now marks standalone explicit-module source-document direct-root system-contract provenance as `Done`
-  - live docs now record the active PNT cycle as an `R6`/`R15` regression-only standalone explicit-module system-contract provenance hardening run
-  - `RUST_CODEBASE_ANALYSIS.md` now records the explicit-module system-contract projection provenance regression while keeping the refreshed test count at `666` listed Rust tests
+  - live-status tracker now marks standalone explicit-module selected module init-assignment provenance as `Done`
+  - live-status tracker now marks standalone explicit-module source-document direct-root init-assignment provenance as `Done`
+  - live docs now record the active PNT cycle as an `R6`/`R15` regression-only standalone explicit-module init-assignment provenance hardening run
+  - `RUST_CODEBASE_ANALYSIS.md` now records the explicit-module init-assignment projection provenance regression while keeping the refreshed test count at `666` listed Rust tests
 - verification status:
   - focused test `cargo test --manifest-path Cargo.toml -p specforge standalone_explicit_module_recovers_inputs_from_module_control_reads` passed
   - adapter suite `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `143/143` adapter-filtered tests

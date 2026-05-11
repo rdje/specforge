@@ -10798,6 +10798,42 @@ mod tests {
         );
     }
 
+    fn assert_renderable_init_assignment_provenance(
+        module: &FsmRenderableModule,
+        expected_assignments: &[InitAssignmentRecord],
+    ) {
+        let expected_by_target = expected_assignments
+            .iter()
+            .map(|assignment| (assignment.target_signal.as_str(), assignment))
+            .collect::<BTreeMap<_, _>>();
+
+        assert_eq!(module.init_assignments.len(), expected_assignments.len());
+        for assignment in &module.init_assignments {
+            let expected = expected_by_target
+                .get(assignment.target_signal.as_str())
+                .unwrap_or_else(|| {
+                    panic!(
+                        "renderable init assignment for {} should preserve a canonical source assignment",
+                        assignment.target_signal
+                    )
+                });
+            assert_eq!(&assignment.value, &expected.value);
+            assert!(
+                !assignment.supporting_statement_ids.is_empty(),
+                "{} init assignment should retain support IDs",
+                assignment.target_signal
+            );
+            assert_eq!(
+                assignment.supporting_statement_ids,
+                expected.supporting_statement_ids
+            );
+            assert_eq!(
+                assignment.automation_confidence,
+                expected.automation_confidence
+            );
+        }
+    }
+
     fn assert_renderable_control_block_provenance(
         module: &FsmRenderableModule,
         expected_blocks: &[ControlBlockRecord],
@@ -11110,6 +11146,10 @@ mod tests {
             renderable_module,
             &expected_module.control_blocks,
         );
+        assert_renderable_init_assignment_provenance(
+            renderable_module,
+            &expected_module.init_assignments,
+        );
         assert_eq!(fsm.renderable_module.as_ref(), Some(renderable_module));
         let renderable_document = fsm
             .renderable_document
@@ -11138,6 +11178,10 @@ mod tests {
         assert_renderable_control_block_provenance(
             &direct_root.module,
             &expected_module.control_blocks,
+        );
+        assert_renderable_init_assignment_provenance(
+            &direct_root.module,
+            &expected_module.init_assignments,
         );
     }
 

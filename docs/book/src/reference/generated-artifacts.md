@@ -142,6 +142,7 @@ Their renderable module and emitted source-document direct root also preserve th
 Standalone explicit-module `?fsm:name` roots follow the same state-graph contract across module candidates, selected renderable modules, and emitted source-document direct roots, preserving source explicit-module state and transition provenance rather than rebuilding it from emitted text.
 Their selected renderable modules and emitted source-document direct roots also preserve source explicit-module control-block support IDs, branch support IDs, and automation confidence.
 They preserve source explicit-module system-contract clock/reset support IDs and automation confidence on those same renderable projection surfaces.
+They also preserve source explicit-module init-assignment targets, values, support IDs, and automation confidence on those same surfaces.
 Direct control-input width recovery is part of that emitted surface too: an actor-port width recovered for a direct control input feeds the renderable `(+size ...)` entry alongside the target-actor input direction.
 Explicit-module control-input width recovery follows the same rule for module-local `(+size ...)` entries, combining module-control input direction with actor-port width provenance without requiring a flat module-local direction hint.
 Target-actor-backed direct output selection follows the same rule while excluding shared external actor evidence from the selected inventory.
