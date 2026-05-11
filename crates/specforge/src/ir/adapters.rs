@@ -11083,7 +11083,7 @@ mod tests {
         assert_renderable_state_graph_provenance(&direct_root.module, intent_ir);
     }
 
-    fn assert_standalone_module_state_graph_provenance(
+    fn assert_standalone_module_renderable_projection_provenance(
         fsm: &FsmAdapterArtifact,
         module: &FsmExplicitModuleCandidate,
         intent_ir: &IntentIr,
@@ -11100,6 +11100,10 @@ mod tests {
             .renderable_module
             .as_ref()
             .expect("standalone explicit module should carry a renderable module");
+        assert_renderable_control_block_provenance(
+            renderable_module,
+            &expected_module.control_blocks,
+        );
         assert_eq!(fsm.renderable_module.as_ref(), Some(renderable_module));
         let renderable_document = fsm
             .renderable_document
@@ -11118,6 +11122,10 @@ mod tests {
             &direct_root.module,
             &expected_module.regular_states,
             &expected_module.state_transitions,
+        );
+        assert_renderable_control_block_provenance(
+            &direct_root.module,
+            &expected_module.control_blocks,
         );
     }
 
@@ -14450,7 +14458,7 @@ mod tests {
 
         assert_eq!(fsm.root_name, "controller");
         assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Fsm);
-        assert_standalone_module_state_graph_provenance(&fsm, module, &intent_ir);
+        assert_standalone_module_renderable_projection_provenance(&fsm, module, &intent_ir);
         for signal_name in ["DATA_IN", "GO", "DONE"] {
             let signal = module
                 .signal_inventory

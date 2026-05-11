@@ -24,22 +24,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `d96a4aa84cbc55886f747364f24daef3346c7f74`
-- latest_commit_brief_message: `Add structured FSM renderable projection provenance regression`
-- note: slice 6/100 of the active `BWFSC=100` batch is committed locally; push remains deferred until the full batch completes
+- latest_commit_hash: `85c7c829df626c2cf6e921c314e720500a7e0cf6`
+- latest_commit_brief_message: `Add explicit FSM state graph provenance regression`
+- note: slice 7/100 of the active `BWFSC=100` batch is committed locally; push remains deferred until the full batch completes
 
 ## Recent commit chain (last 6)
+- `85c7c82` Add explicit FSM state graph provenance regression
 - `d96a4aa` Add structured FSM renderable projection provenance regression
 - `13f843e` Add structured FSM state graph provenance regression
 - `e665b3d` Add reset-block FSM provenance regression
 - `470681d` test(adapter): preserve structured fsm control graph signals
 - `9ef8815` test(adapter): preserve structured fsm system graph signals
-- `82661e1` docs(bootstrap): correct active batch continuity
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state: locally ahead of `origin/main` by six committed active-batch slices before slice 7 changes; push remains deferred
+- branch state: locally ahead of `origin/main` by seven committed active-batch slices before slice 8 changes; push remains deferred
 - files in flight for the current slice:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -61,17 +61,15 @@
 ## Current batch status
 - objective:
   - active user-authorized batch uses default `BWFSC=100`
-  - current slice is slice 7/100 and adds standalone explicit-module `?fsm:name` state graph provenance coverage across module candidates, selected renderable modules, and emitted source-document direct roots
-  - completed_count after this commit: `7`
+  - current slice is slice 8/100 and adds standalone explicit-module `?fsm:name` control-block and branch provenance coverage across selected renderable modules and emitted source-document direct roots
+  - completed_count after this commit: `8`
   - push remains deferred until all `100` slices are complete unless a real blocker stops the batch or the user explicitly changes the policy
   - `R6` remains the active `.fsm` adapter hardening lane; SystemVerilog, Verilog, and VHDL adapter expansion remains not started
 - tracker effect:
-  - live-status tracker now marks standalone explicit-module state candidate provenance as `Done`
-  - live-status tracker now marks standalone explicit-module transition candidate provenance as `Done`
-  - live-status tracker now marks standalone explicit-module selected module state graph projection provenance as `Done`
-  - live-status tracker now marks standalone explicit-module source-document direct-root state graph projection provenance as `Done`
-  - live docs now record slice 7/100 as an `R6`/`R15` regression-only standalone explicit-module state graph provenance hardening slice
-  - `RUST_CODEBASE_ANALYSIS.md` now records the explicit-module renderable projection provenance regression while keeping the refreshed test count at `666` listed Rust tests
+  - live-status tracker now marks standalone explicit-module selected module control-block provenance as `Done`
+  - live-status tracker now marks standalone explicit-module source-document direct-root control-block provenance as `Done`
+  - live docs now record slice 8/100 as an `R6`/`R15` regression-only standalone explicit-module control-block provenance hardening slice
+  - `RUST_CODEBASE_ANALYSIS.md` now records the explicit-module control-block projection provenance regression while keeping the refreshed test count at `666` listed Rust tests
 - verification status:
   - focused test `cargo test --manifest-path Cargo.toml -p specforge standalone_explicit_module_recovers_inputs_from_module_control_reads` passed
   - adapter suite `cargo test --manifest-path Cargo.toml -p specforge ir::adapters::tests` passed with `143/143` adapter-filtered tests
@@ -1279,8 +1277,8 @@
   - message file is currently untracked and `0` bytes
 
 ## Next exact steps
-- complete the slice 4 commit workflow: write `git_message_brief.txt`, stage only intended tracked files, commit, then clear and verify `git_message_brief.txt`
-- after slice 4 commits, continue with slice 5/100 by selecting the next bounded roadmap-aligned `R6`/`R15` `.fsm` graph-first hardening task
+- complete the slice 8 commit workflow: write `git_message_brief.txt`, stage only intended tracked files, commit, then clear and verify `git_message_brief.txt`
+- after slice 8 commits, continue with slice 9/100 by selecting the next bounded roadmap-aligned `R6`/`R15` `.fsm` graph-first hardening task
 - keep push deferred until all 100 slices are complete, unless a real blocker stops the batch or the user explicitly changes the policy
 - keep SystemVerilog, Verilog, and VHDL adapter expansion at `Not Started` until the `.fsm` hardening lane and canonical truthfulness surface are ready
 - `cargo sweep --time 1` is no longer blocked by an observed `target/release/tool_matrix` process; run it only when explicitly requested or when it becomes part of a safe cleanup slice

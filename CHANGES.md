@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-05-11 (`.fsm` standalone explicit-module control-block provenance)
+
+### Improved: standalone explicit-module FSM roots keep canonical control-block provenance
+- Extended `standalone_explicit_module_recovers_inputs_from_module_control_reads` so the standalone explicit-module `?fsm:name` regression now proves selected renderable modules and emitted source-document direct roots preserve source explicit-module control-block and branch provenance.
+- Reused the renderable control-block provenance checker for explicit modules, covering block support IDs, branch support IDs, and automation confidence against the source explicit module.
+- This is regression-only hardening for the existing `.fsm` adapter behavior; no production lowering behavior intentionally changed.
+- The Rust test listing remains `666` tests after tightening the existing regression.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge standalone_explicit_module_recovers_inputs_from_module_control_reads` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`143/143` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge -- --list` -> listed `666` Rust tests
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- tracked markdown/mdBook absolute-path scan -> passed (`217` tracked markdown/mdBook files checked)
+
 ## 2026-05-10 (`.fsm` standalone explicit-module state graph provenance)
 
 ### Improved: standalone explicit-module FSM roots keep canonical state graph provenance
