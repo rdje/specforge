@@ -162,7 +162,7 @@
 - status: In Progress
 - current lane:
   - `.fsm` adapter hardening is active, with renderable standalone/top paths, blocked renderability diagnostics, residual decisions, support/confidence preservation, and selected-inventory provenance under continuing regression coverage.
-  - the active PNT cycle is continuing with standalone explicit-module width-conflict aggregate blocker coverage; `R6` remains active and push checkpoints are around every 30 local commits.
+  - the active PNT cycle is continuing with standalone explicit-module direction-conflict aggregate blocker coverage; `R6` remains active and push checkpoints are around every 30 local commits.
   - SystemVerilog, Verilog, and VHDL expansion remains intentionally deferred until the `.fsm` lane and canonical IR truthfulness surface are strong enough to avoid semantic invention.
 - goals:
   - define target-specific lowering boundaries for:
@@ -192,6 +192,7 @@
   - standalone explicit-module renderable aggregate and module-candidate surfaces prove empty blocker and required-enrichment diagnostics when renderable
   - standalone explicit-module actor-port width recovery preserves recovered width through selected aggregate renderable modules and emitted source-document direct roots
   - standalone explicit-module actor-port width conflicts block aggregate renderable modules and source documents while preserving conflicting-width repair guidance
+  - standalone explicit-module control-read direction conflicts block aggregate renderable modules and source documents while preserving conflicting-direction repair guidance
   - real explicit `?top:name` target text is emitted only when the canonical model carries explicit top ports, child modules, renderable child roots, and width-compatible links
   - top-link width mismatch blockers preserve width-compatible repair guidance on blocked top and aggregate `.fsm` renderability surfaces while retaining the mismatched link provenance
   - top-link width mismatch blockers preserve the composition-topology residual decision so width-compatible link repair remains visible in structured adapter diagnostics

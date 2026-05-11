@@ -6,6 +6,12 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-11 `.fsm` standalone explicit-module direction-conflict aggregate blockers
+- Continued the user-requested PNT cycle with another `R6`/`R15` graph-first `.fsm` hardening slice.
+- Extended `standalone_explicit_module_blocks_conflicting_module_control_read_direction` in `crates/specforge/src/ir/adapters.rs` so conflicting graph-backed direction evidence blocks the aggregate `.fsm` renderable module and source document, not only the module-candidate surface.
+- Added aggregate blocking-reason and required-enrichment checks for conflicting actor-relative graph direction evidence.
+- The slice is regression-only: no production lowering behavior changed, and the existing blocked explicit-module path remains blocked.
+- Focused validation passed and adapter-filtered validation passed with `143/143` tests; formatting, test-list, docs, diff, and tracked markdown path-hygiene checks are recorded in `CHANGES.md`.
 ## 2026-05-11 `.fsm` standalone explicit-module width-conflict aggregate blockers
 - Continued the user-requested PNT cycle with another `R6`/`R15` graph-first `.fsm` hardening slice.
 - Extended `standalone_explicit_module_blocks_conflicting_control_input_actor_port_widths` in `crates/specforge/src/ir/adapters.rs` so conflicting actor-port width evidence blocks the aggregate `.fsm` renderable module and source document, not only the module-candidate surface.
