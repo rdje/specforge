@@ -24,22 +24,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `352518d806ba33858c8ce4add944922aef4e5db6`
-- latest_commit_brief_message: `Document PNT post-commit continuation`
-- note: PNT workflow-policy slice 8 is committed locally; push remains deferred because the branch is below the around-`30` local-commit checkpoint threshold
+- latest_commit_hash: `04070f89d2ce098d588add85fa7da07ead081917`
+- latest_commit_brief_message: `Add explicit module width projection regression`
+- note: PNT slice 9 is committed locally; push remains deferred because the branch is below the around-`30` local-commit checkpoint threshold
 
 ## Recent commit chain (last 6)
+- `04070f8` Add explicit module width projection regression
 - `352518d` Document PNT post-commit continuation
 - `64340a6` Add explicit module clean renderability regression
 - `d672ddc` Add explicit module output provenance regression
 - `576b7a8` Add explicit module root provenance regression
 - `2fe27c2` Add explicit module candidate provenance regression
-- `9365052` Document PNT push checkpoint policy
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state: locally ahead of `origin/main` by sixteen committed active-batch/PNT slices before this PNT slice; push remains deferred because the around-`30` local-commit checkpoint has not been reached
+- branch state: locally ahead of `origin/main` by seventeen committed active-batch/PNT slices before this PNT slice; push remains deferred because the around-`30` local-commit checkpoint has not been reached
 - files in flight for the current PNT slice:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -62,16 +62,16 @@
 ## Current batch status
 - objective:
   - active user-authorized run uses PNT with undefined BWFSC
-  - current PNT slice adds standalone explicit-module actor-port width recovery projection coverage across selected aggregate renderable modules and emitted source-document direct roots
-  - completed_count after this PNT commit: `9`
+  - current PNT slice adds standalone explicit-module actor-port width-conflict aggregate blocker coverage for stale renderable module/source-document prevention
+  - completed_count after this PNT commit: `10`
   - push remains deferred until the branch reaches around `30` local commits since the last push or the user explicitly changes the policy
   - `R6` remains the active `.fsm` adapter hardening lane; SystemVerilog, Verilog, and VHDL adapter expansion remains not started
 - tracker effect:
-  - live-status tracker now marks standalone explicit-module width recovery projection provenance as `Done`
-  - live docs now record the active PNT cycle as an `R6`/`R15` regression-only standalone explicit-module width projection hardening run
-  - `RUST_CODEBASE_ANALYSIS.md` now records the explicit-module width projection regression while keeping the refreshed test count at `666` listed Rust tests
+  - live-status tracker now marks standalone explicit-module width-conflict aggregate blocker coverage as `Done`
+  - live docs now record the active PNT cycle as an `R6`/`R15` regression-only standalone explicit-module width-conflict blocker hardening run
+  - `RUST_CODEBASE_ANALYSIS.md` now records the explicit-module width-conflict aggregate blocker regression while keeping the refreshed test count at `666` listed Rust tests
 - verification status:
-  - focused test `cargo test --manifest-path Cargo.toml -p specforge standalone_explicit_module_recovers_control_input_width_from_actor_port_graph` passed
+  - focused test `cargo test --manifest-path Cargo.toml -p specforge standalone_explicit_module_blocks_conflicting_control_input_actor_port_widths` passed
   - adapter suite `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `143/143` adapter-filtered tests
   - `cargo fmt --all --check` passed
   - `cargo test --manifest-path Cargo.toml -p specforge -- --list` listed `666` Rust tests
