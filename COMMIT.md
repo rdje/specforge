@@ -21,6 +21,7 @@ When the user authorizes PNT (`Pick the Next Task`) mode:
 - treat PNT as an open-ended batch with no fixed `BWFSC`
 - still run the full commit workflow after every completed slice
 - continue selecting bounded roadmap-aligned slices until no task, slice, or lane remains to pick from or the user explicitly pauses/stops
+- treat the post-commit report as a continuity checkpoint, not a pause; after reporting, immediately pick the next slice and roll with it
 - push around every `30` local commits since the last push, unless the user gives a different push instruction
 - record the active PNT completed count, current ahead count when known, and push threshold in `MEMORY.md`
 

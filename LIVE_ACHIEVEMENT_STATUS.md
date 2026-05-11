@@ -6,6 +6,7 @@
 - Tracked live docs and mdBook now reject checkout-specific absolute filesystem paths: Done
 - Batch-run deferred-push policy documented while preserving per-slice commits: Done
 - PNT no-fixed-end policy documented with around-30-commit push checkpoints: Done
+- PNT post-commit reports documented as continuation checkpoints, not pauses: Done
 - GitHub Actions CI workflow present but temporarily manual-only to conserve Actions minutes: Done
 - Canonical CI entrypoint runnable locally and reused by GitHub Actions: Done
 - Canonical CI now runs Clippy with warnings denied: Done

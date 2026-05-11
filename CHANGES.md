@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-11 (PNT post-commit continuation)
+
+### Changed: PNT reports now explicitly continue into the next slice
+- Clarified the PNT workflow so a post-commit report is a continuity checkpoint, not a pause.
+- Documented that after reporting a completed PNT slice, the agent must immediately pick the next roadmap-aligned task/slice/lane and continue until no task remains or the user explicitly pauses/stops.
+- No code behavior changed.
+
+### Validation
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- tracked markdown/mdBook absolute-path scan -> passed (`217` tracked markdown/mdBook files checked)
+
 ## 2026-05-11 (`.fsm` standalone explicit-module clean renderability)
 
 ### Improved: standalone explicit-module renderability is explicitly clean

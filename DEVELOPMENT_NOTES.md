@@ -6,6 +6,11 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-11 PNT post-commit continuation
+- User clarified that a post-commit report shall lead directly to picking the next task and rolling with it.
+- Updated `COMMIT.md` so PNT post-commit reporting is explicitly a continuity checkpoint, not a pause.
+- Updated `MEMORY.md` so recovery instructions preserve the rule: after a PNT commit/report, immediately select the next bounded roadmap-aligned slice unless no task remains or the user explicitly pauses/stops.
+- This is workflow/documentation-only; no Rust code behavior changed.
 ## 2026-05-11 `.fsm` standalone explicit-module clean renderability
 - Continued the user-requested PNT cycle with another `R6`/`R15` graph-first `.fsm` hardening slice.
 - Extended `standalone_explicit_module_recovers_inputs_from_module_control_reads` in `crates/specforge/src/ir/adapters.rs` so both the selected aggregate `.fsm` surface and standalone explicit-module candidate prove `is_renderable` while retaining empty blocking-reason and required-enrichment lists.
