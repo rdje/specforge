@@ -3,6 +3,11 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-11 `.fsm` top-composition root identity)
+- Extended `builds_renderable_top_composition_fsm_adapter_artifact` in `crates/specforge/src/ir/adapters.rs`.
+- This is a regression-only `R6`/`R15` hardening slice: renderable top candidates and aggregate `.fsm` surfaces now prove empty blocker/enrichment diagnostics, and the renderable top root proves top name, port/child/link counts, child order, child source modules, child root kinds, and equality with the emitted source-document top root.
+- Production adapter behavior did not change; the existing top-composition regression now covers top-root identity before source-document emission.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
 ## Session update (2026-05-11 `.fsm` standalone explicit-module system direct-root identity)
 - Extended `standalone_explicit_module_recovers_system_signals_from_system_contract` in `crates/specforge/src/ir/adapters.rs`.
 - This is a regression-only `R6`/`R15` hardening slice: emitted source-document direct roots now prove standalone explicit-module system-contract recovery keeps no top root, exactly one direct root, the `controller` module name, `Fsm` root kind, and equality with the selected aggregate renderable module.

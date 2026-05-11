@@ -1,5 +1,22 @@
 # CHANGES
 
+## 2026-05-11 (`.fsm` top-composition root identity)
+
+### Improved: renderable top compositions keep top-root identity cleanly
+- Extended `builds_renderable_top_composition_fsm_adapter_artifact` so the top candidate and aggregate `.fsm` renderability prove empty blocker/enrichment diagnostics.
+- Added renderable top-root checks for top name, port/child/link counts, child order, child source modules, and child root kinds, plus equality between the candidate top root and emitted source-document top root.
+- This is regression-only hardening for the existing `.fsm` adapter behavior; no production lowering behavior intentionally changed.
+- The Rust test listing remains `666` tests after tightening the existing regression.
+
+### Validation
+- `cargo test --manifest-path Cargo.toml -p specforge builds_renderable_top_composition_fsm_adapter_artifact` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge adapters` -> passed (`143/143` adapter-filtered tests)
+- `cargo fmt --all --check` -> passed
+- `cargo test --manifest-path Cargo.toml -p specforge -- --list` -> listed `666` Rust tests
+- `git diff --check` -> passed
+- `bash scripts/run_docs_ci.sh` -> passed
+- tracked markdown/mdBook absolute-path scan -> passed (`217` tracked markdown/mdBook files checked)
+
 ## 2026-05-11 (`.fsm` standalone explicit-module system direct-root identity)
 
 ### Improved: explicit-module system recovery keeps direct-root identity

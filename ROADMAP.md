@@ -162,7 +162,7 @@
 - status: In Progress
 - current lane:
   - `.fsm` adapter hardening is active, with renderable standalone/top paths, blocked renderability diagnostics, residual decisions, support/confidence preservation, and selected-inventory provenance under continuing regression coverage.
-  - the active PNT cycle is continuing with standalone explicit-module system direct-root identity coverage; `R6` remains active and push checkpoints are around every 30 local commits.
+  - the active PNT cycle is continuing with renderable top-composition root identity coverage; `R6` remains active and push checkpoints are around every 30 local commits.
   - SystemVerilog, Verilog, and VHDL expansion remains intentionally deferred until the `.fsm` lane and canonical IR truthfulness surface are strong enough to avoid semantic invention.
 - goals:
   - define target-specific lowering boundaries for:
@@ -195,6 +195,7 @@
   - standalone explicit-module control-read direction conflicts block aggregate renderable modules and source documents while preserving conflicting-direction repair guidance
   - standalone explicit-module flat/graph direction disagreements block aggregate renderable modules and source documents while preserving canonical/graph repair guidance
   - standalone explicit-module system-contract recovery preserves source-document direct-root identity and equality with the selected aggregate renderable module
+  - renderable top compositions preserve top-root identity, child order, child root kinds, and empty blocker/enrichment diagnostics before source-document emission
   - real explicit `?top:name` target text is emitted only when the canonical model carries explicit top ports, child modules, renderable child roots, and width-compatible links
   - top-link width mismatch blockers preserve width-compatible repair guidance on blocked top and aggregate `.fsm` renderability surfaces while retaining the mismatched link provenance
   - top-link width mismatch blockers preserve the composition-topology residual decision so width-compatible link repair remains visible in structured adapter diagnostics

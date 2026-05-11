@@ -6,6 +6,12 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-11 `.fsm` top-composition root identity
+- Continued the user-requested PNT cycle with another `R6`/`R15` graph-first `.fsm` hardening slice, moving from standalone explicit modules into top-composition coverage.
+- Extended `builds_renderable_top_composition_fsm_adapter_artifact` in `crates/specforge/src/ir/adapters.rs` so renderable top candidates and aggregate `.fsm` surfaces prove empty blocker/enrichment diagnostics.
+- Added renderable top-root checks for top name, port/child/link counts, child order, child source modules, child root kinds, and equality between the candidate top root and emitted source-document top root.
+- The slice is regression-only: no production lowering behavior changed, and the existing top-composition path remains renderable.
+- Focused validation passed and adapter-filtered validation passed with `143/143` tests; formatting, test-list, docs, diff, and tracked markdown path-hygiene checks are recorded in `CHANGES.md`.
 ## 2026-05-11 `.fsm` standalone explicit-module system direct-root identity
 - Continued the user-requested PNT cycle with another `R6`/`R15` graph-first `.fsm` hardening slice.
 - Extended `standalone_explicit_module_recovers_system_signals_from_system_contract` in `crates/specforge/src/ir/adapters.rs` so the emitted source-document direct root is proven to be the selected `controller` `?fsm:name` root.

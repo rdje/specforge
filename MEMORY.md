@@ -24,22 +24,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `d6f0ce2e1c927dd996c632c4796a1a3bf3818b01`
-- latest_commit_brief_message: `Add explicit module flat graph aggregate regression`
-- note: PNT slice 12 is committed locally; push remains deferred because the branch is below the around-`30` local-commit checkpoint threshold
+- latest_commit_hash: `ab38754fd3a842a12549ec18297abb0647c328e7`
+- latest_commit_brief_message: `Add explicit module system direct root regression`
+- note: PNT slice 13 is committed locally; push remains deferred because the branch is below the around-`30` local-commit checkpoint threshold
 
 ## Recent commit chain (last 6)
+- `ab38754` Add explicit module system direct root regression
 - `d6f0ce2` Add explicit module flat graph aggregate regression
 - `06050de` Add explicit module direction conflict aggregate regression
 - `821f781` Add explicit module width conflict aggregate regression
 - `04070f8` Add explicit module width projection regression
 - `352518d` Document PNT post-commit continuation
-- `64340a6` Add explicit module clean renderability regression
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state: locally ahead of `origin/main` by twenty committed active-batch/PNT slices before this PNT slice; push remains deferred because the around-`30` local-commit checkpoint has not been reached
+- branch state: locally ahead of `origin/main` by twenty-one committed active-batch/PNT slices before this PNT slice; push remains deferred because the around-`30` local-commit checkpoint has not been reached
 - files in flight for the current PNT slice:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -62,16 +62,16 @@
 ## Current batch status
 - objective:
   - active user-authorized run uses PNT with undefined BWFSC
-  - current PNT slice adds standalone explicit-module system-contract recovery source-document direct-root identity coverage
-  - completed_count after this PNT commit: `13`
+  - current PNT slice adds renderable top-composition top-root identity and clean-diagnostics coverage before source-document emission
+  - completed_count after this PNT commit: `14`
   - push remains deferred until the branch reaches around `30` local commits since the last push or the user explicitly changes the policy
   - `R6` remains the active `.fsm` adapter hardening lane; SystemVerilog, Verilog, and VHDL adapter expansion remains not started
 - tracker effect:
-  - live-status tracker now marks standalone explicit-module system direct-root identity coverage as `Done`
-  - live docs now record the active PNT cycle as an `R6`/`R15` regression-only standalone explicit-module system direct-root identity hardening run
-  - `RUST_CODEBASE_ANALYSIS.md` now records the explicit-module system direct-root identity regression while keeping the refreshed test count at `666` listed Rust tests
+  - live-status tracker now marks renderable top-composition top-root identity and clean diagnostics coverage as `Done`
+  - live docs now record the active PNT cycle as an `R6`/`R15` regression-only top-composition root-identity hardening run
+  - `RUST_CODEBASE_ANALYSIS.md` now records the top-composition root-identity regression while keeping the refreshed test count at `666` listed Rust tests
 - verification status:
-  - focused test `cargo test --manifest-path Cargo.toml -p specforge standalone_explicit_module_recovers_system_signals_from_system_contract` passed
+  - focused test `cargo test --manifest-path Cargo.toml -p specforge builds_renderable_top_composition_fsm_adapter_artifact` passed
   - adapter suite `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `143/143` adapter-filtered tests
   - `cargo fmt --all --check` passed
   - `cargo test --manifest-path Cargo.toml -p specforge -- --list` listed `666` Rust tests

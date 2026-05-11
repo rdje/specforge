@@ -15395,13 +15395,36 @@ mod tests {
                 .any(|id| consumer_to_top_link.supporting_statement_ids.contains(id))
         );
         assert!(top_candidate.renderability.is_renderable);
-        assert!(top_candidate.renderable_top.is_some());
+        assert!(top_candidate.renderability.blocking_reasons.is_empty());
+        assert!(
+            top_candidate
+                .renderability
+                .required_canonical_enrichments
+                .is_empty()
+        );
+        let top_root = top_candidate
+            .renderable_top
+            .as_ref()
+            .expect("datapath top candidate should carry a renderable top root");
+        assert_eq!(top_root.top_name, "datapath");
+        assert_eq!(top_root.ports.len(), 1);
+        assert_eq!(top_root.children.len(), 2);
+        assert_eq!(top_root.links.len(), 2);
+        assert_eq!(top_root.children[0].instance_name, "producer");
+        assert_eq!(top_root.children[0].source_module_name, "producer_core");
+        assert_eq!(top_root.children[0].child_root_kind, FsmRootKind::Dt);
+        assert_eq!(top_root.children[1].instance_name, "consumer");
+        assert_eq!(top_root.children[1].source_module_name, "consumer_core");
+        assert_eq!(top_root.children[1].child_root_kind, FsmRootKind::Dt);
         assert!(fsm.renderability.is_renderable);
+        assert!(fsm.renderability.blocking_reasons.is_empty());
+        assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert!(fsm.renderable_module.is_none());
         let renderable_document = fsm
             .renderable_document
             .as_ref()
             .expect("renderable top should carry a source document");
+        assert_eq!(renderable_document.top_root.as_ref(), Some(top_root));
         let direct_root_names = renderable_document
             .direct_roots
             .iter()
