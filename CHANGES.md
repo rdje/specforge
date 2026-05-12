@@ -14100,6 +14100,16 @@
 - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `128` fixtures and `0` failures
 - `git diff --check` -> passed
 
+## 2026-05-13 (`.fsm` structured FSM root_kind_decision complete)
+
+### Changed: root_kind_decision now asserted on all 3 structured FSM tests
+- Added `root_kind_decision` assertions to `structured_fsm_preserves_graph_backed_system_signal_inventory` (renderable), `structured_fsm_blocks_graph_backed_undriven_output_inventory` (blocked), and `structured_fsm_blocks_flat_graph_direction_disagreement` (blocked).
+- Each asserts `selected_root_kind == Fsm`, `deferred_root_kinds == [Top]`, `automation_confidence == High`, and rationale mentioning "carries explicit regular-state facts".
+- All 3 structured FSM tests now carry complete root_kind_decision regression coverage — zero gaps.
+
+### Validation
+- `cargo test -p specforge` -> passed with `666/666`
+
 ## 2026-05-13 (`.fsm` standalone sequential DT root_kind_decision complete)
 
 ### Changed: root_kind_decision now asserted on all 8 standalone sequential DT tests
