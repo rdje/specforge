@@ -1,5 +1,11 @@
 # CHANGES
 
+## 2026-05-12 (`.fsm` top composition tests continue — fsm-level blocking_reasons)
+
+### Improved: three more top composition tests now prove fsm-level blocking_reasons
+- Added `assert!(!fsm.renderability.blocking_reasons.is_empty())` and `assert!(fsm.renderable_module.is_none())` to: `top_composition_blocks_width_mismatched_top_link_guidance`, `top_composition_blocks_top_without_port_guidance`, `top_composition_blocks_link_to_unemitted_child_target_guidance`.
+- The Rust test listing remains `666` tests, all passing.
+
 ## 2026-05-12 (`.fsm` top composition link_from tests — fsm-level blocking_reasons)
 
 ### Improved: three link_from top composition tests now prove fsm-level blocking_reasons

@@ -24,9 +24,9 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `90d498d9`
-- latest_commit_brief_message: `Add fsm-level blocking_reasons checks to three link_from top composition tests`
-- note: PNT slice 50 committed locally; branch ahead 21 commits since last push at 400ee6a1; 9 of 24 top composition tests now prove fsm-level blocking_reasons; 15 remain
+- latest_commit_hash: `TBD`
+- latest_commit_brief_message: `Add fsm-level blocking_reasons checks to three more top composition tests`
+- note: PNT slice 51 committed locally; branch ahead 22 commits since last push at 400ee6a1; 12 of 24 top composition tests now prove fsm-level blocking_reasons; 12 remain
 
 ## Recent commit chain (last 6)
 - `8ecb7a70` Add child candidate diagnostics to two actor-port recovery tests
