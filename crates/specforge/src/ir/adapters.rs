@@ -18690,6 +18690,13 @@ mod tests {
             .expect("blocked source-side child link should stay on the top candidate");
 
         assert!(producer.renderability.is_renderable);
+        assert!(producer.renderability.blocking_reasons.is_empty());
+        assert!(
+            producer
+                .renderability
+                .required_canonical_enrichments
+                .is_empty()
+        );
         assert!(producer.renderable_module.is_some());
         assert!(
             producer
@@ -22212,6 +22219,14 @@ mod tests {
             .expect("result_data top endpoint should stay in selected inventory");
 
         assert!(producer.renderability.is_renderable);
+        assert!(producer.renderability.blocking_reasons.is_empty());
+        assert!(
+            producer
+                .renderability
+                .required_canonical_enrichments
+                .is_empty()
+        );
+        assert!(producer.renderable_module.is_some());
         let blocked_link_support_ids = super::explicit_top_link_supporting_ids(blocked_link);
         assert!(
             width_mismatch_support_ids
@@ -24320,6 +24335,13 @@ mod tests {
             .find(|candidate| candidate.module_name == "producer_core")
             .expect("producer module candidate should remain visible");
         assert!(producer.renderability.is_renderable);
+        assert!(producer.renderability.blocking_reasons.is_empty());
+        assert!(
+            producer
+                .renderability
+                .required_canonical_enrichments
+                .is_empty()
+        );
         assert!(
             producer
                 .renderable_module
