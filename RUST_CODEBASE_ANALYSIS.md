@@ -3,6 +3,11 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-12 `.fsm` child candidate resolved root kind coverage)
+- Added `resolved_root_kind` assertions to child candidates in nine blocked/keeps tests in `crates/specforge/src/ir/adapters.rs`.
+- Every top composition test extracting a named child candidate now proves both `source_module_name` and `resolved_root_kind`.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
+
 ## Session update (2026-05-12 `.fsm` child candidate diagnostics in actor-port recovery)
 - Added `source_module_name` and `resolved_root_kind` assertions to child candidates in two actor-port recovery tests in `crates/specforge/src/ir/adapters.rs`.
 - All top composition tests that extract a named child candidate now prove `source_module_name` and `resolved_root_kind`.

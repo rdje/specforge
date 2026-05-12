@@ -18569,6 +18569,7 @@ mod tests {
             .find(|child| child.instance_name == "producer")
             .expect("producer child candidate should remain visible");
         assert_eq!(producer_child.source_module_name, "producer_core");
+        assert_eq!(producer_child.resolved_root_kind, Some(FsmRootKind::Dt));
         assert!(
             child_support_ids
                 .iter()
@@ -18755,6 +18756,7 @@ mod tests {
             .find(|child| child.instance_name == "producer")
             .expect("producer child candidate should remain visible");
         assert_eq!(producer_child.source_module_name, "producer_core");
+        assert_eq!(producer_child.resolved_root_kind, Some(FsmRootKind::Dt));
         assert!(
             child_support_ids
                 .iter()
@@ -19212,6 +19214,7 @@ mod tests {
             .find(|child| child.instance_name == "consumer")
             .expect("consumer child candidate should remain visible");
         assert_eq!(consumer_child.source_module_name, "missing_module");
+        assert_eq!(consumer_child.resolved_root_kind, None);
         assert!(
             child_support_ids
                 .iter()
@@ -19414,6 +19417,7 @@ mod tests {
             .find(|child| child.instance_name == "producer")
             .expect("producer child candidate should remain visible");
         assert_eq!(producer_child.source_module_name, "producer_core");
+        assert_eq!(producer_child.resolved_root_kind, Some(FsmRootKind::Dt));
         assert!(
             child_support_ids
                 .iter()
@@ -19618,6 +19622,7 @@ mod tests {
             .find(|child| child.instance_name == "producer")
             .expect("producer child candidate should remain visible");
         assert_eq!(producer_child.source_module_name, "producer_core");
+        assert_eq!(producer_child.resolved_root_kind, Some(FsmRootKind::Dt));
         assert!(
             child_support_ids
                 .iter()
@@ -19835,6 +19840,7 @@ mod tests {
             .find(|child| child.instance_name == "consumer")
             .expect("consumer child candidate should remain visible");
         assert_eq!(consumer_child.source_module_name, "consumer_core");
+        assert_eq!(consumer_child.resolved_root_kind, Some(FsmRootKind::Dt));
         assert!(
             child_support_ids
                 .iter()
@@ -20077,6 +20083,7 @@ mod tests {
             .find(|child| child.instance_name == "producer")
             .expect("producer child candidate should remain visible");
         assert_eq!(producer_child.source_module_name, "producer_core");
+        assert_eq!(producer_child.resolved_root_kind, Some(FsmRootKind::Dt));
         assert!(
             child_support_ids
                 .iter()
@@ -20307,6 +20314,7 @@ mod tests {
             .find(|child| child.instance_name == "producer")
             .expect("producer child candidate should remain visible");
         assert_eq!(producer_child.source_module_name, "producer_core");
+        assert_eq!(producer_child.resolved_root_kind, Some(FsmRootKind::Dt));
         assert!(
             child_support_ids
                 .iter()
@@ -20527,6 +20535,7 @@ mod tests {
             .find(|child| child.instance_name == "producer")
             .expect("producer child candidate should remain visible");
         assert_eq!(producer_child.source_module_name, "producer_core");
+        assert_eq!(producer_child.resolved_root_kind, Some(FsmRootKind::Dt));
         assert!(
             child_support_ids
                 .iter()

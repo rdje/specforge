@@ -1,5 +1,14 @@
 # CHANGES
 
+## 2026-05-12 (`.fsm` child candidate resolved root kind coverage)
+
+### Improved: nine blocked/keeps tests now prove child candidate resolved root kind
+- Added `resolved_root_kind` assertions to child candidates in nine blocked/keeps top composition tests that already checked `source_module_name` but skipped root-kind resolution.
+- Seven producer_child and two consumer_child candidates now prove `resolved_root_kind == Some(FsmRootKind::Dt)` (for declared DT modules) or `None` (for the missing_module case).
+- Every top composition test that extracts a named child candidate now proves both `source_module_name` and `resolved_root_kind`.
+- This is regression-only hardening for the existing `.fsm` adapter behavior; no production lowering behavior intentionally changed.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
+
 ## 2026-05-12 (`.fsm` child candidate diagnostics in actor-port recovery)
 
 ### Improved: two actor-port recovery tests now prove child candidate identity and root kind

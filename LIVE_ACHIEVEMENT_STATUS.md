@@ -241,6 +241,7 @@
 - `.fsm` single-FSM-child direct root now proves FSM root_kind: Done
 - `.fsm` four blocked sibling-link/child-topology/actor-port conflict tests now prove top-candidate renderability: Done
 - `.fsm` two actor-port recovery tests now prove child candidate source module name and resolved root kind: Done
+- `.fsm` nine blocked/keeps tests now prove child candidate resolved root kind: Done
 - `.fsm` top-link direction recovery now stays composition-residual clean when renderable: Done
 - `.fsm` top-link direction recovery now preserves selected inventory provenance: Done
 - `.fsm` actor-port direction recovery now stays composition-residual clean when renderable: Done

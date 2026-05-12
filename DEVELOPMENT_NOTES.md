@@ -6,6 +6,11 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-12 `.fsm` child candidate resolved root kind coverage
+- Continued the PNT cycle adding `resolved_root_kind` assertions to child candidates in nine blocked/keeps top composition tests.
+- Seven tests prove `producer_child.resolved_root_kind == Some(FsmRootKind::Dt)`, one proves `consumer_child.resolved_root_kind == Some(FsmRootKind::Dt)`, and one proves `consumer_child.resolved_root_kind == None` (missing module).
+- Every top composition test that extracts a named child candidate now proves both `source_module_name` and `resolved_root_kind`, completing child candidate identity coverage.
+
 ## 2026-05-12 `.fsm` child candidate diagnostics in actor-port recovery
 - Continued the PNT cycle adding child candidate identity diagnostics to two actor-port recovery tests.
 - `top_composition_recovers_top_port_direction_from_actor_ports` and `_width_from_actor_ports` now prove `producer_child.source_module_name == "producer_core"` and `producer_child.resolved_root_kind == Some(FsmRootKind::Dt)`.
