@@ -14597,6 +14597,7 @@ mod tests {
             AutomationConfidence::High
         );
         assert!(!fsm.renderability.is_renderable);
+        assert!(fsm.renderable_module.is_none());
         assert!(fsm.renderable_document.is_none());
         assert!(
             fsm.renderability
@@ -14801,6 +14802,7 @@ mod tests {
         );
         assert_eq!(acc.automation_confidence, AutomationConfidence::High);
         assert!(!fsm.renderability.is_renderable);
+        assert!(fsm.renderable_module.is_none());
         assert!(fsm.renderable_document.is_none());
         assert!(fsm.renderability.blocking_reasons.iter().any(|reason| {
             reason.contains("conflicting canonical and graph-backed direction evidence")
@@ -19370,6 +19372,8 @@ mod tests {
                     == "declare every top child source as an explicit module before lowering `?top:name`")
         );
         assert!(!fsm.renderability.is_renderable);
+        assert!(!fsm.renderability.blocking_reasons.is_empty());
+        assert!(fsm.renderable_module.is_none());
         assert!(top_candidate.renderable_top.is_none());
         assert!(fsm.renderable_document.is_none());
         assert!(
