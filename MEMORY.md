@@ -24,9 +24,9 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `98863eef`
-- latest_commit_brief_message: `Add dt_candidate.automation_confidence to blocked DT-centric adapter test`
-- note: PNT slice 56 committed locally; dt_candidate.automation_confidence gap closed (1/1 remaining closed); 8 commits ahead since last push
+- latest_commit_hash: `1cf02644`
+- latest_commit_brief_message: `Add renderable_module and renderable_document presence to three builds_renderable DT tests`
+- note: PNT slice 57 committed locally; renderable-document presence gap narrowing (~8 of ~11 remaining); 10 commits ahead since last push
 
 ## Recent commit chain (last 6)
 - `8ecb7a70` Add child candidate diagnostics to two actor-port recovery tests
