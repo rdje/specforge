@@ -61,6 +61,7 @@
 - `.fsm` renderable-document presence now asserted on all 6 builds_renderable DT tests — zero gaps in that category: Done
 - `.fsm` renderable-document presence now asserted on all standalone recovery tests — zero gaps across all 12 renderable tests: Done
 - `.fsm` renderable_module.is_none() guards now on all blocked tests with fsm.renderability checks — zero gaps: Done
+- `.fsm` root_kind_decision checks now on standalone DT blocked tests (3 added, ~40 remain): In Progress
 - `.fsm` standalone explicit-module transition candidate provenance now preserves canonical support IDs, guards, declaration order, and confidence: Done
 - `.fsm` standalone explicit-module selected module state graph projection now preserves source explicit-module state and transition provenance: Done
 - `.fsm` standalone explicit-module source-document direct-root state graph projection now preserves transition support IDs, guards, declaration order, and confidence: Done

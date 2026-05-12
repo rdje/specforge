@@ -12159,6 +12159,11 @@ mod tests {
                     == "enrich_intent_ir_interface_inventory")
         );
         let fsm = adapter.fsm.expect("fsm artifact should be present");
+        assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Dt);
+        assert_eq!(
+            fsm.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Fsm, FsmRootKind::Top]
+        );
         let data_in = fsm
             .signal_inventory
             .iter()
@@ -12529,6 +12534,11 @@ mod tests {
                 .contains("render-critical signal roles unresolved")
         );
         let fsm = adapter.fsm.expect("fsm artifact should be present");
+        assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Dt);
+        assert_eq!(
+            fsm.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Fsm, FsmRootKind::Top]
+        );
         let data_out = fsm
             .signal_inventory
             .iter()
@@ -12640,6 +12650,11 @@ mod tests {
                 .contains("render-critical signal roles unresolved")
         );
         let fsm = adapter.fsm.expect("fsm artifact should be present");
+        assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Dt);
+        assert_eq!(
+            fsm.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Fsm, FsmRootKind::Top]
+        );
         let data_out = fsm
             .signal_inventory
             .iter()

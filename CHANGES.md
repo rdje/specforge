@@ -1,5 +1,12 @@
 # CHANGES
 
+## 2026-05-13 (`.fsm` root_kind_decision for standalone DT blocked tests)
+
+### Improved: three standalone DT blocked tests now prove root_kind_decision
+- Added `assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Dt)` and `deferred_root_kinds == [Fsm, Top]` to: `standalone_dt_blocks_conflicting_control_input_actor_port_widths`, `standalone_dt_blocks_flat_graph_direction_disagreement`, `standalone_dt_keeps_conflicting_actor_port_width_unresolved`.
+- These blocked DT tests previously checked renderability but never verified the adapter stays in DT-root mode.
+- The Rust test listing remains `666` tests, all passing.
+
 ## 2026-05-13 (`.fsm` renderable_module.is_none() guards — all blocked tests complete)
 
 ### Improved: two remaining top composition blocked tests now prove full stale-output prevention

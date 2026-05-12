@@ -11,6 +11,11 @@
 - DT candidate confidence: for non-explicit (behavior-aggregated) candidates, it's `Medium` when behaviors exist and `Low` when behaviors are empty. The handshake adapter has behaviors → Medium.
 - All decision tree candidate automation_confidence gaps now closed.
 
+## 2026-05-13 `.fsm` root_kind_decision for standalone DT blocked tests
+- Added `root_kind_decision` (Dt + [Fsm, Top]) to 3 standalone DT blocked tests that lacked it.
+- Pattern: blocked tests that stay in DT mode should prove the selected and deferred root kinds.
+- ~40 tests (across all categories) still without root_kind_decision checks.
+
 ## 2026-05-13 `.fsm` renderable_module.is_none() guards — all blocked tests complete
 - Added `!blocking_reasons.is_empty()` and `renderable_module.is_none()` to last 2 blocked tests without them: `top_composition_keeps_duplicate_top_port_width_conflict_unresolved` and `keeps_top_composition_blocked_when_child_module_is_missing`.
 - All blocked tests now prove: blocked status, non-empty blocking_reasons, no renderable module, and no renderable document.

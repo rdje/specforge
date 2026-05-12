@@ -3,6 +3,11 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-13 `.fsm` root_kind_decision for standalone DT blocked tests)
+- Added `root_kind_decision` assertions to 3 standalone DT blocked tests, proving the selected root kind stays `Dt` with `Fsm` and `Top` deferred.
+- Many tests still lack root_kind_decision coverage; this category is large (~40 tests).
+- The Rust test listing remains `666` tests, all passing.
+
 ## Session update (2026-05-13 `.fsm` renderable_module.is_none() — all blocked tests complete)
 - Added missing `renderable_module.is_none()` and `!blocking_reasons.is_empty()` guards to the last 2 blocked tests lacking them.
 - All blocked tests now prove the complete stale-output prevention contract.
