@@ -24,7 +24,7 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `TBD`
+- latest_commit_hash: `4b5a852f`
 - latest_commit_brief_message: `Close last fsm.renderability gap in system-contract top composition test`
 - note: PNT slice 38 is committed locally; branch ahead 1 commit since last push at 400ee6a1
 
