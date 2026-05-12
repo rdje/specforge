@@ -6,6 +6,11 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-11 `.fsm` top-before-child top cleanliness
+- Continued the PNT cycle with an `R6`/`R15` graph-first `.fsm` top-before-child top-composition hardening slice.
+- Top-before-child ordering regression now matches coverage pattern of sibling `renderable_top_document_*` tests: top-candidate cleanliness, source-document top-root equality, aggregate no-direct-module state.
+- The 8 assertions (including the pre-existing renderable_top identity check) mirror the pattern established in `renderable_top_document_preserves_fsm_child_root_kind` and siblings.
+
 ## 2026-05-11 `.fsm` mixed-child top cleanliness
 - Continued the PNT cycle with an `R6`/`R15` graph-first `.fsm` mixed-child top-composition hardening slice.
 - Mixed-child (DT + FSM) top regression now matches coverage pattern of single-kind sibling tests: top-candidate cleanliness, source-document top-root equality, aggregate no-direct-module state.

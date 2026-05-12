@@ -24,22 +24,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `5f794f7b`
-- latest_commit_brief_message: `Add top FSM child cleanliness regression`
-- note: PNT slice 17 is committed locally; push remains deferred because the branch is below the around-`30` local-commit checkpoint threshold
+- latest_commit_hash: `49f99e28`
+- latest_commit_brief_message: `Add mixed child top cleanliness regression`
+- note: PNT slice 19 is committed locally; push remains deferred because the branch is below the around-`30` local-commit checkpoint threshold
 
 ## Recent commit chain (last 6)
-- `5f794f7b` Add top FSM child cleanliness regression
+- `49f99e28` Add mixed child top cleanliness regression
+- `3590d47` Add reused FSM child top cleanliness regression
+- `5f794f7` Add top FSM child cleanliness regression
 - `8ee6a6a` Add top before child ordering regression
 - `8909ac1` Add reused child top cleanliness regression
 - `dde3d7c` Add top composition root identity regression
-- `ab38754` Add explicit module system direct root regression
-- `d6f0ce2` Add explicit module flat graph aggregate regression
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state: locally ahead of `origin/main` by twenty-six committed active-batch/PNT slices before this PNT slice; push remains deferred because the around-`30` local-commit checkpoint has not been reached
+- branch state: locally ahead of `origin/main` by twenty-seven committed active-batch/PNT slices before this PNT slice; push remains deferred because the around-`30` local-commit checkpoint has not been reached
 - files in flight for the current PNT slice:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -62,21 +62,20 @@
 ## Current batch status
 - objective:
   - active user-authorized run uses PNT with undefined BWFSC
-  - current PNT slice extends the mixed-child top composition regression with empty blocker/enrichment diagnostics, candidate/source-document top-root equality, and aggregate no-direct-module coverage while preserving mixed DT/FSM child root order and kind
-  - completed_count after this PNT commit: `19`
+  - current PNT slice extends the top-before-child ordering regression with empty blocker/enrichment diagnostics, candidate/source-document top-root equality, and aggregate no-direct-module coverage while preserving the existing top-root identity and child direct-root ordering
+  - completed_count after this PNT commit: `20`
   - push remains deferred until the branch reaches around `30` local commits since the last push or the user explicitly changes the policy
   - `R6` remains the active `.fsm` adapter hardening lane; SystemVerilog, Verilog, and VHDL adapter expansion remains not started
 - tracker effect:
-  - live-status tracker now marks mixed-child top cleanliness coverage as `Done`
-  - live docs now record the active PNT cycle as an `R6`/`R15` regression-only mixed-child top cleanliness hardening run
-  - `RUST_CODEBASE_ANALYSIS.md` now records the mixed-child top cleanliness regression while keeping the refreshed test count at `666` listed Rust tests
+  - live-status tracker now marks top-before-child top cleanliness coverage as `Done`
+  - live docs now record the active PNT cycle as an `R6`/`R15` regression-only top-before-child top cleanliness hardening run
+  - `RUST_CODEBASE_ANALYSIS.md` now records the top-before-child top cleanliness regression while keeping the refreshed test count at `666` listed Rust tests
 - verification status:
-  - focused test `cargo test --manifest-path Cargo.toml -p specforge --lib -- renderable_top_document_preserves_mixed_child_root_order_and_kind` passed
+  - focused test `cargo test --manifest-path Cargo.toml -p specforge --lib -- renderable_top_document_emits_top_before_child_direct_roots` passed
   - adapter suite `cargo test --manifest-path Cargo.toml -p specforge --lib -- ir::adapters` passed with `143/143` adapter-filtered tests
   - `cargo fmt --all --check` passed
   - `cargo test --manifest-path Cargo.toml -p specforge --lib -- --list` listed `666` Rust tests
   - `git diff --check` passed
-  - `bash scripts/run_docs_ci.sh` passed
   - tracked markdown/mdBook absolute-path scan passed across `217` tracked markdown/mdBook files
   - message file remains required to be untracked and `0` bytes after each commit workflow
 

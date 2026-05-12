@@ -15855,7 +15855,19 @@ mod tests {
             .top_root
             .as_ref()
             .expect("renderable top should remain present");
+        assert!(top_candidate.renderability.is_renderable);
+        assert!(top_candidate.renderability.blocking_reasons.is_empty());
+        assert!(
+            top_candidate
+                .renderability
+                .required_canonical_enrichments
+                .is_empty()
+        );
         assert_eq!(top_candidate.renderable_top.as_ref(), Some(renderable_top));
+        assert!(fsm.renderability.is_renderable);
+        assert!(fsm.renderability.blocking_reasons.is_empty());
+        assert!(fsm.renderability.required_canonical_enrichments.is_empty());
+        assert!(fsm.renderable_module.is_none());
         let direct_root_names = renderable_document
             .direct_roots
             .iter()

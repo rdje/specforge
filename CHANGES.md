@@ -1,5 +1,13 @@
 # CHANGES
 
+## 2026-05-11 (`.fsm` top-before-child top cleanliness)
+
+### Improved: top-before-child source documents now prove clean topology and aggregate no-direct-module
+- Extended `renderable_top_document_emits_top_before_child_direct_roots` so top-before-child top candidates and aggregate `.fsm` surfaces prove empty blocker/enrichment diagnostics.
+- Added candidate renderability checks and aggregate no-direct-module assertions while preserving the existing top-root identity and child direct-root ordering coverage.
+- This is regression-only hardening for the existing `.fsm` adapter behavior; no production lowering behavior intentionally changed.
+- The Rust test listing remains `666` tests after tightening the existing regression.
+
 ## 2026-05-11 (`.fsm` mixed-child top cleanliness)
 
 ### Improved: mixed-child (DT+FSM) top compositions stay clean while preserving order and kind
