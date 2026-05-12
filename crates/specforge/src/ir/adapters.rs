@@ -17018,6 +17018,14 @@ mod tests {
                     && link.target.signal_name == "result_data"
             })
             .expect("top candidate should preserve recovered topology link");
+        assert!(top_candidate.renderability.is_renderable);
+        assert!(top_candidate.renderability.blocking_reasons.is_empty());
+        assert!(
+            top_candidate
+                .renderability
+                .required_canonical_enrichments
+                .is_empty()
+        );
         let renderable_top = fsm
             .renderable_document
             .as_ref()
@@ -17216,6 +17224,14 @@ mod tests {
             .iter()
             .find(|child| child.instance_name == "producer")
             .expect("producer child should remain selected");
+        assert!(top_candidate.renderability.is_renderable);
+        assert!(top_candidate.renderability.blocking_reasons.is_empty());
+        assert!(
+            top_candidate
+                .renderability
+                .required_canonical_enrichments
+                .is_empty()
+        );
         let renderable_top = fsm
             .renderable_document
             .as_ref()
@@ -17402,6 +17418,14 @@ mod tests {
             .iter()
             .find(|child| child.instance_name == "producer")
             .expect("producer child should remain selected");
+        assert!(top_candidate.renderability.is_renderable);
+        assert!(top_candidate.renderability.blocking_reasons.is_empty());
+        assert!(
+            top_candidate
+                .renderability
+                .required_canonical_enrichments
+                .is_empty()
+        );
         let renderable_top = fsm
             .renderable_document
             .as_ref()
@@ -22249,6 +22273,14 @@ mod tests {
             .iter()
             .find(|port| port.port_name == "result_data")
             .expect("recovered top port should stay visible");
+        assert!(top_candidate.renderability.is_renderable);
+        assert!(top_candidate.renderability.blocking_reasons.is_empty());
+        assert!(
+            top_candidate
+                .renderability
+                .required_canonical_enrichments
+                .is_empty()
+        );
         let renderable_top = fsm
             .renderable_document
             .as_ref()

@@ -1,5 +1,13 @@
 # CHANGES
 
+## 2026-05-12 (`.fsm` top-candidate renderability in top-port recovery)
+
+### Improved: four top-port recovery tests now prove top-candidate renderability
+- Added `top_candidate.renderability.is_renderable`, `blocking_reasons.is_empty()`, and `required_canonical_enrichments.is_empty()` assertions to `top_composition_recovers_top_port_direction_from_link_topology`, `_from_actor_ports`, `top_port_width_from_actor_ports`, and `top_port_width_from_child_link_topology`.
+- These four renderable tests previously had `fsm.renderability` and `renderable_top` identity assertions but were missing the top-candidate-level renderability diagnostics.
+- This is regression-only hardening for the existing `.fsm` adapter behavior; no production lowering behavior intentionally changed.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
+
 ## 2026-05-12 (`.fsm` missing renderability assertions)
 
 ### Improved: two adapter tests now carry renderability assertions

@@ -3,6 +3,11 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-12 `.fsm` top-candidate renderability in top-port recovery)
+- Added `top_candidate.renderability` diagnostics to four top-port direction/width recovery tests in `crates/specforge/src/ir/adapters.rs`.
+- These renderable tests had fsm-level and renderable_top identity but were missing the intermediate top-candidate renderability layer.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
+
 ## Session update (2026-05-12 `.fsm` missing renderability assertions)
 - Added renderability diagnostics to the last two adapter tests that lacked any renderability assertion.
 - `top_composition_recovers_top_port_direction_from_link_topology` (renderable) and `top_root_kind_confidence_follows_recovered_top_port_evidence` (blocked) now both carry appropriate renderability checks.
