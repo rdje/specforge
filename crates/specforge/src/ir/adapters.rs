@@ -13252,6 +13252,11 @@ mod tests {
         assert_eq!(adapter.lowering_status.as_str(), "blocked");
         assert!(adapter.artifact_layout.emitted_target_path.is_none());
         let fsm = adapter.fsm.expect("fsm artifact should be present");
+        assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Dt);
+        assert_eq!(
+            fsm.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Fsm, FsmRootKind::Top]
+        );
         let clk = fsm
             .signal_inventory
             .iter()
@@ -13547,6 +13552,11 @@ mod tests {
         assert_eq!(adapter.lowering_status.as_str(), "blocked");
         assert!(adapter.artifact_layout.emitted_target_path.is_none());
         let fsm = adapter.fsm.expect("fsm artifact should be present");
+        assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Dt);
+        assert_eq!(
+            fsm.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Fsm, FsmRootKind::Top]
+        );
         let clk = fsm
             .signal_inventory
             .iter()
@@ -13631,6 +13641,11 @@ mod tests {
         assert_eq!(adapter.lowering_status.as_str(), "blocked");
         assert!(adapter.artifact_layout.emitted_target_path.is_none());
         let fsm = adapter.fsm.expect("fsm artifact should be present");
+        assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Dt);
+        assert_eq!(
+            fsm.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Fsm, FsmRootKind::Top]
+        );
         let clk = fsm
             .signal_inventory
             .iter()

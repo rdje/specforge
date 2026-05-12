@@ -3,6 +3,9 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-13 `.fsm` root_kind_decision for sequential DT blocked tests)
+- Added root_kind_decision to 3 standalone sequential DT blocked tests. 666 all passing.
+
 ## Session update (2026-05-13 `.fsm` root_kind_decision confidence — standalone DT blocked tests)
 - Completed root_kind_decision contract for 3 standalone DT blocked tests: added automation_confidence (Medium) and rationale checks.
 - The Rust test listing remains `666` tests, all passing.

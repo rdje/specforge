@@ -1,5 +1,11 @@
 # CHANGES
 
+## 2026-05-13 (`.fsm` root_kind_decision for sequential DT blocked tests)
+
+### Improved: three standalone sequential DT blocked tests now prove root_kind_decision
+- Added `selected_root_kind == Dt` and `deferred_root_kinds == [Fsm, Top]` to system-contract conflict tests.
+- The Rust test listing remains `666` tests, all passing.
+
 ## 2026-05-13 (`.fsm` root_kind_decision confidence — standalone DT blocked tests)
 
 ### Improved: three standalone DT blocked tests now prove full root_kind_decision contract
