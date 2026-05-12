@@ -12164,6 +12164,15 @@ mod tests {
             fsm.root_kind_decision.deferred_root_kinds,
             vec![FsmRootKind::Fsm, FsmRootKind::Top]
         );
+        assert_eq!(
+            fsm.root_kind_decision.automation_confidence,
+            AutomationConfidence::Medium
+        );
+        assert!(
+            fsm.root_kind_decision
+                .rationale
+                .contains("does not yet carry explicit regular-state facts")
+        );
         let data_in = fsm
             .signal_inventory
             .iter()
@@ -12539,6 +12548,15 @@ mod tests {
             fsm.root_kind_decision.deferred_root_kinds,
             vec![FsmRootKind::Fsm, FsmRootKind::Top]
         );
+        assert_eq!(
+            fsm.root_kind_decision.automation_confidence,
+            AutomationConfidence::Medium
+        );
+        assert!(
+            fsm.root_kind_decision
+                .rationale
+                .contains("does not yet carry explicit regular-state facts")
+        );
         let data_out = fsm
             .signal_inventory
             .iter()
@@ -12654,6 +12672,15 @@ mod tests {
         assert_eq!(
             fsm.root_kind_decision.deferred_root_kinds,
             vec![FsmRootKind::Fsm, FsmRootKind::Top]
+        );
+        assert_eq!(
+            fsm.root_kind_decision.automation_confidence,
+            AutomationConfidence::Medium
+        );
+        assert!(
+            fsm.root_kind_decision
+                .rationale
+                .contains("does not yet carry explicit regular-state facts")
         );
         let data_out = fsm
             .signal_inventory

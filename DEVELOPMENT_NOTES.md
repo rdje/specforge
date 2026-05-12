@@ -11,6 +11,10 @@
 - DT candidate confidence: for non-explicit (behavior-aggregated) candidates, it's `Medium` when behaviors exist and `Low` when behaviors are empty. The handshake adapter has behaviors → Medium.
 - All decision tree candidate automation_confidence gaps now closed.
 
+## 2026-05-13 `.fsm` root_kind_decision confidence — standalone DT blocked tests
+- Added `automation_confidence` (Medium) and rationale to the same 3 tests.
+- Full root_kind_decision contract: kind, deferred kinds, confidence, and rationale.
+
 ## 2026-05-13 `.fsm` root_kind_decision for standalone DT blocked tests
 - Added `root_kind_decision` (Dt + [Fsm, Top]) to 3 standalone DT blocked tests that lacked it.
 - Pattern: blocked tests that stay in DT mode should prove the selected and deferred root kinds.

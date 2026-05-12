@@ -1,5 +1,12 @@
 # CHANGES
 
+## 2026-05-13 (`.fsm` root_kind_decision confidence — standalone DT blocked tests)
+
+### Improved: three standalone DT blocked tests now prove full root_kind_decision contract
+- Added `automation_confidence` (`Medium`) and `rationale` ("does not yet carry explicit regular-state facts") to the same 3 tests that just received root_kind_decision checks.
+- These tests now prove: selected_root_kind (Dt), deferred_root_kinds (Fsm, Top), automation_confidence (Medium), and rationale content.
+- The Rust test listing remains `666` tests, all passing.
+
 ## 2026-05-13 (`.fsm` root_kind_decision for standalone DT blocked tests)
 
 ### Improved: three standalone DT blocked tests now prove root_kind_decision
