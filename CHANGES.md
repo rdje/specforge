@@ -1,5 +1,13 @@
 # CHANGES
 
+## 2026-05-11 (`.fsm` builds-renderable aggregate diagnostics)
+
+### Improved: all builds-renderable DT/FSM adapter tests prove empty aggregate diagnostics
+- Extended all 8 `builds_renderable_*` DT and FSM adapter tests to assert `fsm.renderability.blocking_reasons.is_empty()` and `fsm.renderability.required_canonical_enrichments.is_empty()`.
+- These aggregate diagnostics assertions accompany the pre-existing `fsm.renderability.is_renderable` checks, proving no hidden blockers or enrichments in renderable DT/FSM adapters.
+- This is regression-only hardening for the existing `.fsm` adapter behavior; no production lowering behavior intentionally changed.
+- The Rust test listing remains `666` tests after tightening the existing regressions.
+
 ## 2026-05-11 (`.fsm` top-link root-kind confidence cleanliness)
 
 ### Improved: top-link root-kind confidence test covers full cleanliness diagnostics

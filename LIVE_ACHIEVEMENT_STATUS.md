@@ -23,7 +23,7 @@
 - `N=200` batch run completed, committed per slice, and pushed after completion: Done
 - `BWFSC=200` batch run completed, committed per slice, passed final full CI, and pushed after completion: Done
 - `BWFSC=100` batch run completed with final post-commit push closure: Done
-- Active PNT cycle advanced through top-link root-kind confidence cleanliness coverage with around-30-commit push checkpoint policy: In Progress
+- Active PNT cycle advanced through builds-renderable aggregate diagnostics coverage with around-30-commit push checkpoint policy: In Progress
 - `R6` `.fsm` adapter hardening lane is active: In Progress
 - `.fsm` duplicate top-port direction blockers now block stale top and aggregate renderable output: Done
 - `.fsm` recovered top-port direction blockers now block stale top and aggregate renderable output: Done
@@ -78,6 +78,7 @@
 - `.fsm` top-before-child source documents now preserve clean diagnostics and aggregate no-direct-module state while preserving top-root identity and child direct-root order: Done
 - `.fsm` child-declaration root-kind confidence tests now prove clean candidate and aggregate diagnostics alongside root-kind identity: Done
 - `.fsm` top-link root-kind confidence tests now prove clean candidate and aggregate diagnostics alongside root-kind identity: Done
+- `.fsm` builds-renderable DT/FSM adapter tests now prove empty aggregate blocker/enrichment diagnostics: Done
 - `.fsm` structured-FSM flat/graph disagreements now block stale aggregate renderable output: Done
 - `.fsm` explicit-module flat/graph disagreements now block stale module and aggregate renderable output: Done
 - `.fsm` explicit-module control-read direction conflicts now block stale module and aggregate renderable output: Done

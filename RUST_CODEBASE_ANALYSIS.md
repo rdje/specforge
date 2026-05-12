@@ -3,6 +3,12 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-11 `.fsm` builds-renderable aggregate diagnostics)
+- Extended all 8 `builds_renderable_*` DT/FSM adapter tests in `crates/specforge/src/ir/adapters.rs` with empty aggregate blocker and enrichment diagnostics.
+- This is a regression-only `R6`/`R15` hardening slice: every renderable DT and FSM adapter test now proves `fsm.renderability.blocking_reasons.is_empty()` and `fsm.renderability.required_canonical_enrichments.is_empty()` alongside the pre-existing `is_renderable` check.
+- Production adapter behavior did not change; the existing builds-renderable tests now prove no hidden blockers or required enrichments in aggregate diagnostics.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
+
 ## Session update (2026-05-11 `.fsm` top-link root-kind confidence cleanliness)
 - Extended `top_root_kind_confidence_follows_top_link_evidence` in `crates/specforge/src/ir/adapters.rs`.
 - This is a regression-only `R6`/`R15` hardening slice: the top-link root-kind confidence test now proves the full cleanliness pattern (empty blockers, empty enrichments, candidate/source-document top-root equality, aggregate no-direct-module) in addition to the single pre-existing `is_renderable` check.

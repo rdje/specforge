@@ -6,6 +6,11 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-11 `.fsm` builds-renderable aggregate diagnostics
+- Continued the PNT cycle with a batch `R6`/`R15` hardening slice covering all 8 `builds_renderable_*` DT/FSM adapter tests.
+- Each test now asserts `blocking_reasons.is_empty()` and `required_canonical_enrichments.is_empty()` on `fsm.renderability`, alongside the pre-existing `is_renderable` check.
+- This brings DT/FSM adapter tests to parity with the already-hardened `builds_renderable_top_composition_fsm_adapter_artifact` test.
+
 ## 2026-05-11 `.fsm` top-link root-kind confidence cleanliness
 - Continued the PNT cycle with an `R6`/`R15` graph-first `.fsm` root-kind confidence hardening slice.
 - Top-link root-kind confidence regression now matches the full cleanliness coverage pattern: top-candidate cleanliness, source-document top-root equality, aggregate no-direct-module state.
