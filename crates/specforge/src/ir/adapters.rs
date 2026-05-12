@@ -16346,6 +16346,21 @@ mod tests {
             .expect("renderable reused-child top should emit target text");
         let emitted_text = fs::read_to_string(emitted_target_path)?;
         let fsm = adapter.fsm.expect("fsm artifact should be present");
+
+        assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Top);
+        assert_eq!(
+            fsm.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Dt, FsmRootKind::Fsm]
+        );
+        assert_eq!(
+            fsm.root_kind_decision.automation_confidence,
+            AutomationConfidence::High
+        );
+        assert!(
+            fsm.root_kind_decision
+                .rationale
+                .contains("carries explicit top ports")
+        );
         let top_candidate = fsm
             .top_candidates
             .iter()
@@ -16579,6 +16594,21 @@ mod tests {
             .expect("renderable top should emit target text");
         let emitted_text = fs::read_to_string(emitted_target_path)?;
         let fsm = adapter.fsm.expect("fsm artifact should be present");
+
+        assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Top);
+        assert_eq!(
+            fsm.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Dt, FsmRootKind::Fsm]
+        );
+        assert_eq!(
+            fsm.root_kind_decision.automation_confidence,
+            AutomationConfidence::High
+        );
+        assert!(
+            fsm.root_kind_decision
+                .rationale
+                .contains("carries explicit top ports")
+        );
         let renderable_document = fsm
             .renderable_document
             .as_ref()
@@ -16765,6 +16795,21 @@ mod tests {
             .expect("renderable top with FSM child should emit target text");
         let emitted_text = fs::read_to_string(emitted_target_path)?;
         let fsm = adapter.fsm.expect("fsm artifact should be present");
+
+        assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Top);
+        assert_eq!(
+            fsm.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Dt, FsmRootKind::Fsm]
+        );
+        assert_eq!(
+            fsm.root_kind_decision.automation_confidence,
+            AutomationConfidence::High
+        );
+        assert!(
+            fsm.root_kind_decision
+                .rationale
+                .contains("carries explicit top ports")
+        );
         let top_candidate = fsm
             .top_candidates
             .iter()
@@ -16988,6 +17033,21 @@ mod tests {
             .expect("renderable top with reused FSM child should emit target text");
         let emitted_text = fs::read_to_string(emitted_target_path)?;
         let fsm = adapter.fsm.expect("fsm artifact should be present");
+
+        assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Top);
+        assert_eq!(
+            fsm.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Dt, FsmRootKind::Fsm]
+        );
+        assert_eq!(
+            fsm.root_kind_decision.automation_confidence,
+            AutomationConfidence::High
+        );
+        assert!(
+            fsm.root_kind_decision
+                .rationale
+                .contains("carries explicit top ports")
+        );
         let top_candidate = fsm
             .top_candidates
             .iter()
@@ -17294,6 +17354,21 @@ mod tests {
             .expect("renderable mixed-child top should emit target text");
         let emitted_text = fs::read_to_string(emitted_target_path)?;
         let fsm = adapter.fsm.expect("fsm artifact should be present");
+
+        assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Top);
+        assert_eq!(
+            fsm.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Dt, FsmRootKind::Fsm]
+        );
+        assert_eq!(
+            fsm.root_kind_decision.automation_confidence,
+            AutomationConfidence::High
+        );
+        assert!(
+            fsm.root_kind_decision
+                .rationale
+                .contains("carries explicit top ports")
+        );
         let top_candidate = fsm
             .top_candidates
             .iter()

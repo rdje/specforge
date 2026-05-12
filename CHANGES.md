@@ -14100,6 +14100,16 @@
 - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `128` fixtures and `0` failures
 - `git diff --check` -> passed
 
+## 2026-05-13 (`.fsm` top composition root_kind_decision batch 1)
+
+### Changed: root_kind_decision added to 5 renderable top-document tests
+- Added Top-root assertions to `renderable_top_document_deduplicates_reused_child_module_roots`, `renderable_top_document_emits_top_before_child_direct_roots`, `renderable_top_document_preserves_fsm_child_root_kind`, `renderable_top_document_deduplicates_reused_fsm_child_roots`, and `renderable_top_document_preserves_mixed_child_root_order_and_kind`.
+- Top pattern: `Top`/`[Dt, Fsm]`/`High`/`"carries explicit top ports"`.
+- 5 of ~21 remaining top composition tests now covered.
+
+### Validation
+- `cargo test -p specforge` -> passed with `666/666`
+
 ## 2026-05-13 (`.fsm` standalone DT root_kind_decision complete)
 
 ### Changed: root_kind_decision now asserted on all standalone DT tests — zero gaps
