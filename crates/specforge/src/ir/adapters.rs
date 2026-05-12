@@ -12868,6 +12868,9 @@ mod tests {
             &system_contract_support_ids,
         );
         assert!(fsm.renderability.is_renderable);
+        assert!(fsm.renderability.blocking_reasons.is_empty());
+        assert!(fsm.renderability.required_canonical_enrichments.is_empty());
+        assert!(fsm.renderable_module.is_some());
         assert!(emitted_text.contains("(?fsm:reset_fsm"));
         assert!(emitted_text.contains("(+system"));
         assert!(emitted_text.contains("(clock clk)"));
@@ -13047,6 +13050,9 @@ mod tests {
             assert_eq!(signal.automation_confidence, AutomationConfidence::High);
         }
         assert!(fsm.renderability.is_renderable);
+        assert!(fsm.renderability.blocking_reasons.is_empty());
+        assert!(fsm.renderability.required_canonical_enrichments.is_empty());
+        assert!(fsm.renderable_module.is_some());
         assert!(emitted_text.contains("(+system"));
         assert!(emitted_text.contains("(clock clk)"));
         assert!(emitted_text.contains("(asreset rst_n)"));
@@ -13189,6 +13195,10 @@ mod tests {
             .iter()
             .find(|signal| signal.signal_name == "rst_n")
             .expect("reset should remain in the signal inventory");
+        assert!(fsm.renderability.is_renderable);
+        assert!(fsm.renderability.blocking_reasons.is_empty());
+        assert!(fsm.renderability.required_canonical_enrichments.is_empty());
+        assert!(fsm.renderable_module.is_some());
         let renderable_module = fsm
             .renderable_module
             .as_ref()
@@ -13224,7 +13234,6 @@ mod tests {
             renderable_document_module,
             &system_contract_support_ids,
         );
-        assert!(fsm.renderability.is_renderable);
         assert!(emitted_text.contains("(+system"));
         assert!(emitted_text.contains("(clock clk)"));
         assert!(emitted_text.contains("(asreset rst_n)"));
@@ -13288,6 +13297,10 @@ mod tests {
             .iter()
             .find(|signal| signal.signal_name == "rst_n")
             .expect("reset should be materialized in the signal inventory");
+        assert!(fsm.renderability.is_renderable);
+        assert!(fsm.renderability.blocking_reasons.is_empty());
+        assert!(fsm.renderability.required_canonical_enrichments.is_empty());
+        assert!(fsm.renderable_module.is_some());
         let renderable_module = fsm
             .renderable_module
             .as_ref()
@@ -13323,7 +13336,6 @@ mod tests {
             renderable_document_module,
             &system_contract_support_ids,
         );
-        assert!(fsm.renderability.is_renderable);
         assert!(emitted_text.contains("(+system"));
         assert!(emitted_text.contains("(clock clk)"));
         assert!(emitted_text.contains("(asreset rst_n)"));
@@ -14113,6 +14125,9 @@ mod tests {
         assert_eq!(data_in.automation_confidence, AutomationConfidence::High);
         assert!(!data_in.width_hint_conflicted);
         assert!(fsm.renderability.is_renderable);
+        assert!(fsm.renderability.blocking_reasons.is_empty());
+        assert!(fsm.renderability.required_canonical_enrichments.is_empty());
+        assert!(fsm.renderable_module.is_some());
 
         Ok(())
     }
@@ -14439,6 +14454,8 @@ mod tests {
 
         assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Fsm);
         assert!(fsm.renderability.is_renderable);
+        assert!(fsm.renderability.blocking_reasons.is_empty());
+        assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         let renderable_module = fsm
             .renderable_module
             .as_ref()
@@ -14792,7 +14809,16 @@ mod tests {
             "external actor width must not import the external actor's direction"
         );
         assert!(module.renderability.is_renderable);
+        assert!(module.renderability.blocking_reasons.is_empty());
+        assert!(
+            module
+                .renderability
+                .required_canonical_enrichments
+                .is_empty()
+        );
         assert!(fsm.renderability.is_renderable);
+        assert!(fsm.renderability.blocking_reasons.is_empty());
+        assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         let renderable_module = module
             .renderable_module
             .as_ref()
@@ -15262,7 +15288,16 @@ mod tests {
             &system_contract_support_ids,
         );
         assert!(module.renderability.is_renderable);
+        assert!(module.renderability.blocking_reasons.is_empty());
+        assert!(
+            module
+                .renderability
+                .required_canonical_enrichments
+                .is_empty()
+        );
         assert!(fsm.renderability.is_renderable);
+        assert!(fsm.renderability.blocking_reasons.is_empty());
+        assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert!(emitted_text.contains("(?fsm:controller"));
         assert!(emitted_text.contains("(+system"));
         assert!(emitted_text.contains("(clock clk)"));
