@@ -9902,6 +9902,14 @@
   - validation metrics report `with_resolved_direction = 0`, `with_graph_direction = 0`, and `with_compat_direction_hint = 0`
 - The focused `kg-bench` run passed for the new fixture, and the full tracked fixture suite now reports `128/128` passing fixtures.
 
+## 2026-05-13 Standalone sequential DT root_kind_decision complete
+- Added `root_kind_decision` assertions to the 5 remaining standalone sequential DT `.fsm` tests.
+- Pattern: immediately after `let fsm = adapter.fsm.expect(...)`, insert the four standard DT-root assertions (selected_root_kind == Dt, deferred == [Fsm, Top], confidence == Medium, rationale contains "does not yet carry explicit regular-state facts").
+- Renderable tests (4 of 5): the assertions go between the fsm extraction and the signal-inventory extractions (clk, rst_n).
+- Blocked test (1 of 5, `keeps_standalone_sequential_dt_blocked_without_system_contract`): assertions go between fsm extraction and the `decision_tree_candidates.len()` check.
+- Edit anchors used unique `.expect()` messages on the emitted_target_path line to differentiate the 4 renderable tests; the blocked test used the unique `"enrich_intent_ir_system_surface"` residual interpretation ID.
+- No production behavior changed; regression-only assertion additions.
+
 ## 2026-05-05 FSMGEN submodule machine-contract baseline
 - Fast-forwarded the read-only `subs/fsmgen` reference from `955f2bb` to `32aa318` as requested before taking the next roadmap task.
 - The refreshed FSMGEN baseline is materially different from the prior adapter reconnaissance pin because several SPECFORGE-requested tool-to-tool surfaces now exist in bounded form:

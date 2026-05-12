@@ -14100,6 +14100,17 @@
 - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `128` fixtures and `0` failures
 - `git diff --check` -> passed
 
+## 2026-05-13 (`.fsm` standalone sequential DT root_kind_decision complete)
+
+### Changed: root_kind_decision now asserted on all 8 standalone sequential DT tests
+- Added `root_kind_decision` assertions (selected_root_kind, deferred_root_kinds, automation_confidence, rationale) to the 5 remaining standalone sequential DT tests that lacked them.
+- The 5 tests: `builds_renderable_standalone_sequential_dt_fsm_adapter_artifact`, `standalone_sequential_dt_recovers_system_directions_from_actor_ports`, `standalone_sequential_dt_recovers_system_signals_from_system_contract`, `standalone_sequential_dt_materializes_system_signals_from_system_contract`, `keeps_standalone_sequential_dt_blocked_without_system_contract`.
+- Each asserts `selected_root_kind == Dt`, `deferred_root_kinds == [Fsm, Top]`, `automation_confidence == Medium`, and rationale mentioning "does not yet carry explicit regular-state facts".
+- Combined with the prior 3 blocked tests, all 8 standalone sequential DT tests now carry complete root_kind_decision regression coverage — zero gaps.
+
+### Validation
+- `cargo test -p specforge` -> passed with `666/666`
+
 ## 2026-05-05 (FSMGEN submodule machine-contract baseline)
 
 ### Changed: FSMGEN reference advanced for `.fsm` adapter planning

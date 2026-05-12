@@ -3,6 +3,11 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-13 `.fsm` standalone sequential DT root_kind_decision complete)
+- Added root_kind_decision to the 5 remaining standalone sequential DT tests (4 renderable + 1 blocked). All 8 sequential DT tests now carry root_kind_decision — zero gaps.
+- 666/666 tests passing; 24 commits ahead of origin/main.
+- Next targets: structured FSM (3 tests), explicit-module DT (5), remaining standalone DT (13), top composition (21).
+
 ## Session update (2026-05-13 `.fsm` root_kind_decision for sequential DT blocked tests)
 - Added root_kind_decision to 3 standalone sequential DT blocked tests. 666 all passing.
 
