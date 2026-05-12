@@ -1,5 +1,17 @@
 # CHANGES
 
+## 2026-05-12 (`.fsm` remaining blocking-reason enrichment diagnostics — zero gaps)
+
+### Improved: seven remaining FSM blocked tests now prove fsm.renderability required canonical enrichments
+- Added `fsm.renderability.required_canonical_enrichments` companion assertions to all 7 remaining tests that checked `fsm.renderability.blocking_reasons` without proving enrichments.
+- Three "keeps" standalone DT tests now prove enrichments: missing system contract ("promote backend-neutral clock/reset system-contract facts..."), reset polarity naming ("align active-low reset polarity..."), and selector predicate mismatch ("keep selector-bearing canonical branches as comparisons...").
+- One DT-centric builds test now proves the "promote canonical standalone control blocks" enrichment.
+- Two structured FSM "keeps" tests now prove enrichments: missing initial state ("mark exactly one canonical regular state as initial...") and undeclared transition target ("declare every transition target as an explicit canonical regular state"). Both also received missing `renderable_module.is_none()` guards.
+- One top composition confidence test now proves the "carry explicit child-module references" enrichment and received a missing `renderable_module.is_none()` guard.
+- The `fsm.renderability` enrichment diagnostic coverage is now 100%: all 68 tests that check `blocking_reasons` also prove `required_canonical_enrichments`, with zero gaps.
+- This is regression-only hardening for the existing `.fsm` adapter behavior; no production lowering behavior intentionally changed.
+- The Rust test listing remains `666` tests, all passing.
+
 ## 2026-05-12 (`.fsm` remaining standalone DT enrichment diagnostics)
 
 ### Improved: four remaining standalone DT blocked tests now prove fsm.renderability required canonical enrichments

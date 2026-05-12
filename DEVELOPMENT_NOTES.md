@@ -6,6 +6,12 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-12 `.fsm` remaining enrichment diagnostics — zero gaps
+- Closed the final 7 enrichment diagnostic gaps across standalone DT, sequential DT, structured FSM, and top composition tests.
+- Enrichment strings mapped from blocking reasons: standalone control blocks → "promote canonical standalone control blocks before lowering a `?dt:name` root", missing system contract → "promote backend-neutral clock/reset system-contract facts before lowering sequential DT control", reset polarity → "align active-low reset polarity with an `_n`/`_b` naming cue before lowering `.fsm` system contracts", selector predicate → "keep selector-bearing canonical branches as comparisons between the selected test expression and a scalar selector token", missing initial state → "mark exactly one canonical regular state as initial before lowering a true `?fsm:name` root", undeclared target → "declare every transition target as an explicit canonical regular state", missing child module → "carry explicit child-module references before lowering `?top:name`".
+- Three tests also received missing `renderable_module.is_none()` companion guards.
+- All 68 tests with `fsm.renderability.blocking_reasons` now also prove `required_canonical_enrichments` — zero gaps, 100% diagnostic coverage.
+
 ## 2026-05-12 `.fsm` remaining standalone DT enrichment diagnostics
 - Continued the PNT cycle adding `fsm.renderability.required_canonical_enrichments` to four remaining standalone DT blocked tests with diverse blocking categories: undriven output, missing direction hint, graph-backed direction conflict, and width conflict.
 

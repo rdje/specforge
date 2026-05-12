@@ -11350,6 +11350,12 @@ mod tests {
                 .iter()
                 .any(|reason| { reason.contains("standalone decision-tree control blocks") })
         );
+        assert!(fsm
+            .renderability
+            .required_canonical_enrichments
+            .iter()
+            .any(|enrichment| enrichment
+                == "promote canonical standalone control blocks before lowering a `?dt:name` root"));
         assert!(fsm.renderable_module.is_none());
         assert!(fsm.renderable_document.is_none());
         assert_eq!(fsm.decision_tree_candidates.len(), 1);
@@ -13698,6 +13704,12 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.iter().any(|reason| {
             reason.contains("system contract") || reason.contains("init assignment")
         }));
+        assert!(fsm
+            .renderability
+            .required_canonical_enrichments
+            .iter()
+            .any(|enrichment| enrichment
+                == "promote backend-neutral clock/reset system-contract facts before lowering sequential DT control"));
 
         Ok(())
     }
@@ -13752,6 +13764,12 @@ mod tests {
                 .iter()
                 .any(|reason| { reason.contains("reset polarity through the reset signal name") })
         );
+        assert!(fsm
+            .renderability
+            .required_canonical_enrichments
+            .iter()
+            .any(|enrichment| enrichment
+                == "align active-low reset polarity with an `_n`/`_b` naming cue before lowering `.fsm` system contracts"));
         let system_contract_residual = adapter
             .residual_decisions
             .iter()
@@ -14067,6 +14085,12 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.iter().any(|reason| {
             reason.contains("does not map to an explicit `.fsm` test selector token")
         }));
+        assert!(fsm
+            .renderability
+            .required_canonical_enrichments
+            .iter()
+            .any(|enrichment| enrichment
+                == "keep selector-bearing canonical branches as comparisons between the selected test expression and a scalar selector token"));
 
         Ok(())
     }
@@ -17818,7 +17842,14 @@ mod tests {
         );
         assert!(!fsm.renderability.is_renderable);
         assert!(!fsm.renderability.blocking_reasons.is_empty());
+        assert!(fsm.renderable_module.is_none());
         assert!(fsm.renderable_document.is_none());
+        assert!(fsm
+            .renderability
+            .required_canonical_enrichments
+            .iter()
+            .any(|enrichment| enrichment
+                == "carry explicit child-module references before lowering `?top:name`"));
 
         Ok(())
     }
@@ -26396,6 +26427,7 @@ mod tests {
             );
         }
         assert!(!fsm.renderability.is_renderable);
+        assert!(fsm.renderable_module.is_none());
         assert!(fsm.renderable_document.is_none());
         assert!(
             fsm.renderability
@@ -26403,6 +26435,12 @@ mod tests {
                 .iter()
                 .any(|reason| { reason.contains("exactly one explicit initial regular state") })
         );
+        assert!(fsm
+            .renderability
+            .required_canonical_enrichments
+            .iter()
+            .any(|enrichment| enrichment
+                == "mark exactly one canonical regular state as initial before lowering a true `?fsm:name` root"));
         let state_graph_residual = adapter
             .residual_decisions
             .iter()
@@ -26521,10 +26559,17 @@ mod tests {
             AutomationConfidence::High
         );
         assert!(!fsm.renderability.is_renderable);
+        assert!(fsm.renderable_module.is_none());
         assert!(fsm.renderable_document.is_none());
         assert!(fsm.renderability.blocking_reasons.iter().any(|reason| {
             reason.contains("Transition target `missing_state` is not declared")
         }));
+        assert!(fsm
+            .renderability
+            .required_canonical_enrichments
+            .iter()
+            .any(|enrichment| enrichment
+                == "declare every transition target as an explicit canonical regular state"));
         let state_graph_residual = adapter
             .residual_decisions
             .iter()
