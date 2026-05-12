@@ -24,22 +24,22 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `db077f61`
-- latest_commit_brief_message: `Add top before child top cleanliness regression`
-- note: PNT slice 20 is committed locally; push remains deferred because the branch is below the around-`30` local-commit checkpoint threshold
+- latest_commit_hash: `ab37f153`
+- latest_commit_brief_message: `Add child declaration root kind confidence cleanliness regression`
+- note: PNT slice 21 is committed locally; push remains deferred because the branch is below the around-`30` local-commit checkpoint threshold
 
 ## Recent commit chain (last 6)
+- `ab37f153` Add child declaration root kind confidence cleanliness regression
 - `db077f61` Add top before child top cleanliness regression
 - `49f99e28` Add mixed child top cleanliness regression
 - `3590d47` Add reused FSM child top cleanliness regression
 - `5f794f7` Add top FSM child cleanliness regression
 - `8ee6a6a` Add top before child ordering regression
-- `8909ac1` Add reused child top cleanliness regression
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state: locally ahead of `origin/main` by twenty-eight committed active-batch/PNT slices before this PNT slice; push remains deferred because the around-`30` local-commit checkpoint has not been reached
+- branch state: locally ahead of `origin/main` by twenty-nine committed active-batch/PNT slices before this PNT slice; push remains deferred because the around-`30` local-commit checkpoint has not been reached
 - files in flight for the current PNT slice:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -62,16 +62,16 @@
 ## Current batch status
 - objective:
   - active user-authorized run uses PNT with undefined BWFSC
-  - current PNT slice extends the child-declaration root-kind confidence regression with the full cleanliness pattern: empty blockers/enrichments, candidate/source-document top-root equality, and aggregate no-direct-module coverage while preserving root-kind classification and confidence assertions
-  - completed_count after this PNT commit: `21`
+  - current PNT slice extends the top-link root-kind confidence regression with the full cleanliness pattern: empty blockers/enrichments, candidate/source-document top-root equality, and aggregate no-direct-module coverage while preserving link-evidence-based confidence classification
+  - completed_count after this PNT commit: `22`
   - push remains deferred until the branch reaches around `30` local commits since the last push or the user explicitly changes the policy
   - `R6` remains the active `.fsm` adapter hardening lane; SystemVerilog, Verilog, and VHDL adapter expansion remains not started
 - tracker effect:
-  - live-status tracker now marks child-declaration root-kind confidence cleanliness coverage as `Done`
-  - live docs now record the active PNT cycle as an `R6`/`R15` regression-only child-declaration root-kind confidence cleanliness hardening run
-  - `RUST_CODEBASE_ANALYSIS.md` now records the child-declaration root-kind confidence cleanliness regression while keeping the refreshed test count at `666` listed Rust tests
+  - live-status tracker now marks top-link root-kind confidence cleanliness coverage as `Done`
+  - live docs now record the active PNT cycle as an `R6`/`R15` regression-only top-link root-kind confidence cleanliness hardening run
+  - `RUST_CODEBASE_ANALYSIS.md` now records the top-link root-kind confidence cleanliness regression while keeping the refreshed test count at `666` listed Rust tests
 - verification status:
-  - focused test `cargo test --manifest-path Cargo.toml -p specforge --lib -- top_root_kind_confidence_follows_child_declaration_evidence` passed
+  - focused test `cargo test --manifest-path Cargo.toml -p specforge --lib -- top_root_kind_confidence_follows_top_link_evidence` passed
   - adapter suite `cargo test --manifest-path Cargo.toml -p specforge --lib -- ir::adapters` passed with `143/143` adapter-filtered tests
   - `cargo fmt --all --check` passed
   - `cargo test --manifest-path Cargo.toml -p specforge --lib -- --list` listed `666` Rust tests

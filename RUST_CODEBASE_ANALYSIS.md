@@ -3,6 +3,12 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-11 `.fsm` top-link root-kind confidence cleanliness)
+- Extended `top_root_kind_confidence_follows_top_link_evidence` in `crates/specforge/src/ir/adapters.rs`.
+- This is a regression-only `R6`/`R15` hardening slice: the top-link root-kind confidence test now proves the full cleanliness pattern (empty blockers, empty enrichments, candidate/source-document top-root equality, aggregate no-direct-module) in addition to the single pre-existing `is_renderable` check.
+- Production adapter behavior did not change; the existing root-kind confidence test now covers clean diagnostics in addition to link-evidence-based confidence classification.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
+
 ## Session update (2026-05-11 `.fsm` child-declaration root-kind confidence cleanliness)
 - Extended `top_root_kind_confidence_follows_child_declaration_evidence` in `crates/specforge/src/ir/adapters.rs`.
 - This is a regression-only `R6`/`R15` hardening slice: the child-declaration root-kind confidence test now proves the full cleanliness pattern (empty blockers, empty enrichments, candidate/source-document top-root equality, aggregate no-direct-module) in addition to the existing `is_renderable` checks.

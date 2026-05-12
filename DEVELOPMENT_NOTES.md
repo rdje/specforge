@@ -6,6 +6,11 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-11 `.fsm` top-link root-kind confidence cleanliness
+- Continued the PNT cycle with an `R6`/`R15` graph-first `.fsm` root-kind confidence hardening slice.
+- Top-link root-kind confidence regression now matches the full cleanliness coverage pattern: top-candidate cleanliness, source-document top-root equality, aggregate no-direct-module state.
+- The 7 new assertions extend the 1 pre-existing `is_renderable` check into the full 8-assertion pattern.
+
 ## 2026-05-11 `.fsm` child-declaration root-kind confidence cleanliness
 - Continued the PNT cycle with an `R6`/`R15` graph-first `.fsm` root-kind confidence hardening slice.
 - Child-declaration root-kind confidence regression now matches the full cleanliness coverage pattern of `renderable_top_document_*` tests: top-candidate cleanliness, source-document top-root equality, aggregate no-direct-module state.
