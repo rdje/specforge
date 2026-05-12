@@ -12171,6 +12171,12 @@ mod tests {
                 .iter()
                 .any(|reason| reason.contains("conflicting width evidence"))
         );
+        assert!(fsm
+            .renderability
+            .required_canonical_enrichments
+            .iter()
+            .any(|enrichment| enrichment
+                == "resolve conflicting canonical signal width evidence before lowering `.fsm`"));
 
         Ok(())
     }
@@ -12414,6 +12420,12 @@ mod tests {
                 .iter()
                 .any(|reason| reason.contains("conflicting canonical direction evidence"))
         );
+        assert!(fsm
+            .renderability
+            .required_canonical_enrichments
+            .iter()
+            .any(|enrichment| enrichment
+                == "resolve conflicting canonical signal direction evidence before lowering `.fsm`"));
 
         Ok(())
     }
@@ -12510,6 +12522,12 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.iter().any(|reason| {
             reason.contains("conflicting canonical and graph-backed direction evidence")
         }));
+        assert!(fsm
+            .renderability
+            .required_canonical_enrichments
+            .iter()
+            .any(|enrichment| enrichment
+                == "resolve conflicting canonical and actor-relative graph direction evidence before lowering `.fsm`"));
 
         Ok(())
     }
@@ -14117,6 +14135,12 @@ mod tests {
                 .iter()
                 .any(|reason| reason.contains("parametric width `DATA_WIDTH`"))
         );
+        assert!(fsm
+            .renderability
+            .required_canonical_enrichments
+            .iter()
+            .any(|enrichment| enrichment
+                == "resolve parametric canonical signal widths to numeric widths before lowering `.fsm`"));
 
         Ok(())
     }
@@ -14181,6 +14205,12 @@ mod tests {
                 .iter()
                 .any(|reason| reason.contains("parametric width `DATA_WIDTH`"))
         );
+        assert!(fsm
+            .renderability
+            .required_canonical_enrichments
+            .iter()
+            .any(|enrichment| enrichment
+                == "resolve parametric canonical signal widths to numeric widths before lowering `.fsm`"));
 
         Ok(())
     }

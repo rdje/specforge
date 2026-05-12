@@ -1,5 +1,13 @@
 # CHANGES
 
+## 2026-05-12 (`.fsm` standalone DT enrichment diagnostics)
+
+### Improved: five standalone DT tests now prove fsm.renderability required canonical enrichments
+- Added `fsm.renderability.required_canonical_enrichments` assertions to five standalone DT tests that proved `is_renderable` and `blocking_reasons` but skipped the companion enrichment diagnostic.
+- Tests now prove: width conflict → `"resolve conflicting canonical signal width evidence before lowering .fsm"`, direction conflict → `"resolve conflicting canonical signal direction evidence..."`, flat/graph disagreement → `"resolve conflicting canonical and actor-relative graph direction evidence..."`, parametric width → `"resolve parametric canonical signal widths to numeric widths..."`.
+- This is regression-only hardening for the existing `.fsm` adapter behavior; no production lowering behavior intentionally changed.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
+
 ## 2026-05-12 (`.fsm` child candidate resolved root kind coverage)
 
 ### Improved: nine blocked/keeps tests now prove child candidate resolved root kind

@@ -6,6 +6,11 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-12 `.fsm` standalone DT enrichment diagnostics
+- Continued the PNT cycle adding `fsm.renderability.required_canonical_enrichments` companion assertions to five standalone DT blocked tests.
+- Mapping from blocking reasons to enrichments: width conflict → `"resolve conflicting canonical signal width evidence before lowering .fsm"`, canonical direction → `"resolve conflicting canonical signal direction evidence before lowering .fsm"`, flat/graph disagreement → `"resolve conflicting canonical and actor-relative graph direction evidence before lowering .fsm"`, parametric → `"resolve parametric canonical signal widths to numeric widths before lowering .fsm"`.
+- Verified against production code at lines 5136-5242 to ensure correct enrichment strings for each blocking path.
+
 ## 2026-05-12 `.fsm` child candidate resolved root kind coverage
 - Continued the PNT cycle adding `resolved_root_kind` assertions to child candidates in nine blocked/keeps top composition tests.
 - Seven tests prove `producer_child.resolved_root_kind == Some(FsmRootKind::Dt)`, one proves `consumer_child.resolved_root_kind == Some(FsmRootKind::Dt)`, and one proves `consumer_child.resolved_root_kind == None` (missing module).
