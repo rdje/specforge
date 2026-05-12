@@ -24,7 +24,7 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `TBD`
+- latest_commit_hash: `69de6def`
 - latest_commit_brief_message: `Close final top composition fsm-level blocking_reasons gaps`
 - note: PNT slice 54 committed locally; all 24 top composition tests now prove fsm-level blocking_reasons with zero gaps; next target: renderability status guards gap (46 tests)
 
