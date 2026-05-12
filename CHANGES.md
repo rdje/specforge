@@ -1,5 +1,13 @@
 # CHANGES
 
+## 2026-05-12 (`.fsm` top composition conflicting-evidence tests — fsm-level blocking_reasons)
+
+### Improved: three conflicting top-port tests now prove fsm-level blocking_reasons
+- Added `assert!(!fsm.renderability.blocking_reasons.is_empty())` and `assert!(fsm.renderable_module.is_none())` to three top composition tests: `top_composition_blocks_conflicting_top_actor_port_direction`, `top_composition_blocks_conflicting_top_actor_port_width`, `top_composition_blocks_conflicting_top_port_widths_from_child_links`.
+- These tests now prove the complete fsm-level renderability contract alongside their top_candidate-level blocking checks.
+- This is regression-only hardening for the existing `.fsm` adapter behavior; no production lowering behavior intentionally changed.
+- The Rust test listing remains `666` tests, all passing.
+
 ## 2026-05-12 (`.fsm` top composition keeps tests — fsm-level blocking_reasons)
 
 ### Improved: three keeps top composition tests now prove fsm-level blocking_reasons

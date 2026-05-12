@@ -30,6 +30,7 @@
 - `.fsm` actor-port parametric-width blockers now block stale module and aggregate renderable output: Done
 - `.fsm` enrichment diagnostics now cover all 68 blocking_reasons-bearing tests with zero gaps: Done
 - `.fsm` top composition keeps tests now prove fsm-level blocking_reasons alongside top_candidate-level checks: Done
+- `.fsm` top composition conflicting-evidence tests now prove fsm-level blocking_reasons: Done
 - `.fsm` canonical parametric-width blockers now block stale module and aggregate renderable output: Done
 - `.fsm` selector-predicate blockers now block stale module and aggregate renderable output: Done
 - `.fsm` reset-polarity blockers now block stale module and aggregate renderable output: Done
