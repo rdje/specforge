@@ -24,9 +24,9 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `7ec7ff13`
-- latest_commit_brief_message: `Add fsm.renderability status assertions to four standalone DT blocked tests`
-- note: PNT slice 45 committed locally; branch ahead 15 commits since last push at 400ee6a1
+- latest_commit_hash: `4e9a3879`
+- latest_commit_brief_message: `Add enrichment diagnostics to four remaining standalone DT blocked tests`
+- note: PNT slice 46 committed locally; branch ahead 17 commits since last push at 400ee6a1
 
 ## Recent commit chain (last 6)
 - `8ecb7a70` Add child candidate diagnostics to two actor-port recovery tests
