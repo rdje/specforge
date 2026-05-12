@@ -24,17 +24,17 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `1a85c51b`
-- latest_commit_brief_message: `Add top-candidate renderability to four blocked conflict tests`
-- note: PNT slice 40 committed locally; branch ahead 5 commits since last push at 400ee6a1
+- latest_commit_hash: `TODO_fill_after_commit`
+- latest_commit_brief_message: `Add child candidate diagnostics to two actor-port recovery tests`
+- note: PNT slice 41 committed locally; branch ahead 7 commits since last push at 400ee6a1
 
 ## Recent commit chain (last 6)
-- `f50b052e` Add direct_roots root_kind assertions to two renderable top-document tests
+- `1a85c51b` Add top-candidate renderability to four blocked conflict tests
+- `f3252cc2` Update MEMORY.md commit hash for blocked-test renderability slice
 - `93451036` Update MEMORY.md commit hash for direct_roots root_kind slice
+- `f50b052e` Add direct_roots root_kind assertions to two renderable top-document tests
 - `63b5ea92` Update MEMORY.md commit hash for last renderability gap closure slice
 - `4b5a852f` Close last fsm.renderability gap in system-contract top composition test
-- `400ee6a1` Update MEMORY.md commit hash for top-candidate renderability slice
-- `fe0815f2` Add top-candidate renderability assertions to top-port recovery tests
 - `c2e12eec` Add blocked DT-centric adapter blocking reason regression
 - `5d54aa13` Add composition module document-root identity regression
 - `71c8ede5` Add renderable document top root and module identity regression

@@ -6,6 +6,11 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-12 `.fsm` child candidate diagnostics in actor-port recovery
+- Continued the PNT cycle adding child candidate identity diagnostics to two actor-port recovery tests.
+- `top_composition_recovers_top_port_direction_from_actor_ports` and `_width_from_actor_ports` now prove `producer_child.source_module_name == "producer_core"` and `producer_child.resolved_root_kind == Some(FsmRootKind::Dt)`.
+- These were the only two top composition tests that extracted a named child candidate but skipped the source module name and resolved root kind.
+
 ## 2026-05-12 `.fsm` blocked-test top-candidate renderability
 - Continued the PNT cycle adding `top_candidate.renderability` diagnostics to the last four blocked tests that accessed `top_candidate` without any top-candidate-level renderability check.
 - All four test conflicting evidence (sibling child-link widths, child topology widths, child link topology directions, conflicting actor-port directions) where the fsm is blocked.

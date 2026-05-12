@@ -17237,6 +17237,8 @@ mod tests {
             .iter()
             .find(|child| child.instance_name == "producer")
             .expect("producer child should remain selected");
+        assert_eq!(producer_child.source_module_name, "producer_core");
+        assert_eq!(producer_child.resolved_root_kind, Some(FsmRootKind::Dt));
         assert!(top_candidate.renderability.is_renderable);
         assert!(top_candidate.renderability.blocking_reasons.is_empty());
         assert!(
@@ -17431,6 +17433,8 @@ mod tests {
             .iter()
             .find(|child| child.instance_name == "producer")
             .expect("producer child should remain selected");
+        assert_eq!(producer_child.source_module_name, "producer_core");
+        assert_eq!(producer_child.resolved_root_kind, Some(FsmRootKind::Dt));
         assert!(top_candidate.renderability.is_renderable);
         assert!(top_candidate.renderability.blocking_reasons.is_empty());
         assert!(

@@ -1,5 +1,14 @@
 # CHANGES
 
+## 2026-05-12 (`.fsm` child candidate diagnostics in actor-port recovery)
+
+### Improved: two actor-port recovery tests now prove child candidate identity and root kind
+- Added `source_module_name` and `resolved_root_kind` assertions to the producer child candidate in `top_composition_recovers_top_port_direction_from_actor_ports` and `_width_from_actor_ports`.
+- Both tests previously accessed the producer child for `supporting_canonical_ids` and `automation_confidence` but skipped the child's module identity and root-kind resolution.
+- All top composition child recovery tests that extract a named child candidate now prove `source_module_name` and `resolved_root_kind`.
+- This is regression-only hardening for the existing `.fsm` adapter behavior; no production lowering behavior intentionally changed.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
+
 ## 2026-05-12 (`.fsm` blocked-test top-candidate renderability)
 
 ### Improved: four blocked conflict tests now prove top-candidate renderability
