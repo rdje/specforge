@@ -23877,6 +23877,8 @@ mod tests {
         assert!(!top_candidate.renderability.blocking_reasons.is_empty());
         assert!(top_candidate.renderable_top.is_none());
         assert!(!fsm.renderability.is_renderable);
+        assert!(!fsm.renderability.blocking_reasons.is_empty());
+        assert!(fsm.renderable_module.is_none());
         assert!(fsm.renderable_document.is_none());
         assert!(
             fsm.renderability
@@ -25604,6 +25606,8 @@ mod tests {
         );
         assert!(top_candidate.renderable_top.is_none());
         assert!(!fsm.renderability.is_renderable);
+        assert!(!fsm.renderability.blocking_reasons.is_empty());
+        assert!(fsm.renderable_module.is_none());
         assert!(fsm.renderable_document.is_none());
         assert!(
             fsm.renderability
@@ -25890,6 +25894,8 @@ mod tests {
         );
         assert!(top_candidate.renderable_top.is_none());
         assert!(!fsm.renderability.is_renderable);
+        assert!(!fsm.renderability.blocking_reasons.is_empty());
+        assert!(fsm.renderable_module.is_none());
         assert!(fsm.renderable_document.is_none());
         assert!(
             fsm.renderability

@@ -6,6 +6,10 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-12 `.fsm` top composition direction-role fsm-level blocking_reasons
+- Added to 3 more tests: child_source/child_target direction role guidance and conflicting actor port directions.
+- 18 of 24 top composition tests now complete; 6 remain.
+
 ## 2026-05-12 `.fsm` top composition fsm-level blocking_reasons continued
 - Added fsm-level blocking_reasons to 3 more tests: width_mismatched, top_without_port, link_to_unemitted_child_target.
 - 12 of 24 top composition tests now complete; 12 remain.

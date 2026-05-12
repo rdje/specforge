@@ -1,5 +1,12 @@
 # CHANGES
 
+## 2026-05-12 (`.fsm` top composition direction-role tests — fsm-level blocking_reasons)
+
+### Improved: three more top composition tests now prove fsm-level blocking_reasons
+- Added `assert!(!fsm.renderability.blocking_reasons.is_empty())` and `assert!(fsm.renderable_module.is_none())` to: `top_composition_blocks_child_source_direction_role_guidance`, `top_composition_blocks_child_target_direction_role_guidance`, `top_composition_blocks_conflicting_actor_port_directions`.
+- These tests now prove the complete fsm-level renderability contract.
+- The Rust test listing remains `666` tests, all passing.
+
 ## 2026-05-12 (`.fsm` top composition tests continue — fsm-level blocking_reasons)
 
 ### Improved: three more top composition tests now prove fsm-level blocking_reasons
