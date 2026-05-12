@@ -3,6 +3,12 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-13 `.fsm` renderable-document presence — 3 builds_renderable DT tests)
+- Added `assert!(fsm.renderable_module.is_some())` and `assert!(fsm.renderable_document.is_some())` to 3 builds_renderable DT tests that previously had no output artifact presence checks.
+- Tests: symbolic DT, selector-based DT, computed-selector DT. Each now proves both the renderable module and source document exist alongside the renderability status.
+- ~8 more renderable tests (both builds_renderable and standalone) still lack renderable_document presence assertions.
+- The Rust test listing remains `666` tests, all passing.
+
 ## Session update (2026-05-12 `.fsm` dt_candidate.automation_confidence — gap closed)
 - Added `dt_candidate.automation_confidence` (`AutomationConfidence::Medium`) to `builds_blocked_dt_centric_fsm_adapter_artifact`, closing the last remaining decision tree candidate confidence gap.
 - Production code at lines 2199-2203: non-explicit DT candidates get `Medium` when `!behaviors.is_empty()`, `Low` when `behaviors.is_empty()`. The handshake fixture has behaviors → Medium.

@@ -1,5 +1,13 @@
 # CHANGES
 
+## 2026-05-13 (`.fsm` renderable-document presence for builds_renderable DT tests)
+
+### Improved: three builds_renderable DT tests now prove renderable_module and renderable_document presence
+- Added `assert!(fsm.renderable_module.is_some())` and `assert!(fsm.renderable_document.is_some())` to: `builds_renderable_symbolic_dt_fsm_adapter_artifact`, `builds_renderable_selector_based_dt_fsm_adapter_artifact`, `builds_renderable_computed_selector_dt_fsm_adapter_artifact`.
+- These renderable tests previously checked `is_renderable`, `blocking_reasons.is_empty()`, and `required_canonical_enrichments.is_empty()` but never proved the renderable output artifacts exist.
+- ~8 more renderable tests remain without document/Module presence checks.
+- The Rust test listing remains `666` tests, all passing.
+
 ## 2026-05-12 (`.fsm` decision tree candidate automation_confidence — gap closed)
 
 ### Improved: blocked DT-centric adapter test now proves dt_candidate.automation_confidence
