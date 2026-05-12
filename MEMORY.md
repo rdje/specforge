@@ -24,9 +24,9 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `8248e28c`
-- latest_commit_brief_message: `Add root_kind_decision assertions to three standalone sequential DT blocked tests`
-- note: PNT slice 63 committed locally; 22 commits ahead since last push; push threshold ~30 approaching
+- latest_commit_hash: `99e783c6`
+- latest_commit_brief_message: `Add root_kind_decision assertions to five remaining standalone sequential DT tests`
+- note: PNT slice 64 committed locally; 24 commits ahead since last push; push threshold ~30 approaching
 
 ## Recent commit chain (last 6)
 - `8ecb7a70` Add child candidate diagnostics to two actor-port recovery tests
