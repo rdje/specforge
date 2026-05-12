@@ -24,7 +24,7 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `TBD`
+- latest_commit_hash: `2bac4736`
 - latest_commit_brief_message: `Add fsm-level blocking_reasons checks to three conflicting top-port tests`
 - note: PNT slice 49 committed locally; branch ahead 20 commits since last push at 400ee6a1; 6 of 24 top composition tests now prove fsm-level blocking_reasons; 18 remain
 
