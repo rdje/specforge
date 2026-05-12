@@ -88,6 +88,7 @@
 - `.fsm` Module candidate root-kind decision now proven across all top composition tests that access module candidates: Done
 - `.fsm` Missing renderability assertions now added to adapter confidence and topology recovery tests: Done
 - `.fsm` Top-candidate renderability now proven in top-port direction and width recovery tests: Done
+- `.fsm` Last fsm.renderability gap closed in system-contract top composition test: Done
 - `.fsm` structured-FSM flat/graph disagreements now block stale aggregate renderable output: Done
 - `.fsm` explicit-module flat/graph disagreements now block stale module and aggregate renderable output: Done
 - `.fsm` explicit-module control-read direction conflicts now block stale module and aggregate renderable output: Done

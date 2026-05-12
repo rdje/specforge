@@ -24,9 +24,9 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `fe0815f2`
-- latest_commit_brief_message: `Add top-candidate renderability assertions to top-port recovery tests`
-- note: PNT slice 37 is committed locally; branch ahead 27 commits, push checkpoint threshold reached
+- latest_commit_hash: `TBD`
+- latest_commit_brief_message: `Close last fsm.renderability gap in system-contract top composition test`
+- note: PNT slice 38 is committed locally; branch ahead 1 commit since last push at 400ee6a1
 
 ## Recent commit chain (last 6)
 - `fe0815f2` Add top-candidate renderability assertions to top-port recovery tests

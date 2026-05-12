@@ -1,5 +1,14 @@
 # CHANGES
 
+## 2026-05-12 (`.fsm` last fsm.renderability gap closed)
+
+### Improved: system-contract top composition test now carries fsm.renderability
+- Added `fsm.renderability.is_renderable`, `blocking_reasons.is_empty()`, `required_canonical_enrichments.is_empty()`, and `renderable_module.is_none()` to `top_composition_recovers_top_system_port_widths_from_child_system_contract`.
+- This was the last test accessing `adapter.fsm` that lacked any form of `fsm.renderability` diagnostic assertion.
+- Every adapter test that accesses `adapter.fsm` now proves at least the top-level aggregate renderability status.
+- This is regression-only hardening for the existing `.fsm` adapter behavior; no production lowering behavior intentionally changed.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
+
 ## 2026-05-12 (`.fsm` top-candidate renderability in top-port recovery)
 
 ### Improved: four top-port recovery tests now prove top-candidate renderability

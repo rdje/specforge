@@ -3,6 +3,12 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-12 `.fsm` last fsm.renderability gap closed)
+- Added `fsm.renderability` diagnostics to the last adapter test that was missing them: `top_composition_recovers_top_system_port_widths_from_child_system_contract`.
+- Every adapter test (143 total) that accesses `adapter.fsm` now proves the top-level renderability status.
+- Complete fsm.renderability coverage is a foundational regression safety net for the `.fsm` adapter.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
+
 ## Session update (2026-05-12 `.fsm` top-candidate renderability in top-port recovery)
 - Added `top_candidate.renderability` diagnostics to four top-port direction/width recovery tests in `crates/specforge/src/ir/adapters.rs`.
 - These renderable tests had fsm-level and renderable_top identity but were missing the intermediate top-candidate renderability layer.

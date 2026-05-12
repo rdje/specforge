@@ -6,6 +6,10 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-12 `.fsm` last fsm.renderability gap closed
+- Continued the PNT cycle closing the last `fsm.renderability` diagnostic gap in `top_composition_recovers_top_system_port_widths_from_child_system_contract`.
+- Every adapter test that accesses `adapter.fsm` now proves at least the top-level aggregate renderability status (is_renderable, blocking_reasons, required_canonical_enrichments, renderable_module).
+
 ## 2026-05-12 `.fsm` top-candidate renderability in top-port recovery
 - Continued the PNT cycle adding top-candidate-level renderability diagnostics to four top-port recovery tests that were missing them.
 - Each test now asserts `top_candidate.renderability.is_renderable` with empty blocking_reasons and required_canonical_enrichments.
