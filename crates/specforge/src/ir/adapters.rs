@@ -11888,6 +11888,12 @@ mod tests {
                 .any(|reason| reason
                     == "Declared output signal `UNUSED_OUT` is not driven by any typed control action.")
         );
+        assert!(fsm
+            .renderability
+            .required_canonical_enrichments
+            .iter()
+            .any(|enrichment| enrichment
+                == "keep canonical output roles aligned with explicit driving actions"));
 
         Ok(())
     }
@@ -12245,6 +12251,12 @@ mod tests {
                 .iter()
                 .any(|reason| reason.contains("missing a canonical direction hint"))
         );
+        assert!(fsm
+            .renderability
+            .required_canonical_enrichments
+            .iter()
+            .any(|enrichment| enrichment
+                == "promote a canonical interface inventory with stable signal names, directions, and widths"));
 
         Ok(())
     }
@@ -12329,6 +12341,12 @@ mod tests {
                 .iter()
                 .any(|reason| reason.contains("conflicting graph-backed direction evidence"))
         );
+        assert!(fsm
+            .renderability
+            .required_canonical_enrichments
+            .iter()
+            .any(|enrichment| enrichment
+                == "resolve conflicting actor-relative graph direction evidence before lowering `.fsm`"));
 
         Ok(())
     }
@@ -12649,6 +12667,12 @@ mod tests {
                 .iter()
                 .any(|reason| reason.contains("conflicting width evidence"))
         );
+        assert!(fsm
+            .renderability
+            .required_canonical_enrichments
+            .iter()
+            .any(|enrichment| enrichment
+                == "resolve conflicting canonical signal width evidence before lowering `.fsm`"));
 
         Ok(())
     }

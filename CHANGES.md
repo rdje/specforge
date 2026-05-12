@@ -1,5 +1,13 @@
 # CHANGES
 
+## 2026-05-12 (`.fsm` remaining standalone DT enrichment diagnostics)
+
+### Improved: four remaining standalone DT blocked tests now prove fsm.renderability required canonical enrichments
+- Added `fsm.renderability.required_canonical_enrichments` assertions to four standalone DT tests: undriven output ("keep canonical output roles aligned with explicit driving actions"), missing direction hint ("promote a canonical interface inventory..."), graph-backed direction conflict ("resolve conflicting actor-relative graph direction evidence..."), and width conflict ("resolve conflicting canonical signal width evidence...").
+- These four tests now have the complete fsm.renderability contract: is_renderable, renderable_module/document staleness guards, blocking_reasons, and required_canonical_enrichments.
+- This is regression-only hardening for the existing `.fsm` adapter behavior; no production lowering behavior intentionally changed.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
+
 ## 2026-05-12 (`.fsm` renderability status companion checks)
 
 ### Improved: four standalone DT blocked tests now prove fsm.renderability status
