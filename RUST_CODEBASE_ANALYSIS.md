@@ -3,6 +3,13 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-12 `.fsm` renderable document top-root / module identity)
+- Extended 4 top-composition tests and 3 standalone DT/FSM tests in `crates/specforge/src/ir/adapters.rs` with renderable-document identity assertions.
+- Type 3 (top-root identity): refactored `top_composition_recovers_top_port_direction_from_link_topology`, `top_composition_recovers_top_port_direction_from_actor_ports`, `top_composition_recovers_top_port_width_from_actor_ports`, and `top_composition_recovers_top_port_width_from_child_link_topology` to extract `renderable_top` from `renderable_document.top_root` and assert equality with `top_candidate.renderable_top`.
+- Type 1 (module identity): extended `standalone_dt_reports_signal_inventory_sizing_and_widths`, `standalone_dt_recovers_control_input_width_from_actor_port_graph`, and one structured-FSM test to assert `renderable_document.direct_roots[0].module` equals `renderable_module`.
+- This closes the Type 3 and Type 1 coverage gaps from the renderable-document identity audit. Production adapter behavior did not change.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
+
 ## Session update (2026-05-11 `.fsm` builds-renderable aggregate diagnostics)
 - Extended all 8 `builds_renderable_*` DT/FSM adapter tests in `crates/specforge/src/ir/adapters.rs` with empty aggregate blocker and enrichment diagnostics.
 - This is a regression-only `R6`/`R15` hardening slice: every renderable DT and FSM adapter test now proves `fsm.renderability.blocking_reasons.is_empty()` and `fsm.renderability.required_canonical_enrichments.is_empty()` alongside the pre-existing `is_renderable` check.

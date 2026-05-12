@@ -11538,6 +11538,12 @@ mod tests {
             .renderable_module
             .as_ref()
             .expect("graph-backed standalone DT should produce a renderable module");
+        let renderable_document_module = fsm
+            .renderable_document
+            .as_ref()
+            .and_then(|document| document.direct_roots.first())
+            .map(|root| &root.module);
+        assert_eq!(renderable_document_module, Some(renderable_module));
         for (signal_name, direction_hint, width) in [
             ("DATA_IN", InterfaceSignalDirection::Input, 8),
             ("DATA_OUT", InterfaceSignalDirection::Output, 8),
@@ -12027,6 +12033,12 @@ mod tests {
             .renderable_module
             .as_ref()
             .expect("control-input-width-backed standalone DT should produce a renderable module");
+        let renderable_document_module = fsm
+            .renderable_document
+            .as_ref()
+            .and_then(|document| document.direct_roots.first())
+            .map(|root| &root.module);
+        assert_eq!(renderable_document_module, Some(renderable_module));
         let data_in_size = renderable_module
             .size_entries
             .iter()
@@ -14460,6 +14472,12 @@ mod tests {
             .renderable_module
             .as_ref()
             .expect("graph-backed structured FSM should produce a renderable module");
+        let renderable_document_module = fsm
+            .renderable_document
+            .as_ref()
+            .and_then(|document| document.direct_roots.first())
+            .map(|root| &root.module);
+        assert_eq!(renderable_document_module, Some(renderable_module));
         for (signal_name, width) in [("DATA_IN", 8), ("GO", 1), ("DONE", 1)] {
             let size_entry = renderable_module
                 .size_entries
@@ -16855,6 +16873,7 @@ mod tests {
             .as_ref()
             .and_then(|document| document.top_root.as_ref())
             .expect("renderable top root should be present");
+        assert_eq!(top_candidate.renderable_top.as_ref(), Some(renderable_top));
         let renderable_top_port = renderable_top
             .ports
             .iter()
@@ -17047,16 +17066,16 @@ mod tests {
             .iter()
             .find(|child| child.instance_name == "producer")
             .expect("producer child should remain selected");
-        let renderable_top_port = fsm
+        let renderable_top = fsm
             .renderable_document
             .as_ref()
             .and_then(|document| document.top_root.as_ref())
-            .and_then(|top_root| {
-                top_root
-                    .ports
-                    .iter()
-                    .find(|port| port.port_name == "ext_data")
-            })
+            .expect("renderable top root should be present");
+        assert_eq!(top_candidate.renderable_top.as_ref(), Some(renderable_top));
+        let renderable_top_port = renderable_top
+            .ports
+            .iter()
+            .find(|port| port.port_name == "ext_data")
             .expect("recovered top port should be present in renderable top root");
         let signal_inventory_port = fsm
             .signal_inventory
@@ -17233,16 +17252,16 @@ mod tests {
             .iter()
             .find(|child| child.instance_name == "producer")
             .expect("producer child should remain selected");
-        let renderable_top_port = fsm
+        let renderable_top = fsm
             .renderable_document
             .as_ref()
             .and_then(|document| document.top_root.as_ref())
-            .and_then(|top_root| {
-                top_root
-                    .ports
-                    .iter()
-                    .find(|port| port.port_name == "ext_data")
-            })
+            .expect("renderable top root should be present");
+        assert_eq!(top_candidate.renderable_top.as_ref(), Some(renderable_top));
+        let renderable_top_port = renderable_top
+            .ports
+            .iter()
+            .find(|port| port.port_name == "ext_data")
             .expect("recovered top port should be present in renderable top root");
         let signal_inventory_port = fsm
             .signal_inventory
@@ -21775,16 +21794,16 @@ mod tests {
             .iter()
             .find(|port| port.port_name == "result_data")
             .expect("recovered top port should stay visible");
-        let renderable_top_port = fsm
+        let renderable_top = fsm
             .renderable_document
             .as_ref()
             .and_then(|document| document.top_root.as_ref())
-            .and_then(|top_root| {
-                top_root
-                    .ports
-                    .iter()
-                    .find(|port| port.port_name == "result_data")
-            })
+            .expect("renderable top root should be present");
+        assert_eq!(top_candidate.renderable_top.as_ref(), Some(renderable_top));
+        let renderable_top_port = renderable_top
+            .ports
+            .iter()
+            .find(|port| port.port_name == "result_data")
             .expect("recovered top port should be present in renderable top root");
         let signal_inventory_port = fsm
             .signal_inventory

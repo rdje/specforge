@@ -6,6 +6,12 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-12 `.fsm` renderable document top-root / module identity
+- Continued the PNT cycle with an `R6`/`R15` identity-gap hardening slice covering 4 top-composition tests (Type 3) and 3 standalone DT/FSM tests (Type 1).
+- Type 3: top-composition tests that derived `renderable_top_port` via `.and_then()` on `renderable_document` now extract `renderable_top` first and assert `top_candidate.renderable_top.as_ref() == Some(renderable_top)`, proving the source document's top root is the candidate's renderable top.
+- Type 1: standalone DT/FSM tests now assert `renderable_document.direct_roots[0].module` equals `renderable_module`, proving the renderable module matches the document's direct-root projection.
+- These identity assertions close the renderable-document identity coverage gaps identified in the systematic audit — the document's top root and direct-root module projections are now proven consistent with the candidate's renderable top and the aggregate renderable module.
+
 ## 2026-05-11 `.fsm` builds-renderable aggregate diagnostics
 - Continued the PNT cycle with a batch `R6`/`R15` hardening slice covering all 8 `builds_renderable_*` DT/FSM adapter tests.
 - Each test now asserts `blocking_reasons.is_empty()` and `required_canonical_enrichments.is_empty()` on `fsm.renderability`, alongside the pre-existing `is_renderable` check.

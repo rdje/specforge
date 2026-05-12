@@ -1,5 +1,14 @@
 # CHANGES
 
+## 2026-05-12 (`.fsm` renderable document top-root / module identity)
+
+### Improved: top-composition and standalone DT/FSM tests prove renderable-document identity equality
+- Extended 4 top-composition tests to extract `renderable_top` from `renderable_document.top_root` and assert `top_candidate.renderable_top` identity, replacing bare `.and_then()` chains that derived port details without proving the source was the document top root.
+- Extended 3 standalone DT/FSM tests to assert `renderable_document.direct_roots[0].module` equals `renderable_module`, proving the renderable module is the one the document projects.
+- This closes the Type 3 (top-root identity) and Type 1 (module identity) coverage gaps identified in the renderable-document identity audit.
+- This is regression-only hardening for the existing `.fsm` adapter behavior; no production lowering behavior intentionally changed.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
+
 ## 2026-05-11 (`.fsm` builds-renderable aggregate diagnostics)
 
 ### Improved: all builds-renderable DT/FSM adapter tests prove empty aggregate diagnostics
