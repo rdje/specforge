@@ -24,7 +24,7 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `TBD`
+- latest_commit_hash: `7631bc13`
 - latest_commit_brief_message: `Add enrichment diagnostics to seven remaining FSM blocked tests`
 - note: PNT slice 47 committed locally; branch ahead 18 commits since last push at 400ee6a1; all 68 blocking_reasons-bearing tests now prove required_canonical_enrichments with zero gaps
 
