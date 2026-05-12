@@ -1,5 +1,14 @@
 # CHANGES
 
+## 2026-05-12 (`.fsm` missing renderability assertions)
+
+### Improved: two adapter tests now carry renderability assertions
+- Added `fsm.renderability.is_renderable`, `blocking_reasons`, `required_canonical_enrichments`, and `renderable_module.is_none()` assertions to `top_composition_recovers_top_port_direction_from_link_topology` (renderable).
+- Added `!fsm.renderability.is_renderable`, `!blocking_reasons.is_empty()`, and `renderable_document.is_none()` assertions to `top_root_kind_confidence_follows_recovered_top_port_evidence` (blocked — top without children).
+- These were the last two adapter tests missing any form of renderability diagnostic check; every adapter test now carries at least one renderability assertion.
+- This is regression-only hardening for the existing `.fsm` adapter behavior; no production lowering behavior intentionally changed.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
+
 ## 2026-05-12 (`.fsm` module candidate root-kind decision in top composition)
 
 ### Improved: all top composition tests now prove module candidate root-kind decision

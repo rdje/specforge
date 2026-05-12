@@ -16994,6 +16994,10 @@ mod tests {
             .expect("topology-recovered top should emit target text");
         let emitted_text = fs::read_to_string(emitted_target_path)?;
         let fsm = adapter.fsm.expect("fsm artifact should be present");
+        assert!(fsm.renderability.is_renderable);
+        assert!(fsm.renderability.blocking_reasons.is_empty());
+        assert!(fsm.renderability.required_canonical_enrichments.is_empty());
+        assert!(fsm.renderable_module.is_none());
         let top_candidate = fsm
             .top_candidates
             .iter()
@@ -17675,6 +17679,9 @@ mod tests {
                 .iter()
                 .any(|interpretation| interpretation.description.contains("explicit top ports"))
         );
+        assert!(!fsm.renderability.is_renderable);
+        assert!(!fsm.renderability.blocking_reasons.is_empty());
+        assert!(fsm.renderable_document.is_none());
 
         Ok(())
     }

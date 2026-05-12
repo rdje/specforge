@@ -6,6 +6,12 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-12 `.fsm` missing renderability assertions
+- Continued the PNT cycle closing the last two adapter tests missing renderability diagnostics.
+- `top_composition_recovers_top_port_direction_from_link_topology` now asserts `fsm.renderability.is_renderable` with empty diagnostics (renderable topology-recovered top).
+- `top_root_kind_confidence_follows_recovered_top_port_evidence` now asserts `!fsm.renderability.is_renderable` with non-empty blocking reasons (blocked top without child modules).
+- With this slice, every adapter test (143 total) now carries at least one renderability diagnostic assertion.
+
 ## 2026-05-12 `.fsm` module candidate root-kind decision in top composition
 - Continued the PNT cycle with module candidate-level `root_kind_decision` completeness across all top composition tests.
 - Each producer/consumer module candidate accessed in top composition tests now asserts `root_kind_decision.selected_root_kind` = `Dt`, `deferred_root_kinds` = `[Fsm, Top]`, `automation_confidence` = `Medium`, `rationale` contains `"does not yet carry explicit regular-state facts"`.

@@ -3,6 +3,12 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-12 `.fsm` missing renderability assertions)
+- Added renderability diagnostics to the last two adapter tests that lacked any renderability assertion.
+- `top_composition_recovers_top_port_direction_from_link_topology` (renderable) and `top_root_kind_confidence_follows_recovered_top_port_evidence` (blocked) now both carry appropriate renderability checks.
+- Every one of the 143 adapter tests now has at least one renderability diagnostic assertion.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
+
 ## Session update (2026-05-12 `.fsm` module candidate root-kind decision in top composition)
 - Extended all ~22 module candidate access sites across ~16 top composition tests in `crates/specforge/src/ir/adapters.rs` with `module.root_kind_decision` assertions.
 - Producer and consumer modules consistently classify as DT (Medium confidence, absence-based) because they lack explicit regular-state facts.
