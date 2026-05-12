@@ -6,6 +6,11 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-12 `.fsm` sequential DT + structured FSM enrichment diagnostics
+- Continued the PNT cycle adding `fsm.renderability.required_canonical_enrichments` to three sequential DT system-contract tests and two structured FSM tests.
+- System-contract enrichments differ from standalone-module enrichments: `system-signal` replaces `signal` and `system contracts` replaces `.fsm` in the enrichment string.
+- Structured FSM undriven-output enrichment uses a different category: `"keep canonical output roles aligned with explicit FSM-state actions"`.
+
 ## 2026-05-12 `.fsm` standalone DT enrichment diagnostics
 - Continued the PNT cycle adding `fsm.renderability.required_canonical_enrichments` companion assertions to five standalone DT blocked tests.
 - Mapping from blocking reasons to enrichments: width conflict → `"resolve conflicting canonical signal width evidence before lowering .fsm"`, canonical direction → `"resolve conflicting canonical signal direction evidence before lowering .fsm"`, flat/graph disagreement → `"resolve conflicting canonical and actor-relative graph direction evidence before lowering .fsm"`, parametric → `"resolve parametric canonical signal widths to numeric widths before lowering .fsm"`.

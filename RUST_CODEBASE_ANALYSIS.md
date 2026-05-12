@@ -3,6 +3,11 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-12 `.fsm` sequential DT + structured FSM enrichment diagnostics)
+- Added `fsm.renderability.required_canonical_enrichments` companion assertions to three sequential DT system-contract blocked tests and two structured FSM tests in `crates/specforge/src/ir/adapters.rs`.
+- System-contract variant enrichments use distinct strings (`system-signal`/`system contracts`) from standalone-module flavors.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
+
 ## Session update (2026-05-12 `.fsm` standalone DT enrichment diagnostics)
 - Added `fsm.renderability.required_canonical_enrichments` companion assertions to five standalone DT blocked tests in `crates/specforge/src/ir/adapters.rs`.
 - Tests prove the enrichment diagnostic strings that tell users how to resolve blocking conditions: width, direction, flat/graph, and parametric conflicts.

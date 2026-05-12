@@ -13187,6 +13187,12 @@ mod tests {
                 "clock signal `clk` has conflicting canonical and graph-backed direction evidence",
             )
         }));
+        assert!(fsm
+            .renderability
+            .required_canonical_enrichments
+            .iter()
+            .any(|enrichment| enrichment
+                == "resolve conflicting canonical and graph-backed system-signal direction evidence before lowering `.fsm` system contracts"));
         let system_contract_residual = adapter
             .residual_decisions
             .iter()
@@ -13466,6 +13472,12 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.iter().any(|reason| {
             reason.contains("clock signal `clk` has conflicting canonical direction evidence")
         }));
+        assert!(fsm
+            .renderability
+            .required_canonical_enrichments
+            .iter()
+            .any(|enrichment| enrichment
+                == "resolve conflicting canonical system-signal direction evidence before lowering `.fsm` system contracts"));
         let system_contract_residual = adapter
             .residual_decisions
             .iter()
@@ -13547,6 +13559,12 @@ mod tests {
                 .iter()
                 .any(|reason| reason.contains("clock signal `clk` has conflicting width evidence"))
         );
+        assert!(fsm
+            .renderability
+            .required_canonical_enrichments
+            .iter()
+            .any(|enrichment| enrichment
+                == "resolve conflicting canonical system-signal width evidence before lowering `.fsm` system contracts"));
         let system_contract_residual = adapter
             .residual_decisions
             .iter()
@@ -14527,6 +14545,12 @@ mod tests {
                 .any(|reason| reason
                     == "Declared output signal `UNUSED_TRACE` is not driven by any typed FSM-state action.")
         );
+        assert!(fsm
+            .renderability
+            .required_canonical_enrichments
+            .iter()
+            .any(|enrichment| enrichment
+                == "keep canonical output roles aligned with explicit FSM-state actions"));
 
         Ok(())
     }
@@ -14721,6 +14745,12 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.iter().any(|reason| {
             reason.contains("conflicting canonical and graph-backed direction evidence")
         }));
+        assert!(fsm
+            .renderability
+            .required_canonical_enrichments
+            .iter()
+            .any(|enrichment| enrichment
+                == "resolve conflicting canonical and actor-relative graph direction evidence before lowering `.fsm`"));
         let signal_inventory_residual = adapter
             .residual_decisions
             .iter()

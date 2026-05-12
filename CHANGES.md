@@ -1,5 +1,14 @@
 # CHANGES
 
+## 2026-05-12 (`.fsm` sequential DT + structured FSM enrichment diagnostics)
+
+### Improved: five sequential-DT and structured-FSM tests now prove fsm.renderability required canonical enrichments
+- Added `fsm.renderability.required_canonical_enrichments` companion assertions to three standalone sequential DT system-contract tests and two structured FSM blocked tests.
+- System-contract enrichments use `system-signal` / `system contracts` variants to distinguish from standalone-module enrichments.
+- Structured FSM undriven-output test now proves the `"keep canonical output roles aligned with explicit FSM-state actions"` enrichment.
+- This is regression-only hardening for the existing `.fsm` adapter behavior; no production lowering behavior intentionally changed.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
+
 ## 2026-05-12 (`.fsm` standalone DT enrichment diagnostics)
 
 ### Improved: five standalone DT tests now prove fsm.renderability required canonical enrichments

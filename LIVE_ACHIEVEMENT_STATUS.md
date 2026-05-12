@@ -243,6 +243,8 @@
 - `.fsm` two actor-port recovery tests now prove child candidate source module name and resolved root kind: Done
 - `.fsm` nine blocked/keeps tests now prove child candidate resolved root kind: Done
 - `.fsm` five standalone DT tests now prove fsm.renderability enrichment diagnostics: Done
+- `.fsm` three sequential DT system-contract tests now prove fsm.renderability enrichment diagnostics: Done
+- `.fsm` two structured FSM tests now prove fsm.renderability enrichment diagnostics: Done
 - `.fsm` top-link direction recovery now stays composition-residual clean when renderable: Done
 - `.fsm` top-link direction recovery now preserves selected inventory provenance: Done
 - `.fsm` actor-port direction recovery now stays composition-residual clean when renderable: Done
