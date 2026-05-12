@@ -11334,6 +11334,15 @@ mod tests {
             fsm.root_kind_decision.deferred_root_kinds,
             vec![FsmRootKind::Fsm, FsmRootKind::Top]
         );
+        assert_eq!(
+            fsm.root_kind_decision.automation_confidence,
+            AutomationConfidence::Medium
+        );
+        assert!(
+            fsm.root_kind_decision
+                .rationale
+                .contains("does not yet carry explicit regular-state facts")
+        );
         assert!(!fsm.renderability.is_renderable);
         assert!(
             fsm.renderability
@@ -11406,6 +11415,15 @@ mod tests {
         assert_eq!(
             fsm.root_kind_decision.deferred_root_kinds,
             vec![FsmRootKind::Fsm, FsmRootKind::Top]
+        );
+        assert_eq!(
+            fsm.root_kind_decision.automation_confidence,
+            AutomationConfidence::Medium
+        );
+        assert!(
+            fsm.root_kind_decision
+                .rationale
+                .contains("does not yet carry explicit regular-state facts")
         );
         assert_eq!(fsm.decision_tree_candidates.len(), 1);
         assert!(
@@ -13704,6 +13722,19 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Dt);
+        assert_eq!(
+            fsm.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Fsm, FsmRootKind::Top]
+        );
+        assert_eq!(
+            fsm.root_kind_decision.automation_confidence,
+            AutomationConfidence::Medium
+        );
+        assert!(
+            fsm.root_kind_decision
+                .rationale
+                .contains("does not yet carry explicit regular-state facts")
+        );
         assert_eq!(fsm.decision_tree_candidates.len(), 1);
         assert!(
             fsm.decision_tree_candidates
@@ -13771,6 +13802,19 @@ mod tests {
         let emitted_text = fs::read_to_string(emitted_target_path)?;
         let fsm = adapter.fsm.expect("fsm artifact should be present");
         assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Dt);
+        assert_eq!(
+            fsm.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Fsm, FsmRootKind::Top]
+        );
+        assert_eq!(
+            fsm.root_kind_decision.automation_confidence,
+            AutomationConfidence::Medium
+        );
+        assert!(
+            fsm.root_kind_decision
+                .rationale
+                .contains("does not yet carry explicit regular-state facts")
+        );
         assert_eq!(fsm.decision_tree_candidates.len(), 1);
         let dt_candidate = fsm
             .decision_tree_candidates
@@ -13830,6 +13874,19 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Dt);
+        assert_eq!(
+            fsm.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Fsm, FsmRootKind::Top]
+        );
+        assert_eq!(
+            fsm.root_kind_decision.automation_confidence,
+            AutomationConfidence::Medium
+        );
+        assert!(
+            fsm.root_kind_decision
+                .rationale
+                .contains("does not yet carry explicit regular-state facts")
+        );
         assert_eq!(fsm.decision_tree_candidates.len(), 1);
         let dt_candidate = fsm
             .decision_tree_candidates
@@ -13881,6 +13938,19 @@ mod tests {
         assert!(adapter.artifact_layout.emitted_target_path.is_none());
         let fsm = adapter.fsm.expect("fsm artifact should be present");
         assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Dt);
+        assert_eq!(
+            fsm.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Fsm, FsmRootKind::Top]
+        );
+        assert_eq!(
+            fsm.root_kind_decision.automation_confidence,
+            AutomationConfidence::Medium
+        );
+        assert!(
+            fsm.root_kind_decision
+                .rationale
+                .contains("does not yet carry explicit regular-state facts")
+        );
         assert_eq!(fsm.decision_tree_candidates.len(), 1);
         let dt_candidate = fsm
             .decision_tree_candidates
@@ -13946,6 +14016,19 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Dt);
+        assert_eq!(
+            fsm.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Fsm, FsmRootKind::Top]
+        );
+        assert_eq!(
+            fsm.root_kind_decision.automation_confidence,
+            AutomationConfidence::Medium
+        );
+        assert!(
+            fsm.root_kind_decision
+                .rationale
+                .contains("does not yet carry explicit regular-state facts")
+        );
         assert_eq!(fsm.decision_tree_candidates.len(), 1);
         let dt_candidate = fsm
             .decision_tree_candidates

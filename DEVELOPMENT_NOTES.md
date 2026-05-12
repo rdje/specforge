@@ -6,6 +6,12 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-12 `.fsm` DT root-kind decision confidence and rationale
+- Continued the PNT cycle with an `R6`/`R15` root-kind decision completeness slice covering all 7 DT-root tests.
+- Each DT-root test now asserts `root_kind_decision.automation_confidence` (always `Medium` for DT, since the absence of regular-state facts is a negative signal) and `root_kind_decision.rationale` (always contains `"does not yet carry explicit regular-state facts"`).
+- The five DT-root tests that previously omitted `deferred_root_kinds` now also prove the standard `[Fsm, Top]` deferred vector.
+- The DT-specific `automation_confidence` is `Medium` because DT is selected based on the absence of FSM-level facts, which is inherently a lower-confidence signal than explicit positive evidence.
+
 ## 2026-05-12 `.fsm` blocked DT-centric blocking reason
 - Continued the PNT cycle with an `R6`/`R15` hardening slice closing the last bare negative `is_renderable` assertion.
 - Extended `builds_blocked_dt_centric_fsm_adapter_artifact` with a specific blocking reason check (`"standalone decision-tree control blocks"`), matching the pattern used by every other negative renderability assertion in the suite.

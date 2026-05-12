@@ -3,6 +3,13 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-12 `.fsm` DT root-kind decision confidence and rationale)
+- Extended all 7 DT-root tests in `crates/specforge/src/ir/adapters.rs` with `root_kind_decision.automation_confidence` and `root_kind_decision.rationale` assertions.
+- DT `automation_confidence` is consistently `Medium` (absence-based inference), and rationale consistently contains `"does not yet carry explicit regular-state facts"`.
+- Five DT-root tests also gained the previously-omitted `deferred_root_kinds` assertion (`[Fsm, Top]`).
+- This is the first slice of the broader `root_kind_decision` completeness work; FSM-root and Top-root tests remain for subsequent slices.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
+
 ## Session update (2026-05-12 `.fsm` blocked DT-centric blocking reason)
 - Extended `builds_blocked_dt_centric_fsm_adapter_artifact` in `crates/specforge/src/ir/adapters.rs` with a specific blocking reason assertion.
 - This was the last remaining bare negative `is_renderable` assertion in the entire 143-test adapter suite. Every other negative assertion already proved at least one specific blocker or enrichment.

@@ -1,5 +1,14 @@
 # CHANGES
 
+## 2026-05-12 (`.fsm` DT root-kind decision confidence and rationale)
+
+### Improved: all seven DT-root tests now prove root-kind confidence and rationale
+- Extended all 7 DT-root tests (`builds_blocked_dt_centric_*`, `builds_renderable_standalone_dt_*`, `builds_renderable_symbolic_dt_*`, `builds_renderable_selector_based_dt_*`, `builds_renderable_computed_selector_dt_*`, `keeps_selector_based_dt_blocked_*`, `builds_renderable_compound_update_dt_*`) with `root_kind_decision.automation_confidence` and `root_kind_decision.rationale` assertions.
+- The five tests that previously omitted `deferred_root_kinds` now also assert the DT-standard `[Fsm, Top]` deferred kind vector.
+- This closes the DT portion of the `root_kind_decision` completeness gap; FSM-root and Top-root tests remain for subsequent slices.
+- This is regression-only hardening for the existing `.fsm` adapter behavior; no production lowering behavior intentionally changed.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
+
 ## 2026-05-12 (`.fsm` blocked DT-centric blocking reason)
 
 ### Improved: blocked DT-centric adapter test now proves the specific blocking reason

@@ -35,6 +35,10 @@
 - `0612eac0` Add remaining producer module candidate diagnostics regression
 - `07e03eb6` Add top composition recovery aggregate diagnostics regression
 - `2af0c774` Add remaining renderable DT FSM aggregate diagnostics regression
+- `71c8ede5` Add renderable document top root and module identity regression
+- `0612eac0` Add remaining producer module candidate diagnostics regression
+- `07e03eb6` Add top composition recovery aggregate diagnostics regression
+- `2af0c774` Add remaining renderable DT FSM aggregate diagnostics regression
 - `849d35a2` Add standalone DT graph recovery aggregate diagnostics regression
 - `0612eac0` Add remaining producer module candidate diagnostics regression
 - `07e03eb6` Add top composition recovery aggregate diagnostics regression
@@ -50,7 +54,7 @@
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state: locally ahead of `origin/main` by fourteen committed active-batch/PNT slices before this PNT slice; push checkpoint reached — around-`30` threshold
+- branch state: locally ahead of `origin/main` by sixteen committed active-batch/PNT slices before this PNT slice; push checkpoint reached at around-`30` threshold
 - files in flight for the current PNT slice:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -73,16 +77,16 @@
 ## Current batch status
 - objective:
   - active user-authorized run uses PNT with undefined BWFSC
-  - current PNT slice closes the last bare negative `is_renderable` assertion by adding a specific blocking reason check to `builds_blocked_dt_centric_fsm_adapter_artifact`
-  - completed_count after this PNT commit: `31`
+  - current PNT slice extends all 7 DT-root tests with `root_kind_decision.automation_confidence` and `rationale` assertions
+  - completed_count after this PNT commit: `32`
   - push checkpoint reached at around-`30` local commits; push deferred per continuation policy
   - `R6` remains the active `.fsm` adapter hardening lane; SystemVerilog, Verilog, and VHDL adapter expansion remains not started
 - tracker effect:
-  - live-status tracker now marks blocked DT-centric blocking reason coverage as `Done`
-  - live docs now record the active PNT cycle as an `R6`/`R15` regression-only DT-centric blocking reason hardening run
-  - `RUST_CODEBASE_ANALYSIS.md` now records the DT-centric blocking reason regression while keeping the refreshed test count at `666` listed Rust tests
+  - live-status tracker now marks DT root-kind decision confidence/rationale coverage as `Done`
+  - live docs now record the active PNT cycle as an `R6`/`R15` regression-only DT root-kind decision completeness hardening run
+  - `RUST_CODEBASE_ANALYSIS.md` now records the DT root-kind decision regression while keeping the refreshed test count at `666` listed Rust tests
 - verification status:
-  - the DT-centric blocking reason test plus full adapter suite `cargo test --manifest-path Cargo.toml -p specforge --lib -- ir::adapters` passed with `143/143` adapter-filtered tests
+  - all 7 DT-root decision completeness tests plus full adapter suite `cargo test --manifest-path Cargo.toml -p specforge --lib -- ir::adapters` passed with `143/143` adapter-filtered tests
   - `cargo fmt --all --check` passed
   - `cargo test --manifest-path Cargo.toml -p specforge --lib -- --list` listed `666` Rust tests
   - `git diff --check` passed
