@@ -24,7 +24,7 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `TODO_fill_after_commit`
+- latest_commit_hash: `1a85c51b`
 - latest_commit_brief_message: `Add top-candidate renderability to four blocked conflict tests`
 - note: PNT slice 40 committed locally; branch ahead 5 commits since last push at 400ee6a1
 
