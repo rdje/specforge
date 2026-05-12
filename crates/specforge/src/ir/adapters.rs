@@ -11738,6 +11738,9 @@ mod tests {
         assert_eq!(data_out.automation_confidence, AutomationConfidence::High);
         assert_eq!(zero_flag.automation_confidence, AutomationConfidence::High);
         assert!(fsm.renderability.is_renderable);
+        assert!(fsm.renderability.blocking_reasons.is_empty());
+        assert!(fsm.renderability.required_canonical_enrichments.is_empty());
+        assert!(fsm.renderable_module.is_some());
         assert!(emitted_text.contains("(DATA_OUT = DATA_IN)"));
         assert!(emitted_text.contains("(ZERO_FLAG = 1)"));
         assert!(
@@ -11919,6 +11922,8 @@ mod tests {
             "external environment actor port must not become the target actor perspective"
         );
         assert!(fsm.renderability.is_renderable);
+        assert!(fsm.renderability.blocking_reasons.is_empty());
+        assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         let renderable_module = fsm
             .renderable_module
             .as_ref()
@@ -12016,6 +12021,8 @@ mod tests {
             "external actor width must not import the external actor's direction"
         );
         assert!(fsm.renderability.is_renderable);
+        assert!(fsm.renderability.blocking_reasons.is_empty());
+        assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         let renderable_module = fsm
             .renderable_module
             .as_ref()
@@ -14084,6 +14091,10 @@ mod tests {
 
         assert_eq!(adapter.lowering_status.as_str(), "renderable");
         let fsm = adapter.fsm.expect("fsm artifact should be present");
+        assert!(fsm.renderability.is_renderable);
+        assert!(fsm.renderability.blocking_reasons.is_empty());
+        assert!(fsm.renderability.required_canonical_enrichments.is_empty());
+        assert!(fsm.renderable_module.is_some());
         let data_in = fsm
             .signal_inventory
             .iter()
