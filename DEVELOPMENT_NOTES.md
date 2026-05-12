@@ -9902,6 +9902,12 @@
   - validation metrics report `with_resolved_direction = 0`, `with_graph_direction = 0`, and `with_compat_direction_hint = 0`
 - The focused `kg-bench` run passed for the new fixture, and the full tracked fixture suite now reports `128/128` passing fixtures.
 
+## 2026-05-13 Standalone DT root_kind_decision complete
+- Added DT-root `root_kind_decision` assertions to the final 5 standalone DT tests (2 renderable + 3 blocked).
+- All standalone DT tests now carry complete root_kind_decision — zero gaps.
+- Differentiation strategy for the two parametric blocked tests: used unique follow-on assertion categories (`"interface"` vs `"actor_port"`) as edit anchors.
+- No production behavior changed; regression-only assertion additions.
+
 ## 2026-05-13 Standalone DT root_kind_decision batch 1
 - Added DT-root `root_kind_decision` assertions to 5 standalone DT tests (4 renderable + 1 blocked).
 - DT pattern: Dt/[Fsm, Top]/Medium/"does not yet carry explicit regular-state facts".

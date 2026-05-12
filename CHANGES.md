@@ -14100,6 +14100,16 @@
 - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `128` fixtures and `0` failures
 - `git diff --check` -> passed
 
+## 2026-05-13 (`.fsm` standalone DT root_kind_decision complete)
+
+### Changed: root_kind_decision now asserted on all standalone DT tests — zero gaps
+- Added DT-root assertions to the final 5 standalone DT tests: `standalone_dt_keeps_conflicting_actor_port_direction_unresolved`, `standalone_dt_blocks_conflicting_flat_direction_even_with_actor_graph`, `standalone_dt_blocks_parametric_signal_width_with_diagnostic`, `standalone_dt_blocks_parametric_actor_port_width_with_diagnostic`, `standalone_dt_keeps_explicit_numeric_width_over_actor_parametric_width`.
+- All standalone DT tests now carry root_kind_decision: Dt/[Fsm, Top]/Medium/"does not yet carry explicit regular-state facts".
+- Standalone DT family fully covered — zero gaps.
+
+### Validation
+- `cargo test -p specforge` -> passed with `666/666`
+
 ## 2026-05-13 (`.fsm` standalone DT root_kind_decision batch 1)
 
 ### Changed: root_kind_decision added to 5 more standalone DT tests
