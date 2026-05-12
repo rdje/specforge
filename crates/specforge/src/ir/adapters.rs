@@ -16108,6 +16108,18 @@ mod tests {
             .map(|root| root.module_name.as_str())
             .collect::<Vec<_>>();
         assert_eq!(direct_root_names, vec!["producer_core", "consumer_core"]);
+        let producer_root = renderable_document
+            .direct_roots
+            .iter()
+            .find(|root| root.module_name == "producer_core")
+            .expect("producer direct root should be present");
+        assert_eq!(producer_root.root_kind, FsmRootKind::Dt);
+        let consumer_root = renderable_document
+            .direct_roots
+            .iter()
+            .find(|root| root.module_name == "consumer_core")
+            .expect("consumer direct root should be present");
+        assert_eq!(consumer_root.root_kind, FsmRootKind::Dt);
         assert!(producer_to_consumer_link_support_ids.iter().any(|id| {
             renderable_top
                 .links
@@ -16263,6 +16275,7 @@ mod tests {
             .iter()
             .find(|root| root.module_name == "controller_core")
             .expect("FSM child direct root should be present");
+        assert_eq!(direct_root.root_kind, FsmRootKind::Fsm);
 
         assert!(top_candidate.renderability.is_renderable);
         assert!(top_candidate.renderability.blocking_reasons.is_empty());

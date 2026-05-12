@@ -237,6 +237,8 @@
 - `.fsm` single-FSM-child top documents now stay composition-residual clean while preserving FSM child root kind: Done
 - `.fsm` reused-FSM-child top documents now stay composition-residual clean after deduplicating the shared FSM root: Done
 - `.fsm` mixed-child top documents now stay composition-residual clean while preserving DT/FSM root order: Done
+- `.fsm` top-before-child direct roots now prove DT root_kind alongside ordering: Done
+- `.fsm` single-FSM-child direct root now proves FSM root_kind: Done
 - `.fsm` top-link direction recovery now stays composition-residual clean when renderable: Done
 - `.fsm` top-link direction recovery now preserves selected inventory provenance: Done
 - `.fsm` actor-port direction recovery now stays composition-residual clean when renderable: Done

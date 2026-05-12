@@ -6,6 +6,12 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-12 `.fsm` direct_roots root_kind assertions
+- Continued the PNT cycle adding `root_kind` assertions on `direct_roots` entries in two renderable_top_document tests.
+- `renderable_top_document_emits_top_before_child_direct_roots` now proves both producer_core and consumer_core direct roots carry `FsmRootKind::Dt`.
+- `renderable_top_document_preserves_fsm_child_root_kind` now proves the controller_core direct root carries `FsmRootKind::Fsm`.
+- This closes the gap where these tests checked ordering/names or child-level resolved_root_kind but skipped the direct-root root_kind property.
+
 ## 2026-05-12 `.fsm` last fsm.renderability gap closed
 - Continued the PNT cycle closing the last `fsm.renderability` diagnostic gap in `top_composition_recovers_top_system_port_widths_from_child_system_contract`.
 - Every adapter test that accesses `adapter.fsm` now proves at least the top-level aggregate renderability status (is_renderable, blocking_reasons, required_canonical_enrichments, renderable_module).

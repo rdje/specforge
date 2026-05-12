@@ -1,5 +1,14 @@
 # CHANGES
 
+## 2026-05-12 (`.fsm` direct_roots root_kind assertions)
+
+### Improved: two renderable top-document tests now prove direct-root root_kind
+- Added `root_kind` assertions to `direct_roots` entries in `renderable_top_document_emits_top_before_child_direct_roots` (DT for both producer_core and consumer_core) and `renderable_top_document_preserves_fsm_child_root_kind` (FSM for controller_core).
+- These two tests previously checked ordering/names or child-level resolved_root_kind but skipped the direct-root root_kind property on the renderable document.
+- All renderable_top_document tests that access `direct_roots` now prove root-level `root_kind`.
+- This is regression-only hardening for the existing `.fsm` adapter behavior; no production lowering behavior intentionally changed.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
+
 ## 2026-05-12 (`.fsm` last fsm.renderability gap closed)
 
 ### Improved: system-contract top composition test now carries fsm.renderability

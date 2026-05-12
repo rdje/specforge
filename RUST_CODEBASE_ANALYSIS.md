@@ -3,6 +3,13 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-12 `.fsm` direct_roots root_kind assertions)
+- Added `root_kind` assertions to `direct_roots` entries in two renderable_top_document tests in `crates/specforge/src/ir/adapters.rs`.
+- `renderable_top_document_emits_top_before_child_direct_roots`: both direct roots (producer_core, consumer_core) are `FsmRootKind::Dt`.
+- `renderable_top_document_preserves_fsm_child_root_kind`: the single direct root (controller_core) is `FsmRootKind::Fsm`.
+- All renderable_top_document tests that access `direct_roots` now prove root-level `root_kind`.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
+
 ## Session update (2026-05-12 `.fsm` last fsm.renderability gap closed)
 - Added `fsm.renderability` diagnostics to the last adapter test that was missing them: `top_composition_recovers_top_system_port_widths_from_child_system_contract`.
 - Every adapter test (143 total) that accesses `adapter.fsm` now proves the top-level renderability status.
