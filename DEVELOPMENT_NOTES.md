@@ -6,6 +6,11 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-12 `.fsm` dt_candidate.automation_confidence — gap closed
+- Added `dt_candidate.automation_confidence` (Medium) to `builds_blocked_dt_centric_fsm_adapter_artifact`, the last remaining test with decision tree candidates but no candidate-level confidence check.
+- DT candidate confidence: for non-explicit (behavior-aggregated) candidates, it's `Medium` when behaviors exist and `Low` when behaviors are empty. The handshake adapter has behaviors → Medium.
+- All decision tree candidate automation_confidence gaps now closed.
+
 ## 2026-05-12 `.fsm` top composition remaining fsm-level blocking_reasons
 - Added to 3 more: widthless top port, conflicting child topology widths, conflicting child link topology directions.
 - ~21 of 24 top composition tests complete; ~3 remain.

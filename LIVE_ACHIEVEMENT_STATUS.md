@@ -56,6 +56,7 @@
 - `.fsm` renderable structured-FSM module state graph projection now preserves canonical state order and initial-state flags: Done
 - `.fsm` renderable structured-FSM source-document state graph projection now preserves transition support IDs, guards, declaration order, and confidence: Done
 - `.fsm` standalone explicit-module state candidate provenance now preserves canonical support IDs and confidence: Done
+- `.fsm` decision tree candidate automation_confidence coverage now at 100% — zero gaps: Done
 - `.fsm` standalone explicit-module transition candidate provenance now preserves canonical support IDs, guards, declaration order, and confidence: Done
 - `.fsm` standalone explicit-module selected module state graph projection now preserves source explicit-module state and transition provenance: Done
 - `.fsm` standalone explicit-module source-document direct-root state graph projection now preserves transition support IDs, guards, declaration order, and confidence: Done

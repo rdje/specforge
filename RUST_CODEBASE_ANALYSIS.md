@@ -3,6 +3,12 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-12 `.fsm` dt_candidate.automation_confidence — gap closed)
+- Added `dt_candidate.automation_confidence` (`AutomationConfidence::Medium`) to `builds_blocked_dt_centric_fsm_adapter_artifact`, closing the last remaining decision tree candidate confidence gap.
+- Production code at lines 2199-2203: non-explicit DT candidates get `Medium` when `!behaviors.is_empty()`, `Low` when `behaviors.is_empty()`. The handshake fixture has behaviors → Medium.
+- All tests with `decision_tree_candidates` now prove `automation_confidence` on extracted candidates.
+- The Rust test listing remains `666` tests, all passing.
+
 ## Session update (2026-05-12 `.fsm` top composition remaining fsm-level blocking_reasons)
 - 3 more complete; ~21 of 24 done with ~3 remain. Rust test listing `666` all passing.
 

@@ -11359,6 +11359,15 @@ mod tests {
         assert!(fsm.renderable_module.is_none());
         assert!(fsm.renderable_document.is_none());
         assert_eq!(fsm.decision_tree_candidates.len(), 1);
+        let dt_candidate = fsm
+            .decision_tree_candidates
+            .iter()
+            .find(|candidate| candidate.candidate_id == "dt_primary_intent_cone")
+            .expect("decision-tree candidate should remain visible");
+        assert_eq!(
+            dt_candidate.automation_confidence,
+            AutomationConfidence::Medium
+        );
         assert!(
             fsm.signal_inventory
                 .iter()

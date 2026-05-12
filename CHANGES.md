@@ -1,5 +1,12 @@
 # CHANGES
 
+## 2026-05-12 (`.fsm` decision tree candidate automation_confidence — gap closed)
+
+### Improved: blocked DT-centric adapter test now proves dt_candidate.automation_confidence
+- Added `dt_candidate.automation_confidence` assertion (`AutomationConfidence::Medium`) to `builds_blocked_dt_centric_fsm_adapter_artifact`, the one remaining test with decision tree candidates that lacked a candidate-level confidence check.
+- All tests that enumerate `decision_tree_candidates` now prove `automation_confidence` on extracted candidates — zero gaps.
+- The Rust test listing remains `666` tests, all passing.
+
 ## 2026-05-12 (`.fsm` top composition fsm-level blocking_reasons — gap closed)
 
 ### Improved: final three top composition tests now prove complete fsm-level renderability contract
