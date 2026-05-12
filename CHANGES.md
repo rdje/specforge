@@ -1,5 +1,13 @@
 # CHANGES
 
+## 2026-05-12 (`.fsm` blocked DT-centric blocking reason)
+
+### Improved: blocked DT-centric adapter test now proves the specific blocking reason
+- Extended `builds_blocked_dt_centric_fsm_adapter_artifact` to assert the specific blocking reason ("standalone decision-tree control blocks") alongside the pre-existing bare `!is_renderable` check.
+- This was the last remaining bare negative `is_renderable` assertion in the adapter test suite — every negative renderability assertion now proves at least one specific blocking reason or required enrichment.
+- This is regression-only hardening for the existing `.fsm` adapter behavior; no production lowering behavior intentionally changed.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
+
 ## 2026-05-12 (`.fsm` composition module document-root identity)
 
 ### Improved: all six top-composition child recovery tests prove child modules match document direct roots

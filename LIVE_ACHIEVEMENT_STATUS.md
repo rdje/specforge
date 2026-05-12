@@ -81,6 +81,7 @@
 - `.fsm` builds-renderable DT/FSM adapter tests now prove empty aggregate blocker/enrichment diagnostics: Done
 - `.fsm` renderable document top-root and module identity now proven equal across top-composition and standalone DT/FSM tests: Done
 - `.fsm` composition child-module document-root identity now proven across all six top-composition child recovery tests: Done
+- `.fsm` blocked DT-centric adapter now proves the specific standalone control-block blocking reason: Done
 - `.fsm` structured-FSM flat/graph disagreements now block stale aggregate renderable output: Done
 - `.fsm` explicit-module flat/graph disagreements now block stale module and aggregate renderable output: Done
 - `.fsm` explicit-module control-read direction conflicts now block stale module and aggregate renderable output: Done

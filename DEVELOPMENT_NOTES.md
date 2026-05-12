@@ -6,6 +6,11 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-12 `.fsm` blocked DT-centric blocking reason
+- Continued the PNT cycle with an `R6`/`R15` hardening slice closing the last bare negative `is_renderable` assertion.
+- Extended `builds_blocked_dt_centric_fsm_adapter_artifact` with a specific blocking reason check (`"standalone decision-tree control blocks"`), matching the pattern used by every other negative renderability assertion in the suite.
+- With this slice, the full adapter test suite has zero bare renderability assertions — every positive `is_renderable` is paired with empty diagnostics, and every negative has a specific reason or enrichment check.
+
 ## 2026-05-12 `.fsm` composition module document-root identity
 - Continued the PNT cycle with an `R6`/`R15` Type 2 identity-gap hardening slice covering all 6 `top_composition_recovers_child_*` tests.
 - Each test now extracts `renderable_document` and asserts that child `renderable_module` values (producer, consumer, or both) are present in `renderable_document.direct_roots[*].module`.

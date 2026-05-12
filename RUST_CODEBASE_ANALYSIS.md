@@ -3,6 +3,12 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-12 `.fsm` blocked DT-centric blocking reason)
+- Extended `builds_blocked_dt_centric_fsm_adapter_artifact` in `crates/specforge/src/ir/adapters.rs` with a specific blocking reason assertion.
+- This was the last remaining bare negative `is_renderable` assertion in the entire 143-test adapter suite. Every other negative assertion already proved at least one specific blocker or enrichment.
+- The adapter test suite now has complete renderability diagnostic coverage: zero bare positive or negative assertions remain.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
+
 ## Session update (2026-05-12 `.fsm` composition module document-root identity)
 - Extended all 6 `top_composition_recovers_child_*` tests in `crates/specforge/src/ir/adapters.rs` with renderable-document direct-root identity assertions.
 - Each test now proves that child `renderable_module` values are present in `renderable_document.direct_roots[*].module`, closing the Type 2 identity gap.

@@ -11335,6 +11335,12 @@ mod tests {
             vec![FsmRootKind::Fsm, FsmRootKind::Top]
         );
         assert!(!fsm.renderability.is_renderable);
+        assert!(
+            fsm.renderability
+                .blocking_reasons
+                .iter()
+                .any(|reason| { reason.contains("standalone decision-tree control blocks") })
+        );
         assert!(fsm.renderable_module.is_none());
         assert!(fsm.renderable_document.is_none());
         assert_eq!(fsm.decision_tree_candidates.len(), 1);

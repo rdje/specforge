@@ -35,6 +35,10 @@
 - `07e03eb6` Add top composition recovery aggregate diagnostics regression
 - `2af0c774` Add remaining renderable DT FSM aggregate diagnostics regression
 - `849d35a2` Add standalone DT graph recovery aggregate diagnostics regression
+- `0612eac0` Add remaining producer module candidate diagnostics regression
+- `07e03eb6` Add top composition recovery aggregate diagnostics regression
+- `2af0c774` Add remaining renderable DT FSM aggregate diagnostics regression
+- `849d35a2` Add standalone DT graph recovery aggregate diagnostics regression
 - `c9d59ab5` Add standalone DT recovery aggregate diagnostics regression
 - `07e03eb6` Add top composition recovery aggregate diagnostics regression
 - `2af0c774` Add remaining renderable DT FSM aggregate diagnostics regression
@@ -45,7 +49,7 @@
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state: locally ahead of `origin/main` by twelve committed active-batch/PNT slices before this PNT slice; push remains deferred because the around-`30` local-commit checkpoint has not been reached
+- branch state: locally ahead of `origin/main` by fourteen committed active-batch/PNT slices before this PNT slice; push checkpoint reached — around-`30` threshold
 - files in flight for the current PNT slice:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -68,16 +72,16 @@
 ## Current batch status
 - objective:
   - active user-authorized run uses PNT with undefined BWFSC
-  - current PNT slice adds renderable-document direct-root identity assertions to all 6 `top_composition_recovers_child_*` tests (Type 2)
-  - completed_count after this PNT commit: `30`
-  - push checkpoint approaching: branch will reach around-`30` local-commit threshold after this commit
+  - current PNT slice closes the last bare negative `is_renderable` assertion by adding a specific blocking reason check to `builds_blocked_dt_centric_fsm_adapter_artifact`
+  - completed_count after this PNT commit: `31`
+  - push checkpoint reached at around-`30` local commits; push deferred per continuation policy
   - `R6` remains the active `.fsm` adapter hardening lane; SystemVerilog, Verilog, and VHDL adapter expansion remains not started
 - tracker effect:
-  - live-status tracker now marks composition child-module document-root identity coverage as `Done`
-  - live docs now record the active PNT cycle as an `R6`/`R15` regression-only composition module document-root identity hardening run
-  - `RUST_CODEBASE_ANALYSIS.md` now records the composition module document-root identity regression while keeping the refreshed test count at `666` listed Rust tests
+  - live-status tracker now marks blocked DT-centric blocking reason coverage as `Done`
+  - live docs now record the active PNT cycle as an `R6`/`R15` regression-only DT-centric blocking reason hardening run
+  - `RUST_CODEBASE_ANALYSIS.md` now records the DT-centric blocking reason regression while keeping the refreshed test count at `666` listed Rust tests
 - verification status:
-  - all 6 composition child-module identity tests plus full adapter suite `cargo test --manifest-path Cargo.toml -p specforge --lib -- ir::adapters` passed with `143/143` adapter-filtered tests
+  - the DT-centric blocking reason test plus full adapter suite `cargo test --manifest-path Cargo.toml -p specforge --lib -- ir::adapters` passed with `143/143` adapter-filtered tests
   - `cargo fmt --all --check` passed
   - `cargo test --manifest-path Cargo.toml -p specforge --lib -- --list` listed `666` Rust tests
   - `git diff --check` passed
