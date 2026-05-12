@@ -1,5 +1,12 @@
 # CHANGES
 
+## 2026-05-12 (`.fsm` top composition fsm-level blocking_reasons — gap closed)
+
+### Improved: final three top composition tests now prove complete fsm-level renderability contract
+- Added `assert!(!fsm.renderability.blocking_reasons.is_empty())` and `assert!(fsm.renderable_module.is_none())` to: `top_composition_blocks_duplicate_child_instance_guidance`, `top_composition_blocks_multi_child_without_links_guidance`, `top_composition_blocks_top_without_child_guidance`.
+- All 24 top composition tests with `!fsm.renderability.is_renderable` now also prove `fsm.renderability.blocking_reasons` — zero gaps.
+- The Rust test listing remains `666` tests, all passing.
+
 ## 2026-05-12 (`.fsm` top composition remaining tests — fsm-level blocking_reasons)
 
 ### Improved: three more top composition tests now prove fsm-level blocking_reasons (widthless, conflicting topology widths/directions)

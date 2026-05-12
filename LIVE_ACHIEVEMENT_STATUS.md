@@ -32,7 +32,7 @@
 - `.fsm` top composition keeps tests now prove fsm-level blocking_reasons alongside top_candidate-level checks: Done
 - `.fsm` top composition conflicting-evidence tests now prove fsm-level blocking_reasons: Done
 - `.fsm` top composition link_from tests now prove fsm-level blocking_reasons: Done
-- `.fsm` top composition fsm-level blocking_reasons coverage at 12/24 tests: In Progress
+- `.fsm` top composition fsm-level blocking_reasons coverage now at 24/24 tests — zero gaps: Done
 - `.fsm` canonical parametric-width blockers now block stale module and aggregate renderable output: Done
 - `.fsm` selector-predicate blockers now block stale module and aggregate renderable output: Done
 - `.fsm` reset-polarity blockers now block stale module and aggregate renderable output: Done
