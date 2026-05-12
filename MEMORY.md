@@ -26,7 +26,7 @@
 ## Latest committed baseline
 - latest_commit_hash: `961f4c74`
 - latest_commit_brief_message: `Add fsm-level blocking_reasons checks to three final top composition tests`
-- note: PNT slice 52 committed locally; branch ahead 23 commits since last push at 400ee6a1; ~18 of 24 top composition tests now prove fsm-level blocking_reasons; ~6 remain
+- note: PNT slice 52 committed locally; pushed at 30-commit checkpoint (400ee6a1..31d39e40); ~18 of 24 top composition tests now prove fsm-level blocking_reasons; ~6 remain
 
 ## Recent commit chain (last 6)
 - `8ecb7a70` Add child candidate diagnostics to two actor-port recovery tests
