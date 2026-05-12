@@ -3,6 +3,12 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-13 `.fsm` renderable-document presence — builds_renderable DT complete)
+- Closed remaining gap: all 6 builds_renderable DT tests now prove `renderable_module.is_some()` and `renderable_document.is_some()`.
+- Added standalone DT document presence, and both module + document presence for standalone sequential DT and compound update DT tests.
+- ~5 standalone recovery tests remain without renderable_document presence assertions.
+- The Rust test listing remains `666` tests, all passing.
+
 ## Session update (2026-05-13 `.fsm` renderable-document presence — 3 builds_renderable DT tests)
 - Added `assert!(fsm.renderable_module.is_some())` and `assert!(fsm.renderable_document.is_some())` to 3 builds_renderable DT tests that previously had no output artifact presence checks.
 - Tests: symbolic DT, selector-based DT, computed-selector DT. Each now proves both the renderable module and source document exist alongside the renderability status.

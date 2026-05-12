@@ -11,6 +11,12 @@
 - DT candidate confidence: for non-explicit (behavior-aggregated) candidates, it's `Medium` when behaviors exist and `Low` when behaviors are empty. The handshake adapter has behaviors → Medium.
 - All decision tree candidate automation_confidence gaps now closed.
 
+## 2026-05-13 `.fsm` renderable-document presence — builds_renderable DT gap closed
+- Completed renderable output artifact checks for all 6 builds_renderable DT tests.
+- Standalone DT test only needed `renderable_document.is_some()` (already had `renderable_module.is_some()`).
+- Standalone sequential DT and compound update DT needed both module and document presence assertions.
+- ~5 standalone recovery tests remain without renderable_document checks.
+
 ## 2026-05-13 `.fsm` renderable-document presence for builds_renderable DT tests
 - Added `renderable_module.is_some()` and `renderable_document.is_some()` to 3 builds_renderable DT tests (symbolic, selector-based, computed-selector).
 - These tests previously asserted `is_renderable` and empty blocking reasons but never proved the actual renderable output artifacts (module and document) exist.

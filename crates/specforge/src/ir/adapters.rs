@@ -11426,6 +11426,7 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert!(fsm.renderable_module.is_some());
+        assert!(fsm.renderable_document.is_some());
         assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Dt);
         assert_eq!(
             fsm.root_kind_decision.deferred_root_kinds,
@@ -13035,6 +13036,8 @@ mod tests {
         assert!(fsm.renderability.is_renderable);
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
+        assert!(fsm.renderable_module.is_some());
+        assert!(fsm.renderable_document.is_some());
         assert_eq!(fsm.decision_tree_candidates.len(), 1);
         assert!(
             fsm.decision_tree_candidates
@@ -14135,6 +14138,8 @@ mod tests {
         assert!(fsm.renderability.is_renderable);
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
+        assert!(fsm.renderable_module.is_some());
+        assert!(fsm.renderable_document.is_some());
         assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Dt);
         assert_eq!(
             fsm.root_kind_decision.deferred_root_kinds,

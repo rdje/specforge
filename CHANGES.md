@@ -1,5 +1,13 @@
 # CHANGES
 
+## 2026-05-13 (`.fsm` renderable-document presence — all builds_renderable DT tests complete)
+
+### Improved: remaining three builds_renderable DT tests now prove renderable output artifact presence
+- Added `assert!(fsm.renderable_document.is_some())` to `builds_renderable_standalone_dt_fsm_adapter_artifact` (which already had `renderable_module.is_some()`).
+- Added both `assert!(fsm.renderable_module.is_some())` and `assert!(fsm.renderable_document.is_some())` to: `builds_renderable_standalone_sequential_dt_fsm_adapter_artifact`, `builds_renderable_compound_update_dt_fsm_adapter_artifact`.
+- All 6 builds_renderable DT tests now prove the renderable module and source document existence — zero gaps in the builds_renderable category.
+- The Rust test listing remains `666` tests, all passing.
+
 ## 2026-05-13 (`.fsm` renderable-document presence for builds_renderable DT tests)
 
 ### Improved: three builds_renderable DT tests now prove renderable_module and renderable_document presence
