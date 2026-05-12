@@ -11480,6 +11480,10 @@ mod tests {
             .expect("graph-backed standalone adapter should emit target text");
         let emitted_text = fs::read_to_string(emitted_target_path)?;
         let fsm = adapter.fsm.expect("fsm artifact should be present");
+        assert!(fsm.renderability.is_renderable);
+        assert!(fsm.renderability.blocking_reasons.is_empty());
+        assert!(fsm.renderability.required_canonical_enrichments.is_empty());
+        assert!(fsm.renderable_module.is_some());
         let data_in = fsm
             .signal_inventory
             .iter()
@@ -11582,6 +11586,10 @@ mod tests {
 
         assert_eq!(adapter.lowering_status.as_str(), "renderable");
         let fsm = adapter.fsm.expect("fsm artifact should be present");
+        assert!(fsm.renderability.is_renderable);
+        assert!(fsm.renderability.blocking_reasons.is_empty());
+        assert!(fsm.renderability.required_canonical_enrichments.is_empty());
+        assert!(fsm.renderable_module.is_some());
         let data_out = fsm
             .signal_inventory
             .iter()

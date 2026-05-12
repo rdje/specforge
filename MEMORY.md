@@ -39,7 +39,7 @@
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state: locally ahead of `origin/main` by thirty committed active-batch/PNT slices before this PNT slice; push remains deferred because the around-`30` local-commit checkpoint has been reached and should be scheduled
+- branch state: locally ahead of `origin/main` by five committed active-batch/PNT slices before this PNT slice; push remains deferred because the around-`30` local-commit checkpoint has not been reached
 - files in flight for the current PNT slice:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
