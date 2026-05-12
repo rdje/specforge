@@ -6,6 +6,11 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-12 `.fsm` FSM root-kind decision confidence and rationale
+- Continued the PNT cycle with an `R6`/`R15` root-kind decision completeness slice covering all 6 FSM-root tests.
+- Each FSM-root test now asserts `root_kind_decision.automation_confidence` (`High` — FSM selection is based on positive evidence of explicit regular-state facts), `root_kind_decision.rationale` (always contains `"carries explicit regular-state facts"`), and `deferred_root_kinds` (`[Top]`).
+- FSM confidence is `High` because the presence of explicit regular-state facts is a strong positive signal, unlike DT which is selected based on their absence (`Medium`).
+
 ## 2026-05-12 `.fsm` DT root-kind decision confidence and rationale
 - Continued the PNT cycle with an `R6`/`R15` root-kind decision completeness slice covering all 7 DT-root tests.
 - Each DT-root test now asserts `root_kind_decision.automation_confidence` (always `Medium` for DT, since the absence of regular-state facts is a negative signal) and `root_kind_decision.rationale` (always contains `"does not yet carry explicit regular-state facts"`).

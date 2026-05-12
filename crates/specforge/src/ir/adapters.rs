@@ -12653,6 +12653,15 @@ mod tests {
             fsm.root_kind_decision.deferred_root_kinds,
             vec![FsmRootKind::Top]
         );
+        assert_eq!(
+            fsm.root_kind_decision.automation_confidence,
+            AutomationConfidence::High
+        );
+        assert!(
+            fsm.root_kind_decision
+                .rationale
+                .contains("carries explicit regular-state facts")
+        );
         let system_contract = fsm
             .system_contract
             .as_ref()
@@ -14259,6 +14268,19 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Fsm);
+        assert_eq!(
+            fsm.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Top]
+        );
+        assert_eq!(
+            fsm.root_kind_decision.automation_confidence,
+            AutomationConfidence::High
+        );
+        assert!(
+            fsm.root_kind_decision
+                .rationale
+                .contains("carries explicit regular-state facts")
+        );
         let system_contract = fsm
             .system_contract
             .as_ref()
@@ -14554,6 +14576,19 @@ mod tests {
         }
 
         assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Fsm);
+        assert_eq!(
+            fsm.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Top]
+        );
+        assert_eq!(
+            fsm.root_kind_decision.automation_confidence,
+            AutomationConfidence::High
+        );
+        assert!(
+            fsm.root_kind_decision
+                .rationale
+                .contains("carries explicit regular-state facts")
+        );
         assert!(fsm.renderability.is_renderable);
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
@@ -14723,6 +14758,19 @@ mod tests {
 
         assert_eq!(fsm.root_name, "controller");
         assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Fsm);
+        assert_eq!(
+            fsm.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Top]
+        );
+        assert_eq!(
+            fsm.root_kind_decision.automation_confidence,
+            AutomationConfidence::High
+        );
+        assert!(
+            fsm.root_kind_decision
+                .rationale
+                .contains("carries explicit regular-state facts")
+        );
         assert!(fsm.renderability.is_renderable);
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
@@ -25630,6 +25678,19 @@ mod tests {
         assert!(adapter.artifact_layout.emitted_target_path.is_none());
         let fsm = adapter.fsm.expect("fsm artifact should be present");
         assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Fsm);
+        assert_eq!(
+            fsm.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Top]
+        );
+        assert_eq!(
+            fsm.root_kind_decision.automation_confidence,
+            AutomationConfidence::High
+        );
+        assert!(
+            fsm.root_kind_decision
+                .rationale
+                .contains("carries explicit regular-state facts")
+        );
         assert_eq!(fsm.state_candidates.len(), 2);
         for (state_name, support_ids) in &state_support_ids {
             let state_candidate = fsm
@@ -25745,6 +25806,19 @@ mod tests {
         assert!(adapter.artifact_layout.emitted_target_path.is_none());
         let fsm = adapter.fsm.expect("fsm artifact should be present");
         assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Fsm);
+        assert_eq!(
+            fsm.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Top]
+        );
+        assert_eq!(
+            fsm.root_kind_decision.automation_confidence,
+            AutomationConfidence::High
+        );
+        assert!(
+            fsm.root_kind_decision
+                .rationale
+                .contains("carries explicit regular-state facts")
+        );
         assert_eq!(fsm.state_candidates.len(), 2);
         for (state_name, is_initial, support_ids) in &state_support_ids {
             let state_candidate = fsm

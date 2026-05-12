@@ -3,6 +3,12 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-12 `.fsm` FSM root-kind decision confidence and rationale)
+- Extended all 6 FSM-root tests in `crates/specforge/src/ir/adapters.rs` with `root_kind_decision.automation_confidence` (`High`), `rationale`, and `deferred_root_kinds` assertions.
+- FSM `automation_confidence` is `High` (positive-evidence-based inference from explicit regular-state facts), unlike DT which uses `Medium` (absence-based inference).
+- This is the second slice of the broader `root_kind_decision` completeness work; Top-root tests remain for the next slice.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
+
 ## Session update (2026-05-12 `.fsm` DT root-kind decision confidence and rationale)
 - Extended all 7 DT-root tests in `crates/specforge/src/ir/adapters.rs` with `root_kind_decision.automation_confidence` and `root_kind_decision.rationale` assertions.
 - DT `automation_confidence` is consistently `Medium` (absence-based inference), and rationale consistently contains `"does not yet carry explicit regular-state facts"`.

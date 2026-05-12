@@ -1,5 +1,13 @@
 # CHANGES
 
+## 2026-05-12 (`.fsm` FSM root-kind decision confidence and rationale)
+
+### Improved: all six FSM-root tests now prove root-kind confidence and rationale
+- Extended all 6 FSM-root tests with `root_kind_decision.automation_confidence` (`High` — positive evidence from explicit regular-state facts), `root_kind_decision.rationale` (contains "carries explicit regular-state facts"), and `deferred_root_kinds` (`[Top]`) where previously omitted.
+- This closes the FSM portion of the `root_kind_decision` completeness gap; Top-root tests remain for subsequent slices.
+- This is regression-only hardening for the existing `.fsm` adapter behavior; no production lowering behavior intentionally changed.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
+
 ## 2026-05-12 (`.fsm` DT root-kind decision confidence and rationale)
 
 ### Improved: all seven DT-root tests now prove root-kind confidence and rationale

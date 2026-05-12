@@ -78,8 +78,8 @@
 ## Current batch status
 - objective:
   - active user-authorized run uses PNT with undefined BWFSC
-  - current PNT slice extends all 7 DT-root tests with `root_kind_decision.automation_confidence` and `rationale` assertions
-  - completed_count after this PNT commit: `32`
+  - current PNT slice extends all 6 FSM-root tests with `root_kind_decision.automation_confidence` and `rationale` assertions
+  - completed_count after this PNT commit: `33`
   - push checkpoint reached at around-`30` local commits; push deferred per continuation policy
   - `R6` remains the active `.fsm` adapter hardening lane; SystemVerilog, Verilog, and VHDL adapter expansion remains not started
 - tracker effect:
