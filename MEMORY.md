@@ -24,12 +24,12 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `TBD`
+- latest_commit_hash: `25ba8f24`
 - latest_commit_brief_message: `Add module candidate root kind decision regression in top composition tests`
 - note: PNT slice 35 is committed locally; branch ahead 23 commits, push checkpoint threshold reached
 
 ## Recent commit chain (last 6)
-- `TBD` Add module candidate root kind decision regression in top composition tests
+- `25ba8f24` Add module candidate root kind decision regression in top composition tests
 - `e5ac3190` Add Top root kind decision completeness regression
 - `d3afaea4` Add FSM root kind decision confidence and rationale regression
 - `70f9408e` Add DT root kind decision confidence and rationale regression
