@@ -24,7 +24,7 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `TODO_fill_after_commit`
+- latest_commit_hash: `f50b052e`
 - latest_commit_brief_message: `Add direct_roots root_kind assertions to two renderable top-document tests`
 - note: PNT slice 39 committed locally; branch ahead 3 commits since last push at 400ee6a1
 
