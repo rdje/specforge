@@ -24,11 +24,12 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `70f9408e`
-- latest_commit_brief_message: `Add DT root kind decision confidence and rationale regression`
-- note: PNT slice 32 is committed locally; branch has reached the around-`30` local-commit push checkpoint threshold
+- latest_commit_hash: `d3afaea4`
+- latest_commit_brief_message: `Add FSM root kind decision confidence and rationale regression`
+- note: PNT slice 33 is committed locally; branch has reached the around-`30` local-commit push checkpoint threshold
 
 ## Recent commit chain (last 6)
+- `d3afaea4` Add FSM root kind decision confidence and rationale regression
 - `70f9408e` Add DT root kind decision confidence and rationale regression
 - `c2e12eec` Add blocked DT-centric adapter blocking reason regression
 - `5d54aa13` Add composition module document-root identity regression
