@@ -1,5 +1,13 @@
 # CHANGES
 
+## 2026-05-12 (`.fsm` composition module document-root identity)
+
+### Improved: all six top-composition child recovery tests prove child modules match document direct roots
+- Extended all 6 `top_composition_recovers_child_*` tests to assert that each child's `renderable_module` appears in `renderable_document.direct_roots[*].module`.
+- This closes the Type 2 identity gap: child module candidates recovered from actor ports, link topology, and sibling/transitive width propagation are now proven to be the same modules the renderable document projects as direct roots.
+- This is regression-only hardening for the existing `.fsm` adapter behavior; no production lowering behavior intentionally changed.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
+
 ## 2026-05-12 (`.fsm` renderable document top-root / module identity)
 
 ### Improved: top-composition and standalone DT/FSM tests prove renderable-document identity equality

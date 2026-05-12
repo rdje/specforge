@@ -3,6 +3,13 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-12 `.fsm` composition module document-root identity)
+- Extended all 6 `top_composition_recovers_child_*` tests in `crates/specforge/src/ir/adapters.rs` with renderable-document direct-root identity assertions.
+- Each test now proves that child `renderable_module` values are present in `renderable_document.direct_roots[*].module`, closing the Type 2 identity gap.
+- Covered tests: `_directions_from_actor_ports`, `_directions_from_link_topology`, `_width_from_top_link_topology`, `_width_from_sibling_child_link_topology`, `_source_child_width_from_sibling_child_link_topology`, `_width_through_transitive_topology`.
+- Type 1, Type 2, and Type 3 renderable-document identity gaps are now all closed. Production adapter behavior did not change.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
+
 ## Session update (2026-05-12 `.fsm` renderable document top-root / module identity)
 - Extended 4 top-composition tests and 3 standalone DT/FSM tests in `crates/specforge/src/ir/adapters.rs` with renderable-document identity assertions.
 - Type 3 (top-root identity): refactored `top_composition_recovers_top_port_direction_from_link_topology`, `top_composition_recovers_top_port_direction_from_actor_ports`, `top_composition_recovers_top_port_width_from_actor_ports`, and `top_composition_recovers_top_port_width_from_child_link_topology` to extract `renderable_top` from `renderable_document.top_root` and assert equality with `top_candidate.renderable_top`.

@@ -6,6 +6,12 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-12 `.fsm` composition module document-root identity
+- Continued the PNT cycle with an `R6`/`R15` Type 2 identity-gap hardening slice covering all 6 `top_composition_recovers_child_*` tests.
+- Each test now extracts `renderable_document` and asserts that child `renderable_module` values (producer, consumer, or both) are present in `renderable_document.direct_roots[*].module`.
+- This proves that child module candidates recovered through actor ports, link topology, sibling links, source-side sibling links, and transitive topology are the exact modules the renderable document projects.
+- With Type 1 (module identity), Type 2 (composition module identity), and Type 3 (top-root identity) gaps now closed, the renderable-document identity audit is complete.
+
 ## 2026-05-12 `.fsm` renderable document top-root / module identity
 - Continued the PNT cycle with an `R6`/`R15` identity-gap hardening slice covering 4 top-composition tests (Type 3) and 3 standalone DT/FSM tests (Type 1).
 - Type 3: top-composition tests that derived `renderable_top_port` via `.and_then()` on `renderable_document` now extract `renderable_top` first and assert `top_candidate.renderable_top.as_ref() == Some(renderable_top)`, proving the source document's top root is the candidate's renderable top.

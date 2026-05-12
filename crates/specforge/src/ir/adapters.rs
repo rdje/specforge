@@ -20557,6 +20557,22 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert!(fsm.renderable_module.is_none());
+        let renderable_document = fsm
+            .renderable_document
+            .as_ref()
+            .expect("renderable document should be present");
+        assert!(
+            renderable_document
+                .direct_roots
+                .iter()
+                .any(|r| Some(&r.module) == producer.renderable_module.as_ref())
+        );
+        assert!(
+            renderable_document
+                .direct_roots
+                .iter()
+                .any(|r| Some(&r.module) == consumer.renderable_module.as_ref())
+        );
         for (module, signal_name, direction_hint) in [
             (producer, "output_data", InterfaceSignalDirection::Output),
             (consumer, "input_data", InterfaceSignalDirection::Input),
@@ -20796,6 +20812,22 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert!(fsm.renderable_module.is_none());
+        let renderable_document = fsm
+            .renderable_document
+            .as_ref()
+            .expect("renderable document should be present");
+        assert!(
+            renderable_document
+                .direct_roots
+                .iter()
+                .any(|r| Some(&r.module) == producer.renderable_module.as_ref())
+        );
+        assert!(
+            renderable_document
+                .direct_roots
+                .iter()
+                .any(|r| Some(&r.module) == consumer.renderable_module.as_ref())
+        );
         for (module, signal_name, direction_hint) in [
             (producer, "output_data", InterfaceSignalDirection::Output),
             (consumer, "input_data", InterfaceSignalDirection::Input),
@@ -20942,6 +20974,16 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert!(fsm.renderable_module.is_none());
+        let renderable_document = fsm
+            .renderable_document
+            .as_ref()
+            .expect("renderable document should be present");
+        assert!(
+            renderable_document
+                .direct_roots
+                .iter()
+                .any(|r| Some(&r.module) == producer.renderable_module.as_ref())
+        );
         let renderable_module = producer
             .renderable_module
             .as_ref()
@@ -21080,6 +21122,16 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert!(fsm.renderable_module.is_none());
+        let renderable_document = fsm
+            .renderable_document
+            .as_ref()
+            .expect("renderable document should be present");
+        assert!(
+            renderable_document
+                .direct_roots
+                .iter()
+                .any(|r| Some(&r.module) == consumer.renderable_module.as_ref())
+        );
         let renderable_module = consumer
             .renderable_module
             .as_ref()
@@ -21222,6 +21274,16 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert!(fsm.renderable_module.is_none());
+        let renderable_document = fsm
+            .renderable_document
+            .as_ref()
+            .expect("renderable document should be present");
+        assert!(
+            renderable_document
+                .direct_roots
+                .iter()
+                .any(|r| Some(&r.module) == producer.renderable_module.as_ref())
+        );
         let renderable_module = producer
             .renderable_module
             .as_ref()
@@ -21423,6 +21485,22 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert!(fsm.renderable_module.is_none());
+        let renderable_document = fsm
+            .renderable_document
+            .as_ref()
+            .expect("renderable document should be present");
+        assert!(
+            renderable_document
+                .direct_roots
+                .iter()
+                .any(|r| Some(&r.module) == producer.renderable_module.as_ref())
+        );
+        assert!(
+            renderable_document
+                .direct_roots
+                .iter()
+                .any(|r| Some(&r.module) == consumer.renderable_module.as_ref())
+        );
         for (module, signal_name, direction_hint) in [
             (producer, "output_data", InterfaceSignalDirection::Output),
             (consumer, "input_data", InterfaceSignalDirection::Input),

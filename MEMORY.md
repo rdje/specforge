@@ -35,12 +35,16 @@
 - `2af0c774` Add remaining renderable DT FSM aggregate diagnostics regression
 - `849d35a2` Add standalone DT graph recovery aggregate diagnostics regression
 - `c9d59ab5` Add standalone DT recovery aggregate diagnostics regression
+- `07e03eb6` Add top composition recovery aggregate diagnostics regression
+- `2af0c774` Add remaining renderable DT FSM aggregate diagnostics regression
+- `849d35a2` Add standalone DT graph recovery aggregate diagnostics regression
+- `c9d59ab5` Add standalone DT recovery aggregate diagnostics regression
 - `1eec1964` Add builds-renderable DT FSM aggregate diagnostics regression
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state: locally ahead of `origin/main` by ten committed active-batch/PNT slices before this PNT slice; push remains deferred because the around-`30` local-commit checkpoint has not been reached
+- branch state: locally ahead of `origin/main` by twelve committed active-batch/PNT slices before this PNT slice; push remains deferred because the around-`30` local-commit checkpoint has not been reached
 - files in flight for the current PNT slice:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -63,16 +67,16 @@
 ## Current batch status
 - objective:
   - active user-authorized run uses PNT with undefined BWFSC
-  - current PNT slice adds renderable-document top-root and module identity assertions to 4 top-composition tests (Type 3) and 3 standalone DT/FSM tests (Type 1)
-  - completed_count after this PNT commit: `29`
-  - push remains deferred until the branch reaches around `30` local commits since the last push or the user explicitly changes the policy
+  - current PNT slice adds renderable-document direct-root identity assertions to all 6 `top_composition_recovers_child_*` tests (Type 2)
+  - completed_count after this PNT commit: `30`
+  - push checkpoint approaching: branch will reach around-`30` local-commit threshold after this commit
   - `R6` remains the active `.fsm` adapter hardening lane; SystemVerilog, Verilog, and VHDL adapter expansion remains not started
 - tracker effect:
-  - live-status tracker now marks renderable-document top-root/module identity coverage as `Done`
-  - live docs now record the active PNT cycle as an `R6`/`R15` regression-only renderable-document identity hardening run
-  - `RUST_CODEBASE_ANALYSIS.md` now records the renderable-document identity regression while keeping the refreshed test count at `666` listed Rust tests
+  - live-status tracker now marks composition child-module document-root identity coverage as `Done`
+  - live docs now record the active PNT cycle as an `R6`/`R15` regression-only composition module document-root identity hardening run
+  - `RUST_CODEBASE_ANALYSIS.md` now records the composition module document-root identity regression while keeping the refreshed test count at `666` listed Rust tests
 - verification status:
-  - all 7 identity-gap tests plus full adapter suite `cargo test --manifest-path Cargo.toml -p specforge --lib -- ir::adapters` passed with `143/143` adapter-filtered tests
+  - all 6 composition child-module identity tests plus full adapter suite `cargo test --manifest-path Cargo.toml -p specforge --lib -- ir::adapters` passed with `143/143` adapter-filtered tests
   - `cargo fmt --all --check` passed
   - `cargo test --manifest-path Cargo.toml -p specforge --lib -- --list` listed `666` Rust tests
   - `git diff --check` passed
