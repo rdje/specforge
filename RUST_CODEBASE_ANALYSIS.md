@@ -3,6 +3,11 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-13 `.fsm` explicit module root_kind_decision complete)
+- Added root_kind_decision to the 5 remaining explicit module tests (2 renderable + 3 blocked). All 6 now carry root_kind_decision — zero gaps.
+- 666/666 tests passing; ~28 commits ahead of origin/main (push threshold ~30).
+- Next targets: remaining standalone DT (13 tests), top composition (21 tests).
+
 ## Session update (2026-05-13 `.fsm` structured FSM root_kind_decision complete)
 - Added root_kind_decision to all 3 structured FSM tests (1 renderable + 2 blocked). FSM-root pattern: Fsm/[Top]/High/"carries explicit regular-state facts".
 - 666/666 tests passing; 25 commits ahead of origin/main.

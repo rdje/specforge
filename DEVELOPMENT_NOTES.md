@@ -9902,6 +9902,13 @@
   - validation metrics report `with_resolved_direction = 0`, `with_graph_direction = 0`, and `with_compat_direction_hint = 0`
 - The focused `kg-bench` run passed for the new fixture, and the full tracked fixture suite now reports `128/128` passing fixtures.
 
+## 2026-05-13 Explicit module root_kind_decision complete
+- Added `root_kind_decision` assertions to the 5 remaining explicit module `.fsm` tests (2 renderable + 3 blocked).
+- All 6 explicit module tests now carry root_kind_decision — zero gaps.
+- Pattern: FSM-root (Fsm/[Top]/High/"carries explicit regular-state facts"), inserted between fsm extraction and module-candidate lookup.
+- Edit anchors used unique `.expect()` messages: emitted_target_path messages for renderable tests, signal-inventory expect messages for blocked tests (differentiated by "the module" vs "module", and signal name DATA_IN vs ACC).
+- No production behavior changed; regression-only assertion additions.
+
 ## 2026-05-13 Structured FSM root_kind_decision complete
 - Added `root_kind_decision` assertions to all 3 structured FSM `.fsm` tests (1 renderable + 2 blocked).
 - Pattern for FSM-root tests: `selected_root_kind == Fsm`, `deferred_root_kinds == [Top]`, `automation_confidence == High`, rationale contains "carries explicit regular-state facts".
