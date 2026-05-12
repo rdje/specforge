@@ -24,12 +24,12 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `TBD`
+- latest_commit_hash: `fe0815f2`
 - latest_commit_brief_message: `Add top-candidate renderability assertions to top-port recovery tests`
 - note: PNT slice 37 is committed locally; branch ahead 27 commits, push checkpoint threshold reached
 
 ## Recent commit chain (last 6)
-- `TBD` Add top-candidate renderability assertions to top-port recovery tests
+- `fe0815f2` Add top-candidate renderability assertions to top-port recovery tests
 - `bb0b204a` Add missing renderability assertions to adapter confidence and topology tests
 - `25ba8f24` Add module candidate root kind decision regression in top composition tests
 - `e5ac3190` Add Top root kind decision completeness regression
