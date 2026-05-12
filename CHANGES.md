@@ -1,5 +1,11 @@
 # CHANGES
 
+## 2026-05-12 (`.fsm` top composition remaining tests — fsm-level blocking_reasons)
+
+### Improved: three more top composition tests now prove fsm-level blocking_reasons (widthless, conflicting topology widths/directions)
+- Added complete fsm-level renderability contract to: `top_composition_blocks_widthless_top_port_without_width_recovery`, `top_composition_blocks_conflicting_child_topology_widths`, `top_composition_blocks_conflicting_child_link_topology_directions`.
+- The Rust test listing remains `666` tests, all passing.
+
 ## 2026-05-12 (`.fsm` top composition direction-role tests — fsm-level blocking_reasons)
 
 ### Improved: three more top composition tests now prove fsm-level blocking_reasons

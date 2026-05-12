@@ -3,6 +3,9 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-12 `.fsm` top composition remaining fsm-level blocking_reasons)
+- 3 more complete; ~21 of 24 done with ~3 remain. Rust test listing `666` all passing.
+
 ## Session update (2026-05-12 `.fsm` top composition direction-role fsm-level blocking_reasons)
 - 3 more top composition tests now complete; 18 of 24 done, ~6 remain.
 - The Rust test listing remains `666` tests, all passing.
