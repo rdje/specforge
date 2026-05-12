@@ -6,6 +6,12 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-12 `.fsm` module candidate root-kind decision in top composition
+- Continued the PNT cycle with module candidate-level `root_kind_decision` completeness across all top composition tests.
+- Each producer/consumer module candidate accessed in top composition tests now asserts `root_kind_decision.selected_root_kind` = `Dt`, `deferred_root_kinds` = `[Fsm, Top]`, `automation_confidence` = `Medium`, `rationale` contains `"does not yet carry explicit regular-state facts"`.
+- The consistent DT classification reflects that producer/consumer modules in these tests are simple signal-and-block containers without explicit regular-state declarations.
+- With this slice, module-level root_kind_decision is now proven wherever module_candidates are accessed in tests, complementing the top-level root_kind_decision completeness already achieved.
+
 ## 2026-05-12 `.fsm` Top root-kind decision completeness
 - Continued the PNT cycle with the final `root_kind_decision` completeness slice covering the 5 remaining Top-root tests.
 - Each Top-root test now asserts `root_kind_decision.deferred_root_kinds` (`[Dt, Fsm]`), `root_kind_decision.automation_confidence` (`High`), and `root_kind_decision.rationale` (contains `"carries explicit top ports"`).

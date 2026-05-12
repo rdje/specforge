@@ -3,6 +3,12 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-12 `.fsm` module candidate root-kind decision in top composition)
+- Extended all ~22 module candidate access sites across ~16 top composition tests in `crates/specforge/src/ir/adapters.rs` with `module.root_kind_decision` assertions.
+- Producer and consumer modules consistently classify as DT (Medium confidence, absence-based) because they lack explicit regular-state facts.
+- The module candidate-level `root_kind_decision` gap in top composition tests is now fully closed.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
+
 ## Session update (2026-05-12 `.fsm` Top root-kind decision completeness)
 - Extended the 5 remaining Top-root tests in `crates/specforge/src/ir/adapters.rs` with `root_kind_decision.deferred_root_kinds`, `root_kind_decision.automation_confidence`, and `root_kind_decision.rationale` assertions.
 - All 15 Top-root tests now have complete `root_kind_decision` coverage: `deferred_root_kinds` = `[Dt, Fsm]`, `automation_confidence` = `High`, `rationale` contains `"carries explicit top ports"`.

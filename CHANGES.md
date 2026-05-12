@@ -1,5 +1,14 @@
 # CHANGES
 
+## 2026-05-12 (`.fsm` module candidate root-kind decision in top composition)
+
+### Improved: all top composition tests now prove module candidate root-kind decision
+- Extended all ~22 module candidate access sites across ~16 top composition tests with `module.root_kind_decision` assertions: `selected_root_kind` = `Dt`, `deferred_root_kinds` = `[Fsm, Top]`, `automation_confidence` = `Medium`, `rationale` contains `"does not yet carry explicit regular-state facts"`.
+- Producer and consumer modules in top composition tests lack explicit regular states, so the module-level root-kind decision correctly classifies them as DT with Medium confidence (absence-based inference).
+- This closes the module candidate-level `root_kind_decision` completeness gap in top composition tests.
+- This is regression-only hardening for the existing `.fsm` adapter behavior; no production lowering behavior intentionally changed.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
+
 ## 2026-05-12 (`.fsm` Top root-kind decision completeness)
 
 ### Improved: all fifteen Top-root tests now prove root-kind confidence and rationale

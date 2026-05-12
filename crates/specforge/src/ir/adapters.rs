@@ -18847,6 +18847,24 @@ mod tests {
             .iter()
             .find(|candidate| candidate.module_name == "producer_core")
             .expect("producer module candidate should exist");
+        assert_eq!(
+            producer.root_kind_decision.selected_root_kind,
+            FsmRootKind::Dt
+        );
+        assert_eq!(
+            producer.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Fsm, FsmRootKind::Top]
+        );
+        assert_eq!(
+            producer.root_kind_decision.automation_confidence,
+            AutomationConfidence::Medium
+        );
+        assert!(
+            producer
+                .root_kind_decision
+                .rationale
+                .contains("does not yet carry explicit regular-state facts")
+        );
         let top_candidate = fsm
             .top_candidates
             .iter()
@@ -20666,11 +20684,47 @@ mod tests {
             .iter()
             .find(|candidate| candidate.module_name == "producer_core")
             .expect("producer module candidate should exist");
+        assert_eq!(
+            producer.root_kind_decision.selected_root_kind,
+            FsmRootKind::Dt
+        );
+        assert_eq!(
+            producer.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Fsm, FsmRootKind::Top]
+        );
+        assert_eq!(
+            producer.root_kind_decision.automation_confidence,
+            AutomationConfidence::Medium
+        );
+        assert!(
+            producer
+                .root_kind_decision
+                .rationale
+                .contains("does not yet carry explicit regular-state facts")
+        );
         let consumer = fsm
             .module_candidates
             .iter()
             .find(|candidate| candidate.module_name == "consumer_core")
             .expect("consumer module candidate should exist");
+        assert_eq!(
+            consumer.root_kind_decision.selected_root_kind,
+            FsmRootKind::Dt
+        );
+        assert_eq!(
+            consumer.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Fsm, FsmRootKind::Top]
+        );
+        assert_eq!(
+            consumer.root_kind_decision.automation_confidence,
+            AutomationConfidence::Medium
+        );
+        assert!(
+            consumer
+                .root_kind_decision
+                .rationale
+                .contains("does not yet carry explicit regular-state facts")
+        );
         let output_data = producer
             .signal_inventory
             .iter()
@@ -20903,6 +20957,24 @@ mod tests {
             .iter()
             .find(|candidate| candidate.module_name == "producer_core")
             .expect("producer module candidate should exist");
+        assert_eq!(
+            producer.root_kind_decision.selected_root_kind,
+            FsmRootKind::Dt
+        );
+        assert_eq!(
+            producer.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Fsm, FsmRootKind::Top]
+        );
+        assert_eq!(
+            producer.root_kind_decision.automation_confidence,
+            AutomationConfidence::Medium
+        );
+        assert!(
+            producer
+                .root_kind_decision
+                .rationale
+                .contains("does not yet carry explicit regular-state facts")
+        );
         let consumer = fsm
             .module_candidates
             .iter()
@@ -21115,6 +21187,24 @@ mod tests {
             .iter()
             .find(|candidate| candidate.module_name == "producer_core")
             .expect("producer module candidate should exist");
+        assert_eq!(
+            producer.root_kind_decision.selected_root_kind,
+            FsmRootKind::Dt
+        );
+        assert_eq!(
+            producer.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Fsm, FsmRootKind::Top]
+        );
+        assert_eq!(
+            producer.root_kind_decision.automation_confidence,
+            AutomationConfidence::Medium
+        );
+        assert!(
+            producer
+                .root_kind_decision
+                .rationale
+                .contains("does not yet carry explicit regular-state facts")
+        );
         let output_data = producer
             .signal_inventory
             .iter()
@@ -21266,6 +21356,24 @@ mod tests {
             .iter()
             .find(|candidate| candidate.module_name == "consumer_core")
             .expect("consumer module candidate should exist");
+        assert_eq!(
+            consumer.root_kind_decision.selected_root_kind,
+            FsmRootKind::Dt
+        );
+        assert_eq!(
+            consumer.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Fsm, FsmRootKind::Top]
+        );
+        assert_eq!(
+            consumer.root_kind_decision.automation_confidence,
+            AutomationConfidence::Medium
+        );
+        assert!(
+            consumer
+                .root_kind_decision
+                .rationale
+                .contains("does not yet carry explicit regular-state facts")
+        );
         let input_data = consumer
             .signal_inventory
             .iter()
@@ -21415,6 +21523,24 @@ mod tests {
             .iter()
             .find(|candidate| candidate.module_name == "producer_core")
             .expect("producer module candidate should exist");
+        assert_eq!(
+            producer.root_kind_decision.selected_root_kind,
+            FsmRootKind::Dt
+        );
+        assert_eq!(
+            producer.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Fsm, FsmRootKind::Top]
+        );
+        assert_eq!(
+            producer.root_kind_decision.automation_confidence,
+            AutomationConfidence::Medium
+        );
+        assert!(
+            producer
+                .root_kind_decision
+                .rationale
+                .contains("does not yet carry explicit regular-state facts")
+        );
         let output_data = producer
             .signal_inventory
             .iter()
@@ -21600,11 +21726,47 @@ mod tests {
             .iter()
             .find(|candidate| candidate.module_name == "producer_core")
             .expect("producer module candidate should exist");
+        assert_eq!(
+            producer.root_kind_decision.selected_root_kind,
+            FsmRootKind::Dt
+        );
+        assert_eq!(
+            producer.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Fsm, FsmRootKind::Top]
+        );
+        assert_eq!(
+            producer.root_kind_decision.automation_confidence,
+            AutomationConfidence::Medium
+        );
+        assert!(
+            producer
+                .root_kind_decision
+                .rationale
+                .contains("does not yet carry explicit regular-state facts")
+        );
         let consumer = fsm
             .module_candidates
             .iter()
             .find(|candidate| candidate.module_name == "consumer_core")
             .expect("consumer module candidate should exist");
+        assert_eq!(
+            consumer.root_kind_decision.selected_root_kind,
+            FsmRootKind::Dt
+        );
+        assert_eq!(
+            consumer.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Fsm, FsmRootKind::Top]
+        );
+        assert_eq!(
+            consumer.root_kind_decision.automation_confidence,
+            AutomationConfidence::Medium
+        );
+        assert!(
+            consumer
+                .root_kind_decision
+                .rationale
+                .contains("does not yet carry explicit regular-state facts")
+        );
         let output_data = producer
             .signal_inventory
             .iter()
@@ -21809,6 +21971,24 @@ mod tests {
             .iter()
             .find(|candidate| candidate.module_name == "consumer_core")
             .expect("consumer module candidate should exist");
+        assert_eq!(
+            consumer.root_kind_decision.selected_root_kind,
+            FsmRootKind::Dt
+        );
+        assert_eq!(
+            consumer.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Fsm, FsmRootKind::Top]
+        );
+        assert_eq!(
+            consumer.root_kind_decision.automation_confidence,
+            AutomationConfidence::Medium
+        );
+        assert!(
+            consumer
+                .root_kind_decision
+                .rationale
+                .contains("does not yet carry explicit regular-state facts")
+        );
         let input_data = consumer
             .signal_inventory
             .iter()
@@ -22479,6 +22659,24 @@ mod tests {
             .iter()
             .find(|candidate| candidate.module_name == "producer_core")
             .expect("producer module candidate should exist");
+        assert_eq!(
+            producer.root_kind_decision.selected_root_kind,
+            FsmRootKind::Dt
+        );
+        assert_eq!(
+            producer.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Fsm, FsmRootKind::Top]
+        );
+        assert_eq!(
+            producer.root_kind_decision.automation_confidence,
+            AutomationConfidence::Medium
+        );
+        assert!(
+            producer
+                .root_kind_decision
+                .rationale
+                .contains("does not yet carry explicit regular-state facts")
+        );
         let top_candidate = fsm
             .top_candidates
             .iter()
@@ -22721,6 +22919,24 @@ mod tests {
             .iter()
             .find(|candidate| candidate.module_name == "producer_core")
             .expect("producer module candidate should exist");
+        assert_eq!(
+            producer.root_kind_decision.selected_root_kind,
+            FsmRootKind::Dt
+        );
+        assert_eq!(
+            producer.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Fsm, FsmRootKind::Top]
+        );
+        assert_eq!(
+            producer.root_kind_decision.automation_confidence,
+            AutomationConfidence::Medium
+        );
+        assert!(
+            producer
+                .root_kind_decision
+                .rationale
+                .contains("does not yet carry explicit regular-state facts")
+        );
         let output_data = producer
             .signal_inventory
             .iter()
@@ -22996,6 +23212,24 @@ mod tests {
             .iter()
             .find(|candidate| candidate.module_name == "producer_core")
             .expect("producer module candidate should exist");
+        assert_eq!(
+            producer.root_kind_decision.selected_root_kind,
+            FsmRootKind::Dt
+        );
+        assert_eq!(
+            producer.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Fsm, FsmRootKind::Top]
+        );
+        assert_eq!(
+            producer.root_kind_decision.automation_confidence,
+            AutomationConfidence::Medium
+        );
+        assert!(
+            producer
+                .root_kind_decision
+                .rationale
+                .contains("does not yet carry explicit regular-state facts")
+        );
         let output_data = producer
             .signal_inventory
             .iter()
@@ -23270,6 +23504,24 @@ mod tests {
             .iter()
             .find(|candidate| candidate.module_name == "producer_core")
             .expect("producer module candidate should exist");
+        assert_eq!(
+            producer.root_kind_decision.selected_root_kind,
+            FsmRootKind::Dt
+        );
+        assert_eq!(
+            producer.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Fsm, FsmRootKind::Top]
+        );
+        assert_eq!(
+            producer.root_kind_decision.automation_confidence,
+            AutomationConfidence::Medium
+        );
+        assert!(
+            producer
+                .root_kind_decision
+                .rationale
+                .contains("does not yet carry explicit regular-state facts")
+        );
         let output_data = producer
             .signal_inventory
             .iter()
@@ -24699,6 +24951,24 @@ mod tests {
             .iter()
             .find(|candidate| candidate.module_name == "producer_core")
             .expect("producer module candidate should remain visible");
+        assert_eq!(
+            producer.root_kind_decision.selected_root_kind,
+            FsmRootKind::Dt
+        );
+        assert_eq!(
+            producer.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Fsm, FsmRootKind::Top]
+        );
+        assert_eq!(
+            producer.root_kind_decision.automation_confidence,
+            AutomationConfidence::Medium
+        );
+        assert!(
+            producer
+                .root_kind_decision
+                .rationale
+                .contains("does not yet carry explicit regular-state facts")
+        );
         assert!(producer.renderability.is_renderable);
         assert!(producer.renderability.blocking_reasons.is_empty());
         assert!(
@@ -24942,6 +25212,24 @@ mod tests {
             .iter()
             .find(|candidate| candidate.module_name == "producer_core")
             .expect("producer module candidate should remain visible");
+        assert_eq!(
+            producer.root_kind_decision.selected_root_kind,
+            FsmRootKind::Dt
+        );
+        assert_eq!(
+            producer.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Fsm, FsmRootKind::Top]
+        );
+        assert_eq!(
+            producer.root_kind_decision.automation_confidence,
+            AutomationConfidence::Medium
+        );
+        assert!(
+            producer
+                .root_kind_decision
+                .rationale
+                .contains("does not yet carry explicit regular-state facts")
+        );
         let side_data = producer
             .signal_inventory
             .iter()
@@ -25209,6 +25497,24 @@ mod tests {
             .iter()
             .find(|candidate| candidate.module_name == "consumer_core")
             .expect("consumer module candidate should remain visible");
+        assert_eq!(
+            consumer.root_kind_decision.selected_root_kind,
+            FsmRootKind::Dt
+        );
+        assert_eq!(
+            consumer.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Fsm, FsmRootKind::Top]
+        );
+        assert_eq!(
+            consumer.root_kind_decision.automation_confidence,
+            AutomationConfidence::Medium
+        );
+        assert!(
+            consumer
+                .root_kind_decision
+                .rationale
+                .contains("does not yet carry explicit regular-state facts")
+        );
         let result_data = consumer
             .signal_inventory
             .iter()
