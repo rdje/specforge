@@ -24,11 +24,12 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `71c8ede5`
-- latest_commit_brief_message: `Add renderable document top root and module identity regression`
-- note: PNT slice 29 is committed locally; push remains deferred because the branch is below the around-`30` local-commit checkpoint threshold
+- latest_commit_hash: `5d54aa13`
+- latest_commit_brief_message: `Add composition module document-root identity regression`
+- note: PNT slice 30 is committed locally; branch is at the around-`30` local-commit push checkpoint threshold
 
 ## Recent commit chain (last 6)
+- `5d54aa13` Add composition module document-root identity regression
 - `71c8ede5` Add renderable document top root and module identity regression
 - `0612eac0` Add remaining producer module candidate diagnostics regression
 - `07e03eb6` Add top composition recovery aggregate diagnostics regression
