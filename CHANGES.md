@@ -1,5 +1,13 @@
 # CHANGES
 
+## 2026-05-11 (`.fsm` child-declaration root-kind confidence cleanliness)
+
+### Improved: child-declaration root-kind confidence test covers full cleanliness diagnostics
+- Extended `top_root_kind_confidence_follows_child_declaration_evidence` so top candidates and aggregate `.fsm` surfaces prove empty blocker/enrichment diagnostics.
+- Added candidate/source-document top-root equality and aggregate no-direct-module assertions alongside the existing root-kind classification and confidence checks.
+- This is regression-only hardening for the existing `.fsm` adapter behavior; no production lowering behavior intentionally changed.
+- The Rust test listing remains `666` tests after tightening the existing regression.
+
 ## 2026-05-11 (`.fsm` top-before-child top cleanliness)
 
 ### Improved: top-before-child source documents now prove clean topology and aggregate no-direct-module

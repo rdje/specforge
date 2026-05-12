@@ -17536,7 +17536,22 @@ mod tests {
         );
         assert_eq!(recovered_child.resolved_root_kind, Some(FsmRootKind::Dt));
         assert!(top_candidate.renderability.is_renderable);
+        assert!(top_candidate.renderability.blocking_reasons.is_empty());
+        assert!(
+            top_candidate
+                .renderability
+                .required_canonical_enrichments
+                .is_empty()
+        );
+        let renderable_top = fsm
+            .renderable_document
+            .as_ref()
+            .and_then(|doc| doc.top_root.as_ref());
+        assert_eq!(top_candidate.renderable_top.as_ref(), renderable_top);
         assert!(fsm.renderability.is_renderable);
+        assert!(fsm.renderability.blocking_reasons.is_empty());
+        assert!(fsm.renderability.required_canonical_enrichments.is_empty());
+        assert!(fsm.renderable_module.is_none());
         assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Top);
         assert_eq!(
             fsm.root_kind_decision.automation_confidence,
