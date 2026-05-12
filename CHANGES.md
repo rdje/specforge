@@ -1,5 +1,13 @@
 # CHANGES
 
+## 2026-05-12 (`.fsm` renderability status companion checks)
+
+### Improved: four standalone DT blocked tests now prove fsm.renderability status
+- Added `assert!(!fsm.renderability.is_renderable)`, `assert!(fsm.renderable_module.is_none())`, and `assert!(fsm.renderable_document.is_none())` to four standalone DT tests that checked `fsm.renderability.blocking_reasons` but skipped the companion status assertions.
+- These tests now prove the full renderability contract: blocked status, stale-output prevention, and blocking reason content.
+- This is regression-only hardening for the existing `.fsm` adapter behavior; no production lowering behavior intentionally changed.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
+
 ## 2026-05-12 (`.fsm` sequential DT + structured FSM enrichment diagnostics)
 
 ### Improved: five sequential-DT and structured-FSM tests now prove fsm.renderability required canonical enrichments

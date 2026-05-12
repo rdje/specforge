@@ -6,6 +6,10 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-12 `.fsm` renderability status companion checks
+- Continued the PNT cycle adding `fsm.renderability.is_renderable`, `fsm.renderable_module.is_none()`, and `fsm.renderable_document.is_none()` to four standalone DT blocked tests that only checked `blocking_reasons`.
+- These tests now prove the full renderability contract: status, stale output prevention, and reason content.
+
 ## 2026-05-12 `.fsm` sequential DT + structured FSM enrichment diagnostics
 - Continued the PNT cycle adding `fsm.renderability.required_canonical_enrichments` to three sequential DT system-contract tests and two structured FSM tests.
 - System-contract enrichments differ from standalone-module enrichments: `system-signal` replaces `signal` and `system contracts` replaces `.fsm` in the enrichment string.

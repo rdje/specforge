@@ -3,6 +3,11 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-12 `.fsm` renderability status companion checks)
+- Added `fsm.renderability.is_renderable`, `fsm.renderable_module.is_none()`, and `fsm.renderable_document.is_none()` companion assertions to four standalone DT blocked tests in `crates/specforge/src/ir/adapters.rs`.
+- Tests that were checking `blocking_reasons` in isolation now prove the full renderability contract.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
+
 ## Session update (2026-05-12 `.fsm` sequential DT + structured FSM enrichment diagnostics)
 - Added `fsm.renderability.required_canonical_enrichments` companion assertions to three sequential DT system-contract blocked tests and two structured FSM tests in `crates/specforge/src/ir/adapters.rs`.
 - System-contract variant enrichments use distinct strings (`system-signal`/`system contracts`) from standalone-module flavors.

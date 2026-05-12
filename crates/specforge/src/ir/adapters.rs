@@ -11878,6 +11878,9 @@ mod tests {
             unused_output.automation_confidence,
             AutomationConfidence::High
         );
+        assert!(!fsm.renderability.is_renderable);
+        assert!(fsm.renderable_module.is_none());
+        assert!(fsm.renderable_document.is_none());
         assert!(
             fsm.renderability
                 .blocking_reasons
@@ -12233,6 +12236,9 @@ mod tests {
             );
             assert_eq!(signal.automation_confidence, AutomationConfidence::High);
         }
+        assert!(!fsm.renderability.is_renderable);
+        assert!(fsm.renderable_module.is_none());
+        assert!(fsm.renderable_document.is_none());
         assert!(
             fsm.renderability
                 .blocking_reasons
@@ -12314,6 +12320,9 @@ mod tests {
                 .any(|id| id == "graph_controller_DATA_OUT_input")
         );
         assert_eq!(data_out.automation_confidence, AutomationConfidence::High);
+        assert!(!fsm.renderability.is_renderable);
+        assert!(fsm.renderable_module.is_none());
+        assert!(fsm.renderable_document.is_none());
         assert!(
             fsm.renderability
                 .blocking_reasons
@@ -12631,6 +12640,9 @@ mod tests {
                 .any(|id| id == "graph_controller_DATA_OUT_width8")
         );
         assert_eq!(data_out.automation_confidence, AutomationConfidence::High);
+        assert!(!fsm.renderability.is_renderable);
+        assert!(fsm.renderable_module.is_none());
+        assert!(fsm.renderable_document.is_none());
         assert!(
             fsm.renderability
                 .blocking_reasons
