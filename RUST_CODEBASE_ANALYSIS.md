@@ -3,6 +3,12 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-11 `.fsm` mixed-child top cleanliness)
+- Extended `renderable_top_document_preserves_mixed_child_root_order_and_kind` in `crates/specforge/src/ir/adapters.rs`.
+- This is a regression-only `R6`/`R15` hardening slice: mixed-child (DT + FSM) top candidates and aggregate `.fsm` surfaces now prove empty blocker/enrichment diagnostics, candidate/source-document top-root equality, and aggregate no-direct-module state while preserving correct child order and root kind for each direct root.
+- Production adapter behavior did not change; the existing mixed-child top regression now covers clean topology and aggregate no-direct-module coverage in addition to mixed-kind ordering and identity.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
+
 ## Session update (2026-05-11 `.fsm` reused FSM-child top cleanliness)
 - Extended `renderable_top_document_deduplicates_reused_fsm_child_roots` in `crates/specforge/src/ir/adapters.rs`.
 - This is a regression-only `R6`/`R15` hardening slice: reused-FSM-child top candidates and aggregate `.fsm` surfaces now prove empty blocker/enrichment diagnostics, candidate/source-document top-root equality, and aggregate no-direct-module state while preserving the single deduplicated FSM direct root.

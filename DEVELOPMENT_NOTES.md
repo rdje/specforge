@@ -6,6 +6,11 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-11 `.fsm` mixed-child top cleanliness
+- Continued the PNT cycle with an `R6`/`R15` graph-first `.fsm` mixed-child top-composition hardening slice.
+- Mixed-child (DT + FSM) top regression now matches coverage pattern of single-kind sibling tests: top-candidate cleanliness, source-document top-root equality, aggregate no-direct-module state.
+- The 8 new assertions mirror the pattern established in `renderable_top_document_preserves_fsm_child_root_kind` and `renderable_top_document_deduplicates_reused_fsm_child_roots`.
+
 ## 2026-05-11 `.fsm` reused FSM-child top cleanliness
 - Continued the user-requested PNT cycle with another `R6`/`R15` graph-first `.fsm` top-composition hardening slice.
 - Extended `renderable_top_document_deduplicates_reused_fsm_child_roots` in `crates/specforge/src/ir/adapters.rs` so reused-FSM-child top candidates and aggregate `.fsm` surfaces prove empty blocker/enrichment diagnostics.

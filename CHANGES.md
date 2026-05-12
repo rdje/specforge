@@ -1,5 +1,13 @@
 # CHANGES
 
+## 2026-05-11 (`.fsm` mixed-child top cleanliness)
+
+### Improved: mixed-child (DT+FSM) top compositions stay clean while preserving order and kind
+- Extended `renderable_top_document_preserves_mixed_child_root_order_and_kind` so mixed-child top candidates and aggregate `.fsm` surfaces prove empty blocker/enrichment diagnostics.
+- Added candidate/source-document top-root equality and aggregate no-direct-module assertions while preserving correct child root order and root kind for each direct root.
+- This is regression-only hardening for the existing `.fsm` adapter behavior; no production lowering behavior intentionally changed.
+- The Rust test listing remains `666` tests after tightening the existing regression.
+
 ## 2026-05-11 (`.fsm` reused FSM-child top cleanliness)
 
 ### Improved: reused FSM-child top compositions stay clean while deduplicating roots

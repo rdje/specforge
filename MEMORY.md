@@ -39,7 +39,7 @@
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state: locally ahead of `origin/main` by twenty-five committed active-batch/PNT slices before this PNT slice; push remains deferred because the around-`30` local-commit checkpoint has not been reached
+- branch state: locally ahead of `origin/main` by twenty-six committed active-batch/PNT slices before this PNT slice; push remains deferred because the around-`30` local-commit checkpoint has not been reached
 - files in flight for the current PNT slice:
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
@@ -62,19 +62,19 @@
 ## Current batch status
 - objective:
   - active user-authorized run uses PNT with undefined BWFSC
-  - current PNT slice extends the reused-FSM-child top composition regression with empty blocker/enrichment diagnostics, candidate/source-document top-root equality, and aggregate no-direct-module coverage while preserving the single deduplicated FSM direct root
-  - completed_count after this PNT commit: `18`
+  - current PNT slice extends the mixed-child top composition regression with empty blocker/enrichment diagnostics, candidate/source-document top-root equality, and aggregate no-direct-module coverage while preserving mixed DT/FSM child root order and kind
+  - completed_count after this PNT commit: `19`
   - push remains deferred until the branch reaches around `30` local commits since the last push or the user explicitly changes the policy
   - `R6` remains the active `.fsm` adapter hardening lane; SystemVerilog, Verilog, and VHDL adapter expansion remains not started
 - tracker effect:
-  - live-status tracker now marks reused-FSM-child top cleanliness coverage as `Done`
-  - live docs now record the active PNT cycle as an `R6`/`R15` regression-only reused-FSM-child top cleanliness hardening run
-  - `RUST_CODEBASE_ANALYSIS.md` now records the reused-FSM-child top cleanliness regression while keeping the refreshed test count at `666` listed Rust tests
+  - live-status tracker now marks mixed-child top cleanliness coverage as `Done`
+  - live docs now record the active PNT cycle as an `R6`/`R15` regression-only mixed-child top cleanliness hardening run
+  - `RUST_CODEBASE_ANALYSIS.md` now records the mixed-child top cleanliness regression while keeping the refreshed test count at `666` listed Rust tests
 - verification status:
-  - focused test `cargo test --manifest-path Cargo.toml -p specforge renderable_top_document_deduplicates_reused_fsm_child_roots` passed
-  - adapter suite `cargo test --manifest-path Cargo.toml -p specforge adapters` passed with `143/143` adapter-filtered tests
+  - focused test `cargo test --manifest-path Cargo.toml -p specforge --lib -- renderable_top_document_preserves_mixed_child_root_order_and_kind` passed
+  - adapter suite `cargo test --manifest-path Cargo.toml -p specforge --lib -- ir::adapters` passed with `143/143` adapter-filtered tests
   - `cargo fmt --all --check` passed
-  - `cargo test --manifest-path Cargo.toml -p specforge -- --list` listed `666` Rust tests
+  - `cargo test --manifest-path Cargo.toml -p specforge --lib -- --list` listed `666` Rust tests
   - `git diff --check` passed
   - `bash scripts/run_docs_ci.sh` passed
   - tracked markdown/mdBook absolute-path scan passed across `217` tracked markdown/mdBook files
