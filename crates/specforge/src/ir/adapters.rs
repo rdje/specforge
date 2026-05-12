@@ -22183,6 +22183,9 @@ mod tests {
                 .any(|enrichment| enrichment
                     == "resolve conflicting canonical signal width evidence before lowering `.fsm`")
         );
+        assert!(!top_candidate.renderability.is_renderable);
+        assert!(!top_candidate.renderability.blocking_reasons.is_empty());
+        assert!(top_candidate.renderable_top.is_none());
         let composition_residual = adapter
             .residual_decisions
             .iter()
@@ -23141,6 +23144,9 @@ mod tests {
             topology_link.automation_confidence,
             AutomationConfidence::High
         );
+        assert!(!top_candidate.renderability.is_renderable);
+        assert!(!top_candidate.renderability.blocking_reasons.is_empty());
+        assert!(top_candidate.renderable_top.is_none());
         let composition_residual = adapter
             .residual_decisions
             .iter()
@@ -23426,6 +23432,9 @@ mod tests {
                     .any(|id| super::explicit_top_link_supporting_ids(link).contains(id))
             }));
         }
+        assert!(!top_candidate.renderability.is_renderable);
+        assert!(!top_candidate.renderability.blocking_reasons.is_empty());
+        assert!(top_candidate.renderable_top.is_none());
         assert!(!fsm.renderability.is_renderable);
         assert!(fsm.renderable_document.is_none());
         assert!(
@@ -23708,6 +23717,9 @@ mod tests {
             );
         }
         assert_eq!(link.automation_confidence, AutomationConfidence::High);
+        assert!(!top_candidate.renderability.is_renderable);
+        assert!(!top_candidate.renderability.blocking_reasons.is_empty());
+        assert!(top_candidate.renderable_top.is_none());
         assert!(!fsm.renderability.is_renderable);
         assert!(fsm.renderable_document.is_none());
         assert!(

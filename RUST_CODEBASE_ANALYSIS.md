@@ -3,6 +3,12 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-12 `.fsm` blocked-test top-candidate renderability)
+- Added `top_candidate.renderability` diagnostics to four blocked conflict tests in `crates/specforge/src/ir/adapters.rs`.
+- These were the last tests that accessed `top_candidate` without any top-candidate-level renderability diagnostic assertion.
+- All blocked top composition tests now prove `!is_renderable` + `!blocking_reasons.is_empty()` + `renderable_top.is_none()` on their top candidate.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
+
 ## Session update (2026-05-12 `.fsm` direct_roots root_kind assertions)
 - Added `root_kind` assertions to `direct_roots` entries in two renderable_top_document tests in `crates/specforge/src/ir/adapters.rs`.
 - `renderable_top_document_emits_top_before_child_direct_roots`: both direct roots (producer_core, consumer_core) are `FsmRootKind::Dt`.

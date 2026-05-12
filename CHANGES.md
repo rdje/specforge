@@ -1,5 +1,14 @@
 # CHANGES
 
+## 2026-05-12 (`.fsm` blocked-test top-candidate renderability)
+
+### Improved: four blocked conflict tests now prove top-candidate renderability
+- Added `!top_candidate.renderability.is_renderable`, `!blocking_reasons.is_empty()`, and `renderable_top.is_none()` to `top_composition_blocks_conflicting_sibling_child_link_widths`, `_conflicting_child_topology_widths`, `_conflicting_child_link_topology_directions`, and `_conflicting_actor_port_directions`.
+- These four blocked tests already had `fsm.renderability` checks and specific blocking reason assertions, but were the last tests accessing `top_candidate` without any top-candidate-level renderability diagnostic.
+- Every blocked top composition test that accesses `top_candidate` now proves at least the baseline `!is_renderable` + `!blocking_reasons.is_empty()` + `renderable_top.is_none()` triplet.
+- This is regression-only hardening for the existing `.fsm` adapter behavior; no production lowering behavior intentionally changed.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
+
 ## 2026-05-12 (`.fsm` direct_roots root_kind assertions)
 
 ### Improved: two renderable top-document tests now prove direct-root root_kind

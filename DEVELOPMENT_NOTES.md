@@ -6,6 +6,12 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-12 `.fsm` blocked-test top-candidate renderability
+- Continued the PNT cycle adding `top_candidate.renderability` diagnostics to the last four blocked tests that accessed `top_candidate` without any top-candidate-level renderability check.
+- All four test conflicting evidence (sibling child-link widths, child topology widths, child link topology directions, conflicting actor-port directions) where the fsm is blocked.
+- Each test now asserts `!top_candidate.renderability.is_renderable`, `!blocking_reasons.is_empty()`, and `renderable_top.is_none()`.
+- Every blocked top composition test accessing `top_candidate` now proves at least the baseline blocked renderability triplet.
+
 ## 2026-05-12 `.fsm` direct_roots root_kind assertions
 - Continued the PNT cycle adding `root_kind` assertions on `direct_roots` entries in two renderable_top_document tests.
 - `renderable_top_document_emits_top_before_child_direct_roots` now proves both producer_core and consumer_core direct roots carry `FsmRootKind::Dt`.
