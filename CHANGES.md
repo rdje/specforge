@@ -14100,6 +14100,16 @@
 - `cargo run --manifest-path Cargo.toml -p specforge -- kg-bench` -> passed with `128` fixtures and `0` failures
 - `git diff --check` -> passed
 
+## 2026-05-13 (`.fsm` standalone DT root_kind_decision batch 1)
+
+### Changed: root_kind_decision added to 5 more standalone DT tests
+- Added DT-root assertions to `standalone_dt_recovers_directions_from_unambiguous_actor_ports`, `standalone_dt_ignores_unrelated_actor_ports_for_graph_context`, `standalone_dt_selects_output_actor_when_external_actors_share_signals`, `standalone_dt_blocks_graph_backed_undriven_output_inventory`, and `standalone_dt_derives_target_inputs_from_control_reads_after_output_actor_selection`.
+- DT pattern: Dt/[Fsm, Top]/Medium/"does not yet carry explicit regular-state facts".
+- 8 standalone DT tests now complete; ~8 standalone DT tests remain (from original 13).
+
+### Validation
+- `cargo test -p specforge` -> passed with `666/666`
+
 ## 2026-05-13 (`.fsm` explicit module root_kind_decision complete)
 
 ### Changed: root_kind_decision now asserted on all 6 explicit module tests

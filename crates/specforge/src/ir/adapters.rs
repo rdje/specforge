@@ -11520,6 +11520,21 @@ mod tests {
             .expect("graph-backed standalone adapter should emit target text");
         let emitted_text = fs::read_to_string(emitted_target_path)?;
         let fsm = adapter.fsm.expect("fsm artifact should be present");
+
+        assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Dt);
+        assert_eq!(
+            fsm.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Fsm, FsmRootKind::Top]
+        );
+        assert_eq!(
+            fsm.root_kind_decision.automation_confidence,
+            AutomationConfidence::Medium
+        );
+        assert!(
+            fsm.root_kind_decision
+                .rationale
+                .contains("does not yet carry explicit regular-state facts")
+        );
         assert!(fsm.renderability.is_renderable);
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
@@ -11632,6 +11647,21 @@ mod tests {
 
         assert_eq!(adapter.lowering_status.as_str(), "renderable");
         let fsm = adapter.fsm.expect("fsm artifact should be present");
+
+        assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Dt);
+        assert_eq!(
+            fsm.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Fsm, FsmRootKind::Top]
+        );
+        assert_eq!(
+            fsm.root_kind_decision.automation_confidence,
+            AutomationConfidence::Medium
+        );
+        assert!(
+            fsm.root_kind_decision
+                .rationale
+                .contains("does not yet carry explicit regular-state facts")
+        );
         assert!(fsm.renderability.is_renderable);
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
@@ -11723,6 +11753,21 @@ mod tests {
             .expect("target-actor-backed standalone adapter should emit target text");
         let emitted_text = fs::read_to_string(emitted_target_path)?;
         let fsm = adapter.fsm.expect("fsm artifact should be present");
+
+        assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Dt);
+        assert_eq!(
+            fsm.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Fsm, FsmRootKind::Top]
+        );
+        assert_eq!(
+            fsm.root_kind_decision.automation_confidence,
+            AutomationConfidence::Medium
+        );
+        assert!(
+            fsm.root_kind_decision
+                .rationale
+                .contains("does not yet carry explicit regular-state facts")
+        );
         let data_out = fsm
             .signal_inventory
             .iter()
@@ -11869,6 +11914,21 @@ mod tests {
                 .contains("render-critical signal roles unresolved")
         );
         let fsm = adapter.fsm.expect("fsm artifact should be present");
+
+        assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Dt);
+        assert_eq!(
+            fsm.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Fsm, FsmRootKind::Top]
+        );
+        assert_eq!(
+            fsm.root_kind_decision.automation_confidence,
+            AutomationConfidence::Medium
+        );
+        assert!(
+            fsm.root_kind_decision
+                .rationale
+                .contains("does not yet carry explicit regular-state facts")
+        );
         let unused_output = fsm
             .signal_inventory
             .iter()
@@ -11947,6 +12007,21 @@ mod tests {
             .expect("control-read-backed standalone adapter should emit target text");
         let emitted_text = fs::read_to_string(emitted_target_path)?;
         let fsm = adapter.fsm.expect("fsm artifact should be present");
+
+        assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Dt);
+        assert_eq!(
+            fsm.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Fsm, FsmRootKind::Top]
+        );
+        assert_eq!(
+            fsm.root_kind_decision.automation_confidence,
+            AutomationConfidence::Medium
+        );
+        assert!(
+            fsm.root_kind_decision
+                .rationale
+                .contains("does not yet carry explicit regular-state facts")
+        );
         let data_in = fsm
             .signal_inventory
             .iter()
