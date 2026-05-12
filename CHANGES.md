@@ -1,5 +1,14 @@
 # CHANGES
 
+## 2026-05-12 (`.fsm` top composition keeps tests — fsm-level blocking_reasons)
+
+### Improved: three keeps top composition tests now prove fsm-level blocking_reasons
+- Added `assert!(!fsm.renderability.blocking_reasons.is_empty())` and `assert!(fsm.renderable_module.is_none())` to the three keeps top composition tests that previously checked blocking only at the `top_candidate.renderability.blocking_reasons` level.
+- Tests: `top_composition_keeps_conflicting_top_port_direction_unresolved`, `top_composition_keeps_duplicate_top_port_direction_conflict_unresolved`, `top_composition_keeps_duplicate_top_port_width_conflict_unresolved`.
+- These tests now prove the fsm-level renderability contract: blocked status, non-empty blocking_reasons, stale-output prevention (module + document), and required canonical enrichments.
+- This is regression-only hardening for the existing `.fsm` adapter behavior; no production lowering behavior intentionally changed.
+- The Rust test listing remains `666` tests, all passing.
+
 ## 2026-05-12 (`.fsm` remaining blocking-reason enrichment diagnostics — zero gaps)
 
 ### Improved: seven remaining FSM blocked tests now prove fsm.renderability required canonical enrichments

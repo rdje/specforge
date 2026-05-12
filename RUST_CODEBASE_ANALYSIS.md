@@ -3,6 +3,12 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-12 `.fsm` top composition keeps fsm-level blocking_reasons)
+- Added fsm-level `blocking_reasons.is_empty()` and `renderable_module.is_none()` assertions to the three keeps top composition tests in `crates/specforge/src/ir/adapters.rs`.
+- These tests previously checked blocking only at the `top_candidate` level; they now prove the aggregate fsm-level contract.
+- 21 of 24 top composition tests still need fsm-level blocking_reasons checks; the 3 keeps tests are now complete.
+- The Rust test listing remains `666` tests, all passing.
+
 ## Session update (2026-05-12 `.fsm` remaining enrichment diagnostics closed — zero gaps)
 - Added `fsm.renderability.required_canonical_enrichments` assertions to the final 7 tests with `blocking_reasons` but no enrichment checks, closing all remaining diagnostic gaps.
 - Tests span four categories: standalone DT (4 tests), sequential DT (1), structured FSM (2), and top composition (1).
