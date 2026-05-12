@@ -1,5 +1,13 @@
 # CHANGES
 
+## 2026-05-13 (`.fsm` renderable-document presence — all 12 renderable tests complete)
+
+### Improved: five remaining standalone recovery tests now prove renderable_document presence
+- Added `assert!(fsm.renderable_document.is_some())` to all 5 remaining standalone recovery tests that had `renderable_module` assertions but no `renderable_document` check.
+- Tests: `standalone_dt_ignores_unrelated_actor_ports_for_graph_context`, `standalone_dt_selects_output_actor_when_external_actors_share_signals`, `standalone_dt_derives_target_inputs_from_control_reads_after_output_actor_selection`, `standalone_sequential_dt_recovers_system_directions_from_actor_ports`, `standalone_dt_keeps_explicit_numeric_width_over_actor_parametric_width`.
+- All 12 renderable tests (6 builds_renderable + 5 standalone recovery + 1 explicit module with helper coverage) now prove `renderable_document` presence — zero gaps.
+- The Rust test listing remains `666` tests, all passing.
+
 ## 2026-05-13 (`.fsm` renderable-document presence — all builds_renderable DT tests complete)
 
 ### Improved: remaining three builds_renderable DT tests now prove renderable output artifact presence

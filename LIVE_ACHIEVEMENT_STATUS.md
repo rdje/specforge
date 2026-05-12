@@ -59,6 +59,7 @@
 - `.fsm` decision tree candidate automation_confidence coverage now at 100% — zero gaps: Done
 - `.fsm` renderable-document presence now asserted on builds_renderable DT tests (3 of ~11 remaining): In Progress
 - `.fsm` renderable-document presence now asserted on all 6 builds_renderable DT tests — zero gaps in that category: Done
+- `.fsm` renderable-document presence now asserted on all standalone recovery tests — zero gaps across all 12 renderable tests: Done
 - `.fsm` standalone explicit-module transition candidate provenance now preserves canonical support IDs, guards, declaration order, and confidence: Done
 - `.fsm` standalone explicit-module selected module state graph projection now preserves source explicit-module state and transition provenance: Done
 - `.fsm` standalone explicit-module source-document direct-root state graph projection now preserves transition support IDs, guards, declaration order, and confidence: Done

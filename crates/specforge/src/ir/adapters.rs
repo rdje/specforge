@@ -11636,6 +11636,7 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert!(fsm.renderable_module.is_some());
+        assert!(fsm.renderable_document.is_some());
         let data_out = fsm
             .signal_inventory
             .iter()
@@ -11787,6 +11788,7 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert!(fsm.renderable_module.is_some());
+        assert!(fsm.renderable_document.is_some());
         assert!(emitted_text.contains("(DATA_OUT = DATA_IN)"));
         assert!(emitted_text.contains("(ZERO_FLAG = 1)"));
         assert!(
@@ -11979,6 +11981,7 @@ mod tests {
         assert!(fsm.renderability.is_renderable);
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
+        assert!(fsm.renderable_document.is_some());
         let renderable_module = fsm
             .renderable_module
             .as_ref()
@@ -13170,6 +13173,7 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert!(fsm.renderable_module.is_some());
+        assert!(fsm.renderable_document.is_some());
         assert!(emitted_text.contains("(+system"));
         assert!(emitted_text.contains("(clock clk)"));
         assert!(emitted_text.contains("(asreset rst_n)"));
@@ -14345,6 +14349,7 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert!(fsm.renderable_module.is_some());
+        assert!(fsm.renderable_document.is_some());
         let data_in = fsm
             .signal_inventory
             .iter()
