@@ -1,5 +1,13 @@
 # CHANGES
 
+## 2026-05-13 (`.fsm` renderable_module.is_none() guards — all blocked tests complete)
+
+### Improved: two remaining top composition blocked tests now prove full stale-output prevention
+- Added `assert!(!fsm.renderability.blocking_reasons.is_empty())` and `assert!(fsm.renderable_module.is_none())` to: `top_composition_keeps_duplicate_top_port_width_conflict_unresolved`, `keeps_top_composition_blocked_when_child_module_is_missing`.
+- These were the last two tests with `!fsm.renderability.is_renderable` that didn't check `renderable_module.is_none()`.
+- All blocked tests now prove the complete stale-output prevention contract: blocked status, non-empty blocking_reasons, no renderable module, and no renderable document.
+- The Rust test listing remains `666` tests, all passing.
+
 ## 2026-05-13 (`.fsm` renderable-document presence — all 12 renderable tests complete)
 
 ### Improved: five remaining standalone recovery tests now prove renderable_document presence

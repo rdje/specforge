@@ -3,6 +3,11 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-13 `.fsm` renderable_module.is_none() — all blocked tests complete)
+- Added missing `renderable_module.is_none()` and `!blocking_reasons.is_empty()` guards to the last 2 blocked tests lacking them.
+- All blocked tests now prove the complete stale-output prevention contract.
+- The Rust test listing remains `666` tests, all passing.
+
 ## Session update (2026-05-13 `.fsm` renderable-document presence — all 12 tests complete)
 - Added `assert!(fsm.renderable_document.is_some())` to the final 5 standalone recovery tests, closing the renderable-document presence gap.
 - All 12 renderable tests now prove both `renderable_module` and `renderable_document` existence (or use helper functions that cover both).
