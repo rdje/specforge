@@ -17028,6 +17028,10 @@ mod tests {
             .expect("top-actor-backed top should emit target text");
         let emitted_text = fs::read_to_string(emitted_target_path)?;
         let fsm = adapter.fsm.expect("fsm artifact should be present");
+        assert!(fsm.renderability.is_renderable);
+        assert!(fsm.renderability.blocking_reasons.is_empty());
+        assert!(fsm.renderability.required_canonical_enrichments.is_empty());
+        assert!(fsm.renderable_module.is_none());
         let top_candidate = fsm
             .top_candidates
             .iter()
@@ -17210,6 +17214,10 @@ mod tests {
             .expect("top-actor-width-backed top should emit target text");
         let emitted_text = fs::read_to_string(emitted_target_path)?;
         let fsm = adapter.fsm.expect("fsm artifact should be present");
+        assert!(fsm.renderability.is_renderable);
+        assert!(fsm.renderability.blocking_reasons.is_empty());
+        assert!(fsm.renderability.required_canonical_enrichments.is_empty());
+        assert!(fsm.renderable_module.is_none());
         let top_candidate = fsm
             .top_candidates
             .iter()
@@ -17819,6 +17827,9 @@ mod tests {
                 .any(|id| renderable_link.supporting_statement_ids.contains(id))
         );
         assert!(fsm.renderability.is_renderable);
+        assert!(fsm.renderability.blocking_reasons.is_empty());
+        assert!(fsm.renderability.required_canonical_enrichments.is_empty());
+        assert!(fsm.renderable_module.is_none());
         assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Top);
         assert_eq!(
             fsm.root_kind_decision.automation_confidence,
@@ -18022,6 +18033,18 @@ mod tests {
             .expect("renderable source document should contain child module root");
 
         assert!(top_candidate.renderability.is_renderable);
+        assert!(top_candidate.renderability.blocking_reasons.is_empty());
+        assert!(
+            top_candidate
+                .renderability
+                .required_canonical_enrichments
+                .is_empty()
+        );
+        let renderable_top = fsm
+            .renderable_document
+            .as_ref()
+            .and_then(|doc| doc.top_root.as_ref());
+        assert_eq!(top_candidate.renderable_top.as_ref(), renderable_top);
         assert_eq!(recovered_child.source_module_name, "controller_core");
         assert_eq!(recovered_child.resolved_root_kind, Some(FsmRootKind::Dt));
         assert!(
@@ -20505,6 +20528,9 @@ mod tests {
             );
         }
         assert!(fsm.renderability.is_renderable);
+        assert!(fsm.renderability.blocking_reasons.is_empty());
+        assert!(fsm.renderability.required_canonical_enrichments.is_empty());
+        assert!(fsm.renderable_module.is_none());
         for (module, signal_name, direction_hint) in [
             (producer, "output_data", InterfaceSignalDirection::Output),
             (consumer, "input_data", InterfaceSignalDirection::Input),
@@ -20725,8 +20751,25 @@ mod tests {
                 .any(|id| result_data.supporting_canonical_ids.contains(id))
         );
         assert!(producer.renderability.is_renderable);
+        assert!(producer.renderability.blocking_reasons.is_empty());
+        assert!(
+            producer
+                .renderability
+                .required_canonical_enrichments
+                .is_empty()
+        );
         assert!(consumer.renderability.is_renderable);
+        assert!(consumer.renderability.blocking_reasons.is_empty());
+        assert!(
+            consumer
+                .renderability
+                .required_canonical_enrichments
+                .is_empty()
+        );
         assert!(fsm.renderability.is_renderable);
+        assert!(fsm.renderability.blocking_reasons.is_empty());
+        assert!(fsm.renderability.required_canonical_enrichments.is_empty());
+        assert!(fsm.renderable_module.is_none());
         for (module, signal_name, direction_hint) in [
             (producer, "output_data", InterfaceSignalDirection::Output),
             (consumer, "input_data", InterfaceSignalDirection::Input),
@@ -20862,7 +20905,17 @@ mod tests {
             AutomationConfidence::High
         );
         assert!(producer.renderability.is_renderable);
+        assert!(producer.renderability.blocking_reasons.is_empty());
+        assert!(
+            producer
+                .renderability
+                .required_canonical_enrichments
+                .is_empty()
+        );
         assert!(fsm.renderability.is_renderable);
+        assert!(fsm.renderability.blocking_reasons.is_empty());
+        assert!(fsm.renderability.required_canonical_enrichments.is_empty());
+        assert!(fsm.renderable_module.is_none());
         let renderable_module = producer
             .renderable_module
             .as_ref()
@@ -20990,7 +21043,17 @@ mod tests {
         );
         assert_eq!(input_data.automation_confidence, AutomationConfidence::High);
         assert!(consumer.renderability.is_renderable);
+        assert!(consumer.renderability.blocking_reasons.is_empty());
+        assert!(
+            consumer
+                .renderability
+                .required_canonical_enrichments
+                .is_empty()
+        );
         assert!(fsm.renderability.is_renderable);
+        assert!(fsm.renderability.blocking_reasons.is_empty());
+        assert!(fsm.renderability.required_canonical_enrichments.is_empty());
+        assert!(fsm.renderable_module.is_none());
         let renderable_module = consumer
             .renderable_module
             .as_ref()
@@ -21122,7 +21185,17 @@ mod tests {
             AutomationConfidence::High
         );
         assert!(producer.renderability.is_renderable);
+        assert!(producer.renderability.blocking_reasons.is_empty());
+        assert!(
+            producer
+                .renderability
+                .required_canonical_enrichments
+                .is_empty()
+        );
         assert!(fsm.renderability.is_renderable);
+        assert!(fsm.renderability.blocking_reasons.is_empty());
+        assert!(fsm.renderability.required_canonical_enrichments.is_empty());
+        assert!(fsm.renderable_module.is_none());
         let renderable_module = producer
             .renderable_module
             .as_ref()
@@ -21305,8 +21378,25 @@ mod tests {
         );
         assert_eq!(input_data.automation_confidence, AutomationConfidence::High);
         assert!(producer.renderability.is_renderable);
+        assert!(producer.renderability.blocking_reasons.is_empty());
+        assert!(
+            producer
+                .renderability
+                .required_canonical_enrichments
+                .is_empty()
+        );
         assert!(consumer.renderability.is_renderable);
+        assert!(consumer.renderability.blocking_reasons.is_empty());
+        assert!(
+            consumer
+                .renderability
+                .required_canonical_enrichments
+                .is_empty()
+        );
         assert!(fsm.renderability.is_renderable);
+        assert!(fsm.renderability.blocking_reasons.is_empty());
+        assert!(fsm.renderability.required_canonical_enrichments.is_empty());
+        assert!(fsm.renderable_module.is_none());
         for (module, signal_name, direction_hint) in [
             (producer, "output_data", InterfaceSignalDirection::Output),
             (consumer, "input_data", InterfaceSignalDirection::Input),
@@ -21760,6 +21850,9 @@ mod tests {
             AutomationConfidence::High
         );
         assert!(fsm.renderability.is_renderable);
+        assert!(fsm.renderability.blocking_reasons.is_empty());
+        assert!(fsm.renderability.required_canonical_enrichments.is_empty());
+        assert!(fsm.renderable_module.is_none());
         assert!(emitted_text.contains("result_data>8"));
         assert!(emitted_text.contains("/producer.output_data/result_data/"));
         assert!(
