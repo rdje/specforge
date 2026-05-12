@@ -6,6 +6,12 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-12 `.fsm` Top root-kind decision completeness
+- Continued the PNT cycle with the final `root_kind_decision` completeness slice covering the 5 remaining Top-root tests.
+- Each Top-root test now asserts `root_kind_decision.deferred_root_kinds` (`[Dt, Fsm]`), `root_kind_decision.automation_confidence` (`High`), and `root_kind_decision.rationale` (contains `"carries explicit top ports"`).
+- Top confidence is `High` because Top selection is based on positive evidence (explicit top ports, child module references, wiring links), consistent with FSM's `High` confidence from positive state-fact evidence.
+- With this slice, the `root_kind_decision` completeness audit is closed across all three root kinds (DT, FSM, Top). All 15 Top-root, 7 DT-root, and 6 FSM-root tests now carry full deferred/confidence/rationale assertions.
+
 ## 2026-05-12 `.fsm` FSM root-kind decision confidence and rationale
 - Continued the PNT cycle with an `R6`/`R15` root-kind decision completeness slice covering all 6 FSM-root tests.
 - Each FSM-root test now asserts `root_kind_decision.automation_confidence` (`High` — FSM selection is based on positive evidence of explicit regular-state facts), `root_kind_decision.rationale` (always contains `"carries explicit regular-state facts"`), and `deferred_root_kinds` (`[Top]`).

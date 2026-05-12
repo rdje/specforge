@@ -1,5 +1,14 @@
 # CHANGES
 
+## 2026-05-12 (`.fsm` Top root-kind decision completeness)
+
+### Improved: all fifteen Top-root tests now prove root-kind confidence and rationale
+- Extended the 5 remaining Top-root tests (`top_root_kind_confidence_follows_recovered_top_port_evidence`, `top_root_kind_confidence_follows_child_declaration_evidence`, `top_root_kind_confidence_follows_top_link_evidence`, `top_composition_blocks_link_from_unemitted_child_port`, `top_composition_blocks_child_target_direction_role_guidance`) with `root_kind_decision.deferred_root_kinds`, `root_kind_decision.automation_confidence`, and `root_kind_decision.rationale` assertions.
+- All 15 Top-root tests now assert the complete root-kind decision: `deferred_root_kinds` = `[Dt, Fsm]`, `automation_confidence` = `High`, and `rationale` contains `"carries explicit top ports"`.
+- This closes the Top-root portion of the `root_kind_decision` completeness gap; DT, FSM, and Top root-kind decisions now all carry full deferred/confidence/rationale assertions.
+- This is regression-only hardening for the existing `.fsm` adapter behavior; no production lowering behavior intentionally changed.
+- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
+
 ## 2026-05-12 (`.fsm` FSM root-kind decision confidence and rationale)
 
 ### Improved: all six FSM-root tests now prove root-kind confidence and rationale
