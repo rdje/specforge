@@ -24,9 +24,9 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `00674669`
-- latest_commit_brief_message: `Add renderable_document presence to remaining three builds_renderable DT tests`
-- note: PNT slice 58 committed locally; all 6 builds_renderable DT tests now prove renderable_module + renderable_document; ~5 standalone recovery tests remain; 12 commits ahead since last push
+- latest_commit_hash: `48cbb13e`
+- latest_commit_brief_message: `Add renderable_document presence to five remaining standalone recovery tests`
+- note: PNT slice 59 committed locally; renderable-document presence gap fully closed (12/12 tests); 14 commits ahead since last push
 
 ## Recent commit chain (last 6)
 - `8ecb7a70` Add child candidate diagnostics to two actor-port recovery tests
