@@ -6,6 +6,10 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-12 `.fsm` top composition link_from fsm-level blocking_reasons
+- Continued closing fsm-level blocking_reasons gap: added to 3 link_from tests (unemitted child port, undeclared top source, unemitted child source).
+- 9 of 24 top composition tests now have fsm-level blocking_reasons; 15 remain.
+
 ## 2026-05-12 `.fsm` top composition conflicting-evidence fsm-level blocking_reasons
 - Continued closing the fsm-level blocking_reasons gap in top composition tests, adding `!blocking_reasons.is_empty()` and `renderable_module.is_none()` to 3 tests with conflicting top-port evidence (direction, width, child-link width).
 - 18 of 24 top composition tests now remain without fsm-level blocking_reasons.

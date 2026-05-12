@@ -3,6 +3,11 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-12 `.fsm` top composition link_from fsm-level blocking_reasons)
+- Added fsm-level `blocking_reasons.is_empty()` and `renderable_module.is_none()` to 3 more top composition tests (link_from category).
+- 9 of 24 top composition tests now complete; 15 remain.
+- The Rust test listing remains `666` tests, all passing.
+
 ## Session update (2026-05-12 `.fsm` top composition conflicting-evidence fsm-level blocking_reasons)
 - Added fsm-level `blocking_reasons.is_empty()` and `renderable_module.is_none()` to 3 additional top composition tests (conflicting top-port direction, width, child-link width).
 - 6 of 24 top composition tests now have fsm-level blocking_reasons; 18 remain.
