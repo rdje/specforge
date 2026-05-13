@@ -1,5 +1,12 @@
 # CHANGES
 
+## 2026-05-13 (`.fsm` root_kind_decision for top composition batch 2)
+
+### Improved: five more top composition tests now prove Top-root root_kind_decision
+- Added `selected_root_kind == Top`, `deferred == [Dt, Fsm]`, `High` confidence, and "carries explicit top ports" rationale to: `top_composition_recovers_top_port_direction_from_link_topology`, `top_composition_recovers_top_port_direction_from_actor_ports`, `top_composition_recovers_top_system_port_widths_from_child_system_contract` (renderable), and `top_composition_blocks_widthless_top_port_without_width_recovery`, `top_composition_preserves_recovered_top_port_direction_when_still_blocked` (blocked).
+- Both blocked tests required unique `.expect()` message anchors to differentiate from identically-structured wrapper/datapath tests.
+- 666/666 tests passing.
+
 ## 2026-05-13 (`.fsm` root_kind_decision for sequential DT blocked tests)
 
 ### Improved: three standalone sequential DT blocked tests now prove root_kind_decision

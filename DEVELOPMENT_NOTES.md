@@ -6,6 +6,13 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-13 `.fsm` top composition root_kind_decision batch 2
+
+- Added Top-root root_kind_decision to 5 more top composition tests (3 renderable + 2 blocked).
+- The 2 blocked tests (`top_composition_blocks_widthless_top_port_without_width_recovery`, `top_composition_preserves_recovered_top_port_direction_when_still_blocked`) required unique `.expect()` message anchors — `"widthless top port should stay visible"` and `"recovered top port should stay on the blocked top candidate"` — because the simpler `blocked + fsm + top_name + recovered_port` pattern matched 4 occurrences each for `"wrapper"` and `"datapath"`.
+- Same pattern used: include the fsm extraction line, the unique `.expect()` message on `recovered_port`, and everything in between as the edit anchor.
+- 10 of ~37 top composition tests now covered.
+
 ## 2026-05-12 `.fsm` dt_candidate.automation_confidence — gap closed
 - Added `dt_candidate.automation_confidence` (Medium) to `builds_blocked_dt_centric_fsm_adapter_artifact`, the last remaining test with decision tree candidates but no candidate-level confidence check.
 - DT candidate confidence: for non-explicit (behavior-aggregated) candidates, it's `Medium` when behaviors exist and `Low` when behaviors are empty. The handshake adapter has behaviors → Medium.

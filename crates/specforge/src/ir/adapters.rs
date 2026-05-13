@@ -17630,6 +17630,21 @@ mod tests {
             .expect("topology-recovered top should emit target text");
         let emitted_text = fs::read_to_string(emitted_target_path)?;
         let fsm = adapter.fsm.expect("fsm artifact should be present");
+
+        assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Top);
+        assert_eq!(
+            fsm.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Dt, FsmRootKind::Fsm]
+        );
+        assert_eq!(
+            fsm.root_kind_decision.automation_confidence,
+            AutomationConfidence::High
+        );
+        assert!(
+            fsm.root_kind_decision
+                .rationale
+                .contains("carries explicit top ports")
+        );
         assert!(fsm.renderability.is_renderable);
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
@@ -17841,6 +17856,21 @@ mod tests {
             .expect("top-actor-backed top should emit target text");
         let emitted_text = fs::read_to_string(emitted_target_path)?;
         let fsm = adapter.fsm.expect("fsm artifact should be present");
+
+        assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Top);
+        assert_eq!(
+            fsm.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Dt, FsmRootKind::Fsm]
+        );
+        assert_eq!(
+            fsm.root_kind_decision.automation_confidence,
+            AutomationConfidence::High
+        );
+        assert!(
+            fsm.root_kind_decision
+                .rationale
+                .contains("carries explicit top ports")
+        );
         assert!(fsm.renderability.is_renderable);
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
@@ -18825,6 +18855,21 @@ mod tests {
             .expect("top with distributed system contract should emit target text");
         let emitted_text = fs::read_to_string(emitted_target_path)?;
         let fsm = adapter.fsm.expect("fsm artifact should be present");
+
+        assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Top);
+        assert_eq!(
+            fsm.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Dt, FsmRootKind::Fsm]
+        );
+        assert_eq!(
+            fsm.root_kind_decision.automation_confidence,
+            AutomationConfidence::High
+        );
+        assert!(
+            fsm.root_kind_decision
+                .rationale
+                .contains("carries explicit top ports")
+        );
         assert!(fsm.renderability.is_renderable);
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
@@ -19142,6 +19187,22 @@ mod tests {
         assert_eq!(adapter.lowering_status.as_str(), "blocked");
         assert!(adapter.artifact_layout.emitted_target_path.is_none());
         let fsm = adapter.fsm.expect("fsm artifact should be present");
+
+        assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Top);
+        assert_eq!(
+            fsm.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Dt, FsmRootKind::Fsm]
+        );
+        assert_eq!(
+            fsm.root_kind_decision.automation_confidence,
+            AutomationConfidence::High
+        );
+        assert!(
+            fsm.root_kind_decision
+                .rationale
+                .contains("carries explicit top ports")
+        );
+
         let top_candidate = fsm
             .top_candidates
             .iter()
@@ -19776,6 +19837,22 @@ mod tests {
         assert_eq!(adapter.lowering_status.as_str(), "blocked");
         assert!(adapter.artifact_layout.emitted_target_path.is_none());
         let fsm = adapter.fsm.expect("fsm artifact should be present");
+
+        assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Top);
+        assert_eq!(
+            fsm.root_kind_decision.deferred_root_kinds,
+            vec![FsmRootKind::Dt, FsmRootKind::Fsm]
+        );
+        assert_eq!(
+            fsm.root_kind_decision.automation_confidence,
+            AutomationConfidence::High
+        );
+        assert!(
+            fsm.root_kind_decision
+                .rationale
+                .contains("carries explicit top ports")
+        );
+
         let top_candidate = fsm
             .top_candidates
             .iter()
