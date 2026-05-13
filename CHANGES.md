@@ -1,5 +1,13 @@
 # CHANGES
 
+## 2026-05-13 (`.fsm` root_kind_decision for top composition batch 4)
+
+### Improved: five more top composition tests now prove Top-root root_kind_decision
+- Added root_kind_decision to: `top_composition_blocks_top_target_direction_role_guidance`, `top_composition_keeps_duplicate_top_port_direction_conflict_unresolved`, `top_composition_keeps_duplicate_top_port_width_conflict_unresolved` (blocked), and `top_composition_recovers_child_directions_from_actor_ports`, `top_composition_recovers_child_directions_from_link_topology` (renderable).
+- Differentiated duplicate-port tests using unique follow-on assertions: `direction_hint.is_none()` (direction conflict) vs `direction_hint == Some(Output)` (width conflict).
+- Renderable tests anchored on unique `.expect()` messages on emitted_target_path.
+- 666/666 tests passing.
+
 ## 2026-05-13 (`.fsm` root_kind_decision for top composition batch 3)
 
 ### Improved: five more top composition tests now prove Top-root root_kind_decision

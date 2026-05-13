@@ -6,6 +6,13 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-13 `.fsm` top composition root_kind_decision batch 4
+
+- Added Top-root root_kind_decision to 5 more top composition tests (2 renderable + 3 blocked).
+- The two duplicate-port tests (`keeps_duplicate_top_port_direction_conflict` and `keeps_duplicate_top_port_width_conflict`) share identical structure up through `assert_eq!(duplicate_inventory_entries.len(), 2)`. Differentiated by including the unique follow-on assertion: `.all(|port| port.direction_hint.is_none())` vs `.all(|port| port.direction_hint == Some(Output))`.
+- Two renderable child-direction recovery tests used unique emitted_target_path `.expect()` messages as anchors.
+- 20 of ~37 top composition tests now covered.
+
 ## 2026-05-13 `.fsm` top composition root_kind_decision batch 3
 
 - Added Top-root root_kind_decision to 5 more top composition tests (1 renderable + 4 blocked).
