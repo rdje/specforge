@@ -24,9 +24,9 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `7858d15d`
-- latest_commit_brief_message: `Add root_kind_decision assertions to five renderable top-document tests (batch 1)`
-- note: PNT slice 69 committed locally; top composition root_kind_decision started (5 of ~21); push at next ~30-commit threshold
+- latest_commit_hash: `2bff0991`
+- latest_commit_brief_message: `Slice 75 — renderable_document paired-field coverage complete across all 143 test functions`
+- note: PNT slice 75; renderable_document paired-field closed (22 is_some assertions added); 17 commits ahead of origin; push at ~30-commit threshold
 
 ## Recent commit chain (last 6)
 - `8ecb7a70` Add child candidate diagnostics to two actor-port recovery tests
