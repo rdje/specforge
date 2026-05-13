@@ -6,6 +6,13 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-13 `.fsm` top composition root_kind_decision batch 3
+
+- Added Top-root root_kind_decision to 5 more top composition tests (1 renderable + 4 blocked).
+- Differentiated two tests with identical `"conflicting top port should stay visible"` expect messages by using the follow-on assertion as part of the anchor: `direction_hint, None` for the direction-conflict test vs `direction_hint, Some(Output)` + `width_hint, None` for the width-conflict test.
+- The `keeps_conflicting_top_port_direction_unresolved` test was straightforward with the unique `"conflicting top port should remain visible"` expect message.
+- 15 of ~37 top composition tests now covered.
+
 ## 2026-05-13 `.fsm` top composition root_kind_decision batch 2
 
 - Added Top-root root_kind_decision to 5 more top composition tests (3 renderable + 2 blocked).
