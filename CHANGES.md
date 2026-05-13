@@ -1,5 +1,12 @@
 # CHANGES
 
+## 2026-05-13 (`.fsm` root_kind_decision lane complete)
+
+### Complete: all fsm-adapter test families now prove root_kind_decision — zero gaps
+- 37 of 37 top composition tests now carry root_kind_decision assertions (Top/[Dt,Fsm]/High/"carries explicit top ports").
+- Families closed this session: standalone DT (all), standalone sequential DT (all), structured FSM (all), explicit module (all), DT-centric FSM (all), top composition (all).
+- 666/666 tests passing. root_kind_decision hardening lane complete.
+
 ## 2026-05-13 (`.fsm` root_kind_decision for top composition batch 5)
 
 ### Improved: four more top composition tests now prove Top-root root_kind_decision

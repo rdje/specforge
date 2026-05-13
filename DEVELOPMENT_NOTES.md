@@ -6,6 +6,12 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-13 `.fsm` root_kind_decision lane complete
+
+- All fsm-adapter test families now prove root_kind_decision: standalone DT, standalone sequential DT, structured FSM, explicit module, DT-centric FSM, and top composition (37 tests).
+- The 7 tests showing count>1 for `selected_root_kind` are not duplicates — they also check child candidate root_kind_decision (Dt/Fsm) alongside fsm-level root_kind_decision (Top).
+- 666/666 tests passing. Lane closed.
+
 ## 2026-05-13 `.fsm` top composition root_kind_decision batch 5
 
 - Added Top-root root_kind_decision to 4 more top composition tests (2 renderable + 2 blocked).

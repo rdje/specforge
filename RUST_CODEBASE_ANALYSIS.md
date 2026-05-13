@@ -3,10 +3,10 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
-## Session update (2026-05-13 `.fsm` top composition root_kind_decision batch 5)
-- Added Top-root root_kind_decision to 4 more top composition tests (2 renderable + 2 blocked). 24 of ~37 top composition tests now covered.
-- 666/666 tests passing.
-- All remaining count=0 tests closed. Remaining: ~13 top composition tests (some may have count=2 from earlier checks needing investigation).
+## Session update (2026-05-13 `.fsm` root_kind_decision lane complete)
+- All fsm-adapter root_kind_decision gaps closed. Every test family proves root_kind_decision: standalone DT, standalone sequential DT, structured FSM, explicit module, DT-centric FSM, top composition (37/37).
+- 108 `selected_root_kind` assertions across 89 fsm test functions (some check both fsm-level and child-candidate root_kind_decision).
+- 666/666 tests passing. Lane closed. Next PNT target TBD.
 
 ## Session update (2026-05-13 `.fsm` standalone DT root_kind_decision complete)
 
