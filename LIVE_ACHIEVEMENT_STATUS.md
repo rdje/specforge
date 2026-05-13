@@ -62,7 +62,7 @@
 - `.fsm` renderable-document presence now asserted on all standalone recovery tests — zero gaps across all 12 renderable tests: Done
 - `.fsm` renderable_module.is_none() guards now on all blocked tests with fsm.renderability checks — zero gaps: Done
 - `.fsm` root_kind_decision now checked on all standalone DT tests — zero gaps: Done
-- `.fsm` root_kind_decision checks now on top composition tests (20 of ~37 total — batch 4 complete): In Progress
+- `.fsm` root_kind_decision checks now on top composition tests (24 of ~37 total — batch 5 complete): In Progress
 - `.fsm` root_kind_decision confidence + rationale now on the same 3 standalone DT blocked tests: Done
 - `.fsm` root_kind_decision checks now on 3 standalone sequential DT blocked tests: Done
 - `.fsm` root_kind_decision now checked on all 8 standalone sequential DT tests — zero gaps: Done

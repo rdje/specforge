@@ -1,5 +1,12 @@
 # CHANGES
 
+## 2026-05-13 (`.fsm` root_kind_decision for top composition batch 5)
+
+### Improved: four more top composition tests now prove Top-root root_kind_decision
+- Added root_kind_decision to: `top_composition_recovers_child_width_through_transitive_topology`, `top_composition_recovers_top_port_width_from_child_link_topology` (renderable), and `top_composition_blocks_conflicting_top_port_widths_from_child_links`, `top_composition_blocks_duplicate_child_instance_guidance` (blocked).
+- The duplicate-child-instance test used the unique `duplicate_children` variable as the edit anchor.
+- 666/666 tests passing.
+
 ## 2026-05-13 (`.fsm` root_kind_decision for top composition batch 4)
 
 ### Improved: five more top composition tests now prove Top-root root_kind_decision
