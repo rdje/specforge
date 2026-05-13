@@ -1,5 +1,12 @@
 # CHANGES
 
+## 2026-05-13 (`.fsm` renderable_document.is_some() gap closed)
+
+### Improved: three renderable top composition tests now assert renderable_document.is_some()
+- Added `assert!(fsm.renderable_document.is_some())` to `top_composition_recovers_child_directions_from_actor_ports`, `top_composition_recovers_child_directions_from_link_topology`, and `top_composition_recovers_child_width_through_transitive_topology`.
+- These tests already extracted `renderable_document` via `.expect()` but never asserted `.is_some()`.
+- 666/666 tests passing.
+
 ## 2026-05-13 (`.fsm` root_kind_decision lane complete)
 
 ### Complete: all fsm-adapter test families now prove root_kind_decision — zero gaps

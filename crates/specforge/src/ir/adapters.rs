@@ -21731,6 +21731,7 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert!(fsm.renderable_module.is_none());
+        assert!(fsm.renderable_document.is_some());
         let renderable_document = fsm
             .renderable_document
             .as_ref()
@@ -22020,6 +22021,7 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert!(fsm.renderable_module.is_none());
+        assert!(fsm.renderable_document.is_some());
         let renderable_document = fsm
             .renderable_document
             .as_ref()
@@ -22799,6 +22801,7 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert!(fsm.renderable_module.is_none());
+        assert!(fsm.renderable_document.is_some());
         let renderable_document = fsm
             .renderable_document
             .as_ref()

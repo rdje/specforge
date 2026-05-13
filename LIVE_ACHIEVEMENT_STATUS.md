@@ -64,6 +64,7 @@
 - `.fsm` root_kind_decision now checked on all standalone DT tests — zero gaps: Done
 - `.fsm` root_kind_decision checks now on all top composition tests — zero gaps: Done
 - `.fsm` root_kind_decision hardening lane complete: all fsm-adapter test families now prove root_kind_decision: Done
+- `.fsm` renderable_document.is_some() now on 3 top composition tests that previously extracted it without asserting: Done
 - `.fsm` root_kind_decision confidence + rationale now on the same 3 standalone DT blocked tests: Done
 - `.fsm` root_kind_decision checks now on 3 standalone sequential DT blocked tests: Done
 - `.fsm` root_kind_decision now checked on all 8 standalone sequential DT tests — zero gaps: Done
