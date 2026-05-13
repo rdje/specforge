@@ -11539,6 +11539,7 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert!(fsm.renderable_module.is_some());
+        assert!(fsm.renderable_document.is_some());
         let data_in = fsm
             .signal_inventory
             .iter()
@@ -13151,6 +13152,7 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert!(fsm.renderable_module.is_some());
+        assert!(fsm.renderable_document.is_some());
         assert!(emitted_text.contains("(?fsm:reset_fsm"));
         assert!(emitted_text.contains("(+system"));
         assert!(emitted_text.contains("(clock clk)"));
@@ -13537,6 +13539,7 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert!(fsm.renderable_module.is_some());
+        assert!(fsm.renderable_document.is_some());
         let renderable_module = fsm
             .renderable_module
             .as_ref()
@@ -13654,6 +13657,7 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert!(fsm.renderable_module.is_some());
+        assert!(fsm.renderable_document.is_some());
         let renderable_module = fsm
             .renderable_module
             .as_ref()
@@ -14761,6 +14765,7 @@ mod tests {
             assert_eq!(signal.automation_confidence, AutomationConfidence::High);
         }
         assert!(fsm.renderable_module.is_some());
+        assert!(fsm.renderable_document.is_some());
         assert!(emitted_text.contains("(?fsm:explicit_fsm"));
         assert!(emitted_text.contains("(+system"));
         assert!(emitted_text.contains("(clock clk)"));
@@ -16202,6 +16207,7 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert!(fsm.renderable_module.is_none());
+        assert!(fsm.renderable_document.is_some());
         let renderable_document = fsm
             .renderable_document
             .as_ref()
@@ -16390,6 +16396,7 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert!(fsm.renderable_module.is_none());
+        assert!(fsm.renderable_document.is_some());
         assert_eq!(top_candidate.ports.len(), 1);
         let result_port = top_candidate
             .ports
@@ -16680,6 +16687,7 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert!(fsm.renderable_module.is_none());
+        assert!(fsm.renderable_document.is_some());
         let direct_root_names = renderable_document
             .direct_roots
             .iter()
@@ -16883,6 +16891,7 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert!(fsm.renderable_module.is_none());
+        assert!(fsm.renderable_document.is_some());
         assert_eq!(renderable_document.direct_roots.len(), 1);
         assert_eq!(child.resolved_root_kind, Some(FsmRootKind::Fsm));
         assert!(
@@ -17137,6 +17146,7 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert!(fsm.renderable_module.is_none());
+        assert!(fsm.renderable_document.is_some());
         assert_eq!(top_candidate.children.len(), 2);
         assert!(
             acc_a_top_port_support_ids
@@ -17480,6 +17490,7 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert!(fsm.renderable_module.is_none());
+        assert!(fsm.renderable_document.is_some());
         assert!(
             acc_top_port_support_ids
                 .iter()
@@ -17649,6 +17660,7 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert!(fsm.renderable_module.is_none());
+        assert!(fsm.renderable_document.is_some());
         let top_candidate = fsm
             .top_candidates
             .iter()
@@ -17875,6 +17887,7 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert!(fsm.renderable_module.is_none());
+        assert!(fsm.renderable_document.is_some());
         let top_candidate = fsm
             .top_candidates
             .iter()
@@ -18087,6 +18100,7 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert!(fsm.renderable_module.is_none());
+        assert!(fsm.renderable_document.is_some());
         let top_candidate = fsm
             .top_candidates
             .iter()
@@ -18532,6 +18546,7 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert!(fsm.renderable_module.is_none());
+        assert!(fsm.renderable_document.is_some());
         assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Top);
         assert_eq!(
             fsm.root_kind_decision.deferred_root_kinds,
@@ -18675,6 +18690,7 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert!(fsm.renderable_module.is_none());
+        assert!(fsm.renderable_document.is_some());
         assert_eq!(
             recovered_port.automation_confidence,
             AutomationConfidence::Low
@@ -18741,6 +18757,7 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert!(fsm.renderable_module.is_none());
+        assert!(fsm.renderable_document.is_some());
         assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Top);
         assert_eq!(
             fsm.root_kind_decision.deferred_root_kinds,
@@ -18890,6 +18907,7 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert!(fsm.renderable_module.is_none());
+        assert!(fsm.renderable_document.is_some());
         let top_candidate = fsm
             .top_candidates
             .iter()
@@ -22202,6 +22220,7 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert!(fsm.renderable_module.is_none());
+        assert!(fsm.renderable_document.is_some());
         let renderable_document = fsm
             .renderable_document
             .as_ref()
@@ -22368,6 +22387,7 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert!(fsm.renderable_module.is_none());
+        assert!(fsm.renderable_document.is_some());
         let renderable_document = fsm
             .renderable_document
             .as_ref()
@@ -22538,6 +22558,7 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert!(fsm.renderable_module.is_none());
+        assert!(fsm.renderable_document.is_some());
         let renderable_document = fsm
             .renderable_document
             .as_ref()
@@ -23319,6 +23340,7 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert!(fsm.renderable_module.is_none());
+        assert!(fsm.renderable_document.is_some());
         assert!(emitted_text.contains("result_data>8"));
         assert!(emitted_text.contains("/producer.output_data/result_data/"));
         assert!(
