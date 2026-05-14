@@ -18072,6 +18072,10 @@ mod tests {
         assert_eq!(clock_gate.component_name.as_deref(), Some("CGATE0"));
         assert_eq!(clock_gate.stage_count, None);
         assert_eq!(clock_gate.target_actor_names, vec!["Requester".to_string()]);
+        assert_eq!(
+            clock_gate.automation_confidence,
+            AutomationConfidence::Medium
+        );
         assert!(!clock_gate.supporting_statement_id.is_empty());
         assert_ne!(
             clock_gate.supporting_statement_id,
@@ -18117,6 +18121,10 @@ mod tests {
             synchronizer.target_actor_names,
             vec!["Requester".to_string()]
         );
+        assert_eq!(
+            synchronizer.automation_confidence,
+            AutomationConfidence::Medium
+        );
         let reset_tree = reset_infrastructure
             .infrastructure_topology
             .iter()
@@ -18125,6 +18133,10 @@ mod tests {
         assert_eq!(
             reset_tree.target_actor_names,
             vec!["Requester".to_string(), "Completer".to_string()]
+        );
+        assert_eq!(
+            reset_tree.automation_confidence,
+            AutomationConfidence::Medium
         );
         assert!(
             semantic_ir.actor_ports.is_empty(),

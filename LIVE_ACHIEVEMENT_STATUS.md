@@ -1589,4 +1589,5 @@
 - semantic.rs automation_confidence batch 5: 12 assertions across 4 tests covering ExplicitTopChildRecord, ExplicitTopLinkRecord, TimingConstraintRecord, SignalConstraintRecord, InterfaceSignalRecord: Done
 - semantic.rs automation_confidence batch 6: 4 assertions covering ExplicitTopPortRecord, ActorPortRecord, SignalConnectivityRecord: Done
 - semantic.rs automation_confidence batch 7: 6 assertions covering InfrastructureSignalRecord and system-contract InterfaceSignalRecord: Done
+- semantic.rs automation_confidence batch 8: 3 assertions covering InfrastructureTopologyRecord: Done
 <!-- validation_projection:end -->
