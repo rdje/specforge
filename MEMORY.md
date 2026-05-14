@@ -24,9 +24,9 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `55850ebe`
-- latest_commit_brief_message: Close PROVENANCE-HARDENING tree — all provenance-like fields hardened
-- note: PROVENANCE-HARDENING tree closed — all 10 leaves resolved (8 committed hardening leaves, 1 audit, 1 closure). 24 provenance-field assertions total. 666/666 tests passing. R6-FSM-ADAPTER tree activated as next PNT frontier. 11 local commits ahead of origin.
+- latest_commit_hash: pending (R6-FSM-ADAPTER.1.1 adapter identity hardening)
+- latest_commit_brief_message: pending
+- note: R6-FSM-ADAPTER.1 audit complete (4 zero-coverage fields found). R6-FSM-ADAPTER.1.1 adapter identity hardening: 9 assertions across 2 tests. 666/666 tests passing. 12 local commits ahead of origin.
 
 ## Recent commit chain (last 10)
 - pending (EvidenceLink provenance IDs hardening)

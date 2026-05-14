@@ -47,15 +47,15 @@ across the adapter test surface.
   Goal: `Audit remaining adapter test coverage gaps after the completed provenance-hardening and root_kind_decision lanes.`
   Acceptance: `All 34 adapter record struct fields inventoried. 4 zero-coverage fields found across AdapterArtifact (adapter_id, summary, document_identity), FsmDecisionTreeCandidate (summary), and FsmRenderableModule (symbol_definitions — end-to-end). 4 thin-coverage fields (1 assertion each). Defined 3 concrete hardening leaves.`
   Verification: `grep audit of all adapter struct fields in adapters.rs lines 351-735 cross-referenced against test module lines 6240-27515`
-  Commit: `pending`
+  Commit: `1fb4b4e7` — Audit adapter test coverage
 
 ### Batch 2: Zero-coverage adapter fields
 
 - ID: `R6-FSM-ADAPTER.1.1`
-  Status: `pending`
+  Status: `done`
   Goal: `Harden AdapterArtifact identity fields — adapter_identity (adapter_id, summary) and document_identity.`
-  Acceptance: `Non-empty assertions on adapter_identity.adapter_id, adapter_identity.summary, and document_identity.document_key in existing adapter build tests.`
-  Verification: `pending`
+  Acceptance: `9 assertions across 2 tests: builds_blocked_dt_centric_fsm_adapter_artifact (6 assertions — adapter_id non-empty + prefix, summary non-empty + content, document_key + display_name non-empty) and builds_renderable_standalone_dt_fsm_adapter_artifact (3 assertions — adapter_id, summary, document_key non-empty).`
+  Verification: `cargo test -p specforge --lib — 666/666 passed`
   Commit: `pending`
 
 - ID: `R6-FSM-ADAPTER.1.2`
@@ -76,9 +76,8 @@ across the adapter test surface.
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `R6-FSM-ADAPTER.1.1` | `pending` | Largest gap — AdapterArtifact identity fields populated every build but never asserted. |
-| 2 | `R6-FSM-ADAPTER.1.2` | `pending` | FsmDecisionTreeCandidate.summary is a dynamic format string — zero coverage. |
-| 3 | `R6-FSM-ADAPTER.1.3` | `pending` | FsmRenderableModule.symbol_definitions has only function-level coverage, no end-to-end assertions. |
+| 1 | `R6-FSM-ADAPTER.1.2` | `pending` | FsmDecisionTreeCandidate.summary is a dynamic format string — zero coverage. |
+| 2 | `R6-FSM-ADAPTER.1.3` | `pending` | FsmRenderableModule.symbol_definitions has only function-level coverage, no end-to-end assertions. |
 
 ## Decisions
 
@@ -99,11 +98,13 @@ across the adapter test surface.
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-05-14` | `R6-FSM-ADAPTER.1` | grep audit of 34 adapter struct fields in adapters.rs | 4 zero-coverage fields found, 3 hardening leaves defined |
+| `2026-05-14` | `R6-FSM-ADAPTER.1.1` | `cargo test -p specforge --lib` | 666/666 passed |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- | --- |
+| `R6-FSM-ADAPTER.1` | `1fb4b4e7` Audit adapter test coverage | Audit only — 3 hardening leaves defined |
 
 ## Changelog
 

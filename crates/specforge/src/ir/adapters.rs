@@ -11299,6 +11299,12 @@ mod tests {
         assert_eq!(adapter.target, AdapterTarget::Fsm);
         assert_eq!(adapter.required_input_stage.as_str(), "intent_ir");
         assert_eq!(adapter.lowering_status.as_str(), "blocked");
+        assert!(!adapter.adapter_identity.adapter_id.is_empty());
+        assert!(adapter.adapter_identity.adapter_id.starts_with("adapter_fsm_"));
+        assert!(!adapter.adapter_identity.summary.is_empty());
+        assert!(adapter.adapter_identity.summary.contains("`.fsm`"));
+        assert!(!adapter.document_identity.document_key.is_empty());
+        assert!(!adapter.document_identity.display_name.is_empty());
         assert!(
             adapter
                 .artifact_layout
@@ -11414,6 +11420,9 @@ mod tests {
         adapter.write_to_disk()?;
 
         assert_eq!(adapter.lowering_status.as_str(), "renderable");
+        assert!(!adapter.adapter_identity.adapter_id.is_empty());
+        assert!(!adapter.adapter_identity.summary.is_empty());
+        assert!(!adapter.document_identity.document_key.is_empty());
         let emitted_target_path = adapter
             .artifact_layout
             .emitted_target_path
