@@ -52,7 +52,7 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
 ### Batch 3: tokenize_control_expression
 
 - ID: `R6-SEMANTIC-HARDENING.3`
-  Status: `in_progress`
+  Status: `done`
   Goal: `Fix 4 missed mutants in tokenize_control_expression — +→* at pair-guard, ||→&& and ==→!= at identifier lexing.`
   Acceptance: `4 mutants caught: +→* at line 5338, ||→&& at line 5371, ==→!= (underscore) at line 5371, ==→!= (apostrophe) at line 5371.`
   Verification: `cargo test -p specforge --lib — 687/687 passed`
@@ -62,7 +62,7 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `R6-SEMANTIC-HARDENING.3` | `in_progress` | tokenize_control_expression — 4 missed mutants to fix |
+| No pending leaves. Run cargo-mutants to discover next target. |
 
 ## Decisions
 
@@ -90,7 +90,7 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
 | --- | --- | --- | --- |
 | `R6-SEMANTIC-HARDENING.1` | `8db82b8a` | 4 assertion additions + conflicting symbols test |
 | `R6-SEMANTIC-HARDENING.2` | `ea0020bb` | 3 unit tests for parse_explicit_system_reset |
-| `R6-SEMANTIC-HARDENING.3` | pending | 3 unit tests for tokenize_control_expression |
+| `R6-SEMANTIC-HARDENING.3` | `3a91e4f6` | 4 unit tests for tokenize_control_expression |
 
 ## Changelog
 
