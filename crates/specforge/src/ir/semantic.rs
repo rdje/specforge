@@ -11585,6 +11585,10 @@ mod tests {
             }),
             "diagram cycle label T1 should survive as a bounded cycle window"
         );
+        assert_eq!(
+            vlm_signal_value_rule.automation_confidence,
+            AutomationConfidence::Medium
+        );
 
         Ok(())
     }
@@ -13672,6 +13676,7 @@ mod tests {
                 } if signal_name == "HTRANS"
             )
         }));
+        assert_eq!(rule.automation_confidence, AutomationConfidence::Medium);
 
         Ok(())
     }
@@ -17311,6 +17316,7 @@ mod tests {
             conflict.conflicting_values,
             vec!["HIGH".to_string(), "LOW".to_string()]
         );
+        assert_eq!(conflict.automation_confidence, AutomationConfidence::Medium);
 
         Ok(())
     }

@@ -1582,4 +1582,5 @@
 - EvidenceIR test hardening lane complete: all 10 automation_confidence and supporting_statement_ids field categories covered (49 assertions total): Done
 - New hardening lane opened — semantic.rs automation_confidence coverage: In progress
 - semantic.rs automation_confidence batch 1: 11 assertions across 5 tests covering 8 record types: Done
+- semantic.rs automation_confidence batch 2: 3 assertions across 3 tests covering TemporalRuleRecord and additional TemporalConflictRecord variants: Done
 <!-- validation_projection:end -->
