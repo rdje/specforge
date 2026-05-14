@@ -11339,6 +11339,7 @@ mod tests {
                     .control_blocks
                     .iter()
                     .any(|block| block.block_name == "produce")
+                && module.automation_confidence == AutomationConfidence::High
         }));
         assert!(semantic_ir.explicit_modules.iter().any(|module| {
             module.module_name == "consumer_core"
@@ -11349,6 +11350,7 @@ mod tests {
                             && signal.width_hint == Some(WidthHint::Numeric(8))
                     })
                 })
+                && module.automation_confidence == AutomationConfidence::High
         }));
 
         let explicit_top = semantic_ir

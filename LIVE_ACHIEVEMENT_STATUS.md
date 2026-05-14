@@ -1584,4 +1584,6 @@
 - semantic.rs automation_confidence batch 1: 11 assertions across 5 tests covering 8 record types: Done
 - semantic.rs automation_confidence batch 2: 3 assertions across 3 tests covering TemporalRuleRecord and additional TemporalConflictRecord variants: Done
 - semantic.rs automation_confidence batch 3: 3 assertions across 2 tests covering InterfaceSignalConflictRecord and SignalConnectivityConflictRecord: Done
+- semantic.rs automation_confidence batch 4: 2 assertions on ExplicitModuleRecord covering producer and consumer variants: Done
+- semantic.rs lane progress: 19 assertions across 12 tests covering 13 record types; remaining: InterfaceRecord, ExplicitTopChild, ExplicitTopLink, SignalInterfaceRecord, WidthConstraintRecord, TimingConstraintRecord
 <!-- validation_projection:end -->
