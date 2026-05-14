@@ -1580,16 +1580,5 @@
 - evidence.rs SignalPolarityRecord and VisualEvidenceItem hardening: 13 assertions across 5 tests: Done
 - evidence.rs observation-level supporting_statement_ids: 4 assertions across 2 conflict tests: Done
 - EvidenceIR test hardening lane complete: all 10 automation_confidence and supporting_statement_ids field categories covered (49 assertions total): Done
-- New hardening lane opened — semantic.rs automation_confidence coverage: In progress
-- semantic.rs automation_confidence batch 1: 11 assertions across 5 tests covering 8 record types: Done
-- semantic.rs automation_confidence batch 2: 3 assertions across 3 tests covering TemporalRuleRecord and additional TemporalConflictRecord variants: Done
-- semantic.rs automation_confidence batch 3: 3 assertions across 2 tests covering InterfaceSignalConflictRecord and SignalConnectivityConflictRecord: Done
-- semantic.rs automation_confidence batch 4: 2 assertions on ExplicitModuleRecord covering producer and consumer variants: Done
-- semantic.rs lane progress: 19 assertions across 12 tests covering 13 record types; remaining: InterfaceRecord, ExplicitTopChild, ExplicitTopLink, SignalInterfaceRecord, WidthConstraintRecord, TimingConstraintRecord
-- semantic.rs automation_confidence batch 5: 12 assertions across 4 tests covering ExplicitTopChildRecord, ExplicitTopLinkRecord, TimingConstraintRecord, SignalConstraintRecord, InterfaceSignalRecord: Done
-- semantic.rs automation_confidence batch 6: 4 assertions covering ExplicitTopPortRecord, ActorPortRecord, SignalConnectivityRecord: Done
-- semantic.rs automation_confidence batch 7: 6 assertions covering InfrastructureSignalRecord and system-contract InterfaceSignalRecord: Done
-- semantic.rs automation_confidence batch 8: 3 assertions covering InfrastructureTopologyRecord: Done
-- semantic.rs automation_confidence batch 9: 4 assertions covering SymbolEnumMemberRecord, ControlBranchRecord, InterfaceSignalSemanticObservationRecord: Done
-- semantic.rs automation_confidence batch 10: 4 assertions covering InterfaceSignalSemanticCandidateRecord: Done
+- SemanticIR test hardening lane complete: 52 automation_confidence assertions across 10 batches covering all 22 record types: Done
 <!-- validation_projection:end -->
