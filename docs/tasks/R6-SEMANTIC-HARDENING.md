@@ -29,7 +29,7 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
 - ID: `R6-SEMANTIC-HARDENING`
   Status: `active`
   Goal: `Fix high-value missed cargo-mutants in semantic.rs functions.`
-  Children: `R6-SEMANTIC-HARDENING.1`, `R6-SEMANTIC-HARDENING.2`, `R6-SEMANTIC-HARDENING.3`, `R6-SEMANTIC-HARDENING.4`, `R6-SEMANTIC-HARDENING.5`, `R6-SEMANTIC-HARDENING.6`, `R6-SEMANTIC-HARDENING.7`, `R6-SEMANTIC-HARDENING.8`, `R6-SEMANTIC-HARDENING.9`, `R6-SEMANTIC-HARDENING.10`, `R6-SEMANTIC-HARDENING.11`, `R6-SEMANTIC-HARDENING.12`
+  Children: `R6-SEMANTIC-HARDENING.1`, `R6-SEMANTIC-HARDENING.2`, `R6-SEMANTIC-HARDENING.3`, `R6-SEMANTIC-HARDENING.4`, `R6-SEMANTIC-HARDENING.5`, `R6-SEMANTIC-HARDENING.6`, `R6-SEMANTIC-HARDENING.7`, `R6-SEMANTIC-HARDENING.8`, `R6-SEMANTIC-HARDENING.9`, `R6-SEMANTIC-HARDENING.10`, `R6-SEMANTIC-HARDENING.11`, `R6-SEMANTIC-HARDENING.12`, `R6-SEMANTIC-HARDENING.13`, `R6-SEMANTIC-HARDENING.14`
 
 ### Batch 1: build_symbol_definitions
 
@@ -139,6 +139,24 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
   Verification: `cargo test -p specforge --lib — 771/771 passed`
   Commit: `b76507b8`
 
+### Batch 13: is_false, is_zero, is_waveform_index_token
+
+- ID: `R6-SEMANTIC-HARDENING.13`
+  Status: `done`
+  Goal: `Fix 7 missed mutants across is_false (1), is_zero (3), is_waveform_index_token (3).`
+  Acceptance: `7 mutants caught: replace with false, return true, return false, ==→!=, &&→||, delete !.`
+  Verification: `cargo test -p specforge --lib — 779/779 passed`
+  Commit: `dc2e7454`
+
+### Batch 14: is_compact_waveform_index_label
+
+- ID: `R6-SEMANTIC-HARDENING.14`
+  Status: `done`
+  Goal: `Fix 1 missed mutant in is_compact_waveform_index_label — delete ! at line 10015.`
+  Acceptance: `1 mutant caught: delete !. 2 ||→&& equivalent (downstream parse_identifier/is_waveform_index_token rescue).`
+  Verification: `cargo test -p specforge --lib — 788/788 passed`
+  Commit: `b7223fb1`
+
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
@@ -173,6 +191,8 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
 | `2026-05-14` | `R6-SEMANTIC-HARDENING.10` | `cargo test -p specforge --lib` | 736/736 passed |
 | `2026-05-14` | `R6-SEMANTIC-HARDENING.11` | `cargo test -p specforge --lib` | 764/764 passed |
 | `2026-05-15` | `R6-SEMANTIC-HARDENING.12` | `cargo test -p specforge --lib` | 771/771 passed |
+| `2026-05-15` | `R6-SEMANTIC-HARDENING.13` | `cargo test -p specforge --lib` | 779/779 passed |
+| `2026-05-15` | `R6-SEMANTIC-HARDENING.14` | `cargo test -p specforge --lib` | 788/788 passed |
 
 ## Commit Log
 
@@ -190,6 +210,8 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
 | `R6-SEMANTIC-HARDENING.10` | `2e8b07fc` | 9 unit tests across contains_named_generic_edge_unit, parse_indexed_signal_annotation_base, trailing_tokens_form_only_cycle_marker_label |
 | `R6-SEMANTIC-HARDENING.11` | `5421dbc6`, `b76507b8` | 20+ unit tests across collect_known_actor_names, contains_token_phrase, parse_cardinal_cycle_count_value, parse_ordinal_cycle_count_value |
 | `R6-SEMANTIC-HARDENING.12` | `b76507b8` | 7 unit tests for vlm_guard_clause_has_comparison, parse_vlm_decision_tree_value |
+| `R6-SEMANTIC-HARDENING.13` | `dc2e7454` | 8 unit tests for is_false, is_zero, is_waveform_index_token |
+| `R6-SEMANTIC-HARDENING.14` | `b7223fb1` | 9 unit tests for is_compact_waveform_index_label |
 
 ## Changelog
 
