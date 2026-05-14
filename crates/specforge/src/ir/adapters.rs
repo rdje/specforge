@@ -14102,6 +14102,7 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert!(fsm.renderable_module.is_some());
+        assert!(!fsm.renderable_module.as_ref().unwrap().symbol_definitions.is_empty());
         assert!(fsm.renderable_document.is_some());
         assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Dt);
         assert_eq!(
@@ -14409,6 +14410,7 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert!(fsm.renderable_module.is_some());
+        assert!(!fsm.renderable_module.as_ref().unwrap().symbol_definitions.is_empty());
         assert!(fsm.renderable_document.is_some());
         assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Dt);
         assert_eq!(

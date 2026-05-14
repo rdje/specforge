@@ -63,20 +63,18 @@ across the adapter test surface.
   Goal: `Harden FsmDecisionTreeCandidate.summary — dynamic format string populated during DT candidate construction.`
   Acceptance: `2 assertions across 2 tests: builds_blocked_dt_centric_fsm_adapter_artifact and builds_renderable_standalone_dt_fsm_adapter_artifact_with_graph_direction_context. Summary is populated in both DT construction paths.`
   Verification: `cargo test -p specforge --lib — 666/666 passed`
-  Commit: `pending`
+  Commit: `b67de022` — Add FsmDecisionTreeCandidate.summary assertions
 
 - ID: `R6-FSM-ADAPTER.1.3`
-  Status: `pending`
+  Status: `done`
   Goal: `Harden FsmRenderableModule.symbol_definitions — end-to-end assertion through the adapter build pipeline.`
-  Acceptance: `Non-empty assertion on symbol_definitions in at least one existing adapter build test.`
-  Verification: `pending`
-  Commit: `pending`
+  Acceptance: `2 end-to-end assertions across 2 DT-root tests: builds_renderable_symbolic_dt_fsm_adapter_artifact and builds_renderable_compound_update_dt_fsm_adapter_artifact. Two other DT tests (standalone_dt, computed_selector) skip symbol_definitions — their fixtures carry no SymbolDefinitionRecords.`
+  Verification: `cargo test -p specforge --lib — 666/666 passed`
+  Commit: `pending — about to commit`
 
 ## Current Frontier
 
-| Order | Leaf | Status | Why next |
-| --- | --- | --- | --- |
-| 1 | `R6-FSM-ADAPTER.1.3` | `pending` | FsmRenderableModule.symbol_definitions has only function-level coverage, no end-to-end assertions. |
+No executable leaves remain. All 4 R6-FSM-ADAPTER leaves (audit + 3 hardening) complete.
 
 ## Decisions
 
@@ -98,12 +96,17 @@ across the adapter test surface.
 | --- | --- | --- | --- |
 | `2026-05-14` | `R6-FSM-ADAPTER.1` | grep audit of 34 adapter struct fields in adapters.rs | 4 zero-coverage fields found, 3 hardening leaves defined |
 | `2026-05-14` | `R6-FSM-ADAPTER.1.1` | `cargo test -p specforge --lib` | 666/666 passed |
+| `2026-05-14` | `R6-FSM-ADAPTER.1.2` | `cargo test -p specforge --lib` | 666/666 passed |
+| `2026-05-14` | `R6-FSM-ADAPTER.1.3` | `cargo test -p specforge --lib` | 666/666 passed |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- | --- |
 | `R6-FSM-ADAPTER.1` | `1fb4b4e7` Audit adapter test coverage | Audit only — 3 hardening leaves defined |
+| `R6-FSM-ADAPTER.1.1` | `9bbf01e3` Add adapter_identity and document_identity assertions | 9 assertions across 2 tests |
+| `R6-FSM-ADAPTER.1.2` | `b67de022` Add FsmDecisionTreeCandidate.summary assertions | 2 assertions across 2 tests |
+| `R6-FSM-ADAPTER.1.3` | pending — about to commit | 2 symbol_definitions end-to-end assertions |
 
 ## Changelog
 
