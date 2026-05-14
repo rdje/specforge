@@ -18840,4 +18840,38 @@ mod tests {
         // Catches ||→&& mutant at line 10362 — single || means either licence/license matches
         assert!(super::is_boilerplate_section_title("Proprietary Notice"));
     }
+
+    // parse_identifier unit tests
+
+    #[test]
+    fn parse_identifier_accepts_underscore_prefix() {
+        // Catches ==→!= mutant at line 5679 — _ must be accepted as first character
+        let result = super::parse_identifier("_foo");
+        assert_eq!(result, Some("_foo".to_string()));
+    }
+
+    #[test]
+    fn parse_identifier_accepts_alphabetic_start() {
+        let result = super::parse_identifier("hello_world");
+        assert_eq!(result, Some("hello_world".to_string()));
+    }
+
+    // contains_text_phrase unit tests
+
+    #[test]
+    fn contains_text_phrase_rejects_word_after_underscore() {
+        // Catches &&→|| mutants at lines 9345, 9351 — _ is not a word boundary
+        assert!(!super::contains_text_phrase("hello_world", "world"));
+    }
+
+    #[test]
+    fn contains_text_phrase_accepts_word_after_space() {
+        assert!(super::contains_text_phrase("hello world", "world"));
+    }
+
+    #[test]
+    fn contains_text_phrase_rejects_word_with_missing_prefix_boundary() {
+        // Catches &&→|| mutant at line 9353 — both prefix and suffix must be boundaries
+        assert!(!super::contains_text_phrase("worldhello", "world"));
+    }
 }
