@@ -19020,6 +19020,16 @@ mod tests {
     }
 
     #[test]
+    fn cardinal_cycle_count_parses_word_two() {
+        assert_eq!(super::parse_cardinal_cycle_count_value("two"), Some(2));
+    }
+
+    #[test]
+    fn cardinal_cycle_count_parses_word_four() {
+        assert_eq!(super::parse_cardinal_cycle_count_value("four"), Some(4));
+    }
+
+    #[test]
     fn cardinal_cycle_count_parses_word_three() {
         assert_eq!(super::parse_cardinal_cycle_count_value("three"), Some(3));
     }
@@ -19030,8 +19040,23 @@ mod tests {
     }
 
     #[test]
+    fn cardinal_cycle_count_parses_word_six() {
+        assert_eq!(super::parse_cardinal_cycle_count_value("six"), Some(6));
+    }
+
+    #[test]
+    fn cardinal_cycle_count_parses_word_seven() {
+        assert_eq!(super::parse_cardinal_cycle_count_value("seven"), Some(7));
+    }
+
+    #[test]
     fn cardinal_cycle_count_parses_word_eight() {
         assert_eq!(super::parse_cardinal_cycle_count_value("eight"), Some(8));
+    }
+
+    #[test]
+    fn cardinal_cycle_count_parses_word_nine() {
+        assert_eq!(super::parse_cardinal_cycle_count_value("nine"), Some(9));
     }
 
     #[test]
@@ -19042,8 +19067,19 @@ mod tests {
     // parse_ordinal_cycle_count_value unit tests
 
     #[test]
+    fn ordinal_cycle_count_parses_suffixed_number() {
+        // Catches delete ! mutant at line 9290 — non-empty prefix must pass guard
+        assert_eq!(super::parse_ordinal_cycle_count_value("1st"), Some(1));
+    }
+
+    #[test]
     fn ordinal_cycle_count_parses_word_first() {
         assert_eq!(super::parse_ordinal_cycle_count_value("first"), Some(1));
+    }
+
+    #[test]
+    fn ordinal_cycle_count_parses_word_second() {
+        assert_eq!(super::parse_ordinal_cycle_count_value("second"), Some(2));
     }
 
     #[test]
@@ -19052,8 +19088,23 @@ mod tests {
     }
 
     #[test]
+    fn ordinal_cycle_count_parses_word_fourth() {
+        assert_eq!(super::parse_ordinal_cycle_count_value("fourth"), Some(4));
+    }
+
+    #[test]
     fn ordinal_cycle_count_parses_word_fifth() {
         assert_eq!(super::parse_ordinal_cycle_count_value("fifth"), Some(5));
+    }
+
+    #[test]
+    fn ordinal_cycle_count_parses_word_sixth() {
+        assert_eq!(super::parse_ordinal_cycle_count_value("sixth"), Some(6));
+    }
+
+    #[test]
+    fn ordinal_cycle_count_parses_word_seventh() {
+        assert_eq!(super::parse_ordinal_cycle_count_value("seventh"), Some(7));
     }
 
     #[test]
@@ -19062,13 +19113,68 @@ mod tests {
     }
 
     #[test]
+    fn ordinal_cycle_count_parses_word_ninth() {
+        assert_eq!(super::parse_ordinal_cycle_count_value("ninth"), Some(9));
+    }
+
+    #[test]
     fn ordinal_cycle_count_parses_word_tenth() {
         assert_eq!(super::parse_ordinal_cycle_count_value("tenth"), Some(10));
     }
 
+    // vlm_guard_clause_has_comparison unit tests
+
     #[test]
-    fn ordinal_cycle_count_rejects_empty_prefix_stripped_suffix() {
-        // Catches delete ! mutant at line 9290 — empty prefix after strip must be rejected
-        assert_eq!(super::parse_ordinal_cycle_count_value("st"), None);
+    fn vlm_guard_clause_detects_equality_comparison() {
+        // Catches return false mutant
+        assert!(super::vlm_guard_clause_has_comparison("x == y"));
+    }
+
+    #[test]
+    fn vlm_guard_clause_detects_inequality_comparison() {
+        // Catches ||→&& mutant at line 10226 — != present but == absent
+        assert!(super::vlm_guard_clause_has_comparison("x != y"));
+    }
+
+    #[test]
+    fn vlm_guard_clause_detects_single_equals_comparison() {
+        // Catches ||→&& mutants at lines 10227 and 10228 — single = without == or !=
+        assert!(super::vlm_guard_clause_has_comparison("x = y"));
+    }
+
+    #[test]
+    fn vlm_guard_clause_detects_is_comparison() {
+        // Catches ||→&& at line 10228 — "is" without any = operator
+        assert!(super::vlm_guard_clause_has_comparison("x is y"));
+    }
+
+    #[test]
+    fn vlm_guard_clause_rejects_plain_text() {
+        // Catches return true mutant
+        assert!(!super::vlm_guard_clause_has_comparison("hello"));
+    }
+
+    // parse_vlm_decision_tree_value unit tests
+
+    #[test]
+    fn vlm_decision_tree_value_parses_signal_ref_when_in_known_set() {
+        // Catches ||→&& mutant at line 10343 — is_empty false, contains true
+        let known: HashSet<String> = ["MY_SIG".to_string()].into();
+        let result = super::parse_vlm_decision_tree_value("MY_SIG", &known);
+        assert!(matches!(
+            result,
+            Some(super::DecisionTreeValueRecord::SignalRef { .. })
+        ));
+    }
+
+    #[test]
+    fn vlm_decision_tree_value_falls_back_to_literal_when_unknown() {
+        // Ensures fallback path works when signal is not in known set
+        let known: HashSet<String> = ["OTHER".to_string()].into();
+        let result = super::parse_vlm_decision_tree_value("MY_SIG", &known);
+        assert!(matches!(
+            result,
+            Some(super::DecisionTreeValueRecord::Literal { .. })
+        ));
     }
 }
