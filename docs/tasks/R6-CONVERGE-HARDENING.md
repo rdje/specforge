@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `R6-CONVERGE-HARDENING`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: `R6`
 - Created: `2026-05-14`
 - Last updated: `2026-05-14`
@@ -45,17 +45,18 @@ Add regression-only test assertions to `converge.rs` and related command-module 
 ### Batch 2: Prior memory + SourceSnapshot
 
 - ID: `R6-CONVERGE-HARDENING.2`
-  Status: `pending`
+  Status: `deferred`
   Goal: `Harden prior_memory.rs CorpusMemoryUpdatePolicyRecord and PriorSourceArtifactRecord fields, plus SourceSnapshot fields — all populated in production, zero assertions.`
-  Acceptance: `At least one non-empty assertion per field family in existing kg_bench or converge tests.`
-  Verification: `pending`
-  Commit: `pending`
+  Reason: `prior_memory.rs has no test module. SourceSnapshot is a private struct not exposed through the public ConvergenceReport API. Neither can be asserted without new test infrastructure.`
+  Acceptance: `—`
+  Verification: `—`
+  Commit: `—`
 
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `R6-CONVERGE-HARDENING.2` | `pending` | Broader prior_memory + snapshot coverage. |
+No executable leaves remain. Leaf 2 deferred (no test infrastructure for prior_memory or private SourceSnapshot).
 
 ## Decisions
 
@@ -80,7 +81,7 @@ Add regression-only test assertions to `converge.rs` and related command-module 
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- | --- |
-| `R6-CONVERGE-HARDENING.1` | pending — about to commit | 2 assertions on rescan plan report |
+| `R6-CONVERGE-HARDENING.1` | `4d8197a7` Add executed_validated_changed + executed_validated_no_change assertions | 2 assertions on rescan plan report |
 
 ## Changelog
 

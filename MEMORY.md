@@ -26,7 +26,7 @@
 ## Latest committed baseline
 - latest_commit_hash: `3015f029`
 - latest_commit_brief_message: Update FSMGEN submodule to fc634306
-- note: R6-SOURCE-HARDENING tree closed — 3 leaves done (11 assertions across 6 source.rs fields). 23 local commits ahead. 3 task trees closed (PROVENANCE-HARDENING, R6-FSM-ADAPTER, R6-SOURCE-HARDENING). No active task trees remain.
+- note: R6-CONVERGE-HARDENING tree closed — 1 leaf done (2 assertions), leaf 2 deferred (prior_memory has no tests, SourceSnapshot is private). 25 local commits ahead. 4 task trees closed.
 
 ## Recent commit chain (last 10)
 - pending (EvidenceLink provenance IDs hardening)
