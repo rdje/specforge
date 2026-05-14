@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-14 (evidence.rs supporting_span_ids hardening)
+
+### Improved: 2 supporting_span_ids assertions in visual evidence test
+- Added `!observation.supporting_span_ids.is_empty()` to caption and figure-reference observation assertions in `links_caption_and_figure_reference_into_visual_evidence`.
+- The field is populated from evidence spans during visual evidence creation.
+- 666/666 tests passing.
+
+## 2026-05-14 (semantic.rs supporting_section_ids hardening)
+
+### Improved: supporting_section_ids assertion on ActorRecord
+- Added `!actor.supporting_section_ids.is_empty()` to `carries_actor_relative_ports_and_signal_connectivity`.
+- 666/666 tests passing.
+
 ## 2026-05-14 (intent.rs supporting_semantic_ids hardening)
 
 ### Improved: 5 supporting_semantic_ids assertions across 3 intent.rs tests

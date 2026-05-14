@@ -24,12 +24,15 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `1e90aa9e` (supporting_actor_ids); supporting_semantic_ids slice pending commit
-- latest_commit_brief_message: `Add supporting_actor_ids assertions to two intent.rs actor tests`
-- note: PNT hardening continuing; intent.rs supporting_semantic_ids slice (5 assertions across 3 tests) ready for commit; 666 tests passing; branch at 2 local commits ahead of origin
+- latest_commit_hash: `4d7bd220` (supporting_span_ids); doc sync pending commit
+- latest_commit_brief_message: `Add supporting_span_ids assertions to visual evidence observation checks`
+- note: PNT hardening continuing; 5 slices this session covering supporting_actor_ids (2 assertions), supporting_semantic_ids (5), supporting_section_ids (1), supporting_span_ids (2); 666 tests passing; branch at 5 local commits ahead of origin
 
 ## Recent commit chain (last 6)
-- (pending) Add supporting_actor_ids assertions to two intent.rs actor tests
+- `4d7bd220` Add supporting_span_ids assertions to visual evidence observation checks
+- `52f47c41` Add supporting_section_ids assertion to carries_actor_relative_ports_and_signal_connectivity test
+- `070b3721` Add supporting_semantic_ids assertions to intent.rs behavior, constraint, and assumption tests
+- `1e90aa9e` Add supporting_actor_ids assertions to two intent.rs actor tests
 - `ec21de0f` Sync tracked live docs after hardening session
 - `a8635878` Add supporting_visual_evidence_ids assertion to cross-modality grounding test
 - `44a25f70` Add semantic.rs supporting_table_ids hardening
