@@ -19282,4 +19282,78 @@ mod tests {
     fn compact_waveform_index_rejects_plain_text() {
         assert!(!super::is_compact_waveform_index_label("hello"));
     }
+
+    // parse_explicit_infrastructure_source_actor unit tests
+
+    #[test]
+    fn infrastructure_source_actor_parses_active_verb() {
+        let result = super::parse_explicit_infrastructure_source_actor(
+            "the DMA engine drives the CLK",
+            "CLK",
+        );
+        // The subject phrase extraction depends on NLP parsing, but exercising
+        // the code path catches comparison/arithmetic mutants.
+        assert!(result.is_some());
+    }
+
+    #[test]
+    fn infrastructure_source_actor_parses_passive_verb() {
+        // Catches <=→> mutant at line 3259 — passive verb path
+        let result = super::parse_explicit_infrastructure_source_actor(
+            "CLK is driven by the DMA engine",
+            "CLK",
+        );
+        assert!(result.is_some());
+    }
+
+    #[test]
+    fn infrastructure_source_actor_parses_passive_verb_with_leading_text() {
+        // Catches +→* mutant at line 3258 — non-zero pattern_pos
+        let result = super::parse_explicit_infrastructure_source_actor(
+            "The CLK is driven by the DMA engine",
+            "CLK",
+        );
+        assert!(result.is_some());
+    }
+
+    #[test]
+    fn infrastructure_source_actor_returns_none_for_no_match() {
+        // Catches return None mutant
+        let result = super::parse_explicit_infrastructure_source_actor(
+            "no signal here",
+            "CLK",
+        );
+        assert!(result.is_none());
+    }
+
+    // parse_explicit_infrastructure_distribution_actors unit tests
+
+    #[test]
+    fn infrastructure_distribution_actors_parses_signal_subject_verb() {
+        // Catches <=→> mutant at line 3420 — signal subject verb path
+        let result = super::parse_explicit_infrastructure_distribution_actors(
+            "CLK feeds the CPU and DMA",
+            "CLK",
+        );
+        assert!(!result.is_empty());
+    }
+
+    #[test]
+    fn infrastructure_distribution_actors_parses_signal_subject_verb_with_leading_text() {
+        // Catches +→* mutant at line 3419 — non-zero pattern_pos
+        let result = super::parse_explicit_infrastructure_distribution_actors(
+            "The CLK feeds the CPU and DMA",
+            "CLK",
+        );
+        assert!(!result.is_empty());
+    }
+
+    #[test]
+    fn infrastructure_distribution_actors_returns_empty_for_no_match() {
+        let result = super::parse_explicit_infrastructure_distribution_actors(
+            "no signal here",
+            "CLK",
+        );
+        assert!(result.is_empty());
+    }
 }
