@@ -1591,4 +1591,5 @@
 - semantic.rs supporting_visual_evidence_ids hardening: 1 assertion in cross-modality grounding test covering visual-caption observations: Done
 - intent.rs supporting_actor_ids hardening: 2 assertions across 2 tests covering IntentActor supporting_actor_ids pass-through from semantic to intent: Done
 - intent.rs supporting_semantic_ids hardening: 5 assertions across 3 tests covering BehaviorIntent, IntentConstraint, and IntentAssumption supporting_semantic_ids: Done
+- semantic.rs supporting_section_ids hardening: 1 assertion covering ActorRecord supporting_section_ids: Done
 <!-- validation_projection:end -->

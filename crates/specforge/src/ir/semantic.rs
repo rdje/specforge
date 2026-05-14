@@ -12681,6 +12681,7 @@ mod tests {
                 .any(|name| name.eq_ignore_ascii_case("Requester"))
         );
         assert!(semantic_ir.actors.iter().all(|actor| !actor.supporting_statement_ids.is_empty()));
+        assert!(semantic_ir.actors.iter().all(|actor| !actor.supporting_section_ids.is_empty()));
 
         let completer_pready = semantic_ir
             .actor_ports
