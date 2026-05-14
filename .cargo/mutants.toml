@@ -1,0 +1,20 @@
+# cargo-mutants configuration for SpecForge
+# Docs: https://mutants.rs/
+
+# Exclude CLI entry points with no test coverage and test-only files
+exclude_globs = [
+  "**/main.rs",
+  "**/lib.rs",
+  "**/test_support.rs",
+  "**/commands/adapt.rs",
+  "**/commands/enrich.rs",
+  "**/commands/evidence.rs",
+  "**/commands/ingest.rs",
+  "**/commands/inspect.rs",
+  "**/commands/intent.rs",
+  "**/commands/semantic.rs",
+]
+
+# Skip trivial mutation targets that produce noise
+skip_calls = ["with_capacity", "clone", "as_str", "to_string"]
+skip_calls_defaults = true

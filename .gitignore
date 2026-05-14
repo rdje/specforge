@@ -6,3 +6,4 @@
 /generated/
 /.venv-docling/
 *.swp
+mutants.out*/
