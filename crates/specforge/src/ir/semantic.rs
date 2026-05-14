@@ -11368,13 +11368,16 @@ mod tests {
                 && port.width_hint == Some(WidthHint::Numeric(8))
         }));
         assert!(explicit_top.children.iter().any(|child| {
-            child.instance_name == "producer" && child.source_module_name == "producer_core"
+            child.instance_name == "producer"
+                && child.source_module_name == "producer_core"
+                && child.automation_confidence == AutomationConfidence::High
         }));
         assert!(explicit_top.links.iter().any(|link| {
             link.source.instance_name.as_deref() == Some("consumer")
                 && link.source.signal_name == "result_data"
                 && link.target.instance_name.is_none()
                 && link.target.signal_name == "result_data"
+                && link.automation_confidence == AutomationConfidence::High
         }));
 
         Ok(())
@@ -11514,6 +11517,7 @@ mod tests {
                     .as_deref()
                     .map(|d| d.contains("tSU"))
                     .unwrap_or(false)
+                    && tc.automation_confidence == AutomationConfidence::Medium
             }),
             "expected timing constraint from VLM annotation 'tSU = 2 ns'"
         );
@@ -11523,6 +11527,7 @@ mod tests {
                     .as_deref()
                     .map(|d| d.contains("tHD"))
                     .unwrap_or(false)
+                    && tc.automation_confidence == AutomationConfidence::Medium
             }),
             "expected timing constraint from VLM annotation 'tHD = 1 ns'"
         );
@@ -11532,6 +11537,7 @@ mod tests {
                     && constraint.subject_signal == "XREQ"
                     && matches!(constraint.constraint_kind, SignalConstraintKind::MustBeHigh)
                     && constraint.source_text.contains("cycle T1")
+                    && constraint.automation_confidence == AutomationConfidence::Medium
             }),
             "expected VLM timing signal/value tuple to become a grounded signal constraint"
         );
@@ -11954,6 +11960,7 @@ mod tests {
                     .as_deref()
                     .map(|description| description.contains("setup time"))
                     .unwrap_or(false)
+                    && tc.automation_confidence == AutomationConfidence::Medium
             }),
             "expected timing constraint from fenced VLM annotation"
         );
@@ -11963,6 +11970,7 @@ mod tests {
                     .as_deref()
                     .map(|description| description.contains("hold time"))
                     .unwrap_or(false)
+                    && tc.automation_confidence == AutomationConfidence::Medium
             }),
             "expected timing constraint from fenced VLM annotation"
         );
@@ -12544,6 +12552,7 @@ mod tests {
         let haddr = find_signal("HADDR").expect("HADDR should be extracted from table");
         assert_eq!(haddr.direction_hint, Some(InterfaceSignalDirection::Output));
         assert_eq!(haddr.width_hint, Some(WidthHint::Numeric(32)));
+        assert_eq!(haddr.automation_confidence, AutomationConfidence::High);
 
         let hwrite = find_signal("HWRITE").expect("HWRITE should be extracted from table");
         assert_eq!(
@@ -12551,6 +12560,7 @@ mod tests {
             Some(InterfaceSignalDirection::Output)
         );
         assert_eq!(hwrite.width_hint, Some(WidthHint::Numeric(1)));
+        assert_eq!(hwrite.automation_confidence, AutomationConfidence::High);
 
         let htrans = find_signal("HTRANS").expect("HTRANS should be extracted from table");
         assert_eq!(
@@ -12558,6 +12568,7 @@ mod tests {
             Some(InterfaceSignalDirection::Output)
         );
         assert_eq!(htrans.width_hint, Some(WidthHint::Numeric(2)));
+        assert_eq!(htrans.automation_confidence, AutomationConfidence::High);
 
         // Subordinate signals should be extracted as Input with explicit widths.
         let hreadyout = find_signal("HREADYOUT").expect("HREADYOUT should be extracted from table");
@@ -12566,10 +12577,12 @@ mod tests {
             Some(InterfaceSignalDirection::Input)
         );
         assert_eq!(hreadyout.width_hint, Some(WidthHint::Numeric(1)));
+        assert_eq!(hreadyout.automation_confidence, AutomationConfidence::High);
 
         let hresp = find_signal("HRESP").expect("HRESP should be extracted from table");
         assert_eq!(hresp.direction_hint, Some(InterfaceSignalDirection::Input));
         assert_eq!(hresp.width_hint, Some(WidthHint::Numeric(1)));
+        assert_eq!(hresp.automation_confidence, AutomationConfidence::High);
 
         Ok(())
     }
