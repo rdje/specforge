@@ -10366,6 +10366,7 @@ mod tests {
         );
         assert!(evidence_ir.extracted_statements.iter().any(|statement| {
             !statement.related_visual_evidence_ids.is_empty()
+                && !statement.evidence_span_ids.is_empty()
                 && statement
                     .text
                     .contains("The handshake is shown in Figure 1.")
