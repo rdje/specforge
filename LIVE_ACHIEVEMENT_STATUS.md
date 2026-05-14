@@ -1574,7 +1574,7 @@
   - `IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf`: [info:system_contract] 2 infrastructure signal(s) have no resolved producer actor in IntentIR connectivity; canonical sourcing status remains explicit in the infrastructure/system-contract surface
 - Targeted rescan queue:
   - none
-- New hardening lane opened — evidence.rs `automation_confidence` and `supporting_statement_ids` coverage: In progress
+- New hardening lane opened — evidence.rs `automation_confidence` and `supporting_statement_ids` coverage: Done (lane expanded to cover all IR modules)
 - evidence.rs automation_confidence batch 1: 19 assertions across 13 tests covering 5 source kinds: Done
 - evidence.rs supporting_statement_ids hardening: 13 assertions across 8 tests covering non-empty and empty patterns: Done
 - evidence.rs SignalPolarityRecord and VisualEvidenceItem hardening: 13 assertions across 5 tests: Done
@@ -1587,4 +1587,5 @@
 - nlp_enrich.rs automation_confidence and supporting_statement_ids hardening complete: 6 assertions across 5 tests covering SignalConstraintRecord and ConditionalRuleRecord from NLP Level 3 extraction: Done
 - intent.rs automation_confidence and supporting_statement_ids hardening complete: 12 assertions across 6 tests covering TemporalRuleRecord (5 tests) and TemporalConflictRecord (1 test) pass-through from semantic.rs: Done
 - learn_priors.rs strongest_automation_confidence hardening complete: 7 assertions across 4 tests covering SemanticPhrasePriorRecord, SemanticModalityReliabilityPriorRecord, TemporalPhrasePriorRecord, ActorTaxonomyPriorRecord, and NegativeKnowledgePriorRecord output types: Done
+- semantic.rs supporting_table_ids hardening: 8 assertions across 4 tests covering InterfaceSignalRecord and observation-level supporting_table_ids for table-derived signal evidence: Done
 <!-- validation_projection:end -->

@@ -12601,6 +12601,7 @@ mod tests {
         assert_eq!(haddr.direction_hint, Some(InterfaceSignalDirection::Output));
         assert_eq!(haddr.width_hint, Some(WidthHint::Numeric(32)));
         assert_eq!(haddr.automation_confidence, AutomationConfidence::High);
+        assert!(!haddr.supporting_table_ids.is_empty());
 
         let hwrite = find_signal("HWRITE").expect("HWRITE should be extracted from table");
         assert_eq!(
@@ -12609,6 +12610,7 @@ mod tests {
         );
         assert_eq!(hwrite.width_hint, Some(WidthHint::Numeric(1)));
         assert_eq!(hwrite.automation_confidence, AutomationConfidence::High);
+        assert!(!hwrite.supporting_table_ids.is_empty());
 
         let htrans = find_signal("HTRANS").expect("HTRANS should be extracted from table");
         assert_eq!(
@@ -12617,6 +12619,7 @@ mod tests {
         );
         assert_eq!(htrans.width_hint, Some(WidthHint::Numeric(2)));
         assert_eq!(htrans.automation_confidence, AutomationConfidence::High);
+        assert!(!htrans.supporting_table_ids.is_empty());
 
         // Subordinate signals should be extracted as Input with explicit widths.
         let hreadyout = find_signal("HREADYOUT").expect("HREADYOUT should be extracted from table");
@@ -12626,11 +12629,13 @@ mod tests {
         );
         assert_eq!(hreadyout.width_hint, Some(WidthHint::Numeric(1)));
         assert_eq!(hreadyout.automation_confidence, AutomationConfidence::High);
+        assert!(!hreadyout.supporting_table_ids.is_empty());
 
         let hresp = find_signal("HRESP").expect("HRESP should be extracted from table");
         assert_eq!(hresp.direction_hint, Some(InterfaceSignalDirection::Input));
         assert_eq!(hresp.width_hint, Some(WidthHint::Numeric(1)));
         assert_eq!(hresp.automation_confidence, AutomationConfidence::High);
+        assert!(!hresp.supporting_table_ids.is_empty());
 
         Ok(())
     }
@@ -13575,6 +13580,12 @@ mod tests {
             xreq_consensus.automation_confidence,
             AutomationConfidence::Medium
         );
+        assert!(xreq.semantic_observations.iter().any(|observation| {
+            matches!(
+                observation.source_kind,
+                SignalSemanticHintSourceKind::SignalDescriptionTable
+            ) && !observation.supporting_table_ids.is_empty()
+        }));
 
         Ok(())
     }
@@ -13692,6 +13703,9 @@ mod tests {
             xreq_consensus.automation_confidence,
             AutomationConfidence::Medium
         );
+        assert!(xreq.semantic_observations.iter().all(|observation| {
+            !observation.supporting_table_ids.is_empty()
+        }));
 
         Ok(())
     }
@@ -16969,6 +16983,7 @@ mod tests {
             .flat_map(|interface| interface.signal_records.iter())
             .find(|signal| signal.signal_name == "XVALID")
             .expect("expected XVALID interface signal");
+        assert!(!xvalid.supporting_table_ids.is_empty());
         let arbitration = xvalid
             .semantic_arbitration
             .as_ref()
