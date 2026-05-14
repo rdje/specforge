@@ -6796,8 +6796,9 @@ mod tests {
     };
 
     use super::{
-        EvidenceIr, EvidenceLinkKind, SignalSemanticHintSourceKind, SignalSemanticTag,
-        StatementClass, VisualObservationKind, canonicalize_existing_path,
+        EvidenceIr, EvidenceLinkKind, EvidenceModality, SignalSemanticHintSourceKind,
+        SignalSemanticTag, StatementClass, VisualObservationKind,
+        canonicalize_existing_path,
     };
 
     fn make_table_cell(text: &str, is_header: bool) -> StructuredTableCellRecord {
@@ -6947,6 +6948,20 @@ mod tests {
             evidence_ir.extracted_statements[0].class,
             StatementClass::NormativeStatement
         );
+        assert_eq!(
+            evidence_ir.extracted_statements[0].modality,
+            EvidenceModality::Text
+        );
+        assert!(evidence_ir.extracted_statements[0]
+            .related_visual_evidence_ids
+            .is_empty());
+        assert_eq!(
+            evidence_ir.extracted_statements[1].modality,
+            EvidenceModality::Text
+        );
+        assert!(evidence_ir.extracted_statements[1]
+            .related_visual_evidence_ids
+            .is_empty());
 
         Ok(())
     }
