@@ -2202,6 +2202,8 @@ mod tests {
                         } if signal_name == "HTRANS"
                     )
                 })
+                && rule.automation_confidence == AutomationConfidence::Medium
+                && !rule.supporting_statement_ids.is_empty()
         }));
 
         Ok(())
@@ -2272,6 +2274,8 @@ mod tests {
                     } if actor_name.eq_ignore_ascii_case("Completer") && signal_name == "PREADY"
                 )
             })
+                && rule.automation_confidence == AutomationConfidence::Medium
+                && !rule.supporting_statement_ids.is_empty()
         }));
 
         Ok(())
@@ -2343,6 +2347,8 @@ mod tests {
                     } if actor_name.eq_ignore_ascii_case("Completer") && signal_name == "PREADY"
                 )
             })
+                && rule.automation_confidence == AutomationConfidence::Medium
+                && !rule.supporting_statement_ids.is_empty()
         }));
 
         Ok(())
@@ -2427,6 +2433,8 @@ mod tests {
                         } if signal_name == "HSEL" && value == "HIGH"
                     )
                 })
+                && rule.automation_confidence == AutomationConfidence::Medium
+                && !rule.supporting_statement_ids.is_empty()
         }));
 
         Ok(())
@@ -2499,6 +2507,8 @@ mod tests {
                         } if valid_signal == "AWVALID" && ready_signal == "AWREADY"
                     )
                 })
+                && rule.automation_confidence == AutomationConfidence::Medium
+                && !rule.supporting_statement_ids.is_empty()
         }));
 
         Ok(())
@@ -2961,6 +2971,8 @@ mod tests {
             conflict.conflicting_values,
             vec!["HIGH".to_string(), "LOW".to_string()]
         );
+        assert_eq!(conflict.automation_confidence, AutomationConfidence::Medium);
+        assert!(!conflict.supporting_statement_ids.is_empty());
 
         Ok(())
     }
