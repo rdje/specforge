@@ -18712,4 +18712,64 @@ mod tests {
         // Catches ||→&& mutant at line 9823 — mutation would skip the early-return guard
         assert!(!super::is_non_quantitative_waveform_motion_annotation("hello world"));
     }
+
+    // is_timing_annotation_constraint_token unit tests
+
+    #[test]
+    fn timing_annotation_constraint_token_recognizes_setup() {
+        // Catches return false mutant
+        assert!(super::is_timing_annotation_constraint_token("setup"));
+    }
+
+    #[test]
+    fn timing_annotation_constraint_token_rejects_unknown() {
+        assert!(!super::is_timing_annotation_constraint_token("foobar"));
+    }
+
+    // is_compact_waveform_sample_label unit tests
+
+    #[test]
+    fn compact_sample_label_accepts_hex_prefix() {
+        assert!(super::is_compact_waveform_sample_label("0x1A"));
+    }
+
+    #[test]
+    fn compact_sample_label_rejects_empty_hex_suffix() {
+        // Catches &&→|| mutant at line 9952 — empty hex digits must be rejected
+        assert!(!super::is_compact_waveform_sample_label("0x"));
+    }
+
+    #[test]
+    fn compact_sample_label_accepts_binary_prefix() {
+        assert!(super::is_compact_waveform_sample_label("0b101"));
+    }
+
+    #[test]
+    fn compact_sample_label_rejects_empty_binary_suffix() {
+        // Catches &&→|| at line 9958 and delete ! at line 9957
+        assert!(!super::is_compact_waveform_sample_label("0b"));
+    }
+
+    #[test]
+    fn compact_sample_label_accepts_named_prefix_with_digit_suffix() {
+        assert!(super::is_compact_waveform_sample_label("addr5"));
+    }
+
+    #[test]
+    fn compact_sample_label_rejects_empty_named_prefix_suffix() {
+        // Catches &&→|| mutant at line 9983
+        assert!(!super::is_compact_waveform_sample_label("data"));
+    }
+
+    #[test]
+    fn compact_sample_label_rejects_unmatched_prefix_with_digits() {
+        // Catches &&→|| mutant at line 9993 — 'x' doesnt match 'a'|'d'
+        assert!(!super::is_compact_waveform_sample_label("x42"));
+    }
+
+    #[test]
+    fn compact_sample_label_accepts_single_char_prefix_with_digits() {
+        // Catches &&→|| mutant at line 9994
+        assert!(super::is_compact_waveform_sample_label("a0"));
+    }
 }
