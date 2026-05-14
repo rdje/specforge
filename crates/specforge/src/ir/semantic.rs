@@ -11187,7 +11187,10 @@ mod tests {
                 && definition
                     .members
                     .iter()
-                    .any(|member| member.member_name == "idle")
+                    .any(|member| {
+                        member.member_name == "idle"
+                            && member.automation_confidence == AutomationConfidence::High
+                    })
                 && definition.automation_confidence == AutomationConfidence::High
         }));
 
@@ -11204,11 +11207,16 @@ mod tests {
                 if reference.base_name == "MODE"
                     && reference.kind_hint == ControlReferenceKind::Signal
         ));
+        let decode_branch = decode_block
+            .branches
+            .first()
+            .expect("decode block should have a first branch");
+        assert_eq!(
+            decode_branch.automation_confidence,
+            AutomationConfidence::High
+        );
         assert!(matches!(
-            decode_block
-                .branches
-                .first()
-                .and_then(|branch| branch.predicate.as_ref()),
+            decode_branch.predicate.as_ref(),
             Some(ControlExpressionRecord::Binary {
                 operator: ControlBinaryOperator::Eq,
                 left,
@@ -13316,6 +13324,7 @@ mod tests {
                 observation.source_kind,
                 SignalSemanticHintSourceKind::VisualCaption
             ) && !observation.supporting_visual_evidence_ids.is_empty()
+                && observation.automation_confidence == AutomationConfidence::Low
         }));
 
         let xack = semantic_ir
@@ -13400,6 +13409,7 @@ mod tests {
             ) && observation
                 .supporting_table_ids
                 .contains(&"table_signal_semantic_tags".to_string())
+                && observation.automation_confidence == AutomationConfidence::Medium
         }));
 
         Ok(())
