@@ -18521,4 +18521,29 @@ mod tests {
 
         Ok(())
     }
+
+    // ── parse_explicit_system_reset unit tests ──────────────────────────
+
+    #[test]
+    fn parse_explicit_system_reset_returns_none_for_non_reset_text() {
+        // tokens.len() >= 4 but tokens[0] != "reset" — catches ||→&& mutant
+        assert!(
+            super::parse_explicit_system_reset("Signal clk is input width 1.").is_none()
+        );
+    }
+
+    #[test]
+    fn parse_explicit_system_reset_returns_none_for_short_text() {
+        // tokens.len() < 4 — guard clause
+        assert!(super::parse_explicit_system_reset("Reset").is_none());
+    }
+
+    #[test]
+    fn parse_explicit_system_reset_parses_signal_keyword_form() {
+        // "reset signal X is ..." — catches >=→< mutant
+        let result = super::parse_explicit_system_reset(
+            "Reset signal rst_n is synchronous active low.",
+        );
+        assert!(result.is_some());
+    }
 }
