@@ -1,5 +1,12 @@
 # CHANGES
 
+## 2026-05-14 (evidence.rs EvidenceLink from_evidence_span_id / to_visual_evidence_id hardening)
+
+### Improved: 2 EvidenceLink field assertions in visual evidence test
+- Added `!link.from_evidence_span_id.is_empty()` and `!link.to_visual_evidence_id.is_empty()` to `links_caption_and_figure_reference_into_visual_evidence`.
+- These fields link evidence spans to visual evidence items. Previously untested.
+- 666/666 tests passing.
+
 ## 2026-05-14 (learn_priors.rs supporting_document_keys hardening)
 
 ### Improved: 8 supporting_document_keys assertions across 3 learn_priors tests

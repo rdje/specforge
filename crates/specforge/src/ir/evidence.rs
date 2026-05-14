@@ -10355,6 +10355,14 @@ mod tests {
                 .iter()
                 .any(|link| link.relation == EvidenceLinkKind::Cites)
         );
+        assert!(evidence_ir
+            .evidence_links
+            .iter()
+            .all(|link| !link.from_evidence_span_id.is_empty()));
+        assert!(evidence_ir
+            .evidence_links
+            .iter()
+            .all(|link| !link.to_visual_evidence_id.is_empty()));
         assert_eq!(
             evidence_ir.visual_evidence[0]
                 .figure_reference_text

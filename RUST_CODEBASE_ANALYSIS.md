@@ -3,6 +3,10 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-14 evidence.rs EvidenceLink provenance ID hardening)
+- Added `from_evidence_span_id` and `to_visual_evidence_id` assertions to the evidence links test. Previously untested. Zero production changes.
+- 666/666 tests passing.
+
 ## Session update (2026-05-14 learn_priors.rs supporting_document_keys hardening)
 - Added `supporting_document_keys` assertions (8 assertions across 3 tests) covering all 7 prior record types.
 - The field links harvested priors back to the documents they were learned from. Previously untested. Zero production changes.

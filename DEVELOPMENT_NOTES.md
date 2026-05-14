@@ -6,6 +6,12 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-14 evidence.rs EvidenceLink provenance ID hardening
+
+- Added `from_evidence_span_id` and `to_visual_evidence_id` non-empty assertions to `links_caption_and_figure_reference_into_visual_evidence`.
+- These are the two provenance-like fields on EvidenceLink that link evidence spans to visual evidence items.
+- 2 assertions across 1 test. 666/666 tests passing.
+
 ## 2026-05-14 learn_priors.rs supporting_document_keys hardening
 
 - Added `supporting_document_keys` assertions to the 3 harvest tests that cover all 7 prior record types.

@@ -24,12 +24,13 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: pending (supporting_document_keys hardening)
+- latest_commit_hash: pending (EvidenceLink provenance IDs hardening)
 - latest_commit_brief_message: pending
-- note: PNT hardening continuing; 9 slices this session covering supporting_actor_ids (2), supporting_semantic_ids (5), supporting_section_ids (1), supporting_span_ids (2), evidence_span_ids (1), table_signal_declaration_provenance (3), supporting_document_keys (8); 666 tests passing; branch at 8 local commits ahead of origin
+- note: PNT hardening continuing; 10 slices this session covering supporting_actor_ids (2), supporting_semantic_ids (5), supporting_section_ids (1), supporting_span_ids (2), evidence_span_ids (1), table_signal_declaration_provenance (3), supporting_document_keys (8), EvidenceLink IDs (2); 666 tests passing; branch at 9 local commits ahead of origin
 
 ## Recent commit chain (last 10)
-- pending (supporting_document_keys hardening)
+- pending (EvidenceLink provenance IDs hardening)
+- `045d020a` Add supporting_document_keys assertions to all 7 learn_priors prior record types
 - `c0f33f1e` Add table_signal_declaration_provenance assertions to evidence.rs signal-description table tests
 - `7409891b` Add evidence_span_ids assertion to extracted statement check
 - `1683beb4` Sync tracked docs — CHANGES.md and MEMORY.md updated for 3 recent hardening slices
