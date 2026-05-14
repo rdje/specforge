@@ -26,7 +26,7 @@
 ## Latest committed baseline
 - latest_commit_hash: `3015f029`
 - latest_commit_brief_message: Update FSMGEN submodule to fc634306
-- note: R6-CONVERGE-HARDENING tree closed — 1 leaf done (2 assertions), leaf 2 deferred (prior_memory has no tests, SourceSnapshot is private). 25 local commits ahead. 4 task trees closed.
+- note: 4 task trees closed this session. 26 local commits ahead. 666 tests passing. Near push checkpoint (~30). Next: DT guard condition feature adoption in adapter.
 
 ## Recent commit chain (last 10)
 - pending (EvidenceLink provenance IDs hardening)
