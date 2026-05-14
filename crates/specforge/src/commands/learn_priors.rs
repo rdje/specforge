@@ -1942,6 +1942,10 @@ mod tests {
         );
         assert_eq!(semantic_records[0].protocol_family, ProtocolFamily::AmbaAxi);
         assert_eq!(semantic_records[0].support_count, 1);
+        assert_eq!(
+            semantic_records[0].strongest_automation_confidence,
+            AutomationConfidence::High
+        );
         assert_eq!(semantic_modality_reliability_records.len(), 1);
         assert_eq!(
             semantic_modality_reliability_records[0].role,
@@ -1954,6 +1958,10 @@ mod tests {
         assert_eq!(
             semantic_modality_reliability_records[0].strongest_grounding_strength,
             SemanticGroundingStrength::CrossModality
+        );
+        assert_eq!(
+            semantic_modality_reliability_records[0].strongest_automation_confidence,
+            AutomationConfidence::High
         );
 
         assert_eq!(temporal_records.len(), 1);
@@ -1969,6 +1977,10 @@ mod tests {
             })
         );
         assert!(temporal_records[0].actor_grounded);
+        assert_eq!(
+            temporal_records[0].strongest_automation_confidence,
+            AutomationConfidence::High
+        );
     }
 
     #[test]
@@ -2131,11 +2143,13 @@ mod tests {
         assert!(records.iter().any(|record| {
             record.normalized_actor_term == "requester"
                 && record.taxonomy_role == ActorTaxonomyRole::RequesterLike
+                && record.strongest_automation_confidence == AutomationConfidence::High
         }));
         assert!(records.iter().any(|record| {
             record.normalized_actor_term == "completer"
                 && record.taxonomy_role == ActorTaxonomyRole::CompleterLike
                 && record.strongest_grounding_strength == SemanticGroundingStrength::CrossModality
+                && record.strongest_automation_confidence == AutomationConfidence::High
         }));
     }
 
@@ -2165,6 +2179,10 @@ mod tests {
         assert_eq!(
             records[0].strongest_grounding_strength,
             SemanticGroundingStrength::SingleSource
+        );
+        assert_eq!(
+            records[0].strongest_automation_confidence,
+            AutomationConfidence::Medium
         );
     }
 
@@ -2413,6 +2431,10 @@ mod tests {
             "signal_semantic_conflict:signal_description_table:handshake_valid_like|visual_caption:handshake_ready_like"
         );
         assert_eq!(negative_records[0].support_count, 1);
+        assert_eq!(
+            negative_records[0].strongest_automation_confidence,
+            AutomationConfidence::Medium
+        );
 
         Ok(())
     }

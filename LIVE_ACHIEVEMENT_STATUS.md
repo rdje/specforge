@@ -1586,4 +1586,5 @@
 - SourceIR automation_confidence hardening lane complete: 8 assertions across 7 tests covering SourceIr and ResidualDecisionPacket (remaining record types defined in source.rs are only exercised in downstream modules): Done
 - nlp_enrich.rs automation_confidence and supporting_statement_ids hardening complete: 6 assertions across 5 tests covering SignalConstraintRecord and ConditionalRuleRecord from NLP Level 3 extraction: Done
 - intent.rs automation_confidence and supporting_statement_ids hardening complete: 12 assertions across 6 tests covering TemporalRuleRecord (5 tests) and TemporalConflictRecord (1 test) pass-through from semantic.rs: Done
+- learn_priors.rs strongest_automation_confidence hardening complete: 7 assertions across 4 tests covering SemanticPhrasePriorRecord, SemanticModalityReliabilityPriorRecord, TemporalPhrasePriorRecord, ActorTaxonomyPriorRecord, and NegativeKnowledgePriorRecord output types: Done
 <!-- validation_projection:end -->
