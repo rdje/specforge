@@ -11374,6 +11374,7 @@ mod tests {
             dt_candidate.automation_confidence,
             AutomationConfidence::Medium
         );
+        assert!(!dt_candidate.summary.is_empty());
         assert!(
             fsm.signal_inventory
                 .iter()
@@ -14210,6 +14211,7 @@ mod tests {
             dt_candidate.automation_confidence,
             AutomationConfidence::High
         );
+        assert!(!dt_candidate.summary.is_empty());
         for signal_name in ["MODE", "OUT"] {
             assert!(
                 fsm.signal_inventory

@@ -56,13 +56,13 @@ across the adapter test surface.
   Goal: `Harden AdapterArtifact identity fields — adapter_identity (adapter_id, summary) and document_identity.`
   Acceptance: `9 assertions across 2 tests: builds_blocked_dt_centric_fsm_adapter_artifact (6 assertions — adapter_id non-empty + prefix, summary non-empty + content, document_key + display_name non-empty) and builds_renderable_standalone_dt_fsm_adapter_artifact (3 assertions — adapter_id, summary, document_key non-empty).`
   Verification: `cargo test -p specforge --lib — 666/666 passed`
-  Commit: `pending`
+  Commit: `9bbf01e3` — Add adapter_identity and document_identity assertions
 
 - ID: `R6-FSM-ADAPTER.1.2`
-  Status: `pending`
+  Status: `done`
   Goal: `Harden FsmDecisionTreeCandidate.summary — dynamic format string populated during DT candidate construction.`
-  Acceptance: `Non-empty assertion on summary in at least one test that already checks other FsmDecisionTreeCandidate fields.`
-  Verification: `pending`
+  Acceptance: `2 assertions across 2 tests: builds_blocked_dt_centric_fsm_adapter_artifact and builds_renderable_standalone_dt_fsm_adapter_artifact_with_graph_direction_context. Summary is populated in both DT construction paths.`
+  Verification: `cargo test -p specforge --lib — 666/666 passed`
   Commit: `pending`
 
 - ID: `R6-FSM-ADAPTER.1.3`
@@ -76,8 +76,7 @@ across the adapter test surface.
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `R6-FSM-ADAPTER.1.2` | `pending` | FsmDecisionTreeCandidate.summary is a dynamic format string — zero coverage. |
-| 2 | `R6-FSM-ADAPTER.1.3` | `pending` | FsmRenderableModule.symbol_definitions has only function-level coverage, no end-to-end assertions. |
+| 1 | `R6-FSM-ADAPTER.1.3` | `pending` | FsmRenderableModule.symbol_definitions has only function-level coverage, no end-to-end assertions. |
 
 ## Decisions
 
