@@ -2982,4 +2982,278 @@ mod tests {
 
         Ok(())
     }
+
+    // ── overlaps unit tests ──────────────────────────────────────────────
+
+    #[test]
+    fn overlaps_empty_left_returns_false() {
+        assert!(!super::overlaps(&[], &["a".to_string()]));
+    }
+
+    #[test]
+    fn overlaps_empty_right_returns_false() {
+        assert!(!super::overlaps(&["a".to_string()], &[]));
+    }
+
+    #[test]
+    fn overlaps_returns_true_when_common_element_exists() {
+        assert!(super::overlaps(
+            &["a".to_string(), "b".to_string()],
+            &["b".to_string(), "c".to_string()]
+        ));
+    }
+
+    #[test]
+    fn overlaps_returns_false_when_no_common_element() {
+        assert!(!super::overlaps(
+            &["a".to_string()],
+            &["b".to_string()]
+        ));
+    }
+
+    #[test]
+    fn overlaps_empty_both_returns_false() {
+        assert!(!super::overlaps(&[], &[]));
+    }
+
+    // ── dedup tests ─────────────────────────────────────────────────────
+
+    #[test]
+    fn build_behaviors_deduplicates_phases() {
+        use std::collections::BTreeSet;
+        let context = super::IntentContext {
+            semantic_actors: Vec::new(),
+            phases: vec![
+                super::PhaseContext {
+                    phase_id: "phase_1".to_string(),
+                    summary: "Address phase".to_string(),
+                    supporting_statement_ids: vec![],
+                    supporting_section_ids: vec![],
+                },
+                super::PhaseContext {
+                    phase_id: "phase_2".to_string(),
+                    summary: "Address phase".to_string(), // duplicate summary
+                    supporting_statement_ids: vec![],
+                    supporting_section_ids: vec![],
+                },
+            ],
+            invariants: Vec::new(),
+            assertions: Vec::new(),
+            contracts: Vec::new(),
+            gates: Vec::new(),
+            abstractions: Vec::new(),
+            residual_decisions: Vec::new(),
+        };
+        let actor_ids = BTreeSet::new();
+        let behaviors = super::build_behaviors(&context, actor_ids);
+        assert_eq!(behaviors.len(), 1, "duplicate phases must be deduped");
+        assert!(behaviors[0].statement.contains("Address phase"));
+        assert_eq!(
+            behaviors[0].behavior_id, "behavior_phase_1",
+            "must keep first phase, not second"
+        );
+    }
+
+    #[test]
+    fn build_constraints_deduplicates_invariants() {
+        let context = super::IntentContext {
+            semantic_actors: Vec::new(),
+            phases: Vec::new(),
+            invariants: vec![
+                super::ConstraintSourceContext {
+                    source_id: "inv_1".to_string(),
+                    statement: "XREQ must remain stable".to_string(),
+                    related_interface_ids: vec![],
+                },
+                super::ConstraintSourceContext {
+                    source_id: "inv_2".to_string(),
+                    statement: "XREQ must remain stable".to_string(), // duplicate
+                    related_interface_ids: vec![],
+                },
+            ],
+            assertions: Vec::new(),
+            contracts: Vec::new(),
+            gates: Vec::new(),
+            abstractions: Vec::new(),
+            residual_decisions: Vec::new(),
+        };
+        let constraints = super::build_constraints(&context);
+        assert_eq!(constraints.len(), 1, "duplicate invariants must be deduped");
+        assert!(constraints[0].statement.contains("XREQ"));
+        assert_eq!(
+            constraints[0].constraint_id, "constraint_inv_1",
+            "must keep first invariant, not second"
+        );
+    }
+
+    // ── build_assumptions missing packet_id tests ────────────────────────
+
+    #[test]
+    fn build_assumptions_emits_for_semantic_role_without_consensus() {
+        let context = super::IntentContext {
+            semantic_actors: Vec::new(),
+            phases: Vec::new(),
+            invariants: Vec::new(),
+            assertions: Vec::new(),
+            contracts: Vec::new(),
+            gates: Vec::new(),
+            abstractions: Vec::new(),
+            residual_decisions: vec![ResidualDecisionPacket {
+                packet_id: "semantic_resolved_role_without_consensus".to_string(),
+                question: "Is the role consensus resolved?".to_string(),
+                why_unresolved: "Still provisional.".to_string(),
+                automation_confidence: AutomationConfidence::Low,
+                candidate_interpretations: vec![],
+            }],
+        };
+        let assumptions = super::build_assumptions(&context, &[]);
+        assert!(assumptions.iter().any(|a| {
+            a.assumption_id == "assumption_semantic_role_without_consensus"
+        }));
+    }
+
+    #[test]
+    fn build_assumptions_emits_for_alias_dependent_handshake_completion() {
+        let context = super::IntentContext {
+            semantic_actors: Vec::new(),
+            phases: Vec::new(),
+            invariants: Vec::new(),
+            assertions: Vec::new(),
+            contracts: Vec::new(),
+            gates: Vec::new(),
+            abstractions: Vec::new(),
+            residual_decisions: vec![ResidualDecisionPacket {
+                packet_id: "semantic_alias_dependent_handshake_completion".to_string(),
+                question: "Is handshake completion alias-dependent?".to_string(),
+                why_unresolved: "Alias dependent.".to_string(),
+                automation_confidence: AutomationConfidence::Low,
+                candidate_interpretations: vec![],
+            }],
+        };
+        let assumptions = super::build_assumptions(&context, &[]);
+        assert!(assumptions.iter().any(|a| {
+            a.assumption_id == "assumption_alias_dependent_handshake_completion"
+        }));
+    }
+
+    #[test]
+    fn build_behaviors_deduplicates_gates() {
+        use std::collections::BTreeSet;
+        let context = super::IntentContext {
+            semantic_actors: Vec::new(),
+            phases: Vec::new(),
+            invariants: Vec::new(),
+            assertions: Vec::new(),
+            contracts: Vec::new(),
+            gates: vec![
+                super::GateContext {
+                    gate_id: "gate_1".to_string(),
+                    condition: "HREADY is HIGH".to_string(),
+                    related_interface_ids: vec![],
+                },
+                super::GateContext {
+                    gate_id: "gate_2".to_string(),
+                    condition: "HREADY is HIGH".to_string(), // duplicate
+                    related_interface_ids: vec![],
+                },
+            ],
+            abstractions: Vec::new(),
+            residual_decisions: Vec::new(),
+        };
+        let actor_ids = BTreeSet::new();
+        let behaviors = super::build_behaviors(&context, actor_ids);
+        assert_eq!(behaviors.len(), 1, "duplicate gates must be deduped");
+        assert_eq!(behaviors[0].behavior_id, "behavior_gate_1");
+    }
+
+    #[test]
+    fn build_constraints_deduplicates_assertions() {
+        let context = super::IntentContext {
+            semantic_actors: Vec::new(),
+            phases: Vec::new(),
+            invariants: Vec::new(),
+            assertions: vec![
+                super::ConstraintSourceContext {
+                    source_id: "asrt_1".to_string(),
+                    statement: "XREQ is stable".to_string(),
+                    related_interface_ids: vec![],
+                },
+                super::ConstraintSourceContext {
+                    source_id: "asrt_2".to_string(),
+                    statement: "XREQ is stable".to_string(), // duplicate
+                    related_interface_ids: vec![],
+                },
+            ],
+            contracts: Vec::new(),
+            gates: Vec::new(),
+            abstractions: Vec::new(),
+            residual_decisions: Vec::new(),
+        };
+        let constraints = super::build_constraints(&context);
+        assert_eq!(constraints.len(), 1, "duplicate assertions must be deduped");
+        assert_eq!(constraints[0].constraint_id, "constraint_asrt_1");
+    }
+
+    #[test]
+    fn build_constraints_deduplicates_gates() {
+        let context = super::IntentContext {
+            semantic_actors: Vec::new(),
+            phases: Vec::new(),
+            invariants: Vec::new(),
+            assertions: Vec::new(),
+            contracts: Vec::new(),
+            gates: vec![
+                super::GateContext {
+                    gate_id: "gate_3".to_string(),
+                    condition: "HREADY is HIGH".to_string(),
+                    related_interface_ids: vec!["if_1".to_string()],
+                },
+                super::GateContext {
+                    gate_id: "gate_4".to_string(),
+                    condition: "HREADY is HIGH".to_string(), // duplicate
+                    related_interface_ids: vec!["if_2".to_string()],
+                },
+            ],
+            abstractions: Vec::new(),
+            residual_decisions: Vec::new(),
+        };
+        let constraints = super::build_constraints(&context);
+        assert_eq!(constraints.len(), 1, "duplicate gates must be deduped");
+        assert_eq!(constraints[0].constraint_id, "constraint_gate_3_gate");
+    }
+
+    // ── build_intent_actors overlaps test ────────────────────────────────
+
+    #[test]
+    fn build_intent_actors_attaches_phase_when_statements_overlap() {
+        let context = super::IntentContext {
+            semantic_actors: vec![super::SemanticActorContext {
+                actor_id: "actor_tx".to_string(),
+                actor_name: Some("Transmitter".to_string()),
+                role_summary: String::new(),
+                supporting_statement_ids: vec!["stmt_1".to_string()],
+                supporting_section_ids: vec![], // no section overlap
+            }],
+            phases: vec![super::PhaseContext {
+                phase_id: "phase_addr".to_string(),
+                summary: "Address phase".to_string(),
+                supporting_statement_ids: vec!["stmt_1".to_string()], // overlaps via statement
+                supporting_section_ids: vec!["sec_other".to_string()],
+            }],
+            invariants: Vec::new(),
+            assertions: Vec::new(),
+            contracts: Vec::new(),
+            gates: Vec::new(),
+            abstractions: Vec::new(),
+            residual_decisions: Vec::new(),
+        };
+        let actors = super::build_intent_actors(&context);
+        let tx = actors.iter().find(|a| a.actor_id == "actor_tx").unwrap();
+        assert!(
+            tx.responsibilities
+                .iter()
+                .any(|r| r.contains("Address phase")),
+            "actor must participate in phase when supporting statements overlap (even with empty sections)"
+        );
+    }
 }
