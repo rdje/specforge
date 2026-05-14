@@ -10350,6 +10350,7 @@ mod tests {
                     observation.kind == VisualObservationKind::Caption
                         && observation.text == "Figure 1: VALID/READY timing behavior."
                         && observation.automation_confidence == AutomationConfidence::High
+                        && !observation.supporting_span_ids.is_empty()
                 })
         );
         assert!(
@@ -10360,6 +10361,7 @@ mod tests {
                     observation.kind == VisualObservationKind::FigureReference
                         && observation.text == "Figure 1"
                         && observation.automation_confidence == AutomationConfidence::Medium
+                        && !observation.supporting_span_ids.is_empty()
                 })
         );
         assert!(evidence_ir.extracted_statements.iter().any(|statement| {

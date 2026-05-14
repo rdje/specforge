@@ -1592,4 +1592,5 @@
 - intent.rs supporting_actor_ids hardening: 2 assertions across 2 tests covering IntentActor supporting_actor_ids pass-through from semantic to intent: Done
 - intent.rs supporting_semantic_ids hardening: 5 assertions across 3 tests covering BehaviorIntent, IntentConstraint, and IntentAssumption supporting_semantic_ids: Done
 - semantic.rs supporting_section_ids hardening: 1 assertion covering ActorRecord supporting_section_ids: Done
+- evidence.rs supporting_span_ids hardening: 2 assertions covering VisualObservation supporting_span_ids for caption and figure-reference observations: Done
 <!-- validation_projection:end -->
