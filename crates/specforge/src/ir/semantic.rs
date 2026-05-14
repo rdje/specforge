@@ -19406,16 +19406,80 @@ mod tests {
     // extract_infrastructure_subject_phrase unit tests
 
     #[test]
-    fn infrastructure_subject_phrase_extracts_after_determiner() {
-        // Catches delete ! at line 3794 — determiner trimming must keep alpha chars
+    fn infrastructure_subject_phrase_extracts_after_clean_determiner() {
         let result = super::extract_infrastructure_subject_phrase("the DMA engine");
         assert_eq!(result.as_deref(), Some("DMA engine"));
     }
 
     #[test]
-    fn infrastructure_subject_phrase_extracts_from_end_without_determiner() {
-        // Catches +→* at line 3800 — non-zero index path via reverse iteration
+    fn infrastructure_subject_phrase_extracts_after_punctuated_determiner() {
+        // Catches delete ! at line 3794 — non-alpha chars must be stripped from determiner
+        let result = super::extract_infrastructure_subject_phrase("the, DMA engine");
+        assert_eq!(result.as_deref(), Some("DMA engine"));
+    }
+
+    #[test]
+    fn infrastructure_subject_phrase_extracts_with_leading_words_before_determiner() {
+        // Catches +→* at line 3800 — non-zero index path
         let result = super::extract_infrastructure_subject_phrase("drives the DMA engine");
+        assert_eq!(result.as_deref(), Some("DMA engine"));
+    }
+
+    #[test]
+    fn infrastructure_subject_phrase_preserves_underscore_after_determiner() {
+        // Catches !=→== (underscore) at line 3802:65
+        let result = super::extract_infrastructure_subject_phrase("the _DMA");
+        assert_eq!(result.as_deref(), Some("_DMA"));
+    }
+
+    #[test]
+    fn infrastructure_subject_phrase_preserves_hyphen_after_determiner() {
+        // Catches !=→== (hyphen) at line 3802:85
+        let result = super::extract_infrastructure_subject_phrase("the -DMA");
+        assert_eq!(result.as_deref(), Some("-DMA"));
+    }
+
+    #[test]
+    fn infrastructure_subject_phrase_keeps_two_words_after_determiner() {
+        // Catches &&→|| at line 3802:52,72 — second non-stop word
+        let result = super::extract_infrastructure_subject_phrase("the one two");
+        assert_eq!(result.as_deref(), Some("one two"));
+    }
+
+    #[test]
+    fn infrastructure_subject_phrase_reverse_path_extracts_actor() {
+        // Exercises reverse path (no determiner found) — reverse order
+        let result = super::extract_infrastructure_subject_phrase("DMA engine drives");
         assert!(result.is_some());
+    }
+
+    #[test]
+    fn infrastructure_subject_phrase_reverse_preserves_underscore() {
+        // Catches !=→== (underscore) at line 3824:61
+        let result = super::extract_infrastructure_subject_phrase("_DMA engine");
+        assert_eq!(result.as_deref(), Some("_DMA engine"));
+    }
+
+    #[test]
+    fn infrastructure_subject_phrase_reverse_preserves_hyphen() {
+        // Catches !=→== (hyphen) at line 3824:81
+        let result = super::extract_infrastructure_subject_phrase("-DMA engine");
+        assert_eq!(result.as_deref(), Some("-DMA engine"));
+    }
+
+    #[test]
+    fn infrastructure_subject_phrase_skips_leading_skip_word_in_reverse() {
+        // Catches delete ! at line 3831 — skip word with empty actor_words must continue
+        let result = super::extract_infrastructure_subject_phrase("and DMA engine");
+        assert_eq!(result.as_deref(), Some("DMA engine"));
+    }
+
+    #[test]
+    fn infrastructure_subject_phrase_reverse_caps_at_four_words() {
+        // Catches >=→< at line 3837
+        let result = super::extract_infrastructure_subject_phrase("one two three four five");
+        let extracted = result.unwrap();
+        let word_count = extracted.split_whitespace().count();
+        assert_eq!(word_count, 4);
     }
 }
