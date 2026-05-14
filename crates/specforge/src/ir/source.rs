@@ -1061,7 +1061,9 @@ mod tests {
     use crate::ir::IrStage;
     use crate::test_support::env_var_lock;
 
-    use super::{NormalizationBackend, SourceIr, SourceKind, document_key, stable_stem};
+    use super::{
+        AutomationConfidence, NormalizationBackend, SourceIr, SourceKind, document_key, stable_stem,
+    };
 
     struct EnvVarGuard {
         key: &'static str,
@@ -1150,6 +1152,10 @@ mod tests {
         assert!(source_ir.residual_decisions.is_empty());
         assert!(source_ir.visual_assets.is_empty());
         assert!(source_ir.placeholder_bindings.is_empty());
+        assert_eq!(
+            source_ir.automation_confidence,
+            AutomationConfidence::High
+        );
 
         Ok(())
     }
@@ -1198,6 +1204,10 @@ mod tests {
             Some("visual_assets.json")
         );
         assert!(source_ir.residual_decisions.is_empty());
+        assert_eq!(
+            source_ir.automation_confidence,
+            AutomationConfidence::High
+        );
 
         Ok(())
     }
@@ -1220,6 +1230,14 @@ mod tests {
             source_ir.planned_actions,
             vec!["resolve_source_ir_residual_decisions".to_string()]
         );
+        assert_eq!(
+            source_ir.automation_confidence,
+            AutomationConfidence::Low
+        );
+        assert_eq!(
+            source_ir.residual_decisions[0].automation_confidence,
+            AutomationConfidence::Low
+        );
 
         Ok(())
     }
@@ -1240,6 +1258,7 @@ mod tests {
         assert!(source_ir_json.contains("\"source_kind\": \"markdown\""));
         assert!(source_ir_json.contains("\"stage\": \"source_ir\""));
         assert!(source_ir_json.contains("\"backend\": \"direct_markdown\""));
+        assert!(source_ir_json.contains("\"automation_confidence\": \"high\""));
 
         Ok(())
     }
@@ -1349,6 +1368,10 @@ EOF
                 "build_intent_ir".to_string(),
                 "plan_adapter_lowering".to_string()
             ]
+        );
+        assert_eq!(
+            source_ir.automation_confidence,
+            AutomationConfidence::High
         );
 
         let source_ir_json =
@@ -1470,6 +1493,10 @@ EOF
                 .join("normalized.staging")
                 .exists()
         );
+        assert_eq!(
+            source_ir.automation_confidence,
+            AutomationConfidence::High
+        );
 
         Ok(())
     }
@@ -1512,6 +1539,10 @@ exit 7
                 .join("bus_spec")
                 .join("normalized.staging")
                 .exists()
+        );
+        assert_eq!(
+            source_ir.automation_confidence,
+            AutomationConfidence::High
         );
 
         Ok(())
