@@ -24,9 +24,9 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `3beb0051`
-- latest_commit_brief_message: R6-FSM-ADAPTER.1.3: Add symbol_definitions end-to-end assertions
-- note: R6-FSM-ADAPTER tree closed — all 4 leaves done (audit + 3 hardening). 17 local commits ahead of origin. No active task trees remain.
+- latest_commit_hash: `3015f029`
+- latest_commit_brief_message: Update FSMGEN submodule to fc634306
+- note: Both task trees closed (PROVENANCE-HARDENING, R6-FSM-ADAPTER). 19 local commits ahead. FSMGEN submodule updated — ISF v0.6 docs reviewed. Auditing IR modules for next hardening target.
 
 ## Recent commit chain (last 10)
 - pending (EvidenceLink provenance IDs hardening)
