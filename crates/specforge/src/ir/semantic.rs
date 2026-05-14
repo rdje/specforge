@@ -18546,4 +18546,39 @@ mod tests {
         );
         assert!(result.is_some());
     }
+
+    // tokenize_control_expression unit tests
+
+    #[test]
+    fn tokenize_two_char_operator_not_equals() {
+        // Catches +→* mutant at line 5338 — pair character at index*1 picks wrong char
+        let tokens = super::tokenize_control_expression("x != y")
+            .expect("tokenize 'x != y'");
+        assert_eq!(tokens, vec!["x", "!=", "y"]);
+    }
+
+    #[test]
+    fn tokenize_identifier_starting_with_underscore() {
+        // Catches ==→!= (underscore) mutant at line 5371 — _ as first char hits
+        // the outer-while condition, not the inner scanner loop
+        let tokens = super::tokenize_control_expression("_foo")
+            .expect("tokenize '_foo'");
+        assert_eq!(tokens, vec!["_foo"]);
+    }
+
+    #[test]
+    fn tokenize_identifier_starting_with_apostrophe() {
+        // Catches ==→!= (apostrophe) mutant at line 5371
+        let tokens = super::tokenize_control_expression("'bar")
+            .expect("tokenize '''bar''");
+        assert_eq!(tokens, vec!["'bar"]);
+    }
+
+    #[test]
+    fn tokenize_identifier_with_underscore() {
+        // Catches ||→&& mutant at line 5371 — 'm' fails && character == '_'
+        let tokens = super::tokenize_control_expression("my_signal")
+            .expect("tokenize 'my_signal'");
+        assert_eq!(tokens, vec!["my_signal"]);
+    }
 }
