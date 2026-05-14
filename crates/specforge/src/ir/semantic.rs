@@ -19356,4 +19356,66 @@ mod tests {
         );
         assert!(result.is_empty());
     }
+
+    // extract_infrastructure_component_phrase unit tests
+
+    #[test]
+    fn infrastructure_component_phrase_preserves_leading_underscore() {
+        // Catches !=→== (underscore) at line 3754:61 — trim_matches must not trim _
+        let result = super::extract_infrastructure_component_phrase("_DMA");
+        assert_eq!(result.as_deref(), Some("_DMA"));
+    }
+
+    #[test]
+    fn infrastructure_component_phrase_preserves_leading_hyphen() {
+        // Catches !=→== (hyphen) at line 3754:81 — trim_matches must not trim -
+        let result = super::extract_infrastructure_component_phrase("-DMA");
+        assert_eq!(result.as_deref(), Some("-DMA"));
+    }
+
+    #[test]
+    fn infrastructure_component_phrase_keeps_two_non_stop_words() {
+        // Catches &&→|| at line 3760 — second non-stop-word must not break
+        let result = super::extract_infrastructure_component_phrase("one two");
+        assert_eq!(result.as_deref(), Some("one two"));
+    }
+
+    #[test]
+    fn infrastructure_component_phrase_caps_at_four_words() {
+        // Catches >=→< at line 3774 — exactly 4 words must be accepted
+        let result = super::extract_infrastructure_component_phrase("one two three four");
+        assert!(result.is_some());
+    }
+
+    #[test]
+    fn infrastructure_component_phrase_breaks_before_fifth_word() {
+        // Catches >=→< at line 3774 — >= 4 triggers break on 4th word
+        let result = super::extract_infrastructure_component_phrase("one two three four five");
+        // Should cap at 4 words
+        let extracted = result.unwrap();
+        let word_count = extracted.split_whitespace().count();
+        assert_eq!(word_count, 4);
+    }
+
+    #[test]
+    fn infrastructure_component_phrase_stops_at_stop_word() {
+        let result = super::extract_infrastructure_component_phrase("DMA to RAM");
+        assert_eq!(result.as_deref(), Some("DMA"));
+    }
+
+    // extract_infrastructure_subject_phrase unit tests
+
+    #[test]
+    fn infrastructure_subject_phrase_extracts_after_determiner() {
+        // Catches delete ! at line 3794 — determiner trimming must keep alpha chars
+        let result = super::extract_infrastructure_subject_phrase("the DMA engine");
+        assert_eq!(result.as_deref(), Some("DMA engine"));
+    }
+
+    #[test]
+    fn infrastructure_subject_phrase_extracts_from_end_without_determiner() {
+        // Catches +→* at line 3800 — non-zero index path via reverse iteration
+        let result = super::extract_infrastructure_subject_phrase("drives the DMA engine");
+        assert!(result.is_some());
+    }
 }
