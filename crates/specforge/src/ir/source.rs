@@ -1385,6 +1385,14 @@ EOF
             source_ir.automation_confidence,
             AutomationConfidence::High
         );
+        assert!(source_ir.source.size_bytes.is_some());
+        assert!(source_ir.source.size_bytes.unwrap() > 0);
+        assert!(!source_ir.normalization_plan.notes.is_empty());
+        assert!(source_ir
+            .normalization_plan
+            .notes
+            .iter()
+            .any(|note| note.contains("docling materialized")));
 
         let source_ir_json =
             fs::read_to_string(artifact_base.join("bus_spec").join("source_ir.json"))?;

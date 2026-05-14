@@ -43,11 +43,11 @@ Add regression-only test assertions to `source.rs` struct fields that are popula
   Commit: `pending — about to commit`
 
 - ID: `R6-SOURCE-HARDENING.2`
-  Status: `pending`
+  Status: `done`
   Goal: `Harden SourceRegistration.size_bytes and NormalizationPlan.notes — metadata fields populated during SourceIR::build and normalization.`
-  Acceptance: `Non-empty assertion on size_bytes (Some with >0 value) in a file-based test. Non-empty assertion on notes in a test that exercises normalization.`
-  Verification: `pending`
-  Commit: `pending`
+  Acceptance: `4 assertions in pdf_source_ir_materialization_uses_backend_helper_and_writes_manifests: size_bytes Some + >0, notes non-empty + contains "docling materialized".`
+  Verification: `cargo test -p specforge --lib — 666/666 passed`
+  Commit: `pending — about to commit`
 
 ### Batch 2: Visual asset / page geometry fields
 
@@ -62,8 +62,7 @@ Add regression-only test assertions to `source.rs` struct fields that are popula
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `R6-SOURCE-HARDENING.2` | `pending` | Metadata fields (size_bytes, notes) — populated during build/normalization, never asserted. |
-| 2 | `R6-SOURCE-HARDENING.3` | `pending` | Visual asset fields (diagram_kind, width_px, height_px) — geometry and classification metadata. |
+| 1 | `R6-SOURCE-HARDENING.3` | `pending` | Visual asset fields (diagram_kind, width_px, height_px) — geometry and classification metadata. |
 
 ## Decisions
 
@@ -84,12 +83,14 @@ Add regression-only test assertions to `source.rs` struct fields that are popula
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-05-14` | `R6-SOURCE-HARDENING.1` | `cargo test -p specforge --lib` | 666/666 passed |
+| `2026-05-14` | `R6-SOURCE-HARDENING.2` | `cargo test -p specforge --lib` | 666/666 passed |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- | --- |
-| `R6-SOURCE-HARDENING.1` | pending — about to commit | 4 assertions across 2 tests |
+| `R6-SOURCE-HARDENING.1` | `983b4af9` Add adapter_targets and origin_kind assertions | 4 assertions across 2 tests |
+| `R6-SOURCE-HARDENING.2` | pending — about to commit | 4 assertions in materialization test |
 
 ## Changelog
 
