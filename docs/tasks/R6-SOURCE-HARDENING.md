@@ -92,7 +92,7 @@ No executable leaves remain. All 3 R6-SOURCE-HARDENING leaves complete.
 | --- | --- | --- | --- |
 | `R6-SOURCE-HARDENING.1` | `983b4af9` Add adapter_targets and origin_kind assertions | 4 assertions across 2 tests |
 | `R6-SOURCE-HARDENING.2` | `ac92d5f5` Add size_bytes and notes assertions | 4 assertions in materialization test |
-| `R6-SOURCE-HARDENING.3` | pending — about to commit | 3 assertions: width_px, height_px, diagram_kind |
+| `R6-SOURCE-HARDENING.3` | `2d6bfaa6` Add diagram_kind, width_px, height_px assertions | 3 assertions: width_px, height_px, diagram_kind |
 
 ## Changelog
 
