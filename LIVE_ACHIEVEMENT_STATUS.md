@@ -1576,4 +1576,5 @@
   - none
 - New hardening lane opened — evidence.rs `automation_confidence` and `supporting_statement_ids` coverage: In progress
 - evidence.rs automation_confidence batch 1: 19 assertions across 13 tests covering 5 source kinds: Done
+- evidence.rs supporting_statement_ids hardening: 13 assertions across 8 tests covering non-empty and empty patterns: Done
 <!-- validation_projection:end -->

@@ -8438,6 +8438,7 @@ mod tests {
                         .semantic_tags
                         .contains(&SignalSemanticTag::HandshakeReadyLike)
                     && hint.automation_confidence == AutomationConfidence::Low
+                    && !hint.supporting_statement_ids.is_empty()
             }),
             "semantic phrase prior should recover a ready-like hint from local prose: {:?}",
             evidence_ir.signal_semantic_hints
@@ -9361,6 +9362,7 @@ mod tests {
                     .semantic_tags
                     .contains(&super::SignalSemanticTag::HandshakeValidLike)
                 && hint.automation_confidence == AutomationConfidence::Medium
+                && hint.supporting_statement_ids.is_empty()
         }));
         assert!(evidence_ir.signal_semantic_hints.iter().any(|hint| {
             hint.signal_name == "XACK"
@@ -9368,6 +9370,7 @@ mod tests {
                     .semantic_tags
                     .contains(&super::SignalSemanticTag::HandshakeReadyLike)
                 && hint.automation_confidence == AutomationConfidence::Medium
+                && hint.supporting_statement_ids.is_empty()
         }));
 
         Ok(())
@@ -9448,6 +9451,7 @@ mod tests {
                     .semantic_tags
                     .contains(&super::SignalSemanticTag::HandshakeReadyLike)
                 && hint.automation_confidence == AutomationConfidence::Medium
+                && hint.supporting_statement_ids.is_empty()
         }));
 
         Ok(())
@@ -9520,6 +9524,7 @@ mod tests {
                     .semantic_tags
                     .contains(&super::SignalSemanticTag::HandshakeValidLike)
                 && hint.automation_confidence == AutomationConfidence::Low
+                && !hint.supporting_statement_ids.is_empty()
         }));
         assert!(evidence_ir.signal_semantic_hints.iter().any(|hint| {
             hint.signal_name == "XREADY"
@@ -9531,6 +9536,7 @@ mod tests {
                     .semantic_tags
                     .contains(&super::SignalSemanticTag::HandshakeReadyLike)
                 && hint.automation_confidence == AutomationConfidence::Low
+                && !hint.supporting_statement_ids.is_empty()
         }));
 
         Ok(())
@@ -9675,6 +9681,7 @@ mod tests {
                     .semantic_tags
                     .contains(&super::SignalSemanticTag::HandshakeValidLike)
                 && hint.automation_confidence == AutomationConfidence::Low
+                && !hint.supporting_statement_ids.is_empty()
         }));
         assert!(evidence_ir.signal_semantic_hints.iter().any(|hint| {
             hint.signal_name == "XACK"
@@ -9686,6 +9693,7 @@ mod tests {
                     .semantic_tags
                     .contains(&super::SignalSemanticTag::HandshakeReadyLike)
                 && hint.automation_confidence == AutomationConfidence::Low
+                && !hint.supporting_statement_ids.is_empty()
         }));
 
         Ok(())
@@ -9796,6 +9804,7 @@ mod tests {
                     .semantic_tags
                     .contains(&super::SignalSemanticTag::HandshakeValidLike)
                 && !hint.supporting_visual_evidence_ids.is_empty()
+                && hint.supporting_statement_ids.is_empty()
                 && hint.automation_confidence == AutomationConfidence::Low
         }));
         assert!(evidence_ir.signal_semantic_hints.iter().any(|hint| {
@@ -9808,6 +9817,7 @@ mod tests {
                     .semantic_tags
                     .contains(&super::SignalSemanticTag::HandshakeReadyLike)
                 && !hint.supporting_visual_evidence_ids.is_empty()
+                && hint.supporting_statement_ids.is_empty()
                 && hint.automation_confidence == AutomationConfidence::Low
         }));
 
@@ -9865,6 +9875,7 @@ mod tests {
                     .semantic_tags
                     .contains(&super::SignalSemanticTag::HandshakeValidLike)
                 && hint.automation_confidence == AutomationConfidence::Low
+                && hint.supporting_statement_ids.is_empty()
         }));
         assert!(evidence_ir.signal_semantic_hints.iter().any(|hint| {
             hint.signal_name == "XREADY"
@@ -9876,6 +9887,7 @@ mod tests {
                     .semantic_tags
                     .contains(&super::SignalSemanticTag::HandshakeReadyLike)
                 && hint.automation_confidence == AutomationConfidence::Low
+                && hint.supporting_statement_ids.is_empty()
         }));
 
         Ok(())
@@ -9926,6 +9938,7 @@ mod tests {
                     .semantic_tags
                     .contains(&super::SignalSemanticTag::HandshakeReadyLike)
                 && !hint.supporting_visual_evidence_ids.is_empty()
+                && hint.supporting_statement_ids.is_empty()
                 && hint.automation_confidence == AutomationConfidence::Low
         }));
 
