@@ -24,9 +24,9 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: pending (EvidenceLink provenance IDs hardening)
+- latest_commit_hash: pending (task-tree tracking system scaffolding)
 - latest_commit_brief_message: pending
-- note: PNT hardening continuing; 10 slices this session covering supporting_actor_ids (2), supporting_semantic_ids (5), supporting_section_ids (1), supporting_span_ids (2), evidence_span_ids (1), table_signal_declaration_provenance (3), supporting_document_keys (8), EvidenceLink IDs (2); 666 tests passing; branch at 9 local commits ahead of origin
+- note: Task-tree tracking system adopted from fsmgen. Created docs/TASK_TREE.md (local operating spec), docs/tasks/TEMPLATE.md (copyable skeleton), docs/tasks/PROVENANCE-HARDENING.md (backfilled: 10 leaves, 24 assertions, 8 committed leaves), docs/tasks/R6-FSM-ADAPTER.md (proposed, 1 pending leaf). Updated SESSION_BOOTSTRAP.md, COMMIT.md (leaf-ID rule), README.md (fast ramp-up + doc index), ROADMAP.md (R6 cross-reference). 10 local commits ahead of origin.
 
 ## Recent commit chain (last 10)
 - pending (EvidenceLink provenance IDs hardening)
@@ -1315,7 +1315,8 @@
 - branch pushed to origin (0 ahead)
 
 ## Next exact steps
-- complete live-doc sync for this session: update CHANGES.md, DEVELOPMENT_NOTES.md, RUST_CODEBASE_ANALYSIS.md with hardening entries
-- continue PNT loop: find next systematic hardening target (remaining gaps in the test assertion surface)
+- complete the task-tree scaffolding commit (all files staged, committed) 
+- close PROVENANCE-HARDENING tree (leaf 10: validate completeness)
+- once PROVENANCE-HARDENING closes, activate R6-FSM-ADAPTER tree and select R6-FSM-ADAPTER.1 from its current frontier
 - keep push deferred until the branch reaches around `30` local commits since the last push or the user explicitly changes the policy
 - keep SystemVerilog, Verilog, and VHDL adapter expansion at `Not Started` until the `.fsm` hardening lane and canonical truthfulness surface are ready

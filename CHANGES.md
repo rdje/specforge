@@ -1,5 +1,18 @@
 # CHANGES
 
+## 2026-05-14 (task-tree tracking system scaffolding)
+
+### Added: task-tree tracking workflow from fsmgen
+- Created `docs/TASK_TREE.md` — local operating spec with active task-tree index, PNT selection rules, and SpecForge-specific defaults.
+- Created `docs/tasks/TEMPLATE.md` — copyable skeleton for new top-level task trees.
+- Created `docs/tasks/PROVENANCE-HARDENING.md` — backfilled tree with 10 leaves covering all 24 provenance-field hardening assertions across 8 committed leaves, 1 audit leaf, and 1 pending close-tree leaf.
+- Created `docs/tasks/R6-FSM-ADAPTER.md` — proposed tree for the active `.fsm` adapter hardening lane with 1 pending audit leaf.
+- Updated `SESSION_BOOTSTRAP.md` — added task-tree reading and PNT frontier selection instructions.
+- Updated `COMMIT.md` — added task-tree commit rule requiring leaf-ID traceability in commit messages.
+- Updated `README.md` — added `docs/TASK_TREE.md` and `docs/tasks/TEMPLATE.md` to fast ramp-up order and documentation index.
+- Updated `ROADMAP.md` — added R6 task-tree cross-reference to `R6-FSM-ADAPTER`.
+- Synced all live docs (MEMORY.md, CHANGES.md, DEVELOPMENT_NOTES.md, LIVE_ACHIEVEMENT_STATUS.md, RUST_CODEBASE_ANALYSIS.md).
+
 ## 2026-05-14 (evidence.rs EvidenceLink from_evidence_span_id / to_visual_evidence_id hardening)
 
 ### Improved: 2 EvidenceLink field assertions in visual evidence test

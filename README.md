@@ -272,16 +272,17 @@ Use it first for the project objective, document navigation, and the current imp
 ## Fast ramp-up order
 1. `README.md`
 2. `SESSION_BOOTSTRAP.md`
-3. `INTENTIR_SPEC.md`
-4. `ROADMAP.md`
-5. `LIVE_ACHIEVEMENT_STATUS.md`
-6. `VALIDATION_SNAPSHOT.md`
-7. `RUST_CODEBASE_ANALYSIS.md`
-8. `USER_GUIDE.md`
-9. `DEVELOPMENT_NOTES.md`
-10. `CHANGES.md`
-11. `MEMORY.md`
-12. `COMMIT.md`
+3. `docs/TASK_TREE.md`
+4. `INTENTIR_SPEC.md`
+5. `ROADMAP.md`
+6. `LIVE_ACHIEVEMENT_STATUS.md`
+7. `VALIDATION_SNAPSHOT.md`
+8. `RUST_CODEBASE_ANALYSIS.md`
+9. `USER_GUIDE.md`
+10. `DEVELOPMENT_NOTES.md`
+11. `CHANGES.md`
+12. `MEMORY.md`
+13. `COMMIT.md`
 
 ## Documentation index
 - `README.md`
@@ -292,6 +293,10 @@ Use it first for the project objective, document navigation, and the current imp
   - canonical book table of contents
 - `SESSION_BOOTSTRAP.md`
   - exact fresh-session instruction for a new AI or LLM instance
+- `docs/TASK_TREE.md`
+  - task-tree workflow spec, active task-tree index, and PNT selection rules
+- `docs/tasks/TEMPLATE.md`
+  - copyable skeleton for new top-level task trees
 - `INTENTIR_SPEC.md`
   - canonical product and stage specification for `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 - `ROADMAP.md`
@@ -324,6 +329,8 @@ Use it first for the project objective, document navigation, and the current imp
 - `docs/book/book.toml`
 - `docs/book/src/SUMMARY.md`
 - `SESSION_BOOTSTRAP.md`
+- `docs/TASK_TREE.md`
+- `docs/tasks/TEMPLATE.md`
 - `INTENTIR_SPEC.md`
 - `ROADMAP.md`
 - `LIVE_ACHIEVEMENT_STATUS.md`

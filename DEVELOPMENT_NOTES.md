@@ -6,6 +6,19 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-14 task-tree tracking system adoption
+
+- Adopted the task-tree tracking workflow from the fsmgen project. Each top-level task now gets a dedicated markdown file under `docs/tasks/` with a stable tree ID, status vocabulary, recursive decomposition into executable leaf nodes, and a current frontier that PNT selects from.
+- **Rationale**: The roadmap states high-level workstream direction but does not capture subtask decomposition, blockers, decisions, validation evidence, or completion traceability per leaf. The task tree fills that gap as the detailed execution ledger.
+- **Key design decisions**:
+  - IDs are permanent once published (never renumber closed nodes).
+  - Only leaf nodes are executable. Container nodes are organizational.
+  - The current frontier is the single ordered list PNT uses to select work.
+  - Commit messages for task-tree-managed leaves must include the leaf ID.
+  - Live docs summarize task-tree state changes without duplicating the whole tree.
+- **Active trees**: `PROVENANCE-HARDENING` (active, 8/10 leaves done), `R6-FSM-ADAPTER` (proposed, 1 pending leaf).
+- Zero production behavior changes — documentation/workflow-only slice.
+
 ## 2026-05-14 evidence.rs EvidenceLink provenance ID hardening
 
 - Added `from_evidence_span_id` and `to_visual_evidence_id` non-empty assertions to `links_caption_and_figure_reference_into_visual_evidence`.

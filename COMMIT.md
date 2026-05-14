@@ -6,6 +6,11 @@ Last updated: 2026-05-05
 Define the exact commit workflow for this project so a new AI instance can apply it consistently without re-reading chat history.
 The workflow exists to preserve full operational continuity across session loss, crashes, and handoffs.
 
+## Task-Tree Commit Rule
+- If a completed activity belongs to a task-tree leaf, update the owning `docs/tasks/*.md` file (node status, verification log, commit log, frontier) before or alongside the source commit.
+- Identify the leaf ID (e.g. `PROVENANCE-HARDENING.4`) in the commit subject or first body line.
+- Commit every completed leaf before selecting another leaf from any task tree.
+
 ## When To Run
 Run this workflow after each completed task/activity.
 

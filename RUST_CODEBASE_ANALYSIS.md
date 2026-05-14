@@ -3,6 +3,11 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-14 task-tree tracking system scaffolding)
+- Adopted task-tree tracking workflow from fsmgen. Documentation/workflow-only change — zero Rust code changes.
+- Architecture, risk profile, and subsystem boundaries unchanged.
+- 666/666 tests remain passing (no code changes).
+
 ## Session update (2026-05-14 evidence.rs EvidenceLink provenance ID hardening)
 - Added `from_evidence_span_id` and `to_visual_evidence_id` assertions to the evidence links test. Previously untested. Zero production changes.
 - 666/666 tests passing.
