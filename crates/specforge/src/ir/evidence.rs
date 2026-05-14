@@ -9311,14 +9311,14 @@ mod tests {
         ) && matches!(
             observation.polarity,
             super::SignalPolarity::ActiveLow
-        )));
+        ) && !observation.supporting_statement_ids.is_empty()));
         assert!(conflict.observations.iter().any(|observation| matches!(
             observation.source_kind,
             super::SignalPolarityEvidenceSourceKind::SignalDescriptionTable
         ) && matches!(
             observation.polarity,
             super::SignalPolarity::ActiveHigh
-        )));
+        ) && observation.supporting_statement_ids.is_empty()));
 
         Ok(())
     }
@@ -10019,11 +10019,13 @@ mod tests {
             observation
                 .semantic_tags
                 .contains(&super::SignalSemanticTag::HandshakeValidLike)
+                && observation.supporting_statement_ids.is_empty()
         }));
         assert!(conflict.observations.iter().any(|observation| {
             observation
                 .semantic_tags
                 .contains(&super::SignalSemanticTag::HandshakeReadyLike)
+                && !observation.supporting_statement_ids.is_empty()
         }));
 
         Ok(())
