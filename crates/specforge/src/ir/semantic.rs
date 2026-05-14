@@ -11366,6 +11366,7 @@ mod tests {
             port.port_name == "result_data"
                 && port.direction_hint == Some(InterfaceSignalDirection::Output)
                 && port.width_hint == Some(WidthHint::Numeric(8))
+                && port.automation_confidence == AutomationConfidence::High
         }));
         assert!(explicit_top.children.iter().any(|child| {
             child.instance_name == "producer"
@@ -12637,6 +12638,10 @@ mod tests {
             .expect("expected Completer/PREADY actor-relative port");
         assert_eq!(completer_pready.direction, ActorRelativeDirection::Output);
         assert_eq!(completer_pready.width_hint, Some(WidthHint::Numeric(1)));
+        assert_eq!(
+            completer_pready.automation_confidence,
+            AutomationConfidence::Medium
+        );
 
         let requester_pready = semantic_ir
             .actor_ports
@@ -12646,6 +12651,10 @@ mod tests {
             })
             .expect("expected Requester/PREADY actor-relative port");
         assert_eq!(requester_pready.direction, ActorRelativeDirection::Input);
+        assert_eq!(
+            requester_pready.automation_confidence,
+            AutomationConfidence::Medium
+        );
 
         let pready_connectivity = semantic_ir
             .signal_connectivity
@@ -12653,6 +12662,10 @@ mod tests {
             .find(|record| record.signal_name == "PREADY")
             .expect("expected signal connectivity for PREADY");
         assert_eq!(pready_connectivity.width_hint, Some(WidthHint::Numeric(1)));
+        assert_eq!(
+            pready_connectivity.automation_confidence,
+            AutomationConfidence::Medium
+        );
         assert!(
             pready_connectivity
                 .producer_actor_names
