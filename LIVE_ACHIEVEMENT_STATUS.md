@@ -1581,4 +1581,5 @@
 - evidence.rs observation-level supporting_statement_ids: 4 assertions across 2 conflict tests: Done
 - EvidenceIR test hardening lane complete: all 10 automation_confidence and supporting_statement_ids field categories covered (49 assertions total): Done
 - SemanticIR test hardening lane complete: 52 automation_confidence assertions across 10 batches covering all 22 record types: Done
+- Adapters automation_confidence hardening lane: previously completed (all 6 candidate record types covered in earlier PNT cycles)
 <!-- validation_projection:end -->
