@@ -11175,7 +11175,7 @@ mod tests {
 
         fs::write(
             &source,
-            "# Rich Explicit Control\nSignal MODE is input width 2.\n\nSignal GO is input width 1.\n\nSignal ACC is output width 8.\n\nSignal PULSE_OUT is output width 1.\n\nConstant STEP = 8'1.\n\nParam RESET_VALUE = 8'0.\n\nEnum mode_t idle = 0.\n\nEnum mode_t busy = 1.\n\nState idle is initial.\n\nState busy.\n\nBlock decode select MODE when MODE == mode_t.idle: public ACC = 8'0; transition idle.\n\nSyncReset clear_acc: ACC <- RESET_VALUE.\n\nAsyncReset clear_pulse: public PULSE_OUT = 0.\n\nBlock busy when GO: next ACC <- ACC + STEP; pulse public PULSE_OUT after 2 = 1; ACC += STEP; -> idle.\n",
+            "# Rich Explicit Control\nSignal MODE is input width 2.\n\nSignal GO is input width 1.\n\nSignal ACC is output width 8.\n\nSignal PULSE_OUT is output width 1.\n\nConstant STEP = 8'1.\n\nParam RESET_VALUE = 8'0.\n\nEnum mode_t idle = 0.\n\nEnum mode_t busy = 1.\n\nDefine LATE_VAL = 1.\n\nState idle is initial.\n\nState busy.\n\nBlock decode select MODE when MODE == mode_t.idle: public ACC = 8'0; transition idle.\n\nSyncReset clear_acc: ACC <- RESET_VALUE.\n\nAsyncReset clear_pulse: public PULSE_OUT = 0.\n\nBlock busy when GO: next ACC <- ACC + STEP; pulse public PULSE_OUT after 2 = 1; ACC += STEP; -> idle.\n",
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
@@ -11191,10 +11191,11 @@ mod tests {
             &semantic_artifact_base,
         )?;
 
-        assert_eq!(semantic_ir.symbol_definitions.len(), 3);
+        assert_eq!(semantic_ir.symbol_definitions.len(), 4);
         assert!(semantic_ir.symbol_definitions.iter().any(|definition| {
             definition.symbol_name == "STEP"
                 && definition.kind == SymbolDefinitionKind::Constant
+                && definition.declaration_order == 0
                 && matches!(
                     definition.value.as_ref(),
                     Some(ControlExpressionRecord::Literal { literal }) if literal == "8'1"
@@ -11203,8 +11204,21 @@ mod tests {
                 && !definition.supporting_statement_ids.is_empty()
         }));
         assert!(semantic_ir.symbol_definitions.iter().any(|definition| {
+            definition.symbol_name == "RESET_VALUE"
+                && definition.kind == SymbolDefinitionKind::Param
+                && definition.declaration_order == 1
+                && definition.automation_confidence == AutomationConfidence::High
+        }));
+        assert!(semantic_ir.symbol_definitions.iter().any(|definition| {
+            definition.symbol_name == "LATE_VAL"
+                && definition.kind == SymbolDefinitionKind::Define
+                && definition.declaration_order == 3
+                && definition.automation_confidence == AutomationConfidence::High
+        }));
+        assert!(semantic_ir.symbol_definitions.iter().any(|definition| {
             definition.symbol_name == "mode_t"
                 && definition.kind == SymbolDefinitionKind::Enum
+                && definition.declaration_order == 2
                 && definition.members.len() == 2
                 && definition
                     .members
@@ -11333,6 +11347,42 @@ mod tests {
         assert!(semantic_ir.control_blocks.iter().any(|block| {
             block.block_name == "clear_pulse" && block.role == ControlBlockRole::ResetAsynchronous
         }));
+
+        Ok(())
+    }
+
+    #[test]
+    fn conflicting_symbol_definitions_are_excluded() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("conflict_symbols.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            "# Symbols\nSignal CLK is input width 1.\n\nConstant STEP = 8'1.\n\nConstant STEP = 8'2.\n",
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        assert!(
+            !semantic_ir
+                .symbol_definitions
+                .iter()
+                .any(|d| d.symbol_name == "STEP"),
+            "conflicting STEP definitions must be excluded"
+        );
 
         Ok(())
     }
