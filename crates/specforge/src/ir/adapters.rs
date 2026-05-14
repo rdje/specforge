@@ -20176,6 +20176,7 @@ mod tests {
         );
         assert_eq!(signal_inventory_port.width_hint, Some(8));
         assert!(!signal_inventory_port.graph_direction_hint_conflicted);
+        assert!(!signal_inventory_port.direction_hint_conflicted);
         assert!(
             signal_inventory_port
                 .mention_categories
@@ -20636,6 +20637,7 @@ mod tests {
         );
         assert_eq!(signal_inventory_port.width_hint, Some(8));
         assert!(!signal_inventory_port.graph_direction_hint_conflicted);
+        assert!(!signal_inventory_port.direction_hint_conflicted);
         assert!(
             signal_inventory_port
                 .mention_categories
@@ -20897,6 +20899,7 @@ mod tests {
         );
         assert_eq!(signal_inventory_port.width_hint, Some(8));
         assert!(!signal_inventory_port.graph_direction_hint_conflicted);
+        assert!(!signal_inventory_port.direction_hint_conflicted);
         assert!(
             signal_inventory_port
                 .mention_categories
