@@ -10594,13 +10594,13 @@ mod tests {
             semantic_ir
                 .actors
                 .iter()
-                .any(|actor| actor.actor_id == "actor_transmitter")
+                .any(|actor| actor.actor_id == "actor_transmitter" && !actor.supporting_statement_ids.is_empty())
         );
         assert!(
             semantic_ir
                 .actors
                 .iter()
-                .any(|actor| actor.actor_id == "actor_receiver")
+                .any(|actor| actor.actor_id == "actor_receiver" && !actor.supporting_statement_ids.is_empty())
         );
         assert!(semantic_ir.interfaces.iter().any(|interface| {
             interface.signals.contains(&"VALID".to_string())
@@ -10610,8 +10610,10 @@ mod tests {
             invariant
                 .statement
                 .contains("VALID must remain asserted until READY is observed.")
+                && !invariant.supporting_statement_ids.is_empty()
         }));
         assert!(!semantic_ir.gates.is_empty());
+        assert!(semantic_ir.gates.iter().all(|gate| !gate.supporting_statement_ids.is_empty()));
         assert!(semantic_ir.residual_decisions.is_empty());
 
         Ok(())
@@ -10852,19 +10854,23 @@ mod tests {
             .iter()
             .find(|interface| interface.signals.contains(&"DATA_IN".to_string()))
             .expect("explicit interface should be present");
+        assert!(!explicit_interface.supporting_statement_ids.is_empty());
         assert!(explicit_interface.signal_records.iter().any(|signal| {
             signal.signal_name == "DATA_IN"
                 && signal.direction_hint == Some(InterfaceSignalDirection::Input)
                 && signal.width_hint == Some(WidthHint::Numeric(8))
+                && !signal.supporting_statement_ids.is_empty()
         }));
         assert!(explicit_interface.signal_records.iter().any(|signal| {
             signal.signal_name == "ZERO_FLAG"
                 && signal.direction_hint == Some(InterfaceSignalDirection::Output)
                 && signal.width_hint == Some(WidthHint::Numeric(1))
+                && !signal.supporting_statement_ids.is_empty()
         }));
         assert_eq!(semantic_ir.decision_tree_fragments.len(), 2);
         assert!(semantic_ir.decision_tree_fragments.iter().any(|fragment| {
             fragment.block_name == "route_data"
+                && !fragment.supporting_statement_ids.is_empty()
                 && matches!(
                     fragment.actions.first(),
                     Some(DecisionTreeActionRecord::Assign {
@@ -10876,6 +10882,7 @@ mod tests {
         }));
         assert!(semantic_ir.decision_tree_fragments.iter().any(|fragment| {
             fragment.block_name == "flag_zero"
+                && !fragment.supporting_statement_ids.is_empty()
                 && matches!(
                     fragment.guard.as_ref(),
                     Some(DecisionTreeGuardRecord::Comparison {
@@ -10942,6 +10949,7 @@ mod tests {
             system_contract.automation_confidence,
             AutomationConfidence::High
         );
+        assert!(!system_contract.supporting_statement_ids.is_empty());
         assert_eq!(semantic_ir.init_assignments.len(), 1);
         assert!(matches!(
             semantic_ir.init_assignments.first(),
@@ -10954,6 +10962,11 @@ mod tests {
         assert_eq!(
             semantic_ir.init_assignments[0].automation_confidence,
             AutomationConfidence::High
+        );
+        assert!(
+            !semantic_ir.init_assignments[0]
+                .supporting_statement_ids
+                .is_empty()
         );
         let accumulate_fragment = semantic_ir
             .decision_tree_fragments
@@ -10972,6 +10985,7 @@ mod tests {
             accumulate_fragment.automation_confidence,
             AutomationConfidence::High
         );
+        assert!(!accumulate_fragment.supporting_statement_ids.is_empty());
 
         Ok(())
     }
@@ -11007,6 +11021,7 @@ mod tests {
             .iter()
             .find(|interface| interface.interface_id == "interface_explicit_document_interface")
             .expect("expected explicit document interface");
+        assert!(!interface.supporting_statement_ids.is_empty());
         let hclk = interface
             .signal_records
             .iter()
@@ -11015,6 +11030,7 @@ mod tests {
         assert_eq!(hclk.direction_hint, Some(InterfaceSignalDirection::Input));
         assert_eq!(hclk.width_hint, Some(WidthHint::Numeric(1)));
         assert_eq!(hclk.automation_confidence, AutomationConfidence::High);
+        assert!(!hclk.supporting_statement_ids.is_empty());
         let hresetn = interface
             .signal_records
             .iter()
@@ -11027,6 +11043,7 @@ mod tests {
         assert_eq!(hresetn.width_hint, Some(WidthHint::Numeric(1)));
         assert_eq!(hresetn.resolved_polarity, Some(SignalPolarity::ActiveLow));
         assert_eq!(hresetn.automation_confidence, AutomationConfidence::High);
+        assert!(!hresetn.supporting_statement_ids.is_empty());
 
         Ok(())
     }
@@ -11084,7 +11101,11 @@ mod tests {
             system_contract.automation_confidence,
             AutomationConfidence::High
         );
+        assert!(!system_contract.supporting_statement_ids.is_empty());
         assert_eq!(semantic_ir.init_assignments.len(), 1);
+        assert!(!semantic_ir.init_assignments[0]
+            .supporting_statement_ids
+            .is_empty());
 
         Ok(())
     }
@@ -11179,6 +11200,7 @@ mod tests {
                     Some(ControlExpressionRecord::Literal { literal }) if literal == "8'1"
                 )
                 && definition.automation_confidence == AutomationConfidence::High
+                && !definition.supporting_statement_ids.is_empty()
         }));
         assert!(semantic_ir.symbol_definitions.iter().any(|definition| {
             definition.symbol_name == "mode_t"
@@ -11190,8 +11212,10 @@ mod tests {
                     .any(|member| {
                         member.member_name == "idle"
                             && member.automation_confidence == AutomationConfidence::High
+                            && !member.supporting_statement_ids.is_empty()
                     })
                 && definition.automation_confidence == AutomationConfidence::High
+                && !definition.supporting_statement_ids.is_empty()
         }));
 
         let decode_block = semantic_ir
@@ -11201,6 +11225,7 @@ mod tests {
             .expect("decode control block should be present");
         assert_eq!(decode_block.role, ControlBlockRole::StandaloneDecisionTree);
         assert_eq!(decode_block.automation_confidence, AutomationConfidence::High);
+        assert!(!decode_block.supporting_statement_ids.is_empty());
         assert!(matches!(
             decode_block.selector.as_ref(),
             Some(ControlExpressionRecord::Reference { reference })
@@ -11215,6 +11240,7 @@ mod tests {
             decode_branch.automation_confidence,
             AutomationConfidence::High
         );
+        assert!(!decode_branch.supporting_statement_ids.is_empty());
         assert!(matches!(
             decode_branch.predicate.as_ref(),
             Some(ControlExpressionRecord::Binary {
@@ -11350,6 +11376,7 @@ mod tests {
                     .iter()
                     .any(|block| block.block_name == "produce")
                 && module.automation_confidence == AutomationConfidence::High
+                && !module.supporting_statement_ids.is_empty()
         }));
         assert!(semantic_ir.explicit_modules.iter().any(|module| {
             module.module_name == "consumer_core"
@@ -11358,9 +11385,11 @@ mod tests {
                         signal.signal_name == "input_data"
                             && signal.direction_hint == Some(InterfaceSignalDirection::Input)
                             && signal.width_hint == Some(WidthHint::Numeric(8))
+                            && !signal.supporting_statement_ids.is_empty()
                     })
                 })
                 && module.automation_confidence == AutomationConfidence::High
+                && !module.supporting_statement_ids.is_empty()
         }));
 
         let explicit_top = semantic_ir
@@ -11372,16 +11401,19 @@ mod tests {
         assert_eq!(explicit_top.children.len(), 2);
         assert_eq!(explicit_top.links.len(), 2);
         assert_eq!(explicit_top.automation_confidence, AutomationConfidence::High);
+        assert!(!explicit_top.supporting_statement_ids.is_empty());
         assert!(explicit_top.ports.iter().any(|port| {
             port.port_name == "result_data"
                 && port.direction_hint == Some(InterfaceSignalDirection::Output)
                 && port.width_hint == Some(WidthHint::Numeric(8))
                 && port.automation_confidence == AutomationConfidence::High
+                && !port.supporting_statement_ids.is_empty()
         }));
         assert!(explicit_top.children.iter().any(|child| {
             child.instance_name == "producer"
                 && child.source_module_name == "producer_core"
                 && child.automation_confidence == AutomationConfidence::High
+                && !child.supporting_statement_ids.is_empty()
         }));
         assert!(explicit_top.links.iter().any(|link| {
             link.source.instance_name.as_deref() == Some("consumer")
@@ -11389,6 +11421,7 @@ mod tests {
                 && link.target.instance_name.is_none()
                 && link.target.signal_name == "result_data"
                 && link.automation_confidence == AutomationConfidence::High
+                && !link.supporting_statement_ids.is_empty()
         }));
 
         Ok(())
@@ -11426,12 +11459,14 @@ mod tests {
                 && state.is_initial
                 && state.declaration_order == 0
                 && state.automation_confidence == AutomationConfidence::High
+                && !state.supporting_statement_ids.is_empty()
         }));
         assert!(semantic_ir.regular_states.iter().any(|state| {
             state.state_name == "busy"
                 && !state.is_initial
                 && state.declaration_order == 1
                 && state.automation_confidence == AutomationConfidence::High
+                && !state.supporting_statement_ids.is_empty()
         }));
         assert_eq!(semantic_ir.state_transitions.len(), 2);
         assert!(semantic_ir.state_transitions.iter().any(|transition| {
@@ -11443,6 +11478,7 @@ mod tests {
                         if signal_name == "GO"
                 )
                 && transition.automation_confidence == AutomationConfidence::High
+                && !transition.supporting_statement_ids.is_empty()
         }));
         assert!(semantic_ir.state_transitions.iter().any(|transition| {
             transition.source_state == "busy"
@@ -11453,18 +11489,19 @@ mod tests {
                         if signal_name == "DONE"
                 )
                 && transition.automation_confidence == AutomationConfidence::High
+                && !transition.supporting_statement_ids.is_empty()
         }));
         assert!(
             semantic_ir
                 .decision_tree_fragments
                 .iter()
-                .any(|fragment| fragment.block_name == "idle")
+                .any(|fragment| fragment.block_name == "idle" && !fragment.supporting_statement_ids.is_empty())
         );
         assert!(
             semantic_ir
                 .decision_tree_fragments
                 .iter()
-                .any(|fragment| fragment.block_name == "busy")
+                .any(|fragment| fragment.block_name == "busy" && !fragment.supporting_statement_ids.is_empty())
         );
 
         Ok(())
@@ -12638,6 +12675,7 @@ mod tests {
                 .filter_map(|actor| actor.actor_name.as_deref())
                 .any(|name| name.eq_ignore_ascii_case("Requester"))
         );
+        assert!(semantic_ir.actors.iter().all(|actor| !actor.supporting_statement_ids.is_empty()));
 
         let completer_pready = semantic_ir
             .actor_ports
@@ -12731,6 +12769,7 @@ mod tests {
             super::SignalConnectivityConflictKind::MultipleProducers
         ));
         assert_eq!(conflict.automation_confidence, AutomationConfidence::Medium);
+        assert!(!conflict.supporting_statement_ids.is_empty());
         assert!(
             conflict
                 .conflicting_actor_names
@@ -12811,6 +12850,7 @@ mod tests {
             observation
                 .semantic_tags
                 .contains(&SignalSemanticTag::HandshakeReadyLike)
+                && !observation.supporting_statement_ids.is_empty()
         }));
         let xctrl = semantic_ir
             .interfaces
@@ -13730,6 +13770,7 @@ mod tests {
             )
         }));
         assert_eq!(rule.automation_confidence, AutomationConfidence::Medium);
+        assert!(!rule.supporting_statement_ids.is_empty());
 
         Ok(())
     }
@@ -17236,6 +17277,7 @@ mod tests {
         assert_eq!(conflict.supporting_rule_ids.len(), 2);
         assert_eq!(conflict.antecedents.len(), 1);
         assert_eq!(conflict.automation_confidence, AutomationConfidence::Medium);
+        assert!(!conflict.supporting_statement_ids.is_empty());
 
         Ok(())
     }
@@ -17745,6 +17787,7 @@ mod tests {
                 && record.recovered_source_actor_ids.is_empty()
                 && record.distributed_to_actor_ids.is_empty()
                 && record.automation_confidence == AutomationConfidence::High
+                && !record.supporting_statement_ids.is_empty()
         }));
 
         Ok(())
@@ -17825,6 +17868,7 @@ mod tests {
             clock_infrastructure.automation_confidence,
             AutomationConfidence::Medium
         );
+        assert!(!clock_infrastructure.supporting_statement_ids.is_empty());
         assert!(
             semantic_ir
                 .actor_ports
@@ -17910,6 +17954,7 @@ mod tests {
                 .distributed_to_actor_names
                 .contains(&"Completer".to_string())
         );
+        assert!(!clock_infrastructure.supporting_statement_ids.is_empty());
         assert!(
             semantic_ir.actor_ports.is_empty(),
             "distribution-only evidence should not create ordinary protocol actor ports"
@@ -18000,6 +18045,7 @@ mod tests {
             reset_infrastructure.automation_confidence,
             AutomationConfidence::Medium
         );
+        assert!(!reset_infrastructure.supporting_statement_ids.is_empty());
         assert!(
             semantic_ir.actor_ports.is_empty(),
             "explicit reset fanout evidence should stay in the infrastructure surface"
@@ -18102,6 +18148,7 @@ mod tests {
             "statement_vague_clock_gate"
         );
         assert_ne!(clock_gate.supporting_statement_id, "statement_vague_sync");
+        assert!(!clock_infrastructure.supporting_statement_ids.is_empty());
 
         let reset_infrastructure = semantic_ir
             .infrastructure_signals
@@ -18158,6 +18205,7 @@ mod tests {
             reset_tree.automation_confidence,
             AutomationConfidence::Medium
         );
+        assert!(!reset_infrastructure.supporting_statement_ids.is_empty());
         assert!(
             semantic_ir.actor_ports.is_empty(),
             "topology-only evidence should stay in the infrastructure surface"
