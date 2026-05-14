@@ -13586,6 +13586,12 @@ mod tests {
                 SignalSemanticHintSourceKind::SignalDescriptionTable
             ) && !observation.supporting_table_ids.is_empty()
         }));
+        assert!(xreq.semantic_observations.iter().any(|observation| {
+            matches!(
+                observation.source_kind,
+                SignalSemanticHintSourceKind::VisualCaption
+            ) && !observation.supporting_visual_evidence_ids.is_empty()
+        }));
 
         Ok(())
     }
