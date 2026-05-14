@@ -18967,4 +18967,108 @@ mod tests {
             "invalid_cycle"
         ]));
     }
+
+    // collect_known_actor_names unit tests
+
+    #[test]
+    fn collect_known_actor_names_returns_names_from_actors_and_ports() {
+        // Catches return BTreeSet::new(), return {""}, return {"xyzzy"}
+        let actors = vec![super::ActorRecord {
+            actor_id: "actor_1".to_string(),
+            actor_name: Some("CPU".to_string()),
+            role_summary: "processor".to_string(),
+            supporting_statement_ids: vec![],
+            supporting_section_ids: vec![],
+        }];
+        let ports = vec![super::ActorPortRecord {
+            actor_id: "actor_port_1".to_string(),
+            actor_name: "DMA".to_string(),
+            signal_name: "req".to_string(),
+            direction: super::ActorRelativeDirection::Output,
+            relation_basis: vec![],
+            width_hint: None,
+            source_statement_ids: vec![],
+            automation_confidence: AutomationConfidence::Medium,
+        }];
+        let names = super::collect_known_actor_names(&actors, &ports);
+        assert!(names.contains("CPU"));
+        assert!(names.contains("DMA"));
+        assert_eq!(names.len(), 2);
+    }
+
+    // contains_token_phrase unit tests
+
+    #[test]
+    fn contains_token_phrase_rejects_empty_phrase() {
+        // Catches ||→&& mutant at line 9256 — empty phrase must return false
+        assert!(!super::contains_token_phrase(&["hello"], &[]));
+    }
+
+    #[test]
+    fn contains_token_phrase_matches_window() {
+        assert!(super::contains_token_phrase(
+            &["a", "b", "c"],
+            &["b", "c"]
+        ));
+    }
+
+    // parse_cardinal_cycle_count_value unit tests
+
+    #[test]
+    fn cardinal_cycle_count_parses_word_one() {
+        assert_eq!(super::parse_cardinal_cycle_count_value("one"), Some(1));
+    }
+
+    #[test]
+    fn cardinal_cycle_count_parses_word_three() {
+        assert_eq!(super::parse_cardinal_cycle_count_value("three"), Some(3));
+    }
+
+    #[test]
+    fn cardinal_cycle_count_parses_word_five() {
+        assert_eq!(super::parse_cardinal_cycle_count_value("five"), Some(5));
+    }
+
+    #[test]
+    fn cardinal_cycle_count_parses_word_eight() {
+        assert_eq!(super::parse_cardinal_cycle_count_value("eight"), Some(8));
+    }
+
+    #[test]
+    fn cardinal_cycle_count_parses_word_ten() {
+        assert_eq!(super::parse_cardinal_cycle_count_value("ten"), Some(10));
+    }
+
+    // parse_ordinal_cycle_count_value unit tests
+
+    #[test]
+    fn ordinal_cycle_count_parses_word_first() {
+        assert_eq!(super::parse_ordinal_cycle_count_value("first"), Some(1));
+    }
+
+    #[test]
+    fn ordinal_cycle_count_parses_word_third() {
+        assert_eq!(super::parse_ordinal_cycle_count_value("third"), Some(3));
+    }
+
+    #[test]
+    fn ordinal_cycle_count_parses_word_fifth() {
+        assert_eq!(super::parse_ordinal_cycle_count_value("fifth"), Some(5));
+    }
+
+    #[test]
+    fn ordinal_cycle_count_parses_word_eighth() {
+        assert_eq!(super::parse_ordinal_cycle_count_value("eighth"), Some(8));
+    }
+
+    #[test]
+    fn ordinal_cycle_count_parses_word_tenth() {
+        assert_eq!(super::parse_ordinal_cycle_count_value("tenth"), Some(10));
+    }
+
+    #[test]
+    fn ordinal_cycle_count_rejects_empty_prefix_stripped_suffix() {
+        // Catches delete ! mutant at line 9290 — empty prefix after strip must be rejected
+        assert_eq!(super::parse_ordinal_cycle_count_value("st"), None);
+    }
 }
