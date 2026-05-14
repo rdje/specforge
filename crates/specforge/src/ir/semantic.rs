@@ -10406,7 +10406,7 @@ fn canonicalize_existing_path(path: &Path) -> Result<PathBuf> {
 #[cfg(test)]
 mod tests {
     use std::{
-        collections::{BTreeSet, HashMap},
+        collections::{BTreeSet, HashMap, HashSet},
         fs,
     };
 
@@ -18638,5 +18638,78 @@ mod tests {
     #[test]
     fn is_vlm_waveform_motion_state_returns_true_for_rise() {
         assert!(super::is_vlm_waveform_motion_state("rise"));
+    }
+
+    // is_signal_value_annotation_label unit tests
+
+    #[test]
+    fn signal_value_annotation_label_requires_both_match_and_trailing_cycle() {
+        // Catches &&→|| mutant at line 9554 — trailing tokens must also validate
+        let mut known_signals = HashSet::new();
+        known_signals.insert("SIG1".to_string());
+        // "1" matches MustBeHigh (first condition true), "stuff" fails cycle marker check
+        assert!(!super::is_signal_value_annotation_label(
+            "SIG1 1 stuff",
+            &known_signals
+        ));
+    }
+
+    // parse_allowed_vlm_observation_signal unit tests
+
+    #[test]
+    fn allowed_vlm_signal_rejects_generic_term_when_known_set_empty() {
+        // Catches delete ! and &&→|| mutants at line 9687
+        let known_signals = HashSet::new();
+        assert!(super::parse_allowed_vlm_observation_signal(
+            "Transfer",
+            &known_signals
+        )
+        .is_none());
+    }
+
+    #[test]
+    fn allowed_vlm_signal_rejects_unknown_signal_when_known_set_non_empty() {
+        // Catches &&→|| mutant at line 9687 — || would allow any non-generic signal
+        let mut known_signals = HashSet::new();
+        known_signals.insert("SIG1".to_string());
+        assert!(super::parse_allowed_vlm_observation_signal("mysig", &known_signals).is_none());
+    }
+
+    // normalize_vlm_waveform_motion_state unit tests
+
+    #[test]
+    fn normalize_motion_state_splits_on_underscore() {
+        // Catches first ||→&& mutant at line 9777 col 30 — underscore stop splitting
+        let normalized = super::normalize_vlm_waveform_motion_state("rising_edge");
+        assert_eq!(normalized, "rising edge");
+    }
+
+    #[test]
+    fn normalize_motion_state_splits_on_hyphen() {
+        // Catches second ||→&& mutant at line 9777 col 50 — hyphen stop splitting
+        let normalized = super::normalize_vlm_waveform_motion_state("rise-fall");
+        assert_eq!(normalized, "rise fall");
+    }
+
+    // is_non_quantitative_waveform_motion_annotation unit tests
+
+    #[test]
+    fn non_quantitative_motion_annotation_recognizes_rise() {
+        // Catches first ||→&& mutant at line 9817 col 33 — alphanumeric stops being kept
+        assert!(super::is_non_quantitative_waveform_motion_annotation("rise"));
+    }
+
+    #[test]
+    fn non_quantitative_motion_annotation_rejects_underscored_non_motion_combination() {
+        // Catches second ||→&& mutant at line 9817 col 69 — underscore stops being a token char.
+        // "rose_fell": combined token "rose_fell" → no motion match → original returns false.
+        // With mutation, splits into ["rose", "fell"] → "rose" matches fallback → returns true.
+        assert!(!super::is_non_quantitative_waveform_motion_annotation("rose_fell"));
+    }
+
+    #[test]
+    fn non_quantitative_motion_annotation_rejects_text_without_motion_tokens() {
+        // Catches ||→&& mutant at line 9823 — mutation would skip the early-return guard
+        assert!(!super::is_non_quantitative_waveform_motion_annotation("hello world"));
     }
 }
