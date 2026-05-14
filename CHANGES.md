@@ -1,5 +1,13 @@
 # CHANGES
 
+## 2026-05-14 (intent.rs supporting_semantic_ids hardening)
+
+### Improved: 5 supporting_semantic_ids assertions across 3 intent.rs tests
+- Added `!behavior.supporting_semantic_ids.is_empty()` to `builds_intent_ir_from_handshake_semantics` (behaviors, constraints, assumptions).
+- Added same check to `emits_assumption_for_semantic_roles_without_consensus` and `emits_assumption_for_alias_dependent_handshake_completion`.
+- The field is populated from semantic source IDs during intent IR construction.
+- 666/666 tests passing.
+
 ## 2026-05-14 (intent.rs supporting_actor_ids hardening)
 
 ### Improved: 2 supporting_actor_ids assertions across 2 intent.rs actor tests

@@ -24,9 +24,9 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `ec21de0f` (live-doc sync); next hardening slice pending commit
-- latest_commit_brief_message: `Sync tracked live docs after hardening session`
-- note: PNT hardening continuing; intent.rs supporting_actor_ids slice (2 assertions) ready for commit; 666 tests passing; branch at 1 local commit ahead of origin
+- latest_commit_hash: `1e90aa9e` (supporting_actor_ids); supporting_semantic_ids slice pending commit
+- latest_commit_brief_message: `Add supporting_actor_ids assertions to two intent.rs actor tests`
+- note: PNT hardening continuing; intent.rs supporting_semantic_ids slice (5 assertions across 3 tests) ready for commit; 666 tests passing; branch at 2 local commits ahead of origin
 
 ## Recent commit chain (last 6)
 - (pending) Add supporting_actor_ids assertions to two intent.rs actor tests

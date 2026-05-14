@@ -868,16 +868,19 @@ mod tests {
             behavior
                 .statement
                 .contains("The transmitter must assert VALID")
+                && !behavior.supporting_semantic_ids.is_empty()
         }));
         assert!(intent_ir.constraints.iter().any(|constraint| {
             constraint
                 .statement
                 .contains("VALID must remain asserted until READY is observed.")
+                && !constraint.supporting_semantic_ids.is_empty()
         }));
         assert!(intent_ir.assumptions.iter().any(|assumption| {
             assumption
                 .statement
                 .contains("backend-neutral transport abstraction")
+                && !assumption.supporting_semantic_ids.is_empty()
         }));
         assert!(intent_ir.residual_decisions.is_empty());
 
@@ -1011,6 +1014,7 @@ mod tests {
         );
         assert!(intent_ir.assumptions.iter().any(|assumption| {
             assumption.assumption_id == "assumption_semantic_role_without_consensus"
+                && !assumption.supporting_semantic_ids.is_empty()
         }));
 
         Ok(())
@@ -1204,6 +1208,7 @@ mod tests {
         );
         assert!(intent_ir.assumptions.iter().any(|assumption| {
             assumption.assumption_id == "assumption_alias_dependent_handshake_completion"
+                && !assumption.supporting_semantic_ids.is_empty()
         }));
 
         Ok(())
