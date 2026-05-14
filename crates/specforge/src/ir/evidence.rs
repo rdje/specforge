@@ -10123,6 +10123,8 @@ mod tests {
             "one constraint record should be created"
         );
         assert_eq!(new_records[0].subject_signal, "HADDR");
+        assert_eq!(new_records[0].constraint_id, "alias2_sigcon_0002");
+        assert!(!new_records[0].negated);
         // The statement class must be updated in place.
         let updated_stmt = evidence_ir
             .extracted_statements
@@ -10134,6 +10136,49 @@ mod tests {
             StatementClass::SignalValueConstraint,
             "statement must be reclassified from NormativeStatement to SignalValueConstraint"
         );
+
+        Ok(())
+    }
+
+    #[test]
+    fn apply_alias_reclassification_sets_negated_from_lowered_text() -> Result<()> {
+        // negated is computed from lowered text: must be true when lowered
+        // contains " not " or "cannot". Test with "cannot".
+        use super::EvidenceModality;
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+
+        fs::write(&source, "# Protocol\nSome content.\n")?;
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+
+        let alias_sentence = "The address bus cannot be changed when HREADY is LOW";
+        evidence_ir
+            .extracted_statements
+            .push(crate::ir::evidence::ExtractedStatement {
+                statement_id: "stmt_negated_test".to_string(),
+                text: alias_sentence.to_string(),
+                class: StatementClass::NormativeStatement,
+                modality: EvidenceModality::Text,
+                evidence_span_ids: vec![],
+                related_visual_evidence_ids: vec![],
+            });
+        evidence_ir
+            .signal_alias_map
+            .insert("address bus".to_string(), "HADDR".to_string());
+
+        let mut counter = 1usize;
+        let (_reclassified, new_records) =
+            evidence_ir.apply_alias_reclassification(&mut counter);
+
+        assert_eq!(new_records.len(), 1);
+        assert!(new_records[0].negated, "negated must be true when lowered text contains 'cannot'");
 
         Ok(())
     }
