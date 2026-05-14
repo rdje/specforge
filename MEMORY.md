@@ -26,7 +26,7 @@
 ## Latest committed baseline
 - latest_commit_hash: `2bff0991`
 - latest_commit_brief_message: `Slice 75 — renderable_document paired-field coverage complete across all 143 test functions`
-- note: PNT slice 78; evidence.rs SignalPolarityRecord/VisualEvidenceItem hardening (13 assertions across 5 tests); 23 commits ahead of origin; push at ~30-commit threshold
+- note: PNT slice 79; evidence.rs hardening lane complete — 49 total assertions covering all 10 automation_confidence/supporting_statement_ids field categories; 25 commits ahead of origin; push at ~30-commit threshold
 
 ## Recent commit chain (last 6)
 - `8ecb7a70` Add child candidate diagnostics to two actor-port recovery tests
