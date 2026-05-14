@@ -19177,4 +19177,56 @@ mod tests {
             Some(super::DecisionTreeValueRecord::Literal { .. })
         ));
     }
+
+    // is_false unit tests
+
+    #[test]
+    fn is_false_detects_false() {
+        // Catches replace with false mutant — must return true for false input
+        assert!(super::is_false(&false));
+    }
+
+    // is_zero unit tests
+
+    #[test]
+    fn is_zero_detects_zero() {
+        // Catches replace with false mutant
+        assert!(super::is_zero(&0));
+    }
+
+    #[test]
+    fn is_zero_rejects_nonzero() {
+        // Catches replace with true and ==→!= mutants
+        assert!(!super::is_zero(&1));
+    }
+
+    // is_waveform_index_token unit tests
+
+    #[test]
+    fn waveform_index_token_accepts_digits() {
+        assert!(super::is_waveform_index_token("42"));
+    }
+
+    #[test]
+    fn waveform_index_token_accepts_hex() {
+        // Catches delete ! mutant — non-empty hex digits with all hex chars
+        assert!(super::is_waveform_index_token("0x1A"));
+    }
+
+    #[test]
+    fn waveform_index_token_rejects_invalid_hex() {
+        // Catches &&→|| mutant — hex prefix with non-hex chars
+        assert!(!super::is_waveform_index_token("0xGG"));
+    }
+
+    #[test]
+    fn waveform_index_token_rejects_plain_text() {
+        // Catches return true mutant
+        assert!(!super::is_waveform_index_token("hello"));
+    }
+
+    #[test]
+    fn waveform_index_token_accepts_colon_separated_indices() {
+        assert!(super::is_waveform_index_token("0:7"));
+    }
 }
