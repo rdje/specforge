@@ -3,6 +3,11 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-14 intent.rs supporting_actor_ids hardening)
+- Added `supporting_actor_ids` assertions (2 assertions across 2 tests) to intent.rs actor tests.
+- The field is populated in `build_intent_actors` and was previously untested. Zero production changes.
+- 666/666 tests passing.
+
 ## Session update (2026-05-14 hardening — pass-through field regression)
 - Four hardening lanes completed: intent.rs temporal pass-through (12 assertions), learn_priors.rs strongest_automation_confidence (7 assertions), semantic.rs supporting_table_ids (8 assertions), semantic.rs supporting_visual_evidence_ids (1 assertion).
 - All work is regression-only: test assertion additions, zero production behavior changes. Architecture, risk profile, and subsystem boundaries unchanged.

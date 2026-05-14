@@ -1589,4 +1589,5 @@
 - learn_priors.rs strongest_automation_confidence hardening complete: 7 assertions across 4 tests covering SemanticPhrasePriorRecord, SemanticModalityReliabilityPriorRecord, TemporalPhrasePriorRecord, ActorTaxonomyPriorRecord, and NegativeKnowledgePriorRecord output types: Done
 - semantic.rs supporting_table_ids hardening: 8 assertions across 4 tests covering InterfaceSignalRecord and observation-level supporting_table_ids for table-derived signal evidence: Done
 - semantic.rs supporting_visual_evidence_ids hardening: 1 assertion in cross-modality grounding test covering visual-caption observations: Done
+- intent.rs supporting_actor_ids hardening: 2 assertions across 2 tests covering IntentActor supporting_actor_ids pass-through from semantic to intent: Done
 <!-- validation_projection:end -->

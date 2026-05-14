@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-05-14 (intent.rs supporting_actor_ids hardening)
+
+### Improved: 2 supporting_actor_ids assertions across 2 intent.rs actor tests
+- Added `!actor.supporting_actor_ids.is_empty()` to actor assertions in `builds_intent_ir_from_handshake_semantics` and `carries_actor_relative_ports_and_connectivity_into_intent_ir`.
+- The field is populated in `build_intent_actors` with the actor's own ID, so it is always non-empty when actors exist.
+- 666/666 tests passing.
+
+## 2026-05-14 (tracked live doc sync)
+
+### Synced: MEMORY.md, CHANGES.md, DEVELOPMENT_NOTES.md, RUST_CODEBASE_ANALYSIS.md after hardening session
+- Updated MEMORY.md commit hash, session summary, and next steps.
+- Added CHANGES.md entries for 4 hardening batches (intent.rs, learn_priors.rs, semantic.rs supporting_table_ids, semantic.rs supporting_visual_evidence_ids).
+- Added DEVELOPMENT_NOTES.md technical notes on pass-through field regression patterns.
+- Updated RUST_CODEBASE_ANALYSIS.md session timestamp (regression-only, no architecture changes).
+
 ## 2026-05-14 (semantic.rs supporting_visual_evidence_ids hardening)
 
 ### Improved: cross-modality grounding test now proves visual-caption observation provenance

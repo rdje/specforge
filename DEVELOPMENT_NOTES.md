@@ -6,6 +6,13 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-14 intent.rs supporting_actor_ids hardening
+
+- Added `supporting_actor_ids` assertions to the 2 intent tests that already check `intent_ir.actors`.
+- The field is populated in `build_intent_actors` with `vec![actor.actor_id.clone()]` — always non-empty when actors exist.
+- 2 assertions across 2 tests (`builds_intent_ir_from_handshake_semantics`, `carries_actor_relative_ports_and_connectivity_into_intent_ir`).
+- 666/666 tests passing.
+
 ## 2026-05-14 hardening session — pass-through field regression patterns
 
 - Four hardening lanes completed across intent.rs, learn_priors.rs, and semantic.rs — all regression-only (test assertion additions, zero production code changes).

@@ -24,11 +24,13 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `a8635878`
-- latest_commit_brief_message: `Add supporting_visual_evidence_ids assertion to cross-modality grounding test`
-- note: PNT hardening session complete; 4 slices committed covering intent.rs temporal pass-through (12 assertions), learn_priors.rs strongest_automation_confidence (7 assertions), semantic.rs supporting_table_ids (8 assertions), and semantic.rs supporting_visual_evidence_ids (1 assertion); 666 tests passing; branch pushed to origin (0 ahead)
+- latest_commit_hash: `ec21de0f` (live-doc sync); next hardening slice pending commit
+- latest_commit_brief_message: `Sync tracked live docs after hardening session`
+- note: PNT hardening continuing; intent.rs supporting_actor_ids slice (2 assertions) ready for commit; 666 tests passing; branch at 1 local commit ahead of origin
 
 ## Recent commit chain (last 6)
+- (pending) Add supporting_actor_ids assertions to two intent.rs actor tests
+- `ec21de0f` Sync tracked live docs after hardening session
 - `a8635878` Add supporting_visual_evidence_ids assertion to cross-modality grounding test
 - `44a25f70` Add semantic.rs supporting_table_ids hardening
 - `e8caf4ef` Add learn_priors.rs strongest_automation_confidence hardening

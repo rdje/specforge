@@ -862,7 +862,7 @@ mod tests {
             intent_ir
                 .actors
                 .iter()
-                .any(|actor| actor.actor_id == "actor_transmitter")
+                .any(|actor| actor.actor_id == "actor_transmitter" && !actor.supporting_actor_ids.is_empty())
         );
         assert!(intent_ir.behaviors.iter().any(|behavior| {
             behavior
@@ -1681,6 +1681,7 @@ mod tests {
                 .as_deref()
                 .map(|name| name.eq_ignore_ascii_case("Completer"))
                 .unwrap_or(false)
+                && !actor.supporting_actor_ids.is_empty()
         }));
         assert!(intent_ir.actor_ports.iter().any(|port| {
             port.actor_name.eq_ignore_ascii_case("Requester") && port.signal_name == "PREADY"
