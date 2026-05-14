@@ -6995,6 +6995,7 @@ mod tests {
                 matches!(o.kind, VisualObservationKind::TimingDiagramExtraction)
                     && o.text.contains("Address phase")
                     && o.created_by == "specforge_vlm_enrich"
+                    && o.automation_confidence == AutomationConfidence::High
             }),
             "expected TimingDiagramExtraction observation from VLM note"
         );
@@ -8436,6 +8437,7 @@ mod tests {
                     && hint
                         .semantic_tags
                         .contains(&SignalSemanticTag::HandshakeReadyLike)
+                    && hint.automation_confidence == AutomationConfidence::Low
             }),
             "semantic phrase prior should recover a ready-like hint from local prose: {:?}",
             evidence_ir.signal_semantic_hints
@@ -8541,7 +8543,8 @@ mod tests {
                     observation.kind,
                     VisualObservationKind::Classification
                 ) && observation.created_by == "specforge_prior_memory"
-                    && observation.text == "diagram_kind=timing_diagram"),
+                    && observation.text == "diagram_kind=timing_diagram"
+                    && observation.automation_confidence == AutomationConfidence::Medium),
             "visual motif prior should add an explicit Classification observation: {:?}",
             evidence_ir.visual_evidence[0].observations
         );
@@ -9279,6 +9282,7 @@ mod tests {
         let conflict = &evidence_ir.signal_polarity_conflicts[0];
         assert_eq!(conflict.signal_name, "PRESETN");
         assert_eq!(conflict.observations.len(), 2);
+        assert_eq!(conflict.automation_confidence, AutomationConfidence::Medium);
         assert!(conflict.observations.iter().any(|observation| matches!(
             observation.source_kind,
             super::SignalPolarityEvidenceSourceKind::ProseStatement
@@ -9356,12 +9360,14 @@ mod tests {
                 && hint
                     .semantic_tags
                     .contains(&super::SignalSemanticTag::HandshakeValidLike)
+                && hint.automation_confidence == AutomationConfidence::Medium
         }));
         assert!(evidence_ir.signal_semantic_hints.iter().any(|hint| {
             hint.signal_name == "XACK"
                 && hint
                     .semantic_tags
                     .contains(&super::SignalSemanticTag::HandshakeReadyLike)
+                && hint.automation_confidence == AutomationConfidence::Medium
         }));
 
         Ok(())
@@ -9441,6 +9447,7 @@ mod tests {
                 && hint
                     .semantic_tags
                     .contains(&super::SignalSemanticTag::HandshakeReadyLike)
+                && hint.automation_confidence == AutomationConfidence::Medium
         }));
 
         Ok(())
@@ -9512,6 +9519,7 @@ mod tests {
                 && hint
                     .semantic_tags
                     .contains(&super::SignalSemanticTag::HandshakeValidLike)
+                && hint.automation_confidence == AutomationConfidence::Low
         }));
         assert!(evidence_ir.signal_semantic_hints.iter().any(|hint| {
             hint.signal_name == "XREADY"
@@ -9522,6 +9530,7 @@ mod tests {
                 && hint
                     .semantic_tags
                     .contains(&super::SignalSemanticTag::HandshakeReadyLike)
+                && hint.automation_confidence == AutomationConfidence::Low
         }));
 
         Ok(())
@@ -9665,6 +9674,7 @@ mod tests {
                 && hint
                     .semantic_tags
                     .contains(&super::SignalSemanticTag::HandshakeValidLike)
+                && hint.automation_confidence == AutomationConfidence::Low
         }));
         assert!(evidence_ir.signal_semantic_hints.iter().any(|hint| {
             hint.signal_name == "XACK"
@@ -9675,6 +9685,7 @@ mod tests {
                 && hint
                     .semantic_tags
                     .contains(&super::SignalSemanticTag::HandshakeReadyLike)
+                && hint.automation_confidence == AutomationConfidence::Low
         }));
 
         Ok(())
@@ -9785,6 +9796,7 @@ mod tests {
                     .semantic_tags
                     .contains(&super::SignalSemanticTag::HandshakeValidLike)
                 && !hint.supporting_visual_evidence_ids.is_empty()
+                && hint.automation_confidence == AutomationConfidence::Low
         }));
         assert!(evidence_ir.signal_semantic_hints.iter().any(|hint| {
             hint.signal_name == "XACK"
@@ -9796,6 +9808,7 @@ mod tests {
                     .semantic_tags
                     .contains(&super::SignalSemanticTag::HandshakeReadyLike)
                 && !hint.supporting_visual_evidence_ids.is_empty()
+                && hint.automation_confidence == AutomationConfidence::Low
         }));
 
         Ok(())
@@ -9851,6 +9864,7 @@ mod tests {
                 && hint
                     .semantic_tags
                     .contains(&super::SignalSemanticTag::HandshakeValidLike)
+                && hint.automation_confidence == AutomationConfidence::Low
         }));
         assert!(evidence_ir.signal_semantic_hints.iter().any(|hint| {
             hint.signal_name == "XREADY"
@@ -9861,6 +9875,7 @@ mod tests {
                 && hint
                     .semantic_tags
                     .contains(&super::SignalSemanticTag::HandshakeReadyLike)
+                && hint.automation_confidence == AutomationConfidence::Low
         }));
 
         Ok(())
@@ -9911,6 +9926,7 @@ mod tests {
                     .semantic_tags
                     .contains(&super::SignalSemanticTag::HandshakeReadyLike)
                 && !hint.supporting_visual_evidence_ids.is_empty()
+                && hint.automation_confidence == AutomationConfidence::Low
         }));
 
         Ok(())
@@ -9964,6 +9980,7 @@ mod tests {
         assert_eq!(evidence_ir.signal_semantic_conflicts.len(), 1);
         let conflict = &evidence_ir.signal_semantic_conflicts[0];
         assert_eq!(conflict.signal_name, "XCTRL");
+        assert_eq!(conflict.automation_confidence, AutomationConfidence::Medium);
         assert!(conflict.observations.iter().any(|observation| {
             observation
                 .semantic_tags
@@ -10296,6 +10313,7 @@ mod tests {
                 .any(|observation| {
                     observation.kind == VisualObservationKind::Caption
                         && observation.text == "Figure 1: VALID/READY timing behavior."
+                        && observation.automation_confidence == AutomationConfidence::High
                 })
         );
         assert!(
@@ -10305,6 +10323,7 @@ mod tests {
                 .any(|observation| {
                     observation.kind == VisualObservationKind::FigureReference
                         && observation.text == "Figure 1"
+                        && observation.automation_confidence == AutomationConfidence::Medium
                 })
         );
         assert!(evidence_ir.extracted_statements.iter().any(|statement| {

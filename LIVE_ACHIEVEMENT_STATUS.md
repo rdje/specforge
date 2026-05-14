@@ -1574,4 +1574,6 @@
   - `IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf`: [info:system_contract] 2 infrastructure signal(s) have no resolved producer actor in IntentIR connectivity; canonical sourcing status remains explicit in the infrastructure/system-contract surface
 - Targeted rescan queue:
   - none
+- New hardening lane opened — evidence.rs `automation_confidence` and `supporting_statement_ids` coverage: In progress
+- evidence.rs automation_confidence batch 1: 19 assertions across 13 tests covering 5 source kinds: Done
 <!-- validation_projection:end -->
