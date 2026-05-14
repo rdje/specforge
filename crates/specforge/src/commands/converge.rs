@@ -920,6 +920,8 @@ mod tests {
         assert_eq!(rescan_report.possible_improvement_review_required, 0);
         assert_eq!(rescan_report.regression_review_required, 0);
         assert_eq!(rescan_report.neutral_change_review_required, 0);
+        assert_eq!(rescan_report.executed_validated_changed, 0);
+        assert_eq!(rescan_report.executed_validated_no_change, 0);
         assert_eq!(rescan_report.arbitration_status(), "dry_run_not_promoted");
 
         let evidence = EvidenceIr::load_from_path(&report.paths.evidence_ir_path)?;

@@ -21,6 +21,7 @@ evidence for one top-level task.
 | `PROVENANCE-HARDENING` | `done` | `R6` | — | [docs/tasks/PROVENANCE-HARDENING.md](docs/tasks/PROVENANCE-HARDENING.md) |
 | `R6-FSM-ADAPTER` | `done` | `R6` | — | [docs/tasks/R6-FSM-ADAPTER.md](docs/tasks/R6-FSM-ADAPTER.md) |
 | `R6-SOURCE-HARDENING` | `done` | `R6` | — | [docs/tasks/R6-SOURCE-HARDENING.md](docs/tasks/R6-SOURCE-HARDENING.md) |
+| `R6-CONVERGE-HARDENING` | `active` | `R6` | `R6-CONVERGE-HARDENING.1` | [docs/tasks/R6-CONVERGE-HARDENING.md](docs/tasks/R6-CONVERGE-HARDENING.md) |
 
 ## Directory Layout
 
