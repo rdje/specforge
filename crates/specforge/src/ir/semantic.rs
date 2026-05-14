@@ -19229,4 +19229,57 @@ mod tests {
     fn waveform_index_token_accepts_colon_separated_indices() {
         assert!(super::is_waveform_index_token("0:7"));
     }
+
+    // is_compact_waveform_index_label unit tests
+
+    #[test]
+    fn compact_waveform_index_accepts_addr_with_index() {
+        assert!(super::is_compact_waveform_index_label("addr[0]"));
+    }
+
+    #[test]
+    fn compact_waveform_index_accepts_data_with_hex_index() {
+        assert!(super::is_compact_waveform_index_label("data[0x1A]"));
+    }
+
+    #[test]
+    fn compact_waveform_index_accepts_a_with_index() {
+        assert!(super::is_compact_waveform_index_label("a[3]"));
+    }
+
+    #[test]
+    fn compact_waveform_index_accepts_angle_brackets() {
+        assert!(super::is_compact_waveform_index_label("data<7>"));
+    }
+
+    #[test]
+    fn compact_waveform_index_rejects_empty_prefix() {
+        // Catches ||→&& at line 10012: prefix empty + index non-empty
+        assert!(!super::is_compact_waveform_index_label("[0]"));
+    }
+
+    #[test]
+    fn compact_waveform_index_rejects_empty_index() {
+        // Catches ||→&& at line 10012 and delete ! at 10015
+        // prefix="a" matches allowlist, empty index fails
+        assert!(!super::is_compact_waveform_index_label("a[]"));
+    }
+
+    #[test]
+    fn compact_waveform_index_rejects_nested_brackets() {
+        assert!(!super::is_compact_waveform_index_label("a[x[y]]"));
+    }
+
+    #[test]
+    fn compact_waveform_index_rejects_digit_started_prefix() {
+        // Catches delete ! at line 10015 — prefix starts with digit,
+        // !matches! is true (not in allowlist), parse_identifier is None (digit start),
+        // so original continues (true&&true) but mutant falls through (false)
+        assert!(!super::is_compact_waveform_index_label("0foo[0]"));
+    }
+
+    #[test]
+    fn compact_waveform_index_rejects_plain_text() {
+        assert!(!super::is_compact_waveform_index_label("hello"));
+    }
 }
