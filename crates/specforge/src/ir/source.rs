@@ -1058,6 +1058,7 @@ mod tests {
     use tempfile::tempdir;
 
     use crate::error::Result;
+    use crate::ir::source::AdapterTarget;
     use crate::ir::IrStage;
     use crate::test_support::env_var_lock;
 
@@ -1156,6 +1157,12 @@ mod tests {
             source_ir.automation_confidence,
             AutomationConfidence::High
         );
+        assert!(!source_ir.adapter_targets.is_empty());
+        assert!(source_ir.adapter_targets.contains(&AdapterTarget::Fsm));
+        assert_eq!(
+            source_ir.document_identity.origin_kind,
+            SourceKind::Markdown
+        );
 
         Ok(())
     }
@@ -1207,6 +1214,11 @@ mod tests {
         assert_eq!(
             source_ir.automation_confidence,
             AutomationConfidence::High
+        );
+        assert!(!source_ir.adapter_targets.is_empty());
+        assert_eq!(
+            source_ir.document_identity.origin_kind,
+            SourceKind::Pdf
         );
 
         Ok(())
