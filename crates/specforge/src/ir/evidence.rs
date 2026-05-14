@@ -7004,6 +7004,10 @@ mod tests {
             evidence_ir.visual_evidence[0].role,
             super::VisualEvidenceRole::Normative
         );
+        assert_eq!(
+            evidence_ir.visual_evidence[0].automation_confidence,
+            AutomationConfidence::High
+        );
 
         Ok(())
     }
@@ -8530,6 +8534,10 @@ mod tests {
             without_priors.visual_evidence[0].role,
             super::VisualEvidenceRole::Ambiguous
         );
+        assert_eq!(
+            without_priors.visual_evidence[0].automation_confidence,
+            AutomationConfidence::High
+        );
 
         let evidence_ir = EvidenceIr::build_with_prior_memory(
             &source_ir.artifact_layout.source_ir_path,
@@ -8553,6 +8561,11 @@ mod tests {
             evidence_ir.visual_evidence[0].role,
             super::VisualEvidenceRole::Normative,
             "prior-guided timing classification should only upgrade the visual evidence role, not synthesize semantic facts"
+        );
+        assert_eq!(
+            evidence_ir.visual_evidence[0].automation_confidence,
+            AutomationConfidence::High,
+            "captioned visual evidence should carry High automation confidence"
         );
 
         Ok(())
@@ -8993,6 +9006,8 @@ mod tests {
             .find(|record| record.signal_name == "CS_N")
             .expect("expected explicit asserted-when-LOW prose to recover CS_N polarity");
         assert_eq!(polarity.polarity, super::SignalPolarity::ActiveLow);
+        assert_eq!(polarity.automation_confidence, AutomationConfidence::Medium);
+        assert!(!polarity.supporting_statement_ids.is_empty());
         assert!(evidence_ir.signal_constraints.iter().any(|constraint| {
             constraint.subject_signal == "CS_N"
                 && constraint.source_text == "CS_N must be asserted."
@@ -9050,6 +9065,8 @@ mod tests {
                 .find(|record| record.signal_name == signal_name)
                 .expect("expected collective active-low prose to recover both control signals");
             assert_eq!(polarity.polarity, super::SignalPolarity::ActiveLow);
+            assert_eq!(polarity.automation_confidence, AutomationConfidence::Medium);
+            assert!(!polarity.supporting_statement_ids.is_empty());
         }
         assert!(evidence_ir.signal_constraints.iter().any(|constraint| {
             constraint.subject_signal == "CS_N"
@@ -9105,12 +9122,16 @@ mod tests {
             .find(|record| record.signal_name == "CS_N")
             .expect("expected clause-local active-low polarity for CS_N");
         assert_eq!(cs_n_polarity.polarity, super::SignalPolarity::ActiveLow);
+        assert_eq!(cs_n_polarity.automation_confidence, AutomationConfidence::Medium);
+        assert!(!cs_n_polarity.supporting_statement_ids.is_empty());
         let enable_polarity = evidence_ir
             .signal_polarities
             .iter()
             .find(|record| record.signal_name == "ENABLE")
             .expect("expected clause-local active-high polarity for ENABLE");
         assert_eq!(enable_polarity.polarity, super::SignalPolarity::ActiveHigh);
+        assert_eq!(enable_polarity.automation_confidence, AutomationConfidence::Medium);
+        assert!(!enable_polarity.supporting_statement_ids.is_empty());
         assert!(evidence_ir.signal_constraints.iter().any(|constraint| {
             constraint.subject_signal == "CS_N"
                 && matches!(
