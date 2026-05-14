@@ -18581,4 +18581,62 @@ mod tests {
             .expect("tokenize 'my_signal'");
         assert_eq!(tokens, vec!["my_signal"]);
     }
+
+    // extract_actor_after_by unit tests
+
+    #[test]
+    fn extract_actor_after_by_returns_actor_following_by_with_the_prefix() {
+        // Catches return None, return Some(""), return Some("xyzzy") mutants
+        let actor =
+            super::extract_actor_after_by("driven by the CPU").expect("should find actor");
+        assert!(!actor.is_empty());
+        assert_eq!(actor, "CPU");
+    }
+
+    #[test]
+    fn extract_actor_after_by_handles_no_the_prefix() {
+        // Catches +→- and +→* mutants at line 9386 — offset into "by " + 4
+        let actor =
+            super::extract_actor_after_by("managed by DMA engine").expect("should find actor");
+        assert_eq!(actor, "DMA engine");
+    }
+
+    #[test]
+    fn extract_actor_after_by_returns_none_when_no_by() {
+        assert!(super::extract_actor_after_by("some text without the keyword").is_none());
+    }
+
+    // signal_constraint_kind_from_vlm_state unit tests
+
+    #[test]
+    fn vlm_state_x_returns_none() {
+        // Catches delete match arm for "x" | "z" | "unknown" | ...
+        let result = super::signal_constraint_kind_from_vlm_state("x");
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn vlm_state_z_returns_none() {
+        let result = super::signal_constraint_kind_from_vlm_state("z");
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn vlm_state_unknown_returns_none() {
+        let result = super::signal_constraint_kind_from_vlm_state("unknown");
+        assert!(result.is_none());
+    }
+
+    // is_vlm_waveform_motion_state unit tests
+
+    #[test]
+    fn is_vlm_waveform_motion_state_returns_false_for_non_motion_state() {
+        // Catches return true mutant
+        assert!(!super::is_vlm_waveform_motion_state("idle"));
+    }
+
+    #[test]
+    fn is_vlm_waveform_motion_state_returns_true_for_rise() {
+        assert!(super::is_vlm_waveform_motion_state("rise"));
+    }
 }

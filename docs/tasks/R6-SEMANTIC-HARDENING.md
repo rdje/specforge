@@ -29,7 +29,7 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
 - ID: `R6-SEMANTIC-HARDENING`
   Status: `active`
   Goal: `Fix high-value missed cargo-mutants in semantic.rs functions.`
-  Children: `R6-SEMANTIC-HARDENING.1`, `R6-SEMANTIC-HARDENING.2`, `R6-SEMANTIC-HARDENING.3`
+  Children: `R6-SEMANTIC-HARDENING.1`, `R6-SEMANTIC-HARDENING.2`, `R6-SEMANTIC-HARDENING.3`, `R6-SEMANTIC-HARDENING.4`
 
 ### Batch 1: build_symbol_definitions
 
@@ -55,7 +55,16 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
   Status: `done`
   Goal: `Fix 4 missed mutants in tokenize_control_expression — +→* at pair-guard, ||→&& and ==→!= at identifier lexing.`
   Acceptance: `4 mutants caught: +→* at line 5338, ||→&& at line 5371, ==→!= (underscore) at line 5371, ==→!= (apostrophe) at line 5371.`
-  Verification: `cargo test -p specforge --lib — 687/687 passed`
+  Verification: `cargo test -p specforge --lib — 688/688 passed`
+  Commit: `3a91e4f6`
+
+### Batch 4: VLM helper functions
+
+- ID: `R6-SEMANTIC-HARDENING.4`
+  Status: `done`
+  Goal: `Fix 7 missed mutants across extract_actor_after_by (5), signal_constraint_kind_from_vlm_state (1), is_vlm_waveform_motion_state (1).`
+  Acceptance: `7 mutants caught: return value replacements, arithmetic +→- +→*, delete match arm, bool→true.`
+  Verification: `cargo test -p specforge --lib — 696/696 passed`
   Commit: pending
 
 ## Current Frontier
@@ -82,7 +91,8 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
 | --- | --- | --- | --- |
 | `2026-05-14` | `R6-SEMANTIC-HARDENING.1` | `cargo test -p specforge --lib` | 681/681 passed |
 | `2026-05-14` | `R6-SEMANTIC-HARDENING.2` | `cargo test -p specforge --lib` | 685/685 passed |
-| `2026-05-14` | `R6-SEMANTIC-HARDENING.3` | `cargo test -p specforge --lib` | 687/687 passed |
+| `2026-05-14` | `R6-SEMANTIC-HARDENING.3` | `cargo test -p specforge --lib` | 688/688 passed |
+| `2026-05-14` | `R6-SEMANTIC-HARDENING.4` | `cargo test -p specforge --lib` | 696/696 passed |
 
 ## Commit Log
 
@@ -91,6 +101,7 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
 | `R6-SEMANTIC-HARDENING.1` | `8db82b8a` | 4 assertion additions + conflicting symbols test |
 | `R6-SEMANTIC-HARDENING.2` | `ea0020bb` | 3 unit tests for parse_explicit_system_reset |
 | `R6-SEMANTIC-HARDENING.3` | `3a91e4f6` | 4 unit tests for tokenize_control_expression |
+| `R6-SEMANTIC-HARDENING.4` | pending | 8 unit tests across extract_actor_after_by, signal_constraint_kind_from_vlm_state, is_vlm_waveform_motion_state |
 
 ## Changelog
 
