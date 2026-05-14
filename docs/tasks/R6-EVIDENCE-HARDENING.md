@@ -11,7 +11,7 @@
 
 ## Goal
 
-Add regression-only test assertions to `ExtractedStatement.modality` and `ExtractedStatement.related_visual_evidence_ids` — two fields populated in production with zero test coverage.
+Add regression-only test assertions to zero-coverage `EvidenceIr` and `ExtractedStatement` fields populated in production.
 
 ## Non-Goals
 
@@ -21,7 +21,7 @@ Add regression-only test assertions to `ExtractedStatement.modality` and `Extrac
 
 ## Acceptance Criteria
 
-- Zero-coverage `modality` and `related_visual_evidence_ids` fields hardened with at least one non-empty assertion each.
+- Zero-coverage fields hardened with at least one non-empty assertion each.
 - All tests pass after every completed leaf.
 - Each leaf is committed through `COMMIT.md` with leaf-ID traceability.
 
@@ -29,15 +29,33 @@ Add regression-only test assertions to `ExtractedStatement.modality` and `Extrac
 
 - ID: `R6-EVIDENCE-HARDENING`
   Status: `active`
-  Goal: `Harden zero-coverage ExtractedStatement.modality and related_visual_evidence_ids assertion gaps.`
-  Children: `R6-EVIDENCE-HARDENING.1`
+  Goal: `Harden zero-coverage evidence.rs field assertion gaps.`
+  Children: `R6-EVIDENCE-HARDENING.1`, `R6-EVIDENCE-HARDENING.2`, `R6-EVIDENCE-HARDENING.3`
 
 ### Batch 1: ExtractedStatement modality + related_visual_evidence_ids
 
 - ID: `R6-EVIDENCE-HARDENING.1`
-  Status: `pending`
+  Status: `done`
   Goal: `Harden ExtractedStatement.modality and related_visual_evidence_ids — zero assertions codebase-wide despite being populated in every EvidenceIr build.`
   Acceptance: `4 assertions in builds_evidence_ir_from_markdown_source_ir: modality = Text for both statements, related_visual_evidence_ids empty for both.`
+  Verification: `cargo test -p specforge --lib — 666/666 passed`
+  Commit: `906597ad`
+
+### Batch 2: EvidenceIr.signal_alias_map
+
+- ID: `R6-EVIDENCE-HARDENING.2`
+  Status: `pending`
+  Goal: `Harden EvidenceIr.signal_alias_map (BTreeMap<String, String>) — zero assertions despite being populated in 4 tests with non-trivial alias data.`
+  Acceptance: `3 assertions in alias_grounded_prose_descriptions_produce_semantic_handshake_hints: len = 2, get("request phase") = "XREQ", get("accept phase") = "XACK".`
+  Verification: `pending`
+  Commit: `pending`
+
+### Batch 3: FsmSignalCandidate.direction_hint_conflicted
+
+- ID: `R6-EVIDENCE-HARDENING.3`
+  Status: `pending`
+  Goal: `Harden FsmSignalCandidate.direction_hint_conflicted (bool) — only 2 assertions across ~3300 assertions in adapters.rs, controls renderability branching in production.`
+  Acceptance: `2+ assertions alongside existing direction_hint/width_hint/graph_direction_hint sibling assertions in signal_inventory tests.`
   Verification: `pending`
   Commit: `pending`
 
@@ -45,12 +63,14 @@ Add regression-only test assertions to `ExtractedStatement.modality` and `Extrac
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `R6-EVIDENCE-HARDENING.1` | `pending` | Only leaf — harden two zero-coverage ExtractedStatement fields |
+| 1 | `R6-EVIDENCE-HARDENING.2` | `pending` | signal_alias_map has zero assertions, 4 tests populate non-trivial data |
+| 2 | `R6-EVIDENCE-HARDENING.3` | `pending` | direction_hint_conflicted has only 2 assertions, critical production role |
 
 ## Decisions
 
 - `2026-05-14`: Scoped to regression-only test assertion additions. Zero production behavior changes.
 - `2026-05-14`: Selected `builds_evidence_ir_from_markdown_source_ir` test — already asserts on extracted_statements, minimal insertion friction.
+- `2026-05-14`: Expanded tree scope to cover additional zero-coverage evidence.rs and adapters.rs fields discovered after leaf 1.
 
 ## Open Questions
 
@@ -64,12 +84,15 @@ Add regression-only test assertions to `ExtractedStatement.modality` and `Extrac
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-05-14` | `R6-EVIDENCE-HARDENING.1` | `cargo test -p specforge --lib` | 666/666 passed |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- | --- |
+| `R6-EVIDENCE-HARDENING.1` | `906597ad` | 4 assertions on modality + related_visual_evidence_ids |
 
 ## Changelog
 
-- `2026-05-14`: Created task tree with 1 hardening leaf targeting ExtractedStatement.modality and related_visual_evidence_ids zero-coverage fields.
+- `2026-05-14`: Created task tree with 1 hardening leaf targeting ExtractedStatement.modality and related_visual_evidence_ids.
+- `2026-05-14`: Added leaves 2 (signal_alias_map) and 3 (direction_hint_conflicted) — zero-coverage fields discovered after leaf 1 completion.

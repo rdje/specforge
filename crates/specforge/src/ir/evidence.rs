@@ -9724,6 +9724,15 @@ mod tests {
         evidence_ir
             .signal_alias_map
             .insert("accept phase".to_string(), "XACK".to_string());
+        assert_eq!(evidence_ir.signal_alias_map.len(), 2);
+        assert_eq!(
+            evidence_ir.signal_alias_map.get("request phase"),
+            Some(&"XREQ".to_string())
+        );
+        assert_eq!(
+            evidence_ir.signal_alias_map.get("accept phase"),
+            Some(&"XACK".to_string())
+        );
         evidence_ir.refresh_signal_semantic_hints()?;
 
         assert!(evidence_ir.signal_semantic_hints.iter().any(|hint| {
