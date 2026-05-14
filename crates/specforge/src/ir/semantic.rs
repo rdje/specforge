@@ -18772,4 +18772,72 @@ mod tests {
         // Catches &&→|| mutant at line 9994
         assert!(super::is_compact_waveform_sample_label("a0"));
     }
+
+    // extract_symbolic_value unit tests
+
+    #[test]
+    fn extract_symbolic_value_returns_uppercase_token() {
+        // Catches delete ! at 9367 (uppercase check), &&→|| and !=→== and delete ! at 9361
+        let value = super::extract_symbolic_value("signal HELLO there", None);
+        assert_eq!(value, Some("HELLO".to_string()));
+    }
+
+    #[test]
+    fn extract_symbolic_value_filters_excluded_keywords() {
+        // HIGH is a keyword that should be filtered
+        let value = super::extract_symbolic_value("set HIGH signal", None);
+        assert_eq!(value, None);
+    }
+
+    #[test]
+    fn extract_symbolic_value_excludes_specified_signal() {
+        let value = super::extract_symbolic_value("MY_SIG and OTHER", Some("MY_SIG"));
+        assert_eq!(value, Some("OTHER".to_string()));
+    }
+
+    #[test]
+    fn extract_symbolic_value_returns_none_for_all_lowercase() {
+        let value = super::extract_symbolic_value("hello world", None);
+        assert_eq!(value, None);
+    }
+
+    #[test]
+    fn extract_symbolic_value_returns_none_for_whitespace_only() {
+        // Catches delete ! at 9362 — empty tokens kept instead of filtered
+        let value = super::extract_symbolic_value("   ", None);
+        assert_eq!(value, None);
+    }
+
+    // find_ascii_case_insensitive unit tests
+
+    #[test]
+    fn find_ascii_case_insensitive_returns_correct_index() {
+        // Catches return None and return Some(0)
+        let index = super::find_ascii_case_insensitive("Hello World", "world");
+        assert_eq!(index, Some(6));
+    }
+
+    #[test]
+    fn find_ascii_case_insensitive_returns_none_for_no_match() {
+        assert_eq!(super::find_ascii_case_insensitive("hello", "xyz"), None);
+    }
+
+    // is_boilerplate_section_title unit tests
+
+    #[test]
+    fn boilerplate_title_recognizes_licence() {
+        // Catches return false
+        assert!(super::is_boilerplate_section_title("Licence Agreement"));
+    }
+
+    #[test]
+    fn boilerplate_title_recognizes_license() {
+        assert!(super::is_boilerplate_section_title("License Information"));
+    }
+
+    #[test]
+    fn boilerplate_title_recognizes_proprietary_notice_without_licence() {
+        // Catches ||→&& mutant at line 10362 — single || means either licence/license matches
+        assert!(super::is_boilerplate_section_title("Proprietary Notice"));
+    }
 }
