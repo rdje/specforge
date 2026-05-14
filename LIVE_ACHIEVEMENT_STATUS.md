@@ -1584,4 +1584,5 @@
 - Adapters automation_confidence hardening lane: previously completed (all 6 candidate record types covered in earlier PNT cycles)
 - SemanticIR supporting_statement_ids hardening lane complete: 43 assertions across 14 tests covering 22 of 30 record types (8 types have no test coverage — phases, contracts, assertions, abstractions, decomposition_candidates not exercised by any test): Done
 - SourceIR automation_confidence hardening lane complete: 8 assertions across 7 tests covering SourceIr and ResidualDecisionPacket (remaining record types defined in source.rs are only exercised in downstream modules): Done
+- nlp_enrich.rs automation_confidence and supporting_statement_ids hardening complete: 6 assertions across 5 tests covering SignalConstraintRecord and ConditionalRuleRecord from NLP Level 3 extraction: Done
 <!-- validation_projection:end -->
