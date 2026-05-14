@@ -1122,7 +1122,8 @@ mod tests {
                 .iter()
                 .any(|r| r.subject_signal == "HTRANS"
                     && matches!(r.constraint_kind, SignalConstraintKind::MustNotChange)
-                    && r.automation_confidence == AutomationConfidence::Medium),
+                    && r.automation_confidence == AutomationConfidence::Medium
+                    && !r.supporting_statement_ids.is_empty()),
             "expected NLP Level 3 SignalConstraintRecord for HTRANS must_not_change"
         );
 
@@ -1182,7 +1183,9 @@ mod tests {
         let raw = "```json\n{\"type\":\"signal_constraint\",\"subject_signal\":\"HREADY\",\"constraint_kind\":\"must_be_high\",\"negated\":false}\n```";
         let result = parse_nlp_response(raw, "stmt_001").unwrap();
         assert!(
-            matches!(result, NlpExtractionResult::SignalConstraint(r) if r.subject_signal == "HREADY")
+            matches!(result, NlpExtractionResult::SignalConstraint(r) if r.subject_signal == "HREADY"
+                && r.automation_confidence == AutomationConfidence::Medium
+                && !r.supporting_statement_ids.is_empty())
         );
     }
 
@@ -1199,7 +1202,9 @@ mod tests {
         let raw = r#"{"type":"conditional_rule","antecedent":"HREADY is LOW","consequent_signal":"HTRANS","consequent_action":"shall remain NONSEQ"}"#;
         let result = parse_nlp_response(raw, "stmt_003").unwrap();
         assert!(
-            matches!(result, NlpExtractionResult::ConditionalRule(r) if r.antecedent_text == "HREADY is LOW")
+            matches!(result, NlpExtractionResult::ConditionalRule(r) if r.antecedent_text == "HREADY is LOW"
+                && r.automation_confidence == AutomationConfidence::Medium
+                && !r.supporting_statement_ids.is_empty())
         );
     }
 
@@ -1456,6 +1461,11 @@ mod tests {
             Some("HADDR"),
             "Form 2: alias \"address bus\" → HADDR must be persisted in signal_alias_map"
         );
+        assert!(enriched.signal_constraints.iter().any(|r| {
+            r.subject_signal == "HADDR"
+                && r.automation_confidence == AutomationConfidence::Medium
+                && !r.supporting_statement_ids.is_empty()
+        }));
 
         Ok(())
     }
@@ -1526,6 +1536,12 @@ mod tests {
             "Form 1 backannotation: statement class must be updated from NormativeStatement \
              to SignalValueConstraint after successful LLM extraction"
         );
+        assert!(enriched.signal_constraints.iter().any(|r| {
+            r.subject_signal == "HWRITE"
+                && matches!(r.constraint_kind, SignalConstraintKind::MustBeHigh)
+                && r.automation_confidence == AutomationConfidence::Medium
+                && !r.supporting_statement_ids.is_empty()
+        }));
 
         Ok(())
     }
@@ -1637,7 +1653,9 @@ mod tests {
             enriched
                 .signal_constraints
                 .iter()
-                .any(|r| r.subject_signal == "HTRANS"),
+                .any(|r| r.subject_signal == "HTRANS"
+                    && r.automation_confidence == AutomationConfidence::Medium
+                    && !r.supporting_statement_ids.is_empty()),
             "HTRANS constraint should have been extracted in first pass"
         );
 
@@ -1702,6 +1720,8 @@ mod tests {
                 record.subject_signal == "HWRITE"
                     && matches!(record.constraint_kind, SignalConstraintKind::MustBeHigh)
                     && record.source_text == duplicate_text
+                    && record.automation_confidence == AutomationConfidence::Medium
+                    && !record.supporting_statement_ids.is_empty()
             })
             .count();
         assert_eq!(
