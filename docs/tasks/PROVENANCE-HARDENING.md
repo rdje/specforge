@@ -118,7 +118,7 @@ populated in production.
   Goal: `Validate completeness and close the provenance hardening tree.`
   Acceptance: `All 8 committed leaves verified via git log and 666/666 test pass. Leaf 9 audit confirmed complete. Tree status, TASK_TREE.md, and live docs updated.`
   Verification: `cargo test -p specforge --lib — 666/666 passed`
-  Commit: `pending`
+  Commit: `55850ebe` — Close PROVENANCE-HARDENING tree
 
 ## Current Frontier
 
@@ -178,7 +178,7 @@ No executable leaves remain. Tree closed 2026-05-14.
 | `PROVENANCE-HARDENING.7` | `045d020a` Add supporting_document_keys assertions to all 7 learn_priors prior record types | 8 assertions |
 | `PROVENANCE-HARDENING.8` | `319308a9` Add from_evidence_span_id and to_visual_evidence_id assertions to EvidenceLink test | 2 assertions |
 | `PROVENANCE-HARDENING.9` | pending — not yet committed | Audit only |
-| `PROVENANCE-HARDENING.10` | pending | Tree closure |
+| `PROVENANCE-HARDENING.10` | `55850ebe` Close PROVENANCE-HARDENING tree | Tree closure |
 
 ## Changelog
 

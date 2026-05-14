@@ -24,8 +24,8 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: pending (PROVENANCE-HARDENING tree closure)
-- latest_commit_brief_message: pending
+- latest_commit_hash: `55850ebe`
+- latest_commit_brief_message: Close PROVENANCE-HARDENING tree — all provenance-like fields hardened
 - note: PROVENANCE-HARDENING tree closed — all 10 leaves resolved (8 committed hardening leaves, 1 audit, 1 closure). 24 provenance-field assertions total. 666/666 tests passing. R6-FSM-ADAPTER tree activated as next PNT frontier. 11 local commits ahead of origin.
 
 ## Recent commit chain (last 10)
