@@ -29,7 +29,7 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
 - ID: `R6-SEMANTIC-HARDENING`
   Status: `active`
   Goal: `Fix high-value missed cargo-mutants in semantic.rs functions.`
-  Children: `R6-SEMANTIC-HARDENING.1`, `R6-SEMANTIC-HARDENING.2`, `R6-SEMANTIC-HARDENING.3`, `R6-SEMANTIC-HARDENING.4`
+  Children: `R6-SEMANTIC-HARDENING.1`, `R6-SEMANTIC-HARDENING.2`, `R6-SEMANTIC-HARDENING.3`, `R6-SEMANTIC-HARDENING.4`, `R6-SEMANTIC-HARDENING.5`
 
 ### Batch 1: build_symbol_definitions
 
@@ -67,6 +67,15 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
   Verification: `cargo test -p specforge --lib — 696/696 passed`
   Commit: `34909758`
 
+### Batch 5: VLM annotation label helpers
+
+- ID: `R6-SEMANTIC-HARDENING.5`
+  Status: `done`
+  Goal: `Fix 6 missed mutants across is_signal_value_annotation_label (1), parse_allowed_vlm_observation_signal (2), normalize_vlm_waveform_motion_state (1), is_non_quantitative_waveform_motion_annotation (2).`
+  Acceptance: `6 mutants caught: all ||→&& and &&→|| and delete ! across 4 functions.`
+  Verification: `cargo test -p specforge --lib — 704/704 passed`
+  Commit: `0b8cd737`
+
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
@@ -93,6 +102,7 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
 | `2026-05-14` | `R6-SEMANTIC-HARDENING.2` | `cargo test -p specforge --lib` | 685/685 passed |
 | `2026-05-14` | `R6-SEMANTIC-HARDENING.3` | `cargo test -p specforge --lib` | 688/688 passed |
 | `2026-05-14` | `R6-SEMANTIC-HARDENING.4` | `cargo test -p specforge --lib` | 696/696 passed |
+| `2026-05-14` | `R6-SEMANTIC-HARDENING.5` | `cargo test -p specforge --lib` | 704/704 passed |
 
 ## Commit Log
 
@@ -102,6 +112,7 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
 | `R6-SEMANTIC-HARDENING.2` | `ea0020bb` | 3 unit tests for parse_explicit_system_reset |
 | `R6-SEMANTIC-HARDENING.3` | `3a91e4f6` | 4 unit tests for tokenize_control_expression |
 | `R6-SEMANTIC-HARDENING.4` | `34909758` | 8 unit tests across extract_actor_after_by, signal_constraint_kind_from_vlm_state, is_vlm_waveform_motion_state |
+| `R6-SEMANTIC-HARDENING.5` | `0b8cd737` | 8 unit tests across is_signal_value_annotation_label, parse_allowed_vlm_observation_signal, normalize_vlm_waveform_motion_state, is_non_quantitative_waveform_motion_annotation |
 
 ## Changelog
 
