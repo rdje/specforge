@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `R6-FSM-ADAPTER`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: `R6`
 - Created: `2026-05-14`
 - Last updated: `2026-05-14`
@@ -29,9 +29,11 @@ across the adapter test surface.
 
 - Remaining adapter field families with zero or thin test coverage are
   inventoried and hardened.
-- All adapter tests pass after every completed leaf.
-- Graph-first direction migration coverage gaps are identified and closed.
+- All adapter tests pass after every completed leaf. (666/666)
+- Graph-first direction migration (`preferred_signal_direction_hint`) has a
+  dedicated unit test + extensive integration assertions — no gaps found.
 - Each leaf is committed through `COMMIT.md` with leaf-ID traceability.
+- Tree closed 2026-05-14.
 
 ## Task Tree
 
@@ -119,3 +121,9 @@ No executable leaves remain. All 4 R6-FSM-ADAPTER leaves (audit + 3 hardening) c
   summary), document_identity, FsmDecisionTreeCandidate.summary,
   FsmRenderableModule.symbol_definitions (end-to-end). Split into 3
   concrete hardening leaves (1.1, 1.2, 1.3).
+- `2026-05-14`: Tree closed. All 4 leaves complete (audit + 3 hardening).
+  666/666 tests. Graph-first direction migration coverage confirmed adequate
+  (dedicated unit test + extensive integration assertions). 4 thin-coverage
+  fields identified in audit but not given hardening leaves per non-goals
+  (already have 1+ assertion each; prior non-tree slices may have hardened
+  them further).

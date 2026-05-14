@@ -19,7 +19,7 @@ evidence for one top-level task.
 | Tree | Status | Roadmap lane | Current frontier | File |
 | --- | --- | --- | --- | --- |
 | `PROVENANCE-HARDENING` | `done` | `R6` | — | [docs/tasks/PROVENANCE-HARDENING.md](docs/tasks/PROVENANCE-HARDENING.md) |
-| `R6-FSM-ADAPTER` | `active` | `R6` | `R6-FSM-ADAPTER.1` | [docs/tasks/R6-FSM-ADAPTER.md](docs/tasks/R6-FSM-ADAPTER.md) |
+| `R6-FSM-ADAPTER` | `done` | `R6` | — | [docs/tasks/R6-FSM-ADAPTER.md](docs/tasks/R6-FSM-ADAPTER.md) |
 
 ## Directory Layout
 
