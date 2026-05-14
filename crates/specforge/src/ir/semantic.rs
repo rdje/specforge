@@ -11014,6 +11014,7 @@ mod tests {
             .expect("expected HCLK interface record");
         assert_eq!(hclk.direction_hint, Some(InterfaceSignalDirection::Input));
         assert_eq!(hclk.width_hint, Some(WidthHint::Numeric(1)));
+        assert_eq!(hclk.automation_confidence, AutomationConfidence::High);
         let hresetn = interface
             .signal_records
             .iter()
@@ -11025,6 +11026,7 @@ mod tests {
         );
         assert_eq!(hresetn.width_hint, Some(WidthHint::Numeric(1)));
         assert_eq!(hresetn.resolved_polarity, Some(SignalPolarity::ActiveLow));
+        assert_eq!(hresetn.automation_confidence, AutomationConfidence::High);
 
         Ok(())
     }
@@ -17722,6 +17724,7 @@ mod tests {
                     == crate::ir::semantic::InfrastructureSignalDistributionStatus::NoRecoveredConsumers
                 && record.recovered_source_actor_ids.is_empty()
                 && record.distributed_to_actor_ids.is_empty()
+                && record.automation_confidence == AutomationConfidence::High
         }));
 
         Ok(())
@@ -17797,6 +17800,10 @@ mod tests {
                 .contains(&"clock generator".to_string()),
             "expected explicit source actor in infrastructure record: {:?}",
             clock_infrastructure
+        );
+        assert_eq!(
+            clock_infrastructure.automation_confidence,
+            AutomationConfidence::Medium
         );
         assert!(
             semantic_ir
@@ -17968,6 +17975,10 @@ mod tests {
             reset_infrastructure
                 .distributed_to_actor_names
                 .contains(&"Requester".to_string())
+        );
+        assert_eq!(
+            reset_infrastructure.automation_confidence,
+            AutomationConfidence::Medium
         );
         assert!(
             semantic_ir.actor_ports.is_empty(),

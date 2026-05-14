@@ -1588,4 +1588,5 @@
 - semantic.rs lane progress: 19 assertions across 12 tests covering 13 record types; remaining: InterfaceRecord, ExplicitTopChild, ExplicitTopLink, SignalInterfaceRecord, WidthConstraintRecord, TimingConstraintRecord
 - semantic.rs automation_confidence batch 5: 12 assertions across 4 tests covering ExplicitTopChildRecord, ExplicitTopLinkRecord, TimingConstraintRecord, SignalConstraintRecord, InterfaceSignalRecord: Done
 - semantic.rs automation_confidence batch 6: 4 assertions covering ExplicitTopPortRecord, ActorPortRecord, SignalConnectivityRecord: Done
+- semantic.rs automation_confidence batch 7: 6 assertions covering InfrastructureSignalRecord and system-contract InterfaceSignalRecord: Done
 <!-- validation_projection:end -->
