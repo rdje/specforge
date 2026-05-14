@@ -18874,4 +18874,46 @@ mod tests {
         // Catches &&→|| mutant at line 9353 — both prefix and suffix must be boundaries
         assert!(!super::contains_text_phrase("worldhello", "world"));
     }
+
+    // explicit_clock_edge_from_text unit tests
+
+    #[test]
+    fn clock_edge_recognizes_rising_edge_phrase() {
+        // Catches ||→&& at line 8247 — single "rising edge" should match
+        assert_eq!(
+            super::explicit_clock_edge_from_text("on the rising edge"),
+            Some(super::ClockEdge::Rising)
+        );
+    }
+
+    #[test]
+    fn clock_edge_recognizes_posedge_phrase() {
+        // Catches ||→&& at line 8248 — single "posedge" should match
+        assert_eq!(
+            super::explicit_clock_edge_from_text("on posedge"),
+            Some(super::ClockEdge::Rising)
+        );
+    }
+
+    #[test]
+    fn clock_edge_recognizes_posedges_phrase() {
+        // Catches ||→&& at line 8249 — single "posedges" should match
+        assert_eq!(
+            super::explicit_clock_edge_from_text("2 posedges"),
+            Some(super::ClockEdge::Rising)
+        );
+    }
+
+    #[test]
+    fn clock_edge_recognizes_falling_edge_phrase() {
+        assert_eq!(
+            super::explicit_clock_edge_from_text("on the falling edge"),
+            Some(super::ClockEdge::Falling)
+        );
+    }
+
+    #[test]
+    fn clock_edge_returns_none_for_no_edge() {
+        assert_eq!(super::explicit_clock_edge_from_text("no clock here"), None);
+    }
 }
