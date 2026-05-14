@@ -1583,4 +1583,5 @@
 - New hardening lane opened — semantic.rs automation_confidence coverage: In progress
 - semantic.rs automation_confidence batch 1: 11 assertions across 5 tests covering 8 record types: Done
 - semantic.rs automation_confidence batch 2: 3 assertions across 3 tests covering TemporalRuleRecord and additional TemporalConflictRecord variants: Done
+- semantic.rs automation_confidence batch 3: 3 assertions across 2 tests covering InterfaceSignalConflictRecord and SignalConnectivityConflictRecord: Done
 <!-- validation_projection:end -->

@@ -12375,6 +12375,7 @@ mod tests {
                             .observations
                             .iter()
                             .any(|observation| observation.value_text == "output")
+                        && conflict.automation_confidence == AutomationConfidence::High
                 })
         );
         assert!(
@@ -12395,6 +12396,7 @@ mod tests {
                             .observations
                             .iter()
                             .any(|observation| observation.value_text == "16")
+                        && conflict.automation_confidence == AutomationConfidence::High
                 })
         );
 
@@ -12690,6 +12692,7 @@ mod tests {
             conflict.conflict_kind,
             super::SignalConnectivityConflictKind::MultipleProducers
         ));
+        assert_eq!(conflict.automation_confidence, AutomationConfidence::Medium);
         assert!(
             conflict
                 .conflicting_actor_names
