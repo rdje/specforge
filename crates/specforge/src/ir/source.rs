@@ -1393,6 +1393,12 @@ EOF
             .notes
             .iter()
             .any(|note| note.contains("docling materialized")));
+        assert_eq!(source_ir.page_artifacts[0].width_px, Some(800));
+        assert_eq!(source_ir.page_artifacts[0].height_px, Some(600));
+        assert_eq!(
+            source_ir.visual_assets[0].diagram_kind,
+            crate::ir::source::DiagramKind::Unknown
+        );
 
         let source_ir_json =
             fs::read_to_string(artifact_base.join("bus_spec").join("source_ir.json"))?;
