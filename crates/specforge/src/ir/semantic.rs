@@ -10951,17 +10951,27 @@ mod tests {
                 ..
             }) if target_signal == "ACC" && literal == "8'0"
         ));
-        assert!(semantic_ir.decision_tree_fragments.iter().any(|fragment| {
-            fragment.block_name == "accumulate"
-                && matches!(
-                    fragment.actions.first(),
-                    Some(DecisionTreeActionRecord::Assign {
-                        target_signal,
-                        assignment_kind: DecisionTreeAssignmentKind::Sequential,
-                        value: DecisionTreeValueRecord::SignalRef { signal_name },
-                    }) if target_signal == "ACC" && signal_name == "DATA_IN"
-                )
-        }));
+        assert_eq!(
+            semantic_ir.init_assignments[0].automation_confidence,
+            AutomationConfidence::High
+        );
+        let accumulate_fragment = semantic_ir
+            .decision_tree_fragments
+            .iter()
+            .find(|fragment| fragment.block_name == "accumulate")
+            .expect("accumulate fragment should be present");
+        assert!(matches!(
+            accumulate_fragment.actions.first(),
+            Some(DecisionTreeActionRecord::Assign {
+                target_signal,
+                assignment_kind: DecisionTreeAssignmentKind::Sequential,
+                value: DecisionTreeValueRecord::SignalRef { signal_name },
+            }) if target_signal == "ACC" && signal_name == "DATA_IN"
+        ));
+        assert_eq!(
+            accumulate_fragment.automation_confidence,
+            AutomationConfidence::High
+        );
 
         Ok(())
     }
@@ -11166,6 +11176,7 @@ mod tests {
                     definition.value.as_ref(),
                     Some(ControlExpressionRecord::Literal { literal }) if literal == "8'1"
                 )
+                && definition.automation_confidence == AutomationConfidence::High
         }));
         assert!(semantic_ir.symbol_definitions.iter().any(|definition| {
             definition.symbol_name == "mode_t"
@@ -11175,6 +11186,7 @@ mod tests {
                     .members
                     .iter()
                     .any(|member| member.member_name == "idle")
+                && definition.automation_confidence == AutomationConfidence::High
         }));
 
         let decode_block = semantic_ir
@@ -11183,6 +11195,7 @@ mod tests {
             .find(|block| block.block_name == "decode")
             .expect("decode control block should be present");
         assert_eq!(decode_block.role, ControlBlockRole::StandaloneDecisionTree);
+        assert_eq!(decode_block.automation_confidence, AutomationConfidence::High);
         assert!(matches!(
             decode_block.selector.as_ref(),
             Some(ControlExpressionRecord::Reference { reference })
@@ -11346,6 +11359,7 @@ mod tests {
         assert_eq!(explicit_top.ports.len(), 1);
         assert_eq!(explicit_top.children.len(), 2);
         assert_eq!(explicit_top.links.len(), 2);
+        assert_eq!(explicit_top.automation_confidence, AutomationConfidence::High);
         assert!(explicit_top.ports.iter().any(|port| {
             port.port_name == "result_data"
                 && port.direction_hint == Some(InterfaceSignalDirection::Output)
@@ -11392,10 +11406,16 @@ mod tests {
 
         assert_eq!(semantic_ir.regular_states.len(), 2);
         assert!(semantic_ir.regular_states.iter().any(|state| {
-            state.state_name == "idle" && state.is_initial && state.declaration_order == 0
+            state.state_name == "idle"
+                && state.is_initial
+                && state.declaration_order == 0
+                && state.automation_confidence == AutomationConfidence::High
         }));
         assert!(semantic_ir.regular_states.iter().any(|state| {
-            state.state_name == "busy" && !state.is_initial && state.declaration_order == 1
+            state.state_name == "busy"
+                && !state.is_initial
+                && state.declaration_order == 1
+                && state.automation_confidence == AutomationConfidence::High
         }));
         assert_eq!(semantic_ir.state_transitions.len(), 2);
         assert!(semantic_ir.state_transitions.iter().any(|transition| {
@@ -11406,6 +11426,7 @@ mod tests {
                     Some(DecisionTreeGuardRecord::SignalIsHigh { signal_name })
                         if signal_name == "GO"
                 )
+                && transition.automation_confidence == AutomationConfidence::High
         }));
         assert!(semantic_ir.state_transitions.iter().any(|transition| {
             transition.source_state == "busy"
@@ -11415,6 +11436,7 @@ mod tests {
                     Some(DecisionTreeGuardRecord::SignalIsHigh { signal_name })
                         if signal_name == "DONE"
                 )
+                && transition.automation_confidence == AutomationConfidence::High
         }));
         assert!(
             semantic_ir
@@ -17155,6 +17177,7 @@ mod tests {
         );
         assert_eq!(conflict.supporting_rule_ids.len(), 2);
         assert_eq!(conflict.antecedents.len(), 1);
+        assert_eq!(conflict.automation_confidence, AutomationConfidence::Medium);
 
         Ok(())
     }

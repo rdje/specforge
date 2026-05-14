@@ -1580,4 +1580,6 @@
 - evidence.rs SignalPolarityRecord and VisualEvidenceItem hardening: 13 assertions across 5 tests: Done
 - evidence.rs observation-level supporting_statement_ids: 4 assertions across 2 conflict tests: Done
 - EvidenceIR test hardening lane complete: all 10 automation_confidence and supporting_statement_ids field categories covered (49 assertions total): Done
+- New hardening lane opened — semantic.rs automation_confidence coverage: In progress
+- semantic.rs automation_confidence batch 1: 11 assertions across 5 tests covering 8 record types: Done
 <!-- validation_projection:end -->
