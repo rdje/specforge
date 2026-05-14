@@ -1942,6 +1942,7 @@ mod tests {
         );
         assert_eq!(semantic_records[0].protocol_family, ProtocolFamily::AmbaAxi);
         assert_eq!(semantic_records[0].support_count, 1);
+        assert!(!semantic_records[0].supporting_document_keys.is_empty());
         assert_eq!(
             semantic_records[0].strongest_automation_confidence,
             AutomationConfidence::High
@@ -1963,6 +1964,9 @@ mod tests {
             semantic_modality_reliability_records[0].strongest_automation_confidence,
             AutomationConfidence::High
         );
+        assert!(!semantic_modality_reliability_records[0]
+            .supporting_document_keys
+            .is_empty());
 
         assert_eq!(temporal_records.len(), 1);
         assert_eq!(
@@ -1981,6 +1985,7 @@ mod tests {
             temporal_records[0].strongest_automation_confidence,
             AutomationConfidence::High
         );
+        assert!(!temporal_records[0].supporting_document_keys.is_empty());
     }
 
     #[test]
@@ -2140,6 +2145,9 @@ mod tests {
 
         let records = materialize_actor_taxonomy_priors(actor_taxonomy_priors);
         assert_eq!(records.len(), 2);
+        assert!(records
+            .iter()
+            .all(|record| !record.supporting_document_keys.is_empty()));
         assert!(records.iter().any(|record| {
             record.normalized_actor_term == "requester"
                 && record.taxonomy_role == ActorTaxonomyRole::RequesterLike
@@ -2174,6 +2182,7 @@ mod tests {
 
         let records = materialize_actor_taxonomy_priors(actor_taxonomy_priors);
         assert_eq!(records.len(), 1);
+        assert!(!records[0].supporting_document_keys.is_empty());
         assert_eq!(records[0].normalized_actor_term, "requester");
         assert_eq!(records[0].taxonomy_role, ActorTaxonomyRole::RequesterLike);
         assert_eq!(
@@ -2327,6 +2336,7 @@ mod tests {
         );
         assert_eq!(records[0].table_kind, TableKind::SignalDescription);
         assert_eq!(records[0].support_count, 1);
+        assert!(!records[0].supporting_document_keys.is_empty());
         assert_eq!(
             records[0].strongest_automation_confidence,
             AutomationConfidence::High
@@ -2420,6 +2430,7 @@ mod tests {
             visual_records[0].strongest_automation_confidence,
             AutomationConfidence::High
         );
+        assert!(!visual_records[0].supporting_document_keys.is_empty());
 
         assert_eq!(negative_records.len(), 1);
         assert_eq!(
@@ -2431,6 +2442,7 @@ mod tests {
             "signal_semantic_conflict:signal_description_table:handshake_valid_like|visual_caption:handshake_ready_like"
         );
         assert_eq!(negative_records[0].support_count, 1);
+        assert!(!negative_records[0].supporting_document_keys.is_empty());
         assert_eq!(
             negative_records[0].strongest_automation_confidence,
             AutomationConfidence::Medium

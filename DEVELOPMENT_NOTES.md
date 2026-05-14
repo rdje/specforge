@@ -6,6 +6,13 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-14 learn_priors.rs supporting_document_keys hardening
+
+- Added `supporting_document_keys` assertions to the 3 harvest tests that cover all 7 prior record types.
+- The field is a `Vec<String>` populated from `intent_ir.document_identity.document_key` in each harvest accumulator.
+- 8 assertions across 3 test functions: `learn_priors_harvests_semantic_and_temporal_priors` (3), `learn_priors_harvests_actor_taxonomy_priors` (1 all() check + 1 single), `learn_priors_harvests_actor_taxonomy_from_actor_identity_terms` (1), `learn_priors_harvests_table_shape_priors_from_source_ir` (1), `learn_priors_harvests_visual_motif_and_negative_knowledge_priors` (2).
+- 666/666 tests passing.
+
 ## 2026-05-14 evidence.rs table_signal_declaration_provenance hardening
 
 - Added `table_signal_declaration_provenance` assertions to 3 evidence tests that synthesize signal declarations from SignalDescription tables.

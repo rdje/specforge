@@ -1,5 +1,12 @@
 # CHANGES
 
+## 2026-05-14 (learn_priors.rs supporting_document_keys hardening)
+
+### Improved: 8 supporting_document_keys assertions across 3 learn_priors tests
+- Added `!record.supporting_document_keys.is_empty()` to all 7 prior record types: SemanticPhrasePriorRecord, SemanticModalityReliabilityPriorRecord, TemporalPhrasePriorRecord, ActorTaxonomyPriorRecord (2 assertions), TableShapePriorRecord, VisualMotifPriorRecord, NegativeKnowledgePriorRecord.
+- The field is populated from `intent_ir.document_identity.document_key` during prior harvesting.
+- 666/666 tests passing.
+
 ## 2026-05-14 (evidence.rs table_signal_declaration_provenance hardening)
 
 ### Improved: 3 table_signal_declaration_provenance assertions across 3 evidence.rs tests
