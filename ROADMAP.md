@@ -160,7 +160,7 @@
 
 ### R6 Adapter layer
 - status: In Progress
-- task tree: `R6-FSM-ADAPTER` (`proposed`) — [docs/tasks/R6-FSM-ADAPTER.md](docs/tasks/R6-FSM-ADAPTER.md); current frontier: `R6-FSM-ADAPTER.1`
+- task tree: `R6-FSM-ADAPTER` (`active`) — [docs/tasks/R6-FSM-ADAPTER.md](docs/tasks/R6-FSM-ADAPTER.md); current frontier: `R6-FSM-ADAPTER.1`
 - current lane:
   - `.fsm` adapter hardening is active, with renderable standalone/top paths, blocked renderability diagnostics, residual decisions, support/confidence preservation, and selected-inventory provenance under continuing regression coverage.
   - the active PNT cycle is continuing with reused FSM-child top cleanliness coverage; `R6` remains active and push checkpoints are around every 30 local commits.

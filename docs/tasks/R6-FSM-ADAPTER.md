@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `R6-FSM-ADAPTER`
-- Status: `proposed`
+- Status: `active`
 - Roadmap lane: `R6`
 - Created: `2026-05-14`
 - Last updated: `2026-05-14`
@@ -36,7 +36,7 @@ across the adapter test surface.
 ## Task Tree
 
 - ID: `R6-FSM-ADAPTER`
-  Status: `proposed`
+  Status: `active`
   Goal: `Continue systematic .fsm adapter test assertion hardening.`
   Children: `R6-FSM-ADAPTER.1`
 
@@ -57,8 +57,7 @@ across the adapter test surface.
 
 - `2026-05-14`: Scoped to regression-only test assertion additions. Zero
   production behavior changes allowed.
-- `2026-05-14`: Tree is `proposed` until PROVENANCE-HARDENING closes and the
-  R6 adapter hardening lane becomes the active PNT frontier.
+- `2026-05-14`: Tree is `active` — PROVENANCE-HARDENING closed, this tree is now the PNT frontier.
 
 ## Open Questions
 

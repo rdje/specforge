@@ -1,5 +1,12 @@
 # CHANGES
 
+## 2026-05-14 (PROVENANCE-HARDENING tree closure)
+
+### Closed: PROVENANCE-HARDENING task tree
+- All 10 leaves resolved: 8 committed hardening leaves (24 total assertions), 1 systematic audit leaf, 1 closure leaf.
+- 666/666 tests pass. All provenance-like field families hardened or explicitly deferred with rationale.
+- R6-FSM-ADAPTER tree activated as next PNT frontier.
+
 ## 2026-05-14 (task-tree tracking system scaffolding)
 
 ### Added: task-tree tracking workflow from fsmgen

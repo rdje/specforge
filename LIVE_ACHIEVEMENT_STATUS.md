@@ -13,6 +13,8 @@
 - `docs/tasks/PROVENANCE-HARDENING.md` backfilled tree with 10 leaves (8 done, 1 audit, 1 pending close): Done
 - `docs/tasks/R6-FSM-ADAPTER.md` proposed tree created for active `.fsm` adapter hardening lane: Done
 - `SESSION_BOOTSTRAP.md`, `COMMIT.md`, `README.md`, `ROADMAP.md` wired to task-tree ledger: Done
+- PROVENANCE-HARDENING task tree closed — all 10 leaves resolved (24 provenance-field assertions, 8 committed leaves): Done
+- R6-FSM-ADAPTER task tree activated — current frontier: `R6-FSM-ADAPTER.1`: Done
 - GitHub Actions CI workflow present but temporarily manual-only to conserve Actions minutes: Done
 - Canonical CI entrypoint runnable locally and reused by GitHub Actions: Done
 - Canonical CI now runs Clippy with warnings denied: Done

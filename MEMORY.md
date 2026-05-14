@@ -24,9 +24,9 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: pending (task-tree tracking system scaffolding)
+- latest_commit_hash: pending (PROVENANCE-HARDENING tree closure)
 - latest_commit_brief_message: pending
-- note: Task-tree tracking system adopted from fsmgen. Created docs/TASK_TREE.md (local operating spec), docs/tasks/TEMPLATE.md (copyable skeleton), docs/tasks/PROVENANCE-HARDENING.md (backfilled: 10 leaves, 24 assertions, 8 committed leaves), docs/tasks/R6-FSM-ADAPTER.md (proposed, 1 pending leaf). Updated SESSION_BOOTSTRAP.md, COMMIT.md (leaf-ID rule), README.md (fast ramp-up + doc index), ROADMAP.md (R6 cross-reference). 10 local commits ahead of origin.
+- note: PROVENANCE-HARDENING tree closed — all 10 leaves resolved (8 committed hardening leaves, 1 audit, 1 closure). 24 provenance-field assertions total. 666/666 tests passing. R6-FSM-ADAPTER tree activated as next PNT frontier. 11 local commits ahead of origin.
 
 ## Recent commit chain (last 10)
 - pending (EvidenceLink provenance IDs hardening)
@@ -1315,8 +1315,7 @@
 - branch pushed to origin (0 ahead)
 
 ## Next exact steps
-- complete the task-tree scaffolding commit (all files staged, committed) 
-- close PROVENANCE-HARDENING tree (leaf 10: validate completeness)
-- once PROVENANCE-HARDENING closes, activate R6-FSM-ADAPTER tree and select R6-FSM-ADAPTER.1 from its current frontier
+- commit PROVENANCE-HARDENING.10 (tree closure)
+- select R6-FSM-ADAPTER.1 from the newly active R6-FSM-ADAPTER current frontier
 - keep push deferred until the branch reaches around `30` local commits since the last push or the user explicitly changes the policy
 - keep SystemVerilog, Verilog, and VHDL adapter expansion at `Not Started` until the `.fsm` hardening lane and canonical truthfulness surface are ready

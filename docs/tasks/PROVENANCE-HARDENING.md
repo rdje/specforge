@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `PROVENANCE-HARDENING`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: `R6`
 - Created: `2026-05-14`
 - Last updated: `2026-05-14`
@@ -35,7 +35,7 @@ populated in production.
 ## Task Tree
 
 - ID: `PROVENANCE-HARDENING`
-  Status: `active`
+  Status: `done`
   Goal: `Achieve systematic test assertion coverage for all provenance-like fields.`
   Children: `PROVENANCE-HARDENING.1`, `PROVENANCE-HARDENING.2`,
   `PROVENANCE-HARDENING.3`, `PROVENANCE-HARDENING.4`, `PROVENANCE-HARDENING.5`,
@@ -114,16 +114,15 @@ populated in production.
 ### Close tree
 
 - ID: `PROVENANCE-HARDENING.10`
-  Status: `pending`
+  Status: `done`
   Goal: `Validate completeness and close the provenance hardening tree.`
-  Acceptance: `All done leaves verified, pending leaf resolved, tree changelog final, live docs synced.`
-  Verification: `pending`
+  Acceptance: `All 8 committed leaves verified via git log and 666/666 test pass. Leaf 9 audit confirmed complete. Tree status, TASK_TREE.md, and live docs updated.`
+  Verification: `cargo test -p specforge --lib — 666/666 passed`
   Commit: `pending`
 
 ## Current Frontier
 
-No executable leaves remain. The tree is effectively closed pending final
-verification of `PROVENANCE-HARDENING.10`.
+No executable leaves remain. Tree closed 2026-05-14.
 
 ## Decisions
 
@@ -164,6 +163,7 @@ verification of `PROVENANCE-HARDENING.10`.
 | `2026-05-14` | `PROVENANCE-HARDENING.7` | `cargo test -p specforge --lib` | 666/666 passed |
 | `2026-05-14` | `PROVENANCE-HARDENING.8` | `cargo test -p specforge --lib` | 666/666 passed |
 | `2026-05-14` | `PROVENANCE-HARDENING.9` | grep audit of all ir/ and commands/ modules | Complete |
+| `2026-05-14` | `PROVENANCE-HARDENING.10` | `cargo test -p specforge --lib` | 666/666 passed |
 
 ## Commit Log
 
@@ -178,9 +178,13 @@ verification of `PROVENANCE-HARDENING.10`.
 | `PROVENANCE-HARDENING.7` | `045d020a` Add supporting_document_keys assertions to all 7 learn_priors prior record types | 8 assertions |
 | `PROVENANCE-HARDENING.8` | `319308a9` Add from_evidence_span_id and to_visual_evidence_id assertions to EvidenceLink test | 2 assertions |
 | `PROVENANCE-HARDENING.9` | pending — not yet committed | Audit only |
+| `PROVENANCE-HARDENING.10` | pending | Tree closure |
 
 ## Changelog
 
 - `2026-05-14`: Created task tree. Backfilled 8 completed leaves from two
   PNT hardening sessions. Added audit leaf (9) and close-tree leaf (10).
   Total: 24 hardening assertions across 8 committed leaves.
+- `2026-05-14`: Closed tree. All 8 committed leaves verified (666/666 tests).
+  Audit leaf confirmed complete. Tree status updated to `done`. TASK_TREE.md
+  and live docs synced.
