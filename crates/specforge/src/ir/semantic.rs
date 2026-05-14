@@ -12841,10 +12841,12 @@ mod tests {
         assert!(xctrl.semantic_candidates.iter().any(|candidate| {
             candidate.role == super::InterfaceSignalSemanticRole::HandshakeValidLike
                 && candidate.evidence_weight == 6
+                && candidate.automation_confidence == AutomationConfidence::Medium
         }));
         assert!(xctrl.semantic_candidates.iter().any(|candidate| {
             candidate.role == super::InterfaceSignalSemanticRole::HandshakeReadyLike
                 && candidate.evidence_weight == 3
+                && candidate.automation_confidence == AutomationConfidence::Low
         }));
 
         Ok(())
@@ -13272,6 +13274,10 @@ mod tests {
             xreq_candidate.grounding_strength,
             super::SemanticGroundingStrength::SingleSource
         );
+        assert_eq!(
+            xreq_candidate.automation_confidence,
+            AutomationConfidence::Low
+        );
         assert_eq!(xreq_candidate.supporting_observation_count, 1);
         assert_eq!(
             xreq_candidate.supporting_source_kinds,
@@ -13354,6 +13360,10 @@ mod tests {
         assert_eq!(
             xack_candidate.grounding_strength,
             super::SemanticGroundingStrength::SingleSource
+        );
+        assert_eq!(
+            xack_candidate.automation_confidence,
+            AutomationConfidence::Medium
         );
         assert_eq!(xack_candidate.supporting_observation_count, 1);
         assert_eq!(

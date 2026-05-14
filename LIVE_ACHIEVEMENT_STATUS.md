@@ -1591,4 +1591,5 @@
 - semantic.rs automation_confidence batch 7: 6 assertions covering InfrastructureSignalRecord and system-contract InterfaceSignalRecord: Done
 - semantic.rs automation_confidence batch 8: 3 assertions covering InfrastructureTopologyRecord: Done
 - semantic.rs automation_confidence batch 9: 4 assertions covering SymbolEnumMemberRecord, ControlBranchRecord, InterfaceSignalSemanticObservationRecord: Done
+- semantic.rs automation_confidence batch 10: 4 assertions covering InterfaceSignalSemanticCandidateRecord: Done
 <!-- validation_projection:end -->
