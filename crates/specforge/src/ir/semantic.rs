@@ -18916,4 +18916,55 @@ mod tests {
     fn clock_edge_returns_none_for_no_edge() {
         assert_eq!(super::explicit_clock_edge_from_text("no clock here"), None);
     }
+
+    // contains_named_generic_edge_unit unit tests
+
+    #[test]
+    fn named_generic_edge_unit_returns_false_for_non_edge_tokens() {
+        // Catches return true mutant
+        let known_signals = BTreeSet::new();
+        assert!(!super::contains_named_generic_edge_unit(
+            &["hello", "world"],
+            &known_signals
+        ));
+    }
+
+    // parse_indexed_signal_annotation_base unit tests
+
+    #[test]
+    fn indexed_signal_annotation_parses_bracket_index() {
+        let result = super::parse_indexed_signal_annotation_base("SIG[0]");
+        assert_eq!(result, Some("SIG".to_string()));
+    }
+
+    #[test]
+    fn indexed_signal_annotation_rejects_empty_prefix() {
+        let result = super::parse_indexed_signal_annotation_base("[0]");
+        assert_eq!(result, None);
+    }
+
+    #[test]
+    fn indexed_signal_annotation_rejects_index_containing_open_delimiter() {
+        // Catches ||→&& mutant at line 9568 col 50 — index.contains check must
+        // reject nested delimiters via ||, not &&, with index.is_empty()
+        let result = super::parse_indexed_signal_annotation_base("SIG[a[b]");
+        assert_eq!(result, None);
+    }
+
+    // trailing_tokens_form_only_cycle_marker_label unit tests
+
+    #[test]
+    fn trailing_cycle_marker_accepts_single_cycle_token() {
+        // Catches delete match arm [cycle] at line 9602
+        assert!(super::trailing_tokens_form_only_cycle_marker_label(&["T1"]));
+    }
+
+    #[test]
+    fn trailing_cycle_marker_rejects_prefix_without_valid_cycle() {
+        // Catches &&→|| mutant at line 9605 — both prefix and cycle must be valid
+        assert!(!super::trailing_tokens_form_only_cycle_marker_label(&[
+            "at",
+            "invalid_cycle"
+        ]));
+    }
 }
