@@ -26,7 +26,7 @@
 ## Latest committed baseline
 - latest_commit_hash: `2bff0991`
 - latest_commit_brief_message: `Slice 75 — renderable_document paired-field coverage complete across all 143 test functions`
-- note: PNT slice 81; semantic.rs automation_confidence batch 2 (3 assertions across 3 tests); 29 commits ahead of origin; push at ~30-commit threshold
+- note: PNT slice 81 pushed (30 slices to origin); semantic.rs automation_confidence lane in progress; 0 commits ahead of origin; push at ~30-commit threshold
 
 ## Recent commit chain (last 6)
 - `8ecb7a70` Add child candidate diagnostics to two actor-port recovery tests
