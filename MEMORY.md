@@ -24,11 +24,14 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `4d7bd220` (supporting_span_ids); doc sync pending commit
-- latest_commit_brief_message: `Add supporting_span_ids assertions to visual evidence observation checks`
-- note: PNT hardening continuing; 5 slices this session covering supporting_actor_ids (2 assertions), supporting_semantic_ids (5), supporting_section_ids (1), supporting_span_ids (2); 666 tests passing; branch at 5 local commits ahead of origin
+- latest_commit_hash: pending (table_signal_declaration_provenance hardening)
+- latest_commit_brief_message: pending
+- note: PNT hardening continuing; 8 slices this session covering supporting_actor_ids (2), supporting_semantic_ids (5), supporting_section_ids (1), supporting_span_ids (2), evidence_span_ids (1), table_signal_declaration_provenance (3); 666 tests passing; branch at 7 local commits ahead of origin
 
-## Recent commit chain (last 6)
+## Recent commit chain (last 8)
+- pending (table_signal_declaration_provenance hardening)
+- `7409891b` Add evidence_span_ids assertion to extracted statement check
+- `1683beb4` Sync tracked docs — CHANGES.md and MEMORY.md updated for 3 recent hardening slices
 - `4d7bd220` Add supporting_span_ids assertions to visual evidence observation checks
 - `52f47c41` Add supporting_section_ids assertion to carries_actor_relative_ports_and_signal_connectivity test
 - `070b3721` Add supporting_semantic_ids assertions to intent.rs behavior, constraint, and assumption tests

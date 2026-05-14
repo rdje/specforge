@@ -7680,6 +7680,7 @@ mod tests {
                 && relation.signal_name == "XACK"
                 && matches!(relation.relation, RelationKind::Reads)
         }));
+        assert!(!evidence_ir.table_signal_declaration_provenance.is_empty());
 
         Ok(())
     }
@@ -7915,6 +7916,15 @@ mod tests {
                 .any(|statement| statement.text == "Signal BROADCASTSHAREABLE is output width 1."),
             "tie-off rows must not synthesize output declarations"
         );
+        assert!(!evidence_ir.table_signal_declaration_provenance.is_empty());
+        assert!(evidence_ir
+            .table_signal_declaration_provenance
+            .iter()
+            .any(|p| p.signal_name == "BROADCASTATOMIC"));
+        assert!(evidence_ir
+            .table_signal_declaration_provenance
+            .iter()
+            .any(|p| p.signal_name == "BROADCASTSHAREABLE"));
 
         Ok(())
     }
@@ -8236,6 +8246,15 @@ mod tests {
             "expected XKEEPCHK directional width statement, saw: {:?}",
             check_signal_statements
         );
+        assert!(!evidence_ir.table_signal_declaration_provenance.is_empty());
+        assert!(evidence_ir
+            .table_signal_declaration_provenance
+            .iter()
+            .any(|p| p.signal_name == "XREQ"));
+        assert!(evidence_ir
+            .table_signal_declaration_provenance
+            .iter()
+            .any(|p| p.signal_name == "XACK"));
 
         Ok(())
     }

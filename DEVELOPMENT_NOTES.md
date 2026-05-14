@@ -6,6 +6,14 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-14 evidence.rs table_signal_declaration_provenance hardening
+
+- Added `table_signal_declaration_provenance` assertions to 3 evidence tests that synthesize signal declarations from SignalDescription tables.
+- The field (`Vec<TableSignalDeclarationProvenanceRecord>`) is populated in `synthesize_signal_declarations` (line 6148) for every signal row that produces a valid declaration.
+- Each record captures `statement_id`, `signal_name`, and `table_id`, linking synthesized statements back to their SourceIR table origin.
+- 3 assertions across 3 tests (`source_table_relations_skip_infrastructure_labels`, `tie_off_source_rows_become_input_declarations_without_fake_actor`, `check_signal_tables_inherit_relations_from_covered_signals`).
+- 666/666 tests passing.
+
 ## 2026-05-14 intent.rs supporting_actor_ids hardening
 
 - Added `supporting_actor_ids` assertions to the 2 intent tests that already check `intent_ir.actors`.

@@ -1594,4 +1594,5 @@
 - semantic.rs supporting_section_ids hardening: 1 assertion covering ActorRecord supporting_section_ids: Done
 - evidence.rs supporting_span_ids hardening: 2 assertions covering VisualObservation supporting_span_ids for caption and figure-reference observations: Done
 - evidence.rs evidence_span_ids hardening: 1 assertion covering ExtractedStatement evidence_span_ids: Done
+- evidence.rs table_signal_declaration_provenance hardening: 3 assertions across 3 tests covering TableSignalDeclarationProvenanceRecord population from signal-description table synthesis: Done
 <!-- validation_projection:end -->

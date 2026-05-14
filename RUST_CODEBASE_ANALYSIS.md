@@ -3,6 +3,11 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-14 evidence.rs table_signal_declaration_provenance hardening)
+- Added `table_signal_declaration_provenance` assertions (3 assertions across 3 tests) to evidence.rs signal-description table tests.
+- The field links synthesized signal declarations back to their SourceIR table origin. Previously untested. Zero production changes.
+- 666/666 tests passing.
+
 ## Session update (2026-05-14 intent.rs supporting_actor_ids hardening)
 - Added `supporting_actor_ids` assertions (2 assertions across 2 tests) to intent.rs actor tests.
 - The field is populated in `build_intent_actors` and was previously untested. Zero production changes.

@@ -1,5 +1,13 @@
 # CHANGES
 
+## 2026-05-14 (evidence.rs table_signal_declaration_provenance hardening)
+
+### Improved: 3 table_signal_declaration_provenance assertions across 3 evidence.rs tests
+- Added `!evidence_ir.table_signal_declaration_provenance.is_empty()` to `source_table_relations_skip_infrastructure_labels`, `tie_off_source_rows_become_input_declarations_without_fake_actor`, and `check_signal_tables_inherit_relations_from_covered_signals`.
+- Added specific signal-name checks for BROADCASTATOMIC, BROADCASTSHAREABLE, XREQ, and XACK.
+- The field is populated from signal-description table synthesis in `synthesize_declarations_from_tables`.
+- 666/666 tests passing.
+
 ## 2026-05-14 (evidence.rs supporting_span_ids hardening)
 
 ### Improved: 2 supporting_span_ids assertions in visual evidence test
