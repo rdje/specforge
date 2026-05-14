@@ -6,6 +6,16 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+## 2026-05-14 hardening session — pass-through field regression patterns
+
+- Four hardening lanes completed across intent.rs, learn_priors.rs, and semantic.rs — all regression-only (test assertion additions, zero production code changes).
+- **intent.rs temporal pass-through**: TemporalRuleRecord and TemporalConflictRecord carry `automation_confidence` and `supporting_statement_ids` that originate in semantic.rs and survive into IntentIR. The hardening proves these fields are populated (not default/empty) after the semantic→intent lift. 12 assertions across 6 tests.
+- **learn_priors.rs strongest_automation_confidence**: Every prior memory output type now has its `strongest_automation_confidence` proven in tests. The field derives from the highest automation_confidence among input records. Key finding: ActorTaxonomyPriorRecord from the identity-term code path is hardcoded Medium (line 374), while port-based paths use the port/consensus confidence. 7 assertions across 4 tests.
+- **semantic.rs supporting_table_ids**: InterfaceSignalRecord and observation-level records carry `supporting_table_ids` when evidence is derived from structured SourceIR tables. The field propagates from table-synthesized declarations through to canonical signal records. Conflict-synthesized observations do NOT carry populated table IDs (the conflict code path doesn't propagate them). 8 assertions across 4 tests.
+- **semantic.rs supporting_visual_evidence_ids**: Visual-caption-derived semantic observations carry `supporting_visual_evidence_ids` — the visual-evidence analogue of `supporting_table_ids`. 1 assertion in the cross-modality grounding test.
+- All hardening follows the established pattern: find record types in the module's tests, identify which fields have no assertions, add targeted assertions proving field population/values.
+- 666/666 tests passing after each slice.
+
 ## 2026-05-13 `.fsm` root_kind_decision lane complete
 
 - All fsm-adapter test families now prove root_kind_decision: standalone DT, standalone sequential DT, structured FSM, explicit module, DT-centric FSM, and top composition (37 tests).

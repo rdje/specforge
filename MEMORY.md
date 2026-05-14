@@ -24,17 +24,17 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `2bff0991`
-- latest_commit_brief_message: `Slice 75 — renderable_document paired-field coverage complete across all 143 test functions`
-- note: PNT slice 83; semantic.rs automation_confidence continuing (19 assertions across 12 tests covering 13 record types); 4 commits ahead of origin; push at ~30-commit threshold
+- latest_commit_hash: `a8635878`
+- latest_commit_brief_message: `Add supporting_visual_evidence_ids assertion to cross-modality grounding test`
+- note: PNT hardening session complete; 4 slices committed covering intent.rs temporal pass-through (12 assertions), learn_priors.rs strongest_automation_confidence (7 assertions), semantic.rs supporting_table_ids (8 assertions), and semantic.rs supporting_visual_evidence_ids (1 assertion); 666 tests passing; branch pushed to origin (0 ahead)
 
 ## Recent commit chain (last 6)
-- `8ecb7a70` Add child candidate diagnostics to two actor-port recovery tests
-- `1747c87a` Update MEMORY.md commit hash for child candidate diagnostics slice
-- `1a85c51b` Add top-candidate renderability to four blocked conflict tests
-- `f3252cc2` Update MEMORY.md commit hash for blocked-test renderability slice
-- `93451036` Update MEMORY.md commit hash for direct_roots root_kind slice
-- `f50b052e` Add direct_roots root_kind assertions to two renderable top-document tests
+- `a8635878` Add supporting_visual_evidence_ids assertion to cross-modality grounding test
+- `44a25f70` Add semantic.rs supporting_table_ids hardening
+- `e8caf4ef` Add learn_priors.rs strongest_automation_confidence hardening
+- `4f5205e8` Add intent.rs temporal_rules and temporal_conflicts automation_confidence and supporting_statement_ids coverage
+- `d9786753` Update LIVE_ACHIEVEMENT_STATUS — confirm nlp_enrich.rs hardening lane complete
+- `88023ac2` Add nlp_enrich.rs automation_confidence and supporting_statement_ids hardening
 - `c2e12eec` Add blocked DT-centric adapter blocking reason regression
 - `5d54aa13` Add composition module document-root identity regression
 - `71c8ede5` Add renderable document top root and module identity regression
@@ -1295,9 +1295,17 @@
   - latest `cargo sweep --time 1` attempt was historically deferred by a `target/release/tool_matrix` process-blocking condition; a fresh process check during the 2026-05-09 doc sync found no running `target/release/tool_matrix` process
   - message file is currently untracked and `0` bytes
 
+## Session work summary (2026-05-14 hardening)
+- intent.rs: 12 assertions across 6 tests — automation_confidence and supporting_statement_ids on TemporalRuleRecord and TemporalConflictRecord pass-through from semantic.rs
+- learn_priors.rs: 7 assertions across 4 tests — strongest_automation_confidence on all 5 prior output types (SemanticPhrasePriorRecord, SemanticModalityReliabilityPriorRecord, TemporalPhrasePriorRecord, ActorTaxonomyPriorRecord, NegativeKnowledgePriorRecord)
+- semantic.rs supporting_table_ids: 8 assertions across 4 tests — InterfaceSignalRecord table provenance and observation-level table evidence propagation
+- semantic.rs supporting_visual_evidence_ids: 1 assertion in cross-modality grounding test — visual-caption observation provenance
+- all hardening is regression-only (test assertion additions, zero production behavior changes)
+- 666/666 tests passing after all 4 slices
+- branch pushed to origin (0 ahead)
+
 ## Next exact steps
-- complete the current PNT slice commit workflow: write `git_message_brief.txt`, stage only intended tracked files, commit, then clear and verify `git_message_brief.txt`
-- after this PNT slice commits, continue the PNT cycle by selecting the next bounded roadmap-aligned `R6`/`R15` `.fsm` graph-first hardening task
+- complete live-doc sync for this session: update CHANGES.md, DEVELOPMENT_NOTES.md, RUST_CODEBASE_ANALYSIS.md with hardening entries
+- continue PNT loop: find next systematic hardening target (remaining gaps in the test assertion surface)
 - keep push deferred until the branch reaches around `30` local commits since the last push or the user explicitly changes the policy
 - keep SystemVerilog, Verilog, and VHDL adapter expansion at `Not Started` until the `.fsm` hardening lane and canonical truthfulness surface are ready
-- `cargo sweep --time 1` is no longer blocked by an observed `target/release/tool_matrix` process; run it only when explicitly requested or when it becomes part of a safe cleanup slice

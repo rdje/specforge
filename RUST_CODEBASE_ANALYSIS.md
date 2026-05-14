@@ -3,6 +3,12 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+## Session update (2026-05-14 hardening — pass-through field regression)
+- Four hardening lanes completed: intent.rs temporal pass-through (12 assertions), learn_priors.rs strongest_automation_confidence (7 assertions), semantic.rs supporting_table_ids (8 assertions), semantic.rs supporting_visual_evidence_ids (1 assertion).
+- All work is regression-only: test assertion additions, zero production behavior changes. Architecture, risk profile, and subsystem boundaries unchanged.
+- 666/666 tests passing. Branch pushed to origin.
+- Next PNT target: continue hardening remaining test assertion gaps in the IR/adapter surface.
+
 ## Session update (2026-05-13 `.fsm` root_kind_decision lane complete)
 - All fsm-adapter root_kind_decision gaps closed. Every test family proves root_kind_decision: standalone DT, standalone sequential DT, structured FSM, explicit module, DT-centric FSM, top composition (37/37).
 - 108 `selected_root_kind` assertions across 89 fsm test functions (some check both fsm-level and child-candidate root_kind_decision).

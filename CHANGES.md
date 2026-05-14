@@ -1,5 +1,38 @@
 # CHANGES
 
+## 2026-05-14 (semantic.rs supporting_visual_evidence_ids hardening)
+
+### Improved: cross-modality grounding test now proves visual-caption observation provenance
+- Added `supporting_visual_evidence_ids` assertion to `marks_cross_modality_semantic_grounding_on_interface_signals` in semantic.rs.
+- Proves that visual-caption-derived semantic observations carry non-empty `supporting_visual_evidence_ids`.
+- 666/666 tests passing.
+
+## 2026-05-14 (semantic.rs supporting_table_ids hardening)
+
+### Improved: 8 supporting_table_ids assertions across 4 semantic.rs tests
+- Added `supporting_table_ids` assertions covering InterfaceSignalRecord table provenance and observation-level table evidence propagation.
+- `extracts_signal_direction_and_width_from_structured_table_in_source_ir`: 5 signal-level assertions (haddr, hwrite, htrans, hreadyout, hresp).
+- `marks_cross_modality_semantic_grounding_on_interface_signals`: 1 observation-level assertion for table-derived semantic hints.
+- `marks_same_modality_repetition_as_multi_source_grounding`: 1 assertion proving all observations carry table IDs.
+- `contested_semantic_roles_block_handshake_name_fallback`: 1 assertion on xvalid table provenance.
+- 666/666 tests passing.
+
+## 2026-05-14 (learn_priors.rs strongest_automation_confidence hardening)
+
+### Improved: 7 strongest_automation_confidence assertions across 4 learn_priors tests
+- Added `strongest_automation_confidence` to all 5 prior output record types.
+- SemanticPhrasePriorRecord, SemanticModalityReliabilityPriorRecord, TemporalPhrasePriorRecord: High (from High-confidence consensus).
+- ActorTaxonomyPriorRecord (identity-term path): Medium (hardcoded at line 374).
+- NegativeKnowledgePriorRecord: Medium.
+- 666/666 tests passing.
+
+## 2026-05-14 (intent.rs temporal pass-through hardening)
+
+### Improved: 12 assertions across 6 intent.rs tests for temporal pass-through fields
+- Added `automation_confidence` and `supporting_statement_ids` to TemporalRuleRecord (5 tests) and TemporalConflictRecord (1 test) pass-through from semantic.rs.
+- automation_confidence on temporal rules: Medium (derived from semantic source).
+- 666/666 tests passing.
+
 ## 2026-05-13 (`.fsm` renderable_document.is_some() gap closed)
 
 ### Improved: three renderable top composition tests now assert renderable_document.is_some()
