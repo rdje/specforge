@@ -24,9 +24,9 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: pending (R6-FSM-ADAPTER.1.1 adapter identity hardening)
-- latest_commit_brief_message: pending
-- note: R6-FSM-ADAPTER.1 audit complete (4 zero-coverage fields found). R6-FSM-ADAPTER.1.1 adapter identity hardening: 9 assertions across 2 tests. 666/666 tests passing. 12 local commits ahead of origin.
+- latest_commit_hash: `3beb0051`
+- latest_commit_brief_message: R6-FSM-ADAPTER.1.3: Add symbol_definitions end-to-end assertions
+- note: R6-FSM-ADAPTER.1.3 complete — all 3 hardening leaves done. 2 symbol_definitions assertions across 2 DT-root tests. 16 local commits ahead of origin.
 
 ## Recent commit chain (last 10)
 - pending (EvidenceLink provenance IDs hardening)

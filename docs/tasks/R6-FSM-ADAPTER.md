@@ -106,7 +106,7 @@ No executable leaves remain. All 4 R6-FSM-ADAPTER leaves (audit + 3 hardening) c
 | `R6-FSM-ADAPTER.1` | `1fb4b4e7` Audit adapter test coverage | Audit only — 3 hardening leaves defined |
 | `R6-FSM-ADAPTER.1.1` | `9bbf01e3` Add adapter_identity and document_identity assertions | 9 assertions across 2 tests |
 | `R6-FSM-ADAPTER.1.2` | `b67de022` Add FsmDecisionTreeCandidate.summary assertions | 2 assertions across 2 tests |
-| `R6-FSM-ADAPTER.1.3` | pending — about to commit | 2 symbol_definitions end-to-end assertions |
+| `R6-FSM-ADAPTER.1.3` | `3beb0051` Add symbol_definitions end-to-end assertions | 2 assertions across 2 DT-root tests |
 
 ## Changelog
 
