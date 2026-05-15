@@ -20287,4 +20287,82 @@ mod tests {
         let record = acc.signal_records.get("clk").unwrap();
         assert_eq!(record.semantic_observations.len(), 0, "empty tags should be skipped");
     }
+
+    // -- is_explicit_infrastructure_component_term high-value mutants --
+
+    #[test]
+    fn infrastructure_component_term_matches_exact_pll() {
+        assert!(super::is_explicit_infrastructure_component_term("pll"), "pll should match exact");
+    }
+
+    #[test]
+    fn infrastructure_component_term_matches_contains_generator() {
+        // Lines 3882-3891: ||→&& — "clock_generator" contains only "generator", not "controller" etc.
+        assert!(
+            super::is_explicit_infrastructure_component_term("clock_generator"),
+            "clock_generator should match via contains(\"generator\")"
+        );
+    }
+
+    #[test]
+    fn infrastructure_component_term_matches_contains_synchronizer() {
+        // Lines 3882-3891: ||→&& — each contains() is independent.
+        assert!(
+            super::is_explicit_infrastructure_component_term("async_synchronizer"),
+            "async_synchronizer should match via contains(\"synchronizer\")"
+        );
+    }
+
+    #[test]
+    fn infrastructure_component_term_rejects_random_word() {
+        // Line 3879: return true — a non-infrastructure term should return false.
+        assert!(
+            !super::is_explicit_infrastructure_component_term("banana"),
+            "banana should not be infrastructure component"
+        );
+    }
+
+    // -- looks_like_signal_token high-value mutants --
+
+    #[test]
+    fn looks_like_signal_token_short_token_returns_false() {
+        // Line 6281: <→== / <→<= — single-char token should be rejected.
+        assert!(!super::looks_like_signal_token("A"), "single char should return false");
+    }
+
+    #[test]
+    fn looks_like_signal_token_two_char_upper_returns_true() {
+        // Line 6281: <→== — len=2 all-uppercase should return true.
+        assert!(super::looks_like_signal_token("AB"), "two-char upper should return true");
+    }
+
+    #[test]
+    fn looks_like_signal_token_uppercase_with_digits_returns_true() {
+        // Line 6301: ||→&& — characters can be uppercase OR digit OR underscore.
+        assert!(super::looks_like_signal_token("CLK2"), "upper+digit should return true");
+    }
+
+    #[test]
+    fn looks_like_signal_token_with_underscore_returns_true() {
+        // Line 6301: ==→!= — underscore should be a valid character.
+        assert!(super::looks_like_signal_token("CLK_OUT"), "underscore should be valid");
+    }
+
+    #[test]
+    fn looks_like_signal_token_mixed_case_returns_false() {
+        // Line 6304: &&→|| — mixed case like "Clk" should NOT pass (needs all upper OR _n/_b suffix).
+        assert!(!super::looks_like_signal_token("Clk"), "mixed case should return false");
+    }
+
+    #[test]
+    fn looks_like_signal_token_lowered_suffix_n_returns_true() {
+        // Line 6312: ends_with("_n") — lowercased signal names with _n suffix.
+        assert!(super::looks_like_signal_token("rst_n"), "rst_n should look like signal");
+    }
+
+    #[test]
+    fn looks_like_signal_token_lowered_suffix_b_returns_true() {
+        // Line 6312: ends_with("_b") — lowercased signal names with _b suffix.
+        assert!(super::looks_like_signal_token("enable_b"), "enable_b should look like signal");
+    }
 }
