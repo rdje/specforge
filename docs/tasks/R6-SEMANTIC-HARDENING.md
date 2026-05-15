@@ -211,11 +211,20 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
   Verification: `cargo test -p specforge --lib — 834/834 passed`
   Commit: `fb4f0fe0`
 
+### Batch 21: as_str functions and build transition dedup
+
+- ID: `R6-SEMANTIC-HARDENING.21`
+  Status: `done`
+  Goal: `Fix 7 missed mutants across InfrastructureTopologyKind::as_str (2 return value), SemanticGroundingStrength::as_str (2 return value), SemanticIr::build (3: ==→!= x2, &&→||).`
+  Acceptance: `7 mutants caught: 4 as_str return-value replacements, 3 build transition dedup logic.`
+  Verification: `cargo test -p specforge --lib — 841/841 passed`
+  Commit: `pending`
+
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `R6-SEMANTIC-HARDENING.21` | `pending` | 9 builder function mutants deferred (need SemanticContext fixtures). Run cargo-mutants to discover more untested functions. |
+| 1 | `R6-SEMANTIC-HARDENING.22` | `pending` | Run broad cargo-mutants scan to confirm exhaustion. Deferred: 9 builder function mutants needing SemanticContext fixtures. |
 
 ## Decisions
 
@@ -253,6 +262,7 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
 | `2026-05-15` | `R6-SEMANTIC-HARDENING.18` | `cargo test -p specforge --lib` | 817/817 passed |
 | `2026-05-15` | `R6-SEMANTIC-HARDENING.19` | `cargo test -p specforge --lib` | 826/826 passed |
 | `2026-05-15` | `R6-SEMANTIC-HARDENING.20` | `cargo test -p specforge --lib` | 834/834 passed |
+| `2026-05-15` | `R6-SEMANTIC-HARDENING.21` | `cargo test -p specforge --lib` | 841/841 passed |
 
 ## Commit Log
 
@@ -278,9 +288,10 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
 | `R6-SEMANTIC-HARDENING.18` | `715bf9ce` | 5 unit tests for parse_width_token |
 | `R6-SEMANTIC-HARDENING.19` | `f2ed61e6` | 9 unit tests for ControlExpressionParser parse_primary and parse_comparison |
 | `R6-SEMANTIC-HARDENING.20` | `fb4f0fe0` | 7 unit tests for dedup_actor_names, parse_explicit_clock_gated_branch, parse_explicit_reset_synchronizer_stages |
+| `R6-SEMANTIC-HARDENING.21` | `pending` | 8 unit tests for InfrastructureTopologyKind::as_str, SemanticGroundingStrength::as_str, SemanticIr::build transition dedup |
 
 ## Changelog
 
 - `2026-05-14`: Created task tree. Leaf 1 (build_symbol_definitions) already completed and backfilled.
 - `2026-05-14`: Completed leaves 2-10 (parse_explicit_system_reset through edge/index/cycle-marker helpers).
-- `2026-05-15`: Completed leaves 11-20 (cycle count functions through clock gate/reset synchronizer/dedup).
+- `2026-05-15`: Completed leaves 11-21 (cycle count functions through as_str/build transition dedup).

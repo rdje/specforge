@@ -19729,4 +19729,148 @@ mod tests {
         );
         assert!(result.is_none());
     }
+
+    // InfrastructureTopologyKind::as_str unit tests
+
+    #[test]
+    fn topology_kind_as_str_clock_gated_branch() {
+        assert_eq!(
+            super::InfrastructureTopologyKind::ClockGatedBranch.as_str(),
+            "clock_gated_branch"
+        );
+    }
+
+    #[test]
+    fn topology_kind_as_str_reset_synchronizer_stages() {
+        assert_eq!(
+            super::InfrastructureTopologyKind::ResetSynchronizerStages.as_str(),
+            "reset_synchronizer_stages"
+        );
+    }
+
+    #[test]
+    fn topology_kind_as_str_reset_tree_targets() {
+        assert_eq!(
+            super::InfrastructureTopologyKind::ResetTreeTargets.as_str(),
+            "reset_tree_targets"
+        );
+    }
+
+    // SemanticGroundingStrength::as_str unit tests
+
+    #[test]
+    fn grounding_strength_as_str_single_source() {
+        assert_eq!(
+            super::SemanticGroundingStrength::SingleSource.as_str(),
+            "single_source"
+        );
+    }
+
+    #[test]
+    fn grounding_strength_as_str_multi_source() {
+        assert_eq!(
+            super::SemanticGroundingStrength::MultiSource.as_str(),
+            "multi_source"
+        );
+    }
+
+    #[test]
+    fn grounding_strength_as_str_cross_modality() {
+        assert_eq!(
+            super::SemanticGroundingStrength::CrossModality.as_str(),
+            "cross_modality"
+        );
+    }
+
+    // SemanticIr::build transition dedup — VLM duplicates are not appended
+
+    #[test]
+    fn build_dedups_vlm_transition_against_formal_transition() -> Result<()> {
+        // Catches ==→!= mutants at lines 277, 278 and &&→|| at line 278.
+        // Formal transition run→done. VLM observation has two transitions:
+        //   run→done (duplicate of formal — must be deduped)
+        //   run→waiting (same source, different target — must NOT be deduped)
+        // The &&→|| mutant would incorrectly dedup run→waiting (source matches).
+        use crate::ir::source::{DiagramKind, VisualAsset, VisualAssetKind};
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("dedup_spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            "# Dedup Test\nSignal clk is input width 1.\n\nState run is initial.\n\nState done.\n\nState waiting.\n\nTransition run -> done when clk.\n",
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.visual_assets.push(VisualAsset {
+            asset_id: "picture_dedup".to_string(),
+            asset_kind: VisualAssetKind::Diagram,
+            page_id: Some("page_0001".to_string()),
+            image_path: None,
+            caption_text: Some("Figure D-1 State machine".to_string()),
+            caption_source_path: None,
+            source_ref: None,
+            placeholder_text: None,
+            note: Some(
+                "vlm_state_machine_extraction: {\"states\":[{\"name\":\"run\",\"is_initial\":true},{\"name\":\"done\"},{\"name\":\"waiting\"}],\"transitions\":[{\"from\":\"run\",\"to\":\"done\",\"guard\":\"clk\"},{\"from\":\"run\",\"to\":\"waiting\",\"guard\":\"\"}]}"
+                    .to_string(),
+            ),
+            diagram_kind: DiagramKind::StateMachineDiagram,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        // Formal run→done + VLM run→waiting = 2 distinct transitions.
+        // VLM run→done is a duplicate (same source AND target) → deduped.
+        // With the &&→|| mutant, run→waiting is also deduped (source matches).
+        // With ==→!= on target_state, VLM run→waiting is deduped (target != done).
+        // With ==→!= on source_state, VLM run→done is NOT deduped (source != run).
+        let run_transitions: Vec<_> = semantic_ir
+            .state_transitions
+            .iter()
+            .filter(|t| t.source_state == "run")
+            .collect();
+        assert_eq!(
+            run_transitions.len(),
+            2,
+            "expected 2 run→* transitions (done + waiting), got {}",
+            run_transitions.len()
+        );
+        let run_to_done: Vec<_> = semantic_ir
+            .state_transitions
+            .iter()
+            .filter(|t| t.source_state == "run" && t.target_state == "done")
+            .collect();
+        assert_eq!(
+            run_to_done.len(),
+            1,
+            "expected 1 run→done (formal, VLM duplicate deduped), got {}",
+            run_to_done.len()
+        );
+        let run_to_waiting: Vec<_> = semantic_ir
+            .state_transitions
+            .iter()
+            .filter(|t| t.source_state == "run" && t.target_state == "waiting")
+            .collect();
+        assert_eq!(
+            run_to_waiting.len(),
+            1,
+            "expected 1 run→waiting (VLM, distinct target), got {}",
+            run_to_waiting.len()
+        );
+
+        Ok(())
+    }
 }
