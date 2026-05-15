@@ -218,7 +218,7 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
   Goal: `Fix 7 missed mutants across InfrastructureTopologyKind::as_str (2 return value), SemanticGroundingStrength::as_str (2 return value), SemanticIr::build (3: ==→!= x2, &&→||).`
   Acceptance: `7 mutants caught: 4 as_str return-value replacements, 3 build transition dedup logic.`
   Verification: `cargo test -p specforge --lib — 841/841 passed`
-  Commit: `pending`
+  Commit: `271d7d8a`
 
 ## Current Frontier
 
@@ -288,7 +288,7 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
 | `R6-SEMANTIC-HARDENING.18` | `715bf9ce` | 5 unit tests for parse_width_token |
 | `R6-SEMANTIC-HARDENING.19` | `f2ed61e6` | 9 unit tests for ControlExpressionParser parse_primary and parse_comparison |
 | `R6-SEMANTIC-HARDENING.20` | `fb4f0fe0` | 7 unit tests for dedup_actor_names, parse_explicit_clock_gated_branch, parse_explicit_reset_synchronizer_stages |
-| `R6-SEMANTIC-HARDENING.21` | `pending` | 8 unit tests for InfrastructureTopologyKind::as_str, SemanticGroundingStrength::as_str, SemanticIr::build transition dedup |
+| `R6-SEMANTIC-HARDENING.21` | `271d7d8a` | 8 unit tests for InfrastructureTopologyKind::as_str, SemanticGroundingStrength::as_str, SemanticIr::build transition dedup |
 
 ## Changelog
 
