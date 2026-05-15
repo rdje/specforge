@@ -29,7 +29,7 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
 - ID: `R6-SEMANTIC-HARDENING`
   Status: `active`
   Goal: `Fix high-value missed cargo-mutants in semantic.rs functions.`
-  Children: `R6-SEMANTIC-HARDENING.1` through `.29`
+  Children: `R6-SEMANTIC-HARDENING.1` through `.30`
 
 ### Batch 1: build_symbol_definitions
 
@@ -288,7 +288,16 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
 - ID: `R6-SEMANTIC-HARDENING.29`
   Status: `pending`
   Goal: `Fix high-value missed mutants in temporal_consequents_from_conditional_rule (7: return vec![], 5x ||→&&, ==→!=), temporal_rule_from_timing_constraint (2: return None, &&→||), enrich_handshake_completion_predicates (2: delete match arm, ||→&&), split_temporal_condition_segment_on_and (3: >→>=, 2x &&→||).`
-  Acceptance: `~14 high-value mutants caught across 4 temporal/consequent functions.`
+  Acceptance: `10 tests added across 4 temporal/consequent functions.`
+  Verification: `cargo test -p specforge --lib — 347 semantic tests passed (1 pre-existing flaky in rescan_plan)`
+  Commit: `2f030a3b`
+
+### Batch 30: Remaining miscellaneous functions — resolve_interface_signal_semantic_role, find_known_signal_name, statement_by_id, contains_phrase, vlm_guard_clause_has_comparison, ControlExpressionParser::expect
+
+- ID: `R6-SEMANTIC-HARDENING.30`
+  Status: `pending`
+  Goal: `Fix high-value missed mutants in remaining testable functions (~13 mutants).`
+  Acceptance: `~13 high-value mutants caught across 6 remaining functions.`
   Verification: pending
   Commit: pending
 
@@ -296,7 +305,7 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `R6-SEMANTIC-HARDENING.29` | `pending` | Temporal/consequent functions — ~14 high-value mutants across 4 functions. |
+| 1 | `R6-SEMANTIC-HARDENING.30` | `pending` | Remaining miscellaneous functions — ~13 high-value mutants across 6 functions. |
 
 ## Decisions
 
@@ -341,6 +350,7 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
 | `2026-05-15` | `R6-SEMANTIC-HARDENING.26` | `cargo test -p specforge --lib` | 969/969 passed |
 | `2026-05-15` | `R6-SEMANTIC-HARDENING.27` | `cargo test -p specforge --lib` | 981/981 passed |
 | `2026-05-15` | `R6-SEMANTIC-HARDENING.28` | `cargo test -p specforge --lib` | 994/994 passed |
+| `2026-05-15` | `R6-SEMANTIC-HARDENING.29` | `cargo test -p specforge --lib` | 347/347 semantic tests passed (1 pre-existing flaky in rescan_plan) |
 
 ## Commit Log
 
@@ -373,6 +383,7 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
 | `R6-SEMANTIC-HARDENING.26` | `3c65dfd4` | 7 unit tests for parse_explicit_signal_declaration, parse_explicit_system_clock |
 | `R6-SEMANTIC-HARDENING.27` | `41c52960` | 12 unit tests for parse_explicit_top_child, parse_explicit_regular_state_declaration, parse_explicit_decision_tree_fragment, parse_explicit_control_clause, parse_interface_signal_direction, split_explicit_assignment, parse_control_assignment_target |
 | `R6-SEMANTIC-HARDENING.28` | `5085b86e` | 13 unit tests for should_emit_interface_candidate, is_invariant_like, reset_signal_name_looks_active_low, normalize_infrastructure_component_name |
+| `R6-SEMANTIC-HARDENING.29` | `2f030a3b` | 10 unit tests for split_temporal_condition_segment_on_and, temporal_rule_from_timing_constraint, temporal_consequents_from_conditional_rule, enrich_handshake_completion_predicates |
 
 ## Changelog
 
