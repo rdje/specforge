@@ -96,6 +96,14 @@ const SEMANTIC_SIGNAL_CONNECTIVITY_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
     "semantic_signal_connectivity_conflict_surface_rescan_guidance";
 const INTENT_SIGNAL_CONNECTIVITY_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
     "intent_signal_connectivity_conflict_surface_rescan_guidance";
+const SEMANTIC_TEMPORAL_HANDSHAKE_COMPLETION_GAP_SURFACE_RESCAN_GUIDANCE: &str =
+    "semantic_temporal_handshake_completion_gap_surface_rescan_guidance";
+const INTENT_TEMPORAL_HANDSHAKE_COMPLETION_GAP_SURFACE_RESCAN_GUIDANCE: &str =
+    "intent_temporal_handshake_completion_gap_surface_rescan_guidance";
+const SEMANTIC_TEMPORAL_MULTI_PREDICATE_ANTECEDENTS_SURFACE_RESCAN_GUIDANCE: &str =
+    "semantic_temporal_multi_predicate_antecedents_surface_rescan_guidance";
+const INTENT_TEMPORAL_MULTI_PREDICATE_ANTECEDENTS_SURFACE_RESCAN_GUIDANCE: &str =
+    "intent_temporal_multi_predicate_antecedents_surface_rescan_guidance";
 const SEMANTIC_SIGNAL_POLARITY_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
     "semantic_signal_polarity_conflict_surface_rescan_guidance";
 const INTENT_SIGNAL_POLARITY_CONFLICT_SURFACE_RESCAN_GUIDANCE: &str =
@@ -304,6 +312,50 @@ fn push_temporal_rule_surface_rescan_guidance(
         "rescan_guidance",
         format!(
             "{} temporal-source id(s) in {stage_label} should trigger targeted NLP rescans plus downstream rebuild because local timing/constraint evidence exists but no typed temporal rules were materialized",
+            related_ids.len()
+        ),
+        related_ids.to_vec(),
+    ));
+}
+
+fn push_temporal_handshake_completion_gap_rescan_guidance(
+    findings: &mut Vec<ValidationFindingRecord>,
+    finding_id: &str,
+    stage_label: &str,
+    related_ids: &[String],
+) {
+    if related_ids.is_empty() {
+        return;
+    }
+
+    findings.push(finding(
+        finding_id,
+        ValidationFindingSeverity::Info,
+        "rescan_guidance",
+        format!(
+            "{} handshake-role signal id(s) in {stage_label} should trigger targeted NLP rescans plus downstream rebuild because handshake semantic roles exist but no typed temporal rule currently expresses a HandshakeComplete predicate",
+            related_ids.len()
+        ),
+        related_ids.to_vec(),
+    ));
+}
+
+fn push_temporal_multi_predicate_antecedents_rescan_guidance(
+    findings: &mut Vec<ValidationFindingRecord>,
+    finding_id: &str,
+    stage_label: &str,
+    related_ids: &[String],
+) {
+    if related_ids.is_empty() {
+        return;
+    }
+
+    findings.push(finding(
+        finding_id,
+        ValidationFindingSeverity::Info,
+        "rescan_guidance",
+        format!(
+            "{} temporal rule id(s) in {stage_label} carry multi-predicate antecedents; compound condition extraction may benefit from further review",
             related_ids.len()
         ),
         related_ids.to_vec(),
@@ -1544,6 +1596,12 @@ fn temporal_rules_with_alias_dependent_handshake_completion_signal_names(
         .collect()
 }
 
+fn interface_signals_with_handshake_semantic_role_names(
+    interfaces: &[crate::ir::semantic::InterfaceRecord],
+) -> Vec<String> {
+    interface_signal_names_matching(interfaces, |signal| signal.resolved_semantic_role.is_some())
+}
+
 fn interface_signals_with_semantic_tags_count(
     interfaces: &[crate::ir::semantic::InterfaceRecord],
 ) -> usize {
@@ -1907,6 +1965,16 @@ fn temporal_rules_with_multi_predicate_antecedents_count(
         .iter()
         .filter(|rule| rule.antecedents.len() > 1)
         .count()
+}
+
+fn temporal_rules_with_multi_predicate_antecedents_rule_ids(
+    temporal_rules: &[crate::ir::semantic::TemporalRuleRecord],
+) -> Vec<String> {
+    temporal_rules
+        .iter()
+        .filter(|rule| rule.antecedents.len() > 1)
+        .map(|rule| rule.rule_id.clone())
+        .collect()
 }
 
 fn describe_signal_polarity_conflict(
@@ -3263,6 +3331,10 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         );
     let temporal_rules_with_multi_predicate_antecedents =
         temporal_rules_with_multi_predicate_antecedents_count(&ir.temporal_rules);
+    let handshake_role_signal_names =
+        interface_signals_with_handshake_semantic_role_names(&ir.interfaces);
+    let multi_predicate_antecedent_rule_ids =
+        temporal_rules_with_multi_predicate_antecedents_rule_ids(&ir.temporal_rules);
     let actor_signal_relation_related_ids =
         actor_signal_relation_related_ids(&ir.actor_signal_relations);
     let signal_connectivity_conflict_related_ids = ir
@@ -3768,6 +3840,54 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 .cloned()
                 .collect(),
         ));
+    }
+    if !ir.temporal_rules.is_empty()
+        && !handshake_role_signal_names.is_empty()
+        && temporal_rules_with_handshake_completion == 0
+    {
+        let handshake_completion_gap_signal_ids = handshake_role_signal_names
+            .iter()
+            .take(8)
+            .cloned()
+            .collect::<Vec<_>>();
+        findings.push(finding(
+            "semantic_temporal_handshake_completion_gap",
+            ValidationFindingSeverity::Info,
+            "temporal_grounding",
+            format!(
+                "{} interface signal(s) carry handshake semantic roles (ValidLike/ReadyLike) but no typed temporal rule currently expresses a HandshakeComplete predicate",
+                handshake_role_signal_names.len()
+            ),
+            handshake_completion_gap_signal_ids.clone(),
+        ));
+        push_temporal_handshake_completion_gap_rescan_guidance(
+            &mut findings,
+            SEMANTIC_TEMPORAL_HANDSHAKE_COMPLETION_GAP_SURFACE_RESCAN_GUIDANCE,
+            "SemanticIR",
+            &handshake_completion_gap_signal_ids,
+        );
+    }
+    if temporal_rules_with_multi_predicate_antecedents > 0 {
+        let multi_pred_rule_ids = multi_predicate_antecedent_rule_ids
+            .iter()
+            .take(8)
+            .cloned()
+            .collect::<Vec<_>>();
+        findings.push(finding(
+            "semantic_temporal_multi_predicate_antecedents_present",
+            ValidationFindingSeverity::Info,
+            "temporal_grounding",
+            format!(
+                "{temporal_rules_with_multi_predicate_antecedents} typed temporal rule(s) carry multi-predicate antecedents; compound condition extraction may benefit from further review"
+            ),
+            multi_pred_rule_ids.clone(),
+        ));
+        push_temporal_multi_predicate_antecedents_rescan_guidance(
+            &mut findings,
+            SEMANTIC_TEMPORAL_MULTI_PREDICATE_ANTECEDENTS_SURFACE_RESCAN_GUIDANCE,
+            "SemanticIR",
+            &multi_pred_rule_ids,
+        );
     }
     if ir.temporal_rules.is_empty()
         && (!ir.timing_constraints.is_empty()
@@ -4625,6 +4745,10 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         );
     let temporal_rules_with_multi_predicate_antecedents =
         temporal_rules_with_multi_predicate_antecedents_count(&ir.temporal_rules);
+    let handshake_role_signal_names =
+        interface_signals_with_handshake_semantic_role_names(&ir.interfaces);
+    let multi_predicate_antecedent_rule_ids =
+        temporal_rules_with_multi_predicate_antecedents_rule_ids(&ir.temporal_rules);
     let actor_signal_relation_related_ids =
         actor_signal_relation_related_ids(&ir.actor_signal_relations);
     let signal_connectivity_conflict_related_ids = ir
@@ -5130,6 +5254,54 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
                 .cloned()
                 .collect(),
         ));
+    }
+    if !ir.temporal_rules.is_empty()
+        && !handshake_role_signal_names.is_empty()
+        && temporal_rules_with_handshake_completion == 0
+    {
+        let handshake_completion_gap_signal_ids = handshake_role_signal_names
+            .iter()
+            .take(8)
+            .cloned()
+            .collect::<Vec<_>>();
+        findings.push(finding(
+            "intent_temporal_handshake_completion_gap",
+            ValidationFindingSeverity::Info,
+            "temporal_grounding",
+            format!(
+                "{} declared signal(s) carry handshake semantic roles (ValidLike/ReadyLike) but no typed temporal rule currently expresses a HandshakeComplete predicate",
+                handshake_role_signal_names.len()
+            ),
+            handshake_completion_gap_signal_ids.clone(),
+        ));
+        push_temporal_handshake_completion_gap_rescan_guidance(
+            &mut findings,
+            INTENT_TEMPORAL_HANDSHAKE_COMPLETION_GAP_SURFACE_RESCAN_GUIDANCE,
+            "IntentIR",
+            &handshake_completion_gap_signal_ids,
+        );
+    }
+    if temporal_rules_with_multi_predicate_antecedents > 0 {
+        let multi_pred_rule_ids = multi_predicate_antecedent_rule_ids
+            .iter()
+            .take(8)
+            .cloned()
+            .collect::<Vec<_>>();
+        findings.push(finding(
+            "intent_temporal_multi_predicate_antecedents_present",
+            ValidationFindingSeverity::Info,
+            "temporal_grounding",
+            format!(
+                "{temporal_rules_with_multi_predicate_antecedents} typed temporal rule(s) carry multi-predicate antecedents; compound condition extraction may benefit from further review"
+            ),
+            multi_pred_rule_ids.clone(),
+        ));
+        push_temporal_multi_predicate_antecedents_rescan_guidance(
+            &mut findings,
+            INTENT_TEMPORAL_MULTI_PREDICATE_ANTECEDENTS_SURFACE_RESCAN_GUIDANCE,
+            "IntentIR",
+            &multi_pred_rule_ids,
+        );
     }
     if ir.temporal_rules.is_empty()
         && (!ir.timing_constraints.is_empty()
@@ -12865,6 +13037,177 @@ mod tests {
         assert!(has_finding(
             &intent_report,
             "intent_state_machine_initial_cardinality"
+        ));
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_semantic_and_intent_ir_report_temporal_handshake_completion_gap() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("handshake_completion_gap.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal clk is input width 1.\n\n",
+                "Signal XREQ is input width 1.\n\n",
+                "Signal XACK is input width 1.\n\n",
+                "Signal PAYLOAD is output width 32.\n\n",
+                "Signal HSEL is input width 1.\n\n",
+                "Clock clk.\n\n",
+                "The request phase indicates that address and control information are valid for transfer.\n\n",
+                "The accept phase indicates that the subordinate can accept the transfer.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir
+            .signal_alias_map
+            .insert("request phase".to_string(), "XREQ".to_string());
+        evidence_ir
+            .signal_alias_map
+            .insert("accept phase".to_string(), "XACK".to_string());
+        evidence_ir.refresh_signal_semantic_hints()?;
+        // Add a constraint that generates a temporal rule WITHOUT handshake completion
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_payload_hsel_only".to_string(),
+            subject_signal: "PAYLOAD".to_string(),
+            constraint_kind: SignalConstraintKind::MustNotChange,
+            target_value: None,
+            condition_text: Some("when HSEL is HIGH".to_string()),
+            negated: false,
+            source_text: "PAYLOAD must not change when HSEL is HIGH.".to_string(),
+            supporting_statement_ids: vec!["stmt_payload_hsel".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        let semantic_report =
+            validate_semantic_ir(&semantic_ir, "handshake_completion_gap".to_string());
+        assert_eq!(
+            metric_value(&semantic_report, "temporal_rules_with_handshake_completion"),
+            Some("0")
+        );
+        assert!(has_finding(
+            &semantic_report,
+            "semantic_temporal_handshake_completion_gap"
+        ));
+
+        let intent_report = validate_intent_ir(&intent_ir, "handshake_completion_gap".to_string());
+        assert_eq!(
+            metric_value(&intent_report, "temporal_rules_with_handshake_completion"),
+            Some("0")
+        );
+        assert!(has_finding(
+            &intent_report,
+            "intent_temporal_handshake_completion_gap"
+        ));
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_semantic_and_intent_ir_report_temporal_multi_predicate_antecedents() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("multi_predicate_antecedents.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal clk is input width 1.\n\n",
+                "Signal HREADY is input width 1.\n\n",
+                "Signal HSEL is input width 1.\n\n",
+                "Signal HTRANS is output width 2.\n\n",
+                "Clock clk.\n\n",
+                "The Manager drives HTRANS.\n\n",
+                "The Subordinate reads HTRANS.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_htrans_compound_guard".to_string(),
+            subject_signal: "HTRANS".to_string(),
+            constraint_kind: SignalConstraintKind::MustNotChange,
+            target_value: None,
+            condition_text: Some("when HREADY is LOW and HSEL is HIGH".to_string()),
+            negated: false,
+            source_text: "HTRANS must not change when HREADY is LOW and HSEL is HIGH.".to_string(),
+            supporting_statement_ids: vec!["stmt_temporal_compound_guard".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        let semantic_report =
+            validate_semantic_ir(&semantic_ir, "multi_predicate_antecedents".to_string());
+        assert_eq!(
+            metric_value(
+                &semantic_report,
+                "temporal_rules_with_multi_predicate_antecedents"
+            ),
+            Some("1")
+        );
+        assert!(has_finding(
+            &semantic_report,
+            "semantic_temporal_multi_predicate_antecedents_present"
+        ));
+
+        let intent_report =
+            validate_intent_ir(&intent_ir, "multi_predicate_antecedents".to_string());
+        assert_eq!(
+            metric_value(
+                &intent_report,
+                "temporal_rules_with_multi_predicate_antecedents"
+            ),
+            Some("1")
+        );
+        assert!(has_finding(
+            &intent_report,
+            "intent_temporal_multi_predicate_antecedents_present"
         ));
 
         Ok(())

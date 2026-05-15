@@ -473,6 +473,7 @@
 
 ### R7 Validation and back-annotation
 - status: In Progress
+- task tree: `R7-VALIDATION` (`active`) — [docs/tasks/R7-VALIDATION.md](docs/tasks/R7-VALIDATION.md)
 - goals:
   - validate stage outputs and adapter outputs
   - collect diagnostics and back-annotate findings into IR artifacts and live docs

@@ -2917,10 +2917,8 @@ fn analyze_top_renderability(
             resolved_port.direction_hint = {
                 let graph_evidence = graph_top_port_directions.get(&port.port_name);
                 let declared_evidence = top_port_directions.get(&port.port_name);
-                let graph_conflicted =
-                    graph_evidence.is_some_and(|e| e.direction_conflicted);
-                let declared_conflicted =
-                    declared_evidence.is_some_and(|e| e.direction_conflicted);
+                let graph_conflicted = graph_evidence.is_some_and(|e| e.direction_conflicted);
+                let declared_conflicted = declared_evidence.is_some_and(|e| e.direction_conflicted);
                 let graph_dir = graph_evidence
                     .filter(|e| !e.direction_conflicted)
                     .and_then(|e| e.direction_hint);
@@ -2929,9 +2927,7 @@ fn analyze_top_renderability(
                     .and_then(|e| e.direction_hint);
                 if graph_conflicted
                     || declared_conflicted
-                    || (graph_dir.is_some()
-                        && declared_dir.is_some()
-                        && graph_dir != declared_dir)
+                    || (graph_dir.is_some() && declared_dir.is_some() && graph_dir != declared_dir)
                 {
                     None
                 } else {

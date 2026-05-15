@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-05-16 (PNT continuation — R7 validation extension)
+
+### R7-VALIDATION.1: Temporal handshake completion gap finding
+- Added `interface_signals_with_handshake_semantic_role_names()` helper.
+- Added finding `semantic_temporal_handshake_completion_gap` / `intent_temporal_handshake_completion_gap` — surfaces when temporal rules exist and handshake-role signals exist but no HandshakeComplete predicates.
+- Added `push_temporal_handshake_completion_gap_rescan_guidance()` for rescan recommendations.
+- 2 tests: `validate_semantic_and_intent_ir_report_temporal_handshake_completion_gap`.
+
+### R7-VALIDATION.2: Temporal multi-predicate antecedent finding
+- Added `temporal_rules_with_multi_predicate_antecedents_rule_ids()` helper.
+- Added finding `semantic_temporal_multi_predicate_antecedents_present` / `intent_temporal_multi_predicate_antecedents_present` — flags compound temporal conditions.
+- Added `push_temporal_multi_predicate_antecedents_rescan_guidance()` for rescan recommendations.
+- 1 test: `validate_semantic_and_intent_ir_report_temporal_multi_predicate_antecedents`.
+
+### Created: R7-VALIDATION task tree
+- 5 leaves scoped from R7 remaining work: temporal handshake gap (.1), multi-predicate antecedents (.2), KG-quality benchmarks (.3), adapter validation (.4), tracked approval evidence (.5 deferred).
+- Leaves .1 and .2 completed in this slice.
+- 1016/1016 tests passing, clippy clean.
+
 ## 2026-05-16 (PNT continuation — R15 graph-direction migration complete)
 
 ### Closed: R15-GRAPH-DIRECTION-MIGRATION task tree (highest-priority remaining gap)

@@ -24,9 +24,9 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `0194e2df`
-- latest_commit_brief_message: Close R15-GRAPH-DIRECTION-MIGRATION task tree — complete graph-first direction migration
-- note: all 9 task trees closed (8 originals + R15-GRAPH-DIRECTION-MIGRATION). 5 commits ahead of origin/main. 1014 tests passing. 151/151 kg-bench fixtures. clippy clean. R15 graph-direction migration done: sole TO-MIGRATE site (resolved top-port direction) now graph-first. Next PNT: roadmap remaining items (R15b-R15e mostly done with open-ended completion criteria).
+- latest_commit_hash: `pending` — will be set after commit
+- latest_commit_brief_message: R7-VALIDATION.1 R7-VALIDATION.2 — add temporal handshake completion gap and multi-predicate antecedent validation findings
+- note: R7-VALIDATION task tree active (.1 + .2 done, frontier → .3 KG-quality benchmarks). 1016 tests passing (2 new). 10 task trees (9 closed + 1 active). clippy clean. All previous R15 graph-direction work committed. Next PNT: R7-VALIDATION.3 (KG-quality benchmarks).
 
 ## Recent commit chain (last 10)
 - `3652db56` Remove R16 from roadmap — HDL lowering is out of scope
