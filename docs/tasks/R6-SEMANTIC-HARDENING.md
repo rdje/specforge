@@ -202,11 +202,20 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
   Verification: `cargo test -p specforge --lib — 826/826 passed`
   Commit: `715bf9ce`, `f2ed61e6`
 
+### Batch 20: clock gate/reset synchronizer/dedup
+
+- ID: `R6-SEMANTIC-HARDENING.20`
+  Status: `done`
+  Goal: `Fix 5 missed mutants across dedup_actor_names (1 delete call), parse_explicit_clock_gated_branch (2 ||→&&), parse_explicit_reset_synchronizer_stages (1 ||→&&).`
+  Acceptance: `4 mutants caught. 1 ||→&& at 3441 equivalent (both "clock gated" and "clock-gated" contain "clock gate" substring rescue).`
+  Verification: `cargo test -p specforge --lib — 834/834 passed`
+  Commit: `pending`
+
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `R6-SEMANTIC-HARDENING.20` | `pending` | 9 pending in builder functions (SemanticContext fixtures needed), 5 in clock gate/reset synchronizer (complex fixtures), 1 in dedup_actor_names. Run cargo-mutants to discover more. |
+| 1 | `R6-SEMANTIC-HARDENING.21` | `pending` | 9 builder function mutants deferred (need SemanticContext fixtures). Run cargo-mutants to discover more untested functions. |
 
 ## Decisions
 
@@ -243,6 +252,7 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
 | `2026-05-15` | `R6-SEMANTIC-HARDENING.17` | `cargo test -p specforge --lib` | 812/812 passed |
 | `2026-05-15` | `R6-SEMANTIC-HARDENING.18` | `cargo test -p specforge --lib` | 817/817 passed |
 | `2026-05-15` | `R6-SEMANTIC-HARDENING.19` | `cargo test -p specforge --lib` | 826/826 passed |
+| `2026-05-15` | `R6-SEMANTIC-HARDENING.20` | `cargo test -p specforge --lib` | 834/834 passed |
 
 ## Commit Log
 
@@ -267,9 +277,10 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
 | `R6-SEMANTIC-HARDENING.17` | `76cce288` | 11 unit tests for extract_infrastructure_subject_phrase |
 | `R6-SEMANTIC-HARDENING.18` | `715bf9ce` | 5 unit tests for parse_width_token |
 | `R6-SEMANTIC-HARDENING.19` | `f2ed61e6` | 9 unit tests for ControlExpressionParser parse_primary and parse_comparison |
+| `R6-SEMANTIC-HARDENING.20` | `pending` | 7 unit tests for dedup_actor_names, parse_explicit_clock_gated_branch, parse_explicit_reset_synchronizer_stages |
 
 ## Changelog
 
 - `2026-05-14`: Created task tree. Leaf 1 (build_symbol_definitions) already completed and backfilled.
 - `2026-05-14`: Completed leaves 2-10 (parse_explicit_system_reset through edge/index/cycle-marker helpers).
-- `2026-05-15`: Completed leaves 11-19 (cycle count functions through expression parser).
+- `2026-05-15`: Completed leaves 11-20 (cycle count functions through clock gate/reset synchronizer/dedup).

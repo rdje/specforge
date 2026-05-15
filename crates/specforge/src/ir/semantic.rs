@@ -19650,4 +19650,83 @@ mod tests {
             })
         ));
     }
+
+    // dedup_actor_names unit tests
+
+    #[test]
+    fn dedup_actor_names_removes_duplicates() {
+        // Catches replace with () mutant — must actually deduplicate
+        let mut names = vec!["CPU".to_string(), "DMA".to_string(), "CPU".to_string()];
+        super::dedup_actor_names(&mut names);
+        assert_eq!(names, vec!["CPU", "DMA"]);
+    }
+
+    #[test]
+    fn dedup_actor_names_preserves_unique_list() {
+        let mut names = vec!["CPU".to_string(), "DMA".to_string()];
+        super::dedup_actor_names(&mut names);
+        assert_eq!(names, vec!["CPU", "DMA"]);
+    }
+
+    // parse_explicit_clock_gated_branch unit tests
+
+    #[test]
+    fn clock_gated_branch_detects_gated_branch() {
+        // Catches ||→&& at line 3442 — "gated branch" without clock prefix
+        let result = super::parse_explicit_clock_gated_branch(
+            "CLK gated branch, feeds the CPU",
+            "CLK",
+        );
+        assert!(result.is_some());
+    }
+
+    #[test]
+    fn clock_gated_branch_detects_clock_gate() {
+        // Catches ||→&& at line 3443 — "clock gate" without "gated by"
+        let result = super::parse_explicit_clock_gated_branch(
+            "CLK clock gate, feeds the CPU",
+            "CLK",
+        );
+        assert!(result.is_some());
+    }
+
+    #[test]
+    fn clock_gated_branch_rejects_unrelated_text() {
+        let result = super::parse_explicit_clock_gated_branch(
+            "CLK drives the CPU",
+            "CLK",
+        );
+        assert!(result.is_none());
+    }
+
+    // parse_explicit_reset_synchronizer_stages unit tests
+
+    #[test]
+    fn reset_synchronizer_detects_synchronizer() {
+        let result = super::parse_explicit_reset_synchronizer_stages(
+            "CLK feeds the CPU, reset synchronizer 2 stages",
+            "CLK",
+        );
+        assert!(result.is_some());
+    }
+
+    #[test]
+    fn reset_synchronizer_rejects_text_without_synchronizer_term() {
+        // Catches ||→&& at line 3491 — signal found but neither synchronizer term present.
+        // Mutant changes guard to F && Inner, allowing fall-through to stage/target parsing.
+        let result = super::parse_explicit_reset_synchronizer_stages(
+            "CLK feeds the CPU, 2 stages",
+            "CLK",
+        );
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn reset_synchronizer_rejects_unrelated_text() {
+        let result = super::parse_explicit_reset_synchronizer_stages(
+            "CLK drives the CPU",
+            "CLK",
+        );
+        assert!(result.is_none());
+    }
 }
