@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `R6-SEMANTIC-HARDENING`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: `R6`
 - Created: `2026-05-14`
 - Last updated: `2026-05-15`
