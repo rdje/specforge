@@ -29,7 +29,7 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
 - ID: `R6-SEMANTIC-HARDENING`
   Status: `active`
   Goal: `Fix high-value missed cargo-mutants in semantic.rs functions.`
-  Children: `R6-SEMANTIC-HARDENING.1` through `.27`
+  Children: `R6-SEMANTIC-HARDENING.1` through `.28`
 
 ### Batch 1: build_symbol_definitions
 
@@ -270,7 +270,16 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
 - ID: `R6-SEMANTIC-HARDENING.27`
   Status: `pending`
   Goal: `Fix high-value missed mutants across 7 parse functions (~9 mutants: ||→&& x8, match guard true x1).`
-  Acceptance: `~9 high-value mutants caught.`
+  Acceptance: `12 tests added across 7 parse functions.`
+  Verification: `cargo test -p specforge --lib — 981/981 passed`
+  Commit: `41c52960`
+
+### Batch 28: Boolean classifier functions — should_emit_interface_candidate, is_invariant_like, reset_signal_name_looks_active_low, normalize_infrastructure_component_name
+
+- ID: `R6-SEMANTIC-HARDENING.28`
+  Status: `pending`
+  Goal: `Fix high-value missed mutants in should_emit_interface_candidate (5: ||→&& x5), is_invariant_like (3: return true, delete !, &&→||), reset_signal_name_looks_active_low (2: return true, ||→&&), normalize_infrastructure_component_name (2: <→==, <→<=).`
+  Acceptance: `~12 high-value mutants caught across 4 boolean classifier functions.`
   Verification: pending
   Commit: pending
 
@@ -278,7 +287,7 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `R6-SEMANTIC-HARDENING.27` | `pending` | Remaining parse functions — ~9 high-value mutants across 7 functions. |
+| 1 | `R6-SEMANTIC-HARDENING.28` | `pending` | Boolean classifier functions — ~12 high-value mutants across 4 functions. |
 
 ## Decisions
 
@@ -321,6 +330,7 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
 | `2026-05-15` | `R6-SEMANTIC-HARDENING.24` | `cargo test -p specforge --lib` | 951/951 passed |
 | `2026-05-15` | `R6-SEMANTIC-HARDENING.25` | `cargo test -p specforge --lib` | 962/962 passed |
 | `2026-05-15` | `R6-SEMANTIC-HARDENING.26` | `cargo test -p specforge --lib` | 969/969 passed |
+| `2026-05-15` | `R6-SEMANTIC-HARDENING.27` | `cargo test -p specforge --lib` | 981/981 passed |
 
 ## Commit Log
 
@@ -351,6 +361,7 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
 | `R6-SEMANTIC-HARDENING.24` | `d021d7e2` | 16 unit tests for register_interface_signal_semantic_hint, merge_signal_hint, merge_sticky_signal_hint, merge_named_hint, merge_copy_hint |
 | `R6-SEMANTIC-HARDENING.25` | `e225b7c0` | 11 unit tests for is_explicit_infrastructure_component_term, looks_like_signal_token |
 | `R6-SEMANTIC-HARDENING.26` | `3c65dfd4` | 7 unit tests for parse_explicit_signal_declaration, parse_explicit_system_clock |
+| `R6-SEMANTIC-HARDENING.27` | `41c52960` | 12 unit tests for parse_explicit_top_child, parse_explicit_regular_state_declaration, parse_explicit_decision_tree_fragment, parse_explicit_control_clause, parse_interface_signal_direction, split_explicit_assignment, parse_control_assignment_target |
 
 ## Changelog
 
