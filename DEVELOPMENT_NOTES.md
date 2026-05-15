@@ -8,6 +8,19 @@
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 - adapter targets: `.fsm` (active), `.isf` (planned); HDL lowering is out of scope
 
+## 2026-05-16 PNT session — R15 graph-direction migration complete
+
+- Closed R15-GRAPH-DIRECTION-MIGRATION task tree (3 leaves) — the highest-priority remaining gap per LIVE_ACHIEVEMENT_STATUS.md.
+- Audited all 234 production-code `direction_hint` accesses across adapters.rs, semantic.rs, validate.rs, kg_bench.rs, and learn_priors.rs.
+  - adapters.rs: 125 total (42 production, 83 test). Production breakdown: 8 GRAPH-FIRST, 28 COMPAT/STRUCTURAL, 1 TO-MIGRATE.
+  - semantic.rs: 43 total. All STRUCTURAL (field definitions, parsing, accumulation).
+  - validate.rs: 38 total. All COMPAT (metrics/reporting on compat vs graph coverage).
+  - kg_bench.rs: 16 total. All TEST/FIXTURE.
+  - learn_priors.rs: 7 total. All TEST.
+- Converted the sole TO-MIGRATE site: `resolved_port.direction_hint` in `analyze_top_renderability` now prefers `graph_top_port_directions` over `top_port_directions`, with conflict-aware resolution mirroring `preferred_signal_direction_hint()` — returns None when flat and graph disagree or either evidence source is conflicted.
+- All 1014 Rust tests pass. All 151 kg-bench fixtures pass. Clippy clean.
+- 5 commits ahead of origin/main. Push checkpoint not yet reached (~30).
+
 ## 2026-05-15 PNT session — HDL scope scrub, AXI timing fixture, maintenance
 
 - Scrubbed remaining HDL adapter target references from README, INTENTIR_SPEC, LIVE_ACHIEVEMENT_STATUS — all now consistent with R16 removal.

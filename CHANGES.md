@@ -1,5 +1,13 @@
 # CHANGES
 
+## 2026-05-16 (PNT continuation — R15 graph-direction migration complete)
+
+### Closed: R15-GRAPH-DIRECTION-MIGRATION task tree (highest-priority remaining gap)
+- Audited all 234 production-code `direction_hint` consumers across adapters.rs, semantic.rs, validate.rs, kg_bench.rs, learn_priors.rs.
+- Found only 1 TO-MIGRATE site: top-port resolved direction in `analyze_top_renderability`.
+- Converted to graph-first with conflict-aware resolution mirroring `preferred_signal_direction_hint()`. Returns None when flat and graph disagree or either evidence source is conflicted.
+- All 1014 Rust tests pass, all 151 kg-bench fixtures pass, clippy clean.
+
 ## 2026-05-15 (PNT continuation — HDL scope scrub, AXI timing fixture, push checkpoint)
 
 ### Scrub: HDL adapter target references from key docs (R16 scope removal)

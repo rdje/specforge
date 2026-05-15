@@ -24,9 +24,9 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `30cfa47e`
-- latest_commit_brief_message: Update MEMORY.md — reflect latest commit and new AXI write-address timing fixture
-- note: all 8 task trees closed. 0 commits ahead (pushed at 29). 1014 tests passing. 151/151 kg-bench fixtures. R16 removed from scope. All five AXI channels now have timing gold fixtures. Next: continue R15 graph-direction migration or find remaining fixture gaps.
+- latest_commit_hash: `0194e2df`
+- latest_commit_brief_message: Close R15-GRAPH-DIRECTION-MIGRATION task tree — complete graph-first direction migration
+- note: all 9 task trees closed (8 originals + R15-GRAPH-DIRECTION-MIGRATION). 5 commits ahead of origin/main. 1014 tests passing. 151/151 kg-bench fixtures. clippy clean. R15 graph-direction migration done: sole TO-MIGRATE site (resolved top-port direction) now graph-first. Next PNT: roadmap remaining items (R15b-R15e mostly done with open-ended completion criteria).
 
 ## Recent commit chain (last 10)
 - `3652db56` Remove R16 from roadmap — HDL lowering is out of scope
