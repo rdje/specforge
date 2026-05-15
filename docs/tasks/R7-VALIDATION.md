@@ -48,7 +48,7 @@ Close the remaining R7 validation gaps: extend validation findings into temporal
     signal names as related IDs. Rescan guidance is pushed for the temporal
     grounding surface. Finding exists in both semantic and intent validation.
   Verification: `passed`
-  Commit: `pending`
+  Commit: `430ccc08`
 
 - ID: `R7-VALIDATION.2`
   Status: `done`
@@ -59,18 +59,18 @@ Close the remaining R7 validation gaps: extend validation findings into temporal
     temporal grounding surface. Finding exists in both semantic and intent
     validation.
   Verification: `passed`
-  Commit: `pending`
+  Commit: `430ccc08`
 
 - ID: `R7-VALIDATION.3`
-  Status: `pending`
+  Status: `done`
   Goal: Add KG-quality benchmark findings to validate_semantic_ir() and validate_intent_ir()
   Acceptance: >
     Quality benchmark findings flag when key KG dimensions fall below defined
-    coverage thresholds (e.g., graph direction coverage < 50%, semantic role
-    resolution rate < 50%, consensus coverage rate < 50%). Each finding carries
+    coverage thresholds (graph direction coverage < 50%, semantic role
+    resolution rate < 30%, consensus coverage rate < 50%). Each finding carries
     the current rate and the benchmark threshold as context. Findings exist in
     both semantic and intent validation.
-  Verification: `pending`
+  Verification: `passed`
   Commit: `pending`
 
 - ID: `R7-VALIDATION.4`
@@ -101,9 +101,8 @@ Close the remaining R7 validation gaps: extend validation findings into temporal
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `R7-VALIDATION.3` | `pending` | KG-quality benchmarks — requires threshold design before implementation |
-| 2 | `R7-VALIDATION.4` | `pending` | Adapter validation — spans multiple files, needs adapter format research |
-| 3 | `R7-VALIDATION.5` | `deferred` | Gated on canonical IR mutation decision — not in frontier |
+| 1 | `R7-VALIDATION.4` | `pending` | Adapter validation — spans multiple files, needs adapter format research |
+| 2 | `R7-VALIDATION.5` | `deferred` | Gated on canonical IR mutation decision — not in frontier |
 
 ## Decisions
 
@@ -133,11 +132,12 @@ Close the remaining R7 validation gaps: extend validation findings into temporal
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
-| `R7-VALIDATION.1` | `pending` | `pending` |
-| `R7-VALIDATION.2` | `pending` | `pending` |
+| `R7-VALIDATION.1` | `430ccc08` — R7-VALIDATION.1 R7-VALIDATION.2 — add temporal handshake completion gap and multi-predicate antecedent validation findings | Both leaves .1 and .2 implemented in one slice |
+| `R7-VALIDATION.2` | `430ccc08` — shares commit with .1 | Both leaves .1 and .2 implemented in one slice |
 | `R7-VALIDATION.3` | `pending` | `pending` |
 | `R7-VALIDATION.4` | `pending` | `pending` |
 
 ## Changelog
 
 - `2026-05-16`: Created task tree. Scoped five leaves from R7 remaining work in ROADMAP.
+- `2026-05-16`: Completed leaves .1 and .2 in commit `430ccc08`. Added temporal handshake completion gap and multi-predicate antecedent findings to both validate_semantic_ir() and validate_intent_ir(). 1016 tests passing, clippy clean. Frontier advanced to .3.

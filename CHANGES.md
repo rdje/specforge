@@ -2,6 +2,15 @@
 
 ## 2026-05-16 (PNT continuation — R7 validation extension)
 
+### R7-VALIDATION.3: KG-quality benchmark findings
+- Added three benchmark findings to both validate_semantic_ir() and validate_intent_ir():
+  - Graph direction coverage < 50% → `*_kg_graph_direction_coverage_below_benchmark`
+  - Semantic role resolution < 30% → `*_kg_semantic_role_resolution_below_benchmark`
+  - Semantic consensus coverage < 50% → `*_kg_semantic_consensus_coverage_below_benchmark`
+- Each finding includes the current rate and threshold in the message body.
+- 1 test: `validate_semantic_and_intent_ir_report_kg_quality_benchmarks_below_thresholds`.
+- 1017/1017 tests passing, clippy clean.
+
 ### R7-VALIDATION.1: Temporal handshake completion gap finding
 - Added `interface_signals_with_handshake_semantic_role_names()` helper.
 - Added finding `semantic_temporal_handshake_completion_gap` / `intent_temporal_handshake_completion_gap` — surfaces when temporal rules exist and handshake-role signals exist but no HandshakeComplete predicates.

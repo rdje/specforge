@@ -3889,6 +3889,49 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             &multi_pred_rule_ids,
         );
     }
+    // KG-quality benchmarks — flag when key dimensions fall below defined thresholds.
+    let graph_direction_coverage_pct = percentage_or_zero(with_graph_direction, total_signals);
+    if total_signals > 0 && graph_direction_coverage_pct < 50 {
+        findings.push(finding(
+            "semantic_kg_graph_direction_coverage_below_benchmark",
+            ValidationFindingSeverity::Info,
+            "kg_quality_benchmark",
+            format!(
+                "graph direction coverage is {graph_direction_coverage_pct}% ({with_graph_direction}/{total_signals}) — below the 50% KG-quality benchmark"
+            ),
+            Vec::new(),
+        ));
+    }
+    let semantic_role_resolution_pct =
+        percentage_or_zero(with_resolved_semantic_role, total_signals);
+    if total_signals > 0 && semantic_role_resolution_pct < 30 {
+        findings.push(finding(
+            "semantic_kg_semantic_role_resolution_below_benchmark",
+            ValidationFindingSeverity::Info,
+            "kg_quality_benchmark",
+            format!(
+                "semantic role resolution rate is {semantic_role_resolution_pct}% ({with_resolved_semantic_role}/{total_signals}) — below the 30% KG-quality benchmark"
+            ),
+            Vec::new(),
+        ));
+    }
+    let semantic_consensus_coverage_pct = if with_resolved_semantic_role > 0 {
+        ((with_semantic_consensus as f64 / with_resolved_semantic_role as f64) * 100.0).round()
+            as usize
+    } else {
+        0
+    };
+    if with_resolved_semantic_role > 0 && semantic_consensus_coverage_pct < 50 {
+        findings.push(finding(
+            "semantic_kg_semantic_consensus_coverage_below_benchmark",
+            ValidationFindingSeverity::Info,
+            "kg_quality_benchmark",
+            format!(
+                "semantic consensus coverage is {semantic_consensus_coverage_pct}% ({with_semantic_consensus}/{with_resolved_semantic_role}) — below the 50% KG-quality benchmark"
+            ),
+            Vec::new(),
+        ));
+    }
     if ir.temporal_rules.is_empty()
         && (!ir.timing_constraints.is_empty()
             || !ir.signal_constraints.is_empty()
@@ -5302,6 +5345,49 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             "IntentIR",
             &multi_pred_rule_ids,
         );
+    }
+    // KG-quality benchmarks — flag when key dimensions fall below defined thresholds.
+    let graph_direction_coverage_pct = percentage_or_zero(with_graph_direction, declared_count);
+    if declared_count > 0 && graph_direction_coverage_pct < 50 {
+        findings.push(finding(
+            "intent_kg_graph_direction_coverage_below_benchmark",
+            ValidationFindingSeverity::Info,
+            "kg_quality_benchmark",
+            format!(
+                "graph direction coverage is {graph_direction_coverage_pct}% ({with_graph_direction}/{declared_count}) — below the 50% KG-quality benchmark"
+            ),
+            Vec::new(),
+        ));
+    }
+    let semantic_role_resolution_pct =
+        percentage_or_zero(with_resolved_semantic_role, declared_count);
+    if declared_count > 0 && semantic_role_resolution_pct < 30 {
+        findings.push(finding(
+            "intent_kg_semantic_role_resolution_below_benchmark",
+            ValidationFindingSeverity::Info,
+            "kg_quality_benchmark",
+            format!(
+                "semantic role resolution rate is {semantic_role_resolution_pct}% ({with_resolved_semantic_role}/{declared_count}) — below the 30% KG-quality benchmark"
+            ),
+            Vec::new(),
+        ));
+    }
+    let semantic_consensus_coverage_pct = if with_resolved_semantic_role > 0 {
+        ((with_semantic_consensus as f64 / with_resolved_semantic_role as f64) * 100.0).round()
+            as usize
+    } else {
+        0
+    };
+    if with_resolved_semantic_role > 0 && semantic_consensus_coverage_pct < 50 {
+        findings.push(finding(
+            "intent_kg_semantic_consensus_coverage_below_benchmark",
+            ValidationFindingSeverity::Info,
+            "kg_quality_benchmark",
+            format!(
+                "semantic consensus coverage is {semantic_consensus_coverage_pct}% ({with_semantic_consensus}/{with_resolved_semantic_role}) — below the 50% KG-quality benchmark"
+            ),
+            Vec::new(),
+        ));
     }
     if ir.temporal_rules.is_empty()
         && (!ir.timing_constraints.is_empty()
@@ -13208,6 +13294,73 @@ mod tests {
         assert!(has_finding(
             &intent_report,
             "intent_temporal_multi_predicate_antecedents_present"
+        ));
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_semantic_and_intent_ir_report_kg_quality_benchmarks_below_thresholds() -> Result<()>
+    {
+        use crate::ir::evidence::EvidenceIr;
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("kg_quality_benchmarks.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+
+        // A minimal spec with signals but no actor/direction/semantic-role evidence.
+        // Graph direction and semantic role coverage will be 0%, well below benchmarks.
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Signal SIG1 is input width 8.\n\n",
+                "Signal SIG2 is output width 16.\n\n",
+                "Signal SIG3 is input width 1.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        let semantic_report =
+            validate_semantic_ir(&semantic_ir, "kg_quality_benchmarks".to_string());
+        // No actor ports → 0% graph direction coverage → below 50% benchmark
+        assert!(has_finding(
+            &semantic_report,
+            "semantic_kg_graph_direction_coverage_below_benchmark"
+        ));
+        // No resolved semantic roles → 0% resolution rate → below 30% benchmark
+        assert!(has_finding(
+            &semantic_report,
+            "semantic_kg_semantic_role_resolution_below_benchmark"
+        ));
+
+        let intent_report = validate_intent_ir(&intent_ir, "kg_quality_benchmarks".to_string());
+        assert!(has_finding(
+            &intent_report,
+            "intent_kg_graph_direction_coverage_below_benchmark"
+        ));
+        assert!(has_finding(
+            &intent_report,
+            "intent_kg_semantic_role_resolution_below_benchmark"
         ));
 
         Ok(())
