@@ -19562,4 +19562,92 @@ mod tests {
             Some(super::ControlExpressionRecord::Literal { .. })
         ));
     }
+
+    // parse_comparison unit tests — exercises all comparison operators
+
+    fn parse_comparison_tokens(tokens: Vec<&str>) -> Option<super::ControlExpressionRecord> {
+        let signals = BTreeSet::new();
+        let symbols = BTreeSet::new();
+        let tokens: Vec<String> = tokens.into_iter().map(|s| s.to_string()).collect();
+        let mut parser = super::ControlExpressionParser::new(tokens, &signals, &symbols);
+        parser.parse_comparison()
+    }
+
+    #[test]
+    fn control_expr_comparison_eq() {
+        // Catches delete match arm Some("==")
+        let result = parse_comparison_tokens(vec!["x", "==", "5"]);
+        assert!(matches!(
+            result,
+            Some(super::ControlExpressionRecord::Binary {
+                operator: super::ControlBinaryOperator::Eq,
+                ..
+            })
+        ));
+    }
+
+    #[test]
+    fn control_expr_comparison_not_eq() {
+        // Catches delete match arm Some("!=") at line 5422
+        let result = parse_comparison_tokens(vec!["x", "!=", "0"]);
+        assert!(matches!(
+            result,
+            Some(super::ControlExpressionRecord::Binary {
+                operator: super::ControlBinaryOperator::NotEq,
+                ..
+            })
+        ));
+    }
+
+    #[test]
+    fn control_expr_comparison_lt() {
+        // Catches delete match arm Some("<") at line 5423
+        let result = parse_comparison_tokens(vec!["x", "<", "10"]);
+        assert!(matches!(
+            result,
+            Some(super::ControlExpressionRecord::Binary {
+                operator: super::ControlBinaryOperator::Lt,
+                ..
+            })
+        ));
+    }
+
+    #[test]
+    fn control_expr_comparison_le() {
+        // Catches delete match arm Some("<=") at line 5424
+        let result = parse_comparison_tokens(vec!["x", "<=", "10"]);
+        assert!(matches!(
+            result,
+            Some(super::ControlExpressionRecord::Binary {
+                operator: super::ControlBinaryOperator::Le,
+                ..
+            })
+        ));
+    }
+
+    #[test]
+    fn control_expr_comparison_gt() {
+        // Catches delete match arm Some(">") at line 5425
+        let result = parse_comparison_tokens(vec!["x", ">", "0"]);
+        assert!(matches!(
+            result,
+            Some(super::ControlExpressionRecord::Binary {
+                operator: super::ControlBinaryOperator::Gt,
+                ..
+            })
+        ));
+    }
+
+    #[test]
+    fn control_expr_comparison_ge() {
+        // Catches delete match arm Some(">=") at line 5426
+        let result = parse_comparison_tokens(vec!["x", ">=", "0"]);
+        assert!(matches!(
+            result,
+            Some(super::ControlExpressionRecord::Binary {
+                operator: super::ControlBinaryOperator::Ge,
+                ..
+            })
+        ));
+    }
 }
