@@ -74,50 +74,23 @@ Fix 101 missed cargo-mutants in `crates/specforge/src/ir/prior_memory.rs` — sy
   Goal: `Fix 4 missed mutants in semantic_modality_reliability_prior_bonus — &&→|| x2, >=→<, delete !.`
   Acceptance: `7 mutants tested, all 7 caught (includes 3 previously covered + 4 newly covered).`
   Verification: `cargo test -p specforge --lib — 893/893 passed`
-  Commit: pending
+  Commit: `a0fbd254`
 
-### Batch 6: CorpusMemory filter methods (semantic_phrase, actor_taxonomy, temporal_phrase)
+### Batch 6: CorpusMemory filter methods (all 6 for_ query methods)
 
 - ID: `R6-PRIOR-MEMORY-HARDENING.6`
-  Status: `pending`
-  Goal: `Fix 17 missed mutants across semantic_phrase_priors_for (6), actor_taxonomy_priors_for (4), temporal_phrase_priors_for (7).`
-  Acceptance: `17 mutants caught: vec![], ==→!=, &&→||, ||→&&, delete ! across 3 filter methods.`
-  Verification: pending
-  Commit: pending
+  Status: `done`
+  Goal: `Fix 29 missed mutants across semantic_phrase_priors_for (6), actor_taxonomy_priors_for (4), temporal_phrase_priors_for (7), table_shape_priors_for (4), visual_motif_priors_for (4), negative_knowledge_priors_for (4).`
+  Acceptance: `All 35 mutants caught (29 caught + 6 unviable). Key catches: vec![], ==→!=, &&→||, delete !, ||→&&.`
+  Verification: `cargo test -p specforge --lib — 909/909 passed`
+  Commit: `273bad09`
 
-### Batch 7: CorpusMemory filter methods (table_shape, visual_motif, negative_knowledge)
+### Batch 7: CorpusMemory search/resolve methods
 
 - ID: `R6-PRIOR-MEMORY-HARDENING.7`
-  Status: `pending`
-  Goal: `Fix 12 missed mutants across table_shape_priors_for (4), visual_motif_priors_for (4), negative_knowledge_priors_for (4).`
-  Acceptance: `12 mutants caught: vec![], ==→!=, &&→|| across 3 filter methods.`
-  Verification: pending
-  Commit: pending
-
-### Batch 8: temporal_cycle_window_in_text + semantic_modality_reliability_bonus + actor_taxonomy_role_for_term
-
-- ID: `R6-PRIOR-MEMORY-HARDENING.8`
-  Status: `pending`
-  Goal: `Fix 8 missed mutants across temporal_cycle_window_in_text (5), semantic_modality_reliability_bonus (1), actor_taxonomy_role_for_term (2).`
-  Acceptance: `8 mutants caught: ==→!=, >→==/< / >=, delete !.`
-  Verification: pending
-  Commit: pending
-
-### Batch 9: diagram_kind_for_visual_caption + table_kind_for_structured_table
-
-- ID: `R6-PRIOR-MEMORY-HARDENING.9`
-  Status: `pending`
-  Goal: `Fix 5 missed mutants across diagram_kind_for_visual_caption (2), table_kind_for_structured_table (3).`
-  Acceptance: `5 mutants caught: >→==, >→<, >→>=.`
-  Verification: pending
-  Commit: pending
-
-### Batch 10: resolve_actor_taxonomy_role + resolve_semantic_phrase_role
-
-- ID: `R6-PRIOR-MEMORY-HARDENING.10`
-  Status: `pending`
-  Goal: `Fix 6 missed mutants across resolve_actor_taxonomy_role (3), resolve_semantic_phrase_role (3).`
-  Acceptance: `6 mutants caught: >→==, >→<, >→>=.`
+  Status: `in_progress`
+  Goal: `Fix remaining mutants across temporal_cycle_window_in_text (5), semantic_modality_reliability_bonus (1), actor_taxonomy_role_for_term (2), diagram_kind_for_visual_caption (2), table_kind_for_structured_table (3), resolve_actor_taxonomy_role (3), resolve_semantic_phrase_role (3).`
+  Acceptance: `All remaining CorpusMemory method mutants caught.`
   Verification: pending
   Commit: pending
 
@@ -125,16 +98,7 @@ Fix 101 missed cargo-mutants in `crates/specforge/src/ir/prior_memory.rs` — sy
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `R6-PRIOR-MEMORY-HARDENING.1` | `pending` | Simple helpers — fastest to start, no CorpusMemory fixture needed |
-| 2 | `R6-PRIOR-MEMORY-HARDENING.2` | `pending` | Private helper — still no CorpusMemory fixture |
-| 3 | `R6-PRIOR-MEMORY-HARDENING.3` | `pending` | Private helper — ||→&& chain |
-| 4 | `R6-PRIOR-MEMORY-HARDENING.4` | `pending` | Private helpers — predicate functions |
-| 5 | `R6-PRIOR-MEMORY-HARDENING.5` | `pending` | Private helper — bonus calculation |
-| 6 | `R6-PRIOR-MEMORY-HARDENING.6` | `pending` | CorpusMemory filter methods — need fixture setup |
-| 7 | `R6-PRIOR-MEMORY-HARDENING.7` | `pending` | More CorpusMemory filter methods |
-| 8 | `R6-PRIOR-MEMORY-HARDENING.8` | `pending` | CorpusMemory search methods |
-| 9 | `R6-PRIOR-MEMORY-HARDENING.9` | `pending` | CorpusMemory kind resolution methods |
-| 10 | `R6-PRIOR-MEMORY-HARDENING.10` | `pending` | CorpusMemory role resolution methods |
+| 1 | `R6-PRIOR-MEMORY-HARDENING.7` | `in_progress` | CorpusMemory search/resolve methods |
 
 ## Decisions
 

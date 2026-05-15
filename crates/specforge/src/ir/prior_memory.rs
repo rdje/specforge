@@ -1043,6 +1043,7 @@ pub struct NegativeKnowledgePriorRecord {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::ir::source::StructuredTableCellRecord;
 
     // is_word_boundary unit tests
 
@@ -1694,5 +1695,436 @@ mod tests {
             Some(NegativeKnowledgeKind::ResidualDecision),
         );
         assert!(results.is_empty());
+    }
+
+    // === Batch 7: CorpusMemory search/resolve methods ===
+
+    // actor_taxonomy_role_for_term
+
+    #[test]
+    fn actor_taxonomy_role_for_term_returns_role_for_matching_term() {
+        // Catches replace Option with None at line 125 and delete ! at line 126
+        // — meaningful term matching a prior must return the role.
+        let corpus = make_test_corpus();
+        let result = corpus.actor_taxonomy_role_for_term(Some(ProtocolFamily::AmbaAxi), "dma");
+        assert_eq!(result, Some(ActorTaxonomyRole::RequesterLike));
+    }
+
+    #[test]
+    fn actor_taxonomy_role_for_term_returns_none_for_stop_word() {
+        // Catches delete ! at line 126 — stop-word terms must return None early.
+        let corpus = make_test_corpus();
+        let result = corpus.actor_taxonomy_role_for_term(Some(ProtocolFamily::AmbaAxi), "clock");
+        assert_eq!(result, None);
+    }
+
+    // temporal_cycle_window_in_text
+
+    #[test]
+    fn temporal_cycle_window_in_text_matches_prior() {
+        // Catches ==→!= at lines 215 and 220 — filter must match record fields.
+        let corpus = make_test_corpus();
+        let signal_names: BTreeSet<String> = BTreeSet::new();
+        let actor_names: BTreeSet<String> = BTreeSet::new();
+        let result = corpus.temporal_cycle_window_in_text(
+            Some(ProtocolFamily::AmbaAxi),
+            "after reset",
+            &signal_names,
+            &actor_names,
+            Some(true),
+            Some(false),
+        );
+        assert!(result.is_some());
+    }
+
+    #[test]
+    fn temporal_cycle_window_in_text_respects_actor_grounded() {
+        // Catches ==→!= at line 215 — actor_grounded mismatch must exclude.
+        let corpus = make_test_corpus();
+        let signal_names: BTreeSet<String> = BTreeSet::new();
+        let actor_names: BTreeSet<String> = BTreeSet::new();
+        // Record has actor_grounded=true; filter with Some(false) → excluded.
+        let result = corpus.temporal_cycle_window_in_text(
+            Some(ProtocolFamily::AmbaAxi),
+            "after reset",
+            &signal_names,
+            &actor_names,
+            Some(false),
+            Some(false),
+        );
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn temporal_cycle_window_in_text_respects_handshake_completion() {
+        // Catches ==→!= at line 220 — handshake_completion mismatch must exclude.
+        let corpus = make_test_corpus();
+        let signal_names: BTreeSet<String> = BTreeSet::new();
+        let actor_names: BTreeSet<String> = BTreeSet::new();
+        // Record has handshake_completion=false; filter with Some(true) → excluded.
+        let result = corpus.temporal_cycle_window_in_text(
+            Some(ProtocolFamily::AmbaAxi),
+            "after reset",
+            &signal_names,
+            &actor_names,
+            Some(true),
+            Some(true),
+        );
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn temporal_cycle_window_in_text_ambiguous_returns_none() {
+        // Exercises >→<, >→==, >→>= at line 238 — multiple different cycle
+        // windows matching the same text must return None (ambiguity).
+        let mut corpus = make_test_corpus();
+        corpus.temporal_phrase_priors.push(TemporalPhrasePriorRecord {
+            prior_id: "tp2".into(),
+            normalized_phrase: "after reset".into(),
+            protocol_family: ProtocolFamily::AmbaAxi,
+            cycle_window: Some(CycleWindowRecord {
+                min_cycles: Some(4),
+                max_cycles: Some(4),
+            }),
+            actor_grounded: true,
+            handshake_completion: false,
+            support_count: 3,
+            supporting_document_keys: vec![],
+            strongest_automation_confidence: AutomationConfidence::High,
+        });
+        let signal_names: BTreeSet<String> = BTreeSet::new();
+        let actor_names: BTreeSet<String> = BTreeSet::new();
+        let result = corpus.temporal_cycle_window_in_text(
+            Some(ProtocolFamily::AmbaAxi),
+            "after reset",
+            &signal_names,
+            &actor_names,
+            Some(true),
+            Some(false),
+        );
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn temporal_cycle_window_in_text_ambiguous_first_scope_falls_through() {
+        // Catches >→< and >→== at line 238 — when first scope (AmbaAxi) has
+        // ambiguity (>1 windows), original returns None immediately. Mutants
+        // fail the check and fall through to AmbaGeneric scope which has a
+        // single unambiguous match — returning Some is wrong.
+        let corpus = CorpusMemory {
+            temporal_phrase_priors: vec![
+                // AmbaAxi — two records with same phrase but different
+                // cycle windows → ambiguity.
+                TemporalPhrasePriorRecord {
+                    prior_id: "tp_axi_1".into(),
+                    normalized_phrase: "after reset".into(),
+                    protocol_family: ProtocolFamily::AmbaAxi,
+                    cycle_window: Some(CycleWindowRecord { min_cycles: Some(2), max_cycles: Some(2) }),
+                    actor_grounded: true,
+                    handshake_completion: false,
+                    support_count: 3,
+                    supporting_document_keys: vec![],
+                    strongest_automation_confidence: AutomationConfidence::High,
+                },
+                TemporalPhrasePriorRecord {
+                    prior_id: "tp_axi_2".into(),
+                    normalized_phrase: "after reset".into(),
+                    protocol_family: ProtocolFamily::AmbaAxi,
+                    cycle_window: Some(CycleWindowRecord { min_cycles: Some(4), max_cycles: Some(4) }),
+                    actor_grounded: true,
+                    handshake_completion: false,
+                    support_count: 3,
+                    supporting_document_keys: vec![],
+                    strongest_automation_confidence: AutomationConfidence::High,
+                },
+                // AmbaGeneric — single unambiguous match. Must NOT be
+                // returned when first scope is ambiguous.
+                TemporalPhrasePriorRecord {
+                    prior_id: "tp_gen".into(),
+                    normalized_phrase: "after reset".into(),
+                    protocol_family: ProtocolFamily::AmbaGeneric,
+                    cycle_window: Some(CycleWindowRecord { min_cycles: Some(1), max_cycles: Some(1) }),
+                    actor_grounded: true,
+                    handshake_completion: false,
+                    support_count: 3,
+                    supporting_document_keys: vec![],
+                    strongest_automation_confidence: AutomationConfidence::High,
+                },
+            ],
+            ..make_test_corpus()
+        };
+        let signal_names: BTreeSet<String> = BTreeSet::new();
+        let actor_names: BTreeSet<String> = BTreeSet::new();
+        let result = corpus.temporal_cycle_window_in_text(
+            Some(ProtocolFamily::AmbaAxi),
+            "after reset",
+            &signal_names,
+            &actor_names,
+            Some(true),
+            Some(false),
+        );
+        assert!(result.is_none());
+    }
+
+    // semantic_modality_reliability_bonus
+
+    #[test]
+    fn semantic_modality_reliability_bonus_skips_zero_in_first_scope() {
+        // Catches >→>= at line 261 — zero-bonus in first scope must not
+        // short-circuit search of subsequent scopes.
+        let corpus = CorpusMemory {
+            semantic_modality_reliability_priors: vec![
+                SemanticModalityReliabilityPriorRecord {
+                    prior_id: "rel_axi".into(),
+                    role: InterfaceSignalSemanticRole::HandshakeValidLike,
+                    protocol_family: ProtocolFamily::AmbaAxi,
+                    source_kind: SignalSemanticHintSourceKind::ProseStatement,
+                    support_count: 5,
+                    supporting_document_keys: vec![],
+                    strongest_automation_confidence: AutomationConfidence::High,
+                    strongest_grounding_strength: SemanticGroundingStrength::SingleSource,
+                },
+                SemanticModalityReliabilityPriorRecord {
+                    prior_id: "rel_gen".into(),
+                    role: InterfaceSignalSemanticRole::HandshakeValidLike,
+                    protocol_family: ProtocolFamily::AmbaGeneric,
+                    source_kind: SignalSemanticHintSourceKind::ProseStatement,
+                    support_count: 5,
+                    supporting_document_keys: vec![],
+                    strongest_automation_confidence: AutomationConfidence::High,
+                    strongest_grounding_strength: SemanticGroundingStrength::MultiSource,
+                },
+            ],
+            ..make_test_corpus()
+        };
+        let result = corpus.semantic_modality_reliability_bonus(
+            Some(ProtocolFamily::AmbaAxi),
+            InterfaceSignalSemanticRole::HandshakeValidLike,
+            SignalSemanticHintSourceKind::ProseStatement,
+        );
+        // SingleSource gives 0, MultiSource gives non-zero. Correct code (> 0)
+        // skips Axi and returns Generic bonus. Mutant (>= 0) returns 0.
+        assert!(result > 0);
+    }
+
+    // diagram_kind_for_visual_caption
+
+    #[test]
+    fn diagram_kind_for_visual_caption_ambiguous_returns_none() {
+        // Exercising >→== and >→>= at line 374. Multi-scope: first scope
+        // (AmbaAxi) ambiguous, second scope (AmbaGeneric) unambiguous.
+        // Original and >= retain None; == and < fall through.
+        let corpus = CorpusMemory {
+            visual_motif_priors: vec![
+                VisualMotifPriorRecord {
+                    prior_id: "vm_axi_1".into(),
+                    normalized_caption_phrase: Some("state machine".into()),
+                    diagram_kind: DiagramKind::StateMachineDiagram,
+                    asset_kind: VisualAssetKind::Diagram,
+                    protocol_family: ProtocolFamily::AmbaAxi,
+                    support_count: 5,
+                    supporting_document_keys: vec![],
+                    strongest_automation_confidence: AutomationConfidence::High,
+                },
+                VisualMotifPriorRecord {
+                    prior_id: "vm_axi_2".into(),
+                    normalized_caption_phrase: Some("state machine".into()),
+                    diagram_kind: DiagramKind::TimingDiagram,
+                    asset_kind: VisualAssetKind::Diagram,
+                    protocol_family: ProtocolFamily::AmbaAxi,
+                    support_count: 5,
+                    supporting_document_keys: vec![],
+                    strongest_automation_confidence: AutomationConfidence::High,
+                },
+                VisualMotifPriorRecord {
+                    prior_id: "vm_gen".into(),
+                    normalized_caption_phrase: Some("state machine".into()),
+                    diagram_kind: DiagramKind::StateMachineDiagram,
+                    asset_kind: VisualAssetKind::Diagram,
+                    protocol_family: ProtocolFamily::AmbaGeneric,
+                    support_count: 5,
+                    supporting_document_keys: vec![],
+                    strongest_automation_confidence: AutomationConfidence::High,
+                },
+            ],
+            ..make_test_corpus()
+        };
+        let signal_names: BTreeSet<String> = BTreeSet::new();
+        let actor_names: BTreeSet<String> = BTreeSet::new();
+        let result = corpus.diagram_kind_for_visual_caption(
+            Some(ProtocolFamily::AmbaAxi),
+            "state machine",
+            &signal_names,
+            &actor_names,
+        );
+        assert!(result.is_none());
+    }
+
+    // table_kind_for_structured_table
+
+    #[test]
+    fn table_kind_for_structured_table_ambiguous_returns_none() {
+        // Multi-scope: first scope (AmbaAxi) ambiguous, second scope
+        // (AmbaGeneric) unambiguous. Catches >→< and >→== at line 402.
+        let corpus = CorpusMemory {
+            table_shape_priors: vec![
+                TableShapePriorRecord {
+                    prior_id: "ts_axi_1".into(),
+                    normalized_header_signature: "signal | description".into(),
+                    table_kind: TableKind::SignalDescription,
+                    protocol_family: ProtocolFamily::AmbaAxi,
+                    support_count: 5,
+                    supporting_document_keys: vec![],
+                    strongest_automation_confidence: AutomationConfidence::High,
+                },
+                TableShapePriorRecord {
+                    prior_id: "ts_axi_2".into(),
+                    normalized_header_signature: "signal | description".into(),
+                    table_kind: TableKind::RegisterMap,
+                    protocol_family: ProtocolFamily::AmbaAxi,
+                    support_count: 5,
+                    supporting_document_keys: vec![],
+                    strongest_automation_confidence: AutomationConfidence::High,
+                },
+                TableShapePriorRecord {
+                    prior_id: "ts_gen".into(),
+                    normalized_header_signature: "signal | description".into(),
+                    table_kind: TableKind::SignalDescription,
+                    protocol_family: ProtocolFamily::AmbaGeneric,
+                    support_count: 5,
+                    supporting_document_keys: vec![],
+                    strongest_automation_confidence: AutomationConfidence::High,
+                },
+            ],
+            ..make_test_corpus()
+        };
+        let table = StructuredTableRecord {
+            table_id: "t1".into(),
+            asset_id: "a1".into(),
+            page_id: None,
+            caption_text: None,
+            source_ref: None,
+            table_kind: TableKind::Unknown,
+            header_rows: vec![vec![
+                StructuredTableCellRecord {
+                    text: "signal".into(),
+                    row_span: 1,
+                    col_span: 1,
+                    is_header: true,
+                },
+                StructuredTableCellRecord {
+                    text: "description".into(),
+                    row_span: 1,
+                    col_span: 1,
+                    is_header: true,
+                },
+            ]],
+            body_rows: vec![],
+            row_count: 1,
+            col_count: 2,
+        };
+        let result = corpus.table_kind_for_structured_table(Some(ProtocolFamily::AmbaAxi), &table);
+        assert!(result.is_none());
+    }
+
+    // resolve_actor_taxonomy_role (via actor_taxonomy_role_for_term)
+
+    #[test]
+    fn resolve_actor_taxonomy_role_ambiguous_returns_none() {
+        // Multi-scope: first scope (AmbaAxi) ambiguous, second scope
+        // (AmbaGeneric) unambiguous. Catches >→< and >→== at line 430.
+        let corpus = CorpusMemory {
+            actor_taxonomy_priors: vec![
+                ActorTaxonomyPriorRecord {
+                    prior_id: "at_axi_1".into(),
+                    normalized_actor_term: "dma".into(),
+                    taxonomy_role: ActorTaxonomyRole::RequesterLike,
+                    protocol_family: ProtocolFamily::AmbaAxi,
+                    support_count: 5,
+                    supporting_document_keys: vec![],
+                    strongest_automation_confidence: AutomationConfidence::High,
+                    strongest_grounding_strength: SemanticGroundingStrength::MultiSource,
+                },
+                ActorTaxonomyPriorRecord {
+                    prior_id: "at_axi_2".into(),
+                    normalized_actor_term: "dma".into(),
+                    taxonomy_role: ActorTaxonomyRole::CompleterLike,
+                    protocol_family: ProtocolFamily::AmbaAxi,
+                    support_count: 5,
+                    supporting_document_keys: vec![],
+                    strongest_automation_confidence: AutomationConfidence::High,
+                    strongest_grounding_strength: SemanticGroundingStrength::MultiSource,
+                },
+                ActorTaxonomyPriorRecord {
+                    prior_id: "at_gen".into(),
+                    normalized_actor_term: "dma".into(),
+                    taxonomy_role: ActorTaxonomyRole::RequesterLike,
+                    protocol_family: ProtocolFamily::AmbaGeneric,
+                    support_count: 5,
+                    supporting_document_keys: vec![],
+                    strongest_automation_confidence: AutomationConfidence::High,
+                    strongest_grounding_strength: SemanticGroundingStrength::MultiSource,
+                },
+            ],
+            ..make_test_corpus()
+        };
+        let result = corpus.actor_taxonomy_role_for_term(Some(ProtocolFamily::AmbaAxi), "dma");
+        assert!(result.is_none());
+    }
+
+    // resolve_semantic_phrase_role (via semantic_phrase_role_in_text)
+
+    #[test]
+    fn resolve_semantic_phrase_role_ambiguous_returns_none() {
+        // Multi-scope: first scope (AmbaAxi) ambiguous, second scope
+        // (AmbaGeneric) unambiguous. Catches >→< and >→== at line 462.
+        let corpus = CorpusMemory {
+            semantic_phrase_priors: vec![
+                SemanticPhrasePriorRecord {
+                    prior_id: "sp_axi_1".into(),
+                    normalized_phrase: "valid signal".into(),
+                    role: InterfaceSignalSemanticRole::HandshakeValidLike,
+                    protocol_family: ProtocolFamily::AmbaAxi,
+                    source_kind: SignalSemanticHintSourceKind::ProseStatement,
+                    support_count: 5,
+                    supporting_document_keys: vec![],
+                    strongest_automation_confidence: AutomationConfidence::High,
+                    strongest_grounding_strength: SemanticGroundingStrength::MultiSource,
+                },
+                SemanticPhrasePriorRecord {
+                    prior_id: "sp_axi_2".into(),
+                    normalized_phrase: "valid signal".into(),
+                    role: InterfaceSignalSemanticRole::HandshakeReadyLike,
+                    protocol_family: ProtocolFamily::AmbaAxi,
+                    source_kind: SignalSemanticHintSourceKind::ProseStatement,
+                    support_count: 5,
+                    supporting_document_keys: vec![],
+                    strongest_automation_confidence: AutomationConfidence::High,
+                    strongest_grounding_strength: SemanticGroundingStrength::MultiSource,
+                },
+                SemanticPhrasePriorRecord {
+                    prior_id: "sp_gen".into(),
+                    normalized_phrase: "valid signal".into(),
+                    role: InterfaceSignalSemanticRole::HandshakeValidLike,
+                    protocol_family: ProtocolFamily::AmbaGeneric,
+                    source_kind: SignalSemanticHintSourceKind::ProseStatement,
+                    support_count: 5,
+                    supporting_document_keys: vec![],
+                    strongest_automation_confidence: AutomationConfidence::High,
+                    strongest_grounding_strength: SemanticGroundingStrength::MultiSource,
+                },
+            ],
+            ..make_test_corpus()
+        };
+        let signal_names: BTreeSet<String> = BTreeSet::new();
+        let actor_names: BTreeSet<String> = BTreeSet::new();
+        let result = corpus.semantic_phrase_role_in_text(
+            Some(ProtocolFamily::AmbaAxi),
+            SignalSemanticHintSourceKind::ProseStatement,
+            "valid signal",
+            &signal_names,
+            &actor_names,
+        );
+        assert!(result.is_none());
     }
 }
