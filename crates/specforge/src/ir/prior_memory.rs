@@ -1136,4 +1136,70 @@ mod tests {
             "truth_table"
         );
     }
+
+    // replace_term_with_placeholder unit tests
+
+    #[test]
+    fn replace_term_at_start_of_text() {
+        // Catches return String::new() and return "xyzzy" at line 813 —
+        // term at index 0 where is_word_boundary(text,0)=true.
+        let result = replace_term_with_placeholder("bar baz", "bar", "XXX");
+        assert_eq!(result, "XXX baz");
+    }
+
+    #[test]
+    fn replace_term_case_insensitive_at_start() {
+        let result = replace_term_with_placeholder("BAR baz", "bar", "XXX");
+        assert_eq!(result, "XXX baz");
+    }
+
+    #[test]
+    fn replace_term_not_at_start_is_not_replaced() {
+        // Catches &&→|| at lines 825-827 — "bar" not at index 0,
+        // is_word_boundary(text,4) checks 'b' which is alphanumeric → false.
+        // The term must NOT be replaced.
+        let result = replace_term_with_placeholder("foo bar baz", "bar", "XXX");
+        assert_eq!(result, "foo bar baz");
+    }
+
+    #[test]
+    fn replace_term_does_not_replace_subword() {
+        // Catches &&→|| at lines 825-826 — "bar" in "foobar" is not
+        // at a word boundary, so it must NOT be replaced.
+        let result = replace_term_with_placeholder("foobar baz", "bar", "XXX");
+        assert_eq!(result, "foobar baz");
+    }
+
+    #[test]
+    fn replace_term_empty_term_returns_original() {
+        // Catches <→== at line 822 — empty term early-return path.
+        let result = replace_term_with_placeholder("hello world", "", "XXX");
+        assert_eq!(result, "hello world");
+    }
+
+    #[test]
+    fn replace_term_not_found_returns_original() {
+        // Catches <→> at line 822 — if the loop never enters or scans
+        // without matching, the result must equal the original.
+        let result = replace_term_with_placeholder("hello world", "xyz", "XXX");
+        assert_eq!(result, "hello world");
+    }
+
+    #[test]
+    fn replace_term_at_start_with_hyphen_prefix_not_replaced() {
+        // Catches >=→< at line 824 — "bar" in "-bar" starts at index 1,
+        // remaining.len()=3 >= term.len()=3, but is_word_boundary(text,1)
+        // checks 'b' → alphanumeric → false → not replaced.
+        let result = replace_term_with_placeholder("-bar baz", "bar", "XXX");
+        assert_eq!(result, "-bar baz");
+    }
+
+    #[test]
+    fn replace_term_only_first_at_start_replaced() {
+        // Catches +=→-= and +=→*= at lines 830, 833 — first "bar" at index 0
+        // is replaced. Second "bar" at index 4 is NOT (is_word_boundary
+        // checks 'b'). Index must advance correctly.
+        let result = replace_term_with_placeholder("bar bar bar", "bar", "X");
+        assert_eq!(result, "X bar bar");
+    }
 }

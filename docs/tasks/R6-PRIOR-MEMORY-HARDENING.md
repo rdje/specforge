@@ -38,15 +38,15 @@ Fix 101 missed cargo-mutants in `crates/specforge/src/ir/prior_memory.rs` — sy
   Goal: `Fix 12 missed mutants across is_word_boundary (8), NegativeKnowledgeKind::as_str (2), table_kind_key (2), diagram_kind_key (2).`
   Acceptance: `14 mutants caught: return values, ||→&&, ==→!=, >=→<, &&→||, delete !, !=→==.`
   Verification: `cargo test -p specforge --lib — 855/855 passed`
-  Commit: pending
+  Commit: `29ba572b`
 
 ### Batch 2: replace_term_with_placeholder
 
 - ID: `R6-PRIOR-MEMORY-HARDENING.2`
-  Status: `pending`
+  Status: `done`
   Goal: `Fix 15 missed mutants in replace_term_with_placeholder — return values, <→==/</>, &&→|| x4, >=→<, +→*/- x2, +=→-=/*= x4.`
-  Acceptance: `High-value mutants caught: logic operators, comparison operators. Low-value arithmetic (+=→*=, +→*) may be deferred.`
-  Verification: pending
+  Acceptance: `11 caught, 3 timeouts (+=→-=/*= cause infinite loops), 1 missed (+→* low-value arithmetic deferred).`
+  Verification: `cargo test -p specforge --lib — 863/863 passed`
   Commit: pending
 
 ### Batch 3: is_meaningful_actor_term
