@@ -1039,3 +1039,101 @@ pub struct NegativeKnowledgePriorRecord {
     pub supporting_document_keys: Vec<String>,
     pub strongest_automation_confidence: AutomationConfidence,
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // is_word_boundary unit tests
+
+    #[test]
+    fn word_boundary_at_zero() {
+        assert!(is_word_boundary("abc", 0));
+    }
+
+    #[test]
+    fn word_boundary_at_length() {
+        assert!(is_word_boundary("abc", 3));
+    }
+
+    #[test]
+    fn word_boundary_beyond_length() {
+        assert!(is_word_boundary("abc", 10));
+    }
+
+    #[test]
+    fn word_boundary_at_alphanumeric_is_not_boundary() {
+        assert!(!is_word_boundary("abc", 1));
+    }
+
+    #[test]
+    fn word_boundary_at_underscore_is_not_boundary() {
+        assert!(!is_word_boundary("a_b", 1));
+    }
+
+    #[test]
+    fn word_boundary_at_hyphen_is_boundary() {
+        assert!(is_word_boundary("a-b", 1));
+    }
+
+    #[test]
+    fn word_boundary_at_space_is_boundary() {
+        assert!(is_word_boundary("a b", 1));
+    }
+
+    #[test]
+    fn word_boundary_zero_length_text() {
+        assert!(is_word_boundary("", 0));
+    }
+
+    // NegativeKnowledgeKind::as_str unit tests
+
+    #[test]
+    fn negative_knowledge_kind_as_str_signal_semantic_conflict() {
+        assert_eq!(
+            NegativeKnowledgeKind::SignalSemanticConflict.as_str(),
+            "signal_semantic_conflict"
+        );
+    }
+
+    #[test]
+    fn negative_knowledge_kind_as_str_residual_decision() {
+        assert_eq!(
+            NegativeKnowledgeKind::ResidualDecision.as_str(),
+            "residual_decision"
+        );
+    }
+
+    // table_kind_key unit tests
+
+    #[test]
+    fn table_kind_key_signal_description() {
+        assert_eq!(
+            table_kind_key(TableKind::SignalDescription),
+            "signal_description"
+        );
+    }
+
+    #[test]
+    fn table_kind_key_unknown() {
+        assert_eq!(table_kind_key(TableKind::Unknown), "unknown");
+    }
+
+    // diagram_kind_key unit tests
+
+    #[test]
+    fn diagram_kind_key_timing_diagram() {
+        assert_eq!(
+            diagram_kind_key(DiagramKind::TimingDiagram),
+            "timing_diagram"
+        );
+    }
+
+    #[test]
+    fn diagram_kind_key_truth_table() {
+        assert_eq!(
+            diagram_kind_key(DiagramKind::TruthTable),
+            "truth_table"
+        );
+    }
+}
