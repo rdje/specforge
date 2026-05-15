@@ -24,9 +24,9 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `3652db56`
-- latest_commit_brief_message: Remove R16 from roadmap — HDL lowering is out of scope
-- note: all 8 task trees now closed. 23 local commits ahead. 1014 tests passing. Near push checkpoint (~30). Next: resume PNT from roadmap remaining items (R15/R7 active lanes).
+- latest_commit_hash: `f4466096`
+- latest_commit_brief_message: Add AXI write-address timing gold KG fixture — R15e benchmark hardening
+- note: all 8 task trees closed. 28 local commits ahead. 1014 tests passing. 151/151 kg-bench fixtures. Push checkpoint (~30). R16 removed from scope. Added AXI write-address timing gold fixture — all five AXI channels now have timing coverage. Next: continue R15 graph-direction migration or find remaining fixture gaps.
 
 ## Recent commit chain (last 10)
 - `3652db56` Remove R16 from roadmap — HDL lowering is out of scope
