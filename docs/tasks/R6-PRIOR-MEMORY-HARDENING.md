@@ -56,15 +56,15 @@ Fix 101 missed cargo-mutants in `crates/specforge/src/ir/prior_memory.rs` — sy
   Goal: `Fix 8 missed mutants in is_meaningful_actor_term — all ||→&& across 8 stop-word checks.`
   Acceptance: `10 mutants caught: 8 ||→&& + 2 already covered.`
   Verification: `cargo test -p specforge --lib — 873/873 passed`
-  Commit: pending
+  Commit: `719ba634`
 
 ### Batch 4: normalized_text_contains_term + is_meaningful_prior_phrase + normalize_table_header_cell
 
 - ID: `R6-PRIOR-MEMORY-HARDENING.4`
-  Status: `pending`
+  Status: `done`
   Goal: `Fix 12 missed mutants across normalized_text_contains_term (2 ||→&&), is_meaningful_prior_phrase (9), normalize_table_header_cell (1 ==→!=).`
-  Acceptance: `12 mutants caught.`
-  Verification: pending
+  Acceptance: `34 mutants tested, all 34 caught (includes 22 previously covered + 12 newly covered).`
+  Verification: `cargo test -p specforge --lib — 888/888 passed`
   Commit: pending
 
 ### Batch 5: semantic_modality_reliability_prior_bonus

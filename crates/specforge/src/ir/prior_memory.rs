@@ -1264,4 +1264,96 @@ mod tests {
         let result = is_meaningful_actor_term("dma engine");
         assert!(result);
     }
+
+    // normalized_text_contains_term unit tests
+
+    #[test]
+    fn contains_term_empty_text_returns_false() {
+        // Catches ||→&& at line 645 — "text_tokens.is_empty() || term_tokens..."
+        assert!(!normalized_text_contains_term("", "clock"));
+    }
+
+    #[test]
+    fn contains_term_empty_term_returns_false() {
+        // Catches ||→&& at line 645 — "term_tokens.is_empty() || term_tokens.len() > ..."
+        assert!(!normalized_text_contains_term("clock signal", ""));
+    }
+
+    #[test]
+    fn contains_term_term_longer_than_text_returns_false() {
+        assert!(!normalized_text_contains_term("clock", "clock signal"));
+    }
+
+    #[test]
+    fn contains_term_exact_match_returns_true() {
+        assert!(normalized_text_contains_term("clock signal", "clock signal"));
+    }
+
+    #[test]
+    fn contains_term_window_match_returns_true() {
+        assert!(normalized_text_contains_term("the clock signal is", "clock signal"));
+    }
+
+    #[test]
+    fn contains_term_no_match_returns_false() {
+        assert!(!normalized_text_contains_term("clock signal", "reset"));
+    }
+
+    // is_meaningful_prior_phrase unit tests
+
+    #[test]
+    fn meaningful_prior_phrase_empty_returns_false() {
+        // Catches &&→|| at line 723 — empty must return false.
+        assert!(!is_meaningful_prior_phrase(""));
+    }
+
+    #[test]
+    fn meaningful_prior_phrase_signal_placeholder_returns_false() {
+        // Catches &&→|| at line 724 — "<signal>" must not be meaningful.
+        assert!(!is_meaningful_prior_phrase("<signal>"));
+    }
+
+    #[test]
+    fn meaningful_prior_phrase_actor_placeholder_returns_false() {
+        // Catches &&→|| at line 725 — "<actor>" must not be meaningful.
+        assert!(!is_meaningful_prior_phrase("<actor>"));
+    }
+
+    #[test]
+    fn meaningful_prior_phrase_no_lowercase_returns_false() {
+        // Catches &&→|| at line 726 — text with no lowercase letters is not meaningful.
+        assert!(!is_meaningful_prior_phrase("123 DMA VIP 456"));
+    }
+
+    #[test]
+    fn meaningful_prior_phrase_only_one_meaningful_term_returns_false() {
+        // Catches &&→|| at line 727 — need at least 2 meaningful terms.
+        assert!(!is_meaningful_prior_phrase("clock"));
+    }
+
+    #[test]
+    fn meaningful_prior_phrase_two_meaningful_terms_returns_true() {
+        // Catches return true at line 714 — two meaningful terms must pass.
+        assert!(is_meaningful_prior_phrase("clock signal"));
+    }
+
+    #[test]
+    fn meaningful_prior_phrase_bracket_trimmed_signal_not_meaningful() {
+        // Catches !=→== at lines 718 — "<signal>" with brackets trimmed
+        // must still be filtered as placeholder.
+        assert!(!is_meaningful_prior_phrase("<signal> something"));
+    }
+
+    // normalize_table_header_cell unit tests
+
+    #[test]
+    fn normalize_table_header_cell_preserves_underscore() {
+        // Catches ==→!= at line 756 — underscore must be preserved.
+        assert_eq!(normalize_table_header_cell("signal_name"), "signal_name");
+    }
+
+    #[test]
+    fn normalize_table_header_cell_replaces_hyphen_with_space() {
+        assert_eq!(normalize_table_header_cell("signal-name"), "signal name");
+    }
 }
