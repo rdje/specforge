@@ -1411,4 +1411,288 @@ mod tests {
         let prior = make_reliability_prior(2, SemanticGroundingStrength::SingleSource);
         assert_eq!(semantic_modality_reliability_prior_bonus(&prior), 0);
     }
+
+    // CorpusMemory filter method unit tests
+    // Helper to construct a minimal CorpusMemory for testing
+
+    fn make_test_corpus() -> CorpusMemory {
+        CorpusMemory {
+            schema_version: 1,
+            update_policy: CorpusMemoryUpdatePolicyRecord {
+                advisory_only: false,
+                requires_validated_intent_ir: false,
+                rejects_error_findings: false,
+                excludes_alias_dependent_semantic_consensus: false,
+                local_grounding_required_for_canonical_promotion: false,
+            },
+            source_artifacts: vec![],
+            actor_taxonomy_priors: vec![ActorTaxonomyPriorRecord {
+                prior_id: "at1".into(),
+                normalized_actor_term: "dma".into(),
+                taxonomy_role: ActorTaxonomyRole::RequesterLike,
+                protocol_family: ProtocolFamily::AmbaAxi,
+                support_count: 5,
+                supporting_document_keys: vec![],
+                strongest_automation_confidence: AutomationConfidence::High,
+                strongest_grounding_strength: SemanticGroundingStrength::MultiSource,
+            }],
+            semantic_phrase_priors: vec![SemanticPhrasePriorRecord {
+                prior_id: "sp1".into(),
+                normalized_phrase: "valid signal".into(),
+                role: InterfaceSignalSemanticRole::HandshakeValidLike,
+                protocol_family: ProtocolFamily::AmbaAxi,
+                source_kind: SignalSemanticHintSourceKind::ProseStatement,
+                support_count: 5,
+                supporting_document_keys: vec![],
+                strongest_automation_confidence: AutomationConfidence::High,
+                strongest_grounding_strength: SemanticGroundingStrength::MultiSource,
+            }],
+            semantic_modality_reliability_priors: vec![],
+            temporal_phrase_priors: vec![TemporalPhrasePriorRecord {
+                prior_id: "tp1".into(),
+                normalized_phrase: "after reset".into(),
+                protocol_family: ProtocolFamily::AmbaAxi,
+                cycle_window: Some(CycleWindowRecord {
+                    min_cycles: Some(2),
+                    max_cycles: Some(2),
+                }),
+                actor_grounded: true,
+                handshake_completion: false,
+                support_count: 3,
+                supporting_document_keys: vec![],
+                strongest_automation_confidence: AutomationConfidence::High,
+            }],
+            table_shape_priors: vec![TableShapePriorRecord {
+                prior_id: "ts1".into(),
+                normalized_header_signature: "signal | description".into(),
+                table_kind: TableKind::SignalDescription,
+                protocol_family: ProtocolFamily::AmbaAxi,
+                support_count: 5,
+                supporting_document_keys: vec![],
+                strongest_automation_confidence: AutomationConfidence::High,
+            }],
+            visual_motif_priors: vec![VisualMotifPriorRecord {
+                prior_id: "vm1".into(),
+                normalized_caption_phrase: Some("state machine".into()),
+                diagram_kind: DiagramKind::StateMachineDiagram,
+                asset_kind: VisualAssetKind::Diagram,
+                protocol_family: ProtocolFamily::AmbaAxi,
+                support_count: 5,
+                supporting_document_keys: vec![],
+                strongest_automation_confidence: AutomationConfidence::High,
+            }],
+            negative_knowledge_priors: vec![NegativeKnowledgePriorRecord {
+                prior_id: "nk1".into(),
+                knowledge_kind: NegativeKnowledgeKind::SignalSemanticConflict,
+                normalized_pattern: "VALID conflict".into(),
+                protocol_family: ProtocolFamily::AmbaAxi,
+                support_count: 3,
+                supporting_document_keys: vec![],
+                strongest_automation_confidence: AutomationConfidence::High,
+            }],
+        }
+    }
+
+    // semantic_phrase_priors_for
+
+    #[test]
+    fn semantic_phrase_priors_for_matching_filter() {
+        // Catches vec![] at line 88 — must return matching records.
+        let corpus = make_test_corpus();
+        let results = corpus.semantic_phrase_priors_for(
+            Some(ProtocolFamily::AmbaAxi),
+            Some(SignalSemanticHintSourceKind::ProseStatement),
+            Some(InterfaceSignalSemanticRole::HandshakeValidLike),
+        );
+        assert_eq!(results.len(), 1);
+    }
+
+    #[test]
+    fn semantic_phrase_priors_for_non_matching_protocol() {
+        // Catches ==→!= at line 92 — wrong protocol must exclude record.
+        let corpus = make_test_corpus();
+        let results = corpus.semantic_phrase_priors_for(
+            Some(ProtocolFamily::AmbaApb),
+            Some(SignalSemanticHintSourceKind::ProseStatement),
+            Some(InterfaceSignalSemanticRole::HandshakeValidLike),
+        );
+        assert!(results.is_empty());
+    }
+
+    #[test]
+    fn semantic_phrase_priors_for_no_filters_returns_all() {
+        // Catches &&→|| at line 94 — with no filters, all records pass.
+        let corpus = make_test_corpus();
+        let results = corpus.semantic_phrase_priors_for(None, None, None);
+        assert_eq!(results.len(), 1);
+    }
+
+    // actor_taxonomy_priors_for
+
+    #[test]
+    fn actor_taxonomy_priors_for_matching_filter() {
+        // Catches vec![] at line 107.
+        let corpus = make_test_corpus();
+        let results = corpus.actor_taxonomy_priors_for(
+            Some(ProtocolFamily::AmbaAxi),
+            Some(ActorTaxonomyRole::RequesterLike),
+        );
+        assert_eq!(results.len(), 1);
+    }
+
+    #[test]
+    fn actor_taxonomy_priors_for_non_matching_role() {
+        // Catches ==→!= at line 114 — wrong role must exclude record.
+        let corpus = make_test_corpus();
+        let results = corpus.actor_taxonomy_priors_for(
+            Some(ProtocolFamily::AmbaAxi),
+            Some(ActorTaxonomyRole::CompleterLike),
+        );
+        assert!(results.is_empty());
+    }
+
+    #[test]
+    fn actor_taxonomy_priors_for_no_filters_returns_all() {
+        // Catches &&→|| at line 113.
+        let corpus = make_test_corpus();
+        let results = corpus.actor_taxonomy_priors_for(None, None);
+        assert_eq!(results.len(), 1);
+    }
+
+    // temporal_phrase_priors_for
+
+    #[test]
+    fn temporal_phrase_priors_for_matching_filter() {
+        // Catches vec![] at line 179.
+        let corpus = make_test_corpus();
+        let results = corpus.temporal_phrase_priors_for(
+            Some(ProtocolFamily::AmbaAxi),
+            false,
+            Some(true),
+        );
+        assert_eq!(results.len(), 1);
+    }
+
+    #[test]
+    fn temporal_phrase_priors_for_requires_cycle_window_matching() {
+        // requires_cycle_window=true with record that has a cycle window.
+        let corpus = make_test_corpus();
+        let results = corpus.temporal_phrase_priors_for(
+            Some(ProtocolFamily::AmbaAxi),
+            true,
+            None,
+        );
+        assert_eq!(results.len(), 1);
+    }
+
+    #[test]
+    fn temporal_phrase_priors_for_requires_cycle_window_excludes_no_window() {
+        // Catches delete ! at line 185 — requires_cycle_window=true must
+        // exclude records without a cycle window. Mutant (delete !) would
+        // keep them.
+        let corpus = CorpusMemory {
+            temporal_phrase_priors: vec![TemporalPhrasePriorRecord {
+                prior_id: "tp_no_win".into(),
+                normalized_phrase: "after reset".into(),
+                protocol_family: ProtocolFamily::AmbaAxi,
+                cycle_window: None,
+                actor_grounded: true,
+                handshake_completion: false,
+                support_count: 3,
+                supporting_document_keys: vec![],
+                strongest_automation_confidence: AutomationConfidence::High,
+            }],
+            ..make_test_corpus()
+        };
+        let results = corpus.temporal_phrase_priors_for(
+            Some(ProtocolFamily::AmbaAxi),
+            true,
+            None,
+        );
+        assert!(results.is_empty());
+    }
+
+    #[test]
+    fn temporal_phrase_priors_for_non_matching_actor_grounded() {
+        // Catches ==→!= at line 187 — actor_grounded mismatch must exclude.
+        let corpus = make_test_corpus();
+        let results = corpus.temporal_phrase_priors_for(
+            Some(ProtocolFamily::AmbaAxi),
+            false,
+            Some(false),
+        );
+        assert!(results.is_empty());
+    }
+
+    // table_shape_priors_for
+
+    #[test]
+    fn table_shape_priors_for_matching_filter() {
+        // Catches vec![] at line 274.
+        let corpus = make_test_corpus();
+        let results = corpus.table_shape_priors_for(
+            Some(ProtocolFamily::AmbaAxi),
+            Some(TableKind::SignalDescription),
+        );
+        assert_eq!(results.len(), 1);
+    }
+
+    #[test]
+    fn table_shape_priors_for_non_matching_kind() {
+        // Catches ==→!= at line 281 — wrong table kind must exclude.
+        let corpus = make_test_corpus();
+        let results = corpus.table_shape_priors_for(
+            Some(ProtocolFamily::AmbaAxi),
+            Some(TableKind::RegisterMap),
+        );
+        assert!(results.is_empty());
+    }
+
+    // visual_motif_priors_for
+
+    #[test]
+    fn visual_motif_priors_for_matching_filter() {
+        // Catches vec![] at line 292.
+        let corpus = make_test_corpus();
+        let results = corpus.visual_motif_priors_for(
+            Some(ProtocolFamily::AmbaAxi),
+            Some(DiagramKind::StateMachineDiagram),
+        );
+        assert_eq!(results.len(), 1);
+    }
+
+    #[test]
+    fn visual_motif_priors_for_non_matching_kind() {
+        // Catches ==→!= at line 299 — wrong diagram kind must exclude.
+        let corpus = make_test_corpus();
+        let results = corpus.visual_motif_priors_for(
+            Some(ProtocolFamily::AmbaAxi),
+            Some(DiagramKind::TimingDiagram),
+        );
+        assert!(results.is_empty());
+    }
+
+    // negative_knowledge_priors_for
+
+    #[test]
+    fn negative_knowledge_priors_for_matching_filter() {
+        // Catches vec![] at line 310.
+        let corpus = make_test_corpus();
+        let results = corpus.negative_knowledge_priors_for(
+            Some(ProtocolFamily::AmbaAxi),
+            Some(NegativeKnowledgeKind::SignalSemanticConflict),
+        );
+        assert_eq!(results.len(), 1);
+    }
+
+    #[test]
+    fn negative_knowledge_priors_for_non_matching_kind() {
+        // Catches ==→!= at line 317 — wrong knowledge kind must exclude.
+        let corpus = make_test_corpus();
+        let results = corpus.negative_knowledge_priors_for(
+            Some(ProtocolFamily::AmbaAxi),
+            Some(NegativeKnowledgeKind::ResidualDecision),
+        );
+        assert!(results.is_empty());
+    }
 }
