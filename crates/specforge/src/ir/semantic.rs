@@ -19482,4 +19482,84 @@ mod tests {
         let word_count = extracted.split_whitespace().count();
         assert_eq!(word_count, 4);
     }
+
+    // parse_width_token unit tests
+
+    #[test]
+    fn width_token_parses_numeric() {
+        assert_eq!(
+            super::parse_width_token("8"),
+            Some(super::WidthHint::Numeric(8))
+        );
+    }
+
+    #[test]
+    fn width_token_rejects_zero() {
+        // Catches >→>= at line 5734
+        assert_eq!(super::parse_width_token("0"), None);
+    }
+
+    #[test]
+    fn width_token_rejects_non_alphanumeric() {
+        // Catches &&→|| at line 5738 — non-empty, no alpha chars
+        assert_eq!(super::parse_width_token("#"), None);
+    }
+
+    #[test]
+    fn width_token_parses_parametric() {
+        assert_eq!(
+            super::parse_width_token("ADDR_WIDTH"),
+            Some(super::WidthHint::Parametric("ADDR_WIDTH".to_string()))
+        );
+    }
+
+    #[test]
+    fn width_token_parses_bit_suffix() {
+        assert_eq!(
+            super::parse_width_token("8-bit"),
+            Some(super::WidthHint::Numeric(8))
+        );
+    }
+
+    // parse_primary unit tests (ControlExpressionParser)
+
+    #[test]
+    fn control_expr_parse_primary_literal_true() {
+        let tokens = vec!["true".to_string()];
+        let signals = BTreeSet::new();
+        let symbols = BTreeSet::new();
+        let mut parser = super::ControlExpressionParser::new(tokens, &signals, &symbols);
+        let result = parser.parse_primary();
+        assert!(matches!(
+            result,
+            Some(super::ControlExpressionRecord::Literal { .. })
+        ));
+    }
+
+    #[test]
+    fn control_expr_parse_primary_literal_false() {
+        // Catches ||→&& at line 5514 — "false" alone must still be a literal
+        let tokens = vec!["false".to_string()];
+        let signals = BTreeSet::new();
+        let symbols = BTreeSet::new();
+        let mut parser = super::ControlExpressionParser::new(tokens, &signals, &symbols);
+        let result = parser.parse_primary();
+        assert!(matches!(
+            result,
+            Some(super::ControlExpressionRecord::Literal { .. })
+        ));
+    }
+
+    #[test]
+    fn control_expr_parse_primary_numeric_literal() {
+        let tokens = vec!["42".to_string()];
+        let signals = BTreeSet::new();
+        let symbols = BTreeSet::new();
+        let mut parser = super::ControlExpressionParser::new(tokens, &signals, &symbols);
+        let result = parser.parse_primary();
+        assert!(matches!(
+            result,
+            Some(super::ControlExpressionRecord::Literal { .. })
+        ));
+    }
 }
