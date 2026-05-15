@@ -11300,7 +11300,12 @@ mod tests {
         assert_eq!(adapter.required_input_stage.as_str(), "intent_ir");
         assert_eq!(adapter.lowering_status.as_str(), "blocked");
         assert!(!adapter.adapter_identity.adapter_id.is_empty());
-        assert!(adapter.adapter_identity.adapter_id.starts_with("adapter_fsm_"));
+        assert!(
+            adapter
+                .adapter_identity
+                .adapter_id
+                .starts_with("adapter_fsm_")
+        );
         assert!(!adapter.adapter_identity.summary.is_empty());
         assert!(adapter.adapter_identity.summary.contains("`.fsm`"));
         assert!(!adapter.document_identity.document_key.is_empty());
@@ -11977,12 +11982,13 @@ mod tests {
                 .any(|reason| reason
                     == "Declared output signal `UNUSED_OUT` is not driven by any typed control action.")
         );
-        assert!(fsm
-            .renderability
-            .required_canonical_enrichments
-            .iter()
-            .any(|enrichment| enrichment
-                == "keep canonical output roles aligned with explicit driving actions"));
+        assert!(
+            fsm.renderability
+                .required_canonical_enrichments
+                .iter()
+                .any(|enrichment| enrichment
+                    == "keep canonical output roles aligned with explicit driving actions")
+        );
 
         Ok(())
     }
@@ -14102,7 +14108,13 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert!(fsm.renderable_module.is_some());
-        assert!(!fsm.renderable_module.as_ref().unwrap().symbol_definitions.is_empty());
+        assert!(
+            !fsm.renderable_module
+                .as_ref()
+                .unwrap()
+                .symbol_definitions
+                .is_empty()
+        );
         assert!(fsm.renderable_document.is_some());
         assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Dt);
         assert_eq!(
@@ -14410,7 +14422,13 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderability.required_canonical_enrichments.is_empty());
         assert!(fsm.renderable_module.is_some());
-        assert!(!fsm.renderable_module.as_ref().unwrap().symbol_definitions.is_empty());
+        assert!(
+            !fsm.renderable_module
+                .as_ref()
+                .unwrap()
+                .symbol_definitions
+                .is_empty()
+        );
         assert!(fsm.renderable_document.is_some());
         assert_eq!(fsm.root_kind_decision.selected_root_kind, FsmRootKind::Dt);
         assert_eq!(
@@ -14960,12 +14978,13 @@ mod tests {
                 .any(|reason| reason
                     == "Declared output signal `UNUSED_TRACE` is not driven by any typed FSM-state action.")
         );
-        assert!(fsm
-            .renderability
-            .required_canonical_enrichments
-            .iter()
-            .any(|enrichment| enrichment
-                == "keep canonical output roles aligned with explicit FSM-state actions"));
+        assert!(
+            fsm.renderability
+                .required_canonical_enrichments
+                .iter()
+                .any(|enrichment| enrichment
+                    == "keep canonical output roles aligned with explicit FSM-state actions")
+        );
 
         Ok(())
     }
@@ -18420,12 +18439,13 @@ mod tests {
         assert!(!fsm.renderability.blocking_reasons.is_empty());
         assert!(fsm.renderable_module.is_none());
         assert!(fsm.renderable_document.is_none());
-        assert!(fsm
-            .renderability
-            .required_canonical_enrichments
-            .iter()
-            .any(|enrichment| enrichment
-                == "carry explicit child-module references before lowering `?top:name`"));
+        assert!(
+            fsm.renderability
+                .required_canonical_enrichments
+                .iter()
+                .any(|enrichment| enrichment
+                    == "carry explicit child-module references before lowering `?top:name`")
+        );
 
         Ok(())
     }
@@ -27457,12 +27477,13 @@ mod tests {
         assert!(fsm.renderability.blocking_reasons.iter().any(|reason| {
             reason.contains("Transition target `missing_state` is not declared")
         }));
-        assert!(fsm
-            .renderability
-            .required_canonical_enrichments
-            .iter()
-            .any(|enrichment| enrichment
-                == "declare every transition target as an explicit canonical regular state"));
+        assert!(
+            fsm.renderability
+                .required_canonical_enrichments
+                .iter()
+                .any(|enrichment| enrichment
+                    == "declare every transition target as an explicit canonical regular state")
+        );
         let state_graph_residual = adapter
             .residual_decisions
             .iter()

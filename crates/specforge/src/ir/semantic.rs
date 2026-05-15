@@ -10594,13 +10594,15 @@ mod tests {
             semantic_ir
                 .actors
                 .iter()
-                .any(|actor| actor.actor_id == "actor_transmitter" && !actor.supporting_statement_ids.is_empty())
+                .any(|actor| actor.actor_id == "actor_transmitter"
+                    && !actor.supporting_statement_ids.is_empty())
         );
         assert!(
             semantic_ir
                 .actors
                 .iter()
-                .any(|actor| actor.actor_id == "actor_receiver" && !actor.supporting_statement_ids.is_empty())
+                .any(|actor| actor.actor_id == "actor_receiver"
+                    && !actor.supporting_statement_ids.is_empty())
         );
         assert!(semantic_ir.interfaces.iter().any(|interface| {
             interface.signals.contains(&"VALID".to_string())
@@ -10613,7 +10615,12 @@ mod tests {
                 && !invariant.supporting_statement_ids.is_empty()
         }));
         assert!(!semantic_ir.gates.is_empty());
-        assert!(semantic_ir.gates.iter().all(|gate| !gate.supporting_statement_ids.is_empty()));
+        assert!(
+            semantic_ir
+                .gates
+                .iter()
+                .all(|gate| !gate.supporting_statement_ids.is_empty())
+        );
         assert!(semantic_ir.residual_decisions.is_empty());
 
         Ok(())
@@ -11103,9 +11110,11 @@ mod tests {
         );
         assert!(!system_contract.supporting_statement_ids.is_empty());
         assert_eq!(semantic_ir.init_assignments.len(), 1);
-        assert!(!semantic_ir.init_assignments[0]
-            .supporting_statement_ids
-            .is_empty());
+        assert!(
+            !semantic_ir.init_assignments[0]
+                .supporting_statement_ids
+                .is_empty()
+        );
 
         Ok(())
     }
@@ -11220,14 +11229,11 @@ mod tests {
                 && definition.kind == SymbolDefinitionKind::Enum
                 && definition.declaration_order == 2
                 && definition.members.len() == 2
-                && definition
-                    .members
-                    .iter()
-                    .any(|member| {
-                        member.member_name == "idle"
-                            && member.automation_confidence == AutomationConfidence::High
-                            && !member.supporting_statement_ids.is_empty()
-                    })
+                && definition.members.iter().any(|member| {
+                    member.member_name == "idle"
+                        && member.automation_confidence == AutomationConfidence::High
+                        && !member.supporting_statement_ids.is_empty()
+                })
                 && definition.automation_confidence == AutomationConfidence::High
                 && !definition.supporting_statement_ids.is_empty()
         }));
@@ -11238,7 +11244,10 @@ mod tests {
             .find(|block| block.block_name == "decode")
             .expect("decode control block should be present");
         assert_eq!(decode_block.role, ControlBlockRole::StandaloneDecisionTree);
-        assert_eq!(decode_block.automation_confidence, AutomationConfidence::High);
+        assert_eq!(
+            decode_block.automation_confidence,
+            AutomationConfidence::High
+        );
         assert!(!decode_block.supporting_statement_ids.is_empty());
         assert!(matches!(
             decode_block.selector.as_ref(),
@@ -11450,7 +11459,10 @@ mod tests {
         assert_eq!(explicit_top.ports.len(), 1);
         assert_eq!(explicit_top.children.len(), 2);
         assert_eq!(explicit_top.links.len(), 2);
-        assert_eq!(explicit_top.automation_confidence, AutomationConfidence::High);
+        assert_eq!(
+            explicit_top.automation_confidence,
+            AutomationConfidence::High
+        );
         assert!(!explicit_top.supporting_statement_ids.is_empty());
         assert!(explicit_top.ports.iter().any(|port| {
             port.port_name == "result_data"
@@ -11545,13 +11557,15 @@ mod tests {
             semantic_ir
                 .decision_tree_fragments
                 .iter()
-                .any(|fragment| fragment.block_name == "idle" && !fragment.supporting_statement_ids.is_empty())
+                .any(|fragment| fragment.block_name == "idle"
+                    && !fragment.supporting_statement_ids.is_empty())
         );
         assert!(
             semantic_ir
                 .decision_tree_fragments
                 .iter()
-                .any(|fragment| fragment.block_name == "busy" && !fragment.supporting_statement_ids.is_empty())
+                .any(|fragment| fragment.block_name == "busy"
+                    && !fragment.supporting_statement_ids.is_empty())
         );
 
         Ok(())
@@ -12730,8 +12744,18 @@ mod tests {
                 .filter_map(|actor| actor.actor_name.as_deref())
                 .any(|name| name.eq_ignore_ascii_case("Requester"))
         );
-        assert!(semantic_ir.actors.iter().all(|actor| !actor.supporting_statement_ids.is_empty()));
-        assert!(semantic_ir.actors.iter().all(|actor| !actor.supporting_section_ids.is_empty()));
+        assert!(
+            semantic_ir
+                .actors
+                .iter()
+                .all(|actor| !actor.supporting_statement_ids.is_empty())
+        );
+        assert!(
+            semantic_ir
+                .actors
+                .iter()
+                .all(|actor| !actor.supporting_section_ids.is_empty())
+        );
 
         let completer_pready = semantic_ir
             .actor_ports
@@ -13760,9 +13784,11 @@ mod tests {
             xreq_consensus.automation_confidence,
             AutomationConfidence::Medium
         );
-        assert!(xreq.semantic_observations.iter().all(|observation| {
-            !observation.supporting_table_ids.is_empty()
-        }));
+        assert!(
+            xreq.semantic_observations
+                .iter()
+                .all(|observation| { !observation.supporting_table_ids.is_empty() })
+        );
 
         Ok(())
     }
@@ -18527,9 +18553,7 @@ mod tests {
     #[test]
     fn parse_explicit_system_reset_returns_none_for_non_reset_text() {
         // tokens.len() >= 4 but tokens[0] != "reset" — catches ||→&& mutant
-        assert!(
-            super::parse_explicit_system_reset("Signal clk is input width 1.").is_none()
-        );
+        assert!(super::parse_explicit_system_reset("Signal clk is input width 1.").is_none());
     }
 
     #[test]
@@ -18541,9 +18565,8 @@ mod tests {
     #[test]
     fn parse_explicit_system_reset_parses_signal_keyword_form() {
         // "reset signal X is ..." — catches >=→< mutant
-        let result = super::parse_explicit_system_reset(
-            "Reset signal rst_n is synchronous active low.",
-        );
+        let result =
+            super::parse_explicit_system_reset("Reset signal rst_n is synchronous active low.");
         assert!(result.is_some());
     }
 
@@ -18552,8 +18575,7 @@ mod tests {
     #[test]
     fn tokenize_two_char_operator_not_equals() {
         // Catches +→* mutant at line 5338 — pair character at index*1 picks wrong char
-        let tokens = super::tokenize_control_expression("x != y")
-            .expect("tokenize 'x != y'");
+        let tokens = super::tokenize_control_expression("x != y").expect("tokenize 'x != y'");
         assert_eq!(tokens, vec!["x", "!=", "y"]);
     }
 
@@ -18561,24 +18583,21 @@ mod tests {
     fn tokenize_identifier_starting_with_underscore() {
         // Catches ==→!= (underscore) mutant at line 5371 — _ as first char hits
         // the outer-while condition, not the inner scanner loop
-        let tokens = super::tokenize_control_expression("_foo")
-            .expect("tokenize '_foo'");
+        let tokens = super::tokenize_control_expression("_foo").expect("tokenize '_foo'");
         assert_eq!(tokens, vec!["_foo"]);
     }
 
     #[test]
     fn tokenize_identifier_starting_with_apostrophe() {
         // Catches ==→!= (apostrophe) mutant at line 5371
-        let tokens = super::tokenize_control_expression("'bar")
-            .expect("tokenize '''bar''");
+        let tokens = super::tokenize_control_expression("'bar").expect("tokenize '''bar''");
         assert_eq!(tokens, vec!["'bar"]);
     }
 
     #[test]
     fn tokenize_identifier_with_underscore() {
         // Catches ||→&& mutant at line 5371 — 'm' fails && character == '_'
-        let tokens = super::tokenize_control_expression("my_signal")
-            .expect("tokenize 'my_signal'");
+        let tokens = super::tokenize_control_expression("my_signal").expect("tokenize 'my_signal'");
         assert_eq!(tokens, vec!["my_signal"]);
     }
 
@@ -18587,8 +18606,7 @@ mod tests {
     #[test]
     fn extract_actor_after_by_returns_actor_following_by_with_the_prefix() {
         // Catches return None, return Some(""), return Some("xyzzy") mutants
-        let actor =
-            super::extract_actor_after_by("driven by the CPU").expect("should find actor");
+        let actor = super::extract_actor_after_by("driven by the CPU").expect("should find actor");
         assert!(!actor.is_empty());
         assert_eq!(actor, "CPU");
     }
@@ -18660,11 +18678,7 @@ mod tests {
     fn allowed_vlm_signal_rejects_generic_term_when_known_set_empty() {
         // Catches delete ! and &&→|| mutants at line 9687
         let known_signals = HashSet::new();
-        assert!(super::parse_allowed_vlm_observation_signal(
-            "Transfer",
-            &known_signals
-        )
-        .is_none());
+        assert!(super::parse_allowed_vlm_observation_signal("Transfer", &known_signals).is_none());
     }
 
     #[test]
@@ -18696,7 +18710,9 @@ mod tests {
     #[test]
     fn non_quantitative_motion_annotation_recognizes_rise() {
         // Catches first ||→&& mutant at line 9817 col 33 — alphanumeric stops being kept
-        assert!(super::is_non_quantitative_waveform_motion_annotation("rise"));
+        assert!(super::is_non_quantitative_waveform_motion_annotation(
+            "rise"
+        ));
     }
 
     #[test]
@@ -18704,13 +18720,17 @@ mod tests {
         // Catches second ||→&& mutant at line 9817 col 69 — underscore stops being a token char.
         // "rose_fell": combined token "rose_fell" → no motion match → original returns false.
         // With mutation, splits into ["rose", "fell"] → "rose" matches fallback → returns true.
-        assert!(!super::is_non_quantitative_waveform_motion_annotation("rose_fell"));
+        assert!(!super::is_non_quantitative_waveform_motion_annotation(
+            "rose_fell"
+        ));
     }
 
     #[test]
     fn non_quantitative_motion_annotation_rejects_text_without_motion_tokens() {
         // Catches ||→&& mutant at line 9823 — mutation would skip the early-return guard
-        assert!(!super::is_non_quantitative_waveform_motion_annotation("hello world"));
+        assert!(!super::is_non_quantitative_waveform_motion_annotation(
+            "hello world"
+        ));
     }
 
     // is_timing_annotation_constraint_token unit tests
@@ -19006,10 +19026,7 @@ mod tests {
 
     #[test]
     fn contains_token_phrase_matches_window() {
-        assert!(super::contains_token_phrase(
-            &["a", "b", "c"],
-            &["b", "c"]
-        ));
+        assert!(super::contains_token_phrase(&["a", "b", "c"], &["b", "c"]));
     }
 
     // parse_cardinal_cycle_count_value unit tests
@@ -19319,10 +19336,7 @@ mod tests {
     #[test]
     fn infrastructure_source_actor_returns_none_for_no_match() {
         // Catches return None mutant
-        let result = super::parse_explicit_infrastructure_source_actor(
-            "no signal here",
-            "CLK",
-        );
+        let result = super::parse_explicit_infrastructure_source_actor("no signal here", "CLK");
         assert!(result.is_none());
     }
 
@@ -19350,10 +19364,8 @@ mod tests {
 
     #[test]
     fn infrastructure_distribution_actors_returns_empty_for_no_match() {
-        let result = super::parse_explicit_infrastructure_distribution_actors(
-            "no signal here",
-            "CLK",
-        );
+        let result =
+            super::parse_explicit_infrastructure_distribution_actors("no signal here", "CLK");
         assert!(result.is_empty());
     }
 
@@ -19673,29 +19685,22 @@ mod tests {
     #[test]
     fn clock_gated_branch_detects_gated_branch() {
         // Catches ||→&& at line 3442 — "gated branch" without clock prefix
-        let result = super::parse_explicit_clock_gated_branch(
-            "CLK gated branch, feeds the CPU",
-            "CLK",
-        );
+        let result =
+            super::parse_explicit_clock_gated_branch("CLK gated branch, feeds the CPU", "CLK");
         assert!(result.is_some());
     }
 
     #[test]
     fn clock_gated_branch_detects_clock_gate() {
         // Catches ||→&& at line 3443 — "clock gate" without "gated by"
-        let result = super::parse_explicit_clock_gated_branch(
-            "CLK clock gate, feeds the CPU",
-            "CLK",
-        );
+        let result =
+            super::parse_explicit_clock_gated_branch("CLK clock gate, feeds the CPU", "CLK");
         assert!(result.is_some());
     }
 
     #[test]
     fn clock_gated_branch_rejects_unrelated_text() {
-        let result = super::parse_explicit_clock_gated_branch(
-            "CLK drives the CPU",
-            "CLK",
-        );
+        let result = super::parse_explicit_clock_gated_branch("CLK drives the CPU", "CLK");
         assert!(result.is_none());
     }
 
@@ -19714,19 +19719,14 @@ mod tests {
     fn reset_synchronizer_rejects_text_without_synchronizer_term() {
         // Catches ||→&& at line 3491 — signal found but neither synchronizer term present.
         // Mutant changes guard to F && Inner, allowing fall-through to stage/target parsing.
-        let result = super::parse_explicit_reset_synchronizer_stages(
-            "CLK feeds the CPU, 2 stages",
-            "CLK",
-        );
+        let result =
+            super::parse_explicit_reset_synchronizer_stages("CLK feeds the CPU, 2 stages", "CLK");
         assert!(result.is_none());
     }
 
     #[test]
     fn reset_synchronizer_rejects_unrelated_text() {
-        let result = super::parse_explicit_reset_synchronizer_stages(
-            "CLK drives the CPU",
-            "CLK",
-        );
+        let result = super::parse_explicit_reset_synchronizer_stages("CLK drives the CPU", "CLK");
         assert!(result.is_none());
     }
 
@@ -19880,21 +19880,30 @@ mod tests {
     fn extract_cycle_window_most_without_at_returns_none() {
         // Line 8714: &&→|| — "most" without "at" should not trigger "at most" path.
         let result = super::extract_cycle_window_from_text("most 5 cycles");
-        assert!(result.is_none(), "most 5 cycles: expected None, got {result:?}");
+        assert!(
+            result.is_none(),
+            "most 5 cycles: expected None, got {result:?}"
+        );
     }
 
     #[test]
     fn extract_cycle_window_more_without_no_returns_none() {
         // Lines 8726-8727: &&→|| — "more" without "no" should not trigger "no more than" path.
         let result = super::extract_cycle_window_from_text("more than 5 cycles");
-        assert!(result.is_none(), "more than 5 cycles: expected None, got {result:?}");
+        assert!(
+            result.is_none(),
+            "more than 5 cycles: expected None, got {result:?}"
+        );
     }
 
     #[test]
     fn extract_cycle_window_no_more_without_than_returns_none() {
         // Line 8727: &&→|| — "no more" without "than" should not match.
         let result = super::extract_cycle_window_from_text("no more 5 cycles");
-        assert!(result.is_none(), "no more 5 cycles: expected None, got {result:?}");
+        assert!(
+            result.is_none(),
+            "no more 5 cycles: expected None, got {result:?}"
+        );
     }
 
     // -- extract_cycle_window_from_text_with_known_signals high-value mutants --
@@ -19907,24 +19916,28 @@ mod tests {
     fn cycle_window_known_signals_between_non_between_token_skipped() {
         // Line 8865: !=→== — "bztween" (typo, not "between") should be skipped.
         let signals = known_signal_set(&["clk"]);
-        let result =
-            super::extract_cycle_window_from_text_with_known_signals(
-                "bztween 3 and 5 clk edges",
-                &signals,
-            );
-        assert!(result.is_none(), "bztween (non-between): expected None, got {result:?}");
+        let result = super::extract_cycle_window_from_text_with_known_signals(
+            "bztween 3 and 5 clk edges",
+            &signals,
+        );
+        assert!(
+            result.is_none(),
+            "bztween (non-between): expected None, got {result:?}"
+        );
     }
 
     #[test]
     fn cycle_window_known_signals_between_and_mismatch() {
         // Line 8875: ==→!= — "between X and Y" requires "and" at position +2.
         let signals = known_signal_set(&["clk"]);
-        let result =
-            super::extract_cycle_window_from_text_with_known_signals(
-                "between 3 then 5 clk edges",
-                &signals,
-            );
-        assert!(result.is_none(), "between 3 then 5: expected None, got {result:?}");
+        let result = super::extract_cycle_window_from_text_with_known_signals(
+            "between 3 then 5 clk edges",
+            &signals,
+        );
+        assert!(
+            result.is_none(),
+            "between 3 then 5: expected None, got {result:?}"
+        );
     }
 
     #[test]
@@ -19933,10 +19946,7 @@ mod tests {
         // Also covers "after" and "for" paths.
         let signals = known_signal_set(&["clk"]);
         let result =
-            super::extract_cycle_window_from_text_with_known_signals(
-                "after 3 clk edges",
-                &signals,
-            );
+            super::extract_cycle_window_from_text_with_known_signals("after 3 clk edges", &signals);
         assert_eq!(
             result,
             Some(CycleWindowRecord {
@@ -19952,10 +19962,7 @@ mod tests {
         // Line 8920: delete match arm "after" | "for" — "for" path coverage.
         let signals = known_signal_set(&["clk"]);
         let result =
-            super::extract_cycle_window_from_text_with_known_signals(
-                "for 4 clk edges",
-                &signals,
-            );
+            super::extract_cycle_window_from_text_with_known_signals("for 4 clk edges", &signals);
         assert_eq!(
             result,
             Some(CycleWindowRecord {
@@ -19971,11 +19978,11 @@ mod tests {
         // Line 8931: &&→|| — "least" without "at" should not trigger "at least" path.
         let signals = known_signal_set(&["clk"]);
         let result =
-            super::extract_cycle_window_from_text_with_known_signals(
-                "least 5 clk edges",
-                &signals,
-            );
-        assert!(result.is_none(), "least 5 clk edges: expected None, got {result:?}");
+            super::extract_cycle_window_from_text_with_known_signals("least 5 clk edges", &signals);
+        assert!(
+            result.is_none(),
+            "least 5 clk edges: expected None, got {result:?}"
+        );
     }
 
     #[test]
@@ -19983,34 +19990,35 @@ mod tests {
         // Line 8945: &&→|| — "most" without "at" should not trigger "at most" path.
         let signals = known_signal_set(&["clk"]);
         let result =
-            super::extract_cycle_window_from_text_with_known_signals(
-                "most 6 clk edges",
-                &signals,
-            );
-        assert!(result.is_none(), "most 6 clk edges: expected None, got {result:?}");
+            super::extract_cycle_window_from_text_with_known_signals("most 6 clk edges", &signals);
+        assert!(
+            result.is_none(),
+            "most 6 clk edges: expected None, got {result:?}"
+        );
     }
 
     #[test]
     fn cycle_window_known_signals_no_more_than_requires_no() {
         // Lines 8959-8961: ==→!= and &&→|| — "more than" without "no" should not match.
         let signals = known_signal_set(&["clk"]);
-        let result =
-            super::extract_cycle_window_from_text_with_known_signals(
-                "more than 7 clk edges",
-                &signals,
-            );
-        assert!(result.is_none(), "more than 7 clk edges: expected None, got {result:?}");
+        let result = super::extract_cycle_window_from_text_with_known_signals(
+            "more than 7 clk edges",
+            &signals,
+        );
+        assert!(
+            result.is_none(),
+            "more than 7 clk edges: expected None, got {result:?}"
+        );
     }
 
     #[test]
     fn cycle_window_known_signals_at_during_on_trigger_parsing() {
         // Line 8983: delete ! — "during" should trigger parsing, not be skipped.
         let signals = known_signal_set(&["clk"]);
-        let result =
-            super::extract_cycle_window_from_text_with_known_signals(
-                "during 3 clk edges",
-                &signals,
-            );
+        let result = super::extract_cycle_window_from_text_with_known_signals(
+            "during 3 clk edges",
+            &signals,
+        );
         assert_eq!(
             result,
             Some(CycleWindowRecord {
@@ -20029,7 +20037,11 @@ mod tests {
         let signals = known_signal_set(&["clk"]);
         let tokens = ["edge", "of", "the", "clk"];
         let result = super::edge_of_known_signal_unit_len(&tokens, 0, &signals);
-        assert_eq!(result, Some(4), "edge of the clk: expected Some(4), got {result:?}");
+        assert_eq!(
+            result,
+            Some(4),
+            "edge of the clk: expected Some(4), got {result:?}"
+        );
     }
 
     #[test]
@@ -20038,7 +20050,11 @@ mod tests {
         let signals = known_signal_set(&["clk"]);
         let tokens = ["edges", "of", "clk"];
         let result = super::edge_of_known_signal_unit_len(&tokens, 0, &signals);
-        assert_eq!(result, Some(3), "edges of clk: expected Some(3), got {result:?}");
+        assert_eq!(
+            result,
+            Some(3),
+            "edges of clk: expected Some(3), got {result:?}"
+        );
     }
 
     // -- merge_copy_hint high-value mutants --
@@ -20063,7 +20079,10 @@ mod tests {
     fn merge_copy_hint_different_value_returns_false() {
         let mut target = Some(42u32);
         let changed = super::merge_copy_hint(&mut target, 99);
-        assert!(!changed, "different value should return false, got {changed}");
+        assert!(
+            !changed,
+            "different value should return false, got {changed}"
+        );
     }
 
     // -- merge_named_hint high-value mutants --
@@ -20088,7 +20107,10 @@ mod tests {
     fn merge_named_hint_different_name_returns_false() {
         let mut target = Some("clk".to_string());
         let changed = super::merge_named_hint(&mut target, "rst");
-        assert!(!changed, "different name should return false, got {changed}");
+        assert!(
+            !changed,
+            "different name should return false, got {changed}"
+        );
     }
 
     // -- merge_signal_hint high-value mutants --
@@ -20105,7 +20127,11 @@ mod tests {
         // Line 5964: !=→== — same value should NOT clear target.
         let mut target = Some("a".to_string());
         super::merge_signal_hint(&mut target, Some("a".to_string()));
-        assert_eq!(target, Some("a".to_string()), "same value should be preserved");
+        assert_eq!(
+            target,
+            Some("a".to_string()),
+            "same value should be preserved"
+        );
     }
 
     #[test]
@@ -20113,7 +20139,10 @@ mod tests {
         // Line 5964: match guard replaced with false would mean different values never clear.
         let mut target = Some("a".to_string());
         super::merge_signal_hint(&mut target, Some("b".to_string()));
-        assert_eq!(target, None, "different value should clear target (conflict)");
+        assert_eq!(
+            target, None,
+            "different value should clear target (conflict)"
+        );
     }
 
     #[test]
@@ -20121,7 +20150,11 @@ mod tests {
         // Line 5964: match guard replaced with true would mean None incoming also triggers.
         let mut target = Some("a".to_string());
         super::merge_signal_hint(&mut target, None::<String>);
-        assert_eq!(target, Some("a".to_string()), "None incoming should be no-op");
+        assert_eq!(
+            target,
+            Some("a".to_string()),
+            "None incoming should be no-op"
+        );
     }
 
     // -- merge_sticky_signal_hint high-value mutants --
@@ -20132,7 +20165,11 @@ mod tests {
         let mut target = Some("a".to_string());
         let mut conflicted = true;
         super::merge_sticky_signal_hint(&mut target, &mut conflicted, Some("b".to_string()));
-        assert_eq!(target, Some("a".to_string()), "conflicted: target should be unchanged");
+        assert_eq!(
+            target,
+            Some("a".to_string()),
+            "conflicted: target should be unchanged"
+        );
         assert!(conflicted, "conflicted flag should stay true");
     }
 
@@ -20141,7 +20178,11 @@ mod tests {
         let mut target = Some("a".to_string());
         let mut conflicted = false;
         super::merge_sticky_signal_hint(&mut target, &mut conflicted, Some("a".to_string()));
-        assert_eq!(target, Some("a".to_string()), "same value should be preserved");
+        assert_eq!(
+            target,
+            Some("a".to_string()),
+            "same value should be preserved"
+        );
         assert!(!conflicted);
     }
 
@@ -20156,7 +20197,10 @@ mod tests {
 
     // -- register_interface_signal_semantic_hint high-value mutants --
 
-    fn make_test_hint(signal_name: &str, tags: &[super::SignalSemanticTag]) -> super::SignalSemanticHintRecord {
+    fn make_test_hint(
+        signal_name: &str,
+        tags: &[super::SignalSemanticTag],
+    ) -> super::SignalSemanticHintRecord {
         super::SignalSemanticHintRecord {
             signal_name: signal_name.to_string(),
             semantic_tags: tags.to_vec(),
@@ -20176,19 +20220,22 @@ mod tests {
             signals: ["clk".to_string()].into(),
             signal_records: {
                 let mut m = BTreeMap::new();
-                m.insert("clk".to_string(), super::InterfaceSignalAccumulator {
-                    direction_hint: None,
-                    direction_hint_conflicted: false,
-                    width_hint: None,
-                    width_hint_conflicted: false,
-                    semantic_tags: BTreeSet::new(),
-                    semantic_observations: vec![],
-                    direction_observations: BTreeMap::new(),
-                    width_observations: BTreeMap::new(),
-                    supporting_statement_ids: BTreeSet::new(),
-                    supporting_table_ids: BTreeSet::new(),
-                    automation_confidence: super::AutomationConfidence::High,
-                });
+                m.insert(
+                    "clk".to_string(),
+                    super::InterfaceSignalAccumulator {
+                        direction_hint: None,
+                        direction_hint_conflicted: false,
+                        width_hint: None,
+                        width_hint_conflicted: false,
+                        semantic_tags: BTreeSet::new(),
+                        semantic_observations: vec![],
+                        direction_observations: BTreeMap::new(),
+                        width_observations: BTreeMap::new(),
+                        supporting_statement_ids: BTreeSet::new(),
+                        supporting_table_ids: BTreeSet::new(),
+                        automation_confidence: super::AutomationConfidence::High,
+                    },
+                );
                 m
             },
             supporting_statement_ids: BTreeSet::new(),
@@ -20215,19 +20262,22 @@ mod tests {
             signals: ["clk".to_string()].into(),
             signal_records: {
                 let mut m = BTreeMap::new();
-                m.insert("clk".to_string(), super::InterfaceSignalAccumulator {
-                    direction_hint: None,
-                    direction_hint_conflicted: false,
-                    width_hint: None,
-                    width_hint_conflicted: false,
-                    semantic_tags: BTreeSet::new(),
-                    semantic_observations: vec![],
-                    direction_observations: BTreeMap::new(),
-                    width_observations: BTreeMap::new(),
-                    supporting_statement_ids: BTreeSet::new(),
-                    supporting_table_ids: BTreeSet::new(),
-                    automation_confidence: super::AutomationConfidence::High,
-                });
+                m.insert(
+                    "clk".to_string(),
+                    super::InterfaceSignalAccumulator {
+                        direction_hint: None,
+                        direction_hint_conflicted: false,
+                        width_hint: None,
+                        width_hint_conflicted: false,
+                        semantic_tags: BTreeSet::new(),
+                        semantic_observations: vec![],
+                        direction_observations: BTreeMap::new(),
+                        width_observations: BTreeMap::new(),
+                        supporting_statement_ids: BTreeSet::new(),
+                        supporting_table_ids: BTreeSet::new(),
+                        automation_confidence: super::AutomationConfidence::High,
+                    },
+                );
                 m
             },
             supporting_statement_ids: BTreeSet::new(),
@@ -20254,19 +20304,22 @@ mod tests {
             signals: ["clk".to_string()].into(),
             signal_records: {
                 let mut m = BTreeMap::new();
-                m.insert("clk".to_string(), super::InterfaceSignalAccumulator {
-                    direction_hint: None,
-                    direction_hint_conflicted: false,
-                    width_hint: None,
-                    width_hint_conflicted: false,
-                    semantic_tags: BTreeSet::new(),
-                    semantic_observations: vec![],
-                    direction_observations: BTreeMap::new(),
-                    width_observations: BTreeMap::new(),
-                    supporting_statement_ids: BTreeSet::new(),
-                    supporting_table_ids: BTreeSet::new(),
-                    automation_confidence: super::AutomationConfidence::High,
-                });
+                m.insert(
+                    "clk".to_string(),
+                    super::InterfaceSignalAccumulator {
+                        direction_hint: None,
+                        direction_hint_conflicted: false,
+                        width_hint: None,
+                        width_hint_conflicted: false,
+                        semantic_tags: BTreeSet::new(),
+                        semantic_observations: vec![],
+                        direction_observations: BTreeMap::new(),
+                        width_observations: BTreeMap::new(),
+                        supporting_statement_ids: BTreeSet::new(),
+                        supporting_table_ids: BTreeSet::new(),
+                        automation_confidence: super::AutomationConfidence::High,
+                    },
+                );
                 m
             },
             supporting_statement_ids: BTreeSet::new(),
@@ -20285,14 +20338,21 @@ mod tests {
         super::register_interface_signal_semantic_hint(&mut acc, "clk", &hint);
 
         let record = acc.signal_records.get("clk").unwrap();
-        assert_eq!(record.semantic_observations.len(), 0, "empty tags should be skipped");
+        assert_eq!(
+            record.semantic_observations.len(),
+            0,
+            "empty tags should be skipped"
+        );
     }
 
     // -- is_explicit_infrastructure_component_term high-value mutants --
 
     #[test]
     fn infrastructure_component_term_matches_exact_pll() {
-        assert!(super::is_explicit_infrastructure_component_term("pll"), "pll should match exact");
+        assert!(
+            super::is_explicit_infrastructure_component_term("pll"),
+            "pll should match exact"
+        );
     }
 
     #[test]
@@ -20327,43 +20387,64 @@ mod tests {
     #[test]
     fn looks_like_signal_token_short_token_returns_false() {
         // Line 6281: <→== / <→<= — single-char token should be rejected.
-        assert!(!super::looks_like_signal_token("A"), "single char should return false");
+        assert!(
+            !super::looks_like_signal_token("A"),
+            "single char should return false"
+        );
     }
 
     #[test]
     fn looks_like_signal_token_two_char_upper_returns_true() {
         // Line 6281: <→== — len=2 all-uppercase should return true.
-        assert!(super::looks_like_signal_token("AB"), "two-char upper should return true");
+        assert!(
+            super::looks_like_signal_token("AB"),
+            "two-char upper should return true"
+        );
     }
 
     #[test]
     fn looks_like_signal_token_uppercase_with_digits_returns_true() {
         // Line 6301: ||→&& — characters can be uppercase OR digit OR underscore.
-        assert!(super::looks_like_signal_token("CLK2"), "upper+digit should return true");
+        assert!(
+            super::looks_like_signal_token("CLK2"),
+            "upper+digit should return true"
+        );
     }
 
     #[test]
     fn looks_like_signal_token_with_underscore_returns_true() {
         // Line 6301: ==→!= — underscore should be a valid character.
-        assert!(super::looks_like_signal_token("CLK_OUT"), "underscore should be valid");
+        assert!(
+            super::looks_like_signal_token("CLK_OUT"),
+            "underscore should be valid"
+        );
     }
 
     #[test]
     fn looks_like_signal_token_mixed_case_returns_false() {
         // Line 6304: &&→|| — mixed case like "Clk" should NOT pass (needs all upper OR _n/_b suffix).
-        assert!(!super::looks_like_signal_token("Clk"), "mixed case should return false");
+        assert!(
+            !super::looks_like_signal_token("Clk"),
+            "mixed case should return false"
+        );
     }
 
     #[test]
     fn looks_like_signal_token_lowered_suffix_n_returns_true() {
         // Line 6312: ends_with("_n") — lowercased signal names with _n suffix.
-        assert!(super::looks_like_signal_token("rst_n"), "rst_n should look like signal");
+        assert!(
+            super::looks_like_signal_token("rst_n"),
+            "rst_n should look like signal"
+        );
     }
 
     #[test]
     fn looks_like_signal_token_lowered_suffix_b_returns_true() {
         // Line 6312: ends_with("_b") — lowercased signal names with _b suffix.
-        assert!(super::looks_like_signal_token("enable_b"), "enable_b should look like signal");
+        assert!(
+            super::looks_like_signal_token("enable_b"),
+            "enable_b should look like signal"
+        );
     }
 
     // -- parse_explicit_signal_declaration high-value mutants --
@@ -20372,7 +20453,10 @@ mod tests {
     fn parse_signal_declaration_three_tokens() {
         // Line 4409: <→== / <→<= — 3-token declaration should be accepted.
         let result = super::parse_explicit_signal_declaration("signal clk is input");
-        assert!(result.is_some(), "signal clk is input: expected Some, got {result:?}");
+        assert!(
+            result.is_some(),
+            "signal clk is input: expected Some, got {result:?}"
+        );
         let decl = result.unwrap();
         assert_eq!(decl.signal_name, "clk");
     }
@@ -20381,14 +20465,20 @@ mod tests {
     fn parse_signal_declaration_first_word_not_signal_returns_none() {
         // Line 4409: ||→&& — first word not "signal" should return None regardless of length.
         let result = super::parse_explicit_signal_declaration("clk is input");
-        assert!(result.is_none(), "clk is input (no 'signal' prefix): expected None, got {result:?}");
+        assert!(
+            result.is_none(),
+            "clk is input (no 'signal' prefix): expected None, got {result:?}"
+        );
     }
 
     #[test]
     fn parse_signal_declaration_too_few_tokens_returns_none() {
         // Line 4409: <→== — 2-token declaration is invalid.
         let result = super::parse_explicit_signal_declaration("signal clk");
-        assert!(result.is_none(), "signal clk (2 tokens): expected None, got {result:?}");
+        assert!(
+            result.is_none(),
+            "signal clk (2 tokens): expected None, got {result:?}"
+        );
     }
 
     // -- parse_explicit_system_clock high-value mutants --
@@ -20397,28 +20487,43 @@ mod tests {
     fn parse_system_clock_signal_middle_word() {
         // Line 4556: ||→&& / match guard false — "clock signal clk" should parse.
         let result = super::parse_explicit_system_clock("clock signal clk");
-        assert_eq!(result, Some("clk".to_string()), "clock signal clk: expected Some(\"clk\"), got {result:?}");
+        assert_eq!(
+            result,
+            Some("clk".to_string()),
+            "clock signal clk: expected Some(\"clk\"), got {result:?}"
+        );
     }
 
     #[test]
     fn parse_system_clock_is_middle_word() {
         // Line 4556: ||→&& — "clock is clk" has middle="is", not "signal".
         let result = super::parse_explicit_system_clock("clock is clk");
-        assert_eq!(result, Some("clk".to_string()), "clock is clk: expected Some(\"clk\"), got {result:?}");
+        assert_eq!(
+            result,
+            Some("clk".to_string()),
+            "clock is clk: expected Some(\"clk\"), got {result:?}"
+        );
     }
 
     #[test]
     fn parse_system_clock_unknown_middle_word_returns_none() {
         // Line 4556: match guard true — "clock something clk" should return None.
         let result = super::parse_explicit_system_clock("clock something clk");
-        assert!(result.is_none(), "clock something clk: expected None, got {result:?}");
+        assert!(
+            result.is_none(),
+            "clock something clk: expected None, got {result:?}"
+        );
     }
 
     #[test]
     fn parse_system_clock_two_token_form() {
         // "clock clk" (2 tokens) should parse.
         let result = super::parse_explicit_system_clock("clock clk");
-        assert_eq!(result, Some("clk".to_string()), "clock clk: expected Some(\"clk\"), got {result:?}");
+        assert_eq!(
+            result,
+            Some("clk".to_string()),
+            "clock clk: expected Some(\"clk\"), got {result:?}"
+        );
     }
 
     // -- parse_explicit_top_child high-value mutants --
@@ -20426,7 +20531,10 @@ mod tests {
     #[test]
     fn parse_top_child_valid_form() {
         let result = super::parse_explicit_top_child("child cpu0 uses module cpu_core");
-        assert!(result.is_some(), "valid top child: expected Some, got {result:?}");
+        assert!(
+            result.is_some(),
+            "valid top child: expected Some, got {result:?}"
+        );
         let parsed = result.unwrap();
         assert_eq!(parsed.instance_name, "cpu0");
         assert_eq!(parsed.source_module_name, "cpu_core");
@@ -20436,14 +20544,20 @@ mod tests {
     fn parse_top_child_wrong_second_token_returns_none() {
         // Line 4842: ||→&& — "has" instead of "uses" should return None.
         let result = super::parse_explicit_top_child("child cpu0 has module cpu_core");
-        assert!(result.is_none(), "has module: expected None, got {result:?}");
+        assert!(
+            result.is_none(),
+            "has module: expected None, got {result:?}"
+        );
     }
 
     #[test]
     fn parse_top_child_wrong_third_token_returns_none() {
         // Line 4843: ||→&& — "block" instead of "module" should return None.
         let result = super::parse_explicit_top_child("child cpu0 uses block cpu_core");
-        assert!(result.is_none(), "uses block: expected None, got {result:?}");
+        assert!(
+            result.is_none(),
+            "uses block: expected None, got {result:?}"
+        );
     }
 
     // -- parse_explicit_regular_state_declaration high-value mutants --
@@ -20451,7 +20565,10 @@ mod tests {
     #[test]
     fn parse_regular_state_is_initial() {
         let result = super::parse_explicit_regular_state_declaration("state IDLE is initial");
-        assert!(result.is_some(), "state IDLE is initial: expected Some, got {result:?}");
+        assert!(
+            result.is_some(),
+            "state IDLE is initial: expected Some, got {result:?}"
+        );
         let parsed = result.unwrap();
         assert!(parsed.is_initial, "is_initial should be true");
     }
@@ -20460,7 +20577,10 @@ mod tests {
     fn parse_regular_state_unknown_suffix_returns_none() {
         // Line 4900: match guard true — suffix not "initial" should return None.
         let result = super::parse_explicit_regular_state_declaration("state IDLE is something");
-        assert!(result.is_none(), "IDLE is something: expected None, got {result:?}");
+        assert!(
+            result.is_none(),
+            "IDLE is something: expected None, got {result:?}"
+        );
     }
 
     // -- parse_explicit_decision_tree_fragment high-value mutants --
@@ -20469,7 +20589,10 @@ mod tests {
     fn decision_tree_fragment_empty_action_returns_none() {
         // Line 4952: ||→&& — empty action clause after ':' should return None.
         let result = super::parse_explicit_decision_tree_fragment("Block my_block:");
-        assert!(result.is_none(), "empty action: expected None, got {result:?}");
+        assert!(
+            result.is_none(),
+            "empty action: expected None, got {result:?}"
+        );
     }
 
     // -- parse_explicit_control_clause high-value mutants --
@@ -20484,7 +20607,10 @@ mod tests {
             &empty_set,
             &empty_set,
         );
-        assert!(result.is_none(), "block with empty action: expected None, got {result:?}");
+        assert!(
+            result.is_none(),
+            "block with empty action: expected None, got {result:?}"
+        );
     }
 
     // -- parse_interface_signal_direction high-value mutants --
@@ -20493,16 +20619,22 @@ mod tests {
     fn interface_signal_direction_internal() {
         // Line 5696: ||→&& — "internal" should be recognized.
         let result = super::parse_interface_signal_direction("internal");
-        assert_eq!(result, Some(super::InterfaceSignalDirection::Internal),
-            "internal: expected Some(Internal), got {result:?}");
+        assert_eq!(
+            result,
+            Some(super::InterfaceSignalDirection::Internal),
+            "internal: expected Some(Internal), got {result:?}"
+        );
     }
 
     #[test]
     fn interface_signal_direction_local() {
         // Line 5696: ||→&& — "local" should also be recognized.
         let result = super::parse_interface_signal_direction("local");
-        assert_eq!(result, Some(super::InterfaceSignalDirection::Internal),
-            "local: expected Some(Internal), got {result:?}");
+        assert_eq!(
+            result,
+            Some(super::InterfaceSignalDirection::Internal),
+            "local: expected Some(Internal), got {result:?}"
+        );
     }
 
     // -- split_explicit_assignment high-value mutants --
@@ -20511,7 +20643,10 @@ mod tests {
     fn split_explicit_assignment_skips_neq_operator() {
         // Line 5201: ||→&& — "a != b" should not be parsed as assignment (= is part of !=).
         let result = super::split_explicit_assignment("a != b");
-        assert!(result.is_none(), "a != b: expected None (should skip !=), got {result:?}");
+        assert!(
+            result.is_none(),
+            "a != b: expected None (should skip !=), got {result:?}"
+        );
     }
 
     // -- parse_control_assignment_target high-value mutants --
@@ -20520,14 +20655,20 @@ mod tests {
     fn control_assignment_target_reg_shorthand() {
         // Line 5234: ||→&& — "reg" should be recognized as registered.
         let result = super::parse_control_assignment_target("my_signal reg");
-        assert!(result.is_some(), "my_signal reg: expected Some, got {result:?}");
+        assert!(
+            result.is_some(),
+            "my_signal reg: expected Some, got {result:?}"
+        );
     }
 
     #[test]
     fn control_assignment_target_registered_full() {
         // Line 5234: ||→&& — "registered" should also be recognized.
         let result = super::parse_control_assignment_target("my_signal registered");
-        assert!(result.is_some(), "my_signal registered: expected Some, got {result:?}");
+        assert!(
+            result.is_some(),
+            "my_signal registered: expected Some, got {result:?}"
+        );
     }
 
     // -- should_emit_interface_candidate high-value mutants --
@@ -20535,41 +20676,55 @@ mod tests {
     #[test]
     fn should_emit_interface_candidate_ends_with_n() {
         // Lines 6786-6790: ||→&& — signal ending with _N should trigger emission.
-        assert!(super::should_emit_interface_candidate(&["FOO_N".to_string()]),
-            "FOO_N should trigger interface candidate emission");
+        assert!(
+            super::should_emit_interface_candidate(&["FOO_N".to_string()]),
+            "FOO_N should trigger interface candidate emission"
+        );
     }
 
     #[test]
     fn should_emit_interface_candidate_contains_rst() {
         // Line 6787: ||→&& — signal containing RST should trigger.
-        assert!(super::should_emit_interface_candidate(&["nRST".to_string()]),
-            "nRST should trigger interface candidate emission");
+        assert!(
+            super::should_emit_interface_candidate(&["nRST".to_string()]),
+            "nRST should trigger interface candidate emission"
+        );
     }
 
     #[test]
     fn should_emit_interface_candidate_contains_clk() {
         // Line 6789: ||→&& — signal containing CLK should trigger.
-        assert!(super::should_emit_interface_candidate(&["SYS_CLK".to_string()]),
-            "SYS_CLK should trigger interface candidate emission");
+        assert!(
+            super::should_emit_interface_candidate(&["SYS_CLK".to_string()]),
+            "SYS_CLK should trigger interface candidate emission"
+        );
     }
 
     #[test]
     fn should_emit_interface_candidate_single_plain_signal_returns_false() {
         // Lines 6786-6790: ||→&& — "data_out" doesn't match any pattern.
-        assert!(!super::should_emit_interface_candidate(&["data_out".to_string()]),
-            "data_out should not trigger emission");
+        assert!(
+            !super::should_emit_interface_candidate(&["data_out".to_string()]),
+            "data_out should not trigger emission"
+        );
     }
 
     #[test]
     fn should_emit_interface_candidate_two_or_more_signals_returns_true() {
         // Line 6780: >=→< — 2+ signals always trigger.
-        assert!(super::should_emit_interface_candidate(&["sig_a".to_string(), "sig_b".to_string()]),
-            "2+ signals should trigger emission");
+        assert!(
+            super::should_emit_interface_candidate(&["sig_a".to_string(), "sig_b".to_string()]),
+            "2+ signals should trigger emission"
+        );
     }
 
     // -- is_invariant_like high-value mutants --
 
-    fn make_statement_context(class: super::StatementClass, text: &str, signals: Vec<String>) -> super::StatementContext {
+    fn make_statement_context(
+        class: super::StatementClass,
+        text: &str,
+        signals: Vec<String>,
+    ) -> super::StatementContext {
         super::StatementContext {
             statement_id: "test_stmt".to_string(),
             class,
@@ -20600,8 +20755,10 @@ mod tests {
             vec![],
         );
         let ctx = make_semantic_context();
-        assert!(!super::is_invariant_like(&stmt, &ctx),
-            "ExplicitAbstraction should return false");
+        assert!(
+            !super::is_invariant_like(&stmt, &ctx),
+            "ExplicitAbstraction should return false"
+        );
     }
 
     #[test]
@@ -20613,8 +20770,10 @@ mod tests {
             vec!["clk".to_string()],
         );
         let ctx = make_semantic_context();
-        assert!(super::is_invariant_like(&stmt, &ctx),
-            "must + signals should return true");
+        assert!(
+            super::is_invariant_like(&stmt, &ctx),
+            "must + signals should return true"
+        );
     }
 
     #[test]
@@ -20626,8 +20785,10 @@ mod tests {
             vec![],
         );
         let ctx = make_semantic_context();
-        assert!(super::is_invariant_like(&stmt, &ctx),
-            "must (no signals) should return true via first phrase check");
+        assert!(
+            super::is_invariant_like(&stmt, &ctx),
+            "must (no signals) should return true via first phrase check"
+        );
     }
 
     // -- reset_signal_name_looks_active_low high-value mutants --
@@ -20635,22 +20796,28 @@ mod tests {
     #[test]
     fn reset_signal_name_looks_active_low_n_suffix() {
         // Line 4673: ||→&& — _n suffix should return true.
-        assert!(super::reset_signal_name_looks_active_low("rst_n"),
-            "rst_n should look active low");
+        assert!(
+            super::reset_signal_name_looks_active_low("rst_n"),
+            "rst_n should look active low"
+        );
     }
 
     #[test]
     fn reset_signal_name_looks_active_low_exact_rstb() {
         // Line 4673: ||→&& — exact match "rstb" should return true.
-        assert!(super::reset_signal_name_looks_active_low("rstb"),
-            "rstb should look active low");
+        assert!(
+            super::reset_signal_name_looks_active_low("rstb"),
+            "rstb should look active low"
+        );
     }
 
     #[test]
     fn reset_signal_name_looks_active_low_plain_name_returns_false() {
         // Line 4670: return true — "reset" without _n/_b should return false.
-        assert!(!super::reset_signal_name_looks_active_low("reset"),
-            "reset (no _n/_b) should not look active low");
+        assert!(
+            !super::reset_signal_name_looks_active_low("reset"),
+            "reset (no _n/_b) should not look active low"
+        );
     }
 
     // -- normalize_infrastructure_component_name high-value mutants --
@@ -20659,7 +20826,10 @@ mod tests {
     fn normalize_infrastructure_component_name_short_text_returns_none() {
         // Line 3848: <→== / <→<= — single char should return None.
         let result = super::normalize_infrastructure_component_name("x");
-        assert!(result.is_none(), "single char: expected None, got {result:?}");
+        assert!(
+            result.is_none(),
+            "single char: expected None, got {result:?}"
+        );
     }
 
     #[test]
@@ -20680,8 +20850,11 @@ mod tests {
         // Lines 7280-7283: >→>= and &&→|| — both parts contain known signals, should split.
         let signals = known_signal_bset(&["CLK", "RST"]);
         let result = super::split_temporal_condition_segment_on_and("CLK and RST", &signals);
-        assert_eq!(result, vec!["CLK".to_string(), "RST".to_string()],
-            "both parts anchored: expected split, got {result:?}");
+        assert_eq!(
+            result,
+            vec!["CLK".to_string(), "RST".to_string()],
+            "both parts anchored: expected split, got {result:?}"
+        );
     }
 
     #[test]
@@ -20689,8 +20862,11 @@ mod tests {
         // Line 7280: >→>= — single part (no "and") should return vec of original text.
         let signals = known_signal_bset(&["CLK"]);
         let result = super::split_temporal_condition_segment_on_and("CLK", &signals);
-        assert_eq!(result, vec!["CLK".to_string()],
-            "single part: expected vec with original, got {result:?}");
+        assert_eq!(
+            result,
+            vec!["CLK".to_string()],
+            "single part: expected vec with original, got {result:?}"
+        );
     }
 
     #[test]
@@ -20698,8 +20874,11 @@ mod tests {
         // Lines 7281-7283: &&→|| — unanchored part (no known signal) should not split.
         let signals = known_signal_bset(&["CLK"]);
         let result = super::split_temporal_condition_segment_on_and("CLK and UNKNOWN", &signals);
-        assert_eq!(result, vec!["CLK and UNKNOWN".to_string()],
-            "unanchored part: expected original text, got {result:?}");
+        assert_eq!(
+            result,
+            vec!["CLK and UNKNOWN".to_string()],
+            "unanchored part: expected original text, got {result:?}"
+        );
     }
 
     // -- temporal_rule_from_timing_constraint high-value mutants --
@@ -20721,8 +20900,17 @@ mod tests {
         let signals = known_signal_bset(&["CLK"]);
         let actors = BTreeSet::new();
         let result = super::temporal_rule_from_timing_constraint(
-            &timing, "unknown signal sampled", &signals, None, &actors, None);
-        assert!(result.is_none(), "no known signal: expected None, got {result:?}");
+            &timing,
+            "unknown signal sampled",
+            &signals,
+            None,
+            &actors,
+            None,
+        );
+        assert!(
+            result.is_none(),
+            "no known signal: expected None, got {result:?}"
+        );
     }
 
     #[test]
@@ -20742,8 +20930,17 @@ mod tests {
         let signals = known_signal_bset(&["CLK"]);
         let actors = BTreeSet::new();
         let result = super::temporal_rule_from_timing_constraint(
-            &timing, "CLK sampled on rising edge", &signals, None, &actors, None);
-        assert!(result.is_some(), "CLK sampled: expected Some, got {result:?}");
+            &timing,
+            "CLK sampled on rising edge",
+            &signals,
+            None,
+            &actors,
+            None,
+        );
+        assert!(
+            result.is_some(),
+            "CLK sampled: expected Some, got {result:?}"
+        );
     }
 
     // -- temporal_consequents_from_conditional_rule high-value mutants --
@@ -20764,8 +20961,12 @@ mod tests {
         let producers = BTreeMap::new();
         let handshake = super::HandshakeRoleContext::default();
         let result = super::temporal_consequents_from_conditional_rule(
-            &rule, &signals, &producers, &handshake);
-        assert!(result.is_empty(), "no consequent signal: expected empty, got {result:?}");
+            &rule, &signals, &producers, &handshake,
+        );
+        assert!(
+            result.is_empty(),
+            "no consequent signal: expected empty, got {result:?}"
+        );
     }
 
     #[test]
@@ -20784,8 +20985,12 @@ mod tests {
         let producers = BTreeMap::new();
         let handshake = super::HandshakeRoleContext::default();
         let result = super::temporal_consequents_from_conditional_rule(
-            &rule, &signals, &producers, &handshake);
-        assert!(!result.is_empty(), "hold action: expected non-empty, got {result:?}");
+            &rule, &signals, &producers, &handshake,
+        );
+        assert!(
+            !result.is_empty(),
+            "hold action: expected non-empty, got {result:?}"
+        );
     }
 
     #[test]
@@ -20804,8 +21009,12 @@ mod tests {
         let producers = BTreeMap::new();
         let handshake = super::HandshakeRoleContext::default();
         let result = super::temporal_consequents_from_conditional_rule(
-            &rule, &signals, &producers, &handshake);
-        assert!(!result.is_empty(), "asserted action: expected non-empty, got {result:?}");
+            &rule, &signals, &producers, &handshake,
+        );
+        assert!(
+            !result.is_empty(),
+            "asserted action: expected non-empty, got {result:?}"
+        );
     }
 
     // -- enrich_handshake_completion_predicates high-value mutants --
@@ -20815,7 +21024,10 @@ mod tests {
         // Returns empty when no predicates given.
         let handshake = super::HandshakeRoleContext::default();
         let result = super::enrich_handshake_completion_predicates(vec![], &handshake);
-        assert!(result.is_empty(), "empty predicates: expected empty, got {result:?}");
+        assert!(
+            result.is_empty(),
+            "empty predicates: expected empty, got {result:?}"
+        );
     }
 
     // -- find_known_signal_name high-value mutants --
@@ -20825,8 +21037,11 @@ mod tests {
         // Line 9326: >=→< — longer signal name should replace shorter match.
         let signals = known_signal_bset(&["CLK", "SYS_CLK"]);
         let result = super::find_known_signal_name("SYS_CLK is the main clock", &signals);
-        assert_eq!(result, Some("SYS_CLK".to_string()),
-            "should prefer SYS_CLK over CLK, got {result:?}");
+        assert_eq!(
+            result,
+            Some("SYS_CLK".to_string()),
+            "should prefer SYS_CLK over CLK, got {result:?}"
+        );
     }
 
     #[test]
@@ -20842,25 +21057,15 @@ mod tests {
     #[test]
     fn statement_by_id_finds_matching_statement() {
         // Line 7008: ==→!= — should find statement with matching ID.
-        let ctx = make_semantic_context_with_statements(vec![
-            make_statement_context(
-                super::StatementClass::SourceFact,
-                "statement one",
-                vec![],
-            ),
-        ]);
-        // Override the statement_id
-        let mut ctx = make_semantic_context_with_statements(vec![
-            super::StatementContext {
-                statement_id: "stmt_one".to_string(),
-                class: super::StatementClass::SourceFact,
-                text: "statement one".to_string(),
-                related_visual_evidence_ids: vec![],
-                section_ids: vec![],
-                signals: vec![],
-                supporting_table_ids: vec![],
-            },
-        ]);
+        let ctx = make_semantic_context_with_statements(vec![super::StatementContext {
+            statement_id: "stmt_one".to_string(),
+            class: super::StatementClass::SourceFact,
+            text: "statement one".to_string(),
+            related_visual_evidence_ids: vec![],
+            section_ids: vec![],
+            signals: vec![],
+            supporting_table_ids: vec![],
+        }]);
         let result = super::statement_by_id(&ctx, "stmt_one");
         assert!(result.is_some(), "should find stmt_one, got None");
     }
@@ -20868,22 +21073,25 @@ mod tests {
     #[test]
     fn statement_by_id_no_match_returns_none() {
         // Line 7008: ==→!= — non-matching ID should return None.
-        let ctx = make_semantic_context_with_statements(vec![
-            super::StatementContext {
-                statement_id: "stmt_one".to_string(),
-                class: super::StatementClass::SourceFact,
-                text: "statement one".to_string(),
-                related_visual_evidence_ids: vec![],
-                section_ids: vec![],
-                signals: vec![],
-                supporting_table_ids: vec![],
-            },
-        ]);
+        let ctx = make_semantic_context_with_statements(vec![super::StatementContext {
+            statement_id: "stmt_one".to_string(),
+            class: super::StatementClass::SourceFact,
+            text: "statement one".to_string(),
+            related_visual_evidence_ids: vec![],
+            section_ids: vec![],
+            signals: vec![],
+            supporting_table_ids: vec![],
+        }]);
         let result = super::statement_by_id(&ctx, "stmt_two");
-        assert!(result.is_none(), "non-matching ID: expected None, got {result:?}");
+        assert!(
+            result.is_none(),
+            "non-matching ID: expected None, got {result:?}"
+        );
     }
 
-    fn make_semantic_context_with_statements(statements: Vec<super::StatementContext>) -> super::SemanticContext {
+    fn make_semantic_context_with_statements(
+        statements: Vec<super::StatementContext>,
+    ) -> super::SemanticContext {
         super::SemanticContext {
             statements,
             section_anchors: vec![],
@@ -20899,16 +21107,20 @@ mod tests {
     fn contains_phrase_exact_word_match_returns_true() {
         // Line 7039: &&→|| — exact word boundary match should return true.
         // Note: contains_phrase expects already-lowercased text.
-        assert!(super::contains_phrase("the clk signal is fast", "CLK"),
-            "clk as separate word should match");
+        assert!(
+            super::contains_phrase("the clk signal is fast", "CLK"),
+            "clk as separate word should match"
+        );
     }
 
     #[test]
     fn contains_phrase_substring_without_boundary_returns_false() {
         // Line 7039: &&→|| — "clk" inside "sclkdiv" has no left boundary (preceded by alphanumeric).
         // With &&→||, prefix_ok=false but suffix_ok=true would incorrectly match via ||.
-        assert!(!super::contains_phrase("the sclkdiv signal", "CLK"),
-            "clk inside sclkdiv should not match (no left boundary)");
+        assert!(
+            !super::contains_phrase("the sclkdiv signal", "CLK"),
+            "clk inside sclkdiv should not match (no left boundary)"
+        );
     }
 
     // -- vlm_guard_clause_has_comparison high-value mutants --
@@ -20916,21 +21128,27 @@ mod tests {
     #[test]
     fn vlm_guard_clause_eqeq_operator() {
         // Line 10226: ||→&& — "==" alone should return true.
-        assert!(super::vlm_guard_clause_has_comparison("a == b"),
-            "== should be recognized as comparison");
+        assert!(
+            super::vlm_guard_clause_has_comparison("a == b"),
+            "== should be recognized as comparison"
+        );
     }
 
     #[test]
     fn vlm_guard_clause_ne_operator() {
         // Line 10226: ||→&& — "!=" alone should also return true.
-        assert!(super::vlm_guard_clause_has_comparison("a != b"),
-            "!= should be recognized as comparison");
+        assert!(
+            super::vlm_guard_clause_has_comparison("a != b"),
+            "!= should be recognized as comparison"
+        );
     }
 
     #[test]
     fn vlm_guard_clause_no_comparison_returns_false() {
-        assert!(!super::vlm_guard_clause_has_comparison("no comparison here"),
-            "no comparison operators should return false");
+        assert!(
+            !super::vlm_guard_clause_has_comparison("no comparison here"),
+            "no comparison operators should return false"
+        );
     }
 
     // -- ControlExpressionParser::expect high-value mutants --
@@ -20940,10 +21158,14 @@ mod tests {
         // Line 5588: return None / return Some(()) — matching token should succeed.
         let signals = BTreeSet::new();
         let symbols = BTreeSet::new();
-        let mut parser = super::ControlExpressionParser::new(
-            vec!["if".to_string()], &signals, &symbols);
+        let mut parser =
+            super::ControlExpressionParser::new(vec!["if".to_string()], &signals, &symbols);
         let result = parser.expect("if");
-        assert_eq!(result, Some(()), "expect 'if': expected Some(()), got {result:?}");
+        assert_eq!(
+            result,
+            Some(()),
+            "expect 'if': expected Some(()), got {result:?}"
+        );
     }
 
     #[test]
@@ -20951,9 +21173,12 @@ mod tests {
         // Line 5588: return Some(()) — non-matching token should return None.
         let signals = BTreeSet::new();
         let symbols = BTreeSet::new();
-        let mut parser = super::ControlExpressionParser::new(
-            vec!["if".to_string()], &signals, &symbols);
+        let mut parser =
+            super::ControlExpressionParser::new(vec!["if".to_string()], &signals, &symbols);
         let result = parser.expect("else");
-        assert_eq!(result, None, "expect 'else' when token is 'if': expected None, got {result:?}");
+        assert_eq!(
+            result, None,
+            "expect 'else' when token is 'if': expected None, got {result:?}"
+        );
     }
 }
