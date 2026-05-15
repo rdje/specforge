@@ -29,7 +29,7 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
 - ID: `R6-SEMANTIC-HARDENING`
   Status: `active`
   Goal: `Fix high-value missed cargo-mutants in semantic.rs functions.`
-  Children: `R6-SEMANTIC-HARDENING.1` through `.23`
+  Children: `R6-SEMANTIC-HARDENING.1` through `.24`
 
 ### Batch 1: build_symbol_definitions
 
@@ -232,9 +232,18 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
 ### Batch 23: High-value parse/heuristic mutants — extract_cycle_window_from_text and edge_of_known_signal_unit_len
 
 - ID: `R6-SEMANTIC-HARDENING.23`
-  Status: `pending`
+  Status: `done`
   Goal: `Fix high-value missed mutants in extract_cycle_window_from_text (21 misses), extract_cycle_window_from_text_with_known_signals (61 misses), and edge_of_known_signal_unit_len (7 misses). Focus on logic/comparison operators; skip low-value arithmetic (+→-, +→*).`
-  Acceptance: `High-value logic (&&→||, delete !, !=→==) and comparison (<→==, >=→<) mutants caught. Arithmetic skipped per policy.`
+  Acceptance: `12 tests added targeting ~15-20 high-value logic (&&→||, !=→==, ==→!=, delete !, delete match arm) and comparison mutants. ~60+ arithmetic mutants skipped per policy.`
+  Verification: `cargo test -p specforge --lib — 935/935 passed`
+  Commit: `647d1d2b`
+
+### Batch 24: Signal hint merge and registration functions
+
+- ID: `R6-SEMANTIC-HARDENING.24`
+  Status: `pending`
+  Goal: `Fix high-value missed mutants in register_interface_signal_semantic_hint (7 misses: ==→!= x7), merge_signal_hint (3 misses: match guard true/false, !=→==), merge_sticky_signal_hint (1 miss: delete match arm), merge_named_hint (1 miss: ==→!=), merge_copy_hint (1 miss: ==→!=).`
+  Acceptance: `~13 high-value mutants caught across 5 signal hint functions.`
   Verification: pending
   Commit: pending
 
@@ -242,7 +251,7 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `R6-SEMANTIC-HARDENING.23` | `pending` | Highest concentration of missed mutants in testable functions. extract_cycle_window_from_text* has 82 misses total. Fix high-value ones first. |
+| 1 | `R6-SEMANTIC-HARDENING.24` | `pending` | Signal hint merge/registration functions — 13 high-value mutants (==→!=, !=→==, delete match arm). Tight cluster of related functions. |
 
 ## Decisions
 
@@ -281,6 +290,7 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
 | `2026-05-15` | `R6-SEMANTIC-HARDENING.19` | `cargo test -p specforge --lib` | 826/826 passed |
 | `2026-05-15` | `R6-SEMANTIC-HARDENING.20` | `cargo test -p specforge --lib` | 834/834 passed |
 | `2026-05-15` | `R6-SEMANTIC-HARDENING.21` | `cargo test -p specforge --lib` | 841/841 passed |
+| `2026-05-15` | `R6-SEMANTIC-HARDENING.23` | `cargo test -p specforge --lib` | 935/935 passed |
 
 ## Commit Log
 
@@ -307,6 +317,7 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
 | `R6-SEMANTIC-HARDENING.19` | `f2ed61e6` | 9 unit tests for ControlExpressionParser parse_primary and parse_comparison |
 | `R6-SEMANTIC-HARDENING.20` | `fb4f0fe0` | 7 unit tests for dedup_actor_names, parse_explicit_clock_gated_branch, parse_explicit_reset_synchronizer_stages |
 | `R6-SEMANTIC-HARDENING.21` | `271d7d8a` | 8 unit tests for InfrastructureTopologyKind::as_str, SemanticGroundingStrength::as_str, SemanticIr::build transition dedup |
+| `R6-SEMANTIC-HARDENING.23` | `647d1d2b` | 12 unit tests for extract_cycle_window_from_text, extract_cycle_window_from_text_with_known_signals, edge_of_known_signal_unit_len |
 
 ## Changelog
 
