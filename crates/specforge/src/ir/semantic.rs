@@ -20668,4 +20668,153 @@ mod tests {
         let result = super::normalize_infrastructure_component_name("pll");
         assert!(result.is_some(), "pll: expected Some, got {result:?}");
     }
+
+    // -- split_temporal_condition_segment_on_and high-value mutants --
+
+    fn known_signal_bset(names: &[&str]) -> BTreeSet<String> {
+        names.iter().map(|s| s.to_string()).collect()
+    }
+
+    #[test]
+    fn split_temporal_on_and_two_anchored_parts() {
+        // Lines 7280-7283: >→>= and &&→|| — both parts contain known signals, should split.
+        let signals = known_signal_bset(&["CLK", "RST"]);
+        let result = super::split_temporal_condition_segment_on_and("CLK and RST", &signals);
+        assert_eq!(result, vec!["CLK".to_string(), "RST".to_string()],
+            "both parts anchored: expected split, got {result:?}");
+    }
+
+    #[test]
+    fn split_temporal_on_and_single_part_no_separator() {
+        // Line 7280: >→>= — single part (no "and") should return vec of original text.
+        let signals = known_signal_bset(&["CLK"]);
+        let result = super::split_temporal_condition_segment_on_and("CLK", &signals);
+        assert_eq!(result, vec!["CLK".to_string()],
+            "single part: expected vec with original, got {result:?}");
+    }
+
+    #[test]
+    fn split_temporal_on_and_unanchored_part_returns_original() {
+        // Lines 7281-7283: &&→|| — unanchored part (no known signal) should not split.
+        let signals = known_signal_bset(&["CLK"]);
+        let result = super::split_temporal_condition_segment_on_and("CLK and UNKNOWN", &signals);
+        assert_eq!(result, vec!["CLK and UNKNOWN".to_string()],
+            "unanchored part: expected original text, got {result:?}");
+    }
+
+    // -- temporal_rule_from_timing_constraint high-value mutants --
+
+    #[test]
+    fn temporal_rule_from_timing_constraint_no_known_signal_returns_none() {
+        // Line 8133: return None — description without known signal should return None.
+        let timing = super::TimingConstraintRecord {
+            constraint_id: "tc1".to_string(),
+            parameter_name: "tSU".to_string(),
+            min_value: None,
+            typ_value: None,
+            max_value: None,
+            unit: None,
+            description: Some("setup time".to_string()),
+            supporting_statement_ids: vec![],
+            automation_confidence: super::AutomationConfidence::High,
+        };
+        let signals = known_signal_bset(&["CLK"]);
+        let actors = BTreeSet::new();
+        let result = super::temporal_rule_from_timing_constraint(
+            &timing, "unknown signal sampled", &signals, None, &actors, None);
+        assert!(result.is_none(), "no known signal: expected None, got {result:?}");
+    }
+
+    #[test]
+    fn temporal_rule_from_timing_constraint_sampled_returns_some() {
+        // Line 8142: &&→|| — "sampled" alone should be sufficient.
+        let timing = super::TimingConstraintRecord {
+            constraint_id: "tc2".to_string(),
+            parameter_name: "tSU".to_string(),
+            min_value: None,
+            typ_value: None,
+            max_value: None,
+            unit: None,
+            description: Some("setup time".to_string()),
+            supporting_statement_ids: vec![],
+            automation_confidence: super::AutomationConfidence::High,
+        };
+        let signals = known_signal_bset(&["CLK"]);
+        let actors = BTreeSet::new();
+        let result = super::temporal_rule_from_timing_constraint(
+            &timing, "CLK sampled on rising edge", &signals, None, &actors, None);
+        assert!(result.is_some(), "CLK sampled: expected Some, got {result:?}");
+    }
+
+    // -- temporal_consequents_from_conditional_rule high-value mutants --
+
+    #[test]
+    fn temporal_consequents_no_consequent_signal_returns_empty() {
+        // Line 7978: return Vec::new() — None consequent_signal should return empty vec.
+        let rule = super::ConditionalRuleRecord {
+            rule_id: "test".to_string(),
+            antecedent_text: "when HREADY is LOW".to_string(),
+            consequent_signal: None,
+            consequent_action: "hold".to_string(),
+            source_text: "original text".to_string(),
+            supporting_statement_ids: vec![],
+            automation_confidence: super::AutomationConfidence::High,
+        };
+        let signals = BTreeSet::new();
+        let producers = BTreeMap::new();
+        let handshake = super::HandshakeRoleContext::default();
+        let result = super::temporal_consequents_from_conditional_rule(
+            &rule, &signals, &producers, &handshake);
+        assert!(result.is_empty(), "no consequent signal: expected empty, got {result:?}");
+    }
+
+    #[test]
+    fn temporal_consequents_hold_action_returns_stable_predicates() {
+        // Lines 8001-8003: ||→&& — "hold" action should trigger stability predicates.
+        let rule = super::ConditionalRuleRecord {
+            rule_id: "test".to_string(),
+            antecedent_text: "when HREADY is LOW".to_string(),
+            consequent_signal: Some("HTRANS".to_string()),
+            consequent_action: "hold".to_string(),
+            source_text: "original text".to_string(),
+            supporting_statement_ids: vec![],
+            automation_confidence: super::AutomationConfidence::High,
+        };
+        let signals = BTreeSet::new();
+        let producers = BTreeMap::new();
+        let handshake = super::HandshakeRoleContext::default();
+        let result = super::temporal_consequents_from_conditional_rule(
+            &rule, &signals, &producers, &handshake);
+        assert!(!result.is_empty(), "hold action: expected non-empty, got {result:?}");
+    }
+
+    #[test]
+    fn temporal_consequents_asserted_action_returns_signal_value() {
+        // Line 8034: ||→&& and ==→!= — "asserted" action should produce SignalValue.
+        let rule = super::ConditionalRuleRecord {
+            rule_id: "test".to_string(),
+            antecedent_text: "when HREADY is LOW".to_string(),
+            consequent_signal: Some("HTRANS".to_string()),
+            consequent_action: "asserted".to_string(),
+            source_text: "original text".to_string(),
+            supporting_statement_ids: vec![],
+            automation_confidence: super::AutomationConfidence::High,
+        };
+        let signals = BTreeSet::new();
+        let producers = BTreeMap::new();
+        let handshake = super::HandshakeRoleContext::default();
+        let result = super::temporal_consequents_from_conditional_rule(
+            &rule, &signals, &producers, &handshake);
+        assert!(!result.is_empty(), "asserted action: expected non-empty, got {result:?}");
+    }
+
+    // -- enrich_handshake_completion_predicates high-value mutants --
+
+    #[test]
+    fn enrich_handshake_no_predicates_returns_empty() {
+        // Returns empty when no predicates given.
+        let handshake = super::HandshakeRoleContext::default();
+        let result = super::enrich_handshake_completion_predicates(vec![], &handshake);
+        assert!(result.is_empty(), "empty predicates: expected empty, got {result:?}");
+    }
 }
