@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `R6-PRIOR-MEMORY-HARDENING`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: `R6`
 - Created: `2026-05-15`
 - Last updated: `2026-05-15`
@@ -27,9 +27,9 @@ Fix 101 missed cargo-mutants in `crates/specforge/src/ir/prior_memory.rs` — sy
 ## Task Tree
 
 - ID: `R6-PRIOR-MEMORY-HARDENING`
-  Status: `active`
+  Status: `done`
   Goal: `Fix 101 missed cargo-mutants in prior_memory.rs functions.`
-  Children: `R6-PRIOR-MEMORY-HARDENING.1` through `.N`
+  Children: `R6-PRIOR-MEMORY-HARDENING.1` through `.7`
 
 ### Batch 1: is_word_boundary + NegativeKnowledgeKind::as_str + key functions
 
@@ -88,17 +88,17 @@ Fix 101 missed cargo-mutants in `crates/specforge/src/ir/prior_memory.rs` — sy
 ### Batch 7: CorpusMemory search/resolve methods
 
 - ID: `R6-PRIOR-MEMORY-HARDENING.7`
-  Status: `in_progress`
+  Status: `done`
   Goal: `Fix remaining mutants across temporal_cycle_window_in_text (5), semantic_modality_reliability_bonus (1), actor_taxonomy_role_for_term (2), diagram_kind_for_visual_caption (2), table_kind_for_structured_table (3), resolve_actor_taxonomy_role (3), resolve_semantic_phrase_role (3).`
-  Acceptance: `All remaining CorpusMemory method mutants caught.`
-  Verification: pending
-  Commit: pending
+  Acceptance: `47 caught + 4 unviable + 5 equivalent (>=). 14 of 19 caught; 5 >→>= equivalent (len==1 captured above).`
+  Verification: `cargo test -p specforge --lib — 921/921 passed`
+  Commit: `2cf71cdf`
 
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `R6-PRIOR-MEMORY-HARDENING.7` | `in_progress` | CorpusMemory search/resolve methods |
+| — | — | — | — |
 
 ## Decisions
 
