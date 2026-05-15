@@ -29,7 +29,7 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
 - ID: `R6-SEMANTIC-HARDENING`
   Status: `active`
   Goal: `Fix high-value missed cargo-mutants in semantic.rs functions.`
-  Children: `R6-SEMANTIC-HARDENING.1`, `R6-SEMANTIC-HARDENING.2`, `R6-SEMANTIC-HARDENING.3`, `R6-SEMANTIC-HARDENING.4`, `R6-SEMANTIC-HARDENING.5`, `R6-SEMANTIC-HARDENING.6`, `R6-SEMANTIC-HARDENING.7`, `R6-SEMANTIC-HARDENING.8`, `R6-SEMANTIC-HARDENING.9`, `R6-SEMANTIC-HARDENING.10`, `R6-SEMANTIC-HARDENING.11`, `R6-SEMANTIC-HARDENING.12`, `R6-SEMANTIC-HARDENING.13`, `R6-SEMANTIC-HARDENING.14`
+  Children: `R6-SEMANTIC-HARDENING.1` through `.19`
 
 ### Batch 1: build_symbol_definitions
 
@@ -157,11 +157,56 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
   Verification: `cargo test -p specforge --lib — 788/788 passed`
   Commit: `b7223fb1`
 
+### Batch 15: Infrastructure actor functions
+
+- ID: `R6-SEMANTIC-HARDENING.15`
+  Status: `done`
+  Goal: `Fix 4 missed mutants across parse_explicit_infrastructure_source_actor (3) and parse_explicit_infrastructure_distribution_actors (3).`
+  Acceptance: `4 mutants caught: +→-, +→*, <=→> (non-zero pattern_pos for +→*).`
+  Verification: `cargo test -p specforge --lib — 795/795 passed`
+  Commit: `ee763737`
+
+### Batch 16: extract_infrastructure_component_phrase
+
+- ID: `R6-SEMANTIC-HARDENING.16`
+  Status: `done`
+  Goal: `Fix 4 missed mutants in extract_infrastructure_component_phrase — !=→== (underscore/hyphen), &&→||, >=→<.`
+  Acceptance: `4 mutants caught. 1 delete ! equivalent (first trim_matches removes all-delimiter tokens).`
+  Verification: `cargo test -p specforge --lib — 803/803 passed`
+  Commit: `a77dba8e`
+
+### Batch 17: extract_infrastructure_subject_phrase
+
+- ID: `R6-SEMANTIC-HARDENING.17`
+  Status: `done`
+  Goal: `Fix 8 missed mutants in extract_infrastructure_subject_phrase — !=→==, >=→<, &&→|| across determiner and reverse paths.`
+  Acceptance: `8 mutants caught. 6 remaining equivalent or low-value (delete ! rescued by dual-path design, +→* arithmetic, &&→||/delete ! in trim_matches rescued).`
+  Verification: `cargo test -p specforge --lib — 812/812 passed`
+  Commit: `76cce288`
+
+### Batch 18: parse_width_token
+
+- ID: `R6-SEMANTIC-HARDENING.18`
+  Status: `done`
+  Goal: `Fix 2 missed mutants in parse_width_token — >→>= and &&→||.`
+  Acceptance: `2 mutants caught: >→>= (zero test), &&→|| (non-alphanumeric test).`
+  Verification: `cargo test -p specforge --lib — 817/817 passed`
+  Commit: `715bf9ce`
+
+### Batch 19: parse_primary and parse_comparison
+
+- ID: `R6-SEMANTIC-HARDENING.19`
+  Status: `done`
+  Goal: `Fix 6 missed mutants across ControlExpressionParser::parse_primary (1 ||→&&) and parse_comparison (5 delete match arm).`
+  Acceptance: `6 mutants caught: ||→&& for "true"/"false" literals, delete match arms for !=, <, <=, >, >=.`
+  Verification: `cargo test -p specforge --lib — 826/826 passed`
+  Commit: `715bf9ce`, `f2ed61e6`
+
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `R6-SEMANTIC-HARDENING.13` | `pending` | Run cargo-mutants to discover next untested functions. |
+| 1 | `R6-SEMANTIC-HARDENING.20` | `pending` | 9 pending in builder functions (SemanticContext fixtures needed), 5 in clock gate/reset synchronizer (complex fixtures), 1 in dedup_actor_names. Run cargo-mutants to discover more. |
 
 ## Decisions
 
@@ -193,6 +238,11 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
 | `2026-05-15` | `R6-SEMANTIC-HARDENING.12` | `cargo test -p specforge --lib` | 771/771 passed |
 | `2026-05-15` | `R6-SEMANTIC-HARDENING.13` | `cargo test -p specforge --lib` | 779/779 passed |
 | `2026-05-15` | `R6-SEMANTIC-HARDENING.14` | `cargo test -p specforge --lib` | 788/788 passed |
+| `2026-05-15` | `R6-SEMANTIC-HARDENING.15` | `cargo test -p specforge --lib` | 795/795 passed |
+| `2026-05-15` | `R6-SEMANTIC-HARDENING.16` | `cargo test -p specforge --lib` | 803/803 passed |
+| `2026-05-15` | `R6-SEMANTIC-HARDENING.17` | `cargo test -p specforge --lib` | 812/812 passed |
+| `2026-05-15` | `R6-SEMANTIC-HARDENING.18` | `cargo test -p specforge --lib` | 817/817 passed |
+| `2026-05-15` | `R6-SEMANTIC-HARDENING.19` | `cargo test -p specforge --lib` | 826/826 passed |
 
 ## Commit Log
 
@@ -212,9 +262,14 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
 | `R6-SEMANTIC-HARDENING.12` | `b76507b8` | 7 unit tests for vlm_guard_clause_has_comparison, parse_vlm_decision_tree_value |
 | `R6-SEMANTIC-HARDENING.13` | `dc2e7454` | 8 unit tests for is_false, is_zero, is_waveform_index_token |
 | `R6-SEMANTIC-HARDENING.14` | `b7223fb1` | 9 unit tests for is_compact_waveform_index_label |
+| `R6-SEMANTIC-HARDENING.15` | `ee763737` | 7 unit tests for parse_explicit_infrastructure_source_actor, parse_explicit_infrastructure_distribution_actors |
+| `R6-SEMANTIC-HARDENING.16` | `a77dba8e` | 6 unit tests for extract_infrastructure_component_phrase |
+| `R6-SEMANTIC-HARDENING.17` | `76cce288` | 11 unit tests for extract_infrastructure_subject_phrase |
+| `R6-SEMANTIC-HARDENING.18` | `715bf9ce` | 5 unit tests for parse_width_token |
+| `R6-SEMANTIC-HARDENING.19` | `f2ed61e6` | 9 unit tests for ControlExpressionParser parse_primary and parse_comparison |
 
 ## Changelog
 
 - `2026-05-14`: Created task tree. Leaf 1 (build_symbol_definitions) already completed and backfilled.
 - `2026-05-14`: Completed leaves 2-10 (parse_explicit_system_reset through edge/index/cycle-marker helpers).
-- `2026-05-15`: Completed leaves 11-12 (cycle count functions, VLM guard/decision tree).
+- `2026-05-15`: Completed leaves 11-19 (cycle count functions through expression parser).
