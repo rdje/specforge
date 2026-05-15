@@ -1,5 +1,25 @@
 # CHANGES
 
+## 2026-05-15 (PNT continuation — HDL scope scrub, AXI timing fixture, push checkpoint)
+
+### Scrub: HDL adapter target references from key docs (R16 scope removal)
+- README.md: replaced SystemVerilog/Verilog/VHDL adapter targets with `.fsm` + `.isf`, marked HDL lowering out of scope.
+- INTENTIR_SPEC.md: same treatment.
+- LIVE_ACHIEVEMENT_STATUS.md: replaced "Not Started" HDL rows with scope-removal entry, closed remaining task tree entries.
+
+### Added: AXI write-address timing gold fixture (R15e benchmark hardening)
+- New fixture `axi_write_address_timing_gold` modeled after `axi_read_address_timing_gold`.
+- Covers AWVALID/AWREADY handshake with next-cycle ready timing and AWADDR stability across handshake.
+- Completes five-channel AXI timing gold coverage (read addr, write addr, read data, write data, write response).
+- 151/151 kg-bench fixtures passing.
+
+### Maintenance
+- Fixed stale LIVE_ACHIEVEMENT_STATUS.md entry (renderable-document DT coverage was done but marked In Progress).
+- Fixed clippy warnings (unused variable, unnecessary mut) in semantic.rs tests.
+- Updated MEMORY.md across multiple slices — commit hash, test count, fixture count, push state.
+- Pushed to origin at 29 commits (push checkpoint ~30).
+- 1014/1014 tests passing. 151/151 fixtures passing.
+
 ## 2026-05-15 (live-doc sync after hardening task tree closures)
 
 ### Synced: stale live docs and mdBook after R6-SEMANTIC-HARDENING and R6-PRIOR-MEMORY-HARDENING closures
