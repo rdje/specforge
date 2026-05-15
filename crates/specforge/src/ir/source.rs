@@ -1058,8 +1058,8 @@ mod tests {
     use tempfile::tempdir;
 
     use crate::error::Result;
-    use crate::ir::source::AdapterTarget;
     use crate::ir::IrStage;
+    use crate::ir::source::AdapterTarget;
     use crate::test_support::env_var_lock;
 
     use super::{
@@ -1153,10 +1153,7 @@ mod tests {
         assert!(source_ir.residual_decisions.is_empty());
         assert!(source_ir.visual_assets.is_empty());
         assert!(source_ir.placeholder_bindings.is_empty());
-        assert_eq!(
-            source_ir.automation_confidence,
-            AutomationConfidence::High
-        );
+        assert_eq!(source_ir.automation_confidence, AutomationConfidence::High);
         assert!(!source_ir.adapter_targets.is_empty());
         assert!(source_ir.adapter_targets.contains(&AdapterTarget::Fsm));
         assert_eq!(
@@ -1211,15 +1208,9 @@ mod tests {
             Some("visual_assets.json")
         );
         assert!(source_ir.residual_decisions.is_empty());
-        assert_eq!(
-            source_ir.automation_confidence,
-            AutomationConfidence::High
-        );
+        assert_eq!(source_ir.automation_confidence, AutomationConfidence::High);
         assert!(!source_ir.adapter_targets.is_empty());
-        assert_eq!(
-            source_ir.document_identity.origin_kind,
-            SourceKind::Pdf
-        );
+        assert_eq!(source_ir.document_identity.origin_kind, SourceKind::Pdf);
 
         Ok(())
     }
@@ -1242,10 +1233,7 @@ mod tests {
             source_ir.planned_actions,
             vec!["resolve_source_ir_residual_decisions".to_string()]
         );
-        assert_eq!(
-            source_ir.automation_confidence,
-            AutomationConfidence::Low
-        );
+        assert_eq!(source_ir.automation_confidence, AutomationConfidence::Low);
         assert_eq!(
             source_ir.residual_decisions[0].automation_confidence,
             AutomationConfidence::Low
@@ -1381,18 +1369,17 @@ EOF
                 "plan_adapter_lowering".to_string()
             ]
         );
-        assert_eq!(
-            source_ir.automation_confidence,
-            AutomationConfidence::High
-        );
+        assert_eq!(source_ir.automation_confidence, AutomationConfidence::High);
         assert!(source_ir.source.size_bytes.is_some());
         assert!(source_ir.source.size_bytes.unwrap() > 0);
         assert!(!source_ir.normalization_plan.notes.is_empty());
-        assert!(source_ir
-            .normalization_plan
-            .notes
-            .iter()
-            .any(|note| note.contains("docling materialized")));
+        assert!(
+            source_ir
+                .normalization_plan
+                .notes
+                .iter()
+                .any(|note| note.contains("docling materialized"))
+        );
         assert_eq!(source_ir.page_artifacts[0].width_px, Some(800));
         assert_eq!(source_ir.page_artifacts[0].height_px, Some(600));
         assert_eq!(
@@ -1519,10 +1506,7 @@ EOF
                 .join("normalized.staging")
                 .exists()
         );
-        assert_eq!(
-            source_ir.automation_confidence,
-            AutomationConfidence::High
-        );
+        assert_eq!(source_ir.automation_confidence, AutomationConfidence::High);
 
         Ok(())
     }
@@ -1566,10 +1550,7 @@ exit 7
                 .join("normalized.staging")
                 .exists()
         );
-        assert_eq!(
-            source_ir.automation_confidence,
-            AutomationConfidence::High
-        );
+        assert_eq!(source_ir.automation_confidence, AutomationConfidence::High);
 
         Ok(())
     }

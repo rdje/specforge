@@ -862,7 +862,8 @@ mod tests {
             intent_ir
                 .actors
                 .iter()
-                .any(|actor| actor.actor_id == "actor_transmitter" && !actor.supporting_actor_ids.is_empty())
+                .any(|actor| actor.actor_id == "actor_transmitter"
+                    && !actor.supporting_actor_ids.is_empty())
         );
         assert!(intent_ir.behaviors.iter().any(|behavior| {
             behavior
@@ -2279,8 +2280,7 @@ mod tests {
                         phase: TickPhase::PostTick,
                     } if actor_name.eq_ignore_ascii_case("Completer") && signal_name == "PREADY"
                 )
-            })
-                && rule.automation_confidence == AutomationConfidence::Medium
+            }) && rule.automation_confidence == AutomationConfidence::Medium
                 && !rule.supporting_statement_ids.is_empty()
         }));
 
@@ -2352,8 +2352,7 @@ mod tests {
                         to_phase: TickPhase::PostTick,
                     } if actor_name.eq_ignore_ascii_case("Completer") && signal_name == "PREADY"
                 )
-            })
-                && rule.automation_confidence == AutomationConfidence::Medium
+            }) && rule.automation_confidence == AutomationConfidence::Medium
                 && !rule.supporting_statement_ids.is_empty()
         }));
 
@@ -3005,10 +3004,7 @@ mod tests {
 
     #[test]
     fn overlaps_returns_false_when_no_common_element() {
-        assert!(!super::overlaps(
-            &["a".to_string()],
-            &["b".to_string()]
-        ));
+        assert!(!super::overlaps(&["a".to_string()], &["b".to_string()]));
     }
 
     #[test]
@@ -3107,9 +3103,11 @@ mod tests {
             }],
         };
         let assumptions = super::build_assumptions(&context, &[]);
-        assert!(assumptions.iter().any(|a| {
-            a.assumption_id == "assumption_semantic_role_without_consensus"
-        }));
+        assert!(
+            assumptions
+                .iter()
+                .any(|a| { a.assumption_id == "assumption_semantic_role_without_consensus" })
+        );
     }
 
     #[test]
@@ -3131,9 +3129,11 @@ mod tests {
             }],
         };
         let assumptions = super::build_assumptions(&context, &[]);
-        assert!(assumptions.iter().any(|a| {
-            a.assumption_id == "assumption_alias_dependent_handshake_completion"
-        }));
+        assert!(
+            assumptions
+                .iter()
+                .any(|a| { a.assumption_id == "assumption_alias_dependent_handshake_completion" })
+        );
     }
 
     #[test]

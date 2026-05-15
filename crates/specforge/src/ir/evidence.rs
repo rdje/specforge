@@ -6797,8 +6797,7 @@ mod tests {
 
     use super::{
         EvidenceIr, EvidenceLinkKind, EvidenceModality, SignalSemanticHintSourceKind,
-        SignalSemanticTag, StatementClass, VisualObservationKind,
-        canonicalize_existing_path,
+        SignalSemanticTag, StatementClass, VisualObservationKind, canonicalize_existing_path,
     };
 
     fn make_table_cell(text: &str, is_header: bool) -> StructuredTableCellRecord {
@@ -6952,16 +6951,20 @@ mod tests {
             evidence_ir.extracted_statements[0].modality,
             EvidenceModality::Text
         );
-        assert!(evidence_ir.extracted_statements[0]
-            .related_visual_evidence_ids
-            .is_empty());
+        assert!(
+            evidence_ir.extracted_statements[0]
+                .related_visual_evidence_ids
+                .is_empty()
+        );
         assert_eq!(
             evidence_ir.extracted_statements[1].modality,
             EvidenceModality::Text
         );
-        assert!(evidence_ir.extracted_statements[1]
-            .related_visual_evidence_ids
-            .is_empty());
+        assert!(
+            evidence_ir.extracted_statements[1]
+                .related_visual_evidence_ids
+                .is_empty()
+        );
 
         Ok(())
     }
@@ -7932,14 +7935,18 @@ mod tests {
             "tie-off rows must not synthesize output declarations"
         );
         assert!(!evidence_ir.table_signal_declaration_provenance.is_empty());
-        assert!(evidence_ir
-            .table_signal_declaration_provenance
-            .iter()
-            .any(|p| p.signal_name == "BROADCASTATOMIC"));
-        assert!(evidence_ir
-            .table_signal_declaration_provenance
-            .iter()
-            .any(|p| p.signal_name == "BROADCASTSHAREABLE"));
+        assert!(
+            evidence_ir
+                .table_signal_declaration_provenance
+                .iter()
+                .any(|p| p.signal_name == "BROADCASTATOMIC")
+        );
+        assert!(
+            evidence_ir
+                .table_signal_declaration_provenance
+                .iter()
+                .any(|p| p.signal_name == "BROADCASTSHAREABLE")
+        );
 
         Ok(())
     }
@@ -8262,14 +8269,18 @@ mod tests {
             check_signal_statements
         );
         assert!(!evidence_ir.table_signal_declaration_provenance.is_empty());
-        assert!(evidence_ir
-            .table_signal_declaration_provenance
-            .iter()
-            .any(|p| p.signal_name == "XREQ"));
-        assert!(evidence_ir
-            .table_signal_declaration_provenance
-            .iter()
-            .any(|p| p.signal_name == "XACK"));
+        assert!(
+            evidence_ir
+                .table_signal_declaration_provenance
+                .iter()
+                .any(|p| p.signal_name == "XREQ")
+        );
+        assert!(
+            evidence_ir
+                .table_signal_declaration_provenance
+                .iter()
+                .any(|p| p.signal_name == "XACK")
+        );
 
         Ok(())
     }
@@ -9156,7 +9167,10 @@ mod tests {
             .find(|record| record.signal_name == "CS_N")
             .expect("expected clause-local active-low polarity for CS_N");
         assert_eq!(cs_n_polarity.polarity, super::SignalPolarity::ActiveLow);
-        assert_eq!(cs_n_polarity.automation_confidence, AutomationConfidence::Medium);
+        assert_eq!(
+            cs_n_polarity.automation_confidence,
+            AutomationConfidence::Medium
+        );
         assert!(!cs_n_polarity.supporting_statement_ids.is_empty());
         let enable_polarity = evidence_ir
             .signal_polarities
@@ -9164,7 +9178,10 @@ mod tests {
             .find(|record| record.signal_name == "ENABLE")
             .expect("expected clause-local active-high polarity for ENABLE");
         assert_eq!(enable_polarity.polarity, super::SignalPolarity::ActiveHigh);
-        assert_eq!(enable_polarity.automation_confidence, AutomationConfidence::Medium);
+        assert_eq!(
+            enable_polarity.automation_confidence,
+            AutomationConfidence::Medium
+        );
         assert!(!enable_polarity.supporting_statement_ids.is_empty());
         assert!(evidence_ir.signal_constraints.iter().any(|constraint| {
             constraint.subject_signal == "CS_N"
@@ -9345,14 +9362,16 @@ mod tests {
         ) && matches!(
             observation.polarity,
             super::SignalPolarity::ActiveLow
-        ) && !observation.supporting_statement_ids.is_empty()));
+        )
+            && !observation.supporting_statement_ids.is_empty()));
         assert!(conflict.observations.iter().any(|observation| matches!(
             observation.source_kind,
             super::SignalPolarityEvidenceSourceKind::SignalDescriptionTable
         ) && matches!(
             observation.polarity,
             super::SignalPolarity::ActiveHigh
-        ) && observation.supporting_statement_ids.is_empty()));
+        )
+            && observation.supporting_statement_ids.is_empty()));
 
         Ok(())
     }
@@ -10174,11 +10193,13 @@ mod tests {
             .insert("address bus".to_string(), "HADDR".to_string());
 
         let mut counter = 1usize;
-        let (_reclassified, new_records) =
-            evidence_ir.apply_alias_reclassification(&mut counter);
+        let (_reclassified, new_records) = evidence_ir.apply_alias_reclassification(&mut counter);
 
         assert_eq!(new_records.len(), 1);
-        assert!(new_records[0].negated, "negated must be true when lowered text contains 'cannot'");
+        assert!(
+            new_records[0].negated,
+            "negated must be true when lowered text contains 'cannot'"
+        );
 
         Ok(())
     }
@@ -10424,14 +10445,18 @@ mod tests {
                 .iter()
                 .any(|link| link.relation == EvidenceLinkKind::Cites)
         );
-        assert!(evidence_ir
-            .evidence_links
-            .iter()
-            .all(|link| !link.from_evidence_span_id.is_empty()));
-        assert!(evidence_ir
-            .evidence_links
-            .iter()
-            .all(|link| !link.to_visual_evidence_id.is_empty()));
+        assert!(
+            evidence_ir
+                .evidence_links
+                .iter()
+                .all(|link| !link.from_evidence_span_id.is_empty())
+        );
+        assert!(
+            evidence_ir
+                .evidence_links
+                .iter()
+                .all(|link| !link.to_visual_evidence_id.is_empty())
+        );
         assert_eq!(
             evidence_ir.visual_evidence[0]
                 .figure_reference_text

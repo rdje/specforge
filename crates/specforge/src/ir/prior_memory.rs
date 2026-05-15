@@ -1132,10 +1132,7 @@ mod tests {
 
     #[test]
     fn diagram_kind_key_truth_table() {
-        assert_eq!(
-            diagram_kind_key(DiagramKind::TruthTable),
-            "truth_table"
-        );
+        assert_eq!(diagram_kind_key(DiagramKind::TruthTable), "truth_table");
     }
 
     // replace_term_with_placeholder unit tests
@@ -1296,12 +1293,18 @@ mod tests {
 
     #[test]
     fn contains_term_exact_match_returns_true() {
-        assert!(normalized_text_contains_term("clock signal", "clock signal"));
+        assert!(normalized_text_contains_term(
+            "clock signal",
+            "clock signal"
+        ));
     }
 
     #[test]
     fn contains_term_window_match_returns_true() {
-        assert!(normalized_text_contains_term("the clock signal is", "clock signal"));
+        assert!(normalized_text_contains_term(
+            "the clock signal is",
+            "clock signal"
+        ));
     }
 
     #[test]
@@ -1575,11 +1578,8 @@ mod tests {
     fn temporal_phrase_priors_for_matching_filter() {
         // Catches vec![] at line 179.
         let corpus = make_test_corpus();
-        let results = corpus.temporal_phrase_priors_for(
-            Some(ProtocolFamily::AmbaAxi),
-            false,
-            Some(true),
-        );
+        let results =
+            corpus.temporal_phrase_priors_for(Some(ProtocolFamily::AmbaAxi), false, Some(true));
         assert_eq!(results.len(), 1);
     }
 
@@ -1587,11 +1587,7 @@ mod tests {
     fn temporal_phrase_priors_for_requires_cycle_window_matching() {
         // requires_cycle_window=true with record that has a cycle window.
         let corpus = make_test_corpus();
-        let results = corpus.temporal_phrase_priors_for(
-            Some(ProtocolFamily::AmbaAxi),
-            true,
-            None,
-        );
+        let results = corpus.temporal_phrase_priors_for(Some(ProtocolFamily::AmbaAxi), true, None);
         assert_eq!(results.len(), 1);
     }
 
@@ -1614,11 +1610,7 @@ mod tests {
             }],
             ..make_test_corpus()
         };
-        let results = corpus.temporal_phrase_priors_for(
-            Some(ProtocolFamily::AmbaAxi),
-            true,
-            None,
-        );
+        let results = corpus.temporal_phrase_priors_for(Some(ProtocolFamily::AmbaAxi), true, None);
         assert!(results.is_empty());
     }
 
@@ -1626,11 +1618,8 @@ mod tests {
     fn temporal_phrase_priors_for_non_matching_actor_grounded() {
         // Catches ==→!= at line 187 — actor_grounded mismatch must exclude.
         let corpus = make_test_corpus();
-        let results = corpus.temporal_phrase_priors_for(
-            Some(ProtocolFamily::AmbaAxi),
-            false,
-            Some(false),
-        );
+        let results =
+            corpus.temporal_phrase_priors_for(Some(ProtocolFamily::AmbaAxi), false, Some(false));
         assert!(results.is_empty());
     }
 
@@ -1651,10 +1640,8 @@ mod tests {
     fn table_shape_priors_for_non_matching_kind() {
         // Catches ==→!= at line 281 — wrong table kind must exclude.
         let corpus = make_test_corpus();
-        let results = corpus.table_shape_priors_for(
-            Some(ProtocolFamily::AmbaAxi),
-            Some(TableKind::RegisterMap),
-        );
+        let results = corpus
+            .table_shape_priors_for(Some(ProtocolFamily::AmbaAxi), Some(TableKind::RegisterMap));
         assert!(results.is_empty());
     }
 
@@ -1787,20 +1774,22 @@ mod tests {
         // Exercises >→<, >→==, >→>= at line 238 — multiple different cycle
         // windows matching the same text must return None (ambiguity).
         let mut corpus = make_test_corpus();
-        corpus.temporal_phrase_priors.push(TemporalPhrasePriorRecord {
-            prior_id: "tp2".into(),
-            normalized_phrase: "after reset".into(),
-            protocol_family: ProtocolFamily::AmbaAxi,
-            cycle_window: Some(CycleWindowRecord {
-                min_cycles: Some(4),
-                max_cycles: Some(4),
-            }),
-            actor_grounded: true,
-            handshake_completion: false,
-            support_count: 3,
-            supporting_document_keys: vec![],
-            strongest_automation_confidence: AutomationConfidence::High,
-        });
+        corpus
+            .temporal_phrase_priors
+            .push(TemporalPhrasePriorRecord {
+                prior_id: "tp2".into(),
+                normalized_phrase: "after reset".into(),
+                protocol_family: ProtocolFamily::AmbaAxi,
+                cycle_window: Some(CycleWindowRecord {
+                    min_cycles: Some(4),
+                    max_cycles: Some(4),
+                }),
+                actor_grounded: true,
+                handshake_completion: false,
+                support_count: 3,
+                supporting_document_keys: vec![],
+                strongest_automation_confidence: AutomationConfidence::High,
+            });
         let signal_names: BTreeSet<String> = BTreeSet::new();
         let actor_names: BTreeSet<String> = BTreeSet::new();
         let result = corpus.temporal_cycle_window_in_text(
@@ -1828,7 +1817,10 @@ mod tests {
                     prior_id: "tp_axi_1".into(),
                     normalized_phrase: "after reset".into(),
                     protocol_family: ProtocolFamily::AmbaAxi,
-                    cycle_window: Some(CycleWindowRecord { min_cycles: Some(2), max_cycles: Some(2) }),
+                    cycle_window: Some(CycleWindowRecord {
+                        min_cycles: Some(2),
+                        max_cycles: Some(2),
+                    }),
                     actor_grounded: true,
                     handshake_completion: false,
                     support_count: 3,
@@ -1839,7 +1831,10 @@ mod tests {
                     prior_id: "tp_axi_2".into(),
                     normalized_phrase: "after reset".into(),
                     protocol_family: ProtocolFamily::AmbaAxi,
-                    cycle_window: Some(CycleWindowRecord { min_cycles: Some(4), max_cycles: Some(4) }),
+                    cycle_window: Some(CycleWindowRecord {
+                        min_cycles: Some(4),
+                        max_cycles: Some(4),
+                    }),
                     actor_grounded: true,
                     handshake_completion: false,
                     support_count: 3,
@@ -1852,7 +1847,10 @@ mod tests {
                     prior_id: "tp_gen".into(),
                     normalized_phrase: "after reset".into(),
                     protocol_family: ProtocolFamily::AmbaGeneric,
-                    cycle_window: Some(CycleWindowRecord { min_cycles: Some(1), max_cycles: Some(1) }),
+                    cycle_window: Some(CycleWindowRecord {
+                        min_cycles: Some(1),
+                        max_cycles: Some(1),
+                    }),
                     actor_grounded: true,
                     handshake_completion: false,
                     support_count: 3,

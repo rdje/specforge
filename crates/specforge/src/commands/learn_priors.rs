@@ -1964,9 +1964,11 @@ mod tests {
             semantic_modality_reliability_records[0].strongest_automation_confidence,
             AutomationConfidence::High
         );
-        assert!(!semantic_modality_reliability_records[0]
-            .supporting_document_keys
-            .is_empty());
+        assert!(
+            !semantic_modality_reliability_records[0]
+                .supporting_document_keys
+                .is_empty()
+        );
 
         assert_eq!(temporal_records.len(), 1);
         assert_eq!(
@@ -2145,9 +2147,11 @@ mod tests {
 
         let records = materialize_actor_taxonomy_priors(actor_taxonomy_priors);
         assert_eq!(records.len(), 2);
-        assert!(records
-            .iter()
-            .all(|record| !record.supporting_document_keys.is_empty()));
+        assert!(
+            records
+                .iter()
+                .all(|record| !record.supporting_document_keys.is_empty())
+        );
         assert!(records.iter().any(|record| {
             record.normalized_actor_term == "requester"
                 && record.taxonomy_role == ActorTaxonomyRole::RequesterLike
