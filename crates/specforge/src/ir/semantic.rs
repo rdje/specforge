@@ -19873,4 +19873,171 @@ mod tests {
 
         Ok(())
     }
+
+    // -- extract_cycle_window_from_text high-value mutant tests --
+
+    #[test]
+    fn extract_cycle_window_most_without_at_returns_none() {
+        // Line 8714: &&→|| — "most" without "at" should not trigger "at most" path.
+        let result = super::extract_cycle_window_from_text("most 5 cycles");
+        assert!(result.is_none(), "most 5 cycles: expected None, got {result:?}");
+    }
+
+    #[test]
+    fn extract_cycle_window_more_without_no_returns_none() {
+        // Lines 8726-8727: &&→|| — "more" without "no" should not trigger "no more than" path.
+        let result = super::extract_cycle_window_from_text("more than 5 cycles");
+        assert!(result.is_none(), "more than 5 cycles: expected None, got {result:?}");
+    }
+
+    #[test]
+    fn extract_cycle_window_no_more_without_than_returns_none() {
+        // Line 8727: &&→|| — "no more" without "than" should not match.
+        let result = super::extract_cycle_window_from_text("no more 5 cycles");
+        assert!(result.is_none(), "no more 5 cycles: expected None, got {result:?}");
+    }
+
+    // -- extract_cycle_window_from_text_with_known_signals high-value mutants --
+
+    fn known_signal_set(signals: &[&str]) -> BTreeSet<String> {
+        signals.iter().map(|s| s.to_string()).collect()
+    }
+
+    #[test]
+    fn cycle_window_known_signals_between_non_between_token_skipped() {
+        // Line 8865: !=→== — "bztween" (typo, not "between") should be skipped.
+        let signals = known_signal_set(&["clk"]);
+        let result =
+            super::extract_cycle_window_from_text_with_known_signals(
+                "bztween 3 and 5 clk edges",
+                &signals,
+            );
+        assert!(result.is_none(), "bztween (non-between): expected None, got {result:?}");
+    }
+
+    #[test]
+    fn cycle_window_known_signals_between_and_mismatch() {
+        // Line 8875: ==→!= — "between X and Y" requires "and" at position +2.
+        let signals = known_signal_set(&["clk"]);
+        let result =
+            super::extract_cycle_window_from_text_with_known_signals(
+                "between 3 then 5 clk edges",
+                &signals,
+            );
+        assert!(result.is_none(), "between 3 then 5: expected None, got {result:?}");
+    }
+
+    #[test]
+    fn cycle_window_known_signals_within_returns_min_none() {
+        // Line 8920: delete match arm "after" | "for" — "within" path still works.
+        // Also covers "after" and "for" paths.
+        let signals = known_signal_set(&["clk"]);
+        let result =
+            super::extract_cycle_window_from_text_with_known_signals(
+                "after 3 clk edges",
+                &signals,
+            );
+        assert_eq!(
+            result,
+            Some(CycleWindowRecord {
+                min_cycles: Some(3),
+                max_cycles: Some(3),
+            }),
+            "after 3 clk edges: expected Some(min=3,max=3), got {result:?}"
+        );
+    }
+
+    #[test]
+    fn cycle_window_known_signals_for_returns_count() {
+        // Line 8920: delete match arm "after" | "for" — "for" path coverage.
+        let signals = known_signal_set(&["clk"]);
+        let result =
+            super::extract_cycle_window_from_text_with_known_signals(
+                "for 4 clk edges",
+                &signals,
+            );
+        assert_eq!(
+            result,
+            Some(CycleWindowRecord {
+                min_cycles: Some(4),
+                max_cycles: Some(4),
+            }),
+            "for 4 clk edges: expected Some(min=4,max=4), got {result:?}"
+        );
+    }
+
+    #[test]
+    fn cycle_window_known_signals_at_least_without_at() {
+        // Line 8931: &&→|| — "least" without "at" should not trigger "at least" path.
+        let signals = known_signal_set(&["clk"]);
+        let result =
+            super::extract_cycle_window_from_text_with_known_signals(
+                "least 5 clk edges",
+                &signals,
+            );
+        assert!(result.is_none(), "least 5 clk edges: expected None, got {result:?}");
+    }
+
+    #[test]
+    fn cycle_window_known_signals_at_most_without_at() {
+        // Line 8945: &&→|| — "most" without "at" should not trigger "at most" path.
+        let signals = known_signal_set(&["clk"]);
+        let result =
+            super::extract_cycle_window_from_text_with_known_signals(
+                "most 6 clk edges",
+                &signals,
+            );
+        assert!(result.is_none(), "most 6 clk edges: expected None, got {result:?}");
+    }
+
+    #[test]
+    fn cycle_window_known_signals_no_more_than_requires_no() {
+        // Lines 8959-8961: ==→!= and &&→|| — "more than" without "no" should not match.
+        let signals = known_signal_set(&["clk"]);
+        let result =
+            super::extract_cycle_window_from_text_with_known_signals(
+                "more than 7 clk edges",
+                &signals,
+            );
+        assert!(result.is_none(), "more than 7 clk edges: expected None, got {result:?}");
+    }
+
+    #[test]
+    fn cycle_window_known_signals_at_during_on_trigger_parsing() {
+        // Line 8983: delete ! — "during" should trigger parsing, not be skipped.
+        let signals = known_signal_set(&["clk"]);
+        let result =
+            super::extract_cycle_window_from_text_with_known_signals(
+                "during 3 clk edges",
+                &signals,
+            );
+        assert_eq!(
+            result,
+            Some(CycleWindowRecord {
+                min_cycles: Some(3),
+                max_cycles: Some(3),
+            }),
+            "during 3 clk edges: expected Some, got {result:?}"
+        );
+    }
+
+    // -- edge_of_known_signal_unit_len high-value mutants --
+
+    #[test]
+    fn edge_of_known_signal_edge_singular_token() {
+        // Line 9029: ||→&& — "edge" (singular) should be recognized.
+        let signals = known_signal_set(&["clk"]);
+        let tokens = ["edge", "of", "the", "clk"];
+        let result = super::edge_of_known_signal_unit_len(&tokens, 0, &signals);
+        assert_eq!(result, Some(4), "edge of the clk: expected Some(4), got {result:?}");
+    }
+
+    #[test]
+    fn edge_of_known_signal_edges_plural_token() {
+        // Line 9029: ||→&& — "edges" (plural) should also be recognized.
+        let signals = known_signal_set(&["clk"]);
+        let tokens = ["edges", "of", "clk"];
+        let result = super::edge_of_known_signal_unit_len(&tokens, 0, &signals);
+        assert_eq!(result, Some(3), "edges of clk: expected Some(3), got {result:?}");
+    }
 }
