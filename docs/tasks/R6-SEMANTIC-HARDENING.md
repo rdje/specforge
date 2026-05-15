@@ -6,7 +6,7 @@
 - Status: `active`
 - Roadmap lane: `R6`
 - Created: `2026-05-14`
-- Last updated: `2026-05-15`
+- Last updated: `2026-05-15` (scan completed 15:50, ~6h runtime)
 - Owner: repo-local workflow
 
 ## Goal
@@ -29,7 +29,7 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
 - ID: `R6-SEMANTIC-HARDENING`
   Status: `active`
   Goal: `Fix high-value missed cargo-mutants in semantic.rs functions.`
-  Children: `R6-SEMANTIC-HARDENING.1` through `.22`
+  Children: `R6-SEMANTIC-HARDENING.1` through `.23`
 
 ### Batch 1: build_symbol_definitions
 
@@ -223,9 +223,18 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
 ### Batch 22: Broad exhaustion scan
 
 - ID: `R6-SEMANTIC-HARDENING.22`
-  Status: `in_progress`
+  Status: `done`
   Goal: `Run broad cargo-mutants scan on semantic.rs to confirm exhaustion.`
-  Acceptance: `All previously missed mutants caught; only equivalent/timeout/unviable remain. Verify deferred 9 builder function mutants still need SemanticContext fixtures.`
+  Acceptance: `Scan completed: 1569 mutants tested in 5h. 293 missed, 1044 caught, 195 unviable, 37 timeouts. ~35 builder function mutants (need SemanticContext — deferred), ~258 testable mutants across 40+ functions. Far more than the previously documented "9 deferred."`
+  Verification: `cargo mutants -p specforge -f semantic.rs — exit code 3 (missed+timeouts)`
+  Commit: pending
+
+### Batch 23: High-value parse/heuristic mutants — extract_cycle_window_from_text and edge_of_known_signal_unit_len
+
+- ID: `R6-SEMANTIC-HARDENING.23`
+  Status: `pending`
+  Goal: `Fix high-value missed mutants in extract_cycle_window_from_text (21 misses), extract_cycle_window_from_text_with_known_signals (61 misses), and edge_of_known_signal_unit_len (7 misses). Focus on logic/comparison operators; skip low-value arithmetic (+→-, +→*).`
+  Acceptance: `High-value logic (&&→||, delete !, !=→==) and comparison (<→==, >=→<) mutants caught. Arithmetic skipped per policy.`
   Verification: pending
   Commit: pending
 
@@ -233,7 +242,7 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `R6-SEMANTIC-HARDENING.22` | `pending` | Run broad cargo-mutants scan to confirm exhaustion. Deferred: 9 builder function mutants needing SemanticContext fixtures. |
+| 1 | `R6-SEMANTIC-HARDENING.23` | `pending` | Highest concentration of missed mutants in testable functions. extract_cycle_window_from_text* has 82 misses total. Fix high-value ones first. |
 
 ## Decisions
 
