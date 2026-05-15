@@ -1204,6 +1204,15 @@ mod tests {
         assert_eq!(result, "X bar bar");
     }
 
+    #[test]
+    fn replace_term_not_replaced_when_no_end_boundary() {
+        // Catches +→* at line 827 — "bar" at index 0 matches start boundary
+        // but char after term ('b' in "barbaz") is alphanumeric → no end
+        // boundary. Mutant changes index+len→index*len=0 (always boundary).
+        let result = replace_term_with_placeholder("barbaz", "bar", "XXX");
+        assert_eq!(result, "barbaz");
+    }
+
     // is_meaningful_actor_term unit tests
 
     #[test]
