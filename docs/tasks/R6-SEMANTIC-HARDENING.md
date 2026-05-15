@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `R6-SEMANTIC-HARDENING`
-- Status: `done`
+- Status: `active`
 - Roadmap lane: `R6`
 - Created: `2026-05-14`
 - Last updated: `2026-05-15`
@@ -29,7 +29,7 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
 - ID: `R6-SEMANTIC-HARDENING`
   Status: `active`
   Goal: `Fix high-value missed cargo-mutants in semantic.rs functions.`
-  Children: `R6-SEMANTIC-HARDENING.1` through `.19`
+  Children: `R6-SEMANTIC-HARDENING.1` through `.22`
 
 ### Batch 1: build_symbol_definitions
 
@@ -219,6 +219,15 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
   Acceptance: `7 mutants caught: 4 as_str return-value replacements, 3 build transition dedup logic.`
   Verification: `cargo test -p specforge --lib — 841/841 passed`
   Commit: `271d7d8a`
+
+### Batch 22: Broad exhaustion scan
+
+- ID: `R6-SEMANTIC-HARDENING.22`
+  Status: `in_progress`
+  Goal: `Run broad cargo-mutants scan on semantic.rs to confirm exhaustion.`
+  Acceptance: `All previously missed mutants caught; only equivalent/timeout/unviable remain. Verify deferred 9 builder function mutants still need SemanticContext fixtures.`
+  Verification: pending
+  Commit: pending
 
 ## Current Frontier
 

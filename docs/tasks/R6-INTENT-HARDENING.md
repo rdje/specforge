@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `R6-INTENT-HARDENING`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: `R6`
 - Created: `2026-05-14`
-- Last updated: `2026-05-14`
+- Last updated: `2026-05-15`
 - Owner: repo-local workflow
 
 ## Goal
@@ -27,34 +27,26 @@ Fix missed cargo-mutants in intent.rs builder functions — 10 missed mutants ac
 ## Task Tree
 
 - ID: `R6-INTENT-HARDENING`
-  Status: `active`
+  Status: `done`
   Goal: `Fix 10 missed cargo-mutants in intent.rs builder functions.`
   Children: `R6-INTENT-HARDENING.1`, `R6-INTENT-HARDENING.2`
 
-### Batch 1: overlaps unit tests + dedup + build_assumptions
+### Batch 1: overlaps unit tests + dedup + build_assumptions + build_intent_actors
 
 - ID: `R6-INTENT-HARDENING.1`
-  Status: `pending`
-  Goal: `Add unit tests for overlaps() function + dedup behavior in build_behaviors/build_constraints + missing build_assumptions packet_ids.`
-  Acceptance: `overlaps tests catch 3 mutants (true/false/||→&&), dedup test catches 4 delete-! mutants, build_assumptions test catches 2 ==→!= mutants. 10/10 caught after fix.`
-  Verification: `pending`
-  Commit: `pending`
-
-### Batch 2: build_intent_actors overlaps || → &&
+  Status: `done`
+  Goal: `Add unit tests for overlaps() function + dedup behavior in build_behaviors/build_constraints + missing build_assumptions packet_ids + build_intent_actors statement-vs-section overlap.`
+  Acceptance: `31 caught, 9 unviable, 1 false positive (||→&& in empty-check is equivalent). Both batches committed together.`
+  Verification: `cargo test -p specforge --lib — 680/680 passed`
+  Commit: `2dc9562f`
 
 - ID: `R6-INTENT-HARDENING.2`
-  Status: `pending`
-  Goal: `Add test where actor overlaps with phase via statements but not sections, catching ||→&& mutant at line 477.`
-  Acceptance: `1 mutant caught: line 477 ||→&&.`
-  Verification: `pending`
-  Commit: `pending`
+  Status: `superseded`
+  Goal: `Merged into .1 — build_intent_actors ||→&& was fixed in same commit.`
 
 ## Current Frontier
 
-| Order | Leaf | Status | Why next |
-| --- | --- | --- | --- |
-| 1 | `R6-INTENT-HARDENING.1` | `pending` | Bulk of missed mutants (9/10) in overlaps, dedup, and assumptions |
-| 2 | `R6-INTENT-HARDENING.2` | `pending` | Last remaining mutant in build_intent_actors |
+No executable leaves remain. Tree closed 2026-05-14 (work completed), task file backfilled 2026-05-15.
 
 ## Decisions
 
