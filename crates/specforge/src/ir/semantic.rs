@@ -10406,7 +10406,7 @@ fn canonicalize_existing_path(path: &Path) -> Result<PathBuf> {
 #[cfg(test)]
 mod tests {
     use std::{
-        collections::{BTreeSet, HashMap, HashSet},
+        collections::{BTreeMap, BTreeSet, HashMap, HashSet},
         fs,
     };
 
@@ -20039,5 +20039,252 @@ mod tests {
         let tokens = ["edges", "of", "clk"];
         let result = super::edge_of_known_signal_unit_len(&tokens, 0, &signals);
         assert_eq!(result, Some(3), "edges of clk: expected Some(3), got {result:?}");
+    }
+
+    // -- merge_copy_hint high-value mutants --
+
+    #[test]
+    fn merge_copy_hint_none_sets_target() {
+        let mut target: Option<u32> = None;
+        let changed = super::merge_copy_hint(&mut target, 42);
+        assert!(changed, "None→Some should return true");
+        assert_eq!(target, Some(42));
+    }
+
+    #[test]
+    fn merge_copy_hint_same_value_returns_true() {
+        // Line 6001: ==→!= — same values should return true.
+        let mut target = Some(42u32);
+        let changed = super::merge_copy_hint(&mut target, 42);
+        assert!(changed, "same value should return true, got {changed}");
+    }
+
+    #[test]
+    fn merge_copy_hint_different_value_returns_false() {
+        let mut target = Some(42u32);
+        let changed = super::merge_copy_hint(&mut target, 99);
+        assert!(!changed, "different value should return false, got {changed}");
+    }
+
+    // -- merge_named_hint high-value mutants --
+
+    #[test]
+    fn merge_named_hint_none_sets_target() {
+        let mut target: Option<String> = None;
+        let changed = super::merge_named_hint(&mut target, "hello");
+        assert!(changed, "None→Some should return true");
+        assert_eq!(target, Some("hello".to_string()));
+    }
+
+    #[test]
+    fn merge_named_hint_same_name_returns_true() {
+        // Line 5991: ==→!= — same name should return true.
+        let mut target = Some("clk".to_string());
+        let changed = super::merge_named_hint(&mut target, "clk");
+        assert!(changed, "same name should return true, got {changed}");
+    }
+
+    #[test]
+    fn merge_named_hint_different_name_returns_false() {
+        let mut target = Some("clk".to_string());
+        let changed = super::merge_named_hint(&mut target, "rst");
+        assert!(!changed, "different name should return false, got {changed}");
+    }
+
+    // -- merge_signal_hint high-value mutants --
+
+    #[test]
+    fn merge_signal_hint_none_target_set_to_some() {
+        let mut target: Option<String> = None;
+        super::merge_signal_hint(&mut target, Some("a".to_string()));
+        assert_eq!(target, Some("a".to_string()));
+    }
+
+    #[test]
+    fn merge_signal_hint_same_value_preserves_target() {
+        // Line 5964: !=→== — same value should NOT clear target.
+        let mut target = Some("a".to_string());
+        super::merge_signal_hint(&mut target, Some("a".to_string()));
+        assert_eq!(target, Some("a".to_string()), "same value should be preserved");
+    }
+
+    #[test]
+    fn merge_signal_hint_different_value_clears_target() {
+        // Line 5964: match guard replaced with false would mean different values never clear.
+        let mut target = Some("a".to_string());
+        super::merge_signal_hint(&mut target, Some("b".to_string()));
+        assert_eq!(target, None, "different value should clear target (conflict)");
+    }
+
+    #[test]
+    fn merge_signal_hint_none_incoming_does_nothing() {
+        // Line 5964: match guard replaced with true would mean None incoming also triggers.
+        let mut target = Some("a".to_string());
+        super::merge_signal_hint(&mut target, None::<String>);
+        assert_eq!(target, Some("a".to_string()), "None incoming should be no-op");
+    }
+
+    // -- merge_sticky_signal_hint high-value mutants --
+
+    #[test]
+    fn merge_sticky_signal_hint_conflicted_ignores_incoming() {
+        // Line 5975: delete match arm (_, true, Some(_)) — conflicted targets should ignore.
+        let mut target = Some("a".to_string());
+        let mut conflicted = true;
+        super::merge_sticky_signal_hint(&mut target, &mut conflicted, Some("b".to_string()));
+        assert_eq!(target, Some("a".to_string()), "conflicted: target should be unchanged");
+        assert!(conflicted, "conflicted flag should stay true");
+    }
+
+    #[test]
+    fn merge_sticky_signal_hint_same_value_preserves() {
+        let mut target = Some("a".to_string());
+        let mut conflicted = false;
+        super::merge_sticky_signal_hint(&mut target, &mut conflicted, Some("a".to_string()));
+        assert_eq!(target, Some("a".to_string()), "same value should be preserved");
+        assert!(!conflicted);
+    }
+
+    #[test]
+    fn merge_sticky_signal_hint_different_value_sets_conflict() {
+        let mut target = Some("a".to_string());
+        let mut conflicted = false;
+        super::merge_sticky_signal_hint(&mut target, &mut conflicted, Some("b".to_string()));
+        assert_eq!(target, None, "different value should clear target");
+        assert!(conflicted, "should set conflicted flag");
+    }
+
+    // -- register_interface_signal_semantic_hint high-value mutants --
+
+    fn make_test_hint(signal_name: &str, tags: &[super::SignalSemanticTag]) -> super::SignalSemanticHintRecord {
+        super::SignalSemanticHintRecord {
+            signal_name: signal_name.to_string(),
+            semantic_tags: tags.to_vec(),
+            source_kind: super::SignalSemanticHintSourceKind::ProseStatement,
+            source_text: "test source".to_string(),
+            supporting_statement_ids: vec!["stmt1".to_string()],
+            supporting_table_ids: vec!["tbl1".to_string()],
+            supporting_visual_evidence_ids: vec!["vis1".to_string()],
+            automation_confidence: super::AutomationConfidence::High,
+        }
+    }
+
+    #[test]
+    fn register_signal_semantic_hint_does_not_duplicate_identical_observation() {
+        // Lines 5943-5948: ==→!= x6 — any comparison inversion would miss the duplicate.
+        let mut acc = super::InterfaceAccumulator {
+            signals: ["clk".to_string()].into(),
+            signal_records: {
+                let mut m = BTreeMap::new();
+                m.insert("clk".to_string(), super::InterfaceSignalAccumulator {
+                    direction_hint: None,
+                    direction_hint_conflicted: false,
+                    width_hint: None,
+                    width_hint_conflicted: false,
+                    semantic_tags: BTreeSet::new(),
+                    semantic_observations: vec![],
+                    direction_observations: BTreeMap::new(),
+                    width_observations: BTreeMap::new(),
+                    supporting_statement_ids: BTreeSet::new(),
+                    supporting_table_ids: BTreeSet::new(),
+                    automation_confidence: super::AutomationConfidence::High,
+                });
+                m
+            },
+            supporting_statement_ids: BTreeSet::new(),
+        };
+
+        let hint = make_test_hint("clk", &[super::SignalSemanticTag::HandshakeValidLike]);
+        super::register_interface_signal_semantic_hint(&mut acc, "clk", &hint);
+
+        // Register same hint again — should be deduplicated
+        super::register_interface_signal_semantic_hint(&mut acc, "clk", &hint);
+
+        let record = acc.signal_records.get("clk").unwrap();
+        assert_eq!(
+            record.semantic_observations.len(),
+            1,
+            "identical hint should be deduplicated, got {} observations",
+            record.semantic_observations.len()
+        );
+    }
+
+    #[test]
+    fn register_signal_semantic_hint_with_different_tags_adds_observation() {
+        let mut acc = super::InterfaceAccumulator {
+            signals: ["clk".to_string()].into(),
+            signal_records: {
+                let mut m = BTreeMap::new();
+                m.insert("clk".to_string(), super::InterfaceSignalAccumulator {
+                    direction_hint: None,
+                    direction_hint_conflicted: false,
+                    width_hint: None,
+                    width_hint_conflicted: false,
+                    semantic_tags: BTreeSet::new(),
+                    semantic_observations: vec![],
+                    direction_observations: BTreeMap::new(),
+                    width_observations: BTreeMap::new(),
+                    supporting_statement_ids: BTreeSet::new(),
+                    supporting_table_ids: BTreeSet::new(),
+                    automation_confidence: super::AutomationConfidence::High,
+                });
+                m
+            },
+            supporting_statement_ids: BTreeSet::new(),
+        };
+
+        let hint1 = make_test_hint("clk", &[super::SignalSemanticTag::HandshakeValidLike]);
+        super::register_interface_signal_semantic_hint(&mut acc, "clk", &hint1);
+
+        let hint2 = make_test_hint("clk", &[super::SignalSemanticTag::HandshakeReadyLike]);
+        super::register_interface_signal_semantic_hint(&mut acc, "clk", &hint2);
+
+        let record = acc.signal_records.get("clk").unwrap();
+        assert_eq!(
+            record.semantic_observations.len(),
+            2,
+            "different tags should produce separate observations, got {}",
+            record.semantic_observations.len()
+        );
+    }
+
+    #[test]
+    fn register_signal_semantic_hint_empty_tags_skips() {
+        let mut acc = super::InterfaceAccumulator {
+            signals: ["clk".to_string()].into(),
+            signal_records: {
+                let mut m = BTreeMap::new();
+                m.insert("clk".to_string(), super::InterfaceSignalAccumulator {
+                    direction_hint: None,
+                    direction_hint_conflicted: false,
+                    width_hint: None,
+                    width_hint_conflicted: false,
+                    semantic_tags: BTreeSet::new(),
+                    semantic_observations: vec![],
+                    direction_observations: BTreeMap::new(),
+                    width_observations: BTreeMap::new(),
+                    supporting_statement_ids: BTreeSet::new(),
+                    supporting_table_ids: BTreeSet::new(),
+                    automation_confidence: super::AutomationConfidence::High,
+                });
+                m
+            },
+            supporting_statement_ids: BTreeSet::new(),
+        };
+
+        let hint = super::SignalSemanticHintRecord {
+            signal_name: "clk".to_string(),
+            semantic_tags: vec![],
+            source_kind: super::SignalSemanticHintSourceKind::ProseStatement,
+            source_text: "test".to_string(),
+            supporting_statement_ids: vec![],
+            supporting_table_ids: vec![],
+            supporting_visual_evidence_ids: vec![],
+            automation_confidence: super::AutomationConfidence::High,
+        };
+        super::register_interface_signal_semantic_hint(&mut acc, "clk", &hint);
+
+        let record = acc.signal_records.get("clk").unwrap();
+        assert_eq!(record.semantic_observations.len(), 0, "empty tags should be skipped");
     }
 }
