@@ -1,7 +1,7 @@
 # ROADMAP
 ## Objective
 - build `specforge` as a staged Rust toolchain for extracting implementation-relevant intent from specifications into canonical `IntentIR`
-- keep `.fsm`, SystemVerilog, Verilog, and VHDL as adapter targets downstream of `IntentIR`
+- keep `.fsm` and `.isf` as adapter targets downstream of `IntentIR`
 - preserve deterministic provenance, typed intermediate data, and explicit residual decisions across all stages
 - treat text, layout, figures, captions, tables, and charts as first-class evidence rather than markdown decoration
 - prioritize semantic truthfulness and KG quality ahead of adapter breadth until the canonical four-layer pipeline is top-notch
@@ -166,13 +166,11 @@
 - current lane:
   - `.fsm` adapter hardening is active, with renderable standalone/top paths, blocked renderability diagnostics, residual decisions, support/confidence preservation, and selected-inventory provenance under continuing regression coverage.
   - the active PNT cycle is continuing with reused FSM-child top cleanliness coverage; `R6` remains active and push checkpoints are around every 30 local commits.
-  - SystemVerilog, Verilog, and VHDL expansion remains intentionally deferred until the `.fsm` lane and canonical IR truthfulness surface are strong enough to avoid semantic invention.
+  - HDL lowering (SystemVerilog/Verilog/VHDL) is removed from scope — SpecForge lowers to `.fsm` or `.isf`; downstream toolchains own HDL generation.
 - goals:
   - define target-specific lowering boundaries for:
     - `.fsm`
-    - SystemVerilog
-    - Verilog
-    - VHDL
+    - `.isf`
   - land the first honest `.fsm` adapter slices for standalone DT, explicit FSM-root, and explicit top-root composition cases without leaking target assumptions backward into `IntentIR`
   - keep adapter concerns from leaking backward into `IntentIR`
 - completion criteria:
@@ -521,7 +519,7 @@
 - remaining:
   - extend validation into the upcoming semantic-truthfulness surfaces (temporal rules, arbitration/conflict records, and KG-quality benchmarks)
   - design tracked approval evidence only if canonical IR mutation is explicitly introduced later
-  - keep adapter validation (SystemVerilog/Verilog/VHDL targets) as not-started future work until the semantic pipeline is materially harder to fool
+  - adapter validation targets are `.fsm` and `.isf` (HDL lowering is out of scope — owned by downstream toolchains)
 
 ### R8 SourceIR SOTA capture (Tier 1 of EXTRACTION_ARCHITECTURE.md)
 - status: Done
@@ -1480,15 +1478,6 @@
   - add further specialized page families beyond the current semantic/truthfulness, typed-prior-memory, table, visual, state-machine, timing, infrastructure, protocol, and prior-candidate pages when new evidence families need their own durable corpus synthesis surfaces
   - continue deepening the prior-candidate bridge only through typed schemas, KG-bench fixtures, and validation gates; do not let corpus-KB candidates directly write `CorpusMemory` or canonical IR
 
-### R16 SystemVerilog adapter (Not Started)
-- status: Not Started
-- prerequisites:
-  - `R15`, `R15b`, `R15c`, `R15d`, `R15e`, `R15f`, `R15g`, and `R14` are materially complete
-- goals:
-  - generate a correct SystemVerilog interface from `IntentIR`
-  - generate a correct SystemVerilog module template for each actor
-  - compute port directions from actor-relative signal relations
-
 ## Recommended implementation order
 1. Keep `IntentIR` as the canonical product boundary in all code and docs
 2. Finish the graph-first downstream signal model so `direction_hint` is no longer the primary semantic surface (`R15`)
@@ -1499,7 +1488,7 @@
 7. Add a separate cross-document learning plane for typed extraction priors while keeping canonical document truth local (`R15f`)
 8. Add a corpus knowledge base plane beside the KG and prior memory so compiled cross-document synthesis becomes persistent and reviewable (`R15g`)
 9. Extend relation extraction for harder prose with Tier 3 support only after the graph/temporal/eval/corpus-memory surfaces are ready (`R14`)
-10. Treat new adapter families and adapter validation as not-started future work until the semantic pipeline is materially harder to fool (`R16`)
+10. Adapter families begin and end at `.fsm` and `.isf`; HDL lowering is owned by downstream toolchains, not SpecForge
 
 ## Immediate next milestone
 - `R15`: finish the transition from compatibility `direction_hint` fields to actor-relative graph-first downstream semantics

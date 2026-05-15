@@ -22,8 +22,8 @@ Current surface:
 - `corpus-kb [validation-report]... [--kg-fixtures-root <fixture-root>] [--kg-fixture <fixture>]`
 - `clean [--generated-root <root>] [--scope source-normalized|document|all-generated] [--document-key <key>] [--execute]`
 
-Only `--target fsm` currently materializes adapter artifacts.
-The CLI reserves SystemVerilog, Verilog, and VHDL target names for planned adapter work, but those lowering paths are not started and currently report feature-not-yet-implemented behavior.
+Only `--target fsm` and `--target isf` materialize adapter artifacts.
+HDL lowering (SystemVerilog/Verilog/VHDL) is out of scope — owned by downstream toolchains.
 
 The commands fall into three groups:
 
