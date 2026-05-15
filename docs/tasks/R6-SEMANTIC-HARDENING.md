@@ -209,7 +209,7 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
   Goal: `Fix 5 missed mutants across dedup_actor_names (1 delete call), parse_explicit_clock_gated_branch (2 ||→&&), parse_explicit_reset_synchronizer_stages (1 ||→&&).`
   Acceptance: `4 mutants caught. 1 ||→&& at 3441 equivalent (both "clock gated" and "clock-gated" contain "clock gate" substring rescue).`
   Verification: `cargo test -p specforge --lib — 834/834 passed`
-  Commit: `pending`
+  Commit: `fb4f0fe0`
 
 ## Current Frontier
 
@@ -277,7 +277,7 @@ Fix missed cargo-mutants in semantic.rs — systematically run mutation testing 
 | `R6-SEMANTIC-HARDENING.17` | `76cce288` | 11 unit tests for extract_infrastructure_subject_phrase |
 | `R6-SEMANTIC-HARDENING.18` | `715bf9ce` | 5 unit tests for parse_width_token |
 | `R6-SEMANTIC-HARDENING.19` | `f2ed61e6` | 9 unit tests for ControlExpressionParser parse_primary and parse_comparison |
-| `R6-SEMANTIC-HARDENING.20` | `pending` | 7 unit tests for dedup_actor_names, parse_explicit_clock_gated_branch, parse_explicit_reset_synchronizer_stages |
+| `R6-SEMANTIC-HARDENING.20` | `fb4f0fe0` | 7 unit tests for dedup_actor_names, parse_explicit_clock_gated_branch, parse_explicit_reset_synchronizer_stages |
 
 ## Changelog
 
