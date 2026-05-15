@@ -24,7 +24,7 @@ evidence for one top-level task.
 | `R6-CONVERGE-HARDENING` | `done` | `R6` | — | [docs/tasks/R6-CONVERGE-HARDENING.md](docs/tasks/R6-CONVERGE-HARDENING.md) |
 | `R6-EVIDENCE-HARDENING` | `done` | `R6` | — | [docs/tasks/R6-EVIDENCE-HARDENING.md](docs/tasks/R6-EVIDENCE-HARDENING.md) |
 | `R6-INTENT-HARDENING` | `done` | `R6` | — | [docs/tasks/R6-INTENT-HARDENING.md](docs/tasks/R6-INTENT-HARDENING.md) |
-| `R6-SEMANTIC-HARDENING` | `active` | `R6` | `R6-SEMANTIC-HARDENING.22` | [docs/tasks/R6-SEMANTIC-HARDENING.md](docs/tasks/R6-SEMANTIC-HARDENING.md) |
+| `R6-SEMANTIC-HARDENING` | `done` | `R6` | — | [docs/tasks/R6-SEMANTIC-HARDENING.md](docs/tasks/R6-SEMANTIC-HARDENING.md) |
 | `R6-PRIOR-MEMORY-HARDENING` | `done` | `R6` | — | [docs/tasks/R6-PRIOR-MEMORY-HARDENING.md](docs/tasks/R6-PRIOR-MEMORY-HARDENING.md) |
 
 ## Directory Layout
