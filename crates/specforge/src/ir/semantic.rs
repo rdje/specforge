@@ -20420,4 +20420,113 @@ mod tests {
         let result = super::parse_explicit_system_clock("clock clk");
         assert_eq!(result, Some("clk".to_string()), "clock clk: expected Some(\"clk\"), got {result:?}");
     }
+
+    // -- parse_explicit_top_child high-value mutants --
+
+    #[test]
+    fn parse_top_child_valid_form() {
+        let result = super::parse_explicit_top_child("child cpu0 uses module cpu_core");
+        assert!(result.is_some(), "valid top child: expected Some, got {result:?}");
+        let parsed = result.unwrap();
+        assert_eq!(parsed.instance_name, "cpu0");
+        assert_eq!(parsed.source_module_name, "cpu_core");
+    }
+
+    #[test]
+    fn parse_top_child_wrong_second_token_returns_none() {
+        // Line 4842: ||→&& — "has" instead of "uses" should return None.
+        let result = super::parse_explicit_top_child("child cpu0 has module cpu_core");
+        assert!(result.is_none(), "has module: expected None, got {result:?}");
+    }
+
+    #[test]
+    fn parse_top_child_wrong_third_token_returns_none() {
+        // Line 4843: ||→&& — "block" instead of "module" should return None.
+        let result = super::parse_explicit_top_child("child cpu0 uses block cpu_core");
+        assert!(result.is_none(), "uses block: expected None, got {result:?}");
+    }
+
+    // -- parse_explicit_regular_state_declaration high-value mutants --
+
+    #[test]
+    fn parse_regular_state_is_initial() {
+        let result = super::parse_explicit_regular_state_declaration("state IDLE is initial");
+        assert!(result.is_some(), "state IDLE is initial: expected Some, got {result:?}");
+        let parsed = result.unwrap();
+        assert!(parsed.is_initial, "is_initial should be true");
+    }
+
+    #[test]
+    fn parse_regular_state_unknown_suffix_returns_none() {
+        // Line 4900: match guard true — suffix not "initial" should return None.
+        let result = super::parse_explicit_regular_state_declaration("state IDLE is something");
+        assert!(result.is_none(), "IDLE is something: expected None, got {result:?}");
+    }
+
+    // -- parse_explicit_decision_tree_fragment high-value mutants --
+
+    #[test]
+    fn decision_tree_fragment_empty_action_returns_none() {
+        // Line 4952: ||→&& — empty action clause after ':' should return None.
+        let result = super::parse_explicit_decision_tree_fragment("Block my_block:");
+        assert!(result.is_none(), "empty action: expected None, got {result:?}");
+    }
+
+    // -- parse_explicit_control_clause high-value mutants --
+
+    #[test]
+    fn control_clause_empty_action_returns_none() {
+        // Line 4996: ||→&& — empty action after ':' should return None.
+        let empty_set = BTreeSet::new();
+        let result = super::parse_explicit_control_clause(
+            "block my_block:",
+            &empty_set,
+            &empty_set,
+            &empty_set,
+        );
+        assert!(result.is_none(), "block with empty action: expected None, got {result:?}");
+    }
+
+    // -- parse_interface_signal_direction high-value mutants --
+
+    #[test]
+    fn interface_signal_direction_internal() {
+        // Line 5696: ||→&& — "internal" should be recognized.
+        let result = super::parse_interface_signal_direction("internal");
+        assert_eq!(result, Some(super::InterfaceSignalDirection::Internal),
+            "internal: expected Some(Internal), got {result:?}");
+    }
+
+    #[test]
+    fn interface_signal_direction_local() {
+        // Line 5696: ||→&& — "local" should also be recognized.
+        let result = super::parse_interface_signal_direction("local");
+        assert_eq!(result, Some(super::InterfaceSignalDirection::Internal),
+            "local: expected Some(Internal), got {result:?}");
+    }
+
+    // -- split_explicit_assignment high-value mutants --
+
+    #[test]
+    fn split_explicit_assignment_skips_neq_operator() {
+        // Line 5201: ||→&& — "a != b" should not be parsed as assignment (= is part of !=).
+        let result = super::split_explicit_assignment("a != b");
+        assert!(result.is_none(), "a != b: expected None (should skip !=), got {result:?}");
+    }
+
+    // -- parse_control_assignment_target high-value mutants --
+
+    #[test]
+    fn control_assignment_target_reg_shorthand() {
+        // Line 5234: ||→&& — "reg" should be recognized as registered.
+        let result = super::parse_control_assignment_target("my_signal reg");
+        assert!(result.is_some(), "my_signal reg: expected Some, got {result:?}");
+    }
+
+    #[test]
+    fn control_assignment_target_registered_full() {
+        // Line 5234: ||→&& — "registered" should also be recognized.
+        let result = super::parse_control_assignment_target("my_signal registered");
+        assert!(result.is_some(), "my_signal registered: expected Some, got {result:?}");
+    }
 }
