@@ -1434,8 +1434,8 @@
 - KG-quality evaluation with gold fixtures and negative fixtures: In Progress
 - Cross-document extraction learning plane with typed reusable priors: In Progress
 - Corpus knowledge base plane beside KG + typed priors: In Progress
-- SystemVerilog/Verilog/VHDL adapter expansion: Not Started
-- Adapter validation (SystemVerilog/Verilog/VHDL targets): Not Started
+- HDL lowering (SystemVerilog/Verilog/VHDL) removed from scope — owned by downstream toolchains: Done
+- `.isf` adapter expansion: Not Started
 - Actor-relative direction model in `SemanticIR` / `IntentIR`: In Progress
 - Standalone `.fsm` DT renderable size entries now consume graph-backed actor-port directions: Done
 - Structured `.fsm` renderable size entries now consume graph-backed control-read directions: Done

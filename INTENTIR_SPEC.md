@@ -20,10 +20,9 @@ The canonical output of the system is:
 - explicit about uncertainty, abstractions, and residual decisions
 
 Backend-specific outputs are not the primary product. They are adapters:
-- `.fsm`
-- SystemVerilog
-- Verilog
-- VHDL
+- `.fsm` (active)
+- `.isf` (planned)
+- HDL lowering (SystemVerilog, Verilog, VHDL) is out of scope — owned by downstream toolchains
 
 ## Why IntentIR instead of “AST”
 `AST` is too syntactic for the actual problem.
@@ -406,10 +405,9 @@ Minimal conceptual example:
 Adapters lower `IntentIR` into concrete targets.
 
 Initial planned targets:
-- `.fsm`
-- SystemVerilog
-- Verilog
-- VHDL
+- `.fsm` (active)
+- `.isf` (planned)
+- HDL lowering (SystemVerilog, Verilog, VHDL) is out of scope — owned by downstream toolchains
 Current implementation note:
 - `specforge adapt <intent-ir> --target fsm` now materializes `generated/adapters/fsm/<document_key>/adapter.json`
 - the first executable adapter slice consumes persisted `IntentIR` JSON
