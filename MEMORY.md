@@ -24,9 +24,9 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `f4466096`
-- latest_commit_brief_message: Add AXI write-address timing gold KG fixture — R15e benchmark hardening
-- note: all 8 task trees closed. 28 local commits ahead. 1014 tests passing. 151/151 kg-bench fixtures. Push checkpoint (~30). R16 removed from scope. Added AXI write-address timing gold fixture — all five AXI channels now have timing coverage. Next: continue R15 graph-direction migration or find remaining fixture gaps.
+- latest_commit_hash: `30cfa47e`
+- latest_commit_brief_message: Update MEMORY.md — reflect latest commit and new AXI write-address timing fixture
+- note: all 8 task trees closed. 0 commits ahead (pushed at 29). 1014 tests passing. 151/151 kg-bench fixtures. R16 removed from scope. All five AXI channels now have timing gold fixtures. Next: continue R15 graph-direction migration or find remaining fixture gaps.
 
 ## Recent commit chain (last 10)
 - `3652db56` Remove R16 from roadmap — HDL lowering is out of scope
@@ -43,7 +43,7 @@
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state: 23 local commits ahead of `origin/main`; push checkpoint at around-`30` threshold
+- branch state: pushed at 29 commits; currently 0 commits ahead of `origin/main`; next push checkpoint at around-`30`
 - all 8 task trees are closed (`done`):
   - `PROVENANCE-HARDENING`, `R6-FSM-ADAPTER`, `R6-SOURCE-HARDENING`, `R6-CONVERGE-HARDENING`, `R6-EVIDENCE-HARDENING`, `R6-INTENT-HARDENING`, `R6-SEMANTIC-HARDENING`, `R6-PRIOR-MEMORY-HARDENING`
 - 1014 Rust tests passing (was 666 before R6-SEMANTIC-HARDENING and R6-PRIOR-MEMORY-HARDENING added tests)
@@ -69,7 +69,7 @@
   - active user-authorized run uses PNT with undefined BWFSC
   - current slice: live-doc sync after R6-SEMANTIC-HARDENING and R6-PRIOR-MEMORY-HARDENING task tree closures
   - completed_count: all 8 task trees now closed; PNT will resume from roadmap remaining items
-  - 23 local commits ahead of `origin/main`; push deferred per continuation policy (~30 threshold)
+  - pushed to origin at 29 commits (around-`30` threshold); now 0 commits ahead
   - R16 (HDL lowering) removed from roadmap — SystemVerilog, Verilog, VHDL adapter expansion is out of scope; SpecForge lowers to `.fsm` or `.isf`, downstream toolchains own HDL generation
 - tracker effect:
   - live-status tracker marks all 8 task trees as `done`
