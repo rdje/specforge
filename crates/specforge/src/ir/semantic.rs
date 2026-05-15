@@ -20817,4 +20817,143 @@ mod tests {
         let result = super::enrich_handshake_completion_predicates(vec![], &handshake);
         assert!(result.is_empty(), "empty predicates: expected empty, got {result:?}");
     }
+
+    // -- find_known_signal_name high-value mutants --
+
+    #[test]
+    fn find_known_signal_prefers_longest_match() {
+        // Line 9326: >=→< — longer signal name should replace shorter match.
+        let signals = known_signal_bset(&["CLK", "SYS_CLK"]);
+        let result = super::find_known_signal_name("SYS_CLK is the main clock", &signals);
+        assert_eq!(result, Some("SYS_CLK".to_string()),
+            "should prefer SYS_CLK over CLK, got {result:?}");
+    }
+
+    #[test]
+    fn find_known_signal_no_match_returns_none() {
+        // Line 9326: match guard true — no signal match should return None.
+        let signals = known_signal_bset(&["CLK", "RST"]);
+        let result = super::find_known_signal_name("no signals here", &signals);
+        assert!(result.is_none(), "no match: expected None, got {result:?}");
+    }
+
+    // -- statement_by_id high-value mutants --
+
+    #[test]
+    fn statement_by_id_finds_matching_statement() {
+        // Line 7008: ==→!= — should find statement with matching ID.
+        let ctx = make_semantic_context_with_statements(vec![
+            make_statement_context(
+                super::StatementClass::SourceFact,
+                "statement one",
+                vec![],
+            ),
+        ]);
+        // Override the statement_id
+        let mut ctx = make_semantic_context_with_statements(vec![
+            super::StatementContext {
+                statement_id: "stmt_one".to_string(),
+                class: super::StatementClass::SourceFact,
+                text: "statement one".to_string(),
+                related_visual_evidence_ids: vec![],
+                section_ids: vec![],
+                signals: vec![],
+                supporting_table_ids: vec![],
+            },
+        ]);
+        let result = super::statement_by_id(&ctx, "stmt_one");
+        assert!(result.is_some(), "should find stmt_one, got None");
+    }
+
+    #[test]
+    fn statement_by_id_no_match_returns_none() {
+        // Line 7008: ==→!= — non-matching ID should return None.
+        let ctx = make_semantic_context_with_statements(vec![
+            super::StatementContext {
+                statement_id: "stmt_one".to_string(),
+                class: super::StatementClass::SourceFact,
+                text: "statement one".to_string(),
+                related_visual_evidence_ids: vec![],
+                section_ids: vec![],
+                signals: vec![],
+                supporting_table_ids: vec![],
+            },
+        ]);
+        let result = super::statement_by_id(&ctx, "stmt_two");
+        assert!(result.is_none(), "non-matching ID: expected None, got {result:?}");
+    }
+
+    fn make_semantic_context_with_statements(statements: Vec<super::StatementContext>) -> super::SemanticContext {
+        super::SemanticContext {
+            statements,
+            section_anchors: vec![],
+            visual_roles_by_id: HashMap::new(),
+            actor_signal_relations: vec![],
+            signal_semantic_hints: vec![],
+        }
+    }
+
+    // -- contains_phrase high-value mutants --
+
+    #[test]
+    fn contains_phrase_exact_word_match_returns_true() {
+        // Line 7039: &&→|| — exact word boundary match should return true.
+        // Note: contains_phrase expects already-lowercased text.
+        assert!(super::contains_phrase("the clk signal is fast", "CLK"),
+            "clk as separate word should match");
+    }
+
+    #[test]
+    fn contains_phrase_substring_without_boundary_returns_false() {
+        // Line 7039: &&→|| — "clk" inside "sclkdiv" has no left boundary (preceded by alphanumeric).
+        // With &&→||, prefix_ok=false but suffix_ok=true would incorrectly match via ||.
+        assert!(!super::contains_phrase("the sclkdiv signal", "CLK"),
+            "clk inside sclkdiv should not match (no left boundary)");
+    }
+
+    // -- vlm_guard_clause_has_comparison high-value mutants --
+
+    #[test]
+    fn vlm_guard_clause_eqeq_operator() {
+        // Line 10226: ||→&& — "==" alone should return true.
+        assert!(super::vlm_guard_clause_has_comparison("a == b"),
+            "== should be recognized as comparison");
+    }
+
+    #[test]
+    fn vlm_guard_clause_ne_operator() {
+        // Line 10226: ||→&& — "!=" alone should also return true.
+        assert!(super::vlm_guard_clause_has_comparison("a != b"),
+            "!= should be recognized as comparison");
+    }
+
+    #[test]
+    fn vlm_guard_clause_no_comparison_returns_false() {
+        assert!(!super::vlm_guard_clause_has_comparison("no comparison here"),
+            "no comparison operators should return false");
+    }
+
+    // -- ControlExpressionParser::expect high-value mutants --
+
+    #[test]
+    fn control_expression_parser_expect_matching_token() {
+        // Line 5588: return None / return Some(()) — matching token should succeed.
+        let signals = BTreeSet::new();
+        let symbols = BTreeSet::new();
+        let mut parser = super::ControlExpressionParser::new(
+            vec!["if".to_string()], &signals, &symbols);
+        let result = parser.expect("if");
+        assert_eq!(result, Some(()), "expect 'if': expected Some(()), got {result:?}");
+    }
+
+    #[test]
+    fn control_expression_parser_expect_non_matching_token() {
+        // Line 5588: return Some(()) — non-matching token should return None.
+        let signals = BTreeSet::new();
+        let symbols = BTreeSet::new();
+        let mut parser = super::ControlExpressionParser::new(
+            vec!["if".to_string()], &signals, &symbols);
+        let result = parser.expect("else");
+        assert_eq!(result, None, "expect 'else' when token is 'if': expected None, got {result:?}");
+    }
 }
