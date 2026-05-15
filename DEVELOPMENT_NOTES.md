@@ -8,6 +8,16 @@
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 - adapter targets: `.fsm` (active), `.isf` (planned); HDL lowering is out of scope
 
+## 2026-05-15 PNT session — HDL scope scrub, AXI timing fixture, maintenance
+
+- Scrubbed remaining HDL adapter target references from README, INTENTIR_SPEC, LIVE_ACHIEVEMENT_STATUS — all now consistent with R16 removal.
+- Added `axi_write_address_timing_gold` fixture — modeled after `axi_read_address_timing_gold`, covers AWVALID/AWREADY handshake with next-cycle timing and AWADDR stability. All five AXI channels now have timing gold coverage. 151/151 fixtures passing.
+- Fixed stale LIVE_ACHIEVEMENT_STATUS entry (renderable-document DT coverage was complete but entry claimed "In Progress").
+- Fixed clippy warnings: unused variable and unnecessary `mut` in semantic.rs test functions.
+- Updated MEMORY.md, CHANGES.md, LIVE_ACHIEVEMENT_STATUS.md across multiple slices.
+- Pushed to origin at 29 commits. 1014/1014 tests passing. 0 commits ahead.
+- **Next PNT direction**: continue R15 graph-direction migration (highest-priority remaining gap) or look for remaining fixture/coverage gaps.
+
 ## 2026-05-15 live-doc sync after task tree closures
 
 - All 8 task trees are now `done`. R6-SEMANTIC-HARDENING and R6-PRIOR-MEMORY-HARDENING were the last to close.
