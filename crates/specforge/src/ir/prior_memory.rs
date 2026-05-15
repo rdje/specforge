@@ -1202,4 +1202,66 @@ mod tests {
         let result = replace_term_with_placeholder("bar bar bar", "bar", "X");
         assert_eq!(result, "X bar bar");
     }
+
+    // is_meaningful_actor_term unit tests
+
+    #[test]
+    fn meaningful_actor_term_rejects_clock() {
+        // Catches ||→&& at line 620 — "clock" alone must trigger return false.
+        assert!(!is_meaningful_actor_term("clock signal"));
+    }
+
+    #[test]
+    fn meaningful_actor_term_rejects_reset() {
+        // Catches ||→&& at line 621.
+        assert!(!is_meaningful_actor_term("reset controller"));
+    }
+
+    #[test]
+    fn meaningful_actor_term_rejects_global() {
+        // Catches ||→&& at line 622.
+        assert!(!is_meaningful_actor_term("global enable"));
+    }
+
+    #[test]
+    fn meaningful_actor_term_rejects_system_bus() {
+        // Catches ||→&& at line 623.
+        assert!(!is_meaningful_actor_term("system bus interface"));
+    }
+
+    #[test]
+    fn meaningful_actor_term_rejects_power() {
+        // Catches ||→&& at line 624.
+        assert!(!is_meaningful_actor_term("power management"));
+    }
+
+    #[test]
+    fn meaningful_actor_term_rejects_ground() {
+        // Catches ||→&& at line 625.
+        assert!(!is_meaningful_actor_term("ground plane"));
+    }
+
+    #[test]
+    fn meaningful_actor_term_rejects_supply() {
+        // Catches ||→&& at line 626.
+        assert!(!is_meaningful_actor_term("supply rail"));
+    }
+
+    #[test]
+    fn meaningful_actor_term_rejects_vdd() {
+        // Catches ||→&& at line 627.
+        assert!(!is_meaningful_actor_term("vdd rail"));
+    }
+
+    #[test]
+    fn meaningful_actor_term_rejects_vss() {
+        // Catches ||→&& at line 627.
+        assert!(!is_meaningful_actor_term("vss rail"));
+    }
+
+    #[test]
+    fn meaningful_actor_term_accepts_real_actor() {
+        let result = is_meaningful_actor_term("dma engine");
+        assert!(result);
+    }
 }
