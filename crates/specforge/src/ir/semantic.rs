@@ -20529,4 +20529,143 @@ mod tests {
         let result = super::parse_control_assignment_target("my_signal registered");
         assert!(result.is_some(), "my_signal registered: expected Some, got {result:?}");
     }
+
+    // -- should_emit_interface_candidate high-value mutants --
+
+    #[test]
+    fn should_emit_interface_candidate_ends_with_n() {
+        // Lines 6786-6790: ||→&& — signal ending with _N should trigger emission.
+        assert!(super::should_emit_interface_candidate(&["FOO_N".to_string()]),
+            "FOO_N should trigger interface candidate emission");
+    }
+
+    #[test]
+    fn should_emit_interface_candidate_contains_rst() {
+        // Line 6787: ||→&& — signal containing RST should trigger.
+        assert!(super::should_emit_interface_candidate(&["nRST".to_string()]),
+            "nRST should trigger interface candidate emission");
+    }
+
+    #[test]
+    fn should_emit_interface_candidate_contains_clk() {
+        // Line 6789: ||→&& — signal containing CLK should trigger.
+        assert!(super::should_emit_interface_candidate(&["SYS_CLK".to_string()]),
+            "SYS_CLK should trigger interface candidate emission");
+    }
+
+    #[test]
+    fn should_emit_interface_candidate_single_plain_signal_returns_false() {
+        // Lines 6786-6790: ||→&& — "data_out" doesn't match any pattern.
+        assert!(!super::should_emit_interface_candidate(&["data_out".to_string()]),
+            "data_out should not trigger emission");
+    }
+
+    #[test]
+    fn should_emit_interface_candidate_two_or_more_signals_returns_true() {
+        // Line 6780: >=→< — 2+ signals always trigger.
+        assert!(super::should_emit_interface_candidate(&["sig_a".to_string(), "sig_b".to_string()]),
+            "2+ signals should trigger emission");
+    }
+
+    // -- is_invariant_like high-value mutants --
+
+    fn make_statement_context(class: super::StatementClass, text: &str, signals: Vec<String>) -> super::StatementContext {
+        super::StatementContext {
+            statement_id: "test_stmt".to_string(),
+            class,
+            text: text.to_string(),
+            related_visual_evidence_ids: vec![],
+            section_ids: vec![],
+            signals,
+            supporting_table_ids: vec![],
+        }
+    }
+
+    fn make_semantic_context() -> super::SemanticContext {
+        super::SemanticContext {
+            statements: vec![],
+            section_anchors: vec![],
+            visual_roles_by_id: HashMap::new(),
+            actor_signal_relations: vec![],
+            signal_semantic_hints: vec![],
+        }
+    }
+
+    #[test]
+    fn is_invariant_like_explicit_abstraction_returns_false() {
+        // Line 6881: return true — ExplicitAbstraction should return false.
+        let stmt = make_statement_context(
+            super::StatementClass::ExplicitAbstraction,
+            "this is abstract",
+            vec![],
+        );
+        let ctx = make_semantic_context();
+        assert!(!super::is_invariant_like(&stmt, &ctx),
+            "ExplicitAbstraction should return false");
+    }
+
+    #[test]
+    fn is_invariant_like_must_with_signals_returns_true() {
+        // Line 6906: delete ! — statement with "must" and non-empty signals should return true.
+        let stmt = make_statement_context(
+            super::StatementClass::NormativeStatement,
+            "the signal must be asserted",
+            vec!["clk".to_string()],
+        );
+        let ctx = make_semantic_context();
+        assert!(super::is_invariant_like(&stmt, &ctx),
+            "must + signals should return true");
+    }
+
+    #[test]
+    fn is_invariant_like_must_no_signals_returns_true() {
+        // Line 6907: &&→|| — "must" alone (no signals) should still return true from the first check.
+        let stmt = make_statement_context(
+            super::StatementClass::NormativeStatement,
+            "the design must be verified",
+            vec![],
+        );
+        let ctx = make_semantic_context();
+        assert!(super::is_invariant_like(&stmt, &ctx),
+            "must (no signals) should return true via first phrase check");
+    }
+
+    // -- reset_signal_name_looks_active_low high-value mutants --
+
+    #[test]
+    fn reset_signal_name_looks_active_low_n_suffix() {
+        // Line 4673: ||→&& — _n suffix should return true.
+        assert!(super::reset_signal_name_looks_active_low("rst_n"),
+            "rst_n should look active low");
+    }
+
+    #[test]
+    fn reset_signal_name_looks_active_low_exact_rstb() {
+        // Line 4673: ||→&& — exact match "rstb" should return true.
+        assert!(super::reset_signal_name_looks_active_low("rstb"),
+            "rstb should look active low");
+    }
+
+    #[test]
+    fn reset_signal_name_looks_active_low_plain_name_returns_false() {
+        // Line 4670: return true — "reset" without _n/_b should return false.
+        assert!(!super::reset_signal_name_looks_active_low("reset"),
+            "reset (no _n/_b) should not look active low");
+    }
+
+    // -- normalize_infrastructure_component_name high-value mutants --
+
+    #[test]
+    fn normalize_infrastructure_component_name_short_text_returns_none() {
+        // Line 3848: <→== / <→<= — single char should return None.
+        let result = super::normalize_infrastructure_component_name("x");
+        assert!(result.is_none(), "single char: expected None, got {result:?}");
+    }
+
+    #[test]
+    fn normalize_infrastructure_component_name_valid_term() {
+        // Line 3848: <→== — 2+ chars should proceed past the length guard.
+        let result = super::normalize_infrastructure_component_name("pll");
+        assert!(result.is_some(), "pll: expected Some, got {result:?}");
+    }
 }
