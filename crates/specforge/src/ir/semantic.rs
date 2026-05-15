@@ -20365,4 +20365,59 @@ mod tests {
         // Line 6312: ends_with("_b") — lowercased signal names with _b suffix.
         assert!(super::looks_like_signal_token("enable_b"), "enable_b should look like signal");
     }
+
+    // -- parse_explicit_signal_declaration high-value mutants --
+
+    #[test]
+    fn parse_signal_declaration_three_tokens() {
+        // Line 4409: <→== / <→<= — 3-token declaration should be accepted.
+        let result = super::parse_explicit_signal_declaration("signal clk is input");
+        assert!(result.is_some(), "signal clk is input: expected Some, got {result:?}");
+        let decl = result.unwrap();
+        assert_eq!(decl.signal_name, "clk");
+    }
+
+    #[test]
+    fn parse_signal_declaration_first_word_not_signal_returns_none() {
+        // Line 4409: ||→&& — first word not "signal" should return None regardless of length.
+        let result = super::parse_explicit_signal_declaration("clk is input");
+        assert!(result.is_none(), "clk is input (no 'signal' prefix): expected None, got {result:?}");
+    }
+
+    #[test]
+    fn parse_signal_declaration_too_few_tokens_returns_none() {
+        // Line 4409: <→== — 2-token declaration is invalid.
+        let result = super::parse_explicit_signal_declaration("signal clk");
+        assert!(result.is_none(), "signal clk (2 tokens): expected None, got {result:?}");
+    }
+
+    // -- parse_explicit_system_clock high-value mutants --
+
+    #[test]
+    fn parse_system_clock_signal_middle_word() {
+        // Line 4556: ||→&& / match guard false — "clock signal clk" should parse.
+        let result = super::parse_explicit_system_clock("clock signal clk");
+        assert_eq!(result, Some("clk".to_string()), "clock signal clk: expected Some(\"clk\"), got {result:?}");
+    }
+
+    #[test]
+    fn parse_system_clock_is_middle_word() {
+        // Line 4556: ||→&& — "clock is clk" has middle="is", not "signal".
+        let result = super::parse_explicit_system_clock("clock is clk");
+        assert_eq!(result, Some("clk".to_string()), "clock is clk: expected Some(\"clk\"), got {result:?}");
+    }
+
+    #[test]
+    fn parse_system_clock_unknown_middle_word_returns_none() {
+        // Line 4556: match guard true — "clock something clk" should return None.
+        let result = super::parse_explicit_system_clock("clock something clk");
+        assert!(result.is_none(), "clock something clk: expected None, got {result:?}");
+    }
+
+    #[test]
+    fn parse_system_clock_two_token_form() {
+        // "clock clk" (2 tokens) should parse.
+        let result = super::parse_explicit_system_clock("clock clk");
+        assert_eq!(result, Some("clk".to_string()), "clock clk: expected Some(\"clk\"), got {result:?}");
+    }
 }
