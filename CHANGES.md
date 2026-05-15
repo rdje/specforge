@@ -1,5 +1,14 @@
 # CHANGES
 
+## 2026-05-15 (live-doc sync after hardening task tree closures)
+
+### Synced: stale live docs and mdBook after R6-SEMANTIC-HARDENING and R6-PRIOR-MEMORY-HARDENING closures
+- All 8 task trees now closed (`done`). R6-SEMANTIC-HARDENING (leaves .22–.30) and R6-PRIOR-MEMORY-HARDENING (leaves .1–.7) were the last two.
+- Updated MEMORY.md: fixed stale commit hash (`3015f029` → `3652db56`), test count (666 → 1014), recent commit chain, and batch status.
+- Updated RUST_CODEBASE_ANALYSIS.md: new session entry reflecting all 8 task trees closed, 1014 tests, R16 removal.
+- Updated mdBook: removed stale "planned but not started" HDL lowering language from `commands/pipeline.md` and `pipeline/intentir.md` — HDL lowering is out of scope per R16 removal.
+- 1014/1014 tests passing. 23 commits ahead of origin/main.
+
 ## 2026-05-14 (PROVENANCE-HARDENING tree closure)
 
 ### Closed: PROVENANCE-HARDENING task tree

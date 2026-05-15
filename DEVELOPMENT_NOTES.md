@@ -6,6 +6,17 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
+- adapter targets: `.fsm` (active), `.isf` (planned); HDL lowering is out of scope
+
+## 2026-05-15 live-doc sync after task tree closures
+
+- All 8 task trees are now `done`. R6-SEMANTIC-HARDENING and R6-PRIOR-MEMORY-HARDENING were the last to close.
+- MEMORY.md was stale: wrong commit hash, wrong test count (666 vs 1014), wrong batch status. All fixed.
+- RUST_CODEBASE_ANALYSIS.md updated with current architecture snapshot (1014 tests, 66K lines across 6 IR source files, all trees closed).
+- mdBook updated: `commands/pipeline.md` and `pipeline/intentir.md` no longer describe HDL targets as "planned but not started" — per R16 removal, HDL lowering is out of scope.
+- 23 commits ahead of origin/main. Push checkpoint near (~30).
+- **Next PNT direction**: all task trees closed, so the next slice should come from roadmap remaining items — R15 (actor-relative direction), R15b (temporal model), R7 (validation hardening).
+
 ## 2026-05-14 task-tree tracking system adoption
 
 - Adopted the task-tree tracking workflow from the fsmgen project. Each top-level task now gets a dedicated markdown file under `docs/tasks/` with a stable tree ID, status vocabulary, recursive decomposition into executable leaf nodes, and a current frontier that PNT selects from.

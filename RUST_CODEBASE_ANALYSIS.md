@@ -3,6 +3,15 @@
 - maintain a live, deep-dive analysis of the Rust codebase
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
+
+## Session update (2026-05-15 live-doc sync after task tree closures)
+- All 8 task trees are now closed (`done`). R6-SEMANTIC-HARDENING (leaves .22–.30) and R6-PRIOR-MEMORY-HARDENING (leaves .1–.7) were the last to close.
+- 1014/1014 Rust tests passing (up from 666 — the hardening lanes added ~348 tests through mutant catching and unit test backfill).
+- R16 (HDL lowering) removed from roadmap — SystemVerilog/Verilog/VHDL lowering now explicitly out of scope for SpecForge.
+- Architecture: 6 IR source files totaling ~66K lines (`adapters.rs` 27.5K, `semantic.rs` 21K, `evidence.rs` 10.5K, `intent.rs` 3.3K, `prior_memory.rs` 2.1K, `source.rs` 1.6K).
+- 23 commits ahead of origin/main. Near push checkpoint (~30).
+- Next: resume PNT from roadmap remaining items — R7 (validation), R15 (actor-relative direction), R15b (temporal model), R15c (KG-guided rescans), R15d (evidence arbitration), R15e (KG-quality benchmarks).
+
 ## Session update (2026-05-14 task-tree tracking system scaffolding)
 - Adopted task-tree tracking workflow from fsmgen. Documentation/workflow-only change — zero Rust code changes.
 - Architecture, risk profile, and subsystem boundaries unchanged.

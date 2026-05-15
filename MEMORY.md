@@ -24,63 +24,37 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `3015f029`
-- latest_commit_brief_message: Update FSMGEN submodule to fc634306
-- note: 4 task trees closed this session. 26 local commits ahead. 666 tests passing. Near push checkpoint (~30). Next: DT guard condition feature adoption in adapter.
+- latest_commit_hash: `3652db56`
+- latest_commit_brief_message: Remove R16 from roadmap — HDL lowering is out of scope
+- note: all 8 task trees now closed. 23 local commits ahead. 1014 tests passing. Near push checkpoint (~30). Next: resume PNT from roadmap remaining items (R15/R7 active lanes).
 
 ## Recent commit chain (last 10)
-- pending (EvidenceLink provenance IDs hardening)
-- `045d020a` Add supporting_document_keys assertions to all 7 learn_priors prior record types
-- `c0f33f1e` Add table_signal_declaration_provenance assertions to evidence.rs signal-description table tests
-- `7409891b` Add evidence_span_ids assertion to extracted statement check
-- `1683beb4` Sync tracked docs — CHANGES.md and MEMORY.md updated for 3 recent hardening slices
-- `4d7bd220` Add supporting_span_ids assertions to visual evidence observation checks
-- `52f47c41` Add supporting_section_ids assertion to carries_actor_relative_ports_and_signal_connectivity test
-- `070b3721` Add supporting_semantic_ids assertions to intent.rs behavior, constraint, and assumption tests
-- `1e90aa9e` Add supporting_actor_ids assertions to two intent.rs actor tests
-- `ec21de0f` Sync tracked live docs after hardening session
-- `a8635878` Add supporting_visual_evidence_ids assertion to cross-modality grounding test
-- `44a25f70` Add semantic.rs supporting_table_ids hardening
-- `e8caf4ef` Add learn_priors.rs strongest_automation_confidence hardening
-- `4f5205e8` Add intent.rs temporal_rules and temporal_conflicts automation_confidence and supporting_statement_ids coverage
-- `d9786753` Update LIVE_ACHIEVEMENT_STATUS — confirm nlp_enrich.rs hardening lane complete
-- `88023ac2` Add nlp_enrich.rs automation_confidence and supporting_statement_ids hardening
-- `c2e12eec` Add blocked DT-centric adapter blocking reason regression
-- `5d54aa13` Add composition module document-root identity regression
-- `71c8ede5` Add renderable document top root and module identity regression
-- `0612eac0` Add remaining producer module candidate diagnostics regression
-- `07e03eb6` Add top composition recovery aggregate diagnostics regression
-- `2af0c774` Add remaining renderable DT FSM aggregate diagnostics regression
-- `71c8ede5` Add renderable document top root and module identity regression
-- `0612eac0` Add remaining producer module candidate diagnostics regression
-- `07e03eb6` Add top composition recovery aggregate diagnostics regression
-- `2af0c774` Add remaining renderable DT FSM aggregate diagnostics regression
-- `849d35a2` Add standalone DT graph recovery aggregate diagnostics regression
-- `0612eac0` Add remaining producer module candidate diagnostics regression
-- `07e03eb6` Add top composition recovery aggregate diagnostics regression
-- `2af0c774` Add remaining renderable DT FSM aggregate diagnostics regression
-- `849d35a2` Add standalone DT graph recovery aggregate diagnostics regression
-- `c9d59ab5` Add standalone DT recovery aggregate diagnostics regression
-- `07e03eb6` Add top composition recovery aggregate diagnostics regression
-- `2af0c774` Add remaining renderable DT FSM aggregate diagnostics regression
-- `849d35a2` Add standalone DT graph recovery aggregate diagnostics regression
-- `c9d59ab5` Add standalone DT recovery aggregate diagnostics regression
-- `1eec1964` Add builds-renderable DT FSM aggregate diagnostics regression
+- `3652db56` Remove R16 from roadmap — HDL lowering is out of scope
+- `90d9e7fe` R6-SEMANTIC-HARDENING: close task tree — mark leaf .30 and tree done
+- `ec97b62e` R6-SEMANTIC-HARDENING.30: add unit tests for remaining miscellaneous functions
+- `b5f450da` R6-SEMANTIC-HARDENING.29: update task tree — mark leaf done, advance frontier to .30
+- `2f030a3b` R6-SEMANTIC-HARDENING.29: add unit tests for temporal and consequent functions
+- `8e7e3a55` R6-SEMANTIC-HARDENING.28: update task tree — mark leaf done, advance frontier to .29
+- `5085b86e` R6-SEMANTIC-HARDENING.28: add unit tests for boolean classifier functions
+- `f908d94d` R6-SEMANTIC-HARDENING.27: update task tree — mark leaf done, advance frontier to .28
+- `41c52960` R6-SEMANTIC-HARDENING.27: add unit tests for 7 remaining parse functions
+- `02ea0ca9` R6-SEMANTIC-HARDENING.26: update task tree — mark leaf done, advance frontier to .27
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state: locally ahead of `origin/main` by sixteen committed active-batch/PNT slices before this PNT slice; push checkpoint reached at around-`30` threshold
-- files in flight for the current PNT slice:
+- branch state: 23 local commits ahead of `origin/main`; push checkpoint at around-`30` threshold
+- all 8 task trees are closed (`done`):
+  - `PROVENANCE-HARDENING`, `R6-FSM-ADAPTER`, `R6-SOURCE-HARDENING`, `R6-CONVERGE-HARDENING`, `R6-EVIDENCE-HARDENING`, `R6-INTENT-HARDENING`, `R6-SEMANTIC-HARDENING`, `R6-PRIOR-MEMORY-HARDENING`
+- 1014 Rust tests passing (was 666 before R6-SEMANTIC-HARDENING and R6-PRIOR-MEMORY-HARDENING added tests)
+- files in flight for live-doc sync:
+  - `MEMORY.md`
+  - `RUST_CODEBASE_ANALYSIS.md`
+  - `docs/book/` (mdBook sync)
   - `CHANGES.md`
   - `DEVELOPMENT_NOTES.md`
   - `LIVE_ACHIEVEMENT_STATUS.md`
-  - `MEMORY.md`
-  - `README.md`
   - `ROADMAP.md`
-  - `RUST_CODEBASE_ANALYSIS.md`
-  - `crates/specforge/src/ir/adapters.rs`
-  - `docs/book/src/reference/generated-artifacts.md`
 
 ## Latest completed batch run
 - requested_count: `100`
@@ -93,21 +67,18 @@
 ## Current batch status
 - objective:
   - active user-authorized run uses PNT with undefined BWFSC
-  - current PNT slice extends all 6 FSM-root tests with `root_kind_decision.automation_confidence` and `rationale` assertions
-  - completed_count after this PNT commit: `33`
-  - push checkpoint reached at around-`30` local commits; push deferred per continuation policy
-  - `R6` remains the active `.fsm` adapter hardening lane; SystemVerilog, Verilog, and VHDL adapter expansion remains not started
+  - current slice: live-doc sync after R6-SEMANTIC-HARDENING and R6-PRIOR-MEMORY-HARDENING task tree closures
+  - completed_count: all 8 task trees now closed; PNT will resume from roadmap remaining items
+  - 23 local commits ahead of `origin/main`; push deferred per continuation policy (~30 threshold)
+  - R16 (HDL lowering) removed from roadmap — SystemVerilog, Verilog, VHDL adapter expansion is out of scope; SpecForge lowers to `.fsm` or `.isf`, downstream toolchains own HDL generation
 - tracker effect:
-  - live-status tracker now marks DT root-kind decision confidence/rationale coverage as `Done`
-  - live docs now record the active PNT cycle as an `R6`/`R15` regression-only DT root-kind decision completeness hardening run
-  - `RUST_CODEBASE_ANALYSIS.md` now records the DT root-kind decision regression while keeping the refreshed test count at `666` listed Rust tests
+  - live-status tracker marks all 8 task trees as `done`
+  - R6 `.fsm` adapter hardening lane remains `In Progress` on ROADMAP but all task trees are done
+  - active lanes on ROADMAP: R7 (Validation), R15 (actor-relative direction), R15b (temporal model), R15c (KG-guided rescans), R15d (evidence arbitration), R15e (KG-quality benchmarks)
 - verification status:
-  - all 7 DT-root decision completeness tests plus full adapter suite `cargo test --manifest-path Cargo.toml -p specforge --lib -- ir::adapters` passed with `143/143` adapter-filtered tests
+  - `cargo test --manifest-path Cargo.toml -p specforge --lib` passed — 1014/1014 tests
   - `cargo fmt --all --check` passed
-  - `cargo test --manifest-path Cargo.toml -p specforge --lib -- --list` listed `666` Rust tests
   - `git diff --check` passed
-  - tracked markdown/mdBook absolute-path scan passed across `217` tracked markdown/mdBook files
-  - message file remains required to be untracked and `0` bytes after each commit workflow
 
 ## Historical previous batch status retained from pre-slice-1 handoff
 - note: the following section preserves the detailed previous `BWFSC=100` closure status from the prior handoff; it is historical recovery context, not the active current state.

@@ -43,9 +43,9 @@ The project boundary is:
 Then adapters can lower that into:
 
 - `.fsm`
-- later SystemVerilog
-- later Verilog
-- later VHDL
+- `.isf` (planned)
+
+HDL lowering (SystemVerilog/Verilog/VHDL) is out of scope — downstream toolchains own HDL generation.
 
 This ordering is what keeps the project from collapsing into backend-shaped shortcuts too early.
 The product boundary is supposed to be reusable implementation intent, not one specific code generator.

@@ -100,7 +100,7 @@ cargo run --manifest-path Cargo.toml -- adapt generated/intent_ir/<document_key>
 
 Right now the active downstream target is `.fsm`, and the project still treats adapters as downstream consumers rather than the core product boundary.
 That `.fsm` lane is in active hardening: renderable standalone and top-composition paths, blocked renderability diagnostics, residual decisions, support/confidence preservation, and selected-inventory provenance are being locked down before broader adapter expansion.
-SystemVerilog, Verilog, and VHDL targets remain planned but not started; their target names are reserved by the CLI, but lowering those targets currently reports feature-not-yet-implemented behavior.
+HDL lowering (SystemVerilog, Verilog, VHDL) is out of scope — SpecForge lowers to `.fsm` or `.isf`; downstream toolchains own HDL generation.
 When `.fsm` lowering is blocked, the adapter artifact can still preserve recovered context, such as top-link-derived boundary port directions, so users can inspect what was learned separately from why target text was not emitted.
 For top roots, flat `direction_hint` and graph-backed `graph_direction_hint` remain separate in the signal inventory when they disagree; the renderable top port is blocked, but the artifact does not pretend the graph itself conflicted unless graph evidence disagreed with graph evidence.
 For standalone DT/FSM roots, renderability also checks graph-backed output roles across the full signal inventory: an output recovered from actor-relative graph evidence still needs a typed driving action before target text is emitted.

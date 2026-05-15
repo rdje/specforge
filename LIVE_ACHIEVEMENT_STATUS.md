@@ -31,7 +31,13 @@
 - `N=200` batch run completed, committed per slice, and pushed after completion: Done
 - `BWFSC=200` batch run completed, committed per slice, passed final full CI, and pushed after completion: Done
 - `BWFSC=100` batch run completed with final post-commit push closure: Done
-- Active PNT cycle advanced through builds-renderable aggregate diagnostics coverage with around-30-commit push checkpoint policy: In Progress
+- R6-SEMANTIC-HARDENING task tree closed — 30 leaves resolved across semantic.rs unit test hardening (leaves .22–.30 caught high-value mutants and backfilled tests for parse, signal hint, boolean classifier, temporal, consequent, and miscellaneous functions): Done
+- R6-PRIOR-MEMORY-HARDENING task tree closed — 7 leaves resolved across prior_memory.rs mutant catching (leaves .1–.7 fixed missed mutants in word boundary, placeholder replacement, actor term, table header, phrase, modality reliability, filter, and search/resolve methods): Done
+- All 8 task trees now closed (`done`); PNT frontier exhausted — next slices come from roadmap remaining items: Done
+- R16 (HDL lowering) removed from roadmap — SystemVerilog/Verilog/VHDL adapter expansion is out of scope; SpecForge lowers to `.fsm` or `.isf`, downstream toolchains own HDL generation: Done
+- Live docs synced after hardening task tree closures — MEMORY.md, RUST_CODEBASE_ANALYSIS.md, CHANGES.md, DEVELOPMENT_NOTES.md updated; stale commit hash and test count corrected (666 → 1014): Done
+- mdBook scrubbed of stale HDL "planned but not started" language — `commands/pipeline.md` and `pipeline/intentir.md` now state HDL lowering is out of scope: Done
+- Active PNT cycle advanced through builds-renderable aggregate diagnostics coverage with around-30-commit push checkpoint policy: Done
 - `R6` `.fsm` adapter hardening lane is active: In Progress
 - `.fsm` duplicate top-port direction blockers now block stale top and aggregate renderable output: Done
 - `.fsm` recovered top-port direction blockers now block stale top and aggregate renderable output: Done
