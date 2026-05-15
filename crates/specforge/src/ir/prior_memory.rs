@@ -1356,4 +1356,59 @@ mod tests {
     fn normalize_table_header_cell_replaces_hyphen_with_space() {
         assert_eq!(normalize_table_header_cell("signal-name"), "signal name");
     }
+
+    // semantic_modality_reliability_prior_bonus unit tests
+
+    fn make_reliability_prior(
+        support_count: usize,
+        grounding_strength: SemanticGroundingStrength,
+    ) -> SemanticModalityReliabilityPriorRecord {
+        SemanticModalityReliabilityPriorRecord {
+            prior_id: "test".into(),
+            role: InterfaceSignalSemanticRole::HandshakeValidLike,
+            protocol_family: ProtocolFamily::Unknown,
+            source_kind: SignalSemanticHintSourceKind::ProseStatement,
+            support_count,
+            supporting_document_keys: vec![],
+            strongest_automation_confidence: AutomationConfidence::Medium,
+            strongest_grounding_strength: grounding_strength,
+        }
+    }
+
+    #[test]
+    fn reliability_bonus_cross_modality_with_support_3_returns_2() {
+        let prior = make_reliability_prior(3, SemanticGroundingStrength::CrossModality);
+        assert_eq!(semantic_modality_reliability_prior_bonus(&prior), 2);
+    }
+
+    #[test]
+    fn reliability_bonus_multi_source_with_support_2_returns_1() {
+        // Catches delete ! at line 801 — MultiSource must NOT match SingleSource.
+        let prior = make_reliability_prior(2, SemanticGroundingStrength::MultiSource);
+        assert_eq!(semantic_modality_reliability_prior_bonus(&prior), 1);
+    }
+
+    #[test]
+    fn reliability_bonus_low_support_returns_0() {
+        // Catches >=→< at line 800 — support_count < 2 must not trigger bonus 1.
+        let prior = make_reliability_prior(1, SemanticGroundingStrength::MultiSource);
+        assert_eq!(semantic_modality_reliability_prior_bonus(&prior), 0);
+    }
+
+    #[test]
+    fn reliability_bonus_high_support_single_source_returns_0() {
+        // Catches &&→|| at line 794 — support_count >= 3 but SingleSource
+        // (not CrossModality) must return 0, not 2. With || the bonus 2
+        // triggers on support_count alone.
+        let prior = make_reliability_prior(3, SemanticGroundingStrength::SingleSource);
+        assert_eq!(semantic_modality_reliability_prior_bonus(&prior), 0);
+    }
+
+    #[test]
+    fn reliability_bonus_single_source_with_support_2_returns_0() {
+        // Catches &&→|| at line 801 — support_count >= 2 but SingleSource
+        // must return 0, not 1 (the !matches! excludes SingleSource).
+        let prior = make_reliability_prior(2, SemanticGroundingStrength::SingleSource);
+        assert_eq!(semantic_modality_reliability_prior_bonus(&prior), 0);
+    }
 }
