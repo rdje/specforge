@@ -134,7 +134,7 @@ Close the remaining R7 validation gaps: extend validation findings into temporal
 | `R7-VALIDATION.1` | `430ccc08` — R7-VALIDATION.1 R7-VALIDATION.2 — add temporal handshake completion gap and multi-predicate antecedent validation findings | Both leaves .1 and .2 implemented in one slice |
 | `R7-VALIDATION.2` | `430ccc08` — shares commit with .1 | Both leaves .1 and .2 implemented in one slice |
 | `R7-VALIDATION.3` | `5962a149` — R7-VALIDATION.3 — add KG-quality benchmark findings | 3 benchmark findings in both validate functions, 1 test |
-| `R7-VALIDATION.4` | `pending` | `pending` |
+| `R7-VALIDATION.4` | `657c0b9a` — R7-VALIDATION.4 — add FSM adapter validation target with structural and coverage findings | Adapter validation wired into `specforge validate`, 8 findings + 1 test, project_validation.rs match arms updated |
 
 ## Changelog
 

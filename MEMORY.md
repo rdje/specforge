@@ -24,8 +24,8 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `pending`
-- latest_commit_brief_message: pending
+- latest_commit_hash: `657c0b9a`
+- latest_commit_brief_message: R7-VALIDATION.4 — add FSM adapter validation target with structural and coverage findings
 - note: R7-VALIDATION task tree — all actionable leaves done (.1/.2/.3/.4 done, .5 deferred). 1018 tests passing. clippy clean. R7 exhausted — no more PNT slices in R7 lane.
 
 ## Recent commit chain (last 10)
