@@ -926,12 +926,13 @@ fn assess_isf_renderability(intent_ir: &IntentIr) -> (bool, Vec<String>) {
         }
     }
 
-    if intent_ir.temporal_rules.is_empty()
-        && intent_ir.conditional_rules.is_empty()
-        && intent_ir.signal_constraints.is_empty()
-    {
+    let has_behavior = !intent_ir.temporal_rules.is_empty()
+        || !intent_ir.conditional_rules.is_empty()
+        || !intent_ir.signal_constraints.is_empty()
+        || !intent_ir.control_blocks.is_empty();
+    if !has_behavior {
         reasons.push(
-            "no temporal rules, conditional rules, or signal constraints — .isf requires behavioral content"
+            "no behavioral content (temporal rules, conditional rules, signal constraints, or control blocks)"
                 .to_string(),
         );
     }
@@ -1023,6 +1024,71 @@ fn render_isf_reset_clause(system_contract: &SystemContractRecord) -> String {
         "(reset ({} {} {}))",
         system_contract.reset_signal, kind_str, polarity_str
     )
+}
+
+fn sanitize_isf_name(raw: &str) -> String {
+    raw.replace([' ', '-', '.'], "_").to_lowercase()
+}
+
+fn emit_isf_action(lines: &mut Vec<String>, action: &ControlActionRecord, indent: &str) {
+    match action {
+        ControlActionRecord::Assign { target, value, .. } => {
+            let val_text = render_isf_control_expression(value);
+            lines.push(format!(
+                "{}(drive {} {})",
+                indent, target.signal_name, val_text
+            ));
+        }
+        ControlActionRecord::CompoundUpdate {
+            target,
+            operation,
+            amount,
+            ..
+        } => {
+            let op = match operation {
+                ControlCompoundUpdateOperation::Increment => "+",
+                ControlCompoundUpdateOperation::Decrement => "-",
+            };
+            let amt = match amount {
+                Some(expr) => render_isf_control_expression(expr),
+                None => "1".to_string(),
+            };
+            lines.push(format!(
+                "{}(drive {} ({} {} {}))",
+                indent, target.signal_name, op, target.signal_name, amt
+            ));
+        }
+        ControlActionRecord::Transition { target_state, .. } => {
+            lines.push(format!("{}(drive state {})", indent, target_state));
+        }
+        ControlActionRecord::DelayedPulse { .. } => {
+            // ISF doesn't have a direct delayed-pulse; emit as commented placeholder
+            lines.push(format!(
+                "{};; delayed pulse (not directly representable)",
+                indent
+            ));
+        }
+    }
+}
+
+fn emit_isf_rule_action(lines: &mut Vec<String>, guard: &str, action: &ControlActionRecord) {
+    let rule_name = match action {
+        ControlActionRecord::Assign { target, .. } => sanitize_isf_name(&target.signal_name),
+        ControlActionRecord::CompoundUpdate { target, .. } => {
+            sanitize_isf_name(&target.signal_name)
+        }
+        _ => "rule".to_string(),
+    };
+    match action {
+        ControlActionRecord::Assign { target, value, .. } => {
+            let val_text = render_isf_control_expression(value);
+            lines.push(format!(
+                "  (rule {} {} (set {} {}))",
+                rule_name, guard, target.signal_name, val_text
+            ));
+        }
+        _ => {}
+    }
 }
 
 fn build_isf_source_text(intent_ir: &IntentIr, actor_name: &str) -> String {
@@ -1155,7 +1221,7 @@ fn build_isf_source_text(intent_ir: &IntentIr, actor_name: &str) -> String {
         lines.push("  )".to_string());
     }
 
-    // Drives — emit simple per-output-signal drives
+    // Emit a parameterized drive per output signal (needed for drive-call syntax)
     let output_signals: Vec<String> = intent_ir
         .interfaces
         .iter()
@@ -1163,25 +1229,56 @@ fn build_isf_source_text(intent_ir: &IntentIr, actor_name: &str) -> String {
         .filter(|sig| matches!(sig.direction_hint, Some(InterfaceSignalDirection::Output)))
         .map(|sig| sig.signal_name.clone())
         .collect();
-    if !output_signals.is_empty() {
-        for sig in &output_signals {
-            lines.push(format!("  (drive ({} val) ({} val))", sig, sig));
+    for sig in &output_signals {
+        lines.push(format!("  (drive ({} val) ({} val))", sig, sig));
+    }
+
+    // Map control_blocks to transactions and rules
+    for (_cb_idx, cb) in intent_ir.control_blocks.iter().enumerate() {
+        let block_name = sanitize_isf_name(&cb.block_name);
+        match &cb.selector {
+            None => {
+                // Unconditional block → transaction
+                if !cb.branches.is_empty() {
+                    let tx_name = format!("{}_tx", block_name);
+                    lines.push(format!("  (transaction {}", tx_name));
+                    lines.push("    (on start".to_string());
+                    for branch in &cb.branches {
+                        for action in &branch.actions {
+                            emit_isf_action(&mut lines, action, "      ");
+                        }
+                    }
+                    lines.push("    )".to_string());
+                    lines.push("    (complete done)".to_string());
+                    lines.push("  )".to_string());
+                }
+            }
+            Some(selector_expr) => {
+                // Conditional block → rules with guards
+                let selector_text = render_isf_control_expression(selector_expr);
+                for branch in &cb.branches {
+                    let guard = match &branch.predicate {
+                        Some(pred) => render_isf_control_expression(pred),
+                        None => "true".to_string(),
+                    };
+                    let full_guard = if guard == "true" {
+                        selector_text.clone()
+                    } else {
+                        format!("(== {} {})", selector_text, guard)
+                    };
+                    for action in &branch.actions {
+                        emit_isf_rule_action(&mut lines, &full_guard, action);
+                    }
+                }
+            }
         }
     }
 
-    // Transactions from temporal rules
-    for (tx_idx, temporal) in intent_ir.temporal_rules.iter().enumerate() {
-        let tx_name = if temporal.rule_id.contains("transaction") {
-            format!("tx_{}", tx_idx)
-        } else {
-            temporal
-                .rule_id
-                .replace([' ', '-', '.'], "_")
-                .to_lowercase()
-        };
+    // Also map any explicit temporal_rules
+    for (_tx_idx, temporal) in intent_ir.temporal_rules.iter().enumerate() {
+        let tx_name = sanitize_isf_name(&temporal.rule_id);
         lines.push(format!("  (transaction {}", tx_name));
         lines.push("    (on start".to_string());
-        // Sample signals from antecedents
         for ant in &temporal.antecedents {
             if let TemporalPredicateRecord::SignalValue { signal_name, .. }
             | TemporalPredicateRecord::ActorDrivesSignal { signal_name, .. }
@@ -1193,8 +1290,6 @@ fn build_isf_source_text(intent_ir: &IntentIr, actor_name: &str) -> String {
             }
         }
         lines.push("    )".to_string());
-
-        // Drive consequents as actions
         for cons in &temporal.consequents {
             if let TemporalPredicateRecord::SignalValue {
                 signal_name, value, ..
@@ -1205,7 +1300,6 @@ fn build_isf_source_text(intent_ir: &IntentIr, actor_name: &str) -> String {
                 lines.push(format!("    (drive {} 1)", signal_name));
             }
         }
-
         lines.push("    (complete done)".to_string());
         lines.push("  )".to_string());
     }
@@ -1241,14 +1335,19 @@ fn build_isf_source_text(intent_ir: &IntentIr, actor_name: &str) -> String {
     }
 
     // Priority — rules fire before transactions
-    if !intent_ir.conditional_rules.is_empty() && !intent_ir.temporal_rules.is_empty() {
-        if let Some(first_tx) = intent_ir.temporal_rules.first() {
-            let tx_name = first_tx
-                .rule_id
-                .replace([' ', '-', '.'], "_")
-                .to_lowercase();
-            lines.push(format!("  (priority rule_0 over {})", tx_name));
-        }
+    let has_rules = !intent_ir.conditional_rules.is_empty()
+        || !intent_ir.signal_constraints.is_empty()
+        || intent_ir
+            .control_blocks
+            .iter()
+            .any(|cb| cb.selector.is_some());
+    let has_transactions = !intent_ir.temporal_rules.is_empty()
+        || intent_ir
+            .control_blocks
+            .iter()
+            .any(|cb| cb.selector.is_none() && !cb.branches.is_empty());
+    if has_rules && has_transactions {
+        lines.push("  (priority rules over transactions)".to_string());
     }
 
     lines.push(")".to_string());
@@ -1270,8 +1369,19 @@ fn build_isf_adapter_artifact(
     let (is_renderable, blocking_reasons) = assess_isf_renderability(intent_ir);
 
     let signal_count = count_isf_signals(intent_ir);
-    let transaction_count = intent_ir.temporal_rules.len();
-    let rule_count = intent_ir.conditional_rules.len() + intent_ir.signal_constraints.len();
+    let cb_tx_count = intent_ir
+        .control_blocks
+        .iter()
+        .filter(|cb| cb.selector.is_none() && !cb.branches.is_empty())
+        .count();
+    let cb_rule_count = intent_ir
+        .control_blocks
+        .iter()
+        .filter(|cb| cb.selector.is_some())
+        .count();
+    let transaction_count = intent_ir.temporal_rules.len() + cb_tx_count;
+    let rule_count =
+        intent_ir.conditional_rules.len() + intent_ir.signal_constraints.len() + cb_rule_count;
     let constant_count = intent_ir
         .symbol_definitions
         .iter()
@@ -28270,5 +28380,80 @@ mod tests {
             signal_name: "HCLK".to_string(),
         };
         assert_eq!(render_top_link_endpoint(&endpoint), "HCLK");
+    }
+
+    // --- ISF adapter ---
+
+    #[test]
+    fn isf_adapter_emits_valid_s_expression_source() -> Result<()> {
+        let tempdir = tempdir()?;
+        let intent_ir = build_explicit_symbolic_dt_intent_ir(tempdir.path())?;
+        let artifact = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Isf,
+            tempdir.path(),
+        )?;
+
+        let isf = artifact.isf.expect("ISF artifact must be populated");
+        assert!(isf.is_renderable, "expected renderable ISF artifact");
+        assert!(isf.blocking_reasons.is_empty());
+
+        // Counts
+        assert_eq!(isf.signal_count, 4, "SEL, DATA_OUT, PARAM_OUT, ENUM_OUT");
+        assert!(isf.constant_count >= 3, "C0, D0, P0");
+        assert_eq!(isf.enum_count, 1, "mode_t");
+        assert!(
+            isf.transaction_count > 0 || isf.rule_count > 0,
+            "should have behavioral content"
+        );
+
+        let source = &isf.source_text;
+        // Verify S-expression structure
+        assert!(source.starts_with("(actor"), "must start with actor form");
+        assert!(source.ends_with(")"), "must end with closing paren");
+        assert!(source.contains("(clock "), "must declare clock");
+        assert!(source.contains("(interface"), "must declare interface");
+        assert!(
+            source.contains("(input ") || source.contains("(output "),
+            "must have signal directions"
+        );
+        assert!(source.contains("(constants"), "must declare constants");
+        assert!(source.contains("(types"), "must declare types");
+        assert!(source.contains("(enums"), "must declare enums");
+        assert!(
+            source.contains("(transaction ") || source.contains("(rule "),
+            "must have behavioral content"
+        );
+
+        // Verify emitted target path
+        assert!(artifact.artifact_layout.emitted_target_path.is_some());
+        assert!(
+            artifact
+                .artifact_layout
+                .emitted_target_path
+                .unwrap()
+                .to_string_lossy()
+                .ends_with(".isf")
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn isf_adapter_blocks_when_no_signals() -> Result<()> {
+        let tempdir = tempdir()?;
+        let intent_ir = build_intent_ir_from_markdown(tempdir.path(), "empty.md", "# Empty\n")?;
+        let artifact = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Isf,
+            tempdir.path(),
+        )?;
+
+        let isf = artifact.isf.expect("ISF artifact must be populated");
+        assert!(!isf.is_renderable);
+        assert!(!isf.blocking_reasons.is_empty());
+        assert!(artifact.artifact_layout.emitted_target_path.is_none());
+
+        Ok(())
     }
 }
