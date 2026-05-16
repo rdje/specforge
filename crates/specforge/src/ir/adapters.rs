@@ -1071,23 +1071,18 @@ fn emit_isf_action(lines: &mut Vec<String>, action: &ControlActionRecord, indent
     }
 }
 
-fn emit_isf_rule_action(lines: &mut Vec<String>, guard: &str, action: &ControlActionRecord) {
-    let rule_name = match action {
-        ControlActionRecord::Assign { target, .. } => sanitize_isf_name(&target.signal_name),
-        ControlActionRecord::CompoundUpdate { target, .. } => {
-            sanitize_isf_name(&target.signal_name)
-        }
-        _ => "rule".to_string(),
-    };
-    match action {
-        ControlActionRecord::Assign { target, value, .. } => {
-            let val_text = render_isf_control_expression(value);
-            lines.push(format!(
-                "  (rule {} {} (set {} {}))",
-                rule_name, guard, target.signal_name, val_text
-            ));
-        }
-        _ => {}
+fn collect_branch_actions(branches: &[ControlBranchRecord]) -> Vec<ControlActionRecord> {
+    branches.iter().flat_map(|b| b.actions.clone()).collect()
+}
+
+fn branch_predicate_guard(branch: &ControlBranchRecord, selector_text: &str) -> String {
+    match &branch.predicate {
+        Some(pred) => format!(
+            "(== {} {})",
+            selector_text,
+            render_isf_control_expression(pred)
+        ),
+        None => selector_text.to_string(),
     }
 }
 
@@ -1233,43 +1228,63 @@ fn build_isf_source_text(intent_ir: &IntentIr, actor_name: &str) -> String {
         lines.push(format!("  (drive ({} val) ({} val))", sig, sig));
     }
 
-    // Map control_blocks to transactions and rules
+    // Map control_blocks to transactions with ISF control-flow constructs
     for (_cb_idx, cb) in intent_ir.control_blocks.iter().enumerate() {
         let block_name = sanitize_isf_name(&cb.block_name);
+        if cb.branches.is_empty() {
+            continue;
+        }
         match &cb.selector {
             None => {
-                // Unconditional block → transaction
-                if !cb.branches.is_empty() {
-                    let tx_name = format!("{}_tx", block_name);
-                    lines.push(format!("  (transaction {}", tx_name));
-                    lines.push("    (on start".to_string());
+                // Unconditional block → transaction with inline drives
+                let tx_name = format!("{}_tx", block_name);
+                lines.push(format!("  (transaction {}", tx_name));
+                lines.push("    (on start".to_string());
+                for action in collect_branch_actions(&cb.branches) {
+                    emit_isf_action(&mut lines, &action, "      ");
+                }
+                lines.push("    )".to_string());
+                for action in collect_branch_actions(&cb.branches) {
+                    emit_isf_action(&mut lines, &action, "    ");
+                }
+                lines.push("    (complete done)".to_string());
+                lines.push("  )".to_string());
+            }
+            Some(selector_expr) => {
+                // Conditional block → transaction with when/switch clauses
+                let tx_name = format!("{}_tx", block_name);
+                let sel_text = render_isf_control_expression(selector_expr);
+                lines.push(format!("  (transaction {}", tx_name));
+                lines.push("    (on start".to_string());
+
+                if cb.branches.len() == 1 {
+                    // Single branch → (when condition (drive ...))
+                    let branch = &cb.branches[0];
+                    let guard = branch_predicate_guard(branch, &sel_text);
+                    lines.push("    )".to_string());
+                    lines.push(format!("    (when {}", guard));
+                    for action in &branch.actions {
+                        emit_isf_action(&mut lines, action, "      ");
+                    }
+                    lines.push("    )".to_string());
+                } else {
+                    // Multiple branches → (switch selector ...)
+                    lines.push("    )".to_string());
+                    lines.push(format!("    (switch {}", sel_text));
                     for branch in &cb.branches {
+                        let val = match &branch.predicate {
+                            Some(pred) => render_isf_control_expression(pred),
+                            None => "default".to_string(),
+                        };
+                        lines.push(format!("      ({})", val));
                         for action in &branch.actions {
-                            emit_isf_action(&mut lines, action, "      ");
+                            emit_isf_action(&mut lines, action, "        ");
                         }
                     }
                     lines.push("    )".to_string());
-                    lines.push("    (complete done)".to_string());
-                    lines.push("  )".to_string());
                 }
-            }
-            Some(selector_expr) => {
-                // Conditional block → rules with guards
-                let selector_text = render_isf_control_expression(selector_expr);
-                for branch in &cb.branches {
-                    let guard = match &branch.predicate {
-                        Some(pred) => render_isf_control_expression(pred),
-                        None => "true".to_string(),
-                    };
-                    let full_guard = if guard == "true" {
-                        selector_text.clone()
-                    } else {
-                        format!("(== {} {})", selector_text, guard)
-                    };
-                    for action in &branch.actions {
-                        emit_isf_rule_action(&mut lines, &full_guard, action);
-                    }
-                }
+                lines.push("    (complete done)".to_string());
+                lines.push("  )".to_string());
             }
         }
     }
@@ -1372,16 +1387,10 @@ fn build_isf_adapter_artifact(
     let cb_tx_count = intent_ir
         .control_blocks
         .iter()
-        .filter(|cb| cb.selector.is_none() && !cb.branches.is_empty())
-        .count();
-    let cb_rule_count = intent_ir
-        .control_blocks
-        .iter()
-        .filter(|cb| cb.selector.is_some())
+        .filter(|cb| !cb.branches.is_empty())
         .count();
     let transaction_count = intent_ir.temporal_rules.len() + cb_tx_count;
-    let rule_count =
-        intent_ir.conditional_rules.len() + intent_ir.signal_constraints.len() + cb_rule_count;
+    let rule_count = intent_ir.conditional_rules.len() + intent_ir.signal_constraints.len();
     let constant_count = intent_ir
         .symbol_definitions
         .iter()
