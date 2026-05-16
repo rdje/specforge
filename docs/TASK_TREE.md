@@ -27,7 +27,7 @@ evidence for one top-level task.
 | `R6-SEMANTIC-HARDENING` | `done` | `R6` | — | [docs/tasks/R6-SEMANTIC-HARDENING.md](docs/tasks/R6-SEMANTIC-HARDENING.md) |
 | `R6-PRIOR-MEMORY-HARDENING` | `done` | `R6` | — | [docs/tasks/R6-PRIOR-MEMORY-HARDENING.md](docs/tasks/R6-PRIOR-MEMORY-HARDENING.md) |
 | `R15-GRAPH-DIRECTION-MIGRATION` | `done` | `R15` | — | [docs/tasks/R15-GRAPH-DIRECTION-MIGRATION.md](docs/tasks/R15-GRAPH-DIRECTION-MIGRATION.md) |
-| `R7-VALIDATION` | `active` | `R7` | R7-VALIDATION.4 | [docs/tasks/R7-VALIDATION.md](docs/tasks/R7-VALIDATION.md) |
+| `R7-VALIDATION` | `done` | `R7` | — (.5 deferred) | [docs/tasks/R7-VALIDATION.md](docs/tasks/R7-VALIDATION.md) |
 
 ## Directory Layout
 

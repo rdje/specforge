@@ -24,9 +24,9 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `657c0b9a`
-- latest_commit_brief_message: R7-VALIDATION.4 — add FSM adapter validation target with structural and coverage findings
-- note: R7-VALIDATION task tree — all actionable leaves done (.1/.2/.3/.4 done, .5 deferred). 1018 tests passing. clippy clean. R7 exhausted — no more PNT slices in R7 lane.
+- latest_commit_hash: `4f2eb367`
+- latest_commit_brief_message: Update fsmgen submodule — latest ISF downstream integration spec and docs
+- note: All 10 task trees closed. R7-VALIDATION done (.1/.2/.3/.4 done, .5 deferred). 1018 tests passing, clippy clean. PNT frontier exhausted — no implementable slices remain. Remaining ROADMAP items are design-level decisions (R15f/R15g).
 
 ## Recent commit chain (last 10)
 - `3652db56` Remove R16 from roadmap — HDL lowering is out of scope
