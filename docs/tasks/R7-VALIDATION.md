@@ -71,10 +71,10 @@ Close the remaining R7 validation gaps: extend validation findings into temporal
     the current rate and the benchmark threshold as context. Findings exist in
     both semantic and intent validation.
   Verification: `passed`
-  Commit: `pending`
+  Commit: `5962a149`
 
 - ID: `R7-VALIDATION.4`
-  Status: `pending`
+  Status: `done`
   Goal: Add adapter validation targets for .fsm and .isf adapters
   Acceptance: >
     The validate command can accept `.fsm` and `.isf` adapter artifacts,
@@ -83,7 +83,7 @@ Close the remaining R7 validation gaps: extend validation findings into temporal
     and a coverage check for key properties (state graph completeness for .fsm,
     interface completeness for .isf). Findings are reported in the same
     ValidationReportRecord format.
-  Verification: `pending`
+  Verification: `passed`
   Commit: `pending`
 
 - ID: `R7-VALIDATION.5`
@@ -101,8 +101,7 @@ Close the remaining R7 validation gaps: extend validation findings into temporal
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `R7-VALIDATION.4` | `pending` | Adapter validation — spans multiple files, needs adapter format research |
-| 2 | `R7-VALIDATION.5` | `deferred` | Gated on canonical IR mutation decision — not in frontier |
+| 1 | `R7-VALIDATION.5` | `deferred` | Gated on canonical IR mutation decision — not in frontier |
 
 ## Decisions
 
@@ -113,7 +112,7 @@ Close the remaining R7 validation gaps: extend validation findings into temporal
 ## Open Questions
 
 - What concrete benchmark thresholds should KG-quality use beyond the initial 50% floor? Answer will emerge from running validation against real spec documents and observing distribution of current coverage rates.
-- For adapter validation (R7-VALIDATION.4): should validation be a separate command or integrated into `specforge validate`? TBD when leaf is reached.
+- For adapter validation (R7-VALIDATION.4): should validation be a separate command or integrated into `specforge validate`? **Resolved**: integrated into `specforge validate` — auto-detects stage from AdapterArtifact JSON `stage` field and dispatches to `validate_fsm_adapter()` just like other stages.
 
 ## Blockers
 
@@ -126,7 +125,7 @@ Close the remaining R7 validation gaps: extend validation findings into temporal
 | `2026-05-16` | `R7-VALIDATION.1` | `cargo test -p specforge --lib` (1016 passed) | `passed` |
 | `2026-05-16` | `R7-VALIDATION.2` | `cargo test -p specforge --lib` (1016 passed) | `passed` |
 | `2026-05-16` | `R7-VALIDATION.3` | `pending` | `pending` |
-| `2026-05-16` | `R7-VALIDATION.4` | `pending` | `pending` |
+| `2026-05-16` | `R7-VALIDATION.4` | `cargo test -p specforge --lib` (1018 passed) | `passed` |
 
 ## Commit Log
 
@@ -134,10 +133,12 @@ Close the remaining R7 validation gaps: extend validation findings into temporal
 | --- | --- | --- |
 | `R7-VALIDATION.1` | `430ccc08` — R7-VALIDATION.1 R7-VALIDATION.2 — add temporal handshake completion gap and multi-predicate antecedent validation findings | Both leaves .1 and .2 implemented in one slice |
 | `R7-VALIDATION.2` | `430ccc08` — shares commit with .1 | Both leaves .1 and .2 implemented in one slice |
-| `R7-VALIDATION.3` | `pending` | `pending` |
+| `R7-VALIDATION.3` | `5962a149` — R7-VALIDATION.3 — add KG-quality benchmark findings | 3 benchmark findings in both validate functions, 1 test |
 | `R7-VALIDATION.4` | `pending` | `pending` |
 
 ## Changelog
 
 - `2026-05-16`: Created task tree. Scoped five leaves from R7 remaining work in ROADMAP.
 - `2026-05-16`: Completed leaves .1 and .2 in commit `430ccc08`. Added temporal handshake completion gap and multi-predicate antecedent findings to both validate_semantic_ir() and validate_intent_ir(). 1016 tests passing, clippy clean. Frontier advanced to .3.
+- `2026-05-16`: Completed leaf .3 in commit `5962a149`. Added KG-quality benchmark findings for graph direction coverage, semantic role resolution, and consensus coverage. 1017 tests passing, clippy clean. Frontier advanced to .4.
+- `2026-05-16`: Completed leaf .4. Added FSM adapter validation — auto-detects stage from AdapterArtifact JSON, runs structural well-formedness and coverage checks (FSM payload, schema version, renderability, state graph, transitions, signal inventory, system contract, residual decisions). 1 test. 1018 tests passing, clippy clean. All actionable R7 leaves exhausted (.5 is deferred).

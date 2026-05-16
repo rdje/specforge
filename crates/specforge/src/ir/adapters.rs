@@ -406,6 +406,7 @@ impl AdapterLoweringStatus {
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct AdapterArtifact {
+    pub stage: IrStage,
     pub schema_version: u32,
     pub target: AdapterTarget,
     pub required_input_stage: IrStage,
@@ -415,6 +416,8 @@ pub struct AdapterArtifact {
     pub document_identity: IntentDocumentIdentity,
     pub lowering_status: AdapterLoweringStatus,
     pub residual_decisions: Vec<ResidualDecisionPacket>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub validation_reports: Vec<crate::ir::source::ValidationReportRecord>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub fsm: Option<FsmAdapterArtifact>,
 }
@@ -940,6 +943,7 @@ fn build_fsm_adapter_artifact(
     };
 
     Ok(AdapterArtifact {
+        stage: IrStage::FsmAdapter,
         schema_version: 1,
         target: AdapterTarget::Fsm,
         required_input_stage: IrStage::IntentIr,
@@ -953,6 +957,7 @@ fn build_fsm_adapter_artifact(
         document_identity: intent_ir.document_identity.clone(),
         lowering_status,
         residual_decisions,
+        validation_reports: vec![],
         fsm: Some(fsm),
     })
 }

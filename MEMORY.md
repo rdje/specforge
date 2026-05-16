@@ -24,9 +24,9 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `430ccc08`
-- latest_commit_brief_message: R7-VALIDATION.1 R7-VALIDATION.2 — add temporal handshake completion gap and multi-predicate antecedent validation findings
-- note: R7-VALIDATION task tree active (.1 + .2 done, frontier → .3 KG-quality benchmarks). 1016 tests passing (2 new). 10 task trees (9 closed + 1 active). clippy clean. All previous R15 graph-direction work committed. Next PNT: R7-VALIDATION.3 (KG-quality benchmarks).
+- latest_commit_hash: `pending`
+- latest_commit_brief_message: pending
+- note: R7-VALIDATION task tree — all actionable leaves done (.1/.2/.3/.4 done, .5 deferred). 1018 tests passing. clippy clean. R7 exhausted — no more PNT slices in R7 lane.
 
 ## Recent commit chain (last 10)
 - `3652db56` Remove R16 from roadmap — HDL lowering is out of scope

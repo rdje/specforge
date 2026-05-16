@@ -2,6 +2,15 @@
 
 ## 2026-05-16 (PNT continuation — R7 validation extension)
 
+### R7-VALIDATION.4: Adapter validation targets for .fsm
+- Added `IrStage::FsmAdapter` variant and wired adapter validation into `specforge validate`.
+- Added `validate_fsm_adapter()` with 8 findings: missing FSM payload (Error), schema version unexpected (Warning), not renderable (Warning), no state candidates (Info), initial state cardinality (Warning), no transitions (Info), empty signal inventory (Info), no system contract (Info), residual decisions (Warning).
+- Added `persist_fsm_adapter_validation()` and `fsm_adapter_fingerprint()` following existing patterns.
+- Added `stage` and `validation_reports` fields to `AdapterArtifact` for validation backannotation.
+- 1 test: `validate_fsm_adapter_reports_structural_and_coverage_findings`.
+- All non-exhaustive `IrStage` match arms in `project_validation.rs` updated for `FsmAdapter`.
+- 1018/1018 tests passing, clippy clean, fmt clean.
+
 ### R7-VALIDATION.3: KG-quality benchmark findings
 - Added three benchmark findings to both validate_semantic_ir() and validate_intent_ir():
   - Graph direction coverage < 50% → `*_kg_graph_direction_coverage_below_benchmark`
