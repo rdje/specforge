@@ -858,12 +858,10 @@ fn actor_signal_relation_related_ids(relations: &[ActorSignalRelation]) -> Vec<S
 struct IntentQualityScoreInputs {
     dir_pct: usize,
     width_pct: usize,
-    structured_nlp_constraints: usize,
+    has_clock: bool,
+    has_reset: bool,
     has_encoding_enums: bool,
-    has_register_map: bool,
-    has_timing_constraints: bool,
-    has_state_machine: bool,
-    has_system_contract: bool,
+    behavioral_rule_ratio: f64,
 }
 
 fn intent_quality_gap_related_ids(inputs: IntentQualityScoreInputs) -> Vec<String> {
@@ -875,23 +873,17 @@ fn intent_quality_gap_related_ids(inputs: IntentQualityScoreInputs) -> Vec<Strin
     if inputs.width_pct < 100 {
         related_ids.push("score_component:signal_width".to_string());
     }
-    if inputs.structured_nlp_constraints < 30 {
-        related_ids.push("score_component:nlp_constraints".to_string());
+    if !inputs.has_clock {
+        related_ids.push("score_component:clock_contract".to_string());
+    }
+    if !inputs.has_reset {
+        related_ids.push("score_component:reset_contract".to_string());
     }
     if !inputs.has_encoding_enums {
         related_ids.push("score_component:encoding_enums".to_string());
     }
-    if !inputs.has_register_map {
-        related_ids.push("score_component:register_map".to_string());
-    }
-    if !inputs.has_timing_constraints {
-        related_ids.push("score_component:timing_constraints".to_string());
-    }
-    if !inputs.has_state_machine {
-        related_ids.push("score_component:state_machine".to_string());
-    }
-    if !inputs.has_system_contract {
-        related_ids.push("score_component:system_contract".to_string());
+    if inputs.behavioral_rule_ratio < 0.5 {
+        related_ids.push("score_component:behavioral_rules".to_string());
     }
 
     related_ids
@@ -4563,55 +4555,71 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     println!("  conditional_rules: {}", ir.conditional_rules.len());
     println!();
 
-    // Layer E: spec-type-aware quality scoring.
+    // Layer E: ISF readiness scoring.
+    //
+    // The score measures interface-contract completeness for lowering to `.isf`
+    // (Intent Scheduling Format). Behavioral rules carry the dominant weight
+    // because temporal/timing/conditional relationships between signals are the
+    // hardest information to extract and the most critical for lowering.
+    // Direction, width, and encoding are easier to extract but still needed.
     //
     // Points breakdown (total max = 100):
-    //   Signal direction coverage (declared only): 0–25 pts
-    //   Signal width coverage    (declared only):  0–10 pts
-    //   NLP constraint richness  (sig + cond):     0–30 pts  (capped at 30 constraints)
-    //   Encoding enum definitions:                 0–15 pts
-    //   Register map records:                      0–5  pts
-    //   Timing constraint records:                 0–5  pts
-    //   State machine (FSM specs):                 0–5  pts  (bonus, not penalised if absent)
-    //   System contract (clock/reset):             0–5  pts  (bonus, not penalised if absent)
+    //   Signal direction coverage (declared only): 0–3  pts
+    //   Signal width coverage    (declared only): 0–3  pts  (parametric widths count)
+    //   Clock/reset contract:                    0–2  pts  (clock=1, reset=1 — table stakes)
+    //   Encoding enum definitions:               0–3  pts  (binary — extracted or not)
+    //   Behavioral rule coverage:                0–89 pts  (proportional to signals, dominant)
     //
-    // The FSM/contract bonuses are additive rather than penalties so that bus protocol
-    // specs like AHB (which have no FSM or explicit clock declaration) are scored on the
-    // merit of what they *do* contain rather than penalised for spec-appropriate omissions.
-    let has_states = !ir.regular_states.is_empty();
+    // Parametric widths are scored as resolved because ISF accepts parameterized
+    // widths natively — the designer chooses concrete values at integration time.
+    // Missing actor hierarchy does not penalise the score because ISF generates
+    // flat actors; the designer decomposes later. Missing FSM states, register maps,
+    // and timing constraints are not penalised because ISF does not require them.
     let has_enums = !ir.symbol_definitions.is_empty();
-    let has_constraints = ir.signal_constraints.len() + ir.conditional_rules.len();
     let has_system_contract = ir.system_contract.is_some();
-    let has_registers = !ir.register_records.is_empty();
-    let has_timing = !ir.timing_constraints.is_empty();
 
-    let dir_score = dir_pct as f64 * 0.25; // 0–25
-    let width_score = w_pct as f64 * 0.10; // 0–10
-    let constraint_score = has_constraints.min(30) as f64; // 0–30
-    let enum_score = if has_enums { 15.0_f64 } else { 0.0 }; // 0–15
-    let register_score = if has_registers { 5.0_f64 } else { 0.0 }; // 0–5
-    let timing_score = if has_timing { 5.0_f64 } else { 0.0 }; // 0–5
-    let fsm_score = if has_states { 5.0_f64 } else { 0.0 }; // 0–5  (bonus)
-    let contract_score = if has_system_contract { 5.0_f64 } else { 0.0 }; // 0–5  (bonus)
+    // Clock/reset: check both the formal system contract and infrastructure signals.
+    let has_clock = has_system_contract
+        || ir
+            .infrastructure_signals
+            .iter()
+            .any(|s| matches!(s.kind, InfrastructureSignalKind::SystemClock));
+    let has_reset = has_system_contract
+        || ir
+            .infrastructure_signals
+            .iter()
+            .any(|s| matches!(s.kind, InfrastructureSignalKind::SystemReset));
 
-    let score = (dir_score
-        + width_score
-        + constraint_score
-        + enum_score
-        + register_score
-        + timing_score
-        + fsm_score
-        + contract_score)
-        .min(100.0);
+    // Behavioral rule coverage: ratio of rules to declared signals.
+    let behavioral_rule_count =
+        ir.temporal_rules.len() + ir.signal_constraints.len() + ir.conditional_rules.len();
+    let behavioral_rule_ratio = if declared_count > 0 {
+        behavioral_rule_count as f64 / declared_count as f64
+    } else {
+        0.0
+    };
+
+    let dir_score = dir_pct as f64 * 0.03; // 0–3
+    let width_score = w_pct as f64 * 0.03; // 0–3
+    // Clock/reset: table-stakes — always exist in a digital design.
+    // If not named in the PDF, we default to clk/rst_n. Minimal weight.
+    let clock_score = if has_clock { 1.0_f64 } else { 0.0 }; // 0–1
+    let reset_score = if has_reset { 1.0_f64 } else { 0.0 }; // 0–1
+    let enum_score = if has_enums { 3.0_f64 } else { 0.0 }; // 0–3
+    // Behavioral rules: full credit when average >= 1 rule per signal;
+    // scale proportionally otherwise. Dominant weight (89/100).
+    let behavioral_score = (behavioral_rule_ratio.min(1.0) * 89.0).min(89.0); // 0–89
+
+    let score =
+        (dir_score + width_score + clock_score + reset_score + enum_score + behavioral_score)
+            .min(100.0);
     let quality_gap_related_ids = intent_quality_gap_related_ids(IntentQualityScoreInputs {
         dir_pct,
         width_pct: w_pct,
-        structured_nlp_constraints: has_constraints,
+        has_clock,
+        has_reset,
         has_encoding_enums: has_enums,
-        has_register_map: has_registers,
-        has_timing_constraints: has_timing,
-        has_state_machine: has_states,
-        has_system_contract,
+        behavioral_rule_ratio,
     });
 
     println!("=== Quality Score ===");
@@ -4620,24 +4628,26 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     );
     println!("  graph_direction_coverage: {graph_dir_pct}% (declared signals only)");
     println!("  compatibility_direction_hints: {compat_dir_pct}% (declared signals only)");
-    println!("  signal_width_coverage: {w_pct}% (declared signals only)");
-    println!("  has_encoding_enums: {has_enums}");
-    println!("  has_register_map: {has_registers}");
-    println!("  has_timing_constraints: {has_timing}");
-    println!("  has_state_machine: {has_states}");
+    println!(
+        "  signal_width_coverage: {w_pct}% (declared signals only) [{with_numeric_width} numeric, {with_parametric_width} parametric]"
+    );
+    println!("  has_clock: {has_clock}");
+    println!("  has_reset: {has_reset}");
     println!("  has_system_contract: {has_system_contract}");
-    println!("  structured_nlp_constraints: {has_constraints}");
+    println!("  has_encoding_enums: {has_enums}");
+    println!(
+        "  behavioral_rule_count: {behavioral_rule_count} (temporal + signal constraints + conditional rules)"
+    );
+    println!("  behavioral_rule_ratio: {behavioral_rule_ratio:.2} rules/signal");
     println!("  residual_decisions: {}", ir.residual_decisions.len());
     println!();
     println!("  score_breakdown:");
-    println!("    signal_direction:  {dir_score:.1}/25");
-    println!("    signal_width:      {width_score:.1}/10");
-    println!("    nlp_constraints:   {constraint_score:.0}/30");
-    println!("    encoding_enums:    {enum_score:.0}/15");
-    println!("    register_map:      {register_score:.0}/5");
-    println!("    timing:            {timing_score:.0}/5");
-    println!("    fsm_bonus:         {fsm_score:.0}/5");
-    println!("    contract_bonus:    {contract_score:.0}/5");
+    println!("    signal_direction:  {dir_score:.1}/3");
+    println!("    signal_width:      {width_score:.1}/3");
+    println!("    clock_contract:    {clock_score:.0}/1");
+    println!("    reset_contract:    {reset_score:.0}/1");
+    println!("    encoding_enums:    {enum_score:.0}/3");
+    println!("    behavioral_rules:  {behavioral_score:.1}/89");
     let grade = match score as u32 {
         90..=100 => "EXCELLENT",
         70..=89 => "GOOD",
@@ -8313,8 +8323,8 @@ mod tests {
 
         let report = validate_intent_ir(&intent_ir, "quality_gap_related_ids".to_string());
 
-        assert_eq!(report.overall_score, Some(35));
-        assert_eq!(report.grade.as_deref(), Some("NEEDS IMPROVEMENT"));
+        assert_eq!(report.overall_score, Some(6));
+        assert_eq!(report.grade.as_deref(), Some("INCOMPLETE"));
 
         let finding = report
             .findings
@@ -8324,12 +8334,10 @@ mod tests {
         assert_eq!(
             finding.related_ids,
             vec![
-                "score_component:nlp_constraints".to_string(),
+                "score_component:clock_contract".to_string(),
+                "score_component:reset_contract".to_string(),
                 "score_component:encoding_enums".to_string(),
-                "score_component:register_map".to_string(),
-                "score_component:timing_constraints".to_string(),
-                "score_component:state_machine".to_string(),
-                "score_component:system_contract".to_string(),
+                "score_component:behavioral_rules".to_string(),
             ]
         );
 

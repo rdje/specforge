@@ -2731,13 +2731,13 @@ mod tests {
         let snapshot_doc = fs::read_to_string(repo_root.join(VALIDATION_SNAPSHOT_DOC))?;
         assert!(snapshot_doc.contains("spec.md"));
         assert!(snapshot_doc.contains("intent_ir"));
-        assert!(snapshot_doc.contains("35/100 NEEDS IMPROVEMENT"));
+        assert!(snapshot_doc.contains("6/100 INCOMPLETE"));
         assert!(snapshot_doc.contains("- Targeted rescan recommendations: 0"));
 
         let live_status = fs::read_to_string(repo_root.join(LIVE_STATUS_DOC))?;
         assert!(live_status.contains("## Validation Projection"));
         assert!(live_status.contains(VALIDATION_PROJECTION_START));
-        assert!(live_status.contains("35/100 NEEDS IMPROVEMENT"));
+        assert!(live_status.contains("6/100 INCOMPLETE"));
         assert!(live_status.contains("- Targeted rescan queue:\n  - none"));
 
         let rescan_plan = fs::read_to_string(repo_root.join(VALIDATION_RESCAN_PLAN_PATH))?;

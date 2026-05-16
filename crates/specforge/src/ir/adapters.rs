@@ -18,6 +18,7 @@ use crate::ir::semantic::{
     ExplicitTopRecord, InitAssignmentRecord, InterfaceRecord, InterfaceSignalDirection,
     StateTransitionRecord, SymbolDefinitionKind, SymbolDefinitionRecord, SystemContractRecord,
     SystemResetKind, SystemResetPolarity, SystemResetTargetKind, SystemResetTimingRelation,
+    TemporalPredicateRecord,
 };
 use crate::ir::source::{
     AutomationConfidence, CandidateInterpretation, ResidualDecisionPacket, WidthHint, document_key,
@@ -29,6 +30,7 @@ const TOP_LINK_ENDPOINT_DIRECTION_ROLE_ENRICHMENT: &str = "align top-link endpoi
 #[serde(rename_all = "snake_case")]
 pub enum AdapterTarget {
     Fsm,
+    Isf,
     SystemVerilog,
     Verilog,
     Vhdl,
@@ -38,6 +40,7 @@ impl AdapterTarget {
     pub fn as_str(self) -> &'static str {
         match self {
             Self::Fsm => "fsm",
+            Self::Isf => "isf",
             Self::SystemVerilog => "system_verilog",
             Self::Verilog => "verilog",
             Self::Vhdl => "vhdl",
@@ -358,6 +361,15 @@ pub struct AdapterPlan {
 pub fn default_adapter_plans() -> Vec<AdapterPlan> {
     vec![
         AdapterPlan {
+            target: AdapterTarget::Isf,
+            required_input_stage: IrStage::IntentIr,
+            status: AdapterStatus::Implemented,
+            notes: vec![
+                "Intent Scheduling Format (.isf) adapter — emits high-level scheduling intent".to_string(),
+                "FSMGen lowers .isf → scheduled .fsm → HDL; SpecForge does not do cycle scheduling".to_string(),
+            ],
+        },
+        AdapterPlan {
             target: AdapterTarget::Fsm,
             required_input_stage: IrStage::IntentIr,
             status: AdapterStatus::Implemented,
@@ -420,6 +432,8 @@ pub struct AdapterArtifact {
     pub validation_reports: Vec<crate::ir::source::ValidationReportRecord>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub fsm: Option<FsmAdapterArtifact>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub isf: Option<IsfAdapterArtifact>,
 }
 
 impl AdapterArtifact {
@@ -450,6 +464,9 @@ impl AdapterArtifact {
         let intent_ir: IntentIr = serde_json::from_str(&raw_artifact)?;
 
         match target {
+            AdapterTarget::Isf => {
+                build_isf_adapter_artifact(&intent_ir, &intent_ir_path, artifact_base_root)
+            }
             AdapterTarget::Fsm => {
                 build_fsm_adapter_artifact(&intent_ir, &intent_ir_path, artifact_base_root)
             }
@@ -535,6 +552,21 @@ pub struct FsmAdapterArtifact {
     pub renderable_module: Option<FsmRenderableModule>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub renderable_document: Option<FsmRenderableSourceDocument>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct IsfAdapterArtifact {
+    pub actor_name: String,
+    pub source_text: String,
+    pub is_renderable: bool,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub blocking_reasons: Vec<String>,
+    pub signal_count: usize,
+    pub transaction_count: usize,
+    pub rule_count: usize,
+    pub constant_count: usize,
+    pub enum_count: usize,
+    pub storage_count: usize,
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
@@ -836,6 +868,489 @@ struct RenderableEndpointPort {
     width_hint: Option<u32>,
 }
 
+fn derive_isf_actor_name(intent_ir: &IntentIr) -> String {
+    if let Some(actor) = intent_ir.actors.first() {
+        if let Some(ref name) = actor.actor_name {
+            if !name.is_empty() {
+                return name.replace([' ', '-', '.'], "_").to_lowercase();
+            }
+        }
+    }
+    intent_ir
+        .document_identity
+        .document_key
+        .replace([' ', '-', '.'], "_")
+        .to_lowercase()
+}
+
+fn count_isf_signals(intent_ir: &IntentIr) -> usize {
+    let mut seen = BTreeSet::new();
+    for iface in &intent_ir.interfaces {
+        for sig in &iface.signal_records {
+            seen.insert(&sig.signal_name);
+        }
+    }
+    seen.len()
+}
+
+fn assess_isf_renderability(intent_ir: &IntentIr) -> (bool, Vec<String>) {
+    let mut reasons: Vec<String> = Vec::new();
+
+    let signal_count = count_isf_signals(intent_ir);
+    if signal_count == 0 {
+        reasons.push("no signals declared in interface".to_string());
+    } else {
+        let mut missing_direction = 0usize;
+        let mut missing_width = 0usize;
+        for iface in &intent_ir.interfaces {
+            for sig in &iface.signal_records {
+                if sig.direction_hint.is_none() {
+                    missing_direction += 1;
+                }
+                if sig.width_hint.is_none() {
+                    missing_width += 1;
+                }
+            }
+        }
+        if missing_direction > 0 {
+            reasons.push(format!(
+                "{} signal(s) missing direction — cannot emit valid .isf interface",
+                missing_direction
+            ));
+        }
+        if missing_width > 0 {
+            reasons.push(format!(
+                "{} signal(s) missing width — .isf requires explicit widths",
+                missing_width
+            ));
+        }
+    }
+
+    if intent_ir.temporal_rules.is_empty()
+        && intent_ir.conditional_rules.is_empty()
+        && intent_ir.signal_constraints.is_empty()
+    {
+        reasons.push(
+            "no temporal rules, conditional rules, or signal constraints — .isf requires behavioral content"
+                .to_string(),
+        );
+    }
+
+    (reasons.is_empty(), reasons)
+}
+
+fn render_isf_control_expression(expr: &ControlExpressionRecord) -> String {
+    match expr {
+        ControlExpressionRecord::Literal { literal } => literal.clone(),
+        ControlExpressionRecord::Reference { reference } => {
+            let mut s = reference.base_name.clone();
+            for suffix in &reference.suffixes {
+                match suffix {
+                    ControlReferenceSuffix::Member { member_name } => {
+                        s = format!("{}.{}", s, member_name);
+                    }
+                    ControlReferenceSuffix::BitIndex { index } => {
+                        s = format!("{}[{}]", s, index);
+                    }
+                    ControlReferenceSuffix::Slice { msb, lsb } => {
+                        s = format!("{}[{}:{}]", s, msb, lsb);
+                    }
+                    ControlReferenceSuffix::WidthCast { width } => {
+                        s = format!("({}'d{})", width, s);
+                    }
+                }
+            }
+            s
+        }
+        ControlExpressionRecord::Unary { operator, operand } => {
+            let op_str = match operator {
+                ControlUnaryOperator::Not => "!",
+            };
+            format!("({} {})", op_str, render_isf_control_expression(operand))
+        }
+        ControlExpressionRecord::Binary {
+            operator,
+            left,
+            right,
+        } => {
+            let op_str = render_isf_binary_operator(*operator);
+            format!(
+                "({} {} {})",
+                op_str,
+                render_isf_control_expression(left),
+                render_isf_control_expression(right)
+            )
+        }
+    }
+}
+
+fn render_isf_binary_operator(op: ControlBinaryOperator) -> &'static str {
+    match op {
+        ControlBinaryOperator::Add => "+",
+        ControlBinaryOperator::Sub => "-",
+        ControlBinaryOperator::Mul => "*",
+        ControlBinaryOperator::Div => "/",
+        ControlBinaryOperator::Mod => "%",
+        ControlBinaryOperator::BitAnd => "&",
+        ControlBinaryOperator::BitOr => "|",
+        ControlBinaryOperator::BitXor => "^",
+        ControlBinaryOperator::Eq => "==",
+        ControlBinaryOperator::NotEq => "!=",
+        ControlBinaryOperator::Lt => "<",
+        ControlBinaryOperator::Le => "<=",
+        ControlBinaryOperator::Gt => ">",
+        ControlBinaryOperator::Ge => ">=",
+    }
+}
+
+fn render_isf_width_hint(width: &WidthHint) -> String {
+    match width {
+        WidthHint::Numeric(n) => n.to_string(),
+        WidthHint::Parametric(p) => p.clone(),
+    }
+}
+
+fn render_isf_reset_clause(system_contract: &SystemContractRecord) -> String {
+    let polarity_str = match system_contract.reset_polarity {
+        SystemResetPolarity::ActiveHigh => "active_high",
+        SystemResetPolarity::ActiveLow => "active_low",
+    };
+    let kind_str = match system_contract.reset_kind {
+        SystemResetKind::Synchronous => "sync",
+        SystemResetKind::Asynchronous => "async",
+    };
+    format!(
+        "(reset ({} {} {}))",
+        system_contract.reset_signal, kind_str, polarity_str
+    )
+}
+
+fn build_isf_source_text(intent_ir: &IntentIr, actor_name: &str) -> String {
+    let mut lines: Vec<String> = Vec::new();
+
+    // Actor header
+    lines.push(format!("(actor {}", actor_name));
+
+    // Clock
+    if let Some(ref sc) = intent_ir.system_contract {
+        lines.push(format!("  (clock {})", sc.clock_signal));
+    } else if let Some(infra) = intent_ir.infrastructure_signals.iter().find(|s| {
+        s.signal_name.to_lowercase().contains("clk")
+            || s.signal_name.to_lowercase().contains("clock")
+    }) {
+        lines.push(format!("  (clock {})", infra.signal_name));
+    } else {
+        lines.push("  (clock clk)".to_string());
+    }
+
+    // Reset
+    if let Some(ref sc) = intent_ir.system_contract {
+        lines.push(format!("  {}", render_isf_reset_clause(sc)));
+    } else if let Some(infra) = intent_ir.infrastructure_signals.iter().find(|s| {
+        s.signal_name.to_lowercase().contains("rst")
+            || s.signal_name.to_lowercase().contains("reset")
+    }) {
+        let rst_name = &infra.signal_name;
+        let polarity = if rst_name.ends_with("_n") || rst_name.ends_with("_b") {
+            "active_low"
+        } else {
+            "active_high"
+        };
+        lines.push(format!("  (reset ({} sync {}))", rst_name, polarity));
+    }
+
+    // Watchdog
+    lines.push("  (watchdog 65536)".to_string());
+
+    // Interface
+    lines.push("  (interface".to_string());
+    for iface in &intent_ir.interfaces {
+        for sig in &iface.signal_records {
+            let dir_str = sig.direction_hint.map(|d| d.as_str()).unwrap_or("input");
+            let width_str = match &sig.width_hint {
+                Some(w) => format!("(width {})", render_isf_width_hint(w)),
+                None => "(width 1)".to_string(),
+            };
+            lines.push(format!(
+                "    ({} {} {})",
+                dir_str, sig.signal_name, width_str
+            ));
+        }
+    }
+    lines.push("  )".to_string());
+
+    // Constants
+    let constants: Vec<_> = intent_ir
+        .symbol_definitions
+        .iter()
+        .filter(|s| {
+            matches!(
+                s.kind,
+                SymbolDefinitionKind::Constant
+                    | SymbolDefinitionKind::Define
+                    | SymbolDefinitionKind::Param
+            )
+        })
+        .collect();
+    if !constants.is_empty() {
+        lines.push("  (constants".to_string());
+        for c in constants {
+            let val_str = match &c.value {
+                Some(expr) => render_isf_control_expression(expr),
+                None => "0".to_string(),
+            };
+            lines.push(format!("    ({} {})", c.symbol_name, val_str));
+        }
+        lines.push("  )".to_string());
+    }
+
+    // Types / Enums
+    let enums: Vec<_> = intent_ir
+        .symbol_definitions
+        .iter()
+        .filter(|s| matches!(s.kind, SymbolDefinitionKind::Enum))
+        .collect();
+    if !enums.is_empty() {
+        lines.push("  (types".to_string());
+        for e in &enums {
+            let width = e.members.len().max(1).next_power_of_two().trailing_zeros();
+            let actual_width = if width < 1 { 1 } else { width };
+            lines.push(format!(
+                "    (type {} (bits {}))",
+                e.symbol_name, actual_width
+            ));
+        }
+        lines.push("  )".to_string());
+        lines.push("  (enums".to_string());
+        for e in &enums {
+            lines.push(format!("    ({})", e.symbol_name));
+            for m in &e.members {
+                let val_str = render_isf_control_expression(&m.value);
+                lines.push(format!("      ({} {})", m.member_name, val_str));
+            }
+        }
+        lines.push("  )".to_string());
+    }
+
+    // Storage
+    let registers: Vec<_> = intent_ir.register_records.iter().collect();
+    if !registers.is_empty() {
+        lines.push("  (storage".to_string());
+        for r in registers {
+            let total_bits: Option<u32> = r
+                .fields
+                .iter()
+                .filter_map(|f| match (f.bits_high, f.bits_low) {
+                    (Some(hi), Some(lo)) => Some(hi.saturating_sub(lo).saturating_add(1)),
+                    _ => None,
+                })
+                .max();
+            let width = total_bits.unwrap_or(32);
+            lines.push(format!(
+                "    (var {} (width {}))",
+                r.register_name.to_lowercase(),
+                width
+            ));
+        }
+        lines.push("  )".to_string());
+    }
+
+    // Drives — emit simple per-output-signal drives
+    let output_signals: Vec<String> = intent_ir
+        .interfaces
+        .iter()
+        .flat_map(|iface| iface.signal_records.iter())
+        .filter(|sig| matches!(sig.direction_hint, Some(InterfaceSignalDirection::Output)))
+        .map(|sig| sig.signal_name.clone())
+        .collect();
+    if !output_signals.is_empty() {
+        for sig in &output_signals {
+            lines.push(format!("  (drive ({} val) ({} val))", sig, sig));
+        }
+    }
+
+    // Transactions from temporal rules
+    for (tx_idx, temporal) in intent_ir.temporal_rules.iter().enumerate() {
+        let tx_name = if temporal.rule_id.contains("transaction") {
+            format!("tx_{}", tx_idx)
+        } else {
+            temporal
+                .rule_id
+                .replace([' ', '-', '.'], "_")
+                .to_lowercase()
+        };
+        lines.push(format!("  (transaction {}", tx_name));
+        lines.push("    (on start".to_string());
+        // Sample signals from antecedents
+        for ant in &temporal.antecedents {
+            if let TemporalPredicateRecord::SignalValue { signal_name, .. }
+            | TemporalPredicateRecord::ActorDrivesSignal { signal_name, .. }
+            | TemporalPredicateRecord::ActorSamplesSignal { signal_name, .. }
+            | TemporalPredicateRecord::SignalSampled { signal_name, .. } = ant
+            {
+                let sample_name = format!("{}_sampled", signal_name.to_lowercase());
+                lines.push(format!("      (sample {} as {})", signal_name, sample_name));
+            }
+        }
+        lines.push("    )".to_string());
+
+        // Drive consequents as actions
+        for cons in &temporal.consequents {
+            if let TemporalPredicateRecord::SignalValue {
+                signal_name, value, ..
+            } = cons
+            {
+                lines.push(format!("    (drive {} {})", signal_name, value));
+            } else if let TemporalPredicateRecord::ActorDrivesSignal { signal_name, .. } = cons {
+                lines.push(format!("    (drive {} 1)", signal_name));
+            }
+        }
+
+        lines.push("    (complete done)".to_string());
+        lines.push("  )".to_string());
+    }
+
+    // Rules from conditional rules and signal constraints
+    for (cr_idx, cr) in intent_ir.conditional_rules.iter().enumerate() {
+        let rule_name = format!("rule_{}", cr_idx);
+        let cond = &cr.antecedent_text;
+        let sig = cr.consequent_signal.as_deref().unwrap_or("unknown");
+        let action = &cr.consequent_action;
+        let val = if action.contains("not") || action.contains("must not") {
+            "0"
+        } else {
+            "1"
+        };
+        lines.push(format!(
+            "  (rule {} {} (set {} {}))",
+            rule_name, cond, sig, val
+        ));
+    }
+    for (sc_idx, sc) in intent_ir.signal_constraints.iter().enumerate() {
+        let rule_name = format!("constraint_{}", sc_idx);
+        let guard = sc.condition_text.as_deref().unwrap_or("true");
+        let val = if sc.negated {
+            sc.target_value.as_deref().unwrap_or("0")
+        } else {
+            sc.target_value.as_deref().unwrap_or("1")
+        };
+        lines.push(format!(
+            "  (rule {} {} (set {} {}))",
+            rule_name, guard, sc.subject_signal, val
+        ));
+    }
+
+    // Priority — rules fire before transactions
+    if !intent_ir.conditional_rules.is_empty() && !intent_ir.temporal_rules.is_empty() {
+        if let Some(first_tx) = intent_ir.temporal_rules.first() {
+            let tx_name = first_tx
+                .rule_id
+                .replace([' ', '-', '.'], "_")
+                .to_lowercase();
+            lines.push(format!("  (priority rule_0 over {})", tx_name));
+        }
+    }
+
+    lines.push(")".to_string());
+    lines.join("\n")
+}
+
+fn build_isf_adapter_artifact(
+    intent_ir: &IntentIr,
+    intent_ir_path: &Path,
+    artifact_base_root: &Path,
+) -> Result<AdapterArtifact> {
+    let artifact_root = artifact_base_root
+        .join(AdapterTarget::Isf.as_str())
+        .join(&intent_ir.document_identity.document_key);
+    let adapter_artifact_path = artifact_root.join("adapter.json");
+
+    let actor_name = derive_isf_actor_name(intent_ir);
+    let source_text = build_isf_source_text(intent_ir, &actor_name);
+    let (is_renderable, blocking_reasons) = assess_isf_renderability(intent_ir);
+
+    let signal_count = count_isf_signals(intent_ir);
+    let transaction_count = intent_ir.temporal_rules.len();
+    let rule_count = intent_ir.conditional_rules.len() + intent_ir.signal_constraints.len();
+    let constant_count = intent_ir
+        .symbol_definitions
+        .iter()
+        .filter(|s| {
+            matches!(
+                s.kind,
+                SymbolDefinitionKind::Constant
+                    | SymbolDefinitionKind::Define
+                    | SymbolDefinitionKind::Param
+            )
+        })
+        .count();
+    let enum_count = intent_ir
+        .symbol_definitions
+        .iter()
+        .filter(|s| matches!(s.kind, SymbolDefinitionKind::Enum))
+        .count();
+    let storage_count = intent_ir.register_records.len();
+
+    let emitted_target_path = if is_renderable {
+        Some(artifact_root.join(format!("{}.isf", actor_name)))
+    } else {
+        None
+    };
+
+    let lowering_status = if is_renderable {
+        AdapterLoweringStatus::Renderable
+    } else {
+        AdapterLoweringStatus::Blocked
+    };
+
+    let adapter_identity = AdapterIdentity {
+        adapter_id: format!(
+            "adapter_{}_{}",
+            AdapterTarget::Isf.as_str(),
+            intent_ir.document_identity.document_key
+        ),
+        summary: format!(
+            ".isf lowering artifact for {}",
+            intent_ir.document_identity.display_name
+        ),
+    };
+
+    let isf = IsfAdapterArtifact {
+        actor_name: actor_name.clone(),
+        source_text,
+        is_renderable,
+        blocking_reasons,
+        signal_count,
+        transaction_count,
+        rule_count,
+        constant_count,
+        enum_count,
+        storage_count,
+    };
+
+    let residual_decisions = intent_ir.residual_decisions.clone();
+
+    Ok(AdapterArtifact {
+        stage: IrStage::FsmAdapter,
+        schema_version: 1,
+        target: AdapterTarget::Isf,
+        required_input_stage: IrStage::IntentIr,
+        intent_ir_path: intent_ir_path.to_path_buf(),
+        artifact_layout: AdapterArtifactLayout {
+            artifact_root,
+            adapter_artifact_path,
+            emitted_target_path,
+        },
+        adapter_identity,
+        document_identity: intent_ir.document_identity.clone(),
+        lowering_status,
+        residual_decisions,
+        validation_reports: vec![],
+        fsm: None,
+        isf: Some(isf),
+    })
+}
+
 fn build_fsm_adapter_artifact(
     intent_ir: &IntentIr,
     intent_ir_path: &Path,
@@ -959,6 +1474,7 @@ fn build_fsm_adapter_artifact(
         residual_decisions,
         validation_reports: vec![],
         fsm: Some(fsm),
+        isf: None,
     })
 }
 
@@ -6269,9 +6785,13 @@ mod tests {
 
     use crate::error::{AppError, Result};
     use crate::ir::adapters::{
-        AdapterArtifact, AdapterTarget, FsmAdapterArtifact, FsmExplicitModuleCandidate,
-        FsmRenderableModule, FsmRootKind, FsmSignalCandidate, FsmStateCandidate,
-        FsmTransitionCandidate,
+        AdapterArtifact, AdapterTarget, ExplicitTopLinkEndpoint, FsmAdapterArtifact,
+        FsmExplicitModuleCandidate, FsmRenderableModule, FsmRootKind, FsmSignalCandidate,
+        FsmStateCandidate, FsmTransitionCandidate, is_hdl_identifier, render_comparison_operator,
+        render_control_binary_operator, render_system_reset_kind, render_system_reset_kind_name,
+        render_system_reset_target_kind, render_system_reset_timing_relation,
+        render_top_child_kind, render_top_link_endpoint, render_top_port_width_hint,
+        reset_signal_name_looks_active_low,
     };
     use crate::ir::evidence::EvidenceIr;
     use crate::ir::intent::IntentIr;
@@ -6284,7 +6804,7 @@ mod tests {
         DecisionTreeComparisonOperator, DecisionTreeGuardRecord, DecisionTreeValueRecord,
         ExplicitModuleRecord, InitAssignmentRecord, InterfaceSignalDirection, RegularStateRecord,
         SemanticIr, StateTransitionRecord, SymbolDefinitionKind, SymbolDefinitionRecord,
-        SymbolEnumMemberRecord, SystemResetPolarity, SystemResetTargetKind,
+        SymbolEnumMemberRecord, SystemResetKind, SystemResetPolarity, SystemResetTargetKind,
         SystemResetTimingRelation,
     };
     use crate::ir::source::{AutomationConfidence, SourceIr, WidthHint};
@@ -27570,5 +28090,185 @@ mod tests {
         }
 
         Ok(())
+    }
+
+    // --- is_hdl_identifier ---
+
+    #[test]
+    fn is_hdl_identifier_accepts_valid() {
+        assert!(is_hdl_identifier("HADDR"));
+        assert!(is_hdl_identifier("_private"));
+        assert!(is_hdl_identifier("a"));
+    }
+
+    #[test]
+    fn is_hdl_identifier_rejects_digit_start() {
+        assert!(!is_hdl_identifier("0sig"));
+    }
+
+    #[test]
+    fn is_hdl_identifier_rejects_empty() {
+        assert!(!is_hdl_identifier(""));
+    }
+
+    #[test]
+    fn is_hdl_identifier_rejects_special_chars() {
+        assert!(!is_hdl_identifier("sig-name"));
+    }
+
+    // --- reset_signal_name_looks_active_low ---
+
+    #[test]
+    fn reset_signal_name_looks_active_low_detects_suffixes() {
+        assert!(reset_signal_name_looks_active_low("RESET_N"));
+        assert!(reset_signal_name_looks_active_low("rst_b"));
+        assert!(reset_signal_name_looks_active_low("rstn"));
+        assert!(reset_signal_name_looks_active_low("resetb"));
+    }
+
+    #[test]
+    fn reset_signal_name_looks_active_low_rejects_others() {
+        assert!(!reset_signal_name_looks_active_low("RESET"));
+        assert!(!reset_signal_name_looks_active_low("RST"));
+    }
+
+    // --- render_top_child_kind ---
+
+    #[test]
+    fn render_top_child_kind_returns_correct_strings() {
+        assert_eq!(render_top_child_kind(FsmRootKind::Dt), "dtc");
+        assert_eq!(render_top_child_kind(FsmRootKind::Fsm), "fsmc");
+        assert_eq!(render_top_child_kind(FsmRootKind::Top), "topc");
+    }
+
+    // --- render_system_reset_kind ---
+
+    #[test]
+    fn render_system_reset_kind_returns_correct_strings() {
+        assert_eq!(
+            render_system_reset_kind(SystemResetKind::Synchronous),
+            "sreset"
+        );
+        assert_eq!(
+            render_system_reset_kind(SystemResetKind::Asynchronous),
+            "asreset"
+        );
+    }
+
+    // --- render_system_reset_kind_name ---
+
+    #[test]
+    fn render_system_reset_kind_name_returns_correct_strings() {
+        assert_eq!(
+            render_system_reset_kind_name(SystemResetKind::Synchronous),
+            "synchronous"
+        );
+        assert_eq!(
+            render_system_reset_kind_name(SystemResetKind::Asynchronous),
+            "asynchronous"
+        );
+    }
+
+    // --- render_system_reset_target_kind ---
+
+    #[test]
+    fn render_system_reset_target_kind_returns_correct_strings() {
+        assert_eq!(
+            render_system_reset_target_kind(SystemResetTargetKind::DataInputPath),
+            "data_input_path"
+        );
+        assert_eq!(
+            render_system_reset_target_kind(SystemResetTargetKind::DedicatedResetPin),
+            "dedicated_reset_pin"
+        );
+    }
+
+    // --- render_system_reset_timing_relation ---
+
+    #[test]
+    fn render_system_reset_timing_relation_returns_correct_strings() {
+        assert_eq!(
+            render_system_reset_timing_relation(SystemResetTimingRelation::SynchronousToClock),
+            "synchronous_to_clock"
+        );
+        assert_eq!(
+            render_system_reset_timing_relation(SystemResetTimingRelation::AsynchronousToClock),
+            "asynchronous_to_clock"
+        );
+    }
+
+    // --- render_comparison_operator ---
+
+    #[test]
+    fn render_comparison_operator_returns_correct_strings() {
+        assert_eq!(
+            render_comparison_operator(DecisionTreeComparisonOperator::Eq),
+            "=="
+        );
+        assert_eq!(
+            render_comparison_operator(DecisionTreeComparisonOperator::NotEq),
+            "!="
+        );
+    }
+
+    // --- render_control_binary_operator ---
+
+    #[test]
+    fn render_control_binary_operator_returns_correct_strings() {
+        assert_eq!(
+            render_control_binary_operator(ControlBinaryOperator::Add),
+            "+"
+        );
+        assert_eq!(
+            render_control_binary_operator(ControlBinaryOperator::Sub),
+            "-"
+        );
+        assert_eq!(
+            render_control_binary_operator(ControlBinaryOperator::Mul),
+            "*"
+        );
+        assert_eq!(
+            render_control_binary_operator(ControlBinaryOperator::Eq),
+            "=="
+        );
+        assert_eq!(
+            render_control_binary_operator(ControlBinaryOperator::NotEq),
+            "!="
+        );
+    }
+
+    // --- render_top_port_width_hint ---
+
+    #[test]
+    fn render_top_port_width_hint_numeric() {
+        assert_eq!(render_top_port_width_hint(&WidthHint::Numeric(32)), "32");
+    }
+
+    #[test]
+    fn render_top_port_width_hint_parametric() {
+        assert_eq!(
+            render_top_port_width_hint(&WidthHint::Parametric("WIDTH".to_string())),
+            "WIDTH"
+        );
+    }
+
+    // --- render_top_link_endpoint ---
+
+    #[test]
+    fn render_top_link_endpoint_with_instance() {
+        let endpoint = ExplicitTopLinkEndpoint {
+            instance_name: Some("u_cpu".to_string()),
+            signal_name: "HCLK".to_string(),
+        };
+        assert_eq!(render_top_link_endpoint(&endpoint), "u_cpu.HCLK");
+    }
+
+    #[test]
+    fn render_top_link_endpoint_without_instance() {
+        let endpoint = ExplicitTopLinkEndpoint {
+            instance_name: None,
+            signal_name: "HCLK".to_string(),
+        };
+        assert_eq!(render_top_link_endpoint(&endpoint), "HCLK");
     }
 }
