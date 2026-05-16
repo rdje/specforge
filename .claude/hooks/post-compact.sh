@@ -61,12 +61,27 @@ for f in \
     dump_file "fsmgen/$f" "$FSMGEN_MAIN_DIR/$f"
 done
 
-# mdBook chapters referenced from the integration spec
+# mdBook chapters — subs/fsmgen (preferred)
 for f in \
     docs/book/src/13-intent-scheduling.md \
+    docs/book/src/13a-actor-interface.md \
+    docs/book/src/13b-transactions.md \
+    docs/book/src/13c-drive-blocks.md \
+    docs/book/src/13d-control-flow.md \
+    docs/book/src/13e-data-manipulation.md \
+    docs/book/src/13f-composition.md \
+    docs/book/src/13g-rules.md \
     docs/book/src/13h-lowering-reference.md \
-    docs/book/src/13j-type-enum-aggregate.md \
-    docs/book/src/13k-isf-feature-support-matrix.md; do
+    docs/book/src/13i-downstream-integration.md; do
+    dump_file "subs/fsmgen/$f" "$FSMGEN_SUB_DIR/$f"
+done
+
+dump_file "subs/fsmgen/docs/book/src/SUMMARY.md" "$FSMGEN_SUB_DIR/docs/book/src/SUMMARY.md" 999
+
+# mdBook chapters — main fsmgen repo (may carry ahead-of-submodule chapters)
+for f in \
+    docs/book/src/13-intent-scheduling.md \
+    docs/book/src/13h-lowering-reference.md; do
     dump_file "fsmgen/$f" "$FSMGEN_MAIN_DIR/$f"
 done
 
