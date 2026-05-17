@@ -21,6 +21,25 @@
 - Reconciled `RUST_CODEBASE_ANALYSIS.md` (ISF: untracked → owned).
 - Docs only — zero code change.
 
+### R6-ISF-ADAPTER.2: resolve the IrStage ISF-as-FsmAdapter modeling smell
+- Added `IrStage::IsfAdapter` (snake_case `isf_adapter`); `build_isf_adapter_artifact`
+  now tags ISF adapter artifacts with `IrStage::IsfAdapter` instead of
+  `IrStage::FsmAdapter`, so stage-keyed dispatch no longer treats an ISF
+  artifact as an FSM artifact.
+- `specforge validate` on an ISF adapter artifact now dispatches to a new
+  `validate_isf_adapter()` (structural + coverage findings:
+  `isf_adapter_artifact_missing_isf_payload` Error,
+  `isf_adapter_schema_version_unexpected` / `_not_renderable` /
+  `_residual_decisions_present` Warning, `_empty_signal_inventory` /
+  `_no_behavior` Info) with `persist_isf_adapter_validation()` /
+  `isf_adapter_fingerprint()`, instead of misrouting into `validate_fsm_adapter`.
+- Updated every exhaustive `IrStage` match in `project_validation.rs`
+  (25 sites) so ISF adapter artifacts are handled in parallel with FSM
+  (snapshot projection, rescan-kind/action strings, evidence-input gating,
+  and the negative-knowledge/temporal `unreachable!` adapter guards).
+- 1 focused test: `validate_isf_adapter_reports_structural_and_coverage_findings`.
+  Existing ISF adapter tests still pass with the new stage tag.
+
 ## 2026-05-17 (Bootstrap re-analysis + SIGNOFF-REMEDIATION)
 
 ### Bootstrap re-analysis (RUST_CODEBASE_ANALYSIS.md)

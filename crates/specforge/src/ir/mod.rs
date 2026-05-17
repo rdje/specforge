@@ -16,6 +16,7 @@ pub enum IrStage {
     SemanticIr,
     IntentIr,
     FsmAdapter,
+    IsfAdapter,
 }
 
 impl IrStage {
@@ -26,6 +27,7 @@ impl IrStage {
             Self::SemanticIr => "semantic_ir",
             Self::IntentIr => "intent_ir",
             Self::FsmAdapter => "fsm_adapter",
+            Self::IsfAdapter => "isf_adapter",
         }
     }
 }

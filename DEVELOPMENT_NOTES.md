@@ -23,6 +23,16 @@
   adding tests over it (`.3`), then policy/doc lock (`.4`), then close+push
   (`.5`). Each leaf is its own COMMIT.md slice; push deferred to `.5` per
   the COMMIT.md batch rule.
+- `.2`: added a real `IrStage::IsfAdapter` variant rather than documenting
+  the `FsmAdapter` reuse — the artifact genuinely is an ISF adapter and
+  Rust's exhaustive-match checking is exactly what made this safe: the
+  compiler enumerated all 25 affected `IrStage` matches in
+  `project_validation.rs`, none silently mis-handled. ISF behaves in
+  parallel with FSM in every adapter-stage branch (both are terminal
+  adapter stages with a structurally identical `AdapterArtifact`), and
+  `specforge validate` now has a dedicated `validate_isf_adapter` instead
+  of misrouting ISF artifacts into the FSM validator. CI caught a rustfmt
+  miss in the new test before commit — the signoff gate working as intended.
 
 ## 2026-05-17 session — bootstrap re-analysis + SIGNOFF-REMEDIATION
 

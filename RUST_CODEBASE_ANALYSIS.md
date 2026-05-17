@@ -16,6 +16,15 @@
   tests, renderability-policy decision) are now scoped as leaves `.2`–`.4`.
 - Architecture/metrics unchanged by `.1`: still 7 IR modules, ~110K lines,
   1191 lib tests, `scripts/run_ci.sh` green.
+- Leaf `.2` (code): `IrStage` now has an `IsfAdapter` variant
+  (`crates/specforge/src/ir/mod.rs`); `build_isf_adapter_artifact` tags ISF
+  artifacts with it instead of `IrStage::FsmAdapter`. New public-ish surface
+  in `validate.rs`: `validate_isf_adapter` / `persist_isf_adapter_validation`
+  / `isf_adapter_fingerprint`, and a dedicated `IrStage::IsfAdapter` arm in
+  the `specforge validate` stage dispatch (ISF artifacts no longer misroute
+  into the FSM validator). All 25 exhaustive `IrStage` matches in
+  `project_validation.rs` updated; ISF behaves in parallel with FSM as a
+  terminal adapter stage. +1 test (1192 lib tests); `scripts/run_ci.sh` green.
 
 ## Session update (2026-05-17 bootstrap re-analysis — ISF adapter landed, signoff regression detected)
 

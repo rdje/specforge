@@ -71,7 +71,7 @@ signoff but explicitly left this governance/coverage gap as scoped follow-up.
   Commit: `R6-ISF-ADAPTER.1 — backfill ISF adapter ownership + continuity`
 
 - ID: `R6-ISF-ADAPTER.2`
-  Status: `pending`
+  Status: `done`
   Goal: `Resolve the IrStage modeling smell for ISF adapter artifacts.`
   Acceptance: >
     `IrStage` gains an `IsfAdapter` variant (snake_case `isf_adapter`);
@@ -82,8 +82,8 @@ signoff but explicitly left this governance/coverage gap as scoped follow-up.
     FSM artifact; `specforge validate` on an ISF adapter artifact does not
     misroute into FSM-only validation. Focused tests added/updated;
     `scripts/run_ci.sh` green.
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — 1192 lib tests; clippy/fmt clean; full `scripts/run_ci.sh` green; compiler-enumerated all 25 exhaustive IrStage matches
+  Commit: `R6-ISF-ADAPTER.2 — add IrStage::IsfAdapter + dedicated ISF adapter validation`
 
 - ID: `R6-ISF-ADAPTER.3`
   Status: `pending`
@@ -124,8 +124,8 @@ signoff but explicitly left this governance/coverage gap as scoped follow-up.
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `R6-ISF-ADAPTER.1` | `done` | Ownership/continuity backfilled |
-| 2 | `R6-ISF-ADAPTER.2` | `pending` | Next — latent dispatch bug; fix before adding tests over it |
-| 3 | `R6-ISF-ADAPTER.3` | `pending` | Harden once the type model is correct |
+| 2 | `R6-ISF-ADAPTER.2` | `done` | IrStage smell resolved; CI green |
+| 3 | `R6-ISF-ADAPTER.3` | `pending` | Next — harden once the type model is correct |
 | 4 | `R6-ISF-ADAPTER.4` | `pending` | Lock the policy + user docs last |
 | 5 | `R6-ISF-ADAPTER.5` | `pending` | Close + push the batch |
 
@@ -153,12 +153,14 @@ signoff but explicitly left this governance/coverage gap as scoped follow-up.
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-05-17` | `R6-ISF-ADAPTER.1` | docs-only diff audit (no `.rs` changed) | `passed` |
+| `2026-05-17` | `R6-ISF-ADAPTER.2` | `scripts/run_ci.sh` (1192 lib tests, clippy/fmt/rustdoc/mdBook) | `passed` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `R6-ISF-ADAPTER.1` | `R6-ISF-ADAPTER.1 — backfill ISF adapter ownership + continuity` | Docs only |
+| `R6-ISF-ADAPTER.2` | `R6-ISF-ADAPTER.2 — add IrStage::IsfAdapter + dedicated ISF adapter validation` | Code: enum variant, validate_isf_adapter, 25 match arms, +1 test |
 
 ## Changelog
 

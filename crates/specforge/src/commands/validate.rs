@@ -186,6 +186,12 @@ pub fn run(args: ValidateArgs) -> Result<()> {
             persist_fsm_adapter_validation(&mut artifact, &args.artifact, &report)?;
             print_validation_backannotation(&args.artifact, &report)?;
         }
+        IrStage::IsfAdapter => {
+            let mut artifact = AdapterArtifact::load_from_path(&args.artifact)?;
+            let report = validate_isf_adapter(&artifact, isf_adapter_fingerprint(&artifact)?);
+            persist_isf_adapter_validation(&mut artifact, &args.artifact, &report)?;
+            print_validation_backannotation(&args.artifact, &report)?;
+        }
     }
 
     Ok(())
@@ -2180,6 +2186,22 @@ fn persist_fsm_adapter_validation(
 }
 
 fn fsm_adapter_fingerprint(artifact: &AdapterArtifact) -> Result<String> {
+    let mut fp = artifact.clone();
+    fp.validation_reports.clear();
+    Ok(stable_fingerprint(&fp.to_pretty_json()?))
+}
+
+fn persist_isf_adapter_validation(
+    artifact: &mut AdapterArtifact,
+    artifact_path: &Path,
+    report: &ValidationReportRecord,
+) -> Result<()> {
+    backannotate_report(&mut artifact.validation_reports, report);
+    artifact.write_to_disk()?;
+    write_validation_report_sidecar(artifact_path, report)
+}
+
+fn isf_adapter_fingerprint(artifact: &AdapterArtifact) -> Result<String> {
     let mut fp = artifact.clone();
     fp.validation_reports.clear();
     Ok(stable_fingerprint(&fp.to_pretty_json()?))
@@ -6004,6 +6026,151 @@ fn validate_fsm_adapter(
             metric("module_candidates", module_candidate_count.to_string()),
             metric("top_candidates", top_candidate_count.to_string()),
             metric("decision_tree_candidates", decision_tree_count.to_string()),
+            metric("residual_decisions", residual_decision_count.to_string()),
+        ],
+        findings,
+    };
+    print_validation_findings(&report);
+    report
+}
+
+fn validate_isf_adapter(
+    artifact: &AdapterArtifact,
+    artifact_fingerprint: String,
+) -> ValidationReportRecord {
+    println!("command: validate");
+    println!("stage: isf_adapter");
+    println!("document_key: {}", artifact.document_identity.document_key);
+    println!();
+
+    let isf = artifact.isf.as_ref();
+    let isf_absent = isf.is_none();
+
+    let schema_ok = artifact.schema_version == 1;
+    let is_renderable = isf.is_some_and(|i| i.is_renderable);
+    let blocking_reasons: &[String] = isf.map(|i| i.blocking_reasons.as_slice()).unwrap_or(&[]);
+    let signal_count = isf.map(|i| i.signal_count).unwrap_or(0);
+    let transaction_count = isf.map(|i| i.transaction_count).unwrap_or(0);
+    let rule_count = isf.map(|i| i.rule_count).unwrap_or(0);
+    let constant_count = isf.map(|i| i.constant_count).unwrap_or(0);
+    let enum_count = isf.map(|i| i.enum_count).unwrap_or(0);
+    let storage_count = isf.map(|i| i.storage_count).unwrap_or(0);
+    let residual_decision_count = artifact.residual_decisions.len();
+    let emitted_target = artifact
+        .artifact_layout
+        .emitted_target_path
+        .as_ref()
+        .map(|p| p.to_string_lossy().to_string())
+        .unwrap_or_else(|| "none".to_string());
+
+    println!("=== ISF Adapter ===");
+    println!("  target: {}", artifact.target.as_str());
+    println!(
+        "  actor_name: {}",
+        isf.map(|i| &*i.actor_name).unwrap_or("n/a")
+    );
+    println!("  schema_version: {}", artifact.schema_version);
+    println!("  is_renderable: {is_renderable}");
+    println!("  blocking_reasons: {}", blocking_reasons.len());
+    println!("  emitted_target: {emitted_target}");
+    println!("  signal_count: {signal_count}");
+    println!("  transaction_count: {transaction_count}");
+    println!("  rule_count: {rule_count}");
+    println!("  constant_count: {constant_count}");
+    println!("  enum_count: {enum_count}");
+    println!("  storage_count: {storage_count}");
+    println!("  residual_decisions: {residual_decision_count}");
+    println!();
+
+    let mut findings = Vec::new();
+
+    if isf_absent {
+        findings.push(finding(
+            "isf_adapter_artifact_missing_isf_payload",
+            ValidationFindingSeverity::Error,
+            "structural",
+            "adapter artifact targets ISF but carries no ISF payload".to_string(),
+            Vec::new(),
+        ));
+    }
+    if !schema_ok {
+        findings.push(finding(
+            "isf_adapter_schema_version_unexpected",
+            ValidationFindingSeverity::Warning,
+            "structural",
+            format!(
+                "adapter artifact schema version is {}; expected 1",
+                artifact.schema_version
+            ),
+            Vec::new(),
+        ));
+    }
+    if !is_renderable && !isf_absent {
+        findings.push(finding(
+            "isf_adapter_not_renderable",
+            ValidationFindingSeverity::Warning,
+            "renderability",
+            format!(
+                "ISF adapter is not renderable ({} blocking reason(s))",
+                blocking_reasons.len()
+            ),
+            blocking_reasons.iter().take(8).cloned().collect(),
+        ));
+    }
+    if !isf_absent && signal_count == 0 {
+        findings.push(finding(
+            "isf_adapter_empty_signal_inventory",
+            ValidationFindingSeverity::Info,
+            "interface_coverage",
+            "ISF signal inventory is empty; no signals carried forward from IntentIR".to_string(),
+            Vec::new(),
+        ));
+    }
+    if !isf_absent && transaction_count == 0 && rule_count == 0 {
+        findings.push(finding(
+            "isf_adapter_no_behavior",
+            ValidationFindingSeverity::Info,
+            "behavior_coverage",
+            "ISF adapter carries no transactions or rules; behavioral surface is empty".to_string(),
+            Vec::new(),
+        ));
+    }
+    if residual_decision_count > 0 {
+        findings.push(finding(
+            "isf_adapter_residual_decisions_present",
+            ValidationFindingSeverity::Warning,
+            "residual_decisions",
+            format!("ISF adapter carries {residual_decision_count} residual decision packet(s)"),
+            artifact
+                .residual_decisions
+                .iter()
+                .map(|packet| packet.packet_id.clone())
+                .collect(),
+        ));
+    }
+
+    let report = ValidationReportRecord {
+        report_id: format!("validation_isf_adapter_{artifact_fingerprint}"),
+        validated_stage: IrStage::IsfAdapter,
+        artifact_fingerprint,
+        summary: format!(
+            "ISF adapter validation for {} with {} finding(s)",
+            artifact.document_identity.display_name,
+            findings.len()
+        ),
+        overall_score: None,
+        grade: None,
+        metrics: vec![
+            metric("schema_version", artifact.schema_version.to_string()),
+            metric("is_renderable", is_renderable.to_string()),
+            metric("blocking_reasons", blocking_reasons.len().to_string()),
+            metric("emitted_target", emitted_target),
+            metric("signal_count", signal_count.to_string()),
+            metric("transaction_count", transaction_count.to_string()),
+            metric("rule_count", rule_count.to_string()),
+            metric("constant_count", constant_count.to_string()),
+            metric("enum_count", enum_count.to_string()),
+            metric("storage_count", storage_count.to_string()),
             metric("residual_decisions", residual_decision_count.to_string()),
         ],
         findings,
@@ -13734,6 +13901,82 @@ mod tests {
         assert!(!has_finding(
             &report,
             "fsm_adapter_schema_version_unexpected"
+        ));
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_isf_adapter_reports_structural_and_coverage_findings() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("isf_validate_spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+        let adapter_artifact_base = tempdir.path().join("generated");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Clock clk.\n\n",
+                "Reset rst_n is active-low.\n\n",
+                "Signal data_in is input width 8.\n\n",
+                "Signal data_out is output width 8.\n\n",
+                "Signal valid is output width 1.\n\n",
+                "When valid is HIGH then data_out must be stable.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+        intent_ir.write_to_disk()?;
+
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Isf,
+            &adapter_artifact_base,
+        )?;
+
+        // The ISF adapter artifact must be tagged with the ISF stage, not FSM,
+        // so `specforge validate` dispatches to the ISF validator.
+        assert_eq!(adapter.stage, IrStage::IsfAdapter);
+
+        let fingerprint = isf_adapter_fingerprint(&adapter)?;
+        let report = validate_isf_adapter(&adapter, fingerprint);
+
+        // The report records the ISF adapter stage.
+        assert_eq!(report.validated_stage, IrStage::IsfAdapter);
+        // Structural: schema version is 1.
+        assert_eq!(metric_value(&report, "schema_version"), Some("1"));
+        // Coverage metrics are present.
+        assert!(metric_value(&report, "signal_count").is_some());
+        assert!(metric_value(&report, "transaction_count").is_some());
+        assert!(metric_value(&report, "rule_count").is_some());
+        // Should NOT report missing ISF payload (the builder produced one).
+        assert!(!has_finding(
+            &report,
+            "isf_adapter_artifact_missing_isf_payload"
+        ));
+        // Should NOT report unexpected schema version.
+        assert!(!has_finding(
+            &report,
+            "isf_adapter_schema_version_unexpected"
         ));
 
         Ok(())

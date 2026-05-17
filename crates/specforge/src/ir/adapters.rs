@@ -1005,7 +1005,7 @@ fn build_isf_adapter_artifact(
     let residual_decisions = intent_ir.residual_decisions.clone();
 
     Ok(AdapterArtifact {
-        stage: IrStage::FsmAdapter,
+        stage: IrStage::IsfAdapter,
         schema_version: 1,
         target: AdapterTarget::Isf,
         required_input_stage: IrStage::IntentIr,
