@@ -8,6 +8,22 @@
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 - adapter targets: `.fsm` (active), `.isf` (planned); HDL lowering is out of scope
 
+## 2026-05-17 session — R6-ISF-ADAPTER batch (ISF ownership backfill + hardening)
+
+- Authorized 5-leaf batch to bring the untracked ISF adapter into doctrine
+  compliance and IR-layer parity. Root cause being remediated: the ISF
+  adapter (`isf_ir.rs`, `bfe4f973`→`490e6aed`) bypassed task-tree ownership
+  and the COMMIT.md root-doc sync; only the mdBook chapter existed.
+- `.1` (this entry): pure ownership/continuity backfill — created
+  `R6-ISF-ADAPTER`, registered it, retro-recorded the ISF adapter across the
+  continuity surface and ROADMAP R6, reconciled RUST_CODEBASE_ANALYSIS.
+  No code touched, so the 1191-test / CI-green baseline is unaffected.
+- Sequencing rationale: ownership/continuity first (so subsequent code
+  leaves are tracked), then the `IrStage` correctness fix (`.2`) before
+  adding tests over it (`.3`), then policy/doc lock (`.4`), then close+push
+  (`.5`). Each leaf is its own COMMIT.md slice; push deferred to `.5` per
+  the COMMIT.md batch rule.
+
 ## 2026-05-17 session — bootstrap re-analysis + SIGNOFF-REMEDIATION
 
 - Ran the full README → SESSION_BOOTSTRAP chain. Re-read the live-doc surface, all 10 task-tree files, and re-analyzed the Rust codebase (~110K lines, now 7 IR modules).

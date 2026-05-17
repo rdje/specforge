@@ -1,5 +1,26 @@
 # CHANGES
 
+## 2026-05-17 (R6-ISF-ADAPTER batch — ISF adapter ownership backfill + hardening)
+
+### Created: R6-ISF-ADAPTER task tree (lane R6, 5-leaf authorized batch)
+- Backfills task-tree ownership for the ISF (`.isf`) adapter that landed
+  untracked across commits `bfe4f973`→`490e6aed` (no owning tree, no leaf IDs
+  in commit subjects, root continuity docs never synced — the mdBook chapter
+  `docs/book/src/pipeline/isf-adapter.md` was the only ISF doc that existed).
+- Leaves: `.1` ownership/continuity backfill (docs), `.2` resolve the
+  `IrStage` ISF-as-FsmAdapter modeling smell (code), `.3` unit-test
+  `isf_ir.rs` (tests), `.4` make the renderability policy explicit + verify
+  user docs, `.5` close tree + push batch.
+
+### R6-ISF-ADAPTER.1: ownership & continuity backfill
+- Created `docs/tasks/R6-ISF-ADAPTER.md`; registered it in `docs/TASK_TREE.md`.
+- Recorded the landed ISF adapter in `CHANGES.md`, `DEVELOPMENT_NOTES.md`,
+  `LIVE_ACHIEVEMENT_STATUS.md`, and `ROADMAP.md` (R6 `.isf` status: first
+  slices landed: typed `IsfIr` IR, `--target isf`, `IsfAdapterArtifact`,
+  fsmgen `--strict --check --json` integration test).
+- Reconciled `RUST_CODEBASE_ANALYSIS.md` (ISF: untracked → owned).
+- Docs only — zero code change.
+
 ## 2026-05-17 (Bootstrap re-analysis + SIGNOFF-REMEDIATION)
 
 ### Bootstrap re-analysis (RUST_CODEBASE_ANALYSIS.md)

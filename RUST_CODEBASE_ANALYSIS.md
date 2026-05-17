@@ -4,6 +4,19 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-17 R6-ISF-ADAPTER batch — ISF ownership backfilled)
+
+- The ISF adapter is no longer untracked: `R6-ISF-ADAPTER` (lane R6, authorized
+  5-leaf batch) now owns it. Leaf `.1` (docs only, no architecture change)
+  registered the tree and recorded the ISF adapter across CHANGES /
+  DEVELOPMENT_NOTES / LIVE_ACHIEVEMENT_STATUS / ROADMAP (R6 `.isf` status).
+- Supersedes the "Process / continuity gap" note in the entry below: the
+  task-tree-ownership and root-doc-sync gap is being remediated; the
+  recommended-direction items there (`IrStage::IsfAdapter`, `isf_ir.rs` unit
+  tests, renderability-policy decision) are now scoped as leaves `.2`–`.4`.
+- Architecture/metrics unchanged by `.1`: still 7 IR modules, ~110K lines,
+  1191 lib tests, `scripts/run_ci.sh` green.
+
 ## Session update (2026-05-17 bootstrap re-analysis — ISF adapter landed, signoff regression detected)
 
 State verified directly from the working tree at commit `490e6aed` (HEAD), not inherited from prior notes.

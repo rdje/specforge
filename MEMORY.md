@@ -24,11 +24,19 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `490e6aed` (pre-commit baseline; SIGNOFF-REMEDIATION commit not yet created at time of this update)
-- latest_commit_brief_message: Extract ISF-IR module — typed IntentIR → IsfIr → ISF text pipeline with FSMGen strict validation
-- note: 2026-05-17 bootstrap re-analysis found HEAD non-signoff (fmt fail + 25 clippy errors; `scripts/run_ci.sh` would reject `main`). Root cause: ISF adapter slices `bfe4f973`→`490e6aed` bypassed task-tree ownership + COMMIT.md sync. Created + executed `SIGNOFF-REMEDIATION` (lane R0): 25 clippy errors cleared idiomatically + fmt restored, zero behavior change, 1191 tests pass, full CI green. ISF adapter re-ownership/re-documentation remains a tracked follow-up.
+- latest_commit_hash: `c2d7c94f` (pre-commit baseline; the R6-ISF-ADAPTER.1 commit is not yet created at time of this update)
+- latest_commit_brief_message: SIGNOFF-REMEDIATION.1 SIGNOFF-REMEDIATION.2 — restore signoff at HEAD
+- note: 2026-05-17 — signoff restored (25 clippy errors + fmt, full CI green, 1191 tests). Now executing the authorized `R6-ISF-ADAPTER` batch to backfill ISF adapter ownership and harden it to IR-layer parity.
+
+## Active batch status
+- batch: `R6-ISF-ADAPTER` (user-authorized, fixed size `N=5` leaves: `.1`..`.5`)
+- completed_count: `.1` in progress at time of this update (committing now)
+- per-leaf rule: full COMMIT.md workflow after every leaf; task-scoped commits not deferred
+- push policy: deferred until the full 5-leaf batch completes (push happens in `.5`), unless the branch hits ~30 ahead or the user changes the instruction
+- branch ahead pre-`.1`: 23 commits ahead of `origin/main` (under the ~30 checkpoint)
 
 ## Recent commit chain (last 10)
+- `c2d7c94f` SIGNOFF-REMEDIATION.1 SIGNOFF-REMEDIATION.2 — restore signoff at HEAD
 - `490e6aed` Extract ISF-IR module — typed IntentIR → IsfIr → ISF text pipeline with FSMGen strict validation
 - `7ba56b2f` Revert FSMGen issue bundle — bare-token guard was not a bug, just an unsupported ISF form
 - `4d67874e` Track FSMGen downstream issue bundle — bare-token guard triggers infix-assignment rejection in strict mode
