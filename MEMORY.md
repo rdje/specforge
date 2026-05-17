@@ -24,18 +24,18 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `01069b93` (pre-commit baseline; the R6-ISF-ADAPTER.5 commit is not yet created at time of this update)
-- latest_commit_brief_message: R6-ISF-ADAPTER.4 — explicit ISF renderability policy + user-doc accuracy
-- note: 2026-05-17 — signoff restored, then the authorized `R6-ISF-ADAPTER` batch. `.1`/`.2`/`.3`/`.4` committed; `.5` (close tree + push) being committed now, followed by the final full CI gate and the batch push. Post-push commit id/ahead-count reported in the slice completion message; next session's MEMORY refresh reconciles the post-push baseline.
+- latest_commit_hash: `83616ead` (pushed to `origin/main`; this MEMORY post-push refresh is the only commit after it)
+- latest_commit_brief_message: R6-ISF-ADAPTER.5 — close tree + push batch
+- note: 2026-05-17 — signoff restored (`SIGNOFF-REMEDIATION`), then the authorized `R6-ISF-ADAPTER` 5-leaf batch fully complete and **pushed** (`30cfa47e..83616ead`). Final full CI gate green (1201 lib tests). ISF adapter is now task-tree-owned, continuity-documented, correctly stage-typed, unit-tested, and policy-explicit.
 
 ## Active batch status
-- batch: `R6-ISF-ADAPTER` (user-authorized, fixed size `N=5` leaves: `.1`..`.5`) — COMPLETE at `.5`
-- completed_count: `.1` (`0124fc2c`) + `.2` (`7fda5acd`) + `.3` (`ba9de037`) + `.4` (`01069b93`) committed; `.5` committing now, then final CI gate, then push
-- per-leaf rule: full COMMIT.md workflow ran after every leaf; task-scoped commits not deferred
-- push policy: push the full 5-leaf batch after `.5` commit + final `scripts/run_ci.sh` gate (COMMIT.md batch rule)
-- prior signoff slice `SIGNOFF-REMEDIATION` (`c2d7c94f`) also on this unpushed run
+- batch: `R6-ISF-ADAPTER` — COMPLETE and PUSHED. No active batch.
+- leaf commits: `.1 0124fc2c`, `.2 7fda5acd`, `.3 ba9de037`, `.4 01069b93`, `.5 83616ead`; signoff slice `c2d7c94f` also in this push
+- branch state: pushed; `0` commits ahead of `origin/main` at push time (this MEMORY refresh commit makes it `1` ahead — under the ~30 checkpoint, no push expected unless requested)
+- open question carried: lingering HDL `AdapterTarget`/`AdapterTargetArg` variants vs out-of-scope HDL — candidate for a future separate task tree (recorded in `docs/tasks/R6-ISF-ADAPTER.md` Open Questions)
 
 ## Recent commit chain (last 10)
+- `83616ead` R6-ISF-ADAPTER.5 — close tree + push batch
 - `01069b93` R6-ISF-ADAPTER.4 — explicit ISF renderability policy + user-doc accuracy
 - `ba9de037` R6-ISF-ADAPTER.3 — unit-test isf_ir.rs emitter and helpers
 - `7fda5acd` R6-ISF-ADAPTER.2 — add IrStage::IsfAdapter + dedicated ISF adapter validation
