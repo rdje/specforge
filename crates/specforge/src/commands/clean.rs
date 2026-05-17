@@ -248,9 +248,124 @@ mod tests {
 
     use tempfile::tempdir;
 
-    use super::{CleanupPlan, build_cleanup_plan, execute_cleanup_plan};
+    use super::{
+        CleanupPlan, build_cleanup_plan, clean_scope_label, execute_cleanup_plan, human_bytes,
+        path_size,
+    };
     use crate::cli::CleanScopeArg;
     use crate::error::Result;
+
+    // --- clean_scope_label ---
+
+    #[test]
+    fn clean_scope_label_returns_correct_strings() {
+        assert_eq!(
+            clean_scope_label(CleanScopeArg::SourceNormalized),
+            "source-normalized"
+        );
+        assert_eq!(clean_scope_label(CleanScopeArg::Document), "document");
+        assert_eq!(
+            clean_scope_label(CleanScopeArg::AllGenerated),
+            "all-generated"
+        );
+    }
+
+    // --- human_bytes ---
+
+    #[test]
+    fn human_bytes_zero() {
+        assert_eq!(human_bytes(0), "0 B");
+    }
+
+    #[test]
+    fn human_bytes_one_byte() {
+        assert_eq!(human_bytes(1), "1 B");
+    }
+
+    #[test]
+    fn human_bytes_one_below_kib() {
+        assert_eq!(human_bytes(1023), "1023 B");
+    }
+
+    #[test]
+    fn human_bytes_exactly_one_kib() {
+        assert_eq!(human_bytes(1024), "1.0 KiB");
+    }
+
+    #[test]
+    fn human_bytes_one_and_half_kib() {
+        assert_eq!(human_bytes(1536), "1.5 KiB");
+    }
+
+    #[test]
+    fn human_bytes_exactly_one_mib() {
+        assert_eq!(human_bytes(1048576), "1.0 MiB");
+    }
+
+    #[test]
+    fn human_bytes_exactly_one_gib() {
+        assert_eq!(human_bytes(1073741824), "1.0 GiB");
+    }
+
+    #[test]
+    fn human_bytes_exactly_one_tib() {
+        assert_eq!(human_bytes(1099511627776), "1.0 TiB");
+    }
+
+    #[test]
+    fn human_bytes_above_tib() {
+        // 2 TiB — stays at TiB since TiB is the largest unit
+        assert_eq!(human_bytes(2199023255552), "2.0 TiB");
+    }
+
+    // --- path_size ---
+
+    #[test]
+    fn path_size_returns_file_size() -> Result<()> {
+        let tempdir = tempdir()?;
+        let file_path = tempdir.path().join("test.txt");
+        fs::write(&file_path, b"hello world")?;
+        let size = path_size(&file_path)?;
+        assert_eq!(size, 11);
+        Ok(())
+    }
+
+    #[test]
+    fn path_size_returns_zero_for_empty_dir() -> Result<()> {
+        let tempdir = tempdir()?;
+        let size = path_size(tempdir.path())?;
+        assert_eq!(size, 0);
+        Ok(())
+    }
+
+    #[test]
+    fn path_size_accumulates_directory_contents() -> Result<()> {
+        let tempdir = tempdir()?;
+        fs::write(tempdir.path().join("a.txt"), b"12345")?;
+        fs::write(tempdir.path().join("b.txt"), b"67890")?;
+        let size = path_size(tempdir.path())?;
+        assert_eq!(size, 10);
+        Ok(())
+    }
+
+    #[test]
+    fn path_size_accumulates_recursive_directory() -> Result<()> {
+        let tempdir = tempdir()?;
+        fs::write(tempdir.path().join("outer.txt"), b"ab")?;
+        let sub = tempdir.path().join("sub");
+        fs::create_dir(&sub)?;
+        fs::write(sub.join("inner.txt"), b"cdef")?;
+        // 2 + 4 = 6
+        let size = path_size(tempdir.path())?;
+        assert_eq!(size, 6);
+        Ok(())
+    }
+
+    #[test]
+    fn path_size_returns_error_for_missing_path() {
+        let result = path_size(std::path::Path::new("/nonexistent/path/for/testing"));
+        assert!(result.is_err());
+    }
 
     #[test]
     fn source_normalized_scope_collects_normalized_and_staging_roots() -> Result<()> {
@@ -387,6 +502,18 @@ mod tests {
             .expect_err("all-generated scope should reject document_key");
 
         assert!(error.to_string().contains("does not accept --document-key"));
+    }
+
+    #[test]
+    fn run_rejects_all_generated_with_document_key() {
+        let args = crate::cli::CleanArgs {
+            generated_root: std::path::PathBuf::from("generated"),
+            scope: CleanScopeArg::AllGenerated,
+            document_key: Some("doc".to_string()),
+            execute: false,
+        };
+        let result = super::run(args);
+        assert!(result.is_err());
     }
 
     #[test]

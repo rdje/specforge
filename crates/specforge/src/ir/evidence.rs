@@ -6798,6 +6798,12 @@ mod tests {
     use super::{
         EvidenceIr, EvidenceLinkKind, EvidenceModality, SignalSemanticHintSourceKind,
         SignalSemanticTag, StatementClass, VisualObservationKind, canonicalize_existing_path,
+        contains_any, contains_reference_token, diagram_kind_key, is_abstract_transport_actor_term,
+        is_abstract_transport_signal_token, is_hardware_signal_token, is_image_line,
+        is_signal_name_char, is_signal_synthesis_non_signal, is_standalone_markdown_block,
+        is_tie_off_actor_text, looks_like_encoding_literal,
+        looks_like_structural_contents_entry_for_semantic_hint, numbered_list_prefix,
+        parse_encoding_numeric_literal,
     };
 
     fn make_table_cell(text: &str, is_header: bool) -> StructuredTableCellRecord {
@@ -10500,5 +10506,343 @@ mod tests {
         );
 
         Ok(())
+    }
+
+    // --- is_image_line ---
+
+    #[test]
+    fn is_image_line_detects_image_markdown() {
+        assert!(is_image_line("![alt text](path.png)"));
+    }
+
+    #[test]
+    fn is_image_line_rejects_plain_text() {
+        assert!(!is_image_line("plain text"));
+    }
+
+    #[test]
+    fn is_image_line_rejects_empty() {
+        assert!(!is_image_line(""));
+    }
+
+    // --- is_standalone_markdown_block ---
+
+    #[test]
+    fn is_standalone_markdown_block_detects_list_items() {
+        assert!(is_standalone_markdown_block("- list item"));
+        assert!(is_standalone_markdown_block("* star item"));
+        assert!(is_standalone_markdown_block("+ plus item"));
+    }
+
+    #[test]
+    fn is_standalone_markdown_block_detects_table_row() {
+        assert!(is_standalone_markdown_block("| col1 | col2 |"));
+    }
+
+    #[test]
+    fn is_standalone_markdown_block_detects_numbered_list() {
+        assert!(is_standalone_markdown_block("1. first item"));
+        assert!(is_standalone_markdown_block("42. answer"));
+    }
+
+    #[test]
+    fn is_standalone_markdown_block_rejects_plain_text() {
+        assert!(!is_standalone_markdown_block("plain text"));
+    }
+
+    // --- is_signal_name_char ---
+
+    #[test]
+    fn is_signal_name_char_accepts_alphanumeric_and_underscore() {
+        assert!(is_signal_name_char('A'));
+        assert!(is_signal_name_char('z'));
+        assert!(is_signal_name_char('0'));
+        assert!(is_signal_name_char('_'));
+    }
+
+    #[test]
+    fn is_signal_name_char_rejects_special_chars() {
+        assert!(!is_signal_name_char('-'));
+        assert!(!is_signal_name_char('.'));
+        assert!(!is_signal_name_char(' '));
+        assert!(!is_signal_name_char('['));
+    }
+
+    // --- is_tie_off_actor_text ---
+
+    #[test]
+    fn is_tie_off_actor_text_detects_variants() {
+        assert!(is_tie_off_actor_text("tie off"));
+        assert!(is_tie_off_actor_text("tieoff"));
+        assert!(is_tie_off_actor_text("TIE OFF"));
+        assert!(is_tie_off_actor_text("TieOff"));
+    }
+
+    #[test]
+    fn is_tie_off_actor_text_rejects_others() {
+        assert!(!is_tie_off_actor_text("master"));
+        assert!(!is_tie_off_actor_text(""));
+    }
+
+    // --- is_abstract_transport_signal_token ---
+
+    #[test]
+    fn is_abstract_transport_signal_token_detects_known_tokens() {
+        assert!(is_abstract_transport_signal_token("VALID"));
+        assert!(is_abstract_transport_signal_token("READY"));
+        assert!(is_abstract_transport_signal_token("PENDING"));
+        assert!(is_abstract_transport_signal_token("CRDT"));
+    }
+
+    #[test]
+    fn is_abstract_transport_signal_token_rejects_unknown() {
+        assert!(!is_abstract_transport_signal_token("CLOCK"));
+        assert!(!is_abstract_transport_signal_token("data"));
+        assert!(!is_abstract_transport_signal_token(""));
+    }
+
+    // --- is_abstract_transport_actor_term ---
+
+    #[test]
+    fn is_abstract_transport_actor_term_detects_known_terms() {
+        assert!(is_abstract_transport_actor_term("tx"));
+        assert!(is_abstract_transport_actor_term("rx"));
+        assert!(is_abstract_transport_actor_term("transmitter"));
+        assert!(is_abstract_transport_actor_term("receiver"));
+    }
+
+    #[test]
+    fn is_abstract_transport_actor_term_rejects_unknown() {
+        assert!(!is_abstract_transport_actor_term("master"));
+        assert!(!is_abstract_transport_actor_term(""));
+    }
+
+    // --- diagram_kind_key ---
+
+    #[test]
+    fn diagram_kind_key_returns_correct_strings() {
+        assert_eq!(
+            diagram_kind_key(DiagramKind::TimingDiagram),
+            "timing_diagram"
+        );
+        assert_eq!(
+            diagram_kind_key(DiagramKind::StateMachineDiagram),
+            "state_machine_diagram"
+        );
+        assert_eq!(diagram_kind_key(DiagramKind::BlockDiagram), "block_diagram");
+        assert_eq!(
+            diagram_kind_key(DiagramKind::RegisterBitfield),
+            "register_bitfield"
+        );
+        assert_eq!(diagram_kind_key(DiagramKind::TruthTable), "truth_table");
+        assert_eq!(diagram_kind_key(DiagramKind::FlowChart), "flow_chart");
+        assert_eq!(diagram_kind_key(DiagramKind::Unknown), "unknown");
+    }
+
+    // --- parse_encoding_numeric_literal ---
+
+    #[test]
+    fn parse_encoding_numeric_literal_decimal() {
+        assert_eq!(parse_encoding_numeric_literal("42"), Some(42));
+    }
+
+    #[test]
+    fn parse_encoding_numeric_literal_binary_prefix() {
+        assert_eq!(parse_encoding_numeric_literal("0b1010"), Some(10));
+    }
+
+    #[test]
+    fn parse_encoding_numeric_literal_hex_prefix() {
+        assert_eq!(parse_encoding_numeric_literal("0xFF"), Some(255));
+    }
+
+    #[test]
+    fn parse_encoding_numeric_literal_verilog_binary() {
+        assert_eq!(parse_encoding_numeric_literal("3'b101"), Some(5));
+    }
+
+    #[test]
+    fn parse_encoding_numeric_literal_verilog_hex() {
+        assert_eq!(parse_encoding_numeric_literal("8'hFF"), Some(255));
+    }
+
+    #[test]
+    fn parse_encoding_numeric_literal_trims_brackets() {
+        assert_eq!(parse_encoding_numeric_literal("[42]"), Some(42));
+    }
+
+    #[test]
+    fn parse_encoding_numeric_literal_empty() {
+        assert_eq!(parse_encoding_numeric_literal(""), None);
+    }
+
+    #[test]
+    fn parse_encoding_numeric_literal_invalid() {
+        assert_eq!(parse_encoding_numeric_literal("not_a_number"), None);
+    }
+
+    // --- contains_any ---
+
+    #[test]
+    fn contains_any_finds_match() {
+        assert!(contains_any("hello world", &["hello", "foo"]));
+    }
+
+    #[test]
+    fn contains_any_no_match() {
+        assert!(!contains_any("hello world", &["foo", "bar"]));
+    }
+
+    #[test]
+    fn contains_any_empty_candidates() {
+        assert!(!contains_any("hello world", &[]));
+    }
+
+    // --- contains_reference_token ---
+
+    #[test]
+    fn contains_reference_token_matches_word_boundary() {
+        assert!(contains_reference_token(
+            "see Figure 1 for details",
+            "Figure 1"
+        ));
+    }
+
+    #[test]
+    fn contains_reference_token_rejects_partial_word() {
+        assert!(!contains_reference_token(
+            "see Figure10 for details",
+            "Figure 1"
+        ));
+    }
+
+    #[test]
+    fn contains_reference_token_at_start_of_text() {
+        assert!(contains_reference_token("Figure 1 shows", "Figure 1"));
+    }
+
+    #[test]
+    fn contains_reference_token_at_end_of_text() {
+        assert!(contains_reference_token("see Figure 1", "Figure 1"));
+    }
+
+    // --- numbered_list_prefix ---
+
+    #[test]
+    fn numbered_list_prefix_detects_simple() {
+        assert!(numbered_list_prefix("1. item"));
+        assert!(numbered_list_prefix("42. answer"));
+    }
+
+    #[test]
+    fn numbered_list_prefix_rejects_missing_dot() {
+        assert!(!numbered_list_prefix("1 item"));
+    }
+
+    #[test]
+    fn numbered_list_prefix_rejects_no_space_after_dot() {
+        assert!(!numbered_list_prefix("1.item"));
+    }
+
+    #[test]
+    fn numbered_list_prefix_rejects_empty() {
+        assert!(!numbered_list_prefix(""));
+    }
+
+    // --- looks_like_encoding_literal ---
+
+    #[test]
+    fn looks_like_encoding_literal_detects_binary() {
+        assert!(looks_like_encoding_literal("0b1010"));
+    }
+
+    #[test]
+    fn looks_like_encoding_literal_detects_hex() {
+        assert!(looks_like_encoding_literal("0xFF"));
+    }
+
+    #[test]
+    fn looks_like_encoding_literal_detects_verilog_binary() {
+        assert!(looks_like_encoding_literal("3'b101"));
+    }
+
+    #[test]
+    fn looks_like_encoding_literal_rejects_plain_text() {
+        assert!(!looks_like_encoding_literal("hello"));
+    }
+
+    #[test]
+    fn looks_like_encoding_literal_rejects_empty() {
+        assert!(!looks_like_encoding_literal(""));
+    }
+
+    // --- looks_like_structural_contents_entry_for_semantic_hint ---
+
+    #[test]
+    fn looks_like_structural_contents_detects_toc() {
+        assert!(looks_like_structural_contents_entry_for_semantic_hint(
+            "Table of Contents"
+        ));
+    }
+
+    #[test]
+    fn looks_like_structural_contents_detects_dots() {
+        assert!(looks_like_structural_contents_entry_for_semantic_hint(
+            "1.0 Introduction . . . . . . 5"
+        ));
+    }
+
+    #[test]
+    fn looks_like_structural_contents_rejects_plain_text() {
+        assert!(!looks_like_structural_contents_entry_for_semantic_hint(
+            "Signal HADDR is input"
+        ));
+    }
+
+    // --- is_hardware_signal_token ---
+
+    #[test]
+    fn is_hardware_signal_token_accepts_valid_signals() {
+        assert!(is_hardware_signal_token("HADDR"));
+        assert!(is_hardware_signal_token("HCLK"));
+        assert!(is_hardware_signal_token("AWVALID"));
+        assert!(is_hardware_signal_token("S_AXI_AWREADY"));
+    }
+
+    #[test]
+    fn is_hardware_signal_token_rejects_lowercase() {
+        assert!(!is_hardware_signal_token("haddr"));
+    }
+
+    #[test]
+    fn is_hardware_signal_token_rejects_short() {
+        assert!(!is_hardware_signal_token("A"));
+    }
+
+    #[test]
+    fn is_hardware_signal_token_rejects_no_uppercase_letter() {
+        assert!(!is_hardware_signal_token("123_456"));
+    }
+
+    #[test]
+    fn is_hardware_signal_token_rejects_empty() {
+        assert!(!is_hardware_signal_token(""));
+    }
+
+    // --- is_signal_synthesis_non_signal ---
+
+    #[test]
+    fn is_signal_synthesis_non_signal_detects_roles() {
+        assert!(is_signal_synthesis_non_signal("MANAGER"));
+        assert!(is_signal_synthesis_non_signal("SUBORDINATE"));
+        assert!(is_signal_synthesis_non_signal("INITIATOR"));
+        assert!(is_signal_synthesis_non_signal("CLOCK"));
+        assert!(is_signal_synthesis_non_signal("RESET"));
+    }
+
+    #[test]
+    fn is_signal_synthesis_non_signal_rejects_real_signals() {
+        assert!(!is_signal_synthesis_non_signal("HADDR"));
+        assert!(!is_signal_synthesis_non_signal("AWVALID"));
     }
 }

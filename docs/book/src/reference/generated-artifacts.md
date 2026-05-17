@@ -15,6 +15,7 @@ That rule is intentional. Real chip PDFs can produce large intermediate artifact
 - `generated/semantic_ir/<document_key>/semantic_ir.json`
 - `generated/intent_ir/<document_key>/intent_ir.json`
 - `generated/adapters/fsm/<document_key>/adapter.json`
+- `generated/adapters/isf/<document_key>/adapter.json`
 - `generated/prior_memory/corpus_memory.json`
 
 ## Stage artifacts
@@ -117,6 +118,7 @@ That future schema would need to record current-document evidence support, valid
 Adapter output lives under:
 
 - `generated/adapters/fsm/<document_key>/adapter.json`
+- `generated/adapters/isf/<document_key>/adapter.json`
 
 Adapter artifacts are downstream products of `IntentIR`.
 They should not define what the canonical document meaning is.

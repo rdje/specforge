@@ -150,6 +150,8 @@ pub struct IntentArgs {
 pub enum AdapterTargetArg {
     #[value(name = "fsm")]
     Fsm,
+    #[value(name = "isf")]
+    Isf,
     #[value(name = "systemverilog")]
     SystemVerilog,
     #[value(name = "verilog")]
@@ -162,6 +164,7 @@ impl From<AdapterTargetArg> for AdapterTarget {
     fn from(value: AdapterTargetArg) -> Self {
         match value {
             AdapterTargetArg::Fsm => AdapterTarget::Fsm,
+            AdapterTargetArg::Isf => AdapterTarget::Isf,
             AdapterTargetArg::SystemVerilog => AdapterTarget::SystemVerilog,
             AdapterTargetArg::Verilog => AdapterTarget::Verilog,
             AdapterTargetArg::Vhdl => AdapterTarget::Vhdl,

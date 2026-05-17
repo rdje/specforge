@@ -1,4 +1,4 @@
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -10,16 +10,18 @@ use crate::ir::evidence::{
     SignalPolarityConflictRecord, SignalPolarityRecord, SignalSemanticConflictRecord,
 };
 use crate::ir::semantic::{
-    ActorPortRecord, ConditionalRuleRecord, ControlBlockRecord, DecisionTreeFragmentRecord,
-    ExplicitModuleRecord, ExplicitTopRecord, InfrastructureSignalRecord, InitAssignmentRecord,
-    InterfaceRecord, InterfaceSignalConflictRecord, RegisterRecord, RegularStateRecord, SemanticIr,
+    ActorPortRecord, ConditionalRuleRecord, ControlActionRecord, ControlBinaryOperator,
+    ControlBlockRecord, ControlCompoundUpdateOperation,
+    ControlExpressionRecord, DecisionTreeFragmentRecord, ExplicitModuleRecord,
+    ExplicitTopRecord, InfrastructureSignalRecord, InitAssignmentRecord, InterfaceRecord,
+    InterfaceSignalConflictRecord, RegisterRecord, RegularStateRecord, SemanticIr,
     SignalConnectivityConflictRecord, SignalConnectivityRecord, SignalConstraintRecord,
     StateTransitionRecord, SymbolDefinitionRecord, SystemContractRecord, TemporalConflictRecord,
-    TemporalRuleRecord, TimingConstraintRecord,
+    TemporalPredicateRecord, TemporalRuleRecord, TimingConstraintRecord,
 };
 use crate::ir::source::{
-    ActorSignalRelation, AutomationConfidence, CandidateInterpretation, ResidualDecisionPacket,
-    ValidationReportRecord, document_key,
+    ActorSignalRelation, AutomationConfidence, CandidateInterpretation, RelationKind,
+    ResidualDecisionPacket, SignalConstraintKind, ValidationReportRecord, document_key,
 };
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -90,6 +92,24 @@ pub struct IntentIr {
     /// Level 2 NLP: conditional rule records carried forward from `SemanticIR`.
     #[serde(default)]
     pub conditional_rules: Vec<ConditionalRuleRecord>,
+    /// Transaction intents — ordered behavioral steps extracted from PDF text.
+    #[serde(default)]
+    pub transactions: Vec<TransactionIntent>,
+    /// Actor drive relations — which actor drives which signal to which consumer.
+    #[serde(default)]
+    pub actor_drive_relations: Vec<ActorDriveRelationRecord>,
+    /// Actor sample relations — which actor samples which signal and when.
+    #[serde(default)]
+    pub actor_sample_relations: Vec<ActorSampleRelationRecord>,
+    /// Actor trigger relations — activation paths between actors.
+    #[serde(default)]
+    pub actor_trigger_relations: Vec<ActorTriggerRelationRecord>,
+    /// Actor temporal dependencies — wait-for relationships between actors.
+    #[serde(default)]
+    pub actor_temporal_dependencies: Vec<ActorTemporalDependencyRecord>,
+    /// Temporal invariants — constraints that must always hold.
+    #[serde(default)]
+    pub temporal_invariants: Vec<TemporalInvariantRecord>,
     pub residual_decisions: Vec<ResidualDecisionPacket>,
     #[serde(default)]
     pub validation_reports: Vec<ValidationReportRecord>,
@@ -157,6 +177,22 @@ impl IntentIr {
         let temporal_conflicts = semantic_ir.temporal_conflicts.clone();
         let signal_constraints = semantic_ir.signal_constraints.clone();
         let conditional_rules = semantic_ir.conditional_rules.clone();
+        let mut transactions = synthesize_transactions(&semantic_ir);
+        let mut actor_drive_relations = synthesize_actor_drive_relations(&semantic_ir);
+        let mut actor_sample_relations = synthesize_actor_sample_relations(&semantic_ir);
+        let mut actor_trigger_relations = synthesize_actor_trigger_relations(&semantic_ir);
+        let mut actor_temporal_dependencies =
+            synthesize_actor_temporal_dependencies(&semantic_ir);
+        let mut temporal_invariants = synthesize_temporal_invariants(&semantic_ir);
+        recognize_digital_patterns(
+            &mut transactions,
+            &mut actor_drive_relations,
+            &mut actor_sample_relations,
+            &mut actor_trigger_relations,
+            &mut actor_temporal_dependencies,
+            &mut temporal_invariants,
+            &semantic_ir,
+        );
         let residual_decisions =
             build_residual_decisions(&context, &actors, &behaviors, &constraints);
         let intent_identity = build_intent_identity(
@@ -212,6 +248,12 @@ impl IntentIr {
             temporal_conflicts,
             signal_constraints,
             conditional_rules,
+            transactions,
+            actor_drive_relations,
+            actor_sample_relations,
+            actor_trigger_relations,
+            actor_temporal_dependencies,
+            temporal_invariants,
             residual_decisions,
             validation_reports: Vec::new(),
         })
@@ -788,12 +830,1423 @@ fn normalize_text_key(text: &str) -> String {
     normalize_sentence(text).to_ascii_lowercase()
 }
 
+// ---------------------------------------------------------------------------
+// Transaction intent — ordered behavioral steps for ISF lowering
+// ---------------------------------------------------------------------------
+
+/// An ordered sequence of behavioral steps that form a transaction body.
+/// Maps directly to ISF `(transaction name clauses...)`.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct TransactionIntent {
+    pub transaction_id: String,
+    /// Human-readable name, sanitized for ISF.
+    pub transaction_name: String,
+    /// The activation port that starts this transaction (e.g., "start").
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub activation_port: Option<String>,
+    /// Ports declared on this transaction (for do/spawn bindings).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub ports: Vec<TransactionPortRecord>,
+    /// Ordered body steps.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub steps: Vec<TransactionStep>,
+    /// The control_block_ids this transaction was built from.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub source_block_ids: Vec<String>,
+    /// The temporal_rule_ids referenced by this transaction.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub source_temporal_rule_ids: Vec<String>,
+    pub supporting_statement_ids: Vec<String>,
+    pub automation_confidence: AutomationConfidence,
+}
+
+/// A single port declaration on a transaction, used for do/spawn bindings.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct TransactionPortRecord {
+    pub port_name: String,
+    pub direction: TransactionPortDirection,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub width: Option<u32>,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum TransactionPortDirection {
+    Input,
+    Output,
+    InOut,
+}
+
+/// One step in a transaction body. Each variant maps to an ISF construct.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(tag = "step_kind", rename_all = "snake_case")]
+pub enum TransactionStep {
+    /// `(drive name args...)` — call a named drive with actual values.
+    Drive {
+        drive_name: String,
+        #[serde(default, skip_serializing_if = "Vec::is_empty")]
+        actuals: Vec<String>,
+    },
+    /// `(when condition body...)` — inline conditional.
+    When {
+        condition: String,
+        body: Vec<TransactionStep>,
+    },
+    /// `(switch selector (val body...)...)` — multi-way dispatch.
+    Switch {
+        selector: String,
+        branches: Vec<SwitchBranch>,
+    },
+    /// `(while condition body...)` — loop while condition holds.
+    While {
+        condition: String,
+        body: Vec<TransactionStep>,
+    },
+    /// `(until condition body...)` — loop until condition holds.
+    Until {
+        condition: String,
+        body: Vec<TransactionStep>,
+    },
+    /// `(repeat count body...)` — repeat N times.
+    Repeat {
+        count: String,
+        body: Vec<TransactionStep>,
+    },
+    /// `(await port)` / `(await port (watchdog N))` — wait for port.
+    Await {
+        port: String,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        watchdog: Option<u32>,
+    },
+    /// `(wait N)` — wait N cycles.
+    Wait {
+        count: String,
+    },
+    /// `(sample port as name)` — capture port value.
+    Sample {
+        port: String,
+        as_name: String,
+    },
+    /// `(do child (bind ...))` — synchronous child activation.
+    Do {
+        child_transaction: String,
+        #[serde(default, skip_serializing_if = "Vec::is_empty")]
+        bindings: Vec<PortBinding>,
+    },
+    /// `(spawn child as inst (bind ...))` — parallel child activation.
+    Spawn {
+        child_transaction: String,
+        instance: String,
+        #[serde(default, skip_serializing_if = "Vec::is_empty")]
+        bindings: Vec<PortBinding>,
+    },
+    /// `(set target expr)` — register assignment.
+    Set {
+        target: String,
+        expr: String,
+    },
+    /// `(update target expr)` — in-place update (increment/decrement).
+    Update {
+        target: String,
+        expr: String,
+    },
+    /// `(shift_left reg bit)` — shift left.
+    ShiftLeft {
+        reg: String,
+        bit: String,
+    },
+    /// `(shift_right reg bit)` — shift right.
+    ShiftRight {
+        reg: String,
+        bit: String,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        width: Option<u32>,
+    },
+    /// `(complete port)` — transaction completion.
+    Complete {
+        port: String,
+    },
+    /// `(await_all done_port)` — wait for all child transactions.
+    AwaitAll {
+        done_port: String,
+    },
+    /// `(await_any done_port)` — wait for any child transaction.
+    AwaitAny {
+        done_port: String,
+    },
+    /// `(latency (min N) (max M))` — latency bounds.
+    Latency {
+        min: u32,
+        max: u32,
+    },
+}
+
+/// A branch within a `(switch selector ...)` clause.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct SwitchBranch {
+    pub value: String,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub body: Vec<TransactionStep>,
+}
+
+/// A port binding for do/spawn activation.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct PortBinding {
+    pub direction: TransactionPortDirection,
+    pub child_port: String,
+    pub parent_signal: String,
+}
+
+// ---------------------------------------------------------------------------
+// Actor interaction records — multi-actor drive/sample/trigger/dependency
+// ---------------------------------------------------------------------------
+
+/// "Actor X drives signal Y to actor Z when condition C"
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ActorDriveRelationRecord {
+    pub relation_id: String,
+    pub driver_actor: String,
+    pub signal_name: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub consumer_actor: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub condition: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub value: Option<String>,
+    pub source_text: String,
+    pub supporting_statement_ids: Vec<String>,
+    pub automation_confidence: AutomationConfidence,
+}
+
+/// "Actor X samples signal Y from actor Z at phase P"
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ActorSampleRelationRecord {
+    pub relation_id: String,
+    pub sampler_actor: String,
+    pub signal_name: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub source_actor: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub phase: Option<String>,
+    pub source_text: String,
+    pub supporting_statement_ids: Vec<String>,
+    pub automation_confidence: AutomationConfidence,
+}
+
+/// "Actor X triggers/spawns actor Y on port P"
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ActorTriggerRelationRecord {
+    pub relation_id: String,
+    pub source_actor: String,
+    pub target_actor: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub trigger_port: Option<String>,
+    /// Whether this is a do (synchronous) or spawn (parallel) activation.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub activation_kind: Option<ActivationKind>,
+    pub source_text: String,
+    pub supporting_statement_ids: Vec<String>,
+    pub automation_confidence: AutomationConfidence,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum ActivationKind {
+    Do,
+    Spawn,
+}
+
+/// "Actor X waits for actor Y to assert/deassert signal Z"
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ActorTemporalDependencyRecord {
+    pub dependency_id: String,
+    pub waiting_actor: String,
+    pub signal_name: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub source_actor: Option<String>,
+    /// Whether the dependency waits for assertion or deassertion.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub wait_for: Option<WaitForKind>,
+    pub source_text: String,
+    pub supporting_statement_ids: Vec<String>,
+    pub automation_confidence: AutomationConfidence,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum WaitForKind {
+    Assertion,
+    Deassertion,
+}
+
+/// A temporal invariant — a constraint that always holds across time.
+/// "Signal X must not change when Y is low", "X must remain stable during Y"
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct TemporalInvariantRecord {
+    pub invariant_id: String,
+    pub subject_signal: String,
+    pub invariant_kind: TemporalInvariantKind,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub condition_signal: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub condition_value: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub target_value: Option<String>,
+    pub source_text: String,
+    pub supporting_statement_ids: Vec<String>,
+    pub automation_confidence: AutomationConfidence,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum TemporalInvariantKind {
+    MustNotChange,
+    MustRemainStable,
+    MustBeAsserted,
+    MustMatch,
+    MustNotExceed,
+    OnlyValidWhen,
+}
+
+/// Count total nested steps (including recursion into when/switch/while/until/repeat bodies).
+pub fn count_nested_steps(steps: &[TransactionStep]) -> usize {
+    let mut count = steps.len();
+    for step in steps {
+        match step {
+            TransactionStep::When { body, .. }
+            | TransactionStep::While { body, .. }
+            | TransactionStep::Until { body, .. }
+            | TransactionStep::Repeat { body, .. } => {
+                count += count_nested_steps(body);
+            }
+            TransactionStep::Switch { branches, .. } => {
+                for branch in branches {
+                    count += count_nested_steps(&branch.body);
+                }
+            }
+            _ => {}
+        }
+    }
+    count
+}
+
 fn canonicalize_existing_path(path: &Path) -> Result<PathBuf> {
     if !path.exists() {
         return Err(AppError::MissingPath(path.to_path_buf()));
     }
 
     Ok(fs::canonicalize(path)?)
+}
+
+// ---------------------------------------------------------------------------
+// Synthesis: populate new IntentIR temporal record types from SemanticIR data
+// ---------------------------------------------------------------------------
+
+fn recognize_digital_patterns(
+    transactions: &mut Vec<TransactionIntent>,
+    drive_relations: &mut Vec<ActorDriveRelationRecord>,
+    _sample_relations: &mut Vec<ActorSampleRelationRecord>,
+    trigger_relations: &mut Vec<ActorTriggerRelationRecord>,
+    _temporal_deps: &mut Vec<ActorTemporalDependencyRecord>,
+    invariants: &mut Vec<TemporalInvariantRecord>,
+    semantic_ir: &SemanticIr,
+) {
+    // Collect all signal names across interfaces and actor relations
+    let all_signals: BTreeSet<String> = semantic_ir
+        .actor_signal_relations
+        .iter()
+        .map(|r| r.signal_name.clone())
+        .chain(
+            semantic_ir
+                .interfaces
+                .iter()
+                .flat_map(|i| i.signal_records.iter().map(|s| s.signal_name.clone())),
+        )
+        .collect();
+
+    let signal_list: Vec<&str> = all_signals.iter().map(|s| s.as_str()).collect();
+
+    // --- Pattern 1: Valid/Ready handshake ---
+    // Look for pairs like *_VALID + *_READY, or VALID + READY
+    let valid_signals: Vec<&str> = signal_list
+        .iter()
+        .filter(|s| s.ends_with("VALID") || s.ends_with("_VALID") || s.starts_with("VALID_"))
+        .copied()
+        .collect();
+    let ready_signals: Vec<&str> = signal_list
+        .iter()
+        .filter(|s| s.ends_with("READY") || s.ends_with("_READY") || s.starts_with("READY_"))
+        .copied()
+        .collect();
+
+    for valid in &valid_signals {
+        for ready in &ready_signals {
+            // Pair signals that share a common prefix (e.g., AXI_AWVALID + AXI_AWREADY)
+            let v_base = valid
+                .trim_end_matches("_VALID")
+                .trim_end_matches("VALID");
+            let r_base = ready
+                .trim_end_matches("_READY")
+                .trim_end_matches("READY");
+            if v_base == r_base || valid.contains(ready.trim_end_matches("_READY")) || ready.contains(valid.trim_end_matches("_VALID")) {
+                let tx_name = format!("{}_handshake", sanitize_id(v_base));
+                // Check if we already have a transaction for this handshake
+                let already_has = transactions.iter().any(|t| t.transaction_name == tx_name);
+                if !already_has {
+                    let steps = vec![
+                        TransactionStep::AwaitAll {
+                            done_port: format!("{}_handshake_done", sanitize_id(v_base)),
+                        },
+                        TransactionStep::Sample {
+                            port: valid.to_string(),
+                            as_name: format!("{}_val", sanitize_id(v_base)),
+                        },
+                    ];
+                    transactions.push(TransactionIntent {
+                        transaction_id: format!("txn_hs_{}", sanitize_id(v_base)),
+                        transaction_name: tx_name,
+                        activation_port: Some(ready.to_string()),
+                        ports: vec![
+                            TransactionPortRecord {
+                                port_name: valid.to_string(),
+                                direction: TransactionPortDirection::Input,
+                                width: None,
+                            },
+                            TransactionPortRecord {
+                                port_name: ready.to_string(),
+                                direction: TransactionPortDirection::Output,
+                                width: None,
+                            },
+                        ],
+                        steps,
+                        source_block_ids: Vec::new(),
+                        source_temporal_rule_ids: Vec::new(),
+                        supporting_statement_ids: Vec::new(),
+                        automation_confidence: AutomationConfidence::Medium,
+                    });
+                }
+                // Actor drive relations for handshake
+                let valid_driver = semantic_ir
+                    .actor_signal_relations
+                    .iter()
+                    .find(|r| r.signal_name == *valid && matches!(r.relation, RelationKind::Drives));
+                if let Some(driver) = valid_driver {
+                    let already_rel = drive_relations
+                        .iter()
+                        .any(|dr| dr.signal_name == *valid && dr.driver_actor == driver.actor_name);
+                    if !already_rel {
+                        drive_relations.push(ActorDriveRelationRecord {
+                            relation_id: format!("adr_hs_{}", sanitize_id(valid)),
+                            driver_actor: driver.actor_name.clone(),
+                            signal_name: valid.to_string(),
+                            consumer_actor: None,
+                            condition: Some(format!("{} asserted", ready)),
+                            value: None,
+                            source_text: String::new(),
+                            supporting_statement_ids: Vec::new(),
+                            automation_confidence: AutomationConfidence::Medium,
+                        });
+                    }
+                }
+            }
+        }
+    }
+
+    // --- Pattern 2: Request/Acknowledge/Grant ---
+    let req_signals: Vec<&str> = signal_list
+        .iter()
+        .filter(|s| {
+            s.ends_with("REQ")
+                || s.ends_with("_REQ")
+                || s.ends_with("REQUEST")
+                || s.ends_with("_REQUEST")
+        })
+        .copied()
+        .collect();
+    let ack_signals: Vec<&str> = signal_list
+        .iter()
+        .filter(|s| {
+            s.ends_with("ACK")
+                || s.ends_with("_ACK")
+                || s.ends_with("GNT")
+                || s.ends_with("_GNT")
+                || s.ends_with("GRANT")
+        })
+        .copied()
+        .collect();
+
+    for req in &req_signals {
+        for ack in &ack_signals {
+            let req_actor = semantic_ir
+                .actor_signal_relations
+                .iter()
+                .find(|r| r.signal_name == *req && matches!(r.relation, RelationKind::Drives));
+            let ack_actor = semantic_ir
+                .actor_signal_relations
+                .iter()
+                .find(|r| r.signal_name == *ack && matches!(r.relation, RelationKind::Drives));
+            if let (Some(req_a), Some(ack_a)) = (req_actor, ack_actor) {
+                if req_a.actor_name != ack_a.actor_name {
+                    let already = trigger_relations.iter().any(|tr| {
+                        tr.source_actor == req_a.actor_name
+                            && tr.target_actor == ack_a.actor_name
+                    });
+                    if !already {
+                        trigger_relations.push(ActorTriggerRelationRecord {
+                            relation_id: format!(
+                                "atr_reqack_{}_{}",
+                                sanitize_id(&req_a.actor_name),
+                                sanitize_id(&ack_a.actor_name)
+                            ),
+                            source_actor: req_a.actor_name.clone(),
+                            target_actor: ack_a.actor_name.clone(),
+                            trigger_port: Some(req.to_string()),
+                            activation_kind: Some(ActivationKind::Do),
+                            source_text: String::new(),
+                            supporting_statement_ids: Vec::new(),
+                            automation_confidence: AutomationConfidence::Medium,
+                        });
+                    }
+                }
+            }
+        }
+    }
+
+    // --- Pattern 3: AHB bus protocol ---
+    let has_htrans = signal_list.iter().any(|s| *s == "HTRANS");
+    let has_hready = signal_list.iter().any(|s| *s == "HREADY");
+    let has_haddr = signal_list.iter().any(|s| *s == "HADDR");
+    if has_htrans && has_hready {
+        let steps = vec![
+            TransactionStep::Await {
+                port: "HREADY".to_string(),
+                watchdog: Some(16),
+            },
+            TransactionStep::When {
+                condition: "HTRANS == NONSEQ or HTRANS == SEQ".to_string(),
+                body: vec![
+                    TransactionStep::Drive {
+                        drive_name: "HADDR".to_string(),
+                        actuals: vec!["addr_value".to_string()],
+                    },
+                    TransactionStep::Drive {
+                        drive_name: "HWRITE".to_string(),
+                        actuals: vec!["write_value".to_string()],
+                    },
+                ],
+            },
+        ];
+        let tx_id = "txn_ahb_transfer";
+        let already = transactions.iter().any(|t| t.transaction_id == tx_id);
+        if !already {
+            let mut ports = vec![
+                TransactionPortRecord {
+                    port_name: "HTRANS".to_string(),
+                    direction: TransactionPortDirection::Output,
+                    width: Some(2),
+                },
+                TransactionPortRecord {
+                    port_name: "HREADY".to_string(),
+                    direction: TransactionPortDirection::Input,
+                    width: Some(1),
+                },
+            ];
+            if has_haddr {
+                ports.push(TransactionPortRecord {
+                    port_name: "HADDR".to_string(),
+                    direction: TransactionPortDirection::Output,
+                    width: Some(32),
+                });
+            }
+            transactions.push(TransactionIntent {
+                transaction_id: tx_id.to_string(),
+                transaction_name: "ahb_transfer".to_string(),
+                activation_port: Some("HREADY".to_string()),
+                ports,
+                steps,
+                source_block_ids: Vec::new(),
+                source_temporal_rule_ids: Vec::new(),
+                supporting_statement_ids: Vec::new(),
+                automation_confidence: AutomationConfidence::Medium,
+            });
+        }
+
+        // FIFO-like invariant: "HADDR must not change when HREADY is low"
+        invariants.push(TemporalInvariantRecord {
+            invariant_id: "tinv_ahb_addr_stable".to_string(),
+            subject_signal: "HADDR".to_string(),
+            invariant_kind: TemporalInvariantKind::MustNotChange,
+            condition_signal: Some("HREADY".to_string()),
+            condition_value: Some("LOW".to_string()),
+            target_value: None,
+            source_text: "AHB protocol: address must remain stable while slave is not ready"
+                .to_string(),
+            supporting_statement_ids: Vec::new(),
+            automation_confidence: AutomationConfidence::Medium,
+        });
+    }
+
+    // --- Pattern 4: APB bus protocol ---
+    let has_psel = signal_list.iter().any(|s| *s == "PSEL" || s.starts_with("PSEL"));
+    let has_penable = signal_list.iter().any(|s| *s == "PENABLE");
+    let has_pready = signal_list.iter().any(|s| *s == "PREADY");
+    if has_psel && has_penable {
+        let steps = vec![
+            TransactionStep::When {
+                condition: "PSEL asserted".to_string(),
+                body: vec![
+                    TransactionStep::Drive {
+                        drive_name: "PENABLE".to_string(),
+                        actuals: vec!["1".to_string()],
+                    },
+                    TransactionStep::Await {
+                        port: "PREADY".to_string(),
+                        watchdog: Some(16),
+                    },
+                ],
+            },
+        ];
+        let tx_id = "txn_apb_transfer";
+        let already = transactions.iter().any(|t| t.transaction_id == tx_id);
+        if !already {
+            let mut ports = vec![
+                TransactionPortRecord {
+                    port_name: "PSEL".to_string(),
+                    direction: TransactionPortDirection::Output,
+                    width: Some(1),
+                },
+                TransactionPortRecord {
+                    port_name: "PENABLE".to_string(),
+                    direction: TransactionPortDirection::Output,
+                    width: Some(1),
+                },
+            ];
+            if has_pready {
+                ports.push(TransactionPortRecord {
+                    port_name: "PREADY".to_string(),
+                    direction: TransactionPortDirection::Input,
+                    width: Some(1),
+                });
+            }
+            transactions.push(TransactionIntent {
+                transaction_id: tx_id.to_string(),
+                transaction_name: "apb_transfer".to_string(),
+                activation_port: None,
+                ports,
+                steps,
+                source_block_ids: Vec::new(),
+                source_temporal_rule_ids: Vec::new(),
+                supporting_statement_ids: Vec::new(),
+                automation_confidence: AutomationConfidence::Medium,
+            });
+        }
+    }
+
+    // --- Pattern 5: SPI protocol ---
+    let has_miso = signal_list.iter().any(|s| *s == "MISO");
+    let has_mosi = signal_list.iter().any(|s| *s == "MOSI");
+    let has_sclk = signal_list.iter().any(|s| *s == "SCLK" || *s == "SCK");
+    if (has_miso || has_mosi) && has_sclk {
+        let steps = vec![
+            TransactionStep::Repeat {
+                count: "8".to_string(),
+                body: vec![
+                    TransactionStep::Drive {
+                        drive_name: "SCLK".to_string(),
+                        actuals: vec!["1".to_string()],
+                    },
+                    TransactionStep::ShiftLeft {
+                        reg: "mosi_shift".to_string(),
+                        bit: "1".to_string(),
+                    },
+                    TransactionStep::Sample {
+                        port: "MISO".to_string(),
+                        as_name: "miso_bit".to_string(),
+                    },
+                    TransactionStep::ShiftRight {
+                        reg: "miso_shift".to_string(),
+                        bit: "miso_bit".to_string(),
+                        width: Some(8),
+                    },
+                    TransactionStep::Drive {
+                        drive_name: "SCLK".to_string(),
+                        actuals: vec!["0".to_string()],
+                    },
+                ],
+            },
+        ];
+        let tx_id = "txn_spi_transfer";
+        let already = transactions.iter().any(|t| t.transaction_id == tx_id);
+        if !already {
+            transactions.push(TransactionIntent {
+                transaction_id: tx_id.to_string(),
+                transaction_name: "spi_transfer".to_string(),
+                activation_port: None,
+                ports: vec![
+                    TransactionPortRecord {
+                        port_name: "SCLK".to_string(),
+                        direction: TransactionPortDirection::Output,
+                        width: Some(1),
+                    },
+                    TransactionPortRecord {
+                        port_name: "MOSI".to_string(),
+                        direction: TransactionPortDirection::Output,
+                        width: Some(1),
+                    },
+                    TransactionPortRecord {
+                        port_name: "MISO".to_string(),
+                        direction: TransactionPortDirection::Input,
+                        width: Some(1),
+                    },
+                ],
+                steps,
+                source_block_ids: Vec::new(),
+                source_temporal_rule_ids: Vec::new(),
+                supporting_statement_ids: Vec::new(),
+                automation_confidence: AutomationConfidence::Medium,
+            });
+        }
+    }
+
+    // --- Pattern 6: FIFO status ---
+    let has_full = signal_list.iter().any(|s| *s == "FULL" || s.ends_with("_FULL"));
+    let has_empty = signal_list.iter().any(|s| *s == "EMPTY" || s.ends_with("_EMPTY"));
+    if has_full {
+        invariants.push(TemporalInvariantRecord {
+            invariant_id: "tinv_fifo_full_write_protect".to_string(),
+            subject_signal: "WEN".to_string(),
+            invariant_kind: TemporalInvariantKind::OnlyValidWhen,
+            condition_signal: Some("FULL".to_string()),
+            condition_value: Some("LOW".to_string()),
+            target_value: None,
+            source_text: "FIFO: write enable only valid when FIFO is not full".to_string(),
+            supporting_statement_ids: Vec::new(),
+            automation_confidence: AutomationConfidence::Medium,
+        });
+    }
+    if has_empty {
+        invariants.push(TemporalInvariantRecord {
+            invariant_id: "tinv_fifo_empty_read_protect".to_string(),
+            subject_signal: "REN".to_string(),
+            invariant_kind: TemporalInvariantKind::OnlyValidWhen,
+            condition_signal: Some("EMPTY".to_string()),
+            condition_value: Some("LOW".to_string()),
+            target_value: None,
+            source_text: "FIFO: read enable only valid when FIFO is not empty".to_string(),
+            supporting_statement_ids: Vec::new(),
+            automation_confidence: AutomationConfidence::Medium,
+        });
+    }
+}
+
+fn synthesize_transactions(semantic_ir: &SemanticIr) -> Vec<TransactionIntent> {
+    let mut transactions = Vec::new();
+
+    // 1. Convert each control_block to a TransactionIntent.
+    //    Control blocks already capture conditional behavioral logic —
+    //    they map ~1:1 to ISF transactions.
+    for cb in &semantic_ir.control_blocks {
+        let mut steps = Vec::new();
+
+        if let Some(ref selector) = cb.selector {
+            // selector + branches → Switch step
+            let selector_expr = render_control_expression(selector);
+            let mut branches = Vec::new();
+            for branch in &cb.branches {
+                let value = branch
+                    .predicate
+                    .as_ref()
+                    .map(|p| extract_case_value(p, selector))
+                    .unwrap_or_else(|| "default".to_string());
+                let body = branch
+                    .actions
+                    .iter()
+                    .map(convert_control_action_to_step)
+                    .collect();
+                branches.push(SwitchBranch { value, body });
+            }
+            if !branches.is_empty() {
+                steps.push(TransactionStep::Switch {
+                    selector: selector_expr,
+                    branches,
+                });
+            }
+        } else {
+            // No selector — flat sequence of When branches or direct actions
+            for branch in &cb.branches {
+                if let Some(predicate) = &branch.predicate {
+                    let condition = render_control_expression(predicate);
+                    let body: Vec<TransactionStep> = branch
+                        .actions
+                        .iter()
+                        .map(convert_control_action_to_step)
+                        .collect();
+                    if !body.is_empty() {
+                        steps.push(TransactionStep::When { condition, body });
+                    }
+                } else {
+                    // Unconditional branch — direct actions
+                    for action in &branch.actions {
+                        steps.push(convert_control_action_to_step(action));
+                    }
+                }
+            }
+        }
+
+        // Extract ports referenced in this control block
+        let ports: Vec<TransactionPortRecord> = cb
+            .referenced_signal_names
+            .iter()
+            .map(|sig| TransactionPortRecord {
+                port_name: sig.clone(),
+                direction: TransactionPortDirection::InOut,
+                width: None,
+            })
+            .collect();
+
+        transactions.push(TransactionIntent {
+            transaction_id: format!("txn_{}", cb.block_id),
+            transaction_name: cb.block_name.clone(),
+            activation_port: None,
+            ports,
+            steps,
+            source_block_ids: vec![cb.block_id.clone()],
+            source_temporal_rule_ids: Vec::new(),
+            supporting_statement_ids: cb.supporting_statement_ids.clone(),
+            automation_confidence: cb.automation_confidence,
+        });
+    }
+
+    // 2. Synthesize per-actor transactions from temporal_rules.
+    //    Group temporal_rules by the actor that drives the consequent signal.
+    let mut actor_txn_map: BTreeMap<String, Vec<&TemporalRuleRecord>> = BTreeMap::new();
+    for rule in &semantic_ir.temporal_rules {
+        for consequent in &rule.consequents {
+            if let TemporalPredicateRecord::ActorDrivesSignal {
+                actor_name,
+                ..
+            } = consequent
+            {
+                actor_txn_map
+                    .entry(actor_name.clone())
+                    .or_default()
+                    .push(rule);
+                break; // one actor per rule for grouping
+            }
+        }
+    }
+
+    for (actor_name, rules) in actor_txn_map.iter() {
+        if rules.is_empty() {
+            continue;
+        }
+        let mut steps = Vec::new();
+        for rule in rules {
+            // antecedents → When condition
+            let conditions: Vec<String> = rule
+                .antecedents
+                .iter()
+                .map(|ant| render_temporal_predicate(ant))
+                .collect();
+            let condition = if conditions.is_empty() {
+                format!("on_{:?}_edge", rule.edge)
+            } else {
+                conditions.join(" and ")
+            };
+
+            let mut body = Vec::new();
+            for consequent in &rule.consequents {
+                if let Some(step) = temporal_consequent_to_step(consequent) {
+                    body.push(step);
+                }
+            }
+
+            if !body.is_empty() {
+                steps.push(TransactionStep::When { condition, body });
+            }
+        }
+
+        if !steps.is_empty() {
+            let all_rule_ids: Vec<String> = rules.iter().map(|r| r.rule_id.clone()).collect();
+            let all_stmt_ids: Vec<String> = rules
+                .iter()
+                .flat_map(|r| r.supporting_statement_ids.clone())
+                .collect();
+            transactions.push(TransactionIntent {
+                transaction_id: format!("txn_temporal_{}", sanitize_id(&actor_name)),
+                transaction_name: format!("{}_behavior", actor_name),
+                activation_port: None,
+                ports: Vec::new(),
+                steps,
+                source_block_ids: Vec::new(),
+                source_temporal_rule_ids: all_rule_ids,
+                supporting_statement_ids: all_stmt_ids,
+                automation_confidence: AutomationConfidence::Medium,
+            });
+        }
+    }
+
+    transactions
+}
+
+fn synthesize_actor_drive_relations(semantic_ir: &SemanticIr) -> Vec<ActorDriveRelationRecord> {
+    let mut relations = Vec::new();
+
+    // From actor_signal_relations (Drives)
+    for rel in &semantic_ir.actor_signal_relations {
+        if matches!(rel.relation, RelationKind::Drives) {
+            relations.push(ActorDriveRelationRecord {
+                relation_id: format!("adr_{}", rel.relation_id),
+                driver_actor: rel.actor_name.clone(),
+                signal_name: rel.signal_name.clone(),
+                consumer_actor: None,
+                condition: None,
+                value: None,
+                source_text: String::new(),
+                supporting_statement_ids: rel.source_statement_ids.clone(),
+                automation_confidence: rel.automation_confidence,
+            });
+        }
+    }
+
+    // From temporal_rules — consequents with ActorDrivesSignal
+    for rule in &semantic_ir.temporal_rules {
+        for consequent in &rule.consequents {
+            if let TemporalPredicateRecord::ActorDrivesSignal {
+                actor_name,
+                signal_name,
+                ..
+            } = consequent
+            {
+                // Check if we already have this relation
+                let already_has = relations.iter().any(|r| {
+                    r.driver_actor == *actor_name && r.signal_name == *signal_name
+                });
+                if !already_has {
+                    relations.push(ActorDriveRelationRecord {
+                        relation_id: format!("adr_{}_{}", sanitize_id(actor_name), sanitize_id(signal_name)),
+                        driver_actor: actor_name.clone(),
+                        signal_name: signal_name.clone(),
+                        consumer_actor: None,
+                        condition: None,
+                        value: None,
+                        source_text: rule.source_text.clone(),
+                        supporting_statement_ids: rule.supporting_statement_ids.clone(),
+                        automation_confidence: rule.automation_confidence,
+                    });
+                }
+            }
+        }
+    }
+
+    relations
+}
+
+fn synthesize_actor_sample_relations(semantic_ir: &SemanticIr) -> Vec<ActorSampleRelationRecord> {
+    let mut relations = Vec::new();
+
+    // From actor_signal_relations (Reads)
+    for rel in &semantic_ir.actor_signal_relations {
+        if matches!(rel.relation, RelationKind::Reads) {
+            relations.push(ActorSampleRelationRecord {
+                relation_id: format!("asr_{}", rel.relation_id),
+                sampler_actor: rel.actor_name.clone(),
+                signal_name: rel.signal_name.clone(),
+                source_actor: None,
+                phase: None,
+                source_text: String::new(),
+                supporting_statement_ids: rel.source_statement_ids.clone(),
+                automation_confidence: rel.automation_confidence,
+            });
+        }
+    }
+
+    // From temporal_rules — ActorSamplesSignal
+    for rule in &semantic_ir.temporal_rules {
+        for pred in rule
+            .antecedents
+            .iter()
+            .chain(rule.consequents.iter())
+        {
+            if let TemporalPredicateRecord::ActorSamplesSignal {
+                actor_name,
+                signal_name,
+                phase,
+            } = pred
+            {
+                let already_has = relations.iter().any(|r| {
+                    r.sampler_actor == *actor_name && r.signal_name == *signal_name
+                });
+                if !already_has {
+                    relations.push(ActorSampleRelationRecord {
+                        relation_id: format!(
+                            "asr_{}_{}",
+                            sanitize_id(actor_name),
+                            sanitize_id(signal_name)
+                        ),
+                        sampler_actor: actor_name.clone(),
+                        signal_name: signal_name.clone(),
+                        source_actor: None,
+                        phase: Some(format!("{:?}", phase)),
+                        source_text: rule.source_text.clone(),
+                        supporting_statement_ids: rule.supporting_statement_ids.clone(),
+                        automation_confidence: rule.automation_confidence,
+                    });
+                }
+            }
+        }
+    }
+
+    relations
+}
+
+fn synthesize_actor_trigger_relations(
+    semantic_ir: &SemanticIr,
+) -> Vec<ActorTriggerRelationRecord> {
+    let mut relations = Vec::new();
+
+    // Build actor→signals map from actor_signal_relations
+    let mut actor_signals: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
+    for rel in &semantic_ir.actor_signal_relations {
+        actor_signals
+            .entry(rel.actor_name.clone())
+            .or_default()
+            .insert(rel.signal_name.clone());
+    }
+
+    // Look for temporal_rules where antecedent involves one actor's signal
+    // and consequent involves a different actor's signal → trigger relation
+    for rule in &semantic_ir.temporal_rules {
+        let mut antecedent_actors: BTreeSet<String> = BTreeSet::new();
+        let mut consequent_actors: BTreeSet<String> = BTreeSet::new();
+
+        for ant in &rule.antecedents {
+            if let Some(actor) = predicate_actor(ant) {
+                antecedent_actors.insert(actor);
+            }
+        }
+        for cons in &rule.consequents {
+            if let Some(actor) = predicate_actor(cons) {
+                consequent_actors.insert(actor);
+            }
+        }
+
+        // Trigger: when antecedent actor's action leads to consequent actor's action
+        for source in &antecedent_actors {
+            for target in &consequent_actors {
+                if source != target {
+                    // Find the trigger port — the signal in the consequent
+                    let trigger_port = rule.consequents.iter().find_map(|c| predicate_signal(c));
+                    relations.push(ActorTriggerRelationRecord {
+                        relation_id: format!(
+                            "atr_{}_to_{}",
+                            sanitize_id(source),
+                            sanitize_id(target)
+                        ),
+                        source_actor: source.clone(),
+                        target_actor: target.clone(),
+                        trigger_port,
+                        activation_kind: Some(ActivationKind::Do),
+                        source_text: rule.source_text.clone(),
+                        supporting_statement_ids: rule.supporting_statement_ids.clone(),
+                        automation_confidence: rule.automation_confidence,
+                    });
+                }
+            }
+        }
+    }
+
+    relations
+}
+
+fn synthesize_actor_temporal_dependencies(
+    semantic_ir: &SemanticIr,
+) -> Vec<ActorTemporalDependencyRecord> {
+    let mut dependencies = Vec::new();
+
+    for rule in &semantic_ir.temporal_rules {
+        // If antecedent waits for a signal (SignalValue, SignalStable, HandshakeComplete)
+        // and consequent is driven by a specific actor → dependency
+        let mut waiting_actor: Option<String> = None;
+        let mut signal_name: Option<String> = None;
+
+        for ant in &rule.antecedents {
+            match ant {
+                TemporalPredicateRecord::SignalValue {
+                    signal_name: ant_signal,
+                    ..
+                } => {
+                    // Find who drives this signal
+                    let driver = semantic_ir
+                        .actor_signal_relations
+                        .iter()
+                        .find(|r| {
+                            r.signal_name == *ant_signal
+                                && matches!(r.relation, RelationKind::Drives)
+                        })
+                        .map(|r| r.actor_name.clone());
+                    waiting_actor = driver;
+                    signal_name = Some(ant_signal.clone());
+                }
+                TemporalPredicateRecord::HandshakeComplete { .. } => {
+                    waiting_actor = None;
+                }
+                _ => {}
+            }
+        }
+
+        // Find the actor in the consequent
+        let consequent_actor = rule.consequents.iter().find_map(|c| predicate_actor(c));
+
+        if let (Some(wait_for), Some(sig), Some(source)) =
+            (&waiting_actor, &signal_name, &consequent_actor)
+        {
+            if wait_for != source {
+                dependencies.push(ActorTemporalDependencyRecord {
+                    dependency_id: format!(
+                        "atd_{}_waits_{}_from_{}",
+                        sanitize_id(source),
+                        sanitize_id(sig),
+                        sanitize_id(wait_for)
+                    ),
+                    waiting_actor: source.clone(),
+                    signal_name: sig.clone(),
+                    source_actor: Some(wait_for.clone()),
+                    wait_for: None,
+                    source_text: rule.source_text.clone(),
+                    supporting_statement_ids: rule.supporting_statement_ids.clone(),
+                    automation_confidence: rule.automation_confidence,
+                });
+            }
+        }
+    }
+
+    dependencies
+}
+
+fn synthesize_temporal_invariants(semantic_ir: &SemanticIr) -> Vec<TemporalInvariantRecord> {
+    let mut invariants = Vec::new();
+
+    // From InvariantRecord in SemanticIR
+    for inv in &semantic_ir.invariants {
+        let kind = classify_invariant_text(&inv.statement);
+        invariants.push(TemporalInvariantRecord {
+            invariant_id: format!("tinv_{}", inv.invariant_id),
+            subject_signal: String::new(),
+            invariant_kind: kind,
+            condition_signal: None,
+            condition_value: None,
+            target_value: None,
+            source_text: inv.statement.clone(),
+            supporting_statement_ids: inv.supporting_statement_ids.clone(),
+            automation_confidence: AutomationConfidence::Medium,
+        });
+    }
+
+    // From signal_constraints (these are temporal by nature — "must not change when...")
+    for sc in &semantic_ir.signal_constraints {
+        let kind = signal_constraint_to_temporal_invariant_kind(&sc.constraint_kind);
+        let (condition_signal, condition_value) =
+            extract_condition_from_text(&sc.condition_text);
+        invariants.push(TemporalInvariantRecord {
+            invariant_id: format!("tinv_sc_{}", sc.constraint_id),
+            subject_signal: sc.subject_signal.clone(),
+            invariant_kind: kind,
+            condition_signal,
+            condition_value,
+            target_value: sc.target_value.clone(),
+            source_text: sc.source_text.clone(),
+            supporting_statement_ids: sc.supporting_statement_ids.clone(),
+            automation_confidence: sc.automation_confidence,
+        });
+    }
+
+    invariants
+}
+
+// ---------------------------------------------------------------------------
+// Synthesis helpers
+// ---------------------------------------------------------------------------
+
+fn render_control_expression(expr: &ControlExpressionRecord) -> String {
+    match expr {
+        ControlExpressionRecord::Reference { reference } => {
+            reference.base_name.clone()
+        }
+        ControlExpressionRecord::Literal { literal } => literal.clone(),
+        ControlExpressionRecord::Unary { operator, operand } => {
+            format!("{:?}({})", operator, render_control_expression(operand))
+        }
+        ControlExpressionRecord::Binary {
+            operator,
+            left,
+            right,
+        } => {
+            format!(
+                "({} {:?} {})",
+                render_control_expression(left),
+                operator,
+                render_control_expression(right)
+            )
+        }
+    }
+}
+
+fn convert_control_action_to_step(action: &ControlActionRecord) -> TransactionStep {
+    match action {
+        ControlActionRecord::Assign {
+            target,
+            value,
+            ..
+        } => TransactionStep::Drive {
+            drive_name: target.signal_name.clone(),
+            actuals: vec![render_control_expression(value)],
+        },
+        ControlActionRecord::Transition { target_state } => TransactionStep::Set {
+            target: "state".to_string(),
+            expr: target_state.clone(),
+        },
+        ControlActionRecord::DelayedPulse {
+            target,
+            delay,
+            value,
+        } => {
+            let mut steps = Vec::new();
+            steps.push(TransactionStep::Wait {
+                count: delay.to_string(),
+            });
+            steps.push(TransactionStep::Drive {
+                drive_name: target.signal_name.clone(),
+                actuals: vec![render_control_expression(value)],
+            });
+            TransactionStep::When {
+                condition: "delayed_pulse".to_string(),
+                body: steps,
+            }
+        }
+        ControlActionRecord::CompoundUpdate {
+            target,
+            operation,
+            amount,
+        } => {
+            let expr = if let Some(amt) = amount {
+                render_control_expression(amt)
+            } else {
+                "1".to_string()
+            };
+            match operation {
+                ControlCompoundUpdateOperation::Increment => TransactionStep::Update {
+                    target: target.signal_name.clone(),
+                    expr: format!("+{}", expr),
+                },
+                ControlCompoundUpdateOperation::Decrement => TransactionStep::Update {
+                    target: target.signal_name.clone(),
+                    expr: format!("-{}", expr),
+                },
+            }
+        }
+    }
+}
+
+fn render_temporal_predicate(pred: &TemporalPredicateRecord) -> String {
+    match pred {
+        TemporalPredicateRecord::SignalValue {
+            signal_name,
+            value,
+            phase,
+        } => format!("{} == {} @{:?}", signal_name, value, phase),
+        TemporalPredicateRecord::ActorDrivesSignal {
+            actor_name,
+            signal_name,
+            phase,
+        } => format!("{} drives {} @{:?}", actor_name, signal_name, phase),
+        TemporalPredicateRecord::ActorMaintainsSignalStable {
+            actor_name,
+            signal_name,
+            from_phase,
+            to_phase,
+        } => format!(
+            "{} stable {} {:?}→{:?}",
+            actor_name, signal_name, from_phase, to_phase
+        ),
+        TemporalPredicateRecord::SignalStable {
+            signal_name,
+            from_phase,
+            to_phase,
+        } => format!("{} stable {:?}→{:?}", signal_name, from_phase, to_phase),
+        TemporalPredicateRecord::ActorSamplesSignal {
+            actor_name,
+            signal_name,
+            phase,
+        } => format!("{} samples {} @{:?}", actor_name, signal_name, phase),
+        TemporalPredicateRecord::SignalSampled {
+            signal_name,
+            phase,
+        } => format!("{} sampled @{:?}", signal_name, phase),
+        TemporalPredicateRecord::HandshakeComplete {
+            valid_signal,
+            ready_signal,
+            phase,
+        } => format!("{}/{} handshake @{:?}", valid_signal, ready_signal, phase),
+    }
+}
+
+fn temporal_consequent_to_step(consequent: &TemporalPredicateRecord) -> Option<TransactionStep> {
+    match consequent {
+        TemporalPredicateRecord::ActorDrivesSignal {
+            signal_name,
+            phase,
+            ..
+        } => Some(TransactionStep::Drive {
+            drive_name: signal_name.clone(),
+            actuals: vec![format!("@{:?}", phase)],
+        }),
+        TemporalPredicateRecord::ActorSamplesSignal {
+            signal_name,
+            ..
+        } => Some(TransactionStep::Sample {
+            port: signal_name.clone(),
+            as_name: signal_name.clone(),
+        }),
+        TemporalPredicateRecord::HandshakeComplete {
+            valid_signal,
+            ready_signal,
+            ..
+        } => Some(TransactionStep::AwaitAll {
+            done_port: format!("{}_{}_done", valid_signal, ready_signal),
+        }),
+        TemporalPredicateRecord::SignalValue {
+            signal_name,
+            value,
+            ..
+        } => Some(TransactionStep::Drive {
+            drive_name: signal_name.clone(),
+            actuals: vec![value.clone()],
+        }),
+        _ => None,
+    }
+}
+
+fn predicate_actor(pred: &TemporalPredicateRecord) -> Option<String> {
+    match pred {
+        TemporalPredicateRecord::ActorDrivesSignal {
+            actor_name, ..
+        } => Some(actor_name.clone()),
+        TemporalPredicateRecord::ActorMaintainsSignalStable {
+            actor_name, ..
+        } => Some(actor_name.clone()),
+        TemporalPredicateRecord::ActorSamplesSignal {
+            actor_name, ..
+        } => Some(actor_name.clone()),
+        _ => None,
+    }
+}
+
+fn predicate_signal(pred: &TemporalPredicateRecord) -> Option<String> {
+    match pred {
+        TemporalPredicateRecord::SignalValue {
+            signal_name, ..
+        } => Some(signal_name.clone()),
+        TemporalPredicateRecord::ActorDrivesSignal {
+            signal_name, ..
+        } => Some(signal_name.clone()),
+        TemporalPredicateRecord::ActorMaintainsSignalStable {
+            signal_name, ..
+        } => Some(signal_name.clone()),
+        TemporalPredicateRecord::SignalStable {
+            signal_name, ..
+        } => Some(signal_name.clone()),
+        TemporalPredicateRecord::ActorSamplesSignal {
+            signal_name, ..
+        } => Some(signal_name.clone()),
+        TemporalPredicateRecord::SignalSampled {
+            signal_name, ..
+        } => Some(signal_name.clone()),
+        TemporalPredicateRecord::HandshakeComplete {
+            valid_signal, ..
+        } => Some(valid_signal.clone()),
+    }
+}
+
+fn classify_invariant_text(text: &str) -> TemporalInvariantKind {
+    let lower = text.to_lowercase();
+    if lower.contains("must not change") || lower.contains("shall not change") {
+        TemporalInvariantKind::MustNotChange
+    } else if lower.contains("remain stable") || lower.contains("must be stable") {
+        TemporalInvariantKind::MustRemainStable
+    } else if lower.contains("must be asserted") || lower.contains("shall be asserted") {
+        TemporalInvariantKind::MustBeAsserted
+    } else if lower.contains("must match") || lower.contains("shall match") {
+        TemporalInvariantKind::MustMatch
+    } else if lower.contains("must not exceed") || lower.contains("shall not exceed") {
+        TemporalInvariantKind::MustNotExceed
+    } else if lower.contains("only valid when") || lower.contains("valid only when") {
+        TemporalInvariantKind::OnlyValidWhen
+    } else {
+        TemporalInvariantKind::MustRemainStable // default for chip invariants
+    }
+}
+
+fn signal_constraint_to_temporal_invariant_kind(
+    kind: &SignalConstraintKind,
+) -> TemporalInvariantKind {
+    match kind {
+        SignalConstraintKind::MustBeHigh
+        | SignalConstraintKind::MustBeLow
+        | SignalConstraintKind::MustBeAsserted
+        | SignalConstraintKind::MustBeDeasserted => TemporalInvariantKind::MustBeAsserted,
+        SignalConstraintKind::MustNotChange => TemporalInvariantKind::MustNotChange,
+        SignalConstraintKind::MustBeStable => TemporalInvariantKind::MustRemainStable,
+        SignalConstraintKind::MustHoldData => TemporalInvariantKind::MustMatch,
+        SignalConstraintKind::MustBeValue { .. } => TemporalInvariantKind::MustBeAsserted,
+    }
+}
+
+fn extract_condition_from_text(text: &Option<String>) -> (Option<String>, Option<String>) {
+    let text = match text {
+        Some(t) => t,
+        None => return (None, None),
+    };
+    let lower = text.to_lowercase();
+    if let Some(pos) = lower.find("when ") {
+        let rest = &text[pos + 5..];
+        let signal = rest
+            .split_whitespace()
+            .next()
+            .map(|s| s.trim_matches(',').to_uppercase());
+        (signal, None)
+    } else {
+        (None, None)
+    }
+}
+
+fn sanitize_id(s: &str) -> String {
+    s.chars()
+        .map(|c| if c.is_alphanumeric() || c == '_' { c } else { '_' })
+        .collect::<String>()
+        .to_lowercase()
+}
+
+/// Extract the case value from a branch predicate for a switch statement.
+/// E.g. for predicate `(HTRANS == NONSEQ)` with selector `HTRANS`, returns `NONSEQ`.
+fn extract_case_value(
+    predicate: &ControlExpressionRecord,
+    _selector: &ControlExpressionRecord,
+) -> String {
+    if let ControlExpressionRecord::Binary {
+        operator: ControlBinaryOperator::Eq,
+        left,
+        right,
+    } = predicate
+    {
+        if let ControlExpressionRecord::Literal { literal } = right.as_ref() {
+            return literal.clone();
+        }
+        if let ControlExpressionRecord::Literal { literal } = left.as_ref() {
+            return literal.clone();
+        }
+    }
+    render_control_expression(predicate)
 }
 
 #[cfg(test)]
@@ -3255,5 +4708,416 @@ mod tests {
                 .any(|r| r.contains("Address phase")),
             "actor must participate in phase when supporting statements overlap (even with empty sections)"
         );
+    }
+
+    // -----------------------------------------------------------------------
+    // Regression tests for new temporal record types (#53)
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn transaction_intent_round_trips_through_json() {
+        let tx = super::TransactionIntent {
+            transaction_id: "txn_test".to_string(),
+            transaction_name: "test_transfer".to_string(),
+            activation_port: Some("HREADY".to_string()),
+            ports: vec![super::TransactionPortRecord {
+                port_name: "HADDR".to_string(),
+                direction: super::TransactionPortDirection::Output,
+                width: Some(32),
+            }],
+            steps: vec![
+                super::TransactionStep::Await {
+                    port: "HREADY".to_string(),
+                    watchdog: Some(16),
+                },
+                super::TransactionStep::When {
+                    condition: "HTRANS == NONSEQ".to_string(),
+                    body: vec![super::TransactionStep::Drive {
+                        drive_name: "HADDR".to_string(),
+                        actuals: vec!["addr".to_string()],
+                    }],
+                },
+            ],
+            source_block_ids: vec!["cb_1".to_string()],
+            source_temporal_rule_ids: vec!["tr_1".to_string()],
+            supporting_statement_ids: vec!["stmt_1".to_string()],
+            automation_confidence: super::AutomationConfidence::Medium,
+        };
+
+        let json = serde_json::to_string(&tx).unwrap();
+        let round_tripped: super::TransactionIntent = serde_json::from_str(&json).unwrap();
+        assert_eq!(round_tripped.transaction_id, "txn_test");
+        assert_eq!(round_tripped.transaction_name, "test_transfer");
+        assert_eq!(round_tripped.activation_port, Some("HREADY".to_string()));
+        assert_eq!(round_tripped.ports.len(), 1);
+        assert_eq!(round_tripped.steps.len(), 2);
+    }
+
+    #[test]
+    fn transaction_step_all_variants_serialize_with_step_kind_tag() {
+        let steps = vec![
+            super::TransactionStep::Drive {
+                drive_name: "HADDR".to_string(),
+                actuals: vec!["val".to_string()],
+            },
+            super::TransactionStep::When {
+                condition: "x == 1".to_string(),
+                body: vec![],
+            },
+            super::TransactionStep::Switch {
+                selector: "HTRANS".to_string(),
+                branches: vec![super::SwitchBranch {
+                    value: "NONSEQ".to_string(),
+                    body: vec![],
+                }],
+            },
+            super::TransactionStep::While {
+                condition: "count < 4".to_string(),
+                body: vec![],
+            },
+            super::TransactionStep::Until {
+                condition: "done".to_string(),
+                body: vec![],
+            },
+            super::TransactionStep::Repeat {
+                count: "8".to_string(),
+                body: vec![],
+            },
+            super::TransactionStep::Await {
+                port: "READY".to_string(),
+                watchdog: Some(16),
+            },
+            super::TransactionStep::Wait {
+                count: "2".to_string(),
+            },
+            super::TransactionStep::Sample {
+                port: "DATA".to_string(),
+                as_name: "val".to_string(),
+            },
+            super::TransactionStep::Do {
+                child_transaction: "sub_tx".to_string(),
+                bindings: vec![],
+            },
+            super::TransactionStep::Spawn {
+                child_transaction: "sub_tx".to_string(),
+                instance: "i0".to_string(),
+                bindings: vec![],
+            },
+            super::TransactionStep::Set {
+                target: "state".to_string(),
+                expr: "IDLE".to_string(),
+            },
+            super::TransactionStep::Update {
+                target: "counter".to_string(),
+                expr: "+1".to_string(),
+            },
+            super::TransactionStep::ShiftLeft {
+                reg: "shift_reg".to_string(),
+                bit: "1".to_string(),
+            },
+            super::TransactionStep::ShiftRight {
+                reg: "shift_reg".to_string(),
+                bit: "0".to_string(),
+                width: Some(8),
+            },
+            super::TransactionStep::Complete {
+                port: "done".to_string(),
+            },
+            super::TransactionStep::AwaitAll {
+                done_port: "all_done".to_string(),
+            },
+            super::TransactionStep::AwaitAny {
+                done_port: "any_done".to_string(),
+            },
+            super::TransactionStep::Latency {
+                min: 1,
+                max: 3,
+            },
+        ];
+
+        let json = serde_json::to_string_pretty(&steps).unwrap();
+        assert!(json.contains("\"step_kind\""));
+        assert!(json.contains("\"drive\""));
+        assert!(json.contains("\"when\""));
+        assert!(json.contains("\"switch\""));
+        assert!(json.contains("\"while\""));
+        assert!(json.contains("\"until\""));
+        assert!(json.contains("\"repeat\""));
+        assert!(json.contains("\"await\""));
+        assert!(json.contains("\"wait\""));
+        assert!(json.contains("\"sample\""));
+        assert!(json.contains("\"do\""));
+        assert!(json.contains("\"spawn\""));
+        assert!(json.contains("\"set\""));
+        assert!(json.contains("\"update\""));
+        assert!(json.contains("\"shift_left\""));
+        assert!(json.contains("\"shift_right\""));
+        assert!(json.contains("\"complete\""));
+        assert!(json.contains("\"await_all\""));
+        assert!(json.contains("\"await_any\""));
+        assert!(json.contains("\"latency\""));
+
+        let round_tripped: Vec<super::TransactionStep> = serde_json::from_str(&json).unwrap();
+        assert_eq!(round_tripped.len(), 19);
+    }
+
+    #[test]
+    fn actor_drive_relation_round_trips() {
+        let rel = super::ActorDriveRelationRecord {
+            relation_id: "adr_1".to_string(),
+            driver_actor: "Manager".to_string(),
+            signal_name: "HADDR".to_string(),
+            consumer_actor: Some("Subordinate".to_string()),
+            condition: Some("HTRANS == NONSEQ".to_string()),
+            value: Some("addr_val".to_string()),
+            source_text: "Manager drives HADDR".to_string(),
+            supporting_statement_ids: vec!["stmt_1".to_string()],
+            automation_confidence: super::AutomationConfidence::High,
+        };
+
+        let json = serde_json::to_string(&rel).unwrap();
+        let round_tripped: super::ActorDriveRelationRecord = serde_json::from_str(&json).unwrap();
+        assert_eq!(round_tripped.relation_id, "adr_1");
+        assert_eq!(round_tripped.driver_actor, "Manager");
+        assert_eq!(round_tripped.signal_name, "HADDR");
+        assert_eq!(round_tripped.consumer_actor, Some("Subordinate".to_string()));
+    }
+
+    #[test]
+    fn temporal_invariant_round_trips() {
+        let inv = super::TemporalInvariantRecord {
+            invariant_id: "tinv_1".to_string(),
+            subject_signal: "HADDR".to_string(),
+            invariant_kind: super::TemporalInvariantKind::MustNotChange,
+            condition_signal: Some("HREADY".to_string()),
+            condition_value: Some("LOW".to_string()),
+            target_value: None,
+            source_text: "HADDR must not change when HREADY is LOW".to_string(),
+            supporting_statement_ids: vec!["stmt_1".to_string()],
+            automation_confidence: super::AutomationConfidence::High,
+        };
+
+        let json = serde_json::to_string(&inv).unwrap();
+        let round_tripped: super::TemporalInvariantRecord = serde_json::from_str(&json).unwrap();
+        assert_eq!(round_tripped.invariant_id, "tinv_1");
+        assert_eq!(round_tripped.invariant_kind, super::TemporalInvariantKind::MustNotChange);
+        assert_eq!(round_tripped.condition_signal, Some("HREADY".to_string()));
+    }
+
+    #[test]
+    fn actor_trigger_relation_round_trips() {
+        let rel = super::ActorTriggerRelationRecord {
+            relation_id: "atr_1".to_string(),
+            source_actor: "Requester".to_string(),
+            target_actor: "Arbiter".to_string(),
+            trigger_port: Some("REQ".to_string()),
+            activation_kind: Some(super::ActivationKind::Do),
+            source_text: "Arbiter grants on REQ".to_string(),
+            supporting_statement_ids: vec![],
+            automation_confidence: super::AutomationConfidence::Medium,
+        };
+
+        let json = serde_json::to_string(&rel).unwrap();
+        let round_tripped: super::ActorTriggerRelationRecord = serde_json::from_str(&json).unwrap();
+        assert_eq!(round_tripped.source_actor, "Requester");
+        assert_eq!(round_tripped.target_actor, "Arbiter");
+        assert_eq!(round_tripped.activation_kind, Some(super::ActivationKind::Do));
+    }
+
+    #[test]
+    fn intent_ir_serializes_new_fields() {
+        // Build a minimal IntentIr and verify the new fields serialize
+        let tempdir = tempdir().unwrap();
+        let source = tempdir.path().join("spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+
+        fs::write(
+            &source,
+            "# Spec\nSignal VALID is output width 1.\nSignal READY is input width 1.\nSignal DATA is output width 8.\n\nThe transmitter drives VALID and DATA.\nThe receiver samples VALID and drives READY.\nWhen VALID and READY, data is transferred.\n",
+        ).unwrap();
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base).unwrap();
+        source_ir.write_to_disk().unwrap();
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        ).unwrap();
+        evidence_ir.write_to_disk().unwrap();
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        ).unwrap();
+        semantic_ir.write_to_disk().unwrap();
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        ).unwrap();
+
+        let json = intent_ir.to_pretty_json().unwrap();
+
+        // New fields must appear in JSON output
+        assert!(json.contains("\"transactions\""), "transactions field missing");
+        assert!(json.contains("\"actor_drive_relations\""), "actor_drive_relations field missing");
+        assert!(json.contains("\"actor_sample_relations\""), "actor_sample_relations field missing");
+        assert!(json.contains("\"actor_trigger_relations\""), "actor_trigger_relations field missing");
+        assert!(json.contains("\"actor_temporal_dependencies\""), "actor_temporal_dependencies field missing");
+        assert!(json.contains("\"temporal_invariants\""), "temporal_invariants field missing");
+
+        // Write to disk then load back and verify new fields are accessible
+        intent_ir.write_to_disk().unwrap();
+        let reloaded = IntentIr::load_from_path(&intent_ir.artifact_layout.intent_ir_path).unwrap();
+        // New fields should exist (may be empty depending on NLP)
+        let _ = reloaded.transactions.len();
+        let _ = reloaded.actor_drive_relations.len();
+        let _ = reloaded.temporal_invariants.len();
+    }
+
+    #[test]
+    fn pattern_recognition_detects_valid_ready_handshake() {
+        // Verify that when INTENT_IR is built from a spec with VALID/READY signals,
+        // the digital pattern recognizer adds handshake transactions
+        let tempdir = tempdir().unwrap();
+        let source = tempdir.path().join("hs.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+
+        fs::write(
+            &source,
+            "# Handshake Protocol\nSignal VALID is output width 1.\nSignal READY is input width 1.\n\nThe transmitter drives VALID.\nThe receiver drives READY.\nWhen VALID and READY, data is transferred.\n",
+        ).unwrap();
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base).unwrap();
+        source_ir.write_to_disk().unwrap();
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        ).unwrap();
+        evidence_ir.write_to_disk().unwrap();
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        ).unwrap();
+        semantic_ir.write_to_disk().unwrap();
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        ).unwrap();
+
+        // Pattern recognition should have added a handshake transaction
+        let has_handshake_tx = intent_ir
+            .transactions
+            .iter()
+            .any(|t| t.transaction_name.contains("handshake"));
+        assert!(
+            has_handshake_tx,
+            "expected pattern recognition to add a valid/ready handshake transaction"
+        );
+
+        // Should also have a drive relation for VALID
+        let has_valid_drive = intent_ir
+            .actor_drive_relations
+            .iter()
+            .any(|r| r.signal_name == "VALID");
+        assert!(has_valid_drive, "expected a drive relation for VALID signal");
+    }
+
+    #[test]
+    fn temporal_invariant_kind_classification() {
+        assert_eq!(
+            super::classify_invariant_text("HADDR must not change when HREADY is LOW"),
+            super::TemporalInvariantKind::MustNotChange
+        );
+        assert_eq!(
+            super::classify_invariant_text("DATA shall remain stable during address phase"),
+            super::TemporalInvariantKind::MustRemainStable
+        );
+        assert_eq!(
+            super::classify_invariant_text("RESET must be asserted for 16 cycles"),
+            super::TemporalInvariantKind::MustBeAsserted
+        );
+        assert_eq!(
+            super::classify_invariant_text("HWDATA must match the value on the bus"),
+            super::TemporalInvariantKind::MustMatch
+        );
+        assert_eq!(
+            super::classify_invariant_text("BURST length must not exceed 16"),
+            super::TemporalInvariantKind::MustNotExceed
+        );
+        assert_eq!(
+            super::classify_invariant_text("WRITE is only valid when READY is HIGH"),
+            super::TemporalInvariantKind::OnlyValidWhen
+        );
+    }
+
+    #[test]
+    fn sanitize_id_replaces_special_chars() {
+        assert_eq!(super::sanitize_id("AHB Manager"), "ahb_manager");
+        assert_eq!(super::sanitize_id("req/ack_protocol"), "req_ack_protocol");
+        assert_eq!(super::sanitize_id("READY"), "ready");
+    }
+
+    #[test]
+    fn count_nested_steps_handles_empty() {
+        let steps: Vec<super::TransactionStep> = vec![];
+        assert_eq!(super::count_nested_steps(&steps), 0);
+    }
+
+    #[test]
+    fn count_nested_steps_sums_nested_bodies() {
+        let steps = vec![
+            super::TransactionStep::When {
+                condition: "x".to_string(),
+                body: vec![
+                    super::TransactionStep::Drive {
+                        drive_name: "A".to_string(),
+                        actuals: vec![],
+                    },
+                    super::TransactionStep::Drive {
+                        drive_name: "B".to_string(),
+                        actuals: vec![],
+                    },
+                ],
+            },
+            super::TransactionStep::Drive {
+                drive_name: "C".to_string(),
+                actuals: vec![],
+            },
+        ];
+        // 2 top-level steps + 2 nested = 4
+        assert_eq!(super::count_nested_steps(&steps), 4);
+    }
+
+    #[test]
+    fn extract_case_value_from_binary_equality() {
+        use crate::ir::semantic::{ControlBinaryOperator, ControlExpressionRecord};
+        let predicate = ControlExpressionRecord::Binary {
+            operator: ControlBinaryOperator::Eq,
+            left: Box::new(ControlExpressionRecord::Reference {
+                reference: crate::ir::semantic::ControlReferenceRecord {
+                    base_name: "HTRANS".to_string(),
+                    kind_hint: crate::ir::semantic::ControlReferenceKind::Signal,
+                    suffixes: vec![],
+                    exposed_public_output: false,
+                },
+            }),
+            right: Box::new(ControlExpressionRecord::Literal {
+                literal: "NONSEQ".to_string(),
+            }),
+        };
+        let selector = ControlExpressionRecord::Reference {
+            reference: crate::ir::semantic::ControlReferenceRecord {
+                base_name: "HTRANS".to_string(),
+                kind_hint: crate::ir::semantic::ControlReferenceKind::Signal,
+                suffixes: vec![],
+                exposed_public_output: false,
+            },
+        };
+        let value = super::extract_case_value(&predicate, &selector);
+        assert_eq!(value, "NONSEQ");
     }
 }

@@ -11,7 +11,7 @@ use crate::ir::evidence::{
     EvidenceIr, SignalSemanticConflictRecord, SignalSemanticHintRecord,
     SignalSemanticHintSourceKind, StatementClass, VisualEvidenceRole, VisualObservationKind,
 };
-use crate::ir::intent::IntentIr;
+use crate::ir::intent::{count_nested_steps, IntentIr};
 use crate::ir::prior_memory::{
     CorpusMemory, NegativeKnowledgeKind, ProtocolFamily,
     interface_signal_conflict_negative_knowledge_pattern,
@@ -4557,24 +4557,19 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
 
     // Layer E: ISF readiness scoring.
     //
-    // The score measures interface-contract completeness for lowering to `.isf`
-    // (Intent Scheduling Format). Behavioral rules carry the dominant weight
-    // because temporal/timing/conditional relationships between signals are the
-    // hardest information to extract and the most critical for lowering.
-    // Direction, width, and encoding are easier to extract but still needed.
+    // The score measures interface-contract completeness AND temporal extraction
+    // quality for lowering to `.isf` (Intent Scheduling Format).
     //
     // Points breakdown (total max = 100):
-    //   Signal direction coverage (declared only): 0–3  pts
-    //   Signal width coverage    (declared only): 0–3  pts  (parametric widths count)
-    //   Clock/reset contract:                    0–2  pts  (clock=1, reset=1 — table stakes)
-    //   Encoding enum definitions:               0–3  pts  (binary — extracted or not)
-    //   Behavioral rule coverage:                0–89 pts  (proportional to signals, dominant)
-    //
-    // Parametric widths are scored as resolved because ISF accepts parameterized
-    // widths natively — the designer chooses concrete values at integration time.
-    // Missing actor hierarchy does not penalise the score because ISF generates
-    // flat actors; the designer decomposes later. Missing FSM states, register maps,
-    // and timing constraints are not penalised because ISF does not require them.
+    //   Signal direction coverage:              0–3  pts
+    //   Signal width coverage:                  0–3  pts  (parametric widths count)
+    //   Clock/reset contract:                   0–2  pts  (clock=1, reset=1 — table stakes)
+    //   Encoding enum definitions:              0–3  pts  (binary — extracted or not)
+    //   Transaction structure:                  0–30 pts  (ordered behavioral steps per actor)
+    //   Transaction complexity:                 0–15 pts  (control flow depth — when/switch/while/await)
+    //   Actor interactions:                     0–15 pts  (drive/sample/trigger/dependency records)
+    //   Temporal invariants:                    0–14 pts  (always-true constraints extracted)
+    //   Base behavioral rules:                  0–15 pts  (proportional rule coverage)
     let has_enums = !ir.symbol_definitions.is_empty();
     let has_system_contract = ir.system_contract.is_some();
 
@@ -4590,7 +4585,53 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             .iter()
             .any(|s| matches!(s.kind, InfrastructureSignalKind::SystemReset));
 
-    // Behavioral rule coverage: ratio of rules to declared signals.
+    // --- Temporal sub-component scoring ---
+
+    // 1. Transaction structure (0–30 pts): each actor should have at least one
+    //    transaction with structured steps. Full credit at 1+ transaction per actor.
+    let actor_count = ir.actors.len().max(1);
+    let txn_ratio = (ir.transactions.len() as f64 / actor_count as f64).min(1.0);
+    let txn_structure_score = txn_ratio * 30.0;
+
+    // 2. Transaction complexity (0–15 pts): average step depth per transaction
+    //    rewards nested control flow (when/switch/while/await/repeat).
+    let txn_complexity: f64 = if ir.transactions.is_empty() {
+        0.0
+    } else {
+        let total_steps: usize = ir
+            .transactions
+            .iter()
+            .map(|t| count_nested_steps(&t.steps))
+            .sum();
+        let avg_depth = total_steps as f64 / ir.transactions.len() as f64;
+        // Cap at ~20 steps average for full credit
+        (avg_depth / 20.0).min(1.0)
+    };
+    let txn_complexity_score = txn_complexity * 15.0;
+
+    // 3. Actor interactions (0–15 pts): drive/sample/trigger/dependency records
+    //    per declared signal.
+    let interaction_count = ir.actor_drive_relations.len()
+        + ir.actor_sample_relations.len()
+        + ir.actor_trigger_relations.len()
+        + ir.actor_temporal_dependencies.len();
+    let interaction_ratio = if declared_count > 0 {
+        (interaction_count as f64 / declared_count as f64).min(1.0)
+    } else {
+        0.0
+    };
+    let interaction_score = interaction_ratio * 15.0;
+
+    // 4. Temporal invariants (0–14 pts): always-true constraints extracted per signal.
+    let invariant_ratio = if declared_count > 0 {
+        (ir.temporal_invariants.len() as f64 / declared_count as f64).min(1.0)
+    } else {
+        0.0
+    };
+    let invariant_score = invariant_ratio * 14.0;
+
+    // 5. Base behavioral rules (0–15 pts): the existing ratio of temporal_rules +
+    //    signal_constraints + conditional_rules to declared signals.
     let behavioral_rule_count =
         ir.temporal_rules.len() + ir.signal_constraints.len() + ir.conditional_rules.len();
     let behavioral_rule_ratio = if declared_count > 0 {
@@ -4598,21 +4639,27 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     } else {
         0.0
     };
+    let base_behavioral_score = (behavioral_rule_ratio.min(1.0) * 15.0).min(15.0); // 0–15
 
+    // --- Static components ---
     let dir_score = dir_pct as f64 * 0.03; // 0–3
     let width_score = w_pct as f64 * 0.03; // 0–3
-    // Clock/reset: table-stakes — always exist in a digital design.
-    // If not named in the PDF, we default to clk/rst_n. Minimal weight.
     let clock_score = if has_clock { 1.0_f64 } else { 0.0 }; // 0–1
     let reset_score = if has_reset { 1.0_f64 } else { 0.0 }; // 0–1
     let enum_score = if has_enums { 3.0_f64 } else { 0.0 }; // 0–3
-    // Behavioral rules: full credit when average >= 1 rule per signal;
-    // scale proportionally otherwise. Dominant weight (89/100).
-    let behavioral_score = (behavioral_rule_ratio.min(1.0) * 89.0).min(89.0); // 0–89
 
-    let score =
-        (dir_score + width_score + clock_score + reset_score + enum_score + behavioral_score)
-            .min(100.0);
+    let score = (dir_score
+        + width_score
+        + clock_score
+        + reset_score
+        + enum_score
+        + txn_structure_score
+        + txn_complexity_score
+        + interaction_score
+        + invariant_score
+        + base_behavioral_score)
+        .min(100.0);
+
     let quality_gap_related_ids = intent_quality_gap_related_ids(IntentQualityScoreInputs {
         dir_pct,
         width_pct: w_pct,
@@ -4635,19 +4682,26 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     println!("  has_reset: {has_reset}");
     println!("  has_system_contract: {has_system_contract}");
     println!("  has_encoding_enums: {has_enums}");
+    println!("  transactions: {} (across {} actors)", ir.transactions.len(), actor_count);
     println!(
         "  behavioral_rule_count: {behavioral_rule_count} (temporal + signal constraints + conditional rules)"
     );
+    println!("  actor_interactions: {} (drive/sample/trigger/dependency)", interaction_count);
+    println!("  temporal_invariants: {}", ir.temporal_invariants.len());
     println!("  behavioral_rule_ratio: {behavioral_rule_ratio:.2} rules/signal");
     println!("  residual_decisions: {}", ir.residual_decisions.len());
     println!();
     println!("  score_breakdown:");
-    println!("    signal_direction:  {dir_score:.1}/3");
-    println!("    signal_width:      {width_score:.1}/3");
-    println!("    clock_contract:    {clock_score:.0}/1");
-    println!("    reset_contract:    {reset_score:.0}/1");
-    println!("    encoding_enums:    {enum_score:.0}/3");
-    println!("    behavioral_rules:  {behavioral_score:.1}/89");
+    println!("    signal_direction:   {dir_score:.1}/3");
+    println!("    signal_width:       {width_score:.1}/3");
+    println!("    clock_contract:     {clock_score:.0}/1");
+    println!("    reset_contract:     {reset_score:.0}/1");
+    println!("    encoding_enums:     {enum_score:.0}/3");
+    println!("    txn_structure:      {txn_structure_score:.1}/30");
+    println!("    txn_complexity:     {txn_complexity_score:.1}/15");
+    println!("    actor_interactions: {interaction_score:.1}/15");
+    println!("    temporal_invariants:{invariant_score:.1}/14");
+    println!("    base_behavioral:    {base_behavioral_score:.1}/15");
     let grade = match score as u32 {
         90..=100 => "EXCELLENT",
         70..=89 => "GOOD",

@@ -52,6 +52,22 @@ pub fn run(args: AdaptArgs) -> Result<()> {
             println!("top_candidate_count: {}", fsm.top_candidates.len());
             println!("renderable: {}", fsm.renderability.is_renderable);
         }
+        if let Some(isf) = &adapter.isf {
+            println!("actor_name: {}", isf.actor_name);
+            println!("is_renderable: {}", isf.is_renderable);
+            println!("signal_count: {}", isf.signal_count);
+            println!("transaction_count: {}", isf.transaction_count);
+            println!("rule_count: {}", isf.rule_count);
+            println!("constant_count: {}", isf.constant_count);
+            println!("enum_count: {}", isf.enum_count);
+            println!("storage_count: {}", isf.storage_count);
+            if !isf.blocking_reasons.is_empty() {
+                println!("blocking_reasons:");
+                for reason in &isf.blocking_reasons {
+                    println!("  - {}", reason);
+                }
+            }
+        }
         println!(
             "residual_decision_count: {}",
             adapter.residual_decisions.len()

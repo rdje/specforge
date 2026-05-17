@@ -1810,6 +1810,12 @@ mod tests {
             temporal_conflicts: Vec::new(),
             signal_constraints: Vec::new(),
             conditional_rules: Vec::new(),
+            transactions: Vec::new(),
+            actor_drive_relations: Vec::new(),
+            actor_sample_relations: Vec::new(),
+            actor_trigger_relations: Vec::new(),
+            actor_temporal_dependencies: Vec::new(),
+            temporal_invariants: Vec::new(),
             residual_decisions: Vec::new(),
             validation_reports: vec![ValidationReportRecord {
                 report_id: "report_1".to_string(),
@@ -2533,6 +2539,197 @@ mod tests {
             &mut semantic_priors,
         );
         assert!(semantic_priors.is_empty());
+    }
+
+    #[test]
+    fn run_rejects_missing_artifact_path() {
+        let args = crate::cli::LearnPriorsArgs {
+            artifacts: vec![std::path::PathBuf::from("/nonexistent/artifact.json")],
+            output: std::path::PathBuf::from("/tmp/out.json"),
+            dry_run: true,
+        };
+        let result = run(args);
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn run_rejects_non_intent_ir_artifact() -> Result<()> {
+        let tempdir = tempdir()?;
+        // Create an IntentIR JSON with a non-IntentIr stage (SemanticIr) to trigger the stage check
+        let artifact_path = tempdir.path().join("intent_ir.json");
+        let non_intent = serde_json::json!({
+            "schema_version": 1,
+            "stage": "semantic_ir",
+            "semantic_ir_path": "/tmp/semantic_ir.json",
+            "artifact_layout": {
+                "artifact_root": "/tmp",
+                "intent_ir_path": "/tmp/intent_ir.json"
+            },
+            "document_identity": {
+                "document_key": "test_doc",
+                "display_name": "Test Doc"
+            },
+            "intent_identity": {
+                "intent_id": "intent",
+                "summary": "summary"
+            },
+            "actors": [],
+            "actor_signal_relations": [],
+            "actor_ports": [],
+            "signal_connectivity": [],
+            "infrastructure_signals": [],
+            "interface_signal_conflicts": [],
+            "signal_connectivity_conflicts": [],
+            "signal_polarities": [],
+            "signal_polarity_conflicts": [],
+            "signal_semantic_conflicts": [],
+            "interfaces": [],
+            "system_contract": null,
+            "behaviors": [],
+            "constraints": [],
+            "assumptions": [],
+            "init_assignments": [],
+            "regular_states": [],
+            "state_transitions": [],
+            "decision_tree_fragments": [],
+            "symbol_definitions": [],
+            "control_blocks": [],
+            "explicit_modules": [],
+            "explicit_tops": [],
+            "register_records": [],
+            "timing_constraints": [],
+            "temporal_rules": [],
+            "temporal_conflicts": [],
+            "signal_constraints": [],
+            "conditional_rules": [],
+            "residual_decisions": [],
+            "validation_reports": []
+        });
+        fs::write(&artifact_path, serde_json::to_string_pretty(&non_intent)?)?;
+
+        let args = crate::cli::LearnPriorsArgs {
+            artifacts: vec![artifact_path],
+            output: tempdir.path().join("out.json"),
+            dry_run: true,
+        };
+        let result = run(args);
+        assert!(result.is_err());
+        assert!(result.unwrap_err().to_string().contains("IntentIR"));
+        Ok(())
+    }
+
+    #[test]
+    fn assess_intent_for_learning_rejects_non_intent_ir_report() {
+        let validation_reports = vec![ValidationReportRecord {
+            report_id: "report_1".to_string(),
+            validated_stage: IrStage::SemanticIr,
+            artifact_fingerprint: "fingerprint".to_string(),
+            summary: "ok".to_string(),
+            overall_score: Some(80),
+            grade: Some("GOOD".to_string()),
+            metrics: Vec::new(),
+            findings: Vec::new(),
+        }];
+
+        let assessment = assess_intent_for_learning(&validation_reports);
+        assert!(!assessment.accepted);
+        assert!(
+            assessment
+                .skip_reason
+                .as_deref()
+                .unwrap()
+                .contains("instead of intent_ir")
+        );
+    }
+
+    #[test]
+    fn harvest_actor_taxonomy_priors_upgrades_confidence_when_higher() {
+        let mut intent_ir = base_intent_ir("doc_upgrade", "doc_upgrade");
+        intent_ir.actors = vec![IntentActor {
+            actor_id: "actor_requester".to_string(),
+            actor_name: Some("Requester".to_string()),
+            responsibilities: Vec::new(),
+            supporting_actor_ids: Vec::new(),
+        }];
+        intent_ir.interfaces = vec![InterfaceRecord {
+            interface_id: "if_1".to_string(),
+            signals: vec!["PSEL".to_string()],
+            signal_records: vec![InterfaceSignalRecord {
+                signal_name: "PSEL".to_string(),
+                direction_hint: Some(InterfaceSignalDirection::Output),
+                width_hint: None,
+                resolved_polarity: None,
+                semantic_tags: vec![SignalSemanticTag::HandshakeValidLike],
+                semantic_candidates: Vec::new(),
+                semantic_arbitration: Some(InterfaceSignalSemanticArbitrationRecord {
+                    candidate_count: 1,
+                    leading_role: InterfaceSignalSemanticRole::HandshakeValidLike,
+                    leading_evidence_weight: 3,
+                    leading_prior_reliability_adjustment: 0,
+                    leading_arbitration_weight: 3,
+                    runner_up_role: None,
+                    runner_up_evidence_weight: None,
+                    runner_up_prior_reliability_adjustment: None,
+                    runner_up_arbitration_weight: None,
+                    margin_over_runner_up: None,
+                    decisive: true,
+                    decision_basis: SemanticArbitrationDecisionBasis::SingleCandidate,
+                }),
+                resolved_semantic_role: Some(InterfaceSignalSemanticRole::HandshakeValidLike),
+                semantic_grounding_strength: Some(SemanticGroundingStrength::MultiSource),
+                semantic_consensus: Some(InterfaceSignalSemanticConsensusRecord {
+                    role: InterfaceSignalSemanticRole::HandshakeValidLike,
+                    grounding_strength: SemanticGroundingStrength::MultiSource,
+                    supporting_source_kinds: vec![
+                        SignalSemanticHintSourceKind::SignalDescriptionTable,
+                    ],
+                    supporting_observation_count: 1,
+                    automation_confidence: AutomationConfidence::High,
+                    prior_reliability_adjustment: 0,
+                    prior_guided: false,
+                    alias_dependent: false,
+                }),
+                semantic_observations: vec![InterfaceSignalSemanticObservationRecord {
+                    semantic_tags: vec![SignalSemanticTag::HandshakeValidLike],
+                    source_kind: SignalSemanticHintSourceKind::SignalDescriptionTable,
+                    source_text: "Initiates the transfer request.".to_string(),
+                    supporting_statement_ids: vec!["stmt_psel".to_string()],
+                    supporting_table_ids: vec!["table_1".to_string()],
+                    supporting_visual_evidence_ids: Vec::new(),
+                    automation_confidence: AutomationConfidence::High,
+                }],
+                supporting_statement_ids: Vec::new(),
+                supporting_table_ids: vec!["table_1".to_string()],
+                automation_confidence: AutomationConfidence::High,
+            }],
+            supporting_statement_ids: Vec::new(),
+        }];
+        // First port: Medium confidence
+        intent_ir.actor_ports = vec![ActorPortRecord {
+            actor_id: "actor_requester".to_string(),
+            actor_name: "Requester".to_string(),
+            signal_name: "PSEL".to_string(),
+            direction: ActorRelativeDirection::Output,
+            relation_basis: vec![RelationKind::Drives],
+            width_hint: None,
+            source_statement_ids: vec!["stmt_psel".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        }];
+
+        let mut actor_taxonomy_priors = BTreeMap::new();
+        harvest_actor_taxonomy_priors(
+            &intent_ir,
+            ProtocolFamily::AmbaApb,
+            &mut actor_taxonomy_priors,
+        );
+
+        let records = materialize_actor_taxonomy_priors(actor_taxonomy_priors);
+        assert_eq!(records.len(), 1);
+        // The consensus has High confidence which should upgrade from Medium
+        assert_eq!(
+            records[0].strongest_automation_confidence,
+            AutomationConfidence::High
+        );
     }
 
     #[test]

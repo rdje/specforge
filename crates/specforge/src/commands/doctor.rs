@@ -608,7 +608,7 @@ mod tests {
     use super::{
         DEFAULT_LOCAL_MODEL, LOCAL_CHAT_PROBE_TIMEOUT_SECONDS, format_curl_probe_failure,
         parse_ollama_tags_response, parse_openai_chat_response, parse_openai_models_response,
-        truncate_for_display,
+        truncate_for_display, yes_no,
     };
 
     #[test]
@@ -703,5 +703,67 @@ mod tests {
         );
 
         assert_eq!(detail, "connection refused");
+    }
+
+    // --- yes_no ---
+
+    #[test]
+    fn yes_no_returns_yes_for_true() {
+        assert_eq!(yes_no(true), "yes");
+    }
+
+    #[test]
+    fn yes_no_returns_no_for_false() {
+        assert_eq!(yes_no(false), "no");
+    }
+
+    // --- truncate_for_display edge cases ---
+
+    #[test]
+    fn truncate_for_display_empty_string() {
+        assert_eq!(truncate_for_display("", 5), "");
+    }
+
+    #[test]
+    fn truncate_for_display_zero_max_chars() {
+        assert_eq!(truncate_for_display("hello", 0), "…");
+    }
+
+    #[test]
+    fn truncate_for_display_exact_max_chars() {
+        assert_eq!(truncate_for_display("hello", 5), "hello");
+    }
+
+    #[test]
+    fn truncate_for_display_shorter_than_max() {
+        assert_eq!(truncate_for_display("hi", 10), "hi");
+    }
+
+    // --- parse_ollama_tags_response error cases ---
+
+    #[test]
+    fn parse_ollama_tags_response_rejects_invalid_json() {
+        let result = parse_ollama_tags_response("not json");
+        assert!(result.is_err());
+    }
+
+    // --- parse_openai_models_response error cases ---
+
+    #[test]
+    fn parse_openai_models_response_rejects_invalid_json() {
+        let result = parse_openai_models_response("not json", DEFAULT_LOCAL_MODEL);
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn parse_openai_chat_response_rejects_invalid_json() {
+        let result = parse_openai_chat_response("not json");
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn parse_openai_chat_response_rejects_missing_choices() {
+        let result = parse_openai_chat_response(r#"{"other": "field"}"#);
+        assert!(result.is_err());
     }
 }

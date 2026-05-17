@@ -971,4 +971,264 @@ mod tests {
                 .contains("--execute-rescan-plan requires --rescan-plan <path>")
         );
     }
+
+    #[test]
+    fn artifact_base_roots_are_non_default() {
+        assert!(!source_artifact_base_root().to_string_lossy().is_empty());
+        assert!(!evidence_artifact_base_root().to_string_lossy().is_empty());
+        assert!(!semantic_artifact_base_root().to_string_lossy().is_empty());
+        assert!(!intent_artifact_base_root().to_string_lossy().is_empty());
+        assert!(!adapter_artifact_base_root().to_string_lossy().is_empty());
+    }
+
+    #[test]
+    fn provider_name_returns_correct_values() {
+        assert_eq!(provider_name(VlmProviderArg::Ollama), "ollama");
+        assert_eq!(provider_name(VlmProviderArg::OpenAi), "openai");
+        assert_eq!(provider_name(VlmProviderArg::LmStudio), "lmstudio");
+        assert_eq!(provider_name(VlmProviderArg::Skip), "skip");
+    }
+
+    #[test]
+    fn render_lowering_status_returns_correct_values() {
+        assert_eq!(
+            render_lowering_status(AdapterLoweringStatus::Renderable),
+            "renderable"
+        );
+        assert_eq!(
+            render_lowering_status(AdapterLoweringStatus::Blocked),
+            "blocked"
+        );
+    }
+
+    // --- arbitration_status_for ---
+
+    #[test]
+    fn arbitration_status_for_dry_run_not_promoted() {
+        assert_eq!(
+            ConvergenceRescanPlanReport::arbitration_status_for(false, 0, false, 0),
+            "dry_run_not_promoted"
+        );
+    }
+
+    #[test]
+    fn arbitration_status_for_changed_requires_review_from_review_required() {
+        assert_eq!(
+            ConvergenceRescanPlanReport::arbitration_status_for(true, 0, false, 1),
+            "changed_requires_validation_review"
+        );
+    }
+
+    #[test]
+    fn arbitration_status_for_changed_requires_review_from_executed_changed() {
+        assert_eq!(
+            ConvergenceRescanPlanReport::arbitration_status_for(true, 1, false, 0),
+            "changed_requires_validation_review"
+        );
+    }
+
+    #[test]
+    fn arbitration_status_for_changed_requires_review_from_snapshot_changed() {
+        assert_eq!(
+            ConvergenceRescanPlanReport::arbitration_status_for(true, 0, true, 0),
+            "changed_requires_validation_review"
+        );
+    }
+
+    #[test]
+    fn arbitration_status_for_executed_validated_no_change() {
+        assert_eq!(
+            ConvergenceRescanPlanReport::arbitration_status_for(true, 0, false, 0),
+            "executed_validated_no_change"
+        );
+    }
+
+    #[test]
+    fn arbitration_status_delegates_correctly() {
+        let report = ConvergenceRescanPlanReport {
+            plan_path: PathBuf::from("/tmp/plan.json"),
+            executed: false,
+            selected_recommendations: 0,
+            executed_validated_changed: 0,
+            executed_validated_no_change: 0,
+            snapshot_changed: false,
+            review_required: 0,
+            possible_improvement_review_required: 0,
+            regression_review_required: 0,
+            neutral_change_review_required: 0,
+        };
+        assert_eq!(report.arbitration_status(), "dry_run_not_promoted");
+    }
+
+    // --- fact_count ---
+
+    #[test]
+    fn source_snapshot_fact_count_sums_all_fields() {
+        let s = SourceSnapshot {
+            page_artifacts: 1,
+            visual_assets: 2,
+            structured_tables: 3,
+            content_elements: 4,
+            document_sections: 5,
+            timing_diagrams: 6,
+            state_machine_diagrams: 7,
+            vlm_enriched_assets: 8,
+        };
+        // 1+2+3+4+5+6+7+8 = 36
+        assert_eq!(s.fact_count(), 36);
+    }
+
+    #[test]
+    fn source_snapshot_fact_count_zero() {
+        let s = SourceSnapshot {
+            page_artifacts: 0,
+            visual_assets: 0,
+            structured_tables: 0,
+            content_elements: 0,
+            document_sections: 0,
+            timing_diagrams: 0,
+            state_machine_diagrams: 0,
+            vlm_enriched_assets: 0,
+        };
+        assert_eq!(s.fact_count(), 0);
+    }
+
+    #[test]
+    fn evidence_snapshot_fact_count_sums_fields() {
+        let s = EvidenceSnapshot {
+            section_anchors: 1,
+            evidence_spans: 1,
+            visual_evidence: 1,
+            extracted_statements: 1,
+            signal_value_statements: 1,
+            conditional_rule_statements: 1,
+            normative_statements: 1,
+            signal_constraints: 1,
+            conditional_rules: 1,
+            actor_signal_relations: 1,
+            register_records: 1,
+            timing_constraints: 1,
+            alias_map_size: 1,
+            timing_diagram_observations: 1,
+            state_machine_observations: 1,
+        };
+        // 14 counted fields (normative_statements not in fact_count)
+        assert_eq!(s.fact_count(), 14);
+    }
+
+    #[test]
+    fn semantic_snapshot_fact_count_includes_system_contract_present() {
+        let s = SemanticSnapshot {
+            actors: 1,
+            interfaces: 1,
+            interface_signals: 1,
+            phases: 1,
+            invariants: 1,
+            contracts: 1,
+            gates: 1,
+            assertions: 1,
+            abstractions: 1,
+            decomposition_candidates: 1,
+            system_contract_present: true,
+            init_assignments: 1,
+            regular_states: 1,
+            state_transitions: 1,
+            decision_tree_fragments: 1,
+            symbol_definitions: 1,
+            control_blocks: 1,
+            explicit_modules: 1,
+            explicit_tops: 1,
+            register_records: 1,
+            timing_constraints: 1,
+            signal_constraints: 1,
+            conditional_rules: 1,
+            residual_decisions: 0,
+        };
+        // 23 counted fields, each 1 (system_contract_present=true → 1) = 23
+        assert_eq!(s.fact_count(), 23);
+    }
+
+    #[test]
+    fn semantic_snapshot_fact_count_system_contract_absent() {
+        let s = SemanticSnapshot {
+            system_contract_present: false,
+            ..default_semantic_snapshot()
+        };
+        // system_contract_present=false → 0, all others 0 → 0
+        assert_eq!(s.fact_count(), 0);
+    }
+
+    #[test]
+    fn intent_snapshot_fact_count_includes_system_contract_present() {
+        let s = IntentSnapshot {
+            actors: 1,
+            interfaces: 1,
+            interface_signals: 1,
+            behaviors: 1,
+            constraints: 1,
+            assumptions: 1,
+            system_contract_present: true,
+            init_assignments: 1,
+            regular_states: 1,
+            state_transitions: 1,
+            decision_tree_fragments: 1,
+            symbol_definitions: 1,
+            control_blocks: 1,
+            explicit_modules: 1,
+            explicit_tops: 1,
+            register_records: 1,
+            timing_constraints: 1,
+            signal_constraints: 1,
+            conditional_rules: 1,
+            residual_decisions: 0,
+        };
+        // 19 counted fields, each 1 (system_contract_present=true → 1) = 19
+        assert_eq!(s.fact_count(), 19);
+    }
+
+    fn default_semantic_snapshot() -> SemanticSnapshot {
+        SemanticSnapshot {
+            actors: 0,
+            interfaces: 0,
+            interface_signals: 0,
+            phases: 0,
+            invariants: 0,
+            contracts: 0,
+            gates: 0,
+            assertions: 0,
+            abstractions: 0,
+            decomposition_candidates: 0,
+            system_contract_present: false,
+            init_assignments: 0,
+            regular_states: 0,
+            state_transitions: 0,
+            decision_tree_fragments: 0,
+            symbol_definitions: 0,
+            control_blocks: 0,
+            explicit_modules: 0,
+            explicit_tops: 0,
+            register_records: 0,
+            timing_constraints: 0,
+            signal_constraints: 0,
+            conditional_rules: 0,
+            residual_decisions: 0,
+        }
+    }
+
+    // --- absolute_artifact_path ---
+
+    #[test]
+    fn absolute_artifact_path_returns_absolute_path_unchanged() {
+        let abs = std::path::Path::new("/absolute/path/file.json");
+        let result = absolute_artifact_path(abs).unwrap();
+        assert_eq!(result, abs);
+    }
+
+    #[test]
+    fn absolute_artifact_path_resolves_relative_path() {
+        let cwd = std::env::current_dir().unwrap();
+        let rel = std::path::Path::new("relative/file.json");
+        let result = absolute_artifact_path(rel).unwrap();
+        assert_eq!(result, cwd.join("relative/file.json"));
+    }
 }

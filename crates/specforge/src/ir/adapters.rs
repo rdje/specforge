@@ -1,12 +1,14 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Path, PathBuf};
-
 use serde::{Deserialize, Serialize};
 
 use crate::error::{AppError, Result};
+use crate::ir::isf_ir::IsfIr;
 use crate::ir::IrStage;
-use crate::ir::intent::{IntentDocumentIdentity, IntentIr};
+use crate::ir::intent::{
+    IntentDocumentIdentity, IntentIr,
+};
 use crate::ir::semantic::{
     ActorPortRecord, ActorRelativeDirection, ControlActionRecord, ControlAssignmentTargetRecord,
     ControlBinaryOperator, ControlBlockRecord, ControlBlockRole, ControlBranchRecord,
@@ -18,7 +20,7 @@ use crate::ir::semantic::{
     ExplicitTopRecord, InitAssignmentRecord, InterfaceRecord, InterfaceSignalDirection,
     StateTransitionRecord, SymbolDefinitionKind, SymbolDefinitionRecord, SystemContractRecord,
     SystemResetKind, SystemResetPolarity, SystemResetTargetKind, SystemResetTimingRelation,
-    TemporalPredicateRecord,
+
 };
 use crate::ir::source::{
     AutomationConfidence, CandidateInterpretation, ResidualDecisionPacket, WidthHint, document_key,
@@ -500,8 +502,8 @@ impl AdapterArtifact {
     }
 
     fn rendered_target_text(&self) -> Option<String> {
-        match (&self.target, &self.fsm) {
-            (AdapterTarget::Fsm, Some(fsm)) if fsm.renderability.is_renderable => {
+        match (&self.target, &self.fsm, &self.isf) {
+            (AdapterTarget::Fsm, Some(fsm), _) if fsm.renderability.is_renderable => {
                 if let Some(document) = fsm.renderable_document.as_ref() {
                     return Some(render_fsm_source_document(document));
                 }
@@ -511,6 +513,9 @@ impl AdapterArtifact {
                     fsm.root_kind_decision.selected_root_kind,
                     fsm.renderable_module.as_ref()?,
                 ))
+            }
+            (AdapterTarget::Isf, _, Some(isf)) if isf.is_renderable => {
+                Some(isf.source_text.clone())
             }
             _ => None,
         }
@@ -868,6 +873,7 @@ struct RenderableEndpointPort {
     width_hint: Option<u32>,
 }
 
+
 fn derive_isf_actor_name(intent_ir: &IntentIr) -> String {
     if let Some(actor) = intent_ir.actors.first() {
         if let Some(ref name) = actor.actor_name {
@@ -900,30 +906,8 @@ fn assess_isf_renderability(intent_ir: &IntentIr) -> (bool, Vec<String>) {
     if signal_count == 0 {
         reasons.push("no signals declared in interface".to_string());
     } else {
-        let mut missing_direction = 0usize;
-        let mut missing_width = 0usize;
-        for iface in &intent_ir.interfaces {
-            for sig in &iface.signal_records {
-                if sig.direction_hint.is_none() {
-                    missing_direction += 1;
-                }
-                if sig.width_hint.is_none() {
-                    missing_width += 1;
-                }
-            }
-        }
-        if missing_direction > 0 {
-            reasons.push(format!(
-                "{} signal(s) missing direction — cannot emit valid .isf interface",
-                missing_direction
-            ));
-        }
-        if missing_width > 0 {
-            reasons.push(format!(
-                "{} signal(s) missing width — .isf requires explicit widths",
-                missing_width
-            ));
-        }
+        // Direction and width missing are informational only — the ISF IR
+        // defaults them to output / width 1 so emission can proceed.
     }
 
     let has_behavior = !intent_ir.temporal_rules.is_empty()
@@ -940,433 +924,10 @@ fn assess_isf_renderability(intent_ir: &IntentIr) -> (bool, Vec<String>) {
     (reasons.is_empty(), reasons)
 }
 
-fn render_isf_control_expression(expr: &ControlExpressionRecord) -> String {
-    match expr {
-        ControlExpressionRecord::Literal { literal } => literal.clone(),
-        ControlExpressionRecord::Reference { reference } => {
-            let mut s = reference.base_name.clone();
-            for suffix in &reference.suffixes {
-                match suffix {
-                    ControlReferenceSuffix::Member { member_name } => {
-                        s = format!("{}.{}", s, member_name);
-                    }
-                    ControlReferenceSuffix::BitIndex { index } => {
-                        s = format!("{}[{}]", s, index);
-                    }
-                    ControlReferenceSuffix::Slice { msb, lsb } => {
-                        s = format!("{}[{}:{}]", s, msb, lsb);
-                    }
-                    ControlReferenceSuffix::WidthCast { width } => {
-                        s = format!("({}'d{})", width, s);
-                    }
-                }
-            }
-            s
-        }
-        ControlExpressionRecord::Unary { operator, operand } => {
-            let op_str = match operator {
-                ControlUnaryOperator::Not => "!",
-            };
-            format!("({} {})", op_str, render_isf_control_expression(operand))
-        }
-        ControlExpressionRecord::Binary {
-            operator,
-            left,
-            right,
-        } => {
-            let op_str = render_isf_binary_operator(*operator);
-            format!(
-                "({} {} {})",
-                op_str,
-                render_isf_control_expression(left),
-                render_isf_control_expression(right)
-            )
-        }
-    }
-}
-
-fn render_isf_binary_operator(op: ControlBinaryOperator) -> &'static str {
-    match op {
-        ControlBinaryOperator::Add => "+",
-        ControlBinaryOperator::Sub => "-",
-        ControlBinaryOperator::Mul => "*",
-        ControlBinaryOperator::Div => "/",
-        ControlBinaryOperator::Mod => "%",
-        ControlBinaryOperator::BitAnd => "&",
-        ControlBinaryOperator::BitOr => "|",
-        ControlBinaryOperator::BitXor => "^",
-        ControlBinaryOperator::Eq => "==",
-        ControlBinaryOperator::NotEq => "!=",
-        ControlBinaryOperator::Lt => "<",
-        ControlBinaryOperator::Le => "<=",
-        ControlBinaryOperator::Gt => ">",
-        ControlBinaryOperator::Ge => ">=",
-    }
-}
-
-fn render_isf_width_hint(width: &WidthHint) -> String {
-    match width {
-        WidthHint::Numeric(n) => n.to_string(),
-        WidthHint::Parametric(p) => p.clone(),
-    }
-}
-
-fn render_isf_reset_clause(system_contract: &SystemContractRecord) -> String {
-    let polarity_str = match system_contract.reset_polarity {
-        SystemResetPolarity::ActiveHigh => "active_high",
-        SystemResetPolarity::ActiveLow => "active_low",
-    };
-    let kind_str = match system_contract.reset_kind {
-        SystemResetKind::Synchronous => "sync",
-        SystemResetKind::Asynchronous => "async",
-    };
-    format!(
-        "(reset ({} {} {}))",
-        system_contract.reset_signal, kind_str, polarity_str
-    )
-}
-
-fn sanitize_isf_name(raw: &str) -> String {
-    raw.replace([' ', '-', '.'], "_").to_lowercase()
-}
-
-fn emit_isf_action(lines: &mut Vec<String>, action: &ControlActionRecord, indent: &str) {
-    match action {
-        ControlActionRecord::Assign { target, value, .. } => {
-            let val_text = render_isf_control_expression(value);
-            lines.push(format!(
-                "{}(drive {} {})",
-                indent, target.signal_name, val_text
-            ));
-        }
-        ControlActionRecord::CompoundUpdate {
-            target,
-            operation,
-            amount,
-            ..
-        } => {
-            let op = match operation {
-                ControlCompoundUpdateOperation::Increment => "+",
-                ControlCompoundUpdateOperation::Decrement => "-",
-            };
-            let amt = match amount {
-                Some(expr) => render_isf_control_expression(expr),
-                None => "1".to_string(),
-            };
-            lines.push(format!(
-                "{}(drive {} ({} {} {}))",
-                indent, target.signal_name, op, target.signal_name, amt
-            ));
-        }
-        ControlActionRecord::Transition { target_state, .. } => {
-            lines.push(format!("{}(drive state {})", indent, target_state));
-        }
-        ControlActionRecord::DelayedPulse { .. } => {
-            // ISF doesn't have a direct delayed-pulse; emit as commented placeholder
-            lines.push(format!(
-                "{};; delayed pulse (not directly representable)",
-                indent
-            ));
-        }
-    }
-}
-
-fn collect_branch_actions(branches: &[ControlBranchRecord]) -> Vec<ControlActionRecord> {
-    branches.iter().flat_map(|b| b.actions.clone()).collect()
-}
-
-fn branch_predicate_guard(branch: &ControlBranchRecord, selector_text: &str) -> String {
-    match &branch.predicate {
-        Some(pred) => format!(
-            "(== {} {})",
-            selector_text,
-            render_isf_control_expression(pred)
-        ),
-        None => selector_text.to_string(),
-    }
-}
 
 fn build_isf_source_text(intent_ir: &IntentIr, actor_name: &str) -> String {
-    let mut lines: Vec<String> = Vec::new();
-
-    // Actor header
-    lines.push(format!("(actor {}", actor_name));
-
-    // Clock
-    if let Some(ref sc) = intent_ir.system_contract {
-        lines.push(format!("  (clock {})", sc.clock_signal));
-    } else if let Some(infra) = intent_ir.infrastructure_signals.iter().find(|s| {
-        s.signal_name.to_lowercase().contains("clk")
-            || s.signal_name.to_lowercase().contains("clock")
-    }) {
-        lines.push(format!("  (clock {})", infra.signal_name));
-    } else {
-        lines.push("  (clock clk)".to_string());
-    }
-
-    // Reset
-    if let Some(ref sc) = intent_ir.system_contract {
-        lines.push(format!("  {}", render_isf_reset_clause(sc)));
-    } else if let Some(infra) = intent_ir.infrastructure_signals.iter().find(|s| {
-        s.signal_name.to_lowercase().contains("rst")
-            || s.signal_name.to_lowercase().contains("reset")
-    }) {
-        let rst_name = &infra.signal_name;
-        let polarity = if rst_name.ends_with("_n") || rst_name.ends_with("_b") {
-            "active_low"
-        } else {
-            "active_high"
-        };
-        lines.push(format!("  (reset ({} sync {}))", rst_name, polarity));
-    }
-
-    // Watchdog
-    lines.push("  (watchdog 65536)".to_string());
-
-    // Interface
-    lines.push("  (interface".to_string());
-    for iface in &intent_ir.interfaces {
-        for sig in &iface.signal_records {
-            let dir_str = sig.direction_hint.map(|d| d.as_str()).unwrap_or("input");
-            let width_str = match &sig.width_hint {
-                Some(w) => format!("(width {})", render_isf_width_hint(w)),
-                None => "(width 1)".to_string(),
-            };
-            lines.push(format!(
-                "    ({} {} {})",
-                dir_str, sig.signal_name, width_str
-            ));
-        }
-    }
-    lines.push("  )".to_string());
-
-    // Constants
-    let constants: Vec<_> = intent_ir
-        .symbol_definitions
-        .iter()
-        .filter(|s| {
-            matches!(
-                s.kind,
-                SymbolDefinitionKind::Constant
-                    | SymbolDefinitionKind::Define
-                    | SymbolDefinitionKind::Param
-            )
-        })
-        .collect();
-    if !constants.is_empty() {
-        lines.push("  (constants".to_string());
-        for c in constants {
-            let val_str = match &c.value {
-                Some(expr) => render_isf_control_expression(expr),
-                None => "0".to_string(),
-            };
-            lines.push(format!("    ({} {})", c.symbol_name, val_str));
-        }
-        lines.push("  )".to_string());
-    }
-
-    // Types / Enums
-    let enums: Vec<_> = intent_ir
-        .symbol_definitions
-        .iter()
-        .filter(|s| matches!(s.kind, SymbolDefinitionKind::Enum))
-        .collect();
-    if !enums.is_empty() {
-        lines.push("  (types".to_string());
-        for e in &enums {
-            let width = e.members.len().max(1).next_power_of_two().trailing_zeros();
-            let actual_width = if width < 1 { 1 } else { width };
-            lines.push(format!(
-                "    (type {} (bits {}))",
-                e.symbol_name, actual_width
-            ));
-        }
-        lines.push("  )".to_string());
-        lines.push("  (enums".to_string());
-        for e in &enums {
-            lines.push(format!("    ({})", e.symbol_name));
-            for m in &e.members {
-                let val_str = render_isf_control_expression(&m.value);
-                lines.push(format!("      ({} {})", m.member_name, val_str));
-            }
-        }
-        lines.push("  )".to_string());
-    }
-
-    // Storage
-    let registers: Vec<_> = intent_ir.register_records.iter().collect();
-    if !registers.is_empty() {
-        lines.push("  (storage".to_string());
-        for r in registers {
-            let total_bits: Option<u32> = r
-                .fields
-                .iter()
-                .filter_map(|f| match (f.bits_high, f.bits_low) {
-                    (Some(hi), Some(lo)) => Some(hi.saturating_sub(lo).saturating_add(1)),
-                    _ => None,
-                })
-                .max();
-            let width = total_bits.unwrap_or(32);
-            lines.push(format!(
-                "    (var {} (width {}))",
-                r.register_name.to_lowercase(),
-                width
-            ));
-        }
-        lines.push("  )".to_string());
-    }
-
-    // Emit a parameterized drive per output signal (needed for drive-call syntax)
-    let output_signals: Vec<String> = intent_ir
-        .interfaces
-        .iter()
-        .flat_map(|iface| iface.signal_records.iter())
-        .filter(|sig| matches!(sig.direction_hint, Some(InterfaceSignalDirection::Output)))
-        .map(|sig| sig.signal_name.clone())
-        .collect();
-    for sig in &output_signals {
-        lines.push(format!("  (drive ({} val) ({} val))", sig, sig));
-    }
-
-    // Map control_blocks to transactions with ISF control-flow constructs
-    for (_cb_idx, cb) in intent_ir.control_blocks.iter().enumerate() {
-        let block_name = sanitize_isf_name(&cb.block_name);
-        if cb.branches.is_empty() {
-            continue;
-        }
-        match &cb.selector {
-            None => {
-                // Unconditional block → transaction with inline drives
-                let tx_name = format!("{}_tx", block_name);
-                lines.push(format!("  (transaction {}", tx_name));
-                lines.push("    (on start".to_string());
-                for action in collect_branch_actions(&cb.branches) {
-                    emit_isf_action(&mut lines, &action, "      ");
-                }
-                lines.push("    )".to_string());
-                for action in collect_branch_actions(&cb.branches) {
-                    emit_isf_action(&mut lines, &action, "    ");
-                }
-                lines.push("    (complete done)".to_string());
-                lines.push("  )".to_string());
-            }
-            Some(selector_expr) => {
-                // Conditional block → transaction with when/switch clauses
-                let tx_name = format!("{}_tx", block_name);
-                let sel_text = render_isf_control_expression(selector_expr);
-                lines.push(format!("  (transaction {}", tx_name));
-                lines.push("    (on start".to_string());
-
-                if cb.branches.len() == 1 {
-                    // Single branch → (when condition (drive ...))
-                    let branch = &cb.branches[0];
-                    let guard = branch_predicate_guard(branch, &sel_text);
-                    lines.push("    )".to_string());
-                    lines.push(format!("    (when {}", guard));
-                    for action in &branch.actions {
-                        emit_isf_action(&mut lines, action, "      ");
-                    }
-                    lines.push("    )".to_string());
-                } else {
-                    // Multiple branches → (switch selector ...)
-                    lines.push("    )".to_string());
-                    lines.push(format!("    (switch {}", sel_text));
-                    for branch in &cb.branches {
-                        let val = match &branch.predicate {
-                            Some(pred) => render_isf_control_expression(pred),
-                            None => "default".to_string(),
-                        };
-                        lines.push(format!("      ({})", val));
-                        for action in &branch.actions {
-                            emit_isf_action(&mut lines, action, "        ");
-                        }
-                    }
-                    lines.push("    )".to_string());
-                }
-                lines.push("    (complete done)".to_string());
-                lines.push("  )".to_string());
-            }
-        }
-    }
-
-    // Also map any explicit temporal_rules
-    for (_tx_idx, temporal) in intent_ir.temporal_rules.iter().enumerate() {
-        let tx_name = sanitize_isf_name(&temporal.rule_id);
-        lines.push(format!("  (transaction {}", tx_name));
-        lines.push("    (on start".to_string());
-        for ant in &temporal.antecedents {
-            if let TemporalPredicateRecord::SignalValue { signal_name, .. }
-            | TemporalPredicateRecord::ActorDrivesSignal { signal_name, .. }
-            | TemporalPredicateRecord::ActorSamplesSignal { signal_name, .. }
-            | TemporalPredicateRecord::SignalSampled { signal_name, .. } = ant
-            {
-                let sample_name = format!("{}_sampled", signal_name.to_lowercase());
-                lines.push(format!("      (sample {} as {})", signal_name, sample_name));
-            }
-        }
-        lines.push("    )".to_string());
-        for cons in &temporal.consequents {
-            if let TemporalPredicateRecord::SignalValue {
-                signal_name, value, ..
-            } = cons
-            {
-                lines.push(format!("    (drive {} {})", signal_name, value));
-            } else if let TemporalPredicateRecord::ActorDrivesSignal { signal_name, .. } = cons {
-                lines.push(format!("    (drive {} 1)", signal_name));
-            }
-        }
-        lines.push("    (complete done)".to_string());
-        lines.push("  )".to_string());
-    }
-
-    // Rules from conditional rules and signal constraints
-    for (cr_idx, cr) in intent_ir.conditional_rules.iter().enumerate() {
-        let rule_name = format!("rule_{}", cr_idx);
-        let cond = &cr.antecedent_text;
-        let sig = cr.consequent_signal.as_deref().unwrap_or("unknown");
-        let action = &cr.consequent_action;
-        let val = if action.contains("not") || action.contains("must not") {
-            "0"
-        } else {
-            "1"
-        };
-        lines.push(format!(
-            "  (rule {} {} (set {} {}))",
-            rule_name, cond, sig, val
-        ));
-    }
-    for (sc_idx, sc) in intent_ir.signal_constraints.iter().enumerate() {
-        let rule_name = format!("constraint_{}", sc_idx);
-        let guard = sc.condition_text.as_deref().unwrap_or("true");
-        let val = if sc.negated {
-            sc.target_value.as_deref().unwrap_or("0")
-        } else {
-            sc.target_value.as_deref().unwrap_or("1")
-        };
-        lines.push(format!(
-            "  (rule {} {} (set {} {}))",
-            rule_name, guard, sc.subject_signal, val
-        ));
-    }
-
-    // Priority — rules fire before transactions
-    let has_rules = !intent_ir.conditional_rules.is_empty()
-        || !intent_ir.signal_constraints.is_empty()
-        || intent_ir
-            .control_blocks
-            .iter()
-            .any(|cb| cb.selector.is_some());
-    let has_transactions = !intent_ir.temporal_rules.is_empty()
-        || intent_ir
-            .control_blocks
-            .iter()
-            .any(|cb| cb.selector.is_none() && !cb.branches.is_empty());
-    if has_rules && has_transactions {
-        lines.push("  (priority rules over transactions)".to_string());
-    }
-
-    lines.push(")".to_string());
-    lines.join("\n")
+    let isf_ir = IsfIr::from_intent_ir(intent_ir, actor_name);
+    isf_ir.render()
 }
 
 fn build_isf_adapter_artifact(
@@ -28426,13 +27987,12 @@ mod tests {
             source.contains("(input ") || source.contains("(output "),
             "must have signal directions"
         );
-        assert!(source.contains("(constants"), "must declare constants");
-        assert!(source.contains("(types"), "must declare types");
-        assert!(source.contains("(enums"), "must declare enums");
         assert!(
             source.contains("(transaction ") || source.contains("(rule "),
             "must have behavioral content"
         );
+        // (constants), (types), (enums) are NOT valid ISF clauses per FSMGen
+        // fixtures — our ISF IR preserves the data but does not emit them.
 
         // Verify emitted target path
         assert!(artifact.artifact_layout.emitted_target_path.is_some());
@@ -28462,6 +28022,86 @@ mod tests {
         assert!(!isf.is_renderable);
         assert!(!isf.blocking_reasons.is_empty());
         assert!(artifact.artifact_layout.emitted_target_path.is_none());
+
+        Ok(())
+    }
+
+    #[test]
+    fn isf_output_passes_fsmgen_strict_validation() -> Result<()> {
+        let tempdir = tempdir()?;
+
+        // Build an IntentIR with clock, reset, states, signals, and transitions.
+        let intent_ir = build_explicit_fsm_intent_ir(tempdir.path())?;
+
+        let artifact = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Isf,
+            tempdir.path(),
+        )?;
+
+        let isf = artifact.isf.expect("ISF artifact must be populated");
+        assert!(
+            isf.is_renderable,
+            "ISF must be renderable: {:?}",
+            isf.blocking_reasons
+        );
+
+        // Write ISF source text to a temp file for fsmgen to consume.
+        let isf_path = tempdir.path().join("test_output.isf");
+        fs::write(&isf_path, &isf.source_text)?;
+        eprintln!("=== ISF source text ===\n{}\n=== END ===", isf.source_text);
+
+        // Locate fsmgen binary relative to the specforge crate root.
+        let fsmgen_path = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("../../subs/fsmgen/bin/fsmgen");
+
+        let output = std::process::Command::new(&fsmgen_path)
+            .args(["--strict", "--check", "--json"])
+            .arg(&isf_path)
+            .output()?;
+
+        let stdout = String::from_utf8_lossy(&output.stdout);
+        let stderr = String::from_utf8_lossy(&output.stderr);
+
+        let check_result: serde_json::Value = serde_json::from_str(&stdout).unwrap_or_else(|e| {
+            panic!(
+                "fsmgen did not produce valid JSON.\nstdout: {}\nstderr: {}\nparse error: {}",
+                stdout, stderr, e
+            );
+        });
+
+        let success = check_result["diagnostic_summary"]["success"]
+            .as_bool()
+            .unwrap_or(false);
+
+        let diag_count = check_result["diagnostic_summary"]["diagnostic_count"]
+            .as_i64()
+            .unwrap_or(-1);
+
+        if !success {
+            // Print diagnostics for debugging
+            if let Some(diags) = check_result["diagnostics"].as_array() {
+                for d in diags {
+                    eprintln!(
+                        "FSMGen diagnostic: {}",
+                        d.get("message")
+                            .and_then(|m| m.as_str())
+                            .unwrap_or("(no message)")
+                    );
+                }
+            }
+        }
+
+        assert!(
+            success,
+            "FSMGen strict validation failed with {} diagnostics",
+            diag_count
+        );
+        assert_eq!(
+            diag_count, 0,
+            "expected 0 FSMGen diagnostics, got {}",
+            diag_count
+        );
 
         Ok(())
     }

@@ -10429,12 +10429,16 @@ mod tests {
     use super::{
         ActorRelativeDirection, ControlActionRecord, ControlBinaryOperator, ControlBlockRole,
         ControlCompoundUpdateOperation, ControlDualOutputKind, ControlExpressionRecord,
-        ControlReferenceKind, ControlReferenceSuffix, CycleWindowRecord, DecisionTreeActionRecord,
-        DecisionTreeAssignmentKind, DecisionTreeComparisonOperator, DecisionTreeGuardRecord,
-        DecisionTreeValueRecord, InfrastructureTopologyKind, InterfaceSignalDirection,
-        InterfaceSignalSemanticRole, SemanticArbitrationDecisionBasis, SemanticGroundingStrength,
-        SemanticIr, SignalSemanticHintSourceKind, SignalSemanticTag, SymbolDefinitionKind,
-        SystemResetKind, SystemResetPolarity, SystemResetTargetKind, SystemResetTimingRelation,
+        ControlReferenceKind, ControlReferenceSuffix, ControlUnaryOperator, CycleWindowRecord,
+        DecisionTreeActionRecord, DecisionTreeAssignmentKind, DecisionTreeComparisonOperator,
+        DecisionTreeGuardRecord, DecisionTreeValueRecord, InfrastructureTopologyKind,
+        InterfaceSignalDirection, InterfaceSignalSemanticRole, SemanticArbitrationDecisionBasis,
+        SemanticGroundingStrength, SemanticIr, SignalSemanticHintSourceKind, SignalSemanticTag,
+        SymbolDefinitionKind, SystemResetKind, SystemResetPolarity, SystemResetTargetKind,
+        SystemResetTimingRelation, control_binary_operator_key, control_block_role_key,
+        control_reference_kind_key, control_reference_suffix_key, control_unary_operator_key,
+        decision_tree_comparison_operator_key, is_explicit_infrastructure_component_term, is_false,
+        is_zero, split_control_header_keyword, width_hint_key,
     };
 
     fn make_table_cell(text: &str, is_header: bool) -> StructuredTableCellRecord {
@@ -21180,5 +21184,203 @@ mod tests {
             result, None,
             "expect 'else' when token is 'if': expected None, got {result:?}"
         );
+    }
+
+    // --- is_false ---
+
+    #[test]
+    fn is_false_returns_true_for_false() {
+        assert!(is_false(&false));
+    }
+
+    #[test]
+    fn is_false_returns_false_for_true() {
+        assert!(!is_false(&true));
+    }
+
+    // --- is_zero ---
+
+    #[test]
+    fn is_zero_returns_true_for_zero() {
+        assert!(is_zero(&0));
+    }
+
+    #[test]
+    fn is_zero_returns_false_for_nonzero() {
+        assert!(!is_zero(&1));
+        assert!(!is_zero(&42));
+    }
+
+    // --- is_explicit_infrastructure_component_term ---
+
+    #[test]
+    fn is_explicit_infrastructure_component_term_detects_known_terms() {
+        assert!(is_explicit_infrastructure_component_term("pll"));
+        assert!(is_explicit_infrastructure_component_term("dll"));
+        assert!(is_explicit_infrastructure_component_term("clock generator"));
+        assert!(is_explicit_infrastructure_component_term(
+            "reset controller"
+        ));
+        assert!(is_explicit_infrastructure_component_term(
+            "domain synchronizer"
+        ));
+        assert!(is_explicit_infrastructure_component_term("clock gate"));
+        assert!(is_explicit_infrastructure_component_term("clock mux"));
+    }
+
+    #[test]
+    fn is_explicit_infrastructure_component_term_rejects_unknown() {
+        assert!(!is_explicit_infrastructure_component_term("processor"));
+        assert!(!is_explicit_infrastructure_component_term("memory"));
+        assert!(!is_explicit_infrastructure_component_term(""));
+    }
+
+    // --- control_block_role_key ---
+
+    #[test]
+    fn control_block_role_key_returns_correct_strings() {
+        assert_eq!(
+            control_block_role_key(ControlBlockRole::StateBody),
+            "state_body"
+        );
+        assert_eq!(
+            control_block_role_key(ControlBlockRole::ResetSynchronous),
+            "reset_synchronous"
+        );
+        assert_eq!(
+            control_block_role_key(ControlBlockRole::ResetAsynchronous),
+            "reset_asynchronous"
+        );
+        assert_eq!(
+            control_block_role_key(ControlBlockRole::StandaloneDecisionTree),
+            "standalone_decision_tree"
+        );
+    }
+
+    // --- control_reference_kind_key ---
+
+    #[test]
+    fn control_reference_kind_key_returns_correct_strings() {
+        assert_eq!(
+            control_reference_kind_key(ControlReferenceKind::Unknown),
+            "unknown"
+        );
+        assert_eq!(
+            control_reference_kind_key(ControlReferenceKind::Signal),
+            "signal"
+        );
+        assert_eq!(
+            control_reference_kind_key(ControlReferenceKind::Symbol),
+            "symbol"
+        );
+    }
+
+    // --- control_unary_operator_key ---
+
+    #[test]
+    fn control_unary_operator_key_returns_not() {
+        assert_eq!(control_unary_operator_key(ControlUnaryOperator::Not), "not");
+    }
+
+    // --- control_binary_operator_key ---
+
+    #[test]
+    fn control_binary_operator_key_returns_correct_strings() {
+        assert_eq!(
+            control_binary_operator_key(ControlBinaryOperator::Add),
+            "add"
+        );
+        assert_eq!(
+            control_binary_operator_key(ControlBinaryOperator::Sub),
+            "sub"
+        );
+        assert_eq!(control_binary_operator_key(ControlBinaryOperator::Eq), "eq");
+        assert_eq!(
+            control_binary_operator_key(ControlBinaryOperator::NotEq),
+            "not_eq"
+        );
+        assert_eq!(control_binary_operator_key(ControlBinaryOperator::Lt), "lt");
+        assert_eq!(control_binary_operator_key(ControlBinaryOperator::Ge), "ge");
+    }
+
+    // --- decision_tree_comparison_operator_key ---
+
+    #[test]
+    fn decision_tree_comparison_operator_key_returns_correct_strings() {
+        assert_eq!(
+            decision_tree_comparison_operator_key(DecisionTreeComparisonOperator::Eq),
+            "eq"
+        );
+        assert_eq!(
+            decision_tree_comparison_operator_key(DecisionTreeComparisonOperator::NotEq),
+            "not_eq"
+        );
+    }
+
+    // --- split_control_header_keyword ---
+
+    #[test]
+    fn split_control_header_keyword_splits_on_keyword() {
+        let (left, right) = split_control_header_keyword("if (HREADY) then", "then");
+        assert_eq!(left, "if (HREADY) ");
+        assert_eq!(right, Some(""));
+    }
+
+    #[test]
+    fn split_control_header_keyword_returns_none_when_keyword_missing() {
+        let (left, right) = split_control_header_keyword("if (HREADY)", "then");
+        assert_eq!(left, "if (HREADY)");
+        assert_eq!(right, None);
+    }
+
+    #[test]
+    fn split_control_header_keyword_case_insensitive() {
+        let (left, right) = split_control_header_keyword("IF (HREADY) THEN action", "then");
+        assert_eq!(left, "IF (HREADY) ");
+        assert_eq!(right, Some(" action"));
+    }
+
+    // --- width_hint_key ---
+
+    #[test]
+    fn width_hint_key_numeric() {
+        assert_eq!(width_hint_key(&WidthHint::Numeric(32)), "32");
+    }
+
+    #[test]
+    fn width_hint_key_parametric() {
+        assert_eq!(
+            width_hint_key(&WidthHint::Parametric("ADDR_WIDTH".to_string())),
+            "ADDR_WIDTH"
+        );
+    }
+
+    // --- control_reference_suffix_key ---
+
+    #[test]
+    fn control_reference_suffix_key_member() {
+        let result = control_reference_suffix_key(&ControlReferenceSuffix::Member {
+            member_name: "ENABLE".to_string(),
+        });
+        assert_eq!(result, "member:ENABLE");
+    }
+
+    #[test]
+    fn control_reference_suffix_key_bit_index() {
+        let result = control_reference_suffix_key(&ControlReferenceSuffix::BitIndex { index: 3 });
+        assert_eq!(result, "bit:3");
+    }
+
+    #[test]
+    fn control_reference_suffix_key_slice() {
+        let result =
+            control_reference_suffix_key(&ControlReferenceSuffix::Slice { msb: 7, lsb: 0 });
+        assert_eq!(result, "slice:7:0");
+    }
+
+    #[test]
+    fn control_reference_suffix_key_width_cast() {
+        let result = control_reference_suffix_key(&ControlReferenceSuffix::WidthCast { width: 16 });
+        assert_eq!(result, "width:16");
     }
 }

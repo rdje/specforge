@@ -3,7 +3,7 @@ use std::process::Command;
 
 use crate::cli::{NlpEnrichArgs, VlmProviderArg};
 use crate::error::{AppError, Result};
-use crate::ir::evidence::{EvidenceIr, StatementClass};
+use crate::ir::evidence::{EvidenceIr, EvidenceModality, ExtractedStatement, StatementClass};
 use crate::ir::source::{
     AutomationConfidence, ConditionalRuleRecord, SignalConstraintKind, SignalConstraintRecord,
 };
@@ -354,6 +354,18 @@ pub fn run(args: NlpEnrichArgs) -> Result<()> {
             }
 
             if !args.dry_run {
+                // Post-process: extract signal direction/width from constraint texts
+                // and synthesize declarations. Free — no additional LLM calls.
+                let dir_synth_count =
+                    synthesize_signal_directions_from_nlp_constraints(&mut evidence_ir);
+                if dir_synth_count > 0 {
+                    println!(
+                        "nlp_direction_synthesis: {dir_synth_count} signal declarations synthesized"
+                    );
+                    evidence_ir.refresh_signal_semantic_hints()?;
+                    evidence_ir.write_to_disk()?;
+                }
+
                 println!("--- summary ---");
                 println!("total_llm_calls: {total_calls}");
                 println!("total_new_signal_constraints: {total_signal_constraints}");
@@ -422,6 +434,277 @@ fn auto_extract_declared_signals(evidence_ir: &EvidenceIr) -> Vec<String> {
     signals.sort();
     signals.dedup();
     signals
+}
+
+/// After NLP enrichment, scan extracted constraints for direction-indicating patterns
+/// and synthesize `"Signal X is output/input [width N]."` declarations.
+///
+/// These flow into SemanticIR's build_interfaces() and are parsed as High-confidence
+/// signal declarations. This is a free, deterministic post-processing step — no
+/// additional LLM calls are made.
+fn synthesize_signal_directions_from_nlp_constraints(evidence_ir: &mut EvidenceIr) -> usize {
+    use std::collections::{HashMap, HashSet};
+
+    // signal_name → (direction, width_text)
+    let mut signal_hints: HashMap<String, (Option<&str>, Option<String>)> = HashMap::new();
+
+    // ── Scan signal constraints ──
+    for sc in &evidence_ir.signal_constraints {
+        let signal = sc.subject_signal.trim().to_ascii_uppercase();
+        if signal.is_empty() {
+            continue;
+        }
+        let text = &sc.source_text;
+
+        // Direction from constraint kind (the signal's behavioral role)
+        let dir_from_kind = match sc.constraint_kind {
+            SignalConstraintKind::MustBeAsserted
+            | SignalConstraintKind::MustBeDeasserted
+            | SignalConstraintKind::MustBeHigh
+            | SignalConstraintKind::MustBeLow => Some("output"),
+            SignalConstraintKind::MustBeStable | SignalConstraintKind::MustNotChange => {
+                Some("input")
+            }
+            SignalConstraintKind::MustBeValue { .. } | SignalConstraintKind::MustHoldData => None,
+        };
+
+        // Direction from prose patterns in source text
+        let dir_from_text = extract_direction_from_text(text, &signal);
+
+        let direction: Option<&str> = dir_from_text.or(dir_from_kind);
+
+        // Width from text
+        let width = extract_width_from_text(text);
+
+        let entry = signal_hints.entry(signal.clone()).or_insert((None, None));
+        if direction.is_some() && entry.0.is_none() {
+            entry.0 = direction;
+        }
+        if width.is_some() && entry.1.is_none() {
+            entry.1 = width;
+        }
+    }
+
+    // ── Scan conditional rules ──
+    for cr in &evidence_ir.conditional_rules {
+        if let Some(ref signal) = cr.consequent_signal {
+            let signal = signal.trim().to_ascii_uppercase();
+            if !signal.is_empty() && signal != "NULL" {
+                // Consequent signals are controlled by the rule → output from some actor
+                let entry = signal_hints.entry(signal.clone()).or_insert((None, None));
+                if entry.0.is_none() {
+                    entry.0 = Some("output");
+                }
+            }
+        }
+    }
+
+    // ── Signal-name heuristics for well-known roles ──
+    for (signal, entry) in signal_hints.iter_mut() {
+        if entry.0.is_none() {
+            let upper = signal.to_ascii_uppercase();
+            if upper.contains("CLK") || upper.contains("CLOCK") {
+                entry.0 = Some("output");
+            } else if upper.contains("DATA") || upper == "SDA" || upper == "SD" {
+                entry.0 = Some("bidirectional");
+            } else if upper == "RST" || upper == "RESET" || upper.contains("RESETN") {
+                entry.0 = Some("input");
+            }
+        }
+    }
+
+    // ── Known bidirectional signal names (override constraint-derived direction) ──
+    for (signal, entry) in signal_hints.iter_mut() {
+        let upper = signal.to_ascii_uppercase();
+        if upper == "SDA" || upper == "SDAH" || upper == "USDA" || upper == "SD" || upper == "DQ" {
+            entry.0 = Some("bidirectional");
+        }
+    }
+
+    // ── Synthesize ExtractedStatement entries ──
+    let mut counter = evidence_ir.extracted_statements.len();
+    let mut count = 0usize;
+    let mut seen: HashSet<String> = HashSet::new();
+
+    for (signal, (dir_opt, width_opt)) in &signal_hints {
+        if let Some(dir) = dir_opt {
+            if seen.insert(signal.clone()) {
+                counter += 1;
+                // Default width to 1 bit when none is found — most protocol
+                // control/status signals are single-bit.
+                let text = match width_opt {
+                    Some(w) => format!("Signal {signal} is {dir} width {w}."),
+                    None => format!("Signal {signal} is {dir} width 1."),
+                };
+                evidence_ir.extracted_statements.push(ExtractedStatement {
+                    statement_id: format!("nlp_dir_synth_{counter:06}"),
+                    class: StatementClass::SourceFact,
+                    modality: EvidenceModality::Text,
+                    text,
+                    evidence_span_ids: vec![],
+                    related_visual_evidence_ids: vec![],
+                });
+                count += 1;
+            }
+        }
+    }
+
+    // ── Synthesize clock/reset declarations for system contract ──
+    for (signal, _entry) in &signal_hints {
+        let upper = signal.to_ascii_uppercase();
+        if (upper.contains("CLK") || upper.contains("CLOCK")) && seen.contains(signal) {
+            counter += 1;
+            let text = format!("Clock signal {signal} is the system clock.");
+            evidence_ir.extracted_statements.push(ExtractedStatement {
+                statement_id: format!("nlp_dir_synth_{counter:06}"),
+                class: StatementClass::SourceFact,
+                modality: EvidenceModality::Text,
+                text,
+                evidence_span_ids: vec![],
+                related_visual_evidence_ids: vec![],
+            });
+            count += 1;
+            break; // one clock is enough
+        }
+    }
+
+    count
+}
+
+/// Extract direction hint from prose text mentioning a signal.
+/// Returns "output" if the text indicates the signal is driven/asserted/generated,
+/// "input" if the text indicates the signal is received/sampled/monitored.
+fn extract_direction_from_text(text: &str, signal_name: &str) -> Option<&'static str> {
+    let lowered = text.to_ascii_lowercase();
+    let sig_lower = signal_name.to_ascii_lowercase();
+
+    // Find the signal mention position
+    let sig_pos = lowered.find(&sig_lower)?;
+
+    // Look at text around the signal for direction words
+    let window_start = sig_pos.saturating_sub(80);
+    let window_end = (sig_pos + sig_lower.len() + 80).min(lowered.len());
+    let window = &lowered[window_start..window_end];
+
+    // Output patterns: signal is driven, asserted, generated, controlled
+    let output_patterns = [
+        "driven by",
+        "is driven",
+        "asserted by",
+        "is asserted",
+        "generated by",
+        "is generated",
+        "produced by",
+        "is produced",
+        "controlled by",
+        "is controlled",
+        "drives the",
+        "shall drive",
+        "must drive",
+        "shall assert",
+        "must assert",
+        "shall set",
+        "must output",
+        "shall output",
+        "source of",
+        "is the source",
+    ];
+
+    for pat in &output_patterns {
+        if window.contains(pat) {
+            return Some("output");
+        }
+    }
+
+    // Input patterns: signal is sampled, received, monitored, detected
+    let input_patterns = [
+        "sampled",
+        "is sampled",
+        "are sampled",
+        "received by",
+        "is received",
+        "monitored by",
+        "is monitored",
+        "detected by",
+        "is detected",
+        "observed by",
+        "is observed",
+        "read by",
+        "is read",
+        "captured by",
+        "is captured",
+        "measured by",
+        "is measured",
+        "sensed by",
+        "is sensed",
+    ];
+
+    for pat in &input_patterns {
+        if window.contains(pat) {
+            return Some("input");
+        }
+    }
+
+    // Bidirectional patterns
+    if window.contains("bidirectional")
+        || window.contains("bi-directional")
+        || window.contains("input and output")
+        || window.contains("input/output")
+        || window.contains("i/o")
+    {
+        return Some("bidirectional");
+    }
+
+    None
+}
+
+/// Extract numeric width from prose text (e.g. "8-bit", "width of 32", "16-bit wide").
+fn extract_width_from_text(text: &str) -> Option<String> {
+    let lowered = text.to_ascii_lowercase();
+
+    // Pattern: "N-bit" or "N bit" (e.g. "16-bit", "32 bit")
+    for cap in ["bit ", "bits ", "-bit ", "-bits ", " bit ", " bits "] {
+        if let Some(pos) = lowered.find(cap) {
+            let before = &lowered[..pos];
+            if let Some(num) = before
+                .split_whitespace()
+                .next_back()
+                .and_then(|w| w.trim_end_matches(&['(', '[', '{']).parse::<u32>().ok())
+            {
+                return Some(num.to_string());
+            }
+        }
+    }
+
+    // Pattern: "width of N" or "width N"
+    for prefix in &["width of ", "width "] {
+        if let Some(pos) = lowered.find(prefix) {
+            let after = &lowered[pos + prefix.len()..];
+            if let Some(num) = after.split_whitespace().next().and_then(|w| {
+                w.trim_end_matches(&['.', ',', ')', ']', '}'])
+                    .parse::<u32>()
+                    .ok()
+            }) {
+                return Some(num.to_string());
+            }
+        }
+    }
+
+    // Pattern: "N-bit wide" or "N bits wide"
+    for suffix in &["-bit wide", " bits wide", "-bit bus", " bits bus"] {
+        if let Some(pos) = lowered.find(suffix) {
+            let before = &lowered[..pos];
+            if let Some(num) = before
+                .split_whitespace()
+                .next_back()
+                .and_then(|w| w.parse::<u32>().ok())
+            {
+                return Some(num.to_string());
+            }
+        }
+    }
+
+    None
 }
 
 /// Form 2: Extract a prose alias phrase for a signal from a sentence where Level 3

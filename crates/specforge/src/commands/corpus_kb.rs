@@ -1427,6 +1427,74 @@ Keep this benchmark note.\n\n\
     }
 
     #[test]
+    fn kg_fixture_matches_any_family_matches_correctly() {
+        assert!(kg_fixture_matches_any_family(
+            "amba_axi_gold",
+            &["protocol-family AMBA/APB/AHB/AXI"]
+        ));
+        assert!(!kg_fixture_matches_any_family(
+            "amba_axi_gold",
+            &["actor connectivity"]
+        ));
+    }
+
+    #[test]
+    fn kg_fixture_matches_any_family_returns_false_when_no_match() {
+        assert!(!kg_fixture_matches_any_family(
+            "toy_fixture",
+            &["actor connectivity"]
+        ));
+    }
+
+    #[test]
+    fn default_validation_page_is_non_empty() {
+        let page = default_validation_page();
+        assert!(!page.is_empty());
+        assert!(page.contains("Human Synthesis"));
+        assert!(page.contains(VALIDATION_MANAGED_START));
+    }
+
+    #[test]
+    fn default_kg_fixtures_page_is_non_empty() {
+        let page = default_kg_fixtures_page();
+        assert!(!page.is_empty());
+        assert!(page.contains("Human Synthesis"));
+        assert!(page.contains(KG_FIXTURES_MANAGED_START));
+    }
+
+    #[test]
+    fn display_path_returns_non_empty_string() -> Result<()> {
+        let tempdir = tempdir()?;
+        let sub_path = tempdir.path().join("subdir").join("file.txt");
+        let result = display_path(tempdir.path(), &sub_path);
+        assert!(!result.is_empty());
+        Ok(())
+    }
+
+    #[test]
+    fn display_path_falls_back_to_display_on_error() {
+        let non_existent = std::path::Path::new("/nonexistent/root");
+        let path = std::path::Path::new("/some/path");
+        let result = display_path(non_existent, path);
+        assert!(!result.is_empty());
+        assert_eq!(result, path.display().to_string());
+    }
+
+    #[test]
+    fn corpus_kb_rejects_kg_fixture_selectors_and_reports_invalid_combination() {
+        let tempdir = tempdir().expect("tempdir");
+        let report_path = tempdir.path().join("nonexistent_report.json");
+        let error = run(CorpusKbArgs {
+            validation_reports: vec![report_path],
+            repo_root: tempdir.path().to_path_buf(),
+            kg_fixtures_root: None,
+            kg_fixture: vec![PathBuf::from("toy_fixture")],
+        })
+        .expect_err("kg fixture selectors require a fixture root");
+        assert!(matches!(error, AppError::InvalidStageArtifact(_)));
+    }
+
+    #[test]
     fn corpus_kb_rejects_empty_refresh_inputs() {
         let tempdir = tempdir().expect("tempdir");
         let error = run(CorpusKbArgs {
@@ -1452,5 +1520,174 @@ Keep this benchmark note.\n\n\
         .expect_err("kg fixture selectors require a fixture root");
 
         assert!(matches!(error, AppError::InvalidStageArtifact(_)));
+    }
+
+    // --- prior_candidate_readiness ---
+
+    fn make_projection(
+        candidate_kind: &'static str,
+        positive_fixtures: &[&str],
+        guard_fixtures: &[&str],
+    ) -> PriorCandidateProjection {
+        PriorCandidateProjection {
+            candidate_kind,
+            target_schema: "test_schema",
+            required_gates: "none",
+            schema_gate: "none",
+            fixture_gate: "none",
+            harvest_gate: "none",
+            consumer_gate: "none",
+            supporting_fixtures: BTreeSet::new(),
+            positive_fixtures: positive_fixtures.iter().map(|s| s.to_string()).collect(),
+            guard_fixtures: guard_fixtures.iter().map(|s| s.to_string()).collect(),
+        }
+    }
+
+    #[test]
+    fn prior_candidate_readiness_caution_surface_for_negative_with_guards() {
+        let c = make_projection("negative_knowledge_prior", &[], &["guard1"]);
+        assert_eq!(
+            prior_candidate_readiness(&c),
+            "caution_surface_review_ready"
+        );
+    }
+
+    #[test]
+    fn prior_candidate_readiness_fixture_paired() {
+        let c = make_projection("some_kind", &["pos1"], &["guard1"]);
+        assert_eq!(prior_candidate_readiness(&c), "fixture_paired_review_ready");
+    }
+
+    #[test]
+    fn prior_candidate_readiness_needs_guard_fixture() {
+        let c = make_projection("some_kind", &["pos1"], &[]);
+        assert_eq!(prior_candidate_readiness(&c), "needs_guard_fixture");
+    }
+
+    #[test]
+    fn prior_candidate_readiness_needs_positive_fixture() {
+        let c = make_projection("some_kind", &[], &["guard1"]);
+        assert_eq!(prior_candidate_readiness(&c), "needs_positive_fixture");
+    }
+
+    #[test]
+    fn prior_candidate_readiness_needs_fixture_coverage() {
+        let c = make_projection("some_kind", &[], &[]);
+        assert_eq!(prior_candidate_readiness(&c), "needs_fixture_coverage");
+    }
+
+    #[test]
+    fn prior_candidate_readiness_negative_without_guards_is_not_caution() {
+        // negative_knowledge_prior with empty guard_fixtures → falls through to match
+        let c = make_projection("negative_knowledge_prior", &["pos1"], &[]);
+        assert_eq!(prior_candidate_readiness(&c), "needs_guard_fixture");
+    }
+
+    // --- render_fixture_set ---
+
+    #[test]
+    fn render_fixture_set_empty() {
+        assert_eq!(render_fixture_set(&BTreeSet::new()), "`none`");
+    }
+
+    #[test]
+    fn render_fixture_set_one_fixture() {
+        let mut fixtures = BTreeSet::new();
+        fixtures.insert("test_fixture".to_string());
+        assert_eq!(render_fixture_set(&fixtures), "`test_fixture`");
+    }
+
+    #[test]
+    fn render_fixture_set_multiple_fixtures() {
+        let mut fixtures = BTreeSet::new();
+        fixtures.insert("alpha".to_string());
+        fixtures.insert("beta".to_string());
+        assert_eq!(render_fixture_set(&fixtures), "`alpha`, `beta`");
+    }
+
+    // --- escape_markdown_line ---
+
+    #[test]
+    fn escape_markdown_line_replaces_newlines() {
+        assert_eq!(escape_markdown_line("line1\nline2"), "line1 line2");
+    }
+
+    #[test]
+    fn escape_markdown_line_escapes_pipes() {
+        assert_eq!(escape_markdown_line("a|b"), "a\\|b");
+    }
+
+    #[test]
+    fn escape_markdown_line_no_special_chars() {
+        assert_eq!(escape_markdown_line("hello world"), "hello world");
+    }
+
+    // --- document_key_from_report_path ---
+
+    #[test]
+    fn document_key_from_report_path_extracts_parent_dir_name() {
+        let p = std::path::Path::new("generated/intent_ir/my_document/validation_report.json");
+        assert_eq!(document_key_from_report_path(p), "my_document");
+    }
+
+    #[test]
+    fn document_key_from_report_path_falls_back_for_root_file() {
+        let p = std::path::Path::new("validation_report.json");
+        assert_eq!(document_key_from_report_path(p), "unknown_document");
+    }
+
+    // --- replace_managed_block ---
+
+    #[test]
+    fn replace_managed_block_inserts_when_start_not_found() -> Result<()> {
+        let existing = "# Title\n\nSome human text.\n";
+        let managed = "| Col1 | Col2 |\n|------|------|\n| a | b |\n";
+        let result = replace_managed_block(
+            existing,
+            managed,
+            "<!-- MANAGED_START -->",
+            "<!-- MANAGED_END -->",
+            "## Managed Section\n",
+        )?;
+        assert!(result.contains("<!-- MANAGED_START -->") || result.contains("## Managed Section"));
+        assert!(result.contains("| Col1 | Col2 |"));
+        Ok(())
+    }
+
+    #[test]
+    fn replace_managed_block_replaces_existing_managed_section() -> Result<()> {
+        let existing = "# Title\n\nHuman text.\n\n<!-- MANAGED_START -->\nold content\n<!-- MANAGED_END -->\n\nMore human text.\n";
+        let managed = "new content\n";
+        let result = replace_managed_block(
+            existing,
+            managed,
+            "<!-- MANAGED_START -->",
+            "<!-- MANAGED_END -->",
+            "## Managed Section\n",
+        )?;
+        assert!(result.contains("new content"));
+        assert!(!result.contains("old content"));
+        assert!(result.contains("More human text."));
+        assert!(result.contains("Human text."));
+        Ok(())
+    }
+
+    #[test]
+    fn replace_managed_block_errors_when_end_not_found() {
+        let existing = "<!-- MANAGED_START -->\ncontent\nno end marker";
+        let result = replace_managed_block(
+            existing,
+            "new",
+            "<!-- MANAGED_START -->",
+            "<!-- MANAGED_END -->",
+            "## Managed\n",
+        );
+        assert!(result.is_err());
+        assert!(
+            result
+                .unwrap_err()
+                .to_string()
+                .contains("has `<!-- MANAGED_START -->` but no `<!-- MANAGED_END -->`")
+        );
     }
 }
