@@ -59,13 +59,13 @@ The most important ones are:
 7. validate the result and back-annotate findings
 
 ## Planned command shape
-- `specforge converge <source> --target <fsm|systemverilog|verilog|vhdl>` defaults to full Ollama-backed VLM image enrichment plus NLP Level 3 backannotation; pass `--vlm-provider skip` and/or `--nlp-provider skip` only when you intentionally want a narrower run
+- `specforge converge <source> --target <fsm|isf>` defaults to full Ollama-backed VLM image enrichment plus NLP Level 3 backannotation; pass `--vlm-provider skip` and/or `--nlp-provider skip` only when you intentionally want a narrower run (HDL lowering — SystemVerilog/Verilog/VHDL — is out of scope; downstream toolchains own it)
 - `specforge ingest <source>`
 - `specforge inspect <artifact-or-path>`
 - `specforge evidence <source-ir>`
 - `specforge semantic <evidence-ir>`
 - `specforge intent <semantic-ir>`
-- `specforge adapt <intent-ir> --target <fsm|systemverilog|verilog|vhdl>` (today, only `fsm` is implemented)
+- `specforge adapt <intent-ir> --target <fsm|isf>` (both `fsm` and `isf` are implemented; HDL lowering is out of scope — owned by downstream toolchains)
 - `specforge validate <artifact>`
 - `specforge project-validation <artifact>...`
 - `specforge learn-priors <intent-ir>...`

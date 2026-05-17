@@ -894,6 +894,22 @@ fn count_isf_signals(intent_ir: &IntentIr) -> usize {
     seen.len()
 }
 
+// ISF renderability policy (R6-ISF-ADAPTER.4 decision).
+//
+// ISF lowering blocks on exactly two conditions:
+//   1. no signals declared in any interface, and
+//   2. no behavioral content (temporal rules, conditional rules, signal
+//      constraints, or control blocks).
+//
+// Missing per-signal direction or width is *deliberately not* a blocker:
+// `IsfIr::from_intent_ir` defaults an unknown direction to `output` and an
+// unknown width to `1`. This is intentional and is the key policy difference
+// from the stricter `.fsm` adapter, which blocks on missing/conflicting
+// direction or width. The rationale: FSMGen performs the cycle scheduling for
+// `.isf`, and ISF accepts a default direction/width, so blocking on those
+// would over-restrict otherwise-honest lowering without improving downstream
+// correctness. The `.fsm` path stays strict because it must not fabricate
+// target syntax; the `.isf` path can safely default and let FSMGen schedule.
 fn assess_isf_renderability(intent_ir: &IntentIr) -> (bool, Vec<String>) {
     let mut reasons: Vec<String> = Vec::new();
 
@@ -902,7 +918,8 @@ fn assess_isf_renderability(intent_ir: &IntentIr) -> (bool, Vec<String>) {
         reasons.push("no signals declared in interface".to_string());
     } else {
         // Direction and width missing are informational only — the ISF IR
-        // defaults them to output / width 1 so emission can proceed.
+        // defaults them to output / width 1 so emission can proceed (see the
+        // ISF renderability policy comment above).
     }
 
     let has_behavior = !intent_ir.temporal_rules.is_empty()

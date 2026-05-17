@@ -61,6 +61,26 @@
   emitter/helper coverage (recorded as a task-tree decision).
 - 9 new tests (1201 lib tests); `scripts/run_ci.sh` green.
 
+### R6-ISF-ADAPTER.4: explicit renderability policy + user-doc accuracy
+- Recorded the ISF renderability policy as an explicit decision: ISF lowering
+  blocks only on (1) no signals or (2) no behavioral content; missing
+  per-signal direction/width is deliberately NOT a blocker (`IsfIr` defaults
+  to `output` / width `1`) — the key policy difference from the stricter
+  `.fsm` adapter, because FSMGen does the cycle scheduling for `.isf`.
+  Documented at `assess_isf_renderability` (expanded comment), in the task
+  tree Decisions, in DEVELOPMENT_NOTES, and in the mdBook ISF chapter.
+- mdBook `pipeline/isf-adapter.md`: added a "Renderability policy" section
+  and updated "Validation"/"Generated artifact" for the `isf_adapter` stage
+  and the new `specforge validate` ISF dispatch (from `.2`).
+- USER_GUIDE.md: corrected stale command surface — `converge`/`adapt`
+  `--target` is `<fsm|isf>` (both implemented), HDL explicitly out of scope
+  (was `<fsm|systemverilog|verilog|vhdl>` / "only fsm is implemented").
+- Open question recorded: `AdapterTarget`/`AdapterTargetArg` still carry
+  HDL variants though HDL is out of scope — flagged for a separate decision,
+  not changed here (out of `.4` scope).
+- Comment-only code touch; zero behavior change; `scripts/run_ci.sh` green
+  (1201 lib tests).
+
 ## 2026-05-17 (Bootstrap re-analysis + SIGNOFF-REMEDIATION)
 
 ### Bootstrap re-analysis (RUST_CODEBASE_ANALYSIS.md)

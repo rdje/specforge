@@ -7,6 +7,7 @@
 - R6-ISF-ADAPTER.1 — ISF adapter ownership + continuity backfill (task tree registered; ISF recorded in CHANGES/DEVELOPMENT_NOTES/ROADMAP R6/RUST_CODEBASE_ANALYSIS): Done
 - R6-ISF-ADAPTER.2 — IrStage modeling smell resolved: added `IrStage::IsfAdapter`; ISF artifacts no longer mislabeled as FsmAdapter; dedicated `validate_isf_adapter` instead of FSM-validator misroute; 25 project_validation.rs match arms updated; full CI green: Done
 - R6-ISF-ADAPTER.3 — `isf_ir.rs` now has 9 dedicated unit tests (was zero): emitter invariants (clock/reset/watchdog always emitted, BTreeSet dedup/order, when/switch nesting, balanced parens) + pure helpers; full CI green: Done
+- R6-ISF-ADAPTER.4 — ISF renderability policy made explicit (code comment + mdBook + DEVELOPMENT_NOTES + task-tree decision); USER_GUIDE command surface corrected to `--target <fsm|isf>`; HDL-enum-variant inconsistency flagged as open question; full CI green: Done
 - Git repository initialized: Done
 - Commit workflow document present and reviewed: Done
 - Commit workflow now requires explicit current-state live-doc/mdBook drift audit before commit: Done

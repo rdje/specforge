@@ -24,18 +24,19 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `7fda5acd` (pre-commit baseline; the R6-ISF-ADAPTER.3 commit is not yet created at time of this update)
-- latest_commit_brief_message: R6-ISF-ADAPTER.2 — add IrStage::IsfAdapter + dedicated ISF adapter validation
-- note: 2026-05-17 — signoff restored, then executing the authorized `R6-ISF-ADAPTER` batch. `.1`/`.2`/`.3` done (`.3`: 9 isf_ir.rs unit tests, 1201 tests, full CI green); committing `.3` now. `.4`/`.5` pending.
+- latest_commit_hash: `ba9de037` (pre-commit baseline; the R6-ISF-ADAPTER.4 commit is not yet created at time of this update)
+- latest_commit_brief_message: R6-ISF-ADAPTER.3 — unit-test isf_ir.rs emitter and helpers
+- note: 2026-05-17 — signoff restored, then executing the authorized `R6-ISF-ADAPTER` batch. `.1`/`.2`/`.3`/`.4` done (`.4`: explicit renderability policy + mdBook/USER_GUIDE accuracy, 1201 tests, full CI green); committing `.4` now. Only `.5` (close + push) remains.
 
 ## Active batch status
 - batch: `R6-ISF-ADAPTER` (user-authorized, fixed size `N=5` leaves: `.1`..`.5`)
-- completed_count: `.1` (`0124fc2c`) + `.2` (`7fda5acd`) committed; `.3` done, committing now; `.4`/`.5` pending
+- completed_count: `.1` (`0124fc2c`) + `.2` (`7fda5acd`) + `.3` (`ba9de037`) committed; `.4` done, committing now; `.5` (close + push) pending
 - per-leaf rule: full COMMIT.md workflow after every leaf; task-scoped commits not deferred
 - push policy: deferred until the full 5-leaf batch completes (push happens in `.5`), unless the branch hits ~30 ahead or the user changes the instruction
 - branch ahead pre-`.1`: 23 commits ahead of `origin/main` (under the ~30 checkpoint)
 
 ## Recent commit chain (last 10)
+- `ba9de037` R6-ISF-ADAPTER.3 — unit-test isf_ir.rs emitter and helpers
 - `7fda5acd` R6-ISF-ADAPTER.2 — add IrStage::IsfAdapter + dedicated ISF adapter validation
 - `0124fc2c` R6-ISF-ADAPTER.1 — backfill ISF adapter ownership + continuity
 - `c2d7c94f` SIGNOFF-REMEDIATION.1 SIGNOFF-REMEDIATION.2 — restore signoff at HEAD

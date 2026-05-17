@@ -104,14 +104,28 @@ ir/adapters.rs        AdapterArtifact, build_isf_source_text (thin wrapper), FSM
 
 `adapters.rs` calls `IsfIr::from_intent_ir()` and `.render()` — it does not contain the ISF IR. The ISF IR lives in its own module, surfaced via `ir/mod.rs` as `pub mod isf_ir`.
 
+## Renderability policy
+
+ISF lowering blocks on exactly two conditions:
+
+1. **No signals** — no signal records in any interface, and
+2. **No behavioral content** — no temporal rules, conditional rules, signal constraints, or control blocks.
+
+If either holds, the adapter artifact is `Blocked` with explicit `blocking_reasons` and no `.isf` text is emitted.
+
+Crucially, **missing per-signal direction or width is _not_ a blocker**. `IsfIr::from_intent_ir` defaults an unknown direction to `output` and an unknown width to `1`, and emission proceeds. This is the deliberate policy difference from the stricter `.fsm` adapter, which blocks on missing or conflicting direction/width. The rationale: FSMGen performs the cycle scheduling for `.isf` and accepts a default direction/width, so blocking on those would over-restrict otherwise-honest lowering without improving downstream correctness. The `.fsm` path stays strict because it must not fabricate target syntax; the `.isf` path can safely default and let FSMGen schedule. The policy lives next to `assess_isf_renderability` in `ir/adapters.rs`.
+
 ## Generated artifact
 
 ISF adapter output lives under:
 
 - `generated/adapters/isf/<document_key>/adapter.json`
 
-The adapter artifact carries the rendered `.isf` source text, renderability status, blocking reasons, and signal inventory metadata.
+The adapter artifact carries the rendered `.isf` source text, renderability status, blocking reasons, and signal inventory metadata. It is tagged with the `isf_adapter` stage (distinct from `fsm_adapter`), so stage-keyed tooling never treats an ISF artifact as an FSM artifact.
 
 ## Validation
 
-ISF output is validated against FSMGen `--strict --check --json` in the test `isf_output_passes_fsmgen_strict_validation`. The test ensures that SPECFORGE-generated ISF passes FSMGen's strict acceptance surface — zero diagnostics, zero syntax errors.
+Two complementary checks cover ISF output:
+
+- **FSMGen strict acceptance** — ISF text is validated against FSMGen `--strict --check --json` in the test `isf_output_passes_fsmgen_strict_validation`, ensuring SPECFORGE-generated ISF passes FSMGen's strict surface with zero diagnostics and zero syntax errors.
+- **`specforge validate <isf adapter.json>`** — auto-detects the `isf_adapter` stage and runs `validate_isf_adapter`, reporting structural and coverage findings (missing ISF payload, unexpected schema version, not renderable, empty signal inventory, no behavioral surface, residual decisions). ISF artifacts are no longer misrouted into the FSM validator.

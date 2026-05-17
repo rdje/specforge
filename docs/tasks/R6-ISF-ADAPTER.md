@@ -99,15 +99,15 @@ signoff but explicitly left this governance/coverage gap as scoped follow-up.
   Commit: `R6-ISF-ADAPTER.3 — unit-test isf_ir.rs emitter and helpers`
 
 - ID: `R6-ISF-ADAPTER.4`
-  Status: `pending`
+  Status: `done`
   Goal: `Make the ISF renderability policy explicit and verify user docs.`
   Acceptance: >
     `assess_isf_renderability`'s permissive direction/width defaults are
     recorded as an explicit decision (task-tree Decisions + code comment +
     DEVELOPMENT_NOTES); the mdBook ISF chapter and USER_GUIDE/command
     surface are verified to match actual behavior, corrected if stale.
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — policy comment added; mdBook + USER_GUIDE corrected; full `scripts/run_ci.sh` green (1201 lib tests)
+  Commit: `R6-ISF-ADAPTER.4 — explicit ISF renderability policy + user-doc accuracy`
 
 - ID: `R6-ISF-ADAPTER.5`
   Status: `pending`
@@ -126,8 +126,8 @@ signoff but explicitly left this governance/coverage gap as scoped follow-up.
 | 1 | `R6-ISF-ADAPTER.1` | `done` | Ownership/continuity backfilled |
 | 2 | `R6-ISF-ADAPTER.2` | `done` | IrStage smell resolved; CI green |
 | 3 | `R6-ISF-ADAPTER.3` | `done` | isf_ir.rs unit tests added; CI green |
-| 4 | `R6-ISF-ADAPTER.4` | `pending` | Next — lock the policy + user docs |
-| 5 | `R6-ISF-ADAPTER.5` | `pending` | Close + push the batch |
+| 4 | `R6-ISF-ADAPTER.4` | `done` | Renderability policy + user docs locked; CI green |
+| 5 | `R6-ISF-ADAPTER.5` | `pending` | Next — close + push the batch |
 
 ## Decisions
 
@@ -143,12 +143,24 @@ signoff but explicitly left this governance/coverage gap as scoped follow-up.
   `--strict --check --json`): hand-building the 43-field `IntentIr` with no
   `Default` for a unit test would be brittle and lower-quality than focused
   emitter/invariant coverage.
+- `2026-05-17`: `.4` ISF renderability policy is intentional: block only on
+  no-signals or no-behavior; default unknown direction→`output`, width→`1`
+  and let FSMGen schedule. `.fsm` stays strict (must not fabricate target
+  syntax); `.isf` may default (FSMGen owns scheduling).
 
 ## Open Questions
 
 - `.2`: does `specforge validate` need ISF-specific adapter validation, or
   is a minimal structural check / explicit "no ISF validator yet" path
-  sufficient for now? Resolve during `.2` from the actual validate.rs path.
+  sufficient for now? **Resolved in `.2`**: added a dedicated
+  `validate_isf_adapter` mirroring the FSM validator's structural+coverage
+  shape; a stub would have been lower quality.
+- `.4` finding (out of this tree's scope): `AdapterTarget` and
+  `AdapterTargetArg` still enumerate `SystemVerilog` / `Verilog` / `Vhdl`
+  even though HDL lowering is explicitly out of scope per
+  README/ROADMAP/INTENTIR_SPEC. Not changed here (scope creep + needs its
+  own decision on whether to remove the variants or keep them erroring).
+  Candidate for a separate task tree.
 
 ## Blockers
 
@@ -161,6 +173,7 @@ signoff but explicitly left this governance/coverage gap as scoped follow-up.
 | `2026-05-17` | `R6-ISF-ADAPTER.1` | docs-only diff audit (no `.rs` changed) | `passed` |
 | `2026-05-17` | `R6-ISF-ADAPTER.2` | `scripts/run_ci.sh` (1192 lib tests, clippy/fmt/rustdoc/mdBook) | `passed` |
 | `2026-05-17` | `R6-ISF-ADAPTER.3` | `scripts/run_ci.sh` (1201 lib tests, clippy/fmt/rustdoc/mdBook) | `passed` |
+| `2026-05-17` | `R6-ISF-ADAPTER.4` | `scripts/run_ci.sh` (comment-only code touch; 1201 lib tests, clippy/fmt/rustdoc/mdBook) | `passed` |
 
 ## Commit Log
 
@@ -169,6 +182,7 @@ signoff but explicitly left this governance/coverage gap as scoped follow-up.
 | `R6-ISF-ADAPTER.1` | `R6-ISF-ADAPTER.1 — backfill ISF adapter ownership + continuity` | Docs only |
 | `R6-ISF-ADAPTER.2` | `R6-ISF-ADAPTER.2 — add IrStage::IsfAdapter + dedicated ISF adapter validation` | Code: enum variant, validate_isf_adapter, 25 match arms, +1 test |
 | `R6-ISF-ADAPTER.3` | `R6-ISF-ADAPTER.3 — unit-test isf_ir.rs emitter and helpers` | Tests only: 9 new isf_ir.rs unit tests |
+| `R6-ISF-ADAPTER.4` | `R6-ISF-ADAPTER.4 — explicit ISF renderability policy + user-doc accuracy` | Comment + mdBook + USER_GUIDE; HDL-variant open question recorded |
 
 ## Changelog
 

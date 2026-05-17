@@ -41,6 +41,14 @@
   `IsfIr` construction + balanced-paren / dedup / nesting assertions is
   the higher-quality coverage. Recorded as a task-tree decision. CI again
   caught a rustfmt miss in the new tests pre-commit.
+- `.4`: made the ISF renderability policy explicit rather than implicit in a
+  one-line comment — it is a genuine design stance (ISF defaults unknown
+  direction/width and lets FSMGen schedule; `.fsm` stays strict). Recorded
+  at the code site, the task tree, here, and the mdBook. Also fixed stale
+  USER_GUIDE command-surface lines (HDL targets / "only fsm implemented").
+  Discovered that `AdapterTarget`/`AdapterTargetArg` still enumerate
+  SystemVerilog/Verilog/Vhdl despite HDL being out of scope — deliberately
+  left as a recorded open question rather than scope-creeping `.4`.
 
 ## 2026-05-17 session — bootstrap re-analysis + SIGNOFF-REMEDIATION
 
