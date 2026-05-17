@@ -1,0 +1,368 @@
+{
+   "command" : {
+      "json" : true,
+      "mode" : "semantic_export",
+      "strict_mode" : false,
+      "target_language" : "systemverilog"
+   },
+   "diagnostic_summary" : {
+      "code_counts" : {},
+      "codes" : [],
+      "contract_source" : "FSM::Support::SerializableDiagnosticSummary",
+      "diagnostic_count" : 0,
+      "diagnostic_summary_schema_version" : 1,
+      "has_diagnostics" : false,
+      "has_stable_codes" : false,
+      "matched_support_accounting" : false,
+      "report_source" : "FSM::Support::SerializableDiagnosticSummary",
+      "severity_counts" : {},
+      "success" : true,
+      "unique_codes" : []
+   },
+   "diagnostics" : [],
+   "generated_output" : {
+      "emitted" : false
+   },
+   "generation_result_snapshot" : {
+      "contract_source" : "FSM::Support::SerializableGenerationResultSnapshot",
+      "generation_result_snapshot_schema_version" : 1,
+      "present" : true,
+      "raw_shell_presence" : {
+         "composition_plan" : {
+            "present" : false,
+            "value_ref" : null
+         },
+         "composition_report" : {
+            "present" : false,
+            "value_ref" : null
+         },
+         "composition_spec" : {
+            "present" : false,
+            "value_ref" : null
+         },
+         "fsm_module" : {
+            "present" : true,
+            "value_ref" : "FSM::CoreAST::FSMModule"
+         },
+         "raw_ast" : {
+            "present" : true,
+            "value_ref" : "ARRAY"
+         },
+         "resolved_package_imports" : {
+            "present" : true,
+            "value_ref" : "HASH"
+         }
+      },
+      "report_source" : "FSM::Support::SerializableGenerationResultSnapshot",
+      "semantic_layer_presence" : {
+         "intent_hir" : true,
+         "lowered_rtl_ir" : true,
+         "structural_rtl_ir" : true
+      },
+      "source_summary" : {
+         "header" : "?fsm:demo",
+         "kind" : "fsm",
+         "package_import_count" : 0,
+         "package_import_names" : []
+      },
+      "stable_summary_presence" : {
+         "module_info" : true,
+         "source_info" : true,
+         "statistics" : true
+      },
+      "statistics_summary" : {
+         "factoring_enabled" : false,
+         "global_expressions" : 0,
+         "intermediate_signals" : 0
+      },
+      "summary" : {
+         "composition_child_count" : 0,
+         "hdl_code_length" : 1825,
+         "hdl_code_line_count" : 65,
+         "hdl_code_present" : true,
+         "module_name" : "demo",
+         "module_signal_count" : 2,
+         "module_state_count" : 0,
+         "source_root_kind" : "fsm",
+         "target_language" : "systemverilog"
+      },
+      "top_level_keys" : [
+         "fsm_module",
+         "hdl_code",
+         "intent_hir",
+         "lowered_rtl_ir",
+         "module_info",
+         "raw_ast",
+         "resolved_package_imports",
+         "source_info",
+         "statistics",
+         "structural_rtl_ir"
+      ]
+   },
+   "normalized_semantic_schema_version" : 1,
+   "producer" : {
+      "name" : "FSMGen",
+      "report_source" : "FSM::Support::NormalizedSemanticReport",
+      "semantic_layers" : [
+         "intent_hir",
+         "lowered_rtl_ir",
+         "structural_rtl_ir"
+      ]
+   },
+   "semantic" : {
+      "explicit_system_contract" : {
+         "clock" : "clk",
+         "reset" : "rst_n",
+         "reset_active_level" : 0,
+         "reset_keyword" : "areset",
+         "reset_kind" : "async"
+      },
+      "forward_ir" : {
+         "intent_hir" : {
+            "explicit_system_contract" : {
+               "clock" : "clk",
+               "reset" : "rst_n",
+               "reset_active_level" : 0,
+               "reset_keyword" : "areset",
+               "reset_kind" : "async"
+            },
+            "module_name" : "demo",
+            "parameter_count" : 0,
+            "parameter_names" : [],
+            "regular_state_count" : 0,
+            "regular_state_names" : [],
+            "requires_implicit_system_ports" : 1,
+            "signal_analysis" : {
+               "inputs" : [
+                  {
+                     "direction" : "input",
+                     "name" : "true",
+                     "signed" : 0,
+                     "width" : 1
+                  }
+               ],
+               "multi_bit" : [],
+               "outputs" : [
+                  {
+                     "direction" : "output",
+                     "name" : "sig_a",
+                     "signed" : 0,
+                     "width" : 1
+                  }
+               ],
+               "single_bit" : [
+                  {
+                     "direction" : "output",
+                     "name" : "sig_a",
+                     "signed" : 0,
+                     "width" : 1
+                  },
+                  {
+                     "direction" : "input",
+                     "name" : "true",
+                     "signed" : 0,
+                     "width" : 1
+                  }
+               ]
+            },
+            "signal_count" : 2,
+            "signal_names" : [
+               "sig_a",
+               "true"
+            ],
+            "source_root_kind" : "fsm",
+            "standalone_dt_count" : 1,
+            "standalone_dt_enable_families" : [
+               {
+                  "dt_name" : "-unconditional_rule",
+                  "enable_signal" : "unconditional_rule_en"
+               }
+            ],
+            "standalone_dt_module_enable_family" : {
+               "dt_names" : [
+                  "-unconditional_rule"
+               ],
+               "enable_signals" : [
+                  "unconditional_rule_en"
+               ]
+            },
+            "standalone_dt_names" : [
+               "-unconditional_rule"
+            ],
+            "state_count" : 0,
+            "symbol_contract" : null,
+            "system_contract" : {
+               "clock" : "clk",
+               "declare_ports" : 1,
+               "implicit" : 0,
+               "reset" : "rst_n",
+               "reset_active_level" : 0,
+               "reset_keyword" : "areset",
+               "reset_kind" : "async"
+            }
+         },
+         "lowered_rtl_ir" : {
+            "module_name" : "demo",
+            "output_drive_families" : [
+               {
+                  "default_value" : "sig_a",
+                  "driver_blocks" : [
+                     "-unconditional_rule"
+                  ],
+                  "driver_count" : 1,
+                  "driver_enable_signals" : [
+                     "unconditional_rule_sig_a_1_en"
+                  ],
+                  "family_enable_signals" : [
+                     "sig_a_1_en"
+                  ],
+                  "multiplexer_type" : "flop",
+                  "reset_value" : "1'b0",
+                  "rhs_enable_families" : [
+                     {
+                        "driver_blocks" : [
+                           "-unconditional_rule"
+                        ],
+                        "driver_enable_signals" : [
+                           "unconditional_rule_sig_a_1_en"
+                        ],
+                        "family_enable_signal" : "sig_a_1_en",
+                        "rhs_value" : "1"
+                     }
+                  ],
+                  "rhs_values" : [
+                     "1"
+                  ],
+                  "signal_name" : "sig_a",
+                  "width" : 1
+               }
+            ],
+            "output_drive_family_count" : 1,
+            "selector_conflict_target_count" : 0,
+            "selector_conflict_targets" : [],
+            "source_root_kind" : "fsm",
+            "standalone_dt_multi_drive_target_count" : 0,
+            "standalone_dt_multi_drive_targets" : [],
+            "target_language" : "systemverilog"
+         },
+         "structural_rtl_ir" : {
+            "auxiliary_assignment_count" : 0,
+            "auxiliary_assignments" : [],
+            "declared_link_count" : 0,
+            "declared_links" : [],
+            "instance_count" : 0,
+            "instances" : [],
+            "module_name" : "demo",
+            "net_count" : 0,
+            "nets" : [],
+            "port_count" : 4,
+            "ports" : [
+               {
+                  "direction" : "input",
+                  "name" : "true",
+                  "signed" : 0,
+                  "type" : "wire",
+                  "width" : 1
+               },
+               {
+                  "direction" : "output",
+                  "name" : "sig_a",
+                  "signed" : 0,
+                  "type" : "wire",
+                  "width" : 1
+               },
+               {
+                  "direction" : "input",
+                  "name" : "clk",
+                  "signed" : 0,
+                  "type" : "clock",
+                  "width" : 1
+               },
+               {
+                  "direction" : "input",
+                  "name" : "rst_n",
+                  "signed" : 0,
+                  "type" : "reset",
+                  "width" : 1
+               }
+            ],
+            "resolved_link_count" : 0,
+            "resolved_links" : [],
+            "source_root_kind" : "fsm",
+            "target_language" : "systemverilog"
+         }
+      },
+      "module" : {
+         "name" : "demo",
+         "output_drive_family_count" : 1,
+         "parameter_count" : 0,
+         "parameter_names" : [],
+         "regular_state_count" : 0,
+         "regular_state_names" : [],
+         "requires_implicit_system_ports" : true,
+         "signal_count" : 2,
+         "signal_names" : [
+            "sig_a",
+            "true"
+         ],
+         "source_root_kind" : "fsm",
+         "standalone_dt_count" : 1,
+         "standalone_dt_multi_drive_target_count" : 0,
+         "standalone_dt_names" : [
+            "-unconditional_rule"
+         ],
+         "state_count" : 0,
+         "target_language" : "systemverilog"
+      },
+      "signal_analysis" : {
+         "inputs" : [
+            {
+               "direction" : "input",
+               "name" : "true",
+               "signed" : 0,
+               "width" : 1
+            }
+         ],
+         "multi_bit" : [],
+         "outputs" : [
+            {
+               "direction" : "output",
+               "name" : "sig_a",
+               "signed" : 0,
+               "width" : 1
+            }
+         ],
+         "single_bit" : [
+            {
+               "direction" : "output",
+               "name" : "sig_a",
+               "signed" : 0,
+               "width" : 1
+            },
+            {
+               "direction" : "input",
+               "name" : "true",
+               "signed" : 0,
+               "width" : 1
+            }
+         ]
+      },
+      "system_contract" : {
+         "clock" : "clk",
+         "declare_ports" : 1,
+         "implicit" : 0,
+         "reset" : "rst_n",
+         "reset_active_level" : 0,
+         "reset_keyword" : "areset",
+         "reset_kind" : "async"
+      }
+   },
+   "source" : {
+      "input" : "fsmgen-issue-bare-token-guard-infix/sources/fsmgen-input/bare_guard_repro.isf",
+      "resolved_path" : "/var/folders/4h/29gg6nrx2pj9wfjkzc460hlr0000gn/T/afrViAXZPu.fsm"
+   },
+   "success" : true,
+   "support_accounting" : {
+      "matched" : false
+   }
+}

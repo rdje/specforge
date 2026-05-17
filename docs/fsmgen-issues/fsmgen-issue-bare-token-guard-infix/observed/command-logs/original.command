@@ -1,0 +1,1 @@
+./bin/fsmgen --strict --check --json fsmgen-issue-bare-token-guard-infix/sources/fsmgen-input/bare_guard_repro.isf

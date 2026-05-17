@@ -1,0 +1,1 @@
+./bin/fsmgen --outdir fsmgen-issue-bare-token-guard-infix/observed/generated/lowered -l sv -o fsmgen-issue-bare-token-guard-infix/observed/generated/output.sv fsmgen-issue-bare-token-guard-infix/sources/fsmgen-input/bare_guard_repro.isf

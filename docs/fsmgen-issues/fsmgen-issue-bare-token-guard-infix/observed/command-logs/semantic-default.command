@@ -1,0 +1,1 @@
+./bin/fsmgen --emit-semantic-json fsmgen-issue-bare-token-guard-infix/sources/fsmgen-input/bare_guard_repro.isf
