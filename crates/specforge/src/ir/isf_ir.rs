@@ -330,10 +330,7 @@ impl IsfIr {
                 }
                 lines.push(format!("{})", indent));
             }
-            IsfTxnStep::Switch {
-                selector,
-                branches,
-            } => {
+            IsfTxnStep::Switch { selector, branches } => {
                 lines.push(format!("{}(switch {}", indent, selector));
                 for (val, body) in branches {
                     lines.push(format!("{}  ({})", indent, val));
@@ -377,9 +374,7 @@ impl IsfIr {
             IsfTxnStep::Sample { port, as_name } => {
                 lines.push(format!("{}(sample {} as {})", indent, port, as_name));
             }
-            IsfTxnStep::Do {
-                child_transaction,
-            } => {
+            IsfTxnStep::Do { child_transaction } => {
                 lines.push(format!("{}(do {})", indent, child_transaction));
             }
             IsfTxnStep::Spawn {
@@ -468,11 +463,20 @@ impl IsfIr {
             s.signal_name.to_lowercase().contains("rst")
                 || s.signal_name.to_lowercase().contains("reset")
         }) {
-            let is_n_suffix = infra.signal_name.ends_with("_n") || infra.signal_name.ends_with("_b");
+            let is_n_suffix =
+                infra.signal_name.ends_with("_n") || infra.signal_name.ends_with("_b");
             IsfReset {
                 signal: infra.signal_name.clone(),
-                timing: if is_n_suffix { "async".to_string() } else { "sync".to_string() },
-                polarity: if is_n_suffix { "active_low".to_string() } else { "active_high".to_string() },
+                timing: if is_n_suffix {
+                    "async".to_string()
+                } else {
+                    "sync".to_string()
+                },
+                polarity: if is_n_suffix {
+                    "active_low".to_string()
+                } else {
+                    "active_high".to_string()
+                },
             }
         } else {
             IsfReset {
@@ -483,8 +487,9 @@ impl IsfIr {
         };
 
         // --- Signals (dedup by name, clock/reset excluded) ---
-        let infra_names: BTreeSet<&str> =
-            [clock.as_str(), reset.signal.as_str()].into_iter().collect();
+        let infra_names: BTreeSet<&str> = [clock.as_str(), reset.signal.as_str()]
+            .into_iter()
+            .collect();
         let mut signals: BTreeSet<IsfSignal> = BTreeSet::new();
         let mut seen_signal_names: BTreeSet<String> = BTreeSet::new();
         for iface in &intent_ir.interfaces {
@@ -625,10 +630,8 @@ impl IsfIr {
                 match &cb.selector {
                     None => {
                         let actions = collect_branch_actions(&cb.branches);
-                        let steps: Vec<IsfTxnStep> = actions
-                            .iter()
-                            .map(|a| convert_action_to_txn_step(a))
-                            .collect();
+                        let steps: Vec<IsfTxnStep> =
+                            actions.iter().map(convert_action_to_txn_step).collect();
                         fallback_txns.push(IsfTransaction {
                             name: tx_name,
                             on_trigger: None,
@@ -647,7 +650,7 @@ impl IsfIr {
                             let steps: Vec<IsfTxnStep> = branch
                                 .actions
                                 .iter()
-                                .map(|a| convert_action_to_txn_step(a))
+                                .map(convert_action_to_txn_step)
                                 .collect();
                             fallback_txns.push(IsfTransaction {
                                 name: tx_name,
@@ -670,11 +673,8 @@ impl IsfIr {
                                         Some(pred) => render_isf_control_expression(pred),
                                         None => "default".to_string(),
                                     };
-                                    let body: Vec<IsfTxnStep> = b
-                                        .actions
-                                        .iter()
-                                        .map(|a| convert_action_to_txn_step(a))
-                                        .collect();
+                                    let body: Vec<IsfTxnStep> =
+                                        b.actions.iter().map(convert_action_to_txn_step).collect();
                                     (val, body)
                                 })
                                 .collect();
@@ -703,8 +703,7 @@ impl IsfIr {
         };
 
         // --- Rules ---
-        let signal_names: BTreeSet<String> =
-            signals.iter().map(|s| s.name.clone()).collect();
+        let signal_names: BTreeSet<String> = signals.iter().map(|s| s.name.clone()).collect();
         let mut rules: Vec<IsfRule> = Vec::new();
 
         for (cr_idx, cr) in intent_ir.conditional_rules.iter().enumerate() {
@@ -771,11 +770,11 @@ impl IsfIr {
                 let mut conflict = false;
                 for (sig, val) in &rule.drives {
                     let key = (sig.clone(), rule.condition.clone());
-                    if let Some(prev_val) = seen.get(&key) {
-                        if prev_val != val {
-                            conflict = true;
-                            break;
-                        }
+                    if let Some(prev_val) = seen.get(&key)
+                        && prev_val != val
+                    {
+                        conflict = true;
+                        break;
                     }
                 }
                 if conflict {
@@ -848,7 +847,7 @@ fn partition_txn_steps(steps: &[TransactionStep]) -> (Vec<TransactionStep>, Vec<
 }
 
 fn convert_txn_steps(steps: &[TransactionStep]) -> Vec<IsfTxnStep> {
-    steps.iter().map(|s| convert_txn_step(s)).collect()
+    steps.iter().map(convert_txn_step).collect()
 }
 
 fn convert_txn_step(step: &TransactionStep) -> IsfTxnStep {
@@ -864,10 +863,7 @@ fn convert_txn_step(step: &TransactionStep) -> IsfTxnStep {
             condition: condition.clone(),
             body: convert_txn_steps(body),
         },
-        TransactionStep::Switch {
-            selector,
-            branches,
-        } => IsfTxnStep::Switch {
+        TransactionStep::Switch { selector, branches } => IsfTxnStep::Switch {
             selector: selector.clone(),
             branches: branches
                 .iter()
@@ -928,9 +924,7 @@ fn convert_txn_step(step: &TransactionStep) -> IsfTxnStep {
             bit: bit.clone(),
             width: width.map(|w| w as u8),
         },
-        TransactionStep::Complete { port } => IsfTxnStep::Complete {
-            port: port.clone(),
-        },
+        TransactionStep::Complete { port } => IsfTxnStep::Complete { port: port.clone() },
         TransactionStep::AwaitAll { done_port } => IsfTxnStep::AwaitAll {
             done_port: done_port.clone(),
         },
@@ -958,7 +952,9 @@ fn convert_action_to_txn_step(action: &ControlActionRecord) -> IsfTxnStep {
             name: target.signal_name.clone(),
             actuals: vec![render_isf_control_expression(value)],
         },
-        ControlActionRecord::CompoundUpdate { target, operation, .. } => {
+        ControlActionRecord::CompoundUpdate {
+            target, operation, ..
+        } => {
             let expr = match operation {
                 ControlCompoundUpdateOperation::Increment => "+1".to_string(),
                 ControlCompoundUpdateOperation::Decrement => "-1".to_string(),

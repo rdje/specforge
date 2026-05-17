@@ -8,6 +8,14 @@
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 - adapter targets: `.fsm` (active), `.isf` (planned); HDL lowering is out of scope
 
+## 2026-05-17 session — bootstrap re-analysis + SIGNOFF-REMEDIATION
+
+- Ran the full README → SESSION_BOOTSTRAP chain. Re-read the live-doc surface, all 10 task-tree files, and re-analyzed the Rust codebase (~110K lines, now 7 IR modules).
+- Discovered HEAD (`490e6aed`) was in a non-signoff state: `cargo fmt --all --check` failing and `cargo clippy -- -D warnings` failing with 25 errors (intent.rs 14, isf_ir.rs 5, nlp_enrich.rs 4, adapters.rs 2). `scripts/run_ci.sh` would have rejected `main`. Root cause: the ISF adapter slices (`bfe4f973`→`490e6aed`) bypassed task-tree ownership and the COMMIT.md live-doc/CI sync.
+- Per the task-tree doctrine, created `SIGNOFF-REMEDIATION` (lane R0) before any code change, then implemented leaf `.1`.
+- Design choice: clippy and fmt are not independently signoff-able (a clippy-only commit would still fail the pre-existing fmt drift / CI), so they are remediated in a single cohesive leaf rather than split. All fixes are idiomatic refactors with zero production behavior change; the 1191-test baseline holds, confirming behavioral equivalence (let-chain collapses, `contains`/closure shorthands, `vec![]` init).
+- Did not attempt to retro-own or re-document the ISF adapter itself in this slice — that is separate scoped follow-up after signoff is restored (noted in RUST_CODEBASE_ANALYSIS.md recommended direction).
+
 ## 2026-05-16 PNT session — R15 graph-direction migration complete
 
 - Closed R15-GRAPH-DIRECTION-MIGRATION task tree (3 leaves) — the highest-priority remaining gap per LIVE_ACHIEVEMENT_STATUS.md.

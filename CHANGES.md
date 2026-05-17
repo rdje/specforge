@@ -1,5 +1,23 @@
 # CHANGES
 
+## 2026-05-17 (Bootstrap re-analysis + SIGNOFF-REMEDIATION)
+
+### Bootstrap re-analysis (RUST_CODEBASE_ANALYSIS.md)
+- Executed the README → SESSION_BOOTSTRAP chain: re-read the live-doc surface and all 10 task-tree files, re-analyzed the Rust codebase, and refreshed `RUST_CODEBASE_ANALYSIS.md` with a verified 2026-05-17 snapshot.
+- Findings: the ISF (`.isf`) adapter (`crates/specforge/src/ir/isf_ir.rs`, ~1.1K lines; `IntentIR → IsfIr → render → .isf`) landed across commits `bfe4f973`→`490e6aed` with **no owning task tree** and **no COMMIT.md live-doc sync**; `MEMORY.md` baseline was stale (`4f2eb367`); `RUST_CODEBASE_ANALYSIS.md` claimed 6 IR files / 1014 tests (actual: 7 IR files / 1191 tests). All 10 task-tree frontiers exhausted (only `R7-VALIDATION.5` open, explicitly deferred).
+
+### Created: SIGNOFF-REMEDIATION task tree
+- HEAD (`490e6aed`) failed `cargo fmt --all --check` and failed `cargo clippy -- -D warnings` with **25 errors**, so the canonical CI gate `scripts/run_ci.sh` would have rejected `main` — a non-signoff state. Created `docs/tasks/SIGNOFF-REMEDIATION.md` (lane R0) to own the regression fix.
+
+### SIGNOFF-REMEDIATION.1: clear 25 clippy errors + restore fmt
+- Idiomatic fixes only, zero production behavior change, no blanket `#[allow]`:
+  - `isf_ir.rs` (5): 4× redundant-closure `.map(fn)` / `.find` shorthand, 1× collapsible-if → let-chain.
+  - `adapters.rs` (2): collapsed the 3-level nested if in `derive_isf_actor_name` into a let-chain.
+  - `nlp_enrich.rs` (4): collapsible-if → let-chain, `for (k,_)` → `.keys()`, 2× needless `&[..]` borrow → `[..]`.
+  - `intent.rs` (14): 7× `iter().any(|s| *s==X)` → `contains(&X)`, 3× redundant closure, 1× needless borrow, 2× collapsible-if → let-chain, 1× `vec_init_then_push` → `vec![..]`.
+- `cargo fmt --all` applied (also normalized pre-existing fmt drift in `validate.rs`, `adapters.rs`, `intent.rs`, `isf_ir.rs`).
+- Verified: `cargo clippy -p specforge --all-targets -- -D warnings` clean; `cargo fmt --all --check` clean; `cargo test -p specforge --lib` 1191 passed; `scripts/run_ci.sh` green.
+
 ## 2026-05-16 (PNT continuation — R7 validation extension)
 
 ### R7-VALIDATION.4: Adapter validation targets for .fsm

@@ -4,6 +4,33 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-17 bootstrap re-analysis — ISF adapter landed, signoff regression detected)
+
+State verified directly from the working tree at commit `490e6aed` (HEAD), not inherited from prior notes.
+
+### Architecture delta since the 2026-05-15 snapshot
+- A new 7th IR module exists: `crates/specforge/src/ir/isf_ir.rs` (~1.1K lines). It is a typed `.isf` lowering IR with the pipeline `IntentIR -> IsfIr::from_intent_ir() -> IsfIr -> IsfIr::render() -> .isf text`. It deliberately uses type-level invariants (e.g. `BTreeSet<IsfSignal>` dedup, non-optional `IsfReset`) to make malformed S-expression output unrepresentable.
+- The `.isf` adapter is now fully wired end to end: `cli.rs` exposes `--target isf`; `adapters.rs` carries `AdapterTarget::Isf`, `IsfAdapterArtifact`, `build_isf_adapter_artifact`, `assess_isf_renderability`, and `derive_isf_actor_name`; `adapt.rs` prints the ISF artifact surface.
+- IR source files now total ~70K lines: `adapters.rs` ~28.1K, `semantic.rs` ~21.4K, `evidence.rs` ~10.8K, `intent.rs` ~5.1K (grew from ~3.3K), `prior_memory.rs` ~2.1K, `source.rs` ~1.6K, `isf_ir.rs` ~1.1K. Whole `crates/specforge/src` ~110K lines.
+- `IrStage` still has no `IsfAdapter` variant; `build_isf_adapter_artifact` tags ISF artifacts with `stage: IrStage::FsmAdapter`. This is a modeling smell worth tracking when ISF validation is formalized.
+- `isf_ir.rs` carries 0 unit tests of its own. ISF coverage is via 3 adapters.rs integration tests, including `isf_output_passes_fsmgen_strict_validation`, which runs the real pinned `subs/fsmgen/bin/fsmgen --strict --check --json` against generated `.isf` text.
+
+### Verified quality state (signoff regression)
+- `cargo test -p specforge --lib`: **1191 passed, 0 failed** (the 2026-05-15 note's "1014" is stale; R7-VALIDATION + ISF added the rest).
+- `cargo fmt --all --check`: **FAILS** — unformatted diffs in `validate.rs`, `adapters.rs`, `intent.rs` (extensive), and `isf_ir.rs`.
+- `cargo clippy -p specforge --all-targets -- -D warnings`: **FAILS — 25 errors** (intent.rs 14, isf_ir.rs 5, nlp_enrich.rs 4, adapters.rs 2; kinds: `contains` vs `iter().any()` x7, redundant closure x7, collapsible `if` x6, needless borrow x2, map-keys iteration x1, immediate deref x1, push-after-creation x1).
+- Consequence: the canonical CI entrypoint `scripts/run_ci.sh` (warning-deny clippy + fmt-check + warning-deny tests + rustdoc + mdBook) would **reject HEAD**. The project's non-negotiable signoff bar is currently not met at `main`.
+
+### Process / continuity gap
+- The ISF adapter landed across commits `bfe4f973` -> `4aa730cb` -> `48f04ee7` -> `490e6aed` with **no owning task tree** (none in `docs/TASK_TREE.md` or `docs/tasks/`), contrary to the task-tree-ownership doctrine.
+- COMMIT.md live-doc sync was skipped for that work: `CHANGES.md`, `DEVELOPMENT_NOTES.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `MEMORY.md`, `ROADMAP.md`, and (until this entry) `RUST_CODEBASE_ANALYSIS.md` do not describe the ISF adapter. `MEMORY.md`'s "latest committed baseline" still points at `4f2eb367`.
+- All 10 task-tree frontiers are exhausted; the only open leaf, `R7-VALIDATION.5`, is explicitly `deferred` (gated on a future canonical-IR-mutation decision). No eligible PNT leaf exists.
+
+### Recommended implementation direction
+1. Restore signoff first: clear all 25 clippy errors and `cargo fmt` the four affected files until `scripts/run_ci.sh` is green. This is remediation of a regression and should be its own task-tree-owned slice.
+2. Backfill an ISF adapter task tree so the already-landed and remaining `.isf` work has ownership, then re-sync the skipped live docs.
+3. Add unit tests inside `isf_ir.rs` itself (currently only integration-covered) and decide whether `IrStage` needs an `IsfAdapter` variant before ISF validation is formalized under R7.
+
 ## Session update (2026-05-15 live-doc sync after task tree closures)
 - All 8 task trees are now closed (`done`). R6-SEMANTIC-HARDENING (leaves .22–.30) and R6-PRIOR-MEMORY-HARDENING (leaves .1–.7) were the last to close.
 - 1014/1014 Rust tests passing (up from 666 — the hardening lanes added ~348 tests through mutant catching and unit test backfill).

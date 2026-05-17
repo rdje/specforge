@@ -24,29 +24,29 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `4f2eb367`
-- latest_commit_brief_message: Update fsmgen submodule — latest ISF downstream integration spec and docs
-- note: All 10 task trees closed. R7-VALIDATION done (.1/.2/.3/.4 done, .5 deferred). 1018 tests passing, clippy clean. PNT frontier exhausted — no implementable slices remain. Remaining ROADMAP items are design-level decisions (R15f/R15g).
+- latest_commit_hash: `490e6aed` (pre-commit baseline; SIGNOFF-REMEDIATION commit not yet created at time of this update)
+- latest_commit_brief_message: Extract ISF-IR module — typed IntentIR → IsfIr → ISF text pipeline with FSMGen strict validation
+- note: 2026-05-17 bootstrap re-analysis found HEAD non-signoff (fmt fail + 25 clippy errors; `scripts/run_ci.sh` would reject `main`). Root cause: ISF adapter slices `bfe4f973`→`490e6aed` bypassed task-tree ownership + COMMIT.md sync. Created + executed `SIGNOFF-REMEDIATION` (lane R0): 25 clippy errors cleared idiomatically + fmt restored, zero behavior change, 1191 tests pass, full CI green. ISF adapter re-ownership/re-documentation remains a tracked follow-up.
 
 ## Recent commit chain (last 10)
-- `3652db56` Remove R16 from roadmap — HDL lowering is out of scope
-- `90d9e7fe` R6-SEMANTIC-HARDENING: close task tree — mark leaf .30 and tree done
-- `ec97b62e` R6-SEMANTIC-HARDENING.30: add unit tests for remaining miscellaneous functions
-- `b5f450da` R6-SEMANTIC-HARDENING.29: update task tree — mark leaf done, advance frontier to .30
-- `2f030a3b` R6-SEMANTIC-HARDENING.29: add unit tests for temporal and consequent functions
-- `8e7e3a55` R6-SEMANTIC-HARDENING.28: update task tree — mark leaf done, advance frontier to .29
-- `5085b86e` R6-SEMANTIC-HARDENING.28: add unit tests for boolean classifier functions
-- `f908d94d` R6-SEMANTIC-HARDENING.27: update task tree — mark leaf done, advance frontier to .28
-- `41c52960` R6-SEMANTIC-HARDENING.27: add unit tests for 7 remaining parse functions
-- `02ea0ca9` R6-SEMANTIC-HARDENING.26: update task tree — mark leaf done, advance frontier to .27
+- `490e6aed` Extract ISF-IR module — typed IntentIR → IsfIr → ISF text pipeline with FSMGen strict validation
+- `7ba56b2f` Revert FSMGen issue bundle — bare-token guard was not a bug, just an unsupported ISF form
+- `4d67874e` Track FSMGen downstream issue bundle — bare-token guard triggers infix-assignment rejection in strict mode
+- `2c4819c0` Update PostCompact to re-read all ISF book chapters from subs/fsmgen
+- `48f04ee7` Map conditional control_blocks to ISF when/switch in transactions
+- `4aa730cb` Map control_blocks to ISF transactions and rules
+- `c2ef64bb` Add SESSION_BOOTSTRAP.md to PostCompact live-doc reload list
+- `bfe4f973` Implement ISF (.isf) adapter — emit valid S-expression source from IntentIR
+- `74964783` Update fsmgen submodule — ISF contract storage/actor metadata report hardening
+- `2524501c` Update fsmgen submodule — DOWNSTREAM-ISSUE-REPRO-FLOW.1 publish issue bundle flow
 
 ## Current repository state
 - active workspace member: `crates/specforge`
 - branch: `main`
-- branch state: pushed at 29 commits; currently 0 commits ahead of `origin/main`; next push checkpoint at around-`30`
-- all 8 task trees are closed (`done`):
-  - `PROVENANCE-HARDENING`, `R6-FSM-ADAPTER`, `R6-SOURCE-HARDENING`, `R6-CONVERGE-HARDENING`, `R6-EVIDENCE-HARDENING`, `R6-INTENT-HARDENING`, `R6-SEMANTIC-HARDENING`, `R6-PRIOR-MEMORY-HARDENING`
-- 1014 Rust tests passing (was 666 before R6-SEMANTIC-HARDENING and R6-PRIOR-MEMORY-HARDENING added tests)
+- branch state: 22 commits ahead of `origin/main` pre-commit (23 after the SIGNOFF-REMEDIATION commit); next push checkpoint at around-`30`; not yet due and not requested
+- 11 task trees: 10 closed (`done`) + `SIGNOFF-REMEDIATION` closed this slice:
+  - `PROVENANCE-HARDENING`, `R6-FSM-ADAPTER`, `R6-SOURCE-HARDENING`, `R6-CONVERGE-HARDENING`, `R6-EVIDENCE-HARDENING`, `R6-INTENT-HARDENING`, `R6-SEMANTIC-HARDENING`, `R6-PRIOR-MEMORY-HARDENING`, `R15-GRAPH-DIRECTION-MIGRATION`, `R7-VALIDATION` (.5 deferred), `SIGNOFF-REMEDIATION`
+- 1191 Rust lib tests passing; `scripts/run_ci.sh` green (clippy/fmt/tests/rustdoc/mdBook)
 - files in flight for live-doc sync:
   - `MEMORY.md`
   - `RUST_CODEBASE_ANALYSIS.md`

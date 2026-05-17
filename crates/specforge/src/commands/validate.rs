@@ -11,7 +11,7 @@ use crate::ir::evidence::{
     EvidenceIr, SignalSemanticConflictRecord, SignalSemanticHintRecord,
     SignalSemanticHintSourceKind, StatementClass, VisualEvidenceRole, VisualObservationKind,
 };
-use crate::ir::intent::{count_nested_steps, IntentIr};
+use crate::ir::intent::{IntentIr, count_nested_steps};
 use crate::ir::prior_memory::{
     CorpusMemory, NegativeKnowledgeKind, ProtocolFamily,
     interface_signal_conflict_negative_knowledge_pattern,
@@ -4682,11 +4682,18 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     println!("  has_reset: {has_reset}");
     println!("  has_system_contract: {has_system_contract}");
     println!("  has_encoding_enums: {has_enums}");
-    println!("  transactions: {} (across {} actors)", ir.transactions.len(), actor_count);
+    println!(
+        "  transactions: {} (across {} actors)",
+        ir.transactions.len(),
+        actor_count
+    );
     println!(
         "  behavioral_rule_count: {behavioral_rule_count} (temporal + signal constraints + conditional rules)"
     );
-    println!("  actor_interactions: {} (drive/sample/trigger/dependency)", interaction_count);
+    println!(
+        "  actor_interactions: {} (drive/sample/trigger/dependency)",
+        interaction_count
+    );
     println!("  temporal_invariants: {}", ir.temporal_invariants.len());
     println!("  behavioral_rule_ratio: {behavioral_rule_ratio:.2} rules/signal");
     println!("  residual_decisions: {}", ir.residual_decisions.len());

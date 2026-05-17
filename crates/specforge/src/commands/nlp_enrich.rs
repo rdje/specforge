@@ -527,30 +527,30 @@ fn synthesize_signal_directions_from_nlp_constraints(evidence_ir: &mut EvidenceI
     let mut seen: HashSet<String> = HashSet::new();
 
     for (signal, (dir_opt, width_opt)) in &signal_hints {
-        if let Some(dir) = dir_opt {
-            if seen.insert(signal.clone()) {
-                counter += 1;
-                // Default width to 1 bit when none is found — most protocol
-                // control/status signals are single-bit.
-                let text = match width_opt {
-                    Some(w) => format!("Signal {signal} is {dir} width {w}."),
-                    None => format!("Signal {signal} is {dir} width 1."),
-                };
-                evidence_ir.extracted_statements.push(ExtractedStatement {
-                    statement_id: format!("nlp_dir_synth_{counter:06}"),
-                    class: StatementClass::SourceFact,
-                    modality: EvidenceModality::Text,
-                    text,
-                    evidence_span_ids: vec![],
-                    related_visual_evidence_ids: vec![],
-                });
-                count += 1;
-            }
+        if let Some(dir) = dir_opt
+            && seen.insert(signal.clone())
+        {
+            counter += 1;
+            // Default width to 1 bit when none is found — most protocol
+            // control/status signals are single-bit.
+            let text = match width_opt {
+                Some(w) => format!("Signal {signal} is {dir} width {w}."),
+                None => format!("Signal {signal} is {dir} width 1."),
+            };
+            evidence_ir.extracted_statements.push(ExtractedStatement {
+                statement_id: format!("nlp_dir_synth_{counter:06}"),
+                class: StatementClass::SourceFact,
+                modality: EvidenceModality::Text,
+                text,
+                evidence_span_ids: vec![],
+                related_visual_evidence_ids: vec![],
+            });
+            count += 1;
         }
     }
 
     // ── Synthesize clock/reset declarations for system contract ──
-    for (signal, _entry) in &signal_hints {
+    for signal in signal_hints.keys() {
         let upper = signal.to_ascii_uppercase();
         if (upper.contains("CLK") || upper.contains("CLOCK")) && seen.contains(signal) {
             counter += 1;
@@ -669,7 +669,7 @@ fn extract_width_from_text(text: &str) -> Option<String> {
             if let Some(num) = before
                 .split_whitespace()
                 .next_back()
-                .and_then(|w| w.trim_end_matches(&['(', '[', '{']).parse::<u32>().ok())
+                .and_then(|w| w.trim_end_matches(['(', '[', '{']).parse::<u32>().ok())
             {
                 return Some(num.to_string());
             }
@@ -681,7 +681,7 @@ fn extract_width_from_text(text: &str) -> Option<String> {
         if let Some(pos) = lowered.find(prefix) {
             let after = &lowered[pos + prefix.len()..];
             if let Some(num) = after.split_whitespace().next().and_then(|w| {
-                w.trim_end_matches(&['.', ',', ')', ']', '}'])
+                w.trim_end_matches(['.', ',', ')', ']', '}'])
                     .parse::<u32>()
                     .ok()
             }) {

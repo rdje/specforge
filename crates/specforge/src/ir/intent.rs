@@ -11,9 +11,9 @@ use crate::ir::evidence::{
 };
 use crate::ir::semantic::{
     ActorPortRecord, ConditionalRuleRecord, ControlActionRecord, ControlBinaryOperator,
-    ControlBlockRecord, ControlCompoundUpdateOperation,
-    ControlExpressionRecord, DecisionTreeFragmentRecord, ExplicitModuleRecord,
-    ExplicitTopRecord, InfrastructureSignalRecord, InitAssignmentRecord, InterfaceRecord,
+    ControlBlockRecord, ControlCompoundUpdateOperation, ControlExpressionRecord,
+    DecisionTreeFragmentRecord, ExplicitModuleRecord, ExplicitTopRecord,
+    InfrastructureSignalRecord, InitAssignmentRecord, InterfaceRecord,
     InterfaceSignalConflictRecord, RegisterRecord, RegularStateRecord, SemanticIr,
     SignalConnectivityConflictRecord, SignalConnectivityRecord, SignalConstraintRecord,
     StateTransitionRecord, SymbolDefinitionRecord, SystemContractRecord, TemporalConflictRecord,
@@ -181,8 +181,7 @@ impl IntentIr {
         let mut actor_drive_relations = synthesize_actor_drive_relations(&semantic_ir);
         let mut actor_sample_relations = synthesize_actor_sample_relations(&semantic_ir);
         let mut actor_trigger_relations = synthesize_actor_trigger_relations(&semantic_ir);
-        let mut actor_temporal_dependencies =
-            synthesize_actor_temporal_dependencies(&semantic_ir);
+        let mut actor_temporal_dependencies = synthesize_actor_temporal_dependencies(&semantic_ir);
         let mut temporal_invariants = synthesize_temporal_invariants(&semantic_ir);
         recognize_digital_patterns(
             &mut transactions,
@@ -919,14 +918,9 @@ pub enum TransactionStep {
         watchdog: Option<u32>,
     },
     /// `(wait N)` — wait N cycles.
-    Wait {
-        count: String,
-    },
+    Wait { count: String },
     /// `(sample port as name)` — capture port value.
-    Sample {
-        port: String,
-        as_name: String,
-    },
+    Sample { port: String, as_name: String },
     /// `(do child (bind ...))` — synchronous child activation.
     Do {
         child_transaction: String,
@@ -941,20 +935,11 @@ pub enum TransactionStep {
         bindings: Vec<PortBinding>,
     },
     /// `(set target expr)` — register assignment.
-    Set {
-        target: String,
-        expr: String,
-    },
+    Set { target: String, expr: String },
     /// `(update target expr)` — in-place update (increment/decrement).
-    Update {
-        target: String,
-        expr: String,
-    },
+    Update { target: String, expr: String },
     /// `(shift_left reg bit)` — shift left.
-    ShiftLeft {
-        reg: String,
-        bit: String,
-    },
+    ShiftLeft { reg: String, bit: String },
     /// `(shift_right reg bit)` — shift right.
     ShiftRight {
         reg: String,
@@ -963,22 +948,13 @@ pub enum TransactionStep {
         width: Option<u32>,
     },
     /// `(complete port)` — transaction completion.
-    Complete {
-        port: String,
-    },
+    Complete { port: String },
     /// `(await_all done_port)` — wait for all child transactions.
-    AwaitAll {
-        done_port: String,
-    },
+    AwaitAll { done_port: String },
     /// `(await_any done_port)` — wait for any child transaction.
-    AwaitAny {
-        done_port: String,
-    },
+    AwaitAny { done_port: String },
     /// `(latency (min N) (max M))` — latency bounds.
-    Latency {
-        min: u32,
-        max: u32,
-    },
+    Latency { min: u32, max: u32 },
 }
 
 /// A branch within a `(switch selector ...)` clause.
@@ -1182,13 +1158,12 @@ fn recognize_digital_patterns(
     for valid in &valid_signals {
         for ready in &ready_signals {
             // Pair signals that share a common prefix (e.g., AXI_AWVALID + AXI_AWREADY)
-            let v_base = valid
-                .trim_end_matches("_VALID")
-                .trim_end_matches("VALID");
-            let r_base = ready
-                .trim_end_matches("_READY")
-                .trim_end_matches("READY");
-            if v_base == r_base || valid.contains(ready.trim_end_matches("_READY")) || ready.contains(valid.trim_end_matches("_VALID")) {
+            let v_base = valid.trim_end_matches("_VALID").trim_end_matches("VALID");
+            let r_base = ready.trim_end_matches("_READY").trim_end_matches("READY");
+            if v_base == r_base
+                || valid.contains(ready.trim_end_matches("_READY"))
+                || ready.contains(valid.trim_end_matches("_VALID"))
+            {
                 let tx_name = format!("{}_handshake", sanitize_id(v_base));
                 // Check if we already have a transaction for this handshake
                 let already_has = transactions.iter().any(|t| t.transaction_name == tx_name);
@@ -1226,10 +1201,9 @@ fn recognize_digital_patterns(
                     });
                 }
                 // Actor drive relations for handshake
-                let valid_driver = semantic_ir
-                    .actor_signal_relations
-                    .iter()
-                    .find(|r| r.signal_name == *valid && matches!(r.relation, RelationKind::Drives));
+                let valid_driver = semantic_ir.actor_signal_relations.iter().find(|r| {
+                    r.signal_name == *valid && matches!(r.relation, RelationKind::Drives)
+                });
                 if let Some(driver) = valid_driver {
                     let already_rel = drive_relations
                         .iter()
@@ -1285,37 +1259,36 @@ fn recognize_digital_patterns(
                 .actor_signal_relations
                 .iter()
                 .find(|r| r.signal_name == *ack && matches!(r.relation, RelationKind::Drives));
-            if let (Some(req_a), Some(ack_a)) = (req_actor, ack_actor) {
-                if req_a.actor_name != ack_a.actor_name {
-                    let already = trigger_relations.iter().any(|tr| {
-                        tr.source_actor == req_a.actor_name
-                            && tr.target_actor == ack_a.actor_name
+            if let (Some(req_a), Some(ack_a)) = (req_actor, ack_actor)
+                && req_a.actor_name != ack_a.actor_name
+            {
+                let already = trigger_relations.iter().any(|tr| {
+                    tr.source_actor == req_a.actor_name && tr.target_actor == ack_a.actor_name
+                });
+                if !already {
+                    trigger_relations.push(ActorTriggerRelationRecord {
+                        relation_id: format!(
+                            "atr_reqack_{}_{}",
+                            sanitize_id(&req_a.actor_name),
+                            sanitize_id(&ack_a.actor_name)
+                        ),
+                        source_actor: req_a.actor_name.clone(),
+                        target_actor: ack_a.actor_name.clone(),
+                        trigger_port: Some(req.to_string()),
+                        activation_kind: Some(ActivationKind::Do),
+                        source_text: String::new(),
+                        supporting_statement_ids: Vec::new(),
+                        automation_confidence: AutomationConfidence::Medium,
                     });
-                    if !already {
-                        trigger_relations.push(ActorTriggerRelationRecord {
-                            relation_id: format!(
-                                "atr_reqack_{}_{}",
-                                sanitize_id(&req_a.actor_name),
-                                sanitize_id(&ack_a.actor_name)
-                            ),
-                            source_actor: req_a.actor_name.clone(),
-                            target_actor: ack_a.actor_name.clone(),
-                            trigger_port: Some(req.to_string()),
-                            activation_kind: Some(ActivationKind::Do),
-                            source_text: String::new(),
-                            supporting_statement_ids: Vec::new(),
-                            automation_confidence: AutomationConfidence::Medium,
-                        });
-                    }
                 }
             }
         }
     }
 
     // --- Pattern 3: AHB bus protocol ---
-    let has_htrans = signal_list.iter().any(|s| *s == "HTRANS");
-    let has_hready = signal_list.iter().any(|s| *s == "HREADY");
-    let has_haddr = signal_list.iter().any(|s| *s == "HADDR");
+    let has_htrans = signal_list.contains(&"HTRANS");
+    let has_hready = signal_list.contains(&"HREADY");
+    let has_haddr = signal_list.contains(&"HADDR");
     if has_htrans && has_hready {
         let steps = vec![
             TransactionStep::Await {
@@ -1387,25 +1360,25 @@ fn recognize_digital_patterns(
     }
 
     // --- Pattern 4: APB bus protocol ---
-    let has_psel = signal_list.iter().any(|s| *s == "PSEL" || s.starts_with("PSEL"));
-    let has_penable = signal_list.iter().any(|s| *s == "PENABLE");
-    let has_pready = signal_list.iter().any(|s| *s == "PREADY");
+    let has_psel = signal_list
+        .iter()
+        .any(|s| *s == "PSEL" || s.starts_with("PSEL"));
+    let has_penable = signal_list.contains(&"PENABLE");
+    let has_pready = signal_list.contains(&"PREADY");
     if has_psel && has_penable {
-        let steps = vec![
-            TransactionStep::When {
-                condition: "PSEL asserted".to_string(),
-                body: vec![
-                    TransactionStep::Drive {
-                        drive_name: "PENABLE".to_string(),
-                        actuals: vec!["1".to_string()],
-                    },
-                    TransactionStep::Await {
-                        port: "PREADY".to_string(),
-                        watchdog: Some(16),
-                    },
-                ],
-            },
-        ];
+        let steps = vec![TransactionStep::When {
+            condition: "PSEL asserted".to_string(),
+            body: vec![
+                TransactionStep::Drive {
+                    drive_name: "PENABLE".to_string(),
+                    actuals: vec!["1".to_string()],
+                },
+                TransactionStep::Await {
+                    port: "PREADY".to_string(),
+                    watchdog: Some(16),
+                },
+            ],
+        }];
         let tx_id = "txn_apb_transfer";
         let already = transactions.iter().any(|t| t.transaction_id == tx_id);
         if !already {
@@ -1443,38 +1416,36 @@ fn recognize_digital_patterns(
     }
 
     // --- Pattern 5: SPI protocol ---
-    let has_miso = signal_list.iter().any(|s| *s == "MISO");
-    let has_mosi = signal_list.iter().any(|s| *s == "MOSI");
+    let has_miso = signal_list.contains(&"MISO");
+    let has_mosi = signal_list.contains(&"MOSI");
     let has_sclk = signal_list.iter().any(|s| *s == "SCLK" || *s == "SCK");
     if (has_miso || has_mosi) && has_sclk {
-        let steps = vec![
-            TransactionStep::Repeat {
-                count: "8".to_string(),
-                body: vec![
-                    TransactionStep::Drive {
-                        drive_name: "SCLK".to_string(),
-                        actuals: vec!["1".to_string()],
-                    },
-                    TransactionStep::ShiftLeft {
-                        reg: "mosi_shift".to_string(),
-                        bit: "1".to_string(),
-                    },
-                    TransactionStep::Sample {
-                        port: "MISO".to_string(),
-                        as_name: "miso_bit".to_string(),
-                    },
-                    TransactionStep::ShiftRight {
-                        reg: "miso_shift".to_string(),
-                        bit: "miso_bit".to_string(),
-                        width: Some(8),
-                    },
-                    TransactionStep::Drive {
-                        drive_name: "SCLK".to_string(),
-                        actuals: vec!["0".to_string()],
-                    },
-                ],
-            },
-        ];
+        let steps = vec![TransactionStep::Repeat {
+            count: "8".to_string(),
+            body: vec![
+                TransactionStep::Drive {
+                    drive_name: "SCLK".to_string(),
+                    actuals: vec!["1".to_string()],
+                },
+                TransactionStep::ShiftLeft {
+                    reg: "mosi_shift".to_string(),
+                    bit: "1".to_string(),
+                },
+                TransactionStep::Sample {
+                    port: "MISO".to_string(),
+                    as_name: "miso_bit".to_string(),
+                },
+                TransactionStep::ShiftRight {
+                    reg: "miso_shift".to_string(),
+                    bit: "miso_bit".to_string(),
+                    width: Some(8),
+                },
+                TransactionStep::Drive {
+                    drive_name: "SCLK".to_string(),
+                    actuals: vec!["0".to_string()],
+                },
+            ],
+        }];
         let tx_id = "txn_spi_transfer";
         let already = transactions.iter().any(|t| t.transaction_id == tx_id);
         if !already {
@@ -1509,8 +1480,12 @@ fn recognize_digital_patterns(
     }
 
     // --- Pattern 6: FIFO status ---
-    let has_full = signal_list.iter().any(|s| *s == "FULL" || s.ends_with("_FULL"));
-    let has_empty = signal_list.iter().any(|s| *s == "EMPTY" || s.ends_with("_EMPTY"));
+    let has_full = signal_list
+        .iter()
+        .any(|s| *s == "FULL" || s.ends_with("_FULL"));
+    let has_empty = signal_list
+        .iter()
+        .any(|s| *s == "EMPTY" || s.ends_with("_EMPTY"));
     if has_full {
         invariants.push(TemporalInvariantRecord {
             invariant_id: "tinv_fifo_full_write_protect".to_string(),
@@ -1622,11 +1597,7 @@ fn synthesize_transactions(semantic_ir: &SemanticIr) -> Vec<TransactionIntent> {
     let mut actor_txn_map: BTreeMap<String, Vec<&TemporalRuleRecord>> = BTreeMap::new();
     for rule in &semantic_ir.temporal_rules {
         for consequent in &rule.consequents {
-            if let TemporalPredicateRecord::ActorDrivesSignal {
-                actor_name,
-                ..
-            } = consequent
-            {
+            if let TemporalPredicateRecord::ActorDrivesSignal { actor_name, .. } = consequent {
                 actor_txn_map
                     .entry(actor_name.clone())
                     .or_default()
@@ -1646,7 +1617,7 @@ fn synthesize_transactions(semantic_ir: &SemanticIr) -> Vec<TransactionIntent> {
             let conditions: Vec<String> = rule
                 .antecedents
                 .iter()
-                .map(|ant| render_temporal_predicate(ant))
+                .map(render_temporal_predicate)
                 .collect();
             let condition = if conditions.is_empty() {
                 format!("on_{:?}_edge", rule.edge)
@@ -1673,7 +1644,7 @@ fn synthesize_transactions(semantic_ir: &SemanticIr) -> Vec<TransactionIntent> {
                 .flat_map(|r| r.supporting_statement_ids.clone())
                 .collect();
             transactions.push(TransactionIntent {
-                transaction_id: format!("txn_temporal_{}", sanitize_id(&actor_name)),
+                transaction_id: format!("txn_temporal_{}", sanitize_id(actor_name)),
                 transaction_name: format!("{}_behavior", actor_name),
                 activation_port: None,
                 ports: Vec::new(),
@@ -1719,12 +1690,16 @@ fn synthesize_actor_drive_relations(semantic_ir: &SemanticIr) -> Vec<ActorDriveR
             } = consequent
             {
                 // Check if we already have this relation
-                let already_has = relations.iter().any(|r| {
-                    r.driver_actor == *actor_name && r.signal_name == *signal_name
-                });
+                let already_has = relations
+                    .iter()
+                    .any(|r| r.driver_actor == *actor_name && r.signal_name == *signal_name);
                 if !already_has {
                     relations.push(ActorDriveRelationRecord {
-                        relation_id: format!("adr_{}_{}", sanitize_id(actor_name), sanitize_id(signal_name)),
+                        relation_id: format!(
+                            "adr_{}_{}",
+                            sanitize_id(actor_name),
+                            sanitize_id(signal_name)
+                        ),
                         driver_actor: actor_name.clone(),
                         signal_name: signal_name.clone(),
                         consumer_actor: None,
@@ -1763,20 +1738,16 @@ fn synthesize_actor_sample_relations(semantic_ir: &SemanticIr) -> Vec<ActorSampl
 
     // From temporal_rules — ActorSamplesSignal
     for rule in &semantic_ir.temporal_rules {
-        for pred in rule
-            .antecedents
-            .iter()
-            .chain(rule.consequents.iter())
-        {
+        for pred in rule.antecedents.iter().chain(rule.consequents.iter()) {
             if let TemporalPredicateRecord::ActorSamplesSignal {
                 actor_name,
                 signal_name,
                 phase,
             } = pred
             {
-                let already_has = relations.iter().any(|r| {
-                    r.sampler_actor == *actor_name && r.signal_name == *signal_name
-                });
+                let already_has = relations
+                    .iter()
+                    .any(|r| r.sampler_actor == *actor_name && r.signal_name == *signal_name);
                 if !already_has {
                     relations.push(ActorSampleRelationRecord {
                         relation_id: format!(
@@ -1800,9 +1771,7 @@ fn synthesize_actor_sample_relations(semantic_ir: &SemanticIr) -> Vec<ActorSampl
     relations
 }
 
-fn synthesize_actor_trigger_relations(
-    semantic_ir: &SemanticIr,
-) -> Vec<ActorTriggerRelationRecord> {
+fn synthesize_actor_trigger_relations(semantic_ir: &SemanticIr) -> Vec<ActorTriggerRelationRecord> {
     let mut relations = Vec::new();
 
     // Build actor→signals map from actor_signal_relations
@@ -1836,7 +1805,7 @@ fn synthesize_actor_trigger_relations(
             for target in &consequent_actors {
                 if source != target {
                     // Find the trigger port — the signal in the consequent
-                    let trigger_port = rule.consequents.iter().find_map(|c| predicate_signal(c));
+                    let trigger_port = rule.consequents.iter().find_map(predicate_signal);
                     relations.push(ActorTriggerRelationRecord {
                         relation_id: format!(
                             "atr_{}_to_{}",
@@ -1896,28 +1865,27 @@ fn synthesize_actor_temporal_dependencies(
         }
 
         // Find the actor in the consequent
-        let consequent_actor = rule.consequents.iter().find_map(|c| predicate_actor(c));
+        let consequent_actor = rule.consequents.iter().find_map(predicate_actor);
 
         if let (Some(wait_for), Some(sig), Some(source)) =
             (&waiting_actor, &signal_name, &consequent_actor)
+            && wait_for != source
         {
-            if wait_for != source {
-                dependencies.push(ActorTemporalDependencyRecord {
-                    dependency_id: format!(
-                        "atd_{}_waits_{}_from_{}",
-                        sanitize_id(source),
-                        sanitize_id(sig),
-                        sanitize_id(wait_for)
-                    ),
-                    waiting_actor: source.clone(),
-                    signal_name: sig.clone(),
-                    source_actor: Some(wait_for.clone()),
-                    wait_for: None,
-                    source_text: rule.source_text.clone(),
-                    supporting_statement_ids: rule.supporting_statement_ids.clone(),
-                    automation_confidence: rule.automation_confidence,
-                });
-            }
+            dependencies.push(ActorTemporalDependencyRecord {
+                dependency_id: format!(
+                    "atd_{}_waits_{}_from_{}",
+                    sanitize_id(source),
+                    sanitize_id(sig),
+                    sanitize_id(wait_for)
+                ),
+                waiting_actor: source.clone(),
+                signal_name: sig.clone(),
+                source_actor: Some(wait_for.clone()),
+                wait_for: None,
+                source_text: rule.source_text.clone(),
+                supporting_statement_ids: rule.supporting_statement_ids.clone(),
+                automation_confidence: rule.automation_confidence,
+            });
         }
     }
 
@@ -1946,8 +1914,7 @@ fn synthesize_temporal_invariants(semantic_ir: &SemanticIr) -> Vec<TemporalInvar
     // From signal_constraints (these are temporal by nature — "must not change when...")
     for sc in &semantic_ir.signal_constraints {
         let kind = signal_constraint_to_temporal_invariant_kind(&sc.constraint_kind);
-        let (condition_signal, condition_value) =
-            extract_condition_from_text(&sc.condition_text);
+        let (condition_signal, condition_value) = extract_condition_from_text(&sc.condition_text);
         invariants.push(TemporalInvariantRecord {
             invariant_id: format!("tinv_sc_{}", sc.constraint_id),
             subject_signal: sc.subject_signal.clone(),
@@ -1970,9 +1937,7 @@ fn synthesize_temporal_invariants(semantic_ir: &SemanticIr) -> Vec<TemporalInvar
 
 fn render_control_expression(expr: &ControlExpressionRecord) -> String {
     match expr {
-        ControlExpressionRecord::Reference { reference } => {
-            reference.base_name.clone()
-        }
+        ControlExpressionRecord::Reference { reference } => reference.base_name.clone(),
         ControlExpressionRecord::Literal { literal } => literal.clone(),
         ControlExpressionRecord::Unary { operator, operand } => {
             format!("{:?}({})", operator, render_control_expression(operand))
@@ -1994,11 +1959,7 @@ fn render_control_expression(expr: &ControlExpressionRecord) -> String {
 
 fn convert_control_action_to_step(action: &ControlActionRecord) -> TransactionStep {
     match action {
-        ControlActionRecord::Assign {
-            target,
-            value,
-            ..
-        } => TransactionStep::Drive {
+        ControlActionRecord::Assign { target, value, .. } => TransactionStep::Drive {
             drive_name: target.signal_name.clone(),
             actuals: vec![render_control_expression(value)],
         },
@@ -2011,14 +1972,15 @@ fn convert_control_action_to_step(action: &ControlActionRecord) -> TransactionSt
             delay,
             value,
         } => {
-            let mut steps = Vec::new();
-            steps.push(TransactionStep::Wait {
-                count: delay.to_string(),
-            });
-            steps.push(TransactionStep::Drive {
-                drive_name: target.signal_name.clone(),
-                actuals: vec![render_control_expression(value)],
-            });
+            let steps = vec![
+                TransactionStep::Wait {
+                    count: delay.to_string(),
+                },
+                TransactionStep::Drive {
+                    drive_name: target.signal_name.clone(),
+                    actuals: vec![render_control_expression(value)],
+                },
+            ];
             TransactionStep::When {
                 condition: "delayed_pulse".to_string(),
                 body: steps,
@@ -2079,10 +2041,9 @@ fn render_temporal_predicate(pred: &TemporalPredicateRecord) -> String {
             signal_name,
             phase,
         } => format!("{} samples {} @{:?}", actor_name, signal_name, phase),
-        TemporalPredicateRecord::SignalSampled {
-            signal_name,
-            phase,
-        } => format!("{} sampled @{:?}", signal_name, phase),
+        TemporalPredicateRecord::SignalSampled { signal_name, phase } => {
+            format!("{} sampled @{:?}", signal_name, phase)
+        }
         TemporalPredicateRecord::HandshakeComplete {
             valid_signal,
             ready_signal,
@@ -2094,20 +2055,17 @@ fn render_temporal_predicate(pred: &TemporalPredicateRecord) -> String {
 fn temporal_consequent_to_step(consequent: &TemporalPredicateRecord) -> Option<TransactionStep> {
     match consequent {
         TemporalPredicateRecord::ActorDrivesSignal {
-            signal_name,
-            phase,
-            ..
+            signal_name, phase, ..
         } => Some(TransactionStep::Drive {
             drive_name: signal_name.clone(),
             actuals: vec![format!("@{:?}", phase)],
         }),
-        TemporalPredicateRecord::ActorSamplesSignal {
-            signal_name,
-            ..
-        } => Some(TransactionStep::Sample {
-            port: signal_name.clone(),
-            as_name: signal_name.clone(),
-        }),
+        TemporalPredicateRecord::ActorSamplesSignal { signal_name, .. } => {
+            Some(TransactionStep::Sample {
+                port: signal_name.clone(),
+                as_name: signal_name.clone(),
+            })
+        }
         TemporalPredicateRecord::HandshakeComplete {
             valid_signal,
             ready_signal,
@@ -2116,9 +2074,7 @@ fn temporal_consequent_to_step(consequent: &TemporalPredicateRecord) -> Option<T
             done_port: format!("{}_{}_done", valid_signal, ready_signal),
         }),
         TemporalPredicateRecord::SignalValue {
-            signal_name,
-            value,
-            ..
+            signal_name, value, ..
         } => Some(TransactionStep::Drive {
             drive_name: signal_name.clone(),
             actuals: vec![value.clone()],
@@ -2129,42 +2085,30 @@ fn temporal_consequent_to_step(consequent: &TemporalPredicateRecord) -> Option<T
 
 fn predicate_actor(pred: &TemporalPredicateRecord) -> Option<String> {
     match pred {
-        TemporalPredicateRecord::ActorDrivesSignal {
-            actor_name, ..
-        } => Some(actor_name.clone()),
-        TemporalPredicateRecord::ActorMaintainsSignalStable {
-            actor_name, ..
-        } => Some(actor_name.clone()),
-        TemporalPredicateRecord::ActorSamplesSignal {
-            actor_name, ..
-        } => Some(actor_name.clone()),
+        TemporalPredicateRecord::ActorDrivesSignal { actor_name, .. } => Some(actor_name.clone()),
+        TemporalPredicateRecord::ActorMaintainsSignalStable { actor_name, .. } => {
+            Some(actor_name.clone())
+        }
+        TemporalPredicateRecord::ActorSamplesSignal { actor_name, .. } => Some(actor_name.clone()),
         _ => None,
     }
 }
 
 fn predicate_signal(pred: &TemporalPredicateRecord) -> Option<String> {
     match pred {
-        TemporalPredicateRecord::SignalValue {
-            signal_name, ..
-        } => Some(signal_name.clone()),
-        TemporalPredicateRecord::ActorDrivesSignal {
-            signal_name, ..
-        } => Some(signal_name.clone()),
-        TemporalPredicateRecord::ActorMaintainsSignalStable {
-            signal_name, ..
-        } => Some(signal_name.clone()),
-        TemporalPredicateRecord::SignalStable {
-            signal_name, ..
-        } => Some(signal_name.clone()),
-        TemporalPredicateRecord::ActorSamplesSignal {
-            signal_name, ..
-        } => Some(signal_name.clone()),
-        TemporalPredicateRecord::SignalSampled {
-            signal_name, ..
-        } => Some(signal_name.clone()),
-        TemporalPredicateRecord::HandshakeComplete {
-            valid_signal, ..
-        } => Some(valid_signal.clone()),
+        TemporalPredicateRecord::SignalValue { signal_name, .. } => Some(signal_name.clone()),
+        TemporalPredicateRecord::ActorDrivesSignal { signal_name, .. } => Some(signal_name.clone()),
+        TemporalPredicateRecord::ActorMaintainsSignalStable { signal_name, .. } => {
+            Some(signal_name.clone())
+        }
+        TemporalPredicateRecord::SignalStable { signal_name, .. } => Some(signal_name.clone()),
+        TemporalPredicateRecord::ActorSamplesSignal { signal_name, .. } => {
+            Some(signal_name.clone())
+        }
+        TemporalPredicateRecord::SignalSampled { signal_name, .. } => Some(signal_name.clone()),
+        TemporalPredicateRecord::HandshakeComplete { valid_signal, .. } => {
+            Some(valid_signal.clone())
+        }
     }
 }
 
@@ -2222,7 +2166,13 @@ fn extract_condition_from_text(text: &Option<String>) -> (Option<String>, Option
 
 fn sanitize_id(s: &str) -> String {
     s.chars()
-        .map(|c| if c.is_alphanumeric() || c == '_' { c } else { '_' })
+        .map(|c| {
+            if c.is_alphanumeric() || c == '_' {
+                c
+            } else {
+                '_'
+            }
+        })
         .collect::<String>()
         .to_lowercase()
 }
@@ -4829,10 +4779,7 @@ mod tests {
             super::TransactionStep::AwaitAny {
                 done_port: "any_done".to_string(),
             },
-            super::TransactionStep::Latency {
-                min: 1,
-                max: 3,
-            },
+            super::TransactionStep::Latency { min: 1, max: 3 },
         ];
 
         let json = serde_json::to_string_pretty(&steps).unwrap();
@@ -4880,7 +4827,10 @@ mod tests {
         assert_eq!(round_tripped.relation_id, "adr_1");
         assert_eq!(round_tripped.driver_actor, "Manager");
         assert_eq!(round_tripped.signal_name, "HADDR");
-        assert_eq!(round_tripped.consumer_actor, Some("Subordinate".to_string()));
+        assert_eq!(
+            round_tripped.consumer_actor,
+            Some("Subordinate".to_string())
+        );
     }
 
     #[test]
@@ -4900,7 +4850,10 @@ mod tests {
         let json = serde_json::to_string(&inv).unwrap();
         let round_tripped: super::TemporalInvariantRecord = serde_json::from_str(&json).unwrap();
         assert_eq!(round_tripped.invariant_id, "tinv_1");
-        assert_eq!(round_tripped.invariant_kind, super::TemporalInvariantKind::MustNotChange);
+        assert_eq!(
+            round_tripped.invariant_kind,
+            super::TemporalInvariantKind::MustNotChange
+        );
         assert_eq!(round_tripped.condition_signal, Some("HREADY".to_string()));
     }
 
@@ -4921,7 +4874,10 @@ mod tests {
         let round_tripped: super::ActorTriggerRelationRecord = serde_json::from_str(&json).unwrap();
         assert_eq!(round_tripped.source_actor, "Requester");
         assert_eq!(round_tripped.target_actor, "Arbiter");
-        assert_eq!(round_tripped.activation_kind, Some(super::ActivationKind::Do));
+        assert_eq!(
+            round_tripped.activation_kind,
+            Some(super::ActivationKind::Do)
+        );
     }
 
     #[test]
@@ -4944,27 +4900,48 @@ mod tests {
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
-        ).unwrap();
+        )
+        .unwrap();
         evidence_ir.write_to_disk().unwrap();
         let semantic_ir = SemanticIr::build(
             &evidence_ir.artifact_layout.evidence_ir_path,
             &semantic_artifact_base,
-        ).unwrap();
+        )
+        .unwrap();
         semantic_ir.write_to_disk().unwrap();
         let intent_ir = IntentIr::build(
             &semantic_ir.artifact_layout.semantic_ir_path,
             &intent_artifact_base,
-        ).unwrap();
+        )
+        .unwrap();
 
         let json = intent_ir.to_pretty_json().unwrap();
 
         // New fields must appear in JSON output
-        assert!(json.contains("\"transactions\""), "transactions field missing");
-        assert!(json.contains("\"actor_drive_relations\""), "actor_drive_relations field missing");
-        assert!(json.contains("\"actor_sample_relations\""), "actor_sample_relations field missing");
-        assert!(json.contains("\"actor_trigger_relations\""), "actor_trigger_relations field missing");
-        assert!(json.contains("\"actor_temporal_dependencies\""), "actor_temporal_dependencies field missing");
-        assert!(json.contains("\"temporal_invariants\""), "temporal_invariants field missing");
+        assert!(
+            json.contains("\"transactions\""),
+            "transactions field missing"
+        );
+        assert!(
+            json.contains("\"actor_drive_relations\""),
+            "actor_drive_relations field missing"
+        );
+        assert!(
+            json.contains("\"actor_sample_relations\""),
+            "actor_sample_relations field missing"
+        );
+        assert!(
+            json.contains("\"actor_trigger_relations\""),
+            "actor_trigger_relations field missing"
+        );
+        assert!(
+            json.contains("\"actor_temporal_dependencies\""),
+            "actor_temporal_dependencies field missing"
+        );
+        assert!(
+            json.contains("\"temporal_invariants\""),
+            "temporal_invariants field missing"
+        );
 
         // Write to disk then load back and verify new fields are accessible
         intent_ir.write_to_disk().unwrap();
@@ -4996,17 +4973,20 @@ mod tests {
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
-        ).unwrap();
+        )
+        .unwrap();
         evidence_ir.write_to_disk().unwrap();
         let semantic_ir = SemanticIr::build(
             &evidence_ir.artifact_layout.evidence_ir_path,
             &semantic_artifact_base,
-        ).unwrap();
+        )
+        .unwrap();
         semantic_ir.write_to_disk().unwrap();
         let intent_ir = IntentIr::build(
             &semantic_ir.artifact_layout.semantic_ir_path,
             &intent_artifact_base,
-        ).unwrap();
+        )
+        .unwrap();
 
         // Pattern recognition should have added a handshake transaction
         let has_handshake_tx = intent_ir
@@ -5023,7 +5003,10 @@ mod tests {
             .actor_drive_relations
             .iter()
             .any(|r| r.signal_name == "VALID");
-        assert!(has_valid_drive, "expected a drive relation for VALID signal");
+        assert!(
+            has_valid_drive,
+            "expected a drive relation for VALID signal"
+        );
     }
 
     #[test]

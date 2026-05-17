@@ -1,5 +1,8 @@
 # LIVE_ACHIEVEMENT_STATUS
 ## Current snapshot
+- Signoff restored at HEAD via SIGNOFF-REMEDIATION.1 — 25 clippy `-D warnings` errors cleared and `cargo fmt` drift fixed; `scripts/run_ci.sh` green again; 1191 lib tests pass: Done
+- SIGNOFF-REMEDIATION task tree created (lane R0) to own the regression fix after the bootstrap re-analysis found HEAD non-signoff: Done
+- Bootstrap re-analysis (2026-05-17): RUST_CODEBASE_ANALYSIS.md refreshed; ISF adapter found landed untracked (`bfe4f973`→`490e6aed`, no task tree / no live-doc sync) — re-ownership + re-documentation tracked as follow-up: In Progress
 - Git repository initialized: Done
 - Commit workflow document present and reviewed: Done
 - Commit workflow now requires explicit current-state live-doc/mdBook drift audit before commit: Done

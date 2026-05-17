@@ -1,14 +1,12 @@
+use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Path, PathBuf};
-use serde::{Deserialize, Serialize};
 
 use crate::error::{AppError, Result};
-use crate::ir::isf_ir::IsfIr;
 use crate::ir::IrStage;
-use crate::ir::intent::{
-    IntentDocumentIdentity, IntentIr,
-};
+use crate::ir::intent::{IntentDocumentIdentity, IntentIr};
+use crate::ir::isf_ir::IsfIr;
 use crate::ir::semantic::{
     ActorPortRecord, ActorRelativeDirection, ControlActionRecord, ControlAssignmentTargetRecord,
     ControlBinaryOperator, ControlBlockRecord, ControlBlockRole, ControlBranchRecord,
@@ -20,7 +18,6 @@ use crate::ir::semantic::{
     ExplicitTopRecord, InitAssignmentRecord, InterfaceRecord, InterfaceSignalDirection,
     StateTransitionRecord, SymbolDefinitionKind, SymbolDefinitionRecord, SystemContractRecord,
     SystemResetKind, SystemResetPolarity, SystemResetTargetKind, SystemResetTimingRelation,
-
 };
 use crate::ir::source::{
     AutomationConfidence, CandidateInterpretation, ResidualDecisionPacket, WidthHint, document_key,
@@ -873,14 +870,12 @@ struct RenderableEndpointPort {
     width_hint: Option<u32>,
 }
 
-
 fn derive_isf_actor_name(intent_ir: &IntentIr) -> String {
-    if let Some(actor) = intent_ir.actors.first() {
-        if let Some(ref name) = actor.actor_name {
-            if !name.is_empty() {
-                return name.replace([' ', '-', '.'], "_").to_lowercase();
-            }
-        }
+    if let Some(actor) = intent_ir.actors.first()
+        && let Some(name) = &actor.actor_name
+        && !name.is_empty()
+    {
+        return name.replace([' ', '-', '.'], "_").to_lowercase();
     }
     intent_ir
         .document_identity
@@ -923,7 +918,6 @@ fn assess_isf_renderability(intent_ir: &IntentIr) -> (bool, Vec<String>) {
 
     (reasons.is_empty(), reasons)
 }
-
 
 fn build_isf_source_text(intent_ir: &IntentIr, actor_name: &str) -> String {
     let isf_ir = IsfIr::from_intent_ir(intent_ir, actor_name);
@@ -28052,8 +28046,8 @@ mod tests {
         eprintln!("=== ISF source text ===\n{}\n=== END ===", isf.source_text);
 
         // Locate fsmgen binary relative to the specforge crate root.
-        let fsmgen_path = Path::new(env!("CARGO_MANIFEST_DIR"))
-            .join("../../subs/fsmgen/bin/fsmgen");
+        let fsmgen_path =
+            Path::new(env!("CARGO_MANIFEST_DIR")).join("../../subs/fsmgen/bin/fsmgen");
 
         let output = std::process::Command::new(&fsmgen_path)
             .args(["--strict", "--check", "--json"])
