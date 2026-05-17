@@ -163,7 +163,7 @@
 - task tree: `R6-FSM-ADAPTER` (`done`) — [docs/tasks/R6-FSM-ADAPTER.md](docs/tasks/R6-FSM-ADAPTER.md)
   - task tree: `R6-SOURCE-HARDENING` (`done`) — [docs/tasks/R6-SOURCE-HARDENING.md](docs/tasks/R6-SOURCE-HARDENING.md)
   - task tree: `R6-CONVERGE-HARDENING` (`done`) — [docs/tasks/R6-CONVERGE-HARDENING.md](docs/tasks/R6-CONVERGE-HARDENING.md)
-  - task tree: `R6-ISF-ADAPTER` (`active`) — [docs/tasks/R6-ISF-ADAPTER.md](docs/tasks/R6-ISF-ADAPTER.md)
+  - task tree: `R6-ISF-ADAPTER` (`done`) — [docs/tasks/R6-ISF-ADAPTER.md](docs/tasks/R6-ISF-ADAPTER.md)
 - `.isf` adapter status:
   - first `.isf` slices have landed: a typed `IsfIr` IR (`crates/specforge/src/ir/isf_ir.rs`), the `IntentIR → IsfIr::from_intent_ir() → render() → .isf` pipeline, `--target isf` on the CLI, `IsfAdapterArtifact` in `adapters.rs`, the mdBook chapter `docs/book/src/pipeline/isf-adapter.md`, and an integration test running pinned `subs/fsmgen --strict --check --json` against emitted ISF text.
   - those slices originally landed untracked (commits `bfe4f973`→`490e6aed`); `R6-ISF-ADAPTER` retroactively owns them and is hardening ISF to IR-layer parity (IrStage correctness, unit tests, explicit renderability policy).

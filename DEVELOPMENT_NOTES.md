@@ -49,6 +49,10 @@
   Discovered that `AdapterTarget`/`AdapterTargetArg` still enumerate
   SystemVerilog/Verilog/Vhdl despite HDL being out of scope — deliberately
   left as a recorded open question rather than scope-creeping `.4`.
+- `.5`: closed `R6-ISF-ADAPTER`; synced TASK_TREE.md + ROADMAP R6; final
+  full CI gate green; pushed the completed 5-leaf batch per the COMMIT.md
+  batch rule. The untracked-ISF gap surfaced by the bootstrap re-analysis
+  is now fully remediated under task-tree ownership.
 
 ## 2026-05-17 session — bootstrap re-analysis + SIGNOFF-REMEDIATION
 

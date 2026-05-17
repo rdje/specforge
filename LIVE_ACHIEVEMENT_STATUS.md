@@ -3,11 +3,12 @@
 - Signoff restored at HEAD via SIGNOFF-REMEDIATION.1 — 25 clippy `-D warnings` errors cleared and `cargo fmt` drift fixed; `scripts/run_ci.sh` green again; 1191 lib tests pass: Done
 - SIGNOFF-REMEDIATION task tree created (lane R0) to own the regression fix after the bootstrap re-analysis found HEAD non-signoff: Done
 - Bootstrap re-analysis (2026-05-17): RUST_CODEBASE_ANALYSIS.md refreshed; ISF adapter found landed untracked (`bfe4f973`→`490e6aed`, no task tree / no live-doc sync): Done
-- R6-ISF-ADAPTER task tree created (lane R6) — authorized 5-leaf batch to backfill ISF ownership, fix the IrStage smell, add isf_ir.rs unit tests, and lock the renderability policy/docs: In Progress
+- R6-ISF-ADAPTER task tree (lane R6) — authorized 5-leaf batch complete and closed: ISF ownership backfilled, IrStage smell fixed, isf_ir.rs unit-tested, renderability policy/docs locked; batch pushed: Done
 - R6-ISF-ADAPTER.1 — ISF adapter ownership + continuity backfill (task tree registered; ISF recorded in CHANGES/DEVELOPMENT_NOTES/ROADMAP R6/RUST_CODEBASE_ANALYSIS): Done
 - R6-ISF-ADAPTER.2 — IrStage modeling smell resolved: added `IrStage::IsfAdapter`; ISF artifacts no longer mislabeled as FsmAdapter; dedicated `validate_isf_adapter` instead of FSM-validator misroute; 25 project_validation.rs match arms updated; full CI green: Done
 - R6-ISF-ADAPTER.3 — `isf_ir.rs` now has 9 dedicated unit tests (was zero): emitter invariants (clock/reset/watchdog always emitted, BTreeSet dedup/order, when/switch nesting, balanced parens) + pure helpers; full CI green: Done
 - R6-ISF-ADAPTER.4 — ISF renderability policy made explicit (code comment + mdBook + DEVELOPMENT_NOTES + task-tree decision); USER_GUIDE command surface corrected to `--target <fsm|isf>`; HDL-enum-variant inconsistency flagged as open question; full CI green: Done
+- R6-ISF-ADAPTER.5 — tree closed; TASK_TREE.md + ROADMAP R6 synced; final CI gate green; 5-leaf batch pushed to origin/main: Done
 - Git repository initialized: Done
 - Commit workflow document present and reviewed: Done
 - Commit workflow now requires explicit current-state live-doc/mdBook drift audit before commit: Done

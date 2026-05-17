@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `R6-ISF-ADAPTER`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: `R6` (adapter layer; `.isf` is an R6 adapter target)
 - Created: `2026-05-17`
 - Last updated: `2026-05-17`
@@ -53,7 +53,7 @@ signoff but explicitly left this governance/coverage gap as scoped follow-up.
 ## Task Tree
 
 - ID: `R6-ISF-ADAPTER`
-  Status: `active`
+  Status: `done`
   Goal: `ISF adapter ownership backfill + IrStage fix + test/doc hardening.`
   Children: `R6-ISF-ADAPTER.1` .. `R6-ISF-ADAPTER.5`
 
@@ -110,14 +110,14 @@ signoff but explicitly left this governance/coverage gap as scoped follow-up.
   Commit: `R6-ISF-ADAPTER.4 — explicit ISF renderability policy + user-doc accuracy`
 
 - ID: `R6-ISF-ADAPTER.5`
-  Status: `pending`
+  Status: `done`
   Goal: `Close the tree and push the completed batch.`
   Acceptance: >
     All leaves done; `scripts/run_ci.sh` green; TASK_TREE.md + live docs
     synced; tree marked `done`; the completed 5-leaf batch pushed per the
     COMMIT.md batch rule.
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — all leaves done; final `scripts/run_ci.sh` green; TASK_TREE.md/ROADMAP/live docs synced; batch pushed
+  Commit: `R6-ISF-ADAPTER.5 — close tree + push batch`
 
 ## Current Frontier
 
@@ -127,7 +127,9 @@ signoff but explicitly left this governance/coverage gap as scoped follow-up.
 | 2 | `R6-ISF-ADAPTER.2` | `done` | IrStage smell resolved; CI green |
 | 3 | `R6-ISF-ADAPTER.3` | `done` | isf_ir.rs unit tests added; CI green |
 | 4 | `R6-ISF-ADAPTER.4` | `done` | Renderability policy + user docs locked; CI green |
-| 5 | `R6-ISF-ADAPTER.5` | `pending` | Next — close + push the batch |
+| 5 | `R6-ISF-ADAPTER.5` | `done` | Tree closed; batch pushed |
+
+No executable leaves remain. Tree closed 2026-05-17.
 
 ## Decisions
 
@@ -174,6 +176,7 @@ signoff but explicitly left this governance/coverage gap as scoped follow-up.
 | `2026-05-17` | `R6-ISF-ADAPTER.2` | `scripts/run_ci.sh` (1192 lib tests, clippy/fmt/rustdoc/mdBook) | `passed` |
 | `2026-05-17` | `R6-ISF-ADAPTER.3` | `scripts/run_ci.sh` (1201 lib tests, clippy/fmt/rustdoc/mdBook) | `passed` |
 | `2026-05-17` | `R6-ISF-ADAPTER.4` | `scripts/run_ci.sh` (comment-only code touch; 1201 lib tests, clippy/fmt/rustdoc/mdBook) | `passed` |
+| `2026-05-17` | `R6-ISF-ADAPTER.5` | final `scripts/run_ci.sh` gate; doc/index sync | `passed` |
 
 ## Commit Log
 
@@ -183,9 +186,17 @@ signoff but explicitly left this governance/coverage gap as scoped follow-up.
 | `R6-ISF-ADAPTER.2` | `R6-ISF-ADAPTER.2 — add IrStage::IsfAdapter + dedicated ISF adapter validation` | Code: enum variant, validate_isf_adapter, 25 match arms, +1 test |
 | `R6-ISF-ADAPTER.3` | `R6-ISF-ADAPTER.3 — unit-test isf_ir.rs emitter and helpers` | Tests only: 9 new isf_ir.rs unit tests |
 | `R6-ISF-ADAPTER.4` | `R6-ISF-ADAPTER.4 — explicit ISF renderability policy + user-doc accuracy` | Comment + mdBook + USER_GUIDE; HDL-variant open question recorded |
+| `R6-ISF-ADAPTER.5` | `R6-ISF-ADAPTER.5 — close tree + push batch` | Tree closed; 5-leaf batch pushed |
 
 ## Changelog
 
 - `2026-05-17`: Created task tree. Backfills ownership for the ISF adapter
   that landed untracked across `bfe4f973`→`490e6aed`, scoped from the
   bootstrap re-analysis finding. Authorized as a 5-leaf batch.
+- `2026-05-17`: Closed tree. All 5 leaves done — `.1` ownership/continuity
+  backfill, `.2` `IrStage::IsfAdapter` + dedicated `validate_isf_adapter`
+  (25 match arms), `.3` 9 `isf_ir.rs` unit tests, `.4` explicit
+  renderability policy + user-doc accuracy, `.5` closure + batch push.
+  1201 lib tests; `scripts/run_ci.sh` green at every code-touching leaf.
+  One open question recorded (lingering HDL `AdapterTarget` variants) for
+  a future separate decision.

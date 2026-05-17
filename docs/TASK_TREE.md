@@ -29,7 +29,7 @@ evidence for one top-level task.
 | `R15-GRAPH-DIRECTION-MIGRATION` | `done` | `R15` | — | [docs/tasks/R15-GRAPH-DIRECTION-MIGRATION.md](docs/tasks/R15-GRAPH-DIRECTION-MIGRATION.md) |
 | `R7-VALIDATION` | `done` | `R7` | — (.5 deferred) | [docs/tasks/R7-VALIDATION.md](docs/tasks/R7-VALIDATION.md) |
 | `SIGNOFF-REMEDIATION` | `done` | `R0` | — | [docs/tasks/SIGNOFF-REMEDIATION.md](docs/tasks/SIGNOFF-REMEDIATION.md) |
-| `R6-ISF-ADAPTER` | `active` | `R6` | `R6-ISF-ADAPTER.1` | [docs/tasks/R6-ISF-ADAPTER.md](docs/tasks/R6-ISF-ADAPTER.md) |
+| `R6-ISF-ADAPTER` | `done` | `R6` | — | [docs/tasks/R6-ISF-ADAPTER.md](docs/tasks/R6-ISF-ADAPTER.md) |
 
 ## Directory Layout
 

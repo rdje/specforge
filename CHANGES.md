@@ -81,6 +81,19 @@
 - Comment-only code touch; zero behavior change; `scripts/run_ci.sh` green
   (1201 lib tests).
 
+### R6-ISF-ADAPTER.5: close tree + push batch
+- Marked `R6-ISF-ADAPTER` `done` (all 5 leaves complete); updated
+  `docs/TASK_TREE.md` (frontier —) and `ROADMAP.md` R6 (`R6-ISF-ADAPTER`
+  → `done`).
+- Final `scripts/run_ci.sh` gate green (1201 lib tests, clippy/fmt/rustdoc/
+  mdBook). The authorized 5-leaf batch pushed to `origin/main` per the
+  COMMIT.md batch rule (push deferred until full batch complete).
+- Net outcome of the batch: the ISF (`.isf`) adapter is now task-tree-owned,
+  continuity-documented, correctly stage-typed (`IrStage::IsfAdapter` with a
+  dedicated validator), unit-tested (9 `isf_ir.rs` tests), and its
+  renderability policy is explicit. One open question recorded (lingering
+  HDL `AdapterTarget` variants) for a future separate decision.
+
 ## 2026-05-17 (Bootstrap re-analysis + SIGNOFF-REMEDIATION)
 
 ### Bootstrap re-analysis (RUST_CODEBASE_ANALYSIS.md)

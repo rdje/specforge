@@ -24,18 +24,19 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `ba9de037` (pre-commit baseline; the R6-ISF-ADAPTER.4 commit is not yet created at time of this update)
-- latest_commit_brief_message: R6-ISF-ADAPTER.3 — unit-test isf_ir.rs emitter and helpers
-- note: 2026-05-17 — signoff restored, then executing the authorized `R6-ISF-ADAPTER` batch. `.1`/`.2`/`.3`/`.4` done (`.4`: explicit renderability policy + mdBook/USER_GUIDE accuracy, 1201 tests, full CI green); committing `.4` now. Only `.5` (close + push) remains.
+- latest_commit_hash: `01069b93` (pre-commit baseline; the R6-ISF-ADAPTER.5 commit is not yet created at time of this update)
+- latest_commit_brief_message: R6-ISF-ADAPTER.4 — explicit ISF renderability policy + user-doc accuracy
+- note: 2026-05-17 — signoff restored, then the authorized `R6-ISF-ADAPTER` batch. `.1`/`.2`/`.3`/`.4` committed; `.5` (close tree + push) being committed now, followed by the final full CI gate and the batch push. Post-push commit id/ahead-count reported in the slice completion message; next session's MEMORY refresh reconciles the post-push baseline.
 
 ## Active batch status
-- batch: `R6-ISF-ADAPTER` (user-authorized, fixed size `N=5` leaves: `.1`..`.5`)
-- completed_count: `.1` (`0124fc2c`) + `.2` (`7fda5acd`) + `.3` (`ba9de037`) committed; `.4` done, committing now; `.5` (close + push) pending
-- per-leaf rule: full COMMIT.md workflow after every leaf; task-scoped commits not deferred
-- push policy: deferred until the full 5-leaf batch completes (push happens in `.5`), unless the branch hits ~30 ahead or the user changes the instruction
-- branch ahead pre-`.1`: 23 commits ahead of `origin/main` (under the ~30 checkpoint)
+- batch: `R6-ISF-ADAPTER` (user-authorized, fixed size `N=5` leaves: `.1`..`.5`) — COMPLETE at `.5`
+- completed_count: `.1` (`0124fc2c`) + `.2` (`7fda5acd`) + `.3` (`ba9de037`) + `.4` (`01069b93`) committed; `.5` committing now, then final CI gate, then push
+- per-leaf rule: full COMMIT.md workflow ran after every leaf; task-scoped commits not deferred
+- push policy: push the full 5-leaf batch after `.5` commit + final `scripts/run_ci.sh` gate (COMMIT.md batch rule)
+- prior signoff slice `SIGNOFF-REMEDIATION` (`c2d7c94f`) also on this unpushed run
 
 ## Recent commit chain (last 10)
+- `01069b93` R6-ISF-ADAPTER.4 — explicit ISF renderability policy + user-doc accuracy
 - `ba9de037` R6-ISF-ADAPTER.3 — unit-test isf_ir.rs emitter and helpers
 - `7fda5acd` R6-ISF-ADAPTER.2 — add IrStage::IsfAdapter + dedicated ISF adapter validation
 - `0124fc2c` R6-ISF-ADAPTER.1 — backfill ISF adapter ownership + continuity
