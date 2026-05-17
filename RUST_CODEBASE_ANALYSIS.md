@@ -25,6 +25,14 @@
   into the FSM validator). All 25 exhaustive `IrStage` matches in
   `project_validation.rs` updated; ISF behaves in parallel with FSM as a
   terminal adapter stage. +1 test (1192 lib tests); `scripts/run_ci.sh` green.
+- Leaf `.3` (tests): `isf_ir.rs` now carries a `#[cfg(test)] mod tests`
+  (9 tests) — closes the "0 unit tests of its own" gap flagged in the
+  bootstrap entry below. Coverage targets the emitter (`render` /
+  `render_txn_step`) and pure helpers (`sanitize_isf_name`,
+  `sanitize_rule_condition`, `render_isf_binary_operator`,
+  `render_isf_width_hint`, `branch_predicate_guard`). `from_intent_ir`
+  remains integration-covered (43-field `IntentIr`; hand-construction
+  rejected as brittle). 1201 lib tests; `scripts/run_ci.sh` green.
 
 ## Session update (2026-05-17 bootstrap re-analysis — ISF adapter landed, signoff regression detected)
 

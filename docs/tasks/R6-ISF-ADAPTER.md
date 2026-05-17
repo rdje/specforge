@@ -86,7 +86,7 @@ signoff but explicitly left this governance/coverage gap as scoped follow-up.
   Commit: `R6-ISF-ADAPTER.2 — add IrStage::IsfAdapter + dedicated ISF adapter validation`
 
 - ID: `R6-ISF-ADAPTER.3`
-  Status: `pending`
+  Status: `done`
   Goal: `Add dedicated unit tests inside isf_ir.rs.`
   Acceptance: >
     A `#[cfg(test)] mod tests` in `isf_ir.rs` covers the typed-IR
@@ -95,8 +95,8 @@ signoff but explicitly left this governance/coverage gap as scoped follow-up.
     mapping including transaction / rule / when / switch lowering,
     with mutation-style depth comparable to the other R6 hardening
     trees. `scripts/run_ci.sh` green.
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — 9 new isf_ir.rs unit tests; 1201 lib tests; full `scripts/run_ci.sh` green
+  Commit: `R6-ISF-ADAPTER.3 — unit-test isf_ir.rs emitter and helpers`
 
 - ID: `R6-ISF-ADAPTER.4`
   Status: `pending`
@@ -125,8 +125,8 @@ signoff but explicitly left this governance/coverage gap as scoped follow-up.
 | --- | --- | --- | --- |
 | 1 | `R6-ISF-ADAPTER.1` | `done` | Ownership/continuity backfilled |
 | 2 | `R6-ISF-ADAPTER.2` | `done` | IrStage smell resolved; CI green |
-| 3 | `R6-ISF-ADAPTER.3` | `pending` | Next — harden once the type model is correct |
-| 4 | `R6-ISF-ADAPTER.4` | `pending` | Lock the policy + user docs last |
+| 3 | `R6-ISF-ADAPTER.3` | `done` | isf_ir.rs unit tests added; CI green |
+| 4 | `R6-ISF-ADAPTER.4` | `pending` | Next — lock the policy + user docs |
 | 5 | `R6-ISF-ADAPTER.5` | `pending` | Close + push the batch |
 
 ## Decisions
@@ -137,6 +137,12 @@ signoff but explicitly left this governance/coverage gap as scoped follow-up.
 - `2026-05-17`: `.2` adds a real `IrStage::IsfAdapter` variant rather than
   documenting the `FsmAdapter` reuse — the artifact genuinely is an ISF
   adapter and stage-keyed dispatch must not treat it as FSM.
+- `2026-05-17`: `.3` unit-tests the emitter (`render`/`render_txn_step`) and
+  pure helpers via direct `IsfIr` construction. `from_intent_ir` is left to
+  the existing 3 adapters.rs integration tests (incl. fsmgen
+  `--strict --check --json`): hand-building the 43-field `IntentIr` with no
+  `Default` for a unit test would be brittle and lower-quality than focused
+  emitter/invariant coverage.
 
 ## Open Questions
 
@@ -154,6 +160,7 @@ signoff but explicitly left this governance/coverage gap as scoped follow-up.
 | --- | --- | --- | --- |
 | `2026-05-17` | `R6-ISF-ADAPTER.1` | docs-only diff audit (no `.rs` changed) | `passed` |
 | `2026-05-17` | `R6-ISF-ADAPTER.2` | `scripts/run_ci.sh` (1192 lib tests, clippy/fmt/rustdoc/mdBook) | `passed` |
+| `2026-05-17` | `R6-ISF-ADAPTER.3` | `scripts/run_ci.sh` (1201 lib tests, clippy/fmt/rustdoc/mdBook) | `passed` |
 
 ## Commit Log
 
@@ -161,6 +168,7 @@ signoff but explicitly left this governance/coverage gap as scoped follow-up.
 | --- | --- | --- |
 | `R6-ISF-ADAPTER.1` | `R6-ISF-ADAPTER.1 — backfill ISF adapter ownership + continuity` | Docs only |
 | `R6-ISF-ADAPTER.2` | `R6-ISF-ADAPTER.2 — add IrStage::IsfAdapter + dedicated ISF adapter validation` | Code: enum variant, validate_isf_adapter, 25 match arms, +1 test |
+| `R6-ISF-ADAPTER.3` | `R6-ISF-ADAPTER.3 — unit-test isf_ir.rs emitter and helpers` | Tests only: 9 new isf_ir.rs unit tests |
 
 ## Changelog
 

@@ -40,6 +40,27 @@
 - 1 focused test: `validate_isf_adapter_reports_structural_and_coverage_findings`.
   Existing ISF adapter tests still pass with the new stage tag.
 
+### R6-ISF-ADAPTER.3: unit-test isf_ir.rs
+- Added a `#[cfg(test)] mod tests` inside `isf_ir.rs` (9 tests) — previously
+  the 1.1K-line typed IR had zero unit tests of its own (integration-only).
+- Pure-helper coverage: `render_isf_binary_operator` (all 14 operators
+  exact), `render_isf_width_hint` (numeric vs parametric), `sanitize_isf_name`
+  (special-char replacement, `__` collapse, trim, empty→`unnamed`,
+  leading-digit→`reg_` guard), `sanitize_rule_condition` (whitespace / empty
+  / `true` / >80-char → no guard; single token → `(== tok 1)`),
+  `branch_predicate_guard` (no-predicate selector fallback).
+- Emitter invariants via direct `IsfIr` construction: clock/reset/watchdog
+  always emitted (strict-mode requirement) and parens balanced even with an
+  empty body; `BTreeSet<IsfSignal>` dedup + deterministic ordering in the
+  interface block; storage/drive/rule (guarded vs unconditional)/priority
+  emission; transaction `when`/`switch`/default `(on start)`/`(complete)`/
+  `(latency …)` nesting with balanced parentheses.
+- `from_intent_ir` stays integration-covered (3 adapters.rs tests incl.
+  fsmgen `--strict --check --json`); hand-building the 43-field `IntentIr`
+  for a unit test would be brittle and lower-quality than the focused
+  emitter/helper coverage (recorded as a task-tree decision).
+- 9 new tests (1201 lib tests); `scripts/run_ci.sh` green.
+
 ## 2026-05-17 (Bootstrap re-analysis + SIGNOFF-REMEDIATION)
 
 ### Bootstrap re-analysis (RUST_CODEBASE_ANALYSIS.md)

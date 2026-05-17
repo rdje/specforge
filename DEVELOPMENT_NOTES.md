@@ -33,6 +33,14 @@
   `specforge validate` now has a dedicated `validate_isf_adapter` instead
   of misrouting ISF artifacts into the FSM validator. CI caught a rustfmt
   miss in the new test before commit — the signoff gate working as intended.
+- `.3`: unit-tested `isf_ir.rs` at its genuine internal surface — the
+  emitter (`render`/`render_txn_step`) and pure helpers — rather than
+  hand-building a 43-field `IntentIr` for `from_intent_ir` (already
+  integration-covered by 3 adapters.rs tests incl. fsmgen strict). The
+  emitter is the part the module exists to make bug-proof, so direct
+  `IsfIr` construction + balanced-paren / dedup / nesting assertions is
+  the higher-quality coverage. Recorded as a task-tree decision. CI again
+  caught a rustfmt miss in the new tests pre-commit.
 
 ## 2026-05-17 session — bootstrap re-analysis + SIGNOFF-REMEDIATION
 

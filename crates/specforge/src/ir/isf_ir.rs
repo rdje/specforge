@@ -1091,3 +1091,241 @@ fn branch_predicate_guard(branch: &ControlBranchRecord, selector_text: &str) -> 
         None => selector_text.to_string(),
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn paren_balance(s: &str) -> i64 {
+        let mut depth: i64 = 0;
+        for c in s.chars() {
+            match c {
+                '(' => depth += 1,
+                ')' => depth -= 1,
+                _ => {}
+            }
+            assert!(depth >= 0, "closing paren before matching open in:\n{s}");
+        }
+        depth
+    }
+
+    fn minimal_isf() -> IsfIr {
+        IsfIr {
+            actor_name: "a".to_string(),
+            clock: "clk".to_string(),
+            reset: IsfReset {
+                signal: "rst_n".to_string(),
+                timing: "async".to_string(),
+                polarity: "active_low".to_string(),
+            },
+            watchdog: 16,
+            signals: BTreeSet::new(),
+            constants: vec![],
+            types: vec![],
+            enums: vec![],
+            storage: vec![],
+            drives: vec![],
+            transactions: vec![],
+            rules: vec![],
+            priorities: vec![],
+        }
+    }
+
+    // --- pure helpers -----------------------------------------------------
+
+    #[test]
+    fn binary_operator_rendering_is_exhaustive_and_exact() {
+        use ControlBinaryOperator::*;
+        let cases = [
+            (Eq, "=="),
+            (NotEq, "!="),
+            (Lt, "<"),
+            (Le, "<="),
+            (Gt, ">"),
+            (Ge, ">="),
+            (BitAnd, "&"),
+            (BitOr, "|"),
+            (BitXor, "^"),
+            (Add, "+"),
+            (Sub, "-"),
+            (Mul, "*"),
+            (Div, "/"),
+            (Mod, "%"),
+        ];
+        for (op, expected) in cases {
+            assert_eq!(render_isf_binary_operator(op), expected);
+        }
+    }
+
+    #[test]
+    fn width_hint_rendering_distinguishes_numeric_and_parametric() {
+        assert_eq!(render_isf_width_hint(&WidthHint::Numeric(8)), "8");
+        assert_eq!(render_isf_width_hint(&WidthHint::Numeric(1)), "1");
+        assert_eq!(
+            render_isf_width_hint(&WidthHint::Parametric("DATA_W".to_string())),
+            "DATA_W"
+        );
+    }
+
+    #[test]
+    fn sanitize_isf_name_replaces_specials_collapses_and_guards_leading_digit() {
+        assert_eq!(sanitize_isf_name("AW VALID"), "aw_valid");
+        assert_eq!(sanitize_isf_name("a--b..c"), "a_b_c");
+        assert_eq!(sanitize_isf_name("__lead_trail__"), "lead_trail");
+        assert_eq!(sanitize_isf_name("***"), "unnamed");
+        assert_eq!(sanitize_isf_name("3state"), "reg_3state");
+        assert_eq!(sanitize_isf_name("Mixed/Case#1"), "mixed_case_1");
+    }
+
+    #[test]
+    fn sanitize_rule_condition_only_accepts_single_token_guards() {
+        assert_eq!(sanitize_rule_condition("has space"), "");
+        assert_eq!(sanitize_rule_condition(""), "");
+        assert_eq!(sanitize_rule_condition("true"), "");
+        assert_eq!(sanitize_rule_condition(&"x".repeat(81)), "");
+        assert_eq!(sanitize_rule_condition("ENABLE"), "(== enable 1)");
+    }
+
+    #[test]
+    fn branch_predicate_guard_falls_back_to_selector_when_no_predicate() {
+        let branch = ControlBranchRecord {
+            branch_id: "b0".to_string(),
+            declaration_order: 0,
+            predicate: None,
+            actions: vec![],
+            supporting_statement_ids: vec![],
+            automation_confidence: crate::ir::source::AutomationConfidence::Low,
+        };
+        assert_eq!(branch_predicate_guard(&branch, "sel_text"), "sel_text");
+    }
+
+    // --- emitter invariants ----------------------------------------------
+
+    #[test]
+    fn render_always_emits_clock_reset_watchdog_and_is_balanced() {
+        let out = minimal_isf().render();
+        assert!(out.starts_with("(actor a"), "actor header missing:\n{out}");
+        assert!(out.contains("  (clock clk)"), "clock missing:\n{out}");
+        assert!(
+            out.contains("  (reset (rst_n async active_low))"),
+            "reset missing:\n{out}"
+        );
+        assert!(out.contains("  (watchdog 16)"), "watchdog missing:\n{out}");
+        assert!(out.ends_with(")"), "must end with closing paren:\n{out}");
+        // No interface block when there are no signals.
+        assert!(!out.contains("(interface"), "unexpected interface:\n{out}");
+        assert_eq!(paren_balance(&out), 0, "unbalanced parens:\n{out}");
+    }
+
+    #[test]
+    fn render_interface_is_sorted_and_deduped_by_construction() {
+        let mut isf = minimal_isf();
+        // Insert out of order, plus an exact duplicate.
+        isf.signals.insert(IsfSignal {
+            name: "ZZ".to_string(),
+            direction: IsfDirection::Output,
+            width: 1,
+        });
+        isf.signals.insert(IsfSignal {
+            name: "AA".to_string(),
+            direction: IsfDirection::Input,
+            width: 8,
+        });
+        isf.signals.insert(IsfSignal {
+            name: "AA".to_string(),
+            direction: IsfDirection::Input,
+            width: 8,
+        });
+        assert_eq!(
+            isf.signals.len(),
+            2,
+            "BTreeSet must dedup identical signals"
+        );
+        let out = isf.render();
+        let aa = out.find("(input AA (width 8))").expect("AA line");
+        let zz = out.find("(output ZZ (width 1))").expect("ZZ line");
+        assert!(aa < zz, "BTreeSet ordering must place AA before ZZ:\n{out}");
+        assert!(out.contains("  (interface"));
+        assert_eq!(paren_balance(&out), 0);
+    }
+
+    #[test]
+    fn render_emits_storage_drives_rules_and_priorities() {
+        let mut isf = minimal_isf();
+        isf.storage.push(IsfStorageVar {
+            name: "acc".to_string(),
+            width: 8,
+        });
+        isf.drives.push(IsfNamedDrive {
+            name: "out".to_string(),
+            body: vec![("sig".to_string(), "1".to_string())],
+        });
+        isf.rules.push(IsfRule {
+            name: "r_guarded".to_string(),
+            condition: "(== en 1)".to_string(),
+            drives: vec![("o".to_string(), "0".to_string())],
+        });
+        isf.rules.push(IsfRule {
+            name: "r_uncond".to_string(),
+            condition: String::new(),
+            drives: vec![],
+        });
+        isf.priorities.push(IsfPriority {
+            higher: "r_guarded".to_string(),
+            over: "r_uncond".to_string(),
+        });
+
+        let out = isf.render();
+        assert!(out.contains("  (storage"));
+        assert!(out.contains("    (var acc (width 8))"));
+        assert!(out.contains("  (drive (out val) (sig 1))"));
+        // Guarded rule keeps its condition; unconditional rule omits it.
+        assert!(out.contains("  (rule r_guarded (== en 1)"));
+        assert!(out.contains("  (rule r_uncond\n") || out.contains("  (rule r_uncond)"));
+        assert!(out.contains("  (priority r_guarded over r_uncond)"));
+        assert_eq!(paren_balance(&out), 0);
+    }
+
+    #[test]
+    fn render_transaction_nests_when_switch_and_default_on_start() {
+        let mut isf = minimal_isf();
+        isf.transactions.push(IsfTransaction {
+            name: "t1".to_string(),
+            on_trigger: None,
+            on_steps: vec![],
+            steps: vec![
+                IsfTxnStep::When {
+                    condition: "ready".to_string(),
+                    body: vec![IsfTxnStep::Drive {
+                        name: "out".to_string(),
+                        actuals: vec!["1".to_string()],
+                    }],
+                },
+                IsfTxnStep::Switch {
+                    selector: "mode".to_string(),
+                    branches: vec![(
+                        "fast".to_string(),
+                        vec![IsfTxnStep::Wait {
+                            count: "2".to_string(),
+                        }],
+                    )],
+                },
+            ],
+            complete: "done".to_string(),
+            latency_min: Some(1),
+            latency_max: Some(4),
+        });
+
+        let out = isf.render();
+        assert!(out.contains("  (transaction t1"));
+        assert!(out.contains("    (on start)"), "default on-start:\n{out}");
+        assert!(out.contains("    (when ready"));
+        assert!(out.contains("      (drive out 1)"));
+        assert!(out.contains("    (switch mode"));
+        assert!(out.contains("      (fast)"));
+        assert!(out.contains("        (wait 2)"));
+        assert!(out.contains("    (complete done)"));
+        assert!(out.contains("    (latency (min 1) (max 4))"));
+        assert_eq!(paren_balance(&out), 0, "unbalanced:\n{out}");
+    }
+}
