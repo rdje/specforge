@@ -1,0 +1,214 @@
+# ISF-ONLY-CONSOLIDATION: Drop HDL + `.fsm` adapters; SpecForge emits only `.isf`
+
+## Metadata
+
+- Tree ID: `ISF-ONLY-CONSOLIDATION`
+- Status: `active`
+- Roadmap lane: `R6` (adapter layer — this redefines the adapter strategy)
+- Created: `2026-05-18`
+- Last updated: `2026-05-18`
+- Owner: repo-local workflow
+
+## Goal
+
+Make `.isf` SpecForge's single adapter target. Remove the HDL adapter
+surface (SystemVerilog / Verilog / VHDL) and the entire `.fsm` adapter
+subsystem from code, tests, fixtures, and documentation. After this tree,
+SpecForge lowers `IntentIR` to `.isf` only; FSMGen owns everything
+downstream of `.isf` (scheduling, `.fsm`, HDL).
+
+## Background / decision
+
+User decision (2026-05-18): now that the typed `.isf` adapter exists
+(`R6-ISF-ADAPTER`), there is no objective reason for SpecForge to keep
+HDL adapters or its own `.fsm` adapter. SpecForge's canonical downstream
+contract is `IntentIR → .isf → FSMGen`. This supersedes the prior
+"`.fsm` active, `.isf` planned" adapter strategy and closes the recorded
+`R6-ISF-ADAPTER` open question about lingering HDL `AdapterTarget`
+variants by removing them outright (and `.fsm` with them).
+
+Scope reality (surveyed 2026-05-18):
+- `crates/specforge/src/ir/adapters.rs` is 28,119 lines: ~1,977 FSM-symbol
+  lines, ~62 ISF-symbol lines, 163 `#[test]` fns (the large majority FSM).
+- `AdapterTarget` = `{Fsm, Isf, SystemVerilog, Verilog, Vhdl}`;
+  `AdapterArtifact` carries `fsm: Option<FsmAdapterArtifact>` and
+  `isf: Option<IsfAdapterArtifact>`; `IrStage` = `{… FsmAdapter, IsfAdapter}`.
+- FSM coupling also in `cli.rs`, `ir/source.rs`, `ir/evidence.rs`,
+  `ir/mod.rs`, `commands/validate.rs`, `commands/project_validation.rs`
+  (~25 IrStage match arms), `commands/adapt.rs`, `commands/converge.rs`.
+- 153 `crates/specforge/test_data/kg_quality` fixtures (mixed: some are
+  FSM-adapter-specific, many are KG/semantic-truthfulness and stay).
+- Pervasive `.fsm` content in the mdBook and in README / ROADMAP /
+  INTENTIR_SPEC / USER_GUIDE / docs/FSMGEN_FEEDBACK.md.
+- `subs/fsmgen` submodule and the `isf_output_passes_fsmgen_strict_validation`
+  test STAY — FSMGen is the downstream consumer of `.isf`.
+
+## Non-Goals
+
+- Do not change `.isf` adapter behavior or the `IsfIr` typed model.
+- Do not remove the `subs/fsmgen` submodule or the ISF↔FSMGen strict test.
+- Do not rewrite history; `R6-FSM-ADAPTER` (closed) is kept as historical
+  record, marked `superseded` by this tree.
+- Do not delete KG/semantic-truthfulness fixtures that are not FSM-adapter
+  specific — only retire genuinely FSM-adapter-only fixtures.
+- Do not regress signoff: `scripts/run_ci.sh` must be green at every
+  code/fixture-touching leaf.
+
+## Acceptance Criteria
+
+- `AdapterTarget` and `AdapterTargetArg` expose only `isf`.
+- `AdapterArtifact` no longer has an `fsm` payload; `IrStage` has no
+  `FsmAdapter`; no `FsmAdapterArtifact` / `validate_fsm_adapter` /
+  `fsm_adapter_fingerprint` / FSM lowering remains.
+- `adapters.rs` (or its ISF successor module) contains only ISF + shared
+  adapter scaffolding; the FSM lowering bulk and FSM tests are gone.
+- `specforge adapt`/`converge` accept only `--target isf`; no HDL/FSM CLI.
+- `kg-bench` + `corpus-kb` green with the retained fixture set.
+- mdBook builds; FSM pages removed/rewritten; ISF chapter is the canonical
+  adapter chapter.
+- README / ROADMAP / INTENTIR_SPEC / USER_GUIDE / LIVE_ACHIEVEMENT_STATUS /
+  RUST_CODEBASE_ANALYSIS / MEMORY reflect the ISF-only adapter strategy.
+- Every leaf committed through `COMMIT.md`; `scripts/run_ci.sh` green.
+
+## Task Tree
+
+- ID: `ISF-ONLY-CONSOLIDATION`
+  Status: `active`
+  Goal: `SpecForge emits only .isf; HDL and .fsm fully removed.`
+  Children: `.1`, `.2`, `.3`, `.4`, `.5`, `.6`, `.7`
+
+- ID: `ISF-ONLY-CONSOLIDATION.1`
+  Status: `pending`
+  Goal: >
+    Adopt and record the ISF-only adapter strategy in the canonical
+    docs before code changes: README objective, INTENTIR_SPEC adapter
+    section, ROADMAP R6, USER_GUIDE, docs/FSMGEN_FEEDBACK scope note;
+    mark `R6-FSM-ADAPTER` `superseded` in TASK_TREE.md; record the
+    decision. Docs only.
+  Acceptance: `Canonical docs state .isf is the sole adapter target and FSMGen owns downstream; R6-FSM-ADAPTER marked superseded; no code change.`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `ISF-ONLY-CONSOLIDATION.2`
+  Status: `pending`
+  Goal: >
+    Extract the ISF adapter surface (`IsfAdapterArtifact`,
+    `build_isf_adapter_artifact`, `assess_isf_renderability`,
+    `derive_isf_actor_name`, `count_isf_signals`, ISF adapter tests)
+    out of `adapters.rs` into a self-contained ISF adapter module so the
+    FSM bulk can later be deleted wholesale without entangling ISF.
+  Acceptance: `ISF adapter logic + tests live in their own module; AdapterArtifact still builds for isf; scripts/run_ci.sh green. May split.`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `ISF-ONLY-CONSOLIDATION.3`
+  Status: `pending`
+  Goal: >
+    Make the typed surface ISF-only: drop `AdapterTarget::{Fsm,
+    SystemVerilog,Verilog,Vhdl}` and the matching `AdapterTargetArg`
+    variants, `AdapterArtifact.fsm`, `FsmAdapterArtifact`,
+    `IrStage::FsmAdapter`; update `cli.rs`, `ir/source.rs`,
+    `ir/evidence.rs`, `ir/mod.rs`, and the `project_validation.rs`
+    IrStage match arms.
+  Acceptance: `Only isf remains in AdapterTarget/AdapterTargetArg/IrStage; compiler-enumerated matches updated; scripts/run_ci.sh green. May split.`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `ISF-ONLY-CONSOLIDATION.4`
+  Status: `pending`
+  Goal: >
+    Delete the FSM lowering bulk and FSM validation: the FSM lowering
+    logic + FSM `#[test]` fns formerly in `adapters.rs`,
+    `validate_fsm_adapter` / `persist_fsm_adapter_validation` /
+    `fsm_adapter_fingerprint` and their dispatch, plus FSM handling in
+    `commands/adapt.rs` / `commands/converge.rs`.
+  Acceptance: `No FSM lowering/validation/test code remains; scripts/run_ci.sh green. Expected to split into several sub-leaves given size.`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `ISF-ONLY-CONSOLIDATION.5`
+  Status: `pending`
+  Goal: >
+    Triage `test_data/kg_quality`: retire genuinely FSM-adapter-only
+    fixtures, keep KG/semantic-truthfulness fixtures, and keep
+    `kg-bench` + `corpus-kb` green and their tracked projections clean.
+  Acceptance: `Only FSM-adapter-specific fixtures removed; kg-bench + corpus-kb green; no stale tracked projection diff. May split.`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `ISF-ONLY-CONSOLIDATION.6`
+  Status: `pending`
+  Goal: >
+    mdBook sweep: remove or rewrite FSM-centric pages/sections across
+    `docs/book/src` (pipeline, commands, domain, quality, getting-started,
+    introduction, SUMMARY); the ISF chapter becomes the canonical adapter
+    chapter. `bash scripts/run_docs_ci.sh` green.
+  Acceptance: `No stale .fsm user-facing content; ISF is the canonical adapter chapter; docs CI green. May split.`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `ISF-ONLY-CONSOLIDATION.7`
+  Status: `pending`
+  Goal: >
+    Final continuity reconcile (README/ROADMAP/INTENTIR_SPEC/
+    LIVE_ACHIEVEMENT_STATUS/RUST_CODEBASE_ANALYSIS/MEMORY/CHANGES/
+    DEVELOPMENT_NOTES), close the tree, push the completed batch per the
+    COMMIT.md batch rule.
+  Acceptance: `All live docs consistent with ISF-only; tree done; final scripts/run_ci.sh gate green; batch pushed.`
+  Verification: `pending`
+  Commit: `pending`
+
+## Current Frontier
+
+| Order | Leaf | Status | Why next |
+| --- | --- | --- | --- |
+| 1 | `ISF-ONLY-CONSOLIDATION.1` | `pending` | Record the strategy before any code removal |
+| 2 | `ISF-ONLY-CONSOLIDATION.2` | `pending` | Isolate ISF so FSM can be deleted cleanly |
+| 3 | `ISF-ONLY-CONSOLIDATION.3` | `pending` | Make typed surface ISF-only |
+| 4 | `ISF-ONLY-CONSOLIDATION.4` | `pending` | Delete FSM bulk (likely splits) |
+| 5 | `ISF-ONLY-CONSOLIDATION.5` | `pending` | Fixture triage |
+| 6 | `ISF-ONLY-CONSOLIDATION.6` | `pending` | mdBook sweep |
+| 7 | `ISF-ONLY-CONSOLIDATION.7` | `pending` | Reconcile + close + push |
+
+## Decisions
+
+- `2026-05-18`: `.isf` is SpecForge's sole adapter target; FSMGen owns
+  scheduling/`.fsm`/HDL downstream. Supersedes the `.fsm`-active strategy.
+- `2026-05-18`: ISF is extracted to its own module first (`.2`) so the
+  FSM bulk can be deleted as a block rather than untangled in place.
+- `2026-05-18`: `R6-FSM-ADAPTER` stays as closed history, marked
+  `superseded` by this tree (no history rewrite).
+- `2026-05-18`: `subs/fsmgen` + the ISF↔FSMGen strict test are retained;
+  FSMGen is the downstream `.isf` consumer.
+
+## Open Questions
+
+- `.4`/`.6` sizes: `adapters.rs` FSM bulk and the mdBook sweep will very
+  likely each split into sub-leaves; exact decomposition decided when the
+  leaf is reached, per the TASK_TREE splitting rules.
+- `.5`: precise fixture classification (FSM-adapter-only vs KG-truthfulness)
+  is determined by inspecting each fixture during `.5`, not pre-judged.
+
+## Blockers
+
+- None. (Execution authorization beyond task-tree creation is a separate
+  user decision; this tree records the work regardless.)
+
+## Verification Log
+
+| Date | Leaf | Checks | Result |
+| --- | --- | --- | --- |
+| `2026-05-18` | `ISF-ONLY-CONSOLIDATION.1` | `pending` | `pending` |
+
+## Commit Log
+
+| Leaf | Commit subject or reference | Notes |
+| --- | --- | --- |
+| `ISF-ONLY-CONSOLIDATION.1` | `pending` | `pending` |
+
+## Changelog
+
+- `2026-05-18`: Created task tree. Owns the user-authorized ISF-only
+  consolidation: remove HDL + the entire `.fsm` adapter; SpecForge emits
+  only `.isf`. Scope surveyed; decomposed into 7 leaves (`.4`/`.6`
+  expected to split further during execution).

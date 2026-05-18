@@ -30,6 +30,7 @@ evidence for one top-level task.
 | `R7-VALIDATION` | `done` | `R7` | — (.5 deferred) | [docs/tasks/R7-VALIDATION.md](docs/tasks/R7-VALIDATION.md) |
 | `SIGNOFF-REMEDIATION` | `done` | `R0` | — | [docs/tasks/SIGNOFF-REMEDIATION.md](docs/tasks/SIGNOFF-REMEDIATION.md) |
 | `R6-ISF-ADAPTER` | `done` | `R6` | — | [docs/tasks/R6-ISF-ADAPTER.md](docs/tasks/R6-ISF-ADAPTER.md) |
+| `ISF-ONLY-CONSOLIDATION` | `active` | `R6` | `ISF-ONLY-CONSOLIDATION.1` | [docs/tasks/ISF-ONLY-CONSOLIDATION.md](docs/tasks/ISF-ONLY-CONSOLIDATION.md) |
 
 ## Directory Layout
 

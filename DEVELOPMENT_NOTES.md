@@ -8,6 +8,27 @@
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 - adapter targets: `.fsm` (active), `.isf` (planned); HDL lowering is out of scope
 
+## 2026-05-18 session — ISF-ONLY-CONSOLIDATION task tree created
+
+- User strategic decision: SpecForge keeps only `.isf`. Remove the HDL
+  adapter surface AND the entire `.fsm` adapter subsystem; FSMGen owns
+  scheduling/`.fsm`/HDL downstream of `.isf`. Confirmed scope explicitly
+  via a clarifying question (the user's "only keep ISF" included `.fsm`,
+  not just HDL) before writing the tree — the two readings had very
+  different blast radii and one was a large irreversible deletion.
+- Created `ISF-ONLY-CONSOLIDATION` (lane R6, 7 leaves). Sequencing
+  rationale: record the strategy in canonical docs first (`.1`), then
+  isolate the small ISF island out of the FSM-dominated `adapters.rs`
+  (`.2`) so the FSM bulk can be deleted as a block rather than untangled
+  in place (`.4`), with the typed surface narrowed in between (`.3`),
+  then fixtures (`.5`), mdBook (`.6`), and reconcile+close+push (`.7`).
+  `.4`/`.6` will very likely split per the TASK_TREE splitting rules.
+- This is tree creation + continuity only; no code changed and the
+  canonical README/ROADMAP/INTENTIR_SPEC rewrite is deferred to leaf `.1`.
+  Execution of the leaves is a separate, explicit authorization given the
+  scale (~1977 FSM lines, 163 mostly-FSM tests, 153-fixture triage,
+  pervasive docs).
+
 ## 2026-05-17 session — R6-ISF-ADAPTER batch (ISF ownership backfill + hardening)
 
 - Authorized 5-leaf batch to bring the untracked ISF adapter into doctrine

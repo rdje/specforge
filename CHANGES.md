@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-05-18 (ISF-ONLY-CONSOLIDATION task tree created — strategy pivot)
+
+- User decision: now that the typed `.isf` adapter exists, SpecForge keeps
+  only `.isf`. The HDL adapter surface (SystemVerilog/Verilog/VHDL) **and the
+  entire `.fsm` adapter subsystem** are to be removed; FSMGen owns
+  scheduling/`.fsm`/HDL downstream of `.isf`. This supersedes the prior
+  "`.fsm` active, `.isf` planned" adapter strategy.
+- Created `docs/tasks/ISF-ONLY-CONSOLIDATION.md` (lane R6) and registered it
+  in `docs/TASK_TREE.md`. Scope surveyed: `adapters.rs` ~28.1K lines with
+  ~1977 FSM-symbol lines / 163 mostly-FSM test fns, `AdapterTarget` /
+  `AdapterArtifact.fsm` / `IrStage::FsmAdapter` / `validate_fsm_adapter`,
+  ~25 IrStage match arms, 153 kg fixtures, pervasive `.fsm` docs.
+- Decomposed into 7 leaves (`.1` doc strategy, `.2` extract ISF module,
+  `.3` ISF-only typed surface, `.4` delete FSM bulk, `.5` fixture triage,
+  `.6` mdBook sweep, `.7` reconcile+close+push); `.4`/`.6` expected to
+  split. `subs/fsmgen` + the ISF↔FSMGen strict test are retained.
+- This entry records tree creation only; the canonical README/ROADMAP/
+  INTENTIR_SPEC rewrite is leaf `.1`.
+
 ## 2026-05-17 (R6-ISF-ADAPTER batch — ISF adapter ownership backfill + hardening)
 
 ### Created: R6-ISF-ADAPTER task tree (lane R6, 5-leaf authorized batch)

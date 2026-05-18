@@ -24,15 +24,15 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `83616ead` (pushed to `origin/main`; this MEMORY post-push refresh is the only commit after it)
-- latest_commit_brief_message: R6-ISF-ADAPTER.5 — close tree + push batch
-- note: 2026-05-17 — signoff restored (`SIGNOFF-REMEDIATION`), then the authorized `R6-ISF-ADAPTER` 5-leaf batch fully complete and **pushed** (`30cfa47e..83616ead`). Final full CI gate green (1201 lib tests). ISF adapter is now task-tree-owned, continuity-documented, correctly stage-typed, unit-tested, and policy-explicit.
+- latest_commit_hash: `b9fb694d` (pre-commit baseline; the ISF-ONLY-CONSOLIDATION tree-creation commit is not yet created at time of this update)
+- latest_commit_brief_message: Update MEMORY.md — reflect R6-ISF-ADAPTER batch push and post-push state
+- note: 2026-05-18 — `R6-ISF-ADAPTER` complete+pushed (`30cfa47e..83616ead`, `b9fb694d` post-push). New strategy pivot: created `ISF-ONLY-CONSOLIDATION` (lane R6) to remove HDL + the entire `.fsm` adapter; SpecForge keeps only `.isf`. This commit is tree-creation + continuity only; leaf execution is a separate authorization.
 
 ## Active batch status
-- batch: `R6-ISF-ADAPTER` — COMPLETE and PUSHED. No active batch.
-- leaf commits: `.1 0124fc2c`, `.2 7fda5acd`, `.3 ba9de037`, `.4 01069b93`, `.5 83616ead`; signoff slice `c2d7c94f` also in this push
-- branch state: pushed; `0` commits ahead of `origin/main` at push time (this MEMORY refresh commit makes it `1` ahead — under the ~30 checkpoint, no push expected unless requested)
-- open question carried: lingering HDL `AdapterTarget`/`AdapterTargetArg` variants vs out-of-scope HDL — candidate for a future separate task tree (recorded in `docs/tasks/R6-ISF-ADAPTER.md` Open Questions)
+- no active batch executing. `ISF-ONLY-CONSOLIDATION` (7 leaves, lane R6) is created and registered but NOT yet started — leaf `.1`..`.7` execution awaits explicit user go-ahead given the scale (~1977 FSM lines, 163 mostly-FSM tests, 153-fixture triage, pervasive docs).
+- sequencing recorded in `docs/tasks/ISF-ONLY-CONSOLIDATION.md`: `.1` doc strategy → `.2` extract ISF module → `.3` ISF-only typed surface → `.4` delete FSM bulk (will split) → `.5` fixture triage → `.6` mdBook sweep (will split) → `.7` reconcile+close+push.
+- the prior R6-ISF-ADAPTER HDL open question is now SUBSUMED by `ISF-ONLY-CONSOLIDATION` (HDL removed together with `.fsm`).
+- branch: `1` ahead of `origin/main` pre-commit (becomes `2` after the tree-creation commit; under ~30, no push expected unless requested).
 
 ## Recent commit chain (last 10)
 - `83616ead` R6-ISF-ADAPTER.5 — close tree + push batch
