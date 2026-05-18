@@ -108,7 +108,7 @@ temporal/clock-tick behavior is extracted and then silently dropped from
   Commit: `ISF-TEMPORAL-LOWERING.2.2 — wire windowed temporal_rules → (contract …)`
 
 - ID: `ISF-TEMPORAL-LOWERING.2.3`
-  Status: `pending`
+  Status: `done`
   Goal: >
     Wire value/guard→drive temporal_rules (no window) → actor
     `(rule <rule_id> <antecedent_condition> (<sig> <val>))` per `.1` #3;
@@ -116,8 +116,17 @@ temporal/clock-tick behavior is extracted and then silently dropped from
     construct (e.g. bare `SignalStable` with no window) → explicit
     residual decision per `.1` #4 (do NOT fabricate syntax).
   Acceptance: `Guard→drive temporal_rules emit (rule …); unrepresentable → residual decision; fsmgen-strict green; scripts/run_ci.sh green.`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — single `classify_temporal_rule` classifier
+    (Contract | Rule | Residual) shared by `from_intent_ir` (emit) and
+    `build_isf_adapter_artifact` (residual append, single ISF model built
+    once); guard `(== <declared-sig> <lit>)` / conditionless forms
+    empirically fsmgen-strict-verified (exact declared name, never
+    `sanitize_isf_name`d); 11 new unit tests incl. real-binary strict;
+    LIVE on nvme IntentIR (109 temporal_rules, 0 windowed → 17 Rule [13
+    emitted + 4 dedup-dropped] + 92 explicit residual = 109 fully
+    accounted; emitted `.isf` `fsmgen --strict --check` `success:true`);
+    full `scripts/run_ci.sh` green
+  Commit: `see Commit Log`
 
 - ID: `ISF-TEMPORAL-LOWERING.2.4`
   Status: `pending`
@@ -157,8 +166,8 @@ temporal/clock-tick behavior is extracted and then silently dropped from
 | — | `ISF-TEMPORAL-LOWERING.2` | `active` | Container — split into `.2.1`–`.2.4` |
 | 2 | `ISF-TEMPORAL-LOWERING.2.1` | `done` | `(contract …)` render verified strict; stage dropped |
 | 3 | `ISF-TEMPORAL-LOWERING.2.2` | `done` | Windowed→`(contract …)` live on corpus; `(within 0)` guarded |
-| 4 | `ISF-TEMPORAL-LOWERING.2.3` | `pending` | Next — guard→drive `(rule …)`; residual for unrepresentable (incl. `within 0`, HandshakeComplete) |
-| 5 | `ISF-TEMPORAL-LOWERING.2.4` | `pending` | Reconcile artifact metrics |
+| 4 | `ISF-TEMPORAL-LOWERING.2.3` | `done` | guard→drive `(rule …)` + residual classifier; live on nvme; strict-valid |
+| 5 | `ISF-TEMPORAL-LOWERING.2.4` | `pending` | Next — reconcile artifact metrics (transaction_count/rule_count still old blind formula; must == emitted content + temporal residual count) |
 | 6 | `ISF-TEMPORAL-LOWERING.3` | `pending` | End-to-end regression incl. fsmgen strict |
 | 7 | `ISF-TEMPORAL-LOWERING.4` | `pending` | Close + doc sync |
 
@@ -217,6 +226,23 @@ temporal/clock-tick behavior is extracted and then silently dropped from
     temporal_rules now map to explicit residual decisions (`.1` #4).
     `IsfStage` is not modelled. `.2.2` handles only the windowed
     `(contract …)` case; HandshakeComplete → residual in `.2.3`.
+- `2026-05-18` (`.2.3` implementation + empirical fsmgen-strict
+  verification): mapping #3/#4 wired through one `classify_temporal_rule`
+  classifier returning `Contract | Rule | Residual` (subsumes the inline
+  `.2.2` windowed loop — single source of truth). Empirically verified
+  against the pinned binary BEFORE trusting: `(rule n (== <declared-sig>
+  <lit>) (<sig> <lit>))` and conditionless `(rule n (<sig> <lit>))` both
+  `--strict --check` `success:true`. Picky fix: the guard references the
+  EXACT declared signal name (FSMGen is case-sensitive) — it is NOT
+  `sanitize_isf_name`d (that lowercases and would reference an undeclared
+  signal). Non-windowed-without-value, HandshakeComplete, `(within 0)`,
+  undeclared-signal, non-literal-value → explicit residual
+  (`isf_temporal_unrepresentable_*`), never fabricated. Temporal rules
+  join `rules` BEFORE dedup so conflicting drives are dropped, not
+  emitted invalid. Residuals appended in `build_isf_adapter_artifact`
+  from the same single ISF model (`isf_model.temporal_residuals()`),
+  replacing the throwaway `build_isf_source_text`. `transaction_count`/
+  `rule_count` deliberately NOT touched — that is `.2.4`.
 - `2026-05-18` (`.2` honest outcome — PNT rule 5): `.2` split into
   `.2.1`–`.2.4`. Corpus evidence (387 temporal_rules, 28 windowed,
   mostly `SignalStable`/`SignalValue`) showed no large trivially-safe
@@ -243,6 +269,7 @@ temporal/clock-tick behavior is extracted and then silently dropped from
 | `2026-05-18` | `ISF-TEMPORAL-LOWERING.1` | FSMGen ISF spec + TemporalRuleRecord read; mapping recorded | `passed` |
 | `2026-05-18` | `ISF-TEMPORAL-LOWERING.2.1` | 2 unit tests incl. real fsmgen `--strict --check`; full `scripts/run_ci.sh` | `passed` |
 | `2026-05-18` | `ISF-TEMPORAL-LOWERING.2.2` | live corpus adapt (CXS) + `(within 0)` strict-reject caught/guarded; 15 isf tests; full `scripts/run_ci.sh` | `passed` |
+| `2026-05-18` | `ISF-TEMPORAL-LOWERING.2.3` | 11 new classifier/residual/render unit tests + real-binary `(rule …)` strict test; empirical pre-verify of guard/conditionless forms; LIVE nvme adapt (109→17 Rule/92 residual, strict `success:true`); full `scripts/run_ci.sh` | `passed` |
 
 ## Commit Log
 
@@ -250,6 +277,8 @@ temporal/clock-tick behavior is extracted and then silently dropped from
 | --- | --- | --- |
 | `ISF-TEMPORAL-LOWERING.1` | `ISF-TEMPORAL-LOWERING.1 — FSMGen-spec-grounded temporal_rules→ISF mapping decision` | Docs only; rejected deprecated `(handshake …)` |
 | `ISF-TEMPORAL-LOWERING.2.1` | `ISF-TEMPORAL-LOWERING.2.1 — typed bounded (contract …) render construct` | strict-verified nested `(within N)`; `(stage …)` dropped + FSMGen feedback logged |
+| `ISF-TEMPORAL-LOWERING.2.2` | `ISF-TEMPORAL-LOWERING.2.2 — wire windowed temporal_rules → (contract …)` | `0ccdc8f0`; live CXS; `(within 0)` guarded |
+| `ISF-TEMPORAL-LOWERING.2.3` | `ISF-TEMPORAL-LOWERING.2.3 — guard→drive (rule …) + residual classifier` | classifier shared by emit + residual; live nvme strict-valid |
 
 ## Changelog
 

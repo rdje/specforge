@@ -46,6 +46,35 @@
   invalid `(within 0)`. 15 isf tests + both fsmgen-strict tests green;
   `scripts/run_ci.sh` green.
 
+### ISF-TEMPORAL-LOWERING.2.3 — guard→drive `(rule …)` + residual classifier
+- One `classify_temporal_rule` classifier (`Contract | Rule | Residual`)
+  is now the single source of truth; it subsumes the inline `.2.2`
+  windowed loop. `from_intent_ir` emits a synthetic `(contract …)` for
+  `Contract`, an actor `(rule <name> [<cond>] (<sig> <val>))` for `Rule`
+  (non-windowed `SignalValue` consequent, declared signal, ISF-literal
+  value; guard from a `SignalValue` antecedent → `(== <declared-sig>
+  <lit>)`, else conditionless), and records an explicit
+  `isf_temporal_unrepresentable_*` residual decision for everything else
+  (HandshakeComplete, `(within 0)`, undeclared signal, non-literal
+  value, no-concrete-value consequent) — syntax is never fabricated.
+- Empirically fsmgen-strict-verified BEFORE trusting: both the guarded
+  `(== <declared-sig> <lit>)` and conditionless `(rule …)` forms pass
+  `--strict --check`. Picky fix: the guard uses the EXACT declared
+  signal name (FSMGen is case-sensitive); it is not `sanitize_isf_name`d
+  (that lowercases → would reference an undeclared signal).
+- Temporal rules join the rule set BEFORE dedup so conflicting drives
+  are dropped (strict rejects conflicts) rather than emitted invalid.
+  Residuals are appended in `build_isf_adapter_artifact` from one shared
+  ISF model (`isf_model.temporal_residuals()`), replacing the throwaway
+  `build_isf_source_text`. `transaction_count`/`rule_count` deliberately
+  unchanged (that is `.2.4`).
+- Verified LIVE on the nvme IntentIR (109 temporal_rules, 0 windowed):
+  17 Rule (13 emitted `(rule temporal_…)` + 4 dedup-dropped) + 92
+  explicit residual = 109 fully accounted; emitted `.isf` passes
+  `fsmgen --strict --check --json` (`success:true`). 11 new unit tests
+  (classifier dispositions, residual packet, render, real-binary
+  strict); full `scripts/run_ci.sh` green.
+
 ### FSMGEN-ISSUE-REPORTING (tree) + .1 — file the genuine FSMGen findings
 - New task tree to file the genuine FSMGen findings discovered during
   `ISF-TEMPORAL-LOWERING.2.1` via the official protocol

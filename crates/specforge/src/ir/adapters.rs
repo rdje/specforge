@@ -242,11 +242,6 @@ fn assess_isf_renderability(intent_ir: &IntentIr) -> (bool, Vec<String>) {
     (reasons.is_empty(), reasons)
 }
 
-fn build_isf_source_text(intent_ir: &IntentIr, actor_name: &str) -> String {
-    let isf_ir = IsfIr::from_intent_ir(intent_ir, actor_name);
-    isf_ir.render()
-}
-
 fn build_isf_adapter_artifact(
     intent_ir: &IntentIr,
     intent_ir_path: &Path,
@@ -258,7 +253,12 @@ fn build_isf_adapter_artifact(
     let adapter_artifact_path = artifact_root.join("adapter.json");
 
     let actor_name = derive_isf_actor_name(intent_ir);
-    let source_text = build_isf_source_text(intent_ir, &actor_name);
+    // Build the typed ISF model once so the emitted source text and the
+    // temporal residual decisions come from the exact same lowering pass
+    // (ISF-TEMPORAL-LOWERING.2.3 — the residual set must reflect what the
+    // emitter actually did, not a re-derived guess).
+    let isf_model = IsfIr::from_intent_ir(intent_ir, &actor_name);
+    let source_text = isf_model.render();
     let (is_renderable, blocking_reasons) = assess_isf_renderability(intent_ir);
 
     let signal_count = count_isf_signals(intent_ir);
@@ -325,7 +325,12 @@ fn build_isf_adapter_artifact(
         storage_count,
     };
 
-    let residual_decisions = intent_ir.residual_decisions.clone();
+    // Temporal rules with no representable supported ISF construct are
+    // preserved as explicit residual decisions (ISF-TEMPORAL-LOWERING.2.3
+    // mapping #4) so a dropped temporal obligation is visible in the
+    // artifact rather than silently lost; syntax is never fabricated.
+    let mut residual_decisions = intent_ir.residual_decisions.clone();
+    residual_decisions.extend(isf_model.temporal_residuals().iter().cloned());
 
     Ok(AdapterArtifact {
         stage: IrStage::IsfAdapter,

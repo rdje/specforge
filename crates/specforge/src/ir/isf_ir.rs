@@ -17,7 +17,9 @@ use crate::ir::semantic::{
     ControlUnaryOperator, InterfaceSignalDirection, SymbolDefinitionKind, SystemResetKind,
     SystemResetPolarity, TemporalPredicateRecord, TemporalRuleRecord,
 };
-use crate::ir::source::WidthHint;
+use crate::ir::source::{
+    AutomationConfidence, CandidateInterpretation, ResidualDecisionPacket, WidthHint,
+};
 
 // ---------------------------------------------------------------------------
 // ISF-IR data types
@@ -214,6 +216,12 @@ pub(crate) struct IsfIr {
     transactions: Vec<IsfTransaction>,
     rules: Vec<IsfRule>,
     priorities: Vec<IsfPriority>,
+    /// Temporal rules that have no representable supported ISF construct
+    /// (ISF-TEMPORAL-LOWERING.2.3 mapping #4). They are NOT rendered into
+    /// `.isf`; they are preserved here so the adapter artifact records the
+    /// dropped obligation as an explicit residual decision instead of
+    /// fabricating unsupported syntax.
+    temporal_residuals: Vec<ResidualDecisionPacket>,
 }
 
 // ---------------------------------------------------------------------------
@@ -221,6 +229,15 @@ pub(crate) struct IsfIr {
 // ---------------------------------------------------------------------------
 
 impl IsfIr {
+    /// Temporal rules that could not be lowered to a supported ISF construct,
+    /// preserved as explicit residual decisions
+    /// (ISF-TEMPORAL-LOWERING.2.3 mapping #4). The adapter artifact appends
+    /// these to its residual-decision set so a dropped temporal obligation is
+    /// visible rather than silently lost.
+    pub(crate) fn temporal_residuals(&self) -> &[ResidualDecisionPacket] {
+        &self.temporal_residuals
+    }
+
     pub(crate) fn render(&self) -> String {
         let mut lines: Vec<String> = Vec::new();
 
@@ -736,51 +753,62 @@ impl IsfIr {
         // --- Rules ---
         let signal_names: BTreeSet<String> = signals.iter().map(|s| s.name.clone()).collect();
 
-        // --- ISF-TEMPORAL-LOWERING.2.2: windowed temporal_rules ---
-        // A temporal rule with a bounded cycle window whose consequent
-        // names a declared signal lowers to a synthetic transaction
-        // carrying the FSMGen-strict-verified `bounded_eventually`
-        // contract `(contract <id> (eventually <signal> (within <N>)))`.
-        // Non-windowed / HandshakeComplete / undeclared-signal rules are
-        // intentionally left for .2.3 (rule / residual). No fabricated
-        // body step is emitted (strict-verified to pass without one).
+        // --- ISF-TEMPORAL-LOWERING.2.2/.2.3: lower temporal_rules ---
+        // Each `temporal_rule` is classified into exactly one disposition
+        // (`.1` mapping #1/#3/#4). Windowed `bounded_eventually` → a
+        // synthetic transaction carrying the FSMGen-strict-verified nested
+        // `(contract <id> (eventually <signal> (within <N>)))`. Non-windowed
+        // value/guard→drive → an actor `(rule …)`. Anything with no
+        // representable supported ISF construct (HandshakeComplete,
+        // `(within 0)`, no concrete value, undeclared signal, …) is
+        // preserved as an explicit residual decision — never fabricated
+        // (`fsmgen-contract-authority`).
+        let mut temporal_isf_rules: Vec<IsfRule> = Vec::new();
+        let mut temporal_residuals: Vec<ResidualDecisionPacket> = Vec::new();
         for rule in &intent_ir.temporal_rules {
-            let Some(window) = &rule.cycle_window else {
-                continue;
-            };
-            let Some(within) = window.max_cycles else {
-                continue;
-            };
-            // FSMGen `--strict --check` rejects `(within 0)` — the
-            // contract requires a positive cycle bound. A 0-cycle
-            // ("same cycle") obligation is not a `bounded_eventually`;
-            // it is left for .2.3 (rule / residual), never emitted as
-            // an invalid `(within 0)` contract.
-            if within == 0 {
-                continue;
-            }
-            let Some(signal) = temporal_consequent_signal(rule) else {
-                continue;
-            };
-            if !signal_names.contains(&signal) {
-                continue;
-            }
-            let name = sanitize_isf_name(&rule.rule_id);
-            all_transactions.push(IsfTransaction {
-                name: format!("txn_temporal_{}", name),
-                on_trigger: None,
-                on_steps: vec![],
-                steps: vec![],
-                complete: "done".to_string(),
-                latency_min: None,
-                latency_max: None,
-                contracts: vec![IsfContract {
+            match classify_temporal_rule(rule, &signal_names) {
+                TemporalRuleDisposition::Contract {
                     name,
                     signal,
-                    within: u64::from(within),
-                }],
-            });
+                    within,
+                } => {
+                    all_transactions.push(IsfTransaction {
+                        name: format!("txn_temporal_{}", name),
+                        on_trigger: None,
+                        on_steps: vec![],
+                        steps: vec![],
+                        complete: "done".to_string(),
+                        latency_min: None,
+                        latency_max: None,
+                        contracts: vec![IsfContract {
+                            name,
+                            signal,
+                            within,
+                        }],
+                    });
+                }
+                TemporalRuleDisposition::Rule {
+                    name,
+                    condition,
+                    signal,
+                    value,
+                } => {
+                    temporal_isf_rules.push(IsfRule {
+                        name,
+                        condition,
+                        drives: vec![(signal, value)],
+                    });
+                }
+                TemporalRuleDisposition::Residual { rule_id, reason } => {
+                    temporal_residuals.push(temporal_residual_packet(
+                        &rule_id,
+                        &reason,
+                        &rule.source_text,
+                    ));
+                }
+            }
         }
+
         let mut rules: Vec<IsfRule> = Vec::new();
 
         for (cr_idx, cr) in intent_ir.conditional_rules.iter().enumerate() {
@@ -835,6 +863,12 @@ impl IsfIr {
                 drives: vec![(inv.subject_signal.clone(), target_val.to_string())],
             });
         }
+
+        // Temporal value/guard→drive rules (`.2.3` #3) join the rule set
+        // before dedup so a temporal rule that conflicts with an existing
+        // rule on the same signal+guard is dropped (FSMGen strict rejects
+        // conflicting drives) rather than producing invalid `.isf`.
+        rules.extend(temporal_isf_rules);
 
         // --- Dedup: remove rules that conflict on the same signal+guard ---
         // When two rules share the same guard but drive the same signal to
@@ -895,6 +929,7 @@ impl IsfIr {
             transactions: all_transactions,
             rules,
             priorities,
+            temporal_residuals,
         }
     }
 }
@@ -1178,6 +1213,257 @@ fn temporal_consequent_signal(rule: &TemporalRuleRecord) -> Option<String> {
     })
 }
 
+/// The single ISF disposition of one `temporal_rule`
+/// (ISF-TEMPORAL-LOWERING `.1` mapping #1/#3/#4). The three arms are
+/// mutually exclusive so a rule is lowered exactly one way (or not at all).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(crate) enum TemporalRuleDisposition {
+    /// Windowed `bounded_eventually` → synthetic `(transaction …
+    /// (contract <name> (eventually <signal> (within <within>))))` (`.2.2`).
+    Contract {
+        name: String,
+        signal: String,
+        within: u64,
+    },
+    /// Non-windowed value/guard→drive → actor
+    /// `(rule <name> [<condition>] (<signal> <value>))` (`.2.3` #3).
+    Rule {
+        name: String,
+        condition: String,
+        signal: String,
+        value: String,
+    },
+    /// No representable supported ISF construct → explicit residual
+    /// decision; syntax is never fabricated (`.2.3` #4,
+    /// `fsmgen-contract-authority`).
+    Residual { rule_id: String, reason: String },
+}
+
+/// First consequent that is a concrete `SignalValue` (a signal name *and* a
+/// value to drive). The actor/stability/sample predicates name a signal but
+/// carry no concrete value, so they are not a representable `(rule …)` drive.
+fn temporal_drive_consequent(rule: &TemporalRuleRecord) -> Option<(String, String)> {
+    rule.consequents.iter().find_map(|p| match p {
+        TemporalPredicateRecord::SignalValue {
+            signal_name, value, ..
+        } => Some((signal_name.clone(), value.clone())),
+        _ => None,
+    })
+}
+
+/// Normalize a temporal predicate's textual value to an ISF literal, or
+/// `None` if it is not safely representable. Fabricating a value for a
+/// non-literal is forbidden (`fsmgen-contract-authority`): such rules become
+/// residual decisions instead.
+fn isf_literal_value(raw: &str) -> Option<String> {
+    let t = raw.trim();
+    match t.to_ascii_lowercase().as_str() {
+        "1" | "high" | "asserted" | "assert" | "true" | "set" | "active" => {
+            return Some("1".to_string());
+        }
+        "0" | "low" | "deasserted" | "deassert" | "false" | "clear" | "inactive" => {
+            return Some("0".to_string());
+        }
+        _ => {}
+    }
+    // Pure unsigned decimal / hex / binary integer literals only.
+    let is_dec = !t.is_empty() && t.bytes().all(|b| b.is_ascii_digit());
+    let is_hex = t.len() > 2
+        && (t.starts_with("0x") || t.starts_with("0X"))
+        && t[2..].bytes().all(|b| b.is_ascii_hexdigit());
+    let is_bin = t.len() > 2
+        && (t.starts_with("0b") || t.starts_with("0B"))
+        && t[2..].bytes().all(|b| b == b'0' || b == b'1');
+    if is_dec || is_hex || is_bin {
+        Some(t.to_string())
+    } else {
+        None
+    }
+}
+
+/// Derive a strict-safe `(rule …)` guard from the rule's antecedents: the
+/// first `SignalValue` antecedent whose signal is declared and whose value is
+/// an ISF literal yields `(== <signal> <value>)`. Otherwise the empty string
+/// (an unconditional rule — strict-verified accepted; the real corpus emits
+/// conditionless `(rule name (sig val))`). A bare non-`==` token guard is
+/// never produced (FSMGen strict rejects it — `sanitize_rule_condition`).
+fn temporal_antecedent_condition(
+    rule: &TemporalRuleRecord,
+    declared_signals: &BTreeSet<String>,
+) -> String {
+    for p in &rule.antecedents {
+        if let TemporalPredicateRecord::SignalValue {
+            signal_name, value, ..
+        } = p
+            && declared_signals.contains(signal_name)
+            && let Some(val) = isf_literal_value(value)
+        {
+            // Use the exact declared signal name (FSMGen is case-sensitive
+            // and the guard must reference a signal in the interface) — do
+            // NOT `sanitize_isf_name` it.
+            return format!("(== {} {})", signal_name, val);
+        }
+    }
+    String::new()
+}
+
+/// Classify one `temporal_rule` into its single ISF disposition.
+/// `declared_signals` MUST be the exact set of signal names the emitter
+/// renders into the `.isf` interface, so the classification matches what is
+/// actually emitted (a rule/contract may only reference declared signals).
+pub(crate) fn classify_temporal_rule(
+    rule: &TemporalRuleRecord,
+    declared_signals: &BTreeSet<String>,
+) -> TemporalRuleDisposition {
+    // (1) Windowed `bounded_eventually` (mapping #1, wired by `.2.2`).
+    if let Some(window) = &rule.cycle_window {
+        let bad_window = match window.max_cycles {
+            None => Some(
+                "windowed temporal rule has no max cycle bound; FSMGen \
+                 `(within N)` requires a positive N"
+                    .to_string(),
+            ),
+            Some(0) => Some(
+                "windowed temporal rule has a 0-cycle window; FSMGen strict \
+                 rejects `(within 0)` — a same-cycle obligation is not a \
+                 `bounded_eventually` contract"
+                    .to_string(),
+            ),
+            Some(_) => None,
+        };
+        if let Some(reason) = bad_window {
+            return TemporalRuleDisposition::Residual {
+                rule_id: rule.rule_id.clone(),
+                reason,
+            };
+        }
+        let within = window
+            .max_cycles
+            .expect("max_cycles is Some(>=1) — None/0 returned above");
+        return match temporal_consequent_signal(rule) {
+            Some(signal) if declared_signals.contains(&signal) => {
+                TemporalRuleDisposition::Contract {
+                    name: sanitize_isf_name(&rule.rule_id),
+                    signal,
+                    within: u64::from(within),
+                }
+            }
+            Some(signal) => TemporalRuleDisposition::Residual {
+                rule_id: rule.rule_id.clone(),
+                reason: format!(
+                    "windowed temporal rule targets signal '{}' which is not \
+                     in the emitted `.isf` interface",
+                    signal
+                ),
+            },
+            None => TemporalRuleDisposition::Residual {
+                rule_id: rule.rule_id.clone(),
+                reason: "windowed temporal rule has no single-signal \
+                         consequent (e.g. HandshakeComplete); FSMGen strict \
+                         rejects the `(stage …)` ready/valid form"
+                    .to_string(),
+            },
+        };
+    }
+
+    // (2) Non-windowed value/guard→drive (mapping #3): a `SignalValue`
+    //     consequent naming a declared signal with an ISF-literal value.
+    if let Some((signal, value)) = temporal_drive_consequent(rule) {
+        if !declared_signals.contains(&signal) {
+            return TemporalRuleDisposition::Residual {
+                rule_id: rule.rule_id.clone(),
+                reason: format!(
+                    "temporal rule drives signal '{}' which is not in the \
+                     emitted `.isf` interface",
+                    signal
+                ),
+            };
+        }
+        let Some(val) = isf_literal_value(&value) else {
+            return TemporalRuleDisposition::Residual {
+                rule_id: rule.rule_id.clone(),
+                reason: format!(
+                    "temporal rule target value '{}' is not an ISF literal; \
+                     fabricating a value is forbidden",
+                    value
+                ),
+            };
+        };
+        return TemporalRuleDisposition::Rule {
+            name: format!("temporal_{}", sanitize_isf_name(&rule.rule_id)),
+            condition: temporal_antecedent_condition(rule, declared_signals),
+            signal,
+            value: val,
+        };
+    }
+
+    // (3) Everything else (HandshakeComplete-only; stability/sample/actor-
+    //     drive consequents that name a signal but carry no concrete value):
+    //     no representable supported ISF construct → residual (mapping #4).
+    TemporalRuleDisposition::Residual {
+        rule_id: rule.rule_id.clone(),
+        reason: "temporal rule has no representable supported ISF construct \
+                 (no positive bounded window and no concrete signal value to \
+                 drive); preserved as a residual decision rather than \
+                 fabricating unsupported syntax"
+            .to_string(),
+    }
+}
+
+/// Build the explicit residual-decision packet for a temporal rule that has
+/// no representable supported ISF construct (mapping #4).
+fn temporal_residual_packet(
+    rule_id: &str,
+    reason: &str,
+    source_text: &str,
+) -> ResidualDecisionPacket {
+    ResidualDecisionPacket {
+        packet_id: format!(
+            "isf_temporal_unrepresentable_{}",
+            sanitize_isf_name(rule_id)
+        ),
+        question: format!(
+            "How should temporal rule '{}' be represented downstream of `.isf`?",
+            rule_id
+        ),
+        why_unresolved: format!(
+            "{}. Source: {}",
+            reason,
+            if source_text.is_empty() {
+                "(no source text)"
+            } else {
+                source_text
+            }
+        ),
+        automation_confidence: AutomationConfidence::Low,
+        candidate_interpretations: vec![
+            CandidateInterpretation {
+                interpretation_id: "preserve_as_residual".to_string(),
+                description: "Keep the temporal obligation as a residual \
+                              decision; do not emit any `.isf` construct for \
+                              it (current behavior — honest and lossless to \
+                              the IntentIR)."
+                    .to_string(),
+                downstream_impact: "FSMGen never sees this obligation; a human \
+                                    or a future supported ISF construct must \
+                                    carry it."
+                    .to_string(),
+            },
+            CandidateInterpretation {
+                interpretation_id: "future_isf_construct".to_string(),
+                description: "Lower it once FSMGen ships a supported ISF \
+                              construct for this temporal shape (e.g. a \
+                              non-rejected stage/stability form)."
+                    .to_string(),
+                downstream_impact: "Requires a confirmed FSMGen-strict-valid \
+                                    construct; tracked via \
+                                    docs/FSMGEN_FEEDBACK.md."
+                    .to_string(),
+            },
+        ],
+    }
+}
+
 fn branch_predicate_guard(branch: &ControlBranchRecord, selector_text: &str) -> String {
     match &branch.predicate {
         Some(pred) => render_isf_control_expression(pred),
@@ -1221,6 +1507,7 @@ mod tests {
             transactions: vec![],
             rules: vec![],
             priorities: vec![],
+            temporal_residuals: vec![],
         }
     }
 
@@ -1504,6 +1791,260 @@ mod tests {
         assert!(
             success,
             "FSMGen strict rejected the spec-shaped (stage …)/(contract …) forms"
+        );
+    }
+
+    // --- ISF-TEMPORAL-LOWERING.2.3: classify_temporal_rule + residual ---
+
+    use crate::ir::semantic::{ClockEdge, CycleWindowRecord, TickPhase};
+
+    fn t_rule(
+        rule_id: &str,
+        antecedents: Vec<TemporalPredicateRecord>,
+        consequents: Vec<TemporalPredicateRecord>,
+        cycle_window: Option<CycleWindowRecord>,
+    ) -> TemporalRuleRecord {
+        TemporalRuleRecord {
+            rule_id: rule_id.to_string(),
+            clock_signal: None,
+            edge: ClockEdge::Rising,
+            antecedents,
+            consequents,
+            cycle_window,
+            source_text: format!("source for {rule_id}"),
+            supporting_statement_ids: vec![],
+            automation_confidence: AutomationConfidence::Medium,
+        }
+    }
+
+    fn sigval(name: &str, value: &str) -> TemporalPredicateRecord {
+        TemporalPredicateRecord::SignalValue {
+            signal_name: name.to_string(),
+            value: value.to_string(),
+            phase: TickPhase::PostTick,
+        }
+    }
+
+    fn declared(names: &[&str]) -> BTreeSet<String> {
+        names.iter().map(|s| s.to_string()).collect()
+    }
+
+    #[test]
+    fn classify_non_windowed_signalvalue_with_guard_is_rule() {
+        let rule = t_rule(
+            "r_guarded",
+            vec![sigval("SEL", "1")],
+            vec![sigval("GRANT", "1")],
+            None,
+        );
+        let d = classify_temporal_rule(&rule, &declared(&["SEL", "GRANT"]));
+        assert_eq!(
+            d,
+            TemporalRuleDisposition::Rule {
+                name: "temporal_r_guarded".to_string(),
+                // exact declared signal name, never lowercased
+                condition: "(== SEL 1)".to_string(),
+                signal: "GRANT".to_string(),
+                value: "1".to_string(),
+            }
+        );
+    }
+
+    #[test]
+    fn classify_non_windowed_no_antecedent_is_unconditional_rule() {
+        let rule = t_rule("r_uncond", vec![], vec![sigval("GRANT", "low")], None);
+        let d = classify_temporal_rule(&rule, &declared(&["GRANT"]));
+        assert_eq!(
+            d,
+            TemporalRuleDisposition::Rule {
+                name: "temporal_r_uncond".to_string(),
+                condition: String::new(), // strict-verified: conditionless rule
+                signal: "GRANT".to_string(),
+                value: "0".to_string(), // "low" normalized
+            }
+        );
+    }
+
+    #[test]
+    fn classify_windowed_signalvalue_is_contract() {
+        let rule = t_rule(
+            "r_win",
+            vec![],
+            vec![sigval("RVALID", "1")],
+            Some(CycleWindowRecord {
+                min_cycles: None,
+                max_cycles: Some(8),
+            }),
+        );
+        let d = classify_temporal_rule(&rule, &declared(&["RVALID"]));
+        assert_eq!(
+            d,
+            TemporalRuleDisposition::Contract {
+                name: "r_win".to_string(),
+                signal: "RVALID".to_string(),
+                within: 8,
+            }
+        );
+    }
+
+    #[test]
+    fn classify_window_zero_is_residual_not_within_zero() {
+        let rule = t_rule(
+            "r_w0",
+            vec![],
+            vec![sigval("RVALID", "1")],
+            Some(CycleWindowRecord {
+                min_cycles: None,
+                max_cycles: Some(0),
+            }),
+        );
+        match classify_temporal_rule(&rule, &declared(&["RVALID"])) {
+            TemporalRuleDisposition::Residual { rule_id, reason } => {
+                assert_eq!(rule_id, "r_w0");
+                assert!(reason.contains("(within 0)"), "reason: {reason}");
+            }
+            other => panic!("expected Residual, got {other:?}"),
+        }
+    }
+
+    #[test]
+    fn classify_handshake_complete_is_residual() {
+        let rule = t_rule(
+            "r_hs",
+            vec![],
+            vec![TemporalPredicateRecord::HandshakeComplete {
+                valid_signal: "AWVALID".to_string(),
+                ready_signal: "AWREADY".to_string(),
+                phase: TickPhase::PostTick,
+            }],
+            None,
+        );
+        match classify_temporal_rule(&rule, &declared(&["AWVALID", "AWREADY"])) {
+            TemporalRuleDisposition::Residual { rule_id, .. } => assert_eq!(rule_id, "r_hs"),
+            other => panic!("expected Residual, got {other:?}"),
+        }
+    }
+
+    #[test]
+    fn classify_undeclared_signal_and_nonliteral_value_are_residual() {
+        let undeclared = t_rule("r_ud", vec![], vec![sigval("MISSING", "1")], None);
+        assert!(matches!(
+            classify_temporal_rule(&undeclared, &declared(&["OTHER"])),
+            TemporalRuleDisposition::Residual { .. }
+        ));
+        let nonlit = t_rule("r_nl", vec![], vec![sigval("GRANT", "addr+4")], None);
+        assert!(matches!(
+            classify_temporal_rule(&nonlit, &declared(&["GRANT"])),
+            TemporalRuleDisposition::Residual { .. }
+        ));
+    }
+
+    #[test]
+    fn classify_signal_naming_consequent_without_value_is_residual() {
+        // ActorDrivesSignal names a signal but carries no concrete value —
+        // fabricating `(GRANT 1)` would invent semantics → residual.
+        let rule = t_rule(
+            "r_drv",
+            vec![],
+            vec![TemporalPredicateRecord::ActorDrivesSignal {
+                actor_name: "Manager".to_string(),
+                signal_name: "GRANT".to_string(),
+                phase: TickPhase::PostTick,
+            }],
+            None,
+        );
+        assert!(matches!(
+            classify_temporal_rule(&rule, &declared(&["GRANT"])),
+            TemporalRuleDisposition::Residual { .. }
+        ));
+    }
+
+    #[test]
+    fn temporal_residual_packet_is_well_formed() {
+        let p = temporal_residual_packet("r X", "no representable construct", "RVALID stable");
+        assert_eq!(p.packet_id, "isf_temporal_unrepresentable_r_x");
+        assert!(p.question.contains("r X"));
+        assert!(p.why_unresolved.contains("no representable construct"));
+        assert!(p.why_unresolved.contains("RVALID stable"));
+        assert_eq!(p.automation_confidence, AutomationConfidence::Low);
+        assert_eq!(p.candidate_interpretations.len(), 2);
+    }
+
+    fn isf_with_temporal_rule() -> IsfIr {
+        let mut isf = minimal_isf();
+        isf.signals.insert(IsfSignal {
+            name: "SEL".to_string(),
+            direction: IsfDirection::Input,
+            width: 1,
+        });
+        isf.signals.insert(IsfSignal {
+            name: "GRANT".to_string(),
+            direction: IsfDirection::Output,
+            width: 1,
+        });
+        isf.rules.push(IsfRule {
+            name: "temporal_r_guarded".to_string(),
+            condition: "(== SEL 1)".to_string(),
+            drives: vec![("GRANT".to_string(), "1".to_string())],
+        });
+        isf.rules.push(IsfRule {
+            name: "temporal_r_uncond".to_string(),
+            condition: String::new(),
+            drives: vec![("GRANT".to_string(), "1".to_string())],
+        });
+        isf
+    }
+
+    #[test]
+    fn temporal_rule_renders_guarded_and_unconditional_forms() {
+        let out = isf_with_temporal_rule().render();
+        assert!(
+            out.contains("  (rule temporal_r_guarded (== SEL 1)"),
+            "guarded rule shape:\n{out}"
+        );
+        assert!(
+            out.contains("  (rule temporal_r_uncond\n"),
+            "unconditional rule shape:\n{out}"
+        );
+        assert_eq!(paren_balance(&out), 0, "unbalanced:\n{out}");
+    }
+
+    #[test]
+    fn temporal_rule_isf_passes_fsmgen_strict_validation() {
+        let tempdir = tempfile::tempdir().expect("tempdir");
+        let out = isf_with_temporal_rule().render();
+        let isf_path = tempdir.path().join("temporal_rule.isf");
+        std::fs::write(&isf_path, &out).expect("write isf");
+        eprintln!("=== ISF ===\n{out}\n=== END ===");
+
+        let fsmgen_path =
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../subs/fsmgen/bin/fsmgen");
+        let output = std::process::Command::new(&fsmgen_path)
+            .args(["--strict", "--check", "--json"])
+            .arg(&isf_path)
+            .output()
+            .expect("run fsmgen");
+        let stdout = String::from_utf8_lossy(&output.stdout);
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        let check: serde_json::Value = serde_json::from_str(&stdout).unwrap_or_else(|e| {
+            panic!("fsmgen non-JSON.\nstdout:{stdout}\nstderr:{stderr}\nerr:{e}")
+        });
+        let success = check["diagnostic_summary"]["success"]
+            .as_bool()
+            .unwrap_or(false);
+        if !success && let Some(diags) = check["diagnostics"].as_array() {
+            for d in diags {
+                eprintln!(
+                    "FSMGen diagnostic: {}",
+                    d.get("message")
+                        .and_then(|m| m.as_str())
+                        .unwrap_or("(none)")
+                );
+            }
+        }
+        assert!(
+            success,
+            "FSMGen strict rejected the temporal `(rule …)` lowering forms"
         );
     }
 }
