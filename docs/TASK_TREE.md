@@ -34,7 +34,7 @@ evidence for one top-level task.
 | `ISF-TEMPORAL-LOWERING` | `active` | `R15b` | `ISF-TEMPORAL-LOWERING.1` | [docs/tasks/ISF-TEMPORAL-LOWERING.md](docs/tasks/ISF-TEMPORAL-LOWERING.md) |
 | `ISF-ONLY-IR-PRUNE` | `active` | `R6` | `ISF-ONLY-IR-PRUNE.1` | [docs/tasks/ISF-ONLY-IR-PRUNE.md](docs/tasks/ISF-ONLY-IR-PRUNE.md) |
 | `AUDIT-DOC-RECONCILE` | `active` | `R0` | `AUDIT-DOC-RECONCILE.1` | [docs/tasks/AUDIT-DOC-RECONCILE.md](docs/tasks/AUDIT-DOC-RECONCILE.md) |
-| `FSMGEN-ISSUE-REPORTING` | `active` | `R0` | `FSMGEN-ISSUE-REPORTING.1` | [docs/tasks/FSMGEN-ISSUE-REPORTING.md](docs/tasks/FSMGEN-ISSUE-REPORTING.md) |
+| `FSMGEN-ISSUE-REPORTING` | `done` | `R0` | — | [docs/tasks/FSMGEN-ISSUE-REPORTING.md](docs/tasks/FSMGEN-ISSUE-REPORTING.md) |
 
 ## Directory Layout
 

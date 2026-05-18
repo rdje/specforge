@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `FSMGEN-ISSUE-REPORTING`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: `R0` (downstream contract hygiene; unblocks ISF lowering trust)
 - Created: `2026-05-18`
 - Last updated: `2026-05-18`
@@ -60,7 +60,7 @@ Honest count: **two** genuine FSMGen findings, not three.
 ## Task Tree
 
 - ID: `FSMGEN-ISSUE-REPORTING`
-  Status: `active`
+  Status: `done`
   Goal: file the two genuine FSMGen findings as protocol bundles
   Children: `FSMGEN-ISSUE-REPORTING.1`, `.2`, `.3`
 
@@ -98,14 +98,17 @@ Honest count: **two** genuine FSMGen findings, not three.
   Commit: `see Commit Log`
 
 - ID: `FSMGEN-ISSUE-REPORTING.3`
-  Status: `pending`
+  Status: `done`
   Goal: reference both filed bundle ids in `docs/FSMGEN_FEEDBACK.md`, record
   the 2-not-3 determination with evidence, sync live docs, close tree
   Acceptance: feedback doc cites the bundle paths/ids and the `(within 0)`
   non-finding rationale; CHANGES/LIVE_ACHIEVEMENT/MEMORY/TASK_TREE synced; tree
   Status `done`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — `docs/FSMGEN_FEEDBACK.md` now has the "Filed issue
+  bundles (2026-05-18)" section with the F1/F2 id+path+reproduce table, the
+  count-is-two evidence, and the no-JSON-on-strict-die observation;
+  `docs/TASK_TREE.md` index → `done`; live docs synced
+  Commit: `see Commit Log`
 
 ## Current Frontier
 
@@ -113,7 +116,9 @@ Honest count: **two** genuine FSMGen findings, not three.
 | --- | --- | --- | --- |
 | 1 | `FSMGEN-ISSUE-REPORTING.1` | `done` | F1 bundle filed + reproduction verified; helper-output-outside-submodule pattern proven |
 | 2 | `FSMGEN-ISSUE-REPORTING.2` | `done` | F2 bundle filed + reproduction verified |
-| 3 | `FSMGEN-ISSUE-REPORTING.3` | `pending` | Next — reference both bundle ids in `docs/FSMGEN_FEEDBACK.md` (the stable SPECFORGE↔FSMGen channel), record 2-not-3, close |
+| 3 | `FSMGEN-ISSUE-REPORTING.3` | `done` | Bundle ids wired into `docs/FSMGEN_FEEDBACK.md`; 2-not-3 recorded; tree closed |
+
+Tree complete. PNT returns to `ISF-TEMPORAL-LOWERING.2.3`.
 
 ## Decisions
 
@@ -141,6 +146,7 @@ Honest count: **two** genuine FSMGen findings, not three.
 | --- | --- | --- | --- |
 | `2026-05-18` | `FSMGEN-ISSUE-REPORTING.1` | `bin/fsmgen-issue-bundle` build + `commands.sh` rerun from `subs/fsmgen` + baseline-good strict-pass + submodule-clean check | `passed` (orig exit 255; stderr names contract; baseline `success:true`; FSMGen HEAD `effe591d`; `subs/fsmgen` clean) |
 | `2026-05-18` | `FSMGEN-ISSUE-REPORTING.2` | same protocol checks for the F2 stage bundle | `passed` (orig exit 255; stderr `stage 's_demo' has unsupported subclause 'ready'`; baseline `success:true`; FSMGen HEAD `effe591d`; `subs/fsmgen` clean) |
+| `2026-05-18` | `FSMGEN-ISSUE-REPORTING.3` | feedback-doc cross-reference + index/live-doc sync review | `passed` (FSMGEN_FEEDBACK.md cites both bundle ids/paths + reproduce + 2-not-3 evidence; TASK_TREE.md → done) |
 
 ## Commit Log
 
@@ -148,7 +154,8 @@ Honest count: **two** genuine FSMGen findings, not three.
 | --- | --- | --- |
 | `FSMGEN-ISSUE-REPORTING` (tree) | `FSMGEN-ISSUE-REPORTING — track filing the genuine FSMGen findings` (`1c3a5d37`) | tree + index |
 | `FSMGEN-ISSUE-REPORTING.1` | `FSMGEN-ISSUE-REPORTING.1 — file F1 bundle (contract eventually flat-vs-nested)` (`1b028453`) | bundle under `docs/fsmgen-issues/sf-isf-contract-eventually-flat/`; submodule untouched |
-| `FSMGEN-ISSUE-REPORTING.2` | `FSMGEN-ISSUE-REPORTING.2 — file F2 bundle (stage ready/valid strict-rejected)` | bundle under `docs/fsmgen-issues/sf-isf-stage-ready-valid/`; submodule untouched |
+| `FSMGEN-ISSUE-REPORTING.2` | `FSMGEN-ISSUE-REPORTING.2 — file F2 bundle (stage ready/valid strict-rejected)` (`c415fc25`) | bundle under `docs/fsmgen-issues/sf-isf-stage-ready-valid/`; submodule untouched |
+| `FSMGEN-ISSUE-REPORTING.3` | `FSMGEN-ISSUE-REPORTING.3 — wire bundle ids into FSMGEN_FEEDBACK.md; close tree` | tree closed; PNT resumes `ISF-TEMPORAL-LOWERING.2.3` |
 
 ## Changelog
 
@@ -167,3 +174,9 @@ Honest count: **two** genuine FSMGen findings, not three.
   deviation from the strict-accepted baseline is the spec §11.8
   `(stage … (ready)(valid))` clause; `commands.sh` rerun reproduces exit 255 +
   `stage 's_demo' has unsupported subclause 'ready'`; `subs/fsmgen` clean.
+- `2026-05-18`: `.3` done — `docs/FSMGEN_FEEDBACK.md` gained the "Filed issue
+  bundles" section: F1/F2 id+path+reproduce table, "where FSMGEN can see each
+  report" (committed/pushed bundles + this feedback doc as the stable
+  channel), the count-is-two evidence, and the no-JSON-on-strict-die
+  observation. `docs/TASK_TREE.md` index → `done`. Tree closed; PNT resumes
+  `ISF-TEMPORAL-LOWERING.2.3`.

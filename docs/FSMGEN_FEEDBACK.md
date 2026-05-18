@@ -495,3 +495,46 @@ strict checker:
 SPECFORGE has not patched the submodule (per the standing rule); this is
 a forward bug report. The `(contract … (eventually s (within N)))` form
 is confirmed strict-valid and is what SPECFORGE emits.
+
+## Filed issue bundles (2026-05-18) — official `DOWNSTREAM_ISSUE_REPORTING.md` protocol
+
+The two tracked findings above are now filed as **reproducible issue
+bundles** built with `subs/fsmgen/bin/fsmgen-issue-bundle` per
+`subs/fsmgen/docs/DOWNSTREAM_ISSUE_REPORTING.md`. **Where FSMGEN can see
+each report:** the bundles are committed in the SPECFORGE repository and
+pushed to `origin/main`; this file (`docs/FSMGEN_FEEDBACK.md`) is the
+stable SPECFORGE↔FSMGEN channel that points to them, so FSMGEN reads one
+document and finds the reproductions.
+
+| Finding | Bundle id | Path in SPECFORGE repo | Reproduce |
+| --- | --- | --- | --- |
+| F1 — §11.8 flat `(eventually s within N)` strict-rejected; nested `(within N)` required | `sf-isf-contract-eventually-flat` | `docs/fsmgen-issues/sf-isf-contract-eventually-flat/` | from a FSMGEN checkout: `cd <fsmgen-root> && bash <path>/commands.sh` |
+| F2 — §11.8 `(stage p (ready r)(valid v))` strict-rejected "unsupported subclause 'ready'" despite documented `ready_valid_barrier` | `sf-isf-stage-ready-valid` | `docs/fsmgen-issues/sf-isf-stage-ready-valid/` | from a FSMGEN checkout: `cd <fsmgen-root> && bash <path>/commands.sh` |
+
+Each bundle contains `README.md` (protocol §1 summary), `commands.sh`
+(reproduces from the FSMGEN repo root using only bundled files),
+`env.txt`, `sources/fsmgen-input/` (the failing `.isf`),
+`observed/` (captured exit/stdout/stderr/JSON; FSMGEN HEAD
+`effe591dff8487c6b1095be013540fe2aef129f8`), and `expected/`
+(`baseline-good.isf` — a strict-passing counterpart that differs by
+exactly one line, plus its captured `success:true` JSON). The bundles
+were generated with `--bundle-dir` pointing into the SPECFORGE tree so
+the pinned `subs/fsmgen/` submodule working tree was never modified.
+
+### Count is two, not three (evidence-backed)
+
+A third candidate — `(within 0)` strict-rejected (positive cycles
+required) — is **not** an FSMGEN bug. The spec never documents
+`(within 0)` as supported; rejecting a zero-cycle eventually-window is
+defensible strictness. The actual defect was SPECFORGE-side (it was
+about to emit `(within 0)` for `max_cycles == 0`); SPECFORGE caught it
+by picky self-verification and guarded it in `ISF-TEMPORAL-LOWERING.2.2`
+(zero-window → SPECFORGE residual decision). Per
+`DOWNSTREAM_ISSUE_REPORTING.md` §9 this is FSMGEN following its public
+contract → a downstream bug, already fixed. No bundle is filed for it.
+
+Observed across both filed bundles: the strict rejection exits `255`
+with **empty stdout even though `--json` was requested** — the failure
+is not expressible through the documented JSON check surface. This is
+recorded in each bundle's README as a secondary observation for
+FSMGEN's triage.

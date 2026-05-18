@@ -74,6 +74,15 @@
   good `success:true`; `subs/fsmgen` clean. Both bundles are committed
   under `docs/fsmgen-issues/`; `.3` wires their ids into
   `docs/FSMGEN_FEEDBACK.md` (the stable SPECFORGE↔FSMGen channel).
+- `.3`: `docs/FSMGEN_FEEDBACK.md` gained a "Filed issue bundles" section
+  answering **where FSMGEN sees each report** — the bundles are committed
+  in SPECFORGE and pushed to `origin/main`, and this feedback doc (the
+  protocol's "one stable document FSMGEN reads") points to each by
+  id/path with the reproduce command; plus the count-is-two evidence and
+  the strict-die-bypasses-JSON observation. `docs/TASK_TREE.md` index →
+  `done`. Tree `FSMGEN-ISSUE-REPORTING` closed; PNT resumes
+  `ISF-TEMPORAL-LOWERING.2.3`. (Docs/artifacts-only leaf — no Rust,
+  fixture, or mdBook change; CI gate not applicable.)
 
 ## 2026-05-18 (ISF-ONLY-CONSOLIDATION task tree created — strategy pivot)
 
