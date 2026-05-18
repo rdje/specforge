@@ -65,15 +65,21 @@ Honest count: **two** genuine FSMGen findings, not three.
   Children: `FSMGEN-ISSUE-REPORTING.1`, `.2`, `.3`
 
 - ID: `FSMGEN-ISSUE-REPORTING.1`
-  Status: `pending`
+  Status: `done`
   Goal: build + verify the F1 bundle (`sf-isf-contract-eventually-flat`) —
   minimal `.isf` whose only deviation is the flat `(eventually sig within N)`;
   known-good nested counterpart in `expected/`
   Acceptance: helper-built bundle under `docs/fsmgen-issues/`; rerunning its
   `commands.sh` from `subs/fsmgen` reproduces strict rejection of the flat form
   and acceptance of the nested form; submodule tree clean
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — bundle built via `bin/fsmgen-issue-bundle` at
+  `docs/fsmgen-issues/sf-isf-contract-eventually-flat/`; `commands.sh` rerun
+  from `subs/fsmgen` reproduces `original.exit=255`, stderr `Transaction
+  'txn_demo': contract 'c_demo' supports only '(eventually signal (within
+  cycles))'`, empty stdout (no JSON despite `--json`);
+  `expected/baseline-good.isf` strict result `success:true`; FSMGen HEAD
+  `effe591d` captured; `git -C subs/fsmgen status` clean
+  Commit: `see Commit Log`
 
 - ID: `FSMGEN-ISSUE-REPORTING.2`
   Status: `pending`
@@ -100,8 +106,8 @@ Honest count: **two** genuine FSMGen findings, not three.
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `FSMGEN-ISSUE-REPORTING.1` | `pending` | First bundle; establishes the helper-output-outside-submodule pattern reused by `.2` |
-| 2 | `FSMGEN-ISSUE-REPORTING.2` | `pending` | Second bundle once the pattern is proven |
+| 1 | `FSMGEN-ISSUE-REPORTING.1` | `done` | F1 bundle filed + reproduction verified; helper-output-outside-submodule pattern proven |
+| 2 | `FSMGEN-ISSUE-REPORTING.2` | `pending` | Next — F2 bundle reuses the proven pattern |
 | 3 | `FSMGEN-ISSUE-REPORTING.3` | `pending` | Close once both bundles verified |
 
 ## Decisions
@@ -128,13 +134,14 @@ Honest count: **two** genuine FSMGen findings, not three.
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
-| `2026-05-18` | `FSMGEN-ISSUE-REPORTING.1` | `pending` | `pending` |
+| `2026-05-18` | `FSMGEN-ISSUE-REPORTING.1` | `bin/fsmgen-issue-bundle` build + `commands.sh` rerun from `subs/fsmgen` + baseline-good strict-pass + submodule-clean check | `passed` (orig exit 255; stderr names contract; baseline `success:true`; FSMGen HEAD `effe591d`; `subs/fsmgen` clean) |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
-| `FSMGEN-ISSUE-REPORTING.1` | `pending` | `pending` |
+| `FSMGEN-ISSUE-REPORTING` (tree) | `FSMGEN-ISSUE-REPORTING — track filing the genuine FSMGen findings` (`1c3a5d37`) | tree + index |
+| `FSMGEN-ISSUE-REPORTING.1` | `FSMGEN-ISSUE-REPORTING.1 — file F1 bundle (contract eventually flat-vs-nested)` | bundle under `docs/fsmgen-issues/sf-isf-contract-eventually-flat/`; submodule untouched |
 
 ## Changelog
 
@@ -142,3 +149,9 @@ Honest count: **two** genuine FSMGen findings, not three.
   doc-vs-strict findings (F1 contract-eventually-flat, F2 stage-ready-valid)
   via the official bundle protocol, submodule untouched. Recorded the
   evidence-backed 2-not-3 determination.
+- `2026-05-18`: `.1` done — F1 bundle
+  `docs/fsmgen-issues/sf-isf-contract-eventually-flat/` built with
+  `bin/fsmgen-issue-bundle`, derived from a real strict-passing emitted `.isf`
+  reduced to a one-line flat-vs-nested deviation; `commands.sh` rerun
+  reproduces exit 255 + the contract diagnostic; `expected/` carries the
+  strict-passing nested counterpart; `subs/fsmgen` verified clean.

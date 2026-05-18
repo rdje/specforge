@@ -1,0 +1,1 @@
+Transaction 'txn_demo': contract 'c_demo' supports only '(eventually signal (within cycles))'

@@ -46,6 +46,27 @@
   invalid `(within 0)`. 15 isf tests + both fsmgen-strict tests green;
   `scripts/run_ci.sh` green.
 
+### FSMGEN-ISSUE-REPORTING (tree) + .1 — file the genuine FSMGen findings
+- New task tree to file the genuine FSMGen findings discovered during
+  `ISF-TEMPORAL-LOWERING.2.1` via the official protocol
+  `subs/fsmgen/docs/DOWNSTREAM_ISSUE_REPORTING.md`, with bundles stored
+  under SPECFORGE `docs/fsmgen-issues/` so the pinned `subs/fsmgen`
+  submodule working tree is never modified.
+- Evidence-backed count correction: it is **2** genuine FSMGen findings,
+  not 3. F1 (§11.8 flat `(eventually s within N)`) and F2 (§11.8
+  `(stage … (ready)(valid))`) are doc-vs-shipped-strict contradictions.
+  `(within 0)` rejection is defensible strictness undocumented as
+  supported → a SPECFORGE-side bug already fixed in `.2.2`; no third
+  bundle (the count was not padded to match the initial "3").
+- `.1`: F1 bundle `docs/fsmgen-issues/sf-isf-contract-eventually-flat/`
+  built with `bin/fsmgen-issue-bundle`, derived from a real
+  strict-passing emitted `.isf` reduced to a one-line flat-vs-nested
+  deviation (protocol §8 safe reduction); `commands.sh` rerun from
+  `subs/fsmgen` reproduces `exit 255` + stderr `contract 'c_demo'
+  supports only '(eventually signal (within cycles))'` + empty stdout
+  (no JSON despite `--json`); `expected/baseline-good.isf`
+  `success:true`; FSMGen HEAD `effe591d` captured; `subs/fsmgen` clean.
+
 ## 2026-05-18 (ISF-ONLY-CONSOLIDATION task tree created — strategy pivot)
 
 - User decision: now that the typed `.isf` adapter exists, SpecForge keeps

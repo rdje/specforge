@@ -1,0 +1,1 @@
+./bin/fsmgen --strict --check --json /Users/richarddje/Documents/github/specforge/docs/fsmgen-issues/sf-isf-contract-eventually-flat/sources/fsmgen-input/f1-contract-eventually-flat.isf
