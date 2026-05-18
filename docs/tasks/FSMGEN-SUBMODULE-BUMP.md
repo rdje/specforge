@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `FSMGEN-SUBMODULE-BUMP`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: `R0` (downstream contract hygiene; consumes the
   `FSMGEN-ISSUE-REPORTING` outcome)
 - Created: `2026-05-18`
@@ -57,7 +57,7 @@ submodule.
 ## Task Tree
 
 - ID: `FSMGEN-SUBMODULE-BUMP`
-  Status: `active`
+  Status: `done`
   Goal: pin to `9bfb9a20`, verify fixes, reconcile, no regression
   Children: `.1`, `.2`, `.3`, `.4`
 
@@ -125,11 +125,15 @@ submodule.
   Commit: `see Commit Log`
 
 - ID: `FSMGEN-SUBMODULE-BUMP.4`
-  Status: `pending`
+  Status: `done`
   Goal: close tree; sync live docs (CHANGES/LIVE/MEMORY/TASK_TREE)
   Acceptance: tree `done`; index updated; CI green
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — tree + top node `done`; `docs/TASK_TREE.md`
+    index `FSMGEN-SUBMODULE-BUMP` → `done`; CHANGES/LIVE/MEMORY synced.
+    CI gate already satisfied by `.2` (full `scripts/run_ci.sh`
+    `1054 passed; 0 failed` on the new pin `9bfb9a20`); `.3`/`.4` are
+    docs-only (no Rust/fixture/mdBook change).
+  Commit: `see Commit Log`
 
 ## Current Frontier
 
@@ -138,7 +142,9 @@ submodule.
 | 1 | `FSMGEN-SUBMODULE-BUMP.1` | `done` | Pinned `9bfb9a20`; both findings audited fixed (F2-bundle conflict nuance recorded) |
 | 2 | `FSMGEN-SUBMODULE-BUMP.2` | `done` | Full CI green on new pin (1054/0); no fallout |
 | 3 | `FSMGEN-SUBMODULE-BUMP.3` | `done` | Paper trail reconciled; stage follow-up scoped as proposed tree |
-| 4 | `FSMGEN-SUBMODULE-BUMP.4` | `pending` | Next — close tree + live-doc sync |
+| 4 | `FSMGEN-SUBMODULE-BUMP.4` | `done` | Tree CLOSED — pin bumped, both fixes audited, no regression, paper trail reconciled |
+
+Tree complete. Remaining PNT: `ISF-ONLY-IR-PRUNE.1`, `AUDIT-DOC-RECONCILE.1/.2`; proposed `ISF-HANDSHAKE-STAGE-LOWERING` awaits promotion.
 
 ## Decisions
 
@@ -181,6 +187,7 @@ submodule.
 | `2026-05-18` | `FSMGEN-SUBMODULE-BUMP.1` | pin bump + binary smoke + F1/F2/nested empirical audit on new binary | `passed` (F1 fixed+JSON; F2 stage construct fixed isolated; F2-bundle self-conflict nuance recorded; nested baseline no regression) |
 | `2026-05-18` | `FSMGEN-SUBMODULE-BUMP.2` | full `scripts/run_ci.sh` on pin `9bfb9a20` | `passed` (`RUN_CI_EXIT=0`, 1054 passed, 0 failed; no fallout) |
 | `2026-05-18` | `FSMGEN-SUBMODULE-BUMP.3` | FEEDBACK RESOLVED section + 2 bundle RESOLUTION.md + ISSUE-REPORTING/ISF-TEMPORAL cross-refs + proposed follow-up tree review | `passed` (docs-only; paper trail precise incl. F2-bundle caveat) |
+| `2026-05-18` | `FSMGEN-SUBMODULE-BUMP.4` | tree/index close + live-doc sync review; CI gate inherited from `.2` | `passed` (docs-only close; `.2` was 1054/0 on the new pin) |
 
 ## Commit Log
 
@@ -190,6 +197,7 @@ submodule.
 | `FSMGEN-SUBMODULE-BUMP.1` | `FSMGEN-SUBMODULE-BUMP.1 — pin subs/fsmgen 9bfb9a20; audit both findings fixed` (`87c6e124`) | submodule pin bump; F1✓ F2-construct✓ |
 | `FSMGEN-SUBMODULE-BUMP.2` | `FSMGEN-SUBMODULE-BUMP.2 — full CI regression on the new pinned binary` | 1054/0; no fallout |
 | `FSMGEN-SUBMODULE-BUMP.3` | `FSMGEN-SUBMODULE-BUMP.3 — reconcile FEEDBACK/bundles/reporting; scope stage follow-up` | docs-only; `ISF-HANDSHAKE-STAGE-LOWERING` proposed |
+| `FSMGEN-SUBMODULE-BUMP.4` | `FSMGEN-SUBMODULE-BUMP.4 — close tree; live-doc sync` | tree CLOSED |
 
 ## Changelog
 
@@ -197,3 +205,16 @@ submodule.
   bump `subs/fsmgen` `effe591d → 9bfb9a20`, empirically audit the fix, run
   full regression on the new ground-truth binary, reconcile the reporting
   paper trail, and scope (not auto-do) the `(stage …)` re-enablement.
+- `2026-05-18`: Tree CLOSED. Pin `effe591d → 9bfb9a20`; **both filed
+  findings empirically verified fixed** on the new binary (F1 flat
+  contract `success:true`+JSON; F2 `(stage …)` construct accepted
+  isolated) — the user's claim audited true, with the precise honest
+  caveat that the F2 *bundle* now hits an unrelated, correct
+  self-conflict from its own minimization (not a remaining bug). Full
+  `scripts/run_ci.sh` `1054 passed; 0 failed` on the new pin (no
+  fallout — SPECFORGE emits the still-valid nested form). Paper trail
+  reconciled (FEEDBACK RESOLVED, bundle RESOLUTION.md ×2, closed-tree
+  cross-refs). `(stage …)`-for-HandshakeComplete unlocked but scoped as
+  the `proposed` `ISF-HANDSHAKE-STAGE-LOWERING` tree (verification-gated,
+  not auto-done). The SPECFORGE↔FSMGEN reporting protocol worked
+  end-to-end: file → upstream fix → audited pin bump.

@@ -49,6 +49,17 @@
   `(stage …)` is now unlocked but is a verification-gated behavior change,
   scoped (NOT auto-done — scope discipline + `fsmgen-contract-authority`).
 
+### FSMGEN-SUBMODULE-BUMP.4 — close tree; live-doc sync
+- `FSMGEN-SUBMODULE-BUMP` tree CLOSED (`.1`–`.4` done); `docs/TASK_TREE.md`
+  index → `done`. The SPECFORGE↔FSMGEN reporting protocol worked
+  end-to-end: filed two minimized bundles → FSMGen reproduced & fixed
+  both → SPECFORGE audited the fixes on the new binary and bumped the
+  pin `effe591d → 9bfb9a20` with zero regression (1054/0). Net result:
+  SPECFORGE's pinned FSMGen ground truth now accepts flat eventual
+  contracts and ready/valid stages; no SPECFORGE code change was forced
+  (it already emits the strict-valid nested contract form). Docs-only
+  close (CI gate inherited from `.2`).
+
 - Audit (codebase vs roadmap vs book) found: (critical) `temporal_rules`
   extracted but never lowered to `.isf` and `transaction_count`
   misreports it across the whole real corpus; orphaned `.fsm`-era IR;
