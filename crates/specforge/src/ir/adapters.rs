@@ -262,13 +262,16 @@ fn build_isf_adapter_artifact(
     let (is_renderable, blocking_reasons) = assess_isf_renderability(intent_ir);
 
     let signal_count = count_isf_signals(intent_ir);
-    let cb_tx_count = intent_ir
-        .control_blocks
-        .iter()
-        .filter(|cb| !cb.branches.is_empty())
-        .count();
-    let transaction_count = intent_ir.temporal_rules.len() + cb_tx_count;
-    let rule_count = intent_ir.conditional_rules.len() + intent_ir.signal_constraints.len();
+    // ISF-TEMPORAL-LOWERING.2.4: report what the emitter actually renders,
+    // not a blind IntentIR-derived guess. The old
+    // `transaction_count = temporal_rules.len() + cb_tx_count` and
+    // `rule_count = conditional_rules + signal_constraints` counted surfaces
+    // the emitter ignores (the entire temporal_rules set pre-.2.2/.2.3, and
+    // control_blocks that may not all lower) and missed temporal-synthesized
+    // transactions and temporal `(rule …)`. Derive both from the single ISF
+    // model built above so the metric == emitted content.
+    let transaction_count = isf_model.emitted_transaction_count();
+    let rule_count = isf_model.emitted_rule_count();
     let constant_count = intent_ir
         .symbol_definitions
         .iter()
@@ -477,6 +480,38 @@ mod tests {
                 .ends_with(".isf")
         );
 
+        Ok(())
+    }
+
+    // ISF-TEMPORAL-LOWERING.2.4 regression: every reported behavioral count
+    // MUST equal what the emitter actually rendered — never a blind
+    // IntentIR-derived guess that counts a surface the emitter ignores.
+    #[test]
+    fn isf_adapter_counts_equal_emitted_content() -> Result<()> {
+        let tempdir = tempdir()?;
+        let intent_ir =
+            build_intent_ir_from_markdown(tempdir.path(), "isf_count.md", ISF_ADAPTER_TEST_SPEC)?;
+        let artifact = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Isf,
+            tempdir.path(),
+        )?;
+        let isf = artifact.isf.expect("ISF artifact must be populated");
+        let src = &isf.source_text;
+
+        // Top-level transaction/rule forms render at a 2-space indent
+        // (`\n  (transaction `/`\n  (rule `); nested clauses are deeper.
+        let emitted_txns = src.matches("\n  (transaction ").count();
+        let emitted_rules = src.matches("\n  (rule ").count();
+
+        assert_eq!(
+            isf.transaction_count, emitted_txns,
+            "transaction_count must equal emitted (transaction …) forms\n{src}"
+        );
+        assert_eq!(
+            isf.rule_count, emitted_rules,
+            "rule_count must equal emitted (rule …) forms\n{src}"
+        );
         Ok(())
     }
 

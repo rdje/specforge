@@ -129,7 +129,7 @@ temporal/clock-tick behavior is extracted and then silently dropped from
   Commit: `see Commit Log`
 
 - ID: `ISF-TEMPORAL-LOWERING.2.4`
-  Status: `pending`
+  Status: `done`
   Goal: >
     Reconcile `build_isf_adapter_artifact` so every reported count
     reflects emitted content: `transaction_count` counts emitted
@@ -137,8 +137,20 @@ temporal/clock-tick behavior is extracted and then silently dropped from
     emitted as `(rule …)` count under rules; unrepresentable count as
     residual. No metric counts a surface the emitter ignores.
   Acceptance: `Every count == emitted content; regression locks it; scripts/run_ci.sh green.`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — `transaction_count`/`rule_count` now derive
+    from the single ISF model (`emitted_transaction_count()` /
+    `emitted_rule_count()`), replacing the blind
+    `temporal_rules.len()+cb_tx_count` / `conditional_rules+
+    signal_constraints`; unrepresentable temporal rules already counted
+    as `residual_decisions` (`.2.3`). Regression
+    `isf_adapter_counts_equal_emitted_content` locks metric ==
+    `\n  (transaction `/`\n  (rule ` occurrences in `source_text`. LIVE
+    nvme: `transaction_count` 109 (old blind) → 0 (== emitted);
+    `rule_count` 250 == 250 emitted; 92 temporal residuals intact. Full
+    `scripts/run_ci.sh` green (1053 lib tests). Scope note in Decisions:
+    constant/enum counts are a separate pre-existing non-temporal
+    concern, surfaced not silently changed.
+  Commit: `see Commit Log`
 
 - ID: `ISF-TEMPORAL-LOWERING.3`
   Status: `pending`
@@ -167,8 +179,8 @@ temporal/clock-tick behavior is extracted and then silently dropped from
 | 2 | `ISF-TEMPORAL-LOWERING.2.1` | `done` | `(contract …)` render verified strict; stage dropped |
 | 3 | `ISF-TEMPORAL-LOWERING.2.2` | `done` | Windowed→`(contract …)` live on corpus; `(within 0)` guarded |
 | 4 | `ISF-TEMPORAL-LOWERING.2.3` | `done` | guard→drive `(rule …)` + residual classifier; live on nvme; strict-valid |
-| 5 | `ISF-TEMPORAL-LOWERING.2.4` | `pending` | Next — reconcile artifact metrics (transaction_count/rule_count still old blind formula; must == emitted content + temporal residual count) |
-| 6 | `ISF-TEMPORAL-LOWERING.3` | `pending` | End-to-end regression incl. fsmgen strict |
+| 5 | `ISF-TEMPORAL-LOWERING.2.4` | `done` | metrics now == emitted content; nvme 109→0 fixed; regression locks it |
+| 6 | `ISF-TEMPORAL-LOWERING.3` | `pending` | Next — end-to-end regression: temporal-rules-bearing IntentIR via generic markdown pipeline → non-empty ISF temporal behavior + metric match + fsmgen-strict |
 | 7 | `ISF-TEMPORAL-LOWERING.4` | `pending` | Close + doc sync |
 
 ## Decisions
@@ -243,6 +255,19 @@ temporal/clock-tick behavior is extracted and then silently dropped from
   from the same single ISF model (`isf_model.temporal_residuals()`),
   replacing the throwaway `build_isf_source_text`. `transaction_count`/
   `rule_count` deliberately NOT touched — that is `.2.4`.
+- `2026-05-18` (`.2.4` metric reconciliation): `transaction_count` and
+  `rule_count` now come from the single emitted ISF model
+  (`emitted_transaction_count()`/`emitted_rule_count()`), so they count
+  exactly what `render()` produces (incl. temporal-synthesized
+  `(contract …)` transactions and temporal `(rule …)`, post-dedup).
+  Regression `isf_adapter_counts_equal_emitted_content` locks
+  metric == emitted-text occurrences. Scope honesty: `render()` does NOT
+  emit constants/types/enums (they are `#[allow(dead_code)]` in `IsfIr`),
+  so `constant_count`/`enum_count` derived from IntentIR symbol defs are
+  a SEPARATE pre-existing non-temporal "extracted but not rendered" gap
+  analogous to the temporal one. It is deliberately NOT changed in this
+  temporal tree (scope discipline) and is surfaced here as an Open
+  Question for a future audit/tree rather than silently zeroed or hidden.
 - `2026-05-18` (`.2` honest outcome — PNT rule 5): `.2` split into
   `.2.1`–`.2.4`. Corpus evidence (387 temporal_rules, 28 windowed,
   mostly `SignalStable`/`SignalValue`) showed no large trivially-safe
@@ -257,6 +282,14 @@ temporal/clock-tick behavior is extracted and then silently dropped from
 - Whether some `temporal_rules` cannot map to any supported ISF construct;
   if so they must be preserved as explicit residual decisions rather than
   fabricated — `.1` decided this (mapping #4); `.2.3` implements it.
+- `IsfIr` populates `constants`/`types`/`enums` from IntentIR but
+  `render()` does NOT emit them (`#[allow(dead_code)]`); the artifact's
+  `constant_count`/`enum_count` therefore still count an unrendered
+  surface. This is a SEPARATE, pre-existing, non-temporal "extracted but
+  not rendered" gap (analogous to the temporal one this tree fixed). It
+  is out of scope for ISF-TEMPORAL-LOWERING and is surfaced here for a
+  future audit/tree — owner: next codebase-vs-roadmap audit; does NOT
+  block this tree's frontier (`.3`).
 
 ## Blockers
 
@@ -270,6 +303,7 @@ temporal/clock-tick behavior is extracted and then silently dropped from
 | `2026-05-18` | `ISF-TEMPORAL-LOWERING.2.1` | 2 unit tests incl. real fsmgen `--strict --check`; full `scripts/run_ci.sh` | `passed` |
 | `2026-05-18` | `ISF-TEMPORAL-LOWERING.2.2` | live corpus adapt (CXS) + `(within 0)` strict-reject caught/guarded; 15 isf tests; full `scripts/run_ci.sh` | `passed` |
 | `2026-05-18` | `ISF-TEMPORAL-LOWERING.2.3` | 11 new classifier/residual/render unit tests + real-binary `(rule …)` strict test; empirical pre-verify of guard/conditionless forms; LIVE nvme adapt (109→17 Rule/92 residual, strict `success:true`); full `scripts/run_ci.sh` | `passed` |
+| `2026-05-18` | `ISF-TEMPORAL-LOWERING.2.4` | `isf_adapter_counts_equal_emitted_content` regression + LIVE nvme metric check (txn 109→0, rule 250==250, 92 residual intact); full `scripts/run_ci.sh` (1053 lib tests) | `passed` |
 
 ## Commit Log
 
@@ -279,6 +313,7 @@ temporal/clock-tick behavior is extracted and then silently dropped from
 | `ISF-TEMPORAL-LOWERING.2.1` | `ISF-TEMPORAL-LOWERING.2.1 — typed bounded (contract …) render construct` | strict-verified nested `(within N)`; `(stage …)` dropped + FSMGen feedback logged |
 | `ISF-TEMPORAL-LOWERING.2.2` | `ISF-TEMPORAL-LOWERING.2.2 — wire windowed temporal_rules → (contract …)` | `0ccdc8f0`; live CXS; `(within 0)` guarded |
 | `ISF-TEMPORAL-LOWERING.2.3` | `ISF-TEMPORAL-LOWERING.2.3 — guard→drive (rule …) + residual classifier` | classifier shared by emit + residual; live nvme strict-valid |
+| `ISF-TEMPORAL-LOWERING.2.4` | `ISF-TEMPORAL-LOWERING.2.4 — reconcile artifact metrics to emitted content` | txn/rule counts from emitted model; regression locks it; nvme 109→0 |
 
 ## Changelog
 

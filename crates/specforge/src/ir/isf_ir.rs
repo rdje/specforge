@@ -238,6 +238,22 @@ impl IsfIr {
         &self.temporal_residuals
     }
 
+    /// Number of transactions the emitter actually renders (includes the
+    /// temporal-synthesized `(contract …)` transactions). The adapter
+    /// artifact MUST report this, not a blind IntentIR-derived guess
+    /// (ISF-TEMPORAL-LOWERING.2.4 — no metric counts a surface the emitter
+    /// ignores).
+    pub(crate) fn emitted_transaction_count(&self) -> usize {
+        self.transactions.len()
+    }
+
+    /// Number of actor `(rule …)` forms the emitter actually renders,
+    /// post-dedup — including temporal value/guard→drive rules
+    /// (ISF-TEMPORAL-LOWERING.2.3/.2.4).
+    pub(crate) fn emitted_rule_count(&self) -> usize {
+        self.rules.len()
+    }
+
     pub(crate) fn render(&self) -> String {
         let mut lines: Vec<String> = Vec::new();
 

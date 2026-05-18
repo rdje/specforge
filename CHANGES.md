@@ -75,6 +75,30 @@
   (classifier dispositions, residual packet, render, real-binary
   strict); full `scripts/run_ci.sh` green.
 
+### ISF-TEMPORAL-LOWERING.2.4 — reconcile artifact metrics to emitted content
+- `build_isf_adapter_artifact` now derives `transaction_count` and
+  `rule_count` from the single emitted ISF model
+  (`IsfIr::emitted_transaction_count()`/`emitted_rule_count()`),
+  replacing the blind `temporal_rules.len() + cb_tx_count` /
+  `conditional_rules + signal_constraints` formulas that counted
+  surfaces the emitter ignores and missed temporal-synthesized
+  transactions and temporal `(rule …)`. Unrepresentable temporal rules
+  are already counted as `residual_decisions` (`.2.3`).
+- New regression `isf_adapter_counts_equal_emitted_content` locks
+  metric == the actual `\n  (transaction `/`\n  (rule ` occurrences in
+  `source_text`. Verified LIVE on nvme: `transaction_count` 109 (old
+  blind) → 0 (== emitted); `rule_count` 250 == 250 emitted; 92 temporal
+  residuals intact. Full `scripts/run_ci.sh` green (1053 lib tests).
+- Scope honesty: `render()` does not emit constants/types/enums, so
+  `constant_count`/`enum_count` derived from IntentIR symbol defs are a
+  SEPARATE pre-existing non-temporal "extracted but not rendered" gap —
+  deliberately not changed in this temporal tree; surfaced as an Open
+  Question in the tree for a future audit (not silently zeroed/hidden).
+- This closes BOTH original audit critical complaints: `temporal_rules`
+  now reach `.isf` (windowed→`(contract …)`, value→`(rule …)`,
+  unrepresentable→explicit residual) AND `transaction_count` no longer
+  misreports across the real corpus.
+
 ### FSMGEN-ISSUE-REPORTING (tree) + .1 — file the genuine FSMGen findings
 - New task tree to file the genuine FSMGen findings discovered during
   `ISF-TEMPORAL-LOWERING.2.1` via the official protocol
