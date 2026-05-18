@@ -611,10 +611,8 @@ struct SemanticSnapshot {
     abstractions: usize,
     decomposition_candidates: usize,
     system_contract_present: bool,
-    init_assignments: usize,
     regular_states: usize,
     state_transitions: usize,
-    decision_tree_fragments: usize,
     symbol_definitions: usize,
     control_blocks: usize,
     explicit_modules: usize,
@@ -644,10 +642,8 @@ impl SemanticSnapshot {
             abstractions: ir.abstractions.len(),
             decomposition_candidates: ir.decomposition_candidates.len(),
             system_contract_present: ir.system_contract.is_some(),
-            init_assignments: ir.init_assignments.len(),
             regular_states: ir.regular_states.len(),
             state_transitions: ir.state_transitions.len(),
-            decision_tree_fragments: ir.decision_tree_fragments.len(),
             symbol_definitions: ir.symbol_definitions.len(),
             control_blocks: ir.control_blocks.len(),
             explicit_modules: ir.explicit_modules.len(),
@@ -672,10 +668,8 @@ impl SemanticSnapshot {
             + self.abstractions
             + self.decomposition_candidates
             + usize::from(self.system_contract_present)
-            + self.init_assignments
             + self.regular_states
             + self.state_transitions
-            + self.decision_tree_fragments
             + self.symbol_definitions
             + self.control_blocks
             + self.explicit_modules
@@ -696,10 +690,8 @@ struct IntentSnapshot {
     constraints: usize,
     assumptions: usize,
     system_contract_present: bool,
-    init_assignments: usize,
     regular_states: usize,
     state_transitions: usize,
-    decision_tree_fragments: usize,
     symbol_definitions: usize,
     control_blocks: usize,
     explicit_modules: usize,
@@ -725,10 +717,8 @@ impl IntentSnapshot {
             constraints: ir.constraints.len(),
             assumptions: ir.assumptions.len(),
             system_contract_present: ir.system_contract.is_some(),
-            init_assignments: ir.init_assignments.len(),
             regular_states: ir.regular_states.len(),
             state_transitions: ir.state_transitions.len(),
-            decision_tree_fragments: ir.decision_tree_fragments.len(),
             symbol_definitions: ir.symbol_definitions.len(),
             control_blocks: ir.control_blocks.len(),
             explicit_modules: ir.explicit_modules.len(),
@@ -749,10 +739,8 @@ impl IntentSnapshot {
             + self.constraints
             + self.assumptions
             + usize::from(self.system_contract_present)
-            + self.init_assignments
             + self.regular_states
             + self.state_transitions
-            + self.decision_tree_fragments
             + self.symbol_definitions
             + self.control_blocks
             + self.explicit_modules
@@ -1130,10 +1118,8 @@ mod tests {
             abstractions: 1,
             decomposition_candidates: 1,
             system_contract_present: true,
-            init_assignments: 1,
             regular_states: 1,
             state_transitions: 1,
-            decision_tree_fragments: 1,
             symbol_definitions: 1,
             control_blocks: 1,
             explicit_modules: 1,
@@ -1144,8 +1130,11 @@ mod tests {
             conditional_rules: 1,
             residual_decisions: 0,
         };
-        // 23 counted fields, each 1 (system_contract_present=true → 1) = 23
-        assert_eq!(s.fact_count(), 23);
+        // 21 counted fields, each 1 (system_contract_present=true → 1) = 21
+        // (was 23; ISF-ONLY-IR-PRUNE.2 removed init_assignments +
+        // decision_tree_fragments from the snapshot — convergence deltas are
+        // unchanged since the surface is gone from every snapshot equally)
+        assert_eq!(s.fact_count(), 21);
     }
 
     #[test]
@@ -1168,10 +1157,8 @@ mod tests {
             constraints: 1,
             assumptions: 1,
             system_contract_present: true,
-            init_assignments: 1,
             regular_states: 1,
             state_transitions: 1,
-            decision_tree_fragments: 1,
             symbol_definitions: 1,
             control_blocks: 1,
             explicit_modules: 1,
@@ -1182,8 +1169,11 @@ mod tests {
             conditional_rules: 1,
             residual_decisions: 0,
         };
-        // 19 counted fields, each 1 (system_contract_present=true → 1) = 19
-        assert_eq!(s.fact_count(), 19);
+        // 17 counted fields, each 1 (system_contract_present=true → 1) = 17
+        // (was 19; ISF-ONLY-IR-PRUNE.2 removed init_assignments +
+        // decision_tree_fragments from the snapshot — convergence deltas are
+        // unchanged since the surface is gone from every snapshot equally)
+        assert_eq!(s.fact_count(), 17);
     }
 
     fn default_semantic_snapshot() -> SemanticSnapshot {
@@ -1199,10 +1189,8 @@ mod tests {
             abstractions: 0,
             decomposition_candidates: 0,
             system_contract_present: false,
-            init_assignments: 0,
             regular_states: 0,
             state_transitions: 0,
-            decision_tree_fragments: 0,
             symbol_definitions: 0,
             control_blocks: 0,
             explicit_modules: 0,

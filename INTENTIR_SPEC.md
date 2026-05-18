@@ -339,15 +339,6 @@ Minimal conceptual example:
     "release_timing": "synchronous_to_clock",
     "target_kind": "dedicated_reset_pin"
   },
-  "init_assignments": [
-    {
-      "target_signal": "ACC",
-      "value": {
-        "kind": "literal",
-        "literal": "8'0"
-      }
-    }
-  ],
   "regular_states": [
     {
       "state_id": "regular_state_idle",
@@ -372,23 +363,6 @@ Minimal conceptual example:
         "signal_name": "GO"
       },
       "declaration_order": 0
-    }
-  ],
-  "decision_tree_fragments": [
-    {
-      "fragment_id": "dt_fragment_accumulate",
-      "block_name": "accumulate",
-      "actions": [
-        {
-          "kind": "assign",
-          "target_signal": "ACC",
-          "assignment_kind": "sequential",
-          "value": {
-            "kind": "signal_ref",
-            "signal_name": "DATA_IN"
-          }
-        }
-      ]
     }
   ],
   "constraints": [

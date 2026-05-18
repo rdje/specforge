@@ -86,7 +86,7 @@ is **only true for two of them**. Verified consumers:
   Commit: `see Commit Log`
 
 - ID: `ISF-ONLY-IR-PRUNE.2`
-  Status: `pending`
+  Status: `done`
   Goal: >
     Remove the `.1`-confirmed prune-safe surfaces (expected:
     `init_assignments`, `decision_tree_fragments`) from `IntentIr`
@@ -94,8 +94,26 @@ is **only true for two of them**. Verified consumers:
     feeding them, `learn_priors.rs`/`converge.rs` references) without
     regressing kg-bench or any retained surface.
   Acceptance: `Prune-safe surfaces gone; scripts/run_ci.sh green; no fixture regression. May split per surface.`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — both surfaces removed end-to-end per the `.1`
+    plan: `semantic.rs` (2 record types + 2 producer fns + 2 dead
+    accumulators + `decision_tree_fragment_key` + main/secondary struct
+    fields), `intent.rs` (fields, import, carries, summary fn+string),
+    `converge.rs` (both snapshot structs + populators + stability sum +
+    fixtures), `learn_priors.rs` (ctor + JSON test), `INTENTIR_SPEC.md`.
+    Test surgery: removed-surface assertions deleted (3 tests renamed to
+    drop the removed surface from their name, retained-surface
+    assertions kept). Kept unified (not split) — parallel mechanical
+    removal of structurally-identical carriers in the same sites. The
+    `.1` converge care-point materialized exactly as predicted: the 2
+    `fact_count` unit tests asserted an absolute total incl. the removed
+    terms → literals 23→21 / 19→17 updated; convergence *delta* behavior
+    unchanged (surface gone from every snapshot equally). In-scope
+    cleanup: `ParsedDecisionTreeFragment` trimmed to its sole still-read
+    field (`referenced_signal_names`) since `parse_explicit_decision_tree_fragment`
+    is retained for signal-connectivity. `cargo check` zero warnings;
+    full `scripts/run_ci.sh` green (1054 passed, 0 failed; kg-bench /
+    `vlm_state_machine_*` fixtures intact).
+  Commit: `see Commit Log`
 
 - ID: `ISF-ONLY-IR-PRUNE.3`
   Status: `superseded`
@@ -123,9 +141,9 @@ is **only true for two of them**. Verified consumers:
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `ISF-ONLY-IR-PRUNE.1` | `done` | Inventory + per-file removal plan recorded; prune-safe confirmed |
-| 2 | `ISF-ONLY-IR-PRUNE.2` | `pending` | Next — execute the `.1` removal plan (`init_assignments` + `decision_tree_fragments`) |
+| 2 | `ISF-ONLY-IR-PRUNE.2` | `done` | Both surfaces removed end-to-end; CI green 1054/0; no fixture regression |
 | — | `ISF-ONLY-IR-PRUNE.3` | `superseded` | User decision 2026-05-18: keep state-graph; no removal |
-| 3 | `ISF-ONLY-IR-PRUNE.4` | `pending` | Close after .2 (.3 resolved as superseded) |
+| 3 | `ISF-ONLY-IR-PRUNE.4` | `pending` | Next — close tree (`.2` done, `.3` superseded) |
 
 ## Impact analysis (`.1`, 2026-05-18 — full repo grep inventory)
 
@@ -206,12 +224,14 @@ with the fields.
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-05-18` | `ISF-ONLY-IR-PRUNE.1` | full repo grep inventory of all 4 surfaces (code/fixtures/book); per-file removal plan | `passed` (prune-safe confirmed for 2; load-bearing confirmed for 2; no code change) |
+| `2026-05-18` | `ISF-ONLY-IR-PRUNE.2` | end-to-end removal of `init_assignments`+`decision_tree_fragments`; `cargo check` 0 warnings; full `scripts/run_ci.sh` | `passed` (1054 passed, 0 failed; kg-bench/vlm fixtures intact; converge fact_count literals 23→21/19→17, delta-behavior unchanged) |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `ISF-ONLY-IR-PRUNE.1` | `ISF-ONLY-IR-PRUNE.1 — impact analysis + per-file removal plan` | docs-only; prune-safe confirmed, state-graph keep upheld |
+| `ISF-ONLY-IR-PRUNE.2` | `ISF-ONLY-IR-PRUNE.2 — remove dead .fsm-era init_assignments + decision_tree_fragments IR` | 5 files + spec + tests; converge delta-preserving; CI 1054/0 |
 
 ## Changelog
 
@@ -226,3 +246,12 @@ with the fields.
   (`.3` supersede upheld). Exact per-file `.2` removal plan recorded,
   including the converge stability-sum care point (remove-everywhere ⇒
   0 delta ⇒ convergence-preserving, but verify, don't blind-delete).
+- `2026-05-18`: `.2` done — `init_assignments` + `decision_tree_fragments`
+  removed end-to-end (semantic.rs/intent.rs/converge.rs/learn_priors.rs
+  + INTENTIR_SPEC.md + ~19 test sites + dead-helper cascade +
+  `ParsedDecisionTreeFragment` trim). The `.1` converge care-point
+  materialized exactly as predicted and was handled correctly (not
+  blind-deleted): 2 `fact_count` unit tests asserted an absolute total
+  incl. the removed terms → literals 23→21 / 19→17; convergence delta
+  behavior unchanged. Kept unified (parallel identical-site removal).
+  Full CI 1054/0; kg-bench / `vlm_state_machine_*` fixtures intact.

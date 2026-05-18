@@ -57,13 +57,9 @@ pub struct SemanticIr {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub system_contract: Option<SystemContractRecord>,
     #[serde(default)]
-    pub init_assignments: Vec<InitAssignmentRecord>,
-    #[serde(default)]
     pub regular_states: Vec<RegularStateRecord>,
     #[serde(default)]
     pub state_transitions: Vec<StateTransitionRecord>,
-    #[serde(default)]
-    pub decision_tree_fragments: Vec<DecisionTreeFragmentRecord>,
     #[serde(default)]
     pub symbol_definitions: Vec<SymbolDefinitionRecord>,
     #[serde(default)]
@@ -157,10 +153,8 @@ impl SemanticIr {
         let assertions = build_assertions(&context);
         let abstractions = build_abstractions(&context);
         let decomposition_candidates = build_decomposition_candidates(&context);
-        let init_assignments = build_init_assignments(&context);
         let regular_states = build_regular_states(&context);
         let state_transitions = build_state_transitions(&context);
-        let decision_tree_fragments = build_decision_tree_fragments(&context);
         let symbol_definitions = build_symbol_definitions(&context);
         let control_blocks = build_control_blocks(
             &context,
@@ -306,10 +300,8 @@ impl SemanticIr {
             abstractions,
             decomposition_candidates,
             system_contract,
-            init_assignments,
             regular_states: regular_states_with_vlm,
             state_transitions: state_transitions_with_vlm,
-            decision_tree_fragments,
             symbol_definitions,
             control_blocks,
             explicit_modules,
@@ -958,14 +950,6 @@ pub enum SystemResetTargetKind {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-pub struct InitAssignmentRecord {
-    pub target_signal: String,
-    pub value: DecisionTreeValueRecord,
-    pub supporting_statement_ids: Vec<String>,
-    pub automation_confidence: AutomationConfidence,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct RegularStateRecord {
     pub state_id: String,
     pub state_name: String,
@@ -983,18 +967,6 @@ pub struct StateTransitionRecord {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub guard: Option<DecisionTreeGuardRecord>,
     pub declaration_order: u32,
-    pub supporting_statement_ids: Vec<String>,
-    pub automation_confidence: AutomationConfidence,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-pub struct DecisionTreeFragmentRecord {
-    pub fragment_id: String,
-    pub block_name: String,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub guard: Option<DecisionTreeGuardRecord>,
-    pub actions: Vec<DecisionTreeActionRecord>,
-    pub referenced_signal_names: Vec<String>,
     pub supporting_statement_ids: Vec<String>,
     pub automation_confidence: AutomationConfidence,
 }
@@ -1237,13 +1209,9 @@ pub struct ExplicitModuleRecord {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub system_contract: Option<SystemContractRecord>,
     #[serde(default)]
-    pub init_assignments: Vec<InitAssignmentRecord>,
-    #[serde(default)]
     pub regular_states: Vec<RegularStateRecord>,
     #[serde(default)]
     pub state_transitions: Vec<StateTransitionRecord>,
-    #[serde(default)]
-    pub decision_tree_fragments: Vec<DecisionTreeFragmentRecord>,
     #[serde(default)]
     pub symbol_definitions: Vec<SymbolDefinitionRecord>,
     #[serde(default)]
@@ -1592,13 +1560,6 @@ struct ControlBlockAccumulator {
 }
 
 #[derive(Debug, Clone)]
-struct InitAssignmentAccumulator {
-    value: DecisionTreeValueRecord,
-    supporting_statement_ids: BTreeSet<String>,
-    conflicting_value: bool,
-}
-
-#[derive(Debug, Clone)]
 struct TemporalConflictAccumulator {
     clock_signal: Option<String>,
     edge: ClockEdge,
@@ -1735,11 +1696,14 @@ struct ParsedStateTransition {
     guard: Option<DecisionTreeGuardRecord>,
 }
 
+// Retained only for signal-connectivity extraction (`referenced_signal_names`)
+// after ISF-ONLY-IR-PRUNE.2 removed the `decision_tree_fragments` IR surface.
+// `block_name`/`guard`/`action` are still computed locally inside
+// `parse_explicit_decision_tree_fragment` (for parse-validity `?` guards and
+// to derive the referenced signals) but no consumer reads them, so they are
+// no longer stored on this struct.
 #[derive(Debug, Clone)]
 struct ParsedDecisionTreeFragment {
-    block_name: String,
-    guard: Option<DecisionTreeGuardRecord>,
-    action: DecisionTreeActionRecord,
     referenced_signal_names: BTreeSet<String>,
 }
 
@@ -1751,16 +1715,6 @@ struct ParsedControlClause {
     predicate: Option<ControlExpressionRecord>,
     actions: Vec<ControlActionRecord>,
     referenced_signal_names: BTreeSet<String>,
-}
-
-#[derive(Debug, Clone)]
-struct DecisionTreeFragmentAccumulator {
-    block_name: String,
-    guard: Option<DecisionTreeGuardRecord>,
-    actions: Vec<DecisionTreeActionRecord>,
-    referenced_signal_names: BTreeSet<String>,
-    supporting_statement_ids: BTreeSet<String>,
-    automation_confidence: AutomationConfidence,
 }
 
 #[derive(Debug, Clone)]
@@ -2107,42 +2061,6 @@ fn build_system_contract(context: &SemanticContext) -> Option<SystemContractReco
     })
 }
 
-fn build_init_assignments(context: &SemanticContext) -> Vec<InitAssignmentRecord> {
-    let mut accumulators = BTreeMap::<String, InitAssignmentAccumulator>::new();
-
-    for statement in &context.statements {
-        let Some(parsed_init) = parse_explicit_init_assignment(&statement.text) else {
-            continue;
-        };
-
-        let entry = accumulators
-            .entry(parsed_init.target_signal.clone())
-            .or_insert_with(|| InitAssignmentAccumulator {
-                value: parsed_init.value.clone(),
-                supporting_statement_ids: BTreeSet::new(),
-                conflicting_value: false,
-            });
-        if entry.value != parsed_init.value {
-            entry.conflicting_value = true;
-        }
-        entry
-            .supporting_statement_ids
-            .insert(statement.statement_id.clone());
-    }
-
-    accumulators
-        .into_iter()
-        .filter_map(|(target_signal, entry)| {
-            (!entry.conflicting_value).then_some(InitAssignmentRecord {
-                target_signal,
-                value: entry.value,
-                supporting_statement_ids: entry.supporting_statement_ids.into_iter().collect(),
-                automation_confidence: AutomationConfidence::High,
-            })
-        })
-        .collect()
-}
-
 fn build_regular_states(context: &SemanticContext) -> Vec<RegularStateRecord> {
     let mut regular_states = Vec::<RegularStateRecord>::new();
     let mut state_index_by_name = HashMap::<String, usize>::new();
@@ -2221,56 +2139,6 @@ fn build_state_transitions(context: &SemanticContext) -> Vec<StateTransitionReco
     }
 
     state_transitions
-}
-
-fn build_decision_tree_fragments(context: &SemanticContext) -> Vec<DecisionTreeFragmentRecord> {
-    let mut accumulators: BTreeMap<String, DecisionTreeFragmentAccumulator> = BTreeMap::new();
-
-    for statement in &context.statements {
-        let Some(parsed_fragment) = parse_explicit_decision_tree_fragment(&statement.text) else {
-            continue;
-        };
-
-        let key =
-            decision_tree_fragment_key(&parsed_fragment.block_name, parsed_fragment.guard.as_ref());
-        let entry = accumulators
-            .entry(key)
-            .or_insert_with(|| DecisionTreeFragmentAccumulator {
-                block_name: parsed_fragment.block_name.clone(),
-                guard: parsed_fragment.guard.clone(),
-                actions: Vec::new(),
-                referenced_signal_names: BTreeSet::new(),
-                supporting_statement_ids: BTreeSet::new(),
-                automation_confidence: AutomationConfidence::High,
-            });
-        entry.actions.push(parsed_fragment.action);
-        entry
-            .referenced_signal_names
-            .extend(parsed_fragment.referenced_signal_names);
-        entry
-            .supporting_statement_ids
-            .insert(statement.statement_id.clone());
-    }
-
-    accumulators
-        .into_values()
-        .map(|entry| DecisionTreeFragmentRecord {
-            fragment_id: format!(
-                "dt_fragment_{}",
-                document_key(&format!(
-                    "{}_{}",
-                    entry.block_name,
-                    guard_key(entry.guard.as_ref())
-                ))
-            ),
-            block_name: entry.block_name,
-            guard: entry.guard,
-            actions: entry.actions,
-            referenced_signal_names: entry.referenced_signal_names.into_iter().collect(),
-            supporting_statement_ids: entry.supporting_statement_ids.into_iter().collect(),
-            automation_confidence: entry.automation_confidence,
-        })
-        .collect()
 }
 
 fn build_symbol_definitions(context: &SemanticContext) -> Vec<SymbolDefinitionRecord> {
@@ -2604,10 +2472,8 @@ fn build_explicit_module_record(accumulator: ExplicitModuleAccumulator) -> Expli
     let system_contract = build_system_contract(&scoped_context);
     let (interfaces, _interface_signal_conflicts) =
         build_interfaces(&scoped_context, None, &[], system_contract.as_ref());
-    let init_assignments = build_init_assignments(&scoped_context);
     let regular_states = build_regular_states(&scoped_context);
     let state_transitions = build_state_transitions(&scoped_context);
-    let decision_tree_fragments = build_decision_tree_fragments(&scoped_context);
     let symbol_definitions = build_symbol_definitions(&scoped_context);
     let control_blocks = build_control_blocks(
         &scoped_context,
@@ -2627,10 +2493,8 @@ fn build_explicit_module_record(accumulator: ExplicitModuleAccumulator) -> Expli
         declaration_order: accumulator.declaration_order,
         interfaces,
         system_contract,
-        init_assignments,
         regular_states,
         state_transitions,
-        decision_tree_fragments,
         symbol_definitions,
         control_blocks,
         supporting_statement_ids: accumulator.supporting_statement_ids.into_iter().collect(),
@@ -4960,7 +4824,8 @@ fn parse_explicit_decision_tree_fragment(text: &str) -> Option<ParsedDecisionTre
         (header, None)
     };
 
-    let block_name = normalize_decision_tree_block_name(raw_block_name)?;
+    // `?` keeps the parse-validity guard even though the value is unused now.
+    normalize_decision_tree_block_name(raw_block_name)?;
     let guard = match raw_guard {
         Some(guard_text) => Some(parse_explicit_decision_tree_guard(guard_text.trim())?),
         None => None,
@@ -4974,9 +4839,6 @@ fn parse_explicit_decision_tree_fragment(text: &str) -> Option<ParsedDecisionTre
     referenced_signal_names.extend(referenced_signal_names_for_action(&action));
 
     Some(ParsedDecisionTreeFragment {
-        block_name,
-        guard,
-        action,
         referenced_signal_names,
     })
 }
@@ -6019,10 +5881,6 @@ fn automation_confidence_rank(confidence: AutomationConfidence) -> u8 {
         AutomationConfidence::Medium => 2,
         AutomationConfidence::Low => 1,
     }
-}
-
-fn decision_tree_fragment_key(block_name: &str, guard: Option<&DecisionTreeGuardRecord>) -> String {
-    format!("{block_name}::{}", guard_key(guard))
 }
 
 fn control_block_key(
@@ -10430,13 +10288,13 @@ mod tests {
         ActorRelativeDirection, ControlActionRecord, ControlBinaryOperator, ControlBlockRole,
         ControlCompoundUpdateOperation, ControlDualOutputKind, ControlExpressionRecord,
         ControlReferenceKind, ControlReferenceSuffix, ControlUnaryOperator, CycleWindowRecord,
-        DecisionTreeActionRecord, DecisionTreeAssignmentKind, DecisionTreeComparisonOperator,
-        DecisionTreeGuardRecord, DecisionTreeValueRecord, InfrastructureTopologyKind,
-        InterfaceSignalDirection, InterfaceSignalSemanticRole, SemanticArbitrationDecisionBasis,
-        SemanticGroundingStrength, SemanticIr, SignalSemanticHintSourceKind, SignalSemanticTag,
-        SymbolDefinitionKind, SystemResetKind, SystemResetPolarity, SystemResetTargetKind,
-        SystemResetTimingRelation, control_binary_operator_key, control_block_role_key,
-        control_reference_kind_key, control_reference_suffix_key, control_unary_operator_key,
+        DecisionTreeComparisonOperator, DecisionTreeGuardRecord, DecisionTreeValueRecord,
+        InfrastructureTopologyKind, InterfaceSignalDirection, InterfaceSignalSemanticRole,
+        SemanticArbitrationDecisionBasis, SemanticGroundingStrength, SemanticIr,
+        SignalSemanticHintSourceKind, SignalSemanticTag, SymbolDefinitionKind, SystemResetKind,
+        SystemResetPolarity, SystemResetTargetKind, SystemResetTimingRelation,
+        control_binary_operator_key, control_block_role_key, control_reference_kind_key,
+        control_reference_suffix_key, control_unary_operator_key,
         decision_tree_comparison_operator_key, is_explicit_infrastructure_component_term, is_false,
         is_zero, split_control_header_keyword, width_hint_key,
     };
@@ -10835,7 +10693,7 @@ mod tests {
     }
 
     #[test]
-    fn extracts_typed_interface_signals_and_dt_fragments_from_explicit_markdown() -> Result<()> {
+    fn extracts_typed_interface_signals_from_explicit_markdown() -> Result<()> {
         let tempdir = tempdir()?;
         let source = tempdir.path().join("comb_dt.md");
         let source_artifact_base = tempdir.path().join("generated").join("source_ir");
@@ -10878,37 +10736,12 @@ mod tests {
                 && signal.width_hint == Some(WidthHint::Numeric(1))
                 && !signal.supporting_statement_ids.is_empty()
         }));
-        assert_eq!(semantic_ir.decision_tree_fragments.len(), 2);
-        assert!(semantic_ir.decision_tree_fragments.iter().any(|fragment| {
-            fragment.block_name == "route_data"
-                && !fragment.supporting_statement_ids.is_empty()
-                && matches!(
-                    fragment.actions.first(),
-                    Some(DecisionTreeActionRecord::Assign {
-                        target_signal,
-                        assignment_kind: DecisionTreeAssignmentKind::Combinational,
-                        value: DecisionTreeValueRecord::SignalRef { signal_name },
-                    }) if target_signal == "DATA_OUT" && signal_name == "DATA_IN"
-                )
-        }));
-        assert!(semantic_ir.decision_tree_fragments.iter().any(|fragment| {
-            fragment.block_name == "flag_zero"
-                && !fragment.supporting_statement_ids.is_empty()
-                && matches!(
-                    fragment.guard.as_ref(),
-                    Some(DecisionTreeGuardRecord::Comparison {
-                        left_signal,
-                        operator: DecisionTreeComparisonOperator::Eq,
-                        right: DecisionTreeValueRecord::Literal { literal },
-                    }) if left_signal == "DATA_IN" && literal == "8'0"
-                )
-        }));
 
         Ok(())
     }
 
     #[test]
-    fn extracts_system_contract_and_init_assignments_from_explicit_markdown() -> Result<()> {
+    fn extracts_system_contract_from_explicit_markdown() -> Result<()> {
         let tempdir = tempdir()?;
         let source = tempdir.path().join("seq_dt.md");
         let source_artifact_base = tempdir.path().join("generated").join("source_ir");
@@ -10961,42 +10794,6 @@ mod tests {
             AutomationConfidence::High
         );
         assert!(!system_contract.supporting_statement_ids.is_empty());
-        assert_eq!(semantic_ir.init_assignments.len(), 1);
-        assert!(matches!(
-            semantic_ir.init_assignments.first(),
-            Some(super::InitAssignmentRecord {
-                target_signal,
-                value: DecisionTreeValueRecord::Literal { literal },
-                ..
-            }) if target_signal == "ACC" && literal == "8'0"
-        ));
-        assert_eq!(
-            semantic_ir.init_assignments[0].automation_confidence,
-            AutomationConfidence::High
-        );
-        assert!(
-            !semantic_ir.init_assignments[0]
-                .supporting_statement_ids
-                .is_empty()
-        );
-        let accumulate_fragment = semantic_ir
-            .decision_tree_fragments
-            .iter()
-            .find(|fragment| fragment.block_name == "accumulate")
-            .expect("accumulate fragment should be present");
-        assert!(matches!(
-            accumulate_fragment.actions.first(),
-            Some(DecisionTreeActionRecord::Assign {
-                target_signal,
-                assignment_kind: DecisionTreeAssignmentKind::Sequential,
-                value: DecisionTreeValueRecord::SignalRef { signal_name },
-            }) if target_signal == "ACC" && signal_name == "DATA_IN"
-        ));
-        assert_eq!(
-            accumulate_fragment.automation_confidence,
-            AutomationConfidence::High
-        );
-        assert!(!accumulate_fragment.supporting_statement_ids.is_empty());
 
         Ok(())
     }
@@ -11113,12 +10910,6 @@ mod tests {
             AutomationConfidence::High
         );
         assert!(!system_contract.supporting_statement_ids.is_empty());
-        assert_eq!(semantic_ir.init_assignments.len(), 1);
-        assert!(
-            !semantic_ir.init_assignments[0]
-                .supporting_statement_ids
-                .is_empty()
-        );
 
         Ok(())
     }
@@ -11431,10 +11222,6 @@ mod tests {
         assert!(semantic_ir.explicit_modules.iter().any(|module| {
             module.module_name == "producer_core"
                 && module
-                    .decision_tree_fragments
-                    .iter()
-                    .any(|fragment| fragment.block_name == "produce")
-                && module
                     .control_blocks
                     .iter()
                     .any(|block| block.block_name == "produce")
@@ -11557,20 +11344,6 @@ mod tests {
                 && transition.automation_confidence == AutomationConfidence::High
                 && !transition.supporting_statement_ids.is_empty()
         }));
-        assert!(
-            semantic_ir
-                .decision_tree_fragments
-                .iter()
-                .any(|fragment| fragment.block_name == "idle"
-                    && !fragment.supporting_statement_ids.is_empty())
-        );
-        assert!(
-            semantic_ir
-                .decision_tree_fragments
-                .iter()
-                .any(|fragment| fragment.block_name == "busy"
-                    && !fragment.supporting_statement_ids.is_empty())
-        );
 
         Ok(())
     }

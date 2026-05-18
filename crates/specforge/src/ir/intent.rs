@@ -12,8 +12,7 @@ use crate::ir::evidence::{
 use crate::ir::semantic::{
     ActorPortRecord, ConditionalRuleRecord, ControlActionRecord, ControlBinaryOperator,
     ControlBlockRecord, ControlCompoundUpdateOperation, ControlExpressionRecord,
-    DecisionTreeFragmentRecord, ExplicitModuleRecord, ExplicitTopRecord,
-    InfrastructureSignalRecord, InitAssignmentRecord, InterfaceRecord,
+    ExplicitModuleRecord, ExplicitTopRecord, InfrastructureSignalRecord, InterfaceRecord,
     InterfaceSignalConflictRecord, RegisterRecord, RegularStateRecord, SemanticIr,
     SignalConnectivityConflictRecord, SignalConnectivityRecord, SignalConstraintRecord,
     StateTransitionRecord, SymbolDefinitionRecord, SystemContractRecord, TemporalConflictRecord,
@@ -59,13 +58,9 @@ pub struct IntentIr {
     pub constraints: Vec<IntentConstraint>,
     pub assumptions: Vec<IntentAssumption>,
     #[serde(default)]
-    pub init_assignments: Vec<InitAssignmentRecord>,
-    #[serde(default)]
     pub regular_states: Vec<RegularStateRecord>,
     #[serde(default)]
     pub state_transitions: Vec<StateTransitionRecord>,
-    #[serde(default)]
-    pub decision_tree_fragments: Vec<DecisionTreeFragmentRecord>,
     #[serde(default)]
     pub symbol_definitions: Vec<SymbolDefinitionRecord>,
     #[serde(default)]
@@ -163,10 +158,8 @@ impl IntentIr {
         let behaviors = build_behaviors(&context, actor_ids);
         let constraints = build_constraints(&context);
         let assumptions = build_assumptions(&context, &actors);
-        let init_assignments = semantic_ir.init_assignments.clone();
         let regular_states = semantic_ir.regular_states.clone();
         let state_transitions = semantic_ir.state_transitions.clone();
-        let decision_tree_fragments = semantic_ir.decision_tree_fragments.clone();
         let symbol_definitions = semantic_ir.symbol_definitions.clone();
         let control_blocks = semantic_ir.control_blocks.clone();
         let explicit_modules = semantic_ir.explicit_modules.clone();
@@ -201,10 +194,8 @@ impl IntentIr {
             system_contract.as_ref(),
             &behaviors,
             &constraints,
-            &init_assignments,
             &regular_states,
             &state_transitions,
-            &decision_tree_fragments,
             &symbol_definitions,
             &control_blocks,
             &explicit_modules,
@@ -233,10 +224,8 @@ impl IntentIr {
             behaviors,
             constraints,
             assumptions,
-            init_assignments,
             regular_states,
             state_transitions,
-            decision_tree_fragments,
             symbol_definitions,
             control_blocks,
             explicit_modules,
@@ -467,10 +456,8 @@ fn build_intent_identity(
     system_contract: Option<&SystemContractRecord>,
     behaviors: &[BehaviorIntent],
     constraints: &[IntentConstraint],
-    init_assignments: &[InitAssignmentRecord],
     regular_states: &[RegularStateRecord],
     state_transitions: &[StateTransitionRecord],
-    decision_tree_fragments: &[DecisionTreeFragmentRecord],
     symbol_definitions: &[SymbolDefinitionRecord],
     control_blocks: &[ControlBlockRecord],
     explicit_modules: &[ExplicitModuleRecord],
@@ -479,16 +466,14 @@ fn build_intent_identity(
     IntentIdentity {
         intent_id: format!("intent_{}", document_identity.document_key),
         summary: format!(
-            "backend-neutral intent for {} covering {} actors, {} interfaces, {} behaviors, {} constraints, {} init assignments, {} regular states, {} state transitions, {} control fragments, {} symbol definitions, {} structured control blocks, {} explicit modules, {} explicit tops, and {} explicit system contract",
+            "backend-neutral intent for {} covering {} actors, {} interfaces, {} behaviors, {} constraints, {} regular states, {} state transitions, {} symbol definitions, {} structured control blocks, {} explicit modules, {} explicit tops, and {} explicit system contract",
             document_identity.display_name,
             actors.len(),
             interfaces.len(),
             behaviors.len(),
             constraints.len(),
-            init_assignments.len(),
             regular_states.len(),
             state_transitions.len(),
-            decision_tree_fragments.len(),
             symbol_definitions.len(),
             control_blocks.len(),
             explicit_modules.len(),
@@ -2619,7 +2604,7 @@ mod tests {
     }
 
     #[test]
-    fn carries_typed_interface_and_control_fragments_into_intent_ir() -> Result<()> {
+    fn carries_typed_interface_into_intent_ir() -> Result<()> {
         let tempdir = tempdir()?;
         let source = tempdir.path().join("comb_dt.md");
         let source_artifact_base = tempdir.path().join("generated").join("source_ir");
@@ -2656,19 +2641,6 @@ mod tests {
                     && signal.width_hint.as_ref().and_then(|w| w.as_numeric()) == Some(8)
             })
         }));
-        assert_eq!(intent_ir.decision_tree_fragments.len(), 2);
-        assert!(
-            intent_ir
-                .decision_tree_fragments
-                .iter()
-                .any(|fragment| fragment.block_name == "route_data")
-        );
-        assert!(
-            intent_ir
-                .intent_identity
-                .summary
-                .contains("control fragments")
-        );
 
         Ok(())
     }
@@ -2733,7 +2705,7 @@ mod tests {
     }
 
     #[test]
-    fn carries_system_contract_and_init_assignments_into_intent_ir() -> Result<()> {
+    fn carries_system_contract_into_intent_ir() -> Result<()> {
         let tempdir = tempdir()?;
         let source = tempdir.path().join("seq_dt.md");
         let source_artifact_base = tempdir.path().join("generated").join("source_ir");
@@ -2791,7 +2763,6 @@ mod tests {
             system_contract.automation_confidence,
             AutomationConfidence::High
         );
-        assert_eq!(intent_ir.init_assignments.len(), 1);
         assert!(
             intent_ir
                 .intent_identity
@@ -2861,7 +2832,6 @@ mod tests {
             system_contract.automation_confidence,
             AutomationConfidence::High
         );
-        assert_eq!(intent_ir.init_assignments.len(), 1);
 
         Ok(())
     }
@@ -2961,13 +2931,12 @@ mod tests {
 
         assert_eq!(intent_ir.explicit_modules.len(), 2);
         assert_eq!(intent_ir.explicit_tops.len(), 1);
-        assert!(intent_ir.explicit_modules.iter().any(|module| {
-            module.module_name == "producer_core"
-                && module
-                    .decision_tree_fragments
-                    .iter()
-                    .any(|fragment| fragment.block_name == "produce")
-        }));
+        assert!(
+            intent_ir
+                .explicit_modules
+                .iter()
+                .any(|module| { module.module_name == "producer_core" })
+        );
         assert!(intent_ir.explicit_tops.iter().any(|top| {
             top.top_name == "datapath" && top.children.len() == 2 && top.links.len() == 2
         }));

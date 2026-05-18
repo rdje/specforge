@@ -2,6 +2,34 @@
 
 ## 2026-05-18 (Post-ISF-ONLY audit + PNT remediation)
 
+### ISF-ONLY-IR-PRUNE.2 — remove dead `.fsm`-era init_assignments + decision_tree_fragments IR
+- Both genuinely-orphaned `.fsm`-era IR surfaces removed end-to-end per
+  the `.1` plan: `semantic.rs` (`InitAssignmentRecord`/`DecisionTreeFragmentRecord`
+  types, the 2 producer fns, 2 dead accumulators, `decision_tree_fragment_key`,
+  main+secondary struct fields), `intent.rs` (fields, import, carries,
+  the intent-summary fn param/string), `converge.rs` (both snapshot
+  structs + populators + the stability sum + test fixtures),
+  `learn_priors.rs` (ctor + JSON test), `INTENTIR_SPEC.md` JSON example.
+  ~19 test sites reconciled (removed-surface assertions deleted; 3 tests
+  renamed to drop the removed surface; retained-surface assertions kept).
+- Kept as one unified leaf (not split): the two surfaces are
+  structurally-identical dead carriers removed by the same mechanical
+  pattern in the same sites — splitting would double-touch identical
+  lines.
+- The `.1` converge "care point" materialized exactly as predicted and
+  was handled correctly (not blind-deleted): the 2 `fact_count` unit
+  tests asserted an absolute total that included the removed terms →
+  literals updated 23→21 (semantic) / 19→17 (intent); convergence
+  *delta* behavior is unchanged (the surface is gone from every
+  snapshot equally). In-scope cleanup: `ParsedDecisionTreeFragment`
+  trimmed to its sole still-read field (`referenced_signal_names`)
+  because `parse_explicit_decision_tree_fragment` is retained for
+  signal-connectivity extraction.
+- `regular_states`/`state_transitions` untouched (load-bearing, `.3`
+  superseded). `cargo check` zero warnings; full `scripts/run_ci.sh`
+  green (1054 passed, 0 failed); kg-bench / `vlm_state_machine_*`
+  fixtures intact (no R10/R15c/R15e/R7 regression).
+
 ### ISF-ONLY-IR-PRUNE.1 — impact analysis + per-file removal plan
 - Full repo grep inventory of `init_assignments`,
   `decision_tree_fragments`, `regular_states`, `state_transitions`
