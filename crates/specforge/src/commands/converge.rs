@@ -768,34 +768,34 @@ impl IntentSnapshot {
 struct AdapterSnapshot {
     lowering_status: AdapterLoweringStatus,
     residual_decisions: usize,
-    signal_inventory: usize,
-    decision_tree_candidates: usize,
-    state_candidates: usize,
-    transition_candidates: usize,
-    module_candidates: usize,
-    top_candidates: usize,
+    signal_count: usize,
+    transaction_count: usize,
+    rule_count: usize,
+    constant_count: usize,
+    enum_count: usize,
+    storage_count: usize,
     renderable: bool,
 }
 
 impl AdapterSnapshot {
     fn from_artifact(artifact: &AdapterArtifact) -> Self {
         let (
-            signal_inventory,
-            decision_tree_candidates,
-            state_candidates,
-            transition_candidates,
-            module_candidates,
-            top_candidates,
+            signal_count,
+            transaction_count,
+            rule_count,
+            constant_count,
+            enum_count,
+            storage_count,
             renderable,
-        ) = if let Some(fsm) = artifact.fsm.as_ref() {
+        ) = if let Some(isf) = artifact.isf.as_ref() {
             (
-                fsm.signal_inventory.len(),
-                fsm.decision_tree_candidates.len(),
-                fsm.state_candidates.len(),
-                fsm.transition_candidates.len(),
-                fsm.module_candidates.len(),
-                fsm.top_candidates.len(),
-                fsm.renderability.is_renderable,
+                isf.signal_count,
+                isf.transaction_count,
+                isf.rule_count,
+                isf.constant_count,
+                isf.enum_count,
+                isf.storage_count,
+                isf.is_renderable,
             )
         } else {
             (0, 0, 0, 0, 0, 0, false)
@@ -804,12 +804,12 @@ impl AdapterSnapshot {
         Self {
             lowering_status: artifact.lowering_status,
             residual_decisions: artifact.residual_decisions.len(),
-            signal_inventory,
-            decision_tree_candidates,
-            state_candidates,
-            transition_candidates,
-            module_candidates,
-            top_candidates,
+            signal_count,
+            transaction_count,
+            rule_count,
+            constant_count,
+            enum_count,
+            storage_count,
             renderable,
         }
     }
@@ -888,7 +888,7 @@ mod tests {
 
         let result = run_convergence(ConvergeArgs {
             source: source.clone(),
-            target: AdapterTargetArg::Fsm,
+            target: AdapterTargetArg::Isf,
             max_iterations: 4,
             vlm_provider: VlmProviderArg::Skip,
             vlm_model: None,
@@ -952,7 +952,7 @@ mod tests {
     fn converge_rejects_execute_rescan_plan_without_plan() {
         let err = run_convergence(ConvergeArgs {
             source: PathBuf::from("missing.md"),
-            target: AdapterTargetArg::Fsm,
+            target: AdapterTargetArg::Isf,
             max_iterations: 1,
             vlm_provider: VlmProviderArg::Skip,
             vlm_model: None,

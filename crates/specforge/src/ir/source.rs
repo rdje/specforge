@@ -681,7 +681,7 @@ impl SourceIr {
             residual_decisions,
             validation_reports: Vec::new(),
             downstream_stages: vec![IrStage::EvidenceIr, IrStage::SemanticIr, IrStage::IntentIr],
-            adapter_targets: vec![AdapterTarget::Fsm],
+            adapter_targets: vec![AdapterTarget::Isf],
             planned_actions,
             automation_confidence,
         })
@@ -1150,7 +1150,7 @@ mod tests {
         assert!(source_ir.placeholder_bindings.is_empty());
         assert_eq!(source_ir.automation_confidence, AutomationConfidence::High);
         assert!(!source_ir.adapter_targets.is_empty());
-        assert!(source_ir.adapter_targets.contains(&AdapterTarget::Fsm));
+        assert!(source_ir.adapter_targets.contains(&AdapterTarget::Isf));
         assert_eq!(
             source_ir.document_identity.origin_kind,
             SourceKind::Markdown

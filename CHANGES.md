@@ -64,6 +64,34 @@
   `cli.rs`. Only `Fsm`/`Isf` remain (Fsm removed in `.4`).
 - Compiles independently; `scripts/run_ci.sh` green.
 
+### ISF-ONLY-CONSOLIDATION.4: atomic FSM removal
+- Single atomic slice (the `AdapterTarget::Fsm` / `AdapterArtifact.fsm` /
+  `FsmAdapterArtifact` / FSM code+tests are mutually dependent — no partial
+  removal compiles).
+- `crates/specforge/src/ir/adapters.rs`: **28,113 → 575 lines** (−27,964).
+  Reconstructed as an ISF-only module via a verified keep-range splice
+  (shared `AdapterTarget`/`AdapterStatus`/`AdapterPlan`/
+  `AdapterLoweringStatus`/`AdapterArtifact`+impl/`AdapterArtifactLayout`/
+  `AdapterIdentity`/`IsfAdapterArtifact`, the 5 ISF fns + renderability
+  policy, `canonicalize_existing_path`, `StageProbe`) + a minimal ISF-only
+  test module (3 ISF tests + generic `build_intent_ir_from_markdown`).
+  Removed: `FsmAdapterArtifact` + ~25 `Fsm*` candidate structs,
+  `build_fsm_adapter_artifact` + ~150 FSM lowering/renderability helpers,
+  `validate_system_*_renderability`, and ~160 FSM `#[test]` fns
+  (adapters.rs test fns 163 → 3).
+- `AdapterTarget` is now `{ Isf }`; `AdapterArtifact.fsm` field removed;
+  `IrStage::FsmAdapter` removed (`ir/mod.rs`).
+- `validate.rs`: deleted `validate_fsm_adapter` /
+  `persist_fsm_adapter_validation` / `fsm_adapter_fingerprint` / the
+  `IrStage::FsmAdapter` dispatch arm / the FSM adapter test.
+- `project_validation.rs`: all 25 `IrStage::FsmAdapter` match sites
+  reduced to ISF-only.
+- `cli.rs` `AdapterTargetArg` → `{ Isf }`; `adapt.rs` FSM print block
+  removed; `converge.rs` `AdapterSnapshot` reshaped to ISF metrics;
+  `source.rs` default `adapter_targets` → `[Isf]`.
+- `subs/fsmgen` + the ISF↔FSMGen strict test retained. `src` total
+  ~110K → ~82K lines. `scripts/run_ci.sh` green.
+
 ## 2026-05-17 (R6-ISF-ADAPTER batch — ISF adapter ownership backfill + hardening)
 
 ### Created: R6-ISF-ADAPTER task tree (lane R6, 5-leaf authorized batch)

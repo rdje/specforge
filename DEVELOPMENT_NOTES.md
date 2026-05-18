@@ -56,6 +56,20 @@
   FSM removal. `.3` done: removed all SystemVerilog/Verilog/VHDL variants,
   plans, dispatch arms, source defaults, and CLI args; only `Fsm`/`Isf`
   remain pending `.4`.
+- `.4` (atomic FSM removal — the largest single change in project history):
+  reconstructed `adapters.rs` 28,113 → 575 lines via a verified
+  keep-range Python splice (shared + ISF + `canonicalize_existing_path` +
+  `StageProbe`) plus a hand-written minimal ISF-only test module, then
+  compiler-driven cleanup. Chose reconstruction over in-place mass-Edit
+  because ~27K interleaved FSM lines cannot be excised reliably by hand.
+  `FsmAdapterArtifact`, ~25 `Fsm*` structs, `build_fsm_adapter_artifact` +
+  ~150 helpers, `validate_system_*_renderability`, ~160 FSM tests,
+  `validate_fsm_adapter`/persist/fingerprint, `AdapterTarget::Fsm`,
+  `AdapterArtifact.fsm`, `IrStage::FsmAdapter`, and all FSM match arms in
+  `project_validation.rs` (25 sites) are gone. The CI gate caught a
+  `collapsible_if` clippy error in the carried-over fsmgen test (fixed via
+  let-chain) — signoff working as intended. `subs/fsmgen` + the ISF↔FSMGen
+  strict test are retained. Net `src` ~110K → ~82K lines.
 
 ## 2026-05-17 session — R6-ISF-ADAPTER batch (ISF ownership backfill + hardening)
 

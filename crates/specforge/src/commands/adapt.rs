@@ -33,25 +33,6 @@ pub fn run(args: AdaptArgs) -> Result<()> {
         println!("document_key: {}", adapter.document_identity.document_key);
         println!("target: {}", adapter.target.as_str());
         println!("lowering_status: {}", adapter.lowering_status.as_str());
-        if let Some(fsm) = &adapter.fsm {
-            println!(
-                "selected_root_kind: {}",
-                fsm.root_kind_decision.selected_root_kind.as_str()
-            );
-            println!("signal_candidate_count: {}", fsm.signal_inventory.len());
-            println!(
-                "decision_tree_candidate_count: {}",
-                fsm.decision_tree_candidates.len()
-            );
-            println!("state_candidate_count: {}", fsm.state_candidates.len());
-            println!(
-                "transition_candidate_count: {}",
-                fsm.transition_candidates.len()
-            );
-            println!("module_candidate_count: {}", fsm.module_candidates.len());
-            println!("top_candidate_count: {}", fsm.top_candidates.len());
-            println!("renderable: {}", fsm.renderability.is_renderable);
-        }
         if let Some(isf) = &adapter.isf {
             println!("actor_name: {}", isf.actor_name);
             println!("is_renderable: {}", isf.is_renderable);

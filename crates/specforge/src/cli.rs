@@ -71,7 +71,7 @@ pub struct ConvergeArgs {
     /// Source specification file to iterate on
     pub source: PathBuf,
     /// Adapter target to materialize each pass
-    #[arg(long, value_enum, default_value = "fsm")]
+    #[arg(long, value_enum, default_value = "isf")]
     pub target: AdapterTargetArg,
     /// Safety cap on whole-pipeline convergence passes
     #[arg(long, default_value = "8")]
@@ -148,8 +148,6 @@ pub struct IntentArgs {
 
 #[derive(Debug, Clone, Copy, ValueEnum)]
 pub enum AdapterTargetArg {
-    #[value(name = "fsm")]
-    Fsm,
     #[value(name = "isf")]
     Isf,
 }
@@ -157,7 +155,6 @@ pub enum AdapterTargetArg {
 impl From<AdapterTargetArg> for AdapterTarget {
     fn from(value: AdapterTargetArg) -> Self {
         match value {
-            AdapterTargetArg::Fsm => AdapterTarget::Fsm,
             AdapterTargetArg::Isf => AdapterTarget::Isf,
         }
     }

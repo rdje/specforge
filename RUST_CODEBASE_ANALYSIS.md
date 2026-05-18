@@ -4,6 +4,37 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-18 ISF-ONLY-CONSOLIDATION — HDL + `.fsm` removed; `.isf` is the sole adapter)
+
+Major architecture change (user-authorized `ISF-ONLY-CONSOLIDATION` batch).
+SpecForge now emits only `.isf`; FSMGen owns scheduling/`.fsm`/HDL downstream.
+
+- **Adapter layer collapsed to ISF.** `crates/specforge/src/ir/adapters.rs`
+  went from **28,113 → 575 lines**: it is now just the shared adapter
+  scaffolding (`AdapterTarget` = `{Isf}`, `AdapterStatus`, `AdapterPlan`,
+  `AdapterLoweringStatus`, `AdapterArtifact` + impl, `AdapterArtifactLayout`,
+  `AdapterIdentity`, `IsfAdapterArtifact`), the 5 ISF lowering fns + the
+  renderability-policy comment, `canonicalize_existing_path`, `StageProbe`,
+  and a 3-test ISF module. All FSM lowering (`FsmAdapterArtifact`, ~25
+  `Fsm*` structs, `build_fsm_adapter_artifact` + ~150 helpers,
+  `validate_system_*_renderability`) and ~160 FSM tests are gone.
+- **Type surface narrowed.** `AdapterArtifact.fsm` removed; `IrStage` no
+  longer has `FsmAdapter`; `AdapterTargetArg` = `{Isf}`.
+  `validate.rs` lost `validate_fsm_adapter`/persist/fingerprint + dispatch;
+  `project_validation.rs` lost all 25 FSM `IrStage` match sites;
+  `converge.rs` `AdapterSnapshot` now tracks ISF metrics; `cli.rs`
+  `--target` defaults to `isf`.
+- **IR module count: 7** (`isf_ir.rs` is the typed ISF IR; `adapters.rs`
+  is now effectively the ISF adapter + shared scaffolding). Whole
+  `crates/specforge/src` ~110K → ~82K lines.
+- `subs/fsmgen` submodule and `isf_output_passes_fsmgen_strict_validation`
+  retained — FSMGen is the downstream `.isf` consumer.
+- Lib test count dropped sharply (~160 FSM adapter tests removed); the
+  exact post-removal count is recorded in CHANGES/MEMORY for this slice.
+- `scripts/run_ci.sh` green (clippy/fmt/tests/rustdoc/mdBook). Recommended
+  direction: `.5` retires FSM-adapter-only kg fixtures, `.6` sweeps the
+  mdBook, `.7` reconciles remaining live docs + closes the tree.
+
 ## Session update (2026-05-17 R6-ISF-ADAPTER batch — ISF ownership backfilled)
 
 - The ISF adapter is no longer untracked: `R6-ISF-ADAPTER` (lane R6, authorized

@@ -450,7 +450,7 @@ fn project_artifact(artifact: &Path, repo_root: &Path) -> Result<ProjectedArtifa
                 ir.validation_reports,
             )
         }
-        IrStage::FsmAdapter | IrStage::IsfAdapter => {
+        IrStage::IsfAdapter => {
             let artifact = AdapterArtifact::load_from_path(&artifact_path)?;
             projected_snapshot(
                 artifact.document_identity.document_key,
@@ -1428,7 +1428,6 @@ fn recommended_rescan_commands(
             IrStage::EvidenceIr => "rebuild_evidence_ir",
             IrStage::SemanticIr => "rebuild_semantic_ir",
             IrStage::IntentIr => "rebuild_intent_ir",
-            IrStage::FsmAdapter => "rebuild_fsm_adapter",
             IrStage::IsfAdapter => "rebuild_isf_adapter",
         };
         let rebuild_command = match stage {
@@ -1436,7 +1435,6 @@ fn recommended_rescan_commands(
             IrStage::EvidenceIr => Some(vec!["evidence".to_string(), input_path]),
             IrStage::SemanticIr => Some(vec!["semantic".to_string(), input_path]),
             IrStage::IntentIr => Some(vec!["intent".to_string(), input_path]),
-            IrStage::FsmAdapter => Some(vec!["fsm".to_string(), input_path]),
             IrStage::IsfAdapter => Some(vec!["isf".to_string(), input_path]),
         };
         if let Some(args) = rebuild_command {
@@ -1593,7 +1591,7 @@ fn evidence_input_for_snapshot_stage(
     snapshot: &ProjectedArtifactSnapshot,
 ) -> Option<PathBuf> {
     match stage {
-        IrStage::SourceIr | IrStage::FsmAdapter | IrStage::IsfAdapter => None,
+        IrStage::SourceIr | IrStage::IsfAdapter => None,
         IrStage::EvidenceIr => Some(snapshot.artifact_path.clone()),
         IrStage::SemanticIr => snapshot
             .replay_inputs
@@ -2060,7 +2058,6 @@ fn extractor_lane_for_rescan(stage: IrStage, finding: &ValidationFindingRecord) 
         IrStage::EvidenceIr => "evidence_ir_multimodal_semantic_corroboration",
         IrStage::SemanticIr => "semantic_ir_conflict_corroboration",
         IrStage::IntentIr => "intent_ir_canonical_surface_corroboration",
-        IrStage::FsmAdapter => "fsm_adapter_rescan",
         IrStage::IsfAdapter => "isf_adapter_rescan",
     }
 }
@@ -2081,7 +2078,7 @@ fn recommended_rescan_action(stage: IrStage, finding: &ValidationFindingRecord) 
             IrStage::IntentIr => {
                 "restart from SourceIR through EvidenceIR, SemanticIR, and IntentIR, then validate whether the related canonical conflict or residual ids still reproduce from current-document evidence"
             }
-            IrStage::SourceIr | IrStage::FsmAdapter | IrStage::IsfAdapter => unreachable!(
+            IrStage::SourceIr | IrStage::IsfAdapter => unreachable!(
                 "negative-knowledge specialized action only applies to evidence/semantic/intent rescans"
             ),
         };
@@ -2095,7 +2092,7 @@ fn recommended_rescan_action(stage: IrStage, finding: &ValidationFindingRecord) 
             IrStage::IntentIr => {
                 "run local NLP enrichment on EvidenceIR, rebuild SemanticIR and IntentIR, and validate whether the related temporal source ids survive as typed temporal rules without blind promotion"
             }
-            IrStage::SourceIr | IrStage::EvidenceIr | IrStage::FsmAdapter | IrStage::IsfAdapter => {
+            IrStage::SourceIr | IrStage::EvidenceIr | IrStage::IsfAdapter => {
                 unreachable!(
                     "temporal-rule-surface specialized action only applies to semantic/intent rescans"
                 )
@@ -2111,7 +2108,7 @@ fn recommended_rescan_action(stage: IrStage, finding: &ValidationFindingRecord) 
             IrStage::IntentIr => {
                 "run local NLP enrichment on EvidenceIR, rebuild SemanticIR and IntentIR, and validate whether the related actor-signal relation ids survive as actor-relative port direction records instead of relation-only graph evidence"
             }
-            IrStage::SourceIr | IrStage::EvidenceIr | IrStage::FsmAdapter | IrStage::IsfAdapter => {
+            IrStage::SourceIr | IrStage::EvidenceIr | IrStage::IsfAdapter => {
                 unreachable!(
                     "actor-port-gap specialized action only applies to semantic/intent rescans"
                 )
@@ -2127,7 +2124,7 @@ fn recommended_rescan_action(stage: IrStage, finding: &ValidationFindingRecord) 
             IrStage::IntentIr => {
                 "run local NLP enrichment on EvidenceIR, rebuild SemanticIR and IntentIR, and validate whether the related signal ids now survive with a decisive semantic-role outcome instead of contested arbitration"
             }
-            IrStage::SourceIr | IrStage::EvidenceIr | IrStage::FsmAdapter | IrStage::IsfAdapter => {
+            IrStage::SourceIr | IrStage::EvidenceIr | IrStage::IsfAdapter => {
                 unreachable!(
                     "semantic-role-arbitration specialized action only applies to semantic/intent rescans"
                 )
@@ -2143,7 +2140,7 @@ fn recommended_rescan_action(stage: IrStage, finding: &ValidationFindingRecord) 
             IrStage::IntentIr => {
                 "run local NLP enrichment on EvidenceIR, rebuild SemanticIR and IntentIR, and validate whether the related signal ids survive with observation-backed semantic-role consensus instead of fallback-only role meaning"
             }
-            IrStage::SourceIr | IrStage::EvidenceIr | IrStage::FsmAdapter | IrStage::IsfAdapter => {
+            IrStage::SourceIr | IrStage::EvidenceIr | IrStage::IsfAdapter => {
                 unreachable!(
                     "semantic-role-consensus specialized action only applies to semantic/intent rescans"
                 )
@@ -2159,7 +2156,7 @@ fn recommended_rescan_action(stage: IrStage, finding: &ValidationFindingRecord) 
             IrStage::IntentIr => {
                 "run local NLP enrichment on EvidenceIR, rebuild SemanticIR and IntentIR, and validate whether the related signal ids survive with direct or corroborating non-alias semantic-role consensus instead of alias-dependent carry-through"
             }
-            IrStage::SourceIr | IrStage::EvidenceIr | IrStage::FsmAdapter | IrStage::IsfAdapter => {
+            IrStage::SourceIr | IrStage::EvidenceIr | IrStage::IsfAdapter => {
                 unreachable!(
                     "alias-dependent semantic-consensus specialized action only applies to semantic/intent rescans"
                 )
@@ -2175,7 +2172,7 @@ fn recommended_rescan_action(stage: IrStage, finding: &ValidationFindingRecord) 
             IrStage::IntentIr => {
                 "run local NLP enrichment on EvidenceIR, rebuild SemanticIR and IntentIR, and validate whether the related signal ids survive with stronger current-document semantic-role consensus instead of prior-guided carry-through"
             }
-            IrStage::SourceIr | IrStage::EvidenceIr | IrStage::FsmAdapter | IrStage::IsfAdapter => {
+            IrStage::SourceIr | IrStage::EvidenceIr | IrStage::IsfAdapter => {
                 unreachable!(
                     "prior-guided semantic-consensus specialized action only applies to semantic/intent rescans"
                 )
@@ -2191,7 +2188,7 @@ fn recommended_rescan_action(stage: IrStage, finding: &ValidationFindingRecord) 
             IrStage::IntentIr => {
                 "run local NLP enrichment on EvidenceIR, rebuild SemanticIR and IntentIR, and validate whether the related signal ids survive with producer-side connectivity evidence instead of remaining producerless"
             }
-            IrStage::SourceIr | IrStage::EvidenceIr | IrStage::FsmAdapter | IrStage::IsfAdapter => {
+            IrStage::SourceIr | IrStage::EvidenceIr | IrStage::IsfAdapter => {
                 unreachable!(
                     "connectivity-producer specialized action only applies to semantic/intent rescans"
                 )
@@ -2207,7 +2204,7 @@ fn recommended_rescan_action(stage: IrStage, finding: &ValidationFindingRecord) 
             IrStage::IntentIr => {
                 "run local NLP enrichment on EvidenceIR, rebuild SemanticIR and IntentIR, and validate whether the related signal ids survive with consumer-side connectivity evidence instead of remaining consumerless"
             }
-            IrStage::SourceIr | IrStage::EvidenceIr | IrStage::FsmAdapter | IrStage::IsfAdapter => {
+            IrStage::SourceIr | IrStage::EvidenceIr | IrStage::IsfAdapter => {
                 unreachable!(
                     "connectivity-consumer specialized action only applies to semantic/intent rescans"
                 )
@@ -2223,7 +2220,7 @@ fn recommended_rescan_action(stage: IrStage, finding: &ValidationFindingRecord) 
             IrStage::IntentIr => {
                 "run local NLP enrichment on EvidenceIR, rebuild SemanticIR and IntentIR, and validate whether the related interface conflict ids survive with consistent direction/width declarations instead of unresolved interface-shape ambiguity"
             }
-            IrStage::SourceIr | IrStage::EvidenceIr | IrStage::FsmAdapter | IrStage::IsfAdapter => {
+            IrStage::SourceIr | IrStage::EvidenceIr | IrStage::IsfAdapter => {
                 unreachable!(
                     "interface-signal-conflict specialized action only applies to semantic/intent rescans"
                 )
@@ -2239,7 +2236,7 @@ fn recommended_rescan_action(stage: IrStage, finding: &ValidationFindingRecord) 
             IrStage::IntentIr => {
                 "run local NLP enrichment on EvidenceIR, rebuild SemanticIR and IntentIR, and validate whether the related temporal conflict ids survive with a single locally corroborated timing obligation instead of contradictory value obligations"
             }
-            IrStage::SourceIr | IrStage::EvidenceIr | IrStage::FsmAdapter | IrStage::IsfAdapter => {
+            IrStage::SourceIr | IrStage::EvidenceIr | IrStage::IsfAdapter => {
                 unreachable!(
                     "temporal-conflict specialized action only applies to semantic/intent rescans"
                 )
@@ -2255,7 +2252,7 @@ fn recommended_rescan_action(stage: IrStage, finding: &ValidationFindingRecord) 
             IrStage::IntentIr => {
                 "run local NLP enrichment on EvidenceIR, rebuild SemanticIR and IntentIR, and validate whether the related polarity conflict ids survive with a single locally corroborated active-level interpretation instead of unresolved polarity disagreement"
             }
-            IrStage::SourceIr | IrStage::EvidenceIr | IrStage::FsmAdapter | IrStage::IsfAdapter => {
+            IrStage::SourceIr | IrStage::EvidenceIr | IrStage::IsfAdapter => {
                 unreachable!(
                     "signal-polarity-conflict specialized action only applies to semantic/intent rescans"
                 )
@@ -2271,7 +2268,7 @@ fn recommended_rescan_action(stage: IrStage, finding: &ValidationFindingRecord) 
             IrStage::IntentIr => {
                 "run local NLP enrichment on EvidenceIR, rebuild SemanticIR and IntentIR, and validate whether the related semantic conflict ids survive with a single locally corroborated role meaning instead of unresolved semantic-role disagreement"
             }
-            IrStage::SourceIr | IrStage::EvidenceIr | IrStage::FsmAdapter | IrStage::IsfAdapter => {
+            IrStage::SourceIr | IrStage::EvidenceIr | IrStage::IsfAdapter => {
                 unreachable!(
                     "signal-semantic-conflict specialized action only applies to semantic/intent rescans"
                 )
@@ -2287,7 +2284,7 @@ fn recommended_rescan_action(stage: IrStage, finding: &ValidationFindingRecord) 
             IrStage::IntentIr => {
                 "run local NLP enrichment on EvidenceIR, rebuild SemanticIR and IntentIR, and validate whether the related connectivity conflict ids survive with single-producer connectivity instead of unresolved producer ambiguity"
             }
-            IrStage::SourceIr | IrStage::EvidenceIr | IrStage::FsmAdapter | IrStage::IsfAdapter => {
+            IrStage::SourceIr | IrStage::EvidenceIr | IrStage::IsfAdapter => {
                 unreachable!(
                     "signal-connectivity-conflict specialized action only applies to semantic/intent rescans"
                 )
@@ -2303,7 +2300,7 @@ fn recommended_rescan_action(stage: IrStage, finding: &ValidationFindingRecord) 
             IrStage::IntentIr => {
                 "run local NLP enrichment on EvidenceIR, rebuild SemanticIR and IntentIR, and validate whether the related graph-direction conflict ids survive with one actor-relative direction per actor-signal edge instead of unresolved same-actor direction disagreement"
             }
-            IrStage::SourceIr | IrStage::EvidenceIr | IrStage::FsmAdapter | IrStage::IsfAdapter => {
+            IrStage::SourceIr | IrStage::EvidenceIr | IrStage::IsfAdapter => {
                 unreachable!(
                     "graph-direction-conflict specialized action only applies to semantic/intent rescans"
                 )
@@ -2319,7 +2316,7 @@ fn recommended_rescan_action(stage: IrStage, finding: &ValidationFindingRecord) 
             IrStage::IntentIr => {
                 "run local NLP enrichment on EvidenceIR, rebuild SemanticIR and IntentIR, and validate whether the related temporal rule ids survive with explicit cycle-window bounds instead of remaining unbounded"
             }
-            IrStage::SourceIr | IrStage::EvidenceIr | IrStage::FsmAdapter | IrStage::IsfAdapter => {
+            IrStage::SourceIr | IrStage::EvidenceIr | IrStage::IsfAdapter => {
                 unreachable!(
                     "temporal-cycle-window specialized action only applies to semantic/intent rescans"
                 )
@@ -2335,7 +2332,7 @@ fn recommended_rescan_action(stage: IrStage, finding: &ValidationFindingRecord) 
             IrStage::IntentIr => {
                 "run local NLP enrichment on EvidenceIR, rebuild SemanticIR and IntentIR, and validate whether the related signal ids survive with actor-relative graph direction coverage instead of remaining graph-uncovered"
             }
-            IrStage::SourceIr | IrStage::EvidenceIr | IrStage::FsmAdapter | IrStage::IsfAdapter => {
+            IrStage::SourceIr | IrStage::EvidenceIr | IrStage::IsfAdapter => {
                 unreachable!(
                     "graph-direction-coverage specialized action only applies to semantic/intent rescans"
                 )
@@ -2351,7 +2348,7 @@ fn recommended_rescan_action(stage: IrStage, finding: &ValidationFindingRecord) 
             IrStage::IntentIr => {
                 "run local NLP enrichment on EvidenceIR, rebuild SemanticIR and IntentIR, and validate whether the related temporal rule ids survive with actor-relative drive/sample grounding instead of remaining actor-ungrounded"
             }
-            IrStage::SourceIr | IrStage::EvidenceIr | IrStage::FsmAdapter | IrStage::IsfAdapter => {
+            IrStage::SourceIr | IrStage::EvidenceIr | IrStage::IsfAdapter => {
                 unreachable!(
                     "temporal-actor-grounding specialized action only applies to semantic/intent rescans"
                 )
@@ -2367,7 +2364,7 @@ fn recommended_rescan_action(stage: IrStage, finding: &ValidationFindingRecord) 
             IrStage::IntentIr => {
                 "run local NLP enrichment on EvidenceIR, rebuild SemanticIR and IntentIR, and validate whether the related temporal rule ids survive with explicit clock or edge grounding instead of remaining clockless"
             }
-            IrStage::SourceIr | IrStage::EvidenceIr | IrStage::FsmAdapter | IrStage::IsfAdapter => {
+            IrStage::SourceIr | IrStage::EvidenceIr | IrStage::IsfAdapter => {
                 unreachable!(
                     "temporal-clock-grounding specialized action only applies to semantic/intent rescans"
                 )
@@ -2411,9 +2408,6 @@ fn recommended_rescan_action(stage: IrStage, finding: &ValidationFindingRecord) 
         }
         IrStage::IntentIr => {
             "rebuild IntentIR after targeted semantic/evidence rescans and keep the related canonical ids explicit until corroborated"
-        }
-        IrStage::FsmAdapter => {
-            "rebuild FSM adapter after targeted intent rescans and validate structural and coverage properties"
         }
         IrStage::IsfAdapter => {
             "rebuild ISF adapter after targeted intent rescans and validate structural and coverage properties"
