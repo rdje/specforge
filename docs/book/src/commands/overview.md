@@ -6,12 +6,12 @@ Current surface:
 
 - `inspect <path>`
 - `doctor [--strict]`
-- `converge <source> [--target fsm] [--vlm-provider ollama|open-ai|lm-studio|skip] [--nlp-provider ollama|open-ai|lm-studio|skip] [--rescan-plan <plan>] [--execute-rescan-plan]`
+- `converge <source> [--target isf] [--vlm-provider ollama|open-ai|lm-studio|skip] [--nlp-provider ollama|open-ai|lm-studio|skip] [--rescan-plan <plan>] [--execute-rescan-plan]`
 - `ingest <source> [--dry-run]`
 - `evidence <source-ir> [--prior-memory <path>] [--dry-run]`
 - `semantic <evidence-ir> [--dry-run]`
 - `intent <semantic-ir> [--dry-run]`
-- `adapt <intent-ir> --target fsm [--dry-run]`
+- `adapt <intent-ir> --target isf [--dry-run]`
 - `enrich <source-ir> [--vlm-provider ollama|open-ai|lm-studio|skip] [--classify-only] [--dry-run]`
 - `nlp-enrich <evidence-ir> [--vlm-provider ollama|open-ai|lm-studio|skip] [--dry-run]`
 - `validate <artifact>`
@@ -22,8 +22,8 @@ Current surface:
 - `corpus-kb [validation-report]... [--kg-fixtures-root <fixture-root>] [--kg-fixture <fixture>]`
 - `clean [--generated-root <root>] [--scope source-normalized|document|all-generated] [--document-key <key>] [--execute]`
 
-Only `--target fsm` and `--target isf` materialize adapter artifacts.
-HDL lowering (SystemVerilog/Verilog/VHDL) is out of scope — owned by downstream toolchains.
+Only `--target isf` materializes an adapter artifact.
+`.fsm` and HDL lowering (SystemVerilog/Verilog/VHDL) are out of scope — FSMGen consumes `.isf` and owns scheduling, `.fsm`, and HDL downstream.
 
 The commands fall into three groups:
 
@@ -36,7 +36,7 @@ The commands fall into three groups:
 If you want one end-to-end run:
 
 ```bash
-cargo run --manifest-path Cargo.toml -- converge /path/to/spec.pdf --target fsm
+cargo run --manifest-path Cargo.toml -- converge /path/to/spec.pdf --target isf
 ```
 
 If you want stage-by-stage visibility:
@@ -77,7 +77,7 @@ cargo run --manifest-path Cargo.toml -- rescan-plan
 If you want the stabilized convergence loop to inspect that same queue:
 
 ```bash
-cargo run --manifest-path Cargo.toml -- converge /path/to/spec.pdf --target fsm --rescan-plan generated/validation/rescan_plan.json
+cargo run --manifest-path Cargo.toml -- converge /path/to/spec.pdf --target isf --rescan-plan generated/validation/rescan_plan.json
 ```
 
 If you want to update the cross-document prior store:

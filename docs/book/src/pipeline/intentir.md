@@ -40,19 +40,18 @@ The project boundary is:
 
 - recover honest, typed, reusable implementation intent
 
-Then adapters can lower that into:
+Then the adapter can lower that into:
 
-- `.fsm`
-- `.isf` (planned)
+- `.isf` (the single adapter target)
 
-HDL lowering (SystemVerilog/Verilog/VHDL) is out of scope — downstream toolchains own HDL generation.
+`.fsm` and HDL lowering (SystemVerilog/Verilog/VHDL) are out of scope — FSMGen consumes `.isf` and owns scheduling, `.fsm`, and HDL downstream.
 
 This ordering is what keeps the project from collapsing into backend-shaped shortcuts too early.
 The product boundary is supposed to be reusable implementation intent, not one specific code generator.
 
-For `.fsm`, SPECFORGE keeps a pinned FSMGEN reference checkout under `subs/fsmgen/`.
-That checkout is useful for target syntax, strict-mode boundaries, bounded capability/check/semantic JSON surfaces, stable diagnostic codes, support accounting, examples, generated-HDL validation, and its own live book, but it does not move the product boundary.
-FSMGEN tells the adapter what target forms are real; `IntentIR` still decides what document meaning is justified.
+For `.isf`, SPECFORGE keeps a pinned FSMGEN reference checkout under `subs/fsmgen/`.
+FSMGEN is the downstream consumer of `.isf` (it owns scheduling, `.fsm`, and HDL). That checkout is useful for ISF target syntax, strict-mode boundaries, bounded capability/check/semantic JSON surfaces, stable diagnostic codes, support accounting, examples, and its own live book, but it does not move the product boundary.
+FSMGEN tells the adapter what `.isf` forms are real; `IntentIR` still decides what document meaning is justified.
 
 ## What a good `IntentIR` artifact looks like
 

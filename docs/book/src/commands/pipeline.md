@@ -93,26 +93,20 @@ It carries:
 ## `adapt`
 
 ```bash
-cargo run --manifest-path Cargo.toml -- adapt generated/intent_ir/<document_key>/intent_ir.json --target fsm
+cargo run --manifest-path Cargo.toml -- adapt generated/intent_ir/<document_key>/intent_ir.json --target isf
 ```
 
 `adapt` lowers canonical intent into a backend-specific adapter artifact.
 
-Right now the active downstream target is `.fsm`, and the project still treats adapters as downstream consumers rather than the core product boundary.
-That `.fsm` lane is in active hardening: renderable standalone and top-composition paths, blocked renderability diagnostics, residual decisions, support/confidence preservation, and selected-inventory provenance are being locked down before broader adapter expansion.
-HDL lowering (SystemVerilog, Verilog, VHDL) is out of scope — SpecForge lowers to `.fsm` or `.isf`; downstream toolchains own HDL generation.
-When `.fsm` lowering is blocked, the adapter artifact can still preserve recovered context, such as top-link-derived boundary port directions, so users can inspect what was learned separately from why target text was not emitted.
-For top roots, flat `direction_hint` and graph-backed `graph_direction_hint` remain separate in the signal inventory when they disagree; the renderable top port is blocked, but the artifact does not pretend the graph itself conflicted unless graph evidence disagreed with graph evidence.
-For standalone DT/FSM roots, renderability also checks graph-backed output roles across the full signal inventory: an output recovered from actor-relative graph evidence still needs a typed driving action before target text is emitted.
-Top-linked child endpoints remain composition diagnostics, so a child port referenced by a top link must resolve to an emitted child module port before a `?top:name` document is renderable.
-Renderable top-composition artifacts now also preserve the public top-port shape in the selected top candidate.
-That means direction, numeric width, automation confidence, and renderable-top presence stay inspectable alongside child declaration and topology-link support IDs.
-The matching blocked composition and structured-FSM paths preserve their own state, transition, top-port, or child-candidate provenance even when no target text is emitted.
+`.isf` is SpecForge's single adapter target, and the project treats the adapter as a downstream consumer rather than the core product boundary.
+`.fsm` and HDL lowering (SystemVerilog, Verilog, VHDL) are out of scope — FSMGen consumes `.isf` and owns scheduling, `.fsm`, and HDL downstream; SpecForge does not do cycle scheduling.
+The adapter lowers `IntentIR` through the typed `IsfIr` model and emits `.isf` S-expression source only when the canonical signal/behavior surface is renderable; otherwise it blocks with explicit `blocking_reasons` instead of fabricating target text.
+When ISF lowering is blocked, the adapter artifact still preserves the recovered context (signal/behavior counts, residual decisions) so users can inspect what was learned separately from why target text was not emitted.
 
 ## `converge`
 
 ```bash
-cargo run --manifest-path Cargo.toml -- converge /path/to/spec.pdf --target fsm
+cargo run --manifest-path Cargo.toml -- converge /path/to/spec.pdf --target isf
 ```
 
 `converge` is the default end-to-end path.
@@ -129,7 +123,7 @@ This is the main command when you want a serious local run on a real spec.
 After convergence stabilizes, the command can optionally inspect a schema-v2 validation rescan queue:
 
 ```bash
-cargo run --manifest-path Cargo.toml -- converge /path/to/spec.pdf --target fsm --rescan-plan generated/validation/rescan_plan.json
+cargo run --manifest-path Cargo.toml -- converge /path/to/spec.pdf --target isf --rescan-plan generated/validation/rescan_plan.json
 ```
 
 That is dry-run by default.
@@ -137,7 +131,7 @@ The plan is automatically filtered to the current source document key, so a mult
 To execute the same guarded replay hints used by `rescan-plan --execute`, add `--execute-rescan-plan`:
 
 ```bash
-cargo run --manifest-path Cargo.toml -- converge /path/to/spec.pdf --target fsm --rescan-plan generated/validation/rescan_plan.json --execute-rescan-plan
+cargo run --manifest-path Cargo.toml -- converge /path/to/spec.pdf --target isf --rescan-plan generated/validation/rescan_plan.json --execute-rescan-plan
 ```
 
 This remains an arbitration surface, not an auto-fix path.

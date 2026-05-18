@@ -42,7 +42,7 @@ That gives you the four staged artifacts without invoking the full convergent lo
 ## Fast path for a real spec
 
 ```bash
-cargo run --manifest-path Cargo.toml -- converge /path/to/spec.pdf --target fsm
+cargo run --manifest-path Cargo.toml -- converge /path/to/spec.pdf --target isf
 ```
 
 By default, `converge` now does the heavy local-first path:
@@ -56,13 +56,13 @@ By default, `converge` now does the heavy local-first path:
 Use a narrower run only when you mean to:
 
 ```bash
-cargo run --manifest-path Cargo.toml -- converge /path/to/spec.pdf --target fsm --vlm-provider skip --nlp-provider skip
+cargo run --manifest-path Cargo.toml -- converge /path/to/spec.pdf --target isf --vlm-provider skip --nlp-provider skip
 ```
 
 If you already generated a validation rescan queue, `converge` can inspect it after the fixed-point loop stabilizes:
 
 ```bash
-cargo run --manifest-path Cargo.toml -- converge /path/to/spec.pdf --target fsm --rescan-plan generated/validation/rescan_plan.json
+cargo run --manifest-path Cargo.toml -- converge /path/to/spec.pdf --target isf --rescan-plan generated/validation/rescan_plan.json
 ```
 
 Execution stays explicitly gated with `--execute-rescan-plan`.
@@ -92,7 +92,7 @@ Generated artifacts are written under `generated/`:
 - `generated/evidence_ir/<document_key>/evidence_ir.json`
 - `generated/semantic_ir/<document_key>/semantic_ir.json`
 - `generated/intent_ir/<document_key>/intent_ir.json`
-- `generated/adapters/fsm/<document_key>/adapter.json`
+- `generated/adapters/isf/<document_key>/adapter.json`
 - `generated/prior_memory/corpus_memory.json`
 
 Tracked corpus knowledge-base synthesis lives outside `generated/`:

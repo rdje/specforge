@@ -100,6 +100,26 @@
   exercise the KG/semantic-truthfulness IR pipeline, not the (removed)
   FSM adapter. No fixture or code change required. Audit-only.
 
+### ISF-ONLY-CONSOLIDATION.6: mdBook FSM sweep
+- Swept all 11 FSM-bearing mdBook pages to ISF-only:
+  - `reference/generated-artifacts.md`: replaced the 353-line FSM
+    adapter-artifact section with a concise ISF adapter-artifact section
+    (521 → 221 lines); roots list `adapters/fsm` removed.
+  - `domain/actor-connectivity.md`: replaced the obsolete 114-line FSM
+    "Adapter use" renderability section with an ISF section (326 → 238).
+  - `commands/pipeline.md` / `overview.md` / `getting-started.md` /
+    `quality-and-learning.md`: `--target fsm` → `--target isf`,
+    `adapters/fsm` → `adapters/isf`, command list / "only ISF
+    materializes an adapter" prose corrected.
+  - `pipeline/intentir.md`: adapter list → `.isf` only; FSMGEN reference
+    reframed as the downstream `.isf` consumer.
+  - `introduction.md` / `domain/clock-reset.md` / `pipeline/isf-adapter.md`:
+    `.fsm`-adapter prose reworded to ISF-only / FSMGen-downstream framing.
+- Remaining `.fsm`/FSM mentions are all legitimate context (FSMGen owns
+  `.fsm` downstream of `.isf`; state-machine *diagram extraction*
+  fixtures). `bash scripts/run_docs_ci.sh` (mdBook) green; full
+  `scripts/run_ci.sh` green. Docs-only.
+
 ## 2026-05-17 (R6-ISF-ADAPTER batch — ISF adapter ownership backfill + hardening)
 
 ### Created: R6-ISF-ADAPTER task tree (lane R6, 5-leaf authorized batch)

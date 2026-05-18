@@ -75,6 +75,15 @@
   IR pipeline. 0/153 reference FSM symbols and kg-bench/corpus-kb stayed
   green through `.4`, so nothing is retired. Honest "no-op" leaf,
   consistent with prior audit leaves elsewhere in the trees.
+- `.6` swept the 11 FSM-bearing mdBook pages to ISF-only. Two were
+  obsolete FSM reference walls replaced wholesale via verified splice
+  (`generated-artifacts.md` adapter section 521→221; `actor-connectivity`
+  Adapter-use section 326→238); the rest were targeted `--target`/path/
+  prose fixes. Remaining `.fsm`/FSM strings are legitimate context
+  (FSMGen owns `.fsm` downstream; state-machine *diagram extraction*
+  fixtures). Note: a backgrounded CI run flaked the external-`fsmgen`
+  strict test with `Can't cd to :` (background-cwd issue, not an ISF
+  defect — the emitted ISF was well-formed); re-run from correct cwd.
 
 ## 2026-05-17 session — R6-ISF-ADAPTER batch (ISF ownership backfill + hardening)
 

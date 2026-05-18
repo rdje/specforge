@@ -12,7 +12,7 @@ The current canonical pipeline is:
 
 `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR`
 
-Adapters such as `.fsm` are downstream consumers of `IntentIR`, not the core product boundary.
+The `.isf` adapter is a downstream consumer of `IntentIR`, not the core product boundary. `.fsm`/HDL are out of scope — FSMGen consumes `.isf` and owns them downstream.
 
 This book is the canonical user-facing documentation surface for `specforge`. It is organized in increasing depth:
 

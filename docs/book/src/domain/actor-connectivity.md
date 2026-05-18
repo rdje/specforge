@@ -193,118 +193,29 @@ It ties a timing obligation back to the responsible actor.
 
 ## Adapter use
 
-Adapters should consume this graph when they need a target-actor-relative direction.
+The actor-relative graph is the canonical direction surface. `SemanticIR`
+and `IntentIR` carry `actor_signal_relations`, `actor_ports`, and
+`signal_connectivity`, and validation scores direction coverage from that
+graph first, treating any flat `direction_hint` lag as a compatibility
+diagnostic rather than truth-model loss.
 
-The first bounded consumers are `.fsm` lowering paths.
+SpecForge's single adapter target is `.isf`. The `.isf` adapter consumes
+the canonical interface and behavior surface of `IntentIR` and lowers it
+through the typed `IsfIr` model. It deliberately does **not** re-derive
+target-actor-relative port directions or block on missing per-signal
+direction/width: the ISF IR defaults an unknown direction to `output` and
+an unknown width to `1`, and FSMGen performs the cycle scheduling
+downstream of `.isf`. The actor-relative graph still matters because it
+makes `IntentIR` direction/connectivity honest before lowering; it is just
+no longer consumed by adapter-side renderability gymnastics.
 
-The explicit-module/top-composition path has the cleanest target actor context.
-When an explicit child module already has a local signal and width but the flat module-local `direction_hint` is missing or stale, the adapter can overlay matching `IntentIR.actor_ports` for that module actor before renderability analysis.
-For standalone explicit modules, module-local control reads can also recover input roles for signals already in the module inventory, while assigned/init targets stay outputs.
-If module actor-port evidence and module-local control-read evidence disagree, the adapter keeps the direction unresolved and blocks instead of choosing a winner.
-
-Standalone direct roots are stricter.
-They do not carry a module name that says which actor the target is relative to, so the adapter first looks for one actor that graph-drives every render-critical assignment or init target already present in the direct local inventory.
-That allows normal external actors to coexist in the same graph: an environment may drive an input signal, and a monitor may read output signals, without making the direct root ambiguous when one target actor clearly owns all produced outputs.
-If no such output-target actor exists, the older one-actor direct context gate remains the fallback.
-After the target actor is selected, the adapter can also use explicit control reads to recover target inputs for signals already present in the direct inventory.
-For example, if `DATA_OUT = DATA_IN` and `ZERO_FLAG` is driven under a `DATA_IN` guard, then `DATA_IN` is read by the selected target actor even if the structural KG only says an external environment drives `DATA_IN`.
-The same principle applies to true structured FSM roots: state-body assignments and transition guards can recover target inputs such as data and guard signals after the produced-output graph selects the target actor.
-Assigned output targets are excluded from this read-side recovery so outputs do not become fake inputs.
-Unrelated graph-only actor ports are ignored by this direct-root context gate and are not added to the standalone inventory.
-If the graph mixes multiple possible target-output actors, or if no actor owns the required direct output targets, the adapter leaves the missing flat directions unresolved and blocks rather than guessing.
-If repeated evidence for the same actor and signal disagrees, the collapsed direction or width remains unresolved; later duplicate hints cannot resurrect a value after conflict.
-That same guarded direct-root path now has regression coverage for sequential system contracts too: graph-backed actor ports can satisfy the clock/reset input directions needed for `(+system ...)` when flat direct-interface hints lag.
-
-Explicit top composition has one more bounded recovery path.
-If a top boundary port has width but no flat direction, explicit link topology can recover the boundary role: a top endpoint used as a link source is a top input, and a top endpoint used as a link target is a top output.
-The same explicit links can recover existing child module port roles before module renderability analysis: a child endpoint used as a link source is a module output, and a child endpoint used as a link target is a module input.
-That recovered boundary role remains visible in the adapter artifact even when another composition gate still blocks emission, such as a missing child module.
-That path is composition-topology recovery, not actor-graph inference; it does not create undeclared child ports, and conflicting or unresolved top or child directions still block.
-If a top declaration says a boundary port is an output but link topology uses that same boundary endpoint as a source, the adapter collapses the boundary direction to unresolved rather than keeping the stale declaration in the blocked artifact.
-The top signal inventory still keeps both pieces of evidence visible: the flat `direction_hint` remains the declared direction, and `graph_direction_hint` remains the actor/topology-derived direction unless the graph evidence conflicts with itself.
-That distinction matters because a flat-vs-graph disagreement is not the same defect as two graph facts disagreeing.
-The same collapse applies when duplicate top-port declarations disagree about direction; duplicate declarations still block, but the artifact no longer lets the later declaration overwrite the earlier one.
-The same idea now applies to duplicate top-port widths too: duplicate width disagreement blocks and collapses the blocked artifact width instead of leaving a last-writer numeric width behind.
-For example, if the same child signal is used as both a link source and a link target, the adapter keeps that child port direction unresolved rather than choosing one topology interpretation.
-
-This is still conservative.
-Graph `input` and `output` directions can fill the module-local port role, but `in_out` and `unknown` are not turned into fake `.fsm` directions.
-Conflicts between flat hints and graph evidence still collapse the renderable port role to unresolved and block lowering instead of silently choosing a winner, while artifact provenance keeps the two evidence planes inspectable.
-The shared adapter direction resolver is regression-tested directly for that contract: flat-only evidence remains usable, graph-only evidence can carry a lagging compatibility surface, matching flat/graph evidence is accepted, and any flat conflict, graph conflict, or flat-vs-graph disagreement fails closed.
-The top-boundary direction merger uses the same fail-closed posture: once explicit top declarations, top actor-port graph evidence, or link-topology evidence disagree, that boundary role stays unresolved even if later evidence repeats one side of the conflict.
-The same sticky-conflict rule applies to top-boundary widths recovered from explicit declarations, actor-port widths, or topology propagation.
-Width-incompatible top links stay blocked, but the selected top inventory still preserves each explicit endpoint's direction, width, provenance, support IDs, and confidence.
-Duplicate child-instance blockers keep each child declaration's source module, resolved root kind, support IDs, and automation confidence visible.
-They also keep the declared top port in selected top inventory with support IDs and high confidence while duplicate child instances are deduplicated.
-Missing-link multi-child blockers keep the same child declaration confidence visible while composition waits for explicit links.
-They also keep the declared top port in selected top inventory with support IDs and high confidence while missing links are added.
-Missing child-module blockers keep the declared top port in selected top inventory with support IDs and high confidence while the child module is declared.
-Undeclared top-link target blockers keep retained top-port, child, and link confidence visible while composition waits for the missing endpoint declaration.
-They also keep the declared top port in selected top inventory with support IDs and high confidence while the missing target endpoint is repaired.
-Undeclared top-link source blockers keep the same retained confidence visible while composition waits for the missing source declaration.
-They also keep the declared top port in selected top inventory with support IDs and high confidence while the missing source endpoint is repaired.
-Source-side unemitted child endpoint blockers keep retained top-port, child, and link confidence visible while composition waits for the child port to become renderable.
-They also keep the declared top port in selected top inventory with support IDs and high confidence while the child source endpoint is emitted.
-Target-side unemitted child endpoint blockers keep the same retained confidence visible while composition waits for the target child port to become renderable.
-They also keep the declared top port in selected top inventory with support IDs and high confidence while the child target endpoint is emitted.
-The legacy source-side unemitted child-port blocker now exercises the same retained top-port, child, and link confidence contract.
-It also keeps the declared top port in selected top inventory with support IDs and high confidence while the legacy child source endpoint is emitted.
-Source-side child direction-role blockers keep retained top-port, child, and link confidence visible while role evidence is repaired.
-They also keep the declared top port in selected top inventory with support IDs and high confidence while child source role evidence is repaired.
-Target-side child direction-role blockers keep the same retained confidence visible while target role evidence is repaired.
-They also keep the declared top port in selected top inventory with support IDs and high confidence while child target role evidence is repaired.
-Child actor-port direction conflicts keep retained top-port, child, and child-to-child link confidence visible while graph-role evidence is repaired.
-They also keep the declared top port in selected top inventory with support IDs and high confidence while child actor-port direction evidence is repaired.
-Child topology direction conflicts keep retained top-port, child, and conflicting-link confidence visible while topology evidence is repaired.
-They also keep the declared top port in selected top inventory with support IDs and high confidence while child topology direction evidence is repaired.
-Child topology width conflicts keep the same retained confidence visible while width evidence is repaired.
-They also keep the declared top port in selected top inventory with support IDs and high confidence while child topology width evidence is repaired.
-Top child-link width conflicts keep retained top-port, child, and conflicting-link confidence visible while top-boundary width evidence is repaired.
-Sibling child-link width conflicts keep retained top-port, child, and conflicting-link confidence visible while child input width evidence is repaired.
-They also keep the declared top port in selected top inventory with support IDs and high confidence while child input width evidence is repaired.
-Top-link direction conflicts keep retained top-port, child, and link confidence visible while boundary direction evidence is repaired.
-Top-target direction-role blockers keep retained top-port, child, and link confidence visible while target role evidence is repaired.
-Top actor-port direction conflicts keep retained top-port and child confidence visible while boundary graph direction evidence is repaired.
-Top actor-port width conflicts keep retained top-port and child confidence visible while boundary graph width evidence is repaired.
-Duplicate top-port direction blockers keep retained top-port and child confidence visible while explicit top declarations are deduplicated.
-Duplicate top-port width blockers keep retained top-port and child confidence visible while explicit top declarations are deduplicated.
-Widthless top-port blockers keep retained top-port and child confidence visible while boundary width evidence is recovered.
-Parametric top-port blockers keep retained top-port and child confidence visible while symbolic boundary widths are resolved.
-Recovered top-port missing-module blockers keep retained top-port, child, and link confidence visible while child modules are declared.
-Top-without-child blockers keep retained top-port inventory confidence visible while child references are added.
-For child outputs recovered only from top-link topology, local module renderability does not report a stale missing-drive blocker; composition validation owns the endpoint diagnostic because the top link may be the only reason that child port is visible.
-When a signal does reach renderable size-entry registration, graph-only direction evidence can emit the port role, but flat-vs-graph disagreement leaves no stale size entry behind.
-The same graph-first rule applies to system-contract clock/reset validation for `.fsm` `(+system ...)` lowering: graph-only input evidence can satisfy the role, while stale flat disagreement blocks.
-Init assignments follow the same rule for reset/init lowering: graph-backed output targets can be rendered, but stale flat disagreement fails the target role check and does not leave a size entry behind.
-Typed control assignments, delayed-pulse actions, and compound updates use the same role rule: graph-backed output targets can be driven, while stale flat disagreement fails target renderability and does not create a stale size entry.
-Sequential dual-output assignments use that same target role rule before emitting either `.fsm` next-signal or registered-signal dual-output assignment syntax.
-Dual-output assignments still require sequential canonical intent; nonsequential dual-output metadata remains blocking even when the graph-backed target role is recoverable.
-Next-signal and registered-signal dual-output assignment values use the same read-side rule as ordinary assignment values: graph-backed input references can be sized, while stale flat disagreement remains blocking.
-Next-signal dual-output width-cast values retain graph-backed target and value metadata while width-cast lowering remains blocked.
-Registered-signal dual-output width-cast values follow the same blocked-but-metadata-preserving path.
-Delayed-pulse actions still require positive cycle delays; zero-delay pulse intent remains blocking even when the graph-backed output target is recoverable.
-Delayed-pulse pulse-level values remain literal-only in the active adapter slice, so graph-backed signal references there do not create renderable signal metadata until that lowering is deliberately widened.
-Delayed-pulse width-cast pulse-level values stay on that signal-free literal-only path.
-Typed assignment values use the read-side rule too: graph-backed value references create input size entries, while stale flat disagreement remains blocking.
-Width-cast assignment values retain both graph-backed target and value metadata while the suffix-lowering gate remains blocking.
-Compound-update amounts use that same read-side rule when they reference signals.
-Width-cast compound-update amounts retain graph-backed target and amount metadata while width-cast lowering remains blocked.
-Compound-update public-output exposure remains blocked in the active shorthand path even when the graph-backed target role is recoverable.
-Guard predicates, comparison guards, true-FSM transition guards, selector-bearing branch predicates, and non-selector branch predicates use the shared registration rule too: graph-backed guard, selector, or predicate signals create size entries, while stale flat disagreement blocks and does not create a stale entry.
-Typed control expressions follow that read-side path as well: graph-backed signal references can be sized for rendering, while stale flat disagreement remains blocking instead of creating stale renderable metadata.
-Width-cast control-expression references still block under the active suffix-lowering boundary, but their graph-backed base signal is retained in renderable metadata for diagnostics.
-Selector width-casts follow the same rule and also remain blocked at the test-node selector-head encoding boundary.
-Non-selector branch-predicate width-casts retain the same base-signal metadata while staying behind the suffix-lowering gate.
-Unary expression width-cast operands also retain their graph-backed base-signal metadata through recursive validation.
-Binary expression width-cast operands follow the same recursive validation rule.
-Unary and binary control expressions recurse through the same rule, so graph-backed operands are renderable and stale flat disagreement remains blocking.
-Symbol definitions are intentionally stricter in the active `.fsm` slice: graph-backed signal references inside scalar symbol values, unary or binary symbol values, enum member values, or unary or binary enum member values still block and do not create renderable signal metadata until symbol expression lowering is deliberately widened.
-Width-cast symbol-definition values follow the same signal-free symbol slice boundary and also report the width-cast suffix blocker.
-Unary symbol-definition width-cast operands follow that same signal-free recursive validation path.
-Binary symbol-definition width-cast operands remain signal-free under the same recursive rule for both sides.
-Enum-member width-cast values remain signal-free under that symbol slice boundary as well.
-Unary enum-member width-cast operands stay signal-free through the recursive enum validation path.
-Binary enum-member width-cast operands stay signal-free through that same recursive path for both sides.
+`.fsm` and HDL are out of scope — FSMGen consumes `.isf` and owns
+scheduling, `.fsm`, and HDL downstream. The fail-closed sticky-conflict
+rules for the canonical graph (flat vs graph disagreement, duplicate
+declaration disagreement, and self-conflicting graph evidence all collapse
+to unresolved rather than silently choosing a winner) continue to apply at
+the `SemanticIR` / `IntentIR` layer and keep both evidence planes
+inspectable in the artifacts.
 
 ## What users should inspect
 

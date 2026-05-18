@@ -155,15 +155,15 @@ Scope reality (surveyed 2026-05-18):
   Commit: `ISF-ONLY-CONSOLIDATION.5 — kg fixture audit (no FSM-adapter fixtures; nothing to retire)`
 
 - ID: `ISF-ONLY-CONSOLIDATION.6`
-  Status: `pending`
+  Status: `done`
   Goal: >
     mdBook sweep: remove or rewrite FSM-centric pages/sections across
     `docs/book/src` (pipeline, commands, domain, quality, getting-started,
     introduction, SUMMARY); the ISF chapter becomes the canonical adapter
     chapter. `bash scripts/run_docs_ci.sh` green.
   Acceptance: `No stale .fsm user-facing content; ISF is the canonical adapter chapter; docs CI green. May split.`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — 11 pages swept; only legit FSMGen-downstream/state-machine-extraction `.fsm` mentions remain; full scripts/run_ci.sh + mdBook green (re-run from correct cwd after a background-cwd flake)
+  Commit: `ISF-ONLY-CONSOLIDATION.6 — mdBook FSM sweep (ISF-only book)`
 
 - ID: `ISF-ONLY-CONSOLIDATION.7`
   Status: `pending`
@@ -185,8 +185,8 @@ Scope reality (surveyed 2026-05-18):
 | 3 | `ISF-ONLY-CONSOLIDATION.3` | `done` | HDL surface removed |
 | 4 | `ISF-ONLY-CONSOLIDATION.4` | `done` | Atomic FSM removal complete; CI green |
 | 5 | `ISF-ONLY-CONSOLIDATION.5` | `done` | Audit: no FSM-adapter fixtures; nothing to retire |
-| 6 | `ISF-ONLY-CONSOLIDATION.6` | `pending` | Next — mdBook sweep |
-| 7 | `ISF-ONLY-CONSOLIDATION.7` | `pending` | Reconcile + close + push |
+| 6 | `ISF-ONLY-CONSOLIDATION.6` | `done` | mdBook swept to ISF-only; CI green |
+| 7 | `ISF-ONLY-CONSOLIDATION.7` | `pending` | Next — reconcile + close + push |
 
 ## Decisions
 
@@ -235,6 +235,7 @@ Scope reality (surveyed 2026-05-18):
 | `2026-05-18` | `ISF-ONLY-CONSOLIDATION.3` | no HDL refs; standalone compile; full `scripts/run_ci.sh` | `passed` |
 | `2026-05-18` | `ISF-ONLY-CONSOLIDATION.4` | adapters.rs 28113→575; 1040 lib tests; fsmgen strict; full `scripts/run_ci.sh` | `passed` |
 | `2026-05-18` | `ISF-ONLY-CONSOLIDATION.5` | grep audit 0/153 FSM-referencing; kg-bench/corpus-kb green in `.4` CI | `passed` |
+| `2026-05-18` | `ISF-ONLY-CONSOLIDATION.6` | 11 mdBook pages swept; full `scripts/run_ci.sh` + mdBook green | `passed` |
 
 ## Commit Log
 
@@ -245,6 +246,7 @@ Scope reality (surveyed 2026-05-18):
 | `ISF-ONLY-CONSOLIDATION.3` | `ISF-ONLY-CONSOLIDATION.3 — remove HDL (SystemVerilog/Verilog/VHDL) adapter surface` | HDL-only; compiles standalone |
 | `ISF-ONLY-CONSOLIDATION.4` | `ISF-ONLY-CONSOLIDATION.4 — atomic FSM removal (adapters.rs 28113->575)` | Largest slice; −27,964 lines; 1040 lib tests |
 | `ISF-ONLY-CONSOLIDATION.5` | `ISF-ONLY-CONSOLIDATION.5 — kg fixture audit (no FSM-adapter fixtures; nothing to retire)` | Audit-only; 0/153 FSM-referencing |
+| `ISF-ONLY-CONSOLIDATION.6` | `ISF-ONLY-CONSOLIDATION.6 — mdBook FSM sweep (ISF-only book)` | 11 pages; generated-artifacts 521→221, actor-connectivity 326→238 |
 
 ## Changelog
 

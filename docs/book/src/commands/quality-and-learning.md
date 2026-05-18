@@ -153,7 +153,7 @@ That makes the machine-readable plan say the same thing as the product policy: a
 The convergent loop can consume the same plan after stability:
 
 ```bash
-cargo run --manifest-path Cargo.toml -- converge /path/to/spec.pdf --target fsm --rescan-plan generated/validation/rescan_plan.json
+cargo run --manifest-path Cargo.toml -- converge /path/to/spec.pdf --target isf --rescan-plan generated/validation/rescan_plan.json
 ```
 
 Add `--execute-rescan-plan` only when you want those whitelisted hints to run.
