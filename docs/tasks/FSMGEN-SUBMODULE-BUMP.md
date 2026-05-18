@@ -104,7 +104,7 @@ submodule.
   Commit: `see Commit Log`
 
 - ID: `FSMGEN-SUBMODULE-BUMP.3`
-  Status: `pending`
+  Status: `done`
   Goal: reconcile docs — `docs/FSMGEN_FEEDBACK.md` findings → RESOLVED (cite
   fixing commits); both issue bundles → resolution note; `FSMGEN-ISSUE-REPORTING`
   tree → resolution recorded; `ISF-TEMPORAL-LOWERING` decision cross-refs
@@ -112,8 +112,17 @@ submodule.
   explicit scoped follow-up (own decision/tree, not done here)
   Acceptance: docs state the findings are fixed upstream and what (if
   anything) SPECFORGE should now change; follow-up explicitly scoped
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — `docs/FSMGEN_FEEDBACK.md` "RESOLVED upstream"
+    section added (per-finding fix-commit + verified-on-`9bfb9a20` table +
+    honest F2-bundle self-conflict caveat + forward consequence);
+    `RESOLUTION.md` added to both bundles (original `observed/` kept as
+    historical repro, not rewritten); `FSMGEN-ISSUE-REPORTING` (closed)
+    Changelog records the end-to-end resolution; `ISF-TEMPORAL-LOWERING`
+    (closed) gained a post-close forward-pointer that decision #2 is
+    superseded; new `proposed` tree `ISF-HANDSHAKE-STAGE-LOWERING` created
+    + registered in `docs/TASK_TREE.md` (scoped, verification-gated, NOT
+    auto-done). Docs-only leaf.
+  Commit: `see Commit Log`
 
 - ID: `FSMGEN-SUBMODULE-BUMP.4`
   Status: `pending`
@@ -128,8 +137,8 @@ submodule.
 | --- | --- | --- | --- |
 | 1 | `FSMGEN-SUBMODULE-BUMP.1` | `done` | Pinned `9bfb9a20`; both findings audited fixed (F2-bundle conflict nuance recorded) |
 | 2 | `FSMGEN-SUBMODULE-BUMP.2` | `done` | Full CI green on new pin (1054/0); no fallout |
-| 3 | `FSMGEN-SUBMODULE-BUMP.3` | `pending` | Next — reconcile FEEDBACK/bundles/ISSUE-REPORTING; scope stage follow-up |
-| 4 | `FSMGEN-SUBMODULE-BUMP.4` | `pending` | Close + sync |
+| 3 | `FSMGEN-SUBMODULE-BUMP.3` | `done` | Paper trail reconciled; stage follow-up scoped as proposed tree |
+| 4 | `FSMGEN-SUBMODULE-BUMP.4` | `pending` | Next — close tree + live-doc sync |
 
 ## Decisions
 
@@ -171,6 +180,7 @@ submodule.
 | --- | --- | --- | --- |
 | `2026-05-18` | `FSMGEN-SUBMODULE-BUMP.1` | pin bump + binary smoke + F1/F2/nested empirical audit on new binary | `passed` (F1 fixed+JSON; F2 stage construct fixed isolated; F2-bundle self-conflict nuance recorded; nested baseline no regression) |
 | `2026-05-18` | `FSMGEN-SUBMODULE-BUMP.2` | full `scripts/run_ci.sh` on pin `9bfb9a20` | `passed` (`RUN_CI_EXIT=0`, 1054 passed, 0 failed; no fallout) |
+| `2026-05-18` | `FSMGEN-SUBMODULE-BUMP.3` | FEEDBACK RESOLVED section + 2 bundle RESOLUTION.md + ISSUE-REPORTING/ISF-TEMPORAL cross-refs + proposed follow-up tree review | `passed` (docs-only; paper trail precise incl. F2-bundle caveat) |
 
 ## Commit Log
 
@@ -179,6 +189,7 @@ submodule.
 | `FSMGEN-SUBMODULE-BUMP` (tree) | `FSMGEN-SUBMODULE-BUMP — track pin to upstream that fixed both findings` (`d3f63f9c`) | tree + index |
 | `FSMGEN-SUBMODULE-BUMP.1` | `FSMGEN-SUBMODULE-BUMP.1 — pin subs/fsmgen 9bfb9a20; audit both findings fixed` (`87c6e124`) | submodule pin bump; F1✓ F2-construct✓ |
 | `FSMGEN-SUBMODULE-BUMP.2` | `FSMGEN-SUBMODULE-BUMP.2 — full CI regression on the new pinned binary` | 1054/0; no fallout |
+| `FSMGEN-SUBMODULE-BUMP.3` | `FSMGEN-SUBMODULE-BUMP.3 — reconcile FEEDBACK/bundles/reporting; scope stage follow-up` | docs-only; `ISF-HANDSHAKE-STAGE-LOWERING` proposed |
 
 ## Changelog
 

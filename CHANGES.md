@@ -32,6 +32,23 @@
   output; the 4 serialized fsmgen-binary tests pass on the new binary.
   No suppression needed.
 
+### FSMGEN-SUBMODULE-BUMP.3 — reconcile FEEDBACK/bundles/reporting; scope follow-up
+- `docs/FSMGEN_FEEDBACK.md`: added a "RESOLVED upstream (2026-05-18)"
+  section — per-finding fix-commit + verified-on-`9bfb9a20` table, the
+  honest F2-bundle self-conflict caveat, and the forward consequence
+  (HandshakeComplete→`(stage …)` now possible).
+- Each issue bundle gained a `RESOLUTION.md` recording the upstream fix
+  and the empirical re-verification; the original `observed/` captures
+  are deliberately NOT rewritten (kept as the historical reproduction).
+- `FSMGEN-ISSUE-REPORTING` (closed) Changelog records the end-to-end
+  outcome (file → upstream fix → audited pin bump); `ISF-TEMPORAL-LOWERING`
+  (closed) gained a post-close forward-pointer that its `(stage …)`
+  decision #2 is superseded by the upstream fix.
+- New `proposed` tree `ISF-HANDSHAKE-STAGE-LOWERING` created + registered
+  in `docs/TASK_TREE.md`: lowering `HandshakeComplete` temporal_rules to
+  `(stage …)` is now unlocked but is a verification-gated behavior change,
+  scoped (NOT auto-done — scope discipline + `fsmgen-contract-authority`).
+
 - Audit (codebase vs roadmap vs book) found: (critical) `temporal_rules`
   extracted but never lowered to `.isf` and `transaction_count`
   misreports it across the whole real corpus; orphaned `.fsm`-era IR;

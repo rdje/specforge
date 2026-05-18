@@ -370,3 +370,12 @@ Tree complete. PNT continues to `ISF-ONLY-IR-PRUNE.1`.
   here, scope discipline): constants/types/enums are populated in
   `IsfIr` but not rendered — a separate non-temporal "extracted but not
   rendered" gap recorded as an Open Question for a future audit.
+- `2026-05-18` (post-close forward-pointer — do NOT act on the stale
+  decision): `.2.1`/`.2.3` decision #2 ("`(stage …)` is strict-rejected
+  → `HandshakeComplete` temporal_rules map to residual, not `(stage …)`")
+  is now SUPERSEDED by upstream FSMGEN fix `d4d6dfab` (pin `9bfb9a20`,
+  `FSMGEN-SUBMODULE-BUMP.1`): `(stage … (ready)(valid))` is now accepted.
+  This closed tree's residual behavior is still correct *as shipped*;
+  re-enabling `(stage …)` for `HandshakeComplete` is the proposed
+  follow-up tree `ISF-HANDSHAKE-STAGE-LOWERING` — it is NOT done here and
+  this tree stays `done`.

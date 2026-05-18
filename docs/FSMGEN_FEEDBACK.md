@@ -538,3 +538,38 @@ with **empty stdout even though `--json` was requested** — the failure
 is not expressible through the documented JSON check surface. This is
 recorded in each bundle's README as a secondary observation for
 FSMGEN's triage.
+
+## RESOLVED upstream (2026-05-18) — pin `effe591d → 9bfb9a20`
+
+FSMGEN addressed both filed findings. Upstream `origin/main` reproduced
+SPECFORGE's two minimized bundles and shipped fixes; SPECFORGE bumped
+the `subs/fsmgen` pin to `9bfb9a20` (`FSMGEN-SUBMODULE-BUMP`) and
+**empirically verified each fix on the new binary** (not trusted from
+commit subjects):
+
+| Finding | FSMGEN fix commit | Verified on `9bfb9a20` |
+| --- | --- | --- |
+| F1 — flat `(eventually s within N)` strict-rejected | `610cb26e STAGE-CONTRACT-BUGS.1: accept flat eventual contracts` | F1 bundle input now `success:true`, `diagnostic_count:0` |
+| F2 — `(stage … (ready)(valid))` strict-rejected "unsupported subclause 'ready'" | `d4d6dfab STAGE-CONTRACT-BUGS.2: accept ready-valid stages` | isolated `(transaction … (stage s (ready r)(valid v)) …)` now `success:true` |
+| Secondary — strict reject exits 255 with no JSON despite `--json` | `9bfb9a20 STAGE-CONTRACT-BUGS.3: emit ISF check JSON failures` | F1/F2 now emit structured check JSON instead of exit-255/empty-stdout |
+
+FSMGEN tracked the work in its own
+`ISF-SPECFORGE-REPORTED-STAGE-CONTRACT-BUGS` tree (commit `a60cc1ab`).
+
+Honest caveat on the F2 *bundle artifact*: after the fix the F2 bundle
+input still returns `success:false`, but with a NEW, correct diagnostic
+`isf_priority_mixed_timing_conflict on ADDRESS`. The reported stage bug
+is fixed; the bundle's minimized repro happened to inject the stage onto
+a corpus-derived signal that an existing rule already drives, so now
+that stages are processed FSMGEN correctly flags that artifact's own
+self-conflict. This is correct FSMGEN behavior on a self-conflicting
+minimization artifact, not a remaining bug — recorded so the paper trail
+is precise rather than over-claiming a clean bundle pass.
+
+Forward consequence (NOT yet acted on): `(stage …)` is now an accepted
+construct, so SPECFORGE's `HandshakeComplete` temporal_rules — currently
+preserved as residual decisions because `(stage …)` was rejected
+(`ISF-TEMPORAL-LOWERING` `.2.1`/`.2.3` decision #2) — could now lower to
+`(stage <p> (ready <r>)(valid <v>))`. That is a deliberate behavior
+change requiring its own verification and task-tree ownership; it is
+scoped as a proposed follow-up tree, not auto-enabled.

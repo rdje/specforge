@@ -180,3 +180,12 @@ Tree complete. PNT returns to `ISF-TEMPORAL-LOWERING.2.3`.
   channel), the count-is-two evidence, and the no-JSON-on-strict-die
   observation. `docs/TASK_TREE.md` index → `done`. Tree closed; PNT resumes
   `ISF-TEMPORAL-LOWERING.2.3`.
+- `2026-05-18` (outcome — both filed findings RESOLVED upstream): FSMGEN
+  reproduced and fixed both bundles (`STAGE-CONTRACT-BUGS.1` flat eventual
+  contracts, `.2` ready-valid stages, `.3` JSON-on-strict-reject; tracked in
+  FSMGEN's `a60cc1ab`). SPECFORGE bumped the pin `effe591d → 9bfb9a20` and
+  empirically verified both fixes — tracked under `FSMGEN-SUBMODULE-BUMP`
+  (this closed tree is left `done`; the resolution lives there + in
+  `docs/FSMGEN_FEEDBACK.md` "RESOLVED upstream" + each bundle's
+  `RESOLUTION.md`). The reporting protocol worked end-to-end: file →
+  upstream fix → audited pin bump.
