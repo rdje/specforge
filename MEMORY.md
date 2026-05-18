@@ -24,12 +24,17 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `4d88ccd2` (pushed to `origin/main`; this MEMORY post-push refresh is the only commit after it)
-- latest_commit_brief_message: ISF-ONLY-CONSOLIDATION.7 — reconcile docs, close tree, push batch
-- note: 2026-05-18 — `ISF-ONLY-CONSOLIDATION` 7-leaf batch COMPLETE and **pushed** (`83616ead..4d88ccd2`). Final full CI gate green (1040 lib tests, fsmgen-strict ok, mdBook). SpecForge now emits only `.isf`; HDL + the entire `.fsm` adapter subsystem removed; `subs/fsmgen` + the ISF↔FSMGen strict test retained; FSMGen owns scheduling/`.fsm`/HDL downstream.
+- latest_commit_hash: `7bf415cf` (pushed baseline + this PNT setup; pre-PNT-leaf state)
+- latest_commit_brief_message: Update MEMORY.md — reflect ISF-ONLY-CONSOLIDATION batch push and post-push state
+- note: 2026-05-18 — Post-ISF-ONLY audit done. User authorized PNT through 3 new trees to exhaustion. SpecForge emits only `.isf`.
 
-## Active batch status
-- batch: `ISF-ONLY-CONSOLIDATION` — COMPLETE and PUSHED. No active batch.
+## Active PNT status
+- mode: PNT (open-ended), user-authorized 2026-05-18, until full exhaustion of the new audit-driven trees
+- trees + priority order: (1) `ISF-TEMPORAL-LOWERING` (R15b, critical — temporal_rules never reach `.isf`; transaction_count misreports), (2) `ISF-ONLY-IR-PRUNE` (R6 — prune only `.fsm`-era-dead `init_assignments`/`decision_tree_fragments`; `regular_states`/`state_transitions` removal is a BLOCKED leaf — R10/R15c/R15e/R7/R15f load-bearing, needs explicit user decision), (3) `AUDIT-DOC-RECONCILE` (R0 — R15 text + book converge flags)
+- completed_count: 0 (trees just created; no leaf executed yet)
+- per-leaf rule: full COMMIT.md after every leaf; `scripts/run_ci.sh` green at every code/fixture/mdBook leaf; run CI from repo cwd (`bash /abs/scripts/run_ci.sh`)
+- push policy: PNT → push around every ~30 local commits since last push (pushed at `4d88ccd2`; currently ~1 ahead)
+- prior batch: `ISF-ONLY-CONSOLIDATION` COMPLETE and PUSHED (`83616ead..4d88ccd2`); SpecForge emits only `.isf`
 - leaf commits: `.1 284de01a` `.2 b2bf525e` `.3 e2ea0cfb` `.4 5bd35b37` `.5 e4dd1b04` `.6 f6a5f8fd` `.7 4d88ccd2` (tree-creation `b9824bae`)
 - branch state: pushed; `0` ahead at push time (this MEMORY refresh commit makes it `1` ahead — under ~30, no push expected unless requested)
 - CI note: run from repo cwd (`bash /abs/scripts/run_ci.sh`); backgrounded relative-path runs flake the external-fsmgen strict test with `Can't cd to :`
