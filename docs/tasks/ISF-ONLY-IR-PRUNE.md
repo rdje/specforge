@@ -65,7 +65,7 @@ is **only true for two of them**. Verified consumers:
   Children: `.1`, `.2`, `.3`, `.4`
 
 - ID: `ISF-ONLY-IR-PRUNE.1`
-  Status: `pending`
+  Status: `done`
   Goal: >
     Full impact analysis of `init_assignments`,
     `decision_tree_fragments`, `regular_states`, `state_transitions`:
@@ -75,8 +75,15 @@ is **only true for two of them**. Verified consumers:
     `load-bearing (keep / user-decision)`. Produce the exact removal plan
     + the recorded state-graph decision. Docs/analysis only.
   Acceptance: `Per-surface consumer inventory + classification + removal plan recorded; state-graph decision explicit; no code change.`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — full repo grep inventory recorded below
+    ("Impact analysis"). `init_assignments`/`decision_tree_fragments`
+    confirmed prune-safe (zero `validate.rs` / `kg_bench.rs` / kg-fixture
+    / adapter consumers); `regular_states`/`state_transitions` confirmed
+    load-bearing (`validate.rs` 15/4, `kg_bench.rs` 9/6, 5+
+    `vlm_state_machine_*` fixtures) → `.3` supersede upheld. Exact
+    per-file removal plan for `.2` recorded incl. the one care point
+    (converge stability-sum). No code change.
+  Commit: `see Commit Log`
 
 - ID: `ISF-ONLY-IR-PRUNE.2`
   Status: `pending`
@@ -115,10 +122,60 @@ is **only true for two of them**. Verified consumers:
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `ISF-ONLY-IR-PRUNE.1` | `pending` | Analysis gates the safe removal |
-| 2 | `ISF-ONLY-IR-PRUNE.2` | `pending` | Prune only the confirmed-dead surfaces |
+| 1 | `ISF-ONLY-IR-PRUNE.1` | `done` | Inventory + per-file removal plan recorded; prune-safe confirmed |
+| 2 | `ISF-ONLY-IR-PRUNE.2` | `pending` | Next — execute the `.1` removal plan (`init_assignments` + `decision_tree_fragments`) |
 | — | `ISF-ONLY-IR-PRUNE.3` | `superseded` | User decision 2026-05-18: keep state-graph; no removal |
 | 3 | `ISF-ONLY-IR-PRUNE.4` | `pending` | Close after .2 (.3 resolved as superseded) |
+
+## Impact analysis (`.1`, 2026-05-18 — full repo grep inventory)
+
+Classification:
+
+| Surface | `semantic.rs` | `intent.rs` | `converge.rs` | `learn_priors.rs` | `validate.rs` | `kg_bench.rs` | kg fixtures | verdict |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `init_assignments` | 12 (type@961, prod@2136, fields@60/1240, test@10967) | 8 (field@62, carry@166/204/236, summary-fn, tests) | 9 (2 snapshot count fields + stability sum + tests) | 2 (empty ctor @1799, JSON test str @2591) | **0** | **0** | **0** | **prune-safe** |
+| `decision_tree_fragments` | 13 (type@991, prod@2257, fields@66/1246) | 9 (field@68, carry@169/207/239, summary-fn, tests) | 9 (snapshot + sum + tests) | 2 (empty ctor @1802, JSON test str @2594) | **0** | **0** | **0** | **prune-safe** |
+| `regular_states` | 33 | 8 | 9 | 2 | **15** | **9** | **5+ `vlm_state_machine_*`** | **load-bearing → KEEP** |
+| `state_transitions` | 31 | 8 | 9 | 2 | **4** | **6** | **5+ `vlm_state_machine_*`** | **load-bearing → KEEP** |
+
+`InitAssignmentRecord` (`semantic.rs:961`) and `DecisionTreeFragmentRecord`
+(`semantic.rs:991`) are referenced *only* by the two prune-safe fields
+(import `intent.rs:15-16`, producers `semantic.rs:2136`/`2257`, one
+`semantic.rs:10967` test) — so the types + producers + import are removed
+with the fields.
+
+### `.2` removal plan (exact, per file)
+
+1. `semantic.rs`: delete `struct InitAssignmentRecord` (@961) and
+   `struct DecisionTreeFragmentRecord` (@991); delete the two producer
+   sites (@2136 init-from-non-conflicting-entries, @2257
+   decision-tree-fragment map) and their wiring; drop both fields from the
+   main `SemanticIr` (@60/@66) and the secondary snapshot/diff struct
+   (@1240/@1246); fix the `semantic.rs:10967` test.
+2. `intent.rs`: drop fields (@62/@68), the import (@15-16), the
+   `semantic_ir.*.clone()` carries (@166/@169), the summary-fn params +
+   `.len()` log uses (@204/207/470/473/488/491), the struct init
+   (@236/@239); update carry-through tests (@2659/@2736/@2794/@2864/@2967)
+   — assertions on the removed surfaces are deleted, not weakened.
+3. `converge.rs`: remove the `init_assignments`/`decision_tree_fragments`
+   `usize` fields from BOTH snapshot structs (@614/617, @699/702), their
+   `ir.*.len()` populators (@647/650, @728/731), and their terms in the
+   stability **sum** (@675/678, @752/755). **Care point (not blind
+   delete):** the sum is a convergence-stability total; removing a
+   surface that is deleted *everywhere* contributes 0 to every snapshot,
+   so convergence deltas are unchanged — but `.2` MUST keep every other
+   sum term intact and re-verify convergence tests. Update the snapshot
+   test fixtures (@1133/1136, @1171/1174, @1202/1205).
+4. `learn_priors.rs`: delete the empty-ctor field inits (@1799/@1802) and
+   the `"init_assignments": []` / `"decision_tree_fragments": []` lines in
+   the JSON test string (@2591/@2594). No prior-extraction logic consumes
+   them.
+5. Docs: `INTENTIR_SPEC.md` describes both fields — update to drop them
+   (no kg-bench/book-behavior doc references them; `regular_states`/
+   `state_transitions` doc stays).
+6. `.2` MAY split per surface (`init_assignments` then
+   `decision_tree_fragments`) if the single diff is too broad
+   (TASK_TREE rule 5).
 
 ## Decisions
 
@@ -148,16 +205,24 @@ is **only true for two of them**. Verified consumers:
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
-| `2026-05-18` | `ISF-ONLY-IR-PRUNE.1` | `pending` | `pending` |
+| `2026-05-18` | `ISF-ONLY-IR-PRUNE.1` | full repo grep inventory of all 4 surfaces (code/fixtures/book); per-file removal plan | `passed` (prune-safe confirmed for 2; load-bearing confirmed for 2; no code change) |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
-| `ISF-ONLY-IR-PRUNE.1` | `pending` | `pending` |
+| `ISF-ONLY-IR-PRUNE.1` | `ISF-ONLY-IR-PRUNE.1 — impact analysis + per-file removal plan` | docs-only; prune-safe confirmed, state-graph keep upheld |
 
 ## Changelog
 
 - `2026-05-18`: Created from the post-ISF-ONLY audit. Scope corrected:
   state-graph surfaces are load-bearing for R10/R15c/R15e/R7/R15f, not
   `.fsm` leftovers; their removal is a blocked user-decision leaf.
+- `2026-05-18`: `.1` done — full repo grep inventory recorded ("Impact
+  analysis"). Confirmed with hard evidence: `init_assignments` /
+  `decision_tree_fragments` have zero `validate.rs`/`kg_bench.rs`/
+  fixture/adapter consumers (prune-safe); `regular_states` /
+  `state_transitions` are validate+kg_bench+5-fixture load-bearing
+  (`.3` supersede upheld). Exact per-file `.2` removal plan recorded,
+  including the converge stability-sum care point (remove-everywhere ⇒
+  0 delta ⇒ convergence-preserving, but verify, don't blind-delete).

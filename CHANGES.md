@@ -2,6 +2,20 @@
 
 ## 2026-05-18 (Post-ISF-ONLY audit + PNT remediation)
 
+### ISF-ONLY-IR-PRUNE.1 — impact analysis + per-file removal plan
+- Full repo grep inventory of `init_assignments`,
+  `decision_tree_fragments`, `regular_states`, `state_transitions`
+  recorded in the tree. Hard evidence confirms the audit's
+  picky-auditor scope correction: the first two have **zero**
+  `validate.rs` / `kg_bench.rs` / kg-fixture / adapter consumers
+  (prune-safe; `InitAssignmentRecord`/`DecisionTreeFragmentRecord` types
+  are used only by those fields), while `regular_states`/`state_transitions`
+  are validate+kg_bench+5-`vlm_state_machine_*`-fixture load-bearing
+  (`.3` supersede upheld — keep). Exact per-file `.2` removal plan
+  recorded, incl. the one converge stability-sum care point
+  (remove-everywhere ⇒ 0 convergence-delta, but verify not blind-delete).
+  Docs/analysis-only; no code change.
+
 ### FSMGEN-SUBMODULE-BUMP.1 — pin subs/fsmgen 9bfb9a20; audit both findings fixed
 - `subs/fsmgen` pin bumped `effe591d → 9bfb9a20` (upstream `origin/main`),
   which carries FSMGen's explicit fixes for the two SPECFORGE-filed
