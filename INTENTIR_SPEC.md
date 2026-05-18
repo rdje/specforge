@@ -2,7 +2,7 @@
 ## Purpose
 - define the canonical product boundary for `specforge`
 - specify the staged IR pipeline clearly enough that future implementation work does not drift back toward backend-specific thinking
-- make it explicit that `IntentIR`, not `.fsm`, is the canonical deliverable of the tool
+- make it explicit that `IntentIR`, not `.isf`, is the canonical deliverable of the tool
 
 ## Canonical product boundary
 `specforge` exists to extract implementation-relevant intent from specifications.
@@ -19,10 +19,9 @@ The canonical output of the system is:
 - precise enough to drive backend adapters
 - explicit about uncertainty, abstractions, and residual decisions
 
-Backend-specific outputs are not the primary product. They are adapters:
-- `.fsm` (active)
-- `.isf` (planned)
-- HDL lowering (SystemVerilog, Verilog, VHDL) is out of scope — owned by downstream toolchains
+Backend-specific outputs are not the primary product. The single adapter is:
+- `.isf` (the only adapter target)
+- `.fsm` and HDL lowering (SystemVerilog, Verilog, VHDL) are out of scope — FSMGen consumes `.isf` and owns scheduling, `.fsm`, and HDL downstream
 
 ## Why IntentIR instead of “AST”
 `AST` is too syntactic for the actual problem.
@@ -401,17 +400,15 @@ Minimal conceptual example:
 }
 ```
 
-### Adapters
-Adapters lower `IntentIR` into concrete targets.
+### Adapter
+The single adapter lowers `IntentIR` into the `.isf` target.
 
-Initial planned targets:
-- `.fsm` (active)
-- `.isf` (planned)
-- HDL lowering (SystemVerilog, Verilog, VHDL) is out of scope — owned by downstream toolchains
+- `.isf` is the only adapter target
+- `.fsm` and HDL lowering (SystemVerilog, Verilog, VHDL) are out of scope — FSMGen consumes `.isf` and owns scheduling, `.fsm`, and HDL downstream
 Current implementation note:
-- `specforge adapt <intent-ir> --target fsm` now materializes `generated/adapters/fsm/<document_key>/adapter.json`
-- the first executable adapter slice consumes persisted `IntentIR` JSON
-- it currently chooses `?dt:name` for fully specified explicit standalone cases, chooses `?fsm:name` when explicit regular-state and transition records are present, chooses `?top:name` when explicit module/top composition facts are present, consumes canonical interface/control/system/init/state/module/top records when available, emits real standalone, structured, or explicit top-root `.fsm` text only when renderability is explicit enough, and keeps compatibility-level direct-module spellings outside the current canonical root-kind model rather than fabricating `.fsm` text from an invented direct-module distinction
+- `specforge adapt <intent-ir> --target isf` materializes `generated/adapters/isf/<document_key>/adapter.json`
+- the adapter consumes persisted `IntentIR` JSON and lowers it through the typed `IsfIr` model (`IntentIR → IsfIr::from_intent_ir() → render() → .isf`)
+- it emits real `.isf` S-expression source when the canonical signal/behavior surface is renderable, and blocks with explicit reasons otherwise (see the ISF renderability policy)
 
 Minimal conceptual adapter artifact:
 ```json
@@ -475,7 +472,7 @@ Example:
 - PDFs should preserve structured page and visual artifacts even when markdown is also emitted
 
 ## Guardrails
-- do not let `IntentIR` collapse into `.fsm` assumptions
+- do not let `IntentIR` collapse into `.isf` (or downstream `.fsm`) assumptions
 - do not let adapter concerns leak backward into the canonical model
 - do not let markdown reports become the real system of record
 - do not reduce visually rich PDFs to text-only markdown when the figures, charts, or diagrams carry semantics
@@ -487,8 +484,7 @@ Example:
 - `specforge evidence` constructs `EvidenceIR` from normalized markdown, page/asset manifests, and visual evidence anchors
 - `specforge semantic` constructs `SemanticIR` from grounded evidence
 - `specforge intent` now constructs canonical `IntentIR`
-- `specforge adapt --target fsm` now constructs a typed `.fsm` adapter artifact, emits real standalone or structured `.fsm` text for explicit canonical standalone/stateful cases, and blocks unsafe target text emission with explicit residual decisions otherwise
-- `specforge adapt --target fsm` now also emits real explicit `?top:name` source documents when explicit module/top composition facts are complete enough to avoid semantic invention
+- `specforge adapt --target isf` constructs a typed `.isf` adapter artifact via the `IsfIr` model, emits real `.isf` S-expression source when the canonical signal/behavior surface is renderable, and blocks with explicit reasons otherwise
 - adapter work should follow `IntentIR`, not precede it
 
 ## Long-term documentation requirement
@@ -498,4 +494,4 @@ Example:
 - schema documentation
 - many worked examples
 - end-to-end examples from source documents to `IntentIR`
-- examples from `IntentIR` to each adapter target
+- examples from `IntentIR` to the `.isf` adapter target

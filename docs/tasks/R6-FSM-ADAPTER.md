@@ -1,9 +1,15 @@
 # R6-FSM-ADAPTER: `.fsm` Adapter Hardening
 
+> **SUPERSEDED 2026-05-18 by `ISF-ONLY-CONSOLIDATION`.** This tree's work
+> was completed in its time, but the `.fsm` adapter it hardened is being
+> removed entirely: SpecForge now emits only `.isf` and FSMGen owns
+> `.fsm`/HDL downstream. This file is retained as historical record only;
+> see [docs/tasks/ISF-ONLY-CONSOLIDATION.md](ISF-ONLY-CONSOLIDATION.md).
+
 ## Metadata
 
 - Tree ID: `R6-FSM-ADAPTER`
-- Status: `done`
+- Status: `superseded` (by `ISF-ONLY-CONSOLIDATION`; historically `done`)
 - Roadmap lane: `R6`
 - Created: `2026-05-14`
 - Last updated: `2026-05-14`

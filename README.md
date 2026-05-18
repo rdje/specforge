@@ -5,8 +5,8 @@ Use it first for the project objective, document navigation, and the current imp
 ## Project objective
 - build `specforge` as a staged Rust toolchain for extracting implementation-relevant intent from protocol, component, system, and software-interface specifications
 - make the canonical deliverable a backend-independent `IntentIR`, serialized as JSON or a future equivalent interchange format
-- treat `.fsm` and `.isf` as adapter targets downstream of `IntentIR`, not as the core product boundary
-- HDL lowering (SystemVerilog, Verilog, VHDL) is out of scope — owned by downstream toolchains
+- treat `.isf` as the single adapter target downstream of `IntentIR`, not as the core product boundary
+- `.fsm` and HDL lowering (SystemVerilog, Verilog, VHDL) are out of scope — FSMGen consumes `.isf` and owns scheduling, `.fsm`, and HDL downstream
 - push automation as far as safely possible, while representing unresolved ambiguity as structured residual decision packets instead of ad hoc manual gaps
 - preserve crash-safe continuity through live documentation so a new AI or LLM session can resume work quickly and correctly
 - implement protocol semantics as a typed domain model plus evidence aggregation, using AI only as a bounded hypothesis generator rather than as an end-to-end black-box reader
@@ -266,10 +266,9 @@ Use it first for the project objective, document navigation, and the current imp
 ## Working naming
 - repository / project / CLI / crate name: `specforge`
 - canonical output: `IntentIR`
-- adapter targets:
-  - `.fsm` is the active implemented/hardening lane
-  - `.isf` is a planned adapter target
-  - HDL lowering (SystemVerilog, Verilog, VHDL) is out of scope — owned by downstream toolchains
+- adapter target:
+  - `.isf` is the single implemented adapter target
+  - `.fsm` and HDL lowering (SystemVerilog, Verilog, VHDL) are out of scope — FSMGen consumes `.isf` and owns scheduling, `.fsm`, and HDL downstream
 
 ## Fast ramp-up order
 1. `README.md`
@@ -503,12 +502,12 @@ cargo run -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_dat
 - stage 1: build `EvidenceIR` from normalized text, section anchors, evidence spans, figure/caption links, visual evidence, and statement extraction
 - stage 2: build `SemanticIR` from actors, interfaces, backend-neutral system/init records, phases, invariants, contracts, gates, assertions, abstractions, and decomposition candidates
 - stage 3: build `IntentIR` as the canonical backend-independent intent model, including explicit interface inventory, backend-neutral guarded/action fragments, and backend-neutral system/init records when supported by the evidence
-- stage 4: lower `IntentIR` through adapters such as `.fsm` and `.isf` (HDL lowering is out of scope — owned by downstream toolchains)
+- stage 4: lower `IntentIR` through the `.isf` adapter (`.fsm`/HDL lowering is out of scope — FSMGen consumes `.isf` and owns it downstream)
 - stage 5: validate adapters and back-annotate findings into the IR/documentation surface
 
 ## Key operating principles
 - `IntentIR` is the canonical endpoint
-- `.fsm` is an adapter target, not the core endpoint
+- `.isf` is the single adapter target, not the core endpoint; `.fsm`/HDL are out of scope (FSMGen owns them downstream of `.isf`)
 - the pipeline is explicit: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 - the staged pipeline can now be driven through a fixed-point entrypoint that re-runs downstream stages until the persisted knowledge snapshot stabilizes
 - automation-first, manual-last

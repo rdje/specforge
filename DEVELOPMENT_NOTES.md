@@ -28,6 +28,15 @@
   Execution of the leaves is a separate, explicit authorization given the
   scale (~1977 FSM lines, 163 mostly-FSM tests, 153-fixture triage,
   pervasive docs).
+- `.1` (this slice; full batch authorized): rewrote the canonical adapter
+  strategy to ISF-only across README/INTENTIR_SPEC/ROADMAP/USER_GUIDE/
+  FSMGEN_FEEDBACK and superseded `R6-FSM-ADAPTER`. The ROADMAP R6 section
+  (~317 FSM-criteria lines) was spliced down to a concise ISF-only section
+  via a Python range replacement — Edit could not take a 317-line unique
+  `old_string` and chunked Edits would still need the exact ~270-line
+  middle; a precise line-range splice was the right tool, then verified.
+  Docs only; deep historical FSM "done" bullets in ROADMAP R15 left for
+  the `.7` reconcile (they record completed work, not forward strategy).
 
 ## 2026-05-17 session — R6-ISF-ADAPTER batch (ISF ownership backfill + hardening)
 

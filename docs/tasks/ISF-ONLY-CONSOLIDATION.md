@@ -78,7 +78,7 @@ Scope reality (surveyed 2026-05-18):
   Children: `.1`, `.2`, `.3`, `.4`, `.5`, `.6`, `.7`
 
 - ID: `ISF-ONLY-CONSOLIDATION.1`
-  Status: `pending`
+  Status: `done`
   Goal: >
     Adopt and record the ISF-only adapter strategy in the canonical
     docs before code changes: README objective, INTENTIR_SPEC adapter
@@ -86,8 +86,8 @@ Scope reality (surveyed 2026-05-18):
     mark `R6-FSM-ADAPTER` `superseded` in TASK_TREE.md; record the
     decision. Docs only.
   Acceptance: `Canonical docs state .isf is the sole adapter target and FSMGen owns downstream; R6-FSM-ADAPTER marked superseded; no code change.`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — README/INTENTIR_SPEC/ROADMAP(R6+objective+order+R7 target)/USER_GUIDE/FSMGEN_FEEDBACK now ISF-only; R6-FSM-ADAPTER superseded in TASK_TREE.md + file; docs-only (no .rs changed)
+  Commit: `ISF-ONLY-CONSOLIDATION.1 — adopt ISF-only adapter strategy in canonical docs`
 
 - ID: `ISF-ONLY-CONSOLIDATION.2`
   Status: `pending`
@@ -162,8 +162,8 @@ Scope reality (surveyed 2026-05-18):
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `ISF-ONLY-CONSOLIDATION.1` | `pending` | Record the strategy before any code removal |
-| 2 | `ISF-ONLY-CONSOLIDATION.2` | `pending` | Isolate ISF so FSM can be deleted cleanly |
+| 1 | `ISF-ONLY-CONSOLIDATION.1` | `done` | Strategy recorded in canonical docs |
+| 2 | `ISF-ONLY-CONSOLIDATION.2` | `pending` | Next — isolate ISF so FSM can be deleted cleanly |
 | 3 | `ISF-ONLY-CONSOLIDATION.3` | `pending` | Make typed surface ISF-only |
 | 4 | `ISF-ONLY-CONSOLIDATION.4` | `pending` | Delete FSM bulk (likely splits) |
 | 5 | `ISF-ONLY-CONSOLIDATION.5` | `pending` | Fixture triage |
@@ -198,13 +198,13 @@ Scope reality (surveyed 2026-05-18):
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
-| `2026-05-18` | `ISF-ONLY-CONSOLIDATION.1` | `pending` | `pending` |
+| `2026-05-18` | `ISF-ONLY-CONSOLIDATION.1` | docs-only diff audit (no `.rs` changed) | `passed` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
-| `ISF-ONLY-CONSOLIDATION.1` | `pending` | `pending` |
+| `ISF-ONLY-CONSOLIDATION.1` | `ISF-ONLY-CONSOLIDATION.1 — adopt ISF-only adapter strategy in canonical docs` | Docs only; ROADMAP R6 spliced (~279 FSM-criteria lines removed) |
 
 ## Changelog
 

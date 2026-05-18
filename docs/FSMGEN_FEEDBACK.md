@@ -1,5 +1,20 @@
 # FSMGEN Feedback From SPECFORGE
 
+## Scope update (2026-05-18) — SPECFORGE emits only `.isf`
+
+SPECFORGE's single adapter target is now `.isf`. SPECFORGE no longer emits
+`.fsm` itself and never emitted HDL; FSMGEN consumes `.isf` and owns
+scheduling, `.fsm`, and HDL downstream. The relationship is therefore
+strictly `SPECFORGE IntentIR → .isf → FSMGEN`.
+
+The `.fsm`-language-feature suggestions below are retained as historical
+context and may still be useful to FSMGEN, but the **active, load-bearing
+asks for SPECFORGE are the ISF-facing ones**: strict-mode `.isf` acceptance,
+the capability manifest, stable diagnostic codes, JSON check, normalized
+semantic JSON, and reset/clock/contract metadata as they apply to `.isf`.
+Wherever this document says "`.fsm` adapter", read it as historical; the
+current adapter is `.isf`.
+
 ## Purpose
 
 This file is SPECFORGE's tracked feedback for FSMGEN.

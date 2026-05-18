@@ -19,6 +19,21 @@
 - This entry records tree creation only; the canonical README/ROADMAP/
   INTENTIR_SPEC rewrite is leaf `.1`.
 
+### ISF-ONLY-CONSOLIDATION.1: adopt ISF-only strategy in canonical docs
+- User authorized executing the full `.1`–`.7` batch.
+- Rewrote the normative adapter strategy to ISF-only across README
+  (objective / working naming / product shape stage 4 / key principles),
+  INTENTIR_SPEC (product boundary / Adapter section / guardrails /
+  implementation implications), ROADMAP (objective; R6 section spliced —
+  ~279 FSM-criteria lines replaced with a concise ISF-only R6; R7 adapter
+  validation target; recommended order item 10), and USER_GUIDE
+  (workflow / command shape / principles / current limitation).
+- `docs/FSMGEN_FEEDBACK.md`: added a scope banner — SpecForge emits only
+  `.isf`; `.fsm`-language suggestions retained as historical context.
+- Marked `R6-FSM-ADAPTER` `superseded` by `ISF-ONLY-CONSOLIDATION` in
+  `docs/TASK_TREE.md` and in its own file (historical record retained).
+- Docs only — zero code change; the 1201-test / CI-green baseline holds.
+
 ## 2026-05-17 (R6-ISF-ADAPTER batch — ISF adapter ownership backfill + hardening)
 
 ### Created: R6-ISF-ADAPTER task tree (lane R6, 5-leaf authorized batch)

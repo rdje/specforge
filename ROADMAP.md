@@ -1,7 +1,7 @@
 # ROADMAP
 ## Objective
 - build `specforge` as a staged Rust toolchain for extracting implementation-relevant intent from specifications into canonical `IntentIR`
-- keep `.fsm` and `.isf` as adapter targets downstream of `IntentIR`
+- keep `.isf` as the single adapter target downstream of `IntentIR` (`.fsm`/HDL are out of scope — FSMGen consumes `.isf` and owns them downstream)
 - preserve deterministic provenance, typed intermediate data, and explicit residual decisions across all stages
 - treat text, layout, figures, captions, tables, and charts as first-class evidence rather than markdown decoration
 - prioritize semantic truthfulness and KG quality ahead of adapter breadth until the canonical four-layer pipeline is top-notch
@@ -160,320 +160,37 @@
 
 ### R6 Adapter layer
 - status: In Progress
-- task tree: `R6-FSM-ADAPTER` (`done`) — [docs/tasks/R6-FSM-ADAPTER.md](docs/tasks/R6-FSM-ADAPTER.md)
+- task tree: `R6-ISF-ADAPTER` (`done`) — [docs/tasks/R6-ISF-ADAPTER.md](docs/tasks/R6-ISF-ADAPTER.md)
   - task tree: `R6-SOURCE-HARDENING` (`done`) — [docs/tasks/R6-SOURCE-HARDENING.md](docs/tasks/R6-SOURCE-HARDENING.md)
   - task tree: `R6-CONVERGE-HARDENING` (`done`) — [docs/tasks/R6-CONVERGE-HARDENING.md](docs/tasks/R6-CONVERGE-HARDENING.md)
-  - task tree: `R6-ISF-ADAPTER` (`done`) — [docs/tasks/R6-ISF-ADAPTER.md](docs/tasks/R6-ISF-ADAPTER.md)
-- `.isf` adapter status:
-  - first `.isf` slices have landed: a typed `IsfIr` IR (`crates/specforge/src/ir/isf_ir.rs`), the `IntentIR → IsfIr::from_intent_ir() → render() → .isf` pipeline, `--target isf` on the CLI, `IsfAdapterArtifact` in `adapters.rs`, the mdBook chapter `docs/book/src/pipeline/isf-adapter.md`, and an integration test running pinned `subs/fsmgen --strict --check --json` against emitted ISF text.
-  - those slices originally landed untracked (commits `bfe4f973`→`490e6aed`); `R6-ISF-ADAPTER` retroactively owns them and is hardening ISF to IR-layer parity (IrStage correctness, unit tests, explicit renderability policy).
-- current lane:
-  - `.fsm` adapter hardening is active, with renderable standalone/top paths, blocked renderability diagnostics, residual decisions, support/confidence preservation, and selected-inventory provenance under continuing regression coverage.
-  - the active PNT cycle is continuing with reused FSM-child top cleanliness coverage; `R6` remains active and push checkpoints are around every 30 local commits.
-  - HDL lowering (SystemVerilog/Verilog/VHDL) is removed from scope — SpecForge lowers to `.fsm` or `.isf`; downstream toolchains own HDL generation.
+  - task tree: `R6-FSM-ADAPTER` (`superseded` by `ISF-ONLY-CONSOLIDATION`) — [docs/tasks/R6-FSM-ADAPTER.md](docs/tasks/R6-FSM-ADAPTER.md)
+  - task tree: `ISF-ONLY-CONSOLIDATION` (`active`) — [docs/tasks/ISF-ONLY-CONSOLIDATION.md](docs/tasks/ISF-ONLY-CONSOLIDATION.md)
+- adapter strategy (2026-05-18 pivot):
+  - `.isf` is SpecForge's single adapter target. `IntentIR` lowers to `.isf`
+    through the typed `IsfIr` model (`IntentIR → IsfIr::from_intent_ir() →
+    render() → .isf`).
+  - `.fsm` and HDL lowering (SystemVerilog/Verilog/VHDL) are out of scope.
+    FSMGen consumes `.isf` and owns scheduling, `.fsm`, and HDL downstream.
+  - the prior `.fsm`-active adapter strategy and its extensive FSM
+    renderability/composition completion criteria are superseded; the
+    `ISF-ONLY-CONSOLIDATION` task tree owns removing the HDL surface and the
+    entire `.fsm` adapter subsystem from code, tests, fixtures, and docs.
 - goals:
-  - define target-specific lowering boundaries for:
-    - `.fsm`
-    - `.isf`
-  - land the first honest `.fsm` adapter slices for standalone DT, explicit FSM-root, and explicit top-root composition cases without leaking target assumptions backward into `IntentIR`
-  - keep adapter concerns from leaking backward into `IntentIR`
+  - define the `.isf` lowering boundary cleanly, without leaking adapter
+    assumptions backward into `IntentIR`
+  - keep ISF emission honest: emit `.isf` only when the canonical
+    signal/behavior surface is renderable, otherwise block with explicit
+    reasons (the ISF renderability policy)
 - completion criteria:
   - adapter planning is typed
-  - at least one real adapter artifact exists after `IntentIR` is stable
-  - non-renderable adapter cases stop with explicit residual decisions instead of fabricated target text
-  - real standalone `?dt:name` target text is emitted only when the canonical signal, control, system-contract, and init structure is renderable without semantic invention
-  - standalone DT lowering can also carry canonical symbol-definition sections, reset-role blocks, selector/test-node branches, and compound-update shorthand when the widened canonical control/value surface maps directly to explicit `.fsm` syntax
-  - explicit standalone sequential DT cases can lower with `(+system ...)` and `(:= ...)` without promoting a true FSM root
-  - real structured `?fsm:name` target text is emitted only when the canonical state graph, state-body control, transition targets, and system/init surface are explicit enough to avoid semantic invention
-  - renderable structured-FSM state graph candidates preserve state and transition support IDs, guards, declaration order, and automation confidence
-  - renderable structured-FSM module and source-document state graph projections preserve canonical state order, transition support IDs, guards, declaration order, and automation confidence
-  - standalone explicit-module `?fsm:name` state graph candidates, selected renderable modules, and emitted source-document direct roots preserve source explicit-module state IDs, state names, initial flags, declaration order, support IDs, transition IDs, source/target pairs, guards, transition support IDs, and automation confidence
-  - standalone explicit-module `?fsm:name` selected renderable modules and emitted source-document direct roots preserve source explicit-module control-block support IDs, branch support IDs, and automation confidence
-  - standalone explicit-module `?fsm:name` selected renderable modules and emitted source-document direct roots preserve source explicit-module system-contract clock/reset support IDs and automation confidence
-  - standalone explicit-module `?fsm:name` selected renderable modules and emitted source-document direct roots preserve source explicit-module init-assignment targets, values, support IDs, and automation confidence
-  - standalone explicit-module candidates preserve source explicit-module system-contract and init-assignment provenance before renderable projection
-  - standalone explicit-module candidates preserve selected root kind, deferred root kind, automation confidence, and explicit-state rationale before renderable projection
-  - standalone explicit-module output signals preserve graph-backed direction, module-control support, external actor-port support, automation confidence, renderable direction, and renderable width
-  - standalone explicit-module renderable aggregate and module-candidate surfaces prove empty blocker and required-enrichment diagnostics when renderable
-  - standalone explicit-module actor-port width recovery preserves recovered width through selected aggregate renderable modules and emitted source-document direct roots
-  - standalone explicit-module actor-port width conflicts block aggregate renderable modules and source documents while preserving conflicting-width repair guidance
-  - standalone explicit-module control-read direction conflicts block aggregate renderable modules and source documents while preserving conflicting-direction repair guidance
-  - standalone explicit-module flat/graph direction disagreements block aggregate renderable modules and source documents while preserving canonical/graph repair guidance
-  - standalone explicit-module system-contract recovery preserves source-document direct-root identity and equality with the selected aggregate renderable module
-  - renderable top compositions preserve top-root identity, child order, child root kinds, and empty blocker/enrichment diagnostics before source-document emission
-  - reused-child top compositions preserve candidate/source-document top-root equality and clean diagnostics while deduplicating shared child roots
-  - top-before-child source documents preserve candidate/source-document top-root equality and direct-root order alongside emitted-text ordering
-  - top compositions with FSM children preserve clean diagnostics, candidate/source-document top-root equality, aggregate no-direct-module state, and exactly one FSM direct root
-  - real explicit `?top:name` target text is emitted only when the canonical model carries explicit top ports, child modules, renderable child roots, and width-compatible links
-  - top-link width mismatch blockers preserve width-compatible repair guidance on blocked top and aggregate `.fsm` renderability surfaces while retaining the mismatched link provenance
-  - top-link width mismatch blockers preserve the composition-topology residual decision so width-compatible link repair remains visible in structured adapter diagnostics
-  - top-link width mismatch blockers preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output
-  - top-link width mismatch residuals preserve child-module reference diagnostics alongside width-compatible top-link and explicit top-port diagnostics so all repair surfaces remain visible
-  - top-link width mismatch residuals preserve renderable child-module diagnostics alongside width-compatible top-link, explicit top-port, and child-module reference diagnostics so all repair surfaces remain visible
-  - selected top signal inventory preserves symbolic public IO width provenance while `.fsm` lowering remains blocked until numeric width evidence exists
-  - widthless public top-port blockers preserve explicit top-port support IDs and high automation confidence while `.fsm` lowering remains blocked until numeric width evidence exists
-  - widthless public top-port blockers preserve top-boundary width recovery guidance and low-confidence composition-topology residual diagnostics on blocked top and aggregate `.fsm` renderability surfaces
-  - widthless public top-port residuals preserve explicit top-port diagnostics alongside renderable child-module and child-module reference diagnostics so all repair surfaces remain visible
-  - widthless public top-port residuals preserve child-module reference diagnostics alongside explicit top-port diagnostics so both repair surfaces remain visible
-  - widthless public top-port residuals preserve renderable child-module diagnostics alongside explicit top-port and child-module reference diagnostics so all repair surfaces remain visible
-  - the widthless public top-port residual guard is asserted directly in the widthless blocker regression, not through adjacent recovered-root confidence coverage
-  - parametric public top-port blockers preserve explicit top-port support IDs and high automation confidence while `.fsm` lowering remains blocked until numeric width evidence exists
-  - parametric public top-port blockers preserve top-boundary width resolution guidance and low-confidence composition-topology residual diagnostics on blocked top and aggregate `.fsm` renderability surfaces
-  - parametric public top-port residuals preserve explicit top-port diagnostics alongside renderable child-module and child-module reference diagnostics so all repair surfaces remain visible
-  - parametric public top-port residuals preserve child-module reference diagnostics alongside explicit top-port diagnostics so both repair surfaces remain visible
-  - parametric public top-port residuals preserve renderable child-module diagnostics alongside explicit top-port and child-module reference diagnostics so all repair surfaces remain visible
-  - top-link blockers for unemitted child endpoints preserve explicit link support IDs, high automation confidence, and source- and target-endpoint enrichment guidance on blocked top and aggregate `.fsm` renderability surfaces while blocking `.fsm` emission
-  - source-side unemitted child endpoint residuals preserve child-module reference diagnostics alongside renderable child-module and explicit top-port diagnostics so all repair surfaces remain visible
-  - target-side unemitted child blockers preserve selected top signal-inventory provenance, direction, width, support IDs, and high confidence while composition stays blocked
-  - source-side child direction-role blockers preserve selected top signal-inventory provenance, direction, width, support IDs, and high confidence while composition stays blocked
-  - source-side child direction-role blockers preserve conflicted child inventory interface provenance, topology-link support, graph direction conflict state, and repair guidance while composition stays blocked
-  - source-side child direction-role residuals preserve child-module reference diagnostics alongside renderable child-module and explicit top-port diagnostics so all repair surfaces remain visible
-  - target-side child direction-role blockers preserve selected top signal-inventory provenance, direction, width, support IDs, and high confidence while composition stays blocked
-  - target-side child direction-role blockers preserve conflicted child inventory interface provenance, topology-link support, graph-backed direction state, and repair guidance while composition stays blocked
-  - target-side child direction-role residuals preserve child-module reference diagnostics alongside renderable child-module and explicit top-port diagnostics so all repair surfaces remain visible
-  - missing-child top blockers preserve child-source declaration guidance on blocked top and aggregate `.fsm` renderability surfaces while keeping recovered top-boundary evidence inspectable
-  - missing-child top blockers preserve selected top signal-inventory provenance, direction, width, support IDs, and high confidence while composition stays blocked
-  - primary missing-child composition blockers preserve child-source declaration guidance alongside top-port and child-declaration provenance
-  - missing-child top blockers preserve composition-topology residual diagnostics so child-module reference repair remains visible in structured adapter output
-  - missing-child top blockers preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output
-  - primary missing-child residuals preserve explicit top-port diagnostics alongside child-module reference diagnostics so both repair surfaces remain visible
-  - primary missing-child residuals preserve renderable child-module diagnostics alongside explicit top-port and child-module reference diagnostics so all repair surfaces remain visible
-  - duplicate top child-instance blockers preserve child-instance deduplication guidance, composition-topology residual diagnostics, and both duplicate child declaration support-ID sets
-  - actor-port parametric width blockers preserve graph-backed provenance category, support IDs, and automation confidence while `.fsm` lowering remains blocked until numeric width evidence exists
-  - canonical parametric width blockers preserve interface provenance category, support IDs, and automation confidence while `.fsm` lowering remains blocked until numeric width evidence exists
-  - explicit numeric interface width evidence stays provenance-auditable and takes precedence over graph-backed actor-port symbolic widths for `.fsm` emission
-  - blocked top-composition recovered top-port direction preserves top-link support IDs, high automation confidence, and low-confidence composition-topology residual diagnostics even when another composition gate blocks `.fsm` emission
-  - blocked recovered top-port direction residuals preserve explicit top-port diagnostics alongside child-module reference diagnostics so both repair surfaces remain visible
-  - top-link direction recovery preserves original public top-port declaration support IDs alongside topology-link support IDs and stays composition-residual clean once renderable
-  - actor-port direction recovery preserves original public top-port declaration support IDs alongside graph actor-port support IDs and stays composition-residual clean once renderable
-  - actor-port direction recovery preserves selected top signal-inventory provenance, graph direction, top-port support, graph support, and high confidence once renderable
-  - actor-port width recovery preserves original public top-port declaration support IDs alongside graph actor-port width support IDs and stays composition-residual clean once renderable
-  - actor-port width recovery preserves selected top signal-inventory provenance, graph-backed width, top-port support, graph support, and high confidence once renderable
-  - child-link width recovery preserves original public top-port declaration support IDs alongside topology-link width support IDs and stays composition-residual clean once renderable
-  - child-system-contract width recovery preserves original public top-port declaration support IDs alongside topology-link and system-contract support IDs and stays composition-residual clean once renderable
-  - top actor-port direction conflicts preserve explicit top-port support IDs, graph actor-port support IDs, and high automation confidence while blocking `.fsm` emission
-  - top actor-port direction conflict blockers preserve top-boundary direction-conflict enrichment guidance and low-confidence composition-topology residual diagnostics on blocked top and aggregate `.fsm` renderability surfaces
-  - top actor-port direction residuals preserve explicit top-port diagnostics alongside renderable child-module and child-module reference diagnostics so all repair surfaces remain visible
-  - top actor-port direction residuals preserve child-module reference diagnostics alongside explicit top-port diagnostics so both repair surfaces remain visible
-  - top actor-port direction residuals preserve renderable child-module diagnostics alongside explicit top-port and child-module reference diagnostics so all repair surfaces remain visible
-  - top actor-port width conflicts preserve explicit top-port support IDs, graph actor-port width support IDs, width-conflict inventory state, and high automation confidence while blocking `.fsm` emission
-  - top actor-port width conflict blockers preserve top-boundary width-conflict enrichment guidance and low-confidence composition-topology residual diagnostics on blocked top and aggregate `.fsm` renderability surfaces
-  - top actor-port width residuals preserve child-module reference diagnostics alongside explicit top-port diagnostics so both repair surfaces remain visible
-  - top actor-port width residuals preserve renderable child-module diagnostics alongside explicit top-port and child-module reference diagnostics so all repair surfaces remain visible
-  - top-link direction conflicts preserve explicit top-port support IDs, topology-link support IDs, graph-direction inventory state, and high automation confidence while blocking `.fsm` emission
-  - top-link direction conflict blockers preserve top-boundary direction-conflict enrichment guidance and low-confidence composition-topology residual diagnostics on blocked top and aggregate `.fsm` renderability surfaces
-  - top-link direction residuals preserve explicit top-port diagnostics alongside renderable child-module and child-module reference diagnostics so all three repair surfaces remain visible
-  - top-link direction residuals preserve child-module reference diagnostics alongside renderable child-module and explicit top-port diagnostics so all three repair surfaces remain visible
-  - top-link endpoint direction-role blockers preserve source/output and target/input repair guidance on blocked child, top, and aggregate `.fsm` renderability surfaces
-  - top-link endpoint direction-role blockers preserve the composition-topology residual decision so renderable-child and topology repair remains visible in structured adapter diagnostics
-  - source-side top-link direction-role blockers preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output
-  - source-side child direction-role guidance residuals preserve explicit top-port diagnostics alongside renderable child-module diagnostics so the endpoint-role regression matches the documented repair surfaces
-  - source-side child direction-role residuals preserve explicit top-port diagnostics alongside renderable child-module diagnostics so both repair surfaces remain visible
-  - top-link target endpoint direction-role blockers preserve source/output and target/input repair guidance across topology-backed flat/graph disagreements
-  - top-link target endpoint direction-role blockers preserve the same composition-topology residual decision as the source-side role blockers
-  - target-side top-link direction-role blockers preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output
-  - target-side child direction-role guidance residuals preserve explicit top-port diagnostics alongside renderable child-module diagnostics so the endpoint-role regression matches the documented repair surfaces
-  - target-side child direction-role residuals preserve explicit top-port diagnostics alongside renderable child-module diagnostics so both repair surfaces remain visible
-  - top-boundary top-link direction conflicts preserve source/output and target/input repair guidance alongside boundary direction-conflict guidance
-  - top-target boundary role conflicts preserve source/output and target/input repair guidance alongside boundary direction-conflict guidance
-  - top-target boundary role conflicts preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output
-  - top-target boundary role residuals preserve explicit top-port diagnostics alongside renderable child-module diagnostics so both repair surfaces remain visible
-  - top-target boundary role residuals preserve child-module reference diagnostics alongside renderable child-module and explicit top-port diagnostics so all three repair surfaces remain visible
-  - width-mismatched top-link residuals preserve explicit top-port diagnostics alongside width-compatible top-link diagnostics so both repair surfaces remain visible
-  - duplicate top-port direction conflicts preserve both duplicate declaration support-ID sets and high automation confidence while blocking `.fsm` emission
-  - duplicate top-port direction conflict blockers preserve top-boundary direction-conflict enrichment guidance on blocked top and aggregate `.fsm` renderability surfaces
-  - duplicate top-port direction blockers preserve explicit top-port deduplication guidance, composition-topology residual diagnostics, and direction-conflict guidance
-  - duplicate top-port direction blockers preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output
-  - duplicate top-port direction residuals preserve explicit top-port diagnostics alongside renderable child-module and child-module reference diagnostics so all repair surfaces remain visible
-  - duplicate top-port direction residuals preserve child-module reference diagnostics alongside explicit top-port diagnostics so both repair surfaces remain visible
-  - duplicate top-port direction residuals preserve renderable child-module diagnostics alongside explicit top-port and child-module reference diagnostics so all repair surfaces remain visible
-  - duplicate top-port width conflicts preserve both duplicate declaration support-ID sets, width-conflict inventory state, and high automation confidence while blocking `.fsm` emission
-  - duplicate top-port width conflict blockers preserve top-boundary width-conflict enrichment guidance on blocked top and aggregate `.fsm` renderability surfaces
-  - duplicate top-port width blockers preserve explicit top-port deduplication guidance, composition-topology residual diagnostics, and width-conflict guidance
-  - duplicate top-port width blockers preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output
-  - duplicate top-port width residuals preserve explicit top-port diagnostics alongside renderable child-module and child-module reference diagnostics so all repair surfaces remain visible
-  - duplicate top-port width residuals preserve child-module reference diagnostics alongside explicit top-port diagnostics so both repair surfaces remain visible
-  - duplicate top-port width residuals preserve renderable child-module diagnostics alongside explicit top-port and child-module reference diagnostics so all repair surfaces remain visible
-  - multi-child top roots without explicit top-link records preserve top-link enrichment guidance and composition-topology residual diagnostics while retaining child declaration provenance and resolved child root kinds
-  - multi-child top roots without explicit top-link records preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output
-  - multi-child no-link residuals preserve explicit top-port diagnostics alongside width-compatible top-link diagnostics so both repair surfaces remain visible
-  - multi-child no-link residuals preserve child-module reference diagnostics alongside width-compatible top-link and explicit top-port diagnostics so all repair surfaces remain visible
-  - multi-child no-link residuals preserve renderable child-module diagnostics alongside width-compatible top-link, explicit top-port, and child-module reference diagnostics so all repair surfaces remain visible
-  - top roots without child-module references preserve child-module enrichment guidance and composition-topology residual diagnostics while retaining top-port provenance
-  - top roots without child-module references preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output
-  - no-child top residuals preserve explicit top-port diagnostics alongside child-module reference diagnostics so both repair surfaces remain visible
-  - no-child top residuals preserve renderable child-module diagnostics alongside explicit top-port and child-module reference diagnostics so all repair surfaces remain visible
-  - no-child top residual live status clusters renderable-child diagnostics alongside the explicit-top-port and child-module-reference rows for the owning blocker family
-  - top roots without top-port records preserve top-port enrichment guidance and composition-topology residual diagnostics while retaining child declaration provenance and resolved child root kind
-  - top roots without top-port records preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output
-  - no-top-port residuals preserve child-module reference diagnostics alongside explicit top-port diagnostics so both repair surfaces remain visible
-  - no-top-port residuals preserve renderable child-module diagnostics alongside explicit top-port and child-module reference diagnostics so all repair surfaces remain visible
-  - the no-top-port residual surface is asserted directly in the no-top-port blocker regression
-  - duplicate child-instance top blockers preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output
-  - duplicate child-instance residuals preserve explicit top-port diagnostics alongside child-module reference diagnostics so both repair surfaces remain visible
-  - duplicate child-instance residuals preserve child-module reference diagnostics alongside explicit top-port and renderable child-module diagnostics so all repair surfaces remain visible
-  - duplicate child-instance residuals preserve renderable child-module diagnostics alongside explicit top-port and child-module reference diagnostics so all repair surfaces remain visible
-  - top links targeting undeclared top-boundary ports preserve target-endpoint enrichment guidance, composition-topology residual diagnostics, and top-port, child, and link provenance
-  - top links targeting undeclared top-boundary ports preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output
-  - undeclared top-target residuals preserve explicit top-port diagnostics alongside child-module reference and renderable child-module diagnostics so all repair surfaces remain visible
-  - undeclared top-target residuals preserve child-module reference diagnostics alongside explicit top-port diagnostics so both repair surfaces remain visible
-  - undeclared top-target residuals preserve renderable child-module diagnostics alongside explicit top-port and child-module reference diagnostics so all repair surfaces remain visible
-  - top links originating from undeclared top-boundary ports preserve source-endpoint enrichment guidance, composition-topology residual diagnostics, and top-port, child, and link provenance
-  - top links originating from undeclared top-boundary ports preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output
-  - undeclared top-source residuals preserve explicit top-port diagnostics alongside child-module reference and renderable child-module diagnostics so all repair surfaces remain visible
-  - undeclared top-source residuals preserve child-module reference diagnostics alongside explicit top-port diagnostics so both repair surfaces remain visible
-  - undeclared top-source residuals preserve renderable child-module diagnostics alongside explicit top-port and child-module reference diagnostics so all repair surfaces remain visible
-  - top links originating from child endpoints absent from emitted child modules preserve source-endpoint enrichment guidance, low-confidence composition-topology residual diagnostics, and top-port, child, and link provenance
-  - source-side child endpoints absent from emitted child modules preserve low-confidence composition-topology residual diagnostics in the provenance-rich guidance regression
-  - source-side unemitted child guidance residuals preserve explicit top-port diagnostics alongside renderable child-module diagnostics so the provenance-rich endpoint regression matches the documented repair surfaces
-  - source-side unemitted child guidance residuals preserve child-module reference diagnostics alongside renderable child-module and explicit top-port diagnostics so the provenance-rich endpoint regression matches the documented repair surfaces
-  - source-side unemitted child endpoint residuals preserve explicit top-port diagnostics alongside renderable child-module diagnostics so both repair surfaces remain visible
-  - source-side unemitted child endpoint residuals preserve child-module reference diagnostics alongside renderable child-module and explicit top-port diagnostics in the primary non-guidance regression
-  - top links targeting child endpoints absent from emitted child modules preserve target-endpoint enrichment guidance, low-confidence composition-topology residual diagnostics, and top-port, child, and link provenance
-  - target-side unemitted child guidance residuals preserve explicit top-port diagnostics alongside renderable child-module diagnostics so the provenance-rich endpoint regression matches the documented repair surfaces
-  - target-side unemitted child guidance residuals preserve child-module reference diagnostics alongside renderable child-module and explicit top-port diagnostics so all repair surfaces remain visible
-  - target-side unemitted child endpoint residuals preserve explicit top-port diagnostics alongside renderable child-module diagnostics so both repair surfaces remain visible
-  - target-side unemitted child endpoint residuals preserve child-module reference diagnostics alongside renderable child-module and explicit top-port diagnostics so all three repair surfaces remain visible
-  - child actor-port direction recovery preserves graph-backed support IDs and high automation confidence across producer and consumer child module inventories while staying composition-residual clean once renderable
-  - child actor-port direction recovery preserves original child signal declaration support IDs alongside graph actor-port support IDs in recovered child module inventories while staying composition-residual clean once renderable
-  - child actor-port direction recovery preserves selected child inventory provenance, graph directions, declaration support, graph support, and high confidence once renderable
-  - child actor-port direction conflicts preserve explicit child signal declaration support IDs and graph actor-port support IDs while blocking `.fsm` emission
-  - child actor-port direction conflict blockers preserve actor-relative graph-direction enrichment guidance and composition-topology residual diagnostics on blocked module and aggregate `.fsm` renderability surfaces
-  - child actor-port direction conflict blockers preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output
-  - child actor-port direction residuals preserve child-module reference diagnostics alongside renderable child-module and explicit top-port diagnostics so all three repair surfaces remain visible
-  - child link-topology direction recovery preserves explicit top-link support IDs and high automation confidence across producer and consumer child module inventories while staying composition-residual clean once renderable
-  - child link-topology direction recovery preserves original child signal declaration support IDs alongside topology-link support IDs in recovered child module inventories while staying composition-residual clean once renderable
-  - child link-topology direction recovery preserves selected child inventory provenance, graph directions, declaration support, topology support, and high confidence once renderable
-  - child top-link width recovery preserves explicit top-link support IDs and high automation confidence in recovered child module inventories while staying composition-residual clean once renderable
-  - child top-link width recovery preserves original child signal declaration support IDs alongside topology-link support IDs in recovered child module inventories while staying composition-residual clean once renderable
-  - top-link child-width recovery preserves selected child inventory provenance, recovered width, declaration support, topology support, and high confidence once renderable
-  - sibling child-link width recovery preserves explicit top-link support IDs and high automation confidence in both source-side and target-side recovered child module inventories while staying composition-residual clean once renderable
-  - sibling child-link width recovery preserves original child signal declaration support IDs alongside topology-link support IDs in recovered child module inventories while staying composition-residual clean once renderable
-  - sibling child-link width recovery preserves selected child inventory provenance, recovered width, declaration support, topology support, and high confidence once renderable
-  - source-side sibling child-link width recovery preserves original child signal declaration support IDs alongside topology-link support IDs in recovered child module inventories while staying composition-residual clean once renderable
-  - source-side sibling child-link width recovery preserves selected child inventory provenance, recovered width, declaration support, topology support, and high confidence once renderable
-  - sibling child-link width conflicts preserve both conflicting topology-link support-ID sets and high automation confidence while blocking `.fsm` emission
-  - sibling child-link width conflicts preserve conflicted child inventory interface provenance, both conflicting topology-link support-ID sets, unresolved width, input direction, and high confidence while blocking `.fsm` emission
-  - sibling child-link width conflict blockers preserve canonical width-conflict enrichment guidance and composition-topology residual diagnostics on blocked module and aggregate `.fsm` renderability surfaces
-  - sibling child-link width conflict blockers preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output
-  - sibling child-link width residuals preserve child-module reference diagnostics alongside renderable child-module and explicit top-port diagnostics so all three repair surfaces remain visible
-  - top child-link width conflicts preserve both conflicting topology-link support-ID sets and high automation confidence while blocking `.fsm` emission
-  - top child-link width conflict blockers preserve top-boundary width-conflict enrichment guidance and composition-topology residual diagnostics on blocked top and aggregate `.fsm` renderability surfaces
-  - top child-link width conflict blockers preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output
-  - top child-link width residuals preserve child-module reference diagnostics alongside explicit top-port diagnostics so both repair surfaces remain visible
-  - top child-link width residuals preserve renderable child-module diagnostics alongside explicit top-port and child-module reference diagnostics so all repair surfaces remain visible
-  - child topology width conflicts preserve both explicit child signal declaration support IDs and topology-link support IDs while blocking `.fsm` emission
-  - child topology width conflicts preserve conflicted child inventory interface provenance, child signal support, topology support, unresolved width, output direction, and high confidence while blocking `.fsm` emission
-  - child topology width conflict blockers preserve canonical width-conflict enrichment guidance and composition-topology residual diagnostics on blocked module and aggregate `.fsm` renderability surfaces
-  - child topology width conflict blockers preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output
-  - child topology width residuals preserve child-module reference diagnostics alongside renderable child-module and explicit top-port diagnostics so all three repair surfaces remain visible
-  - child topology direction conflicts preserve both explicit child signal declaration support IDs and contradictory topology-link support IDs while blocking `.fsm` emission
-  - child topology direction conflicts preserve conflicted child inventory interface provenance, child signal support, contradictory topology support, conflicted graph direction, width, and high confidence while blocking `.fsm` emission
-  - child topology direction conflict blockers preserve actor-relative graph-direction enrichment guidance and composition-topology residual diagnostics on blocked module and aggregate `.fsm` renderability surfaces
-  - child topology direction conflict blockers preserve low-confidence composition-topology residual diagnostics so topology-detail repair remains visible in structured adapter output
-  - child topology direction residuals preserve explicit top-port diagnostics alongside renderable child-module diagnostics so both repair surfaces remain visible
-  - child topology direction residuals preserve child-module reference diagnostics alongside renderable child-module and explicit top-port diagnostics so all three repair surfaces remain visible
-  - transitive child-width recovery preserves each contributing topology-link support ID and high automation confidence as width evidence flows from top link through sibling child link while staying composition-residual clean once renderable
-  - transitive child-width recovery preserves original producer and consumer child signal declaration support IDs alongside topology-link support IDs while staying composition-residual clean once renderable
-  - transitive child-width recovery preserves selected producer and consumer child inventory provenance, recovered widths, declaration support, topology support, and high confidence once renderable
-  - recovered top-port evidence preserves graph-backed support IDs while raising top-root selection confidence and preserving low-confidence composition-topology residual diagnostics when topology is still incomplete
-  - blocked recovered top-port direction residuals preserve renderable child-module diagnostics alongside explicit top-port and child-module reference diagnostics so all repair surfaces remain visible
-  - recovered top-root confidence residuals preserve explicit top-port diagnostics alongside child-module reference diagnostics so both repair surfaces remain visible
-  - recovered top-root confidence residuals preserve renderable child-module diagnostics alongside explicit top-port and child-module reference diagnostics so all repair surfaces remain visible
-  - recovered top-root confidence preserves selected top signal-inventory provenance, graph direction, width, support IDs, and high confidence while composition stays blocked
-  - recovered child-declaration evidence preserves child support IDs while raising top-root selection confidence and staying composition-residual clean once the single-child topology is renderable
-  - recovered top-link evidence preserves link support IDs while raising top-root selection confidence and staying composition-residual clean once the linked topology is renderable
-  - baseline renderable top-composition lowering preserves top port, child declaration, and explicit topology-link support IDs in selected top candidates
-  - missing-child top-composition blockers preserve unresolved child declaration support IDs and confidence while blocking `.fsm` emission
-  - reused-child top-composition lowering preserves per-instance child support IDs while deduplicating the shared emitted module root and staying composition-residual clean once renderable
-  - reused-FSM-child top-composition lowering preserves per-instance child, top-port, and topology-link support IDs while deduplicating the shared emitted FSM module root and staying composition-residual clean once renderable
-  - mixed-child top-composition lowering preserves DT/FSM child, top-port, and topology-link support IDs while preserving emitted root order and kind and staying composition-residual clean once renderable
-  - single FSM-child top-composition lowering preserves child, top-port, and topology-link support IDs while preserving FSM child root kind and staying composition-residual clean once renderable
-  - renderable top-before-child source-document emission preserves child, top-port, and topology-link support IDs while keeping top-first output order and staying composition-residual clean once renderable
-  - child sibling-link target width recovery preserves explicit top-link support IDs and high automation confidence in recovered consumer child module inventories
-  - direct-root actor-port width recovery preserves graph-backed support IDs and automation confidence while avoiding import of the external actor's direction and staying signal-inventory-residual clean once renderable
-  - unambiguous direct actor-port direction recovery preserves graph-backed support IDs and high automation confidence for direct inputs and outputs while staying signal-inventory-residual clean once renderable
-  - standalone sequential system-contract actor-port direction recovery preserves graph-backed support IDs and high automation confidence for clock/reset inputs
-  - structured-FSM system-contract actor-port direction recovery preserves graph-backed support IDs and high automation confidence for clock/reset inputs while staying system-residual clean once renderable
-  - structured-FSM reset-block control/action actor-port direction recovery preserves graph-backed support IDs, numeric widths, and high automation confidence for guard and driven output signals while staying signal-inventory and action-graph residual clean once renderable
-  - standalone sequential system-contract flat-vs-graph direction disagreement preserves conflicting actor-port support IDs, high automation confidence, and system-surface repair guidance while blocking `.fsm` emission
-  - standalone sequential system-contract direction conflicts preserve system-contract support IDs, high automation confidence, and system-surface repair guidance while blocking `.fsm` emission
-  - standalone sequential system-contract width conflicts preserve system-contract support IDs, high automation confidence, and system-surface repair guidance while blocking `.fsm` emission
-  - reset-polarity name blockers preserve system-contract support IDs, confidence, and system-surface repair guidance while blocking `.fsm` emission
-  - missing-system-contract blockers preserve DT control-fragment support IDs, confidence, and system-surface repair guidance while blocking `.fsm` emission
-  - selector-branch blockers preserve DT control-fragment support IDs, referenced signal inventory, and confidence while blocking `.fsm` emission
-  - renderable selector/test-node lowering preserves DT control-fragment support IDs, branch shape, selector inventory, and confidence
-  - renderable computed selector/test-node lowering preserves DT candidate confidence and computed selector/action signal inventory
-  - renderable compound-update lowering preserves DT candidate confidence and reset/update signal inventory
-  - renderable symbolic DT lowering preserves DT candidate visibility and symbolic assignment signal inventory
-  - renderable standalone DT lowering preserves canonical DT candidate identity and baseline signal inventory
-  - renderable standalone sequential DT lowering preserves canonical DT candidate identity and system signal inventory
-  - renderable structured-FSM lowering preserves named state and transition candidates
-  - renderable reset-block structured-FSM lowering preserves state transitions and reset block roles in the renderable module
-  - renderable reset-block structured-FSM roots preserve control-block and branch support IDs plus automation confidence across the selected renderable module and emitted source-document root
-  - missing-initial structured-FSM blockers preserve transition candidate provenance alongside state candidates
-  - undeclared-target structured-FSM blockers preserve declared state candidate provenance alongside the rejected transition
-  - missing-child composition blockers preserve declared top-port provenance alongside unresolved child candidates
-  - renderable top-composition lowering preserves top-port shape and renderable-top provenance alongside child/link support IDs
-  - reused-child top-composition lowering preserves top-port shape and topology-link support IDs while deduplicating the shared emitted child root without leaving composition-topology residuals once renderable
-  - renderable top-before-child source-document emission preserves top-port and topology-link provenance alongside child support IDs without leaving composition-topology residuals once renderable
-  - single-FSM-child top source-document emission preserves top-port and topology-link provenance alongside child root-kind support without leaving composition-topology residuals once renderable
-  - reused-FSM-child top source-document emission preserves top-port and topology-link provenance while deduplicating the shared FSM root without leaving composition-topology residuals once renderable
-  - mixed-child top source-document emission preserves top-port and topology-link provenance while preserving DT/FSM direct-root order without leaving composition-topology residuals once renderable
-  - top-link direction recovery augments public top-port declarations with topology support without dropping declaration support IDs or leaving composition-topology residuals once renderable
-  - actor-port direction recovery augments public top-port declarations with graph support without dropping declaration support IDs or leaving composition-topology residuals once renderable
-  - actor-port width recovery augments public top-port declarations with graph width support without dropping declaration support IDs or leaving composition-topology residuals once renderable
-  - child-link width recovery augments public top-port declarations with topology width support without dropping declaration support IDs or leaving composition-topology residuals once renderable
-  - child-link top-width recovery preserves selected top signal-inventory provenance, topology support, recovered width, and high confidence once renderable
-  - child-system-contract width recovery augments public top-port declarations with topology and child system-contract support without dropping declaration support IDs or leaving composition-topology residuals once renderable
-  - top-link child-width recovery augments child signal declarations with topology width support without dropping declaration support IDs or leaving composition-topology residuals once renderable
-  - sibling-link child-width recovery augments child signal declarations with topology width support without dropping declaration support IDs or leaving composition-topology residuals once renderable
-  - source-side sibling child-width recovery augments child signal declarations with topology width support without dropping declaration support IDs or leaving composition-topology residuals once renderable
-  - transitive child-width recovery augments producer and consumer child signal declarations with topology width support without dropping declaration support IDs or leaving composition-topology residuals once renderable
-  - child link-topology direction recovery augments child signal declarations with topology direction support without dropping declaration support IDs or leaving composition-topology residuals once renderable
-  - child actor-port direction recovery augments child signal declarations with graph direction support without dropping declaration support IDs or leaving composition-topology residuals once renderable
-  - unrelated direct actor-port graph context keeps selected support IDs auditable while excluding unrelated side-band evidence from `.fsm` inventories and staying signal-inventory-residual clean once renderable
-  - ambiguous direct actor-port graph context leaves graph direction, actor-port category, and support IDs unselected instead of guessing a target actor while retaining signal-inventory repair guidance when blocked
-  - recovered top-port direction blockers now explicitly block renderable top roots and aggregate `.fsm` source documents before lowering `?top:name`
-  - actor-port parametric-width blockers now explicitly block renderable modules and aggregate `.fsm` source documents before lowering DT-root output
-  - canonical parametric signal-width blockers now explicitly block renderable modules and aggregate `.fsm` source documents before lowering DT-root output
-  - unsupported selector-branch predicates now explicitly block renderable modules and aggregate `.fsm` source documents before lowering DT-root output
-  - reset-polarity blockers now explicitly block renderable modules and aggregate `.fsm` source documents before lowering DT-root output
-  - missing standalone sequential system contracts now explicitly block renderable modules and aggregate `.fsm` source documents before lowering DT-root output
-  - standalone sequential system-contract width conflicts now explicitly block renderable modules and aggregate `.fsm` source documents before lowering DT-root output
-  - standalone sequential system-contract direction conflicts now explicitly block renderable modules and aggregate `.fsm` source documents before lowering DT-root output
-  - standalone sequential system-contract flat/graph direction disagreements now explicitly block renderable modules and aggregate `.fsm` source documents before lowering DT-root output
-  - direct DT flat/graph direction disagreements now explicitly block renderable modules and aggregate `.fsm` source documents before lowering DT-root output
-  - direct DT flat-direction conflicts now explicitly block renderable modules and aggregate `.fsm` source documents before lowering DT-root output even when actor graph evidence exists
-  - direct DT actor-port width conflicts now explicitly block renderable modules and aggregate `.fsm` source documents before lowering DT-root output
-  - blocked DT-centric adapter artifacts now explicitly block renderable modules and aggregate `.fsm` source documents before lowering DT-root output
-  - blocked DT-centric adapter artifacts preserve selected signal-inventory visibility and signal-inventory repair guidance while blocking `.fsm` emission
-  - standalone DT graph-backed undriven output blockers preserve selected actor support IDs, high automation confidence, and signal-inventory repair guidance while blocking `.fsm` emission
-  - structured-FSM graph-backed undriven output blockers preserve selected actor support IDs, high automation confidence, and signal-inventory repair guidance while blocking `.fsm` emission
-  - structured-FSM missing-initial blockers preserve state declaration support IDs, confidence, and state-graph repair guidance while blocking `.fsm` emission
-  - structured-FSM undeclared-transition blockers preserve transition support IDs, confidence, and state-graph repair guidance while blocking `.fsm` emission
-  - direct-root actor-port direction conflicts preserve both conflicting graph-backed support IDs, automation confidence, and signal-inventory repair guidance while blocking `.fsm` emission
-  - explicit-module flat-vs-graph direction disagreement preserves interface and actor-port provenance plus signal-inventory repair guidance while blocking `.fsm` emission
-  - structured-FSM flat-vs-graph direction disagreement preserves interface and actor-port provenance plus signal-inventory repair guidance while blocking `.fsm` emission
-  - direct-root same-actor actor-port width conflicts preserve both conflicting graph-backed support IDs, automation confidence, and signal-inventory repair guidance while blocking `.fsm` emission
-  - direct-root flat-vs-graph direction disagreement preserves interface and actor-port provenance plus signal-inventory repair guidance while blocking `.fsm` emission
-  - direct-root flat direction conflicts preserve interface conflict evidence, graph-backed actor provenance, and signal-inventory repair guidance while blocking `.fsm` emission
-  - direct-root output actor selection preserves graph-backed support IDs and high automation confidence while shared external signal actors stay non-authoritative and renderable recovery stays signal-inventory-residual clean
-  - direct-root control-read input recovery preserves canonical control-branch support IDs and high automation confidence while avoiding import of the external actor's direction and staying signal-inventory-residual clean once renderable
-  - structured-FSM control-read input recovery preserves canonical control/transition support IDs and high automation confidence while avoiding import of the external actor's direction
-  - explicit-module control-read input recovery preserves canonical control/transition support IDs and high automation confidence while avoiding import of the external actor's direction
-  - explicit-module control-read direction conflicts preserve actor-port/control-read provenance plus signal-inventory repair guidance while blocking `.fsm` emission
-  - explicit-module actor-port width recovery preserves graph-backed support IDs and automation confidence while avoiding import of the external actor's direction
-  - explicit-module actor-port width conflicts preserve both graph-backed support IDs, automation confidence, and signal-inventory repair guidance while blocking `.fsm` emission
-  - direct-root actor-port width conflicts preserve both graph-backed support IDs and automation confidence while blocking `.fsm` emission
-  - the canonical system contract preserves reset kind, polarity, assertion/release timing, and reset-target semantics explicitly enough that adapter lowering does not have to infer hardware reset behavior ad hoc
-  - compatibility-level `?mod:name` and `?module:name` spellings stay outside the adapter root-kind model until the canonical layer carries an honest direct-module distinction
-- cross-project FSMGEN sync:
-  - FSMGEN accepted the strict-mode-first `.fsm` contract direction in `subs/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md`, first observed at commit `7475f07`
-  - the pinned `subs/fsmgen` reference is now refreshed to upstream `32aa318`, where first bounded machine-readable contract surfaces exist for capability manifests, stable diagnostic codes, check-JSON diagnostics, normalized semantic JSON export, generated-SystemVerilog validation, and support-accounting/runtime report contracts
-  - SPECFORGE should target strict-mode canonical `.fsm` by default and treat compatibility syntax as adapter-blocked unless FSMGEN explicitly marks a generated-output lane safe
-  - SPECFORGE should plan future adapter validation around those bounded machine-readable surfaces plus FSMGEN's mdBook and regression corpus/support-accounting sources, while still treating only regression-backed FSMGEN facts as stable target-language truth
-  - future `.fsm` widening should still wait for FSMGEN-backed language features such as actor roles, channel grouping, semantic roles, temporal/stability contracts, and provenance/residual metadata before SPECFORGE lowers richer `IntentIR` facts into target syntax
+  - `specforge adapt <intent-ir> --target isf` materializes a typed
+    `IsfAdapterArtifact` and emits valid `.isf` S-expression source when the
+    canonical interface/behavior surface is renderable
+  - non-renderable cases block with explicit `blocking_reasons` instead of
+    fabricated target text
+  - emitted `.isf` passes FSMGen `--strict --check --json`
+  - no `.fsm`/HDL adapter code, tests, fixtures, or user-facing docs remain
+    once `ISF-ONLY-CONSOLIDATION` is complete
 
 ### R7 Validation and back-annotation
 - status: In Progress
@@ -524,7 +241,7 @@
 - remaining:
   - extend validation into the upcoming semantic-truthfulness surfaces (temporal rules, arbitration/conflict records, and KG-quality benchmarks)
   - design tracked approval evidence only if canonical IR mutation is explicitly introduced later
-  - adapter validation targets are `.fsm` and `.isf` (HDL lowering is out of scope — owned by downstream toolchains)
+  - adapter validation target is `.isf` only (`.fsm`/HDL out of scope — FSMGen owns them downstream of `.isf`)
 
 ### R8 SourceIR SOTA capture (Tier 1 of EXTRACTION_ARCHITECTURE.md)
 - status: Done
@@ -1493,7 +1210,7 @@
 7. Add a separate cross-document learning plane for typed extraction priors while keeping canonical document truth local (`R15f`)
 8. Add a corpus knowledge base plane beside the KG and prior memory so compiled cross-document synthesis becomes persistent and reviewable (`R15g`)
 9. Extend relation extraction for harder prose with Tier 3 support only after the graph/temporal/eval/corpus-memory surfaces are ready (`R14`)
-10. Adapter families begin and end at `.fsm` and `.isf`; HDL lowering is owned by downstream toolchains, not SpecForge
+10. The adapter family begins and ends at `.isf`; `.fsm`/HDL are owned by FSMGen (downstream of `.isf`), not SpecForge
 
 ## Immediate next milestone
 - `R15`: finish the transition from compatibility `direction_hint` fields to actor-relative graph-first downstream semantics

@@ -55,17 +55,17 @@ The most important ones are:
 3. build `EvidenceIR` from text, figures, captions, charts, and other grounded evidence
 4. build `SemanticIR`
 5. build canonical `IntentIR`
-6. lower `IntentIR` through an adapter such as `.fsm` or RTL
+6. lower `IntentIR` through the `.isf` adapter (FSMGen consumes `.isf` and owns scheduling/`.fsm`/HDL downstream)
 7. validate the result and back-annotate findings
 
 ## Planned command shape
-- `specforge converge <source> --target <fsm|isf>` defaults to full Ollama-backed VLM image enrichment plus NLP Level 3 backannotation; pass `--vlm-provider skip` and/or `--nlp-provider skip` only when you intentionally want a narrower run (HDL lowering — SystemVerilog/Verilog/VHDL — is out of scope; downstream toolchains own it)
+- `specforge converge <source> --target isf` defaults to full Ollama-backed VLM image enrichment plus NLP Level 3 backannotation; pass `--vlm-provider skip` and/or `--nlp-provider skip` only when you intentionally want a narrower run (`.isf` is the only adapter target; `.fsm`/HDL are out of scope — FSMGen owns them downstream)
 - `specforge ingest <source>`
 - `specforge inspect <artifact-or-path>`
 - `specforge evidence <source-ir>`
 - `specforge semantic <evidence-ir>`
 - `specforge intent <semantic-ir>`
-- `specforge adapt <intent-ir> --target <fsm|isf>` (both `fsm` and `isf` are implemented; HDL lowering is out of scope — owned by downstream toolchains)
+- `specforge adapt <intent-ir> --target isf` (`.isf` is the only adapter target; `.fsm`/HDL are out of scope — FSMGen consumes `.isf` and owns them downstream)
 - `specforge validate <artifact>`
 - `specforge project-validation <artifact>...`
 - `specforge learn-priors <intent-ir>...`
@@ -78,14 +78,14 @@ The most important ones are:
 - images, figures, captions, and charts should stay available as first-class evidence when they carry semantic value
 - unresolved ambiguity should be emitted as residual decision packets instead of being hidden in ad hoc notes
 - `IntentIR` should remain backend-independent
-- `.fsm` is only one adapter target among several
+- `.isf` is the single adapter target; FSMGen owns `.fsm`/HDL downstream
 
 ## Current limitation
 - `SourceIR`, the first real `EvidenceIR` pass, the first real `SemanticIR` pass, and the first real `IntentIR` pass are implemented
 - the current `EvidenceIR` extraction logic is still heuristic and does not yet perform deeper OCR, chart extraction, or semantic lifting from visual regions
 - the current `SemanticIR` extraction logic is still heuristic and conservative, so later `IntentIR` work will need refinement rather than semantic invention
 - the current `IntentIR` canonicalization logic is still heuristic and conservative, so adapter work should refine backend lowering rather than treat the current pass as a complete semantic endpoint
-- the first `.fsm` adapter slices are implemented and can now emit standalone renderable `?dt:name` text for explicit canonical combinational and sequential DT cases, structured renderable `?fsm:name` text for explicit canonical state-graph cases, canonical symbol-definition/reset-role lowering, selector/test-node branches, compound-update shorthand for honest canonical cases, and first-slice renderable `?top:name` text for explicit canonical composition cases, but unsupported selector/predicate shapes still remain deferred and compatibility-level `?mod:name` / `?module:name` spellings stay outside the current canonical root-kind model
+- the `.isf` adapter is implemented: `IntentIR` lowers through the typed `IsfIr` model (`IntentIR → IsfIr::from_intent_ir() → render() → .isf`), emitting valid `.isf` S-expression source when the canonical signal/behavior surface is renderable and blocking with explicit reasons otherwise; emitted `.isf` is validated against FSMGen `--strict --check --json`. The HDL surface and the prior `.fsm` adapter are being removed under `ISF-ONLY-CONSOLIDATION`
 - `specforge validate <artifact>` now backannotates the latest validation report into the artifact and writes a stage-local `validation_report.json` sidecar
 - `specforge project-validation <artifact>...` now turns those persisted reports into tracked markdown continuity docs, and broader adapter validation remains intentionally deferred until semantic truthfulness is stronger
 - `specforge learn-priors <intent-ir>...` now turns validated canonical `IntentIR` artifacts into a local `CorpusMemory` prior store under `generated/prior_memory/corpus_memory.json`, and the current slice learns reusable actor-taxonomy, semantic-role, semantic modality-reliability, temporal-language, and table-shape priors without letting that memory author canonical facts directly
