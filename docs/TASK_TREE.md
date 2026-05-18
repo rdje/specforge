@@ -35,6 +35,7 @@ evidence for one top-level task.
 | `ISF-ONLY-IR-PRUNE` | `active` | `R6` | `ISF-ONLY-IR-PRUNE.1` | [docs/tasks/ISF-ONLY-IR-PRUNE.md](docs/tasks/ISF-ONLY-IR-PRUNE.md) |
 | `AUDIT-DOC-RECONCILE` | `active` | `R0` | `AUDIT-DOC-RECONCILE.1` | [docs/tasks/AUDIT-DOC-RECONCILE.md](docs/tasks/AUDIT-DOC-RECONCILE.md) |
 | `FSMGEN-ISSUE-REPORTING` | `done` | `R0` | — | [docs/tasks/FSMGEN-ISSUE-REPORTING.md](docs/tasks/FSMGEN-ISSUE-REPORTING.md) |
+| `FSMGEN-SUBMODULE-BUMP` | `active` | `R0` | `FSMGEN-SUBMODULE-BUMP.1` | [docs/tasks/FSMGEN-SUBMODULE-BUMP.md](docs/tasks/FSMGEN-SUBMODULE-BUMP.md) |
 
 ## Directory Layout
 
