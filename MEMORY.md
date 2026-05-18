@@ -31,7 +31,7 @@
 ## Active PNT status
 - mode: PNT (open-ended), user-authorized 2026-05-18, until full exhaustion of the new audit-driven trees
 - trees + priority order: (1) `ISF-TEMPORAL-LOWERING` (R15b, critical — temporal_rules never reach `.isf`; transaction_count misreports), (2) `ISF-ONLY-IR-PRUNE` (R6 — prune only `.fsm`-era-dead `init_assignments`/`decision_tree_fragments`; `regular_states`/`state_transitions` removal is a BLOCKED leaf — R10/R15c/R15e/R7/R15f load-bearing, needs explicit user decision), (3) `AUDIT-DOC-RECONCILE` (R0 — R15 text + book converge flags)
-- completed_count: 0 (trees just created; no leaf executed yet)
+- completed_count: `ISF-TEMPORAL-LOWERING.1` done (spec-grounded mapping decision, docs-only); next frontier `ISF-TEMPORAL-LOWERING.2`
 - per-leaf rule: full COMMIT.md after every leaf; `scripts/run_ci.sh` green at every code/fixture/mdBook leaf; run CI from repo cwd (`bash /abs/scripts/run_ci.sh`)
 - push policy: PNT → push around every ~30 local commits since last push (pushed at `4d88ccd2`; currently ~1 ahead)
 - prior batch: `ISF-ONLY-CONSOLIDATION` COMPLETE and PUSHED (`83616ead..4d88ccd2`); SpecForge emits only `.isf`

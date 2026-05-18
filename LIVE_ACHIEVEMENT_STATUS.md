@@ -8,6 +8,8 @@
 - ISF-ONLY-CONSOLIDATION.5 — kg fixture audit: 0/153 fixtures reference FSM-adapter; kg-bench/corpus-kb green; fixtures test the KG/semantic IR pipeline, not the removed adapter; nothing to retire (audit-only): Done
 - ISF-ONLY-CONSOLIDATION.6 — mdBook FSM sweep: 11 pages reworked to ISF-only (generated-artifacts 521→221, actor-connectivity 326→238, command/path/prose fixes); residual `.fsm` only in legit FSMGen-downstream / state-machine-extraction context; full CI + mdBook green: Done
 - ISF-ONLY-CONSOLIDATION.7 — README/ROADMAP current-state reconciled to ISF-only (CLI/quick-start/impl-paths; R15 superseding note); tree closed; final CI gate green; 7-leaf batch pushed to origin/main: Done
+- Post-ISF-ONLY audit complete; 3 remediation trees created (ISF-TEMPORAL-LOWERING, ISF-ONLY-IR-PRUNE, AUDIT-DOC-RECONCILE); PNT active to exhaust them: In Progress
+- ISF-TEMPORAL-LOWERING.1 — FSMGen-spec-grounded temporal_rules→ISF mapping recorded (`(handshake …)` rejected as deprecated; transaction `(contract/stage/when)` + `(rule …)` vehicles; metric reconciliation specified): Done
 - Signoff restored at HEAD via SIGNOFF-REMEDIATION.1 — 25 clippy `-D warnings` errors cleared and `cargo fmt` drift fixed; `scripts/run_ci.sh` green again; 1191 lib tests pass: Done
 - SIGNOFF-REMEDIATION task tree created (lane R0) to own the regression fix after the bootstrap re-analysis found HEAD non-signoff: Done
 - Bootstrap re-analysis (2026-05-17): RUST_CODEBASE_ANALYSIS.md refreshed; ISF adapter found landed untracked (`bfe4f973`→`490e6aed`, no task tree / no live-doc sync): Done

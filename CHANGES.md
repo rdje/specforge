@@ -1,5 +1,25 @@
 # CHANGES
 
+## 2026-05-18 (Post-ISF-ONLY audit + PNT remediation)
+
+- Audit (codebase vs roadmap vs book) found: (critical) `temporal_rules`
+  extracted but never lowered to `.isf` and `transaction_count`
+  misreports it across the whole real corpus; orphaned `.fsm`-era IR;
+  R15 forward-text drift; book converge-flag gaps.
+- Created task trees `ISF-TEMPORAL-LOWERING` (R15b), `ISF-ONLY-IR-PRUNE`
+  (R6, scope-corrected — state-graph surfaces are R10/R15c/R15e/R7/R15f
+  load-bearing, not `.fsm` leftovers), `AUDIT-DOC-RECONCILE` (R0).
+  Entered PNT to exhaust them.
+
+### ISF-TEMPORAL-LOWERING.1: FSMGen-spec-grounded mapping decision
+- Read `subs/fsmgen/docs/ISF_DOWNSTREAM_INTEGRATION_SPEC.md` (§6/§11/§11.8/§12)
+  + `TemporalRuleRecord`. Recorded the `temporal_rules → ISF` mapping:
+  `(handshake …)` is REJECTED (spec §6 marks it deprecated/ignored);
+  supported vehicles are transaction `(when …)`/`(await …)`/`(stage …)`/
+  `(contract … (eventually s within N))`/`(latency …)` and actor
+  `(rule …)`; unrepresentable predicates → explicit residual decisions.
+  Metric reconciliation specified. Docs only.
+
 ## 2026-05-18 (ISF-ONLY-CONSOLIDATION task tree created — strategy pivot)
 
 - User decision: now that the typed `.isf` adapter exists, SpecForge keeps
