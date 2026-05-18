@@ -31,7 +31,8 @@
 ## Active PNT status
 - mode: PNT (open-ended), user-authorized 2026-05-18, until full exhaustion of the new audit-driven trees
 - trees + priority order: (1) `ISF-TEMPORAL-LOWERING` (R15b, critical — temporal_rules never reach `.isf`; transaction_count misreports), (2) `ISF-ONLY-IR-PRUNE` (R6 — prune only `.fsm`-era-dead `init_assignments`/`decision_tree_fragments`; `regular_states`/`state_transitions` removal is a BLOCKED leaf — R10/R15c/R15e/R7/R15f load-bearing, needs explicit user decision), (3) `AUDIT-DOC-RECONCILE` (R0 — R15 text + book converge flags)
-- completed_count: `ISF-TEMPORAL-LOWERING.1` done (`f557baba`); `.2` split into `.2.1`–`.2.4` per PNT rule 5 (corpus evidence: 387 temporal_rules/28 windowed, needs new fsmgen-strict constructs). Next frontier: `ISF-TEMPORAL-LOWERING.2.1` (typed `(contract …)`/`(stage …)` render constructs)
+- completed_count: `.1`(`f557baba`) + `.2` split(`b92f29ef`) + `.2.1` (typed `(contract … (eventually s (within N)))`, fsmgen-strict-verified; `(stage …)` proven strict-rejected → dropped + FSMGen feedback logged) done, committing now. Next frontier: `ISF-TEMPORAL-LOWERING.2.2` (wire windowed temporal_rules → `(contract …)`)
+- KEY fsmgen-strict facts (binary = ground truth): contract strict shape is NESTED `(contract n (eventually sig (within N)))`; `(stage … (ready)(valid))` is strict-REJECTED despite spec §11.8 → HandshakeComplete temporal_rules map to residual decisions, not `(stage …)`
 - per-leaf rule: full COMMIT.md after every leaf; `scripts/run_ci.sh` green at every code/fixture/mdBook leaf; run CI from repo cwd (`bash /abs/scripts/run_ci.sh`)
 - push policy: PNT → push around every ~30 local commits since last push (pushed at `4d88ccd2`; currently ~1 ahead)
 - prior batch: `ISF-ONLY-CONSOLIDATION` COMPLETE and PUSHED (`83616ead..4d88ccd2`); SpecForge emits only `.isf`

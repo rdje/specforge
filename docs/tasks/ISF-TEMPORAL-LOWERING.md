@@ -81,7 +81,7 @@ temporal/clock-tick behavior is extracted and then silently dropped from
   rather than one risky multi-construct slice.
 
 - ID: `ISF-TEMPORAL-LOWERING.2.1`
-  Status: `pending`
+  Status: `done`
   Goal: >
     Extend the typed `IsfIr` model + `render` with the spec-supported
     transaction-internal constructs `(contract <name> (eventually
@@ -92,8 +92,8 @@ temporal/clock-tick behavior is extracted and then silently dropped from
     a hand-built fixture proving the emitted forms pass
     `fsmgen --strict --check --json`.
   Acceptance: `Typed contract/stage constructs render to the spec shapes; fsmgen-strict accepts a hand-built sample; scripts/run_ci.sh green.`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — fsmgen-strict-verified: `(contract … (eventually s (within N)))` accepted (2 unit tests incl. real-binary strict); `(stage …)` proven strict-rejected → dropped + FSMGen feedback logged; scripts/run_ci.sh green
+  Commit: `ISF-TEMPORAL-LOWERING.2.1 — typed bounded `(contract …)` render construct (fsmgen-strict-verified; stage dropped)`
 
 - ID: `ISF-TEMPORAL-LOWERING.2.2`
   Status: `pending`
@@ -155,8 +155,8 @@ temporal/clock-tick behavior is extracted and then silently dropped from
 | --- | --- | --- | --- |
 | 1 | `ISF-TEMPORAL-LOWERING.1` | `done` | Spec-grounded mapping recorded |
 | — | `ISF-TEMPORAL-LOWERING.2` | `active` | Container — split into `.2.1`–`.2.4` |
-| 2 | `ISF-TEMPORAL-LOWERING.2.1` | `pending` | Next — typed contract/stage render constructs |
-| 3 | `ISF-TEMPORAL-LOWERING.2.2` | `pending` | Wire windowed/handshake temporal_rules |
+| 2 | `ISF-TEMPORAL-LOWERING.2.1` | `done` | `(contract …)` render verified strict; stage dropped |
+| 3 | `ISF-TEMPORAL-LOWERING.2.2` | `pending` | Next — wire windowed temporal_rules → `(contract …)` |
 | 4 | `ISF-TEMPORAL-LOWERING.2.3` | `pending` | Wire guard→drive; residual for unrepresentable |
 | 5 | `ISF-TEMPORAL-LOWERING.2.4` | `pending` | Reconcile artifact metrics |
 | 6 | `ISF-TEMPORAL-LOWERING.3` | `pending` | End-to-end regression incl. fsmgen strict |
@@ -206,6 +206,17 @@ temporal/clock-tick behavior is extracted and then silently dropped from
     `temporal_*` count for rules emitted as `(rule …)` / residual).
     No metric may count a surface the emitter ignores.
 
+- `2026-05-18` (`.2.1` fsmgen-strict verification — corrects `.1`):
+  binary `fsmgen --strict --check` proved two §11.8 doc claims wrong
+  (logged in `docs/FSMGEN_FEEDBACK.md`):
+  - `(contract … (eventually s within N))` flat form is REJECTED; the
+    strict-valid shape is nested `(contract … (eventually s (within N)))`.
+    `.1` mapping #1 stands with the corrected shape.
+  - `(stage … (ready)(valid))` is REJECTED despite §11.8. `.1` mapping
+    #2 (HandshakeComplete → `(stage …)`) is **retired**; HandshakeComplete
+    temporal_rules now map to explicit residual decisions (`.1` #4).
+    `IsfStage` is not modelled. `.2.2` handles only the windowed
+    `(contract …)` case; HandshakeComplete → residual in `.2.3`.
 - `2026-05-18` (`.2` honest outcome — PNT rule 5): `.2` split into
   `.2.1`–`.2.4`. Corpus evidence (387 temporal_rules, 28 windowed,
   mostly `SignalStable`/`SignalValue`) showed no large trivially-safe
@@ -230,12 +241,14 @@ temporal/clock-tick behavior is extracted and then silently dropped from
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-05-18` | `ISF-TEMPORAL-LOWERING.1` | FSMGen ISF spec + TemporalRuleRecord read; mapping recorded | `passed` |
+| `2026-05-18` | `ISF-TEMPORAL-LOWERING.2.1` | 2 unit tests incl. real fsmgen `--strict --check`; full `scripts/run_ci.sh` | `passed` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `ISF-TEMPORAL-LOWERING.1` | `ISF-TEMPORAL-LOWERING.1 — FSMGen-spec-grounded temporal_rules→ISF mapping decision` | Docs only; rejected deprecated `(handshake …)` |
+| `ISF-TEMPORAL-LOWERING.2.1` | `ISF-TEMPORAL-LOWERING.2.1 — typed bounded (contract …) render construct` | strict-verified nested `(within N)`; `(stage …)` dropped + FSMGen feedback logged |
 
 ## Changelog
 

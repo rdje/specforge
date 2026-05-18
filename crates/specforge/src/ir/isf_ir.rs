@@ -91,6 +91,21 @@ struct IsfTransaction {
     complete: String,
     latency_min: Option<u64>,
     latency_max: Option<u64>,
+    // Spec §11.8 transaction-internal bounded-eventually contracts.
+    contracts: Vec<IsfContract>,
+}
+
+// `(contract <name> (eventually <signal> (within <N>)))` — FSMGen ISF
+// spec §11.8 shipped kind `bounded_eventually`. NOTE: `--strict --check`
+// requires the nested `(within N)` subclause (the spec's flat
+// `within N` prose is rejected). `(stage … (ready)(valid))` from §11.8
+// is also strict-rejected and is intentionally not modelled here
+// (recorded in docs/FSMGEN_FEEDBACK.md).
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct IsfContract {
+    name: String,
+    signal: String,
+    within: u64,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -301,6 +316,18 @@ impl IsfIr {
 
         for step in &tx.steps {
             self.render_txn_step(lines, step, "    ");
+        }
+
+        for contract in &tx.contracts {
+            // FSMGen `--strict --check` requires the nested `(within N)`
+            // subclause; the spec §11.8 prose form `eventually s within N`
+            // is rejected. `(stage … (ready)(valid))` is also strict-
+            // rejected despite §11.8, so it is intentionally NOT emitted
+            // (see docs/FSMGEN_FEEDBACK.md and ISF-TEMPORAL-LOWERING.1).
+            lines.push(format!(
+                "    (contract {} (eventually {} (within {})))",
+                contract.name, contract.signal, contract.within
+            ));
         }
 
         lines.push(format!("    (complete {})", tx.complete));
@@ -612,6 +639,7 @@ impl IsfIr {
                     on_steps: convert_txn_steps(&on_steps),
                     steps: convert_txn_steps(&body_steps),
                     complete: "done".to_string(),
+                    contracts: Vec::new(),
                     latency_min: None,
                     latency_max: None,
                 }
@@ -638,6 +666,7 @@ impl IsfIr {
                             on_steps: vec![],
                             steps,
                             complete: "done".to_string(),
+                            contracts: Vec::new(),
                             latency_min: None,
                             latency_max: None,
                         });
@@ -661,6 +690,7 @@ impl IsfIr {
                                     body: steps,
                                 }],
                                 complete: "done".to_string(),
+                                contracts: Vec::new(),
                                 latency_min: None,
                                 latency_max: None,
                             });
@@ -687,6 +717,7 @@ impl IsfIr {
                                     branches,
                                 }],
                                 complete: "done".to_string(),
+                                contracts: Vec::new(),
                                 latency_min: None,
                                 latency_max: None,
                             });
@@ -1312,6 +1343,7 @@ mod tests {
                 },
             ],
             complete: "done".to_string(),
+            contracts: Vec::new(),
             latency_min: Some(1),
             latency_max: Some(4),
         });
@@ -1327,5 +1359,89 @@ mod tests {
         assert!(out.contains("    (complete done)"));
         assert!(out.contains("    (latency (min 1) (max 4))"));
         assert_eq!(paren_balance(&out), 0, "unbalanced:\n{out}");
+    }
+
+    // --- ISF-TEMPORAL-LOWERING.2.1: transaction-internal bounded contract ---
+
+    fn isf_with_temporal_contract_transaction() -> IsfIr {
+        let mut isf = minimal_isf();
+        isf.signals.insert(IsfSignal {
+            name: "RVALID".to_string(),
+            direction: IsfDirection::Output,
+            width: 1,
+        });
+        isf.signals.insert(IsfSignal {
+            name: "RREADY".to_string(),
+            direction: IsfDirection::Input,
+            width: 1,
+        });
+        isf.transactions.push(IsfTransaction {
+            name: "t_temporal".to_string(),
+            on_trigger: None,
+            on_steps: vec![],
+            steps: vec![IsfTxnStep::Await {
+                port: "RREADY".to_string(),
+                watchdog: None,
+            }],
+            complete: "done".to_string(),
+            latency_min: None,
+            latency_max: None,
+            contracts: vec![IsfContract {
+                name: "c_resp".to_string(),
+                signal: "RVALID".to_string(),
+                within: 4,
+            }],
+        });
+        isf
+    }
+
+    #[test]
+    fn render_emits_spec_shaped_bounded_contract() {
+        let out = isf_with_temporal_contract_transaction().render();
+        // FSMGen `--strict` requires the nested `(within N)` subclause.
+        assert!(
+            out.contains("    (contract c_resp (eventually RVALID (within 4)))"),
+            "contract shape:\n{out}"
+        );
+        assert_eq!(paren_balance(&out), 0, "unbalanced:\n{out}");
+    }
+
+    #[test]
+    fn bounded_contract_passes_fsmgen_strict_validation() {
+        let tempdir = tempfile::tempdir().expect("tempdir");
+        let out = isf_with_temporal_contract_transaction().render();
+        let isf_path = tempdir.path().join("temporal_barrier.isf");
+        std::fs::write(&isf_path, &out).expect("write isf");
+        eprintln!("=== ISF ===\n{out}\n=== END ===");
+
+        let fsmgen_path =
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../subs/fsmgen/bin/fsmgen");
+        let output = std::process::Command::new(&fsmgen_path)
+            .args(["--strict", "--check", "--json"])
+            .arg(&isf_path)
+            .output()
+            .expect("run fsmgen");
+        let stdout = String::from_utf8_lossy(&output.stdout);
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        let check: serde_json::Value = serde_json::from_str(&stdout).unwrap_or_else(|e| {
+            panic!("fsmgen non-JSON.\nstdout:{stdout}\nstderr:{stderr}\nerr:{e}")
+        });
+        let success = check["diagnostic_summary"]["success"]
+            .as_bool()
+            .unwrap_or(false);
+        if !success && let Some(diags) = check["diagnostics"].as_array() {
+            for d in diags {
+                eprintln!(
+                    "FSMGen diagnostic: {}",
+                    d.get("message")
+                        .and_then(|m| m.as_str())
+                        .unwrap_or("(none)")
+                );
+            }
+        }
+        assert!(
+            success,
+            "FSMGen strict rejected the spec-shaped (stage …)/(contract …) forms"
+        );
     }
 }

@@ -20,6 +20,19 @@
   `(rule …)`; unrepresentable predicates → explicit residual decisions.
   Metric reconciliation specified. Docs only.
 
+### ISF-TEMPORAL-LOWERING.2 split + .2.1 (typed bounded contract)
+- `.2` split into `.2.1`–`.2.4` (PNT rule 5; corpus = 387 temporal_rules /
+  28 windowed, needs new fsmgen-strict constructs).
+- `.2.1`: added typed `IsfContract` + `render` of
+  `(contract <n> (eventually <s> (within <N>)))`. Verified against the
+  pinned `fsmgen --strict --check`: the spec §11.8 flat
+  `eventually s within N` is REJECTED — strict requires the **nested**
+  `(within N)`; and `(stage … (ready)(valid))` is strict-REJECTED
+  despite §11.8, so `IsfStage` is not modelled and `HandshakeComplete`
+  temporal_rules will map to residual decisions (`.2.3`). Both mismatches
+  logged in `docs/FSMGEN_FEEDBACK.md` (no submodule patch). 2 unit tests
+  (incl. real-binary strict). `scripts/run_ci.sh` green.
+
 ## 2026-05-18 (ISF-ONLY-CONSOLIDATION task tree created — strategy pivot)
 
 - User decision: now that the typed `.isf` adapter exists, SpecForge keeps

@@ -468,3 +468,30 @@ This feedback is not asking FSMGEN to:
 
 SPECFORGE's side of the bargain is to keep its adapter honest.
 FSMGEN's most useful side of the bargain is to keep `.fsm` behavior precise, documented, and machine-checkable.
+
+## Tracked finding (2026-05-18) — `ISF_DOWNSTREAM_INTEGRATION_SPEC.md` §11.8 doc-vs-strict mismatches
+
+While implementing `ISF-TEMPORAL-LOWERING.2.1`, SPECFORGE verified §11.8
+constructs against the pinned `subs/fsmgen/bin/fsmgen --strict --check
+--json`. Two precise mismatches between the handoff doc and the shipped
+strict checker:
+
+1. **`(contract name (eventually signal within N))`** — §11.8 prints the
+   flat form `eventually signal within N`, but `--strict --check`
+   rejects it: *"contract '<n>' supports only '(eventually signal
+   (within cycles))'"*. The accepted shape is the **nested**
+   `(eventually <signal> (within <N>))`. SPECFORGE now emits the nested
+   form; the doc prose should be corrected to match the strict grammar.
+2. **`(stage phase (ready r) (valid v))`** — §11.8 presents this as the
+   shipped `ready_valid_barrier`, but `--strict --check` rejects it:
+   *"stage '<p>' has unsupported subclause 'ready'"*. Because the
+   handoff doc explicitly lists it as supported yet strict rejects it
+   (the documented escalation bar), SPECFORGE does **not** emit
+   `(stage …)`; ISF temporal `HandshakeComplete` obligations are
+   preserved as explicit SPECFORGE residual decisions instead, and the
+   `(stage …)` source shape is reported here for FSMGEN to either fix in
+   the checker or correct in the spec.
+
+SPECFORGE has not patched the submodule (per the standing rule); this is
+a forward bug report. The `(contract … (eventually s (within N)))` form
+is confirmed strict-valid and is what SPECFORGE emits.
