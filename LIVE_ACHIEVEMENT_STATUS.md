@@ -1,12 +1,13 @@
 # LIVE_ACHIEVEMENT_STATUS
 ## Current snapshot
-- ISF-ONLY-CONSOLIDATION task tree (lane R6, 7 leaves) — strategy pivot: SpecForge keeps only `.isf`; HDL + the entire `.fsm` adapter subsystem being removed; FSMGen owns downstream. Full `.1`–`.7` batch authorized and executing: In Progress
+- ISF-ONLY-CONSOLIDATION task tree (lane R6, 7 leaves) — COMPLETE and pushed: SpecForge emits only `.isf`; HDL + the entire `.fsm` adapter subsystem removed (adapters.rs 28,113→575); FSMGen owns scheduling/`.fsm`/HDL downstream of `.isf`; `subs/fsmgen` + ISF↔FSMGen strict test retained; 1040 lib tests; full CI green: Done
 - ISF-ONLY-CONSOLIDATION.1 — canonical adapter strategy rewritten to ISF-only across README/INTENTIR_SPEC/ROADMAP(R6 spliced)/USER_GUIDE/FSMGEN_FEEDBACK; R6-FSM-ADAPTER superseded; docs only: Done
 - ISF-ONLY-CONSOLIDATION.2 — 3 ISF adapter tests decoupled from FSM-only fixtures (now use generic markdown pipeline + self-contained spec); fsmgen strict still green; test-only; re-scoped to in-place FSM deletion per user decision: Done
 - ISF-ONLY-CONSOLIDATION.3 — HDL-only removal: all SystemVerilog/Verilog/VHDL AdapterTarget+AdapterTargetArg variants, plans, dispatch arms, SourceIR defaults, and CLI args removed; compiles standalone; full CI green: Done
 - ISF-ONLY-CONSOLIDATION.4 — atomic FSM removal: adapters.rs 28,113→575 lines (−27,964); FsmAdapterArtifact/~25 Fsm structs/build_fsm/~150 helpers/~160 FSM tests/validate_fsm_adapter/AdapterTarget::Fsm/AdapterArtifact.fsm/IrStage::FsmAdapter and all 25 project_validation FSM arms removed; SpecForge emits only .isf; subs/fsmgen + ISF↔FSMGen strict test retained; full CI green: Done
 - ISF-ONLY-CONSOLIDATION.5 — kg fixture audit: 0/153 fixtures reference FSM-adapter; kg-bench/corpus-kb green; fixtures test the KG/semantic IR pipeline, not the removed adapter; nothing to retire (audit-only): Done
 - ISF-ONLY-CONSOLIDATION.6 — mdBook FSM sweep: 11 pages reworked to ISF-only (generated-artifacts 521→221, actor-connectivity 326→238, command/path/prose fixes); residual `.fsm` only in legit FSMGen-downstream / state-machine-extraction context; full CI + mdBook green: Done
+- ISF-ONLY-CONSOLIDATION.7 — README/ROADMAP current-state reconciled to ISF-only (CLI/quick-start/impl-paths; R15 superseding note); tree closed; final CI gate green; 7-leaf batch pushed to origin/main: Done
 - Signoff restored at HEAD via SIGNOFF-REMEDIATION.1 — 25 clippy `-D warnings` errors cleared and `cargo fmt` drift fixed; `scripts/run_ci.sh` green again; 1191 lib tests pass: Done
 - SIGNOFF-REMEDIATION task tree created (lane R0) to own the regression fix after the bootstrap re-analysis found HEAD non-signoff: Done
 - Bootstrap re-analysis (2026-05-17): RUST_CODEBASE_ANALYSIS.md refreshed; ISF adapter found landed untracked (`bfe4f973`→`490e6aed`, no task tree / no live-doc sync): Done

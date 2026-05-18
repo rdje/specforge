@@ -34,6 +34,14 @@ SpecForge now emits only `.isf`; FSMGen owns scheduling/`.fsm`/HDL downstream.
 - `scripts/run_ci.sh` green (clippy/fmt/tests/rustdoc/mdBook). Recommended
   direction: `.5` retires FSM-adapter-only kg fixtures, `.6` sweeps the
   mdBook, `.7` reconciles remaining live docs + closes the tree.
+- Batch outcome (closed 2026-05-18): all 7 `ISF-ONLY-CONSOLIDATION`
+  leaves done and pushed. `.5` audit found no FSM-adapter-specific kg
+  fixtures (kg-bench exercises the IR pipeline, not the adapter); `.6`
+  swept 11 mdBook pages to ISF-only; `.7` reconciled README/ROADMAP
+  current-state and closed the tree. No further Rust architecture change
+  since `.4`; `crates/specforge/src/ir/adapters.rs` is the ISF adapter +
+  shared scaffolding (575 lines), `isf_ir.rs` is the typed ISF IR.
+  Final `scripts/run_ci.sh` green; 1040 lib tests.
 
 ## Session update (2026-05-17 R6-ISF-ADAPTER batch — ISF ownership backfilled)
 

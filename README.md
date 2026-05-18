@@ -37,7 +37,7 @@ Use it first for the project objective, document navigation, and the current imp
 - the current `specforge` CLI surface supports:
   - `inspect <path>`
   - `doctor [--strict]`
-  - `converge <source> [--target fsm] [--vlm-provider ollama|open-ai|lm-studio|skip] [--nlp-provider ollama|open-ai|lm-studio|skip] [--rescan-plan <plan>] [--execute-rescan-plan]`
+  - `converge <source> [--target isf] [--vlm-provider ollama|open-ai|lm-studio|skip] [--nlp-provider ollama|open-ai|lm-studio|skip] [--rescan-plan <plan>] [--execute-rescan-plan]`
   - `ingest <source> --dry-run`
   - `ingest <source>`
   - `evidence <source-ir> --dry-run`
@@ -49,8 +49,8 @@ Use it first for the project objective, document navigation, and the current imp
   - `enrich <source-ir> [--vlm-provider ollama|open-ai|lm-studio|skip] [--classify-only] [--dry-run]`
   - `nlp-enrich <evidence-ir> [--vlm-provider ollama|open-ai|lm-studio|skip] [--dry-run]`
   - `validate <artifact>`
-  - `adapt <intent-ir> --target fsm --dry-run`
-  - `adapt <intent-ir> --target fsm`
+  - `adapt <intent-ir> --target isf --dry-run`
+  - `adapt <intent-ir> --target isf`
   - `kg-bench`
   - `project-validation <artifact>... [--rescan-vlm-provider auto-local|ollama|lm-studio|skip]`
   - `rescan-plan [--plan <plan>] [--execute] [--limit <n>] [--document-key <key>]`
@@ -62,9 +62,9 @@ Use it first for the project objective, document navigation, and the current imp
 - `specforge evidence` now computes and materializes `EvidenceIR` at `generated/evidence_ir/<document_key>/evidence_ir.json`
 - `specforge semantic` now computes and materializes `SemanticIR` at `generated/semantic_ir/<document_key>/semantic_ir.json`
 - `specforge intent` now computes and materializes `IntentIR` at `generated/intent_ir/<document_key>/intent_ir.json`
-- `specforge adapt --target fsm` now computes and materializes typed adapter artifacts at `generated/adapters/fsm/<document_key>/adapter.json`
-- `.fsm` adapter lowering is now partially graph-first: explicit module/top-composition paths recover child-module port directions from matching `IntentIR.actor_ports`, renderable top compositions preserve top-root identity, reused-child deduplication, FSM-child root cleanliness, top-before-child direct-root order, and clean diagnostics, standalone explicit-module `?fsm:name` roots preserve source explicit-module state-graph, root-kind, clean-renderability, control-block, system-contract, system direct-root identity, init-assignment, width-recovery, width-conflict blocker, direction-conflict blocker, flat/graph blocker, and output-inventory/renderable-size provenance through module candidates, selected renderable modules, and emitted source-document direct roots, standalone direct roots can recover missing local-inventory directions when the direct actor context is unambiguous or when one target actor graph-drives all direct output targets despite external shared-signal actors, direct and explicit-module control reads can fill target-actor input directions after that target actor is selected across DT and true FSM roots, top-link topology can recover and retain top-boundary port directions even when another composition gate still blocks emission, repeated actor-port direction/width conflicts stay unresolved instead of self-healing by duplication, standalone sequential DT roots now have regression coverage for graph-backed clock/reset system-contract direction recovery, and graph-backed standalone output ports with no typed driving action now block instead of being silently omitted from emitted `.fsm` size entries
-- `specforge converge <source> --target fsm` now ingests once, runs Ollama-backed VLM figure enrichment and NLP Level 3 by default, rebuilds the downstream IR stages, and stops when the persisted knowledge snapshot is stable across passes; use `--vlm-provider skip` and/or `--nlp-provider skip` only when you explicitly want a narrower run, and use `--rescan-plan <plan>` plus optional `--execute-rescan-plan` only when you deliberately want the stabilized loop to inspect or execute replayable validation rescan hints
+- `specforge adapt --target isf` now computes and materializes a typed ISF adapter artifact at `generated/adapters/isf/<document_key>/adapter.json`
+- the `.isf` adapter lowers `IntentIR` through the typed `IsfIr` model (`IntentIR → IsfIr::from_intent_ir() → render() → .isf`); it emits valid `.isf` S-expression source when the canonical signal/behavior surface is renderable and blocks with explicit reasons otherwise; emitted `.isf` is validated against FSMGen `--strict --check --json`. The prior `.fsm` adapter and HDL surface were removed by `ISF-ONLY-CONSOLIDATION` — FSMGen consumes `.isf` and owns scheduling, `.fsm`, and HDL downstream
+- `specforge converge <source> --target isf` now ingests once, runs Ollama-backed VLM figure enrichment and NLP Level 3 by default, rebuilds the downstream IR stages, and stops when the persisted knowledge snapshot is stable across passes; use `--vlm-provider skip` and/or `--nlp-provider skip` only when you explicitly want a narrower run, and use `--rescan-plan <plan>` plus optional `--execute-rescan-plan` only when you deliberately want the stabilized loop to inspect or execute replayable validation rescan hints
 - the intended architecture is not "teach code to understand unrestricted English"; it is "teach the pipeline to recover typed protocol facts from multimodal evidence and validate them aggressively"
 - temporal arbitration is now polarity-aware too: `ASSERTED` / `DEASSERTED` only collapse to `HIGH` / `LOW` when the current document actually grounds signal polarity
 - resolved signal polarity now also lives directly on canonical `InterfaceSignalRecord` entries, with validator coverage reported as `with_resolved_polarity`
@@ -191,7 +191,6 @@ Use it first for the project objective, document navigation, and the current imp
 - table-driven top-level signal synthesis is now stricter too: field-like `Bits | Name | Description` layouts and `... signal fields` captions are filtered before they can generate fake signals, widths, semantic hints, or system-contract facts
 - `SemanticIR` and `IntentIR` now preserve the structural KG downstream via `actor_signal_relations`, `actor_ports`, and `signal_connectivity`, while keeping flat `direction_hint` fields only as a compatibility surface
 - `kg-bench` can now assert graph-backed direction coverage by signal name directly, so benchmark fixtures no longer need to overload flat `signal_directions_include` when they mean canonical actor-port coverage; same-actor graph-direction conflicts are intentionally not credited as graph coverage and are now fixture-locked as unresolved direction debt
-- `.fsm` explicit-module/top-composition lowering now has bounded graph/topology-first direction consumers too: matching `IntentIR.actor_ports` can recover child-module port directions when flat module-local hints lag, standalone direct roots can select one target actor from graph-backed output-target ownership while ignoring external readers/drivers that merely share those signals, explicit direct control reads can then recover target-actor input directions for local inventory signals, repeated actor-port direction/width conflicts remain sticky and blocked, standalone sequential DT roots have regression coverage for graph-backed clock/reset system-contract directions, and explicit top links can recover width-only top boundary port directions without inventing `.fsm` port roles
 - width-only synthesized signal declarations like `Signal AWVALID is width 1.` now survive into `SemanticIR` / `IntentIR`, so AXI-style `Name | Width | Description` tables can create canonical signal records even when direction comes later from actor-relative graph evidence
 - `SemanticIR` and `IntentIR` now also carry `interface_signal_conflicts` so conflicting direction/width evidence for the same signal stays explicit instead of only collapsing the canonical hint to `None`; the `SemanticIR` accumulator keeps that collapse sticky so later duplicate declarations cannot resurrect a poisoned canonical hint
 - `SemanticIR` and `IntentIR` now also carry `signal_connectivity_conflicts` so unresolved multi-producer structural ambiguity stays explicit in the canonical layers instead of hiding inside raw connectivity vectors
@@ -259,8 +258,8 @@ Use it first for the project objective, document navigation, and the current imp
   - `SemanticIR`
   - `IntentIR`
   - typed adapter lowering
-- the first real `.fsm` adapter slices now materialize typed adapter artifacts, emit explicit standalone `?dt:name` text for honest canonical DT cases, emit structured `?fsm:name` text when the canonical state graph is explicit, emit explicit `?top:name` source documents when module/top composition facts are explicit, lower canonical symbol-definition sections, structured reset-role blocks, selector/test-node branches, and compound-update shorthand from the widened semantic model when those canonical shapes map directly into `.fsm`, keep reset polarity honest through the reset signal name because emitted `.fsm` text still carries only `sreset` / `asreset` plus the signal, keep unsupported selector predicates and other unsafe broader-root cases blocked with explicit residual decisions instead of fabricating target syntax, and intentionally keep compatibility-level `?mod:name` / `?module:name` spellings outside the current canonical root-kind model until a real backend-neutral direct-module distinction exists
-- the next implementation milestone is semantic-truthfulness plus active `.fsm` adapter hardening: finish the remaining graph-first direction migration, broaden the new meaning-based role inference beyond signal-description tables plus initial prose/alias grounding into richer multimodal grounding, deepen the temporal-rule surface into richer temporal arbitration across modalities and actors, add KG-guided rescans and evidence arbitration, broaden the first cross-document learning plane so the extractor can accumulate reusable priors without contaminating per-document canonical truth, and keep tightening `.fsm` adapter renderability/provenance diagnostics; HDL lowering (SystemVerilog, Verilog, VHDL) is out of scope — owned by downstream toolchains
+- the `.isf` adapter materializes a typed `IsfAdapterArtifact`: it lowers `IntentIR` through the typed `IsfIr` model, emits valid `.isf` S-expression source when the canonical signal/behavior surface is renderable (defaulting unknown direction/width and letting FSMGen schedule), and blocks with explicit `blocking_reasons` otherwise; the prior `.fsm` adapter + HDL surface were removed by `ISF-ONLY-CONSOLIDATION` (FSMGen owns scheduling/`.fsm`/HDL downstream of `.isf`)
+- the next implementation milestone is semantic-truthfulness hardening: broaden meaning-based role inference beyond signal-description tables plus initial prose/alias grounding into richer multimodal grounding, deepen the temporal-rule surface into richer temporal arbitration across modalities and actors, add KG-guided rescans and evidence arbitration, and broaden the cross-document learning plane so the extractor can accumulate reusable priors without contaminating per-document canonical truth; `.fsm`/HDL lowering is out of scope — FSMGen consumes `.isf` and owns it downstream
 - that truthfulness program now includes a tracked KG benchmark surface under `crates/specforge/test_data/kg_quality/`, with seed gold and negative fixtures for actor ports, graph-backed direction coverage, compatibility-direction lag versus genuinely unresolved direction gaps, name-only semantic noise rejection, multi-producer conflict surfacing, actor-boundary residual quality, contested handshake-name fallback blocking, alias-dependent handshake-completion caveats, both positive and negative direct VLM timing-note semantic grounding, same-asset visual semantic conflict surfacing, collective and mixed clause-local non-reset control polarity recovery plus detached mixed-polarity rejection, AMBA-style `Source`-column and `Destination`-column gold fixtures, representative APB `Requester` / `Completer`, setup/access timing, address-protection-stability, write-control stability, and response-stability gold fixtures, representative AXI width-only plus prose-direction, write-address next-cycle timing, write-response timing, address-response-user-sideband-stability, read-address timing, address-qos-region-sideband-stability, read-address-control-sideband-stability, read-address-sideband-stability, data-user-sideband-stability, read-data timing, read-data-last-stability, write-data timing, write-data-last-stability, sideband-stability, write-address-control-sideband-stability, and write-address-sideband-stability gold fixtures, representative AHB section-heading, wait-state timing, control-stability, transfer-lock-stability, exclusive-security-stability, response-stability, and write-data-stability gold fixtures, a bogus-actor-attribution negative fixture for `Source`-column infrastructure rows, explicit clock/reset topology gold plus generic-advice negative fixtures, a field-table misclassification negative fixture, spurious-timing negative fixtures proving low-value VLM annotation labels and motion-only VLM annotation prose do not become timing constraints, and prior-guided gold/negative pairs for actor-taxonomy direction recovery, bounded temporal recovery, semantic-role recovery, and visual-caption semantic recovery
 
 ## Working naming
@@ -413,7 +412,7 @@ Use it first for the project objective, document navigation, and the current imp
 - `crates/specforge/src/commands/intent.rs`
   - `IntentIR` preview/materialization command
 - `crates/specforge/src/commands/adapt.rs`
-  - `.fsm` adapter preview/materialization command for the current honest DT/FSM/top lowering slices
+  - `.isf` adapter preview/materialization command
 - `crates/specforge/src/commands/enrich.rs`
   - VLM-backed `SourceIR` visual enrichment command
 - `crates/specforge/src/commands/validate.rs`
@@ -443,7 +442,9 @@ Use it first for the project objective, document navigation, and the current imp
 - `crates/specforge/src/ir/intent.rs`
   - first real `IntentIR` builder for canonical intent identity, actor responsibilities, carried interface inventory, carried backend-neutral control fragments, carried explicit module/top composition facts, behaviors, constraints, assumptions, and residual decisions
 - `crates/specforge/src/ir/adapters.rs`
-  - typed adapter artifacts, honest standalone/structured/top-root `.fsm` lowering logic, renderability analysis, and adapter-side residual decisions
+  - shared adapter scaffolding (`AdapterArtifact`, `AdapterTarget`, plans) plus the `.isf` adapter (`build_isf_adapter_artifact`, ISF renderability policy) and adapter-side residual decisions
+- `crates/specforge/src/ir/isf_ir.rs`
+  - typed `IsfIr` model: `IntentIR → IsfIr::from_intent_ir() → render() → .isf`
 - `crates/specforge/src/ir/prior_memory.rs`
   - advisory cross-document `CorpusMemory` prior schema and lookup helpers
 
@@ -463,12 +464,12 @@ cargo test
 ./scripts/run_ci.sh
 cargo run -p specforge -- --help
 cargo run -p specforge -- inspect README.md
-cargo run -p specforge -- converge README.md --target fsm
+cargo run -p specforge -- converge README.md --target isf
 cargo run -p specforge -- ingest README.md --dry-run
 cargo run -p specforge -- evidence generated/source_ir/readme/source_ir.json --dry-run
 cargo run -p specforge -- semantic generated/evidence_ir/readme/evidence_ir.json --dry-run
 cargo run -p specforge -- intent generated/semantic_ir/readme/semantic_ir.json --dry-run
-cargo run -p specforge -- adapt generated/intent_ir/readme/intent_ir.json --target fsm --dry-run
+cargo run -p specforge -- adapt generated/intent_ir/readme/intent_ir.json --target isf --dry-run
 cargo run -p specforge -- project-validation generated/intent_ir/readme/intent_ir.json
 cargo run -p specforge -- rescan-plan
 cargo run -p specforge -- kg-bench
@@ -485,9 +486,9 @@ cargo run -p specforge -- corpus-kb --kg-fixtures-root crates/specforge/test_dat
 - `specforge semantic <evidence-ir>` materializes `generated/semantic_ir/<document_key>/semantic_ir.json`
 - `specforge intent <semantic-ir> --dry-run` prints computed `IntentIR` JSON without writing artifacts
 - `specforge intent <semantic-ir>` materializes `generated/intent_ir/<document_key>/intent_ir.json`
-- `specforge adapt <intent-ir> --target fsm --dry-run` prints computed adapter JSON without writing artifacts
-- `specforge adapt <intent-ir> --target fsm` materializes `generated/adapters/fsm/<document_key>/adapter.json` and writes an emitted `.fsm` file when the canonical interface/control/system/init/state surface or explicit module/top composition surface is explicit enough for honest standalone DT, structured FSM, or first-slice `?top:name` lowering
-- `specforge converge <source> --target fsm` materializes the loop-backed pipeline entrypoint, defaults to full Ollama VLM + NLP Level 3 enrichment, and stops when `SourceIR`/`EvidenceIR`/`SemanticIR`/`IntentIR`/adapter facts stop changing; add `--rescan-plan generated/validation/rescan_plan.json` to dry-run the targeted validation queue after stability, and add `--execute-rescan-plan` only when you intentionally want whitelisted replay hints executed
+- `specforge adapt <intent-ir> --target isf --dry-run` prints computed adapter JSON without writing artifacts
+- `specforge adapt <intent-ir> --target isf` materializes `generated/adapters/isf/<document_key>/adapter.json` and writes an emitted `.isf` file when the canonical signal/behavior surface is renderable (≥1 signal plus temporal/conditional/signal-constraint/control-block behavior); otherwise it blocks with explicit `blocking_reasons`
+- `specforge converge <source> --target isf` materializes the loop-backed pipeline entrypoint, defaults to full Ollama VLM + NLP Level 3 enrichment, and stops when `SourceIR`/`EvidenceIR`/`SemanticIR`/`IntentIR`/adapter facts stop changing; add `--rescan-plan generated/validation/rescan_plan.json` to dry-run the targeted validation queue after stability, and add `--execute-rescan-plan` only when you intentionally want whitelisted replay hints executed
 - `specforge project-validation <artifact>...` validates the passed artifacts, persists their latest reports, refreshes `VALIDATION_SNAPSHOT.md`, and updates the managed validation projection block in `LIVE_ACHIEVEMENT_STATUS.md`
 - `specforge project-validation` also materializes `generated/validation/rescan_plan.json`, a local-only replay-oriented target list with typed inputs and structured command hints; visual-motif corroboration entries include an explicit local VLM `enrich_source_ir` hint before `EvidenceIR` rebuild/validation, and `--rescan-vlm-provider auto-local|ollama|lm-studio|skip` plus optional `--rescan-vlm-model <model>` controls the generated local provider hint without executing rescans automatically
 - `specforge rescan-plan [--execute]` consumes that local plan; without `--execute` it only prints pending work, and with `--execute` it dispatches only whitelisted local enrichment/stage rebuild/validate hints from structured args rather than shell text, then records whether validation changed plus the before/after validation delta and conservative arbitration verdict; `--document-key <key>` scopes multi-document queues, and the same engine is available through `converge --rescan-plan <plan>` after the fixed-point loop stabilizes

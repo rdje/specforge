@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `ISF-ONLY-CONSOLIDATION`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: `R6` (adapter layer — this redefines the adapter strategy)
 - Created: `2026-05-18`
 - Last updated: `2026-05-18`
@@ -73,7 +73,7 @@ Scope reality (surveyed 2026-05-18):
 ## Task Tree
 
 - ID: `ISF-ONLY-CONSOLIDATION`
-  Status: `active`
+  Status: `done`
   Goal: `SpecForge emits only .isf; HDL and .fsm fully removed.`
   Children: `.1`, `.2`, `.3`, `.4`, `.5`, `.6`, `.7`
 
@@ -166,15 +166,15 @@ Scope reality (surveyed 2026-05-18):
   Commit: `ISF-ONLY-CONSOLIDATION.6 — mdBook FSM sweep (ISF-only book)`
 
 - ID: `ISF-ONLY-CONSOLIDATION.7`
-  Status: `pending`
+  Status: `done`
   Goal: >
     Final continuity reconcile (README/ROADMAP/INTENTIR_SPEC/
     LIVE_ACHIEVEMENT_STATUS/RUST_CODEBASE_ANALYSIS/MEMORY/CHANGES/
     DEVELOPMENT_NOTES), close the tree, push the completed batch per the
     COMMIT.md batch rule.
   Acceptance: `All live docs consistent with ISF-only; tree done; final scripts/run_ci.sh gate green; batch pushed.`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — README/ROADMAP(R6+R15 note)/INTENTIR_SPEC/live docs reconciled to ISF-only; final scripts/run_ci.sh green; batch pushed
+  Commit: `ISF-ONLY-CONSOLIDATION.7 — reconcile docs, close tree, push batch`
 
 ## Current Frontier
 
@@ -186,7 +186,9 @@ Scope reality (surveyed 2026-05-18):
 | 4 | `ISF-ONLY-CONSOLIDATION.4` | `done` | Atomic FSM removal complete; CI green |
 | 5 | `ISF-ONLY-CONSOLIDATION.5` | `done` | Audit: no FSM-adapter fixtures; nothing to retire |
 | 6 | `ISF-ONLY-CONSOLIDATION.6` | `done` | mdBook swept to ISF-only; CI green |
-| 7 | `ISF-ONLY-CONSOLIDATION.7` | `pending` | Next — reconcile + close + push |
+| 7 | `ISF-ONLY-CONSOLIDATION.7` | `done` | Docs reconciled; tree closed; batch pushed |
+
+No executable leaves remain. Tree closed 2026-05-18.
 
 ## Decisions
 
@@ -236,6 +238,7 @@ Scope reality (surveyed 2026-05-18):
 | `2026-05-18` | `ISF-ONLY-CONSOLIDATION.4` | adapters.rs 28113→575; 1040 lib tests; fsmgen strict; full `scripts/run_ci.sh` | `passed` |
 | `2026-05-18` | `ISF-ONLY-CONSOLIDATION.5` | grep audit 0/153 FSM-referencing; kg-bench/corpus-kb green in `.4` CI | `passed` |
 | `2026-05-18` | `ISF-ONLY-CONSOLIDATION.6` | 11 mdBook pages swept; full `scripts/run_ci.sh` + mdBook green | `passed` |
+| `2026-05-18` | `ISF-ONLY-CONSOLIDATION.7` | README/ROADMAP/live docs reconciled; final `scripts/run_ci.sh` gate; batch pushed | `passed` |
 
 ## Commit Log
 
@@ -247,6 +250,7 @@ Scope reality (surveyed 2026-05-18):
 | `ISF-ONLY-CONSOLIDATION.4` | `ISF-ONLY-CONSOLIDATION.4 — atomic FSM removal (adapters.rs 28113->575)` | Largest slice; −27,964 lines; 1040 lib tests |
 | `ISF-ONLY-CONSOLIDATION.5` | `ISF-ONLY-CONSOLIDATION.5 — kg fixture audit (no FSM-adapter fixtures; nothing to retire)` | Audit-only; 0/153 FSM-referencing |
 | `ISF-ONLY-CONSOLIDATION.6` | `ISF-ONLY-CONSOLIDATION.6 — mdBook FSM sweep (ISF-only book)` | 11 pages; generated-artifacts 521→221, actor-connectivity 326→238 |
+| `ISF-ONLY-CONSOLIDATION.7` | `ISF-ONLY-CONSOLIDATION.7 — reconcile docs, close tree, push batch` | README/ROADMAP reconciled; tree closed; batch pushed |
 
 ## Changelog
 
@@ -254,3 +258,12 @@ Scope reality (surveyed 2026-05-18):
   consolidation: remove HDL + the entire `.fsm` adapter; SpecForge emits
   only `.isf`. Scope surveyed; decomposed into 7 leaves (`.4`/`.6`
   expected to split further during execution).
+- `2026-05-18`: Closed tree. All 7 leaves done — `.1` doc strategy,
+  `.2` ISF tests decoupled, `.3` HDL removal, `.4` atomic FSM removal
+  (adapters.rs 28,113→575; −27,964 lines; 1040 lib tests), `.5` kg
+  fixture audit (nothing to retire), `.6` mdBook sweep, `.7` reconcile
+  + close + push. `.2`/`.3`/`.4` were re-scoped vs the original plan
+  (keep ISF in adapters.rs, delete FSM in place; `.4` is one atomic
+  non-splittable slice) — recorded in Decisions. SpecForge now emits
+  only `.isf`; FSMGen owns scheduling/`.fsm`/HDL downstream;
+  `subs/fsmgen` + the ISF↔FSMGen strict test retained.

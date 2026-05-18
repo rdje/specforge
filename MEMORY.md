@@ -24,13 +24,14 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `e4dd1b04` (pre-commit baseline; the ISF-ONLY-CONSOLIDATION.6 commit is not yet created at time of this update)
-- latest_commit_brief_message: ISF-ONLY-CONSOLIDATION.5 — kg fixture audit (no FSM-adapter fixtures; nothing to retire)
-- note: 2026-05-18 — `ISF-ONLY-CONSOLIDATION` FULL `.1`–`.7` batch executing. `.1`–`.5` committed (`.4`=`5bd35b37` atomic FSM removal, `.5`=`e4dd1b04` kg audit). `.6` (mdBook sweep to ISF-only, 11 pages, full CI green) done, committing now. Remaining: `.7` reconcile+close+push (final CI gate + push the batch).
+- latest_commit_hash: `f6a5f8fd` (pre-commit baseline; the ISF-ONLY-CONSOLIDATION.7 commit is not yet created at time of this update)
+- latest_commit_brief_message: ISF-ONLY-CONSOLIDATION.6 — mdBook FSM sweep (ISF-only book)
+- note: 2026-05-18 — `ISF-ONLY-CONSOLIDATION` FULL `.1`–`.7` batch complete. `.1`–`.6` committed; `.7` (README/ROADMAP reconcile + tree closure) done, committing now, then the final `scripts/run_ci.sh` gate and the batch push. Post-push commit id/ahead-count in the slice completion message; next session's MEMORY refresh reconciles the post-push baseline. SpecForge now emits only `.isf`.
 
 ## Active batch status
-- batch: `ISF-ONLY-CONSOLIDATION` (user-authorized full `.1`–`.7`, lane R6) — EXECUTING
-- completed_count: `.1`(`284de01a`)/`.2`(`b2bf525e`)/`.3`(`e2ea0cfb`)/`.4`(`5bd35b37`)/`.5`(`e4dd1b04`) committed; `.6` done, committing now; only `.7` (reconcile+close+push) pending
+- batch: `ISF-ONLY-CONSOLIDATION` (user-authorized full `.1`–`.7`, lane R6) — COMPLETE at `.7`
+- leaf commits: `.1 284de01a` `.2 b2bf525e` `.3 e2ea0cfb` `.4 5bd35b37` `.5 e4dd1b04` `.6 f6a5f8fd`; `.7` committing now, then final CI gate, then push
+- push policy: push the full 7-leaf batch after `.7` commit + final `scripts/run_ci.sh` gate (COMMIT.md batch rule). Run CI from repo cwd (`bash /abs/scripts/run_ci.sh`).
 - lib test count: `1040` (post-`.4`; ~161 FSM adapter tests removed). SpecForge emits only `.isf`; `subs/fsmgen` + ISF↔FSMGen strict test retained. NOTE: run CI from repo cwd (`bash /abs/scripts/run_ci.sh` with repo cwd) — background runs from wrong cwd flake the external-fsmgen strict test (`Can't cd to :`).
 - KEY decisions: keep ISF in `adapters.rs` (no module move); `.3`=HDL-only (done); `.4`=ATOMIC FSM removal (cannot split into compiling sub-commits — AdapterTarget::Fsm + AdapterArtifact.fsm + FsmAdapterArtifact + FSM code/tests are mutually dependent). `build_intent_ir_from_markdown` is generic and MUST be retained in `.4` (ISF tests depend on it).
 - per-leaf rule: full COMMIT.md workflow after every leaf; `scripts/run_ci.sh` green at every code/fixture/mdBook-touching leaf; task-scoped commits not deferred
@@ -40,6 +41,7 @@
 - branch: `2` ahead of `origin/main` pre-`.1` (under ~30)
 
 ## Recent commit chain (last 10)
+- `f6a5f8fd` ISF-ONLY-CONSOLIDATION.6 — mdBook FSM sweep (ISF-only book)
 - `e4dd1b04` ISF-ONLY-CONSOLIDATION.5 — kg fixture audit (no FSM-adapter fixtures; nothing to retire)
 - `5bd35b37` ISF-ONLY-CONSOLIDATION.4 — atomic FSM removal (adapters.rs 28113->575)
 - `e2ea0cfb` ISF-ONLY-CONSOLIDATION.3 — remove HDL (SystemVerilog/Verilog/VHDL) adapter surface

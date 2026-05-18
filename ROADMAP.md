@@ -164,7 +164,7 @@
   - task tree: `R6-SOURCE-HARDENING` (`done`) — [docs/tasks/R6-SOURCE-HARDENING.md](docs/tasks/R6-SOURCE-HARDENING.md)
   - task tree: `R6-CONVERGE-HARDENING` (`done`) — [docs/tasks/R6-CONVERGE-HARDENING.md](docs/tasks/R6-CONVERGE-HARDENING.md)
   - task tree: `R6-FSM-ADAPTER` (`superseded` by `ISF-ONLY-CONSOLIDATION`) — [docs/tasks/R6-FSM-ADAPTER.md](docs/tasks/R6-FSM-ADAPTER.md)
-  - task tree: `ISF-ONLY-CONSOLIDATION` (`active`) — [docs/tasks/ISF-ONLY-CONSOLIDATION.md](docs/tasks/ISF-ONLY-CONSOLIDATION.md)
+  - task tree: `ISF-ONLY-CONSOLIDATION` (`done`) — [docs/tasks/ISF-ONLY-CONSOLIDATION.md](docs/tasks/ISF-ONLY-CONSOLIDATION.md)
 - adapter strategy (2026-05-18 pivot):
   - `.isf` is SpecForge's single adapter target. `IntentIR` lowers to `.isf`
     through the typed `IsfIr` model (`IntentIR → IsfIr::from_intent_ir() →
@@ -391,6 +391,17 @@
 ### R15 Actor-relative direction model in SemanticIR
 - status: In Progress
 - reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` §Phase 4
+- 2026-05-18 note: the actor-relative graph (`actor_signal_relations`,
+  `actor_ports`, `signal_connectivity`) remains canonical in
+  `SemanticIR` / `IntentIR` and is still scored graph-first by
+  validation. The many `done:` bullets below that describe `.fsm`
+  adapter graph-direction consumers (size entries, top/child
+  composition, renderability) are **superseded historical record**:
+  `ISF-ONLY-CONSOLIDATION` removed the `.fsm` adapter entirely.
+  SpecForge's only adapter is `.isf`, which defaults unknown
+  direction/width and lets FSMGen schedule, so adapter-side direction
+  recovery no longer applies. The graph-direction *model itself* (the
+  R15 goal) is unaffected by that removal.
 - goals:
   - replace `direction_hint: Option<InterfaceSignalDirection>` with an actor-relative model
   - make `InterfaceSignalRecord` carry actor-relative drive/read information instead of a single flattened perspective

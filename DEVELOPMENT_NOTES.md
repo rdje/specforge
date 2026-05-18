@@ -84,6 +84,14 @@
   fixtures). Note: a backgrounded CI run flaked the external-`fsmgen`
   strict test with `Can't cd to :` (background-cwd issue, not an ISF
   defect — the emitted ISF was well-formed); re-run from correct cwd.
+- `.7` reconciled the README/ROADMAP current-state drift the normative
+  `.1` pass deferred (README is the single entrypoint, so its stale
+  `.fsm` CLI/quick-start/impl-path/current-state content had to be
+  fixed). ROADMAP R15's 55 `.fsm`-consumer `done:` bullets are a true
+  historical record of completed migration work; a proportionate
+  superseding note beats rewriting 55 bullets. Closed the tree, ran the
+  final CI gate, pushed the 7-leaf batch. `ISF-ONLY-CONSOLIDATION`
+  complete: SpecForge emits only `.isf`.
 
 ## 2026-05-17 session — R6-ISF-ADAPTER batch (ISF ownership backfill + hardening)
 

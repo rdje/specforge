@@ -120,6 +120,23 @@
   fixtures). `bash scripts/run_docs_ci.sh` (mdBook) green; full
   `scripts/run_ci.sh` green. Docs-only.
 
+### ISF-ONLY-CONSOLIDATION.7: reconcile docs, close tree, push batch
+- Reconciled the remaining current-facing `.fsm` drift the normative `.1`
+  pass did not cover: README (CLI surface, current-state bullets, Rust
+  impl paths, quick start → ISF-only; added an `isf_ir.rs` path entry),
+  ROADMAP R6 task-tree ref → `done`, and a ROADMAP R15 superseding note
+  (the `.fsm`-adapter graph-direction `done:` bullets are historical
+  record; the actor-relative graph model itself remains canonical).
+- Closed `ISF-ONLY-CONSOLIDATION` (all 7 leaves done) in
+  `docs/TASK_TREE.md` and the task file. Final `scripts/run_ci.sh` gate
+  green; the completed 7-leaf batch pushed per the COMMIT.md batch rule.
+- Net outcome of the batch: SpecForge emits only `.isf`. The HDL surface
+  and the entire `.fsm` adapter subsystem (adapters.rs 28,113→575;
+  `FsmAdapterArtifact`, `IrStage::FsmAdapter`, `validate_fsm_adapter`,
+  ~160 FSM tests, 25 project_validation FSM arms) are gone. `subs/fsmgen`
+  + the ISF↔FSMGen strict test are retained; FSMGen owns scheduling,
+  `.fsm`, and HDL downstream of `.isf`. 1040 lib tests; `src` ~110K→~82K.
+
 ## 2026-05-17 (R6-ISF-ADAPTER batch — ISF adapter ownership backfill + hardening)
 
 ### Created: R6-ISF-ADAPTER task tree (lane R6, 5-leaf authorized batch)
