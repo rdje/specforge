@@ -90,16 +90,19 @@ Scope reality (surveyed 2026-05-18):
   Commit: `ISF-ONLY-CONSOLIDATION.1 — adopt ISF-only adapter strategy in canonical docs`
 
 - ID: `ISF-ONLY-CONSOLIDATION.2`
-  Status: `pending`
+  Status: `done`
   Goal: >
-    Extract the ISF adapter surface (`IsfAdapterArtifact`,
-    `build_isf_adapter_artifact`, `assess_isf_renderability`,
-    `derive_isf_actor_name`, `count_isf_signals`, ISF adapter tests)
-    out of `adapters.rs` into a self-contained ISF adapter module so the
-    FSM bulk can later be deleted wholesale without entangling ISF.
-  Acceptance: `ISF adapter logic + tests live in their own module; AdapterArtifact still builds for isf; scripts/run_ci.sh green. May split.`
-  Verification: `pending`
-  Commit: `pending`
+    RE-SCOPED 2026-05-18 (user decision: keep ISF in `adapters.rs`,
+    delete FSM in place — no physical module move). Make the 3 ISF
+    adapter tests self-contained so the FSM bulk and FSM-only test
+    helpers can be deleted in `.4` without breaking ISF: drop their
+    dependence on the FSM-only fixtures `build_explicit_symbolic_dt_intent_ir`
+    and `build_explicit_fsm_intent_ir`, routing them through the generic
+    `build_intent_ir_from_markdown` pipeline helper, relocated next to the
+    ISF tests so `.4`'s deletion boundary is unambiguous.
+  Acceptance: `The 3 ISF tests depend only on the generic markdown→IntentIR pipeline helper (no FSM-only fixtures); all 3 pass incl. fsmgen --strict --check --json; scripts/run_ci.sh green.`
+  Verification: `passed` — 3 ISF tests green via generic pipeline + self-contained spec, fsmgen strict green; full scripts/run_ci.sh green; test-only change
+  Commit: `ISF-ONLY-CONSOLIDATION.2 — decouple ISF tests from FSM-only fixtures`
 
 - ID: `ISF-ONLY-CONSOLIDATION.3`
   Status: `pending`
@@ -163,8 +166,8 @@ Scope reality (surveyed 2026-05-18):
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `ISF-ONLY-CONSOLIDATION.1` | `done` | Strategy recorded in canonical docs |
-| 2 | `ISF-ONLY-CONSOLIDATION.2` | `pending` | Next — isolate ISF so FSM can be deleted cleanly |
-| 3 | `ISF-ONLY-CONSOLIDATION.3` | `pending` | Make typed surface ISF-only |
+| 2 | `ISF-ONLY-CONSOLIDATION.2` | `done` | ISF tests decoupled from FSM-only fixtures |
+| 3 | `ISF-ONLY-CONSOLIDATION.3` | `pending` | Next — make typed surface ISF-only |
 | 4 | `ISF-ONLY-CONSOLIDATION.4` | `pending` | Delete FSM bulk (likely splits) |
 | 5 | `ISF-ONLY-CONSOLIDATION.5` | `pending` | Fixture triage |
 | 6 | `ISF-ONLY-CONSOLIDATION.6` | `pending` | mdBook sweep |
@@ -176,6 +179,12 @@ Scope reality (surveyed 2026-05-18):
   scheduling/`.fsm`/HDL downstream. Supersedes the `.fsm`-active strategy.
 - `2026-05-18`: ISF is extracted to its own module first (`.2`) so the
   FSM bulk can be deleted as a block rather than untangled in place.
+- `2026-05-18` (revises the above, user decision): do NOT physically move
+  ISF. Keep ISF in `adapters.rs` and delete the FSM blocks in place;
+  `adapters.rs` naturally becomes the ISF adapter file (optional rename
+  deferred to `.7`). Lower churn/risk than a cross-module move on a 28K-line
+  file. `.2` is therefore re-scoped to only de-coupling the ISF tests from
+  FSM-only fixtures so `.4` can delete FSM test infra safely.
 - `2026-05-18`: `R6-FSM-ADAPTER` stays as closed history, marked
   `superseded` by this tree (no history rewrite).
 - `2026-05-18`: `subs/fsmgen` + the ISF↔FSMGen strict test are retained;
@@ -199,12 +208,14 @@ Scope reality (surveyed 2026-05-18):
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-05-18` | `ISF-ONLY-CONSOLIDATION.1` | docs-only diff audit (no `.rs` changed) | `passed` |
+| `2026-05-18` | `ISF-ONLY-CONSOLIDATION.2` | 3 ISF tests + fsmgen strict; full `scripts/run_ci.sh` | `passed` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `ISF-ONLY-CONSOLIDATION.1` | `ISF-ONLY-CONSOLIDATION.1 — adopt ISF-only adapter strategy in canonical docs` | Docs only; ROADMAP R6 spliced (~279 FSM-criteria lines removed) |
+| `ISF-ONLY-CONSOLIDATION.2` | `ISF-ONLY-CONSOLIDATION.2 — decouple ISF tests from FSM-only fixtures` | Test-only; 3 ISF tests via generic pipeline; re-scoped (in-place FSM deletion) |
 
 ## Changelog
 

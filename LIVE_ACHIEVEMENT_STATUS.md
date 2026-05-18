@@ -2,6 +2,7 @@
 ## Current snapshot
 - ISF-ONLY-CONSOLIDATION task tree (lane R6, 7 leaves) — strategy pivot: SpecForge keeps only `.isf`; HDL + the entire `.fsm` adapter subsystem being removed; FSMGen owns downstream. Full `.1`–`.7` batch authorized and executing: In Progress
 - ISF-ONLY-CONSOLIDATION.1 — canonical adapter strategy rewritten to ISF-only across README/INTENTIR_SPEC/ROADMAP(R6 spliced)/USER_GUIDE/FSMGEN_FEEDBACK; R6-FSM-ADAPTER superseded; docs only: Done
+- ISF-ONLY-CONSOLIDATION.2 — 3 ISF adapter tests decoupled from FSM-only fixtures (now use generic markdown pipeline + self-contained spec); fsmgen strict still green; test-only; re-scoped to in-place FSM deletion per user decision: Done
 - Signoff restored at HEAD via SIGNOFF-REMEDIATION.1 — 25 clippy `-D warnings` errors cleared and `cargo fmt` drift fixed; `scripts/run_ci.sh` green again; 1191 lib tests pass: Done
 - SIGNOFF-REMEDIATION task tree created (lane R0) to own the regression fix after the bootstrap re-analysis found HEAD non-signoff: Done
 - Bootstrap re-analysis (2026-05-17): RUST_CODEBASE_ANALYSIS.md refreshed; ISF adapter found landed untracked (`bfe4f973`→`490e6aed`, no task tree / no live-doc sync): Done

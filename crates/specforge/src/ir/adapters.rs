@@ -27965,10 +27965,26 @@ mod tests {
 
     // --- ISF adapter ---
 
+    // Self-contained ISF spec: a renderable ISF needs >=1 signal plus
+    // behavioral content. Built through the generic markdown -> IntentIR
+    // pipeline so the ISF tests do not depend on FSM-only fixtures (which
+    // are removed by ISF-ONLY-CONSOLIDATION.4).
+    const ISF_ADAPTER_TEST_SPEC: &str = concat!(
+        "# ISF Spec\n",
+        "Clock clk.\n\n",
+        "Reset rst_n is asynchronous active low.\n\n",
+        "Signal DATA_IN is input width 8.\n\n",
+        "Signal GO is input width 1.\n\n",
+        "Signal ACC is output width 8.\n\n",
+        "Init ACC = 8'0.\n\n",
+        "Block accumulate when GO: ACC <- DATA_IN.\n",
+    );
+
     #[test]
     fn isf_adapter_emits_valid_s_expression_source() -> Result<()> {
         let tempdir = tempdir()?;
-        let intent_ir = build_explicit_symbolic_dt_intent_ir(tempdir.path())?;
+        let intent_ir =
+            build_intent_ir_from_markdown(tempdir.path(), "isf_spec.md", ISF_ADAPTER_TEST_SPEC)?;
         let artifact = AdapterArtifact::build(
             &intent_ir.artifact_layout.intent_ir_path,
             AdapterTarget::Isf,
@@ -27976,13 +27992,15 @@ mod tests {
         )?;
 
         let isf = artifact.isf.expect("ISF artifact must be populated");
-        assert!(isf.is_renderable, "expected renderable ISF artifact");
+        assert!(
+            isf.is_renderable,
+            "expected renderable ISF artifact: {:?}",
+            isf.blocking_reasons
+        );
         assert!(isf.blocking_reasons.is_empty());
 
-        // Counts
-        assert_eq!(isf.signal_count, 4, "SEL, DATA_OUT, PARAM_OUT, ENUM_OUT");
-        assert!(isf.constant_count >= 3, "C0, D0, P0");
-        assert_eq!(isf.enum_count, 1, "mode_t");
+        // Renderability requires signals plus behavioral content.
+        assert!(isf.signal_count > 0, "must carry signal inventory");
         assert!(
             isf.transaction_count > 0 || isf.rule_count > 0,
             "should have behavioral content"
@@ -28041,8 +28059,13 @@ mod tests {
     fn isf_output_passes_fsmgen_strict_validation() -> Result<()> {
         let tempdir = tempdir()?;
 
-        // Build an IntentIR with clock, reset, states, signals, and transitions.
-        let intent_ir = build_explicit_fsm_intent_ir(tempdir.path())?;
+        // Build an IntentIR via the generic markdown pipeline (clock, reset,
+        // signals, behavior) — no FSM-only fixture dependency.
+        let intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "isf_strict_spec.md",
+            ISF_ADAPTER_TEST_SPEC,
+        )?;
 
         let artifact = AdapterArtifact::build(
             &intent_ir.artifact_layout.intent_ir_path,

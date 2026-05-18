@@ -24,13 +24,14 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `b9824bae` (pre-commit baseline; the ISF-ONLY-CONSOLIDATION.1 commit is not yet created at time of this update)
-- latest_commit_brief_message: Create ISF-ONLY-CONSOLIDATION task tree — drop HDL + .fsm, keep only .isf
-- note: 2026-05-18 — `R6-ISF-ADAPTER` complete+pushed. `ISF-ONLY-CONSOLIDATION` (7 leaves, lane R6) created, then FULL `.1`–`.7` batch authorized and now executing. `.1` (canonical-doc ISF-only rewrite + R6-FSM-ADAPTER superseded) done, committing now.
+- latest_commit_hash: `284de01a` (pre-commit baseline; the ISF-ONLY-CONSOLIDATION.2 commit is not yet created at time of this update)
+- latest_commit_brief_message: ISF-ONLY-CONSOLIDATION.1 — adopt ISF-only adapter strategy in canonical docs
+- note: 2026-05-18 — `R6-ISF-ADAPTER` complete+pushed. `ISF-ONLY-CONSOLIDATION` (7 leaves, lane R6) FULL `.1`–`.7` batch authorized and executing. `.1` (doc strategy) committed `284de01a`; `.2` (ISF tests decoupled from FSM-only fixtures, re-scoped to in-place FSM deletion) done, committing now.
 
 ## Active batch status
 - batch: `ISF-ONLY-CONSOLIDATION` (user-authorized full `.1`–`.7`, lane R6) — EXECUTING
-- completed_count: `.1` done (canonical-doc ISF-only strategy), committing now; `.2`–`.7` pending
+- completed_count: `.1` (`284de01a`) committed; `.2` done, committing now; `.3`–`.7` pending
+- `.2` re-scope decision: keep ISF in `adapters.rs`, delete FSM in place (no module move). `build_intent_ir_from_markdown` is generic and MUST be retained in `.4` (ISF tests depend on it).
 - per-leaf rule: full COMMIT.md workflow after every leaf; `scripts/run_ci.sh` green at every code/fixture/mdBook-touching leaf; task-scoped commits not deferred
 - push policy: push the completed batch after `.7` + final `scripts/run_ci.sh` gate (COMMIT.md batch rule), unless ~30 ahead first
 - sequencing: `.1` doc strategy (done) → `.2` extract ISF module → `.3` ISF-only typed surface → `.4` delete FSM bulk (will split) → `.5` fixture triage → `.6` mdBook sweep (will split) → `.7` reconcile+close+push
@@ -38,6 +39,7 @@
 - branch: `2` ahead of `origin/main` pre-`.1` (under ~30)
 
 ## Recent commit chain (last 10)
+- `284de01a` ISF-ONLY-CONSOLIDATION.1 — adopt ISF-only adapter strategy in canonical docs
 - `b9824bae` Create ISF-ONLY-CONSOLIDATION task tree — drop HDL + .fsm, keep only .isf
 - `83616ead` R6-ISF-ADAPTER.5 — close tree + push batch
 - `01069b93` R6-ISF-ADAPTER.4 — explicit ISF renderability policy + user-doc accuracy

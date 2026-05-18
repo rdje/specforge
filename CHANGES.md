@@ -34,6 +34,23 @@
   `docs/TASK_TREE.md` and in its own file (historical record retained).
 - Docs only — zero code change; the 1201-test / CI-green baseline holds.
 
+### ISF-ONLY-CONSOLIDATION.2: decouple ISF tests from FSM-only fixtures
+- Re-scoped per user decision (keep ISF in `adapters.rs`, delete FSM in
+  place — no physical module move; recorded as a task-tree decision).
+- The 3 ISF adapter tests (`isf_adapter_emits_valid_s_expression_source`,
+  `isf_adapter_blocks_when_no_signals`, `isf_output_passes_fsmgen_strict_validation`)
+  now build their `IntentIR` only through the generic
+  `build_intent_ir_from_markdown` pipeline helper, via a shared
+  self-contained `ISF_ADAPTER_TEST_SPEC` markdown constant — no longer
+  using the FSM-only fixtures `build_explicit_symbolic_dt_intent_ir` /
+  `build_explicit_fsm_intent_ir` (which `.4` deletes).
+- The emit test's incidental exact-count assertions (signal 4 / const 3 /
+  enum 1, tied to the old hand-built FSM fixture) were relaxed to robust
+  structural ISF invariants (renderable, S-expr structure, signal+behavior
+  present, emitted `.isf` path); the fsmgen `--strict --check --json`
+  validation still passes on the pipeline-derived ISF.
+- Test-only; zero production change. `scripts/run_ci.sh` green.
+
 ## 2026-05-17 (R6-ISF-ADAPTER batch — ISF adapter ownership backfill + hardening)
 
 ### Created: R6-ISF-ADAPTER task tree (lane R6, 5-leaf authorized batch)

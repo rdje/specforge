@@ -37,6 +37,17 @@
   middle; a precise line-range splice was the right tool, then verified.
   Docs only; deep historical FSM "done" bullets in ROADMAP R15 left for
   the `.7` reconcile (they record completed work, not forward strategy).
+- `.2` re-scoped (user chose lower-risk "delete FSM in place"): instead of
+  a cross-module ISF extraction, only de-couple the 3 ISF tests from the
+  FSM-only fixtures so `.4` can delete FSM test infra safely. Routed them
+  through the generic `build_intent_ir_from_markdown` with a shared
+  self-contained spec. Found the pipeline needs the recognized prose
+  grammar (`Block <name> when <cond>: <action>.` → control_blocks =
+  behavior) for ISF renderability — a vague "When X then Y must be stable"
+  did not synthesize behavior. The pipeline-derived ISF still passes
+  fsmgen `--strict --check --json`, which is a stronger end-to-end signal
+  than the prior hand-built FSM fixture. `build_intent_ir_from_markdown`
+  must be RETAINED in `.4` (generic, ISF tests depend on it).
 
 ## 2026-05-17 session — R6-ISF-ADAPTER batch (ISF ownership backfill + hardening)
 
