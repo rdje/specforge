@@ -30,6 +30,23 @@
   green (1054 passed, 0 failed); kg-bench / `vlm_state_machine_*`
   fixtures intact (no R10/R15c/R15e/R7 regression).
 
+### AUDIT-DOC-RECONCILE.2 — document full converge flag surface + defaults (tree CLOSED)
+- `docs/book/src/commands/pipeline.md#converge` gained a "Flags" table
+  with all 12 `ConvergeArgs` entries and their exact defaults
+  transcribed from `crates/specforge/src/cli.rs` — closing the audit
+  finding that the book documented only 5 converge flags with unstated
+  defaults (now incl. `--max-iterations 8`, `--vlm-model`,
+  `--nlp-model`, `--nlp-max-sentences 0`,
+  `--prior-memory generated/prior_memory/corpus_memory.json`,
+  `--rescan-plan-limit 0`). `overview.md` one-liner completed + linked
+  to the reference. Docs-only; full `scripts/run_ci.sh` green (1054
+  passed; mdBook builds).
+- `AUDIT-DOC-RECONCILE` tree CLOSED. **This was the last leaf of the
+  last audit-driven tree — the entire post-ISF-ONLY audit remediation
+  program (FSMGEN-ISSUE-REPORTING, ISF-TEMPORAL-LOWERING,
+  FSMGEN-SUBMODULE-BUMP, ISF-ONLY-IR-PRUNE, AUDIT-DOC-RECONCILE) is now
+  complete; `ISF-HANDSHAKE-STAGE-LOWERING` remains `proposed`.**
+
 ### AUDIT-DOC-RECONCILE.1 — reconcile ROADMAP R15 forward text to ISF-only reality
 - ROADMAP `R15` `status`/`goals`/`remaining`/`completion criteria`
   reconciled: the canonical actor-relative directed graph in

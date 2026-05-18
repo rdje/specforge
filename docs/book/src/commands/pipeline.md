@@ -120,6 +120,26 @@ It:
 
 This is the main command when you want a serious local run on a real spec.
 
+### Flags
+
+Full surface and defaults (authoritative source: `crates/specforge/src/cli.rs`
+`ConvergeArgs`):
+
+| Flag | Default | Meaning |
+| --- | --- | --- |
+| `<source>` | (required) | Source specification file to iterate on |
+| `--target <isf>` | `isf` | Adapter target to materialize each pass (`isf` is the only target) |
+| `--max-iterations <n>` | `8` | Safety cap on whole-pipeline convergence passes |
+| `--vlm-provider <ollama\|open-ai\|lm-studio\|skip>` | `ollama` | VLM provider for figure enrichment; `skip` opts out |
+| `--vlm-model <name>` | (provider default) | Model-name override for figure enrichment |
+| `--nlp-provider <ollama\|open-ai\|lm-studio\|skip>` | `ollama` | LLM provider for Level 3 NLP backannotation; `skip` opts out |
+| `--nlp-model <name>` | (provider default) | Model-name override for NLP Level 3 backannotation |
+| `--nlp-max-sentences <n>` | `0` | Max sentences sent to NLP Level 3 per pass (`0` = all) |
+| `--prior-memory <path>` | `generated/prior_memory/corpus_memory.json` | Advisory local prior-memory store consulted during extraction when present |
+| `--rescan-plan <path>` | (none) | Optional schema-v2 validation rescan plan to inspect after convergence stabilizes |
+| `--execute-rescan-plan` | off | Execute whitelisted recommendations from `--rescan-plan` after stabilization |
+| `--rescan-plan-limit <n>` | `0` | Max pending rescan-plan recommendation(s) to process (`0` = all) |
+
 After convergence stabilizes, the command can optionally inspect a schema-v2 validation rescan queue:
 
 ```bash

@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `AUDIT-DOC-RECONCILE`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: `R0` (live-doc continuity / accuracy)
 - Created: `2026-05-18`
 - Last updated: `2026-05-18`
@@ -45,10 +45,9 @@ Reconcile the two doc-drift findings from the audit:
 ## Task Tree
 
 - ID: `AUDIT-DOC-RECONCILE`
-  Status: `active`
+  Status: `done`
   Goal: `R15 text + book converge flags reconciled to code reality.`
   Children: `.1`, `.2`
-  Note: `.1` done; `.2` is the remaining frontier.
 
 - ID: `AUDIT-DOC-RECONCILE.1`
   Status: `done`
@@ -72,22 +71,32 @@ Reconcile the two doc-drift findings from the audit:
   Commit: `see Commit Log`
 
 - ID: `AUDIT-DOC-RECONCILE.2`
-  Status: `pending`
+  Status: `done`
   Goal: >
     Document the full `converge` flag surface + defaults in
     `docs/book/src/commands/overview.md` (and `commands/pipeline.md`
     where relevant) accurately vs `crates/specforge/src/cli.rs`
     `ConvergeArgs`.
   Acceptance: `Book converge flags/defaults match cli.rs; mdBook build green; docs only.`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — `pipeline.md#converge` gained a "Flags"
+    table with all 12 `ConvergeArgs` entries + exact defaults
+    transcribed from `cli.rs` (incl. the previously-undocumented
+    `--max-iterations 8`, `--vlm-model`, `--nlp-model`,
+    `--nlp-max-sentences 0`, `--prior-memory <default path>`,
+    `--rescan-plan-limit 0`); `overview.md` one-liner completed + linked
+    to the reference. Full `scripts/run_ci.sh` green (1054 passed;
+    mdBook builds). Docs only.
+  Commit: `see Commit Log`
 
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `AUDIT-DOC-RECONCILE.1` | `done` | R15 forward text reconciled to ISF-only reality |
-| 2 | `AUDIT-DOC-RECONCILE.2` | `pending` | Next — book converge-flag completeness vs `cli.rs` |
+| 2 | `AUDIT-DOC-RECONCILE.2` | `done` | Book converge flags/defaults now match `cli.rs` |
+
+Tree CLOSED. This was the **last leaf of the last audit-driven tree** —
+the post-ISF-ONLY audit remediation program is complete.
 
 ## Decisions
 
@@ -107,12 +116,14 @@ Reconcile the two doc-drift findings from the audit:
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-05-18` | `AUDIT-DOC-RECONCILE.1` | R15 forward-text reconcile (status/goals/remaining/criteria) vs ISF-only code reality; historical bullets preserved | `passed` (docs-only; ROADMAP not in mdBook) |
+| `2026-05-18` | `AUDIT-DOC-RECONCILE.2` | `converge` flag/default table vs `cli.rs ConvergeArgs`; full `scripts/run_ci.sh` incl. mdBook | `passed` (12/12 flags+defaults documented; 1054 passed; mdBook green) |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `AUDIT-DOC-RECONCILE.1` | `AUDIT-DOC-RECONCILE.1 — reconcile ROADMAP R15 forward text to ISF-only reality` | docs-only; historical `done:` bullets preserved |
+| `AUDIT-DOC-RECONCILE.2` | `AUDIT-DOC-RECONCILE.2 — document full converge flag surface + defaults` | book `pipeline.md`/`overview.md` vs `cli.rs`; tree CLOSED |
 
 ## Changelog
 
@@ -124,3 +135,9 @@ Reconcile the two doc-drift findings from the audit:
   `.fsm` adapter-direction forward work retired, not deferred). The
   2026-05-18 note and all historical `done:` bullets preserved verbatim
   per the Non-Goal. Frontier → `.2` (book converge flags).
+- `2026-05-18`: `.2` done; tree CLOSED. `pipeline.md#converge` now has a
+  12-row Flags table with exact `cli.rs ConvergeArgs` defaults (closing
+  the audit's "documents only 5 flags + unstated defaults" finding);
+  `overview.md` one-liner completed + linked. Full CI green incl.
+  mdBook. **This was the last leaf of the last audit-driven tree — the
+  post-ISF-ONLY audit remediation program is complete.**

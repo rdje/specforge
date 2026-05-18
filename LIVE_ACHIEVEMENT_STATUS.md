@@ -1,5 +1,7 @@
 # LIVE_ACHIEVEMENT_STATUS
 ## Current snapshot
+- AUDIT-DOC-RECONCILE task tree (lane R0) — COMPLETE/CLOSED: R15 forward text + book converge-flag surface reconciled to code; LAST audit tree → the entire post-ISF-ONLY audit remediation program (5 trees) is complete: Done
+- AUDIT-DOC-RECONCILE.2 — book `pipeline.md#converge` full 12-flag/default table vs `cli.rs ConvergeArgs` (closed the "5 flags, unstated defaults" finding); `overview.md` completed+linked; full CI green incl. mdBook: Done
 - AUDIT-DOC-RECONCILE.1 — ROADMAP R15 forward text (status/goals/remaining/criteria) reconciled to ISF-only reality (graph model met; `.fsm` adapter-direction forward work retired not deferred); historical done: bullets + note preserved verbatim; docs-only: Done
 - ISF-ONLY-IR-PRUNE task tree (lane R6) — COMPLETE/CLOSED: only genuinely `.fsm`-era-orphaned IR removed (−242 LOC); audit picky-auditor scope correction held end-to-end (regular_states/state_transitions kept, `.3` superseded); no regression; full CI 1054/0: Done
 - ISF-ONLY-IR-PRUNE.4 — tree closed; TASK_TREE index → done; docs-only (CI inherited from `.2`): Done

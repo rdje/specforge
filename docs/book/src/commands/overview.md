@@ -6,7 +6,7 @@ Current surface:
 
 - `inspect <path>`
 - `doctor [--strict]`
-- `converge <source> [--target isf] [--vlm-provider ollama|open-ai|lm-studio|skip] [--nlp-provider ollama|open-ai|lm-studio|skip] [--rescan-plan <plan>] [--execute-rescan-plan]`
+- `converge <source> [--target isf] [--max-iterations 8] [--vlm-provider ollama|open-ai|lm-studio|skip] [--vlm-model <name>] [--nlp-provider ollama|open-ai|lm-studio|skip] [--nlp-model <name>] [--nlp-max-sentences 0] [--prior-memory <path>] [--rescan-plan <plan>] [--execute-rescan-plan] [--rescan-plan-limit 0]` — full flag/default reference in the [pipeline chapter](pipeline.md#converge)
 - `ingest <source> [--dry-run]`
 - `evidence <source-ir> [--prior-memory <path>] [--dry-run]`
 - `semantic <evidence-ir> [--dry-run]`
