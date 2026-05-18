@@ -48,9 +48,10 @@ Reconcile the two doc-drift findings from the audit:
   Status: `active`
   Goal: `R15 text + book converge flags reconciled to code reality.`
   Children: `.1`, `.2`
+  Note: `.1` done; `.2` is the remaining frontier.
 
 - ID: `AUDIT-DOC-RECONCILE.1`
-  Status: `pending`
+  Status: `done`
   Goal: >
     Reconcile ROADMAP R15 `goals:` / completion criteria / `remaining:`
     to the ISF-only reality: the actor-relative directed graph is
@@ -59,8 +60,16 @@ Reconcile the two doc-drift findings from the audit:
     to FSMGen; the deleted `.fsm` adapter-direction paths are removed
     from the forward text (historical `done:` bullets stay as record).
   Acceptance: `R15 forward text non-contradictory vs code; mdBook build green; docs only.`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — R15 `status` reconciled (model deliverable
+    Done; adapter-direction forward scope retired with the `.fsm`
+    adapter); obsolete 3rd `goal` struck-through with the ISF-only
+    rationale; both `.fsm`-consumer `remaining:` bullets replaced with
+    "none — retired (not deferred)"; `completion criteria` rewritten to
+    the two met, code-true criteria. The 2026-05-18 note and ALL 50+
+    historical `done:` bullets left verbatim (Non-Goal honored).
+    ROADMAP.md is not in the mdBook `SUMMARY`, so no book impact;
+    docs-only.
+  Commit: `see Commit Log`
 
 - ID: `AUDIT-DOC-RECONCILE.2`
   Status: `pending`
@@ -77,8 +86,8 @@ Reconcile the two doc-drift findings from the audit:
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `AUDIT-DOC-RECONCILE.1` | `pending` | Highest-signal doc drift (roadmap contradicts code) |
-| 2 | `AUDIT-DOC-RECONCILE.2` | `pending` | Book converge-flag completeness |
+| 1 | `AUDIT-DOC-RECONCILE.1` | `done` | R15 forward text reconciled to ISF-only reality |
+| 2 | `AUDIT-DOC-RECONCILE.2` | `pending` | Next — book converge-flag completeness vs `cli.rs` |
 
 ## Decisions
 
@@ -97,15 +106,21 @@ Reconcile the two doc-drift findings from the audit:
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
-| `2026-05-18` | `AUDIT-DOC-RECONCILE.1` | `pending` | `pending` |
+| `2026-05-18` | `AUDIT-DOC-RECONCILE.1` | R15 forward-text reconcile (status/goals/remaining/criteria) vs ISF-only code reality; historical bullets preserved | `passed` (docs-only; ROADMAP not in mdBook) |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
-| `AUDIT-DOC-RECONCILE.1` | `pending` | `pending` |
+| `AUDIT-DOC-RECONCILE.1` | `AUDIT-DOC-RECONCILE.1 — reconcile ROADMAP R15 forward text to ISF-only reality` | docs-only; historical `done:` bullets preserved |
 
 ## Changelog
 
 - `2026-05-18`: Created from the post-ISF-ONLY audit (R15 text drift +
   book converge-flag completeness).
+- `2026-05-18`: `.1` done — ROADMAP R15 `status`/`goals`/`remaining`/
+  `completion criteria` reconciled to ISF-only reality (canonical
+  actor-relative graph in IR + graph-first validation = met; deleted
+  `.fsm` adapter-direction forward work retired, not deferred). The
+  2026-05-18 note and all historical `done:` bullets preserved verbatim
+  per the Non-Goal. Frontier → `.2` (book converge flags).

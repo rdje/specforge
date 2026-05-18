@@ -389,7 +389,11 @@
   - the relation-resolution workflow is documented in `USER_GUIDE.md`
 
 ### R15 Actor-relative direction model in SemanticIR
-- status: In Progress
+- status: Model deliverable Done; adapter-direction forward scope retired
+  with the `.fsm` adapter (ISF-only). The canonical actor-relative
+  directed graph exists in `SemanticIR`/`IntentIR` and is scored
+  graph-first by validation; the only remaining forward items were
+  `.fsm`-adapter direction recovery, which no longer applies.
 - reference: `KNOWLEDGE_GRAPH_ARCHITECTURE.md` §Phase 4
 - 2026-05-18 note: the actor-relative graph (`actor_signal_relations`,
   `actor_ports`, `signal_connectivity`) remains canonical in
@@ -405,7 +409,7 @@
 - goals:
   - replace `direction_hint: Option<InterfaceSignalDirection>` with an actor-relative model
   - make `InterfaceSignalRecord` carry actor-relative drive/read information instead of a single flattened perspective
-  - compute adapter-facing port directions relative to the target actor at adapter time
+  - ~~compute adapter-facing port directions relative to the target actor at adapter time~~ — **retired**: a `.fsm`-era goal. The only adapter is now `.isf`, which intentionally defaults unknown direction/width and lets FSMGen own scheduling; SpecForge does not compute adapter-facing port directions. The canonical actor-relative graph model (goals 1–2) is the deliverable and is achieved.
 - done:
   - `SemanticIR` now carries `actor_signal_relations`, `actor_ports`, and `signal_connectivity`
   - `IntentIR` now preserves the same actor-relative KG surface as canonical output
@@ -460,11 +464,20 @@
   - standalone sequential `.fsm` roots now have regression coverage proving graph-backed actor ports can satisfy clock/reset system-contract direction needs when flat direct-interface hints lag; direct and explicit-module roots can also recover existing clock/reset signal input/1-bit shape from canonical system-contract facts without mutating `IntentIR`, while contradictory local signal shape remains unresolved
   - explicit top `.fsm` composition can now preserve width-only top boundary port records, recover missing top input/output direction from explicit top-link source/target topology, keep those recovered boundary directions visible even when an unrelated composition gate still blocks emission, collapse contradictory top-boundary direction plus duplicate top-port direction/width evidence to unresolved state, and recover existing child-module input/output port directions from child endpoints in explicit top links before module renderability analysis while leaving contradictory child-link topology unresolved
 - remaining:
-  - keep moving the remaining direct consumers from flat `direction_hint` onto actor-relative graph semantics beyond the explicit-module actor-port/control-read, target-actor-aware standalone, and explicit-top-link/topology-retention/child-link `.fsm` paths
-  - compute target-actor-relative port directions from the actor-relative graph for every downstream consumer that still needs them
-- completion criteria:
-  - downstream consumers can compute correct actor-relative port directions without depending on flat compatibility `direction_hint`
-  - `IntentIR` carries a proper directed graph, not a flat list with implicit actor context
+  - none. The two prior `remaining:` items both described moving `.fsm`
+    adapter direction consumers onto the graph; `ISF-ONLY-CONSOLIDATION`
+    deleted the `.fsm` adapter, so that forward work is retired (not
+    deferred). The `.isf` adapter defers direction/width to FSMGen by
+    design — there is no adapter-side actor-relative direction work left.
+- completion criteria (met):
+  - `IntentIR` carries a proper actor-relative directed graph
+    (`actor_signal_relations`, `actor_ports`, `signal_connectivity`),
+    not a flat list with implicit actor context — done
+  - validation scores signal direction from that graph first, with flat
+    `direction_hint` exposed only as a compatibility/lag diagnostic
+    rather than the truth model — done. (The original "downstream
+    consumers can compute adapter-facing directions" criterion is
+    superseded: under ISF-only there is no such adapter consumer.)
 
 ### R15b Explicit clock-tick temporal model in SemanticIR / IntentIR
 - status: In Progress

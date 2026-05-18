@@ -1,5 +1,6 @@
 # LIVE_ACHIEVEMENT_STATUS
 ## Current snapshot
+- AUDIT-DOC-RECONCILE.1 — ROADMAP R15 forward text (status/goals/remaining/criteria) reconciled to ISF-only reality (graph model met; `.fsm` adapter-direction forward work retired not deferred); historical done: bullets + note preserved verbatim; docs-only: Done
 - ISF-ONLY-IR-PRUNE task tree (lane R6) — COMPLETE/CLOSED: only genuinely `.fsm`-era-orphaned IR removed (−242 LOC); audit picky-auditor scope correction held end-to-end (regular_states/state_transitions kept, `.3` superseded); no regression; full CI 1054/0: Done
 - ISF-ONLY-IR-PRUNE.4 — tree closed; TASK_TREE index → done; docs-only (CI inherited from `.2`): Done
 - ISF-ONLY-IR-PRUNE.2 — `init_assignments` + `decision_tree_fragments` `.fsm`-era IR removed end-to-end (5 files + INTENTIR_SPEC + ~19 test sites + dead-helper cascade + ParsedDecisionTreeFragment trim); `.1` converge care-point handled correctly (fact_count literals 23→21/19→17, delta-behavior unchanged); regular_states/state_transitions untouched; full CI green 1054/0, kg-bench/vlm fixtures intact: Done

@@ -30,6 +30,18 @@
   green (1054 passed, 0 failed); kg-bench / `vlm_state_machine_*`
   fixtures intact (no R10/R15c/R15e/R7 regression).
 
+### AUDIT-DOC-RECONCILE.1 — reconcile ROADMAP R15 forward text to ISF-only reality
+- ROADMAP `R15` `status`/`goals`/`remaining`/`completion criteria`
+  reconciled: the canonical actor-relative directed graph in
+  `SemanticIR`/`IntentIR` + graph-first validation are the met
+  deliverable; the obsolete 3rd goal and both `remaining:` bullets
+  (which described moving the now-deleted `.fsm` adapter's direction
+  consumers onto the graph) are retired — not deferred — because
+  `ISF-ONLY-CONSOLIDATION` removed the `.fsm` adapter and `.isf` defers
+  direction/width to FSMGen by design. The 2026-05-18 note and all 50+
+  historical `done:` bullets are preserved verbatim (Non-Goal honored).
+  Docs-only; ROADMAP.md is not in the mdBook `SUMMARY`.
+
 ### ISF-ONLY-IR-PRUNE.4 — close tree; live-doc sync
 - `ISF-ONLY-IR-PRUNE` tree CLOSED (`.1` analysis, `.2` removal, `.3`
   superseded by user decision, `.4` close); `docs/TASK_TREE.md` index →
