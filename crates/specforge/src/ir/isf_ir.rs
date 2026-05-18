@@ -15,7 +15,7 @@ use crate::ir::semantic::{
     ControlActionRecord, ControlBinaryOperator, ControlBranchRecord,
     ControlCompoundUpdateOperation, ControlExpressionRecord, ControlReferenceSuffix,
     ControlUnaryOperator, InterfaceSignalDirection, SymbolDefinitionKind, SystemResetKind,
-    SystemResetPolarity,
+    SystemResetPolarity, TemporalPredicateRecord, TemporalRuleRecord,
 };
 use crate::ir::source::WidthHint;
 
@@ -727,7 +727,7 @@ impl IsfIr {
             }
         }
 
-        let all_transactions = if transactions.is_empty() {
+        let mut all_transactions = if transactions.is_empty() {
             fallback_txns
         } else {
             transactions
@@ -735,6 +735,52 @@ impl IsfIr {
 
         // --- Rules ---
         let signal_names: BTreeSet<String> = signals.iter().map(|s| s.name.clone()).collect();
+
+        // --- ISF-TEMPORAL-LOWERING.2.2: windowed temporal_rules ---
+        // A temporal rule with a bounded cycle window whose consequent
+        // names a declared signal lowers to a synthetic transaction
+        // carrying the FSMGen-strict-verified `bounded_eventually`
+        // contract `(contract <id> (eventually <signal> (within <N>)))`.
+        // Non-windowed / HandshakeComplete / undeclared-signal rules are
+        // intentionally left for .2.3 (rule / residual). No fabricated
+        // body step is emitted (strict-verified to pass without one).
+        for rule in &intent_ir.temporal_rules {
+            let Some(window) = &rule.cycle_window else {
+                continue;
+            };
+            let Some(within) = window.max_cycles else {
+                continue;
+            };
+            // FSMGen `--strict --check` rejects `(within 0)` — the
+            // contract requires a positive cycle bound. A 0-cycle
+            // ("same cycle") obligation is not a `bounded_eventually`;
+            // it is left for .2.3 (rule / residual), never emitted as
+            // an invalid `(within 0)` contract.
+            if within == 0 {
+                continue;
+            }
+            let Some(signal) = temporal_consequent_signal(rule) else {
+                continue;
+            };
+            if !signal_names.contains(&signal) {
+                continue;
+            }
+            let name = sanitize_isf_name(&rule.rule_id);
+            all_transactions.push(IsfTransaction {
+                name: format!("txn_temporal_{}", name),
+                on_trigger: None,
+                on_steps: vec![],
+                steps: vec![],
+                complete: "done".to_string(),
+                latency_min: None,
+                latency_max: None,
+                contracts: vec![IsfContract {
+                    name,
+                    signal,
+                    within: u64::from(within),
+                }],
+            });
+        }
         let mut rules: Vec<IsfRule> = Vec::new();
 
         for (cr_idx, cr) in intent_ir.conditional_rules.iter().enumerate() {
@@ -1114,6 +1160,22 @@ fn collect_branch_actions(branches: &[ControlBranchRecord]) -> Vec<ControlAction
         actions.extend(branch.actions.clone());
     }
     actions
+}
+
+// First consequent that names a single signal, for the `bounded_eventually`
+// contract target. `HandshakeComplete` names two signals and no single
+// eventual target, so it is not represented here (ISF-TEMPORAL-LOWERING.2.3
+// maps it to a residual decision instead of fabricating syntax).
+fn temporal_consequent_signal(rule: &TemporalRuleRecord) -> Option<String> {
+    rule.consequents.iter().find_map(|p| match p {
+        TemporalPredicateRecord::SignalValue { signal_name, .. }
+        | TemporalPredicateRecord::ActorDrivesSignal { signal_name, .. }
+        | TemporalPredicateRecord::ActorMaintainsSignalStable { signal_name, .. }
+        | TemporalPredicateRecord::SignalStable { signal_name, .. }
+        | TemporalPredicateRecord::ActorSamplesSignal { signal_name, .. }
+        | TemporalPredicateRecord::SignalSampled { signal_name, .. } => Some(signal_name.clone()),
+        TemporalPredicateRecord::HandshakeComplete { .. } => None,
+    })
 }
 
 fn branch_predicate_guard(branch: &ControlBranchRecord, selector_text: &str) -> String {

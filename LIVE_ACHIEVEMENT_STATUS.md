@@ -11,6 +11,7 @@
 - Post-ISF-ONLY audit complete; 3 remediation trees created (ISF-TEMPORAL-LOWERING, ISF-ONLY-IR-PRUNE, AUDIT-DOC-RECONCILE); PNT active to exhaust them: In Progress
 - ISF-TEMPORAL-LOWERING.1 — FSMGen-spec-grounded temporal_rules→ISF mapping recorded (`(handshake …)` rejected as deprecated; transaction `(contract/stage/when)` + `(rule …)` vehicles; metric reconciliation specified): Done
 - ISF-TEMPORAL-LOWERING.2.1 — typed bounded `(contract … (eventually s (within N)))` render added + fsmgen-strict-verified; spec §11.8 flat-`within` and `(stage …)` proven strict-rejected → `(stage …)` dropped, FSMGen feedback logged; full CI green: Done
+- ISF-TEMPORAL-LOWERING.2.2 — windowed temporal_rules now lower to `(contract …)`; verified LIVE on AMBA CXS corpus; `(within 0)` strict-reject caught + guarded (→ .2.3 residual); the critical temporal_rules→.isf gap is closed for windowed rules; full CI green: Done
 - Signoff restored at HEAD via SIGNOFF-REMEDIATION.1 — 25 clippy `-D warnings` errors cleared and `cargo fmt` drift fixed; `scripts/run_ci.sh` green again; 1191 lib tests pass: Done
 - SIGNOFF-REMEDIATION task tree created (lane R0) to own the regression fix after the bootstrap re-analysis found HEAD non-signoff: Done
 - Bootstrap re-analysis (2026-05-17): RUST_CODEBASE_ANALYSIS.md refreshed; ISF adapter found landed untracked (`bfe4f973`→`490e6aed`, no task tree / no live-doc sync): Done

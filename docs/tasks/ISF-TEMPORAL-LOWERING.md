@@ -96,7 +96,7 @@ temporal/clock-tick behavior is extracted and then silently dropped from
   Commit: `ISF-TEMPORAL-LOWERING.2.1 — typed bounded `(contract …)` render construct (fsmgen-strict-verified; stage dropped)`
 
 - ID: `ISF-TEMPORAL-LOWERING.2.2`
-  Status: `pending`
+  Status: `done`
   Goal: >
     Wire `temporal_rules` with a `cycle_window` → synthetic
     `(transaction … (contract <rule_id> (eventually <consequent_signal>
@@ -104,8 +104,8 @@ temporal/clock-tick behavior is extracted and then silently dropped from
     transaction `(stage <phase> (ready <ready>)(valid <valid>))`. Per
     `.1` mapping #1/#2.
   Acceptance: `Windowed + handshake temporal_rules lowered per .1; fsmgen-strict green; scripts/run_ci.sh green.`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — windowed temporal_rules (`max_cycles>=1`, signal-bearing consequent, in-interface) emit `(contract <id> (eventually <sig> (within <N>)))`; verified LIVE on the AMBA CXS corpus IntentIR; picky self-verification caught + fixed a real bug: `(within 0)` is strict-REJECTED, so `max_cycles==0` is skipped (→ .2.3 residual) not emitted invalid; 15 isf tests + both fsmgen-strict tests green; full scripts/run_ci.sh green
+  Commit: `ISF-TEMPORAL-LOWERING.2.2 — wire windowed temporal_rules → (contract …)`
 
 - ID: `ISF-TEMPORAL-LOWERING.2.3`
   Status: `pending`
@@ -156,8 +156,8 @@ temporal/clock-tick behavior is extracted and then silently dropped from
 | 1 | `ISF-TEMPORAL-LOWERING.1` | `done` | Spec-grounded mapping recorded |
 | — | `ISF-TEMPORAL-LOWERING.2` | `active` | Container — split into `.2.1`–`.2.4` |
 | 2 | `ISF-TEMPORAL-LOWERING.2.1` | `done` | `(contract …)` render verified strict; stage dropped |
-| 3 | `ISF-TEMPORAL-LOWERING.2.2` | `pending` | Next — wire windowed temporal_rules → `(contract …)` |
-| 4 | `ISF-TEMPORAL-LOWERING.2.3` | `pending` | Wire guard→drive; residual for unrepresentable |
+| 3 | `ISF-TEMPORAL-LOWERING.2.2` | `done` | Windowed→`(contract …)` live on corpus; `(within 0)` guarded |
+| 4 | `ISF-TEMPORAL-LOWERING.2.3` | `pending` | Next — guard→drive `(rule …)`; residual for unrepresentable (incl. `within 0`, HandshakeComplete) |
 | 5 | `ISF-TEMPORAL-LOWERING.2.4` | `pending` | Reconcile artifact metrics |
 | 6 | `ISF-TEMPORAL-LOWERING.3` | `pending` | End-to-end regression incl. fsmgen strict |
 | 7 | `ISF-TEMPORAL-LOWERING.4` | `pending` | Close + doc sync |
@@ -242,6 +242,7 @@ temporal/clock-tick behavior is extracted and then silently dropped from
 | --- | --- | --- | --- |
 | `2026-05-18` | `ISF-TEMPORAL-LOWERING.1` | FSMGen ISF spec + TemporalRuleRecord read; mapping recorded | `passed` |
 | `2026-05-18` | `ISF-TEMPORAL-LOWERING.2.1` | 2 unit tests incl. real fsmgen `--strict --check`; full `scripts/run_ci.sh` | `passed` |
+| `2026-05-18` | `ISF-TEMPORAL-LOWERING.2.2` | live corpus adapt (CXS) + `(within 0)` strict-reject caught/guarded; 15 isf tests; full `scripts/run_ci.sh` | `passed` |
 
 ## Commit Log
 

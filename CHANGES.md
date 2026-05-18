@@ -33,6 +33,19 @@
   logged in `docs/FSMGEN_FEEDBACK.md` (no submodule patch). 2 unit tests
   (incl. real-binary strict). `scripts/run_ci.sh` green.
 
+### ISF-TEMPORAL-LOWERING.2.2 — wire windowed temporal_rules → (contract …)
+- `IsfIr::from_intent_ir` now synthesizes `(transaction txn_temporal_<id>
+  (on start) (contract <id> (eventually <sig> (within <N>))) (complete
+  done))` for each `temporal_rule` with `cycle_window.max_cycles >= 1`,
+  a signal-bearing consequent, and an in-interface signal. Verified
+  LIVE on the AMBA CXS corpus IntentIR (the temporal_rules→`.isf`
+  gap is now actually closed for windowed rules).
+- Picky self-verification caught a real bug: `(within 0)` is
+  fsmgen-strict-REJECTED (positive cycles required). `max_cycles == 0`
+  ("same cycle") is now skipped (→ `.2.3` residual), never emitted as
+  invalid `(within 0)`. 15 isf tests + both fsmgen-strict tests green;
+  `scripts/run_ci.sh` green.
+
 ## 2026-05-18 (ISF-ONLY-CONSOLIDATION task tree created — strategy pivot)
 
 - User decision: now that the typed `.isf` adapter exists, SpecForge keeps
