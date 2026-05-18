@@ -82,15 +82,20 @@ Honest count: **two** genuine FSMGen findings, not three.
   Commit: `see Commit Log`
 
 - ID: `FSMGEN-ISSUE-REPORTING.2`
-  Status: `pending`
+  Status: `done`
   Goal: build + verify the F2 bundle (`sf-isf-stage-ready-valid`) — minimal
   `.isf` whose only deviation is the spec-documented `(stage p (ready r)(valid
   v))`; `expected/` notes the spec lines that document it as shipped
   Acceptance: helper-built bundle under `docs/fsmgen-issues/`; rerunning its
   `commands.sh` reproduces strict rejection "unsupported subclause 'ready'";
   submodule tree clean
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — bundle at
+  `docs/fsmgen-issues/sf-isf-stage-ready-valid/`; `commands.sh` rerun from
+  `subs/fsmgen` reproduces `original.exit=255`, stderr `Transaction
+  'txn_demo': stage 's_demo' has unsupported subclause 'ready'`, empty stdout
+  (no JSON despite `--json`); `expected/baseline-good.isf` strict
+  `success:true`; FSMGen HEAD `effe591d`; `git -C subs/fsmgen status` clean
+  Commit: `see Commit Log`
 
 - ID: `FSMGEN-ISSUE-REPORTING.3`
   Status: `pending`
@@ -107,8 +112,8 @@ Honest count: **two** genuine FSMGen findings, not three.
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `FSMGEN-ISSUE-REPORTING.1` | `done` | F1 bundle filed + reproduction verified; helper-output-outside-submodule pattern proven |
-| 2 | `FSMGEN-ISSUE-REPORTING.2` | `pending` | Next — F2 bundle reuses the proven pattern |
-| 3 | `FSMGEN-ISSUE-REPORTING.3` | `pending` | Close once both bundles verified |
+| 2 | `FSMGEN-ISSUE-REPORTING.2` | `done` | F2 bundle filed + reproduction verified |
+| 3 | `FSMGEN-ISSUE-REPORTING.3` | `pending` | Next — reference both bundle ids in `docs/FSMGEN_FEEDBACK.md` (the stable SPECFORGE↔FSMGen channel), record 2-not-3, close |
 
 ## Decisions
 
@@ -135,13 +140,15 @@ Honest count: **two** genuine FSMGen findings, not three.
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-05-18` | `FSMGEN-ISSUE-REPORTING.1` | `bin/fsmgen-issue-bundle` build + `commands.sh` rerun from `subs/fsmgen` + baseline-good strict-pass + submodule-clean check | `passed` (orig exit 255; stderr names contract; baseline `success:true`; FSMGen HEAD `effe591d`; `subs/fsmgen` clean) |
+| `2026-05-18` | `FSMGEN-ISSUE-REPORTING.2` | same protocol checks for the F2 stage bundle | `passed` (orig exit 255; stderr `stage 's_demo' has unsupported subclause 'ready'`; baseline `success:true`; FSMGen HEAD `effe591d`; `subs/fsmgen` clean) |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `FSMGEN-ISSUE-REPORTING` (tree) | `FSMGEN-ISSUE-REPORTING — track filing the genuine FSMGen findings` (`1c3a5d37`) | tree + index |
-| `FSMGEN-ISSUE-REPORTING.1` | `FSMGEN-ISSUE-REPORTING.1 — file F1 bundle (contract eventually flat-vs-nested)` | bundle under `docs/fsmgen-issues/sf-isf-contract-eventually-flat/`; submodule untouched |
+| `FSMGEN-ISSUE-REPORTING.1` | `FSMGEN-ISSUE-REPORTING.1 — file F1 bundle (contract eventually flat-vs-nested)` (`1b028453`) | bundle under `docs/fsmgen-issues/sf-isf-contract-eventually-flat/`; submodule untouched |
+| `FSMGEN-ISSUE-REPORTING.2` | `FSMGEN-ISSUE-REPORTING.2 — file F2 bundle (stage ready/valid strict-rejected)` | bundle under `docs/fsmgen-issues/sf-isf-stage-ready-valid/`; submodule untouched |
 
 ## Changelog
 
@@ -155,3 +162,8 @@ Honest count: **two** genuine FSMGen findings, not three.
   reduced to a one-line flat-vs-nested deviation; `commands.sh` rerun
   reproduces exit 255 + the contract diagnostic; `expected/` carries the
   strict-passing nested counterpart; `subs/fsmgen` verified clean.
+- `2026-05-18`: `.2` done — F2 bundle
+  `docs/fsmgen-issues/sf-isf-stage-ready-valid/` built the same way; the only
+  deviation from the strict-accepted baseline is the spec §11.8
+  `(stage … (ready)(valid))` clause; `commands.sh` rerun reproduces exit 255 +
+  `stage 's_demo' has unsupported subclause 'ready'`; `subs/fsmgen` clean.

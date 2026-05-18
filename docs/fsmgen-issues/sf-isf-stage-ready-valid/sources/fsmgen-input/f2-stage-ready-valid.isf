@@ -1,0 +1,34 @@
+(actor agent
+  (clock clk)
+  (reset (rst_n async active_low))
+  (watchdog 65536)
+  (interface
+    (output ADDRESS (width 1))
+    (output FIFO (width 1))
+    (output RANDOM_MECHANISM (width 1))
+    (input SIGNAL_NAME (width 1))
+  )
+  (drive (ADDRESS val) (ADDRESS val))
+  (drive (FIFO val) (FIFO val))
+  (drive (RANDOM_MECHANISM val) (RANDOM_MECHANISM val))
+  (rule rule_2
+    (FIFO 1)
+  )
+  (rule rule_3
+    (FIFO 1)
+  )
+  (rule rule_6
+    (RANDOM_MECHANISM 1)
+  )
+  (rule rule_7
+    (ADDRESS 1)
+  )
+  (rule constraint_0
+    (SIGNAL_NAME 1)
+  )
+  (transaction txn_demo
+    (on start)
+    (stage s_demo (ready SIGNAL_NAME) (valid ADDRESS))
+    (complete done)
+  )
+)

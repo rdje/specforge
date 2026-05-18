@@ -1,0 +1,1 @@
+./bin/fsmgen --strict --check --json /Users/richarddje/Documents/github/specforge/docs/fsmgen-issues/sf-isf-stage-ready-valid/sources/fsmgen-input/f2-stage-ready-valid.isf

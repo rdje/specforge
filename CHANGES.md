@@ -66,6 +66,14 @@
   supports only '(eventually signal (within cycles))'` + empty stdout
   (no JSON despite `--json`); `expected/baseline-good.isf`
   `success:true`; FSMGen HEAD `effe591d` captured; `subs/fsmgen` clean.
+- `.2`: F2 bundle `docs/fsmgen-issues/sf-isf-stage-ready-valid/` built
+  the same way; only deviation from the strict-accepted baseline is the
+  spec §11.8 `(stage s_demo (ready SIGNAL_NAME)(valid ADDRESS))` clause;
+  `commands.sh` rerun reproduces `exit 255` + stderr `Transaction
+  'txn_demo': stage 's_demo' has unsupported subclause 'ready'`; known-
+  good `success:true`; `subs/fsmgen` clean. Both bundles are committed
+  under `docs/fsmgen-issues/`; `.3` wires their ids into
+  `docs/FSMGEN_FEEDBACK.md` (the stable SPECFORGE↔FSMGen channel).
 
 ## 2026-05-18 (ISF-ONLY-CONSOLIDATION task tree created — strategy pivot)
 
