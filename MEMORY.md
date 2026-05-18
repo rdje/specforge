@@ -24,14 +24,16 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `f6a5f8fd` (pre-commit baseline; the ISF-ONLY-CONSOLIDATION.7 commit is not yet created at time of this update)
-- latest_commit_brief_message: ISF-ONLY-CONSOLIDATION.6 — mdBook FSM sweep (ISF-only book)
-- note: 2026-05-18 — `ISF-ONLY-CONSOLIDATION` FULL `.1`–`.7` batch complete. `.1`–`.6` committed; `.7` (README/ROADMAP reconcile + tree closure) done, committing now, then the final `scripts/run_ci.sh` gate and the batch push. Post-push commit id/ahead-count in the slice completion message; next session's MEMORY refresh reconciles the post-push baseline. SpecForge now emits only `.isf`.
+- latest_commit_hash: `4d88ccd2` (pushed to `origin/main`; this MEMORY post-push refresh is the only commit after it)
+- latest_commit_brief_message: ISF-ONLY-CONSOLIDATION.7 — reconcile docs, close tree, push batch
+- note: 2026-05-18 — `ISF-ONLY-CONSOLIDATION` 7-leaf batch COMPLETE and **pushed** (`83616ead..4d88ccd2`). Final full CI gate green (1040 lib tests, fsmgen-strict ok, mdBook). SpecForge now emits only `.isf`; HDL + the entire `.fsm` adapter subsystem removed; `subs/fsmgen` + the ISF↔FSMGen strict test retained; FSMGen owns scheduling/`.fsm`/HDL downstream.
 
 ## Active batch status
-- batch: `ISF-ONLY-CONSOLIDATION` (user-authorized full `.1`–`.7`, lane R6) — COMPLETE at `.7`
-- leaf commits: `.1 284de01a` `.2 b2bf525e` `.3 e2ea0cfb` `.4 5bd35b37` `.5 e4dd1b04` `.6 f6a5f8fd`; `.7` committing now, then final CI gate, then push
-- push policy: push the full 7-leaf batch after `.7` commit + final `scripts/run_ci.sh` gate (COMMIT.md batch rule). Run CI from repo cwd (`bash /abs/scripts/run_ci.sh`).
+- batch: `ISF-ONLY-CONSOLIDATION` — COMPLETE and PUSHED. No active batch.
+- leaf commits: `.1 284de01a` `.2 b2bf525e` `.3 e2ea0cfb` `.4 5bd35b37` `.5 e4dd1b04` `.6 f6a5f8fd` `.7 4d88ccd2` (tree-creation `b9824bae`)
+- branch state: pushed; `0` ahead at push time (this MEMORY refresh commit makes it `1` ahead — under ~30, no push expected unless requested)
+- CI note: run from repo cwd (`bash /abs/scripts/run_ci.sh`); backgrounded relative-path runs flake the external-fsmgen strict test with `Can't cd to :`
+- all task trees closed/done; no active PNT frontier. SpecForge: `SourceIR→EvidenceIR→SemanticIR→IntentIR→.isf` only.
 - lib test count: `1040` (post-`.4`; ~161 FSM adapter tests removed). SpecForge emits only `.isf`; `subs/fsmgen` + ISF↔FSMGen strict test retained. NOTE: run CI from repo cwd (`bash /abs/scripts/run_ci.sh` with repo cwd) — background runs from wrong cwd flake the external-fsmgen strict test (`Can't cd to :`).
 - KEY decisions: keep ISF in `adapters.rs` (no module move); `.3`=HDL-only (done); `.4`=ATOMIC FSM removal (cannot split into compiling sub-commits — AdapterTarget::Fsm + AdapterArtifact.fsm + FsmAdapterArtifact + FSM code/tests are mutually dependent). `build_intent_ir_from_markdown` is generic and MUST be retained in `.4` (ISF tests depend on it).
 - per-leaf rule: full COMMIT.md workflow after every leaf; `scripts/run_ci.sh` green at every code/fixture/mdBook-touching leaf; task-scoped commits not deferred
@@ -41,6 +43,7 @@
 - branch: `2` ahead of `origin/main` pre-`.1` (under ~30)
 
 ## Recent commit chain (last 10)
+- `4d88ccd2` ISF-ONLY-CONSOLIDATION.7 — reconcile docs, close tree, push batch
 - `f6a5f8fd` ISF-ONLY-CONSOLIDATION.6 — mdBook FSM sweep (ISF-only book)
 - `e4dd1b04` ISF-ONLY-CONSOLIDATION.5 — kg fixture audit (no FSM-adapter fixtures; nothing to retire)
 - `5bd35b37` ISF-ONLY-CONSOLIDATION.4 — atomic FSM removal (adapters.rs 28113->575)
