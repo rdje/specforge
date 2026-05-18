@@ -1,6 +1,7 @@
 # LIVE_ACHIEVEMENT_STATUS
 ## Current snapshot
 - FSMGEN-SUBMODULE-BUMP.1 — `subs/fsmgen` pinned `effe591d → 9bfb9a20` (upstream fixed both SPECFORGE-filed findings); empirically audited on the new binary: F1 flat-contract fixed (success:true, now emits JSON), F2 `(stage … (ready)(valid))` construct fixed (isolated success:true), nested form SPECFORGE emits still passes; F2-bundle now hits an unrelated self-conflict from its own minimization (recorded, not a remaining bug): Done
+- FSMGEN-SUBMODULE-BUMP.2 — full `scripts/run_ci.sh` on the new pin `9bfb9a20`: 1054 passed / 0 failed, no fallout (SPECFORGE emits nested contract / no `(stage …)`, so the strict widening can't regress; 4 serialized fsmgen tests green): Done
 - ISF-ONLY-CONSOLIDATION task tree (lane R6, 7 leaves) — COMPLETE and pushed: SpecForge emits only `.isf`; HDL + the entire `.fsm` adapter subsystem removed (adapters.rs 28,113→575); FSMGen owns scheduling/`.fsm`/HDL downstream of `.isf`; `subs/fsmgen` + ISF↔FSMGen strict test retained; 1040 lib tests; full CI green: Done
 - ISF-ONLY-CONSOLIDATION.1 — canonical adapter strategy rewritten to ISF-only across README/INTENTIR_SPEC/ROADMAP(R6 spliced)/USER_GUIDE/FSMGEN_FEEDBACK; R6-FSM-ADAPTER superseded; docs only: Done
 - ISF-ONLY-CONSOLIDATION.2 — 3 ISF adapter tests decoupled from FSM-only fixtures (now use generic markdown pipeline + self-contained spec); fsmgen strict still green; test-only; re-scoped to in-place FSM deletion per user decision: Done

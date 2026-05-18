@@ -89,14 +89,19 @@ submodule.
   Commit: `see Commit Log`
 
 - ID: `FSMGEN-SUBMODULE-BUMP.2`
-  Status: `pending`
+  Status: `done`
   Goal: full `scripts/run_ci.sh` against the new binary (esp. the 4
   fsmgen-binary tests via `run_fsmgen_strict_check`); diagnose and fix any
   behavior fallout from the pinned binary changing
   Acceptance: full CI green on the new pin; any fallout fixed with root cause
   recorded (not suppressed)
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — full `scripts/run_ci.sh` on pin `9bfb9a20`:
+    `RUN_CI_EXIT=0`, `1054 passed; 0 failed`. No fallout: SPECFORGE emits
+    the nested `(contract … (within N))` (still strict-valid) and does not
+    emit `(stage …)`, so the strict-acceptance widening at `9bfb9a20`
+    cannot regress current output; the 4 serialized fsmgen-binary tests
+    pass against the new binary. No suppression needed.
+  Commit: `see Commit Log`
 
 - ID: `FSMGEN-SUBMODULE-BUMP.3`
   Status: `pending`
@@ -122,8 +127,8 @@ submodule.
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `FSMGEN-SUBMODULE-BUMP.1` | `done` | Pinned `9bfb9a20`; both findings audited fixed (F2-bundle conflict nuance recorded) |
-| 2 | `FSMGEN-SUBMODULE-BUMP.2` | `pending` | Next — full CI regression on the new ground-truth binary |
-| 3 | `FSMGEN-SUBMODULE-BUMP.3` | `pending` | Reconcile the reporting/feedback paper trail |
+| 2 | `FSMGEN-SUBMODULE-BUMP.2` | `done` | Full CI green on new pin (1054/0); no fallout |
+| 3 | `FSMGEN-SUBMODULE-BUMP.3` | `pending` | Next — reconcile FEEDBACK/bundles/ISSUE-REPORTING; scope stage follow-up |
 | 4 | `FSMGEN-SUBMODULE-BUMP.4` | `pending` | Close + sync |
 
 ## Decisions
@@ -165,13 +170,15 @@ submodule.
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-05-18` | `FSMGEN-SUBMODULE-BUMP.1` | pin bump + binary smoke + F1/F2/nested empirical audit on new binary | `passed` (F1 fixed+JSON; F2 stage construct fixed isolated; F2-bundle self-conflict nuance recorded; nested baseline no regression) |
+| `2026-05-18` | `FSMGEN-SUBMODULE-BUMP.2` | full `scripts/run_ci.sh` on pin `9bfb9a20` | `passed` (`RUN_CI_EXIT=0`, 1054 passed, 0 failed; no fallout) |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `FSMGEN-SUBMODULE-BUMP` (tree) | `FSMGEN-SUBMODULE-BUMP — track pin to upstream that fixed both findings` (`d3f63f9c`) | tree + index |
-| `FSMGEN-SUBMODULE-BUMP.1` | `FSMGEN-SUBMODULE-BUMP.1 — pin subs/fsmgen 9bfb9a20; audit both findings fixed` | submodule pin bump; F1✓ F2-construct✓ |
+| `FSMGEN-SUBMODULE-BUMP.1` | `FSMGEN-SUBMODULE-BUMP.1 — pin subs/fsmgen 9bfb9a20; audit both findings fixed` (`87c6e124`) | submodule pin bump; F1✓ F2-construct✓ |
+| `FSMGEN-SUBMODULE-BUMP.2` | `FSMGEN-SUBMODULE-BUMP.2 — full CI regression on the new pinned binary` | 1054/0; no fallout |
 
 ## Changelog
 

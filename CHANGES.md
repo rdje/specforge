@@ -23,6 +23,15 @@
   The reported bug is fixed; the bundle artifact has an unrelated
   self-conflict from minimization (annotated in `.3`).
 
+### FSMGEN-SUBMODULE-BUMP.2 — full CI regression on the new pinned binary
+- Full `scripts/run_ci.sh` against pin `9bfb9a20`: `RUN_CI_EXIT=0`,
+  `1054 passed; 0 failed`. No fallout from the ground-truth binary
+  changing — SPECFORGE emits the still-valid nested `(contract …
+  (within N))` and does not emit `(stage …)`, so FSMGen's strict
+  *widening* (accepting more) at `9bfb9a20` cannot regress current
+  output; the 4 serialized fsmgen-binary tests pass on the new binary.
+  No suppression needed.
+
 - Audit (codebase vs roadmap vs book) found: (critical) `temporal_rules`
   extracted but never lowered to `.isf` and `transaction_count`
   misreports it across the whole real corpus; orphaned `.fsm`-era IR;
