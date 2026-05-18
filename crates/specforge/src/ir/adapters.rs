@@ -610,4 +610,113 @@ mod tests {
 
         Ok(())
     }
+
+    // ISF-TEMPORAL-LOWERING.3 end-to-end regression: a temporal-rules-
+    // bearing IntentIR produced through the generic markdown pipeline must
+    // yield non-empty ISF temporal behavior, the artifact metric must match
+    // the emitted content, and the emitted `.isf` must pass fsmgen strict.
+    const ISF_TEMPORAL_E2E_SPEC: &str = concat!(
+        "# Temporal Spec\n",
+        "Clock clk.\n\n",
+        "Reset rst_n is asynchronous active low.\n\n",
+        "Signal PSEL is input width 1.\n\n",
+        "Signal PREADY is output width 1.\n\n",
+        "Signal CS_N is output width 1.\n\n",
+        "PREADY must be asserted within 2 cycles.\n\n",
+        "CS_N must be asserted.\n",
+    );
+
+    #[test]
+    fn isf_temporal_rules_reach_isf_end_to_end() -> Result<()> {
+        let tempdir = tempdir()?;
+        let intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "isf_temporal_e2e.md",
+            ISF_TEMPORAL_E2E_SPEC,
+        )?;
+
+        // The generic markdown pipeline must have recovered temporal rules
+        // (this regression is meaningless otherwise).
+        let loaded = IntentIr::load_from_path(&intent_ir.artifact_layout.intent_ir_path)?;
+        assert!(
+            !loaded.temporal_rules.is_empty(),
+            "pipeline produced no temporal_rules — spec/regression is moot"
+        );
+
+        let artifact = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Isf,
+            tempdir.path(),
+        )?;
+        let isf = artifact
+            .isf
+            .clone()
+            .expect("ISF artifact must be populated");
+        let src = &isf.source_text;
+        eprintln!(
+            "=== temporal_rules={} ===\n{src}\n=== residuals={} ===",
+            loaded.temporal_rules.len(),
+            artifact.residual_decisions.len()
+        );
+
+        // Non-empty ISF temporal behavior: at least one temporal-derived
+        // construct OR an explicit residual decision — never silent loss.
+        let has_contract = src.contains("\n    (contract ");
+        let has_temporal_rule = src.contains("(rule temporal_");
+        let has_temporal_residual = artifact
+            .residual_decisions
+            .iter()
+            .any(|p| p.packet_id.starts_with("isf_temporal_unrepresentable_"));
+        assert!(
+            has_contract || has_temporal_rule || has_temporal_residual,
+            "temporal_rules were silently dropped (no contract, no temporal rule, no residual)\n{src}"
+        );
+
+        // Metric == emitted content (ISF-TEMPORAL-LOWERING.2.4 invariant
+        // holds in the temporal path too).
+        assert_eq!(
+            isf.transaction_count,
+            src.matches("\n  (transaction ").count(),
+            "transaction_count must equal emitted transactions\n{src}"
+        );
+        assert_eq!(
+            isf.rule_count,
+            src.matches("\n  (rule ").count(),
+            "rule_count must equal emitted rules\n{src}"
+        );
+
+        // Emitted `.isf` still passes fsmgen strict.
+        let isf_path = tempdir.path().join("temporal_e2e.isf");
+        fs::write(&isf_path, src)?;
+        let fsmgen_path =
+            Path::new(env!("CARGO_MANIFEST_DIR")).join("../../subs/fsmgen/bin/fsmgen");
+        let output = std::process::Command::new(&fsmgen_path)
+            .args(["--strict", "--check", "--json"])
+            .arg(&isf_path)
+            .output()?;
+        let stdout = String::from_utf8_lossy(&output.stdout);
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        let check: serde_json::Value = serde_json::from_str(&stdout).unwrap_or_else(|e| {
+            panic!("fsmgen non-JSON.\nstdout:{stdout}\nstderr:{stderr}\nerr:{e}")
+        });
+        let success = check["diagnostic_summary"]["success"]
+            .as_bool()
+            .unwrap_or(false);
+        if !success && let Some(diags) = check["diagnostics"].as_array() {
+            for d in diags {
+                eprintln!(
+                    "FSMGen diagnostic: {}",
+                    d.get("message")
+                        .and_then(|m| m.as_str())
+                        .unwrap_or("(none)")
+                );
+            }
+        }
+        assert!(
+            success,
+            "emitted temporal `.isf` was rejected by fsmgen strict"
+        );
+
+        Ok(())
+    }
 }

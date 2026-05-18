@@ -99,6 +99,19 @@
   unrepresentable→explicit residual) AND `transaction_count` no longer
   misreports across the real corpus.
 
+### ISF-TEMPORAL-LOWERING.3 — end-to-end markdown→.isf temporal regression
+- New self-contained regression `isf_temporal_rules_reach_isf_end_to_end`:
+  a markdown spec drives the full SourceIR→EvidenceIR→SemanticIR→IntentIR
+  pipeline, which recovers 2 `temporal_rules`; the emitted `.isf` carries
+  BOTH a windowed `(contract temporal_signal_constraint_sigcon_0002
+  (eventually PREADY (within 2)))` and a value `(rule temporal_…)`. The
+  test asserts non-empty temporal behavior (contract|rule|residual —
+  never silent loss), `transaction_count`/`rule_count` == emitted
+  occurrences, and `fsmgen --strict --check --json` `success:true`.
+- Full `scripts/run_ci.sh` green (1054 lib tests). The R15b temporal/
+  clock-tick deliverable is now verified reaching the only adapter
+  through the real pipeline, not just unit-level.
+
 ### FSMGEN-ISSUE-REPORTING (tree) + .1 — file the genuine FSMGen findings
 - New task tree to file the genuine FSMGen findings discovered during
   `ISF-TEMPORAL-LOWERING.2.1` via the official protocol

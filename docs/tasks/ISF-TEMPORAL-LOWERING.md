@@ -153,15 +153,23 @@ temporal/clock-tick behavior is extracted and then silently dropped from
   Commit: `see Commit Log`
 
 - ID: `ISF-TEMPORAL-LOWERING.3`
-  Status: `pending`
+  Status: `done`
   Goal: >
     Regression: a temporal-rules-bearing IntentIR (via the generic
     markdown pipeline) yields non-empty ISF temporal behavior, the
     artifact metric matches the emitted content, and the emitted `.isf`
     passes `fsmgen --strict --check --json`.
   Acceptance: `Self-contained regression test added; fsmgen strict green; scripts/run_ci.sh green.`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — `isf_temporal_rules_reach_isf_end_to_end`:
+    self-contained markdown spec → full SourceIR→…→IntentIR pipeline
+    recovers 2 `temporal_rules`; emitted `.isf` carries BOTH a windowed
+    `(contract temporal_signal_constraint_sigcon_0002 (eventually PREADY
+    (within 2)))` and a value `(rule temporal_…)`; asserts non-empty
+    temporal behavior (contract|rule|residual — never silent loss),
+    `transaction_count`/`rule_count` == emitted occurrences, and
+    `fsmgen --strict --check --json` `success:true`. Full
+    `scripts/run_ci.sh` green (1054 lib tests).
+  Commit: `see Commit Log`
 
 - ID: `ISF-TEMPORAL-LOWERING.4`
   Status: `pending`
@@ -180,8 +188,8 @@ temporal/clock-tick behavior is extracted and then silently dropped from
 | 3 | `ISF-TEMPORAL-LOWERING.2.2` | `done` | Windowed→`(contract …)` live on corpus; `(within 0)` guarded |
 | 4 | `ISF-TEMPORAL-LOWERING.2.3` | `done` | guard→drive `(rule …)` + residual classifier; live on nvme; strict-valid |
 | 5 | `ISF-TEMPORAL-LOWERING.2.4` | `done` | metrics now == emitted content; nvme 109→0 fixed; regression locks it |
-| 6 | `ISF-TEMPORAL-LOWERING.3` | `pending` | Next — end-to-end regression: temporal-rules-bearing IntentIR via generic markdown pipeline → non-empty ISF temporal behavior + metric match + fsmgen-strict |
-| 7 | `ISF-TEMPORAL-LOWERING.4` | `pending` | Close + doc sync |
+| 6 | `ISF-TEMPORAL-LOWERING.3` | `done` | e2e regression green: markdown→IntentIR→`.isf` with contract+temporal rule, metric match, fsmgen-strict |
+| 7 | `ISF-TEMPORAL-LOWERING.4` | `pending` | Next — close tree; sync live docs + mdBook ISF chapter + ROADMAP R15b |
 
 ## Decisions
 
@@ -304,6 +312,7 @@ temporal/clock-tick behavior is extracted and then silently dropped from
 | `2026-05-18` | `ISF-TEMPORAL-LOWERING.2.2` | live corpus adapt (CXS) + `(within 0)` strict-reject caught/guarded; 15 isf tests; full `scripts/run_ci.sh` | `passed` |
 | `2026-05-18` | `ISF-TEMPORAL-LOWERING.2.3` | 11 new classifier/residual/render unit tests + real-binary `(rule …)` strict test; empirical pre-verify of guard/conditionless forms; LIVE nvme adapt (109→17 Rule/92 residual, strict `success:true`); full `scripts/run_ci.sh` | `passed` |
 | `2026-05-18` | `ISF-TEMPORAL-LOWERING.2.4` | `isf_adapter_counts_equal_emitted_content` regression + LIVE nvme metric check (txn 109→0, rule 250==250, 92 residual intact); full `scripts/run_ci.sh` (1053 lib tests) | `passed` |
+| `2026-05-18` | `ISF-TEMPORAL-LOWERING.3` | `isf_temporal_rules_reach_isf_end_to_end` (markdown→pipeline→IntentIR 2 temporal_rules→`.isf` contract+rule, metric==emitted, fsmgen-strict `success:true`); full `scripts/run_ci.sh` (1054 lib tests) | `passed` |
 
 ## Commit Log
 
@@ -314,6 +323,7 @@ temporal/clock-tick behavior is extracted and then silently dropped from
 | `ISF-TEMPORAL-LOWERING.2.2` | `ISF-TEMPORAL-LOWERING.2.2 — wire windowed temporal_rules → (contract …)` | `0ccdc8f0`; live CXS; `(within 0)` guarded |
 | `ISF-TEMPORAL-LOWERING.2.3` | `ISF-TEMPORAL-LOWERING.2.3 — guard→drive (rule …) + residual classifier` | classifier shared by emit + residual; live nvme strict-valid |
 | `ISF-TEMPORAL-LOWERING.2.4` | `ISF-TEMPORAL-LOWERING.2.4 — reconcile artifact metrics to emitted content` | txn/rule counts from emitted model; regression locks it; nvme 109→0 |
+| `ISF-TEMPORAL-LOWERING.3` | `ISF-TEMPORAL-LOWERING.3 — end-to-end markdown→.isf temporal regression` | full pipeline; contract+temporal rule emitted; metric match; fsmgen-strict |
 
 ## Changelog
 
