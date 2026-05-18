@@ -32,7 +32,7 @@ evidence for one top-level task.
 | `R6-ISF-ADAPTER` | `done` | `R6` | — | [docs/tasks/R6-ISF-ADAPTER.md](docs/tasks/R6-ISF-ADAPTER.md) |
 | `ISF-ONLY-CONSOLIDATION` | `done` | `R6` | — | [docs/tasks/ISF-ONLY-CONSOLIDATION.md](docs/tasks/ISF-ONLY-CONSOLIDATION.md) |
 | `ISF-TEMPORAL-LOWERING` | `done` | `R15b` | — | [docs/tasks/ISF-TEMPORAL-LOWERING.md](docs/tasks/ISF-TEMPORAL-LOWERING.md) |
-| `ISF-ONLY-IR-PRUNE` | `active` | `R6` | `ISF-ONLY-IR-PRUNE.1` | [docs/tasks/ISF-ONLY-IR-PRUNE.md](docs/tasks/ISF-ONLY-IR-PRUNE.md) |
+| `ISF-ONLY-IR-PRUNE` | `done` | `R6` | — | [docs/tasks/ISF-ONLY-IR-PRUNE.md](docs/tasks/ISF-ONLY-IR-PRUNE.md) |
 | `AUDIT-DOC-RECONCILE` | `active` | `R0` | `AUDIT-DOC-RECONCILE.1` | [docs/tasks/AUDIT-DOC-RECONCILE.md](docs/tasks/AUDIT-DOC-RECONCILE.md) |
 | `FSMGEN-ISSUE-REPORTING` | `done` | `R0` | — | [docs/tasks/FSMGEN-ISSUE-REPORTING.md](docs/tasks/FSMGEN-ISSUE-REPORTING.md) |
 | `FSMGEN-SUBMODULE-BUMP` | `done` | `R0` | — | [docs/tasks/FSMGEN-SUBMODULE-BUMP.md](docs/tasks/FSMGEN-SUBMODULE-BUMP.md) |

@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `ISF-ONLY-IR-PRUNE`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: `R6` (adapter-layer cleanup after the ISF-only pivot)
 - Created: `2026-05-18`
 - Last updated: `2026-05-18`
@@ -60,7 +60,7 @@ is **only true for two of them**. Verified consumers:
 ## Task Tree
 
 - ID: `ISF-ONLY-IR-PRUNE`
-  Status: `active`
+  Status: `done`
   Goal: `Prune truly-dead .fsm-era IR; decide state-graph fate explicitly.`
   Children: `.1`, `.2`, `.3`, `.4`
 
@@ -130,11 +130,14 @@ is **only true for two of them**. Verified consumers:
   Commit: `(recorded with the .3 supersede continuity commit)`
 
 - ID: `ISF-ONLY-IR-PRUNE.4`
-  Status: `pending`
+  Status: `done`
   Goal: `Close tree (after .2 done and .3 decided); live-doc sync.`
   Acceptance: `Tree closed with .3 resolved (done/superseded/decided); scripts/run_ci.sh green.`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — tree + top node `done`; `.1` done, `.2`
+    done (CI 1054/0 at `27dc2bb9`), `.3` superseded (user decision),
+    `.4` close; `docs/TASK_TREE.md` index → `done`; live docs synced.
+    Docs-only close; CI gate satisfied by `.2`'s full `scripts/run_ci.sh`.
+  Commit: `see Commit Log`
 
 ## Current Frontier
 
@@ -143,7 +146,9 @@ is **only true for two of them**. Verified consumers:
 | 1 | `ISF-ONLY-IR-PRUNE.1` | `done` | Inventory + per-file removal plan recorded; prune-safe confirmed |
 | 2 | `ISF-ONLY-IR-PRUNE.2` | `done` | Both surfaces removed end-to-end; CI green 1054/0; no fixture regression |
 | — | `ISF-ONLY-IR-PRUNE.3` | `superseded` | User decision 2026-05-18: keep state-graph; no removal |
-| 3 | `ISF-ONLY-IR-PRUNE.4` | `pending` | Next — close tree (`.2` done, `.3` superseded) |
+| 3 | `ISF-ONLY-IR-PRUNE.4` | `done` | Tree CLOSED — dead `.fsm`-era IR pruned; state-graph kept |
+
+Tree complete. Remaining PNT: `AUDIT-DOC-RECONCILE.1/.2`; proposed `ISF-HANDSHAKE-STAGE-LOWERING` awaits promotion.
 
 ## Impact analysis (`.1`, 2026-05-18 — full repo grep inventory)
 
@@ -231,7 +236,8 @@ with the fields.
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `ISF-ONLY-IR-PRUNE.1` | `ISF-ONLY-IR-PRUNE.1 — impact analysis + per-file removal plan` | docs-only; prune-safe confirmed, state-graph keep upheld |
-| `ISF-ONLY-IR-PRUNE.2` | `ISF-ONLY-IR-PRUNE.2 — remove dead .fsm-era init_assignments + decision_tree_fragments IR` | 5 files + spec + tests; converge delta-preserving; CI 1054/0 |
+| `ISF-ONLY-IR-PRUNE.2` | `ISF-ONLY-IR-PRUNE.2 — remove dead .fsm-era init_assignments + decision_tree_fragments IR` (`27dc2bb9`) | 5 files + spec + tests; converge delta-preserving; CI 1054/0 |
+| `ISF-ONLY-IR-PRUNE.4` | `ISF-ONLY-IR-PRUNE.4 — close tree; live-doc sync` | tree CLOSED; `.3` superseded |
 
 ## Changelog
 
@@ -255,3 +261,9 @@ with the fields.
   incl. the removed terms → literals 23→21 / 19→17; convergence delta
   behavior unchanged. Kept unified (parallel identical-site removal).
   Full CI 1054/0; kg-bench / `vlm_state_machine_*` fixtures intact.
+- `2026-05-18`: Tree CLOSED (`.4`). Net outcome: the only genuinely
+  `.fsm`-era-orphaned IR (`init_assignments`, `decision_tree_fragments`)
+  is gone (−242 LOC); the audit's picky-auditor scope correction held
+  end-to-end — `regular_states`/`state_transitions` were correctly kept
+  (R10/R15c/R15e/R7/R15f load-bearing, `.3` superseded by user
+  decision). No regression. `docs/TASK_TREE.md` index → `done`.

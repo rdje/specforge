@@ -30,6 +30,15 @@
   green (1054 passed, 0 failed); kg-bench / `vlm_state_machine_*`
   fixtures intact (no R10/R15c/R15e/R7 regression).
 
+### ISF-ONLY-IR-PRUNE.4 — close tree; live-doc sync
+- `ISF-ONLY-IR-PRUNE` tree CLOSED (`.1` analysis, `.2` removal, `.3`
+  superseded by user decision, `.4` close); `docs/TASK_TREE.md` index →
+  `done`. Net: the only genuinely `.fsm`-era-orphaned IR is gone
+  (−242 LOC) and the audit's picky-auditor scope correction held
+  end-to-end — `regular_states`/`state_transitions` correctly kept as
+  R10/R15c/R15e/R7/R15f load-bearing. No regression. Docs-only close
+  (CI gate satisfied by `.2`).
+
 ### ISF-ONLY-IR-PRUNE.1 — impact analysis + per-file removal plan
 - Full repo grep inventory of `init_assignments`,
   `decision_tree_fragments`, `regular_states`, `state_transitions`
