@@ -75,10 +75,41 @@ The adapter walks `IntentIr` and populates the typed tree:
 6. **Storage** — from storage variable declarations
 7. **Drives** — one `(drive (sig val) (sig val))` entry per output signal
 8. **Transactions** — from `IntentIr` transaction intents plus control-block fallbacks; `TransactionStep` converted to typed `IsfTxnStep`
-9. **Rules** — from conditional rules, signal constraints, and temporal invariants with non-empty subject signals
-10. **Priorities** — rule-over-transaction priority declarations when both rules and transactions exist
+9. **Temporal rules** — every `IntentIr.temporal_rules` entry is classified by `classify_temporal_rule` into exactly one disposition (see below)
+10. **Rules** — from conditional rules, signal constraints, temporal invariants with non-empty subject signals, plus the temporal value/guard→drive rules from step 9
+11. **Priorities** — rule-over-transaction priority declarations when both rules and transactions exist
 
 Temporal invariants with empty `subject_signal` (e.g. transition invariants like "idle → busy when GO") are skipped for rule generation — they represent state-transition assertions that cannot be lowered to ISF signal assignments.
+
+#### Temporal-rule lowering (`classify_temporal_rule`)
+
+`IntentIr.temporal_rules` is the R15b clock-tick deliverable; the ISF
+adapter is the only target it can reach. A single classifier assigns each
+rule exactly one disposition, so a rule is lowered one way or not at all:
+
+- **Contract** — a bounded `cycle_window` (`max_cycles >= 1`) with a
+  single-signal consequent naming a declared signal → a synthetic
+  `(transaction txn_temporal_<id> (on start) (contract <id> (eventually
+  <signal> (within <N>))) (complete done))`. This is FSMGen's shipped
+  `bounded_eventually`; the **nested** `(within N)` is required (the flat
+  `within N` printed in the FSMGen spec §11.8 is strict-rejected — see
+  `docs/FSMGEN_FEEDBACK.md`).
+- **Rule** — no window, a `SignalValue` consequent naming a declared
+  signal with an ISF-literal value → an actor `(rule temporal_<id>
+  [<guard>] (<signal> <value>))`. The guard is `(== <declared-signal>
+  <literal>)` derived from a `SignalValue` antecedent, else the rule is
+  conditionless (both forms are fsmgen-strict-verified). The exact
+  declared signal name is used (FSMGen is case-sensitive).
+- **Residual** — anything with no representable supported ISF construct
+  (`HandshakeComplete`, `(within 0)`, undeclared signal, non-literal
+  value, a consequent that names a signal but carries no concrete value)
+  → an explicit `isf_temporal_unrepresentable_<id>` residual decision on
+  the adapter artifact. Syntax is **never** fabricated; the dropped
+  obligation is visible, not silently lost.
+
+Temporal value/guard→drive rules join the rule set before dedup, so a
+temporal rule that conflicts with an existing rule on the same
+signal+guard is dropped rather than emitted as invalid `.isf`.
 
 ### Rendering: `IsfIr::render() -> String`
 
@@ -122,6 +153,18 @@ ISF adapter output lives under:
 - `generated/adapters/isf/<document_key>/adapter.json`
 
 The adapter artifact carries the rendered `.isf` source text, renderability status, blocking reasons, and signal inventory metadata. It is tagged with the `isf_adapter` `IrStage`, which stage-keyed tooling (e.g. `specforge validate`, `project-validation`) dispatches on.
+
+Every behavioral count in the artifact reflects **what the emitter
+actually rendered**, never a blind `IntentIr`-derived guess:
+`transaction_count` and `rule_count` are taken from the single emitted
+ISF model (`emitted_transaction_count()` / `emitted_rule_count()`), so
+they include temporal-synthesized `(contract …)` transactions and
+temporal `(rule …)` and exclude anything the emitter dropped. Temporal
+rules with no representable construct are counted as
+`residual_decisions` (`isf_temporal_unrepresentable_*`). The regression
+`isf_adapter_counts_equal_emitted_content` locks metric == emitted
+content; `isf_temporal_rules_reach_isf_end_to_end` proves the full
+markdown → `IntentIr` → `.isf` temporal path end-to-end.
 
 ## Validation
 

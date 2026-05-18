@@ -112,6 +112,30 @@
   clock-tick deliverable is now verified reaching the only adapter
   through the real pipeline, not just unit-level.
 
+### ISF-TEMPORAL-LOWERING.4 — close tree; sync mdBook + ROADMAP R15b
+- mdBook `pipeline/isf-adapter.md` gained a "Temporal-rule lowering
+  (`classify_temporal_rule`)" subsection (Contract / Rule / Residual
+  dispositions) and an emitted-count metric note (counts == rendered,
+  residual for unrepresentable); the construction/rendering step lists
+  now include temporal lowering.
+- ROADMAP `R15b` gained two `done:` bullets (temporal_rules reach the
+  adapter; blind metric replaced + e2e regression), historical bullets
+  preserved (forward-text reconciliation stays owned by
+  `AUDIT-DOC-RECONCILE`, no scope creep; R15b status left as-is).
+- `docs/TASK_TREE.md` index `ISF-TEMPORAL-LOWERING` → `done`. Tree
+  CLOSED — all of `.1`–`.4` done. PNT continues to
+  `ISF-ONLY-IR-PRUNE.1`.
+- Honest defect fix folded into `.4`: `.3`'s e2e test added a 4th
+  concurrent `fsmgen`-binary invocation that intermittently tripped the
+  documented `Can't cd to :` external-Perl CWD race under cargo parallel
+  test execution (the `.isf` is correct — passes in isolation). Fixed
+  properly per the signoff doctrine (not retried/suppressed): new
+  `#[cfg(test)] crate::ir::FSMGEN_TEST_LOCK` mutex + `run_fsmgen_strict_check`
+  helper that serializes all fsmgen-binary tests and pins CWD to the
+  fsmgen repo root; all 4 fsmgen tests routed through it. Re-verified
+  **repeatable**: 4 consecutive full `scripts/run_ci.sh`/lib-suite runs
+  `1054 passed; 0 failed` (previously intermittently 2 failed).
+
 ### FSMGEN-ISSUE-REPORTING (tree) + .1 — file the genuine FSMGen findings
 - New task tree to file the genuine FSMGen findings discovered during
   `ISF-TEMPORAL-LOWERING.2.1` via the official protocol

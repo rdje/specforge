@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `ISF-TEMPORAL-LOWERING`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: `R15b` (explicit clock-tick temporal model → must reach the adapter)
 - Created: `2026-05-18`
 - Last updated: `2026-05-18`
@@ -49,7 +49,7 @@ temporal/clock-tick behavior is extracted and then silently dropped from
 ## Task Tree
 
 - ID: `ISF-TEMPORAL-LOWERING`
-  Status: `active`
+  Status: `done`
   Goal: `temporal_rules reach .isf; metrics honest; fsmgen-strict valid.`
   Children: `.1`, `.2`, `.3`, `.4`
 
@@ -69,7 +69,7 @@ temporal/clock-tick behavior is extracted and then silently dropped from
   Commit: `ISF-TEMPORAL-LOWERING.1 — FSMGen-spec-grounded temporal_rules→ISF mapping decision`
 
 - ID: `ISF-TEMPORAL-LOWERING.2`
-  Status: `active`
+  Status: `done`
   Goal: `Implement temporal_rules lowering + metric reconciliation.`
   Children: `.2.1`, `.2.2`, `.2.3`, `.2.4`
   Split rationale (2026-05-18): real corpus = 387 temporal_rules (only 28
@@ -172,11 +172,23 @@ temporal/clock-tick behavior is extracted and then silently dropped from
   Commit: `see Commit Log`
 
 - ID: `ISF-TEMPORAL-LOWERING.4`
-  Status: `pending`
+  Status: `done`
   Goal: `Close tree; sync live docs + the mdBook ISF chapter.`
   Acceptance: `Tree done; book/ROADMAP reflect temporal lowering; scripts/run_ci.sh green.`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — mdBook `pipeline/isf-adapter.md` gained a
+    "Temporal-rule lowering (`classify_temporal_rule`)" subsection
+    (Contract/Rule/Residual) + the emitted-count metric note; ROADMAP
+    `R15b` gained two `done:` bullets (temporal_rules reach the adapter;
+    blind metric replaced + e2e regression) with historical bullets
+    preserved; `docs/TASK_TREE.md` index → `done`. Also fixed a
+    test-suite flake the `.3` e2e test exposed (its concurrent
+    `fsmgen` invocation tipped the documented `Can't cd to :` CWD race):
+    a shared `#[cfg(test)] FSMGEN_TEST_LOCK` mutex + fsmgen-root-pinned
+    CWD via one DRY `run_fsmgen_strict_check` helper, all 4
+    fsmgen-binary tests routed through it. Verified repeatable:
+    4 consecutive full `scripts/run_ci.sh` / lib-suite runs
+    `1054 passed; 0 failed` (was intermittently 2 failed)
+  Commit: `see Commit Log`
 
 ## Current Frontier
 
@@ -189,7 +201,9 @@ temporal/clock-tick behavior is extracted and then silently dropped from
 | 4 | `ISF-TEMPORAL-LOWERING.2.3` | `done` | guard→drive `(rule …)` + residual classifier; live on nvme; strict-valid |
 | 5 | `ISF-TEMPORAL-LOWERING.2.4` | `done` | metrics now == emitted content; nvme 109→0 fixed; regression locks it |
 | 6 | `ISF-TEMPORAL-LOWERING.3` | `done` | e2e regression green: markdown→IntentIR→`.isf` with contract+temporal rule, metric match, fsmgen-strict |
-| 7 | `ISF-TEMPORAL-LOWERING.4` | `pending` | Next — close tree; sync live docs + mdBook ISF chapter + ROADMAP R15b |
+| 7 | `ISF-TEMPORAL-LOWERING.4` | `done` | Tree CLOSED — mdBook + ROADMAP R15b synced |
+
+Tree complete. PNT continues to `ISF-ONLY-IR-PRUNE.1`.
 
 ## Decisions
 
@@ -313,6 +327,7 @@ temporal/clock-tick behavior is extracted and then silently dropped from
 | `2026-05-18` | `ISF-TEMPORAL-LOWERING.2.3` | 11 new classifier/residual/render unit tests + real-binary `(rule …)` strict test; empirical pre-verify of guard/conditionless forms; LIVE nvme adapt (109→17 Rule/92 residual, strict `success:true`); full `scripts/run_ci.sh` | `passed` |
 | `2026-05-18` | `ISF-TEMPORAL-LOWERING.2.4` | `isf_adapter_counts_equal_emitted_content` regression + LIVE nvme metric check (txn 109→0, rule 250==250, 92 residual intact); full `scripts/run_ci.sh` (1053 lib tests) | `passed` |
 | `2026-05-18` | `ISF-TEMPORAL-LOWERING.3` | `isf_temporal_rules_reach_isf_end_to_end` (markdown→pipeline→IntentIR 2 temporal_rules→`.isf` contract+rule, metric==emitted, fsmgen-strict `success:true`); full `scripts/run_ci.sh` (1054 lib tests) | `passed` |
+| `2026-05-18` | `ISF-TEMPORAL-LOWERING.4` | mdBook ISF chapter + ROADMAP R15b synced; TASK_TREE index → done; fsmgen-test flake fixed (shared lock + pinned CWD); 4 consecutive full runs `1054 passed; 0 failed` | `passed` |
 
 ## Commit Log
 
@@ -324,9 +339,34 @@ temporal/clock-tick behavior is extracted and then silently dropped from
 | `ISF-TEMPORAL-LOWERING.2.3` | `ISF-TEMPORAL-LOWERING.2.3 — guard→drive (rule …) + residual classifier` | classifier shared by emit + residual; live nvme strict-valid |
 | `ISF-TEMPORAL-LOWERING.2.4` | `ISF-TEMPORAL-LOWERING.2.4 — reconcile artifact metrics to emitted content` | txn/rule counts from emitted model; regression locks it; nvme 109→0 |
 | `ISF-TEMPORAL-LOWERING.3` | `ISF-TEMPORAL-LOWERING.3 — end-to-end markdown→.isf temporal regression` | full pipeline; contract+temporal rule emitted; metric match; fsmgen-strict |
+| `ISF-TEMPORAL-LOWERING.4` | `ISF-TEMPORAL-LOWERING.4 — close tree; sync mdBook ISF chapter + ROADMAP R15b` | tree CLOSED; PNT → `ISF-ONLY-IR-PRUNE.1` |
 
 ## Changelog
 
 - `2026-05-18`: Created from the post-ISF-ONLY audit critical finding —
   temporal_rules extracted but never lowered to `.isf`; transaction_count
   misreports it across the entire real corpus.
+- `2026-05-18` (`.4` honest defect disclosure): `.3`'s
+  `isf_temporal_rules_reach_isf_end_to_end` added a 4th concurrent
+  `fsmgen` binary invocation, which under cargo parallel test execution
+  intermittently tripped the documented `Can't cd to : No such file or
+  directory` race (the `.isf` is correct — every test passes in
+  isolation; this is an external-Perl-binary CWD/contention flake, not a
+  lowering bug). Fixed properly (not retried/ignored) per the signoff
+  doctrine: `crate::ir::FSMGEN_TEST_LOCK` (a `#[cfg(test)]` `Mutex`)
+  serializes all fsmgen-binary tests and `run_fsmgen_strict_check` pins
+  CWD to the fsmgen repo root (mirrors the issue-bundle protocol's "run
+  from FSMGen repo root"). All 4 fsmgen tests routed through the one
+  helper. Re-verified repeatable: 4 consecutive full runs `1054 passed;
+  0 failed`.
+- `2026-05-18`: Tree CLOSED. Both audit critical complaints resolved:
+  (1) `temporal_rules` reach `.isf` via `classify_temporal_rule`
+  (Contract `(contract … (within N))` / Rule `(rule temporal_…)` /
+  explicit residual — never fabricated), live-verified on the AMBA CXS
+  and nvme corpora and end-to-end through the markdown pipeline;
+  (2) `transaction_count`/`rule_count` now reflect emitted content, not
+  the blind `temporal_rules.len()+cb_tx_count` formula. `.1`–`.4` all
+  done; mdBook ISF chapter + ROADMAP R15b synced. Surfaced (not fixed
+  here, scope discipline): constants/types/enums are populated in
+  `IsfIr` but not rendered — a separate non-temporal "extracted but not
+  rendered" gap recorded as an Open Question for a future audit.

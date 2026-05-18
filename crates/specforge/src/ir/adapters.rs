@@ -560,13 +560,7 @@ mod tests {
         fs::write(&isf_path, &isf.source_text)?;
         eprintln!("=== ISF source text ===\n{}\n=== END ===", isf.source_text);
 
-        let fsmgen_path =
-            Path::new(env!("CARGO_MANIFEST_DIR")).join("../../subs/fsmgen/bin/fsmgen");
-
-        let output = std::process::Command::new(&fsmgen_path)
-            .args(["--strict", "--check", "--json"])
-            .arg(&isf_path)
-            .output()?;
+        let output = crate::ir::run_fsmgen_strict_check(&isf_path);
 
         let stdout = String::from_utf8_lossy(&output.stdout);
         let stderr = String::from_utf8_lossy(&output.stderr);
@@ -688,12 +682,7 @@ mod tests {
         // Emitted `.isf` still passes fsmgen strict.
         let isf_path = tempdir.path().join("temporal_e2e.isf");
         fs::write(&isf_path, src)?;
-        let fsmgen_path =
-            Path::new(env!("CARGO_MANIFEST_DIR")).join("../../subs/fsmgen/bin/fsmgen");
-        let output = std::process::Command::new(&fsmgen_path)
-            .args(["--strict", "--check", "--json"])
-            .arg(&isf_path)
-            .output()?;
+        let output = crate::ir::run_fsmgen_strict_check(&isf_path);
         let stdout = String::from_utf8_lossy(&output.stdout);
         let stderr = String::from_utf8_lossy(&output.stderr);
         let check: serde_json::Value = serde_json::from_str(&stdout).unwrap_or_else(|e| {

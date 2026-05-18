@@ -1779,13 +1779,7 @@ mod tests {
         std::fs::write(&isf_path, &out).expect("write isf");
         eprintln!("=== ISF ===\n{out}\n=== END ===");
 
-        let fsmgen_path =
-            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../subs/fsmgen/bin/fsmgen");
-        let output = std::process::Command::new(&fsmgen_path)
-            .args(["--strict", "--check", "--json"])
-            .arg(&isf_path)
-            .output()
-            .expect("run fsmgen");
+        let output = crate::ir::run_fsmgen_strict_check(&isf_path);
         let stdout = String::from_utf8_lossy(&output.stdout);
         let stderr = String::from_utf8_lossy(&output.stderr);
         let check: serde_json::Value = serde_json::from_str(&stdout).unwrap_or_else(|e| {
@@ -2033,13 +2027,7 @@ mod tests {
         std::fs::write(&isf_path, &out).expect("write isf");
         eprintln!("=== ISF ===\n{out}\n=== END ===");
 
-        let fsmgen_path =
-            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../subs/fsmgen/bin/fsmgen");
-        let output = std::process::Command::new(&fsmgen_path)
-            .args(["--strict", "--check", "--json"])
-            .arg(&isf_path)
-            .output()
-            .expect("run fsmgen");
+        let output = crate::ir::run_fsmgen_strict_check(&isf_path);
         let stdout = String::from_utf8_lossy(&output.stdout);
         let stderr = String::from_utf8_lossy(&output.stderr);
         let check: serde_json::Value = serde_json::from_str(&stdout).unwrap_or_else(|e| {
