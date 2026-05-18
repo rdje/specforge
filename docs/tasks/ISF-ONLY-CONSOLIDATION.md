@@ -137,14 +137,22 @@ Scope reality (surveyed 2026-05-18):
   Commit: `ISF-ONLY-CONSOLIDATION.4 — atomic FSM removal (adapters.rs 28113->575)`
 
 - ID: `ISF-ONLY-CONSOLIDATION.5`
-  Status: `pending`
+  Status: `done`
   Goal: >
     Triage `test_data/kg_quality`: retire genuinely FSM-adapter-only
     fixtures, keep KG/semantic-truthfulness fixtures, and keep
     `kg-bench` + `corpus-kb` green and their tracked projections clean.
-  Acceptance: `Only FSM-adapter-specific fixtures removed; kg-bench + corpus-kb green; no stale tracked projection diff. May split.`
-  Verification: `pending`
-  Commit: `pending`
+    AUDIT OUTCOME 2026-05-18: zero of the 153 fixtures reference
+    `fsm` / `.fsm` / `adapter` / `renderab` / `root_kind` / `FsmAdapter`;
+    `kg_bench.rs` carries no FSM-adapter assertions; `kg-bench` +
+    `corpus-kb` were green in the `.4` CI with the fixtures unchanged.
+    The kg_quality fixtures exercise the KG/semantic-truthfulness IR
+    pipeline (`SourceIR→EvidenceIR→SemanticIR→IntentIR` + validation),
+    not the (now-removed) FSM adapter — which had its own tests in
+    `adapters.rs`. Nothing to retire; no fixture/code change. Audit-only.
+  Acceptance: `Audit shows no FSM-adapter-specific fixtures exist; kg-bench + corpus-kb remain green (verified in .4 CI); no fixture/code change required.`
+  Verification: `passed` — grep audit (0/153 FSM-referencing) + kg-bench/corpus-kb green in `.4` CI; docs-only audit record
+  Commit: `ISF-ONLY-CONSOLIDATION.5 — kg fixture audit (no FSM-adapter fixtures; nothing to retire)`
 
 - ID: `ISF-ONLY-CONSOLIDATION.6`
   Status: `pending`
@@ -176,8 +184,8 @@ Scope reality (surveyed 2026-05-18):
 | 2 | `ISF-ONLY-CONSOLIDATION.2` | `done` | ISF tests decoupled from FSM-only fixtures |
 | 3 | `ISF-ONLY-CONSOLIDATION.3` | `done` | HDL surface removed |
 | 4 | `ISF-ONLY-CONSOLIDATION.4` | `done` | Atomic FSM removal complete; CI green |
-| 5 | `ISF-ONLY-CONSOLIDATION.5` | `pending` | Next — fixture triage |
-| 6 | `ISF-ONLY-CONSOLIDATION.6` | `pending` | mdBook sweep |
+| 5 | `ISF-ONLY-CONSOLIDATION.5` | `done` | Audit: no FSM-adapter fixtures; nothing to retire |
+| 6 | `ISF-ONLY-CONSOLIDATION.6` | `pending` | Next — mdBook sweep |
 | 7 | `ISF-ONLY-CONSOLIDATION.7` | `pending` | Reconcile + close + push |
 
 ## Decisions
@@ -226,6 +234,7 @@ Scope reality (surveyed 2026-05-18):
 | `2026-05-18` | `ISF-ONLY-CONSOLIDATION.2` | 3 ISF tests + fsmgen strict; full `scripts/run_ci.sh` | `passed` |
 | `2026-05-18` | `ISF-ONLY-CONSOLIDATION.3` | no HDL refs; standalone compile; full `scripts/run_ci.sh` | `passed` |
 | `2026-05-18` | `ISF-ONLY-CONSOLIDATION.4` | adapters.rs 28113→575; 1040 lib tests; fsmgen strict; full `scripts/run_ci.sh` | `passed` |
+| `2026-05-18` | `ISF-ONLY-CONSOLIDATION.5` | grep audit 0/153 FSM-referencing; kg-bench/corpus-kb green in `.4` CI | `passed` |
 
 ## Commit Log
 
@@ -235,6 +244,7 @@ Scope reality (surveyed 2026-05-18):
 | `ISF-ONLY-CONSOLIDATION.2` | `ISF-ONLY-CONSOLIDATION.2 — decouple ISF tests from FSM-only fixtures` | Test-only; 3 ISF tests via generic pipeline; re-scoped (in-place FSM deletion) |
 | `ISF-ONLY-CONSOLIDATION.3` | `ISF-ONLY-CONSOLIDATION.3 — remove HDL (SystemVerilog/Verilog/VHDL) adapter surface` | HDL-only; compiles standalone |
 | `ISF-ONLY-CONSOLIDATION.4` | `ISF-ONLY-CONSOLIDATION.4 — atomic FSM removal (adapters.rs 28113->575)` | Largest slice; −27,964 lines; 1040 lib tests |
+| `ISF-ONLY-CONSOLIDATION.5` | `ISF-ONLY-CONSOLIDATION.5 — kg fixture audit (no FSM-adapter fixtures; nothing to retire)` | Audit-only; 0/153 FSM-referencing |
 
 ## Changelog
 

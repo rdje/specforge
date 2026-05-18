@@ -92,6 +92,14 @@
 - `subs/fsmgen` + the ISF↔FSMGen strict test retained. `src` total
   ~110K → ~82K lines. `scripts/run_ci.sh` green.
 
+### ISF-ONLY-CONSOLIDATION.5: kg fixture audit (nothing to retire)
+- Audit: 0 of 153 `test_data/kg_quality` fixtures reference
+  `fsm`/`.fsm`/`adapter`/`renderab`/`root_kind`/`FsmAdapter`;
+  `kg_bench.rs` has no FSM-adapter assertions; `kg-bench` + `corpus-kb`
+  were green in the `.4` CI with fixtures unchanged. The kg fixtures
+  exercise the KG/semantic-truthfulness IR pipeline, not the (removed)
+  FSM adapter. No fixture or code change required. Audit-only.
+
 ## 2026-05-17 (R6-ISF-ADAPTER batch — ISF adapter ownership backfill + hardening)
 
 ### Created: R6-ISF-ADAPTER task tree (lane R6, 5-leaf authorized batch)

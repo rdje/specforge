@@ -70,6 +70,11 @@
   `collapsible_if` clippy error in the carried-over fsmgen test (fixed via
   let-chain) — signoff working as intended. `subs/fsmgen` + the ISF↔FSMGen
   strict test are retained. Net `src` ~110K → ~82K lines.
+- `.5` is audit-only: the kg_quality fixtures never exercised the FSM
+  adapter (it had its own adapters.rs tests); they test the KG/semantic
+  IR pipeline. 0/153 reference FSM symbols and kg-bench/corpus-kb stayed
+  green through `.4`, so nothing is retired. Honest "no-op" leaf,
+  consistent with prior audit leaves elsewhere in the trees.
 
 ## 2026-05-17 session — R6-ISF-ADAPTER batch (ISF ownership backfill + hardening)
 
