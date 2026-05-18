@@ -152,12 +152,6 @@ pub enum AdapterTargetArg {
     Fsm,
     #[value(name = "isf")]
     Isf,
-    #[value(name = "systemverilog")]
-    SystemVerilog,
-    #[value(name = "verilog")]
-    Verilog,
-    #[value(name = "vhdl")]
-    Vhdl,
 }
 
 impl From<AdapterTargetArg> for AdapterTarget {
@@ -165,9 +159,6 @@ impl From<AdapterTargetArg> for AdapterTarget {
         match value {
             AdapterTargetArg::Fsm => AdapterTarget::Fsm,
             AdapterTargetArg::Isf => AdapterTarget::Isf,
-            AdapterTargetArg::SystemVerilog => AdapterTarget::SystemVerilog,
-            AdapterTargetArg::Verilog => AdapterTarget::Verilog,
-            AdapterTargetArg::Vhdl => AdapterTarget::Vhdl,
         }
     }
 }

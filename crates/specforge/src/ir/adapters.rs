@@ -30,9 +30,6 @@ const TOP_LINK_ENDPOINT_DIRECTION_ROLE_ENRICHMENT: &str = "align top-link endpoi
 pub enum AdapterTarget {
     Fsm,
     Isf,
-    SystemVerilog,
-    Verilog,
-    Vhdl,
 }
 
 impl AdapterTarget {
@@ -40,9 +37,6 @@ impl AdapterTarget {
         match self {
             Self::Fsm => "fsm",
             Self::Isf => "isf",
-            Self::SystemVerilog => "system_verilog",
-            Self::Verilog => "verilog",
-            Self::Vhdl => "vhdl",
         }
     }
 }
@@ -378,24 +372,6 @@ pub fn default_adapter_plans() -> Vec<AdapterPlan> {
                     .to_string(),
             ],
         },
-        AdapterPlan {
-            target: AdapterTarget::SystemVerilog,
-            required_input_stage: IrStage::IntentIr,
-            status: AdapterStatus::Planned,
-            notes: vec!["direct RTL adapter planned after IntentIR stabilization".to_string()],
-        },
-        AdapterPlan {
-            target: AdapterTarget::Verilog,
-            required_input_stage: IrStage::IntentIr,
-            status: AdapterStatus::Planned,
-            notes: vec!["target-neutral lowering should support Verilog later".to_string()],
-        },
-        AdapterPlan {
-            target: AdapterTarget::Vhdl,
-            required_input_stage: IrStage::IntentIr,
-            status: AdapterStatus::Planned,
-            notes: vec!["target-neutral lowering should support VHDL later".to_string()],
-        },
     ]
 }
 
@@ -469,11 +445,6 @@ impl AdapterArtifact {
             AdapterTarget::Fsm => {
                 build_fsm_adapter_artifact(&intent_ir, &intent_ir_path, artifact_base_root)
             }
-            AdapterTarget::SystemVerilog => {
-                Err(AppError::FeatureNotYetImplemented("SystemVerilog adapter"))
-            }
-            AdapterTarget::Verilog => Err(AppError::FeatureNotYetImplemented("Verilog adapter")),
-            AdapterTarget::Vhdl => Err(AppError::FeatureNotYetImplemented("VHDL adapter")),
         }
     }
 
@@ -1543,9 +1514,9 @@ fn build_signal_inventory_map_from_surface(
         }
 
         for signal in &interface.signal_records {
-            // Adapters currently use numeric widths only for port declarations (e.g. +size in FSM).
+            // Adapters currently use numeric widths only for port declarations.
             // Parametric widths (ADDR_WIDTH, DATA_WIDTH) are user-configurable and kept as None here;
-            // the SystemVerilog adapter (future) will emit them as parameter references.
+            // FSMGen resolves them downstream of `.isf`.
             let supporting_ids = std::iter::once(interface.interface_id.clone())
                 .chain(signal.supporting_statement_ids.iter().cloned())
                 .collect::<Vec<_>>();

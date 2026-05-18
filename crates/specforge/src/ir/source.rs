@@ -681,12 +681,7 @@ impl SourceIr {
             residual_decisions,
             validation_reports: Vec::new(),
             downstream_stages: vec![IrStage::EvidenceIr, IrStage::SemanticIr, IrStage::IntentIr],
-            adapter_targets: vec![
-                AdapterTarget::Fsm,
-                AdapterTarget::SystemVerilog,
-                AdapterTarget::Verilog,
-                AdapterTarget::Vhdl,
-            ],
+            adapter_targets: vec![AdapterTarget::Fsm],
             planned_actions,
             automation_confidence,
         })

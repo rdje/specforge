@@ -51,6 +51,19 @@
   validation still passes on the pipeline-derived ISF.
 - Test-only; zero production change. `scripts/run_ci.sh` green.
 
+### ISF-ONLY-CONSOLIDATION.3: HDL-only removal
+- Re-scoped (decision): `AdapterTarget::Fsm` / `AdapterArtifact.fsm` /
+  `FsmAdapterArtifact` / FSM code are mutually dependent and cannot land in
+  separately-compiling pieces, so `.3` is now HDL-only and `.4` is the
+  single atomic FSM removal.
+- Removed `AdapterTarget::{SystemVerilog,Verilog,Vhdl}` (enum + `as_str`),
+  the 3 HDL `AdapterPlan` entries in `default_adapter_plans`, the HDL
+  `Err(FeatureNotYetImplemented)` dispatch arms, the stale SystemVerilog
+  comment, the HDL entries in `SourceIr` default `adapter_targets`, and
+  `AdapterTargetArg::{SystemVerilog,Verilog,Vhdl}` + their `From` arms in
+  `cli.rs`. Only `Fsm`/`Isf` remain (Fsm removed in `.4`).
+- Compiles independently; `scripts/run_ci.sh` green.
+
 ## 2026-05-17 (R6-ISF-ADAPTER batch — ISF adapter ownership backfill + hardening)
 
 ### Created: R6-ISF-ADAPTER task tree (lane R6, 5-leaf authorized batch)

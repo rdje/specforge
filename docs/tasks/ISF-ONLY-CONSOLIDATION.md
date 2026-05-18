@@ -105,27 +105,34 @@ Scope reality (surveyed 2026-05-18):
   Commit: `ISF-ONLY-CONSOLIDATION.2 — decouple ISF tests from FSM-only fixtures`
 
 - ID: `ISF-ONLY-CONSOLIDATION.3`
-  Status: `pending`
+  Status: `done`
   Goal: >
-    Make the typed surface ISF-only: drop `AdapterTarget::{Fsm,
-    SystemVerilog,Verilog,Vhdl}` and the matching `AdapterTargetArg`
-    variants, `AdapterArtifact.fsm`, `FsmAdapterArtifact`,
-    `IrStage::FsmAdapter`; update `cli.rs`, `ir/source.rs`,
-    `ir/evidence.rs`, `ir/mod.rs`, and the `project_validation.rs`
-    IrStage match arms.
-  Acceptance: `Only isf remains in AdapterTarget/AdapterTargetArg/IrStage; compiler-enumerated matches updated; scripts/run_ci.sh green. May split.`
-  Verification: `pending`
-  Commit: `pending`
+    RE-SCOPED 2026-05-18: HDL-only removal. Drop
+    `AdapterTarget::{SystemVerilog,Verilog,Vhdl}` and the matching
+    `AdapterTargetArg` variants + their `Err(FeatureNotYetImplemented)`
+    dispatch arms in `cli.rs` / `adapters.rs`. This compiles independently
+    of the FSM removal (nothing else references the HDL variants), so it
+    is a clean small slice ahead of the atomic FSM removal.
+  Acceptance: `No SystemVerilog/Verilog/Vhdl variants remain; .fsm/.isf still build; scripts/run_ci.sh green.`
+  Verification: `passed` — no HDL refs remain; crate compiles standalone; full scripts/run_ci.sh green
+  Commit: `ISF-ONLY-CONSOLIDATION.3 — remove HDL (SystemVerilog/Verilog/VHDL) adapter surface`
 
 - ID: `ISF-ONLY-CONSOLIDATION.4`
   Status: `pending`
   Goal: >
-    Delete the FSM lowering bulk and FSM validation: the FSM lowering
-    logic + FSM `#[test]` fns formerly in `adapters.rs`,
-    `validate_fsm_adapter` / `persist_fsm_adapter_validation` /
-    `fsm_adapter_fingerprint` and their dispatch, plus FSM handling in
-    `commands/adapt.rs` / `commands/converge.rs`.
-  Acceptance: `No FSM lowering/validation/test code remains; scripts/run_ci.sh green. Expected to split into several sub-leaves given size.`
+    RE-SCOPED 2026-05-18: the atomic FSM removal. `AdapterTarget::Fsm`,
+    `AdapterArtifact.fsm`, `FsmAdapterArtifact`, `build_fsm_adapter_artifact`
+    + the FSM lowering bulk, all FSM `#[test]` fns + FSM-only fixtures in
+    `adapters.rs`, `validate_fsm_adapter` / `persist_fsm_adapter_validation`
+    / `fsm_adapter_fingerprint` + dispatch, `IrStage::FsmAdapter`, and FSM
+    handling in `commands/adapt.rs` / `commands/converge.rs` /
+    `project_validation.rs`. These are mutually dependent (the
+    `AdapterArtifact.fsm` field, the `AdapterTarget::Fsm` variant, and the
+    FSM code/tests cannot be removed in separately-compiling pieces), so
+    `.4` is ONE atomic compile-coherent slice — it cannot split into
+    independently green sub-commits. `build_intent_ir_from_markdown` is
+    generic and MUST be retained (ISF tests depend on it).
+  Acceptance: `No FSM lowering/validation/test/dispatch code or AdapterTarget::Fsm/IrStage::FsmAdapter remains; ISF tests + fsmgen strict still green; scripts/run_ci.sh green.`
   Verification: `pending`
   Commit: `pending`
 
@@ -167,8 +174,8 @@ Scope reality (surveyed 2026-05-18):
 | --- | --- | --- | --- |
 | 1 | `ISF-ONLY-CONSOLIDATION.1` | `done` | Strategy recorded in canonical docs |
 | 2 | `ISF-ONLY-CONSOLIDATION.2` | `done` | ISF tests decoupled from FSM-only fixtures |
-| 3 | `ISF-ONLY-CONSOLIDATION.3` | `pending` | Next — make typed surface ISF-only |
-| 4 | `ISF-ONLY-CONSOLIDATION.4` | `pending` | Delete FSM bulk (likely splits) |
+| 3 | `ISF-ONLY-CONSOLIDATION.3` | `done` | HDL surface removed |
+| 4 | `ISF-ONLY-CONSOLIDATION.4` | `pending` | Next — atomic FSM removal (single slice) |
 | 5 | `ISF-ONLY-CONSOLIDATION.5` | `pending` | Fixture triage |
 | 6 | `ISF-ONLY-CONSOLIDATION.6` | `pending` | mdBook sweep |
 | 7 | `ISF-ONLY-CONSOLIDATION.7` | `pending` | Reconcile + close + push |
@@ -179,8 +186,16 @@ Scope reality (surveyed 2026-05-18):
   scheduling/`.fsm`/HDL downstream. Supersedes the `.fsm`-active strategy.
 - `2026-05-18`: ISF is extracted to its own module first (`.2`) so the
   FSM bulk can be deleted as a block rather than untangled in place.
-- `2026-05-18` (revises the above, user decision): do NOT physically move
-  ISF. Keep ISF in `adapters.rs` and delete the FSM blocks in place;
+- `2026-05-18`: `.3`/`.4` re-scoped. `AdapterTarget::Fsm`,
+  `AdapterArtifact.fsm`, `FsmAdapterArtifact`, and the FSM code/tests are
+  mutually dependent and cannot land in separately-compiling pieces, so the
+  original "narrow types (`.3`) then delete bulk (`.4`)" split is infeasible
+  under per-commit signoff. `.3` is re-scoped to HDL-only (compiles
+  standalone); `.4` is the single atomic FSM removal (cannot split into
+  independently green sub-commits — signoff requires each commit compile +
+  CI green, and any partial FSM removal leaves the tree non-compiling).
+- `2026-05-18` (revises the module-extraction item, user decision): do NOT
+  physically move ISF. Keep ISF in `adapters.rs` and delete the FSM blocks in place;
   `adapters.rs` naturally becomes the ISF adapter file (optional rename
   deferred to `.7`). Lower churn/risk than a cross-module move on a 28K-line
   file. `.2` is therefore re-scoped to only de-coupling the ISF tests from
@@ -209,6 +224,7 @@ Scope reality (surveyed 2026-05-18):
 | --- | --- | --- | --- |
 | `2026-05-18` | `ISF-ONLY-CONSOLIDATION.1` | docs-only diff audit (no `.rs` changed) | `passed` |
 | `2026-05-18` | `ISF-ONLY-CONSOLIDATION.2` | 3 ISF tests + fsmgen strict; full `scripts/run_ci.sh` | `passed` |
+| `2026-05-18` | `ISF-ONLY-CONSOLIDATION.3` | no HDL refs; standalone compile; full `scripts/run_ci.sh` | `passed` |
 
 ## Commit Log
 
@@ -216,6 +232,7 @@ Scope reality (surveyed 2026-05-18):
 | --- | --- | --- |
 | `ISF-ONLY-CONSOLIDATION.1` | `ISF-ONLY-CONSOLIDATION.1 — adopt ISF-only adapter strategy in canonical docs` | Docs only; ROADMAP R6 spliced (~279 FSM-criteria lines removed) |
 | `ISF-ONLY-CONSOLIDATION.2` | `ISF-ONLY-CONSOLIDATION.2 — decouple ISF tests from FSM-only fixtures` | Test-only; 3 ISF tests via generic pipeline; re-scoped (in-place FSM deletion) |
+| `ISF-ONLY-CONSOLIDATION.3` | `ISF-ONLY-CONSOLIDATION.3 — remove HDL (SystemVerilog/Verilog/VHDL) adapter surface` | HDL-only; compiles standalone |
 
 ## Changelog
 

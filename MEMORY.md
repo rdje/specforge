@@ -24,14 +24,14 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `284de01a` (pre-commit baseline; the ISF-ONLY-CONSOLIDATION.2 commit is not yet created at time of this update)
-- latest_commit_brief_message: ISF-ONLY-CONSOLIDATION.1 — adopt ISF-only adapter strategy in canonical docs
-- note: 2026-05-18 — `R6-ISF-ADAPTER` complete+pushed. `ISF-ONLY-CONSOLIDATION` (7 leaves, lane R6) FULL `.1`–`.7` batch authorized and executing. `.1` (doc strategy) committed `284de01a`; `.2` (ISF tests decoupled from FSM-only fixtures, re-scoped to in-place FSM deletion) done, committing now.
+- latest_commit_hash: `b2bf525e` (pre-commit baseline; the ISF-ONLY-CONSOLIDATION.3 commit is not yet created at time of this update)
+- latest_commit_brief_message: ISF-ONLY-CONSOLIDATION.2 — decouple ISF tests from FSM-only fixtures
+- note: 2026-05-18 — `ISF-ONLY-CONSOLIDATION` FULL `.1`–`.7` batch executing. `.1`(`284de01a`)/`.2`(`b2bf525e`) committed; `.3` (HDL-only removal) done, committing now. Next: `.4` = the single atomic FSM removal (largest slice).
 
 ## Active batch status
 - batch: `ISF-ONLY-CONSOLIDATION` (user-authorized full `.1`–`.7`, lane R6) — EXECUTING
-- completed_count: `.1` (`284de01a`) committed; `.2` done, committing now; `.3`–`.7` pending
-- `.2` re-scope decision: keep ISF in `adapters.rs`, delete FSM in place (no module move). `build_intent_ir_from_markdown` is generic and MUST be retained in `.4` (ISF tests depend on it).
+- completed_count: `.1` (`284de01a`) + `.2` (`b2bf525e`) committed; `.3` done, committing now; `.4`–`.7` pending
+- KEY decisions: keep ISF in `adapters.rs` (no module move); `.3`=HDL-only (done); `.4`=ATOMIC FSM removal (cannot split into compiling sub-commits — AdapterTarget::Fsm + AdapterArtifact.fsm + FsmAdapterArtifact + FSM code/tests are mutually dependent). `build_intent_ir_from_markdown` is generic and MUST be retained in `.4` (ISF tests depend on it).
 - per-leaf rule: full COMMIT.md workflow after every leaf; `scripts/run_ci.sh` green at every code/fixture/mdBook-touching leaf; task-scoped commits not deferred
 - push policy: push the completed batch after `.7` + final `scripts/run_ci.sh` gate (COMMIT.md batch rule), unless ~30 ahead first
 - sequencing: `.1` doc strategy (done) → `.2` extract ISF module → `.3` ISF-only typed surface → `.4` delete FSM bulk (will split) → `.5` fixture triage → `.6` mdBook sweep (will split) → `.7` reconcile+close+push
@@ -39,6 +39,7 @@
 - branch: `2` ahead of `origin/main` pre-`.1` (under ~30)
 
 ## Recent commit chain (last 10)
+- `b2bf525e` ISF-ONLY-CONSOLIDATION.2 — decouple ISF tests from FSM-only fixtures
 - `284de01a` ISF-ONLY-CONSOLIDATION.1 — adopt ISF-only adapter strategy in canonical docs
 - `b9824bae` Create ISF-ONLY-CONSOLIDATION task tree — drop HDL + .fsm, keep only .isf
 - `83616ead` R6-ISF-ADAPTER.5 — close tree + push batch

@@ -48,6 +48,14 @@
   fsmgen `--strict --check --json`, which is a stronger end-to-end signal
   than the prior hand-built FSM fixture. `build_intent_ir_from_markdown`
   must be RETAINED in `.4` (generic, ISF tests depend on it).
+- `.3`/`.4` re-scoped: `AdapterTarget::Fsm`, `AdapterArtifact.fsm`,
+  `FsmAdapterArtifact`, and FSM code/tests are mutually dependent — there
+  is no partial removal that compiles, so the original "narrow types then
+  delete bulk" split is infeasible under per-commit signoff. `.3` is now
+  HDL-only (compiles standalone, small, clean); `.4` is the single atomic
+  FSM removal. `.3` done: removed all SystemVerilog/Verilog/VHDL variants,
+  plans, dispatch arms, source defaults, and CLI args; only `Fsm`/`Isf`
+  remain pending `.4`.
 
 ## 2026-05-17 session — R6-ISF-ADAPTER batch (ISF ownership backfill + hardening)
 
