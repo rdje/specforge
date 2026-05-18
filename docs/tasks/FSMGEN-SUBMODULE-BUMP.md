@@ -62,16 +62,31 @@ submodule.
   Children: `.1`, `.2`, `.3`, `.4`
 
 - ID: `FSMGEN-SUBMODULE-BUMP.1`
-  Status: `pending`
+  Status: `done`
   Goal: bump the pin `effe591d → 9bfb9a20`; smoke the new binary; then
   **empirically audit the user's claim** — F1 (`sf-isf-contract-eventually-flat`)
-  and F2 (`sf-isf-stage-ready-valid`) bundle inputs now pass `--strict
-  --check --json`, and the nested `(within N)` form SPECFORGE emits still
-  passes
-  Acceptance: pin == `9bfb9a20`; submodule clean; F1+F2 inputs `success:true`
-  on the new binary; nested-contract baseline still `success:true`
-  Verification: `pending`
-  Commit: `pending`
+  and F2 (`sf-isf-stage-ready-valid`) findings are fixed on the new binary,
+  and the nested `(within N)` form SPECFORGE emits still passes
+  Acceptance: pin == `9bfb9a20`; submodule clean; both reported findings
+  verified fixed on the new binary; nested-contract baseline still
+  `success:true`
+  Verification: `passed` (audited, not assumed) — pin `effe591d →
+  9bfb9a20`, `git -C subs/fsmgen status` CLEAN, `--capability-manifest`
+  exit 0. **F1 fixed**: F1 bundle input `success:true`,
+  `diagnostic_count:0`, and now emits JSON (was exit 255 / 0 bytes — the
+  `.3` JSON-on-strict-reject fix also confirmed). **F2 finding fixed**:
+  an isolated `(transaction … (stage s1 (ready REQ)(valid ACK)) …)` is
+  `success:true` on the new binary (was "unsupported subclause 'ready'").
+  Nested `(eventually s (within N))` baseline SPECFORGE emits still
+  `success:true` (no regression). NUANCE recorded honestly: the F2
+  *bundle* input still returns `success:false`, but with a NEW unrelated
+  diagnostic `isf_priority_mixed_timing_conflict on ADDRESS` — the
+  minimized repro injected the stage onto a corpus head that already
+  rule-drives `ADDRESS`, so now that stages are processed FSMGen
+  correctly flags that artifact's self-conflict. This is correct FSMGen
+  behavior on a self-conflicting minimization artifact, NOT a remaining
+  stage bug; `.3` refreshes the F2 bundle's resolution note accordingly.
+  Commit: `see Commit Log`
 
 - ID: `FSMGEN-SUBMODULE-BUMP.2`
   Status: `pending`
@@ -106,8 +121,8 @@ submodule.
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `FSMGEN-SUBMODULE-BUMP.1` | `pending` | Bump + audit the fix claim before anything depends on it |
-| 2 | `FSMGEN-SUBMODULE-BUMP.2` | `pending` | Regression on the new ground-truth binary |
+| 1 | `FSMGEN-SUBMODULE-BUMP.1` | `done` | Pinned `9bfb9a20`; both findings audited fixed (F2-bundle conflict nuance recorded) |
+| 2 | `FSMGEN-SUBMODULE-BUMP.2` | `pending` | Next — full CI regression on the new ground-truth binary |
 | 3 | `FSMGEN-SUBMODULE-BUMP.3` | `pending` | Reconcile the reporting/feedback paper trail |
 | 4 | `FSMGEN-SUBMODULE-BUMP.4` | `pending` | Close + sync |
 
@@ -125,6 +140,16 @@ submodule.
   `.3`, not executed here (scope discipline + `fsmgen-contract-authority`:
   re-confirm against the new binary before lowering to a previously-rejected
   construct).
+- `2026-05-18` (`.1` audited finding — picky verification paid off): the
+  commit subject `STAGE-CONTRACT-BUGS.2: accept ready-valid stages` is
+  TRUE (isolated `(stage …)` now `success:true`), but the F2 *bundle*
+  input still fails — with a NEW, correct `isf_priority_mixed_timing_conflict`
+  because the minimized repro reused corpus signal `ADDRESS` for both a
+  rule and the stage `valid`. Lesson: the reported bug is fixed; the
+  bundle artifact has an unrelated self-conflict from minimization. Do
+  not report "F2 still broken" (false) nor "F2 bundle passes" (false) —
+  the precise truth is recorded. `.3` will annotate the F2 bundle with
+  this resolution rather than claim a clean pass.
 
 ## Open Questions
 
@@ -139,13 +164,14 @@ submodule.
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
-| `2026-05-18` | `FSMGEN-SUBMODULE-BUMP.1` | `pending` | `pending` |
+| `2026-05-18` | `FSMGEN-SUBMODULE-BUMP.1` | pin bump + binary smoke + F1/F2/nested empirical audit on new binary | `passed` (F1 fixed+JSON; F2 stage construct fixed isolated; F2-bundle self-conflict nuance recorded; nested baseline no regression) |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
-| `FSMGEN-SUBMODULE-BUMP.1` | `pending` | `pending` |
+| `FSMGEN-SUBMODULE-BUMP` (tree) | `FSMGEN-SUBMODULE-BUMP — track pin to upstream that fixed both findings` (`d3f63f9c`) | tree + index |
+| `FSMGEN-SUBMODULE-BUMP.1` | `FSMGEN-SUBMODULE-BUMP.1 — pin subs/fsmgen 9bfb9a20; audit both findings fixed` | submodule pin bump; F1✓ F2-construct✓ |
 
 ## Changelog
 

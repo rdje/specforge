@@ -2,6 +2,27 @@
 
 ## 2026-05-18 (Post-ISF-ONLY audit + PNT remediation)
 
+### FSMGEN-SUBMODULE-BUMP.1 — pin subs/fsmgen 9bfb9a20; audit both findings fixed
+- `subs/fsmgen` pin bumped `effe591d → 9bfb9a20` (upstream `origin/main`),
+  which carries FSMGen's explicit fixes for the two SPECFORGE-filed
+  findings (`STAGE-CONTRACT-BUGS.1` flat eventual contracts / `.2`
+  ready-valid stages / `.3` ISF check JSON failures). Submodule working
+  tree clean — this is a sanctioned pin move, not submodule patching.
+- Empirically audited on the new binary (not trusted from commit
+  subjects): **F1 fixed** — flat `(eventually s within N)`
+  `success:true`, `diagnostic_count:0`, and now emits JSON (was exit
+  255 / 0 bytes; the `.3` fix confirmed too). **F2 finding fixed** — an
+  isolated `(transaction … (stage s1 (ready REQ)(valid ACK)) …)` is
+  `success:true` (was "unsupported subclause 'ready'"). Nested
+  `(within N)` form SPECFORGE actually emits still `success:true` (no
+  regression).
+- Honest nuance recorded: the F2 *bundle* input still returns
+  `success:false` — but now with a NEW, correct
+  `isf_priority_mixed_timing_conflict on ADDRESS` because the minimized
+  repro reused a corpus signal for both a rule and the stage `valid`.
+  The reported bug is fixed; the bundle artifact has an unrelated
+  self-conflict from minimization (annotated in `.3`).
+
 - Audit (codebase vs roadmap vs book) found: (critical) `temporal_rules`
   extracted but never lowered to `.isf` and `transaction_count`
   misreports it across the whole real corpus; orphaned `.fsm`-era IR;
