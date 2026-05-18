@@ -91,16 +91,18 @@ is **only true for two of them**. Verified consumers:
   Commit: `pending`
 
 - ID: `ISF-ONLY-IR-PRUNE.3`
-  Status: `blocked`
+  Status: `superseded`
   Goal: >
-    `regular_states` / `state_transitions` removal. BLOCKED: removing
-    these regresses R10/R15c (VLM state-machine extraction), R15e
-    (7 `vlm_state_machine_*` fixtures), R7 (state-graph validation
-    findings), and R15f priors. Not silent work.
-  Acceptance: `Only actioned under an explicit user decision that re-scopes or accepts those regressions.`
-  Blocker: User premise ("`.fsm` leftover") is incorrect for these two — they are R10/R15c/R15e/R7/R15f load-bearing. Unblock condition: explicit user decision to either (a) keep them as the canonical state-graph surface and close this leaf as `superseded`, or (b) accept + re-scope the R10/R15e/R7 regressions. Until then this leaf stays OUT of the PNT frontier.
-  Verification: `pending`
-  Commit: `pending`
+    `regular_states` / `state_transitions` removal. SUPERSEDED by user
+    decision 2026-05-18: keep them as the canonical state-graph surface
+    (R10/R15c VLM state-machine extraction, R15e `vlm_state_machine_*`
+    fixtures, R7 state-graph validation, R15f priors). They are NOT
+    `.fsm` leftovers; removal is explicitly rejected as a regression.
+    No removal action; `.2` prunes only `init_assignments` /
+    `decision_tree_fragments`.
+  Acceptance: `Superseded — keep regular_states/state_transitions; audit picky-auditor catch upheld.`
+  Verification: `passed` — user decision (2026-05-18) "keep them; close .3 as superseded"; no regression
+  Commit: `(recorded with the .3 supersede continuity commit)`
 
 - ID: `ISF-ONLY-IR-PRUNE.4`
   Status: `pending`
@@ -115,8 +117,8 @@ is **only true for two of them**. Verified consumers:
 | --- | --- | --- | --- |
 | 1 | `ISF-ONLY-IR-PRUNE.1` | `pending` | Analysis gates the safe removal |
 | 2 | `ISF-ONLY-IR-PRUNE.2` | `pending` | Prune only the confirmed-dead surfaces |
-| — | `ISF-ONLY-IR-PRUNE.3` | `blocked` | Needs explicit user decision (R10/R15e conflict) |
-| 3 | `ISF-ONLY-IR-PRUNE.4` | `pending` | Close after .2 + .3 resolved |
+| — | `ISF-ONLY-IR-PRUNE.3` | `superseded` | User decision 2026-05-18: keep state-graph; no removal |
+| 3 | `ISF-ONLY-IR-PRUNE.4` | `pending` | Close after .2 (.3 resolved as superseded) |
 
 ## Decisions
 
@@ -125,6 +127,10 @@ is **only true for two of them**. Verified consumers:
   `.fsm`-era prune candidates; `regular_states` / `state_transitions`
   are R10/R15c/R15e/R7/R15f load-bearing and are NOT removed without an
   explicit user decision (recorded as blocked `.3`).
+- `2026-05-18` (user decision): keep `regular_states` /
+  `state_transitions` as the canonical state-graph surface; `.3`
+  `superseded`, no regression. Tree scope is now firmly: prune only
+  `init_assignments` / `decision_tree_fragments` (gated by `.1`).
 
 ## Open Questions
 
@@ -134,9 +140,9 @@ is **only true for two of them**. Verified consumers:
 
 ## Blockers
 
-- `ISF-ONLY-IR-PRUNE.3` blocked — see leaf. Unblock = explicit user
-  decision on the state-graph surfaces given the R10/R15c/R15e/R7/R15f
-  dependency.
+- None. `ISF-ONLY-IR-PRUNE.3` was blocked pending a user decision on the
+  state-graph surfaces; **resolved 2026-05-18** — user chose "keep them;
+  close `.3` as superseded". No regression to R10/R15c/R15e/R7/R15f.
 
 ## Verification Log
 
