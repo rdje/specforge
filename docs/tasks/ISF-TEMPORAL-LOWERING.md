@@ -69,13 +69,65 @@ temporal/clock-tick behavior is extracted and then silently dropped from
   Commit: `ISF-TEMPORAL-LOWERING.1 — FSMGen-spec-grounded temporal_rules→ISF mapping decision`
 
 - ID: `ISF-TEMPORAL-LOWERING.2`
+  Status: `active`
+  Goal: `Implement temporal_rules lowering + metric reconciliation.`
+  Children: `.2.1`, `.2.2`, `.2.3`, `.2.4`
+  Split rationale (2026-05-18): real corpus = 387 temporal_rules (only 28
+  with cycle_window), predominantly `SignalStable`/`SignalValue`
+  invariant-shaped — no large trivially-safe `(rule …)` subset. The fix
+  genuinely requires new FSMGen transaction-internal constructs
+  (`(contract …)`, `(stage …)`) that must pass `fsmgen --strict --check
+  --json`, so this is split into independently CI-greenable sub-leaves
+  rather than one risky multi-construct slice.
+
+- ID: `ISF-TEMPORAL-LOWERING.2.1`
   Status: `pending`
   Goal: >
-    Implement `temporal_rules` lowering in `IsfIr::from_intent_ir` per the
-    `.1` decision, and reconcile `build_isf_adapter_artifact` so every
-    reported count matches emitted content (no double counting vs
-    conditional/transaction sources). Focused tests.
-  Acceptance: `temporal_rules emit ISF per .1; counts == emitted; scripts/run_ci.sh green. May split.`
+    Extend the typed `IsfIr` model + `render` with the spec-supported
+    transaction-internal constructs `(contract <name> (eventually
+    <signal> within <N>))` (`bounded_eventually`) and `(stage <phase>
+    (ready <r>)(valid <v>))` (`ready_valid_barrier`), wired only into
+    `render`/`render_transaction` (no `from_intent_ir` behavior yet).
+    Add a focused render unit test proving exact emitted text shape, and
+    a hand-built fixture proving the emitted forms pass
+    `fsmgen --strict --check --json`.
+  Acceptance: `Typed contract/stage constructs render to the spec shapes; fsmgen-strict accepts a hand-built sample; scripts/run_ci.sh green.`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `ISF-TEMPORAL-LOWERING.2.2`
+  Status: `pending`
+  Goal: >
+    Wire `temporal_rules` with a `cycle_window` → synthetic
+    `(transaction … (contract <rule_id> (eventually <consequent_signal>
+    within <N>)))`; consequent `HandshakeComplete{valid,ready}` →
+    transaction `(stage <phase> (ready <ready>)(valid <valid>))`. Per
+    `.1` mapping #1/#2.
+  Acceptance: `Windowed + handshake temporal_rules lowered per .1; fsmgen-strict green; scripts/run_ci.sh green.`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `ISF-TEMPORAL-LOWERING.2.3`
+  Status: `pending`
+  Goal: >
+    Wire value/guard→drive temporal_rules (no window) → actor
+    `(rule <rule_id> <antecedent_condition> (<sig> <val>))` per `.1` #3;
+    temporal_rules whose predicates have no representable supported ISF
+    construct (e.g. bare `SignalStable` with no window) → explicit
+    residual decision per `.1` #4 (do NOT fabricate syntax).
+  Acceptance: `Guard→drive temporal_rules emit (rule …); unrepresentable → residual decision; fsmgen-strict green; scripts/run_ci.sh green.`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `ISF-TEMPORAL-LOWERING.2.4`
+  Status: `pending`
+  Goal: >
+    Reconcile `build_isf_adapter_artifact` so every reported count
+    reflects emitted content: `transaction_count` counts emitted
+    transactions (incl. temporal-synthesized) only; temporal rules
+    emitted as `(rule …)` count under rules; unrepresentable count as
+    residual. No metric counts a surface the emitter ignores.
+  Acceptance: `Every count == emitted content; regression locks it; scripts/run_ci.sh green.`
   Verification: `pending`
   Commit: `pending`
 
@@ -102,9 +154,13 @@ temporal/clock-tick behavior is extracted and then silently dropped from
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `ISF-TEMPORAL-LOWERING.1` | `done` | Spec-grounded mapping recorded |
-| 2 | `ISF-TEMPORAL-LOWERING.2` | `pending` | Next — implement + reconcile metrics |
-| 3 | `ISF-TEMPORAL-LOWERING.3` | `pending` | Prove it end-to-end incl. fsmgen strict |
-| 4 | `ISF-TEMPORAL-LOWERING.4` | `pending` | Close + doc sync |
+| — | `ISF-TEMPORAL-LOWERING.2` | `active` | Container — split into `.2.1`–`.2.4` |
+| 2 | `ISF-TEMPORAL-LOWERING.2.1` | `pending` | Next — typed contract/stage render constructs |
+| 3 | `ISF-TEMPORAL-LOWERING.2.2` | `pending` | Wire windowed/handshake temporal_rules |
+| 4 | `ISF-TEMPORAL-LOWERING.2.3` | `pending` | Wire guard→drive; residual for unrepresentable |
+| 5 | `ISF-TEMPORAL-LOWERING.2.4` | `pending` | Reconcile artifact metrics |
+| 6 | `ISF-TEMPORAL-LOWERING.3` | `pending` | End-to-end regression incl. fsmgen strict |
+| 7 | `ISF-TEMPORAL-LOWERING.4` | `pending` | Close + doc sync |
 
 ## Decisions
 
@@ -150,11 +206,20 @@ temporal/clock-tick behavior is extracted and then silently dropped from
     `temporal_*` count for rules emitted as `(rule …)` / residual).
     No metric may count a surface the emitter ignores.
 
+- `2026-05-18` (`.2` honest outcome — PNT rule 5): `.2` split into
+  `.2.1`–`.2.4`. Corpus evidence (387 temporal_rules, 28 windowed,
+  mostly `SignalStable`/`SignalValue`) showed no large trivially-safe
+  subset; the fix requires new fsmgen-strict-validated transaction
+  constructs, so it must land as independently CI-greenable sub-leaves
+  (render constructs → wire windowed/handshake → wire guard→drive +
+  residual → reconcile metrics) rather than one risky multi-construct
+  slice.
+
 ## Open Questions
 
 - Whether some `temporal_rules` cannot map to any supported ISF construct;
   if so they must be preserved as explicit residual decisions rather than
-  fabricated — resolved during `.1`.
+  fabricated — `.1` decided this (mapping #4); `.2.3` implements it.
 
 ## Blockers
 
