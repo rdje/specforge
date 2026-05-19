@@ -92,7 +92,7 @@ ready/valid `(stage …)`).
   Commit: `see Commit Log`
 
 - ID: `R16-CONTRACT-IR.3`
-  Status: `in_progress`
+  Status: `done`
   Goal: >
     **Parity-preserving re-point only** (no behaviour change). Populate
     `actor_contracts` from `temporal_rules` in the SemanticIr/IntentIr
@@ -104,8 +104,24 @@ ready/valid `(stage …)`).
     `temporal_rules` consumers (converge snapshot / validate /
     learn_priors, the `ISF-ONLY-IR-PRUNE.1` method) and project-or-migrate.
   Acceptance: `Emitted .isf is semantically identical pre/post on the real corpus (parity gate); fsmgen-strict tests green; scripts/run_ci.sh green.`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — parity proven three independent ways:
+    (1) by-construction pointwise oracle test
+    `classify_actor_contract_is_parity_equivalent_to_classify_temporal_rule`
+    (13-shape battery incl. multi-antecedent, windowed-stable, every
+    residual kind) asserts `classify_actor_contract ==
+    classify_temporal_rule`; (2) LIVE nvme corpus via the back-compat
+    fallback: `transaction_count=0`, `rule_count=250`, `92` temporal
+    residuals == the ISF-TEMPORAL-LOWERING.2.4 baseline exactly, emitted
+    `.isf` `fsmgen --strict --check` `success:true`; (3) the existing
+    e2e + fsmgen-strict tests (real markdown→IntentIR→`.isf`) green
+    through the new populate+re-point. `classify_temporal_rule` + 3
+    helpers retained `#[cfg(test)]` as the oracle. Back-compat fallback
+    added (pre-ContractIR `IntentIR` with no `actor_contracts` projects
+    from `temporal_rules` → identical `.isf`). Consumer audit → KEEP
+    `temporal_rules` (load-bearing: `validate.rs` 96 refs R7/R15b
+    diagnostics, `learn_priors`, + the fallback source). Full
+    `scripts/run_ci.sh` green — 1063 passed, 0 failed, mdBook builds.
+  Commit: `see Commit Log`
 
 - ID: `R16-CONTRACT-IR.4`
   Status: `pending`
@@ -136,8 +152,8 @@ ready/valid `(stage …)`).
 | --- | --- | --- | --- |
 | 1 | `R16-CONTRACT-IR.1` | `done` | Design fixed (placement + grammar + migration/parity + subsumption); book mirror added |
 | 2 | `R16-CONTRACT-IR.2` | `done` | Typed `ir/contract.rs` + serde + conversion + 7 tests; additive field; CI 1061/0 |
-| 3 | `R16-CONTRACT-IR.3` | `in_progress` | Slice 1 done (parity-faithful window-first conversion + `source_rule_id`, CI 1062/0). Remaining: `classify_actor_contract` + populate + re-point `.isf` call site + corpus parity-diff gate + `temporal_rules` consumer audit |
-| 4 | `R16-CONTRACT-IR.4` | `pending` | Post-parity behaviour change — enable `HandshakeBarrier → (stage …)` (subsumed `ISF-HANDSHAKE-STAGE-LOWERING`), fsmgen-strict-verified |
+| 3 | `R16-CONTRACT-IR.3` | `done` | Parity re-point complete: classify_actor_contract + populate + fallback; parity proven 3 ways (oracle test / live nvme baseline / e2e+fsmgen-strict); temporal_rules kept (audit); CI 1063/0 |
+| 4 | `R16-CONTRACT-IR.4` | `pending` | **Next** — post-parity behaviour change: enable `HandshakeBarrier → (stage …)` (subsumed `ISF-HANDSHAKE-STAGE-LOWERING`), fsmgen-strict-verified on the corpus |
 | 5 | `R16-CONTRACT-IR.5` | `pending` | Close + doc/ROADMAP sync |
 
 ## Dependencies / Order
@@ -269,6 +285,21 @@ marked `superseded` → `R16-CONTRACT-IR`.
 - `2026-05-19`: Highest program leverage (per `R16-INTENT-CAPTURE`
   thesis): representation loss is currently misdiagnosed as extraction
   loss. Created `proposed`; first to be promoted.
+- `2026-05-19` (`.3` slice 2 — re-point complete + 2 more honest catches):
+  (a) the re-point made `.isf` depend on `actor_contracts`, which a
+  pre-ContractIR persisted `IntentIR` lacks → it would emit *no*
+  temporal `.isf` for old artifacts. Added a back-compat fallback:
+  empty `actor_contracts` ⇒ project from `temporal_rules` via the same
+  lossless conversion (parity for old & new). (b) the 4 old fns became
+  production-dead; retained `#[cfg(test)]` as the parity oracle (test
+  build only), `TemporalRuleRecord`/`TemporalPredicateRecord` imports
+  test-gated. Added `guard_candidates` to `ActorContract` so
+  `classify_actor_contract` reproduces `temporal_antecedent_condition`
+  EXACTLY for the multi-antecedent case (parity by construction, not
+  gate-and-hope). Consumer audit (`ISF-ONLY-IR-PRUNE.1` method):
+  `temporal_rules` is KEPT — load-bearing for `validate.rs` (96 refs,
+  R7/R15b diagnostics), `learn_priors`, and the fallback; `actor_contracts`
+  is the additive typed projection lowering consumes.
 - `2026-05-19` (`.3` parity finding — picky-auditor catch before any
   re-point): the classifier's `temporal_consequent_signal` treats
   `SignalStable`/`ActorMaintainsSignalStable`/`ActorSamplesSignal`/
@@ -339,6 +370,7 @@ marked `superseded` → `R16-CONTRACT-IR`.
 | `2026-05-19` | `R16-CONTRACT-IR.1` | current types re-verified; full design recorded (placement/grammar/migration/parity/subsumption); every `TemporalRuleRecord`/`TemporalPredicateRecord` case mapped incl. residual-now-modelled; book mirror added; mdBook builds | `passed` (docs-only) |
 | `2026-05-19` | `R16-CONTRACT-IR.2` | `ir/contract.rs` typed model + serde + `contract_from_temporal_rule` + 7 unit tests; additive unpopulated `actor_contracts` field; collision + Observe refinements; full `scripts/run_ci.sh` | `passed` (1061 passed, 0 failed; mdBook builds; zero artifact churn) |
 | `2026-05-19` | `R16-CONTRACT-IR.3` (slice 1) | parity-faithful window-first conversion rewrite (windowed signal-bearing → Eventually for all predicate kinds) + `source_rule_id`; +1 parity unit test; full `scripts/run_ci.sh` | `passed` (1062 passed, 0 failed; mdBook builds; zero `.isf`/artifact change — unpopulated/unconsumed) |
+| `2026-05-19` | `R16-CONTRACT-IR.3` (slice 2 — done) | `classify_actor_contract` + `guard_candidates` + populate builders + back-compat fallback + re-point `.isf` loop; pointwise oracle parity test; LIVE nvme baseline match (0/250/92, strict `success:true`); consumer audit (keep `temporal_rules`); full `scripts/run_ci.sh` | `passed` (1063 passed, 0 failed; mdBook builds; parity proven 3 ways) |
 
 ## Commit Log
 
@@ -346,6 +378,8 @@ marked `superseded` → `R16-CONTRACT-IR`.
 | --- | --- | --- |
 | `R16-CONTRACT-IR.1` | `R16-CONTRACT-IR.1 — ContractIR design (placement + operator algebra + migration/parity + subsumption)` | docs-only; book mirror per `BOOK-METHOD-DOC` |
 | `R16-CONTRACT-IR.2` | `R16-CONTRACT-IR.2 — implement typed ir/contract.rs model + serde + conversion` | first R16 code; additive unpopulated field; CI 1061/0 |
+| `R16-CONTRACT-IR.3` (s1) | `R16-CONTRACT-IR.3 (slice 1) — parity-faithful window-first conversion + source_rule_id` (`4c5d34e0`) | CI 1062/0; zero `.isf` change |
+| `R16-CONTRACT-IR.3` (s2) | `R16-CONTRACT-IR.3 (slice 2) — classify_actor_contract + re-point + fallback; parity proven` | CI 1063/0; `.3` DONE |
 
 ## Changelog
 
@@ -358,6 +392,14 @@ marked `superseded` → `R16-CONTRACT-IR`.
   map with residual-cases-now-modelled; corpus CI-parity gate;
   `ISF-HANDSHAKE-STAGE-LOWERING` subsumed). Thorough mirror added to the
   mdBook per `BOOK-METHOD-DOC`. Frontier → `.2` (implement typed model).
+- `2026-05-19`: `.3` DONE — slice 2 landed `classify_actor_contract`
+  (reproduces `classify_temporal_rule` exactly via obligation +
+  `guard_candidates` + `source_rule_id`), populated `actor_contracts`
+  in both builders, added the pre-ContractIR back-compat fallback, and
+  re-pointed the `.isf` lowering loop. Parity proven 3 ways (pointwise
+  oracle test / live nvme baseline 0/250/92 strict-valid / e2e+fsmgen
+  CI). Consumer audit → keep `temporal_rules`. CI 1063/0. Frontier →
+  `.4` (post-parity `HandshakeBarrier → (stage …)` behaviour change).
 - `2026-05-19`: `.3` slice 1 — picky-auditor caught a latent corpus-wide
   parity break (windowed `SignalStable`/sample/actor-drive currently →
   Contract, but `.2` conversion mapped them to Stable/Observe+Residual).

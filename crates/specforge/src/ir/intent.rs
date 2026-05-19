@@ -174,6 +174,8 @@ impl IntentIr {
         let register_records = semantic_ir.register_records.clone();
         let timing_constraints = semantic_ir.timing_constraints.clone();
         let temporal_rules = semantic_ir.temporal_rules.clone();
+        // R16-CONTRACT-IR.3: carry the typed ContractIR forward.
+        let actor_contracts = semantic_ir.actor_contracts.clone();
         let temporal_conflicts = semantic_ir.temporal_conflicts.clone();
         let signal_constraints = semantic_ir.signal_constraints.clone();
         let conditional_rules = semantic_ir.conditional_rules.clone();
@@ -240,7 +242,7 @@ impl IntentIr {
             register_records,
             timing_constraints,
             temporal_rules,
-            actor_contracts: Vec::new(),
+            actor_contracts,
             temporal_conflicts,
             signal_constraints,
             conditional_rules,

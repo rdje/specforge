@@ -249,6 +249,12 @@ impl SemanticIr {
             &known_actor_names,
             prior_guidance.as_ref(),
         );
+        // R16-CONTRACT-IR.3: project the typed ContractIR alongside
+        // `temporal_rules` (lossless 1:1; `.isf` lowering consumes this).
+        let actor_contracts = temporal_rules
+            .iter()
+            .map(crate::ir::contract::contract_from_temporal_rule)
+            .collect::<Vec<_>>();
         let temporal_conflicts = build_temporal_conflicts(
             &temporal_rules,
             signal_polarities.as_slice(),
@@ -317,7 +323,7 @@ impl SemanticIr {
             register_records,
             timing_constraints,
             temporal_rules,
-            actor_contracts: Vec::new(),
+            actor_contracts,
             temporal_conflicts,
             signal_constraints,
             conditional_rules,

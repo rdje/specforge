@@ -15,8 +15,13 @@ use crate::ir::semantic::{
     ControlActionRecord, ControlBinaryOperator, ControlBranchRecord,
     ControlCompoundUpdateOperation, ControlExpressionRecord, ControlReferenceSuffix,
     ControlUnaryOperator, InterfaceSignalDirection, SymbolDefinitionKind, SystemResetKind,
-    SystemResetPolarity, TemporalPredicateRecord, TemporalRuleRecord,
+    SystemResetPolarity,
 };
+// R16-CONTRACT-IR.3: `TemporalRuleRecord`/`TemporalPredicateRecord` are now
+// referenced only by the test-only parity oracle (`classify_temporal_rule`
+// + helpers) and the test module — production lowering uses ContractIR.
+#[cfg(test)]
+use crate::ir::semantic::{TemporalPredicateRecord, TemporalRuleRecord};
 use crate::ir::source::{
     AutomationConfidence, CandidateInterpretation, ResidualDecisionPacket, WidthHint,
 };
@@ -781,8 +786,26 @@ impl IsfIr {
         // (`fsmgen-contract-authority`).
         let mut temporal_isf_rules: Vec<IsfRule> = Vec::new();
         let mut temporal_residuals: Vec<ResidualDecisionPacket> = Vec::new();
-        for rule in &intent_ir.temporal_rules {
-            match classify_temporal_rule(rule, &signal_names) {
+        // R16-CONTRACT-IR.3: lowering consumes the typed ContractIR
+        // (`actor_contracts`) via `classify_actor_contract`, which
+        // reproduces the exact `classify_temporal_rule` decision
+        // (parity gate: emitted `.isf` byte-identical on the real corpus).
+        // Back-compat: an `IntentIR` persisted before ContractIR has
+        // `temporal_rules` but no `actor_contracts` — project on the fly
+        // so adapting pre-existing artifacts stays parity-identical (the
+        // projection is the same lossless `contract_from_temporal_rule`).
+        let temporal_contracts: Vec<crate::ir::contract::ActorContract> =
+            if intent_ir.actor_contracts.is_empty() {
+                intent_ir
+                    .temporal_rules
+                    .iter()
+                    .map(crate::ir::contract::contract_from_temporal_rule)
+                    .collect()
+            } else {
+                intent_ir.actor_contracts.clone()
+            };
+        for contract in &temporal_contracts {
+            match classify_actor_contract(contract, &signal_names) {
                 TemporalRuleDisposition::Contract {
                     name,
                     signal,
@@ -819,7 +842,7 @@ impl IsfIr {
                     temporal_residuals.push(temporal_residual_packet(
                         &rule_id,
                         &reason,
-                        &rule.source_text,
+                        &contract.provenance.source_text,
                     ));
                 }
             }
@@ -1217,6 +1240,10 @@ fn collect_branch_actions(branches: &[ControlBranchRecord]) -> Vec<ControlAction
 // contract target. `HandshakeComplete` names two signals and no single
 // eventual target, so it is not represented here (ISF-TEMPORAL-LOWERING.2.3
 // maps it to a residual decision instead of fabricating syntax).
+// R16-CONTRACT-IR.3: production lowering now uses `classify_actor_contract`.
+// `classify_temporal_rule` + these helpers are retained test-only as the
+// parity ORACLE (`classify_actor_contract` must equal it pointwise).
+#[cfg(test)]
 fn temporal_consequent_signal(rule: &TemporalRuleRecord) -> Option<String> {
     rule.consequents.iter().find_map(|p| match p {
         TemporalPredicateRecord::SignalValue { signal_name, .. }
@@ -1258,6 +1285,7 @@ pub(crate) enum TemporalRuleDisposition {
 /// First consequent that is a concrete `SignalValue` (a signal name *and* a
 /// value to drive). The actor/stability/sample predicates name a signal but
 /// carry no concrete value, so they are not a representable `(rule …)` drive.
+#[cfg(test)]
 fn temporal_drive_consequent(rule: &TemporalRuleRecord) -> Option<(String, String)> {
     rule.consequents.iter().find_map(|p| match p {
         TemporalPredicateRecord::SignalValue {
@@ -1303,6 +1331,7 @@ fn isf_literal_value(raw: &str) -> Option<String> {
 /// (an unconditional rule — strict-verified accepted; the real corpus emits
 /// conditionless `(rule name (sig val))`). A bare non-`==` token guard is
 /// never produced (FSMGen strict rejects it — `sanitize_rule_condition`).
+#[cfg(test)]
 fn temporal_antecedent_condition(
     rule: &TemporalRuleRecord,
     declared_signals: &BTreeSet<String>,
@@ -1327,6 +1356,7 @@ fn temporal_antecedent_condition(
 /// `declared_signals` MUST be the exact set of signal names the emitter
 /// renders into the `.isf` interface, so the classification matches what is
 /// actually emitted (a rule/contract may only reference declared signals).
+#[cfg(test)]
 pub(crate) fn classify_temporal_rule(
     rule: &TemporalRuleRecord,
     declared_signals: &BTreeSet<String>,
@@ -1423,6 +1453,128 @@ pub(crate) fn classify_temporal_rule(
                  drive); preserved as a residual decision rather than \
                  fabricating unsupported syntax"
             .to_string(),
+    }
+}
+
+/// `R16-CONTRACT-IR.3` parity re-point: classify an `ActorContract` into
+/// the exact same `TemporalRuleDisposition` that `classify_temporal_rule`
+/// produces for its originating rule. The `contract_from_temporal_rule`
+/// conversion is window-first and structurally parallel to
+/// `classify_temporal_rule`, so the obligation, `guard_candidates`,
+/// `source_rule_id` and `declared_signals` together fully determine the
+/// FSMGen-facing decision. Per the recorded `.3` parity definition the
+/// emitted `.isf` and the Contract/Rule/residual `rule_id` sets are
+/// identical; residual reason wording is internal `adapter.json`
+/// metadata taken from the contract's recorded lowering reason.
+pub(crate) fn classify_actor_contract(
+    contract: &crate::ir::contract::ActorContract,
+    declared_signals: &BTreeSet<String>,
+) -> TemporalRuleDisposition {
+    use crate::ir::contract::{Condition, EventExpr, LoweringDisposition, Obligation, Window};
+
+    let rule_id = contract.source_rule_id.clone().unwrap_or_else(|| {
+        contract
+            .contract_id
+            .strip_prefix("contract_")
+            .unwrap_or(&contract.contract_id)
+            .to_string()
+    });
+
+    match &contract.obligation {
+        // Windowed bounded_eventually candidate — produced ONLY for a
+        // windowed rule with a single-signal consequent and a positive
+        // bound (mirrors `classify_temporal_rule` branch 1, Contract arm).
+        Obligation::Eventually {
+            target: EventExpr::Level { signal, .. },
+            window: Window::Within { max, .. },
+        } => {
+            if declared_signals.contains(signal) {
+                TemporalRuleDisposition::Contract {
+                    name: sanitize_isf_name(&rule_id),
+                    signal: signal.clone(),
+                    within: u64::from(*max),
+                }
+            } else {
+                TemporalRuleDisposition::Residual {
+                    rule_id,
+                    reason: format!(
+                        "windowed temporal rule targets signal '{}' which is not \
+                         in the emitted `.isf` interface",
+                        signal
+                    ),
+                }
+            }
+        }
+
+        // Non-windowed value drive — produced ONLY for a non-windowed
+        // `SignalValue` consequent (mirrors branch 2, Rule arm + its
+        // declared / ISF-literal gates).
+        Obligation::Drive { signal, value } => {
+            if !declared_signals.contains(signal) {
+                TemporalRuleDisposition::Residual {
+                    rule_id,
+                    reason: format!(
+                        "temporal rule drives signal '{}' which is not in the \
+                         emitted `.isf` interface",
+                        signal
+                    ),
+                }
+            } else if let Some(val) = isf_literal_value(value) {
+                // Reproduce `temporal_antecedent_condition` EXACTLY: the
+                // first SignalValue antecedent that is interface-declared
+                // with an ISF-literal value → `(== signal literal)`.
+                let condition = contract
+                    .guard_candidates
+                    .iter()
+                    .find_map(|g| {
+                        let Condition::Eq {
+                            signal: s,
+                            value: v,
+                        } = g;
+                        if declared_signals.contains(s)
+                            && let Some(lit) = isf_literal_value(v)
+                        {
+                            Some(format!("(== {} {})", s, lit))
+                        } else {
+                            None
+                        }
+                    })
+                    .unwrap_or_default();
+                TemporalRuleDisposition::Rule {
+                    name: format!("temporal_{}", sanitize_isf_name(&rule_id)),
+                    condition,
+                    signal: signal.clone(),
+                    value: val,
+                }
+            } else {
+                TemporalRuleDisposition::Residual {
+                    rule_id,
+                    reason: format!(
+                        "temporal rule target value '{}' is not an ISF literal; \
+                         fabricating a value is forbidden",
+                        value
+                    ),
+                }
+            }
+        }
+
+        // Everything else is residual (same residual SET as
+        // `classify_temporal_rule`); the reason is the contract's
+        // recorded lowering reason (internal `adapter.json` metadata per
+        // the `.3` parity definition).
+        _ => {
+            let reason = match &contract.lowering {
+                LoweringDisposition::Residual { reason } => reason.clone(),
+                LoweringDisposition::Lowerable => {
+                    "temporal rule has no representable supported ISF construct \
+                     (no positive bounded window and no concrete signal value to \
+                     drive); preserved as a residual decision rather than \
+                     fabricating unsupported syntax"
+                        .to_string()
+                }
+            };
+            TemporalRuleDisposition::Residual { rule_id, reason }
+        }
     }
 }
 
@@ -1837,6 +1989,84 @@ mod tests {
 
     fn declared(names: &[&str]) -> BTreeSet<String> {
         names.iter().map(|s| s.to_string()).collect()
+    }
+
+    // R16-CONTRACT-IR.3 PARITY GATE (by construction): for every rule
+    // shape, `classify_actor_contract(contract_from_temporal_rule(r))`
+    // must yield the SAME disposition as `classify_temporal_rule(r)` —
+    // Contract/Rule fully equal (drives the emitted `.isf`); Residual
+    // same `rule_id` (reason wording is internal `adapter.json` metadata
+    // per the recorded `.3` parity definition).
+    #[test]
+    fn classify_actor_contract_is_parity_equivalent_to_classify_temporal_rule() {
+        use crate::ir::contract::contract_from_temporal_rule;
+
+        let hs = |v: &str, r: &str| TemporalPredicateRecord::HandshakeComplete {
+            valid_signal: v.to_string(),
+            ready_signal: r.to_string(),
+            phase: TickPhase::PostTick,
+        };
+        let stable = |s: &str| TemporalPredicateRecord::SignalStable {
+            signal_name: s.to_string(),
+            from_phase: TickPhase::PreTick,
+            to_phase: TickPhase::PostTick,
+        };
+        let drives = |s: &str| TemporalPredicateRecord::ActorDrivesSignal {
+            actor_name: "M".to_string(),
+            signal_name: s.to_string(),
+            phase: TickPhase::PostTick,
+        };
+        let win = |max: u32| {
+            Some(CycleWindowRecord {
+                min_cycles: None,
+                max_cycles: Some(max),
+            })
+        };
+
+        let sigs = declared(&["ACK", "GRANT", "SEL", "ADDR"]);
+        let cases: Vec<TemporalRuleRecord> = vec![
+            t_rule("w_sv_decl", vec![], vec![sigval("ACK", "1")], win(4)),
+            t_rule("w_sv_undecl", vec![], vec![sigval("MISS", "1")], win(4)),
+            t_rule("w_sv_zero", vec![], vec![sigval("ACK", "1")], win(0)),
+            t_rule("w_stable_decl", vec![], vec![stable("ADDR")], win(2)),
+            t_rule("w_hs", vec![], vec![hs("V", "R")], win(3)),
+            t_rule(
+                "nw_sv_guarded",
+                vec![sigval("SEL", "1")],
+                vec![sigval("GRANT", "1")],
+                None,
+            ),
+            t_rule(
+                "nw_sv_nonlit",
+                vec![],
+                vec![sigval("GRANT", "addr+4")],
+                None,
+            ),
+            t_rule("nw_sv_undecl", vec![], vec![sigval("MISS", "1")], None),
+            t_rule("nw_hs", vec![], vec![hs("AWVALID", "AWREADY")], None),
+            t_rule("nw_stable", vec![], vec![stable("ADDR")], None),
+            t_rule("nw_drives", vec![], vec![drives("GRANT")], None),
+            // multi-antecedent: first SignalValue undeclared, second
+            // declared+literal — guard must select the second.
+            t_rule(
+                "nw_multi_ante",
+                vec![sigval("MISS", "1"), sigval("SEL", "1")],
+                vec![sigval("GRANT", "1")],
+                None,
+            ),
+        ];
+
+        for r in &cases {
+            let oracle = classify_temporal_rule(r, &sigs);
+            let via = classify_actor_contract(&contract_from_temporal_rule(r), &sigs);
+            match (&oracle, &via) {
+                (
+                    TemporalRuleDisposition::Residual { rule_id: a, .. },
+                    TemporalRuleDisposition::Residual { rule_id: b, .. },
+                ) => assert_eq!(a, b, "residual rule_id mismatch for {}", r.rule_id),
+                _ => assert_eq!(oracle, via, "disposition mismatch for rule '{}'", r.rule_id),
+            }
+        }
     }
 
     #[test]

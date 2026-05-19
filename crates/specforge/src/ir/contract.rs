@@ -167,6 +167,13 @@ pub struct ActorContract {
     pub kind: ContractKind,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub guard: Option<Condition>,
+    /// All `SignalValue` antecedents, in source order — the candidate
+    /// guards. The adapter (`R16-CONTRACT-IR.3`) selects the first one
+    /// that is interface-declared with an ISF-literal value, reproducing
+    /// `temporal_antecedent_condition` EXACTLY (parity by construction,
+    /// not gate-and-hope, for the multi-antecedent case).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub guard_candidates: Vec<Condition>,
     pub obligation: Obligation,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub clock_signal: Option<String>,
@@ -243,6 +250,25 @@ fn consequent_level_value(rule: &TemporalRuleRecord) -> String {
     drive_consequent(rule)
         .map(|(_, v)| v)
         .unwrap_or_else(|| "1".to_string())
+}
+
+/// All `SignalValue` antecedents, in source order, as `Eq` candidate
+/// guards (interface-independent). The adapter picks the first
+/// interface-declared + ISF-literal one — exactly
+/// `temporal_antecedent_condition`.
+fn guard_candidates_from_antecedents(rule: &TemporalRuleRecord) -> Vec<Condition> {
+    rule.antecedents
+        .iter()
+        .filter_map(|p| match p {
+            TemporalPredicateRecord::SignalValue {
+                signal_name, value, ..
+            } => Some(Condition::Eq {
+                signal: signal_name.clone(),
+                value: value.clone(),
+            }),
+            _ => None,
+        })
+        .collect()
 }
 
 /// Actor name carried by the first consequent that has one.
@@ -462,6 +488,7 @@ pub fn contract_from_temporal_rule(rule: &TemporalRuleRecord) -> ActorContract {
         actor_name: actor_from_consequents(rule),
         kind,
         guard: guard_from_antecedents(rule),
+        guard_candidates: guard_candidates_from_antecedents(rule),
         obligation,
         clock_signal: rule.clock_signal.clone(),
         edge: rule.edge,

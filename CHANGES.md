@@ -2,6 +2,40 @@
 
 ## 2026-05-19 (R16 SOTA intent-capture program scaffolded)
 
+### R16-CONTRACT-IR.3 (slice 2 — DONE) — re-point `.isf` lowering onto ContractIR
+- `classify_actor_contract` added (reproduces `classify_temporal_rule`'s
+  exact Contract|Rule|Residual decision from obligation +
+  `guard_candidates` + `source_rule_id` + declared signals); `.isf`
+  lowering loop re-pointed from `temporal_rules`/`classify_temporal_rule`
+  onto `actor_contracts`/`classify_actor_contract`; `actor_contracts`
+  populated in `SemanticIr::build` + carried in `IntentIr::build`.
+- Back-compat fallback: a pre-ContractIR `IntentIR` (no
+  `actor_contracts`) projects from `temporal_rules` via the same
+  lossless conversion — adapting old artifacts stays parity-identical.
+- Added `ActorContract.guard_candidates` (all SignalValue antecedents)
+  so the guard reproduces `temporal_antecedent_condition` EXACTLY for
+  the multi-antecedent case (parity by construction). `source_rule_id`
+  drives identical `.isf` naming.
+- `classify_temporal_rule` + 3 helpers retained `#[cfg(test)]` as the
+  parity ORACLE; new pointwise test
+  `classify_actor_contract_is_parity_equivalent_to_classify_temporal_rule`
+  (13-shape battery) asserts equivalence.
+- **Parity proven three independent ways:** (1) the pointwise oracle
+  test; (2) LIVE nvme corpus via the fallback —
+  `transaction_count=0`/`rule_count=250`/`92` temporal residuals ==
+  the ISF-TEMPORAL-LOWERING.2.4 baseline exactly, emitted `.isf`
+  `fsmgen --strict` `success:true`; (3) the existing e2e + fsmgen-strict
+  tests through the new populate+re-point.
+- Consumer audit (`ISF-ONLY-IR-PRUNE.1` method): `temporal_rules` is
+  KEPT — load-bearing (`validate.rs` 96 R7/R15b refs, `learn_priors`,
+  + the fallback source). `actor_contracts` is the additive typed
+  projection lowering consumes.
+- Honest catches recorded: clippy `doc_lazy_continuation` on the new
+  docstring (fixed, prose reworded); the pre-ContractIR-IntentIR gap
+  (fixed via the fallback). Full `scripts/run_ci.sh` green — **1063
+  passed**, 0 failed, mdBook builds. `R16-CONTRACT-IR.3` DONE; frontier
+  → `.4` (post-parity `HandshakeBarrier → (stage …)`).
+
 ### R16-CONTRACT-IR.3 (slice 1) — parity-faithful conversion + source_rule_id
 - Picky-auditor catch **before any re-point**: `classify_temporal_rule`'s
   `temporal_consequent_signal` treats `SignalStable`/sample/actor-drive
