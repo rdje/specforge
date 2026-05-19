@@ -65,14 +65,26 @@ IntentIR" the thesis requires.
   Commit: `see Commit Log`
 
 - ID: `R16-KG-PROTOCOL-ONTOLOGY.2`
-  Status: `pending`
+  Status: `done`
   Goal: implement the typed `protocol_graph` module + serde; additive
   empty fields on SemanticIr/IntentIr (serde-default + skip-if-empty,
-  zero artifact churn, parallel to `actor_contracts`); validate counts;
+  zero artifact churn, parallel to `actor_contracts`); count helpers;
   unit tests.
-  Acceptance: `Typed nodes/edges + serde + validate counts + tests; zero artifact churn; scripts/run_ci.sh green.`
-  Verification: `pending`
-  Commit: `pending`
+  Acceptance: `Typed nodes/edges + serde + count helpers + tests; zero artifact churn; scripts/run_ci.sh green.`
+  Verification: `passed` — `crates/specforge/src/ir/protocol_graph.rs`
+    added (`Channel`/`ProtocolPhase`/`Transaction`/`HandshakePair` +
+    `ChannelRole` + `ProtocolGraph` with `is_empty`/`counts`; serde
+    snake_case; empty graph ⇒ `{}`); module registered in `ir/mod.rs`;
+    additive `protocol_graph` field on `SemanticIr` (empty
+    `ProtocolGraph::default()`) and `IntentIr` (carried forward from
+    `SemanticIR`, parallel to `actor_contracts`), serde-default +
+    `skip_serializing_if = ProtocolGraph::is_empty` ⇒ **zero
+    artifact/fixture churn** (unpopulated). 3 unit tests
+    (empty/populated/serde-round-trip). Scope note: `specforge validate`
+    count *reporting* deferred to `.4` (counts are meaningless while
+    empty; `counts()` helper + tests added now — parallels the
+    `R16-CONTRACT-IR.2` bounded scope). Full `scripts/run_ci.sh` green.
+  Commit: `see Commit Log`
 
 - ID: `R16-KG-PROTOCOL-ONTOLOGY.3`
   Status: `pending`
@@ -97,8 +109,8 @@ IntentIR" the thesis requires.
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `R16-KG-PROTOCOL-ONTOLOGY.1` | `done` | Ontology design fixed; book mirror added |
-| 2 | `R16-KG-PROTOCOL-ONTOLOGY.2` | `pending` | **Next** — implement the typed `protocol_graph` module + additive empty fields |
-| 3 | `R16-KG-PROTOCOL-ONTOLOGY.3` | `pending` | Wire ContractIR channel/phase projection (parity-preserving) |
+| 2 | `R16-KG-PROTOCOL-ONTOLOGY.2` | `done` | Typed `protocol_graph` module + serde + additive empty fields + 3 tests; zero artifact churn |
+| 3 | `R16-KG-PROTOCOL-ONTOLOGY.3` | `pending` | **Next** — wire ContractIR channel/phase projection (parity-preserving; nodes empty until extraction) |
 | 4 | `R16-KG-PROTOCOL-ONTOLOGY.4` | `pending` | kg-bench fixtures + close |
 
 ## Design (`.1` output, 2026-05-19)
@@ -195,12 +207,14 @@ ships the vocabulary, not the extractor.
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-05-19` | `R16-KG-PROTOCOL-ONTOLOGY.1` | ontology design vs verified current IR; placement/schema/projection/disambiguation recorded; book mirror per BOOK-METHOD-DOC | `passed` (docs-only) |
+| `2026-05-19` | `R16-KG-PROTOCOL-ONTOLOGY.2` | typed `protocol_graph` module + serde + count helpers + 3 unit tests; additive empty fields (serde skip-if-empty); full `scripts/run_ci.sh` | `passed` (zero artifact churn) |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
-| `R16-KG-PROTOCOL-ONTOLOGY.1` | `R16-KG-PROTOCOL-ONTOLOGY.1 — ontology design (promote #2)` | docs-only; book mirror; also the `R16-INTENT-CAPTURE.2` #2 promotion |
+| `R16-KG-PROTOCOL-ONTOLOGY.1` | `R16-KG-PROTOCOL-ONTOLOGY.1 — ontology design (promote #2)` (`ba630db6`) | docs-only; book mirror; also the `R16-INTENT-CAPTURE.2` #2 promotion |
+| `R16-KG-PROTOCOL-ONTOLOGY.2` | `R16-KG-PROTOCOL-ONTOLOGY.2 — typed protocol_graph module + additive empty fields` | first KG-ONTOLOGY code; zero artifact churn |
 
 ## Changelog
 
@@ -208,3 +222,10 @@ ships the vocabulary, not the extractor.
 - `2026-05-19`: Promoted to `active` (DAG predecessor `R16-CONTRACT-IR`
   done); `.1` ontology design fixed + book mirror; concrete `.1`–`.4`
   leaves defined. Frontier → `.2` (implement typed `protocol_graph`).
+- `2026-05-19`: `.2` done — `ir/protocol_graph.rs` typed module
+  (`Channel`/`ProtocolPhase`/`Transaction`/`HandshakePair`/`ChannelRole`/
+  `ProtocolGraph`) + serde + `is_empty`/`counts` + 3 unit tests; additive
+  `protocol_graph` field on SemanticIr (empty) / IntentIr (carried
+  forward), serde skip-if-empty ⇒ zero artifact churn (CONTRACT-IR.2
+  discipline). `validate` count-reporting deferred to `.4`. Full CI
+  green. Frontier → `.3` (wire ContractIR channel/phase projection).

@@ -4,6 +4,7 @@ pub mod evidence;
 pub mod intent;
 pub mod isf_ir;
 pub mod prior_memory;
+pub mod protocol_graph;
 pub mod semantic;
 pub mod source;
 

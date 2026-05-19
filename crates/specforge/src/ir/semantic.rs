@@ -85,6 +85,15 @@ pub struct SemanticIr {
     /// artifact/fixture change in `.2`).
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub actor_contracts: Vec<crate::ir::contract::ActorContract>,
+    /// Protocol-structure KG (R16-KG-PROTOCOL-ONTOLOGY): channels /
+    /// protocol phases / transactions / handshake pairs. Additive and
+    /// empty until extraction (R16 #3/#4/#6) populates it; serde-skipped
+    /// while empty ⇒ zero artifact churn.
+    #[serde(
+        default,
+        skip_serializing_if = "crate::ir::protocol_graph::ProtocolGraph::is_empty"
+    )]
+    pub protocol_graph: crate::ir::protocol_graph::ProtocolGraph,
     /// Explicit conflicts detected across contradictory temporal value obligations.
     #[serde(default)]
     pub temporal_conflicts: Vec<TemporalConflictRecord>,
@@ -324,6 +333,7 @@ impl SemanticIr {
             timing_constraints,
             temporal_rules,
             actor_contracts,
+            protocol_graph: crate::ir::protocol_graph::ProtocolGraph::default(),
             temporal_conflicts,
             signal_constraints,
             conditional_rules,

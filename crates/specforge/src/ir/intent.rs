@@ -85,6 +85,14 @@ pub struct IntentIr {
     /// empty).
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub actor_contracts: Vec<crate::ir::contract::ActorContract>,
+    /// Protocol-structure KG (R16-KG-PROTOCOL-ONTOLOGY), carried forward
+    /// from `SemanticIR`. Additive and empty until extraction populates
+    /// it; serde-skipped while empty.
+    #[serde(
+        default,
+        skip_serializing_if = "crate::ir::protocol_graph::ProtocolGraph::is_empty"
+    )]
+    pub protocol_graph: crate::ir::protocol_graph::ProtocolGraph,
     /// Explicit conflicts detected across contradictory temporal value obligations.
     #[serde(default)]
     pub temporal_conflicts: Vec<TemporalConflictRecord>,
@@ -176,6 +184,9 @@ impl IntentIr {
         let temporal_rules = semantic_ir.temporal_rules.clone();
         // R16-CONTRACT-IR.3: carry the typed ContractIR forward.
         let actor_contracts = semantic_ir.actor_contracts.clone();
+        // R16-KG-PROTOCOL-ONTOLOGY: carry the protocol-structure KG
+        // forward (empty until extraction populates it).
+        let protocol_graph = semantic_ir.protocol_graph.clone();
         let temporal_conflicts = semantic_ir.temporal_conflicts.clone();
         let signal_constraints = semantic_ir.signal_constraints.clone();
         let conditional_rules = semantic_ir.conditional_rules.clone();
@@ -243,6 +254,7 @@ impl IntentIr {
             timing_constraints,
             temporal_rules,
             actor_contracts,
+            protocol_graph,
             temporal_conflicts,
             signal_constraints,
             conditional_rules,

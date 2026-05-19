@@ -2,6 +2,24 @@
 
 ## 2026-05-19 (R16 SOTA intent-capture program scaffolded)
 
+### R16-KG-PROTOCOL-ONTOLOGY.2 — implement the typed protocol_graph module
+- New `crates/specforge/src/ir/protocol_graph.rs`: typed
+  `Channel`/`ProtocolPhase`/`Transaction`/`HandshakePair` records (+
+  `ChannelRole`) wrapped in `ProtocolGraph` with `is_empty`/`counts`;
+  serde snake_case; an empty graph serialises to `{}`. 3 unit tests
+  (empty / populated / serde round-trip). Module registered in
+  `ir/mod.rs`.
+- Additive `protocol_graph` field on `SemanticIr` (empty
+  `ProtocolGraph::default()`) and `IntentIr` (carried forward from
+  `SemanticIR`, parallel to `actor_contracts`), serde-default +
+  `skip_serializing_if = ProtocolGraph::is_empty` ⇒ **zero
+  artifact/fixture churn** (unpopulated until the extraction trees
+  `#3`/`#4`/`#6` recover protocol structure). `specforge validate`
+  count *reporting* deferred to `.4` (meaningless while empty; the
+  `counts()` helper + tests are in place now — same bounded scope as
+  `R16-CONTRACT-IR.2`). Full `scripts/run_ci.sh` green. Frontier → `.3`
+  (wire the ContractIR channel/phase projection, parity-preserving).
+
 ### R16-KG-PROTOCOL-ONTOLOGY.1 — promote #2 + ontology design
 - DAG governance (`R16-INTENT-CAPTURE.2`): with point #1
   (`R16-CONTRACT-IR`) closed, `R16-KG-PROTOCOL-ONTOLOGY` (#2) promoted
