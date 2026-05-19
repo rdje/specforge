@@ -78,6 +78,13 @@ pub struct IntentIr {
     /// Clock-tick temporal rules carried forward from `SemanticIR`.
     #[serde(default)]
     pub temporal_rules: Vec<TemporalRuleRecord>,
+    /// ContractIR — typed timed-contract projection (R16-CONTRACT-IR),
+    /// carried forward from `SemanticIR`. Named `actor_contracts` to
+    /// avoid collision with `SemanticIR.contracts` (protocol contracts).
+    /// Additive and empty until `R16-CONTRACT-IR.3` (serde-skipped while
+    /// empty).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub actor_contracts: Vec<crate::ir::contract::ActorContract>,
     /// Explicit conflicts detected across contradictory temporal value obligations.
     #[serde(default)]
     pub temporal_conflicts: Vec<TemporalConflictRecord>,
@@ -233,6 +240,7 @@ impl IntentIr {
             register_records,
             timing_constraints,
             temporal_rules,
+            actor_contracts: Vec::new(),
             temporal_conflicts,
             signal_constraints,
             conditional_rules,

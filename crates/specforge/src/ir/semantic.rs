@@ -77,6 +77,14 @@ pub struct SemanticIr {
     /// Clock-tick temporal rules derived from timing, constraint, and conditional evidence.
     #[serde(default)]
     pub temporal_rules: Vec<TemporalRuleRecord>,
+    /// ContractIR — typed timed-contract projection (R16-CONTRACT-IR).
+    /// Named `actor_contracts` to avoid collision with the pre-existing
+    /// `contracts: Vec<ContractRecord>` (semantic protocol contracts).
+    /// Additive and empty until `R16-CONTRACT-IR.3` wires producers and
+    /// re-points `.isf` lowering (serde-skipped while empty: zero
+    /// artifact/fixture change in `.2`).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub actor_contracts: Vec<crate::ir::contract::ActorContract>,
     /// Explicit conflicts detected across contradictory temporal value obligations.
     #[serde(default)]
     pub temporal_conflicts: Vec<TemporalConflictRecord>,
@@ -309,6 +317,7 @@ impl SemanticIr {
             register_records,
             timing_constraints,
             temporal_rules,
+            actor_contracts: Vec::new(),
             temporal_conflicts,
             signal_constraints,
             conditional_rules,

@@ -72,11 +72,24 @@ ready/valid `(stage …)`).
   Commit: `see Commit Log`
 
 - ID: `R16-CONTRACT-IR.2`
-  Status: `pending`
+  Status: `done`
   Goal: implement the typed ContractIR model + serde per the `.1` design.
   Acceptance: `Typed model + serde + unit tests; scripts/run_ci.sh green.`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — `crates/specforge/src/ir/contract.rs` added
+    (closed algebra: `EventExpr`/`Window`/`Condition`/`Obligation`/
+    `ActorContract` + serde) with `contract_from_temporal_rule` mapping
+    every `TemporalRuleRecord`/`TemporalPredicateRecord` case per the
+    `.1` table (residual cases modelled, not lost); 7 unit tests
+    (per migration row + serde round-trip); module registered in
+    `ir/mod.rs`; additive `actor_contracts` field on `SemanticIr`/
+    `IntentIr` (serde default + skip-if-empty, **unpopulated** — zero
+    artifact/fixture change; producers/lowering re-point is `.3`). Two
+    honest in-implementation refinements (see Decisions): field named
+    `actor_contracts` (collision with pre-existing `SemanticIR.contracts:
+    Vec<ContractRecord>`); `Obligation::Observe` added for the no-value
+    predicate case. Full `scripts/run_ci.sh` green — 1061 passed
+    (1054 + 7), 0 failed, mdBook builds.
+  Commit: `see Commit Log`
 
 - ID: `R16-CONTRACT-IR.3`
   Status: `pending`
@@ -100,8 +113,8 @@ ready/valid `(stage …)`).
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `R16-CONTRACT-IR.1` | `done` | Design fixed (placement + grammar + migration/parity + subsumption); book mirror added |
-| 2 | `R16-CONTRACT-IR.2` | `pending` | Next — implement the typed ContractIR model + serde per the `.1` design |
-| 3 | `R16-CONTRACT-IR.3` | `pending` | Migrate producers/lowering with CI parity |
+| 2 | `R16-CONTRACT-IR.2` | `done` | Typed `ir/contract.rs` + serde + conversion + 7 tests; additive field; CI 1061/0 |
+| 3 | `R16-CONTRACT-IR.3` | `pending` | Next — populate `actor_contracts` + re-point `.isf` lowering onto it; real-corpus CI-parity gate; `temporal_rules` consumer audit |
 | 4 | `R16-CONTRACT-IR.4` | `pending` | Close + doc sync |
 
 ## Dependencies / Order
@@ -123,8 +136,11 @@ Grounded against the verified current types: `TemporalRuleRecord`
 
 ContractIR is a new typed module `crates/specforge/src/ir/contract.rs`
 defining `ActorContract` + the operator algebra. `SemanticIR` and
-`IntentIR` carry `contracts: Vec<ActorContract>` as an additive
-(`#[serde(default)]`) field. **No new pipeline stage / CLI / `IrStage`.**
+`IntentIR` carry `actor_contracts: Vec<ActorContract>` as an additive
+(`#[serde(default, skip_serializing_if = "Vec::is_empty")]`) field —
+named `actor_contracts` (NOT `contracts`) because `SemanticIR` already
+has `contracts: Vec<ContractRecord>` (semantic protocol contracts);
+`.2` honest refinement. **No new pipeline stage / CLI / `IrStage`.**
 Rationale: (1) the standing doctrine "keep `IntentIR` the canonical
 product boundary"; (2) the `ISF-ONLY-*` ethos favours fewer stages; (3)
 `temporal_rules`/`actor_*` already live as typed fields the same way;
@@ -148,10 +164,13 @@ Obligation  = Eventually{target:EventExpr, window:Within}
             | Stable{signal, during:Between}
             | Drive{signal, value}
             | HandshakeBarrier{valid, ready}
-            | Persist{hold:Level|Edge, until:EventExpr}   // "remain X until Y"
+            | Persist{hold:EventExpr, until:EventExpr}    // "remain X until Y"
             | Sequence{steps:Vec<(EventExpr,Window)>}
             | Mutex{a,b} | OrderedBefore{phaseA,phaseB}
-Condition   = the existing bounded guard form ((== sig val) / single-token)
+            | Observe{signal}    // .2 refinement: weak no-value/no-window
+                                 //   boundary fact; captured, residual-
+                                 //   lowered, never fabricated into a value
+Condition   = Eq{signal,value}  // the existing bounded (== sig val) guard form
 ActorContract = { contract_id, actor:ActorRef, kind:Assume|Guarantee,
                   guard:Option<Condition>, obligation:Obligation,
                   clock:Option<Signal>, edge:ClockEdge,
@@ -217,6 +236,17 @@ tree is marked `superseded` → `R16-CONTRACT-IR`.
 - `2026-05-19`: Highest program leverage (per `R16-INTENT-CAPTURE`
   thesis): representation loss is currently misdiagnosed as extraction
   loss. Created `proposed`; first to be promoted.
+- `2026-05-19` (`.2` honest refinements during implementation): (1) the
+  carried field is `actor_contracts`, not `contracts` — `SemanticIR`
+  already has `contracts: Vec<ContractRecord>` (semantic protocol
+  contracts); a duplicate field name would not compile and would collide
+  in serde. Caught by the picky-auditor compile check before any commit.
+  (2) Added `Obligation::Observe{signal}` for predicates that name a
+  boundary signal but carry no concrete value/window
+  (`ActorDrivesSignal`/`ActorSamplesSignal`/`SignalSampled`): an honest,
+  closed, residual-lowered variant — captured in the typed KG, never
+  fabricated into a value. The `.1` design text + book mirror were
+  corrected to match (docs-track-code discipline).
 - `2026-05-19` (`.1`): placement = typed layer, no new stage (canonical-
   IntentIR doctrine + fewer-stages ethos). Closed operator algebra fixed.
   Migration is additive-then-reproint with a corpus CI-parity gate.
@@ -239,12 +269,14 @@ tree is marked `superseded` → `R16-CONTRACT-IR`.
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-05-19` | `R16-CONTRACT-IR.1` | current types re-verified; full design recorded (placement/grammar/migration/parity/subsumption); every `TemporalRuleRecord`/`TemporalPredicateRecord` case mapped incl. residual-now-modelled; book mirror added; mdBook builds | `passed` (docs-only) |
+| `2026-05-19` | `R16-CONTRACT-IR.2` | `ir/contract.rs` typed model + serde + `contract_from_temporal_rule` + 7 unit tests; additive unpopulated `actor_contracts` field; collision + Observe refinements; full `scripts/run_ci.sh` | `passed` (1061 passed, 0 failed; mdBook builds; zero artifact churn) |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `R16-CONTRACT-IR.1` | `R16-CONTRACT-IR.1 — ContractIR design (placement + operator algebra + migration/parity + subsumption)` | docs-only; book mirror per `BOOK-METHOD-DOC` |
+| `R16-CONTRACT-IR.2` | `R16-CONTRACT-IR.2 — implement typed ir/contract.rs model + serde + conversion` | first R16 code; additive unpopulated field; CI 1061/0 |
 
 ## Changelog
 
@@ -257,3 +289,10 @@ tree is marked `superseded` → `R16-CONTRACT-IR`.
   map with residual-cases-now-modelled; corpus CI-parity gate;
   `ISF-HANDSHAKE-STAGE-LOWERING` subsumed). Thorough mirror added to the
   mdBook per `BOOK-METHOD-DOC`. Frontier → `.2` (implement typed model).
+- `2026-05-19`: `.2` done — `ir/contract.rs` typed model + serde +
+  `contract_from_temporal_rule` + 7 unit tests; additive unpopulated
+  `actor_contracts` field (zero artifact churn). Honest refinements:
+  field renamed to avoid the `SemanticIR.contracts` collision; added
+  `Obligation::Observe` for no-value predicates; design doc + book
+  corrected to match. Full CI 1061/0. Frontier → `.3` (populate +
+  re-point lowering with the real-corpus CI-parity gate).

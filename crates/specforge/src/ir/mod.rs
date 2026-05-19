@@ -1,4 +1,5 @@
 pub mod adapters;
+pub mod contract;
 pub mod evidence;
 pub mod intent;
 pub mod isf_ir;

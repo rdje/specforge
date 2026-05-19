@@ -83,8 +83,12 @@ to land and `.isf` lowering stays mechanical.
 - **Placement — a typed layer, not a new pipeline stage.** A new module
   `crates/specforge/src/ir/contract.rs` defines `ActorContract` and a
   small **closed** operator algebra. `SemanticIR` and `IntentIR` carry a
-  new additive `contracts: Vec<ActorContract>` field (serde-default, so
-  older artifacts still load). No new `IrStage`/CLI/validate surface —
+  new additive `actor_contracts: Vec<ActorContract>` field (named so to
+  avoid collision with the pre-existing `SemanticIR.contracts:
+  Vec<ContractRecord>` semantic-protocol-contracts; serde-default +
+  skipped while empty, so older artifacts load and `.2` causes zero
+  artifact change — it ships the type but leaves the field unpopulated
+  until `.3`). No new `IrStage`/CLI/validate surface —
   this respects the standing "IntentIR is the canonical product
   boundary" doctrine and the ISF-only "fewer stages" ethos, and matches
   how `temporal_rules` / the actor graph already live as typed fields.
@@ -92,7 +96,9 @@ to land and `.isf` lowering stays mechanical.
   handshake-fire / phase boundary / start), `Window`
   (`Within{min,max≥1}` / `Between{from,to}` / `SameCycle`), `Obligation`
   (`Eventually` / `Stable` / `Drive` / `HandshakeBarrier` / `Persist` /
-  `Sequence` / `Mutex` / `OrderedBefore`), a bounded `Condition` guard,
+  `Sequence` / `Mutex` / `OrderedBefore` / `Observe` — the last a weak
+  no-value/no-window boundary fact, captured and residual-lowered, never
+  fabricated), a bounded `Condition` guard,
   wrapped in `ActorContract{actor, Assume|Guarantee, guard, obligation,
   clock, edge, channel, phase, provenance, lowering, confidence}`. It is
   deliberately finite so it is realizability-checkable, mechanically

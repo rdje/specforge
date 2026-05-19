@@ -2,6 +2,28 @@
 
 ## 2026-05-19 (R16 SOTA intent-capture program scaffolded)
 
+### R16-CONTRACT-IR.2 — implement the typed ContractIR model (first R16 code)
+- New `crates/specforge/src/ir/contract.rs`: the closed operator algebra
+  (`EventExpr`/`Window`/`Condition`/`Obligation`/`ActorContract` +
+  serde) and `contract_from_temporal_rule`, mapping every
+  `TemporalRuleRecord`/`TemporalPredicateRecord` case per the `.1`
+  migration table — residual cases (`HandshakeComplete`, bare stability,
+  0-cycle, no-value) are *modelled* with an explicit `Residual{reason}`,
+  never lost or fabricated. 7 unit tests (per migration row + serde
+  round-trip).
+- Additive `actor_contracts: Vec<ActorContract>` field on `SemanticIr`/
+  `IntentIr` (serde-default + skip-if-empty), **unpopulated** — `.2`
+  ships the type with **zero artifact/fixture change**; producers +
+  `.isf`-lowering re-point + the real-corpus CI-parity gate are `.3`.
+- Two honest in-implementation refinements (recorded; design doc + book
+  corrected to match): (1) field named `actor_contracts` — `contracts`
+  collided with the pre-existing `SemanticIR.contracts:
+  Vec<ContractRecord>` (caught by the pre-commit compile check); (2)
+  added `Obligation::Observe{signal}` for no-value/no-window predicates
+  (honest, closed, residual-lowered).
+- Full `scripts/run_ci.sh` green — **1061 passed** (1054 + 7), 0 failed,
+  mdBook builds. Frontier → `R16-CONTRACT-IR.3`.
+
 ### BOOK-METHOD-DOC.1 + R16-CONTRACT-IR.1 — book per-tree method-doc convention; ContractIR design
 - `BOOK-METHOD-DOC` (R0, `active`) created: standing convention + close-
   rule that **every task-tree's implementation & verification is

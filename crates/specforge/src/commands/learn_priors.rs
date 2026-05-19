@@ -1805,6 +1805,7 @@ mod tests {
             register_records: Vec::new(),
             timing_constraints: Vec::new(),
             temporal_rules: Vec::new(),
+            actor_contracts: Vec::new(),
             temporal_conflicts: Vec::new(),
             signal_constraints: Vec::new(),
             conditional_rules: Vec::new(),
