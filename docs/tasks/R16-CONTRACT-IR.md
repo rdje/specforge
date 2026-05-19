@@ -48,7 +48,7 @@ ready/valid `(stage …)`).
 - ID: `R16-CONTRACT-IR`
   Status: `active`
   Goal: typed timed-contract IR; IntentIR projects it; mechanical `.isf`
-  Children: `.1`, `.2`, `.3`, `.4`
+  Children: `.1`, `.2`, `.3`, `.4`, `.5`
 
 - ID: `R16-CONTRACT-IR.1`
   Status: `done`
@@ -93,17 +93,39 @@ ready/valid `(stage …)`).
 
 - ID: `R16-CONTRACT-IR.3`
   Status: `pending`
-  Goal: migrate `TemporalRuleRecord` producers + `.isf` lowering onto
-  ContractIR with CI parity (every currently-lowered rule still lowers;
-  previously-shredded bound obligations now survive as one contract).
-  Acceptance: `Producers/lowering on ContractIR; CI-parity proven on the real corpus; scripts/run_ci.sh green.`
+  Goal: >
+    **Parity-preserving re-point only** (no behaviour change). Populate
+    `actor_contracts` from `temporal_rules` in the SemanticIr/IntentIr
+    builders; add `classify_actor_contract` reproducing the *exact*
+    current `classify_temporal_rule` Contract|Rule|Residual decisions;
+    switch the `.isf` lowering call site to consume `actor_contracts`.
+    `HandshakeBarrier` stays Residual here (parity) — enabling `(stage
+    …)` is the deliberate behaviour change in `.4`. Then audit
+    `temporal_rules` consumers (converge snapshot / validate /
+    learn_priors, the `ISF-ONLY-IR-PRUNE.1` method) and project-or-migrate.
+  Acceptance: `Emitted .isf is semantically identical pre/post on the real corpus (parity gate); fsmgen-strict tests green; scripts/run_ci.sh green.`
   Verification: `pending`
   Commit: `pending`
 
 - ID: `R16-CONTRACT-IR.4`
   Status: `pending`
+  Goal: >
+    **Behaviour change (post-parity), fsmgen-strict-verified**: enable
+    `HandshakeBarrier → (stage p (ready r)(valid v))` lowering — the
+    subsumed `ISF-HANDSHAKE-STAGE-LOWERING`. HandshakeComplete temporal
+    rules that were residual now emit `(stage …)` (FSMGen accepts it at
+    pin `9bfb9a20`); verify live on the real corpus + fsmgen-strict;
+    residual count drops; metric reconciliation (`ISF-TEMPORAL-LOWERING.2.4`
+    invariant) still holds.
+  Acceptance: `HandshakeComplete → (stage …) live-verified fsmgen-strict on the corpus; no other .isf change; scripts/run_ci.sh green.`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `R16-CONTRACT-IR.5`
+  Status: `pending`
   Goal: close tree; sync mdBook (temporal-semantics + ISF chapters) +
-  ROADMAP R16; record `ISF-HANDSHAKE-STAGE-LOWERING` disposition.
+  ROADMAP R16; finalize `ISF-HANDSHAKE-STAGE-LOWERING` disposition
+  (delivered via `.4`).
   Acceptance: `Tree done; docs synced; scripts/run_ci.sh green.`
   Verification: `pending`
   Commit: `pending`
@@ -114,8 +136,9 @@ ready/valid `(stage …)`).
 | --- | --- | --- | --- |
 | 1 | `R16-CONTRACT-IR.1` | `done` | Design fixed (placement + grammar + migration/parity + subsumption); book mirror added |
 | 2 | `R16-CONTRACT-IR.2` | `done` | Typed `ir/contract.rs` + serde + conversion + 7 tests; additive field; CI 1061/0 |
-| 3 | `R16-CONTRACT-IR.3` | `pending` | Next — populate `actor_contracts` + re-point `.isf` lowering onto it; real-corpus CI-parity gate; `temporal_rules` consumer audit |
-| 4 | `R16-CONTRACT-IR.4` | `pending` | Close + doc sync |
+| 3 | `R16-CONTRACT-IR.3` | `pending` | **Next** — parity-preserving re-point: populate `actor_contracts`, `classify_actor_contract` reproducing exact decisions, switch `.isf` call site; byte/semantically-identical corpus gate; consumer audit |
+| 4 | `R16-CONTRACT-IR.4` | `pending` | Post-parity behaviour change — enable `HandshakeBarrier → (stage …)` (subsumed `ISF-HANDSHAKE-STAGE-LOWERING`), fsmgen-strict-verified |
+| 5 | `R16-CONTRACT-IR.5` | `pending` | Close + doc/ROADMAP sync |
 
 ## Dependencies / Order
 
@@ -209,33 +232,54 @@ is lossless for representable cases and emits explicit
 
 ### (c2) Migration phases + CI-parity gate
 
-- `.2`: add `ir/contract.rs` + serde + `contract_from_temporal_rule`;
-  add `contracts` field additively (serde back-compat). No behaviour
-  change (temporal_rules still drives `.isf`).
-- `.3`: re-point `classify_temporal_rule` to consume `ActorContract`.
-  **Parity gate:** on the real corpus the emitted `.isf` is semantically
-  identical (same contracts/rules/residuals) to pre-migration; the
-  fsmgen-strict tests (`bounded_contract_passes_…`,
-  `temporal_rule_isf_passes_…`, `isf_temporal_rules_reach_isf_end_to_end`)
-  stay green; add a transition parity test. Then audit `temporal_rules`
-  consumers (converge snapshot / validate / learn_priors — the
-  `ISF-ONLY-IR-PRUNE.1` method) and either project `temporal_rules` from
-  `contracts` or migrate consumers + remove it.
-- `.4`: close + sync book (`pipeline/isf-adapter.md`,
+- `.2` (done): add `ir/contract.rs` + serde + `contract_from_temporal_rule`;
+  add `actor_contracts` field additively+unpopulated. No behaviour
+  change (temporal_rules still drives `.isf`; zero artifact churn).
+- `.3` — **parity-preserving re-point ONLY** (corrected: a behaviour
+  change cannot share a leaf with a byte-identical parity gate).
+  Populate `actor_contracts`; add `classify_actor_contract` that
+  reproduces the **exact** current `classify_temporal_rule`
+  Contract|Rule|Residual decisions (`HandshakeBarrier` **stays
+  Residual** here for parity); switch the `.isf` lowering call site to
+  `actor_contracts`. **Parity gate:** emitted `.isf` semantically
+  identical pre/post on the real corpus; the fsmgen-strict tests
+  (`bounded_contract_passes_…`, `temporal_rule_isf_passes_…`,
+  `isf_temporal_rules_reach_isf_end_to_end`) stay green; add a
+  transition parity test. Then audit `temporal_rules` consumers
+  (converge snapshot / validate / learn_priors — the
+  `ISF-ONLY-IR-PRUNE.1` method) and project-or-migrate.
+- `.4` — **deliberate behaviour change, post-parity**, fsmgen-strict-
+  verified on the corpus: enable `HandshakeBarrier → (stage …)` (the
+  subsumed `ISF-HANDSHAKE-STAGE-LOWERING`). Only the handshake disposition
+  changes; everything else stays parity.
+- `.5`: close + sync book (`pipeline/isf-adapter.md`,
   `domain/temporal-semantics.md`) + ROADMAP R16.
 
 ### (d) `ISF-HANDSHAKE-STAGE-LOWERING` subsumption
 
 That `proposed` tree (HandshakeComplete → `(stage …)`) is **folded** into
 ContractIR: `HandshakeComplete` → `HandshakeBarrier` obligation, lowered
-to `(stage p (ready r)(valid v))` in `R16-CONTRACT-IR.3`. The standalone
-tree is marked `superseded` → `R16-CONTRACT-IR`.
+to `(stage p (ready r)(valid v))` in **`R16-CONTRACT-IR.4`** (the
+post-parity, fsmgen-strict-verified behaviour-change leaf — corrected
+from the original `.3`, which is parity-only). The standalone tree is
+marked `superseded` → `R16-CONTRACT-IR`.
 
 ## Decisions
 
 - `2026-05-19`: Highest program leverage (per `R16-INTENT-CAPTURE`
   thesis): representation loss is currently misdiagnosed as extraction
   loss. Created `proposed`; first to be promoted.
+- `2026-05-19` (honest split — TASK_TREE rule 5): the `.1` design
+  conflated two mutually-exclusive things in one leaf — a
+  byte-identical corpus **parity** re-point and the
+  `HandshakeBarrier → (stage …)` **behaviour change** (parity forbids
+  any `.isf` change; the stage-enable *is* an `.isf` change). Split:
+  `.3` = parity-preserving re-point only (HandshakeBarrier stays
+  Residual); `.4` = the post-parity fsmgen-strict-verified
+  handshake-stage behaviour change (the subsumed
+  `ISF-HANDSHAKE-STAGE-LOWERING`); `.5` = close. Design `(c2)`/`(d)` +
+  frontier corrected to match. Recorded as an honest tree update before
+  any `.3` code.
 - `2026-05-19` (`.2` honest refinements during implementation): (1) the
   carried field is `actor_contracts`, not `contracts` — `SemanticIR`
   already has `contracts: Vec<ContractRecord>` (semantic protocol
@@ -289,6 +333,10 @@ tree is marked `superseded` → `R16-CONTRACT-IR`.
   map with residual-cases-now-modelled; corpus CI-parity gate;
   `ISF-HANDSHAKE-STAGE-LOWERING` subsumed). Thorough mirror added to the
   mdBook per `BOOK-METHOD-DOC`. Frontier → `.2` (implement typed model).
+- `2026-05-19`: honest tree split (rule 5) — `.3` parity-only re-point;
+  new `.4` = post-parity fsmgen-strict-verified `HandshakeBarrier →
+  (stage …)` (subsumed `ISF-HANDSHAKE-STAGE-LOWERING`); `.5` close.
+  Design/frontier corrected. No code.
 - `2026-05-19`: `.2` done — `ir/contract.rs` typed model + serde +
   `contract_from_temporal_rule` + 7 unit tests; additive unpopulated
   `actor_contracts` field (zero artifact churn). Honest refinements:
