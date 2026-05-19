@@ -87,14 +87,27 @@ IntentIR" the thesis requires.
   Commit: `see Commit Log`
 
 - ID: `R16-KG-PROTOCOL-ONTOLOGY.3`
-  Status: `pending`
+  Status: `done`
   Goal: wire the projection — `ActorContract.channel`/`.phase` reference
   the new node ids; `EventExpr::PhaseBoundary` may reference a
   `ProtocolPhase`; IntentIR carries the node sets forward. Mechanical,
   parity-preserving (nodes empty until extraction populates).
   Acceptance: `Projection wired; CI-parity (zero .isf change while node sets empty); scripts/run_ci.sh green.`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — `project_handshake_pairs(&[ActorContract])`
+    mechanically derives `HandshakePair` nodes from already-recovered
+    `HandshakeBarrier` obligations (LOSSLESS restatement of contract
+    data — NOT PDF extraction, which stays the extraction trees' job /
+    Non-Goal; deduped by `(valid,ready)`); `SemanticIr::build` populates
+    `protocol_graph.handshakes` from `actor_contracts`; `IntentIR`
+    carries `protocol_graph` forward (from `.2`). Typed-reference
+    accessors `channel()`/`phase()` + `dangling_contract_refs()`
+    (surfaces a contract pointing at a non-existent channel/phase
+    explicitly). Parity: the corpus has 0 `handshake_complete`
+    temporal_rules ⇒ 0 projected pairs ⇒ `protocol_graph` stays empty
+    corpus-wide ⇒ **zero `.isf`/artifact change**; the path is
+    unit-tested with synthesized handshake contracts. Full
+    `scripts/run_ci.sh` green.
+  Commit: `see Commit Log`
 
 - ID: `R16-KG-PROTOCOL-ONTOLOGY.4`
   Status: `pending`
@@ -110,8 +123,8 @@ IntentIR" the thesis requires.
 | --- | --- | --- | --- |
 | 1 | `R16-KG-PROTOCOL-ONTOLOGY.1` | `done` | Ontology design fixed; book mirror added |
 | 2 | `R16-KG-PROTOCOL-ONTOLOGY.2` | `done` | Typed `protocol_graph` module + serde + additive empty fields + 3 tests; zero artifact churn |
-| 3 | `R16-KG-PROTOCOL-ONTOLOGY.3` | `pending` | **Next** — wire ContractIR channel/phase projection (parity-preserving; nodes empty until extraction) |
-| 4 | `R16-KG-PROTOCOL-ONTOLOGY.4` | `pending` | kg-bench fixtures + close |
+| 3 | `R16-KG-PROTOCOL-ONTOLOGY.3` | `done` | Projection wired (HandshakePair from HandshakeBarrier; accessors + dangling-ref check); zero corpus churn |
+| 4 | `R16-KG-PROTOCOL-ONTOLOGY.4` | `pending` | **Next** — `kg-bench` protocol-structure fixtures + `validate` count surface; close tree + book/ROADMAP sync |
 
 ## Design (`.1` output, 2026-05-19)
 
@@ -208,13 +221,15 @@ ships the vocabulary, not the extractor.
 | --- | --- | --- | --- |
 | `2026-05-19` | `R16-KG-PROTOCOL-ONTOLOGY.1` | ontology design vs verified current IR; placement/schema/projection/disambiguation recorded; book mirror per BOOK-METHOD-DOC | `passed` (docs-only) |
 | `2026-05-19` | `R16-KG-PROTOCOL-ONTOLOGY.2` | typed `protocol_graph` module + serde + count helpers + 3 unit tests; additive empty fields (serde skip-if-empty); full `scripts/run_ci.sh` | `passed` (zero artifact churn) |
+| `2026-05-19` | `R16-KG-PROTOCOL-ONTOLOGY.3` | `project_handshake_pairs` + accessors + `dangling_contract_refs` + wire SemanticIr::build; 3 new tests; full `scripts/run_ci.sh` | `passed` (corpus 0 handshakes ⇒ empty ⇒ zero `.isf`/artifact change) |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `R16-KG-PROTOCOL-ONTOLOGY.1` | `R16-KG-PROTOCOL-ONTOLOGY.1 — ontology design (promote #2)` (`ba630db6`) | docs-only; book mirror; also the `R16-INTENT-CAPTURE.2` #2 promotion |
-| `R16-KG-PROTOCOL-ONTOLOGY.2` | `R16-KG-PROTOCOL-ONTOLOGY.2 — typed protocol_graph module + additive empty fields` | first KG-ONTOLOGY code; zero artifact churn |
+| `R16-KG-PROTOCOL-ONTOLOGY.2` | `R16-KG-PROTOCOL-ONTOLOGY.2 — typed protocol_graph module + additive empty fields` (`f810f24d`) | first KG-ONTOLOGY code; zero artifact churn |
+| `R16-KG-PROTOCOL-ONTOLOGY.3` | `R16-KG-PROTOCOL-ONTOLOGY.3 — wire projection (HandshakePair from HandshakeBarrier) + accessors` | mechanical/lossless; zero corpus churn |
 
 ## Changelog
 
@@ -222,6 +237,14 @@ ships the vocabulary, not the extractor.
 - `2026-05-19`: Promoted to `active` (DAG predecessor `R16-CONTRACT-IR`
   done); `.1` ontology design fixed + book mirror; concrete `.1`–`.4`
   leaves defined. Frontier → `.2` (implement typed `protocol_graph`).
+- `2026-05-19`: `.3` done — projection wired:
+  `project_handshake_pairs` derives `HandshakePair` nodes from
+  `HandshakeBarrier` contracts (lossless restatement, NOT PDF
+  extraction — that's the extraction trees'; deduped); `SemanticIr::build`
+  populates `protocol_graph.handshakes`; accessors + `dangling_contract_refs`
+  added. Corpus has 0 `handshake_complete` ⇒ empty ⇒ zero `.isf`/artifact
+  change; path unit-tested. Frontier → `.4` (kg-bench fixtures +
+  `validate` counts + close).
 - `2026-05-19`: `.2` done — `ir/protocol_graph.rs` typed module
   (`Channel`/`ProtocolPhase`/`Transaction`/`HandshakePair`/`ChannelRole`/
   `ProtocolGraph`) + serde + `is_empty`/`counts` + 3 unit tests; additive

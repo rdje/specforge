@@ -332,8 +332,11 @@ impl SemanticIr {
             register_records,
             timing_constraints,
             temporal_rules,
+            protocol_graph: crate::ir::protocol_graph::ProtocolGraph {
+                handshakes: crate::ir::protocol_graph::project_handshake_pairs(&actor_contracts),
+                ..Default::default()
+            },
             actor_contracts,
-            protocol_graph: crate::ir::protocol_graph::ProtocolGraph::default(),
             temporal_conflicts,
             signal_constraints,
             conditional_rules,

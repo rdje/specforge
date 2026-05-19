@@ -20,7 +20,11 @@
 //! temporal model's `TickPhase` (clock-edge granularity); a
 //! `ProtocolPhase` may span many clock ticks.
 
+use std::collections::BTreeSet;
+
 use serde::{Deserialize, Serialize};
+
+use crate::ir::contract::{ActorContract, Obligation};
 
 /// Semantic role of a protocol channel (protocol-neutral).
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
@@ -120,6 +124,65 @@ impl ProtocolGraph {
             self.handshakes.len(),
         )
     }
+
+    /// Resolve a `channel_id` to its `Channel` (typed-reference lookup).
+    pub fn channel(&self, channel_id: &str) -> Option<&Channel> {
+        self.channels.iter().find(|c| c.channel_id == channel_id)
+    }
+
+    /// Resolve a `phase_id` to its `ProtocolPhase`.
+    pub fn phase(&self, phase_id: &str) -> Option<&ProtocolPhase> {
+        self.phases.iter().find(|p| p.phase_id == phase_id)
+    }
+
+    /// `ActorContract.channel`/`.phase` ids that reference no node in
+    /// this graph (dangling typed references). Used by validation to
+    /// surface inconsistency explicitly rather than let a contract point
+    /// at a non-existent channel/phase (R16-KG-PROTOCOL-ONTOLOGY.3).
+    pub fn dangling_contract_refs(&self, contracts: &[ActorContract]) -> Vec<String> {
+        let mut bad = Vec::new();
+        for c in contracts {
+            if let Some(ch) = &c.channel
+                && self.channel(ch).is_none()
+            {
+                bad.push(format!("{}: channel '{}'", c.contract_id, ch));
+            }
+            if let Some(ph) = &c.phase
+                && self.phase(ph).is_none()
+            {
+                bad.push(format!("{}: phase '{}'", c.contract_id, ph));
+            }
+        }
+        bad
+    }
+}
+
+/// Mechanically project `HandshakePair` nodes from already-recovered
+/// `HandshakeBarrier` contract obligations (R16-KG-PROTOCOL-ONTOLOGY.3).
+/// This is a LOSSLESS restatement of data already in `actor_contracts`
+/// (a `HandshakeBarrier` *is* a ready/valid pair) — NOT PDF extraction
+/// (that is the extraction trees' job / a Non-Goal here). Deduplicated
+/// by `(valid, ready)`; `channel` carried from the contract when set.
+pub fn project_handshake_pairs(contracts: &[ActorContract]) -> Vec<HandshakePair> {
+    let mut seen: BTreeSet<(String, String)> = BTreeSet::new();
+    let mut pairs = Vec::new();
+    for c in contracts {
+        if let Obligation::HandshakeBarrier { valid, ready } = &c.obligation
+            && seen.insert((valid.clone(), ready.clone()))
+        {
+            let rid = c
+                .source_rule_id
+                .clone()
+                .unwrap_or_else(|| c.contract_id.clone());
+            pairs.push(HandshakePair {
+                pair_id: format!("hs_{}", rid),
+                valid_signal: valid.clone(),
+                ready_signal: ready.clone(),
+                channel: c.channel.clone(),
+            });
+        }
+    }
+    pairs
 }
 
 #[cfg(test)]
@@ -165,6 +228,88 @@ mod tests {
         };
         assert!(!g.is_empty());
         assert_eq!(g.counts(), (1, 1, 1, 1));
+    }
+
+    #[test]
+    fn project_handshake_pairs_from_handshake_contracts_dedup_and_channel() {
+        use crate::ir::contract::contract_from_temporal_rule;
+        use crate::ir::semantic::{
+            ClockEdge, TemporalPredicateRecord, TemporalRuleRecord, TickPhase,
+        };
+
+        let hs_rule = |id: &str| TemporalRuleRecord {
+            rule_id: id.to_string(),
+            clock_signal: None,
+            edge: ClockEdge::Rising,
+            antecedents: vec![],
+            consequents: vec![TemporalPredicateRecord::HandshakeComplete {
+                valid_signal: "AWVALID".into(),
+                ready_signal: "AWREADY".into(),
+                phase: TickPhase::PostTick,
+            }],
+            cycle_window: None,
+            source_text: "src".into(),
+            supporting_statement_ids: vec![],
+            automation_confidence: crate::ir::source::AutomationConfidence::Medium,
+        };
+        // Two rules → same (valid, ready) → deduped to one pair.
+        let c1 = contract_from_temporal_rule(&hs_rule("h1"));
+        let c2 = contract_from_temporal_rule(&hs_rule("h2"));
+        let pairs = project_handshake_pairs(std::slice::from_ref(&c1));
+        assert_eq!(pairs.len(), 1);
+        assert_eq!(pairs[0].valid_signal, "AWVALID");
+        assert_eq!(pairs[0].ready_signal, "AWREADY");
+        assert_eq!(pairs[0].pair_id, "hs_h1");
+        assert_eq!(project_handshake_pairs(&[c1, c2]).len(), 1);
+    }
+
+    #[test]
+    fn accessors_and_dangling_refs() {
+        use crate::ir::contract::contract_from_temporal_rule;
+        use crate::ir::semantic::{
+            ClockEdge, TemporalPredicateRecord, TemporalRuleRecord, TickPhase,
+        };
+
+        let g = ProtocolGraph {
+            channels: vec![Channel {
+                channel_id: "ch_aw".into(),
+                name: "AW".into(),
+                actor: None,
+                signal_names: vec![],
+                role: None,
+            }],
+            phases: vec![ProtocolPhase {
+                phase_id: "ph0".into(),
+                name: "p".into(),
+                channel: None,
+                order: 0,
+            }],
+            ..Default::default()
+        };
+        assert!(g.channel("ch_aw").is_some());
+        assert!(g.channel("nope").is_none());
+        assert!(g.phase("ph0").is_some());
+
+        let mut c = contract_from_temporal_rule(&TemporalRuleRecord {
+            rule_id: "r1".into(),
+            clock_signal: None,
+            edge: ClockEdge::Rising,
+            antecedents: vec![],
+            consequents: vec![TemporalPredicateRecord::SignalValue {
+                signal_name: "ACK".into(),
+                value: "1".into(),
+                phase: TickPhase::PostTick,
+            }],
+            cycle_window: None,
+            source_text: "s".into(),
+            supporting_statement_ids: vec![],
+            automation_confidence: crate::ir::source::AutomationConfidence::Medium,
+        });
+        c.channel = Some("ch_aw".into()); // resolvable
+        c.phase = Some("missing".into()); // dangling
+        let bad = g.dangling_contract_refs(std::slice::from_ref(&c));
+        assert_eq!(bad.len(), 1);
+        assert!(bad[0].contains("phase 'missing'"), "{bad:?}");
     }
 
     #[test]

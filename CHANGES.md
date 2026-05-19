@@ -2,6 +2,24 @@
 
 ## 2026-05-19 (R16 SOTA intent-capture program scaffolded)
 
+### R16-KG-PROTOCOL-ONTOLOGY.3 — wire the projection (parity-preserving)
+- `project_handshake_pairs(&[ActorContract])` mechanically derives
+  `HandshakePair` nodes from already-recovered `HandshakeBarrier`
+  obligations — a **lossless restatement** of contract data (a barrier
+  *is* a ready/valid pair), explicitly **not** PDF extraction (that
+  stays the extraction trees' job / Non-Goal); deduped by
+  `(valid,ready)`. `SemanticIr::build` populates
+  `protocol_graph.handshakes` from `actor_contracts`; `IntentIR`
+  carries `protocol_graph` forward (from `.2`). Added typed-reference
+  accessors `channel()`/`phase()` + `dangling_contract_refs()` (surfaces
+  a contract pointing at a non-existent channel/phase explicitly rather
+  than dangling). 3 new tests.
+- Parity: the corpus has 0 `handshake_complete` temporal_rules ⇒ 0
+  projected pairs ⇒ `protocol_graph` stays empty corpus-wide ⇒ **zero
+  `.isf`/artifact change** (the path is unit-verified with synthesized
+  handshake contracts). Full `scripts/run_ci.sh` green. Frontier → `.4`
+  (kg-bench fixtures + `validate` count surface + close).
+
 ### R16-KG-PROTOCOL-ONTOLOGY.2 — implement the typed protocol_graph module
 - New `crates/specforge/src/ir/protocol_graph.rs`: typed
   `Channel`/`ProtocolPhase`/`Transaction`/`HandshakePair` records (+
