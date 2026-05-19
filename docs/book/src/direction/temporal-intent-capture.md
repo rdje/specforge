@@ -57,3 +57,85 @@ extraction-fidelity thrust — the crux the thesis names. Each sub-tree is
 `proposed` until promoted in DAG order under
 `R16-INTENT-CAPTURE`; all code lands under `COMMIT.md`-tracked leaves
 with `scripts/run_ci.sh` green per leaf.
+
+---
+
+This chapter also carries, per sub-tree, a precise account of **how it
+is implemented and how it is verified** (the `BOOK-METHOD-DOC`
+convention). Sections appear as each sub-tree's design is fixed.
+
+## R16-CONTRACT-IR — how it is implemented and verified
+
+**Why first.** This is the DAG root and the program's highest-leverage
+move: today the temporal model is a *bag of predicates*
+(`TemporalRuleRecord` = antecedents → consequents + one optional cycle
+window), so a single *bound* obligation ("VALID holds until READY; the
+payload is stable across exactly that interval; the transfer is the
+first cycle both are high") is shredded into disjoint predicates and the
+binding between them is lost. That loss is currently misread as an
+*extraction* failure when it is a *representation* failure. ContractIR
+makes the IR shaped like the thing being captured — a timed contract
+over actor boundaries — so extraction (#3/#4/#6) has an accurate place
+to land and `.isf` lowering stays mechanical.
+
+### Implementation
+
+- **Placement — a typed layer, not a new pipeline stage.** A new module
+  `crates/specforge/src/ir/contract.rs` defines `ActorContract` and a
+  small **closed** operator algebra. `SemanticIR` and `IntentIR` carry a
+  new additive `contracts: Vec<ActorContract>` field (serde-default, so
+  older artifacts still load). No new `IrStage`/CLI/validate surface —
+  this respects the standing "IntentIR is the canonical product
+  boundary" doctrine and the ISF-only "fewer stages" ethos, and matches
+  how `temporal_rules` / the actor graph already live as typed fields.
+- **Closed operator algebra.** `EventExpr` (signal edge / level /
+  handshake-fire / phase boundary / start), `Window`
+  (`Within{min,max≥1}` / `Between{from,to}` / `SameCycle`), `Obligation`
+  (`Eventually` / `Stable` / `Drive` / `HandshakeBarrier` / `Persist` /
+  `Sequence` / `Mutex` / `OrderedBefore`), a bounded `Condition` guard,
+  wrapped in `ActorContract{actor, Assume|Guarantee, guard, obligation,
+  clock, edge, channel, phase, provenance, lowering, confidence}`. It is
+  deliberately finite so it is realizability-checkable, mechanically
+  lowerable, and the residual boundary is explicit (`lowering:
+  Residual{reason}`), never silent loss.
+- **Migration, additive then re-point.** A pure
+  `contract_from_temporal_rule()` maps **every** existing
+  `TemporalRuleRecord` / `TemporalPredicateRecord` case to a ContractIR
+  construct. Crucially, cases that are *residual* today
+  (`HandshakeComplete`, bare stability, 0-cycle windows) become
+  **explicitly modelled** in the typed KG even when their `.isf`
+  lowering remains residual — that is precisely the thesis (accurate
+  typed KG first; honest mechanical lowering second). `HandshakeComplete
+  → HandshakeBarrier → (stage …)` folds in and supersedes the separate
+  `ISF-HANDSHAKE-STAGE-LOWERING` proposal (FSMGen accepts `(stage …)` at
+  the pinned `9bfb9a20`). The field is added additively first
+  (no behaviour change), then `.isf` lowering is re-pointed onto
+  `ActorContract`.
+
+### Verification
+
+- **CI-parity gate (the core safety property).** After lowering is
+  re-pointed, the emitted `.isf` on the real corpus must be
+  *semantically identical* (same contracts/rules/residuals) to the
+  pre-migration output. The existing real-binary fsmgen-strict tests
+  (`bounded_contract_passes_fsmgen_strict_validation`,
+  `temporal_rule_isf_passes_fsmgen_strict_validation`,
+  `isf_temporal_rules_reach_isf_end_to_end`) must stay green, plus a
+  dedicated transition parity test. Any divergence is a regression, not
+  an improvement, until the parity baseline is consciously updated.
+- **No-capture-loss review.** `.1` enumerated every
+  `TemporalRuleRecord`/`TemporalPredicateRecord` variant against an
+  explicit ContractIR target (recorded in the task tree's migration
+  table); the design is reviewed against the *verified* current types,
+  not assumed ones.
+- **Consumer audit before removing `temporal_rules`.** Using the
+  `ISF-ONLY-IR-PRUNE.1` method (full producer/consumer inventory:
+  converge snapshot, validate, learn_priors), `temporal_rules` is either
+  projected from `contracts` or its consumers are migrated and it is
+  removed — never silently dropped.
+- **Standard gate.** `scripts/run_ci.sh` green per leaf; every leaf via
+  `COMMIT.md`; fsmgen-binary tests run through the serialized
+  `run_fsmgen_strict_check` helper.
+
+Authoritative tracking: `docs/tasks/R16-CONTRACT-IR.md` (the "Design
+(`.1` output)" section is the full specification this summarises).

@@ -51,18 +51,25 @@ ready/valid `(stage …)`).
   Children: `.1`, `.2`, `.3`, `.4`
 
 - ID: `R16-CONTRACT-IR.1`
-  Status: `pending`
+  Status: `done`
   Goal: >
     Design leaf (docs-only): (a) placement decision — new IR stage vs.
     typed layer extending SemanticIR/IntentIR; (b) the closed operator
-    grammar (`rose/fell`, `stable … throughout [e1,e2]`, `s ##[m:n] t`,
-    `s until t`, `eventually within N`, `mutex`, `ordered_before`) with
-    typed event/window operands; (c) exact `TemporalRuleRecord` →
-    ContractIR migration map proving zero temporal-fidelity loss + CI
-    parity strategy; (d) how `ISF-HANDSHAKE-STAGE-LOWERING` is subsumed.
+    grammar; (c) exact `TemporalRuleRecord` → ContractIR migration map
+    proving zero temporal-fidelity loss + CI parity strategy; (d) how
+    `ISF-HANDSHAKE-STAGE-LOWERING` is subsumed.
   Acceptance: `Design doc recorded in this tree (placement + grammar + migration map + parity plan + subsumption); no code; reviewed against current TemporalRuleRecord/TickPhase/cycle_window/HandshakeComplete and the .isf contract/stage/bounded_eventually surface.`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — current types re-verified
+    (`semantic.rs:805-879`, carriers `semantic.rs:79`/`intent.rs:80`,
+    classifier `isf_ir.rs TemporalRuleDisposition`); full design recorded
+    in "Design (`.1` output)" below; every `TemporalRuleRecord` /
+    `TemporalPredicateRecord` case has an explicit ContractIR target
+    (incl. the currently-residual ones — now *modeled*, not lost); CI
+    parity strategy + `ISF-HANDSHAKE-STAGE-LOWERING` subsumption fixed;
+    a thorough mirror section was added to the mdBook
+    (`direction/temporal-intent-capture.md`) per `BOOK-METHOD-DOC`.
+    Docs-only — no code.
+  Commit: `see Commit Log`
 
 - ID: `R16-CONTRACT-IR.2`
   Status: `pending`
@@ -92,8 +99,8 @@ ready/valid `(stage …)`).
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `R16-CONTRACT-IR.1` | `pending` | Design before code — placement + operator grammar + migration map + parity plan (docs-only); gates all R16 extraction |
-| 2 | `R16-CONTRACT-IR.2` | `pending` | Typed model once `.1` design is fixed |
+| 1 | `R16-CONTRACT-IR.1` | `done` | Design fixed (placement + grammar + migration/parity + subsumption); book mirror added |
+| 2 | `R16-CONTRACT-IR.2` | `pending` | Next — implement the typed ContractIR model + serde per the `.1` design |
 | 3 | `R16-CONTRACT-IR.3` | `pending` | Migrate producers/lowering with CI parity |
 | 4 | `R16-CONTRACT-IR.4` | `pending` | Close + doc sync |
 
@@ -103,11 +110,120 @@ ready/valid `(stage …)`).
   `R16-CAPTURE-FIDELITY-GATES`, and transitively all extraction trees —
   nothing can extract accurately into a shape that does not exist.
 
+## Design (`.1` output, 2026-05-19)
+
+Grounded against the verified current types: `TemporalRuleRecord`
+(`semantic.rs:867`), `TemporalPredicateRecord` 7 variants
+(`:828`), `CycleWindowRecord` (`:819`), `TickPhase{PreTick,PostTick}`,
+`ClockEdge`; carriers `semantic.rs:79` + `intent.rs:80`; lowering
+`classify_temporal_rule → TemporalRuleDisposition{Contract|Rule|Residual}`
+(`isf_ir.rs`).
+
+### (a) Placement — typed layer, NOT a new IR stage
+
+ContractIR is a new typed module `crates/specforge/src/ir/contract.rs`
+defining `ActorContract` + the operator algebra. `SemanticIR` and
+`IntentIR` carry `contracts: Vec<ActorContract>` as an additive
+(`#[serde(default)]`) field. **No new pipeline stage / CLI / `IrStage`.**
+Rationale: (1) the standing doctrine "keep `IntentIR` the canonical
+product boundary"; (2) the `ISF-ONLY-*` ethos favours fewer stages; (3)
+`temporal_rules`/`actor_*` already live as typed fields the same way;
+(4) `.isf` lowering already consumes `IntentIR`. A separate stage would
+add large surface for zero capture benefit.
+
+### (b) Closed operator algebra (small, verifiable, lowerable)
+
+```
+EventExpr   = Edge{signal, Rose|Fell}
+            | Level{signal, value}                  // state, used in guards
+            | HandshakeFire{valid, ready}           // the transfer cycle
+            | Start                                  // txn/phase start
+            | PhaseBoundary{phase, Enter|Exit}
+Window      = Within{min:Option<u32>, max:u32 (>=1)} // FSMGen (within N), N>=1
+            | Between{from:EventExpr, to:EventExpr}   // for stability/throughout
+            | SameCycle                               // 0-cycle/combinational
+                                                       //   (the within-0 case,
+                                                       //    MODELLED not lost)
+Obligation  = Eventually{target:EventExpr, window:Within}
+            | Stable{signal, during:Between}
+            | Drive{signal, value}
+            | HandshakeBarrier{valid, ready}
+            | Persist{hold:Level|Edge, until:EventExpr}   // "remain X until Y"
+            | Sequence{steps:Vec<(EventExpr,Window)>}
+            | Mutex{a,b} | OrderedBefore{phaseA,phaseB}
+Condition   = the existing bounded guard form ((== sig val) / single-token)
+ActorContract = { contract_id, actor:ActorRef, kind:Assume|Guarantee,
+                  guard:Option<Condition>, obligation:Obligation,
+                  clock:Option<Signal>, edge:ClockEdge,
+                  channel:Option<Ref>, phase:Option<Ref>,
+                  provenance:{statement_ids, source_text, modality},
+                  lowering:Lowerable|Residual{reason},
+                  confidence:AutomationConfidence }
+```
+
+The algebra is **closed** (finite operator set) so it is realizability-
+checkable (`R16-CAPTURE-FIDELITY-GATES`), mechanically lowerable, and the
+residual boundary is crisp (`lowering: Residual{reason}` is explicit, not
+silent loss).
+
+### (c) `TemporalRuleRecord` → ContractIR migration map (zero capture loss)
+
+Every existing predicate/disposition has an explicit ContractIR target;
+the **currently-residual cases become modelled** (captured in the typed
+KG even if their `.isf` lowering is still residual — exactly the R16
+thesis):
+
+| Current shape | ContractIR | `.isf` lowering |
+| --- | --- | --- |
+| windowed `SignalValue` consequent (`max_cycles≥1`) | `Guarantee Eventually{Level(sig=val), Within{max=N}}` | `(contract … (eventually sig (within N)))` (parity) |
+| non-windowed `SignalValue` consequent + repr. antecedent | `Guarantee Drive{sig,val}` `guard=(== ante v)` | `(rule … (sig val))` (parity) |
+| `HandshakeComplete{valid,ready}` | `Guarantee HandshakeBarrier{valid,ready}` | `(stage p (ready r)(valid v))` — **subsumes `ISF-HANDSHAKE-STAGE-LOWERING`** (FSMGen accepts it at pin `9bfb9a20`) |
+| `SignalStable`/`ActorMaintainsSignalStable{from→to}` | `Guarantee Stable{sig, Between{from,to}}` | checked stability where FSMGen supports, else `Residual{reason}` — **but the intent is now in the typed KG** (was lost) |
+| `cycle_window` with `max_cycles==0` | `SameCycle` window | explicit `Residual` (never `(within 0)`) — modelled, not a silent skip |
+| `ActorDrivesSignal`/`Samples`/`SignalSampled` (no value) | `Assume`/`Guarantee` with `Edge`/sampling `EventExpr` | residual/metadata; captured |
+| `antecedents` (multi) | `guard` = conjunction of representable `Condition`s; non-representable parts → contract still emitted, guard flagged partial-residual | as today |
+| `TickPhase` Pre/Post, `ClockEdge` | `PhaseBoundary`/sampling `EventExpr` operands; `edge` field | preserved |
+
+A pure `contract_from_temporal_rule(&TemporalRuleRecord) -> ActorContract`
+is lossless for representable cases and emits explicit
+`Obligation`+`Residual{reason}` for the rest.
+
+### (c2) Migration phases + CI-parity gate
+
+- `.2`: add `ir/contract.rs` + serde + `contract_from_temporal_rule`;
+  add `contracts` field additively (serde back-compat). No behaviour
+  change (temporal_rules still drives `.isf`).
+- `.3`: re-point `classify_temporal_rule` to consume `ActorContract`.
+  **Parity gate:** on the real corpus the emitted `.isf` is semantically
+  identical (same contracts/rules/residuals) to pre-migration; the
+  fsmgen-strict tests (`bounded_contract_passes_…`,
+  `temporal_rule_isf_passes_…`, `isf_temporal_rules_reach_isf_end_to_end`)
+  stay green; add a transition parity test. Then audit `temporal_rules`
+  consumers (converge snapshot / validate / learn_priors — the
+  `ISF-ONLY-IR-PRUNE.1` method) and either project `temporal_rules` from
+  `contracts` or migrate consumers + remove it.
+- `.4`: close + sync book (`pipeline/isf-adapter.md`,
+  `domain/temporal-semantics.md`) + ROADMAP R16.
+
+### (d) `ISF-HANDSHAKE-STAGE-LOWERING` subsumption
+
+That `proposed` tree (HandshakeComplete → `(stage …)`) is **folded** into
+ContractIR: `HandshakeComplete` → `HandshakeBarrier` obligation, lowered
+to `(stage p (ready r)(valid v))` in `R16-CONTRACT-IR.3`. The standalone
+tree is marked `superseded` → `R16-CONTRACT-IR`.
+
 ## Decisions
 
 - `2026-05-19`: Highest program leverage (per `R16-INTENT-CAPTURE`
   thesis): representation loss is currently misdiagnosed as extraction
   loss. Created `proposed`; first to be promoted.
+- `2026-05-19` (`.1`): placement = typed layer, no new stage (canonical-
+  IntentIR doctrine + fewer-stages ethos). Closed operator algebra fixed.
+  Migration is additive-then-reproint with a corpus CI-parity gate.
+  `ISF-HANDSHAKE-STAGE-LOWERING` subsumed (→ `superseded`). The
+  currently-residual temporal cases become *modelled* in the typed KG
+  even when their `.isf` lowering stays residual — directly serving the
+  thesis (accurate typed KG first; lowering mechanical/honest).
 - `2026-05-19`: **Promoted `proposed → active`** by `R16-INTENT-CAPTURE.2`
   after the extraction methodology was presented and accepted. Frontier
   is `.1` — a docs-only design leaf (no code until the placement +
@@ -116,7 +232,19 @@ ready/valid `(stage …)`).
 
 ## Blockers
 
-- None. Active; frontier `R16-CONTRACT-IR.1` (design, docs-only).
+- None. Active; frontier `R16-CONTRACT-IR.2` (implement the typed model).
+
+## Verification Log
+
+| Date | Leaf | Checks | Result |
+| --- | --- | --- | --- |
+| `2026-05-19` | `R16-CONTRACT-IR.1` | current types re-verified; full design recorded (placement/grammar/migration/parity/subsumption); every `TemporalRuleRecord`/`TemporalPredicateRecord` case mapped incl. residual-now-modelled; book mirror added; mdBook builds | `passed` (docs-only) |
+
+## Commit Log
+
+| Leaf | Commit subject or reference | Notes |
+| --- | --- | --- |
+| `R16-CONTRACT-IR.1` | `R16-CONTRACT-IR.1 — ContractIR design (placement + operator algebra + migration/parity + subsumption)` | docs-only; book mirror per `BOOK-METHOD-DOC` |
 
 ## Changelog
 
@@ -124,3 +252,8 @@ ready/valid `(stage …)`).
 - `2026-05-19`: Promoted to `active` (frontier `.1`, docs-only design)
   after the user accepted the extraction methodology and authorized the
   program to begin. Concrete `.1`–`.4` leaves defined.
+- `2026-05-19`: `.1` done — ContractIR design fixed (typed layer / no new
+  stage; closed operator algebra; lossless `TemporalRuleRecord` migration
+  map with residual-cases-now-modelled; corpus CI-parity gate;
+  `ISF-HANDSHAKE-STAGE-LOWERING` subsumed). Thorough mirror added to the
+  mdBook per `BOOK-METHOD-DOC`. Frontier → `.2` (implement typed model).

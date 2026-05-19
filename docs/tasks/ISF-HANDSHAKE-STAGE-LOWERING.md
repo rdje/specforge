@@ -3,7 +3,12 @@
 ## Metadata
 
 - Tree ID: `ISF-HANDSHAKE-STAGE-LOWERING`
-- Status: `proposed`
+- Status: `superseded` → `R16-CONTRACT-IR`
+- Superseded: `2026-05-19` — folded into `R16-CONTRACT-IR`:
+  `HandshakeComplete` → `HandshakeBarrier` obligation → `(stage p
+  (ready r)(valid v))` is part of the ContractIR design (`.1`) and its
+  lowering (`R16-CONTRACT-IR.3`). No standalone work; no regression
+  (current behavior = residual, unchanged until ContractIR lands).
 - Roadmap lane: `R15b` (temporal lowering completeness — follow-on)
 - Created: `2026-05-18`
 - Last updated: `2026-05-18`

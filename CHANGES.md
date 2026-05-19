@@ -2,6 +2,30 @@
 
 ## 2026-05-19 (R16 SOTA intent-capture program scaffolded)
 
+### BOOK-METHOD-DOC.1 + R16-CONTRACT-IR.1 — book per-tree method-doc convention; ContractIR design
+- `BOOK-METHOD-DOC` (R0, `active`) created: standing convention + close-
+  rule that **every task-tree's implementation & verification is
+  documented clearly/thoroughly/accurately in the topically-correct
+  mdBook chapter** (chapter-placement map recorded; memory
+  `feedback-book-method-doc`; backfill of existing trees = `.2`). Honest
+  correction: the in-chat extraction methodology was NOT previously in
+  the book — this convention fixes that going forward and by backfill.
+- `R16-CONTRACT-IR.1` (option **b**, done): full ContractIR design
+  recorded — placement = **typed layer, no new IR stage** (canonical-
+  IntentIR doctrine + fewer-stages ethos); a **closed operator algebra**
+  (`EventExpr`/`Window`/`Obligation`/`ActorContract`); a **lossless
+  `TemporalRuleRecord` → ContractIR migration map** where the
+  currently-residual cases (`HandshakeComplete`, bare stability,
+  0-cycle) become *explicitly modelled* in the typed KG (the thesis);
+  additive-then-re-point migration with a **corpus CI-parity gate**.
+- `ISF-HANDSHAKE-STAGE-LOWERING` **superseded** → folded into
+  `R16-CONTRACT-IR` (`HandshakeComplete → HandshakeBarrier → (stage …)`).
+- First worked instance of the `BOOK-METHOD-DOC` convention landed: a
+  thorough "R16-CONTRACT-IR — how it is implemented and verified"
+  section in `direction/temporal-intent-capture.md`. Docs-only; full
+  `scripts/run_ci.sh` green (mdBook builds). Frontier →
+  `R16-CONTRACT-IR.2` (implement the typed model).
+
 ### R16-INTENT-CAPTURE.2 — extraction plan accepted; promote R16-CONTRACT-IR
 - The systematic+reliable extraction methodology for (1) actor names,
   (2) actor-relative boundary pins/ports, (3) prose+timing-diagram

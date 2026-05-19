@@ -36,7 +36,7 @@ evidence for one top-level task.
 | `AUDIT-DOC-RECONCILE` | `done` | `R0` | — | [docs/tasks/AUDIT-DOC-RECONCILE.md](docs/tasks/AUDIT-DOC-RECONCILE.md) |
 | `FSMGEN-ISSUE-REPORTING` | `done` | `R0` | — | [docs/tasks/FSMGEN-ISSUE-REPORTING.md](docs/tasks/FSMGEN-ISSUE-REPORTING.md) |
 | `FSMGEN-SUBMODULE-BUMP` | `done` | `R0` | — | [docs/tasks/FSMGEN-SUBMODULE-BUMP.md](docs/tasks/FSMGEN-SUBMODULE-BUMP.md) |
-| `ISF-HANDSHAKE-STAGE-LOWERING` | `proposed` | `R15b` | — (not active; upstream `(stage …)` fix unlocks it) | [docs/tasks/ISF-HANDSHAKE-STAGE-LOWERING.md](docs/tasks/ISF-HANDSHAKE-STAGE-LOWERING.md) |
+| `ISF-HANDSHAKE-STAGE-LOWERING` | `superseded` | `R15b` | — (folded into `R16-CONTRACT-IR`) | [docs/tasks/ISF-HANDSHAKE-STAGE-LOWERING.md](docs/tasks/ISF-HANDSHAKE-STAGE-LOWERING.md) |
 | `R16-INTENT-CAPTURE` | `active` | `R16` | `R16-INTENT-CAPTURE.2` (governance live; `R16-CONTRACT-IR` promoted) | [docs/tasks/R16-INTENT-CAPTURE.md](docs/tasks/R16-INTENT-CAPTURE.md) |
 | `R16-CONTRACT-IR` | `active` | `R16` | `R16-CONTRACT-IR.1` (design — docs-only) | [docs/tasks/R16-CONTRACT-IR.md](docs/tasks/R16-CONTRACT-IR.md) |
 | `R16-KG-PROTOCOL-ONTOLOGY` | `proposed` | `R16` | — (point #2, order 2; dep: CONTRACT-IR) | [docs/tasks/R16-KG-PROTOCOL-ONTOLOGY.md](docs/tasks/R16-KG-PROTOCOL-ONTOLOGY.md) |
@@ -44,6 +44,7 @@ evidence for one top-level task.
 | `R16-MULTIMODAL-CONTRACT-FUSION` | `proposed` | `R16` | — (point #3, order 4; deps: 1,2,3) | [docs/tasks/R16-MULTIMODAL-CONTRACT-FUSION.md](docs/tasks/R16-MULTIMODAL-CONTRACT-FUSION.md) |
 | `R16-WAVEFORM-CONTRACT-MINING` | `proposed` | `R16` | — (point #4, order 5 — crux; deps: 1,3) | [docs/tasks/R16-WAVEFORM-CONTRACT-MINING.md](docs/tasks/R16-WAVEFORM-CONTRACT-MINING.md) |
 | `R16-CONSTRAINED-VERIFIED-EXTRACTION` | `proposed` | `R16` | — (point #6, order 6 — crux; deps: 1,3) | [docs/tasks/R16-CONSTRAINED-VERIFIED-EXTRACTION.md](docs/tasks/R16-CONSTRAINED-VERIFIED-EXTRACTION.md) |
+| `BOOK-METHOD-DOC` | `active` | `R0` | `BOOK-METHOD-DOC.2` (backfill existing trees; `.1` done) | [docs/tasks/BOOK-METHOD-DOC.md](docs/tasks/BOOK-METHOD-DOC.md) |
 
 ## Directory Layout
 
