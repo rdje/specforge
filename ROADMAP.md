@@ -1227,7 +1227,13 @@
   - continue deepening the prior-candidate bridge only through typed schemas, KG-bench fixtures, and validation gates; do not let corpus-KB candidates directly write `CorpusMemory` or canonical IR
 
 ### R16 SOTA design-intent capture (active forward program)
-- status: Program scaffolded; sub-trees `proposed`, executed in DAG order
+- status: In progress. **`R16-CONTRACT-IR` (point #1, DAG root) DONE**
+  (`.1`–`.5`): typed ContractIR layer; `.isf` lowering re-pointed with a
+  3-way-proven parity gate; `HandshakeBarrier → (stage …)` enabled
+  (subsumes/delivers `ISF-HANDSHAKE-STAGE-LOWERING`, verified-but-dormant
+  until extraction grounds handshakes). Next DAG-promotable:
+  `R16-KG-PROTOCOL-ONTOLOGY` (#2) and `R16-CAPTURE-FIDELITY-GATES`
+  (#5/order-3). Remaining sub-trees `proposed`, executed in DAG order.
 - reference: `docs/tasks/R16-INTENT-CAPTURE.md` (umbrella, authoritative
   ordering + DAG), mdBook *SOTA Temporal-Intent Capture* chapter
 - thesis (user direction 2026-05-19): a digital-design PDF encodes intent

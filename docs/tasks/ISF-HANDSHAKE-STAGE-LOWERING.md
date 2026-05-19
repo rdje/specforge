@@ -3,12 +3,18 @@
 ## Metadata
 
 - Tree ID: `ISF-HANDSHAKE-STAGE-LOWERING`
-- Status: `superseded` → `R16-CONTRACT-IR`
+- Status: `superseded` → `R16-CONTRACT-IR` (DELIVERED via
+  `R16-CONTRACT-IR.4`)
 - Superseded: `2026-05-19` — folded into `R16-CONTRACT-IR`:
   `HandshakeComplete` → `HandshakeBarrier` obligation → `(stage p
-  (ready r)(valid v))` is part of the ContractIR design (`.1`) and its
-  lowering (`R16-CONTRACT-IR.3`). No standalone work; no regression
-  (current behavior = residual, unchanged until ContractIR lands).
+  (ready r)(valid v))`. **Delivered `2026-05-19` by
+  `R16-CONTRACT-IR.4`** (`6869c128`): re-added `IsfStage`/render +
+  classify Stage arm; FSMGen-`ready_valid_barrier`-correct (the `ready`
+  operand must be an actor input — gated, else residual, never
+  strict-invalid); real-binary fsmgen-strict-verified at pin `9bfb9a20`.
+  Verified-but-dormant on the current corpus (no `handshake_complete`
+  temporal_rule yet → zero `.isf` change; activates when extraction
+  grounds handshakes). No regression. No standalone work remains.
 - Roadmap lane: `R15b` (temporal lowering completeness — follow-on)
 - Created: `2026-05-18`
 - Last updated: `2026-05-18`

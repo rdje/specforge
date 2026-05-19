@@ -2,6 +2,18 @@
 
 ## 2026-05-19 (R16 SOTA intent-capture program scaffolded)
 
+### R16-CONTRACT-IR.5 — close tree; book/ROADMAP sync (program point #1 DELIVERED)
+- `R16-CONTRACT-IR` tree CLOSED (`.1`–`.5`). The mdBook R16 chapter's
+  `R16-CONTRACT-IR` section gained a "Status — delivered" subsection
+  (parity proven 3 ways; the FSMGen ready-must-be-input constraint; the
+  verified-but-dormant handshake fact) per the `BOOK-METHOD-DOC`
+  close-rule. ROADMAP `R16` status updated (point #1 done; next DAG =
+  `R16-KG-PROTOCOL-ONTOLOGY` / `R16-CAPTURE-FIDELITY-GATES`).
+  `ISF-HANDSHAKE-STAGE-LOWERING` marked DELIVERED via `.4`.
+  `docs/TASK_TREE.md` index → `R16-CONTRACT-IR` `done`. Docs-only;
+  `scripts/run_ci.sh` green (mdBook builds). The R16 DAG root is
+  complete; PNT continues to point #2/#5(order-3).
+
 ### R16-CONTRACT-IR.4 — enable HandshakeBarrier → (stage …) (subsumes ISF-HANDSHAKE-STAGE-LOWERING)
 - Re-added typed `IsfStage` + `IsfTransaction.stages` + `(stage <n>
   (ready r)(valid v))` render; `TemporalRuleDisposition::Stage`;

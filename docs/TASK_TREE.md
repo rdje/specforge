@@ -36,9 +36,9 @@ evidence for one top-level task.
 | `AUDIT-DOC-RECONCILE` | `done` | `R0` | — | [docs/tasks/AUDIT-DOC-RECONCILE.md](docs/tasks/AUDIT-DOC-RECONCILE.md) |
 | `FSMGEN-ISSUE-REPORTING` | `done` | `R0` | — | [docs/tasks/FSMGEN-ISSUE-REPORTING.md](docs/tasks/FSMGEN-ISSUE-REPORTING.md) |
 | `FSMGEN-SUBMODULE-BUMP` | `done` | `R0` | — | [docs/tasks/FSMGEN-SUBMODULE-BUMP.md](docs/tasks/FSMGEN-SUBMODULE-BUMP.md) |
-| `ISF-HANDSHAKE-STAGE-LOWERING` | `superseded` | `R15b` | — (folded into `R16-CONTRACT-IR`) | [docs/tasks/ISF-HANDSHAKE-STAGE-LOWERING.md](docs/tasks/ISF-HANDSHAKE-STAGE-LOWERING.md) |
-| `R16-INTENT-CAPTURE` | `active` | `R16` | `R16-INTENT-CAPTURE.2` (governance live; `R16-CONTRACT-IR` promoted) | [docs/tasks/R16-INTENT-CAPTURE.md](docs/tasks/R16-INTENT-CAPTURE.md) |
-| `R16-CONTRACT-IR` | `active` | `R16` | `R16-CONTRACT-IR.1` (design — docs-only) | [docs/tasks/R16-CONTRACT-IR.md](docs/tasks/R16-CONTRACT-IR.md) |
+| `ISF-HANDSHAKE-STAGE-LOWERING` | `superseded` | `R15b` | — (delivered via `R16-CONTRACT-IR.4`) | [docs/tasks/ISF-HANDSHAKE-STAGE-LOWERING.md](docs/tasks/ISF-HANDSHAKE-STAGE-LOWERING.md) |
+| `R16-INTENT-CAPTURE` | `active` | `R16` | `R16-INTENT-CAPTURE.2` (governance live; #1 done → promote `R16-KG-PROTOCOL-ONTOLOGY` / `R16-CAPTURE-FIDELITY-GATES`) | [docs/tasks/R16-INTENT-CAPTURE.md](docs/tasks/R16-INTENT-CAPTURE.md) |
+| `R16-CONTRACT-IR` | `done` | `R16` | — (program point #1 delivered) | [docs/tasks/R16-CONTRACT-IR.md](docs/tasks/R16-CONTRACT-IR.md) |
 | `R16-KG-PROTOCOL-ONTOLOGY` | `proposed` | `R16` | — (point #2, order 2; dep: CONTRACT-IR) | [docs/tasks/R16-KG-PROTOCOL-ONTOLOGY.md](docs/tasks/R16-KG-PROTOCOL-ONTOLOGY.md) |
 | `R16-CAPTURE-FIDELITY-GATES` | `proposed` | `R16` | — (point #5, order 3 — objective function; dep: CONTRACT-IR) | [docs/tasks/R16-CAPTURE-FIDELITY-GATES.md](docs/tasks/R16-CAPTURE-FIDELITY-GATES.md) |
 | `R16-MULTIMODAL-CONTRACT-FUSION` | `proposed` | `R16` | — (point #3, order 4; deps: 1,2,3) | [docs/tasks/R16-MULTIMODAL-CONTRACT-FUSION.md](docs/tasks/R16-MULTIMODAL-CONTRACT-FUSION.md) |

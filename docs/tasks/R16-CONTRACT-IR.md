@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `R16-CONTRACT-IR`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: `R16`
 - Program: `R16-INTENT-CAPTURE` (point #1, order 1 — DAG root)
 - Created: `2026-05-19`
@@ -46,7 +46,7 @@ ready/valid `(stage …)`).
 ## Task Tree
 
 - ID: `R16-CONTRACT-IR`
-  Status: `active`
+  Status: `done`
   Goal: typed timed-contract IR; IntentIR projects it; mechanical `.isf`
   Children: `.1`, `.2`, `.3`, `.4`, `.5`
 
@@ -158,13 +158,20 @@ ready/valid `(stage …)`).
   Commit: `see Commit Log`
 
 - ID: `R16-CONTRACT-IR.5`
-  Status: `pending`
+  Status: `done`
   Goal: close tree; sync mdBook (temporal-semantics + ISF chapters) +
   ROADMAP R16; finalize `ISF-HANDSHAKE-STAGE-LOWERING` disposition
   (delivered via `.4`).
   Acceptance: `Tree done; docs synced; scripts/run_ci.sh green.`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — mdBook R16 chapter's `R16-CONTRACT-IR`
+    section got a "Status — delivered" subsection (parity-3-ways, the
+    FSMGen ready-must-be-input constraint, the verified-but-dormant
+    fact) per the `BOOK-METHOD-DOC` close-rule; ROADMAP `R16` status
+    updated (CONTRACT-IR DONE; next DAG = KG-PROTOCOL-ONTOLOGY /
+    CAPTURE-FIDELITY-GATES); `ISF-HANDSHAKE-STAGE-LOWERING` marked
+    DELIVERED via `.4`; `docs/TASK_TREE.md` index → `R16-CONTRACT-IR`
+    `done`. Docs-only; `scripts/run_ci.sh` green (mdBook builds).
+  Commit: `see Commit Log`
 
 ## Current Frontier
 
@@ -174,7 +181,11 @@ ready/valid `(stage …)`).
 | 2 | `R16-CONTRACT-IR.2` | `done` | Typed `ir/contract.rs` + serde + conversion + 7 tests; additive field; CI 1061/0 |
 | 3 | `R16-CONTRACT-IR.3` | `done` | Parity re-point complete: classify_actor_contract + populate + fallback; parity proven 3 ways (oracle test / live nvme baseline / e2e+fsmgen-strict); temporal_rules kept (audit); CI 1063/0 |
 | 4 | `R16-CONTRACT-IR.4` | `done` | `HandshakeBarrier → (stage …)` enabled + fsmgen-strict-verified (ready=input gate); honest finding: 0 corpus handshake_complete → dormant, zero `.isf` change |
-| 5 | `R16-CONTRACT-IR.5` | `pending` | **Next** — close tree; sync mdBook (isf-adapter/temporal-semantics) + ROADMAP R16; finalize `ISF-HANDSHAKE-STAGE-LOWERING` disposition |
+| 5 | `R16-CONTRACT-IR.5` | `done` | Tree CLOSED — book/ROADMAP synced; ISF-HANDSHAKE-STAGE-LOWERING delivered |
+
+Tree complete. Per the `R16-INTENT-CAPTURE` DAG the next promotable
+sub-trees are `R16-KG-PROTOCOL-ONTOLOGY` (#2) and
+`R16-CAPTURE-FIDELITY-GATES` (#5/order-3).
 
 ## Dependencies / Order
 
@@ -401,7 +412,8 @@ marked `superseded` → `R16-CONTRACT-IR`.
 | `R16-CONTRACT-IR.2` | `R16-CONTRACT-IR.2 — implement typed ir/contract.rs model + serde + conversion` | first R16 code; additive unpopulated field; CI 1061/0 |
 | `R16-CONTRACT-IR.3` (s1) | `R16-CONTRACT-IR.3 (slice 1) — parity-faithful window-first conversion + source_rule_id` (`4c5d34e0`) | CI 1062/0; zero `.isf` change |
 | `R16-CONTRACT-IR.3` (s2) | `R16-CONTRACT-IR.3 (slice 2) — classify_actor_contract + re-point + fallback; parity proven` | CI 1063/0; `.3` DONE |
-| `R16-CONTRACT-IR.4` | `R16-CONTRACT-IR.4 — enable HandshakeBarrier → (stage …); ready-is-input gate; fsmgen-strict-verified` | dormant on corpus (no handshake_complete); zero `.isf` change |
+| `R16-CONTRACT-IR.4` | `R16-CONTRACT-IR.4 — enable HandshakeBarrier → (stage …); ready-is-input gate; fsmgen-strict-verified` (`6869c128`) | dormant on corpus (no handshake_complete); zero `.isf` change |
+| `R16-CONTRACT-IR.5` | `R16-CONTRACT-IR.5 — close tree; book/ROADMAP sync; ISF-HANDSHAKE-STAGE-LOWERING delivered` | tree CLOSED; docs-only |
 
 ## Changelog
 
@@ -414,6 +426,14 @@ marked `superseded` → `R16-CONTRACT-IR`.
   map with residual-cases-now-modelled; corpus CI-parity gate;
   `ISF-HANDSHAKE-STAGE-LOWERING` subsumed). Thorough mirror added to the
   mdBook per `BOOK-METHOD-DOC`. Frontier → `.2` (implement typed model).
+- `2026-05-19`: **Tree CLOSED (`.5`)**. R16 program point #1 delivered:
+  typed ContractIR layer; `.isf` lowering re-pointed with a 3-way-proven
+  parity gate; `HandshakeBarrier → (stage …)` enabled
+  (subsumes/delivers `ISF-HANDSHAKE-STAGE-LOWERING`,
+  verified-but-dormant). mdBook R16 chapter + ROADMAP R16 +
+  `ISF-HANDSHAKE-STAGE-LOWERING` + `docs/TASK_TREE.md` index synced.
+  Per the DAG, next promotable: `R16-KG-PROTOCOL-ONTOLOGY` (#2) /
+  `R16-CAPTURE-FIDELITY-GATES` (#5, order-3).
 - `2026-05-19`: `.4` DONE — `HandshakeBarrier → (stage …)` enabled
   (re-added `IsfStage`/render; `TemporalRuleDisposition::Stage`;
   classify arm). Real-binary picky catch: FSMGen requires the stage

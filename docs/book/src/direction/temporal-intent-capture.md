@@ -143,5 +143,36 @@ to land and `.isf` lowering stays mechanical.
   `COMMIT.md`; fsmgen-binary tests run through the serialized
   `run_fsmgen_strict_check` helper.
 
+### Status — delivered (`R16-CONTRACT-IR` tree closed)
+
+`.1` design → `.2` typed `ir/contract.rs` model → `.3` parity-preserving
+re-point (`.isf` lowering now consumes ContractIR; parity proven three
+ways — a by-construction pointwise oracle test, the live nvme corpus
+matching the pre-ContractIR baseline exactly, and the e2e/fsmgen-strict
+suite; a back-compat fallback projects from `temporal_rules` for
+pre-ContractIR artifacts) → `.4` enabled `HandshakeBarrier → (stage p
+(ready r)(valid v))`, which **subsumes and delivers
+`ISF-HANDSHAKE-STAGE-LOWERING`**.
+
+Two honest, recorded constraints on `.4`:
+
+- FSMGen's `ready_valid_barrier` requires the stage's `ready` operand to
+  be an actor **input** (verified against the pinned binary). SPECFORGE
+  emits `(stage …)` only when that holds, otherwise it preserves an
+  explicit residual — it never fabricates a strict-invalid stage.
+- It is a **verified-but-dormant** capability today: no current corpus
+  `temporal_rule` carries a `handshake_complete` predicate, so zero
+  stages are emitted corpus-wide and the emitted `.isf` is unchanged.
+  The path is unit- and real-binary-fsmgen-strict-verified; it activates
+  once the extraction trees (`#3`/`#4`/`#6`) ground handshake
+  completion. This is the thesis in action: the typed target and its
+  lowering are correct and ready; capture fidelity is the remaining
+  work.
+
+`temporal_rules` is kept (load-bearing for validation/priors and as the
+fallback); `actor_contracts` is the additive typed projection lowering
+consumes.
+
 Authoritative tracking: `docs/tasks/R16-CONTRACT-IR.md` (the "Design
-(`.1` output)" section is the full specification this summarises).
+(`.1` output)" section is the full specification; the Decisions and
+Verification Log record every honest catch).
