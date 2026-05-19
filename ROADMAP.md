@@ -1226,19 +1226,68 @@
   - add further specialized page families beyond the current semantic/truthfulness, typed-prior-memory, table, visual, state-machine, timing, infrastructure, protocol, and prior-candidate pages when new evidence families need their own durable corpus synthesis surfaces
   - continue deepening the prior-candidate bridge only through typed schemas, KG-bench fixtures, and validation gates; do not let corpus-KB candidates directly write `CorpusMemory` or canonical IR
 
+### R16 SOTA design-intent capture (active forward program)
+- status: Program scaffolded; sub-trees `proposed`, executed in DAG order
+- reference: `docs/tasks/R16-INTENT-CAPTURE.md` (umbrella, authoritative
+  ordering + DAG), mdBook *SOTA Temporal-Intent Capture* chapter
+- thesis (user direction 2026-05-19): a digital-design PDF encodes intent
+  as the temporal behavior of actors at their boundary (pins/ports). The
+  hardest, highest-value problem is **accurate and reliable extraction of
+  temporal behavior from prose AND timing diagrams into a typed knowledge
+  graph**. Once that typed KG holds accurate temporal behavior for every
+  signal/port, the rest (KG → IntentIR → `.isf` → FSMGen) is **almost
+  mechanical**. So: build the mechanical-to-lower typed target first,
+  make capture fidelity objectively measurable early, then concentrate
+  effort on prose+waveform extraction fidelity measured against the
+  spec's own figures. Residual-honesty doctrine is enforced throughout
+  (unverifiable temporal intent → explicit residual, never fabricated).
+- the six points, in program order (DAG in the umbrella tree):
+  1. `R16-CONTRACT-IR` — typed timed-contract IR (assume/guarantee per
+     actor; sequence/stability/bounded-liveness/until). The
+     mechanical-to-lower target shape. (DAG root)
+  2. `R16-KG-PROTOCOL-ONTOLOGY` — first-class `Channel`/`Transaction`/
+     `Phase`/`HandshakePair` KG nodes+edges; IntentIR projects it.
+  3. `R16-CAPTURE-FIDELITY-GATES` — realizability + spec-figure
+     conformance = the objective capture-fidelity metric + residual
+     driver. Pulled early: it is the objective function for the crux.
+  4. `R16-MULTIMODAL-CONTRACT-FUSION` — cross-modal evidence (prose +
+     table + figure) → one contract object + provenance + disagreement.
+  5. `R16-WAVEFORM-CONTRACT-MINING` — timing diagram → partial trace →
+     generalized contract; cross-check vs prose. **Crux.**
+  6. `R16-CONSTRAINED-VERIFIED-EXTRACTION` — schema-constrained +
+     entailment-verified extraction + protocol template library +
+     uncertainty-driven converge. **Crux, continuous.**
+- completion criteria:
+  - ContractIR + protocol-structured KG exist; IntentIR/`.isf` lowering
+    from them is mechanical and CI-parity with current temporal lowering
+  - an objective per-document capture-fidelity score (realizability +
+    spec-figure conformance) is regression-locked
+  - prose+waveform extraction precision/recall improves against that
+    score on the real corpus, with disagreement preserved as residual
+
 ## Recommended implementation order
-1. Keep `IntentIR` as the canonical product boundary in all code and docs
-2. Finish the graph-first downstream signal model so `direction_hint` is no longer the primary semantic surface (`R15`)
-3. Land the explicit clock-tick temporal model (`R15b`)
-4. Make KG-guided multimodal rescans a first-class convergent workstream (`R15c`)
-5. Add typed evidence arbitration and conflict resolution across modalities (`R15d`)
-6. Harden evaluation with gold fixtures, negative fixtures, and false-positive control (`R15e`)
-7. Add a separate cross-document learning plane for typed extraction priors while keeping canonical document truth local (`R15f`)
-8. Add a corpus knowledge base plane beside the KG and prior memory so compiled cross-document synthesis becomes persistent and reviewable (`R15g`)
-9. Extend relation extraction for harder prose with Tier 3 support only after the graph/temporal/eval/corpus-memory surfaces are ready (`R14`)
-10. The adapter family begins and ends at `.isf`; `.fsm`/HDL are owned by FSMGen (downstream of `.isf`), not SpecForge
+1. **`R16`: SOTA design-intent capture is the active forward program** —
+   execute its six sub-trees in the DAG order recorded in
+   `docs/tasks/R16-INTENT-CAPTURE.md` (CONTRACT-IR → KG-PROTOCOL-ONTOLOGY
+   / CAPTURE-FIDELITY-GATES → FUSION / WAVEFORM / CONSTRAINED-VERIFIED)
+2. Keep `IntentIR` as the canonical product boundary in all code and docs
+3. Finish the graph-first downstream signal model so `direction_hint` is no longer the primary semantic surface (`R15`)
+4. Land the explicit clock-tick temporal model (`R15b`)
+5. Make KG-guided multimodal rescans a first-class convergent workstream (`R15c`)
+6. Add typed evidence arbitration and conflict resolution across modalities (`R15d`)
+7. Harden evaluation with gold fixtures, negative fixtures, and false-positive control (`R15e`)
+8. Add a separate cross-document learning plane for typed extraction priors while keeping canonical document truth local (`R15f`)
+9. Add a corpus knowledge base plane beside the KG and prior memory so compiled cross-document synthesis becomes persistent and reviewable (`R15g`)
+10. Extend relation extraction for harder prose with Tier 3 support only after the graph/temporal/eval/corpus-memory surfaces are ready (`R14`)
+11. The adapter family begins and ends at `.isf`; `.fsm`/HDL are owned by FSMGen (downstream of `.isf`), not SpecForge
 
 ## Immediate next milestone
+- `R16`: the active forward program — SOTA design-intent capture. Promote
+  and execute its six sub-trees in DAG order starting at
+  `R16-CONTRACT-IR` (the typed timed-contract target), per
+  `docs/tasks/R16-INTENT-CAPTURE.md`. The crux is accurate/reliable
+  prose+timing-diagram → typed-KG temporal extraction; everything
+  downstream of an accurate typed KG is almost mechanical.
 - `R15`: finish the transition from compatibility `direction_hint` fields to actor-relative graph-first downstream semantics
 - `R15b`: introduce the explicit clock-tick temporal model so behavioral truth is first-class in `SemanticIR` / `IntentIR`
 - `R15c`: make KG-guided multimodal rescans a named workstream in the convergent pipeline

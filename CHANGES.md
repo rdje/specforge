@@ -1,5 +1,32 @@
 # CHANGES
 
+## 2026-05-19 (R16 SOTA intent-capture program scaffolded)
+
+### R16-INTENT-CAPTURE.1 — scaffold the SOTA design-intent-capture program
+- New forward program captured precisely as ordered task-trees, ROADMAP,
+  and mdBook (no production code — scaffolding/ownership only, per the
+  doctrine). 7 trees created: umbrella `R16-INTENT-CAPTURE` (`active`)
+  + 6 `proposed` sub-trees (`R16-CONTRACT-IR`,
+  `R16-KG-PROTOCOL-ONTOLOGY`, `R16-CAPTURE-FIDELITY-GATES`,
+  `R16-MULTIMODAL-CONTRACT-FUSION`, `R16-WAVEFORM-CONTRACT-MINING`,
+  `R16-CONSTRAINED-VERIFIED-EXTRACTION`), all registered in
+  `docs/TASK_TREE.md` with the dependency DAG.
+- ROADMAP gained lane `R16` (thesis + the six points in order + DAG +
+  completion criteria), is now `#1` in "Recommended implementation
+  order" and the lead "Immediate next milestone". mdBook gained
+  `direction/temporal-intent-capture.md` + `SUMMARY.md` entry. Thesis
+  recorded as memory `project-r16-intent-capture`.
+- Recorded thesis (user direction): accurate/reliable temporal
+  extraction from **prose + timing diagrams** into a typed KG is the
+  crux; once the typed KG is accurate, KG→IntentIR→`.isf`→FSMGen is
+  almost mechanical. Order: build the typed contract target first
+  (#1/#2), make capture fidelity objectively measurable early
+  (#5→order-3, via the spec's own figures), then concentrate on
+  extraction fidelity (#3/#4/#6). Residual-honesty doctrine enforced.
+- Sub-trees are `proposed` — execution begins on DAG-ordered promotion
+  via `R16-INTENT-CAPTURE.2` (first: `R16-CONTRACT-IR`). Full
+  `scripts/run_ci.sh` green (mdBook builds with the new chapter).
+
 ## 2026-05-18 (Post-ISF-ONLY audit + PNT remediation)
 
 ### ISF-ONLY-IR-PRUNE.2 — remove dead `.fsm`-era init_assignments + decision_tree_fragments IR

@@ -37,6 +37,13 @@ evidence for one top-level task.
 | `FSMGEN-ISSUE-REPORTING` | `done` | `R0` | — | [docs/tasks/FSMGEN-ISSUE-REPORTING.md](docs/tasks/FSMGEN-ISSUE-REPORTING.md) |
 | `FSMGEN-SUBMODULE-BUMP` | `done` | `R0` | — | [docs/tasks/FSMGEN-SUBMODULE-BUMP.md](docs/tasks/FSMGEN-SUBMODULE-BUMP.md) |
 | `ISF-HANDSHAKE-STAGE-LOWERING` | `proposed` | `R15b` | — (not active; upstream `(stage …)` fix unlocks it) | [docs/tasks/ISF-HANDSHAKE-STAGE-LOWERING.md](docs/tasks/ISF-HANDSHAKE-STAGE-LOWERING.md) |
+| `R16-INTENT-CAPTURE` | `active` | `R16` | `R16-INTENT-CAPTURE.2` (promote `R16-CONTRACT-IR`) | [docs/tasks/R16-INTENT-CAPTURE.md](docs/tasks/R16-INTENT-CAPTURE.md) |
+| `R16-CONTRACT-IR` | `proposed` | `R16` | — (program point #1, order 1 — DAG root; promote first) | [docs/tasks/R16-CONTRACT-IR.md](docs/tasks/R16-CONTRACT-IR.md) |
+| `R16-KG-PROTOCOL-ONTOLOGY` | `proposed` | `R16` | — (point #2, order 2; dep: CONTRACT-IR) | [docs/tasks/R16-KG-PROTOCOL-ONTOLOGY.md](docs/tasks/R16-KG-PROTOCOL-ONTOLOGY.md) |
+| `R16-CAPTURE-FIDELITY-GATES` | `proposed` | `R16` | — (point #5, order 3 — objective function; dep: CONTRACT-IR) | [docs/tasks/R16-CAPTURE-FIDELITY-GATES.md](docs/tasks/R16-CAPTURE-FIDELITY-GATES.md) |
+| `R16-MULTIMODAL-CONTRACT-FUSION` | `proposed` | `R16` | — (point #3, order 4; deps: 1,2,3) | [docs/tasks/R16-MULTIMODAL-CONTRACT-FUSION.md](docs/tasks/R16-MULTIMODAL-CONTRACT-FUSION.md) |
+| `R16-WAVEFORM-CONTRACT-MINING` | `proposed` | `R16` | — (point #4, order 5 — crux; deps: 1,3) | [docs/tasks/R16-WAVEFORM-CONTRACT-MINING.md](docs/tasks/R16-WAVEFORM-CONTRACT-MINING.md) |
+| `R16-CONSTRAINED-VERIFIED-EXTRACTION` | `proposed` | `R16` | — (point #6, order 6 — crux; deps: 1,3) | [docs/tasks/R16-CONSTRAINED-VERIFIED-EXTRACTION.md](docs/tasks/R16-CONSTRAINED-VERIFIED-EXTRACTION.md) |
 
 ## Directory Layout
 

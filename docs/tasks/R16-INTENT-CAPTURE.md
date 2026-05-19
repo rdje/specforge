@@ -1,0 +1,166 @@
+# R16-INTENT-CAPTURE: SOTA design-intent capture (program umbrella)
+
+## Metadata
+
+- Tree ID: `R16-INTENT-CAPTURE`
+- Status: `active`
+- Roadmap lane: `R16` (new major workstream — SOTA temporal-intent capture)
+- Created: `2026-05-19`
+- Last updated: `2026-05-19`
+- Owner: repo-local workflow
+
+## Thesis (load-bearing — recorded by explicit user direction 2026-05-19)
+
+A digital-design PDF (protocol / component) encodes design intent as the
+**temporal behavior of actors observed at their boundary (pins/ports)**.
+The single hardest, highest-value problem is **accurate and reliable
+extraction of temporal behavior from prose AND from timing diagrams** into
+a **typed knowledge graph**. Once that typed KG holds accurate temporal
+behavior for every involved signal/port, the remainder
+(KG → IntentIR → `.isf` → FSMGen) is **almost mechanical**.
+
+Therefore the program is sequenced so that:
+
+1. the typed target the extraction must land in exists and is shaped like
+   a timed contract over actor boundaries (mechanical to lower from), and
+2. capture fidelity is **objectively measurable early** (the spec's own
+   figures/waveforms are near-ground-truth conformance vectors), so that
+3. the bulk of effort concentrates on **prose + timing-diagram → typed KG
+   extraction fidelity**, measured against that objective metric.
+
+This thesis is preserved as memory `feedback-temporal-capture-thesis` and
+in ROADMAP `R16` and the mdBook direction chapter. It must not be eroded
+by treating extraction gaps as mere lowering problems, nor by fabricating
+temporal intent the source does not license (residual-honesty doctrine).
+
+## Goal
+
+Steer the IR pipeline to SOTA design-intent capture via six owned
+sub-trees (the "6 points"), executed in the recorded order with the
+recorded dependency DAG. This umbrella owns the program scaffolding,
+ordering, and cross-tree invariants; each sub-tree owns its
+implementation.
+
+## Non-Goals
+
+- This umbrella performs **no production code change** — sub-trees do,
+  each under its own ownership.
+- Do not promote a sub-tree to `active` out of dependency order without
+  recording the rationale here.
+- Do not weaken the residual-honesty doctrine: unverifiable temporal
+  intent is preserved as an explicit residual, never fabricated.
+
+## The six sub-trees (points) and their order
+
+| Order | Sub-tree | Point | Role | Depends on |
+| --- | --- | --- | --- | --- |
+| 1 | `R16-CONTRACT-IR` | #1 | Typed timed-contract IR layer (assume/guarantee per actor; sequence/stability/bounded-liveness/until operators). The mechanical-to-lower target shape. | — |
+| 2 | `R16-KG-PROTOCOL-ONTOLOGY` | #2 | First-class `Channel` / `Transaction` / `Phase` / `HandshakePair` KG nodes+edges so IntentIR is a systematic projection of protocol structure. | `R16-CONTRACT-IR` |
+| 3 | `R16-CAPTURE-FIDELITY-GATES` | #5 | Realizability/consistency check + replay of the spec's own figures/waveforms as conformance vectors → the **objective capture-fidelity metric** + residual/repair driver. Pulled early: it is the objective function for the hard problem. | `R16-CONTRACT-IR` |
+| 4 | `R16-MULTIMODAL-CONTRACT-FUSION` | #3 | Cluster cross-modal evidence (prose + table + figure + state diagram) keyed by (actor, channel/group, phase) into one contract object with provenance + typed merge + explicit disagreement surface. | 1, 2, 3 |
+| 5 | `R16-WAVEFORM-CONTRACT-MINING` | #4 | Timing diagram → structured partial trace (lanes/edges/value-spans/relative-delay annotations/causal arrows) → generalized contract; cross-check vs prose-derived contract. **The crux extraction thrust.** | 1, 3 (feeds 4) |
+| 6 | `R16-CONSTRAINED-VERIFIED-EXTRACTION` | #6 | Schema-constrained LLM/VLM extraction emitting directly into ContractIR + entailment verifier (source span must license the contract) + protocol-pattern template library seeded into prior memory + uncertainty-driven converge. **The crux, continuous.** | 1, 3 |
+
+Dependency DAG: `1 → 2`; `1 → 3`; `{1,2,3} → 4`; `{1,3} → 5`; `{1,3} → 6`.
+`5` and `6` produce/clean contract candidates that `4` fuses; `3` measures
+all of `4/5/6`. `1` is the spine; `3` is the objective function.
+
+## Acceptance Criteria (program-level)
+
+- All six sub-trees exist as registered `proposed` task files with
+  precise goals, non-goals, acceptance, dependencies, and the recorded
+  order; the dependency DAG is consistent.
+- ROADMAP lane `R16` and an mdBook chapter capture the program, the six
+  points, the order, and the thesis.
+- `docs/TASK_TREE.md` indexes all seven trees.
+- Promotion of each sub-tree to `active` happens in DAG order (or with a
+  recorded exception); every sub-tree's code lands under its own
+  `COMMIT.md`-tracked leaves; `scripts/run_ci.sh` green per code leaf.
+
+## Task Tree
+
+- ID: `R16-INTENT-CAPTURE`
+  Status: `active`
+  Goal: own the program scaffolding, ordering, cross-tree invariants
+  Children: `R16-INTENT-CAPTURE.1`, `.2`
+
+- ID: `R16-INTENT-CAPTURE.1`
+  Status: `done`
+  Goal: >
+    Scaffold the program: create the 6 `proposed` sub-tree files with
+    precise goals/non-goals/acceptance/deps/order; add ROADMAP `R16`;
+    add the mdBook direction chapter; register all 7 trees in
+    `docs/TASK_TREE.md`; record the thesis (memory + docs). Docs only.
+  Acceptance: `7 trees registered + ROADMAP R16 + mdBook chapter + thesis memory; mdBook builds; no code change.`
+  Verification: `passed` — 6 sub-tree files + this umbrella created
+    (`docs/tasks/R16-*.md`), all 7 registered in `docs/TASK_TREE.md`
+    with status/lane/dep order; ROADMAP lane `R16` added (thesis, the
+    six points in order, DAG, completion criteria) + listed #1 in
+    "Recommended implementation order" + "Immediate next milestone";
+    mdBook chapter `direction/temporal-intent-capture.md` + `SUMMARY.md`
+    entry added; thesis recorded as memory `project-r16-intent-capture`.
+    No production code change. Full `scripts/run_ci.sh` green (mdBook
+    builds with the new chapter).
+  Commit: `see Commit Log`
+
+- ID: `R16-INTENT-CAPTURE.2`
+  Status: `pending`
+  Goal: >
+    Drive the program: promote sub-trees to `active` in DAG order,
+    keep the order/DAG/thesis consistent as sub-trees split, and close
+    when all six are `done`. (Sequencing/governance leaf — opens after
+    `.1`; the first promotion is `R16-CONTRACT-IR`.)
+  Acceptance: `Sub-trees executed in DAG order; program closed when all six done; ordering integrity maintained.`
+  Verification: `pending`
+  Commit: `pending`
+
+## Current Frontier
+
+| Order | Leaf | Status | Why next |
+| --- | --- | --- | --- |
+| 1 | `R16-INTENT-CAPTURE.1` | `done` | Program scaffolding (this leaf) |
+| 2 | `R16-INTENT-CAPTURE.2` | `pending` | Next — promote `R16-CONTRACT-IR` to `active` (DAG root) when execution is authorized |
+
+## Decisions
+
+- `2026-05-19`: Six sub-trees, one umbrella, lane `R16`. Order pulls
+  point #5 (`R16-CAPTURE-FIDELITY-GATES`) to 3rd: capture fidelity is the
+  program's objective function, and the spec's own figures/waveforms are
+  near-ground-truth — you must measure the hard problem before/while
+  attacking it. #1/#2 are the foundational typed target ("mechanical to
+  lower from", per the thesis); #3/#4/#6 are the extraction-fidelity
+  thrust (the crux: prose + timing-diagram → typed KG).
+- `2026-05-19`: Sub-trees created `proposed`, not `active` — captured,
+  owned, ordered; execution begins on promotion (`.2`), DAG-ordered.
+  This matches the doctrine "no code change without task-tree ownership"
+  while not pre-committing implementation detail before promotion.
+
+## Open Questions
+
+- ContractIR placement: a new IR stage vs. a typed layer extending
+  `SemanticIR`/`IntentIR`. Resolved inside `R16-CONTRACT-IR.1` (design
+  leaf), not here.
+
+## Blockers
+
+- None. Sub-trees are `proposed`; promotion is gated on authorization +
+  DAG order, not on an external blocker.
+
+## Verification Log
+
+| Date | Leaf | Checks | Result |
+| --- | --- | --- | --- |
+| `2026-05-19` | `R16-INTENT-CAPTURE.1` | 7 trees + ROADMAP R16 + mdBook chapter + index + thesis memory; full `scripts/run_ci.sh` (mdBook) | `passed` |
+
+## Commit Log
+
+| Leaf | Commit subject or reference | Notes |
+| --- | --- | --- |
+| `R16-INTENT-CAPTURE.1` | `R16-INTENT-CAPTURE — scaffold SOTA intent-capture program (6 ordered trees + ROADMAP + mdBook)` | docs-only; sub-trees `proposed` |
+
+## Changelog
+
+- `2026-05-19`: Created by explicit user direction — capture the SOTA
+  6-point intent-capture program precisely as ordered task-trees +
+  ROADMAP + mdBook, with the prose/timing-diagram-extraction-is-the-crux
+  thesis recorded. No code change (scaffolding only).

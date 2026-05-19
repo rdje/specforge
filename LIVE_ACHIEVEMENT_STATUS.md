@@ -1,5 +1,6 @@
 # LIVE_ACHIEVEMENT_STATUS
 ## Current snapshot
+- R16-INTENT-CAPTURE.1 — SOTA design-intent-capture program scaffolded: umbrella `R16-INTENT-CAPTURE` (active) + 6 `proposed` ordered sub-trees (CONTRACT-IR → KG-PROTOCOL-ONTOLOGY/CAPTURE-FIDELITY-GATES → FUSION/WAVEFORM/CONSTRAINED-VERIFIED) with dependency DAG; ROADMAP lane R16 + #1 implementation order + immediate milestone; mdBook `direction/temporal-intent-capture.md`; thesis (prose+waveform→typed-KG extraction is the crux; rest mechanical) recorded in docs + memory; no code (scaffolding only); full CI green: Done — execution begins on DAG-ordered promotion (first: R16-CONTRACT-IR)
 - AUDIT-DOC-RECONCILE task tree (lane R0) — COMPLETE/CLOSED: R15 forward text + book converge-flag surface reconciled to code; LAST audit tree → the entire post-ISF-ONLY audit remediation program (5 trees) is complete: Done
 - AUDIT-DOC-RECONCILE.2 — book `pipeline.md#converge` full 12-flag/default table vs `cli.rs ConvergeArgs` (closed the "5 flags, unstated defaults" finding); `overview.md` completed+linked; full CI green incl. mdBook: Done
 - AUDIT-DOC-RECONCILE.1 — ROADMAP R15 forward text (status/goals/remaining/criteria) reconciled to ISF-only reality (graph model met; `.fsm` adapter-direction forward work retired not deferred); historical done: bullets + note preserved verbatim; docs-only: Done
