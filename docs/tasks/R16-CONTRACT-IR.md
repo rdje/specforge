@@ -92,7 +92,7 @@ ready/valid `(stage …)`).
   Commit: `see Commit Log`
 
 - ID: `R16-CONTRACT-IR.3`
-  Status: `pending`
+  Status: `in_progress`
   Goal: >
     **Parity-preserving re-point only** (no behaviour change). Populate
     `actor_contracts` from `temporal_rules` in the SemanticIr/IntentIr
@@ -136,7 +136,7 @@ ready/valid `(stage …)`).
 | --- | --- | --- | --- |
 | 1 | `R16-CONTRACT-IR.1` | `done` | Design fixed (placement + grammar + migration/parity + subsumption); book mirror added |
 | 2 | `R16-CONTRACT-IR.2` | `done` | Typed `ir/contract.rs` + serde + conversion + 7 tests; additive field; CI 1061/0 |
-| 3 | `R16-CONTRACT-IR.3` | `pending` | **Next** — parity-preserving re-point: populate `actor_contracts`, `classify_actor_contract` reproducing exact decisions, switch `.isf` call site; byte/semantically-identical corpus gate; consumer audit |
+| 3 | `R16-CONTRACT-IR.3` | `in_progress` | Slice 1 done (parity-faithful window-first conversion + `source_rule_id`, CI 1062/0). Remaining: `classify_actor_contract` + populate + re-point `.isf` call site + corpus parity-diff gate + `temporal_rules` consumer audit |
 | 4 | `R16-CONTRACT-IR.4` | `pending` | Post-parity behaviour change — enable `HandshakeBarrier → (stage …)` (subsumed `ISF-HANDSHAKE-STAGE-LOWERING`), fsmgen-strict-verified |
 | 5 | `R16-CONTRACT-IR.5` | `pending` | Close + doc/ROADMAP sync |
 
@@ -269,6 +269,30 @@ marked `superseded` → `R16-CONTRACT-IR`.
 - `2026-05-19`: Highest program leverage (per `R16-INTENT-CAPTURE`
   thesis): representation loss is currently misdiagnosed as extraction
   loss. Created `proposed`; first to be promoted.
+- `2026-05-19` (`.3` parity finding — picky-auditor catch before any
+  re-point): the classifier's `temporal_consequent_signal` treats
+  `SignalStable`/`ActorMaintainsSignalStable`/`ActorSamplesSignal`/
+  `SignalSampled`/`ActorDrivesSignal` as signal-bearing, so a *windowed*
+  such rule currently lowers to a **Contract**. The `.2`
+  `contract_from_temporal_rule` wrongly mapped those to `Stable`/`Observe`
+  + Residual, dropping the window — a latent corpus-wide `.isf` parity
+  break the re-point would have silently introduced. Fixed: the
+  conversion is now **window-first, structurally parallel to
+  `classify_temporal_rule`** (`consequent_signal` mirrors
+  `temporal_consequent_signal`); windowed signal-bearing → `Eventually`
+  + `Lowerable` for every predicate kind. Added `source_rule_id`
+  provenance so `classify_actor_contract` can reproduce identical
+  `.isf` naming. New unit test
+  `windowed_signalstable_is_eventually_lowerable_parity_finding`; CI
+  1062/0; zero `.isf`/artifact change (still unpopulated/unconsumed).
+- `2026-05-19` (precise parity definition for `.3`): the parity gate is
+  **the FSMGen-facing emitted `.isf` is byte-identical pre/post, AND the
+  set of Contract/Rule emissions and the set of residual `rule_id`s is
+  identical**. Residual *reason wording* is SPECFORGE-internal
+  adapter-metadata (in `adapter.json`, not `.isf`) and may become the
+  (more accurate) ContractIR reason — an accepted, documented
+  consequence, not a regression. This avoids contorting the typed model
+  to leak window-ness through `HandshakeBarrier`.
 - `2026-05-19` (honest split — TASK_TREE rule 5): the `.1` design
   conflated two mutually-exclusive things in one leaf — a
   byte-identical corpus **parity** re-point and the
@@ -314,6 +338,7 @@ marked `superseded` → `R16-CONTRACT-IR`.
 | --- | --- | --- | --- |
 | `2026-05-19` | `R16-CONTRACT-IR.1` | current types re-verified; full design recorded (placement/grammar/migration/parity/subsumption); every `TemporalRuleRecord`/`TemporalPredicateRecord` case mapped incl. residual-now-modelled; book mirror added; mdBook builds | `passed` (docs-only) |
 | `2026-05-19` | `R16-CONTRACT-IR.2` | `ir/contract.rs` typed model + serde + `contract_from_temporal_rule` + 7 unit tests; additive unpopulated `actor_contracts` field; collision + Observe refinements; full `scripts/run_ci.sh` | `passed` (1061 passed, 0 failed; mdBook builds; zero artifact churn) |
+| `2026-05-19` | `R16-CONTRACT-IR.3` (slice 1) | parity-faithful window-first conversion rewrite (windowed signal-bearing → Eventually for all predicate kinds) + `source_rule_id`; +1 parity unit test; full `scripts/run_ci.sh` | `passed` (1062 passed, 0 failed; mdBook builds; zero `.isf`/artifact change — unpopulated/unconsumed) |
 
 ## Commit Log
 
@@ -333,6 +358,15 @@ marked `superseded` → `R16-CONTRACT-IR`.
   map with residual-cases-now-modelled; corpus CI-parity gate;
   `ISF-HANDSHAKE-STAGE-LOWERING` subsumed). Thorough mirror added to the
   mdBook per `BOOK-METHOD-DOC`. Frontier → `.2` (implement typed model).
+- `2026-05-19`: `.3` slice 1 — picky-auditor caught a latent corpus-wide
+  parity break (windowed `SignalStable`/sample/actor-drive currently →
+  Contract, but `.2` conversion mapped them to Stable/Observe+Residual).
+  Rewrote `contract_from_temporal_rule` window-first parallel to
+  `classify_temporal_rule`; added `source_rule_id`; +1 parity unit test;
+  CI 1062/0; zero `.isf` change. Precise `.3` parity definition recorded
+  (FSMGen-facing `.isf` + Contract/Rule/residual-set identity; residual
+  reason wording is internal metadata). `.3` `in_progress` — re-point +
+  corpus gate next.
 - `2026-05-19`: honest tree split (rule 5) — `.3` parity-only re-point;
   new `.4` = post-parity fsmgen-strict-verified `HandshakeBarrier →
   (stage …)` (subsumed `ISF-HANDSHAKE-STAGE-LOWERING`); `.5` close.

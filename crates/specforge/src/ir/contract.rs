@@ -157,6 +157,11 @@ pub struct ContractProvenance {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct ActorContract {
     pub contract_id: String,
+    /// The originating `TemporalRuleRecord.rule_id` (provenance). Lets
+    /// the adapter reproduce the exact pre-ContractIR `.isf` naming /
+    /// disposition during the `R16-CONTRACT-IR.3` parity re-point.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub source_rule_id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub actor_name: Option<String>,
     pub kind: ContractKind,
@@ -199,6 +204,47 @@ fn guard_from_antecedents(rule: &TemporalRuleRecord) -> Option<Condition> {
     })
 }
 
+/// First consequent that names a single signal — mirrors the adapter's
+/// `temporal_consequent_signal` EXACTLY (SignalValue / ActorDrivesSignal /
+/// ActorMaintainsSignalStable / SignalStable / ActorSamplesSignal /
+/// SignalSampled → the signal; HandshakeComplete → None). This parity with
+/// the classifier is what lets `R16-CONTRACT-IR.3` reproduce the current
+/// windowed→Contract decision for *every* signal-bearing consequent (not
+/// only `SignalValue`).
+fn consequent_signal(rule: &TemporalRuleRecord) -> Option<String> {
+    rule.consequents.iter().find_map(|p| match p {
+        TemporalPredicateRecord::SignalValue { signal_name, .. }
+        | TemporalPredicateRecord::ActorDrivesSignal { signal_name, .. }
+        | TemporalPredicateRecord::ActorMaintainsSignalStable { signal_name, .. }
+        | TemporalPredicateRecord::SignalStable { signal_name, .. }
+        | TemporalPredicateRecord::ActorSamplesSignal { signal_name, .. }
+        | TemporalPredicateRecord::SignalSampled { signal_name, .. } => Some(signal_name.clone()),
+        TemporalPredicateRecord::HandshakeComplete { .. } => None,
+    })
+}
+
+/// First `SignalValue` consequent (signal, value) — mirrors the adapter's
+/// `temporal_drive_consequent`.
+fn drive_consequent(rule: &TemporalRuleRecord) -> Option<(String, String)> {
+    rule.consequents.iter().find_map(|p| match p {
+        TemporalPredicateRecord::SignalValue {
+            signal_name, value, ..
+        } => Some((signal_name.clone(), value.clone())),
+        _ => None,
+    })
+}
+
+/// The level value to anchor a windowed `Eventually` target on: the
+/// `SignalValue` value when the first consequent carries one, else
+/// `"1"` (asserted). Irrelevant to emitted `.isf` (the `bounded_eventually`
+/// contract is `(eventually <signal> (within N))` — no value), kept only
+/// so the typed obligation is well-formed.
+fn consequent_level_value(rule: &TemporalRuleRecord) -> String {
+    drive_consequent(rule)
+        .map(|(_, v)| v)
+        .unwrap_or_else(|| "1".to_string())
+}
+
 /// Actor name carried by the first consequent that has one.
 fn actor_from_consequents(rule: &TemporalRuleRecord) -> Option<String> {
     rule.consequents.iter().find_map(|p| match p {
@@ -228,139 +274,191 @@ pub fn contract_from_temporal_rule(rule: &TemporalRuleRecord) -> ActorContract {
 
     let first = rule.consequents.first();
 
-    let (kind, obligation, lowering) = match first {
-        // Ready/valid handshake completion → barrier (now FSMGen-accepted).
-        Some(TemporalPredicateRecord::HandshakeComplete {
-            valid_signal,
-            ready_signal,
-            ..
-        }) => (
-            ContractKind::Guarantee,
-            Obligation::HandshakeBarrier {
-                valid: valid_signal.clone(),
-                ready: ready_signal.clone(),
-            },
-            LoweringDisposition::Lowerable,
-        ),
-
-        // Signal-value consequent.
-        Some(TemporalPredicateRecord::SignalValue {
-            signal_name, value, ..
-        }) => {
-            let target = EventExpr::Level {
-                signal: signal_name.clone(),
-                value: value.clone(),
-            };
-            if let Some(max) = usable_max {
+    // Window-first, structurally PARALLEL to the adapter's
+    // `classify_temporal_rule` (R16-CONTRACT-IR.3 parity): a windowed
+    // rule whose first signal-bearing consequent is declared lowers to a
+    // bounded_eventually Contract for EVERY signal-bearing predicate kind
+    // (not only `SignalValue`) — `consequent_signal` mirrors the
+    // classifier's `temporal_consequent_signal` exactly.
+    let (kind, obligation, lowering) = if has_window {
+        match (usable_max, consequent_signal(rule)) {
+            // Positive bound + single-signal consequent → bounded_eventually.
+            (Some(max), Some(signal)) => (
+                ContractKind::Guarantee,
+                Obligation::Eventually {
+                    target: EventExpr::Level {
+                        signal,
+                        value: consequent_level_value(rule),
+                    },
+                    window: Window::Within {
+                        min: min_cycles,
+                        max,
+                    },
+                },
+                LoweringDisposition::Lowerable,
+            ),
+            // Positive bound but no single-signal consequent (e.g.
+            // HandshakeComplete) — classifier residual; keep
+            // HandshakeBarrier for `.4`, else Observe.
+            (Some(_), None) => {
+                let ob = match first {
+                    Some(TemporalPredicateRecord::HandshakeComplete {
+                        valid_signal,
+                        ready_signal,
+                        ..
+                    }) => Obligation::HandshakeBarrier {
+                        valid: valid_signal.clone(),
+                        ready: ready_signal.clone(),
+                    },
+                    _ => Obligation::Observe {
+                        signal: String::new(),
+                    },
+                };
                 (
                     ContractKind::Guarantee,
-                    Obligation::Eventually {
-                        target,
-                        window: Window::Within {
-                            min: min_cycles,
-                            max,
-                        },
-                    },
-                    LoweringDisposition::Lowerable,
-                )
-            } else if has_window {
-                // window present but unusable (0 / no max): modelled,
-                // residual lowering (never `(within 0)`).
-                (
-                    ContractKind::Guarantee,
-                    Obligation::Eventually {
-                        target,
-                        window: Window::SameCycle,
-                    },
+                    ob,
                     LoweringDisposition::Residual {
-                        reason: "0/none-cycle window — same-cycle obligation has no \
-                                 bounded_eventually .isf form"
+                        reason: "windowed temporal rule has no single-signal \
+                                 consequent (e.g. HandshakeComplete) — not a \
+                                 bounded_eventually"
                             .to_string(),
                     },
                 )
-            } else {
-                // Non-windowed value drive → actor `(rule …)`.
+            }
+            // Window present but unusable (0 / no max) — classifier residual.
+            (None, sig_opt) => {
+                let ob = match (first, sig_opt) {
+                    (
+                        Some(TemporalPredicateRecord::HandshakeComplete {
+                            valid_signal,
+                            ready_signal,
+                            ..
+                        }),
+                        _,
+                    ) => Obligation::HandshakeBarrier {
+                        valid: valid_signal.clone(),
+                        ready: ready_signal.clone(),
+                    },
+                    (_, Some(signal)) => Obligation::Eventually {
+                        target: EventExpr::Level {
+                            signal,
+                            value: consequent_level_value(rule),
+                        },
+                        window: Window::SameCycle,
+                    },
+                    (_, None) => Obligation::Observe {
+                        signal: String::new(),
+                    },
+                };
                 (
                     ContractKind::Guarantee,
-                    Obligation::Drive {
-                        signal: signal_name.clone(),
-                        value: value.clone(),
+                    ob,
+                    LoweringDisposition::Residual {
+                        reason: "windowed temporal rule has a 0/none-cycle bound; \
+                                 FSMGen strict rejects `(within 0)` — not a \
+                                 bounded_eventually"
+                            .to_string(),
                     },
-                    LoweringDisposition::Lowerable,
                 )
             }
         }
-
-        // Stability predicates.
-        Some(
-            TemporalPredicateRecord::SignalStable {
-                signal_name,
-                from_phase,
-                to_phase,
-            }
-            | TemporalPredicateRecord::ActorMaintainsSignalStable {
-                signal_name,
-                from_phase,
-                to_phase,
-                ..
+    } else {
+        // Non-windowed (classifier branches 2 & 3).
+        match drive_consequent(rule) {
+            // Non-windowed `SignalValue` → actor `(rule …)` drive.
+            Some((signal, value)) => (
+                ContractKind::Guarantee,
+                Obligation::Drive { signal, value },
+                LoweringDisposition::Lowerable,
+            ),
+            None => match first {
+                Some(TemporalPredicateRecord::HandshakeComplete {
+                    valid_signal,
+                    ready_signal,
+                    ..
+                }) => (
+                    ContractKind::Guarantee,
+                    Obligation::HandshakeBarrier {
+                        valid: valid_signal.clone(),
+                        ready: ready_signal.clone(),
+                    },
+                    LoweringDisposition::Residual {
+                        reason: "non-windowed handshake completion — no \
+                                 representable supported .isf construct \
+                                 (HandshakeBarrier; (stage …) enabled in .4)"
+                            .to_string(),
+                    },
+                ),
+                Some(
+                    TemporalPredicateRecord::SignalStable {
+                        signal_name,
+                        from_phase,
+                        to_phase,
+                    }
+                    | TemporalPredicateRecord::ActorMaintainsSignalStable {
+                        signal_name,
+                        from_phase,
+                        to_phase,
+                        ..
+                    },
+                ) => (
+                    ContractKind::Guarantee,
+                    Obligation::Stable {
+                        signal: signal_name.clone(),
+                        during: Window::Between {
+                            from: tick_phase_event(*from_phase),
+                            to: tick_phase_event(*to_phase),
+                        },
+                    },
+                    LoweringDisposition::Residual {
+                        reason: "bare stability across tick phases has no \
+                                 supported .isf construct"
+                            .to_string(),
+                    },
+                ),
+                Some(TemporalPredicateRecord::ActorDrivesSignal { signal_name, .. }) => (
+                    ContractKind::Guarantee,
+                    Obligation::Observe {
+                        signal: signal_name.clone(),
+                    },
+                    LoweringDisposition::Residual {
+                        reason: "actor-drives predicate names a signal but \
+                                 carries no concrete value/window"
+                            .to_string(),
+                    },
+                ),
+                Some(
+                    TemporalPredicateRecord::ActorSamplesSignal { signal_name, .. }
+                    | TemporalPredicateRecord::SignalSampled { signal_name, .. },
+                ) => (
+                    ContractKind::Assume,
+                    Obligation::Observe {
+                        signal: signal_name.clone(),
+                    },
+                    LoweringDisposition::Residual {
+                        reason: "sample predicate names a signal but carries no \
+                                 concrete value/window"
+                            .to_string(),
+                    },
+                ),
+                // `SignalValue` is covered by `drive_consequent` above;
+                // `None` = producer emitted no consequents (defensive).
+                _ => (
+                    ContractKind::Guarantee,
+                    Obligation::Observe {
+                        signal: String::new(),
+                    },
+                    LoweringDisposition::Residual {
+                        reason: "temporal rule has no consequents".to_string(),
+                    },
+                ),
             },
-        ) => (
-            ContractKind::Guarantee,
-            Obligation::Stable {
-                signal: signal_name.clone(),
-                during: Window::Between {
-                    from: tick_phase_event(*from_phase),
-                    to: tick_phase_event(*to_phase),
-                },
-            },
-            LoweringDisposition::Residual {
-                reason: "bare stability across tick phases has no supported .isf \
-                         construct"
-                    .to_string(),
-            },
-        ),
-
-        // Drive/sample predicates that name a signal but carry no value.
-        Some(TemporalPredicateRecord::ActorDrivesSignal { signal_name, .. }) => (
-            ContractKind::Guarantee,
-            Obligation::Observe {
-                signal: signal_name.clone(),
-            },
-            LoweringDisposition::Residual {
-                reason: "actor-drives predicate names a signal but carries no \
-                         concrete value/window"
-                    .to_string(),
-            },
-        ),
-        Some(
-            TemporalPredicateRecord::ActorSamplesSignal { signal_name, .. }
-            | TemporalPredicateRecord::SignalSampled { signal_name, .. },
-        ) => (
-            ContractKind::Assume,
-            Obligation::Observe {
-                signal: signal_name.clone(),
-            },
-            LoweringDisposition::Residual {
-                reason: "sample predicate names a signal but carries no concrete \
-                         value/window"
-                    .to_string(),
-            },
-        ),
-
-        // Defensive: producers always emit consequents, but never panic.
-        None => (
-            ContractKind::Guarantee,
-            Obligation::Observe {
-                signal: String::new(),
-            },
-            LoweringDisposition::Residual {
-                reason: "temporal rule has no consequents".to_string(),
-            },
-        ),
+        }
     };
 
     ActorContract {
         contract_id: format!("contract_{}", rule.rule_id),
+        source_rule_id: Some(rule.rule_id.clone()),
         actor_name: actor_from_consequents(rule),
         kind,
         guard: guard_from_antecedents(rule),
@@ -477,7 +575,10 @@ mod tests {
     }
 
     #[test]
-    fn handshake_complete_is_barrier_lowerable() {
+    fn non_windowed_handshake_complete_is_barrier_residual_until_dot4() {
+        // Parity (`.3`): non-windowed HandshakeComplete is residual today;
+        // the obligation is `HandshakeBarrier` so `.4` can enable
+        // `(stage …)` without re-shaping the contract.
         let c = contract_from_temporal_rule(&rule(
             vec![TemporalPredicateRecord::HandshakeComplete {
                 valid_signal: "AWVALID".into(),
@@ -492,6 +593,38 @@ mod tests {
             Obligation::HandshakeBarrier {
                 valid: "AWVALID".into(),
                 ready: "AWREADY".into()
+            }
+        );
+        assert!(matches!(c.lowering, LoweringDisposition::Residual { .. }));
+    }
+
+    #[test]
+    fn windowed_signalstable_is_eventually_lowerable_parity_finding() {
+        // R16-CONTRACT-IR.3 parity finding: the classifier's
+        // `temporal_consequent_signal` treats `SignalStable` as
+        // signal-bearing, so a *windowed* SignalStable currently lowers to
+        // a bounded_eventually Contract. The conversion must reproduce that
+        // (was wrongly mapped to Stable+Residual in the `.2` draft).
+        let c = contract_from_temporal_rule(&rule(
+            vec![TemporalPredicateRecord::SignalStable {
+                signal_name: "ADDR".into(),
+                from_phase: TickPhase::PreTick,
+                to_phase: TickPhase::PostTick,
+            }],
+            vec![],
+            Some(CycleWindowRecord {
+                min_cycles: None,
+                max_cycles: Some(4),
+            }),
+        ));
+        assert_eq!(
+            c.obligation,
+            Obligation::Eventually {
+                target: EventExpr::Level {
+                    signal: "ADDR".into(),
+                    value: "1".into()
+                },
+                window: Window::Within { min: None, max: 4 },
             }
         );
         assert_eq!(c.lowering, LoweringDisposition::Lowerable);

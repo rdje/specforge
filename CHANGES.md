@@ -2,6 +2,31 @@
 
 ## 2026-05-19 (R16 SOTA intent-capture program scaffolded)
 
+### R16-CONTRACT-IR.3 (slice 1) — parity-faithful conversion + source_rule_id
+- Picky-auditor catch **before any re-point**: `classify_temporal_rule`'s
+  `temporal_consequent_signal` treats `SignalStable`/sample/actor-drive
+  predicates as signal-bearing, so a *windowed* such rule currently
+  lowers to a **Contract**. The `.2` `contract_from_temporal_rule`
+  mapped those to `Stable`/`Observe`+Residual (dropping the window) — a
+  latent corpus-wide `.isf` parity break the re-point would have
+  silently shipped. Fixed: the conversion is now **window-first,
+  structurally parallel to `classify_temporal_rule`** (`consequent_signal`
+  mirrors `temporal_consequent_signal`); windowed signal-bearing →
+  `Eventually` + `Lowerable` for every predicate kind. Added
+  `ActorContract.source_rule_id` so the upcoming `classify_actor_contract`
+  reproduces identical `.isf` naming. +1 parity unit test
+  (`windowed_signalstable_is_eventually_lowerable_parity_finding`).
+- Precise `.3` parity definition recorded: FSMGen-facing emitted `.isf`
+  byte-identical + identical Contract/Rule/residual-`rule_id` sets;
+  residual reason wording is SPECFORGE-internal `adapter.json` metadata
+  and may improve to the ContractIR reason (documented, not a
+  regression).
+- Full `scripts/run_ci.sh` green — **1062 passed** (1061 + 1), 0 failed,
+  mdBook builds; **zero `.isf`/artifact change** (`actor_contracts`
+  still unpopulated/unconsumed). `.3` `in_progress`; next:
+  `classify_actor_contract` + populate + re-point + corpus parity-diff
+  gate + `temporal_rules` consumer audit.
+
 ### R16-CONTRACT-IR.2 — implement the typed ContractIR model (first R16 code)
 - New `crates/specforge/src/ir/contract.rs`: the closed operator algebra
   (`EventExpr`/`Window`/`Condition`/`Obligation`/`ActorContract` +
