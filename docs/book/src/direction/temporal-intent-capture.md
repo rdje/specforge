@@ -176,3 +176,53 @@ consumes.
 Authoritative tracking: `docs/tasks/R16-CONTRACT-IR.md` (the "Design
 (`.1` output)" section is the full specification; the Decisions and
 Verification Log record every honest catch).
+
+## R16-KG-PROTOCOL-ONTOLOGY — how it is implemented and verified
+
+**Why.** ContractIR gives temporal intent the right *shape*; this gives
+the knowledge graph the right *protocol structure*. Today the KG has
+actors, signals, the actor-relative direction graph, and `TickPhase`
+(clock-edge granularity) — but a protocol PDF is organised around
+**channels, transactions, and protocol phases** (AXI AW/W/B/AR/R; APB
+setup/access; burst/beat/last), none of which are first-class. Without
+them, `IntentIR` cannot be a *systematic projection* of protocol
+structure and the cross-modal fusion tree (#3) has nothing stable to key
+on.
+
+### Implementation
+
+- **Typed layer, not a new stage** (same decision as ContractIR): a new
+  `crates/specforge/src/ir/protocol_graph.rs` defines `Channel`,
+  `ProtocolPhase`, `Transaction`, `HandshakePair`; `SemanticIR`/
+  `IntentIR` carry an additive `protocol_graph` field (serde-default,
+  skipped while empty — zero artifact churn).
+- **Closed typed records, not a raw edge soup**: edges are typed
+  references (`Channel.signal_names`, `Transaction.phases`/
+  `.ordered_before`, `HandshakePair.channel`), matching how the actor
+  graph is already modelled. `qualifies`/`stable-during` are expressed
+  through a ContractIR `Stable` obligation whose `Between` endpoints are
+  `PhaseBoundary`s referencing a `ProtocolPhase`.
+- **`TickPhase` ≠ `ProtocolPhase`** — clock-edge vs protocol-stage
+  granularity; distinct, co-existing. A `ProtocolPhase` may span many
+  ticks.
+- **Projection is mechanical**: `IntentIR` carries `protocol_graph`
+  forward; `ActorContract.channel`/`.phase` (already typed-optional from
+  ContractIR.2) reference the new node ids; `EventExpr::HandshakeFire`
+  ties to a `HandshakePair`. No new lowering logic — `.isf` is
+  unchanged; this is pure structure the extraction trees populate.
+- **Population is out of scope** (Non-Goal): `.2`/`.3` ship + wire the
+  *empty* typed structure (parity-preserving, like ContractIR.2);
+  recovering channels/phases/transactions from the PDF is the extraction
+  trees' (#3/#4/#6) job. This tree ships the vocabulary, not the
+  extractor.
+
+### Verification
+
+- Additive empty fields ⇒ zero `.isf`/artifact change while unpopulated
+  (parity by construction); the existing fsmgen-strict + e2e suite must
+  stay green. `kg-bench` gains protocol-structure fixtures with no
+  regression of the `vlm_state_machine_*`/connectivity fixtures.
+  `scripts/run_ci.sh` green per leaf; every leaf via `COMMIT.md`; the
+  closing leaf refreshes this section (BOOK-METHOD-DOC).
+
+Authoritative tracking: `docs/tasks/R16-KG-PROTOCOL-ONTOLOGY.md`.

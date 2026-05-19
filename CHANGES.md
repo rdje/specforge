@@ -2,6 +2,24 @@
 
 ## 2026-05-19 (R16 SOTA intent-capture program scaffolded)
 
+### R16-KG-PROTOCOL-ONTOLOGY.1 — promote #2 + ontology design
+- DAG governance (`R16-INTENT-CAPTURE.2`): with point #1
+  (`R16-CONTRACT-IR`) closed, `R16-KG-PROTOCOL-ONTOLOGY` (#2) promoted
+  `proposed → active` with concrete `.1`–`.4` leaves.
+- `.1` ontology design fixed (docs-only): typed layer / no new stage
+  (parallels ContractIR); closed typed records
+  `Channel`/`ProtocolPhase`/`Transaction`/`HandshakePair` with edges as
+  typed references (not a raw soup); the **`TickPhase` (clock-edge) ≠
+  `ProtocolPhase` (protocol-stage)** disambiguation recorded;
+  projection rules (`IntentIR` carries `protocol_graph`;
+  `ActorContract.channel`/`.phase` + `EventExpr::HandshakeFire`
+  reference the nodes — mechanical, no new lowering). `.2`/`.3` ship the
+  *empty* typed structure (zero artifact churn, parity-preserving — the
+  ContractIR.2 discipline); PDF recovery is the extraction trees' job
+  (Non-Goal here). Book mirror added per `BOOK-METHOD-DOC`;
+  `docs/TASK_TREE.md` index updated. Docs-only; `scripts/run_ci.sh`
+  green (mdBook builds). Frontier → `.2`.
+
 ### R16-CONTRACT-IR.5 — close tree; book/ROADMAP sync (program point #1 DELIVERED)
 - `R16-CONTRACT-IR` tree CLOSED (`.1`–`.5`). The mdBook R16 chapter's
   `R16-CONTRACT-IR` section gained a "Status — delivered" subsection
