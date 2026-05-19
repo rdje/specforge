@@ -104,25 +104,42 @@ all of `4/5/6`. `1` is the spine; `3` is the objective function.
   Commit: `see Commit Log`
 
 - ID: `R16-INTENT-CAPTURE.2`
-  Status: `pending`
+  Status: `active`
   Goal: >
     Drive the program: promote sub-trees to `active` in DAG order,
     keep the order/DAG/thesis consistent as sub-trees split, and close
-    when all six are `done`. (Sequencing/governance leaf — opens after
-    `.1`; the first promotion is `R16-CONTRACT-IR`.)
+    when all six are `done`. (Long-running sequencing/governance leaf —
+    stays `active` until all six sub-trees are `done`.)
   Acceptance: `Sub-trees executed in DAG order; program closed when all six done; ordering integrity maintained.`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: >
+    in progress — extraction methodology for (1) actor names,
+    (2) actor-relative boundary ports, (3) prose+waveform temporal
+    behavior presented and accepted by the user 2026-05-19; DAG root
+    `R16-CONTRACT-IR` promoted `proposed → active` (frontier = its `.1`
+    design leaf). Remaining promotions follow the DAG as predecessors
+    close.
+  Commit: `see Commit Log`
 
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `R16-INTENT-CAPTURE.1` | `done` | Program scaffolding (this leaf) |
-| 2 | `R16-INTENT-CAPTURE.2` | `pending` | Next — promote `R16-CONTRACT-IR` to `active` (DAG root) when execution is authorized |
+| 1 | `R16-INTENT-CAPTURE.1` | `done` | Program scaffolding |
+| 2 | `R16-INTENT-CAPTURE.2` | `active` | Governance live — extraction plan accepted; `R16-CONTRACT-IR` promoted `active` |
+| → | `R16-CONTRACT-IR.1` | `pending` | **Real frontier** — ContractIR design (placement + operator grammar + `TemporalRuleRecord` migration plan; docs-first) |
 
 ## Decisions
 
+- `2026-05-19` (`.2` opened): the systematic+reliable extraction
+  methodology for (1) actor names, (2) actor-relative boundary
+  pins/ports, (3) prose+timing-diagram temporal behavior was presented
+  to and accepted by the user. Core method: tiered strongest-source-wins
+  extraction, multi-source consensus, **cross-modal corroboration**
+  (prose ⇄ table ⇄ waveform), the spec's own signal-tables/figures as
+  near-ground-truth cross-checks, realizability gate, and
+  residual-not-fabricate enforced by an entailment verifier. The plan is
+  the R16 program (traceability table in the mdBook chapter / this
+  tree). Authorized to begin → `R16-CONTRACT-IR` promoted to `active`.
 - `2026-05-19`: Six sub-trees, one umbrella, lane `R16`. Order pulls
   point #5 (`R16-CAPTURE-FIDELITY-GATES`) to 3rd: capture fidelity is the
   program's objective function, and the spec's own figures/waveforms are

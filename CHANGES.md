@@ -2,6 +2,23 @@
 
 ## 2026-05-19 (R16 SOTA intent-capture program scaffolded)
 
+### R16-INTENT-CAPTURE.2 — extraction plan accepted; promote R16-CONTRACT-IR
+- The systematic+reliable extraction methodology for (1) actor names,
+  (2) actor-relative boundary pins/ports, (3) prose+timing-diagram
+  temporal behavior was presented and user-accepted. Core method: tiered
+  strongest-source-wins extraction, multi-source consensus, cross-modal
+  corroboration (prose ⇄ table ⇄ waveform), spec-own-tables/figures as
+  near-ground-truth cross-checks, realizability gate, and
+  residual-not-fabricate enforced by an entailment verifier (the plan is
+  the R16 program; traceability table in the mdBook chapter).
+- `R16-INTENT-CAPTURE.2` governance leaf opened (`active`, long-running).
+  DAG root `R16-CONTRACT-IR` promoted `proposed → active`; concrete
+  `.1`–`.4` leaves defined. Current frontier `R16-CONTRACT-IR.1` is a
+  **docs-only design leaf** (placement + closed operator grammar +
+  `TemporalRuleRecord` migration/CI-parity map + `ISF-HANDSHAKE-STAGE-
+  LOWERING` subsumption) — no production code until the design is
+  recorded. Docs-only governance change; TASK_TREE.md index updated.
+
 ### R16-INTENT-CAPTURE.1 — scaffold the SOTA design-intent-capture program
 - New forward program captured precisely as ordered task-trees, ROADMAP,
   and mdBook (no production code — scaffolding/ownership only, per the
