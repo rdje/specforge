@@ -124,7 +124,7 @@ ready/valid `(stage …)`).
   Commit: `see Commit Log`
 
 - ID: `R16-CONTRACT-IR.4`
-  Status: `pending`
+  Status: `done`
   Goal: >
     **Behaviour change (post-parity), fsmgen-strict-verified**: enable
     `HandshakeBarrier → (stage p (ready r)(valid v))` lowering — the
@@ -134,8 +134,28 @@ ready/valid `(stage …)`).
     residual count drops; metric reconciliation (`ISF-TEMPORAL-LOWERING.2.4`
     invariant) still holds.
   Acceptance: `HandshakeComplete → (stage …) live-verified fsmgen-strict on the corpus; no other .isf change; scripts/run_ci.sh green.`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — re-added typed `IsfStage` + `stages` on
+    `IsfTransaction` + `(stage <n> (ready r)(valid v))` render;
+    `TemporalRuleDisposition::Stage`; `classify_actor_contract`
+    `HandshakeBarrier` arm → Stage when both signals declared.
+    **Picky-auditor catch via the real binary:** FSMGen rejects a stage
+    whose `ready` is not an actor input ("stage … input '<r>' is not an
+    actor input"); added an `input_signal_names` gate in `from_intent_ir`
+    — emit `(stage …)` only when `ready` is an interface input, else an
+    explicit residual (never a strict-invalid stage); test direction
+    corrected to FSMGEN-SUBMODULE-BUMP.1's verified shape (ready=input /
+    valid=output). 3 new tests incl. real-binary
+    `temporal_stage_isf_passes_fsmgen_strict_validation` (synthesized
+    `(stage …)` accepted at pin `9bfb9a20`). HONEST scope finding: NO
+    corpus `temporal_rule` currently carries a `handshake_complete`
+    predicate → **0 stages emitted corpus-wide; zero `.isf` change**
+    (nvme still 0/250/92 == the `.3` baseline; metric==emitted; strict
+    `success:true` on 4 corpus docs). `.4` is a verified-but-dormant
+    capability that activates when upstream extraction (R16 #3/#4/#6)
+    grounds handshake completion. The `.3` parity oracle stays green
+    (handshake divergence is the intentional `.4` change, tested
+    separately). Full `scripts/run_ci.sh` green.
+  Commit: `see Commit Log`
 
 - ID: `R16-CONTRACT-IR.5`
   Status: `pending`
@@ -153,8 +173,8 @@ ready/valid `(stage …)`).
 | 1 | `R16-CONTRACT-IR.1` | `done` | Design fixed (placement + grammar + migration/parity + subsumption); book mirror added |
 | 2 | `R16-CONTRACT-IR.2` | `done` | Typed `ir/contract.rs` + serde + conversion + 7 tests; additive field; CI 1061/0 |
 | 3 | `R16-CONTRACT-IR.3` | `done` | Parity re-point complete: classify_actor_contract + populate + fallback; parity proven 3 ways (oracle test / live nvme baseline / e2e+fsmgen-strict); temporal_rules kept (audit); CI 1063/0 |
-| 4 | `R16-CONTRACT-IR.4` | `pending` | **Next** — post-parity behaviour change: enable `HandshakeBarrier → (stage …)` (subsumed `ISF-HANDSHAKE-STAGE-LOWERING`), fsmgen-strict-verified on the corpus |
-| 5 | `R16-CONTRACT-IR.5` | `pending` | Close + doc/ROADMAP sync |
+| 4 | `R16-CONTRACT-IR.4` | `done` | `HandshakeBarrier → (stage …)` enabled + fsmgen-strict-verified (ready=input gate); honest finding: 0 corpus handshake_complete → dormant, zero `.isf` change |
+| 5 | `R16-CONTRACT-IR.5` | `pending` | **Next** — close tree; sync mdBook (isf-adapter/temporal-semantics) + ROADMAP R16; finalize `ISF-HANDSHAKE-STAGE-LOWERING` disposition |
 
 ## Dependencies / Order
 
@@ -371,6 +391,7 @@ marked `superseded` → `R16-CONTRACT-IR`.
 | `2026-05-19` | `R16-CONTRACT-IR.2` | `ir/contract.rs` typed model + serde + `contract_from_temporal_rule` + 7 unit tests; additive unpopulated `actor_contracts` field; collision + Observe refinements; full `scripts/run_ci.sh` | `passed` (1061 passed, 0 failed; mdBook builds; zero artifact churn) |
 | `2026-05-19` | `R16-CONTRACT-IR.3` (slice 1) | parity-faithful window-first conversion rewrite (windowed signal-bearing → Eventually for all predicate kinds) + `source_rule_id`; +1 parity unit test; full `scripts/run_ci.sh` | `passed` (1062 passed, 0 failed; mdBook builds; zero `.isf`/artifact change — unpopulated/unconsumed) |
 | `2026-05-19` | `R16-CONTRACT-IR.3` (slice 2 — done) | `classify_actor_contract` + `guard_candidates` + populate builders + back-compat fallback + re-point `.isf` loop; pointwise oracle parity test; LIVE nvme baseline match (0/250/92, strict `success:true`); consumer audit (keep `temporal_rules`); full `scripts/run_ci.sh` | `passed` (1063 passed, 0 failed; mdBook builds; parity proven 3 ways) |
+| `2026-05-19` | `R16-CONTRACT-IR.4` | re-added `IsfStage`/render + `HandshakeBarrier`→Stage + ready-is-input gate (real-binary catch); 3 new tests incl. fsmgen-strict on synthesized `(stage …)`; LIVE 4-corpus (0 stages — no corpus handshake_complete; zero `.isf` change, nvme==`.3` baseline, strict `success:true`); full `scripts/run_ci.sh` | `passed` |
 
 ## Commit Log
 
@@ -380,6 +401,7 @@ marked `superseded` → `R16-CONTRACT-IR`.
 | `R16-CONTRACT-IR.2` | `R16-CONTRACT-IR.2 — implement typed ir/contract.rs model + serde + conversion` | first R16 code; additive unpopulated field; CI 1061/0 |
 | `R16-CONTRACT-IR.3` (s1) | `R16-CONTRACT-IR.3 (slice 1) — parity-faithful window-first conversion + source_rule_id` (`4c5d34e0`) | CI 1062/0; zero `.isf` change |
 | `R16-CONTRACT-IR.3` (s2) | `R16-CONTRACT-IR.3 (slice 2) — classify_actor_contract + re-point + fallback; parity proven` | CI 1063/0; `.3` DONE |
+| `R16-CONTRACT-IR.4` | `R16-CONTRACT-IR.4 — enable HandshakeBarrier → (stage …); ready-is-input gate; fsmgen-strict-verified` | dormant on corpus (no handshake_complete); zero `.isf` change |
 
 ## Changelog
 
@@ -392,6 +414,18 @@ marked `superseded` → `R16-CONTRACT-IR`.
   map with residual-cases-now-modelled; corpus CI-parity gate;
   `ISF-HANDSHAKE-STAGE-LOWERING` subsumed). Thorough mirror added to the
   mdBook per `BOOK-METHOD-DOC`. Frontier → `.2` (implement typed model).
+- `2026-05-19`: `.4` DONE — `HandshakeBarrier → (stage …)` enabled
+  (re-added `IsfStage`/render; `TemporalRuleDisposition::Stage`;
+  classify arm). Real-binary picky catch: FSMGen requires the stage
+  `ready` to be an actor INPUT → added an `input_signal_names` gate
+  (emit stage only then, else explicit residual — never strict-invalid);
+  test shape corrected (ready=input/valid=output per
+  FSMGEN-SUBMODULE-BUMP.1). 3 new tests incl. real-binary strict on the
+  synthesized `(stage …)`. Honest finding: NO corpus `temporal_rule`
+  has `handshake_complete` → 0 stages corpus-wide, zero `.isf` change
+  (nvme == `.3` baseline) — a verified-but-dormant capability,
+  activates when R16 #3/#4/#6 ground handshakes. `ISF-HANDSHAKE-STAGE-
+  LOWERING` thereby delivered (folded). Frontier → `.5` (close).
 - `2026-05-19`: `.3` DONE — slice 2 landed `classify_actor_contract`
   (reproduces `classify_temporal_rule` exactly via obligation +
   `guard_candidates` + `source_rule_id`), populated `actor_contracts`

@@ -100,19 +100,35 @@ struct IsfTransaction {
     latency_max: Option<u64>,
     // Spec §11.8 transaction-internal bounded-eventually contracts.
     contracts: Vec<IsfContract>,
+    // Spec §11.8 transaction-internal ready/valid stages
+    // (`ready_valid_barrier`). FSMGen ACCEPTS `(stage p (ready r)(valid
+    // v))` as of pin `9bfb9a20` (verified `FSMGEN-SUBMODULE-BUMP.1`);
+    // `R16-CONTRACT-IR.4` lowers `HandshakeBarrier` here.
+    stages: Vec<IsfStage>,
 }
 
 // `(contract <name> (eventually <signal> (within <N>)))` — FSMGen ISF
 // spec §11.8 shipped kind `bounded_eventually`. NOTE: `--strict --check`
 // requires the nested `(within N)` subclause (the spec's flat
-// `within N` prose is rejected). `(stage … (ready)(valid))` from §11.8
-// is also strict-rejected and is intentionally not modelled here
-// (recorded in docs/FSMGEN_FEEDBACK.md).
+// `within N` prose is rejected).
 #[derive(Debug, Clone, PartialEq, Eq)]
 struct IsfContract {
     name: String,
     signal: String,
     within: u64,
+}
+
+// `(stage <name> (ready <ready>) (valid <valid>))` — FSMGen ISF spec
+// §11.8 shipped kind `ready_valid_barrier`. Strict-REJECTED at the old
+// pin `effe591d` (logged in docs/FSMGEN_FEEDBACK.md); FSMGen FIXED it
+// (`d4d6dfab`) and SPECFORGE verified acceptance at pin `9bfb9a20`
+// (`FSMGEN-SUBMODULE-BUMP.1`). `R16-CONTRACT-IR.4` lowers a
+// `HandshakeComplete`/`HandshakeBarrier` obligation to this.
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct IsfStage {
+    name: String,
+    ready: String,
+    valid: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -359,12 +375,19 @@ impl IsfIr {
         for contract in &tx.contracts {
             // FSMGen `--strict --check` requires the nested `(within N)`
             // subclause; the spec §11.8 prose form `eventually s within N`
-            // is rejected. `(stage … (ready)(valid))` is also strict-
-            // rejected despite §11.8, so it is intentionally NOT emitted
-            // (see docs/FSMGEN_FEEDBACK.md and ISF-TEMPORAL-LOWERING.1).
+            // is rejected (see docs/FSMGEN_FEEDBACK.md).
             lines.push(format!(
                 "    (contract {} (eventually {} (within {})))",
                 contract.name, contract.signal, contract.within
+            ));
+        }
+
+        for stage in &tx.stages {
+            // FSMGen `ready_valid_barrier`, accepted as of pin `9bfb9a20`
+            // (R16-CONTRACT-IR.4 / FSMGEN-SUBMODULE-BUMP.1).
+            lines.push(format!(
+                "    (stage {} (ready {}) (valid {}))",
+                stage.name, stage.ready, stage.valid
             ));
         }
 
@@ -678,6 +701,7 @@ impl IsfIr {
                     steps: convert_txn_steps(&body_steps),
                     complete: "done".to_string(),
                     contracts: Vec::new(),
+                    stages: Vec::new(),
                     latency_min: None,
                     latency_max: None,
                 }
@@ -705,6 +729,7 @@ impl IsfIr {
                             steps,
                             complete: "done".to_string(),
                             contracts: Vec::new(),
+                            stages: Vec::new(),
                             latency_min: None,
                             latency_max: None,
                         });
@@ -729,6 +754,7 @@ impl IsfIr {
                                 }],
                                 complete: "done".to_string(),
                                 contracts: Vec::new(),
+                                stages: Vec::new(),
                                 latency_min: None,
                                 latency_max: None,
                             });
@@ -756,6 +782,7 @@ impl IsfIr {
                                 }],
                                 complete: "done".to_string(),
                                 contracts: Vec::new(),
+                                stages: Vec::new(),
                                 latency_min: None,
                                 latency_max: None,
                             });
@@ -773,6 +800,15 @@ impl IsfIr {
 
         // --- Rules ---
         let signal_names: BTreeSet<String> = signals.iter().map(|s| s.name.clone()).collect();
+        // FSMGen `ready_valid_barrier` requires the stage `ready` operand
+        // to be an actor INPUT ("stage … input '<r>' is not an actor
+        // input"); only emit `(stage …)` when that holds, else residual
+        // (R16-CONTRACT-IR.4 — never fabricate a strict-invalid stage).
+        let input_signal_names: BTreeSet<String> = signals
+            .iter()
+            .filter(|s| s.direction == IsfDirection::Input)
+            .map(|s| s.name.clone())
+            .collect();
 
         // --- ISF-TEMPORAL-LOWERING.2.2/.2.3: lower temporal_rules ---
         // Each `temporal_rule` is classified into exactly one disposition
@@ -824,7 +860,51 @@ impl IsfIr {
                             signal,
                             within,
                         }],
+                        stages: vec![],
                     });
+                }
+                TemporalRuleDisposition::Stage { name, ready, valid } => {
+                    // R16-CONTRACT-IR.4: ready/valid barrier → synthetic
+                    // transaction carrying a FSMGen `ready_valid_barrier`
+                    // `(stage …)` (accepted at pin `9bfb9a20`). FSMGen
+                    // requires the `ready` operand to be an actor INPUT;
+                    // otherwise emit no stage and preserve a residual —
+                    // never fabricate a strict-invalid `(stage …)`.
+                    if input_signal_names.contains(&ready) {
+                        all_transactions.push(IsfTransaction {
+                            name: format!("txn_temporal_{}", name),
+                            on_trigger: None,
+                            on_steps: vec![],
+                            steps: vec![],
+                            complete: "done".to_string(),
+                            latency_min: None,
+                            latency_max: None,
+                            contracts: vec![],
+                            stages: vec![IsfStage {
+                                name: format!("stage_{}", name),
+                                ready,
+                                valid,
+                            }],
+                        });
+                    } else {
+                        let rid = contract.source_rule_id.clone().unwrap_or_else(|| {
+                            contract
+                                .contract_id
+                                .strip_prefix("contract_")
+                                .unwrap_or(&contract.contract_id)
+                                .to_string()
+                        });
+                        temporal_residuals.push(temporal_residual_packet(
+                            &rid,
+                            &format!(
+                                "ready/valid barrier ready signal '{}' is not an \
+                                 actor input; FSMGen `ready_valid_barrier` requires \
+                                 it — preserved as residual (not fabricated)",
+                                ready
+                            ),
+                            &contract.provenance.source_text,
+                        ));
+                    }
                 }
                 TemporalRuleDisposition::Rule {
                     name,
@@ -1276,6 +1356,15 @@ pub(crate) enum TemporalRuleDisposition {
         signal: String,
         value: String,
     },
+    /// Ready/valid handshake barrier → synthetic `(transaction …
+    /// (stage <name> (ready <ready>)(valid <valid>)))`
+    /// (`R16-CONTRACT-IR.4`; FSMGen `ready_valid_barrier`, accepted at
+    /// pin `9bfb9a20`).
+    Stage {
+        name: String,
+        ready: String,
+        valid: String,
+    },
     /// No representable supported ISF construct → explicit residual
     /// decision; syntax is never fabricated (`.2.3` #4,
     /// `fsmgen-contract-authority`).
@@ -1553,6 +1642,31 @@ pub(crate) fn classify_actor_contract(
                         "temporal rule target value '{}' is not an ISF literal; \
                          fabricating a value is forbidden",
                         value
+                    ),
+                }
+            }
+        }
+
+        // R16-CONTRACT-IR.4 — deliberate post-parity behaviour change:
+        // a ready/valid handshake barrier lowers to a `(stage …)`
+        // transaction (FSMGen `ready_valid_barrier`, accepted at pin
+        // `9bfb9a20`) instead of residual, when both signals are in the
+        // emitted interface. Undeclared signals → residual (never
+        // fabricate a reference to an undeclared signal).
+        Obligation::HandshakeBarrier { valid, ready } => {
+            if declared_signals.contains(valid) && declared_signals.contains(ready) {
+                TemporalRuleDisposition::Stage {
+                    name: sanitize_isf_name(&rule_id),
+                    ready: ready.clone(),
+                    valid: valid.clone(),
+                }
+            } else {
+                TemporalRuleDisposition::Residual {
+                    rule_id,
+                    reason: format!(
+                        "handshake barrier references signal(s) not in the \
+                         emitted `.isf` interface (valid '{}', ready '{}')",
+                        valid, ready
                     ),
                 }
             }
@@ -1861,6 +1975,7 @@ mod tests {
             ],
             complete: "done".to_string(),
             contracts: Vec::new(),
+            stages: Vec::new(),
             latency_min: Some(1),
             latency_max: Some(4),
         });
@@ -1908,6 +2023,7 @@ mod tests {
                 signal: "RVALID".to_string(),
                 within: 4,
             }],
+            stages: vec![],
         });
         isf
     }
@@ -2279,6 +2395,117 @@ mod tests {
         assert!(
             success,
             "FSMGen strict rejected the temporal `(rule …)` lowering forms"
+        );
+    }
+
+    // --- R16-CONTRACT-IR.4: HandshakeBarrier → (stage …) ---
+
+    #[test]
+    fn classify_actor_contract_declared_handshake_is_stage_undeclared_residual() {
+        use crate::ir::contract::contract_from_temporal_rule;
+        let hs = t_rule(
+            "h1",
+            vec![],
+            vec![TemporalPredicateRecord::HandshakeComplete {
+                valid_signal: "AWVALID".into(),
+                ready_signal: "AWREADY".into(),
+                phase: TickPhase::PostTick,
+            }],
+            None,
+        );
+        let c = contract_from_temporal_rule(&hs);
+        // Both signals declared → the deliberate `.4` behaviour change:
+        // Stage (was Residual under the `.3` parity oracle).
+        assert_eq!(
+            classify_actor_contract(&c, &declared(&["AWVALID", "AWREADY"])),
+            TemporalRuleDisposition::Stage {
+                name: "h1".to_string(),
+                ready: "AWREADY".to_string(),
+                valid: "AWVALID".to_string(),
+            }
+        );
+        // Undeclared signal → still residual (never reference an
+        // undeclared signal).
+        assert!(matches!(
+            classify_actor_contract(&c, &declared(&["AWVALID"])),
+            TemporalRuleDisposition::Residual { .. }
+        ));
+    }
+
+    fn isf_with_temporal_stage() -> IsfIr {
+        let mut isf = minimal_isf();
+        // FSMGen `ready_valid_barrier`: `ready` must be an actor INPUT
+        // (the actor samples it); `valid` as an output is accepted
+        // (FSMGEN-SUBMODULE-BUMP.1 verified ready=input / valid=output).
+        isf.signals.insert(IsfSignal {
+            name: "AWVALID".to_string(),
+            direction: IsfDirection::Output,
+            width: 1,
+        });
+        isf.signals.insert(IsfSignal {
+            name: "AWREADY".to_string(),
+            direction: IsfDirection::Input,
+            width: 1,
+        });
+        isf.transactions.push(IsfTransaction {
+            name: "txn_temporal_h1".to_string(),
+            on_trigger: None,
+            on_steps: vec![],
+            steps: vec![],
+            complete: "done".to_string(),
+            latency_min: None,
+            latency_max: None,
+            contracts: vec![],
+            stages: vec![IsfStage {
+                name: "stage_h1".to_string(),
+                ready: "AWREADY".to_string(),
+                valid: "AWVALID".to_string(),
+            }],
+        });
+        isf
+    }
+
+    #[test]
+    fn temporal_stage_renders_ready_valid_barrier() {
+        let out = isf_with_temporal_stage().render();
+        assert!(
+            out.contains("    (stage stage_h1 (ready AWREADY) (valid AWVALID))"),
+            "stage shape:\n{out}"
+        );
+        assert_eq!(paren_balance(&out), 0, "unbalanced:\n{out}");
+    }
+
+    #[test]
+    fn temporal_stage_isf_passes_fsmgen_strict_validation() {
+        let tempdir = tempfile::tempdir().expect("tempdir");
+        let out = isf_with_temporal_stage().render();
+        let isf_path = tempdir.path().join("temporal_stage.isf");
+        std::fs::write(&isf_path, &out).expect("write isf");
+        eprintln!("=== ISF ===\n{out}\n=== END ===");
+
+        let output = crate::ir::run_fsmgen_strict_check(&isf_path);
+        let stdout = String::from_utf8_lossy(&output.stdout);
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        let check: serde_json::Value = serde_json::from_str(&stdout).unwrap_or_else(|e| {
+            panic!("fsmgen non-JSON.\nstdout:{stdout}\nstderr:{stderr}\nerr:{e}")
+        });
+        let success = check["diagnostic_summary"]["success"]
+            .as_bool()
+            .unwrap_or(false);
+        if !success && let Some(diags) = check["diagnostics"].as_array() {
+            for d in diags {
+                eprintln!(
+                    "FSMGen diagnostic: {}",
+                    d.get("message")
+                        .and_then(|m| m.as_str())
+                        .unwrap_or("(none)")
+                );
+            }
+        }
+        assert!(
+            success,
+            "FSMGen strict rejected the `(stage …)` ready_valid_barrier \
+             (expected accepted at pin 9bfb9a20)"
         );
     }
 }

@@ -2,6 +2,33 @@
 
 ## 2026-05-19 (R16 SOTA intent-capture program scaffolded)
 
+### R16-CONTRACT-IR.4 — enable HandshakeBarrier → (stage …) (subsumes ISF-HANDSHAKE-STAGE-LOWERING)
+- Re-added typed `IsfStage` + `IsfTransaction.stages` + `(stage <n>
+  (ready r)(valid v))` render; `TemporalRuleDisposition::Stage`;
+  `classify_actor_contract` `HandshakeBarrier` arm → Stage when both
+  signals declared. Post-parity behaviour change (the `.3` parity
+  oracle stays green; handshake divergence is the intentional `.4`
+  change, tested separately).
+- **Real-binary picky-auditor catch:** FSMGen rejects a stage whose
+  `ready` is not an actor input ("stage … input '<r>' is not an actor
+  input"). Added an `input_signal_names` gate in `from_intent_ir` —
+  `(stage …)` is emitted only when `ready` is an interface input, else
+  an explicit residual (never a strict-invalid stage —
+  `fsmgen-contract-authority`). Strict-test signal directions corrected
+  to FSMGEN-SUBMODULE-BUMP.1's verified shape (ready=input/valid=output).
+- 3 new tests incl. real-binary
+  `temporal_stage_isf_passes_fsmgen_strict_validation` (synthesized
+  `(stage …)` accepted at pin `9bfb9a20`).
+- **Honest scope finding:** NO corpus `temporal_rule` carries a
+  `handshake_complete` predicate → **0 stages emitted corpus-wide,
+  zero `.isf` change** (nvme still 0/250/92 == the `.3` baseline,
+  metric==emitted, fsmgen-strict `success:true` on 4 corpus docs). `.4`
+  is a verified-but-dormant capability — it activates once upstream
+  extraction (R16 `#3`/`#4`/`#6`) grounds handshake completion.
+  `ISF-HANDSHAKE-STAGE-LOWERING` is thereby delivered (folded). Full
+  `scripts/run_ci.sh` green. Frontier → `R16-CONTRACT-IR.5` (close +
+  book/ROADMAP sync).
+
 ### R16-CONTRACT-IR.3 (slice 2 — DONE) — re-point `.isf` lowering onto ContractIR
 - `classify_actor_contract` added (reproduces `classify_temporal_rule`'s
   exact Contract|Rule|Residual decision from obligation +
