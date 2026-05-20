@@ -2,6 +2,41 @@
 
 ## 2026-05-20
 
+### R16-CAPTURE-FIDELITY-GATES.2 — implement the typed `fidelity` module
+- New `crates/specforge/src/ir/fidelity.rs`: typed `FidelityGate`
+  (6 variants), `FindingStatus = Pass | Fail | NotEvaluated`
+  (`NotEvaluated` never silently treated as `Pass` — honest
+  three-valued status), `FidelityFinding`, `FigureTrace`.
+- 5 per-gate evaluators over `ActorContract`:
+  `evaluate_realizable_boundary` (contract-signal closure ⊆ declared
+  boundary); `evaluate_realizable_direction` (Assume↔input,
+  Guarantee↔output; unknown direction ⇒ `NotEvaluated`, not silently
+  Pass); `evaluate_realizable_handshake` (matches the
+  `R16-CONTRACT-IR.4` gate: HandshakeBarrier ⇒ ready∈inputs ∧
+  valid∈outputs); `evaluate_residual_honesty` (empty-reason Residual
+  ⇒ Fail; Lowerable + Observe ⇒ Fail); `evaluate_no_strict_invalid`
+  (Lowerable + (Observe|OrderedBefore) ⇒ Fail; Residual ⇒
+  NotEvaluated).
+- Bounded `evaluate_figure_trace` primitive (`.2` scope: `Stable`
+  within-window + `Drive` only; other obligations ⇒ `NotEvaluated`;
+  missing signal in trace ⇒ `NotEvaluated`, never silently Pass).
+  `evaluate_figure_conformance` runs `NotEvaluated` when no trace is
+  assigned — honest dormancy until `R16-WAVEFORM-CONTRACT-MINING` (#4).
+- `FidelitySummary{pass,fail,not_evaluated}` with `score()` =
+  `pass / (pass + fail)` over *evaluated* gates (`None` when no gates
+  evaluated — no honest score is defined); `meets_threshold(t)`
+  requires `score ≥ t` AND `fail == 0` (default threshold `1.0` ⇒ any
+  `Fail` = below-threshold, honest discipline). 9 unit tests covering
+  Pass/Fail/NotEvaluated paths per gate + summary/threshold behaviour.
+- Additive `fidelity_findings: Vec<FidelityFinding>` field on
+  `SemanticIr` (empty `Vec::new()`) and `IntentIr` (carried forward
+  from `SemanticIR`, parallel to `actor_contracts`/`protocol_graph`),
+  serde-default + `skip_serializing_if = Vec::is_empty` ⇒ **zero
+  artifact/fixture churn** (producer wiring deferred to `.3`).
+  Clippy-clean (rewrote `samples.iter().any(|v| *v == want)` to
+  `samples.contains(&want)`). Full `scripts/run_ci.sh` green. Frontier
+  → `.3`.
+
 ### R16-CAPTURE-FIDELITY-GATES.1 — promote #5/order-3 + gate design
 - DAG governance (`R16-INTENT-CAPTURE.2`): with point #1
   (`R16-CONTRACT-IR`) closed and point #2 (`R16-KG-PROTOCOL-ONTOLOGY`)

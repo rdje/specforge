@@ -94,6 +94,11 @@ pub struct SemanticIr {
         skip_serializing_if = "crate::ir::protocol_graph::ProtocolGraph::is_empty"
     )]
     pub protocol_graph: crate::ir::protocol_graph::ProtocolGraph,
+    /// Capture-fidelity findings (R16-CAPTURE-FIDELITY-GATES). Additive
+    /// and empty until `R16-CAPTURE-FIDELITY-GATES.3` wires the
+    /// producer (serde-skipped while empty ⇒ zero artifact churn).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub fidelity_findings: Vec<crate::ir::fidelity::FidelityFinding>,
     /// Explicit conflicts detected across contradictory temporal value obligations.
     #[serde(default)]
     pub temporal_conflicts: Vec<TemporalConflictRecord>,
@@ -337,6 +342,7 @@ impl SemanticIr {
                 ..Default::default()
             },
             actor_contracts,
+            fidelity_findings: Vec::new(),
             temporal_conflicts,
             signal_constraints,
             conditional_rules,

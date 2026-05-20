@@ -1,6 +1,7 @@
 pub mod adapters;
 pub mod contract;
 pub mod evidence;
+pub mod fidelity;
 pub mod intent;
 pub mod isf_ir;
 pub mod prior_memory;

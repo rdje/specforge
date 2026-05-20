@@ -59,20 +59,35 @@ The pair becomes the objective function that gates and steers #3/#4/#6.
   Commit: `see Commit Log`
 
 - ID: `R16-CAPTURE-FIDELITY-GATES.2`
-  Status: `pending`
+  Status: `done`
   Goal: implement the typed `fidelity` module (`FidelityGate`,
   `FindingStatus`, `FidelityFinding`) + per-gate evaluators that act on
-  `actor_contracts` (RealizableBoundary, RealizableDirection,
-  RealizableHandshake, ResidualHonesty, NoStrictInvalid) +
-  trace-replay primitive (`evaluate_figure_trace(&ActorContract, &FigureTrace) -> FindingStatus`).
-  Additive empty `fidelity_findings: Vec<FidelityFinding>` field on
-  SemanticIr/IntentIr (serde-skipped while empty ⇒ zero artifact
-  churn). `FigureConformance` runs `NotEvaluated` corpus-wide (no
-  FigureTraces yet — honest, not faked Pass) but the primitive is unit-
-  tested with synthesized traces.
+  `actor_contracts` + trace-replay primitive. Additive empty
+  `fidelity_findings: Vec<FidelityFinding>` field on SemanticIr/IntentIr.
   Acceptance: `Typed module + per-gate evaluators + trace-replay primitive + additive empty field + unit tests; zero artifact churn; scripts/run_ci.sh green.`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — `crates/specforge/src/ir/fidelity.rs` added:
+    `FidelityGate` (6 variants), `FindingStatus = Pass | Fail |
+    NotEvaluated` (NotEvaluated never silently Pass — honesty),
+    `FidelityFinding`, `FigureTrace`, per-gate evaluators
+    (`evaluate_realizable_boundary`, `evaluate_realizable_direction`,
+    `evaluate_realizable_handshake` matching the CONTRACT-IR.4 gate,
+    `evaluate_residual_honesty` (empty-reason / Lowerable-Observe),
+    `evaluate_no_strict_invalid` (Lowerable + (Observe|OrderedBefore)
+    ⇒ Fail), `evaluate_figure_conformance` honestly NotEvaluated when
+    no trace), bounded `evaluate_figure_trace` primitive
+    (`.2` scope: Stable+Drive only; missing signal ⇒ NotEvaluated, not
+    Pass), `FidelitySummary` with `score()` = pass/(pass+fail) over
+    *evaluated* gates only (None when no gates evaluated) +
+    `meets_threshold(t)` requiring score≥t AND fail==0 (threshold 1.0
+    default = honest discipline). 9 unit tests covering Pass/Fail/
+    NotEvaluated paths per gate + summary/threshold behaviour. Module
+    registered in `ir/mod.rs`. Additive `fidelity_findings` field on
+    `SemanticIr` (empty `Vec::new()`) and `IntentIr` (carried forward
+    from `SemanticIR`, parallel to `actor_contracts`/`protocol_graph`),
+    serde-default + `skip_serializing_if = Vec::is_empty` ⇒ **zero
+    artifact/fixture churn**. Full `scripts/run_ci.sh` green (clippy
+    too: rewrote `iter().any(|v| *v == want)` → `contains(&want)`).
+  Commit: `see Commit Log`
 
 - ID: `R16-CAPTURE-FIDELITY-GATES.3`
   Status: `pending`
@@ -101,8 +116,8 @@ The pair becomes the objective function that gates and steers #3/#4/#6.
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `R16-CAPTURE-FIDELITY-GATES.1` | `done` | Gate design fixed; book mirror added |
-| 2 | `R16-CAPTURE-FIDELITY-GATES.2` | `pending` | **Next** — implement typed `fidelity` module + per-gate evaluators + trace primitive + additive empty field |
-| 3 | `R16-CAPTURE-FIDELITY-GATES.3` | `pending` | Producer wiring + Fail-to-residual routing |
+| 2 | `R16-CAPTURE-FIDELITY-GATES.2` | `done` | Typed `fidelity` module + 5 per-gate evaluators + trace-replay primitive + summary/threshold + 9 tests; additive empty field; zero artifact churn |
+| 3 | `R16-CAPTURE-FIDELITY-GATES.3` | `pending` | **Next** — producer wiring in `SemanticIr::build` + Fail-on-Lowerable → Residual routing |
 | 4 | `R16-CAPTURE-FIDELITY-GATES.4` | `pending` | Corpus report + close |
 
 ## Design (`.1` output, 2026-05-20)
@@ -233,12 +248,14 @@ bounded, mirrors the `R16-KG-PROTOCOL-ONTOLOGY.4` precedent).
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-05-20` | `R16-CAPTURE-FIDELITY-GATES.1` | gate set / finding shape / scoring / trace-replay / residual routing / report shape recorded; book mirror per BOOK-METHOD-DOC; mdBook builds | `passed` (docs-only) |
+| `2026-05-20` | `R16-CAPTURE-FIDELITY-GATES.2` | typed `fidelity` module (`FidelityGate`/`FindingStatus`/`FidelityFinding`/`FigureTrace` + 5 per-gate evaluators + bounded `evaluate_figure_trace` + `FidelitySummary`) + 9 unit tests; additive `fidelity_findings` field; clippy-clean (`contains(&want)` rewrite); full `scripts/run_ci.sh` | `passed` (zero artifact churn) |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
-| `R16-CAPTURE-FIDELITY-GATES.1` | `R16-CAPTURE-FIDELITY-GATES.1 — gate design (promote #5/order-3)` | docs-only; book mirror; also the `R16-INTENT-CAPTURE.2` #5/order-3 promotion |
+| `R16-CAPTURE-FIDELITY-GATES.1` | `R16-CAPTURE-FIDELITY-GATES.1 — gate design (promote #5/order-3)` (`4d0b2207`) | docs-only; book mirror; also the `R16-INTENT-CAPTURE.2` #5/order-3 promotion |
+| `R16-CAPTURE-FIDELITY-GATES.2` | `R16-CAPTURE-FIDELITY-GATES.2 — typed fidelity module + per-gate evaluators + trace primitive + additive empty field` | first FIDELITY code; zero artifact churn; producer wiring deferred to `.3` |
 
 ## Changelog
 
@@ -247,6 +264,20 @@ bounded, mirrors the `R16-KG-PROTOCOL-ONTOLOGY.4` precedent).
   done; sibling `R16-KG-PROTOCOL-ONTOLOGY` (#2) done); `.1` gate design
   fixed + book mirror; concrete `.1`–`.4` leaves defined. Frontier →
   `.2` (implement typed `fidelity` module).
+- `2026-05-20`: `.2` done — `ir/fidelity.rs` typed module
+  (`FidelityGate{6}`/`FindingStatus{Pass,Fail,NotEvaluated}`/
+  `FidelityFinding`/`FigureTrace`) + 5 per-gate evaluators (boundary/
+  direction/handshake/residual-honesty/no-strict-invalid) + bounded
+  `evaluate_figure_trace` primitive (`.2` scope: Stable+Drive only;
+  missing-signal ⇒ NotEvaluated, never silently Pass) +
+  `FidelitySummary{pass,fail,not_evaluated}` with `score()` over
+  *evaluated* gates and `meets_threshold(1.0)` requiring `fail == 0`
+  (honest discipline default). 9 unit tests. Additive
+  `fidelity_findings` field on SemanticIr(empty)/IntentIr(carried) ⇒
+  zero artifact churn (CONTRACT-IR.2/KG-ONTOLOGY.2 discipline). Full
+  CI green (clippy too — `samples.iter().any(|v| *v == want)` rewritten
+  to `samples.contains(&want)`). Frontier → `.3` (wire producer in
+  `SemanticIr::build` + Fail-on-Lowerable → Residual routing).
 
 ## Dependencies / Order
 

@@ -93,6 +93,11 @@ pub struct IntentIr {
         skip_serializing_if = "crate::ir::protocol_graph::ProtocolGraph::is_empty"
     )]
     pub protocol_graph: crate::ir::protocol_graph::ProtocolGraph,
+    /// Capture-fidelity findings (R16-CAPTURE-FIDELITY-GATES), carried
+    /// forward from `SemanticIR`. Additive and empty until
+    /// `R16-CAPTURE-FIDELITY-GATES.3` wires the producer.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub fidelity_findings: Vec<crate::ir::fidelity::FidelityFinding>,
     /// Explicit conflicts detected across contradictory temporal value obligations.
     #[serde(default)]
     pub temporal_conflicts: Vec<TemporalConflictRecord>,
@@ -255,6 +260,7 @@ impl IntentIr {
             temporal_rules,
             actor_contracts,
             protocol_graph,
+            fidelity_findings: semantic_ir.fidelity_findings.clone(),
             temporal_conflicts,
             signal_constraints,
             conditional_rules,
