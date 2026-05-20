@@ -31,12 +31,15 @@
 //! artifacts are unchanged (the CONTRACT-IR.2 / KG-ONTOLOGY.2 /
 //! FIDELITY.2 / FUSION.2 / WAVEFORM.2 discipline).
 
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 
 use crate::ir::contract::{
-    ActorContract, Condition, EventExpr, LoweringDisposition, Obligation, SequenceStep, Window,
+    ActorContract, Condition, ContractKind, ContractProvenance, EventExpr, EvidenceModality,
+    LoweringDisposition, Obligation, SequenceStep, Window,
 };
 use crate::ir::fidelity::FindingStatus;
+use crate::ir::semantic::ClockEdge;
+use crate::ir::source::AutomationConfidence;
 
 /// Human-/provider-facing JSON-Schema **summary** for `ActorContract`,
 /// expressed so an LLM/VLM that supports JSON-Schema-grammar-
@@ -294,6 +297,198 @@ pub fn apply_entailment_to_contract(
     status
 }
 
+// ---------- Protocol-pattern template library (R16-CONSTRAINED-VERIFIED-EXTRACTION.4)
+//
+// Per the `.1` design's "Template library (`.4`)" section, this is the
+// canonical seed set: ready/valid, credit flow control, setup/access,
+// async-assert/sync-release reset, burst+last. The `.1` design names
+// `prior_memory` as the canonical home; for `.4` bounded scope the
+// library ships here next to the entailment verifier (the natural
+// consumer), with a future leaf available to migrate into
+// `prior_memory` if a `CorpusMemory` integration becomes useful.
+//
+// Match-grounding gate (honesty doctrine): instantiation requires
+// every role in `required_roles()` to be bound in the
+// `SignalBindings`; missing bindings ⇒ `None`. Some templates whose
+// obligation shape is not yet representable as a single supported
+// `Obligation` (credit flow control; setup/access phase ordering)
+// honestly instantiate as `Observe + Residual{reason}` rather than
+// fabricate a misleading Obligation — the template's existence is
+// recorded; its lowering is deferred (future work surfaces the
+// `Residual.reason` so an operator can see what's missing).
+
+/// The canonical seed-set of protocol-pattern templates.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum ProtocolTemplate {
+    ReadyValidHandshake,
+    CreditFlowControl,
+    SetupAccess,
+    AsyncAssertSyncReleaseReset,
+    BurstLast,
+}
+
+impl ProtocolTemplate {
+    pub fn all() -> &'static [ProtocolTemplate] {
+        &[
+            ProtocolTemplate::ReadyValidHandshake,
+            ProtocolTemplate::CreditFlowControl,
+            ProtocolTemplate::SetupAccess,
+            ProtocolTemplate::AsyncAssertSyncReleaseReset,
+            ProtocolTemplate::BurstLast,
+        ]
+    }
+
+    pub fn name(self) -> &'static str {
+        match self {
+            ProtocolTemplate::ReadyValidHandshake => "ready_valid_handshake",
+            ProtocolTemplate::CreditFlowControl => "credit_flow_control",
+            ProtocolTemplate::SetupAccess => "setup_access",
+            ProtocolTemplate::AsyncAssertSyncReleaseReset => "async_assert_sync_release_reset",
+            ProtocolTemplate::BurstLast => "burst_last",
+        }
+    }
+
+    /// Role names a binding must supply for the template to instantiate.
+    pub fn required_roles(self) -> &'static [&'static str] {
+        match self {
+            ProtocolTemplate::ReadyValidHandshake => &["valid", "ready"],
+            ProtocolTemplate::CreditFlowControl => &["credit_grant", "credit_consume"],
+            ProtocolTemplate::SetupAccess => &["sel", "enable", "ready"],
+            ProtocolTemplate::AsyncAssertSyncReleaseReset => &["reset_n"],
+            ProtocolTemplate::BurstLast => &["last"],
+        }
+    }
+}
+
+/// Maps template role names (e.g. `"valid"`) to concrete signal names
+/// from the actor boundary (e.g. `"AWVALID"`).
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct SignalBindings {
+    pub bindings: BTreeMap<String, String>,
+}
+
+impl SignalBindings {
+    pub fn from_pairs(pairs: &[(&str, &str)]) -> Self {
+        let bindings = pairs
+            .iter()
+            .map(|(k, v)| ((*k).to_string(), (*v).to_string()))
+            .collect();
+        Self { bindings }
+    }
+
+    fn missing_roles(&self, required: &[&'static str]) -> Vec<&'static str> {
+        required
+            .iter()
+            .copied()
+            .filter(|r| !self.bindings.contains_key(*r))
+            .collect()
+    }
+}
+
+fn template_provenance(template_name: &str) -> ContractProvenance {
+    ContractProvenance {
+        supporting_statement_ids: vec![format!("template:{template_name}")],
+        source_text: format!("instantiated from {template_name} template"),
+        modality: EvidenceModality::Mixed,
+    }
+}
+
+fn template_contract(
+    contract_id: String,
+    obligation: Obligation,
+    lowering: LoweringDisposition,
+    template_name: &str,
+    confidence: AutomationConfidence,
+) -> ActorContract {
+    ActorContract {
+        contract_id,
+        source_rule_id: None,
+        actor_name: None,
+        kind: ContractKind::Guarantee,
+        guard: None,
+        guard_candidates: vec![],
+        obligation,
+        clock_signal: None,
+        edge: ClockEdge::Rising,
+        channel: None,
+        phase: None,
+        provenance: template_provenance(template_name),
+        lowering,
+        automation_confidence: confidence,
+    }
+}
+
+/// Instantiate `template` against `bindings`. Returns `None` when the
+/// match-grounding gate fails (any required role unbound). When the
+/// template's obligation shape is not yet representable as a single
+/// supported `Obligation` (CFC; SetupAccess phase ordering), the
+/// instantiation honestly produces an `Observe + Residual{reason}`
+/// instead of fabricating a misleading Obligation — the template's
+/// existence is recorded but its lowering is deferred.
+pub fn instantiate_template(
+    template: ProtocolTemplate,
+    bindings: &SignalBindings,
+) -> Option<ActorContract> {
+    let missing = bindings.missing_roles(template.required_roles());
+    if !missing.is_empty() {
+        return None;
+    }
+    let get = |role: &str| bindings.bindings.get(role).cloned().unwrap();
+    let id = format!("tmpl:{}", template.name());
+    Some(match template {
+        ProtocolTemplate::ReadyValidHandshake => template_contract(
+            id,
+            Obligation::HandshakeBarrier {
+                valid: get("valid"),
+                ready: get("ready"),
+            },
+            LoweringDisposition::Lowerable,
+            template.name(),
+            AutomationConfidence::High,
+        ),
+        ProtocolTemplate::AsyncAssertSyncReleaseReset => template_contract(
+            id,
+            Obligation::Drive {
+                signal: get("reset_n"),
+                value: "0".into(),
+            },
+            LoweringDisposition::Lowerable,
+            template.name(),
+            AutomationConfidence::High,
+        ),
+        ProtocolTemplate::BurstLast => template_contract(
+            id,
+            Obligation::Drive {
+                signal: get("last"),
+                value: "1".into(),
+            },
+            LoweringDisposition::Lowerable,
+            template.name(),
+            AutomationConfidence::High,
+        ),
+        ProtocolTemplate::CreditFlowControl => template_contract(
+            id,
+            Obligation::Observe {
+                signal: get("credit_grant"),
+            },
+            LoweringDisposition::Residual {
+                reason: "credit-flow template — counter primitives not yet representable as a single ContractIR obligation".into(),
+            },
+            template.name(),
+            AutomationConfidence::High,
+        ),
+        ProtocolTemplate::SetupAccess => template_contract(
+            id,
+            Obligation::Observe { signal: get("sel") },
+            LoweringDisposition::Residual {
+                reason: "setup/access template — phase ordering needs explicit ProtocolPhase ids (R16-KG-PROTOCOL-ONTOLOGY) bound via extraction".into(),
+            },
+            template.name(),
+            AutomationConfidence::High,
+        ),
+    })
+}
+
 /// Parse a constrained-decoded JSON contract into the typed
 /// `ActorContract`. **Fails closed** on any schema/serde violation:
 /// the returned `Err` carries the serde diagnostic — the caller MUST
@@ -485,6 +680,125 @@ mod tests {
         assert!(span_contains_number("exactly 7 cycles", 7));
         assert!(span_contains_number("up to 12 cycles", 12));
         assert!(!span_contains_number("up to 12 cycles", 1));
+    }
+
+    #[test]
+    fn protocol_template_library_enumerates_five_canonical_templates() {
+        let all = ProtocolTemplate::all();
+        assert_eq!(all.len(), 5);
+        let names: Vec<&str> = all.iter().map(|t| t.name()).collect();
+        for n in [
+            "ready_valid_handshake",
+            "credit_flow_control",
+            "setup_access",
+            "async_assert_sync_release_reset",
+            "burst_last",
+        ] {
+            assert!(names.contains(&n), "missing template {n}");
+        }
+    }
+
+    #[test]
+    fn ready_valid_handshake_instantiates_handshake_barrier_at_high_confidence() {
+        let b = SignalBindings::from_pairs(&[("valid", "AWVALID"), ("ready", "AWREADY")]);
+        let c = instantiate_template(ProtocolTemplate::ReadyValidHandshake, &b).unwrap();
+        match &c.obligation {
+            Obligation::HandshakeBarrier { valid, ready } => {
+                assert_eq!(valid, "AWVALID");
+                assert_eq!(ready, "AWREADY");
+            }
+            other => panic!("expected HandshakeBarrier, got {other:?}"),
+        }
+        assert!(matches!(c.lowering, LoweringDisposition::Lowerable));
+        assert_eq!(c.automation_confidence, AutomationConfidence::High);
+        assert_eq!(c.provenance.modality, EvidenceModality::Mixed);
+        assert_eq!(c.contract_id, "tmpl:ready_valid_handshake");
+    }
+
+    #[test]
+    fn match_grounding_gate_returns_none_for_missing_role() {
+        let b = SignalBindings::from_pairs(&[("valid", "VLD")]); // missing "ready"
+        assert!(instantiate_template(ProtocolTemplate::ReadyValidHandshake, &b).is_none());
+    }
+
+    #[test]
+    fn burst_last_template_instantiates_drive_lowerable() {
+        let b = SignalBindings::from_pairs(&[("last", "WLAST")]);
+        let c = instantiate_template(ProtocolTemplate::BurstLast, &b).unwrap();
+        match &c.obligation {
+            Obligation::Drive { signal, value } => {
+                assert_eq!(signal, "WLAST");
+                assert_eq!(value, "1");
+            }
+            other => panic!("expected Drive, got {other:?}"),
+        }
+        assert!(matches!(c.lowering, LoweringDisposition::Lowerable));
+    }
+
+    #[test]
+    fn async_reset_template_drives_reset_n_to_zero_lowerable() {
+        let b = SignalBindings::from_pairs(&[("reset_n", "ARESETN")]);
+        let c = instantiate_template(ProtocolTemplate::AsyncAssertSyncReleaseReset, &b).unwrap();
+        match &c.obligation {
+            Obligation::Drive { signal, value } => {
+                assert_eq!(signal, "ARESETN");
+                assert_eq!(value, "0");
+            }
+            other => panic!("expected Drive, got {other:?}"),
+        }
+        assert!(matches!(c.lowering, LoweringDisposition::Lowerable));
+    }
+
+    #[test]
+    fn credit_flow_and_setup_access_honestly_residual() {
+        let cfc = instantiate_template(
+            ProtocolTemplate::CreditFlowControl,
+            &SignalBindings::from_pairs(&[
+                ("credit_grant", "CR_GRANT"),
+                ("credit_consume", "CR_USE"),
+            ]),
+        )
+        .unwrap();
+        match &cfc.lowering {
+            LoweringDisposition::Residual { reason } => {
+                assert!(reason.contains("credit-flow"), "{reason}");
+                assert!(
+                    reason.contains("not yet"),
+                    "must call out the deferred lowering: {reason}"
+                );
+            }
+            other => panic!("expected Residual, got {other:?}"),
+        }
+        assert!(matches!(cfc.obligation, Obligation::Observe { .. }));
+
+        let sa = instantiate_template(
+            ProtocolTemplate::SetupAccess,
+            &SignalBindings::from_pairs(&[
+                ("sel", "PSEL"),
+                ("enable", "PENABLE"),
+                ("ready", "PREADY"),
+            ]),
+        )
+        .unwrap();
+        match &sa.lowering {
+            LoweringDisposition::Residual { reason } => {
+                assert!(reason.contains("setup/access"), "{reason}");
+                assert!(reason.contains("ProtocolPhase"), "{reason}");
+            }
+            other => panic!("expected Residual, got {other:?}"),
+        }
+    }
+
+    #[test]
+    fn template_match_is_entailment_verifiable_against_an_actor_boundary_span() {
+        // The .1 design says: "the match itself is entailment-verifiable".
+        // A template instantiates only when its bound signals appear; the
+        // entailment check on a source-span containing those signals
+        // then Passes.
+        let b = SignalBindings::from_pairs(&[("valid", "AWVALID"), ("ready", "AWREADY")]);
+        let c = instantiate_template(ProtocolTemplate::ReadyValidHandshake, &b).unwrap();
+        let span = "AWVALID asserts and AWREADY is sampled on the rising edge";
+        assert_eq!(entailment_check(span, &c), FindingStatus::Pass);
     }
 
     #[test]

@@ -2,6 +2,48 @@
 
 ## 2026-05-20
 
+### R16-CONSTRAINED-VERIFIED-EXTRACTION.4 — protocol-pattern template library
+- New `ProtocolTemplate` enum (5 canonical: `ReadyValidHandshake`,
+  `CreditFlowControl`, `SetupAccess`, `AsyncAssertSyncReleaseReset`,
+  `BurstLast`) + `SignalBindings` (role → concrete signal name) +
+  `instantiate_template(template, &bindings) -> Option<ActorContract>`
+  in `crates/specforge/src/ir/cve.rs`.
+- **Match-grounding gate**: instantiation requires every role in
+  `required_roles()` to be bound; any missing role ⇒ `None`
+  (refuses to fabricate). Honors the `.1` design.
+- Lowerable instantiations: `ReadyValidHandshake` →
+  `HandshakeBarrier{valid, ready}`; `AsyncAssertSyncReleaseReset` →
+  `Drive(reset_n, "0")`; `BurstLast` → `Drive(last, "1")`. All at
+  `automation_confidence = High` per the `.1` design (the match was
+  grounded).
+- **Honest deferred lowering** for `CreditFlowControl` and
+  `SetupAccess`: each instantiates as
+  `Observe + Residual{reason="…not yet representable as a single
+  ContractIR obligation"}` — the template's existence is recorded,
+  its lowering as a single obligation is honestly under-specified
+  (fabrication refused; an operator can see what's missing via the
+  `Residual.reason`).
+- **Placement note**: the `.1` design names `prior_memory` as the
+  canonical home. For `.4`'s bounded scope the library ships in
+  `cve.rs` next to the entailment verifier — its natural consumer —
+  with a future leaf available to migrate into `prior_memory` if a
+  `CorpusMemory` integration becomes useful (recorded honestly in
+  the Verification Log).
+- 7 new unit tests: library enumerates 5 templates with the canonical
+  names; `ReadyValidHandshake` full path → `HandshakeBarrier` /
+  Lowerable / High / Mixed-modality / `"tmpl:ready_valid_handshake"`
+  id; match-grounding `None` on missing role; BurstLast Drive
+  Lowerable; AsyncReset Drive Lowerable; CFC + SetupAccess Residual
+  with diagnostic reasons; **entailment-check Pass on a
+  template-derived contract** over a span containing its signals
+  (the "match is entailment-verifiable" round-trip claim from `.1`,
+  proven).
+- No producer wiring; `SemanticIr` / `IntentIr` schemas unchanged ⇒
+  **zero artifact/fixture churn** (the CVE.3 / CVE.2 / WAVEFORM.2 /
+  FUSION.2 / FIDELITY.2 / KG-ONTOLOGY.2 / CONTRACT-IR.2 discipline).
+  Full `scripts/run_ci.sh` green. Frontier → `.5`
+  (uncertainty-driven converge VoI selection).
+
 ### R16-CONSTRAINED-VERIFIED-EXTRACTION.3 — entailment verifier + Fail→Residual routing
 - New `entailment_check(source_span: &str, contract: &ActorContract) ->
   FindingStatus` in `crates/specforge/src/ir/cve.rs`: extracts every

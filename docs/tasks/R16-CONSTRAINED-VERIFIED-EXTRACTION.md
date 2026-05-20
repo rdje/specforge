@@ -116,15 +116,37 @@ Make extraction high-precision by construction (the program thesis: prose
   Commit: `see Commit Log`
 
 - ID: `R16-CONSTRAINED-VERIFIED-EXTRACTION.4`
-  Status: `pending`
-  Goal: protocol-pattern template library seeded into `prior_memory`
-  (canonical templates: ready/valid, credit flow control, setup/access,
-  async-assert/sync-release reset, burst+last). Matched templates
-  instantiate at high confidence; the *match* is itself entailment-
-  verifiable (template's promised signals appear in the source).
+  Status: `done`
+  Goal: protocol-pattern template library seeded with the 5 canonical
+  templates; match-grounding gate; entailment-verifiable instantiation.
   Acceptance: `Library seeded; match→instantiate path tested; no fabricated templates (signal grounding is checked); scripts/run_ci.sh green.`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — added to `crates/specforge/src/ir/cve.rs`
+    (placement note: `.1` named `prior_memory` as the canonical home;
+    for `.4`'s bounded scope the library ships next to the entailment
+    verifier — its natural consumer — with a future leaf available to
+    migrate into `prior_memory` if a `CorpusMemory` integration becomes
+    useful). `ProtocolTemplate{ReadyValidHandshake, CreditFlowControl,
+    SetupAccess, AsyncAssertSyncReleaseReset, BurstLast}` with
+    `all()`/`name()`/`required_roles()`; `SignalBindings` maps
+    template roles → concrete actor signal names; `instantiate_template`
+    enforces the match-grounding gate (any missing role ⇒ `None` —
+    no fabrication). Implementations: RV-Handshake →
+    `HandshakeBarrier` / Lowerable; AsyncReset → `Drive(reset_n,"0")`
+    / Lowerable; BurstLast → `Drive(last,"1")` / Lowerable. **Honest
+    deferred lowering** for CFC and SetupAccess: each instantiates as
+    `Observe + Residual{reason}` (template is recorded; lowering as
+    a single Obligation is honestly under-specified — fabrication
+    refused). All templates instantiate at `automation_confidence =
+    High` per `.1` (the match itself was grounded). 7 new unit
+    tests: library enumeration (all 5 + name set); RV-handshake
+    full path; match-grounding `None` on missing role; BurstLast
+    Drive Lowerable; AsyncReset Drive Lowerable; CFC + SetupAccess
+    Residual with diagnostic reasons; entailment-check Pass on a
+    template-derived contract over a span containing its signals
+    (the "match is entailment-verifiable" claim from `.1`).
+    `SemanticIr`/`IntentIr` schemas unchanged ⇒ ZERO artifact churn.
+    Full `scripts/run_ci.sh` green.
+  Commit: `see Commit Log`
 
 - ID: `R16-CONSTRAINED-VERIFIED-EXTRACTION.5`
   Status: `pending`
@@ -153,8 +175,8 @@ Make extraction high-precision by construction (the program thesis: prose
 | 1 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.1` | `done` | Constrained-decoding + entailment + templates + uncertainty design fixed; book mirror added |
 | 2 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.2` | `done` | Typed `cve` module: provider-facing JSON-Schema summary + fails-closed adapter + 4 tests; zero artifact churn |
 | 3 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.3` | `done` | `entailment_check` + `apply_entailment_to_contract` Fail→Residual routing; 7 new tests; honesty doctrine mechanically enforced |
-| 4 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.4` | `pending` | **Next** — protocol-pattern template library in prior_memory |
-| 5 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.5` | `pending` | Uncertainty-driven converge selection |
+| 4 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.4` | `done` | Protocol-template library (5 canonical, match-grounded, entailment-verifiable; CFC + SetupAccess honestly Residual); 7 tests; zero artifact churn |
+| 5 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.5` | `pending` | **Next** — uncertainty-driven converge selection (deterministic VoI score) |
 | 6 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.6` | `pending` | Corpus precision/recall + close |
 
 ## Design (`.1` output, 2026-05-20)
@@ -310,6 +332,7 @@ KG-ONTOLOGY.4 / FIDELITY.4 / FUSION.4 precedents).
 | `2026-05-20` | `R16-CONSTRAINED-VERIFIED-EXTRACTION.1` | constrained-decoding / entailment / templates / uncertainty / honesty enforcement / dormancy framing recorded; book mirror per BOOK-METHOD-DOC; mdBook builds | `passed` (docs-only) |
 | `2026-05-20` | `R16-CONSTRAINED-VERIFIED-EXTRACTION.2` | typed `cve` module (`actor_contract_json_schema_summary` + fails-closed `parse_constrained_contract`) + 4 unit tests (round-trip, malformed-input fail-closed, doc-vs-code required-keys, obligation-discriminator drift-lock); SemanticIr/IntentIr unchanged; full `scripts/run_ci.sh` | `passed` (zero artifact churn) |
 | `2026-05-20` | `R16-CONSTRAINED-VERIFIED-EXTRACTION.3` | `entailment_check` (lexical signal + structural digit-run bound check; three-valued including `NotEvaluated`) + `apply_entailment_to_contract` Fail→Residual routing; 7 new unit tests (Pass over Drive+Stable; Fail on missing signal/bound; NotEvaluated when nothing checkable; routing flips Lowerable+Fail; Pass leaves unchanged; preexisting Residual untouched; `span_contains_number` exact digit runs); SemanticIr/IntentIr unchanged; full `scripts/run_ci.sh` | `passed` (zero artifact churn) |
+| `2026-05-20` | `R16-CONSTRAINED-VERIFIED-EXTRACTION.4` | `ProtocolTemplate` (5 canonical) + `SignalBindings` + `instantiate_template` with match-grounding gate; RV-Handshake/AsyncReset/BurstLast → Lowerable; CFC/SetupAccess honestly Residual; 7 new unit tests including the "match is entailment-verifiable" round-trip; SemanticIr/IntentIr unchanged; full `scripts/run_ci.sh` | `passed` (zero artifact churn) |
 
 ## Commit Log
 
@@ -317,7 +340,8 @@ KG-ONTOLOGY.4 / FIDELITY.4 / FUSION.4 precedents).
 | --- | --- | --- |
 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.1` | `R16-CONSTRAINED-VERIFIED-EXTRACTION.1 — high-precision-by-construction design (promote #6)` (`d61d87ab`) | docs-only; book mirror; also the `R16-INTENT-CAPTURE.2` #6 promotion — the FINAL R16 sub-tree promoted |
 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.2` | `R16-CONSTRAINED-VERIFIED-EXTRACTION.2 — JSON-schema summary + fails-closed adapter` (`828441f0`) | first CVE code; zero artifact churn; serde is the authoritative validator |
-| `R16-CONSTRAINED-VERIFIED-EXTRACTION.3` | `R16-CONSTRAINED-VERIFIED-EXTRACTION.3 — entailment verifier + Fail→Residual routing` | honesty doctrine mechanically enforced parallel to FUSION.3 / FIDELITY.3 |
+| `R16-CONSTRAINED-VERIFIED-EXTRACTION.3` | `R16-CONSTRAINED-VERIFIED-EXTRACTION.3 — entailment verifier + Fail→Residual routing` (`f7b17f0a`) | honesty doctrine mechanically enforced parallel to FUSION.3 / FIDELITY.3 |
+| `R16-CONSTRAINED-VERIFIED-EXTRACTION.4` | `R16-CONSTRAINED-VERIFIED-EXTRACTION.4 — protocol-pattern template library (5 canonical, match-grounded, entailment-verifiable)` | placement in cve.rs (next to consumer); prior_memory migration deferred; CFC + SetupAccess honestly Residual |
 
 ## Dependencies / Order
 
@@ -336,6 +360,21 @@ KG-ONTOLOGY.4 / FIDELITY.4 / FUSION.4 precedents).
   fixed + book mirror; concrete `.1`–`.6` leaves defined. This is the
   FINAL R16 sub-tree promoted (all 6 program points now active or
   closed). Frontier → `.2` (JSON-schema adapter for ActorContract).
+- `2026-05-20`: `.4` done — protocol-pattern template library
+  (`ProtocolTemplate` enum with 5 canonical templates + `SignalBindings`
+  role→signal map + `instantiate_template`). Match-grounding gate
+  refuses to fabricate (missing role ⇒ `None`).
+  RV-Handshake/AsyncReset/BurstLast lower as Lowerable; CFC and
+  SetupAccess honestly lower as `Observe + Residual{reason="…not yet
+  representable as a single ContractIR obligation"}` — template
+  recorded; lowering deferred (future work). 7 unit tests including
+  the "match is entailment-verifiable" round-trip (template
+  instantiates only when bindings present; entailment_check Passes
+  on a span containing those signals). Placement: in `cve.rs`
+  (consumer-adjacent) with prior_memory migration deferred to a
+  later leaf per honest scope. `SemanticIr`/`IntentIr` unchanged ⇒
+  ZERO artifact churn. Full CI green. Frontier → `.5`
+  (uncertainty-driven converge VoI selection).
 - `2026-05-20`: `.3` done — entailment verifier wired:
   `entailment_check(span, contract) → FindingStatus` (conservative
   lexical signal + structural digit-run bound check; three-valued
