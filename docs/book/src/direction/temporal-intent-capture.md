@@ -313,3 +313,36 @@ not just authorial.
   faked as `Pass`.
 
 Authoritative tracking: `docs/tasks/R16-CAPTURE-FIDELITY-GATES.md`.
+
+### Status — delivered (`2026-05-20`)
+
+`R16-CAPTURE-FIDELITY-GATES` is **closed**. All four leaves done:
+
+1. `.1` gate design fixed (typed layer / no new stage; 6-gate set;
+   three-valued `FindingStatus` honesty);
+2. `.2` typed `fidelity` module + 5 per-gate evaluators + bounded
+   `evaluate_figure_trace` primitive + `FidelitySummary` with honest
+   `score()` (over evaluated gates) and `meets_threshold(1.0)` default
+   + additive empty `fidelity_findings` field on `SemanticIr`/
+   `IntentIr` (serde-skipped while empty);
+3. `.3` producer wired in `SemanticIr::build` —
+   `apply_fidelity_gates(&mut [ActorContract], &[ActorPortRecord])` —
+   with **honesty doctrine MECHANICALLY enforced**: a `Lowerable`
+   contract with any `Fail` is rerouted to
+   `Residual{reason = "fidelity:<Gate>: <message>"}` BEFORE the
+   `.isf` adapter consumes it;
+4. `.4` `specforge validate` `fidelity:` block (pass / fail /
+   not_evaluated + score; first-5 failures when any) on both
+   SemanticIR and IntentIR.
+
+Live evidence: corpus baseline reads `fidelity: pass=N fail=0
+not_evaluated=K score=1.000` — the existing
+`contract_from_temporal_rule` path is fidelity-honest on the nvme
+corpus (no `Fail` findings). The producer is now load-bearing: any
+future contract-producer change that introduces a fidelity violation
+will mechanically downgrade the affected contract to `Residual`
+(documented reason) and surface in both the validate `fidelity:` block
+and IR fixtures — the residual-honesty doctrine is structural, not
+only authorial. Next DAG-promotable R16 sub-tree =
+`R16-MULTIMODAL-CONTRACT-FUSION` (#3, order 4; deps `R16-CONTRACT-IR`
+✓ + `R16-KG-PROTOCOL-ONTOLOGY` ✓ + `R16-CAPTURE-FIDELITY-GATES` ✓).

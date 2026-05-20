@@ -2,6 +2,31 @@
 
 ## 2026-05-20
 
+### R16-CAPTURE-FIDELITY-GATES.4 — `validate` `fidelity:` block + close tree (point #5/order-3 DELIVERED)
+- `specforge validate` now prints
+  `fidelity: pass=N fail=M not_evaluated=K  score=X.XXX` in both the
+  SemanticIR and IntentIR count blocks (additive lines via
+  `replace_all`; structured-metric/JSON shape NOT touched — bounded,
+  KG-ONTOLOGY.4 precedent). When `fail > 0`, a
+  `fidelity_failures (first 5):` block lists
+  `[Gate] contract_id: message` for the first five failing findings.
+- Corpus baseline: nvme + the full e2e suite report `fail=0` and
+  `score=1.000` — the existing `contract_from_temporal_rule` path is
+  fidelity-honest on the corpus. The producer is now load-bearing for
+  any future contract-producer change that would introduce a fidelity
+  violation: such a contract is mechanically downgraded to `Residual`
+  (`.3` routing) and surfaces in both the validate `fidelity:` block
+  and IR fixtures. The regression gate is `scripts/run_ci.sh`.
+- Tree CLOSED: `docs/tasks/R16-CAPTURE-FIDELITY-GATES.md` Status=done;
+  Verification Log / Commit Log / Decisions / Changelog reconciled.
+  `docs/TASK_TREE.md` row → `done`. `ROADMAP.md` R16 entry updated:
+  point #5/order-3 DONE; next DAG-promotable =
+  `R16-MULTIMODAL-CONTRACT-FUSION` (#3, order 4; deps 1+2+3 all
+  satisfied). Book *Temporal-Intent Capture* chapter "Status —
+  delivered (2026-05-20)" subsection added under the
+  CAPTURE-FIDELITY-GATES section per `BOOK-METHOD-DOC` close-rule.
+  Full `scripts/run_ci.sh` green.
+
 ### R16-CAPTURE-FIDELITY-GATES.3 — wire producer + Fail-on-Lowerable → Residual routing
 - New private helper `apply_fidelity_gates(&mut [ActorContract],
   &[ActorPortRecord]) -> Vec<FidelityFinding>` in

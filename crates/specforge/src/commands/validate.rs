@@ -3152,6 +3152,31 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         "  protocol_graph: channels={} phases={} transactions={} handshakes={}",
         pg_counts.0, pg_counts.1, pg_counts.2, pg_counts.3
     );
+    let fid = crate::ir::fidelity::FidelitySummary::from_findings(&ir.fidelity_findings);
+    let fid_score = fid
+        .score()
+        .map(|s| format!("{:.3}", s))
+        .unwrap_or_else(|| "n/a".into());
+    println!(
+        "  fidelity: pass={} fail={} not_evaluated={} score={}",
+        fid.pass, fid.fail, fid.not_evaluated, fid_score
+    );
+    if fid.fail > 0 {
+        println!("  fidelity_failures (first 5):");
+        for f in ir
+            .fidelity_findings
+            .iter()
+            .filter(|f| f.status == crate::ir::fidelity::FindingStatus::Fail)
+            .take(5)
+        {
+            println!(
+                "    [{:?}] {}: {}",
+                f.gate,
+                f.contract_id.as_deref().unwrap_or("-"),
+                f.message
+            );
+        }
+    }
     println!("  temporal_conflicts: {}", ir.temporal_conflicts.len());
     println!(
         "  temporal_rules_with_actor_grounding: {}",
@@ -4547,6 +4572,31 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         "  protocol_graph: channels={} phases={} transactions={} handshakes={}",
         pg_counts.0, pg_counts.1, pg_counts.2, pg_counts.3
     );
+    let fid = crate::ir::fidelity::FidelitySummary::from_findings(&ir.fidelity_findings);
+    let fid_score = fid
+        .score()
+        .map(|s| format!("{:.3}", s))
+        .unwrap_or_else(|| "n/a".into());
+    println!(
+        "  fidelity: pass={} fail={} not_evaluated={} score={}",
+        fid.pass, fid.fail, fid.not_evaluated, fid_score
+    );
+    if fid.fail > 0 {
+        println!("  fidelity_failures (first 5):");
+        for f in ir
+            .fidelity_findings
+            .iter()
+            .filter(|f| f.status == crate::ir::fidelity::FindingStatus::Fail)
+            .take(5)
+        {
+            println!(
+                "    [{:?}] {}: {}",
+                f.gate,
+                f.contract_id.as_deref().unwrap_or("-"),
+                f.message
+            );
+        }
+    }
     println!("  temporal_conflicts: {}", ir.temporal_conflicts.len());
     println!(
         "  temporal_rules_with_actor_grounding: {}",

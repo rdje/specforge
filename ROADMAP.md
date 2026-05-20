@@ -1241,8 +1241,24 @@
   `specforge validate` reports `protocol_graph`+`actor_contracts`
   counts; corpus reads all-zero (empty until extraction). kg-bench
   protocol-structure fixtures honestly deferred to the extraction
-  trees. Next DAG-promotable: `R16-CAPTURE-FIDELITY-GATES`
-  (#5/order-3). Remaining sub-trees `proposed`, executed in DAG order.
+  trees. **`R16-CAPTURE-FIDELITY-GATES` (point #5, pulled to order 3 —
+  the program's objective function) DONE** (`.1`–`.4`, 2026-05-20):
+  typed `fidelity` module (6 gates / three-valued `FindingStatus` /
+  `FidelitySummary` with honest `score()` over evaluated gates only);
+  producer wired in `SemanticIr::build` —
+  `apply_fidelity_gates(&mut [ActorContract], &[ActorPortRecord])` —
+  with **honesty doctrine MECHANICALLY enforced**: a `Lowerable`
+  contract with any `Fail` is rerouted to
+  `Residual{reason="fidelity:<Gate>: <message>"}` BEFORE the `.isf`
+  adapter consumes it; `specforge validate` prints a `fidelity:` block
+  (+ first-5 failures when any) for both SemanticIR and IntentIR.
+  Corpus baseline: `fail=0`, `score=1.000` (existing
+  `contract_from_temporal_rule` is fidelity-honest on nvme); the
+  producer is now load-bearing for any future drift. `FigureConformance`
+  honestly `NotEvaluated` corpus-wide until `R16-WAVEFORM-CONTRACT-MINING`
+  (#4) populates `FigureTrace`s. Next DAG-promotable:
+  `R16-MULTIMODAL-CONTRACT-FUSION` (#3, order 4; all three deps
+  satisfied). Remaining sub-trees `proposed`, executed in DAG order.
 - reference: `docs/tasks/R16-INTENT-CAPTURE.md` (umbrella, authoritative
   ordering + DAG), mdBook *SOTA Temporal-Intent Capture* chapter
 - thesis (user direction 2026-05-19): a digital-design PDF encodes intent

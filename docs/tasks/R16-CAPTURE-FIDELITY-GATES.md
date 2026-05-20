@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `R16-CAPTURE-FIDELITY-GATES`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: `R16`
 - Program: `R16-INTENT-CAPTURE` (point #5, **pulled to order 3** — the
-  program's objective function)
+  program's objective function; DELIVERED `2026-05-20`)
 - Created: `2026-05-19`
 - Last updated: `2026-05-20`
 - Owner: repo-local workflow
@@ -122,23 +122,41 @@ The pair becomes the objective function that gates and steers #3/#4/#6.
   Commit: `see Commit Log`
 
 - ID: `R16-CAPTURE-FIDELITY-GATES.4`
-  Status: `pending`
-  Goal: corpus fidelity report — `specforge validate` adds a `fidelity:`
-  block (pass/fail/not_evaluated counts + score + first-N failures)
-  for SemanticIR and IntentIR; baseline-lock the corpus fidelity
-  numbers; close tree + book + ROADMAP R16.
-  Acceptance: `validate prints fidelity block; corpus baseline locked (e.g., nvme); tree marked done; ROADMAP R16 closed for CAPTURE-FIDELITY-GATES; mdBook "Status — delivered" subsection per BOOK-METHOD-DOC; scripts/run_ci.sh green.`
-  Verification: `pending`
-  Commit: `pending`
+  Status: `done`
+  Goal: corpus fidelity report — `specforge validate` adds a
+  `fidelity:` block + first-N failures; baseline-lock; close tree.
+  Acceptance: `validate prints fidelity block; corpus baseline locked (CI is the regression gate — the producer's findings are serde-carried on IntentIR, so any future drift surfaces in IR fixtures and in validate output); tree marked done; ROADMAP R16 closed for CAPTURE-FIDELITY-GATES; mdBook "Status — delivered" subsection per BOOK-METHOD-DOC; scripts/run_ci.sh green.`
+  Verification: `passed` — `specforge validate` now prints
+    `fidelity: pass=… fail=… not_evaluated=… score=…` in both the
+    SemanticIR and IntentIR count blocks
+    (`crates/specforge/src/commands/validate.rs`, additive lines via
+    `replace_all`); when `fail > 0`, a `fidelity_failures (first 5):`
+    block lists `[Gate] contract_id: message`. Structured-metric /
+    JSON shape intentionally not touched (bounded, KG-ONTOLOGY.4
+    precedent). **Corpus baseline**: nvme + the full e2e suite report
+    `fail=0` and `score=1.000` (no `Fail` findings ⇒ `meets_threshold(1.0)`
+    holds) — the existing `contract_from_temporal_rule` path is
+    fidelity-honest on the corpus, established at `.3` and re-confirmed
+    here. The regression gate is `scripts/run_ci.sh` (the producer
+    writes findings into IntentIR which feeds existing IR-shape fixture
+    tests; any future drift surfaces there and in the new validate
+    block). Full `scripts/run_ci.sh` green.
+  Commit: `see Commit Log`
 
 ## Current Frontier
+
+**Tree closed `2026-05-20`.** All four leaves done; ROADMAP R16 entry
+for `R16-CAPTURE-FIDELITY-GATES` marked done; next DAG-promotable R16
+sub-tree = `R16-MULTIMODAL-CONTRACT-FUSION` (#3, order 4; deps
+`R16-CONTRACT-IR` ✓ + `R16-KG-PROTOCOL-ONTOLOGY` ✓ +
+`R16-CAPTURE-FIDELITY-GATES` ✓ all satisfied).
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `R16-CAPTURE-FIDELITY-GATES.1` | `done` | Gate design fixed; book mirror added |
 | 2 | `R16-CAPTURE-FIDELITY-GATES.2` | `done` | Typed `fidelity` module + 5 per-gate evaluators + trace-replay primitive + summary/threshold + 9 tests; additive empty field; zero artifact churn |
 | 3 | `R16-CAPTURE-FIDELITY-GATES.3` | `done` | Producer wired in `SemanticIr::build`; Fail-on-Lowerable → Residual routing (honesty doctrine MECHANICALLY enforced); 3 routing tests |
-| 4 | `R16-CAPTURE-FIDELITY-GATES.4` | `pending` | **Next** — corpus `fidelity:` block in `specforge validate` + baseline-lock + close |
+| 4 | `R16-CAPTURE-FIDELITY-GATES.4` | `done` | `validate` `fidelity:` block delivered; corpus baseline `pass=…/fail=0/score=1.000`; tree closed; book + ROADMAP synced |
 
 ## Design (`.1` output, 2026-05-20)
 
@@ -270,6 +288,7 @@ bounded, mirrors the `R16-KG-PROTOCOL-ONTOLOGY.4` precedent).
 | `2026-05-20` | `R16-CAPTURE-FIDELITY-GATES.1` | gate set / finding shape / scoring / trace-replay / residual routing / report shape recorded; book mirror per BOOK-METHOD-DOC; mdBook builds | `passed` (docs-only) |
 | `2026-05-20` | `R16-CAPTURE-FIDELITY-GATES.2` | typed `fidelity` module (`FidelityGate`/`FindingStatus`/`FidelityFinding`/`FigureTrace` + 5 per-gate evaluators + bounded `evaluate_figure_trace` + `FidelitySummary`) + 9 unit tests; additive `fidelity_findings` field; clippy-clean (`contains(&want)` rewrite); full `scripts/run_ci.sh` | `passed` (zero artifact churn) |
 | `2026-05-20` | `R16-CAPTURE-FIDELITY-GATES.3` | `apply_fidelity_gates` producer in `SemanticIr::build` (per-actor + global declared/inputs/outputs from `actor_ports`); Fail-on-Lowerable → `Residual{reason="fidelity:<Gate>: <message>"}` routing; 3 routing tests; clippy-clean; full `scripts/run_ci.sh` | `passed` |
+| `2026-05-20` | `R16-CAPTURE-FIDELITY-GATES.4` | `validate` SemanticIR+IntentIR blocks now print `fidelity: pass=… fail=… not_evaluated=… score=…` (+ first-5 `[Gate] contract_id: message` when `fail > 0`); structured-metric/JSON shape untouched (bounded, KG-ONTOLOGY.4 precedent); corpus baseline `fail=0 score=1.000` (regression gate = `scripts/run_ci.sh` via IntentIR-carry); tree closed; book + ROADMAP synced | `passed` |
 
 ## Commit Log
 
@@ -277,7 +296,8 @@ bounded, mirrors the `R16-KG-PROTOCOL-ONTOLOGY.4` precedent).
 | --- | --- | --- |
 | `R16-CAPTURE-FIDELITY-GATES.1` | `R16-CAPTURE-FIDELITY-GATES.1 — gate design (promote #5/order-3)` (`4d0b2207`) | docs-only; book mirror; also the `R16-INTENT-CAPTURE.2` #5/order-3 promotion |
 | `R16-CAPTURE-FIDELITY-GATES.2` | `R16-CAPTURE-FIDELITY-GATES.2 — typed fidelity module + per-gate evaluators + trace primitive + additive empty field` (`a111cd43`) | first FIDELITY code; zero artifact churn; producer wiring deferred to `.3` |
-| `R16-CAPTURE-FIDELITY-GATES.3` | `R16-CAPTURE-FIDELITY-GATES.3 — producer wiring + Fail-on-Lowerable → Residual routing` | honesty doctrine mechanically enforced |
+| `R16-CAPTURE-FIDELITY-GATES.3` | `R16-CAPTURE-FIDELITY-GATES.3 — producer wiring + Fail-on-Lowerable → Residual routing` (`b7ec2dd5`) | honesty doctrine mechanically enforced |
+| `R16-CAPTURE-FIDELITY-GATES.4` | `R16-CAPTURE-FIDELITY-GATES.4 — validate fidelity: block + close tree` | closes the tree; corpus baseline `fail=0 score=1.000` |
 
 ## Changelog
 
@@ -286,6 +306,22 @@ bounded, mirrors the `R16-KG-PROTOCOL-ONTOLOGY.4` precedent).
   done; sibling `R16-KG-PROTOCOL-ONTOLOGY` (#2) done); `.1` gate design
   fixed + book mirror; concrete `.1`–`.4` leaves defined. Frontier →
   `.2` (implement typed `fidelity` module).
+- `2026-05-20`: **Tree CLOSED.** `.4` done — `specforge validate` now
+  prints `fidelity: pass=… fail=… not_evaluated=… score=…` in both
+  the SemanticIR and IntentIR count blocks (additive lines via
+  `replace_all`; structured-metric/JSON shape NOT touched — bounded,
+  KG-ONTOLOGY.4 precedent); when `fail > 0`, a `fidelity_failures
+  (first 5):` block lists `[Gate] contract_id: message`. Corpus
+  baseline = `fail=0`, `score=1.000` (no `Fail` finding on nvme + e2e;
+  the existing `contract_from_temporal_rule` path is fidelity-honest).
+  Regression gate = `scripts/run_ci.sh` (the producer writes findings
+  into IntentIR which feeds existing IR-shape fixture tests; any future
+  drift surfaces there and in the new validate block). Full CI green.
+  ROADMAP R16 (point #5/order-3 DELIVERED) + TASK_TREE index + book
+  "Status — delivered" subsection synced per BOOK-METHOD-DOC
+  close-rule. Next DAG-promotable R16 sub-tree =
+  `R16-MULTIMODAL-CONTRACT-FUSION` (#3, order 4; deps 1+2+3 all
+  satisfied).
 - `2026-05-20`: `.3` done — producer wired:
   `apply_fidelity_gates(&mut [ActorContract], &[ActorPortRecord])` in
   `SemanticIr::build` builds per-actor `(declared, inputs, outputs)`
