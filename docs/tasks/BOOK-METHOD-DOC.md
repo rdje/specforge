@@ -100,12 +100,22 @@ human-facing, topically-organized explanation that mirrors them.
     Commit: `see Commit Log`
 
   - ID: `BOOK-METHOD-DOC.2.b`
-    Status: `pending`
+    Status: `done` (`2026-05-20`)
     Goal: backfill `reference/*` chapters for `AUDIT-DOC-RECONCILE`,
     `SIGNOFF-REMEDIATION`.
     Acceptance: `Both trees have topically-placed method-doc subsections in reference/*.md; mdBook green.`
-    Verification: `pending`
-    Commit: `pending`
+    Verification: `passed` — `AUDIT-DOC-RECONCILE` subsection
+      appended to `docs/book/src/reference/documentation-scope.md`
+      under a new "Closed task trees" section (its job is reconciling
+      documentation-scope claims against code reality — topically
+      correct); `SIGNOFF-REMEDIATION` subsection appended to
+      `docs/book/src/reference/live-docs.md` under the same section
+      heading (its job is the signoff/CI gate — topically correct).
+      Each subsection is a short topical paragraph + `*Authoritative
+      tracking:*` pointer; the recorded doctrine ("text describes
+      code; signoff is non-negotiable") is the load-bearing piece
+      every subsequent close-leaf inherits. `mdbook build` green.
+    Commit: `see Commit Log`
 
   - ID: `BOOK-METHOD-DOC.2.c`
     Status: `pending`
@@ -132,7 +142,7 @@ human-facing, topically-organized explanation that mirrors them.
 | --- | --- | --- | --- |
 | 1 | `BOOK-METHOD-DOC.1` | `done` | Convention + map + first worked instance (R16-CONTRACT-IR) |
 | 2.a | `BOOK-METHOD-DOC.2.a` | `done` | ISF-adapter chapter backfilled (7 trees) — `2026-05-20` |
-| 2.b | `BOOK-METHOD-DOC.2.b` | `pending` | `reference/*` chapters: `AUDIT-DOC-RECONCILE`, `SIGNOFF-REMEDIATION` |
+| 2.b | `BOOK-METHOD-DOC.2.b` | `done` | reference/* chapters backfilled (AUDIT-DOC-RECONCILE, SIGNOFF-REMEDIATION) — `2026-05-20` |
 | 2.c | `BOOK-METHOD-DOC.2.c` | `pending` | Remaining trees per the placement map (`R6-*-HARDENING`, `R7-VALIDATION`, `PROVENANCE-HARDENING`, `R15*`) |
 | 3 | `BOOK-METHOD-DOC.3` | `pending` | Encode the standing close-rule into workflow doctrine |
 
@@ -158,13 +168,15 @@ human-facing, topically-organized explanation that mirrors them.
 | --- | --- | --- | --- |
 | `2026-05-19` | `BOOK-METHOD-DOC.1` | convention + placement map + standing rule recorded; first instance = R16-CONTRACT-IR book section | `passed` |
 | `2026-05-20` | `BOOK-METHOD-DOC.2.a` | 7 ISF/FSMGen trees backfilled into `docs/book/src/pipeline/isf-adapter.md` "Closed task trees" section; mdBook builds | `passed` |
+| `2026-05-20` | `BOOK-METHOD-DOC.2.b` | `AUDIT-DOC-RECONCILE` → `reference/documentation-scope.md`; `SIGNOFF-REMEDIATION` → `reference/live-docs.md`; both topically placed; mdBook builds | `passed` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `BOOK-METHOD-DOC.1` | `BOOK-METHOD-DOC.1 — convention + placement map (with R16-CONTRACT-IR.1)` | docs-only; worked template = R16-CONTRACT-IR book section |
-| `BOOK-METHOD-DOC.2.a` | `BOOK-METHOD-DOC.2.a — backfill ISF-adapter chapter (7 closed pre-R16 trees)` | docs-only; per the convention; mdBook green |
+| `BOOK-METHOD-DOC.2.a` | `BOOK-METHOD-DOC.2.a — backfill ISF-adapter chapter (7 closed pre-R16 trees)` (`3fae27dc`) | docs-only; per the convention; mdBook green |
+| `BOOK-METHOD-DOC.2.b` | `BOOK-METHOD-DOC.2.b — backfill reference/* chapters (AUDIT-DOC-RECONCILE, SIGNOFF-REMEDIATION)` | docs-only; topical placement per map; mdBook green |
 
 ## Changelog
 
@@ -172,6 +184,14 @@ human-facing, topically-organized explanation that mirrors them.
   thoroughly and accurately explain how each task-tree is implemented
   and verified, topically placed; with a standing close-rule so it
   never drifts.
+- `2026-05-20`: `.2.b` done — appended per-tree method-doc
+  subsections for `AUDIT-DOC-RECONCILE` (in
+  `docs/book/src/reference/documentation-scope.md`, topical: docs-vs-
+  code reconciliation) and `SIGNOFF-REMEDIATION` (in
+  `docs/book/src/reference/live-docs.md`, topical: signoff/CI gate as
+  part of live-doc continuity). Each subsection records the
+  load-bearing doctrine the tree established (docs describe code;
+  signoff is non-negotiable). Docs-only; mdBook green.
 - `2026-05-20`: `.2.a` done — appended "Closed task trees" section
   to `docs/book/src/pipeline/isf-adapter.md` with topically-placed
   per-tree subsections for the 7 closed pre-R16 ISF/FSMGen trees

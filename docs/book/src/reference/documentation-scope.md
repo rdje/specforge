@@ -41,3 +41,29 @@ They are not the primary public product docs, even when they contain valuable de
 When a change affects what users should understand about `specforge`, it belongs in the book.
 
 When a change mainly preserves live state, sequencing, recovery context, or session continuity, it belongs in the root continuity docs.
+
+## Closed task trees — how each was implemented and verified
+
+### `AUDIT-DOC-RECONCILE` — reconcile docs against code reality
+
+When the documentation lane drifts ahead of (or behind) the code,
+the book/ROADMAP/README must be brought back to what the code
+actually does — never the other way around. This tree reconciled
+two specific findings from a doc-audit pass:
+
+1. `ROADMAP` R15 still described adapter-side actor-relative
+   direction computation and the deleted `.fsm` paths even though
+   `.isf` (the only adapter) defaults direction/width by design
+   and the actor-relative graph remained canonical in
+   `SemanticIR`/`IntentIR`. The text contradicted the code; the
+   text was rewritten to match.
+2. Stale references to multi-target HDL adapters were removed
+   from the book and ROADMAP after `ISF-ONLY-CONSOLIDATION` made
+   `.isf` the sole target.
+
+The doctrine recorded by this tree (and now load-bearing for
+every subsequent close-leaf): *book / ROADMAP language must
+describe what the code does — when it doesn't, the text is
+wrong, not the code*. Verified by leaf-by-leaf diff against the
+relevant code surfaces + `scripts/run_docs_ci.sh`.
+*Authoritative tracking:* `docs/tasks/AUDIT-DOC-RECONCILE.md`.

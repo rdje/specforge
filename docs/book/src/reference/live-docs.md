@@ -128,3 +128,26 @@ They let a future session answer:
 - which caveats are still real?
 
 The book, meanwhile, keeps the project understandable to someone who did not live through those sessions.
+
+## Closed task trees — how each was implemented and verified
+
+### `SIGNOFF-REMEDIATION` — restore the signoff bar at `main`
+
+The non-negotiable signoff bar (`scripts/run_ci.sh` green at
+`main`) had drifted: HEAD failed `cargo fmt --all --check` and
+`cargo clippy -- -D warnings` with 25 errors. This tree restored
+the bar with **idiomatic fixes only** — no blanket `#[allow]`
+suppression — and zero production behaviour change.
+
+Doctrine recorded by this tree: signoff is non-negotiable; CI
+green at HEAD is a hard precondition for every later tree. Per-
+leaf, idiomatic clippy fixes (no blanket allows) are the
+canonical way to land them — `#[allow(...)]` is permitted only
+at the line/function level when the lint is genuinely
+inapplicable (the surface area must stay narrow and recorded).
+Verified by `scripts/run_ci.sh` itself + per-leaf clippy/fmt
+diagnostics tracked in the Verification Log. After this tree
+the bar held for every subsequent close (the long R16 program
+shows the discipline working: 35+ leaves landed with `run_ci.sh`
+green each time).
+*Authoritative tracking:* `docs/tasks/SIGNOFF-REMEDIATION.md`.

@@ -2,6 +2,25 @@
 
 ## 2026-05-20
 
+### BOOK-METHOD-DOC.2.b — backfill reference/* chapters (AUDIT-DOC-RECONCILE, SIGNOFF-REMEDIATION)
+- Appended a topical method-doc subsection for `AUDIT-DOC-RECONCILE`
+  to `docs/book/src/reference/documentation-scope.md` under a new
+  "Closed task trees" section. Records the load-bearing doctrine:
+  *book / ROADMAP language must describe what the code does — when
+  it doesn't, the text is wrong, not the code*; references the two
+  doc-audit findings reconciled (ROADMAP R15 stale claims; HDL
+  multi-target references).
+- Appended a topical method-doc subsection for
+  `SIGNOFF-REMEDIATION` to `docs/book/src/reference/live-docs.md`
+  under the same section heading. Records the doctrine: *signoff
+  is non-negotiable; CI green at HEAD is a hard precondition for
+  every later tree*; idiomatic per-leaf clippy/fmt fixes only (no
+  blanket `#[allow]`). Notes the discipline held across the R16
+  program's 35+ leaves.
+- Each subsection includes an `*Authoritative tracking:*` pointer
+  to the corresponding task-tree file. Docs-only;
+  `scripts/run_docs_ci.sh` green (mdBook builds).
+
 ### BOOK-METHOD-DOC.2.a — backfill ISF-adapter chapter (7 closed pre-R16 trees)
 - Per the `BOOK-METHOD-DOC` standing close-rule, appended a "Closed
   task trees — how each was implemented and verified" section to
