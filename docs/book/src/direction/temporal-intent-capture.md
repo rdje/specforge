@@ -564,96 +564,270 @@ land.
 
 ## R16-CAPTURE-FIDELITY-GATES — how it is implemented and verified
 
-**Why.** The program thesis: prose+waveform → typed KG extraction is
-the hard problem; the rest is mechanical. But you cannot improve what
-you cannot measure. This tree makes "how well did we capture intent?"
-an **objective, gating number** so the extraction trees
-(`#3`/`#4`/`#6`) have a feedback signal to optimize against — and so
-the residual-honesty doctrine ("unverifiable temporal intent →
-explicit residual, never fabricated") is **mechanically enforced**,
-not just authorial.
+This section explains the typed surface that turns *"how well
+did we capture intent?"* into a measurable, gating number — and
+turns the residual-honesty doctrine *"unverifiable intent →
+explicit residual, never fabricated"* from a rule SpecForge's
+authors follow into a property the code itself enforces.
+Reading it end-to-end should leave you with a working mental
+model of each gate, the three-valued result you should expect
+to see, what the corpus baseline tells you today, and the four
+properties this design buys you.
 
-### Implementation
+### The problem this fixes
 
-- **Typed layer, not a new stage** (parallels CONTRACT-IR /
-  KG-ONTOLOGY): a new `crates/specforge/src/ir/fidelity.rs` defines a
-  typed gate set (`RealizableBoundary` / `RealizableDirection` /
-  `RealizableHandshake` / `ResidualHonesty` / `NoStrictInvalid` /
-  `FigureConformance`), a `FidelityFinding` record, and a
-  `FindingStatus = Pass | Fail | NotEvaluated` (honestly three-valued
-  — `NotEvaluated` is never silently treated as `Pass`).
-- **Additive empty field** on `SemanticIr`/`IntentIr`:
-  `fidelity_findings: Vec<FidelityFinding>` (serde-default +
-  `skip_serializing_if = Vec::is_empty`) ⇒ zero artifact churn until
-  the producer populates it. Same discipline as `actor_contracts` and
-  `protocol_graph`.
-- **Producer** (`.3`) runs in `SemanticIr::build` after
-  `actor_contracts` exist; each gate evaluator returns `Pass` / `Fail`
-  / `NotEvaluated` per contract. A `Fail` on a `Lowerable` contract is
-  routed to **Residual** with the gate message as the reason — the
-  honesty doctrine, mechanically enforced.
-- **Trace-replay primitive**:
-  `evaluate_figure_trace(&ActorContract, &FigureTrace)` is a bounded
-  structural check (every obligation's witness within the trace tick
-  window must hold). Until `R16-WAVEFORM-CONTRACT-MINING` (#4)
-  populates `FigureTrace` from PDF figures, `FigureConformance` runs
-  `NotEvaluated` corpus-wide — honest dormant capability; the
-  primitive is unit-tested with synthesized traces in `.2`.
-- **Report** (`.4`): `specforge validate` adds a `fidelity:` block
-  (pass / fail / not_evaluated counts + per-document score + first-N
-  failures) for SemanticIR and IntentIR. Structured-metric / JSON
-  shape intentionally not touched (bounded, mirrors the
-  `R16-KG-PROTOCOL-ONTOLOGY.4` precedent).
+The program thesis says the hard problem is extracting accurate
+temporal intent from prose and timing diagrams into a typed
+KG; the rest of the pipeline is mechanical. But there's an
+honest follow-up question: *"how would we know if we got
+better at it?"* If we can't measure capture fidelity, we can't
+improve it — and worse, we have no structural barrier against
+silently lowering a contract that shouldn't have been licensed
+in the first place.
 
-### Verification
+Before this tree, fidelity was a judgment SpecForge's authors
+made — a residual-honesty doctrine that read *"if you can't
+ground it, residual it."* That's fine as a principle. As a
+property the IR enforces, it was missing. A typo or a
+well-meaning shortcut in the contract producer could ship a
+`Lowerable` contract whose obligation referenced a signal that
+isn't on the actor's boundary — and nothing in the pipeline
+would catch it until someone read the `.isf` output and
+noticed.
 
-- Per-document score = `pass / (pass + fail)` over **evaluated** gates;
-  `NotEvaluated` excluded from the denominator and counted separately.
-  Threshold default `1.0`: any `Fail` = below-threshold (disciplined
-  honesty default). Corpus baseline-locked at `.4`.
-- Additive empty field ⇒ zero `.isf`/artifact change while unpopulated
-  (parity by construction); existing fsmgen-strict + e2e suites must
-  stay green. `scripts/run_ci.sh` green per leaf; every leaf via
-  `COMMIT.md`; the closing leaf refreshes this section
-  (BOOK-METHOD-DOC).
-- Honest scope: `FigureConformance` stays `NotEvaluated` on the corpus
-  until `#4` populates `FigureTrace`s — explicitly recorded; never
-  faked as `Pass`.
+`R16-CAPTURE-FIDELITY-GATES` adds the missing measurement and
+the missing structural barrier.
 
-Authoritative tracking: `docs/tasks/R16-CAPTURE-FIDELITY-GATES.md`.
+### The mental model
+
+> **A `FidelityFinding` is a typed observation about one
+> contract from one of six gates. Each gate returns `Pass`,
+> `Fail`, or `NotEvaluated` — honestly three-valued. A `Fail`
+> on a `Lowerable` contract is mechanically rerouted to
+> `Residual{reason}` before the `.isf` adapter ever sees it —
+> the doctrine becomes structural, not authorial. The corpus
+> baseline (`fail=0 score=1.000`) tells you `SpecForge`'s
+> existing contract producer is fidelity-honest today; the
+> gates remain on guard against any future drift.**
+
+Everything below is the typed surface: the six gates and what
+each one checks, the three-valued status, the producer that
+runs them, the routing rule, the `FidelitySummary` and how the
+per-document score is computed, the validate `fidelity:` block
+you see in the report, and the four user-facing properties
+the design guarantees.
+
+### Where `fidelity` lives
+
+It's a typed layer, not a new stage — parallel to ContractIR
+and KG-ONTOLOGY. A new module
+`crates/specforge/src/ir/fidelity.rs` defines the gate set,
+the typed records, and the per-gate evaluators;
+`SemanticIR` and `IntentIR` carry an additive
+`fidelity_findings: Vec<FidelityFinding>` field, serde-default
+and skipped-while-empty. Today's IR artifacts don't grow;
+populated tomorrow's gain a structured per-contract fidelity
+record.
+
+### The six gates
+
+Each gate is a focused check that returns `Pass` / `Fail` /
+`NotEvaluated` for one contract:
+
+- **`RealizableBoundary`** — every signal the contract
+  references (in its obligation, guard, guard_candidates, or
+  clock) is declared on the actor's boundary. *"You can't
+  promise about signals that don't exist."*
+- **`RealizableDirection`** — the obligation's primary signal
+  direction is consistent with the contract kind. A
+  `Guarantee` is about an output (or `InOut`); an `Assume` is
+  about an input (or `InOut`). When the direction is unknown
+  to the actor, the gate honestly returns `NotEvaluated` —
+  never silently `Pass`.
+- **`RealizableHandshake`** — when the obligation is a
+  `HandshakeBarrier`, `ready` must be an actor input and
+  `valid` an actor output. Mirrors the FSMGen
+  `ready_valid_barrier` strict requirement from CONTRACT-IR.4.
+  Non-handshake obligations honestly return `NotEvaluated`.
+- **`ResidualHonesty`** — a `Residual{reason}` must carry a
+  non-empty reason; a `Lowerable` contract must not carry an
+  `Observe` obligation (which has no representable `.isf`
+  form). Catches the most common dishonesty: a residual
+  pretending it doesn't owe an explanation.
+- **`NoStrictInvalid`** — a `Lowerable` contract whose
+  obligation shape has no FSMGen-strict-valid `.isf` form
+  (currently `Observe` and `OrderedBefore`) fails. Catches
+  contracts that would produce invalid syntax downstream.
+- **`FigureConformance`** — when a figure-derived trace is
+  attached to a contract (via `R16-WAVEFORM-CONTRACT-MINING`),
+  the contract's obligation must be satisfied by that trace.
+  Until `#4` populates `FigureTrace`s in the corpus, this gate
+  honestly runs `NotEvaluated` — never faked as `Pass`. The
+  primitive is unit-tested with synthesized traces.
+
+### Three-valued status — and why `NotEvaluated` is a real outcome
+
+```rust
+pub enum FindingStatus { Pass, Fail, NotEvaluated }
+```
+
+The third value is load-bearing. `NotEvaluated` means *"this
+gate honestly cannot reach a verdict on this contract right
+now"* — usually because the inputs the gate needs aren't
+available yet (e.g. no figure trace; unknown signal
+direction). It's **not** the same as `Pass`, and it's **not**
+treated as `Pass` anywhere in the pipeline. The per-document
+score excludes `NotEvaluated` from the denominator and counts
+it separately. The corpus baseline today carries plenty of
+`NotEvaluated` (because no figure traces exist yet); none of
+those silently roll up into a "passing" number.
+
+### How the gates run — and what they do on a `Fail`
+
+`SemanticIr::build` runs `apply_fidelity_gates(&mut
+[ActorContract], &[ActorPortRecord])` after the contract
+producer has populated `actor_contracts`. Each gate evaluates
+every contract; the per-contract findings get appended to
+`fidelity_findings`.
+
+The load-bearing routing rule: **if a `Lowerable` contract
+gets any `Fail` finding, the producer reroutes it to**
+
+```rust
+LoweringDisposition::Residual {
+    reason: format!("fidelity:<Gate>: <message>"),
+}
+```
+
+**before the `.isf` adapter ever sees it.** The contract still
+exists in the IR (no information is lost), but it now honestly
+records that it failed a fidelity gate, with the gate name and
+the gate's message embedded in the reason text. Reading the
+adapter's residual decisions tells you exactly which gate
+objected and why.
+
+`Pass` and `NotEvaluated` leave the contract unchanged.
+Already-`Residual` contracts are not re-routed by this pass
+(their existing reason is preserved); the gates still produce
+their findings, but no second rewrite happens.
+
+### `FidelitySummary` and the per-document score
+
+```rust
+pub struct FidelitySummary {
+    pub pass: u32,
+    pub fail: u32,
+    pub not_evaluated: u32,
+}
+
+impl FidelitySummary {
+    pub fn score(&self) -> Option<f64> {
+        let evaluated = self.pass + self.fail;
+        if evaluated == 0 { None } else {
+            Some(self.pass as f64 / evaluated as f64)
+        }
+    }
+
+    pub fn meets_threshold(&self, threshold: f64) -> bool {
+        match self.score() {
+            Some(s) => s >= threshold && self.fail == 0,
+            None => false,
+        }
+    }
+}
+```
+
+The score is `pass / (pass + fail)` over **evaluated** gates.
+`NotEvaluated` is counted separately. `meets_threshold(t)`
+requires `score ≥ t` **and** `fail == 0` — the default
+threshold is `1.0`, which means any `Fail` ⇒ below-threshold.
+That's the disciplined-honesty default: SpecForge doesn't ship
+"79% fidelity" as a victory; you either captured cleanly or you
+have a known residual.
+
+### What you see in the report today
+
+Run `specforge validate <intent.json>` and the SemanticIR and
+IntentIR count blocks include:
+
+```
+  fidelity: pass=N fail=0 not_evaluated=K  score=1.000
+```
+
+`fail=0` is the live evidence that the existing
+`contract_from_temporal_rule` producer is fidelity-honest on
+the nvme corpus — every contract it currently creates passes
+every gate it can be evaluated against, and the residual ones
+have non-empty reasons. The `score=1.000` is correspondingly
+clean. The `not_evaluated=K` count is non-zero because
+`FigureConformance` runs `NotEvaluated` corpus-wide until
+extraction lands.
+
+If `fail` ever goes non-zero, the report also includes:
+
+```
+  fidelity_failures (first 5):
+    [Gate] contract_id: message
+    …
+```
+
+so you can see exactly which contracts failed which gates, in
+the report itself.
+
+### The four user-facing guarantees
+
+This design buys you four properties you can rely on:
+
+1. **You can see, in a number, how clean your IR's contract
+   producer is.** `fail=0 score=1.000` is the corpus baseline
+   today; any drift moves the numbers visibly.
+2. **The residual-honesty doctrine is structural, not
+   authorial.** A future producer change that ships a
+   fidelity-violating contract gets mechanically demoted to
+   `Residual` with a diagnostic reason; it doesn't sneak past
+   review.
+3. **`NotEvaluated` never lies as `Pass`.** When a gate
+   honestly cannot reach a verdict, the report says so
+   explicitly. You can tell *"the gate couldn't run"* from
+   *"the gate ran and approved"*.
+4. **Failures carry full provenance.** The diagnostic in
+   `Residual.reason` names the gate (`fidelity:<Gate>:`) and
+   the gate's message; a downstream reader can trace from the
+   `.isf` residual decision back to which gate objected,
+   without re-running anything.
 
 ### Status — delivered (`2026-05-20`)
 
-`R16-CAPTURE-FIDELITY-GATES` is **closed**. All four leaves done:
+`R16-CAPTURE-FIDELITY-GATES` is **closed**. All four leaves
+landed under the standard CI bar:
 
-1. `.1` gate design fixed (typed layer / no new stage; 6-gate set;
-   three-valued `FindingStatus` honesty);
-2. `.2` typed `fidelity` module + 5 per-gate evaluators + bounded
-   `evaluate_figure_trace` primitive + `FidelitySummary` with honest
-   `score()` (over evaluated gates) and `meets_threshold(1.0)` default
-   + additive empty `fidelity_findings` field on `SemanticIr`/
-   `IntentIr` (serde-skipped while empty);
-3. `.3` producer wired in `SemanticIr::build` —
-   `apply_fidelity_gates(&mut [ActorContract], &[ActorPortRecord])` —
-   with **honesty doctrine MECHANICALLY enforced**: a `Lowerable`
-   contract with any `Fail` is rerouted to
-   `Residual{reason = "fidelity:<Gate>: <message>"}` BEFORE the
-   `.isf` adapter consumes it;
-4. `.4` `specforge validate` `fidelity:` block (pass / fail /
-   not_evaluated + score; first-5 failures when any) on both
-   SemanticIR and IntentIR.
+- `.1` — the gate design above (typed layer; six gates;
+  three-valued status; refuse-by-default routing).
+- `.2` — the typed `fidelity` module + five per-gate
+  evaluators + the bounded `evaluate_figure_trace` primitive +
+  `FidelitySummary` with honest `score()` and
+  `meets_threshold(1.0)` default + the additive empty
+  `fidelity_findings` field on `SemanticIr`/`IntentIr`.
+- `.3` — `apply_fidelity_gates` wired in `SemanticIr::build`,
+  with the **honesty doctrine mechanically enforced**: a
+  `Lowerable` contract with any `Fail` is rerouted to
+  `Residual { reason: "fidelity:<Gate>: <message>" }` *before*
+  the `.isf` adapter sees it.
+- `.4` — the `validate fidelity:` block (pass / fail /
+  not_evaluated + score; first-5 failures when any) on both
+  SemanticIR and IntentIR. The corpus baseline reads
+  `fail=0 score=1.000` — the contract producer is
+  fidelity-honest on nvme today; the gates remain on guard
+  against any future drift.
 
-Live evidence: corpus baseline reads `fidelity: pass=N fail=0
-not_evaluated=K score=1.000` — the existing
-`contract_from_temporal_rule` path is fidelity-honest on the nvme
-corpus (no `Fail` findings). The producer is now load-bearing: any
-future contract-producer change that introduces a fidelity violation
-will mechanically downgrade the affected contract to `Residual`
-(documented reason) and surface in both the validate `fidelity:` block
-and IR fixtures — the residual-honesty doctrine is structural, not
-only authorial. Next DAG-promotable R16 sub-tree =
-`R16-MULTIMODAL-CONTRACT-FUSION` (#3, order 4; deps `R16-CONTRACT-IR`
-✓ + `R16-KG-PROTOCOL-ONTOLOGY` ✓ + `R16-CAPTURE-FIDELITY-GATES` ✓).
+The producer is now load-bearing: it's the third structural
+honesty doctrine (with FUSION.3 disagreement-routing and
+CVE.3 entailment-Fail-routing) that together make
+fabrication mechanically prevented end-to-end across the
+pipeline.
+
+*Authoritative tracking:*
+`docs/tasks/R16-CAPTURE-FIDELITY-GATES.md`.
 
 ## R16-MULTIMODAL-CONTRACT-FUSION — how it is implemented and verified
 

@@ -2,6 +2,49 @@
 
 ## 2026-05-20
 
+### BOOK-USER-FRIENDLY-BACKFILL.2.c — rewrite R16-CAPTURE-FIDELITY-GATES book subsection user-friendly
+- Rewrote the `R16-CAPTURE-FIDELITY-GATES` subsection in
+  `docs/book/src/direction/temporal-intent-capture.md` to the
+  user-friendly standard. The new version walks the reader
+  through:
+  - **The problem this fixes** — *"how would we know if
+    capture got better?"* + missing structural barrier
+    against silently lowering ungrounded contracts.
+  - **One-sentence mental model** — `FidelityFinding` is a
+    typed observation; three-valued status; Fail-on-Lowerable
+    mechanically rerouted to `Residual{reason}` before `.isf`
+    sees it.
+  - **Where `fidelity` lives** — additive typed layer.
+  - **The six gates** — each one explained in plain language
+    with what it checks and when it returns `NotEvaluated`
+    (`RealizableBoundary` / `RealizableDirection` /
+    `RealizableHandshake` / `ResidualHonesty` /
+    `NoStrictInvalid` / `FigureConformance`).
+  - **Three-valued status** — why `NotEvaluated` is a real
+    outcome (load-bearing) and never silently treated as
+    `Pass`.
+  - **How the gates run, what happens on a `Fail`** —
+    `apply_fidelity_gates` producer walked through; the
+    `Lowerable + Fail → Residual{"fidelity:<Gate>:
+    <message>"}` routing rule called out explicitly.
+  - **`FidelitySummary` and the per-document score** —
+    `score()` excludes `NotEvaluated` from the denominator;
+    `meets_threshold(1.0)` is the disciplined-honesty
+    default.
+  - **What you see in the report today** — `fidelity: pass=N
+    fail=0 not_evaluated=K  score=1.000` as live evidence of
+    a fidelity-honest contract producer on nvme; the
+    `fidelity_failures (first 5):` block shape if `fail > 0`.
+  - **Four user-facing guarantees framed as benefits**: you
+    can see a number for cleanness; the doctrine is
+    structural; `NotEvaluated` never lies as `Pass`; failures
+    carry full provenance.
+  - **Status — delivered** leaf-by-leaf with the
+    three-doctrines framing (this + FUSION.3 + CVE.3 together
+    make fabrication mechanically prevented end-to-end).
+- Docs-only; `scripts/run_docs_ci.sh` green (mdBook builds).
+  Frontier → `.2.d` (R16-MULTIMODAL-CONTRACT-FUSION rewrite).
+
 ### BOOK-USER-FRIENDLY-BACKFILL.2.b — rewrite R16-KG-PROTOCOL-ONTOLOGY book subsection user-friendly
 - Rewrote the `R16-KG-PROTOCOL-ONTOLOGY` subsection in
   `docs/book/src/direction/temporal-intent-capture.md` to the
