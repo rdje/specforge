@@ -2,6 +2,38 @@
 
 ## 2026-05-20
 
+### BOOK-USER-FRIENDLY-BACKFILL.1 — create tree + scope audit + chapter classification
+- New tree at `docs/tasks/BOOK-USER-FRIENDLY-BACKFILL.md`, created
+  and immediately promoted `active`. Goal: bring every existing
+  per-tree book method-doc subsection up to the user-friendly
+  thorough standard established `2026-05-20` (per the
+  BOOK-METHOD-DOC Decisions entry + `feedback-book-user-friendly`
+  memory). The worked template is the `R7-VALIDATION.5`
+  subsection in `docs/book/src/quality/validation.md`.
+- `.1` scope audit recorded: classified every existing per-tree
+  book subsection into **concept-introducing → upgrade-needed**
+  vs **concise closure summary → keep as-is**. The honest
+  Non-Goal is recorded explicitly: *user-friendly thorough* is
+  the standard for concept-introducing subsections (the user
+  needs to understand new typed records / doctrines / pipeline
+  surfaces to use SpecForge); *more-words for more-words' sake*
+  is **not** the goal. Accurate brevity remains right for
+  1-paragraph closure summaries (ISF/FSMGen, R6 hardening,
+  PROVENANCE).
+- Scope total: **6 R16 family subsections** (`.2`) + **2 doctrine
+  subsections** in `reference/*` (`.3`) + **1 closure summary
+  with introduced structure** (`.4`) + **1 doctrine subsection**
+  in `domain/*` (`.5`) + close (`.6`). `docs/TASK_TREE.md` index
+  updated.
+- Per the now-structural BOOK-METHOD-DOC close-rule, this tree
+  inherits the requirement that its own close (`.6`) refreshes
+  the BOOK-METHOD-DOC Decisions entry with a cross-reference to
+  this tree (so the standard is fully self-referential going
+  forward).
+- Docs-only; `scripts/run_docs_ci.sh` green (mdBook builds).
+  Frontier → `.2` (R16 family upgrade — highest user-impact
+  surface).
+
 ### BOOK-METHOD-DOC — clarify "thorough" means user-friendly thorough + rewrite R7-VALIDATION.5 book section as the worked template
 - Per explicit user direction (verbatim):
   *"Yes, the user (me) shall be able to understand everything
