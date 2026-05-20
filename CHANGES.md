@@ -2,6 +2,42 @@
 
 ## 2026-05-20
 
+### R16-WAVEFORM-CONTRACT-MINING.1 — promote #4 (the crux) + crux design
+- DAG governance (`R16-INTENT-CAPTURE.2`): with DAG predecessors
+  closed (`R16-CONTRACT-IR` ✓, `R16-CAPTURE-FIDELITY-GATES` ✓; sibling
+  consumer `R16-MULTIMODAL-CONTRACT-FUSION` also closed and ready to
+  consume figure-derived contracts), `R16-WAVEFORM-CONTRACT-MINING`
+  (#4, order 5 — **the program thesis's crux**) promoted
+  `proposed → active` with concrete `.1`–`.4` leaves (and `.3`
+  explicitly flagged for honest split when the concrete extractor
+  approach is chosen).
+- `.1` crux design fixed (docs-only): typed layer / no new stage
+  (parallels prior R16 trees). Typed intermediate
+  (`PartialTrace`/`LaneEdge`/`ValueSpan`/`RelativeDelay`/`CausalArrow`/
+  `EdgeKind`) is the contract between an extractor (`.3`) and a
+  generalizer (`.2`) — both independently unit-testable.
+  Conservative, bounded generalization rules: `RelativeDelay{min,max}`
+  ⇒ `Eventually{Within{min,max}}`; multi-tick `ValueSpan` ⇒
+  `Stable{Within{max=span_len}}`; next-tick `CausalArrow` ⇒
+  `Eventually{Within{min=0,max=1}}`; bare `LaneEdge` ⇒
+  `Observe` + `Residual{reason="bare edge — no window licensed"}`
+  (honesty doctrine, mechanically enforced — fabrication structurally
+  prevented). Round-trip verifier reuses `evaluate_figure_trace`
+  (`R16-CAPTURE-FIDELITY-GATES.2`): a contract generalized from a
+  trace must satisfy that trace; otherwise demoted to
+  `Residual{reason="verifier disagreement: …"}`. Cross-check with
+  prose is **delegated to `R16-MULTIMODAL-CONTRACT-FUSION`** (already
+  closed; this tree does not re-implement cross-check). Extractor
+  strategy (`.3`) deliberately undecided at `.1` (VLM-structured? /
+  vector-SVG path parsing? / both?) — expected honest split (rule 5)
+  at `.3` promotion. Honest dormancy: through `.2` the corpus stays
+  unchanged (no PDF parsing yet); `.3` ends dormancy; `.4` measures
+  `FigureConformance` Pass-rate improvement + negative-fixture
+  coverage proving junk waveforms do **not** mint contracts. Book
+  mirror added per `BOOK-METHOD-DOC`; `docs/TASK_TREE.md` index
+  updated. Docs-only; `scripts/run_docs_ci.sh` green (mdBook builds).
+  Frontier → `.2`.
+
 ### R16-MULTIMODAL-CONTRACT-FUSION.4 — `validate fusion:` block + close tree (point #3 DELIVERED)
 - `specforge validate` now prints
   `fusion: groups_merged=N disagreements=M` in both the SemanticIR

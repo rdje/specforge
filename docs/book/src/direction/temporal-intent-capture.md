@@ -447,3 +447,61 @@ protocol element. Next DAG-promotable R16 sub-tree =
 `R16-WAVEFORM-CONTRACT-MINING` (#4, order 5 — **the crux** of the
 program thesis: prose + timing-diagram extraction into typed
 contracts).
+
+## R16-WAVEFORM-CONTRACT-MINING — how it is implemented and verified
+
+**Why.** This is the program thesis's crux. Timing diagrams *are* the
+timed automaton, drawn, and they typically encode the densest
+temporal-intent the spec ships — yet today the VLM timing extractor
+is largely defensive (junk-label guarding). Closing this tree turns
+the spec's own figures into ground truth a contract producer can
+mine.
+
+### Implementation
+
+- **Typed layer, no new stage** (parallels prior R16 trees): a new
+  `crates/specforge/src/ir/waveform.rs` defines the typed
+  intermediate (`PartialTrace`, `LaneEdge`, `ValueSpan`,
+  `RelativeDelay`, `CausalArrow`, `EdgeKind`) that an extractor
+  produces and a generalizer consumes. This split lets each side be
+  independently unit-testable against synthetic `PartialTrace`s.
+- **Generalization rules** (conservative, bounded; under-determined
+  ⇒ Observe/Residual): `RelativeDelay{min,max}` ⇒ `Eventually` with
+  `Within{min,max}`; multi-tick `ValueSpan` ⇒ `Stable` with
+  `Within{max=span_len}`; next-tick `CausalArrow` ⇒ `Eventually`
+  with `Within{min=0,max=1}`; bare `LaneEdge` ⇒ `Observe` +
+  `Residual{reason="bare edge — no window licensed"}` (honesty
+  doctrine, mechanically enforced).
+- **Round-trip verifier**: a generated contract must satisfy
+  `evaluate_figure_trace` against the same `PartialTrace` it was
+  generalized from; otherwise it is demoted to
+  `Residual{reason="verifier disagreement: …"}`. Fabrication is
+  structurally prevented at the generalizer's own boundary, before
+  the downstream fidelity / fusion gates see the contract.
+- **Cross-check with prose** is delegated to
+  `R16-MULTIMODAL-CONTRACT-FUSION` (already closed) — the figure
+  contracts and prose contracts cluster by `FusionKey`, and
+  agreement / disagreement is the FUSION layer's job, not this
+  tree's. This keeps the tree focused on figure→contract; fusion
+  stays the single load-bearing primitive for cross-modal
+  reconciliation.
+- **Extractor strategy** (`.3` — qualitatively the largest leaf):
+  VLM-structured prompting and/or vector-SVG path parsing,
+  decision-deferred to `.3`'s promotion (when corpus figure-format
+  mix is empirically known). Explicitly **expected to honest-split
+  (rule 5)** into sub-leaves at that point.
+
+### Verification
+
+- `.2` ships the typed intermediate + generalizer + verifier
+  unit-tested against synthetic `PartialTrace`s; zero artifact churn
+  through `.2` (no PDF parsing yet).
+- `.3` ships the figure→`PartialTrace` extractor (likely split);
+  `.4` measures `FigureConformance` Pass-rate improvement on the
+  corpus and ships negative-fixture coverage proving that junk
+  waveforms do **not** mint contracts (verifier-fail ⇒ Residual, not
+  silent fabrication).
+- `scripts/run_ci.sh` green per leaf; every leaf via `COMMIT.md`;
+  the closing leaf refreshes this section (BOOK-METHOD-DOC).
+
+Authoritative tracking: `docs/tasks/R16-WAVEFORM-CONTRACT-MINING.md`.
