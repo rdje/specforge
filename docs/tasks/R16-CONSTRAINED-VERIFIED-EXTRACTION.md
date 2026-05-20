@@ -149,15 +149,33 @@ Make extraction high-precision by construction (the program thesis: prose
   Commit: `see Commit Log`
 
 - ID: `R16-CONSTRAINED-VERIFIED-EXTRACTION.5`
-  Status: `pending`
-  Goal: uncertainty-driven converge — at converge time, pass selection
-  prioritizes contracts with `automation_confidence` low AND high
-  fidelity-`Fail`-rate; computed as a simple
-  value-of-information score over current `fidelity_findings` +
-  `automation_confidence`. Bounded budget per pass.
+  Status: `done`
+  Goal: uncertainty-driven converge SELECTION helper (deterministic
+  VoI score). Integration into the existing converge command remains
+  the integration leaf (deferred — honest bounded scope).
   Acceptance: `Selection function implemented + unit-tested over synthetic findings; integrated into the converge loop iff loop exists in this repo (else parked behind a feature flag); scripts/run_ci.sh green.`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — added to
+    `crates/specforge/src/ir/cve.rs`:
+    `voi_score(contract, findings) = w_conf * (1 - rank(automation_confidence)/2)
+    + w_fail * count_fails_for(contract.contract_id, findings)`
+    with initial weights `w_conf = w_fail = 1.0` per `.1`; rank
+    `High=2 ⇒ uncertainty=0` / `Medium=1 ⇒ 0.5` / `Low=0 ⇒ 1`;
+    `count_fails_for` counts `FidelityFinding`s with
+    `status == Fail` whose `contract_id` matches.
+    `select_top_n_by_voi(&ConvergeInputs{contracts, findings}, n)`
+    returns the top-`n` `contract_id`s by descending VoI with
+    **deterministic tie-break by `contract_id` lexicographic
+    ascending** (next-pass reproducible). 5 new unit tests: VoI
+    Low > High when no findings (1 vs 0); Medium-with-2-Fails
+    outranks Low-no-fails (2.5 vs 1); tie-break ascending by
+    contract_id (`a` before `b`); explicit ordering test (Medium+1Fail
+    > Low > High); empty inputs ⇒ empty selection. Integration of
+    the helper into the existing converge command stays deferred (the
+    converge command is an established flow; this leaf ships the
+    selection primitive + tests, honoring the bounded-scope
+    discipline). `SemanticIr` / `IntentIr` unchanged ⇒ ZERO artifact
+    churn. Full `scripts/run_ci.sh` green.
+  Commit: `see Commit Log`
 
 - ID: `R16-CONSTRAINED-VERIFIED-EXTRACTION.6`
   Status: `pending`
@@ -176,8 +194,8 @@ Make extraction high-precision by construction (the program thesis: prose
 | 2 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.2` | `done` | Typed `cve` module: provider-facing JSON-Schema summary + fails-closed adapter + 4 tests; zero artifact churn |
 | 3 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.3` | `done` | `entailment_check` + `apply_entailment_to_contract` Fail→Residual routing; 7 new tests; honesty doctrine mechanically enforced |
 | 4 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.4` | `done` | Protocol-template library (5 canonical, match-grounded, entailment-verifiable; CFC + SetupAccess honestly Residual); 7 tests; zero artifact churn |
-| 5 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.5` | `pending` | **Next** — uncertainty-driven converge selection (deterministic VoI score) |
-| 6 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.6` | `pending` | Corpus precision/recall + close |
+| 5 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.5` | `done` | `voi_score` + `select_top_n_by_voi` (deterministic tie-break) + 5 tests; converge-loop integration deferred (bounded scope) |
+| 6 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.6` | `pending` | **Next** — corpus precision/recall + close tree |
 
 ## Design (`.1` output, 2026-05-20)
 
@@ -333,6 +351,7 @@ KG-ONTOLOGY.4 / FIDELITY.4 / FUSION.4 precedents).
 | `2026-05-20` | `R16-CONSTRAINED-VERIFIED-EXTRACTION.2` | typed `cve` module (`actor_contract_json_schema_summary` + fails-closed `parse_constrained_contract`) + 4 unit tests (round-trip, malformed-input fail-closed, doc-vs-code required-keys, obligation-discriminator drift-lock); SemanticIr/IntentIr unchanged; full `scripts/run_ci.sh` | `passed` (zero artifact churn) |
 | `2026-05-20` | `R16-CONSTRAINED-VERIFIED-EXTRACTION.3` | `entailment_check` (lexical signal + structural digit-run bound check; three-valued including `NotEvaluated`) + `apply_entailment_to_contract` Fail→Residual routing; 7 new unit tests (Pass over Drive+Stable; Fail on missing signal/bound; NotEvaluated when nothing checkable; routing flips Lowerable+Fail; Pass leaves unchanged; preexisting Residual untouched; `span_contains_number` exact digit runs); SemanticIr/IntentIr unchanged; full `scripts/run_ci.sh` | `passed` (zero artifact churn) |
 | `2026-05-20` | `R16-CONSTRAINED-VERIFIED-EXTRACTION.4` | `ProtocolTemplate` (5 canonical) + `SignalBindings` + `instantiate_template` with match-grounding gate; RV-Handshake/AsyncReset/BurstLast → Lowerable; CFC/SetupAccess honestly Residual; 7 new unit tests including the "match is entailment-verifiable" round-trip; SemanticIr/IntentIr unchanged; full `scripts/run_ci.sh` | `passed` (zero artifact churn) |
+| `2026-05-20` | `R16-CONSTRAINED-VERIFIED-EXTRACTION.5` | `voi_score(c, &findings)` + `select_top_n_by_voi(&ConvergeInputs, n)` with deterministic tie-break; 5 unit tests (Low > High no-findings; Medium-2-Fails > Low-no-fails; lex tie-break; explicit ordering Medium+1Fail > Low > High; empty inputs); SemanticIr/IntentIr unchanged; full `scripts/run_ci.sh` | `passed` (zero artifact churn) |
 
 ## Commit Log
 
@@ -341,7 +360,8 @@ KG-ONTOLOGY.4 / FIDELITY.4 / FUSION.4 precedents).
 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.1` | `R16-CONSTRAINED-VERIFIED-EXTRACTION.1 — high-precision-by-construction design (promote #6)` (`d61d87ab`) | docs-only; book mirror; also the `R16-INTENT-CAPTURE.2` #6 promotion — the FINAL R16 sub-tree promoted |
 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.2` | `R16-CONSTRAINED-VERIFIED-EXTRACTION.2 — JSON-schema summary + fails-closed adapter` (`828441f0`) | first CVE code; zero artifact churn; serde is the authoritative validator |
 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.3` | `R16-CONSTRAINED-VERIFIED-EXTRACTION.3 — entailment verifier + Fail→Residual routing` (`f7b17f0a`) | honesty doctrine mechanically enforced parallel to FUSION.3 / FIDELITY.3 |
-| `R16-CONSTRAINED-VERIFIED-EXTRACTION.4` | `R16-CONSTRAINED-VERIFIED-EXTRACTION.4 — protocol-pattern template library (5 canonical, match-grounded, entailment-verifiable)` | placement in cve.rs (next to consumer); prior_memory migration deferred; CFC + SetupAccess honestly Residual |
+| `R16-CONSTRAINED-VERIFIED-EXTRACTION.4` | `R16-CONSTRAINED-VERIFIED-EXTRACTION.4 — protocol-pattern template library (5 canonical, match-grounded, entailment-verifiable)` (`fe8e029e`) | placement in cve.rs (next to consumer); prior_memory migration deferred; CFC + SetupAccess honestly Residual |
+| `R16-CONSTRAINED-VERIFIED-EXTRACTION.5` | `R16-CONSTRAINED-VERIFIED-EXTRACTION.5 — uncertainty-driven converge VoI selector` | converge-loop integration deferred (bounded scope); deterministic tie-break |
 
 ## Dependencies / Order
 
@@ -360,6 +380,18 @@ KG-ONTOLOGY.4 / FIDELITY.4 / FUSION.4 precedents).
   fixed + book mirror; concrete `.1`–`.6` leaves defined. This is the
   FINAL R16 sub-tree promoted (all 6 program points now active or
   closed). Frontier → `.2` (JSON-schema adapter for ActorContract).
+- `2026-05-20`: `.5` done — uncertainty-driven converge VoI
+  selector: `voi_score(c, findings) = w_conf * uncertainty(conf) +
+  w_fail * count_fails_for(c.contract_id, findings)` (w_conf =
+  w_fail = 1.0; uncertainty: High=0, Medium=0.5, Low=1) +
+  `select_top_n_by_voi(&ConvergeInputs, n)` with deterministic
+  tie-break by `contract_id` ascending. 5 unit tests covering the
+  scoring identities, tie-break, ordering, and bounded-budget
+  selection. Converge-command integration deferred (the existing
+  converge flow is intentionally untouched in this leaf — bounded
+  scope; future leaf wires the selector into the actual command).
+  `SemanticIr`/`IntentIr` unchanged ⇒ ZERO artifact churn. Full CI
+  green. Frontier → `.6` (corpus precision/recall + close).
 - `2026-05-20`: `.4` done — protocol-pattern template library
   (`ProtocolTemplate` enum with 5 canonical templates + `SignalBindings`
   role→signal map + `instantiate_template`). Match-grounding gate

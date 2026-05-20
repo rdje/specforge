@@ -297,6 +297,87 @@ pub fn apply_entailment_to_contract(
     status
 }
 
+// ---------- Uncertainty-driven converge selector (R16-CONSTRAINED-VERIFIED-EXTRACTION.5)
+//
+// Per the `.1` design's "Uncertainty-driven converge (`.5`)" section,
+// the converge pass should spend its bounded budget on the contracts
+// with the highest value-of-information — those that are least
+// confident AND have the most fidelity failures. `.5` ships the
+// deterministic SELECTION helper + tests over synthetic findings.
+// Integrating the helper into the actual converge command is the
+// integration leaf (deferred to `.6` close or a future follow-up —
+// the converge command is an existing flow; this leaf does not
+// re-wire it, honoring the bounded-scope discipline).
+
+/// Inputs for the uncertainty selector. Construct on the fly from
+/// `ir.actor_contracts` and `ir.fidelity_findings` at the converge
+/// command's call site.
+pub struct ConvergeInputs<'a> {
+    pub contracts: &'a [ActorContract],
+    pub findings: &'a [crate::ir::fidelity::FidelityFinding],
+}
+
+fn confidence_uncertainty(c: AutomationConfidence) -> f64 {
+    // 1 - rank(c)/2; High=2 ⇒ 0; Medium=1 ⇒ 0.5; Low=0 ⇒ 1.
+    let rank = match c {
+        AutomationConfidence::High => 2.0,
+        AutomationConfidence::Medium => 1.0,
+        AutomationConfidence::Low => 0.0,
+    };
+    1.0 - rank / 2.0
+}
+
+fn count_fail_findings_for(
+    contract_id: &str,
+    findings: &[crate::ir::fidelity::FidelityFinding],
+) -> u32 {
+    findings
+        .iter()
+        .filter(|f| {
+            f.status == FindingStatus::Fail && f.contract_id.as_deref() == Some(contract_id)
+        })
+        .count() as u32
+}
+
+/// Value-of-information score for one contract over the current
+/// findings. Initial weights `w_conf = w_fail = 1.0` per `.1`.
+pub fn voi_score(
+    contract: &ActorContract,
+    findings: &[crate::ir::fidelity::FidelityFinding],
+) -> f64 {
+    let w_conf = 1.0f64;
+    let w_fail = 1.0f64;
+    w_conf * confidence_uncertainty(contract.automation_confidence)
+        + w_fail * count_fail_findings_for(&contract.contract_id, findings) as f64
+}
+
+/// Pick the top-`n` `contract_id`s by `voi_score` (descending). Ties
+/// break deterministically by `contract_id` lexicographic ascending
+/// — the next pass is reproducible across runs. Returns up to `n`
+/// ids (fewer if `contracts.len() < n`).
+pub fn select_top_n_by_voi(inputs: &ConvergeInputs<'_>, n: usize) -> Vec<String> {
+    if n == 0 {
+        return Vec::new();
+    }
+    let mut scored: Vec<(f64, &str)> = inputs
+        .contracts
+        .iter()
+        .map(|c| (voi_score(c, inputs.findings), c.contract_id.as_str()))
+        .collect();
+    // Descending VoI; ascending contract_id on ties.
+    scored.sort_by(|(a_voi, a_id), (b_voi, b_id)| {
+        b_voi
+            .partial_cmp(a_voi)
+            .unwrap_or(std::cmp::Ordering::Equal)
+            .then_with(|| a_id.cmp(b_id))
+    });
+    scored
+        .into_iter()
+        .take(n)
+        .map(|(_, id)| id.to_string())
+        .collect()
+}
+
 // ---------- Protocol-pattern template library (R16-CONSTRAINED-VERIFIED-EXTRACTION.4)
 //
 // Per the `.1` design's "Template library (`.4`)" section, this is the
@@ -799,6 +880,106 @@ mod tests {
         let c = instantiate_template(ProtocolTemplate::ReadyValidHandshake, &b).unwrap();
         let span = "AWVALID asserts and AWREADY is sampled on the rising edge";
         assert_eq!(entailment_check(span, &c), FindingStatus::Pass);
+    }
+
+    fn finding_for(
+        contract_id: &str,
+        status: FindingStatus,
+    ) -> crate::ir::fidelity::FidelityFinding {
+        use crate::ir::fidelity::{FidelityFinding, FidelityGate};
+        FidelityFinding {
+            gate: FidelityGate::ResidualHonesty,
+            status,
+            contract_id: Some(contract_id.into()),
+            message: String::new(),
+        }
+    }
+
+    fn make_for_voi(id: &str, conf: AutomationConfidence) -> ActorContract {
+        let mut c = sample_contract();
+        c.contract_id = id.into();
+        c.automation_confidence = conf;
+        c
+    }
+
+    #[test]
+    fn voi_low_confidence_beats_high_confidence_when_no_findings() {
+        let low = make_for_voi("low", AutomationConfidence::Low);
+        let high = make_for_voi("high", AutomationConfidence::High);
+        assert!(voi_score(&low, &[]) > voi_score(&high, &[]));
+        // VoI(High) is 0 + 0 = 0; VoI(Low) is 1 + 0 = 1.
+        assert_eq!(voi_score(&high, &[]), 0.0);
+        assert_eq!(voi_score(&low, &[]), 1.0);
+    }
+
+    #[test]
+    fn voi_fail_findings_outrank_a_low_confidence_no_findings_contract() {
+        let medium_two_fails = make_for_voi("m", AutomationConfidence::Medium);
+        let low_no_fails = make_for_voi("l", AutomationConfidence::Low);
+        let findings = vec![
+            finding_for("m", FindingStatus::Fail),
+            finding_for("m", FindingStatus::Fail),
+            finding_for("l", FindingStatus::Pass),
+        ];
+        // VoI(m) = 0.5 + 2 = 2.5; VoI(l) = 1 + 0 = 1.
+        assert!(voi_score(&medium_two_fails, &findings) > voi_score(&low_no_fails, &findings));
+    }
+
+    #[test]
+    fn select_top_n_by_voi_tie_breaks_lex_ascending_on_contract_id() {
+        let cs = vec![
+            make_for_voi("b", AutomationConfidence::Low),
+            make_for_voi("a", AutomationConfidence::Low),
+        ];
+        let inputs = ConvergeInputs {
+            contracts: &cs,
+            findings: &[],
+        };
+        // Equal VoI ⇒ deterministic ascending tie-break.
+        assert_eq!(
+            select_top_n_by_voi(&inputs, 2),
+            vec!["a".to_string(), "b".to_string()]
+        );
+        assert_eq!(select_top_n_by_voi(&inputs, 1), vec!["a".to_string()]);
+        assert!(select_top_n_by_voi(&inputs, 0).is_empty());
+    }
+
+    #[test]
+    fn select_top_n_orders_by_descending_voi() {
+        let cs = vec![
+            make_for_voi("high_clean", AutomationConfidence::High),
+            make_for_voi("low_clean", AutomationConfidence::Low),
+            make_for_voi("medium_one_fail", AutomationConfidence::Medium),
+        ];
+        let findings = vec![finding_for("medium_one_fail", FindingStatus::Fail)];
+        let inputs = ConvergeInputs {
+            contracts: &cs,
+            findings: &findings,
+        };
+        // VoIs: high=0, low=1, medium+1fail=1.5 → ordering m,l,h.
+        assert_eq!(
+            select_top_n_by_voi(&inputs, 3),
+            vec![
+                "medium_one_fail".to_string(),
+                "low_clean".to_string(),
+                "high_clean".to_string(),
+            ]
+        );
+        // Budget of 1 picks just the top one.
+        assert_eq!(
+            select_top_n_by_voi(&inputs, 1),
+            vec!["medium_one_fail".to_string()]
+        );
+    }
+
+    #[test]
+    fn select_top_n_empty_inputs_yield_empty() {
+        let cs: Vec<ActorContract> = vec![];
+        let inputs = ConvergeInputs {
+            contracts: &cs,
+            findings: &[],
+        };
+        assert!(select_top_n_by_voi(&inputs, 5).is_empty());
     }
 
     #[test]

@@ -2,6 +2,31 @@
 
 ## 2026-05-20
 
+### R16-CONSTRAINED-VERIFIED-EXTRACTION.5 — uncertainty-driven converge VoI selector
+- New `voi_score(contract, &findings) -> f64` in
+  `crates/specforge/src/ir/cve.rs`:
+  `w_conf * (1 - rank(automation_confidence) / 2)
+  + w_fail * count_fails_for(contract.contract_id, findings)`
+  with initial `w_conf = w_fail = 1.0` per `.1`; rank `High=2 ⇒
+  uncertainty=0` / `Medium=1 ⇒ 0.5` / `Low=0 ⇒ 1`; `count_fails_for`
+  counts `FidelityFinding`s with `status == Fail` whose
+  `contract_id` matches.
+- New `select_top_n_by_voi(&ConvergeInputs{contracts, findings}, n)
+  -> Vec<contract_id>`: returns the top-`n` ids by descending VoI;
+  **deterministic tie-break by `contract_id` lexicographic
+  ascending** (so the next pass is reproducible across runs).
+  `n == 0` ⇒ empty.
+- 5 new unit tests: VoI Low > High when no findings (1 vs 0);
+  Medium-with-2-Fails outranks Low-no-fails (2.5 vs 1); tie-break
+  ascending by contract_id (`a` before `b`); explicit ordering
+  Medium+1Fail > Low > High; empty inputs yield empty selection.
+- Integration of the helper into the existing converge command stays
+  deferred (the converge command is an established flow; this leaf
+  ships the selection primitive + tests, honoring the bounded-scope
+  discipline). `SemanticIr` / `IntentIr` schemas unchanged ⇒ **zero
+  artifact/fixture churn**. Full `scripts/run_ci.sh` green. Frontier
+  → `.6` (corpus precision/recall via FIDELITY + close).
+
 ### R16-CONSTRAINED-VERIFIED-EXTRACTION.4 — protocol-pattern template library
 - New `ProtocolTemplate` enum (5 canonical: `ReadyValidHandshake`,
   `CreditFlowControl`, `SetupAccess`, `AsyncAssertSyncReleaseReset`,
