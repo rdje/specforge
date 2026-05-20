@@ -66,116 +66,274 @@ convention). Sections appear as each sub-tree's design is fixed.
 
 ## R16-CONTRACT-IR — how it is implemented and verified
 
-**Why first.** This is the DAG root and the program's highest-leverage
-move: today the temporal model is a *bag of predicates*
-(`TemporalRuleRecord` = antecedents → consequents + one optional cycle
-window), so a single *bound* obligation ("VALID holds until READY; the
-payload is stable across exactly that interval; the transfer is the
-first cycle both are high") is shredded into disjoint predicates and the
-binding between them is lost. That loss is currently misread as an
-*extraction* failure when it is a *representation* failure. ContractIR
-makes the IR shaped like the thing being captured — a timed contract
-over actor boundaries — so extraction (#3/#4/#6) has an accurate place
-to land and `.isf` lowering stays mechanical.
+This section explains the typed shape that every temporal-intent
+record now lands in. Reading it end-to-end should leave you with
+a working mental model of what an `ActorContract` is, what it
+can represent, what happens when one can't be cleanly expressed,
+and where the line is between "the IR captured the intent" and
+"the IR honestly recorded that it couldn't."
 
-### Implementation
+### The problem this fixes
 
-- **Placement — a typed layer, not a new pipeline stage.** A new module
-  `crates/specforge/src/ir/contract.rs` defines `ActorContract` and a
-  small **closed** operator algebra. `SemanticIR` and `IntentIR` carry a
-  new additive `actor_contracts: Vec<ActorContract>` field (named so to
-  avoid collision with the pre-existing `SemanticIR.contracts:
-  Vec<ContractRecord>` semantic-protocol-contracts; serde-default +
-  skipped while empty, so older artifacts load and `.2` causes zero
-  artifact change — it ships the type but leaves the field unpopulated
-  until `.3`). No new `IrStage`/CLI/validate surface —
-  this respects the standing "IntentIR is the canonical product
-  boundary" doctrine and the ISF-only "fewer stages" ethos, and matches
-  how `temporal_rules` / the actor graph already live as typed fields.
-- **Closed operator algebra.** `EventExpr` (signal edge / level /
-  handshake-fire / phase boundary / start), `Window`
-  (`Within{min,max≥1}` / `Between{from,to}` / `SameCycle`), `Obligation`
-  (`Eventually` / `Stable` / `Drive` / `HandshakeBarrier` / `Persist` /
-  `Sequence` / `Mutex` / `OrderedBefore` / `Observe` — the last a weak
-  no-value/no-window boundary fact, captured and residual-lowered, never
-  fabricated), a bounded `Condition` guard,
-  wrapped in `ActorContract{actor, Assume|Guarantee, guard, obligation,
-  clock, edge, channel, phase, provenance, lowering, confidence}`. It is
-  deliberately finite so it is realizability-checkable, mechanically
-  lowerable, and the residual boundary is explicit (`lowering:
-  Residual{reason}`), never silent loss.
-- **Migration, additive then re-point.** A pure
-  `contract_from_temporal_rule()` maps **every** existing
-  `TemporalRuleRecord` / `TemporalPredicateRecord` case to a ContractIR
-  construct. Crucially, cases that are *residual* today
-  (`HandshakeComplete`, bare stability, 0-cycle windows) become
-  **explicitly modelled** in the typed KG even when their `.isf`
-  lowering remains residual — that is precisely the thesis (accurate
-  typed KG first; honest mechanical lowering second). `HandshakeComplete
-  → HandshakeBarrier → (stage …)` folds in and supersedes the separate
-  `ISF-HANDSHAKE-STAGE-LOWERING` proposal (FSMGen accepts `(stage …)` at
-  the pinned `9bfb9a20`). The field is added additively first
-  (no behaviour change), then `.isf` lowering is re-pointed onto
-  `ActorContract`.
+Picture a single, perfectly-bound obligation from a protocol
+spec:
 
-### Verification
+> *"`VALID` holds until `READY` is high; the payload is stable
+> across exactly that interval; the transfer is the first cycle
+> they overlap."*
 
-- **CI-parity gate (the core safety property).** After lowering is
-  re-pointed, the emitted `.isf` on the real corpus must be
-  *semantically identical* (same contracts/rules/residuals) to the
-  pre-migration output. The existing real-binary fsmgen-strict tests
-  (`bounded_contract_passes_fsmgen_strict_validation`,
-  `temporal_rule_isf_passes_fsmgen_strict_validation`,
-  `isf_temporal_rules_reach_isf_end_to_end`) must stay green, plus a
-  dedicated transition parity test. Any divergence is a regression, not
-  an improvement, until the parity baseline is consciously updated.
-- **No-capture-loss review.** `.1` enumerated every
-  `TemporalRuleRecord`/`TemporalPredicateRecord` variant against an
-  explicit ContractIR target (recorded in the task tree's migration
-  table); the design is reviewed against the *verified* current types,
-  not assumed ones.
-- **Consumer audit before removing `temporal_rules`.** Using the
-  `ISF-ONLY-IR-PRUNE.1` method (full producer/consumer inventory:
-  converge snapshot, validate, learn_priors), `temporal_rules` is either
-  projected from `contracts` or its consumers are migrated and it is
-  removed — never silently dropped.
-- **Standard gate.** `scripts/run_ci.sh` green per leaf; every leaf via
-  `COMMIT.md`; fsmgen-binary tests run through the serialized
-  `run_fsmgen_strict_check` helper.
+That is **one** thing. It's a timed contract with a clear
+subject (the channel), a clear shape (a ready/valid handshake),
+and clear evidence (the prose says all three pieces).
+
+Before this tree, SpecForge stored the temporal model as a *bag
+of predicates*: a `TemporalRuleRecord` was "some antecedents →
+some consequents + maybe one cycle window." A bound obligation
+like the one above got shredded into three or four disjoint
+records, and the binding *between* them — the thing that made
+them one contract — was lost the moment the records were saved.
+
+That loss looked like an extraction failure, but it wasn't —
+the extractor saw the binding fine. It was a **representation
+failure**: the IR had no shape for "one contract with three
+bound pieces", so the binding had nowhere to land.
+
+`R16-CONTRACT-IR` adds the missing shape.
+
+### The mental model
+
+> **An `ActorContract` is one timed promise about how an actor
+> behaves at its boundary. Every contract carries who is
+> promising (an Assume vs Guarantee role), what they're
+> promising (a small, closed set of obligation shapes), what
+> evidence licenses the promise, and what happens when the
+> promise can't be cleanly lowered (an explicit residual with a
+> reason — never a silent loss).**
+
+Everything below is the typed surface of that sentence: the
+small closed operator algebra (`EventExpr` / `Window` /
+`Obligation` / `Condition`), the wrapping
+`ActorContract { … }`, where it lives in the pipeline, and how
+the lowering to `.isf` consumes it.
+
+### Where `ActorContract` lives
+
+It's a typed layer, not a new pipeline stage. A new module
+`crates/specforge/src/ir/contract.rs` defines the records;
+`SemanticIR` and `IntentIR` carry an additive field
+`actor_contracts: Vec<ActorContract>` (named that way to avoid
+colliding with the pre-existing
+`SemanticIR.contracts: Vec<ContractRecord>` for
+protocol-contracts — different surface, same word). The field
+is serde-default and skipped-while-empty, so:
+
+- older IR artifacts load unchanged;
+- the typed surface ships before any producer populates it ⇒
+  artifacts don't change shape until a real change happens;
+- no new `IrStage` / CLI / validate target appears — `IntentIR`
+  remains the canonical product boundary.
+
+This matches how `temporal_rules` and the actor-relative graph
+already live as typed fields on existing stages. You don't
+learn a new pipeline; you learn one more field shape.
+
+### What an `ActorContract` carries
+
+```rust
+pub struct ActorContract {
+    pub contract_id: String,
+    pub source_rule_id: Option<String>,    // back-reference to the originating TemporalRuleRecord
+    pub actor_name: Option<String>,        // who is making the promise
+    pub kind: ContractKind,                // Assume | Guarantee
+    pub guard: Option<Condition>,          // a bounded "when …" clause
+    pub guard_candidates: Vec<Condition>,  // all the candidate guards parity selects from
+    pub obligation: Obligation,            // the actual promise (see below)
+    pub clock_signal: Option<String>,
+    pub edge: ClockEdge,                   // rising / falling
+    pub channel: Option<String>,           // protocol channel id (populated by extraction)
+    pub phase: Option<String>,             // protocol phase id (populated by extraction)
+    pub provenance: ContractProvenance,    // which source text licensed this
+    pub lowering: LoweringDisposition,     // Lowerable | Residual{reason}
+    pub automation_confidence: AutomationConfidence,
+}
+```
+
+Read it left-to-right: *who* is promising, *under what guard*,
+*what specifically*, *on what clock*, *for which channel/phase
+of the protocol*, *backed by what evidence*, *and how cleanly
+it lowers*.
+
+`channel` and `phase` are typed but optional — extraction trees
+(`R16-KG-PROTOCOL-ONTOLOGY`, then the prose/figure extractors)
+populate them; until they do, the contract still lands cleanly,
+just without protocol-graph anchoring.
+
+### The closed operator algebra (the obligation shapes)
+
+The set of shapes a contract can express is **closed** —
+deliberately finite — so it stays realizability-checkable, the
+lowering stays mechanical, and the boundary between "the IR
+captured it" and "the IR honestly couldn't" is structural, not
+authorial.
+
+`Obligation` variants:
+
+- **`Eventually { target, window }`** — `target` must happen
+  within `window` cycles (`Within { min, max }`, with `max ≥ 1`
+  per FSMGen-strict; `0` is not a window, it's a `SameCycle`).
+- **`Stable { signal, during }`** — `signal` holds its value
+  across `during`.
+- **`Drive { signal, value }`** — the actor drives `signal` to
+  `value` (the everyday case for a `Guarantee` contract).
+- **`HandshakeBarrier { valid, ready }`** — the canonical
+  ready/valid transfer. Lowers to FSMGen's
+  `(stage p (ready r) (valid v))` form (more on this below).
+- **`Persist { hold, until }`** — `hold` persists until `until`
+  is observed.
+- **`Sequence { steps }`** — an ordered series of
+  boundary events with per-step windows.
+- **`Mutex { a, b }`** — `a` and `b` cannot be simultaneously
+  asserted.
+- **`OrderedBefore { earlier_phase, later_phase }`** — a phase
+  ordering (KG-level, not a tick-level event).
+- **`Observe { signal }`** — *"this signal participated, but the
+  source gave us no value and no window."* This is the **honest
+  weak fact**: it's captured in the typed KG so we don't lose
+  the observation, but it lowers as `Residual{reason}` because
+  there's nothing concrete to lower. **The IR never invents a
+  value or window from an `Observe`.**
+
+`EventExpr` is similarly closed: `Edge { signal, dir }`,
+`Level { signal, value }`, `HandshakeFire { valid, ready }`,
+`PhaseBoundary { phase, at }`, `Start`. `Window` has three
+shapes: `Within { min, max ≥ 1 }`, `Between { from, to }`,
+`SameCycle`. `Condition` (used for guards) is a single bounded
+shape: `Eq { signal, value }`.
+
+That's the whole algebra. If a piece of prose says something
+the closed algebra can't express, the contract gets created
+anyway — with `lowering = Residual { reason: "…" }` and the
+intent recorded in `provenance`. **The typed KG holds the
+observation; the lowering pathway honestly admits it doesn't
+fit.**
+
+### What you see in the report today
+
+Run `specforge validate <intent.json>` against the current
+corpus and you'll see, in both the SemanticIR and IntentIR
+count blocks:
+
+```
+  temporal_rules: N
+  actor_contracts: N
+```
+
+The two numbers match — every `TemporalRuleRecord` projects to
+exactly one `ActorContract`. That projection is **lossless by
+construction** (the `.3` parity gate, below).
+
+### How the lowering stays mechanical
+
+`SemanticIr::build` calls `contract_from_temporal_rule` on
+every record and stores the result in `actor_contracts`. From
+that point on, the `.isf` adapter reads `actor_contracts` —
+**not** the raw `temporal_rules`. The mapping is:
+
+- a contract whose `lowering` is `Lowerable` becomes the
+  corresponding `.isf` form (an `(eventually …)`, a `(stable …)`,
+  a `(rule …)` drive, or a `(stage p (ready r) (valid v))` for
+  `HandshakeBarrier`);
+- a contract whose `lowering` is `Residual { reason }` is
+  emitted as a typed residual decision in the adapter report —
+  with the reason text — and is **never** silently dropped.
+
+`temporal_rules` is **kept** on the IR (it's load-bearing for
+validation, prior-memory, and as a back-compat fallback for
+pre-ContractIR artifacts), but the adapter has stopped reading
+it.
+
+### The four user-facing guarantees
+
+The design buys you four properties you can rely on, framed
+as benefits rather than restrictions:
+
+1. **You can hold one contract in one place.** Bound
+   obligations stay bound — no more re-stitching three
+   predicates by hand to recover a handshake.
+2. **You always know what got lowered and what didn't.**
+   `lowering: Lowerable` ⇒ the `.isf` form is present;
+   `lowering: Residual { reason }` ⇒ the reason text tells you
+   exactly why the IR couldn't lower it. Reading the adapter
+   report tells you the whole truth — no hidden drops.
+3. **You can trust the lowering to be reproducible.** The
+   re-point (see `.3` below) was gated by a parity test that
+   demanded the post-ContractIR `.isf` be **semantically
+   identical** to the pre-ContractIR `.isf` on the corpus
+   before the change shipped. The adapter's behaviour on every
+   contract that was already lowering cleanly didn't change at
+   all.
+4. **The honesty doctrine is structural.** `Observe` and
+   under-determined windows lower as `Residual` by *type*, not
+   by author convention. There's no "well, the validator
+   inferred a 2-cycle window because it seemed reasonable"
+   path. If the typed shape doesn't license it, the IR doesn't
+   claim it.
 
 ### Status — delivered (`R16-CONTRACT-IR` tree closed)
 
-`.1` design → `.2` typed `ir/contract.rs` model → `.3` parity-preserving
-re-point (`.isf` lowering now consumes ContractIR; parity proven three
-ways — a by-construction pointwise oracle test, the live nvme corpus
-matching the pre-ContractIR baseline exactly, and the e2e/fsmgen-strict
-suite; a back-compat fallback projects from `temporal_rules` for
-pre-ContractIR artifacts) → `.4` enabled `HandshakeBarrier → (stage p
-(ready r)(valid v))`, which **subsumes and delivers
-`ISF-HANDSHAKE-STAGE-LOWERING`**.
+The work landed across four leaves, each gated by the standard
+CI bar (`scripts/run_ci.sh` green; per-leaf `COMMIT.md`
+discipline):
 
-Two honest, recorded constraints on `.4`:
+- `.1` — the design above, recorded against the *verified*
+  current types (every `TemporalRuleRecord` /
+  `TemporalPredicateRecord` variant enumerated to its explicit
+  ContractIR target; no assumed shapes).
+- `.2` — the typed `ir/contract.rs` module + the
+  `contract_from_temporal_rule` projection + unit tests.
+  Additive only: the field shipped, the producer didn't.
+- `.3` — the `.isf` adapter re-pointed at `actor_contracts`.
+  **Parity proven three ways**:
+  - a by-construction pointwise oracle test
+    (`classify_actor_contract` reproduces
+    `classify_temporal_rule` exactly);
+  - the live `nvme` corpus emitted byte-equivalent
+    `.isf` against the pre-ContractIR baseline;
+  - the existing real-binary fsmgen-strict suite
+    (`bounded_contract_passes_fsmgen_strict_validation`,
+    `temporal_rule_isf_passes_fsmgen_strict_validation`,
+    `isf_temporal_rules_reach_isf_end_to_end`) stayed green.
+  A back-compat fallback projects from `temporal_rules` for
+  pre-ContractIR artifacts so older runs still load.
+- `.4` — enabled `HandshakeBarrier → (stage p (ready r) (valid
+  v))`. This **subsumes and delivers
+  `ISF-HANDSHAKE-STAGE-LOWERING`** — the separate proposal
+  closes folded into here.
 
-- FSMGen's `ready_valid_barrier` requires the stage's `ready` operand to
-  be an actor **input** (verified against the pinned binary). SPECFORGE
-  emits `(stage …)` only when that holds, otherwise it preserves an
-  explicit residual — it never fabricates a strict-invalid stage.
-- It is a **verified-but-dormant** capability today: no current corpus
-  `temporal_rule` carries a `handshake_complete` predicate, so zero
-  stages are emitted corpus-wide and the emitted `.isf` is unchanged.
-  The path is unit- and real-binary-fsmgen-strict-verified; it activates
-  once the extraction trees (`#3`/`#4`/`#6`) ground handshake
-  completion. This is the thesis in action: the typed target and its
-  lowering are correct and ready; capture fidelity is the remaining
-  work.
+Two honest, recorded constraints on `.4` you should know
+about:
 
-`temporal_rules` is kept (load-bearing for validation/priors and as the
-fallback); `actor_contracts` is the additive typed projection lowering
-consumes.
+- FSMGen's `ready_valid_barrier` form requires the stage's
+  `ready` operand to be an actor **input** (verified against
+  the pinned `9bfb9a20` binary). SpecForge emits `(stage …)`
+  **only** when that input-direction property holds; otherwise
+  it preserves an explicit residual. It never fabricates a
+  strict-invalid stage.
+- The `(stage …)` capability is **verified-but-dormant** on
+  today's corpus: no current `temporal_rule` carries a
+  `handshake_complete` predicate, so zero stages are actually
+  emitted corpus-wide and your emitted `.isf` is unchanged.
+  The path is unit-tested and real-binary-fsmgen-strict-
+  verified; it activates the moment the extraction trees
+  (`R16-WAVEFORM-CONTRACT-MINING` /
+  `R16-CONSTRAINED-VERIFIED-EXTRACTION`) start grounding
+  handshake completions. This is the program's thesis at
+  work: typed target + honest mechanical lowering are ready;
+  capture fidelity is the remaining work.
 
-Authoritative tracking: `docs/tasks/R16-CONTRACT-IR.md` (the "Design
-(`.1` output)" section is the full specification; the Decisions and
-Verification Log record every honest catch).
+*Authoritative tracking:* `docs/tasks/R16-CONTRACT-IR.md`
+(the "Design (`.1` output)" section is the full specification;
+the Decisions and Verification Log record every honest catch).
 
 ## R16-KG-PROTOCOL-ONTOLOGY — how it is implemented and verified
 

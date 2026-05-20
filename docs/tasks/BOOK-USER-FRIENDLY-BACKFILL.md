@@ -99,7 +99,8 @@ Non-Goal above — accurate is the bar; more-words is not.
   Commit: `see Commit Log`
 
 - ID: `BOOK-USER-FRIENDLY-BACKFILL.2`
-  Status: `pending`
+  Status: `in-progress` (honest-split into per-subsection sub-leaves
+  for reviewable diffs; each R16 subsection is substantial)
   Goal: upgrade the 6 R16-family subsections in
   `docs/book/src/direction/temporal-intent-capture.md` to the
   user-friendly standard (use the `R7-VALIDATION.5` template).
@@ -107,8 +108,70 @@ Non-Goal above — accurate is the bar; more-words is not.
   needs to understand to use SpecForge; this is the highest-impact
   leaf for user adoption.
   Acceptance: `All 6 R16 family subsections rewritten to meet the user-friendly standard; mdBook green; per-tree task-tree files unchanged.`
-  Verification: `pending`
-  Commit: `pending`
+
+  - ID: `BOOK-USER-FRIENDLY-BACKFILL.2.a`
+    Status: `done` (`2026-05-20`)
+    Goal: rewrite the `R16-CONTRACT-IR` subsection (program DAG
+    root; introduces `ActorContract` + closed operator algebra
+    + lowering disposition + the four user-facing guarantees).
+    Acceptance: `Subsection meets standard; mdBook green.`
+    Verification: `passed` — opens with the user's problem
+      (the bound obligation that gets shredded into a
+      bag-of-predicates); one-sentence mental model; typed
+      `ActorContract` walked through field-by-field in plain
+      language; closed `Obligation` / `EventExpr` / `Window`
+      algebra enumerated with plain-language explanations;
+      `Observe` framed as the "honest weak fact" doctrine;
+      `.isf` lowering pathway walked through; four user-facing
+      guarantees framed as benefits ("you can hold one
+      contract in one place"; "you always know what got
+      lowered and what didn't"; "you can trust the lowering
+      to be reproducible"; "the honesty doctrine is
+      structural"); Status — delivered section concise but
+      complete, with honest constraints recorded (FSMGen
+      ready-is-input requirement; `(stage …)` dormant on the
+      current corpus). mdBook green.
+    Commit: `see Commit Log`
+
+  - ID: `BOOK-USER-FRIENDLY-BACKFILL.2.b`
+    Status: `pending`
+    Goal: rewrite the `R16-KG-PROTOCOL-ONTOLOGY` subsection.
+    Acceptance: `Subsection meets standard; mdBook green.`
+    Verification: `pending`
+    Commit: `pending`
+
+  - ID: `BOOK-USER-FRIENDLY-BACKFILL.2.c`
+    Status: `pending`
+    Goal: rewrite the `R16-CAPTURE-FIDELITY-GATES` subsection.
+    Acceptance: `Subsection meets standard; mdBook green.`
+    Verification: `pending`
+    Commit: `pending`
+
+  - ID: `BOOK-USER-FRIENDLY-BACKFILL.2.d`
+    Status: `pending`
+    Goal: rewrite the `R16-MULTIMODAL-CONTRACT-FUSION` subsection.
+    Acceptance: `Subsection meets standard; mdBook green.`
+    Verification: `pending`
+    Commit: `pending`
+
+  - ID: `BOOK-USER-FRIENDLY-BACKFILL.2.e`
+    Status: `pending`
+    Goal: rewrite the `R16-WAVEFORM-CONTRACT-MINING` subsection
+    (including the `.3.1 FigureRegion` sub-design).
+    Acceptance: `Subsection meets standard; mdBook green.`
+    Verification: `pending`
+    Commit: `pending`
+
+  - ID: `BOOK-USER-FRIENDLY-BACKFILL.2.f`
+    Status: `pending`
+    Goal: rewrite the `R16-CONSTRAINED-VERIFIED-EXTRACTION`
+    subsection. The `R7-VALIDATION.5` template lives next door
+    in `quality/validation.md` and shares conceptual ground
+    (verification + residual routing) — keep the framing
+    consistent.
+    Acceptance: `Subsection meets standard; mdBook green.`
+    Verification: `pending`
+    Commit: `pending`
 
 - ID: `BOOK-USER-FRIENDLY-BACKFILL.3`
   Status: `pending`
@@ -158,7 +221,13 @@ Non-Goal above — accurate is the bar; more-words is not.
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `BOOK-USER-FRIENDLY-BACKFILL.1` | `done` | Scope audit recorded |
-| 2 | `BOOK-USER-FRIENDLY-BACKFILL.2` | `pending` | **Next** — R16-family upgrade (highest user-impact surface; 6 subsections in `direction/temporal-intent-capture.md`) |
+| 2 | `BOOK-USER-FRIENDLY-BACKFILL.2` | `in-progress` | Honest-split into `.2.a`–`.2.f` (per-subsection) for reviewable diffs |
+| 2.a | `BOOK-USER-FRIENDLY-BACKFILL.2.a` | `done` | `R16-CONTRACT-IR` rewritten user-friendly — `2026-05-20` |
+| 2.b | `BOOK-USER-FRIENDLY-BACKFILL.2.b` | `pending` | **Next** — `R16-KG-PROTOCOL-ONTOLOGY` rewrite |
+| 2.c | `BOOK-USER-FRIENDLY-BACKFILL.2.c` | `pending` | `R16-CAPTURE-FIDELITY-GATES` rewrite |
+| 2.d | `BOOK-USER-FRIENDLY-BACKFILL.2.d` | `pending` | `R16-MULTIMODAL-CONTRACT-FUSION` rewrite |
+| 2.e | `BOOK-USER-FRIENDLY-BACKFILL.2.e` | `pending` | `R16-WAVEFORM-CONTRACT-MINING` rewrite |
+| 2.f | `BOOK-USER-FRIENDLY-BACKFILL.2.f` | `pending` | `R16-CONSTRAINED-VERIFIED-EXTRACTION` rewrite |
 | 3 | `BOOK-USER-FRIENDLY-BACKFILL.3` | `pending` | reference/* doctrine subsections |
 | 4 | `BOOK-USER-FRIENDLY-BACKFILL.4` | `pending` | R7-VALIDATION close-out summary |
 | 5 | `BOOK-USER-FRIENDLY-BACKFILL.5` | `pending` | R15 actor-relative-graph framing |
@@ -197,15 +266,29 @@ Non-Goal above — accurate is the bar; more-words is not.
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-05-20` | `BOOK-USER-FRIENDLY-BACKFILL.1` | scope audit recorded; chapters classified; mdBook builds | `passed` (docs-only) |
+| `2026-05-20` | `BOOK-USER-FRIENDLY-BACKFILL.2.a` | `R16-CONTRACT-IR` subsection rewritten user-friendly (opens with the bound-obligation problem; one-sentence mental model; typed `ActorContract` walked through; closed `Obligation`/`EventExpr`/`Window` algebra in plain language; `Observe` honest-weak-fact framing; lowering pathway walked through; 4 user-facing guarantees framed as benefits; honest constraints on `(stage …)` dormancy recorded); mdBook green | `passed` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
-| `BOOK-USER-FRIENDLY-BACKFILL.1` | `BOOK-USER-FRIENDLY-BACKFILL.1 — create tree + scope audit + chapter classification` | docs-only; the new tree's own scaffolding |
+| `BOOK-USER-FRIENDLY-BACKFILL.1` | `BOOK-USER-FRIENDLY-BACKFILL.1 — create tree + scope audit + chapter classification` (`6f6839ec`) | docs-only; the new tree's own scaffolding |
+| `BOOK-USER-FRIENDLY-BACKFILL.2.a` | `BOOK-USER-FRIENDLY-BACKFILL.2.a — rewrite R16-CONTRACT-IR book subsection user-friendly` | docs-only; per the standard; mdBook green |
 
 ## Changelog
 
 - `2026-05-20`: Created and promoted `active` same day the
   user-friendly standard was established. `.1` scope audit
   recorded; frontier → `.2` (R16 family upgrade).
+- `2026-05-20`: `.2.a` done — `R16-CONTRACT-IR` subsection
+  rewritten to the user-friendly standard (opens with the
+  bound-obligation problem; one-sentence mental model; typed
+  `ActorContract` walked through field-by-field in plain
+  language; closed `Obligation` / `EventExpr` / `Window`
+  algebra enumerated with plain-language explanations;
+  `Observe` framed as the honest-weak-fact doctrine; `.isf`
+  lowering pathway walked through; four user-facing
+  guarantees framed as benefits; Status — delivered with
+  honest constraints on `(stage …)` dormancy recorded).
+  Honest-split `.2` into per-subsection sub-leaves
+  (`.2.a`–`.2.f`) for reviewable diffs. Frontier → `.2.b`.

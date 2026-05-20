@@ -2,6 +2,50 @@
 
 ## 2026-05-20
 
+### BOOK-USER-FRIENDLY-BACKFILL.2.a — rewrite R16-CONTRACT-IR book subsection user-friendly
+- Per the new "user-friendly thorough" standard (BOOK-METHOD-DOC
+  Decisions / feedback-book-user-friendly), rewrote the
+  `R16-CONTRACT-IR` subsection in
+  `docs/book/src/direction/temporal-intent-capture.md` end-to-end.
+  The new version walks the reader through:
+  - **The problem this fixes** — the bound-obligation example
+    ("VALID holds until READY; payload stable across that
+    interval; transfer is the first overlap") shredded today
+    into a bag of predicates; the lost binding is a
+    representation failure, not an extraction failure.
+  - **One-sentence mental model** — *"an `ActorContract` is
+    one timed promise about how an actor behaves at its
+    boundary"* + the four binding pieces.
+  - **Where `ActorContract` lives** — additive typed layer, no
+    new pipeline stage; field shape and zero-churn discipline.
+  - **What an `ActorContract` carries** — every field walked
+    through left-to-right in plain language.
+  - **The closed operator algebra** — `Obligation`,
+    `EventExpr`, `Window`, `Condition` enumerated with
+    plain-language explanations of each variant; `Observe`
+    framed as "the honest weak fact" doctrine.
+  - **What you see in the report today** — the
+    `actor_contracts: N` line; the lossless 1-to-1
+    correspondence with `temporal_rules`.
+  - **How the lowering stays mechanical** — adapter consumes
+    `actor_contracts`; `Lowerable` ⇒ `.isf` form,
+    `Residual { reason }` ⇒ honest residual decision.
+  - **Four user-facing guarantees framed as benefits**: you
+    can hold one contract in one place; you always know what
+    got lowered and what didn't; you can trust the lowering
+    to be reproducible; the honesty doctrine is structural.
+  - **Status — delivered** with leaf-by-leaf recap and two
+    honest constraints on `.4`: FSMGen's ready-is-input
+    requirement; the `(stage …)` capability is
+    verified-but-dormant on today's corpus until extraction
+    grounds handshakes.
+- Honest-split of `BOOK-USER-FRIENDLY-BACKFILL.2` into
+  per-subsection sub-leaves `.2.a`–`.2.f` for reviewable diffs
+  (each R16 subsection is substantial). `docs/TASK_TREE.md`
+  index inherits the parent `.2` row.
+- Docs-only; `scripts/run_docs_ci.sh` green (mdBook builds).
+  Frontier → `.2.b` (R16-KG-PROTOCOL-ONTOLOGY rewrite).
+
 ### BOOK-USER-FRIENDLY-BACKFILL.1 — create tree + scope audit + chapter classification
 - New tree at `docs/tasks/BOOK-USER-FRIENDLY-BACKFILL.md`, created
   and immediately promoted `active`. Goal: bring every existing
