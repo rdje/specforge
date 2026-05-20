@@ -1096,132 +1096,347 @@ protocol element.
 
 ## R16-WAVEFORM-CONTRACT-MINING — how it is implemented and verified
 
-**Why.** This is the program thesis's crux. Timing diagrams *are* the
-timed automaton, drawn, and they typically encode the densest
-temporal-intent the spec ships — yet today the VLM timing extractor
-is largely defensive (junk-label guarding). Closing this tree turns
-the spec's own figures into ground truth a contract producer can
-mine.
+This section explains the typed pipeline that turns timing
+diagrams from a protocol PDF into honest, ground-truth
+contracts. Reading it end-to-end should leave you with a
+working mental model of the typed intermediate (`PartialTrace`),
+the four generalization rules that turn it into contracts, the
+round-trip verifier that prevents fabrication at the
+generalizer's own boundary, the typed input contract
+(`FigureRegion`) the upstream PDF pipeline targets, and what
+the corpus baseline tells you today.
 
-### Implementation
+### The problem this fixes
 
-- **Typed layer, no new stage** (parallels prior R16 trees): a new
-  `crates/specforge/src/ir/waveform.rs` defines the typed
-  intermediate (`PartialTrace`, `LaneEdge`, `ValueSpan`,
-  `RelativeDelay`, `CausalArrow`, `EdgeKind`) that an extractor
-  produces and a generalizer consumes. This split lets each side be
-  independently unit-testable against synthetic `PartialTrace`s.
-- **Generalization rules** (conservative, bounded; under-determined
-  ⇒ Observe/Residual): `RelativeDelay{min,max}` ⇒ `Eventually` with
-  `Within{min,max}`; multi-tick `ValueSpan` ⇒ `Stable` with
-  `Within{max=span_len}`; next-tick `CausalArrow` ⇒ `Eventually`
-  with `Within{min=0,max=1}`; bare `LaneEdge` ⇒ `Observe` +
-  `Residual{reason="bare edge — no window licensed"}` (honesty
-  doctrine, mechanically enforced).
-- **Round-trip verifier**: a generated contract must satisfy
-  `evaluate_figure_trace` against the same `PartialTrace` it was
-  generalized from; otherwise it is demoted to
-  `Residual{reason="verifier disagreement: …"}`. Fabrication is
-  structurally prevented at the generalizer's own boundary, before
-  the downstream fidelity / fusion gates see the contract.
-- **Cross-check with prose** is delegated to
-  `R16-MULTIMODAL-CONTRACT-FUSION` (already closed) — the figure
-  contracts and prose contracts cluster by `FusionKey`, and
-  agreement / disagreement is the FUSION layer's job, not this
-  tree's. This keeps the tree focused on figure→contract; fusion
-  stays the single load-bearing primitive for cross-modal
-  reconciliation.
-- **Extractor strategy** (`.3` — qualitatively the largest leaf):
-  VLM-structured prompting and/or vector-SVG path parsing,
-  decision-deferred to `.3`'s promotion (when corpus figure-format
-  mix is empirically known). Explicitly **expected to honest-split
-  (rule 5)** into sub-leaves at that point.
+The program thesis says capture fidelity is the hard problem,
+and timing diagrams are *the* densest source of temporal
+intent in any protocol spec — they're literally the timed
+automaton, drawn. A well-mined timing diagram gives you
+exactly the bound obligations
+(*"VALID held high for ≥ 2 cycles; READY sampled on the
+third tick; payload stable across the transfer"*) that prose
+struggles to articulate cleanly.
 
-### Verification
+Before this tree, SpecForge's VLM-based timing extraction was
+**defensive** — its main job was to guard against junk labels
+and reject things it didn't recognise, rather than turn
+recognised structure into contracts. That worked as a safety
+floor but missed the upside: when the figure *is* clean, the
+contracts the figure licenses are right there.
 
-- `.2` ships the typed intermediate + generalizer + verifier
-  unit-tested against synthetic `PartialTrace`s; zero artifact churn
-  through `.2` (no PDF parsing yet).
-- `.3` ships the figure→`PartialTrace` extractor (likely split);
-  `.4` measures `FigureConformance` Pass-rate improvement on the
-  corpus and ships negative-fixture coverage proving that junk
-  waveforms do **not** mint contracts (verifier-fail ⇒ Residual, not
-  silent fabrication).
-- `scripts/run_ci.sh` green per leaf; every leaf via `COMMIT.md`;
-  the closing leaf refreshes this section (BOOK-METHOD-DOC).
+`R16-WAVEFORM-CONTRACT-MINING` adds the missing pipeline:
+typed `PartialTrace` ⇒ deterministic generalizer ⇒ round-trip
+verifier ⇒ `ActorContract`s the rest of the program (fusion,
+fidelity, .isf lowering) already knows how to consume.
 
-Authoritative tracking: `docs/tasks/R16-WAVEFORM-CONTRACT-MINING.md`.
+### The mental model
 
-### `.3.1` — typed `FigureRegion` input contract (`2026-05-20`)
+> **A `PartialTrace` is whatever a figure-extractor recovered
+> from one timing diagram: the lanes, the values they held,
+> the annotated delays, the causal arrows. The generalizer
+> reads it and produces conservative `ActorContract`s — never
+> inventing windows beyond what the trace licenses. The
+> round-trip verifier double-checks that each generated
+> contract is satisfied by the trace it came from — and
+> demotes it to `Residual{reason="verifier disagreement:
+> …"}` if it isn't. Fabrication is structurally prevented
+> at the boundary, not at lowering time.**
 
-A corpus survey (`find … *.pdf *.svg` over the SpecForge tree)
-returned nothing — the test corpus is **pre-processed**; raw PDF /
-SVG bytes are out-of-tree. So `WAVEFORM.3`'s "extractor" is in
-fact a **typed adapter** consuming the upstream record an
-out-of-tree PDF pipeline produces.
+Everything below is the typed surface: the `PartialTrace`
+records the figure-extractor produces, the four conservative
+generalization rules, the round-trip verifier and what it
+guarantees, the cross-check delegation to FUSION, the typed
+`FigureRegion` input contract (`.3.1`), the adapter (`.3.2`),
+and what the corpus baseline tells you today.
 
-The existing closest upstream record is
-`crates/specforge/src/ir/source.rs::VisualAsset`
-(`asset_id` / `asset_kind` / `page_id` / `image_path` /
-`caption_text` / `diagram_kind`). `FigureRegion` is the typed
-**extension** the upstream pipeline produces when it classifies
-a `VisualAsset` as a timing diagram and recovers lane / annotation
-structure:
+### Where `waveform` lives
+
+It's a typed layer, not a new pipeline stage — parallel to
+the rest of the R16 family. A new module
+`crates/specforge/src/ir/waveform.rs` defines the typed
+intermediate `PartialTrace` and the generalizer + verifier
+that operate on it. The figure→`PartialTrace` adapter lives
+in a sibling module `crates/specforge/src/ir/figure_region.rs`
+(detailed under `.3.1` / `.3.2` below). Both are additive;
+nothing on `SemanticIr` / `IntentIr` changes shape until an
+upstream figure-extractor produces `PartialTrace`s.
+
+### `PartialTrace` — what a figure-extractor produces
 
 ```rust
-pub struct FigureRegion {
-    pub visual_asset_id: String,
-    pub bbox: Option<BoundingBox>,
-    pub annotations: Vec<FigureAnnotation>,   // typed delay / label / value
-    pub waveform_lanes: Vec<FigureLane>,      // recovered lane samples
-    pub raw_image_path: Option<PathBuf>,      // rarely needed
+pub struct PartialTrace {
+    pub figure_id: String,
+    pub signals: Vec<String>,             // signals the trace covers
+    pub edges: Vec<LaneEdge>,             // bare transitions (no window licensed alone)
+    pub spans: Vec<ValueSpan>,            // contiguous-value runs
+    pub delays: Vec<RelativeDelay>,       // annotated bounds between events
+    pub causal: Vec<CausalArrow>,         // "A's edge causes B's edge"
+    pub ticks: u32,                       // length of the trace window
+    pub confidence: AutomationConfidence, // upstream's confidence in the recovery
 }
 ```
 
-The `.3.2` adapter consumes `FigureRegion`s and produces the typed
-`PartialTrace` (`ir/waveform.rs`) that `.2`'s generalizer and
-`R16-MULTIMODAL-CONTRACT-FUSION` consume. When the upstream
-pipeline produces zero `FigureRegion`s (the corpus today), the
-adapter is a no-op — zero artifact churn; the typed pathway is
-ready to light up the moment upstream lands its records.
+The intermediate is **deliberately structured per evidence
+kind**. An extractor that's good at recovering value spans
+but bad at causal arrows produces good `spans` and few
+`causal`s — and that observability shows up downstream. The
+generalizer doesn't need to know how the extractor works;
+both sides are unit-testable against synthetic
+`PartialTrace`s.
+
+### Generalization rules — conservative, bounded, never fabricating
+
+`generalize_partial_trace(&PartialTrace) -> Vec<ActorContract>`
+applies four rules, each well-grounded in what the trace
+licenses:
+
+- **`RelativeDelay { from, to, min, max }`** ⇒
+  `Eventually { target: Edge { signal: to, dir: Rose }, window:
+  Within { min, max } }` / `Lowerable`. The annotated bound
+  is the window.
+- **Multi-tick `ValueSpan { signal, from_tick, to_tick }`** ⇒
+  `Stable { signal, during: Within { max: to_tick - from_tick } }`
+  / `Lowerable`. The held value across multiple ticks is the
+  Stable obligation; the span length is the window.
+- **Next-tick `CausalArrow`** ⇒ `Eventually { target: Edge { …,
+  dir: Rose }, window: Within { min: 0, max: 1 } }` /
+  `Lowerable`. An arrow with `to_tick == from_tick + 1`
+  licenses a one-cycle Eventually.
+- **Bare `LaneEdge`** (no enclosing delay / span / causal) ⇒
+  `Observe { signal }` + `Residual { reason: "bare edge — no
+  window licensed" }`. **The IR captures the observation but
+  refuses to invent a window the trace doesn't license.**
+
+Confidence is **capped** per source: a contract mined from
+a single figure never gets `automation_confidence = High` on
+its own (`capped_confidence` clamps it to `Medium`).
+Promotion to High is a cross-modal property — it requires
+agreement with a prose- or table-derived contract through
+`R16-MULTIMODAL-CONTRACT-FUSION`.
+
+### Round-trip verifier — fabrication is structurally prevented
+
+`verify_contract_against_trace(&ActorContract, &PartialTrace)
+-> FindingStatus` is the safety property that makes the
+above rules trustworthy. The verifier:
+
+1. **lifts** the `PartialTrace` to a `FigureTrace` (the
+   primitive `R16-CAPTURE-FIDELITY-GATES.2` already defined)
+   by replaying its samples;
+2. **calls** `evaluate_figure_trace(&contract, &lifted)`
+   from FIDELITY.2 — the trace must satisfy the obligation
+   the contract claims;
+3. returns `Pass` / `Fail` / `NotEvaluated` honestly.
+
+A `Fail` ⇒ the generated contract is demoted to
+`Residual { reason: "verifier disagreement: …" }`. The
+contract still exists in the IR (the observation isn't
+lost), but the round-trip oracle has refused to license it
+as `Lowerable`. This is the **third place** in the R16
+program where fabrication is structurally prevented:
+
+1. `FIDELITY.3` — Fail on a Lowerable contract ⇒ Residual.
+2. `FUSION.3` — disagreement across sources ⇒ Residual.
+3. `WAVEFORM.3`'s round-trip verifier — generalized
+   contract not satisfied by its source trace ⇒ Residual.
+
+Together with `CVE.3`'s entailment routing (the fourth
+structural-honesty enforcement, planned for prose), the IR
+cannot silently fabricate.
+
+### Cross-check with prose — delegated to FUSION
+
+This tree does **not** re-implement prose-vs-figure
+cross-checking. Figure-derived contracts cluster by
+`FusionKey` like everyone else; agreement and disagreement
+are `R16-MULTIMODAL-CONTRACT-FUSION`'s job. That keeps the
+WAVEFORM tree focused on figure→contract; FUSION stays the
+single load-bearing primitive for cross-modal
+reconciliation. (See the `MULTIMODAL-CONTRACT-FUSION`
+section above for the merge / disagreement rules a
+WAVEFORM-derived candidate flows through.)
+
+### `.3.1` — the typed `FigureRegion` input contract
+
+A corpus survey (`find … *.pdf *.svg` over the SpecForge
+tree) returned nothing — the test corpus is **pre-processed**;
+raw PDF / SVG bytes are out-of-tree. So `WAVEFORM.3`'s
+"extractor" is in fact a **typed adapter** consuming the
+upstream record an out-of-tree PDF pipeline produces. The
+question for `.3.1` was: *what shape should that upstream
+record take so the WAVEFORM tree can consume it cleanly?*
+
+The closest existing upstream record is
+`crates/specforge/src/ir/source.rs::VisualAsset`
+(`asset_id` / `asset_kind` / `page_id` / `image_path` /
+`caption_text` / `diagram_kind`). `VisualAsset` is good at
+*"this is a figure"* but doesn't carry the lane / annotation
+structure the WAVEFORM generalizer needs. `FigureRegion` is
+the typed **extension** the upstream pipeline produces when
+it classifies a `VisualAsset` as a timing diagram and
+recovers structure:
+
+```rust
+pub struct FigureRegion {
+    pub visual_asset_id: String,             // references existing VisualAsset
+    pub bbox: Option<BoundingBox>,
+    pub annotations: Vec<FigureAnnotation>,  // typed: Delay / Value / Label / Unknown
+    pub waveform_lanes: Vec<FigureLane>,     // recovered lane samples
+    pub tick_count: Option<u32>,
+    pub raw_image_path: Option<PathBuf>,     // rarely needed downstream
+    pub confidence: AutomationConfidence,
+}
+
+pub enum FigureAnnotation {
+    Delay { from_signal, to_signal, min_cycles, max_cycles, text, bbox },
+    Value { signal, value, from_tick, to_tick, text, bbox },
+    Label { text, bbox },                    // informational only
+    Unknown { text, bbox },                  // upstream couldn't classify
+}
+```
+
+The contract is deliberately additive: `VisualAsset` doesn't
+change; `FigureRegion` is the **new typed record** an upstream
+extractor populates when it has structure to record. When
+upstream produces zero `FigureRegion`s (today's corpus),
+the adapter is a no-op and the rest of the pipeline runs
+exactly as it did before this tree.
+
+### `.3.2` — `figure_region_to_partial_trace`
+
+The adapter maps `FigureRegion` ⇒ `PartialTrace` cleanly:
+
+- **`FigureLane`** ⇒ `LaneEdge`s on level transitions
+  (`Low → High` = `Rising`; `High → Low` = `Falling`) +
+  `ValueSpan`s on contiguous identical-value runs. `Unknown`
+  lane samples **break runs without recording an edge** —
+  honest dormancy at the sample level: if upstream doesn't
+  know the level, the adapter doesn't claim a transition.
+- **`FigureAnnotation::Delay`** ⇒ a `RelativeDelay` straight
+  through.
+- **`FigureAnnotation::Value`** ⇒ an extra `ValueSpan`.
+- **`FigureAnnotation::Label`** is informational only; the
+  adapter ignores it (lane labels are recovered through prose
+  / KG already).
+- **`FigureAnnotation::Unknown`** ⇒ trace confidence is
+  demoted one rank (`High → Medium`, `Medium → Low`, `Low`
+  stays `Low`). Honest dormancy at the annotation level: if
+  upstream couldn't classify, the trace's confidence drops
+  to reflect the unrecognised evidence, never silently
+  treated as fine.
+
+### What you see in the report today
+
+Run `specforge validate <intent.json>` and the SemanticIR /
+IntentIR count blocks include:
+
+```
+  waveform: figure_contracts=0 verifier_fail_residuals=0
+```
+
+Both zero, on the nvme corpus today. That's the honest
+dormancy signal: no `FigureRegion`s are produced upstream
+today, so the adapter generates no `PartialTrace`s, and the
+generalizer mints no contracts. The typed pathway is
+unit-tested end-to-end with synthetic inputs (13 waveform
+tests + 6 adapter tests), so the moment upstream lands real
+records, the numbers move and the rest of the pipeline
+(fusion, fidelity, .isf lowering) consumes the figure-mined
+contracts the same way it consumes prose-mined ones.
+
+Counts derive from the IR itself — `figure_contracts` is the
+count of contracts whose `provenance.modality` is `Figure`;
+`verifier_fail_residuals` is the count of `Residual` contracts
+whose `reason` starts with `"verifier disagreement: "`. The
+IR is self-describing.
+
+### Negative-fixture coverage — junk waveforms do **not** mint contracts
+
+This is the load-bearing safety claim: the round-trip verifier
++ the conservative generalization rules together guarantee
+that a junk or under-determined figure does **not** produce
+a fabricated contract. Three unit tests prove it at the
+synthetic-input level:
+
+- **`bare_edge_generalizes_to_observe_residual`** — a lane
+  with a single rising edge and nothing else generalizes to
+  `Observe { signal } + Residual { reason: "bare edge — no
+  window licensed" }`. The observation is captured; no
+  contract is minted.
+- **`relative_delay_missing_bounds_lowers_residual`** — a
+  `RelativeDelay` without bounds (or with degenerate bounds)
+  generalizes to `Observe + Residual { reason:
+  "under-determined delay — bounds missing or invalid" }`.
+  No invented window.
+- **`adapter_demotes_confidence_on_any_unknown_annotation`** —
+  any `Unknown` annotation lowers the trace's confidence by
+  one rank, so downstream consumers see the reduced
+  confidence even when other parts of the trace are clean.
+
+Corpus-level proof activates the moment upstream produces
+`FigureRegion`s — and when it does, those tests are the
+guardrails that say *"a contract with `Lowerable` lowering
+came from a trace the verifier accepted; you can trust it."*
+
+### The four user-facing guarantees
+
+This design buys you four properties you can rely on:
+
+1. **Figures become contracts when they're clean enough; no
+   invented windows when they're not.** The conservative
+   rules + Observe-on-bare-edge default means the IR captures
+   the observation without inventing structure.
+2. **Round-trip verification is structural, not authorial.**
+   A generated contract that the trace doesn't satisfy is
+   demoted to `Residual` automatically — fabrication is
+   prevented at the generalizer's own boundary.
+3. **Single-source confidence is capped.** A contract
+   mined from a single figure never reaches `High` on its
+   own; promotion requires cross-modal agreement through
+   FUSION.
+4. **Today's pipeline is byte-identical.** With no
+   `FigureRegion`s in the corpus, every record is empty, the
+   adapter is a no-op, the validate counts read zero, and
+   nothing in `IntentIR` / `.isf` changes shape.
 
 ### Status — delivered (`2026-05-20`)
 
-`R16-WAVEFORM-CONTRACT-MINING` is **closed**. All four leaves done:
+`R16-WAVEFORM-CONTRACT-MINING` is **closed**. All four
+leaves landed under the standard CI bar:
 
-1. `.1` crux design fixed (typed intermediate; conservative
-   generalization rules with under-determined ⇒ `Observe`+`Residual`
-   honesty; round-trip verifier; cross-check delegated to FUSION);
-2. `.2` typed `ir/waveform.rs` module + 4-rule
-   `generalize_partial_trace` + round-trip
-   `verify_contract_against_trace` (reuses
-   `R16-CAPTURE-FIDELITY-GATES.2` `evaluate_figure_trace`) + 7
-   unit tests;
-3. `.3` honest-split (rule 5) after corpus survey found no raw
-   PDFs/SVGs in tree; sub-leaves: `.3.1` typed `FigureRegion`
-   input contract (extends upstream `VisualAsset`); `.3.2` typed
-   `ir/figure_region.rs` (Bounding-box + LaneLevel + LaneSample +
-   FigureLane + FigureAnnotation enum + FigureRegion) +
-   `figure_region_to_partial_trace` adapter + 6 unit tests
-   including end-to-end smoke
-   (FigureRegion → PartialTrace → generalize → verify = Pass);
-4. `.4` `specforge validate` `waveform: figure_contracts=N
-   verifier_fail_residuals=M` block (counts derived from
-   `actor_contracts` — IR self-describing).
+- `.1` — crux design fixed (typed intermediate;
+  conservative generalization rules with under-determined ⇒
+  `Observe`+`Residual` honesty; round-trip verifier;
+  cross-check delegated to FUSION).
+- `.2` — typed `ir/waveform.rs` module + the four-rule
+  `generalize_partial_trace` + the round-trip
+  `verify_contract_against_trace` (reuses
+  `R16-CAPTURE-FIDELITY-GATES.2`'s `evaluate_figure_trace`)
+  + 7 unit tests.
+- `.3` — **honest-split (rule 5)** after the corpus survey
+  found no raw PDFs/SVGs in tree:
+  - `.3.1` — the typed `FigureRegion` input contract
+    (extends upstream `VisualAsset`);
+  - `.3.2` — typed `ir/figure_region.rs` (`BoundingBox` +
+    `LaneLevel` + `LaneSample` + `FigureLane` +
+    `FigureAnnotation` enum + `FigureRegion`) +
+    `figure_region_to_partial_trace` adapter + 6 unit tests
+    including the end-to-end smoke test
+    (FigureRegion → PartialTrace → generalize → verify =
+    `Pass`).
+- `.4` — `specforge validate` `waveform: figure_contracts=N
+  verifier_fail_residuals=M` block; counts derived from
+  `actor_contracts` via `provenance.modality == Figure` and
+  `Residual.reason` `"verifier disagreement: "` prefix —
+  IR is self-describing.
 
-Live evidence: corpus baseline reads
-`waveform: figure_contracts=0 verifier_fail_residuals=0` — honest
-dormancy until upstream lands `FigureRegion`s; the typed pathway is
-unit-tested end-to-end with synthetic inputs (13 waveform tests + 6
-adapter tests). Negative-fixture coverage proven at the
-synthetic-input level: `bare_edge_generalizes_to_observe_residual`
-(junk lane → `Observe`+`Residual`, not contract);
-`relative_delay_missing_bounds_lowers_residual` (under-determined
-delay → `Residual`, never fabricated);
-`adapter_demotes_confidence_on_any_unknown_annotation` (Unknown
-annotations lower trace confidence). **Future raster / vector
-handling** stays deferred until upstream produces those bytes — a
-new tree, not a re-opened leaf of this one.
+**Future raster / vector handling** is honestly deferred to
+a new tree, when the upstream PDF pipeline produces those
+bytes. That's not a re-opened leaf of this tree — it's a
+new piece of work with its own scope.
+
+*Authoritative tracking:*
+`docs/tasks/R16-WAVEFORM-CONTRACT-MINING.md`.
 
 ## R16-CONSTRAINED-VERIFIED-EXTRACTION — how it is implemented and verified
 

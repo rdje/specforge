@@ -2,6 +2,66 @@
 
 ## 2026-05-20
 
+### BOOK-USER-FRIENDLY-BACKFILL.2.e — rewrite R16-WAVEFORM-CONTRACT-MINING book subsection user-friendly (incl. .3.1 FigureRegion)
+- Rewrote the `R16-WAVEFORM-CONTRACT-MINING` subsection in
+  `docs/book/src/direction/temporal-intent-capture.md` to the
+  user-friendly standard. The new version walks the reader
+  through:
+  - **The problem this fixes** — timing diagrams are
+    *the* densest temporal-intent source (the timed
+    automaton, drawn); SpecForge's VLM extraction was
+    defensive (junk-label guarding); this tree adds the
+    typed pipeline that turns clean figures into ground-truth
+    contracts.
+  - **One-sentence mental model** — PartialTrace + generalizer
+    + round-trip verifier = fabrication-prevented mining.
+  - **Where `waveform` lives** — additive typed layer.
+  - **`PartialTrace`** walked through with per-evidence-kind
+    rationale (extractor reliability is observable per
+    dimension).
+  - **Four conservative generalization rules** explained with
+    explicit honesty defaults (bare LaneEdge →
+    Observe+Residual; under-determined delay → Residual;
+    single-source confidence capped at Medium).
+  - **Round-trip verifier — fabrication is structurally
+    prevented** — framed as the **third structural-honesty
+    enforcement** alongside FIDELITY.3 + FUSION.3 (and
+    CVE.3 as the fourth) — making the four-doctrine framing
+    explicit: fabrication is mechanically impossible
+    end-to-end.
+  - **Cross-check with prose — delegated to FUSION** — the
+    tree stays focused on figure→contract; cross-modal
+    reconciliation is the FUSION layer's job.
+  - **`.3.1` typed `FigureRegion` input contract** — corpus
+    survey finding (no raw PDFs/SVGs in tree); VisualAsset
+    extension; typed FigureAnnotation enum
+    (Delay/Value/Label/Unknown).
+  - **`.3.2` `figure_region_to_partial_trace` adapter** —
+    mapping walked through field-by-field; explicit
+    honest-dormancy notes (Unknown breaks runs WITHOUT
+    recording edges; Unknown annotation demotes confidence).
+  - **What you see in the report today** — `waveform:
+    figure_contracts=0 verifier_fail_residuals=0` as honest
+    dormancy.
+  - **Negative-fixture coverage — junk waveforms do NOT mint
+    contracts** — load-bearing safety claim walked through
+    with three named unit tests
+    (`bare_edge_generalizes_to_observe_residual`;
+    `relative_delay_missing_bounds_lowers_residual`;
+    `adapter_demotes_confidence_on_any_unknown_annotation`).
+  - **Four user-facing guarantees framed as benefits**:
+    figures become contracts when clean enough, no invented
+    windows when not; round-trip verification is structural;
+    single-source confidence is capped; today's pipeline is
+    byte-identical.
+  - **Status — delivered** leaf-by-leaf with the honest-split
+    framing (`.3` split into `.3.1` typed contract + `.3.2`
+    adapter); raster/vector handling honestly deferred to a
+    future tree.
+- Docs-only; `scripts/run_docs_ci.sh` green (mdBook builds).
+  Frontier → `.2.f` (R16-CONSTRAINED-VERIFIED-EXTRACTION —
+  the closing R16 subsection).
+
 ### BOOK-USER-FRIENDLY-BACKFILL.2.d — rewrite R16-MULTIMODAL-CONTRACT-FUSION book subsection user-friendly
 - Rewrote the `R16-MULTIMODAL-CONTRACT-FUSION` subsection in
   `docs/book/src/direction/temporal-intent-capture.md` to the

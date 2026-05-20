@@ -206,12 +206,36 @@ Non-Goal above — accurate is the bar; more-words is not.
     Commit: `see Commit Log`
 
   - ID: `BOOK-USER-FRIENDLY-BACKFILL.2.e`
-    Status: `pending`
+    Status: `done` (`2026-05-20`)
     Goal: rewrite the `R16-WAVEFORM-CONTRACT-MINING` subsection
     (including the `.3.1 FigureRegion` sub-design).
     Acceptance: `Subsection meets standard; mdBook green.`
-    Verification: `pending`
-    Commit: `pending`
+    Verification: `passed` — opens with the user's problem
+      (timing diagrams = the densest temporal-intent source;
+      VLM extractor was defensive); one-sentence mental model
+      (PartialTrace + generalizer + round-trip verifier =
+      fabrication-prevented mining); typed `PartialTrace`
+      walked through with what each evidence kind contributes
+      to extractor-observability; four conservative
+      generalization rules with explicit honesty defaults
+      (bare LaneEdge → Observe+Residual; cap on single-source
+      confidence); round-trip verifier framed as **third
+      structural-honesty enforcement** (with FIDELITY.3 and
+      FUSION.3 — four-doctrine framing); cross-check
+      delegated to FUSION explained; `.3.1` FigureRegion
+      input contract design walked through (corpus survey
+      finding; VisualAsset extension; typed
+      `FigureAnnotation` enum); `.3.2` adapter mapping
+      walked through (lane→edges+spans; Unknown breaks runs
+      without recording edges; Unknown annotation demotes
+      confidence); corpus baseline `waveform: figure_contracts=0
+      verifier_fail_residuals=0` as honest dormancy;
+      **negative-fixture coverage** explicitly walked through
+      as the load-bearing safety claim with three named unit
+      tests; four user-facing guarantees framed as benefits;
+      Status delivered leaf-by-leaf with honest-split
+      framing. mdBook green.
+    Commit: `see Commit Log`
 
   - ID: `BOOK-USER-FRIENDLY-BACKFILL.2.f`
     Status: `pending`
@@ -277,8 +301,8 @@ Non-Goal above — accurate is the bar; more-words is not.
 | 2.b | `BOOK-USER-FRIENDLY-BACKFILL.2.b` | `done` | `R16-KG-PROTOCOL-ONTOLOGY` rewritten user-friendly — `2026-05-20` |
 | 2.c | `BOOK-USER-FRIENDLY-BACKFILL.2.c` | `done` | `R16-CAPTURE-FIDELITY-GATES` rewritten user-friendly — `2026-05-20` |
 | 2.d | `BOOK-USER-FRIENDLY-BACKFILL.2.d` | `done` | `R16-MULTIMODAL-CONTRACT-FUSION` rewritten user-friendly — `2026-05-20` |
-| 2.e | `BOOK-USER-FRIENDLY-BACKFILL.2.e` | `pending` | **Next** — `R16-WAVEFORM-CONTRACT-MINING` rewrite |
-| 2.f | `BOOK-USER-FRIENDLY-BACKFILL.2.f` | `pending` | `R16-CONSTRAINED-VERIFIED-EXTRACTION` rewrite |
+| 2.e | `BOOK-USER-FRIENDLY-BACKFILL.2.e` | `done` | `R16-WAVEFORM-CONTRACT-MINING` rewritten user-friendly — `2026-05-20` |
+| 2.f | `BOOK-USER-FRIENDLY-BACKFILL.2.f` | `pending` | **Next** — `R16-CONSTRAINED-VERIFIED-EXTRACTION` rewrite |
 | 3 | `BOOK-USER-FRIENDLY-BACKFILL.3` | `pending` | reference/* doctrine subsections |
 | 4 | `BOOK-USER-FRIENDLY-BACKFILL.4` | `pending` | R7-VALIDATION close-out summary |
 | 5 | `BOOK-USER-FRIENDLY-BACKFILL.5` | `pending` | R15 actor-relative-graph framing |
@@ -321,6 +345,7 @@ Non-Goal above — accurate is the bar; more-words is not.
 | `2026-05-20` | `BOOK-USER-FRIENDLY-BACKFILL.2.b` | `R16-KG-PROTOCOL-ONTOLOGY` subsection rewritten user-friendly (opens with the channels/phases/transactions-missing-from-IR problem; one-sentence mental model; `ProtocolGraph` walked through record-by-record with concrete protocol examples; `TickPhase ≠ ProtocolPhase` explained via the two questions they each answer; two population paths (mechanical projection vs PDF extraction) with trust levels; accessors covered; 3 user-facing guarantees framed as benefits; honest all-zero dormancy baseline signalled); mdBook green | `passed` |
 | `2026-05-20` | `BOOK-USER-FRIENDLY-BACKFILL.2.c` | `R16-CAPTURE-FIDELITY-GATES` subsection rewritten user-friendly (opens with "how would we know if capture got better?" + missing structural barrier against silent unground-lowering; one-sentence mental model; six gates explained in plain language; three-valued `FindingStatus` framed as why `NotEvaluated` ≠ `Pass`; `apply_fidelity_gates` + Lowerable+Fail→Residual{"fidelity:<Gate>: <message>"} routing rule called out; `FidelitySummary`/`score()`/`meets_threshold(1.0)` as disciplined-honesty default; corpus baseline `fail=0 score=1.000` as live evidence; `fidelity_failures (first 5)` shape shown; 4 user-facing guarantees framed as benefits; three-doctrines framing in Status); mdBook green | `passed` |
 | `2026-05-20` | `BOOK-USER-FRIENDLY-BACKFILL.2.d` | `R16-MULTIMODAL-CONTRACT-FUSION` subsection rewritten user-friendly (opens with the AXI write-channel obligation in 4 places of the spec; two nasty failure modes: silent overwrite + lost contradiction; one-sentence mental model; `FusionKey` field-by-field; agreement merge walked through with provenance union + Mixed + min confidence + "fused:…" id; disagreement routing as the second structural honesty doctrine; producer ordering before fidelity called out with rationale; determinism + idempotence notes; corpus baseline `groups_merged=0 disagreements=0` as honest dormancy; 4 user-facing guarantees framed as benefits); mdBook green | `passed` |
+| `2026-05-20` | `BOOK-USER-FRIENDLY-BACKFILL.2.e` | `R16-WAVEFORM-CONTRACT-MINING` subsection rewritten user-friendly (opens with timing diagrams as densest temporal-intent source + defensive VLM extractor problem; one-sentence mental model PartialTrace + generalizer + round-trip verifier = fabrication-prevented mining; typed `PartialTrace` walked through with evidence-kind structure; four conservative generalization rules with explicit honesty defaults; **round-trip verifier framed as third structural-honesty enforcement** alongside FIDELITY.3 + FUSION.3 + CVE.3 = four-doctrine framing; cross-check delegated to FUSION; `.3.1` FigureRegion input contract design walked through with corpus-survey finding; `.3.2` adapter mapping walked through; corpus baseline 0/0 as honest dormancy; negative-fixture coverage as the load-bearing safety claim with three named unit tests; 4 user-facing guarantees framed as benefits); mdBook green | `passed` |
 
 ## Commit Log
 
@@ -330,13 +355,44 @@ Non-Goal above — accurate is the bar; more-words is not.
 | `BOOK-USER-FRIENDLY-BACKFILL.2.a` | `BOOK-USER-FRIENDLY-BACKFILL.2.a — rewrite R16-CONTRACT-IR book subsection user-friendly` (`3cc840ef`) | docs-only; per the standard; mdBook green |
 | `BOOK-USER-FRIENDLY-BACKFILL.2.b` | `BOOK-USER-FRIENDLY-BACKFILL.2.b — rewrite R16-KG-PROTOCOL-ONTOLOGY book subsection user-friendly` (`40d8e2cb`) | docs-only; per the standard; mdBook green |
 | `BOOK-USER-FRIENDLY-BACKFILL.2.c` | `BOOK-USER-FRIENDLY-BACKFILL.2.c — rewrite R16-CAPTURE-FIDELITY-GATES book subsection user-friendly` (`26cac946`) | docs-only; per the standard; mdBook green |
-| `BOOK-USER-FRIENDLY-BACKFILL.2.d` | `BOOK-USER-FRIENDLY-BACKFILL.2.d — rewrite R16-MULTIMODAL-CONTRACT-FUSION book subsection user-friendly` | docs-only; per the standard; mdBook green |
+| `BOOK-USER-FRIENDLY-BACKFILL.2.d` | `BOOK-USER-FRIENDLY-BACKFILL.2.d — rewrite R16-MULTIMODAL-CONTRACT-FUSION book subsection user-friendly` (`db9d8fe6`) | docs-only; per the standard; mdBook green |
+| `BOOK-USER-FRIENDLY-BACKFILL.2.e` | `BOOK-USER-FRIENDLY-BACKFILL.2.e — rewrite R16-WAVEFORM-CONTRACT-MINING book subsection user-friendly (incl. .3.1 FigureRegion)` | docs-only; per the standard; mdBook green |
 
 ## Changelog
 
 - `2026-05-20`: Created and promoted `active` same day the
   user-friendly standard was established. `.1` scope audit
   recorded; frontier → `.2` (R16 family upgrade).
+- `2026-05-20`: `.2.e` done — `R16-WAVEFORM-CONTRACT-MINING`
+  subsection rewritten user-friendly (opens with timing
+  diagrams = densest temporal-intent source + the defensive
+  VLM extractor problem; one-sentence mental model walks the
+  reader through the PartialTrace + generalizer + round-trip
+  verifier triple as "fabrication-prevented mining"; typed
+  `PartialTrace` walked through with the rationale for the
+  per-evidence-kind structure (extractor reliability is
+  observable per dimension); four conservative generalization
+  rules explained with explicit honesty defaults (bare edge →
+  Observe+Residual; under-determined delay → Residual;
+  single-source confidence capped at Medium); round-trip
+  verifier framed as the **third structural-honesty
+  enforcement** alongside FIDELITY.3 + FUSION.3 (and
+  CVE.3 as the fourth) — the four-doctrine framing makes
+  fabrication mechanically impossible end-to-end; cross-check
+  delegation to FUSION; `.3.1` FigureRegion input contract
+  walked through with corpus-survey finding (no raw
+  PDFs/SVGs in tree); `.3.2` adapter mapping walked through
+  field-by-field with explicit honest-dormancy notes
+  (Unknown breaks runs without recording edges; Unknown
+  annotation demotes confidence); corpus baseline `waveform:
+  figure_contracts=0 verifier_fail_residuals=0` as honest
+  dormancy; negative-fixture coverage explicitly walked
+  through as the load-bearing safety claim with three named
+  unit tests; four user-facing guarantees framed as benefits;
+  Status delivered leaf-by-leaf with honest-split framing).
+  Frontier → `.2.f` (R16-CONSTRAINED-VERIFIED-EXTRACTION —
+  the closing R16 subsection; mirrors the R7-VALIDATION.5
+  template).
 - `2026-05-20`: `.2.d` done — `R16-MULTIMODAL-CONTRACT-FUSION`
   subsection rewritten user-friendly (opens with the AXI
   write-channel obligation appearing in four places of the
