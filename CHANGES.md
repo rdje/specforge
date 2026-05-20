@@ -2,6 +2,35 @@
 
 ## 2026-05-20
 
+### R16-WAVEFORM-CONTRACT-MINING.3.1 — typed `FigureRegion` input contract
+- Investigation: `crates/specforge/src/ir/source.rs` carries
+  `VisualAsset { asset_id, asset_kind, page_id, image_path,
+  caption_text, diagram_kind, … }` — the existing upstream record
+  for PDF figures (asset_kind = "figure"; diagram_kind ∈ Timing /
+  StateDiagram / …).
+- `FigureRegion` is the typed *extension* the upstream PDF pipeline
+  produces when it classifies a `VisualAsset` as a timing diagram
+  AND recovers lane/annotation structure: `visual_asset_id` (ref) +
+  optional `bbox` + `Vec<FigureAnnotation>` (typed by `kind`:
+  Delay / Label / Value / Unknown) + `Vec<FigureLane>` (typed lane
+  samples with `LaneLevel`: High / Low / Unknown / Bus(value)) +
+  optional `raw_image_path` (rarely needed; typed surface is
+  primary).
+- `.3.2` adapter design: `FigureLane` → `LaneEdge`s +
+  `ValueSpan`s; `Delay`-kind annotations with parseable bounds →
+  `RelativeDelay`; `Value`-kind annotations → `ValueSpan`
+  augmentation; `Unknown`-kind annotations lower
+  `PartialTrace.confidence` (honest dormancy).
+- Additive design: `VisualAsset` is unchanged. When upstream
+  produces zero `FigureRegion`s (today's corpus), `.3.2` is a no-op
+  ⇒ zero artifact churn; the typed pathway lights up the moment
+  upstream lands its records.
+- Mirrored in `docs/book/src/direction/temporal-intent-capture.md`
+  under the WAVEFORM section per BOOK-METHOD-DOC. Docs-only;
+  `scripts/run_docs_ci.sh` green (mdBook builds).
+- Frontier → `.3.2` (FigureRegion → PartialTrace adapter
+  implementation).
+
 ### R16-WAVEFORM-CONTRACT-MINING.3 — corpus survey + honest-split decision (per rule 5)
 - Corpus survey: `find … *.pdf *.svg` over the SpecForge tree
   returns nothing — the test corpus is **pre-processed** (typed

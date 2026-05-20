@@ -506,6 +506,39 @@ mine.
 
 Authoritative tracking: `docs/tasks/R16-WAVEFORM-CONTRACT-MINING.md`.
 
+### `.3.1` — typed `FigureRegion` input contract (`2026-05-20`)
+
+A corpus survey (`find … *.pdf *.svg` over the SpecForge tree)
+returned nothing — the test corpus is **pre-processed**; raw PDF /
+SVG bytes are out-of-tree. So `WAVEFORM.3`'s "extractor" is in
+fact a **typed adapter** consuming the upstream record an
+out-of-tree PDF pipeline produces.
+
+The existing closest upstream record is
+`crates/specforge/src/ir/source.rs::VisualAsset`
+(`asset_id` / `asset_kind` / `page_id` / `image_path` /
+`caption_text` / `diagram_kind`). `FigureRegion` is the typed
+**extension** the upstream pipeline produces when it classifies
+a `VisualAsset` as a timing diagram and recovers lane / annotation
+structure:
+
+```rust
+pub struct FigureRegion {
+    pub visual_asset_id: String,
+    pub bbox: Option<BoundingBox>,
+    pub annotations: Vec<FigureAnnotation>,   // typed delay / label / value
+    pub waveform_lanes: Vec<FigureLane>,      // recovered lane samples
+    pub raw_image_path: Option<PathBuf>,      // rarely needed
+}
+```
+
+The `.3.2` adapter consumes `FigureRegion`s and produces the typed
+`PartialTrace` (`ir/waveform.rs`) that `.2`'s generalizer and
+`R16-MULTIMODAL-CONTRACT-FUSION` consume. When the upstream
+pipeline produces zero `FigureRegion`s (the corpus today), the
+adapter is a no-op — zero artifact churn; the typed pathway is
+ready to light up the moment upstream lands its records.
+
 ## R16-CONSTRAINED-VERIFIED-EXTRACTION — how it is implemented and verified
 
 **Why.** This is the closing tree of the program — it makes

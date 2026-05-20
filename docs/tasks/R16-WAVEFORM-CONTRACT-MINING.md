@@ -108,17 +108,62 @@ defensive (junk-label guarding). Deliver:
   with upstream, not on the image format.
 
   - ID: `R16-WAVEFORM-CONTRACT-MINING.3.1`
-    Status: `pending`
+    Status: `done` (`2026-05-20`)
     Goal: define the typed `FigureRegion` input contract (what an
     upstream PDF extractor must produce to feed `WAVEFORM.3.2`).
-    Investigation: read the existing PDF-ingestion code paths to
-    identify the closest existing record (or design a new one); the
-    typed record carries figure id + bounding box + textual
-    annotations + (optionally) raster bytes / vector paths when
-    present. Docs-only design leaf — parallels prior R16 `.1`s.
     Acceptance: `Typed FigureRegion input contract designed + recorded in this tree + mirrored in the book; docs-only; mdBook green.`
-    Verification: `pending`
-    Commit: `pending`
+    Verification: `passed` — investigation step: surveyed
+      `crates/specforge/src/ir/source.rs` and found
+      `VisualAsset { asset_id, asset_kind, page_id, image_path,
+      caption_text, diagram_kind, … }` — the existing upstream
+      record for PDF figures (asset_kind="figure",
+      diagram_kind∈Timing/StateDiagram/…). `FigureRegion` is the
+      typed *extension* an upstream PDF pipeline produces when it
+      classifies a `VisualAsset` as a timing diagram and recovers
+      lane/annotation structure:
+
+      ```rust
+      pub struct FigureRegion {
+          pub visual_asset_id: String,             // ref to upstream VisualAsset
+          pub bbox: Option<BoundingBox>,           // figure bbox in PDF user space
+          pub annotations: Vec<FigureAnnotation>,  // "≥ 2 cycles", lane labels, …
+          pub waveform_lanes: Vec<FigureLane>,     // recovered lanes when upstream classifies
+          pub raw_image_path: Option<PathBuf>,     // rarely needed; typed surface is primary
+      }
+      pub struct BoundingBox { pub x: f64, pub y: f64, pub w: f64, pub h: f64 }
+      pub struct FigureAnnotation {
+          pub text: String,
+          pub bbox: Option<BoundingBox>,
+          pub kind: AnnotationKind,                // Delay / Label / Value / Unknown
+      }
+      pub enum AnnotationKind { Delay, Label, Value, Unknown }
+      pub struct FigureLane {
+          pub signal_name: String,
+          pub samples: Vec<LaneSample>,
+      }
+      pub struct LaneSample { pub at_tick: u32, pub level: LaneLevel }
+      pub enum LaneLevel { High, Low, Unknown, Bus(String) }
+      ```
+
+      The adapter (`.3.2`) consumes `FigureRegion`s and produces
+      `PartialTrace` (the typed `ir/waveform.rs` intermediate) via:
+      - each `FigureLane` → `LaneEdge`s (level transitions) +
+        `ValueSpan`s (held-value runs);
+      - annotations with `kind == Delay` + parseable bounds (e.g.
+        "≥ 2 cycles" → `min=Some(2), max=None`) → `RelativeDelay`;
+      - annotations with `kind == Value` → `ValueSpan` augmentation;
+      - `Unknown`-kind annotations lower `PartialTrace.confidence`
+        (honest dormancy — never silently treated as licensed).
+
+      Additive design: the upstream `VisualAsset` is unchanged;
+      `FigureRegion` is a new typed record produced when the upstream
+      pipeline classifies a VisualAsset as a timing diagram AND
+      recovers structure. When upstream produces zero
+      `FigureRegion`s (the corpus today), `.3.2` is a no-op (zero
+      artifact churn). Mirrored in
+      `docs/book/src/direction/temporal-intent-capture.md` under the
+      `R16-WAVEFORM-CONTRACT-MINING` section. `mdbook build` green.
+    Commit: `see Commit Log`
 
   - ID: `R16-WAVEFORM-CONTRACT-MINING.3.2`
     Status: `pending`
@@ -151,8 +196,8 @@ defensive (junk-label guarding). Deliver:
 | 1 | `R16-WAVEFORM-CONTRACT-MINING.1` | `done` | Schema + generalizer + verifier design fixed; book mirror added |
 | 2 | `R16-WAVEFORM-CONTRACT-MINING.2` | `done` | Typed `waveform` module + 4-rule generalizer + round-trip verifier + 7 tests; zero artifact churn |
 | 3 | `R16-WAVEFORM-CONTRACT-MINING.3` | `in-progress` | Honest-split: `.3.1` typed FigureRegion input contract (next); `.3.2` adapter implementation |
-| 3.1 | `R16-WAVEFORM-CONTRACT-MINING.3.1` | `pending` | **Next** — typed FigureRegion contract with upstream PDF ingestion (docs-only design leaf) |
-| 3.2 | `R16-WAVEFORM-CONTRACT-MINING.3.2` | `pending` | FigureRegion → PartialTrace adapter |
+| 3.1 | `R16-WAVEFORM-CONTRACT-MINING.3.1` | `done` | Typed FigureRegion contract designed (extends upstream VisualAsset; bbox + typed annotations + waveform_lanes + optional raw_image_path); book mirror added |
+| 3.2 | `R16-WAVEFORM-CONTRACT-MINING.3.2` | `pending` | **Next** — FigureRegion → PartialTrace adapter (typed module + lexical annotation parser + tests) |
 | 4 | `R16-WAVEFORM-CONTRACT-MINING.4` | `pending` | Corpus conformance eval + negative fixtures + close |
 
 ## Design (`.1` output, 2026-05-20)
