@@ -3167,6 +3167,32 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         "  fusion: groups_merged={} disagreements={}",
         fusion_merged, fusion_disagreements
     );
+    // R16-CONSTRAINED-VERIFIED-EXTRACTION.6: constrained-extraction
+    // counts derived from `actor_contracts` (the IR is self-describing
+    // — no new field needed). `schema_rejects` is 0 today because no
+    // upstream prose extractor invokes `parse_constrained_contract`;
+    // wiring an adapter call-site counter is a future leaf.
+    let cve_entailment_fails = ir
+        .actor_contracts
+        .iter()
+        .filter(|c| {
+            matches!(
+                &c.lowering,
+                crate::ir::contract::LoweringDisposition::Residual { reason }
+                    if reason.starts_with("entailment fail: ")
+            )
+        })
+        .count();
+    let cve_template_hits = ir
+        .actor_contracts
+        .iter()
+        .filter(|c| c.contract_id.starts_with("tmpl:"))
+        .count();
+    let cve_schema_rejects = 0usize;
+    println!(
+        "  constrained: schema_rejects={} entailment_fails={} template_hits={}",
+        cve_schema_rejects, cve_entailment_fails, cve_template_hits
+    );
     let pg_counts = ir.protocol_graph.counts();
     println!(
         "  protocol_graph: channels={} phases={} transactions={} handshakes={}",
@@ -4606,6 +4632,32 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     println!(
         "  fusion: groups_merged={} disagreements={}",
         fusion_merged, fusion_disagreements
+    );
+    // R16-CONSTRAINED-VERIFIED-EXTRACTION.6: constrained-extraction
+    // counts derived from `actor_contracts` (the IR is self-describing
+    // — no new field needed). `schema_rejects` is 0 today because no
+    // upstream prose extractor invokes `parse_constrained_contract`;
+    // wiring an adapter call-site counter is a future leaf.
+    let cve_entailment_fails = ir
+        .actor_contracts
+        .iter()
+        .filter(|c| {
+            matches!(
+                &c.lowering,
+                crate::ir::contract::LoweringDisposition::Residual { reason }
+                    if reason.starts_with("entailment fail: ")
+            )
+        })
+        .count();
+    let cve_template_hits = ir
+        .actor_contracts
+        .iter()
+        .filter(|c| c.contract_id.starts_with("tmpl:"))
+        .count();
+    let cve_schema_rejects = 0usize;
+    println!(
+        "  constrained: schema_rejects={} entailment_fails={} template_hits={}",
+        cve_schema_rejects, cve_entailment_fails, cve_template_hits
     );
     let pg_counts = ir.protocol_graph.counts();
     println!(

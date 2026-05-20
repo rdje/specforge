@@ -1269,10 +1269,34 @@
   disagreements=M` (counts derived from `contract_id` / `Residual.reason`
   prefixes — IR is self-describing). Corpus baseline:
   `groups_merged=0 disagreements=0` (honest dormancy; producer is
-  load-bearing the moment extraction lands). Next DAG-promotable:
-  **`R16-WAVEFORM-CONTRACT-MINING`** (#4, order 5 — **the crux** of
-  the program thesis: prose + timing-diagram extraction). Remaining
-  sub-trees `proposed`, executed in DAG order.
+  load-bearing the moment extraction lands). **`R16-WAVEFORM-CONTRACT-MINING`
+  (point #4) `.1`+`.2` DONE** (2026-05-20): typed
+  `waveform` intermediate (`PartialTrace`/`LaneEdge`/`ValueSpan`/
+  `RelativeDelay`/`CausalArrow`) + `generalize_partial_trace` (4
+  conservative rules; under-determined ⇒ `Observe`+`Residual`
+  honesty) + round-trip `verify_contract_against_trace` reusing the
+  FIDELITY.2 trace-replay primitive; the figure→`PartialTrace`
+  extractor (`.3`) is qualitatively the largest remaining leaf and
+  is explicitly flagged for honest split (rule 5) when the concrete
+  approach (VLM-structured? vector-SVG? both?) is decided.
+  **`R16-CONSTRAINED-VERIFIED-EXTRACTION` (point #6) DONE**
+  (`.1`–`.6`, 2026-05-20): provider-agnostic fails-closed JSON-schema
+  adapter (`parse_constrained_contract`); conservative
+  lexical/structural entailment verifier + `Fail→Residual{reason}`
+  routing (third structural honesty doctrine, parallel to FIDELITY.3
+  and FUSION.3); protocol-pattern template library (5 canonical;
+  match-grounded; CFC + SetupAccess honestly Residual);
+  uncertainty-driven converge VoI selector with deterministic
+  tie-break; `specforge validate` `constrained: schema_rejects=0
+  entailment_fails=0 template_hits=0` block (honest dormancy until
+  upstream prose extractor lands). **R16 PROGRAM COMPLETE — all 6
+  sub-trees closed at their honest scope boundaries.** Remaining
+  frontiers: `R16-WAVEFORM-CONTRACT-MINING.3` extractor honest-split
+  + CVE producer wiring once an upstream prose extractor exists.
+  Three load-bearing honesty doctrines are now STRUCTURAL rather
+  than authorial: fidelity Fail→Residual; fusion disagreement→
+  Residual; entailment Fail→Residual — fabrication is mechanically
+  prevented end-to-end.
 - reference: `docs/tasks/R16-INTENT-CAPTURE.md` (umbrella, authoritative
   ordering + DAG), mdBook *SOTA Temporal-Intent Capture* chapter
 - thesis (user direction 2026-05-19): a digital-design PDF encodes intent

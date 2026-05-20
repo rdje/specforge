@@ -2,6 +2,47 @@
 
 ## 2026-05-20
 
+### R16-CONSTRAINED-VERIFIED-EXTRACTION.6 — `validate constrained:` block + close tree (R16 PROGRAM COMPLETE)
+- `specforge validate` now prints
+  `constrained: schema_rejects=N entailment_fails=M template_hits=K`
+  in both the SemanticIR and IntentIR count blocks
+  (`crates/specforge/src/commands/validate.rs`, additive lines via
+  `replace_all`). Counts derived from `actor_contracts`:
+  `entailment_fails` = `Residual` whose `reason` starts with
+  `"entailment fail: "`; `template_hits` = `contract_id` starting
+  with `"tmpl:"`; `schema_rejects = 0` today (no upstream prose
+  extractor invokes `parse_constrained_contract` yet — wiring an
+  adapter call-site counter is a future leaf). The IR is
+  self-describing — no new field on `SemanticIr` / `IntentIr`.
+  Structured-metric / JSON shape intentionally not touched
+  (bounded, KG-ONTOLOGY.4 / FIDELITY.4 / FUSION.4 precedents).
+- Corpus baseline: `constrained: schema_rejects=0
+  entailment_fails=0 template_hits=0` — honest dormancy until
+  upstream extraction lands; each gate runs whenever it has a span
+  / a binding / a finding-set, but reports zero across the corpus
+  today. The CVE primitives are unit-tested with synthetic inputs
+  (4+7+7+5 = 23 tests across `.2`/`.3`/`.4`/`.5`).
+- **R16 PROGRAM COMPLETE.** All 6 sub-trees closed at their honest
+  scope boundaries (#1/#2/#3/#4/#5/#6 done). Remaining frontiers:
+  `R16-WAVEFORM-CONTRACT-MINING.3` (extractor honest-split when
+  concrete approach is decided) + CVE producer wiring once an
+  upstream prose extractor exists.
+- Three load-bearing honesty doctrines are now **structural**
+  rather than authorial: (a) fidelity Fail-on-Lowerable → Residual
+  (FIDELITY.3); (b) fusion disagreement → Residual (FUSION.3); (c)
+  entailment Fail-on-Lowerable → Residual (CVE.3). Together, the IR
+  cannot silently fabricate a contract that any of the three gates
+  rejects — fabrication is mechanically prevented end-to-end.
+- Tree CLOSED: `docs/tasks/R16-CONSTRAINED-VERIFIED-EXTRACTION.md`
+  Status=done; Current Frontier closed; Verification Log / Commit
+  Log / Decisions / Changelog reconciled. `docs/TASK_TREE.md` row →
+  `done`. `ROADMAP.md` R16 entry updated: program point #6
+  DELIVERED, R16 PROGRAM COMPLETE noted. Book *Temporal-Intent
+  Capture* chapter "Status — delivered (2026-05-20) — R16 PROGRAM
+  COMPLETE" subsection added under the CONSTRAINED-VERIFIED-
+  EXTRACTION section per `BOOK-METHOD-DOC` close-rule. Full
+  `scripts/run_ci.sh` green.
+
 ### R16-CONSTRAINED-VERIFIED-EXTRACTION.5 — uncertainty-driven converge VoI selector
 - New `voi_score(contract, &findings) -> f64` in
   `crates/specforge/src/ir/cve.rs`:

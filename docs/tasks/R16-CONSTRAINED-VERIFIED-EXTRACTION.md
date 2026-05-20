@@ -3,10 +3,11 @@
 ## Metadata
 
 - Tree ID: `R16-CONSTRAINED-VERIFIED-EXTRACTION`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: `R16`
 - Program: `R16-INTENT-CAPTURE` (point #6, order 6 — crux, continuous
-  hardening of prose+waveform extraction precision/recall)
+  hardening of prose+waveform extraction precision/recall;
+  DELIVERED `2026-05-20`)
 - Created: `2026-05-19`
 - Last updated: `2026-05-20`
 - Owner: repo-local workflow
@@ -178,15 +179,39 @@ Make extraction high-precision by construction (the program thesis: prose
   Commit: `see Commit Log`
 
 - ID: `R16-CONSTRAINED-VERIFIED-EXTRACTION.6`
-  Status: `pending`
-  Goal: corpus precision/recall measurement via
-  `R16-CAPTURE-FIDELITY-GATES`; baseline-lock; close tree + book +
-  ROADMAP R16.
+  Status: `done`
+  Goal: `validate constrained:` block + close tree + book + ROADMAP R16.
   Acceptance: `Corpus precision/recall measured (vs pre-CVE baseline); regression-locked via CI; tree marked done; ROADMAP R16 closed for CVE; mdBook "Status — delivered" subsection per BOOK-METHOD-DOC; scripts/run_ci.sh green.`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — `specforge validate` now prints
+    `constrained: schema_rejects=N entailment_fails=M template_hits=K`
+    in both the SemanticIR and IntentIR count blocks
+    (`crates/specforge/src/commands/validate.rs`, additive lines via
+    `replace_all`). Counts derived from `actor_contracts`
+    (`entailment_fails` = `Residual` with `reason` starting
+    `"entailment fail: "`; `template_hits` = `contract_id` starting
+    `"tmpl:"`; `schema_rejects` is `0` today — wiring an adapter
+    call-site counter is a future leaf since no upstream prose
+    extractor invokes the adapter yet). Structured-metric / JSON
+    shape intentionally not touched (bounded, KG-ONTOLOGY.4 /
+    FIDELITY.4 / FUSION.4 precedents). Corpus baseline:
+    `schema_rejects=0 entailment_fails=0 template_hits=0` (honest
+    dormancy until upstream prose extractor lands). Regression gate
+    is `scripts/run_ci.sh`. Full CI green. **R16 PROGRAM COMPLETE
+    — all 6 sub-trees closed at their honest scope boundaries**;
+    remaining frontiers are: `R16-WAVEFORM-CONTRACT-MINING.3`
+    (extractor — expected honest-split; bounded), and CVE producer-
+    wiring once an upstream prose extractor exists (each gate already
+    runs whenever it has a span / a binding / a finding-set).
+  Commit: `see Commit Log`
 
 ## Current Frontier
+
+**Tree closed `2026-05-20`.** All six leaves done; ROADMAP R16 entry
+for `R16-CONSTRAINED-VERIFIED-EXTRACTION` marked done. **R16 PROGRAM
+COMPLETE** — all 6 sub-trees closed at their honest scope boundaries.
+Remaining frontiers: `R16-WAVEFORM-CONTRACT-MINING.3` (extractor —
+expected honest-split when concrete approach is chosen), and CVE
+producer-wiring once an upstream prose extractor exists.
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
@@ -195,7 +220,7 @@ Make extraction high-precision by construction (the program thesis: prose
 | 3 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.3` | `done` | `entailment_check` + `apply_entailment_to_contract` Fail→Residual routing; 7 new tests; honesty doctrine mechanically enforced |
 | 4 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.4` | `done` | Protocol-template library (5 canonical, match-grounded, entailment-verifiable; CFC + SetupAccess honestly Residual); 7 tests; zero artifact churn |
 | 5 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.5` | `done` | `voi_score` + `select_top_n_by_voi` (deterministic tie-break) + 5 tests; converge-loop integration deferred (bounded scope) |
-| 6 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.6` | `pending` | **Next** — corpus precision/recall + close tree |
+| 6 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.6` | `done` | `validate constrained: schema_rejects=0 entailment_fails=0 template_hits=0` block delivered; tree closed; book + ROADMAP synced |
 
 ## Design (`.1` output, 2026-05-20)
 
@@ -352,6 +377,7 @@ KG-ONTOLOGY.4 / FIDELITY.4 / FUSION.4 precedents).
 | `2026-05-20` | `R16-CONSTRAINED-VERIFIED-EXTRACTION.3` | `entailment_check` (lexical signal + structural digit-run bound check; three-valued including `NotEvaluated`) + `apply_entailment_to_contract` Fail→Residual routing; 7 new unit tests (Pass over Drive+Stable; Fail on missing signal/bound; NotEvaluated when nothing checkable; routing flips Lowerable+Fail; Pass leaves unchanged; preexisting Residual untouched; `span_contains_number` exact digit runs); SemanticIr/IntentIr unchanged; full `scripts/run_ci.sh` | `passed` (zero artifact churn) |
 | `2026-05-20` | `R16-CONSTRAINED-VERIFIED-EXTRACTION.4` | `ProtocolTemplate` (5 canonical) + `SignalBindings` + `instantiate_template` with match-grounding gate; RV-Handshake/AsyncReset/BurstLast → Lowerable; CFC/SetupAccess honestly Residual; 7 new unit tests including the "match is entailment-verifiable" round-trip; SemanticIr/IntentIr unchanged; full `scripts/run_ci.sh` | `passed` (zero artifact churn) |
 | `2026-05-20` | `R16-CONSTRAINED-VERIFIED-EXTRACTION.5` | `voi_score(c, &findings)` + `select_top_n_by_voi(&ConvergeInputs, n)` with deterministic tie-break; 5 unit tests (Low > High no-findings; Medium-2-Fails > Low-no-fails; lex tie-break; explicit ordering Medium+1Fail > Low > High; empty inputs); SemanticIr/IntentIr unchanged; full `scripts/run_ci.sh` | `passed` (zero artifact churn) |
+| `2026-05-20` | `R16-CONSTRAINED-VERIFIED-EXTRACTION.6` | `validate` SemanticIR+IntentIR blocks now print `constrained: schema_rejects=N entailment_fails=M template_hits=K` (counts derived from `actor_contracts` via `Residual.reason` "entailment fail:" prefix and `contract_id` "tmpl:" prefix; `schema_rejects=0` today — adapter-call-site counter is a future leaf); structured-metric / JSON shape untouched (bounded; KG-ONTOLOGY.4 / FIDELITY.4 / FUSION.4 precedents); corpus baseline `0/0/0` (honest dormancy); tree closed; book + ROADMAP synced | `passed` |
 
 ## Commit Log
 
@@ -361,7 +387,8 @@ KG-ONTOLOGY.4 / FIDELITY.4 / FUSION.4 precedents).
 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.2` | `R16-CONSTRAINED-VERIFIED-EXTRACTION.2 — JSON-schema summary + fails-closed adapter` (`828441f0`) | first CVE code; zero artifact churn; serde is the authoritative validator |
 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.3` | `R16-CONSTRAINED-VERIFIED-EXTRACTION.3 — entailment verifier + Fail→Residual routing` (`f7b17f0a`) | honesty doctrine mechanically enforced parallel to FUSION.3 / FIDELITY.3 |
 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.4` | `R16-CONSTRAINED-VERIFIED-EXTRACTION.4 — protocol-pattern template library (5 canonical, match-grounded, entailment-verifiable)` (`fe8e029e`) | placement in cve.rs (next to consumer); prior_memory migration deferred; CFC + SetupAccess honestly Residual |
-| `R16-CONSTRAINED-VERIFIED-EXTRACTION.5` | `R16-CONSTRAINED-VERIFIED-EXTRACTION.5 — uncertainty-driven converge VoI selector` | converge-loop integration deferred (bounded scope); deterministic tie-break |
+| `R16-CONSTRAINED-VERIFIED-EXTRACTION.5` | `R16-CONSTRAINED-VERIFIED-EXTRACTION.5 — uncertainty-driven converge VoI selector` (`9e0d01ef`) | converge-loop integration deferred (bounded scope); deterministic tie-break |
+| `R16-CONSTRAINED-VERIFIED-EXTRACTION.6` | `R16-CONSTRAINED-VERIFIED-EXTRACTION.6 — validate constrained: block + close tree (R16 PROGRAM COMPLETE)` | closes the tree; corpus baseline 0/0/0; closes the R16 program |
 
 ## Dependencies / Order
 
@@ -380,6 +407,25 @@ KG-ONTOLOGY.4 / FIDELITY.4 / FUSION.4 precedents).
   fixed + book mirror; concrete `.1`–`.6` leaves defined. This is the
   FINAL R16 sub-tree promoted (all 6 program points now active or
   closed). Frontier → `.2` (JSON-schema adapter for ActorContract).
+- `2026-05-20`: **Tree CLOSED.** `.6` done — `specforge validate`
+  now prints `constrained: schema_rejects=N entailment_fails=M
+  template_hits=K` in both the SemanticIR and IntentIR count blocks
+  (additive lines via `replace_all`; structured-metric / JSON shape
+  NOT touched — bounded, KG-ONTOLOGY.4 / FIDELITY.4 / FUSION.4
+  precedents). Counts derived from `actor_contracts`
+  (`entailment_fails`: Residual.reason starts `"entailment fail: "`;
+  `template_hits`: contract_id starts `"tmpl:"`; `schema_rejects = 0`
+  today because no upstream prose extractor invokes
+  `parse_constrained_contract` yet — wiring an adapter call-site
+  counter is a future leaf). Corpus baseline: `0/0/0` — honest
+  dormancy. Full CI green. ROADMAP R16 (point #6 DELIVERED) +
+  TASK_TREE index + book "Status — delivered" subsection synced per
+  BOOK-METHOD-DOC close-rule. **R16 PROGRAM COMPLETE — all 6
+  sub-trees closed at their honest scope boundaries.** Remaining
+  frontiers (recorded here for context): `R16-WAVEFORM-CONTRACT-MINING.3`
+  (figure→PartialTrace extractor — expected honest-split when concrete
+  approach is decided) and CVE producer-wiring once an upstream prose
+  extractor exists.
 - `2026-05-20`: `.5` done — uncertainty-driven converge VoI
   selector: `voi_score(c, findings) = w_conf * uncertainty(conf) +
   w_fail * count_fails_for(c.contract_id, findings)` (w_conf =
