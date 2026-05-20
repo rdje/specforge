@@ -831,104 +831,268 @@ pipeline.
 
 ## R16-MULTIMODAL-CONTRACT-FUSION — how it is implemented and verified
 
-**Why.** Today an obligation distributed across prose §3.1, a timing
-table §3.4, Figure 3-2, and an exception in §3.5 lives as four
-disjoint `ActorContract`s — contract-level recall is lost at the
-join. Worse, when two sources say different things, today there is no
-first-class way to surface "these contradict": one extraction's value
-silently wins. This tree adds a **deterministic fusion phase** that
-clusters multimodal candidates by a typed `FusionKey`, merges
-agreeing sources (provenance union, `Mixed` modality), and routes
-disagreements to `Residual{reason="disagreement: …"}` —
-mechanically refusing to silently pick.
+This section explains the typed phase that takes contract
+candidates extracted from *multiple* sources — prose, a timing
+table, a figure, an exception clause — and turns them into one
+authoritative `ActorContract` per protocol element. Reading it
+end-to-end should leave you with a working mental model of
+the cluster key, the deterministic merge, the
+disagreement-routing rule, and what the corpus baseline tells
+you today about why the producer is dormant-but-load-bearing.
 
-### Implementation
+### The problem this fixes
 
-- **Typed layer, no new stage** (parallels prior R16 trees): a new
-  `crates/specforge/src/ir/fusion.rs` defines `FusionKey` and the
-  merge primitive. The fused outcome is still an `ActorContract` (no
-  schema change needed); fusion is reflected through `provenance`
-  (`Mixed` modality, union `supporting_statement_ids`, delimited
-  `source_text`) and, on disagreement, through `lowering =
-  Residual{reason="disagreement: …"}`.
-- **`FusionKey`** keys clusters on `(actor, channel, phase,
-  obligation_kind, primary_signal)`. `channel`/`phase` are populated
-  by the extraction trees (#3/#4/#6); until then most contracts
-  cluster at size 1 ⇒ fusion is identity ⇒ zero artifact churn on
-  the corpus (CONTRACT-IR.2 / KG-ONTOLOGY.2 / FIDELITY.2 discipline).
-- **Agreement merge** (deterministic): obligation/guard/kind common
-  values carried through; `guard_candidates`/`supporting_statement_ids`
-  union with source-order dedup; `provenance.modality` ⇒ `Mixed` when
-  sources differ; `provenance.source_text` ⇒ delimited concatenation;
-  `automation_confidence` ⇒ minimum (conservative).
-- **Disagreement** (incompatible obligation / guard / kind): the
-  fused contract carries the union of provenance and sets `lowering
-  = Residual{reason="disagreement: …"}` — the honesty doctrine,
-  mechanically enforced (parallel to `R16-CAPTURE-FIDELITY-GATES.3`).
-  Two sources contradicting is now a first-class IR observation,
-  never a silent pick.
-- **Producer** (`.3`) runs in `SemanticIr::build` BEFORE
-  `apply_fidelity_gates` (so the fidelity gates see fused contracts);
-  IntentIR carries forward without schema change.
-- **Report** (`.4`): `specforge validate` adds
-  `fusion: groups_merged=… disagreements=…` to the SemanticIR /
-  IntentIR count blocks. Structured-metric / JSON shape intentionally
-  not touched (bounded, same as the prior R16 closes).
+Picture a single AXI write-channel obligation a spec might
+license in *four* places:
 
-### Verification
+> *Prose §3.1: "AWVALID must be held high until the slave
+> asserts AWREADY."*
+>
+> *Timing table §3.4: "AWVALID ≥ 1 cycle before AWREADY
+> sample."*
+>
+> *Figure 3-2: an arrow from `AWVALID↑` to `AWREADY↑` two
+> ticks later.*
+>
+> *Exception §3.5: "AWVALID may be deasserted before AWREADY
+> if AWRESETN low."*
 
-- Unit-tested with synthetic multi-modal candidates: agreement path
-  consolidates into one contract with `Mixed` modality and union
-  provenance; disagreement path produces `Residual{reason="disagreement:
-  …"}`; single-contract cluster is identity. Producer parity on
-  corpus: clusters all size 1 today ⇒ zero artifact churn (the
-  producer becomes load-bearing when `#4`/`#6` populate
-  `channel`/`phase` and ground multiple sources per protocol element).
-- Recall-improvement *measurement* on the corpus is necessarily `0`
-  today (Non-Goal until extraction populates multi-source
-  candidates). The corpus baseline at `.4` reads `groups_merged=0
-  disagreements=0` — honest dormancy, not a faked Pass.
-- `scripts/run_ci.sh` green per leaf; every leaf via `COMMIT.md`; the
-  closing leaf refreshes this section (BOOK-METHOD-DOC).
+Each of those is one piece of evidence about the **same**
+protocol obligation. Before this tree they landed as four
+disjoint `ActorContract`s, each with its own provenance,
+none of them aware of the others. Contract-level recall got
+lost at the join, and two even nastier failure modes lurked:
 
-Authoritative tracking: `docs/tasks/R16-MULTIMODAL-CONTRACT-FUSION.md`.
+- **One source silently overwrites another.** If the prose
+  said "≥ 1 cycle" and the table said "≥ 2 cycles," whichever
+  one the pipeline processed last won — with no visible
+  signal that the other source had said something different.
+- **A real contradiction looked like a clean win.** A
+  contradiction between two sources is a *first-class
+  observation* about the spec — but the IR had no shape for
+  it, so the contradiction silently disappeared.
+
+`R16-MULTIMODAL-CONTRACT-FUSION` adds the missing typed
+phase: cluster the candidates, merge the ones that agree
+(preserving every source's evidence), and route the ones
+that disagree to an explicit `Residual{reason="disagreement:
+…"}`.
+
+### The mental model
+
+> **A `FusionKey` says "these contract candidates are all
+> talking about the same protocol element." `merge_cluster`
+> takes a cluster of candidates with the same key and returns
+> one `ActorContract`. When the candidates agree, the merged
+> contract is `Lowerable` and carries provenance from all
+> sources. When they disagree on `obligation` / `guard` /
+> `kind`, the merged contract is `Residual{reason}` — the
+> doctrine is "two sources contradicting each other is a
+> recorded observation, never a silent pick."**
+
+Everything below is the typed surface: the `FusionKey`
+fields, the deterministic agreement merge, the
+disagreement-routing rule, the `apply_fusion` producer (which
+runs **before** the fidelity gate so the gates see the fused
+contracts), and the validate `fusion:` block you see in the
+report.
+
+### Where `fusion` lives
+
+It's a typed layer, not a new pipeline stage — parallel to
+ContractIR, KG-ONTOLOGY, and FIDELITY-GATES. A new module
+`crates/specforge/src/ir/fusion.rs` defines `FusionKey` and
+the merge primitive. The fused outcome is still an
+`ActorContract` (no schema change needed); fusion is
+reflected through the existing `provenance` and `lowering`
+fields. `SemanticIr`/`IntentIr` carry the fused contracts in
+the same `actor_contracts` field — no new vector, no new
+shape to learn.
+
+### `FusionKey` — what makes two candidates "the same protocol element"
+
+```rust
+pub struct FusionKey {
+    pub actor: Option<String>,
+    pub channel: Option<String>,
+    pub phase: Option<String>,
+    pub obligation_kind: &'static str,
+    pub primary_signal: Option<String>,
+}
+```
+
+Two candidates fuse iff their `FusionKey`s are equal. The
+five fields together capture *"about whom, in which channel,
+at which phase, what shape of obligation, primarily about
+which signal."* When two extractors look at the same protocol
+element from different angles, they should produce candidates
+with the same key — that's the cluster the merge operates on.
+
+`channel` and `phase` are populated by the extraction trees
+(KG-ONTOLOGY + the extraction siblings). Until they
+populate, most contracts have `actor=None / channel=None /
+phase=None`, leaving `(obligation_kind, primary_signal)` as
+the discriminator. That's still enough to keep distinct
+obligations distinct (a `Drive { signal: "Q", value: "1" }`
+key never clusters with a `Stable { signal: "D", … }` key);
+it just means most clusters end up size-1 today, and the
+producer is correspondingly an identity on the corpus —
+load-bearing for the day extraction lands the
+`channel`/`phase` fields.
+
+### Agreement merge — deterministic, provenance-preserving
+
+When two or more candidates share a `FusionKey` and **agree**
+on the load-bearing fields (`obligation`, `guard`, `kind`),
+`merge_cluster` returns one `ActorContract` with:
+
+- `obligation` / `guard` / `kind` / `clock_signal` /
+  `channel` / `phase` carried through (they're equal across
+  candidates by construction);
+- `guard_candidates` — union of all sources, in first-seen
+  order, deduped;
+- `provenance.supporting_statement_ids` — union of all
+  sources' supporting ids, in first-seen order, deduped;
+- `provenance.modality` — `Mixed` when sources differ
+  (prose + table + figure = `Mixed`); the common modality
+  otherwise;
+- `provenance.source_text` — delimited concatenation
+  (`"prose §3.1 | table §3.4 | figure 3-2"`);
+- `automation_confidence` — **minimum** across the cluster
+  (conservative — a chain is as strong as its weakest
+  source);
+- `contract_id` — `"fused:<id1>+<id2>+…"` so you can trace
+  back to the original candidates by inspection.
+
+The merge is **deterministic**: the same cluster of
+candidates always produces the same fused contract.
+Reproducibility is preserved.
+
+### Disagreement routing — the second structural honesty doctrine
+
+When two or more candidates share a `FusionKey` but **disagree**
+on `obligation` / `guard` / `kind`, the merge returns:
+
+- `lowering = Residual { reason: "disagreement: <sorted+
+  deduped list of disagreeing fields>" }`;
+- everything else as in the agreement path — `provenance`
+  still unioned (so both sources are preserved), `Mixed`
+  modality, `automation_confidence` still the minimum.
+
+That's the second of the three structural honesty doctrines
+the R16 program adds. (The first is fidelity-Fail → Residual
+from `R16-CAPTURE-FIDELITY-GATES.3`; the third is
+entailment-Fail → Residual from
+`R16-CONSTRAINED-VERIFIED-EXTRACTION.3`.) Together they
+mean: **a contract that any structural check rejects is
+mechanically routed to `Residual` with the reason in the
+text — fabrication is impossible end-to-end.**
+
+A reader of the `.isf` adapter's residual decisions can now
+see exactly which contracts came from a disagreement and
+exactly which fields disagreed. The contradiction is
+preserved in the IR as a first-class observation.
+
+### `apply_fusion` — and why ordering matters
+
+`SemanticIr::build` runs `apply_fusion(&mut actor_contracts)`
+**before** `apply_fidelity_gates`. The ordering is
+load-bearing: the fidelity gates evaluate **fused**
+contracts, not pre-fusion duplicates. A multi-source
+contradiction is routed by fusion first; then the fidelity
+gates evaluate the now-Residual fused contract; then the
+.isf adapter consumes the result. Each step's invariants
+are stable because the previous step already produced its
+output.
+
+Implementation notes:
+
+- Clustering uses a `HashMap` keyed by `FusionKey` for the
+  cluster lookup, plus a parallel `Vec<FusionKey>` recording
+  first-seen order so the resulting `actor_contracts` vector
+  is deterministic across runs.
+- For each cluster of size > 1, `merge_cluster` produces the
+  fused contract; the merged contract takes the slot of the
+  cluster's first member; the trailing members are dropped
+  from the vector.
+- The producer is **idempotent**: re-running it on already-
+  fused input is a no-op (every contract is now in its own
+  size-1 cluster, and `merge_cluster` returns size-1 input
+  unchanged).
+
+### What you see in the report today
+
+Run `specforge validate <intent.json>` and the SemanticIR
+and IntentIR count blocks include:
+
+```
+  fusion: groups_merged=0 disagreements=0
+```
+
+Both zero, on the nvme corpus today. That's the honest
+dormancy signal: clusters are all size 1 because the
+extraction trees haven't populated `channel`/`phase` or
+delivered multi-source candidates yet. The producer ran
+and produced its identity output; no fabrication is
+hiding behind the numbers.
+
+The counts are derived from the IR itself — no new field
+was needed: `groups_merged` is the count of contracts whose
+`contract_id` starts with `"fused:"`; `disagreements` is the
+count of `Residual` contracts whose `reason` starts with
+`"disagreement: "`. The IR is self-describing.
+
+### The four user-facing guarantees
+
+This design buys you four properties you can rely on:
+
+1. **You can hold one obligation in one place even when it
+   came from many sources.** When extraction lands and yields
+   multi-source candidates, agreement consolidates them into
+   one `ActorContract` with the provenance from all sources —
+   not four contracts you'd have to re-cluster by hand.
+2. **No source silently overwrites another.** Disagreements
+   are routed to `Residual{reason="disagreement: …"}` with
+   the disagreeing fields enumerated; the contradiction is a
+   first-class IR observation, not a hidden choice.
+3. **Mergers are deterministic and reproducible.** The same
+   cluster always produces the same fused contract, with
+   stable ordering and stable provenance.
+4. **Today's pipeline is byte-identical.** The producer runs
+   on every build and produces an identity result on the
+   corpus; reports look the same as before this tree shipped
+   — zero churn, load-bearing for tomorrow.
 
 ### Status — delivered (`2026-05-20`)
 
-`R16-MULTIMODAL-CONTRACT-FUSION` is **closed**. All four leaves done:
+`R16-MULTIMODAL-CONTRACT-FUSION` is **closed**. All four
+leaves landed under the standard CI bar:
 
-1. `.1` fusion design fixed (typed layer / no new stage; `FusionKey`
-   on (actor, channel, phase, obligation_kind, primary_signal);
-   deterministic agreement merge with provenance union + `Mixed`
-   modality + min `automation_confidence`; disagreement → Residual
-   honesty doctrine);
-2. `.2` typed `fusion` module + `merge_cluster` primitive (size-1
-   identity, agreement merge, multi-field sorted-dedup disagreement) +
-   6 unit tests; no producer wiring; zero artifact churn;
-3. `.3` `apply_fusion` producer wired in `SemanticIr::build` **BEFORE**
-   `apply_fidelity_gates` (so the fidelity gates evaluate the fused
-   contracts); HashMap + first-seen-order Vec for determinism;
-   merged contract takes the first slot, trailing dropped, input
-   order otherwise preserved; idempotent on already-fused input;
-   3 producer tests;
-4. `.4` `specforge validate` `fusion: groups_merged=N
-   disagreements=M` block (counts derived from `actor_contracts`
-   via the `contract_id` `"fused:"` prefix and the `Residual.reason`
-   `"disagreement: "` prefix — the IR is self-describing, no new
-   field needed).
+- `.1` — the fusion design above: typed layer / no new
+  stage; `FusionKey` on the five fields; agreement merge
+  rule; disagreement → Residual; producer ordering before
+  fidelity.
+- `.2` — the typed `fusion` module + `merge_cluster`
+  primitive (size-1 identity, agreement merge, multi-field
+  sorted-deduped disagreement) + 6 unit tests; no producer
+  wiring; zero artifact churn.
+- `.3` — `apply_fusion` producer wired in `SemanticIr::build`
+  **before** `apply_fidelity_gates` so the fidelity gates
+  evaluate fused contracts; deterministic cluster ordering;
+  idempotent on already-fused input; 3 producer tests.
+- `.4` — `validate fusion: groups_merged=N disagreements=M`
+  block; counts derived from `actor_contracts` via the
+  `contract_id` `"fused:"` prefix and the `Residual.reason`
+  `"disagreement: "` prefix.
 
-Live evidence: corpus baseline reads `fusion: groups_merged=0
-disagreements=0` — the nvme corpus has no agreement-mergeable
-clusters today (most contracts have `actor_name=None` /
-`channel=None` / `phase=None`, but `(obligation_kind, primary_signal)`
-still discriminates the rules well enough). **Honest dormancy**: the
-primitive and producer are unit-tested with synthetic clusters; the
-producer becomes load-bearing the moment extraction (`#4`/`#6`)
-populates `channel`/`phase` or yields multi-source candidates per
-protocol element. Next DAG-promotable R16 sub-tree =
-`R16-WAVEFORM-CONTRACT-MINING` (#4, order 5 — **the crux** of the
-program thesis: prose + timing-diagram extraction into typed
-contracts).
+Live corpus evidence: `fusion: groups_merged=0
+disagreements=0`. Honest dormancy. The producer is
+load-bearing the moment extraction starts grounding
+`channel`/`phase` or yielding multi-source candidates per
+protocol element.
+
+*Authoritative tracking:*
+`docs/tasks/R16-MULTIMODAL-CONTRACT-FUSION.md`.
 
 ## R16-WAVEFORM-CONTRACT-MINING — how it is implemented and verified
 

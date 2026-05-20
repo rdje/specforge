@@ -2,6 +2,57 @@
 
 ## 2026-05-20
 
+### BOOK-USER-FRIENDLY-BACKFILL.2.d — rewrite R16-MULTIMODAL-CONTRACT-FUSION book subsection user-friendly
+- Rewrote the `R16-MULTIMODAL-CONTRACT-FUSION` subsection in
+  `docs/book/src/direction/temporal-intent-capture.md` to the
+  user-friendly standard. The new version walks the reader
+  through:
+  - **The problem this fixes** — the AXI write-channel
+    obligation appearing in four places of the spec (prose,
+    timing table, figure, exception clause); before this
+    tree, four disjoint contracts; two nasty failure modes
+    spelled out concretely: silent overwrite + lost
+    contradiction.
+  - **One-sentence mental model** — `FusionKey` identifies
+    "same protocol element"; `merge_cluster` returns one
+    `ActorContract`; agreement = `Lowerable` with unioned
+    provenance; disagreement = `Residual{reason}` with the
+    disagreeing fields named.
+  - **Where `fusion` lives** — additive typed layer; no
+    schema change.
+  - **`FusionKey`** — five fields walked through with what
+    each contributes; honest scope note on `channel`/`phase`
+    being extraction-populated.
+  - **Agreement merge** — deterministic, provenance-preserving,
+    walked through field-by-field (carry through obligation /
+    guard / kind; union supporting_statement_ids; Mixed
+    modality when sources differ; delimited source_text;
+    min `automation_confidence`; `"fused:<id1>+<id2>+…"`
+    contract_id).
+  - **Disagreement routing — the second structural honesty
+    doctrine** — explicit framing alongside FIDELITY.3 and
+    CVE.3: a contract that any structural check rejects is
+    mechanically routed to `Residual` with the reason in
+    text — fabrication is impossible end-to-end.
+  - **`apply_fusion` and why ordering matters** — runs in
+    `SemanticIr::build` *before* `apply_fidelity_gates` so
+    fidelity evaluates fused contracts; HashMap +
+    first-seen-order Vec for determinism; idempotent on
+    already-fused input.
+  - **What you see in the report today** — `fusion:
+    groups_merged=0 disagreements=0` as honest dormancy;
+    counts derived from IR via contract_id / Residual.reason
+    prefixes (IR is self-describing).
+  - **Four user-facing guarantees framed as benefits**: hold
+    one obligation in one place; no source silently
+    overwrites another; mergers are deterministic and
+    reproducible; today's pipeline is byte-identical.
+  - **Status — delivered** leaf-by-leaf with the same
+    honest-dormancy framing.
+- Docs-only; `scripts/run_docs_ci.sh` green (mdBook builds).
+  Frontier → `.2.e` (R16-WAVEFORM-CONTRACT-MINING — most
+  substantial; includes the `.3.1` FigureRegion sub-design).
+
 ### BOOK-USER-FRIENDLY-BACKFILL.2.c — rewrite R16-CAPTURE-FIDELITY-GATES book subsection user-friendly
 - Rewrote the `R16-CAPTURE-FIDELITY-GATES` subsection in
   `docs/book/src/direction/temporal-intent-capture.md` to the

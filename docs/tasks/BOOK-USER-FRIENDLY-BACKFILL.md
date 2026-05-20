@@ -182,11 +182,28 @@ Non-Goal above — accurate is the bar; more-words is not.
     Commit: `see Commit Log`
 
   - ID: `BOOK-USER-FRIENDLY-BACKFILL.2.d`
-    Status: `pending`
+    Status: `done` (`2026-05-20`)
     Goal: rewrite the `R16-MULTIMODAL-CONTRACT-FUSION` subsection.
     Acceptance: `Subsection meets standard; mdBook green.`
-    Verification: `pending`
-    Commit: `pending`
+    Verification: `passed` — opens with the user's problem
+      (one AXI write-channel obligation in four places of the
+      spec; before this tree, four disjoint contracts; two
+      nasty failure modes: silent overwrite, lost
+      contradiction); one-sentence mental model;
+      `FusionKey` walked through with what each field
+      contributes; agreement merge walked through
+      field-by-field (provenance union, `Mixed` modality,
+      delimited source_text, min confidence, `"fused:…"`
+      id); disagreement routing framed as the **second
+      structural honesty doctrine** (with FIDELITY.3 and
+      CVE.3) — contradiction preserved in IR as first-class
+      observation; `apply_fusion` runs before fidelity gates
+      (ordering rationale called out); implementation notes
+      on determinism + idempotence; corpus baseline
+      `fusion: groups_merged=0 disagreements=0` as honest
+      dormancy; four user-facing guarantees framed as
+      benefits. mdBook green.
+    Commit: `see Commit Log`
 
   - ID: `BOOK-USER-FRIENDLY-BACKFILL.2.e`
     Status: `pending`
@@ -259,8 +276,8 @@ Non-Goal above — accurate is the bar; more-words is not.
 | 2.a | `BOOK-USER-FRIENDLY-BACKFILL.2.a` | `done` | `R16-CONTRACT-IR` rewritten user-friendly — `2026-05-20` |
 | 2.b | `BOOK-USER-FRIENDLY-BACKFILL.2.b` | `done` | `R16-KG-PROTOCOL-ONTOLOGY` rewritten user-friendly — `2026-05-20` |
 | 2.c | `BOOK-USER-FRIENDLY-BACKFILL.2.c` | `done` | `R16-CAPTURE-FIDELITY-GATES` rewritten user-friendly — `2026-05-20` |
-| 2.d | `BOOK-USER-FRIENDLY-BACKFILL.2.d` | `pending` | **Next** — `R16-MULTIMODAL-CONTRACT-FUSION` rewrite |
-| 2.e | `BOOK-USER-FRIENDLY-BACKFILL.2.e` | `pending` | `R16-WAVEFORM-CONTRACT-MINING` rewrite |
+| 2.d | `BOOK-USER-FRIENDLY-BACKFILL.2.d` | `done` | `R16-MULTIMODAL-CONTRACT-FUSION` rewritten user-friendly — `2026-05-20` |
+| 2.e | `BOOK-USER-FRIENDLY-BACKFILL.2.e` | `pending` | **Next** — `R16-WAVEFORM-CONTRACT-MINING` rewrite |
 | 2.f | `BOOK-USER-FRIENDLY-BACKFILL.2.f` | `pending` | `R16-CONSTRAINED-VERIFIED-EXTRACTION` rewrite |
 | 3 | `BOOK-USER-FRIENDLY-BACKFILL.3` | `pending` | reference/* doctrine subsections |
 | 4 | `BOOK-USER-FRIENDLY-BACKFILL.4` | `pending` | R7-VALIDATION close-out summary |
@@ -303,6 +320,7 @@ Non-Goal above — accurate is the bar; more-words is not.
 | `2026-05-20` | `BOOK-USER-FRIENDLY-BACKFILL.2.a` | `R16-CONTRACT-IR` subsection rewritten user-friendly (opens with the bound-obligation problem; one-sentence mental model; typed `ActorContract` walked through; closed `Obligation`/`EventExpr`/`Window` algebra in plain language; `Observe` honest-weak-fact framing; lowering pathway walked through; 4 user-facing guarantees framed as benefits; honest constraints on `(stage …)` dormancy recorded); mdBook green | `passed` |
 | `2026-05-20` | `BOOK-USER-FRIENDLY-BACKFILL.2.b` | `R16-KG-PROTOCOL-ONTOLOGY` subsection rewritten user-friendly (opens with the channels/phases/transactions-missing-from-IR problem; one-sentence mental model; `ProtocolGraph` walked through record-by-record with concrete protocol examples; `TickPhase ≠ ProtocolPhase` explained via the two questions they each answer; two population paths (mechanical projection vs PDF extraction) with trust levels; accessors covered; 3 user-facing guarantees framed as benefits; honest all-zero dormancy baseline signalled); mdBook green | `passed` |
 | `2026-05-20` | `BOOK-USER-FRIENDLY-BACKFILL.2.c` | `R16-CAPTURE-FIDELITY-GATES` subsection rewritten user-friendly (opens with "how would we know if capture got better?" + missing structural barrier against silent unground-lowering; one-sentence mental model; six gates explained in plain language; three-valued `FindingStatus` framed as why `NotEvaluated` ≠ `Pass`; `apply_fidelity_gates` + Lowerable+Fail→Residual{"fidelity:<Gate>: <message>"} routing rule called out; `FidelitySummary`/`score()`/`meets_threshold(1.0)` as disciplined-honesty default; corpus baseline `fail=0 score=1.000` as live evidence; `fidelity_failures (first 5)` shape shown; 4 user-facing guarantees framed as benefits; three-doctrines framing in Status); mdBook green | `passed` |
+| `2026-05-20` | `BOOK-USER-FRIENDLY-BACKFILL.2.d` | `R16-MULTIMODAL-CONTRACT-FUSION` subsection rewritten user-friendly (opens with the AXI write-channel obligation in 4 places of the spec; two nasty failure modes: silent overwrite + lost contradiction; one-sentence mental model; `FusionKey` field-by-field; agreement merge walked through with provenance union + Mixed + min confidence + "fused:…" id; disagreement routing as the second structural honesty doctrine; producer ordering before fidelity called out with rationale; determinism + idempotence notes; corpus baseline `groups_merged=0 disagreements=0` as honest dormancy; 4 user-facing guarantees framed as benefits); mdBook green | `passed` |
 
 ## Commit Log
 
@@ -311,13 +329,32 @@ Non-Goal above — accurate is the bar; more-words is not.
 | `BOOK-USER-FRIENDLY-BACKFILL.1` | `BOOK-USER-FRIENDLY-BACKFILL.1 — create tree + scope audit + chapter classification` (`6f6839ec`) | docs-only; the new tree's own scaffolding |
 | `BOOK-USER-FRIENDLY-BACKFILL.2.a` | `BOOK-USER-FRIENDLY-BACKFILL.2.a — rewrite R16-CONTRACT-IR book subsection user-friendly` (`3cc840ef`) | docs-only; per the standard; mdBook green |
 | `BOOK-USER-FRIENDLY-BACKFILL.2.b` | `BOOK-USER-FRIENDLY-BACKFILL.2.b — rewrite R16-KG-PROTOCOL-ONTOLOGY book subsection user-friendly` (`40d8e2cb`) | docs-only; per the standard; mdBook green |
-| `BOOK-USER-FRIENDLY-BACKFILL.2.c` | `BOOK-USER-FRIENDLY-BACKFILL.2.c — rewrite R16-CAPTURE-FIDELITY-GATES book subsection user-friendly` | docs-only; per the standard; mdBook green |
+| `BOOK-USER-FRIENDLY-BACKFILL.2.c` | `BOOK-USER-FRIENDLY-BACKFILL.2.c — rewrite R16-CAPTURE-FIDELITY-GATES book subsection user-friendly` (`26cac946`) | docs-only; per the standard; mdBook green |
+| `BOOK-USER-FRIENDLY-BACKFILL.2.d` | `BOOK-USER-FRIENDLY-BACKFILL.2.d — rewrite R16-MULTIMODAL-CONTRACT-FUSION book subsection user-friendly` | docs-only; per the standard; mdBook green |
 
 ## Changelog
 
 - `2026-05-20`: Created and promoted `active` same day the
   user-friendly standard was established. `.1` scope audit
   recorded; frontier → `.2` (R16 family upgrade).
+- `2026-05-20`: `.2.d` done — `R16-MULTIMODAL-CONTRACT-FUSION`
+  subsection rewritten user-friendly (opens with the AXI
+  write-channel obligation appearing in four places of the
+  spec; two nasty failure modes: silent overwrite + lost
+  contradiction; one-sentence mental model;
+  `FusionKey` walked through with what each field
+  contributes; agreement merge walked through
+  field-by-field (provenance union, `Mixed` modality,
+  delimited source_text, min confidence, `"fused:…"` id);
+  disagreement routing framed as the **second structural
+  honesty doctrine** (parallel to FIDELITY.3 and CVE.3);
+  `apply_fusion` runs BEFORE fidelity gates — ordering
+  rationale called out; implementation notes on determinism
+  + idempotence; corpus baseline `fusion: groups_merged=0
+  disagreements=0` as honest dormancy; four user-facing
+  guarantees framed as benefits). Frontier → `.2.e`
+  (R16-WAVEFORM-CONTRACT-MINING — most substantial; includes
+  the `.3.1` FigureRegion sub-design).
 - `2026-05-20`: `.2.c` done — `R16-CAPTURE-FIDELITY-GATES`
   subsection rewritten user-friendly (opens with "how would
   we know if capture got better?" + missing structural
