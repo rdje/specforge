@@ -170,3 +170,115 @@ makes residuals honest; an unasserted provenance field is a
 silent fabrication surface*. Verified by per-field audit + the
 full `scripts/run_ci.sh`. *Authoritative tracking:*
 `docs/tasks/PROVENANCE-HARDENING.md`.
+
+### `R7-VALIDATION` — closing-out the R7 validation lane
+
+`R7-VALIDATION` closed `2026-05-20`. The implementation leaves
+(`.1`–`.4`) shipped earlier and added findings-and-metrics
+coverage across the validation pipeline:
+
+- `.1` — temporal handshake completion gap finding
+  (`HandshakeValidLike`/`HandshakeReadyLike` interface signals
+  exist but no temporal rule expresses a `HandshakeComplete`
+  predicate); surfaced as an `Info` finding in both
+  `validate_semantic_ir` and `validate_intent_ir` with affected
+  signal names as related ids and rescan guidance for the
+  temporal grounding surface.
+- `.2` — temporal multi-predicate antecedent finding (an `Info`
+  finding when a temporal rule's antecedent carries more than
+  one predicate; flags the count and the rule ids).
+- `.3` — KG-quality benchmark findings: graph-direction
+  coverage, semantic-role resolution rate, consensus coverage
+  rate, each carrying its current rate and the conservative 50%
+  floor threshold in the finding message.
+- `.4` — `.fsm` / `.isf` adapter validation targets: the
+  `specforge validate` command auto-detects an adapter artifact
+  via its `stage` field and dispatches to a per-adapter
+  validator (structural well-formedness + key-property coverage
+  for FSM; ISF coverage already shipped in `R6-ISF-ADAPTER`).
+  Eight FSM-adapter findings (state-graph completeness;
+  transitions present; signal inventory non-empty; system
+  contract present; residual decision count; schema-version
+  freshness; renderability; payload presence).
+- `.5` — design deliverable for tracked approval evidence
+  (canonical IR mutation). See "Tracked approval evidence for
+  canonical IR mutation" below; implementation of the mutation
+  pathway itself remains gated on the user-owned canonical-IR-
+  mutation decision (a future tree picks up this design when
+  that decision is made).
+
+Every leaf landed under the per-leaf signoff discipline
+(`scripts/run_ci.sh` green; idiomatic clippy/fmt fixes only,
+per `SIGNOFF-REMEDIATION`). *Authoritative tracking:*
+`docs/tasks/R7-VALIDATION.md`.
+
+### Tracked approval evidence for canonical IR mutation (`R7-VALIDATION.5` design)
+
+**Why** the design exists *before* implementation: today the
+validation pipeline is read-only — `ValidationFindingRecord`s
+and `ValidationMetricRecord`s are additive observations *about*
+the IR; they don't modify it. The IR's per-stage immutability
+is what makes the pipeline reproducible. "Canonical IR mutation"
+would be: a validation pass that, given approved evidence,
+**modifies the IR itself** (e.g. overriding a
+`LoweringDisposition`; adding/removing typed records). That is
+dangerous by default because it breaks the immutability
+invariant, lets validation silently *fabricate* (the exact
+anti-pattern R16's three structural honesty doctrines were
+introduced to prevent), and makes provenance opaque.
+
+The `R7-VALIDATION.5` design makes canonical IR mutation
+**possible but structurally impossible to perform silently or
+without proof of approval**.
+
+**`ApprovalRecord`** is the typed proof of approval every
+mutation requires: `approval_id`; `approver` (`Human {
+userid, evidence: SignedCommit | SignedFile |
+PullRequestApproval }` or `SystemProcess { process_id,
+parent_approval }`); `scope: MutationScope { ir_stage,
+ir_path: serde-json-path, value_before, value_after }`;
+`justification`; `timestamp_utc` (RFC 3339, recorded once);
+`related_finding_ids` (the findings that licensed the
+mutation); `content_hash` (SHA-256 tamper-evident seal over
+the load-bearing fields).
+
+**`apply_approved_mutation`** is the **single entry point**
+through which canonical IR mutation must flow. It enforces:
+(a) the approval is present in the store; (b) the content_hash
+verifies; (c) the captured `value_before` matches what the
+approval expected (drift detection); (d) the captured
+`value_after` matches what the approval expected
+(post-state verification). Any other code path mutating the IR
+in the validation context would be a bug.
+
+**`ValidationReportRecord.applied_mutations`** is the additive,
+durable audit surface. Empty under today's read-only default
+⇒ byte-for-byte identical to current behaviour (the R16.2
+zero-churn discipline). Non-empty when one or more approved
+mutations were applied; every record carries the approval id,
+the scope, and the apply-time timestamp.
+
+**`ApprovalStore`** is append-only and version-controlled
+(e.g. `.specforge/approvals.jsonl`). No implicit deletion;
+reversing a previously-applied mutation requires a *new*
+approval whose scope inverts it (also tracked).
+
+**Four honesty doctrines** parallel to the three structural
+R16 doctrines:
+
+1. **Refuse-by-default** — any mutation without a present +
+   content-hash-verified + store-resolvable approval fails
+   closed.
+2. **Fully diff-able** — every applied mutation carries its
+   exact `value_before`/`value_after` in the approval.
+3. **Provenance-bearing** — every applied mutation links to
+   the finding ids that licensed it.
+4. **Append-only** — approvals + applied-mutations records are
+   append-only; reversal is itself a tracked mutation.
+
+Together with R16's fidelity-Fail→Residual /
+fusion-disagreement→Residual / entailment-Fail→Residual
+doctrines, fabrication remains mechanically prevented end-to-end
+even after canonical IR mutation is introduced. *Authoritative
+tracking:* `docs/tasks/R7-VALIDATION.md` (the "Design (`.5`
+output, 2026-05-20)" section is the full specification).

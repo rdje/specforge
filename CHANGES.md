@@ -2,6 +2,59 @@
 
 ## 2026-05-20
 
+### R7-VALIDATION.5 — tracked approval evidence design (close R7-VALIDATION tree)
+- Per explicit user direction to PNT into R7-VALIDATION.5, landed
+  the design-only deliverable the leaf required. The
+  Acceptance was always *"design document defining what tracked
+  approval evidence is, when it is required, and how it
+  integrates with the validation pipeline."* The leaf's
+  *implementation* (the mutation pathway itself) remains gated
+  on the user-owned canonical-IR-mutation decision, per the
+  ROADMAP gating language; the design is the load-bearing
+  pre-work that makes a future implementation bounded.
+- The design defines:
+  - **`ApprovalRecord`** — typed proof of approval: approval id;
+    approver identity (`Human { userid, evidence: SignedCommit
+    | SignedFile | PullRequestApproval }` or `SystemProcess {
+    process_id, parent_approval }`); `scope: MutationScope {
+    ir_stage, ir_path: serde-json-path, value_before,
+    value_after }`; justification; RFC-3339 timestamp;
+    `related_finding_ids` (findings that licensed the
+    mutation); `content_hash` (SHA-256 tamper-evident seal).
+  - **`apply_approved_mutation`** — the **single entry point**
+    through which any canonical IR mutation must flow.
+    Refuse-by-default: missing/tampered/unknown approval ⇒
+    `Err`. Drift-detected: captured `value_before` must match
+    the approval. Post-state verified: captured `value_after`
+    must match the approval. Any other code path mutating the
+    IR in the validation context would be a bug.
+  - **`ApprovalStore`** — append-only, version-controlled
+    JSONL (e.g. `.specforge/approvals.jsonl`). No implicit
+    deletion; reversal is itself a tracked mutation.
+  - Additive `ValidationReportRecord.applied_mutations` field
+    (serde-default + skip-if-empty per the R16.2 zero-churn
+    discipline). Empty under today's read-only default ⇒
+    byte-for-byte identical to current behaviour.
+- **Four honesty doctrines** parallel to the three structural
+  R16 doctrines (fidelity Fail→Residual; fusion
+  disagreement→Residual; entailment Fail→Residual):
+  refuse-by-default; fully diff-able; provenance-bearing;
+  append-only. Together they ensure fabrication remains
+  mechanically prevented end-to-end even after canonical IR
+  mutation is introduced.
+- Book method-doc subsection appended to
+  `docs/book/src/quality/validation.md` per the now-structural
+  `BOOK-METHOD-DOC` close-rule (covers all five R7-VALIDATION
+  leaves + the full `.5` design). `docs/TASK_TREE.md` index
+  why-next column updated.
+- **R7-VALIDATION tree CLOSED** — metadata Status was already
+  `done` in the index but `active` in the tree-file; this
+  commit reconciles. Implementation of the mutation pathway is
+  honestly recorded as a future tree (e.g.
+  `R7-MUTATION-PATHWAY-IMPL`) — not a re-opened leaf of this
+  one. Docs-only; `scripts/run_docs_ci.sh` green (mdBook
+  builds).
+
 ### R15-GRAPH-DIRECTION-MIGRATION — metadata reconciliation + book method-doc close
 - The tree's Current Frontier already read "Tree complete. All
   three leaves resolved." and the leaves themselves were all
