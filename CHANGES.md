@@ -2,6 +2,53 @@
 
 ## 2026-05-20
 
+### BOOK-USER-FRIENDLY-BACKFILL.6 — close tree + cross-reference BOOK-METHOD-DOC Decisions (standard now self-referential)
+- Cross-referenced `BOOK-USER-FRIENDLY-BACKFILL` on the
+  `BOOK-METHOD-DOC` Decisions entry so the user-friendly
+  standard is fully **self-referential**: the worked
+  template (the `R7-VALIDATION.5` book subsection in
+  `docs/book/src/quality/validation.md`) AND the backfill
+  instance (this tree's per-subsection upgrades of every
+  concept-introducing pre-2026-05-20 subsection) are both
+  recorded as the canonical examples for closing any
+  future tree.
+- **BOOK-USER-FRIENDLY-BACKFILL tree CLOSED**: 10
+  concept-introducing subsections upgraded across 5 book
+  chapters via per-subsection sub-leaves:
+  - **R16 family** in
+    `direction/temporal-intent-capture.md` (×6:
+    `R16-CONTRACT-IR`, `R16-KG-PROTOCOL-ONTOLOGY`,
+    `R16-CAPTURE-FIDELITY-GATES`,
+    `R16-MULTIMODAL-CONTRACT-FUSION`,
+    `R16-WAVEFORM-CONTRACT-MINING`,
+    `R16-CONSTRAINED-VERIFIED-EXTRACTION`);
+  - **`AUDIT-DOC-RECONCILE`** in
+    `reference/documentation-scope.md`;
+  - **`SIGNOFF-REMEDIATION`** in `reference/live-docs.md`;
+  - **`R7-VALIDATION`** close-out summary in
+    `quality/validation.md`;
+  - **`R15-GRAPH-DIRECTION-MIGRATION`** in
+    `domain/actor-connectivity.md`.
+- Each subsection applies the same structural pattern:
+  user-facing guarantee in blockquote up top → why this
+  isn't free / trivial / a-given (with a concrete
+  failure-mode example) → what-this-tree-fixed concretely
+  → how-the-doctrine-is-enforced-now (when there is a
+  doctrine) → what-this-buys-the-SpecForge-user.
+- **Honest Non-Goal preserved**: concise 1-paragraph
+  closure summaries (ISF/FSMGen 7 trees + R6 hardening 6
+  trees + PROVENANCE-HARDENING) are kept as-is — accurate
+  brevity is the right answer for non-concept-introducing
+  subsections; more-words for more-words' sake is not the
+  standard.
+- `docs/TASK_TREE.md` row → `done`. Docs-only;
+  `scripts/run_docs_ci.sh` green (mdBook builds throughout
+  every leaf). The user-friendly thorough standard is now
+  load-bearing structurally (via the BOOK-METHOD-DOC
+  close-rule in Completion Rules + Required Commit Workflow)
+  AND validated retroactively (via this tree's 10
+  upgrades).
+
 ### BOOK-USER-FRIENDLY-BACKFILL.5 — rewrite R15-GRAPH-DIRECTION-MIGRATION as actor-relative-graph user-facing property
 - Rewrote the `R15-GRAPH-DIRECTION-MIGRATION` subsection in
   `docs/book/src/domain/actor-connectivity.md` as a

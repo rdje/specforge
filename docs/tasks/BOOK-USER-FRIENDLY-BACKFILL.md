@@ -3,10 +3,11 @@
 ## Metadata
 
 - Tree ID: `BOOK-USER-FRIENDLY-BACKFILL`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: `R0` (live-doc continuity / accuracy)
 - Created: `2026-05-20`
 - Last updated: `2026-05-20`
+- Closed: `2026-05-20`
 - Owner: repo-local workflow
 
 ## Goal
@@ -336,7 +337,7 @@ Non-Goal above — accurate is the bar; more-words is not.
   Commit: `see Commit Log`
 
 - ID: `BOOK-USER-FRIENDLY-BACKFILL.6`
-  Status: `pending`
+  Status: `done` (`2026-05-20`)
   Goal: close the tree. Final verification: re-read every upgraded
   subsection cold; confirm a new user could understand the
   introduced concepts from the book alone; record this audit pass
@@ -344,10 +345,43 @@ Non-Goal above — accurate is the bar; more-words is not.
   entry with a cross-reference to this tree so the standard is
   fully self-referential.
   Acceptance: `Cold-read audit confirms each upgraded subsection is user-comprehensible; BOOK-METHOD-DOC Decisions cross-references this tree; tree marked done.`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — every upgraded subsection
+    (`.2.a`–`.2.f` R16-family in
+    `direction/temporal-intent-capture.md`; `.3`
+    AUDIT-DOC-RECONCILE in
+    `reference/documentation-scope.md`; `.3`
+    SIGNOFF-REMEDIATION in `reference/live-docs.md`; `.4`
+    R7-VALIDATION close-out in `quality/validation.md`;
+    `.5` R15 in `domain/actor-connectivity.md`) applies the
+    same structural pattern: user-facing guarantee in
+    blockquote up top → why this isn't free / trivial /
+    a-given (with a concrete failure-mode example) →
+    what-this-tree-fixed concretely → how-the-doctrine-is-
+    enforced-now (when there is a doctrine) →
+    what-this-buys-the-SpecForge-user. The R7-VALIDATION.5
+    book subsection in `docs/book/src/quality/validation.md`
+    is the canonical worked template (rewritten earlier
+    today); the BOOK-METHOD-DOC Decisions entry is updated
+    to cross-reference this tree as the worked backfill that
+    proved the standard across the existing surface. Honest
+    Non-Goal recorded: concise 1-paragraph closure summaries
+    (ISF/FSMGen 7 trees + R6 hardening 6 trees +
+    PROVENANCE-HARDENING) are kept as-is — accurate brevity
+    is the right answer for non-concept-introducing
+    subsections; more-words for more-words' sake is not
+    the standard. mdBook green throughout.
+  Commit: `see Commit Log`
 
 ## Current Frontier
+
+**Tree closed `2026-05-20`.** All six leaves done; ten upgraded
+subsections across five book chapters meet the user-friendly
+standard; BOOK-METHOD-DOC Decisions cross-references this tree as
+the worked backfill that proved the standard across the existing
+surface. The standard now applies to every future close-leaf
+structurally (per the BOOK-METHOD-DOC close-rule encoded in
+`docs/TASK_TREE.md` Completion Rules + `COMMIT.md` Required
+Commit Workflow).
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
@@ -362,7 +396,7 @@ Non-Goal above — accurate is the bar; more-words is not.
 | 3 | `BOOK-USER-FRIENDLY-BACKFILL.3` | `done` | reference/* doctrines rewritten user-friendly — `2026-05-20` |
 | 4 | `BOOK-USER-FRIENDLY-BACKFILL.4` | `done` | R7-VALIDATION close-out summary upgraded — `2026-05-20` |
 | 5 | `BOOK-USER-FRIENDLY-BACKFILL.5` | `done` | R15 actor-relative-graph framing rewritten — `2026-05-20` |
-| 6 | `BOOK-USER-FRIENDLY-BACKFILL.6` | `pending` | **Next** — close tree (cold-read audit + cross-reference BOOK-METHOD-DOC Decisions) |
+| 6 | `BOOK-USER-FRIENDLY-BACKFILL.6` | `done` | Tree closed `2026-05-20`; BOOK-METHOD-DOC Decisions cross-referenced |
 
 ## Dependencies / Order
 
@@ -407,6 +441,7 @@ Non-Goal above — accurate is the bar; more-words is not.
 | `2026-05-20` | `BOOK-USER-FRIENDLY-BACKFILL.3` | AUDIT-DOC-RECONCILE + SIGNOFF-REMEDIATION subsections rewritten with consistent user-friendly structure: user-facing guarantee in blockquote up top; why-this-isn't-free with concrete drift-or-bar-slip example; what-this-tree-fixed concretely; how-the-doctrine-is-enforced-now (structural enforcement via Completion Rules + Required Commit Workflow); what-this-buys-the-SpecForge-user; mdBook green | `passed` |
 | `2026-05-20` | `BOOK-USER-FRIENDLY-BACKFILL.4` | R7-VALIDATION close-out summary rewritten as a user-facing guide ("what `specforge validate` does for you today") rather than a leaf-by-leaf changelog; user-facing guarantee in blockquote; severity meanings + read-only contract; four delivered surfaces (handshake gap, multi-predicate antecedent, KG-quality benchmarks with 50% floor, adapter auto-detection) each framed in terms of what the user sees + what it means; four benefits framed as properties; signoff discipline pointer; mdBook green | `passed` |
 | `2026-05-20` | `BOOK-USER-FRIENDLY-BACKFILL.5` | R15-GRAPH-DIRECTION-MIGRATION subsection rewritten: opens with the tautology framing ("ask the actor-relative graph from the perspective of the actor you care about"); user-facing guarantee in blockquote; **why-this-isn't-trivial section explains protocol-direction = perspective-relative** (manager-output = subordinate-input); flat direction_hint drift example; actor-relative-graph fix; what-this-tree-did concretely (adapter + validation + semantic migrated); compatibility surface kept; 3 user-facing benefits as properties (no perspective bugs, read-IR-by-perspective, external direction_hint consumers still work); mdBook green | `passed` |
+| `2026-05-20` | `BOOK-USER-FRIENDLY-BACKFILL.6` | tree closed; cross-referenced this tree on the BOOK-METHOD-DOC Decisions entry so the standard is fully self-referential (the worked template + the backfill instance both recorded); honest Non-Goal preserved (concise 1-paragraph closure summaries kept as-is); mdBook green | `passed` |
 
 ## Commit Log
 
@@ -421,13 +456,35 @@ Non-Goal above — accurate is the bar; more-words is not.
 | `BOOK-USER-FRIENDLY-BACKFILL.2.f` | `BOOK-USER-FRIENDLY-BACKFILL.2.f — rewrite R16-CONSTRAINED-VERIFIED-EXTRACTION book subsection user-friendly (closes BUF.2; R16 PROGRAM COMPLETE recap)` (`e36a00c3`) | docs-only; per the standard; mdBook green; **closes the R16 family book backfill** |
 | `BOOK-USER-FRIENDLY-BACKFILL.3` | `BOOK-USER-FRIENDLY-BACKFILL.3 — rewrite reference/* doctrine subsections (AUDIT-DOC-RECONCILE + SIGNOFF-REMEDIATION) user-friendly` (`96bef553`) | docs-only; per the standard; mdBook green |
 | `BOOK-USER-FRIENDLY-BACKFILL.4` | `BOOK-USER-FRIENDLY-BACKFILL.4 — rewrite R7-VALIDATION close-out summary as user-facing validate guide` (`e0638d30`) | docs-only; per the standard; mdBook green |
-| `BOOK-USER-FRIENDLY-BACKFILL.5` | `BOOK-USER-FRIENDLY-BACKFILL.5 — rewrite R15-GRAPH-DIRECTION-MIGRATION as actor-relative-graph user-facing property` | docs-only; per the standard; mdBook green; perspective-relativity rationale explained |
+| `BOOK-USER-FRIENDLY-BACKFILL.5` | `BOOK-USER-FRIENDLY-BACKFILL.5 — rewrite R15-GRAPH-DIRECTION-MIGRATION as actor-relative-graph user-facing property` (`56c03ce7`) | docs-only; per the standard; mdBook green; perspective-relativity rationale explained |
+| `BOOK-USER-FRIENDLY-BACKFILL.6` | `BOOK-USER-FRIENDLY-BACKFILL.6 — close tree + cross-reference BOOK-METHOD-DOC Decisions` | docs-only; tree closed; standard now self-referential (worked template + backfill instance) |
 
 ## Changelog
 
 - `2026-05-20`: Created and promoted `active` same day the
   user-friendly standard was established. `.1` scope audit
   recorded; frontier → `.2` (R16 family upgrade).
+- `2026-05-20`: **Tree CLOSED.** `.6` done — cross-referenced
+  this tree on the BOOK-METHOD-DOC Decisions entry so the
+  user-friendly standard is now **self-referential**: the
+  worked template (`R7-VALIDATION.5` book subsection in
+  `docs/book/src/quality/validation.md`) AND the backfill
+  instance (this tree's per-subsection upgrades of every
+  concept-introducing pre-2026-05-20 subsection) are both
+  recorded as the canonical examples. The honest Non-Goal
+  is preserved: concise 1-paragraph closure summaries
+  (ISF/FSMGen 7 trees + R6 hardening 6 trees +
+  PROVENANCE-HARDENING) stay as-is — accurate brevity is
+  the right answer for non-concept-introducing subsections.
+  Final scoreboard: **10 concept-introducing subsections
+  upgraded across 5 book chapters** (R16 family ×6 in
+  `direction/temporal-intent-capture.md`;
+  AUDIT-DOC-RECONCILE in `reference/documentation-scope.md`;
+  SIGNOFF-REMEDIATION in `reference/live-docs.md`;
+  R7-VALIDATION close-out in `quality/validation.md`;
+  R15-GRAPH-DIRECTION-MIGRATION in
+  `domain/actor-connectivity.md`). mdBook green throughout
+  every leaf.
 - `2026-05-20`: `.5` done — `R15-GRAPH-DIRECTION-MIGRATION`
   subsection in `docs/book/src/domain/actor-connectivity.md`
   rewritten as an actor-relative-graph user-facing property

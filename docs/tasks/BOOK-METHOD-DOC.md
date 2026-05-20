@@ -228,6 +228,27 @@ chapter is a hard completion criterion.
   forward — refer to it as the canonical example when closing
   any future tree.
 
+  Backfill of pre-2026-05-20 subsections to this standard:
+  `BOOK-USER-FRIENDLY-BACKFILL` tree (closed `2026-05-20`)
+  systematically upgraded the existing concept-introducing
+  subsections — all six R16-family subsections, the
+  `reference/*` doctrine subsections
+  (`AUDIT-DOC-RECONCILE` / `SIGNOFF-REMEDIATION`), the
+  `R7-VALIDATION` close-out summary, and
+  `R15-GRAPH-DIRECTION-MIGRATION` — to the same structural
+  pattern: user-facing guarantee in blockquote → why this
+  isn't free / trivial / a-given → what the tree fixed
+  concretely → how the doctrine is enforced now (when there
+  is a doctrine) → what this buys the SpecForge user. The
+  honest scope rule recorded on `BOOK-USER-FRIENDLY-BACKFILL`:
+  concise 1-paragraph closure summaries (ISF/FSMGen, R6
+  hardening, PROVENANCE-HARDENING) are kept as-is — accurate
+  brevity is the right answer for non-concept-introducing
+  subsections; more-words for more-words' sake is not the
+  goal. See
+  `docs/tasks/BOOK-USER-FRIENDLY-BACKFILL.md` for the full
+  scope audit + per-subsection upgrade record.
+
 ## Blockers
 
 - None.

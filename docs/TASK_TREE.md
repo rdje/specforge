@@ -45,7 +45,7 @@ evidence for one top-level task.
 | `R16-WAVEFORM-CONTRACT-MINING` | `done` | `R16` | — (program point #4 fully delivered `2026-05-20`: `.1`+`.2`+`.3` (`.3.1`+`.3.2`)+`.4`; `validate waveform: figure_contracts=0 verifier_fail_residuals=0` corpus baseline; raster/vector handling deferred to a future tree when upstream PDF pipeline produces those bytes) | [docs/tasks/R16-WAVEFORM-CONTRACT-MINING.md](docs/tasks/R16-WAVEFORM-CONTRACT-MINING.md) |
 | `R16-CONSTRAINED-VERIFIED-EXTRACTION` | `done` | `R16` | — (program point #6 delivered `2026-05-20`; fails-closed adapter + entailment verifier + template library + uncertainty VoI selector + `validate constrained:` block; corpus baseline 0/0/0; closes R16 program) | [docs/tasks/R16-CONSTRAINED-VERIFIED-EXTRACTION.md](docs/tasks/R16-CONSTRAINED-VERIFIED-EXTRACTION.md) |
 | `BOOK-METHOD-DOC` | `done` | `R0` | — (closed `2026-05-20`: convention + placement map + 7+2 backfilled trees + close-rule encoded in workflow doctrine; close-rule now structurally enforced via Completion Rules + Required Commit Workflow) | [docs/tasks/BOOK-METHOD-DOC.md](docs/tasks/BOOK-METHOD-DOC.md) |
-| `BOOK-USER-FRIENDLY-BACKFILL` | `active` | `R0` | `BOOK-USER-FRIENDLY-BACKFILL.6` (`.1`–`.5` done; next = close tree: cold-read audit + cross-reference BOOK-METHOD-DOC Decisions) | [docs/tasks/BOOK-USER-FRIENDLY-BACKFILL.md](docs/tasks/BOOK-USER-FRIENDLY-BACKFILL.md) |
+| `BOOK-USER-FRIENDLY-BACKFILL` | `done` | `R0` | — (closed `2026-05-20`: 10 concept-introducing subsections upgraded across 5 book chapters via per-subsection sub-leaves; BOOK-METHOD-DOC Decisions cross-referenced — standard fully self-referential) | [docs/tasks/BOOK-USER-FRIENDLY-BACKFILL.md](docs/tasks/BOOK-USER-FRIENDLY-BACKFILL.md) |
 
 ## Directory Layout
 
