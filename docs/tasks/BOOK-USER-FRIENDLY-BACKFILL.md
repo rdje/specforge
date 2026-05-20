@@ -270,15 +270,23 @@ Non-Goal above — accurate is the bar; more-words is not.
     Commit: `see Commit Log`
 
 - ID: `BOOK-USER-FRIENDLY-BACKFILL.3`
-  Status: `pending`
+  Status: `done` (`2026-05-20`)
   Goal: light upgrade of the two `reference/*` doctrine
   subsections (`AUDIT-DOC-RECONCILE` →
   `reference/documentation-scope.md`; `SIGNOFF-REMEDIATION` →
   `reference/live-docs.md`) — frame each doctrine as a user
   benefit, with concrete examples of what the doctrine prevents.
   Acceptance: `Both subsections framed in user terms; the doctrine each tree established is presented as a property the user can rely on; mdBook green.`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — both subsections rewritten with
+    the same user-friendly structure: user-facing guarantee
+    up top (in blockquote); why-this-isn't-free section
+    with a concrete drift-or-bar-slip example; what-this-
+    tree-fixed concretely; how-the-doctrine-is-enforced-now
+    section explaining the structural enforcement;
+    what-this-buys-you-as-a-SpecForge-user section framing
+    the doctrine as a property the user can rely on. mdBook
+    green.
+  Commit: `see Commit Log`
 
 - ID: `BOOK-USER-FRIENDLY-BACKFILL.4`
   Status: `pending`
@@ -324,8 +332,8 @@ Non-Goal above — accurate is the bar; more-words is not.
 | 2.d | `BOOK-USER-FRIENDLY-BACKFILL.2.d` | `done` | `R16-MULTIMODAL-CONTRACT-FUSION` rewritten user-friendly — `2026-05-20` |
 | 2.e | `BOOK-USER-FRIENDLY-BACKFILL.2.e` | `done` | `R16-WAVEFORM-CONTRACT-MINING` rewritten user-friendly — `2026-05-20` |
 | 2.f | `BOOK-USER-FRIENDLY-BACKFILL.2.f` | `done` | `R16-CONSTRAINED-VERIFIED-EXTRACTION` rewritten user-friendly — `2026-05-20` |
-| 3 | `BOOK-USER-FRIENDLY-BACKFILL.3` | `pending` | **Next** — reference/* doctrine subsections |
-| 4 | `BOOK-USER-FRIENDLY-BACKFILL.4` | `pending` | R7-VALIDATION close-out summary |
+| 3 | `BOOK-USER-FRIENDLY-BACKFILL.3` | `done` | reference/* doctrines rewritten user-friendly — `2026-05-20` |
+| 4 | `BOOK-USER-FRIENDLY-BACKFILL.4` | `pending` | **Next** — R7-VALIDATION close-out summary |
 | 5 | `BOOK-USER-FRIENDLY-BACKFILL.5` | `pending` | R15 actor-relative-graph framing |
 | 6 | `BOOK-USER-FRIENDLY-BACKFILL.6` | `pending` | Close tree |
 
@@ -369,6 +377,7 @@ Non-Goal above — accurate is the bar; more-words is not.
 | `2026-05-20` | `BOOK-USER-FRIENDLY-BACKFILL.2.e` | `R16-WAVEFORM-CONTRACT-MINING` subsection rewritten user-friendly (opens with timing diagrams as densest temporal-intent source + defensive VLM extractor problem; one-sentence mental model PartialTrace + generalizer + round-trip verifier = fabrication-prevented mining; typed `PartialTrace` walked through with evidence-kind structure; four conservative generalization rules with explicit honesty defaults; **round-trip verifier framed as third structural-honesty enforcement** alongside FIDELITY.3 + FUSION.3 + CVE.3 = four-doctrine framing; cross-check delegated to FUSION; `.3.1` FigureRegion input contract design walked through with corpus-survey finding; `.3.2` adapter mapping walked through; corpus baseline 0/0 as honest dormancy; negative-fixture coverage as the load-bearing safety claim with three named unit tests; 4 user-facing guarantees framed as benefits); mdBook green | `passed` |
 | `2026-05-20` | `BOOK-USER-FRIENDLY-BACKFILL.2.f` | `R16-CONSTRAINED-VERIFIED-EXTRACTION` subsection rewritten user-friendly (opens with the LLM/VLM extractor producing JSON that *looks* like ActorContract; three concrete failure modes; one-sentence mental model; `parse_constrained_contract` with serde-is-validator + drift-lock + provider-agnostic properties; `entailment_check` + the **fourth structural honesty doctrine** completing four-doctrine framing (FIDELITY.3 + FUSION.3 + WAVEFORM.3 + CVE.3); template library with match-grounding + honestly-residual lowering for CFC/SetupAccess; `voi_score`/`select_top_n_by_voi` with reproducibility framing; corpus baseline 0/0/0 as honest dormancy; 4 user-facing guarantees; **Status closes with R16 PROGRAM COMPLETE recap** + four-doctrine table); mdBook green | `passed` |
 | `2026-05-20` | `BOOK-USER-FRIENDLY-BACKFILL.2` | All 6 R16-family subsections rewritten user-friendly via per-subsection sub-leaves `.2.a`–`.2.f`; per-tree task-tree files unchanged; mdBook green | `passed` |
+| `2026-05-20` | `BOOK-USER-FRIENDLY-BACKFILL.3` | AUDIT-DOC-RECONCILE + SIGNOFF-REMEDIATION subsections rewritten with consistent user-friendly structure: user-facing guarantee in blockquote up top; why-this-isn't-free with concrete drift-or-bar-slip example; what-this-tree-fixed concretely; how-the-doctrine-is-enforced-now (structural enforcement via Completion Rules + Required Commit Workflow); what-this-buys-the-SpecForge-user; mdBook green | `passed` |
 
 ## Commit Log
 
@@ -380,13 +389,46 @@ Non-Goal above — accurate is the bar; more-words is not.
 | `BOOK-USER-FRIENDLY-BACKFILL.2.c` | `BOOK-USER-FRIENDLY-BACKFILL.2.c — rewrite R16-CAPTURE-FIDELITY-GATES book subsection user-friendly` (`26cac946`) | docs-only; per the standard; mdBook green |
 | `BOOK-USER-FRIENDLY-BACKFILL.2.d` | `BOOK-USER-FRIENDLY-BACKFILL.2.d — rewrite R16-MULTIMODAL-CONTRACT-FUSION book subsection user-friendly` (`db9d8fe6`) | docs-only; per the standard; mdBook green |
 | `BOOK-USER-FRIENDLY-BACKFILL.2.e` | `BOOK-USER-FRIENDLY-BACKFILL.2.e — rewrite R16-WAVEFORM-CONTRACT-MINING book subsection user-friendly (incl. .3.1 FigureRegion)` (`c75ac736`) | docs-only; per the standard; mdBook green |
-| `BOOK-USER-FRIENDLY-BACKFILL.2.f` | `BOOK-USER-FRIENDLY-BACKFILL.2.f — rewrite R16-CONSTRAINED-VERIFIED-EXTRACTION book subsection user-friendly (closes BUF.2; R16 PROGRAM COMPLETE recap)` | docs-only; per the standard; mdBook green; **closes the R16 family book backfill** |
+| `BOOK-USER-FRIENDLY-BACKFILL.2.f` | `BOOK-USER-FRIENDLY-BACKFILL.2.f — rewrite R16-CONSTRAINED-VERIFIED-EXTRACTION book subsection user-friendly (closes BUF.2; R16 PROGRAM COMPLETE recap)` (`e36a00c3`) | docs-only; per the standard; mdBook green; **closes the R16 family book backfill** |
+| `BOOK-USER-FRIENDLY-BACKFILL.3` | `BOOK-USER-FRIENDLY-BACKFILL.3 — rewrite reference/* doctrine subsections (AUDIT-DOC-RECONCILE + SIGNOFF-REMEDIATION) user-friendly` | docs-only; per the standard; mdBook green |
 
 ## Changelog
 
 - `2026-05-20`: Created and promoted `active` same day the
   user-friendly standard was established. `.1` scope audit
   recorded; frontier → `.2` (R16 family upgrade).
+- `2026-05-20`: `.3` done — both `reference/*` doctrine
+  subsections rewritten with the same user-friendly
+  structure:
+  - **`AUDIT-DOC-RECONCILE`** in
+    `docs/book/src/reference/documentation-scope.md` —
+    user-facing guarantee in blockquote ("every claim in the
+    book / ROADMAP / README either describes what the code
+    does, or it's recorded as wrong and gets fixed"); why
+    this isn't free (with a concrete doc-drift example);
+    what this tree fixed (ROADMAP R15 + stale HDL refs); how
+    the doctrine is enforced now (via BOOK-METHOD-DOC
+    close-rule + run_docs_ci.sh); what it buys the SpecForge
+    user (you can read the book and trust it).
+  - **`SIGNOFF-REMEDIATION`** in
+    `docs/book/src/reference/live-docs.md` — user-facing
+    guarantee in blockquote ("`scripts/run_ci.sh` on `main`
+    is always green; if you branch, your starting point is
+    clean"); why this isn't free (three concrete failure
+    modes when CI bar slips); what this tree fixed
+    (25-clippy-errors restoration with idiomatic fixes only +
+    narrow-recorded `#[allow]`s where genuinely
+    inapplicable + zero production behaviour change); how
+    the doctrine is enforced now (via COMMIT.md Required
+    Commit Workflow); what it buys the SpecForge user
+    (clean starting point, every leaf shipped under a green
+    gate, idiomatic clippy precedent).
+  Both subsections share the structural pattern: user-facing
+  guarantee → why-not-free → what-was-fixed → how-it's-
+  enforced-now → what-this-buys-you. Frontier → `.4`
+  (R7-VALIDATION close-out summary in `quality/validation.md`
+  — frame the per-leaf findings/metrics as what the user
+  gets out of running validation today).
 - `2026-05-20`: **`.2` (parent) DONE — all 6 R16-family
   subsections rewritten user-friendly via the per-subsection
   sub-leaves.** `.2.f` done — `R16-CONSTRAINED-VERIFIED-EXTRACTION`

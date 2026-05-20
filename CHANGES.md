@@ -2,6 +2,37 @@
 
 ## 2026-05-20
 
+### BOOK-USER-FRIENDLY-BACKFILL.3 — rewrite reference/* doctrine subsections user-friendly (AUDIT-DOC-RECONCILE + SIGNOFF-REMEDIATION)
+- Rewrote both reference/* doctrine subsections with a
+  consistent user-friendly structure: user-facing guarantee
+  in blockquote up top → why-this-isn't-free with a concrete
+  example → what-this-tree-fixed concretely →
+  how-the-doctrine-is-enforced-now (structural enforcement
+  via Completion Rules / Required Commit Workflow) →
+  what-this-buys-the-SpecForge-user.
+- **`AUDIT-DOC-RECONCILE`** in
+  `docs/book/src/reference/documentation-scope.md`:
+  guarantee = *every claim in book / ROADMAP / README either
+  describes what the code does, or it's recorded as wrong
+  and gets fixed*; doc-drift example (ROADMAP describing
+  deleted `.fsm` paths); both reconciled findings spelled
+  out; structural enforcement via the BOOK-METHOD-DOC
+  close-rule + `scripts/run_docs_ci.sh`; user benefit (you
+  can read this book and trust it).
+- **`SIGNOFF-REMEDIATION`** in
+  `docs/book/src/reference/live-docs.md`: guarantee =
+  *`scripts/run_ci.sh` on `main` is always green; if you
+  branch your starting point is clean*; three concrete CI-
+  bar-slip failure modes spelled out; restoration approach
+  (idiomatic fixes only, narrow-scoped `#[allow]`s with
+  recorded reasons, zero production behaviour change); 40+
+  R16 leaves landed under this discipline; structural
+  enforcement via `COMMIT.md` Required Commit Workflow;
+  user benefit (clean starting point, every leaf shipped
+  under green gate).
+- Docs-only; `scripts/run_docs_ci.sh` green (mdBook builds).
+  Frontier → `.4` (R7-VALIDATION close-out summary).
+
 ### BOOK-USER-FRIENDLY-BACKFILL.2.f — rewrite R16-CONSTRAINED-VERIFIED-EXTRACTION book subsection user-friendly (closes BUF.2; R16 PROGRAM COMPLETE recap)
 - Rewrote the `R16-CONSTRAINED-VERIFIED-EXTRACTION` subsection
   in `docs/book/src/direction/temporal-intent-capture.md` to

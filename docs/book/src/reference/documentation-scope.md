@@ -44,26 +44,110 @@ When a change mainly preserves live state, sequencing, recovery context, or sess
 
 ## Closed task trees — how each was implemented and verified
 
-### `AUDIT-DOC-RECONCILE` — reconcile docs against code reality
+### `AUDIT-DOC-RECONCILE` — the doctrine that keeps the docs honest
 
-When the documentation lane drifts ahead of (or behind) the code,
-the book/ROADMAP/README must be brought back to what the code
-actually does — never the other way around. This tree reconciled
-two specific findings from a doc-audit pass:
+When you read a SpecForge guide, a ROADMAP entry, or a
+README sentence, you should be able to trust that what it
+says is what the code actually does. That sounds obvious. It
+isn't free, and `AUDIT-DOC-RECONCILE` is the tree that paid
+for it.
 
-1. `ROADMAP` R15 still described adapter-side actor-relative
-   direction computation and the deleted `.fsm` paths even though
-   `.isf` (the only adapter) defaults direction/width by design
-   and the actor-relative graph remained canonical in
-   `SemanticIR`/`IntentIR`. The text contradicted the code; the
-   text was rewritten to match.
-2. Stale references to multi-target HDL adapters were removed
-   from the book and ROADMAP after `ISF-ONLY-CONSOLIDATION` made
-   `.isf` the sole target.
+#### The user-facing guarantee
 
-The doctrine recorded by this tree (and now load-bearing for
-every subsequent close-leaf): *book / ROADMAP language must
-describe what the code does — when it doesn't, the text is
-wrong, not the code*. Verified by leaf-by-leaf diff against the
-relevant code surfaces + `scripts/run_docs_ci.sh`.
-*Authoritative tracking:* `docs/tasks/AUDIT-DOC-RECONCILE.md`.
+> **Every claim in the book / ROADMAP / README either
+> describes what the code does, or it's recorded as wrong
+> and gets fixed. The text is never allowed to silently lie
+> about the code. When in doubt: the code is the truth, the
+> text is the suspect.**
+
+That's the doctrine. It's load-bearing for every later
+tree's close-leaf — including every R16 subsection you just
+read in this book.
+
+#### Why this isn't free
+
+Doc drift is the gentlest kind of bug: it doesn't break a
+test, it doesn't crash a build, and it survives every
+refactor that doesn't happen to touch the documented
+surface. A typical drift case looks like this:
+
+> *The ROADMAP says: "the adapter computes actor-relative
+> direction from the flat `direction_hint` field."*
+>
+> *Six months earlier, R15-GRAPH-DIRECTION-MIGRATION moved
+> direction-computation into the canonical KG. The adapter
+> stopped consulting `direction_hint` for that purpose.*
+>
+> *The ROADMAP sentence stayed. Anyone reading the ROADMAP
+> today gets a clean, plausible explanation of how the
+> adapter works — except the explanation is wrong, by a
+> migration nobody remembered to also write about.*
+
+Multiply that by every active subsystem, every long-running
+program, every README that promised an architecture before
+the code arrived, and you get a documentation lane that
+quietly drifts ahead of (or, more often, behind) the code
+that's actually shipping.
+
+#### What this tree fixed (concretely)
+
+Two specific drifts were identified by a doc-audit pass and
+reconciled in this tree:
+
+1. **`ROADMAP` R15** still described adapter-side
+   actor-relative direction computation and the deleted
+   `.fsm` paths even though `.isf` (the only adapter
+   target) defaults direction and width by design, and the
+   actor-relative graph remained canonical in `SemanticIR` /
+   `IntentIR`. The text contradicted the code; the text was
+   rewritten to match.
+2. **Stale references to multi-target HDL adapters**
+   (SystemVerilog / Verilog / VHDL) lingered in the book and
+   ROADMAP after `ISF-ONLY-CONSOLIDATION` made `.isf` the
+   sole adapter target. The references were removed.
+
+Both fixes followed the doctrine: the code was the truth;
+the text was rewritten to describe it.
+
+#### How the doctrine is enforced now
+
+The doctrine became **structural** through the
+`BOOK-METHOD-DOC` close-rule (see `Required Commit
+Workflow` in `COMMIT.md` and `Completion Rules` in
+`docs/TASK_TREE.md`):
+
+- Every tree's closing leaf MUST add or refresh that tree's
+  method-doc subsection in the topically-correct mdBook
+  chapter — describing what the code does now.
+- A close leaf whose book section is missing or stale is, by
+  definition, **incomplete**.
+- The CI step (`scripts/run_docs_ci.sh`) builds the book on
+  every leaf, so the book is exercised continuously.
+
+In other words: this doctrine + that close-rule mean drift
+becomes a per-leaf bug instead of a six-month-later audit
+finding. The book section you're reading right now exists
+because the close-leaf that delivered the R7-VALIDATION tree
+was required to refresh it.
+
+#### What this buys you, as a SpecForge user
+
+- **You can read this book and trust it.** If a section
+  claims SpecForge does X, the code does X. If the section
+  is wrong, that's a bug — file it, and the next close-leaf
+  to touch the affected area will reconcile it.
+- **You don't have to read the source to be sure.** The
+  task-tree files remain the machine-tracked authority for
+  what was delivered; the book is the topically-placed
+  explanation that mirrors them. If you read either and
+  reach the same conclusion, the doctrine is doing its job.
+- **You can spot drift cheaply.** If you find a sentence
+  here that doesn't match the code, you've found a real bug
+  (and a small one — drifts are usually one paragraph in
+  one chapter, not a tangled refactor).
+
+*Authoritative tracking:*
+`docs/tasks/AUDIT-DOC-RECONCILE.md`. The doctrine is
+recorded as a standing rule in `docs/TASK_TREE.md`'s
+Completion Rules and `COMMIT.md`'s Required Commit
+Workflow.
