@@ -410,3 +410,40 @@ mechanically refusing to silently pick.
   closing leaf refreshes this section (BOOK-METHOD-DOC).
 
 Authoritative tracking: `docs/tasks/R16-MULTIMODAL-CONTRACT-FUSION.md`.
+
+### Status — delivered (`2026-05-20`)
+
+`R16-MULTIMODAL-CONTRACT-FUSION` is **closed**. All four leaves done:
+
+1. `.1` fusion design fixed (typed layer / no new stage; `FusionKey`
+   on (actor, channel, phase, obligation_kind, primary_signal);
+   deterministic agreement merge with provenance union + `Mixed`
+   modality + min `automation_confidence`; disagreement → Residual
+   honesty doctrine);
+2. `.2` typed `fusion` module + `merge_cluster` primitive (size-1
+   identity, agreement merge, multi-field sorted-dedup disagreement) +
+   6 unit tests; no producer wiring; zero artifact churn;
+3. `.3` `apply_fusion` producer wired in `SemanticIr::build` **BEFORE**
+   `apply_fidelity_gates` (so the fidelity gates evaluate the fused
+   contracts); HashMap + first-seen-order Vec for determinism;
+   merged contract takes the first slot, trailing dropped, input
+   order otherwise preserved; idempotent on already-fused input;
+   3 producer tests;
+4. `.4` `specforge validate` `fusion: groups_merged=N
+   disagreements=M` block (counts derived from `actor_contracts`
+   via the `contract_id` `"fused:"` prefix and the `Residual.reason`
+   `"disagreement: "` prefix — the IR is self-describing, no new
+   field needed).
+
+Live evidence: corpus baseline reads `fusion: groups_merged=0
+disagreements=0` — the nvme corpus has no agreement-mergeable
+clusters today (most contracts have `actor_name=None` /
+`channel=None` / `phase=None`, but `(obligation_kind, primary_signal)`
+still discriminates the rules well enough). **Honest dormancy**: the
+primitive and producer are unit-tested with synthetic clusters; the
+producer becomes load-bearing the moment extraction (`#4`/`#6`)
+populates `channel`/`phase` or yields multi-source candidates per
+protocol element. Next DAG-promotable R16 sub-tree =
+`R16-WAVEFORM-CONTRACT-MINING` (#4, order 5 — **the crux** of the
+program thesis: prose + timing-diagram extraction into typed
+contracts).

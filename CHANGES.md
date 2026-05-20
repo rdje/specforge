@@ -2,6 +2,35 @@
 
 ## 2026-05-20
 
+### R16-MULTIMODAL-CONTRACT-FUSION.4 — `validate fusion:` block + close tree (point #3 DELIVERED)
+- `specforge validate` now prints
+  `fusion: groups_merged=N disagreements=M` in both the SemanticIR
+  and IntentIR count blocks
+  (`crates/specforge/src/commands/validate.rs`, additive lines via
+  `replace_all`). Counts derived from `actor_contracts`:
+  `groups_merged` = contracts whose `contract_id` starts with
+  `fused:`; `disagreements` = `Residual` contracts whose `reason`
+  starts with `disagreement: `. The IR is self-describing — no new
+  field on `SemanticIr` / `IntentIr`. Structured-metric / JSON shape
+  intentionally not touched (bounded; KG-ONTOLOGY.4 / FIDELITY.4
+  precedents).
+- Corpus baseline: nvme + e2e suite report
+  `fusion: groups_merged=0 disagreements=0` — honest dormancy: the
+  primitive + producer are unit-tested with synthetic clusters in
+  `.2`/`.3`; the producer becomes load-bearing the moment extraction
+  (`#4`/`#6`) populates `channel`/`phase` or yields multi-source
+  candidates.
+- Tree CLOSED: `docs/tasks/R16-MULTIMODAL-CONTRACT-FUSION.md`
+  Status=done; Current Frontier closed; Verification Log / Commit
+  Log / Decisions / Changelog reconciled. `docs/TASK_TREE.md` row →
+  `done`. `ROADMAP.md` R16 entry updated: program point #3
+  DELIVERED; next DAG-promotable =
+  `R16-WAVEFORM-CONTRACT-MINING` (#4, order 5 — **the crux** of the
+  program thesis: prose + timing-diagram extraction). Book
+  *Temporal-Intent Capture* chapter "Status — delivered (2026-05-20)"
+  subsection added under the MULTIMODAL-CONTRACT-FUSION section per
+  `BOOK-METHOD-DOC` close-rule. Full `scripts/run_ci.sh` green.
+
 ### R16-MULTIMODAL-CONTRACT-FUSION.3 — wire producer in SemanticIr::build BEFORE fidelity gate
 - New `apply_fusion(&mut Vec<ActorContract>)` in
   `crates/specforge/src/ir/fusion.rs`: clusters by `fusion_key`

@@ -3147,6 +3147,26 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
     println!("  timing_constraints: {}", ir.timing_constraints.len());
     println!("  temporal_rules: {}", ir.temporal_rules.len());
     println!("  actor_contracts: {}", ir.actor_contracts.len());
+    let fusion_merged = ir
+        .actor_contracts
+        .iter()
+        .filter(|c| c.contract_id.starts_with("fused:"))
+        .count();
+    let fusion_disagreements = ir
+        .actor_contracts
+        .iter()
+        .filter(|c| {
+            matches!(
+                &c.lowering,
+                crate::ir::contract::LoweringDisposition::Residual { reason }
+                    if reason.starts_with("disagreement: ")
+            )
+        })
+        .count();
+    println!(
+        "  fusion: groups_merged={} disagreements={}",
+        fusion_merged, fusion_disagreements
+    );
     let pg_counts = ir.protocol_graph.counts();
     println!(
         "  protocol_graph: channels={} phases={} transactions={} handshakes={}",
@@ -4567,6 +4587,26 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     println!("  timing_constraints: {}", ir.timing_constraints.len());
     println!("  temporal_rules: {}", ir.temporal_rules.len());
     println!("  actor_contracts: {}", ir.actor_contracts.len());
+    let fusion_merged = ir
+        .actor_contracts
+        .iter()
+        .filter(|c| c.contract_id.starts_with("fused:"))
+        .count();
+    let fusion_disagreements = ir
+        .actor_contracts
+        .iter()
+        .filter(|c| {
+            matches!(
+                &c.lowering,
+                crate::ir::contract::LoweringDisposition::Residual { reason }
+                    if reason.starts_with("disagreement: ")
+            )
+        })
+        .count();
+    println!(
+        "  fusion: groups_merged={} disagreements={}",
+        fusion_merged, fusion_disagreements
+    );
     let pg_counts = ir.protocol_graph.counts();
     println!(
         "  protocol_graph: channels={} phases={} transactions={} handshakes={}",

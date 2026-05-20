@@ -1256,9 +1256,23 @@
   `contract_from_temporal_rule` is fidelity-honest on nvme); the
   producer is now load-bearing for any future drift. `FigureConformance`
   honestly `NotEvaluated` corpus-wide until `R16-WAVEFORM-CONTRACT-MINING`
-  (#4) populates `FigureTrace`s. Next DAG-promotable:
-  `R16-MULTIMODAL-CONTRACT-FUSION` (#3, order 4; all three deps
-  satisfied). Remaining sub-trees `proposed`, executed in DAG order.
+  (#4) populates `FigureTrace`s. **`R16-MULTIMODAL-CONTRACT-FUSION`
+  (point #3) DONE** (`.1`–`.4`, 2026-05-20): typed `fusion` module
+  (`FusionKey`/`merge_cluster`); `apply_fusion` producer wired in
+  `SemanticIr::build` **before** the fidelity gate (so fidelity sees
+  fused contracts); deterministic agreement merge with provenance union
+  + `Mixed` modality + min `automation_confidence` +
+  `"fused:..."` id; **disagreement → `Residual{reason="disagreement: …"}`**
+  (honesty doctrine MECHANICALLY enforced — never a silent pick across
+  contradicting sources, parallel to the FIDELITY.3 Fail-to-Residual
+  routing); `specforge validate` prints `fusion: groups_merged=N
+  disagreements=M` (counts derived from `contract_id` / `Residual.reason`
+  prefixes — IR is self-describing). Corpus baseline:
+  `groups_merged=0 disagreements=0` (honest dormancy; producer is
+  load-bearing the moment extraction lands). Next DAG-promotable:
+  **`R16-WAVEFORM-CONTRACT-MINING`** (#4, order 5 — **the crux** of
+  the program thesis: prose + timing-diagram extraction). Remaining
+  sub-trees `proposed`, executed in DAG order.
 - reference: `docs/tasks/R16-INTENT-CAPTURE.md` (umbrella, authoritative
   ordering + DAG), mdBook *SOTA Temporal-Intent Capture* chapter
 - thesis (user direction 2026-05-19): a digital-design PDF encodes intent

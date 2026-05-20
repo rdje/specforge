@@ -3,9 +3,9 @@
 ## Metadata
 
 - Tree ID: `R16-MULTIMODAL-CONTRACT-FUSION`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: `R16`
-- Program: `R16-INTENT-CAPTURE` (point #3, order 4)
+- Program: `R16-INTENT-CAPTURE` (point #3, order 4; DELIVERED `2026-05-20`)
 - Created: `2026-05-19`
 - Last updated: `2026-05-20`
 - Owner: repo-local workflow
@@ -104,22 +104,40 @@ contradict become a residual/repair packet, not a silent pick).
   Commit: `see Commit Log`
 
 - ID: `R16-MULTIMODAL-CONTRACT-FUSION.4`
-  Status: `pending`
+  Status: `done`
   Goal: `validate fusion:` count surface (`groups_merged`,
   `disagreements`) for SemanticIR + IntentIR; close tree + book +
   ROADMAP R16.
   Acceptance: `validate prints fusion block; corpus baseline locked (today: groups_merged=0, disagreements=0 — honest dormancy until extraction populates multi-source candidates); tree marked done; ROADMAP R16 closed for MULTIMODAL-CONTRACT-FUSION; mdBook "Status — delivered" subsection per BOOK-METHOD-DOC; scripts/run_ci.sh green.`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — `specforge validate` now prints
+    `fusion: groups_merged=N disagreements=M` in both the SemanticIR
+    and IntentIR count blocks
+    (`crates/specforge/src/commands/validate.rs`, additive lines via
+    `replace_all`). Counts derived from `actor_contracts`:
+    `groups_merged` = contracts whose `contract_id` starts with
+    `fused:`; `disagreements` = `Residual` contracts whose `reason`
+    starts with `disagreement: `. Structured-metric / JSON shape
+    intentionally not touched (bounded, KG-ONTOLOGY.4 / FIDELITY.4
+    precedents). Corpus baseline: `groups_merged=0 disagreements=0`
+    (honest dormancy — no multi-source candidates yet; the primitive
+    + producer are unit-tested with synthetic clusters in
+    `.2`/`.3`). Full `scripts/run_ci.sh` green.
+  Commit: `see Commit Log`
 
 ## Current Frontier
+
+**Tree closed `2026-05-20`.** All four leaves done; ROADMAP R16 entry
+for `R16-MULTIMODAL-CONTRACT-FUSION` marked done; next DAG-promotable
+R16 sub-tree = `R16-WAVEFORM-CONTRACT-MINING` (#4, order 5 — **the
+crux** of the program thesis: prose + timing-diagram extraction into
+typed contracts).
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `R16-MULTIMODAL-CONTRACT-FUSION.1` | `done` | Fusion design fixed; book mirror added |
 | 2 | `R16-MULTIMODAL-CONTRACT-FUSION.2` | `done` | Typed `fusion` module + `FusionKey` + `merge_cluster` (agree/disagree) + 6 tests; zero artifact churn |
 | 3 | `R16-MULTIMODAL-CONTRACT-FUSION.3` | `done` | Producer wired in `SemanticIr::build` BEFORE fidelity gate; 3 producer tests; zero corpus churn (load-bearing on extraction) |
-| 4 | `R16-MULTIMODAL-CONTRACT-FUSION.4` | `pending` | **Next** — corpus `fusion:` block in `specforge validate` + baseline-lock + close |
+| 4 | `R16-MULTIMODAL-CONTRACT-FUSION.4` | `done` | `validate fusion: groups_merged=0 disagreements=0` block delivered; tree closed; book + ROADMAP synced |
 
 ## Design (`.1` output, 2026-05-20)
 
@@ -250,6 +268,7 @@ precedents).
 | `2026-05-20` | `R16-MULTIMODAL-CONTRACT-FUSION.1` | fusion-key / merge / disagreement-policy / report shape recorded; book mirror per BOOK-METHOD-DOC; mdBook builds | `passed` (docs-only) |
 | `2026-05-20` | `R16-MULTIMODAL-CONTRACT-FUSION.2` | typed `fusion` module (`FusionKey`/`obligation_kind`/`fusion_key`/`merge_cluster`) + 6 unit tests; SemanticIr/IntentIr schemas unchanged; clippy-clean; full `scripts/run_ci.sh` | `passed` (zero artifact churn) |
 | `2026-05-20` | `R16-MULTIMODAL-CONTRACT-FUSION.3` | `apply_fusion` producer + wired in `SemanticIr::build` BEFORE `apply_fidelity_gates`; 3 producer tests (size-1 unchanged, multi-cluster merge + singleton order, idempotence); full `scripts/run_ci.sh` | `passed` (zero corpus churn — clusters all size 1; producer load-bearing for #4/#6) |
+| `2026-05-20` | `R16-MULTIMODAL-CONTRACT-FUSION.4` | `validate` SemanticIR+IntentIR blocks now print `fusion: groups_merged=N disagreements=M` (counts derived from `actor_contracts` via `contract_id` / `Residual.reason` prefixes); structured-metric / JSON shape untouched; corpus baseline `groups_merged=0 disagreements=0` (honest dormancy); tree closed; book + ROADMAP synced | `passed` |
 
 ## Commit Log
 
@@ -257,7 +276,8 @@ precedents).
 | --- | --- | --- |
 | `R16-MULTIMODAL-CONTRACT-FUSION.1` | `R16-MULTIMODAL-CONTRACT-FUSION.1 — fusion design (promote #3)` (`f50b2e1e`) | docs-only; book mirror; also the `R16-INTENT-CAPTURE.2` #3 promotion |
 | `R16-MULTIMODAL-CONTRACT-FUSION.2` | `R16-MULTIMODAL-CONTRACT-FUSION.2 — typed fusion module + merge primitive + tests` (`c19b704f`) | first FUSION code; zero artifact churn; producer wiring deferred to `.3` |
-| `R16-MULTIMODAL-CONTRACT-FUSION.3` | `R16-MULTIMODAL-CONTRACT-FUSION.3 — wire apply_fusion producer in SemanticIr::build BEFORE fidelity gate` | zero corpus churn; load-bearing for extraction |
+| `R16-MULTIMODAL-CONTRACT-FUSION.3` | `R16-MULTIMODAL-CONTRACT-FUSION.3 — wire apply_fusion producer in SemanticIr::build BEFORE fidelity gate` (`80a9f08c`) | zero corpus churn; load-bearing for extraction |
+| `R16-MULTIMODAL-CONTRACT-FUSION.4` | `R16-MULTIMODAL-CONTRACT-FUSION.4 — validate fusion: block + close tree` | closes the tree; corpus baseline `groups_merged=0 disagreements=0` |
 
 ## Dependencies / Order
 
@@ -272,6 +292,21 @@ precedents).
 - `2026-05-20`: Promoted to `active` (all 3 DAG predecessors closed);
   `.1` fusion design fixed + book mirror; concrete `.1`–`.4` leaves
   defined. Frontier → `.2` (implement typed `fusion` module).
+- `2026-05-20`: **Tree CLOSED.** `.4` done — `specforge validate` now
+  prints `fusion: groups_merged=N disagreements=M` in both the
+  SemanticIR and IntentIR count blocks (additive lines via
+  `replace_all`; structured-metric / JSON shape NOT touched — bounded,
+  KG-ONTOLOGY.4 / FIDELITY.4 precedents). Counts derived from
+  `actor_contracts` (`contract_id` prefix `"fused:"` for merges;
+  `Residual.reason` prefix `"disagreement: "` for disagreements) —
+  the IR is self-describing, no new field. Corpus baseline:
+  `groups_merged=0 disagreements=0` (honest dormancy; the primitive +
+  producer are unit-tested with synthetic clusters in `.2`/`.3`).
+  Full CI green. ROADMAP R16 (point #3 DELIVERED) + TASK_TREE index +
+  book "Status — delivered" subsection synced per BOOK-METHOD-DOC
+  close-rule. Next DAG-promotable R16 sub-tree =
+  `R16-WAVEFORM-CONTRACT-MINING` (#4, order 5 — **the crux** of the
+  program thesis).
 - `2026-05-20`: `.3` done — producer wired:
   `apply_fusion(&mut Vec<ActorContract>)` clusters by `fusion_key`
   (HashMap + first-seen-order Vec for determinism); each cluster of
