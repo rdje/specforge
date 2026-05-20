@@ -311,14 +311,29 @@ Non-Goal above — accurate is the bar; more-words is not.
   Commit: `see Commit Log`
 
 - ID: `BOOK-USER-FRIENDLY-BACKFILL.5`
-  Status: `pending`
+  Status: `done` (`2026-05-20`)
   Goal: light upgrade of `R15-GRAPH-DIRECTION-MIGRATION` in
   `domain/actor-connectivity.md` — frame "actor-relative graph
   as the source of truth for signal direction" as the user-facing
   property, not a migration story.
   Acceptance: `R15 subsection presents actor-relative graph semantics as a property the user benefits from; mdBook green.`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — opens with the tautology
+    framing ("if you ask SpecForge whether a signal is an
+    input or an output, there's exactly one correct way to
+    find out: ask the actor-relative graph from the
+    perspective of the actor you care about"); user-facing
+    guarantee in blockquote; **why-this-isn't-trivial section
+    explains protocol-direction-is-inherently-perspective-
+    relative** — same wire = output for manager + input for
+    subordinate; flat direction_hint silently drifts when
+    upstream + downstream use different conventions;
+    actor-relative graph fixes this by making the perspective
+    explicit; what-this-tree-did concretely (adapter +
+    validation + semantic migrated); compatibility surface
+    kept; three user-facing benefits framed as properties
+    (no perspective bugs, read-IR-by-perspective, external
+    tooling can still consume direction_hint). mdBook green.
+  Commit: `see Commit Log`
 
 - ID: `BOOK-USER-FRIENDLY-BACKFILL.6`
   Status: `pending`
@@ -346,8 +361,8 @@ Non-Goal above — accurate is the bar; more-words is not.
 | 2.f | `BOOK-USER-FRIENDLY-BACKFILL.2.f` | `done` | `R16-CONSTRAINED-VERIFIED-EXTRACTION` rewritten user-friendly — `2026-05-20` |
 | 3 | `BOOK-USER-FRIENDLY-BACKFILL.3` | `done` | reference/* doctrines rewritten user-friendly — `2026-05-20` |
 | 4 | `BOOK-USER-FRIENDLY-BACKFILL.4` | `done` | R7-VALIDATION close-out summary upgraded — `2026-05-20` |
-| 5 | `BOOK-USER-FRIENDLY-BACKFILL.5` | `pending` | **Next** — R15 actor-relative-graph framing |
-| 6 | `BOOK-USER-FRIENDLY-BACKFILL.6` | `pending` | Close tree |
+| 5 | `BOOK-USER-FRIENDLY-BACKFILL.5` | `done` | R15 actor-relative-graph framing rewritten — `2026-05-20` |
+| 6 | `BOOK-USER-FRIENDLY-BACKFILL.6` | `pending` | **Next** — close tree (cold-read audit + cross-reference BOOK-METHOD-DOC Decisions) |
 
 ## Dependencies / Order
 
@@ -391,6 +406,7 @@ Non-Goal above — accurate is the bar; more-words is not.
 | `2026-05-20` | `BOOK-USER-FRIENDLY-BACKFILL.2` | All 6 R16-family subsections rewritten user-friendly via per-subsection sub-leaves `.2.a`–`.2.f`; per-tree task-tree files unchanged; mdBook green | `passed` |
 | `2026-05-20` | `BOOK-USER-FRIENDLY-BACKFILL.3` | AUDIT-DOC-RECONCILE + SIGNOFF-REMEDIATION subsections rewritten with consistent user-friendly structure: user-facing guarantee in blockquote up top; why-this-isn't-free with concrete drift-or-bar-slip example; what-this-tree-fixed concretely; how-the-doctrine-is-enforced-now (structural enforcement via Completion Rules + Required Commit Workflow); what-this-buys-the-SpecForge-user; mdBook green | `passed` |
 | `2026-05-20` | `BOOK-USER-FRIENDLY-BACKFILL.4` | R7-VALIDATION close-out summary rewritten as a user-facing guide ("what `specforge validate` does for you today") rather than a leaf-by-leaf changelog; user-facing guarantee in blockquote; severity meanings + read-only contract; four delivered surfaces (handshake gap, multi-predicate antecedent, KG-quality benchmarks with 50% floor, adapter auto-detection) each framed in terms of what the user sees + what it means; four benefits framed as properties; signoff discipline pointer; mdBook green | `passed` |
+| `2026-05-20` | `BOOK-USER-FRIENDLY-BACKFILL.5` | R15-GRAPH-DIRECTION-MIGRATION subsection rewritten: opens with the tautology framing ("ask the actor-relative graph from the perspective of the actor you care about"); user-facing guarantee in blockquote; **why-this-isn't-trivial section explains protocol-direction = perspective-relative** (manager-output = subordinate-input); flat direction_hint drift example; actor-relative-graph fix; what-this-tree-did concretely (adapter + validation + semantic migrated); compatibility surface kept; 3 user-facing benefits as properties (no perspective bugs, read-IR-by-perspective, external direction_hint consumers still work); mdBook green | `passed` |
 
 ## Commit Log
 
@@ -404,13 +420,39 @@ Non-Goal above — accurate is the bar; more-words is not.
 | `BOOK-USER-FRIENDLY-BACKFILL.2.e` | `BOOK-USER-FRIENDLY-BACKFILL.2.e — rewrite R16-WAVEFORM-CONTRACT-MINING book subsection user-friendly (incl. .3.1 FigureRegion)` (`c75ac736`) | docs-only; per the standard; mdBook green |
 | `BOOK-USER-FRIENDLY-BACKFILL.2.f` | `BOOK-USER-FRIENDLY-BACKFILL.2.f — rewrite R16-CONSTRAINED-VERIFIED-EXTRACTION book subsection user-friendly (closes BUF.2; R16 PROGRAM COMPLETE recap)` (`e36a00c3`) | docs-only; per the standard; mdBook green; **closes the R16 family book backfill** |
 | `BOOK-USER-FRIENDLY-BACKFILL.3` | `BOOK-USER-FRIENDLY-BACKFILL.3 — rewrite reference/* doctrine subsections (AUDIT-DOC-RECONCILE + SIGNOFF-REMEDIATION) user-friendly` (`96bef553`) | docs-only; per the standard; mdBook green |
-| `BOOK-USER-FRIENDLY-BACKFILL.4` | `BOOK-USER-FRIENDLY-BACKFILL.4 — rewrite R7-VALIDATION close-out summary as user-facing validate guide` | docs-only; per the standard; mdBook green |
+| `BOOK-USER-FRIENDLY-BACKFILL.4` | `BOOK-USER-FRIENDLY-BACKFILL.4 — rewrite R7-VALIDATION close-out summary as user-facing validate guide` (`e0638d30`) | docs-only; per the standard; mdBook green |
+| `BOOK-USER-FRIENDLY-BACKFILL.5` | `BOOK-USER-FRIENDLY-BACKFILL.5 — rewrite R15-GRAPH-DIRECTION-MIGRATION as actor-relative-graph user-facing property` | docs-only; per the standard; mdBook green; perspective-relativity rationale explained |
 
 ## Changelog
 
 - `2026-05-20`: Created and promoted `active` same day the
   user-friendly standard was established. `.1` scope audit
   recorded; frontier → `.2` (R16 family upgrade).
+- `2026-05-20`: `.5` done — `R15-GRAPH-DIRECTION-MIGRATION`
+  subsection in `docs/book/src/domain/actor-connectivity.md`
+  rewritten as an actor-relative-graph user-facing property
+  (not a migration story). Opens with the tautology framing
+  *"if you ask SpecForge whether a signal is an input or an
+  output, there's exactly one correct way to find out: ask
+  the actor-relative graph from the perspective of the
+  actor you care about"*; user-facing guarantee in
+  blockquote; **why-this-isn't-trivial section explains
+  that protocol direction is inherently perspective-
+  relative** (same wire = output for manager + input for
+  subordinate), the flat-direction_hint drift mechanism
+  (some upstream stage sets it from one perspective; some
+  downstream consumer reads it from another; silent
+  reversal for a subset of signals), and the
+  actor-relative-graph fix (perspective made explicit per
+  edge); what-this-tree-did concretely (adapter +
+  validation + semantic stages migrated to graph lookup);
+  compatibility surface kept (direction_hint stays for
+  external consumers); three user-facing benefits framed
+  as properties (no perspective bugs; you can read the IR
+  by perspective; external tooling can still consume
+  direction_hint). Frontier → `.6` (close tree: cold-read
+  audit + cross-reference BOOK-METHOD-DOC Decisions entry
+  for self-referential standard).
 - `2026-05-20`: `.4` done — `R7-VALIDATION` close-out
   summary in `docs/book/src/quality/validation.md` rewritten
   as a user-facing guide ("what `specforge validate` does

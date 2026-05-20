@@ -2,6 +2,33 @@
 
 ## 2026-05-20
 
+### BOOK-USER-FRIENDLY-BACKFILL.5 — rewrite R15-GRAPH-DIRECTION-MIGRATION as actor-relative-graph user-facing property
+- Rewrote the `R15-GRAPH-DIRECTION-MIGRATION` subsection in
+  `docs/book/src/domain/actor-connectivity.md` as a
+  user-facing property (not a migration story). The new
+  version walks the reader through:
+  - **the tautology framing** — *"if you ask SpecForge
+    whether a signal is an input or an output, there's
+    exactly one correct way to find out: ask the
+    actor-relative graph from the perspective of the actor
+    you care about"*;
+  - **user-facing guarantee** in blockquote;
+  - **why this isn't trivial** — protocol direction is
+    inherently perspective-relative (same wire = output for
+    manager, input for subordinate); the flat-direction_hint
+    drift mechanism spelled out concretely; the
+    actor-relative-graph fix (perspective made explicit per
+    edge);
+  - **what this tree did concretely** — adapter / validation
+    / semantic stages migrated to graph lookup;
+    compatibility surface kept;
+  - **three user-facing benefits framed as properties** (no
+    perspective bugs; you can read the IR by perspective;
+    external tooling can still consume `direction_hint`).
+- Docs-only; `scripts/run_docs_ci.sh` green (mdBook builds).
+  Frontier → `.6` (close tree: cold-read audit +
+  cross-reference BOOK-METHOD-DOC Decisions entry).
+
 ### BOOK-USER-FRIENDLY-BACKFILL.4 — rewrite R7-VALIDATION close-out summary as a user-facing validate guide
 - Rewrote the `R7-VALIDATION` close-out summary in
   `docs/book/src/quality/validation.md` as a user-facing

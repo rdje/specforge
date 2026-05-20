@@ -238,21 +238,94 @@ not only:
 
 ## Closed task trees — how each was implemented and verified
 
-### `R15-GRAPH-DIRECTION-MIGRATION` — actor-relative graph direction across the pipeline
+### `R15-GRAPH-DIRECTION-MIGRATION` — one source of truth for "which way does this signal go?"
 
-Earlier stages already carried the actor-relative graph; the
-adapter, validation, and semantic stages still consulted a flat
-`direction_hint` in places. This tree replaced the remaining
-`direction_hint` consumers with actor-relative graph semantics,
-so the answer to "which way does this signal go?" is consistently
-"ask the graph from this actor's perspective" — not "read the
-flat hint and hope it was set correctly upstream." `direction_hint`
-itself was kept as a compatibility surface (Non-Goal: removal);
-the migration is about *who decides direction* (the graph), not
-*what fields exist*. Verified by leaf-by-leaf coverage of each
-migrated consumer site + the full `scripts/run_ci.sh` regression.
+If you ask SpecForge whether a signal is an input or an
+output, there's exactly one correct way to find out: ask the
+actor-relative graph from the perspective of the actor you
+care about. That sounds tautological. It wasn't, until this
+tree paid for it.
+
+#### The user-facing guarantee
+
+> **The actor-relative graph is THE source of truth for
+> signal direction. Every pipeline stage that needs to know
+> "which way does this signal go for this actor?" consults
+> the graph; no stage falls back to a flat
+> `direction_hint` lookup that might be stale, missing, or
+> set from a different perspective.**
+
+The flat `direction_hint` field is still on the IR — kept as
+a compatibility surface for code that hasn't been migrated to
+the actor-relative graph — but it's no longer the *deciding*
+consumer anywhere in the adapter, validation, or semantic
+stages.
+
+#### Why this isn't trivial
+
+Direction in a protocol is **inherently relative to a
+perspective**. The same wire is an output for the manager
+and an input for the subordinate. A flat "is `AWVALID` an
+input or an output?" question has no correct answer in the
+abstract — only "for whom?" When the IR carries a single
+flat `direction_hint`, you eventually need a convention for
+*whose* perspective it captures, and that convention drifts:
+
+- some upstream stage sets it from the manager's
+  perspective;
+- some downstream consumer reads it from the subordinate's
+  perspective (because that's the more natural framing for
+  that consumer);
+- the result is direction reversed for a subset of signals,
+  silently, with no error path.
+
+The actor-relative graph fixes this by making the
+perspective explicit: every direction edge carries
+`actor → signal → direction-from-that-actor`. The same
+underlying wire shows up with `direction = Output` from one
+actor's view and `direction = Input` from the other's. The
+answer is always available, and always correct for the
+asker.
+
+#### What this tree did concretely
+
+Several pipeline stages (the `.isf` adapter, validation, the
+semantic stage) still consulted `direction_hint` in places
+even after the actor-relative graph was canonical in
+`SemanticIR` / `IntentIR`. This tree migrated each of those
+sites:
+
+- the adapter now derives direction from the actor-relative
+  graph when it needs it;
+- validation findings that turn on direction now consult the
+  graph, so a finding about *"this signal looks like an
+  output but is being driven from outside the actor"* uses
+  the actor-perspective answer;
+- semantic-stage internal reads were migrated through the
+  same lookup.
+
+`direction_hint` is **kept** because some external
+artifacts still carry it and we don't break compatibility.
+But internally, the migration is about *who decides
+direction* — the graph, not the flat field.
+
+#### What this buys you, as a SpecForge user
+
+- **No perspective bugs.** Ask any pipeline stage about a
+  signal's direction; the answer is consistent because every
+  stage asks the same graph from the same actor.
+- **You can read the IR by perspective.** The
+  actor-relative edges in `SemanticIR` / `IntentIR` let you
+  derive *"what does the manager see?"* and *"what does the
+  subordinate see?"* directly, without re-inferring it from
+  scratch.
+- **External tooling can still consume `direction_hint`.**
+  The compatibility surface stays. Removal of the field is
+  out-of-scope for this tree — and would be a separate
+  decision recorded under the AUDIT-DOC-RECONCILE doctrine.
+
 *Authoritative tracking:*
-`docs/tasks/R15-GRAPH-DIRECTION-MIGRATION.md` (Status closed
-`2026-05-20`; metadata reconciled to match the long-standing
-all-leaves-complete truth + book section added per the
-now-structural `BOOK-METHOD-DOC` close-rule).
+`docs/tasks/R15-GRAPH-DIRECTION-MIGRATION.md` (Status
+closed `2026-05-20`; metadata reconciled to match the
+long-standing all-leaves-complete truth + book section
+added per the now-structural `BOOK-METHOD-DOC` close-rule).
