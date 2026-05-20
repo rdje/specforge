@@ -220,9 +220,36 @@ on.
 
 - Additive empty fields ⇒ zero `.isf`/artifact change while unpopulated
   (parity by construction); the existing fsmgen-strict + e2e suite must
-  stay green. `kg-bench` gains protocol-structure fixtures with no
-  regression of the `vlm_state_machine_*`/connectivity fixtures.
-  `scripts/run_ci.sh` green per leaf; every leaf via `COMMIT.md`; the
-  closing leaf refreshes this section (BOOK-METHOD-DOC).
+  stay green. `scripts/run_ci.sh` green per leaf; every leaf via
+  `COMMIT.md`; the closing leaf refreshes this section (BOOK-METHOD-DOC).
+  Honest scope note: `kg-bench` protocol-structure fixtures are
+  **deferred to the extraction trees** (`#3`/`#4`/`#6`) that actually
+  recover protocol structure — a fixture here would be hollow (this
+  tree ships the vocabulary, not the extractor; Non-Goal).
 
 Authoritative tracking: `docs/tasks/R16-KG-PROTOCOL-ONTOLOGY.md`.
+
+### Status — delivered (`2026-05-20`)
+
+`R16-KG-PROTOCOL-ONTOLOGY` is **closed**. All four leaves done:
+
+1. `.1` ontology design fixed (typed layer / no new stage; closed typed
+   records; `TickPhase` ≠ `ProtocolPhase`; mechanical projection rules);
+2. `.2` typed `protocol_graph` module + serde + additive empty fields on
+   `SemanticIr`/`IntentIr` (serde-skipped while empty ⇒ zero artifact
+   churn);
+3. `.3` projection wired — `project_handshake_pairs` derives
+   `HandshakePair` nodes from already-recovered `HandshakeBarrier`
+   contracts (LOSSLESS restatement of contract data; NOT PDF
+   extraction); accessors + `dangling_contract_refs`; `SemanticIr::build`
+   populates `protocol_graph.handshakes`; `IntentIR` carries it forward;
+4. `.4` `specforge validate` count surface for `actor_contracts` and
+   `protocol_graph: channels=… phases=… transactions=… handshakes=…` on
+   both SemanticIR and IntentIR; kg-bench protocol-structure fixtures
+   honestly deferred to the extraction trees (`#3`/`#4`/`#6`).
+
+Live evidence: corpus reads `protocol_graph: channels=0 phases=0
+transactions=0 handshakes=0` (zero handshake contracts ⇒ empty graph ⇒
+zero `.isf`/artifact change across the full suite). Next
+DAG-promotable R16 sub-tree = `R16-CAPTURE-FIDELITY-GATES` (#5, order 3;
+dep `R16-CONTRACT-IR` ✓).

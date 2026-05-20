@@ -37,9 +37,9 @@ evidence for one top-level task.
 | `FSMGEN-ISSUE-REPORTING` | `done` | `R0` | — | [docs/tasks/FSMGEN-ISSUE-REPORTING.md](docs/tasks/FSMGEN-ISSUE-REPORTING.md) |
 | `FSMGEN-SUBMODULE-BUMP` | `done` | `R0` | — | [docs/tasks/FSMGEN-SUBMODULE-BUMP.md](docs/tasks/FSMGEN-SUBMODULE-BUMP.md) |
 | `ISF-HANDSHAKE-STAGE-LOWERING` | `superseded` | `R15b` | — (delivered via `R16-CONTRACT-IR.4`) | [docs/tasks/ISF-HANDSHAKE-STAGE-LOWERING.md](docs/tasks/ISF-HANDSHAKE-STAGE-LOWERING.md) |
-| `R16-INTENT-CAPTURE` | `active` | `R16` | `R16-INTENT-CAPTURE.2` (governance live; #1 done, #2 promoted active; #5/order-3 next) | [docs/tasks/R16-INTENT-CAPTURE.md](docs/tasks/R16-INTENT-CAPTURE.md) |
+| `R16-INTENT-CAPTURE` | `active` | `R16` | `R16-INTENT-CAPTURE.2` (governance live; #1+#2 done; promote #5/order-3 `R16-CAPTURE-FIDELITY-GATES` next) | [docs/tasks/R16-INTENT-CAPTURE.md](docs/tasks/R16-INTENT-CAPTURE.md) |
 | `R16-CONTRACT-IR` | `done` | `R16` | — (program point #1 delivered) | [docs/tasks/R16-CONTRACT-IR.md](docs/tasks/R16-CONTRACT-IR.md) |
-| `R16-KG-PROTOCOL-ONTOLOGY` | `active` | `R16` | `R16-KG-PROTOCOL-ONTOLOGY.2` (`.1` design done; implement typed `protocol_graph`) | [docs/tasks/R16-KG-PROTOCOL-ONTOLOGY.md](docs/tasks/R16-KG-PROTOCOL-ONTOLOGY.md) |
+| `R16-KG-PROTOCOL-ONTOLOGY` | `done` | `R16` | — (program point #2 delivered `2026-05-20`; typed `protocol_graph` + projection + `validate` count surface; kg-bench fixtures deferred to extraction trees) | [docs/tasks/R16-KG-PROTOCOL-ONTOLOGY.md](docs/tasks/R16-KG-PROTOCOL-ONTOLOGY.md) |
 | `R16-CAPTURE-FIDELITY-GATES` | `proposed` | `R16` | — (point #5, order 3 — objective function; dep: CONTRACT-IR) | [docs/tasks/R16-CAPTURE-FIDELITY-GATES.md](docs/tasks/R16-CAPTURE-FIDELITY-GATES.md) |
 | `R16-MULTIMODAL-CONTRACT-FUSION` | `proposed` | `R16` | — (point #3, order 4; deps: 1,2,3) | [docs/tasks/R16-MULTIMODAL-CONTRACT-FUSION.md](docs/tasks/R16-MULTIMODAL-CONTRACT-FUSION.md) |
 | `R16-WAVEFORM-CONTRACT-MINING` | `proposed` | `R16` | — (point #4, order 5 — crux; deps: 1,3) | [docs/tasks/R16-WAVEFORM-CONTRACT-MINING.md](docs/tasks/R16-WAVEFORM-CONTRACT-MINING.md) |

@@ -1,5 +1,30 @@
 # CHANGES
 
+## 2026-05-20
+
+### R16-KG-PROTOCOL-ONTOLOGY.4 — `validate` count surface + close tree (point #2 DELIVERED)
+- `specforge validate` now reports `actor_contracts: …` and
+  `protocol_graph: channels=… phases=… transactions=… handshakes=…`
+  in both the SemanticIR and IntentIR count blocks
+  (`crates/specforge/src/commands/validate.rs`, additive println lines
+  via `replace_all`; structured-metric/JSON shape **not** touched —
+  bounded scope to avoid downstream-shape churn). Closes the
+  count-reporting deferral from `R16-KG-PROTOCOL-ONTOLOGY.2`. Corpus
+  reads `protocol_graph: channels=0 phases=0 transactions=0
+  handshakes=0` (empty until extraction).
+- **Honest scope**: kg-bench protocol-structure fixtures **deferred**
+  to the extraction trees (`#3`/`#4`/`#6`) that actually recover
+  protocol structure — a fixture here would be hollow (this tree ships
+  the vocabulary, not the extractor; explicit Non-Goal per `.1` design).
+- Tree CLOSED: `docs/tasks/R16-KG-PROTOCOL-ONTOLOGY.md` Status=done;
+  Decisions/Verification Log/Commit Log/Changelog reconciled.
+  `docs/TASK_TREE.md` row → `done`. `ROADMAP.md` R16 entry → point #2
+  DONE; next DAG-promotable = `R16-CAPTURE-FIDELITY-GATES`
+  (#5/order-3, dep CONTRACT-IR ✓). Book *Temporal-Intent Capture*
+  chapter "Status — delivered (2026-05-20)" subsection added under the
+  KG-PROTOCOL-ONTOLOGY section per `BOOK-METHOD-DOC` close-rule. Full
+  `scripts/run_ci.sh` green.
+
 ## 2026-05-19 (R16 SOTA intent-capture program scaffolded)
 
 ### R16-KG-PROTOCOL-ONTOLOGY.3 — wire the projection (parity-preserving)

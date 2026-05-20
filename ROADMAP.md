@@ -1231,8 +1231,17 @@
   (`.1`–`.5`): typed ContractIR layer; `.isf` lowering re-pointed with a
   3-way-proven parity gate; `HandshakeBarrier → (stage …)` enabled
   (subsumes/delivers `ISF-HANDSHAKE-STAGE-LOWERING`, verified-but-dormant
-  until extraction grounds handshakes). Next DAG-promotable:
-  `R16-KG-PROTOCOL-ONTOLOGY` (#2) and `R16-CAPTURE-FIDELITY-GATES`
+  until extraction grounds handshakes). **`R16-KG-PROTOCOL-ONTOLOGY`
+  (point #2) DONE** (`.1`–`.4`, 2026-05-20): typed `protocol_graph`
+  module (`Channel`/`ProtocolPhase`/`Transaction`/`HandshakePair` +
+  `ChannelRole`); additive serde-skipped-while-empty fields on
+  `SemanticIr`/`IntentIr` (zero artifact churn); projection wired —
+  `project_handshake_pairs` derives `HandshakePair` from
+  `HandshakeBarrier` contracts (lossless restatement, NOT extraction);
+  `specforge validate` reports `protocol_graph`+`actor_contracts`
+  counts; corpus reads all-zero (empty until extraction). kg-bench
+  protocol-structure fixtures honestly deferred to the extraction
+  trees. Next DAG-promotable: `R16-CAPTURE-FIDELITY-GATES`
   (#5/order-3). Remaining sub-trees `proposed`, executed in DAG order.
 - reference: `docs/tasks/R16-INTENT-CAPTURE.md` (umbrella, authoritative
   ordering + DAG), mdBook *SOTA Temporal-Intent Capture* chapter

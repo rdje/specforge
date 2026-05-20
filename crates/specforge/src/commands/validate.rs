@@ -3146,6 +3146,12 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
     println!("  register_records: {}", ir.register_records.len());
     println!("  timing_constraints: {}", ir.timing_constraints.len());
     println!("  temporal_rules: {}", ir.temporal_rules.len());
+    println!("  actor_contracts: {}", ir.actor_contracts.len());
+    let pg_counts = ir.protocol_graph.counts();
+    println!(
+        "  protocol_graph: channels={} phases={} transactions={} handshakes={}",
+        pg_counts.0, pg_counts.1, pg_counts.2, pg_counts.3
+    );
     println!("  temporal_conflicts: {}", ir.temporal_conflicts.len());
     println!(
         "  temporal_rules_with_actor_grounding: {}",
@@ -4535,6 +4541,12 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     println!("  register_records: {}", ir.register_records.len());
     println!("  timing_constraints: {}", ir.timing_constraints.len());
     println!("  temporal_rules: {}", ir.temporal_rules.len());
+    println!("  actor_contracts: {}", ir.actor_contracts.len());
+    let pg_counts = ir.protocol_graph.counts();
+    println!(
+        "  protocol_graph: channels={} phases={} transactions={} handshakes={}",
+        pg_counts.0, pg_counts.1, pg_counts.2, pg_counts.3
+    );
     println!("  temporal_conflicts: {}", ir.temporal_conflicts.len());
     println!(
         "  temporal_rules_with_actor_grounding: {}",
