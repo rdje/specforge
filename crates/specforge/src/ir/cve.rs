@@ -31,7 +31,12 @@
 //! artifacts are unchanged (the CONTRACT-IR.2 / KG-ONTOLOGY.2 /
 //! FIDELITY.2 / FUSION.2 / WAVEFORM.2 discipline).
 
-use crate::ir::contract::ActorContract;
+use std::collections::BTreeSet;
+
+use crate::ir::contract::{
+    ActorContract, Condition, EventExpr, LoweringDisposition, Obligation, SequenceStep, Window,
+};
+use crate::ir::fidelity::FindingStatus;
 
 /// Human-/provider-facing JSON-Schema **summary** for `ActorContract`,
 /// expressed so an LLM/VLM that supports JSON-Schema-grammar-
@@ -90,6 +95,203 @@ pub fn actor_contract_json_schema_summary() -> &'static str {
   }
 }
 "#
+}
+
+// ---------- Entailment verifier (R16-CONSTRAINED-VERIFIED-EXTRACTION.3)
+
+fn event_signals(e: &EventExpr, out: &mut BTreeSet<String>) {
+    match e {
+        EventExpr::Edge { signal, .. } | EventExpr::Level { signal, .. } => {
+            out.insert(signal.clone());
+        }
+        EventExpr::HandshakeFire { valid, ready } => {
+            out.insert(valid.clone());
+            out.insert(ready.clone());
+        }
+        EventExpr::Start | EventExpr::PhaseBoundary { .. } => {}
+    }
+}
+
+fn window_signals(w: &Window, out: &mut BTreeSet<String>) {
+    if let Window::Between { from, to } = w {
+        event_signals(from, out);
+        event_signals(to, out);
+    }
+}
+
+fn obligation_signals(o: &Obligation, out: &mut BTreeSet<String>) {
+    match o {
+        Obligation::Eventually { target, window } => {
+            event_signals(target, out);
+            window_signals(window, out);
+        }
+        Obligation::Stable { signal, during } => {
+            out.insert(signal.clone());
+            window_signals(during, out);
+        }
+        Obligation::Drive { signal, .. } | Obligation::Observe { signal } => {
+            out.insert(signal.clone());
+        }
+        Obligation::HandshakeBarrier { valid, ready } => {
+            out.insert(valid.clone());
+            out.insert(ready.clone());
+        }
+        Obligation::Persist { hold, until } => {
+            event_signals(hold, out);
+            event_signals(until, out);
+        }
+        Obligation::Sequence { steps } => {
+            for SequenceStep { event, window } in steps {
+                event_signals(event, out);
+                window_signals(window, out);
+            }
+        }
+        Obligation::Mutex { a, b } => {
+            out.insert(a.clone());
+            out.insert(b.clone());
+        }
+        Obligation::OrderedBefore { .. } => {}
+    }
+}
+
+fn contract_signals_for_entailment(c: &ActorContract) -> BTreeSet<String> {
+    let mut s = BTreeSet::new();
+    obligation_signals(&c.obligation, &mut s);
+    if let Some(Condition::Eq { signal, .. }) = &c.guard {
+        s.insert(signal.clone());
+    }
+    for Condition::Eq { signal, .. } in &c.guard_candidates {
+        s.insert(signal.clone());
+    }
+    if let Some(clk) = &c.clock_signal {
+        s.insert(clk.clone());
+    }
+    s
+}
+
+/// Bounds the verifier should expect to find as digit runs in the
+/// source span (parsed `u64`). The current scope is the windowed
+/// obligations + `Drive.value` when numeric — extending this set as
+/// `Obligation` grows is the corresponding test
+/// (`entailment_check_unsupported_obligation_is_not_evaluated`).
+fn obligation_numeric_bounds(o: &Obligation) -> Vec<u64> {
+    let mut nums = Vec::new();
+    let pull = |w: &Window, nums: &mut Vec<u64>| {
+        if let Window::Within { min, max } = w {
+            if let Some(m) = min {
+                nums.push(*m as u64);
+            }
+            nums.push(*max as u64);
+        }
+    };
+    match o {
+        Obligation::Eventually { window, .. } => pull(window, &mut nums),
+        Obligation::Stable { during, .. } => pull(during, &mut nums),
+        Obligation::Drive { value, .. } => {
+            if let Ok(v) = value.parse::<u64>() {
+                nums.push(v);
+            }
+        }
+        Obligation::Sequence { steps } => {
+            for SequenceStep { window, .. } in steps {
+                pull(window, &mut nums);
+            }
+        }
+        _ => {}
+    }
+    nums
+}
+
+fn span_contains_number(span: &str, want: u64) -> bool {
+    let bytes = span.as_bytes();
+    let mut i = 0usize;
+    while i < bytes.len() {
+        if !bytes[i].is_ascii_digit() {
+            i += 1;
+            continue;
+        }
+        let start = i;
+        while i < bytes.len() && bytes[i].is_ascii_digit() {
+            i += 1;
+        }
+        if let Ok(n) = std::str::from_utf8(&bytes[start..i])
+            .unwrap_or("")
+            .parse::<u64>()
+            && n == want
+        {
+            return true;
+        }
+    }
+    false
+}
+
+/// Conservative lexical/structural entailment check: every signal the
+/// contract references must appear as a case-preserving substring of
+/// `source_span`; every numeric bound the contract's obligation
+/// carries must appear as a complete digit run in `source_span`.
+///
+/// Returns `NotEvaluated` when the contract has nothing checkable
+/// (no signals AND no numeric bounds) — never silently `Pass`. Per
+/// the `.1` design, the verifier never "softens" a contract to pass;
+/// `apply_entailment_to_contract` reroutes a `Fail` on a `Lowerable`
+/// contract to `Residual{reason="entailment fail: …"}`.
+pub fn entailment_check(source_span: &str, contract: &ActorContract) -> FindingStatus {
+    let signals = contract_signals_for_entailment(contract);
+    let bounds = obligation_numeric_bounds(&contract.obligation);
+    if signals.is_empty() && bounds.is_empty() {
+        return FindingStatus::NotEvaluated;
+    }
+    let mut missing_signals: Vec<String> = Vec::new();
+    for s in &signals {
+        if !source_span.contains(s.as_str()) {
+            missing_signals.push(s.clone());
+        }
+    }
+    let missing_bounds: Vec<u64> = bounds
+        .into_iter()
+        .filter(|n| !span_contains_number(source_span, *n))
+        .collect();
+    if missing_signals.is_empty() && missing_bounds.is_empty() {
+        FindingStatus::Pass
+    } else {
+        FindingStatus::Fail
+    }
+}
+
+/// Mechanically enforce the honesty doctrine on `contract`: if
+/// `entailment_check` returns `Fail` and the contract is currently
+/// `Lowerable`, downgrade to `Residual{reason="entailment fail: …"}`
+/// with a list of the missing signals and bounds. Pass or
+/// `NotEvaluated` leaves the contract unchanged; an already-Residual
+/// contract is left untouched (no re-writing of pre-existing reasons).
+/// Returns the `FindingStatus` the verifier produced so the caller can
+/// log it.
+pub fn apply_entailment_to_contract(
+    contract: &mut ActorContract,
+    source_span: &str,
+) -> FindingStatus {
+    let status = entailment_check(source_span, contract);
+    if status == FindingStatus::Fail && matches!(contract.lowering, LoweringDisposition::Lowerable)
+    {
+        let signals = contract_signals_for_entailment(contract);
+        let bounds = obligation_numeric_bounds(&contract.obligation);
+        let missing_signals: Vec<&str> = signals
+            .iter()
+            .map(String::as_str)
+            .filter(|s| !source_span.contains(*s))
+            .collect();
+        let missing_bounds: Vec<u64> = bounds
+            .into_iter()
+            .filter(|n| !span_contains_number(source_span, *n))
+            .collect();
+        contract.lowering = LoweringDisposition::Residual {
+            reason: format!(
+                "entailment fail: missing signals={:?} bounds={:?}",
+                missing_signals, missing_bounds
+            ),
+        };
+    }
+    status
 }
 
 /// Parse a constrained-decoded JSON contract into the typed
@@ -181,6 +383,108 @@ mod tests {
                 "schema summary should mention required key {required}"
             );
         }
+    }
+
+    #[test]
+    fn entailment_pass_when_span_mentions_every_signal_and_bound() {
+        let mut c = sample_contract();
+        // sample uses Drive{Q, "1"} + clock="clk".
+        let span = "Drive Q to 1 every clk cycle";
+        assert_eq!(entailment_check(span, &c), FindingStatus::Pass);
+        // Window-bearing obligation:
+        c.obligation = Obligation::Stable {
+            signal: "Q".into(),
+            during: crate::ir::contract::Window::Within { min: None, max: 3 },
+        };
+        let span2 = "Q must remain stable for 3 cycles on clk";
+        assert_eq!(entailment_check(span2, &c), FindingStatus::Pass);
+    }
+
+    #[test]
+    fn entailment_fail_when_signal_or_bound_missing() {
+        let mut c = sample_contract();
+        let span_missing_signal = "Drive to 1 every clock cycle"; // no "Q" mentioned, no "clk"
+        assert_eq!(
+            entailment_check(span_missing_signal, &c),
+            FindingStatus::Fail
+        );
+        c.obligation = Obligation::Stable {
+            signal: "Q".into(),
+            during: crate::ir::contract::Window::Within { min: None, max: 7 },
+        };
+        // signal "Q" + "clk" present, but bound 7 not mentioned (only 3):
+        let span_missing_bound = "Q must remain stable for 3 cycles on clk";
+        assert_eq!(
+            entailment_check(span_missing_bound, &c),
+            FindingStatus::Fail
+        );
+    }
+
+    #[test]
+    fn entailment_not_evaluated_when_nothing_checkable() {
+        let mut c = sample_contract();
+        c.obligation = Obligation::OrderedBefore {
+            earlier_phase: "setup".into(),
+            later_phase: "access".into(),
+        };
+        c.clock_signal = None; // remove the only signal
+        // No signals + no bounds ⇒ NotEvaluated (never silently Pass).
+        assert_eq!(
+            entailment_check("anything", &c),
+            FindingStatus::NotEvaluated
+        );
+    }
+
+    #[test]
+    fn apply_entailment_routes_lowerable_fail_to_residual_with_reason() {
+        let mut c = sample_contract();
+        // Force a guaranteed Fail: span mentions neither Q nor clk.
+        let span = "some unrelated prose mentioning nothing";
+        let status = apply_entailment_to_contract(&mut c, span);
+        assert_eq!(status, FindingStatus::Fail);
+        match &c.lowering {
+            LoweringDisposition::Residual { reason } => {
+                assert!(reason.starts_with("entailment fail:"), "{reason}");
+                assert!(reason.contains("\"Q\""), "{reason}");
+                assert!(reason.contains("\"clk\""), "{reason}");
+            }
+            other => panic!("expected Residual, got {other:?}"),
+        }
+    }
+
+    #[test]
+    fn apply_entailment_leaves_pass_lowerable_unchanged() {
+        let mut c = sample_contract();
+        let span = "Drive Q to 1 every clk cycle"; // Pass
+        let before = c.clone();
+        assert_eq!(
+            apply_entailment_to_contract(&mut c, span),
+            FindingStatus::Pass
+        );
+        assert_eq!(c, before);
+    }
+
+    #[test]
+    fn apply_entailment_does_not_rewrite_preexisting_residual_reason() {
+        let mut c = sample_contract();
+        c.lowering = LoweringDisposition::Residual {
+            reason: "preexisting".into(),
+        };
+        let span = "some unrelated prose"; // would Fail
+        let _ = apply_entailment_to_contract(&mut c, span);
+        match &c.lowering {
+            LoweringDisposition::Residual { reason } => assert_eq!(reason, "preexisting"),
+            other => panic!("expected Residual unchanged, got {other:?}"),
+        }
+    }
+
+    #[test]
+    fn span_contains_number_matches_complete_digit_runs_only() {
+        // The number 7 should NOT match in "70" (different digit run).
+        assert!(!span_contains_number("only 70 cycles", 7));
+        assert!(span_contains_number("exactly 7 cycles", 7));
+        assert!(span_contains_number("up to 12 cycles", 12));
+        assert!(!span_contains_number("up to 12 cycles", 1));
     }
 
     #[test]

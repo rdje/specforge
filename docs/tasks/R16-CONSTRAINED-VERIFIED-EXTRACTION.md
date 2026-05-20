@@ -87,19 +87,33 @@ Make extraction high-precision by construction (the program thesis: prose
   Commit: `see Commit Log`
 
 - ID: `R16-CONSTRAINED-VERIFIED-EXTRACTION.3`
-  Status: `pending`
-  Goal: entailment verifier — given (source_span, ActorContract),
-  returns Pass / Fail / NotEvaluated. Initial implementation is a
-  conservative lexical/structural check (every signal name in the
-  contract appears in the span; every numeric bound in the obligation
-  matches a number in the span); future iterations may consult an
-  LLM-as-judge gated behind the verifier API. A `Fail` reroutes the
-  contract to `Residual{reason="entailment fail: …"}` — honesty
-  doctrine mechanically enforced (parallels FUSION.3 / FIDELITY.3
-  routing).
+  Status: `done`
+  Goal: conservative lexical/structural entailment verifier +
+  Fail→Residual routing helper.
   Acceptance: `Verifier returns three-valued status; routing tested; SemanticIr unchanged unless the producer in this leaf is wired; scripts/run_ci.sh green.`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — `entailment_check(span, contract) ->
+    FindingStatus` added to `crates/specforge/src/ir/cve.rs`: extracts
+    `contract_signals_for_entailment` (obligation + guard +
+    guard_candidates + clock_signal) and `obligation_numeric_bounds`
+    (Within{min,max} + Drive.value when numeric +
+    Sequence step windows); requires every signal as a
+    case-preserving substring AND every bound as a complete digit-run
+    match in `source_span`; `Pass` only when both hold; `Fail` if any
+    missing; `NotEvaluated` only when the contract has nothing
+    checkable (no signals AND no bounds — never silently Pass).
+    `apply_entailment_to_contract(contract: &mut, span)` mechanically
+    enforces the honesty doctrine: a `Lowerable` contract with a
+    `Fail` is rerouted to `Residual{reason="entailment fail: missing
+    signals=…  bounds=…"}`; `Pass`/`NotEvaluated` leaves the
+    contract unchanged; already-`Residual` contracts are NOT
+    rewritten. 7 new unit tests (Pass over Drive + Stable; Fail on
+    missing signal; Fail on missing bound; NotEvaluated on
+    no-signal/no-bound obligation; routing flips Lowerable+Fail to
+    Residual; Pass leaves Lowerable unchanged; preexisting Residual
+    untouched; `span_contains_number` matches complete digit runs
+    only — `7` ≠ `70`). No producer wiring; `SemanticIr` / `IntentIr`
+    unchanged ⇒ ZERO artifact churn. Full `scripts/run_ci.sh` green.
+  Commit: `see Commit Log`
 
 - ID: `R16-CONSTRAINED-VERIFIED-EXTRACTION.4`
   Status: `pending`
@@ -138,8 +152,8 @@ Make extraction high-precision by construction (the program thesis: prose
 | --- | --- | --- | --- |
 | 1 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.1` | `done` | Constrained-decoding + entailment + templates + uncertainty design fixed; book mirror added |
 | 2 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.2` | `done` | Typed `cve` module: provider-facing JSON-Schema summary + fails-closed adapter + 4 tests; zero artifact churn |
-| 3 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.3` | `pending` | **Next** — entailment verifier + Fail→Residual routing |
-| 4 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.4` | `pending` | Protocol-pattern template library in prior_memory |
+| 3 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.3` | `done` | `entailment_check` + `apply_entailment_to_contract` Fail→Residual routing; 7 new tests; honesty doctrine mechanically enforced |
+| 4 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.4` | `pending` | **Next** — protocol-pattern template library in prior_memory |
 | 5 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.5` | `pending` | Uncertainty-driven converge selection |
 | 6 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.6` | `pending` | Corpus precision/recall + close |
 
@@ -295,13 +309,15 @@ KG-ONTOLOGY.4 / FIDELITY.4 / FUSION.4 precedents).
 | --- | --- | --- | --- |
 | `2026-05-20` | `R16-CONSTRAINED-VERIFIED-EXTRACTION.1` | constrained-decoding / entailment / templates / uncertainty / honesty enforcement / dormancy framing recorded; book mirror per BOOK-METHOD-DOC; mdBook builds | `passed` (docs-only) |
 | `2026-05-20` | `R16-CONSTRAINED-VERIFIED-EXTRACTION.2` | typed `cve` module (`actor_contract_json_schema_summary` + fails-closed `parse_constrained_contract`) + 4 unit tests (round-trip, malformed-input fail-closed, doc-vs-code required-keys, obligation-discriminator drift-lock); SemanticIr/IntentIr unchanged; full `scripts/run_ci.sh` | `passed` (zero artifact churn) |
+| `2026-05-20` | `R16-CONSTRAINED-VERIFIED-EXTRACTION.3` | `entailment_check` (lexical signal + structural digit-run bound check; three-valued including `NotEvaluated`) + `apply_entailment_to_contract` Fail→Residual routing; 7 new unit tests (Pass over Drive+Stable; Fail on missing signal/bound; NotEvaluated when nothing checkable; routing flips Lowerable+Fail; Pass leaves unchanged; preexisting Residual untouched; `span_contains_number` exact digit runs); SemanticIr/IntentIr unchanged; full `scripts/run_ci.sh` | `passed` (zero artifact churn) |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.1` | `R16-CONSTRAINED-VERIFIED-EXTRACTION.1 — high-precision-by-construction design (promote #6)` (`d61d87ab`) | docs-only; book mirror; also the `R16-INTENT-CAPTURE.2` #6 promotion — the FINAL R16 sub-tree promoted |
-| `R16-CONSTRAINED-VERIFIED-EXTRACTION.2` | `R16-CONSTRAINED-VERIFIED-EXTRACTION.2 — JSON-schema summary + fails-closed adapter` | first CVE code; zero artifact churn; serde is the authoritative validator |
+| `R16-CONSTRAINED-VERIFIED-EXTRACTION.2` | `R16-CONSTRAINED-VERIFIED-EXTRACTION.2 — JSON-schema summary + fails-closed adapter` (`828441f0`) | first CVE code; zero artifact churn; serde is the authoritative validator |
+| `R16-CONSTRAINED-VERIFIED-EXTRACTION.3` | `R16-CONSTRAINED-VERIFIED-EXTRACTION.3 — entailment verifier + Fail→Residual routing` | honesty doctrine mechanically enforced parallel to FUSION.3 / FIDELITY.3 |
 
 ## Dependencies / Order
 
@@ -320,6 +336,17 @@ KG-ONTOLOGY.4 / FIDELITY.4 / FUSION.4 precedents).
   fixed + book mirror; concrete `.1`–`.6` leaves defined. This is the
   FINAL R16 sub-tree promoted (all 6 program points now active or
   closed). Frontier → `.2` (JSON-schema adapter for ActorContract).
+- `2026-05-20`: `.3` done — entailment verifier wired:
+  `entailment_check(span, contract) → FindingStatus` (conservative
+  lexical signal + structural digit-run bound check; three-valued
+  with `NotEvaluated` when contract has nothing checkable — never
+  silently `Pass`); `apply_entailment_to_contract` mechanically
+  enforces honesty doctrine — `Lowerable + Fail → Residual{reason
+  ="entailment fail: missing signals=… bounds=…"}`; `Pass`/
+  `NotEvaluated` leave the contract unchanged; preexisting `Residual`
+  is NOT rewritten. 7 unit tests. SemanticIr/IntentIr unchanged ⇒
+  ZERO artifact churn. Full CI green. Frontier → `.4` (protocol-
+  pattern template library in `prior_memory`).
 - `2026-05-20`: `.2` done — `ir/cve.rs` typed module
   (`actor_contract_json_schema_summary` returning a Draft-2020-12
   provider-facing summary; `parse_constrained_contract` is the

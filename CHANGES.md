@@ -2,6 +2,41 @@
 
 ## 2026-05-20
 
+### R16-CONSTRAINED-VERIFIED-EXTRACTION.3 — entailment verifier + Fail→Residual routing
+- New `entailment_check(source_span: &str, contract: &ActorContract) ->
+  FindingStatus` in `crates/specforge/src/ir/cve.rs`: extracts every
+  signal the contract references (obligation + guard +
+  guard_candidates + clock_signal) and every numeric bound the
+  obligation carries (`Within{min,max}` + numeric `Drive.value` +
+  Sequence step windows). Requires every signal to appear as a
+  case-preserving substring of `source_span` AND every bound to
+  appear as a **complete digit-run** (so `7` ≠ `70`). `Pass` only
+  when both hold; `Fail` if any missing; `NotEvaluated` only when
+  the contract has nothing checkable (no signals AND no bounds —
+  never silently `Pass`).
+- New `apply_entailment_to_contract(contract: &mut, source_span)`
+  mechanically enforces the honesty doctrine: a `Lowerable` contract
+  with a `Fail` is rerouted to `Residual{reason="entailment fail:
+  missing signals=…  bounds=…"}` (diagnostic-bearing); `Pass` /
+  `NotEvaluated` leaves the contract unchanged; an already-`Residual`
+  contract is NOT rewritten (does not clobber a pre-existing
+  reason). Parallel to `R16-MULTIMODAL-CONTRACT-FUSION.3`
+  disagreement-routing and `R16-CAPTURE-FIDELITY-GATES.3`
+  Fail-on-Lowerable-routing.
+- 7 unit tests: Pass over Drive + Stable when the span mentions
+  every signal and bound; Fail on missing signal; Fail on missing
+  bound; NotEvaluated on no-signal/no-bound obligation (OrderedBefore
+  with `clock_signal=None`); routing flips Lowerable+Fail to Residual
+  with a diagnostic mentioning the missing signals/bounds; Pass
+  leaves Lowerable contract unchanged; preexisting Residual reason
+  untouched; `span_contains_number` matches complete digit runs only
+  (`7` not in `"70"`).
+- No producer wiring; `SemanticIr` / `IntentIr` schemas unchanged ⇒
+  **zero artifact/fixture churn** (the CVE.2 / WAVEFORM.2 / FUSION.2
+  / FIDELITY.2 / KG-ONTOLOGY.2 / CONTRACT-IR.2 discipline). Full
+  `scripts/run_ci.sh` green. Frontier → `.4` (protocol-pattern
+  template library in `prior_memory`).
+
 ### R16-CONSTRAINED-VERIFIED-EXTRACTION.2 — implement the typed `cve` module
 - New `crates/specforge/src/ir/cve.rs`:
   - `actor_contract_json_schema_summary()` returns a
