@@ -93,22 +93,44 @@ defensive (junk-label guarding). Deliver:
   Commit: `see Commit Log`
 
 - ID: `R16-WAVEFORM-CONTRACT-MINING.3`
-  Status: `pending`
-  Goal: figure → PartialTrace extractor (the actual research-grade
-  leaf — VLM-structured prompting + heuristic post-verifier; or
-  vector-SVG path-parsing when the figure is a vector graphic;
-  approach TBD). Produces `PartialTrace` records keyed by the
-  upstream figure region, with `EvidenceModality::Figure` provenance.
-  Output flows through the `.2` generalizer + `MULTIMODAL-CONTRACT-FUSION`
-  (already closed; ready to consume).
-  **Honest scope warning**: `.3` is the qualitatively largest leaf in
-  the program and is **expected to honest-split (rule 5) into a
-  sub-tree** when the concrete approach (VLM-structured prompting?
-  heuristic SVG parsing? both?) is decided. The split happens at the
-  start of `.3` execution, not at `.1` design.
+  Status: `in-progress` (honest-split into `.3.1` + `.3.2`)
+  Goal: figure → `PartialTrace` adapter producing typed candidates
+  the `.2` generalizer + `MULTIMODAL-CONTRACT-FUSION` consume.
   Acceptance: `Extractor wired; produces PartialTrace records for the corpus's figures with EvidenceModality::Figure; downstream generalize+fuse path observed end-to-end on at least one fixture; scripts/run_ci.sh green.`
-  Verification: `pending`
-  Commit: `pending`
+
+  **2026-05-20 corpus survey** (recorded in Decisions): The SpecForge
+  repo carries **no raw PDFs or SVGs** — upstream PDF extraction is
+  out-of-tree. The test corpus is pre-processed (typed JSON/markdown
+  fixtures). `WAVEFORM.3`'s input is therefore the **typed figure-
+  region record** the upstream PDF pipeline produces, not raw
+  raster/SVG bytes — the `.1`-anticipated "VLM-structured? vector-SVG?
+  both?" choice is moot; the honest split is on the typed contract
+  with upstream, not on the image format.
+
+  - ID: `R16-WAVEFORM-CONTRACT-MINING.3.1`
+    Status: `pending`
+    Goal: define the typed `FigureRegion` input contract (what an
+    upstream PDF extractor must produce to feed `WAVEFORM.3.2`).
+    Investigation: read the existing PDF-ingestion code paths to
+    identify the closest existing record (or design a new one); the
+    typed record carries figure id + bounding box + textual
+    annotations + (optionally) raster bytes / vector paths when
+    present. Docs-only design leaf — parallels prior R16 `.1`s.
+    Acceptance: `Typed FigureRegion input contract designed + recorded in this tree + mirrored in the book; docs-only; mdBook green.`
+    Verification: `pending`
+    Commit: `pending`
+
+  - ID: `R16-WAVEFORM-CONTRACT-MINING.3.2`
+    Status: `pending`
+    Goal: implement the `FigureRegion → PartialTrace` adapter (typed
+    module + lexical-annotation parser for RelativeDelay /
+    ValueSpan recovery from annotation text; raster/vector handling
+    deferred until upstream produces those bytes). Unit-tested with
+    synthetic `FigureRegion`s + e2e fixture once one upstream record
+    exists.
+    Acceptance: `Typed adapter + tests; downstream generalize+verify+fuse path observed end-to-end on at least one synthetic FigureRegion fixture; scripts/run_ci.sh green.`
+    Verification: `pending`
+    Commit: `pending`
 
 - ID: `R16-WAVEFORM-CONTRACT-MINING.4`
   Status: `pending`
@@ -128,7 +150,9 @@ defensive (junk-label guarding). Deliver:
 | --- | --- | --- | --- |
 | 1 | `R16-WAVEFORM-CONTRACT-MINING.1` | `done` | Schema + generalizer + verifier design fixed; book mirror added |
 | 2 | `R16-WAVEFORM-CONTRACT-MINING.2` | `done` | Typed `waveform` module + 4-rule generalizer + round-trip verifier + 7 tests; zero artifact churn |
-| 3 | `R16-WAVEFORM-CONTRACT-MINING.3` | `pending` | **Next** — Figure→PartialTrace extractor (expected honest-split at promotion time) |
+| 3 | `R16-WAVEFORM-CONTRACT-MINING.3` | `in-progress` | Honest-split: `.3.1` typed FigureRegion input contract (next); `.3.2` adapter implementation |
+| 3.1 | `R16-WAVEFORM-CONTRACT-MINING.3.1` | `pending` | **Next** — typed FigureRegion contract with upstream PDF ingestion (docs-only design leaf) |
+| 3.2 | `R16-WAVEFORM-CONTRACT-MINING.3.2` | `pending` | FigureRegion → PartialTrace adapter |
 | 4 | `R16-WAVEFORM-CONTRACT-MINING.4` | `pending` | Corpus conformance eval + negative fixtures + close |
 
 ## Design (`.1` output, 2026-05-20)
@@ -327,6 +351,20 @@ KG-ONTOLOGY.4 / FIDELITY.4 / FUSION.4 precedents).
 
 - `2026-05-19`: Created `proposed` as program point #4 (crux), ordered
   5th.
+- `2026-05-20`: **Corpus survey** finding for the `.3` honest split:
+  `find … *.pdf *.svg` over the SpecForge tree returns nothing —
+  the test corpus is **pre-processed** (typed JSON/markdown fixtures
+  under `crates/specforge/test_data/`; `corpus_kb/` is markdown
+  only). Upstream PDF extraction (raster/SVG → typed records) is
+  **out-of-tree**, so the `.1`-anticipated "VLM-structured? vector-
+  SVG? both?" choice is moot: the actual decision is on the typed
+  contract with whatever upstream record the PDF pipeline produces.
+  **Honest-split `.3`** (rule 5) into `.3.1` (typed `FigureRegion`
+  input contract design) + `.3.2` (adapter implementation). The
+  raster/vector handling stays deferred until upstream actually
+  produces those bytes — the typed adapter pathway can land before
+  that, processing whatever textual annotations the upstream record
+  carries (RelativeDelay / ValueSpan recovery from annotation text).
 - `2026-05-20`: Promoted to `active` (DAG predecessors closed);
   `.1` design fixed + book mirror; concrete `.1`–`.4` leaves defined
   (with `.3` flagged for honest split). Frontier → `.2` (implement

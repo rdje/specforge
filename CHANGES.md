@@ -2,6 +2,37 @@
 
 ## 2026-05-20
 
+### R16-WAVEFORM-CONTRACT-MINING.3 — corpus survey + honest-split decision (per rule 5)
+- Corpus survey: `find … *.pdf *.svg` over the SpecForge tree
+  returns nothing — the test corpus is **pre-processed** (typed
+  JSON/markdown fixtures under `crates/specforge/test_data/`;
+  `corpus_kb/` is markdown only). Upstream PDF extraction
+  (raster/SVG → typed records) is **out-of-tree**.
+- Consequence: the `.1`-anticipated "VLM-structured? vector-SVG?
+  both?" choice is moot. The actual decision is on the typed
+  contract with whatever upstream record the PDF pipeline
+  produces. Honest-split `.3` (rule 5) into:
+  - `R16-WAVEFORM-CONTRACT-MINING.3.1` (pending) — define the
+    typed `FigureRegion` input contract (what an upstream PDF
+    extractor must produce to feed `.3.2`). Investigation:
+    identify the closest existing PDF-ingestion record (or design
+    a new one); the typed record carries figure id + bounding
+    box + textual annotations + (optionally) raster bytes /
+    vector paths when present. Docs-only design leaf.
+  - `R16-WAVEFORM-CONTRACT-MINING.3.2` (pending) — implement the
+    `FigureRegion → PartialTrace` adapter (typed module + lexical
+    annotation parser for RelativeDelay / ValueSpan recovery from
+    annotation text). Raster/vector handling stays deferred until
+    upstream actually produces those bytes; the typed adapter
+    pathway can land before that, processing whatever textual
+    annotations the upstream record carries.
+- `R16-WAVEFORM-CONTRACT-MINING.md` tree status: `.3` →
+  `in-progress` (split); `docs/TASK_TREE.md` frontier row updated to
+  `.3.1`. Honest tree-split per rule 5 (do not pretend to deliver
+  the extractor today; deliver the split that makes the next leaf
+  concretely actionable). Docs-only;
+  `scripts/run_docs_ci.sh` green (mdBook builds).
+
 ### BOOK-METHOD-DOC.3 — encode close-rule in workflow doctrine + close tree
 - Added a "**Book method-doc close-rule (`BOOK-METHOD-DOC`)**"
   bullet to `docs/TASK_TREE.md`'s "Completion Rules" section: a
