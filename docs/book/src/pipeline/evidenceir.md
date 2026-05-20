@@ -120,3 +120,16 @@ It is one that:
 - avoids creating false structure from generic or noisy inputs
 
 That makes `EvidenceIR` the main staging area for truthfulness before canonical semantics begin.
+
+## Closed task trees — how each was implemented and verified
+
+### `R6-EVIDENCE-HARDENING` — close zero-coverage assertion gaps on `EvidenceIR`
+
+This tree added regression-only test assertions to populated-but-
+untested fields on `EvidenceIr`, `ExtractedStatement`, and
+`FsmSignalCandidate` (the latter retained through historical
+cycles and re-purposed for signal-binding context). The leaves
+worked symbol-by-symbol so failure isolation stayed sharp.
+Verified by mutation testing reducing missed mutants to zero on
+the targeted symbols + `scripts/run_ci.sh`. *Authoritative
+tracking:* `docs/tasks/R6-EVIDENCE-HARDENING.md`.

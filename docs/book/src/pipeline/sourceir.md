@@ -106,3 +106,16 @@ not to pretend a later semantic stage can recover structure that was never prese
 `SourceIR` should maximize faithful preservation and minimize premature interpretation.
 
 That discipline is what allows the later stages to be ambitious without becoming reckless.
+
+## Closed task trees — how each was implemented and verified
+
+### `R6-SOURCE-HARDENING` — close zero-coverage assertion gaps on `SourceIR`
+
+`SourceIR` is the entry point for every SpecForge pipeline; an
+untested field on a source record is a regression risk for
+document ingestion and adapter targeting. This tree added
+regression-only test assertions to every populated-but-untested
+field on `SourceIR`-related records. Verified by mutation
+testing (cargo-mutants) reducing missed mutants to zero on the
+targeted symbols + `scripts/run_ci.sh`. *Authoritative tracking:*
+`docs/tasks/R6-SOURCE-HARDENING.md`.

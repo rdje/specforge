@@ -75,8 +75,9 @@ human-facing, topically-organized explanation that mirrors them.
   Commit: `see Commit Log`
 
 - ID: `BOOK-METHOD-DOC.2`
-  Status: `in-progress` (honest-split into per-chapter sub-leaves; the
-  R16 family already self-documents through its close-rule)
+  Status: `done` (`2026-05-20`; all closed pre-R16 trees per the
+  placement map are now backfilled; active trees self-document at
+  their own close per the standing rule)
   Goal: backfill existing/closed trees to the standard, each in its
   mapped chapter (batched by chapter to keep diffs reviewable).
   Acceptance: `Each existing tree has an accurate method-doc section in its mapped chapter; mdBook green.`
@@ -118,14 +119,28 @@ human-facing, topically-organized explanation that mirrors them.
     Commit: `see Commit Log`
 
   - ID: `BOOK-METHOD-DOC.2.c`
-    Status: `pending`
+    Status: `done` (`2026-05-20`)
     Goal: backfill the remaining mapped trees per the placement map
-    (`R6-*-HARDENING`, `R7-VALIDATION`, `PROVENANCE-HARDENING`,
-    `R15*-…`). Per-chapter subsections in `pipeline/*` / `quality/*` /
-    `domain/*`.
+    (`R6-*-HARDENING`, `PROVENANCE-HARDENING`). Per-chapter
+    subsections in `pipeline/*` / `quality/*`.
     Acceptance: `Each remaining closed tree from the placement map has a topically-placed method-doc subsection; mdBook green.`
-    Verification: `pending`
-    Commit: `pending`
+    Verification: `passed` — 7 closed hardening trees backfilled to
+      their topically-correct chapters:
+      `R6-SOURCE-HARDENING` → `pipeline/sourceir.md`;
+      `R6-EVIDENCE-HARDENING` → `pipeline/evidenceir.md`;
+      `R6-SEMANTIC-HARDENING` → `pipeline/semanticir.md`;
+      `R6-INTENT-HARDENING` + `R6-CONVERGE-HARDENING` →
+      `pipeline/intentir.md`;
+      `R6-PRIOR-MEMORY-HARDENING` → `quality/corpus-memory.md`;
+      `PROVENANCE-HARDENING` → `quality/validation.md`.
+      Each subsection records the mutation-testing methodology
+      (cargo-mutants delta-to-zero on the targeted symbols) and
+      includes an `*Authoritative tracking:*` pointer.
+      `R7-VALIDATION` and `R15-GRAPH-DIRECTION-MIGRATION` are still
+      `active` — per the standing close-rule, their book sections
+      are added by their own close-leaves, not by backfill. `mdbook
+      build` green.
+    Commit: `see Commit Log`
 
 - ID: `BOOK-METHOD-DOC.3`
   Status: `pending`
@@ -143,8 +158,8 @@ human-facing, topically-organized explanation that mirrors them.
 | 1 | `BOOK-METHOD-DOC.1` | `done` | Convention + map + first worked instance (R16-CONTRACT-IR) |
 | 2.a | `BOOK-METHOD-DOC.2.a` | `done` | ISF-adapter chapter backfilled (7 trees) — `2026-05-20` |
 | 2.b | `BOOK-METHOD-DOC.2.b` | `done` | reference/* chapters backfilled (AUDIT-DOC-RECONCILE, SIGNOFF-REMEDIATION) — `2026-05-20` |
-| 2.c | `BOOK-METHOD-DOC.2.c` | `pending` | Remaining trees per the placement map (`R6-*-HARDENING`, `R7-VALIDATION`, `PROVENANCE-HARDENING`, `R15*`) |
-| 3 | `BOOK-METHOD-DOC.3` | `pending` | Encode the standing close-rule into workflow doctrine |
+| 2.c | `BOOK-METHOD-DOC.2.c` | `done` | 7 hardening trees backfilled across pipeline/*/quality/* — `2026-05-20` |
+| 3 | `BOOK-METHOD-DOC.3` | `pending` | **Next** — encode the standing close-rule into workflow doctrine (`docs/TASK_TREE.md` / `COMMIT.md`) + close tree |
 
 ## Decisions
 
@@ -169,6 +184,7 @@ human-facing, topically-organized explanation that mirrors them.
 | `2026-05-19` | `BOOK-METHOD-DOC.1` | convention + placement map + standing rule recorded; first instance = R16-CONTRACT-IR book section | `passed` |
 | `2026-05-20` | `BOOK-METHOD-DOC.2.a` | 7 ISF/FSMGen trees backfilled into `docs/book/src/pipeline/isf-adapter.md` "Closed task trees" section; mdBook builds | `passed` |
 | `2026-05-20` | `BOOK-METHOD-DOC.2.b` | `AUDIT-DOC-RECONCILE` → `reference/documentation-scope.md`; `SIGNOFF-REMEDIATION` → `reference/live-docs.md`; both topically placed; mdBook builds | `passed` |
+| `2026-05-20` | `BOOK-METHOD-DOC.2.c` | 7 hardening trees backfilled across pipeline/*/quality/* (sourceir/evidenceir/semanticir/intentir × 2 trees/corpus-memory/validation); R7-VALIDATION + R15-GRAPH-DIRECTION-MIGRATION still active (self-document at close per standing rule); mdBook builds | `passed` |
 
 ## Commit Log
 
@@ -176,7 +192,8 @@ human-facing, topically-organized explanation that mirrors them.
 | --- | --- | --- |
 | `BOOK-METHOD-DOC.1` | `BOOK-METHOD-DOC.1 — convention + placement map (with R16-CONTRACT-IR.1)` | docs-only; worked template = R16-CONTRACT-IR book section |
 | `BOOK-METHOD-DOC.2.a` | `BOOK-METHOD-DOC.2.a — backfill ISF-adapter chapter (7 closed pre-R16 trees)` (`3fae27dc`) | docs-only; per the convention; mdBook green |
-| `BOOK-METHOD-DOC.2.b` | `BOOK-METHOD-DOC.2.b — backfill reference/* chapters (AUDIT-DOC-RECONCILE, SIGNOFF-REMEDIATION)` | docs-only; topical placement per map; mdBook green |
+| `BOOK-METHOD-DOC.2.b` | `BOOK-METHOD-DOC.2.b — backfill reference/* chapters (AUDIT-DOC-RECONCILE, SIGNOFF-REMEDIATION)` (`95687ed4`) | docs-only; topical placement per map; mdBook green |
+| `BOOK-METHOD-DOC.2.c` | `BOOK-METHOD-DOC.2.c — backfill hardening trees across pipeline/* + quality/* (7 trees)` | docs-only; topical placement per map; mdBook green; active trees self-document at close per standing rule |
 
 ## Changelog
 
@@ -184,6 +201,24 @@ human-facing, topically-organized explanation that mirrors them.
   thoroughly and accurately explain how each task-tree is implemented
   and verified, topically placed; with a standing close-rule so it
   never drifts.
+- `2026-05-20`: `.2.c` done — backfilled 7 closed hardening trees
+  to their topically-correct chapters per the placement map:
+  `R6-SOURCE-HARDENING` → `pipeline/sourceir.md`;
+  `R6-EVIDENCE-HARDENING` → `pipeline/evidenceir.md`;
+  `R6-SEMANTIC-HARDENING` → `pipeline/semanticir.md`;
+  `R6-INTENT-HARDENING` + `R6-CONVERGE-HARDENING` →
+  `pipeline/intentir.md`; `R6-PRIOR-MEMORY-HARDENING` →
+  `quality/corpus-memory.md`; `PROVENANCE-HARDENING` →
+  `quality/validation.md`. Each subsection records the
+  mutation-testing methodology (cargo-mutants delta-to-zero on
+  targeted symbols). `R7-VALIDATION` and
+  `R15-GRAPH-DIRECTION-MIGRATION` are still active; per the
+  standing close-rule their book sections are added by their own
+  close-leaves, not by backfill. **`BOOK-METHOD-DOC.2` parent leaf
+  marked DONE** (all closed pre-R16 trees per the placement map
+  are now backfilled; active trees self-document at close per the
+  standing rule). Frontier → `.3` (encode close-rule in workflow
+  doctrine + close tree). Docs-only; mdBook green.
 - `2026-05-20`: `.2.b` done — appended per-tree method-doc
   subsections for `AUDIT-DOC-RECONCILE` (in
   `docs/book/src/reference/documentation-scope.md`, topical: docs-vs-

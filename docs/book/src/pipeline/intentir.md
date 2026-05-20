@@ -104,3 +104,26 @@ It is the artifact that:
 - project-level snapshots summarize for live baselines
 
 That is why `IntentIR` is the main public product surface today.
+
+## Closed task trees — how each was implemented and verified
+
+### `R6-INTENT-HARDENING` — close mutation-testing gaps in `intent.rs` builders
+
+Mutation testing on the `intent.rs` builder functions
+(`build_intent_actors`, `build_behaviors`, `build_constraints`,
+`build_assumptions`, and the `overlaps` helper) surfaced 10
+missed mutants — assertions that didn't pin down the builder's
+exact contract. This tree closed those gaps with regression-only
+tests. Verified by cargo-mutants delta-to-zero on the targeted
+symbols + `scripts/run_ci.sh`. *Authoritative tracking:*
+`docs/tasks/R6-INTENT-HARDENING.md`.
+
+### `R6-CONVERGE-HARDENING` — close zero-coverage gaps in `converge.rs`
+
+The converge command and several command-module struct fields
+were populated in production but had zero test coverage. This
+tree added regression-only assertions for those fields and for
+the converge command's behaviour-critical paths. Verified by
+cargo-mutants delta-to-zero on the targeted symbols +
+`scripts/run_ci.sh`. *Authoritative tracking:*
+`docs/tasks/R6-CONVERGE-HARDENING.md`.

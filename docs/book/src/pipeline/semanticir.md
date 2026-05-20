@@ -159,3 +159,15 @@ That is why so many truthfulness-hardening slices land here:
 - graph-first direction recovery
 
 This is the main semantic safety boundary before canonical intent.
+
+## Closed task trees — how each was implemented and verified
+
+### `R6-SEMANTIC-HARDENING` — close mutation-testing gaps in `semantic.rs`
+
+`semantic.rs` is the canonical actor/signal graph + conflict
+surface; mutation testing identified branches that survived
+mutation without test detection. This tree closed those gaps
+systematically, again per-symbol so a missed mutant carries a
+clear localization. Verified by cargo-mutants delta-to-zero on
+the targeted symbols + the full `scripts/run_ci.sh`.
+*Authoritative tracking:* `docs/tasks/R6-SEMANTIC-HARDENING.md`.

@@ -114,3 +114,17 @@ This is how `specforge` can become better on PDF `N + 1` after analyzing PDFs `1
 - but by learning how chip specs usually express meaning
 
 That distinction is one of the most important architectural choices in the project.
+
+## Closed task trees — how each was implemented and verified
+
+### `R6-PRIOR-MEMORY-HARDENING` — close mutation gaps in `prior_memory.rs`
+
+`prior_memory.rs` (over 2 000 lines) carried 101 missed mutants
+when this tree opened — substantial functions had no unit tests
+at all. The tree worked function-by-function: each leaf ran
+cargo-mutants on a bounded subset of `prior_memory.rs` symbols,
+added regression-only assertions for the surviving mutants, and
+re-ran the harness to delta-to-zero on that subset. Verified by
+cargo-mutants on the full module reading zero missed across the
+hardened functions + `scripts/run_ci.sh`. *Authoritative
+tracking:* `docs/tasks/R6-PRIOR-MEMORY-HARDENING.md`.

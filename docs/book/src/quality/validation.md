@@ -154,3 +154,19 @@ It is also part of the project’s epistemology:
 - stronger, validated output can become advisory prior knowledge
 
 The next chapters explain the benchmark harness and the prior-memory layer in more detail.
+
+## Closed task trees — how each was implemented and verified
+
+### `PROVENANCE-HARDENING` — provenance fields always have assertions
+
+Every provenance-like field — `supporting_*_ids`,
+`automation_confidence`, `strongest_automation_confidence`,
+provenance vectors, evidence-span ids — on every IR record type
+must have at least one non-empty test assertion where the field
+is populated. The tree audited the IR surface, identified
+provenance fields with no assertion, and added regression-only
+assertions per field. The doctrine recorded: *provenance is what
+makes residuals honest; an unasserted provenance field is a
+silent fabrication surface*. Verified by per-field audit + the
+full `scripts/run_ci.sh`. *Authoritative tracking:*
+`docs/tasks/PROVENANCE-HARDENING.md`.

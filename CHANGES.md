@@ -2,6 +2,32 @@
 
 ## 2026-05-20
 
+### BOOK-METHOD-DOC.2.c — backfill 7 hardening trees across pipeline/* + quality/* (BOOK-METHOD-DOC.2 DONE)
+- Per the BOOK-METHOD-DOC standing close-rule + placement map,
+  appended topical method-doc subsections to:
+  - `docs/book/src/pipeline/sourceir.md` — `R6-SOURCE-HARDENING`;
+  - `docs/book/src/pipeline/evidenceir.md` —
+    `R6-EVIDENCE-HARDENING`;
+  - `docs/book/src/pipeline/semanticir.md` —
+    `R6-SEMANTIC-HARDENING`;
+  - `docs/book/src/pipeline/intentir.md` — `R6-INTENT-HARDENING`
+    + `R6-CONVERGE-HARDENING`;
+  - `docs/book/src/quality/corpus-memory.md` —
+    `R6-PRIOR-MEMORY-HARDENING`;
+  - `docs/book/src/quality/validation.md` — `PROVENANCE-HARDENING`.
+- Each subsection records the mutation-testing methodology
+  (cargo-mutants delta-to-zero on the targeted symbols) and
+  includes an `*Authoritative tracking:*` pointer to the tree
+  file. `R7-VALIDATION` and `R15-GRAPH-DIRECTION-MIGRATION` are
+  still active — per the standing close-rule, their book sections
+  are added by their own close-leaves, not by backfill.
+- **`BOOK-METHOD-DOC.2` parent leaf marked DONE** — all closed
+  pre-R16 trees per the placement map are now backfilled (`.2.a` +
+  `.2.b` + `.2.c`); active trees self-document at close per the
+  standing rule. Docs-only; `scripts/run_docs_ci.sh` green
+  (mdBook builds). Frontier → `.3` (encode the standing
+  close-rule into workflow doctrine + close tree).
+
 ### BOOK-METHOD-DOC.2.b — backfill reference/* chapters (AUDIT-DOC-RECONCILE, SIGNOFF-REMEDIATION)
 - Appended a topical method-doc subsection for `AUDIT-DOC-RECONCILE`
   to `docs/book/src/reference/documentation-scope.md` under a new
