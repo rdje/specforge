@@ -2,6 +2,34 @@
 
 ## 2026-05-20
 
+### R16-CAPTURE-FIDELITY-GATES.1 — promote #5/order-3 + gate design
+- DAG governance (`R16-INTENT-CAPTURE.2`): with point #1
+  (`R16-CONTRACT-IR`) closed and point #2 (`R16-KG-PROTOCOL-ONTOLOGY`)
+  closed, `R16-CAPTURE-FIDELITY-GATES` (#5, pulled to order 3 — the
+  program's objective function) promoted `proposed → active` with
+  concrete `.1`–`.4` leaves.
+- `.1` gate design fixed (docs-only): typed layer / no new stage
+  (parallels CONTRACT-IR / KG-ONTOLOGY); typed gate set
+  (`RealizableBoundary` / `RealizableDirection` / `RealizableHandshake`
+  / `ResidualHonesty` / `NoStrictInvalid` / `FigureConformance`);
+  three-valued `FindingStatus = Pass | Fail | NotEvaluated`
+  (`NotEvaluated` never silently treated as `Pass` — honesty);
+  per-document score `pass / (pass + fail)` over **evaluated** gates,
+  default threshold `1.0` (any `Fail` = below-threshold); a `Fail` on
+  a `Lowerable` contract routed to `Residual` with the gate message as
+  reason in `.3` (residual-honesty doctrine **mechanically enforced**,
+  not only authorial); `FigureConformance` runs `NotEvaluated`
+  corpus-wide until `R16-WAVEFORM-CONTRACT-MINING` (#4) populates
+  `FigureTrace`s — honest dormant capability; trace-replay primitive
+  is unit-tested with synthesized traces in `.2`. Additive empty
+  `fidelity_findings` field on SemanticIr/IntentIr in `.2`/`.3` ⇒ zero
+  artifact churn (CONTRACT-IR.2 / KG-ONTOLOGY.2 discipline);
+  `validate` `fidelity:` report block in `.4` (structured-metric JSON
+  shape intentionally not touched, bounded — KG-ONTOLOGY.4
+  precedent). Book mirror added per `BOOK-METHOD-DOC`;
+  `docs/TASK_TREE.md` index updated. Docs-only; `scripts/run_docs_ci`
+  green (mdBook builds). Frontier → `.2`.
+
 ### R16-KG-PROTOCOL-ONTOLOGY.4 — `validate` count surface + close tree (point #2 DELIVERED)
 - `specforge validate` now reports `actor_contracts: …` and
   `protocol_graph: channels=… phases=… transactions=… handshakes=…`

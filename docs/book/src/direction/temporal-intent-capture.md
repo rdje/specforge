@@ -253,3 +253,63 @@ transactions=0 handshakes=0` (zero handshake contracts ⇒ empty graph ⇒
 zero `.isf`/artifact change across the full suite). Next
 DAG-promotable R16 sub-tree = `R16-CAPTURE-FIDELITY-GATES` (#5, order 3;
 dep `R16-CONTRACT-IR` ✓).
+
+## R16-CAPTURE-FIDELITY-GATES — how it is implemented and verified
+
+**Why.** The program thesis: prose+waveform → typed KG extraction is
+the hard problem; the rest is mechanical. But you cannot improve what
+you cannot measure. This tree makes "how well did we capture intent?"
+an **objective, gating number** so the extraction trees
+(`#3`/`#4`/`#6`) have a feedback signal to optimize against — and so
+the residual-honesty doctrine ("unverifiable temporal intent →
+explicit residual, never fabricated") is **mechanically enforced**,
+not just authorial.
+
+### Implementation
+
+- **Typed layer, not a new stage** (parallels CONTRACT-IR /
+  KG-ONTOLOGY): a new `crates/specforge/src/ir/fidelity.rs` defines a
+  typed gate set (`RealizableBoundary` / `RealizableDirection` /
+  `RealizableHandshake` / `ResidualHonesty` / `NoStrictInvalid` /
+  `FigureConformance`), a `FidelityFinding` record, and a
+  `FindingStatus = Pass | Fail | NotEvaluated` (honestly three-valued
+  — `NotEvaluated` is never silently treated as `Pass`).
+- **Additive empty field** on `SemanticIr`/`IntentIr`:
+  `fidelity_findings: Vec<FidelityFinding>` (serde-default +
+  `skip_serializing_if = Vec::is_empty`) ⇒ zero artifact churn until
+  the producer populates it. Same discipline as `actor_contracts` and
+  `protocol_graph`.
+- **Producer** (`.3`) runs in `SemanticIr::build` after
+  `actor_contracts` exist; each gate evaluator returns `Pass` / `Fail`
+  / `NotEvaluated` per contract. A `Fail` on a `Lowerable` contract is
+  routed to **Residual** with the gate message as the reason — the
+  honesty doctrine, mechanically enforced.
+- **Trace-replay primitive**:
+  `evaluate_figure_trace(&ActorContract, &FigureTrace)` is a bounded
+  structural check (every obligation's witness within the trace tick
+  window must hold). Until `R16-WAVEFORM-CONTRACT-MINING` (#4)
+  populates `FigureTrace` from PDF figures, `FigureConformance` runs
+  `NotEvaluated` corpus-wide — honest dormant capability; the
+  primitive is unit-tested with synthesized traces in `.2`.
+- **Report** (`.4`): `specforge validate` adds a `fidelity:` block
+  (pass / fail / not_evaluated counts + per-document score + first-N
+  failures) for SemanticIR and IntentIR. Structured-metric / JSON
+  shape intentionally not touched (bounded, mirrors the
+  `R16-KG-PROTOCOL-ONTOLOGY.4` precedent).
+
+### Verification
+
+- Per-document score = `pass / (pass + fail)` over **evaluated** gates;
+  `NotEvaluated` excluded from the denominator and counted separately.
+  Threshold default `1.0`: any `Fail` = below-threshold (disciplined
+  honesty default). Corpus baseline-locked at `.4`.
+- Additive empty field ⇒ zero `.isf`/artifact change while unpopulated
+  (parity by construction); existing fsmgen-strict + e2e suites must
+  stay green. `scripts/run_ci.sh` green per leaf; every leaf via
+  `COMMIT.md`; the closing leaf refreshes this section
+  (BOOK-METHOD-DOC).
+- Honest scope: `FigureConformance` stays `NotEvaluated` on the corpus
+  until `#4` populates `FigureTrace`s — explicitly recorded; never
+  faked as `Pass`.
+
+Authoritative tracking: `docs/tasks/R16-CAPTURE-FIDELITY-GATES.md`.

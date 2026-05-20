@@ -3,12 +3,12 @@
 ## Metadata
 
 - Tree ID: `R16-CAPTURE-FIDELITY-GATES`
-- Status: `proposed`
+- Status: `active`
 - Roadmap lane: `R16`
 - Program: `R16-INTENT-CAPTURE` (point #5, **pulled to order 3** — the
   program's objective function)
 - Created: `2026-05-19`
-- Last updated: `2026-05-19`
+- Last updated: `2026-05-20`
 - Owner: repo-local workflow
 
 ## Goal
@@ -45,12 +45,208 @@ The pair becomes the objective function that gates and steers #3/#4/#6.
   conformance) regression-locked.
 - `scripts/run_ci.sh` green per leaf; every leaf via `COMMIT.md`.
 
-## Task Tree (proposed; expands at promotion)
+## Task Tree
 
-- Children (sketch): `.1` metric + gate design (realizability fragment,
-  trace-conformance semantics, scoring/calibration, docs-only) →
-  `.2` figure-conformance replay harness → `.3` realizability/consistency
-  gate + residual routing → `.4` corpus fidelity report + close
+- ID: `R16-CAPTURE-FIDELITY-GATES.1`
+  Status: `done`
+  Goal: typed fidelity-gate set + finding shape + scoring/calibration +
+  report shape design (docs-only, parallels `R16-CONTRACT-IR.1` /
+  `R16-KG-PROTOCOL-ONTOLOGY.1`).
+  Acceptance: `Design recorded in this tree + mirrored in mdBook per BOOK-METHOD-DOC; docs-only; scripts/run_docs_ci.sh green.`
+  Verification: `passed` — see "Design (`.1` output)" section below;
+    book mirror under *Temporal-Intent Capture* chapter; `mdbook build`
+    green.
+  Commit: `see Commit Log`
+
+- ID: `R16-CAPTURE-FIDELITY-GATES.2`
+  Status: `pending`
+  Goal: implement the typed `fidelity` module (`FidelityGate`,
+  `FindingStatus`, `FidelityFinding`) + per-gate evaluators that act on
+  `actor_contracts` (RealizableBoundary, RealizableDirection,
+  RealizableHandshake, ResidualHonesty, NoStrictInvalid) +
+  trace-replay primitive (`evaluate_figure_trace(&ActorContract, &FigureTrace) -> FindingStatus`).
+  Additive empty `fidelity_findings: Vec<FidelityFinding>` field on
+  SemanticIr/IntentIr (serde-skipped while empty ⇒ zero artifact
+  churn). `FigureConformance` runs `NotEvaluated` corpus-wide (no
+  FigureTraces yet — honest, not faked Pass) but the primitive is unit-
+  tested with synthesized traces.
+  Acceptance: `Typed module + per-gate evaluators + trace-replay primitive + additive empty field + unit tests; zero artifact churn; scripts/run_ci.sh green.`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `R16-CAPTURE-FIDELITY-GATES.3`
+  Status: `pending`
+  Goal: wire the producer — `SemanticIr::build` runs the gate evaluators
+  over `actor_contracts` (+ `protocol_graph` where applicable),
+  populating `fidelity_findings`; failures route to residual (a `Fail`
+  on a contract marked `Lowerable` becomes a `Residual` with the gate
+  message); residual-honesty gate is self-consistent. IntentIR carries
+  findings forward.
+  Acceptance: `Producer wired; per-leaf Fail-to-residual routing tested; corpus parity preserved (a Fail downgrades to Residual rather than fabricating a Lowerable — honesty doctrine); scripts/run_ci.sh green.`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `R16-CAPTURE-FIDELITY-GATES.4`
+  Status: `pending`
+  Goal: corpus fidelity report — `specforge validate` adds a `fidelity:`
+  block (pass/fail/not_evaluated counts + score + first-N failures)
+  for SemanticIR and IntentIR; baseline-lock the corpus fidelity
+  numbers; close tree + book + ROADMAP R16.
+  Acceptance: `validate prints fidelity block; corpus baseline locked (e.g., nvme); tree marked done; ROADMAP R16 closed for CAPTURE-FIDELITY-GATES; mdBook "Status — delivered" subsection per BOOK-METHOD-DOC; scripts/run_ci.sh green.`
+  Verification: `pending`
+  Commit: `pending`
+
+## Current Frontier
+
+| Order | Leaf | Status | Why next |
+| --- | --- | --- | --- |
+| 1 | `R16-CAPTURE-FIDELITY-GATES.1` | `done` | Gate design fixed; book mirror added |
+| 2 | `R16-CAPTURE-FIDELITY-GATES.2` | `pending` | **Next** — implement typed `fidelity` module + per-gate evaluators + trace primitive + additive empty field |
+| 3 | `R16-CAPTURE-FIDELITY-GATES.3` | `pending` | Producer wiring + Fail-to-residual routing |
+| 4 | `R16-CAPTURE-FIDELITY-GATES.4` | `pending` | Corpus report + close |
+
+## Design (`.1` output, 2026-05-20)
+
+The hard problem is captured intent fidelity (per the program thesis);
+this tree makes "how well did we capture intent?" an **objective,
+gating number** so the extraction trees (`#3`/`#4`/`#6`) have a
+feedback signal to optimize against. Design parallels
+`R16-CONTRACT-IR.1` / `R16-KG-PROTOCOL-ONTOLOGY.1`: typed layer, no new
+stage, additive serde-skipped-while-empty field, mechanical projection,
+honest residual routing.
+
+### Placement — typed layer, no new stage
+
+A new `crates/specforge/src/ir/fidelity.rs` defines `FidelityGate`,
+`FindingStatus`, `FidelityFinding`. An additive
+`fidelity_findings: Vec<FidelityFinding>` field is added to
+`SemanticIr`/`IntentIr` (serde-default + `skip_serializing_if =
+Vec::is_empty` ⇒ zero artifact churn while no gate has run). Producer
+runs in `SemanticIr::build` (after `actor_contracts` exist); IntentIR
+carries findings forward (parallel to `actor_contracts` /
+`protocol_graph`).
+
+### Typed gate set
+
+```rust
+pub enum FidelityGate {
+    RealizableBoundary,   // every referenced signal declared on the actor boundary
+    RealizableDirection,  // guarantee→output, assume→input (per actor direction)
+    RealizableHandshake,  // HandshakeBarrier: ready∈inputs, valid∈outputs (matches CONTRACT-IR.4 gate)
+    ResidualHonesty,      // Residual ⇒ non-empty reason; Lowerable ⇒ no classifier-residual provenance
+    NoStrictInvalid,      // the contract, when lowered, would not produce FSMGen-strict-invalid syntax
+    FigureConformance,    // a figure-derived trace assigned to this contract satisfies it (deferred trace plumbing)
+}
+```
+
+### Finding shape
+
+```rust
+pub enum FindingStatus { Pass, Fail, NotEvaluated }
+pub struct FidelityFinding {
+    pub gate: FidelityGate,
+    pub status: FindingStatus,
+    pub contract_id: Option<String>,
+    pub message: String,         // human-readable; for Fail, the residual reason
+}
+```
+
+### Scoring / calibration
+
+Per-document fidelity score =
+`pass / (pass + fail)` over **evaluated** gates (denominator excludes
+`NotEvaluated`); `NotEvaluated` is **counted separately**, never
+silently treated as `Pass`. A document is "at fidelity X" iff
+`score ≥ X` AND `fail == 0`. Default threshold = `1.0` (any Fail =
+below-threshold) — the disciplined honesty default (residual not
+fabricate, per the project doctrine).
+
+### Trace-replay (figure conformance)
+
+A `FigureTrace { signals: BTreeMap<String, Vec<u64>>, ticks: u32 }`
+expresses a cycle-accurate sample sequence (one value per signal per
+tick). `evaluate_figure_trace(&ActorContract, &FigureTrace) -> FindingStatus`
+is a bounded structural check: every obligation's witness within the
+trace's tick window must hold. Until `R16-WAVEFORM-CONTRACT-MINING`
+(#4) extracts `FigureTrace` from PDF figures, the `FigureConformance`
+gate runs `NotEvaluated` corpus-wide (honest dormant capability — the
+trace-replay primitive is unit-tested with synthesized traces in
+`.2`).
+
+### Residual routing (the honesty doctrine, mechanically enforced)
+
+A `Fail` on a contract marked `Lowerable` is the strongest signal that
+captured intent is wrong. `.3` routes such failures to **Residual**
+with the gate message as the reason; the contract is NOT silently
+lowered. This makes the doctrine ("unverifiable temporal intent →
+explicit residual, never fabricated") mechanically enforced rather
+than only authorial. Pre-existing Residual contracts with empty
+reasons surface as `ResidualHonesty` Fail.
+
+### Report shape (`.4`, `validate`)
+
+Additive lines in the SemanticIR + IntentIR count blocks of `specforge
+validate`:
+
+```
+  fidelity: pass=… fail=… not_evaluated=…  score=…
+  fidelity_failures (first 5):
+    [gate] contract_id: message
+    …
+```
+
+Structured-metric/JSON shape is intentionally **not** touched (kept
+bounded, mirrors the `R16-KG-PROTOCOL-ONTOLOGY.4` precedent).
+
+### Non-Goals (recorded)
+
+- Not a model-checker product (bounded algebraic gates only).
+- Does not improve extraction itself (measurement + residual routing).
+- `FigureTrace` recovery from PDFs is the extraction trees' job
+  (`#4 WAVEFORM-CONTRACT-MINING`); until then `FigureConformance` is
+  honestly `NotEvaluated` corpus-wide (not faked `Pass`).
+
+## Decisions
+
+- `2026-05-19`: Re-ordered from point #5 to program order 3 — measuring
+  the hard problem must precede pouring effort into it; the spec's own
+  figures are near-ground-truth. Created `proposed`.
+- `2026-05-20`: **Promoted `proposed → active`** by
+  `R16-INTENT-CAPTURE.2` (umbrella) after DAG predecessor
+  `R16-CONTRACT-IR` closed and sibling `R16-KG-PROTOCOL-ONTOLOGY` (#2)
+  closed. `.1` design fixed (docs-only): typed layer / no new stage
+  (parallels CONTRACT-IR/KG-ONTOLOGY); typed gate set; `Pass / Fail /
+  NotEvaluated` (honestly distinct — `NotEvaluated` never silently
+  Pass); per-document score with default threshold 1.0; `Fail` on a
+  `Lowerable` contract → routed to `Residual` in `.3` (honesty doctrine
+  mechanically enforced); `FigureConformance` honestly dormant until
+  `#4 WAVEFORM-CONTRACT-MINING` produces `FigureTrace`s from PDF
+  figures; structured-metric/JSON shape intentionally not touched
+  (bounded, KG-ONTOLOGY.4 precedent). Book mirror per BOOK-METHOD-DOC.
+
+## Blockers
+
+- None. Active; frontier `R16-CAPTURE-FIDELITY-GATES.2`.
+
+## Verification Log
+
+| Date | Leaf | Checks | Result |
+| --- | --- | --- | --- |
+| `2026-05-20` | `R16-CAPTURE-FIDELITY-GATES.1` | gate set / finding shape / scoring / trace-replay / residual routing / report shape recorded; book mirror per BOOK-METHOD-DOC; mdBook builds | `passed` (docs-only) |
+
+## Commit Log
+
+| Leaf | Commit subject or reference | Notes |
+| --- | --- | --- |
+| `R16-CAPTURE-FIDELITY-GATES.1` | `R16-CAPTURE-FIDELITY-GATES.1 — gate design (promote #5/order-3)` | docs-only; book mirror; also the `R16-INTENT-CAPTURE.2` #5/order-3 promotion |
+
+## Changelog
+
+- `2026-05-19`: Created `proposed` as program point #5, ordered 3rd.
+- `2026-05-20`: Promoted to `active` (DAG predecessor `R16-CONTRACT-IR`
+  done; sibling `R16-KG-PROTOCOL-ONTOLOGY` (#2) done); `.1` gate design
+  fixed + book mirror; concrete `.1`–`.4` leaves defined. Frontier →
+  `.2` (implement typed `fidelity` module).
 
 ## Dependencies / Order
 
@@ -58,17 +254,3 @@ The pair becomes the objective function that gates and steers #3/#4/#6.
   objective function and feedback driver. Gates (does not block creation
   of) `R16-MULTIMODAL-CONTRACT-FUSION` / `R16-WAVEFORM-CONTRACT-MINING` /
   `R16-CONSTRAINED-VERIFIED-EXTRACTION`.
-
-## Decisions
-
-- `2026-05-19`: Re-ordered from point #5 to program order 3 — measuring
-  the hard problem must precede pouring effort into it; the spec's own
-  figures are near-ground-truth. Created `proposed`.
-
-## Blockers
-
-- None (proposed; promotion after `R16-CONTRACT-IR`).
-
-## Changelog
-
-- `2026-05-19`: Created `proposed` as program point #5, ordered 3rd.
