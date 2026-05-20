@@ -2,6 +2,38 @@
 
 ## 2026-05-20
 
+### R16-CONSTRAINED-VERIFIED-EXTRACTION.1 — promote #6 (the FINAL R16 sub-tree) + high-precision-by-construction design
+- DAG governance (`R16-INTENT-CAPTURE.2`): with DAG predecessors
+  closed (`R16-CONTRACT-IR` ✓, `R16-CAPTURE-FIDELITY-GATES` ✓),
+  `R16-CONSTRAINED-VERIFIED-EXTRACTION` (#6, order 6) promoted
+  `proposed → active` with concrete `.1`–`.6` leaves. **All 6 R16
+  sub-trees are now active or closed** (#1/#2/#3/#5 delivered;
+  #4+#6 active).
+- `.1` design fixed (docs-only): typed layer / no new stage
+  (parallels prior R16 trees); module
+  `crates/specforge/src/ir/cve.rs` (to be written in `.2`).
+  Schema-constrained adapter
+  (`parse_constrained_contract(json: &str) -> Result<ActorContract>`)
+  is **provider-agnostic** — not pinned to any LLM/VLM; integration
+  point survives provider churn. Entailment verifier (`.3`):
+  given `(source_span, contract)`, conservative lexical/structural
+  check (every contract signal must appear in the span; every
+  numeric bound must match a number in the span); `Fail` reroutes to
+  `Residual{reason="entailment fail: …"}` — honesty doctrine
+  MECHANICALLY enforced, parallel to `FUSION.3` /
+  `FIDELITY.3` routings; verifier never "softens" a contract to
+  pass. Template library (`.4`) in `prior_memory`: canonical
+  templates (ready/valid, credit flow control, setup/access, async-
+  assert/sync-release reset, burst+last) instantiate at
+  `automation_confidence = High` only when promised signals are all
+  present (match is itself entailment-verifiable). Uncertainty-driven
+  converge (`.5`): deterministic value-of-information score over
+  (automation_confidence, fidelity-Fail count) with bounded budget
+  per pass. Honest dormancy through `.2`–`.5`; `.6` is corpus
+  precision/recall + close. Book mirror added per `BOOK-METHOD-DOC`;
+  `docs/TASK_TREE.md` index updated. Docs-only;
+  `scripts/run_docs_ci.sh` green (mdBook builds). Frontier → `.2`.
+
 ### R16-WAVEFORM-CONTRACT-MINING.2 — implement the typed `waveform` module
 - New `crates/specforge/src/ir/waveform.rs`: typed intermediate
   (`EdgeKind` / `LaneEdge` / `ValueSpan` / `RelativeDelay` /

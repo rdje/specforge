@@ -505,3 +505,72 @@ mine.
   the closing leaf refreshes this section (BOOK-METHOD-DOC).
 
 Authoritative tracking: `docs/tasks/R16-WAVEFORM-CONTRACT-MINING.md`.
+
+## R16-CONSTRAINED-VERIFIED-EXTRACTION — how it is implemented and verified
+
+**Why.** This is the closing tree of the program — it makes
+extraction **high-precision by construction** by removing the last
+authorial path to a bad contract. Prior trees gave us the typed
+target (CONTRACT-IR), protocol structure (KG-ONTOLOGY), an objective
+metric and Fail-to-Residual routing (CAPTURE-FIDELITY-GATES),
+cross-modal reconciliation with disagreement-to-Residual (MULTIMODAL-
+CONTRACT-FUSION), and a verifier-gated trace-mining primitive
+(WAVEFORM-CONTRACT-MINING). What was left: keeping every captured
+contract honest at extraction time, not just at lowering time.
+
+### Implementation
+
+- **Typed layer, no new stage** (parallels prior R16 trees): a new
+  `crates/specforge/src/ir/cve.rs` houses the constrained-decoding
+  adapter (`.2`), the entailment verifier (`.3`), and the
+  uncertainty selection helper (`.5`). The protocol-pattern templates
+  in `.4` live in `prior_memory` (the existing home for repeated
+  priors). No new IR stage; `SemanticIr`/`IntentIr` schemas unchanged
+  through `.2`/`.3`/`.4`/`.5`.
+- **Schema-constrained decoding** (`.2`): a JSON schema for
+  `ActorContract` (derived from its serde shape with a round-trip
+  oracle test) + a provider-agnostic adapter
+  `parse_constrained_contract(json: &str) -> Result<ActorContract>`
+  that fails closed on schema violations. Invalid JSON is an `Err`
+  — not a silently-fabricated contract. The integration with any
+  particular LLM/VLM is **not pinned** so the design survives
+  provider churn.
+- **Entailment verifier** (`.3`): given `(source_span, contract)`
+  returns `FindingStatus`. Initial implementation is conservative
+  lexical/structural (every signal in the contract must appear in
+  the span; every numeric bound must match a number actually present
+  in the span). A `Fail` reroutes to
+  `Residual{reason="entailment fail: …"}` — the honesty doctrine,
+  mechanically enforced, parallel to `FUSION.3` disagreement-routing
+  and `FIDELITY.3` Fail-on-Lowerable-routing. The verifier never
+  "softens" a contract to pass.
+- **Template library** (`.4`): canonical protocol templates seeded
+  into `prior_memory` (ready/valid; credit flow control;
+  setup/access; async-assert/sync-release reset; burst+last). Matched
+  templates instantiate at `automation_confidence = High` only when
+  the template's promised signals are all present — the match itself
+  is entailment-verifiable.
+- **Uncertainty-driven converge** (`.5`): a deterministic
+  value-of-information score over (`automation_confidence`,
+  fidelity-`Fail` count) selects the top-N contracts for re-extraction
+  on the next pass — bounded budget, never blanket rescans.
+
+### Verification
+
+- `.2` ships the schema + adapter (round-trip parse/serialize +
+  reject-invalid tests); `.3` ships the verifier + routing test;
+  `.4` ships the template library + a match-grounding test (no
+  fabricated templates: signals must be present); `.5` ships the
+  selection helper + a unit test over synthetic findings; `.6`
+  measures corpus precision/recall via
+  `R16-CAPTURE-FIDELITY-GATES` and baseline-locks. `scripts/run_ci.sh`
+  green per leaf; every leaf via `COMMIT.md`; the closing leaf
+  refreshes this section (BOOK-METHOD-DOC).
+- Honest dormancy: until an upstream prose extractor produces
+  candidates and feeds the adapter, the producer-side of `.3`/`.5`
+  is dormant on the corpus (the verifier still runs whenever it has
+  a span; the templates are always available; the schema adapter is
+  always usable). `.6` is where measurement becomes meaningful
+  end-to-end.
+
+Authoritative tracking: `docs/tasks/R16-CONSTRAINED-VERIFIED-EXTRACTION.md`.
