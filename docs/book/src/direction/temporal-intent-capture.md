@@ -1440,130 +1440,368 @@ new piece of work with its own scope.
 
 ## R16-CONSTRAINED-VERIFIED-EXTRACTION — how it is implemented and verified
 
-**Why.** This is the closing tree of the program — it makes
-extraction **high-precision by construction** by removing the last
-authorial path to a bad contract. Prior trees gave us the typed
-target (CONTRACT-IR), protocol structure (KG-ONTOLOGY), an objective
-metric and Fail-to-Residual routing (CAPTURE-FIDELITY-GATES),
-cross-modal reconciliation with disagreement-to-Residual (MULTIMODAL-
-CONTRACT-FUSION), and a verifier-gated trace-mining primitive
-(WAVEFORM-CONTRACT-MINING). What was left: keeping every captured
-contract honest at extraction time, not just at lowering time.
+This is the closing tree of the R16 program — the one that
+removes the last authorial path to a bad contract from the
+prose side of extraction. Reading it end-to-end should leave
+you with a working mental model of how SpecForge will safely
+consume LLM/VLM-extracted contracts (when those extractors
+land), the four typed pieces (`parse_constrained_contract`,
+`entailment_check`, the template library, the
+uncertainty-driven converge selector), and why this completes
+the four-doctrine structural-honesty story.
 
-### Implementation
+### The problem this fixes
 
-- **Typed layer, no new stage** (parallels prior R16 trees): a new
-  `crates/specforge/src/ir/cve.rs` houses the constrained-decoding
-  adapter (`.2`), the entailment verifier (`.3`), and the
-  uncertainty selection helper (`.5`). The protocol-pattern templates
-  in `.4` live in `prior_memory` (the existing home for repeated
-  priors). No new IR stage; `SemanticIr`/`IntentIr` schemas unchanged
-  through `.2`/`.3`/`.4`/`.5`.
-- **Schema-constrained decoding** (`.2`): a JSON schema for
-  `ActorContract` (derived from its serde shape with a round-trip
-  oracle test) + a provider-agnostic adapter
-  `parse_constrained_contract(json: &str) -> Result<ActorContract>`
-  that fails closed on schema violations. Invalid JSON is an `Err`
-  — not a silently-fabricated contract. The integration with any
-  particular LLM/VLM is **not pinned** so the design survives
-  provider churn.
-- **Entailment verifier** (`.3`): given `(source_span, contract)`
-  returns `FindingStatus`. Initial implementation is conservative
-  lexical/structural (every signal in the contract must appear in
-  the span; every numeric bound must match a number actually present
-  in the span). A `Fail` reroutes to
-  `Residual{reason="entailment fail: …"}` — the honesty doctrine,
-  mechanically enforced, parallel to `FUSION.3` disagreement-routing
-  and `FIDELITY.3` Fail-on-Lowerable-routing. The verifier never
-  "softens" a contract to pass.
-- **Template library** (`.4`): canonical protocol templates seeded
-  into `prior_memory` (ready/valid; credit flow control;
-  setup/access; async-assert/sync-release reset; burst+last). Matched
-  templates instantiate at `automation_confidence = High` only when
-  the template's promised signals are all present — the match itself
-  is entailment-verifiable.
-- **Uncertainty-driven converge** (`.5`): a deterministic
-  value-of-information score over (`automation_confidence`,
-  fidelity-`Fail` count) selects the top-N contracts for re-extraction
-  on the next pass — bounded budget, never blanket rescans.
+The prior R16 trees gave us a lot: a typed target
+(`ContractIR`), protocol structure (`KG-ONTOLOGY`),
+mechanically-enforced fidelity (`FIDELITY-GATES`),
+deterministic multi-source fusion with disagreement routing
+(`MULTIMODAL-CONTRACT-FUSION`), and a verifier-gated
+figure-mining pipeline (`WAVEFORM-CONTRACT-MINING`). What was
+left: keeping every prose-extracted contract honest at
+**extraction time**, not just at lowering time.
 
-### Verification
+The dangerous case looks something like this: an LLM is asked
+to extract contracts from a paragraph of prose. It returns a
+JSON blob that *looks* like an `ActorContract`. Without typed
+constraints, the parsing pipeline tolerantly assembles a
+`Lowerable` contract from a slightly-malformed blob; without
+an entailment check, the contract claims a signal that doesn't
+appear in the source paragraph; without protocol templates, a
+familiar shape (ready/valid handshake!) gets recognised
+heuristically rather than via a typed match. All three of
+those failure modes produce contracts that *look* fine but
+aren't grounded in the source.
 
-- `.2` ships the schema + adapter (round-trip parse/serialize +
-  reject-invalid tests); `.3` ships the verifier + routing test;
-  `.4` ships the template library + a match-grounding test (no
-  fabricated templates: signals must be present); `.5` ships the
-  selection helper + a unit test over synthetic findings; `.6`
-  measures corpus precision/recall via
-  `R16-CAPTURE-FIDELITY-GATES` and baseline-locks. `scripts/run_ci.sh`
-  green per leaf; every leaf via `COMMIT.md`; the closing leaf
-  refreshes this section (BOOK-METHOD-DOC).
-- Honest dormancy: until an upstream prose extractor produces
-  candidates and feeds the adapter, the producer-side of `.3`/`.5`
-  is dormant on the corpus (the verifier still runs whenever it has
-  a span; the templates are always available; the schema adapter is
-  always usable). `.6` is where measurement becomes meaningful
-  end-to-end.
+`R16-CONSTRAINED-VERIFIED-EXTRACTION` adds four typed pieces
+that make each of those failure modes a `Residual` instead of
+a silent pass — and lays down the **fourth structural honesty
+doctrine** (`entailment Fail → Residual`) that completes the
+program's four-doctrine guarantee.
 
-Authoritative tracking: `docs/tasks/R16-CONSTRAINED-VERIFIED-EXTRACTION.md`.
+### The mental model
+
+> **An LLM/VLM emits JSON that the schema-constrained adapter
+> parses into an `ActorContract` (or rejects, closed-fail). An
+> entailment verifier checks the contract is actually licensed
+> by its source span (or demotes it to `Residual`). Canonical
+> protocol templates short-circuit familiar shapes (ready/valid,
+> burst+last, …) only when their promised signals are present in
+> the boundary. An uncertainty-driven converge selector decides
+> which low-confidence / failing contracts deserve the next
+> extraction pass's budget. None of it ships any code today —
+> this is the design that makes the future implementation
+> bounded.**
+
+Everything below is the typed surface: the four pieces
+(adapter, verifier, templates, selector), how they compose,
+the four-doctrine framing that closes the program, and the
+honest scope rule that distinguishes "design today" from
+"implementation when the upstream LLM/VLM integration lands."
+
+### Where `cve` lives
+
+It's a typed layer, not a new pipeline stage — parallel to
+prior R16 trees. A new module
+`crates/specforge/src/ir/cve.rs` houses the
+constrained-decoding adapter (`.2`), the entailment verifier
+(`.3`), and the uncertainty selection helper (`.5`). The
+protocol-pattern templates (`.4`) live in `prior_memory`
+(the existing home for repeated priors). No new IR stage;
+`SemanticIr`/`IntentIr` schemas unchanged.
+
+### `parse_constrained_contract` — fails-closed JSON-Schema decoding
+
+```rust
+pub fn parse_constrained_contract(json: &str) -> Result<ActorContract>;
+```
+
+A provider-agnostic adapter for the LLM/VLM-emitted JSON case.
+Two safety properties:
+
+- **Serde is the authoritative validator.** The function uses
+  `serde_json::from_str::<ActorContract>` against the typed
+  Rust shape; invalid JSON or shape violations return `Err`
+  — never a partially-assembled contract.
+- **The JSON-Schema "summary" surface is documentation, not
+  the validator.** A discriminator drift-lock test
+  (`actor_contract_summary_schema_lists_obligation_kinds`)
+  guarantees that as the typed `Obligation` enum grows, the
+  documented schema summary either grows with it or the test
+  fails — preventing the doc from silently drifting from the
+  code.
+- **Provider-agnostic.** No SDK is pinned; the function just
+  parses JSON. Which LLM, which prompting strategy, which
+  schema-constrained generation mode — all out-of-scope for
+  this tree.
+
+### `entailment_check` — and the **fourth structural honesty doctrine**
+
+```rust
+pub fn entailment_check(source_span: &str, contract: &ActorContract)
+    -> FindingStatus;
+```
+
+The entailment verifier answers a single question: *"is this
+contract actually licensed by this source paragraph?"* The
+initial implementation is deliberately conservative:
+
+- every signal the contract references must appear in
+  `source_span` (case-preserving substring);
+- every numeric bound the obligation carries must match a
+  complete digit-run in `source_span` (so `7` does not
+  spuriously match `70`);
+- otherwise `Pass`. (Future iterations may consult an
+  LLM-as-judge gated behind the same API — but never to
+  *soften* a `Fail`; only to lift `NotEvaluated` to `Pass`
+  with a separate `automation_confidence` adjustment.)
+
+The companion `apply_entailment_to_contract(&mut contract,
+source_span)` enforces the doctrine: a `Lowerable` contract
+that fails entailment is demoted to:
+
+```rust
+LoweringDisposition::Residual {
+    reason: "entailment fail: <details>",
+}
+```
+
+The contract still exists in the IR (the observation isn't
+lost); the diagnostic reason tells you exactly which span
+failed to license it. This is the **fourth structural
+honesty enforcement**, completing the set:
+
+1. `FIDELITY.3` — fidelity gate Fail on a `Lowerable`
+   contract ⇒ `Residual`.
+2. `FUSION.3` — disagreement across sources ⇒ `Residual`.
+3. `WAVEFORM.3` — generalized contract not satisfied by its
+   source trace ⇒ `Residual`.
+4. `CVE.3` — entailment Fail on a `Lowerable` contract ⇒
+   `Residual`.
+
+The four together mean: **a contract that any structural
+check rejects is mechanically routed to `Residual` with the
+reason in the text — silent fabrication is impossible
+end-to-end.**
+
+### Protocol-pattern template library — known shapes, grounded matches
+
+```rust
+pub enum ProtocolTemplate {
+    ReadyValidHandshake,
+    CreditFlowControl,
+    SetupAccess,
+    AsyncAssertSyncReleaseReset,
+    BurstLast,
+}
+
+pub fn instantiate_template(
+    template: ProtocolTemplate,
+    bindings: &SignalBindings,
+) -> Option<ActorContract>;
+```
+
+Five canonical templates seed `prior_memory` so familiar
+protocol shapes don't have to be re-inferred from prose every
+time. The **match-grounding rule** is what keeps the
+templates honest: `instantiate_template` returns `None` when
+the template's promised signals (`SignalBindings`) aren't
+present on the actor's boundary — never a fabricated match.
+
+Where a template instantiates as a concrete obligation
+(`ReadyValidHandshake` → `HandshakeBarrier`;
+`AsyncAssertSyncReleaseReset` → `Drive`; `BurstLast` →
+`Drive`), the contract lowers as `Lowerable`. Where a
+template's full semantics aren't expressible in the closed
+`Obligation` algebra today (`CreditFlowControl` would need a
+counter primitive; `SetupAccess` would need protocol-phase
+ordering grounded by extraction), the template
+**honestly instantiates as `Observe + Residual { reason: "…
+not yet representable as a single ContractIR obligation" }`**.
+The template existence is recorded; the lowering is honestly
+deferred. The doctrine pattern from `WAVEFORM.2`'s bare-edge
+case extends here naturally.
+
+The match itself is **entailment-verifiable**: an instantiated
+template's signals appear in `bindings.bindings.values()`;
+those signals must appear in any source span the template was
+matched against. The verifier from `.3` will pass the match;
+the doctrine that prevents wrong matches is the same one that
+catches wrong free-form contracts.
+
+### Uncertainty-driven converge — `voi_score` + `select_top_n_by_voi`
+
+```rust
+pub fn voi_score(
+    contract: &ActorContract,
+    findings: &[FidelityFinding],
+) -> f64;
+
+pub fn select_top_n_by_voi(
+    inputs: &ConvergeInputs<'_>,
+    n: usize,
+) -> Vec<String>;
+```
+
+When an LLM/VLM extraction loop runs multiple passes, each
+pass has a bounded budget. `voi_score` is a deterministic
+value-of-information ranking:
+
+```
+voi(c) = w_conf * (1 - rank(c.automation_confidence) / 2)
+       + w_fail * count_fail_findings(c)
+```
+
+with `w_conf = w_fail = 1.0` initial. Higher VoI = more
+worth re-extracting (lower confidence, more failed
+fidelity findings). `select_top_n_by_voi` picks the top-N
+contracts deterministically — ties break by `contract_id`
+lex-ascending so the next pass is reproducible across runs.
+
+The integration into the converge loop is deferred (it's a
+small follow-up when the LLM/VLM extractor lands); the
+selection primitive is the load-bearing piece this tree
+delivers.
+
+### What you see in the report today
+
+Run `specforge validate <intent.json>` and the SemanticIR /
+IntentIR count blocks include:
+
+```
+  constrained: schema_rejects=0 entailment_fails=0 template_hits=0
+```
+
+All zero, on the nvme corpus today. That's the honest
+dormancy signal: no upstream LLM/VLM extractor is invoking
+`parse_constrained_contract`, no source spans are being fed
+to `entailment_check`, no template matches have been
+attempted. The metric reports zero across the corpus because
+the four typed pieces are *available* but not yet *driven*.
+
+Counts derive from the IR itself — `schema_rejects` is
+sourced when the adapter is invoked; `entailment_fails` is
+the count of `Residual` contracts whose `reason` starts with
+`"entailment fail: "`; `template_hits` is the count of
+contracts whose `contract_id` carries the template prefix
+the templates emit. The IR is self-describing.
+
+The primitives are unit-tested with synthetic inputs (4 + 7 +
+7 + 5 = 23 tests in `ir/cve.rs`); each becomes load-bearing
+as upstream extraction lands.
+
+### The four user-facing guarantees
+
+This design buys you four properties you can rely on:
+
+1. **An LLM/VLM extractor can never silently fabricate a
+   contract.** The schema-constrained adapter fails closed on
+   shape violations; the entailment verifier demotes
+   contracts that aren't licensed by their source span; the
+   template match-grounding refuses fabricated matches.
+2. **The four-doctrine guarantee is complete.** Fidelity +
+   fusion + waveform-verifier + entailment together make
+   structural fabrication-prevention end-to-end.
+3. **The extraction loop converges deterministically.**
+   `select_top_n_by_voi` is reproducible across runs with
+   stable tie-breaking; the next pass is the same next pass.
+4. **Today's pipeline is byte-identical.** All four pieces
+   are dormant under the corpus's current no-LLM-extractor
+   conditions; reports look the same as they did before this
+   tree.
 
 ### Status — delivered (`2026-05-20`) — R16 PROGRAM COMPLETE
 
-`R16-CONSTRAINED-VERIFIED-EXTRACTION` is **closed**. All six leaves
-done:
+`R16-CONSTRAINED-VERIFIED-EXTRACTION` is **closed**. All six
+leaves landed under the standard CI bar:
 
-1. `.1` high-precision-by-construction design fixed (typed layer /
-   no new stage; provider-agnostic schema adapter; entailment
-   verifier; template library; uncertainty-driven converge);
-2. `.2` typed `cve` module — provider-facing JSON-Schema summary +
-   fails-closed `parse_constrained_contract` adapter (serde is the
-   authoritative validator) + 4 tests including the discriminator
-   drift-lock;
-3. `.3` entailment verifier `entailment_check(span, contract)` +
-   `apply_entailment_to_contract` Fail→Residual routing (honesty
-   doctrine MECHANICALLY enforced, parallel to FUSION.3 / FIDELITY.3
-   routings) + 7 tests including a complete-digit-run match for
-   numeric bounds;
-4. `.4` protocol-pattern template library (5 canonical:
-   ReadyValidHandshake / CreditFlowControl / SetupAccess /
-   AsyncAssertSyncReleaseReset / BurstLast) with `SignalBindings` +
-   `instantiate_template` match-grounding gate; CFC + SetupAccess
-   honestly Residual (deferred lowering, no fabrication) + 7 tests
-   including the "match is entailment-verifiable" round-trip;
-5. `.5` uncertainty-driven converge `voi_score` +
-   `select_top_n_by_voi` (deterministic lex tie-break) + 5 tests
-   (converge-loop integration deferred — honest bounded scope);
-6. `.6` `specforge validate` `constrained: schema_rejects=N
-   entailment_fails=M template_hits=K` block (additive lines via
-   `replace_all`, structured-metric / JSON shape untouched).
+- `.1` — high-precision-by-construction design (typed layer
+  / no new stage; provider-agnostic schema adapter;
+  entailment verifier; template library; uncertainty-driven
+  converge).
+- `.2` — typed `cve` module: provider-facing JSON-Schema
+  summary + fails-closed `parse_constrained_contract`
+  adapter (serde is the authoritative validator) + 4 tests
+  including the obligation-discriminator drift-lock.
+- `.3` — entailment verifier `entailment_check(span,
+  contract)` + `apply_entailment_to_contract`
+  Fail→Residual routing (the **fourth structural-honesty
+  enforcement**, parallel to FUSION.3 / FIDELITY.3 /
+  WAVEFORM.3) + 7 tests including a complete-digit-run
+  match for numeric bounds.
+- `.4` — protocol-pattern template library (5 canonical:
+  `ReadyValidHandshake` / `CreditFlowControl` /
+  `SetupAccess` / `AsyncAssertSyncReleaseReset` /
+  `BurstLast`) with `SignalBindings` +
+  `instantiate_template` match-grounding gate; CFC +
+  SetupAccess honestly Residual (deferred lowering, no
+  fabrication) + 7 tests including the "match is
+  entailment-verifiable" round-trip.
+- `.5` — uncertainty-driven converge `voi_score` +
+  `select_top_n_by_voi` (deterministic lex tie-break) + 5
+  tests (converge-loop integration deferred — honest
+  bounded scope).
+- `.6` — `specforge validate` `constrained:
+  schema_rejects=N entailment_fails=M template_hits=K`
+  block; counts derived from `actor_contracts` (the IR is
+  self-describing).
 
-Live evidence: corpus baseline reads `constrained: schema_rejects=0
-entailment_fails=0 template_hits=0` — honest dormancy: each gate runs
-whenever it has a span / a binding / a finding-set, but no upstream
-prose extractor invokes the adapter today, so the metric reports zero
-across the corpus. The primitives are unit-tested with synthetic
-inputs (4+7+7+5 = 23 tests in `ir/cve.rs`); each becomes load-bearing
-as upstream extraction lands.
+Corpus baseline: `constrained: schema_rejects=0
+entailment_fails=0 template_hits=0` — honest dormancy until
+upstream LLM/VLM extraction lands.
 
-**R16 PROGRAM COMPLETE.** All 6 sub-trees closed at their honest
-scope boundaries:
+#### R16 PROGRAM COMPLETE — what you can rely on now
 
-- `R16-CONTRACT-IR` (#1, DAG root) — typed timed-contract IR;
-- `R16-KG-PROTOCOL-ONTOLOGY` (#2) — typed protocol-structure KG;
-- `R16-MULTIMODAL-CONTRACT-FUSION` (#3) — deterministic fusion +
-  disagreement→Residual routing;
-- `R16-WAVEFORM-CONTRACT-MINING` (#4) — typed figure→contract
-  generalizer + verifier (extractor `.3` still pending, expected
-  honest-split when concrete approach is chosen);
-- `R16-CAPTURE-FIDELITY-GATES` (#5) — 6-gate fidelity producer with
-  Fail-on-Lowerable→Residual routing + validate `fidelity:` block;
-- `R16-CONSTRAINED-VERIFIED-EXTRACTION` (#6) — fails-closed adapter
-  + entailment verifier + template library + uncertainty selector +
-  validate `constrained:` block.
+All six R16 sub-trees closed at their honest scope
+boundaries:
 
-Three load-bearing honesty doctrines are now **structural** rather
-than authorial: (a) fidelity Fail-on-Lowerable → Residual; (b)
-fusion disagreement → Residual; (c) entailment Fail-on-Lowerable
-→ Residual. Together, the IR cannot silently fabricate a contract
-that any of the three gates rejects — fabrication is mechanically
+- **`R16-CONTRACT-IR` (#1, DAG root)** — typed
+  timed-contract IR. One bound obligation lives as one
+  `ActorContract` with a small closed operator algebra; the
+  `.isf` lowering reads the typed projection (`actor_contracts`)
+  and produces byte-identical output to the pre-program
+  baseline, with `Lowerable`/`Residual` lowering disposition
+  carrying every honesty boundary.
+- **`R16-KG-PROTOCOL-ONTOLOGY` (#2)** — typed protocol
+  structure (`Channel`, `ProtocolPhase`, `Transaction`,
+  `HandshakePair`). The spec's organising vocabulary is now
+  first-class in the IR; `TickPhase ≠ ProtocolPhase` is
+  enforced; mechanical `HandshakePair` projection from
+  `HandshakeBarrier` contracts is wired and tested.
+- **`R16-MULTIMODAL-CONTRACT-FUSION` (#3)** — deterministic
+  multi-source fusion. Agreement merges preserve provenance;
+  disagreements route to `Residual` with the disagreeing
+  fields named. The producer runs before fidelity, so
+  cross-modal reconciliation is a first-class IR phase.
+- **`R16-WAVEFORM-CONTRACT-MINING` (#4)** — typed figure →
+  contract pipeline. `PartialTrace` is the typed handoff;
+  four conservative generalization rules + a round-trip
+  verifier prevent fabrication at the mining boundary; the
+  `FigureRegion` input contract targets the upstream PDF
+  pipeline.
+- **`R16-CAPTURE-FIDELITY-GATES` (#5)** — six-gate fidelity
+  producer + `validate fidelity:` block. The doctrine
+  becomes structural; the corpus baseline `fail=0
+  score=1.000` is the live evidence that today's contract
+  producer is fidelity-honest.
+- **`R16-CONSTRAINED-VERIFIED-EXTRACTION` (#6)** — the four
+  CVE pieces (adapter / entailment / templates / selector) +
+  `validate constrained:` block. The fourth structural
+  honesty doctrine closes the set.
+
+**Four load-bearing honesty doctrines** are now structural
+rather than authorial:
+
+| # | Doctrine | Tree |
+| --- | --- | --- |
+| 1 | fidelity Fail-on-Lowerable → Residual | `R16-CAPTURE-FIDELITY-GATES.3` |
+| 2 | fusion disagreement → Residual | `R16-MULTIMODAL-CONTRACT-FUSION.3` |
+| 3 | trace-verifier disagreement → Residual | `R16-WAVEFORM-CONTRACT-MINING.2`/`.3.2` |
+| 4 | entailment Fail-on-Lowerable → Residual | `R16-CONSTRAINED-VERIFIED-EXTRACTION.3` |
+
+Together, the IR cannot silently fabricate a contract that
+any of the four checks rejects. Fabrication is mechanically
 prevented end-to-end.
+
+*Authoritative tracking:*
+`docs/tasks/R16-CONSTRAINED-VERIFIED-EXTRACTION.md`.

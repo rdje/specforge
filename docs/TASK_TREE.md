@@ -45,7 +45,7 @@ evidence for one top-level task.
 | `R16-WAVEFORM-CONTRACT-MINING` | `done` | `R16` | — (program point #4 fully delivered `2026-05-20`: `.1`+`.2`+`.3` (`.3.1`+`.3.2`)+`.4`; `validate waveform: figure_contracts=0 verifier_fail_residuals=0` corpus baseline; raster/vector handling deferred to a future tree when upstream PDF pipeline produces those bytes) | [docs/tasks/R16-WAVEFORM-CONTRACT-MINING.md](docs/tasks/R16-WAVEFORM-CONTRACT-MINING.md) |
 | `R16-CONSTRAINED-VERIFIED-EXTRACTION` | `done` | `R16` | — (program point #6 delivered `2026-05-20`; fails-closed adapter + entailment verifier + template library + uncertainty VoI selector + `validate constrained:` block; corpus baseline 0/0/0; closes R16 program) | [docs/tasks/R16-CONSTRAINED-VERIFIED-EXTRACTION.md](docs/tasks/R16-CONSTRAINED-VERIFIED-EXTRACTION.md) |
 | `BOOK-METHOD-DOC` | `done` | `R0` | — (closed `2026-05-20`: convention + placement map + 7+2 backfilled trees + close-rule encoded in workflow doctrine; close-rule now structurally enforced via Completion Rules + Required Commit Workflow) | [docs/tasks/BOOK-METHOD-DOC.md](docs/tasks/BOOK-METHOD-DOC.md) |
-| `BOOK-USER-FRIENDLY-BACKFILL` | `active` | `R0` | `BOOK-USER-FRIENDLY-BACKFILL.2` (`.1` scope audit done; upgrade 6 R16-family subsections in `direction/temporal-intent-capture.md` to the user-friendly standard) | [docs/tasks/BOOK-USER-FRIENDLY-BACKFILL.md](docs/tasks/BOOK-USER-FRIENDLY-BACKFILL.md) |
+| `BOOK-USER-FRIENDLY-BACKFILL` | `active` | `R0` | `BOOK-USER-FRIENDLY-BACKFILL.3` (`.1` scope audit + `.2` all 6 R16-family subsections done; next = reference/* doctrine subsections AUDIT-DOC-RECONCILE + SIGNOFF-REMEDIATION) | [docs/tasks/BOOK-USER-FRIENDLY-BACKFILL.md](docs/tasks/BOOK-USER-FRIENDLY-BACKFILL.md) |
 
 ## Directory Layout
 

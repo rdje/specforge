@@ -2,6 +2,62 @@
 
 ## 2026-05-20
 
+### BOOK-USER-FRIENDLY-BACKFILL.2.f — rewrite R16-CONSTRAINED-VERIFIED-EXTRACTION book subsection user-friendly (closes BUF.2; R16 PROGRAM COMPLETE recap)
+- Rewrote the `R16-CONSTRAINED-VERIFIED-EXTRACTION` subsection
+  in `docs/book/src/direction/temporal-intent-capture.md` to
+  the user-friendly standard. The new version walks the reader
+  through:
+  - **The problem this fixes** — LLM/VLM extractor producing
+    JSON that *looks* like an `ActorContract`; three concrete
+    failure modes spelled out (malformed shape;
+    claimed-but-not-licensed signal; heuristic template
+    match).
+  - **One-sentence mental model** — adapter parses (or
+    rejects); verifier checks (or demotes to Residual);
+    templates short-circuit familiar shapes only when
+    grounded; selector picks the next pass's budget.
+  - **Where `cve` lives** — additive typed layer; templates
+    in `prior_memory`.
+  - **`parse_constrained_contract`** — fails-closed
+    serde-is-validator + discriminator drift-lock +
+    provider-agnostic.
+  - **`entailment_check` and the FOURTH structural honesty
+    doctrine** — conservative initial impl explained;
+    `apply_entailment_to_contract`
+    Fail-on-Lowerable→Residual{"entailment fail: …"} routing
+    rule called out; **the four-doctrine framing made
+    explicit** (FIDELITY.3 + FUSION.3 + WAVEFORM.3's
+    verifier + CVE.3 = fabrication impossible end-to-end).
+  - **Protocol-pattern template library** — five canonical
+    templates; match-grounding rule (refuses fabricated
+    matches); CFC + SetupAccess honestly Residual (deferred
+    lowering, no fabrication) — extending the WAVEFORM.2
+    bare-edge doctrine pattern.
+  - **`voi_score` + `select_top_n_by_voi`** — deterministic
+    next-pass selection with stable tie-breaking; converge
+    integration deferred.
+  - **What you see in the report today** — `constrained:
+    schema_rejects=0 entailment_fails=0 template_hits=0`
+    as honest dormancy.
+  - **Four user-facing guarantees framed as benefits**: an
+    LLM/VLM extractor can never silently fabricate; the
+    four-doctrine guarantee is complete; the extraction loop
+    converges deterministically; today's pipeline is
+    byte-identical.
+  - **Status — R16 PROGRAM COMPLETE recap** — all six trees
+    enumerated with one-sentence user-facing summaries; the
+    **four-doctrine table** mapping each enforcement to its
+    source tree; structural-fabrication-prevention-end-to-end
+    framing.
+- **`BOOK-USER-FRIENDLY-BACKFILL.2` parent leaf marked DONE**
+  — all 6 R16-family subsections rewritten user-friendly via
+  the per-subsection sub-leaves `.2.a`–`.2.f`. The R16
+  family book chapter is now consistent with the
+  user-friendly standard end-to-end.
+- Docs-only; `scripts/run_docs_ci.sh` green (mdBook builds).
+  Frontier → `.3` (reference/* doctrine subsections —
+  AUDIT-DOC-RECONCILE + SIGNOFF-REMEDIATION).
+
 ### BOOK-USER-FRIENDLY-BACKFILL.2.e — rewrite R16-WAVEFORM-CONTRACT-MINING book subsection user-friendly (incl. .3.1 FigureRegion)
 - Rewrote the `R16-WAVEFORM-CONTRACT-MINING` subsection in
   `docs/book/src/direction/temporal-intent-capture.md` to the
