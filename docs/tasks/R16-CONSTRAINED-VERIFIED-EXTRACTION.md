@@ -60,17 +60,31 @@ Make extraction high-precision by construction (the program thesis: prose
   Commit: `see Commit Log`
 
 - ID: `R16-CONSTRAINED-VERIFIED-EXTRACTION.2`
-  Status: `pending`
-  Goal: derive a JSON-schema for `ActorContract` (the constrained
-  target) from the typed Rust definition (via existing serde-derived
-  shape or a hand-mirrored schema with a serde round-trip test); add
-  a typed adapter `parse_constrained_contract(json: &str) -> Result<ActorContract>`
-  that fails closed on schema violations. Adapter is provider-agnostic
-  (any LLM/VLM that supports JSON-schema-constrained decoding can
-  drive it; the integration is not pinned here).
+  Status: `done`
+  Goal: typed adapter + provider-facing JSON-schema summary, with
+  fails-closed parsing on schema/serde violations.
   Acceptance: `JSON schema present; adapter parses valid contracts + rejects invalid; SemanticIr/IntentIr unchanged; scripts/run_ci.sh green.`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — `crates/specforge/src/ir/cve.rs` added:
+    `actor_contract_json_schema_summary()` returns a provider-facing
+    JSON-Schema (Draft-2020-12) string covering the required
+    top-level keys + the obligation discriminator (9 variants —
+    drift-locked by the
+    `schema_summary_enumerates_obligation_kinds` test); the
+    **authoritative validator** is serde via
+    `parse_constrained_contract(json: &str) -> Result<ActorContract, String>`
+    (fails closed on any schema/serde violation; the diagnostic is
+    propagated so the caller can route to residual). Integration is
+    explicitly provider-agnostic (any LLM/VLM with JSON-Schema-
+    grammar-constrained decoding can drive it; `schemars` left as a
+    non-pinned integration choice). 4 unit tests: valid contract
+    round-trips; malformed input (non-JSON, empty object, missing
+    required keys) fails closed; schema summary lists the required
+    top-level keys (doc-vs-code contract); schema summary lists
+    every `Obligation` discriminator (drift-detection). Module
+    registered in `ir/mod.rs`. No producer wiring; `SemanticIr`/
+    `IntentIr` schemas unchanged ⇒ **zero artifact/fixture churn**.
+    Full `scripts/run_ci.sh` green.
+  Commit: `see Commit Log`
 
 - ID: `R16-CONSTRAINED-VERIFIED-EXTRACTION.3`
   Status: `pending`
@@ -123,8 +137,8 @@ Make extraction high-precision by construction (the program thesis: prose
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.1` | `done` | Constrained-decoding + entailment + templates + uncertainty design fixed; book mirror added |
-| 2 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.2` | `pending` | **Next** — derive a JSON schema for ActorContract + typed adapter |
-| 3 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.3` | `pending` | Entailment verifier + routing |
+| 2 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.2` | `done` | Typed `cve` module: provider-facing JSON-Schema summary + fails-closed adapter + 4 tests; zero artifact churn |
+| 3 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.3` | `pending` | **Next** — entailment verifier + Fail→Residual routing |
 | 4 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.4` | `pending` | Protocol-pattern template library in prior_memory |
 | 5 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.5` | `pending` | Uncertainty-driven converge selection |
 | 6 | `R16-CONSTRAINED-VERIFIED-EXTRACTION.6` | `pending` | Corpus precision/recall + close |
@@ -280,12 +294,14 @@ KG-ONTOLOGY.4 / FIDELITY.4 / FUSION.4 precedents).
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-05-20` | `R16-CONSTRAINED-VERIFIED-EXTRACTION.1` | constrained-decoding / entailment / templates / uncertainty / honesty enforcement / dormancy framing recorded; book mirror per BOOK-METHOD-DOC; mdBook builds | `passed` (docs-only) |
+| `2026-05-20` | `R16-CONSTRAINED-VERIFIED-EXTRACTION.2` | typed `cve` module (`actor_contract_json_schema_summary` + fails-closed `parse_constrained_contract`) + 4 unit tests (round-trip, malformed-input fail-closed, doc-vs-code required-keys, obligation-discriminator drift-lock); SemanticIr/IntentIr unchanged; full `scripts/run_ci.sh` | `passed` (zero artifact churn) |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
-| `R16-CONSTRAINED-VERIFIED-EXTRACTION.1` | `R16-CONSTRAINED-VERIFIED-EXTRACTION.1 — high-precision-by-construction design (promote #6)` | docs-only; book mirror; also the `R16-INTENT-CAPTURE.2` #6 promotion — the FINAL R16 sub-tree promoted |
+| `R16-CONSTRAINED-VERIFIED-EXTRACTION.1` | `R16-CONSTRAINED-VERIFIED-EXTRACTION.1 — high-precision-by-construction design (promote #6)` (`d61d87ab`) | docs-only; book mirror; also the `R16-INTENT-CAPTURE.2` #6 promotion — the FINAL R16 sub-tree promoted |
+| `R16-CONSTRAINED-VERIFIED-EXTRACTION.2` | `R16-CONSTRAINED-VERIFIED-EXTRACTION.2 — JSON-schema summary + fails-closed adapter` | first CVE code; zero artifact churn; serde is the authoritative validator |
 
 ## Dependencies / Order
 
@@ -304,3 +320,14 @@ KG-ONTOLOGY.4 / FIDELITY.4 / FUSION.4 precedents).
   fixed + book mirror; concrete `.1`–`.6` leaves defined. This is the
   FINAL R16 sub-tree promoted (all 6 program points now active or
   closed). Frontier → `.2` (JSON-schema adapter for ActorContract).
+- `2026-05-20`: `.2` done — `ir/cve.rs` typed module
+  (`actor_contract_json_schema_summary` returning a Draft-2020-12
+  provider-facing summary; `parse_constrained_contract` is the
+  authoritative validator via serde, **fails closed** on any
+  schema/serde violation with the diagnostic propagated for residual
+  routing) + 4 unit tests (round-trip; malformed-input fails-closed
+  for non-JSON / `{}` / missing required keys; doc-vs-code required
+  keys; obligation-discriminator drift-lock — schema mentions every
+  `Obligation` variant). `SemanticIr`/`IntentIr` schemas unchanged ⇒
+  ZERO artifact churn. Full CI green. Frontier → `.3` (entailment
+  verifier + Fail→Residual routing).

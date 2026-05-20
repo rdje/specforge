@@ -2,6 +2,35 @@
 
 ## 2026-05-20
 
+### R16-CONSTRAINED-VERIFIED-EXTRACTION.2 — implement the typed `cve` module
+- New `crates/specforge/src/ir/cve.rs`:
+  - `actor_contract_json_schema_summary()` returns a
+    Draft-2020-12 JSON-Schema **summary** documenting the
+    `ActorContract` top-level required keys + the obligation
+    discriminator (9 variants). Deliberately short so it doesn't
+    drift; the authoritative validator is serde.
+  - `parse_constrained_contract(json: &str) -> Result<ActorContract, String>`
+    is the authoritative adapter — **fails closed** on any
+    schema/serde violation, propagating the diagnostic so the caller
+    can route to residual. Provider-agnostic: any LLM/VLM with
+    JSON-Schema-grammar-constrained decoding (or grammar-constrained,
+    e.g. GBNF) can drive it; `schemars` is left as a non-pinned
+    integration choice.
+- 4 unit tests:
+  - valid contract round-trips through the adapter;
+  - malformed input fails closed (non-JSON, `{}`, missing required
+    keys);
+  - schema summary mentions every required top-level key
+    (doc-vs-code contract);
+  - schema summary enumerates every `Obligation` discriminator
+    (drift-detection — the test fails if the enum grows and the
+    schema is not updated).
+- No producer wiring; `SemanticIr` / `IntentIr` schemas unchanged ⇒
+  **zero artifact/fixture churn** (the CONTRACT-IR.2 / KG-ONTOLOGY.2
+  / FIDELITY.2 / FUSION.2 / WAVEFORM.2 discipline). Module
+  registered in `ir/mod.rs`. Full `scripts/run_ci.sh` green. Frontier
+  → `.3` (entailment verifier + Fail→Residual routing).
+
 ### R16-CONSTRAINED-VERIFIED-EXTRACTION.1 — promote #6 (the FINAL R16 sub-tree) + high-precision-by-construction design
 - DAG governance (`R16-INTENT-CAPTURE.2`): with DAG predecessors
   closed (`R16-CONTRACT-IR` ✓, `R16-CAPTURE-FIDELITY-GATES` ✓),

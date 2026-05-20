@@ -1,5 +1,6 @@
 pub mod adapters;
 pub mod contract;
+pub mod cve;
 pub mod evidence;
 pub mod fidelity;
 pub mod fusion;
