@@ -2,6 +2,47 @@
 
 ## 2026-05-20
 
+### BOOK-USER-FRIENDLY-BACKFILL.2.b — rewrite R16-KG-PROTOCOL-ONTOLOGY book subsection user-friendly
+- Rewrote the `R16-KG-PROTOCOL-ONTOLOGY` subsection in
+  `docs/book/src/direction/temporal-intent-capture.md` to the
+  user-friendly standard. The new version walks the reader
+  through:
+  - **The problem this fixes** — every protocol PDF is
+    organised around channels, phases, and transactions (AXI
+    AW/W/B/AR/R; APB setup/access; TileLink A..E); the IR had
+    none of those as first-class records before this tree.
+  - **One-sentence mental model** — `ProtocolGraph` is the
+    typed projection of the spec's own organising vocabulary
+    into the KG.
+  - **Where `ProtocolGraph` lives** — additive typed layer,
+    serde-skipped-while-empty.
+  - **What `ProtocolGraph` carries** — each typed record
+    (`Channel`, `ProtocolPhase`, `Transaction`, `HandshakePair`)
+    walked through in plain language with concrete protocol
+    examples.
+  - **`TickPhase ≠ ProtocolPhase`** — explained via the two
+    different questions they each answer (*"where in the
+    clock cycle?"* vs *"where in the protocol's
+    choreography?"*).
+  - **How `ProtocolGraph` gets populated** — two paths
+    cleanly separated with trust levels: mechanical
+    projection from already-recovered contracts (lossless
+    restatement), vs PDF extraction (Non-Goal here; the
+    extraction trees' job).
+  - **Accessors** — `channel(id)`, `phase(id)`,
+    `dangling_contract_refs` for inconsistency detection.
+  - **What you see in the report today** — the
+    `protocol_graph: channels=0 phases=0 transactions=0
+    handshakes=0` baseline as honest dormancy signalling.
+  - **Three user-facing guarantees framed as benefits**:
+    you can reason about protocol structure not just signals;
+    mechanical projection from contracts is lossless; today's
+    pipeline is byte-identical.
+  - **Status — delivered** leaf-by-leaf with the same
+    dormancy framing.
+- Docs-only; `scripts/run_docs_ci.sh` green (mdBook builds).
+  Frontier → `.2.c` (R16-CAPTURE-FIDELITY-GATES rewrite).
+
 ### BOOK-USER-FRIENDLY-BACKFILL.2.a — rewrite R16-CONTRACT-IR book subsection user-friendly
 - Per the new "user-friendly thorough" standard (BOOK-METHOD-DOC
   Decisions / feedback-book-user-friendly), rewrote the

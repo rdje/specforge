@@ -337,80 +337,230 @@ the Decisions and Verification Log record every honest catch).
 
 ## R16-KG-PROTOCOL-ONTOLOGY — how it is implemented and verified
 
-**Why.** ContractIR gives temporal intent the right *shape*; this gives
-the knowledge graph the right *protocol structure*. Today the KG has
-actors, signals, the actor-relative direction graph, and `TickPhase`
-(clock-edge granularity) — but a protocol PDF is organised around
-**channels, transactions, and protocol phases** (AXI AW/W/B/AR/R; APB
-setup/access; burst/beat/last), none of which are first-class. Without
-them, `IntentIR` cannot be a *systematic projection* of protocol
-structure and the cross-modal fusion tree (#3) has nothing stable to key
-on.
+This section explains the typed shape that gives the knowledge
+graph its **protocol structure** — the channels, phases,
+transactions, and handshake pairs that organise every protocol
+spec but were missing from the KG before this tree. Reading it
+end-to-end should leave you with a working mental model of what
+each record represents, how it gets populated (and what doesn't
+populate it), and what you can rely on the KG to tell you once
+extraction grounds the structure.
 
-### Implementation
+### The problem this fixes
 
-- **Typed layer, not a new stage** (same decision as ContractIR): a new
-  `crates/specforge/src/ir/protocol_graph.rs` defines `Channel`,
-  `ProtocolPhase`, `Transaction`, `HandshakePair`; `SemanticIR`/
-  `IntentIR` carry an additive `protocol_graph` field (serde-default,
-  skipped while empty — zero artifact churn).
-- **Closed typed records, not a raw edge soup**: edges are typed
-  references (`Channel.signal_names`, `Transaction.phases`/
-  `.ordered_before`, `HandshakePair.channel`), matching how the actor
-  graph is already modelled. `qualifies`/`stable-during` are expressed
-  through a ContractIR `Stable` obligation whose `Between` endpoints are
-  `PhaseBoundary`s referencing a `ProtocolPhase`.
-- **`TickPhase` ≠ `ProtocolPhase`** — clock-edge vs protocol-stage
-  granularity; distinct, co-existing. A `ProtocolPhase` may span many
-  ticks.
-- **Projection is mechanical**: `IntentIR` carries `protocol_graph`
-  forward; `ActorContract.channel`/`.phase` (already typed-optional from
-  ContractIR.2) reference the new node ids; `EventExpr::HandshakeFire`
-  ties to a `HandshakePair`. No new lowering logic — `.isf` is
-  unchanged; this is pure structure the extraction trees populate.
-- **Population is out of scope** (Non-Goal): `.2`/`.3` ship + wire the
-  *empty* typed structure (parity-preserving, like ContractIR.2);
-  recovering channels/phases/transactions from the PDF is the extraction
-  trees' (#3/#4/#6) job. This tree ships the vocabulary, not the
-  extractor.
+Pick any digital-protocol PDF. The spec is almost certainly
+organised around three structural ideas:
 
-### Verification
+- **Channels** — named groups of related signals that move
+  together as one logical "lane" of the protocol. AXI has
+  `AW` / `W` / `B` / `AR` / `R`. APB has the transfer
+  bundle (`PSEL`/`PENABLE`/`PADDR`/…). TileLink has `A` /
+  `B` / `C` / `D` / `E`.
+- **Phases** — named stages each channel passes through. APB
+  has `setup` / `access`. AXI burst protocols have address /
+  data / response.
+- **Transactions** — bundles of channel activity that together
+  realise one protocol operation (a complete AXI write =
+  AW + W + B; a burst = an ordered sequence of beats ending in
+  `LAST`).
 
-- Additive empty fields ⇒ zero `.isf`/artifact change while unpopulated
-  (parity by construction); the existing fsmgen-strict + e2e suite must
-  stay green. `scripts/run_ci.sh` green per leaf; every leaf via
-  `COMMIT.md`; the closing leaf refreshes this section (BOOK-METHOD-DOC).
-  Honest scope note: `kg-bench` protocol-structure fixtures are
-  **deferred to the extraction trees** (`#3`/`#4`/`#6`) that actually
-  recover protocol structure — a fixture here would be hollow (this
-  tree ships the vocabulary, not the extractor; Non-Goal).
+Before this tree, the SpecForge KG had actors, signals, the
+actor-relative direction graph, and `TickPhase` (clock-edge
+granularity). None of those structural ideas were first-class.
+A reader of `IntentIR` could see *which signals exist* but
+not *which channel they belong to*; the cross-modal fusion
+tree (`R16-MULTIMODAL-CONTRACT-FUSION`) had nothing stable to
+cluster on; the spec's own organising vocabulary was lost in
+translation.
 
-Authoritative tracking: `docs/tasks/R16-KG-PROTOCOL-ONTOLOGY.md`.
+`R16-KG-PROTOCOL-ONTOLOGY` adds the missing vocabulary.
+
+### The mental model
+
+> **A `ProtocolGraph` is the typed projection of the spec's own
+> organising vocabulary — channels, phases, transactions, and
+> handshake pairs — into the KG. The extraction trees populate
+> it; the rest of the pipeline reads it. When it's empty, the
+> pipeline behaves exactly as before; when it's populated, an
+> `ActorContract` knows which channel and phase it belongs to,
+> and downstream tooling can reason about protocol structure
+> instead of bare signals.**
+
+Everything below is the typed surface of that sentence: the
+records, where they live, how they get populated (mechanically
+from contracts vs from PDF extraction), and the
+`TickPhase ≠ ProtocolPhase` distinction that keeps clock-level
+and protocol-level granularity separate.
+
+### Where `ProtocolGraph` lives
+
+It's a typed layer, not a new pipeline stage — same decision
+as ContractIR. A new module
+`crates/specforge/src/ir/protocol_graph.rs` defines the
+records; `SemanticIR` and `IntentIR` carry an additive
+`protocol_graph: ProtocolGraph` field, serde-default and
+skipped-while-empty. Today's IR artifacts grow no shape;
+populated tomorrow's gain a structured vocabulary.
+
+### What `ProtocolGraph` carries
+
+```rust
+pub struct ProtocolGraph {
+    pub channels: Vec<Channel>,
+    pub phases: Vec<ProtocolPhase>,
+    pub transactions: Vec<Transaction>,
+    pub handshakes: Vec<HandshakePair>,
+}
+```
+
+Each record is closed and typed; edges are typed references
+between them (not a raw edge soup), matching the way the
+actor-relative graph already models actor↔signal relations.
+
+- **`Channel { channel_id, name, actor, signal_names, role }`**
+  — a named group of related signals from one actor's
+  perspective. `role` is an optional `ChannelRole`
+  (`Address` / `Data` / `Response` / `Request` / `Sideband` /
+  `Mixed`) — populated by extraction when the spec's
+  classification is clear.
+- **`ProtocolPhase { phase_id, name, channel, order }`** — a
+  named stage within a channel, with a stable `order` so phase
+  sequencing is mechanical, not heuristic.
+- **`Transaction { transaction_id, name, channels, phases,
+  ordered_before }`** — a protocol operation that binds
+  channels and phases together; `ordered_before` carries a
+  typed ordering edge for use cases like "address phase
+  precedes data phase".
+- **`HandshakePair { pair_id, valid_signal, ready_signal,
+  channel }`** — the canonical transfer point of a ready/valid
+  protocol. The single place a downstream consumer needs to
+  look to know *"this is where one beat of the channel
+  transfers."*
+
+### `TickPhase` is **not** `ProtocolPhase` — and you need both
+
+The pre-existing `TickPhase` (clock-edge granularity:
+`pre_tick` / `post_tick`) is **not** what a protocol spec
+means by "phase". A `ProtocolPhase` is protocol-stage
+granularity (`setup` / `access` / `address` / `data` /
+`response` / …) and can span many ticks.
+
+The two co-exist on the IR because they answer different
+questions: `TickPhase` answers *"where in the clock cycle?"*;
+`ProtocolPhase` answers *"where in the protocol's
+choreography?"*. A `Stable { signal, during: Between { from:
+PhaseBoundary { phase: …, at: enter }, to: PhaseBoundary {
+phase: …, at: exit } } }` obligation expresses *"this signal
+is stable across the data phase"* — and the typed reference
+to a `ProtocolPhase` makes that claim mechanically auditable.
+
+### How `ProtocolGraph` gets populated
+
+Two paths feed the structure, with very different trust
+levels:
+
+- **Mechanical projection from already-recovered contracts.**
+  `SemanticIr::build` runs `project_handshake_pairs(
+  &actor_contracts)`, which derives one `HandshakePair` from
+  every `HandshakeBarrier` obligation already on the
+  contracts. This is **lossless restatement** of data that's
+  already on the IR — the IR isn't claiming anything new; it's
+  just exposing the handshake in the place a consumer of
+  protocol structure looks. Today the corpus has no
+  `HandshakeBarrier` contracts, so this projection produces
+  zero `HandshakePair`s — but the pathway is live and
+  unit-tested.
+- **Extraction (Non-Goal here; the extraction trees' job).**
+  Recovering `Channel`, `ProtocolPhase`, `Transaction` from
+  the PDF requires reading prose / tables / figures — that's
+  the work of `R16-WAVEFORM-CONTRACT-MINING` and
+  `R16-CONSTRAINED-VERIFIED-EXTRACTION`. This tree
+  deliberately does **not** invent extraction; it ships the
+  vocabulary so when extraction lands, the data has a typed
+  place to live. *"Tree ships the vocabulary, not the
+  extractor"* is the standing scope rule.
+
+The accessors round out the surface:
+
+- `protocol_graph.channel(id)` / `protocol_graph.phase(id)` —
+  typed lookups by id.
+- `protocol_graph.dangling_contract_refs(&actor_contracts)`
+  — surfaces any contract whose `channel` or `phase` field
+  references a node that doesn't exist. The doctrine: a
+  dangling reference is an inconsistency, not an "I'll figure
+  it out later"; the helper makes it observable.
+
+### What you see in the report today
+
+Run `specforge validate <intent.json>` and the SemanticIR and
+IntentIR count blocks include:
+
+```
+  protocol_graph: channels=0 phases=0 transactions=0 handshakes=0
+```
+
+All zeros, today. That's the honest baseline: no in-tree
+producer populates the `ProtocolGraph`; extraction hasn't
+landed yet. The line is there so the day the numbers move,
+it's visible at a glance — *"oh, the extractor wired up; the
+spec's vocabulary is showing up in the IR."*
+
+### The user-facing guarantees
+
+This design buys you three properties you can rely on, framed
+as benefits:
+
+1. **You can reason about protocol structure, not just
+   signals.** Once extraction grounds the records, asking
+   *"which channel does `AWVALID` belong to?"* / *"what phase
+   ordering does this transaction enforce?"* becomes a typed
+   lookup — not a regex search through the spec.
+2. **Mechanical projection from contracts is lossless.** A
+   `HandshakePair` derived from a `HandshakeBarrier` contract
+   is the **same** information in a new typed shape — never an
+   embellishment. If a consumer reads the `HandshakePair`s and
+   gets surprised by a `valid`/`ready` they didn't expect,
+   that surprise points back to a real `HandshakeBarrier`
+   obligation; there's no fabrication path.
+3. **Today's pipeline is byte-identical.** The field exists,
+   it's empty, it serde-skips, your reports look the same as
+   they did before this tree. Zero churn; load-bearing for
+   tomorrow.
 
 ### Status — delivered (`2026-05-20`)
 
-`R16-KG-PROTOCOL-ONTOLOGY` is **closed**. All four leaves done:
+`R16-KG-PROTOCOL-ONTOLOGY` is **closed**. All four leaves
+landed under the standard CI bar:
 
-1. `.1` ontology design fixed (typed layer / no new stage; closed typed
-   records; `TickPhase` ≠ `ProtocolPhase`; mechanical projection rules);
-2. `.2` typed `protocol_graph` module + serde + additive empty fields on
-   `SemanticIr`/`IntentIr` (serde-skipped while empty ⇒ zero artifact
-   churn);
-3. `.3` projection wired — `project_handshake_pairs` derives
-   `HandshakePair` nodes from already-recovered `HandshakeBarrier`
-   contracts (LOSSLESS restatement of contract data; NOT PDF
-   extraction); accessors + `dangling_contract_refs`; `SemanticIr::build`
-   populates `protocol_graph.handshakes`; `IntentIR` carries it forward;
-4. `.4` `specforge validate` count surface for `actor_contracts` and
-   `protocol_graph: channels=… phases=… transactions=… handshakes=…` on
-   both SemanticIR and IntentIR; kg-bench protocol-structure fixtures
-   honestly deferred to the extraction trees (`#3`/`#4`/`#6`).
+- `.1` — the ontology design above, fixing the typed records,
+  the `TickPhase ≠ ProtocolPhase` distinction, and the
+  Non-Goal that extraction is the extraction trees' job.
+- `.2` — the typed `protocol_graph` module + serde +
+  additive empty `ProtocolGraph` field on
+  `SemanticIr`/`IntentIr`. Zero artifact churn (the field
+  serde-skips while empty).
+- `.3` — `project_handshake_pairs` wired in
+  `SemanticIr::build`; `IntentIR` carries the structure
+  forward; accessors + `dangling_contract_refs` shipped.
+  Lossless restatement of `HandshakeBarrier` contract data,
+  with the explicit guarantee that *zero corpus contracts ⇒
+  zero `HandshakePair`s ⇒ zero downstream churn*.
+- `.4` — the `validate` count surface
+  (`protocol_graph: channels=… phases=… transactions=…
+  handshakes=…`) on both SemanticIR and IntentIR. The
+  kg-bench protocol-structure fixtures are **honestly
+  deferred** to the extraction trees that actually recover
+  protocol structure from PDFs — a fixture here would be
+  hollow (this tree ships the vocabulary, not the extractor).
 
-Live evidence: corpus reads `protocol_graph: channels=0 phases=0
-transactions=0 handshakes=0` (zero handshake contracts ⇒ empty graph ⇒
-zero `.isf`/artifact change across the full suite). Next
-DAG-promotable R16 sub-tree = `R16-CAPTURE-FIDELITY-GATES` (#5, order 3;
-dep `R16-CONTRACT-IR` ✓).
+Live corpus evidence: the validate block reads
+`protocol_graph: channels=0 phases=0 transactions=0
+handshakes=0` — the dormant-but-ready signal the design
+promised. The numbers move the moment the extraction trees
+land.
+
+*Authoritative tracking:*
+`docs/tasks/R16-KG-PROTOCOL-ONTOLOGY.md`.
 
 ## R16-CAPTURE-FIDELITY-GATES — how it is implemented and verified
 

@@ -134,11 +134,27 @@ Non-Goal above — accurate is the bar; more-words is not.
     Commit: `see Commit Log`
 
   - ID: `BOOK-USER-FRIENDLY-BACKFILL.2.b`
-    Status: `pending`
+    Status: `done` (`2026-05-20`)
     Goal: rewrite the `R16-KG-PROTOCOL-ONTOLOGY` subsection.
     Acceptance: `Subsection meets standard; mdBook green.`
-    Verification: `pending`
-    Commit: `pending`
+    Verification: `passed` — opens with the user's problem
+      (every protocol PDF is organised around channels +
+      phases + transactions; the IR had none of those as
+      first-class records); one-sentence mental model;
+      typed `ProtocolGraph` walked through record-by-record
+      (Channel/ProtocolPhase/Transaction/HandshakePair) in
+      plain language with concrete protocol examples
+      (AXI AW/W/B; APB setup/access; TileLink A..E); the
+      `TickPhase ≠ ProtocolPhase` distinction explained
+      with the two questions they each answer; the two
+      population paths (mechanical projection from
+      contracts vs PDF extraction) clearly separated
+      with trust levels; accessors covered; what you see in
+      the report today (the all-zero baseline as honest
+      dormancy); three user-facing guarantees framed as
+      benefits; Status delivered with the same dormancy
+      signalling. mdBook green.
+    Commit: `see Commit Log`
 
   - ID: `BOOK-USER-FRIENDLY-BACKFILL.2.c`
     Status: `pending`
@@ -223,8 +239,8 @@ Non-Goal above — accurate is the bar; more-words is not.
 | 1 | `BOOK-USER-FRIENDLY-BACKFILL.1` | `done` | Scope audit recorded |
 | 2 | `BOOK-USER-FRIENDLY-BACKFILL.2` | `in-progress` | Honest-split into `.2.a`–`.2.f` (per-subsection) for reviewable diffs |
 | 2.a | `BOOK-USER-FRIENDLY-BACKFILL.2.a` | `done` | `R16-CONTRACT-IR` rewritten user-friendly — `2026-05-20` |
-| 2.b | `BOOK-USER-FRIENDLY-BACKFILL.2.b` | `pending` | **Next** — `R16-KG-PROTOCOL-ONTOLOGY` rewrite |
-| 2.c | `BOOK-USER-FRIENDLY-BACKFILL.2.c` | `pending` | `R16-CAPTURE-FIDELITY-GATES` rewrite |
+| 2.b | `BOOK-USER-FRIENDLY-BACKFILL.2.b` | `done` | `R16-KG-PROTOCOL-ONTOLOGY` rewritten user-friendly — `2026-05-20` |
+| 2.c | `BOOK-USER-FRIENDLY-BACKFILL.2.c` | `pending` | **Next** — `R16-CAPTURE-FIDELITY-GATES` rewrite |
 | 2.d | `BOOK-USER-FRIENDLY-BACKFILL.2.d` | `pending` | `R16-MULTIMODAL-CONTRACT-FUSION` rewrite |
 | 2.e | `BOOK-USER-FRIENDLY-BACKFILL.2.e` | `pending` | `R16-WAVEFORM-CONTRACT-MINING` rewrite |
 | 2.f | `BOOK-USER-FRIENDLY-BACKFILL.2.f` | `pending` | `R16-CONSTRAINED-VERIFIED-EXTRACTION` rewrite |
@@ -267,19 +283,37 @@ Non-Goal above — accurate is the bar; more-words is not.
 | --- | --- | --- | --- |
 | `2026-05-20` | `BOOK-USER-FRIENDLY-BACKFILL.1` | scope audit recorded; chapters classified; mdBook builds | `passed` (docs-only) |
 | `2026-05-20` | `BOOK-USER-FRIENDLY-BACKFILL.2.a` | `R16-CONTRACT-IR` subsection rewritten user-friendly (opens with the bound-obligation problem; one-sentence mental model; typed `ActorContract` walked through; closed `Obligation`/`EventExpr`/`Window` algebra in plain language; `Observe` honest-weak-fact framing; lowering pathway walked through; 4 user-facing guarantees framed as benefits; honest constraints on `(stage …)` dormancy recorded); mdBook green | `passed` |
+| `2026-05-20` | `BOOK-USER-FRIENDLY-BACKFILL.2.b` | `R16-KG-PROTOCOL-ONTOLOGY` subsection rewritten user-friendly (opens with the channels/phases/transactions-missing-from-IR problem; one-sentence mental model; `ProtocolGraph` walked through record-by-record with concrete protocol examples; `TickPhase ≠ ProtocolPhase` explained via the two questions they each answer; two population paths (mechanical projection vs PDF extraction) with trust levels; accessors covered; 3 user-facing guarantees framed as benefits; honest all-zero dormancy baseline signalled); mdBook green | `passed` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `BOOK-USER-FRIENDLY-BACKFILL.1` | `BOOK-USER-FRIENDLY-BACKFILL.1 — create tree + scope audit + chapter classification` (`6f6839ec`) | docs-only; the new tree's own scaffolding |
-| `BOOK-USER-FRIENDLY-BACKFILL.2.a` | `BOOK-USER-FRIENDLY-BACKFILL.2.a — rewrite R16-CONTRACT-IR book subsection user-friendly` | docs-only; per the standard; mdBook green |
+| `BOOK-USER-FRIENDLY-BACKFILL.2.a` | `BOOK-USER-FRIENDLY-BACKFILL.2.a — rewrite R16-CONTRACT-IR book subsection user-friendly` (`3cc840ef`) | docs-only; per the standard; mdBook green |
+| `BOOK-USER-FRIENDLY-BACKFILL.2.b` | `BOOK-USER-FRIENDLY-BACKFILL.2.b — rewrite R16-KG-PROTOCOL-ONTOLOGY book subsection user-friendly` | docs-only; per the standard; mdBook green |
 
 ## Changelog
 
 - `2026-05-20`: Created and promoted `active` same day the
   user-friendly standard was established. `.1` scope audit
   recorded; frontier → `.2` (R16 family upgrade).
+- `2026-05-20`: `.2.b` done — `R16-KG-PROTOCOL-ONTOLOGY`
+  subsection rewritten user-friendly (opens with the
+  channels/phases/transactions-missing-from-IR problem;
+  one-sentence mental model; `ProtocolGraph` walked through
+  record-by-record with concrete protocol examples (AXI
+  AW/W/B; APB setup/access; TileLink A..E); the
+  `TickPhase ≠ ProtocolPhase` distinction explained via the
+  two questions they each answer; the two population paths
+  (mechanical projection from contracts vs PDF extraction)
+  cleanly separated with trust levels; accessors covered;
+  what you see in the report today is the all-zero baseline
+  as honest dormancy; three user-facing guarantees framed as
+  benefits ("you can reason about protocol structure, not
+  just signals"; "mechanical projection from contracts is
+  lossless"; "today's pipeline is byte-identical"). Frontier
+  → `.2.c` (R16-CAPTURE-FIDELITY-GATES).
 - `2026-05-20`: `.2.a` done — `R16-CONTRACT-IR` subsection
   rewritten to the user-friendly standard (opens with the
   bound-obligation problem; one-sentence mental model; typed
