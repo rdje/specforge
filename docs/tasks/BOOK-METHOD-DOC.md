@@ -3,10 +3,11 @@
 ## Metadata
 
 - Tree ID: `BOOK-METHOD-DOC`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: `R0` (live-doc continuity / accuracy)
 - Created: `2026-05-19`
-- Last updated: `2026-05-19`
+- Last updated: `2026-05-20`
+- Closed: `2026-05-20`
 - Owner: repo-local workflow
 
 ## Goal
@@ -143,15 +144,32 @@ human-facing, topically-organized explanation that mirrors them.
     Commit: `see Commit Log`
 
 - ID: `BOOK-METHOD-DOC.3`
-  Status: `pending`
+  Status: `done` (`2026-05-20`)
   Goal: encode the standing close-rule in the workflow docs
   (`docs/TASK_TREE.md` / `COMMIT.md`) so every future tree's close leaf
   refreshes its book section; then close.
   Acceptance: `Standing rule encoded in workflow doctrine; tree closed.`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — added a "**Book method-doc close-rule
+    (`BOOK-METHOD-DOC`)**" bullet to `docs/TASK_TREE.md`'s
+    "Completion Rules" section: a leaf is **incomplete** if it
+    closes a tree without adding/refreshing the tree's
+    implementation+verification subsection in the topically-correct
+    mdBook chapter (per the placement map). Added a parallel bullet
+    to `COMMIT.md`'s "Required Commit Workflow" section so the rule
+    is enforced at commit time as well as at the tree-completion
+    boundary. The bullets cross-reference each other and the
+    `AUDIT-DOC-RECONCILE` doctrine ("book / ROADMAP language must
+    describe what the code does"). Docs-only; `mdbook build` green.
+  Commit: `see Commit Log`
 
 ## Current Frontier
+
+**Tree closed `2026-05-20`.** All leaves done; the close-rule is now
+structurally enforced via the `Completion Rules` section of
+`docs/TASK_TREE.md` and the `Required Commit Workflow` section of
+`COMMIT.md`. Every future tree's closing leaf inherits the
+discipline: book method-doc section in the topically-correct
+chapter is a hard completion criterion.
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
@@ -159,7 +177,7 @@ human-facing, topically-organized explanation that mirrors them.
 | 2.a | `BOOK-METHOD-DOC.2.a` | `done` | ISF-adapter chapter backfilled (7 trees) — `2026-05-20` |
 | 2.b | `BOOK-METHOD-DOC.2.b` | `done` | reference/* chapters backfilled (AUDIT-DOC-RECONCILE, SIGNOFF-REMEDIATION) — `2026-05-20` |
 | 2.c | `BOOK-METHOD-DOC.2.c` | `done` | 7 hardening trees backfilled across pipeline/*/quality/* — `2026-05-20` |
-| 3 | `BOOK-METHOD-DOC.3` | `pending` | **Next** — encode the standing close-rule into workflow doctrine (`docs/TASK_TREE.md` / `COMMIT.md`) + close tree |
+| 3 | `BOOK-METHOD-DOC.3` | `done` | Close-rule encoded in `docs/TASK_TREE.md` Completion Rules + `COMMIT.md` Required Workflow; tree closed `2026-05-20` |
 
 ## Decisions
 
@@ -185,6 +203,7 @@ human-facing, topically-organized explanation that mirrors them.
 | `2026-05-20` | `BOOK-METHOD-DOC.2.a` | 7 ISF/FSMGen trees backfilled into `docs/book/src/pipeline/isf-adapter.md` "Closed task trees" section; mdBook builds | `passed` |
 | `2026-05-20` | `BOOK-METHOD-DOC.2.b` | `AUDIT-DOC-RECONCILE` → `reference/documentation-scope.md`; `SIGNOFF-REMEDIATION` → `reference/live-docs.md`; both topically placed; mdBook builds | `passed` |
 | `2026-05-20` | `BOOK-METHOD-DOC.2.c` | 7 hardening trees backfilled across pipeline/*/quality/* (sourceir/evidenceir/semanticir/intentir × 2 trees/corpus-memory/validation); R7-VALIDATION + R15-GRAPH-DIRECTION-MIGRATION still active (self-document at close per standing rule); mdBook builds | `passed` |
+| `2026-05-20` | `BOOK-METHOD-DOC.3` | close-rule encoded in `docs/TASK_TREE.md` Completion Rules + `COMMIT.md` Required Workflow; cross-referenced + AUDIT-DOC-RECONCILE doctrine reference; mdBook builds | `passed` |
 
 ## Commit Log
 
@@ -193,7 +212,8 @@ human-facing, topically-organized explanation that mirrors them.
 | `BOOK-METHOD-DOC.1` | `BOOK-METHOD-DOC.1 — convention + placement map (with R16-CONTRACT-IR.1)` | docs-only; worked template = R16-CONTRACT-IR book section |
 | `BOOK-METHOD-DOC.2.a` | `BOOK-METHOD-DOC.2.a — backfill ISF-adapter chapter (7 closed pre-R16 trees)` (`3fae27dc`) | docs-only; per the convention; mdBook green |
 | `BOOK-METHOD-DOC.2.b` | `BOOK-METHOD-DOC.2.b — backfill reference/* chapters (AUDIT-DOC-RECONCILE, SIGNOFF-REMEDIATION)` (`95687ed4`) | docs-only; topical placement per map; mdBook green |
-| `BOOK-METHOD-DOC.2.c` | `BOOK-METHOD-DOC.2.c — backfill hardening trees across pipeline/* + quality/* (7 trees)` | docs-only; topical placement per map; mdBook green; active trees self-document at close per standing rule |
+| `BOOK-METHOD-DOC.2.c` | `BOOK-METHOD-DOC.2.c — backfill hardening trees across pipeline/* + quality/* (7 trees)` (`f43a1b49`) | docs-only; topical placement per map; mdBook green; active trees self-document at close per standing rule |
+| `BOOK-METHOD-DOC.3` | `BOOK-METHOD-DOC.3 — encode close-rule into workflow doctrine + close tree` | docs-only; close-rule now structurally enforced via TASK_TREE / COMMIT |
 
 ## Changelog
 
@@ -201,6 +221,19 @@ human-facing, topically-organized explanation that mirrors them.
   thoroughly and accurately explain how each task-tree is implemented
   and verified, topically placed; with a standing close-rule so it
   never drifts.
+- `2026-05-20`: **Tree CLOSED.** `.3` done — encoded the standing
+  close-rule into the workflow doctrine: added a "**Book method-doc
+  close-rule (`BOOK-METHOD-DOC`)**" bullet to `docs/TASK_TREE.md`'s
+  "Completion Rules" section (a leaf is incomplete if it closes a
+  tree without adding/refreshing the tree's
+  implementation+verification subsection in the topically-correct
+  mdBook chapter); added the parallel bullet to `COMMIT.md`'s
+  "Required Commit Workflow" so the rule is enforced at commit time
+  as well as at tree-completion. Both bullets cross-reference each
+  other and the `AUDIT-DOC-RECONCILE` doctrine. The discipline is
+  now structural: every future tree's closing leaf inherits the
+  requirement; the convention will not silently drift. Docs-only;
+  mdBook green. Tree CLOSED.
 - `2026-05-20`: `.2.c` done — backfilled 7 closed hardening trees
   to their topically-correct chapters per the placement map:
   `R6-SOURCE-HARDENING` → `pipeline/sourceir.md`;

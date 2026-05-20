@@ -2,6 +2,26 @@
 
 ## 2026-05-20
 
+### BOOK-METHOD-DOC.3 — encode close-rule in workflow doctrine + close tree
+- Added a "**Book method-doc close-rule (`BOOK-METHOD-DOC`)**"
+  bullet to `docs/TASK_TREE.md`'s "Completion Rules" section: a
+  leaf is incomplete if it closes a tree without adding/refreshing
+  the tree's implementation+verification subsection in the
+  topically-correct mdBook chapter (per the placement map in
+  `docs/tasks/BOOK-METHOD-DOC.md`). Cross-references the
+  `AUDIT-DOC-RECONCILE` doctrine.
+- Added the parallel bullet to `COMMIT.md`'s "Required Commit
+  Workflow" so the rule is enforced at commit time as well as at
+  tree-completion. Cross-references the placement map.
+- The convention is now **structural**: every future tree's
+  closing leaf inherits the requirement; the discipline will not
+  silently drift even across long sessions / new owners.
+- **BOOK-METHOD-DOC tree CLOSED**: convention (`.1`) + placement
+  map + 7+2+7 backfilled trees (`.2.a`/`.2.b`/`.2.c`) +
+  close-rule encoded in workflow doctrine (`.3`). All leaves done.
+  `docs/TASK_TREE.md` row → `done`. Docs-only;
+  `scripts/run_docs_ci.sh` green (mdBook builds).
+
 ### BOOK-METHOD-DOC.2.c — backfill 7 hardening trees across pipeline/* + quality/* (BOOK-METHOD-DOC.2 DONE)
 - Per the BOOK-METHOD-DOC standing close-rule + placement map,
   appended topical method-doc subsections to:

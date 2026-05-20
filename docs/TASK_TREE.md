@@ -44,7 +44,7 @@ evidence for one top-level task.
 | `R16-MULTIMODAL-CONTRACT-FUSION` | `done` | `R16` | — (program point #3 delivered `2026-05-20`; typed `fusion` + producer with disagreement→Residual + `validate fusion:` block; corpus baseline `groups_merged=0 disagreements=0`; load-bearing for extraction) | [docs/tasks/R16-MULTIMODAL-CONTRACT-FUSION.md](docs/tasks/R16-MULTIMODAL-CONTRACT-FUSION.md) |
 | `R16-WAVEFORM-CONTRACT-MINING` | `active` | `R16` | `R16-WAVEFORM-CONTRACT-MINING.3` (`.1` design + `.2` typed waveform module + generalizer + verifier done; extractor `.3` awaits honest-split decision on approach — corpus figure-format survey needed) | [docs/tasks/R16-WAVEFORM-CONTRACT-MINING.md](docs/tasks/R16-WAVEFORM-CONTRACT-MINING.md) |
 | `R16-CONSTRAINED-VERIFIED-EXTRACTION` | `done` | `R16` | — (program point #6 delivered `2026-05-20`; fails-closed adapter + entailment verifier + template library + uncertainty VoI selector + `validate constrained:` block; corpus baseline 0/0/0; closes R16 program) | [docs/tasks/R16-CONSTRAINED-VERIFIED-EXTRACTION.md](docs/tasks/R16-CONSTRAINED-VERIFIED-EXTRACTION.md) |
-| `BOOK-METHOD-DOC` | `active` | `R0` | `BOOK-METHOD-DOC.2` (backfill existing trees; `.1` done) | [docs/tasks/BOOK-METHOD-DOC.md](docs/tasks/BOOK-METHOD-DOC.md) |
+| `BOOK-METHOD-DOC` | `done` | `R0` | — (closed `2026-05-20`: convention + placement map + 7+2 backfilled trees + close-rule encoded in workflow doctrine; close-rule now structurally enforced via Completion Rules + Required Commit Workflow) | [docs/tasks/BOOK-METHOD-DOC.md](docs/tasks/BOOK-METHOD-DOC.md) |
 
 ## Directory Layout
 
@@ -212,6 +212,16 @@ A leaf is complete only when all of the following are true:
 - `MEMORY.md`, `CHANGES.md`, `DEVELOPMENT_NOTES.md`,
   `LIVE_ACHIEVEMENT_STATUS.md`, and `ROADMAP.md` are updated when the
   leaf changes project state.
+- **Book method-doc close-rule** (`BOOK-METHOD-DOC`): a tree's
+  closing leaf (`.N`) MUST add or refresh that tree's
+  implementation+verification subsection in the topically-correct
+  mdBook chapter (per the placement map in
+  `docs/tasks/BOOK-METHOD-DOC.md`). The subsection is the
+  human-facing "how + why + how-verified"; the task-tree file
+  remains the machine-tracked authority. A close leaf whose book
+  section is missing or stale is incomplete — the book / ROADMAP
+  language always describes what the code does (the
+  `AUDIT-DOC-RECONCILE` doctrine).
 - The commit workflow in `COMMIT.md` has completed.
 - `git_message_brief.txt` has been cleared after commit.
 

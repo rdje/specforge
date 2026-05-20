@@ -71,6 +71,14 @@ When the user authorizes PNT (`Pick the Next Task`) mode:
      - always review the tracked continuity/workflow markdown surface before commit,
      - always update every relevant tracked `.md` file touched by the task or affected by its workflow/policy/command/documentation impact,
      - do not leave a relevant markdown file stale just because code/tests already passed.
+   - **Book method-doc close-rule** (`BOOK-METHOD-DOC`): when the commit
+     completes a tree's **closing leaf** (`.N`), the commit MUST also
+     add or refresh that tree's implementation+verification subsection
+     in the topically-correct mdBook chapter per the placement map in
+     `docs/tasks/BOOK-METHOD-DOC.md`. The subsection is the
+     human-facing "how + why + how-verified"; the task-tree file
+     remains the machine-tracked authority. A close commit whose book
+     section is missing or stale is incomplete.
    - Treat current-state drift as a blocker before commit:
      - explicitly compare the codebase and just-completed work against `README.md`, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `MEMORY.md`, `RUST_CODEBASE_ANALYSIS.md`, and the mdBook source,
      - reconcile active/in-progress/not-started terminology, batch state, push state, command surfaces, adapter targets, and validation claims before staging,
