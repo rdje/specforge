@@ -2,6 +2,35 @@
 
 ## 2026-05-20
 
+### BOOK-USER-FRIENDLY-BACKFILL.4 — rewrite R7-VALIDATION close-out summary as a user-facing validate guide
+- Rewrote the `R7-VALIDATION` close-out summary in
+  `docs/book/src/quality/validation.md` as a user-facing
+  guide to what `specforge validate` produces today, not a
+  leaf-by-leaf changelog. The new version walks the reader
+  through:
+  - **user-facing guarantee** in blockquote — typed report
+    with findings + metrics + additive-empty-by-design
+    `applied_mutations` field;
+  - **Info / Warning / Error severities** explained briefly;
+    the read-only contract stated explicitly with a forward
+    pointer to the "Tracked approval evidence" design
+    section that protects it structurally;
+  - **the four delivered surfaces** (temporal handshake
+    completion gap with rescan guidance; temporal
+    multi-predicate antecedent flag with coverage rationale;
+    KG-quality benchmark findings with the conservative 50%
+    floor; `.fsm` / `.isf` adapter validation auto-
+    detection) each framed in terms of what the user sees +
+    what it means;
+  - **four user-facing benefits framed as properties**
+    (capture gaps are visible; KG quality has a baseline;
+    adapter validation is one command; validation never
+    silently mutates your IR);
+  - **signoff discipline pointer** back to
+    `SIGNOFF-REMEDIATION`.
+- Docs-only; `scripts/run_docs_ci.sh` green (mdBook builds).
+  Frontier → `.5` (R15 actor-graph framing).
+
 ### BOOK-USER-FRIENDLY-BACKFILL.3 — rewrite reference/* doctrine subsections user-friendly (AUDIT-DOC-RECONCILE + SIGNOFF-REMEDIATION)
 - Rewrote both reference/* doctrine subsections with a
   consistent user-friendly structure: user-facing guarantee

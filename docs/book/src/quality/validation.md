@@ -171,45 +171,116 @@ silent fabrication surface*. Verified by per-field audit + the
 full `scripts/run_ci.sh`. *Authoritative tracking:*
 `docs/tasks/PROVENANCE-HARDENING.md`.
 
-### `R7-VALIDATION` — closing-out the R7 validation lane
+### `R7-VALIDATION` — what `specforge validate` does for you today
 
-`R7-VALIDATION` closed `2026-05-20`. The implementation leaves
-(`.1`–`.4`) shipped earlier and added findings-and-metrics
-coverage across the validation pipeline:
+If you run `specforge validate <artifact.json>`, this section
+tells you what kinds of observations you should expect to see
+in the report — and what they mean. The `R7-VALIDATION` tree
+is the work that landed the additional findings and metrics
+beyond the originals; reading this gives you the full
+inventory of validate-time surfaces grouped by what each one
+helps you catch.
 
-- `.1` — temporal handshake completion gap finding
-  (`HandshakeValidLike`/`HandshakeReadyLike` interface signals
-  exist but no temporal rule expresses a `HandshakeComplete`
-  predicate); surfaced as an `Info` finding in both
-  `validate_semantic_ir` and `validate_intent_ir` with affected
-  signal names as related ids and rescan guidance for the
-  temporal grounding surface.
-- `.2` — temporal multi-predicate antecedent finding (an `Info`
-  finding when a temporal rule's antecedent carries more than
-  one predicate; flags the count and the rule ids).
-- `.3` — KG-quality benchmark findings: graph-direction
-  coverage, semantic-role resolution rate, consensus coverage
-  rate, each carrying its current rate and the conservative 50%
-  floor threshold in the finding message.
-- `.4` — `.fsm` / `.isf` adapter validation targets: the
-  `specforge validate` command auto-detects an adapter artifact
-  via its `stage` field and dispatches to a per-adapter
-  validator (structural well-formedness + key-property coverage
-  for FSM; ISF coverage already shipped in `R6-ISF-ADAPTER`).
-  Eight FSM-adapter findings (state-graph completeness;
-  transitions present; signal inventory non-empty; system
-  contract present; residual decision count; schema-version
-  freshness; renderability; payload presence).
-- `.5` — design deliverable for tracked approval evidence
-  (canonical IR mutation). See "Tracked approval evidence for
-  canonical IR mutation" below; implementation of the mutation
-  pathway itself remains gated on the user-owned canonical-IR-
-  mutation decision (a future tree picks up this design when
-  that decision is made).
+#### The user-facing guarantee
 
-Every leaf landed under the per-leaf signoff discipline
-(`scripts/run_ci.sh` green; idiomatic clippy/fmt fixes only,
-per `SIGNOFF-REMEDIATION`). *Authoritative tracking:*
+> **Whenever you run `specforge validate`, you get a typed
+> report (findings + metrics + an additive
+> `applied_mutations` field, currently empty by design — see
+> below) — covering temporal-rule capture gaps, KG-quality
+> baselines, and adapter-artifact structure. Every finding
+> tells you what was observed, where, and whether you should
+> act on it.**
+
+`Info` means "we noticed this; here's the signal." `Warning`
+means "this is likely worth your attention." `Error` means
+"this is a hard correctness issue." The validator is
+read-only — it never silently rewrites your IR (see the
+"Tracked approval evidence" section below for the design
+that makes the read-only-by-default contract structural even
+if canonical IR mutation is ever introduced).
+
+#### The four findings/metrics surfaces this tree delivered
+
+**Temporal handshake completion gap** — when your
+`interfaces[].signal_records` carry the
+`HandshakeValidLike` / `HandshakeReadyLike` semantic roles
+but no temporal rule expresses a `HandshakeComplete`
+predicate over them, you see an `Info` finding listing the
+affected signal names. *"Your spec has the signals; the
+extracted temporal rules don't yet bind them into a
+completion predicate."* The rescan-guidance pointer aims at
+the temporal-grounding surface so the next pass knows where
+to look.
+
+**Temporal multi-predicate antecedent flag** — when a
+temporal rule's antecedent carries more than one predicate
+(`signal A high AND signal B held value V` rather than just
+one), an `Info` finding flags the count and lists the rule
+ids. It isn't a correctness error — multi-predicate
+antecedents are valid — but it's a coverage signal: a rule
+that fires only when several conditions co-occur has fewer
+witnesses than a rule that fires on a single trigger, so
+the extractor's confidence in it should be lower until you
+confirm.
+
+**KG-quality benchmark findings** — three measurable signals
+about how well the knowledge graph is grounded:
+
+- **Graph-direction coverage**: what fraction of signals
+  have a non-`Unknown` actor-relative direction.
+- **Semantic-role resolution rate**: what fraction of
+  signals carry a typed semantic role (clock / reset /
+  data / handshake).
+- **Consensus coverage rate**: what fraction of signals
+  have agreement across the contributing extractors.
+
+Each surfaces with its current rate and the conservative 50%
+floor threshold. Below the threshold ⇒ `Info` finding with
+the threshold and the actual rate in the message; you can
+see *"we expect at least 50% here; we're at 32%"* without
+reading source.
+
+**`.fsm` / `.isf` adapter validation targets** — when you
+pass `specforge validate` an adapter artifact (one of the
+shapes the build pipeline emits), the command auto-detects
+the adapter kind from the artifact's `stage` field and runs
+the per-adapter checks. For `.fsm` adapters that's eight
+findings covering state-graph completeness, transitions
+present, signal inventory non-empty, system contract present,
+residual decision count, schema-version freshness,
+renderability, and payload presence; for `.isf` adapters,
+the ISF coverage that already shipped in `R6-ISF-ADAPTER`.
+
+You don't need to know which validator to invoke — the
+auto-detection picks it for you. Failing checks surface as
+typed findings in the same `ValidationReportRecord` format
+as every other validate output.
+
+#### What this buys you, as a SpecForge user
+
+- **Capture gaps are visible.** When the temporal extractor
+  hasn't yet bound a handshake or a multi-predicate
+  antecedent, you see it in the report; you don't have to
+  read the IR yourself to find the gap.
+- **KG quality has a baseline.** The three benchmark metrics
+  give you a "is this getting better or worse?" number per
+  document, against a stable threshold; drift is observable
+  not anecdotal.
+- **Adapter validation is one command.** `specforge
+  validate <adapter.json>` works regardless of which
+  adapter target produced it — `.fsm`, `.isf`, or future
+  targets get the same surface.
+- **Validation never silently mutates your IR.** The
+  report is additive; nothing about your input artifact
+  changes. (The "Tracked approval evidence" section below
+  designs the only path through which that could ever
+  change — and that path is opt-in, signed by you, and fully
+  audited.)
+
+Every leaf in this tree landed under the per-leaf signoff
+discipline — `scripts/run_ci.sh` green; idiomatic clippy /
+fmt fixes only, per the `SIGNOFF-REMEDIATION` doctrine
+(see `reference/live-docs.md`). *Authoritative tracking:*
 `docs/tasks/R7-VALIDATION.md`.
 
 ### Tracked approval evidence for canonical IR mutation (`R7-VALIDATION.5` design)

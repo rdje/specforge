@@ -289,14 +289,26 @@ Non-Goal above — accurate is the bar; more-words is not.
   Commit: `see Commit Log`
 
 - ID: `BOOK-USER-FRIENDLY-BACKFILL.4`
-  Status: `pending`
+  Status: `done` (`2026-05-20`)
   Goal: light upgrade of the `R7-VALIDATION` close-out summary in
   `quality/validation.md` so the per-leaf findings/metrics are
   framed as *what the user gets out of running validation today*,
   not a leaf-by-leaf changelog.
   Acceptance: `R7-VALIDATION close-out summary reads as a user guide to today's validation surface; mdBook green.`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — rewrote the subsection as a
+    user-facing guide to what `specforge validate` produces:
+    user-facing guarantee in blockquote (typed report with
+    findings + metrics + additive-empty-by-design
+    `applied_mutations`); explanation of Info/Warning/Error
+    severities + the read-only contract; the four delivered
+    surfaces (temporal handshake completion gap, temporal
+    multi-predicate antecedent flag, KG-quality benchmark
+    findings with the conservative 50% floor, adapter
+    validation auto-detection) each framed in terms of what
+    the user sees and what it means; four user-facing
+    benefits framed as properties; signoff discipline
+    pointer. mdBook green.
+  Commit: `see Commit Log`
 
 - ID: `BOOK-USER-FRIENDLY-BACKFILL.5`
   Status: `pending`
@@ -333,8 +345,8 @@ Non-Goal above — accurate is the bar; more-words is not.
 | 2.e | `BOOK-USER-FRIENDLY-BACKFILL.2.e` | `done` | `R16-WAVEFORM-CONTRACT-MINING` rewritten user-friendly — `2026-05-20` |
 | 2.f | `BOOK-USER-FRIENDLY-BACKFILL.2.f` | `done` | `R16-CONSTRAINED-VERIFIED-EXTRACTION` rewritten user-friendly — `2026-05-20` |
 | 3 | `BOOK-USER-FRIENDLY-BACKFILL.3` | `done` | reference/* doctrines rewritten user-friendly — `2026-05-20` |
-| 4 | `BOOK-USER-FRIENDLY-BACKFILL.4` | `pending` | **Next** — R7-VALIDATION close-out summary |
-| 5 | `BOOK-USER-FRIENDLY-BACKFILL.5` | `pending` | R15 actor-relative-graph framing |
+| 4 | `BOOK-USER-FRIENDLY-BACKFILL.4` | `done` | R7-VALIDATION close-out summary upgraded — `2026-05-20` |
+| 5 | `BOOK-USER-FRIENDLY-BACKFILL.5` | `pending` | **Next** — R15 actor-relative-graph framing |
 | 6 | `BOOK-USER-FRIENDLY-BACKFILL.6` | `pending` | Close tree |
 
 ## Dependencies / Order
@@ -378,6 +390,7 @@ Non-Goal above — accurate is the bar; more-words is not.
 | `2026-05-20` | `BOOK-USER-FRIENDLY-BACKFILL.2.f` | `R16-CONSTRAINED-VERIFIED-EXTRACTION` subsection rewritten user-friendly (opens with the LLM/VLM extractor producing JSON that *looks* like ActorContract; three concrete failure modes; one-sentence mental model; `parse_constrained_contract` with serde-is-validator + drift-lock + provider-agnostic properties; `entailment_check` + the **fourth structural honesty doctrine** completing four-doctrine framing (FIDELITY.3 + FUSION.3 + WAVEFORM.3 + CVE.3); template library with match-grounding + honestly-residual lowering for CFC/SetupAccess; `voi_score`/`select_top_n_by_voi` with reproducibility framing; corpus baseline 0/0/0 as honest dormancy; 4 user-facing guarantees; **Status closes with R16 PROGRAM COMPLETE recap** + four-doctrine table); mdBook green | `passed` |
 | `2026-05-20` | `BOOK-USER-FRIENDLY-BACKFILL.2` | All 6 R16-family subsections rewritten user-friendly via per-subsection sub-leaves `.2.a`–`.2.f`; per-tree task-tree files unchanged; mdBook green | `passed` |
 | `2026-05-20` | `BOOK-USER-FRIENDLY-BACKFILL.3` | AUDIT-DOC-RECONCILE + SIGNOFF-REMEDIATION subsections rewritten with consistent user-friendly structure: user-facing guarantee in blockquote up top; why-this-isn't-free with concrete drift-or-bar-slip example; what-this-tree-fixed concretely; how-the-doctrine-is-enforced-now (structural enforcement via Completion Rules + Required Commit Workflow); what-this-buys-the-SpecForge-user; mdBook green | `passed` |
+| `2026-05-20` | `BOOK-USER-FRIENDLY-BACKFILL.4` | R7-VALIDATION close-out summary rewritten as a user-facing guide ("what `specforge validate` does for you today") rather than a leaf-by-leaf changelog; user-facing guarantee in blockquote; severity meanings + read-only contract; four delivered surfaces (handshake gap, multi-predicate antecedent, KG-quality benchmarks with 50% floor, adapter auto-detection) each framed in terms of what the user sees + what it means; four benefits framed as properties; signoff discipline pointer; mdBook green | `passed` |
 
 ## Commit Log
 
@@ -390,13 +403,30 @@ Non-Goal above — accurate is the bar; more-words is not.
 | `BOOK-USER-FRIENDLY-BACKFILL.2.d` | `BOOK-USER-FRIENDLY-BACKFILL.2.d — rewrite R16-MULTIMODAL-CONTRACT-FUSION book subsection user-friendly` (`db9d8fe6`) | docs-only; per the standard; mdBook green |
 | `BOOK-USER-FRIENDLY-BACKFILL.2.e` | `BOOK-USER-FRIENDLY-BACKFILL.2.e — rewrite R16-WAVEFORM-CONTRACT-MINING book subsection user-friendly (incl. .3.1 FigureRegion)` (`c75ac736`) | docs-only; per the standard; mdBook green |
 | `BOOK-USER-FRIENDLY-BACKFILL.2.f` | `BOOK-USER-FRIENDLY-BACKFILL.2.f — rewrite R16-CONSTRAINED-VERIFIED-EXTRACTION book subsection user-friendly (closes BUF.2; R16 PROGRAM COMPLETE recap)` (`e36a00c3`) | docs-only; per the standard; mdBook green; **closes the R16 family book backfill** |
-| `BOOK-USER-FRIENDLY-BACKFILL.3` | `BOOK-USER-FRIENDLY-BACKFILL.3 — rewrite reference/* doctrine subsections (AUDIT-DOC-RECONCILE + SIGNOFF-REMEDIATION) user-friendly` | docs-only; per the standard; mdBook green |
+| `BOOK-USER-FRIENDLY-BACKFILL.3` | `BOOK-USER-FRIENDLY-BACKFILL.3 — rewrite reference/* doctrine subsections (AUDIT-DOC-RECONCILE + SIGNOFF-REMEDIATION) user-friendly` (`96bef553`) | docs-only; per the standard; mdBook green |
+| `BOOK-USER-FRIENDLY-BACKFILL.4` | `BOOK-USER-FRIENDLY-BACKFILL.4 — rewrite R7-VALIDATION close-out summary as user-facing validate guide` | docs-only; per the standard; mdBook green |
 
 ## Changelog
 
 - `2026-05-20`: Created and promoted `active` same day the
   user-friendly standard was established. `.1` scope audit
   recorded; frontier → `.2` (R16 family upgrade).
+- `2026-05-20`: `.4` done — `R7-VALIDATION` close-out
+  summary in `docs/book/src/quality/validation.md` rewritten
+  as a user-facing guide ("what `specforge validate` does
+  for you today") rather than a leaf-by-leaf changelog.
+  Pattern: user-facing guarantee in blockquote (typed report
+  with findings + metrics + additive-empty-by-design
+  `applied_mutations`); Info/Warning/Error severity
+  meanings + the read-only-by-default contract; the four
+  delivered surfaces (temporal handshake completion gap,
+  temporal multi-predicate antecedent flag, KG-quality
+  benchmark findings with the conservative 50% floor,
+  adapter validation auto-detection) each framed in terms
+  of what the user sees and what it means; four
+  user-facing benefits framed as properties; pointer back
+  to the SIGNOFF-REMEDIATION doctrine. Frontier → `.5`
+  (R15 actor-graph framing).
 - `2026-05-20`: `.3` done — both `reference/*` doctrine
   subsections rewritten with the same user-friendly
   structure:
