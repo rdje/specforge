@@ -2,6 +2,32 @@
 
 ## 2026-05-20
 
+### R16-CAPTURE-FIDELITY-GATES.3 — wire producer + Fail-on-Lowerable → Residual routing
+- New private helper `apply_fidelity_gates(&mut [ActorContract],
+  &[ActorPortRecord]) -> Vec<FidelityFinding>` in
+  `crates/specforge/src/ir/semantic.rs`: builds per-actor
+  `(declared, inputs, outputs)` sets from `actor_ports`
+  (Input/Output/InOut/Unknown) with a **global declared fallback** when
+  a contract's `actor_name` is `None`/unknown (direction-bearing gates
+  then honestly run `NotEvaluated`, never silently `Pass`).
+- For each `ActorContract`, runs all 6 evaluators (5 over actor_contracts
+  + `FigureConformance` = `NotEvaluated` until #4 produces
+  `FigureTrace`s). **Honesty doctrine, mechanically enforced**: a
+  `Lowerable` contract with any `Fail` is rerouted to
+  `Residual{reason = "fidelity:<Gate>: <message>"}` BEFORE the `.isf`
+  adapter consumes it; already-Residual contracts and Pass-only
+  contracts are left untouched. The recorded findings reflect what the
+  gates observed pre-routing (a `Fail` paired with a now-Residual
+  contract is the doctrine *working*, not a bug). `SemanticIr::build`
+  populates `fidelity_findings`; `IntentIR` carries it forward (from
+  `.2`).
+- 3 routing unit tests: Lowerable+Observe → Residual (reason carries
+  `fidelity:ResidualHonesty`); clean Drive on declared output stays
+  Lowerable; preexisting Residual untouched (router does not rewrite
+  reasons). Clippy-clean (`ActorSigSets` type alias; `or_default`).
+  Full `scripts/run_ci.sh` green. Frontier → `.4` (corpus `fidelity:`
+  block in `specforge validate` + baseline-lock + close).
+
 ### R16-CAPTURE-FIDELITY-GATES.2 — implement the typed `fidelity` module
 - New `crates/specforge/src/ir/fidelity.rs`: typed `FidelityGate`
   (6 variants), `FindingStatus = Pass | Fail | NotEvaluated`

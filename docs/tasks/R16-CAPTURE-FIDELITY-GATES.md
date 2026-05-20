@@ -90,16 +90,36 @@ The pair becomes the objective function that gates and steers #3/#4/#6.
   Commit: `see Commit Log`
 
 - ID: `R16-CAPTURE-FIDELITY-GATES.3`
-  Status: `pending`
-  Goal: wire the producer — `SemanticIr::build` runs the gate evaluators
-  over `actor_contracts` (+ `protocol_graph` where applicable),
-  populating `fidelity_findings`; failures route to residual (a `Fail`
-  on a contract marked `Lowerable` becomes a `Residual` with the gate
-  message); residual-honesty gate is self-consistent. IntentIR carries
-  findings forward.
+  Status: `done`
+  Goal: wire the producer — `SemanticIr::build` runs the gate
+  evaluators over `actor_contracts`, populating `fidelity_findings`;
+  failures route to residual (a `Fail` on a contract marked
+  `Lowerable` becomes a `Residual` with the gate message —
+  honesty doctrine mechanically enforced). IntentIR carries findings
+  forward (already done in `.2`).
   Acceptance: `Producer wired; per-leaf Fail-to-residual routing tested; corpus parity preserved (a Fail downgrades to Residual rather than fabricating a Lowerable — honesty doctrine); scripts/run_ci.sh green.`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — `apply_fidelity_gates(&mut [ActorContract],
+    &[ActorPortRecord])` added (private helper in
+    `crates/specforge/src/ir/semantic.rs`): builds per-actor
+    `(declared, inputs, outputs)` sets from `actor_ports`
+    (Input/Output/InOut/Unknown) + global declared fallback when
+    `actor_name` is `None`/unknown (direction-bearing gates run
+    `NotEvaluated`, honestly). For each contract: 6 evaluators run
+    (`RealizableBoundary`, `RealizableDirection`, `RealizableHandshake`,
+    `ResidualHonesty`, `NoStrictInvalid`, `FigureConformance` =
+    NotEvaluated until #4). Honesty doctrine: a `Lowerable` contract
+    with any `Fail` ⇒ rerouted to `Residual{reason =
+    "fidelity:<Gate>: <message>"}` BEFORE the `.isf` adapter consumes
+    it; already-Residual contracts and Pass-only contracts left
+    untouched. Findings recorded reflect pre-routing observations (a
+    `Fail` paired with a now-Residual contract is the doctrine
+    working). `SemanticIr::build` populates
+    `fidelity_findings`; `IntentIR` carries it forward (from `.2`). 3
+    new routing unit tests (Lowerable+Observe→Residual; clean Drive
+    stays Lowerable; preexisting Residual untouched). Clippy-clean
+    (`ActorSigSets` type alias; `or_default`). Full
+    `scripts/run_ci.sh` green.
+  Commit: `see Commit Log`
 
 - ID: `R16-CAPTURE-FIDELITY-GATES.4`
   Status: `pending`
@@ -117,8 +137,8 @@ The pair becomes the objective function that gates and steers #3/#4/#6.
 | --- | --- | --- | --- |
 | 1 | `R16-CAPTURE-FIDELITY-GATES.1` | `done` | Gate design fixed; book mirror added |
 | 2 | `R16-CAPTURE-FIDELITY-GATES.2` | `done` | Typed `fidelity` module + 5 per-gate evaluators + trace-replay primitive + summary/threshold + 9 tests; additive empty field; zero artifact churn |
-| 3 | `R16-CAPTURE-FIDELITY-GATES.3` | `pending` | **Next** — producer wiring in `SemanticIr::build` + Fail-on-Lowerable → Residual routing |
-| 4 | `R16-CAPTURE-FIDELITY-GATES.4` | `pending` | Corpus report + close |
+| 3 | `R16-CAPTURE-FIDELITY-GATES.3` | `done` | Producer wired in `SemanticIr::build`; Fail-on-Lowerable → Residual routing (honesty doctrine MECHANICALLY enforced); 3 routing tests |
+| 4 | `R16-CAPTURE-FIDELITY-GATES.4` | `pending` | **Next** — corpus `fidelity:` block in `specforge validate` + baseline-lock + close |
 
 ## Design (`.1` output, 2026-05-20)
 
@@ -249,13 +269,15 @@ bounded, mirrors the `R16-KG-PROTOCOL-ONTOLOGY.4` precedent).
 | --- | --- | --- | --- |
 | `2026-05-20` | `R16-CAPTURE-FIDELITY-GATES.1` | gate set / finding shape / scoring / trace-replay / residual routing / report shape recorded; book mirror per BOOK-METHOD-DOC; mdBook builds | `passed` (docs-only) |
 | `2026-05-20` | `R16-CAPTURE-FIDELITY-GATES.2` | typed `fidelity` module (`FidelityGate`/`FindingStatus`/`FidelityFinding`/`FigureTrace` + 5 per-gate evaluators + bounded `evaluate_figure_trace` + `FidelitySummary`) + 9 unit tests; additive `fidelity_findings` field; clippy-clean (`contains(&want)` rewrite); full `scripts/run_ci.sh` | `passed` (zero artifact churn) |
+| `2026-05-20` | `R16-CAPTURE-FIDELITY-GATES.3` | `apply_fidelity_gates` producer in `SemanticIr::build` (per-actor + global declared/inputs/outputs from `actor_ports`); Fail-on-Lowerable → `Residual{reason="fidelity:<Gate>: <message>"}` routing; 3 routing tests; clippy-clean; full `scripts/run_ci.sh` | `passed` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `R16-CAPTURE-FIDELITY-GATES.1` | `R16-CAPTURE-FIDELITY-GATES.1 — gate design (promote #5/order-3)` (`4d0b2207`) | docs-only; book mirror; also the `R16-INTENT-CAPTURE.2` #5/order-3 promotion |
-| `R16-CAPTURE-FIDELITY-GATES.2` | `R16-CAPTURE-FIDELITY-GATES.2 — typed fidelity module + per-gate evaluators + trace primitive + additive empty field` | first FIDELITY code; zero artifact churn; producer wiring deferred to `.3` |
+| `R16-CAPTURE-FIDELITY-GATES.2` | `R16-CAPTURE-FIDELITY-GATES.2 — typed fidelity module + per-gate evaluators + trace primitive + additive empty field` (`a111cd43`) | first FIDELITY code; zero artifact churn; producer wiring deferred to `.3` |
+| `R16-CAPTURE-FIDELITY-GATES.3` | `R16-CAPTURE-FIDELITY-GATES.3 — producer wiring + Fail-on-Lowerable → Residual routing` | honesty doctrine mechanically enforced |
 
 ## Changelog
 
@@ -264,6 +286,21 @@ bounded, mirrors the `R16-KG-PROTOCOL-ONTOLOGY.4` precedent).
   done; sibling `R16-KG-PROTOCOL-ONTOLOGY` (#2) done); `.1` gate design
   fixed + book mirror; concrete `.1`–`.4` leaves defined. Frontier →
   `.2` (implement typed `fidelity` module).
+- `2026-05-20`: `.3` done — producer wired:
+  `apply_fidelity_gates(&mut [ActorContract], &[ActorPortRecord])` in
+  `SemanticIr::build` builds per-actor `(declared, inputs, outputs)`
+  sets (Input/Output/InOut/Unknown) with global declared fallback when
+  `actor_name` is `None`/unknown (direction-bearing gates honestly
+  `NotEvaluated`); for each contract runs all 6 evaluators; a
+  `Lowerable` contract with any `Fail` is rerouted to
+  `Residual{reason = "fidelity:<Gate>: <message>"}` BEFORE the `.isf`
+  adapter consumes it. The honesty doctrine ("unverifiable temporal
+  intent → explicit residual, never fabricated") becomes
+  **structural**, not only authorial. 3 routing unit tests
+  (Lowerable+Observe→Residual; clean Drive stays Lowerable; preexisting
+  Residual untouched). Clippy-clean (`ActorSigSets` type alias;
+  `or_default`). Full CI green. Frontier → `.4` (corpus `fidelity:`
+  block in `specforge validate` + baseline-lock + close).
 - `2026-05-20`: `.2` done — `ir/fidelity.rs` typed module
   (`FidelityGate{6}`/`FindingStatus{Pass,Fail,NotEvaluated}`/
   `FidelityFinding`/`FigureTrace`) + 5 per-gate evaluators (boundary/

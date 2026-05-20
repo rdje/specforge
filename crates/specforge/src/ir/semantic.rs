@@ -265,10 +265,19 @@ impl SemanticIr {
         );
         // R16-CONTRACT-IR.3: project the typed ContractIR alongside
         // `temporal_rules` (lossless 1:1; `.isf` lowering consumes this).
-        let actor_contracts = temporal_rules
+        let mut actor_contracts = temporal_rules
             .iter()
             .map(crate::ir::contract::contract_from_temporal_rule)
             .collect::<Vec<_>>();
+        // R16-CAPTURE-FIDELITY-GATES.3: evaluate the typed fidelity
+        // gates over `actor_contracts` and **mechanically enforce the
+        // residual-honesty doctrine** — any `Fail` on a `Lowerable`
+        // contract is rerouted to `Residual{reason}` BEFORE the `.isf`
+        // adapter consumes it (the doctrine becomes structural, not
+        // only authorial). The recorded findings reflect what the gates
+        // saw pre-routing (a `Fail` finding paired with a now-Residual
+        // contract = the doctrine working).
+        let fidelity_findings = apply_fidelity_gates(&mut actor_contracts, &actor_ports);
         let temporal_conflicts = build_temporal_conflicts(
             &temporal_rules,
             signal_polarities.as_slice(),
@@ -342,7 +351,7 @@ impl SemanticIr {
                 ..Default::default()
             },
             actor_contracts,
-            fidelity_findings: Vec::new(),
+            fidelity_findings,
             temporal_conflicts,
             signal_constraints,
             conditional_rules,
@@ -2767,6 +2776,87 @@ fn build_actors(context: &SemanticContext, interfaces: &[InterfaceRecord]) -> Ac
         actor_id_by_term,
         explicit_actor_count,
     }
+}
+
+/// Evaluate the typed fidelity gates over every `ActorContract` and
+/// mechanically enforce the residual-honesty doctrine: any `Fail` on a
+/// `Lowerable` contract is rerouted to `Residual{reason}` BEFORE the
+/// `.isf` adapter consumes it. The reason carries the gate name and
+/// its message so downstream consumers can attribute the routing.
+/// Returns the full per-gate findings the gates produced (a `Fail`
+/// finding paired with a now-Residual contract is the doctrine
+/// working, not a bug).
+///
+/// Boundary-direction context comes from `actor_ports`: per-actor
+/// `(declared, inputs, outputs)` sets, with an actor-agnostic fallback
+/// of the global declared union when a contract's `actor_name` is
+/// `None` or unknown (direction-bearing gates run `NotEvaluated` in
+/// that case, honestly).
+fn apply_fidelity_gates(
+    contracts: &mut [crate::ir::contract::ActorContract],
+    actor_ports: &[ActorPortRecord],
+) -> Vec<crate::ir::fidelity::FidelityFinding> {
+    use crate::ir::contract::LoweringDisposition;
+    use crate::ir::fidelity::{
+        FindingStatus, evaluate_figure_conformance, evaluate_no_strict_invalid,
+        evaluate_realizable_boundary, evaluate_realizable_direction, evaluate_realizable_handshake,
+        evaluate_residual_honesty,
+    };
+
+    // (declared, inputs, outputs) per actor.
+    type ActorSigSets = (BTreeSet<String>, BTreeSet<String>, BTreeSet<String>);
+    let mut per_actor: BTreeMap<String, ActorSigSets> = BTreeMap::new();
+    let mut global: BTreeSet<String> = BTreeSet::new();
+    for p in actor_ports {
+        let entry = per_actor.entry(p.actor_name.clone()).or_default();
+        entry.0.insert(p.signal_name.clone());
+        global.insert(p.signal_name.clone());
+        match p.direction {
+            ActorRelativeDirection::Input => {
+                entry.1.insert(p.signal_name.clone());
+            }
+            ActorRelativeDirection::Output => {
+                entry.2.insert(p.signal_name.clone());
+            }
+            ActorRelativeDirection::InOut => {
+                entry.1.insert(p.signal_name.clone());
+                entry.2.insert(p.signal_name.clone());
+            }
+            ActorRelativeDirection::Unknown => {}
+        }
+    }
+    let empty_actor: ActorSigSets = (BTreeSet::new(), BTreeSet::new(), BTreeSet::new());
+
+    let mut all_findings = Vec::with_capacity(contracts.len() * 6);
+    for c in contracts.iter_mut() {
+        let resolved = c.actor_name.as_deref().and_then(|n| per_actor.get(n));
+        let (declared, inputs, outputs) = match resolved {
+            Some(sigs) => (&sigs.0, &sigs.1, &sigs.2),
+            None => (&global, &empty_actor.1, &empty_actor.2),
+        };
+
+        let here = [
+            evaluate_realizable_boundary(c, declared),
+            evaluate_realizable_direction(c, inputs, outputs),
+            evaluate_realizable_handshake(c, inputs, outputs),
+            evaluate_residual_honesty(c),
+            evaluate_no_strict_invalid(c),
+            evaluate_figure_conformance(c, None),
+        ];
+
+        // Honesty doctrine: a Lowerable contract that fails any gate
+        // is rerouted to Residual with the gate finding as the reason.
+        if matches!(c.lowering, LoweringDisposition::Lowerable)
+            && let Some(failing) = here.iter().find(|f| f.status == FindingStatus::Fail)
+        {
+            c.lowering = LoweringDisposition::Residual {
+                reason: format!("fidelity:{:?}: {}", failing.gate, failing.message),
+            };
+        }
+
+        all_findings.extend(here);
+    }
+    all_findings
 }
 
 fn build_actor_ports(
@@ -21189,5 +21279,139 @@ mod tests {
     fn control_reference_suffix_key_width_cast() {
         let result = control_reference_suffix_key(&ControlReferenceSuffix::WidthCast { width: 16 });
         assert_eq!(result, "width:16");
+    }
+}
+
+#[cfg(test)]
+mod fidelity_gate_routing_tests {
+    //! `R16-CAPTURE-FIDELITY-GATES.3` — the producer must mechanically
+    //! enforce the residual-honesty doctrine: a `Fail` on a `Lowerable`
+    //! contract must be rerouted to `Residual{reason}`, NOT silently
+    //! lowered. Already-Residual contracts and Pass-only contracts stay
+    //! untouched.
+
+    use super::{ActorPortRecord, ActorRelativeDirection, ClockEdge, apply_fidelity_gates};
+    use crate::ir::contract::{
+        ActorContract, ContractKind, ContractProvenance, EvidenceModality, LoweringDisposition,
+        Obligation,
+    };
+    use crate::ir::fidelity::{FidelityGate, FindingStatus};
+    use crate::ir::source::AutomationConfidence;
+
+    fn contract(
+        id: &str,
+        actor: Option<&str>,
+        obligation: Obligation,
+        kind: ContractKind,
+        lowering: LoweringDisposition,
+    ) -> ActorContract {
+        ActorContract {
+            contract_id: id.into(),
+            source_rule_id: Some(id.into()),
+            actor_name: actor.map(|s| s.to_string()),
+            kind,
+            guard: None,
+            guard_candidates: vec![],
+            obligation,
+            clock_signal: None,
+            edge: ClockEdge::Rising,
+            channel: None,
+            phase: None,
+            provenance: ContractProvenance {
+                supporting_statement_ids: vec![],
+                source_text: "src".into(),
+                modality: EvidenceModality::Prose,
+            },
+            lowering,
+            automation_confidence: AutomationConfidence::Medium,
+        }
+    }
+
+    fn port(actor: &str, signal: &str, dir: ActorRelativeDirection) -> ActorPortRecord {
+        ActorPortRecord {
+            actor_id: format!("{actor}_id"),
+            actor_name: actor.into(),
+            signal_name: signal.into(),
+            direction: dir,
+            relation_basis: vec![],
+            width_hint: None,
+            source_statement_ids: vec![],
+            automation_confidence: AutomationConfidence::Medium,
+        }
+    }
+
+    #[test]
+    fn lowerable_observe_reroutes_to_residual_with_gate_reason() {
+        // Observe + Lowerable is the textbook Fail of both
+        // ResidualHonesty and NoStrictInvalid — doctrine demands
+        // Residual after the gate runs.
+        let mut cs = vec![contract(
+            "obs",
+            Some("A"),
+            Obligation::Observe { signal: "X".into() },
+            ContractKind::Guarantee,
+            LoweringDisposition::Lowerable,
+        )];
+        let ports = vec![port("A", "X", ActorRelativeDirection::Output)];
+        let findings = apply_fidelity_gates(&mut cs, &ports);
+        let lowering = &cs[0].lowering;
+        match lowering {
+            LoweringDisposition::Residual { reason } => {
+                assert!(
+                    reason.contains("fidelity:") && reason.contains("ResidualHonesty"),
+                    "{reason}"
+                );
+            }
+            other => panic!("expected Residual, got {other:?}"),
+        }
+        // The pre-routing Fail finding is still recorded (it is the
+        // doctrine working, not a bug).
+        assert!(
+            findings.iter().any(|f| f.status == FindingStatus::Fail
+                && matches!(f.gate, FidelityGate::ResidualHonesty))
+        );
+    }
+
+    #[test]
+    fn pass_only_contract_stays_lowerable() {
+        let mut cs = vec![contract(
+            "drv",
+            Some("A"),
+            Obligation::Drive {
+                signal: "Q".into(),
+                value: "1".into(),
+            },
+            ContractKind::Guarantee,
+            LoweringDisposition::Lowerable,
+        )];
+        let ports = vec![port("A", "Q", ActorRelativeDirection::Output)];
+        let findings = apply_fidelity_gates(&mut cs, &ports);
+        assert!(matches!(cs[0].lowering, LoweringDisposition::Lowerable));
+        // No Fail recorded for this clean contract.
+        assert!(findings.iter().all(|f| f.status != FindingStatus::Fail));
+    }
+
+    #[test]
+    fn already_residual_contract_is_not_touched_by_routing() {
+        let mut cs = vec![contract(
+            "r",
+            None, // unknown actor → direction NotEvaluated
+            Obligation::Stable {
+                signal: "MISSING".into(), // would Fail boundary
+                during: crate::ir::contract::Window::SameCycle,
+            },
+            ContractKind::Assume,
+            LoweringDisposition::Residual {
+                reason: "preexisting".into(),
+            },
+        )];
+        let ports: Vec<ActorPortRecord> = vec![]; // empty boundary
+        let _ = apply_fidelity_gates(&mut cs, &ports);
+        match &cs[0].lowering {
+            LoweringDisposition::Residual { reason } => {
+                assert_eq!(reason, "preexisting", "router must not rewrite Residual");
+            }
+            other => panic!("expected Residual unchanged, got {other:?}"),
+        }
     }
 }
