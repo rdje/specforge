@@ -190,6 +190,43 @@ chapter is a hard completion criterion.
   `BOOK-METHOD-DOC.2` backfill is scheduled, not blocking, and proceeds
   on PNT/explicit direction. The convention is proven immediately by the
   `R16-CONTRACT-IR` book section landing with its design.
+- `2026-05-20`: **"Thorough" means user-friendly thorough** —
+  explicit clarification by the user during the
+  `R7-VALIDATION.5` book expansion:
+  *"Yes, the user (me) shall be able to understand everything
+  about R7-VALIDATION.5. The should be user friendly. The goal
+  is to engage people not to scare them. The goal is to explain
+  things to the user so that they understand. And we want them
+  to understand if we want them to use specforge."*
+
+  The book section is the **user's primary surface** for
+  understanding a tree, not a condensed pointer to the
+  task-tree file. A reader of the book chapter alone must be
+  able to understand the tree's design end-to-end without
+  needing to open the tree file. Concretely, the close-rule
+  for every tree from `2026-05-20` onward is:
+  - **Thorough** — mirror every concept the tree introduces,
+    not just the typed names. If the tree's design has a
+    "When required" subsection, the book has one too. If the
+    tree spec has Non-Goals, the book lists them.
+  - **Accurate** — language describes what the design / code
+    does (the `AUDIT-DOC-RECONCILE` doctrine extended to
+    book-vs-design).
+  - **User-friendly** — explain the *why* before the *what*;
+    introduce typed names alongside plain-language summaries;
+    walk through worked examples; frame safety properties as
+    user benefits (*"You never lose work to a silent
+    rewrite"*) rather than restrictions.
+  - **Engage, do not scare** — open with the problem the
+    user has, not the type lattice; use second-person; keep
+    paragraphs short; use code blocks sparingly and only when
+    they illuminate.
+
+  The `R7-VALIDATION.5` book subsection in
+  `docs/book/src/quality/validation.md` (rewritten
+  `2026-05-20`) is the worked template for the standard going
+  forward — refer to it as the canonical example when closing
+  any future tree.
 
 ## Blockers
 

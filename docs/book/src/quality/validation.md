@@ -214,71 +214,309 @@ per `SIGNOFF-REMEDIATION`). *Authoritative tracking:*
 
 ### Tracked approval evidence for canonical IR mutation (`R7-VALIDATION.5` design)
 
-**Why** the design exists *before* implementation: today the
-validation pipeline is read-only — `ValidationFindingRecord`s
-and `ValidationMetricRecord`s are additive observations *about*
-the IR; they don't modify it. The IR's per-stage immutability
-is what makes the pipeline reproducible. "Canonical IR mutation"
-would be: a validation pass that, given approved evidence,
-**modifies the IR itself** (e.g. overriding a
-`LoweringDisposition`; adding/removing typed records). That is
-dangerous by default because it breaks the immutability
-invariant, lets validation silently *fabricate* (the exact
-anti-pattern R16's three structural honesty doctrines were
-introduced to prevent), and makes provenance opaque.
+This section explains a design — not yet implemented — for the
+single case in which `specforge` would ever modify your IR
+after the build stages have produced it. Reading this end-to-end
+should leave you confident about two things: (1) **today**,
+`specforge` never modifies your IR during validation, full stop;
+and (2) **if** that ever changes, the change will be opt-in,
+explicit, signed by you, and fully audited.
 
-The `R7-VALIDATION.5` design makes canonical IR mutation
-**possible but structurally impossible to perform silently or
-without proof of approval**.
+#### What the IR contract looks like today
 
-**`ApprovalRecord`** is the typed proof of approval every
-mutation requires: `approval_id`; `approver` (`Human {
-userid, evidence: SignedCommit | SignedFile |
-PullRequestApproval }` or `SystemProcess { process_id,
-parent_approval }`); `scope: MutationScope { ir_stage,
-ir_path: serde-json-path, value_before, value_after }`;
-`justification`; `timestamp_utc` (RFC 3339, recorded once);
-`related_finding_ids` (the findings that licensed the
-mutation); `content_hash` (SHA-256 tamper-evident seal over
-the load-bearing fields).
+Today the validation pipeline is **read-only**. When you run
+`specforge validate <artifact.json>`, the validator inspects the
+IR and emits two kinds of additive observations:
 
-**`apply_approved_mutation`** is the **single entry point**
-through which canonical IR mutation must flow. It enforces:
-(a) the approval is present in the store; (b) the content_hash
-verifies; (c) the captured `value_before` matches what the
-approval expected (drift detection); (d) the captured
-`value_after` matches what the approval expected
-(post-state verification). Any other code path mutating the IR
-in the validation context would be a bug.
+- **Findings** (`ValidationFindingRecord`) — things the
+  validator noticed. *"You have ready/valid signals but no
+  `HandshakeComplete` temporal rule covering them."* Info,
+  Warning, or Error severity. They do not change the IR.
+- **Metrics** (`ValidationMetricRecord`) — counts and rates the
+  validator measured. *"Graph-direction coverage = 73%."* They
+  do not change the IR either.
 
-**`ValidationReportRecord.applied_mutations`** is the additive,
-durable audit surface. Empty under today's read-only default
-⇒ byte-for-byte identical to current behaviour (the R16.2
-zero-churn discipline). Non-empty when one or more approved
-mutations were applied; every record carries the approval id,
-the scope, and the apply-time timestamp.
+Findings and metrics flow back into the report you read; the IR
+that the build stages emitted stays exactly as it was. That
+read-only contract is what makes a `specforge` pipeline
+**reproducible** — run validation twice on the same input, you
+get the same report; the IR you built upstream is never silently
+edited under your feet.
 
-**`ApprovalStore`** is append-only and version-controlled
-(e.g. `.specforge/approvals.jsonl`). No implicit deletion;
-reversing a previously-applied mutation requires a *new*
-approval whose scope inverts it (also tracked).
+#### What "canonical IR mutation" would mean — and why it's risky
 
-**Four honesty doctrines** parallel to the three structural
-R16 doctrines:
+Imagine the validator finds something it thinks it can fix:
 
-1. **Refuse-by-default** — any mutation without a present +
-   content-hash-verified + store-resolvable approval fails
-   closed.
-2. **Fully diff-able** — every applied mutation carries its
-   exact `value_before`/`value_after` in the approval.
-3. **Provenance-bearing** — every applied mutation links to
-   the finding ids that licensed it.
-4. **Append-only** — approvals + applied-mutations records are
-   append-only; reversal is itself a tracked mutation.
+> "Contract `c-37` is marked `Residual{reason="under-determined
+> delay"}`, but I see a follow-up table on page 14 that pins
+> the bound to `min=2, max=4`. I could flip this to `Lowerable`
+> with that bound."
 
-Together with R16's fidelity-Fail→Residual /
-fusion-disagreement→Residual / entailment-Fail→Residual
-doctrines, fabrication remains mechanically prevented end-to-end
-even after canonical IR mutation is introduced. *Authoritative
-tracking:* `docs/tasks/R7-VALIDATION.md` (the "Design (`.5`
-output, 2026-05-20)" section is the full specification).
+Letting the validator just *do that* would be **canonical IR
+mutation** — the validator writing back to the IR it was meant
+only to observe. It would be tempting because it would close a
+real gap automatically. It would also be dangerous, for three
+reasons every `specforge` user should know:
+
+1. **Reproducibility breaks.** Two validation runs against the
+   same input could now produce different IRs, depending on
+   which mutations the validator decided to apply.
+2. **Fabrication becomes possible.** The whole point of the
+   three structural honesty doctrines `R16` introduced —
+   *fidelity Fail → Residual*, *fusion disagreement →
+   Residual*, *entailment Fail → Residual* — is that
+   `specforge` refuses to silently invent a contract it can't
+   ground. A validator that's allowed to "fix" the IR
+   unilaterally is exactly the surface those doctrines were
+   built to prevent.
+3. **Provenance gets opaque.** A reader of the final IR has no
+   way to know *what* the validator changed, *why*, *when*, or
+   *who* sanctioned it. The audit trail vanishes.
+
+This design's job is to make the useful case (a human-approved
+correction) possible **without** opening the door to any of the
+three risks above.
+
+#### The mental model: every change comes with an approval card
+
+The whole design comes down to one rule, and you can hold it in
+your head as a single sentence:
+
+> **The IR can only be changed if you hand the validator a
+> signed "approval card" that says exactly what to change and
+> why — and the validator double-checks the card matches the
+> change before and after.**
+
+Everything below is the typed shape of that approval card
+(`ApprovalRecord`), the single function that's allowed to read
+the card and apply the change (`apply_approved_mutation`), the
+place the cards live in your repo (`ApprovalStore`), the
+permanent receipt the validator writes after applying a card
+(`ValidationReportRecord.applied_mutations`), and the four
+safety rules that make sure no card can ever be forged, lost,
+or applied to the wrong IR.
+
+#### `ApprovalRecord` — what an approval card carries
+
+Every change carries an `ApprovalRecord`. Here are the fields,
+in plain language:
+
+- `approval_id` — a stable string you can refer to in
+  conversation and in tickets (`"approval-2026-axi-aw-stage"`).
+- `approver` — who signed the card. Either a `Human { userid,
+  evidence }` (you, with `evidence: SignedCommit { commit_sha }`
+  or `SignedFile { path, sig }` or `PullRequestApproval {
+  pr_url, approver_login }` — whichever your team's process
+  uses to prove an approval is real), or a `SystemProcess {
+  process_id, parent_approval }` for the cases where one
+  approval explicitly chains to another (e.g. a batch
+  remediation script that was itself human-approved).
+- `scope: MutationScope` — exactly what changes:
+  - `ir_stage` — which stage's IR (`SemanticIR`, `IntentIR`,
+    `IsfAdapter`, `FsmAdapter`).
+  - `ir_path` — a serde-JSON path into the IR
+    (`actor_contracts[3].lowering`).
+  - `value_before` — the JSON value that *must* be at that path
+    before the change.
+  - `value_after` — the JSON value that *must* be at that path
+    after the change.
+- `justification` — the human-readable reason. *"Confirmed
+  pinned bound 2..4 from the §3.4 timing table; original
+  Residual reason no longer applies."*
+- `timestamp_utc` — RFC 3339, recorded once when you sign the
+  card. Doesn't update on re-application.
+- `related_finding_ids` — the validator's own finding ids that
+  motivated this change. If your `value_before` came from an
+  Info finding, that finding's id goes here. This is the audit
+  thread back to *why* the change exists.
+- `content_hash` — a SHA-256 over the load-bearing fields
+  (`scope`, `justification`, `timestamp_utc`,
+  `related_finding_ids`). If anyone tampers with the card,
+  the hash stops matching, and the validator refuses to apply
+  it. (A later phase can upgrade this to a detached PGP or
+  ed25519 signature bound to `approver.evidence`; the algorithm
+  swaps under the same field name.)
+
+#### `ApprovalStore` — where the cards live
+
+The cards live in **your repo**, under version control, in an
+append-only JSONL file (default: `.specforge/approvals.jsonl`).
+
+- **Append-only** is the structural contract. You add a card;
+  you never delete one. If a previously-applied mutation turns
+  out to be wrong, the fix is a *new* approval whose
+  `value_before` is the post-state of the wrong one and whose
+  `value_after` reverses it. Both cards stay in the store.
+  The audit trail is the full history, not a "current view"
+  that could lie.
+- **Version-controlled** means `git blame` works on the
+  approvals themselves — who added a card, in which commit,
+  is recoverable from your normal repo history. No new tooling
+  needed.
+- **Per-record content hash** plus **per-store git history**
+  give you two independent tamper-detection layers.
+
+#### `apply_approved_mutation` — the single function that's allowed to change the IR
+
+Every canonical IR mutation flows through one function. Any
+other code path that writes to the IR in the validation context
+is, by definition, a bug. Here's the algorithm in plain
+English:
+
+1. **Look up the card in the store.** If `approval_id` isn't
+   present, **refuse** (`MutationError::UnknownApproval`).
+2. **Re-compute the card's `content_hash`.** If it doesn't
+   match what's written on the card, **refuse**
+   (`MutationError::TamperedApproval`).
+3. **Read the IR at `scope.ir_path`.** If the value there
+   doesn't match `scope.value_before`, **refuse**
+   (`MutationError::DriftedSource`). This catches the case
+   where the IR has moved since the card was signed —
+   e.g. an upstream re-extraction changed the contract you
+   were approving a fix for.
+4. **Apply the change.** This is the *only* moment any IR
+   field gets written. It's a small closure provided by the
+   caller that knows how to set the typed field at `ir_path`.
+5. **Read the IR at `scope.ir_path` again.** If the value
+   there doesn't now match `scope.value_after`, **refuse**
+   (`MutationError::PostStateMismatch`) — meaning the closure
+   did something different from what the card promised.
+6. Return an `AppliedMutationRecord` capturing the approval
+   id, the scope, and the apply-time timestamp.
+
+Notice what this gives you: a "refuse to act" outcome from
+*any* of the four checks. Nothing about your IR can change
+unless every one of (present, untampered, matching-before,
+matching-after) is true. Validation that runs with no cards in
+the store — today's default — never enters this function at
+all.
+
+#### `ValidationReportRecord.applied_mutations` — what you see afterwards
+
+After validation runs, the report you read carries a new
+additive field: `applied_mutations: Vec<AppliedMutationRecord>`.
+
+- **Empty** in the default read-only case. *Your report looks
+  byte-for-byte the same as before this design ever existed.*
+  This is the zero-artifact-churn discipline we've applied
+  across every recent `specforge` typed addition: the surface
+  only takes up space when it has content.
+- **Non-empty** when one or more mutations were applied. Each
+  record carries the approval id (so you can find the card in
+  the store), the scope (so you can see the exact change),
+  and the apply-time timestamp. Re-reading the report tells
+  you everything about what the validator did to your IR.
+
+#### When an approval is required
+
+Any change to any typed IR field through the validation
+pipeline requires a matching `ApprovalRecord`. That's the
+default policy, and it's enforced *structurally*: the only
+code path that writes to the IR is the function above, and
+that function won't run without a present, untampered,
+matched-before-and-after card.
+
+The validator's normal response to "I think the IR could be
+improved here" is **not** to change anything. It's to emit:
+
+- a `Finding { severity: Warning }` that says what it would
+  change, and
+- a **draft `ApprovalRecord` template** the operator can review,
+  fill in (the `justification`, the `approver.evidence`), and
+  add to the store.
+
+Nothing happens until you, the operator, sign the card. This
+is the read-only-by-default property preserved verbatim — what
+changes is that you now have a typed, auditable path to opt
+in to a specific correction, one at a time.
+
+#### How this slots into the existing validation pipeline
+
+The functions you already use (`validate_semantic_ir`,
+`validate_intent_ir`, `validate_isf_adapter`,
+`validate_fsm_adapter`) keep their existing signatures and
+keep returning the same `ValidationReportRecord`. The design
+adds **one** optional pass-through hook on each:
+
+> `with_approved_mutations(&ApprovalStore)`
+
+When you pass `Some(store)`, the validator runs the approved
+mutations through `apply_approved_mutation` **before** the
+read-only check pass runs. That ordering matters: findings
+should observe the *post-mutation* IR, so a fix you've
+approved removes the finding it was approved against — not the
+other way around. Every successful application gets appended
+to `ValidationReportRecord.applied_mutations`.
+
+When you pass `None` (or omit the hook entirely), the pipeline
+is byte-for-byte identical to today's behaviour. The opt-in is
+explicit, per-run.
+
+#### Audit-by-absence — how we'll prove no one snuck around the single entry point
+
+A future tree (sketch id: `R7-MUTATION-PATHWAY-IMPL`) will add
+a **static audit** to the test suite: a build-time check that
+no `ir.<field> = …` assignment, no `.push(…)`/`.insert(…)`/
+`.remove(…)` on a tracked IR collection, exists *outside*
+`apply_approved_mutation`. The check is mechanical (grep- or
+syn-tree-based) and runs in CI. Combined with the single-entry-
+point algorithm above, this gives you a structural guarantee:
+*"if validation changed an IR field, it went through the
+audited path."*
+
+#### The four protections you get, framed as user benefits
+
+The same four properties expressed as what they buy you:
+
+1. **Refuse-by-default** — *You never lose work to a silent
+   automated rewrite.* If the validator can't verify a change
+   end-to-end against an approval card you signed, it doesn't
+   happen.
+2. **Fully diff-able** — *You can always see exactly what
+   changed.* The `value_before` and `value_after` are right
+   there on the card, in JSON, beside the `ir_path` they apply
+   to. No "the validator did something." Always: *this* field,
+   *this* before, *this* after.
+3. **Provenance-bearing** — *You can always trace a change
+   back to why.* Every applied mutation links to the
+   `Finding`s the validator emitted that motivated it. The
+   audit thread runs all the way back to the observation that
+   started the conversation.
+4. **Append-only** — *You can't lose the history.* The audit
+   trail is the full history of approvals + applied mutations.
+   Reversing a wrong change is a new approval, not a deletion;
+   even the "undo" is on the record.
+
+Together with `R16`'s three structural honesty doctrines —
+*fidelity Fail → Residual*, *fusion disagreement → Residual*,
+*entailment Fail → Residual* — these four properties extend
+the "fabrication is mechanically impossible" guarantee across
+the validation pipeline, even after canonical IR mutation is
+introduced.
+
+#### What this design does **not** do (and what comes next)
+
+To set expectations honestly:
+
+- **No code ships from `R7-VALIDATION.5`.** This is a design
+  deliverable. Today's `specforge validate` behaves exactly
+  as it did before this section was written — read-only, no
+  approval store, no `applied_mutations` field in the report.
+- **The default never flips.** Even after a future
+  implementation tree (sketch id: `R7-MUTATION-PATHWAY-IMPL`)
+  lands the typed `approval` module + the `with_approved_mutations`
+  hook, running validation without an approval store leaves the
+  IR untouched. The opt-in is explicit and per-run.
+- **CLI / UX is not part of this design.** How you'll *propose*
+  an approval (the validator emitting a draft card),
+  *interactively review* it, *sign* it (the bridge to your
+  team's signing process), and *commit* it to the store is a
+  downstream UX leaf when the implementation lands.
+- **Phase 1 tamper-evidence uses `content_hash` (SHA-256).**
+  Phase 2 can upgrade to detached PGP or ed25519 signatures
+  bound to `approver.evidence`. The `content_hash` field name
+  stays; the algorithm behind it swaps.
+
+*Authoritative tracking:* `docs/tasks/R7-VALIDATION.md` — the
+"Design (`.5` output, 2026-05-20)" section is the full
+specification this chapter explains.

@@ -2,6 +2,52 @@
 
 ## 2026-05-20
 
+### BOOK-METHOD-DOC — clarify "thorough" means user-friendly thorough + rewrite R7-VALIDATION.5 book section as the worked template
+- Per explicit user direction (verbatim):
+  *"Yes, the user (me) shall be able to understand everything
+  about R7-VALIDATION.5. The should be user friendly. The goal
+  is to engage people not to scare them. The goal is to explain
+  things to the user so that they understand. And we want them
+  to understand if we want them to use specforge."*
+- Added a Decisions entry to `docs/tasks/BOOK-METHOD-DOC.md`
+  recording this clarification as the standard for every
+  future close-leaf. The book section is the **user's primary
+  surface** for understanding a tree, not a condensed pointer
+  to the task-tree file. Concretely:
+  - **Thorough** — mirror every concept the tree introduces.
+  - **Accurate** — language describes what the design / code
+    does (AUDIT-DOC-RECONCILE doctrine extended to
+    book-vs-design).
+  - **User-friendly** — explain the *why* before the *what*;
+    introduce typed names alongside plain-language summaries;
+    walk through worked examples; frame safety properties as
+    user benefits ("you never lose work to a silent rewrite")
+    rather than restrictions.
+  - **Engage, do not scare** — open with the problem the user
+    has, not the type lattice; use second-person; keep
+    paragraphs short; use code blocks sparingly.
+- Rewrote the `R7-VALIDATION.5` book subsection in
+  `docs/book/src/quality/validation.md` as the worked template
+  for the standard. The new section walks the reader through:
+  the IR contract today; what "canonical IR mutation" would
+  mean and why it's risky (three concrete risks); the mental
+  model in one sentence (*"the IR can only be changed if you
+  hand the validator a signed approval card…"*);
+  `ApprovalRecord` field-by-field in plain language;
+  `ApprovalStore` (append-only JSONL in your repo, version-
+  controlled); the six-step `apply_approved_mutation`
+  algorithm in plain English; what you see in the report
+  afterwards; when an approval is required; how it slots into
+  the existing validate functions via a single optional
+  `with_approved_mutations` hook; audit-by-absence (the
+  static-audit follow-up); the four protections framed as user
+  benefits; and an honest "what this design does **not** do"
+  closer (no code ships from `.5`; default never flips; CLI is
+  a downstream UX leaf; SHA-256 today / signatures later).
+- The `R7-VALIDATION.5` book subsection is recorded as the
+  canonical example to refer to when closing any future tree.
+- Docs-only; `scripts/run_docs_ci.sh` green (mdBook builds).
+
 ### R7-VALIDATION.5 — tracked approval evidence design (close R7-VALIDATION tree)
 - Per explicit user direction to PNT into R7-VALIDATION.5, landed
   the design-only deliverable the leaf required. The
