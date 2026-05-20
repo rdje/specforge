@@ -178,6 +178,60 @@ pub fn merge_cluster(cluster: &[ActorContract]) -> ActorContract {
     base
 }
 
+/// Producer wiring (R16-MULTIMODAL-CONTRACT-FUSION.3): cluster
+/// `contracts` by `fusion_key` and replace each cluster of size > 1
+/// with a single `merge_cluster` result. Insertion order of the
+/// resulting vec is preserved (the merged contract takes the slot of
+/// the first cluster member; the trailing members are dropped).
+/// Single-element clusters are unchanged. Idempotent on already-fused
+/// input (a `merge_cluster` of a single contract is identity).
+///
+/// Designed to run in `SemanticIr::build` BEFORE
+/// `apply_fidelity_gates` so the fidelity gates evaluate the fused
+/// contracts (not the pre-fusion duplicates).
+pub fn apply_fusion(contracts: &mut Vec<ActorContract>) {
+    if contracts.len() < 2 {
+        return;
+    }
+    use std::collections::HashMap;
+    let mut groups: HashMap<FusionKey, Vec<usize>> = HashMap::new();
+    let mut order: Vec<FusionKey> = Vec::new();
+    for (i, c) in contracts.iter().enumerate() {
+        let k = fusion_key(c);
+        if !groups.contains_key(&k) {
+            order.push(k.clone());
+        }
+        groups.entry(k).or_default().push(i);
+    }
+    let has_multi = order.iter().any(|k| groups[k].len() > 1);
+    if !has_multi {
+        return;
+    }
+    let mut replacements: HashMap<usize, ActorContract> = HashMap::new();
+    let mut to_skip: std::collections::HashSet<usize> = std::collections::HashSet::new();
+    for k in &order {
+        let idxs = &groups[k];
+        if idxs.len() < 2 {
+            continue;
+        }
+        let cluster: Vec<ActorContract> = idxs.iter().map(|&i| contracts[i].clone()).collect();
+        let merged = merge_cluster(&cluster);
+        replacements.insert(idxs[0], merged);
+        for &i in &idxs[1..] {
+            to_skip.insert(i);
+        }
+    }
+    let mut new_contracts = Vec::with_capacity(contracts.len() - to_skip.len());
+    for (i, c) in contracts.iter().enumerate() {
+        if let Some(m) = replacements.remove(&i) {
+            new_contracts.push(m);
+        } else if !to_skip.contains(&i) {
+            new_contracts.push(c.clone());
+        }
+    }
+    *contracts = new_contracts;
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -452,5 +506,102 @@ mod tests {
         );
         assert_eq!(obligation_kind(&c.obligation), "stable");
         assert_eq!(fusion_key(&c).obligation_kind, "stable");
+    }
+
+    #[test]
+    fn apply_fusion_size_one_input_is_unchanged() {
+        let mut cs = vec![contract(
+            "c1",
+            Some("A"),
+            Obligation::Drive {
+                signal: "Q".into(),
+                value: "1".into(),
+            },
+            ContractKind::Guarantee,
+            "s",
+            EvidenceModality::Prose,
+            "s1",
+            LoweringDisposition::Lowerable,
+            AutomationConfidence::High,
+        )];
+        let before = cs.clone();
+        apply_fusion(&mut cs);
+        assert_eq!(cs, before);
+    }
+
+    #[test]
+    fn apply_fusion_merges_a_multi_cluster_and_keeps_order_of_singletons() {
+        // Three contracts: c1 & c3 cluster (same key); c2 alone.
+        let c1 = contract(
+            "c1",
+            Some("A"),
+            Obligation::Drive {
+                signal: "Q".into(),
+                value: "1".into(),
+            },
+            ContractKind::Guarantee,
+            "prose",
+            EvidenceModality::Prose,
+            "s1",
+            LoweringDisposition::Lowerable,
+            AutomationConfidence::High,
+        );
+        let c2 = contract(
+            "c2",
+            Some("B"), // different actor ⇒ different key
+            Obligation::Drive {
+                signal: "Q".into(),
+                value: "1".into(),
+            },
+            ContractKind::Guarantee,
+            "prose",
+            EvidenceModality::Prose,
+            "s2",
+            LoweringDisposition::Lowerable,
+            AutomationConfidence::Medium,
+        );
+        let c3 = contract(
+            "c3",
+            Some("A"),
+            Obligation::Drive {
+                signal: "Q".into(),
+                value: "1".into(),
+            },
+            ContractKind::Guarantee,
+            "table",
+            EvidenceModality::Table,
+            "s3",
+            LoweringDisposition::Lowerable,
+            AutomationConfidence::Medium,
+        );
+        let mut cs = vec![c1, c2.clone(), c3];
+        apply_fusion(&mut cs);
+        assert_eq!(cs.len(), 2, "c1+c3 should fuse to one; c2 stays");
+        // Merged contract takes c1's slot; c2 stays at index 1.
+        assert_eq!(cs[0].contract_id, "fused:c1+c3");
+        assert_eq!(cs[0].provenance.modality, EvidenceModality::Mixed);
+        assert_eq!(cs[1], c2);
+    }
+
+    #[test]
+    fn apply_fusion_is_idempotent_on_already_fused() {
+        let mut cs = vec![contract(
+            "c1",
+            Some("A"),
+            Obligation::Drive {
+                signal: "Q".into(),
+                value: "1".into(),
+            },
+            ContractKind::Guarantee,
+            "prose | table",
+            EvidenceModality::Mixed,
+            "s1",
+            LoweringDisposition::Lowerable,
+            AutomationConfidence::Medium,
+        )];
+        let before = cs.clone();
+        apply_fusion(&mut cs);
+        apply_fusion(&mut cs);
+        assert_eq!(cs, before);
     }
 }

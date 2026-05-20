@@ -77,20 +77,31 @@ contradict become a residual/repair packet, not a silent pick).
   Commit: `see Commit Log`
 
 - ID: `R16-MULTIMODAL-CONTRACT-FUSION.3`
-  Status: `pending`
+  Status: `done`
   Goal: wire producer in `SemanticIr::build` — cluster
   `actor_contracts` by `fusion_key`, merge clusters of size > 1
   (deterministic), replace originals with the fused contract;
-  disagreement → `Residual{reason}` (honesty doctrine, parallel to
-  `R16-CAPTURE-FIDELITY-GATES.3`). IntentIR carries the fused
-  contracts (already done in CONTRACT-IR.3). Corpus parity: today
-  `actor_name`/`channel`/`phase` are unpopulated for most contracts
-  (extraction trees will populate), so clusters are size 1 ⇒ fusion is
-  identity ⇒ zero artifact churn. The producer becomes load-bearing
-  when extraction lands.
+  disagreement → `Residual{reason}` (honesty doctrine).
   Acceptance: `Producer wired; per-leaf agreement/disagreement clustering tested; corpus parity preserved (zero artifact churn today; honest residual on synthetic disagreement); scripts/run_ci.sh green.`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — `apply_fusion(&mut Vec<ActorContract>)`
+    added to `crates/specforge/src/ir/fusion.rs`: clusters by
+    `fusion_key` (HashMap + first-seen-order Vec for determinism); for
+    each cluster of size > 1, runs `merge_cluster` and places the
+    merged contract at the first cluster member's slot (trailing
+    members dropped) — input order otherwise preserved; idempotent
+    on already-fused input. `SemanticIr::build` calls it **BEFORE**
+    `apply_fidelity_gates` so the fidelity gates evaluate the fused
+    contracts. 3 new producer tests (size-1 unchanged; multi-cluster
+    merges + singletons keep their order; idempotence). IntentIR
+    carries the fused contracts forward (no schema change). Corpus
+    evidence: full `scripts/run_ci.sh` green — the nvme corpus had
+    zero observable churn from fusion (most contracts have
+    `actor_name=None`/`channel=None`/`phase=None`, but
+    `(obligation_kind, primary_signal)` still discriminates well
+    enough that no agreement-mergeable clusters surfaced). The
+    producer becomes load-bearing the moment extraction (`#4`/`#6`)
+    populates `channel`/`phase` or yields multi-source candidates.
+  Commit: `see Commit Log`
 
 - ID: `R16-MULTIMODAL-CONTRACT-FUSION.4`
   Status: `pending`
@@ -107,8 +118,8 @@ contradict become a residual/repair packet, not a silent pick).
 | --- | --- | --- | --- |
 | 1 | `R16-MULTIMODAL-CONTRACT-FUSION.1` | `done` | Fusion design fixed; book mirror added |
 | 2 | `R16-MULTIMODAL-CONTRACT-FUSION.2` | `done` | Typed `fusion` module + `FusionKey` + `merge_cluster` (agree/disagree) + 6 tests; zero artifact churn |
-| 3 | `R16-MULTIMODAL-CONTRACT-FUSION.3` | `pending` | **Next** — producer wiring in `SemanticIr::build` before `apply_fidelity_gates` |
-| 4 | `R16-MULTIMODAL-CONTRACT-FUSION.4` | `pending` | Corpus report + close |
+| 3 | `R16-MULTIMODAL-CONTRACT-FUSION.3` | `done` | Producer wired in `SemanticIr::build` BEFORE fidelity gate; 3 producer tests; zero corpus churn (load-bearing on extraction) |
+| 4 | `R16-MULTIMODAL-CONTRACT-FUSION.4` | `pending` | **Next** — corpus `fusion:` block in `specforge validate` + baseline-lock + close |
 
 ## Design (`.1` output, 2026-05-20)
 
@@ -238,13 +249,15 @@ precedents).
 | --- | --- | --- | --- |
 | `2026-05-20` | `R16-MULTIMODAL-CONTRACT-FUSION.1` | fusion-key / merge / disagreement-policy / report shape recorded; book mirror per BOOK-METHOD-DOC; mdBook builds | `passed` (docs-only) |
 | `2026-05-20` | `R16-MULTIMODAL-CONTRACT-FUSION.2` | typed `fusion` module (`FusionKey`/`obligation_kind`/`fusion_key`/`merge_cluster`) + 6 unit tests; SemanticIr/IntentIr schemas unchanged; clippy-clean; full `scripts/run_ci.sh` | `passed` (zero artifact churn) |
+| `2026-05-20` | `R16-MULTIMODAL-CONTRACT-FUSION.3` | `apply_fusion` producer + wired in `SemanticIr::build` BEFORE `apply_fidelity_gates`; 3 producer tests (size-1 unchanged, multi-cluster merge + singleton order, idempotence); full `scripts/run_ci.sh` | `passed` (zero corpus churn — clusters all size 1; producer load-bearing for #4/#6) |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `R16-MULTIMODAL-CONTRACT-FUSION.1` | `R16-MULTIMODAL-CONTRACT-FUSION.1 — fusion design (promote #3)` (`f50b2e1e`) | docs-only; book mirror; also the `R16-INTENT-CAPTURE.2` #3 promotion |
-| `R16-MULTIMODAL-CONTRACT-FUSION.2` | `R16-MULTIMODAL-CONTRACT-FUSION.2 — typed fusion module + merge primitive + tests` | first FUSION code; zero artifact churn; producer wiring deferred to `.3` |
+| `R16-MULTIMODAL-CONTRACT-FUSION.2` | `R16-MULTIMODAL-CONTRACT-FUSION.2 — typed fusion module + merge primitive + tests` (`c19b704f`) | first FUSION code; zero artifact churn; producer wiring deferred to `.3` |
+| `R16-MULTIMODAL-CONTRACT-FUSION.3` | `R16-MULTIMODAL-CONTRACT-FUSION.3 — wire apply_fusion producer in SemanticIr::build BEFORE fidelity gate` | zero corpus churn; load-bearing for extraction |
 
 ## Dependencies / Order
 
@@ -259,6 +272,22 @@ precedents).
 - `2026-05-20`: Promoted to `active` (all 3 DAG predecessors closed);
   `.1` fusion design fixed + book mirror; concrete `.1`–`.4` leaves
   defined. Frontier → `.2` (implement typed `fusion` module).
+- `2026-05-20`: `.3` done — producer wired:
+  `apply_fusion(&mut Vec<ActorContract>)` clusters by `fusion_key`
+  (HashMap + first-seen-order Vec for determinism); each cluster of
+  size > 1 → `merge_cluster`, merged contract takes the first
+  cluster member's slot, trailing members dropped; idempotent on
+  already-fused input. `SemanticIr::build` calls it **BEFORE**
+  `apply_fidelity_gates` so the fidelity gates see the fused
+  contracts. 3 producer tests (size-1 unchanged; multi-cluster merge
+  + singletons keep their order; idempotence). Corpus evidence: full
+  CI green — nvme had no agreement-mergeable clusters surface today
+  (most contracts have `actor_name=None`/`channel=None`/`phase=None`,
+  but `(obligation_kind, primary_signal)` still discriminates well).
+  Producer is load-bearing the moment extraction (`#4`/`#6`) populates
+  `channel`/`phase` or yields multi-source candidates. Frontier →
+  `.4` (corpus `fusion:` block in `specforge validate` +
+  baseline-lock + close).
 - `2026-05-20`: `.2` done — `ir/fusion.rs` typed module
   (`FusionKey{actor,channel,phase,obligation_kind,primary_signal}` +
   `obligation_kind(9 variants)` + `fusion_key` + deterministic

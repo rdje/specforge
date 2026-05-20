@@ -2,6 +2,30 @@
 
 ## 2026-05-20
 
+### R16-MULTIMODAL-CONTRACT-FUSION.3 — wire producer in SemanticIr::build BEFORE fidelity gate
+- New `apply_fusion(&mut Vec<ActorContract>)` in
+  `crates/specforge/src/ir/fusion.rs`: clusters by `fusion_key`
+  (HashMap + first-seen-order Vec for determinism); for each cluster
+  of size > 1, runs `merge_cluster` and places the merged contract at
+  the first cluster member's slot — trailing members dropped, input
+  order otherwise preserved; idempotent on already-fused input.
+- `SemanticIr::build` calls `apply_fusion(&mut actor_contracts)`
+  **BEFORE** `apply_fidelity_gates`, so the fidelity gates evaluate
+  the fused contracts (not pre-fusion duplicates). IntentIR carries
+  the fused contracts forward (no schema change).
+- 3 new producer unit tests: size-1 input unchanged; 3-contract input
+  with one fused cluster + one singleton ⇒ length 2, merged contract
+  takes the first slot with `"fused:c1+c3"` id and `Mixed` modality,
+  singleton at position 1; double-application is idempotent.
+- Corpus evidence: full `scripts/run_ci.sh` green — the nvme corpus
+  had no agreement-mergeable clusters surface today (most contracts
+  have `actor_name=None`/`channel=None`/`phase=None`, but
+  `(obligation_kind, primary_signal)` still discriminates well
+  enough). The producer becomes load-bearing the moment extraction
+  (`#4`/`#6`) populates `channel`/`phase` or yields multi-source
+  candidates. Frontier → `.4` (corpus `fusion:` block in `specforge
+  validate` + baseline-lock + close).
+
 ### R16-MULTIMODAL-CONTRACT-FUSION.2 — implement the typed `fusion` module
 - New `crates/specforge/src/ir/fusion.rs`: typed `FusionKey { actor,
   channel, phase, obligation_kind, primary_signal }` (Hash+Eq for

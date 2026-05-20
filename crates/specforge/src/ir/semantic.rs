@@ -269,6 +269,13 @@ impl SemanticIr {
             .iter()
             .map(crate::ir::contract::contract_from_temporal_rule)
             .collect::<Vec<_>>();
+        // R16-MULTIMODAL-CONTRACT-FUSION.3: cluster `actor_contracts`
+        // by `fusion_key` and merge each multi-element cluster
+        // deterministically; disagreements route to `Residual` (the
+        // honesty doctrine, mechanically enforced — never a silent
+        // pick across contradicting sources). Runs BEFORE the
+        // fidelity gates so they evaluate the fused contracts.
+        crate::ir::fusion::apply_fusion(&mut actor_contracts);
         // R16-CAPTURE-FIDELITY-GATES.3: evaluate the typed fidelity
         // gates over `actor_contracts` and **mechanically enforce the
         // residual-honesty doctrine** — any `Fail` on a `Lowerable`
