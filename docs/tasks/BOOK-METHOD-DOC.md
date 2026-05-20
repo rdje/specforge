@@ -75,12 +75,47 @@ human-facing, topically-organized explanation that mirrors them.
   Commit: `see Commit Log`
 
 - ID: `BOOK-METHOD-DOC.2`
-  Status: `pending`
+  Status: `in-progress` (honest-split into per-chapter sub-leaves; the
+  R16 family already self-documents through its close-rule)
   Goal: backfill existing/closed trees to the standard, each in its
   mapped chapter (batched by chapter to keep diffs reviewable).
   Acceptance: `Each existing tree has an accurate method-doc section in its mapped chapter; mdBook green.`
-  Verification: `pending`
-  Commit: `pending`
+
+  - ID: `BOOK-METHOD-DOC.2.a`
+    Status: `done` (`2026-05-20`)
+    Goal: backfill the ISF-adapter chapter — `R6-ISF-ADAPTER`,
+    `ISF-ONLY-CONSOLIDATION`, `ISF-ONLY-IR-PRUNE`,
+    `ISF-TEMPORAL-LOWERING`, `ISF-HANDSHAKE-STAGE-LOWERING`,
+    `FSMGEN-ISSUE-REPORTING`, `FSMGEN-SUBMODULE-BUMP` (7 trees).
+    Acceptance: `Each of the 7 ISF/FSMGen trees has a topically-placed method-doc subsection under "Closed task trees — how each was implemented and verified" in docs/book/src/pipeline/isf-adapter.md; mdBook green.`
+    Verification: `passed` — appended a "Closed task trees" section
+      to `docs/book/src/pipeline/isf-adapter.md` with 7 per-tree
+      subsections (R6-ISF-ADAPTER; ISF-ONLY-CONSOLIDATION;
+      ISF-ONLY-IR-PRUNE; ISF-TEMPORAL-LOWERING with its
+      R16-CONTRACT-IR.3 subsumption note; ISF-HANDSHAKE-STAGE-LOWERING
+      with its R16-CONTRACT-IR.4 supersession note;
+      FSMGEN-ISSUE-REPORTING; FSMGEN-SUBMODULE-BUMP). Each subsection
+      is a short topical paragraph + `*Authoritative tracking:*` pointer.
+      `mdbook build` green.
+    Commit: `see Commit Log`
+
+  - ID: `BOOK-METHOD-DOC.2.b`
+    Status: `pending`
+    Goal: backfill `reference/*` chapters for `AUDIT-DOC-RECONCILE`,
+    `SIGNOFF-REMEDIATION`.
+    Acceptance: `Both trees have topically-placed method-doc subsections in reference/*.md; mdBook green.`
+    Verification: `pending`
+    Commit: `pending`
+
+  - ID: `BOOK-METHOD-DOC.2.c`
+    Status: `pending`
+    Goal: backfill the remaining mapped trees per the placement map
+    (`R6-*-HARDENING`, `R7-VALIDATION`, `PROVENANCE-HARDENING`,
+    `R15*-…`). Per-chapter subsections in `pipeline/*` / `quality/*` /
+    `domain/*`.
+    Acceptance: `Each remaining closed tree from the placement map has a topically-placed method-doc subsection; mdBook green.`
+    Verification: `pending`
+    Commit: `pending`
 
 - ID: `BOOK-METHOD-DOC.3`
   Status: `pending`
@@ -96,7 +131,9 @@ human-facing, topically-organized explanation that mirrors them.
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `BOOK-METHOD-DOC.1` | `done` | Convention + map + first worked instance (R16-CONTRACT-IR) |
-| 2 | `BOOK-METHOD-DOC.2` | `pending` | Next — backfill existing trees by chapter (after R16 work, or interleaved per user priority) |
+| 2.a | `BOOK-METHOD-DOC.2.a` | `done` | ISF-adapter chapter backfilled (7 trees) — `2026-05-20` |
+| 2.b | `BOOK-METHOD-DOC.2.b` | `pending` | `reference/*` chapters: `AUDIT-DOC-RECONCILE`, `SIGNOFF-REMEDIATION` |
+| 2.c | `BOOK-METHOD-DOC.2.c` | `pending` | Remaining trees per the placement map (`R6-*-HARDENING`, `R7-VALIDATION`, `PROVENANCE-HARDENING`, `R15*`) |
 | 3 | `BOOK-METHOD-DOC.3` | `pending` | Encode the standing close-rule into workflow doctrine |
 
 ## Decisions
@@ -120,12 +157,14 @@ human-facing, topically-organized explanation that mirrors them.
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-05-19` | `BOOK-METHOD-DOC.1` | convention + placement map + standing rule recorded; first instance = R16-CONTRACT-IR book section | `passed` |
+| `2026-05-20` | `BOOK-METHOD-DOC.2.a` | 7 ISF/FSMGen trees backfilled into `docs/book/src/pipeline/isf-adapter.md` "Closed task trees" section; mdBook builds | `passed` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `BOOK-METHOD-DOC.1` | `BOOK-METHOD-DOC.1 — convention + placement map (with R16-CONTRACT-IR.1)` | docs-only; worked template = R16-CONTRACT-IR book section |
+| `BOOK-METHOD-DOC.2.a` | `BOOK-METHOD-DOC.2.a — backfill ISF-adapter chapter (7 closed pre-R16 trees)` | docs-only; per the convention; mdBook green |
 
 ## Changelog
 
@@ -133,3 +172,13 @@ human-facing, topically-organized explanation that mirrors them.
   thoroughly and accurately explain how each task-tree is implemented
   and verified, topically placed; with a standing close-rule so it
   never drifts.
+- `2026-05-20`: `.2.a` done — appended "Closed task trees" section
+  to `docs/book/src/pipeline/isf-adapter.md` with topically-placed
+  per-tree subsections for the 7 closed pre-R16 ISF/FSMGen trees
+  (`R6-ISF-ADAPTER`, `ISF-ONLY-CONSOLIDATION`, `ISF-ONLY-IR-PRUNE`,
+  `ISF-TEMPORAL-LOWERING` with R16-CONTRACT-IR.3 subsumption note,
+  `ISF-HANDSHAKE-STAGE-LOWERING` with R16-CONTRACT-IR.4 supersession
+  note, `FSMGEN-ISSUE-REPORTING`, `FSMGEN-SUBMODULE-BUMP`). Honest
+  split of `.2` into `.2.a` (done), `.2.b` (reference/*), `.2.c`
+  (R6/R7/R15* hardening) keeps each PNT step bounded per rule 5.
+  mdBook green.

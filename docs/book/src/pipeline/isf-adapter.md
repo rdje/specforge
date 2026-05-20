@@ -172,3 +172,110 @@ Two complementary checks cover ISF output:
 
 - **FSMGen strict acceptance** — ISF text is validated against FSMGen `--strict --check --json` in the test `isf_output_passes_fsmgen_strict_validation`, ensuring SPECFORGE-generated ISF passes FSMGen's strict surface with zero diagnostics and zero syntax errors.
 - **`specforge validate <isf adapter.json>`** — auto-detects the `isf_adapter` stage and runs `validate_isf_adapter`, reporting structural and coverage findings (missing ISF payload, unexpected schema version, not renderable, empty signal inventory, no behavioral surface, residual decisions).
+
+## Closed task trees — how each was implemented and verified
+
+Per the `BOOK-METHOD-DOC` standing close-rule, each tree carries a
+topically-placed implementation+verification summary; the
+task-tree files remain the machine-tracked authority. The seven
+trees below all closed at the ISF / FSMGen boundary; their `.isf`
+adapter behaviour is captured here in one consolidated section.
+
+### `R6-ISF-ADAPTER` — bring the `.isf` adapter under task-tree ownership
+
+The `.isf` adapter landed before the task-tree workflow stabilized;
+this tree retroactively put it under ownership: removed the
+`IrStage` modeling smell (a leftover of the multi-target era),
+raised the ISF self-test coverage to the IR-layer bar, and
+documented the adapter's contract with FSMGen. No behavioural
+regression — every leaf either preserves the pre-existing `.isf`
+or records an explicit decision to change it. Verified by the
+full IR self-test suite + FSMGen-strict acceptance + e2e adapter
+fixtures. *Authoritative tracking:* `docs/tasks/R6-ISF-ADAPTER.md`.
+
+### `ISF-ONLY-CONSOLIDATION` — `.isf` as the sole adapter target
+
+Removed the multi-target HDL adapter surface (SystemVerilog /
+Verilog / VHDL) and the entire `.fsm` adapter subsystem from
+code, tests, fixtures, and documentation. After this tree
+SpecForge lowers `IntentIR` to `.isf` only; FSMGen owns
+everything downstream (scheduling, `.fsm`, HDL). Verified by
+absence of HDL/`fsm` code paths (compile-checked), the e2e
+suite still green against `.isf`-only fixtures, and the
+pipeline overview chapter rewritten to match.
+*Authoritative tracking:* `docs/tasks/ISF-ONLY-CONSOLIDATION.md`.
+
+### `ISF-ONLY-IR-PRUNE` — remove IR surfaces that fed only the removed `.fsm`
+
+After `.fsm` and HDL adapters were removed, several IR surfaces
+no longer had a consumer (`init_assignments`,
+`decision_tree_fragments`, `regular_states`, `state_transitions`).
+This tree audited the consumer graph and removed the surfaces no
+ISF/FSMGen path reads — a strict subset (`temporal_rules` was
+audited and kept, given `validate.rs` R7/R15b references +
+`learn_priors` + the back-compat fallback in `R16-CONTRACT-IR.3`).
+Verified by full CI + adapter-fixtures regression.
+*Authoritative tracking:* `docs/tasks/ISF-ONLY-IR-PRUNE.md`.
+
+### `ISF-TEMPORAL-LOWERING` — `IntentIR.temporal_rules` reaches the adapter
+
+The flagship-R15b deliverable (`IntentIR.temporal_rules`) was
+gated by `assess_isf_renderability` but **never read** by
+`IsfIr::from_intent_ir` — the typed temporal surface didn't
+reach `.isf`. This tree wired the read path: classify every
+temporal rule into a `TemporalRuleDisposition` (`Rule`,
+`Contract`, or `Residual{reason}`); honest residual for shapes
+without a representable `.isf` construct; FSMGen-strict
+acceptance is a hard verification. Verified at every leaf via
+the real FSMGen binary on a strict-baseline nvme fixture
+(`0/250/92`-class metric) and `scripts/run_ci.sh`. Subsumed by
+`R16-CONTRACT-IR.3` (which re-pointed the adapter at the typed
+`actor_contracts` projection while preserving
+`classify_temporal_rule` output exactly — parity by
+construction). *Authoritative tracking:*
+`docs/tasks/ISF-TEMPORAL-LOWERING.md`.
+
+### `ISF-HANDSHAKE-STAGE-LOWERING` — `(stage p (ready r)(valid v))`
+
+Originally a separate tree; **superseded by and DELIVERED via
+`R16-CONTRACT-IR.4`** (`6869c128`, 2026-05-19). The
+`HandshakeComplete` temporal_rules now lower as
+`HandshakeBarrier` obligations and emit `(stage …)` only when
+the actor's input direction permits (FSMGen rejects a `(stage)`
+whose `ready` is not an actor input — gated by
+`input_signal_names`, else honest residual; never strict-invalid).
+Real-binary verified at FSMGen pin `9bfb9a20`. Verified-but-
+**dormant** on the current corpus (no `handshake_complete`
+temporal_rule yet ⇒ zero `.isf` change); activates the moment
+extraction grounds handshakes. *Authoritative tracking:*
+`docs/tasks/ISF-HANDSHAKE-STAGE-LOWERING.md` (superseded
+marker) and `docs/tasks/R16-CONTRACT-IR.md` (`.4`).
+
+### `FSMGEN-ISSUE-REPORTING` — downstream-issue bundles
+
+Two genuine FSMGen findings surfaced during
+`ISF-TEMPORAL-LOWERING.2.1` (F1: flat-eventual nested syntax;
+F2: ready/valid stage acceptance) were filed via the official
+protocol (`subs/fsmgen/docs/DOWNSTREAM_ISSUE_REPORTING.md`;
+`bin/fsmgen-issue-bundle`), with bundles stored under SPECFORGE
+so the pinned `subs/fsmgen/` working tree is never modified.
+**Honest count**: two findings, not three (the third candidate
+was a downstream-spec interpretation issue, not a FSMGen bug).
+Verified by `fsmgen-issue-bundle` integration tests + the
+serialised parallel-CWD lock (`FSMGEN_TEST_LOCK`).
+*Authoritative tracking:* `docs/tasks/FSMGEN-ISSUE-REPORTING.md`.
+
+### `FSMGEN-SUBMODULE-BUMP` — pin `effe591d` → `9bfb9a20`
+
+Updated the pinned `subs/fsmgen` submodule to upstream HEAD
+`9bfb9a20`, which carries explicit fixes for the two filed
+findings (`610cb26e` + `d4d6dfab`) plus structured-JSON failure
+emission (`9bfb9a20`). Both fixes were audited from the
+SPECFORGE side: nested `(eventually s (within N))` now accepts;
+`(stage p (ready r)(valid v))` now accepts (with the
+ready-is-actor-input contract, gated in `R16-CONTRACT-IR.4`).
+Verified by re-running both `fsmgen-issue-bundle` reproducers
+against the new pin and confirming both produce success; the
+existing `scripts/run_ci.sh` flow regressed cleanly to the new
+pin. *Authoritative tracking:*
+`docs/tasks/FSMGEN-SUBMODULE-BUMP.md`.

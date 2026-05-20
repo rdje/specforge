@@ -2,6 +2,42 @@
 
 ## 2026-05-20
 
+### BOOK-METHOD-DOC.2.a — backfill ISF-adapter chapter (7 closed pre-R16 trees)
+- Per the `BOOK-METHOD-DOC` standing close-rule, appended a "Closed
+  task trees — how each was implemented and verified" section to
+  `docs/book/src/pipeline/isf-adapter.md` with topically-placed
+  per-tree subsections for the 7 closed pre-R16 ISF/FSMGen trees:
+  - `R6-ISF-ADAPTER` — retroactive task-tree ownership of the
+    `.isf` adapter; removed `IrStage` modeling smell; coverage
+    raised; no behaviour regression.
+  - `ISF-ONLY-CONSOLIDATION` — `.isf` as sole adapter target;
+    HDL + `.fsm` surfaces removed from code/tests/fixtures/docs.
+  - `ISF-ONLY-IR-PRUNE` — removed IR surfaces that had no
+    consumer after `.fsm`/HDL removal; audited & kept
+    `temporal_rules` (R7/R15b/learn_priors / back-compat fallback).
+  - `ISF-TEMPORAL-LOWERING` — `IntentIR.temporal_rules` now reaches
+    the adapter via `classify_temporal_rule`/`TemporalRuleDisposition`;
+    later subsumed by `R16-CONTRACT-IR.3` (parity by construction
+    against the typed `actor_contracts` projection).
+  - `ISF-HANDSHAKE-STAGE-LOWERING` — superseded by + DELIVERED via
+    `R16-CONTRACT-IR.4`: `(stage p (ready r)(valid v))` with the
+    ready-is-input gate; real-binary FSMGen-strict-verified at pin
+    `9bfb9a20`.
+  - `FSMGEN-ISSUE-REPORTING` — two genuine FSMGen findings filed
+    via the official protocol with bundles under SPECFORGE; honest
+    count was two, not three.
+  - `FSMGEN-SUBMODULE-BUMP` — pin `effe591d` → `9bfb9a20` for the
+    two fixes + structured-JSON failure emission; both fixes
+    audited from the SPECFORGE side.
+- Each subsection is a short topical paragraph + `*Authoritative
+  tracking:*` pointer to the corresponding task-tree file.
+- **Honest split** of `BOOK-METHOD-DOC.2` into `.2.a` (done, this
+  commit), `.2.b` (reference/* chapters: `AUDIT-DOC-RECONCILE`,
+  `SIGNOFF-REMEDIATION`), and `.2.c` (R6/R7/PROVENANCE-HARDENING +
+  R15* chapters) — keeps each PNT step bounded per rule 5 while
+  honoring the standing close-rule's intent. Docs-only;
+  `scripts/run_docs_ci.sh` green (mdBook builds).
+
 ### R16-CONSTRAINED-VERIFIED-EXTRACTION.6 — `validate constrained:` block + close tree (R16 PROGRAM COMPLETE)
 - `specforge validate` now prints
   `constrained: schema_rejects=N entailment_fails=M template_hits=K`
