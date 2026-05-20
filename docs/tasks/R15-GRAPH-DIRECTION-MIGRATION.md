@@ -3,10 +3,15 @@
 ## Metadata
 
 - Tree ID: `R15-GRAPH-DIRECTION-MIGRATION`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: `R15`
 - Created: `2026-05-15`
-- Last updated: `2026-05-15`
+- Last updated: `2026-05-20`
+- Closed: `2026-05-20` — metadata reconciled to match the
+  long-standing leaf truth (all three child leaves were `complete`
+  and the Current Frontier already said "Tree complete. All three
+  leaves resolved.") + book method-doc subsection added per the
+  now-structural `BOOK-METHOD-DOC` close-rule.
 - Owner: repo-local workflow
 
 ## Goal

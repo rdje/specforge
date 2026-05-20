@@ -235,3 +235,24 @@ If direction coverage is weak, the right question is usually:
 not only:
 
 - did a table contain a literal `input` or `output` string?
+
+## Closed task trees — how each was implemented and verified
+
+### `R15-GRAPH-DIRECTION-MIGRATION` — actor-relative graph direction across the pipeline
+
+Earlier stages already carried the actor-relative graph; the
+adapter, validation, and semantic stages still consulted a flat
+`direction_hint` in places. This tree replaced the remaining
+`direction_hint` consumers with actor-relative graph semantics,
+so the answer to "which way does this signal go?" is consistently
+"ask the graph from this actor's perspective" — not "read the
+flat hint and hope it was set correctly upstream." `direction_hint`
+itself was kept as a compatibility surface (Non-Goal: removal);
+the migration is about *who decides direction* (the graph), not
+*what fields exist*. Verified by leaf-by-leaf coverage of each
+migrated consumer site + the full `scripts/run_ci.sh` regression.
+*Authoritative tracking:*
+`docs/tasks/R15-GRAPH-DIRECTION-MIGRATION.md` (Status closed
+`2026-05-20`; metadata reconciled to match the long-standing
+all-leaves-complete truth + book section added per the
+now-structural `BOOK-METHOD-DOC` close-rule).

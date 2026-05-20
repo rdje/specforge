@@ -2,6 +2,27 @@
 
 ## 2026-05-20
 
+### R15-GRAPH-DIRECTION-MIGRATION — metadata reconciliation + book method-doc close
+- The tree's Current Frontier already read "Tree complete. All
+  three leaves resolved." and the leaves themselves were all
+  `complete` — but the top-level Metadata Status was still
+  `active`. `docs/TASK_TREE.md` already correctly listed the tree
+  as `done`. This commit reconciles the tree-file metadata to
+  match the long-standing leaf truth + the index entry (per the
+  `AUDIT-DOC-RECONCILE` doctrine: book / ROADMAP / metadata
+  language describes what the code does — when it doesn't, the
+  text is wrong, not the code).
+- Per the now-structural `BOOK-METHOD-DOC` close-rule (encoded in
+  `docs/TASK_TREE.md` Completion Rules + `COMMIT.md` Required
+  Commit Workflow at `f7b3dba8`), added a topical method-doc
+  subsection for `R15-GRAPH-DIRECTION-MIGRATION` to
+  `docs/book/src/domain/actor-connectivity.md` (its natural
+  topical home). Records the doctrine: actor-relative graph
+  semantics are the answer to "which way does this signal go?";
+  `direction_hint` is retained as a compatibility surface but is
+  no longer the deciding consumer in the migrated stages.
+- Docs-only; `scripts/run_docs_ci.sh` green (mdBook builds).
+
 ### R16-WAVEFORM-CONTRACT-MINING.4 — `validate waveform:` block + close tree
 - `specforge validate` now prints
   `waveform: figure_contracts=N verifier_fail_residuals=M` in both
