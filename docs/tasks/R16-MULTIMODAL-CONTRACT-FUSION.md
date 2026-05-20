@@ -48,19 +48,33 @@ contradict become a residual/repair packet, not a silent pick).
   Commit: `see Commit Log`
 
 - ID: `R16-MULTIMODAL-CONTRACT-FUSION.2`
-  Status: `pending`
-  Goal: implement typed `fusion` module: `FusionKey` (actor / channel /
-  phase / obligation kind / primary signal), `fusion_key(&ActorContract)
-  -> FusionKey`, `merge_cluster(&[ActorContract]) -> ActorContract`
-  with deterministic agreement merge (union provenance,
-  `Mixed` modality, delimited source_text) AND disagreement detection
-  (incompatible obligation parameters ⇒ produced contract has
-  `lowering = Residual{reason="disagreement: …"}`). Unit-tested with
-  synthetic multi-modal candidates (agree path + disagree path); no
-  producer wiring; zero artifact churn.
+  Status: `done`
+  Goal: implement typed `fusion` module: `FusionKey` +
+  `fusion_key(&ActorContract) -> FusionKey` +
+  `merge_cluster(&[ActorContract]) -> ActorContract` deterministic;
+  agreement merges preserve provenance, disagreements route to
+  `Residual{reason="disagreement: …"}`.
   Acceptance: `Typed module + merge primitive + agreement/disagreement tests; no producer wiring; zero artifact churn; scripts/run_ci.sh green.`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — `crates/specforge/src/ir/fusion.rs` added:
+    `FusionKey { actor, channel, phase, obligation_kind, primary_signal }`
+    (Hash+Eq for grouping); `obligation_kind(&Obligation)` (9
+    variants) + `fusion_key(&ActorContract)`; `merge_cluster` is size-1
+    identity OR deterministic merge — kind/obligation/guard
+    disagreements collected, `disagreement_fields` sorted+deduped, set
+    `lowering = Residual{reason="disagreement: …"}` on any diff;
+    provenance preserved on both paths (union
+    `supporting_statement_ids`, `Mixed` modality when sources differ,
+    delimited `source_text`, minimum `automation_confidence` via
+    `min_confidence`); `contract_id = "fused:<id1>+<id2>+…"`. 6 unit
+    tests covering FusionKey discrimination (actor / primary signal),
+    size-1 identity, agreement-merge provenance shape, single-field
+    disagreement, multi-field sorted-dedup disagreement, and the
+    `obligation_kind` round-trip. Module registered in `ir/mod.rs`.
+    Producer wiring deferred to `.3` (`SemanticIr`/`IntentIr` schemas
+    unchanged ⇒ zero artifact/fixture churn). Clippy-clean
+    (`#[allow(clippy::too_many_arguments)]` on the test helper).
+    Full `scripts/run_ci.sh` green.
+  Commit: `see Commit Log`
 
 - ID: `R16-MULTIMODAL-CONTRACT-FUSION.3`
   Status: `pending`
@@ -92,8 +106,8 @@ contradict become a residual/repair packet, not a silent pick).
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `R16-MULTIMODAL-CONTRACT-FUSION.1` | `done` | Fusion design fixed; book mirror added |
-| 2 | `R16-MULTIMODAL-CONTRACT-FUSION.2` | `pending` | **Next** — implement typed `fusion` module + merge primitive + unit tests |
-| 3 | `R16-MULTIMODAL-CONTRACT-FUSION.3` | `pending` | Producer wiring + disagreement-to-Residual routing |
+| 2 | `R16-MULTIMODAL-CONTRACT-FUSION.2` | `done` | Typed `fusion` module + `FusionKey` + `merge_cluster` (agree/disagree) + 6 tests; zero artifact churn |
+| 3 | `R16-MULTIMODAL-CONTRACT-FUSION.3` | `pending` | **Next** — producer wiring in `SemanticIr::build` before `apply_fidelity_gates` |
 | 4 | `R16-MULTIMODAL-CONTRACT-FUSION.4` | `pending` | Corpus report + close |
 
 ## Design (`.1` output, 2026-05-20)
@@ -223,12 +237,14 @@ precedents).
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-05-20` | `R16-MULTIMODAL-CONTRACT-FUSION.1` | fusion-key / merge / disagreement-policy / report shape recorded; book mirror per BOOK-METHOD-DOC; mdBook builds | `passed` (docs-only) |
+| `2026-05-20` | `R16-MULTIMODAL-CONTRACT-FUSION.2` | typed `fusion` module (`FusionKey`/`obligation_kind`/`fusion_key`/`merge_cluster`) + 6 unit tests; SemanticIr/IntentIr schemas unchanged; clippy-clean; full `scripts/run_ci.sh` | `passed` (zero artifact churn) |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
-| `R16-MULTIMODAL-CONTRACT-FUSION.1` | `R16-MULTIMODAL-CONTRACT-FUSION.1 — fusion design (promote #3)` | docs-only; book mirror; also the `R16-INTENT-CAPTURE.2` #3 promotion |
+| `R16-MULTIMODAL-CONTRACT-FUSION.1` | `R16-MULTIMODAL-CONTRACT-FUSION.1 — fusion design (promote #3)` (`f50b2e1e`) | docs-only; book mirror; also the `R16-INTENT-CAPTURE.2` #3 promotion |
+| `R16-MULTIMODAL-CONTRACT-FUSION.2` | `R16-MULTIMODAL-CONTRACT-FUSION.2 — typed fusion module + merge primitive + tests` | first FUSION code; zero artifact churn; producer wiring deferred to `.3` |
 
 ## Dependencies / Order
 
@@ -243,3 +259,14 @@ precedents).
 - `2026-05-20`: Promoted to `active` (all 3 DAG predecessors closed);
   `.1` fusion design fixed + book mirror; concrete `.1`–`.4` leaves
   defined. Frontier → `.2` (implement typed `fusion` module).
+- `2026-05-20`: `.2` done — `ir/fusion.rs` typed module
+  (`FusionKey{actor,channel,phase,obligation_kind,primary_signal}` +
+  `obligation_kind(9 variants)` + `fusion_key` + deterministic
+  `merge_cluster` with agreement-merge / disagreement-routing +
+  `min_confidence` helper) + 6 unit tests (key discrimination, size-1
+  identity, agreement provenance shape, single-field disagreement,
+  multi-field sorted-dedup disagreement, obligation_kind round-trip);
+  `SemanticIr`/`IntentIr` schemas unchanged ⇒ ZERO artifact churn.
+  Clippy-clean (`#[allow(clippy::too_many_arguments)]` on the test
+  helper). Full CI green. Frontier → `.3` (wire producer in
+  `SemanticIr::build` BEFORE `apply_fidelity_gates`).

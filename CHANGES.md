@@ -2,6 +2,33 @@
 
 ## 2026-05-20
 
+### R16-MULTIMODAL-CONTRACT-FUSION.2 — implement the typed `fusion` module
+- New `crates/specforge/src/ir/fusion.rs`: typed `FusionKey { actor,
+  channel, phase, obligation_kind, primary_signal }` (Hash+Eq for
+  grouping); `obligation_kind(&Obligation)` (9 variants);
+  `fusion_key(&ActorContract)`; deterministic
+  `merge_cluster(&[ActorContract]) -> ActorContract`:
+  - size-1 ⇒ identity;
+  - agreement merge ⇒ union `guard_candidates` (preserve order, dedup);
+    union `supporting_statement_ids`; `Mixed` modality when sources
+    differ; delimited `source_text`; `min_confidence`
+    (`AutomationConfidence::min`) — conservative;
+    `contract_id = "fused:<id1>+<id2>+…"`;
+  - **disagreement** (`kind`/`obligation`/`guard` differ): collected,
+    sorted, deduped → `lowering = Residual{reason="disagreement:
+    <fields>"}` (the honesty doctrine, mechanically enforced; parallel
+    to `R16-CAPTURE-FIDELITY-GATES.3` Fail-to-Residual routing).
+- 6 unit tests: FusionKey discrimination (actor / primary signal),
+  size-1 identity, agreement-merge provenance shape, single-field
+  disagreement, multi-field sorted-dedup disagreement, `obligation_kind`
+  round-trip. Module registered in `ir/mod.rs`.
+- Producer wiring **deferred to `.3`**; `SemanticIr` / `IntentIr`
+  schemas unchanged ⇒ **zero artifact/fixture churn**. Clippy-clean
+  (`#[allow(clippy::too_many_arguments)]` on the test helper). Full
+  `scripts/run_ci.sh` green. Frontier → `.3` (producer wiring +
+  cluster routing in `SemanticIr::build` BEFORE
+  `apply_fidelity_gates`).
+
 ### R16-MULTIMODAL-CONTRACT-FUSION.1 — promote #3 + fusion design
 - DAG governance (`R16-INTENT-CAPTURE.2`): with all 3 DAG predecessors
   closed (`R16-CONTRACT-IR` ✓, `R16-KG-PROTOCOL-ONTOLOGY` ✓,
