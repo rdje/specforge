@@ -3,6 +3,7 @@ pub mod contract;
 pub mod cve;
 pub mod evidence;
 pub mod fidelity;
+pub mod figure_region;
 pub mod fusion;
 pub mod intent;
 pub mod isf_ir;

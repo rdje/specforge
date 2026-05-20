@@ -111,6 +111,212 @@ pub struct PartialTrace {
     pub confidence: AutomationConfidence,
 }
 
+// ---------- FigureRegion → PartialTrace adapter (R16-WAVEFORM-CONTRACT-MINING.3.2)
+
+use crate::ir::figure_region::{FigureAnnotation, FigureLane, FigureRegion, LaneLevel};
+
+fn level_value(level: &LaneLevel) -> Option<String> {
+    match level {
+        LaneLevel::High => Some("1".into()),
+        LaneLevel::Low => Some("0".into()),
+        LaneLevel::Bus(v) => Some(v.clone()),
+        LaneLevel::Unknown => None,
+    }
+}
+
+/// Build `LaneEdge`s + `ValueSpan`s from a single `FigureLane`.
+/// `LaneEdge` records transitions between samples; `ValueSpan`
+/// records the maximal run of identical value. `Unknown` samples
+/// break runs but do not record an edge (honest dormancy — we
+/// don't know the level).
+fn lane_to_edges_and_spans(lane: &FigureLane) -> (Vec<LaneEdge>, Vec<ValueSpan>) {
+    let mut edges = Vec::new();
+    let mut spans = Vec::new();
+    if lane.samples.is_empty() {
+        return (edges, spans);
+    }
+    // Samples in tick order (best-effort: assume upstream emits sorted).
+    let mut prev: Option<&crate::ir::figure_region::LaneSample> = None;
+    let mut run_start: Option<u32> = None;
+    let mut run_value: Option<String> = None;
+    for s in &lane.samples {
+        if let Some(p) = prev {
+            // Edge?
+            match (&p.level, &s.level) {
+                (LaneLevel::Low, LaneLevel::High) | (LaneLevel::High, LaneLevel::Low) => {
+                    edges.push(LaneEdge {
+                        signal: lane.signal_name.clone(),
+                        at_tick: s.at_tick,
+                        kind: if matches!(s.level, LaneLevel::High) {
+                            EdgeKind::Rising
+                        } else {
+                            EdgeKind::Falling
+                        },
+                    });
+                }
+                _ => {}
+            }
+        }
+        // Run handling — track contiguous identical-value spans.
+        match level_value(&s.level) {
+            Some(v) => match (&run_value, run_start) {
+                (Some(rv), Some(rs)) if *rv == v => {
+                    // Continue current run; nothing to flush.
+                    let _ = (rs, rv);
+                }
+                _ => {
+                    // Flush previous run.
+                    if let (Some(rv), Some(rs)) = (run_value.take(), run_start.take())
+                        && s.at_tick > rs
+                    {
+                        // Closed when value changed at s.at_tick.
+                        // ValueSpan's to_tick is inclusive; the run held value `rv`
+                        // through s.at_tick - 1.
+                        spans.push(ValueSpan {
+                            signal: lane.signal_name.clone(),
+                            value: rv,
+                            from_tick: rs,
+                            to_tick: s.at_tick.saturating_sub(1),
+                        });
+                    }
+                    run_start = Some(s.at_tick);
+                    run_value = Some(v);
+                }
+            },
+            None => {
+                // Unknown breaks the run; flush.
+                if let (Some(rv), Some(rs)) = (run_value.take(), run_start.take())
+                    && s.at_tick > rs
+                {
+                    spans.push(ValueSpan {
+                        signal: lane.signal_name.clone(),
+                        value: rv,
+                        from_tick: rs,
+                        to_tick: s.at_tick.saturating_sub(1),
+                    });
+                }
+            }
+        }
+        prev = Some(s);
+    }
+    // Flush any trailing run (closes at the last sample's tick).
+    if let (Some(rv), Some(rs)) = (run_value, run_start)
+        && let Some(last) = lane.samples.last()
+        && last.at_tick > rs
+    {
+        spans.push(ValueSpan {
+            signal: lane.signal_name.clone(),
+            value: rv,
+            from_tick: rs,
+            to_tick: last.at_tick,
+        });
+    }
+    (edges, spans)
+}
+
+/// Adapter (`R16-WAVEFORM-CONTRACT-MINING.3.2`): consume a
+/// `FigureRegion` produced by an upstream PDF pipeline and produce
+/// the typed `PartialTrace` the `.2` generalizer consumes.
+///
+/// Mapping rules:
+/// - each `FigureLane` ⇒ `LaneEdge`s on level transitions and
+///   `ValueSpan`s on contiguous identical-value runs;
+/// - `FigureAnnotation::Delay { from_signal, to_signal, min_cycles,
+///   max_cycles, … }` ⇒ `RelativeDelay`;
+/// - `FigureAnnotation::Value { signal, value, from_tick, to_tick,
+///   … }` ⇒ extra `ValueSpan`;
+/// - `FigureAnnotation::Label` is informational only (ignored by the
+///   adapter — recovered via prose / KG, not the trace);
+/// - `FigureAnnotation::Unknown` lowers `PartialTrace.confidence`
+///   (Medium → Low) — honest dormancy; never silently licensed.
+///
+/// `figure_id` is `FigureRegion.visual_asset_id` (the upstream
+/// `VisualAsset` reference). The output `PartialTrace.ticks` is
+/// `FigureRegion.inferred_ticks()`.
+pub fn figure_region_to_partial_trace(region: &FigureRegion) -> PartialTrace {
+    let mut edges = Vec::new();
+    let mut spans = Vec::new();
+    let mut signals: BTreeMap<String, ()> = BTreeMap::new();
+    let mut delays = Vec::new();
+    let mut unknown_count = 0u32;
+
+    for lane in &region.waveform_lanes {
+        signals.insert(lane.signal_name.clone(), ());
+        let (e, s) = lane_to_edges_and_spans(lane);
+        edges.extend(e);
+        spans.extend(s);
+    }
+
+    for ann in &region.annotations {
+        match ann {
+            FigureAnnotation::Delay {
+                from_signal,
+                to_signal,
+                min_cycles,
+                max_cycles,
+                text,
+                ..
+            } => {
+                signals.insert(from_signal.clone(), ());
+                signals.insert(to_signal.clone(), ());
+                delays.push(RelativeDelay {
+                    from_signal: from_signal.clone(),
+                    to_signal: to_signal.clone(),
+                    min_cycles: *min_cycles,
+                    max_cycles: *max_cycles,
+                    annotation_text: text.clone(),
+                });
+            }
+            FigureAnnotation::Value {
+                signal,
+                value,
+                from_tick,
+                to_tick,
+                ..
+            } => {
+                signals.insert(signal.clone(), ());
+                spans.push(ValueSpan {
+                    signal: signal.clone(),
+                    value: value.clone(),
+                    from_tick: *from_tick,
+                    to_tick: *to_tick,
+                });
+            }
+            FigureAnnotation::Label { .. } => {
+                // Informational only — not lifted to the trace.
+            }
+            FigureAnnotation::Unknown { .. } => {
+                unknown_count += 1;
+            }
+        }
+    }
+
+    // Confidence downgrade per honest dormancy: any Unknown annotation
+    // demotes the trace's confidence one rank (Medium ⇒ Low, High ⇒
+    // Medium). The trace never silently keeps confidence in the face
+    // of upstream-unclassified evidence.
+    let confidence = if unknown_count > 0 {
+        match region.confidence {
+            AutomationConfidence::High => AutomationConfidence::Medium,
+            AutomationConfidence::Medium => AutomationConfidence::Low,
+            AutomationConfidence::Low => AutomationConfidence::Low,
+        }
+    } else {
+        region.confidence
+    };
+
+    PartialTrace {
+        figure_id: region.visual_asset_id.clone(),
+        signals: signals.into_keys().collect(),
+        edges,
+        spans,
+        delays,
+        causal: Vec::new(), // Upstream does not (yet) emit causal arrows.
+        ticks: region.inferred_ticks(),
+        confidence,
+    }
+}
+
 // ---------- Generalization (PartialTrace → Vec<ActorContract>)
 
 /// `min(High,Medium)=Medium` / `min(_,Low)=Low`. Mining never promotes
@@ -603,6 +809,210 @@ mod tests {
         // And the original t Pass-or-Fail observation is also valid evidence — record it:
         let st = verify_contract_against_trace(c, &t);
         assert!(matches!(st, FindingStatus::Pass | FindingStatus::Fail));
+    }
+
+    // ---------- R16-WAVEFORM-CONTRACT-MINING.3.2 adapter tests
+
+    use crate::ir::figure_region::{
+        FigureAnnotation, FigureLane, FigureRegion, LaneLevel, LaneSample,
+    };
+
+    fn lane_q_pulse_2() -> FigureLane {
+        FigureLane {
+            signal_name: "Q".into(),
+            samples: vec![
+                LaneSample {
+                    at_tick: 0,
+                    level: LaneLevel::Low,
+                },
+                LaneSample {
+                    at_tick: 1,
+                    level: LaneLevel::High,
+                },
+                LaneSample {
+                    at_tick: 2,
+                    level: LaneLevel::High,
+                },
+                LaneSample {
+                    at_tick: 3,
+                    level: LaneLevel::Low,
+                },
+            ],
+        }
+    }
+
+    #[test]
+    fn adapter_lifts_lanes_into_edges_and_value_spans() {
+        let region = FigureRegion {
+            visual_asset_id: "fig:rv1".into(),
+            bbox: None,
+            annotations: vec![],
+            waveform_lanes: vec![lane_q_pulse_2()],
+            tick_count: None,
+            raw_image_path: None,
+            confidence: AutomationConfidence::High,
+        };
+        let pt = figure_region_to_partial_trace(&region);
+        assert_eq!(pt.figure_id, "fig:rv1");
+        assert_eq!(pt.ticks, 4);
+        assert_eq!(pt.signals, vec!["Q".to_string()]);
+        // Edges: rising at tick 1, falling at tick 3.
+        assert_eq!(pt.edges.len(), 2);
+        assert!(
+            pt.edges
+                .iter()
+                .any(|e| e.signal == "Q" && e.at_tick == 1 && matches!(e.kind, EdgeKind::Rising))
+        );
+        assert!(
+            pt.edges
+                .iter()
+                .any(|e| e.signal == "Q" && e.at_tick == 3 && matches!(e.kind, EdgeKind::Falling))
+        );
+        // Spans: Q="0" 0..0, Q="1" 1..2, Q="0" 3..3. The first and
+        // last single-tick runs are flushed too (closed at 0 by
+        // the rising transition; closed at 3 by the trailing
+        // flush). Verify the multi-tick high span is present.
+        assert!(
+            pt.spans
+                .iter()
+                .any(|s| s.signal == "Q" && s.value == "1" && s.from_tick == 1 && s.to_tick == 2)
+        );
+    }
+
+    #[test]
+    fn adapter_lifts_delay_annotation_into_relative_delay() {
+        let region = FigureRegion {
+            visual_asset_id: "fig:d".into(),
+            bbox: None,
+            annotations: vec![FigureAnnotation::Delay {
+                from_signal: "A".into(),
+                to_signal: "B".into(),
+                min_cycles: Some(2),
+                max_cycles: None,
+                text: "≥ 2 cycles".into(),
+                bbox: None,
+            }],
+            waveform_lanes: vec![],
+            tick_count: Some(5),
+            raw_image_path: None,
+            confidence: AutomationConfidence::Medium,
+        };
+        let pt = figure_region_to_partial_trace(&region);
+        assert_eq!(pt.delays.len(), 1);
+        assert_eq!(pt.delays[0].from_signal, "A");
+        assert_eq!(pt.delays[0].to_signal, "B");
+        assert_eq!(pt.delays[0].min_cycles, Some(2));
+        assert_eq!(pt.delays[0].max_cycles, None);
+        // Signals include both delay endpoints even with no lanes.
+        assert!(pt.signals.contains(&"A".to_string()));
+        assert!(pt.signals.contains(&"B".to_string()));
+    }
+
+    #[test]
+    fn adapter_lifts_value_annotation_into_value_span() {
+        let region = FigureRegion {
+            visual_asset_id: "fig:v".into(),
+            bbox: None,
+            annotations: vec![FigureAnnotation::Value {
+                signal: "DATA".into(),
+                value: "0xAB".into(),
+                from_tick: 2,
+                to_tick: 5,
+                text: "DATA = 0xAB".into(),
+                bbox: None,
+            }],
+            waveform_lanes: vec![],
+            tick_count: None,
+            raw_image_path: None,
+            confidence: AutomationConfidence::High,
+        };
+        let pt = figure_region_to_partial_trace(&region);
+        assert_eq!(pt.spans.len(), 1);
+        assert_eq!(pt.spans[0].signal, "DATA");
+        assert_eq!(pt.spans[0].value, "0xAB");
+        assert_eq!(pt.spans[0].from_tick, 2);
+        assert_eq!(pt.spans[0].to_tick, 5);
+        // tick count = max(to_tick) + 1 = 6.
+        assert_eq!(pt.ticks, 6);
+    }
+
+    #[test]
+    fn adapter_demotes_confidence_on_any_unknown_annotation() {
+        let region = FigureRegion {
+            visual_asset_id: "fig:u".into(),
+            bbox: None,
+            annotations: vec![FigureAnnotation::Unknown {
+                text: "???".into(),
+                bbox: None,
+            }],
+            waveform_lanes: vec![],
+            tick_count: Some(1),
+            raw_image_path: None,
+            confidence: AutomationConfidence::High,
+        };
+        let pt = figure_region_to_partial_trace(&region);
+        // High ⇒ Medium under unknown demotion (honest dormancy).
+        assert_eq!(pt.confidence, AutomationConfidence::Medium);
+    }
+
+    #[test]
+    fn adapter_round_trips_into_generalizer_and_verifier_pass() {
+        // End-to-end smoke: FigureRegion → PartialTrace → contracts →
+        // verifier Pass on at least one Stable contract from a Value
+        // annotation that the verifier knows how to evaluate.
+        let region = FigureRegion {
+            visual_asset_id: "fig:e2e".into(),
+            bbox: None,
+            annotations: vec![FigureAnnotation::Value {
+                signal: "D".into(),
+                value: "1".into(),
+                from_tick: 0,
+                to_tick: 2,
+                text: "D held".into(),
+                bbox: None,
+            }],
+            waveform_lanes: vec![],
+            tick_count: Some(3),
+            raw_image_path: None,
+            confidence: AutomationConfidence::Medium,
+        };
+        let pt = figure_region_to_partial_trace(&region);
+        let cs = generalize_partial_trace(&pt);
+        // The Value annotation produced a multi-tick ValueSpan; the
+        // generalizer turned it into a Stable contract.
+        let stable = cs
+            .iter()
+            .find(|c| matches!(c.obligation, Obligation::Stable { .. }))
+            .expect("expected at least one Stable contract");
+        // The verifier passes Stable contracts evaluated against the
+        // source trace (per fidelity.rs evaluate_figure_trace
+        // semantics for Stable + Within).
+        assert_eq!(
+            verify_contract_against_trace(stable, &pt),
+            FindingStatus::Pass
+        );
+    }
+
+    #[test]
+    fn adapter_label_annotation_is_informational_only() {
+        let region = FigureRegion {
+            visual_asset_id: "fig:l".into(),
+            bbox: None,
+            annotations: vec![FigureAnnotation::Label {
+                text: "Bus A".into(),
+                bbox: None,
+            }],
+            waveform_lanes: vec![],
+            tick_count: Some(0),
+            raw_image_path: None,
+            confidence: AutomationConfidence::Medium,
+        };
+        let pt = figure_region_to_partial_trace(&region);
+        assert!(pt.edges.is_empty());
+        assert!(pt.spans.is_empty());
+        assert!(pt.delays.is_empty());
+        // Confidence is unchanged for Label.
+        assert_eq!(pt.confidence, AutomationConfidence::Medium);
     }
 
     #[test]

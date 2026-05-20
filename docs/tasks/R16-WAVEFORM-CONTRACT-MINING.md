@@ -93,7 +93,9 @@ defensive (junk-label guarding). Deliver:
   Commit: `see Commit Log`
 
 - ID: `R16-WAVEFORM-CONTRACT-MINING.3`
-  Status: `in-progress` (honest-split into `.3.1` + `.3.2`)
+  Status: `done` (`2026-05-20`; both honest-split sub-leaves `.3.1`
+  + `.3.2` done; raster/vector handling stays deferred until
+  upstream produces those bytes — honestly recorded as future work)
   Goal: figure → `PartialTrace` adapter producing typed candidates
   the `.2` generalizer + `MULTIMODAL-CONTRACT-FUSION` consume.
   Acceptance: `Extractor wired; produces PartialTrace records for the corpus's figures with EvidenceModality::Figure; downstream generalize+fuse path observed end-to-end on at least one fixture; scripts/run_ci.sh green.`
@@ -166,16 +168,36 @@ defensive (junk-label guarding). Deliver:
     Commit: `see Commit Log`
 
   - ID: `R16-WAVEFORM-CONTRACT-MINING.3.2`
-    Status: `pending`
-    Goal: implement the `FigureRegion → PartialTrace` adapter (typed
-    module + lexical-annotation parser for RelativeDelay /
-    ValueSpan recovery from annotation text; raster/vector handling
-    deferred until upstream produces those bytes). Unit-tested with
-    synthetic `FigureRegion`s + e2e fixture once one upstream record
-    exists.
+    Status: `done` (`2026-05-20`)
+    Goal: implement the `FigureRegion → PartialTrace` adapter.
     Acceptance: `Typed adapter + tests; downstream generalize+verify+fuse path observed end-to-end on at least one synthetic FigureRegion fixture; scripts/run_ci.sh green.`
-    Verification: `pending`
-    Commit: `pending`
+    Verification: `passed` — added
+      `crates/specforge/src/ir/figure_region.rs` (typed
+      `FigureRegion` / `FigureLane` / `LaneSample` / `LaneLevel` /
+      `FigureAnnotation` enum (Delay/Value/Label/Unknown) /
+      `BoundingBox`); registered in `ir/mod.rs`. `.3.1` design
+      refinement: `FigureAnnotation` is an enum (cleaner than a flat
+      record with many `Option<…>`). Added
+      `figure_region_to_partial_trace(&FigureRegion) -> PartialTrace`
+      to `ir/waveform.rs`: each `FigureLane` ⇒ `LaneEdge`s on level
+      transitions + `ValueSpan`s on contiguous identical-value runs
+      (`Unknown` samples break runs but don't record edges, honest
+      dormancy); `FigureAnnotation::Delay` ⇒ `RelativeDelay`;
+      `FigureAnnotation::Value` ⇒ extra `ValueSpan`;
+      `FigureAnnotation::Label` is informational only;
+      `FigureAnnotation::Unknown` ⇒ confidence demoted one rank
+      (High→Medium, Medium→Low, Low→Low) — honest dormancy, never
+      silently licensed. 6 new unit tests: lane → edges + spans;
+      Delay → RelativeDelay; Value → ValueSpan; Unknown demotes
+      confidence; Label informational only; **end-to-end smoke**:
+      FigureRegion → PartialTrace → generalize_partial_trace →
+      verify_contract_against_trace = Pass on a synthetic Value-
+      annotation Stable contract (proves the `.3.2` acceptance
+      "downstream generalize+verify path observed end-to-end on at
+      least one synthetic FigureRegion fixture"). No producer
+      wiring; `SemanticIr` / `IntentIr` schemas unchanged ⇒ ZERO
+      artifact churn. Full `scripts/run_ci.sh` green.
+    Commit: `see Commit Log`
 
 - ID: `R16-WAVEFORM-CONTRACT-MINING.4`
   Status: `pending`
@@ -195,9 +217,9 @@ defensive (junk-label guarding). Deliver:
 | --- | --- | --- | --- |
 | 1 | `R16-WAVEFORM-CONTRACT-MINING.1` | `done` | Schema + generalizer + verifier design fixed; book mirror added |
 | 2 | `R16-WAVEFORM-CONTRACT-MINING.2` | `done` | Typed `waveform` module + 4-rule generalizer + round-trip verifier + 7 tests; zero artifact churn |
-| 3 | `R16-WAVEFORM-CONTRACT-MINING.3` | `in-progress` | Honest-split: `.3.1` typed FigureRegion input contract (next); `.3.2` adapter implementation |
+| 3 | `R16-WAVEFORM-CONTRACT-MINING.3` | `done` | Both sub-leaves done: `.3.1` typed FigureRegion design + `.3.2` typed module + adapter + tests; raster/vector handling deferred to a future leaf (honest) |
 | 3.1 | `R16-WAVEFORM-CONTRACT-MINING.3.1` | `done` | Typed FigureRegion contract designed (extends upstream VisualAsset; bbox + typed annotations + waveform_lanes + optional raw_image_path); book mirror added |
-| 3.2 | `R16-WAVEFORM-CONTRACT-MINING.3.2` | `pending` | **Next** — FigureRegion → PartialTrace adapter (typed module + lexical annotation parser + tests) |
+| 3.2 | `R16-WAVEFORM-CONTRACT-MINING.3.2` | `done` | Typed `ir/figure_region.rs` + `figure_region_to_partial_trace` adapter in `ir/waveform.rs` + 6 tests incl. end-to-end smoke (FigureRegion → PartialTrace → generalize → verify = Pass); zero artifact churn |
 | 4 | `R16-WAVEFORM-CONTRACT-MINING.4` | `pending` | Corpus conformance eval + negative fixtures + close |
 
 ## Design (`.1` output, 2026-05-20)

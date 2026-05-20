@@ -2,6 +2,52 @@
 
 ## 2026-05-20
 
+### R16-WAVEFORM-CONTRACT-MINING.3.2 — typed `figure_region` module + `figure_region_to_partial_trace` adapter
+- New `crates/specforge/src/ir/figure_region.rs`:
+  - `BoundingBox`, `LaneLevel` (High / Low / Unknown /
+    `Bus(String)` for multi-valued lanes), `LaneSample`, `FigureLane`
+    (signal + per-tick samples).
+  - **`FigureAnnotation`** as an enum (a `.3.1` refinement —
+    cleaner than a flat-record-with-many-Options): variants
+    `Delay { from_signal, to_signal, min_cycles, max_cycles, text,
+    bbox }`, `Value { signal, value, from_tick, to_tick, text,
+    bbox }`, `Label { text, bbox }`, `Unknown { text, bbox }`.
+  - `FigureRegion { visual_asset_id, bbox, annotations,
+    waveform_lanes, tick_count, raw_image_path, confidence }` —
+    references an upstream `VisualAsset` by id (additive — the
+    existing `VisualAsset` in `source.rs` is unchanged).
+    `inferred_ticks()` helper falls back to max(at_tick)+1 when no
+    explicit tick_count is set.
+- New `figure_region_to_partial_trace(&FigureRegion) -> PartialTrace`
+  in `ir/waveform.rs`:
+  - each `FigureLane` ⇒ `LaneEdge`s on level transitions
+    (Low→High = Rising; High→Low = Falling) + `ValueSpan`s on
+    contiguous identical-value runs;
+  - `Unknown` lane samples break runs **without** recording an
+    edge (honest dormancy — we don't know the level);
+  - `FigureAnnotation::Delay` ⇒ `RelativeDelay`;
+  - `FigureAnnotation::Value` ⇒ extra `ValueSpan`;
+  - `FigureAnnotation::Label` is informational only;
+  - `FigureAnnotation::Unknown` ⇒ trace confidence demoted one
+    rank (High→Medium, Medium→Low, Low→Low) — honest dormancy,
+    never silently licensed.
+- 6 new unit tests: lane → edges + spans; Delay → RelativeDelay;
+  Value → ValueSpan with `to_tick` / inferred `ticks`; Unknown
+  demotes confidence; Label informational only; **end-to-end
+  smoke**: FigureRegion → PartialTrace → `generalize_partial_trace`
+  → `verify_contract_against_trace` = `Pass` on a synthetic
+  Value-annotation Stable contract (proves the `.3.2` acceptance
+  "downstream generalize+verify path observed end-to-end on at
+  least one synthetic FigureRegion fixture").
+- No producer wiring; `SemanticIr` / `IntentIr` schemas unchanged
+  ⇒ **zero artifact/fixture churn** (the discipline now applied
+  end-to-end across the R16 program). Module registered in
+  `ir/mod.rs`. `R16-WAVEFORM-CONTRACT-MINING.3` parent leaf marked
+  DONE (both `.3.1` + `.3.2` done; raster/vector handling stays
+  deferred until upstream produces those bytes — honestly
+  recorded). Full `scripts/run_ci.sh` green. Frontier → `.4`
+  (corpus FigureConformance baseline + negative fixtures + close).
+
 ### R16-WAVEFORM-CONTRACT-MINING.3.1 — typed `FigureRegion` input contract
 - Investigation: `crates/specforge/src/ir/source.rs` carries
   `VisualAsset { asset_id, asset_kind, page_id, image_path,
