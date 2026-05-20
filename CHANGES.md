@@ -2,6 +2,45 @@
 
 ## 2026-05-20
 
+### R16-WAVEFORM-CONTRACT-MINING.2 — implement the typed `waveform` module
+- New `crates/specforge/src/ir/waveform.rs`: typed intermediate
+  (`EdgeKind` / `LaneEdge` / `ValueSpan` / `RelativeDelay` /
+  `CausalArrow` / `PartialTrace`) — the contract between an extractor
+  (`.3`) and the generalizer (`.2`), both independently unit-testable.
+- `generalize_partial_trace(&PartialTrace) -> Vec<ActorContract>`
+  applies the conservative bounded rules from `.1`:
+  - `RelativeDelay{min,max≥1, max≥min}` ⇒
+    `Eventually{Edge.Rose, Within{min,max}}` / `Lowerable`;
+  - degenerate delays ⇒
+    `Observe + Residual{reason="under-determined delay — bounds
+    missing or invalid"}` (honesty doctrine);
+  - multi-tick `ValueSpan` ⇒ `Stable{Within{max=span_len}}` /
+    `Lowerable`;
+  - `CausalArrow` next-tick ⇒ `Eventually{Within{0,1}}`, wider
+    gaps ⇒ `Eventually{Within{0,gap}}`;
+  - bare `LaneEdge` not covered by another record ⇒
+    `Observe + Residual{reason="bare edge — no window licensed"}`
+    (deduped per signal).
+- `capped_confidence` ensures single-figure mining never promotes to
+  `High` without cross-modal corroboration. `provenance` tags
+  `EvidenceModality::Figure` with `figure:{id}` supporting statement
+  + annotation source_text.
+- `verify_contract_against_trace(&ActorContract, &PartialTrace) ->
+  FindingStatus`: round-trip oracle reusing
+  `R16-CAPTURE-FIDELITY-GATES.2`'s `evaluate_figure_trace` via
+  `partial_trace_to_figure_trace` lift (spans first then edges;
+  values best-effort `u64`, fallback `0`). A generalized contract
+  that does NOT satisfy its own source trace returns `Fail` — the
+  producer in `.3` interprets this as "demote to
+  `Residual{reason='verifier disagreement: …'}`".
+- 7 unit tests covering each generalization path + verifier Pass /
+  NotEvaluated semantics. Module registered in `ir/mod.rs`.
+- Producer wiring **deferred to `.3`**; `SemanticIr` / `IntentIr`
+  schemas unchanged ⇒ **zero artifact/fixture churn**. Full
+  `scripts/run_ci.sh` green. Frontier → `.3` (figure→PartialTrace
+  extractor; expected honest-split (rule 5) when concrete approach
+  is decided).
+
 ### R16-WAVEFORM-CONTRACT-MINING.1 — promote #4 (the crux) + crux design
 - DAG governance (`R16-INTENT-CAPTURE.2`): with DAG predecessors
   closed (`R16-CONTRACT-IR` ✓, `R16-CAPTURE-FIDELITY-GATES` ✓; sibling

@@ -63,21 +63,34 @@ defensive (junk-label guarding). Deliver:
   Commit: `see Commit Log`
 
 - ID: `R16-WAVEFORM-CONTRACT-MINING.2`
-  Status: `pending`
-  Goal: implement typed `waveform` module: the intermediate types
-  (`PartialTrace`/`LaneEdge`/`ValueSpan`/`RelativeDelay`/
-  `CausalArrow`/`EdgeKind`) + `generalize_partial_trace(&PartialTrace)
-  -> Vec<ActorContract>` (rule-based, conservative) +
-  `verify_contract_against_trace(&ActorContract, &PartialTrace) ->
-  FindingStatus` (round-trip oracle that demotes a generalized
-  contract to `Residual{reason="verifier disagreement"}` when the
-  source trace does not satisfy it). Unit-tested with synthetic
-  PartialTraces (positive: Eventually / Stable / next-cycle Causal
-  generalize cleanly; negative: under-determined / verifier-fail →
-  Residual). No producer wiring; zero artifact churn.
+  Status: `done`
+  Goal: implement typed `waveform` module + generalizer + round-trip
+  verifier (synthetic-trace tests; no PDF parsing).
   Acceptance: `Typed module + generalizer + verifier + positive/negative tests; no producer wiring; zero artifact churn; scripts/run_ci.sh green.`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — `crates/specforge/src/ir/waveform.rs`
+    added: typed intermediate (`EdgeKind` /
+    `LaneEdge`/`ValueSpan`/`RelativeDelay`/`CausalArrow`/`PartialTrace`)
+    + `generalize_partial_trace(&PartialTrace) -> Vec<ActorContract>`
+    (`RelativeDelay{min,max≥1, max≥min}` ⇒ `Eventually{Edge.Rose,
+    Within{min,max}}` / Lowerable; degenerate delays ⇒ `Observe` +
+    `Residual{reason="under-determined delay — bounds missing or
+    invalid"}`; multi-tick `ValueSpan` ⇒ `Stable{Within{max=span_len}}`
+    / Lowerable; next-tick `CausalArrow` ⇒
+    `Eventually{Within{0,1}}`, wider gap ⇒ `Eventually{Within{0,gap}}`;
+    bare `LaneEdge` not covered by another record ⇒ `Observe` +
+    `Residual{reason="bare edge — no window licensed"}` —
+    deduplicated per signal); `capped_confidence` caps to `Medium`
+    (no single-figure High); `provenance` tags
+    `EvidenceModality::Figure` with `figure:{id}` statement id +
+    annotation source_text. `verify_contract_against_trace` reuses
+    `evaluate_figure_trace` via `partial_trace_to_figure_trace` lift
+    (spans apply first then edges; values best-effort parsed u64,
+    fallback 0). 7 unit tests covering all generalization paths +
+    verifier Pass/NotEvaluated semantics. Module registered in
+    `ir/mod.rs`. Producer wiring deferred to `.3`; SemanticIr /
+    IntentIr schemas unchanged ⇒ **zero artifact/fixture churn**.
+    Full `scripts/run_ci.sh` green.
+  Commit: `see Commit Log`
 
 - ID: `R16-WAVEFORM-CONTRACT-MINING.3`
   Status: `pending`
@@ -114,8 +127,8 @@ defensive (junk-label guarding). Deliver:
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `R16-WAVEFORM-CONTRACT-MINING.1` | `done` | Schema + generalizer + verifier design fixed; book mirror added |
-| 2 | `R16-WAVEFORM-CONTRACT-MINING.2` | `pending` | **Next** — implement typed `waveform` module + generalizer + verifier + tests (synthetic PartialTraces; no PDF parsing yet) |
-| 3 | `R16-WAVEFORM-CONTRACT-MINING.3` | `pending` | Figure→PartialTrace extractor (expected honest-split at promotion time) |
+| 2 | `R16-WAVEFORM-CONTRACT-MINING.2` | `done` | Typed `waveform` module + 4-rule generalizer + round-trip verifier + 7 tests; zero artifact churn |
+| 3 | `R16-WAVEFORM-CONTRACT-MINING.3` | `pending` | **Next** — Figure→PartialTrace extractor (expected honest-split at promotion time) |
 | 4 | `R16-WAVEFORM-CONTRACT-MINING.4` | `pending` | Corpus conformance eval + negative fixtures + close |
 
 ## Design (`.1` output, 2026-05-20)
@@ -293,12 +306,14 @@ KG-ONTOLOGY.4 / FIDELITY.4 / FUSION.4 precedents).
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-05-20` | `R16-WAVEFORM-CONTRACT-MINING.1` | intermediate / generalizer / verifier / extractor strategy / cross-check delegation recorded; book mirror per BOOK-METHOD-DOC; mdBook builds | `passed` (docs-only) |
+| `2026-05-20` | `R16-WAVEFORM-CONTRACT-MINING.2` | typed `waveform` module (`EdgeKind`/`LaneEdge`/`ValueSpan`/`RelativeDelay`/`CausalArrow`/`PartialTrace` + `generalize_partial_trace` + `verify_contract_against_trace` + `partial_trace_to_figure_trace` lift) + 7 unit tests; SemanticIr/IntentIr unchanged; full `scripts/run_ci.sh` | `passed` (zero artifact churn) |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
-| `R16-WAVEFORM-CONTRACT-MINING.1` | `R16-WAVEFORM-CONTRACT-MINING.1 — crux design (promote #4)` | docs-only; book mirror; also the `R16-INTENT-CAPTURE.2` #4 promotion |
+| `R16-WAVEFORM-CONTRACT-MINING.1` | `R16-WAVEFORM-CONTRACT-MINING.1 — crux design (promote #4)` (`13ac7069`) | docs-only; book mirror; also the `R16-INTENT-CAPTURE.2` #4 promotion |
+| `R16-WAVEFORM-CONTRACT-MINING.2` | `R16-WAVEFORM-CONTRACT-MINING.2 — typed waveform module + generalizer + verifier + tests` | first WAVEFORM code; zero artifact churn; extractor (`.3`) still pending |
 
 ## Dependencies / Order
 
@@ -316,3 +331,15 @@ KG-ONTOLOGY.4 / FIDELITY.4 / FUSION.4 precedents).
   `.1` design fixed + book mirror; concrete `.1`–`.4` leaves defined
   (with `.3` flagged for honest split). Frontier → `.2` (implement
   typed `waveform` module + generalizer + verifier).
+- `2026-05-20`: `.2` done — `ir/waveform.rs` typed module
+  (`EdgeKind`/`LaneEdge`/`ValueSpan`/`RelativeDelay`/`CausalArrow`/
+  `PartialTrace`) + `generalize_partial_trace` (4 rules per `.1`
+  design, with under-determined ⇒ `Observe`+`Residual` honesty) +
+  `verify_contract_against_trace` (round-trip oracle via
+  `partial_trace_to_figure_trace` lift to `FigureTrace` + reuse of
+  `R16-CAPTURE-FIDELITY-GATES.2`'s `evaluate_figure_trace`); 7 unit
+  tests covering each generalization path + verifier Pass /
+  NotEvaluated semantics. SemanticIr / IntentIr schemas unchanged ⇒
+  ZERO artifact churn. Full CI green. Frontier → `.3` (figure →
+  PartialTrace extractor — expected honest-split when concrete
+  approach is decided).
