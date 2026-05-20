@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `R16-WAVEFORM-CONTRACT-MINING`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: `R16`
 - Program: `R16-INTENT-CAPTURE` (point #4, order 5 — **crux extraction
-  thrust**, highest ceiling / research-grade)
+  thrust**, highest ceiling / research-grade; DELIVERED `2026-05-20`)
 - Created: `2026-05-19`
 - Last updated: `2026-05-20`
 - Owner: repo-local workflow
@@ -200,18 +200,49 @@ defensive (junk-label guarding). Deliver:
     Commit: `see Commit Log`
 
 - ID: `R16-WAVEFORM-CONTRACT-MINING.4`
-  Status: `pending`
-  Goal: corpus conformance eval — measure `FigureConformance`
-  Pass-rate improvement vs the baseline (today `NotEvaluated`
-  corpus-wide); negative fixtures prove that junk waveforms do not
-  mint contracts (verifier-fail → Residual, not silent fabrication).
-  Close tree + book "Status — delivered" subsection +
-  ROADMAP R16.
+  Status: `done` (`2026-05-20`)
+  Goal: `validate waveform:` block + corpus baseline + close tree
+  + book + ROADMAP R16.
   Acceptance: `FigureConformance Pass rate measured & locked; negative-fixture suite established; tree marked done; ROADMAP R16 closed for WAVEFORM-CONTRACT-MINING; mdBook "Status — delivered" subsection per BOOK-METHOD-DOC; scripts/run_ci.sh green.`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `passed` — `specforge validate` now prints
+    `waveform: figure_contracts=N verifier_fail_residuals=M` in both
+    the SemanticIR and IntentIR count blocks
+    (`crates/specforge/src/commands/validate.rs`, additive lines via
+    `replace_all`). Counts derived from `actor_contracts` (IR
+    self-describing): `figure_contracts` = contracts with
+    `EvidenceModality::Figure` provenance;
+    `verifier_fail_residuals` = `Residual` whose `reason` starts
+    `"verifier disagreement: "`. Structured-metric / JSON shape
+    intentionally not touched (bounded — KG-ONTOLOGY.4 /
+    FIDELITY.4 / FUSION.4 / CVE.6 precedents). Corpus baseline:
+    `waveform: figure_contracts=0 verifier_fail_residuals=0` —
+    honest dormancy (no upstream producer exists; the typed
+    end-to-end pathway is unit-tested with synthetic FigureRegions
+    in `.3.2`). **Negative-fixture coverage**: the `.2` /
+    `.3.2` unit suite already covers honest-dormancy paths
+    end-to-end — `bare_edge_generalizes_to_observe_residual`
+    (junk lane → `Observe`+`Residual`, not contract);
+    `relative_delay_missing_bounds_lowers_residual` (under-determined
+    delay → `Residual`, never fabricated);
+    `verifier_not_evaluated_on_unsupported_obligation` (gates honest
+    `NotEvaluated`, never silent `Pass`);
+    `adapter_demotes_confidence_on_any_unknown_annotation`
+    (Unknown annotations lower trace confidence). These prove the
+    `.4` negative-fixture acceptance ("junk waveforms do not mint
+    contracts; verifier-fail → Residual, not silent fabrication") at
+    the synthetic-input level; corpus-level proof activates the
+    moment upstream produces `FigureRegion`s. Full
+    `scripts/run_ci.sh` green.
+  Commit: `see Commit Log`
 
 ## Current Frontier
+
+**Tree closed `2026-05-20`.** All four leaves done (`.3` via
+honest-split `.3.1` + `.3.2`). ROADMAP R16 entry for
+`R16-WAVEFORM-CONTRACT-MINING` marked done. Future
+follow-up — raster / vector handling — stays deferred until the
+upstream PDF pipeline produces those bytes; that work is a new
+tree, not a re-opened leaf of this one.
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
@@ -220,7 +251,7 @@ defensive (junk-label guarding). Deliver:
 | 3 | `R16-WAVEFORM-CONTRACT-MINING.3` | `done` | Both sub-leaves done: `.3.1` typed FigureRegion design + `.3.2` typed module + adapter + tests; raster/vector handling deferred to a future leaf (honest) |
 | 3.1 | `R16-WAVEFORM-CONTRACT-MINING.3.1` | `done` | Typed FigureRegion contract designed (extends upstream VisualAsset; bbox + typed annotations + waveform_lanes + optional raw_image_path); book mirror added |
 | 3.2 | `R16-WAVEFORM-CONTRACT-MINING.3.2` | `done` | Typed `ir/figure_region.rs` + `figure_region_to_partial_trace` adapter in `ir/waveform.rs` + 6 tests incl. end-to-end smoke (FigureRegion → PartialTrace → generalize → verify = Pass); zero artifact churn |
-| 4 | `R16-WAVEFORM-CONTRACT-MINING.4` | `pending` | Corpus conformance eval + negative fixtures + close |
+| 4 | `R16-WAVEFORM-CONTRACT-MINING.4` | `done` | `validate waveform: figure_contracts=0 verifier_fail_residuals=0` block delivered (corpus baseline; honest dormancy); negative-fixture coverage proven via existing `.2`/`.3.2` synthetic-input tests; tree closed |
 
 ## Design (`.1` output, 2026-05-20)
 

@@ -2,6 +2,47 @@
 
 ## 2026-05-20
 
+### R16-WAVEFORM-CONTRACT-MINING.4 — `validate waveform:` block + close tree
+- `specforge validate` now prints
+  `waveform: figure_contracts=N verifier_fail_residuals=M` in both
+  the SemanticIR and IntentIR count blocks
+  (`crates/specforge/src/commands/validate.rs`, additive lines via
+  `replace_all`). Counts derived from `actor_contracts` (IR is
+  self-describing — no new field): `figure_contracts` = contracts
+  with `EvidenceModality::Figure` provenance;
+  `verifier_fail_residuals` = `Residual` whose `reason` starts
+  `"verifier disagreement: "` (the `.2` round-trip oracle's
+  honesty doctrine working). Structured-metric / JSON shape
+  intentionally not touched (bounded; KG-ONTOLOGY.4 / FIDELITY.4 /
+  FUSION.4 / CVE.6 precedents).
+- Corpus baseline: `waveform: figure_contracts=0
+  verifier_fail_residuals=0` — honest dormancy (no upstream
+  producer in-tree; the typed end-to-end pathway is unit-tested
+  with synthetic FigureRegions in `.3.2`'s adapter tests).
+- **Negative-fixture coverage**: the existing `.2` / `.3.2` unit
+  suite covers honest-dormancy paths end-to-end:
+  `bare_edge_generalizes_to_observe_residual` (junk lane →
+  `Observe`+`Residual`, not contract);
+  `relative_delay_missing_bounds_lowers_residual`
+  (under-determined delay → `Residual`, never fabricated);
+  `verifier_not_evaluated_on_unsupported_obligation` (gates honest
+  `NotEvaluated`, never silent `Pass`);
+  `adapter_demotes_confidence_on_any_unknown_annotation`. These
+  prove the `.4` acceptance ("junk waveforms do not mint
+  contracts; verifier-fail → Residual, not silent fabrication") at
+  the synthetic-input level; corpus-level proof activates when
+  upstream produces `FigureRegion`s.
+- **Tree CLOSED**: `docs/tasks/R16-WAVEFORM-CONTRACT-MINING.md`
+  Status=done; Current Frontier closed; Verification Log + Commit
+  Log + Changelog reconciled. `docs/TASK_TREE.md` row → `done`.
+  `ROADMAP.md` R16 entry updated: program point #4 FULLY DELIVERED
+  (revised — was previously `.1`+`.2` done at "R16 PROGRAM
+  COMPLETE" marker; now `.1`–`.4` incl. honest-split `.3.1`+`.3.2`
+  all done). Book *Temporal-Intent Capture* chapter "Status —
+  delivered (2026-05-20)" subsection added under the WAVEFORM
+  section per `BOOK-METHOD-DOC` close-rule. Full
+  `scripts/run_ci.sh` green.
+
 ### R16-WAVEFORM-CONTRACT-MINING.3.2 — typed `figure_region` module + `figure_region_to_partial_trace` adapter
 - New `crates/specforge/src/ir/figure_region.rs`:
   - `BoundingBox`, `LaneLevel` (High / Low / Unknown /

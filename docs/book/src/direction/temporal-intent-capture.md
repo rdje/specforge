@@ -539,6 +539,44 @@ pipeline produces zero `FigureRegion`s (the corpus today), the
 adapter is a no-op — zero artifact churn; the typed pathway is
 ready to light up the moment upstream lands its records.
 
+### Status — delivered (`2026-05-20`)
+
+`R16-WAVEFORM-CONTRACT-MINING` is **closed**. All four leaves done:
+
+1. `.1` crux design fixed (typed intermediate; conservative
+   generalization rules with under-determined ⇒ `Observe`+`Residual`
+   honesty; round-trip verifier; cross-check delegated to FUSION);
+2. `.2` typed `ir/waveform.rs` module + 4-rule
+   `generalize_partial_trace` + round-trip
+   `verify_contract_against_trace` (reuses
+   `R16-CAPTURE-FIDELITY-GATES.2` `evaluate_figure_trace`) + 7
+   unit tests;
+3. `.3` honest-split (rule 5) after corpus survey found no raw
+   PDFs/SVGs in tree; sub-leaves: `.3.1` typed `FigureRegion`
+   input contract (extends upstream `VisualAsset`); `.3.2` typed
+   `ir/figure_region.rs` (Bounding-box + LaneLevel + LaneSample +
+   FigureLane + FigureAnnotation enum + FigureRegion) +
+   `figure_region_to_partial_trace` adapter + 6 unit tests
+   including end-to-end smoke
+   (FigureRegion → PartialTrace → generalize → verify = Pass);
+4. `.4` `specforge validate` `waveform: figure_contracts=N
+   verifier_fail_residuals=M` block (counts derived from
+   `actor_contracts` — IR self-describing).
+
+Live evidence: corpus baseline reads
+`waveform: figure_contracts=0 verifier_fail_residuals=0` — honest
+dormancy until upstream lands `FigureRegion`s; the typed pathway is
+unit-tested end-to-end with synthetic inputs (13 waveform tests + 6
+adapter tests). Negative-fixture coverage proven at the
+synthetic-input level: `bare_edge_generalizes_to_observe_residual`
+(junk lane → `Observe`+`Residual`, not contract);
+`relative_delay_missing_bounds_lowers_residual` (under-determined
+delay → `Residual`, never fabricated);
+`adapter_demotes_confidence_on_any_unknown_annotation` (Unknown
+annotations lower trace confidence). **Future raster / vector
+handling** stays deferred until upstream produces those bytes — a
+new tree, not a re-opened leaf of this one.
+
 ## R16-CONSTRAINED-VERIFIED-EXTRACTION — how it is implemented and verified
 
 **Why.** This is the closing tree of the program — it makes

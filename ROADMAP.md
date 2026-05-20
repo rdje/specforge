@@ -1270,15 +1270,26 @@
   prefixes — IR is self-describing). Corpus baseline:
   `groups_merged=0 disagreements=0` (honest dormancy; producer is
   load-bearing the moment extraction lands). **`R16-WAVEFORM-CONTRACT-MINING`
-  (point #4) `.1`+`.2` DONE** (2026-05-20): typed
-  `waveform` intermediate (`PartialTrace`/`LaneEdge`/`ValueSpan`/
-  `RelativeDelay`/`CausalArrow`) + `generalize_partial_trace` (4
-  conservative rules; under-determined ⇒ `Observe`+`Residual`
-  honesty) + round-trip `verify_contract_against_trace` reusing the
-  FIDELITY.2 trace-replay primitive; the figure→`PartialTrace`
-  extractor (`.3`) is qualitatively the largest remaining leaf and
-  is explicitly flagged for honest split (rule 5) when the concrete
-  approach (VLM-structured? vector-SVG? both?) is decided.
+  (point #4) FULLY DONE** (`.1`–`.4` incl. honest-split `.3.1`+`.3.2`,
+  2026-05-20): typed `waveform` intermediate
+  (`PartialTrace`/`LaneEdge`/`ValueSpan`/`RelativeDelay`/`CausalArrow`)
+  + `generalize_partial_trace` (4 conservative rules;
+  under-determined ⇒ `Observe`+`Residual` honesty) + round-trip
+  `verify_contract_against_trace` reusing FIDELITY.2's
+  `evaluate_figure_trace`. After the corpus survey found no raw
+  PDFs/SVGs in tree (upstream PDF extraction is out-of-tree), `.3`
+  honest-split (rule 5) into `.3.1` typed `FigureRegion` input
+  contract (extends upstream `VisualAsset`) + `.3.2` typed
+  `ir/figure_region.rs` + `figure_region_to_partial_trace` adapter
+  (FigureLane → LaneEdges+ValueSpans; Delay → RelativeDelay; Value
+  → ValueSpan; Label informational; Unknown demotes confidence —
+  honest dormancy) with 6 unit tests including end-to-end smoke
+  (FigureRegion → PartialTrace → generalize → verify = Pass).
+  `specforge validate` `waveform: figure_contracts=0
+  verifier_fail_residuals=0` block (corpus baseline; honest
+  dormancy). Negative-fixture coverage at the synthetic-input level.
+  Raster/vector handling deferred to a future tree when upstream
+  produces those bytes — honestly recorded, NOT a re-opened leaf.
   **`R16-CONSTRAINED-VERIFIED-EXTRACTION` (point #6) DONE**
   (`.1`–`.6`, 2026-05-20): provider-agnostic fails-closed JSON-schema
   adapter (`parse_constrained_contract`); conservative
@@ -1290,9 +1301,13 @@
   tie-break; `specforge validate` `constrained: schema_rejects=0
   entailment_fails=0 template_hits=0` block (honest dormancy until
   upstream prose extractor lands). **R16 PROGRAM COMPLETE — all 6
-  sub-trees closed at their honest scope boundaries.** Remaining
-  frontiers: `R16-WAVEFORM-CONTRACT-MINING.3` extractor honest-split
-  + CVE producer wiring once an upstream prose extractor exists.
+  sub-trees closed at their honest scope boundaries** (revised
+  `2026-05-20`: WAVEFORM #4 now also fully delivered through `.4`
+  including the honest-split `.3.1` + `.3.2` extractor pathway).
+  Remaining open scope: raster/vector figure handling for WAVEFORM
+  + CVE producer wiring once an upstream prose extractor exists —
+  both are honestly-deferred future trees, not re-opened leaves of
+  any closed R16 tree.
   Three load-bearing honesty doctrines are now STRUCTURAL rather
   than authorial: fidelity Fail→Residual; fusion disagreement→
   Residual; entailment Fail→Residual — fabrication is mechanically

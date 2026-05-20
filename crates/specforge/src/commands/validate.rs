@@ -3193,6 +3193,38 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         "  constrained: schema_rejects={} entailment_fails={} template_hits={}",
         cve_schema_rejects, cve_entailment_fails, cve_template_hits
     );
+    // R16-WAVEFORM-CONTRACT-MINING.4: figure-derived contract counts
+    // (IR is self-describing — no new field). `figure_contracts` =
+    // contracts with `EvidenceModality::Figure` provenance (the wf:*
+    // contracts the .2 generalizer + .3.2 adapter produce);
+    // `verifier_fail_residuals` = Residual contracts whose reason
+    // starts with "verifier disagreement: " (the round-trip oracle's
+    // honesty doctrine working).
+    let wf_figure_contracts = ir
+        .actor_contracts
+        .iter()
+        .filter(|c| {
+            matches!(
+                c.provenance.modality,
+                crate::ir::contract::EvidenceModality::Figure
+            )
+        })
+        .count();
+    let wf_verifier_fail = ir
+        .actor_contracts
+        .iter()
+        .filter(|c| {
+            matches!(
+                &c.lowering,
+                crate::ir::contract::LoweringDisposition::Residual { reason }
+                    if reason.starts_with("verifier disagreement: ")
+            )
+        })
+        .count();
+    println!(
+        "  waveform: figure_contracts={} verifier_fail_residuals={}",
+        wf_figure_contracts, wf_verifier_fail
+    );
     let pg_counts = ir.protocol_graph.counts();
     println!(
         "  protocol_graph: channels={} phases={} transactions={} handshakes={}",
@@ -4658,6 +4690,38 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     println!(
         "  constrained: schema_rejects={} entailment_fails={} template_hits={}",
         cve_schema_rejects, cve_entailment_fails, cve_template_hits
+    );
+    // R16-WAVEFORM-CONTRACT-MINING.4: figure-derived contract counts
+    // (IR is self-describing — no new field). `figure_contracts` =
+    // contracts with `EvidenceModality::Figure` provenance (the wf:*
+    // contracts the .2 generalizer + .3.2 adapter produce);
+    // `verifier_fail_residuals` = Residual contracts whose reason
+    // starts with "verifier disagreement: " (the round-trip oracle's
+    // honesty doctrine working).
+    let wf_figure_contracts = ir
+        .actor_contracts
+        .iter()
+        .filter(|c| {
+            matches!(
+                c.provenance.modality,
+                crate::ir::contract::EvidenceModality::Figure
+            )
+        })
+        .count();
+    let wf_verifier_fail = ir
+        .actor_contracts
+        .iter()
+        .filter(|c| {
+            matches!(
+                &c.lowering,
+                crate::ir::contract::LoweringDisposition::Residual { reason }
+                    if reason.starts_with("verifier disagreement: ")
+            )
+        })
+        .count();
+    println!(
+        "  waveform: figure_contracts={} verifier_fail_residuals={}",
+        wf_figure_contracts, wf_verifier_fail
     );
     let pg_counts = ir.protocol_graph.counts();
     println!(
