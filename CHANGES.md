@@ -2,6 +2,34 @@
 
 ## 2026-05-20
 
+### R16-MULTIMODAL-CONTRACT-FUSION.1 — promote #3 + fusion design
+- DAG governance (`R16-INTENT-CAPTURE.2`): with all 3 DAG predecessors
+  closed (`R16-CONTRACT-IR` ✓, `R16-KG-PROTOCOL-ONTOLOGY` ✓,
+  `R16-CAPTURE-FIDELITY-GATES` ✓), `R16-MULTIMODAL-CONTRACT-FUSION`
+  (#3, order 4) promoted `proposed → active` with concrete `.1`–`.4`
+  leaves.
+- `.1` fusion design fixed (docs-only): typed layer / no new stage
+  (parallels prior R16 trees); `FusionKey` on
+  `(actor, channel, phase, obligation_kind, primary_signal)`;
+  agreement merge is deterministic and provenance-preserving (union
+  `supporting_statement_ids`, `Mixed` modality when sources differ,
+  delimited `source_text`, minimum `automation_confidence`);
+  **disagreement → `Residual{reason="disagreement: …"}`** (honesty
+  doctrine mechanically enforced — never a silent pick, parallel to
+  `R16-CAPTURE-FIDELITY-GATES.3`). Producer runs in `SemanticIr::build`
+  BEFORE the fidelity gate so gates see fused contracts. `.2` ships
+  the typed module + merge primitive + tests (zero artifact churn);
+  `.3` wires producer; `.4` adds `validate fusion: groups_merged=…
+  disagreements=…` block + close. **Honest dormancy** at `.4`:
+  recall-improvement *measurement* on the corpus is `0` today (no
+  multi-source candidates yet — extraction is `#4`/`#6`); the corpus
+  baseline reads `groups_merged=0 disagreements=0`, never a faked
+  Pass. Structured-metric / JSON shape intentionally not touched in
+  `.4` (bounded — KG-ONTOLOGY.4 / FIDELITY.4 precedents). Book mirror
+  added per `BOOK-METHOD-DOC`; `docs/TASK_TREE.md` index updated.
+  Docs-only; `scripts/run_docs_ci.sh` green (mdBook builds).
+  Frontier → `.2`.
+
 ### R16-CAPTURE-FIDELITY-GATES.4 — `validate` `fidelity:` block + close tree (point #5/order-3 DELIVERED)
 - `specforge validate` now prints
   `fidelity: pass=N fail=M not_evaluated=K  score=X.XXX` in both the
