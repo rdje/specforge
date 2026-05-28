@@ -4,6 +4,149 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-29 ramp-up re-analysis — R16 ContractIR subsystem captured; program complete)
+
+State verified directly from the working tree at HEAD `44bf2723`, not inherited
+from prior notes. This entry closes a documentation gap: the entire **R16 SOTA
+design-intent-capture** subsystem landed `2026-05-19 → 2026-05-20` (six closed
+sub-trees) but this analysis file had not yet captured it — its newest prior
+entry was the `2026-05-18` ISF-ONLY snapshot ("IR module count: 7, ~82K lines").
+
+### Architecture delta since the 2026-05-18 snapshot
+- The `ir/` namespace grew from **7 → 14 modules**. R16 added seven new typed IR
+  modules (`crates/specforge/src/ir/mod.rs`): `contract.rs`, `protocol_graph.rs`,
+  `fidelity.rs`, `fusion.rs`, `waveform.rs`, `figure_region.rs`, `cve.rs`
+  (4,657 lines combined). Whole `crates/specforge/src` is now **88,673 lines**
+  (was ~82K). No IR *stage* was added — R16 is a **typed layer over the existing
+  four stages**, not a sixth stage. `IrStage` is unchanged
+  (`SourceIr/EvidenceIr/SemanticIr/IntentIr/IsfAdapter`).
+- `semantic.rs` is now 21,424 lines and `intent.rs` 5,103 lines; the R16
+  producers/consumers were wired into `SemanticIr::build` and carried by
+  `IntentIr` without changing on-disk artifacts (additive, serde-skipped fields).
+
+### The R16 ContractIR subsystem (typed timed-contract layer)
+The thesis (recorded in `docs/tasks/R16-INTENT-CAPTURE.md`): a design PDF encodes
+intent as the temporal behavior of actors at their boundary; the crux is
+accurate prose+waveform → typed-KG extraction, and everything downstream of an
+accurate typed KG is almost mechanical. R16 built the **mechanical-to-lower typed
+target + the objective fidelity metric + the honesty enforcement** first, leaving
+upstream extraction (waveform raster/vector bytes; prose LLM/VLM provider) as
+honestly-deferred future trees. Module-by-module (test counts are `#[cfg(test)]`
+unit tests inside each module):
+
+- **`contract.rs`** (725 ln, 8 tests) — the timed-contract algebra and lowering
+  spine. `ActorContract` (per-actor assume/guarantee over boundary signals) with
+  a closed operator algebra: `Obligation` (Eventually/Stable/Drive/
+  HandshakeBarrier/Persist/Sequence/Mutex/OrderedBefore/`Observe`),
+  `EventExpr` (Edge/Level/HandshakeFire/Start/PhaseBoundary), `Window`
+  (Within/Between/SameCycle), `Condition` (Eq). `LoweringDisposition`
+  (`Lowerable` | `Residual{reason}`) is the honesty seam.
+  `contract_from_temporal_rule()` is the lossless `TemporalRuleRecord →
+  ActorContract` migration; `.isf` lowering re-points onto it (3-way-proven
+  parity gate). `Observe` is the deliberate "honest weak fact" obligation for
+  under-licensed evidence.
+- **`protocol_graph.rs`** (337 ln, 5 tests) — first-class protocol structure:
+  `Channel`/`ProtocolPhase`/`Transaction`/`HandshakePair` + `ChannelRole`.
+  `ProtocolPhase` (protocol-stage granularity) is deliberately distinct from
+  `TickPhase` (clock-edge). `project_handshake_pairs()` derives `HandshakePair`
+  from `HandshakeBarrier` obligations — a **lossless restatement, not PDF
+  extraction**. `is_empty()`/`counts()`/`dangling_contract_refs()` support the
+  serde-skip discipline and validation.
+- **`fidelity.rs`** (784 ln, 9 tests) — the program's **objective function**.
+  Six `FidelityGate`s (RealizableBoundary/RealizableDirection/
+  RealizableHandshake/ResidualHonesty/NoStrictInvalid/FigureConformance) with a
+  three-valued `FindingStatus` (`Pass`/`Fail`/`NotEvaluated` — `NotEvaluated`
+  is never silently `Pass`). `FidelitySummary.score()` ranges over evaluated
+  gates only; `meets_threshold(1.0)` is the honest default.
+  `evaluate_figure_trace()` is the bounded structural trace-replay primitive
+  reused by the waveform verifier.
+- **`fusion.rs`** (607 ln, 9 tests) — multimodal contract fusion. `FusionKey`
+  (actor, channel, phase, obligation_kind, primary_signal); `merge_cluster()`
+  deterministically merges agreement (provenance union + `Mixed` modality + min
+  confidence + `"fused:…"` id) and routes disagreement to `Residual`.
+  `apply_fusion()` is the producer (order-preserving, idempotent).
+- **`waveform.rs`** (1,043 ln, 13 tests) — the crux extraction intermediate.
+  `PartialTrace`/`LaneEdge`/`EdgeKind`/`ValueSpan`/`RelativeDelay`/`CausalArrow`
+  is the typed contract between an (out-of-tree) extractor and the generalizer.
+  `generalize_partial_trace()` applies four conservative rules
+  (RelativeDelay→Eventually, multi-tick ValueSpan→Stable, next-tick
+  CausalArrow→Eventually; **under-determined → `Observe`+`Residual`**).
+  `verify_contract_against_trace()` is a round-trip oracle reusing
+  `fidelity::evaluate_figure_trace`. `figure_region_to_partial_trace()` adapts
+  the input contract below.
+- **`figure_region.rs`** (150 ln, 0 tests — input schema, no producer yet) —
+  `FigureRegion`/`FigureLane`/`LaneSample`/`LaneLevel`/`FigureAnnotation`/
+  `BoundingBox`: the typed input the upstream PDF pipeline must produce when it
+  classifies a `VisualAsset` as a timing diagram. Exercised via the waveform
+  adapter's end-to-end smoke test; raster/vector decoding is a deferred future
+  tree.
+- **`cve.rs`** (1,011 ln, 23 tests) — constrained, verified extraction (the
+  continuous crux). `actor_contract_json_schema_summary()` is the provider-facing
+  schema; `parse_constrained_contract()` is the **fails-closed serde-authoritative
+  adapter**; `entailment_check()`/`apply_entailment_to_contract()` is the
+  conservative lexical/structural verifier (every signal must appear; every bound
+  must match a digit run; never silently `Pass`). `instantiate_template()` plus
+  the `ProtocolTemplate` library (ReadyValidHandshake/CreditFlowControl/
+  SetupAccess/AsyncAssertSyncReleaseReset/BurstLast) is match-grounded.
+  `voi_score()`/`select_top_n_by_voi()` is the deterministic uncertainty-driven
+  converge selector.
+
+### Cross-cutting wiring + the three structural honesty doctrines
+`SemanticIr::build` runs the producers in this order (semantic.rs ~268–287):
+`temporal_rules → contract_from_temporal_rule` → **`apply_fusion` (first)** →
+**`apply_fidelity_gates` (second, so gates see fused contracts)**. The three
+load-bearing honesty doctrines are now **structural, not authorial** — a
+`Lowerable` contract that fails is mechanically demoted to a diagnostic-bearing
+`Residual` *before* the `.isf` adapter can consume it, so fabrication is
+prevented end-to-end:
+- **fidelity Fail → Residual** — `reason="fidelity:<Gate>: <message>"`
+  (semantic.rs ~2856–2862).
+- **fusion disagreement → Residual** — `reason="disagreement: <sorted fields>"`
+  (fusion.rs ~171).
+- **entailment Fail → Residual** — `reason="entailment fail: …"`
+  (cve.rs ~291–293).
+The surface is carried by three additive fields on both `SemanticIr` and
+`IntentIr` — `actor_contracts`, `fidelity_findings`, `protocol_graph` — each
+`#[serde(default, skip_serializing_if = …)]`, so on-disk IR artifacts are
+**byte-identical until extraction populates them** (zero artifact churn; the
+CONTRACT-IR.2 / KG-ONTOLOGY.2 discipline). On the real (nvme) corpus the R16
+surface is honestly dormant: `fidelity fail=0 score=1.000`, `fusion
+groups_merged=0 disagreements=0`, `protocol_graph` all-zero, `waveform
+figure_contracts=0`, `constrained 0/0/0` — the producers are load-bearing for
+any *future* contract-producer drift, not faked passes.
+
+### Verified quality state
+- `cargo test -p specforge --lib`: **1128 passed, 0 failed** (370s). HEAD meets
+  the signoff bar at the lib-test layer. (The full `scripts/run_ci.sh` gate —
+  fmt/clippy-`-D`/tests-`-D`/rustdoc/mdBook — is exercised on the
+  book-touching slices in this session.)
+- 67 of the 1128 tests live inside the seven R16 modules
+  (8+5+9+9+13+0+23).
+
+### Risk / steering picture
+- **Healthiest area:** the typed-target + honesty-enforcement spine is complete,
+  unit-tested, and CI-parity-proven against the prior temporal lowering. The
+  `.isf` adapter consumes `actor_contracts` with a pre-ContractIR fallback.
+- **The real frontier is upstream of this subsystem, and is genuinely blocked:**
+  the thesis crux (accurate prose+waveform → typed-KG extraction) needs
+  (a) a PDF→`FigureRegion` raster/vector extractor and (b) an integrated
+  prose LLM/VLM provider feeding `parse_constrained_contract`. Both are
+  honestly-deferred future trees, not re-opened leaves. Until they exist, the
+  R16 surface stays dormant-but-verified by design.
+- **No architectural smell introduced:** R16 held the additive/serde-skip
+  discipline throughout, so there is no artifact-churn or back-compat debt.
+
+### Recommended implementation direction
+1. Close the `R16-INTENT-CAPTURE` umbrella governance leaf (`.2`): all six
+   sub-trees are `done`, so its acceptance ("program closed when all six done")
+   is met; reconcile the stale tree file + ROADMAP R16 "promote/execute" text +
+   live docs, and record the two deferred future trees explicitly.
+2. After that, the task-tree frontier is exhausted; remaining roadmap crux work
+   is blocked on the two upstream extractors above. Favor honest reporting of
+   that blocker over inventing low-value churn; any unblocked work is incremental
+   hardening (e.g. additional `kg-bench` fixtures, mutation-test backfill) rather
+   than new capability.
+
 ## Session update (2026-05-18 ISF-ONLY-CONSOLIDATION — HDL + `.fsm` removed; `.isf` is the sole adapter)
 
 Major architecture change (user-authorized `ISF-ONLY-CONSOLIDATION` batch).

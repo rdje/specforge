@@ -24,9 +24,9 @@
 - keep repo-internal paths in tracked markdown relative, never checkout-specific absolute paths
 
 ## Latest committed baseline
-- latest_commit_hash: `7bf415cf` (pushed baseline + this PNT setup; pre-PNT-leaf state)
-- latest_commit_brief_message: Update MEMORY.md — reflect ISF-ONLY-CONSOLIDATION batch push and post-push state
-- note: 2026-05-18 — Post-ISF-ONLY audit done. User authorized PNT through 3 new trees to exhaustion. SpecForge emits only `.isf`.
+- latest_commit_hash: `44bf2723` (HEAD before the 2026-05-29 ramp-up session; `BOOK-USER-FRIENDLY-BACKFILL` tree CLOSED)
+- latest_commit_brief_message: BOOK-USER-FRIENDLY-BACKFILL.6 — close tree + cross-reference BOOK-METHOD-DOC Decisions (standard now self-referential)
+- note: 2026-05-29 ramp-up re-analysis — README → SESSION_BOOTSTRAP ramp complete. `RUST_CODEBASE_ANALYSIS.md` refreshed to capture the **R16 ContractIR subsystem** (7 new typed IR modules `contract`/`protocol_graph`/`fidelity`/`fusion`/`waveform`/`figure_region`/`cve` = 4,657 ln; 3 structural honesty doctrines wired into `SemanticIr::build`) that the analysis doc had missed; `src` now 88,673 ln, ir/ namespace 7 → 14 modules. Lib suite GREEN **1128/0**. R16 PROGRAM COMPLETE (all 6 sub-trees `done`); the only still-`active` node is the `R16-INTENT-CAPTURE` umbrella governance leaf `.2`, whose close-condition (all six done) is now met. **PNT next = close that umbrella** + reconcile the stale tree file / ROADMAP R16 "promote+execute" text / live-status; the two remaining crux items (waveform raster/vector extractor + CVE prose-extractor producer wiring) are blocked on upstream capability and stay honestly-deferred FUTURE trees, not re-opened leaves. 13 commits ahead of origin (push at ~30).
 
 ## Active PNT status
 - mode: PNT (open-ended), user-authorized 2026-05-18, until full exhaustion of the new audit-driven trees
