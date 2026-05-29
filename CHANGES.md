@@ -182,6 +182,25 @@
 - Promoted the `ISF-SYMBOL-SURFACE-EMIT` tree; emission of the
   built-but-discarded `(constants)`/`(types)`/`(enums)` surface is `.2`.
 
+### ISF-SYMBOL-SURFACE-EMIT.2 / .3 — emit the recovered symbol surface; close tree
+- `isf_ir.rs::render()` now emits the actor-local
+  `(types (type NAME (bits k)))` / `(enums (NAME (M V)…))` /
+  `(constants (NAME VALUE))` surface it already built but used to discard
+  (removed the `#[allow(dead_code)]` on those fields). Per FSMGen's
+  `c0b7eaa7` answer, each recovered enum co-declares the backing `(type)` +
+  its `(enums)` family (`k = ceil(log2(members))`).
+- Value-safety guard `is_safe_isf_scalar_value`: only whitespace-free
+  scalars (literals / refs / width-casts) are emitted; operator-expression
+  values are **excluded** rather than emitted as strict-invalid `.isf`
+  (residual-honesty).
+- **Verified** by a render-lock test (surface emitted; expression value
+  skipped) and a **fsmgen-`--strict` end-to-end test** (`subs/fsmgen`
+  binary accepts the rendered `(type)`/`(enums)`/`(constants)` actor).
+  Closes the count-vs-emission honesty gap for the safe-valued common case.
+- **`ISF-SYMBOL-SURFACE-EMIT` tree CLOSED.** Book close-rule subsection
+  added to `pipeline/isf-adapter.md`. Lib `1148 → 1150`; full
+  `scripts/run_ci.sh` green.
+
 ## 2026-05-20
 
 ### BOOK-USER-FRIENDLY-BACKFILL.6 — close tree + cross-reference BOOK-METHOD-DOC Decisions (standard now self-referential)

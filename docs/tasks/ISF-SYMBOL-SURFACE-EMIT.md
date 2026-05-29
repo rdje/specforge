@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `ISF-SYMBOL-SURFACE-EMIT`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: `R6` (`.isf` adapter)
 - Created: `2026-05-29`
 - Last updated: `2026-05-29`
@@ -57,7 +57,7 @@ emit the already-built surface, with conservative constant-value handling.
 ## Task Tree
 
 - ID: `ISF-SYMBOL-SURFACE-EMIT`
-  Status: `active`
+  Status: `done`
   Goal: emit the built-but-discarded symbol surface, contract-correctly
   Children: `ISF-SYMBOL-SURFACE-EMIT.1`, `.2`, `.3`
 
@@ -81,7 +81,7 @@ emit the already-built surface, with conservative constant-value handling.
   Commit: `see Commit Log`
 
 - ID: `ISF-SYMBOL-SURFACE-EMIT.2`
-  Status: `pending`
+  Status: `done`
   Goal: >
     Emit the symbol surface in `render()` per the clarified contract: per
     enum symbol, emit both `(types (type NAME (bits k)))` and
@@ -90,23 +90,44 @@ emit the already-built surface, with conservative constant-value handling.
     render-lock test + a FSMGen-strict e2e; reconcile the validate
     count-vs-emission honesty gap.
   Acceptance: `emitted .isf carries the surface and passes FSMGen --strict; reported counts correspond to emitted content; tests green; scripts/run_ci.sh green.`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: >
+    passed (`2026-05-29`) — `render()` now emits `(types)`/`(enums)`/
+    `(constants)` near the top of the actor body, removed the
+    `#[allow(dead_code)]` on the now-used symbol fields, and added an
+    `is_safe_isf_scalar_value` guard so only whitespace-free scalar values
+    (literals / refs / width-casts) emit — operator expressions are excluded
+    (residual-honesty). Two tests: `render_emits_symbol_surface_and_skips_expression_values`
+    (render-lock + the expression skip) and **`symbol_surface_passes_fsmgen_strict_validation`**
+    (a co-declared `(type)`/`(enums)` + literal `(constants)` actor rendered
+    and run through the real `subs/fsmgen --strict` → **accepted**). The
+    count-vs-emission gap is closed for the safe-valued common case (emission
+    now occurs, matching the recovered count); expression-valued symbols are
+    honestly excluded. Lib `1148 → 1150`; full `scripts/run_ci.sh` green.
+  Commit: `see Commit Log`
 
 - ID: `ISF-SYMBOL-SURFACE-EMIT.3`
-  Status: `pending`
+  Status: `done`
   Goal: close the tree; `BOOK-METHOD-DOC` close-rule subsection; reconcile live docs.
   Acceptance: `tree closed; book subsection added; TASK_TREE index + live docs synced.`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: >
+    passed (`2026-05-29`) — `BOOK-METHOD-DOC` close-rule subsection added to
+    `docs/book/src/pipeline/isf-adapter.md` (how + why + how-verified,
+    including the FSMGen clarity provenance); `docs/TASK_TREE.md` index +
+    README + CHANGES + LIVE_ACHIEVEMENT_STATUS + MEMORY reconciled; mdBook
+    builds green.
+  Commit: `see Commit Log`
 
 ## Current Frontier
 
+**Tree closed `2026-05-29`** — all three leaves `done`; the recovered
+symbol surface is emitted and fsmgen-`--strict`-verified. No eligible leaf
+remains.
+
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `ISF-SYMBOL-SURFACE-EMIT.1` | `done` | bumped `subs/fsmgen` → `c0b7eaa7`; answer ingested; CI green; README + FSMGEN_FEEDBACK reconciled |
-| → | `ISF-SYMBOL-SURFACE-EMIT.2` | `pending` | **Real frontier** — emit `(constants)`/`(types)`/`(enums)` in `render()` + strict-verify + close the count-vs-emission honesty gap |
-| 3 | `ISF-SYMBOL-SURFACE-EMIT.3` | `pending` | close |
+| 1 | `ISF-SYMBOL-SURFACE-EMIT.1` | `done` | bumped `subs/fsmgen` → `c0b7eaa7`; answer ingested; CI green |
+| 2 | `ISF-SYMBOL-SURFACE-EMIT.2` | `done` | `render()` emits `(types)`/`(enums)`/`(constants)`; fsmgen-strict e2e green |
+| 3 | `ISF-SYMBOL-SURFACE-EMIT.3` | `done` | book close-rule subsection; tree CLOSED |
 
 ## Decisions
 
@@ -129,15 +150,24 @@ emit the already-built surface, with conservative constant-value handling.
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-05-29` | `ISF-SYMBOL-SURFACE-EMIT.1` | gitlink `88a7af9c → c0b7eaa7`; full `scripts/run_ci.sh` on the new binary (`1148/0`; fsmgen-strict ISF + temporal e2e both `ok`); README + FSMGEN_FEEDBACK reconciled | `passed` |
+| `2026-05-29` | `ISF-SYMBOL-SURFACE-EMIT.2` | `render()` emits `(types)`/`(enums)`/`(constants)` + value-safety guard; render-lock test + **fsmgen-`--strict` e2e** (`symbol_surface_passes_fsmgen_strict_validation` → accepted); lib `1148 → 1150`; full `scripts/run_ci.sh` | `passed` |
+| `2026-05-29` | `ISF-SYMBOL-SURFACE-EMIT.3` | book close-rule subsection in `pipeline/isf-adapter.md`; index + live docs reconciled; mdBook green; **tree CLOSED** | `passed` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `ISF-SYMBOL-SURFACE-EMIT.1` | `ISF-SYMBOL-SURFACE-EMIT.1 — bump subs/fsmgen 88a7af9c -> c0b7eaa7 (ingest enum-type answer); verify; mark request RESOLVED` | submodule pin change (tracked); answer ingested; `.isf` still strict-valid |
+| `ISF-SYMBOL-SURFACE-EMIT.2` / `.3` | `ISF-SYMBOL-SURFACE-EMIT.2/.3 — emit (constants)/(types)/(enums); fsmgen-strict-verified; close tree` | render() emits the surface (value-safety guard); strict e2e green; book + close |
 
 ## Changelog
 
+- `2026-05-29`: `.2` + `.3` — `render()` now emits the recovered
+  `(types)`/`(enums)`/`(constants)` surface (value-safety guard excludes
+  operator-expression values); render-lock test + **fsmgen-`--strict` e2e**
+  prove the real binary accepts it (lib `1148 → 1150`); book close-rule
+  subsection added; **tree CLOSED**. Closes the count-vs-emission honesty
+  gap for the safe-valued common case.
 - `2026-05-29`: Created + promoted `active` — FSMGen answered the type↔enum
   clarity request (`c0b7eaa7`), unblocking emission of the built-but-
   discarded `(constants)`/`(types)`/`(enums)` surface.

@@ -226,11 +226,8 @@ pub(crate) struct IsfIr {
     reset: IsfReset,
     watchdog: u64,
     signals: BTreeSet<IsfSignal>,
-    #[allow(dead_code)]
     constants: Vec<IsfConstant>,
-    #[allow(dead_code)]
     types: Vec<IsfTypeDef>,
-    #[allow(dead_code)]
     enums: Vec<IsfEnum>,
     storage: Vec<IsfStorageVar>,
     drives: Vec<IsfNamedDrive>,
@@ -279,6 +276,56 @@ impl IsfIr {
         let mut lines: Vec<String> = Vec::new();
 
         lines.push(format!("(actor {}", self.actor_name));
+
+        // Actor-local symbol surface (FSMGen ISF book 13j / public contract):
+        // `(types (type NAME (bits k)))`, `(enums (NAME (M V)…))`,
+        // `(constants (NAME VALUE))`. Per FSMGen's 2026-05-29 clarity reply
+        // (`c0b7eaa7`, locked by `t/1378`): an enum name is NOT a type alias,
+        // so a recovered enum co-declares a backing `(type NAME (bits k))`
+        // (k = ceil(log2(members))) AND its `(enums …)` family — both are
+        // accepted/required. Declared before `(clock …)` to match the book's
+        // actor-body shape. Values that are not whitespace-free scalars
+        // (operator expressions) are excluded rather than emitted as
+        // strict-invalid (residual-honesty).
+        if !self.types.is_empty() {
+            lines.push("  (types".to_string());
+            for t in &self.types {
+                lines.push(format!("    (type {} (bits {}))", t.name, t.bits));
+            }
+            lines.push("  )".to_string());
+        }
+        let safe_enums: Vec<&IsfEnum> = self
+            .enums
+            .iter()
+            .filter(|e| {
+                !e.members.is_empty() && e.members.iter().all(|(_, v)| is_safe_isf_scalar_value(v))
+            })
+            .collect();
+        if !safe_enums.is_empty() {
+            lines.push("  (enums".to_string());
+            for e in &safe_enums {
+                let members: Vec<String> = e
+                    .members
+                    .iter()
+                    .map(|(n, v)| format!("({} {})", n, v))
+                    .collect();
+                lines.push(format!("    ({} {})", e.type_name, members.join(" ")));
+            }
+            lines.push("  )".to_string());
+        }
+        let safe_constants: Vec<&IsfConstant> = self
+            .constants
+            .iter()
+            .filter(|c| is_safe_isf_scalar_value(&c.value))
+            .collect();
+        if !safe_constants.is_empty() {
+            lines.push("  (constants".to_string());
+            for c in &safe_constants {
+                lines.push(format!("    ({} {})", c.name, c.value));
+            }
+            lines.push("  )".to_string());
+        }
+
         lines.push(format!("  (clock {})", self.clock));
         lines.push(format!(
             "  (reset ({} {} {}))",
@@ -1198,6 +1245,18 @@ fn convert_action_to_txn_step(action: &ControlActionRecord) -> IsfTxnStep {
             }
         }
     }
+}
+
+/// True when a rendered control-expression value is safe to place directly
+/// as a `(constants (NAME VALUE))` / enum-member scalar: a single
+/// whitespace-free token — a literal (`0`, `0x3`), a reference
+/// (`mode.BUSY`, `bus[3]`), or a width-cast (`(8'd5)`). Operator
+/// expressions (`(| a b)`, `(! x)`) render with internal whitespace and are
+/// NOT valid in scalar position (FSMGen `--strict` rejects them), so they
+/// are excluded — emit nothing rather than strict-invalid `.isf`
+/// (residual-honesty).
+fn is_safe_isf_scalar_value(value: &str) -> bool {
+    !value.is_empty() && !value.chars().any(char::is_whitespace)
 }
 
 fn render_isf_control_expression(expr: &ControlExpressionRecord) -> String {
@@ -2567,5 +2626,88 @@ mod tests {
         assert!(!out.contains("await-all"), "{out}");
         assert!(!out.contains("await-any"), "{out}");
         assert!(!out.contains("(spawn worker w0)"), "{out}");
+    }
+
+    #[test]
+    fn render_emits_symbol_surface_and_skips_expression_values() {
+        let mut isf = minimal_isf();
+        isf.types = vec![IsfTypeDef {
+            name: "mode".into(),
+            bits: 1,
+        }];
+        isf.enums = vec![IsfEnum {
+            type_name: "mode".into(),
+            members: vec![("IDLE".into(), "0".into()), ("BUSY".into(), "1".into())],
+        }];
+        isf.constants = vec![
+            IsfConstant {
+                name: "DEFAULT".into(),
+                value: "5".into(),
+            },
+            IsfConstant {
+                name: "ALIASED".into(),
+                value: "mode.BUSY".into(),
+            },
+            IsfConstant {
+                name: "EXPR_VALUED".into(),
+                value: "(| a b)".into(),
+            },
+        ];
+        let out = isf.render();
+        assert!(out.contains("(type mode (bits 1))"), "{out}");
+        assert!(out.contains("(mode (IDLE 0) (BUSY 1))"), "{out}");
+        assert!(out.contains("(DEFAULT 5)"), "{out}");
+        assert!(out.contains("(ALIASED mode.BUSY)"), "{out}");
+        // The expression-valued constant is excluded (would be strict-invalid):
+        assert!(!out.contains("EXPR_VALUED"), "{out}");
+        assert!(!out.contains("(| a b)"), "{out}");
+    }
+
+    #[test]
+    fn symbol_surface_passes_fsmgen_strict_validation() {
+        // End-to-end: a recovered enum co-declares (type NAME (bits k)) +
+        // (enums (NAME …)) (FSMGen's c0b7eaa7 contract), plus a literal
+        // (constants …); the emitted .isf must pass the real fsmgen --strict.
+        let mut isf = isf_with_temporal_contract_transaction();
+        isf.types = vec![IsfTypeDef {
+            name: "mode".into(),
+            bits: 1,
+        }];
+        isf.enums = vec![IsfEnum {
+            type_name: "mode".into(),
+            members: vec![("IDLE".into(), "0".into()), ("BUSY".into(), "1".into())],
+        }];
+        isf.constants = vec![IsfConstant {
+            name: "DEFAULT".into(),
+            value: "1".into(),
+        }];
+        let tempdir = tempfile::tempdir().expect("tempdir");
+        let out = isf.render();
+        let isf_path = tempdir.path().join("symbol_surface.isf");
+        std::fs::write(&isf_path, &out).expect("write isf");
+        eprintln!("=== ISF ===\n{out}\n=== END ===");
+        let output = crate::ir::run_fsmgen_strict_check(&isf_path);
+        let stdout = String::from_utf8_lossy(&output.stdout);
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        let check: serde_json::Value = serde_json::from_str(&stdout).unwrap_or_else(|e| {
+            panic!("fsmgen non-JSON.\nstdout:{stdout}\nstderr:{stderr}\nerr:{e}")
+        });
+        let success = check["diagnostic_summary"]["success"]
+            .as_bool()
+            .unwrap_or(false);
+        if !success && let Some(diags) = check["diagnostics"].as_array() {
+            for d in diags {
+                eprintln!(
+                    "FSMGen diagnostic: {}",
+                    d.get("message")
+                        .and_then(|m| m.as_str())
+                        .unwrap_or("(none)")
+                );
+            }
+        }
+        assert!(
+            success,
+            "FSMGen strict rejected the emitted (types)/(enums)/(constants) symbol surface"
+        );
     }
 }

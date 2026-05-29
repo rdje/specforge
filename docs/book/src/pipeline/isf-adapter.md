@@ -305,3 +305,38 @@ not a grammar typo. **Verified** by a render-lock unit test asserting the
 contract-exact forms are emitted and the old hyphen / missing-`as` forms
 are gone, plus full `scripts/run_ci.sh`. *Authoritative tracking:*
 `docs/tasks/ISF-TXN-GRAMMAR-FIX.md`.
+
+### `ISF-SYMBOL-SURFACE-EMIT` — emitting the recovered constant/type/enum surface
+
+SpecForge recovers actor-local symbols (constants, enum-like types) from a
+spec and **builds** them into the ISF model — but `render()` used to
+**discard** them, even though the adapter artifact reported their
+`constant_count`/`enum_count`. That was a *count-vs-emission honesty gap*:
+the report claimed content the emitted `.isf` never carried.
+
+Closing it needed one contract fact SpecForge could not infer safely, so it
+**asked FSMGen** (the `2026-05-29` clarity request) rather than guess.
+FSMGen answered (upstream `c0b7eaa7`, locked by `t/1378`): an
+`(enums (NAME …))` is **not** a `(type NAME)` alias, so to make a recovered
+enum usable as a width-bearing type you **co-declare both**
+`(types (type NAME (bits k)))` and `(enums (NAME …))` — accepted, required,
+not a conflict — with `k = ceil(log2(member_count))`. That *validated
+SpecForge's existing build* (it already co-declares exactly that) and
+corrected an earlier "enums-standalone" guess.
+
+So this tree changed only `render()`: it now emits
+`(types (type NAME (bits k)))`, `(enums (NAME (M V)…))`, and
+`(constants (NAME VALUE))` near the top of the actor body (the book's
+shape). One safety rule is load-bearing: a constant/enum value is emitted
+only when it is a **whitespace-free scalar** (a literal `0`, a reference
+`mode.BUSY`, a width-cast `(8'd5)`); operator expressions (`(| a b)`) render
+with internal whitespace and are *not* valid in scalar position, so they
+are **excluded rather than emitted as strict-invalid** `.isf`
+(residual-honesty).
+
+**Verified** two ways: a render-lock unit test (the surface is emitted, and
+an expression-valued constant is skipped), and — the load-bearing one — a
+**fsmgen-`--strict` end-to-end test** that builds an actor carrying the
+co-declared `(type)`/`(enums)` + a literal `(constants)`, renders it, and
+runs the *real* `subs/fsmgen` binary, asserting it accepts the output.
+*Authoritative tracking:* `docs/tasks/ISF-SYMBOL-SURFACE-EMIT.md`.
