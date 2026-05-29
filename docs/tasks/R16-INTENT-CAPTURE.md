@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `R16-INTENT-CAPTURE`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: `R16` (new major workstream — SOTA temporal-intent capture)
 - Created: `2026-05-19`
-- Last updated: `2026-05-19`
+- Last updated: `2026-05-29`
 - Owner: repo-local workflow
 
 ## Thesis (load-bearing — recorded by explicit user direction 2026-05-19)
@@ -80,7 +80,7 @@ all of `4/5/6`. `1` is the spine; `3` is the objective function.
 ## Task Tree
 
 - ID: `R16-INTENT-CAPTURE`
-  Status: `active`
+  Status: `done`
   Goal: own the program scaffolding, ordering, cross-tree invariants
   Children: `R16-INTENT-CAPTURE.1`, `.2`
 
@@ -104,7 +104,7 @@ all of `4/5/6`. `1` is the spine; `3` is the objective function.
   Commit: `see Commit Log`
 
 - ID: `R16-INTENT-CAPTURE.2`
-  Status: `active`
+  Status: `done`
   Goal: >
     Drive the program: promote sub-trees to `active` in DAG order,
     keep the order/DAG/thesis consistent as sub-trees split, and close
@@ -112,23 +112,62 @@ all of `4/5/6`. `1` is the spine; `3` is the objective function.
     stays `active` until all six sub-trees are `done`.)
   Acceptance: `Sub-trees executed in DAG order; program closed when all six done; ordering integrity maintained.`
   Verification: >
-    in progress — extraction methodology for (1) actor names,
-    (2) actor-relative boundary ports, (3) prose+waveform temporal
-    behavior presented and accepted by the user 2026-05-19; DAG root
-    `R16-CONTRACT-IR` promoted `proposed → active` (frontier = its `.1`
-    design leaf). Remaining promotions follow the DAG as predecessors
-    close.
+    passed (`2026-05-29`) — all six sub-trees were promoted in DAG
+    order and closed at their honest scope boundaries on `2026-05-20`
+    (#1 `R16-CONTRACT-IR`, #2 `R16-KG-PROTOCOL-ONTOLOGY`,
+    #5/order-3 `R16-CAPTURE-FIDELITY-GATES`,
+    #3 `R16-MULTIMODAL-CONTRACT-FUSION`,
+    #4 `R16-WAVEFORM-CONTRACT-MINING`,
+    #6 `R16-CONSTRAINED-VERIFIED-EXTRACTION`); ordering integrity and
+    the dependency DAG held throughout (every promotion waited on its
+    predecessors). The acceptance condition "program closed when all
+    six done" is met, so this governance leaf closes the umbrella. The
+    two remaining crux items — waveform raster/vector figure extraction
+    and CVE prose-extractor producer wiring — are blocked on upstream
+    capability that does not yet exist and are recorded as
+    honestly-deferred FUTURE trees, not re-opened leaves of any closed
+    R16 tree (residual-honesty doctrine). Docs-only; lib `1128/0`; full
+    `scripts/run_ci.sh` green.
   Commit: `see Commit Log`
 
 ## Current Frontier
 
+Empty — **tree closed `2026-05-29`**. Both leaves are `done` and all six
+sub-trees are `done`; no eligible leaf remains. The forward path is two
+honestly-deferred FUTURE trees (see Decisions `2026-05-29`), each blocked
+on upstream capability that does not yet exist:
+
+- waveform raster/vector figure extraction — feeds
+  `R16-WAVEFORM-CONTRACT-MINING`'s `figure_region_to_partial_trace`;
+- prose LLM/VLM producer wiring for `parse_constrained_contract` — feeds
+  `R16-CONSTRAINED-VERIFIED-EXTRACTION`.
+
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `R16-INTENT-CAPTURE.1` | `done` | Program scaffolding |
-| 2 | `R16-INTENT-CAPTURE.2` | `active` | Governance live — extraction plan accepted; `R16-CONTRACT-IR` promoted `active` |
-| → | `R16-CONTRACT-IR.1` | `pending` | **Real frontier** — ContractIR design (placement + operator grammar + `TemporalRuleRecord` migration plan; docs-first) |
+| 2 | `R16-INTENT-CAPTURE.2` | `done` | Governance close — all six sub-trees `done`; acceptance met |
 
 ## Decisions
+
+- `2026-05-29` (`.2` closed → umbrella closed): all six sub-trees are
+  `done` (closed `2026-05-20` at their honest scope boundaries), so this
+  governance leaf's acceptance ("program closed when all six done") is
+  met and the `R16-INTENT-CAPTURE` umbrella closes. The program
+  delivered the *mechanical-to-lower typed target* (#1 ContractIR / #2
+  protocol ontology), the *objective capture-fidelity metric* (#5
+  fidelity gates), and *structural honesty enforcement* (#3 fusion / #4
+  waveform / #6 constrained-verified — four doctrines: fidelity, fusion,
+  waveform-verifier, and entailment Fail→Residual). The thesis crux —
+  accurate prose+timing-diagram extraction *into* that target — is
+  deliberately not wired to a live extractor: two pieces stay deferred
+  to FUTURE trees because each is blocked on upstream capability that
+  does not exist yet — (1) a PDF → `FigureRegion` raster/vector figure
+  extractor, and (2) a prose LLM/VLM provider feeding
+  `parse_constrained_contract`. Recording them as deferred future trees
+  rather than re-opened leaves is the residual-honesty doctrine applied
+  to the program itself: do not pretend the crux is solved before the
+  evidence to solve it exists. Closing the umbrella exhausts the active
+  task-tree frontier; remaining roadmap crux work is upstream-blocked.
 
 - `2026-05-19` (`.2` opened): the systematic+reliable extraction
   methodology for (1) actor names, (2) actor-relative boundary
@@ -168,14 +207,29 @@ all of `4/5/6`. `1` is the spine; `3` is the objective function.
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-05-19` | `R16-INTENT-CAPTURE.1` | 7 trees + ROADMAP R16 + mdBook chapter + index + thesis memory; full `scripts/run_ci.sh` (mdBook) | `passed` |
+| `2026-05-29` | `R16-INTENT-CAPTURE.2` | all six sub-trees `done` (DAG order, honest scope); tree/index/ROADMAP/live-docs/book reconciled; lib `1128/0`; full `scripts/run_ci.sh` (mdBook) | `passed` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `R16-INTENT-CAPTURE.1` | `R16-INTENT-CAPTURE — scaffold SOTA intent-capture program (6 ordered trees + ROADMAP + mdBook)` | docs-only; sub-trees `proposed` |
+| `R16-INTENT-CAPTURE.2` | `R16-INTENT-CAPTURE.2 — close umbrella governance leaf (all 6 sub-trees done); reconcile tree/ROADMAP/live-docs/book` | docs-only; umbrella + R16 program CLOSED; 2 deferred future trees recorded |
 
 ## Changelog
+
+- `2026-05-29`: `.2` closed → **`R16-INTENT-CAPTURE` umbrella CLOSED /
+  R16 program complete**. All six sub-trees `done` at their honest scope
+  boundaries (`2026-05-20`); acceptance "program closed when all six
+  done" met. Reconciled the stale frontier table (was still showing
+  `R16-CONTRACT-IR.1` as the real frontier), the umbrella + `.2`
+  statuses, the `docs/TASK_TREE.md` index, ROADMAP R16 / Recommended
+  implementation order / Immediate next milestone,
+  `LIVE_ACHIEVEMENT_STATUS.md`, `CHANGES.md`, `DEVELOPMENT_NOTES.md`, and
+  the mdBook program chapter (intro program-status banner + governance-
+  closed recap). Two crux items deferred to FUTURE trees (upstream-
+  blocked): waveform raster/vector extraction + CVE prose-extractor
+  producer wiring. Docs-only; full `scripts/run_ci.sh` green.
 
 - `2026-05-19`: Created by explicit user direction — capture the SOTA
   6-point intent-capture program precisely as ordered task-trees +

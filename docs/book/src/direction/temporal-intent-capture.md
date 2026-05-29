@@ -1,9 +1,30 @@
 # SOTA Temporal-Intent Capture (R16)
 
-This chapter is the human-facing capture of the active forward program.
+This chapter is the human-facing capture of the R16 design-intent-capture
+program (complete; see the program-status note below).
 The authoritative, machine-tracked source is the task-tree umbrella
 `docs/tasks/R16-INTENT-CAPTURE.md` and ROADMAP lane `R16`; this page
 must stay consistent with them.
+
+> **Program status (`2026-05-29`): COMPLETE.** All six sub-trees were
+> delivered in DAG order and closed at their honest scope boundaries
+> (`2026-05-20`); the `R16-INTENT-CAPTURE` governance umbrella that
+> sequenced them is now **closed** (`2026-05-29`). What this program
+> built is the *mechanical-to-lower typed target*, the *objective
+> capture-fidelity metric*, and *structural honesty enforcement* (four
+> doctrines) — see the per-sub-tree sections below and the **R16 PROGRAM
+> COMPLETE** recap at the end of this chapter.
+>
+> The thesis crux — accurate prose + timing-diagram extraction *into*
+> that target — is deliberately **not yet wired to a live extractor**.
+> Two pieces stay honestly deferred to future trees because each is
+> blocked on upstream capability that does not exist yet: a PDF →
+> `FigureRegion` raster/vector figure extractor (feeds waveform mining),
+> and a prose LLM/VLM provider feeding `parse_constrained_contract`
+> (feeds constrained extraction). Until those land the R16 surface is
+> **dormant but verified** — every typed target, gate, and honesty
+> doctrine is unit-tested and ready, and on the real corpus the surface
+> reads all-zero rather than faking a pass.
 
 ## Thesis
 
@@ -53,16 +74,16 @@ extraction has somewhere accurate to land and so lowering stays
 mechanical. Point #5 is pulled ahead of the extraction work because you
 cannot improve what you cannot measure, and the spec ships its own
 near-ground-truth vectors (its figures). Points #3/#4/#6 are the
-extraction-fidelity thrust — the crux the thesis names. Each sub-tree is
-`proposed` until promoted in DAG order under
-`R16-INTENT-CAPTURE`; all code lands under `COMMIT.md`-tracked leaves
-with `scripts/run_ci.sh` green per leaf.
+extraction-fidelity thrust — the crux the thesis names. Each sub-tree
+was promoted in DAG order under `R16-INTENT-CAPTURE`, with all code
+landing under `COMMIT.md`-tracked leaves and `scripts/run_ci.sh` green
+per leaf; all six are now `done`.
 
 ---
 
 This chapter also carries, per sub-tree, a precise account of **how it
 is implemented and how it is verified** (the `BOOK-METHOD-DOC`
-convention). Sections appear as each sub-tree's design is fixed.
+convention). All six sub-tree sections are present below.
 
 ## R16-CONTRACT-IR — how it is implemented and verified
 
@@ -1802,6 +1823,29 @@ rather than authorial:
 Together, the IR cannot silently fabricate a contract that
 any of the four checks rejects. Fabrication is mechanically
 prevented end-to-end.
+
+#### Program governance — closed (`2026-05-29`)
+
+The `R16-INTENT-CAPTURE` umbrella that owned the ordering, the
+dependency DAG, and the cross-tree invariants closed on
+`2026-05-29`, once all six sub-trees were `done`. Closing it
+records an honest boundary, not a finished crux: the *typed
+target and its honesty enforcement are complete*, while the
+*extraction that fills the target* waits on two upstream-blocked
+future trees —
+
+- **waveform raster/vector extraction** — decode real PDF
+  timing-diagram bytes into the typed `FigureRegion` the `.3.1`
+  section above defines, so `figure_region_to_partial_trace` has
+  real input;
+- **constrained-extraction producer wiring** — connect a prose
+  LLM/VLM provider to `parse_constrained_contract` so the
+  entailment-verified adapter has real candidates.
+
+Both are recorded as deferred future trees rather than re-opened
+leaves of any closed R16 tree, in keeping with the
+residual-honesty doctrine: we do not pretend the crux is solved
+before the evidence to solve it exists.
 
 *Authoritative tracking:*
 `docs/tasks/R16-CONSTRAINED-VERIFIED-EXTRACTION.md`.

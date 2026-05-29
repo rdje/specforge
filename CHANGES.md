@@ -1,5 +1,46 @@
 # CHANGES
 
+## 2026-05-29
+
+### ramp-up: refresh RUST_CODEBASE_ANALYSIS.md for the R16 ContractIR subsystem
+- Re-analysed the Rust codebase at HEAD `44bf2723` and added a
+  `2026-05-29` session update to `RUST_CODEBASE_ANALYSIS.md` capturing the
+  R16 subsystem the doc had not yet recorded: the 7 new typed IR modules
+  (`contract` / `protocol_graph` / `fidelity` / `fusion` / `waveform` /
+  `figure_region` / `cve` = 4,657 ln), the `SemanticIr::build` producer
+  order (`apply_fusion` before `apply_fidelity_gates`), the three
+  structural honesty doctrines (fidelity / fusion-disagreement /
+  entailment `Fail → Residual`), and current metrics (`src` 88,673 ln;
+  ir/ namespace 7 → 14 modules; lib `1128/0`). Reconciled the stale
+  `MEMORY.md` latest-committed baseline (`7bf415cf → 44bf2723`).
+- Commit: `74c0033d`.
+
+### R16-INTENT-CAPTURE.2 — close umbrella governance leaf; R16 program complete
+- Closed the `R16-INTENT-CAPTURE` umbrella's governance leaf `.2`: all
+  six R16 sub-trees were `done` (closed `2026-05-20` at their honest scope
+  boundaries, in DAG order), so the acceptance "program closed when all
+  six done" is met. Marked `.2` and the umbrella `done`.
+- Reconciled stale current-state across the live surface: the tree file's
+  frontier table (was still showing `R16-CONTRACT-IR.1` as the real
+  frontier; last-updated `2026-05-19`), the `docs/TASK_TREE.md` index
+  row, ROADMAP `R16` status + "Recommended implementation order" #1 +
+  "Immediate next milestone" (all still said "promote and execute the six
+  sub-trees"), `LIVE_ACHIEVEMENT_STATUS.md`, and the mdBook program
+  chapter (intro program-status banner + governance-closed recap, per the
+  `BOOK-METHOD-DOC` close-rule).
+- Also reconciled two pre-existing live-doc drifts found during the close:
+  `LIVE_ACHIEVEMENT_STATUS.md` still listed `BOOK-METHOD-DOC` as "In
+  Progress" (it closed `2026-05-20`), and `DEVELOPMENT_NOTES.md`'s
+  project-direction header still said adapter targets were "`.fsm`
+  (active), `.isf` (planned)" (ISF-ONLY-CONSOLIDATION made `.isf` the sole
+  adapter on `2026-05-18`).
+- Recorded the two remaining R16 crux items — waveform raster/vector
+  figure extraction and CVE prose-extractor producer wiring — as
+  upstream-blocked, honestly-deferred FUTURE trees (not re-opened leaves
+  of any closed R16 tree), per the residual-honesty doctrine. Closing the
+  umbrella exhausts the active task-tree frontier.
+- Docs-only; lib `1128/0`; full `scripts/run_ci.sh` green.
+
 ## 2026-05-20
 
 ### BOOK-USER-FRIENDLY-BACKFILL.6 — close tree + cross-reference BOOK-METHOD-DOC Decisions (standard now self-referential)

@@ -6,7 +6,37 @@
 - canonical deliverable: `IntentIR`
 - product shape: staged IR toolchain, not one-shot backend generation
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
-- adapter targets: `.fsm` (active), `.isf` (planned); HDL lowering is out of scope
+- adapter target: `.isf` (sole adapter); `.fsm`/HDL are out of scope — FSMGen consumes `.isf` and owns scheduling/`.fsm`/HDL downstream (since `ISF-ONLY-CONSOLIDATION`, `2026-05-18`)
+
+## 2026-05-29 session — R16-INTENT-CAPTURE umbrella closed (R16 program complete)
+
+- Ramp-up: re-read `README.md` → `SESSION_BOOTSTRAP.md` and the live-doc
+  surface, re-analysed the Rust codebase, and refreshed
+  `RUST_CODEBASE_ANALYSIS.md` to capture the R16 ContractIR subsystem
+  (7 new typed IR modules; the three structural honesty doctrines wired
+  into `SemanticIr::build`) that the analysis doc had not yet recorded.
+  Lib suite green at `1128/0`.
+- PNT leaf: closed the `R16-INTENT-CAPTURE` governance umbrella. Its `.2`
+  acceptance ("program closed when all six sub-trees done") was met — all
+  six closed at their honest scope boundaries on `2026-05-20` in DAG
+  order. This is a governance/docs close, not a code change.
+- Rationale for closing now rather than waiting for the crux extraction:
+  the program-level acceptance criteria are about the typed target,
+  ordering, and each sub-tree landing its code — all met. The thesis crux
+  (accurate prose+timing-diagram → typed-KG extraction) is genuinely
+  blocked on upstream capability — a PDF → `FigureRegion` raster/vector
+  extractor, and a prose LLM/VLM provider feeding
+  `parse_constrained_contract`. Holding the umbrella open indefinitely on
+  a real external blocker would violate the task-tree blocker rules;
+  recording the two pieces as honestly-deferred FUTURE trees applies the
+  residual-honesty doctrine to the program itself.
+- Reconciled current-state drift found during the close: ROADMAP R16 +
+  order #1 + milestone still said "promote and execute the six
+  sub-trees"; the umbrella's frontier table still showed
+  `R16-CONTRACT-IR.1`; `LIVE_ACHIEVEMENT_STATUS.md` still listed
+  `BOOK-METHOD-DOC` as "In Progress" (closed `2026-05-20`); and this
+  file's project-direction header still said adapter targets were "`.fsm`
+  (active), `.isf` (planned)" (corrected above to `.isf`-only).
 
 ## 2026-05-18 session — ISF-ONLY-CONSOLIDATION task tree created
 

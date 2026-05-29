@@ -1226,8 +1226,13 @@
   - add further specialized page families beyond the current semantic/truthfulness, typed-prior-memory, table, visual, state-machine, timing, infrastructure, protocol, and prior-candidate pages when new evidence families need their own durable corpus synthesis surfaces
   - continue deepening the prior-candidate bridge only through typed schemas, KG-bench fixtures, and validation gates; do not let corpus-KB candidates directly write `CorpusMemory` or canonical IR
 
-### R16 SOTA design-intent capture (active forward program)
-- status: In progress. **`R16-CONTRACT-IR` (point #1, DAG root) DONE**
+### R16 SOTA design-intent capture (program complete)
+- status: Done — **R16 PROGRAM COMPLETE** (`2026-05-20`); the
+  `R16-INTENT-CAPTURE` governance umbrella that sequenced the six
+  sub-trees is **CLOSED** (`2026-05-29`). The two remaining crux items
+  (waveform raster/vector figure extraction + CVE prose-extractor
+  producer wiring) are upstream-blocked, honestly-deferred FUTURE trees,
+  not re-opened leaves. Detail below. **`R16-CONTRACT-IR` (point #1, DAG root) DONE**
   (`.1`–`.5`): typed ContractIR layer; `.isf` lowering re-pointed with a
   3-way-proven parity gate; `HandshakeBarrier → (stage …)` enabled
   (subsumes/delivers `ISF-HANDSHAKE-STAGE-LOWERING`, verified-but-dormant
@@ -1350,10 +1355,15 @@
     score on the real corpus, with disagreement preserved as residual
 
 ## Recommended implementation order
-1. **`R16`: SOTA design-intent capture is the active forward program** —
-   execute its six sub-trees in the DAG order recorded in
-   `docs/tasks/R16-INTENT-CAPTURE.md` (CONTRACT-IR → KG-PROTOCOL-ONTOLOGY
-   / CAPTURE-FIDELITY-GATES → FUSION / WAVEFORM / CONSTRAINED-VERIFIED)
+1. **`R16`: SOTA design-intent capture — PROGRAM COMPLETE** (`2026-05-20`;
+   `R16-INTENT-CAPTURE` umbrella CLOSED `2026-05-29`). All six sub-trees
+   were executed in the recorded DAG order (CONTRACT-IR →
+   KG-PROTOCOL-ONTOLOGY / CAPTURE-FIDELITY-GATES → FUSION / WAVEFORM /
+   CONSTRAINED-VERIFIED) and closed at their honest scope boundaries. The
+   two remaining crux items — waveform raster/vector figure extraction
+   and CVE prose-extractor producer wiring — are upstream-blocked,
+   honestly-deferred FUTURE trees, not re-opened leaves. See
+   `docs/tasks/R16-INTENT-CAPTURE.md`.
 2. Keep `IntentIR` as the canonical product boundary in all code and docs
 3. Finish the graph-first downstream signal model so `direction_hint` is no longer the primary semantic surface (`R15`)
 4. Land the explicit clock-tick temporal model (`R15b`)
@@ -1366,12 +1376,17 @@
 11. The adapter family begins and ends at `.isf`; `.fsm`/HDL are owned by FSMGen (downstream of `.isf`), not SpecForge
 
 ## Immediate next milestone
-- `R16`: the active forward program — SOTA design-intent capture. Promote
-  and execute its six sub-trees in DAG order starting at
-  `R16-CONTRACT-IR` (the typed timed-contract target), per
-  `docs/tasks/R16-INTENT-CAPTURE.md`. The crux is accurate/reliable
-  prose+timing-diagram → typed-KG temporal extraction; everything
-  downstream of an accurate typed KG is almost mechanical.
+- `R16`: **PROGRAM COMPLETE** — the six sub-trees are delivered and the
+  `R16-INTENT-CAPTURE` umbrella is closed (`2026-05-29`). The program
+  built the mechanical-to-lower typed target, the objective
+  capture-fidelity metric, and the four structural honesty doctrines. The
+  thesis crux — accurate/reliable prose+timing-diagram → typed-KG
+  temporal extraction — is the forward frontier but is **blocked on
+  upstream capability**: it needs (a) a PDF → `FigureRegion`
+  raster/vector figure extractor and (b) a prose LLM/VLM provider feeding
+  `parse_constrained_contract`. Both are honestly-deferred FUTURE trees.
+  Until they exist the R16 surface stays dormant-but-verified; the next
+  unblocked work is incremental hardening on the lanes below.
 - `R15`: finish the transition from compatibility `direction_hint` fields to actor-relative graph-first downstream semantics
 - `R15b`: introduce the explicit clock-tick temporal model so behavioral truth is first-class in `SemanticIR` / `IntentIR`
 - `R15c`: make KG-guided multimodal rescans a named workstream in the convergent pipeline
