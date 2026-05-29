@@ -1806,6 +1806,7 @@ mod tests {
             timing_constraints: Vec::new(),
             temporal_rules: Vec::new(),
             actor_contracts: Vec::new(),
+            constrained_extraction_stats: None,
             protocol_graph: Default::default(),
             fidelity_findings: Vec::new(),
             temporal_conflicts: Vec::new(),

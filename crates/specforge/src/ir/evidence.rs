@@ -119,6 +119,20 @@ pub struct EvidenceIr {
     /// Level 2 NLP: structured records extracted from `ConditionalRule` sentences.
     #[serde(default)]
     pub conditional_rules: Vec<ConditionalRuleRecord>,
+    /// CVE-PROSE-EXTRACTION: `ActorContract`s extracted from prose by the
+    /// `extract-contracts` command (Qwen via Ollama), each fails-closed parsed
+    /// (`parse_constrained_contract`) + entailment-gated
+    /// (`apply_entailment_to_contract`). Additive + serde-skip-if-empty ⇒ zero
+    /// artifact churn until the producer runs; `SemanticIr::build` folds these
+    /// into `actor_contracts` before fusion/fidelity.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub extracted_contracts: Vec<crate::ir::contract::ActorContract>,
+    /// CVE-PROSE-EXTRACTION: producer-time extraction stats (the
+    /// `schema_rejects` count cannot be derived from survivors). Carried
+    /// `EvidenceIR → SemanticIR → IntentIR` for the `validate` `constrained:`
+    /// block. `None` until the producer runs.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub constrained_extraction_stats: Option<crate::ir::cve::ConstrainedExtractionStats>,
     /// Provenance links from table-synthesized signal declarations back to SourceIR tables.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub table_signal_declaration_provenance: Vec<TableSignalDeclarationProvenanceRecord>,
@@ -533,6 +547,8 @@ impl EvidenceIr {
             timing_constraints,
             signal_constraints,
             conditional_rules,
+            extracted_contracts: Vec::new(),
+            constrained_extraction_stats: None,
             table_signal_declaration_provenance,
             signal_polarities,
             signal_polarity_conflicts,

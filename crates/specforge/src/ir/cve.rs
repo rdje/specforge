@@ -40,6 +40,45 @@ use crate::ir::contract::{
 use crate::ir::fidelity::FindingStatus;
 use crate::ir::semantic::ClockEdge;
 use crate::ir::source::AutomationConfidence;
+use serde::{Deserialize, Serialize};
+
+// ---------- Constrained prose→contract extraction stats (CVE-PROSE-EXTRACTION)
+
+/// Producer-time stats for the constrained prose→contract extractor
+/// (`extract-contracts`, `CVE-PROSE-EXTRACTION`). `schema_rejects` —
+/// candidates whose JSON failed `parse_constrained_contract` (fails-closed) —
+/// yields NO contract, so it is NOT derivable from the surviving
+/// `actor_contracts`; it is persisted here and carried `EvidenceIR →
+/// SemanticIR → IntentIR` so the `validate` `constrained:` block can report
+/// it. `entailment_fails`/`template_hits` stay derived from the surviving
+/// contracts. Additive + `Option` on the IRs ⇒ zero artifact churn until the
+/// producer runs.
+#[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ConstrainedExtractionStats {
+    /// Prose statements sent to the provider.
+    #[serde(default)]
+    pub candidates_seen: usize,
+    /// Responses that failed `parse_constrained_contract` (no contract produced).
+    #[serde(default)]
+    pub schema_rejects: usize,
+    /// Contracts that parsed and were kept (incl. entailment-Residual ones).
+    #[serde(default)]
+    pub contracts_accepted: usize,
+}
+
+/// `schema_rejects` for the `validate` `constrained:` block: read from the
+/// carried producer stat, `0` when the extractor has not run.
+pub fn constrained_schema_rejects(stats: Option<&ConstrainedExtractionStats>) -> usize {
+    stats.map(|s| s.schema_rejects).unwrap_or(0)
+}
+
+/// Fold prose-extracted contracts into the temporal-rule-projected set, in
+/// order (projected first, then extracted), so the existing `apply_fusion` /
+/// `apply_fidelity_gates` pass sees them as ordinary `actor_contracts`. Pure
+/// helper so the fold is unit-testable away from the full `SemanticIr::build`.
+pub fn fold_extracted_contracts(projected: &mut Vec<ActorContract>, extracted: &[ActorContract]) {
+    projected.extend(extracted.iter().cloned());
+}
 
 /// Human-/provider-facing JSON-Schema **summary** for `ActorContract`,
 /// expressed so an LLM/VLM that supports JSON-Schema-grammar-
@@ -1007,5 +1046,44 @@ mod tests {
                 "schema summary should list obligation kind {kind:?}"
             );
         }
+    }
+
+    #[test]
+    fn extraction_stats_default_and_round_trip() {
+        let z = ConstrainedExtractionStats::default();
+        assert_eq!(z.candidates_seen, 0);
+        assert_eq!(z.schema_rejects, 0);
+        assert_eq!(z.contracts_accepted, 0);
+        let s = ConstrainedExtractionStats {
+            candidates_seen: 7,
+            schema_rejects: 2,
+            contracts_accepted: 4,
+        };
+        let json = serde_json::to_string(&s).expect("serialize");
+        let back: ConstrainedExtractionStats = serde_json::from_str(&json).expect("deserialize");
+        assert_eq!(s, back);
+    }
+
+    #[test]
+    fn constrained_schema_rejects_reads_stat_else_zero() {
+        assert_eq!(constrained_schema_rejects(None), 0);
+        let s = ConstrainedExtractionStats {
+            candidates_seen: 5,
+            schema_rejects: 3,
+            contracts_accepted: 2,
+        };
+        assert_eq!(constrained_schema_rejects(Some(&s)), 3);
+    }
+
+    #[test]
+    fn fold_extracted_appends_after_projected_preserving_order() {
+        let mut projected = vec![make_for_voi("proj_a", AutomationConfidence::High)];
+        let extracted = vec![
+            make_for_voi("extr_b", AutomationConfidence::Low),
+            make_for_voi("extr_c", AutomationConfidence::Medium),
+        ];
+        fold_extracted_contracts(&mut projected, &extracted);
+        let ids: Vec<&str> = projected.iter().map(|c| c.contract_id.as_str()).collect();
+        assert_eq!(ids, vec!["proj_a", "extr_b", "extr_c"]);
     }
 }

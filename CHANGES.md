@@ -2,6 +2,24 @@
 
 ## 2026-05-30
 
+### CVE-PROSE-EXTRACTION.2 — typed surface + fold (zero churn until the producer runs)
+- Added `cve::ConstrainedExtractionStats` (candidates_seen / schema_rejects /
+  contracts_accepted) + pure helpers `constrained_schema_rejects` and
+  `fold_extracted_contracts` (3 unit tests).
+- Additive fields: `EvidenceIR.extracted_contracts: Vec<ActorContract>` +
+  `EvidenceIR.constrained_extraction_stats: Option<…>` (serde skip-if-empty/
+  none); `constrained_extraction_stats` carried `EvidenceIR → SemanticIR →
+  IntentIR`.
+- `SemanticIr::build` folds `evidence_ir.extracted_contracts` into
+  `actor_contracts` BEFORE `apply_fusion`/`apply_fidelity_gates`, so extracted
+  contracts flow through the same fusion + fidelity honesty pipeline.
+- Both `validate.rs` `constrained:` blocks now read `schema_rejects` from the
+  carried stat (was hardcoded `0`); `entailment_fails`/`template_hits` still
+  derive from `actor_contracts`.
+- Compiler confirmed no other IR literal sites needed the new field; zero
+  artifact churn (green kg-bench/fixture suite — no drift). Lib `1151 → 1154`;
+  full `scripts/run_ci.sh` green.
+
 ### CVE-PROSE-EXTRACTION.1 — design + tree: wire the live prose→ActorContract extractor
 - User greenlit implementing item (1a) ("wire the live extractor into the R16
   CVE surface") to full exhaustion. Created the `CVE-PROSE-EXTRACTION` tree

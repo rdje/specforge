@@ -3167,11 +3167,13 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         "  fusion: groups_merged={} disagreements={}",
         fusion_merged, fusion_disagreements
     );
-    // R16-CONSTRAINED-VERIFIED-EXTRACTION.6: constrained-extraction
-    // counts derived from `actor_contracts` (the IR is self-describing
-    // — no new field needed). `schema_rejects` is 0 today because no
-    // upstream prose extractor invokes `parse_constrained_contract`;
-    // wiring an adapter call-site counter is a future leaf.
+    // R16-CONSTRAINED-VERIFIED-EXTRACTION.6 + CVE-PROSE-EXTRACTION.2:
+    // `entailment_fails` / `template_hits` are derived from
+    // `actor_contracts` (the IR is self-describing); `schema_rejects`
+    // (candidates whose JSON failed `parse_constrained_contract`) yields
+    // no contract, so it is read from the carried
+    // `constrained_extraction_stats` the `extract-contracts` producer
+    // persisted (0 until that producer runs).
     let cve_entailment_fails = ir
         .actor_contracts
         .iter()
@@ -3188,7 +3190,8 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         .iter()
         .filter(|c| c.contract_id.starts_with("tmpl:"))
         .count();
-    let cve_schema_rejects = 0usize;
+    let cve_schema_rejects =
+        crate::ir::cve::constrained_schema_rejects(ir.constrained_extraction_stats.as_ref());
     println!(
         "  constrained: schema_rejects={} entailment_fails={} template_hits={}",
         cve_schema_rejects, cve_entailment_fails, cve_template_hits
@@ -4665,11 +4668,13 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         "  fusion: groups_merged={} disagreements={}",
         fusion_merged, fusion_disagreements
     );
-    // R16-CONSTRAINED-VERIFIED-EXTRACTION.6: constrained-extraction
-    // counts derived from `actor_contracts` (the IR is self-describing
-    // — no new field needed). `schema_rejects` is 0 today because no
-    // upstream prose extractor invokes `parse_constrained_contract`;
-    // wiring an adapter call-site counter is a future leaf.
+    // R16-CONSTRAINED-VERIFIED-EXTRACTION.6 + CVE-PROSE-EXTRACTION.2:
+    // `entailment_fails` / `template_hits` are derived from
+    // `actor_contracts` (the IR is self-describing); `schema_rejects`
+    // (candidates whose JSON failed `parse_constrained_contract`) yields
+    // no contract, so it is read from the carried
+    // `constrained_extraction_stats` the `extract-contracts` producer
+    // persisted (0 until that producer runs).
     let cve_entailment_fails = ir
         .actor_contracts
         .iter()
@@ -4686,7 +4691,8 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         .iter()
         .filter(|c| c.contract_id.starts_with("tmpl:"))
         .count();
-    let cve_schema_rejects = 0usize;
+    let cve_schema_rejects =
+        crate::ir::cve::constrained_schema_rejects(ir.constrained_extraction_stats.as_ref());
     println!(
         "  constrained: schema_rejects={} entailment_fails={} template_hits={}",
         cve_schema_rejects, cve_entailment_fails, cve_template_hits

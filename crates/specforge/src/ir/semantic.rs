@@ -85,6 +85,11 @@ pub struct SemanticIr {
     /// artifact/fixture change in `.2`).
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub actor_contracts: Vec<crate::ir::contract::ActorContract>,
+    /// CVE-PROSE-EXTRACTION: producer-time constrained-extraction stats
+    /// (carried from `EvidenceIR`). `None` until `extract-contracts` runs;
+    /// the `validate` `constrained:` block reads `schema_rejects` from it.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub constrained_extraction_stats: Option<crate::ir::cve::ConstrainedExtractionStats>,
     /// Protocol-structure KG (R16-KG-PROTOCOL-ONTOLOGY): channels /
     /// protocol phases / transactions / handshake pairs. Additive and
     /// empty until extraction (R16 #3/#4/#6) populates it; serde-skipped
@@ -269,6 +274,16 @@ impl SemanticIr {
             .iter()
             .map(crate::ir::contract::contract_from_temporal_rule)
             .collect::<Vec<_>>();
+        // CVE-PROSE-EXTRACTION.2: fold prose-extracted contracts (from the
+        // `extract-contracts` command — already fails-closed parsed +
+        // entailment-gated when written) into `actor_contracts` BEFORE fusion
+        // / fidelity, so they flow through the same honesty pipeline as the
+        // temporal-rule projection.
+        crate::ir::cve::fold_extracted_contracts(
+            &mut actor_contracts,
+            &evidence_ir.extracted_contracts,
+        );
+        let constrained_extraction_stats = evidence_ir.constrained_extraction_stats.clone();
         // R16-MULTIMODAL-CONTRACT-FUSION.3: cluster `actor_contracts`
         // by `fusion_key` and merge each multi-element cluster
         // deterministically; disagreements route to `Residual` (the
@@ -358,6 +373,7 @@ impl SemanticIr {
                 ..Default::default()
             },
             actor_contracts,
+            constrained_extraction_stats,
             fidelity_findings,
             temporal_conflicts,
             signal_constraints,

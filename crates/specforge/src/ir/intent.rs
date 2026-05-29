@@ -85,6 +85,11 @@ pub struct IntentIr {
     /// empty).
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub actor_contracts: Vec<crate::ir::contract::ActorContract>,
+    /// CVE-PROSE-EXTRACTION: producer-time constrained-extraction stats,
+    /// carried forward from `SemanticIR`. `None` until `extract-contracts`
+    /// runs; the `validate` `constrained:` block reads `schema_rejects` from it.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub constrained_extraction_stats: Option<crate::ir::cve::ConstrainedExtractionStats>,
     /// Protocol-structure KG (R16-KG-PROTOCOL-ONTOLOGY), carried forward
     /// from `SemanticIR`. Additive and empty until extraction populates
     /// it; serde-skipped while empty.
@@ -189,6 +194,7 @@ impl IntentIr {
         let temporal_rules = semantic_ir.temporal_rules.clone();
         // R16-CONTRACT-IR.3: carry the typed ContractIR forward.
         let actor_contracts = semantic_ir.actor_contracts.clone();
+        let constrained_extraction_stats = semantic_ir.constrained_extraction_stats.clone();
         // R16-KG-PROTOCOL-ONTOLOGY: carry the protocol-structure KG
         // forward (empty until extraction populates it).
         let protocol_graph = semantic_ir.protocol_graph.clone();
@@ -259,6 +265,7 @@ impl IntentIr {
             timing_constraints,
             temporal_rules,
             actor_contracts,
+            constrained_extraction_stats,
             protocol_graph,
             fidelity_findings: semantic_ir.fidelity_findings.clone(),
             temporal_conflicts,
