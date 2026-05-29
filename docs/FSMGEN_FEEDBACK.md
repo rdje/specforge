@@ -17,6 +17,20 @@ current adapter is `.isf`.
 
 ## Clarity request (2026-05-29) — actor-local `(types)` ↔ `(enums)` same-name relationship
 
+> **RESOLVED `2026-05-29`** — FSMGen answered in upstream commit `c0b7eaa7`
+> (`ISF-ENUM-TYPE-RELATIONSHIP-CLARITY.2`), in
+> `subs/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md` (§ Actor-Local
+> `(types)`↔`(enums)` Relationship Clarity), locked by
+> `subs/fsmgen/t/1378-isf-enum-type-relationship.t`. Answer: `(enums (NAME …))`
+> is **not** a `(type NAME)` alias; to use an enum name as a width-bearing
+> type, **co-declare** `(types (type NAME (bits k)))` (accepted, required,
+> not a redeclaration conflict; `k = ceil(log2(member_count))` is an accepted
+> choice — the width is not cross-validated); unreferenced
+> `(types)`/`(enums)`/`(constants)` are valid. This **validates SpecForge's
+> existing build** (it already emits both with that `k`) and corrects the
+> earlier "enums-standalone" reading. Ingested by pinning `subs/fsmgen` to
+> `c0b7eaa7` (`ISF-SYMBOL-SURFACE-EMIT.1`); emission is `ISF-SYMBOL-SURFACE-EMIT.2`.
+
 Reviewing the ISF type/enum/aggregate surface at pin `88a7af9c`
 (`ISF_PUBLIC_INTERFACE_CONTRACT.md` actor-local-declarations section ~L1792–1844,
 `docs/book/src/13j-type-enum-aggregate.md`) for a SPECFORGE `.isf`

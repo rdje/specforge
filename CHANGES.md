@@ -164,6 +164,24 @@
 - **`ISF-TXN-GRAMMAR-FIX` tree CLOSED.** Lib `1147 → 1148`; full
   `scripts/run_ci.sh` green.
 
+### ISF-SYMBOL-SURFACE-EMIT.1 — ingest FSMGen's enum-type answer (bump subs/fsmgen → c0b7eaa7)
+- FSMGen **answered** the 2026-05-29 type↔enum clarity request in upstream
+  `c0b7eaa7` (`ISF-ENUM-TYPE-RELATIONSHIP-CLARITY.2`, locked by `t/1378`):
+  `(enums (NAME …))` is **not** a `(type NAME)` alias → to use an enum name
+  as a width-bearing type, **co-declare** `(types (type NAME (bits k)))`
+  (accepted, required, not a conflict; `k = ceil(log2(member_count))` is an
+  accepted choice — width not cross-validated); unreferenced decls are
+  valid. This **validates SpecForge's existing build** (it already emits
+  both, with that `k`) and corrects the earlier "enums-standalone" reading.
+- Bumped `subs/fsmgen` `88a7af9c → c0b7eaa7` (the clean enum-type-clarity
+  tree-done boundary; *not* the moving `origin/main` tip `107ca400`, which
+  is mid an unrelated in-flight loop-`do` tree). Full `scripts/run_ci.sh`
+  green on the new binary (`1148/0`; `isf_output_passes_fsmgen_strict_validation`
+  + temporal e2e still pass). README pin reconciled; the clarity request
+  marked **RESOLVED** in `docs/FSMGEN_FEEDBACK.md`.
+- Promoted the `ISF-SYMBOL-SURFACE-EMIT` tree; emission of the
+  built-but-discarded `(constants)`/`(types)`/`(enums)` surface is `.2`.
+
 ## 2026-05-20
 
 ### BOOK-USER-FRIENDLY-BACKFILL.6 — close tree + cross-reference BOOK-METHOD-DOC Decisions (standard now self-referential)
