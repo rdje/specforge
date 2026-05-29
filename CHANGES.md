@@ -71,6 +71,16 @@
 - Test-only; zero production behavior change. Lib `1138 → 1141`; full
   `scripts/run_ci.sh` green.
 
+### R16-MODULE-HARDENING.3 — backfill fidelity evaluate_figure_conformance glue test
+- Added a `fidelity` test exercising the `evaluate_figure_conformance`
+  trace=Some glue the `.2` audit flagged: Pass (satisfying `Stable`
+  trace), Fail (wobbly trace, with a non-empty diagnostic message), and
+  an obligation the trace primitive cannot evaluate → `NotEvaluated`
+  (never silently Pass). The pre-existing test covered only the
+  trace=None path.
+- Test-only; zero production behavior change. Lib `1141 → 1142`; full
+  `scripts/run_ci.sh` green. Contract + fusion gaps moved to `.4`.
+
 ## 2026-05-20
 
 ### BOOK-USER-FRIENDLY-BACKFILL.6 — close tree + cross-reference BOOK-METHOD-DOC Decisions (standard now self-referential)

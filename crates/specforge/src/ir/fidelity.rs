@@ -694,6 +694,54 @@ mod tests {
     }
 
     #[test]
+    fn figure_conformance_with_trace_returns_pass_fail_and_unsupported() {
+        // The trace=Some glue paths (Pass / Fail / obligation-unsupported
+        // NotEvaluated), distinct from the trace=None path above.
+        let stable_contract = lowerable_contract(
+            "s",
+            Obligation::Stable {
+                signal: "D".into(),
+                during: Window::Within { min: None, max: 3 },
+            },
+            ContractKind::Assume,
+        );
+        let stable_trace = FigureTrace {
+            signals: BTreeMap::from([("D".into(), vec![5, 5, 5, 5])]),
+            ticks: 4,
+        };
+        let pass = evaluate_figure_conformance(&stable_contract, Some(&stable_trace));
+        assert_eq!(pass.gate, FidelityGate::FigureConformance);
+        assert_eq!(pass.status, FindingStatus::Pass);
+
+        let wobbly_trace = FigureTrace {
+            signals: BTreeMap::from([("D".into(), vec![5, 5, 6, 5])]),
+            ticks: 4,
+        };
+        let fail = evaluate_figure_conformance(&stable_contract, Some(&wobbly_trace));
+        assert_eq!(fail.status, FindingStatus::Fail);
+        assert!(
+            !fail.message.is_empty(),
+            "a Fail finding must carry a diagnostic message"
+        );
+
+        // An obligation the trace primitive does not support must stay
+        // NotEvaluated (never silently Pass), even with a trace present.
+        let observe_contract = lowerable_contract(
+            "obs",
+            Obligation::Observe { signal: "X".into() },
+            ContractKind::Guarantee,
+        );
+        let any_trace = FigureTrace {
+            signals: BTreeMap::from([("X".into(), vec![1, 1])]),
+            ticks: 2,
+        };
+        assert_eq!(
+            evaluate_figure_conformance(&observe_contract, Some(&any_trace)).status,
+            FindingStatus::NotEvaluated,
+        );
+    }
+
+    #[test]
     fn figure_trace_drive_pass_fail_not_evaluated() {
         let drive = lowerable_contract(
             "d",

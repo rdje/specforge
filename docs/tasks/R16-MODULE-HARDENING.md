@@ -72,16 +72,25 @@ later.
   Commit: `see Commit Log`
 
 - ID: `R16-MODULE-HARDENING.3`
+  Status: `done`
+  Goal: >
+    Backfill the fidelity gap from the `.2` audit:
+    `evaluate_figure_conformance` trace=Some Pass / Fail / obligation-
+    unsupported (NotEvaluated) glue (only the trace=None path was tested).
+  Acceptance: `fidelity test covers the three trace=Some paths through evaluate_figure_conformance (Pass; Fail-with-message; unsupported obligation → NotEvaluated, never silently Pass); scripts/run_ci.sh green.`
+  Verification: `passed — see Verification Log`
+  Commit: `see Commit Log`
+
+- ID: `R16-MODULE-HARDENING.4`
   Status: `pending`
   Goal: >
-    Backfill the deeper-construction genuine gaps from the `.2` audit:
-    (a) fidelity `evaluate_figure_conformance` trace=Some Pass + Fail
-    paths; (b) contract `contract_from_temporal_rule` untested consequent
-    arms (windowed non-HandshakeComplete → empty-signal `Observe`;
-    non-windowed `ActorMaintainsSignalStable` / `ActorSamplesSignal` /
-    `SignalSampled`); (c) fusion guard_candidates dedup on merge +
-    `apply_fusion` no-multi-cluster early-exit pass-through.
-  Acceptance: `Each listed gap gets a direct test (or is recorded with evidence as already indirectly locked); scripts/run_ci.sh green; then close the tree (all 7 R16 modules assessed + gaps closed/recorded).`
+    Backfill the remaining deeper-construction gaps from the `.2` audit,
+    then close the tree: (a) contract `contract_from_temporal_rule`
+    untested consequent arms (windowed non-HandshakeComplete →
+    empty-signal `Observe`; non-windowed `ActorMaintainsSignalStable` /
+    `ActorSamplesSignal` / `SignalSampled`); (b) fusion guard_candidates
+    dedup on merge + `apply_fusion` no-multi-cluster early-exit.
+  Acceptance: `Each gap gets a direct test (or is recorded with evidence as already indirectly locked); scripts/run_ci.sh green; then close the tree (all 7 R16 modules assessed + gaps closed/recorded).`
   Verification: `pending`
   Commit: `pending`
 
@@ -91,7 +100,8 @@ later.
 | --- | --- | --- | --- |
 | 1 | `R16-MODULE-HARDENING.1` | `done` | `figure_region.rs` was the only R16 module with 0 direct tests |
 | 2 | `R16-MODULE-HARDENING.2` | `done` | audited all 6 remaining modules; `cve` well-covered; backfilled the 3 clean gaps |
-| → | `R16-MODULE-HARDENING.3` | `pending` | **Real frontier** — backfill the deeper-construction gaps (fidelity Pass/Fail; contract consequent arms; fusion dedup/early-exit), then close the tree |
+| 3 | `R16-MODULE-HARDENING.3` | `done` | fidelity `evaluate_figure_conformance` Pass/Fail/unsupported glue |
+| → | `R16-MODULE-HARDENING.4` | `pending` | **Real frontier** — contract consequent arms + fusion dedup/early-exit, then close the tree |
 
 ## Decisions
 
@@ -146,16 +156,21 @@ later.
 | --- | --- | --- | --- |
 | `2026-05-29` | `R16-MODULE-HARDENING.1` | 10 new `figure_region.rs` unit tests (lib `1128 → 1138`); full `scripts/run_ci.sh` (fmt / clippy-`D` / test-`D` / rustdoc / mdBook) | `passed` |
 | `2026-05-29` | `R16-MODULE-HARDENING.2` | coverage audit of 6 modules + 3 backfill tests (waveform `capped_confidence` + single-tick span; protocol_graph `phase()` None); lib `1138 → 1141`; full `scripts/run_ci.sh` | `passed` |
+| `2026-05-29` | `R16-MODULE-HARDENING.3` | 1 fidelity test (`evaluate_figure_conformance` Pass / Fail / unsupported); lib `1141 → 1142`; full `scripts/run_ci.sh` | `passed` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `R16-MODULE-HARDENING.1` | `R16-MODULE-HARDENING.1 — backfill figure_region.rs unit tests (0 -> 10); create hardening tree` | tree created + first leaf; test-only; zero production behavior change |
-| `R16-MODULE-HARDENING.2` | `R16-MODULE-HARDENING.2 — audit remaining 6 R16 modules + backfill clean gaps (3 tests)` | test-only; cve well-covered; deeper gaps → `.3` |
+| `R16-MODULE-HARDENING.2` | `R16-MODULE-HARDENING.2 — audit remaining 6 R16 modules + backfill clean gaps (3 tests)` | test-only; cve well-covered; deeper gaps → `.3`/`.4` |
+| `R16-MODULE-HARDENING.3` | `R16-MODULE-HARDENING.3 — backfill fidelity evaluate_figure_conformance Pass/Fail glue test` | test-only; contract + fusion gaps → `.4` |
 
 ## Changelog
 
+- `2026-05-29`: `.3` — backfilled the fidelity gap
+  (`evaluate_figure_conformance` trace=Some Pass / Fail / unsupported-
+  NotEvaluated glue); contract + fusion gaps moved to `.4`.
 - `2026-05-29`: `.2` — audited the 6 remaining R16 modules; backfilled
   3 clean gaps (waveform `capped_confidence`, single-tick `ValueSpan`;
   protocol_graph `phase()` None); recorded `cve.rs` well-covered and the
