@@ -5,6 +5,7 @@ pub mod corpus_kb;
 pub mod doctor;
 pub mod enrich;
 pub mod evidence;
+pub mod extract_contracts;
 pub mod ingest;
 pub mod inspect;
 pub mod intent;

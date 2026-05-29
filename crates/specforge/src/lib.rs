@@ -27,5 +27,6 @@ pub fn run(cli: Cli) -> Result<()> {
         Commands::CorpusKb(args) => commands::corpus_kb::run(args),
         Commands::Clean(args) => commands::clean::run(args),
         Commands::NlpEnrich(args) => commands::nlp_enrich::run(args),
+        Commands::ExtractContracts(args) => commands::extract_contracts::run(args),
     }
 }

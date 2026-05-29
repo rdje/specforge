@@ -2,6 +2,23 @@
 
 ## 2026-05-30
 
+### CVE-PROSE-EXTRACTION.3 — producer + `extract-contracts` command (Qwen via Ollama)
+- New `commands/extract_contracts.rs` + `ExtractContractsArgs` /
+  `Commands::ExtractContracts` / `lib.rs` dispatch / `commands/mod.rs`.
+- For each `NormativeStatement` prose sentence it prompts the provider with
+  `actor_contract_json_schema_summary()`, then classifies the response via a
+  PURE `classify_response`: a `none` sentinel → skip; invalid/missing-required
+  JSON → `parse_constrained_contract` `Err` → `schema_reject` (no contract);
+  valid JSON → `apply_entailment_to_contract` (signals present → `Lowerable`;
+  absent → entailment `Residual`). Provenance is overridden to the real
+  statement and `contract_id` namespaced `cve:<statement_id>`. Survivors +
+  `ConstrainedExtractionStats` are written onto the EvidenceIR.
+- Transport (curl + `SPECFORGE_VLM_HELPER` hook + `build_text_chat_request` /
+  `extract_chat_content`) mirrors `nlp_enrich`; the duplication is flagged
+  in-module as a DRY follow-up (kept zero-risk to the in-use `nlp_enrich`).
+- 5 unit tests cover the 4 outcome paths + `strip_code_fences`. Lib
+  `1154 → 1159`; full `scripts/run_ci.sh` green.
+
 ### CVE-PROSE-EXTRACTION.2 — typed surface + fold (zero churn until the producer runs)
 - Added `cve::ConstrainedExtractionStats` (candidates_seen / schema_rejects /
   contracts_accepted) + pure helpers `constrained_schema_rejects` and

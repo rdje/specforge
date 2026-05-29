@@ -51,6 +51,8 @@ pub enum Commands {
     Clean(CleanArgs),
     /// Enrich an EvidenceIR artifact with LLM-extracted NLP Level 3 constraints
     NlpEnrich(NlpEnrichArgs),
+    /// Extract typed ActorContracts from prose via the constrained-verified extractor (Qwen)
+    ExtractContracts(ExtractContractsArgs),
 }
 
 #[derive(Debug, Args)]
@@ -181,6 +183,24 @@ pub struct NlpEnrichArgs {
     /// in the EvidenceIR. Pass an empty string to disable grounding entirely.
     #[arg(long)]
     pub grounding_signals: Option<String>,
+}
+
+#[derive(Debug, Args)]
+pub struct ExtractContractsArgs {
+    /// Path to an EvidenceIR JSON artifact to enrich with extracted ActorContracts
+    pub evidence_ir: std::path::PathBuf,
+    /// LLM provider (default ollama; same providers as enrich/nlp-enrich)
+    #[arg(long, value_enum, default_value = "ollama")]
+    pub provider: VlmProviderArg,
+    /// Model name override (default qwen2.5vl:7b for ollama/lmstudio, gpt-4o for openai)
+    #[arg(long)]
+    pub model: Option<String>,
+    /// Show candidate statements without making LLM calls
+    #[arg(long)]
+    pub dry_run: bool,
+    /// Maximum NormativeStatement sentences to send to the LLM (0 = all)
+    #[arg(long, default_value = "0")]
+    pub max_statements: usize,
 }
 
 #[derive(Debug, Args)]
