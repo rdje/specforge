@@ -120,6 +120,22 @@
   residual-honesty.
 - **`FSMGEN-REFRESH-INTEGRATE` tree CLOSED.** Docs-only.
 
+### FSMGen feedback — clarity request on actor-local (types) ↔ (enums) same-name relationship
+- Per user direction (the FSMGen contract/book/handoff are the authority;
+  parser-acceptance ≠ support — don't reverse-engineer from the binary):
+  the ISF type/enum/aggregate docs clearly specify the grammar and that
+  actor-local `(types)`/`(enums)`/`(constants)` are a shipped public
+  surface, but are **silent on the type↔enum same-name relationship**
+  (does `(enums NAME …)` establish type `NAME`? is a co-declared
+  `(type NAME)` a conflict / harmless redundancy / required?) — exactly the
+  case SpecForge's symbol build would hit (it derives both a member list
+  and a backing bit-width per enum). Filed a documentation-clarity request
+  in `docs/FSMGEN_FEEDBACK.md` instead of reverse-engineering it from the
+  binary.
+- Consequence: the `ISF-SYMBOL-SURFACE-EMIT` follow-up's enum/type emission
+  is gated on FSMGEN's clarity (residual-honesty); SpecForge's current
+  reading is *enums-standalone*. Docs-only.
+
 ## 2026-05-20
 
 ### BOOK-USER-FRIENDLY-BACKFILL.6 — close tree + cross-reference BOOK-METHOD-DOC Decisions (standard now self-referential)

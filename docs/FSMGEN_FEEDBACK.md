@@ -15,6 +15,47 @@ semantic JSON, and reset/clock/contract metadata as they apply to `.isf`.
 Wherever this document says "`.fsm` adapter", read it as historical; the
 current adapter is `.isf`.
 
+## Clarity request (2026-05-29) — actor-local `(types)` ↔ `(enums)` same-name relationship
+
+Reviewing the ISF type/enum/aggregate surface at pin `88a7af9c`
+(`ISF_PUBLIC_INTERFACE_CONTRACT.md` actor-local-declarations section ~L1792–1844,
+`docs/book/src/13j-type-enum-aggregate.md`) for a SPECFORGE `.isf`
+symbol-emission feature, one rule is not stated explicitly and would help
+downstream emitters lower a recovered symbol inventory deterministically:
+
+- **Does `(enums (NAME (M0 0) (M1 1)))` by itself establish a type named
+  `NAME`** — i.e. is `NAME` then usable as `(type NAME)` on a width-bearing
+  interface port / transaction port / storage var? `13j` always declares
+  enums standalone (no co-declared `(type NAME)`), and the contract says
+  enums are "preserved as `+enums`", but neither states whether the enum
+  name is also a scalar type alias.
+- **Is co-declaring `(types (type NAME (bits k)))` AND `(enums (NAME ...))`
+  for the same `NAME`** a redeclaration conflict, a harmless redundancy, or
+  required? The contract's fail-closed list (unknown aliases /
+  `(width)`+`(type)` conflicts / aggregate-outside-storage / …) and the book
+  do not address same-name `(type)`+`(enums)`, and no duplicate/redeclaration
+  rule is stated for actor-local declarations.
+- (Secondary) It would also help to state explicitly that actor-local
+  `(types)` / `(enums)` / `(constants)` declarations need **not** be
+  referenced to be contract-valid — currently only derivable from the
+  fail-closed list's silence on unreferenced declarations.
+
+Why it matters to SPECFORGE: when SPECFORGE recovers an enum-like symbol it
+derives both a member list and a backing bit-width
+(`ceil(log2(member_count))`). Without a stated rule an emitter cannot know
+whether to emit `(enums (NAME ...))` alone or also a backing
+`(type NAME (bits k))` without risking a redeclaration. SPECFORGE's current
+reading (**pending FSMGEN confirmation**) is *enums-standalone*: emit
+`(enums (NAME ...))` only, reserving `(types (type NAME ...))` for non-enum
+scalar aliases. A one-line statement in
+`ISF_PUBLIC_INTERFACE_CONTRACT.md` / `13j` confirming the type↔enum name
+relationship + the duplicate-declaration rule would resolve it.
+
+This is a **documentation-clarity request, not a bug report**: no SPECFORGE
+`.isf` is broken (SPECFORGE does not yet emit the symbol surface — that work
+is deliberately gated on this clarity, per the residual-honesty doctrine and
+the "parser-acceptance ≠ support" principle).
+
 ## Purpose
 
 This file is SPECFORGE's tracked feedback for FSMGEN.
