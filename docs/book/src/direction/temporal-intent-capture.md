@@ -1849,3 +1849,47 @@ before the evidence to solve it exists.
 
 *Authoritative tracking:*
 `docs/tasks/R16-CONSTRAINED-VERIFIED-EXTRACTION.md`.
+
+## R16-MODULE-HARDENING — how the R16 modules are unit-test hardened
+
+The six R16 sub-trees above each landed their typed module under the
+standard CI bar. `R16-MODULE-HARDENING` is a follow-on quality tree that
+brings those seven modules — `contract`, `protocol_graph`, `fidelity`,
+`fusion`, `waveform`, `figure_region`, `cve` — to the same *direct*
+unit-test signoff bar the rest of the codebase holds (the discipline the
+`R6-*-HARDENING` trees applied to the mature modules).
+
+**Why bother, when the surface is dormant?** These modules carry no live
+extractor today, but they are load-bearing the moment upstream extraction
+lands. A silent bug in, say, `figure_region::inferred_ticks` (an off-by-one
+on tick counts) or `contract_from_temporal_rule` (a mis-mapped consequent)
+would quietly corrupt the typed contracts everything downstream depends on.
+Locking the behavior now, while it is small and readable, is far cheaper
+than debugging it through a full pipeline later.
+
+**How it was done — audit, then backfill only genuine gaps.** Each module
+was read against its tests to find *real* untested behavior — branching,
+precedence, edge cases, the serde wire contract — never padding for trivial
+getters. The gaps found were closed:
+
+- `figure_region` (the only module with **0** direct tests) → tests locking
+  `inferred_ticks` precedence/derivation/saturation and the enum-tagged
+  serde shape.
+- `waveform` → the `capped_confidence` never-promote-to-`High` cap and the
+  single-tick `ValueSpan` skip.
+- `protocol_graph` → the `phase()` unknown-id `None` path.
+- `fidelity` → the `evaluate_figure_conformance` trace-present Pass / Fail /
+  obligation-unsupported (`NotEvaluated`, never silently `Pass`) glue.
+- `contract` → the windowed-no-consequent empty-`Observe` defensive path,
+  the actor-grounded `ActorMaintainsSignalStable` stability arm, and the
+  `ActorSamplesSignal` / `SignalSampled` Observe-as-`Assume` arms.
+- `fusion` → the merge guard-candidate union/dedup and the `apply_fusion`
+  distinct-key early-exit.
+- `cve` was already comprehensively covered and is recorded as such.
+
+**How it is verified.** Every leaf ran the full `scripts/run_ci.sh` gate
+(fmt / clippy-`-D` / tests-`-D` / rustdoc / mdBook). The R16 module test
+count rose from 67 to 86 across the tree, and the whole lib suite stayed
+green throughout.
+
+*Authoritative tracking:* `docs/tasks/R16-MODULE-HARDENING.md`.

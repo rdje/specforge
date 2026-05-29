@@ -136,6 +136,19 @@
   is gated on FSMGEN's clarity (residual-honesty); SpecForge's current
   reading is *enums-standalone*. Docs-only.
 
+### R16-MODULE-HARDENING.4 — backfill contract consequent arms + fusion gaps; close tree
+- Backfilled the last audited gaps: `contract` (windowed-no-consequent
+  empty-`Observe` defensive path; non-windowed `ActorMaintainsSignalStable`
+  → Stable{Between}+Residual; `ActorSamplesSignal`/`SignalSampled` →
+  Observe+Residual+`Assume`) and `fusion` (merge guard-candidate
+  union/dedup; `apply_fusion` distinct-key early-exit).
+- **`R16-MODULE-HARDENING` tree CLOSED** — all 7 R16 IR modules are now at
+  the direct unit-test signoff bar; R16 module tests `67 → 86`. Added the
+  `BOOK-METHOD-DOC` close-rule subsection to
+  `docs/book/src/direction/temporal-intent-capture.md`.
+- Test-only; zero production behavior change. Lib `1142 → 1147`; full
+  `scripts/run_ci.sh` green (incl. mdBook).
+
 ## 2026-05-20
 
 ### BOOK-USER-FRIENDLY-BACKFILL.6 — close tree + cross-reference BOOK-METHOD-DOC Decisions (standard now self-referential)

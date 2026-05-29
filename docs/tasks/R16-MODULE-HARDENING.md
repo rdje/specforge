@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `R16-MODULE-HARDENING`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: `R16`
 - Created: `2026-05-29`
 - Last updated: `2026-05-29`
@@ -47,9 +47,9 @@ later.
 ## Task Tree
 
 - ID: `R16-MODULE-HARDENING`
-  Status: `active`
+  Status: `done`
   Goal: unit-test signoff hardening across the 7 R16 IR modules
-  Children: `R16-MODULE-HARDENING.1`, …
+  Children: `R16-MODULE-HARDENING.1`, `.2`, `.3`, `.4`
 
 - ID: `R16-MODULE-HARDENING.1`
   Status: `done`
@@ -91,17 +91,30 @@ later.
     `ActorSamplesSignal` / `SignalSampled`); (b) fusion guard_candidates
     dedup on merge + `apply_fusion` no-multi-cluster early-exit.
   Acceptance: `Each gap gets a direct test (or is recorded with evidence as already indirectly locked); scripts/run_ci.sh green; then close the tree (all 7 R16 modules assessed + gaps closed/recorded).`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: >
+    passed (`2026-05-29`) — 5 tests added: contract (windowed-no-consequent
+    empty-`Observe` defensive path; non-windowed `ActorMaintainsSignalStable`
+    → Stable{Between}+Residual; `ActorSamplesSignal`/`SignalSampled` →
+    Observe+Residual+Assume) + fusion (merge guard-candidate union/dedup;
+    `apply_fusion` distinct-key early-exit). All 7 R16 modules now assessed +
+    genuine gaps closed (`cve` recorded already-covered). Lib `1142 → 1147`;
+    R16 module tests `67 → 86`. Full `scripts/run_ci.sh` green. Tree CLOSED;
+    book method-doc subsection added to `direction/temporal-intent-capture.md`
+    per the `BOOK-METHOD-DOC` close-rule.
+  Commit: `see Commit Log`
 
 ## Current Frontier
+
+**Tree closed `2026-05-29`** — all four leaves `done`; all 7 R16 modules
+assessed and every genuine coverage gap closed (`cve` recorded
+already-covered). No eligible leaf remains.
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `R16-MODULE-HARDENING.1` | `done` | `figure_region.rs` was the only R16 module with 0 direct tests |
-| 2 | `R16-MODULE-HARDENING.2` | `done` | audited all 6 remaining modules; `cve` well-covered; backfilled the 3 clean gaps |
-| 3 | `R16-MODULE-HARDENING.3` | `done` | fidelity `evaluate_figure_conformance` Pass/Fail/unsupported glue |
-| → | `R16-MODULE-HARDENING.4` | `pending` | **Real frontier** — contract consequent arms + fusion dedup/early-exit, then close the tree |
+| 2 | `R16-MODULE-HARDENING.2` | `done` | audited 6 remaining modules; `cve` well-covered; 3 clean gaps |
+| 3 | `R16-MODULE-HARDENING.3` | `done` | fidelity `evaluate_figure_conformance` glue |
+| 4 | `R16-MODULE-HARDENING.4` | `done` | contract consequent arms + fusion gaps; tree CLOSED |
 
 ## Decisions
 
@@ -157,6 +170,7 @@ later.
 | `2026-05-29` | `R16-MODULE-HARDENING.1` | 10 new `figure_region.rs` unit tests (lib `1128 → 1138`); full `scripts/run_ci.sh` (fmt / clippy-`D` / test-`D` / rustdoc / mdBook) | `passed` |
 | `2026-05-29` | `R16-MODULE-HARDENING.2` | coverage audit of 6 modules + 3 backfill tests (waveform `capped_confidence` + single-tick span; protocol_graph `phase()` None); lib `1138 → 1141`; full `scripts/run_ci.sh` | `passed` |
 | `2026-05-29` | `R16-MODULE-HARDENING.3` | 1 fidelity test (`evaluate_figure_conformance` Pass / Fail / unsupported); lib `1141 → 1142`; full `scripts/run_ci.sh` | `passed` |
+| `2026-05-29` | `R16-MODULE-HARDENING.4` | 5 tests (contract ×3, fusion ×2); lib `1142 → 1147`; R16 module tests `67 → 86`; book method-doc subsection added; full `scripts/run_ci.sh` (incl. mdBook); **tree CLOSED** | `passed` |
 
 ## Commit Log
 
@@ -165,9 +179,17 @@ later.
 | `R16-MODULE-HARDENING.1` | `R16-MODULE-HARDENING.1 — backfill figure_region.rs unit tests (0 -> 10); create hardening tree` | tree created + first leaf; test-only; zero production behavior change |
 | `R16-MODULE-HARDENING.2` | `R16-MODULE-HARDENING.2 — audit remaining 6 R16 modules + backfill clean gaps (3 tests)` | test-only; cve well-covered; deeper gaps → `.3`/`.4` |
 | `R16-MODULE-HARDENING.3` | `R16-MODULE-HARDENING.3 — backfill fidelity evaluate_figure_conformance Pass/Fail glue test` | test-only; contract + fusion gaps → `.4` |
+| `R16-MODULE-HARDENING.4` | `R16-MODULE-HARDENING.4 — backfill contract consequent arms + fusion gaps; close tree (book method-doc)` | test-only + BOOK-METHOD-DOC close-rule subsection; tree CLOSED |
 
 ## Changelog
 
+- `2026-05-29`: `.4` — backfilled contract consequent arms
+  (windowed-no-consequent empty-`Observe`; `ActorMaintainsSignalStable`;
+  `ActorSamplesSignal` / `SignalSampled`) + fusion gaps (guard-candidate
+  union/dedup; `apply_fusion` distinct-key early-exit); R16 module tests
+  `67 → 86`; added the `BOOK-METHOD-DOC` close-rule subsection to
+  `direction/temporal-intent-capture.md`; **tree CLOSED** (all 7 R16
+  modules at the unit-test signoff bar).
 - `2026-05-29`: `.3` — backfilled the fidelity gap
   (`evaluate_figure_conformance` trace=Some Pass / Fail / unsupported-
   NotEvaluated glue); contract + fusion gaps moved to `.4`.

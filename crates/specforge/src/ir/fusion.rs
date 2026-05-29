@@ -604,4 +604,84 @@ mod tests {
         apply_fusion(&mut cs);
         assert_eq!(cs, before);
     }
+
+    #[test]
+    fn merge_cluster_unions_and_dedups_guard_candidates() {
+        // Agreement merge unions guard_candidates across the cluster while
+        // de-duplicating shared candidates (no double-count).
+        let shared = Condition::Eq {
+            signal: "g_shared".into(),
+            value: "1".into(),
+        };
+        let only1 = Condition::Eq {
+            signal: "g_only1".into(),
+            value: "1".into(),
+        };
+        let only2 = Condition::Eq {
+            signal: "g_only2".into(),
+            value: "1".into(),
+        };
+        let mut c1 = contract(
+            "c1",
+            Some("A"),
+            Obligation::Drive {
+                signal: "Q".into(),
+                value: "1".into(),
+            },
+            ContractKind::Guarantee,
+            "p1",
+            EvidenceModality::Prose,
+            "s1",
+            LoweringDisposition::Lowerable,
+            AutomationConfidence::Medium,
+        );
+        c1.guard_candidates = vec![shared.clone(), only1.clone()];
+        let mut c2 = contract(
+            "c2",
+            Some("A"),
+            Obligation::Drive {
+                signal: "Q".into(),
+                value: "1".into(),
+            },
+            ContractKind::Guarantee,
+            "p2",
+            EvidenceModality::Prose,
+            "s2",
+            LoweringDisposition::Lowerable,
+            AutomationConfidence::Medium,
+        );
+        c2.guard_candidates = vec![shared.clone(), only2.clone()];
+        let merged = merge_cluster(&[c1, c2]);
+        // Union, deduped, order-preserved: `shared` appears exactly once.
+        assert_eq!(merged.guard_candidates, vec![shared, only1, only2]);
+    }
+
+    #[test]
+    fn apply_fusion_leaves_distinct_key_contracts_unchanged() {
+        // No cluster of size > 1 (all distinct fusion keys) -> the has_multi
+        // early-exit returns the input untouched (no "fused:" merge).
+        let mk = |id: &str, actor: &str, sig: &str| {
+            contract(
+                id,
+                Some(actor),
+                Obligation::Drive {
+                    signal: sig.into(),
+                    value: "1".into(),
+                },
+                ContractKind::Guarantee,
+                "p",
+                EvidenceModality::Prose,
+                "s",
+                LoweringDisposition::Lowerable,
+                AutomationConfidence::Medium,
+            )
+        };
+        let c1 = mk("c1", "A", "P");
+        let c2 = mk("c2", "B", "Q");
+        let c3 = mk("c3", "C", "R");
+        let mut v = vec![c1.clone(), c2.clone(), c3.clone()];
+        apply_fusion(&mut v);
+        assert_eq!(v, vec![c1, c2, c3]);
+        assert!(v.iter().all(|c| !c.contract_id.starts_with("fused:")));
+    }
 }

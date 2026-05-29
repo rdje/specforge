@@ -722,4 +722,84 @@ mod tests {
         let back: ActorContract = serde_json::from_str(&json).expect("deserialize");
         assert_eq!(c, back);
     }
+
+    #[test]
+    fn windowed_rule_without_consequents_is_empty_observe_residual() {
+        // Windowed but no signal-bearing consequent (consequent_signal == None)
+        // and first != HandshakeComplete -> Observe{signal: ""} + Residual:
+        // a defensive path that must never fabricate a bounded_eventually.
+        let c = contract_from_temporal_rule(&rule(
+            vec![],
+            vec![],
+            Some(CycleWindowRecord {
+                min_cycles: None,
+                max_cycles: Some(2),
+            }),
+        ));
+        assert_eq!(
+            c.obligation,
+            Obligation::Observe {
+                signal: String::new()
+            }
+        );
+        assert!(matches!(c.lowering, LoweringDisposition::Residual { .. }));
+        assert_eq!(c.kind, ContractKind::Guarantee);
+    }
+
+    #[test]
+    fn non_windowed_actor_maintains_stable_is_stable_between_residual() {
+        // ActorMaintainsSignalStable shares the arm with SignalStable, so the
+        // actor-grounded variant must also lower to Stable{Between} + Residual.
+        let c = contract_from_temporal_rule(&rule(
+            vec![TemporalPredicateRecord::ActorMaintainsSignalStable {
+                actor_name: "Manager".to_string(),
+                signal_name: "AWADDR".to_string(),
+                from_phase: TickPhase::PreTick,
+                to_phase: TickPhase::PostTick,
+            }],
+            vec![],
+            None,
+        ));
+        match (&c.obligation, &c.lowering) {
+            (
+                Obligation::Stable {
+                    signal,
+                    during: Window::Between { .. },
+                },
+                LoweringDisposition::Residual { reason },
+            ) if signal == "AWADDR" => {
+                assert!(reason.contains("stability"), "{reason}");
+            }
+            other => panic!("unexpected obligation/lowering: {other:?}"),
+        }
+        assert_eq!(c.kind, ContractKind::Guarantee);
+    }
+
+    #[test]
+    fn non_windowed_sample_predicates_are_observe_residual_assume() {
+        // ActorSamplesSignal / SignalSampled name a signal but carry no
+        // value/window -> Observe{signal} + Residual, and are ContractKind::Assume
+        // (a sampled input is an assumption on the boundary, not a guarantee).
+        for cons in [
+            TemporalPredicateRecord::ActorSamplesSignal {
+                actor_name: "Subordinate".to_string(),
+                signal_name: "RDATA".to_string(),
+                phase: TickPhase::PostTick,
+            },
+            TemporalPredicateRecord::SignalSampled {
+                signal_name: "RDATA".to_string(),
+                phase: TickPhase::PostTick,
+            },
+        ] {
+            let c = contract_from_temporal_rule(&rule(vec![cons], vec![], None));
+            assert_eq!(
+                c.obligation,
+                Obligation::Observe {
+                    signal: "RDATA".to_string()
+                }
+            );
+            assert!(matches!(c.lowering, LoweringDisposition::Residual { .. }));
+            assert_eq!(c.kind, ContractKind::Assume);
+        }
+    }
 }
