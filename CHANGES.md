@@ -41,6 +41,21 @@
   umbrella exhausts the active task-tree frontier.
 - Docs-only; lib `1128/0`; full `scripts/run_ci.sh` green.
 
+### R16-MODULE-HARDENING.1 — backfill figure_region.rs unit tests (0 → 10); create hardening tree
+- Created task tree `R16-MODULE-HARDENING` (lane R16) to bring the seven
+  R16 IR modules to the same unit-test signoff bar as the rest of the
+  codebase (parallels the `R6-*-HARDENING` trees). `docs/TASK_TREE.md`
+  indexed.
+- `.1`: added a `#[cfg(test)]` module to `ir/figure_region.rs` (was the
+  only R16 module with 0 direct tests) — 10 tests locking
+  `inferred_ticks()` (explicit-`tick_count` precedence; `max+1`
+  derivation from lane samples vs `Value` annotations; `Delay` / `Label`
+  / `Unknown` annotations contribute nothing; `saturating_add` overflow
+  safety; empty → 0), the `LaneLevel` `kind`/`value` tagged serde shape,
+  the skip-if-`None` discipline, and a full `FigureRegion` round-trip.
+- Test-only; zero production behavior change. Lib `1128 → 1138`; full
+  `scripts/run_ci.sh` green.
+
 ## 2026-05-20
 
 ### BOOK-USER-FRIENDLY-BACKFILL.6 — close tree + cross-reference BOOK-METHOD-DOC Decisions (standard now self-referential)
