@@ -469,8 +469,10 @@ impl IsfIr {
                 child_transaction,
                 instance,
             } => {
+                // FSMGen ISF grammar (book 13f-composition.md): the `as`
+                // keyword is mandatory — `(spawn child as name)`.
                 lines.push(format!(
-                    "{}(spawn {} {})",
+                    "{}(spawn {} as {})",
                     indent, child_transaction, instance
                 ));
             }
@@ -481,26 +483,26 @@ impl IsfIr {
                 lines.push(format!("{}(update {} {})", indent, target, expr));
             }
             IsfTxnStep::ShiftLeft { reg, bit } => {
-                lines.push(format!("{}(shift-left {} {})", indent, reg, bit));
+                lines.push(format!("{}(shift_left {} {})", indent, reg, bit));
             }
             IsfTxnStep::ShiftRight { reg, bit, width } => {
                 if let Some(w) = width {
                     lines.push(format!(
-                        "{}(shift-right {} {} (width {}))",
+                        "{}(shift_right {} {} (width {}))",
                         indent, reg, bit, w
                     ));
                 } else {
-                    lines.push(format!("{}(shift-right {} {})", indent, reg, bit));
+                    lines.push(format!("{}(shift_right {} {})", indent, reg, bit));
                 }
             }
             IsfTxnStep::Complete { port } => {
                 lines.push(format!("{}(complete {})", indent, port));
             }
             IsfTxnStep::AwaitAll { done_port } => {
-                lines.push(format!("{}(await-all {})", indent, done_port));
+                lines.push(format!("{}(await_all {})", indent, done_port));
             }
             IsfTxnStep::AwaitAny { done_port } => {
-                lines.push(format!("{}(await-any {})", indent, done_port));
+                lines.push(format!("{}(await_any {})", indent, done_port));
             }
             IsfTxnStep::Latency { min, max } => {
                 lines.push(format!("{}(latency (min {}) (max {}))", indent, min, max));
@@ -2507,5 +2509,63 @@ mod tests {
             "FSMGen strict rejected the `(stage …)` ready_valid_barrier \
              (expected accepted at pin 9bfb9a20)"
         );
+    }
+
+    #[test]
+    fn transaction_steps_use_fsmgen_contract_grammar() {
+        // FSMGen ISF grammar (book 13e-data-manipulation / 13f-composition):
+        // shift_left / shift_right / await_all / await_any (underscore) and
+        // `(spawn child as name)` — NOT the old hyphen / missing-`as` forms.
+        let mut isf = minimal_isf();
+        isf.transactions.push(IsfTransaction {
+            name: "t_grammar".into(),
+            on_trigger: None,
+            on_steps: vec![],
+            steps: vec![
+                IsfTxnStep::ShiftLeft {
+                    reg: "rdata".into(),
+                    bit: "sda".into(),
+                },
+                IsfTxnStep::ShiftRight {
+                    reg: "rdata".into(),
+                    bit: "sda".into(),
+                    width: Some(8),
+                },
+                IsfTxnStep::ShiftRight {
+                    reg: "rdata".into(),
+                    bit: "sda".into(),
+                    width: None,
+                },
+                IsfTxnStep::AwaitAll {
+                    done_port: "done".into(),
+                },
+                IsfTxnStep::AwaitAny {
+                    done_port: "done".into(),
+                },
+                IsfTxnStep::Spawn {
+                    child_transaction: "worker".into(),
+                    instance: "w0".into(),
+                },
+            ],
+            complete: "done".into(),
+            latency_min: None,
+            latency_max: None,
+            contracts: vec![],
+            stages: vec![],
+        });
+        let out = isf.render();
+        // Contract-exact forms present:
+        assert!(out.contains("(shift_left rdata sda)"), "{out}");
+        assert!(out.contains("(shift_right rdata sda (width 8))"), "{out}");
+        assert!(out.contains("(shift_right rdata sda)"), "{out}");
+        assert!(out.contains("(await_all done)"), "{out}");
+        assert!(out.contains("(await_any done)"), "{out}");
+        assert!(out.contains("(spawn worker as w0)"), "{out}");
+        // Old buggy hyphen / missing-`as` forms must be gone:
+        assert!(!out.contains("shift-left"), "{out}");
+        assert!(!out.contains("shift-right"), "{out}");
+        assert!(!out.contains("await-all"), "{out}");
+        assert!(!out.contains("await-any"), "{out}");
+        assert!(!out.contains("(spawn worker w0)"), "{out}");
     }
 }

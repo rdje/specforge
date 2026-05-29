@@ -149,6 +149,21 @@
 - Test-only; zero production behavior change. Lib `1142 → 1147`; full
   `scripts/run_ci.sh` green (incl. mdBook).
 
+### ISF-TXN-GRAMMAR-FIX.1 — emit FSMGen-contract-exact transaction-step grammar
+- Fixed six `isf_ir.rs::render_txn_step` sites emitting grammar the FSMGen
+  ISF book/contract does not use (verified against the **book/contract**,
+  not the binary): `shift-left`/`shift-right` → `shift_left`/`shift_right`,
+  `await-all`/`await-any` → `await_all`/`await_any`, and
+  `(spawn child instance)` → `(spawn child as instance)` (the `as` keyword
+  is mandatory). `(do child)` left unchanged — already contract-exact.
+- These steps are dormant on today's corpus (no current spec drives them
+  through `IntentIR`), so no emitted artifact changes today; the fix
+  removes a latent trap (strict-invalid `.isf` the moment a richer
+  transaction produces them). Added a render-lock unit test; book
+  method-doc subsection added to `pipeline/isf-adapter.md`.
+- **`ISF-TXN-GRAMMAR-FIX` tree CLOSED.** Lib `1147 → 1148`; full
+  `scripts/run_ci.sh` green.
+
 ## 2026-05-20
 
 ### BOOK-USER-FRIENDLY-BACKFILL.6 — close tree + cross-reference BOOK-METHOD-DOC Decisions (standard now self-referential)

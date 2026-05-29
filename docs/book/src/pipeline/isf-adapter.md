@@ -279,3 +279,29 @@ against the new pin and confirming both produce success; the
 existing `scripts/run_ci.sh` flow regressed cleanly to the new
 pin. *Authoritative tracking:*
 `docs/tasks/FSMGEN-SUBMODULE-BUMP.md`.
+
+### `ISF-TXN-GRAMMAR-FIX` — emitter grammar made FSMGen-contract-exact
+
+After the `FSMGEN-REFRESH-INTEGRATE` refresh, a review of the
+transaction-step emitter (`render_txn_step`) against the FSMGen ISF
+book/contract — *not* the binary (parser-acceptance ≠ support) — found
+six sites emitting forms the grammar does not use:
+
+- `shift-left` / `shift-right` (hyphen) → `shift_left` / `shift_right`
+  (book *Data Manipulation*: "the form is exact: `(shift_left reg bit)`").
+- `await-all` / `await-any` (hyphen) → `await_all` / `await_any`
+  (book *Composition*: `(await_all done)` / `(await_any done)`).
+- `(spawn child instance)` → `(spawn child as instance)` — the `as`
+  keyword is mandatory (book *Composition*: "the base form is exact:
+  `(spawn child as name)`").
+
+These steps are dormant on today's corpus (no current spec drives them
+through `IntentIR`), so the fix changes no emitted artifact today — but it
+removes a latent trap: the moment a richer transaction *did* produce them,
+SpecForge would have emitted FSMGen-strict-invalid `.isf`. `(do child)`
+was deliberately left unchanged — its syntax is already contract-exact;
+the separate "child must be a declared transaction" concern is semantic,
+not a grammar typo. **Verified** by a render-lock unit test asserting the
+contract-exact forms are emitted and the old hyphen / missing-`as` forms
+are gone, plus full `scripts/run_ci.sh`. *Authoritative tracking:*
+`docs/tasks/ISF-TXN-GRAMMAR-FIX.md`.
