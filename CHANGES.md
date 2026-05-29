@@ -56,6 +56,21 @@
 - Test-only; zero production behavior change. Lib `1128 → 1138`; full
   `scripts/run_ci.sh` green.
 
+### R16-MODULE-HARDENING.2 — audit remaining 6 R16 modules + backfill clean gaps
+- Conservative coverage audit of the 6 remaining R16 modules: `cve.rs`
+  recorded **well-covered** (23 tests); minor genuine gaps found in the
+  other 5 (recorded in the tree's Decisions).
+- Backfilled the 3 clean gaps: `waveform::capped_confidence` (the
+  never-promote-to-High cap), `waveform::generalize_partial_trace`
+  single-tick `ValueSpan` skip (no Stable contract), and
+  `protocol_graph::ProtocolGraph::phase()` unknown-id → `None`.
+- Deferred the deeper-construction gaps to `.3` (fidelity
+  `evaluate_figure_conformance` Pass/Fail; contract
+  `contract_from_temporal_rule` consequent arms; fusion guard-candidate
+  dedup + `apply_fusion` early-exit).
+- Test-only; zero production behavior change. Lib `1138 → 1141`; full
+  `scripts/run_ci.sh` green.
+
 ## 2026-05-20
 
 ### BOOK-USER-FRIENDLY-BACKFILL.6 — close tree + cross-reference BOOK-METHOD-DOC Decisions (standard now self-referential)

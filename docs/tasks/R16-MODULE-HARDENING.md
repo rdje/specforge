@@ -61,14 +61,61 @@ later.
   Verification: `passed — see Verification Log`
   Commit: `see Commit Log`
 
+- ID: `R16-MODULE-HARDENING.2`
+  Status: `done`
+  Goal: >
+    Audit the remaining 6 R16 modules' unit-test coverage and backfill
+    the cleanest genuine gaps. (Full audit recorded in Decisions
+    `2026-05-29`.)
+  Acceptance: `All 6 remaining modules assessed; cve.rs recorded well-covered; the clean genuine gaps (waveform capped_confidence cap + single-tick ValueSpan skip; protocol_graph phase() None) backfilled; deeper-construction gaps recorded as .3; scripts/run_ci.sh green.`
+  Verification: `passed — see Verification Log`
+  Commit: `see Commit Log`
+
+- ID: `R16-MODULE-HARDENING.3`
+  Status: `pending`
+  Goal: >
+    Backfill the deeper-construction genuine gaps from the `.2` audit:
+    (a) fidelity `evaluate_figure_conformance` trace=Some Pass + Fail
+    paths; (b) contract `contract_from_temporal_rule` untested consequent
+    arms (windowed non-HandshakeComplete → empty-signal `Observe`;
+    non-windowed `ActorMaintainsSignalStable` / `ActorSamplesSignal` /
+    `SignalSampled`); (c) fusion guard_candidates dedup on merge +
+    `apply_fusion` no-multi-cluster early-exit pass-through.
+  Acceptance: `Each listed gap gets a direct test (or is recorded with evidence as already indirectly locked); scripts/run_ci.sh green; then close the tree (all 7 R16 modules assessed + gaps closed/recorded).`
+  Verification: `pending`
+  Commit: `pending`
+
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `R16-MODULE-HARDENING.1` | `done` | `figure_region.rs` was the only R16 module with 0 direct tests |
-| → | (assess remaining 6 modules) | `pending` | audit `contract` / `protocol_graph` / `fidelity` / `fusion` / `waveform` / `cve` coverage; backfill genuine gaps or record as already-sufficient, then close |
+| 2 | `R16-MODULE-HARDENING.2` | `done` | audited all 6 remaining modules; `cve` well-covered; backfilled the 3 clean gaps |
+| → | `R16-MODULE-HARDENING.3` | `pending` | **Real frontier** — backfill the deeper-construction gaps (fidelity Pass/Fail; contract consequent arms; fusion dedup/early-exit), then close the tree |
 
 ## Decisions
+
+- `2026-05-29` (`.2` audit): a conservative coverage audit of the 6
+  remaining R16 modules found `cve.rs` **well-covered** (23 tests, all
+  branches) and **minor genuine gaps** in the other 5:
+  - `waveform.rs`: `capped_confidence` (High→Medium cap) untested
+    directly; single-tick `ValueSpan` (`from==to`) skip untested →
+    **both backfilled in `.2`**.
+  - `protocol_graph.rs`: `phase()` None (unknown-id) path untested →
+    **backfilled in `.2`**.
+  - `fidelity.rs`: `evaluate_figure_conformance` trace=Some Pass/Fail
+    glue untested (only NotEvaluated tested) → **deferred to `.3`**
+    (needs a satisfying/violating `FigureTrace` + `Stable` contract).
+  - `contract.rs`: `contract_from_temporal_rule` arms (windowed
+    non-HandshakeComplete → empty-signal `Observe`; non-windowed
+    `ActorMaintainsSignalStable` / `ActorSamplesSignal` / `SignalSampled`)
+    untested → **deferred to `.3`**.
+  - `fusion.rs`: guard_candidates dedup on merge + `apply_fusion`
+    no-multi-cluster early-exit untested → **deferred to `.3`**.
+  These are dormant-code gaps (marginal but genuine); `.2` closed the
+  clean ones, `.3` owns the deeper-construction ones. Full mutation
+  testing (`cargo-mutants`, available here) remains an option for deeper
+  rigor if later desired.
 
 - `2026-05-29`: created to apply the established `R6-*-HARDENING`
   unit-test discipline to the newest (R16) modules. Started with
@@ -98,15 +145,22 @@ later.
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-05-29` | `R16-MODULE-HARDENING.1` | 10 new `figure_region.rs` unit tests (lib `1128 → 1138`); full `scripts/run_ci.sh` (fmt / clippy-`D` / test-`D` / rustdoc / mdBook) | `passed` |
+| `2026-05-29` | `R16-MODULE-HARDENING.2` | coverage audit of 6 modules + 3 backfill tests (waveform `capped_confidence` + single-tick span; protocol_graph `phase()` None); lib `1138 → 1141`; full `scripts/run_ci.sh` | `passed` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `R16-MODULE-HARDENING.1` | `R16-MODULE-HARDENING.1 — backfill figure_region.rs unit tests (0 -> 10); create hardening tree` | tree created + first leaf; test-only; zero production behavior change |
+| `R16-MODULE-HARDENING.2` | `R16-MODULE-HARDENING.2 — audit remaining 6 R16 modules + backfill clean gaps (3 tests)` | test-only; cve well-covered; deeper gaps → `.3` |
 
 ## Changelog
 
+- `2026-05-29`: `.2` — audited the 6 remaining R16 modules; backfilled
+  3 clean gaps (waveform `capped_confidence`, single-tick `ValueSpan`;
+  protocol_graph `phase()` None); recorded `cve.rs` well-covered and the
+  deeper-construction gaps (fidelity Pass/Fail; contract consequent arms;
+  fusion dedup/early-exit) as `.3`.
 - `2026-05-29`: Created. `.1` (`figure_region.rs` unit-test backfill,
   `0 → 10` tests) implemented in the same slice as tree registration
   (bounded, test-only first leaf).

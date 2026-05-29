@@ -710,6 +710,55 @@ mod tests {
     }
 
     #[test]
+    fn capped_confidence_never_promotes_to_high() {
+        // A single figure is never enough to assert High — mining caps it
+        // at Medium; Medium / Low pass through unchanged.
+        assert_eq!(
+            capped_confidence(AutomationConfidence::High),
+            AutomationConfidence::Medium
+        );
+        assert_eq!(
+            capped_confidence(AutomationConfidence::Medium),
+            AutomationConfidence::Medium
+        );
+        assert_eq!(
+            capped_confidence(AutomationConfidence::Low),
+            AutomationConfidence::Low
+        );
+    }
+
+    #[test]
+    fn single_tick_value_span_yields_no_stable_contract() {
+        // A span that does not cover >1 tick is not Stable (combinational);
+        // generalize_partial_trace must emit no span contract for it.
+        let t = PartialTrace {
+            figure_id: "fig_single".into(),
+            signals: vec!["Q".into()],
+            edges: vec![],
+            spans: vec![ValueSpan {
+                signal: "Q".into(),
+                value: "1".into(),
+                from_tick: 2,
+                to_tick: 2,
+            }],
+            delays: vec![],
+            causal: vec![],
+            ticks: 4,
+            confidence: AutomationConfidence::Medium,
+        };
+        let cs = generalize_partial_trace(&t);
+        assert!(
+            !cs.iter()
+                .any(|c| matches!(c.obligation, Obligation::Stable { .. })),
+            "single-tick span must not generalize to a Stable contract"
+        );
+        assert!(
+            !cs.iter().any(|c| c.contract_id.contains(":span:")),
+            "single-tick span must emit no span contract"
+        );
+    }
+
+    #[test]
     fn causal_next_tick_generalizes_to_eventually_within_zero_one() {
         let t = PartialTrace {
             figure_id: "fig4".into(),

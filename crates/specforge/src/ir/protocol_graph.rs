@@ -231,6 +231,25 @@ mod tests {
     }
 
     #[test]
+    fn phase_accessor_returns_none_for_unknown_id() {
+        // The typed-reference lookup must return None for an unknown id
+        // (the path dangling_contract_refs relies on to flag bad refs).
+        let g = ProtocolGraph {
+            channels: vec![],
+            phases: vec![ProtocolPhase {
+                phase_id: "ph_setup".into(),
+                name: "setup".into(),
+                channel: None,
+                order: 0,
+            }],
+            transactions: vec![],
+            handshakes: vec![],
+        };
+        assert!(g.phase("ph_setup").is_some());
+        assert!(g.phase("ph_nonexistent").is_none());
+    }
+
+    #[test]
     fn project_handshake_pairs_from_handshake_contracts_dedup_and_channel() {
         use crate::ir::contract::contract_from_temporal_rule;
         use crate::ir::semantic::{
