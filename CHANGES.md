@@ -1,5 +1,32 @@
 # CHANGES
 
+## 2026-05-30
+
+### AUDIT-PROVIDER-FRAMING-RECONCILE.1 — reconcile "LLM/VLM provider doesn't exist" framing; close tree
+- A thorough `SESSION_BOOTSTRAP` re-read found the live docs propagated a
+  stale framing: `ROADMAP.md` (Immediate next milestone / recommended order /
+  R16 section), `docs/TASK_TREE.md` (R16 row), and `RUST_CODEBASE_ANALYSIS.md`
+  described the R16 crux as "blocked on upstream capability — needs a prose
+  LLM/VLM provider," implying SpecForge has no LLM/VLM provider. It does:
+  **Ollama + Qwen2.5VL is the production default** (`converge` defaults
+  `--vlm-provider`/`--nlp-provider` to `ollama`; `DEFAULT_LOCAL_MODEL =
+  "qwen2.5vl:7b"`), powering `enrich` (VLM diagram reading) + `nlp_enrich`
+  (NLP L3 prose relation extraction), validated on AMBA at 90–95/100.
+- Reconciled per the `AUDIT-DOC-RECONCILE` doctrine (code is the truth, text
+  is the suspect): the remaining R16 CVE work is **wiring** the existing
+  provider into `parse_constrained_contract` (+ a `signal_relation` type for
+  R14) — not building a provider; the one genuinely upstream-absent piece is a
+  typed PDF→`FigureRegion` raster/vector decoder.
+- Also corrected `INTENTIR_SPEC.md`'s two stale `.fsm` example blocks → `.isf`
+  (the adapter example now matches the real `IsfAdapterArtifact` serde shape
+  verified in `adapters.rs`), and added a dated currency banner to
+  `RUST_CODEBASE_ANALYSIS.md` (provider production-default; full 17-command
+  surface incl. `corpus_kb`/`clean`; `.fsm` sections marked historical) — also
+  discharging `SESSION_BOOTSTRAP` step 3.
+- `AUDIT-PROVIDER-FRAMING-RECONCILE` tree CLOSED; book close-rule subsection
+  added to `reference/documentation-scope.md`. Docs-only; full
+  `scripts/run_ci.sh` green (incl. mdBook).
+
 ## 2026-05-29
 
 ### ramp-up: refresh RUST_CODEBASE_ANALYSIS.md for the R16 ContractIR subsystem

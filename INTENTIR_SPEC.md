@@ -117,10 +117,7 @@ Minimal conceptual example:
     "intent_ir"
   ],
   "adapter_targets": [
-    "fsm",
-    "system_verilog",
-    "verilog",
-    "vhdl"
+    "isf"
   ]
 }
 ```
@@ -387,18 +384,21 @@ Current implementation note:
 Minimal conceptual adapter artifact:
 ```json
 {
-  "target": "fsm",
+  "target": "isf",
   "required_input_stage": "intent_ir",
   "intent_ir_path": "generated/intent_ir/axi_core/intent_ir.json",
   "lowering_status": "blocked",
-  "fsm": {
-    "root_name": "axi_core",
-    "root_kind_decision": {
-      "selected_root_kind": "dt"
-    },
-    "renderability": {
-      "is_renderable": false
-    }
+  "isf": {
+    "actor_name": "axi_core",
+    "source_text": "",
+    "is_renderable": false,
+    "blocking_reasons": ["no renderable signal/behavior surface"],
+    "signal_count": 0,
+    "transaction_count": 0,
+    "rule_count": 0,
+    "constant_count": 0,
+    "enum_count": 0,
+    "storage_count": 0
   }
 }
 ```

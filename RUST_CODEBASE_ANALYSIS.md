@@ -4,6 +4,50 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-05-30 ramp-up currency correction — LLM/VLM provider + command surface)
+
+State verified directly from the working tree. This entry corrects three stale
+spots a ramp-up audit found, so the document is not read as implying
+capabilities are absent that are in fact production-default. Older sections
+below are preserved as historical record. (Owned by
+`docs/tasks/AUDIT-PROVIDER-FRAMING-RECONCILE.md`.)
+
+### The LLM/VLM provider is production-default — NOT deferred future work
+SpecForge ships fully-integrated Ollama + Qwen2.5VL as the **production
+default**, not a deferred upstream dependency. Where this file (or `ROADMAP.md`)
+frames "a prose LLM/VLM provider" as missing, it refers ONLY to *wiring that
+provider's output into the R16 CVE producer `parse_constrained_contract`* —
+not to the provider's existence.
+- `VlmProviderArg` (`crates/specforge/src/cli.rs`) = `ollama | open-ai |
+  lm-studio | skip`; `converge` defaults BOTH `--vlm-provider` and
+  `--nlp-provider` to `ollama`. `DEFAULT_LOCAL_MODEL = "qwen2.5vl:7b"`
+  (`commands/doctor.rs`); OpenAI-compatible
+  `http://localhost:11434/v1/chat/completions`.
+- `commands/enrich.rs` — VLM timing/state-diagram enrichment (diagram PNG →
+  signal names + cycle states → `VisualAsset.note` → EvidenceIR
+  `VisualObservation` → SemanticIR `TimingConstraintRecord`).
+- `commands/nlp_enrich.rs` — NLP Level-3 prose relation extraction
+  (`NormativeStatement` → `SignalConstraintRecord` / `ConditionalRuleRecord`).
+- `commands/doctor.rs` — preflights Ollama / LM-Studio reachability + model
+  presence. Validated end-to-end on AMBA (AXI/APB/AHB at 90–95/100).
+The only genuinely upstream-absent piece is a typed PDF→`FigureRegion`
+raster/vector decoder (the VLM already reads diagram PNGs, just to text).
+
+### Current command surface = 17 commands (all live)
+`inspect`, `doctor`, `converge`, `ingest`, `evidence`, `semantic`, `intent`,
+`adapt`, `enrich`, `nlp_enrich`, `validate`, `project-validation`,
+`rescan-plan`, `kg-bench`, `learn-priors`, `corpus-kb`, `clean`
+(`crates/specforge/src/cli.rs`, dispatched in `lib.rs`). Any earlier command
+list in this file that omits `corpus_kb` / `clean` is superseded by this entry.
+
+### `.fsm` adapter sections are historical
+Any subsection below describing a `.fsm` adapter / HDL lowering as *present* in
+SpecForge predates `ISF-ONLY-CONSOLIDATION` (which removed the entire `.fsm`
+adapter + HDL surface). SpecForge's sole adapter target is `.isf` via `IsfIr`
+(`ir/isf_ir.rs`); FSMGen owns scheduling / `.fsm` / HDL downstream of `.isf`.
+
+---
+
 ## Session update (2026-05-29 ramp-up re-analysis — R16 ContractIR subsystem captured; program complete)
 
 State verified directly from the working tree at HEAD `44bf2723`, not inherited

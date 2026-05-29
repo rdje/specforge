@@ -1304,15 +1304,20 @@
   match-grounded; CFC + SetupAccess honestly Residual);
   uncertainty-driven converge VoI selector with deterministic
   tie-break; `specforge validate` `constrained: schema_rejects=0
-  entailment_fails=0 template_hits=0` block (honest dormancy until
-  upstream prose extractor lands). **R16 PROGRAM COMPLETE — all 6
+  entailment_fails=0 template_hits=0` block (honest dormancy until the
+  existing prose provider is wired into `parse_constrained_contract`).
+  **R16 PROGRAM COMPLETE — all 6
   sub-trees closed at their honest scope boundaries** (revised
   `2026-05-20`: WAVEFORM #4 now also fully delivered through `.4`
   including the honest-split `.3.1` + `.3.2` extractor pathway).
-  Remaining open scope: raster/vector figure handling for WAVEFORM
-  + CVE producer wiring once an upstream prose extractor exists —
-  both are honestly-deferred future trees, not re-opened leaves of
-  any closed R16 tree.
+  Remaining open scope (honestly-deferred future trees, not
+  re-opened leaves of any closed R16 tree): raster/vector figure
+  handling for WAVEFORM (genuinely upstream-absent — needs a typed
+  PDF→`FigureRegion` decoder); and CVE producer wiring — NOT
+  upstream-blocked, since the prose LLM/VLM provider already exists
+  (production-default Ollama + Qwen2.5VL via `enrich`/`nlp_enrich`); it
+  needs that existing provider's output routed into
+  `parse_constrained_contract`.
   Three load-bearing honesty doctrines are now STRUCTURAL rather
   than authorial: fidelity Fail→Residual; fusion disagreement→
   Residual; entailment Fail→Residual — fabrication is mechanically
@@ -1360,10 +1365,13 @@
    were executed in the recorded DAG order (CONTRACT-IR →
    KG-PROTOCOL-ONTOLOGY / CAPTURE-FIDELITY-GATES → FUSION / WAVEFORM /
    CONSTRAINED-VERIFIED) and closed at their honest scope boundaries. The
-   two remaining crux items — waveform raster/vector figure extraction
-   and CVE prose-extractor producer wiring — are upstream-blocked,
-   honestly-deferred FUTURE trees, not re-opened leaves. See
-   `docs/tasks/R16-INTENT-CAPTURE.md`.
+   two remaining crux items are honestly-deferred FUTURE trees, not
+   re-opened leaves: (i) CVE prose-extractor producer wiring — NOT
+   upstream-blocked, since the Ollama + Qwen2.5VL prose provider is the
+   production default; it just needs wiring into
+   `parse_constrained_contract`; and (ii) waveform raster/vector
+   `FigureRegion` extraction — the one genuinely upstream-absent piece.
+   See `docs/tasks/R16-INTENT-CAPTURE.md`.
 2. Keep `IntentIR` as the canonical product boundary in all code and docs
 3. Finish the graph-first downstream signal model so `direction_hint` is no longer the primary semantic surface (`R15`)
 4. Land the explicit clock-tick temporal model (`R15b`)
@@ -1381,12 +1389,18 @@
   built the mechanical-to-lower typed target, the objective
   capture-fidelity metric, and the four structural honesty doctrines. The
   thesis crux — accurate/reliable prose+timing-diagram → typed-KG
-  temporal extraction — is the forward frontier but is **blocked on
-  upstream capability**: it needs (a) a PDF → `FigureRegion`
-  raster/vector figure extractor and (b) a prose LLM/VLM provider feeding
-  `parse_constrained_contract`. Both are honestly-deferred FUTURE trees.
-  Until they exist the R16 surface stays dormant-but-verified; the next
-  unblocked work is incremental hardening on the lanes below.
+  temporal extraction — is the forward frontier. The prose LLM/VLM
+  provider it needs **already exists and is the production default**
+  (Ollama + Qwen2.5VL via `commands/enrich.rs` and `commands/nlp_enrich.rs`;
+  `DEFAULT_LOCAL_MODEL = "qwen2.5vl:7b"`), so the remaining crux work is:
+  (a) **WIRE** that existing provider's prose output into the
+  schema-constrained CVE producer (`parse_constrained_contract`) — an
+  edit/extension, NOT a new provider — plus add a `signal_relation`
+  extraction type (R14); and (b) a typed PDF → `FigureRegion` raster/vector
+  geometric decoder — the one genuinely upstream-absent piece (the VLM
+  already reads diagram PNGs to text in `VisualAsset.note`, bypassing the
+  typed geometric path). These stay honestly-deferred FUTURE trees; the R16
+  typed surface stays dormant-but-verified until they are wired.
 - `R15`: finish the transition from compatibility `direction_hint` fields to actor-relative graph-first downstream semantics
 - `R15b`: introduce the explicit clock-tick temporal model so behavioral truth is first-class in `SemanticIR` / `IntentIR`
 - `R15c`: make KG-guided multimodal rescans a named workstream in the convergent pipeline

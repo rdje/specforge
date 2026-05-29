@@ -151,3 +151,62 @@ was required to refresh it.
 recorded as a standing rule in `docs/TASK_TREE.md`'s
 Completion Rules and `COMMIT.md`'s Required Commit
 Workflow.
+
+### `AUDIT-PROVIDER-FRAMING-RECONCILE` — the doctrine, caught in the act
+
+`AUDIT-DOC-RECONCILE` is the doctrine; this tree is what it
+looks like when the doctrine actually catches something.
+
+#### What drifted
+
+Several live docs — `ROADMAP.md`'s "Immediate next
+milestone," the `docs/TASK_TREE.md` R16 row, and
+`RUST_CODEBASE_ANALYSIS.md` — described the R16
+design-intent-capture *crux* as *"blocked on upstream
+capability: it needs a prose LLM/VLM provider."* Read
+literally, that implied SpecForge had **no** LLM/VLM
+provider yet.
+
+It does. Ollama + Qwen2.5VL is the **production default**
+for `converge` (`--vlm-provider` / `--nlp-provider` default
+to `ollama`; `DEFAULT_LOCAL_MODEL = "qwen2.5vl:7b"`),
+powering the `enrich` VLM diagram-reading pass and the
+`nlp_enrich` NLP-Level-3 prose relation extraction, and it
+has been validated end-to-end on AMBA specs. The docs had
+conflated *"the provider doesn't exist"* with *"the
+provider's output isn't yet wired into the newer R16 CVE
+producer `parse_constrained_contract`."* Only the second is
+true.
+
+#### What this tree fixed
+
+Following the doctrine (the code is the truth, the text is
+the suspect), the live docs were rewritten to describe what
+the code does:
+
+- the prose LLM/VLM provider is production-default;
+- the remaining R16 CVE work is **wiring** that existing
+  provider into `parse_constrained_contract` (an edit), plus
+  adding a `signal_relation` extraction type (R14) — not
+  building a provider;
+- the one genuinely upstream-absent piece is a typed
+  PDF→`FigureRegion` raster/vector decoder (the VLM already
+  reads diagram images — just to text, not the typed
+  geometric path);
+- stale `.fsm` example blocks in `INTENTIR_SPEC.md` were
+  corrected to `.isf`, and `RUST_CODEBASE_ANALYSIS.md` gained
+  a dated currency note (provider + full 17-command surface).
+
+#### What this buys you
+
+The "what's left to build" picture is now honest in both
+directions: it doesn't **under**-claim (the extraction
+pipeline is live, default, and validated) and it doesn't
+**over**-claim (the typed R16 honesty surfaces are still
+dormant until wired). If you're choosing what to work on
+next, the docs now point you at *wiring* and a *figure
+decoder* — not at re-inventing a provider that already
+ships.
+
+*Authoritative tracking:*
+`docs/tasks/AUDIT-PROVIDER-FRAMING-RECONCILE.md`.
