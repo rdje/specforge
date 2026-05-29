@@ -2,6 +2,23 @@
 
 ## 2026-05-30
 
+### CVE-PROSE-EXTRACTION.1 — design + tree: wire the live prose→ActorContract extractor
+- User greenlit implementing item (1a) ("wire the live extractor into the R16
+  CVE surface") to full exhaustion. Created the `CVE-PROSE-EXTRACTION` tree
+  (lane R16) with the full design: a new `extract-contracts` command (parallel
+  to `nlp_enrich`) asks Qwen (Ollama, production default) for `ActorContract`
+  JSON per prose statement → fails-closed `parse_constrained_contract` →
+  `apply_entailment_to_contract` (Lowerable+Fail→Residual) → survivors land on
+  a new additive `EvidenceIR.extracted_contracts` + a persisted
+  `ConstrainedExtractionStats`; `SemanticIr::build` folds them into
+  `actor_contracts` BEFORE `apply_fusion`; `IntentIR` carries; `validate.rs`
+  `schema_rejects` reads the carried stat (was hardcoded 0).
+- Safety is structural (Non-Goal: accuracy tuning): malformed → schema_reject
+  (no contract); unverifiable → Residual; never a fabricated Lowerable
+  contract. 4-leaf plan (.1 design / .2 typed surface + fold / .3 producer +
+  command + mock tests / .4 live e2e + book + close).
+- Docs-only design leaf; no code/book touched (CI invariant).
+
 ### AUDIT-PROVIDER-FRAMING-RECONCILE.1 — reconcile "LLM/VLM provider doesn't exist" framing; close tree
 - A thorough `SESSION_BOOTSTRAP` re-read found the live docs propagated a
   stale framing: `ROADMAP.md` (Immediate next milestone / recommended order /
