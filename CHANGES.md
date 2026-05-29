@@ -81,6 +81,24 @@
 - Test-only; zero production behavior change. Lib `1141 → 1142`; full
   `scripts/run_ci.sh` green. Contract + fusion gaps moved to `.4`.
 
+### FSMGEN-REFRESH-INTEGRATE.1 — bump subs/fsmgen 9bfb9a20 → 88a7af9c (+637 commits)
+- Per explicit user direction: refreshed the pinned FSMGen submodule (the
+  downstream `.isf` consumer) from `9bfb9a20` to upstream `origin/main`
+  tip `88a7af9c` (+637 commits — extensive ISF work: downstream/contract
+  handoff sync, feature-support matrix, cookbook, diagnostics, mdBook).
+- Verified full `scripts/run_ci.sh` green on the new binary
+  (`1142 passed/0`): critically `isf_output_passes_fsmgen_strict_validation`
+  and `isf_temporal_rules_reach_isf_end_to_end` still pass — the new
+  fsmgen accepts SpecForge's emitted nested
+  `(contract … (eventually s (within N)))` + `ready`/`valid` `(stage)`.
+  The updated integration spec confirms the nested form stays a supported
+  compatibility alias (flat `within N` now *preferred* — a `.2` follow-up
+  candidate, not a break).
+- Created task tree `FSMGEN-REFRESH-INTEGRATE` (owns the bump + the
+  thorough doc read + the feature-adoption assessment); reconciled the
+  stale README pin (`32aa318 → 88a7af9c`).
+- Submodule pin change (tracked); no SpecForge source change.
+
 ## 2026-05-20
 
 ### BOOK-USER-FRIENDLY-BACKFILL.6 — close tree + cross-reference BOOK-METHOD-DOC Decisions (standard now self-referential)
