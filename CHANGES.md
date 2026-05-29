@@ -201,6 +201,24 @@
   added to `pipeline/isf-adapter.md`. Lib `1148 → 1150`; full
   `scripts/run_ci.sh` green.
 
+### ISF-SYMBOL-COUNT-EMITTED.1 — constant_count/enum_count count emitted content
+- The adapter artifact derives `transaction_count`/`rule_count` from the
+  rendered model ("metric == emitted content", `ISF-TEMPORAL-LOWERING.2.4`),
+  but `constant_count`/`enum_count` were still counting *recovered*
+  `symbol_definitions` — which, after the safe-value emission filter, can
+  over-report what the `.isf` carries. Added `IsfIr::emitted_constant_count()`
+  / `emitted_enum_count()` (DRY-shared with `render()` via private
+  `emitted_constants()`/`emitted_enums()`, so the count *is* the emitted set
+  by construction) and pointed the adapter counts at them (dropped the
+  recovered-symbol count + the now-unused `SymbolDefinitionKind` import).
+- Unit test mixes safe + operator-expression-valued symbols and asserts the
+  counts equal only the safe-emitted subset; existing
+  `isf_adapter_counts_equal_emitted_content` still green.
+- **`ISF-SYMBOL-COUNT-EMITTED` tree CLOSED**; book subsection added. Lib
+  `1150 → 1151`; full `scripts/run_ci.sh` green. (Also recorded: the
+  `(do)`/`(spawn)` undeclared-child concern is a **non-issue** —
+  `TransactionStep::Do`/`Spawn` has no real producer, only a test fixture.)
+
 ## 2026-05-20
 
 ### BOOK-USER-FRIENDLY-BACKFILL.6 — close tree + cross-reference BOOK-METHOD-DOC Decisions (standard now self-referential)

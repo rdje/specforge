@@ -272,6 +272,39 @@ impl IsfIr {
         self.rules.len()
     }
 
+    /// The `(constants …)` entries `render()` actually emits: those whose
+    /// value is a whitespace-free scalar (operator-expression values are
+    /// excluded — see `is_safe_isf_scalar_value`). Shared with `render()`
+    /// and `emitted_constant_count()` so the metric == emitted content.
+    fn emitted_constants(&self) -> Vec<&IsfConstant> {
+        self.constants
+            .iter()
+            .filter(|c| is_safe_isf_scalar_value(&c.value))
+            .collect()
+    }
+
+    /// The `(enums …)` families `render()` actually emits: those whose
+    /// every member value is a whitespace-free scalar.
+    fn emitted_enums(&self) -> Vec<&IsfEnum> {
+        self.enums
+            .iter()
+            .filter(|e| {
+                !e.members.is_empty() && e.members.iter().all(|(_, v)| is_safe_isf_scalar_value(v))
+            })
+            .collect()
+    }
+
+    /// Number of `(constants …)` entries the emitter actually renders
+    /// (metric == emitted content; mirrors `emitted_rule_count`).
+    pub(crate) fn emitted_constant_count(&self) -> usize {
+        self.emitted_constants().len()
+    }
+
+    /// Number of `(enums …)` families the emitter actually renders.
+    pub(crate) fn emitted_enum_count(&self) -> usize {
+        self.emitted_enums().len()
+    }
+
     pub(crate) fn render(&self) -> String {
         let mut lines: Vec<String> = Vec::new();
 
@@ -294,13 +327,7 @@ impl IsfIr {
             }
             lines.push("  )".to_string());
         }
-        let safe_enums: Vec<&IsfEnum> = self
-            .enums
-            .iter()
-            .filter(|e| {
-                !e.members.is_empty() && e.members.iter().all(|(_, v)| is_safe_isf_scalar_value(v))
-            })
-            .collect();
+        let safe_enums = self.emitted_enums();
         if !safe_enums.is_empty() {
             lines.push("  (enums".to_string());
             for e in &safe_enums {
@@ -313,11 +340,7 @@ impl IsfIr {
             }
             lines.push("  )".to_string());
         }
-        let safe_constants: Vec<&IsfConstant> = self
-            .constants
-            .iter()
-            .filter(|c| is_safe_isf_scalar_value(&c.value))
-            .collect();
+        let safe_constants = self.emitted_constants();
         if !safe_constants.is_empty() {
             lines.push("  (constants".to_string());
             for c in &safe_constants {
@@ -2709,5 +2732,45 @@ mod tests {
             success,
             "FSMGen strict rejected the emitted (types)/(enums)/(constants) symbol surface"
         );
+    }
+
+    #[test]
+    fn emitted_symbol_counts_reflect_safe_emitted_subset() {
+        // The artifact's constant_count/enum_count derive from these, so they
+        // must equal what render() actually emits (metric == emitted content).
+        let mut isf = minimal_isf();
+        isf.types = vec![IsfTypeDef {
+            name: "mode".into(),
+            bits: 1,
+        }];
+        isf.enums = vec![
+            IsfEnum {
+                type_name: "mode".into(),
+                members: vec![("IDLE".into(), "0".into()), ("BUSY".into(), "1".into())],
+            },
+            // Excluded: a member value that is an operator expression.
+            IsfEnum {
+                type_name: "bad".into(),
+                members: vec![("X".into(), "(| a b)".into())],
+            },
+        ];
+        isf.constants = vec![
+            IsfConstant {
+                name: "OK".into(),
+                value: "5".into(),
+            },
+            IsfConstant {
+                name: "SKIP".into(),
+                value: "(! x)".into(),
+            },
+        ];
+        assert_eq!(isf.emitted_constant_count(), 1);
+        assert_eq!(isf.emitted_enum_count(), 1);
+        // render() agrees — the unsafe entries are absent from the output.
+        let out = isf.render();
+        assert!(out.contains("(OK 5)"), "{out}");
+        assert!(out.contains("(mode (IDLE 0) (BUSY 1))"), "{out}");
+        assert!(!out.contains("SKIP"), "{out}");
+        assert!(!out.contains("(bad"), "{out}");
     }
 }

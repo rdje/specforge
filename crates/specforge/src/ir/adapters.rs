@@ -7,7 +7,6 @@ use crate::error::{AppError, Result};
 use crate::ir::IrStage;
 use crate::ir::intent::{IntentDocumentIdentity, IntentIr};
 use crate::ir::isf_ir::IsfIr;
-use crate::ir::semantic::SymbolDefinitionKind;
 use crate::ir::source::ResidualDecisionPacket;
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
@@ -272,23 +271,11 @@ fn build_isf_adapter_artifact(
     // model built above so the metric == emitted content.
     let transaction_count = isf_model.emitted_transaction_count();
     let rule_count = isf_model.emitted_rule_count();
-    let constant_count = intent_ir
-        .symbol_definitions
-        .iter()
-        .filter(|s| {
-            matches!(
-                s.kind,
-                SymbolDefinitionKind::Constant
-                    | SymbolDefinitionKind::Define
-                    | SymbolDefinitionKind::Param
-            )
-        })
-        .count();
-    let enum_count = intent_ir
-        .symbol_definitions
-        .iter()
-        .filter(|s| matches!(s.kind, SymbolDefinitionKind::Enum))
-        .count();
+    // Count emitted content, not recovered symbols, so the artifact metric
+    // matches the rendered `.isf` (same doctrine as transaction/rule counts;
+    // `render()`'s safe-value filter may exclude some recovered symbols).
+    let constant_count = isf_model.emitted_constant_count();
+    let enum_count = isf_model.emitted_enum_count();
     let storage_count = intent_ir.register_records.len();
 
     let emitted_target_path = if is_renderable {

@@ -340,3 +340,19 @@ an expression-valued constant is skipped), and — the load-bearing one — a
 co-declared `(type)`/`(enums)` + a literal `(constants)`, renders it, and
 runs the *real* `subs/fsmgen` binary, asserting it accepts the output.
 *Authoritative tracking:* `docs/tasks/ISF-SYMBOL-SURFACE-EMIT.md`.
+
+### `ISF-SYMBOL-COUNT-EMITTED` — the symbol counts now match the emitted `.isf`
+
+A small honesty follow-on. The adapter artifact reports
+`constant_count`/`enum_count`; SpecForge already derives
+`transaction_count`/`rule_count` from the rendered model ("metric ==
+emitted content"), but the symbol counts were still counting *recovered*
+`symbol_definitions`. Since the symbol emitter excludes expression-valued
+entries, the recovered count could over-report what the `.isf` carries. So
+`IsfIr` now exposes `emitted_constant_count()`/`emitted_enum_count()` —
+DRY-shared with `render()` via private `emitted_constants()`/
+`emitted_enums()`, so the count *is* the emitted set by construction — and
+the artifact derives both from them. **Verified** by a unit test that mixes
+safe and operator-expression-valued symbols and asserts the counts equal
+only the safe-emitted subset that `render()` produces.
+*Authoritative tracking:* `docs/tasks/ISF-SYMBOL-COUNT-EMITTED.md`.
