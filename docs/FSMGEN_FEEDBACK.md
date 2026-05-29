@@ -60,9 +60,9 @@ So this feedback is written from the perspective of a tool that wants to lower h
 
 Last SPECFORGE submodule sync reviewed:
 
-- FSMGEN previous baseline: `955f2bb`
-- FSMGEN refreshed baseline: `32aa318`
-- notable reviewed surfaces: FSMGEN live mdBook at `subs/fsmgen/docs/book/`, first bounded `--capability-manifest`, `--check --json` / `--check-json`, stable `FSMGEN_*` diagnostic-code registry, `--emit-semantic-json` / `--semantic-json`, support-accounting/report contracts, and optional generated-SystemVerilog validation through `--verify-hdl` / `--validate-hdl`
+- FSMGEN previous baseline: `9bfb9a20` (history: `955f2bb` → `32aa318` → `9bfb9a20`)
+- FSMGEN refreshed baseline: `88a7af9c` (`FSMGEN-REFRESH-INTEGRATE.1`, `2026-05-29`; +637 commits over `9bfb9a20`)
+- notable reviewed surfaces (ISF, at `88a7af9c`): the ISF public-interface contract (`ISF_PUBLIC_INTERFACE_CONTRACT.md`), downstream-integration spec (`ISF_DOWNSTREAM_INTEGRATION_SPEC.md`), feature-support matrix (`13k`), and lowering reference (`13h`) — see the `FSMGEN-REFRESH-INTEGRATE.2` feature-adoption assessment in `DEVELOPMENT_NOTES.md`. Key contract point: SpecForge's nested `(contract … (eventually s (within N)))` and `(stage … (input)(output))` are now supported **compatibility aliases** (flat `within N` + `ready`/`valid` preferred); SpecForge's emission stays strict-valid. Earlier-reviewed machine surfaces (`--capability-manifest`, `--check --json`, `FSMGEN_*` diagnostic codes, `--emit-semantic-json`, support/report contracts, `--verify-hdl`) and the live mdBook at `subs/fsmgen/docs/book/` remain.
 
 ## FSMGEN Response Received
 
@@ -70,7 +70,7 @@ FSMGEN responded in its own tracked document:
 
 - FSMGEN submodule path: `subs/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md`
 - initial response commit observed by SPECFORGE: `7475f07` (`Docs: track SPECFORGE feedback response`)
-- latest response baseline reviewed by SPECFORGE: `32aa318` (`Refresh README bootstrap validation notes`)
+- latest response baseline reviewed by SPECFORGE: `88a7af9c` (`origin/main` tip; ISF contract / integration / feature-support-matrix reviewed under `FSMGEN-REFRESH-INTEGRATE.2`, `2026-05-29`)
 
 SPECFORGE's planning interpretation is:
 

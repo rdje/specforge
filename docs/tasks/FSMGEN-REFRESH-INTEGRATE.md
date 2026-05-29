@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `FSMGEN-REFRESH-INTEGRATE`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: `R6` (`.isf` adapter — FSMGen is the downstream `.isf` consumer)
 - Created: `2026-05-29`
 - Last updated: `2026-05-29`
@@ -48,7 +48,7 @@ honest and surfaces new lowering capability.
 ## Task Tree
 
 - ID: `FSMGEN-REFRESH-INTEGRATE`
-  Status: `active`
+  Status: `done`
   Goal: refresh the FSMGen submodule + assess adoptable ISF features
   Children: `FSMGEN-REFRESH-INTEGRATE.1`, `.2`, `.3`
 
@@ -77,34 +77,60 @@ honest and surfaces new lowering capability.
   Commit: `see Commit Log`
 
 - ID: `FSMGEN-REFRESH-INTEGRATE.2`
-  Status: `pending`
+  Status: `done`
   Goal: >
     Read thoroughly the handoff (`SPECFORGE_FEEDBACK_RESPONSE.md`),
     integration (`ISF_DOWNSTREAM_INTEGRATION_SPEC.md`), public API
     contract (`ISF_PUBLIC_INTERFACE_CONTRACT.md`), and mdBook (esp.
-    `13i-downstream-integration`, `13k-isf-feature-support-matrix`,
-    `13h-lowering-reference`); record a concrete feature-adoption
-    assessment for the SpecForge `.isf` adapter; update
-    `DEVELOPMENT_NOTES.md` + `docs/FSMGEN_FEEDBACK.md`; scope any adoption
-    as named follow-up trees.
-  Acceptance: `assessment recorded with specific adoptable features (or an honest "nothing new safely adoptable yet"); follow-up trees named if warranted; respects the contract-is-authority doctrine.`
-  Verification: `pending`
-  Commit: `pending`
+    `13i`/`13k`/`13h`); record a concrete feature-adoption assessment;
+    update `DEVELOPMENT_NOTES.md` + `docs/FSMGEN_FEEDBACK.md`; scope
+    adoption as named follow-up trees.
+  Acceptance: `assessment recorded with specific adoptable features; follow-up trees named; respects the contract-is-authority doctrine.`
+  Verification: >
+    passed (`2026-05-29`) — the four authority docs + support matrix +
+    lowering reference were read (delegated deep read, findings verified
+    against `isf_ir.rs`). Assessment recorded in `DEVELOPMENT_NOTES.md`
+    (`2026-05-29 … FSMGen … assessment` section) + reviewed-baseline
+    updated in `docs/FSMGEN_FEEDBACK.md` (`32aa318 → 88a7af9c`).
+    Outcome: nested-contract emission stays valid (no forced change);
+    **ADOPT-NOW** = render the already-built-but-discarded
+    `(constants)`/`(types)`/`(enums)` symbol surface (`render()` omits
+    them — verified; also a count-vs-emission honesty gap) + trivial
+    flat-`within N` migration → proposed tree `ISF-SYMBOL-SURFACE-EMIT`;
+    **GRAMMAR-FIX** = latent hyphen/underscore + `spawn … as` + unknown-
+    child emitter bugs → proposed tree `ISF-TXN-GRAMMAR-FIX` (verify vs
+    grammar first); **FOLLOW-UP** = latency / resources / bind;
+    **OUT-OF-SCOPE** = multi-clock/CDC, banks, ATL (no IntentIR data).
+  Commit: `see Commit Log`
 
 - ID: `FSMGEN-REFRESH-INTEGRATE.3`
-  Status: `pending`
-  Goal: close the tree; reconcile any remaining doc drift; record final CI evidence.
+  Status: `done`
+  Goal: close the tree; reconcile remaining doc drift; record final evidence.
   Acceptance: `tree closed; TASK_TREE index synced; all touched live docs reconciled.`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: >
+    passed (`2026-05-29`) — tree closed; `docs/TASK_TREE.md` index →
+    `done`; README + FSMGEN_FEEDBACK + DEVELOPMENT_NOTES + CHANGES +
+    LIVE_ACHIEVEMENT_STATUS + MEMORY reconciled. Two adoptable items
+    recorded as named proposed follow-up trees (`ISF-SYMBOL-SURFACE-EMIT`,
+    `ISF-TXN-GRAMMAR-FIX`) — not created as files until promoted, per the
+    "captured + owned, execution on promotion" pattern.
+  Commit: `see Commit Log`
 
 ## Current Frontier
 
+Empty — **tree closed `2026-05-29`**. `.1`/`.2`/`.3` all `done`: submodule
+bumped + verified, feature-adoption assessment recorded, follow-up trees
+named. The adoptable work lives in **proposed** trees
+`ISF-SYMBOL-SURFACE-EMIT` (highest value — render the already-built
+`(constants)`/`(types)`/`(enums)` surface + close the count-vs-emission
+honesty gap) and `ISF-TXN-GRAMMAR-FIX` (latent emitter grammar bugs),
+created when promoted.
+
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `FSMGEN-REFRESH-INTEGRATE.1` | `done` | bumped `9bfb9a20 → 88a7af9c`; CI green on new binary; README pin reconciled |
-| → | `FSMGEN-REFRESH-INTEGRATE.2` | `pending` | **Real frontier** — record the feature-adoption assessment + scope follow-up trees |
-| 3 | `FSMGEN-REFRESH-INTEGRATE.3` | `pending` | close |
+| 1 | `FSMGEN-REFRESH-INTEGRATE.1` | `done` | bumped `9bfb9a20 → 88a7af9c`; CI green; README pin reconciled |
+| 2 | `FSMGEN-REFRESH-INTEGRATE.2` | `done` | feature-adoption assessment recorded; follow-up trees named |
+| 3 | `FSMGEN-REFRESH-INTEGRATE.3` | `done` | tree closed; index + live docs synced |
 
 ## Decisions
 
@@ -132,15 +158,26 @@ honest and surfaces new lowering capability.
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-05-29` | `FSMGEN-REFRESH-INTEGRATE.1` | gitlink `9bfb9a20 → 88a7af9c` staged; full `scripts/run_ci.sh` on new binary (`1142 passed/0`; fsmgen-strict ISF + temporal e2e both `ok`); README pin reconciled | `passed` |
+| `2026-05-29` | `FSMGEN-REFRESH-INTEGRATE.2` / `.3` | thorough doc read (contract/integration/matrix/lowering); assessment recorded in DEVELOPMENT_NOTES + FSMGEN_FEEDBACK baseline; follow-up trees named; tree closed; docs-only | `passed` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `FSMGEN-REFRESH-INTEGRATE.1` | `FSMGEN-REFRESH-INTEGRATE.1 — bump subs/fsmgen 9bfb9a20 -> 88a7af9c (+637); CI green; reconcile README pin` | tree created + first leaf; submodule pin change (tracked); SpecForge `.isf` still strict-valid |
+| `FSMGEN-REFRESH-INTEGRATE.2` / `.3` | `FSMGEN-REFRESH-INTEGRATE.2/.3 — record ISF feature-adoption assessment + close tree` | docs-only; ADOPT-NOW = constants/types/enums emit (proposed `ISF-SYMBOL-SURFACE-EMIT`) + flat-contract; grammar-fix + latency/resources/bind scoped |
 
 ## Changelog
 
+- `2026-05-29`: `.2` + `.3` — recorded the ISF feature-adoption
+  assessment (DEVELOPMENT_NOTES + FSMGEN_FEEDBACK baseline `32aa318 →
+  88a7af9c`); named proposed follow-up trees `ISF-SYMBOL-SURFACE-EMIT`
+  (ADOPT-NOW: emit the built-but-discarded constants/types/enums +
+  close the count-vs-emission honesty gap) and `ISF-TXN-GRAMMAR-FIX`
+  (latent emitter grammar bugs); **tree CLOSED**.
+- `2026-05-29`: `.1` — bumped `subs/fsmgen` `9bfb9a20 → 88a7af9c`
+  (+637); full CI green on the new binary (SpecForge `.isf` still
+  strict-valid); README pin reconciled.
 - `2026-05-29`: Created by explicit user direction (update FSMGen
   submodule + read handoff/integration/contract/mdBook + assess
   adoptable features).

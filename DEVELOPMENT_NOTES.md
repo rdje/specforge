@@ -8,6 +8,69 @@
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 - adapter target: `.isf` (sole adapter); `.fsm`/HDL are out of scope — FSMGen consumes `.isf` and owns scheduling/`.fsm`/HDL downstream (since `ISF-ONLY-CONSOLIDATION`, `2026-05-18`)
 
+## 2026-05-29 session — FSMGen submodule refresh + ISF feature-adoption assessment (FSMGEN-REFRESH-INTEGRATE)
+
+Per user direction, bumped `subs/fsmgen` `9bfb9a20 → 88a7af9c` (+637
+upstream commits) and read its handoff (`SPECFORGE_FEEDBACK_RESPONSE.md`),
+integration spec (`ISF_DOWNSTREAM_INTEGRATION_SPEC.md`), public-interface
+contract (`ISF_PUBLIC_INTERFACE_CONTRACT.md`), feature-support matrix
+(`13k`), and lowering reference (`13h`). Doctrine: the public contract +
+integration spec are authoritative — parser acceptance ≠ support.
+
+**Contract-level findings (what the new pin changes for SpecForge):** the
+nested `(contract … (eventually s (within N)))` and the
+`(stage … (input r)(output v))` forms are now explicitly **compatibility
+aliases**; the *preferred* spellings are flat
+`(contract name (eventually signal within N))` and
+`(stage p (ready r)(valid v))`. Both aliases remain accepted
+(regression-backed upstream). SpecForge already emits the preferred
+`ready`/`valid` stage; it still emits the *nested* contract form
+(accepted, now an alias). CI (`isf_output_passes_fsmgen_strict_validation`
++ temporal e2e) confirms the new binary still accepts SpecForge's current
+emission — no break.
+
+**Feature-adoption assessment** (each claim to be re-verified against the
+contract/grammar before any implementation tree acts on it):
+
+- **ADOPT-NOW (highest value):** render the `(constants)`/`(types)`/
+  `(enums)` symbol surface. `isf_ir.rs` already *builds*
+  `IsfConstant`/`IsfTypeDef`/`IsfEnum` from `symbol_definitions`
+  (~`from_intent_ir` line 609) but `render()` (line 278) never emits them
+  (the fields carry `#[allow(dead_code)]`) — **verified**. This is also a
+  **truthfulness gap**: the adapter artifact reports
+  `constant_count`/`enum_count` while emitting none, so adopting it both
+  widens emission and makes the metric honest. Types/enums/constants are
+  a `shipped` bounded surface in the matrix. → proposed follow-up tree
+  **`ISF-SYMBOL-SURFACE-EMIT`**.
+- **ADOPT-NOW (trivial):** migrate the temporal contract to the preferred
+  flat `(eventually signal within N)` spelling (one format string in
+  `render_transaction`), keeping the nested-form regression since the
+  alias stays valid.
+- **GRAMMAR-FIX (latent correctness, currently dormant):** the assessment
+  flagged emitter mismatches that would produce invalid `.isf` the moment
+  a richer IntentIR transaction emits those steps — `shift-left`/
+  `shift-right` and `await-all`/`await-any` (hyphen) vs the grammar's
+  underscore forms; `(spawn child instance)` missing the mandatory `as`;
+  `(do child)` without an unknown-child guard. Not exercised by current
+  fixtures (CI green), but real. → proposed follow-up tree
+  **`ISF-TXN-GRAMMAR-FIX`** (verify each against the ISF grammar first).
+- **FOLLOW-UP-TREE (needs new IntentIR data):** populate transaction
+  `(latency (min)(max))` (renderer+variant exist, `from_intent_ir`
+  hardcodes `None`); `(resources …)` arbitration (would arbitrate
+  conflicting rules instead of silently dropping them); transaction
+  `(bind …)` handoffs (parsed but discarded).
+- **OUT-OF-SCOPE / NOT-YET (residual-honesty):** multi-clock
+  `(clock-domains)` + CDC `(crossings)`, banks `(bank)/(store)/(load)`,
+  ATL network metadata — all `shipped` upstream but SpecForge's IntentIR
+  has no clock-domain/bank/network data to lower honestly.
+
+**Bottom line:** the current nested-contract emission stays valid (no
+forced change). The one safe, data-ready, high-value widening is the
+constants/types/enums symbol surface (also closes a count-vs-emission
+honesty gap); the grammar-fix is genuine latent-correctness work. Both
+scoped as proposed follow-up trees; everything else needs new IntentIR
+plumbing or would violate residual-honesty.
+
 ## 2026-05-29 session — R16-INTENT-CAPTURE umbrella closed (R16 program complete)
 
 - Ramp-up: re-read `README.md` → `SESSION_BOOTSTRAP.md` and the live-doc

@@ -99,6 +99,27 @@
   stale README pin (`32aa318 → 88a7af9c`).
 - Submodule pin change (tracked); no SpecForge source change.
 
+### FSMGEN-REFRESH-INTEGRATE.2 / .3 — record ISF feature-adoption assessment + close tree
+- Read (thoroughly, delegated then verified against `isf_ir.rs`) the
+  FSMGen ISF public-interface contract, downstream-integration spec,
+  feature-support matrix, and lowering reference at the new pin.
+  Recorded the feature-adoption assessment in `DEVELOPMENT_NOTES.md` and
+  updated the reviewed-baseline in `docs/FSMGEN_FEEDBACK.md`
+  (`32aa318 → 88a7af9c`).
+- Outcome: SpecForge's current nested-contract `.isf` emission stays
+  valid (no forced change). **ADOPT-NOW** (highest value): render the
+  `(constants)`/`(types)`/`(enums)` symbol surface that `isf_ir.rs`
+  already *builds* but `render()` discards — verified; also closes a
+  count-vs-emission honesty gap (the artifact reports
+  `constant_count`/`enum_count` while emitting none). Scoped as proposed
+  tree `ISF-SYMBOL-SURFACE-EMIT` (+ a trivial flat-`within N`
+  migration). Latent emitter grammar bugs (hyphen vs underscore;
+  `spawn … as`; unknown-child guard) scoped as proposed
+  `ISF-TXN-GRAMMAR-FIX`. Latency / resources / bind are needs-IntentIR
+  follow-ups; multi-clock/CDC, banks, ATL stay out of scope under
+  residual-honesty.
+- **`FSMGEN-REFRESH-INTEGRATE` tree CLOSED.** Docs-only.
+
 ## 2026-05-20
 
 ### BOOK-USER-FRIENDLY-BACKFILL.6 — close tree + cross-reference BOOK-METHOD-DOC Decisions (standard now self-referential)
