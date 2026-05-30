@@ -1,5 +1,29 @@
 # CHANGES
 
+## 2026-05-31
+
+### CVE-PROSE-EXTRACTION.4 — verify + book + close (R16 CVE producer live)
+- Book method-doc subsection added to `direction/temporal-intent-capture.md`
+  (the R16 chapter) — "wiring the constrained extractor to the live provider".
+- Verified the command end-to-end on a real EvidenceIR: `extract-contracts
+  generated/evidence_ir/readme/evidence_ir.json --provider skip` loaded the
+  artifact, selected 12 `NormativeStatement` candidates, clean exit (load +
+  candidate-selection path, no network).
+- A live `--provider ollama --max-statements 1` run was dispatched but could
+  not complete: the shared single-model Ollama server was saturated by 5
+  concurrent user `converge` jobs, so the one inference never got a queue slot
+  (queued ~1 day, then killed; the tilelink artifact was left untouched —
+  `extract_contracts` only writes at loop end). Recorded **honestly** as
+  *dispatched, server-gated* — NOT claimed as a completed run. The wiring +
+  decision logic are proven by the `.3` pure-`classify_response` unit tests
+  (4 outcome paths) + skip-mode; the live inference is confirmation, runnable
+  any time the shared server is free.
+- **`CVE-PROSE-EXTRACTION` tree CLOSED.** Item (1a) of the "what's left"
+  inventory — wire the live extractor into the R16 CVE surface — is delivered:
+  `extract-contracts` → fails-closed parse → entailment-gate → fold into
+  `actor_contracts` before fusion/fidelity → IntentIR → `validate constrained:`
+  reports real counts. Full `scripts/run_ci.sh` green (incl. mdBook).
+
 ## 2026-05-30
 
 ### CVE-PROSE-EXTRACTION.3 — producer + `extract-contracts` command (Qwen via Ollama)

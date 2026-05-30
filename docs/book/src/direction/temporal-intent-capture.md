@@ -1893,3 +1893,94 @@ count rose from 67 to 86 across the tree, and the whole lib suite stayed
 green throughout.
 
 *Authoritative tracking:* `docs/tasks/R16-MODULE-HARDENING.md`.
+
+## CVE-PROSE-EXTRACTION — wiring the constrained extractor to the live provider
+
+The `R16-CONSTRAINED-VERIFIED-EXTRACTION` surface above built the
+fails-closed parser, the entailment verifier, the template library, and the
+value-of-information selector — then left them **dormant**: nothing called
+`parse_constrained_contract` on real prose, so `specforge validate` always
+read `constrained: schema_rejects=0 entailment_fails=0 template_hits=0`. The
+typed machinery was ready; it had no producer. `CVE-PROSE-EXTRACTION` is that
+producer.
+
+### Why this was the right next step (and why it is *wiring*, not invention)
+
+SpecForge already ships a production LLM/VLM provider — Ollama + Qwen2.5VL,
+the default for `converge`, already driving `enrich` (diagrams) and
+`nlp_enrich` (prose constraints). The constrained surface didn't need a *new*
+provider; it needed the *existing* one routed into
+`parse_constrained_contract`. So this tree connects two things that already
+existed.
+
+### The mental model
+
+> For each normative prose sentence, ask Qwen for one `ActorContract`-shaped
+> JSON object — then trust nothing it says. Parse it through the fails-closed
+> adapter, verify the sentence actually licenses it, and keep only what
+> survives, as honest `Lowerable` *or* `Residual` — never fabricated.
+
+### The `extract-contracts` command
+
+`specforge extract-contracts <evidence-ir> [--provider ollama] [--model …]
+[--max-statements N] [--dry-run]` walks the EvidenceIR's `NormativeStatement`
+prose. For each candidate it prompts the provider with
+`actor_contract_json_schema_summary()` plus a strict "emit JSON or `none`,
+never invent" instruction, then classifies the reply through one pure,
+deterministic function:
+
+- **`none`** (the no-contract sentinel) → skipped.
+- **invalid / missing-required JSON** → `parse_constrained_contract` fails
+  closed → counted a `schema_reject`, with *no* contract produced.
+- **valid JSON** → `apply_entailment_to_contract` against the source
+  sentence: if every signal and bound the contract names appears in the
+  sentence it stays `Lowerable`; otherwise the honesty doctrine reroutes it
+  to `Residual{reason:"entailment fail: …"}`.
+
+Survivors get their provenance overridden to the *actual* statement (the
+model's self-reported provenance is never trusted) and a namespaced
+`contract_id` (`cve:<statement_id>`), then land on a new additive
+`EvidenceIR.extracted_contracts`, beside a persisted
+`ConstrainedExtractionStats {candidates_seen, schema_rejects,
+contracts_accepted}`.
+
+### How the survivors reach the typed KG
+
+`SemanticIr::build` folds `extracted_contracts` into `actor_contracts`
+**before** the existing `apply_fusion` / `apply_fidelity_gates` pass — so an
+extracted contract is treated exactly like a temporal-rule-projected one:
+cross-modal duplicates fuse, contradictions route to `Residual`, and the
+fidelity gates apply. `IntentIR` carries the result, and `validate`'s
+`constrained:` block now reports a real `schema_rejects` (read from the
+carried stat) alongside the `entailment_fails` / `template_hits` it already
+derived from the contracts themselves.
+
+### Why it is safe to ship before accuracy is high
+
+The honesty doctrines exist precisely so an *imperfect* extractor is still
+*safe*: a bad answer becomes a `schema_reject` (nothing), an unverifiable one
+becomes a `Residual` (modelled, not lowered), and a cross-source
+contradiction becomes a `Residual` at fusion. The producer **cannot** mint a
+`Lowerable` contract the prose does not license. Low extraction yield shows
+up as *few contracts* — never as fabrication. Raising precision/recall is
+iterative tuning, measured by the fidelity gates, not a prerequisite for
+shipping the wired surface.
+
+### How it is verified
+
+The per-response decision is a pure `classify_response`, unit-tested over all
+four outcomes (skip / `schema_reject` / accepted-`Lowerable` /
+accepted-entailment-`Residual`) plus Markdown-fence stripping — the logic is
+proven without any network call. The transport (curl + the
+`SPECFORGE_VLM_HELPER` test hook) mirrors the already-tested `nlp_enrich`. The
+command was also exercised on a real protocol EvidenceIR in `--provider skip`
+mode: it loads the artifact and selects its `NormativeStatement` candidates
+(the load + candidate-selection path, no network). A live `--provider ollama`
+run was dispatched too — but because the shared Ollama server is single-model
+and was saturated by concurrent `converge` jobs, that one inference could not
+get a slot; it is recorded honestly as *dispatched, server-gated* rather than
+claimed as a completed run. Crucially, neither the wiring nor the decision
+logic depends on that empirical call — it is confirmation, runnable any time
+the server is free.
+
+*Authoritative tracking:* `docs/tasks/CVE-PROSE-EXTRACTION.md`.
