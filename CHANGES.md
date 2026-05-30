@@ -2,6 +2,23 @@
 
 ## 2026-05-31
 
+### R14-SIGNAL-RESOLVE.2 — producer + `signal-resolve` command (Qwen via Ollama)
+- New `commands/signal_resolve.rs` + `SignalResolveArgs` /
+  `Commands::SignalResolve` / `lib.rs` dispatch / `commands/mod.rs`.
+- For each `NormativeStatement` prose sentence it prompts the provider for one
+  `{actor, signal, relation:"drives"|"reads"}` object, then classifies the
+  reply via a PURE `classify_relation_response`: `none`/unparseable→skip;
+  grounding-gate failure (non-uppercase signal, empty actor, relation ∉
+  {drives,reads}, or — when a declared-signal list is supplied — an ungrounded
+  signal)→skip; otherwise an `ActorSignalRelation` with provenance set to the
+  real statement and `relation_id` namespaced `r14:<id>`.
+- Survivors deduped against existing edges (and within-run) so Tier-3 never
+  double-counts a Tier-1/2 edge; appended to `EvidenceIR.actor_signal_relations`
+  (the existing KG field `SemanticIr::build` already consumes).
+- Transport (curl + `SPECFORGE_VLM_HELPER` hook) mirrors `extract_contracts`;
+  duplication flagged in-module as a DRY follow-up. 5 unit tests over the
+  outcome paths. Lib `1159 → 1164`; full `scripts/run_ci.sh` green.
+
 ### R14-SIGNAL-RESOLVE.1 — design + tree: Tier-3 LLM signal_relation extraction
 - Started R14 (roadmap *Not Started*) as a new additive `signal-resolve`
   command (the roadmap's own suggested shape) — Tier-3 LLM extraction of

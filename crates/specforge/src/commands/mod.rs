@@ -15,4 +15,5 @@ pub mod nlp_enrich;
 pub mod project_validation;
 pub mod rescan_plan;
 pub mod semantic;
+pub mod signal_resolve;
 pub mod validate;

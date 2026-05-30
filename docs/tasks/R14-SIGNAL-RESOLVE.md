@@ -96,7 +96,7 @@ joins the same typed KG Tier-1/2 build, scored graph-first by `validate`.
   Commit: `see Commit Log`
 
 - ID: `R14-SIGNAL-RESOLVE.2`
-  Status: `pending`
+  Status: `done`
   Goal: >
     Producer + command: `commands/signal_resolve.rs` mirroring
     `extract_contracts` (curl + `SPECFORGE_VLM_HELPER`); relation-extraction
@@ -106,8 +106,19 @@ joins the same typed KG Tier-1/2 build, scored graph-first by `validate`.
     CLI `SignalResolveArgs` + `Commands::SignalResolve` + dispatch + mod.
     Mock unit tests over all outcome paths.
   Acceptance: command builds + dispatches; pure classifier tested (5 paths incl. ungrounded-skip + drives/reads); dedup proven; `scripts/run_ci.sh` green.
-  Verification: pending
-  Commit: pending
+  Verification: >
+    passed (`2026-05-31`) — new `commands/signal_resolve.rs` producer +
+    `SignalResolveArgs` / `Commands::SignalResolve` / `lib.rs` dispatch /
+    `commands/mod.rs`. PURE `classify_relation_response` tested over: none→skip,
+    malformed→skip, valid drives→Accepted, valid reads→Accepted,
+    non-uppercase-signal / bad-relation / empty-actor→skip, ungrounded-signal→
+    skip (+ grounded→accept) — 5 tests. Grounding gates (uppercase signal,
+    non-empty actor, relation∈{drives,reads}, optional declared-signal
+    grounding); provenance set to the real statement; `relation_id` namespaced
+    `r14:<id>`; dedup vs existing edges + within-run. Transport mirrors
+    `extract_contracts`/`nlp_enrich` (DRY follow-up flagged in-module). Lib
+    `1159 → 1164`; full `scripts/run_ci.sh` green.
+  Commit: `see Commit Log`
 
 - ID: `R14-SIGNAL-RESOLVE.3`
   Status: `pending`
@@ -125,8 +136,8 @@ joins the same typed KG Tier-1/2 build, scored graph-first by `validate`.
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `R14-SIGNAL-RESOLVE.2` | `pending` | the producer + `signal-resolve` command (mock-tested) |
-| 2 | `R14-SIGNAL-RESOLVE.3` | `pending` | verify + book + close |
+| 1 | `R14-SIGNAL-RESOLVE.2` | `done` | producer + `signal-resolve` command landed (lib 1159→1164; CI green) |
+| 2 | `R14-SIGNAL-RESOLVE.3` | `pending` | verify (skip-mode) + book method-doc + close — next |
 
 ## Decisions
 
@@ -154,15 +165,23 @@ joins the same typed KG Tier-1/2 build, scored graph-first by `validate`.
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-05-31` | `R14-SIGNAL-RESOLVE.1` | design/data-flow/grounding-gates/test-plan recorded; tree registered; docs-only (no code/book ⇒ CI invariant) | `passed` |
+| `2026-05-31` | `R14-SIGNAL-RESOLVE.2` | `commands/signal_resolve.rs` producer + CLI/dispatch/mod; pure `classify_relation_response` tested over 5 outcome paths (incl. ungrounded-skip + drives/reads) + grounding gates + dedup; lib `1159 → 1164`; full `scripts/run_ci.sh` | `passed` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `R14-SIGNAL-RESOLVE.1` | `R14-SIGNAL-RESOLVE.1 — design + tree: Tier-3 LLM signal_relation extraction (signal-resolve command)` | docs-only design leaf |
+| `R14-SIGNAL-RESOLVE.2` | `R14-SIGNAL-RESOLVE.2 — producer + signal-resolve command (Qwen via Ollama); pure classify_relation_response (5 paths) + CLI wiring` | lib 1159→1164; grounding-gated + deduped; DRY-transport follow-up noted |
 
 ## Changelog
 
+- `2026-05-31`: `.2` — producer + `signal-resolve` command
+  (`commands/signal_resolve.rs`) + CLI/dispatch/mod wiring; pure
+  `classify_relation_response` (none/malformed/ungrounded→skip; valid
+  drives|reads→`ActorSignalRelation`) + grounding gates + dedup + 5 unit
+  tests; transport mirrors `extract_contracts` (DRY follow-up flagged);
+  lib `1159 → 1164`; full CI green. Frontier → `.3`.
 - `2026-05-31`: Created — design fixed for the Tier-3 `signal-resolve`
   command (R14); additive producer for the existing
   `EvidenceIR.actor_signal_relations` KG field; 3-leaf plan.

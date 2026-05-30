@@ -53,6 +53,8 @@ pub enum Commands {
     NlpEnrich(NlpEnrichArgs),
     /// Extract typed ActorContracts from prose via the constrained-verified extractor (Qwen)
     ExtractContracts(ExtractContractsArgs),
+    /// Resolve actor->signal relations from prose via Tier-3 LLM extraction (Qwen)
+    SignalResolve(SignalResolveArgs),
 }
 
 #[derive(Debug, Args)]
@@ -201,6 +203,27 @@ pub struct ExtractContractsArgs {
     /// Maximum NormativeStatement sentences to send to the LLM (0 = all)
     #[arg(long, default_value = "0")]
     pub max_statements: usize,
+}
+
+#[derive(Debug, Args)]
+pub struct SignalResolveArgs {
+    /// Path to an EvidenceIR JSON artifact to enrich with extracted actor->signal relations
+    pub evidence_ir: std::path::PathBuf,
+    /// LLM provider (default ollama; same providers as enrich/nlp-enrich)
+    #[arg(long, value_enum, default_value = "ollama")]
+    pub provider: VlmProviderArg,
+    /// Model name override (default qwen2.5vl:7b for ollama/lmstudio, gpt-4o for openai)
+    #[arg(long)]
+    pub model: Option<String>,
+    /// Show candidate statements without making LLM calls
+    #[arg(long)]
+    pub dry_run: bool,
+    /// Maximum NormativeStatement sentences to send to the LLM (0 = all)
+    #[arg(long, default_value = "0")]
+    pub max_statements: usize,
+    /// Comma-separated declared signal names to ground extraction (empty disables)
+    #[arg(long)]
+    pub grounding_signals: Option<String>,
 }
 
 #[derive(Debug, Args)]
