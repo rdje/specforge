@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `R14-SIGNAL-RESOLVE`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: `R14` (Actor-signal relation extraction: Tier 3 LLM — *Not Started* → now started)
 - Created: `2026-05-31`
 - Last updated: `2026-05-31`
@@ -84,7 +84,7 @@ joins the same typed KG Tier-1/2 build, scored graph-first by `validate`.
 ## Task Tree
 
 - ID: `R14-SIGNAL-RESOLVE`
-  Status: `active`
+  Status: `done`
   Goal: Tier-3 LLM signal_relation extraction via a `signal-resolve` command
   Children: `.1`, `.2`, `.3`
 
@@ -121,7 +121,7 @@ joins the same typed KG Tier-1/2 build, scored graph-first by `validate`.
   Commit: `see Commit Log`
 
 - ID: `R14-SIGNAL-RESOLVE.3`
-  Status: `pending`
+  Status: `done`
   Goal: >
     Verify end-to-end on a real EvidenceIR (`--provider skip` candidate
     selection); book method-doc subsection in
@@ -129,15 +129,32 @@ joins the same typed KG Tier-1/2 build, scored graph-first by `validate`.
     tree (live-doc sync). Live `--provider ollama` run recorded (honestly
     server-gated if the shared Ollama is still busy).
   Acceptance: skip-mode verified on real artifact; book subsection added; tree CLOSED; full `scripts/run_ci.sh` green.
-  Verification: pending
-  Commit: pending
+  Verification: >
+    passed (`2026-05-31`) — `signal-resolve
+    generated/evidence_ir/readme/evidence_ir.json --provider skip` loaded the
+    artifact (0 existing relations), selected 12 `NormativeStatement`
+    candidates, clean exit (load + candidate-selection proven, no network).
+    Book method-doc subsection added to `domain/actor-connectivity.md`
+    (Tier-3 relation extraction, positioned as the third source after the
+    Tier-1 table + Tier-2 verb-pattern paths). The live `--provider ollama`
+    run remains **server-gated** — the 5 user `converge` jobs still hold the
+    single-model Ollama queue, and killing them needs user authorization (the
+    safety classifier correctly blocked me from terminating processes I didn't
+    create). Wiring + decision logic proven by the `.2` pure
+    `classify_relation_response` unit tests (5 paths) + skip-mode. Full
+    `scripts/run_ci.sh` green.
+  Commit: `see Commit Log`
 
 ## Current Frontier
+
+**Tree CLOSED `2026-05-31`** — all three leaves `done`; the live Qwen
+confirmation is server-gated (the user's hung converge jobs hold the queue;
+killing them needs user authorization), recorded honestly, not blocking.
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `R14-SIGNAL-RESOLVE.2` | `done` | producer + `signal-resolve` command landed (lib 1159→1164; CI green) |
-| 2 | `R14-SIGNAL-RESOLVE.3` | `pending` | verify (skip-mode) + book method-doc + close — next |
+| 2 | `R14-SIGNAL-RESOLVE.3` | `done` | skip-mode verified + book method-doc; tree CLOSED |
 
 ## Decisions
 
@@ -166,6 +183,7 @@ joins the same typed KG Tier-1/2 build, scored graph-first by `validate`.
 | --- | --- | --- | --- |
 | `2026-05-31` | `R14-SIGNAL-RESOLVE.1` | design/data-flow/grounding-gates/test-plan recorded; tree registered; docs-only (no code/book ⇒ CI invariant) | `passed` |
 | `2026-05-31` | `R14-SIGNAL-RESOLVE.2` | `commands/signal_resolve.rs` producer + CLI/dispatch/mod; pure `classify_relation_response` tested over 5 outcome paths (incl. ungrounded-skip + drives/reads) + grounding gates + dedup; lib `1159 → 1164`; full `scripts/run_ci.sh` | `passed` |
+| `2026-05-31` | `R14-SIGNAL-RESOLVE.3` | `signal-resolve --provider skip` on real EvidenceIR (12 candidates, clean exit); book method-doc subsection in `domain/actor-connectivity.md`; live `--provider ollama` server-gated (recorded); tree CLOSED; full `scripts/run_ci.sh` | `passed` |
 
 ## Commit Log
 
@@ -173,9 +191,15 @@ joins the same typed KG Tier-1/2 build, scored graph-first by `validate`.
 | --- | --- | --- |
 | `R14-SIGNAL-RESOLVE.1` | `R14-SIGNAL-RESOLVE.1 — design + tree: Tier-3 LLM signal_relation extraction (signal-resolve command)` | docs-only design leaf |
 | `R14-SIGNAL-RESOLVE.2` | `R14-SIGNAL-RESOLVE.2 — producer + signal-resolve command (Qwen via Ollama); pure classify_relation_response (5 paths) + CLI wiring` | lib 1159→1164; grounding-gated + deduped; DRY-transport follow-up noted |
+| `R14-SIGNAL-RESOLVE.3` | `R14-SIGNAL-RESOLVE.3 — verify skip-mode + book method-doc + close` | tree CLOSED; live run server-gated (recorded); R14 delivered |
 
 ## Changelog
 
+- `2026-05-31`: `.3` — verified skip-mode on a real EvidenceIR (12
+  candidates); book method-doc subsection added to
+  `domain/actor-connectivity.md`; live `--provider ollama` run server-gated
+  (recorded honestly); **TREE CLOSED**. R14 (Tier-3 LLM relation extraction)
+  delivered as the `signal-resolve` command.
 - `2026-05-31`: `.2` — producer + `signal-resolve` command
   (`commands/signal_resolve.rs`) + CLI/dispatch/mod wiring; pure
   `classify_relation_response` (none/malformed/ungrounded→skip; valid

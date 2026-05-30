@@ -329,3 +329,68 @@ direction* — the graph, not the flat field.
 closed `2026-05-20`; metadata reconciled to match the
 long-standing all-leaves-complete truth + book section
 added per the now-structural `BOOK-METHOD-DOC` close-rule).
+
+### `R14-SIGNAL-RESOLVE` — Tier-3 LLM relation extraction for the hard prose
+
+"Where graph facts come from" (above) lists two ways an
+actor→signal edge enters the knowledge graph: Tier-1 structured
+tables (a `Source`/`Destination` column) and Tier-2 verb
+patterns ("the Manager drives AWVALID"). Those catch the clean
+cases. `R14-SIGNAL-RESOLVE` adds the third tier for the
+sentences they miss.
+
+#### The problem this fixes
+
+Real specs phrase relations in ways no fixed pattern catches:
+"the completer is responsible for returning `PRDATA`", "address
+information flows from the requester onto `PADDR`". A human
+reads "who drives what" instantly; the Tier-2 verb matcher sees
+no `drives`/`samples` keyword and leaves the edge unrecovered —
+the signal ends up with no graph direction, surfaced as
+recovery debt.
+
+#### What it does
+
+`specforge signal-resolve <evidence-ir> [--provider ollama]`
+asks Qwen, for each residual normative sentence, for one
+`{actor, signal, relation:"drives"|"reads"}` object (or
+`none`). It is a **new** command — it does not touch the
+existing `nlp_enrich` — and it writes to the **same**
+`EvidenceIR.actor_signal_relations` field Tier-1/2 populate, so
+a Tier-3 edge is indistinguishable downstream from a
+table-derived one: it flows through `SemanticIr::build` into
+actor ports and graph-first direction the exact same way.
+
+#### Why it can't fabricate the graph
+
+This is the part that matters. An LLM asked "who drives what"
+will happily make something up; the command refuses to trust
+it:
+
+- the **signal** must be an uppercase hardware name (`AWVALID`,
+  not "the address") — prose words cannot become graph nodes;
+- the **actor** must be non-empty and the **relation** exactly
+  `drives` or `reads`;
+- with `--grounding-signals`, the signal must be one already
+  declared in the spec — a hallucinated name is dropped;
+- a new edge is **deduped** against the existing graph, so
+  Tier-3 never inflates counts by re-stating a Tier-1/2 edge;
+- every kept edge carries provenance to the exact source
+  statement.
+
+A `none`, an unparseable reply, or any gate failure yields **no
+edge** — the worst case is a *missed* relation (recovery debt
+stays honestly visible), never a fabricated one.
+
+#### How it is verified
+
+The decision is a pure `classify_relation_response`, unit-tested
+over every path: `none`→skip, malformed→skip, valid
+`drives`/`reads`→accepted, lowercase/prose signal→skip, bad
+relation→skip, empty actor→skip, and ungrounded-signal→skip
+(with grounded→accept). The command was run end-to-end on a real
+EvidenceIR in `--provider skip` mode (loads the artifact,
+selects its candidates); a live `--provider ollama` run is
+runnable whenever the shared Ollama server is free.
+
+*Authoritative tracking:* `docs/tasks/R14-SIGNAL-RESOLVE.md`.

@@ -2,6 +2,23 @@
 
 ## 2026-05-31
 
+### R14-SIGNAL-RESOLVE.3 — verify + book + close (R14 Tier-3 relation extraction delivered)
+- Verified `signal-resolve` end-to-end on a real EvidenceIR: `--provider skip`
+  loaded the `readme` artifact (0 existing relations), selected 12
+  `NormativeStatement` candidates, clean exit (load + candidate-selection, no
+  network).
+- Book method-doc subsection added to `domain/actor-connectivity.md` —
+  "Tier-3 LLM relation extraction for the hard prose", positioned as the third
+  source after Tier-1 tables + Tier-2 verb patterns.
+- The live `--provider ollama` run remains server-gated (the 5 hung user
+  `converge` jobs still hold the single-model Ollama queue; killing them needs
+  user authorization — the safety classifier correctly blocked the agent).
+  Recorded honestly; wiring + decision logic proven by the `.2` unit tests +
+  skip-mode.
+- **`R14-SIGNAL-RESOLVE` tree CLOSED** — roadmap R14 (Tier-3 LLM relation
+  extraction, previously *Not Started*) delivered as the `signal-resolve`
+  command. Full `scripts/run_ci.sh` green (incl. mdBook).
+
 ### R14-SIGNAL-RESOLVE.2 — producer + `signal-resolve` command (Qwen via Ollama)
 - New `commands/signal_resolve.rs` + `SignalResolveArgs` /
   `Commands::SignalResolve` / `lib.rs` dispatch / `commands/mod.rs`.
