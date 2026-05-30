@@ -2,6 +2,22 @@
 
 ## 2026-05-31
 
+### R14-SIGNAL-RESOLVE.1 — design + tree: Tier-3 LLM signal_relation extraction
+- Started R14 (roadmap *Not Started*) as a new additive `signal-resolve`
+  command (the roadmap's own suggested shape) — Tier-3 LLM extraction of
+  actor→signal `drives`/`reads` relations from the hard prose Tier-1 (tables)
+  and Tier-2 (verb patterns) miss, via the production-default Ollama+Qwen.
+- Key design point: the target field `EvidenceIR.actor_signal_relations`
+  (`source.rs:314` `ActorSignalRelation`) already exists and is already
+  consumed by `SemanticIR`, so R14 is a *new producer for an existing KG
+  field* — no new IR types, no `SemanticIr::build` wiring (3 leaves, not 4).
+  Mirrors the just-shipped `extract-contracts` structure; does NOT touch the
+  in-use `nlp_enrich` command.
+- Grounding gates (anti-fabrication): uppercase signal, non-empty actor,
+  relation ∈ {drives, reads}, optional declared-signal grounding, dedup vs
+  existing edges; provenance set to the real statement.
+- Docs-only design leaf; CI invariant.
+
 ### CVE-PROSE-EXTRACTION.4 — verify + book + close (R16 CVE producer live)
 - Book method-doc subsection added to `direction/temporal-intent-capture.md`
   (the R16 chapter) — "wiring the constrained extractor to the live provider".
