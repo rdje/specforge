@@ -133,3 +133,42 @@ worked symbol-by-symbol so failure isolation stayed sharp.
 Verified by mutation testing reducing missed mutants to zero on
 the targeted symbols + `scripts/run_ci.sh`. *Authoritative
 tracking:* `docs/tasks/R6-EVIDENCE-HARDENING.md`.
+
+### `R15C-CONVERGENCE-REPORT` — make the anchored-rescan loop inspectable
+
+**What it gives you:** when you run `specforge validate` on an
+`EvidenceIR`, you now see a `Convergence` section — how many passes
+the extractor ran, how many *genuinely new* facts it recovered, and
+whether it actually settled or was cut off.
+
+**Why that matters.** Building `EvidenceIR` is not a single pass.
+Newly discovered signals become anchors that unlock more tables,
+whose new value atoms unlock more prose constraints — so the
+extractor loops, re-scanning with everything it has learned so far,
+until a pass turns up nothing new. That last part is the honesty
+question: *did the loop genuinely run out of new facts, or did it
+just hit its pass limit while still finding more?* Those two
+outcomes look identical in the final artifact, but they mean very
+different things for how complete your capture is.
+
+So the loop now records an `EvidenceConvergenceReport`: `passes_run`
+(of `max_passes`), `new_facts_per_pass` (counting *deduplicated* new
+statements — real knowledge growth, not vectors getting longer),
+`total_new_facts`, and a `converged` flag. `validate` turns that into
+a finding you can act on:
+
+- **Converged** → an `Info` finding: the loop stabilized; the
+  anchored rescan is as complete as this document allows.
+- **Capped** → a `Warning` finding: the loop stopped at the
+  pass limit while still discovering facts, so convergence is *not*
+  proven and the capture may be incomplete — a signal to look closer.
+
+The extraction outcomes themselves are unchanged; this is a pure
+visibility surface over a loop that was already running. It satisfies
+the R15c criterion "convergence reporting counts genuinely new
+persisted facts instead of duplicate vector growth," and it gives
+future R15c accuracy work a metric to push against. Verified by unit
+tests on the recorded report (converged path) and both `validate`
+findings (converged `Info` / capped `Warning`) + `scripts/run_ci.sh`.
+*Authoritative tracking:* `docs/tasks/R15C-CONVERGENCE-REPORT.md`
+(under `R15C-R15G-LEARNING-PLANE-BACKFILL.1`).

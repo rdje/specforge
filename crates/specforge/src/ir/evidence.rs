@@ -170,6 +170,39 @@ pub struct EvidenceIr {
     pub signal_alias_map: BTreeMap<String, String>,
     #[serde(default)]
     pub validation_reports: Vec<ValidationReportRecord>,
+    /// R15c: report of the monotone anchored-rescan loop that built this
+    /// EvidenceIR. Makes the convergent extraction first-class — how many passes
+    /// ran, how many *genuinely new* (deduplicated) facts each pass recovered,
+    /// and whether the loop stabilized (`converged`) or stopped at its pass cap.
+    /// `None` only for artifacts built before this field existed.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub convergence_report: Option<EvidenceConvergenceReport>,
+}
+
+/// R15c: typed accounting for the EvidenceIR convergent anchored-rescan loop.
+///
+/// The loop seeds from one-shot extraction, then repeatedly uses known signals /
+/// values as anchors to rescan tables (and prose-derived relations) for more
+/// facts, stopping when a pass discovers no new *deduplicated* statement texts.
+/// This record exposes that behavior instead of leaving it implicit, so users
+/// can see genuine knowledge growth (not duplicate vector growth) and whether
+/// convergence was actually reached.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct EvidenceConvergenceReport {
+    /// Number of loop passes actually executed (includes the terminal pass that
+    /// discovered nothing new, when the loop converged).
+    pub passes_run: usize,
+    /// The pass cap for this document (`structured_tables.len().max(1) + 4`).
+    pub max_passes: usize,
+    /// Genuinely-new (deduplicated) statements discovered per pass, in order.
+    #[serde(default)]
+    pub new_facts_per_pass: Vec<usize>,
+    /// Sum of `new_facts_per_pass` — total anchored facts recovered beyond the seed.
+    pub total_new_facts: usize,
+    /// `true` if the loop stopped because a pass found nothing new (stabilized);
+    /// `false` if it exhausted `max_passes` while still discovering facts
+    /// (convergence not proven — the anchored rescan may be incomplete).
+    pub converged: bool,
 }
 
 #[derive(Debug, Clone)]
@@ -520,6 +553,7 @@ impl EvidenceIr {
             signal_polarities,
             signal_polarity_conflicts,
             actor_signal_relations,
+            convergence_report,
         ) = converge_evidence_extractions(
             &source_ir,
             extracted_statements,
@@ -557,6 +591,7 @@ impl EvidenceIr {
             actor_signal_relations,
             signal_alias_map: BTreeMap::new(),
             validation_reports: Vec::new(),
+            convergence_report: Some(convergence_report),
         };
         evidence_ir.carry_forward_existing_knowledge()?;
         evidence_ir.refresh_signal_semantic_hints()?;
@@ -6488,6 +6523,7 @@ fn converge_evidence_extractions(
     Vec<SignalPolarityRecord>,
     Vec<SignalPolarityConflictRecord>,
     Vec<ActorSignalRelation>,
+    EvidenceConvergenceReport,
 ) {
     let signal_names_from_tables = collect_signal_names_from_tables(source_ir, prior_guidance);
     let signal_widths_from_tables = collect_signal_widths_from_tables(source_ir, prior_guidance);
@@ -6501,6 +6537,8 @@ fn converge_evidence_extractions(
     let mut final_signal_polarity_conflicts = Vec::new();
     let mut final_actor_signal_relations = Vec::new();
     let max_passes = source_ir.structured_tables.len().max(1) + 4;
+    let mut new_facts_per_pass: Vec<usize> = Vec::new();
+    let mut converged = false;
 
     for _pass in 0..max_passes {
         let mut extracted_statements = base_extracted_statements.clone();
@@ -6573,11 +6611,21 @@ fn converge_evidence_extractions(
         final_signal_polarity_conflicts = signal_polarity.conflicts;
         final_actor_signal_relations = actor_signal_relations;
 
+        new_facts_per_pass.push(new_dynamic_statements.len());
         if new_dynamic_statements.is_empty() {
+            converged = true;
             break;
         }
         dynamic_synthesized_statements.extend(new_dynamic_statements);
     }
+
+    let convergence_report = EvidenceConvergenceReport {
+        passes_run: new_facts_per_pass.len(),
+        max_passes,
+        total_new_facts: new_facts_per_pass.iter().sum(),
+        new_facts_per_pass,
+        converged,
+    };
 
     (
         final_extracted_statements,
@@ -6586,6 +6634,7 @@ fn converge_evidence_extractions(
         final_signal_polarities,
         final_signal_polarity_conflicts,
         final_actor_signal_relations,
+        convergence_report,
     )
 }
 
@@ -10860,5 +10909,39 @@ mod tests {
     fn is_signal_synthesis_non_signal_rejects_real_signals() {
         assert!(!is_signal_synthesis_non_signal("HADDR"));
         assert!(!is_signal_synthesis_non_signal("AWVALID"));
+    }
+
+    #[test]
+    fn build_records_a_converged_convergence_report() {
+        let tempdir = tempfile::tempdir().unwrap();
+        let source = tempdir.path().join("conv.md");
+        std::fs::write(
+            &source,
+            "# Spec\nSignal HADDR is input width 32.\nHADDR shall remain stable.\n",
+        )
+        .unwrap();
+        let sib = tempdir.path().join("src_ir");
+        let eib = tempdir.path().join("ev_ir");
+        let source_ir = SourceIr::build(&source, &sib).unwrap();
+        source_ir.write_to_disk().unwrap();
+        let ev = EvidenceIr::build(&source_ir.artifact_layout.source_ir_path, &eib).unwrap();
+
+        let report = ev
+            .convergence_report
+            .as_ref()
+            .expect("build records a convergence report");
+        // The monotone loop must stop on a fixpoint, not at the cap.
+        assert!(report.converged, "simple spec must converge");
+        assert!(report.passes_run >= 1);
+        assert!(report.passes_run <= report.max_passes);
+        // passes_run counts every executed pass, including the terminal one.
+        assert_eq!(report.new_facts_per_pass.len(), report.passes_run);
+        // The terminal pass (the one that broke the loop) discovered nothing new.
+        assert_eq!(report.new_facts_per_pass.last().copied(), Some(0));
+        // total is the sum of the per-pass counts.
+        assert_eq!(
+            report.total_new_facts,
+            report.new_facts_per_pass.iter().sum::<usize>()
+        );
     }
 }

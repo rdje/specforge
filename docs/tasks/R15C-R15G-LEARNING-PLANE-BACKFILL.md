@@ -67,6 +67,12 @@ dedicated child tree) when pursued.
     new-fact-vs-duplicate convergence accounting; recover more weakly-labeled
     detail tables / polarity / timing / value facts from known anchors. Status
     `in_progress` (lane open). Each advance → its own owning tree.
+    **Advances landed:** `R15C-CONVERGENCE-REPORT` (`2026-05-31`, CLOSED) —
+    delivered the *convergence-accounting* half: the loop now emits a typed
+    `EvidenceConvergenceReport` (passes, genuinely-new deduped facts/pass,
+    converged-vs-capped), persisted + surfaced by `validate`. Still open: the
+    *accuracy* half — anchored prose/figure rescans that recover MORE facts,
+    measured against that now-visible metric.
   Commit: `see Commit Log`
 
 - ID: `R15C-R15G-LEARNING-PLANE-BACKFILL.2`

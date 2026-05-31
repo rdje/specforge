@@ -2,6 +2,26 @@
 
 ## 2026-05-31
 
+### R15C-CONVERGENCE-REPORT — make the EvidenceIR anchored-rescan loop inspectable
+- First concrete R15c advance (under `R15C-R15G-LEARNING-PLANE-BACKFILL.1`):
+  satisfied the named-but-unbuilt criterion "convergence reporting counts
+  genuinely new persisted facts instead of duplicate vector growth."
+- `converge_evidence_extractions` already ran a monotone anchored-rescan loop
+  that stops on a fixpoint, but emitted no report. Added `pub struct
+  EvidenceConvergenceReport` (`passes_run`, `max_passes`, `new_facts_per_pass`
+  — deduplicated new statements, `total_new_facts`, `converged`); the loop now
+  records per-pass counts + the converged flag and returns it.
+- `EvidenceIr` persists `convergence_report` (`serde(default,
+  skip_serializing_if=None)`, set on every build; carry-forward leaves it
+  intact). `specforge validate` prints a `Convergence` section, emits a finding
+  (Info `evidence_extraction_converged` / Warning `evidence_extraction_not_converged`
+  when it stops at the pass cap still discovering facts — honest about unproven
+  convergence), and adds 3 metrics.
+- Extraction outcomes are unchanged — this is a pure visibility/honesty surface
+  over a loop that was already running, and it gives future R15c accuracy work a
+  metric to push against. Tests: converged-report invariants (evidence.rs) + both
+  validate branches; full `scripts/run_ci.sh` GREEN.
+
 ### NLP-ENRICH-TRANSPORT-DEDUP — finish the text-transport consolidation (2→1)
 - Completed the DRY follow-up `LLM-TEXT-TRANSPORT-DEDUP` flagged: routed
   `commands/nlp_enrich.rs::call_llm_for_sentence` through the shared

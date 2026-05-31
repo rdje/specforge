@@ -2570,6 +2570,20 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
         negative_knowledge_prior_matches.len()
     );
 
+    println!();
+    println!("=== Convergence (R15c anchored rescan loop) ===");
+    match &ir.convergence_report {
+        Some(report) => {
+            println!(
+                "  passes_run: {} (cap {})",
+                report.passes_run, report.max_passes
+            );
+            println!("  total_new_facts: {}", report.total_new_facts);
+            println!("  converged: {}", report.converged);
+        }
+        None => println!("  (not recorded — artifact predates convergence reporting)"),
+    }
+
     let normative_count = classes.get("normative_statement").copied().unwrap_or(0);
     let missing_vlm_observation_related_ids = evidence_missing_vlm_observation_related_ids(ir);
     let structural_kg_missing_related_ids = evidence_structural_kg_missing_related_ids(ir);
@@ -2709,6 +2723,31 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             visual_motif_corroboration_targets.clone(),
         ));
     }
+    if let Some(convergence) = &ir.convergence_report {
+        if convergence.converged {
+            findings.push(finding(
+                "evidence_extraction_converged",
+                ValidationFindingSeverity::Info,
+                "convergence",
+                format!(
+                    "Anchored rescan loop converged in {} pass(es) (cap {}); {} genuinely-new fact(s) recovered beyond the one-shot seed",
+                    convergence.passes_run, convergence.max_passes, convergence.total_new_facts
+                ),
+                Vec::new(),
+            ));
+        } else {
+            findings.push(finding(
+                "evidence_extraction_not_converged",
+                ValidationFindingSeverity::Warning,
+                "convergence",
+                format!(
+                    "Anchored rescan loop stopped at the {}-pass cap while still discovering facts ({} recovered); convergence not proven — the anchored rescan may be incomplete",
+                    convergence.max_passes, convergence.total_new_facts
+                ),
+                Vec::new(),
+            ));
+        }
+    }
 
     let report = ValidationReportRecord {
         report_id: format!("validation_evidence_ir_{artifact_fingerprint}"),
@@ -2754,6 +2793,30 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             metric(
                 "timing_constraints",
                 ir.timing_constraints.len().to_string(),
+            ),
+            metric(
+                "convergence_passes_run",
+                ir.convergence_report
+                    .as_ref()
+                    .map(|r| r.passes_run)
+                    .unwrap_or(0)
+                    .to_string(),
+            ),
+            metric(
+                "convergence_total_new_facts",
+                ir.convergence_report
+                    .as_ref()
+                    .map(|r| r.total_new_facts)
+                    .unwrap_or(0)
+                    .to_string(),
+            ),
+            metric(
+                "convergence_converged",
+                ir.convergence_report
+                    .as_ref()
+                    .map(|r| r.converged)
+                    .unwrap_or(false)
+                    .to_string(),
             ),
             metric(
                 "table_signal_declaration_provenance",
@@ -6583,6 +6646,66 @@ mod tests {
             vec!["polarity_conflict_0001".to_string()]
         );
 
+        Ok(())
+    }
+
+    #[test]
+    fn validate_evidence_ir_reports_convergence() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("converge.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        fs::write(
+            &source,
+            "# Spec\nSignal HADDR is input width 32.\nHADDR shall remain stable.\n",
+        )?;
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+
+        let report = validate_evidence_ir(&evidence_ir, "convergence_info".to_string());
+        // A simple spec must converge on a fixpoint, not stall at the cap.
+        assert_eq!(metric_value(&report, "convergence_converged"), Some("true"));
+        assert!(has_finding(&report, "evidence_extraction_converged"));
+        assert!(!has_finding(&report, "evidence_extraction_not_converged"));
+        Ok(())
+    }
+
+    #[test]
+    fn validate_evidence_ir_warns_when_convergence_capped() -> Result<()> {
+        use crate::ir::evidence::{EvidenceConvergenceReport, EvidenceIr};
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("capped.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        fs::write(&source, "# Spec\nSome content.\n")?;
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        // Force the cap-limited (non-converged) branch.
+        evidence_ir.convergence_report = Some(EvidenceConvergenceReport {
+            passes_run: 5,
+            max_passes: 5,
+            new_facts_per_pass: vec![3, 2, 2, 1, 1],
+            total_new_facts: 9,
+            converged: false,
+        });
+
+        let report = validate_evidence_ir(&evidence_ir, "convergence_warn".to_string());
+        assert_eq!(
+            metric_value(&report, "convergence_converged"),
+            Some("false")
+        );
+        assert_eq!(metric_value(&report, "convergence_passes_run"), Some("5"));
+        assert!(has_finding(&report, "evidence_extraction_not_converged"));
+        assert!(!has_finding(&report, "evidence_extraction_converged"));
         Ok(())
     }
 

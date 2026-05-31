@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `R15C-CONVERGENCE-REPORT`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: `R15c` (KG-guided multimodal rescans)
 - Created: `2026-05-31`
 - Last updated: `2026-05-31`
@@ -55,7 +55,7 @@ is the first concrete advance of that lane.
 ## Task Tree
 
 - ID: `R15C-CONVERGENCE-REPORT`
-  Status: `active`
+  Status: `done`
   Goal: typed convergence report on the EvidenceIR rescan loop + validate surface
   Children: `.1`, `.2`
 
@@ -67,7 +67,7 @@ is the first concrete advance of that lane.
   Commit: `see Commit Log`
 
 - ID: `R15C-CONVERGENCE-REPORT.2`
-  Status: `pending`
+  Status: `done`
   Goal: >
     Implement: add `EvidenceConvergenceReport`; track per-pass deduped new-fact
     counts + `converged` in `converge_evidence_extractions` (return it); persist
@@ -75,15 +75,38 @@ is the first concrete advance of that lane.
     (Info converged / Warning cap-limited). Unit tests + book note in
     `pipeline/evidenceir.md`; full CI green; close.
   Acceptance: report emitted + persisted + validated; behavior-neutral on facts; tests pass; CI green; book updated; tree CLOSED.
-  Verification: pending
-  Commit: pending
+  Verification: >
+    passed (`2026-05-31`) — added `pub struct EvidenceConvergenceReport`
+    (`passes_run`, `max_passes`, `new_facts_per_pass`, `total_new_facts`,
+    `converged`); `converge_evidence_extractions` now records per-pass
+    deduplicated new-fact counts + the `converged` flag and returns the report
+    (7-tuple); `EvidenceIr` persists `convergence_report`
+    (`serde(default, skip_serializing_if=None)`), set on every `build`;
+    `carry_forward_existing_knowledge` leaves it intact. `validate_evidence_ir`
+    prints a `Convergence` section, emits the finding (Info
+    `evidence_extraction_converged` / Warning `evidence_extraction_not_converged`),
+    and adds `convergence_passes_run`/`convergence_total_new_facts`/
+    `convergence_converged` metrics. Extraction outcomes unchanged (pure
+    visibility surface). Tests: `build_records_a_converged_convergence_report`
+    (evidence.rs — converged path + report invariants) +
+    `validate_evidence_ir_reports_convergence` (Info path) +
+    `validate_evidence_ir_warns_when_convergence_capped` (Warning path via field
+    mutation). `cargo clippy --all-targets` clean; one over-long `assert_eq!`
+    rustfmt-wrapped; full `scripts/run_ci.sh` GREEN. Book: user-friendly
+    subsection in `pipeline/evidenceir.md`.
+  Commit: `see Commit Log`
 
 ## Current Frontier
 
-| Order | Leaf | Status | Why next |
+**Tree CLOSED `2026-05-31`** — the EvidenceIR anchored-rescan loop now emits a
+typed `EvidenceConvergenceReport`, persisted on the artifact and surfaced by
+`validate` (Info converged / Warning cap-limited). Extraction outcomes unchanged.
+A first concrete R15c advance under `R15C-R15G-LEARNING-PLANE-BACKFILL.1`.
+
+| Order | Leaf | Status | Why |
 | --- | --- | --- | --- |
 | 1 | `R15C-CONVERGENCE-REPORT.1` | `done` | tree + design landed |
-| 2 | `R15C-CONVERGENCE-REPORT.2` | `pending` | implement the report + validate finding + tests + book + close — next |
+| 2 | `R15C-CONVERGENCE-REPORT.2` | `done` | report + validate finding + 3 tests + book; CI green |
 
 ## Decisions
 
@@ -112,15 +135,21 @@ is the first concrete advance of that lane.
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-05-31` | `.1` | tree created (typed convergence-report design); registered in `docs/TASK_TREE.md`; docs-only (CI invariant) | `passed` |
+| `2026-05-31` | `.2` | `EvidenceConvergenceReport` added; loop records per-pass deduped counts + `converged`; persisted on EvidenceIR; `validate` finding (Info/Warning) + 3 metrics; 3 unit tests (converged + both validate branches); extraction-neutral; fmt/clippy clean; full `scripts/run_ci.sh` GREEN; book subsection | `passed` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `R15C-CONVERGENCE-REPORT.1` | `R15C-CONVERGENCE-REPORT.1 — own + design the EvidenceIR convergence report` | docs-only |
+| `R15C-CONVERGENCE-REPORT.2` | `R15C-CONVERGENCE-REPORT.2 — emit EvidenceConvergenceReport + validate surface; close` | code + book; extraction-neutral; CI green |
 
 ## Changelog
 
+- `2026-05-31`: `.2` — implemented `EvidenceConvergenceReport` (loop records
+  per-pass deduped new-fact counts + converged flag; persisted on EvidenceIR;
+  `validate` Info/Warning finding + metrics; 3 tests; book subsection).
+  Extraction outcomes unchanged. Full CI green. **Tree CLOSED.**
 - `2026-05-31`: Created — own + design a typed convergence report for the
   EvidenceIR anchored-rescan loop (R15c "convergence reporting counts genuinely
   new persisted facts"). Frontier → `.2` (implement).
