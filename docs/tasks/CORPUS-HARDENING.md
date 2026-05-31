@@ -70,8 +70,17 @@ driven-down misses on the specs that matter."
     per-spec completeness signals + check the actor-relative extraction (ports,
     directions, handshakes) against the R12 baselines; rank discovered misses.
   Acceptance: 4 core specs run + recorded; misses ranked into candidate fix-trees.
-  Verification: pending (APB ingest started `2026-05-31`)
-  Commit: pending
+  Verification: >
+    in progress (`2026-05-31`) — 3 of 4 AMBA core specs run end-to-end
+    (ingest→evidence→validate): **APB** IHI0024_E (579 stmts, 4 regs, conv 19✓),
+    **AHB** IHI0033_C (1339, 21 regs, conv 74✓), **AXI** IHI0022_L (6991, 11 regs,
+    conv 257✓). Register tiling clean on all (84 clean registers corpus-wide, 0
+    false positives); convergence informative on all; the recurring real miss is
+    uniformly **partially-structured normative prose (18/72/554 residuals) +
+    un-enriched visual evidence**. CHI IHI0050_G remains (large coherency
+    protocol). Misses ranked below; the dominant lever is region-accounting +
+    cross-modal + a VLM-in-the-loop pass.
+  Commit: `see Commit Log`
 
 ## Current Frontier
 
@@ -100,6 +109,7 @@ nlp_coverage / register_records (tiling overlaps+gaps) / convergence
 | jedec eMMC JESD84-B50 | 6561 | — | 48 (0/0) | 2p · 194 · ✓ | 259 nlp residuals; 3 semantic-role conflicts; 344 un-enriched visuals |
 | arm AMBA APB IHI0024_E | 579 | 10% | 4 (0/0) | 2p · 19 · ✓ | 18 nlp residuals; un-enriched visuals; (clean — actor-signal graph populated, no conflicts) |
 | arm AMBA AHB IHI0033_C | 1339 | 13% | 21 (0/0) | 2p · 74 · ✓ | 72 nlp residuals; 1 semantic-role conflict; un-enriched visuals |
+| arm AMBA AXI IHI0022_L | 6991 | 12% | 11 (0/0) | 2p · 257 · ✓ | 554 nlp residuals; un-enriched visuals; (clean — no conflicts) |
 
 Reading: register tiling is **precise** (fires only on the I2C mis-classification,
 silent on 52 clean registers across eMMC+APB). Convergence is **informative**
