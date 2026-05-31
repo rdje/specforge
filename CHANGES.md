@@ -2,6 +2,34 @@
 
 ## 2026-05-31
 
+### INTENT-COMPLETENESS-RESEARCH — research-first program for detecting & bounding misses
+- User directive (accuracy is of utmost importance; think the problem through
+  before coding): opened a **research-first** task-tree to establish the theory
+  + design for capturing *all* design intent in a digital-chip PDF, with
+  detecting **misses** as the crux.
+- Wrote the A-to-Z framework `docs/research/intent-capture-completeness.md`. Core
+  results:
+  - **Precision vs recall are asymmetric** — correctness is checkable via
+    provenance; a *miss* has no output-side oracle.
+  - **The reframe that makes misses tractable:** detect them on the *input* side
+    — every intent-bearing source region must produce a fact or be tagged
+    non-intent; anything else is a candidate miss. No ground truth needed.
+  - **Domain closure invariants** (symbol closure / register bit-tiling /
+    handshake pairing / encoding coverage / dangling references) = cheap, exact,
+    ground-truth-free miss detectors.
+  - **Capture–recapture** (two independent extractors → Lincoln–Petersen) gives a
+    statistical recall estimate with no gold answer; **competency questions** +
+    gold fixtures (R15e) + an LLM completeness critic round it out.
+  - **Inter-stage conservation** catches misses the pipeline itself introduces.
+  - A unifying **CompletenessReport** (generalizing the just-shipped convergence
+    report) surfaces every detected gap as an explicit residual.
+- Grounded in real fields (KG completeness / local-closed-world / AMIE;
+  capture–recapture in software inspection; ontology competency questions;
+  requirements traceability; table/figure understanding; spec/property mining) —
+  to be verified in the survey leaf. Produced a prioritized implementation
+  backlog; each instrument becomes its own owning tree. Docs/research + docs/tasks
+  only (no code).
+
 ### R15C-CONVERGENCE-REPORT — make the EvidenceIR anchored-rescan loop inspectable
 - First concrete R15c advance (under `R15C-R15G-LEARNING-PLANE-BACKFILL.1`):
   satisfied the named-but-unbuilt criterion "convergence reporting counts
