@@ -2,6 +2,17 @@
 
 ## 2026-05-31
 
+### ROADMAP-TASKTREE-COVERAGE.2 — backfill+audit R1–R5 (foundation milestones)
+- Created `R1-R5-FOUNDATION-BACKFILL` (lane R1–R5) owning the foundational
+  pipeline milestones as audited leaves. AUDIT (verification-only; all delivered
+  before the task-tree system): R1 (crate=`specforge`, IntentIR-canonical,
+  `.isf`-only), R2 (`ir/source` + `docling_backend` + `ingest`/`clean`/`doctor`,
+  12 tests), R3 (`ir/evidence` + command, 120), R4 (`ir/semantic` + command,
+  381), R5 (`ir/intent` + command, 52). All book-covered (`pipeline/*` +
+  `runtime-and-doctor.md`); ROADMAP §R1–R5 completion criteria confirmed met;
+  further hardened by the R6-*-HARDENING trees. Docs-only; umbrella frontier →
+  `.3` (R8–R13).
+
 ### ROADMAP-TASKTREE-COVERAGE.1 — task-tree doctrine README + whole-roadmap coverage umbrella
 - User restated the task-tree doctrine (no code change without an owning tree;
   every coding/non-coding activity tracked; the WHOLE roadmap task-tree-tracked;

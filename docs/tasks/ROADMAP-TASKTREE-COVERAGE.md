@@ -93,15 +93,22 @@ it (drift flagged + reconciled).
   Commit: `see Commit Log`
 
 - ID: `ROADMAP-TASKTREE-COVERAGE.2`
-  Status: `pending`
+  Status: `done`
   Goal: >
     Backfill + audit the foundational milestones **R1–R5**: read each ROADMAP
     section, audit the delivering code/tests, create each owning tree
     (status `done`, audit in Verification Log), confirm book coverage / flag
     drift. Register in the index.
   Acceptance: R1–R5 each owned by an audited tree; book-coverage noted; CI green.
-  Verification: pending
-  Commit: pending
+  Verification: >
+    passed (`2026-05-31`) — created `R1-R5-FOUNDATION-BACKFILL` owning R1–R5 as
+    audited leaves. AUDIT confirmed all delivered: R1 (crate=`specforge`,
+    IntentIR-canonical, `.isf`-only), R2 (`ir/source`+docling+`ingest`/`clean`/
+    `doctor`, 12 tests), R3 (`ir/evidence`+command, 120), R4 (`ir/semantic`+
+    command, 381), R5 (`ir/intent`+command, 52); all book-covered
+    (`pipeline/*` + `runtime-and-doctor`); ROADMAP §R1–R5 criteria met; further
+    hardened by the R6-*-HARDENING trees. Registered in the index. Docs-only.
+  Commit: `see Commit Log`
 
 - ID: `ROADMAP-TASKTREE-COVERAGE.3`
   Status: `pending`
@@ -137,8 +144,8 @@ it (drift flagged + reconciled).
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `ROADMAP-TASKTREE-COVERAGE.1` | `done` | README + gap record + umbrella registration landed |
-| 2 | `ROADMAP-TASKTREE-COVERAGE.2` | `pending` | R1–R5 backfill+audit — next |
-| 3 | `ROADMAP-TASKTREE-COVERAGE.3` | `pending` | R8–R13 backfill+audit |
+| 2 | `ROADMAP-TASKTREE-COVERAGE.2` | `done` | R1–R5 owned + audited (`R1-R5-FOUNDATION-BACKFILL`) |
+| 3 | `ROADMAP-TASKTREE-COVERAGE.3` | `pending` | R8–R13 backfill+audit — next |
 | 4 | `ROADMAP-TASKTREE-COVERAGE.4` | `pending` | R15c–R15g backfill+audit |
 | 5 | `ROADMAP-TASKTREE-COVERAGE.5` | `pending` | alignment lock + close |
 
@@ -166,15 +173,20 @@ it (drift flagged + reconciled).
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-05-31` | `ROADMAP-TASKTREE-COVERAGE.1` | `TASK_TREE_README.md` created (system + 5-point doctrine); coverage gap measured + recorded (16 uncovered milestones); umbrella registered in `docs/TASK_TREE.md` + README cross-linked; docs-only (CI invariant) | `passed` |
+| `2026-05-31` | `ROADMAP-TASKTREE-COVERAGE.2` | `R1-R5-FOUNDATION-BACKFILL` created (R1–R5 as audited leaves); delivering code/tests/book verified per milestone; ROADMAP §R1–R5 criteria met; registered; docs-only | `passed` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `ROADMAP-TASKTREE-COVERAGE.1` | `ROADMAP-TASKTREE-COVERAGE.1 — task-tree doctrine README + whole-roadmap coverage umbrella` | docs-only; sets up the backfill+audit+alignment program |
+| `ROADMAP-TASKTREE-COVERAGE.2` | `ROADMAP-TASKTREE-COVERAGE.2 — backfill+audit R1–R5 foundation milestones` | created `R1-R5-FOUNDATION-BACKFILL`; all delivered + audited |
 
 ## Changelog
 
+- `2026-05-31`: `.2` — created `R1-R5-FOUNDATION-BACKFILL` owning + auditing
+  R1–R5 (all delivered, tested, book-covered; ROADMAP criteria met). Frontier
+  → `.3` (R8–R13).
 - `2026-05-31`: `.1` — created `docs/TASK_TREE_README.md` (doctrine) + this
   umbrella + recorded the coverage gap (R1–R5, R8–R13, R15c–g uncovered);
   registered in the index. Frontier → `.2` (backfill+audit R1–R5).
