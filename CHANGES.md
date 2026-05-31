@@ -2,6 +2,21 @@
 
 ## 2026-05-31
 
+### LLM-TEXT-TRANSPORT-DEDUP.1 — shared commands/llm_text transport
+- Paid down the duplication introduced (and flagged in-module) by
+  `CVE-PROSE-EXTRACTION.3` + `R14-SIGNAL-RESOLVE.2`: `extract_contracts` and
+  `signal_resolve` each copied the OpenAI-compatible text transport (curl +
+  `SPECFORGE_VLM_HELPER` hook + request/response shape).
+- Added shared `commands/llm_text.rs` (`pub(crate)` `provider_name` /
+  `default_model` / `api_url` / `call_text_provider`; private
+  `build_text_chat_request` / `extract_chat_content`; `VLM_HELPER_ENV`) with 3
+  transport unit tests (request-JSON shape/escaping, string+array content
+  extraction, fails-closed on garbage/no-choices). Both commands now route
+  through it; their prompts, pure classifiers, and tests are unchanged.
+- 3→2 transport copies (`nlp_enrich`'s inline copy left untouched — it's the
+  command the running converge jobs use; routing it onto the shared helper is
+  a tracked follow-up). No behavior change; full `scripts/run_ci.sh` green.
+
 ### R14-SIGNAL-RESOLVE.3 — verify + book + close (R14 Tier-3 relation extraction delivered)
 - Verified `signal-resolve` end-to-end on a real EvidenceIR: `--provider skip`
   loaded the `readme` artifact (0 existing relations), selected 12

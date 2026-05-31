@@ -13,50 +13,18 @@
 //! edge; the model can never inject an actor or signal the sentence (and the
 //! grounding list, when supplied) does not support.
 //!
-//! NOTE: `build_text_chat_request` / `extract_chat_content` mirror
-//! `nlp_enrich` / `extract_contracts` (kept private there). A shared text
-//! transport is a tracked DRY follow-up; duplicating keeps this leaf bounded
-//! and zero-risk to the in-use `nlp_enrich`.
-
-use std::fs;
-use std::process::Command;
+//! The OpenAI-compatible text transport (curl + `SPECFORGE_VLM_HELPER` hook +
+//! request/response shape) lives in the shared `crate::commands::llm_text`
+//! helper; this module keeps only the relation-specific prompt + classifier.
 
 use crate::cli::{SignalResolveArgs, VlmProviderArg};
+use crate::commands::llm_text;
 use crate::error::{AppError, Result};
 use crate::ir::evidence::{EvidenceIr, StatementClass};
 use crate::ir::source::{ActorSignalRelation, AutomationConfidence, RelationKind};
 
-/// Test override hook (same var as `enrich` / `nlp-enrich` / `extract-contracts`).
-const VLM_HELPER_ENV: &str = "SPECFORGE_VLM_HELPER";
-
 /// Minimum word count for a prose statement to be a relation candidate.
 const MIN_CANDIDATE_WORDS: usize = 5;
-
-fn provider_name(provider: VlmProviderArg) -> &'static str {
-    match provider {
-        VlmProviderArg::Ollama => "ollama",
-        VlmProviderArg::OpenAi => "openai",
-        VlmProviderArg::LmStudio => "lmstudio",
-        VlmProviderArg::Skip => "skip",
-    }
-}
-
-fn default_model(provider: VlmProviderArg) -> String {
-    match provider {
-        VlmProviderArg::Ollama | VlmProviderArg::LmStudio => "qwen2.5vl:7b".to_string(),
-        VlmProviderArg::OpenAi => "gpt-4o".to_string(),
-        VlmProviderArg::Skip => String::new(),
-    }
-}
-
-fn api_url(provider: VlmProviderArg) -> &'static str {
-    match provider {
-        VlmProviderArg::Ollama => "http://localhost:11434/v1/chat/completions",
-        VlmProviderArg::OpenAi => "https://api.openai.com/v1/chat/completions",
-        VlmProviderArg::LmStudio => "http://localhost:1234/v1/chat/completions",
-        VlmProviderArg::Skip => "",
-    }
-}
 
 /// The outcome of classifying one provider response for one prose statement.
 #[derive(Debug)]
@@ -174,115 +142,6 @@ fn build_relation_prompt(sentence: &str, grounding: &[String]) -> String {
     )
 }
 
-fn build_text_chat_request(model: &str, prompt: &str) -> String {
-    let prompt_escaped = prompt
-        .replace('\\', "\\\\")
-        .replace('"', "\\\"")
-        .replace('\n', "\\n");
-    format!(
-        r#"{{"model": "{model}", "messages": [{{"role": "user", "content": "{prompt_escaped}"}}], "max_tokens": 256, "temperature": 0}}"#
-    )
-}
-
-fn extract_chat_content(response_json: &str) -> Result<String> {
-    #[derive(serde::Deserialize)]
-    struct ChatResponse {
-        choices: Vec<ChatChoice>,
-    }
-    #[derive(serde::Deserialize)]
-    struct ChatChoice {
-        message: ChatMessage,
-    }
-    #[derive(serde::Deserialize)]
-    struct ChatMessage {
-        content: serde_json::Value,
-    }
-    let response: ChatResponse = serde_json::from_str(response_json).map_err(|e| {
-        AppError::InvalidStageArtifact(format!(
-            "invalid LLM response: {e}\nraw: {}",
-            &response_json[..response_json.len().min(256)]
-        ))
-    })?;
-    let content = response
-        .choices
-        .into_iter()
-        .next()
-        .ok_or_else(|| AppError::InvalidStageArtifact("LLM response has no choices".to_string()))?
-        .message
-        .content;
-    match content {
-        serde_json::Value::String(s) => Ok(s),
-        serde_json::Value::Array(parts) => {
-            for part in &parts {
-                if let Some(text) = part.get("text").and_then(|t| t.as_str()) {
-                    return Ok(text.to_string());
-                }
-            }
-            Err(AppError::InvalidStageArtifact(
-                "LLM response content array has no text part".to_string(),
-            ))
-        }
-        other => Ok(other.to_string()),
-    }
-}
-
-fn call_provider_for_relation(
-    sentence: &str,
-    statement_id: &str,
-    model: &str,
-    api_url: &str,
-    provider: VlmProviderArg,
-    grounding: &[String],
-) -> Result<String> {
-    if let Some(helper_path) = std::env::var_os(VLM_HELPER_ENV) {
-        let output = Command::new(&helper_path)
-            .arg("--statement-id")
-            .arg(statement_id)
-            .arg("--sentence")
-            .arg(sentence)
-            .output()?;
-        if output.status.success() {
-            return Ok(String::from_utf8_lossy(&output.stdout).trim().to_string());
-        }
-        return Err(AppError::ExternalCommandFailed {
-            program: helper_path.display().to_string(),
-            exit_code: output.status.code(),
-            stderr: String::from_utf8_lossy(&output.stderr).to_string(),
-        });
-    }
-    let prompt = build_relation_prompt(sentence, grounding);
-    let request_body = build_text_chat_request(model, &prompt);
-    let mut cmd = Command::new("curl");
-    cmd.arg("-s")
-        .arg("-X")
-        .arg("POST")
-        .arg(api_url)
-        .arg("-H")
-        .arg("Content-Type: application/json");
-    if matches!(provider, VlmProviderArg::OpenAi) {
-        let api_key =
-            std::env::var("OPENAI_API_KEY").map_err(|_| AppError::MissingRuntimeDependency {
-                dependency: "OPENAI_API_KEY",
-                resolution: "Set OPENAI_API_KEY environment variable".to_string(),
-            })?;
-        cmd.arg("-H")
-            .arg(format!("Authorization: Bearer {api_key}"));
-    }
-    let tempdir = tempfile::tempdir()?;
-    let request_path = tempdir.path().join("relation_request.json");
-    fs::write(&request_path, &request_body)?;
-    cmd.arg("-d").arg(format!("@{}", request_path.display()));
-    let output = cmd.output()?;
-    if !output.status.success() {
-        return Err(AppError::ExternalCommandFailed {
-            program: "curl".to_string(),
-            exit_code: output.status.code(),
-            stderr: String::from_utf8_lossy(&output.stderr).to_string(),
-        });
-    }
-    extract_chat_content(&String::from_utf8_lossy(&output.stdout))
-}
-
 fn candidate_work(ir: &EvidenceIr, max_statements: usize) -> Vec<(String, String)> {
     let mut work: Vec<(String, String)> = ir
         .extracted_statements
@@ -319,6 +178,10 @@ fn is_duplicate(ir: &EvidenceIr, rel: &ActorSignalRelation) -> bool {
     })
 }
 
+fn is_same_edge(a: &ActorSignalRelation, b: &ActorSignalRelation) -> bool {
+    a.actor_name == b.actor_name && a.signal_name == b.signal_name && a.relation == b.relation
+}
+
 /// Extract actor→signal relations from prose and append them to the EvidenceIR.
 pub fn run(args: SignalResolveArgs) -> Result<()> {
     let evidence_ir_path = if args.evidence_ir.exists() {
@@ -353,10 +216,10 @@ pub fn run(args: SignalResolveArgs) -> Result<()> {
     let model = args
         .model
         .clone()
-        .unwrap_or_else(|| default_model(args.provider));
-    let url = api_url(args.provider);
+        .unwrap_or_else(|| llm_text::default_model(args.provider));
+    let url = llm_text::api_url(args.provider);
     let grounding = grounding_signals(&args.grounding_signals);
-    println!("llm_provider: {}", provider_name(args.provider));
+    println!("llm_provider: {}", llm_text::provider_name(args.provider));
     println!("llm_model: {model}");
 
     if args.dry_run {
@@ -368,13 +231,14 @@ pub fn run(args: SignalResolveArgs) -> Result<()> {
     let mut skipped = 0usize;
     let mut deduped = 0usize;
     for (statement_id, sentence) in &work {
-        let raw = call_provider_for_relation(
-            sentence,
-            statement_id,
+        let prompt = build_relation_prompt(sentence, &grounding);
+        let raw = llm_text::call_text_provider(
+            args.provider,
             &model,
             url,
-            args.provider,
-            &grounding,
+            statement_id,
+            sentence,
+            &prompt,
         )?;
         match classify_relation_response(&raw, statement_id, &grounding) {
             RelationOutcome::Skipped => skipped += 1,
@@ -396,10 +260,6 @@ pub fn run(args: SignalResolveArgs) -> Result<()> {
     println!("wrote: {}", evidence_ir_path.display());
     println!("next: re-run `specforge semantic` to fold these into the actor-relative graph");
     Ok(())
-}
-
-fn is_same_edge(a: &ActorSignalRelation, b: &ActorSignalRelation) -> bool {
-    a.actor_name == b.actor_name && a.signal_name == b.signal_name && a.relation == b.relation
 }
 
 #[cfg(test)]

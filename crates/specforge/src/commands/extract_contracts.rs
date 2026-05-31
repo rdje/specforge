@@ -14,15 +14,12 @@
 //! contract is rerouted to `Residual` — the producer can never fabricate a
 //! `Lowerable` contract the prose does not license.
 //!
-//! NOTE: `build_text_chat_request` / `extract_chat_content` are mirrored from
-//! `nlp_enrich` (which keeps them private). DRY-ing the shared text transport
-//! into one helper is a tracked follow-up; duplicating here keeps this leaf
-//! bounded and zero-risk to the in-use `nlp_enrich` command.
-
-use std::fs;
-use std::process::Command;
+//! The OpenAI-compatible text transport (curl + `SPECFORGE_VLM_HELPER` hook +
+//! request/response shape) lives in the shared `crate::commands::llm_text`
+//! helper; this module keeps only the contract-specific prompt + classifier.
 
 use crate::cli::{ExtractContractsArgs, VlmProviderArg};
+use crate::commands::llm_text;
 use crate::error::{AppError, Result};
 use crate::ir::contract::ActorContract;
 use crate::ir::cve::{
@@ -31,40 +28,10 @@ use crate::ir::cve::{
 };
 use crate::ir::evidence::{EvidenceIr, StatementClass};
 
-/// Environment variable overriding the LLM helper script (for unit testing).
-/// Same variable as `enrich` / `nlp-enrich` so one mock can cover all three.
-const VLM_HELPER_ENV: &str = "SPECFORGE_VLM_HELPER";
-
 /// Minimum word count for a prose statement to be a contract candidate
 /// (mirrors `nlp_enrich`'s candidate floor — very short fragments carry no
 /// extractable timed obligation).
 const MIN_CANDIDATE_WORDS: usize = 5;
-
-fn provider_name(provider: VlmProviderArg) -> &'static str {
-    match provider {
-        VlmProviderArg::Ollama => "ollama",
-        VlmProviderArg::OpenAi => "openai",
-        VlmProviderArg::LmStudio => "lmstudio",
-        VlmProviderArg::Skip => "skip",
-    }
-}
-
-fn default_model(provider: VlmProviderArg) -> String {
-    match provider {
-        VlmProviderArg::Ollama | VlmProviderArg::LmStudio => "qwen2.5vl:7b".to_string(),
-        VlmProviderArg::OpenAi => "gpt-4o".to_string(),
-        VlmProviderArg::Skip => String::new(),
-    }
-}
-
-fn api_url(provider: VlmProviderArg) -> &'static str {
-    match provider {
-        VlmProviderArg::Ollama => "http://localhost:11434/v1/chat/completions",
-        VlmProviderArg::OpenAi => "https://api.openai.com/v1/chat/completions",
-        VlmProviderArg::LmStudio => "http://localhost:1234/v1/chat/completions",
-        VlmProviderArg::Skip => "",
-    }
-}
 
 /// The outcome of classifying one provider response for one prose statement.
 #[derive(Debug)]
@@ -143,120 +110,6 @@ fn build_contract_prompt(sentence: &str) -> String {
     )
 }
 
-/// OpenAI-compatible text-only chat request (mirrors `nlp_enrich`).
-fn build_text_chat_request(model: &str, prompt: &str) -> String {
-    let prompt_escaped = prompt
-        .replace('\\', "\\\\")
-        .replace('"', "\\\"")
-        .replace('\n', "\\n");
-    format!(
-        r#"{{"model": "{model}", "messages": [{{"role": "user", "content": "{prompt_escaped}"}}], "max_tokens": 512, "temperature": 0}}"#
-    )
-}
-
-/// Extract assistant message content from an OpenAI-compatible chat response
-/// (mirrors `nlp_enrich`).
-fn extract_chat_content(response_json: &str) -> Result<String> {
-    #[derive(serde::Deserialize)]
-    struct ChatResponse {
-        choices: Vec<ChatChoice>,
-    }
-    #[derive(serde::Deserialize)]
-    struct ChatChoice {
-        message: ChatMessage,
-    }
-    #[derive(serde::Deserialize)]
-    struct ChatMessage {
-        content: serde_json::Value,
-    }
-    let response: ChatResponse = serde_json::from_str(response_json).map_err(|e| {
-        AppError::InvalidStageArtifact(format!(
-            "invalid LLM response: {e}\nraw: {}",
-            &response_json[..response_json.len().min(256)]
-        ))
-    })?;
-    let content = response
-        .choices
-        .into_iter()
-        .next()
-        .ok_or_else(|| AppError::InvalidStageArtifact("LLM response has no choices".to_string()))?
-        .message
-        .content;
-    match content {
-        serde_json::Value::String(s) => Ok(s),
-        serde_json::Value::Array(parts) => {
-            for part in &parts {
-                if let Some(text) = part.get("text").and_then(|t| t.as_str()) {
-                    return Ok(text.to_string());
-                }
-            }
-            Err(AppError::InvalidStageArtifact(
-                "LLM response content array has no text part".to_string(),
-            ))
-        }
-        other => Ok(other.to_string()),
-    }
-}
-
-/// Call the provider for one statement, returning the raw assistant text.
-/// Honors the `SPECFORGE_VLM_HELPER` test override (same arg shape as
-/// `nlp_enrich`: `--statement-id` / `--sentence`).
-fn call_provider_for_contract(
-    sentence: &str,
-    statement_id: &str,
-    model: &str,
-    api_url: &str,
-    provider: VlmProviderArg,
-) -> Result<String> {
-    if let Some(helper_path) = std::env::var_os(VLM_HELPER_ENV) {
-        let output = Command::new(&helper_path)
-            .arg("--statement-id")
-            .arg(statement_id)
-            .arg("--sentence")
-            .arg(sentence)
-            .output()?;
-        if output.status.success() {
-            return Ok(String::from_utf8_lossy(&output.stdout).trim().to_string());
-        }
-        return Err(AppError::ExternalCommandFailed {
-            program: helper_path.display().to_string(),
-            exit_code: output.status.code(),
-            stderr: String::from_utf8_lossy(&output.stderr).to_string(),
-        });
-    }
-    let prompt = build_contract_prompt(sentence);
-    let request_body = build_text_chat_request(model, &prompt);
-    let mut cmd = Command::new("curl");
-    cmd.arg("-s")
-        .arg("-X")
-        .arg("POST")
-        .arg(api_url)
-        .arg("-H")
-        .arg("Content-Type: application/json");
-    if matches!(provider, VlmProviderArg::OpenAi) {
-        let api_key =
-            std::env::var("OPENAI_API_KEY").map_err(|_| AppError::MissingRuntimeDependency {
-                dependency: "OPENAI_API_KEY",
-                resolution: "Set OPENAI_API_KEY environment variable".to_string(),
-            })?;
-        cmd.arg("-H")
-            .arg(format!("Authorization: Bearer {api_key}"));
-    }
-    let tempdir = tempfile::tempdir()?;
-    let request_path = tempdir.path().join("contract_request.json");
-    fs::write(&request_path, &request_body)?;
-    cmd.arg("-d").arg(format!("@{}", request_path.display()));
-    let output = cmd.output()?;
-    if !output.status.success() {
-        return Err(AppError::ExternalCommandFailed {
-            program: "curl".to_string(),
-            exit_code: output.status.code(),
-            stderr: String::from_utf8_lossy(&output.stderr).to_string(),
-        });
-    }
-    extract_chat_content(&String::from_utf8_lossy(&output.stdout))
-}
-
 /// Owned `(statement_id, text)` candidates so the loop does not borrow the IR
 /// while we later mutate it.
 fn candidate_work(ir: &EvidenceIr, max_statements: usize) -> Vec<(String, String)> {
@@ -303,9 +156,9 @@ pub fn run(args: ExtractContractsArgs) -> Result<()> {
     let model = args
         .model
         .clone()
-        .unwrap_or_else(|| default_model(args.provider));
-    let url = api_url(args.provider);
-    println!("llm_provider: {}", provider_name(args.provider));
+        .unwrap_or_else(|| llm_text::default_model(args.provider));
+    let url = llm_text::api_url(args.provider);
+    println!("llm_provider: {}", llm_text::provider_name(args.provider));
     println!("llm_model: {model}");
 
     if args.dry_run {
@@ -317,7 +170,15 @@ pub fn run(args: ExtractContractsArgs) -> Result<()> {
     let mut schema_rejects = 0usize;
     let candidates_seen = work.len();
     for (statement_id, sentence) in &work {
-        let raw = call_provider_for_contract(sentence, statement_id, &model, url, args.provider)?;
+        let prompt = build_contract_prompt(sentence);
+        let raw = llm_text::call_text_provider(
+            args.provider,
+            &model,
+            url,
+            statement_id,
+            sentence,
+            &prompt,
+        )?;
         match classify_response(&raw, statement_id, sentence) {
             CandidateOutcome::Skipped => {}
             CandidateOutcome::SchemaReject => schema_rejects += 1,
