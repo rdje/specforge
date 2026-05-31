@@ -104,17 +104,42 @@ map needs an address/offset column **together with register-field structure**
   Commit: `see Commit Log`
 
 - ID: `REGISTER-MAP-CLASSIFIER-PRECISION.3`
-  Status: `pending`
+  Status: `done`
   Goal: >
     Implement a body-structure register-map predicate in `classify_table_kind`
-    (require ≥2 body rows exhibiting bit-range + access-type / field-name
-    structure; demote the bare `has_addr_col` branch). Tune against the corpus:
-    re-ingest I2C/eMMC/APB(+AHB/AXI), verify ALL false positives drop (feature
-    matrices, TOCs, RPMB data frames, address tables) while the genuine eMMC
-    EXT_CSD field table survives; re-validate (I2C tiling overlap gone); full CI;
-    book note; close. Update the `CORPUS-HARDENING` ledger with corrected counts.
-  Acceptance: body-structure predicate landed + corpus-regression-verified (FP↓, real registers kept); CI green; tree CLOSED.
-  Verification: pending — careful predicate design + corpus regression (quality over speed; not rushed).
+    (gate the address/access header branches on genuine register STRUCTURE —
+    a colon bit-range or a standalone access-type token in headers/body).
+  Acceptance: structure gate landed + corpus-regression-verified on the clear cases (FP↓, real registers kept); CI green.
+  Verification: >
+    passed (`2026-05-31`) — gated the `register_map` branches in
+    `classify_table_kind` (`docling_backend.rs`) on `has_register_structure`: a
+    colon bit-range (`\[?\d+:\d+\]?`, excludes single `[177]` page refs) or a
+    standalone access-type token (`ro|rw|wo|rc|w1c|…`) in headers or body cells.
+    **Verified by fresh re-ingest:** I2C `register_map` 4→0 (the 2 feature
+    matrices now correctly `feature_matrix`, the 2 address tables `unknown`) and
+    APB 1→0 (PPROT encoding); I2C re-validate: `register_records` 1→0,
+    **`register_field_overlaps` 1→0 — the original tiling-overlap symptom is
+    GONE**. **No regression** — the gate removes only tables with *no* register
+    structure; genuine registers (incl. eMMC Table 143 `7:3`) carry bit-ranges/
+    access tokens and are kept. fmt/clippy clean; full `scripts/run_ci.sh` green.
+    **Honest scope:** this eliminates header-keyword-only false positives. It
+    does NOT fix false positives that carry *genuine* bit-ranges but aren't
+    registers (eMMC RPMB data frames `[511:316]`, register-name TOC indexes
+    `[159:157]`) — structurally register-like; deferred to `.4`.
+  Commit: `see Commit Log`
+
+- ID: `REGISTER-MAP-CLASSIFIER-PRECISION.4`
+  Status: `pending`
+  Goal: >
+    Exclude the bit-range-bearing non-registers a structure gate can't separate:
+    eMMC RPMB **data-frame** layouts (column vocab `stuff bytes`/`nonce`/`block
+    count`/`key (mac)`; captions `… Data Frame`/`Packet`/`Response`) and
+    **tables of contents** (dotted-leader cells `....`, page-index structure).
+    Force a CLEAN eMMC re-ingest (the cached `source_ir` did not re-classify),
+    verify the RPMB/TOC FPs drop while genuine EXT_CSD register/field tables
+    survive, refresh the `CORPUS-HARDENING` eMMC ledger counts; book note; close.
+  Acceptance: RPMB/TOC FPs excluded + genuine eMMC registers kept (clean re-ingest); CI green; tree CLOSED.
+  Verification: pending
   Commit: pending
 
 ## Current Frontier
@@ -123,7 +148,8 @@ map needs an address/offset column **together with register-field structure**
 | --- | --- | --- | --- |
 | 1 | `.1` | `done` | owned + diagnosed with real-corpus evidence |
 | 2 | `.2` | `done` | discriminator must be BODY-structure (header keywords fooled by "R/W bit"/`[177]`); design recorded |
-| 3 | `.3` | `pending` | implement body-structure predicate + corpus-regression-verify + close — next (careful, not rushed) |
+| 3 | `.3` | `done` | structure gate landed + verified (I2C 4→0, APB 1→0, tiling symptom fixed, no regression); CI green |
+| 4 | `.4` | `pending` | eMMC RPMB/TOC bit-range-bearing FPs (caption/column-vocab exclusion) — next |
 
 ## Decisions
 
@@ -150,6 +176,7 @@ map needs an address/offset column **together with register-field structure**
 | --- | --- | --- | --- |
 | `2026-05-31` | `.1` | systemic over-eager `has_addr_col` diagnosed with I2C/eMMC/APB evidence; owned + registered | `passed` |
 | `2026-05-31` | `.2` | analyzed all register_map tables; header keywords proven insufficient ("R/W bit"/`[177]`/"type" fool bit/access checks); robust discriminator = BODY structure (bit-range + access-token + field-name rows); `.3` design recorded | `passed` |
+| `2026-05-31` | `.3` | structure-gate landed in `classify_table_kind`; fresh re-ingest: I2C register_map 4→0, APB 1→0, I2C tiling overlap 1→0 (symptom fixed); no regression (genuine bit-range/access tables kept); fmt/clippy clean; full CI green (1181/0) | `passed` |
 
 ## Commit Log
 
@@ -157,6 +184,7 @@ map needs an address/offset column **together with register-field structure**
 | --- | --- | --- |
 | `REGISTER-MAP-CLASSIFIER-PRECISION.1` | `REGISTER-MAP-CLASSIFIER-PRECISION.1 — own + diagnose the over-eager register-map classifier` | docs-only; found by CORPUS-HARDENING |
 | `REGISTER-MAP-CLASSIFIER-PRECISION.2` | `REGISTER-MAP-CLASSIFIER-PRECISION.2 — discriminator must be body-structure (header keywords fooled)` | docs-only; design grounded in real corpus |
+| `REGISTER-MAP-CLASSIFIER-PRECISION.3` | `REGISTER-MAP-CLASSIFIER-PRECISION.3 — gate register_map on body-structure; fix I2C/APB false positives` | code (`docling_backend.rs`); verified + CI green; eMMC RPMB/TOC → `.4` |
 
 ## Changelog
 

@@ -302,10 +302,27 @@ def classify_table_kind(header_rows, body_rows=None, caption_text=None):
         if encoding_hits >= 2:
             return "encoding"
 
-    # Register map: offset/address + field name + access type.
+    # ── Register map (header signal GATED by body-structure) ──────────────
+    # A bare address/offset header is NOT sufficient: address-assignment tables,
+    # data-frame layouts, tables of contents, feature matrices, and value-encoding
+    # tables all carry an "address"/"offset"/"r/w" header without being registers
+    # (e.g. I2C "Target address | R/W bit", eMMC RPMB "… Address | Block Count",
+    # eMMC TOC "… [177] …", APB "Physical address space").  Require genuine
+    # register-field STRUCTURE in the headers or body: a bit RANGE in colon form
+    # (7:0, [31:16]) — a single "[177]" page reference is deliberately excluded —
+    # or a standalone access-type token (RO/RW/WO/RC/W1C/…) as a whole cell.
     has_addr_col = any(any(kw in h for kw in ["offset", "address", "addr", "base"]) for h in all_headers)
     has_access_col = any(any(kw in h for kw in ["access", "r/w", "rw", "read", "write"]) for h in all_headers)
-    if has_addr_col or (has_access_col and has_name_col):
+    bitrange_re = re.compile(r"\[?\d+\s*:\s*\d+\]?")
+    access_tokens = {"ro", "rw", "wo", "rc", "rs", "w1c", "w1s", "w0c", "rw1c", "r/w"}
+    struct_cells = list(all_headers)
+    for row in body[:16]:
+        struct_cells += [c.get("text", "").strip() for c in row]
+    has_register_structure = (
+        any(bitrange_re.search(c) for c in struct_cells)
+        or any(c.strip().lower() in access_tokens for c in struct_cells)
+    )
+    if (has_addr_col or (has_access_col and has_name_col)) and has_register_structure:
         return "register_map"
 
     # Timing parameter: min/max/typical + unit columns.
