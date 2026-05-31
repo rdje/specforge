@@ -158,6 +158,17 @@ structured normative statements; empty actor-signal graph despite 27 behavioral
 rules; 126 visual assets with 0 timing-diagram extractions) — real, located miss
 anchors for the next detectors (region accounting, symbol closure, cross-modal).
 
+**Register-rich confirmation — eMMC JESD84-B50 (`2026-05-31`):** ingested (Docling)
+→ evidence (6561 statements, **48 register_records**) → validate. Register tiling:
+**0 overlaps, 0 interior gaps across 48 real registers** — i.e. **zero false
+positives** on register-rich real data. Together with the I2C true-positive
+(mis-classified table), this establishes the detector is **precise**: it fires on
+the real issue and stays silent on clean register maps. The convergence report
+also proved its value here: **2 passes, 194 genuinely-new facts** recovered then
+converged (vs I2C's honest 0) — the metric distinguishes a spec where anchored
+rescanning helps from one where it doesn't. (Real anchors: 259 nlp residuals; 3
+semantic-role conflicts; 344 un-enriched visuals.)
+
 ## Open Questions
 
 - Which stage owns symbol closure — EvidenceIR (relations/constraints present) vs
