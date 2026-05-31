@@ -2,6 +2,21 @@
 
 ## 2026-05-31
 
+### COMPLETENESS-CLOSURE-INVARIANTS — first completeness miss-detector lands (register bit-tiling)
+- The completeness research program produces its first running code (user chose
+  "closure invariants" as where coding begins). New `ir/completeness.rs` with a
+  pure, conservative **register bit-tiling** detector: per register, documented
+  bit-fields must not overlap and must have no *interior* gap (an uncovered bit
+  between the lowest and highest documented field = a likely **missed field**).
+  No register width is in the IR, so bits above the highest field are never
+  flagged — exact, no width-speculation false positives.
+- Surfaced in `specforge validate` (EvidenceIR): a `Register Tiling` section +
+  findings (Overlap → Warning, InteriorGap → Info) + 2 metrics. Extraction-
+  neutral — flags only, never mutates the IR. 7 unit + 1 wiring test; CI green.
+- Implements catalog C2 (EXACT) and proves the detect-a-miss → emit-a-residual →
+  `validate` loop end-to-end. Next: symbol closure / dangling references (GATED),
+  then book + close. (`COMPLETENESS-CLOSURE-INVARIANTS.2`.)
+
 ### INTENT-COMPLETENESS-RESEARCH — research-first program for detecting & bounding misses
 - User directive (accuracy is of utmost importance; think the problem through
   before coding): opened a **research-first** task-tree to establish the theory
