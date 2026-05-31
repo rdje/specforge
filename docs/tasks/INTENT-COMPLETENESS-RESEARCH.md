@@ -189,14 +189,28 @@ The durable artifact is [`docs/research/intent-capture-completeness.md`](../rese
   Commit: `see Commit Log`
 
 - ID: `INTENT-COMPLETENESS-RESEARCH.7`
-  Status: `pending`
+  Status: `done`
   Goal: >
     Synthesize → a **prioritized implementation backlog** (which instruments to
     build first, dependencies, expected accuracy lift), each scoped as a future
     owning task-tree. Decide the first implementation slice with the user.
   Acceptance: prioritized backlog registered; first implementation tree proposed.
-  Verification: pending
-  Commit: pending
+  Verification: >
+    passed (`2026-05-31`) — prioritized backlog (cheapest-exact-first, from the
+    catalog `.4`): (1) structural closure invariants — symbol closure + register
+    tiling [EXACT]; (2) region accounting [foundational]; (3) CompletenessReport
+    rails (extend the shipped convergence report); (4) mutation/sensitivity
+    coverage + schema/star-pattern; (5) cross-modal + two-source fusion +
+    capture–recapture (Chao Mh, needs ≥3 heterogeneous extractors) + the
+    STOP-OR-REINSPECT bridge into the convergence loop; (6) competency-question
+    battery; (7) the (A) systematic-blind-spot gaps from `.2` (clock domains,
+    first-class enum record). **User decision (`2026-05-31`): start with closure
+    invariants** → opened `COMPLETENESS-CLOSURE-INVARIANTS` (register tiling first
+    [EXACT], symbol closure second [GATED], surfaced as `validate` findings).
+    Research `.5` (recall estimator + CompletenessReport design) remains the one
+    open research leaf; it will be elaborated alongside the rails when detector
+    coverage warrants. Docs-only.
+  Commit: `see Commit Log`
 
 ## Current Frontier
 
@@ -206,9 +220,9 @@ The durable artifact is [`docs/research/intent-capture-completeness.md`](../rese
 | 2 | `INTENT-COMPLETENESS-RESEARCH.2` | `done` | closed ontology + coverage matrix (`intent-ontology-coverage.md`); 2 gaps confirmed, 2 audit errors corrected |
 | 3 | `INTENT-COMPLETENESS-RESEARCH.3` | `done` | region-accounting design (`region-accounting-design.md`) |
 | 4 | `INTENT-COMPLETENESS-RESEARCH.4` | `done` | miss-detector catalog (`miss-detectors-catalog.md`), exact-vs-gated |
-| 5 | `INTENT-COMPLETENESS-RESEARCH.5` | `pending` | recall estimation + CompletenessReport design — next |
+| 5 | `INTENT-COMPLETENESS-RESEARCH.5` | `pending` | recall estimation + CompletenessReport design — the one open research leaf |
 | 6 | `INTENT-COMPLETENESS-RESEARCH.6` | `done` | literature survey (workflow); grounding + 5 corrections folded in |
-| 7 | `INTENT-COMPLETENESS-RESEARCH.7` | `pending` | prioritized backlog → first implementation tree (decide WITH user) |
+| 7 | `INTENT-COMPLETENESS-RESEARCH.7` | `done` | backlog set; user chose closure invariants → `COMPLETENESS-CLOSURE-INVARIANTS` opened |
 
 The order is a default, not a commitment — `.2`/`.3`/`.4`/`.6` are largely
 independent and could be parallelized (incl. via a research workflow if opted
