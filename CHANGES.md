@@ -2,6 +2,28 @@
 
 ## 2026-05-31
 
+### CORPUS-HARDENING — SpecForge run on the real chip-doc corpus; VLM-in-the-loop recall demonstrated
+- User curated a real corpus (82 PDFs / 10 families at `~/Documents/livework/chipdoc`;
+  PCIe a known paywall gap) and directed using it to harness SpecForge. Opened
+  `CORPUS-HARDENING` as a standing hardening harness (run specs through Docling →
+  `evidence` → `validate`, collect completeness signals, turn recurring real
+  misses into owned fix-trees — no inline fixes).
+- **Detectors validated on real data.** Ran I2C, eMMC, APB, AHB, AXI end-to-end.
+  The register bit-tiling detector (shipped today) is **precise**: 1 true-positive
+  (caught the I2C reserved-address table mis-classified as a register) and **0
+  false-positives across 84 real registers**. The convergence report is
+  **informative** (eMMC 194 / AXI 257 / I2C 0 new facts). First discovered bug:
+  over-eager register-map classifier (candidate fix-tree, anchored on I2C).
+- **Dominant real miss identified + closed.** Across every spec the recall loss
+  is **un-enriched visual evidence + partially-structured normative prose**. The
+  production VLM+NLP-in-the-loop pass on APB (Ollama/Qwen2.5VL) recovered it:
+  `enrich` → timing_diagram_extractions 0→6, state_machine 0→1, findings 5→3
+  (un-enriched-visual warning cleared); `nlp-enrich` → nlp residuals 18→13,
+  +5 typed constraints, +16 prose-synthesized declarations; 38 LLM calls total,
+  **0 errors**, and the unstructurable residue was **honestly declined**
+  (fails-closed, no fabrication). The dominant capture gap is real and closable
+  with the existing production stack.
+
 ### COMPLETENESS-CLOSURE-INVARIANTS — first completeness miss-detector lands (register bit-tiling)
 - The completeness research program produces its first running code (user chose
   "closure invariants" as where coding begins). New `ir/completeness.rs` with a
