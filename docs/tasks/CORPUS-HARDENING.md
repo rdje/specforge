@@ -127,6 +127,20 @@ nlp_coverage / register_records (tiling overlaps+gaps) / convergence
 | arm AMBA AHB IHI0033_C | 1339 | 13% | 21 (0/0) | 2p · 74 · ✓ | 72 nlp residuals; 1 semantic-role conflict; un-enriched visuals |
 | arm AMBA AXI IHI0022_L | 6991 | 12% | 11 (0/0) | 2p · 257 · ✓ | 554 nlp residuals; un-enriched visuals; (clean — no conflicts) |
 
+**VLM-in-the-loop recall gain (APB, `.3`):** running the production `enrich`
+(Qwen2.5VL via Ollama) on APB then rebuilding evidence recovered intent that was
+**completely missed** by the structural pass:
+
+| APB metric | before (no VLM) | after VLM `enrich` |
+| --- | --- | --- |
+| timing_diagram_extractions | 0 | **6** |
+| state_machine_extractions | 0 | **1** |
+| validation findings | 5 | **3** (un-enriched-visual *warning* + rescan-guidance cleared) |
+
+7 Qwen calls (6 timing + 1 state), 0 errors. This directly confirms the ledger's
+diagnosis: the dominant capture-recall loss is un-enriched visual evidence, and
+the production VLM path closes it. (nlp-enrich prose pass: in progress.)
+
 Reading: register tiling is **precise** (fires only on the I2C mis-classification,
 silent on 52 clean registers across eMMC+APB). Convergence is **informative**
 (eMMC 194 / APB 19 / I2C 0 — distinguishes specs where anchored rescan helps).
