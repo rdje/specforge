@@ -184,6 +184,7 @@ killing them needs user authorization), recorded honestly, not blocking.
 | `2026-05-31` | `R14-SIGNAL-RESOLVE.1` | design/data-flow/grounding-gates/test-plan recorded; tree registered; docs-only (no code/book ⇒ CI invariant) | `passed` |
 | `2026-05-31` | `R14-SIGNAL-RESOLVE.2` | `commands/signal_resolve.rs` producer + CLI/dispatch/mod; pure `classify_relation_response` tested over 5 outcome paths (incl. ungrounded-skip + drives/reads) + grounding gates + dedup; lib `1159 → 1164`; full `scripts/run_ci.sh` | `passed` |
 | `2026-05-31` | `R14-SIGNAL-RESOLVE.3` | `signal-resolve --provider skip` on real EvidenceIR (12 candidates, clean exit); book method-doc subsection in `domain/actor-connectivity.md`; live `--provider ollama` server-gated (recorded); tree CLOSED; full `scripts/run_ci.sh` | `passed` |
+| `2026-05-31` | `R14-SIGNAL-RESOLVE` (live follow-up) | **LIVE CONFIRMED** — server-gate cleared (hung jobs stopped + Ollama restarted). `signal-resolve generated/evidence_ir/ihi0079_b_2020_12_amba_cxs_protocol_specification/evidence_ir.json --provider ollama --max-statements 3` → 3 candidates; **`resolved_relations=2`** (2 real grounded actor→signal edges extracted from CXS prose, on top of the 3 Tier-1/2 already had), `skipped=1`, `deduped=0`. Tier-3 LLM relation extraction works against a real model. | `passed` |
 
 ## Commit Log
 

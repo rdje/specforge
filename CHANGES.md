@@ -2,6 +2,23 @@
 
 ## 2026-05-31
 
+### CVE-PROSE-EXTRACTION + R14-SIGNAL-RESOLVE — LIVE Qwen confirmation (server-gate cleared)
+- After the hung converge jobs were stopped and `ollama serve` restarted, ran
+  the two live confirmations that had been gated all along — on the CXS
+  EvidenceIR, `--provider ollama --max-statements 3`:
+  - **extract-contracts**: 3 candidates → `extracted_contracts=0`,
+    **`schema_rejects=1`** (a malformed Qwen response *failed closed* — no
+    fabricated contract), 2 honest `none`. The constrained surface is now
+    exercised LIVE (`schema_rejects>0`, not the dormant `0/0/0`); the
+    fails-closed honesty doctrine held against a real model.
+  - **signal-resolve**: 3 candidates → **`resolved_relations=2`** (2 real
+    grounded actor→signal edges extracted from CXS prose, on top of the 3
+    Tier-1/2 already had), `skipped=1`, `deduped=0`. Tier-3 LLM relation
+    extraction works live.
+- Recorded in both closed trees' verification logs (server-gated → confirmed
+  live). Docs-only — the mutated EvidenceIR is a gitignored generated artifact;
+  no code change.
+
 ### ISF-RULE-CONFLICT-RESIDUAL.1 — dropped value-conflicting rules now surfaced as residuals
 - Closed a residual-honesty gap in the `.isf` emitter: `IsfIr::from_intent_ir`
   dedups rules that drive the same signal to different values under the same
