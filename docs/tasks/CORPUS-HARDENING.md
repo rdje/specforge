@@ -88,6 +88,26 @@ driven-down misses on the specs that matter."
 - `2026-05-31`: discovered issues → ranked candidate fix-trees, not inline fixes
   (no code change without an owning tree).
 
+## Corpus hardening ledger (per-spec, evidence-stage `validate`)
+
+Structural detectors only (no VLM/NLP enrichment run yet). Columns: statements /
+nlp_coverage / register_records (tiling overlaps+gaps) / convergence
+(passes·new-facts·converged) / notable real misses.
+
+| Spec | stmts | nlp_cov | regs (tiling) | convergence | notable misses |
+| --- | --- | --- | --- | --- | --- |
+| nxp I2C UM10204 | 956 | 13% | 1 (**1 overlap**) | 1p · 0 · ✓ | overlap = mis-classified address table (TP); empty actor-signal graph; 59 nlp residuals; 126 un-enriched visuals |
+| jedec eMMC JESD84-B50 | 6561 | — | 48 (0/0) | 2p · 194 · ✓ | 259 nlp residuals; 3 semantic-role conflicts; 344 un-enriched visuals |
+| arm AMBA APB IHI0024_E | 579 | 10% | 4 (0/0) | 2p · 19 · ✓ | 18 nlp residuals; un-enriched visuals; (clean — actor-signal graph populated, no conflicts) |
+
+Reading: register tiling is **precise** (fires only on the I2C mis-classification,
+silent on 52 clean registers across eMMC+APB). Convergence is **informative**
+(eMMC 194 / APB 19 / I2C 0 — distinguishes specs where anchored rescan helps).
+The dominant recurring real miss across all specs is **un-enriched visual
+evidence + partially-structured normative prose** — the strongest signal for
+where capture recall is lost (region-accounting + cross-modal detectors + a
+VLM-in-the-loop pass are the indicated next instruments).
+
 ## Discovered issues (ranked candidate fix-trees)
 
 1. **Over-eager register-map table classifier** — an address-assignment table
