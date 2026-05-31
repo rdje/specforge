@@ -356,3 +356,52 @@ the artifact derives both from them. **Verified** by a unit test that mixes
 safe and operator-expression-valued symbols and asserts the counts equal
 only the safe-emitted subset that `render()` produces.
 *Authoritative tracking:* `docs/tasks/ISF-SYMBOL-COUNT-EMITTED.md`.
+
+### `ISF-RULE-CONFLICT-RESIDUAL` — a dropped conflicting rule is now surfaced, not silently lost
+
+FSMGen's strict mode rejects two rules that drive the **same** signal to
+**different** values under the **same** guard. The emitter has always had to
+drop one of a conflicting pair to keep the `.isf` valid — and it kept the
+first and **silently discarded** the rest. That is the one place the emitter
+violated the project's own rule: *never hide ambiguity.*
+
+#### Why it mattered
+
+Everywhere else, when the `.isf` emitter can't represent something it records
+a `ResidualDecisionPacket` (preserved on `IsfIr.temporal_residuals`, surfaced
+by the adapter as `residual_decisions`) — so a human can see exactly what
+`.isf` could not carry. The conflict-dedup was the lone exception: a real,
+specification-level contradiction (two rules disagreeing on a signal's value)
+just vanished from the output with no trace.
+
+#### What this tree changed
+
+The dedup is now a pure, testable
+`dedup_conflicting_rules(rules) -> (kept, residuals)`. It still keeps the first
+rule and drops the conflicting ones — **the emitted `.isf` is byte-for-byte
+unchanged**, so strict validity is untouched — but each dropped conflict now
+produces an explicit `ResidualDecisionPacket`:
+
+- it names the signal, the guard, the value the dropped rule wanted, and the
+  value the kept rule emits;
+- it offers two candidate interpretations (keep the earlier rule vs. keep the
+  dropped one) so the decision is visible, not pre-made and hidden;
+- it lands in the adapter artifact's `residual_decisions` alongside every
+  other honest gap.
+
+#### What you see now
+
+If a spec contains a genuine drive conflict, `specforge adapt`'s artifact
+gains an `isf_rule_conflict_<rule>` residual explaining it — instead of the
+conflict disappearing. The `.isf` you hand to FSMGen is identical; you just
+also get told what was dropped and why.
+
+#### How it is verified
+
+Unit tests over the extracted helper: a conflicting pair → the first rule
+kept, the second dropped *and* recorded as a residual naming the signal; a
+non-conflicting set (same signal, different guards) → all kept, no residual.
+The fsmgen-strict end-to-end tests still pass unchanged (emission is
+identical).
+
+*Authoritative tracking:* `docs/tasks/ISF-RULE-CONFLICT-RESIDUAL.md`.

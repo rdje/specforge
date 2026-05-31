@@ -2,6 +2,23 @@
 
 ## 2026-05-31
 
+### ISF-RULE-CONFLICT-RESIDUAL.1 — dropped value-conflicting rules now surfaced as residuals
+- Closed a residual-honesty gap in the `.isf` emitter: `IsfIr::from_intent_ir`
+  dedups rules that drive the same signal to different values under the same
+  guard (FSMGen strict rejects that), and it had been keeping the first and
+  **silently discarding** the rest — the one emitter path that bypassed the
+  project's "never hide ambiguity" rule.
+- Extracted a pure, testable `dedup_conflicting_rules(Vec<IsfRule>) -> (kept,
+  Vec<ResidualDecisionPacket>)` + `rule_conflict_residual_packet` (mirrors
+  `temporal_residual_packet`: id `isf_rule_conflict_<rule>`, names the
+  signal/guard/dropped+kept values, two candidate interpretations, `Low`
+  confidence). `from_intent_ir` extends `temporal_residuals` with them, so each
+  dropped conflict surfaces in the adapter artifact's `residual_decisions`.
+- **Emitted `.isf` is byte-identical** (the conflict is still dropped to stay
+  strict-valid) — the fsmgen-strict tests pass unchanged; only the previously
+  silent conflict is now explicit. +2 unit tests; book subsection added to
+  `pipeline/isf-adapter.md`. Lib `1167 → 1169`; full `scripts/run_ci.sh` green.
+
 ### LLM-TEXT-TRANSPORT-DEDUP.1 — shared commands/llm_text transport
 - Paid down the duplication introduced (and flagged in-module) by
   `CVE-PROSE-EXTRACTION.3` + `R14-SIGNAL-RESOLVE.2`: `extract_contracts` and

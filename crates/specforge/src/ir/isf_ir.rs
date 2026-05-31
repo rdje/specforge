@@ -1063,32 +1063,13 @@ impl IsfIr {
 
         // --- Dedup: remove rules that conflict on the same signal+guard ---
         // When two rules share the same guard but drive the same signal to
-        // different values, FSMGen rejects the ISF.  Keep only the first.
+        // different values, FSMGen rejects the ISF. Keep the first and record
+        // every dropped conflict as an explicit residual (never a silent loss
+        // — ISF-RULE-CONFLICT-RESIDUAL).
         {
-            let mut seen: std::collections::BTreeMap<(String, String), String> =
-                std::collections::BTreeMap::new();
-            let mut deduped: Vec<IsfRule> = Vec::new();
-            'outer: for rule in rules {
-                let mut conflict = false;
-                for (sig, val) in &rule.drives {
-                    let key = (sig.clone(), rule.condition.clone());
-                    if let Some(prev_val) = seen.get(&key)
-                        && prev_val != val
-                    {
-                        conflict = true;
-                        break;
-                    }
-                }
-                if conflict {
-                    continue 'outer;
-                }
-                for (sig, val) in &rule.drives {
-                    let key = (sig.clone(), rule.condition.clone());
-                    seen.entry(key).or_insert_with(|| val.clone());
-                }
-                deduped.push(rule);
-            }
+            let (deduped, conflict_residuals) = dedup_conflicting_rules(rules);
             rules = deduped;
+            temporal_residuals.extend(conflict_residuals);
         }
 
         // --- Priorities ---
@@ -1778,6 +1759,87 @@ pub(crate) fn classify_actor_contract(
 
 /// Build the explicit residual-decision packet for a temporal rule that has
 /// no representable supported ISF construct (mapping #4).
+/// Remove rules that conflict on the same signal+guard (FSMGen strict rejects
+/// conflicting drives). The FIRST rule for a given (signal, guard) is kept and
+/// emitted; every later rule that drives the same signal to a *different* value
+/// under the same guard is dropped from the `.isf` AND recorded as an explicit
+/// `ResidualDecisionPacket` — so the conflict is surfaced, never silently lost
+/// (ISF-RULE-CONFLICT-RESIDUAL). Emitted `.isf` is unchanged vs the prior
+/// silent-drop behavior; only the residual record is new.
+fn dedup_conflicting_rules(rules: Vec<IsfRule>) -> (Vec<IsfRule>, Vec<ResidualDecisionPacket>) {
+    let mut seen: std::collections::BTreeMap<(String, String), String> =
+        std::collections::BTreeMap::new();
+    let mut deduped: Vec<IsfRule> = Vec::new();
+    let mut residuals: Vec<ResidualDecisionPacket> = Vec::new();
+    'outer: for rule in rules {
+        for (sig, val) in &rule.drives {
+            let key = (sig.clone(), rule.condition.clone());
+            if let Some(prev_val) = seen.get(&key)
+                && prev_val != val
+            {
+                residuals.push(rule_conflict_residual_packet(
+                    &rule.name,
+                    sig,
+                    &rule.condition,
+                    val,
+                    prev_val,
+                ));
+                continue 'outer;
+            }
+        }
+        for (sig, val) in &rule.drives {
+            let key = (sig.clone(), rule.condition.clone());
+            seen.entry(key).or_insert_with(|| val.clone());
+        }
+        deduped.push(rule);
+    }
+    (deduped, residuals)
+}
+
+/// Residual for a value-conflicting rule dropped at dedup (kept honest instead
+/// of silently discarded). Mirrors `temporal_residual_packet`'s shape.
+fn rule_conflict_residual_packet(
+    rule_name: &str,
+    signal: &str,
+    condition: &str,
+    dropped_value: &str,
+    kept_value: &str,
+) -> ResidualDecisionPacket {
+    ResidualDecisionPacket {
+        packet_id: format!("isf_rule_conflict_{}", sanitize_isf_name(rule_name)),
+        question: format!(
+            "Conflicting drive for `{signal}` under guard `{condition}`: which value is correct?"
+        ),
+        why_unresolved: format!(
+            "Rule `{rule_name}` drives `{signal}` to `{dropped_value}` under guard `{condition}`, \
+             but an earlier rule already drives it to `{kept_value}` under the same guard. FSMGen \
+             strict rejects conflicting drives, so this rule was DROPPED from the emitted `.isf` \
+             (the earlier `{kept_value}` is kept) rather than fabricating an invalid contradiction. \
+             Recorded here so the conflict is explicit, not silently lost."
+        ),
+        automation_confidence: AutomationConfidence::Low,
+        candidate_interpretations: vec![
+            CandidateInterpretation {
+                interpretation_id: "keep_earlier_rule".to_string(),
+                description: format!(
+                    "Keep `{signal}` = `{kept_value}` (the earlier rule, currently emitted)."
+                ),
+                downstream_impact:
+                    "Emitted `.isf` drives this value; the conflicting rule is omitted.".to_string(),
+            },
+            CandidateInterpretation {
+                interpretation_id: "keep_conflicting_rule".to_string(),
+                description: format!(
+                    "Keep `{signal}` = `{dropped_value}` (rule `{rule_name}`, currently dropped)."
+                ),
+                downstream_impact:
+                    "Would require dropping the earlier rule instead — a human must decide."
+                        .to_string(),
+            },
+        ],
+    }
+}
+
 fn temporal_residual_packet(
     rule_id: &str,
     reason: &str,
@@ -2772,5 +2834,58 @@ mod tests {
         assert!(out.contains("(mode (IDLE 0) (BUSY 1))"), "{out}");
         assert!(!out.contains("SKIP"), "{out}");
         assert!(!out.contains("(bad"), "{out}");
+    }
+
+    #[test]
+    fn dedup_records_conflicting_rule_as_residual_not_silent_drop() {
+        let rules = vec![
+            IsfRule {
+                name: "r_keep".to_string(),
+                condition: "SEL == 1".to_string(),
+                drives: vec![("GRANT".to_string(), "1".to_string())],
+            },
+            IsfRule {
+                name: "r_conflict".to_string(),
+                condition: "SEL == 1".to_string(),
+                drives: vec![("GRANT".to_string(), "0".to_string())],
+            },
+            IsfRule {
+                name: "r_other".to_string(),
+                condition: "EN == 1".to_string(),
+                drives: vec![("BUSY".to_string(), "1".to_string())],
+            },
+        ];
+        let (deduped, residuals) = dedup_conflicting_rules(rules);
+        // First GRANT rule + the non-conflicting BUSY rule survive; the
+        // conflicting second GRANT rule is dropped from emission...
+        let kept: Vec<&str> = deduped.iter().map(|r| r.name.as_str()).collect();
+        assert_eq!(kept, vec!["r_keep", "r_other"]);
+        // ...but recorded as an explicit residual instead of silently lost.
+        assert_eq!(residuals.len(), 1);
+        let p = &residuals[0];
+        assert!(p.packet_id.contains("rule_conflict"), "{}", p.packet_id);
+        assert!(p.why_unresolved.contains("GRANT"), "{}", p.why_unresolved);
+        assert!(p.why_unresolved.contains("DROPPED"), "{}", p.why_unresolved);
+        assert_eq!(p.candidate_interpretations.len(), 2);
+    }
+
+    #[test]
+    fn dedup_without_conflict_keeps_all_rules_and_records_no_residual() {
+        // Same signal but DIFFERENT guards is not a conflict — both kept.
+        let rules = vec![
+            IsfRule {
+                name: "a".to_string(),
+                condition: "SEL == 1".to_string(),
+                drives: vec![("X".to_string(), "1".to_string())],
+            },
+            IsfRule {
+                name: "b".to_string(),
+                condition: "SEL == 0".to_string(),
+                drives: vec![("X".to_string(), "0".to_string())],
+            },
+        ];
+        let (deduped, residuals) = dedup_conflicting_rules(rules);
+        assert_eq!(deduped.len(), 2);
+        assert!(residuals.is_empty());
     }
 }
