@@ -133,14 +133,27 @@ it (drift flagged + reconciled).
   Commit: `see Commit Log`
 
 - ID: `ROADMAP-TASKTREE-COVERAGE.4`
-  Status: `pending`
+  Status: `done`
   Goal: >
     Backfill + audit the learning/eval/corpus lanes **R15c–R15g** (same
     method; these are `In Progress`, so trees stay `active`/`in_progress` with
     the delivered-so-far audit + remaining scope). Register in the index.
   Acceptance: R15c–R15g each owned by an audited tree; remaining scope captured; CI green.
-  Verification: pending
-  Commit: pending
+  Verification: >
+    passed (`2026-05-31`) — created `R15C-R15G-LEARNING-PLANE-BACKFILL` (stays
+    `active`; one `in_progress` leaf per open milestone). AUDIT confirmed the
+    delivered surface present per milestone: R15c (semantic-hint/observation/
+    candidate/arbitration/consensus surfaces across evidence+semantic+intent +
+    nlp-enrich refresh + validate arbitration reporting), R15d (polarity/
+    semantic/interface/connectivity conflict records carried + validate-reported
+    across all 3 stages), R15e (`kg-bench` command + **153** `kg_quality`
+    fixtures), R15f (`prior_memory.rs` `CorpusMemory` + `learn-priors` + 5 prior
+    families + ≥4 provenance-safe consumers), R15g (`corpus_kb/` root with **11**
+    page families + README/SCHEMA + `corpus-kb` command). Each leaf also records
+    the REMAINING open completion criteria; all book-covered (`quality/kg-bench`,
+    `quality/corpus-memory`, `quality/corpus-kb`, `domain/actor-connectivity`,
+    `quality/validation`). Registered in the index. Docs-only (CI invariant).
+  Commit: `see Commit Log`
 
 - ID: `ROADMAP-TASKTREE-COVERAGE.5`
   Status: `pending`
@@ -160,8 +173,8 @@ it (drift flagged + reconciled).
 | 1 | `ROADMAP-TASKTREE-COVERAGE.1` | `done` | README + gap record + umbrella registration landed |
 | 2 | `ROADMAP-TASKTREE-COVERAGE.2` | `done` | R1–R5 owned + audited (`R1-R5-FOUNDATION-BACKFILL`) |
 | 3 | `ROADMAP-TASKTREE-COVERAGE.3` | `done` | R8–R13 owned + audited (`R8-R13-EXTRACTION-BACKFILL`) |
-| 4 | `ROADMAP-TASKTREE-COVERAGE.4` | `pending` | R15c–R15g backfill+audit — next |
-| 5 | `ROADMAP-TASKTREE-COVERAGE.5` | `pending` | alignment lock + close |
+| 4 | `ROADMAP-TASKTREE-COVERAGE.4` | `done` | R15c–R15g owned + audited (`R15C-R15G-LEARNING-PLANE-BACKFILL`, stays active) |
+| 5 | `ROADMAP-TASKTREE-COVERAGE.5` | `pending` | alignment lock + close — next |
 
 ## Decisions
 
@@ -189,6 +202,7 @@ it (drift flagged + reconciled).
 | `2026-05-31` | `ROADMAP-TASKTREE-COVERAGE.1` | `TASK_TREE_README.md` created (system + 5-point doctrine); coverage gap measured + recorded (16 uncovered milestones); umbrella registered in `docs/TASK_TREE.md` + README cross-linked; docs-only (CI invariant) | `passed` |
 | `2026-05-31` | `ROADMAP-TASKTREE-COVERAGE.2` | `R1-R5-FOUNDATION-BACKFILL` created (R1–R5 as audited leaves); delivering code/tests/book verified per milestone; ROADMAP §R1–R5 criteria met; registered; docs-only | `passed` |
 | `2026-05-31` | `ROADMAP-TASKTREE-COVERAGE.3` | `R8-R13-EXTRACTION-BACKFILL` created (R8–R13 as audited leaves); delivering symbols/commands + book pages verified per milestone (R9 Mostly-Done residual noted); ROADMAP §R8–R13 criteria met; registered; docs-only | `passed` |
+| `2026-05-31` | `ROADMAP-TASKTREE-COVERAGE.4` | `R15C-R15G-LEARNING-PLANE-BACKFILL` created (stays `active`; R15c–g as `in_progress` leaves); delivered surface audited (semantic/conflict surfaces; `kg-bench` + 153 fixtures; `learn-priors`/CorpusMemory; `corpus-kb`/11 families) + remaining scope captured + book-covered; registered; docs-only | `passed` |
 
 ## Commit Log
 
@@ -197,9 +211,17 @@ it (drift flagged + reconciled).
 | `ROADMAP-TASKTREE-COVERAGE.1` | `ROADMAP-TASKTREE-COVERAGE.1 — task-tree doctrine README + whole-roadmap coverage umbrella` | docs-only; sets up the backfill+audit+alignment program |
 | `ROADMAP-TASKTREE-COVERAGE.2` | `ROADMAP-TASKTREE-COVERAGE.2 — backfill+audit R1–R5 foundation milestones` | created `R1-R5-FOUNDATION-BACKFILL`; all delivered + audited |
 | `ROADMAP-TASKTREE-COVERAGE.3` | `ROADMAP-TASKTREE-COVERAGE.3 — backfill+audit R8–R13 extraction-SOTA milestones` | created `R8-R13-EXTRACTION-BACKFILL`; all delivered + audited (R9 residual noted) |
+| `ROADMAP-TASKTREE-COVERAGE.4` | `ROADMAP-TASKTREE-COVERAGE.4 — backfill+audit R15c–R15g learning/eval/corpus lanes` | created `R15C-R15G-LEARNING-PLANE-BACKFILL` (stays active); delivered surface audited + remaining scope captured |
 
 ## Changelog
 
+- `2026-05-31`: `.4` — created `R15C-R15G-LEARNING-PLANE-BACKFILL` (stays
+  `active`) owning + auditing R15c–g (KG-guided rescans / cross-modality
+  conflict arbitration / KG-quality benchmark / cross-document learning plane /
+  corpus knowledge base); delivered surface verified present (semantic+conflict
+  surfaces; `kg-bench`+153 fixtures; `learn-priors`/`CorpusMemory`; `corpus-kb`/
+  11 families) + remaining open scope captured per leaf; all book-covered.
+  Frontier → `.5` (alignment lock + close).
 - `2026-05-31`: `.3` — created `R8-R13-EXTRACTION-BACKFILL` owning + auditing
   R8–R13 (extraction SOTA: Tier-1 capture / Tier-2 typed evidence / Tier-3 VLM /
   NLP-L3 / multi-spec validation / Tier-2 relations; all delivered + book-covered;

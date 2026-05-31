@@ -2,6 +2,31 @@
 
 ## 2026-05-31
 
+### ROADMAP-TASKTREE-COVERAGE.4 — backfill+audit R15c–R15g (learning/eval/corpus lanes)
+- Created `R15C-R15G-LEARNING-PLANE-BACKFILL` (lane R15c–g). Unlike the R1–R5 /
+  R8–R13 backfills (closed — those milestones are Done), this tree stays
+  **`active`** because R15c–g are **In Progress**; each leaf is `in_progress`
+  and records BOTH the audited delivered surface AND the remaining open scope:
+  - R15c (KG-guided multimodal rescans): semantic-hint/observation/candidate/
+    arbitration/consensus surfaces across `evidence`+`semantic`+`intent` +
+    `nlp-enrich` refresh + `validate` arbitration reporting. Remaining =
+    first-class convergent rescan loop with new-fact-vs-duplicate accounting.
+  - R15d (cross-modality conflict arbitration): polarity / semantic / interface /
+    connectivity conflict records carried + `validate`-reported across all 3
+    canonical stages. Remaining = full-corpus arbitration completeness.
+  - R15e (KG-quality benchmark hardening): `kg-bench` command + **153**
+    `test_data/kg_quality` fixtures (gold/negative/residual/stage-patched).
+    Remaining = evergreen fixture curation + explicit uncertainty-quality checks.
+  - R15f (cross-document learning plane): `ir/prior_memory.rs` `CorpusMemory` +
+    `learn-priors` command + 5 prior families + ≥4 provenance-safe consumers +
+    `kg-bench` staging. Remaining = protocol-family scope growth + new families.
+  - R15g (corpus knowledge base): `corpus_kb/` root (**11** page families +
+    README/SCHEMA) + `corpus-kb` command (validation-finding projection).
+    Remaining = ≥1 more auto-refreshable page family.
+  All book-covered (`quality/kg-bench`, `quality/corpus-memory`,
+  `quality/corpus-kb`, `domain/actor-connectivity`, `quality/validation`).
+  Docs-only; umbrella frontier → `.5` (ROADMAP↔code↔mdBook alignment lock + close).
+
 ### ROADMAP-TASKTREE-COVERAGE.3 — backfill+audit R8–R13 (extraction-SOTA milestones)
 - Created `R8-R13-EXTRACTION-BACKFILL` (lane R8–R13) owning the extraction-SOTA
   milestones as audited leaves. AUDIT (verification-only; all delivered before
