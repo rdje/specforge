@@ -1,5 +1,26 @@
 # CHANGES
 
+## 2026-06-01
+
+### REGISTER-MAP-CLASSIFIER-PRECISION — fix a systemic register-map over-classification (closed)
+- The full virtuous loop the corpus-hardening campaign was built for: a
+  completeness detector surfaced a symptom (the I2C register tiling-overlap),
+  which traced to a **systemic** classifier bug, which is now fixed and
+  corpus-regression-verified end-to-end.
+- Root cause: `classify_table_kind` (`docling_backend.rs`) tagged any table with
+  an "address"/"offset" header as `register_map`, sweeping in address tables,
+  feature matrices, tables of contents, and data-frame layouts.
+- Fix (two gates): (`.3`) require genuine register **structure** — a colon
+  bit-range (`7:0`/`[31:16]`, excluding stray `[177]` page refs) or a standalone
+  access token (`RO`/`RW`/`W1C`/…); (`.4`) plus a **layout guard** rejecting
+  tables of contents (dotted-leader cells) and data-frame/packet layouts (frame
+  column vocabulary).
+- Verified on the real corpus (fresh re-ingests): I2C register_map **4→0**, APB
+  **1→0** (the original tiling-overlap symptom gone), eMMC **18→2**
+  (register_records **48→14** — RPMB data frames + TOCs no longer registers),
+  **genuine EXT_CSD register table kept**, no regression. Full CI green; book
+  note in `pipeline/sourceir.md`.
+
 ## 2026-05-31
 
 ### CORPUS-HARDENING — SpecForge run on the real chip-doc corpus; VLM-in-the-loop recall demonstrated
