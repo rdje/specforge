@@ -2,6 +2,21 @@
 
 ## 2026-05-31
 
+### ROADMAP-TASKTREE-COVERAGE.1 — task-tree doctrine README + whole-roadmap coverage umbrella
+- User restated the task-tree doctrine (no code change without an owning tree;
+  every coding/non-coding activity tracked; the WHOLE roadmap task-tree-tracked;
+  past work audited into trees; ROADMAP ↔ codebase ↔ mdBook locked with zero
+  drift) and directed turning the whole roadmap into owned, audited task-trees.
+- Created `docs/TASK_TREE_README.md` (system overview + the 5-point doctrine) —
+  it did not exist though it was referenced as a doctrine doc.
+- Measured the coverage gap: existing trees own lanes R0/R6/R7/R14/R15/R15b/R16;
+  the **16 uncovered milestones** (delivered before the task-tree system /
+  in-progress lanes) are **R1–R5, R8–R13, R15c–g**.
+- Created the `ROADMAP-TASKTREE-COVERAGE` umbrella (R0) owning the backfill +
+  per-milestone audit + the ROADMAP↔code↔mdBook alignment lock; registered it
+  in `docs/TASK_TREE.md` and cross-linked the README from the workflow doc.
+  Docs-only; frontier → `.2` (backfill+audit R1–R5).
+
 ### CVE-PROSE-EXTRACTION + R14-SIGNAL-RESOLVE — LIVE Qwen confirmation (server-gate cleared)
 - After the hung converge jobs were stopped and `ollama serve` restarted, ran
   the two live confirmations that had been gated all along — on the CXS

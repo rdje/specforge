@@ -3,6 +3,12 @@
 This document defines the repo-local task-tree workflow used by SpecForge.
 Adapted from the FSMGen task-tree system.
 
+See [`docs/TASK_TREE_README.md`](TASK_TREE_README.md) for the system overview
+and the governing doctrine (no code change without an owning tree; every
+activity tracked; past work audited into trees; ROADMAP ↔ codebase ↔ mdBook
+locked with zero drift). Whole-roadmap task-tree coverage + the past-work audit
+is driven by [`docs/tasks/ROADMAP-TASKTREE-COVERAGE.md`](tasks/ROADMAP-TASKTREE-COVERAGE.md).
+
 ## Purpose
 
 Use a task tree when a top-level task is too broad to finish safely as one
@@ -56,6 +62,7 @@ evidence for one top-level task.
 | `R14-SIGNAL-RESOLVE` | `done` | `R14` | — (CLOSED `2026-05-31`: Tier-3 LLM `signal_relation` extraction delivered as the `signal-resolve` command (Qwen via Ollama) — grounded + deduped `ActorSignalRelation` edges appended to the existing `EvidenceIR.actor_signal_relations` KG field; pure classifier 5-path-tested. Live run server-gated; skip-mode verified. lib →1164) | [docs/tasks/R14-SIGNAL-RESOLVE.md](docs/tasks/R14-SIGNAL-RESOLVE.md) |
 | `LLM-TEXT-TRANSPORT-DEDUP` | `done` | `R0` | — (CLOSED `2026-05-31`: consolidated the text chat transport `extract_contracts`+`signal_resolve` duplicated into a shared `commands/llm_text.rs`; 3→2 copies (`nlp_enrich` inline left as follow-up); +3 transport tests; no behavior change; CI green) | [docs/tasks/LLM-TEXT-TRANSPORT-DEDUP.md](docs/tasks/LLM-TEXT-TRANSPORT-DEDUP.md) |
 | `ISF-RULE-CONFLICT-RESIDUAL` | `done` | `R6` | — (CLOSED `2026-05-31`: `.isf` emitter dedup now records each dropped value-conflicting rule as an explicit `ResidualDecisionPacket` (→ `residual_decisions`) instead of silently dropping it; emitted `.isf` byte-identical/strict-valid; extracted testable `dedup_conflicting_rules`; +2 tests; book subsection) | [docs/tasks/ISF-RULE-CONFLICT-RESIDUAL.md](docs/tasks/ISF-RULE-CONFLICT-RESIDUAL.md) |
+| `ROADMAP-TASKTREE-COVERAGE` | `active` | `R0` | `ROADMAP-TASKTREE-COVERAGE.1` (README + gap record done; then backfill+audit R1–R5 / R8–R13 / R15c–g + the ROADMAP↔code↔mdBook alignment lock) — turn the WHOLE roadmap into owned, audited task-trees (user doctrine directive `2026-05-31`) | [docs/tasks/ROADMAP-TASKTREE-COVERAGE.md](docs/tasks/ROADMAP-TASKTREE-COVERAGE.md) |
 
 ## Directory Layout
 
