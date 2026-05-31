@@ -171,11 +171,13 @@ VLM-in-the-loop pass are the indicated next instruments).
 
 ## Discovered issues (ranked candidate fix-trees)
 
-1. **Over-eager register-map table classifier** — an address-assignment table
-   (I2C UM10204 Table 4) was synthesized as a register with bogus overlapping
-   fields. The tiling detector caught it. Candidate fix-tree: tighten the
-   register-map `table_kind` classifier (require register-like columns:
-   offset/field/bits/access), with the I2C table as the anchor fixture.
+1. **Over-eager register-map table classifier** → **OWNED: `REGISTER-MAP-CLASSIFIER-PRECISION`**
+   (`2026-05-31`). What started as an I2C symptom (the address table flagged by
+   the tiling detector) was traced to a **systemic** bug: the bare `has_addr_col`
+   heuristic in `classify_table_kind` mis-classifies feature matrices, TOCs,
+   data-frame layouts, and address-assignment tables as `register_map` across
+   I2C/eMMC/APB (inflating `register_records` with non-registers). Fix =
+   precision-tighten (address+field-structure), corpus-regression-verified.
 
 ## Open Questions
 
