@@ -1,4 +1,5 @@
 pub mod adapters;
+pub mod completeness;
 pub mod contract;
 pub mod cve;
 pub mod evidence;

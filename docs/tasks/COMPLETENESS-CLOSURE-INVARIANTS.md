@@ -67,15 +67,29 @@ Two detectors:
   Commit: `see Commit Log`
 
 - ID: `COMPLETENESS-CLOSURE-INVARIANTS.2`
-  Status: `pending`
+  Status: `done`
   Goal: >
     Register bit-tiling detector: new `ir/completeness.rs` with a pure
     `register_tiling_residuals(&[RegisterRecord]) -> Vec<…>` (overlap + interior
     gap, conservative, no width assumption); unit tests over clean/overlap/gap/
     sparse cases; wire into `validate_evidence_ir` (findings + metrics). Full CI.
   Acceptance: detector + tests + validate surface; CI green.
-  Verification: pending
-  Commit: pending
+  Verification: >
+    passed (`2026-05-31`) — new `ir/completeness.rs` module with pure
+    `register_tiling_residuals(&[RegisterRecord]) -> Vec<RegisterTilingResidual>`
+    (`RegisterTilingKind::{Overlap, InteriorGap}`): per register, fields with both
+    bit bounds are coverage-counted over `[min_low, max_high]`; overlaps (cover>1)
+    and interior gaps (cover==0) collapse into compact bit ranges (`bits [hi:lo]`/
+    `bit [n]`). Conservative — no width speculation (bits above the highest field
+    never flagged), reversed bounds normalized, <2 bounded fields skipped, span
+    capped at 4096 against garbage. 7 unit tests (clean/overlap/interior-gap/
+    single-field/no-bounds/reversed/single-bit). Wired into `validate_evidence_ir`:
+    a `Register Tiling` section + findings (Overlap→Warning
+    `evidence_register_field_overlaps`; InteriorGap→Info
+    `evidence_register_field_interior_gaps`) + 2 metrics; 1 validate wiring test.
+    Extraction-neutral (flags only, never mutates). fmt/clippy clean; full
+    `scripts/run_ci.sh` GREEN.
+  Commit: `see Commit Log`
 
 - ID: `COMPLETENESS-CLOSURE-INVARIANTS.3`
   Status: `pending`
@@ -101,8 +115,8 @@ Two detectors:
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `COMPLETENESS-CLOSURE-INVARIANTS.1` | `done` | tree + design + research `.7` decision recorded |
-| 2 | `COMPLETENESS-CLOSURE-INVARIANTS.2` | `pending` | register tiling — cleanest exact detector — next |
-| 3 | `COMPLETENESS-CLOSURE-INVARIANTS.3` | `pending` | symbol closure (gated) |
+| 2 | `COMPLETENESS-CLOSURE-INVARIANTS.2` | `done` | register tiling landed (`ir/completeness.rs` + validate); 8 tests; CI green |
+| 3 | `COMPLETENESS-CLOSURE-INVARIANTS.3` | `pending` | symbol closure (gated) — next |
 | 4 | `COMPLETENESS-CLOSURE-INVARIANTS.4` | `pending` | book + close |
 
 ## Decisions
@@ -132,15 +146,21 @@ Two detectors:
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-05-31` | `.1` | tree created + registered; research `.7` decision (closure-invariants first) recorded; docs-only (CI invariant) | `passed` |
+| `2026-05-31` | `.2` | `ir/completeness.rs` register-tiling detector (overlap + interior gap, conservative/no-width-speculation); 7 unit + 1 validate-wiring tests; `validate_evidence_ir` findings (Warning/Info) + 2 metrics; extraction-neutral; fmt/clippy clean; full `scripts/run_ci.sh` GREEN | `passed` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `COMPLETENESS-CLOSURE-INVARIANTS.1` | `COMPLETENESS-CLOSURE-INVARIANTS.1 — own the first completeness detectors + record the first-slice decision` | docs-only |
+| `COMPLETENESS-CLOSURE-INVARIANTS.2` | `COMPLETENESS-CLOSURE-INVARIANTS.2 — register bit-tiling detector (ir/completeness.rs) + validate surface` | code; first completeness detector landed |
 
 ## Changelog
 
+- `2026-05-31`: `.2` — landed the register bit-tiling detector in a new
+  `ir/completeness.rs` (overlap + interior gap, conservative), surfaced in
+  `validate` (findings + metrics); 8 tests; CI green. **The first completeness
+  miss-detector is live.** Frontier → `.3` (symbol closure, gated).
 - `2026-05-31`: Created — first implementation from `INTENT-COMPLETENESS-RESEARCH`
   (user chose closure invariants). Register tiling (EXACT) then symbol closure
   (GATED), surfaced as `validate` findings. Frontier → `.2` (register tiling).

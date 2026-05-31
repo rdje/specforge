@@ -2584,6 +2584,28 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
         None => println!("  (not recorded — artifact predates convergence reporting)"),
     }
 
+    let register_tiling = crate::ir::completeness::register_tiling_residuals(&ir.register_records);
+    let register_field_overlaps = register_tiling
+        .iter()
+        .filter(|r| r.kind == crate::ir::completeness::RegisterTilingKind::Overlap)
+        .count();
+    let register_field_interior_gaps = register_tiling
+        .iter()
+        .filter(|r| r.kind == crate::ir::completeness::RegisterTilingKind::InteriorGap)
+        .count();
+    println!();
+    println!("=== Register Tiling (closure invariant) ===");
+    println!("  register_field_overlaps: {register_field_overlaps}");
+    println!("  register_field_interior_gaps: {register_field_interior_gaps}");
+    for residual in register_tiling.iter().take(8) {
+        println!(
+            "  - {} {}: {}",
+            residual.register_name,
+            residual.kind.as_str(),
+            residual.detail
+        );
+    }
+
     let normative_count = classes.get("normative_statement").copied().unwrap_or(0);
     let missing_vlm_observation_related_ids = evidence_missing_vlm_observation_related_ids(ir);
     let structural_kg_missing_related_ids = evidence_structural_kg_missing_related_ids(ir);
@@ -2723,6 +2745,28 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             visual_motif_corroboration_targets.clone(),
         ));
     }
+    if register_field_overlaps > 0 {
+        findings.push(finding(
+            "evidence_register_field_overlaps",
+            ValidationFindingSeverity::Warning,
+            "register_closure",
+            format!(
+                "{register_field_overlaps} register(s) have overlapping bit-fields; the field definitions contradict each other",
+            ),
+            Vec::new(),
+        ));
+    }
+    if register_field_interior_gaps > 0 {
+        findings.push(finding(
+            "evidence_register_field_interior_gaps",
+            ValidationFindingSeverity::Info,
+            "register_closure",
+            format!(
+                "{register_field_interior_gaps} register(s) have an interior bit-gap between documented fields; a field may have been missed",
+            ),
+            Vec::new(),
+        ));
+    }
     if let Some(convergence) = &ir.convergence_report {
         if convergence.converged {
             findings.push(finding(
@@ -2817,6 +2861,14 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
                     .map(|r| r.converged)
                     .unwrap_or(false)
                     .to_string(),
+            ),
+            metric(
+                "register_field_overlaps",
+                register_field_overlaps.to_string(),
+            ),
+            metric(
+                "register_field_interior_gaps",
+                register_field_interior_gaps.to_string(),
             ),
             metric(
                 "table_signal_declaration_provenance",
@@ -6706,6 +6758,53 @@ mod tests {
         assert_eq!(metric_value(&report, "convergence_passes_run"), Some("5"));
         assert!(has_finding(&report, "evidence_extraction_not_converged"));
         assert!(!has_finding(&report, "evidence_extraction_converged"));
+        Ok(())
+    }
+
+    #[test]
+    fn validate_evidence_ir_flags_register_tiling() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{AutomationConfidence, RegisterFieldRecord, RegisterRecord};
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("regs.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        fs::write(&source, "# Spec\nSome content.\n")?;
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        let mk = |name: &str, hi: u32, lo: u32| RegisterFieldRecord {
+            field_name: name.to_string(),
+            bits_high: Some(hi),
+            bits_low: Some(lo),
+            access_type: None,
+            reset_value: None,
+            description: None,
+        };
+        // STATUS: fields [3:0] + [5:2] overlap on bits 2-3.
+        evidence_ir.register_records = vec![RegisterRecord {
+            register_id: "reg_status".to_string(),
+            register_name: "STATUS".to_string(),
+            offset_address: None,
+            fields: vec![mk("A", 3, 0), mk("B", 5, 2)],
+            supporting_statement_ids: vec![],
+            automation_confidence: AutomationConfidence::Medium,
+        }];
+
+        let report = validate_evidence_ir(&evidence_ir, "register_tiling".to_string());
+        assert_eq!(metric_value(&report, "register_field_overlaps"), Some("1"));
+        assert_eq!(
+            metric_value(&report, "register_field_interior_gaps"),
+            Some("0")
+        );
+        assert!(has_finding(&report, "evidence_register_field_overlaps"));
+        assert!(!has_finding(
+            &report,
+            "evidence_register_field_interior_gaps"
+        ));
         Ok(())
     }
 
