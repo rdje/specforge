@@ -239,6 +239,7 @@ pub fn run(args: SignalResolveArgs) -> Result<()> {
             statement_id,
             sentence,
             &prompt,
+            512,
         )?;
         match classify_relation_response(&raw, statement_id, &grounding) {
             RelationOutcome::Skipped => skipped += 1,

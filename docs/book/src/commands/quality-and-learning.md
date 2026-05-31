@@ -278,7 +278,11 @@ malformed answer is skipped, not invented. (See [Actor Connectivity](../domain/a
 
 Use `--dry-run` to preview which sentences would be sent without making a single
 LLM call, `--max-statements` to cap how many candidates are sent (handy for a
-quick check), and `--provider skip` to exercise the full wiring offline. Both
-commands share one OpenAI-compatible transport, so the same `SPECFORGE_VLM_HELPER`
-hook and provider flags behave identically across `enrich`, `nlp-enrich`,
-`extract-contracts`, and `signal-resolve`.
+quick check), and `--provider skip` to exercise the full wiring offline. The
+three text commands — `nlp-enrich`, `extract-contracts`, and `signal-resolve` —
+now route through one shared OpenAI-compatible *text* transport, so the
+`SPECFORGE_VLM_HELPER` hook, provider flags, and OpenAI auth behave identically
+across them; only the per-command prompt, response parsing, and response-token
+budget differ. (`enrich` honors the same `SPECFORGE_VLM_HELPER` test-hook and
+provider-flag convention, but keeps its own image-capable transport because it
+sends diagrams, not text.)

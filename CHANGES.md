@@ -2,6 +2,26 @@
 
 ## 2026-05-31
 
+### NLP-ENRICH-TRANSPORT-DEDUP — finish the text-transport consolidation (2→1)
+- Completed the DRY follow-up `LLM-TEXT-TRANSPORT-DEDUP` flagged: routed
+  `commands/nlp_enrich.rs::call_llm_for_sentence` through the shared
+  `commands/llm_text.rs::call_text_provider`, removing `nlp_enrich`'s duplicated
+  private `build_text_chat_request` / `extract_chat_content`. The
+  OpenAI-compatible text transport is now a single copy (the last duplicate).
+- Behavior-preserving: `call_text_provider` gained a `max_tokens: usize`
+  parameter; `extract-contracts` + `signal-resolve` pass `512` (unchanged),
+  `nlp-enrich` passes `256` (its prior budget, kept because it scans every
+  normative statement). Removed the now-unused `std::fs` / `std::process::Command`
+  imports; `cfg(test)`-gated the test-only `VLM_HELPER_ENV` const.
+- Verified: all 22 `commands::nlp_enrich` tests pass (incl. the
+  `SPECFORGE_VLM_HELPER` mock end-to-end paths); +1 `llm_text` request-body unit
+  test; `cargo clippy --all-targets` clean; full `scripts/run_ci.sh` GREEN.
+- Residual-honesty catch: corrected a book overclaim — `enrich` is the image/VLM
+  command and does NOT share the text transport (it keeps its own base64-image
+  transport); it only shares the `SPECFORGE_VLM_HELPER` hook + provider-flag
+  convention. The book's shared-transport note now scopes the unified transport
+  to the three text commands and footnotes `enrich` accurately.
+
 ### ROADMAP-TASKTREE-COVERAGE.5 — ROADMAP↔code↔mdBook alignment lock + close umbrella
 - Closed the whole-roadmap coverage program. Swept every milestone R0–R16 +
   R15b–g and confirmed each is task-tree-owned and book-covered. The alignment

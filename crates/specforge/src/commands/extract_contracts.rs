@@ -178,6 +178,7 @@ pub fn run(args: ExtractContractsArgs) -> Result<()> {
             statement_id,
             sentence,
             &prompt,
+            512,
         )?;
         match classify_response(&raw, statement_id, sentence) {
             CandidateOutcome::Skipped => {}

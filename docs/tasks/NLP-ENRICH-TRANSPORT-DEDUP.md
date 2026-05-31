@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `NLP-ENRICH-TRANSPORT-DEDUP`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: `R0` (code-quality / DRY debt paydown)
 - Created: `2026-05-31`
 - Last updated: `2026-05-31`
@@ -49,7 +49,7 @@ tempfile request, `extract_chat_content` parsing are already identical).
 ## Task Tree
 
 - ID: `NLP-ENRICH-TRANSPORT-DEDUP`
-  Status: `active`
+  Status: `done`
   Goal: complete the text-transport consolidation
   Children: `.1`, `.2`
 
@@ -61,7 +61,7 @@ tempfile request, `extract_chat_content` parsing are already identical).
   Commit: `see Commit Log`
 
 - ID: `NLP-ENRICH-TRANSPORT-DEDUP.2`
-  Status: `pending`
+  Status: `done`
   Goal: >
     Implement: add `max_tokens: usize` to `call_text_provider` (thread into
     `build_text_chat_request`); update `extract_contracts` + `signal_resolve` to
@@ -69,15 +69,38 @@ tempfile request, `extract_chat_content` parsing are already identical).
     remove `nlp_enrich`'s dead `build_text_chat_request` / `extract_chat_content`.
     Verify `nlp_enrich` mock tests unchanged; full CI green; book note; close.
   Acceptance: 2→1 transport copies; behavior-preserving; full `scripts/run_ci.sh` green; book updated; tree CLOSED.
-  Verification: pending
-  Commit: pending
+  Verification: >
+    passed (`2026-05-31`) — `llm_text::call_text_provider` gained a
+    `max_tokens: usize` param (threaded into `build_text_chat_request`);
+    `extract_contracts` + `signal_resolve` pass `512` (unchanged);
+    `nlp_enrich::call_llm_for_sentence` now delegates to it with a
+    `NLP_MAX_TOKENS = 256` const (exact prior budget preserved), keeping only its
+    `build_nlp_prompt` + `parse_nlp_response`; deleted `nlp_enrich`'s duplicated
+    `build_text_chat_request` / `extract_chat_content` and the now-unused
+    `std::fs` / `std::process::Command` imports; `cfg(test)`-gated the
+    test-only `VLM_HELPER_ENV` const. Text transport is now **2→1** (the last
+    duplicate). All 22 `commands::nlp_enrich` tests pass (incl. the
+    `SPECFORGE_VLM_HELPER` mock-helper end-to-end paths) — behavior preserved.
+    `cargo clippy --all-targets` clean; full `scripts/run_ci.sh` GREEN (fmt /
+    clippy -D / lib tests / rustdoc -D / mdBook). Added a `max_tokens` request-
+    body unit test in `llm_text`. **Residual-honesty catch:** corrected a book
+    overclaim — `enrich` is the image/VLM command and does NOT share the
+    `llm_text` text transport (it keeps its own base64-image transport); it only
+    shares the `SPECFORGE_VLM_HELPER` hook + provider-flag convention. The book's
+    shared-transport note now scopes the unified transport to the **three text
+    commands** and footnotes `enrich` accurately.
+  Commit: `see Commit Log`
 
 ## Current Frontier
 
-| Order | Leaf | Status | Why next |
+**Tree CLOSED `2026-05-31`** — the OpenAI-compatible text transport is now a
+single copy (`llm_text::call_text_provider`), shared by the three text commands;
+`nlp_enrich`'s duplicate is gone; behavior preserved; full CI green.
+
+| Order | Leaf | Status | Why |
 | --- | --- | --- | --- |
 | 1 | `NLP-ENRICH-TRANSPORT-DEDUP.1` | `done` | tree + design landed |
-| 2 | `NLP-ENRICH-TRANSPORT-DEDUP.2` | `pending` | implement the behavior-preserving fold + verify + book + close — next |
+| 2 | `NLP-ENRICH-TRANSPORT-DEDUP.2` | `done` | fold implemented + verified (22 tests) + book + closed |
 
 ## Decisions
 
@@ -100,15 +123,22 @@ tempfile request, `extract_chat_content` parsing are already identical).
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-05-31` | `.1` | tree created (behavior-preserving max_tokens-param design); registered in `docs/TASK_TREE.md`; docs-only (CI invariant) | `passed` |
+| `2026-05-31` | `.2` | `call_text_provider` gained `max_tokens` param; `nlp_enrich` routed through it (256) + dead `build_text_chat_request`/`extract_chat_content` + unused `fs`/`Command` imports removed; 2→1 transport copies; 22 nlp_enrich tests pass (behavior preserved); +1 llm_text unit test; book overclaim re: `enrich` corrected; full `scripts/run_ci.sh` GREEN | `passed` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `NLP-ENRICH-TRANSPORT-DEDUP.1` | `NLP-ENRICH-TRANSPORT-DEDUP.1 — own + design the nlp_enrich→llm_text transport fold` | docs-only |
+| `NLP-ENRICH-TRANSPORT-DEDUP.2` | `NLP-ENRICH-TRANSPORT-DEDUP.2 — route nlp_enrich through shared llm_text transport (2→1); close` | code + book; behavior-preserving; CI green |
 
 ## Changelog
 
+- `2026-05-31`: `.2` — implemented the fold (route `nlp_enrich` through
+  `llm_text::call_text_provider`, `max_tokens` parameterized so nlp_enrich keeps
+  256; removed the duplicated transport + dead imports). 2→1 transport copies;
+  22 nlp_enrich tests pass (behavior preserved); corrected a book overclaim re:
+  `enrich` (image transport, not shared). Full CI green. **Tree CLOSED.**
 - `2026-05-31`: Created — own + design the final text-transport consolidation
   (route `nlp_enrich` through `llm_text::call_text_provider`; 2→1 copies;
   behavior-preserving via a `max_tokens` parameter). Frontier → `.2` (implement).

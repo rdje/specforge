@@ -1,7 +1,5 @@
-use std::fs;
-use std::process::Command;
-
 use crate::cli::{NlpEnrichArgs, VlmProviderArg};
+use crate::commands::llm_text;
 use crate::error::{AppError, Result};
 use crate::ir::evidence::{EvidenceIr, EvidenceModality, ExtractedStatement, StatementClass};
 use crate::ir::source::{
@@ -9,7 +7,11 @@ use crate::ir::source::{
 };
 
 /// Environment variable overriding the LLM helper script (for unit testing).
-/// Same variable as used by `specforge enrich` so a single mock can cover both.
+/// The shared `llm_text::call_text_provider` honors this same variable, so a
+/// single mock covers `enrich`, `nlp-enrich`, `extract-contracts`, and
+/// `signal-resolve`. Test-only here: the production path delegates to
+/// `llm_text`, which owns its own copy of the name.
+#[cfg(test)]
 const VLM_HELPER_ENV: &str = "SPECFORGE_VLM_HELPER";
 
 /// Enrich an EvidenceIR artifact with LLM-extracted NLP constraints.
@@ -1018,6 +1020,11 @@ fn build_nlp_prompt(sentence: &str, grounding_signals: &[String]) -> String {
 }
 
 /// Call the LLM with a text-only structured extraction prompt (no image).
+/// Per-sentence LLM response budget. Smaller than the other text commands
+/// because `nlp-enrich` sends one request per unclassified normative statement;
+/// the responses are short JSON objects.
+const NLP_MAX_TOKENS: usize = 256;
+
 fn call_llm_for_sentence(
     sentence: &str,
     statement_id: &str,
@@ -1026,121 +1033,20 @@ fn call_llm_for_sentence(
     provider: VlmProviderArg,
     grounding_signals: &[String],
 ) -> Result<NlpExtractionResult> {
-    // Allow test override via SPECFORGE_VLM_HELPER env var.
-    let raw_response = if let Some(helper_path) = std::env::var_os(VLM_HELPER_ENV) {
-        let output = Command::new(&helper_path)
-            .arg("--statement-id")
-            .arg(statement_id)
-            .arg("--sentence")
-            .arg(sentence)
-            .output()?;
-        if output.status.success() {
-            String::from_utf8_lossy(&output.stdout).trim().to_string()
-        } else {
-            return Err(AppError::ExternalCommandFailed {
-                program: helper_path.display().to_string(),
-                exit_code: output.status.code(),
-                stderr: String::from_utf8_lossy(&output.stderr).to_string(),
-            });
-        }
-    } else {
-        let prompt = build_nlp_prompt(sentence, grounding_signals);
-        let request_body = build_text_chat_request(model, &prompt);
-
-        let mut cmd = Command::new("curl");
-        cmd.arg("-s")
-            .arg("-X")
-            .arg("POST")
-            .arg(api_url)
-            .arg("-H")
-            .arg("Content-Type: application/json");
-
-        if matches!(provider, VlmProviderArg::OpenAi) {
-            let api_key = std::env::var("OPENAI_API_KEY").map_err(|_| {
-                AppError::MissingRuntimeDependency {
-                    dependency: "OPENAI_API_KEY",
-                    resolution: "Set OPENAI_API_KEY environment variable".to_string(),
-                }
-            })?;
-            cmd.arg("-H")
-                .arg(format!("Authorization: Bearer {api_key}"));
-        }
-
-        let tempdir = tempfile::tempdir()?;
-        let request_path = tempdir.path().join("nlp_request.json");
-        fs::write(&request_path, &request_body)?;
-        cmd.arg("-d").arg(format!("@{}", request_path.display()));
-
-        let output = cmd.output()?;
-        if !output.status.success() {
-            return Err(AppError::ExternalCommandFailed {
-                program: "curl".to_string(),
-                exit_code: output.status.code(),
-                stderr: String::from_utf8_lossy(&output.stderr).to_string(),
-            });
-        }
-
-        extract_chat_content(&String::from_utf8_lossy(&output.stdout))?
-    };
-
+    // Transport (curl + the SPECFORGE_VLM_HELPER test hook + OpenAI auth + the
+    // OpenAI-compatible request/response shape) is shared via `llm_text`; this
+    // command keeps only its prompt construction and typed response parsing.
+    let prompt = build_nlp_prompt(sentence, grounding_signals);
+    let raw_response = llm_text::call_text_provider(
+        provider,
+        model,
+        api_url,
+        statement_id,
+        sentence,
+        &prompt,
+        NLP_MAX_TOKENS,
+    )?;
     parse_nlp_response(&raw_response, statement_id)
-}
-
-/// Build an OpenAI-compatible text-only chat completions request (no image).
-fn build_text_chat_request(model: &str, prompt: &str) -> String {
-    let prompt_escaped = prompt
-        .replace('\\', "\\\\")
-        .replace('"', "\\\"")
-        .replace('\n', "\\n");
-    format!(
-        r#"{{"model": "{model}", "messages": [{{"role": "user", "content": "{prompt_escaped}"}}], "max_tokens": 256, "temperature": 0}}"#
-    )
-}
-
-/// Extract assistant message content from an OpenAI-compatible chat response (shared logic).
-fn extract_chat_content(response_json: &str) -> Result<String> {
-    #[derive(serde::Deserialize)]
-    struct ChatResponse {
-        choices: Vec<ChatChoice>,
-    }
-    #[derive(serde::Deserialize)]
-    struct ChatChoice {
-        message: ChatMessage,
-    }
-    #[derive(serde::Deserialize)]
-    struct ChatMessage {
-        content: serde_json::Value,
-    }
-
-    let response: ChatResponse = serde_json::from_str(response_json).map_err(|e| {
-        AppError::InvalidStageArtifact(format!(
-            "invalid LLM response: {e}\nraw: {}",
-            &response_json[..response_json.len().min(256)]
-        ))
-    })?;
-
-    let content = response
-        .choices
-        .into_iter()
-        .next()
-        .ok_or_else(|| AppError::InvalidStageArtifact("LLM response has no choices".to_string()))?
-        .message
-        .content;
-
-    match content {
-        serde_json::Value::String(s) => Ok(s),
-        serde_json::Value::Array(parts) => {
-            for part in &parts {
-                if let Some(text) = part.get("text").and_then(|t| t.as_str()) {
-                    return Ok(text.to_string());
-                }
-            }
-            Err(AppError::InvalidStageArtifact(
-                "LLM response content array has no text part".to_string(),
-            ))
-        }
-        other => Ok(other.to_string()),
-    }
 }
 
 /// Parse the LLM's JSON response into a typed NlpExtractionResult.

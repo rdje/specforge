@@ -47,14 +47,16 @@ pub(crate) fn api_url(provider: VlmProviderArg) -> &'static str {
     }
 }
 
-/// OpenAI-compatible text-only chat request body.
-fn build_text_chat_request(model: &str, prompt: &str) -> String {
+/// OpenAI-compatible text-only chat request body. `max_tokens` is caller-chosen
+/// so each command keeps its own response budget (e.g. `nlp-enrich` uses a
+/// smaller cap because it scans every normative statement).
+fn build_text_chat_request(model: &str, prompt: &str, max_tokens: usize) -> String {
     let prompt_escaped = prompt
         .replace('\\', "\\\\")
         .replace('"', "\\\"")
         .replace('\n', "\\n");
     format!(
-        r#"{{"model": "{model}", "messages": [{{"role": "user", "content": "{prompt_escaped}"}}], "max_tokens": 512, "temperature": 0}}"#
+        r#"{{"model": "{model}", "messages": [{{"role": "user", "content": "{prompt_escaped}"}}], "max_tokens": {max_tokens}, "temperature": 0}}"#
     )
 }
 
@@ -112,6 +114,7 @@ pub(crate) fn call_text_provider(
     statement_id: &str,
     sentence: &str,
     prompt: &str,
+    max_tokens: usize,
 ) -> Result<String> {
     if let Some(helper_path) = std::env::var_os(VLM_HELPER_ENV) {
         let output = Command::new(&helper_path)
@@ -129,7 +132,7 @@ pub(crate) fn call_text_provider(
             stderr: String::from_utf8_lossy(&output.stderr).to_string(),
         });
     }
-    let request_body = build_text_chat_request(model, prompt);
+    let request_body = build_text_chat_request(model, prompt, max_tokens);
     let mut cmd = Command::new("curl");
     cmd.arg("-s")
         .arg("-X")
@@ -167,12 +170,22 @@ mod tests {
 
     #[test]
     fn request_body_is_valid_json_with_escaped_prompt() {
-        let body = build_text_chat_request("qwen2.5vl:7b", "say \"hi\"\nnow");
+        let body = build_text_chat_request("qwen2.5vl:7b", "say \"hi\"\nnow", 512);
         let v: serde_json::Value = serde_json::from_str(&body).expect("valid request JSON");
         assert_eq!(v["model"], "qwen2.5vl:7b");
         assert_eq!(v["messages"][0]["role"], "user");
         assert_eq!(v["messages"][0]["content"], "say \"hi\"\nnow");
         assert_eq!(v["temperature"], 0);
+    }
+
+    #[test]
+    fn request_body_honors_caller_max_tokens() {
+        let small = build_text_chat_request("m", "p", 256);
+        let v: serde_json::Value = serde_json::from_str(&small).expect("valid request JSON");
+        assert_eq!(v["max_tokens"], 256);
+        let large = build_text_chat_request("m", "p", 512);
+        let v2: serde_json::Value = serde_json::from_str(&large).expect("valid request JSON");
+        assert_eq!(v2["max_tokens"], 512);
     }
 
     #[test]
