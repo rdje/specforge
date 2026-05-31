@@ -94,8 +94,19 @@ driven-down misses on the specs that matter."
     18 nlp residuals — home turf, manageable cost). Running existing commands,
     not a code change.
   Acceptance: enrich+nlp-enrich+re-validate run on APB; before/after recall delta recorded.
-  Verification: pending (Ollama up, qwen2.5vl:7b; enrich started `2026-05-31`)
-  Commit: pending
+  Verification: >
+    passed (`2026-05-31`) — full production VLM+NLP-in-the-loop pass on AMBA APB
+    via Ollama/Qwen2.5VL. `enrich`: 7 VLM calls (6 timing + 1 state diagrams),
+    0 errors → `timing_diagram_extractions` 0→6, `state_machine_extractions` 0→1,
+    validation findings 5→3 (un-enriched-visual warning + rescan guidance
+    cleared). `nlp-enrich`: 31 LLM calls / 0 errors, 3-pass convergent → nlp
+    residuals 18→13, `signal_constraints` 37→42 (+5), +16 prose-synthesized signal
+    declarations; the 13 remaining were honestly declined (no fabrication). Net
+    recovered: 6 timing + 1 state + 5 constraints + 16 declarations the structural
+    pass missed. Demonstrates the dominant corpus-wide capture gap (un-enriched
+    visuals + partially-structured prose) is real AND closable with the existing
+    production stack — honestly (fails-closed on the unstructurable residue).
+  Commit: `see Commit Log`
 
 ## Current Frontier
 
@@ -103,7 +114,7 @@ driven-down misses on the specs that matter."
 | --- | --- | --- | --- |
 | 1 | `CORPUS-HARDENING.1` | `done` | harness proven on I2C + eMMC; campaign owned |
 | 2 | `CORPUS-HARDENING.2` | `in_progress` | AMBA core: APB/AHB/AXI run + recorded; CHI remains |
-| 3 | `CORPUS-HARDENING.3` | `in_progress` | VLM-in-the-loop recall pass on APB (enrich→evidence→nlp-enrich→validate) — biggest lever |
+| 3 | `CORPUS-HARDENING.3` | `done` | VLM+NLP-in-the-loop recall pass on APB — recovered 6 timing + 1 state + 5 constraints + 16 decls (dominant gap closed, honestly) |
 
 ## Decisions
 
@@ -139,7 +150,16 @@ nlp_coverage / register_records (tiling overlaps+gaps) / convergence
 
 7 Qwen calls (6 timing + 1 state), 0 errors. This directly confirms the ledger's
 diagnosis: the dominant capture-recall loss is un-enriched visual evidence, and
-the production VLM path closes it. (nlp-enrich prose pass: in progress.)
+the production VLM path closes it.
+
+The prose half (`nlp-enrich`, Qwen): **nlp residuals 18 → 13** (5 normative
+statements recovered into typed `signal_constraints` 37 → 42), **+16 signal
+declarations** synthesized from prose relations, 31 LLM calls / 0 errors, loop
+converged ("residual stable at 13"). The remaining 13 were **honestly declined**
+(`no_extraction=13` — fails-closed, no fabrication). Net: the full production
+VLM+NLP-in-the-loop pass recovered **6 timing diagrams + 1 state machine + 5
+typed constraints + 16 signal declarations** the structural pass missed — the
+dominant corpus-wide gap, closed with the existing stack, honestly.
 
 Reading: register tiling is **precise** (fires only on the I2C mis-classification,
 silent on 52 clean registers across eMMC+APB). Convergence is **informative**
@@ -174,12 +194,16 @@ VLM-in-the-loop pass are the indicated next instruments).
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-05-31` | `.1` | I2C + eMMC end-to-end; tiling detector precise (TP + 0 FP/48); convergence useful; classifier issue logged | `passed` |
+| `2026-05-31` | `.2` | AMBA core APB/AHB/AXI run + recorded (3/4; CHI remains); tiling 0-FP across 84 registers; recurring miss = prose residuals + un-enriched visuals | `partial` |
+| `2026-05-31` | `.3` | VLM+NLP-in-the-loop on APB (Ollama/Qwen): timing 0→6, state 0→1, findings 5→3, nlp residuals 18→13 (+5 constraints, +16 decls); 0 errors; honest fails-closed on 13 | `passed` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `CORPUS-HARDENING.1` | `CORPUS-HARDENING.1 — own the corpus-hardening harness (I2C + eMMC proven)` | tree + ledger; validation already recorded in COMPLETENESS-CLOSURE-INVARIANTS |
+| `CORPUS-HARDENING.2` | `CORPUS-HARDENING.2 (progress) — APB/AHB/AXI runs + per-spec ledger` | 3/4 AMBA core; CHI remains |
+| `CORPUS-HARDENING.3` | `CORPUS-HARDENING.3 — VLM+NLP-in-the-loop recall pass on APB (Ollama/Qwen)` | dominant capture gap closed on real data, honestly |
 
 ## Changelog
 
