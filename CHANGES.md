@@ -2,6 +2,31 @@
 
 ## 2026-05-31
 
+### ROADMAP-TASKTREE-COVERAGE.5 — ROADMAP↔code↔mdBook alignment lock + close umbrella
+- Closed the whole-roadmap coverage program. Swept every milestone R0–R16 +
+  R15b–g and confirmed each is task-tree-owned and book-covered. The alignment
+  lock found and reconciled **two real drifts** against the code (code-is-truth,
+  `AUDIT-DOC-RECONCILE`):
+  1. **Command-surface drift** — the two newest commands (`extract-contracts`,
+     `signal-resolve`) were documented in their capability chapters but ABSENT
+     from the book's command reference. Added both to `commands/overview.md`
+     (exact flags from `cli.rs`) + a user-friendly section in
+     `commands/quality-and-learning.md`. The book now lists all **19** commands.
+  2. **Capability drift** — `quality/validation.md` claimed `specforge validate`
+     runs an "eight-finding `.fsm` adapter" validator. The code's
+     `AdapterTargetArg` has ONLY `Isf`, and `validate.rs` auto-detects only
+     `IrStage::IsfAdapter` → `validate_isf_adapter` (no `.fsm` validator exists).
+     Rewrote the section to the real `.isf`-only **six-finding** surface (payload
+     presence / schema freshness / renderability / signal inventory / behavior /
+     residual visibility) + fixed the "`.fsm`, `.isf`, or future targets" bullet.
+- All other book `.fsm` mentions verified correct (they document the
+  `ISF-ONLY-CONSOLIDATION`/`PRUNE` removal or the FSMGen downstream boundary).
+  Provider framing confirmed correct (Ollama + qwen2.5vl = production default).
+- Recorded the standing no-drift discipline (`AUDIT-DOC-RECONCILE` +
+  `BOOK-METHOD-DOC` close-rule + `COMMIT.md`). Full `scripts/run_ci.sh` GREEN
+  (1169 tests, 0 failed; rustdoc warnings-denied + mdBook). **Umbrella CLOSED**;
+  `R15C-R15G-LEARNING-PLANE-BACKFILL` stays `active` for the open R15c–g lanes.
+
 ### ROADMAP-TASKTREE-COVERAGE.4 — backfill+audit R15c–R15g (learning/eval/corpus lanes)
 - Created `R15C-R15G-LEARNING-PLANE-BACKFILL` (lane R15c–g). Unlike the R1–R5 /
   R8–R13 backfills (closed — those milestones are Done), this tree stays

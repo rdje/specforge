@@ -240,16 +240,21 @@ the threshold and the actual rate in the message; you can
 see *"we expect at least 50% here; we're at 32%"* without
 reading source.
 
-**`.fsm` / `.isf` adapter validation targets** — when you
-pass `specforge validate` an adapter artifact (one of the
-shapes the build pipeline emits), the command auto-detects
-the adapter kind from the artifact's `stage` field and runs
-the per-adapter checks. For `.fsm` adapters that's eight
-findings covering state-graph completeness, transitions
-present, signal inventory non-empty, system contract present,
-residual decision count, schema-version freshness,
-renderability, and payload presence; for `.isf` adapters,
-the ISF coverage that already shipped in `R6-ISF-ADAPTER`.
+**`.isf` adapter validation target** — when you pass
+`specforge validate` an adapter artifact (the shape the build
+pipeline emits), the command auto-detects the adapter kind
+from the artifact's `stage` field and runs the per-adapter
+checks. `.isf` is SpecForge's sole adapter target (the
+downstream FSMGen tool owns `.fsm`/HDL lowering beyond it), so
+the auto-detected validator is the ISF coverage that shipped in
+`R6-ISF-ADAPTER`: six findings covering payload presence
+(`isf_adapter_artifact_missing_isf_payload`), schema-version
+freshness (`isf_adapter_schema_version_unexpected`),
+renderability (`isf_adapter_not_renderable`), a non-empty
+signal inventory (`isf_adapter_empty_signal_inventory`), a
+non-empty behavioral surface — transactions or rules
+(`isf_adapter_no_behavior`), and residual-decision visibility
+(`isf_adapter_residual_decisions_present`).
 
 You don't need to know which validator to invoke — the
 auto-detection picks it for you. Failing checks surface as
@@ -267,9 +272,10 @@ as every other validate output.
   document, against a stable threshold; drift is observable
   not anecdotal.
 - **Adapter validation is one command.** `specforge
-  validate <adapter.json>` works regardless of which
-  adapter target produced it — `.fsm`, `.isf`, or future
-  targets get the same surface.
+  validate <adapter.json>` auto-detects the adapter kind from
+  the artifact and runs the matching surface — today that is
+  `.isf` (SpecForge's sole adapter target); any future target
+  would slot into the same auto-detected, one-command flow.
 - **Validation never silently mutates your IR.** The
   report is additive; nothing about your input artifact
   changes. (The "Tracked approval evidence" section below

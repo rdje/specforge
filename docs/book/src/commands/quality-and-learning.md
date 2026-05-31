@@ -241,3 +241,44 @@ These are narrower enrichment entrypoints used when you want to operate on the s
 They are still valuable, but `converge` is the preferred user-facing path when you want the full loop.
 
 `nlp-enrich` can learn prose aliases for signals during Form 2 reclassification, but it treats that alias map as evidence-sensitive state: markdown/list prefixes, link targets, and source-layout labels such as table, figure, and section markers are filtered before they can become reusable aliases.
+
+## `extract-contracts` and `signal-resolve`
+
+These two commands ask a local LLM to read the *hard prose* a specification
+buries in sentences — the meaning that tables and verb-pattern heuristics miss —
+and turn it into typed knowledge you can trust. They are deliberately additive:
+each one reads an existing `EvidenceIR` artifact and writes a richer one, so you
+can run them after `evidence`/`converge` without disturbing anything already
+recovered. Both default to the production-default provider (local Ollama with
+`qwen2.5vl:7b`), and both accept the same provider menu as `enrich`/`nlp-enrich`.
+
+```text
+extract-contracts <evidence-ir> [--provider ollama|open-ai|lm-studio|skip] [--model <name>] [--dry-run] [--max-statements 0]
+signal-resolve     <evidence-ir> [--provider ollama|open-ai|lm-studio|skip] [--model <name>] [--dry-run] [--max-statements 0] [--grounding-signals <csv>]```
+
+**`extract-contracts`** mines normative prose ("the master must hold ADDR stable
+until READY is asserted") into typed `ActorContract`s for the R16 constrained-
+verified surface. Why you can rely on it: the model's answer is *not* trusted on
+sight. Each candidate passes through the fails-closed `parse_constrained_contract`
+gate — a malformed or unparseable answer is counted as a `schema_reject`, never a
+fabricated contract — and survivors run entailment, so any claim the evidence
+cannot back becomes an explicit **residual** rather than a silent "fact." That is
+why `validate`'s `constrained:` block now reports real `schema_rejects`: the
+honesty is measured, not assumed. (See the [R16 chapter](../direction/temporal-intent-capture.md)
+for the contract model itself.)
+
+**`signal-resolve`** mines actor→signal `drives`/`reads` edges from the same hard
+prose, appending grounded, de-duplicated `ActorSignalRelation` records to the
+knowledge graph the `SemanticIR` already consumes for actor ports and graph
+direction. Why it stays safe: every proposed edge must clear grounding gates —
+an upper-case signal name, a non-empty actor, a relation that is exactly `drives`
+or `reads`, and (with `--grounding-signals`) membership in the declared signal
+set — and is checked against existing edges before it is kept. An ungrounded or
+malformed answer is skipped, not invented. (See [Actor Connectivity](../domain/actor-connectivity.md).)
+
+Use `--dry-run` to preview which sentences would be sent without making a single
+LLM call, `--max-statements` to cap how many candidates are sent (handy for a
+quick check), and `--provider skip` to exercise the full wiring offline. Both
+commands share one OpenAI-compatible transport, so the same `SPECFORGE_VLM_HELPER`
+hook and provider flags behave identically across `enrich`, `nlp-enrich`,
+`extract-contracts`, and `signal-resolve`.

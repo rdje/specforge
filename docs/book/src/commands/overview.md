@@ -14,6 +14,8 @@ Current surface:
 - `adapt <intent-ir> --target isf [--dry-run]`
 - `enrich <source-ir> [--vlm-provider ollama|open-ai|lm-studio|skip] [--classify-only] [--dry-run]`
 - `nlp-enrich <evidence-ir> [--vlm-provider ollama|open-ai|lm-studio|skip] [--dry-run]`
+- `extract-contracts <evidence-ir> [--provider ollama|open-ai|lm-studio|skip] [--model <name>] [--dry-run] [--max-statements 0]`
+- `signal-resolve <evidence-ir> [--provider ollama|open-ai|lm-studio|skip] [--model <name>] [--dry-run] [--max-statements 0] [--grounding-signals <csv>]`
 - `validate <artifact>`
 - `kg-bench`
 - `project-validation <artifact>... [--rescan-vlm-provider auto-local|ollama|lm-studio|skip]`
