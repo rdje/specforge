@@ -129,6 +129,35 @@ Two detectors:
 - `2026-05-31`: register tiling first (EXACT, lowest-risk), symbol closure second
   (GATED, needs careful inventory/reference definition + external-signal gating).
 
+## Real-corpus validation (`2026-05-31`)
+
+Ran the detector on a real downloaded spec (NXP I2C UM10204, via
+`/Users/richarddje/Documents/livework/chipdoc`, ingested with Docling 2.84.0 →
+`evidence` → `validate`). Result: the register-tiling detector **fired on real
+data** — `register_field_overlaps: 1`, finding
+`evidence_register_field_overlaps` (Warning). Inspection of the offending
+"register" (`register_name = "0000 000"`, fields `0000 000` / `1111 1XX` …)
+showed it is the I2C **reserved slave-address table** (UM10204 Table 4),
+**mis-classified as a register map** by the upstream register-map table
+classifier, with address bit-patterns parsed as field names + spurious bit
+columns (two bogus fields both at bit [1] ⇒ the flagged overlap).
+
+Two conclusions, both valuable:
+1. The detector works on real specs and **doubles as an extraction-precision
+   signal** — an overlap on garbage fields is a strong "this register extraction
+   is wrong" indicator, exactly the kind of miss/issue the completeness program
+   exists to surface (and it did so honestly, no fabrication).
+2. It exposed a real upstream issue: the **register-map table classifier is
+   over-eager** (an address-assignment table became a register). That is a
+   candidate **future owned tree** (`register-map classifier precision`), now
+   anchored in a concrete real example — not a guess.
+
+Also confirmed live on the same spec: the `R15C-CONVERGENCE-REPORT` detector
+(`converged in 1 pass`, honest) and the existing residual surfaces (59 partially-
+structured normative statements; empty actor-signal graph despite 27 behavioral
+rules; 126 visual assets with 0 timing-diagram extractions) — real, located miss
+anchors for the next detectors (region accounting, symbol closure, cross-modal).
+
 ## Open Questions
 
 - Which stage owns symbol closure — EvidenceIR (relations/constraints present) vs
