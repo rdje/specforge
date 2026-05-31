@@ -108,26 +108,47 @@ The durable artifact is [`docs/research/intent-capture-completeness.md`](../rese
   Commit: `see Commit Log`
 
 - ID: `INTENT-COMPLETENESS-RESEARCH.3`
-  Status: `pending`
+  Status: `done`
   Goal: >
     Design the **region-accounting / backward-traceability** instrument (§3): how
     to partition the document, classify regions (intent / non-intent / deferred),
     link facts backward, and emit the "unexplained intent-bearing region"
     residual. Specify the data model + how it rides the existing provenance.
   Acceptance: instrument design + data model spec; ready to become an implementation tree.
-  Verification: pending
-  Commit: pending
+  Verification: >
+    passed (`2026-05-31`) — wrote `docs/research/region-accounting-design.md`:
+    region enumeration from SourceIR units (prose/table/cell/figure/caption/
+    section + id scheme); the intent/non-intent/deferred classifier (high-recall,
+    explainable, reusing existing `StatementClass`/`table_kind`/`DiagramKind`
+    signals); the backward-traceability index built by **inverting the existing
+    forward provenance** (evidence_span_ids / supporting_statement_ids /
+    table_id …), flagging a provenance-completeness precondition where facts lack
+    a resolvable region id; the `UnexplainedRegionResidual` + `RegionAccounting
+    Report` shapes feeding the `CompletenessReport`; computed at EvidenceIR; and
+    how it auto-confirms the `.2` (B) blind-spot hypotheses for free. Docs/
+    research only.
+  Commit: `see Commit Log`
 
 - ID: `INTENT-COMPLETENESS-RESEARCH.4`
-  Status: `pending`
+  Status: `done`
   Goal: >
     Enumerate the **domain closure invariants** (§6) + the full **miss taxonomy**
     (§5) with a concrete detector per kind (symbol closure, register tiling,
     handshake pairing, encoding coverage, direction closure, cross-modal,
     pipeline conservation). Each detector spec'd to be exact + ground-truth-free.
   Acceptance: invariant/detector catalog, each with inputs/outputs/residual shape.
-  Verification: pending
-  Commit: pending
+  Verification: >
+    passed (`2026-05-31`) — wrote `docs/research/miss-detectors-catalog.md`: 6
+    detector families (A region-level incl. mutation/sensitivity coverage; B
+    field-level schema/star-pattern; C structural closure — symbol/tiling/
+    handshake/encoding/producer/infra; D cross-modal + two-source fusion; E
+    pipeline conservation; F systematic-blind-spot / coverage-matrix empty cell),
+    each with inputs / check / typed residual, and **tagged EXACT vs GATED** per
+    the `.6` PCA correction. Added the HNEN canonicalization + provenance-
+    completeness preconditions and the GoldMine mine-then-formally-filter step.
+    Gave the cheapest-exact-first implementation ordering feeding `.7`. Docs/
+    research only (CI invariant).
+  Commit: `see Commit Log`
 
 - ID: `INTENT-COMPLETENESS-RESEARCH.5`
   Status: `pending`
@@ -141,7 +162,7 @@ The durable artifact is [`docs/research/intent-capture-completeness.md`](../rese
   Commit: pending
 
 - ID: `INTENT-COMPLETENESS-RESEARCH.6`
-  Status: `pending`
+  Status: `done`
   Goal: >
     Literature survey — verify/expand §11 into real references and extract the
     specific borrowed result for each (KG completeness / LCWA / AMIE;
@@ -149,8 +170,23 @@ The durable artifact is [`docs/research/intent-capture-completeness.md`](../rese
     traceability; table/figure understanding; spec/property mining; datasheet
     extraction). (May fan out as a research workflow if the user opts in.)
   Acceptance: verified reference list + the concrete result adopted from each.
-  Verification: pending
-  Commit: pending
+  Verification: >
+    passed (`2026-05-31`) — ran the `intent-completeness-lit-survey` **parallel
+    research workflow** (user opted in; 9 agents / 8 disciplines + synthesis,
+    ~283k tokens, web-grounded). Wrote `docs/research/literature-grounding.md`:
+    DBLP/ACM/arXiv-verified references per instrument (Razniewski et al. survey
+    2024; AMIE/PCA WWW'13 + Predicting-Completeness WSDM'17; Eick ICSE'92 /
+    Briand-ElEmam TSE'00 / Petersson-Wohlin JSS'04 / Chao Biometrics'87;
+    Grüninger-Fox IJCAI-95; Gotel-Finkelstein ICRE'94; DocLayNet/PubTables/GriTS;
+    Daikon/GoldMine/Chockler-Kupferman-Vardi; D2S-FLOW + AssertionForge 2025). The
+    survey CONFIRMS the core reframe as the field consensus and forces 5
+    corrections + adds ~10 techniques — all folded into the framework: §8.1
+    capture–recapture → Chao Mh + ≥3 heterogeneous extractors + bias-direction +
+    systematic-blind-spot-invisibility; §6 PCA is heuristic-and-gated (not exact);
+    §8.2 CQs bound schema not population; mutation/sensitivity coverage + star-
+    pattern + two-source fusion + HNEN + the **STOP-OR-REINSPECT** bridge to the
+    shipped convergence loop. Docs/research only.
+  Commit: `see Commit Log`
 
 - ID: `INTENT-COMPLETENESS-RESEARCH.7`
   Status: `pending`
@@ -168,11 +204,11 @@ The durable artifact is [`docs/research/intent-capture-completeness.md`](../rese
 | --- | --- | --- | --- |
 | 1 | `INTENT-COMPLETENESS-RESEARCH.1` | `done` | framework + tree landed |
 | 2 | `INTENT-COMPLETENESS-RESEARCH.2` | `done` | closed ontology + coverage matrix (`intent-ontology-coverage.md`); 2 gaps confirmed, 2 audit errors corrected |
-| 3 | `INTENT-COMPLETENESS-RESEARCH.3` | `pending` | region accounting = the foundational miss detector — next |
-| 4 | `INTENT-COMPLETENESS-RESEARCH.4` | `pending` | closure invariants = cheap exact detectors |
-| 5 | `INTENT-COMPLETENESS-RESEARCH.5` | `pending` | recall estimation + completeness report |
-| 6 | `INTENT-COMPLETENESS-RESEARCH.6` | `pending` | verify academic grounding |
-| 7 | `INTENT-COMPLETENESS-RESEARCH.7` | `pending` | prioritized backlog → first implementation tree |
+| 3 | `INTENT-COMPLETENESS-RESEARCH.3` | `done` | region-accounting design (`region-accounting-design.md`) |
+| 4 | `INTENT-COMPLETENESS-RESEARCH.4` | `done` | miss-detector catalog (`miss-detectors-catalog.md`), exact-vs-gated |
+| 5 | `INTENT-COMPLETENESS-RESEARCH.5` | `pending` | recall estimation + CompletenessReport design — next |
+| 6 | `INTENT-COMPLETENESS-RESEARCH.6` | `done` | literature survey (workflow); grounding + 5 corrections folded in |
+| 7 | `INTENT-COMPLETENESS-RESEARCH.7` | `pending` | prioritized backlog → first implementation tree (decide WITH user) |
 
 The order is a default, not a commitment — `.2`/`.3`/`.4`/`.6` are largely
 independent and could be parallelized (incl. via a research workflow if opted
@@ -212,6 +248,9 @@ in). `.7` depends on the rest.
 | --- | --- | --- | --- |
 | `2026-05-31` | `.1` | framework artifact `docs/research/intent-capture-completeness.md` created (§0–§13: precision/recall asymmetry, closed ontology denominator, region accounting, operational miss definition, taxonomy+detectors, closure invariants, inter-stage conservation, recall estimation, completeness report, academic grounding, instrument backlog); tree registered; docs-only | `passed` |
 | `2026-05-31` | `.2` | `docs/research/intent-ontology-coverage.md` — closed ontology (~20 categories) + code-grounded coverage matrix (Explore audit of `ir/*`+`commands/*`); gap claims verified code-is-truth (2 corrected: protocol_graph populated, reset-kind modeled); confirmed gaps = clock domains + first-class enum record; (B) blind spots recorded as detector-confirmable hypotheses; docs-only | `passed` |
+| `2026-05-31` | `.3` | `docs/research/region-accounting-design.md` — region enumeration + intent/non-intent/deferred classifier + backward-traceability (invert forward provenance) + `UnexplainedRegionResidual`/`RegionAccountingReport`; provenance-completeness precondition flagged; docs-only | `passed` |
+| `2026-05-31` | `.4` | `docs/research/miss-detectors-catalog.md` — 6 detector families (region/field/structural/cross-modal/conservation/blind-spot), each inputs/check/residual + EXACT-vs-GATED tag; HNEN + provenance preconditions; mine-then-filter; cheapest-exact-first ordering; docs-only | `passed` |
+| `2026-05-31` | `.6` | `docs/research/literature-grounding.md` — parallel research workflow (9 agents/8 disciplines); DBLP/ACM/arXiv-verified refs; confirms core reframe; 5 corrections + ~10 techniques folded into the framework (Chao Mh + heterogeneity; PCA heuristic-gated; CQ schema≠population; mutation coverage; STOP-OR-REINSPECT bridge); docs-only | `passed` |
 
 ## Commit Log
 
@@ -219,9 +258,15 @@ in). `.7` depends on the rest.
 | --- | --- | --- |
 | `INTENT-COMPLETENESS-RESEARCH.1` | `INTENT-COMPLETENESS-RESEARCH.1 — frame the intent-capture completeness problem + research framework` | docs/research + docs/tasks only |
 | `INTENT-COMPLETENESS-RESEARCH.2` | `INTENT-COMPLETENESS-RESEARCH.2 — closed intent ontology + code-grounded coverage matrix` | docs/research only; 2 audit errors corrected via code verification |
+| `INTENT-COMPLETENESS-RESEARCH.{3,4,6}` | `INTENT-COMPLETENESS-RESEARCH.{3,4,6} — region accounting + miss-detector catalog + verified literature grounding` | docs/research only; `.6` via parallel research workflow |
 
 ## Changelog
 
+- `2026-05-31`: `.3`+`.4`+`.6` — region-accounting design + miss-detector catalog
+  (exact-vs-gated) + the literature-grounding workflow (verified refs; 5
+  corrections + ~10 techniques folded into the framework). Frontier → `.5`
+  (recall estimation + CompletenessReport) then `.7` (prioritized backlog → first
+  implementation tree, decided WITH the user).
 - `2026-05-31`: `.2` — wrote `docs/research/intent-ontology-coverage.md` (closed
   ontology + coverage matrix, code-grounded). Verified gap claims against the
   code: corrected 2 audit errors (protocol_graph is populated; reset-kind is

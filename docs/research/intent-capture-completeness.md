@@ -171,9 +171,20 @@ digital design:
   and named signals.
 
 These are *local closed-world* assumptions: within one document, the doc is
-expected to define what it references. (See §11: AMIE / Local Closed World
-Assumption / Partial Completeness Assumption.) Each invariant is a cheap, exact,
-ground-truth-free detector.
+expected to define what it references. (See §11 / `.6`: AMIE / Local Closed World
+Assumption / Partial Completeness Assumption.)
+
+**Two classes of invariant (corrected by the `.6` survey).** Some are genuinely
+*exact* (register bit-tiling, symbol closure, handshake pairing — pure structural
+checks). Others are **PCA-style heuristics, NOT exact**: "if a region produced
+*some* fact of type T it produced *all* of them" can **under-count** misses when
+a region is only partially extracted. These must be **gated by explicit
+per-relation cardinality/functionality**: safe where the relation is functional
+or fixed-cardinality (port→direction, signal→width, register-row→{reset,access});
+*unsafe* for open relations (cross-references, "related constraints") where PCA
+would silently hide a miss. The catalog (`.4`) tags each detector exact-vs-gated,
+and a synonym/unit **canonicalization precondition** (HNEN, `.6`) runs first so
+terminology drift neither masquerades as nor hides a miss.
 
 ## 7. Inter-stage conservation — misses the pipeline introduces
 
@@ -196,15 +207,28 @@ and residual-honesty doctrines into a cross-stage **conservation ledger**.
 Detectors (§5–§7) find *specific* misses. To estimate the *residual* recall
 (misses no detector caught), use:
 
-1. **Capture–recapture (mark–recapture).** Run two *independent* extractors over
-   the same content (e.g. SpecForge's pattern Tier-1/2 vs the LLM Tier-3; or two
-   LLM passes with different prompts). Let `a`, `b` be their finds and `m` the
-   overlap. The Lincoln–Petersen estimator gives total population `N̂ ≈ a·b/m`,
-   so estimated misses `≈ N̂ − |a ∪ b|`. Example: a=100, b=90, m=80 ⇒ N̂≈112 ⇒
-   ~12 estimated misses *even though we have no gold answer.* This is a rigorous,
-   implementable recall *gauge*. (Long used in software-inspection recall
-   estimation — §11.) Caveat: assumes independence + equal catchability; we
-   report it as an estimate with its assumptions, not a guarantee.
+1. **Capture–recapture (mark–recapture).** Run independent extractors over the
+   same content (e.g. SpecForge's pattern Tier-1/2 vs the LLM Tier-3). Overlap of
+   what they each find lets you estimate the unseen population. Lincoln–Petersen
+   `N̂ ≈ a·b/m` is the 2-pass intuition (a=100, b=90, m=80 ⇒ N̂≈112 ⇒ ~12 estimated
+   misses with no gold answer). **Corrected/sharpened by the literature survey
+   (`.6`, see [`literature-grounding.md`](literature-grounding.md)):**
+   - **Independence is the load-bearing — and dangerous — assumption.** Two LLM
+     passes on the *same* backbone are *positively correlated* → they co-miss the
+     same hard regions → capture–recapture **over-estimates recall / under-counts
+     misses** (the unsafe direction). Require **≥3 heterogeneous** extractors
+     (rule-based vs VLM vs a different model family / a different *source* — see
+     two-source fusion below), NOT reseeds of one model.
+   - Use **Chao's 1987 Mh estimator** `N̂ = D + f₁²/(2·f₂)` (+ CI) — not plain
+     Lincoln–Petersen — for the singleton-heavy regime chip extraction hits
+     (most facts found by only one extractor).
+   - Capture–recapture *empirically underestimates* content → report `recall_hat`
+     as an **optimistic ceiling** and misses as a **lower bound**, assumptions
+     printed. It is a calibrated gauge, never a guarantee.
+   - **It cannot see systematic blind spots** (a fact missed by *every* pass
+     contributes nothing to the overlap) — those are caught only by the ontology
+     coverage matrix (§2) and independent-source fusion. The instruments are
+     complementary; none alone suffices.
 2. **Competency questions.** From ontology engineering: define the set of
    questions a complete chip-spec KG must answer ("all inputs of actor X?",
    "reset value of field Y?", "what must be stable during a write?", "latency
@@ -262,6 +286,18 @@ Every entry is a residual the user can act on. This is the deliverable that make
 accuracy *visible and improvable*, iteration over iteration.
 
 ## 11. Academic grounding (starting points — verify/expand in `.6`)
+
+> **Verified, corrected grounding now lives in
+> [`literature-grounding.md`](literature-grounding.md)** (leaf `.6` — an
+> 8-discipline research workflow). It confirms the core reframe as the field's
+> consensus, supplies DBLP/ACM/arXiv-checked references, and **corrects** this
+> framework (capture–recapture → Chao + heterogeneity + bias direction; PCA is
+> heuristic-and-gated, not exact; competency questions bound schema not
+> population; systematic blind spots are invisible to capture–recapture) and
+> **extends** it (mutation/sensitivity coverage; star-pattern oracle; two-source
+> KG fusion; HNEN canonicalization; the **STOP-OR-REINSPECT** rule that gives the
+> already-shipped `R15C-CONVERGENCE-REPORT` loop a *principled* statistical
+> stopping criterion). The list below is the original orienting map.
 
 Concepts and fields to ground the design in (the literature-survey leaf will
 confirm exact references; listed here as established starting points, not as
