@@ -47,7 +47,7 @@ driven-down misses on the specs that matter."
 - ID: `CORPUS-HARDENING`
   Status: `active`
   Goal: standing hardening harness over the real corpus; AMBA core first
-  Children: `.1`, `.2`, …
+  Children: `.1`, `.2`, `.3`, …
 
 - ID: `CORPUS-HARDENING.1`
   Status: `done`
@@ -82,12 +82,28 @@ driven-down misses on the specs that matter."
     cross-modal + a VLM-in-the-loop pass.
   Commit: `see Commit Log`
 
+- ID: `CORPUS-HARDENING.3`
+  Status: `in_progress`
+  Goal: >
+    VLM-in-the-loop recall pass (the dominant miss the ledger revealed):
+    run the production `enrich` (VLM/Qwen via Ollama) on a real spec's SourceIR →
+    rebuild `evidence` (VLM observations injected) → `nlp-enrich` (reclassify
+    residual normative prose) → re-`validate`, and **measure the recall gain**
+    (does the un-enriched-visual warning clear? do timing/state extractions go
+    >0? do nlp residuals drop?). Target: AMBA APB IHI0024_E (35 visual assets,
+    18 nlp residuals — home turf, manageable cost). Running existing commands,
+    not a code change.
+  Acceptance: enrich+nlp-enrich+re-validate run on APB; before/after recall delta recorded.
+  Verification: pending (Ollama up, qwen2.5vl:7b; enrich started `2026-05-31`)
+  Commit: pending
+
 ## Current Frontier
 
 | Order | Leaf | Status | Why |
 | --- | --- | --- | --- |
 | 1 | `CORPUS-HARDENING.1` | `done` | harness proven on I2C + eMMC; campaign owned |
-| 2 | `CORPUS-HARDENING.2` | `in_progress` | AMBA core (AXI/AHB/APB/CHI) — home turf + R12 baselines — APB ingesting |
+| 2 | `CORPUS-HARDENING.2` | `in_progress` | AMBA core: APB/AHB/AXI run + recorded; CHI remains |
+| 3 | `CORPUS-HARDENING.3` | `in_progress` | VLM-in-the-loop recall pass on APB (enrich→evidence→nlp-enrich→validate) — biggest lever |
 
 ## Decisions
 
