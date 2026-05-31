@@ -83,15 +83,29 @@ The durable artifact is [`docs/research/intent-capture-completeness.md`](../rese
   Commit: `see Commit Log`
 
 - ID: `INTENT-COMPLETENESS-RESEARCH.2`
-  Status: `pending`
+  Status: `done`
   Goal: >
     Formalize the **closed design-intent ontology** (the recall denominator) +
     the intent-category × source-modality × extractor **coverage matrix**;
     identify empty cells (systematic blind spots). Cross-check against the
     existing IR types so the ontology reflects what the code already models.
   Acceptance: ontology + coverage matrix documented; empty cells listed as candidate blind-spot trees.
-  Verification: pending
-  Commit: pending
+  Verification: >
+    passed (`2026-05-31`) — wrote `docs/research/intent-ontology-coverage.md`:
+    the closed ontology (~20 categories, grouped), the coverage matrix (category
+    → stage:field → producer → modality, code-grounded via an Explore audit of
+    `ir/*` + `commands/*`), and the gap analysis. **Load-bearing gap claims
+    verified against the code** (residual-honesty / AUDIT-DOC-RECONCILE): two
+    audit claims FAILED verification and were corrected — `protocol_graph` is NOT
+    dead (`semantic.rs:371` populates it from `actor_contracts` via
+    `project_handshake_pairs`), and reset synchronicity IS modeled
+    (`SystemResetKind::{Synchronous,Asynchronous}`, `semantic.rs:972`).
+    **Confirmed (A) ontology gaps:** clock domains (no `ClockDomain` type) and
+    enumerations-as-a-queryable-record (only synthetic statements + the recovered
+    ISF symbol surface). **(B) single-modality blind spots** recorded as
+    hypotheses the `.3`/`.4` detectors will confirm empirically (not hand-claimed
+    as misses). Docs/research only (CI invariant).
+  Commit: `see Commit Log`
 
 - ID: `INTENT-COMPLETENESS-RESEARCH.3`
   Status: `pending`
@@ -153,8 +167,8 @@ The durable artifact is [`docs/research/intent-capture-completeness.md`](../rese
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `INTENT-COMPLETENESS-RESEARCH.1` | `done` | framework + tree landed |
-| 2 | `INTENT-COMPLETENESS-RESEARCH.2` | `pending` | closed ontology = the recall denominator; unblocks everything |
-| 3 | `INTENT-COMPLETENESS-RESEARCH.3` | `pending` | region accounting = the foundational miss detector |
+| 2 | `INTENT-COMPLETENESS-RESEARCH.2` | `done` | closed ontology + coverage matrix (`intent-ontology-coverage.md`); 2 gaps confirmed, 2 audit errors corrected |
+| 3 | `INTENT-COMPLETENESS-RESEARCH.3` | `pending` | region accounting = the foundational miss detector — next |
 | 4 | `INTENT-COMPLETENESS-RESEARCH.4` | `pending` | closure invariants = cheap exact detectors |
 | 5 | `INTENT-COMPLETENESS-RESEARCH.5` | `pending` | recall estimation + completeness report |
 | 6 | `INTENT-COMPLETENESS-RESEARCH.6` | `pending` | verify academic grounding |
@@ -197,15 +211,23 @@ in). `.7` depends on the rest.
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-05-31` | `.1` | framework artifact `docs/research/intent-capture-completeness.md` created (§0–§13: precision/recall asymmetry, closed ontology denominator, region accounting, operational miss definition, taxonomy+detectors, closure invariants, inter-stage conservation, recall estimation, completeness report, academic grounding, instrument backlog); tree registered; docs-only | `passed` |
+| `2026-05-31` | `.2` | `docs/research/intent-ontology-coverage.md` — closed ontology (~20 categories) + code-grounded coverage matrix (Explore audit of `ir/*`+`commands/*`); gap claims verified code-is-truth (2 corrected: protocol_graph populated, reset-kind modeled); confirmed gaps = clock domains + first-class enum record; (B) blind spots recorded as detector-confirmable hypotheses; docs-only | `passed` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `INTENT-COMPLETENESS-RESEARCH.1` | `INTENT-COMPLETENESS-RESEARCH.1 — frame the intent-capture completeness problem + research framework` | docs/research + docs/tasks only |
+| `INTENT-COMPLETENESS-RESEARCH.2` | `INTENT-COMPLETENESS-RESEARCH.2 — closed intent ontology + code-grounded coverage matrix` | docs/research only; 2 audit errors corrected via code verification |
 
 ## Changelog
 
+- `2026-05-31`: `.2` — wrote `docs/research/intent-ontology-coverage.md` (closed
+  ontology + coverage matrix, code-grounded). Verified gap claims against the
+  code: corrected 2 audit errors (protocol_graph is populated; reset-kind is
+  modeled); confirmed clock-domains + first-class-enum-record as real gaps; (B)
+  single-modality blind spots recorded as hypotheses the detectors will confirm.
+  Frontier → `.3` (region accounting).
 - `2026-05-31`: Created — research-first program for detecting & bounding
   intent-capture misses (user directive: accuracy of utmost importance, think it
   through before coding). Wrote the A-to-Z framework

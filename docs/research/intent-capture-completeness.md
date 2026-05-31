@@ -81,6 +81,14 @@ extractor owns it*. The matrix is the spec of "what we must attempt." A category
 most dangerous kind of miss (silent and total). Finding empty cells is itself a
 research output.
 
+> **Concrete, code-grounded ontology + coverage matrix:**
+> [`intent-ontology-coverage.md`](intent-ontology-coverage.md) (leaf `.2`). It
+> maps ~20 categories to their IR fields + producers + modalities, with gap
+> claims verified against the code. Confirmed (A) ontology gaps so far: **clock
+> domains** (no first-class type) and **enumerations as a queryable record**.
+> (B) single-modality blind spots are recorded there as hypotheses the §3/§4
+> detectors will confirm empirically.
+
 ## 3. Where intent lives — the source model and region accounting
 
 Intent is distributed across modalities, each with characteristic expression:
