@@ -77,25 +77,44 @@ map needs an address/offset column **together with register-field structure**
   Commit: `see Commit Log`
 
 - ID: `REGISTER-MAP-CLASSIFIER-PRECISION.2`
-  Status: `pending`
+  Status: `done`
   Goal: >
     Investigate the headers of the GENUINE register maps in the corpus (the
     real eMMC/APB/AHB/AXI register tables, distinct from the false positives
     above) so the tightening provably preserves them; design the precise
     predicate (address/offset + bits/field/access structure).
   Acceptance: discriminating predicate validated against real register tables' headers.
-  Verification: pending
-  Commit: pending
+  Verification: >
+    passed (`2026-05-31`) — analyzed every `register_map` table across I2C/eMMC/
+    APB. **Header-keyword tightening is insufficient** (the cleanest finding):
+    the I2C address table header `Target address | R/W bit | Description` trips
+    both a bit-check ("bit") AND an access-check ("r/w") via "R/W bit", so
+    "address + bits/access" would still keep it; eMMC TOC rows trip a bit-check
+    via the `[177]` page-reference regex; coincidental "type"/"scope" trip access
+    checks. The ONLY genuine register table in the sample is eMMC
+    `name | field | bit | type | … | hs_ctrl_rel` (EXT_CSD field table) — explicit
+    field+bit+type columns + real field names. **Conclusion: the robust
+    discriminator must inspect BODY content** (≥2 rows with a bit-range cell —
+    `\[\d+:\d+\]` / `\d+:\d+` — AND/OR an access-type token — `RO|RW|WO|RC|W1C|
+    W1S` — and a field-name cell), mirroring the classifier's existing
+    encoding-detection body inspection (lines ~294–303), NOT header keywords
+    alone. (Note: feature-matrix + TOC + data-frame mis-classifications are the
+    same over-trigger; fixing register-map precision via body structure also
+    removes those from `register_map`.)
+  Commit: `see Commit Log`
 
 - ID: `REGISTER-MAP-CLASSIFIER-PRECISION.3`
   Status: `pending`
   Goal: >
-    Implement the tightened `classify_table_kind`; re-ingest I2C/eMMC/APB(+AHB/AXI)
-    and verify the false positives drop while real register maps survive; re-validate
-    (I2C tiling overlap gone); full CI; book note; close. Update the
-    `CORPUS-HARDENING` ledger with corrected register counts.
-  Acceptance: precision fix landed + corpus-regression-verified; CI green; tree CLOSED.
-  Verification: pending
+    Implement a body-structure register-map predicate in `classify_table_kind`
+    (require ≥2 body rows exhibiting bit-range + access-type / field-name
+    structure; demote the bare `has_addr_col` branch). Tune against the corpus:
+    re-ingest I2C/eMMC/APB(+AHB/AXI), verify ALL false positives drop (feature
+    matrices, TOCs, RPMB data frames, address tables) while the genuine eMMC
+    EXT_CSD field table survives; re-validate (I2C tiling overlap gone); full CI;
+    book note; close. Update the `CORPUS-HARDENING` ledger with corrected counts.
+  Acceptance: body-structure predicate landed + corpus-regression-verified (FP↓, real registers kept); CI green; tree CLOSED.
+  Verification: pending — careful predicate design + corpus regression (quality over speed; not rushed).
   Commit: pending
 
 ## Current Frontier
@@ -103,8 +122,8 @@ map needs an address/offset column **together with register-field structure**
 | Order | Leaf | Status | Why |
 | --- | --- | --- | --- |
 | 1 | `.1` | `done` | owned + diagnosed with real-corpus evidence |
-| 2 | `.2` | `pending` | confirm the discriminating predicate against REAL register headers — next |
-| 3 | `.3` | `pending` | implement + corpus-regression-verify + close |
+| 2 | `.2` | `done` | discriminator must be BODY-structure (header keywords fooled by "R/W bit"/`[177]`); design recorded |
+| 3 | `.3` | `pending` | implement body-structure predicate + corpus-regression-verify + close — next (careful, not rushed) |
 
 ## Decisions
 
@@ -130,12 +149,14 @@ map needs an address/offset column **together with register-field structure**
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-05-31` | `.1` | systemic over-eager `has_addr_col` diagnosed with I2C/eMMC/APB evidence; owned + registered | `passed` |
+| `2026-05-31` | `.2` | analyzed all register_map tables; header keywords proven insufficient ("R/W bit"/`[177]`/"type" fool bit/access checks); robust discriminator = BODY structure (bit-range + access-token + field-name rows); `.3` design recorded | `passed` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `REGISTER-MAP-CLASSIFIER-PRECISION.1` | `REGISTER-MAP-CLASSIFIER-PRECISION.1 — own + diagnose the over-eager register-map classifier` | docs-only; found by CORPUS-HARDENING |
+| `REGISTER-MAP-CLASSIFIER-PRECISION.2` | `REGISTER-MAP-CLASSIFIER-PRECISION.2 — discriminator must be body-structure (header keywords fooled)` | docs-only; design grounded in real corpus |
 
 ## Changelog
 
