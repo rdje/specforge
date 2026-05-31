@@ -119,3 +119,32 @@ field on `SourceIR`-related records. Verified by mutation
 testing (cargo-mutants) reducing missed mutants to zero on the
 targeted symbols + `scripts/run_ci.sh`. *Authoritative tracking:*
 `docs/tasks/R6-SOURCE-HARDENING.md`.
+
+### `REGISTER-MAP-CLASSIFIER-PRECISION` — only real register maps become registers
+
+**What it gives you:** when SpecForge ingests a PDF, a table is
+only tagged a *register map* if it actually looks like one — so
+your register inventory isn't polluted with tables that merely
+*mention* an address.
+
+**Why it mattered.** Running SpecForge across a real
+chip-doc corpus showed the table classifier was too eager: any
+table with an "address"/"offset" header became a `register_map`.
+That swept in *address-assignment tables* (e.g. I2C's reserved
+slave-address list), *feature matrices*, *tables of contents*,
+and *data-frame layouts* (e.g. eMMC's RPMB packet, whose 512-bit
+frame carries `[511:316]` fields that look just like register
+bits). The result was dozens of phantom "registers" — and a
+completeness check even flagged one for self-contradictory bit
+fields, which is how the bug surfaced.
+
+The fix classifies a `register_map` only when the table shows
+genuine register *structure* — a real bit range (`7:0`, `[31:16]`,
+not a stray `[177]` page reference) or a standalone access token
+(`RO`/`RW`/`W1C`/…) — **and** is not a table of contents
+(dotted-leader rows) or a data-frame layout (frame column
+vocabulary). Verified end-to-end on the corpus: the phantom
+registers disappear (eMMC dropped from 18 register tables to 2,
+register records 48 → 14) while genuine register/field tables are
+kept, with no change to clean specs. *Authoritative tracking:*
+`docs/tasks/REGISTER-MAP-CLASSIFIER-PRECISION.md`.

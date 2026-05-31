@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `REGISTER-MAP-CLASSIFIER-PRECISION`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: `R8` (SourceIR Tier-1 capture — table classification)
 - Created: `2026-05-31`
 - Last updated: `2026-05-31`
@@ -61,9 +61,9 @@ map needs an address/offset column **together with register-field structure**
 ## Task Tree
 
 - ID: `REGISTER-MAP-CLASSIFIER-PRECISION`
-  Status: `active`
+  Status: `done`
   Goal: tighten the register-map table classifier; corpus-regression-verified
-  Children: `.1`, `.2`, `.3`
+  Children: `.1`, `.2`, `.3`, `.4`
 
 - ID: `REGISTER-MAP-CLASSIFIER-PRECISION.1`
   Status: `done`
@@ -129,7 +129,7 @@ map needs an address/offset column **together with register-field structure**
   Commit: `see Commit Log`
 
 - ID: `REGISTER-MAP-CLASSIFIER-PRECISION.4`
-  Status: `pending`
+  Status: `done`
   Goal: >
     Exclude the bit-range-bearing non-registers a structure gate can't separate:
     eMMC RPMB **data-frame** layouts (column vocab `stuff bytes`/`nonce`/`block
@@ -139,8 +139,21 @@ map needs an address/offset column **together with register-field structure**
     verify the RPMB/TOC FPs drop while genuine EXT_CSD register/field tables
     survive, refresh the `CORPUS-HARDENING` eMMC ledger counts; book note; close.
   Acceptance: RPMB/TOC FPs excluded + genuine eMMC registers kept (clean re-ingest); CI green; tree CLOSED.
-  Verification: pending
-  Commit: pending
+  Verification: >
+    passed (`2026-06-01`) — added a non-register-layout guard to
+    `classify_table_kind`: `is_toc` (dotted-leader `....` cells) and
+    `frame_cols >= 2` (frame vocabulary `stuff bytes`/`nonce`/`block count`/
+    `(mac)`/`write counter`) suppress `register_map`. **Verified by a CLEAN eMMC
+    re-ingest** (deleted the stale cache → fresh Docling): eMMC `register_map`
+    **18 → 2** (all 14 RPMB data frames + 2 TOCs reclassified to
+    feature_matrix/unknown), `register_records` **48 → 14**, tiling clean (0/0).
+    **No regression** — the genuine EXT_CSD field table (Table 143,
+    `Name|Field|Bit|Type|…|HS_CTRL_REL`) is KEPT; I2C/APB stay `register_map` 0;
+    full `scripts/run_ci.sh` GREEN (1181/0, mdBook built); fmt/clippy clean.
+    (The 1 remaining eMMC `register_map` — a "Packed Command Structure" with
+    offset/name/length — is borderline-register-ish and acceptable; precision
+    went from ~4% genuine to ~50% genuine.)
+  Commit: `see Commit Log`
 
 ## Current Frontier
 
@@ -149,7 +162,12 @@ map needs an address/offset column **together with register-field structure**
 | 1 | `.1` | `done` | owned + diagnosed with real-corpus evidence |
 | 2 | `.2` | `done` | discriminator must be BODY-structure (header keywords fooled by "R/W bit"/`[177]`); design recorded |
 | 3 | `.3` | `done` | structure gate landed + verified (I2C 4→0, APB 1→0, tiling symptom fixed, no regression); CI green |
-| 4 | `.4` | `pending` | eMMC RPMB/TOC bit-range-bearing FPs (caption/column-vocab exclusion) — next |
+| 4 | `.4` | `done` | TOC/data-frame exclusion; clean eMMC re-ingest: register_map 18→2, records 48→14, genuine kept; CI green |
+
+**Tree CLOSED `2026-06-01`** — the systemic `register_map` over-classification is
+fixed and corpus-regression-verified end-to-end (I2C/APB header-keyword FPs via
+the structure gate; eMMC RPMB/TOC bit-range-bearing FPs via the layout guard),
+with the genuine registers preserved across the corpus and full CI green.
 
 ## Decisions
 
@@ -177,6 +195,7 @@ map needs an address/offset column **together with register-field structure**
 | `2026-05-31` | `.1` | systemic over-eager `has_addr_col` diagnosed with I2C/eMMC/APB evidence; owned + registered | `passed` |
 | `2026-05-31` | `.2` | analyzed all register_map tables; header keywords proven insufficient ("R/W bit"/`[177]`/"type" fool bit/access checks); robust discriminator = BODY structure (bit-range + access-token + field-name rows); `.3` design recorded | `passed` |
 | `2026-05-31` | `.3` | structure-gate landed in `classify_table_kind`; fresh re-ingest: I2C register_map 4→0, APB 1→0, I2C tiling overlap 1→0 (symptom fixed); no regression (genuine bit-range/access tables kept); fmt/clippy clean; full CI green (1181/0) | `passed` |
+| `2026-06-01` | `.4` | TOC + data-frame layout guard; CLEAN eMMC re-ingest: register_map 18→2, register_records 48→14, tiling 0/0, genuine EXT_CSD table kept; I2C/APB unaffected; full CI green (1181/0, mdBook) | `passed` |
 
 ## Commit Log
 
@@ -185,9 +204,18 @@ map needs an address/offset column **together with register-field structure**
 | `REGISTER-MAP-CLASSIFIER-PRECISION.1` | `REGISTER-MAP-CLASSIFIER-PRECISION.1 — own + diagnose the over-eager register-map classifier` | docs-only; found by CORPUS-HARDENING |
 | `REGISTER-MAP-CLASSIFIER-PRECISION.2` | `REGISTER-MAP-CLASSIFIER-PRECISION.2 — discriminator must be body-structure (header keywords fooled)` | docs-only; design grounded in real corpus |
 | `REGISTER-MAP-CLASSIFIER-PRECISION.3` | `REGISTER-MAP-CLASSIFIER-PRECISION.3 — gate register_map on body-structure; fix I2C/APB false positives` | code (`docling_backend.rs`); verified + CI green; eMMC RPMB/TOC → `.4` |
+| `REGISTER-MAP-CLASSIFIER-PRECISION.4` | `REGISTER-MAP-CLASSIFIER-PRECISION.4 — exclude TOC/data-frame layouts; eMMC register_map 18→2; close` | code + book; clean eMMC re-ingest verified; tree CLOSED |
 
 ## Changelog
 
+- `2026-06-01`: `.4` — added the TOC + data-frame layout guard to
+  `classify_table_kind`; clean eMMC re-ingest verified register_map 18→2 /
+  register_records 48→14 / tiling 0/0, genuine EXT_CSD table kept, I2C/APB
+  unaffected; full CI green; book note in `pipeline/sourceir.md`. **Tree CLOSED**
+  — systemic `register_map` over-classification fixed + corpus-regression-verified.
+- `2026-05-31`: `.3` — gated `register_map` on body register-structure (colon
+  bit-range / access token); fresh re-ingest verified I2C 4→0, APB 1→0, tiling
+  symptom fixed, no regression; CI green. Harder eMMC RPMB/TOC FPs → `.4`.
 - `2026-05-31`: Created — own a systemic table-classifier precision bug surfaced
   by `CORPUS-HARDENING` (bare `has_addr_col` mis-classifies feature matrices /
   TOCs / data-frames / address tables as `register_map` across I2C/eMMC/APB).

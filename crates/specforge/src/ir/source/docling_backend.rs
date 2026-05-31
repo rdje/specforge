@@ -322,7 +322,21 @@ def classify_table_kind(header_rows, body_rows=None, caption_text=None):
         any(bitrange_re.search(c) for c in struct_cells)
         or any(c.strip().lower() in access_tokens for c in struct_cells)
     )
-    if (has_addr_col or (has_access_col and has_name_col)) and has_register_structure:
+    # Some NON-register tables carry genuine bit-ranges or address columns and so
+    # pass the structure gate above — but are not register maps.  Exclude the two
+    # classes seen in the corpus: tables of contents (dotted-leader cells, e.g.
+    # "BOOT_BUS_CONDITIONS [177]....184") and data-frame / packet layouts
+    # (frame-specific column vocabulary, e.g. eMMC RPMB "Stuff Bytes | Nonce |
+    # Write Counter | Block Count" with body fields "[511:316]").
+    is_toc = any("...." in c for c in struct_cells)
+    frame_vocab = ["stuff bytes", "nonce", "block count", "(mac)", "write counter"]
+    frame_cols = sum(1 for kw in frame_vocab if any(kw in h for h in all_headers))
+    is_non_register_layout = is_toc or frame_cols >= 2
+    if (
+        not is_non_register_layout
+        and (has_addr_col or (has_access_col and has_name_col))
+        and has_register_structure
+    ):
         return "register_map"
 
     # Timing parameter: min/max/typical + unit columns.

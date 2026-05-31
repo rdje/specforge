@@ -133,7 +133,7 @@ nlp_coverage / register_records (tiling overlaps+gaps) / convergence
 | Spec | stmts | nlp_cov | regs (tiling) | convergence | notable misses |
 | --- | --- | --- | --- | --- | --- |
 | nxp I2C UM10204 | 956 | 13% | 1 (**1 overlap**) | 1p · 0 · ✓ | overlap = mis-classified address table (TP); empty actor-signal graph; 59 nlp residuals; 126 un-enriched visuals |
-| jedec eMMC JESD84-B50 | 6561 | — | 48 (0/0) | 2p · 194 · ✓ | 259 nlp residuals; 3 semantic-role conflicts; 344 un-enriched visuals |
+| jedec eMMC JESD84-B50 | 6561 | — | 48→**14** (0/0) | 2p · 194 · ✓ | 259 nlp residuals; 3 semantic-role conflicts; 344 un-enriched visuals — *the 48 was inflated by the register-map classifier bug; `REGISTER-MAP-CLASSIFIER-PRECISION` (CLOSED) corrected it to 14 (RPMB data frames + TOCs no longer registers)* |
 | arm AMBA APB IHI0024_E | 579 | 10% | 4 (0/0) | 2p · 19 · ✓ | 18 nlp residuals; un-enriched visuals; (clean — actor-signal graph populated, no conflicts) |
 | arm AMBA AHB IHI0033_C | 1339 | 13% | 21 (0/0) | 2p · 74 · ✓ | 72 nlp residuals; 1 semantic-role conflict; un-enriched visuals |
 | arm AMBA AXI IHI0022_L | 6991 | 12% | 11 (0/0) | 2p · 257 · ✓ | 554 nlp residuals; un-enriched visuals; (clean — no conflicts) |
