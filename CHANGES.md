@@ -2,6 +2,24 @@
 
 ## 2026-05-31
 
+### ROADMAP-TASKTREE-COVERAGE.3 — backfill+audit R8–R13 (extraction-SOTA milestones)
+- Created `R8-R13-EXTRACTION-BACKFILL` (lane R8–R13) owning the extraction-SOTA
+  milestones as audited leaves. AUDIT (verification-only; all delivered before
+  the task-tree system): R8 (`ir/source` Tier-1 capture —
+  `structured_tables`/`content_elements`/`document_sections`/`document_profile`/
+  `table_kind` via the Docling backend), R9 (`ir/evidence` `synthesize_*` +
+  monotone `converge_evidence_extractions` + `NormativeStatement` + polarity +
+  table provenance — **Mostly Done**, residual = incremental robustness
+  hardening, noted), R10 (`DiagramKind` + `enrich` VLM → `VisualObservation` →
+  `semantic` merge; Ollama + `qwen2.5vl:7b` default), R11 (`nlp_enrich`
+  run/prompt/alias/Layers A–E; Done 2026-04-03), R12 (`extract_alias_phrase`
+  garbage filter + AMBA `Source`/`Driver` direction parsing + APB94/AHB94/AXI85
+  baselines), R13 (`RelationKind`/`ActorSignalRelation` +
+  `extract_actor_signal_relations`). All book-covered (`pipeline/sourceir`,
+  `pipeline/evidenceir`, `quality/validation`, `domain/actor-connectivity`,
+  `runtime-and-doctor`, `commands/overview`); ROADMAP §R8–R13 completion criteria
+  confirmed met. Docs-only; umbrella frontier → `.4` (R15c–g).
+
 ### ROADMAP-TASKTREE-COVERAGE.2 — backfill+audit R1–R5 (foundation milestones)
 - Created `R1-R5-FOUNDATION-BACKFILL` (lane R1–R5) owning the foundational
   pipeline milestones as audited leaves. AUDIT (verification-only; all delivered

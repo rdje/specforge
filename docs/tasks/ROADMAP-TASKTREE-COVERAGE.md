@@ -111,12 +111,26 @@ it (drift flagged + reconciled).
   Commit: `see Commit Log`
 
 - ID: `ROADMAP-TASKTREE-COVERAGE.3`
-  Status: `pending`
+  Status: `done`
   Goal: >
     Backfill + audit **R8–R13** (same method). Register in the index.
   Acceptance: R8–R13 each owned by an audited tree; book-coverage noted; CI green.
-  Verification: pending
-  Commit: pending
+  Verification: >
+    passed (`2026-05-31`) — created `R8-R13-EXTRACTION-BACKFILL` owning R8–R13
+    as audited leaves. AUDIT confirmed all delivered: R8 (`ir/source` Tier-1
+    capture — structured_tables/content_elements/document_sections/
+    document_profile/table_kind), R9 (`ir/evidence` synthesize_* + monotone
+    `converge_evidence_extractions` + `NormativeStatement` + polarity +
+    provenance — Mostly Done, residual = robustness hardening), R10 (`DiagramKind`
+    + `enrich` VLM → `VisualObservation` → `semantic` merge; Ollama+qwen2.5vl
+    default), R11 (`nlp_enrich` run/prompt/alias/Layers A–E; Done 2026-04-03),
+    R12 (`extract_alias_phrase` filter + AMBA direction parsing + APB94/AHB94/
+    AXI85 baselines), R13 (`RelationKind`/`ActorSignalRelation` +
+    `extract_actor_signal_relations`); all book-covered (`pipeline/sourceir`,
+    `pipeline/evidenceir`, `quality/validation`, `domain/actor-connectivity`,
+    `runtime-and-doctor`, `commands/overview`); ROADMAP §R8–R13 criteria met.
+    Registered in the index. Docs-only (CI invariant).
+  Commit: `see Commit Log`
 
 - ID: `ROADMAP-TASKTREE-COVERAGE.4`
   Status: `pending`
@@ -145,8 +159,8 @@ it (drift flagged + reconciled).
 | --- | --- | --- | --- |
 | 1 | `ROADMAP-TASKTREE-COVERAGE.1` | `done` | README + gap record + umbrella registration landed |
 | 2 | `ROADMAP-TASKTREE-COVERAGE.2` | `done` | R1–R5 owned + audited (`R1-R5-FOUNDATION-BACKFILL`) |
-| 3 | `ROADMAP-TASKTREE-COVERAGE.3` | `pending` | R8–R13 backfill+audit — next |
-| 4 | `ROADMAP-TASKTREE-COVERAGE.4` | `pending` | R15c–R15g backfill+audit |
+| 3 | `ROADMAP-TASKTREE-COVERAGE.3` | `done` | R8–R13 owned + audited (`R8-R13-EXTRACTION-BACKFILL`) |
+| 4 | `ROADMAP-TASKTREE-COVERAGE.4` | `pending` | R15c–R15g backfill+audit — next |
 | 5 | `ROADMAP-TASKTREE-COVERAGE.5` | `pending` | alignment lock + close |
 
 ## Decisions
@@ -174,6 +188,7 @@ it (drift flagged + reconciled).
 | --- | --- | --- | --- |
 | `2026-05-31` | `ROADMAP-TASKTREE-COVERAGE.1` | `TASK_TREE_README.md` created (system + 5-point doctrine); coverage gap measured + recorded (16 uncovered milestones); umbrella registered in `docs/TASK_TREE.md` + README cross-linked; docs-only (CI invariant) | `passed` |
 | `2026-05-31` | `ROADMAP-TASKTREE-COVERAGE.2` | `R1-R5-FOUNDATION-BACKFILL` created (R1–R5 as audited leaves); delivering code/tests/book verified per milestone; ROADMAP §R1–R5 criteria met; registered; docs-only | `passed` |
+| `2026-05-31` | `ROADMAP-TASKTREE-COVERAGE.3` | `R8-R13-EXTRACTION-BACKFILL` created (R8–R13 as audited leaves); delivering symbols/commands + book pages verified per milestone (R9 Mostly-Done residual noted); ROADMAP §R8–R13 criteria met; registered; docs-only | `passed` |
 
 ## Commit Log
 
@@ -181,9 +196,15 @@ it (drift flagged + reconciled).
 | --- | --- | --- |
 | `ROADMAP-TASKTREE-COVERAGE.1` | `ROADMAP-TASKTREE-COVERAGE.1 — task-tree doctrine README + whole-roadmap coverage umbrella` | docs-only; sets up the backfill+audit+alignment program |
 | `ROADMAP-TASKTREE-COVERAGE.2` | `ROADMAP-TASKTREE-COVERAGE.2 — backfill+audit R1–R5 foundation milestones` | created `R1-R5-FOUNDATION-BACKFILL`; all delivered + audited |
+| `ROADMAP-TASKTREE-COVERAGE.3` | `ROADMAP-TASKTREE-COVERAGE.3 — backfill+audit R8–R13 extraction-SOTA milestones` | created `R8-R13-EXTRACTION-BACKFILL`; all delivered + audited (R9 residual noted) |
 
 ## Changelog
 
+- `2026-05-31`: `.3` — created `R8-R13-EXTRACTION-BACKFILL` owning + auditing
+  R8–R13 (extraction SOTA: Tier-1 capture / Tier-2 typed evidence / Tier-3 VLM /
+  NLP-L3 / multi-spec validation / Tier-2 relations; all delivered + book-covered;
+  R9 core landed with residual robustness-hardening noted). Frontier → `.4`
+  (R15c–R15g).
 - `2026-05-31`: `.2` — created `R1-R5-FOUNDATION-BACKFILL` owning + auditing
   R1–R5 (all delivered, tested, book-covered; ROADMAP criteria met). Frontier
   → `.3` (R8–R13).
