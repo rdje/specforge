@@ -197,3 +197,21 @@ figure regions, and a unified coverage report, follow). Verified by unit tests
 (covered table / zero-yield table / non-intent kinds skipped / id-marker
 precision) and a `validate` wiring test + `scripts/run_ci.sh`. *Authoritative
 tracking:* `docs/tasks/COMPLETENESS-REGION-ACCOUNTING.md`.
+
+### `COMPLETENESS-REPORT-SURFACE` — one completeness headline
+
+**What it gives you:** a `Completeness Summary` at the end of `validate` that
+answers "how completely did SpecForge capture this document?" in one place —
+a `candidate_misses` total with its breakdown, and the anchored-rescan
+convergence status.
+
+The completeness checks each report their own signal (register tiling, region
+accounting, prose residuals, convergence); this summary **adds them up** so you
+don't have to. `candidate_misses` = register-field overlaps + interior gaps +
+unexplained intent-bearing tables + partially-structured normative statements,
+and the headline names each component. It is honest by construction: a *count of
+candidate misses*, never a claim of completeness — and because it only sums
+values the detectors already produced, it can never introduce a gap the
+detectors didn't already surface (a wiring test asserts the total equals the sum
+of its component metrics). *Authoritative tracking:*
+`docs/tasks/COMPLETENESS-REPORT-SURFACE.md`.

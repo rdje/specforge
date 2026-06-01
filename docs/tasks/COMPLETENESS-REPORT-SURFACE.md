@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `COMPLETENESS-REPORT-SURFACE`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: `R15e` (KG-quality / completeness)
 - Created: `2026-06-01`
 - Last updated: `2026-06-01`
@@ -45,7 +45,7 @@ metric — so "how completely did we capture this document?" has one answer.
 ## Task Tree
 
 - ID: `COMPLETENESS-REPORT-SURFACE`
-  Status: `active`
+  Status: `done`
   Goal: aggregated completeness summary + headline in validate
   Children: `.1`, `.2`
 
@@ -59,22 +59,38 @@ metric — so "how completely did we capture this document?" has one answer.
   Commit: `see Commit Log`
 
 - ID: `COMPLETENESS-REPORT-SURFACE.2`
-  Status: `pending`
+  Status: `done`
   Goal: >
     Implement the `Completeness Summary` section + `completeness_candidate_misses`
     / `completeness_convergence_converged` metrics + an Info headline finding in
     `validate_evidence_ir`; wiring test asserting the aggregate; book note; full
     CI; close.
   Acceptance: summary + metrics + headline finding; aggregate == sum of components; CI green; book updated; tree CLOSED.
-  Verification: pending
-  Commit: pending
+  Verification: >
+    passed (`2026-06-01`) — `validate_evidence_ir` now prints a `Completeness
+    Summary`: `candidate_misses` = register overlaps + interior gaps + unexplained
+    intent-bearing tables + prose residuals (partial normative statements), with
+    the per-component breakdown + anchored-rescan convergence label
+    (converged / cap-limited / unrecorded). Emits an Info
+    `evidence_completeness_summary` headline finding + `completeness_candidate_misses`
+    and `completeness_convergence` metrics. Pure aggregation of already-computed
+    detector outputs — behavior-neutral, never a new false positive, never a
+    perfection claim. Wiring test asserts the aggregate metric equals the sum of
+    its component metrics ("metric == emitted content"). fmt/clippy clean; full
+    `scripts/run_ci.sh` green; book note in `pipeline/evidenceir.md`.
+  Commit: `see Commit Log`
 
 ## Current Frontier
 
-| Order | Leaf | Status | Why next |
+**Tree CLOSED `2026-06-01`** — `validate` now emits one `Completeness Summary`
+headline (`candidate_misses` total + breakdown + convergence) over the
+completeness detectors. The typed `CompletenessReport` + capture–recapture recall
+estimate remain future slices (research `.5`).
+
+| Order | Leaf | Status | Why |
 | --- | --- | --- | --- |
 | 1 | `COMPLETENESS-REPORT-SURFACE.1` | `done` | owned + design |
-| 2 | `COMPLETENESS-REPORT-SURFACE.2` | `pending` | implement the summary + metrics + headline + close — next |
+| 2 | `COMPLETENESS-REPORT-SURFACE.2` | `done` | summary + metrics + headline finding + test + book; CI green |
 
 ## Decisions
 
@@ -99,15 +115,20 @@ metric — so "how completely did we capture this document?" has one answer.
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-06-01` | `.1` | owned + scoped (validate-side aggregation of existing detector signals; no new detection/IR); registered; docs-only | `passed` |
+| `2026-06-01` | `.2` | `Completeness Summary` section + Info `evidence_completeness_summary` headline + `completeness_candidate_misses`/`completeness_convergence` metrics; aggregate==sum-of-components wiring test; behavior-neutral; fmt/clippy clean; full CI green; book note | `passed` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `COMPLETENESS-REPORT-SURFACE.1` | `COMPLETENESS-REPORT-SURFACE.1 — own the unifying completeness-summary surface` | docs-only |
+| `COMPLETENESS-REPORT-SURFACE.2` | `COMPLETENESS-REPORT-SURFACE.2 — Completeness Summary headline in validate; close` | code + book; aggregation-only |
 
 ## Changelog
 
+- `2026-06-01`: `.2` — implemented the `Completeness Summary` (candidate-misses
+  total + breakdown + convergence) + headline finding + metrics in `validate`;
+  aggregate==sum wiring test; CI green; book note. **Tree CLOSED.**
 - `2026-06-01`: Created — own the unifying completeness-summary headline
   (framework §10), a validate-side aggregation of the existing detector signals.
   Frontier → `.2` (implement).

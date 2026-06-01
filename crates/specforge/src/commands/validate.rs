@@ -2640,6 +2640,33 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
     }
 
     let normative_count = classes.get("normative_statement").copied().unwrap_or(0);
+
+    // Completeness summary: one honest headline aggregating the located-miss
+    // signals the completeness detectors surfaced (framework §10). Pure
+    // aggregation of already-computed values — never a new false positive, never
+    // a claim of perfection (a count of *candidate* misses + convergence status).
+    let completeness_candidate_misses = register_field_overlaps
+        + register_field_interior_gaps
+        + region_unexplained_tables.len()
+        + normative_count;
+    let completeness_convergence = ir.convergence_report.as_ref().map(|r| r.converged);
+    let convergence_label = match completeness_convergence {
+        Some(true) => "converged",
+        Some(false) => "cap-limited",
+        None => "unrecorded",
+    };
+    println!();
+    println!("=== Completeness Summary ===");
+    println!("  candidate_misses: {completeness_candidate_misses}");
+    println!("    register_field_overlaps: {register_field_overlaps}");
+    println!("    register_field_interior_gaps: {register_field_interior_gaps}");
+    println!(
+        "    region_unexplained_tables: {}",
+        region_unexplained_tables.len()
+    );
+    println!("    prose_residuals (partial normative): {normative_count}");
+    println!("  convergence: {convergence_label}");
+
     let missing_vlm_observation_related_ids = evidence_missing_vlm_observation_related_ids(ir);
     let structural_kg_missing_related_ids = evidence_structural_kg_missing_related_ids(ir);
     let normative_residual_statement_ids = evidence_normative_residual_statement_ids(ir);
@@ -2812,6 +2839,16 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             Vec::new(),
         ));
     }
+    findings.push(finding(
+        "evidence_completeness_summary",
+        ValidationFindingSeverity::Info,
+        "completeness",
+        format!(
+            "Completeness: {completeness_candidate_misses} candidate miss(es) surfaced (register overlaps {register_field_overlaps}, interior gaps {register_field_interior_gaps}, unexplained tables {}, prose residuals {normative_count}); anchored-rescan convergence {convergence_label}",
+            region_unexplained_tables.len()
+        ),
+        Vec::new(),
+    ));
     if let Some(convergence) = &ir.convergence_report {
         if convergence.converged {
             findings.push(finding(
@@ -2919,6 +2956,11 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
                 "region_unexplained_tables",
                 region_unexplained_tables.len().to_string(),
             ),
+            metric(
+                "completeness_candidate_misses",
+                completeness_candidate_misses.to_string(),
+            ),
+            metric("completeness_convergence", convergence_label.to_string()),
             metric(
                 "table_signal_declaration_provenance",
                 ir.table_signal_declaration_provenance.len().to_string(),
@@ -6896,6 +6938,41 @@ mod tests {
             "the phantom signal table should be unexplained"
         );
         assert!(has_finding(&report, "evidence_region_unexplained_tables"));
+        Ok(())
+    }
+
+    #[test]
+    fn validate_evidence_ir_completeness_summary_aggregates_components() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("comp.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        fs::write(
+            &source,
+            "# Spec\nSignal HADDR is input width 32.\nHADDR shall remain stable.\n",
+        )?;
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+
+        let report = validate_evidence_ir(&evidence_ir, "completeness".to_string());
+        let m = |k: &str| {
+            metric_value(&report, k)
+                .and_then(|v| v.parse::<usize>().ok())
+                .unwrap_or(0)
+        };
+        // The aggregate metric must equal the sum of its component metrics
+        // (metric == emitted content).
+        let expected = m("register_field_overlaps")
+            + m("register_field_interior_gaps")
+            + m("region_unexplained_tables")
+            + m("normative_statements");
+        assert_eq!(m("completeness_candidate_misses"), expected);
+        assert!(has_finding(&report, "evidence_completeness_summary"));
         Ok(())
     }
 
