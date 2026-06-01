@@ -150,6 +150,18 @@ recon (`2026-06-01`, read-only over stored SemanticIR):
   current parameter), `LED` / `PULL_UP_DEVICE` (example devices), `START` / `STOP`
   (bus phases), `VSS` (power rail), `W` (stray). A precision issue with several
   distinct sources; no clean single filter → future precision tree.
+- **column-less signal recall gap is broader than CHI** (quantified `2026-06-01`
+  via a read-only harness over stored `source_ir`, faithful to the shipped logic;
+  `infer_signal_table_row_width_hint` returns None without a width column, so the
+  residual is accurate, not over-counted): **33 column-less `signal_description`
+  tables across 8 specs, ~120 candidate signals**. `SIGNAL-TABLE-COLUMNLESS-RECALL`'s
+  approach-A prose-direction inference recovers **8 (all CHI)**; **~112 remain honest
+  residuals** (no prose driver, no width column) — AXI (20), ATP (41), eMMC (13),
+  RISC-V debug (11), LTI (10), AHB (8). A genuine, bounded recall opportunity for a
+  future owned tree (e.g. a precision-gated bare-existence capture — the declined
+  approach B — or width/role inference), to be corpus-validated on a re-ingest when
+  Docling is available. Recorded honestly per residual-honesty doctrine rather than
+  silently capped.
 
 ## Decisions
 
@@ -235,6 +247,7 @@ VLM-in-the-loop pass are the indicated next instruments).
 | `2026-05-31` | `.2` | AMBA core APB/AHB/AXI run + recorded (3/4; CHI remains); tiling 0-FP across 84 registers; recurring miss = prose residuals + un-enriched visuals | `partial` |
 | `2026-05-31` | `.3` | VLM+NLP-in-the-loop on APB (Ollama/Qwen): timing 0→6, state 0→1, findings 5→3, nlp residuals 18→13 (+5 constraints, +16 decls); 0 errors; honest fails-closed on 13 | `passed` |
 | `2026-06-01` | `.2` (complete) | CHI IHI0050_G run (11666 stmts, 20 regs, conv 591✓); 4 completeness surfaces validated on real CHI data — 1 candidate register overlap, 11 unexplained tables, 1024 prose residuals, candidate_misses=1036; AMBA core campaign complete | `passed` |
+| `2026-06-01` | follow-up (post-fix re-run, harness) | corpus-wide impact of this session's fixes on stored artifacts (no re-ingest): `REGISTER-CLASSIFIER-ENCODING-FP` = 2 CHI tables register_map→encoding (8 phantoms) + 32 encoding corrections, 0 regression / 1989 tables; `SIGNAL-TABLE-COLUMNLESS-RECALL` (approach A) = 8 signals recovered (CHI), ~112 column-less residuals quantified across 8 specs (future tree). `SYMBOL-CLOSURE-CORPUS-VALIDATION` = no-build (typed closure empty; i2c SDA-missing + inventory-noise routed here) | `passed` |
 
 ## Commit Log
 
