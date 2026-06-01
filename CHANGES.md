@@ -2,6 +2,22 @@
 
 ## 2026-06-01
 
+### Completeness program — research closed, detector phase complete, clean work exhausted
+- `INTENT-COMPLETENESS-RESEARCH` CLOSED (`.1`–`.7`): framework + closed ontology /
+  coverage matrix + region-accounting design + miss-detector catalog + verified
+  literature grounding (9-agent workflow) + recall-estimator/typed-report design.
+- It drove a full, corpus-validated implementation phase — **four live `validate`
+  completeness surfaces** (convergence, register bit-tiling, region accounting,
+  Completeness Summary headline) + the **register-map classifier precision fix**.
+- `COMPLETENESS-CLOSURE-INVARIANTS` CLOSED: register-tiling delivered + now
+  book-documented (`pipeline/evidenceir.md`); **symbol closure descoped** to a
+  future careful, corpus-validated tree (rushing it would be noise, not signal).
+- `CORPUS-HARDENING` `.1`–`.3` complete (full AMBA core APB/AHB/AXI/CHI + VLM
+  recall pass); standing harness for future specs.
+- Honestly deferred (blocked / substantial, scoped as owned follow-on trees): the
+  capture–recapture recall gauge (needs per-extractor fact identity), symbol
+  closure, region-accounting prose/figure slices.
+
 ### COMPLETENESS-REPORT-SURFACE — one completeness headline over the detectors (closed)
 - Realized the framework §10 unifying headline: `validate` now prints a
   `Completeness Summary` aggregating the located-miss signals into one
