@@ -315,8 +315,10 @@ Use it first for the project objective, document navigation, and the current imp
   - engineering rationale, design choices, and implementation context
 - `CHANGES.md`
   - full detailed summary of the current set of changes
+- `MEMORY_ARCHITECTURE.md`
+  - portable, harness-agnostic standard for durable cross-session/cross-harness memory (the layer model: resume pointer + task-trees + decision records + git), with built-in enforcement (bootstrap pointers, self-check script, git hooks, CI gate); governs how `MEMORY.md`, `docs/tasks/`, and `docs/decisions/` are used
 - `MEMORY.md`
-  - compact but actionable continuity record for crash/session-loss recovery
+  - the bounded **resume pointer** (layer A of `MEMORY_ARCHITECTURE.md`): current commit, active task-tree frontier, single next action — overwrite-only, size-capped (history lives in git; durable facts in `docs/decisions/`)
 - `COMMIT.md`
   - exact commit workflow and commit-time reporting requirements
 - `.gitmodules`
