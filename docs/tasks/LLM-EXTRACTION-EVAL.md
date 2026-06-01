@@ -131,10 +131,20 @@ until a human reviews it.
   Commit: `see Commit Log`
 
 - ID: `LLM-EXTRACTION-EVAL.3`
-  Status: `pending`
+  Status: `done`
   Goal: seed labeled dataset (~24 items, ≥8/text-task) drafted from real AMBA/i2c
     statements; each `agent_drafted` + note; include negatives.
   Acceptance: dataset under `test_data/llm_eval/`; loads + validates clean.
+  Verification: passed (`2026-06-01`) — `crates/specforge/test_data/llm_eval/seed_apb.json`
+    (+ `README.md`): **16 items** drawn from real AMBA APB (IHI0024_E) statements — 8
+    `signal_constraint` + 8 `actor_signal_relation`, each with real `statement_id`,
+    `input_text`, `agent_drafted` status + `label_note`, ≥2 negatives per task. Gold
+    **independently drafted from the prose** (not copied from the pattern/LLM output —
+    e.g. deliberately omits the bogus `APB protocol reads PWDATA` pattern edge).
+    Loader generalized (`.3`) to accept a single array file OR a directory.
+    `committed_seed_dataset_loads_and_validates` + `load_eval_dataset_reads_a_single_array_file`
+    tests added (8 eval tests total). fmt + clippy clean; full CI green.
+  Commit: `see Commit Log`
 
 - ID: `LLM-EXTRACTION-EVAL.4`
   Status: `pending`
@@ -155,8 +165,8 @@ until a human reviews it.
 | --- | --- | --- | --- |
 | 1 | `.1` | `done` | owned + design |
 | 2 | `.2` | `done` | pure scorer + dataset format/loader (`eval.rs`); 6 unit tests; CI green |
-| 3 | `.3` | `pending` | seed labeled data from real corpus — next |
-| 4 | `.4` | `pending` | provider-gated runner over the real command path |
+| 3 | `.3` | `done` | seed labeled dataset (16 items APB; 8/task; negatives); loader file-or-dir |
+| 4 | `.4` | `pending` | provider-gated runner over the real command path — next |
 | 5 | `.5` | `pending` | baseline + book + close |
 
 ## Decisions
@@ -193,6 +203,7 @@ until a human reviews it.
 | --- | --- | --- |
 | `LLM-EXTRACTION-EVAL.1` | `LLM-EXTRACTION-EVAL.1 — own + design labeled precision/recall eval for the LLM passes` | docs-only |
 | `LLM-EXTRACTION-EVAL.2` | `LLM-EXTRACTION-EVAL.2 — pure scorer + dataset format/loader (eval.rs); 6 tests` | provider-free core |
+| `LLM-EXTRACTION-EVAL.3` | `LLM-EXTRACTION-EVAL.3 — seed labeled dataset (16 APB items, 8/task) + loader file-or-dir` | gold drafted from prose |
 
 ## Changelog
 

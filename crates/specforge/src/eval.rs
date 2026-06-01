@@ -327,23 +327,40 @@ pub fn score_dataset(
     out
 }
 
-/// Load all `*.json` eval items under `dir` (one item per file), validated.
-pub fn load_eval_dataset(dir: &Path) -> Result<Vec<EvalItem>> {
-    let mut items = Vec::new();
-    for entry in fs::read_dir(dir)? {
-        let path = entry?.path();
-        if path.extension().and_then(|ext| ext.to_str()) != Some("json") {
-            continue;
+/// Load a labeled eval dataset from `path`, validated and deterministically ordered.
+///
+/// `path` may be either a **single `.json` file** containing a JSON array of items
+/// (convenient for a small reviewable seed) or a **directory** of `*.json` files, one
+/// item per file (convenient as the set grows).
+pub fn load_eval_dataset(path: &Path) -> Result<Vec<EvalItem>> {
+    let mut items = if path.is_dir() {
+        let mut items = Vec::new();
+        for entry in fs::read_dir(path)? {
+            let file = entry?.path();
+            if file.extension().and_then(|ext| ext.to_str()) != Some("json") {
+                continue;
+            }
+            let text = fs::read_to_string(&file)?;
+            let item: EvalItem = serde_json::from_str(&text).map_err(|err| {
+                AppError::InvalidStageArtifact(format!(
+                    "eval item {} is not valid JSON: {err}",
+                    file.display()
+                ))
+            })?;
+            items.push(item);
         }
-        let text = fs::read_to_string(&path)?;
-        let item: EvalItem = serde_json::from_str(&text).map_err(|err| {
+        items
+    } else {
+        let text = fs::read_to_string(path)?;
+        serde_json::from_str::<Vec<EvalItem>>(&text).map_err(|err| {
             AppError::InvalidStageArtifact(format!(
-                "eval item {} is not valid JSON: {err}",
+                "eval dataset {} is not a valid JSON array of items: {err}",
                 path.display()
             ))
-        })?;
+        })?
+    };
+    for item in &items {
         item.validate()?;
-        items.push(item);
     }
     // Deterministic order so reports are stable across runs.
     items.sort_by(|a, b| {
@@ -603,6 +620,64 @@ mod tests {
         assert_eq!(
             items[0].gold[0].canonical_key(),
             relation_key("Completer", "drives", "PREADY")
+        );
+    }
+
+    #[test]
+    fn load_eval_dataset_reads_a_single_array_file() {
+        let dir = tempfile::tempdir().unwrap();
+        let file = dir.path().join("seed.json");
+        let json = r#"[
+            {"task":"signal_constraint","doc_key":"d","statement_id":"s1",
+             "gold":[{"fact":"constraint","subject_signal":"HADDR","constraint_kind":"must_be_stable"}]},
+            {"task":"actor_signal_relation","doc_key":"d","statement_id":"s2",
+             "gold":[{"fact":"relation","actor":"Manager","relation":"drives","signal":"HTRANS"}]}
+        ]"#;
+        std::fs::write(&file, json).unwrap();
+        let items = load_eval_dataset(&file).unwrap();
+        assert_eq!(items.len(), 2);
+        // deterministic order: SignalConstraint sorts before ActorSignalRelation.
+        assert_eq!(items[0].task, EvalTask::SignalConstraint);
+        assert_eq!(items[1].task, EvalTask::ActorSignalRelation);
+    }
+
+    #[test]
+    fn committed_seed_dataset_loads_and_validates() {
+        // The real seed must parse, validate (gold fact <-> task), and cover both tasks.
+        let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("test_data/llm_eval/seed_apb.json");
+        let items = load_eval_dataset(&path).expect("seed dataset loads + validates");
+        assert!(
+            items.len() >= 16,
+            "seed should have >= 16 items, got {}",
+            items.len()
+        );
+        let constraints = items
+            .iter()
+            .filter(|i| i.task == EvalTask::SignalConstraint)
+            .count();
+        let relations = items
+            .iter()
+            .filter(|i| i.task == EvalTask::ActorSignalRelation)
+            .count();
+        assert!(
+            constraints >= 8,
+            "expected >= 8 constraint items, got {constraints}"
+        );
+        assert!(
+            relations >= 8,
+            "expected >= 8 relation items, got {relations}"
+        );
+        // at least one negative (empty gold) per task is present
+        assert!(
+            items
+                .iter()
+                .any(|i| i.task == EvalTask::SignalConstraint && i.gold.is_empty())
+        );
+        assert!(
+            items
+                .iter()
+                .any(|i| i.task == EvalTask::ActorSignalRelation && i.gold.is_empty())
         );
     }
 }

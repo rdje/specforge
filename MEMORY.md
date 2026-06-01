@@ -17,9 +17,9 @@
   LLM/VLM provider default 0002).
 
 ## Current state (OVERWRITE this block each update — do not append)
-- latest_commit: `6cec44db` — "MEMORY-ARCHITECTURE-DOC.5 — verify end-to-end (full CI green incl. memory-arch check) + sync live docs; close tree"  (ahead of origin `97aedd08`: ~16; push at ~30)
-- active_work_unit: `LLM-EXTRACTION-EVAL`  →  frontier leaf: `.3` (pending) — seed the labeled dataset (~24 items, ≥8/text-task) under `crates/specforge/test_data/llm_eval/`, drafted from real AMBA/i2c statements (agent_drafted + note), incl. negatives.
-- next_action: implement `LLM-EXTRACTION-EVAL.3` (seed labeled data) — `.2` pure scorer + dataset format/loader landed in `crates/specforge/src/eval.rs`. Then `.4` provider-gated runner, `.5` baseline + book + close.
+- latest_commit: `3a413aa3` — "LLM-EXTRACTION-EVAL.2 — pure scorer + dataset format/loader (eval.rs); 6 tests"  (ahead of origin `97aedd08`: ~17; push at ~30)
+- active_work_unit: `LLM-EXTRACTION-EVAL`  →  frontier leaf: `.4` (pending) — provider-gated runner (`eval-extraction` command): for each doc_key in the dataset run the task command with `--model`, read produced records by statement provenance (`index_*_predictions`), `score_dataset`, report per-task P/R/F1; `--provider skip` testable path. (`.2` `eval.rs` scorer + `.3` seed `test_data/llm_eval/seed_apb.json` 16 items landed.)
+- next_action: implement `LLM-EXTRACTION-EVAL.4` (the runner command). Then `.5` baseline (qwen2.5vl) + book + close.
 - paused_work: none.
 - in_flight_uncommitted: none.
 - blockers: `.5` baseline is Ollama-server-gated (record honestly if saturated).

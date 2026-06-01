@@ -1,0 +1,186 @@
+[
+  {
+    "task": "signal_constraint",
+    "doc_key": "ihi0024_e_2023_02_amba_5_apb_protocol_specification",
+    "statement_id": "statement_0202",
+    "input_text": "PREADY is asserted by the Completer at the rising edge of PCLK to indicate that the write data will be accepted at T3. PADDR, PWDATA, and any other control signals, must be stable until the transfer completes.",
+    "grounding": ["PADDR", "PWDATA", "PREADY", "PENABLE"],
+    "gold": [
+      {"fact": "constraint", "subject_signal": "PADDR", "constraint_kind": "must_be_stable"},
+      {"fact": "constraint", "subject_signal": "PWDATA", "constraint_kind": "must_be_stable"}
+    ],
+    "label_status": "agent_drafted",
+    "label_note": "the 'must be stable until the transfer completes' clause applies to PADDR and PWDATA"
+  },
+  {
+    "task": "signal_constraint",
+    "doc_key": "ihi0024_e_2023_02_amba_5_apb_protocol_specification",
+    "statement_id": "statement_0221",
+    "input_text": "For read transfers, the Requester must drive all bits of PSTRB LOW.",
+    "grounding": ["PSTRB"],
+    "gold": [
+      {"fact": "constraint", "subject_signal": "PSTRB", "constraint_kind": "must_be_low"}
+    ],
+    "label_status": "agent_drafted",
+    "label_note": "'must drive all bits of PSTRB LOW' => PSTRB must be LOW"
+  },
+  {
+    "task": "signal_constraint",
+    "doc_key": "ihi0024_e_2023_02_amba_5_apb_protocol_specification",
+    "statement_id": "statement_0322",
+    "input_text": "PWAKEUP must remain asserted until PREADY is asserted if PWAKEUP and PSELx are HIGH in the same cycle.",
+    "grounding": ["PWAKEUP", "PREADY", "PSEL"],
+    "gold": [
+      {"fact": "constraint", "subject_signal": "PWAKEUP", "constraint_kind": "must_be_asserted"}
+    ],
+    "label_status": "agent_drafted",
+    "label_note": "'must remain asserted' => must_be_asserted"
+  },
+  {
+    "task": "signal_constraint",
+    "doc_key": "ihi0024_e_2023_02_amba_5_apb_protocol_specification",
+    "statement_id": "statement_0339",
+    "input_text": "PBUSER must be valid when PSEL, PENABLE, and PREADY are asserted.",
+    "grounding": ["PBUSER", "PSEL", "PENABLE", "PREADY"],
+    "gold": [
+      {"fact": "constraint", "subject_signal": "PBUSER", "constraint_kind": "must_be_value", "target_value": "VALID"}
+    ],
+    "label_status": "agent_drafted",
+    "label_note": "'must be valid' => must_be_value VALID (matches the typed convention)"
+  },
+  {
+    "task": "signal_constraint",
+    "doc_key": "ihi0024_e_2023_02_amba_5_apb_protocol_specification",
+    "statement_id": "statement_0285",
+    "input_text": "PNSE must be valid when PSEL is asserted.",
+    "grounding": ["PNSE", "PSEL"],
+    "gold": [
+      {"fact": "constraint", "subject_signal": "PNSE", "constraint_kind": "must_be_value", "target_value": "VALID"}
+    ],
+    "label_status": "agent_drafted",
+    "label_note": "'must be valid' => must_be_value VALID"
+  },
+  {
+    "task": "signal_constraint",
+    "doc_key": "ihi0024_e_2023_02_amba_5_apb_protocol_specification",
+    "statement_id": "statement_0184",
+    "input_text": "The APB protocol has two independent data buses, PRDATA for read data and PWDATA for write data. The read and write data buses must have the same width.",
+    "grounding": ["PRDATA", "PWDATA"],
+    "gold": [],
+    "label_status": "agent_drafted",
+    "label_note": "NEGATIVE: a bus-width equality statement, not a typed signal-value constraint"
+  },
+  {
+    "task": "signal_constraint",
+    "doc_key": "ihi0024_e_2023_02_amba_5_apb_protocol_specification",
+    "statement_id": "statement_0099",
+    "input_text": "The level of an asserted signal depends on whether the signal is active-HIGH or active-LOW.",
+    "grounding": [],
+    "gold": [],
+    "label_status": "agent_drafted",
+    "label_note": "NEGATIVE: definitional prose about assertion levels, no per-signal constraint"
+  },
+  {
+    "task": "signal_constraint",
+    "doc_key": "ihi0024_e_2023_02_amba_5_apb_protocol_specification",
+    "statement_id": "statement_0297",
+    "input_text": "If PNSE is present on an interface, PPROT must also be present.",
+    "grounding": ["PNSE", "PPROT"],
+    "gold": [],
+    "label_status": "agent_drafted",
+    "label_note": "NEGATIVE for the constraint task: a signal-presence conditional rule, not a value constraint"
+  },
+
+  {
+    "task": "actor_signal_relation",
+    "doc_key": "ihi0024_e_2023_02_amba_5_apb_protocol_specification",
+    "statement_id": "statement_0202",
+    "input_text": "PREADY is asserted by the Completer at the rising edge of PCLK to indicate that the write data will be accepted at T3.",
+    "grounding": ["PREADY"],
+    "gold": [
+      {"fact": "relation", "actor": "Completer", "relation": "drives", "signal": "PREADY"}
+    ],
+    "label_status": "agent_drafted",
+    "label_note": "'PREADY is asserted by the Completer' => Completer drives PREADY"
+  },
+  {
+    "task": "actor_signal_relation",
+    "doc_key": "ihi0024_e_2023_02_amba_5_apb_protocol_specification",
+    "statement_id": "statement_0206",
+    "input_text": "During an Access phase, when PENABLE is HIGH, the Completer extends the transfer by driving PREADY LOW.",
+    "grounding": ["PREADY", "PENABLE"],
+    "gold": [
+      {"fact": "relation", "actor": "Completer", "relation": "drives", "signal": "PREADY"}
+    ],
+    "label_status": "agent_drafted",
+    "label_note": "'the Completer ... driving PREADY LOW' => Completer drives PREADY"
+  },
+  {
+    "task": "actor_signal_relation",
+    "doc_key": "ihi0024_e_2023_02_amba_5_apb_protocol_specification",
+    "statement_id": "statement_0221",
+    "input_text": "For read transfers, the Requester must drive all bits of PSTRB LOW.",
+    "grounding": ["PSTRB"],
+    "gold": [
+      {"fact": "relation", "actor": "Requester", "relation": "drives", "signal": "PSTRB"}
+    ],
+    "label_status": "agent_drafted",
+    "label_note": "'the Requester must drive ... PSTRB' => Requester drives PSTRB"
+  },
+  {
+    "task": "actor_signal_relation",
+    "doc_key": "ihi0024_e_2023_02_amba_5_apb_protocol_specification",
+    "statement_id": "statement_0175",
+    "input_text": "The PRDATA read data bus is driven by the selected Completer during read cycles when PWRITE is LOW.",
+    "grounding": ["PRDATA", "PWRITE"],
+    "gold": [
+      {"fact": "relation", "actor": "Completer", "relation": "drives", "signal": "PRDATA"}
+    ],
+    "label_status": "agent_drafted",
+    "label_note": "'PRDATA ... driven by the selected Completer' => Completer drives PRDATA"
+  },
+  {
+    "task": "actor_signal_relation",
+    "doc_key": "ihi0024_e_2023_02_amba_5_apb_protocol_specification",
+    "statement_id": "statement_0169",
+    "input_text": "The PWDATA write data bus is driven by the APB bridge Requester during write cycles when PWRITE is HIGH.",
+    "grounding": ["PWDATA", "PWRITE"],
+    "gold": [
+      {"fact": "relation", "actor": "Requester", "relation": "drives", "signal": "PWDATA"}
+    ],
+    "label_status": "agent_drafted",
+    "label_note": "'PWDATA ... driven by the APB bridge Requester' => Requester drives PWDATA"
+  },
+  {
+    "task": "actor_signal_relation",
+    "doc_key": "ihi0024_e_2023_02_amba_5_apb_protocol_specification",
+    "statement_id": "statement_0176",
+    "input_text": "PSLVERR is an optional signal that can be asserted HIGH by the Completer to indicate an error condition on an APB transfer.",
+    "grounding": ["PSLVERR"],
+    "gold": [
+      {"fact": "relation", "actor": "Completer", "relation": "drives", "signal": "PSLVERR"}
+    ],
+    "label_status": "agent_drafted",
+    "label_note": "'PSLVERR ... asserted HIGH by the Completer' => Completer drives PSLVERR"
+  },
+  {
+    "task": "actor_signal_relation",
+    "doc_key": "ihi0024_e_2023_02_amba_5_apb_protocol_specification",
+    "statement_id": "statement_0184",
+    "input_text": "The APB protocol has two independent data buses, PRDATA for read data and PWDATA for write data.",
+    "grounding": ["PRDATA", "PWDATA"],
+    "gold": [],
+    "label_status": "agent_drafted",
+    "label_note": "NEGATIVE: names the buses but assigns no driving/reading actor (cf. the bogus pattern edge 'APB protocol reads PWDATA')"
+  },
+  {
+    "task": "actor_signal_relation",
+    "doc_key": "ihi0024_e_2023_02_amba_5_apb_protocol_specification",
+    "statement_id": "statement_0099",
+    "input_text": "The level of an asserted signal depends on whether the signal is active-HIGH or active-LOW.",
+    "grounding": [],
+    "gold": [],
+    "label_status": "agent_drafted",
+    "label_note": "NEGATIVE: definitional prose, no actor-signal relation"
+  }
+]
