@@ -136,6 +136,21 @@ captures column-less signal tables); **Class A** (4 protocol requirement/transit
 matrices mis-typed `timing_parameter` with empty `body_rows` — Docling marked every
 row a header) remains an open follow-up candidate.
 
+Further follow-up candidates surfaced by the `SYMBOL-CLOSURE-CORPUS-VALIDATION`
+recon (`2026-06-01`, read-only over stored SemanticIR):
+- **i2c `SDA` missing from the interface inventory** (high value: a flagship 2-wire
+  bus loses its data wire). `SDA` is referenced 90× in SemanticIR (constraints /
+  timing / rules) but never reaches `interfaces[].signals`, while `SCL` does — the
+  SCL/SDA asymmetry. Root cause: `SDA` is described only in prose ("the data on the
+  **SDA** line must be stable…") and its constraints don't promote `SDA` as the
+  typed subject. Fix is a constraint-subject / inventory-construction change (broad
+  regression risk; needs re-ingest to validate) → future owned tree when Docling is
+  available.
+- **i2c inventory noise**: non-signal tokens promoted to the inventory — `IOL` (DC
+  current parameter), `LED` / `PULL_UP_DEVICE` (example devices), `START` / `STOP`
+  (bus phases), `VSS` (power rail), `W` (stray). A precision issue with several
+  distinct sources; no clean single filter → future precision tree.
+
 ## Decisions
 
 - `2026-05-31`: prioritize AMBA core (SpecForge's design targets + known
