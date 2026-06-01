@@ -81,12 +81,18 @@ in-repo.
   Commit: `see Commit Log`
 
 - ID: `MEMORY-ARCHITECTURE-DOC.2`
-  Status: `pending`
+  Status: `done`
   Goal: implement layer C in-repo — `docs/decisions/` + `INDEX.md`; seed dated
     decision records by migrating durable, not-already-tracked facts (e.g. Docling
     device/MPS operational fact; the production LLM/VLM provider default; a pointer
     record for the task-tree + commit doctrine). Link from related task-trees.
   Acceptance: `docs/decisions/` + index + ≥3 seeded records; index lists them.
+  Verification: passed (`2026-06-01`) — `docs/decisions/INDEX.md` + 3 ADR records:
+    `0001-docling-device-cpu` (migrated the Docling MPS→CPU operational fact + the
+    don't-delete-source_ir-before-reingest process note), `0002-llm-vlm-provider-default`
+    (Ollama+qwen2.5vl:7b production default; never claim missing; qwen3-vl:8b candidate),
+    `0003-task-tree-and-commit-doctrine` (pointer record to the non-negotiable doctrine
+    + COMMIT.md). Index table lists all three; each links its related task-trees.
 
 - ID: `MEMORY-ARCHITECTURE-DOC.3`
   Status: `pending`
@@ -137,12 +143,14 @@ in-repo.
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-06-01` | `.1` | portable standard authored (project-agnostic; enforcement E1–E4 + agnostic kit + durability matrix + templates); README doc-map pointer; MEMORY.md reframed as resume pointer | `passed` |
+| `2026-06-01` | `.2` | layer C in-repo: `docs/decisions/INDEX.md` + 3 ADR records (docling-cpu, provider-default, doctrine-pointer) migrated from `~/.claude`/MEMORY.md; indexed + cross-linked | `passed` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `MEMORY-ARCHITECTURE-DOC.1` | `MEMORY-ARCHITECTURE-DOC.1 — author portable harness-agnostic durable-memory standard (+enforcement +agnostic kit)` | standard + README pointer |
+| `MEMORY-ARCHITECTURE-DOC.2` | `MEMORY-ARCHITECTURE-DOC.2 — implement layer C: docs/decisions + seed migrated decision records` | docs/decisions/ + 3 ADRs |
 
 ## Changelog
 
