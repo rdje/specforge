@@ -2,6 +2,45 @@
 
 ## 2026-06-01
 
+### LLM extraction eval — labeled precision/recall harness (design owned)
+- `LLM-EXTRACTION-EVAL.1` (active): owned + designed the missing measurement piece —
+  a labeled precision/recall/F1 eval for the LLM extraction passes. Today `kg-bench`'s
+  151 fixtures test the deterministic pipeline (provider: none) and the recall gauge is
+  unsupervised, so there is no labeled gold for the LLM passes. Design: per-statement
+  items with gold typed outputs; a pure scorer (task canonical keys, TP/FP/FN→P/R/F1)
+  scoring closed-world over labeled statements; a faithful runner over the REAL command
+  path (run the command with `--model X`, read produced records by statement provenance,
+  score); agent-drafted + review-flagged labels. v1 = the 2 text tasks with crisp keys
+  (SignalConstraint, ActorSignalRelation); ActorContract + VLM enrich deferred. Makes
+  qwen2.5vl-vs-qwen3-vl A/Bs rigorous. Docs-only.
+
+### Docling ingest — deliberate device selection (closed)
+- `DOCLING-DEVICE-CPU-DEFAULT` (CLOSED): a fresh Docling install (torch 2.12) broke PDF
+  ingest on Apple Silicon — Docling defaults its accelerator to `auto`→MPS, and torch's
+  MPS can't do the float64 ops its models need, so every page failed. The embedded helper
+  now selects the device deliberately: honor `DOCLING_DEVICE`; else CUDA when present,
+  else CPU (never auto→MPS); defensive try/except fallback. Verified end-to-end (fresh
+  no-env ingest converts where it failed on page 1). CI green (1198).
+
+### Symbol-closure detector — corpus-validated no-build
+- `SYMBOL-CLOSURE-CORPUS-VALIDATION` (CLOSED, negative result): the `COMPLETENESS-
+  CLOSURE-INVARIANTS.3` descope said symbol closure needed "careful corpus validation".
+  Recon over stored SemanticIR confirmed it: typed closure is trivially empty (the
+  inventory is reference-derived), and the real misses (i2c `SDA` missing — referenced
+  90× but never declared; inventory noise like `IOL`/`LED`/`START`/`STOP`/`VSS`) are
+  capture problems invisible to closure. Decision: do not build; findings routed to
+  `CORPUS-HARDENING` as future re-ingest-gated trees.
+
+### Corpus hardening — fixes confirmed end-to-end on real CHI (CORPUS-HARDENING.4 closed)
+- `CORPUS-HARDENING.4` (CLOSED): restored Docling (CPU) and clean re-ingested CHI
+  IHI0050_G (368 tables, 0 MPS errors). Both session fixes confirmed on real output:
+  `REGISTER-CLASSIFIER-ENCODING-FP` (table_0170/0171→encoding, 0 phantom registers,
+  **register_field_overlaps 1→0** — the headline finding resolved) and
+  `SIGNAL-TABLE-COLUMNLESS-RECALL` (REQ/RSP/SNP/DAT channel signals recovered, decls
+  16→24); unexplained tables 11→7. Honest caveat: fresh re-extraction drift confounds
+  aggregate register_records 20→0 (faithful A/B = the stored-table harness). Bundle
+  reclaimed (518.8 MiB).
+
 ### Recall — capture signals from column-less Signal|Description tables (closed)
 - `SIGNAL-TABLE-COLUMNLESS-RECALL` (CLOSED): diagnosing CHI's "11 unexplained
   intent-bearing tables" (region-accounting finding) surfaced a confirmed **live
