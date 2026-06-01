@@ -2,6 +2,20 @@
 
 ## 2026-06-01
 
+### Recall estimation — per-extractor fact tagging + capture–recapture gauge (closed)
+- `PER-EXTRACTOR-FACT-TAGGING` (closed): a `fact_provenance` index on `EvidenceIR`
+  records which independent extractor found each signal-constraint fact — Pattern
+  (`evidence` build) vs Nlp (`nlp-enrich`, tagged pre-dedup so overlaps survive) —
+  under a canonical key, via a side-index (no change to any of the 140
+  `SignalConstraintRecord` literals). The capture–recapture precondition.
+- `COMPLETENESS-RECALL-GAUGE` (closed): `signal_constraint_recall_estimate`
+  computes the 2-extractor Lincoln–Petersen estimate `N̂ = |a|·|b|/overlap` over
+  that index → estimated remaining misses as an honest **lower bound**, surfaced
+  in `validate` (gated to ≥2 tiers + overlap; "insufficient" otherwise — never a
+  fabricated number; assumptions printed). SpecForge can now estimate *unseen*
+  facts, not just list located misses. Chao-Mh / a 3rd independent extractor is a
+  future upgrade. The research→impl recall-estimation arc is complete.
+
 ### Completeness program — research closed, detector phase complete, clean work exhausted
 - `INTENT-COMPLETENESS-RESEARCH` CLOSED (`.1`–`.7`): framework + closed ontology /
   coverage matrix + region-accounting design + miss-detector catalog + verified
