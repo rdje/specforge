@@ -183,8 +183,29 @@ until a human reviews it.
 
 ## Open Questions
 
-- Exact `ActorContract` canonical key (obligation taxonomy) — settle in `.2` against
-  the real `ActorContract` schema.
+- Exact `ActorContract` canonical key (obligation taxonomy) — settle against the real
+  `ActorContract` schema if/when the contract task is added (deferred).
+
+## `.4` runner design note (`2026-06-01`)
+
+`nlp_enrich::run` / `signal_resolve::run` are CLI entrypoints that read the EvidenceIR
+from `args.evidence_ir`, mutate it, and `ir.write_to_disk()` to the IR's *embedded*
+`artifact_layout` path (not the passed path); `--dry-run` does not expose the produced
+records. So the runner cannot simply call `run()` on the real artifact without
+mutating it. Two faithful options:
+- **A (preferred, cleaner):** extract a reusable, no-write extraction core from each
+  command (`fn enrich_constraints(ir, provider, model, ...) -> Vec<SignalConstraintRecord>`
+  / `fn resolve_relations(...) -> Vec<ActorSignalRelation>`); `run()` calls the core
+  then writes; the runner calls the core directly, builds `PredictedKeys` via
+  `index_*_predictions`, and `score_dataset`s. A small refactor, but the right seam.
+- **B (no refactor):** copy the doc's EvidenceIR to a temp path, rewrite its
+  `artifact_layout` to the temp, run `run()` in execute mode, read the temp result.
+  Hackier; mutates a copy.
+Decision: pursue **A** in `.4` (the seam is reused by the qwen2.5-vs-qwen3 A/B and any
+future model/prompt comparison). The runner exposes an `eval-extraction` command:
+`--dataset <path> --provider <p> [--model <m>] [--evidence-root generated/evidence_ir]`,
+runs per `doc_key`, prints per-task P/R/F1; `--provider skip` is the deterministic,
+testable baseline (pattern-only) — the A/B is skip-vs-model or modelA-vs-modelB.
 
 ## Blockers
 
