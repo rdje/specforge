@@ -6,6 +6,9 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 cd "${ROOT_DIR}"
 
+echo "[specforge-ci] checking memory architecture (MEMORY_ARCHITECTURE.md invariants)"
+./scripts/check_memory_architecture.sh
+
 echo "[specforge-ci] checking formatting"
 cargo fmt --all --check
 

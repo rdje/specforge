@@ -17,9 +17,9 @@
   LLM/VLM provider default 0002).
 
 ## Current state (OVERWRITE this block each update — do not append)
-- latest_commit: `6d668eb2` — "MEMORY-ARCHITECTURE-DOC.2 — implement layer C: docs/decisions + seed migrated decision records"  (ahead of origin `97aedd08`: ~13; push at ~30)
-- active_work_unit: `MEMORY-ARCHITECTURE-DOC`  →  frontier leaf: `.4` (pending) — install the agnostic enforcement kit (`scripts/check_memory_architecture.sh` + `.githooks/` + `core.hooksPath` + bootstrap pointer files + wire into `scripts/run_ci.sh`); then `.5` verify + close.
-- next_action: implement `MEMORY-ARCHITECTURE-DOC.4` (enforcement kit), keeping CI green.
+- latest_commit: `583aa204` — "MEMORY-ARCHITECTURE-DOC.3 — demote MEMORY.md to the bounded resume pointer (1395->25 lines)"  (ahead of origin `97aedd08`: ~14; push at ~30)
+- active_work_unit: `MEMORY-ARCHITECTURE-DOC`  →  frontier leaf: `.5` (pending) — verify end-to-end (self-check + full `run_ci.sh` green) + sync live docs + close. (`.4` enforcement kit installed: check script wired into CI, `.githooks/` active via `core.hooksPath`, bootstrap pointers AGENTS/CLAUDE/.cursorrules/copilot.)
+- next_action: run `MEMORY-ARCHITECTURE-DOC.5` — full `scripts/run_ci.sh` green incl. the new memory-architecture check; then close the tree.
 - paused_work: `LLM-EXTRACTION-EVAL` (`.1` design done; `.2` pure scorer + dataset format is its next step) — resume after MEMORY-ARCHITECTURE-DOC closes.
 - in_flight_uncommitted: none.
 - blockers: none.

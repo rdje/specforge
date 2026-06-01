@@ -108,7 +108,7 @@ in-repo.
     preserved in git history (≤ `6d668eb2`); durable facts already migrated to layer C.
 
 - ID: `MEMORY-ARCHITECTURE-DOC.4`
-  Status: `pending`
+  Status: `done`
   Goal: install the agnostic enforcement kit in-repo — `scripts/check_memory_architecture.sh`
     (+x), `.githooks/pre-commit` + `.githooks/commit-msg` (+x), `git config
     core.hooksPath .githooks`, bootstrap pointer files (`AGENTS.md`, `CLAUDE.md`,
@@ -116,6 +116,15 @@ in-repo.
     `scripts/run_ci.sh` (E4). README references the system.
   Acceptance: self-check passes; hooks active; CI runs the check; bootstrap files point
     at the standard.
+  Verification: passed (`2026-06-01`) — kit installed: `scripts/check_memory_architecture.sh`
+    (single source of truth; +x) wired into `scripts/run_ci.sh` as the first CI step
+    (E4); `.githooks/pre-commit` (runs the self-check) + `.githooks/commit-msg`
+    (unit-id|conventional subject) (+x), activated via `git config core.hooksPath
+    .githooks` (E3); bootstrap pointers `AGENTS.md` (canonical) + `CLAUDE.md` /
+    `.cursorrules` / `.github/copilot-instructions.md` (E1). Self-check passes all 6
+    invariants. **Gates proven to bite**: commit-msg REJECTS a non-compliant subject +
+    ACCEPTS a unit-id one; self-check FAILS when MEMORY.md exceeds the cap. This very
+    commit passes through the now-active pre-commit + commit-msg hooks.
 
 - ID: `MEMORY-ARCHITECTURE-DOC.5`
   Status: `pending`
@@ -151,6 +160,7 @@ in-repo.
 | `2026-06-01` | `.1` | portable standard authored (project-agnostic; enforcement E1–E4 + agnostic kit + durability matrix + templates); README doc-map pointer; MEMORY.md reframed as resume pointer | `passed` |
 | `2026-06-01` | `.2` | layer C in-repo: `docs/decisions/INDEX.md` + 3 ADR records (docling-cpu, provider-default, doctrine-pointer) migrated from `~/.claude`/MEMORY.md; indexed + cross-linked | `passed` |
 | `2026-06-01` | `.3` | `MEMORY.md` demoted to the bounded resume pointer (1,395→25 lines, ≤60 cap); §6 template; prior content preserved in git ≤`6d668eb2` | `passed` |
+| `2026-06-01` | `.4` | enforcement kit installed (check script wired into `run_ci.sh`; `.githooks/` active via `core.hooksPath`; AGENTS/CLAUDE/.cursorrules/copilot pointers); self-check passes 6/6; gates proven to bite (bad subject rejected; over-cap MEMORY.md fails) | `passed` |
 
 ## Commit Log
 
@@ -159,6 +169,7 @@ in-repo.
 | `MEMORY-ARCHITECTURE-DOC.1` | `MEMORY-ARCHITECTURE-DOC.1 — author portable harness-agnostic durable-memory standard (+enforcement +agnostic kit)` | standard + README pointer |
 | `MEMORY-ARCHITECTURE-DOC.2` | `MEMORY-ARCHITECTURE-DOC.2 — implement layer C: docs/decisions + seed migrated decision records` | docs/decisions/ + 3 ADRs |
 | `MEMORY-ARCHITECTURE-DOC.3` | `MEMORY-ARCHITECTURE-DOC.3 — demote MEMORY.md to the bounded resume pointer (1395→25 lines)` | layer A; history in git |
+| `MEMORY-ARCHITECTURE-DOC.4` | `MEMORY-ARCHITECTURE-DOC.4 — install agnostic enforcement kit (check script + githooks + CI + bootstrap pointers)` | E1–E4; gates proven to bite |
 
 ## Changelog
 
