@@ -2,6 +2,22 @@
 
 ## 2026-06-01
 
+### Recall gauge generalized to actor-signal relations (closed)
+- `COMPLETENESS-RECALL-RELATIONS` (CLOSED): the per-extractor provenance index and
+  the capture–recapture recall gauge are now **generic over fact kind**, covering a
+  second multi-produced fact type — **actor-signal relations** (`actor / direction /
+  signal`) from the Pattern tier (`evidence` build) vs the LLM tier (`signal-resolve`,
+  tagged pre-dedup so Pattern overlaps survive).
+- `FactKind::ActorSignalRelation` + `actor_signal_relation_fact_key` (case/whitespace-
+  normalized so the same edge from both tiers collapses to one key); the estimator is
+  now `recall_estimate(&[FactProvenanceRecord], FactKind)` with
+  `signal_constraint_recall_estimate` as a thin wrapper. `validate` prints a per-kind
+  Fact Provenance breakdown, a Recall Estimate for **both** kinds, and a
+  `recall_estimate_relation_remaining_misses` metric — same honesty rules per kind
+  (gated to ≥2 overlapping tiers; kinds never cross-contaminate). Extraction-neutral
+  (additive index + pure read); 2 new unit tests; CI green (1196 tests); book note in
+  `pipeline/evidenceir.md`.
+
 ### Recall estimation — per-extractor fact tagging + capture–recapture gauge (closed)
 - `PER-EXTRACTOR-FACT-TAGGING` (closed): a `fact_provenance` index on `EvidenceIR`
   records which independent extractor found each signal-constraint fact — Pattern

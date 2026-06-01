@@ -233,6 +233,7 @@ pub enum ExtractorTier {
 #[serde(rename_all = "snake_case")]
 pub enum FactKind {
     SignalConstraint,
+    ActorSignalRelation,
 }
 
 /// One per-extractor fact observation: "extractor `producer` found a fact of
@@ -262,6 +263,19 @@ pub fn signal_constraint_fact_key(constraint: &SignalConstraintRecord) -> String
             .unwrap_or("")
             .trim()
             .to_ascii_uppercase(),
+    )
+}
+
+/// Canonical identity of an actor-signal relation for cross-extractor overlap
+/// detection: normalized actor + relation kind + signal, so the same edge
+/// extracted by the pattern tier and the `signal-resolve` LLM produces the same
+/// key regardless of id / source differences.
+pub fn actor_signal_relation_fact_key(relation: &ActorSignalRelation) -> String {
+    format!(
+        "{}|{:?}|{}",
+        relation.actor_name.trim().to_ascii_uppercase(),
+        relation.relation,
+        relation.signal_name.trim().to_ascii_uppercase(),
     )
 }
 
@@ -623,10 +637,10 @@ impl EvidenceIr {
             prior_guidance.as_ref(),
         );
 
-        // PER-EXTRACTOR-FACT-TAGGING: tag every signal constraint produced by the
-        // structural pattern tier (the convergent build loop above) as `Pattern`,
-        // computed before the move into the struct literal. The Nlp tier tags its
-        // finds later, in `nlp-enrich`.
+        // PER-EXTRACTOR-FACT-TAGGING: tag every fact produced by the structural
+        // pattern tier (the convergent build loop above) as `Pattern`, computed
+        // before the move into the struct literal. The LLM tiers tag their finds
+        // later (`nlp-enrich` for constraints, `signal-resolve` for relations).
         let fact_provenance: Vec<FactProvenanceRecord> = signal_constraints
             .iter()
             .map(|c| FactProvenanceRecord {
@@ -634,6 +648,11 @@ impl EvidenceIr {
                 fact_kind: FactKind::SignalConstraint,
                 canonical_key: signal_constraint_fact_key(c),
             })
+            .chain(actor_signal_relations.iter().map(|r| FactProvenanceRecord {
+                producer: ExtractorTier::Pattern,
+                fact_kind: FactKind::ActorSignalRelation,
+                canonical_key: actor_signal_relation_fact_key(r),
+            }))
             .collect();
 
         let mut evidence_ir = Self {
@@ -6937,12 +6956,13 @@ mod tests {
     use super::{
         EvidenceIr, EvidenceLinkKind, EvidenceModality, ExtractorTier, FactKind,
         SignalSemanticHintSourceKind, SignalSemanticTag, StatementClass, VisualObservationKind,
-        canonicalize_existing_path, contains_any, contains_reference_token, diagram_kind_key,
-        is_abstract_transport_actor_term, is_abstract_transport_signal_token,
-        is_hardware_signal_token, is_image_line, is_signal_name_char,
-        is_signal_synthesis_non_signal, is_standalone_markdown_block, is_tie_off_actor_text,
-        looks_like_encoding_literal, looks_like_structural_contents_entry_for_semantic_hint,
-        numbered_list_prefix, parse_encoding_numeric_literal, signal_constraint_fact_key,
+        actor_signal_relation_fact_key, canonicalize_existing_path, contains_any,
+        contains_reference_token, diagram_kind_key, is_abstract_transport_actor_term,
+        is_abstract_transport_signal_token, is_hardware_signal_token, is_image_line,
+        is_signal_name_char, is_signal_synthesis_non_signal, is_standalone_markdown_block,
+        is_tie_off_actor_text, looks_like_encoding_literal,
+        looks_like_structural_contents_entry_for_semantic_hint, numbered_list_prefix,
+        parse_encoding_numeric_literal, signal_constraint_fact_key,
     };
 
     fn make_table_cell(text: &str, is_header: bool) -> StructuredTableCellRecord {
@@ -11048,6 +11068,33 @@ mod tests {
         assert_ne!(
             signal_constraint_fact_key(&pattern),
             signal_constraint_fact_key(&other)
+        );
+    }
+
+    #[test]
+    fn actor_signal_relation_fact_key_normalizes_for_overlap() {
+        use crate::ir::source::{ActorSignalRelation, AutomationConfidence, RelationKind};
+        let mk = |id: &str, actor: &str, sig: &str, rel: RelationKind| ActorSignalRelation {
+            relation_id: id.to_string(),
+            actor_name: actor.to_string(),
+            signal_name: sig.to_string(),
+            relation: rel,
+            source_statement_ids: vec![],
+            automation_confidence: AutomationConfidence::Medium,
+        };
+        // Same edge from two tiers (different id/case) -> same key.
+        let pattern = mk("r14:001", "manager", "HTRANS", RelationKind::Drives);
+        let llm = mk("r14:llm_007", "MANAGER", "htrans", RelationKind::Drives);
+        assert_eq!(
+            actor_signal_relation_fact_key(&pattern),
+            actor_signal_relation_fact_key(&llm),
+            "the same edge from different tiers must share a canonical key (overlap)"
+        );
+        // Different relation direction -> different key.
+        let reads = mk("r14:002", "manager", "HTRANS", RelationKind::Reads);
+        assert_ne!(
+            actor_signal_relation_fact_key(&pattern),
+            actor_signal_relation_fact_key(&reads)
         );
     }
 

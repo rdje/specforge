@@ -2668,43 +2668,56 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
     println!("  convergence: {convergence_label}");
 
     // Per-extractor fact provenance (capture–recapture precondition): how many
-    // facts each independent tier recorded (with overlaps captured pre-dedup).
-    let fact_prov_pattern = ir
-        .fact_provenance
-        .iter()
-        .filter(|p| p.producer == crate::ir::evidence::ExtractorTier::Pattern)
-        .count();
-    let fact_prov_nlp = ir
-        .fact_provenance
-        .iter()
-        .filter(|p| p.producer == crate::ir::evidence::ExtractorTier::Nlp)
-        .count();
+    // facts each independent tier recorded per kind (overlaps captured pre-dedup).
+    use crate::ir::evidence::{ExtractorTier, FactKind};
+    let prov_count = |tier: ExtractorTier, kind: FactKind| {
+        ir.fact_provenance
+            .iter()
+            .filter(|p| p.producer == tier && p.fact_kind == kind)
+            .count()
+    };
+    let sc_pattern = prov_count(ExtractorTier::Pattern, FactKind::SignalConstraint);
+    let sc_nlp = prov_count(ExtractorTier::Nlp, FactKind::SignalConstraint);
+    let rel_pattern = prov_count(ExtractorTier::Pattern, FactKind::ActorSignalRelation);
+    let rel_nlp = prov_count(ExtractorTier::Nlp, FactKind::ActorSignalRelation);
+    let fact_prov_pattern = sc_pattern + rel_pattern;
+    let fact_prov_nlp = sc_nlp + rel_nlp;
     println!();
     println!("=== Fact Provenance (per-extractor; recall-gauge precondition) ===");
-    println!("  signal_constraint finds — pattern: {fact_prov_pattern}, nlp: {fact_prov_nlp}");
+    println!("  signal_constraint — pattern: {sc_pattern}, nlp: {sc_nlp}");
+    println!("  actor_signal_relation — pattern: {rel_pattern}, nlp: {rel_nlp}");
 
-    // Capture–recapture recall estimate (signal constraints) over the
-    // per-extractor provenance — an honest LOWER bound on misses, or "insufficient".
-    let recall = crate::ir::completeness::signal_constraint_recall_estimate(&ir.fact_provenance);
+    // Capture–recapture recall estimate per fact kind — an honest LOWER bound on
+    // misses, or "insufficient". `recall` (signal constraints) is named for the
+    // metric/test below; relations reported alongside.
+    let recall =
+        crate::ir::completeness::recall_estimate(&ir.fact_provenance, FactKind::SignalConstraint);
+    let recall_rel = crate::ir::completeness::recall_estimate(
+        &ir.fact_provenance,
+        FactKind::ActorSignalRelation,
+    );
     println!();
-    println!("=== Recall Estimate (capture–recapture; signal constraints) ===");
-    match &recall {
-        Some(r) => {
-            println!(
-                "  pattern: {}, nlp: {}, overlap: {}, distinct: {}",
-                r.pattern, r.nlp, r.overlap, r.distinct
-            );
-            println!(
-                "  estimated_total: {} | remaining_misses: >= {} (lower bound) | recall: ~{}%",
-                r.estimated_total, r.estimated_remaining_misses, r.estimated_recall_pct
-            );
-            println!(
-                "  assumptions: Lincoln–Petersen (2 extractors); pattern+nlp share prose input (partially correlated → optimistic); misses are a LOWER bound"
-            );
+    println!("=== Recall Estimate (capture–recapture; LOWER bound, assumptions printed) ===");
+    let print_recall = |label: &str, est: &Option<crate::ir::completeness::RecallEstimate>| {
+        match est {
+            Some(r) => println!(
+                "  {label}: pattern {}, nlp {}, overlap {} → estimated_total {} | remaining_misses >= {} | recall ~{}%",
+                r.pattern,
+                r.nlp,
+                r.overlap,
+                r.estimated_total,
+                r.estimated_remaining_misses,
+                r.estimated_recall_pct
+            ),
+            None => println!("  {label}: insufficient (needs both tiers with overlap)"),
         }
-        None => println!(
-            "  (insufficient — needs both pattern and nlp finds with overlap; run `nlp-enrich`)"
-        ),
+    };
+    print_recall("signal_constraint", &recall);
+    print_recall("actor_signal_relation", &recall_rel);
+    if recall.is_some() || recall_rel.is_some() {
+        println!(
+            "  assumptions: Lincoln–Petersen (2 extractors; pattern+llm share inputs → partially correlated → optimistic); misses are a LOWER bound"
+        );
     }
 
     let missing_vlm_observation_related_ids = evidence_missing_vlm_observation_related_ids(ir);
@@ -3015,6 +3028,13 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
                 recall
                     .as_ref()
                     .map(|r| r.estimated_recall_pct.to_string())
+                    .unwrap_or_else(|| "n/a".to_string()),
+            ),
+            metric(
+                "recall_estimate_relation_remaining_misses",
+                recall_rel
+                    .as_ref()
+                    .map(|r| r.estimated_remaining_misses.to_string())
                     .unwrap_or_else(|| "n/a".to_string()),
             ),
             metric(

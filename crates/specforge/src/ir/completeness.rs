@@ -243,13 +243,14 @@ pub struct RecallEstimate {
 /// Returns `None` when fewer than two tiers tagged finds, or when there is no
 /// overlap (`m = 0`, where Lincoln–Petersen is undefined) — i.e. no honest
 /// estimate is possible. NEVER fabricates "0 misses" for the no-data case.
-pub fn signal_constraint_recall_estimate(
+pub fn recall_estimate(
     provenance: &[FactProvenanceRecord],
+    fact_kind: FactKind,
 ) -> Option<RecallEstimate> {
     let keys = |tier: ExtractorTier| -> HashSet<&str> {
         provenance
             .iter()
-            .filter(|p| p.producer == tier && p.fact_kind == FactKind::SignalConstraint)
+            .filter(|p| p.producer == tier && p.fact_kind == fact_kind)
             .map(|p| p.canonical_key.as_str())
             .collect()
     };
@@ -275,6 +276,13 @@ pub fn signal_constraint_recall_estimate(
         estimated_remaining_misses: estimated_total.saturating_sub(distinct),
         estimated_recall_pct: ((distinct as f64 / estimated_total as f64) * 100.0).round() as u32,
     })
+}
+
+/// Recall estimate for signal constraints — see [`recall_estimate`].
+pub fn signal_constraint_recall_estimate(
+    provenance: &[FactProvenanceRecord],
+) -> Option<RecallEstimate> {
+    recall_estimate(provenance, FactKind::SignalConstraint)
 }
 
 #[cfg(test)]
@@ -539,5 +547,31 @@ mod tests {
             fact_prov(ExtractorTier::Nlp, "B"),
         ];
         assert!(signal_constraint_recall_estimate(&no_overlap).is_none());
+    }
+
+    #[test]
+    fn recall_estimate_generalizes_to_relations() {
+        // The same Lincoln–Petersen math must apply to actor-signal relations
+        // when keyed by FactKind::ActorSignalRelation.
+        let rel = |tier, key: &str| FactProvenanceRecord {
+            producer: tier,
+            fact_kind: FactKind::ActorSignalRelation,
+            canonical_key: key.to_string(),
+        };
+        // Pattern captured {A,B}, Nlp captured {B,C}; overlap = {B} = 1.
+        // N̂ = 2*2/1 = 4 distinct edges; observed = 3 → 1 remaining miss; recall = 75%.
+        let prov = vec![
+            rel(ExtractorTier::Pattern, "M|Drives|A"),
+            rel(ExtractorTier::Pattern, "M|Drives|B"),
+            rel(ExtractorTier::Nlp, "M|Drives|B"),
+            rel(ExtractorTier::Nlp, "M|Drives|C"),
+        ];
+        let est = recall_estimate(&prov, FactKind::ActorSignalRelation).expect("estimate");
+        assert_eq!(est.overlap, 1);
+        assert_eq!(est.estimated_total, 4);
+        assert_eq!(est.estimated_remaining_misses, 1);
+        assert_eq!(est.estimated_recall_pct, 75);
+        // Cross-kind isolation: a relation-only provenance yields no signal-constraint estimate.
+        assert!(recall_estimate(&prov, FactKind::SignalConstraint).is_none());
     }
 }

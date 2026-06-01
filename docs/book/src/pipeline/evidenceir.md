@@ -279,3 +279,24 @@ misses as a **lower bound** with its assumptions printed (the two tiers read the
 same prose, so they're partially correlated and the estimate is optimistic). A
 future third, independent extractor would let it move to the sharper Chao
 estimator. *Authoritative tracking:* `docs/tasks/COMPLETENESS-RECALL-GAUGE.md`.
+
+### `COMPLETENESS-RECALL-RELATIONS` — the same gauge, now for actor–signal relations
+
+Signal-constraint facts were the first fact kind to be tagged and gauged, but
+they are not the only intent-bearing relation a document states. The **Tier-3
+relation extractor** (`signal-resolve`, the LLM that reads "the manager *drives*
+`HTRANS`") produces a second, independent fact kind: **actor–signal relations**
+(`actor / relation-direction / signal`). Misses there matter just as much — an
+undetected "drives/reads" edge is a dropped piece of the interaction model.
+
+So the provenance index and the recall gauge are now **generic over fact kind**.
+The `fact_provenance` records carry a `fact_kind` tag, relations get their own
+canonical key (`actor | direction | signal`, case- and whitespace-normalized so
+the *same* edge found by the pattern build and by `signal-resolve` collapses to
+one key), and the Lincoln–Petersen estimator takes the fact kind as a parameter —
+the math is identical, only the population changes. `validate` now prints a
+per-kind provenance breakdown **and** a second recall line,
+`recall_estimate_relation_remaining_misses`, alongside the signal-constraint one.
+The same honesty rules apply per kind: each estimate computes only when both tiers
+have overlapping finds for *that* kind, and the two kinds never cross-contaminate.
+*Authoritative tracking:* `docs/tasks/COMPLETENESS-RECALL-RELATIONS.md`.

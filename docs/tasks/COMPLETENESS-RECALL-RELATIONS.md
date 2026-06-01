@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `COMPLETENESS-RECALL-RELATIONS`
-- Status: `active`
+- Status: `done` (CLOSED)
 - Roadmap lane: `R15e` (KG-quality / completeness)
 - Created: `2026-06-01`
 - Owner: repo-local workflow
@@ -47,7 +47,7 @@ both lets the gauge estimate the unseen population of actor→signal edges too.
 ## Task Tree
 
 - ID: `COMPLETENESS-RECALL-RELATIONS`
-  Status: `active`
+  Status: `done`
   Goal: extend tagging + recall gauge to actor-signal relations
   Children: `.1`, `.2`
 
@@ -63,22 +63,39 @@ both lets the gauge estimate the unseen population of actor→signal edges too.
   Commit: `see Commit Log`
 
 - ID: `COMPLETENESS-RECALL-RELATIONS.2`
-  Status: `pending`
+  Status: `done`
   Goal: >
     Implement `FactKind::ActorSignalRelation` + `actor_signal_relation_fact_key`;
     tag Pattern@build + Nlp@signal-resolve (pre-dedup); generalize
     `recall_estimate(_, fact_kind)`; `validate` relation provenance + recall;
     unit/wiring tests; book note; full CI; close.
   Acceptance: relation tagging + generic gauge + validate surface; CI green; book; tree CLOSED.
-  Verification: pending
-  Commit: pending
+  Verification: >
+    passed (`2026-06-01`) — `FactKind::ActorSignalRelation` +
+    `actor_signal_relation_fact_key` (`actor|relation|signal`, case/whitespace
+    normalized) added in `evidence.rs`; Pattern tagging chained into
+    `EvidenceIr::build` `fact_provenance`; Nlp tagging in `signal_resolve.rs` at
+    `RelationOutcome::Accepted` (pre-dedup, push-if-absent). Estimator generalized
+    to `recall_estimate(&[FactProvenanceRecord], FactKind)` with
+    `signal_constraint_recall_estimate` as a thin wrapper. `validate` now prints a
+    per-kind Fact Provenance breakdown, a Recall Estimate for both kinds, and a
+    `recall_estimate_relation_remaining_misses` metric. New unit tests:
+    `actor_signal_relation_fact_key_normalizes_for_overlap` (overlap + direction
+    distinctness) and `recall_estimate_generalizes_to_relations` (Lincoln–Petersen
+    over relations + cross-kind isolation) — both pass. fmt clean; clippy clean;
+    full CI green (1196 tests). Extraction-neutral (additive index + pure read).
+  Commit: `see Commit Log`
 
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `COMPLETENESS-RECALL-RELATIONS.1` | `done` | owned + design + producers verified |
-| 2 | `COMPLETENESS-RECALL-RELATIONS.2` | `pending` | implement tagging + generic gauge + validate + tests + book + close — next |
+| 2 | `COMPLETENESS-RECALL-RELATIONS.2` | `done` | tagging + generic gauge + validate + tests + book delivered; CI green |
+
+Tree **CLOSED** (`2026-06-01`): all leaves `done`. The recall gauge and
+per-extractor provenance index are now generic over fact kind and cover both
+signal constraints and actor-signal relations.
 
 ## Decisions
 
@@ -101,6 +118,7 @@ both lets the gauge estimate the unseen population of actor→signal edges too.
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-06-01` | `.1` | producers verified (Pattern@build, Nlp@signal_resolve:246 pre-dedup); design mirrors SignalConstraint slice; registered; docs-only | `passed` |
+| `2026-06-01` | `.2` | `FactKind::ActorSignalRelation` + key fn; Pattern@build + Nlp@signal-resolve tagging; generic `recall_estimate(_, fact_kind)`; `validate` per-kind provenance + dual recall + relation metric; 2 new unit tests; fmt/clippy clean; full CI green (1196 tests); extraction-neutral | `passed` |
 
 ## Commit Log
 

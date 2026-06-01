@@ -20,7 +20,10 @@
 use crate::cli::{SignalResolveArgs, VlmProviderArg};
 use crate::commands::llm_text;
 use crate::error::{AppError, Result};
-use crate::ir::evidence::{EvidenceIr, StatementClass};
+use crate::ir::evidence::{
+    EvidenceIr, ExtractorTier, FactKind, FactProvenanceRecord, StatementClass,
+    actor_signal_relation_fact_key,
+};
 use crate::ir::source::{ActorSignalRelation, AutomationConfidence, RelationKind};
 
 /// Minimum word count for a prose statement to be a relation candidate.
@@ -244,6 +247,17 @@ pub fn run(args: SignalResolveArgs) -> Result<()> {
         match classify_relation_response(&raw, statement_id, &grounding) {
             RelationOutcome::Skipped => skipped += 1,
             RelationOutcome::Accepted(rel) => {
+                // PER-EXTRACTOR-FACT-TAGGING: tag this LLM (Nlp-tier) relation find
+                // here, pre-dedup, so an overlap with a Pattern relation is recorded
+                // (the index is deduped by the triple).
+                let prov = FactProvenanceRecord {
+                    producer: ExtractorTier::Nlp,
+                    fact_kind: FactKind::ActorSignalRelation,
+                    canonical_key: actor_signal_relation_fact_key(&rel),
+                };
+                if !ir.fact_provenance.contains(&prov) {
+                    ir.fact_provenance.push(prov);
+                }
                 if is_duplicate(&ir, &rel) || resolved.iter().any(|r| is_same_edge(r, &rel)) {
                     deduped += 1;
                 } else {
