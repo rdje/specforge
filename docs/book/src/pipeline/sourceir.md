@@ -148,3 +148,35 @@ registers disappear (eMMC dropped from 18 register tables to 2,
 register records 48 → 14) while genuine register/field tables are
 kept, with no change to clean specs. *Authoritative tracking:*
 `docs/tasks/REGISTER-MAP-CLASSIFIER-PRECISION.md`.
+
+### `REGISTER-CLASSIFIER-ENCODING-FP` — encoding cross-reference tables aren't registers
+
+**What it gives you:** field-*encoding* tables — which map bit
+*positions* to per-channel meanings — are now typed as `encoding`,
+their true kind, instead of leaking into your register inventory as
+phantom registers.
+
+**Why it mattered.** Continuing the corpus run onto the CHI
+architecture spec, the same completeness check that caught the
+eMMC bug flagged a register with self-contradictory bit fields —
+again the symptom of a misclassification. The culprit was CHI's DVM
+"field encodings" tables (e.g. *"Table B8.10: Security field
+encodings for each DVMType"*): their first column lists bare bit
+positions (`2:0`, `3`, `4`, …) and a header reads `X in
+REQ.Addr[x]`. That header carries the substring "addr" and the body
+carries a `2:0` bit range, so the table tripped the register gate —
+yet it is an encoding cross-reference, not a register. The result
+was 8 phantom registers named after bit ranges (`2:0`, `13:11`, …),
+four of them claiming the same bit.
+
+The fix recognizes an encoding table *before* the register gate, by
+two complementary signals: a caption that says "encoding(s)" (author
+intent — catches the captioned table) and the `X in …` cross-reference
+header idiom (catches caption-less continuation pages). Verified by
+re-classifying every table in the corpus (1,989 tables): the two CHI
+tables flip `register_map → encoding` (all 8 phantom registers gone),
+the 7 genuine register maps and all 210 signal tables are untouched,
+and 32 further tables whose captions literally name an encoding move
+from `unknown`/`feature_matrix`/`timing_parameter` to the correct
+`encoding` — a net precision gain with no regression. *Authoritative
+tracking:* `docs/tasks/REGISTER-CLASSIFIER-ENCODING-FP.md`.

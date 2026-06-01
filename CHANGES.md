@@ -2,6 +2,26 @@
 
 ## 2026-06-01
 
+### Register classifier — encoding cross-reference tables no longer mis-typed as registers (closed)
+- `REGISTER-CLASSIFIER-ENCODING-FP` (CLOSED): the register-tiling closure-invariant
+  detector flagged a CHI register with self-contradictory bit fields — the symptom
+  of a misclassification. Root cause: `classify_table_kind` mis-typed CHI's DVM
+  **field-encoding** cross-reference tables (`table_0170` "… Security field
+  encodings …" + its caption-less continuation `table_0171`) as register maps,
+  because the header `X in REQ.Addr[x]` carries the substring "addr" and the body
+  carries a `2:0` bit range. Result: 8 phantom registers named after bit ranges,
+  four claiming the same bit.
+- Fix: an **encoding cross-reference positive** in `classify_table_kind`, before the
+  register gate — caption contains `"encoding"` (author intent) OR a header matches
+  the `\bx in\b` cross-reference idiom → `encoding`. Validated by a corpus harness
+  over **1,989 stored tables across 18 specs**: the 2 CHI tables flip
+  `register_map → encoding` (8 phantom registers eliminated; register_map 9→7),
+  `signal_description` unchanged (210→210), and 32 further caption-declared encoding
+  tables move from `unknown`/`feature_matrix`/`timing_parameter` to the correct
+  `encoding` — a net precision gain with zero regression. Sibling of the closed
+  `REGISTER-MAP-CLASSIFIER-PRECISION`; same detector→diagnose→fix→corpus-verify loop.
+  Full CI green (1196 tests); book note in `pipeline/sourceir.md`.
+
 ### Recall gauge generalized to actor-signal relations (closed)
 - `COMPLETENESS-RECALL-RELATIONS` (CLOSED): the per-extractor provenance index and
   the capture–recapture recall gauge are now **generic over fact kind**, covering a

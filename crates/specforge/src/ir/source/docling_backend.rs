@@ -302,6 +302,21 @@ def classify_table_kind(header_rows, body_rows=None, caption_text=None):
         if encoding_hits >= 2:
             return "encoding"
 
+    # ── Encoding cross-reference (caption "encoding(s)" or "X in <field>[x]") ──
+    # Field-encoding cross-reference tables (e.g. CHI "Table B8.10: Security field
+    # encodings for each DVMType") map bit POSITIONS to per-channel fields.  Their
+    # first column holds bare positions ("2:0", "3", "4", …) — not SIGNAL[N] refs
+    # or literals — so the content scan above misses them; meanwhile a header like
+    # "X in REQ.Addr[x] DAT.Data[x]" carries the "addr" substring and a body
+    # bit-range, so they would otherwise be mis-read as register maps and emit
+    # phantom bit-range-named registers.  Intercept them as encoding here, before
+    # the register gate:  the caption ("… encodings …") catches captioned tables,
+    # the "X in" cross-reference idiom catches caption-less continuation pages.
+    caption_is_encoding = "encoding" in cap_lower and not caption_is_payload
+    header_is_xref = any(re.search(r"\bx in\b", h) for h in all_headers)
+    if caption_is_encoding or header_is_xref:
+        return "encoding"
+
     # ── Register map (header signal GATED by body-structure) ──────────────
     # A bare address/offset header is NOT sufficient: address-assignment tables,
     # data-frame layouts, tables of contents, feature matrices, and value-encoding

@@ -124,8 +124,12 @@ campaign proved the harness, ran the full AMBA core, demonstrated the VLM-in-the
 loop recall pass, and spawned/closed a real fix (`REGISTER-MAP-CLASSIFIER-PRECISION`).
 This tree remains the home for ongoing corpus hardening; future specs/families
 (or a re-run after a detector change) attach as new leaves. Discovered candidates
-for follow-up: the 1 CHI register overlap (review) and the 11 unexplained CHI
-tables (region-accounting candidates).
+for follow-up: ~~the 1 CHI register overlap (review)~~ **RESOLVED `2026-06-01`**
+via `REGISTER-CLASSIFIER-ENCODING-FP` — root-caused to the table classifier
+mis-typing CHI's DVM field-encoding cross-reference tables (`table_0170`/`0171`)
+as register maps; fixed at the classifier (8 phantom bit-range-named registers
+eliminated, register_map 9→7 corpus-wide, 0 regression). The 11 unexplained CHI
+tables (region-accounting candidates) remain open.
 
 ## Decisions
 
@@ -148,7 +152,7 @@ nlp_coverage / register_records (tiling overlaps+gaps) / convergence
 | arm AMBA APB IHI0024_E | 579 | 10% | 4 (0/0) | 2p · 19 · ✓ | 18 nlp residuals; un-enriched visuals; (clean — actor-signal graph populated, no conflicts) |
 | arm AMBA AHB IHI0033_C | 1339 | 13% | 21 (0/0) | 2p · 74 · ✓ | 72 nlp residuals; 1 semantic-role conflict; un-enriched visuals |
 | arm AMBA AXI IHI0022_L | 6991 | 12% | 11 (0/0) | 2p · 257 · ✓ | 554 nlp residuals; un-enriched visuals; (clean — no conflicts) |
-| arm AMBA CHI IHI0050_G | 11666 | 11% | 20 (**1 overlap**) | 2p · 591 · ✓ | **region accounting: 11 unexplained intent-bearing tables**; 1024 nlp residuals; completeness_candidate_misses=1036. The 1 register overlap is a candidate for review (real CHI register issue or a residual bit-range-bearing edge that survived the classifier fix) |
+| arm AMBA CHI IHI0050_G | 11666 | 11% | 20 (overlap root-caused + **fixed at classifier**) | 2p · 591 · ✓ | **region accounting: 11 unexplained intent-bearing tables**; 1024 nlp residuals; completeness_candidate_misses=1036. *The 1 register overlap was the symptom of 8 phantom registers from 2 DVM field-encoding tables (`table_0170`/`0171`) mis-typed as register maps; `REGISTER-CLASSIFIER-ENCODING-FP` (CLOSED `2026-06-01`) reclassifies them to `encoding`. Projected by the table-classifier harness: 20→12 registers, overlap 1→0. The current generated artifact still shows 20/1 (pre-fix); a clean re-ingest is pending Docling availability* |
 
 **VLM-in-the-loop recall gain (APB, `.3`):** running the production `enrich`
 (Qwen2.5VL via Ollama) on APB then rebuilding evidence recovered intent that was
