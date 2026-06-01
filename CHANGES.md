@@ -2,6 +2,17 @@
 
 ## 2026-06-01
 
+### COMPLETENESS-REPORT-SURFACE — one completeness headline over the detectors (closed)
+- Realized the framework §10 unifying headline: `validate` now prints a
+  `Completeness Summary` aggregating the located-miss signals into one
+  `candidate_misses` total (register overlaps + interior gaps + unexplained
+  intent-bearing tables + prose residuals) with the per-component breakdown +
+  anchored-rescan convergence status, plus an Info `evidence_completeness_summary`
+  finding and `completeness_candidate_misses` / `completeness_convergence` metrics.
+- Pure aggregation of already-computed detector outputs — behavior-neutral, never
+  a new false positive, never a perfection claim. A wiring test asserts the
+  aggregate equals the sum of its component metrics. CI green; book note.
+
 ### COMPLETENESS-REGION-ACCOUNTING — first region-accounting miss detector (closed)
 - Implemented the first slice of the foundational miss detector from the
   completeness research (`INTENT-COMPLETENESS-RESEARCH.3`): the input-side reframe
