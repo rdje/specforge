@@ -2,6 +2,23 @@
 
 ## 2026-06-01
 
+### COMPLETENESS-REGION-ACCOUNTING — first region-accounting miss detector (closed)
+- Implemented the first slice of the foundational miss detector from the
+  completeness research (`INTENT-COMPLETENESS-RESEARCH.3`): the input-side reframe
+  — every intent-bearing source region must produce a fact, so a recognized table
+  that yielded nothing is a candidate miss.
+- New pure `unexplained_intent_bearing_tables` in `ir/completeness.rs`: per
+  `SignalDescription`/`RegisterMap`/`TimingParameter` table, covered iff a record
+  links to its `table_id` (signal provenance direct; register/timing via the
+  `{table_id}_` marker embedded in their ids — trailing `_` prevents `table_0002`
+  matching `table_0020`); else an `UnexplainedTableResidual`.
+- Surfaced in `validate` (best-effort loads the upstream SourceIR for table kinds):
+  a `Region Accounting` section, a Warning `evidence_region_unexplained_tables`,
+  and the `region_unexplained_tables` metric. Flag-only — never mutates the IR.
+- 6 unit tests + 1 validate wiring test; full CI green (1188/0); book note in
+  `pipeline/evidenceir.md`. Prose/figure region accounting + the unified
+  `CompletenessReport` are future slices.
+
 ### REGISTER-MAP-CLASSIFIER-PRECISION — fix a systemic register-map over-classification (closed)
 - The full virtuous loop the corpus-hardening campaign was built for: a
   completeness detector surfaced a symptom (the I2C register tiling-overlap),
