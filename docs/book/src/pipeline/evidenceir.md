@@ -257,3 +257,25 @@ an overlap with a pattern find isn't silently dropped. `validate` shows the
 per-tier counts. This slice records the data (signal constraints first); the
 recall estimate that consumes it is a separate, designed follow-on. *Authoritative
 tracking:* `docs/tasks/PER-EXTRACTOR-FACT-TAGGING.md`.
+
+### `COMPLETENESS-RECALL-GAUGE` — an honest estimate of what's still missing
+
+**What it gives you:** a `Recall Estimate` line in `validate` that puts a number
+on the *unseen* — roughly how many signal-constraint facts the document states
+that **neither** extractor captured — instead of only listing the misses it can
+point to.
+
+It uses **capture–recapture**: if the pattern tier finds a set of facts and the
+NLP tier finds another, the size of their *overlap* tells you how much you're
+likely still missing (a lot of overlap ⇒ you've probably found most of it; little
+overlap ⇒ there's likely a large unseen remainder). With two extractors that is
+the Lincoln–Petersen estimator `N̂ = |a|·|b| / overlap`; remaining misses ≈ `N̂ −
+distinct-found`.
+
+It is deliberately honest: it computes **only** when both tiers have findings
+that actually overlap (so it never invents a "0 misses" out of no data — you'll
+see *"insufficient — run nlp-enrich"* instead), and it reports the remaining
+misses as a **lower bound** with its assumptions printed (the two tiers read the
+same prose, so they're partially correlated and the estimate is optimistic). A
+future third, independent extractor would let it move to the sharper Chao
+estimator. *Authoritative tracking:* `docs/tasks/COMPLETENESS-RECALL-GAUGE.md`.

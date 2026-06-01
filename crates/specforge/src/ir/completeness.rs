@@ -138,8 +138,11 @@ fn format_bit_range(low: u32, high: u32) -> String {
 
 // ── Region accounting (COMPLETENESS-REGION-ACCOUNTING) ─────────────────────────
 
-use crate::ir::evidence::TableSignalDeclarationProvenanceRecord;
+use crate::ir::evidence::{
+    ExtractorTier, FactKind, FactProvenanceRecord, TableSignalDeclarationProvenanceRecord,
+};
 use crate::ir::source::{StructuredTableRecord, TableKind, TimingConstraintRecord};
+use std::collections::HashSet;
 
 /// An intent-bearing table — one the classifier recognized as a register /
 /// signal / timing table — that produced **no** corresponding extracted record.
@@ -209,6 +212,69 @@ pub fn unexplained_intent_bearing_tables(
         }
     }
     residuals
+}
+
+// ── Recall estimate (COMPLETENESS-RECALL-GAUGE) ────────────────────────────────
+
+/// A capture–recapture recall estimate for one fact kind. `estimated_remaining_misses`
+/// is a LOWER BOUND (capture–recapture under-estimates content; the two tiers
+/// share prose input, so the estimate is optimistic).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct RecallEstimate {
+    /// Distinct facts found by the Pattern tier.
+    pub pattern: usize,
+    /// Distinct facts found by the Nlp tier.
+    pub nlp: usize,
+    /// Facts found by both tiers (the recapture overlap).
+    pub overlap: usize,
+    /// Distinct facts found by either tier (`|a ∪ b|`).
+    pub distinct: usize,
+    /// Lincoln–Petersen population estimate `N̂ = |a|·|b| / m`, rounded.
+    pub estimated_total: usize,
+    /// `max(0, N̂ − distinct)` — a lower bound on facts neither tier found.
+    pub estimated_remaining_misses: usize,
+    /// `distinct / N̂` as a percentage (an upper-ish bound, given the bias).
+    pub estimated_recall_pct: u32,
+}
+
+/// Capture–recapture (Lincoln–Petersen, 2-extractor) recall estimate for signal
+/// constraints, over the per-extractor fact-provenance index.
+///
+/// Returns `None` when fewer than two tiers tagged finds, or when there is no
+/// overlap (`m = 0`, where Lincoln–Petersen is undefined) — i.e. no honest
+/// estimate is possible. NEVER fabricates "0 misses" for the no-data case.
+pub fn signal_constraint_recall_estimate(
+    provenance: &[FactProvenanceRecord],
+) -> Option<RecallEstimate> {
+    let keys = |tier: ExtractorTier| -> HashSet<&str> {
+        provenance
+            .iter()
+            .filter(|p| p.producer == tier && p.fact_kind == FactKind::SignalConstraint)
+            .map(|p| p.canonical_key.as_str())
+            .collect()
+    };
+    let a = keys(ExtractorTier::Pattern);
+    let b = keys(ExtractorTier::Nlp);
+    if a.is_empty() || b.is_empty() {
+        return None; // need both independent tiers
+    }
+    let overlap = a.intersection(&b).count();
+    if overlap == 0 {
+        return None; // Lincoln–Petersen undefined with no recapture
+    }
+    let distinct = a.union(&b).count();
+    // Lincoln–Petersen N̂ = |a|·|b| / m; ≥ distinct by construction (guarded).
+    let n_hat = ((a.len() * b.len()) as f64 / overlap as f64).round() as usize;
+    let estimated_total = n_hat.max(distinct);
+    Some(RecallEstimate {
+        pattern: a.len(),
+        nlp: b.len(),
+        overlap,
+        distinct,
+        estimated_total,
+        estimated_remaining_misses: estimated_total.saturating_sub(distinct),
+        estimated_recall_pct: ((distinct as f64 / estimated_total as f64) * 100.0).round() as u32,
+    })
 }
 
 #[cfg(test)]
@@ -419,5 +485,59 @@ mod tests {
         ];
         let r = unexplained_intent_bearing_tables(&tables, &[], &[], &[]);
         assert!(r.is_empty());
+    }
+
+    // ── recall estimate ────────────────────────────────────────────────────
+
+    fn fact_prov(tier: ExtractorTier, key: &str) -> FactProvenanceRecord {
+        FactProvenanceRecord {
+            producer: tier,
+            fact_kind: FactKind::SignalConstraint,
+            canonical_key: key.to_string(),
+        }
+    }
+
+    #[test]
+    fn recall_estimate_lincoln_petersen_from_overlap() {
+        // Pattern {A,B,C,D}, Nlp {C,D,E,F}: overlap 2, distinct 6, N̂ = 4·4/2 = 8,
+        // remaining misses = 8-6 = 2, recall = 6/8 = 75%.
+        let prov_v = vec![
+            fact_prov(ExtractorTier::Pattern, "A"),
+            fact_prov(ExtractorTier::Pattern, "B"),
+            fact_prov(ExtractorTier::Pattern, "C"),
+            fact_prov(ExtractorTier::Pattern, "D"),
+            fact_prov(ExtractorTier::Nlp, "C"),
+            fact_prov(ExtractorTier::Nlp, "D"),
+            fact_prov(ExtractorTier::Nlp, "E"),
+            fact_prov(ExtractorTier::Nlp, "F"),
+        ];
+        let est = signal_constraint_recall_estimate(&prov_v).expect("estimate");
+        assert_eq!(est.pattern, 4);
+        assert_eq!(est.nlp, 4);
+        assert_eq!(est.overlap, 2);
+        assert_eq!(est.distinct, 6);
+        assert_eq!(est.estimated_total, 8);
+        assert_eq!(est.estimated_remaining_misses, 2);
+        assert_eq!(est.estimated_recall_pct, 75);
+    }
+
+    #[test]
+    fn recall_estimate_none_without_two_tiers() {
+        // Only Pattern → can't recapture.
+        let only_pattern = vec![
+            fact_prov(ExtractorTier::Pattern, "A"),
+            fact_prov(ExtractorTier::Pattern, "B"),
+        ];
+        assert!(signal_constraint_recall_estimate(&only_pattern).is_none());
+    }
+
+    #[test]
+    fn recall_estimate_none_without_overlap() {
+        // Both tiers but no shared fact → Lincoln–Petersen undefined.
+        let no_overlap = vec![
+            fact_prov(ExtractorTier::Pattern, "A"),
+            fact_prov(ExtractorTier::Nlp, "B"),
+        ];
+        assert!(signal_constraint_recall_estimate(&no_overlap).is_none());
     }
 }

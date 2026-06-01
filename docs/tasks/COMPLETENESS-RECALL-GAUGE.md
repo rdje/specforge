@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `COMPLETENESS-RECALL-GAUGE`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: `R15e` (KG-quality / completeness)
 - Created: `2026-06-01`
 - Owner: repo-local workflow
@@ -60,7 +60,7 @@ For `fact_kind = SignalConstraint`, from `EvidenceIr.fact_provenance`:
 ## Task Tree
 
 - ID: `COMPLETENESS-RECALL-GAUGE`
-  Status: `active`
+  Status: `done`
   Goal: Lincoln–Petersen recall estimate over the fact-provenance index + validate surface
   Children: `.1`, `.2`
 
@@ -75,22 +75,41 @@ For `fact_kind = SignalConstraint`, from `EvidenceIr.fact_provenance`:
   Commit: `see Commit Log`
 
 - ID: `COMPLETENESS-RECALL-GAUGE.2`
-  Status: `pending`
+  Status: `done`
   Goal: >
     Implement `signal_constraint_recall_estimate` + `RecallEstimate` in
     `ir/completeness.rs`; surface in `validate_evidence_ir` (line + metrics, with
     lower-bound/assumptions framing + the "insufficient" path); unit tests; book
     note; full CI; close.
   Acceptance: estimator + tests + validate surface (gated + honest); CI green; book; tree CLOSED.
-  Verification: pending
-  Commit: pending
+  Verification: >
+    passed (`2026-06-01`) — `signal_constraint_recall_estimate(&[FactProvenanceRecord])
+    -> Option<RecallEstimate>` in `ir/completeness.rs`: builds the Pattern/Nlp
+    canonical-key sets, returns `None` when <2 tiers tagged or overlap=0 (no
+    fabricated estimate), else Lincoln–Petersen `N̂ = |a|·|b|/m` →
+    `estimated_remaining_misses = N̂ − distinct` (lower bound) + recall%. Surfaced
+    in `validate` as a `Recall Estimate` section (value or "insufficient — run
+    nlp-enrich") + `recall_estimate_remaining_misses`/`recall_estimate_pct`
+    metrics, with the lower-bound + correlated-extractors assumptions printed.
+    Pure read over `fact_provenance` (extraction-neutral). 3 unit tests
+    (Lincoln–Petersen from overlap [4·4/2=8, misses=2, recall 75%]; None without
+    2 tiers; None without overlap). fmt/clippy clean; full `scripts/run_ci.sh`
+    GREEN; book note in `pipeline/evidenceir.md`. **The capture–recapture recall
+    gauge is live** — the research-to-impl recall-estimation arc is complete.
+  Commit: `see Commit Log`
 
 ## Current Frontier
 
-| Order | Leaf | Status | Why next |
+**Tree CLOSED `2026-06-01`** — the capture–recapture recall gauge (2-extractor
+Lincoln–Petersen over the fact-provenance index) is live in `validate`, gated +
+honest (lower bound, assumptions printed, "insufficient" when no overlap). The
+research→impl recall-estimation arc is complete. A future 3rd independent
+extractor upgrades it to Chao Mh.
+
+| Order | Leaf | Status | Why |
 | --- | --- | --- | --- |
 | 1 | `COMPLETENESS-RECALL-GAUGE.1` | `done` | owned + design |
-| 2 | `COMPLETENESS-RECALL-GAUGE.2` | `pending` | implement the estimator + validate + tests + book + close — next |
+| 2 | `COMPLETENESS-RECALL-GAUGE.2` | `done` | estimator + validate surface + 3 tests + book; CI green |
 
 ## Decisions
 
@@ -114,15 +133,21 @@ For `fact_kind = SignalConstraint`, from `EvidenceIr.fact_provenance`:
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-06-01` | `.1` | owned + designed the gated 2-extractor Lincoln–Petersen estimate over `fact_provenance`; registered; docs-only | `passed` |
+| `2026-06-01` | `.2` | `signal_constraint_recall_estimate` + `RecallEstimate` (Lincoln–Petersen, gated None on <2 tiers / no overlap); `validate` Recall Estimate section + 2 metrics + lower-bound/assumptions framing; 3 unit tests; extraction-neutral; fmt/clippy clean; full CI green; book note | `passed` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `COMPLETENESS-RECALL-GAUGE.1` | `COMPLETENESS-RECALL-GAUGE.1 — own + design the capture–recapture recall estimate` | docs-only |
+| `COMPLETENESS-RECALL-GAUGE.2` | `COMPLETENESS-RECALL-GAUGE.2 — Lincoln–Petersen recall estimate + validate surface; close` | code + book; recall-estimation arc complete |
 
 ## Changelog
 
+- `2026-06-01`: `.2` — implemented `signal_constraint_recall_estimate` (Lincoln–
+  Petersen over `fact_provenance`) + `validate` Recall Estimate surface (gated +
+  honest lower bound) + 3 tests + book note. **Tree CLOSED** — capture–recapture
+  recall gauge live; the research→impl recall-estimation arc is complete.
 - `2026-06-01`: Created — own the capture–recapture recall gauge (2-extractor
   Lincoln–Petersen over the fact-provenance index, honest lower bound). Frontier
   → `.2` (implement).

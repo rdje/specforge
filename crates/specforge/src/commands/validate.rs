@@ -2683,6 +2683,30 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
     println!("=== Fact Provenance (per-extractor; recall-gauge precondition) ===");
     println!("  signal_constraint finds — pattern: {fact_prov_pattern}, nlp: {fact_prov_nlp}");
 
+    // Capture–recapture recall estimate (signal constraints) over the
+    // per-extractor provenance — an honest LOWER bound on misses, or "insufficient".
+    let recall = crate::ir::completeness::signal_constraint_recall_estimate(&ir.fact_provenance);
+    println!();
+    println!("=== Recall Estimate (capture–recapture; signal constraints) ===");
+    match &recall {
+        Some(r) => {
+            println!(
+                "  pattern: {}, nlp: {}, overlap: {}, distinct: {}",
+                r.pattern, r.nlp, r.overlap, r.distinct
+            );
+            println!(
+                "  estimated_total: {} | remaining_misses: >= {} (lower bound) | recall: ~{}%",
+                r.estimated_total, r.estimated_remaining_misses, r.estimated_recall_pct
+            );
+            println!(
+                "  assumptions: Lincoln–Petersen (2 extractors); pattern+nlp share prose input (partially correlated → optimistic); misses are a LOWER bound"
+            );
+        }
+        None => println!(
+            "  (insufficient — needs both pattern and nlp finds with overlap; run `nlp-enrich`)"
+        ),
+    }
+
     let missing_vlm_observation_related_ids = evidence_missing_vlm_observation_related_ids(ir);
     let structural_kg_missing_related_ids = evidence_structural_kg_missing_related_ids(ir);
     let normative_residual_statement_ids = evidence_normative_residual_statement_ids(ir);
@@ -2979,6 +3003,20 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             metric("completeness_convergence", convergence_label.to_string()),
             metric("fact_provenance_pattern", fact_prov_pattern.to_string()),
             metric("fact_provenance_nlp", fact_prov_nlp.to_string()),
+            metric(
+                "recall_estimate_remaining_misses",
+                recall
+                    .as_ref()
+                    .map(|r| r.estimated_remaining_misses.to_string())
+                    .unwrap_or_else(|| "n/a".to_string()),
+            ),
+            metric(
+                "recall_estimate_pct",
+                recall
+                    .as_ref()
+                    .map(|r| r.estimated_recall_pct.to_string())
+                    .unwrap_or_else(|| "n/a".to_string()),
+            ),
             metric(
                 "table_signal_declaration_provenance",
                 ir.table_signal_declaration_provenance.len().to_string(),
