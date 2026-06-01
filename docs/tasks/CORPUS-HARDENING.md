@@ -111,6 +111,24 @@ driven-down misses on the specs that matter."
     production stack — honestly (fails-closed on the unstructurable residue).
   Commit: `see Commit Log`
 
+- ID: `CORPUS-HARDENING.4`
+  Status: `in_progress`
+  Goal: >
+    End-to-end re-validate this session's fixes on the real CHI spec, converting
+    the harness-projected numbers into actual corpus results. (1) restore the
+    Docling venv (`scripts/bootstrap_docling.sh` — `.venv-docling` was absent;
+    models + wheels already cached). (2) clean re-ingest CHI IHI0050_G (force a
+    fresh classify by removing the stale `source_ir`). (3) rebuild `evidence`.
+    (4) `validate` and confirm: `REGISTER-CLASSIFIER-ENCODING-FP` (register
+    overlap 1→0, registers 20→12, `table_0170/0171` now `encoding`) and
+    `SIGNAL-TABLE-COLUMNLESS-RECALL` (REQ/RSP/SNP/DAT channel signal tables now
+    produce records → unexplained tables drop). (5) reclaim the regenerated
+    normalized bundle (disk). Running existing commands; no code change.
+  Acceptance: CHI re-ingested + validated end-to-end; the two fixes' projected
+    effects confirmed on real data (or any divergence diagnosed); bundle reclaimed.
+  Verification: pending
+  Commit: pending
+
 ## Current Frontier
 
 | Order | Leaf | Status | Why |

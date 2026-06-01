@@ -437,6 +437,28 @@ def main():
     pipeline_options.generate_page_images = True
     pipeline_options.generate_picture_images = True
 
+    # Device selection. Docling defaults `accelerator_options.device` to `auto`,
+    # which resolves to Apple's MPS backend on Apple Silicon — but torch's MPS
+    # cannot perform the float64 ops Docling's layout/table models require, so
+    # every page fails ("Cannot convert a MPS Tensor to float64 dtype"). Avoid
+    # `auto`: honor an explicit DOCLING_DEVICE (cpu/cuda/mps); otherwise use CUDA
+    # when present, else CPU. CUDA hosts keep GPU acceleration; Apple Silicon falls
+    # back to correct-but-slower CPU; opt back into MPS via DOCLING_DEVICE=mps on a
+    # torch build that supports it. Defensive: any import/version drift keeps the
+    # prior default so ingest still runs.
+    try:
+        from docling.datamodel.accelerator_options import AcceleratorOptions
+        import torch
+
+        env_device = os.environ.get("DOCLING_DEVICE")
+        if env_device:
+            pipeline_options.accelerator_options = AcceleratorOptions(device=env_device)
+        else:
+            device = "cuda" if torch.cuda.is_available() else "cpu"
+            pipeline_options.accelerator_options = AcceleratorOptions(device=device)
+    except Exception as exc:  # noqa: BLE001 - keep ingest working on any drift
+        print(f"docling device selection fell back to default: {exc}", file=sys.stderr)
+
     converter = DocumentConverter(
         format_options={
             InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)

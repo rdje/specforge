@@ -180,3 +180,24 @@ and 32 further tables whose captions literally name an encoding move
 from `unknown`/`feature_matrix`/`timing_parameter` to the correct
 `encoding` — a net precision gain with no regression. *Authoritative
 tracking:* `docs/tasks/REGISTER-CLASSIFIER-ENCODING-FP.md`.
+
+### `DOCLING-DEVICE-CPU-DEFAULT` — ingest picks a working compute device
+
+**What it gives you:** PDF ingest works out of the box, including on Apple
+Silicon Macs, without per-command environment tweaks.
+
+**Why it mattered.** Docling runs its layout and table models on a compute
+device it chooses automatically. On Apple Silicon that auto-choice is the Metal
+(MPS) backend — but current PyTorch can't run the float64 math these models need
+on MPS, so *every page* of a conversion fails (`Cannot convert a MPS Tensor to
+float64 dtype`). The result is a total ingest failure on a perfectly good machine.
+
+The fix makes SpecForge's Docling helper choose the device deliberately instead of
+deferring to the broken auto-pick: it uses an explicit `DOCLING_DEVICE` if you set
+one, otherwise CUDA when a GPU is present, otherwise CPU — never the MPS auto-path.
+GPU machines keep their acceleration; Apple Silicon falls back to correct
+(if slower) CPU; and you can still force `DOCLING_DEVICE=mps` on a PyTorch build
+that supports it. A defensive fallback keeps ingest running even if a future
+Docling version reshapes these options. Verified end-to-end: a fresh ingest with
+no environment variables converts cleanly where it previously failed on page one.
+*Authoritative tracking:* `docs/tasks/DOCLING-DEVICE-CPU-DEFAULT.md`.
