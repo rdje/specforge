@@ -8116,6 +8116,95 @@ mod tests {
         Ok(())
     }
 
+    // Documents a CONFIRMED live recall gap (tracked: SIGNAL-TABLE-COLUMNLESS-RECALL).
+    // A two-column `Signal | Description` interface table — no Source/Width/Direction
+    // columns — like CHI "Table B13.2: REQ channel interface signals" synthesizes ZERO
+    // declarations today, because both `synthesize_signal_declarations` (evidence) and
+    // `parse_explicit_signal_declaration` (semantic) require direction OR width and
+    // `continue`/return None otherwise. The signals here are driven by transmitter /
+    // receiver — abstract-transport actors the pipeline deliberately excludes elsewhere
+    // — so the fix is a precision/recall design decision pending the owning tree.
+    // Un-ignoring this test is that tree's acceptance criterion.
+    #[ignore = "SIGNAL-TABLE-COLUMNLESS-RECALL: column-less signal-table capture is a pending design decision"]
+    #[test]
+    fn two_column_signal_description_table_synthesizes_declarations() -> Result<()> {
+        // A minimal two-column `Signal | Description` interface table — no Source/Width
+        // columns — like CHI "Table B13.2: REQ channel interface signals" should
+        // synthesize signal declarations. The bare-position rows with bracketed widths
+        // (e.g. "REQFLIT[(R-1):0]") are legitimately skipped, but the clean names
+        // (REQFLITPEND/REQFLITV/REQLCRDV) should be captured.
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+
+        fs::write(&source, "# REQ channel interface signals\n")?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_req_channel".to_string(),
+            asset_id: "asset_req_channel".to_string(),
+            page_id: None,
+            caption_text: Some("Table B13.2: REQ channel interface signals".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![
+                vec![
+                    make_table_cell("REQFLITPEND", false),
+                    make_table_cell(
+                        "Request Flit Pending. Early indication that a request flit could be transmitted in the following cycle.",
+                        false,
+                    ),
+                ],
+                vec![
+                    make_table_cell("REQFLITV", false),
+                    make_table_cell(
+                        "Request Flit Valid. The transmitter sets this signal HIGH to indicate when the request flit is valid.",
+                        false,
+                    ),
+                ],
+                vec![
+                    make_table_cell("REQFLIT[(R-1):0]", false),
+                    make_table_cell("Request Flit. See the request flit format.", false),
+                ],
+                vec![
+                    make_table_cell("REQLCRDV", false),
+                    make_table_cell(
+                        "Request L-Credit Valid. The receiver sets this signal HIGH to return a request channel L-Credit to a transmitter.",
+                        false,
+                    ),
+                ],
+            ],
+            row_count: 5,
+            col_count: 2,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+
+        let declared: Vec<&str> = evidence_ir
+            .table_signal_declaration_provenance
+            .iter()
+            .filter(|p| p.table_id == "table_req_channel")
+            .map(|p| p.signal_name.as_str())
+            .collect();
+        assert!(
+            declared.contains(&"REQFLITPEND"),
+            "clean two-column signal-table names must be declared; got {declared:?}"
+        );
+        assert!(declared.contains(&"REQFLITV"), "got {declared:?}");
+        assert!(declared.contains(&"REQLCRDV"), "got {declared:?}");
+
+        Ok(())
+    }
+
     #[test]
     fn source_table_relations_infer_unique_complementary_reads() -> Result<()> {
         use crate::ir::source::RelationKind;
