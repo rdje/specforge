@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `PER-EXTRACTOR-FACT-TAGGING`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: `R15e` (KG-quality / completeness)
 - Created: `2026-06-01`
 - Owner: repo-local workflow
@@ -63,7 +63,7 @@ real Pattern-vs-Nlp overlap the gauge can use.
 ## Task Tree
 
 - ID: `PER-EXTRACTOR-FACT-TAGGING`
-  Status: `active`
+  Status: `done`
   Goal: per-extractor fact-provenance index (SignalConstraint) — recall-gauge precondition
   Children: `.1`, `.2`
 
@@ -79,22 +79,44 @@ real Pattern-vs-Nlp overlap the gauge can use.
   Commit: `see Commit Log`
 
 - ID: `PER-EXTRACTOR-FACT-TAGGING.2`
-  Status: `pending`
+  Status: `done`
   Goal: >
     Implement `ExtractorTier`/`FactKind`/`FactProvenanceRecord` +
     `EvidenceIr.fact_provenance` + `signal_constraint_fact_key`; tag Pattern at
     build + Nlp at nlp-enrich (pre-dedup, overlap-recording, deduped index);
     `validate` visibility + metrics; unit/wiring tests; book note; full CI; close.
   Acceptance: index populated (Pattern + Nlp + overlap) + canonical-key match + validate surface; CI green; book; tree CLOSED.
-  Verification: pending
-  Commit: pending
+  Verification: >
+    passed (`2026-06-01`) — added `ExtractorTier {Pattern,Nlp,Vlm}` / `FactKind` /
+    `FactProvenanceRecord {producer, fact_kind, canonical_key}` +
+    `EvidenceIr.fact_provenance` (serde default) + `signal_constraint_fact_key`
+    (normalized subject+kind+target) in `ir/evidence.rs`. **Pattern** tagging at
+    `EvidenceIr::build` (every converge-produced signal constraint, computed before
+    the struct-literal move); **Nlp** tagging in `nlp_enrich.rs` at the pre-dedup
+    collection point (push-if-absent → overlaps with Pattern recorded, index
+    deduped by triple). `validate` prints a `Fact Provenance` section +
+    `fact_provenance_pattern`/`_nlp` metrics. Extraction-neutral (additive index
+    only — no `SignalConstraintRecord` field, so none of the 140 literal sites
+    changed). Tests: key normalization (same fact diff tier/case → same key;
+    diff signal → diff key); Pattern tagged at build (1:1 with constraints, all
+    Pattern, keys match); Nlp tagged at nlp-enrich (mock helper → HTRANS Nlp
+    entry). fmt/clippy clean; full `scripts/run_ci.sh` GREEN; book note in
+    `pipeline/evidenceir.md`. The capture–recapture recall gauge precondition is
+    met (per-extractor fact sets with overlap now recorded).
+  Commit: `see Commit Log`
 
 ## Current Frontier
 
-| Order | Leaf | Status | Why next |
+**Tree CLOSED `2026-06-01`** — the fact-provenance index records, per independent
+extractor (Pattern @ build, Nlp @ nlp-enrich, pre-dedup), the signal constraints
+each found under a shared canonical key — the capture–recapture recall-gauge
+precondition. The gauge itself is the next owned tree. Extending to
+`ActorSignalRelation` / `ConditionalRule` is a follow-on.
+
+| Order | Leaf | Status | Why |
 | --- | --- | --- | --- |
 | 1 | `PER-EXTRACTOR-FACT-TAGGING.1` | `done` | owned + design + producer sites verified |
-| 2 | `PER-EXTRACTOR-FACT-TAGGING.2` | `pending` | implement the index + tagging + validate + tests + book + close — next |
+| 2 | `PER-EXTRACTOR-FACT-TAGGING.2` | `done` | index + Pattern/Nlp tagging + validate + 3 tests + book; CI green |
 
 ## Decisions
 
@@ -120,15 +142,22 @@ real Pattern-vs-Nlp overlap the gauge can use.
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-06-01` | `.1` | producer sites verified (Pattern@build, Nlp@nlp_enrich:248 pre-dedup); index design chosen over 140-site field; registered; docs-only | `passed` |
+| `2026-06-01` | `.2` | `ExtractorTier`/`FactKind`/`FactProvenanceRecord` + `EvidenceIr.fact_provenance` + `signal_constraint_fact_key`; Pattern@build + Nlp@nlp-enrich (pre-dedup, deduped, overlap-capturing); `validate` Fact Provenance section + 2 metrics; 3 tests (key/Pattern/Nlp); extraction-neutral; fmt/clippy clean; full CI green; book note | `passed` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `PER-EXTRACTOR-FACT-TAGGING.1` | `PER-EXTRACTOR-FACT-TAGGING.1 — own + design the fact-provenance index` | docs-only |
+| `PER-EXTRACTOR-FACT-TAGGING.2` | `PER-EXTRACTOR-FACT-TAGGING.2 — fact-provenance index (Pattern/Nlp) + validate surface; close` | code + book; recall-gauge precondition met |
 
 ## Changelog
 
+- `2026-06-01`: `.2` — implemented the fact-provenance index (ExtractorTier/
+  FactKind/FactProvenanceRecord + `EvidenceIr.fact_provenance` + canonical key);
+  Pattern tagged at build, Nlp at nlp-enrich (pre-dedup, overlap-capturing);
+  `validate` surface; 3 tests; CI green; book note. **Tree CLOSED** — the
+  capture–recapture recall-gauge precondition is met.
 - `2026-06-01`: Created — own the per-extractor fact-tagging precondition for the
   capture–recapture recall gauge; provenance-index design over SignalConstraint
   (Pattern vs Nlp, overlap-capturing). Frontier → `.2` (implement).

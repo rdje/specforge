@@ -1,7 +1,10 @@
 use crate::cli::{NlpEnrichArgs, VlmProviderArg};
 use crate::commands::llm_text;
 use crate::error::{AppError, Result};
-use crate::ir::evidence::{EvidenceIr, EvidenceModality, ExtractedStatement, StatementClass};
+use crate::ir::evidence::{
+    EvidenceIr, EvidenceModality, ExtractedStatement, ExtractorTier, FactKind,
+    FactProvenanceRecord, StatementClass, signal_constraint_fact_key,
+};
 use crate::ir::source::{
     AutomationConfidence, ConditionalRuleRecord, SignalConstraintKind, SignalConstraintRecord,
 };
@@ -244,6 +247,17 @@ pub fn run(args: NlpEnrichArgs) -> Result<()> {
                                     record.subject_signal
                                 );
                                 entry.insert(record.subject_signal.clone());
+                            }
+                            // PER-EXTRACTOR-FACT-TAGGING: record this NLP-tier
+                            // find here (pre-dedup) so an overlap with a Pattern
+                            // find is captured; the index is deduped by triple.
+                            let prov = FactProvenanceRecord {
+                                producer: ExtractorTier::Nlp,
+                                fact_kind: FactKind::SignalConstraint,
+                                canonical_key: signal_constraint_fact_key(&record),
+                            };
+                            if !evidence_ir.fact_provenance.contains(&prov) {
+                                evidence_ir.fact_provenance.push(prov);
                             }
                             new_signal_constraints.push(record);
                         }
@@ -1314,6 +1328,18 @@ mod tests {
                     && r.automation_confidence == AutomationConfidence::Medium
                     && !r.supporting_statement_ids.is_empty()),
             "expected NLP Level 3 SignalConstraintRecord for HTRANS must_not_change"
+        );
+
+        // PER-EXTRACTOR-FACT-TAGGING: nlp-enrich must have tagged its HTRANS find
+        // as an Nlp-tier signal-constraint fact-provenance entry.
+        assert!(
+            enriched
+                .fact_provenance
+                .iter()
+                .any(|p| p.producer == ExtractorTier::Nlp
+                    && p.fact_kind == FactKind::SignalConstraint
+                    && p.canonical_key.starts_with("HTRANS|")),
+            "expected an Nlp-tier fact-provenance entry for the HTRANS constraint"
         );
 
         Ok(())

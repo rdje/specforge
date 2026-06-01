@@ -177,6 +177,13 @@ pub struct EvidenceIr {
     /// `None` only for artifacts built before this field existed.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub convergence_report: Option<EvidenceConvergenceReport>,
+    /// PER-EXTRACTOR-FACT-TAGGING: per-extractor fact observations (which tier
+    /// found each fact, under a canonical key) — the capture–recapture recall
+    /// gauge precondition. Pattern finds are tagged at `build`; Nlp finds at
+    /// `nlp-enrich` (pre-dedup, so overlaps are recorded). Empty for artifacts
+    /// built before this field existed.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub fact_provenance: Vec<FactProvenanceRecord>,
 }
 
 /// R15c: typed accounting for the EvidenceIR convergent anchored-rescan loop.
@@ -203,6 +210,59 @@ pub struct EvidenceConvergenceReport {
     /// `false` if it exhausted `max_passes` while still discovering facts
     /// (convergence not proven — the anchored rescan may be incomplete).
     pub converged: bool,
+}
+
+/// The independent extractor families a fact can come from. Recorded per fact so
+/// the capture–recapture recall gauge (`INTENT-COMPLETENESS-RESEARCH.5`) can
+/// estimate the unseen population from the overlap of what each found.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum ExtractorTier {
+    /// Tier-1/2 structural pattern extraction (prose patterns + table synthesis)
+    /// run during `EvidenceIR` build.
+    Pattern,
+    /// Tier-3 NLP via a local LLM (`nlp-enrich`).
+    Nlp,
+    /// Tier-3 visual via a VLM (`enrich`).
+    Vlm,
+}
+
+/// The kind of fact a [`FactProvenanceRecord`] refers to (extensible; the first
+/// tagged type is `SignalConstraint`, which two independent tiers both produce).
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum FactKind {
+    SignalConstraint,
+}
+
+/// One per-extractor fact observation: "extractor `producer` found a fact of
+/// `fact_kind` whose canonical identity is `canonical_key`." Recorded *before*
+/// merge/dedup so a fact found by two tiers appears once per tier (the overlap
+/// capture–recapture needs). The canonical key is normalized so the SAME fact
+/// found by different tiers yields the SAME key.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct FactProvenanceRecord {
+    pub producer: ExtractorTier,
+    pub fact_kind: FactKind,
+    pub canonical_key: String,
+}
+
+/// Canonical identity of a signal constraint for cross-extractor overlap
+/// detection: normalized subject signal + constraint kind + target value, so the
+/// same constraint extracted by the pattern tier and the NLP tier produces the
+/// same key regardless of id / source-text differences.
+pub fn signal_constraint_fact_key(constraint: &SignalConstraintRecord) -> String {
+    format!(
+        "{}|{:?}|{}",
+        constraint.subject_signal.trim().to_ascii_uppercase(),
+        constraint.constraint_kind,
+        constraint
+            .target_value
+            .as_deref()
+            .unwrap_or("")
+            .trim()
+            .to_ascii_uppercase(),
+    )
 }
 
 #[derive(Debug, Clone)]
@@ -563,6 +623,19 @@ impl EvidenceIr {
             prior_guidance.as_ref(),
         );
 
+        // PER-EXTRACTOR-FACT-TAGGING: tag every signal constraint produced by the
+        // structural pattern tier (the convergent build loop above) as `Pattern`,
+        // computed before the move into the struct literal. The Nlp tier tags its
+        // finds later, in `nlp-enrich`.
+        let fact_provenance: Vec<FactProvenanceRecord> = signal_constraints
+            .iter()
+            .map(|c| FactProvenanceRecord {
+                producer: ExtractorTier::Pattern,
+                fact_kind: FactKind::SignalConstraint,
+                canonical_key: signal_constraint_fact_key(c),
+            })
+            .collect();
+
         let mut evidence_ir = Self {
             schema_version: 1,
             stage: IrStage::EvidenceIr,
@@ -592,6 +665,7 @@ impl EvidenceIr {
             signal_alias_map: BTreeMap::new(),
             validation_reports: Vec::new(),
             convergence_report: Some(convergence_report),
+            fact_provenance,
         };
         evidence_ir.carry_forward_existing_knowledge()?;
         evidence_ir.refresh_signal_semantic_hints()?;
@@ -6861,14 +6935,14 @@ mod tests {
     };
 
     use super::{
-        EvidenceIr, EvidenceLinkKind, EvidenceModality, SignalSemanticHintSourceKind,
-        SignalSemanticTag, StatementClass, VisualObservationKind, canonicalize_existing_path,
-        contains_any, contains_reference_token, diagram_kind_key, is_abstract_transport_actor_term,
-        is_abstract_transport_signal_token, is_hardware_signal_token, is_image_line,
-        is_signal_name_char, is_signal_synthesis_non_signal, is_standalone_markdown_block,
-        is_tie_off_actor_text, looks_like_encoding_literal,
-        looks_like_structural_contents_entry_for_semantic_hint, numbered_list_prefix,
-        parse_encoding_numeric_literal,
+        EvidenceIr, EvidenceLinkKind, EvidenceModality, ExtractorTier, FactKind,
+        SignalSemanticHintSourceKind, SignalSemanticTag, StatementClass, VisualObservationKind,
+        canonicalize_existing_path, contains_any, contains_reference_token, diagram_kind_key,
+        is_abstract_transport_actor_term, is_abstract_transport_signal_token,
+        is_hardware_signal_token, is_image_line, is_signal_name_char,
+        is_signal_synthesis_non_signal, is_standalone_markdown_block, is_tie_off_actor_text,
+        looks_like_encoding_literal, looks_like_structural_contents_entry_for_semantic_hint,
+        numbered_list_prefix, parse_encoding_numeric_literal, signal_constraint_fact_key,
     };
 
     fn make_table_cell(text: &str, is_header: bool) -> StructuredTableCellRecord {
@@ -10943,5 +11017,70 @@ mod tests {
             report.total_new_facts,
             report.new_facts_per_pass.iter().sum::<usize>()
         );
+    }
+
+    #[test]
+    fn signal_constraint_fact_key_normalizes_for_overlap() {
+        use crate::ir::source::{
+            AutomationConfidence, SignalConstraintKind, SignalConstraintRecord,
+        };
+        let mk = |id: &str, sig: &str, src: &str| SignalConstraintRecord {
+            constraint_id: id.to_string(),
+            subject_signal: sig.to_string(),
+            constraint_kind: SignalConstraintKind::MustBeStable,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: src.to_string(),
+            supporting_statement_ids: vec![],
+            automation_confidence: AutomationConfidence::Medium,
+        };
+        // Same fact found by two extractors (different id/source/case) -> same key.
+        let pattern = mk("sigcon_0001", "haddr", "the address bus shall be stable");
+        let nlp = mk("nlp3_sigcon_0007", "HADDR", "HADDR must remain stable");
+        assert_eq!(
+            signal_constraint_fact_key(&pattern),
+            signal_constraint_fact_key(&nlp),
+            "the same constraint from different tiers must share a canonical key (overlap)"
+        );
+        // A different signal -> different key.
+        let other = mk("sigcon_0002", "HWDATA", "HWDATA stable");
+        assert_ne!(
+            signal_constraint_fact_key(&pattern),
+            signal_constraint_fact_key(&other)
+        );
+    }
+
+    #[test]
+    fn build_tags_pattern_fact_provenance_for_signal_constraints() {
+        let tempdir = tempfile::tempdir().unwrap();
+        let source = tempdir.path().join("prov.md");
+        std::fs::write(
+            &source,
+            "# Spec\nSignal HADDR is input width 32.\nHADDR must remain stable until HREADY is HIGH.\n",
+        )
+        .unwrap();
+        let sib = tempdir.path().join("src_ir");
+        let eib = tempdir.path().join("ev_ir");
+        let source_ir = SourceIr::build(&source, &sib).unwrap();
+        source_ir.write_to_disk().unwrap();
+        let ev = EvidenceIr::build(&source_ir.artifact_layout.source_ir_path, &eib).unwrap();
+
+        // Every build-time fact-provenance entry is a Pattern-tier SignalConstraint,
+        // and there is exactly one per produced signal constraint with a matching key.
+        assert_eq!(ev.fact_provenance.len(), ev.signal_constraints.len());
+        assert!(
+            ev.fact_provenance
+                .iter()
+                .all(|p| p.producer == ExtractorTier::Pattern
+                    && p.fact_kind == FactKind::SignalConstraint)
+        );
+        for c in &ev.signal_constraints {
+            let key = signal_constraint_fact_key(c);
+            assert!(
+                ev.fact_provenance.iter().any(|p| p.canonical_key == key),
+                "every pattern constraint must have a provenance entry"
+            );
+        }
     }
 }

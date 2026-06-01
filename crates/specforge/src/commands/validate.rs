@@ -2667,6 +2667,22 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
     println!("    prose_residuals (partial normative): {normative_count}");
     println!("  convergence: {convergence_label}");
 
+    // Per-extractor fact provenance (capture–recapture precondition): how many
+    // facts each independent tier recorded (with overlaps captured pre-dedup).
+    let fact_prov_pattern = ir
+        .fact_provenance
+        .iter()
+        .filter(|p| p.producer == crate::ir::evidence::ExtractorTier::Pattern)
+        .count();
+    let fact_prov_nlp = ir
+        .fact_provenance
+        .iter()
+        .filter(|p| p.producer == crate::ir::evidence::ExtractorTier::Nlp)
+        .count();
+    println!();
+    println!("=== Fact Provenance (per-extractor; recall-gauge precondition) ===");
+    println!("  signal_constraint finds — pattern: {fact_prov_pattern}, nlp: {fact_prov_nlp}");
+
     let missing_vlm_observation_related_ids = evidence_missing_vlm_observation_related_ids(ir);
     let structural_kg_missing_related_ids = evidence_structural_kg_missing_related_ids(ir);
     let normative_residual_statement_ids = evidence_normative_residual_statement_ids(ir);
@@ -2961,6 +2977,8 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
                 completeness_candidate_misses.to_string(),
             ),
             metric("completeness_convergence", convergence_label.to_string()),
+            metric("fact_provenance_pattern", fact_prov_pattern.to_string()),
+            metric("fact_provenance_nlp", fact_prov_nlp.to_string()),
             metric(
                 "table_signal_declaration_provenance",
                 ir.table_signal_declaration_provenance.len().to_string(),

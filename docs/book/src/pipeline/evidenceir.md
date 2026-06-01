@@ -237,3 +237,23 @@ over-eager register-map classifier (since fixed; see SourceIR), and across 84
 genuine registers it raised zero false positives. Overlaps surface as a Warning,
 interior gaps as Info (a gap is a *candidate* missed field, not a proven defect).
 *Authoritative tracking:* `docs/tasks/COMPLETENESS-CLOSURE-INVARIANTS.md`.
+
+### `PER-EXTRACTOR-FACT-TAGGING` — who found which fact (recall-gauge groundwork)
+
+This is plumbing for a future **calibrated recall estimate**. To estimate how
+much a document states that SpecForge *didn't* capture, you compare independent
+extractors: the fraction each finds alone vs. together lets you infer the unseen
+remainder (capture–recapture). That needs to know *which* extractor found each
+fact — but the pipeline normally merges (and de-duplicates) everything into one
+`EvidenceIR`, erasing that.
+
+So `EvidenceIR` now carries a `fact_provenance` index: each entry records that a
+tier (**Pattern** = the structural prose/table extractor at build, **Nlp** = the
+LLM in `nlp-enrich`) found a fact, under a **canonical key** that normalizes the
+fact (e.g. signal + constraint kind + value) so the *same* constraint found by
+two tiers maps to the *same* key — which is exactly the overlap the estimate
+needs. Crucially, the NLP tier's finds are recorded *before* de-duplication, so
+an overlap with a pattern find isn't silently dropped. `validate` shows the
+per-tier counts. This slice records the data (signal constraints first); the
+recall estimate that consumes it is a separate, designed follow-on. *Authoritative
+tracking:* `docs/tasks/PER-EXTRACTOR-FACT-TAGGING.md`.
