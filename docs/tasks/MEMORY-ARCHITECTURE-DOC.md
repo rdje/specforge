@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `MEMORY-ARCHITECTURE-DOC`
-- Status: `active`
+- Status: `done` (CLOSED)
 - Roadmap lane: `R0` (process / continuity infrastructure)
 - Created: `2026-06-01`
 - Owner: repo-local workflow
@@ -60,7 +60,7 @@ in-repo.
 ## Task Tree
 
 - ID: `MEMORY-ARCHITECTURE-DOC`
-  Status: `active`
+  Status: `done`
   Children: `.1`–`.5`
 
 - ID: `MEMORY-ARCHITECTURE-DOC.1`
@@ -127,10 +127,16 @@ in-repo.
     commit passes through the now-active pre-commit + commit-msg hooks.
 
 - ID: `MEMORY-ARCHITECTURE-DOC.5`
-  Status: `pending`
+  Status: `done`
   Goal: verify end-to-end — `check_memory_architecture.sh` green, full `run_ci.sh`
     green (incl. the new check), bootstrap/README/live-docs synced; close the tree.
   Acceptance: all green; tree CLOSED.
+  Verification: passed (`2026-06-01`) — full `scripts/run_ci.sh` GREEN with the
+    memory-architecture check as the FIRST step (6/6 invariants), then fmt + clippy
+    (-D) + 1198 tests + rustdoc (-D) + mdBook all green. Live docs synced (CHANGES,
+    LIVE, README doc-map, MEMORY.md resume pointer). Both deliverables complete: the
+    portable standard `MEMORY_ARCHITECTURE.md` (project-agnostic, copyable to other
+    repos) AND its in-repo implementation (layers A–D + enforcement E1–E4). Tree CLOSED.
 
 ## Current Frontier
 
@@ -139,8 +145,15 @@ in-repo.
 | 1 | `MEMORY-ARCHITECTURE-DOC.1` | `pending` | author the standard (w/ enforcement + agnostic kit) + README pointer |
 | 2 | `MEMORY-ARCHITECTURE-DOC.2` | `pending` | layer C: docs/decisions + seed migrated facts |
 | 3 | `MEMORY-ARCHITECTURE-DOC.3` | `pending` | demote MEMORY.md to the bounded resume pointer (before enforcement, so the cap passes) |
-| 4 | `MEMORY-ARCHITECTURE-DOC.4` | `pending` | install enforcement kit (check script + hooks + CI + bootstrap files) |
-| 5 | `MEMORY-ARCHITECTURE-DOC.5` | `pending` | verify all-green + close |
+| 4 | `MEMORY-ARCHITECTURE-DOC.4` | `done` | enforcement kit installed; gates proven to bite |
+| 5 | `MEMORY-ARCHITECTURE-DOC.5` | `done` | full CI green incl. memory-arch check; live docs synced |
+
+Tree **CLOSED** (`2026-06-01`): a portable, harness-agnostic durable-memory standard
+(`MEMORY_ARCHITECTURE.md`, copyable to other repos) + its full in-repo implementation —
+4 memory layers (resume pointer / task-trees / decision records / git) and 4
+enforcement gates (bootstrap pointers / self-check / git hooks / CI) that make
+non-compliance fail fast and un-mergeably. Other projects reproduce it via the §9.1
+agnostic kit.
 
 ## Decisions
 
@@ -161,6 +174,7 @@ in-repo.
 | `2026-06-01` | `.2` | layer C in-repo: `docs/decisions/INDEX.md` + 3 ADR records (docling-cpu, provider-default, doctrine-pointer) migrated from `~/.claude`/MEMORY.md; indexed + cross-linked | `passed` |
 | `2026-06-01` | `.3` | `MEMORY.md` demoted to the bounded resume pointer (1,395→25 lines, ≤60 cap); §6 template; prior content preserved in git ≤`6d668eb2` | `passed` |
 | `2026-06-01` | `.4` | enforcement kit installed (check script wired into `run_ci.sh`; `.githooks/` active via `core.hooksPath`; AGENTS/CLAUDE/.cursorrules/copilot pointers); self-check passes 6/6; gates proven to bite (bad subject rejected; over-cap MEMORY.md fails) | `passed` |
+| `2026-06-01` | `.5` | full `run_ci.sh` GREEN — memory-arch check first (6/6), then fmt/clippy(-D)/1198 tests/rustdoc(-D)/mdBook; live docs synced; tree CLOSED | `passed` |
 
 ## Commit Log
 
@@ -170,8 +184,13 @@ in-repo.
 | `MEMORY-ARCHITECTURE-DOC.2` | `MEMORY-ARCHITECTURE-DOC.2 — implement layer C: docs/decisions + seed migrated decision records` | docs/decisions/ + 3 ADRs |
 | `MEMORY-ARCHITECTURE-DOC.3` | `MEMORY-ARCHITECTURE-DOC.3 — demote MEMORY.md to the bounded resume pointer (1395→25 lines)` | layer A; history in git |
 | `MEMORY-ARCHITECTURE-DOC.4` | `MEMORY-ARCHITECTURE-DOC.4 — install agnostic enforcement kit (check script + githooks + CI + bootstrap pointers)` | E1–E4; gates proven to bite |
+| `MEMORY-ARCHITECTURE-DOC.5` | `MEMORY-ARCHITECTURE-DOC.5 — verify end-to-end (full CI green incl. memory-arch check) + sync live docs; close tree` | tree CLOSED |
 
 ## Changelog
 
 - `2026-06-01`: Created — author a portable harness-agnostic durable-memory standard
   (`MEMORY_ARCHITECTURE.md`).
+- `2026-06-01`: CLOSED — standard authored (incl. enforcement E1–E4 + agnostic kit)
+  AND implemented in-repo: `docs/decisions/` layer C (3 migrated records); `MEMORY.md`
+  demoted 1,395→25 lines; self-check + `.githooks/` + CI gate + bootstrap pointers;
+  gates proven to bite; full CI green.

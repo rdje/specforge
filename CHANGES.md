@@ -2,6 +2,25 @@
 
 ## 2026-06-01
 
+### Durable memory architecture — portable standard + in-repo implementation (MEMORY-ARCHITECTURE-DOC)
+- `MEMORY-ARCHITECTURE-DOC` (`.1`–`.4` done, `.5` closing): authored a portable,
+  harness-agnostic standard `MEMORY_ARCHITECTURE.md` (memory that survives session
+  loss, app/machine crash, and a switch of AI model OR harness — Claude Code / Codex /
+  Cursor / Aider / Copilot / custom) and implemented it in-repo.
+  - Standard (§§0–14): four durability properties; four memory layers by lifecycle
+    (A resume-pointer / B task-trees / C decision records / D git history); write &
+    read paths; §9 enforcement E1–E4 (ubiquitous bootstrap pointers · self-check
+    script · git hooks · CI gate) + §9.1 agnostic reproduce-anywhere kit; durability
+    matrix; templates.
+  - In-repo: `docs/decisions/` layer C with 3 migrated decision records (Docling CPU
+    device, LLM/VLM provider default, task-tree+commit doctrine); **`MEMORY.md`
+    demoted 1,395 → 25 lines** to the bounded resume pointer (history stays in git);
+    `scripts/check_memory_architecture.sh` wired as the first `run_ci.sh` step;
+    `.githooks/` (pre-commit self-check + commit-msg unit-id) via `core.hooksPath`;
+    tool-neutral bootstrap pointers `AGENTS.md` / `CLAUDE.md` / `.cursorrules` /
+    `.github/copilot-instructions.md`. Gates proven to bite (bad subject rejected;
+    over-cap MEMORY.md fails); the install commit passed through its own active hooks.
+
 ### LLM extraction eval — labeled precision/recall harness (design owned)
 - `LLM-EXTRACTION-EVAL.1` (active): owned + designed the missing measurement piece —
   a labeled precision/recall/F1 eval for the LLM extraction passes. Today `kg-bench`'s
