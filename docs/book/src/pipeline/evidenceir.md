@@ -300,3 +300,27 @@ per-kind provenance breakdown **and** a second recall line,
 The same honesty rules apply per kind: each estimate computes only when both tiers
 have overlapping finds for *that* kind, and the two kinds never cross-contaminate.
 *Authoritative tracking:* `docs/tasks/COMPLETENESS-RECALL-RELATIONS.md`.
+
+### `SIGNAL-TABLE-COLUMNLESS-RECALL` — capture signals from column-less signal tables
+
+**What it gives you:** interface signals listed in a bare two-column
+`Signal | Description` table — with no Width and no Direction/Source column — are
+now captured instead of silently dropped.
+
+**Why it mattered.** Running SpecForge across the CHI spec, the region-accounting
+detector flagged the REQ/RSP/SNP/DAT *channel interface signal* tables
+(`REQFLITPEND`, `REQFLITV`, `REQLCRDV`, …) as producing **zero** records. The
+cause: to synthesize a signal declaration the evidence stage required a *direction*
+or a *width*, and these tables state neither in a column — so every row was skipped.
+That dropped core interface signals on the floor.
+
+The fix reads the **driver from the description prose**, exactly as a human does:
+"Request Flit Valid. *The transmitter sets this signal HIGH* …" → the transmitter
+drives it → `output`; "*The receiver sets this signal HIGH* …" → `input`. Direction
+is framed relative to the channel transmitter (the subject of a "<X> channel
+interface signals" table). Crucially, this *adds* a direction where one is provable
+from the text — it does **not** relax the contract that a declaration needs a
+direction or width, and it does **not** fabricate one: a signal whose driver is not
+stated in prose (e.g. `REQFLITPEND`) is left as an **honest residual** rather than
+guessed. So recall improves with no precision cost. *Authoritative tracking:*
+`docs/tasks/SIGNAL-TABLE-COLUMNLESS-RECALL.md`.

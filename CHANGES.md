@@ -2,6 +2,26 @@
 
 ## 2026-06-01
 
+### Recall — capture signals from column-less Signal|Description tables (closed)
+- `SIGNAL-TABLE-COLUMNLESS-RECALL` (CLOSED): diagnosing CHI's "11 unexplained
+  intent-bearing tables" (region-accounting finding) surfaced a confirmed **live
+  recall bug** — bare two-column `Signal | Description` interface tables (CHI's
+  REQ/RSP/SNP/DAT channels: `REQFLITPEND`/`REQFLITV`/`REQLCRDV`) produced **0
+  declarations**, because both `synthesize_signal_declarations` (evidence) and
+  `parse_explicit_signal_declaration` (semantic) required a direction or a width and
+  these tables state neither in a column. Reproduced by a (then-`#[ignore]`d)
+  failing test.
+- Fix (user-chosen **approach A — prose-direction inference**): a new
+  `infer_signal_direction_from_description_prose` reads the driver from the
+  description, as a human does — "the transmitter sets this signal HIGH …" → `output`,
+  "the receiver sets this signal HIGH …" → `input` (matched on the SUBJECT verb so an
+  object mention of the other actor doesn't flip it). Wired into
+  `synthesize_signal_declarations`. This **adds** a provable direction without
+  relaxing the direction-OR-width contract and **without fabricating** one — a signal
+  whose driver isn't stated (`REQFLITPEND`) stays an honest residual. No
+  semantic-stage change needed. 2 new tests (reproduction un-ignored + helper); CI
+  green (1198 tests); book note in `pipeline/evidenceir.md`.
+
 ### Register classifier — encoding cross-reference tables no longer mis-typed as registers (closed)
 - `REGISTER-CLASSIFIER-ENCODING-FP` (CLOSED): the register-tiling closure-invariant
   detector flagged a CHI register with self-contradictory bit fields — the symptom

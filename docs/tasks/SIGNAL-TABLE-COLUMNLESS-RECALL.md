@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `SIGNAL-TABLE-COLUMNLESS-RECALL`
-- Status: `active` (`.1` done — confirmed diagnosis; `.2` BLOCKED on a design decision)
+- Status: `done` (CLOSED — user chose approach A; implemented + verified)
 - Roadmap lane: `R12`/`R15e` (ingest/extraction recall / completeness)
 - Created: `2026-06-01`
 - Owner: repo-local workflow
@@ -84,7 +84,7 @@ bundles reclaimed). Hence a user design decision is required before implementing
 ## Task Tree
 
 - ID: `SIGNAL-TABLE-COLUMNLESS-RECALL`
-  Status: `active`
+  Status: `done`
   Children: `.1`, `.2`
 
 - ID: `SIGNAL-TABLE-COLUMNLESS-RECALL.1`
@@ -102,21 +102,40 @@ bundles reclaimed). Hence a user design decision is required before implementing
   Commit: `see Commit Log`
 
 - ID: `SIGNAL-TABLE-COLUMNLESS-RECALL.2`
-  Status: `blocked` (awaiting design decision: approach A / B / C)
+  Status: `done`
   Goal: implement the chosen approach; un-ignore the reproduction test; add unit
     tests; (corpus-validate if feasible); CI; book note; close.
   Acceptance: chosen approach implemented; reproduction test un-ignored + passing
     (or, for C, the residual documented and the test removed/kept as a known-by-
     design marker); CI green; book; tree CLOSED.
-  Verification: pending
-  Commit: pending
+  Verification: >
+    passed (`2026-06-01`) — user chose **approach A (prose-direction inference)**.
+    Added `infer_signal_direction_from_description_prose` (transmitter/source-driven
+    → output; receiver/destination-driven → input; none-or-both → None honest
+    residual; matches the SUBJECT verb "<actor> sets/drives/asserts this signal" so
+    an object mention of the other actor doesn't flip it). Wired into
+    `synthesize_signal_declarations` as a `.or_else()` before `default_dir`, reading
+    the longest non-name (description) cell. This ADDS a provable direction without
+    relaxing the direction-OR-width contract and without fabrication, so no semantic-
+    stage change was needed (the emitted "Signal X is output." already parses).
+    Un-ignored the reproduction test (REQFLITV→output captured, REQLCRDV→input
+    captured, REQFLITPEND honest residual, REQFLIT[(R-1):0] not a token) + a focused
+    helper unit test. fmt + clippy clean; full CI green. Book note in
+    `pipeline/evidenceir.md`. Class B unexplained CHI signal tables now produce ≥1
+    record each (clearing the region-accounting flag for them on re-ingest).
+  Commit: `see Commit Log`
 
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `SIGNAL-TABLE-COLUMNLESS-RECALL.1` | `done` | owned + confirmed-live diagnosis + design fork surfaced |
-| 2 | `SIGNAL-TABLE-COLUMNLESS-RECALL.2` | `blocked` | needs the user's precision/recall design decision (A/B/C) |
+| 2 | `SIGNAL-TABLE-COLUMNLESS-RECALL.2` | `done` | user chose A; prose-direction inference implemented + verified; CI green |
+
+Tree **CLOSED** (`2026-06-01`): the region-accounting detector found a real recall
+miss; the user chose approach A; prose-direction inference now captures the
+column-less signal-table signals whose driver is stated, leaving direction-less
+ones as honest residuals. Detector→diagnose→user-decision→owned-fix→verify.
 
 ## Decisions
 
@@ -125,31 +144,46 @@ bundles reclaimed). Hence a user design decision is required before implementing
 - `2026-06-01`: do NOT auto-implement — the fix reverses a deliberate
   abstract-transport precision philosophy and cannot be corpus-validated now;
   surface the fork for a user decision.
+- `2026-06-01`: **user chose approach A (prose-direction inference).** It captures
+  the high-value signals whose driver is stated in prose, makes NO contract change
+  (still requires a direction/width — just sourced from the description), fabricates
+  nothing (direction-less signals stay honest residuals), and is unit-testable
+  without a re-ingest. Approaches B (bare-existence) and C (deliberate residual)
+  were declined.
 
 ## Open Questions
 
-- Which approach (A / B / C)? Materially changes the pipeline's precision/recall
-  contract for column-less signal tables across every spec.
+- RESOLVED — the approach question (A/B/C) was answered by the user: **A**.
+- `REQFLITPEND`-style driver-less signals remain an honest residual under A. A
+  future tree could recover them (e.g. width-1 inference for single-bit
+  valid/pending/credit signals), but only with corpus-validated gating.
 
 ## Blockers
 
-- `.2`: design decision (A/B/C). Full corpus re-validation also blocked on Docling
-  availability (`.venv-docling` absent; corpus tree moved).
+- None (decision made; implemented). Note: a *full corpus re-validation* of the
+  end-to-end effect still awaits Docling availability (`.venv-docling` absent;
+  corpus tree moved) — the fix is unit-validated against the exact table shape.
 
 ## Verification Log
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-06-01` | `.1` | diagnosed 11 unexplained CHI tables (Class A/B); confirmed live recall gap via `#[ignore]`d failing reproduction; root-caused dual direction-OR-width gate; documented design fork; CI green (test ignored) | `passed` |
+| `2026-06-01` | `.2` | approach A implemented (`infer_signal_direction_from_description_prose` + wired into `synthesize_signal_declarations`); reproduction test un-ignored + passing; helper unit test; no contract/semantic-stage change; fmt/clippy clean; full CI green (1198 tests, 0 ignored) | `passed` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `SIGNAL-TABLE-COLUMNLESS-RECALL.1` | `SIGNAL-TABLE-COLUMNLESS-RECALL.1 — own + confirm live column-less signal-table recall gap (CHI channels); surface design fork` | docs + ignored reproduction test |
+| `SIGNAL-TABLE-COLUMNLESS-RECALL.2` | `SIGNAL-TABLE-COLUMNLESS-RECALL.2 — prose-direction inference for column-less signal tables (approach A); close tree` | impl + tests + book + close |
 
 ## Changelog
 
 - `2026-06-01`: Created — diagnosed CHI's unexplained signal tables to a confirmed
   live recall gap (column-less `Signal|Description` tables yield 0 declarations);
   `.2` blocked on a precision/recall design decision.
+- `2026-06-01`: CLOSED — user chose approach A; prose-direction inference
+  implemented (transmitter→output, receiver→input; driver-less = honest residual),
+  reproduction test un-ignored + passing, helper unit test, book note; CI green
+  (1198 tests). No contract change; nothing fabricated.

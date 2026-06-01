@@ -129,7 +129,12 @@ via `REGISTER-CLASSIFIER-ENCODING-FP` — root-caused to the table classifier
 mis-typing CHI's DVM field-encoding cross-reference tables (`table_0170`/`0171`)
 as register maps; fixed at the classifier (8 phantom bit-range-named registers
 eliminated, register_map 9→7 corpus-wide, 0 regression). The 11 unexplained CHI
-tables (region-accounting candidates) remain open.
+tables (region-accounting candidates) were diagnosed into two classes: **Class B**
+(the REQ/RSP/SNP/DAT channel `Signal|Description` tables) is **RESOLVED**
+`2026-06-01` via `SIGNAL-TABLE-COLUMNLESS-RECALL` (prose-direction inference now
+captures column-less signal tables); **Class A** (4 protocol requirement/transition
+matrices mis-typed `timing_parameter` with empty `body_rows` — Docling marked every
+row a header) remains an open follow-up candidate.
 
 ## Decisions
 

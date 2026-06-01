@@ -5463,6 +5463,43 @@ fn infer_signal_direction_from_actor_text(
         .map(|role| direction_for_actor_taxonomy_role(role, column_kind))
 }
 
+/// Infer interface direction from a signal-description cell's prose, for tables that
+/// carry NO direction / source / width column (e.g. CHI's two-column
+/// `Signal | Description` channel tables).
+///
+/// AMBA/CHI channel descriptions name the *driver* of the signal in prose:
+///   - "Request Flit Valid. The transmitter sets this signal HIGH …" → transmitter-driven
+///   - "Request L-Credit Valid. The receiver sets this signal HIGH …" → receiver-driven
+///
+/// Framed relative to the channel transmitter (the subject of a "<X> channel interface
+/// signals" table): a transmitter-driven signal is an `output`; a receiver-driven
+/// signal is an `input`. Returns `None` when no driver is stated, or when both are
+/// (ambiguous) — an honest residual rather than a fabricated direction.
+fn infer_signal_direction_from_description_prose(description: &str) -> Option<&'static str> {
+    let lowered = description.to_ascii_lowercase();
+    let driver_stated = |actor: &str| -> bool {
+        [
+            "sets this signal",
+            "drives this signal",
+            "asserts this signal",
+            "generates this signal",
+        ]
+        .iter()
+        .any(|verb| lowered.contains(&format!("{actor} {verb}")))
+            || lowered.contains(&format!("driven by the {actor}"))
+            || lowered.contains(&format!("asserted by the {actor}"))
+            || lowered.contains(&format!("set by the {actor}"))
+    };
+    let transmitter_driven = driver_stated("transmitter") || driver_stated("source");
+    let receiver_driven = driver_stated("receiver") || driver_stated("destination");
+    match (transmitter_driven, receiver_driven) {
+        (true, false) => Some("output"),
+        (false, true) => Some("input"),
+        // No driver stated, or both stated (ambiguous): leave as an honest residual.
+        _ => None,
+    }
+}
+
 fn infer_signal_direction_from_section(
     kind: SectionKind,
     title: &str,
@@ -6262,6 +6299,18 @@ fn synthesize_signal_declarations(
                         prior_guidance,
                     )
                 })
+            })
+            .or_else(|| {
+                // No direction/source/dest column (e.g. CHI's two-column
+                // `Signal | Description` channel tables): the driver is named in the
+                // Description prose. Pick the longest non-name cell (the description)
+                // and infer direction from "the transmitter/receiver sets this signal".
+                row.iter()
+                    .enumerate()
+                    .filter(|(col, _)| *col != name_col)
+                    .map(|(_, cell)| cell.text.as_str())
+                    .max_by_key(|text| text.len())
+                    .and_then(infer_signal_direction_from_description_prose)
             })
             .or(default_dir);
 
@@ -8116,23 +8165,18 @@ mod tests {
         Ok(())
     }
 
-    // Documents a CONFIRMED live recall gap (tracked: SIGNAL-TABLE-COLUMNLESS-RECALL).
-    // A two-column `Signal | Description` interface table — no Source/Width/Direction
-    // columns — like CHI "Table B13.2: REQ channel interface signals" synthesizes ZERO
-    // declarations today, because both `synthesize_signal_declarations` (evidence) and
-    // `parse_explicit_signal_declaration` (semantic) require direction OR width and
-    // `continue`/return None otherwise. The signals here are driven by transmitter /
-    // receiver — abstract-transport actors the pipeline deliberately excludes elsewhere
-    // — so the fix is a precision/recall design decision pending the owning tree.
-    // Un-ignoring this test is that tree's acceptance criterion.
-    #[ignore = "SIGNAL-TABLE-COLUMNLESS-RECALL: column-less signal-table capture is a pending design decision"]
     #[test]
     fn two_column_signal_description_table_synthesizes_declarations() -> Result<()> {
-        // A minimal two-column `Signal | Description` interface table — no Source/Width
-        // columns — like CHI "Table B13.2: REQ channel interface signals" should
-        // synthesize signal declarations. The bare-position rows with bracketed widths
-        // (e.g. "REQFLIT[(R-1):0]") are legitimately skipped, but the clean names
-        // (REQFLITPEND/REQFLITV/REQLCRDV) should be captured.
+        // SIGNAL-TABLE-COLUMNLESS-RECALL (approach A: prose-direction inference).
+        // A two-column `Signal | Description` interface table — no Source/Width/Direction
+        // columns — like CHI "Table B13.2: REQ channel interface signals" must capture
+        // the signals whose driver is stated in the description prose:
+        //   - REQFLITV  "The transmitter sets this signal HIGH …" → output (captured)
+        //   - REQLCRDV  "The receiver sets this signal HIGH …"    → input  (captured)
+        //   - REQFLITPEND (no driver verb)                        → honest residual
+        //   - REQFLIT[(R-1):0] (bracket chars)                    → not a signal token
+        // Before the fix this table synthesized ZERO declarations (direction-OR-width
+        // gate); the bug was confirmed live by this test failing with `got []`.
         let tempdir = tempdir()?;
         let source = tempdir.path().join("spec.md");
         let source_artifact_base = tempdir.path().join("generated").join("source_ir");
@@ -8195,12 +8239,37 @@ mod tests {
             .filter(|p| p.table_id == "table_req_channel")
             .map(|p| p.signal_name.as_str())
             .collect();
+        // Driver stated in prose → captured (was 0 before the fix).
         assert!(
-            declared.contains(&"REQFLITPEND"),
-            "clean two-column signal-table names must be declared; got {declared:?}"
+            declared.contains(&"REQFLITV"),
+            "transmitter-driven signal must be declared (output); got {declared:?}"
         );
-        assert!(declared.contains(&"REQFLITV"), "got {declared:?}");
-        assert!(declared.contains(&"REQLCRDV"), "got {declared:?}");
+        assert!(
+            declared.contains(&"REQLCRDV"),
+            "receiver-driven signal must be declared (input); got {declared:?}"
+        );
+        // No driver verb → honest residual, not a fabricated direction.
+        assert!(
+            !declared.contains(&"REQFLITPEND"),
+            "direction-less signal must stay an honest residual; got {declared:?}"
+        );
+
+        // The inferred directions must match the prose: transmitter → output,
+        // receiver → input.
+        assert!(
+            evidence_ir
+                .extracted_statements
+                .iter()
+                .any(|s| s.text == "Signal REQFLITV is output."),
+            "transmitter-driven REQFLITV must be output"
+        );
+        assert!(
+            evidence_ir
+                .extracted_statements
+                .iter()
+                .any(|s| s.text == "Signal REQLCRDV is input."),
+            "receiver-driven REQLCRDV must be input"
+        );
 
         Ok(())
     }
@@ -10995,6 +11064,43 @@ mod tests {
     #[test]
     fn numbered_list_prefix_rejects_empty() {
         assert!(!numbered_list_prefix(""));
+    }
+
+    // --- infer_signal_direction_from_description_prose ---
+
+    #[test]
+    fn description_prose_direction_maps_transmitter_to_output_receiver_to_input() {
+        use super::infer_signal_direction_from_description_prose as infer;
+        assert_eq!(
+            infer(
+                "Request Flit Valid. The transmitter sets this signal HIGH to indicate validity."
+            ),
+            Some("output"),
+            "transmitter-driven → output"
+        );
+        assert_eq!(
+            infer(
+                "Request L-Credit Valid. The receiver sets this signal HIGH to return a credit to a transmitter."
+            ),
+            Some("input"),
+            "receiver-driven → input (note: object mention of 'transmitter' must not flip it)"
+        );
+        // No driver verb stated → honest residual.
+        assert_eq!(
+            infer(
+                "Request Flit Pending. Early indication that a request flit could be transmitted."
+            ),
+            None
+        );
+        // "driven by the <actor>" / "set by the <actor>" phrasings also resolve.
+        assert_eq!(
+            infer("This signal is driven by the receiver."),
+            Some("input")
+        );
+        assert_eq!(
+            infer("This signal is set by the transmitter."),
+            Some("output")
+        );
     }
 
     // --- looks_like_encoding_literal ---
