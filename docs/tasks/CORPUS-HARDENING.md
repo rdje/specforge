@@ -71,15 +71,18 @@ driven-down misses on the specs that matter."
     directions, handshakes) against the R12 baselines; rank discovered misses.
   Acceptance: 4 core specs run + recorded; misses ranked into candidate fix-trees.
   Verification: >
-    in progress (`2026-05-31`) — 3 of 4 AMBA core specs run end-to-end
-    (ingest→evidence→validate): **APB** IHI0024_E (579 stmts, 4 regs, conv 19✓),
-    **AHB** IHI0033_C (1339, 21 regs, conv 74✓), **AXI** IHI0022_L (6991, 11 regs,
-    conv 257✓). Register tiling clean on all (84 clean registers corpus-wide, 0
-    false positives); convergence informative on all; the recurring real miss is
-    uniformly **partially-structured normative prose (18/72/554 residuals) +
-    un-enriched visual evidence**. CHI IHI0050_G remains (large coherency
-    protocol). Misses ranked below; the dominant lever is region-accounting +
-    cross-modal + a VLM-in-the-loop pass.
+    passed (`2026-06-01`) — all 4 AMBA core specs run end-to-end
+    (ingest→evidence→validate): **APB** IHI0024_E (579 stmts, conv 19✓),
+    **AHB** IHI0033_C (1339, conv 74✓), **AXI** IHI0022_L (6991, conv 257✓),
+    **CHI** IHI0050_G (11666 stmts, 20 regs, conv 591✓). After the classifier fix
+    register tiling is clean except 1 candidate CHI overlap (review); the 4 live
+    completeness surfaces (convergence / register-tiling / region-accounting /
+    completeness-summary) all fire and surface real, located misses — uniformly
+    **partially-structured normative prose** (18/72/554/1024 residuals) +
+    **un-enriched visual evidence** + region accounting's **11 unexplained CHI
+    tables**. Misses ranked: the dominant lever (un-enriched visuals + prose
+    residuals) is closable with the production VLM/NLP pass (`.3`, demonstrated);
+    the register classifier FP was fixed (`REGISTER-MAP-CLASSIFIER-PRECISION`).
   Commit: `see Commit Log`
 
 - ID: `CORPUS-HARDENING.3`
@@ -113,8 +116,16 @@ driven-down misses on the specs that matter."
 | Order | Leaf | Status | Why |
 | --- | --- | --- | --- |
 | 1 | `CORPUS-HARDENING.1` | `done` | harness proven on I2C + eMMC; campaign owned |
-| 2 | `CORPUS-HARDENING.2` | `in_progress` | AMBA core: APB/AHB/AXI run + recorded; CHI remains |
+| 2 | `CORPUS-HARDENING.2` | `done` | all 4 AMBA core (APB/AHB/AXI/CHI) run + recorded; 4 completeness surfaces validated on real data; classifier FP fixed |
 | 3 | `CORPUS-HARDENING.3` | `done` | VLM+NLP-in-the-loop recall pass on APB — recovered 6 timing + 1 state + 5 constraints + 16 decls (dominant gap closed, honestly) |
+
+**Standing harness — current scope (`.1`–`.3`) COMPLETE `2026-06-01`.** The
+campaign proved the harness, ran the full AMBA core, demonstrated the VLM-in-the-
+loop recall pass, and spawned/closed a real fix (`REGISTER-MAP-CLASSIFIER-PRECISION`).
+This tree remains the home for ongoing corpus hardening; future specs/families
+(or a re-run after a detector change) attach as new leaves. Discovered candidates
+for follow-up: the 1 CHI register overlap (review) and the 11 unexplained CHI
+tables (region-accounting candidates).
 
 ## Decisions
 
@@ -137,6 +148,7 @@ nlp_coverage / register_records (tiling overlaps+gaps) / convergence
 | arm AMBA APB IHI0024_E | 579 | 10% | 4 (0/0) | 2p · 19 · ✓ | 18 nlp residuals; un-enriched visuals; (clean — actor-signal graph populated, no conflicts) |
 | arm AMBA AHB IHI0033_C | 1339 | 13% | 21 (0/0) | 2p · 74 · ✓ | 72 nlp residuals; 1 semantic-role conflict; un-enriched visuals |
 | arm AMBA AXI IHI0022_L | 6991 | 12% | 11 (0/0) | 2p · 257 · ✓ | 554 nlp residuals; un-enriched visuals; (clean — no conflicts) |
+| arm AMBA CHI IHI0050_G | 11666 | 11% | 20 (**1 overlap**) | 2p · 591 · ✓ | **region accounting: 11 unexplained intent-bearing tables**; 1024 nlp residuals; completeness_candidate_misses=1036. The 1 register overlap is a candidate for review (real CHI register issue or a residual bit-range-bearing edge that survived the classifier fix) |
 
 **VLM-in-the-loop recall gain (APB, `.3`):** running the production `enrich`
 (Qwen2.5VL via Ollama) on APB then rebuilding evidence recovered intent that was
@@ -198,6 +210,7 @@ VLM-in-the-loop pass are the indicated next instruments).
 | `2026-05-31` | `.1` | I2C + eMMC end-to-end; tiling detector precise (TP + 0 FP/48); convergence useful; classifier issue logged | `passed` |
 | `2026-05-31` | `.2` | AMBA core APB/AHB/AXI run + recorded (3/4; CHI remains); tiling 0-FP across 84 registers; recurring miss = prose residuals + un-enriched visuals | `partial` |
 | `2026-05-31` | `.3` | VLM+NLP-in-the-loop on APB (Ollama/Qwen): timing 0→6, state 0→1, findings 5→3, nlp residuals 18→13 (+5 constraints, +16 decls); 0 errors; honest fails-closed on 13 | `passed` |
+| `2026-06-01` | `.2` (complete) | CHI IHI0050_G run (11666 stmts, 20 regs, conv 591✓); 4 completeness surfaces validated on real CHI data — 1 candidate register overlap, 11 unexplained tables, 1024 prose residuals, candidate_misses=1036; AMBA core campaign complete | `passed` |
 
 ## Commit Log
 
