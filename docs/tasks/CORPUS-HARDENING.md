@@ -112,7 +112,7 @@ driven-down misses on the specs that matter."
   Commit: `see Commit Log`
 
 - ID: `CORPUS-HARDENING.4`
-  Status: `in_progress`
+  Status: `done`
   Goal: >
     End-to-end re-validate this session's fixes on the real CHI spec, converting
     the harness-projected numbers into actual corpus results. (1) restore the
@@ -126,8 +126,32 @@ driven-down misses on the specs that matter."
     normalized bundle (disk). Running existing commands; no code change.
   Acceptance: CHI re-ingested + validated end-to-end; the two fixes' projected
     effects confirmed on real data (or any divergence diagnosed); bundle reclaimed.
-  Verification: pending
-  Commit: pending
+  Verification: >
+    passed (`2026-06-01`) — Docling restored (needed `DOCLING-DEVICE-CPU-DEFAULT`
+    first: the fresh torch 2.12 broke MPS; ran on CPU). Clean re-ingest of CHI
+    IHI0050_G succeeded (368 tables, 6.16 MB source_ir, 0 MPS errors). Both fixes
+    CONFIRMED end-to-end on real Docling output:
+    • `REGISTER-CLASSIFIER-ENCODING-FP`: `table_0170`/`table_0171` now `encoding`;
+      0 register_map tables; **0 phantom bit-range-named registers**; and the
+      headline closure-invariant finding **`register_field_overlaps: 1 → 0`** —
+      the CHI register with self-contradictory bits that started this thread is
+      gone.
+    • `SIGNAL-TABLE-COLUMNLESS-RECALL`: the REQ/RSP/SNP/DAT channel signals
+      (`REQFLITV`, `REQLCRDV`, `RSPFLITV`, `RSPLCRDV`, `SNPFLITV`, `DATFLITV`) are
+      now captured via prose-direction inference (`output`/`input`); table-
+      synthesized declarations **16 → 24** (+8, matching the harness projection).
+    • `unexplained_intent_bearing_tables: 11 → 7` (Class-B channel tables cleared;
+      the 4 Class-A empty-body matrices remain); `candidate_misses: 1036 → 1031`;
+      converged.
+    HONEST CAVEAT: a fresh Docling re-ingest re-extracts tables (CPU + version
+    drift), so it is NOT a pure A/B of only the classifier change — aggregate
+    `register_records 20 → 0` conflates the fix with re-extraction drift (the fresh
+    run classified 0 register_map tables vs 9 in the stale artifact). The
+    cleanly-attributable, fix-specific results are: overlap 1→0, table_0170/0171→
+    encoding, 0 phantom registers, channel signals recovered (+8 decls), unexplained
+    11→7. The faithful single-variable A/B remains the stored-table harness
+    (register_map 9→7). Normalized bundle reclaimed (518.8 MiB; source_ir.json kept).
+  Commit: `see Commit Log`
 
 ## Current Frontier
 
@@ -266,6 +290,7 @@ VLM-in-the-loop pass are the indicated next instruments).
 | `2026-05-31` | `.3` | VLM+NLP-in-the-loop on APB (Ollama/Qwen): timing 0→6, state 0→1, findings 5→3, nlp residuals 18→13 (+5 constraints, +16 decls); 0 errors; honest fails-closed on 13 | `passed` |
 | `2026-06-01` | `.2` (complete) | CHI IHI0050_G run (11666 stmts, 20 regs, conv 591✓); 4 completeness surfaces validated on real CHI data — 1 candidate register overlap, 11 unexplained tables, 1024 prose residuals, candidate_misses=1036; AMBA core campaign complete | `passed` |
 | `2026-06-01` | follow-up (post-fix re-run, harness) | corpus-wide impact of this session's fixes on stored artifacts (no re-ingest): `REGISTER-CLASSIFIER-ENCODING-FP` = 2 CHI tables register_map→encoding (8 phantoms) + 32 encoding corrections, 0 regression / 1989 tables; `SIGNAL-TABLE-COLUMNLESS-RECALL` (approach A) = 8 signals recovered (CHI), ~112 column-less residuals quantified across 8 specs (future tree). `SYMBOL-CLOSURE-CORPUS-VALIDATION` = no-build (typed closure empty; i2c SDA-missing + inventory-noise routed here) | `passed` |
+| `2026-06-01` | `.4` (end-to-end re-ingest) | Docling restored (via `DOCLING-DEVICE-CPU-DEFAULT`; CPU, 0 MPS errors); clean CHI re-ingest (368 tables). Both fixes confirmed on real output: table_0170/0171→encoding, 0 phantom registers, **register_field_overlaps 1→0** (headline finding resolved); channel signals REQ/RSP/SNP/DAT FLITV+LCRDV recovered, decls 16→24; unexplained tables 11→7; misses 1036→1031. Caveat: re-extraction drift confounds aggregate register_records 20→0 (faithful A/B = harness). Bundle reclaimed (518.8 MiB) | `passed` |
 
 ## Commit Log
 
@@ -274,6 +299,7 @@ VLM-in-the-loop pass are the indicated next instruments).
 | `CORPUS-HARDENING.1` | `CORPUS-HARDENING.1 — own the corpus-hardening harness (I2C + eMMC proven)` | tree + ledger; validation already recorded in COMPLETENESS-CLOSURE-INVARIANTS |
 | `CORPUS-HARDENING.2` | `CORPUS-HARDENING.2 (progress) — APB/AHB/AXI runs + per-spec ledger` | 3/4 AMBA core; CHI remains |
 | `CORPUS-HARDENING.3` | `CORPUS-HARDENING.3 — VLM+NLP-in-the-loop recall pass on APB (Ollama/Qwen)` | dominant capture gap closed on real data, honestly |
+| `CORPUS-HARDENING.4` | `CORPUS-HARDENING.4 — end-to-end re-validate session fixes on CHI (overlap 1→0, channel signals recovered); reclaim bundle; close` | Docling restored on CPU; both fixes confirmed on real re-ingest |
 
 ## Changelog
 
