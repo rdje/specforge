@@ -110,10 +110,25 @@ until a human reviews it.
   Commit: `see Commit Log`
 
 - ID: `LLM-EXTRACTION-EVAL.2`
-  Status: `pending`
+  Status: `done`
   Goal: implement the pure scorer + dataset format/loader (no LLM): canonical keys
     per task, TP/FP/FN → precision/recall/F1, JSON item schema + loader. Unit tests.
   Acceptance: scorer + loader + tests; CI green.
+  Verification: passed (`2026-06-01`) — new `crates/specforge/src/eval.rs` (pub module):
+    `EvalTask` (SignalConstraint, ActorSignalRelation), `GoldFact` (tagged enum
+    Constraint|Relation) + `canonical_key` (normalized: signals/actors uppercased,
+    kind/relation lowercased, negation in the key), `constraint_kind_str`/
+    `relation_kind_str`, record-key fns (`signal_constraint_record_key`,
+    `actor_signal_relation_record_key`) that MATCH the gold keys, `EvalItem` + serde +
+    `validate` (gold fact ↔ task), `PredictedKeys = BTreeMap<(EvalTask, statement_id),
+    Set<key>>` + `index_constraint_predictions`/`index_relation_predictions` (attribute
+    each record's key to its supporting statements), `Scorecard` (tp/fp/fn →
+    precision/recall/F1, computed from counts), `score_dataset` (closed-world over
+    labeled statements), `load_eval_dataset` (dir of `*.json`). Provider-free.
+    6 unit tests (key match incl. MustBeValue; negation/direction discrimination;
+    P/R/F1 closed-world; negative-item FP; task/gold validate; loader round-trip).
+    fmt + clippy clean; full CI green.
+  Commit: `see Commit Log`
 
 - ID: `LLM-EXTRACTION-EVAL.3`
   Status: `pending`
@@ -139,8 +154,8 @@ until a human reviews it.
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `.1` | `done` | owned + design |
-| 2 | `.2` | `pending` | pure scorer + format — the rigorous, CI-testable core — next |
-| 3 | `.3` | `pending` | seed labeled data from real corpus |
+| 2 | `.2` | `done` | pure scorer + dataset format/loader (`eval.rs`); 6 unit tests; CI green |
+| 3 | `.3` | `pending` | seed labeled data from real corpus — next |
 | 4 | `.4` | `pending` | provider-gated runner over the real command path |
 | 5 | `.5` | `pending` | baseline + book + close |
 
@@ -177,6 +192,7 @@ until a human reviews it.
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `LLM-EXTRACTION-EVAL.1` | `LLM-EXTRACTION-EVAL.1 — own + design labeled precision/recall eval for the LLM passes` | docs-only |
+| `LLM-EXTRACTION-EVAL.2` | `LLM-EXTRACTION-EVAL.2 — pure scorer + dataset format/loader (eval.rs); 6 tests` | provider-free core |
 
 ## Changelog
 

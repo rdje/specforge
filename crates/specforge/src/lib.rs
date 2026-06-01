@@ -1,6 +1,7 @@
 pub mod cli;
 mod commands;
 pub mod error;
+pub mod eval;
 pub mod ir;
 #[cfg(test)]
 pub(crate) mod test_support;
