@@ -172,3 +172,28 @@ tests on the recorded report (converged path) and both `validate`
 findings (converged `Info` / capped `Warning`) + `scripts/run_ci.sh`.
 *Authoritative tracking:* `docs/tasks/R15C-CONVERGENCE-REPORT.md`
 (under `R15C-R15G-LEARNING-PLANE-BACKFILL.1`).
+
+### `COMPLETENESS-REGION-ACCOUNTING` — flag intent-bearing tables that produced nothing
+
+**What it gives you:** when you `validate` an `EvidenceIR`, a `Region
+Accounting` section tells you whether any table that SpecForge *recognized* as a
+register / signal / timing table came out **empty** — i.e. the table's purpose
+was identified but no facts were captured from it.
+
+**Why it matters.** A miss is, by definition, something in the document that did
+*not* make it into the extraction — which is exactly what you can't see by
+looking at the output alone. The reframe that makes misses findable is to check
+the *input* side: every intent-bearing source region should produce at least one
+fact. So this detector pairs each `SignalDescription` / `RegisterMap` /
+`TimingParameter` table with the records it produced — using the existing
+provenance (signal-declaration `table_id`, and the `table_id` embedded in
+register/timing record ids, e.g. `reg_table_0026_000`) — and flags any such
+table that yielded **zero** records as an `UnexplainedTableResidual` (a Warning
+finding + the `region_unexplained_tables` metric). It is flag-only: it never
+invents a fact, it makes a *gap visible* so you (or a rescan, or a fix) can act.
+
+This is the first slice of the broader region-accounting instrument (prose and
+figure regions, and a unified coverage report, follow). Verified by unit tests
+(covered table / zero-yield table / non-intent kinds skipped / id-marker
+precision) and a `validate` wiring test + `scripts/run_ci.sh`. *Authoritative
+tracking:* `docs/tasks/COMPLETENESS-REGION-ACCOUNTING.md`.

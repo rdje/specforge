@@ -2606,6 +2606,39 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
         );
     }
 
+    // Region accounting (table coverage): an intent-bearing table that produced
+    // no record is a candidate miss. Needs the upstream SourceIR for table kinds
+    // (tables live on SourceIR); load best-effort via the carried path.
+    let region_source = crate::ir::source::SourceIr::load_from_path(&ir.source_ir_path).ok();
+    let region_unexplained_tables = region_source
+        .as_ref()
+        .map(|src| {
+            crate::ir::completeness::unexplained_intent_bearing_tables(
+                &src.structured_tables,
+                &ir.table_signal_declaration_provenance,
+                &ir.register_records,
+                &ir.timing_constraints,
+            )
+        })
+        .unwrap_or_default();
+    println!();
+    println!("=== Region Accounting (intent-bearing table coverage) ===");
+    match &region_source {
+        Some(_) => {
+            println!(
+                "  unexplained_intent_bearing_tables: {}",
+                region_unexplained_tables.len()
+            );
+            for residual in region_unexplained_tables.iter().take(8) {
+                println!(
+                    "  - {} ({}) produced no record",
+                    residual.table_id, residual.table_kind
+                );
+            }
+        }
+        None => println!("  (skipped — upstream SourceIR not available)"),
+    }
+
     let normative_count = classes.get("normative_statement").copied().unwrap_or(0);
     let missing_vlm_observation_related_ids = evidence_missing_vlm_observation_related_ids(ir);
     let structural_kg_missing_related_ids = evidence_structural_kg_missing_related_ids(ir);
@@ -2767,6 +2800,18 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             Vec::new(),
         ));
     }
+    if region_source.is_some() && !region_unexplained_tables.is_empty() {
+        findings.push(finding(
+            "evidence_region_unexplained_tables",
+            ValidationFindingSeverity::Warning,
+            "region_accounting",
+            format!(
+                "{} intent-bearing table(s) produced no extracted record; the table's purpose was recognized but nothing was captured from it (candidate miss)",
+                region_unexplained_tables.len()
+            ),
+            Vec::new(),
+        ));
+    }
     if let Some(convergence) = &ir.convergence_report {
         if convergence.converged {
             findings.push(finding(
@@ -2869,6 +2914,10 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             metric(
                 "register_field_interior_gaps",
                 register_field_interior_gaps.to_string(),
+            ),
+            metric(
+                "region_unexplained_tables",
+                region_unexplained_tables.len().to_string(),
             ),
             metric(
                 "table_signal_declaration_provenance",
@@ -6805,6 +6854,48 @@ mod tests {
             &report,
             "evidence_register_field_interior_gaps"
         ));
+        Ok(())
+    }
+
+    #[test]
+    fn validate_evidence_ir_flags_unexplained_intent_table() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{StructuredTableRecord, TableKind};
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("region.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        fs::write(&source, "# Spec\nSome content.\n")?;
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        // An intent-bearing SignalDescription table with no extractable rows -> no
+        // signal-declaration provenance -> an unexplained table region.
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_9999".to_string(),
+            asset_id: "asset_9999".to_string(),
+            page_id: None,
+            caption_text: Some("phantom signal table".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![],
+            body_rows: vec![],
+            row_count: 0,
+            col_count: 0,
+        });
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+
+        let report = validate_evidence_ir(&evidence_ir, "region_accounting".to_string());
+        let unexplained = metric_value(&report, "region_unexplained_tables")
+            .and_then(|v| v.parse::<usize>().ok())
+            .unwrap_or(0);
+        assert!(
+            unexplained >= 1,
+            "the phantom signal table should be unexplained"
+        );
+        assert!(has_finding(&report, "evidence_region_unexplained_tables"));
         Ok(())
     }
 

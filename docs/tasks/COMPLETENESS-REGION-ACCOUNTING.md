@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `COMPLETENESS-REGION-ACCOUNTING`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: `R15e` (KG-quality / completeness) — cross-cutting R15c
 - Created: `2026-06-01`
 - Last updated: `2026-06-01`
@@ -61,7 +61,7 @@ tables → `ExtractedStatement` link is less clean; deferred.)
 ## Task Tree
 
 - ID: `COMPLETENESS-REGION-ACCOUNTING`
-  Status: `active`
+  Status: `done`
   Goal: intent-bearing table-coverage region accounting + validate surface
   Children: `.1`, `.2`
 
@@ -78,7 +78,7 @@ tables → `ExtractedStatement` link is less clean; deferred.)
   Commit: `see Commit Log`
 
 - ID: `COMPLETENESS-REGION-ACCOUNTING.2`
-  Status: `pending`
+  Status: `done`
   Goal: >
     Implement `unexplained_intent_bearing_tables` (pure) in `ir/completeness.rs`
     + `UnexplainedTableResidual`; unit tests (covered table / zero-yield table /
@@ -86,15 +86,33 @@ tables → `ExtractedStatement` link is less clean; deferred.)
     (`Region Accounting` section + finding [Info none / Warning some] + metrics);
     book note; full CI; close.
   Acceptance: detector + tests + validate surface; extraction-neutral; CI green; book updated; tree CLOSED.
-  Verification: pending
-  Commit: pending
+  Verification: >
+    passed (`2026-06-01`) — pure `unexplained_intent_bearing_tables` in
+    `ir/completeness.rs`: per intent-bearing table, covered iff a corresponding
+    record links to its `table_id` (signal provenance direct; register/timing via
+    the `{table_id}_` marker embedded in their ids — the trailing `_` prevents
+    `table_0002` falsely matching `table_0020`); else an `UnexplainedTableResidual`.
+    Wired into `validate_evidence_ir`: best-effort loads the upstream SourceIR
+    (table kinds live there) via `source_ir_path`, prints a `Region Accounting`
+    section, emits Warning `evidence_region_unexplained_tables` when any, +
+    `region_unexplained_tables` metric (skips gracefully if SourceIR absent).
+    Extraction-neutral (flag-only). 6 unit tests (covered/uncovered per kind +
+    marker precision + non-intent kinds skipped) + 1 validate wiring test
+    (phantom signal table flagged). fmt/clippy clean; full `scripts/run_ci.sh`
+    GREEN. User-friendly book note in `pipeline/evidenceir.md`.
+  Commit: `see Commit Log`
 
 ## Current Frontier
 
-| Order | Leaf | Status | Why next |
+**Tree CLOSED `2026-06-01`** — the first region-accounting slice (intent-bearing
+table coverage) is live: a recognized register/signal/timing table that yields no
+record is surfaced as a candidate miss in `validate`. Prose/figure region
+accounting + the unified backward index + `CompletenessReport` are future slices.
+
+| Order | Leaf | Status | Why |
 | --- | --- | --- | --- |
 | 1 | `COMPLETENESS-REGION-ACCOUNTING.1` | `done` | owned + design + provenance verified |
-| 2 | `COMPLETENESS-REGION-ACCOUNTING.2` | `pending` | implement the table-coverage detector + validate + tests + book + close — next |
+| 2 | `COMPLETENESS-REGION-ACCOUNTING.2` | `done` | detector + validate surface + 7 tests + book; CI green |
 
 ## Decisions
 
@@ -120,15 +138,20 @@ tables → `ExtractedStatement` link is less clean; deferred.)
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-06-01` | `.1` | table→record provenance verified reliable (signal `table_id` direct; register/timing ids embed `table_id`); design + tree registered; docs-only | `passed` |
+| `2026-06-01` | `.2` | `unexplained_intent_bearing_tables` + `UnexplainedTableResidual` in `ir/completeness.rs`; `validate` Region Accounting section + Warning finding + metric (best-effort SourceIR load); 6 unit + 1 wiring test; extraction-neutral; fmt/clippy clean; full CI green; book note | `passed` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `COMPLETENESS-REGION-ACCOUNTING.1` | `COMPLETENESS-REGION-ACCOUNTING.1 — own + design intent-bearing table-coverage region accounting` | docs-only |
+| `COMPLETENESS-REGION-ACCOUNTING.2` | `COMPLETENESS-REGION-ACCOUNTING.2 — intent-bearing table-coverage detector + validate surface; close` | code + book; first region-accounting slice |
 
 ## Changelog
 
+- `2026-06-01`: `.2` — implemented `unexplained_intent_bearing_tables` (intent-
+  bearing table coverage) + `validate` Region Accounting surface; 7 tests; CI
+  green; book note. **Tree CLOSED** — first region-accounting slice live.
 - `2026-06-01`: Created — own the region-accounting detector (research `.3`),
   first slice = intent-bearing table coverage (reliable-provenance, exact today).
   Frontier → `.2` (implement).
