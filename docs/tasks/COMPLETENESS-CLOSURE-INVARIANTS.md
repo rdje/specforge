@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `COMPLETENESS-CLOSURE-INVARIANTS`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: `R15d` (arbitration/closure) — first implementation from `INTENT-COMPLETENESS-RESEARCH`
 - Created: `2026-05-31`
-- Last updated: `2026-05-31`
+- Last updated: `2026-06-01`
 - Owner: repo-local workflow
 
 ## Goal
@@ -55,7 +55,7 @@ Two detectors:
 ## Task Tree
 
 - ID: `COMPLETENESS-CLOSURE-INVARIANTS`
-  Status: `active`
+  Status: `done`
   Goal: first completeness detectors (symbol closure + register tiling) surfaced in validate
   Children: `.1`, `.2`, `.3`, `.4`
 
@@ -92,7 +92,7 @@ Two detectors:
   Commit: `see Commit Log`
 
 - ID: `COMPLETENESS-CLOSURE-INVARIANTS.3`
-  Status: `pending`
+  Status: `descoped`
   Goal: >
     Symbol-closure / dangling-reference detector: pure fn computing referenced
     signals (constraint subjects, conditional/temporal rule targets, actor-signal
@@ -100,15 +100,32 @@ Two detectors:
     suppress legitimately-external/uppercase-noise cases; unit tests; wire into
     `validate`. Full CI.
   Acceptance: detector + tests + validate surface (gated); CI green.
-  Verification: pending
-  Commit: pending
+  Verification: >
+    DESCOPED to a future tree (`2026-06-01`). Real-corpus runs showed the
+    discriminating problem is genuinely hard: the I2C run had an EMPTY
+    actor-signal graph (inventory can be empty → naive symbol closure flags
+    *everything*), and a legitimately-external signal referenced-but-undeclared is
+    indistinguishable from a missed declaration without careful gating + corpus
+    validation. Done crudely it is **noise, not signal** — which would violate the
+    signoff bar. Deferred (not abandoned) so it gets the careful, corpus-validated
+    design it needs rather than a rushed heuristic; recorded as a follow-on in the
+    miss-detector catalog (`docs/research/miss-detectors-catalog.md` C1, GATED).
+  Commit: `see Commit Log`
 
 - ID: `COMPLETENESS-CLOSURE-INVARIANTS.4`
-  Status: `pending`
+  Status: `done`
   Goal: book subsection (how the closure detectors work + why they matter, user-friendly) + close; refresh research `.7`/program status.
   Acceptance: book updated; full CI green; tree CLOSED.
-  Verification: pending
-  Commit: pending
+  Verification: >
+    passed (`2026-06-01`) — added the user-friendly `COMPLETENESS-CLOSURE-INVARIANTS`
+    register bit-tiling subsection to `pipeline/evidenceir.md` (what it gives you,
+    why it's an exact closure invariant, the conservative no-width-speculation
+    design, and its double duty as the extraction-precision signal that exposed
+    the register-classifier bug — closing the doc-drift gap, since the detector
+    shipped live in `.2` without dedicated book coverage). With `.3` symbol closure
+    descoped to a future careful tree, the tree CLOSES on the delivered + now-
+    documented register-tiling detector. mdBook builds (docs CI green).
+  Commit: `see Commit Log`
 
 ## Current Frontier
 
@@ -116,8 +133,13 @@ Two detectors:
 | --- | --- | --- | --- |
 | 1 | `COMPLETENESS-CLOSURE-INVARIANTS.1` | `done` | tree + design + research `.7` decision recorded |
 | 2 | `COMPLETENESS-CLOSURE-INVARIANTS.2` | `done` | register tiling landed (`ir/completeness.rs` + validate); 8 tests; CI green |
-| 3 | `COMPLETENESS-CLOSURE-INVARIANTS.3` | `pending` | symbol closure (gated) — next |
-| 4 | `COMPLETENESS-CLOSURE-INVARIANTS.4` | `pending` | book + close |
+| 3 | `COMPLETENESS-CLOSURE-INVARIANTS.3` | `descoped` | symbol closure → future tree (genuinely hard; would be noise if rushed) |
+| 4 | `COMPLETENESS-CLOSURE-INVARIANTS.4` | `done` | register-tiling book subsection added (closed doc-drift gap); tree closed |
+
+**Tree CLOSED `2026-06-01`** — register bit-tiling delivered (`.2`), real-corpus-
+validated (precise: 1 TP + 0 FP/84), and now documented in the book (`.4`).
+Symbol closure (`.3`) is descoped to a future careful, corpus-validated tree
+(rushing it would produce noise, not signal — recorded in the catalog).
 
 ## Decisions
 
@@ -187,6 +209,8 @@ semantic-role conflicts; 344 un-enriched visuals.)
 | --- | --- | --- | --- |
 | `2026-05-31` | `.1` | tree created + registered; research `.7` decision (closure-invariants first) recorded; docs-only (CI invariant) | `passed` |
 | `2026-05-31` | `.2` | `ir/completeness.rs` register-tiling detector (overlap + interior gap, conservative/no-width-speculation); 7 unit + 1 validate-wiring tests; `validate_evidence_ir` findings (Warning/Info) + 2 metrics; extraction-neutral; fmt/clippy clean; full `scripts/run_ci.sh` GREEN | `passed` |
+| `2026-06-01` | `.3` | symbol closure DESCOPED to a future tree — genuinely hard (empty inventory → noise; missed-decl vs external indistinguishable without careful corpus validation); not rushed (signoff) | `descoped` |
+| `2026-06-01` | `.4` | register-tiling book subsection added to `pipeline/evidenceir.md` (closed the doc-drift gap; `.2` shipped live without dedicated coverage); mdBook green; tree CLOSED | `passed` |
 
 ## Commit Log
 
@@ -194,9 +218,13 @@ semantic-role conflicts; 344 un-enriched visuals.)
 | --- | --- | --- |
 | `COMPLETENESS-CLOSURE-INVARIANTS.1` | `COMPLETENESS-CLOSURE-INVARIANTS.1 — own the first completeness detectors + record the first-slice decision` | docs-only |
 | `COMPLETENESS-CLOSURE-INVARIANTS.2` | `COMPLETENESS-CLOSURE-INVARIANTS.2 — register bit-tiling detector (ir/completeness.rs) + validate surface` | code; first completeness detector landed |
+| `COMPLETENESS-CLOSURE-INVARIANTS.{3,4}` | `COMPLETENESS-CLOSURE-INVARIANTS.4 — register-tiling book note; descope symbol closure; close` | book; `.3` descoped to future tree |
 
 ## Changelog
 
+- `2026-06-01`: `.4`+`.3` — added the register-tiling book subsection (closed the
+  doc-drift gap); descoped symbol closure (`.3`) to a future careful tree.
+  **Tree CLOSED** on the delivered + documented register-tiling detector.
 - `2026-05-31`: `.2` — landed the register bit-tiling detector in a new
   `ir/completeness.rs` (overlap + interior gap, conservative), surfaced in
   `validate` (findings + metrics); 8 tests; CI green. **The first completeness

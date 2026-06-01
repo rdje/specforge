@@ -215,3 +215,25 @@ values the detectors already produced, it can never introduce a gap the
 detectors didn't already surface (a wiring test asserts the total equals the sum
 of its component metrics). *Authoritative tracking:*
 `docs/tasks/COMPLETENESS-REPORT-SURFACE.md`.
+
+### `COMPLETENESS-CLOSURE-INVARIANTS` — register bit-fields that contradict themselves
+
+**What it gives you:** when you `validate` an `EvidenceIR`, a `Register Tiling`
+section flags any register whose documented bit-fields **overlap** (two fields
+claim the same bit — a contradiction) or leave an **interior gap** (an uncovered
+bit *between* the lowest and highest documented field — a likely missed field).
+
+**Why it's a closure invariant.** A register is supposed to tile its bits: each
+bit belongs to exactly one field. That's a structural law you can check exactly,
+with no ground truth — so a violation is a high-confidence signal that the
+extraction (or the spec) is wrong. It is deliberately conservative: the IR
+carries no register *width*, so bits *above* the highest documented field are
+never flagged (that would require guessing the width); reversed bounds are
+normalized; registers with fewer than two bit-bounded fields are skipped.
+
+On the real corpus this detector did double duty as an **extraction-precision
+signal** — its overlap finding on an I2C table was what first exposed an
+over-eager register-map classifier (since fixed; see SourceIR), and across 84
+genuine registers it raised zero false positives. Overlaps surface as a Warning,
+interior gaps as Info (a gap is a *candidate* missed field, not a proven defect).
+*Authoritative tracking:* `docs/tasks/COMPLETENESS-CLOSURE-INVARIANTS.md`.
