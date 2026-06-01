@@ -95,11 +95,17 @@ in-repo.
     + COMMIT.md). Index table lists all three; each links its related task-trees.
 
 - ID: `MEMORY-ARCHITECTURE-DOC.3`
-  Status: `pending`
+  Status: `done`
   Goal: demote this repo's `MEMORY.md` to the §6 bounded resume pointer (≤ cap;
     overwrite-only; current-state block). History stays in git; durable facts now in
     layer C. (Done before enforcement so the cap check passes.)
   Acceptance: `MEMORY.md` ≤ cap and matches the resume-pointer template.
+  Verification: passed (`2026-06-01`) — `MEMORY.md` rewritten as the bounded resume
+    pointer: **25 lines** (≤ 60 cap); matches the §6 template (How-to-resume +
+    overwrite-only Current-state block: latest_commit, active_work_unit + frontier,
+    next_action, paused_work, in_flight, blockers); points at `MEMORY_ARCHITECTURE.md`,
+    the doctrine record, and `docs/decisions/`. The prior 1,395-line content is
+    preserved in git history (≤ `6d668eb2`); durable facts already migrated to layer C.
 
 - ID: `MEMORY-ARCHITECTURE-DOC.4`
   Status: `pending`
@@ -144,6 +150,7 @@ in-repo.
 | --- | --- | --- | --- |
 | `2026-06-01` | `.1` | portable standard authored (project-agnostic; enforcement E1–E4 + agnostic kit + durability matrix + templates); README doc-map pointer; MEMORY.md reframed as resume pointer | `passed` |
 | `2026-06-01` | `.2` | layer C in-repo: `docs/decisions/INDEX.md` + 3 ADR records (docling-cpu, provider-default, doctrine-pointer) migrated from `~/.claude`/MEMORY.md; indexed + cross-linked | `passed` |
+| `2026-06-01` | `.3` | `MEMORY.md` demoted to the bounded resume pointer (1,395→25 lines, ≤60 cap); §6 template; prior content preserved in git ≤`6d668eb2` | `passed` |
 
 ## Commit Log
 
@@ -151,6 +158,7 @@ in-repo.
 | --- | --- | --- |
 | `MEMORY-ARCHITECTURE-DOC.1` | `MEMORY-ARCHITECTURE-DOC.1 — author portable harness-agnostic durable-memory standard (+enforcement +agnostic kit)` | standard + README pointer |
 | `MEMORY-ARCHITECTURE-DOC.2` | `MEMORY-ARCHITECTURE-DOC.2 — implement layer C: docs/decisions + seed migrated decision records` | docs/decisions/ + 3 ADRs |
+| `MEMORY-ARCHITECTURE-DOC.3` | `MEMORY-ARCHITECTURE-DOC.3 — demote MEMORY.md to the bounded resume pointer (1395→25 lines)` | layer A; history in git |
 
 ## Changelog
 
