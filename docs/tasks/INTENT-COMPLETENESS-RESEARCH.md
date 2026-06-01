@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `INTENT-COMPLETENESS-RESEARCH`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: `R15e` (KG-quality evaluation) — cross-cutting into R15c/R15d/R16
 - Created: `2026-05-31`
-- Last updated: `2026-05-31`
+- Last updated: `2026-06-01`
 - Owner: repo-local workflow
 
 ## Goal
@@ -58,7 +58,7 @@ The durable artifact is [`docs/research/intent-capture-completeness.md`](../rese
 ## Task Tree
 
 - ID: `INTENT-COMPLETENESS-RESEARCH`
-  Status: `active`
+  Status: `done`
   Goal: theory + design + prioritized backlog for miss detection / recall bounding
   Children: `.1`, `.2`, `.3`, `.4`, `.5`, `.6`, `.7`
 
@@ -151,15 +151,27 @@ The durable artifact is [`docs/research/intent-capture-completeness.md`](../rese
   Commit: `see Commit Log`
 
 - ID: `INTENT-COMPLETENESS-RESEARCH.5`
-  Status: `pending`
+  Status: `done`
   Goal: >
     Design the **recall estimation** layer (§8): capture–recapture over the two
     independent extractors (assumptions, estimator, reporting); the
     competency-question battery; gold-fixture integration (R15e); the LLM
     completeness critic. Specify the unifying **CompletenessReport** (§10).
   Acceptance: recall-gauge + competency-battery + CompletenessReport designs.
-  Verification: pending
-  Commit: pending
+  Verification: >
+    passed (`2026-06-01`) — wrote `docs/research/recall-estimation-and-report.md`:
+    the capture–recapture recall gauge (Chao 1987 Mh estimator + CI, reported as a
+    lower bound; ≥3 HETEROGENEOUS extractors — SpecForge's pattern-Tier vs LLM-Tier
+    vs VLM — to avoid the correlated-passes optimism; blind spots invisible to it,
+    caught only by the `.2` coverage matrix); the **fact-identity** engineering
+    crux + HNEN canonicalization; the **STOP-OR-REINSPECT** bridge into the
+    shipped convergence loop; and the **typed `CompletenessReport`** schema
+    (generalizing the shipped `Completeness Summary` with the recall estimate +
+    blind-spot categories + honest caveat-attached headline). Recorded the
+    **implementation precondition** honestly (per-extractor fact tagging + a
+    canonical fact key — the estimator is blocked on it, hence DESIGN not impl)
+    and a prioritized follow-on backlog. Docs/research only.
+  Commit: `see Commit Log`
 
 - ID: `INTENT-COMPLETENESS-RESEARCH.6`
   Status: `done`
@@ -220,9 +232,19 @@ The durable artifact is [`docs/research/intent-capture-completeness.md`](../rese
 | 2 | `INTENT-COMPLETENESS-RESEARCH.2` | `done` | closed ontology + coverage matrix (`intent-ontology-coverage.md`); 2 gaps confirmed, 2 audit errors corrected |
 | 3 | `INTENT-COMPLETENESS-RESEARCH.3` | `done` | region-accounting design (`region-accounting-design.md`) |
 | 4 | `INTENT-COMPLETENESS-RESEARCH.4` | `done` | miss-detector catalog (`miss-detectors-catalog.md`), exact-vs-gated |
-| 5 | `INTENT-COMPLETENESS-RESEARCH.5` | `pending` | recall estimation + CompletenessReport design — the one open research leaf |
+| 5 | `INTENT-COMPLETENESS-RESEARCH.5` | `done` | recall estimator (Chao Mh) + typed CompletenessReport design (`recall-estimation-and-report.md`); impl precondition recorded |
 | 6 | `INTENT-COMPLETENESS-RESEARCH.6` | `done` | literature survey (workflow); grounding + 5 corrections folded in |
 | 7 | `INTENT-COMPLETENESS-RESEARCH.7` | `done` | backlog set; user chose closure invariants → `COMPLETENESS-CLOSURE-INVARIANTS` opened |
+
+**Tree CLOSED `2026-06-01`** — the research program is complete (`.1`–`.7` done):
+framework + closed ontology/coverage matrix + region-accounting design +
+miss-detector catalog + verified literature grounding + recall-estimator/typed-report
+design + prioritized backlog. It drove a full implementation phase:
+`COMPLETENESS-CLOSURE-INVARIANTS` (register tiling), `COMPLETENESS-REGION-ACCOUNTING`,
+`COMPLETENESS-REPORT-SURFACE`, and `REGISTER-MAP-CLASSIFIER-PRECISION` — four live,
+corpus-validated `validate` completeness surfaces + a shipped precision fix.
+Future implementation (recall gauge, typed report, symbol closure, prose/figure
+region accounting) is scoped in `.5`/the catalog as owned follow-on trees.
 
 The order is a default, not a commitment — `.2`/`.3`/`.4`/`.6` are largely
 independent and could be parallelized (incl. via a research workflow if opted
@@ -265,6 +287,7 @@ in). `.7` depends on the rest.
 | `2026-05-31` | `.3` | `docs/research/region-accounting-design.md` — region enumeration + intent/non-intent/deferred classifier + backward-traceability (invert forward provenance) + `UnexplainedRegionResidual`/`RegionAccountingReport`; provenance-completeness precondition flagged; docs-only | `passed` |
 | `2026-05-31` | `.4` | `docs/research/miss-detectors-catalog.md` — 6 detector families (region/field/structural/cross-modal/conservation/blind-spot), each inputs/check/residual + EXACT-vs-GATED tag; HNEN + provenance preconditions; mine-then-filter; cheapest-exact-first ordering; docs-only | `passed` |
 | `2026-05-31` | `.6` | `docs/research/literature-grounding.md` — parallel research workflow (9 agents/8 disciplines); DBLP/ACM/arXiv-verified refs; confirms core reframe; 5 corrections + ~10 techniques folded into the framework (Chao Mh + heterogeneity; PCA heuristic-gated; CQ schema≠population; mutation coverage; STOP-OR-REINSPECT bridge); docs-only | `passed` |
+| `2026-06-01` | `.5` | `docs/research/recall-estimation-and-report.md` — capture–recapture recall gauge (Chao Mh, ≥3 heterogeneous extractors, lower-bound) + fact-identity crux + STOP-OR-REINSPECT bridge + typed CompletenessReport schema; impl precondition (per-extractor fact tagging) recorded honestly; prioritized follow-on backlog; docs-only. **Program CLOSED (`.1`–`.7`).** | `passed` |
 
 ## Commit Log
 
@@ -273,9 +296,16 @@ in). `.7` depends on the rest.
 | `INTENT-COMPLETENESS-RESEARCH.1` | `INTENT-COMPLETENESS-RESEARCH.1 — frame the intent-capture completeness problem + research framework` | docs/research + docs/tasks only |
 | `INTENT-COMPLETENESS-RESEARCH.2` | `INTENT-COMPLETENESS-RESEARCH.2 — closed intent ontology + code-grounded coverage matrix` | docs/research only; 2 audit errors corrected via code verification |
 | `INTENT-COMPLETENESS-RESEARCH.{3,4,6}` | `INTENT-COMPLETENESS-RESEARCH.{3,4,6} — region accounting + miss-detector catalog + verified literature grounding` | docs/research only; `.6` via parallel research workflow |
+| `INTENT-COMPLETENESS-RESEARCH.5` | `INTENT-COMPLETENESS-RESEARCH.5 — recall-estimator + typed CompletenessReport design; close program` | docs/research only; closes the research program |
 
 ## Changelog
 
+- `2026-06-01`: `.5` — wrote the recall-estimator (Chao Mh capture–recapture, ≥3
+  heterogeneous extractors) + typed `CompletenessReport` design
+  (`recall-estimation-and-report.md`); recorded the per-extractor-fact-identity
+  impl precondition honestly + a prioritized follow-on backlog. **Program CLOSED
+  (`.1`–`.7`)** — it drove a full implementation phase (4 live completeness
+  detectors + the register-classifier precision fix).
 - `2026-05-31`: `.3`+`.4`+`.6` — region-accounting design + miss-detector catalog
   (exact-vs-gated) + the literature-grounding workflow (verified refs; 5
   corrections + ~10 techniques folded into the framework). Frontier → `.5`
