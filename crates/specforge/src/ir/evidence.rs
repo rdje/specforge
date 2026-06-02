@@ -5561,9 +5561,10 @@ fn extract_signal_constraints(
         let text = &statement.text;
         let lowered = text.to_ascii_lowercase();
 
-        // Strip the condition clause so signal names in "when X" / "during X" / "unless X"
-        // are not mistaken for subjects of the constraint.
-        let subject_part = text_before_condition_marker(text);
+        // Narrow to the sentence carrying the constraint verb (so unrelated earlier
+        // sentences/clauses don't contribute false subjects), THEN strip the trailing
+        // condition clause ("when X" / "until X" / "if X" / …).
+        let subject_part = text_before_condition_marker(constraint_bearing_sentence(text));
 
         // Collect ALL valid signal tokens from the subject part, creating one record each.
         // Fall back to scanning the full text if no signals found in the subject part.
@@ -5692,8 +5693,31 @@ fn extract_signal_constraints(
 /// Return the portion of `text` before the first condition-clause marker
 /// (" when ", " while ", " during ", " unless ", " provided ", " after ", " before ").
 /// Returns the full text if no marker is found.
+/// Narrow a (possibly multi-sentence) statement to the sentence that carries the
+/// constraint verb (`must`/`shall`), so signal names from unrelated earlier sentences
+/// or clauses are not swept in as false subjects. Falls back to the whole text when no
+/// sentence carries a constraint verb.
+///
+/// Example: in "… PREADY is asserted … at the rising edge of PCLK …. PADDR, PWDATA …
+/// must be stable …" only the second sentence (the one with `must`) is the subject
+/// source, so PREADY/PCLK are not minted as `must_be_stable` subjects.
+fn constraint_bearing_sentence(text: &str) -> &str {
+    for sentence in text.split(['.', ';']) {
+        let lowered = sentence.to_ascii_lowercase();
+        if lowered.contains("must") || lowered.contains("shall") {
+            return sentence;
+        }
+    }
+    text
+}
+
 fn text_before_condition_marker(text: &str) -> &str {
     let lowered_bytes = text.to_ascii_lowercase();
+    // Cut at the EARLIEST condition marker (not the first in list order), so signals in
+    // any trailing condition clause are excluded from the subject. `until`/`if` are
+    // included because constraints like "X must remain asserted until Y ... if Z ..."
+    // otherwise leak Y/Z as false subjects.
+    let mut cut = text.len();
     for marker in &[
         " when ",
         " while ",
@@ -5702,12 +5726,14 @@ fn text_before_condition_marker(text: &str) -> &str {
         " provided ",
         " after ",
         " before ",
+        " until ",
+        " if ",
     ] {
         if let Some(pos) = lowered_bytes.find(marker) {
-            return &text[..pos];
+            cut = cut.min(pos);
         }
     }
-    text
+    &text[..cut]
 }
 
 /// Collect all uppercase hardware signal tokens from a text fragment.
@@ -5725,6 +5751,9 @@ fn collect_subject_signal_tokens(text: &str) -> Vec<String> {
                 && tok
                     .chars()
                     .all(|c| c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_')
+                // Width parameters (e.g. DATA_WIDTH, USER_RESP_WIDTH) are integrator
+                // constants, not constrained signals — they appear in table width columns.
+                && !tok.ends_with("_WIDTH")
                 && !matches!(
                     *tok,
                     // Logic levels and protocol state values are never signal subjects.
@@ -7403,6 +7432,94 @@ mod tests {
             assert!(
                 !signals.contains(&"HIGH".to_string()),
                 "HIGH is a logic level, not a signal"
+            );
+        }
+
+        // ── CONSTRAINT-SUBJECT-PRECISION: the 3 over-extraction classes the
+        //    LLM-EXTRACTION-EVAL harness caught on the APB seed. ──────────────
+        fn constraint_subjects(text: &str) -> Vec<String> {
+            use crate::ir::evidence::{
+                EvidenceModality, ExtractedStatement, StatementClass, extract_signal_constraints,
+            };
+            let stmt = ExtractedStatement {
+                statement_id: "s".to_string(),
+                text: text.to_string(),
+                class: StatementClass::SignalValueConstraint,
+                modality: EvidenceModality::Text,
+                evidence_span_ids: vec![],
+                related_visual_evidence_ids: vec![],
+            };
+            let mut counter = 0usize;
+            extract_signal_constraints(&[stmt], &mut counter)
+                .into_iter()
+                .map(|r| r.subject_signal)
+                .collect()
+        }
+
+        #[test]
+        fn constraint_subject_excludes_until_and_if_condition_signals() {
+            // statement_0322: subject is PWAKEUP; PREADY ("until PREADY…") and PSEL
+            // ("if PWAKEUP and PSELx are HIGH") are condition-clause signals, not subjects.
+            let s = constraint_subjects(
+                "PWAKEUP must remain asserted until PREADY is asserted if PWAKEUP and PSELx are HIGH in the same cycle.",
+            );
+            assert!(
+                s.contains(&"PWAKEUP".to_string()),
+                "PWAKEUP is the subject; got {s:?}"
+            );
+            assert!(
+                !s.contains(&"PREADY".to_string()),
+                "PREADY is in an 'until' clause; got {s:?}"
+            );
+            assert!(
+                !s.contains(&"PSEL".to_string()),
+                "PSEL is in an 'if' clause; got {s:?}"
+            );
+        }
+
+        #[test]
+        fn constraint_subject_excludes_width_parameter_tokens() {
+            // statement_0339 (table row): PBUSER is the subject; USER_RESP_WIDTH is the
+            // width-column parameter, not a constrained signal.
+            let s = constraint_subjects(
+                "| PBUSER | USER_RESP_WIDTH | Completer | User-defined response attribute. PBUSER must be valid when PSEL, PENABLE, and PREADY are asserted. |",
+            );
+            assert!(
+                s.contains(&"PBUSER".to_string()),
+                "PBUSER is the subject; got {s:?}"
+            );
+            assert!(
+                !s.contains(&"USER_RESP_WIDTH".to_string()),
+                "width param must not be a subject; got {s:?}"
+            );
+        }
+
+        #[test]
+        fn constraint_subject_does_not_sweep_other_sentence_signals() {
+            // statement_0202: only PADDR/PWDATA are "must be stable"; PENABLE/PREADY/PCLK
+            // live in earlier sentences and must not be swept into the stability clause.
+            let s = constraint_subjects(
+                "The Access phase is shown at T2 where PENABLE is asserted. PREADY is asserted by the Completer at the rising edge of PCLK. PADDR, PWDATA, and any other control signals, must be stable until the transfer completes.",
+            );
+            assert!(
+                s.contains(&"PADDR".to_string()),
+                "PADDR is a subject; got {s:?}"
+            );
+            assert!(
+                s.contains(&"PWDATA".to_string()),
+                "PWDATA is a subject; got {s:?}"
+            );
+            assert!(
+                !s.contains(&"PCLK".to_string()),
+                "PCLK (clock, other sentence) is not a subject; got {s:?}"
+            );
+            assert!(
+                !s.contains(&"PENABLE".to_string()),
+                "PENABLE (other sentence) is not a subject; got {s:?}"
+            );
+            assert!(
+                !s.contains(&"PREADY".to_string()),
+                "PREADY (other sentence) is not a subject; got {s:?}"
             );
         }
     }

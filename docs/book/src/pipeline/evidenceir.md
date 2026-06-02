@@ -324,3 +324,33 @@ direction or width, and it does **not** fabricate one: a signal whose driver is 
 stated in prose (e.g. `REQFLITPEND`) is left as an **honest residual** rather than
 guessed. So recall improves with no precision cost. *Authoritative tracking:*
 `docs/tasks/SIGNAL-TABLE-COLUMNLESS-RECALL.md`.
+
+### `CONSTRAINT-SUBJECT-PRECISION` — a constraint binds the signal it's about, nothing more
+
+**What it gives you:** when SpecForge records "signal X must be stable / asserted /
+this value", the subject is the signal the sentence is actually *about* — not signals
+that merely appear nearby in a condition, a width column, or an earlier sentence.
+
+**Why it mattered, and how it was found.** This was the **first catch of the new
+extraction eval** (`quality/extraction-eval.md`): scoring the LLM constraint task on the
+AMBA APB seed, precision came out at 0.5 — half the recorded constraints on the labeled
+statements were spurious. Diagnosing them (against gold drafted from the prose) showed
+three over-extraction patterns:
+- *Condition-clause signals as subjects.* "PWAKEUP must remain asserted **until** PREADY
+  …, **if** … PSELx are HIGH" recorded `PREADY` and `PSEL` as constrained, though they
+  live in the `until`/`if` clauses — the subject is `PWAKEUP`.
+- *Width parameters as signals.* A table row's width column (`USER_RESP_WIDTH`) was minted
+  as a constrained signal alongside the real subject `PBUSER`.
+- *Cross-sentence sweep.* "… PREADY is asserted … at the rising edge of PCLK. PADDR,
+  PWDATA … must be stable" recorded `PCLK` (the clock) and `PREADY` (the handshake signal
+  that *changes* to complete the transfer) as "must be stable", though only `PADDR`/
+  `PWDATA` are.
+
+The fix tightens subject selection three ways: the condition-clause stripper now also
+cuts at `until`/`if` (and at the *earliest* condition marker, not the first listed);
+width-parameter tokens (`*_WIDTH`) are never subjects; and subjects are collected only
+from the **sentence carrying the constraint verb**, so signals in unrelated earlier
+sentences aren't swept in — with a fallback to the whole statement so a true subject is
+never lost. The three eval-found cases are locked as regression tests; the full suite
+stays green (no true subject dropped). *Authoritative tracking:*
+`docs/tasks/CONSTRAINT-SUBJECT-PRECISION.md`.

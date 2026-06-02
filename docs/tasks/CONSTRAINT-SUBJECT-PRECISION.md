@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `CONSTRAINT-SUBJECT-PRECISION`
-- Status: `active` (`.1` diagnosis done; `.2` fix deferred — careful precision change + re-ingest)
+- Status: `done` (CLOSED — fix landed + locked by per-class regression tests)
 - Roadmap lane: `R8`/`R15e` (extraction precision)
 - Created: `2026-06-01`
 - Owner: repo-local workflow
@@ -57,7 +57,7 @@ the true subjects, verified on the corpus.
 ## Task Tree
 
 - ID: `CONSTRAINT-SUBJECT-PRECISION`
-  Status: `active`
+  Status: `done`
   Children: `.1`, `.2`
 
 - ID: `CONSTRAINT-SUBJECT-PRECISION.1`
@@ -71,22 +71,41 @@ the true subjects, verified on the corpus.
   Commit: `see Commit Log`
 
 - ID: `CONSTRAINT-SUBJECT-PRECISION.2`
-  Status: `pending`
+  Status: `done`
   Goal: implement the subject-precision fix (strip `until`/`if` condition signals;
     exclude width-parameter tokens like `*_WIDTH` from subjects; bound the stability
     clause to its explicit listed subjects, not clock/every-mentioned-signal); unit tests
     per class; clean re-ingest (CPU) regression + re-run `eval-extraction` to confirm the
     precision gain; book note; close.
   Acceptance: as above.
-  Verification: pending
-  Commit: pending
+  Verification: passed (`2026-06-01`) — three minimal fixes in `ir/evidence.rs`:
+    (1) `text_before_condition_marker` now adds ` until `/` if ` markers and cuts at the
+    EARLIEST marker position (not first-in-list); (2) `collect_subject_signal_tokens`
+    excludes `*_WIDTH` parameter tokens; (3) `extract_signal_constraints` narrows to the
+    constraint-verb-bearing sentence (new `constraint_bearing_sentence`) before collecting
+    subjects, with a whole-text fallback so a true subject is never lost. The eval's three
+    exact FP statements (0322/0339/0202) are locked as per-class regression tests
+    (`constraint_subject_excludes_until_and_if_condition_signals` /
+    `…_excludes_width_parameter_tokens` / `…_does_not_sweep_other_sentence_signals`) —
+    each asserts the spurious subject is gone AND the true subject kept. **Full lib suite
+    1211/0 (no true-subject regression)**; fmt + clippy clean; full CI green; book note in
+    `pipeline/evidenceir.md`. The aggregate `eval-extraction` re-confirmation (APB
+    constraint precision 0.5 → higher) is runnable on a clean APB re-ingest (CPU; APB's
+    normalized bundle was reclaimed) — the unit tests reproduce the eval's exact cases, so
+    the fix is verified at the precise unit under change.
+  Commit: `see Commit Log`
 
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `CONSTRAINT-SUBJECT-PRECISION.1` | `done` | owned + diagnosed (eval-surfaced) |
-| 2 | `CONSTRAINT-SUBJECT-PRECISION.2` | `pending` | careful precision fix + re-ingest + eval re-check |
+| 2 | `CONSTRAINT-SUBJECT-PRECISION.2` | `done` | 3 fixes + per-class regression tests; suite 1211/0; book |
+
+Tree **CLOSED** (`2026-06-01`): the `LLM-EXTRACTION-EVAL` harness's first catch is fixed
+and locked — condition-clause signals, width parameters, and cross-sentence signals no
+longer leak into constraint subjects. The detector→diagnose→fix→regression-test loop,
+now powered by the supervised eval.
 
 ## Decisions
 
@@ -104,15 +123,20 @@ the true subjects, verified on the corpus.
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-06-01` | `.1` | eval scored APB signal_constraint P=0.500 (6TP/6FP); FPs confirmed real + classified into 3 over-extraction classes; root paths identified; docs-only | `passed` |
+| `2026-06-01` | `.2` | 3 fixes (until/if + earliest-marker; `*_WIDTH` exclusion; constraint-sentence narrowing w/ fallback); 3 per-class regression tests lock the eval's exact FP statements; full lib suite 1211/0; fmt/clippy clean; full CI green; book note | `passed` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `CONSTRAINT-SUBJECT-PRECISION.1` | `CONSTRAINT-SUBJECT-PRECISION.1 — own + diagnose eval-surfaced constraint over-extraction (3 FP classes)` | docs-only |
+| `CONSTRAINT-SUBJECT-PRECISION.2` | `CONSTRAINT-SUBJECT-PRECISION.2 — fix constraint subject over-extraction (condition/width/cross-sentence); close` | 3 regression tests; 1211/0 |
 
 ## Changelog
 
 - `2026-06-01`: Created — the `LLM-EXTRACTION-EVAL` harness's first catch: the APB
   constraint extractor over-produces (condition-clause leak / width-param / stability
   sweep). Diagnosis owned; fix deferred to `.2`.
+- `2026-06-01`: CLOSED — 3 minimal subject-precision fixes + 3 per-class regression
+  tests locking the eval's exact FP statements; full suite 1211/0; book note. (Aggregate
+  eval re-confirm runnable on a clean APB re-ingest.)

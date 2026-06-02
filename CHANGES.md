@@ -2,6 +2,28 @@
 
 ## 2026-06-01
 
+### Constraint extraction precision — the eval's first catch, fixed (CONSTRAINT-SUBJECT-PRECISION)
+- `CONSTRAINT-SUBJECT-PRECISION` (CLOSED): the new `LLM-EXTRACTION-EVAL` harness scored
+  the APB `signal_constraint` task at P=0.500 — half the recorded constraints on the
+  labeled statements were spurious. The 6 FPs were real over-extraction by the constraint
+  tier (`ir/evidence.rs`), in three classes: condition-clause signals minted as subjects
+  ("until PREADY…/if PSELx…" → `PREADY`/`PSEL`); a width parameter (`USER_RESP_WIDTH`)
+  treated as a signal; and clock/cross-sentence signals (`PCLK`/`PREADY`) swept into a
+  "must be stable" clause. Three minimal fixes: `text_before_condition_marker` now adds
+  `until`/`if` and cuts at the *earliest* marker; `collect_subject_signal_tokens` excludes
+  `*_WIDTH` tokens; `extract_signal_constraints` narrows to the constraint-verb sentence
+  (new `constraint_bearing_sentence`) with a whole-text fallback so no true subject is
+  lost. The eval's three exact FP statements are locked as per-class regression tests;
+  full suite 1211/0; book note `pipeline/evidenceir.md`. First demonstration of the
+  supervised eval catching — and a fix closing — a real precision bug.
+
+### qwen2.5vl-vs-qwen3-vl:8b A/B (decision 0002)
+- Ran the `eval-extraction` A/B with `qwen3-vl:8b` on the APB seed and recorded it in
+  `docs/decisions/0002`: qwen3-vl:8b is **marginally better** than qwen2.5vl (relation
+  precision 0.40→0.50, F1 0.364→0.400; identical on constraints; recall unchanged) — but
+  the seed is tiny, so the default stays `qwen2.5vl:7b` pending a larger human-reviewed
+  eval. Measured, not assumed.
+
 ### Durable memory architecture — portable standard + in-repo implementation (MEMORY-ARCHITECTURE-DOC)
 - `MEMORY-ARCHITECTURE-DOC` (`.1`–`.4` done, `.5` closing): authored a portable,
   harness-agnostic standard `MEMORY_ARCHITECTURE.md` (memory that survives session

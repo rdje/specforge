@@ -17,9 +17,9 @@
   LLM/VLM provider default 0002).
 
 ## Current state (OVERWRITE this block each update — do not append)
-- latest_commit: `260afdac` — "LLM-EXTRACTION-EVAL.4 — eval-extraction runner (temp-redirect over the real command path); skip baseline live"  (ahead of origin `97aedd08`: ~21; push at ~30)
-- active_work_unit: none — `LLM-EXTRACTION-EVAL` CLOSED (`.1`–`.5`: scorer + seed + `eval-extraction` runner + live qwen2.5vl baseline + book). `MEMORY-ARCHITECTURE-DOC` also CLOSED this session. PNT frontier.
-- next_action: PNT — pick next roadmap-aligned slice. Candidate offered to user: the **qwen2.5-vs-qwen3-vl:8b A/B** (pull `qwen3-vl:8b` ~6.1G, then `eval-extraction crates/specforge/test_data/llm_eval/seed_apb.json --provider ollama --model qwen3-vl:8b` vs qwen2.5vl) — gives a measured answer to "is qwen3-vl better"; pending user OK on the pull. Other open: broad column-less recall residual (~112), CHI Class-A tables, more corpus specs (re-ingest now works on CPU).
+- latest_commit: `cc9dfb95` — "docs: record measured qwen2.5vl-vs-qwen3-vl:8b A/B in decision 0002 (provider default)"  (ahead of origin `97aedd08`: ~25; push at ~30 — PUSH SOON)
+- active_work_unit: none — `CONSTRAINT-SUBJECT-PRECISION` CLOSED (the eval's first catch, fixed). This session also CLOSED: MEMORY-ARCHITECTURE-DOC, LLM-EXTRACTION-EVAL (+ qwen3-vl:8b A/B measured → decision 0002), and owned LITERATURE-GROUNDING (`.1` design; survey deferred). PNT frontier.
+- next_action: PNT — pick next roadmap-aligned slice. Open candidates: `LITERATURE-GROUNDING.2+` (the research survey — web access), broad column-less recall residual (~112; needs a precision/recall decision), CHI Class-A tables, more corpus specs (CPU ingest works), or expand the eval seed for a firmer qwen3 verdict. **Push imminent (~25 ahead).**
 - paused_work: none.
 - in_flight_uncommitted: none.
 - blockers: `.5` baseline is Ollama-server-gated (record honestly if saturated).
