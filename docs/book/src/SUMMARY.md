@@ -22,6 +22,7 @@
 - [SOTA Temporal-Intent Capture (R16)](direction/temporal-intent-capture.md)
 - [Validation And Learning](quality/validation.md)
   - [KG Bench And Fixtures](quality/kg-bench.md)
+  - [Extraction Eval](quality/extraction-eval.md)
   - [Corpus Memory And Priors](quality/corpus-memory.md)
   - [Corpus Knowledge Base](quality/corpus-kb.md)
 - [Reference](reference/overview.md)

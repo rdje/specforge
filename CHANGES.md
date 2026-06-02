@@ -21,17 +21,22 @@
     `.github/copilot-instructions.md`. Gates proven to bite (bad subject rejected;
     over-cap MEMORY.md fails); the install commit passed through its own active hooks.
 
-### LLM extraction eval — labeled precision/recall harness (design owned)
-- `LLM-EXTRACTION-EVAL.1` (active): owned + designed the missing measurement piece —
-  a labeled precision/recall/F1 eval for the LLM extraction passes. Today `kg-bench`'s
-  151 fixtures test the deterministic pipeline (provider: none) and the recall gauge is
-  unsupervised, so there is no labeled gold for the LLM passes. Design: per-statement
-  items with gold typed outputs; a pure scorer (task canonical keys, TP/FP/FN→P/R/F1)
-  scoring closed-world over labeled statements; a faithful runner over the REAL command
-  path (run the command with `--model X`, read produced records by statement provenance,
-  score); agent-drafted + review-flagged labels. v1 = the 2 text tasks with crisp keys
-  (SignalConstraint, ActorSignalRelation); ActorContract + VLM enrich deferred. Makes
-  qwen2.5vl-vs-qwen3-vl A/Bs rigorous. Docs-only.
+### LLM extraction eval — labeled precision/recall harness (CLOSED)
+- `LLM-EXTRACTION-EVAL` (CLOSED, `.1`–`.5`): the missing supervised measurement piece
+  for the LLM extraction passes. `kg-bench`'s 151 fixtures test the deterministic
+  pipeline (provider: none) and the recall gauge is unsupervised — there was no labeled
+  gold for the LLM passes. Built: `.2` pure scorer (`crates/specforge/src/eval.rs` —
+  task canonical keys, TP/FP/FN→P/R/F1, closed-world over labeled statements; `EvalItem`/
+  `GoldFact` format + loader); `.3` a 16-item labeled APB seed (`test_data/llm_eval/`,
+  8/task incl. negatives, gold drafted **independently from the prose**); `.4` the
+  `eval-extraction` command — runs the REAL `nlp-enrich`/`signal-resolve` with the chosen
+  model on a **temp-redirected** EvidenceIR copy (corpus never mutated), indexes records
+  by statement provenance, scores, reports P/R/F1; `--provider skip` = deterministic
+  pattern baseline; `.5` a **live qwen2.5vl:7b baseline** (honest: on this small seed the
+  LLM added no constraints and slightly hurt relation precision — directional only) +
+  book page `quality/extraction-eval.md`. README CLI surface synced (added
+  `eval-extraction` + the previously-missing `extract-contracts`/`signal-resolve`). The
+  qwen2.5-vs-`qwen3-vl:8b` A/B is now one command. 10 eval tests; CI green (1208).
 
 ### Docling ingest — deliberate device selection (closed)
 - `DOCLING-DEVICE-CPU-DEFAULT` (CLOSED): a fresh Docling install (torch 2.12) broke PDF

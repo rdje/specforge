@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `LLM-EXTRACTION-EVAL`
-- Status: `active`
+- Status: `done` (CLOSED)
 - Roadmap lane: `R15d`/`R16` (eval / extraction quality)
 - Created: `2026-06-01`
 - Owner: repo-local workflow
@@ -98,7 +98,7 @@ until a human reviews it.
 ## Task Tree
 
 - ID: `LLM-EXTRACTION-EVAL`
-  Status: `active`
+  Status: `done`
   Children: `.1`–`.5`
 
 - ID: `LLM-EXTRACTION-EVAL.1`
@@ -169,10 +169,23 @@ until a human reviews it.
     signal-resolve). fmt + clippy clean; full CI green.
 
 - ID: `LLM-EXTRACTION-EVAL.5`
-  Status: `pending`
+  Status: `done`
   Goal: baseline run with qwen2.5vl:7b (server-gated; record honestly if queued);
     book note; close. qwen3-vl A/B noted as the immediate follow-on.
   Acceptance: baseline numbers recorded; book; tree CLOSED.
+  Verification: passed (`2026-06-01`) — **live qwen2.5vl:7b baseline** on the APB seed
+    (Ollama up; ran to completion): `signal_constraint` P=0.500 R=1.000 F1=0.667
+    (tp6/fp6/fn0 — identical to skip; `new_signal_constraints: 0`, the LLM added no
+    constraints on these statements); `actor_signal_relation` P=0.400 R=0.333 F1=0.364
+    (tp2/fp3/fn4 — one spurious LLM edge vs skip's fp2; recall unchanged, the 4 prose
+    relations not recovered; 2 LLM responses failed-closed). HONEST READ: on this small
+    8-statement-per-task seed the LLM enrichment did **not** improve recall and slightly
+    hurt relation precision — directional only (small seed; some labeled relations are
+    table-row-description statements that `signal-resolve`, a prose pass, may not
+    process — a labeling/coverage nuance the eval surfaced). The qwen3-vl:8b A/B is now a
+    one-command follow-on (`eval-extraction <seed> --provider ollama --model qwen3-vl:8b`),
+    pending a model pull. Book page `quality/extraction-eval.md` + SUMMARY entry. Full CI
+    green (mdBook builds).
 
 ## Current Frontier
 
@@ -182,7 +195,11 @@ until a human reviews it.
 | 2 | `.2` | `done` | pure scorer + dataset format/loader (`eval.rs`); 6 unit tests; CI green |
 | 3 | `.3` | `done` | seed labeled dataset (16 items APB; 8/task; negatives); loader file-or-dir |
 | 4 | `.4` | `done` | `eval-extraction` runner (temp-redirect, real command path); skip-mode baseline live; 2 tests |
-| 5 | `.5` | `pending` | baseline run with qwen2.5vl (server-gated) + book note + close — next |
+| 5 | `.5` | `done` | live qwen2.5vl baseline recorded (honest: LLM didn't help on this seed); book page; close |
+
+Tree **CLOSED** (`2026-06-01`): the missing supervised measurement piece is built and
+proven — a labeled P/R/F1 eval (`eval-extraction`) for the LLM extraction passes, with
+the qwen2.5vl baseline recorded. A model A/B (incl. qwen3-vl:8b) is now one command.
 
 ## Decisions
 
@@ -241,8 +258,13 @@ testable baseline (pattern-only) — the A/B is skip-vs-model or modelA-vs-model
 | `LLM-EXTRACTION-EVAL.2` | `LLM-EXTRACTION-EVAL.2 — pure scorer + dataset format/loader (eval.rs); 6 tests` | provider-free core |
 | `LLM-EXTRACTION-EVAL.3` | `LLM-EXTRACTION-EVAL.3 — seed labeled dataset (16 APB items, 8/task) + loader file-or-dir` | gold drafted from prose |
 | `LLM-EXTRACTION-EVAL.4` | `LLM-EXTRACTION-EVAL.4 — eval-extraction runner (temp-redirect over the real command path); skip baseline live` | provider-gated; README synced |
+| `LLM-EXTRACTION-EVAL.5` | `LLM-EXTRACTION-EVAL.5 — live qwen2.5vl baseline + book page; close tree` | honest baseline; A/B one command away |
 
 ## Changelog
 
 - `2026-06-01`: Created — labeled precision/recall eval for the LLM extraction
   passes (the missing measurement piece for rigorous model A/Bs). Frontier → `.2`.
+- `2026-06-01`: CLOSED — `.2` scorer (`eval.rs`) + `.3` 16-item APB seed + `.4`
+  `eval-extraction` runner (temp-redirect over the real command path) + `.5` live
+  qwen2.5vl baseline (honest: no improvement on this small seed) + book page. The
+  qwen3-vl:8b A/B is one command away.
