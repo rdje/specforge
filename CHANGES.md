@@ -2,6 +2,23 @@
 
 ## 2026-06-02
 
+### Temporal antecedent recall — own + design the coordinated-condition fix (TEMPORAL-ANTECEDENT-RECALL.1)
+- `TEMPORAL-ANTECEDENT-RECALL.1` (own + design, docs-only): the **second catch** of the
+  measure→catch→fix loop (after `CONSTRAINT-SUBJECT-PRECISION`), surfaced by the new
+  `TEMPORAL-RULE-EVAL`. Root-caused the temporal antecedent **under-capture**: for
+  *"PBUSER must be valid when PSEL, PENABLE, and PREADY are asserted"* the EvidenceIR
+  constraint `sigcon_0026` carries the complete `condition_text`, but
+  `parse_temporal_condition_predicates` (`ir/semantic.rs`) emits only `PREADY` — the
+  comma-split isolates the bare `PSEL`/`PENABLE` clauses from the trailing shared
+  "are asserted", so they are dropped. The fix (`.2`): distribute a single shared trailing
+  value across the coordinated signal list, tightly guarded (≥2 signals, exactly one distinct
+  value, fill only value-less clauses; mixed-value lists and unanchored bare mentions
+  untouched). Expected eval delta, verifiable at SemanticIR-build time (no re-ingest):
+  `temporal_rule` P 0.400→0.600, R 0.667→1.000. The temporal **false positives** the eval
+  also surfaced (degenerate `PSEL`-as-subject header rule; `USER_RESP_WIDTH`-as-subject) are
+  upstream constraint-tier + stale-artifact (`CONSTRAINT-SUBJECT-PRECISION` class) and are
+  out of scope (re-ingest-gated follow-up). Registered in `docs/TASK_TREE.md`.
+
 ### Temporal-rule eval — deterministic-producer runner + live APB score; tree CLOSED (TEMPORAL-RULE-EVAL.4)
 - `TEMPORAL-RULE-EVAL.4` (CLOSING leaf): wired the deterministic-producer runner in
   `crates/specforge/src/commands/eval_extraction.rs` — a new `TaskRecords::TemporalRules`
