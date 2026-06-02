@@ -122,11 +122,27 @@ The deliverable is a `docs/research/grounding/` set (one doc per aspect) + a uni
     citation resolvable; none guessed.
   Commit: `see Commit Log`
 
-- ID: `LITERATURE-GROUNDING.3`–`.12`
-  Status: `pending` (remaining aspects 2–11 — one each, per the list above)
+- ID: `LITERATURE-GROUNDING.3`
+  Status: `done`
+  Goal: ground aspect 4 — **protocol & temporal semantics**.
+  Verification: passed (`2026-06-01`) — `docs/research/grounding/protocol-temporal-semantics.md`
+    with web-verified citations: Pnueli LTL (FOCS 1977, 10.1109/SFCS.1977.32), Ammons et al.
+    *Mining Specifications* (POPL 2002, 10.1145/503272.503275), Daikon (Ernst et al.,
+    ICSE 1999/TSE 2001), Texada *General LTL Specification Mining* (Lemieux et al., ASE
+    2015), GoldMine (Vasudevan et al., DATE 2010), W. Li thesis (Berkeley EECS-2014-20),
+    *Mining Secure Behavior of HW Designs* (arXiv:2108.09249). Key insight: SpecForge's
+    `temporal_rules` ARE the `G(antecedent→consequent)`-with-holes LTL-template shape the
+    spec-mining literature formalized; **novelty = mining intent from the spec (forward),
+    not from traces/RTL (backward), fail-closed.** Adopt: LTL/MTL templates + MTL for
+    cycle_window + temporal-rule eval. Every citation resolvable.
+  Commit: `see Commit Log`
+
+- ID: `LITERATURE-GROUNDING.4`–`.12`
+  Status: `pending` (remaining aspects — staged IR / requirements & spec mining /
+    KG-relation extraction / multimodal fusion / neuro-symbolic-bounded-LLM /
+    cross-document learning / IE eval methodology / uncertainty-residual-honesty / spec→RTL)
   Goal: per aspect, find + VERIFY authoritative published work; record
-    `docs/research/grounding/<aspect>.md` (prior art / alignment / adopt / extend-novelty /
-    gaps). No unverifiable citations.
+    `docs/research/grounding/<aspect>.md`. No unverifiable citations.
   Acceptance: verified per-aspect grounding doc.
 
 - ID: `LITERATURE-GROUNDING.13`
@@ -142,8 +158,9 @@ The deliverable is a `docs/research/grounding/` set (one doc per aspect) + a uni
 | --- | --- | --- | --- |
 | 1 | `LITERATURE-GROUNDING.1` | `done` | owned + designed (the program is captured) |
 | 2 | `LITERATURE-GROUNDING.2` | `done` | aspect 1 grounded — document extraction (verified citations) |
-| 3 | `.3`–`.12` | `pending` | remaining aspects 2–11 (verified citations only) |
-| 4 | `.13` | `pending` | synthesis + reach-full-potential backlog |
+| 3 | `LITERATURE-GROUNDING.3` | `done` | aspect 4 grounded — protocol & temporal semantics (verified) |
+| 4 | `.4`–`.12` | `pending` | remaining aspects (verified citations only) |
+| 5 | `.13` | `pending` | synthesis + reach-full-potential backlog |
 
 ## Decisions
 
@@ -168,6 +185,7 @@ The deliverable is a `docs/research/grounding/` set (one doc per aspect) + a uni
 | --- | --- | --- | --- |
 | `2026-06-01` | `.1` | program owned + scoped (11 aspects, methodology + anti-hallucination + out-of-the-box framing); completeness grounding referenced + excluded; docs-only | `passed` |
 | `2026-06-01` | `.2` | aspect 1 (document extraction) grounded with web-verified citations (Docling 2408.09869/2501.17887, TableFormer 2203.01017, DocLayNet 2206.01062, PubTables-1M 2110.00061; TEDS/GriTS); alignment/adopt/extend/gaps; `docs/research/grounding/document-extraction.md` | `passed` |
+| `2026-06-01` | `.3` | aspect 4 (protocol & temporal semantics) grounded with web-verified citations (Pnueli FOCS'77, Ammons POPL'02, Daikon, Texada ASE'15, GoldMine DATE'10, Li EECS-2014-20, arXiv:2108.09249); SpecForge temporal_rules = LTL G(ante→cons) templates; novelty = spec→property (not trace→property); `docs/research/grounding/protocol-temporal-semantics.md` | `passed` |
 
 ## Commit Log
 
@@ -175,6 +193,7 @@ The deliverable is a `docs/research/grounding/` set (one doc per aspect) + a uni
 | --- | --- | --- |
 | `LITERATURE-GROUNDING.1` | `LITERATURE-GROUNDING.1 — own + design the research-grounding program for all SpecForge aspects` | docs-only |
 | `LITERATURE-GROUNDING.2` | `LITERATURE-GROUNDING.2 — ground aspect 1 (document structured extraction) with verified citations` | docs-only; verified |
+| `LITERATURE-GROUNDING.3` | `LITERATURE-GROUNDING.3 — ground aspect 4 (protocol & temporal semantics) with verified citations` | docs-only; verified |
 
 ## Changelog
 
