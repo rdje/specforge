@@ -2,6 +2,28 @@
 
 ## 2026-06-02
 
+### Temporal-rule eval — deterministic-producer runner + live APB score; tree CLOSED (TEMPORAL-RULE-EVAL.4)
+- `TEMPORAL-RULE-EVAL.4` (CLOSING leaf): wired the deterministic-producer runner in
+  `crates/specforge/src/commands/eval_extraction.rs` — a new `TaskRecords::TemporalRules`
+  variant, a `build_predictions` arm routing to `index_temporal_rule_predictions`, and an
+  `EvalTask::TemporalRule` arm of `extract_on_copy` that **builds the SemanticIR**
+  (`SemanticIr::build`) from the TEMP COPY of the document's EvidenceIR — artifacts confined
+  to the temp dir, corpus untouched, no LLM/provider — and returns `semantic.temporal_rules`.
+  The generic `format_report` renders the new task automatically.
+- **Verified end-to-end on the real AMBA APB EvidenceIR**:
+  `eval-extraction seed_apb_temporal.json` → `temporal_rule P=0.400 R=0.667 F1=0.500
+  (tp=2 fp=3 fn=1; gold=3 over 6 statements)`, matching the seed design exactly. The score
+  is the eval **doing its job**: it pinpoints a real antecedent **under-capture** (the
+  PBUSER "valid when PSEL, PENABLE, and PREADY are asserted" rule kept only PREADY) and two
+  **degenerate self-referential rules** on list-introducer header sentences — a candidate
+  fix-tree, continuing the measure→catch→fix loop past `CONSTRAINT-SUBJECT-PRECISION`.
+- +1 runner test (`build_predictions_indexes_temporal_rules`, also asserting
+  clock_signal/provenance are excluded from the key). User-friendly book subsection
+  "Temporal rules — the third measured surface" added to `quality/extraction-eval.md`. Full
+  `scripts/run_ci.sh` GREEN (1215→1216); **zero extraction-behavior change** (pure
+  measurement path). **`TEMPORAL-RULE-EVAL` CLOSED `2026-06-02`** — the first
+  `LITERATURE-GROUNDING` Tier-1 backlog item delivered for the temporal surface.
+
 ### Temporal-rule eval — hand-labeled APB temporal gold seed (TEMPORAL-RULE-EVAL.3)
 - `TEMPORAL-RULE-EVAL.3`: authored `crates/specforge/test_data/llm_eval/seed_apb_temporal.json`
   — 6 `temporal_rule` gold items over AMBA APB (IHI0024_E), each with a real `statement_id`

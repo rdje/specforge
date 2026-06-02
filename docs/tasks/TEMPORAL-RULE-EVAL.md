@@ -3,7 +3,9 @@
 ## Metadata
 
 - Tree ID: `TEMPORAL-RULE-EVAL`
-- Status: `active` (`.1` design done; `.2`+ = code)
+- Status: `done` (CLOSED `2026-06-02` — `.1`–`.4` done; supervised temporal-rule P/R/F1
+  live on real APB at P=0.400/R=0.667, surfacing a real antecedent-under-capture + degenerate
+  header finding)
 - Roadmap lane: `R15d`/`R15e` (extraction evaluation / completeness)
 - Created: `2026-06-02`
 - Owner: repo-local workflow
@@ -181,12 +183,30 @@ computed identically on both sides.
     becomes an FP against the correct gold), and add ≥2 negatives (no temporal content).
 
 - ID: `TEMPORAL-RULE-EVAL.4`
-  Status: `pending`
+  Status: `done`
   Goal: runner path — build temporal rules from a source EvidenceIR copy (no corpus
     mutation; dependency-injected predictions) and score vs gold; integrate into the
     `eval-extraction` report (or a sibling surface); verify on a real EvidenceIR; book note;
     close per BOOK-METHOD-DOC.
   Acceptance: report shows temporal_rule P/R/F1; verified on real data; mdBook green; CLOSED.
+  Verification: passed (`2026-06-02`) — wired the deterministic-producer runner in
+    `commands/eval_extraction.rs`: new `TaskRecords::TemporalRules`, a `build_predictions`
+    arm (→ `index_temporal_rule_predictions`), and the `EvalTask::TemporalRule` arm of
+    `extract_on_copy` now **builds the SemanticIR** (`SemanticIr::build`) from the TEMP COPY
+    of the doc's EvidenceIR — artifacts confined to the temp dir, corpus untouched, no
+    LLM/provider — and returns `semantic.temporal_rules`. The generic `format_report` renders
+    the new task automatically. **Verified end-to-end on the real APB EvidenceIR**:
+    `eval-extraction seed_apb_temporal.json` → `temporal_rule P=0.400 R=0.667 F1=0.500
+    (tp=2 fp=3 fn=1; gold=3 over 6 statements)` — matching the seed design exactly (2 clean
+    TPs; the 2 degenerate-header rules + the PREADY-only PBUSER rule as the 3 FPs; the
+    faithful 3-condition PBUSER gold as the 1 FN; the licence-notice negative correctly
+    scored as nothing). **The eval surfaces a real finding** (antecedent under-capture +
+    degenerate self-referential header rules) — the measure→catch→fix loop validated on live
+    data, as `CONSTRAINT-SUBJECT-PRECISION` was. +1 runner test
+    (`build_predictions_indexes_temporal_rules`, also asserting clock_signal/provenance are
+    key-excluded). User-friendly book subsection "Temporal rules — the third measured surface"
+    added to `quality/extraction-eval.md`. Full `scripts/run_ci.sh` GREEN (1215→1216).
+    **Zero extraction-behavior change** (pure measurement path). Tree CLOSED.
 
 ## Current Frontier
 
@@ -195,7 +215,14 @@ computed identically on both sides.
 | 1 | `TEMPORAL-RULE-EVAL.1` | `done` | owned + designed (this file) |
 | 2 | `TEMPORAL-RULE-EVAL.2` | `done` | scorer types + canonical keys + tests (CI green, 1214) |
 | 3 | `TEMPORAL-RULE-EVAL.3` | `done` | hand-labeled temporal gold seed (6 items, CI green 1215) |
-| 4 | `TEMPORAL-RULE-EVAL.4` | `pending` | runner (deterministic producer) + report + book + close |
+| 4 | `TEMPORAL-RULE-EVAL.4` | `done` | runner + report + book + close (live APB P=0.400/R=0.667; CI green 1216) |
+
+**Tree CLOSED `2026-06-02`.** Supervised temporal-rule precision/recall/F1 is live end-to-end
+(`eval-extraction <temporal seed>` → `temporal_rule P=0.400 R=0.667 F1=0.500`), reusing the
+`eval.rs` closed-world scorer with a provenance-free semantic key, producer = the
+deterministic temporal parser. The first run already surfaced a real finding (antecedent
+under-capture + degenerate self-referential header rules) — a candidate fix-tree, the
+measure→catch→fix loop continuing past `CONSTRAINT-SUBJECT-PRECISION`.
 
 ## Decisions
 
@@ -226,6 +253,7 @@ computed identically on both sides.
 | `2026-06-02` | `.1` | design fixed against real `eval.rs` + `TemporalRuleRecord`/`TemporalPredicateRecord` shapes; semantic provenance-free canonical key; producer = deterministic temporal parser; LLM-tier + capture–recapture deferred; docs-only; registered | `passed` |
 | `2026-06-02` | `.2` | `EvalTask::TemporalRule` + `GoldFact::TemporalRule` + `temporal_predicate_key`/`temporal_rule_key`/`temporal_rule_record_key` + `index_temporal_rule_predictions` in `eval.rs`; `score_dataset` unchanged (already generic); 3 unit tests (order/case-insensitive key match, window/edge discrimination, closed-world scoring); runner kept compiling (LLM path errors for temporal → `.4`; test closure `unreachable!`); zero extraction-behavior change; full CI GREEN (1211→1214) | `passed` |
 | `2026-06-02` | `.3` | `seed_apb_temporal.json` (6 APB `temporal_rule` items, real statement_ids, labels judged from prose): 2 clean TPs, 1 faithful antecedent-under-capture (FN/FP) case, 3 negatives (2 degenerate-header FPs + 1 licence-notice abstention); loader test `committed_temporal_seed_loads_and_validates`; README updated with the temporal gold schema; full CI GREEN (1214→1215) | `passed` |
+| `2026-06-02` | `.4` | deterministic-producer runner (`TaskRecords::TemporalRules`; `extract_on_copy` builds the SemanticIR from the temp EvidenceIR copy → `temporal_rules`; corpus untouched); generic report renders it; **live APB run** `temporal_rule P=0.400 R=0.667 F1=0.500 (tp=2 fp=3 fn=1)` matches the seed design exactly + surfaces a real finding; +1 runner test; user-friendly book subsection in `quality/extraction-eval.md`; full CI GREEN (1215→1216); zero extraction-behavior change; **tree CLOSED** | `passed` |
 
 ## Commit Log
 
@@ -233,7 +261,8 @@ computed identically on both sides.
 | --- | --- | --- |
 | `TEMPORAL-RULE-EVAL.1` | `TEMPORAL-RULE-EVAL.1 — own + design supervised temporal-rule eval (first Tier-1 grounding-backlog item)` (`542bfdf3`) | docs-only |
 | `TEMPORAL-RULE-EVAL.2` | `TEMPORAL-RULE-EVAL.2 — temporal-rule eval scorer types + provenance-free canonical key + tests` (`c2e1b05b`) | code; +3 tests; CI green 1214; zero behavior change |
-| `TEMPORAL-RULE-EVAL.3` | `TEMPORAL-RULE-EVAL.3 — hand-labeled APB temporal gold seed (6 items; TP/FN/FP + negatives)` | test_data + loader test + README; CI green 1215 |
+| `TEMPORAL-RULE-EVAL.3` | `TEMPORAL-RULE-EVAL.3 — hand-labeled APB temporal gold seed (6 items; TP/FN/FP + negatives)` (`9699abf0`) | test_data + loader test + README; CI green 1215 |
+| `TEMPORAL-RULE-EVAL.4` | `TEMPORAL-RULE-EVAL.4 — deterministic-producer runner + live APB score + book; close tree` | code + book; live P=0.400/R=0.667; CI green 1216; tree CLOSED |
 
 ## Changelog
 
@@ -256,3 +285,12 @@ computed identically on both sides.
   doc. Full CI green (1214→1215). Frontier → `.4` (deterministic-producer runner builds the
   SemanticIR from a temp EvidenceIR copy → scores `temporal_rules` vs this seed → report +
   book + close).
+- `2026-06-02`: **Tree CLOSED.** `.4` done — wired the deterministic-producer runner
+  (`TaskRecords::TemporalRules`; `extract_on_copy` builds the SemanticIR from the temp
+  EvidenceIR copy and reads `temporal_rules`, corpus untouched, no LLM), verified
+  end-to-end on the real APB EvidenceIR (`temporal_rule P=0.400 R=0.667 F1=0.500`,
+  tp=2/fp=3/fn=1 — matches the seed design exactly and surfaces a real
+  antecedent-under-capture + degenerate-header finding → a candidate fix-tree), +1 runner
+  test, user-friendly book subsection in `quality/extraction-eval.md`. Full CI green
+  (1215→1216); zero extraction-behavior change. The whole `LITERATURE-GROUNDING` Tier-1
+  item #2 (per-relation/temporal eval) is delivered for the temporal surface.

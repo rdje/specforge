@@ -75,3 +75,54 @@ of the gold *relations* — the prose-only relations are exactly the headroom th
 `signal-resolve` pass is meant to fill, which the model A/B now quantifies.
 
 *Authoritative tracking:* `docs/tasks/LLM-EXTRACTION-EVAL.md`.
+
+## Temporal rules — the third measured surface
+
+Signal constraints and actor→signal relations were the first two things this eval could
+score. There is a third: **temporal rules** — the `if-this-then-that` timing facts
+SpecForge mines from the spec (e.g. *"PNSE must be valid when PSEL is asserted"* becomes a
+typed rule: on the rising clock edge, given PSEL asserted, the Requester drives PNSE valid).
+These come from the **deterministic temporal parser** as the EvidenceIR is lowered to the
+SemanticIR — no LLM involved — so measuring them tells you how faithfully SpecForge turns
+timing prose into typed rules.
+
+It works the same way as the rest of the eval, with one twist worth understanding: a
+temporal rule's *identity* is its **logical content**, not how it was written down. So the
+canonical key is the clock edge plus the rule's antecedent and consequent predicates
+(**sorted**, so order doesn't matter) plus the cycle window — and it deliberately ignores
+the rule id, the source sentence, and the confidence. Two rules that say the same thing
+score as the same fact even if the extractor emitted their parts in a different order.
+
+Run it exactly like the others (the producer is deterministic, so the provider is ignored):
+
+```text
+specforge eval-extraction crates/specforge/test_data/llm_eval/seed_apb_temporal.json
+=== Extraction eval (provider: skip, model: ) ===
+  temporal_rule          P=0.400 R=0.667 F1=0.500  (tp=2 fp=3 fn=1; gold=3 over 6 statements)
+```
+
+That score is not a failure — it is the eval **doing its job** on the real AMBA APB spec.
+The six labelled statements were chosen to exercise the parser, and the numbers pinpoint two
+genuine, actionable issues:
+
+- **Antecedent under-capture (the false negative).** The spec says *"PBUSER must be valid
+  when PSEL, PENABLE, **and** PREADY are asserted."* The faithful rule keeps all three
+  preconditions; the parser kept only PREADY. A rule that fires on a weaker condition than
+  the spec demands is a real semantic gap — now visible as a recall miss instead of hiding
+  in 153 rules.
+- **Degenerate header rules (two of the false positives).** Sentences like *"The following
+  signals must be valid when PSEL is asserted:"* are list *introducers* — the constrained
+  signals are in the list that follows, not the sentence itself. The parser bound the
+  trigger signal as its own subject, producing a tautological "PSEL valid when PSEL
+  asserted" rule. The gold marks these statements as *negatives*, so each degenerate rule
+  is counted as a false positive.
+
+A front-matter licence notice is included as a true negative — the parser correctly produces
+nothing for it, confirming the eval credits honest abstention. The gold is **judged
+independently from the prose** (the under-capture case is deliberately written to *differ*
+from what the extractor emits, so it cannot be a self-fulfilling label), and each label
+carries a note explaining the call. As with the rest of the eval, the labels are
+agent-drafted pending human review.
+
+*Authoritative tracking:* `docs/tasks/TEMPORAL-RULE-EVAL.md` (the `.3` node records the
+producer-representation calibration against the 153 real APB temporal rules).

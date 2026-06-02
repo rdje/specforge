@@ -15,17 +15,20 @@ use crate::cli::{EvalExtractionArgs, NlpEnrichArgs, SignalResolveArgs, VlmProvid
 use crate::error::Result;
 use crate::eval::{
     self, EvalItem, EvalTask, PredictedKeys, Scorecard, index_constraint_predictions,
-    index_relation_predictions,
+    index_relation_predictions, index_temporal_rule_predictions,
 };
 use crate::ir::evidence::EvidenceIr;
+use crate::ir::semantic::{SemanticIr, TemporalRuleRecord};
 use crate::ir::source::{ActorSignalRelation, SignalConstraintRecord};
 use std::collections::BTreeSet;
 use std::path::Path;
 
-/// The typed records produced for one `(doc, task)` by running the extraction command.
+/// The typed records produced for one `(doc, task)`. The two LLM tasks run the real
+/// extraction command; the temporal task builds the SemanticIR (deterministic parser).
 enum TaskRecords {
     Constraints(Vec<SignalConstraintRecord>),
     Relations(Vec<ActorSignalRelation>),
+    TemporalRules(Vec<TemporalRuleRecord>),
 }
 
 /// Build predictions by invoking `extractor` once per unique `(doc_key, task)` in `items`
@@ -46,6 +49,9 @@ where
                 index_constraint_predictions(&records, &mut predicted)
             }
             TaskRecords::Relations(records) => index_relation_predictions(&records, &mut predicted),
+            TaskRecords::TemporalRules(records) => {
+                index_temporal_rule_predictions(&records, &mut predicted)
+            }
         }
     }
     Ok(predicted)
@@ -94,12 +100,14 @@ fn extract_on_copy(
             let enriched = EvidenceIr::load_from_path(&temp_path)?;
             Ok(TaskRecords::Relations(enriched.actor_signal_relations))
         }
-        EvalTask::TemporalRule => Err(crate::error::AppError::InvalidStageArtifact(
-            "temporal_rule eval is not wired into this LLM-command runner: temporal rules come \
-             from the deterministic temporal parser, not nlp-enrich/signal-resolve \
-             (TEMPORAL-RULE-EVAL.4)"
-                .to_string(),
-        )),
+        EvalTask::TemporalRule => {
+            // Temporal rules come from the deterministic EvidenceIR->SemanticIR lowering, not
+            // an LLM command (provider/model are unused for this task). Build the SemanticIR
+            // from the temp copy — all artifacts confined to the temp dir, corpus untouched —
+            // and read its temporal_rules.
+            let semantic = SemanticIr::build(&temp_path, temp.path())?;
+            Ok(TaskRecords::TemporalRules(semantic.temporal_rules))
+        }
     }
 }
 
@@ -288,6 +296,58 @@ mod tests {
         assert_eq!(con.tp, 1);
         assert_eq!(con.fp, 0);
         assert_eq!(con.fn_count, 0);
+    }
+
+    #[test]
+    fn build_predictions_indexes_temporal_rules() {
+        use crate::eval::GoldFact;
+        use crate::ir::semantic::{ClockEdge, TemporalPredicateRecord, TickPhase};
+        let consequent = TemporalPredicateRecord::SignalValue {
+            signal_name: "PADDR".to_string(),
+            value: "VALID".to_string(),
+            phase: TickPhase::PostTick,
+        };
+        let item = EvalItem {
+            task: EvalTask::TemporalRule,
+            doc_key: "apb".to_string(),
+            statement_id: "s1".to_string(),
+            input_text: String::new(),
+            grounding: vec![],
+            gold: vec![GoldFact::TemporalRule {
+                edge: ClockEdge::Rising,
+                antecedents: vec![],
+                consequents: vec![consequent.clone()],
+                cycle_window: None,
+            }],
+            label_status: "agent_drafted".to_string(),
+            label_note: String::new(),
+        };
+        // The produced record carries a clock_signal (PCLK) + provenance the key must ignore.
+        let record = TemporalRuleRecord {
+            rule_id: "t".to_string(),
+            clock_signal: Some("PCLK".to_string()),
+            edge: ClockEdge::Rising,
+            antecedents: vec![],
+            consequents: vec![consequent],
+            cycle_window: None,
+            source_text: "x".to_string(),
+            supporting_statement_ids: vec!["s1".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        };
+        let items = [item];
+        let predicted = build_predictions(&items, |_doc, task| {
+            assert_eq!(task, EvalTask::TemporalRule);
+            Ok(TaskRecords::TemporalRules(vec![record.clone()]))
+        })
+        .unwrap();
+        let scores = eval::score_dataset(&items, &predicted);
+        let card = &scores[&EvalTask::TemporalRule];
+        assert_eq!(
+            card.tp, 1,
+            "gold rule matched (clock_signal + provenance ignored by the key)"
+        );
+        assert_eq!(card.fp, 0);
+        assert_eq!(card.fn_count, 0);
     }
 
     #[test]
