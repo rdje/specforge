@@ -2,6 +2,28 @@
 
 ## 2026-06-02
 
+### Temporal-rule eval — scorer types + provenance-free canonical key + tests (TEMPORAL-RULE-EVAL.2)
+- `TEMPORAL-RULE-EVAL.2`: implemented the pure scorer surface in
+  `crates/specforge/src/eval.rs` for the temporal-rule task — `EvalTask::TemporalRule`
+  (label `temporal_rule`), `GoldFact::TemporalRule { edge, antecedents, consequents,
+  cycle_window }` authored with the IR's own `TemporalPredicateRecord` shapes (so gold and
+  produced records compute the same key), `temporal_predicate_key` (per-variant normalized:
+  signals/actors/values uppercased, phases/edges snake_case, kind-tagged), `temporal_rule_key`
+  (clock edge + **sorted** antecedent/consequent predicate-keys + cycle_window;
+  `rule_id`/`source_text`/`supporting_statement_ids`/`automation_confidence` excluded as
+  provenance), `temporal_rule_record_key`, and `index_temporal_rule_predictions`. The
+  closed-world `score_dataset` was already generic over `item.task` + `GoldFact::canonical_key`,
+  so it needed **no change**.
+- 3 new unit tests: gold↔record key match with reversed consequent order + lower-cased
+  signals (order- + case-insensitive); cycle-window/edge discrimination; closed-world scoring
+  over a labeled temporal statement (TP + spurious FP + ignored unlabeled). The runner
+  (`commands/eval_extraction.rs`) keeps compiling honestly — its LLM-command path returns a
+  clear error for `TemporalRule` (temporal rules come from the deterministic parser → `.4`),
+  and the test closure gets an `unreachable!` arm.
+- **Zero extraction-behavior change** (pure measurement types). Full `scripts/run_ci.sh`
+  GREEN (1211→1214 tests; fmt / clippy `-D` / rustdoc `-D` / mdBook all pass). Frontier → `.3`
+  (hand-labeled APB temporal gold seed).
+
 ### Temporal-rule eval — own + design the supervised P/R/F1 surface (TEMPORAL-RULE-EVAL.1)
 - `TEMPORAL-RULE-EVAL.1` (own + design, docs-only): created the tree for a supervised
   precision/recall/F1 evaluation of **mined temporal rules** — the first Tier-1 item

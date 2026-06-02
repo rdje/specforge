@@ -94,6 +94,12 @@ fn extract_on_copy(
             let enriched = EvidenceIr::load_from_path(&temp_path)?;
             Ok(TaskRecords::Relations(enriched.actor_signal_relations))
         }
+        EvalTask::TemporalRule => Err(crate::error::AppError::InvalidStageArtifact(
+            "temporal_rule eval is not wired into this LLM-command runner: temporal rules come \
+             from the deterministic temporal parser, not nlp-enrich/signal-resolve \
+             (TEMPORAL-RULE-EVAL.4)"
+                .to_string(),
+        )),
     }
 }
 
@@ -266,6 +272,7 @@ mod tests {
                     "s3",
                 )]))
             }
+            EvalTask::TemporalRule => unreachable!("no temporal_rule items in this test"),
         })
         .unwrap();
 

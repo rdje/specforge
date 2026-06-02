@@ -11,9 +11,11 @@
 //! for unlabeled statements are never consulted (so an un-labeled-but-correct extraction
 //! is not penalized). This requires the gold to be *complete per labeled statement*.
 //!
-//! v1 covers the two text tasks with crisp canonical keys:
+//! Covers the extraction surfaces with crisp canonical keys:
 //! - `nlp-enrich`     → [`SignalConstraintRecord`]
 //! - `signal-resolve` → [`ActorSignalRelation`]
+//! - temporal parser  → [`TemporalRuleRecord`] (the deterministic EvidenceIR→SemanticIR
+//!   lowering; identity is the rule's logical content, provenance-free)
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
@@ -22,6 +24,9 @@ use std::path::Path;
 use serde::{Deserialize, Serialize};
 
 use crate::error::{AppError, Result};
+use crate::ir::semantic::{
+    ClockEdge, CycleWindowRecord, TemporalPredicateRecord, TemporalRuleRecord, TickPhase,
+};
 use crate::ir::source::{
     ActorSignalRelation, RelationKind, SignalConstraintKind, SignalConstraintRecord,
 };
@@ -34,6 +39,8 @@ pub enum EvalTask {
     SignalConstraint,
     /// `signal-resolve` → `ActorSignalRelation`.
     ActorSignalRelation,
+    /// The deterministic temporal parser → `TemporalRuleRecord` (mined temporal rules).
+    TemporalRule,
 }
 
 impl EvalTask {
@@ -42,6 +49,7 @@ impl EvalTask {
         match self {
             EvalTask::SignalConstraint => "signal_constraint",
             EvalTask::ActorSignalRelation => "actor_signal_relation",
+            EvalTask::TemporalRule => "temporal_rule",
         }
     }
 }
@@ -72,6 +80,20 @@ pub enum GoldFact {
         relation: String,
         signal: String,
     },
+    /// A mined temporal rule (the deterministic temporal parser). Authored with the *same*
+    /// predicate shapes the IR uses (`TemporalPredicateRecord`), so the canonical key is
+    /// computed identically on gold and on produced records. Identity is the rule's logical
+    /// content — `rule_id`/`source_text`/provenance/confidence are deliberately not part of
+    /// the gold (see [`GoldFact::canonical_key`]).
+    TemporalRule {
+        edge: ClockEdge,
+        #[serde(default)]
+        antecedents: Vec<TemporalPredicateRecord>,
+        #[serde(default)]
+        consequents: Vec<TemporalPredicateRecord>,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        cycle_window: Option<CycleWindowRecord>,
+    },
 }
 
 impl GoldFact {
@@ -80,6 +102,7 @@ impl GoldFact {
         match self {
             GoldFact::Constraint { .. } => EvalTask::SignalConstraint,
             GoldFact::Relation { .. } => EvalTask::ActorSignalRelation,
+            GoldFact::TemporalRule { .. } => EvalTask::TemporalRule,
         }
     }
 
@@ -103,6 +126,12 @@ impl GoldFact {
                 relation,
                 signal,
             } => relation_key(actor, relation, signal),
+            GoldFact::TemporalRule {
+                edge,
+                antecedents,
+                consequents,
+                cycle_window,
+            } => temporal_rule_key(*edge, antecedents, consequents, cycle_window.as_ref()),
         }
     }
 }
@@ -174,6 +203,138 @@ pub fn actor_signal_relation_record_key(record: &ActorSignalRelation) -> String 
     )
 }
 
+/// Stable snake-case string for a [`TickPhase`].
+fn tick_phase_str(phase: TickPhase) -> &'static str {
+    match phase {
+        TickPhase::PreTick => "pre_tick",
+        TickPhase::PostTick => "post_tick",
+    }
+}
+
+/// Stable snake-case string for a [`ClockEdge`].
+fn clock_edge_str(edge: ClockEdge) -> &'static str {
+    match edge {
+        ClockEdge::Rising => "rising",
+        ClockEdge::Falling => "falling",
+        ClockEdge::Unknown => "unknown",
+    }
+}
+
+/// Normalized, order-stable key for a single temporal predicate. Signals/actors/values are
+/// uppercased; phases are their snake_case strings — the same normalization the constraint
+/// and relation keys use. The leading tag keeps different predicate kinds distinct.
+fn temporal_predicate_key(pred: &TemporalPredicateRecord) -> String {
+    let up = |s: &str| s.trim().to_ascii_uppercase();
+    match pred {
+        TemporalPredicateRecord::SignalValue {
+            signal_name,
+            value,
+            phase,
+        } => format!(
+            "sv|{}|{}|{}",
+            up(signal_name),
+            up(value),
+            tick_phase_str(*phase)
+        ),
+        TemporalPredicateRecord::ActorDrivesSignal {
+            actor_name,
+            signal_name,
+            phase,
+        } => format!(
+            "ads|{}|{}|{}",
+            up(actor_name),
+            up(signal_name),
+            tick_phase_str(*phase)
+        ),
+        TemporalPredicateRecord::ActorMaintainsSignalStable {
+            actor_name,
+            signal_name,
+            from_phase,
+            to_phase,
+        } => format!(
+            "amss|{}|{}|{}|{}",
+            up(actor_name),
+            up(signal_name),
+            tick_phase_str(*from_phase),
+            tick_phase_str(*to_phase)
+        ),
+        TemporalPredicateRecord::SignalStable {
+            signal_name,
+            from_phase,
+            to_phase,
+        } => format!(
+            "ss|{}|{}|{}",
+            up(signal_name),
+            tick_phase_str(*from_phase),
+            tick_phase_str(*to_phase)
+        ),
+        TemporalPredicateRecord::ActorSamplesSignal {
+            actor_name,
+            signal_name,
+            phase,
+        } => format!(
+            "asm|{}|{}|{}",
+            up(actor_name),
+            up(signal_name),
+            tick_phase_str(*phase)
+        ),
+        TemporalPredicateRecord::SignalSampled { signal_name, phase } => {
+            format!("ssm|{}|{}", up(signal_name), tick_phase_str(*phase))
+        }
+        TemporalPredicateRecord::HandshakeComplete {
+            valid_signal,
+            ready_signal,
+            phase,
+        } => format!(
+            "hc|{}|{}|{}",
+            up(valid_signal),
+            up(ready_signal),
+            tick_phase_str(*phase)
+        ),
+    }
+}
+
+/// Canonical, **provenance-free** key for a temporal rule: clock edge + the *sorted*
+/// antecedent and consequent predicate keys + the cycle window. Sorting makes the
+/// conjunction order-insensitive; `rule_id`, `source_text`, `supporting_statement_ids`, and
+/// `automation_confidence` are deliberately excluded — they are provenance, not identity.
+fn temporal_rule_key(
+    edge: ClockEdge,
+    antecedents: &[TemporalPredicateRecord],
+    consequents: &[TemporalPredicateRecord],
+    cycle_window: Option<&CycleWindowRecord>,
+) -> String {
+    let mut ant: Vec<String> = antecedents.iter().map(temporal_predicate_key).collect();
+    ant.sort();
+    let mut cons: Vec<String> = consequents.iter().map(temporal_predicate_key).collect();
+    cons.sort();
+    let window = match cycle_window {
+        Some(w) => format!(
+            "{}..{}",
+            w.min_cycles.map(|n| n.to_string()).unwrap_or_default(),
+            w.max_cycles.map(|n| n.to_string()).unwrap_or_default(),
+        ),
+        None => String::new(),
+    };
+    format!(
+        "{}|A:{}|C:{}|W:{}",
+        clock_edge_str(edge),
+        ant.join(","),
+        cons.join(","),
+        window,
+    )
+}
+
+/// Canonical key for a produced [`TemporalRuleRecord`] — matches a gold `TemporalRule`'s key.
+pub fn temporal_rule_record_key(record: &TemporalRuleRecord) -> String {
+    temporal_rule_key(
+        record.edge,
+        &record.antecedents,
+        &record.consequents,
+        record.cycle_window.as_ref(),
+    )
+}
+
 /// One labeled eval item: the gold typed outputs a correct extraction must produce for a
 /// single statement of a single document.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -242,6 +403,19 @@ pub fn index_relation_predictions(records: &[ActorSignalRelation], into: &mut Pr
         let key = actor_signal_relation_record_key(record);
         for statement_id in &record.source_statement_ids {
             into.entry((EvalTask::ActorSignalRelation, statement_id.clone()))
+                .or_default()
+                .insert(key.clone());
+        }
+    }
+}
+
+/// Add a batch of produced temporal rules to `into`, attributing each record's key to every
+/// statement that supports it.
+pub fn index_temporal_rule_predictions(records: &[TemporalRuleRecord], into: &mut PredictedKeys) {
+    for record in records {
+        let key = temporal_rule_record_key(record);
+        for statement_id in &record.supporting_statement_ids {
+            into.entry((EvalTask::TemporalRule, statement_id.clone()))
                 .or_default()
                 .insert(key.clone());
         }
@@ -679,5 +853,192 @@ mod tests {
                 .iter()
                 .any(|i| i.task == EvalTask::ActorSignalRelation && i.gold.is_empty())
         );
+    }
+
+    fn temporal_rule_record(
+        id: &str,
+        edge: ClockEdge,
+        antecedents: Vec<TemporalPredicateRecord>,
+        consequents: Vec<TemporalPredicateRecord>,
+        cycle_window: Option<CycleWindowRecord>,
+        statements: &[&str],
+    ) -> TemporalRuleRecord {
+        TemporalRuleRecord {
+            rule_id: id.to_string(),
+            clock_signal: None,
+            edge,
+            antecedents,
+            consequents,
+            cycle_window,
+            source_text: String::new(),
+            supporting_statement_ids: statements.iter().map(|s| s.to_string()).collect(),
+            automation_confidence: AutomationConfidence::Medium,
+        }
+    }
+
+    #[test]
+    fn temporal_gold_and_record_keys_match_and_ignore_order_and_case() {
+        // antecedent: PSEL high pre-tick; consequents: PADDR + PWRITE stable across the tick.
+        let record = temporal_rule_record(
+            "t1",
+            ClockEdge::Rising,
+            vec![TemporalPredicateRecord::SignalValue {
+                signal_name: "PSEL".to_string(),
+                value: "HIGH".to_string(),
+                phase: TickPhase::PreTick,
+            }],
+            vec![
+                TemporalPredicateRecord::SignalStable {
+                    signal_name: "PADDR".to_string(),
+                    from_phase: TickPhase::PreTick,
+                    to_phase: TickPhase::PostTick,
+                },
+                TemporalPredicateRecord::SignalStable {
+                    signal_name: "PWRITE".to_string(),
+                    from_phase: TickPhase::PreTick,
+                    to_phase: TickPhase::PostTick,
+                },
+            ],
+            None,
+            &["s1"],
+        );
+
+        // Gold: same logical content, consequents in REVERSE order, signals lower-cased.
+        let gold = GoldFact::TemporalRule {
+            edge: ClockEdge::Rising,
+            antecedents: vec![TemporalPredicateRecord::SignalValue {
+                signal_name: "psel".to_string(),
+                value: "high".to_string(),
+                phase: TickPhase::PreTick,
+            }],
+            consequents: vec![
+                TemporalPredicateRecord::SignalStable {
+                    signal_name: "pwrite".to_string(),
+                    from_phase: TickPhase::PreTick,
+                    to_phase: TickPhase::PostTick,
+                },
+                TemporalPredicateRecord::SignalStable {
+                    signal_name: "paddr".to_string(),
+                    from_phase: TickPhase::PreTick,
+                    to_phase: TickPhase::PostTick,
+                },
+            ],
+            cycle_window: None,
+        };
+        assert_eq!(gold.task(), EvalTask::TemporalRule);
+        assert_eq!(gold.canonical_key(), temporal_rule_record_key(&record));
+    }
+
+    #[test]
+    fn temporal_keys_discriminate_window_and_edge() {
+        let cons = vec![TemporalPredicateRecord::SignalSampled {
+            signal_name: "PRDATA".to_string(),
+            phase: TickPhase::PostTick,
+        }];
+        let base = temporal_rule_record("t", ClockEdge::Rising, vec![], cons.clone(), None, &["s"]);
+        let windowed = temporal_rule_record(
+            "t",
+            ClockEdge::Rising,
+            vec![],
+            cons.clone(),
+            Some(CycleWindowRecord {
+                min_cycles: Some(1),
+                max_cycles: Some(1),
+            }),
+            &["s"],
+        );
+        assert_ne!(
+            temporal_rule_record_key(&base),
+            temporal_rule_record_key(&windowed),
+            "cycle window is part of identity"
+        );
+
+        let falling = temporal_rule_record("t", ClockEdge::Falling, vec![], cons, None, &["s"]);
+        assert_ne!(
+            temporal_rule_record_key(&base),
+            temporal_rule_record_key(&falling),
+            "clock edge is part of identity"
+        );
+    }
+
+    #[test]
+    fn score_dataset_scores_temporal_rules_closed_world() {
+        // s1 gold = one rule (PSEL high pre -> PADDR stable across the tick).
+        let item = EvalItem {
+            task: EvalTask::TemporalRule,
+            doc_key: "apb".to_string(),
+            statement_id: "s1".to_string(),
+            input_text: String::new(),
+            grounding: vec![],
+            gold: vec![GoldFact::TemporalRule {
+                edge: ClockEdge::Rising,
+                antecedents: vec![TemporalPredicateRecord::SignalValue {
+                    signal_name: "PSEL".to_string(),
+                    value: "HIGH".to_string(),
+                    phase: TickPhase::PreTick,
+                }],
+                consequents: vec![TemporalPredicateRecord::SignalStable {
+                    signal_name: "PADDR".to_string(),
+                    from_phase: TickPhase::PreTick,
+                    to_phase: TickPhase::PostTick,
+                }],
+                cycle_window: None,
+            }],
+            label_status: "agent_drafted".to_string(),
+            label_note: String::new(),
+        };
+
+        // matching rule on s1 (TP), a spurious rule on s1 (FP), one on unlabeled s2 (ignored).
+        let matching = temporal_rule_record(
+            "p1",
+            ClockEdge::Rising,
+            vec![TemporalPredicateRecord::SignalValue {
+                signal_name: "PSEL".to_string(),
+                value: "HIGH".to_string(),
+                phase: TickPhase::PreTick,
+            }],
+            vec![TemporalPredicateRecord::SignalStable {
+                signal_name: "PADDR".to_string(),
+                from_phase: TickPhase::PreTick,
+                to_phase: TickPhase::PostTick,
+            }],
+            None,
+            &["s1"],
+        );
+        let spurious = temporal_rule_record(
+            "p2",
+            ClockEdge::Falling,
+            vec![],
+            vec![TemporalPredicateRecord::SignalSampled {
+                signal_name: "PRDATA".to_string(),
+                phase: TickPhase::PostTick,
+            }],
+            None,
+            &["s1"],
+        );
+        let unlabeled = temporal_rule_record(
+            "p3",
+            ClockEdge::Rising,
+            vec![],
+            vec![TemporalPredicateRecord::SignalSampled {
+                signal_name: "HREADY".to_string(),
+                phase: TickPhase::PostTick,
+            }],
+            None,
+            &["s2"],
+        );
+
+        let mut predicted = PredictedKeys::new();
+        index_temporal_rule_predictions(&[matching, spurious, unlabeled], &mut predicted);
+
+        let scores = score_dataset(&[item], &predicted);
+        let card = &scores[&EvalTask::TemporalRule];
+        assert_eq!(card.tp, 1, "the matching rule on s1");
+        assert_eq!(card.fn_count, 0, "gold rule was produced");
+        assert_eq!(card.fp, 1, "the Falling-edge sample rule is spurious on s1");
+        assert_eq!(card.gold_total, 1);
+        assert_eq!(card.labeled_statements, 1);
+        assert!((card.precision() - 0.5).abs() < 1e-9);
+        assert!((card.recall() - 1.0).abs() < 1e-9);
     }
 }

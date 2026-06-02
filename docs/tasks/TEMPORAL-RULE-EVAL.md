@@ -119,13 +119,30 @@ computed identically on both sides.
   Commit: `see Commit Log`
 
 - ID: `TEMPORAL-RULE-EVAL.2`
-  Status: `pending`
+  Status: `done`
   Goal: `EvalTask::TemporalRule` + `GoldFact::TemporalRule` (typed predicate sub-schema) +
     `temporal_rule_record_key` + a `temporal_predicate_key` helper + prediction indexing;
     extend `GoldFact::task`/`canonical_key` and the report task list. Pure types + keys, no
     producer change.
   Acceptance: unit tests (gold↔record agreement; antecedent/consequent order-insensitivity;
     negative item; cycle-window in/equality); `scripts/run_ci.sh` green.
+  Verification: passed (`2026-06-02`) — added to `crates/specforge/src/eval.rs`:
+    `EvalTask::TemporalRule` (label `temporal_rule`), `GoldFact::TemporalRule { edge,
+    antecedents, consequents, cycle_window }` (authored with the IR's own
+    `TemporalPredicateRecord` shapes so gold↔record keys are computed identically),
+    `temporal_predicate_key` (per-variant normalized: signals/actors/values uppercased,
+    phases/edges as snake_case, kind-tagged), `temporal_rule_key` (clock edge + **sorted**
+    antecedent/consequent predicate-keys + cycle_window; provenance/confidence excluded),
+    `temporal_rule_record_key`, and `index_temporal_rule_predictions`. The closed-world
+    `score_dataset` needed **no change** (already generic over `item.task` +
+    `GoldFact::canonical_key`). 3 new unit tests: gold↔record key match with reversed
+    consequent order + lower-cased signals (order- + case-insensitive); window/edge
+    discrimination; closed-world score over a labeled temporal statement (TP + spurious FP +
+    ignored unlabeled). The runner (`commands/eval_extraction.rs`) keeps compiling honestly:
+    its LLM-command path returns a clear error for `TemporalRule` (temporal rules come from
+    the deterministic parser → `.4`), and the test closure gets an `unreachable!` arm.
+    **Zero extraction-behavior change.** Full `scripts/run_ci.sh` GREEN (1211→1214 tests;
+    fmt/clippy-D/rustdoc-D/mdBook all pass).
 
 - ID: `TEMPORAL-RULE-EVAL.3`
   Status: `pending`
@@ -146,9 +163,9 @@ computed identically on both sides.
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `TEMPORAL-RULE-EVAL.1` | `done` | owned + designed (this file) |
-| 2 | `TEMPORAL-RULE-EVAL.2` | `pending` | scorer types + canonical keys + tests (needs recompile) |
+| 2 | `TEMPORAL-RULE-EVAL.2` | `done` | scorer types + canonical keys + tests (CI green, 1214) |
 | 3 | `TEMPORAL-RULE-EVAL.3` | `pending` | hand-labeled temporal gold seed |
-| 4 | `TEMPORAL-RULE-EVAL.4` | `pending` | runner + report + book + close |
+| 4 | `TEMPORAL-RULE-EVAL.4` | `pending` | runner (deterministic producer) + report + book + close |
 
 ## Decisions
 
@@ -177,12 +194,14 @@ computed identically on both sides.
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-06-02` | `.1` | design fixed against real `eval.rs` + `TemporalRuleRecord`/`TemporalPredicateRecord` shapes; semantic provenance-free canonical key; producer = deterministic temporal parser; LLM-tier + capture–recapture deferred; docs-only; registered | `passed` |
+| `2026-06-02` | `.2` | `EvalTask::TemporalRule` + `GoldFact::TemporalRule` + `temporal_predicate_key`/`temporal_rule_key`/`temporal_rule_record_key` + `index_temporal_rule_predictions` in `eval.rs`; `score_dataset` unchanged (already generic); 3 unit tests (order/case-insensitive key match, window/edge discrimination, closed-world scoring); runner kept compiling (LLM path errors for temporal → `.4`; test closure `unreachable!`); zero extraction-behavior change; full CI GREEN (1211→1214) | `passed` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
-| `TEMPORAL-RULE-EVAL.1` | `TEMPORAL-RULE-EVAL.1 — own + design supervised temporal-rule eval (first Tier-1 grounding-backlog item)` | docs-only |
+| `TEMPORAL-RULE-EVAL.1` | `TEMPORAL-RULE-EVAL.1 — own + design supervised temporal-rule eval (first Tier-1 grounding-backlog item)` (`542bfdf3`) | docs-only |
+| `TEMPORAL-RULE-EVAL.2` | `TEMPORAL-RULE-EVAL.2 — temporal-rule eval scorer types + provenance-free canonical key + tests` | code; +3 tests; CI green 1214; zero behavior change |
 
 ## Changelog
 
@@ -191,3 +210,10 @@ computed identically on both sides.
   Extends the closed `LLM-EXTRACTION-EVAL` measurement loop to SpecForge's third extraction
   surface (temporal rules), reusing the `eval.rs` closed-world scorer with a new
   semantic, provenance-free canonical key.
+- `2026-06-02`: `.2` done — implemented the scorer types + canonical keys + tests in
+  `eval.rs` (`EvalTask::TemporalRule`, `GoldFact::TemporalRule`, `temporal_predicate_key`,
+  `temporal_rule_key`, `temporal_rule_record_key`, `index_temporal_rule_predictions`); the
+  closed-world `score_dataset` needed no change (already generic). 3 new unit tests; runner
+  kept compiling honestly (LLM path errors for temporal rules → `.4`). Zero
+  extraction-behavior change; full CI green (1211→1214). Frontier → `.3` (hand-labeled APB
+  temporal gold seed).
