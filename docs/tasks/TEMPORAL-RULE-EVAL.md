@@ -149,6 +149,21 @@ computed identically on both sides.
   Goal: hand-labeled APB temporal gold seed (≥6 items, ≥2 negatives), gold drafted
     independently from prose; extend `load_eval_dataset`/validation for the new variant.
   Acceptance: dataset loads + validates; each gold item justifiable from its statement.
+  Producer calibration (`2026-06-02`, recorded so `.3` resumes without re-deriving): the APB
+    SemanticIR (built in-memory via `cargo run -p specforge -- semantic
+    generated/evidence_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/evidence_ir.json
+    --dry-run`) emits **153 `temporal_rules`**. Representation conventions observed (so the
+    gold uses the *same* vocabulary while correctness is judged independently from prose):
+    `edge: "rising"`, `clock_signal: "PCLK"`; a `"must be valid"` constraint lowers to a
+    consequent `signal_value {signal, "VALID", post_tick}` with `cycle_window {1,1}`, plus an
+    `actor_drives_signal {actor, signal, post_tick}` consequent **when a driver actor is
+    known**; rules are emitted **per signal** (one statement → multiple rules), antecedents
+    often empty. Methodology for `.3`: take temporal-bearing statements + their real
+    `statement_id`s from the APB EvidenceIR `extracted_statements` (e.g. `statement_0201`
+    "PSEL … means PADDR, PWRITE, PWDATA must be valid"; `statement_0202` "PADDR, PWDATA …
+    must be stable until the transfer completes"), judge the CORRECT rule(s) from the prose
+    in this vocabulary (TP where the parser agrees, FN for a clear miss, and the wrong rule
+    becomes an FP against the correct gold), and add ≥2 negatives (no temporal content).
 
 - ID: `TEMPORAL-RULE-EVAL.4`
   Status: `pending`
