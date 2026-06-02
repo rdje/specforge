@@ -2,6 +2,19 @@
 
 ## 2026-06-02
 
+### Recall estimation — own + design the Chao heterogeneity-robust second estimate (RECALL-CHAO-ESTIMATOR.1)
+- `RECALL-CHAO-ESTIMATOR.1` (own + design, docs-only): a Tier-2 adopt item from the
+  `LITERATURE-GROUNDING` reach-full-potential backlog (`extraction-evaluation.md`). SpecForge's
+  recall gauge reports only Lincoln–Petersen, which assumes **equal catchability** — an
+  assumption the Pattern and Nlp tiers violate (shared prose, different strengths). Design adds
+  the **Chao1 (Chao 1987, DOI 10.2307/2531532)** lower-bound richness estimator as a second
+  N̂: in the 2-source incidence mapping `f1 = distinct − overlap` (singletons),
+  `f2 = overlap` (doubletons), `N̂_chao = distinct + f1²/(2·f2)`. Worked on the existing recall
+  test (Pattern{A,B,C,D}, Nlp{C,D,E,F}): Chao 10 vs LP 8 → report estimated total 8–10,
+  remaining misses 2–4 as an honest range. Additive — computed only when the gauge already
+  fires (overlap>0 ⇒ f2>0, simple form), `None`-gating unchanged, zero behavior change.
+  Registered in `docs/TASK_TREE.md`.
+
 ### Temporal antecedent recall — distribute a shared assertion-value across coordinated condition signals; tree CLOSED (TEMPORAL-ANTECEDENT-RECALL.2)
 - `TEMPORAL-ANTECEDENT-RECALL.2` (CLOSING leaf): rewrote `parse_temporal_condition_predicates`
   (`crates/specforge/src/ir/semantic.rs`) to parse each condition clause into
