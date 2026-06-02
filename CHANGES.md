@@ -2,6 +2,18 @@
 
 ## 2026-06-01
 
+### Observability invariant — warnings/errors/fatals are never masked by verbosity (audit, clean)
+- `TRACE-SEVERITY-GATING-AUDIT` (CLOSED): audited the entire codebase for the user
+  invariant *"severity ≥ warning must never be gated by a verbosity/trace level — a masked
+  error is a silent failure."* Result: **clean, zero masking.** There is no `tracing`/
+  `log` framework or verbosity/`--quiet` flag; `severity_rank` only sorts findings
+  highest-first + summarizes the worst (never filters); the production `eprintln!("warning:
+  …")` sites (`enrich`/`nlp_enrich`) fire unconditionally on the error path and `main.rs`
+  prints errors unconditionally before exit (ISF `eprintln!` dumps are `#[cfg(test)]`); no
+  `Result` is silently dropped (`.ok()` sites are parse-predicates / path fallbacks / one
+  optional best-effort load). The invariant is recorded for any future trace support in
+  `docs/decisions/0004`. Docs-only.
+
 ### Constraint extraction precision — the eval's first catch, fixed (CONSTRAINT-SUBJECT-PRECISION)
 - `CONSTRAINT-SUBJECT-PRECISION` (CLOSED): the new `LLM-EXTRACTION-EVAL` harness scored
   the APB `signal_constraint` task at P=0.500 — half the recorded constraints on the
