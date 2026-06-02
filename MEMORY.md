@@ -17,9 +17,9 @@
   LLM/VLM provider default 0002).
 
 ## Current state (OVERWRITE this block each update — do not append)
-- latest_commit: `81cd24aa` — "docs: update MEMORY.md continuity baseline to pushed HEAD d92a73e3" (1 ahead of pushed `d92a73e3`; + the TRACE-SEVERITY-GATING-AUDIT close commit pending).
-- active_work_unit: none — `TRACE-SEVERITY-GATING-AUDIT` CLOSED (clean: zero severity-masking; invariant in decision 0004). Session closed trees: COMPLETENESS-RECALL-RELATIONS, REGISTER-CLASSIFIER-ENCODING-FP, SIGNAL-TABLE-COLUMNLESS-RECALL, SYMBOL-CLOSURE-CORPUS-VALIDATION, DOCLING-DEVICE-CPU-DEFAULT, CORPUS-HARDENING.4, MEMORY-ARCHITECTURE-DOC, LLM-EXTRACTION-EVAL, CONSTRAINT-SUBJECT-PRECISION, TRACE-SEVERITY-GATING-AUDIT; owned LITERATURE-GROUNDING (.1). PNT frontier.
-- next_action: PNT — open candidates: `LITERATURE-GROUNDING.2+` (web survey; user "later"); broad column-less residual (~112; needs a precision/recall decision); CHI Class-A; more corpus specs (CPU ingest works); expand eval seed (AHB).
+- latest_commit: `76644e48` — "TRACE-SEVERITY-GATING-AUDIT — … (CLEAN); record invariant; close" (then this LITERATURE-GROUNDING.2 commit pending; ~3 ahead of pushed `d92a73e3`). NOTE: `target/` was `cargo clean`ed (12.7 GiB reclaimed) — next build is a full recompile.
+- active_work_unit: `LITERATURE-GROUNDING` (`.2` done — aspect 1 document-extraction grounded with verified citations; `.3`–`.12` remaining aspects + `.13` synthesis pending). Session closed 10 trees + owned LITERATURE-GROUNDING.
+- next_action: PNT — continue `LITERATURE-GROUNDING.3+` (next aspect: staged IR / progressive lowering, or requirements/spec mining — web research, verify every citation). Other gated candidates: column-less residual (~112; needs a precision/recall decision), CHI Class-A, more corpus specs.
 - paused_work: none.
 - in_flight_uncommitted: none.
 - blockers: `.5` baseline is Ollama-server-gated (record honestly if saturated).

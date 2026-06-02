@@ -109,8 +109,21 @@ The deliverable is a `docs/research/grounding/` set (one doc per aspect) + a uni
     already-grounded completeness aspect referenced as the template + excluded. Registered.
   Commit: `see Commit Log`
 
-- ID: `LITERATURE-GROUNDING.2`–`.12`
-  Status: `pending` (the "later" survey — one aspect each, per the list above)
+- ID: `LITERATURE-GROUNDING.2`
+  Status: `done`
+  Goal: ground aspect 1 — **document structured extraction**.
+  Verification: passed (`2026-06-01`) — `docs/research/grounding/document-extraction.md`
+    written with **web-verified** citations only: Docling (arXiv:2408.09869, :2501.17887),
+    TableFormer (arXiv:2203.01017), DocLayNet (arXiv:2206.01062), PubTables-1M
+    (arXiv:2110.00061); TEDS/GriTS metrics. Alignment (SpecForge's ingest = this SOTA
+    stack), adopt (TEDS/GriTS metrics; PubTables-1M functional analysis for table-role;
+    canonicalization vs oversegmentation), extend/novelty (protocol-intent lift above the
+    structured doc — no doc-AI paper does it), and 3 gaps → candidate future trees. Every
+    citation resolvable; none guessed.
+  Commit: `see Commit Log`
+
+- ID: `LITERATURE-GROUNDING.3`–`.12`
+  Status: `pending` (remaining aspects 2–11 — one each, per the list above)
   Goal: per aspect, find + VERIFY authoritative published work; record
     `docs/research/grounding/<aspect>.md` (prior art / alignment / adopt / extend-novelty /
     gaps). No unverifiable citations.
@@ -128,8 +141,9 @@ The deliverable is a `docs/research/grounding/` set (one doc per aspect) + a uni
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `LITERATURE-GROUNDING.1` | `done` | owned + designed (the program is captured) |
-| 2 | `.2`–`.12` | `pending` | the deliberate "later" per-aspect survey (verified citations only) |
-| 3 | `.13` | `pending` | synthesis + reach-full-potential backlog |
+| 2 | `LITERATURE-GROUNDING.2` | `done` | aspect 1 grounded — document extraction (verified citations) |
+| 3 | `.3`–`.12` | `pending` | remaining aspects 2–11 (verified citations only) |
+| 4 | `.13` | `pending` | synthesis + reach-full-potential backlog |
 
 ## Decisions
 
@@ -153,12 +167,14 @@ The deliverable is a `docs/research/grounding/` set (one doc per aspect) + a uni
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-06-01` | `.1` | program owned + scoped (11 aspects, methodology + anti-hallucination + out-of-the-box framing); completeness grounding referenced + excluded; docs-only | `passed` |
+| `2026-06-01` | `.2` | aspect 1 (document extraction) grounded with web-verified citations (Docling 2408.09869/2501.17887, TableFormer 2203.01017, DocLayNet 2206.01062, PubTables-1M 2110.00061; TEDS/GriTS); alignment/adopt/extend/gaps; `docs/research/grounding/document-extraction.md` | `passed` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `LITERATURE-GROUNDING.1` | `LITERATURE-GROUNDING.1 — own + design the research-grounding program for all SpecForge aspects` | docs-only |
+| `LITERATURE-GROUNDING.2` | `LITERATURE-GROUNDING.2 — ground aspect 1 (document structured extraction) with verified citations` | docs-only; verified |
 
 ## Changelog
 
