@@ -17,9 +17,9 @@
   LLM/VLM provider default 0002).
 
 ## Current state (OVERWRITE this block each update — do not append)
-- latest_commit: `76644e48` — "TRACE-SEVERITY-GATING-AUDIT — … (CLEAN); record invariant; close" (then this LITERATURE-GROUNDING.2 commit pending; ~3 ahead of pushed `d92a73e3`). NOTE: `target/` was `cargo clean`ed (12.7 GiB reclaimed) — next build is a full recompile.
-- active_work_unit: `LITERATURE-GROUNDING` (`.2` document-extraction + `.3` protocol-temporal-semantics grounded, verified citations; `.4`–`.12` remaining aspects + `.13` synthesis pending). Session closed 10 trees + owned/advanced LITERATURE-GROUNDING.
-- next_action: PNT — continue `LITERATURE-GROUNDING.4+` (next aspects: staged IR/progressive lowering; requirements & spec mining; KG/relation extraction; multimodal fusion; neuro-symbolic/bounded-LLM; cross-document learning; IE eval methodology; uncertainty/residual-honesty; spec→RTL — web research, VERIFY every citation), then `.13` synthesis. Other gated candidates: column-less residual (~112; needs a precision/recall decision), CHI Class-A.
+- latest_commit: `aa7c3f6e` — "LITERATURE-GROUNDING.3 — ground aspect 4 (protocol & temporal semantics) with verified citations" (this `LITERATURE-GROUNDING.4-.12` commit pending → becomes 5 ahead of pushed `d92a73e3`; push at ~30). NOTE: `target/` was `cargo clean`ed earlier (12.7 GiB reclaimed); this lane is docs-only so no rebuild was needed.
+- active_work_unit: `LITERATURE-GROUNDING` — `.1`–`.12` DONE (all 11 SpecForge aspects grounded in verified published research; `.4`–`.12` = a 9-agent sweep, verified-citations-only, 1 unverifiable survey dropped). Only `.13` synthesis + reach-full-potential backlog remains → then CLOSE the tree.
+- next_action: PNT — `LITERATURE-GROUNDING.13`: synthesize the unifying SpecForge↔literature map + a prioritized reach-full-potential backlog (adopt-now / claimed-novelty / research-suggested improvements → future owned trees); **`.13` is the CLOSING leaf → BOOK-METHOD-DOC close-rule applies** (add/refresh the tree's mdBook subsection per `docs/tasks/BOOK-METHOD-DOC.md` placement map); then CLOSE. After that, pick the next tree. Gated candidates: column-less residual (~112; needs a precision/recall decision, reverses approach A), CHI Class-A timing matrices.
 - paused_work: none.
 - in_flight_uncommitted: none.
-- blockers: `.5` baseline is Ollama-server-gated (record honestly if saturated).
+- blockers: none for `.13` (docs-only synthesis).

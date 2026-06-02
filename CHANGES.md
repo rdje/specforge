@@ -1,5 +1,34 @@
 # CHANGES
 
+## 2026-06-02
+
+### Literature grounding — 9 remaining SpecForge aspects grounded in verified published research (LITERATURE-GROUNDING.4–.12)
+- `LITERATURE-GROUNDING.4`–`.12`: grounded the 9 remaining SpecForge aspects against the
+  authoritative literature (the program is now `.1`–`.12` complete; only `.13` synthesis
+  + reach-full-potential backlog remains before the tree closes). Executed as a **9-agent
+  parallel research sweep**, one agent per aspect, under the tree's non-negotiable
+  **verify-every-citation** discipline. Every cited source carries a resolvable id
+  (arXiv / DOI / RFC / ISBN / IEEE-std / stable URL); the orchestrator **personally
+  spot-verified the highest-fabrication-risk recent works** before commit — AssertLLM
+  (arXiv:2402.00386, ASP-DAC'25), Hybrid-NL2SVA (arXiv:2506.21569, MLCAD'25),
+  QiMeng-CodeV-SVA (arXiv:2603.14239, 2026), MLLM-VRDU survey (arXiv:2507.09861) — all
+  confirmed real — and **dropped** one secondary survey (arXiv:2408.01287) that was not
+  independently confirmed, rather than guess it.
+- 9 docs written under `docs/research/grounding/`, each separating *adopt-from-literature*
+  from *SpecForge's claimed novelty*: `staged-ir.md` (LLVM/MLIR progressive-lowering,
+  nanopass), `requirements-extraction.md` (RFC 2119/8174, NLP4RE, PROMISE-NFR, NoRBERT,
+  ACE, Berry-Kamsties, NASA ARM), `knowledge-graph-relation-extraction.md` (OpenIE, ReVerb,
+  distant supervision, KBP, Hogan KG survey), `multimodal-fusion.md` (LayoutLM v1–v3, Donut,
+  DocVQA, MLLM-VRDU, Dempster–Shafer evidence theory), `neuro-symbolic-bounded-llm.md`
+  (grammar-constrained decoding, Outlines, RAG, SNLI/NLI, hallucination survey, SelfCheckGPT,
+  Garcez–Lamb neurosymbolic), `cross-document-learning.md` (Yarowsky, Riloff-Jones, Mintz,
+  NELL, Snorkel, continual-learning), `extraction-evaluation.md` (van Rijsbergen F-measure,
+  MUC-5, Cohen κ / Krippendorff α / Artstein-Poesio, Chao estimator, capture–recapture in
+  software inspection), `uncertainty-residual-honesty.md` (Chow reject-option, selective
+  classification, conformal prediction, calibration, open-set recognition),
+  `spec-to-hardware.md` (IEEE 1850 PSL, IEEE 1800 SVA, AssertLLM, Hybrid-NL2SVA,
+  QiMeng-CodeV-SVA, HLS survey). Docs-only; mdBook/links consistent; no code change.
+
 ## 2026-06-01
 
 ### Observability invariant — warnings/errors/fatals are never masked by verbosity (audit, clean)

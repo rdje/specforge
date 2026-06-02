@@ -138,12 +138,38 @@ The deliverable is a `docs/research/grounding/` set (one doc per aspect) + a uni
   Commit: `see Commit Log`
 
 - ID: `LITERATURE-GROUNDING.4`–`.12`
-  Status: `pending` (remaining aspects — staged IR / requirements & spec mining /
-    KG-relation extraction / multimodal fusion / neuro-symbolic-bounded-LLM /
-    cross-document learning / IE eval methodology / uncertainty-residual-honesty / spec→RTL)
+  Status: `done`
   Goal: per aspect, find + VERIFY authoritative published work; record
     `docs/research/grounding/<aspect>.md`. No unverifiable citations.
   Acceptance: verified per-aspect grounding doc.
+  Verification: passed (`2026-06-02`) — all 9 remaining aspects grounded via a 9-agent
+    parallel research sweep, every citation web-verified with a resolvable id (none guessed),
+    and the highest-fabrication-risk recent works personally spot-verified by the
+    orchestrator before commit (AssertLLM arXiv:2402.00386/ASP-DAC'25; Hybrid-NL2SVA
+    arXiv:2506.21569/MLCAD'25; QiMeng-CodeV-SVA arXiv:2603.14239; MLLM-VRDU survey
+    arXiv:2507.09861 — all confirmed real). One unconfirmed secondary survey (arXiv:2408.01287)
+    was DROPPED per the anti-hallucination discipline. Docs written:
+      - `.4`  aspect 2  → `staged-ir.md` (LLVM CGO'04, MLIR CGO'21/2002.11054, nanopass ICFP'04/'13)
+      - `.5`  aspect 3  → `requirements-extraction.md` (RFC 2119/8174, NLP4RE CSUR'21/2004.01099,
+        PROMISE-NFR'07, NoRBERT RE'20, ACE cmp-lg/9603004, Berry-Kamsties, ARM ICSE'97)
+      - `.6`  aspect 5  → `knowledge-graph-relation-extraction.md` (OpenIE IJCAI'07, ReVerb
+        D11-1142, Mintz P09-1113, PCNN D15-1203, KBP P11-1115, OIE survey C18-1326, Hogan KG CSUR'21)
+      - `.7`  aspect 6  → `multimodal-fusion.md` (LayoutLM/v2/v3, Donut 2111.15664, DocVQA
+        2007.00398, MLLM-VRDU 2507.09861, Dempster 1967)
+      - `.8`  aspect 7  → `neuro-symbolic-bounded-llm.md` (GCD 2305.13971, Outlines 2307.09702,
+        RAG 2005.11401, SNLI 1508.05326, Ji hallucination CSUR'23, SelfCheckGPT 2303.08896,
+        Garcez&Lamb neurosymbolic)
+      - `.9`  aspect 8  → `cross-document-learning.md` (Yarowsky'95, Riloff-Jones'99,
+        Mintz P09-1113, NELL AAAI'10, Snorkel 1711.10160, Parisi continual 1802.07569)
+      - `.10` aspect 9  → `extraction-evaluation.md` (van Rijsbergen'79, MUC-5'93, Cohen κ'60,
+        Krippendorff α, Artstein-Poesio CL'08, Chao'87, Eick ICSE'92, Petersson JSS'04)
+      - `.11` aspect 10 → `uncertainty-residual-honesty.md` (Chow'70, El-Yaniv-Wiener JMLR'10,
+        Geifman 1705.08500, Vovk conformal'05, Angelopoulos-Bates 2107.07511, Guo 1706.04599,
+        Scheirer open-set TPAMI'13)
+      - `.12` aspect 11 → `spec-to-hardware.md` (IEEE 1850 PSL, IEEE 1800 SVA, AssertLLM
+        2402.00386, Hybrid-NL2SVA 2506.21569, QiMeng-CodeV-SVA 2603.14239, HLS Cong TCAD'11)
+    Each doc separates adopt-from-literature vs SpecForge's claimed novelty, per the
+    out-of-the-box discipline.
 
 - ID: `LITERATURE-GROUNDING.13`
   Status: `pending`
@@ -159,8 +185,8 @@ The deliverable is a `docs/research/grounding/` set (one doc per aspect) + a uni
 | 1 | `LITERATURE-GROUNDING.1` | `done` | owned + designed (the program is captured) |
 | 2 | `LITERATURE-GROUNDING.2` | `done` | aspect 1 grounded — document extraction (verified citations) |
 | 3 | `LITERATURE-GROUNDING.3` | `done` | aspect 4 grounded — protocol & temporal semantics (verified) |
-| 4 | `.4`–`.12` | `pending` | remaining aspects (verified citations only) |
-| 5 | `.13` | `pending` | synthesis + reach-full-potential backlog |
+| 4 | `.4`–`.12` | `done` | 9 remaining aspects grounded (verified citations only; 9-agent sweep + spot-verify) |
+| 5 | `.13` | `pending` | synthesis + reach-full-potential backlog → close tree |
 
 ## Decisions
 
@@ -186,6 +212,7 @@ The deliverable is a `docs/research/grounding/` set (one doc per aspect) + a uni
 | `2026-06-01` | `.1` | program owned + scoped (11 aspects, methodology + anti-hallucination + out-of-the-box framing); completeness grounding referenced + excluded; docs-only | `passed` |
 | `2026-06-01` | `.2` | aspect 1 (document extraction) grounded with web-verified citations (Docling 2408.09869/2501.17887, TableFormer 2203.01017, DocLayNet 2206.01062, PubTables-1M 2110.00061; TEDS/GriTS); alignment/adopt/extend/gaps; `docs/research/grounding/document-extraction.md` | `passed` |
 | `2026-06-01` | `.3` | aspect 4 (protocol & temporal semantics) grounded with web-verified citations (Pnueli FOCS'77, Ammons POPL'02, Daikon, Texada ASE'15, GoldMine DATE'10, Li EECS-2014-20, arXiv:2108.09249); SpecForge temporal_rules = LTL G(ante→cons) templates; novelty = spec→property (not trace→property); `docs/research/grounding/protocol-temporal-semantics.md` | `passed` |
+| `2026-06-02` | `.4`–`.12` | 9 remaining aspects grounded via 9-agent parallel research sweep, verified-citations-only; orchestrator spot-verified the recent high-risk works (AssertLLM 2402.00386, Hybrid-NL2SVA 2506.21569, QiMeng-CodeV-SVA 2603.14239, MLLM-VRDU 2507.09861 — all confirmed) and DROPPED one unverified survey (2408.01287); 9 docs written under `docs/research/grounding/` (staged-ir, requirements-extraction, knowledge-graph-relation-extraction, multimodal-fusion, neuro-symbolic-bounded-llm, cross-document-learning, extraction-evaluation, uncertainty-residual-honesty, spec-to-hardware), each with adopt-vs-novelty separation | `passed` |
 
 ## Commit Log
 
@@ -194,6 +221,7 @@ The deliverable is a `docs/research/grounding/` set (one doc per aspect) + a uni
 | `LITERATURE-GROUNDING.1` | `LITERATURE-GROUNDING.1 — own + design the research-grounding program for all SpecForge aspects` | docs-only |
 | `LITERATURE-GROUNDING.2` | `LITERATURE-GROUNDING.2 — ground aspect 1 (document structured extraction) with verified citations` | docs-only; verified |
 | `LITERATURE-GROUNDING.3` | `LITERATURE-GROUNDING.3 — ground aspect 4 (protocol & temporal semantics) with verified citations` | docs-only; verified |
+| `LITERATURE-GROUNDING.4`–`.12` | `LITERATURE-GROUNDING.4-.12 — ground 9 remaining aspects with verified citations (9-agent sweep + spot-verify)` | docs-only; verified; 9 grounding docs |
 
 ## Changelog
 
