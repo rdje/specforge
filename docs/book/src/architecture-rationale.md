@@ -219,3 +219,50 @@ That is the reason for the layered shape:
 - and, over time, a broader corpus knowledge-base layer
 
 `specforge` is trying to become expert-like by accumulating reusable extraction knowledge, not by replacing the document pipeline with a black box.
+
+## Why the design is grounded in published research
+
+Almost everything `specforge` does — turning PDFs into structured documents, lowering
+meaning through staged representations, pulling normative requirements and protocol timing
+out of prose, building a knowledge graph of actors and signals, fusing text with tables and
+figures, using a bounded LLM, learning across documents, measuring its own recall, and
+handing off to hardware tooling — is something a research community has already studied for
+years.
+
+That is good news, and we treat it as such. It means the project does not have to invent
+its foundations from scratch: where a problem is settled in the literature, `specforge`
+should *adopt the proven approach and the standard vocabulary* rather than re-derive a
+weaker version. And it means the genuinely new ideas can be named and defended, instead of
+being lost in the noise.
+
+So one task-tree (`LITERATURE-GROUNDING`) deliberately maps each part of the design onto its
+prior art. For every aspect it records three things: where `specforge` already matches the
+established work (validate the design), which techniques are worth borrowing (adopt), and
+where `specforge` genuinely does something the literature does not (claim it). A short
+unifying map and a prioritized "what to improve next" backlog live alongside the per-aspect
+write-ups under `docs/research/grounding/`.
+
+A few threads recur across every aspect — these are the parts worth claiming as genuinely
+ours:
+
+- **We work forwards from the spec.** Most of the related work (program-invariant mining,
+  assertion generation, specification mining) works *backwards* from an existing
+  implementation — traces, RTL, or code. `specforge` recovers intent from the
+  human-authored specification *before* any implementation exists.
+- **When the evidence is not decisive, we keep a structured record instead of guessing.**
+  The wider field usually stops at a confidence number or simply drops the uncertain case.
+  `specforge` emits a first-class, provenance-carrying residual decision — uncertainty stays
+  visible and auditable.
+- **We estimate the misses we cannot see.** Borrowing capture–recapture from software
+  inspection, `specforge` gives an honest lower bound on what it *failed* to extract, not
+  just a score on what it found.
+
+There is one non-negotiable rule behind all of this: **every citation must be real and
+verifiable.** A literature-grounding effort is only trustworthy if its references resolve.
+Each source is checked against a resolvable identifier (an arXiv id, DOI, RFC number, ISBN,
+IEEE standard, or stable URL), the riskiest recent works are double-checked by hand, and any
+source that cannot be confirmed is dropped — never guessed. The goal is to help you trust
+that `specforge` stands on real ground, and to show you exactly where it goes beyond it.
+
+The full grounding survey — one document per aspect plus the unifying synthesis map — lives
+in `docs/research/grounding/` (`README.md` is the synthesis and index).

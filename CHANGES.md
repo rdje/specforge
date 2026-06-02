@@ -2,6 +2,27 @@
 
 ## 2026-06-02
 
+### Literature grounding — synthesis map + reach-full-potential backlog; tree CLOSED (LITERATURE-GROUNDING.13)
+- `LITERATURE-GROUNDING.13` (CLOSING leaf): synthesized the whole program into
+  `docs/research/grounding/README.md` — the 11-aspect → literature map (anchor / alignment /
+  claimed-novelty per aspect), the cross-aspect **novelty throughline** worth claiming
+  (forward spec→intent recovery; fail-closed residuals as first-class typed IR; capture–
+  recapture recall bounds across extractor tiers; a closed behavioral protocol ontology;
+  advisory-only + negative-knowledge priors), and a **3-tier prioritized
+  reach-full-potential backlog** where each item is a candidate future owned tree (Tier-1
+  adopt-now: LTL/MTL templates + `.isf`→PSL/SVA export, per-relation + temporal-rule eval,
+  conformal LLM-tier calibration; Tier-2 principled replacements: NLI verifier, Dempster-rule
+  fusion, κ/α + Chao + partial-match, TEDS/GriTS + functional analysis; Tier-3 structural:
+  nanopass differential grammars + stage verifier, NELL/Snorkel prior hardening, ambiguity
+  classifier + SHOULD/MAY, cross-sentence RE + canonicalization).
+- **BOOK-METHOD-DOC close-rule satisfied**: added a user-friendly "Why the design is grounded
+  in published research" section to `docs/book/src/architecture-rationale.md` (why-before-what:
+  don't reinvent the wheel / claim deliberate novelty / know where to improve; the
+  forward-residual-recall throughline; the verify-every-citation rule framed as a user-trust
+  benefit; pointer to the survey). `mdbook build` green.
+- **Tree CLOSED `2026-06-02`** — all 11 SpecForge aspects (`.2`–`.12`) grounded in verified
+  published research + synthesis (`.13`); `docs/TASK_TREE.md` index updated. Docs-only.
+
 ### Literature grounding — 9 remaining SpecForge aspects grounded in verified published research (LITERATURE-GROUNDING.4–.12)
 - `LITERATURE-GROUNDING.4`–`.12`: grounded the 9 remaining SpecForge aspects against the
   authoritative literature (the program is now `.1`–`.12` complete; only `.13` synthesis

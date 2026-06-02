@@ -3,7 +3,8 @@
 ## Metadata
 
 - Tree ID: `LITERATURE-GROUNDING`
-- Status: `active` (`.1` design done; `.2`+ = the survey, a deliberate "later" program)
+- Status: `done` (CLOSED `2026-06-02` — all 11 aspects grounded with verified citations +
+  synthesis map + reach-full-potential backlog + book mirror)
 - Roadmap lane: `R0`/`R15e` (research / foundations)
 - Created: `2026-06-01`
 - Owner: repo-local workflow
@@ -172,11 +173,27 @@ The deliverable is a `docs/research/grounding/` set (one doc per aspect) + a uni
     out-of-the-box discipline.
 
 - ID: `LITERATURE-GROUNDING.13`
-  Status: `pending`
+  Status: `done`
   Goal: synthesize the unifying "SpecForge ↔ literature" map + a prioritized
     reach-full-potential backlog (adopt-now techniques, claimed novelty, research-suggested
     improvements → future owned trees); close.
   Acceptance: synthesis map + backlog; tree CLOSED.
+  Verification: passed (`2026-06-02`) — `docs/research/grounding/README.md` written: the
+    11-aspect → literature map (anchor / alignment / claimed-novelty per aspect), the
+    cross-aspect novelty throughline (forward spec→intent recovery; fail-closed typed
+    residuals; capture–recapture recall bounds; closed behavioral protocol ontology;
+    advisory-only + negative-knowledge priors), and a 3-tier prioritized reach-full-potential
+    backlog (Tier 1 adopt-now: LTL/MTL templates + `.isf`→PSL/SVA export, per-relation +
+    temporal-rule eval, conformal calibration; Tier 2 principled replacements: NLI verifier,
+    Dempster-rule fusion, κ/α + Chao + partial-match, TEDS/GriTS + functional analysis;
+    Tier 3 structural: nanopass differential grammars + stage verifier, NELL/Snorkel prior
+    hardening, ambiguity classifier + SHOULD/MAY, cross-sentence RE + canonicalization) —
+    each a candidate future owned tree. The earlier `INTENT-COMPLETENESS-RESEARCH` grounding
+    is referenced, not repeated. **BOOK-METHOD-DOC close-rule satisfied**: added a
+    user-friendly "Why the design is grounded in published research" section to
+    `docs/book/src/architecture-rationale.md` (why-before-what; the forward/residual/recall
+    throughline; the verify-every-citation rule as a user-trust benefit; pointer to the
+    survey). mdBook builds green. Docs-only.
 
 ## Current Frontier
 
@@ -186,7 +203,12 @@ The deliverable is a `docs/research/grounding/` set (one doc per aspect) + a uni
 | 2 | `LITERATURE-GROUNDING.2` | `done` | aspect 1 grounded — document extraction (verified citations) |
 | 3 | `LITERATURE-GROUNDING.3` | `done` | aspect 4 grounded — protocol & temporal semantics (verified) |
 | 4 | `.4`–`.12` | `done` | 9 remaining aspects grounded (verified citations only; 9-agent sweep + spot-verify) |
-| 5 | `.13` | `pending` | synthesis + reach-full-potential backlog → close tree |
+| 5 | `.13` | `done` | synthesis map + reach-full-potential backlog + book mirror → **tree CLOSED `2026-06-02`** |
+
+**Tree CLOSED `2026-06-02`.** All 11 SpecForge aspects grounded in verified published
+research (`.2`–`.12`), the synthesis map + prioritized reach-full-potential backlog landed
+(`.13`, `docs/research/grounding/README.md`), and the book mirror added
+(`architecture-rationale.md`). The backlog's Tier-1 items are candidate future owned trees.
 
 ## Decisions
 
@@ -213,6 +235,7 @@ The deliverable is a `docs/research/grounding/` set (one doc per aspect) + a uni
 | `2026-06-01` | `.2` | aspect 1 (document extraction) grounded with web-verified citations (Docling 2408.09869/2501.17887, TableFormer 2203.01017, DocLayNet 2206.01062, PubTables-1M 2110.00061; TEDS/GriTS); alignment/adopt/extend/gaps; `docs/research/grounding/document-extraction.md` | `passed` |
 | `2026-06-01` | `.3` | aspect 4 (protocol & temporal semantics) grounded with web-verified citations (Pnueli FOCS'77, Ammons POPL'02, Daikon, Texada ASE'15, GoldMine DATE'10, Li EECS-2014-20, arXiv:2108.09249); SpecForge temporal_rules = LTL G(ante→cons) templates; novelty = spec→property (not trace→property); `docs/research/grounding/protocol-temporal-semantics.md` | `passed` |
 | `2026-06-02` | `.4`–`.12` | 9 remaining aspects grounded via 9-agent parallel research sweep, verified-citations-only; orchestrator spot-verified the recent high-risk works (AssertLLM 2402.00386, Hybrid-NL2SVA 2506.21569, QiMeng-CodeV-SVA 2603.14239, MLLM-VRDU 2507.09861 — all confirmed) and DROPPED one unverified survey (2408.01287); 9 docs written under `docs/research/grounding/` (staged-ir, requirements-extraction, knowledge-graph-relation-extraction, multimodal-fusion, neuro-symbolic-bounded-llm, cross-document-learning, extraction-evaluation, uncertainty-residual-honesty, spec-to-hardware), each with adopt-vs-novelty separation | `passed` |
+| `2026-06-02` | `.13` | synthesis map + reach-full-potential backlog written (`docs/research/grounding/README.md`: 11-aspect→literature table, cross-aspect novelty throughline, 3-tier prioritized backlog → candidate future trees); BOOK-METHOD-DOC close-rule satisfied (user-friendly "Why the design is grounded in published research" section in `architecture-rationale.md`); mdBook builds green; **tree CLOSED** | `passed` |
 
 ## Commit Log
 
@@ -221,10 +244,20 @@ The deliverable is a `docs/research/grounding/` set (one doc per aspect) + a uni
 | `LITERATURE-GROUNDING.1` | `LITERATURE-GROUNDING.1 — own + design the research-grounding program for all SpecForge aspects` | docs-only |
 | `LITERATURE-GROUNDING.2` | `LITERATURE-GROUNDING.2 — ground aspect 1 (document structured extraction) with verified citations` | docs-only; verified |
 | `LITERATURE-GROUNDING.3` | `LITERATURE-GROUNDING.3 — ground aspect 4 (protocol & temporal semantics) with verified citations` | docs-only; verified |
-| `LITERATURE-GROUNDING.4`–`.12` | `LITERATURE-GROUNDING.4-.12 — ground 9 remaining aspects with verified citations (9-agent sweep + spot-verify)` | docs-only; verified; 9 grounding docs |
+| `LITERATURE-GROUNDING.4`–`.12` | `LITERATURE-GROUNDING.4-.12 — ground 9 remaining aspects with verified citations (9-agent sweep + spot-verify)` (`2a9eeecc`) | docs-only; verified; 9 grounding docs |
+| `LITERATURE-GROUNDING.13` | `LITERATURE-GROUNDING.13 — synthesis map + reach-full-potential backlog + book mirror; close tree` | docs-only; synthesis README + architecture-rationale book section; tree CLOSED |
 
 ## Changelog
 
 - `2026-06-01`: Created — own + design the program to ground every SpecForge aspect in
   verified published research (leverage prior art, claim genuine novelty, surface
   improvement opportunities); survey execution deliberately deferred ("later").
+- `2026-06-02`: **Tree CLOSED.** Executed the full survey under a "roll until exhaustion"
+  PNT directive: `.4`–`.12` grounded the 9 remaining aspects via a 9-agent parallel research
+  sweep (verified-citations-only; one unverifiable survey dropped; commit `2a9eeecc`), and
+  `.13` synthesized the unifying SpecForge↔literature map + a 3-tier prioritized
+  reach-full-potential backlog (`docs/research/grounding/README.md`) and added the
+  user-friendly book mirror to `architecture-rationale.md` (BOOK-METHOD-DOC close-rule).
+  All 11 aspects done; mdBook green. The backlog's Tier-1 items (LTL/MTL templates +
+  `.isf`→PSL/SVA export; per-relation + temporal-rule eval; conformal LLM-tier calibration)
+  are the highest-leverage candidate future owned trees.

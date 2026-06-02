@@ -17,9 +17,9 @@
   LLM/VLM provider default 0002).
 
 ## Current state (OVERWRITE this block each update — do not append)
-- latest_commit: `aa7c3f6e` — "LITERATURE-GROUNDING.3 — ground aspect 4 (protocol & temporal semantics) with verified citations" (this `LITERATURE-GROUNDING.4-.12` commit pending → becomes 5 ahead of pushed `d92a73e3`; push at ~30). NOTE: `target/` was `cargo clean`ed earlier (12.7 GiB reclaimed); this lane is docs-only so no rebuild was needed.
-- active_work_unit: `LITERATURE-GROUNDING` — `.1`–`.12` DONE (all 11 SpecForge aspects grounded in verified published research; `.4`–`.12` = a 9-agent sweep, verified-citations-only, 1 unverifiable survey dropped). Only `.13` synthesis + reach-full-potential backlog remains → then CLOSE the tree.
-- next_action: PNT — `LITERATURE-GROUNDING.13`: synthesize the unifying SpecForge↔literature map + a prioritized reach-full-potential backlog (adopt-now / claimed-novelty / research-suggested improvements → future owned trees); **`.13` is the CLOSING leaf → BOOK-METHOD-DOC close-rule applies** (add/refresh the tree's mdBook subsection per `docs/tasks/BOOK-METHOD-DOC.md` placement map); then CLOSE. After that, pick the next tree. Gated candidates: column-less residual (~112; needs a precision/recall decision, reverses approach A), CHI Class-A timing matrices.
+- latest_commit: `2a9eeecc` — "LITERATURE-GROUNDING.4-.12 — ground 9 remaining aspects with verified citations (9-agent sweep + spot-verify)" (this `LITERATURE-GROUNDING.13` close commit pending → becomes 6 ahead of pushed `d92a73e3`; push at ~30). NOTE: `target/` was `cargo clean`ed earlier (12.7 GiB reclaimed); LITERATURE-GROUNDING was docs-only so no rebuild was needed — next CODE tree triggers a full recompile.
+- active_work_unit: none — `LITERATURE-GROUNDING` **CLOSED `2026-06-02`** (`.1`–`.13` done: all 11 SpecForge aspects grounded with verified citations + `.13` synthesis map & 3-tier reach-full-potential backlog + book mirror in `architecture-rationale.md`; mdBook green).
+- next_action: PNT — pick the next tree. Highest-leverage NEW candidates surfaced by the grounding backlog (each would be its own code-owning tree): Tier-1 = LTL/MTL property-template vocabulary for `temporal_rules` + `.isf`→PSL/SVA export; per-relation P/R/F1 + `temporal_rule` fact kind in the eval harness; conformal calibration of the LLM/VLM tier. Pre-existing gated candidates: column-less residual (~112; needs a precision/recall decision, reverses approach A), CHI Class-A timing matrices, CONSTRAINT-SUBJECT-PRECISION aggregate eval re-confirm on a clean APB re-ingest, AHB eval-seed expansion.
 - paused_work: none.
 - in_flight_uncommitted: none.
-- blockers: none for `.13` (docs-only synthesis).
+- blockers: none.
