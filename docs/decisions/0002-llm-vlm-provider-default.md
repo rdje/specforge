@@ -36,6 +36,21 @@ booster, not on the critical path.
 - Candidate upgrade: `qwen3-vl:8b` (Apache-2.0, ~6.1G on Ollama vs 6.0G — near drop-in;
   newer joint text+vision pretraining). Evaluate, don't assume; local Ollama is 0.18.2
   (current), so it's compatible.
+- **Measured A/B (`2026-06-01`, via `eval-extraction` on the 16-item APB seed):**
+
+  | task | skip (pattern) | qwen2.5vl:7b | qwen3-vl:8b |
+  |---|---|---|---|
+  | signal_constraint | P0.500 R1.000 | P0.500 R1.000 | P0.500 R1.000 |
+  | actor_signal_relation | P0.500 R0.333 | P0.400 R0.333 | P0.500 R0.333 |
+
+  Read: on this seed **qwen3-vl:8b is marginally better** — it did not introduce the
+  spurious relation edge qwen2.5vl did (relation precision 0.40→0.50, F1 0.364→0.400),
+  and is identical on constraints (both add nothing on these statements). Neither model
+  improved recall over the deterministic pattern baseline (both miss the same 4 prose
+  relations). **Not yet a swap recommendation:** the seed is tiny (8 statements/task,
+  agent-drafted), and the relation recall gap is partly a coverage artifact (some labeled
+  relations are table-row-description statements the prose passes don't process). Default
+  stays `qwen2.5vl:7b` until a larger, human-reviewed eval gives a conclusive verdict.
 
 ## Links
 
