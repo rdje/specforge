@@ -2701,12 +2701,14 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
     let print_recall = |label: &str, est: &Option<crate::ir::completeness::RecallEstimate>| {
         match est {
             Some(r) => println!(
-                "  {label}: pattern {}, nlp {}, overlap {} → estimated_total {} | remaining_misses >= {} | recall ~{}%",
+                "  {label}: pattern {}, nlp {}, overlap {} → estimated_total LP {} / Chao {} | remaining_misses >= LP {} / Chao {} | recall ~{}%",
                 r.pattern,
                 r.nlp,
                 r.overlap,
                 r.estimated_total,
+                r.chao_estimated_total,
                 r.estimated_remaining_misses,
+                r.chao_estimated_remaining_misses,
                 r.estimated_recall_pct
             ),
             None => println!("  {label}: insufficient (needs both tiers with overlap)"),
@@ -3031,10 +3033,24 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
                     .unwrap_or_else(|| "n/a".to_string()),
             ),
             metric(
+                "recall_estimate_chao_remaining_misses",
+                recall
+                    .as_ref()
+                    .map(|r| r.chao_estimated_remaining_misses.to_string())
+                    .unwrap_or_else(|| "n/a".to_string()),
+            ),
+            metric(
                 "recall_estimate_relation_remaining_misses",
                 recall_rel
                     .as_ref()
                     .map(|r| r.estimated_remaining_misses.to_string())
+                    .unwrap_or_else(|| "n/a".to_string()),
+            ),
+            metric(
+                "recall_estimate_relation_chao_remaining_misses",
+                recall_rel
+                    .as_ref()
+                    .map(|r| r.chao_estimated_remaining_misses.to_string())
                     .unwrap_or_else(|| "n/a".to_string()),
             ),
             metric(

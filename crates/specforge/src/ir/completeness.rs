@@ -235,6 +235,13 @@ pub struct RecallEstimate {
     pub estimated_remaining_misses: usize,
     /// `distinct / N̂` as a percentage (an upper-ish bound, given the bias).
     pub estimated_recall_pct: u32,
+    /// Chao1 (Chao 1987) lower-bound richness estimate `distinct + f1²/(2·f2)`, where
+    /// `f1 = distinct − overlap` (singletons) and `f2 = overlap` (doubletons). Robust to the
+    /// unequal catchability of the two tiers (which Lincoln–Petersen assumes away), so it
+    /// typically sits *above* the LP estimate — the pair is reported as a range.
+    pub chao_estimated_total: usize,
+    /// `max(0, N̂_chao − distinct)` — the Chao lower bound on facts neither tier found.
+    pub chao_estimated_remaining_misses: usize,
 }
 
 /// Capture–recapture (Lincoln–Petersen, 2-extractor) recall estimate for signal
@@ -267,6 +274,14 @@ pub fn recall_estimate(
     // Lincoln–Petersen N̂ = |a|·|b| / m; ≥ distinct by construction (guarded).
     let n_hat = ((a.len() * b.len()) as f64 / overlap as f64).round() as usize;
     let estimated_total = n_hat.max(distinct);
+    // Chao1 lower bound (Chao 1987), robust to unequal catchability: in the 2-source
+    // incidence case the singletons f1 = facts seen by exactly one tier (distinct − overlap)
+    // and the doubletons f2 = facts seen by both (overlap). f2 > 0 is guaranteed above, so the
+    // simple form `distinct + f1²/(2·f2)` applies (no f2=0 bias-correction needed here).
+    let f1 = distinct - overlap;
+    let f2 = overlap;
+    let chao = (distinct as f64 + (f1 * f1) as f64 / (2.0 * f2 as f64)).round() as usize;
+    let chao_estimated_total = chao.max(distinct);
     Some(RecallEstimate {
         pattern: a.len(),
         nlp: b.len(),
@@ -275,6 +290,8 @@ pub fn recall_estimate(
         estimated_total,
         estimated_remaining_misses: estimated_total.saturating_sub(distinct),
         estimated_recall_pct: ((distinct as f64 / estimated_total as f64) * 100.0).round() as u32,
+        chao_estimated_total,
+        chao_estimated_remaining_misses: chao_estimated_total.saturating_sub(distinct),
     })
 }
 
@@ -527,6 +544,37 @@ mod tests {
         assert_eq!(est.estimated_total, 8);
         assert_eq!(est.estimated_remaining_misses, 2);
         assert_eq!(est.estimated_recall_pct, 75);
+        // Chao1: singletons f1 = distinct−overlap = 4 (A,B,E,F), doubletons f2 = overlap = 2
+        // (C,D) → N̂_chao = 6 + 4²/(2·2) = 10; remaining misses 10−6 = 4. Chao sits above LP
+        // (heterogeneity-aware), so the pair reports a range: total 8–10, misses 2–4.
+        assert_eq!(est.chao_estimated_total, 10);
+        assert_eq!(est.chao_estimated_remaining_misses, 4);
+        assert!(
+            est.chao_estimated_total >= est.distinct,
+            "Chao is a lower bound on richness (≥ observed)"
+        );
+    }
+
+    #[test]
+    fn recall_estimate_chao_matches_observed_on_full_overlap() {
+        // Both tiers found exactly {A,B,C}: zero singletons (f1=0) → Chao adds nothing, so
+        // the Chao estimate equals the observed count and predicts no remaining misses.
+        let prov = vec![
+            fact_prov(ExtractorTier::Pattern, "A"),
+            fact_prov(ExtractorTier::Pattern, "B"),
+            fact_prov(ExtractorTier::Pattern, "C"),
+            fact_prov(ExtractorTier::Nlp, "A"),
+            fact_prov(ExtractorTier::Nlp, "B"),
+            fact_prov(ExtractorTier::Nlp, "C"),
+        ];
+        let est = signal_constraint_recall_estimate(&prov).expect("estimate");
+        assert_eq!(est.distinct, 3);
+        assert_eq!(est.overlap, 3);
+        assert_eq!(
+            est.chao_estimated_total, 3,
+            "no singletons (f1=0) → Chao adds nothing"
+        );
+        assert_eq!(est.chao_estimated_remaining_misses, 0);
     }
 
     #[test]

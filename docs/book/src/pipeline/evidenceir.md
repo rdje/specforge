@@ -277,8 +277,10 @@ that actually overlap (so it never invents a "0 misses" out of no data — you'l
 see *"insufficient — run nlp-enrich"* instead), and it reports the remaining
 misses as a **lower bound** with its assumptions printed (the two tiers read the
 same prose, so they're partially correlated and the estimate is optimistic). A
-future third, independent extractor would let it move to the sharper Chao
-estimator. *Authoritative tracking:* `docs/tasks/COMPLETENESS-RECALL-GAUGE.md`.
+complementary **Chao estimator**, robust to that correlation, is now reported
+alongside it (see *`RECALL-CHAO-ESTIMATOR`* below); a future third, independent
+extractor would unlock the sharper 3-source model.
+*Authoritative tracking:* `docs/tasks/COMPLETENESS-RECALL-GAUGE.md`.
 
 ### `COMPLETENESS-RECALL-RELATIONS` — the same gauge, now for actor–signal relations
 
@@ -300,6 +302,30 @@ per-kind provenance breakdown **and** a second recall line,
 The same honesty rules apply per kind: each estimate computes only when both tiers
 have overlapping finds for *that* kind, and the two kinds never cross-contaminate.
 *Authoritative tracking:* `docs/tasks/COMPLETENESS-RECALL-RELATIONS.md`.
+
+### `RECALL-CHAO-ESTIMATOR` — a second, heterogeneity-aware estimate of the unseen
+
+**What it gives you:** the `Recall Estimate` line now prints **two** numbers for the
+remaining misses, not one — a Lincoln–Petersen estimate *and* a Chao estimate — so you read
+the unseen as an honest **range** instead of a single point.
+
+**Why a second number is worth it.** Lincoln–Petersen assumes both extractors are equally
+likely to catch any given fact. SpecForge's two tiers are not like that: they read the same
+prose and have different strengths, so some facts are easy for both to catch and some are
+hard for both — *unequal catchability*. When that happens, Lincoln–Petersen tends to
+**under**-estimate how much is missing. The **Chao estimator** (Chao, 1987) was designed for
+exactly this case: it leans on the facts caught by only one tier (the "singletons") to infer
+how many were caught by neither, and it tolerates the heterogeneity LP assumes away. On the
+same data where LP estimates 8, Chao estimates 10 — so SpecForge prints *"estimated_total
+LP 8 / Chao 10, remaining_misses ≥ 2 / 4"*: a wider, more honest bound.
+
+It stays deliberately conservative: Chao is computed only when the gauge already fires (both
+tiers, real overlap), it is a **lower bound** like LP (never a claim of the true total), and
+nothing about extraction changes — this is pure measurement. The math is the two-source form
+of Chao1: with `f1` facts seen by exactly one tier and `f2 = overlap` seen by both, the
+estimate is `distinct + f1²/(2·f2)`. This grounds the gauge in the capture–recapture
+literature the `LITERATURE-GROUNDING` survey surfaced (Chao, *Biometrics* 1987).
+*Authoritative tracking:* `docs/tasks/RECALL-CHAO-ESTIMATOR.md`.
 
 ### `SIGNAL-TABLE-COLUMNLESS-RECALL` — capture signals from column-less signal tables
 

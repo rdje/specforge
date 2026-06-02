@@ -2,6 +2,25 @@
 
 ## 2026-06-02
 
+### Recall estimation — add the Chao heterogeneity-robust second estimate; tree CLOSED (RECALL-CHAO-ESTIMATOR.2)
+- `RECALL-CHAO-ESTIMATOR.2` (CLOSING leaf): `RecallEstimate` (`ir/completeness.rs`) gained
+  `chao_estimated_total` + `chao_estimated_remaining_misses`, computed in `recall_estimate`
+  as the Chao1 (Chao 1987) lower bound `distinct + f1²/(2·f2)` with `f1 = distinct − overlap`
+  (singletons) and `f2 = overlap` (doubletons). Robust to the two tiers' unequal catchability,
+  which Lincoln–Petersen assumes away. Additive — one construction site updated, the
+  `None`-gating unchanged, **zero behavior change**.
+- `validate` now prints `estimated_total LP {} / Chao {} | remaining_misses >= LP {} / Chao {}`
+  (order-independent labels rather than a dash-range that could read descending), and emits two
+  new metrics (`recall_estimate_chao_remaining_misses`,
+  `recall_estimate_relation_chao_remaining_misses`). The existing recall test now also asserts
+  Chao (10 / misses 4 on the worked example), plus a new full-overlap edge test (f1=0 ⇒
+  Chao = observed, 0 misses). User-friendly book subsection added to `pipeline/evidenceir.md`
+  ("a second, heterogeneity-aware estimate of the unseen"), and the prior
+  `COMPLETENESS-RECALL-GAUGE` "future Chao estimator" forward-reference updated to point at it.
+  Full `scripts/run_ci.sh` GREEN (1218→1219 tests; no fixture regression). **Tree CLOSED** — a
+  Tier-2 `LITERATURE-GROUNDING` backlog item delivered, grounding the recall gauge in the
+  capture–recapture literature.
+
 ### Recall estimation — own + design the Chao heterogeneity-robust second estimate (RECALL-CHAO-ESTIMATOR.1)
 - `RECALL-CHAO-ESTIMATOR.1` (own + design, docs-only): a Tier-2 adopt item from the
   `LITERATURE-GROUNDING` reach-full-potential backlog (`extraction-evaluation.md`). SpecForge's
