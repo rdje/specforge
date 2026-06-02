@@ -2,6 +2,27 @@
 
 ## 2026-06-02
 
+### Temporal-rule eval — hand-labeled APB temporal gold seed (TEMPORAL-RULE-EVAL.3)
+- `TEMPORAL-RULE-EVAL.3`: authored `crates/specforge/test_data/llm_eval/seed_apb_temporal.json`
+  — 6 `temporal_rule` gold items over AMBA APB (IHI0024_E), each with a real `statement_id`
+  and a label **judged independently from the prose** using the parser's recorded IR
+  vocabulary (clock edge / `TemporalPredicateRecord` predicates / tick phases). Composition:
+  2 clean positives (`statement_0285` *PNSE must be valid when PSEL is asserted*;
+  `statement_0221` *Requester must drive PSTRB LOW*), 1 faithful-gold antecedent
+  **under-capture** case (`statement_0339` *PBUSER must be valid when PSEL, PENABLE, and
+  PREADY are asserted* — the gold keeps all three preconditions; the extractor is expected to
+  drop PSEL+PENABLE, so the seed surfaces a genuine recall gap), and 3 negatives
+  (`statement_0419` + `statement_0238` list-introducer headers whose self-referential rules
+  are degenerate FPs; `statement_0003` a front-matter licence notice the extractor should
+  ignore).
+- New loader test `committed_temporal_seed_loads_and_validates` (≥6 items, all temporal_rule,
+  ≥2 negatives, well-formed edge-led keys, the 3-condition PBUSER antecedent present). The
+  seed `README.md` now documents the temporal gold schema and the seed composition. The
+  producer representation was calibrated against the real APB SemanticIR (153 temporal rules,
+  via `semantic --dry-run`) and recorded in the tree's `.3` node. Anti-fabrication held —
+  labels are correctness judgments from prose, not copied predictions. Full `scripts/run_ci.sh`
+  GREEN (1214→1215). Frontier → `.4` (deterministic-producer runner + report + book + close).
+
 ### Temporal-rule eval — scorer types + provenance-free canonical key + tests (TEMPORAL-RULE-EVAL.2)
 - `TEMPORAL-RULE-EVAL.2`: implemented the pure scorer surface in
   `crates/specforge/src/eval.rs` for the temporal-rule task — `EvalTask::TemporalRule`

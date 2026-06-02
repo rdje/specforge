@@ -1041,4 +1041,48 @@ mod tests {
         assert!((card.precision() - 0.5).abs() < 1e-9);
         assert!((card.recall() - 1.0).abs() < 1e-9);
     }
+
+    #[test]
+    fn committed_temporal_seed_loads_and_validates() {
+        // The temporal gold seed must parse, validate (gold fact <-> task), cover the
+        // temporal_rule task, and carry negatives. Labels are drafted independently from the
+        // APB prose; see `seed_apb_temporal.json` `label_note`s.
+        let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("test_data/llm_eval/seed_apb_temporal.json");
+        let items = load_eval_dataset(&path).expect("temporal seed loads + validates");
+        assert!(
+            items.len() >= 6,
+            "temporal seed should have >= 6 items, got {}",
+            items.len()
+        );
+        assert!(
+            items.iter().all(|i| i.task == EvalTask::TemporalRule),
+            "every temporal-seed item is the temporal_rule task"
+        );
+        let negatives = items.iter().filter(|i| i.gold.is_empty()).count();
+        assert!(
+            negatives >= 2,
+            "expected >= 2 negative items, got {negatives}"
+        );
+        // Positive gold facts produce well-formed, non-empty canonical keys.
+        let keys: BTreeSet<String> = items
+            .iter()
+            .flat_map(|i| i.gold.iter().map(GoldFact::canonical_key))
+            .collect();
+        assert!(
+            keys.iter()
+                .all(|k| !k.is_empty() && k.starts_with("rising|")),
+            "temporal keys are well-formed and edge-led"
+        );
+        // The faithful PBUSER gold carries the full 3-condition antecedent (the recall-gap
+        // case the seed exists to surface).
+        assert!(
+            items.iter().any(|i| i.statement_id == "statement_0339"
+                && i.gold.iter().any(|g| matches!(
+                    g,
+                    GoldFact::TemporalRule { antecedents, .. } if antecedents.len() == 3
+                ))),
+            "statement_0339 gold must keep all three asserted preconditions"
+        );
+    }
 }

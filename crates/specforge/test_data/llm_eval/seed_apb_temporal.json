@@ -1,0 +1,98 @@
+[
+  {
+    "task": "temporal_rule",
+    "doc_key": "ihi0024_e_2023_02_amba_5_apb_protocol_specification",
+    "statement_id": "statement_0285",
+    "input_text": "PNSE must be valid when PSEL is asserted.",
+    "grounding": ["PNSE", "PSEL"],
+    "gold": [
+      {
+        "fact": "temporal_rule",
+        "edge": "rising",
+        "antecedents": [
+          {"kind": "signal_value", "signal_name": "PSEL", "value": "ASSERTED", "phase": "pre_tick"}
+        ],
+        "consequents": [
+          {"kind": "actor_drives_signal", "actor_name": "Requester", "signal_name": "PNSE", "phase": "post_tick"},
+          {"kind": "signal_value", "signal_name": "PNSE", "value": "VALID", "phase": "post_tick"}
+        ]
+      }
+    ],
+    "label_status": "agent_drafted",
+    "label_note": "Single-condition validity obligation; PNSE is a Requester signal (per the signal table). Faithful to prose; expected TP."
+  },
+  {
+    "task": "temporal_rule",
+    "doc_key": "ihi0024_e_2023_02_amba_5_apb_protocol_specification",
+    "statement_id": "statement_0221",
+    "input_text": "For read transfers, the Requester must drive all bits of PSTRB LOW.",
+    "grounding": ["PSTRB"],
+    "gold": [
+      {
+        "fact": "temporal_rule",
+        "edge": "rising",
+        "antecedents": [],
+        "consequents": [
+          {"kind": "actor_drives_signal", "actor_name": "Requester", "signal_name": "PSTRB", "phase": "post_tick"},
+          {"kind": "signal_value", "signal_name": "PSTRB", "value": "LOW", "phase": "post_tick"}
+        ]
+      }
+    ],
+    "label_status": "agent_drafted",
+    "label_note": "Requester drives PSTRB LOW; the 'read transfer' guard has no signal-value predicate, so the antecedent is empty (faithful to the representable content). Expected TP."
+  },
+  {
+    "task": "temporal_rule",
+    "doc_key": "ihi0024_e_2023_02_amba_5_apb_protocol_specification",
+    "statement_id": "statement_0339",
+    "input_text": "PBUSER must be valid when PSEL, PENABLE, and PREADY are asserted.",
+    "grounding": ["PBUSER", "PSEL", "PENABLE", "PREADY"],
+    "gold": [
+      {
+        "fact": "temporal_rule",
+        "edge": "rising",
+        "antecedents": [
+          {"kind": "signal_value", "signal_name": "PSEL", "value": "ASSERTED", "phase": "pre_tick"},
+          {"kind": "signal_value", "signal_name": "PENABLE", "value": "ASSERTED", "phase": "pre_tick"},
+          {"kind": "signal_value", "signal_name": "PREADY", "value": "ASSERTED", "phase": "pre_tick"}
+        ],
+        "consequents": [
+          {"kind": "actor_drives_signal", "actor_name": "Completer", "signal_name": "PBUSER", "phase": "post_tick"},
+          {"kind": "signal_value", "signal_name": "PBUSER", "value": "VALID", "phase": "post_tick"}
+        ]
+      }
+    ],
+    "label_status": "agent_drafted",
+    "label_note": "Faithful precondition is all three asserted (PSEL AND PENABLE AND PREADY); PBUSER is a Completer signal. Drafted from prose independently of the extractor, which is expected to under-capture the antecedent (a recall gap this seed is meant to surface)."
+  },
+  {
+    "task": "temporal_rule",
+    "doc_key": "ihi0024_e_2023_02_amba_5_apb_protocol_specification",
+    "statement_id": "statement_0419",
+    "input_text": "The following signals must be valid when PSEL is asserted:",
+    "grounding": [],
+    "gold": [],
+    "label_status": "agent_drafted",
+    "label_note": "Negative: list-introducer header. The constrained signals are the following list items, not PSEL itself; no concrete temporal rule is extractable from this sentence alone (a PSEL->PSEL rule would be degenerate)."
+  },
+  {
+    "task": "temporal_rule",
+    "doc_key": "ihi0024_e_2023_02_amba_5_apb_protocol_specification",
+    "statement_id": "statement_0238",
+    "input_text": "The following signals remain unchanged while PREADY remains LOW:",
+    "grounding": [],
+    "gold": [],
+    "label_status": "agent_drafted",
+    "label_note": "Negative: list-introducer header. The stable signals are the following list items, not PREADY itself; no concrete temporal rule is extractable from this sentence alone."
+  },
+  {
+    "task": "temporal_rule",
+    "doc_key": "ihi0024_e_2023_02_amba_5_apb_protocol_specification",
+    "statement_id": "statement_0003",
+    "input_text": "This document is NON-CONFIDENTIAL and any use by you is subject to the terms of this notice and the Arm AMBA Specification Licence set about below.",
+    "grounding": [],
+    "gold": [],
+    "label_status": "agent_drafted",
+    "label_note": "Negative: front-matter licence notice with no temporal/protocol content. The extractor should produce nothing (correct abstention)."
+  }
+]

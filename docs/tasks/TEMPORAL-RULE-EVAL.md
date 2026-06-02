@@ -145,10 +145,25 @@ computed identically on both sides.
     fmt/clippy-D/rustdoc-D/mdBook all pass).
 
 - ID: `TEMPORAL-RULE-EVAL.3`
-  Status: `pending`
+  Status: `done`
   Goal: hand-labeled APB temporal gold seed (≥6 items, ≥2 negatives), gold drafted
     independently from prose; extend `load_eval_dataset`/validation for the new variant.
   Acceptance: dataset loads + validates; each gold item justifiable from its statement.
+  Verification: passed (`2026-06-02`) — `crates/specforge/test_data/llm_eval/seed_apb_temporal.json`
+    written: 6 `temporal_rule` items over AMBA APB (IHI0024_E), all real `statement_id`s,
+    labels judged independently from the prose using the recorded IR vocabulary. Composition:
+    2 clean positives (`statement_0285` PNSE-valid-when-PSEL-asserted; `statement_0221`
+    Requester-drives-PSTRB-LOW), 1 faithful-gold antecedent **under-capture** case
+    (`statement_0339` PBUSER valid when PSEL+PENABLE+PREADY — gold keeps all three; the
+    parser is expected to drop PSEL+PENABLE → a recall gap the seed surfaces), and 3
+    negatives (`statement_0419` + `statement_0238` list-introducer headers whose
+    self-referential rules are degenerate FPs; `statement_0003` a licence notice the
+    extractor should ignore). New loader test `committed_temporal_seed_loads_and_validates`
+    (≥6 items, all temporal_rule, ≥2 negatives, well-formed edge-led keys, the 3-condition
+    PBUSER antecedent present). `README.md` documents the temporal seed + the temporal gold
+    schema. Full `scripts/run_ci.sh` GREEN (1214→1215). Anti-fabrication held — labels are
+    correctness judgments from prose, not copied predictions (the under-capture case is
+    deliberately authored to *differ* from the extractor).
   Producer calibration (`2026-06-02`, recorded so `.3` resumes without re-deriving): the APB
     SemanticIR (built in-memory via `cargo run -p specforge -- semantic
     generated/evidence_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/evidence_ir.json
@@ -179,7 +194,7 @@ computed identically on both sides.
 | --- | --- | --- | --- |
 | 1 | `TEMPORAL-RULE-EVAL.1` | `done` | owned + designed (this file) |
 | 2 | `TEMPORAL-RULE-EVAL.2` | `done` | scorer types + canonical keys + tests (CI green, 1214) |
-| 3 | `TEMPORAL-RULE-EVAL.3` | `pending` | hand-labeled temporal gold seed |
+| 3 | `TEMPORAL-RULE-EVAL.3` | `done` | hand-labeled temporal gold seed (6 items, CI green 1215) |
 | 4 | `TEMPORAL-RULE-EVAL.4` | `pending` | runner (deterministic producer) + report + book + close |
 
 ## Decisions
@@ -210,13 +225,15 @@ computed identically on both sides.
 | --- | --- | --- | --- |
 | `2026-06-02` | `.1` | design fixed against real `eval.rs` + `TemporalRuleRecord`/`TemporalPredicateRecord` shapes; semantic provenance-free canonical key; producer = deterministic temporal parser; LLM-tier + capture–recapture deferred; docs-only; registered | `passed` |
 | `2026-06-02` | `.2` | `EvalTask::TemporalRule` + `GoldFact::TemporalRule` + `temporal_predicate_key`/`temporal_rule_key`/`temporal_rule_record_key` + `index_temporal_rule_predictions` in `eval.rs`; `score_dataset` unchanged (already generic); 3 unit tests (order/case-insensitive key match, window/edge discrimination, closed-world scoring); runner kept compiling (LLM path errors for temporal → `.4`; test closure `unreachable!`); zero extraction-behavior change; full CI GREEN (1211→1214) | `passed` |
+| `2026-06-02` | `.3` | `seed_apb_temporal.json` (6 APB `temporal_rule` items, real statement_ids, labels judged from prose): 2 clean TPs, 1 faithful antecedent-under-capture (FN/FP) case, 3 negatives (2 degenerate-header FPs + 1 licence-notice abstention); loader test `committed_temporal_seed_loads_and_validates`; README updated with the temporal gold schema; full CI GREEN (1214→1215) | `passed` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `TEMPORAL-RULE-EVAL.1` | `TEMPORAL-RULE-EVAL.1 — own + design supervised temporal-rule eval (first Tier-1 grounding-backlog item)` (`542bfdf3`) | docs-only |
-| `TEMPORAL-RULE-EVAL.2` | `TEMPORAL-RULE-EVAL.2 — temporal-rule eval scorer types + provenance-free canonical key + tests` | code; +3 tests; CI green 1214; zero behavior change |
+| `TEMPORAL-RULE-EVAL.2` | `TEMPORAL-RULE-EVAL.2 — temporal-rule eval scorer types + provenance-free canonical key + tests` (`c2e1b05b`) | code; +3 tests; CI green 1214; zero behavior change |
+| `TEMPORAL-RULE-EVAL.3` | `TEMPORAL-RULE-EVAL.3 — hand-labeled APB temporal gold seed (6 items; TP/FN/FP + negatives)` | test_data + loader test + README; CI green 1215 |
 
 ## Changelog
 
@@ -232,3 +249,10 @@ computed identically on both sides.
   kept compiling honestly (LLM path errors for temporal rules → `.4`). Zero
   extraction-behavior change; full CI green (1211→1214). Frontier → `.3` (hand-labeled APB
   temporal gold seed).
+- `2026-06-02`: `.3` done — wrote `seed_apb_temporal.json` (6 APB `temporal_rule` items,
+  real statement_ids, labels judged independently from prose using the recorded IR
+  vocabulary): 2 clean TPs, 1 faithful antecedent-under-capture (FN/FP) case, 3 negatives
+  (2 degenerate-header FPs + 1 licence-notice abstention). New loader test + README schema
+  doc. Full CI green (1214→1215). Frontier → `.4` (deterministic-producer runner builds the
+  SemanticIR from a temp EvidenceIR copy → scores `temporal_rules` vs this seed → report +
+  book + close).
