@@ -2,6 +2,22 @@
 
 ## 2026-06-02
 
+### Temporal-rule eval — own + design the supervised P/R/F1 surface (TEMPORAL-RULE-EVAL.1)
+- `TEMPORAL-RULE-EVAL.1` (own + design, docs-only): created the tree for a supervised
+  precision/recall/F1 evaluation of **mined temporal rules** — the first Tier-1 item
+  promoted from the `LITERATURE-GROUNDING` reach-full-potential backlog, and SpecForge's
+  unmeasured third extraction surface (after `signal_constraint` and `actor_signal_relation`,
+  both scored by the closed `LLM-EXTRACTION-EVAL`). Design fixed against the real code
+  (`eval.rs` `EvalTask`/`GoldFact`/closed-world `score_dataset`; the `TemporalRuleRecord` +
+  `TemporalPredicateRecord` shapes in `ir/semantic.rs`): a new `EvalTask::TemporalRule` +
+  `GoldFact::TemporalRule`, scored by a **semantic, provenance-free** canonical key (clock
+  edge + sorted antecedent/consequent predicate-keys + cycle_window; excludes
+  rule_id/source_text/supporting_statement_ids/confidence; antecedents+consequents sorted →
+  order-insensitive), reusing the existing closed-world scorer verbatim. Producer = the
+  deterministic temporal parser (EvidenceIR→SemanticIR). Pure additive measurement, zero
+  extraction-behavior change; LLM-temporal scoring + a `FactKind::TemporalRule`
+  capture–recapture gauge deferred as Open Questions. Registered in `docs/TASK_TREE.md`.
+
 ### Literature grounding — synthesis map + reach-full-potential backlog; tree CLOSED (LITERATURE-GROUNDING.13)
 - `LITERATURE-GROUNDING.13` (CLOSING leaf): synthesized the whole program into
   `docs/research/grounding/README.md` — the 11-aspect → literature map (anchor / alignment /
