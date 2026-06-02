@@ -2,6 +2,29 @@
 
 ## 2026-06-02
 
+### Temporal antecedent recall — distribute a shared assertion-value across coordinated condition signals; tree CLOSED (TEMPORAL-ANTECEDENT-RECALL.2)
+- `TEMPORAL-ANTECEDENT-RECALL.2` (CLOSING leaf): rewrote `parse_temporal_condition_predicates`
+  (`crates/specforge/src/ir/semantic.rs`) to parse each condition clause into
+  `(signal, Option<value>)` and **distribute a single shared trailing value** across a
+  coordinated signal list, under a tight guard — only when there are ≥2 signal clauses,
+  exactly one distinct value is present, and ≥1 clause has no value of its own. So
+  *"PSEL, PENABLE, and PREADY are asserted"* now yields an `ASSERTED` predicate for **all
+  three** signals instead of only PREADY. A genuinely mixed list (*"PSEL HIGH and PREADY
+  LOW"*) is untouched, and a bare unanchored mention with no shared value is still dropped
+  (no fabrication). The value extraction was factored into `temporal_clause_value`
+  (replacing `parse_temporal_condition_clause`, its only caller).
+- **Eval re-run end-to-end on the real AMBA APB EvidenceIR confirms the fix:** `temporal_rule
+  P=0.600 R=1.000 F1=0.750 (tp=3 fp=2 fn=0)`, up from `P=0.400 R=0.667` — the PBUSER
+  antecedent under-capture false negative is resolved (recall 0.667→1.000). This happens at
+  SemanticIR-build time, so no re-ingest was needed. The remaining 2 false positives are the
+  upstream degenerate-header constraints (re-ingest-gated, out of scope).
+- 2 new unit tests (shared-value distribution; the mixed-value guard). Book eval numbers in
+  `quality/extraction-eval.md` refreshed (the under-capture bullet reframed as
+  caught-then-fixed). Full `scripts/run_ci.sh` GREEN (1216→1218 tests; **no `kg-bench`
+  fixture regression** despite the corpus-wide condition-parser change). **Tree CLOSED** —
+  the measure→catch→fix loop's second completed cycle, driven and confirmed by
+  `TEMPORAL-RULE-EVAL`.
+
 ### Temporal antecedent recall — own + design the coordinated-condition fix (TEMPORAL-ANTECEDENT-RECALL.1)
 - `TEMPORAL-ANTECEDENT-RECALL.1` (own + design, docs-only): the **second catch** of the
   measure→catch→fix loop (after `CONSTRAINT-SUBJECT-PRECISION`), surfaced by the new

@@ -98,24 +98,29 @@ Run it exactly like the others (the producer is deterministic, so the provider i
 ```text
 specforge eval-extraction crates/specforge/test_data/llm_eval/seed_apb_temporal.json
 === Extraction eval (provider: skip, model: ) ===
-  temporal_rule          P=0.400 R=0.667 F1=0.500  (tp=2 fp=3 fn=1; gold=3 over 6 statements)
+  temporal_rule          P=0.600 R=1.000 F1=0.750  (tp=3 fp=2 fn=0; gold=3 over 6 statements)
 ```
 
-That score is not a failure — it is the eval **doing its job** on the real AMBA APB spec.
-The six labelled statements were chosen to exercise the parser, and the numbers pinpoint two
-genuine, actionable issues:
+That number tells a story — and it is the eval **doing its job** on the real AMBA APB spec.
+The six labelled statements were chosen to exercise the parser, and the very first run (before
+any fix) scored `P=0.400 R=0.667` because it pinpointed two genuine, actionable issues. One of
+them is already fixed — which is exactly why a measurement surface is worth building:
 
-- **Antecedent under-capture (the false negative).** The spec says *"PBUSER must be valid
-  when PSEL, PENABLE, **and** PREADY are asserted."* The faithful rule keeps all three
-  preconditions; the parser kept only PREADY. A rule that fires on a weaker condition than
-  the spec demands is a real semantic gap — now visible as a recall miss instead of hiding
-  in 153 rules.
-- **Degenerate header rules (two of the false positives).** Sentences like *"The following
+- **Antecedent under-capture — caught, then fixed.** The spec says *"PBUSER must be valid
+  when PSEL, PENABLE, **and** PREADY are asserted."* The parser originally kept only PREADY —
+  a rule that fires on a weaker precondition than the spec demands. The eval surfaced it as a
+  recall miss (instead of it hiding among 153 rules), and `TEMPORAL-ANTECEDENT-RECALL` then
+  taught the condition parser to distribute the shared "are asserted" across the coordinated
+  signal list, so all three preconditions are now captured. **Recall moved from 0.667 to
+  1.000** — visibly, in this same score.
+- **Degenerate header rules (the remaining false positives).** Sentences like *"The following
   signals must be valid when PSEL is asserted:"* are list *introducers* — the constrained
-  signals are in the list that follows, not the sentence itself. The parser bound the
-  trigger signal as its own subject, producing a tautological "PSEL valid when PSEL
-  asserted" rule. The gold marks these statements as *negatives*, so each degenerate rule
-  is counted as a false positive.
+  signals are in the list that follows, not the sentence itself. The parser bound the trigger
+  signal as its own subject, producing a tautological "PSEL valid when PSEL asserted" rule.
+  The gold marks these statements as *negatives*, so each degenerate rule is a false positive.
+  These trace to the upstream constraint tier — the same class `CONSTRAINT-SUBJECT-PRECISION`
+  fixed — on a spec snapshot that predates that fix, so a clean re-ingest is expected to clear
+  them.
 
 A front-matter licence notice is included as a true negative — the parser correctly produces
 nothing for it, confirming the eval credits honest abstention. The gold is **judged

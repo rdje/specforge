@@ -7227,10 +7227,49 @@ fn parse_temporal_condition_predicates(
         .trim_start_matches("while ")
         .trim_start_matches("While ")
         .trim();
+    // Parse each clause into (signal, optional value). A clause with a known signal but no
+    // value of its own (a bare mention in a coordinated list, e.g. "PSEL" in
+    // "PSEL, PENABLE, and PREADY are asserted") is kept with value=None so a single shared
+    // trailing value can be distributed across the list (TEMPORAL-ANTECEDENT-RECALL).
+    let mut parts: Vec<(String, Option<String>)> =
+        split_temporal_condition_clauses(normalized, known_signals)
+            .into_iter()
+            .filter_map(|clause| {
+                find_known_signal_name(&clause, known_signals).map(|signal| {
+                    let value = temporal_clause_value(&clause, &signal);
+                    (signal, value)
+                })
+            })
+            .collect();
+
+    // Distribute a single shared trailing value across the coordinated list: only when there
+    // are >=2 signals, exactly one distinct value is present, and at least one signal has no
+    // value of its own. A genuinely mixed list ("PSEL HIGH, PREADY LOW") is untouched, and a
+    // bare signal with no shared value is still dropped below -- no fabrication.
+    let distinct_values: BTreeSet<&String> = parts.iter().filter_map(|(_, v)| v.as_ref()).collect();
+    if parts.len() >= 2 && distinct_values.len() == 1 && parts.iter().any(|(_, v)| v.is_none()) {
+        let shared = distinct_values
+            .iter()
+            .next()
+            .expect("one distinct value")
+            .to_string();
+        for (_, value) in parts.iter_mut() {
+            if value.is_none() {
+                *value = Some(shared.clone());
+            }
+        }
+    }
+
     let mut seen = BTreeSet::new();
-    let predicates = split_temporal_condition_clauses(normalized, known_signals)
+    let predicates = parts
         .into_iter()
-        .filter_map(|clause| parse_temporal_condition_clause(&clause, known_signals, phase))
+        .filter_map(|(signal_name, value)| {
+            value.map(|value| TemporalPredicateRecord::SignalValue {
+                signal_name,
+                value,
+                phase,
+            })
+        })
         .filter(|predicate| {
             serde_json::to_string(predicate)
                 .map(|key| seen.insert(key))
@@ -7293,13 +7332,12 @@ fn split_temporal_condition_segment_on_and(
     }
 }
 
-fn parse_temporal_condition_clause(
-    text: &str,
-    known_signals: &BTreeSet<String>,
-    phase: TickPhase,
-) -> Option<TemporalPredicateRecord> {
-    let signal_name = find_known_signal_name(text, known_signals)?;
-    let value = if contains_phrase_case_insensitive(text, "LOW") {
+/// The value keyword carried by a single condition clause (LOW / HIGH / ASSERTED /
+/// DEASSERTED, or a symbolic value), or `None` if the clause is a bare signal mention with no
+/// value of its own. Check order is preserved from the original clause parser so a clause's
+/// own value is unchanged; the caller distributes a shared value to value-less clauses.
+fn temporal_clause_value(text: &str, signal_name: &str) -> Option<String> {
+    if contains_phrase_case_insensitive(text, "LOW") {
         Some("LOW".to_string())
     } else if contains_phrase_case_insensitive(text, "HIGH") {
         Some("HIGH".to_string())
@@ -7308,14 +7346,8 @@ fn parse_temporal_condition_clause(
     } else if contains_phrase_case_insensitive(text, "deasserted") {
         Some("DEASSERTED".to_string())
     } else {
-        extract_symbolic_value(text, Some(&signal_name))
-    }?;
-
-    Some(TemporalPredicateRecord::SignalValue {
-        signal_name,
-        value,
-        phase,
-    })
+        extract_symbolic_value(text, Some(signal_name))
+    }
 }
 
 fn enrich_handshake_completion_predicates(
@@ -20939,6 +20971,68 @@ mod tests {
             !result.is_empty(),
             "asserted action: expected non-empty, got {result:?}"
         );
+    }
+
+    #[test]
+    fn temporal_condition_distributes_shared_assertion_across_signal_list() {
+        // TEMPORAL-ANTECEDENT-RECALL: "A, B, and C are asserted" yields one predicate per
+        // signal (the shared trailing value distributes), not just the last signal.
+        let known: BTreeSet<String> = ["PSEL", "PENABLE", "PREADY"]
+            .iter()
+            .map(|s| s.to_string())
+            .collect();
+        let handshake = super::HandshakeRoleContext::default();
+        let predicates = super::parse_temporal_condition_predicates(
+            "PSEL , PENABLE , and PREADY are asserted.",
+            &known,
+            super::TickPhase::PreTick,
+            &handshake,
+        );
+        let asserted: BTreeSet<String> = predicates
+            .iter()
+            .filter_map(|p| match p {
+                super::TemporalPredicateRecord::SignalValue {
+                    signal_name,
+                    value,
+                    phase,
+                } if value == "ASSERTED" && *phase == super::TickPhase::PreTick => {
+                    Some(signal_name.clone())
+                }
+                _ => None,
+            })
+            .collect();
+        assert_eq!(
+            asserted,
+            ["PENABLE", "PREADY", "PSEL"]
+                .iter()
+                .map(|s| s.to_string())
+                .collect::<BTreeSet<_>>(),
+            "all three coordinated signals carry the shared 'asserted' value"
+        );
+    }
+
+    #[test]
+    fn temporal_condition_mixed_values_are_not_cross_filled() {
+        // Guard: a genuinely mixed-value list keeps each signal's own value (no distribution).
+        let known: BTreeSet<String> = ["PSEL", "PREADY"].iter().map(|s| s.to_string()).collect();
+        let handshake = super::HandshakeRoleContext::default();
+        let predicates = super::parse_temporal_condition_predicates(
+            "PSEL is HIGH and PREADY is LOW",
+            &known,
+            super::TickPhase::PreTick,
+            &handshake,
+        );
+        let mut by_signal: BTreeMap<String, String> = BTreeMap::new();
+        for p in &predicates {
+            if let super::TemporalPredicateRecord::SignalValue {
+                signal_name, value, ..
+            } = p
+            {
+                by_signal.insert(signal_name.clone(), value.clone());
+            }
+        }
+        assert_eq!(by_signal.get("PSEL").map(String::as_str), Some("HIGH"));
+        assert_eq!(by_signal.get("PREADY").map(String::as_str), Some("LOW"));
     }
 
     // -- enrich_handshake_completion_predicates high-value mutants --

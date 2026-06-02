@@ -3,7 +3,8 @@
 ## Metadata
 
 - Tree ID: `TEMPORAL-ANTECEDENT-RECALL`
-- Status: `active` (`.1` design done; `.2` = fix + verify + close)
+- Status: `done` (CLOSED `2026-06-02` — guarded shared-value distribution fixed the temporal
+  antecedent under-capture; eval recall 0.667→1.000 on real APB; CI green)
 - Roadmap lane: `R8`/`R15e` (extraction accuracy / completeness)
 - Created: `2026-06-02`
 - Owner: repo-local workflow
@@ -103,18 +104,40 @@ constraints, the IRs, or any other stage.
   Commit: `see Commit Log`
 
 - ID: `TEMPORAL-ANTECEDENT-RECALL.2`
-  Status: `pending`
+  Status: `done`
   Goal: implement the shared-value distribution (guarded) + unit test(s); re-run the temporal
     eval to confirm the recall improvement; refresh the book eval numbers if they change;
     full CI; close.
   Acceptance: unit test green; eval P 0.400→0.600 / R 0.667→1.000; CI GREEN; tree CLOSED.
+  Verification: passed (`2026-06-02`) — rewrote `parse_temporal_condition_predicates`
+    (`ir/semantic.rs`) to parse each clause into `(signal, Option<value>)` and **distribute a
+    single shared trailing value** across the coordinated list under a tight guard (≥2
+    signals, exactly one distinct value present, fill only value-less signal clauses); the
+    value extraction was factored into `temporal_clause_value` (replacing
+    `parse_temporal_condition_clause`, its only caller). A bare signal with no own/shared
+    value is still dropped (no fabrication). 2 unit tests added: the coordinated "PSEL,
+    PENABLE, and PREADY are asserted" now yields one ASSERTED predicate **per signal**; a
+    mixed-value list ("PSEL HIGH and PREADY LOW") is **not** cross-filled. **Eval re-run
+    end-to-end on real APB confirms the predicted improvement:** `temporal_rule
+    P=0.600 R=1.000 F1=0.750 (tp=2→3, fp=3→2, fn=1→0)` — the PBUSER under-capture FN→TP,
+    recall now perfect; the remaining 2 FPs are the out-of-scope upstream degenerate-header
+    constraints. Book eval numbers refreshed in `quality/extraction-eval.md` (the
+    under-capture bullet reframed as caught-then-fixed). Full `scripts/run_ci.sh` GREEN
+    (1216→1218; **no `kg-bench` fixture regression** despite the corpus-wide condition
+    change). Tree CLOSED.
 
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `TEMPORAL-ANTECEDENT-RECALL.1` | `done` | owned + designed (root-caused against real data) |
-| 2 | `TEMPORAL-ANTECEDENT-RECALL.2` | `pending` | guarded fix + unit test + eval re-run + book + close |
+| 2 | `TEMPORAL-ANTECEDENT-RECALL.2` | `done` | guarded fix + 2 tests + eval re-run (R 0.667→1.000) + book + close (CI green 1218) |
+
+**Tree CLOSED `2026-06-02`.** The temporal condition parser now distributes a shared trailing
+value across a coordinated signal list, recovering dropped antecedent preconditions. The fix
+was driven and confirmed by `TEMPORAL-RULE-EVAL` (recall 0.667→1.000 on the real APB seed) —
+the measure→catch→fix loop's second completed cycle. Remaining temporal FPs (degenerate
+header / `*_WIDTH` subject) are the upstream constraint-tier re-ingest-gated follow-up.
 
 ## Decisions
 
@@ -137,12 +160,14 @@ constraints, the IRs, or any other stage.
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-06-02` | `.1` | root cause in `parse_temporal_condition_predicates` confirmed vs real APB `sigcon_0026`; FP cohort separated as upstream/stale; fix + verification plan (incl. expected eval delta) fixed; docs-only | `passed` |
+| `2026-06-02` | `.2` | guarded shared-value distribution implemented (`temporal_clause_value` + parts-based pipeline, ≥2 signals / one distinct value / fill value-less; no fabrication); 2 unit tests (distribution + mixed-value guard); **eval re-run live on real APB `P=0.600 R=1.000 F1=0.750` (tp=3 fp=2 fn=0)** — recall 0.667→1.000; book eval refreshed; full CI GREEN 1216→1218, no kg-bench regression; tree CLOSED | `passed` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
-| `TEMPORAL-ANTECEDENT-RECALL.1` | `TEMPORAL-ANTECEDENT-RECALL.1 — own + design the coordinated-condition antecedent recall fix` | docs-only |
+| `TEMPORAL-ANTECEDENT-RECALL.1` | `TEMPORAL-ANTECEDENT-RECALL.1 — own + design the coordinated-condition antecedent recall fix` (`<see git>`) | docs-only |
+| `TEMPORAL-ANTECEDENT-RECALL.2` | `TEMPORAL-ANTECEDENT-RECALL.2 — distribute shared assertion-value across coordinated condition signals; close tree` | code + 2 tests; eval R 0.667→1.000; CI green 1218; tree CLOSED |
 
 ## Changelog
 
@@ -150,3 +175,11 @@ constraints, the IRs, or any other stage.
   `CONSTRAINT-SUBJECT-PRECISION`), surfaced by the new `TEMPORAL-RULE-EVAL`. Own + design a
   guarded fix that distributes a single shared trailing assertion-value across a coordinated
   signal list in the temporal condition parser, recovering dropped antecedent conditions.
+- `2026-06-02`: **Tree CLOSED.** `.2` done — implemented the guarded distribution in
+  `parse_temporal_condition_predicates` (factored value extraction into `temporal_clause_value`;
+  parts-based pipeline filling value-less clauses when ≥2 signals + one distinct value; no
+  fabrication), +2 unit tests. **Eval re-run on real APB confirmed the fix:** `temporal_rule
+  P=0.600 R=1.000 F1=0.750` (recall 0.667→1.000; the PBUSER FN→TP). Book eval numbers
+  refreshed. Full CI green (1216→1218), no kg-bench regression. The remaining temporal FPs
+  (degenerate header / `*_WIDTH` subject) are the upstream constraint-tier re-ingest-gated
+  follow-up.
