@@ -17,9 +17,9 @@
   LLM/VLM provider default 0002).
 
 ## Current state (OVERWRITE this block each update — do not append)
-- latest_commit: `3a413aa3` — "LLM-EXTRACTION-EVAL.2 — pure scorer + dataset format/loader (eval.rs); 6 tests"  (ahead of origin `97aedd08`: ~17; push at ~30)
-- active_work_unit: `LLM-EXTRACTION-EVAL`  →  frontier leaf: `.4` (pending) — provider-gated runner (`eval-extraction` command): for each doc_key in the dataset run the task command with `--model`, read produced records by statement provenance (`index_*_predictions`), `score_dataset`, report per-task P/R/F1; `--provider skip` testable path. (`.2` `eval.rs` scorer + `.3` seed `test_data/llm_eval/seed_apb.json` 16 items landed.)
-- next_action: implement `LLM-EXTRACTION-EVAL.4` (the runner command). Then `.5` baseline (qwen2.5vl) + book + close.
+- latest_commit: `be25bbea` — "docs: LLM-EXTRACTION-EVAL — record the .4 runner design decision"  (ahead of origin `97aedd08`: ~21; push at ~30; will push around 30)
+- active_work_unit: `LLM-EXTRACTION-EVAL`  →  frontier leaf: `.5` (pending) — run the baseline with `--provider ollama --model qwen2.5vl:7b` (Ollama-server-gated; record honestly if saturated), add the book note (`pipeline/` or a quality page), then close the tree. (`.4` `eval-extraction` runner landed: temp-redirect over the real command path; skip-mode baseline live = sigcon P0.5/R1.0, relation P0.5/R0.33.)
+- next_action: implement `LLM-EXTRACTION-EVAL.5` — attempt the qwen2.5vl baseline run (server-gated), book note, close. The qwen3-vl:8b A/B is then `eval-extraction <seed> --provider ollama --model qwen3-vl:8b` vs qwen2.5vl.
 - paused_work: none.
 - in_flight_uncommitted: none.
 - blockers: `.5` baseline is Ollama-server-gated (record honestly if saturated).

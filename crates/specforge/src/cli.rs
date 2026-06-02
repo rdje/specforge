@@ -55,6 +55,8 @@ pub enum Commands {
     ExtractContracts(ExtractContractsArgs),
     /// Resolve actor->signal relations from prose via Tier-3 LLM extraction (Qwen)
     SignalResolve(SignalResolveArgs),
+    /// Score the LLM extraction passes against a labeled dataset (precision/recall/F1)
+    EvalExtraction(EvalExtractionArgs),
 }
 
 #[derive(Debug, Args)]
@@ -203,6 +205,21 @@ pub struct ExtractContractsArgs {
     /// Maximum NormativeStatement sentences to send to the LLM (0 = all)
     #[arg(long, default_value = "0")]
     pub max_statements: usize,
+}
+
+#[derive(Debug, Args)]
+pub struct EvalExtractionArgs {
+    /// Path to a labeled eval dataset: a JSON array file or a directory of per-item JSON files
+    pub dataset: std::path::PathBuf,
+    /// LLM provider to run the extraction with (default skip = deterministic pattern baseline)
+    #[arg(long, value_enum, default_value = "skip")]
+    pub provider: VlmProviderArg,
+    /// Model name override (default qwen2.5vl:7b for ollama/lmstudio; e.g. qwen3-vl:8b)
+    #[arg(long)]
+    pub model: Option<String>,
+    /// Root holding each document's `<doc_key>/evidence_ir.json`
+    #[arg(long, default_value = "generated/evidence_ir")]
+    pub evidence_root: std::path::PathBuf,
 }
 
 #[derive(Debug, Args)]

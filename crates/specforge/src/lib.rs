@@ -30,5 +30,6 @@ pub fn run(cli: Cli) -> Result<()> {
         Commands::NlpEnrich(args) => commands::nlp_enrich::run(args),
         Commands::ExtractContracts(args) => commands::extract_contracts::run(args),
         Commands::SignalResolve(args) => commands::signal_resolve::run(args),
+        Commands::EvalExtraction(args) => commands::eval_extraction::run(args),
     }
 }

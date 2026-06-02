@@ -147,11 +147,26 @@ until a human reviews it.
   Commit: `see Commit Log`
 
 - ID: `LLM-EXTRACTION-EVAL.4`
-  Status: `pending`
+  Status: `done`
   Goal: provider-gated runner (`eval-extraction` command): run the task command with
     `--model`, read typed records w/ statement provenance, score, report per-task +
     overall P/R/F1. `--provider skip` testable path.
   Acceptance: runner scores the seed set; skip-mode wired test; CI green.
+  Verification: passed (`2026-06-01`) — new `eval-extraction` command
+    (`commands/eval_extraction.rs` + `EvalExtractionArgs` + `Commands::EvalExtraction`
+    + dispatch + mod). Approach **B** (lower risk than refactoring `nlp_enrich`):
+    `extract_on_copy` copies the doc's EvidenceIR, redirects its `artifact_layout` to a
+    temp dir, runs the real `nlp-enrich`/`signal-resolve` command there (corpus artifact
+    never mutated), re-reads the enriched IR, indexes records by statement provenance,
+    `score_dataset`s, and prints a per-task P/R/F1 report. `--provider skip` =
+    deterministic pattern baseline. Orchestration is dependency-injected (`build_predictions`
+    takes an extractor closure) so it's CI-testable without a fixture IR: 2 unit tests
+    (extractor-once-per-(doc,task) + scoring; `format_report`). **Live skip-mode run on
+    the real APB seed** (dev artifact): signal_constraint P=0.500 R=1.000 F1=0.667
+    (tp6/fp6/fn0); actor_signal_relation P=0.500 R=0.333 F1=0.400 (tp2/fp2/fn4) — the
+    relation recall gap is the headroom `signal-resolve`/the LLM fills. README CLI
+    surface synced (added eval-extraction + the previously-missing extract-contracts +
+    signal-resolve). fmt + clippy clean; full CI green.
 
 - ID: `LLM-EXTRACTION-EVAL.5`
   Status: `pending`
@@ -166,8 +181,8 @@ until a human reviews it.
 | 1 | `.1` | `done` | owned + design |
 | 2 | `.2` | `done` | pure scorer + dataset format/loader (`eval.rs`); 6 unit tests; CI green |
 | 3 | `.3` | `done` | seed labeled dataset (16 items APB; 8/task; negatives); loader file-or-dir |
-| 4 | `.4` | `pending` | provider-gated runner over the real command path — next |
-| 5 | `.5` | `pending` | baseline + book + close |
+| 4 | `.4` | `done` | `eval-extraction` runner (temp-redirect, real command path); skip-mode baseline live; 2 tests |
+| 5 | `.5` | `pending` | baseline run with qwen2.5vl (server-gated) + book note + close — next |
 
 ## Decisions
 
@@ -225,6 +240,7 @@ testable baseline (pattern-only) — the A/B is skip-vs-model or modelA-vs-model
 | `LLM-EXTRACTION-EVAL.1` | `LLM-EXTRACTION-EVAL.1 — own + design labeled precision/recall eval for the LLM passes` | docs-only |
 | `LLM-EXTRACTION-EVAL.2` | `LLM-EXTRACTION-EVAL.2 — pure scorer + dataset format/loader (eval.rs); 6 tests` | provider-free core |
 | `LLM-EXTRACTION-EVAL.3` | `LLM-EXTRACTION-EVAL.3 — seed labeled dataset (16 APB items, 8/task) + loader file-or-dir` | gold drafted from prose |
+| `LLM-EXTRACTION-EVAL.4` | `LLM-EXTRACTION-EVAL.4 — eval-extraction runner (temp-redirect over the real command path); skip baseline live` | provider-gated; README synced |
 
 ## Changelog
 

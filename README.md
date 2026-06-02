@@ -48,6 +48,9 @@ Use it first for the project objective, document navigation, and the current imp
   - `intent <semantic-ir>`
   - `enrich <source-ir> [--vlm-provider ollama|open-ai|lm-studio|skip] [--classify-only] [--dry-run]`
   - `nlp-enrich <evidence-ir> [--vlm-provider ollama|open-ai|lm-studio|skip] [--dry-run]`
+  - `extract-contracts <evidence-ir> [--provider ollama|open-ai|lm-studio|skip] [--model <m>] [--dry-run]`
+  - `signal-resolve <evidence-ir> [--provider ollama|open-ai|lm-studio|skip] [--model <m>] [--dry-run]`
+  - `eval-extraction <dataset> [--provider ollama|open-ai|lm-studio|skip] [--model <m>] [--evidence-root <root>]`
   - `validate <artifact>`
   - `adapt <intent-ir> --target isf --dry-run`
   - `adapt <intent-ir> --target isf`
