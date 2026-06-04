@@ -2,6 +2,21 @@
 
 ## 2026-06-04
 
+### Spec-mining provenance — own + design the framing + per-author adopt/defer ledger (SPEC-MINING-PROVENANCE.1)
+- `SPEC-MINING-PROVENANCE.1` (own + design, docs-only): acting on a user directive — (1) adopt
+  **"specification mining"** as SpecForge's discipline name (Ammons/Bodík/Larus, POPL 2002),
+  with the forward-vs-backward novelty explicit (SpecForge mines intent *from the
+  human-authored spec*, before any implementation exists, vs the literature's backward
+  implementation→spec mining); and (2) build a per-author **adopt/defer provenance ledger**
+  (`docs/research/grounding/adopt-defer-ledger.md`): for each leveraged author/work — *Take*
+  (the abstraction adopted) / *Leave-out + why* / *Instantiated-at* (where it lives in
+  SpecForge) — surfaced as Knowledge Map cards + grounded in the book. This sharpens the
+  existing per-*aspect* grounding into per-*author* provenance so the deliberate boundary
+  ("what we left out and why") is recorded, not re-litigated. Prioritizes the temporal trio
+  (Pnueli/GoldMine/Texada) + the framing in `.2`; the rest of the swept authors + a synthesis
+  in `.3`+. Verify-every-citation carries over; advisory (no code change). Registered in
+  `docs/TASK_TREE.md`.
+
 ### Ambiguity detector — flag vague spec prose in validate; tree CLOSED (AMBIGUITY-PHRASE-DETECTOR.2)
 - `AMBIGUITY-PHRASE-DETECTOR.2` (CLOSING leaf): new pure `crates/specforge/src/ir/ambiguity.rs`
   (`pub mod ambiguity;`) — a `WEAK_PHRASES` lexicon (NASA ARM weak phrases + the chip-spec
