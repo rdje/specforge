@@ -3,7 +3,7 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Regenerate with `knowledge-map/scripts/gen_knowledge_map.sh`.
 > Source of truth = YAML front-matter in: `docs/knowledge docs/decisions`. Edit the fact files, never this map.
 > A fact is any `.md` whose front-matter has a non-empty `answers:` list.
-> **15** facts · **74** question keys.
+> **16** facts · **79** question keys.
 
 ## Questions → fact
 
@@ -14,6 +14,7 @@
 - "can SpecForge use FSMGen's (stable …) sampled-value predicate" -> [stable-obligation-phase-scoped-residual](docs/knowledge/stable-obligation-phase-scoped-residual.md) · 2026-06-04 · reverify: `grep -n "bare stability across tick phases" crates/specforge/src/ir/contract.rs`
 - "default model for the ollama provider" -> [llm-vlm-provider-default](docs/knowledge/llm-vlm-provider-default.md) · 2026-06-01 · reverify: `grep -n "qwen2.5vl" crates/specforge/src/commands/llm_text.rs`
 - "did a second annotator validate seed_apb.json" -> [eval-gold-interannotator-kappa](docs/knowledge/eval-gold-interannotator-kappa.md) · 2026-06-05 · reverify: `python3 -c "see EVAL-GOLD-INTERANNOTATOR-AGREEMENT.md Method — re-run a blind second annotation and recompute`
+- "do text-reasoning tasks need a vision model" -> [local-llm-for-text-reasoning](docs/knowledge/local-llm-for-text-reasoning.md) · 2026-06-05 · reverify: `ollama list  # qwen2.5:14b-instruct (text) + qwen2.5vl:7b (vision); re-run the NLI/kappa probes`
 - "does SpecForge detect implementation-defined or TBD or and/or" -> [ambiguity-weak-phrase-detector](docs/knowledge/ambiguity-weak-phrase-detector.md) · 2026-06-04 · reverify: `grep -n "fn weak_phrase_findings" crates/specforge/src/ir/ambiguity.rs`
 - "does SpecForge model-check temporal properties" -> [temporal-logic-choice](docs/knowledge/temporal-logic-choice.md) · 2026-06-04 · reverify: `grep -n "fn temporal_rule_to_ltl" crates/specforge/src/ir/temporal_ltl.rs`
 - "does SpecForge revise or decay priors" -> [contested-priors](docs/knowledge/contested-priors.md) · 2026-06-04 · reverify: `grep -n "fn contested_priors" crates/specforge/src/ir/prior_memory.rs`
@@ -32,6 +33,7 @@
 - "how is a fused contract's automation_confidence computed" -> [dempster-fusion](docs/knowledge/dempster-fusion.md) · 2026-06-04 · reverify: `grep -n "fn dempster_corroborate_confidence" crates/specforge/src/ir/fusion.rs`
 - "how was the eval gold checked for idiosyncrasy" -> [eval-gold-interannotator-kappa](docs/knowledge/eval-gold-interannotator-kappa.md) · 2026-06-05 · reverify: `python3 -c "see EVAL-GOLD-INTERANNOTATOR-AGREEMENT.md Method — re-run a blind second annotation and recompute`
 - "is SpecForge specification mining" -> [spec-mining-framing](docs/knowledge/spec-mining-framing.md) · 2026-06-04 · reverify: `grep -rn "forward specification mining" README.md docs/book/src/architecture-rationale.md`
+- "is qwen2.5:14b-instruct good enough for NLI" -> [local-llm-for-text-reasoning](docs/knowledge/local-llm-for-text-reasoning.md) · 2026-06-05 · reverify: `ollama list  # qwen2.5:14b-instruct (text) + qwen2.5vl:7b (vision); re-run the NLI/kappa probes`
 - "is the LLM/VLM provider missing or not wired up" -> [llm-vlm-provider-default](docs/knowledge/llm-vlm-provider-default.md) · 2026-06-01 · reverify: `grep -n "qwen2.5vl" crates/specforge/src/commands/llm_text.rs`
 - "is the eval gold / answer key trustworthy or reliable" -> [eval-gold-interannotator-kappa](docs/knowledge/eval-gold-interannotator-kappa.md) · 2026-06-05 · reverify: `python3 -c "see EVAL-GOLD-INTERANNOTATOR-AGREEMENT.md Method — re-run a blind second annotation and recompute`
 - "is the eval-extraction temporal precision 0.6 a real defect" -> [temporal-eval-residual-fps-are-stale](docs/knowledge/temporal-eval-residual-fps-are-stale.md) · 2026-06-02 · reverify: `grep -n " when " crates/specforge/src/ir/evidence.rs`
@@ -71,6 +73,8 @@
 - "where is the per-author adopt-vs-defer provenance" -> [adopt-defer-ledger](docs/knowledge/adopt-defer-ledger.md) · 2026-06-04 · reverify: `ls docs/research/grounding/adopt-defer-ledger.md`
 - "where is the weak-phrase / NASA ARM ambiguity detector" -> [ambiguity-weak-phrase-detector](docs/knowledge/ambiguity-weak-phrase-detector.md) · 2026-06-04 · reverify: `grep -n "fn weak_phrase_findings" crates/specforge/src/ir/ambiguity.rs`
 - "which LLM or VLM does SpecForge use" -> [llm-vlm-provider-default](docs/knowledge/llm-vlm-provider-default.md) · 2026-06-01 · reverify: `grep -n "qwen2.5vl" crates/specforge/src/commands/llm_text.rs`
+- "which local model should SpecForge use for NLI or entailment verification" -> [local-llm-for-text-reasoning](docs/knowledge/local-llm-for-text-reasoning.md) · 2026-06-05 · reverify: `ollama list  # qwen2.5:14b-instruct (text) + qwen2.5vl:7b (vision); re-run the NLI/kappa probes`
+- "which local models are pulled and what are they for" -> [local-llm-for-text-reasoning](docs/knowledge/local-llm-for-text-reasoning.md) · 2026-06-05 · reverify: `ollama list  # qwen2.5:14b-instruct (text) + qwen2.5vl:7b (vision); re-run the NLI/kappa probes`
 - "why are modal verbs must shall should may not flagged as ambiguous" -> [ambiguity-weak-phrase-detector](docs/knowledge/ambiguity-weak-phrase-detector.md) · 2026-06-04 · reverify: `grep -n "fn weak_phrase_findings" crates/specforge/src/ir/ambiguity.rs`
 - "why are stability obligations residuals" -> [stable-obligation-phase-scoped-residual](docs/knowledge/stable-obligation-phase-scoped-residual.md) · 2026-06-04 · reverify: `grep -n "bare stability across tick phases" crates/specforge/src/ir/contract.rs`
 - "why does Docling re-ingest fail on Apple Silicon" -> [docling-device-cpu](docs/knowledge/docling-device-cpu.md) · 2026-06-01 · reverify: `grep -n DOCLING_DEVICE crates/specforge/src/ir/source/docling_backend.rs`
@@ -80,6 +84,7 @@
 - "why doesn't fusion use the minimum confidence" -> [dempster-fusion](docs/knowledge/dempster-fusion.md) · 2026-06-04 · reverify: `grep -n "fn dempster_corroborate_confidence" crates/specforge/src/ir/fusion.rs`
 - "why doesn't the temporal_rule eval reach precision 1.0" -> [temporal-eval-residual-fps-are-stale](docs/knowledge/temporal-eval-residual-fps-are-stale.md) · 2026-06-02 · reverify: `grep -n " when " crates/specforge/src/ir/evidence.rs`
 - "why is SpecForge called forward specification mining" -> [spec-mining-framing](docs/knowledge/spec-mining-framing.md) · 2026-06-04 · reverify: `grep -rn "forward specification mining" README.md docs/book/src/architecture-rationale.md`
+- "why is the NLI framing better than free-form labeling" -> [local-llm-for-text-reasoning](docs/knowledge/local-llm-for-text-reasoning.md) · 2026-06-05 · reverify: `ollama list  # qwen2.5:14b-instruct (text) + qwen2.5vl:7b (vision); re-run the NLI/kappa probes`
 - "why not CTL for temporal behavior" -> [temporal-logic-choice](docs/knowledge/temporal-logic-choice.md) · 2026-06-04 · reverify: `grep -n "fn temporal_rule_to_ltl" crates/specforge/src/ir/temporal_ltl.rs`
 
 ## Facts (by id)
@@ -173,6 +178,15 @@ _SpecForge ships a production Ollama+Qwen2.5VL provider (the default LLM/VLM)_
 - **evidence:** `docs/decisions/0002-llm-vlm-provider-default.md; crates/specforge/src/commands/llm_text.rs:35`
 - **reverify:** `grep -n "qwen2.5vl" crates/specforge/src/commands/llm_text.rs`
 - **source:** [`docs/knowledge/llm-vlm-provider-default.md`](docs/knowledge/llm-vlm-provider-default.md)
+
+### local-llm-for-text-reasoning
+_Text-reasoning gates (NLI, semantic checks) want a strong TEXT LLM, not a VLM; qwen2.5:14b-instruct is viable for NLI_
+
+- **answers:** which local model should SpecForge use for NLI or entailment verification | do text-reasoning tasks need a vision model | is qwen2.5:14b-instruct good enough for NLI | why is the NLI framing better than free-form labeling | which local models are pulled and what are they for
+- **date:** 2026-06-05 · **status:** current
+- **evidence:** `docs/knowledge/eval-gold-interannotator-kappa.md; docs/tasks/EVAL-GOLD-INTERANNOTATOR-AGREEMENT.md`
+- **reverify:** `ollama list  # qwen2.5:14b-instruct (text) + qwen2.5vl:7b (vision); re-run the NLI/kappa probes`
+- **source:** [`docs/knowledge/local-llm-for-text-reasoning.md`](docs/knowledge/local-llm-for-text-reasoning.md)
 
 ### spec-mining-framing
 _SpecForge is forward specification mining (spec -> intent, not implementation -> spec)_

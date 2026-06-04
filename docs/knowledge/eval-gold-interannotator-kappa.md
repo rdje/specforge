@@ -47,11 +47,18 @@ debatable call).
   gold here. The capable reviewer (Claude agent) agreed at κ = 0.90 — that is the reliability
   signal.
 
-**Useful side-finding:** qwen2.5vl:7b is **SpecForge's default extraction VLM**, and it
-systematically reads condition signals as constrained — so SpecForge's *raw* VLM extraction likely
-over-constrains "when X …" conditions; this is exactly what the deterministic backbone + grounding
-gates are there to catch, but it is worth knowing the model's bias. (Cross-model κ between *peer
-LLMs* is best run in production with streaming.)
+- **qwen2.5:14b-instruct** (text-only, pulled on request; replaced qwen3-vl:8b): fast (~22 s),
+  **relation κ = 1.00** (perfect cross-model on the clean task), **constraint κ = 0.498** (better
+  than the 7B VLM but still trips on condition-vs-obligation in the *labeling* framing — it reads
+  "when PSEL … are asserted" as `must_be_asserted`), and **NLI entailment 5/6** — notably it judged
+  *"PSEL must be asserted"* NOT-entailed correctly (the nuance it flubbed in labeling). See
+  `[[local-llm-for-text-reasoning]]` for the model-choice conclusion.
+
+**Side-findings:** (1) qwen2.5vl:7b is **SpecForge's default extraction VLM** and reads condition
+signals as constrained — so the *raw* VLM extraction likely over-constrains "when X …" conditions
+(what the deterministic backbone + grounding catch). (2) The **NLI/entailment framing beats
+free-form labeling** for this nuance, and **qwen2.5:14b-instruct is a viable local model for an NLI
+verifier** — see `[[local-llm-for-text-reasoning]]`.
 
 Methodology grounded in Cohen (1960) / Krippendorff α / Artstein-Poesio (CL 2008);
 `extraction-evaluation.md`. Caveat: 18+11 units is small → κ is a strong *signal*, not a precise
