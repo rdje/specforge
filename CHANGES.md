@@ -2,6 +2,21 @@
 
 ## 2026-06-04
 
+### FSMGen min>1 window question — answered (integer-literal bounds; MIN>=1 guarantee); tree CLOSED (FSMGEN-MIN-WINDOW-CONFIRM)
+- `FSMGEN-MIN-WINDOW-CONFIRM` (CLOSED): FSMGen shipped the `(stable/changed/rose/fell)` predicate
+  delta (`ISF-PROPERTY-SAMPLED-VALUE`, commit `6700fbb4`) and proposed the `min > 1` window slice
+  as a backward-compatible third operand `(within B MIN MAX)` → `##[MIN:MAX]`, gated on one
+  confirmation: are SpecForge's `cycle_window` bounds always integer literals with `MIN >= 1`, or
+  can `MIN` be `0`? **Answered** (verified against `ir/semantic.rs`): the bounds are always
+  **integer literals** (`{min_cycles, max_cycles}: Option<u32>`; no symbolic/parameter form);
+  `MIN = 0` occurs only as the degenerate same-cycle `[0,0]` window (already routed to a residual
+  via the `(within 0)` guard) or a `0`-to-`N` range (semantically the anchored
+  `(monitor (within S N))` `F[0,N]` form). SpecForge therefore **guarantees `1 <= MIN <= MAX`**
+  for the `(within B MIN MAX)` consequent and will never emit `(within B 0 MAX)` — so FSMGen can
+  lock the form to `1 <= MIN <= MAX` (redirect/reject `MIN = 0`). Answer filed in
+  `docs/FSMGEN_FEEDBACK.md`; docs-only, no submodule re-pin (the integration is a future owned
+  tree once `min > 1` ships). The `(stable …)` half is shipped and awaits a separate integration.
+
 ### FSMGen verification-family migration — re-pin 43b29f5c + bounded-eventually → (assert (monitor …)); tree CLOSED (FSMGEN-ASSERT-MIGRATE)
 - `FSMGEN-ASSERT-MIGRATE` (`.1` assess + `.2` migrate, CLOSED): a consequence of FSMGen's
   response to the 2026-06-04 LTL/MTL-in-ISF suggestion

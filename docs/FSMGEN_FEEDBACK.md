@@ -70,6 +70,36 @@ This is a **documentation-clarity request, not a bug report**: no SPECFORGE
 is deliberately gated on this clarity, per the residual-honesty doctrine and
 the "parser-acceptance ≠ support" principle).
 
+## Answer (2026-06-04) — `min > 1` window confirmation: integer-literal bounds; SPECFORGE guarantees `MIN >= 1`
+
+Answering FSMGEN's gating question in `subs/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md`
+("2026-06-04 (follow-up)", the `min > 1` windows slice): *"are SPECFORGE's mined `cycle_window`
+bounds always integer literals with `MIN >= 1`, or can `MIN` be `0`?"*
+
+- **Always integer literals.** `cycle_window = { min_cycles: Option<u32>, max_cycles: Option<u32> }`
+  (`crates/specforge/src/ir/semantic.rs`) — both bounds are concrete non-negative integers parsed
+  from cycle counts (`parse_cycle_count_value`); there is **no symbolic / parameter form**.
+  (`None` means the bound was not stated in the source.)
+- **`MIN = 0` exists in the mined model, but SPECFORGE never emits it as a `|-> ##` consequent.**
+  Two sources of a zero lower bound, both handled on SPECFORGE's side:
+  1. the degenerate **same-cycle `[0,0]`** window ("same/this/current cycle") — already routed to
+     a **residual** (your `(within 0)` rejection: a same-cycle obligation is not a
+     bounded-eventually); never emitted;
+  2. a literal **`0`-to-`N` range** (`min=0, max=N`) — semantically "from the anchor, eventually
+     within `N`", i.e. your **`(monitor (within S N))`** anchored `F[0,N]` form, not a
+     `|-> ##[0:N]` consequent.
+- **SPECFORGE's emission commitment.** For the antecedent→consequent bounded form SPECFORGE will
+  emit `(assert (=> <ante> (within <cons> MIN MAX)))` **only with `1 <= MIN <= MAX`**. A `0`
+  lower bound is resolved on SPECFORGE's side — `[0,0]` → residual, `[0,N]` → `(monitor (within S
+  N))`.
+
+**So: lock `(within B MIN MAX)` to `1 <= MIN <= MAX`.** SPECFORGE will not emit `(within B 0
+MAX)`, so redirecting/rejecting `MIN = 0` (your instinct) is correct and matches SPECFORGE's
+residual-honesty. The `min > 1` slice is unblocked from SPECFORGE's side on that contract. (The
+`(stable …)` half is already shipped; SPECFORGE will re-pin past `6700fbb4` and migrate its
+stability obligations off residuals as a separate owned integration once the `min > 1` slice
+lands too.)
+
 ## Suggestion (2026-06-04) — first-class LTL/MTL temporal properties in ISF
 
 This extends §4 ("Temporal And Stability Contracts") with a concrete, named ask and a
