@@ -24,6 +24,14 @@ the **strongest-supported value as an advisory hint** (never auto-resolved). Sur
 
 **Additive** — it does NOT mutate the harvest, merge, or consultation (zero behavior/fixture
 change); it only adds insight. Realizes the Parisi (2019) revision-on-contradiction gap
-(`PRIOR-DECAY`); *down-weighting* a contested prior during consultation and *time-based
-staleness* are deliberate later steps (the latter has no clean recency ordering in
-document-keyed priors). See `docs/tasks/PRIOR-DECAY.md` and `cross-document-learning.md`.
+(`PRIOR-DECAY`).
+
+**Consultation already abstains on a contest — the "down-weight" is a NO-BUILD.** The resolvers
+`CorpusMemory::resolve_actor_taxonomy_role` / `resolve_semantic_phrase_role` collect the matching
+priors' values into a `BTreeSet` and **return `None` when `len() > 1`** (a single value applies; a
+contest abstains). So a contested prior is never auto-applied during extraction — exactly the
+conservative behavior the advisory hint implies. Therefore PRIOR-DECAY's *detection* +
+`resolve_*`'s *abstention* together complete the contest story; no further consultation
+"down-weight" is needed (verified 2026-06-04). *Time-based staleness* remains out of scope (no
+clean recency ordering in document-keyed priors). See `docs/tasks/PRIOR-DECAY.md`,
+`cross-document-learning.md`.
