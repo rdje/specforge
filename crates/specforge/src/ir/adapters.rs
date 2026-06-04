@@ -642,15 +642,18 @@ mod tests {
 
         // Non-empty ISF temporal behavior: at least one temporal-derived
         // construct OR an explicit residual decision — never silent loss.
-        let has_contract = src.contains("\n    (contract ");
+        // The bounded-eventually now lowers to `(assert (monitor …))` (the
+        // `(contract … eventually …)` clause was removed at pin 43b29f5c —
+        // FSMGEN-ASSERT-MIGRATE).
+        let has_assert_monitor = src.contains("\n    (assert (monitor ");
         let has_temporal_rule = src.contains("(rule temporal_");
         let has_temporal_residual = artifact
             .residual_decisions
             .iter()
             .any(|p| p.packet_id.starts_with("isf_temporal_unrepresentable_"));
         assert!(
-            has_contract || has_temporal_rule || has_temporal_residual,
-            "temporal_rules were silently dropped (no contract, no temporal rule, no residual)\n{src}"
+            has_assert_monitor || has_temporal_rule || has_temporal_residual,
+            "temporal_rules were silently dropped (no assert-monitor, no temporal rule, no residual)\n{src}"
         );
 
         // Metric == emitted content (ISF-TEMPORAL-LOWERING.2.4 invariant

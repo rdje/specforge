@@ -89,11 +89,14 @@ rule exactly one disposition, so a rule is lowered one way or not at all:
 
 - **Contract** — a bounded `cycle_window` (`max_cycles >= 1`) with a
   single-signal consequent naming a declared signal → a synthetic
-  `(transaction txn_temporal_<id> (on start) (contract <id> (eventually
-  <signal> (within <N>))) (complete done))`. This is FSMGen's shipped
-  `bounded_eventually`; the **nested** `(within N)` is required (the flat
-  `within N` printed in the FSMGen spec §11.8 is strict-rejected — see
-  `docs/FSMGEN_FEEDBACK.md`).
+  `(transaction txn_temporal_<id> (on start) (assert (monitor (within
+  <signal> <N>))) (complete done))`. As of fsmgen pin `43b29f5c` FSMGen
+  **removed** the standalone `(contract … (eventually …))` clause and
+  generalized temporal properties into the `(assert/assume/cover …)`
+  *verification family* (their decisions `0008`/`0009`); a bounded-eventually
+  now lowers to the monitor property `(assert (monitor (within s N)))`
+  (`FSMGEN-ASSERT-MIGRATE`). The mapping is empirically strict-valid — the
+  fsmgen-binary strict-check tests run the new binary.
 - **Rule** — no window, a `SignalValue` consequent naming a declared
   signal with an ISF-literal value → an actor `(rule temporal_<id>
   [<guard>] (<signal> <value>))`. The guard is `(== <declared-signal>
@@ -405,3 +408,29 @@ The fsmgen-strict end-to-end tests still pass unchanged (emission is
 identical).
 
 *Authoritative tracking:* `docs/tasks/ISF-RULE-CONFLICT-RESIDUAL.md`.
+
+### `FSMGEN-ASSERT-MIGRATE` — following FSMGen's verification-family generalization
+
+This one is a small but important story about staying honest with a *downstream*
+contract. SpecForge had asked FSMGen (through the tracked feedback channel) whether
+ISF could express the full temporal template directly. FSMGen's answer was the best
+kind: *"yes — and it already shipped."* They had **removed** the narrow
+`(contract … (eventually s (within N)))` clause and replaced it with a general
+*verification family* — `(assert …)` / `(assume …)` / `(cover …)` — that expresses any
+`G(antecedent → next/within consequent)` property.
+
+That is good news, but it also means the old spelling SpecForge emitted is now
+*invalid*: feed it to the new FSMGen and you get *"unsupported '(contract ...)'
+clause"*. So this tree re-pinned the FSMGen submodule to the new version and migrated
+the one affected emission — a bounded-eventually now lowers to
+`(assert (monitor (within <signal> <N>)))`, the verification-family monitor form.
+Nothing else moved: `(stage …)` and the `(rule …)` lowering were unchanged, and the
+verification is not on faith — the fsmgen-binary strict-check tests run the *new*
+binary on a real SpecForge `.isf` and confirm acceptance.
+
+Two obligations SpecForge mines — *stable* (a value holding across a tick) and windows
+with a lower bound greater than one — do not yet have ISF primitives, so they continue
+to surface as honest residual decisions until FSMGen adds them. And because the
+spec→checkable-property loop now closes *inside* the existing `IntentIR → .isf → FSMGen`
+handoff, a separate SpecForge-side SVA exporter became unnecessary and was retired.
+*Authoritative tracking:* `docs/tasks/FSMGEN-ASSERT-MIGRATE.md`.

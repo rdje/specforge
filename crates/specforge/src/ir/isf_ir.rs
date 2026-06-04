@@ -107,13 +107,14 @@ struct IsfTransaction {
     stages: Vec<IsfStage>,
 }
 
-// `(contract <name> (eventually <signal> (within <N>)))` — FSMGen ISF
-// spec §11.8 shipped kind `bounded_eventually`. NOTE: `--strict --check`
-// requires the nested `(within N)` subclause (the spec's flat
-// `within N` prose is rejected).
+// A bounded-eventually obligation, lowered to the FSMGen verification-family
+// monitor property `(assert (monitor (within <signal> <N>)))` at pin
+// `43b29f5c` (`FSMGEN-ASSERT-MIGRATE`). The former
+// `(contract <name> (eventually <signal> (within <N>)))` clause was removed
+// upstream (FSMGen decisions 0008/0009); the property is anonymous, so no
+// name is carried.
 #[derive(Debug, Clone, PartialEq, Eq)]
 struct IsfContract {
-    name: String,
     signal: String,
     within: u64,
 }
@@ -443,12 +444,16 @@ impl IsfIr {
         }
 
         for contract in &tx.contracts {
-            // FSMGen `--strict --check` requires the nested `(within N)`
-            // subclause; the spec §11.8 prose form `eventually s within N`
-            // is rejected (see docs/FSMGEN_FEEDBACK.md).
+            // FSMGen removed the standalone `(contract … (eventually …))` clause
+            // at pin `43b29f5c` (verification-family generalization, FSMGen
+            // decisions 0008/0009). The bounded-eventually now lowers to the
+            // shipped monitor property `(assert (monitor (within s N)))`
+            // (`FSMGEN-ASSERT-MIGRATE`; empirically strict-valid on the new pin).
+            // The SpecForge-side contract `name` is dropped — the assert is
+            // anonymous in the verification family.
             lines.push(format!(
-                "    (contract {} (eventually {} (within {})))",
-                contract.name, contract.signal, contract.within
+                "    (assert (monitor (within {} {})))",
+                contract.signal, contract.within
             ));
         }
 
@@ -885,8 +890,10 @@ impl IsfIr {
         // --- ISF-TEMPORAL-LOWERING.2.2/.2.3: lower temporal_rules ---
         // Each `temporal_rule` is classified into exactly one disposition
         // (`.1` mapping #1/#3/#4). Windowed `bounded_eventually` → a
-        // synthetic transaction carrying the FSMGen-strict-verified nested
-        // `(contract <id> (eventually <signal> (within <N>)))`. Non-windowed
+        // synthetic transaction carrying the FSMGen verification-family
+        // monitor property `(assert (monitor (within <signal> <N>)))` (the
+        // `(contract … (eventually …))` clause was removed at pin 43b29f5c —
+        // FSMGEN-ASSERT-MIGRATE). Non-windowed
         // value/guard→drive → an actor `(rule …)`. Anything with no
         // representable supported ISF construct (HandshakeComplete,
         // `(within 0)`, no concrete value, undeclared signal, …) is
@@ -927,11 +934,7 @@ impl IsfIr {
                         complete: "done".to_string(),
                         latency_min: None,
                         latency_max: None,
-                        contracts: vec![IsfContract {
-                            name,
-                            signal,
-                            within,
-                        }],
+                        contracts: vec![IsfContract { signal, within }],
                         stages: vec![],
                     });
                 }
@@ -1406,8 +1409,11 @@ fn temporal_consequent_signal(rule: &TemporalRuleRecord) -> Option<String> {
 /// mutually exclusive so a rule is lowered exactly one way (or not at all).
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub(crate) enum TemporalRuleDisposition {
-    /// Windowed `bounded_eventually` → synthetic `(transaction …
-    /// (contract <name> (eventually <signal> (within <within>))))` (`.2.2`).
+    /// Windowed `bounded_eventually` → synthetic transaction carrying the
+    /// FSMGen verification-family property `(assert (monitor (within <signal>
+    /// <within>)))` (`.2.2`; the `(contract … (eventually …))` clause was
+    /// removed at pin 43b29f5c — `FSMGEN-ASSERT-MIGRATE`). `name` labels the
+    /// synthetic transaction (`txn_temporal_<name>`); the assert is anonymous.
     Contract {
         name: String,
         signal: String,
@@ -2165,7 +2171,6 @@ mod tests {
             latency_min: None,
             latency_max: None,
             contracts: vec![IsfContract {
-                name: "c_resp".to_string(),
                 signal: "RVALID".to_string(),
                 within: 4,
             }],
@@ -2175,12 +2180,14 @@ mod tests {
     }
 
     #[test]
-    fn render_emits_spec_shaped_bounded_contract() {
+    fn render_emits_assert_monitor_bounded_eventually() {
         let out = isf_with_temporal_contract_transaction().render();
-        // FSMGen `--strict` requires the nested `(within N)` subclause.
+        // FSMGen verification family (pin 43b29f5c): a bounded-eventually lowers to
+        // `(assert (monitor (within s N)))`; the `(contract … (eventually …))` clause
+        // was removed (FSMGEN-ASSERT-MIGRATE).
         assert!(
-            out.contains("    (contract c_resp (eventually RVALID (within 4)))"),
-            "contract shape:\n{out}"
+            out.contains("    (assert (monitor (within RVALID 4)))"),
+            "assert-monitor shape:\n{out}"
         );
         assert_eq!(paren_balance(&out), 0, "unbalanced:\n{out}");
     }
@@ -2214,7 +2221,7 @@ mod tests {
         }
         assert!(
             success,
-            "FSMGen strict rejected the spec-shaped (stage …)/(contract …) forms"
+            "FSMGen strict rejected the spec-shaped (stage …)/(assert (monitor …)) forms"
         );
     }
 

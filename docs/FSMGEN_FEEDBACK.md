@@ -125,6 +125,19 @@ tree `TEMPORAL-RULE-SVA-RENDER`; **if** ISF gains native LTL/MTL the SVA export 
 unnecessary. The decision between the two paths is open on SPECFORGE's side; this suggestion
 records the FSMGEN-native option and a concrete shape so FSMGEN can weigh in.
 
+> **ANSWERED + ACTED ON `2026-06-04`.** FSMGEN responded
+> (`subs/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md`, "2026-06-04: First-Class LTL/MTL Temporal
+> Properties — Already Generalized In The Verification Family"): **yes, already shipped** as a
+> generalization — the `(contract … (eventually …))` clause was removed and replaced by the
+> compositional `(assert/assume/cover …)` verification family (decisions `0008`/`0009`), which
+> expresses the full `G(ante → X/F[min,max] cons)` template and is strictly more general.
+> SPECFORGE re-pinned `subs/fsmgen` to `43b29f5c` and migrated its bounded-eventually emission
+> `(contract … (eventually s (within N)))` → `(assert (monitor (within s N)))`
+> (`FSMGEN-ASSERT-MIGRATE`; empirically strict-valid). The SpecForge-side SVA export
+> (`TEMPORAL-RULE-SVA-RENDER`) is **retired as superseded**. FSMGEN flagged two narrower spots —
+> arbitrary `min > 1` windows and a `(stable …)` predicate; SPECFORGE *does* mine both, so those
+> stay SPECFORGE residuals until FSMGEN adds the primitives (being requested separately).
+
 ## Purpose
 
 This file is SPECFORGE's tracked feedback for FSMGEN.

@@ -2,6 +2,31 @@
 
 ## 2026-06-04
 
+### FSMGen verification-family migration — re-pin 43b29f5c + bounded-eventually → (assert (monitor …)); tree CLOSED (FSMGEN-ASSERT-MIGRATE)
+- `FSMGEN-ASSERT-MIGRATE` (`.1` assess + `.2` migrate, CLOSED): a consequence of FSMGen's
+  response to the 2026-06-04 LTL/MTL-in-ISF suggestion
+  (`subs/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md`): FSMGen **already shipped** the
+  generalization — the standalone `(contract … (eventually s (within N)))` clause was **removed**
+  and replaced by the compositional `(assert/assume/cover …)` verification family (their decisions
+  `0008`/`0009`), which expresses the full `G(antecedent → next/within consequent)` template.
+- Re-pinned `subs/fsmgen` `c0b7eaa7 → 43b29f5c` and migrated the one affected emission in
+  `ir/isf_ir.rs`: a windowed bounded-eventually now lowers to `(assert (monitor (within <signal>
+  <N>)))` (was `(contract <name> (eventually <signal> (within <N>)))`). Removed the now-unused
+  `IsfContract.name` field (struct + both construction sites; the disposition `name` still labels
+  the synthetic transaction); updated the string-shape test (renamed
+  `render_emits_assert_monitor_bounded_eventually`), the `adapters.rs` end-to-end no-silent-drop
+  check (`has_assert_monitor`), the descriptive comments, and the strict-check assert message.
+- **Re-validated against the new pin**: full `scripts/run_ci.sh` GREEN (1239) — the fsmgen-binary
+  strict-check tests (`run_fsmgen_strict_check`) run `bin/fsmgen --strict --check` from `43b29f5c`
+  on a real SpecForge `.isf` and confirm the new form is accepted (the old `(contract …)` form is
+  rejected by the new binary: *"unsupported '(contract ...)' clause"*). `(stage …)` unchanged.
+- `stable` and `min > 1` obligations (both mined by SpecForge) have no ISF primitive yet, so they
+  continue to surface as honest **residual** decisions until FSMGen adds them (being requested
+  separately by the user). The spec→checkable-property loop now closes inside `IntentIR → .isf →
+  FSMGEN`, so the SpecForge-side SVA export `TEMPORAL-RULE-SVA-RENDER` is **retired as
+  superseded**. Book subsection + temporal-lowering update in `pipeline/isf-adapter.md`; KM card
+  `fsmgen-temporal-isf-form`; resolution note in `docs/FSMGEN_FEEDBACK.md`.
+
 ### Dempster fusion — corroboration-boosting confidence when sources agree; tree CLOSED (DEMPSTER-FUSION-COMBINER)
 - `DEMPSTER-FUSION-COMBINER` (`.1` design + `.2` impl, CLOSED): replaced the conservative
   `min_confidence` in multimodal contract fusion (`ir/fusion.rs::merge_cluster`) with **Dempster's

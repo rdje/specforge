@@ -3,11 +3,15 @@
 ## Metadata
 
 - Tree ID: `TEMPORAL-RULE-SVA-RENDER`
-- Status: `deferred` — **LOGGED `2026-06-04` per user direction; design captured, execution
-  pending a decision.** The user asked to log the `.isf`→PSL/SVA export "in a tree for later …
-  we will decide what to do with it." The decision is between **this SpecForge-side SVA/PSL
-  export** and the alternative **FSMGen-native LTL/MTL-in-ISF support** (filed as a suggestion —
-  see `FSMGEN-LTL-MTL-SUGGESTION`). Do NOT build `.2` until that decision is made.
+- Status: `superseded` (CLOSED-as-superseded `2026-06-04`) — **the decision resolved to
+  FSMGen-native.** FSMGen answered the LTL/MTL-in-ISF suggestion
+  (`subs/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md`, 2026-06-04): the verification family
+  `(assert/assume/cover …)` already expresses the full `G(ante → X/F[min,max] cons)` template and
+  is strictly more general; SpecForge now lowers its bounded-eventually directly to
+  `(assert (monitor (within s N)))` inside the `IntentIR → .isf → FSMGEN` handoff
+  (`FSMGEN-ASSERT-MIGRATE`). A separate SpecForge-side SVA export is therefore **unnecessary** —
+  this tree is retired without building `.2`. The `.1` SVA-mapping design is kept as a record
+  (it informed the assessment) but is NOT implemented.
 - Roadmap lane: `R6`/`R15e` (temporal semantics / literature grounding)
 - Created: `2026-06-04`
 - Owner: repo-local workflow
