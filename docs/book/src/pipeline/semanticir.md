@@ -171,3 +171,36 @@ systematically, again per-symbol so a missed mutant carries a
 clear localization. Verified by cargo-mutants delta-to-zero on
 the targeted symbols + the full `scripts/run_ci.sh`.
 *Authoritative tracking:* `docs/tasks/R6-SEMANTIC-HARDENING.md`.
+
+### `DEMPSTER-FUSION-COMBINER` — when sources agree, trust grows
+
+When the same protocol fact is recovered from more than one place — say
+prose *and* a timing table both say "the completer drives `PREADY`" —
+`specforge` fuses those contracts into one. The question is: what
+confidence should the fused contract carry?
+
+The old rule was *the minimum* — only as confident as the **weakest**
+source. That is safe, but it throws away something real: **agreement is
+evidence.** Two independent sources saying the same thing should leave
+you *more* sure than either alone, not merely as sure as the shakier one.
+
+`DEMPSTER-FUSION-COMBINER` fixes that with **Dempster's rule of
+combination** (Dempster, 1967), the classic way to fuse independent
+belief. Each confidence becomes a belief mass (High `0.9`, Medium `0.7`,
+Low `0.5`), and independent agreeing sources combine to `1 − ∏(1 − mᵢ)`,
+which is always at least the strongest source. So two **Medium** sources
+that agree now fuse to **High** (`1 − 0.3·0.3 = 0.91`); two **Low**
+sources fuse to **Medium**. A single source is unchanged, and **High
+never inflates past High**.
+
+Crucially, this boost applies *only when sources agree*. If they
+disagree (one says drive `1`, another drive `0`), `specforge` does not
+average them into a false consensus — it routes the conflict to a
+residual decision, exactly as before, and keeps the conservative
+confidence. Corroboration is for agreement; honesty is for conflict.
+(Dempster's full machinery also tracks a *conflict mass* for
+partially-conflicting evidence, but that case cannot arise here: the
+fusion separates agreement from disagreement up front, so the conflict
+mass is always zero on the path that combines confidence — noted so the
+math is not mysterious.) *Authoritative tracking:*
+`docs/tasks/DEMPSTER-FUSION-COMBINER.md`.

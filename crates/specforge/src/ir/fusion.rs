@@ -5,7 +5,9 @@
 //! fusion phase that clusters multimodal `ActorContract` candidates by
 //! a typed `FusionKey` and merges them into one. Agreement merges
 //! preserve provenance (union of `supporting_statement_ids`, `Mixed`
-//! modality, delimited `source_text`, minimum `automation_confidence`).
+//! modality, delimited `source_text`) and **corroborate** the
+//! `automation_confidence` via Dempster's rule (`DEMPSTER-FUSION-COMBINER`:
+//! independent agreement raises confidence rather than capping at the weakest).
 //! **Disagreement** (incompatible obligation / guard / kind) sets the
 //! fused contract's `lowering = Residual{reason="disagreement: …"}` —
 //! the honesty doctrine, mechanically enforced (never a silent pick;
@@ -107,6 +109,56 @@ fn min_confidence(a: AutomationConfidence, b: AutomationConfidence) -> Automatio
     if rank(a) <= rank(b) { a } else { b }
 }
 
+/// Map an ordinal `AutomationConfidence` to a Dempster-Shafer belief mass in the
+/// supported proposition (the remainder is uncertainty mass on the frame).
+fn confidence_belief_mass(c: AutomationConfidence) -> f64 {
+    match c {
+        AutomationConfidence::High => 0.9,
+        AutomationConfidence::Medium => 0.7,
+        AutomationConfidence::Low => 0.5,
+    }
+}
+
+/// Map a combined belief mass back onto the ordinal confidence scale.
+fn belief_mass_confidence(mass: f64) -> AutomationConfidence {
+    const EPS: f64 = 1e-9;
+    if mass >= 0.9 - EPS {
+        AutomationConfidence::High
+    } else if mass >= 0.7 - EPS {
+        AutomationConfidence::Medium
+    } else {
+        AutomationConfidence::Low
+    }
+}
+
+/// Dempster's rule of combination (`DEMPSTER-FUSION-COMBINER`) for INDEPENDENT
+/// sources that all support the SAME proposition — the agreement case in
+/// `merge_cluster`. Disagreement is routed to a residual upstream, so the
+/// conflict mass `K` is 0 on this path.
+///
+/// Combining agreeing belief masses CORROBORATES: the combined belief
+/// `1 - ∏(1 - mᵢ)` is at least the strongest single source, so independent
+/// agreement raises confidence instead of capping it at the weakest (the prior
+/// `min` rule). E.g. Medium+Medium → `1 - 0.3·0.3 = 0.91` → High; Low+Low →
+/// `0.75` → Medium; a single source is unchanged. Graded-conflict DS (`K > 0`
+/// plus the Zadeh high-conflict guard) does not arise here and is a documented
+/// future extension.
+fn dempster_corroborate_confidence<I>(confidences: I) -> AutomationConfidence
+where
+    I: IntoIterator<Item = AutomationConfidence>,
+{
+    let mut uncertainty = 1.0_f64;
+    let mut any = false;
+    for c in confidences {
+        any = true;
+        uncertainty *= 1.0 - confidence_belief_mass(c);
+    }
+    if !any {
+        return AutomationConfidence::Low;
+    }
+    belief_mass_confidence(1.0 - uncertainty)
+}
+
 /// Deterministically merge a cluster of contracts that share a
 /// `FusionKey`. Single-element clusters return unchanged. Agreement
 /// merges preserve provenance; disagreement (incompatible obligation
@@ -170,6 +222,14 @@ pub fn merge_cluster(cluster: &[ActorContract]) -> ActorContract {
         base.lowering = LoweringDisposition::Residual {
             reason: format!("disagreement: {}", disagreement_fields.join(",")),
         };
+        // Disagreeing sources route to a residual; keep the conservative `min`
+        // confidence folded above — conflict must not be "corroborated".
+    } else {
+        // DEMPSTER-FUSION-COMBINER: independent sources that AGREE corroborate.
+        // Dempster's rule raises the combined belief above the weakest source,
+        // instead of the prior `min` cap.
+        base.automation_confidence =
+            dempster_corroborate_confidence(cluster.iter().map(|c| c.automation_confidence));
     }
 
     // Synthetic stable id for the merged contract: "fused:<ids>".
@@ -392,9 +452,130 @@ mod tests {
         assert_eq!(merged.provenance.modality, EvidenceModality::Mixed);
         assert_eq!(merged.provenance.supporting_statement_ids, vec!["s1", "s2"]);
         assert_eq!(merged.provenance.source_text, "prose §3.1 | table §3.4");
-        // Min automation_confidence is the conservative pick.
-        assert_eq!(merged.automation_confidence, AutomationConfidence::Medium);
+        // DEMPSTER-FUSION-COMBINER: two independent agreeing sources corroborate —
+        // High + Medium combine to High (1 - 0.1·0.3 = 0.97), not the old `min` (Medium).
+        assert_eq!(merged.automation_confidence, AutomationConfidence::High);
         assert_eq!(merged.contract_id, "fused:c1+c2");
+    }
+
+    // DEMPSTER-FUSION-COMBINER: corroboration-boosting confidence fusion
+
+    #[test]
+    fn dempster_corroborate_two_medium_is_high() {
+        // 1 - (1-0.7)(1-0.7) = 0.91 -> High
+        assert_eq!(
+            dempster_corroborate_confidence([
+                AutomationConfidence::Medium,
+                AutomationConfidence::Medium,
+            ]),
+            AutomationConfidence::High
+        );
+    }
+
+    #[test]
+    fn dempster_corroborate_two_low_is_medium() {
+        // 1 - (0.5)(0.5) = 0.75 -> Medium
+        assert_eq!(
+            dempster_corroborate_confidence(
+                [AutomationConfidence::Low, AutomationConfidence::Low,]
+            ),
+            AutomationConfidence::Medium
+        );
+    }
+
+    #[test]
+    fn dempster_corroborate_single_source_is_identity() {
+        for c in [
+            AutomationConfidence::High,
+            AutomationConfidence::Medium,
+            AutomationConfidence::Low,
+        ] {
+            assert_eq!(dempster_corroborate_confidence([c]), c);
+        }
+    }
+
+    #[test]
+    fn dempster_corroborate_high_caps_and_is_order_independent() {
+        assert_eq!(
+            dempster_corroborate_confidence([
+                AutomationConfidence::High,
+                AutomationConfidence::Low,
+            ]),
+            AutomationConfidence::High
+        );
+        assert_eq!(
+            dempster_corroborate_confidence([
+                AutomationConfidence::Low,
+                AutomationConfidence::High,
+            ]),
+            AutomationConfidence::High
+        );
+    }
+
+    #[test]
+    fn merge_agreement_corroborates_two_medium_to_high() {
+        let make = |id: &str, conf| {
+            contract(
+                id,
+                Some("A"),
+                Obligation::Drive {
+                    signal: "Q".into(),
+                    value: "1".into(),
+                },
+                ContractKind::Guarantee,
+                id,
+                EvidenceModality::Prose,
+                id,
+                LoweringDisposition::Lowerable,
+                conf,
+            )
+        };
+        // Two independent Medium sources that AGREE -> corroborate to High.
+        let merged = merge_cluster(&[
+            make("c1", AutomationConfidence::Medium),
+            make("c2", AutomationConfidence::Medium),
+        ]);
+        assert!(matches!(merged.lowering, LoweringDisposition::Lowerable));
+        assert_eq!(merged.automation_confidence, AutomationConfidence::High);
+    }
+
+    #[test]
+    fn merge_disagreement_keeps_conservative_confidence() {
+        let c1 = contract(
+            "c1",
+            Some("A"),
+            Obligation::Drive {
+                signal: "Q".into(),
+                value: "1".into(),
+            },
+            ContractKind::Guarantee,
+            "prose",
+            EvidenceModality::Prose,
+            "s1",
+            LoweringDisposition::Lowerable,
+            AutomationConfidence::High,
+        );
+        let c2 = contract(
+            "c2",
+            Some("A"),
+            Obligation::Drive {
+                signal: "Q".into(),
+                value: "0".into(), // disagrees on value
+            },
+            ContractKind::Guarantee,
+            "table",
+            EvidenceModality::Table,
+            "s2",
+            LoweringDisposition::Lowerable,
+            AutomationConfidence::Low,
+        );
+        let merged = merge_cluster(&[c1, c2]);
+        // Disagreement -> Residual, conservative `min` confidence (NOT corroborated).
+        assert!(matches!(
+            merged.lowering,
+            LoweringDisposition::Residual { .. }
+        ));
+        assert_eq!(merged.automation_confidence, AutomationConfidence::Low);
     }
 
     #[test]

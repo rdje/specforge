@@ -2,6 +2,24 @@
 
 ## 2026-06-04
 
+### Dempster fusion — corroboration-boosting confidence when sources agree; tree CLOSED (DEMPSTER-FUSION-COMBINER)
+- `DEMPSTER-FUSION-COMBINER` (`.1` design + `.2` impl, CLOSED): replaced the conservative
+  `min_confidence` in multimodal contract fusion (`ir/fusion.rs::merge_cluster`) with **Dempster's
+  rule of combination** (Dempster 1967; `multimodal-fusion.md` gap). When independent sources
+  **agree** on a contract, their confidences now **corroborate** instead of capping at the
+  weakest: each ordinal confidence → a belief mass (High `0.9` / Medium `0.7` / Low `0.5`),
+  combined `m = 1 − ∏(1 − mᵢ)`, mapped back (`≥0.9 → High`, `≥0.7 → Medium`). So **Medium+Medium →
+  High** (`1 − 0.3·0.3 = 0.91`), Low+Low → Medium, High caps, a single source is unchanged.
+  **Disagreement is untouched** — still routed to a `Residual` with the conservative `min`
+  (conflict is never corroborated). The conflict mass `K` = 0 on this path (disagreement is
+  pre-split before any confidence combination), so the Zadeh high-conflict guard is a documented
+  future extension rather than unreachable code. Added `confidence_belief_mass` /
+  `belief_mass_confidence` / `dempster_corroborate_confidence` + 6 unit tests; updated the module
+  doc; user-friendly book subsection in `pipeline/semanticir.md`; KM card `dempster-fusion`.
+  **Fixture churn was a single legitimately-updated unit test** (High+Medium agreeing now
+  corroborates to High; no `converge`/eval snapshot moved — most production clusters are size-1,
+  so fusion is identity). Full `scripts/run_ci.sh` GREEN (1233 → 1239; +6).
+
 ### Prior decay — detect contested priors in CorpusMemory (read-only); tree CLOSED (PRIOR-DECAY)
 - `PRIOR-DECAY` (`.1` design + `.2` impl, CLOSED): closed the Parisi "priors-only-accrete" gap
   (`cross-document-learning.md`, arXiv:1802.07569). `CorpusMemory` priors only ever accumulated —

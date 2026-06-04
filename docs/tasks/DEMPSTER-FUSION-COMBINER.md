@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `DEMPSTER-FUSION-COMBINER`
-- Status: `active` (`.1` design done; `.2` = implement + close)
+- Status: `done` (CLOSED `2026-06-04` — Dempster corroboration wired into `merge_cluster`; `.1`–`.2`)
 - Roadmap lane: `R16`/`R15e` (multimodal fusion / literature grounding)
 - Created: `2026-06-04`
 - Owner: repo-local workflow
@@ -91,16 +91,32 @@ fixture.** If the churn is unexpectedly broad or any change looks wrong, stop an
   Commit: `see Commit Log`
 
 - ID: `DEMPSTER-FUSION-COMBINER.2`
-  Status: `pending`
+  Status: `done`
   Goal: implement + wire + tests; inspect/update churned fixtures; book + KM; close.
   Acceptance: tests green; fixtures verified; book + KM; full CI GREEN; tree CLOSED.
+  Verification: passed (`2026-06-04`) — added `confidence_belief_mass` / `belief_mass_confidence`
+    / `dempster_corroborate_confidence` to `ir/fusion.rs` and wired it into `merge_cluster`'s
+    **agreement** path (disagreement keeps the conservative `min` + routes to Residual). 6 new
+    tests (Medium+Medium→High; Low+Low→Medium; single-source identity; High caps + order-
+    independence; the merge-level corroboration; disagreement keeps min). **Fixture churn was a
+    single unit test** (`merge_agreement_unions_provenance_and_marks_mixed`: High+Medium now
+    corroborates to High, not min Medium — a legitimate boost, updated) — no `converge`/eval
+    snapshot changed, because (per the module doc) most production clusters are size-1 ⇒ fusion
+    is identity, so only genuine multi-source agreeing clusters shift. Module doc updated;
+    user-friendly book subsection in `pipeline/semanticir.md`; KM card `dempster-fusion`. Full
+    `scripts/run_ci.sh` GREEN (1233 → 1239; +6). K=0-here documented (Zadeh guard = future
+    extension). Tree CLOSED.
 
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `DEMPSTER-FUSION-COMBINER.1` | `done` | owned + designed (Dempster corroboration; K=0 here) |
-| 2 | `DEMPSTER-FUSION-COMBINER.2` | `pending` | implement + wire + fixtures + book + KM + close |
+| 2 | `DEMPSTER-FUSION-COMBINER.2` | `done` | `dempster_corroborate_confidence` wired into `merge_cluster`; +6 tests; book + KM → **CLOSED** |
+
+**Tree CLOSED `2026-06-04`.** Agreeing multi-source contracts now *corroborate* (Medium+Medium →
+High) instead of capping at the weakest; disagreement still routes to a Residual with the
+conservative `min`. CI green 1239 (+6); churn was one legitimately-updated unit test.
 
 ## Decisions
 
@@ -118,12 +134,14 @@ fixture.** If the churn is unexpectedly broad or any change looks wrong, stop an
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-06-04` | `.1` | gap verified in `fusion.rs` (`min_confidence`); Dempster corroboration design (mass map + `1−∏(1−mᵢ)` + thresholds + agreement-path wiring); K=0-here reasoned; churn plan | `passed` |
+| `2026-06-04` | `.2` | helpers + `merge_cluster` agreement-path wiring (disagreement keeps `min`→Residual); +6 tests; churn = one updated unit test (no converge/eval snapshot moved); module doc + book subsection + KM card `dempster-fusion`; full CI GREEN 1239 (+6) | `passed` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `DEMPSTER-FUSION-COMBINER.1` | `DEMPSTER-FUSION-COMBINER.1 — own + design Dempster corroboration confidence fusion` | docs-only |
+| `DEMPSTER-FUSION-COMBINER.2` | `DEMPSTER-FUSION-COMBINER.2 — Dempster corroboration replaces min in merge_cluster; book + KM; close tree` | +6 tests; CI green 1239 |
 
 ## Changelog
 
@@ -131,3 +149,6 @@ fixture.** If the churn is unexpectedly broad or any change looks wrong, stop an
   **Dempster corroboration** for agreeing evidence (`m = 1−∏(1−mᵢ)`), so independent agreement
   raises confidence instead of capping at the weakest. K = 0 on this path (disagreement
   pre-routed to Residual) → the Zadeh conflict guard is a documented future extension.
+- `2026-06-04`: **Tree CLOSED.** `.2` shipped the helpers + the `merge_cluster` agreement-path
+  wiring, +6 tests, the book subsection (`pipeline/semanticir.md`), and KM card `dempster-fusion`.
+  Churn = one legitimately-updated unit test (no converge/eval snapshot moved). CI green 1239.

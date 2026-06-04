@@ -3,7 +3,7 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Regenerate with `knowledge-map/scripts/gen_knowledge_map.sh`.
 > Source of truth = YAML front-matter in: `docs/knowledge docs/decisions`. Edit the fact files, never this map.
 > A fact is any `.md` whose front-matter has a non-empty `answers:` list.
-> **11** facts · **56** question keys.
+> **12** facts · **61** question keys.
 
 ## Questions → fact
 
@@ -15,14 +15,17 @@
 - "does SpecForge model-check temporal properties" -> [temporal-logic-choice](docs/knowledge/temporal-logic-choice.md) · 2026-06-04 · reverify: `grep -n "fn temporal_rule_to_ltl" crates/specforge/src/ir/temporal_ltl.rs`
 - "does SpecForge revise or decay priors" -> [contested-priors](docs/knowledge/contested-priors.md) · 2026-06-04 · reverify: `grep -n "fn contested_priors" crates/specforge/src/ir/prior_memory.rs`
 - "does SpecForge use LTL CTL or TLA+" -> [temporal-logic-choice](docs/knowledge/temporal-logic-choice.md) · 2026-06-04 · reverify: `grep -n "fn temporal_rule_to_ltl" crates/specforge/src/ir/temporal_ltl.rs`
+- "does agreement between sources boost confidence" -> [dempster-fusion](docs/knowledge/dempster-fusion.md) · 2026-06-04 · reverify: `grep -n "fn dempster_corroborate_confidence" crates/specforge/src/ir/fusion.rs`
 - "does corpus prior memory only accrete" -> [contested-priors](docs/knowledge/contested-priors.md) · 2026-06-04 · reverify: `grep -n "fn contested_priors" crates/specforge/src/ir/prior_memory.rs`
 - "does every temporal_rule reach the .isf or a residual" -> [isf-temporal-lowering-no-silent-drop](docs/knowledge/isf-temporal-lowering-no-silent-drop.md) · 2026-06-04 · reverify: `grep -n "temporal_residuals" crates/specforge/src/ir/isf_ir.rs crates/specforge/src/ir/adapters.rs`
 - "how are temporal rules expressed as LTL or MTL" -> [temporal-rule-ltl-rendering](docs/knowledge/temporal-rule-ltl-rendering.md) · 2026-06-04 · reverify: `grep -n "fn temporal_rule_to_ltl" crates/specforge/src/ir/temporal_ltl.rs`
 - "how do I file an FSMGen bug report or feature request" -> [fsmgen-feedback-channel](docs/knowledge/fsmgen-feedback-channel.md) · 2026-06-04 · reverify: `ls docs/FSMGEN_FEEDBACK.md`
 - "how do I run a Docling ingest or re-ingest on this machine" -> [docling-device-cpu](docs/knowledge/docling-device-cpu.md) · 2026-06-01 · reverify: `grep -n DOCLING_DEVICE crates/specforge/src/ir/source/docling_backend.rs`
+- "how does SpecForge combine confidence across modalities or sources" -> [dempster-fusion](docs/knowledge/dempster-fusion.md) · 2026-06-04 · reverify: `grep -n "fn dempster_corroborate_confidence" crates/specforge/src/ir/fusion.rs`
 - "how does SpecForge detect contradicting or conflicting priors" -> [contested-priors](docs/knowledge/contested-priors.md) · 2026-06-04 · reverify: `grep -n "fn contested_priors" crates/specforge/src/ir/prior_memory.rs`
 - "how does SpecForge flag vague or ambiguous spec language" -> [ambiguity-weak-phrase-detector](docs/knowledge/ambiguity-weak-phrase-detector.md) · 2026-06-04 · reverify: `grep -n "fn weak_phrase_findings" crates/specforge/src/ir/ambiguity.rs`
 - "how does SpecForge relate to GoldMine Texada Pnueli Ammons" -> [spec-mining-framing](docs/knowledge/spec-mining-framing.md) · 2026-06-04 · reverify: `grep -rn "forward specification mining" README.md docs/book/src/architecture-rationale.md`
+- "how is a fused contract's automation_confidence computed" -> [dempster-fusion](docs/knowledge/dempster-fusion.md) · 2026-06-04 · reverify: `grep -n "fn dempster_corroborate_confidence" crates/specforge/src/ir/fusion.rs`
 - "is SpecForge specification mining" -> [spec-mining-framing](docs/knowledge/spec-mining-framing.md) · 2026-06-04 · reverify: `grep -rn "forward specification mining" README.md docs/book/src/architecture-rationale.md`
 - "is the LLM/VLM provider missing or not wired up" -> [llm-vlm-provider-default](docs/knowledge/llm-vlm-provider-default.md) · 2026-06-01 · reverify: `grep -n "qwen2.5vl" crates/specforge/src/commands/llm_text.rs`
 - "is the eval-extraction temporal precision 0.6 a real defect" -> [temporal-eval-residual-fps-are-stale](docs/knowledge/temporal-eval-residual-fps-are-stale.md) · 2026-06-02 · reverify: `grep -n " when " crates/specforge/src/ir/evidence.rs`
@@ -41,6 +44,7 @@
 - "what does SpecForge take from the spec-mining literature and what does it leave out" -> [spec-mining-framing](docs/knowledge/spec-mining-framing.md) · 2026-06-04 · reverify: `grep -rn "forward specification mining" README.md docs/book/src/architecture-rationale.md`
 - "what is SpecForge doing in academic or research terms" -> [spec-mining-framing](docs/knowledge/spec-mining-framing.md) · 2026-06-04 · reverify: `grep -rn "forward specification mining" README.md docs/book/src/architecture-rationale.md`
 - "what is a contested prior" -> [contested-priors](docs/knowledge/contested-priors.md) · 2026-06-04 · reverify: `grep -n "fn contested_priors" crates/specforge/src/ir/prior_memory.rs`
+- "what is the Dempster combiner in fusion" -> [dempster-fusion](docs/knowledge/dempster-fusion.md) · 2026-06-04 · reverify: `grep -n "fn dempster_corroborate_confidence" crates/specforge/src/ir/fusion.rs`
 - "what is the FSMGen issue bundle protocol" -> [fsmgen-feedback-channel](docs/knowledge/fsmgen-feedback-channel.md) · 2026-06-04 · reverify: `ls docs/FSMGEN_FEEDBACK.md`
 - "what is the LTL form of a temporal_rule" -> [temporal-rule-ltl-rendering](docs/knowledge/temporal-rule-ltl-rendering.md) · 2026-06-04 · reverify: `grep -n "fn temporal_rule_to_ltl" crates/specforge/src/ir/temporal_ltl.rs`
 - "what is the ambiguous_statements metric in validate" -> [ambiguity-weak-phrase-detector](docs/knowledge/ambiguity-weak-phrase-detector.md) · 2026-06-04 · reverify: `grep -n "fn weak_phrase_findings" crates/specforge/src/ir/ambiguity.rs`
@@ -60,6 +64,7 @@
 - "why are modal verbs must shall should may not flagged as ambiguous" -> [ambiguity-weak-phrase-detector](docs/knowledge/ambiguity-weak-phrase-detector.md) · 2026-06-04 · reverify: `grep -n "fn weak_phrase_findings" crates/specforge/src/ir/ambiguity.rs`
 - "why does Docling re-ingest fail on Apple Silicon" -> [docling-device-cpu](docs/knowledge/docling-device-cpu.md) · 2026-06-01 · reverify: `grep -n DOCLING_DEVICE crates/specforge/src/ir/source/docling_backend.rs`
 - "why doesn't SpecForge use TLA+" -> [temporal-logic-choice](docs/knowledge/temporal-logic-choice.md) · 2026-06-04 · reverify: `grep -n "fn temporal_rule_to_ltl" crates/specforge/src/ir/temporal_ltl.rs`
+- "why doesn't fusion use the minimum confidence" -> [dempster-fusion](docs/knowledge/dempster-fusion.md) · 2026-06-04 · reverify: `grep -n "fn dempster_corroborate_confidence" crates/specforge/src/ir/fusion.rs`
 - "why doesn't the temporal_rule eval reach precision 1.0" -> [temporal-eval-residual-fps-are-stale](docs/knowledge/temporal-eval-residual-fps-are-stale.md) · 2026-06-02 · reverify: `grep -n " when " crates/specforge/src/ir/evidence.rs`
 - "why is SpecForge called forward specification mining" -> [spec-mining-framing](docs/knowledge/spec-mining-framing.md) · 2026-06-04 · reverify: `grep -rn "forward specification mining" README.md docs/book/src/architecture-rationale.md`
 - "why not CTL for temporal behavior" -> [temporal-logic-choice](docs/knowledge/temporal-logic-choice.md) · 2026-06-04 · reverify: `grep -n "fn temporal_rule_to_ltl" crates/specforge/src/ir/temporal_ltl.rs`
@@ -92,6 +97,15 @@ _SpecForge detects contested priors (same key, conflicting values across docs) �
 - **evidence:** `crates/specforge/src/ir/prior_memory.rs; crates/specforge/src/commands/learn_priors.rs`
 - **reverify:** `grep -n "fn contested_priors" crates/specforge/src/ir/prior_memory.rs`
 - **source:** [`docs/knowledge/contested-priors.md`](docs/knowledge/contested-priors.md)
+
+### dempster-fusion
+_SpecForge fuses agreeing-source confidence via Dempster corroboration (not min)_
+
+- **answers:** how does SpecForge combine confidence across modalities or sources | does agreement between sources boost confidence | why doesn't fusion use the minimum confidence | what is the Dempster combiner in fusion | how is a fused contract's automation_confidence computed
+- **date:** 2026-06-04 · **status:** current
+- **evidence:** `crates/specforge/src/ir/fusion.rs`
+- **reverify:** `grep -n "fn dempster_corroborate_confidence" crates/specforge/src/ir/fusion.rs`
+- **source:** [`docs/knowledge/dempster-fusion.md`](docs/knowledge/dempster-fusion.md)
 
 ### docling-device-cpu
 _Docling ingest must run on CPU on this stack (torch MPS lacks float64)_
