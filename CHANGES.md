@@ -2,6 +2,27 @@
 
 ## 2026-06-04
 
+### FSMGen assert-lowering — faithful guarded windowed-eventual; tree CLOSED (FSMGEN-ASSERT-LOWERING.3)
+- `FSMGEN-ASSERT-LOWERING.3` (CLOSING leaf): shipped the genuinely-faithful enabled lowering — a
+  **guarded windowed-eventual** now keeps its antecedent. Previously every windowed eventual
+  lowered to the anchored monitor `(assert (monitor (within s N)))`, which **drops the
+  antecedent** (a rule like "PREADY within N **of** PENABLE" lost the "of PENABLE" and the lower
+  bound). Now: an eventual with a representable `SignalValue` antecedent lowers to the faithful
+  implication **`(assert (=> (== g 1) (within s [MIN] MAX)))`** — the antecedent is preserved and
+  `MIN > 1` emits the two-operand `(within s MIN MAX)` → `##[MIN:MAX]` (using FSMGen's shipped
+  `ISF-PROPERTY-WINDOW-RANGE`). A *guarded* 0 lower bound has no `|-> ##[0:N]` spelling → residual.
+  Unguarded eventuals keep the anchored monitor unchanged (byte-identical).
+- Implementation: generalized `IsfContract` and the `Contract` disposition to carry a pre-built
+  `prop`; added `windowed_eventual_prop` (the monitor/implication/min/residual logic) and
+  `actor_guard_condition` (the production guard, parity-matched to the oracle's
+  `temporal_antecedent_condition`); wired the change into **both** `classify_actor_contract`
+  (production) and `classify_temporal_rule` (test oracle) so the **parity test stays green**.
+  4 new tests (guarded→implication; `min>1`→two-operand window; guarded `min=0`→residual; an
+  end-to-end fsmgen-binary strict-check on `(=> RREADY (within RVALID 2 5))`). Book
+  (`pipeline/isf-adapter.md`) + KM card `fsmgen-temporal-isf-form` updated. Full `scripts/run_ci.sh`
+  GREEN (1239 → 1243). **Tree `FSMGEN-ASSERT-LOWERING` CLOSED** (re-pin `92d7036b` + stable
+  verified-negative + guarded-eventual faithful fix).
+
 ### FSMGen assert-lowering — stable lowering is a fidelity trap; residual is correct (FSMGEN-ASSERT-LOWERING.2, verified-negative)
 - `FSMGEN-ASSERT-LOWERING.2` (verified-negative; **no code change**): before implementing the
   stable lowering, investigated fidelity and found that lowering SpecForge's stability

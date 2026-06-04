@@ -89,14 +89,23 @@ rule exactly one disposition, so a rule is lowered one way or not at all:
 
 - **Contract** — a bounded `cycle_window` (`max_cycles >= 1`) with a
   single-signal consequent naming a declared signal → a synthetic
-  `(transaction txn_temporal_<id> (on start) (assert (monitor (within
-  <signal> <N>))) (complete done))`. As of fsmgen pin `43b29f5c` FSMGen
-  **removed** the standalone `(contract … (eventually …))` clause and
-  generalized temporal properties into the `(assert/assume/cover …)`
-  *verification family* (their decisions `0008`/`0009`); a bounded-eventually
-  now lowers to the monitor property `(assert (monitor (within s N)))`
-  (`FSMGEN-ASSERT-MIGRATE`). The mapping is empirically strict-valid — the
-  fsmgen-binary strict-check tests run the new binary.
+  `(transaction txn_temporal_<id> (on start) (assert <prop>) (complete done))`
+  carrying a FSMGen *verification-family* property. As of fsmgen pin `43b29f5c`
+  FSMGen **removed** the standalone `(contract … (eventually …))` clause and
+  generalized temporal properties into the `(assert/assume/cover …)` family
+  (their decisions `0008`/`0009`). `<prop>` depends on whether the rule has a
+  representable antecedent:
+  - **unguarded** → the anchored monitor `(monitor (within s N))`
+    (`FSMGEN-ASSERT-MIGRATE`);
+  - **guarded** (a `SignalValue` antecedent) → the faithful implication
+    `(=> (== g 1) (within s [MIN] MAX))` — the antecedent is **preserved**
+    (the bare monitor dropped it) and a lower bound `> 1` emits the two-operand
+    `(within s MIN MAX)` → `##[MIN:MAX]` (`FSMGEN-ASSERT-LOWERING.3`, using
+    FSMGen's shipped `ISF-PROPERTY-WINDOW-RANGE`). A *guarded* 0 lower bound has
+    no `|-> ##[0:N]` spelling, so it stays a residual.
+  The mapping is empirically strict-valid — the fsmgen-binary strict-check tests
+  run the new binary on both forms, and a parity oracle keeps the production and
+  test classifiers byte-identical.
 - **Rule** — no window, a `SignalValue` consequent naming a declared
   signal with an ISF-literal value → an actor `(rule temporal_<id>
   [<guard>] (<signal> <value>))`. The guard is `(== <declared-signal>

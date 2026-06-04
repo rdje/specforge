@@ -107,16 +107,15 @@ struct IsfTransaction {
     stages: Vec<IsfStage>,
 }
 
-// A bounded-eventually obligation, lowered to the FSMGen verification-family
-// monitor property `(assert (monitor (within <signal> <N>)))` at pin
-// `43b29f5c` (`FSMGEN-ASSERT-MIGRATE`). The former
-// `(contract <name> (eventually <signal> (within <N>)))` clause was removed
-// upstream (FSMGen decisions 0008/0009); the property is anonymous, so no
-// name is carried.
+// A transaction-level FSMGen verification-family property, rendered as
+// `(assert <prop>)`. `prop` is pre-built by the temporal classifier
+// (`windowed_eventual_prop`): the anchored monitor `(monitor (within s N))` for
+// an unguarded bounded-eventually, or the guarded implication
+// `(=> g (within s [min] max))` (FSMGEN-ASSERT-LOWERING). The `(contract …
+// (eventually …))` clause it replaced was removed upstream (FSMGen 0008/0009).
 #[derive(Debug, Clone, PartialEq, Eq)]
 struct IsfContract {
-    signal: String,
-    within: u64,
+    prop: String,
 }
 
 // `(stage <name> (ready <ready>) (valid <valid>))` — FSMGen ISF spec
@@ -444,17 +443,12 @@ impl IsfIr {
         }
 
         for contract in &tx.contracts {
-            // FSMGen removed the standalone `(contract … (eventually …))` clause
-            // at pin `43b29f5c` (verification-family generalization, FSMGen
-            // decisions 0008/0009). The bounded-eventually now lowers to the
-            // shipped monitor property `(assert (monitor (within s N)))`
-            // (`FSMGEN-ASSERT-MIGRATE`; empirically strict-valid on the new pin).
-            // The SpecForge-side contract `name` is dropped — the assert is
-            // anonymous in the verification family.
-            lines.push(format!(
-                "    (assert (monitor (within {} {})))",
-                contract.signal, contract.within
-            ));
+            // A transaction-level FSMGen verification-family property
+            // `(assert <prop>)`. `prop` is the anchored monitor
+            // `(monitor (within s N))` (unguarded bounded-eventually) or the
+            // guarded implication `(=> g (within s [min] max))`
+            // (FSMGEN-ASSERT-LOWERING), pre-built by the temporal classifier.
+            lines.push(format!("    (assert {})", contract.prop));
         }
 
         for stage in &tx.stages {
@@ -921,11 +915,7 @@ impl IsfIr {
             };
         for contract in &temporal_contracts {
             match classify_actor_contract(contract, &signal_names) {
-                TemporalRuleDisposition::Contract {
-                    name,
-                    signal,
-                    within,
-                } => {
+                TemporalRuleDisposition::Contract { name, prop } => {
                     all_transactions.push(IsfTransaction {
                         name: format!("txn_temporal_{}", name),
                         on_trigger: None,
@@ -934,7 +924,7 @@ impl IsfIr {
                         complete: "done".to_string(),
                         latency_min: None,
                         latency_max: None,
-                        contracts: vec![IsfContract { signal, within }],
+                        contracts: vec![IsfContract { prop }],
                         stages: vec![],
                     });
                 }
@@ -1409,16 +1399,12 @@ fn temporal_consequent_signal(rule: &TemporalRuleRecord) -> Option<String> {
 /// mutually exclusive so a rule is lowered exactly one way (or not at all).
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub(crate) enum TemporalRuleDisposition {
-    /// Windowed `bounded_eventually` → synthetic transaction carrying the
-    /// FSMGen verification-family property `(assert (monitor (within <signal>
-    /// <within>)))` (`.2.2`; the `(contract … (eventually …))` clause was
-    /// removed at pin 43b29f5c — `FSMGEN-ASSERT-MIGRATE`). `name` labels the
-    /// synthetic transaction (`txn_temporal_<name>`); the assert is anonymous.
-    Contract {
-        name: String,
-        signal: String,
-        within: u64,
-    },
+    /// Windowed bounded-eventually → synthetic transaction carrying a FSMGen
+    /// verification-family property `(assert <prop>)`. `prop` is the anchored
+    /// monitor `(monitor (within s N))` (unguarded) or the guarded implication
+    /// `(=> g (within s [min] max))` (`FSMGEN-ASSERT-LOWERING`). `name` labels
+    /// the synthetic transaction (`txn_temporal_<name>`).
+    Contract { name: String, prop: String },
     /// Non-windowed value/guard→drive → actor
     /// `(rule <name> [<condition>] (<signal> <value>))` (`.2.3` #3).
     Rule {
@@ -1485,6 +1471,54 @@ fn isf_literal_value(raw: &str) -> Option<String> {
     }
 }
 
+/// Production-side guard for an `ActorContract`, parity-matched by construction
+/// to the oracle's `temporal_antecedent_condition`: the first interface-declared
+/// `SignalValue` antecedent (a `guard_candidates` `Eq` with an ISF literal) →
+/// `(== <signal> <literal>)`, else the empty string.
+fn actor_guard_condition(
+    guard_candidates: &[crate::ir::contract::Condition],
+    declared_signals: &BTreeSet<String>,
+) -> String {
+    use crate::ir::contract::Condition;
+    guard_candidates
+        .iter()
+        .find_map(|g| {
+            let Condition::Eq {
+                signal: s,
+                value: v,
+            } = g;
+            if declared_signals.contains(s) {
+                isf_literal_value(v).map(|lit| format!("(== {} {})", s, lit))
+            } else {
+                None
+            }
+        })
+        .unwrap_or_default()
+}
+
+/// Build the ISF verification-family property (`(assert <prop>)`) for a windowed
+/// bounded-eventually (`FSMGEN-ASSERT-LOWERING.3`):
+/// - **unguarded** (`guard` empty) → the anchored monitor `(monitor (within s
+///   max))` (F[0,max]; the existing `FSMGEN-ASSERT-MIGRATE` form);
+/// - **guarded** (a representable boolean antecedent) → the faithful implication
+///   `(=> g (within s [min] max))` — the antecedent is preserved (the monitor
+///   dropped it) and `min` is emitted only when `>= 2` (`(within s max)` already
+///   means `##[1:max]`).
+///
+/// Returns `None` for a *guarded* 0 lower bound: a `|-> ##[0:N]` consequent has
+/// no ISF spelling (FSMGen rejects `(within B 0 MAX)` per `FSMGEN-MIN-WINDOW-
+/// CONFIRM`), so that rule stays a residual rather than being mis-lowered.
+fn windowed_eventual_prop(signal: &str, min: Option<u32>, max: u64, guard: &str) -> Option<String> {
+    if guard.is_empty() {
+        return Some(format!("(monitor (within {} {}))", signal, max));
+    }
+    match min {
+        Some(0) => None,
+        Some(m) if m >= 2 => Some(format!("(=> {} (within {} {} {}))", guard, signal, m, max)),
+        _ => Some(format!("(=> {} (within {} {}))", guard, signal, max)),
+    }
+}
+
 /// Derive a strict-safe `(rule …)` guard from the rule's antecedents: the
 /// first `SignalValue` antecedent whose signal is declared and whose value is
 /// an ISF literal yields `(== <signal> <value>)`. Otherwise the empty string
@@ -1548,10 +1582,24 @@ pub(crate) fn classify_temporal_rule(
             .expect("max_cycles is Some(>=1) — None/0 returned above");
         return match temporal_consequent_signal(rule) {
             Some(signal) if declared_signals.contains(&signal) => {
-                TemporalRuleDisposition::Contract {
-                    name: sanitize_isf_name(&rule.rule_id),
-                    signal,
-                    within: u64::from(within),
+                // FSMGEN-ASSERT-LOWERING.3 (parity with classify_actor_contract):
+                // guarded → `(=> g (within s [min] max))`; unguarded → monitor.
+                let guard = temporal_antecedent_condition(rule, declared_signals);
+                match windowed_eventual_prop(&signal, window.min_cycles, u64::from(within), &guard)
+                {
+                    Some(prop) => TemporalRuleDisposition::Contract {
+                        name: sanitize_isf_name(&rule.rule_id),
+                        prop,
+                    },
+                    None => TemporalRuleDisposition::Residual {
+                        rule_id: rule.rule_id.clone(),
+                        reason: format!(
+                            "guarded bounded-eventually for '{}' has a 0-cycle lower \
+                             bound; `|-> ##[0:N]` has no ISF spelling — preserved as \
+                             residual (FSMGEN-MIN-WINDOW-CONFIRM)",
+                            signal
+                        ),
+                    },
                 }
             }
             Some(signal) => TemporalRuleDisposition::Residual {
@@ -1646,15 +1694,9 @@ pub(crate) fn classify_actor_contract(
         // bound (mirrors `classify_temporal_rule` branch 1, Contract arm).
         Obligation::Eventually {
             target: EventExpr::Level { signal, .. },
-            window: Window::Within { max, .. },
+            window: Window::Within { min, max },
         } => {
-            if declared_signals.contains(signal) {
-                TemporalRuleDisposition::Contract {
-                    name: sanitize_isf_name(&rule_id),
-                    signal: signal.clone(),
-                    within: u64::from(*max),
-                }
-            } else {
+            if !declared_signals.contains(signal) {
                 TemporalRuleDisposition::Residual {
                     rule_id,
                     reason: format!(
@@ -1662,6 +1704,26 @@ pub(crate) fn classify_actor_contract(
                          in the emitted `.isf` interface",
                         signal
                     ),
+                }
+            } else {
+                // FSMGEN-ASSERT-LOWERING.3: a guarded windowed-eventual keeps its
+                // antecedent (the monitor dropped it) — `(=> g (within s [min] max))`;
+                // unguarded stays the anchored monitor.
+                let guard = actor_guard_condition(&contract.guard_candidates, declared_signals);
+                match windowed_eventual_prop(signal, *min, u64::from(*max), &guard) {
+                    Some(prop) => TemporalRuleDisposition::Contract {
+                        name: sanitize_isf_name(&rule_id),
+                        prop,
+                    },
+                    None => TemporalRuleDisposition::Residual {
+                        rule_id,
+                        reason: format!(
+                            "guarded bounded-eventually for '{}' has a 0-cycle lower \
+                             bound; `|-> ##[0:N]` has no ISF spelling — preserved as \
+                             residual (FSMGEN-MIN-WINDOW-CONFIRM)",
+                            signal
+                        ),
+                    },
                 }
             }
         }
@@ -2171,8 +2233,7 @@ mod tests {
             latency_min: None,
             latency_max: None,
             contracts: vec![IsfContract {
-                signal: "RVALID".to_string(),
-                within: 4,
+                prop: "(monitor (within RVALID 4))".to_string(),
             }],
             stages: vec![],
         });
@@ -2390,9 +2451,104 @@ mod tests {
             d,
             TemporalRuleDisposition::Contract {
                 name: "r_win".to_string(),
-                signal: "RVALID".to_string(),
-                within: 8,
+                // unguarded bounded-eventually → anchored monitor
+                prop: "(monitor (within RVALID 8))".to_string(),
             }
+        );
+    }
+
+    // FSMGEN-ASSERT-LOWERING.3: guarded windowed-eventuals keep their antecedent.
+
+    #[test]
+    fn classify_guarded_windowed_eventual_is_implication() {
+        // A windowed eventual WITH a representable antecedent → `(=> g (within s max))`
+        // (the monitor would have dropped the antecedent).
+        let rule = t_rule(
+            "g_ack",
+            vec![sigval("PENABLE", "1")],
+            vec![sigval("PREADY", "1")],
+            Some(CycleWindowRecord {
+                min_cycles: None,
+                max_cycles: Some(4),
+            }),
+        );
+        let d = classify_temporal_rule(&rule, &declared(&["PENABLE", "PREADY"]));
+        assert_eq!(
+            d,
+            TemporalRuleDisposition::Contract {
+                name: "g_ack".to_string(),
+                prop: "(=> (== PENABLE 1) (within PREADY 4))".to_string(),
+            }
+        );
+    }
+
+    #[test]
+    fn classify_guarded_windowed_eventual_min_gt_1_emits_range() {
+        // A lower bound > 1 emits the two-operand window `(within s MIN MAX)`.
+        let rule = t_rule(
+            "g_min",
+            vec![sigval("PENABLE", "1")],
+            vec![sigval("PREADY", "1")],
+            Some(CycleWindowRecord {
+                min_cycles: Some(2),
+                max_cycles: Some(5),
+            }),
+        );
+        let d = classify_temporal_rule(&rule, &declared(&["PENABLE", "PREADY"]));
+        assert_eq!(
+            d,
+            TemporalRuleDisposition::Contract {
+                name: "g_min".to_string(),
+                prop: "(=> (== PENABLE 1) (within PREADY 2 5))".to_string(),
+            }
+        );
+    }
+
+    #[test]
+    fn classify_guarded_windowed_eventual_min_zero_is_residual() {
+        // A guarded 0 lower bound has no `|-> ##[0:N]` ISF spelling → residual
+        // (FSMGEN-MIN-WINDOW-CONFIRM), never a fabricated `(within B 0 MAX)`.
+        let rule = t_rule(
+            "g_zero",
+            vec![sigval("PENABLE", "1")],
+            vec![sigval("PREADY", "1")],
+            Some(CycleWindowRecord {
+                min_cycles: Some(0),
+                max_cycles: Some(5),
+            }),
+        );
+        let d = classify_temporal_rule(&rule, &declared(&["PENABLE", "PREADY"]));
+        assert!(
+            matches!(d, TemporalRuleDisposition::Residual { .. }),
+            "{d:?}"
+        );
+    }
+
+    #[test]
+    fn guarded_windowed_eventual_passes_fsmgen_strict_validation() {
+        // End-to-end: the guarded implication form is strict-valid on the pinned
+        // binary (RREADY/RVALID are declared by the fixture).
+        let mut isf = isf_with_temporal_contract_transaction();
+        isf.transactions[0].contracts = vec![IsfContract {
+            prop: "(=> RREADY (within RVALID 2 5))".to_string(),
+        }];
+        let out = isf.render();
+        let tempdir = tempfile::tempdir().expect("tempdir");
+        let isf_path = tempdir.path().join("guarded_eventual.isf");
+        std::fs::write(&isf_path, &out).expect("write isf");
+
+        let output = crate::ir::run_fsmgen_strict_check(&isf_path);
+        let stdout = String::from_utf8_lossy(&output.stdout);
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        let check: serde_json::Value = serde_json::from_str(&stdout).unwrap_or_else(|e| {
+            panic!("fsmgen non-JSON.\nstdout:{stdout}\nstderr:{stderr}\nerr:{e}")
+        });
+        let success = check["diagnostic_summary"]["success"]
+            .as_bool()
+            .unwrap_or(false);
+        assert!(
+            success,
+            "guarded `(=> g (within s MIN MAX))` rejected by fsmgen strict:\n{out}\n{stdout}"
         );
     }
 

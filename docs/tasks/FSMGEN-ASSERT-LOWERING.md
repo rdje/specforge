@@ -3,7 +3,8 @@
 ## Metadata
 
 - Tree ID: `FSMGEN-ASSERT-LOWERING`
-- Status: `active` (`.1` design + re-pin done; `.2` stable; `.3` general `=>`/min>1 + close)
+- Status: `done` (CLOSED `2026-06-04` — re-pin `92d7036b`; stable verified-negative; guarded
+  windowed-eventual lowered faithfully; `.1`–`.3`)
 - Roadmap lane: `R6` (FSMGen handoff / ISF adapter)
 - Created: `2026-06-04`
 - Owner: repo-local workflow
@@ -109,9 +110,21 @@ All empirically strict-valid against `92d7036b` (`(assert (stable RVALID))` and
     Recorded as KM card `stable-obligation-phase-scoped-residual`. No code change.
 
 - ID: `FSMGEN-ASSERT-LOWERING.3`
-  Status: `pending`
+  Status: `done`
   Goal: general antecedent→consequent `(assert (=> A B))` + min>1 `(within B MIN MAX)`; close.
   Acceptance: parity green; strict-check green; full CI GREEN; tree CLOSED.
+  Verification: passed (`2026-06-04`) — **faithful fidelity fix shipped**: a *guarded*
+    windowed-eventual now keeps its antecedent. Generalized `IsfContract` to carry a pre-built
+    `prop` and the `Contract` disposition to `{ name, prop }` (the unguarded monitor output is
+    byte-identical); added `windowed_eventual_prop` (unguarded → `(monitor (within s max))`;
+    guarded → `(=> g (within s [min] max))`, `min` emitted only when `>= 2`; guarded `min=0` →
+    `None` → residual) + `actor_guard_condition` (production guard, parity-matched to the oracle's
+    `temporal_antecedent_condition`). Wired into **both** `classify_actor_contract` (production)
+    and `classify_temporal_rule` (oracle) — the **parity test stays green**. 4 new tests
+    (guarded→implication; min>1→two-operand window; guarded min=0→residual; end-to-end
+    fsmgen-binary strict-check on `(=> RREADY (within RVALID 2 5))`). Book + KM updated. Full
+    `scripts/run_ci.sh` GREEN (1239→1243). Tree CLOSED. (Unguarded `min>1` still uses the
+    anchored monitor — no `##[min:max]` without an antecedent — noted, not regressed.)
 
 ## Current Frontier
 
@@ -119,11 +132,12 @@ All empirically strict-valid against `92d7036b` (`(assert (stable RVALID))` and
 | --- | --- | --- | --- |
 | 1 | `FSMGEN-ASSERT-LOWERING.1` | `done` | design + re-pin `92d7036b` (validated) |
 | 2 | `FSMGEN-ASSERT-LOWERING.2` | `done` | **verified-negative** — stable lowering would over-assert (phase-scoped ≠ unconditional `(stable s)`); residual is correct |
-| 3 | `FSMGEN-ASSERT-LOWERING.3` | `pending` | the genuinely-faithful enabled work: general antecedent→consequent `(assert (=> A B))` + min>1 `(within B MIN MAX)`; close |
+| 3 | `FSMGEN-ASSERT-LOWERING.3` | `done` | guarded windowed-eventual → `(=> g (within s [min] max))` (keeps antecedent + min); parity + strict-check green → **tree CLOSED** |
 
-**`.2` finding:** the `(stable …)` primitive does NOT faithfully lower SpecForge's phase-scoped
-stability obligations — recorded; residual stays. The remaining faithful lowering is `.3` (the
-antecedent→consequent + min>1 family, where the antecedent is a representable boolean).
+**Tree CLOSED `2026-06-04`.** Re-pinned `92d7036b`; stability obligations correctly stay residual
+(`.2` fidelity finding); guarded windowed-eventuals now lower faithfully to
+`(assert (=> g (within s [min] max)))` (`.3`), preserving the antecedent the monitor dropped and
+honoring `min > 1`. Parity oracle green; both forms fsmgen-binary strict-validated; CI green 1243.
 
 ## Decisions
 
@@ -141,6 +155,7 @@ antecedent→consequent + min>1 family, where the antecedent is a representable 
 | --- | --- | --- | --- |
 | `2026-06-04` | `.1` | both deltas shipped (`6700fbb4`/`92d7036b`, MIN-lock per our answer); stable forms strict-valid on `92d7036b`; existing emission CI-green on new pin; design fixed | `passed` |
 | `2026-06-04` | `.2` | **verified-negative**: stability obligations are phase-scoped (`Between{tick_phases}`), not faithfully representable by FSMGen's unconditional `(stable s)` (would over-assert); residual is correct; KM card `stable-obligation-phase-scoped-residual`; no code change | `passed` |
+| `2026-06-04` | `.3` | guarded windowed-eventual → `(=> g (within s [min] max))` (preserves antecedent + min); `IsfContract`/`Contract` carry a pre-built `prop`; `windowed_eventual_prop` + `actor_guard_condition`; wired into BOTH classify paths (parity test green); 4 new tests incl. fsmgen-binary strict-check; book + KM; full CI GREEN 1243 | `passed` |
 
 ## Commit Log
 
@@ -148,6 +163,7 @@ antecedent→consequent + min>1 family, where the antecedent is a representable 
 | --- | --- | --- |
 | `FSMGEN-ASSERT-LOWERING.1` | `FSMGEN-ASSERT-LOWERING.1 — design + re-pin subs/fsmgen 92d7036b (both deltas shipped); validate` | re-pin + docs |
 | `FSMGEN-ASSERT-LOWERING.2` | `FSMGEN-ASSERT-LOWERING.2 — verified-negative: stability obligations stay residual (phase-scoped != unconditional (stable s)); KM card` | docs-only; no code change |
+| `FSMGEN-ASSERT-LOWERING.3` | `FSMGEN-ASSERT-LOWERING.3 — lower guarded windowed-eventuals to (=> g (within s [min] max)) (keep antecedent + min); parity + strict-check; close tree` | +4 tests; CI green 1243 |
 
 ## Changelog
 
@@ -159,3 +175,8 @@ antecedent→consequent + min>1 family, where the antecedent is a representable 
   obligations (over-assert risk); residual is correct, no code change, finding carded. The
   genuinely-faithful enabled lowering is `.3` (antecedent→consequent + min>1, where the
   antecedent is a representable boolean).
+- `2026-06-04`: **Tree CLOSED.** `.3` shipped the faithful guarded windowed-eventual lowering —
+  `(assert (=> g (within s [min] max)))` preserving the antecedent the monitor dropped + honoring
+  `min > 1` — via a pre-built `prop` on `IsfContract`/`Contract`, the `windowed_eventual_prop` +
+  `actor_guard_condition` helpers, wired into both classify paths (parity green), 4 new tests
+  (incl. fsmgen-binary strict-check), book + KM. CI green 1243.
