@@ -79,6 +79,15 @@ relation-task agreement are extensible follow-ups.
   ambiguity (`0202`/PENABLE, the "any other control signals" clause); KM card
   `eval-gold-interannotator-kappa`. User's qwen-as-2nd-rater suggestion adopted as the cross-model
   follow-up (Ollama not reachable from the sandboxed shell).
+- `2026-06-05` (addendum): extended to the **`actor_signal_relation`** task — a 2nd blind agent →
+  **κ = 1.00** (11/11). And ran the **local Ollama qwen** raters (started `ollama serve`):
+  **qwen3-vl:8b** reachable + correct on single items but its thinking can't be disabled
+  (`think:false`/`/no_think` ignored) → too slow for the batch (partial 5/6 on completed units);
+  **qwen2.5vl:7b** fast (21 s) but **κ = 0.285** because it systematically mislabels
+  condition/trigger signals as obligations + invents labels — a statement about the model's
+  competence, not the gold (the capable Claude reviewer's κ = 0.90 is the reliability signal).
+  Side-finding: qwen2.5vl:7b is SpecForge's default extraction VLM → its raw extraction likely
+  over-constrains "when X …" conditions (what the deterministic backbone + grounding catch).
 
 ## Commit Log
 

@@ -15,9 +15,18 @@
   recorded as such, **not** auto-fixed (changing it shifts eval scoring on a debatable call).
   Analysis-only (no code change); KM card `eval-gold-interannotator-kappa`; grounded in
   Cohen/Krippendorff/Artstein-Poesio (`extraction-evaluation.md`). Honest caveat: 18 units → κ is
-  a strong *signal*, not a precise estimate. Follow-ups: a cross-model 2nd rater (the local Ollama
-  **qwen** VLM — user's suggestion; not reachable from the sandboxed shell, runs in the production
-  environment) and the `actor_signal_relation` task.
+  a strong *signal*, not a precise estimate.
+- **Extended same day:** the **`actor_signal_relation`** gold scored **κ = 1.00** (11/11, a 2nd
+  blind agent labeled who-drives-each-signal identically) — both halves of the eval foundation
+  validated. Ran the **local Ollama qwen** raters (started `ollama serve`): **qwen3-vl:8b** is
+  reachable + correct on single items but its thinking is not disable-able (`think:false`/
+  `/no_think` ignored) → too slow for the batch (partial, 5/6 on completed units); **qwen2.5vl:7b**
+  is fast (21 s) but **κ = 0.285** — that reflects *the model's* weakness (it labels condition/
+  trigger signals as obligations + invents labels), **not** the gold (the capable Claude reviewer
+  agreed at κ = 0.90). Side-finding: qwen2.5vl:7b is SpecForge's default extraction VLM → its raw
+  extraction likely over-constrains "when X …" conditions. **Note: this annotation task is
+  text-only — a vision model is unnecessary; a text-only instruct LLM would be faster + better
+  suited** (none currently pulled locally — only the two VLMs).
 
 ## 2026-06-04
 

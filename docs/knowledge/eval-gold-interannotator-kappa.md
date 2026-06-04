@@ -18,16 +18,41 @@ only the statement text + the listed signals + the label scheme — no gold, no 
 scored as **Cohen's κ** over the 18 *(statement, signal)* units (label = `constraint_kind` or
 `NONE`).
 
-**Result (2026-06-05): κ = 0.90, raw agreement 17/18 = 0.944** → "almost perfect" (Landis-Koch).
-The gold is **reliable** — not one annotator's idiosyncrasy. The single disagreement is a genuine
-interpretive ambiguity, not an error: `statement_0202` *"PADDR, PWDATA, and **any other control
-signals**, must be stable"* — the gold labeled only the named signals; the reviewer extended the
-generic "any other control signals" clause to **PENABLE** (`must_be_stable`). Both are defensible;
-recorded as a known ambiguity rather than a gold fix (changing it would shift eval scoring on a
+**Results (2026-06-05):**
+- **`signal_constraint` task: κ = 0.90, raw agreement 17/18 = 0.944** ("almost perfect").
+- **`actor_signal_relation` task: κ = 1.00, 11/11 = 1.0** (perfect — a second blind agent labeled
+  who *drives* each signal identically to the gold).
+
+So **both halves of the eval foundation are reliable** — not one annotator's idiosyncrasy. The
+single constraint disagreement is a genuine interpretive ambiguity, not an error: `statement_0202`
+*"PADDR, PWDATA, and **any other control signals**, must be stable"* — the gold labeled only the
+named signals; the reviewer extended the generic clause to **PENABLE** (`must_be_stable`). Both
+defensible; recorded as a known ambiguity, not a gold fix (changing it shifts eval scoring on a
 debatable call).
 
+**Cross-model (local Ollama qwen) attempts — the annotator's competence dominates the number.**
+- **qwen3-vl:8b** *is* reachable (start `ollama serve`; pulled) and answers single items
+  correctly, but its thinking is **not disable-able** (`think:false` and `/no_think` both ignored;
+  ~3400 thinking tokens/signal) → a full batch is too slow here (4/7 statements time out). On the
+  6 units it completed it agreed with the gold **5/6** — consistent with a reliable gold.
+- **qwen2.5vl:7b** (the project default; no thinking → fast, 21 s for the whole batch) completed
+  it but scored only **κ = 0.285**. Crucially, that is a statement about **the model, not the
+  gold**: almost every disagreement is qwen2.5vl mislabeling a **condition/trigger** signal as an
+  obligation — e.g. "PBUSER must be valid **when PSEL, PENABLE, PREADY are asserted**" → it marked
+  the three condition signals `must_be_asserted`; "if PSELx are HIGH" → `must_be_high`; "until
+  PREADY is asserted" → `must_be_asserted` — plus it invented an out-of-set label
+  (`must_be_same_width`). I.e. it conflates *"X is asserted (condition)"* with *"X must be asserted
+  (obligation)"*. Inter-annotator agreement is only meaningful between **competent** annotators;
+  qwen2.5vl:7b is too weak at the condition-vs-obligation distinction to validate or challenge the
+  gold here. The capable reviewer (Claude agent) agreed at κ = 0.90 — that is the reliability
+  signal.
+
+**Useful side-finding:** qwen2.5vl:7b is **SpecForge's default extraction VLM**, and it
+systematically reads condition signals as constrained — so SpecForge's *raw* VLM extraction likely
+over-constrains "when X …" conditions; this is exactly what the deterministic backbone + grounding
+gates are there to catch, but it is worth knowing the model's bias. (Cross-model κ between *peer
+LLMs* is best run in production with streaming.)
+
 Methodology grounded in Cohen (1960) / Krippendorff α / Artstein-Poesio (CL 2008);
-`extraction-evaluation.md`. Caveat: 18 units is small → κ is a strong *signal*, not a precise
-estimate. **Stronger follow-up:** run the local Ollama **qwen** VLM as a second (cross-model)
-rater for genuinely model-independent agreement — not reachable from the sandboxed shell, runs in
-the production environment. The `actor_signal_relation` task is an extensible follow-up.
+`extraction-evaluation.md`. Caveat: 18+11 units is small → κ is a strong *signal*, not a precise
+estimate.
