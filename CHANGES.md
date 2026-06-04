@@ -2,6 +2,21 @@
 
 ## 2026-06-04
 
+### Temporal rules — own + design standard LTL/MTL rendering (TEMPORAL-RULE-LTL-RENDER.1)
+- `TEMPORAL-RULE-LTL-RENDER.1` (own + design, docs-only): the Tier-1 headline adopt item from
+  the `LITERATURE-GROUNDING` backlog (`protocol-temporal-semantics.md`). SpecForge's
+  `temporal_rules` ARE the `G(antecedent → consequent)`-with-holes property template the
+  spec-mining literature formalized (Pnueli LTL; GoldMine; Texada), but are emitted in an
+  ad-hoc typed shape. Design adds a pure, derived renderer (`ir/temporal_ltl.rs`):
+  `G( <ante> -> X cons )` (no window) / `G( <ante> -> F[min,max] cons )` (cycle window) /
+  `G( cons )` (empty-antecedent invariant), with a deterministic atom vocabulary for all 7
+  `TemporalPredicateRecord` variants (`sig==val`, `drive(actor,sig)`, `stable(…)`,
+  `sample(…)`, `handshake(v,r)`). Exposed **opt-in** via `validate --ltl` (default output
+  unchanged); **not** persisted to the IR (zero `kg-bench` fixture churn) and **not** the
+  `.isf`→PSL/SVA export (that touches the FSMGen contract → explicit separate downstream
+  tree). Worked: `G( PSEL==ASSERTED & PENABLE==ASSERTED & PREADY==ASSERTED -> X
+  (drive(Completer,PBUSER) & PBUSER==VALID) )`. Registered in `docs/TASK_TREE.md`.
+
 ### Knowledge Map — adopt the portable retrieval layer; tree CLOSED (KNOWLEDGE-MAP-ADOPTION.2)
 - `KNOWLEDGE-MAP-ADOPTION.2` (CLOSING leaf): adopted the user's portable
   `KNOWLEDGE_MAP_ARCHITECTURE.md` bundle in SpecForge — an additive, derived, question-keyed
