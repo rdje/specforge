@@ -2,6 +2,22 @@
 
 ## 2026-06-04
 
+### FSMGen assert-lowering — design + re-pin 92d7036b (both deltas shipped) (FSMGEN-ASSERT-LOWERING.1)
+- `FSMGEN-ASSERT-LOWERING.1` (own + design + re-pin): FSMGen shipped both flagged deltas —
+  `(stable/changed/rose/fell SIG)` sampled-value predicates (`ISF-PROPERTY-SAMPLED-VALUE`,
+  `6700fbb4`) and the `min > 1` bounded window `(within B MIN MAX)` → `##[MIN:MAX]`
+  (`ISF-PROPERTY-WINDOW-RANGE`, `92d7036b`, **with `1 <= MIN <= MAX` locked exactly per our
+  `FSMGEN-MIN-WINDOW-CONFIRM` answer**). Designed the lowering of the obligations that residualize
+  today into the ISF verification family (`Obligation::Stable` → `(assert (stable s))` /
+  `(assert (=> g (stable s)))`; general antecedent→consequent + min>1 → `(assert (=> A B))` /
+  `(next B)` / `(within B MIN MAX)`) via a new `AssertProperty` disposition + a shared
+  predicate→ISF-boolean helper + a **mandatory parity oracle**; declared-only else residual;
+  every form empirically strict-validated. **Re-pinned `subs/fsmgen` `43b29f5c → 92d7036b`** —
+  existing emission re-validated full-CI GREEN on the new pin (1239); `(assert (stable RVALID))`
+  and `(assert (=> RREADY (stable RVALID)))` confirmed `success=true`. No behavior change yet
+  (the new primitives are unused until `.2`/`.3`). Sliced: stable first (`.2`), general
+  `=>`/min>1 next (`.3`).
+
 ### FSMGen min>1 window question — answered (integer-literal bounds; MIN>=1 guarantee); tree CLOSED (FSMGEN-MIN-WINDOW-CONFIRM)
 - `FSMGEN-MIN-WINDOW-CONFIRM` (CLOSED): FSMGen shipped the `(stable/changed/rose/fell)` predicate
   delta (`ISF-PROPERTY-SAMPLED-VALUE`, commit `6700fbb4`) and proposed the `min > 1` window slice
