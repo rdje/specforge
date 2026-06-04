@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-06-05
+
+### Eval gold reliability — Cohen's κ 0.90 (gold is trustworthy); tree CLOSED (EVAL-GOLD-INTERANNOTATOR-AGREEMENT)
+- `EVAL-GOLD-INTERANNOTATOR-AGREEMENT` (CLOSED): the user unblocked the "is the eval answer-key
+  trustworthy?" item. The `signal_constraint` gold (`seed_apb.json`) was single-source
+  (`agent_drafted`) and never checked for reliability. Had an **independent blind agent**
+  re-annotate the 8 statements (given only the text + the listed signals — **no gold, no
+  `label_note`s**) and computed **Cohen's κ** over the 18 *(statement, signal)* units
+  (label = `constraint_kind` or `NONE`). **κ = 0.90, raw agreement 17/18 = 0.944** ("almost
+  perfect", Landis-Koch) → **the gold is reliable**, not one annotator's idiosyncrasy. The lone
+  disagreement (`statement_0202` / **PENABLE**: gold `NONE` vs reviewer `must_be_stable`, over the
+  *"and any other control signals must be stable"* clause) is a genuine interpretive ambiguity —
+  recorded as such, **not** auto-fixed (changing it shifts eval scoring on a debatable call).
+  Analysis-only (no code change); KM card `eval-gold-interannotator-kappa`; grounded in
+  Cohen/Krippendorff/Artstein-Poesio (`extraction-evaluation.md`). Honest caveat: 18 units → κ is
+  a strong *signal*, not a precise estimate. Follow-ups: a cross-model 2nd rater (the local Ollama
+  **qwen** VLM — user's suggestion; not reachable from the sandboxed shell, runs in the production
+  environment) and the `actor_signal_relation` task.
+
 ## 2026-06-04
 
 ### FSMGen assert-lowering — faithful guarded windowed-eventual; tree CLOSED (FSMGEN-ASSERT-LOWERING.3)
