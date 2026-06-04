@@ -93,10 +93,20 @@ All empirically strict-valid against `92d7036b` (`(assert (stable RVALID))` and
   Commit: `see Commit Log`
 
 - ID: `FSMGEN-ASSERT-LOWERING.2`
-  Status: `pending`
-  Goal: stable obligations → `(assert (stable s))` / `(assert (=> g (stable s)))`; `AssertProperty`
-    disposition + helper + parity arms + render + metric + tests + book + KM.
-  Acceptance: parity green; strict-check green; full CI GREEN.
+  Status: `done` (**verified-negative — stable lowering is NOT faithfully representable; no code change**)
+  Goal: stable obligations → `(assert (stable s))` / `(assert (=> g (stable s)))`.
+  Acceptance: investigate fidelity; lower only if faithful, else keep residual + record.
+  Verification: passed (`2026-06-04`) — **investigation found the stable lowering would be
+    UNFAITHFUL, so it is NOT implemented; the residual stays.** Every mined `SignalStable` /
+    `ActorMaintainsSignalStable` carries `from_phase`+`to_phase` → `Obligation::Stable { during:
+    Window::Between { tick_phase_events } }` (`contract.rs` ~L432): "stable **during**
+    `[from_phase, to_phase]`". FSMGen's `(stable s)` is **unconditional per-tick** stability
+    (`$stable(s)` every edge) — strictly stronger, so `(assert (stable s))` would over-assert
+    (fidelity bug). The faithful `(assert (=> g (stable s)))` needs a boolean `g` for "inside the
+    phase interval", but tick-phases are abstract markers, not `.isf` signals → no such guard
+    exists, and the model has no level-guarded stability variant. So the existing residual
+    ("bare stability across tick phases has no supported `.isf` construct") is **correct**.
+    Recorded as KM card `stable-obligation-phase-scoped-residual`. No code change.
 
 - ID: `FSMGEN-ASSERT-LOWERING.3`
   Status: `pending`
@@ -108,8 +118,12 @@ All empirically strict-valid against `92d7036b` (`(assert (stable RVALID))` and
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `FSMGEN-ASSERT-LOWERING.1` | `done` | design + re-pin `92d7036b` (validated) |
-| 2 | `FSMGEN-ASSERT-LOWERING.2` | `pending` | stable lowering (validated forms; parity + strict-check) |
-| 3 | `FSMGEN-ASSERT-LOWERING.3` | `pending` | general `=>` + min>1; close |
+| 2 | `FSMGEN-ASSERT-LOWERING.2` | `done` | **verified-negative** — stable lowering would over-assert (phase-scoped ≠ unconditional `(stable s)`); residual is correct |
+| 3 | `FSMGEN-ASSERT-LOWERING.3` | `pending` | the genuinely-faithful enabled work: general antecedent→consequent `(assert (=> A B))` + min>1 `(within B MIN MAX)`; close |
+
+**`.2` finding:** the `(stable …)` primitive does NOT faithfully lower SpecForge's phase-scoped
+stability obligations — recorded; residual stays. The remaining faithful lowering is `.3` (the
+antecedent→consequent + min>1 family, where the antecedent is a representable boolean).
 
 ## Decisions
 
@@ -126,15 +140,22 @@ All empirically strict-valid against `92d7036b` (`(assert (stable RVALID))` and
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-06-04` | `.1` | both deltas shipped (`6700fbb4`/`92d7036b`, MIN-lock per our answer); stable forms strict-valid on `92d7036b`; existing emission CI-green on new pin; design fixed | `passed` |
+| `2026-06-04` | `.2` | **verified-negative**: stability obligations are phase-scoped (`Between{tick_phases}`), not faithfully representable by FSMGen's unconditional `(stable s)` (would over-assert); residual is correct; KM card `stable-obligation-phase-scoped-residual`; no code change | `passed` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `FSMGEN-ASSERT-LOWERING.1` | `FSMGEN-ASSERT-LOWERING.1 — design + re-pin subs/fsmgen 92d7036b (both deltas shipped); validate` | re-pin + docs |
+| `FSMGEN-ASSERT-LOWERING.2` | `FSMGEN-ASSERT-LOWERING.2 — verified-negative: stability obligations stay residual (phase-scoped != unconditional (stable s)); KM card` | docs-only; no code change |
 
 ## Changelog
 
 - `2026-06-04`: Created — FSMGen shipped `(stable …)` + `(within B MIN MAX)`. Design the lowering
   of stability / antecedent→consequent / min>1 obligations (currently residuals) into the ISF
   verification family; re-pin `92d7036b`; slice stable first.
+- `2026-06-04`: `.2` **verified-negative** — investigating the stable slice found the
+  `(stable s)` primitive does NOT faithfully represent SpecForge's phase-scoped stability
+  obligations (over-assert risk); residual is correct, no code change, finding carded. The
+  genuinely-faithful enabled lowering is `.3` (antecedent→consequent + min>1, where the
+  antecedent is a representable boolean).

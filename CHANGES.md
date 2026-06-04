@@ -2,6 +2,21 @@
 
 ## 2026-06-04
 
+### FSMGen assert-lowering — stable lowering is a fidelity trap; residual is correct (FSMGEN-ASSERT-LOWERING.2, verified-negative)
+- `FSMGEN-ASSERT-LOWERING.2` (verified-negative; **no code change**): before implementing the
+  stable lowering, investigated fidelity and found that lowering SpecForge's stability
+  obligations to FSMGen's `(stable s)` would **over-assert**. Every mined `SignalStable` /
+  `ActorMaintainsSignalStable` carries `from_phase`+`to_phase` → `Obligation::Stable { during:
+  Window::Between { tick_phase_events } }` ("stable *during* `[from_phase, to_phase]`"), whereas
+  FSMGen's `(stable s)` is **unconditional per-tick** `$stable(s)` (every clock edge) — strictly
+  stronger. The faithful `(assert (=> g (stable s)))` needs a boolean `g` meaning "inside the
+  phase interval", but tick-phases are abstract markers (not `.isf` interface signals), so no
+  such guard exists and the model has no level-guarded stability variant. Therefore the existing
+  **residual** ("bare stability across tick phases has no supported `.isf` construct") is the
+  correct, honest disposition — caught before introducing a fidelity bug. Recorded as KM card
+  `stable-obligation-phase-scoped-residual`. The genuinely-faithful enabled lowering is `.3`
+  (general antecedent→consequent + min>1, where the antecedent is a representable boolean).
+
 ### FSMGen assert-lowering — design + re-pin 92d7036b (both deltas shipped) (FSMGEN-ASSERT-LOWERING.1)
 - `FSMGEN-ASSERT-LOWERING.1` (own + design + re-pin): FSMGen shipped both flagged deltas —
   `(stable/changed/rose/fell SIG)` sampled-value predicates (`ISF-PROPERTY-SAMPLED-VALUE`,
