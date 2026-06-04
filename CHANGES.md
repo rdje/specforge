@@ -2,6 +2,28 @@
 
 ## 2026-06-04
 
+### Knowledge Map — adopt the portable retrieval layer; tree CLOSED (KNOWLEDGE-MAP-ADOPTION.2)
+- `KNOWLEDGE-MAP-ADOPTION.2` (CLOSING leaf): adopted the user's portable
+  `KNOWLEDGE_MAP_ARCHITECTURE.md` bundle in SpecForge — an additive, derived, question-keyed
+  retrieval layer that makes *archaeology* (re-deriving an already-logged fact) a structural
+  impossibility. Copied the `knowledge-map/` bundle **verbatim** (scripts +x); created
+  `docs/knowledge/` with a pointer README + **3 seed cards** for genuine archaeology traps —
+  `docling-device-cpu` (CPU-only Docling / MPS float64), `llm-vlm-provider-default` (the
+  production Ollama+Qwen2.5VL provider), and `temporal-eval-residual-fps-are-stale` (the
+  residual temporal-eval FPs are a stale artifact, not a live bug) — each `reverify` command
+  probed before writing. Generated `KNOWLEDGE_MAP.md` (**3 facts / 15 question keys**,
+  deterministic).
+- Wired the gate **beside** the memory-arch gate: `.githooks/pre-commit` now runs both
+  (memory-arch check, then KM regenerate→stage→`check_knowledge_map.sh`); `scripts/run_ci.sh`
+  gained the KM check (CI rides via `.github/workflows/ci.yml` → `run_ci.sh`, mirroring the
+  memory-arch enforcement — no redundant standalone workflow). Registered the read path +
+  write rule + gate in every bootstrap surface (`AGENTS.md`, `CLAUDE.md`, `.cursorrules`,
+  `.github/copilot-instructions.md`, `README.md` doc index, `MEMORY_ARCHITECTURE.md` §5).
+- **Verified:** the gate bites on a malformed fact (missing `id/title/date/evidence`) with the
+  precise message + out-of-sync, and returns OK once removed; full `scripts/run_ci.sh` GREEN
+  (KM step reports "facts valid, ids unique, map in sync"; 1219 tests; mdBook green). Additive —
+  replaces nothing, converts nothing; cards grow lazily. **Tree CLOSED.**
+
 ### Knowledge Map — own + design adoption of the portable retrieval layer (KNOWLEDGE-MAP-ADOPTION.1)
 - `KNOWLEDGE-MAP-ADOPTION.1` (own + design, docs-only): the user authored a portable,
   harness-agnostic standard `KNOWLEDGE_MAP_ARCHITECTURE.md` (the `knowledge-map/` bundle) and

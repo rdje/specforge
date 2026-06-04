@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
-# Memory-architecture local gate (layer E3 of MEMORY_ARCHITECTURE.md).
-# Activate once per clone: git config core.hooksPath .githooks
+# Local pre-commit gates. Activate once per clone: git config core.hooksPath .githooks
 set -euo pipefail
-exec "$(git rev-parse --show-toplevel)/scripts/check_memory_architecture.sh"
+ROOT="$(git rev-parse --show-toplevel)"
+
+# Memory-architecture gate (layer E3 of MEMORY_ARCHITECTURE.md).
+"$ROOT/scripts/check_memory_architecture.sh"
+
+# Knowledge Map gate (KNOWLEDGE_MAP_ARCHITECTURE.md §6): regenerate the derived map, stage it
+# (so it is always in sync at zero agent cost), then validate facts + sync.
+"$ROOT/knowledge-map/scripts/gen_knowledge_map.sh" >/dev/null
+git add "$("$ROOT/knowledge-map/scripts/gen_knowledge_map.sh" --print-map-path)" 2>/dev/null || true
+"$ROOT/knowledge-map/scripts/check_knowledge_map.sh"

@@ -3,7 +3,9 @@
 ## Metadata
 
 - Tree ID: `KNOWLEDGE-MAP-ADOPTION`
-- Status: `active` (`.1` design done; `.2` = adopt + seed + wire + close)
+- Status: `done` (CLOSED `2026-06-04` — the portable Knowledge Map retrieval layer adopted in
+  SpecForge: bundle copied, 3 seed cards, derived `KNOWLEDGE_MAP.md`, gated in pre-commit +
+  `run_ci.sh`, registered in the bootstrap; additive, CI green)
 - Roadmap lane: `R0` (durable memory / live-doc continuity / governance)
 - Created: `2026-06-04`
 - Owner: repo-local workflow
@@ -98,19 +100,44 @@ bundle's *optional* future bridge, done when convenient, NOT in this tree.)
   Commit: `see Commit Log`
 
 - ID: `KNOWLEDGE-MAP-ADOPTION.2`
-  Status: `pending`
+  Status: `done`
   Goal: copy the bundle (scripts +x); create `docs/knowledge/` + the 3 seed cards; generate
     `KNOWLEDGE_MAP.md`; rewrite `.githooks/pre-commit` to run both gates; add the KM check to
     `run_ci.sh` + `ci.yml`; register in `MEMORY_ARCHITECTURE.md` + `README.md` + bootstrap
     pointers; verify (gen/check/derive-and-diff, negative hook test, full CI); close.
   Acceptance: as in the Acceptance Criteria above.
+  Verification: passed (`2026-06-04`) — bundle copied verbatim to `knowledge-map/` (scripts
+    +x); `docs/knowledge/` created with a pointer README + the **3 seed cards**
+    (`docling-device-cpu`, `llm-vlm-provider-default`, `temporal-eval-residual-fps-are-stale`),
+    each `reverify` command probed to resolve before writing. `KNOWLEDGE_MAP.md` generated
+    (**3 facts · 15 question keys**, deterministic). `.githooks/pre-commit` rewritten to run
+    **both** gates (de-`exec`): memory-arch check, then KM gen→stage→`check_knowledge_map.sh`.
+    `scripts/run_ci.sh` gained the KM check beside the memory-arch step (CI rides via
+    `ci.yml` → `run_ci.sh`, mirroring how the memory-arch gate is enforced — no redundant
+    standalone workflow; the bundle's `ci/knowledge-map-gate.yml` stays available if push/PR
+    CI is re-enabled). Registered in `AGENTS.md` + `CLAUDE.md` + `.cursorrules` +
+    `.github/copilot-instructions.md` + `README.md` (doc index) + `MEMORY_ARCHITECTURE.md`
+    (§5 composed-retrieval-layer note). **Negative test:** a malformed fact (answers, missing
+    `id/title/date/evidence`) makes `check_knowledge_map.sh` fail with the precise
+    missing-field + out-of-sync message; removing it returns OK. **Full `scripts/run_ci.sh`
+    GREEN** (KM gate reports "facts valid, ids unique, map in sync"; 1219 tests; fmt/clippy/
+    rustdoc/mdBook all pass). BOOK-METHOD-DOC: the KM is repo retrieval **infra**, not a
+    product-pipeline feature — its human-facing home is `KNOWLEDGE_MAP_ARCHITECTURE.md` +
+    `README.md` + `AGENTS.md` (consistent with how `MEMORY-ARCHITECTURE-DOC` is documented);
+    a product mdBook chapter would be off-topic, and mdBook still builds green. Tree CLOSED.
 
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `KNOWLEDGE-MAP-ADOPTION.1` | `done` | owned + designed (bundle read; mapped to SpecForge infra) |
-| 2 | `KNOWLEDGE-MAP-ADOPTION.2` | `pending` | copy + wire + seed + verify + close |
+| 2 | `KNOWLEDGE-MAP-ADOPTION.2` | `done` | copied + wired (both gates) + 3 seed cards + registered + verified (negative test + CI green 1219) |
+
+**Tree CLOSED `2026-06-04`.** SpecForge now carries the portable Knowledge Map retrieval
+layer: `KNOWLEDGE_MAP.md` (3 facts / 15 question keys, derived) over `docs/knowledge/` cards,
+gated derive-and-diff in the pre-commit hook + `run_ci.sh` beside the memory-arch gate, and
+discoverable from every bootstrap surface. Future durable facts become findable with one card;
+archaeology is now a structural impossibility for anything logged once. Grow it lazily.
 
 ## Decisions
 
@@ -128,12 +155,14 @@ bundle's *optional* future bridge, done when convenient, NOT in this tree.)
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-06-04` | `.1` | bundle read end-to-end; SpecForge enforcement infra mapped; seeding + verification plan fixed; docs-only | `passed` |
+| `2026-06-04` | `.2` | bundle copied verbatim (+x); 3 seed cards + README under `docs/knowledge/` (reverify probed); `KNOWLEDGE_MAP.md` derived (3 facts/15 keys); pre-commit runs both gates; KM check in `run_ci.sh` (CI via `ci.yml`); registered in AGENTS/CLAUDE/.cursorrules/copilot/README/MEMORY_ARCHITECTURE; negative-test the gate bites + returns OK; full CI GREEN (1219); KM is infra (no product-book chapter, mdBook green); tree CLOSED | `passed` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
-| `KNOWLEDGE-MAP-ADOPTION.1` | `KNOWLEDGE-MAP-ADOPTION.1 — own + design adoption of the portable Knowledge Map retrieval layer` | docs-only |
+| `KNOWLEDGE-MAP-ADOPTION.1` | `KNOWLEDGE-MAP-ADOPTION.1 — own + design adoption of the portable Knowledge Map retrieval layer` (`8ed47545`) | docs-only |
+| `KNOWLEDGE-MAP-ADOPTION.2` | `KNOWLEDGE-MAP-ADOPTION.2 — adopt the Knowledge Map: copy bundle, seed 3 cards, wire both gates, register; close tree` | infra + docs; KM derived + gated; CI green 1219; CLOSED |
 
 ## Changelog
 
@@ -141,3 +170,11 @@ bundle's *optional* future bridge, done when convenient, NOT in this tree.)
   SpecForge: an additive, derived, question-keyed retrieval index over durable facts that
   makes archaeology structurally impossible, composed with the existing memory architecture +
   enforcement. Seed lazily; no conversion, no migration.
+- `2026-06-04`: **Tree CLOSED.** `.2` done — copied the bundle verbatim; seeded 3 archaeology-
+  trap cards (`docling-device-cpu`, `llm-vlm-provider-default`,
+  `temporal-eval-residual-fps-are-stale`); derived `KNOWLEDGE_MAP.md` (3 facts / 15 question
+  keys); rewrote `.githooks/pre-commit` to run both the memory-arch and KM gates; added the KM
+  check to `run_ci.sh`; registered the read path + write rule + gate in every bootstrap
+  surface (AGENTS/CLAUDE/.cursorrules/copilot/README/MEMORY_ARCHITECTURE). Negative-tested the
+  gate (bites on a malformed fact, OK once removed); full CI green (1219). The KM grows lazily
+  thereafter — one card per durable fact or caught archaeology.

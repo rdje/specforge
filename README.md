@@ -320,6 +320,8 @@ Use it first for the project objective, document navigation, and the current imp
   - full detailed summary of the current set of changes
 - `MEMORY_ARCHITECTURE.md`
   - portable, harness-agnostic standard for durable cross-session/cross-harness memory (the layer model: resume pointer + task-trees + decision records + git), with built-in enforcement (bootstrap pointers, self-check script, git hooks, CI gate); governs how `MEMORY.md`, `docs/tasks/`, and `docs/decisions/` are used
+- `KNOWLEDGE_MAP_ARCHITECTURE.md` (in `knowledge-map/`) + `KNOWLEDGE_MAP.md`
+  - the **retrieval** layer composed on top of the memory architecture: a question-keyed, machine-derived index over durable facts so a future agent never re-derives an already-logged fact (*archaeology*). Facts are front-mattered cards under `docs/knowledge/` (+ optionally `docs/decisions/`); `KNOWLEDGE_MAP.md` is the **auto-generated** index (never hand-edited), gated derive-and-diff in the pre-commit hook + `run_ci.sh`. Add a card lazily when you establish a durable fact or catch archaeology
 - `MEMORY.md`
   - the bounded **resume pointer** (layer A of `MEMORY_ARCHITECTURE.md`): current commit, active task-tree frontier, single next action — overwrite-only, size-capped (history lives in git; durable facts in `docs/decisions/`)
 - `COMMIT.md`
