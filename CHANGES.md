@@ -2,6 +2,20 @@
 
 ## 2026-06-04
 
+### Ambiguity detector — own + design the weak-phrase flag detector (AMBIGUITY-PHRASE-DETECTOR.1)
+- `AMBIGUITY-PHRASE-DETECTOR.1` (own + design, docs-only): a grounded gap from the
+  `LITERATURE-GROUNDING` backlog (`requirements-extraction.md`; NASA ARM, Wilson/Rosenberg/Hyatt
+  ICSE 1997, DOI 10.1145/253228.253258; Berry-Kamsties). Design a **flag-only** detector
+  (`ir/ambiguity.rs`) that scans EvidenceIR statement prose for vagueness / under-specification
+  markers — NASA ARM weak phrases ("as appropriate", "if necessary", "and/or", "TBD", "but not
+  limited to", …) plus the chip-spec idioms "implementation-defined" / "vendor-specific" — and
+  surfaces them in `validate` (an Info finding `evidence_ambiguous_statements` + an
+  `ambiguous_statements` metric, mirroring the region-accounting completeness detector). The
+  RFC 2119 modal verbs (MUST/SHALL/SHOULD/MAY) are **excluded** (normative strength, handled by
+  the constraint/obligation extraction). Residual-honesty: surface where the spec is genuinely
+  vague instead of silently treating it as precise. Extraction-neutral; typed-residual routing
+  deferred to a follow-up. Registered in `docs/TASK_TREE.md`.
+
 ### Temporal rules — render in standard LTL/MTL notation; tree CLOSED (TEMPORAL-RULE-LTL-RENDER.2)
 - `TEMPORAL-RULE-LTL-RENDER.2` (CLOSING leaf): new `crates/specforge/src/ir/temporal_ltl.rs`
   (`pub mod temporal_ltl;`) renders any mined `TemporalRuleRecord` in standard LTL/MTL
