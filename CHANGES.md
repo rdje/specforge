@@ -2,6 +2,29 @@
 
 ## 2026-06-04
 
+### Temporal rules — render in standard LTL/MTL notation; tree CLOSED (TEMPORAL-RULE-LTL-RENDER.2)
+- `TEMPORAL-RULE-LTL-RENDER.2` (CLOSING leaf): new `crates/specforge/src/ir/temporal_ltl.rs`
+  (`pub mod temporal_ltl;`) renders any mined `TemporalRuleRecord` in standard LTL/MTL
+  notation — `temporal_rule_to_ltl(&rule) -> String` producing `G( ante -> X cons )` (no cycle
+  window), `G( ante -> F[min,max] cons )` (cycle window, Metric Temporal Logic bounded
+  eventually), or `G( cons )` (empty-antecedent invariant), with a deterministic atom
+  vocabulary for all 7 `TemporalPredicateRecord` variants (`sig==VAL`, `drive(actor,sig)`,
+  `stable(…)`, `sample(…)`, `handshake(valid,ready)`); multi-atom consequents are
+  parenthesized so the temporal operator scopes the conjunction. This grounds SpecForge's
+  temporal model in the spec-mining `G(antecedent → consequent)` template (Pnueli/GoldMine/
+  Texada) — the Tier-1 vocabulary-adopt item from the `LITERATURE-GROUNDING` backlog.
+- 4 exact-string unit tests (the two worked APB rules byte-for-byte, the empty-antecedent
+  invariant, a windowed `F[1,2]`). The renderer is **pure and derived** — never persisted to
+  the IR, so **zero `kg-bench` fixture churn and zero extraction-behavior change**. A
+  user-friendly book subsection ("Standard LTL/MTL notation") was added to
+  `domain/temporal-semantics.md`, and a Knowledge Map card
+  (`docs/knowledge/temporal-rule-ltl-rendering.md`) makes the renderer findable (KM now 4
+  facts / 20 question keys). The originally-planned opt-in `validate --ltl` flag was dropped
+  (it would churn 10+ `ValidateArgs` construction sites and bloat default output); the
+  renderer is public API consumed by the explicit downstream `.isf`→PSL/SVA export tree
+  (gated on the FSMGen handoff contract). Full `scripts/run_ci.sh` GREEN (1219→1223 tests).
+  **Tree CLOSED.**
+
 ### Temporal rules — own + design standard LTL/MTL rendering (TEMPORAL-RULE-LTL-RENDER.1)
 - `TEMPORAL-RULE-LTL-RENDER.1` (own + design, docs-only): the Tier-1 headline adopt item from
   the `LITERATURE-GROUNDING` backlog (`protocol-temporal-semantics.md`). SpecForge's

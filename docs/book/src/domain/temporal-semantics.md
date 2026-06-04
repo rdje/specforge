@@ -195,6 +195,45 @@ The safety rule is still strict:
 - the prior can recover a cycle window
 - the prior cannot invent a timing rule that has no local grounding
 
+## Standard LTL/MTL notation
+
+A temporal rule is not a SpecForge invention — it is the shape the hardware-verification
+world has used for decades. When researchers mine timing properties from traces or RTL
+(Pnueli's temporal logic; tools like GoldMine and Texada), the unit they produce is a
+**`G(antecedent → consequent)`** template with "holes" — *globally* (`G`, i.e. on every
+clock tick), if the antecedent holds, then the consequent must follow. SpecForge's
+`temporal_rules` **are** that template; they were just stored in a typed Rust shape rather
+than written in the notation.
+
+So SpecForge can render any mined rule back into that standard notation. For
+*"PBUSER must be valid when PSEL, PENABLE, and PREADY are asserted"* it produces:
+
+```text
+G( PSEL==ASSERTED & PENABLE==ASSERTED & PREADY==ASSERTED -> X (drive(Completer,PBUSER) & PBUSER==VALID) )
+```
+
+Read it as: *always, if PSEL, PENABLE, and PREADY are all asserted, then on the next tick
+(`X`) the Completer drives PBUSER and PBUSER is valid.* The pieces map one-to-one onto the
+typed rule:
+
+- **`G( … )`** — the rule holds on every rising (or falling) edge of the clock; the clock
+  signal and edge are shown alongside the formula, since they are the domain `G` ranges over.
+- **`->`** — the `antecedent → consequent` implication.
+- **`X`** — *next tick* (the pre-tick guard implies the post-tick result). When the rule has a
+  **cycle window**, `X` becomes the bounded *eventually* `F[min,max]` of Metric Temporal
+  Logic (e.g. `F[1,2]` = "within one to two cycles"); an open upper bound prints as `∞`.
+- **atoms** — `sig==VALUE`, `drive(actor,signal)`, `stable(…)`, `sample(…)`,
+  `handshake(valid,ready)` — one per typed predicate. A rule with no antecedent renders as a
+  plain invariant, `G( … )`.
+
+Why bother? Because that notation is the *lingua franca* of formal verification: a property
+in this form can be read by a verification engineer, checked by a model checker, or lowered
+to PSL/SVA assertions. Grounding the mined rules in it makes SpecForge's timing intent
+**portable and verifiable**, not just inspectable. The rendering is **derived on demand**
+(`crate::ir::temporal_ltl::temporal_rule_to_ltl`) and never stored in the IR, so it adds no
+weight to the artifacts; turning these formulas into checkable PSL/SVA assertions is the
+next step, owned separately so it can align with the downstream FSMGen contract.
+
 ## What users should inspect
 
 When debugging timing, inspect:

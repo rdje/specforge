@@ -3,7 +3,9 @@
 ## Metadata
 
 - Tree ID: `TEMPORAL-RULE-LTL-RENDER`
-- Status: `active` (`.1` design done; `.2` = code + close)
+- Status: `done` (CLOSED `2026-06-04` — mined temporal rules render to standard LTL/MTL
+  `G(antecedent→consequent)` notation via a pure `ir/temporal_ltl.rs`; book-grounded; derived,
+  zero behavior change; CI green)
 - Roadmap lane: `R6`/`R15e` (temporal semantics / literature grounding)
 - Created: `2026-06-04`
 - Owner: repo-local workflow
@@ -89,24 +91,55 @@ Worked APB examples (real, from the corpus):
   Commit: `see Commit Log`
 
 - ID: `TEMPORAL-RULE-LTL-RENDER.2`
-  Status: `pending`
-  Goal: implement `ir/temporal_ltl.rs` (pure renderer + atom helper) + tests; opt-in
-    `validate --ltl`; book subsection; KM card; close.
-  Acceptance: tests green; `validate --ltl` renders the formulas (default output unchanged);
-    book + KM card; full CI GREEN; tree CLOSED.
+  Status: `done`
+  Goal: implement `ir/temporal_ltl.rs` (pure renderer + atom helper) + tests; a user-friendly
+    book subsection (the user-facing surface) grounding the notation with worked APB examples;
+    a Knowledge Map card; close.
+  Acceptance: tests green; book subsection + KM card; full CI GREEN; tree CLOSED.
+  Verification: passed (`2026-06-04`) — new `crates/specforge/src/ir/temporal_ltl.rs`
+    (`pub mod temporal_ltl;` in `ir/mod.rs`): pure `temporal_rule_to_ltl(&TemporalRuleRecord)
+    -> String` + a `predicate_atom` helper covering all 7 `TemporalPredicateRecord` variants
+    (`sig==VAL`, `drive`, `stable`, `sample`, `handshake`); form `G( ante -> X cons )` /
+    `F[min,max]` with a cycle window / `G( cons )` for an empty antecedent; multi-atom
+    consequents parenthesized so the temporal operator scopes the conjunction. 4 unit tests
+    assert the exact strings (the two worked APB rules byte-for-byte, the empty-antecedent
+    invariant, the windowed `F[1,2]`). Derived/read-only — **no IR field, zero `kg-bench`
+    fixture churn, zero extraction-behavior change**. User-friendly book subsection "Standard
+    LTL/MTL notation" added to `domain/temporal-semantics.md` (grounds it in
+    Pnueli/GoldMine/Texada with the worked PBUSER example + the X/F[min,max]/atom mapping).
+    Knowledge Map card `docs/knowledge/temporal-rule-ltl-rendering.md` written (KM now 4
+    facts / 20 question keys, in sync). Full `scripts/run_ci.sh` GREEN (1219→1223 tests; KM +
+    memory-arch + mdBook all pass). The `--ltl` flag was dropped (see the Note above /
+    Decisions). Tree CLOSED.
+  Note (scope refinement during `.2`): the originally-planned opt-in `validate --ltl` flag was
+    **dropped** — `ValidateArgs` has 10+ construction sites (mostly tests), so adding a field
+    churns them all, and dumping 153 LTL lines risks default-output bloat. The renderer ships
+    as a **tested public building block** (`pub fn temporal_rule_to_ltl`) consumed by the book
+    (the doctrine's user-facing surface) and findable via the KM card; the explicit live
+    consumer is the downstream `.isf`→PSL/SVA export tree.
 
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `TEMPORAL-RULE-LTL-RENDER.1` | `done` | owned + designed (template + atom vocabulary + worked examples) |
-| 2 | `TEMPORAL-RULE-LTL-RENDER.2` | `pending` | renderer + `validate --ltl` + book + KM card + close |
+| 2 | `TEMPORAL-RULE-LTL-RENDER.2` | `done` | renderer (`ir/temporal_ltl.rs`) + 4 tests + book + KM card + close (CI green 1223) |
+
+**Tree CLOSED `2026-06-04`.** SpecForge can now render any mined `temporal_rule` in standard
+LTL/MTL notation (`G(antecedent → consequent)` with `X` / `F[min,max]`), grounding its temporal
+model in the spec-mining formalism (Pnueli/GoldMine/Texada). Pure, derived, zero behavior
+change. The `.isf` → PSL/SVA **export** that consumes this is the explicit downstream tree
+(gated on the FSMGen handoff contract).
 
 ## Decisions
 
-- `2026-06-04`: scope to the **render-only** half (pure, derived, opt-in) — no IR persistence
+- `2026-06-04`: scope to the **render-only** half (pure, derived) — no IR persistence
   (fixture churn), no `.isf`/FSMGen export (contract risk). The export is the explicit
   downstream tree; this lays the verified, standard-notation foundation it will consume.
+- `2026-06-04` (during `.2`): **dropped the `validate --ltl` flag** — `ValidateArgs` has 10+
+  construction sites + 153 LTL lines would bloat default output. Surface = tested public API
+  (`temporal_rule_to_ltl`) + book subsection + KM card; the downstream export tree is the live
+  consumer.
 
 ## Blockers
 
@@ -117,16 +150,24 @@ Worked APB examples (real, from the corpus):
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-06-04` | `.1` | LTL/MTL template + atom vocabulary fixed vs real temporal types; worked APB examples; export/persistence excluded; docs-only | `passed` |
+| `2026-06-04` | `.2` | `ir/temporal_ltl.rs` pure renderer (`G(ante->X/F[min,max] cons)` + 7-variant atom vocab) + 4 exact-string tests (2 worked APB rules, empty-antecedent invariant, windowed F[1,2]); derived/no-IR-field (zero fixture churn); book "Standard LTL/MTL notation" subsection in `domain/temporal-semantics.md`; KM card (KM 4 facts/20 keys); `--ltl` flag dropped (10+ ValidateArgs sites); full CI GREEN 1219→1223; tree CLOSED | `passed` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
-| `TEMPORAL-RULE-LTL-RENDER.1` | `TEMPORAL-RULE-LTL-RENDER.1 — own + design the standard LTL/MTL rendering of mined temporal rules` | docs-only |
+| `TEMPORAL-RULE-LTL-RENDER.1` | `TEMPORAL-RULE-LTL-RENDER.1 — own + design the standard LTL/MTL rendering of mined temporal rules` (`ee638480`) | docs-only |
+| `TEMPORAL-RULE-LTL-RENDER.2` | `TEMPORAL-RULE-LTL-RENDER.2 — render temporal rules as standard LTL/MTL (ir/temporal_ltl.rs); book + KM card; close tree` | renderer + 4 tests + book + KM card; derived/no behavior change; CI green 1223; CLOSED |
 
 ## Changelog
 
 - `2026-06-04`: Created — render `temporal_rules` in standard LTL/MTL notation
   (`G(antecedent → consequent)` with `X`/`F[min,max]`), the Tier-1 vocabulary-adopt item from
-  the `LITERATURE-GROUNDING` backlog. Pure, derived, opt-in (`validate --ltl`); no IR change,
-  no `.isf`/FSMGen export (separate downstream tree).
+  the `LITERATURE-GROUNDING` backlog. Pure, derived; no IR change, no `.isf`/FSMGen export
+  (separate downstream tree).
+- `2026-06-04`: **Tree CLOSED.** `.2` done — `ir/temporal_ltl.rs` pure renderer + 4 exact-string
+  tests, a user-friendly book subsection grounding the notation, and a Knowledge Map card.
+  Dropped the planned `validate --ltl` flag (10+ `ValidateArgs` construction sites + default-
+  output bloat); the renderer is tested public API + book-documented + KM-findable, and the
+  downstream `.isf`→PSL/SVA export tree is its live consumer. Derived/no-IR-field → zero
+  fixture churn, zero behavior change; full CI green (1219→1223).

@@ -12,6 +12,7 @@ pub mod prior_memory;
 pub mod protocol_graph;
 pub mod semantic;
 pub mod source;
+pub mod temporal_ltl;
 pub mod waveform;
 
 use serde::{Deserialize, Serialize};
