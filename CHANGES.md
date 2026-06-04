@@ -2,6 +2,26 @@
 
 ## 2026-06-04
 
+### FSMGen suggestion — first-class LTL/MTL temporal properties in ISF + the SVA export logged as deferred (FSMGEN-LTL-MTL-SUGGESTION; TEMPORAL-RULE-SVA-RENDER deferred)
+- `FSMGEN-LTL-MTL-SUGGESTION` (CLOSED): on user direction, filed a **feature suggestion** in the
+  tracked SpecForge→FSMGen feedback channel `docs/FSMGEN_FEEDBACK.md` ("Suggestion (2026-06-04)
+  — first-class LTL/MTL temporal properties in ISF"): generalize the existing
+  `(contract … (eventually s (within N)))` to the full `G(antecedent → X/F[min,max] consequent)`
+  template so SpecForge can lower its mined `temporal_rules` **directly into ISF** (closing the
+  spec→checkable-property loop inside the `IntentIR → .isf → FSMGEN` handoff). Includes a concrete
+  **proposed ISF shape** — `(temporal-rule (clock <clk> (edge …)) (antecedent <pred>…)
+  (consequent (window min max) <pred>…))` with `pred = value|stable|handshake` — that maps 1:1
+  onto `TemporalRuleRecord`; drive/sample predicates deliberately excluded (not value-over-time
+  properties). Framed as a suggestion, not a bug (no `.isf` is broken; SpecForge does not emit
+  temporal rules into ISF today). Added KM card `fsmgen-feedback-channel` so the channel is one
+  grep away. Tree closes on filing — adoption is FSMGen's call.
+- `TEMPORAL-RULE-SVA-RENDER` (**DEFERRED**, logged): the SpecForge-side `.isf`/IntentIR → SVA
+  export — the LTL renderer's tool-consumable successor — was designed (`.1`: the SVA mapping via
+  `$stable`/`$isunknown`, `|=>` / `|-> ##[min:max]`, active-high convention, dropping
+  non-SVA-expressible drive/sample predicates) but, per user direction, **logged for a later
+  decision rather than built**: the choice between this and FSMGen-native LTL/MTL-in-ISF
+  (above) is open — if ISF gains LTL/MTL, the SVA export may be unnecessary. No code change.
+
 ### Decision 0005 — temporal behavior in LTL/MTL, not CTL or TLA+ (mine, don't model-check)
 - Recorded a design decision the user surfaced: SpecForge captures temporal behavior in
   **LTL/MTL** (in use today — `temporal_rules` *are* the linear-time `G(antecedent →

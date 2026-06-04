@@ -70,6 +70,61 @@ This is a **documentation-clarity request, not a bug report**: no SPECFORGE
 is deliberately gated on this clarity, per the residual-honesty doctrine and
 the "parser-acceptance ≠ support" principle).
 
+## Suggestion (2026-06-04) — first-class LTL/MTL temporal properties in ISF
+
+This extends §4 ("Temporal And Stability Contracts") with a concrete, named ask and a
+proposed ISF shape, at SPECFORGE's request.
+
+**Context.** SPECFORGE mines temporal behavior as typed `temporal_rules` that are, by
+construction, **linear-temporal-logic** properties: each is the `G(antecedent → consequent)`
+template (Pnueli, FOCS 1977) — the same shape the specification-mining literature (GoldMine,
+Texada) uses — with the "next tick" as LTL `X` and a bounded `cycle_window` as the **Metric
+Temporal Logic** bounded-eventually `F[min,max]`. SPECFORGE already renders these to standard
+LTL/MTL (`crate::ir::temporal_ltl`) and chose LTL/MTL deliberately over CTL/TLA+ (SPECFORGE
+ADR-0005: *mine, don't model-check*). ISF already carries the special case
+`(contract <n> (eventually <signal> (within <N>)))` — that is exactly an MTL bounded-eventually
+`F[0,N]` with an empty antecedent and a single `value` consequent.
+
+**Ask.** Would FSMGEN consider generalizing that to a **first-class LTL/MTL temporal-property
+construct in ISF** — the full `G(antecedent → [X | F[min,max]] consequent)` template — so
+SPECFORGE can lower its mined temporal rules *directly into ISF* instead of (a) flattening
+them to residual decisions or (b) emitting a separate SVA artifact outside the
+`IntentIR → .isf → FSMGEN` path? If ISF expresses the general template, the spec→checkable-
+property loop closes inside the existing handoff, and FSMGEN owns whether the property lowers
+to a generated assertion, stays checked metadata, or both (consistent with §4's "even if
+FSMGEN initially treats these as metadata").
+
+**Proposed ISF shape (semantic shape only — exact syntax is FSMGEN's choice).** Generalize the
+existing `eventually` contract to:
+
+```text
+(temporal-rule <name>
+  (clock <clk> (edge rising|falling))           ; the tick domain; G ranges over these edges
+  (antecedent <pred> ...)                       ; conjunction; empty ⇒ a plain invariant
+  (consequent
+    (window <min> <max>)                        ; optional MTL bound; absent ⇒ next cycle (X)
+    <pred> ...))                                 ; conjunction
+;; <pred> ::= (value  <signal> <VALUE>)         ; VALUE ∈ HIGH|LOW|ASSERTED|DEASSERTED|VALID|<sym>
+;;          | (stable <signal>)                 ; $stable-like across the tick
+;;          | (handshake <valid> <ready>)       ; both asserted at the edge
+```
+
+This maps **1:1** onto SPECFORGE's `TemporalRuleRecord` (clock + edge, antecedent predicates,
+consequent predicates, cycle window) and onto the LTL/MTL form
+`G( <ante> -> X|F[min,max] <cons> )`. The current `(eventually s (within N))` is the
+sub-case `(temporal-rule … (antecedent) (consequent (window 0 N) (value s VALID)))`. FSMGEN
+may, of course, keep the flat `eventually` alias and add the general form alongside it. Drive-
+and sample-predicates SPECFORGE also mines (`actor drives`, `is sampled`) are intentionally
+*not* in the proposed grammar — they are not value-over-time properties and SPECFORGE would
+keep them as IntentIR metadata, not ISF temporal properties.
+
+**Status / non-bug.** This is a **feature suggestion**, not a bug report (no SPECFORGE `.isf`
+is broken; SPECFORGE does not emit temporal rules into ISF today). The alternative SPECFORGE
+is weighing — a SPECFORGE-side `.isf`/IntentIR → PSL/SVA export — is logged as the deferred
+tree `TEMPORAL-RULE-SVA-RENDER`; **if** ISF gains native LTL/MTL the SVA export may be
+unnecessary. The decision between the two paths is open on SPECFORGE's side; this suggestion
+records the FSMGEN-native option and a concrete shape so FSMGEN can weigh in.
+
 ## Purpose
 
 This file is SPECFORGE's tracked feedback for FSMGEN.
