@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2026-06-04
+
+### Knowledge Map — own + design adoption of the portable retrieval layer (KNOWLEDGE-MAP-ADOPTION.1)
+- `KNOWLEDGE-MAP-ADOPTION.1` (own + design, docs-only): the user authored a portable,
+  harness-agnostic standard `KNOWLEDGE_MAP_ARCHITECTURE.md` (the `knowledge-map/` bundle) and
+  directed adopting it across repos — the same pattern as `MEMORY_ARCHITECTURE.md`. The KM is
+  an **additive, derived, question-keyed retrieval layer** that makes *archaeology* (a fresh
+  agent re-deriving a fact already logged once) structurally impossible: a fact is one
+  front-mattered `.md` card whose `answers:` list holds the questions an agent would grep
+  (+ `id`/`title`/`date` + `evidence`/`reverify`), a portable POSIX/awk generator derives
+  `KNOWLEDGE_MAP.md`, and a derive-and-diff check gates pre-commit + CI so it cannot drift.
+  Read the bundle end-to-end and mapped it onto SpecForge's existing enforcement: the bundle
+  defaults (`docs/knowledge docs/decisions`, `KNOWLEDGE_MAP.md`) already match SpecForge, so
+  no `.knowledge_map.conf` override and the bundle is copied verbatim; the pre-commit hook
+  (currently `exec`s the memory-arch check) will run **both** gates; `run_ci.sh`/`ci.yml` gain
+  a KM step. `.2` will copy + wire + seed 3 archaeology-trap cards (docling-cpu,
+  llm-provider-default, temporal-eval-stale-FPs) + verify + close. Composes with — replaces
+  nothing in — the existing memory architecture. Registered in `docs/TASK_TREE.md`.
+
 ## 2026-06-02
 
 ### Recall estimation — add the Chao heterogeneity-robust second estimate; tree CLOSED (RECALL-CHAO-ESTIMATOR.2)
