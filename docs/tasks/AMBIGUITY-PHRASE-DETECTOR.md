@@ -3,7 +3,8 @@
 ## Metadata
 
 - Tree ID: `AMBIGUITY-PHRASE-DETECTOR`
-- Status: `active` (`.1` design done; `.2` = code + close)
+- Status: `done` (CLOSED `2026-06-04` — flag-only weak-phrase/ambiguity detector surfaces vague
+  spec prose in `validate`; grounded NASA ARM/Berry-Kamsties; extraction-neutral; CI green)
 - Roadmap lane: `R8`/`R15e` (extraction quality / residual-honesty)
 - Created: `2026-06-04`
 - Owner: repo-local workflow
@@ -84,18 +85,37 @@ under-specified behaviour — high-value, high-precision flags here.)
   Commit: `see Commit Log`
 
 - ID: `AMBIGUITY-PHRASE-DETECTOR.2`
-  Status: `pending`
+  Status: `done`
   Goal: implement `ir/ambiguity.rs` (lexicon + detector + tests); wire the `validate`
     surface (summary + Info finding + metric); book note; KM card; close.
   Acceptance: tests green; `validate` flags ambiguous statements + metric; book + KM card;
     full CI GREEN; tree CLOSED.
+  Verification: passed (`2026-06-04`) — new pure `crates/specforge/src/ir/ambiguity.rs`
+    (`pub mod ambiguity;`): a curated `WEAK_PHRASES` lexicon (NASA ARM weak phrases + chip-spec
+    "implementation-defined"/"vendor-specific"; modal verbs excluded, with a test asserting
+    the exclusion) + `weak_phrase_findings(&[ExtractedStatement])` (case-insensitive,
+    deterministic). 5 unit tests (flagged / clean / case-insensitive / modal-only-not-flagged /
+    lexicon-excludes-modals). Wired into `validate_evidence_ir` (`commands/validate.rs`): an
+    "Ambiguity / Weak Phrases" summary, an Info `evidence_ambiguous_statements` finding (related
+    statement ids), and an `ambiguous_statements` metric — flag-only, extraction-neutral. 1
+    validate-level test builds an EvidenceIR from markdown ("…stable as appropriate.") and
+    asserts the metric ≥ 1 + the finding. User-friendly book subsection in
+    `quality/validation.md`; Knowledge Map card `docs/knowledge/ambiguity-weak-phrase-detector.md`
+    (KM now 5 facts / 25 question keys). Full `scripts/run_ci.sh` GREEN (1223→1229; no existing
+    validate test broke). Tree CLOSED.
 
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `AMBIGUITY-PHRASE-DETECTOR.1` | `done` | owned + designed (lexicon + surface + grounding) |
-| 2 | `AMBIGUITY-PHRASE-DETECTOR.2` | `pending` | detector + validate surface + book + KM card + close |
+| 2 | `AMBIGUITY-PHRASE-DETECTOR.2` | `done` | detector + 6 tests + validate finding/metric + book + KM card + close (CI green 1229) |
+
+**Tree CLOSED `2026-06-04`.** `validate` now flags statements carrying vague / under-specified
+language (NASA ARM weak phrases + chip-spec "implementation-defined"/"vendor-specific") via the
+pure `ir/ambiguity.rs` detector — surfacing where the spec is genuinely vague instead of
+treating it as precise (residual-honesty), flag-only and extraction-neutral. Routing flagged
+statements into typed residual packets is the deferred follow-up.
 
 ## Decisions
 
@@ -112,15 +132,22 @@ under-specified behaviour — high-value, high-precision flags here.)
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-06-04` | `.1` | flag-only scope fixed vs `ExtractedStatement.text` + `validate_evidence_ir` finding/metric pattern; high-precision grounded lexicon (modal verbs excluded); verified citations reused; docs-only | `passed` |
+| `2026-06-04` | `.2` | `ir/ambiguity.rs` (`WEAK_PHRASES` + `weak_phrase_findings`) + 5 unit tests (incl. modal-exclusion); `validate_evidence_ir` summary + `evidence_ambiguous_statements` Info finding + `ambiguous_statements` metric; 1 validate-level test (markdown→EvidenceIR→metric≥1+finding); book subsection in `quality/validation.md`; KM card (KM 5 facts/25 keys); flag-only/extraction-neutral; full CI GREEN 1223→1229; tree CLOSED | `passed` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
-| `AMBIGUITY-PHRASE-DETECTOR.1` | `AMBIGUITY-PHRASE-DETECTOR.1 — own + design the weak-phrase / ambiguity flag detector` | docs-only |
+| `AMBIGUITY-PHRASE-DETECTOR.1` | `AMBIGUITY-PHRASE-DETECTOR.1 — own + design the weak-phrase / ambiguity flag detector` (`fe3b19e9`) | docs-only |
+| `AMBIGUITY-PHRASE-DETECTOR.2` | `AMBIGUITY-PHRASE-DETECTOR.2 — flag vague spec prose in validate (ir/ambiguity.rs); book + KM card; close tree` | detector + 6 tests + validate finding/metric + book + KM; CI green 1229; CLOSED |
 
 ## Changelog
 
 - `2026-06-04`: Created — a grounded, flag-only weak-phrase/ambiguity detector
   (NASA ARM / Berry-Kamsties) that surfaces vague / under-specified spec prose in `validate`,
   in the residual-honesty spirit. Extraction-neutral; residual routing deferred.
+- `2026-06-04`: **Tree CLOSED.** `.2` done — `ir/ambiguity.rs` detector + 5 unit tests, wired
+  into `validate_evidence_ir` (summary + Info finding + `ambiguous_statements` metric) + 1
+  validate-level test, a user-friendly book subsection (`quality/validation.md`), and a KM
+  card. Flag-only/extraction-neutral; full CI green (1223→1229). Typed-residual routing of
+  flagged statements remains a deferred follow-up.

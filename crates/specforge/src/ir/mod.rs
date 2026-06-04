@@ -1,4 +1,5 @@
 pub mod adapters;
+pub mod ambiguity;
 pub mod completeness;
 pub mod contract;
 pub mod cve;

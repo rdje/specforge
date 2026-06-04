@@ -2,6 +2,22 @@
 
 ## 2026-06-04
 
+### Ambiguity detector — flag vague spec prose in validate; tree CLOSED (AMBIGUITY-PHRASE-DETECTOR.2)
+- `AMBIGUITY-PHRASE-DETECTOR.2` (CLOSING leaf): new pure `crates/specforge/src/ir/ambiguity.rs`
+  (`pub mod ambiguity;`) — a `WEAK_PHRASES` lexicon (NASA ARM weak phrases + the chip-spec
+  idioms "implementation-defined" / "vendor-specific"; RFC 2119 modal verbs deliberately
+  excluded) and `weak_phrase_findings(&[ExtractedStatement])` (case-insensitive, deterministic).
+  Wired into `validate_evidence_ir`: an "Ambiguity / Weak Phrases" summary, an Info finding
+  `evidence_ambiguous_statements` (related statement ids), and an `ambiguous_statements` metric.
+  Flag-only / extraction-neutral — nothing is dropped or down-ranked; it only annotates the
+  validation report, in the residual-honesty spirit (surface where the spec is vague instead
+  of treating it as precise). 6 tests (5 unit incl. a modal-verb-exclusion lock + 1
+  validate-level: markdown → EvidenceIR → metric ≥ 1 + finding). User-friendly book subsection
+  in `quality/validation.md`; Knowledge Map card `docs/knowledge/ambiguity-weak-phrase-detector.md`
+  (KM now 5 facts / 25 question keys). Grounded in Wilson/Rosenberg/Hyatt (NASA ARM, ICSE 1997)
+  + Berry-Kamsties. Full `scripts/run_ci.sh` GREEN (1223→1229; no existing validate test broke).
+  Typed-residual routing of flagged statements is a deferred follow-up. **Tree CLOSED.**
+
 ### Ambiguity detector — own + design the weak-phrase flag detector (AMBIGUITY-PHRASE-DETECTOR.1)
 - `AMBIGUITY-PHRASE-DETECTOR.1` (own + design, docs-only): a grounded gap from the
   `LITERATURE-GROUNDING` backlog (`requirements-extraction.md`; NASA ARM, Wilson/Rosenberg/Hyatt

@@ -2639,6 +2639,20 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
         None => println!("  (skipped — upstream SourceIR not available)"),
     }
 
+    // Ambiguity / weak phrases: statement prose carrying NASA ARM "weak phrases" or chip-spec
+    // under-specification idioms ("implementation-defined", "and/or", "TBD", …) is genuinely
+    // vague — surface it for review instead of silently treating it as precise. Flag-only,
+    // extraction-neutral (AMBIGUITY-PHRASE-DETECTOR).
+    let ambiguous = crate::ir::ambiguity::weak_phrase_findings(&ir.extracted_statements);
+    let ambiguous_statement_ids: std::collections::BTreeSet<String> =
+        ambiguous.iter().map(|f| f.statement_id.clone()).collect();
+    println!();
+    println!("=== Ambiguity / Weak Phrases (vague spec prose; residual-honesty) ===");
+    println!("  ambiguous_statements: {}", ambiguous_statement_ids.len());
+    for f in ambiguous.iter().take(8) {
+        println!("  - {} matched \"{}\"", f.statement_id, f.phrase);
+    }
+
     let normative_count = classes.get("normative_statement").copied().unwrap_or(0);
 
     // Completeness summary: one honest headline aggregating the located-miss
@@ -2930,6 +2944,19 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
         }
     }
 
+    if !ambiguous_statement_ids.is_empty() {
+        findings.push(finding(
+            "evidence_ambiguous_statements",
+            ValidationFindingSeverity::Info,
+            "ambiguity",
+            format!(
+                "{} statement(s) carry vague / under-specified language (weak phrases such as \"as appropriate\", \"and/or\", \"TBD\", \"implementation-defined\") — review before relying on extraction precision",
+                ambiguous_statement_ids.len()
+            ),
+            ambiguous_statement_ids.iter().cloned().collect(),
+        ));
+    }
+
     let report = ValidationReportRecord {
         report_id: format!("validation_evidence_ir_{artifact_fingerprint}"),
         validated_stage: IrStage::EvidenceIr,
@@ -2944,6 +2971,10 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
         metrics: vec![
             metric("total_statements", total.to_string()),
             metric("nlp_coverage_pct", nlp_coverage.to_string()),
+            metric(
+                "ambiguous_statements",
+                ambiguous_statement_ids.len().to_string(),
+            ),
             metric(
                 "signal_value_constraint_statements",
                 classes
@@ -7065,6 +7096,35 @@ mod tests {
             + m("normative_statements");
         assert_eq!(m("completeness_candidate_misses"), expected);
         assert!(has_finding(&report, "evidence_completeness_summary"));
+        Ok(())
+    }
+
+    #[test]
+    fn validate_evidence_ir_flags_ambiguous_statements() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("ambiguity.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        // One precise statement + one carrying a weak phrase ("as appropriate").
+        fs::write(
+            &source,
+            "# Spec\nSignal HADDR is input width 32.\nHADDR shall remain stable as appropriate.\n",
+        )?;
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        let report = validate_evidence_ir(&evidence_ir, "ambiguity".to_string());
+        assert!(
+            metric_value(&report, "ambiguous_statements")
+                .and_then(|v| v.parse::<usize>().ok())
+                .unwrap_or(0)
+                >= 1,
+            "the 'as appropriate' statement should be flagged"
+        );
+        assert!(has_finding(&report, "evidence_ambiguous_statements"));
         Ok(())
     }
 

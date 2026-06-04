@@ -597,3 +597,37 @@ To set expectations honestly:
 *Authoritative tracking:* `docs/tasks/R7-VALIDATION.md` — the
 "Design (`.5` output, 2026-05-20)" section is the full
 specification this chapter explains.
+
+### `AMBIGUITY-PHRASE-DETECTOR` — flagging vague prose so it isn't mistaken for precise
+
+Specifications are not all equally precise. A sentence like *"PADDR must remain stable until
+the transfer completes"* pins down exactly what has to happen; *"the reset value is
+implementation-defined"* or *"…handled as appropriate"* does the opposite — it tells you the
+spec is **leaving something open**. SpecForge would happily extract from both and, without
+help, present the vague one with the same confidence as the precise one. That is the kind of
+quiet over-confidence the residual-honesty doctrine exists to prevent.
+
+So `validate` now runs a small, grounded **weak-phrase detector**. Requirements-engineering
+research (the NASA Automated Requirement Measurement work — Wilson, Rosenberg & Hyatt, ICSE
+1997 — and Berry & Kamsties' ambiguity handbook) catalogued the phrases that mark
+under-specified language: *"as appropriate"*, *"if necessary"*, *"and/or"*, *"to be
+determined" / "TBD"*, *"but not limited to"*, and — for chip specs especially —
+*"implementation-defined"* and *"vendor-specific"*. The detector scans the extracted
+statements for these and surfaces an **Ambiguity / Weak Phrases** section plus an
+`ambiguous_statements` metric and an `evidence_ambiguous_statements` finding listing the
+flagged statements.
+
+Two deliberate choices keep it honest and quiet:
+
+- **It flags, it does not delete.** Nothing is dropped or down-ranked; the finding is an
+  `Info` signpost ("review these before relying on extraction precision"). Extraction is
+  completely unchanged — this only adds a note to the validation report.
+- **Modal verbs are *not* weak phrases.** MUST / SHALL / SHOULD / MAY carry *normative
+  strength* (handled by the constraint and obligation extraction), not vagueness, so flagging
+  every "may" would be noise. The lexicon excludes them on purpose.
+
+The detector itself (`crate::ir::ambiguity::weak_phrase_findings`) is a pure, unit-tested
+function over the statement text. Routing flagged statements into typed residual decision
+packets — rather than only noting them — is a deliberate future step.
+
+*Authoritative tracking:* `docs/tasks/AMBIGUITY-PHRASE-DETECTOR.md`.
