@@ -85,11 +85,25 @@ IEEE PSL/SVA/AssertLLM/HLS), then a synthesis + close.
   Commit: `see Commit Log`
 
 - ID: `SPEC-MINING-PROVENANCE.2`
-  Status: `pending`
+  Status: `done`
   Goal: temporal-trio ledger entries (Pnueli / GoldMine / Texada) + adopt the "specification
     mining" framing (README + architecture-rationale) + KM card(s); verify (mdBook + KM gate +
     CI green).
   Acceptance: ledger temporal-trio entries; framing adopted; KM card(s); CI green.
+  Verification: passed (`2026-06-04`) — created `docs/research/grounding/adopt-defer-ledger.md`:
+    the "forward specification mining" framing intro (Ammons POPL'02 verified) + the temporal
+    trio (Pnueli FOCS'77, GoldMine DATE'10, Texada ASE'15) each with Take / Leave-out+why /
+    Instantiated-at (e.g. Pnueli: take LTL `G/F/X` + the invariant shape, leave out full-LTL
+    nesting + model checking [downstream's job], instantiated in `TemporalRuleRecord` +
+    `ir/temporal_ltl.rs`; GoldMine: take the `G(ante→cons)` template + P/R-of-mined-assertions,
+    leave out RTL/trace data-mining [forward, no traces], instantiated as `temporal_rules` +
+    `TEMPORAL-RULE-EVAL`; Texada: take templates-with-holes, leave out user-supplied templates
+    over trace logs [fixed domain ontology over prose], instantiated as the typed
+    `TemporalPredicateRecord` set). Adopted **"forward specification mining"** in `README.md`
+    (project objective) + a new "forward specification mining" section in
+    `architecture-rationale.md`. KM card `spec-mining-framing` written (KM now 6 facts / 30
+    question keys). Citations reused from the verified `protocol-temporal-semantics.md`. Full
+    `scripts/run_ci.sh` GREEN (1229; mdBook + KM gate pass).
 
 - ID: `SPEC-MINING-PROVENANCE.3`
   Status: `pending`
@@ -102,8 +116,8 @@ IEEE PSL/SVA/AssertLLM/HLS), then a synthesis + close.
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `SPEC-MINING-PROVENANCE.1` | `done` | owned + designed (format + framing + priorities) |
-| 2 | `SPEC-MINING-PROVENANCE.2` | `pending` | temporal trio + "specification mining" framing + KM card(s) |
-| 3 | `SPEC-MINING-PROVENANCE.3` | `pending` | remaining authors → ledger; synthesis; close |
+| 2 | `SPEC-MINING-PROVENANCE.2` | `done` | temporal trio + "forward specification mining" framing (README + book) + KM card (CI green) |
+| 3 | `SPEC-MINING-PROVENANCE.3` | `pending` | remaining swept authors → ledger; synthesis; close |
 
 ## Decisions
 
@@ -121,12 +135,14 @@ IEEE PSL/SVA/AssertLLM/HLS), then a synthesis + close.
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-06-04` | `.1` | program scoped from the user's directive; 3-field ledger format + spec-mining framing (forward vs backward, Ammons POPL'02 verified) fixed; prioritization set; docs-only | `passed` |
+| `2026-06-04` | `.2` | `adopt-defer-ledger.md` (framing intro + Pnueli/GoldMine/Texada each Take/Leave-out+why/Instantiated-at, verified citations); "forward specification mining" adopted in README + architecture-rationale; KM card `spec-mining-framing` (KM 6 facts/30 keys); mdBook + KM gate + CI GREEN (1229) | `passed` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
-| `SPEC-MINING-PROVENANCE.1` | `SPEC-MINING-PROVENANCE.1 — own + design the spec-mining framing + per-author adopt/defer ledger` | docs-only |
+| `SPEC-MINING-PROVENANCE.1` | `SPEC-MINING-PROVENANCE.1 — own + design the spec-mining framing + per-author adopt/defer ledger` (`c26a9453`) | docs-only |
+| `SPEC-MINING-PROVENANCE.2` | `SPEC-MINING-PROVENANCE.2 — adopt the forward-spec-mining framing + temporal-trio adopt/defer ledger + KM card` | docs + framing; KM 6 facts; CI green 1229 |
 
 ## Changelog
 
@@ -134,3 +150,7 @@ IEEE PSL/SVA/AssertLLM/HLS), then a synthesis + close.
   mining"** (forward: spec→intent, vs the literature's backward implementation→spec) and build
   a per-author **adopt/defer provenance ledger** (Take / Leave-out+why / Instantiated-at) in
   KM + book + a ledger doc, starting with the temporal trio (Pnueli/GoldMine/Texada).
+- `2026-06-04`: `.2` done — `adopt-defer-ledger.md` created (framing + temporal trio); "forward
+  specification mining" adopted in README + `architecture-rationale.md`; KM card
+  `spec-mining-framing` (KM 6 facts/30 keys); CI green (1229). Frontier → `.3` (remaining swept
+  authors into the ledger, then synthesis + close).

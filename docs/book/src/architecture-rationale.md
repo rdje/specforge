@@ -25,6 +25,29 @@ They are mixed evidence fields made of:
 
 If the tool treats the whole document as plain text, it loses too much of the shape that later meaning depends on.
 
+## What this is, in the literature's terms: forward specification mining
+
+There is an established name for what `specforge` does. The research community calls it
+**specification mining** — automatically discovering the formal specification a system obeys,
+because engineers so rarely write one by hand (Ammons, Bodík & Larus, *Mining Specifications*,
+POPL 2002). Almost all of that work runs **backward**: it takes an existing *implementation* —
+execution traces, RTL, source code — and recovers the spec it must be obeying.
+
+`specforge` runs the same idea **forward**. Its input is not an implementation; it is the
+*human-authored specification document* itself (the PDF — prose, tables, figures). It mines
+typed design **intent** out of that document, *before any implementation exists*. So the
+one-line framing is: **`specforge` is forward specification mining — spec → intent, not
+implementation → spec.**
+
+That direction is the genuinely novel part; the *machinery* is borrowed, deliberately, from
+the (backward) spec-mining literature. The temporal rules `specforge` mines are exactly the
+`G(antecedent → consequent)` property template Pnueli's temporal logic introduced and that
+GoldMine and Texada mine from traces and RTL — `specforge` just instantiates that template
+from spec prose instead. A per-author **adopt / defer ledger**
+(`docs/research/grounding/adopt-defer-ledger.md`) records, for each author the literature
+sweep surfaced, exactly what `specforge` takes, what it leaves out for now, and why — so the
+borrowing is deliberate and the boundaries are written down, not rediscovered.
+
 ## Why there is a staged IR pipeline
 
 `specforge` uses:

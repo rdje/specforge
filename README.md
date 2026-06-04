@@ -4,6 +4,7 @@ Use it first for the project objective, document navigation, and the current imp
 
 ## Project objective
 - build `specforge` as a staged Rust toolchain for extracting implementation-relevant intent from protocol, component, system, and software-interface specifications
+- framed in the literature's terms, this is **forward specification mining**: classic *specification mining* (Ammons, Bodík & Larus, POPL 2002) recovers a formal spec *from an implementation* (traces/RTL/code); `specforge` runs it forward — mining typed design intent *from the human-authored specification itself*, before any implementation exists (see `docs/research/grounding/adopt-defer-ledger.md`)
 - make the canonical deliverable a backend-independent `IntentIR`, serialized as JSON or a future equivalent interchange format
 - treat `.isf` as the single adapter target downstream of `IntentIR`, not as the core product boundary
 - `.fsm` and HDL lowering (SystemVerilog, Verilog, VHDL) are out of scope — FSMGen consumes `.isf` and owns scheduling, `.fsm`, and HDL downstream

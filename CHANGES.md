@@ -2,6 +2,28 @@
 
 ## 2026-06-04
 
+### Spec-mining provenance — adopt the forward-spec-mining framing + temporal-trio ledger (SPEC-MINING-PROVENANCE.2)
+- `SPEC-MINING-PROVENANCE.2`: created `docs/research/grounding/adopt-defer-ledger.md` — a
+  per-author provenance ledger that opens by **naming the discipline**: SpecForge does
+  *specification mining* (Ammons/Bodík/Larus, POPL 2002) but **forward** — the literature
+  recovers a spec *from an implementation* (traces/RTL/code), SpecForge mines intent *from the
+  human-authored specification itself*, before any implementation exists. Adopted the
+  **"forward specification mining"** framing in `README.md` (project objective) and a new
+  section of `architecture-rationale.md`, and added the Knowledge Map card `spec-mining-framing`
+  (KM now 6 facts / 30 question keys).
+- The ledger's first entries are the **temporal trio**, each with *Take* / *Leave-out + why* /
+  *Instantiated-at*: **Pnueli** (FOCS 1977 — take LTL `G/F/X` + the `G(ante→cons)` invariant
+  shape; leave out full-LTL nesting + model checking, that's the downstream verifier's job;
+  instantiated in `TemporalRuleRecord` + `ir/temporal_ltl.rs`); **GoldMine** (DATE 2010 — take
+  the `G(ante→cons)` assertion template + precision/recall-of-mined-assertions; leave out
+  RTL/trace data-mining, because SpecForge mines forward from prose; instantiated as
+  `temporal_rules` + `TEMPORAL-RULE-EVAL`); **Texada** (ASE 2015 — take templates-with-holes;
+  leave out user-supplied LTL templates over trace logs, in favour of a fixed domain-typed
+  template set over prose; instantiated as the typed `TemporalPredicateRecord` set). Citations
+  reused verbatim from the verified `protocol-temporal-semantics.md`. Advisory (no code
+  change); full `scripts/run_ci.sh` GREEN (1229; mdBook + KM gate pass). `.3` will fold the
+  remaining swept authors into the ledger + synthesize + close.
+
 ### Spec-mining provenance — own + design the framing + per-author adopt/defer ledger (SPEC-MINING-PROVENANCE.1)
 - `SPEC-MINING-PROVENANCE.1` (own + design, docs-only): acting on a user directive — (1) adopt
   **"specification mining"** as SpecForge's discipline name (Ammons/Bodík/Larus, POPL 2002),
