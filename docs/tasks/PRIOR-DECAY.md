@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `PRIOR-DECAY`
-- Status: `active` (`.1` design done; `.2` = implement + close)
+- Status: `done` (CLOSED `2026-06-04` — read-only contested-prior detection shipped; `.1`–`.2`)
 - Roadmap lane: `R15c`/`R15e` (cross-document learning / residual honesty)
 - Created: `2026-06-04`
 - Owner: repo-local workflow
@@ -88,17 +88,33 @@ legitimately carry several shapes) are **out of this slice** (extensible later);
   Commit: `see Commit Log`
 
 - ID: `PRIOR-DECAY.2`
-  Status: `pending`
+  Status: `done`
   Goal: implement `contested_priors()` + `ContestedPrior` + tests; surface in `learn-priors`;
     book subsection; KM card; close.
   Acceptance: tests green; surfaced; book + KM; full CI GREEN; tree CLOSED.
+  Verification: passed (`2026-06-04`) — added to `ir/prior_memory.rs`: `ContestedPrior` /
+    `ContestedPriorValue` / `ContestedPriorFamily` + the read-only `CorpusMemory::contested_priors()`
+    (groups priors by `(ProtocolFamily, key)` over ActorTaxonomy/SemanticPhrase/TableShape; emits
+    a contest for any scope with ≥2 distinct values; aggregates support + docs per value;
+    `strongest_value` = highest support, deterministic tiebreak; factored the map type into
+    `ContestValueAggregates` per clippy). 4 unit tests (empty-when-settled; ActorTaxonomy conflict
+    flagged with strongest = higher support; NOT flagged across protocol families; SemanticPhrase
+    conflict flagged). Surfaced in `learn-priors` (`contested_priors:` count + per-contest line).
+    User-friendly book subsection in `quality/corpus-memory.md`; KM card `contested-priors`.
+    Additive — no harvest/merge/consultation change (no fixture churn). Full `scripts/run_ci.sh`
+    GREEN (1229 → 1233; +4 tests). Tree CLOSED.
 
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `PRIOR-DECAY.1` | `done` | owned + designed (read-only contested-prior detection) |
-| 2 | `PRIOR-DECAY.2` | `pending` | implement + surface + tests + book + KM + close |
+| 2 | `PRIOR-DECAY.2` | `done` | `contested_priors()` + 4 tests + `learn-priors` surface + book + KM → **CLOSED** |
+
+**Tree CLOSED `2026-06-04`.** `CorpusMemory::contested_priors()` surfaces cross-document
+contradictions (same key, conflicting values within a protocol family) that the accrete-only
+harvest never revised — read-only/advisory, CI green 1233. Consultation down-weighting and
+time-staleness remain deliberate follow-ups.
 
 ## Decisions
 
@@ -115,12 +131,14 @@ legitimately carry several shapes) are **out of this slice** (extensible later);
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-06-04` | `.1` | gap verified in `prior_memory.rs`; bounded read-only `contested_priors()` slice (ActorTaxonomy/SemanticPhrase/TableShape; no mutation; Parisi-grounded); deferrals reasoned | `passed` |
+| `2026-06-04` | `.2` | `contested_priors()` + types impl (read-only, deterministic, `ContestValueAggregates` alias); 4 unit tests; `learn-priors` surface; book subsection; KM card `contested-priors`; additive (no fixture churn); full CI GREEN 1233 (+4) | `passed` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `PRIOR-DECAY.1` | `PRIOR-DECAY.1 — own + design contested-prior detection (revision-on-contradiction)` | docs-only |
+| `PRIOR-DECAY.2` | `PRIOR-DECAY.2 — detect contested priors in CorpusMemory (read-only); learn-priors surface; book + KM; close tree` | +4 tests; CI green 1233 |
 
 ## Changelog
 
@@ -128,3 +146,8 @@ legitimately carry several shapes) are **out of this slice** (extensible later);
   documents) in `CorpusMemory`, the Parisi-grounded revision-on-contradiction gap. Read-only /
   additive (no harvest/merge/consultation change); temporal staleness + consultation
   down-weighting deferred.
+- `2026-06-04`: **Tree CLOSED.** `.2` shipped `CorpusMemory::contested_priors()` (+ `ContestedPrior`/
+  `ContestedPriorValue`/`ContestedPriorFamily`) over ActorTaxonomy/SemanticPhrase/TableShape, 4
+  unit tests, the `learn-priors` `contested_priors:` surface, a user-friendly book subsection, and
+  KM card `contested-priors`. Additive (no fixture churn); CI green 1233 (+4). Next per user:
+  the Dempster combiner.

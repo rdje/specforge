@@ -923,6 +923,155 @@ impl ActorTaxonomyRole {
     }
 }
 
+// --- PRIOR-DECAY: contested-prior detection (revision-on-contradiction) ---
+
+/// Which prior family a contested key belongs to.
+#[derive(Debug, Clone, Copy, Serialize, PartialEq, Eq)]
+pub enum ContestedPriorFamily {
+    ActorTaxonomy,
+    SemanticPhrase,
+    TableShape,
+}
+
+impl ContestedPriorFamily {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            ContestedPriorFamily::ActorTaxonomy => "actor_taxonomy",
+            ContestedPriorFamily::SemanticPhrase => "semantic_phrase",
+            ContestedPriorFamily::TableShape => "table_shape",
+        }
+    }
+}
+
+/// One competing value for a contested prior key, with its aggregated support.
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+pub struct ContestedPriorValue {
+    pub value: String,
+    pub support_count: usize,
+    pub supporting_document_keys: Vec<String>,
+}
+
+/// A prior key that two or more documents map, within one protocol family, to
+/// DIFFERENT values — a cross-document contradiction the accrete-only harvest
+/// never revises (the Parisi revision-on-contradiction gap; `PRIOR-DECAY`).
+///
+/// Advisory-only: the contest is surfaced (with the strongest-supported value as
+/// a hint in `strongest_value`), never auto-resolved. `contested_priors` does not
+/// mutate any stored prior or consultation behavior.
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+pub struct ContestedPrior {
+    pub family: ContestedPriorFamily,
+    pub protocol_family: ProtocolFamily,
+    pub key: String,
+    pub competing_values: Vec<ContestedPriorValue>,
+    pub strongest_value: String,
+}
+
+impl CorpusMemory {
+    /// Detect **contested priors**: keys carried, within one protocol family, by
+    /// two or more distinct values across the harvested corpus.
+    ///
+    /// Read-only — does not mutate stored priors, the harvest, or consultation.
+    /// Realizes the Parisi revision-on-contradiction gap (`PRIOR-DECAY`): the
+    /// accrete-only harvest never notices when a later validated document maps a
+    /// key to a value that contradicts an earlier one. Covers the families with a
+    /// single-expected-value-per-key (actor taxonomy, semantic phrase, table
+    /// shape); the fuzzier families (temporal/modality/visual, where one key may
+    /// legitimately carry several shapes) are out of scope.
+    pub fn contested_priors(&self) -> Vec<ContestedPrior> {
+        let mut out = Vec::new();
+        out.extend(contested_in_family(
+            ContestedPriorFamily::ActorTaxonomy,
+            self.actor_taxonomy_priors.iter().map(|p| {
+                (
+                    p.protocol_family,
+                    p.normalized_actor_term.clone(),
+                    format!("{:?}", p.taxonomy_role),
+                    p.support_count,
+                    p.supporting_document_keys.clone(),
+                )
+            }),
+        ));
+        out.extend(contested_in_family(
+            ContestedPriorFamily::SemanticPhrase,
+            self.semantic_phrase_priors.iter().map(|p| {
+                (
+                    p.protocol_family,
+                    p.normalized_phrase.clone(),
+                    format!("{:?}", p.role),
+                    p.support_count,
+                    p.supporting_document_keys.clone(),
+                )
+            }),
+        ));
+        out.extend(contested_in_family(
+            ContestedPriorFamily::TableShape,
+            self.table_shape_priors.iter().map(|p| {
+                (
+                    p.protocol_family,
+                    p.normalized_header_signature.clone(),
+                    format!("{:?}", p.table_kind),
+                    p.support_count,
+                    p.supporting_document_keys.clone(),
+                )
+            }),
+        ));
+        out
+    }
+}
+
+/// Group prior rows `(protocol_family, key, value, support, docs)` by
+/// `(protocol_family, key)` and emit a `ContestedPrior` for any scope carrying
+/// two or more distinct values. Deterministic (BTree ordering; competing values
+/// sorted by support desc, ties broken by value asc).
+/// Per-scope aggregation: each distinct value -> (total support, backing documents).
+type ContestValueAggregates = BTreeMap<String, (usize, BTreeSet<String>)>;
+
+fn contested_in_family<I>(family: ContestedPriorFamily, rows: I) -> Vec<ContestedPrior>
+where
+    I: Iterator<Item = (ProtocolFamily, String, String, usize, Vec<String>)>,
+{
+    let mut scopes: BTreeMap<(ProtocolFamily, String), ContestValueAggregates> = BTreeMap::new();
+    for (protocol_family, key, value, support, docs) in rows {
+        let value_agg = scopes
+            .entry((protocol_family, key))
+            .or_default()
+            .entry(value)
+            .or_insert((0, BTreeSet::new()));
+        value_agg.0 += support;
+        value_agg.1.extend(docs);
+    }
+
+    let mut out = Vec::new();
+    for ((protocol_family, key), values) in scopes {
+        if values.len() < 2 {
+            continue; // a single value for the key is settled, not contested
+        }
+        let mut competing_values: Vec<ContestedPriorValue> = values
+            .into_iter()
+            .map(|(value, (support_count, docs))| ContestedPriorValue {
+                value,
+                support_count,
+                supporting_document_keys: docs.into_iter().collect(),
+            })
+            .collect();
+        competing_values.sort_by(|a, b| {
+            b.support_count
+                .cmp(&a.support_count)
+                .then_with(|| a.value.cmp(&b.value))
+        });
+        let strongest_value = competing_values[0].value.clone();
+        out.push(ContestedPrior {
+            family,
+            protocol_family,
+            key,
+            competing_values,
+            strongest_value,
+        });
+    }
+    out
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct ActorTaxonomyPriorRecord {
     pub prior_id: String,
@@ -1504,6 +1653,92 @@ mod tests {
                 strongest_automation_confidence: AutomationConfidence::High,
             }],
         }
+    }
+
+    // PRIOR-DECAY: contested-prior detection (revision-on-contradiction)
+
+    #[test]
+    fn contested_priors_empty_when_each_key_has_one_value() {
+        // make_test_corpus maps each key to a single value -> nothing contested.
+        assert!(make_test_corpus().contested_priors().is_empty());
+    }
+
+    #[test]
+    fn contested_priors_flags_conflicting_actor_taxonomy_value() {
+        let mut corpus = make_test_corpus();
+        // A second document maps the same term ("dma", AmbaAxi) to a DIFFERENT role.
+        corpus.actor_taxonomy_priors.push(ActorTaxonomyPriorRecord {
+            prior_id: "at2".into(),
+            normalized_actor_term: "dma".into(),
+            taxonomy_role: ActorTaxonomyRole::CompleterLike,
+            protocol_family: ProtocolFamily::AmbaAxi,
+            support_count: 2,
+            supporting_document_keys: vec!["docB".into()],
+            strongest_automation_confidence: AutomationConfidence::Medium,
+            strongest_grounding_strength: SemanticGroundingStrength::MultiSource,
+        });
+        let contested = corpus.contested_priors();
+        assert_eq!(
+            contested.len(),
+            1,
+            "the 'dma' role conflict must be flagged"
+        );
+        let flagged = &contested[0];
+        assert_eq!(flagged.family, ContestedPriorFamily::ActorTaxonomy);
+        assert_eq!(flagged.key, "dma");
+        assert_eq!(flagged.competing_values.len(), 2);
+        // strongest = the higher-support value (RequesterLike, support 5 > 2).
+        assert_eq!(flagged.strongest_value, "RequesterLike");
+        assert_eq!(flagged.competing_values[0].support_count, 5);
+    }
+
+    #[test]
+    fn contested_priors_not_flagged_across_protocol_families() {
+        let mut corpus = make_test_corpus();
+        // Same term + a different role, but in a DIFFERENT protocol family — a
+        // legitimately family-specific mapping, not a cross-document contradiction.
+        corpus.actor_taxonomy_priors.push(ActorTaxonomyPriorRecord {
+            prior_id: "at2".into(),
+            normalized_actor_term: "dma".into(),
+            taxonomy_role: ActorTaxonomyRole::CompleterLike,
+            protocol_family: ProtocolFamily::AmbaApb,
+            support_count: 2,
+            supporting_document_keys: vec![],
+            strongest_automation_confidence: AutomationConfidence::Medium,
+            strongest_grounding_strength: SemanticGroundingStrength::MultiSource,
+        });
+        assert!(
+            corpus.contested_priors().is_empty(),
+            "different protocol families are different scopes, not a contradiction"
+        );
+    }
+
+    #[test]
+    fn contested_priors_flags_conflicting_semantic_phrase_value() {
+        let mut corpus = make_test_corpus();
+        // "valid signal" already maps to HandshakeValidLike (support 5); a second
+        // document maps it to HandshakeReadyLike with higher support (7).
+        corpus
+            .semantic_phrase_priors
+            .push(SemanticPhrasePriorRecord {
+                prior_id: "sp2".into(),
+                normalized_phrase: "valid signal".into(),
+                role: InterfaceSignalSemanticRole::HandshakeReadyLike,
+                protocol_family: ProtocolFamily::AmbaAxi,
+                source_kind: SignalSemanticHintSourceKind::ProseStatement,
+                support_count: 7,
+                supporting_document_keys: vec!["docB".into()],
+                strongest_automation_confidence: AutomationConfidence::High,
+                strongest_grounding_strength: SemanticGroundingStrength::MultiSource,
+            });
+        let semantic: Vec<_> = corpus
+            .contested_priors()
+            .into_iter()
+            .filter(|c| c.family == ContestedPriorFamily::SemanticPhrase)
+            .collect();
+        assert_eq!(semantic.len(), 1);
+        // strongest = the higher-support value (HandshakeReadyLike, support 7 > 5).
+        assert_eq!(semantic[0].strongest_value, "HandshakeReadyLike");
     }
 
     // semantic_phrase_priors_for

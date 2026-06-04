@@ -128,3 +128,35 @@ re-ran the harness to delta-to-zero on that subset. Verified by
 cargo-mutants on the full module reading zero missed across the
 hardened functions + `scripts/run_ci.sh`. *Authoritative
 tracking:* `docs/tasks/R6-PRIOR-MEMORY-HARDENING.md`.
+
+### `PRIOR-DECAY` — noticing when documents disagree (contested priors)
+
+Corpus memory *only ever accumulates* — every document a phrase or
+term appears in adds to that prior's support. That is exactly what you
+want when documents *agree*. But what if they *disagree*? If one
+validated spec uses a term in a *requester*-like role and another uses
+the same term in a *completer*-like role, the accrete-only store
+quietly keeps both — and trusts each as if it were already settled.
+
+`PRIOR-DECAY` makes that disagreement visible. A read-only check,
+`CorpusMemory::contested_priors()`, groups priors by key *within one
+protocol family* and flags any key that two or more documents map to
+**different** values. For each contested key it lists the competing
+values (with how much support each has and which documents back it) and
+names the *strongest-supported* value as a hint — but it never picks a
+winner. The `learn-priors` command prints a `contested_priors:` line, so
+you can see at a glance where the corpus is genuinely unsettled.
+
+Why only flag, and not auto-fix? Because honest uncertainty beats a
+confident guess. A contested key is a place where the specifications
+themselves disagree (or where extraction is shaky) — exactly the kind of
+thing that deserves a human's eye, not a silent override. It is the same
+residual-honesty instinct as the rest of the pipeline: surface what is
+not settled instead of pretending it is. The check is deliberately
+*additive* — it reads the priors and changes nothing about how they are
+harvested or consulted, so it can only ever add insight, never alter a
+result. (Grounded in the continual-learning literature's "revise on
+contradicting evidence" idea — Parisi et al., 2019 — applied here as
+detection; actually *down-weighting* a contested prior during
+consultation, and time-based staleness, are deliberate later steps.)
+*Authoritative tracking:* `docs/tasks/PRIOR-DECAY.md`.

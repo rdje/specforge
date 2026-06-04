@@ -2,6 +2,26 @@
 
 ## 2026-06-04
 
+### Prior decay — detect contested priors in CorpusMemory (read-only); tree CLOSED (PRIOR-DECAY)
+- `PRIOR-DECAY` (`.1` design + `.2` impl, CLOSED): closed the Parisi "priors-only-accrete" gap
+  (`cross-document-learning.md`, arXiv:1802.07569). `CorpusMemory` priors only ever accumulated —
+  a later validated document that **contradicted** an earlier prior (same key mapped to a
+  different value) was never noticed. Added the read-only `CorpusMemory::contested_priors()`
+  (+ `ContestedPrior` / `ContestedPriorValue` / `ContestedPriorFamily`): it groups priors by
+  `(protocol_family, key)` over the single-expected-value families — **ActorTaxonomy**
+  (`term → taxonomy_role`), **SemanticPhrase** (`phrase → role`), **TableShape**
+  (`header → table_kind`) — and flags any key carried by **≥2 distinct values**, aggregating
+  each value's support + backing documents and naming the **strongest-supported value as an
+  advisory hint** (deterministic; never auto-resolved). Surfaced in `learn-priors` as a
+  `contested_priors:` count + per-contest line. **Additive — no change to the harvest, merge, or
+  consultation** (zero fixture churn): it can only add insight. 4 unit tests (settled key →
+  empty; an ActorTaxonomy role conflict flagged with strongest = the higher-support value; the
+  same term in a *different* protocol family NOT flagged; a SemanticPhrase conflict flagged).
+  User-friendly book subsection in `quality/corpus-memory.md`; KM card `contested-priors`. Full
+  `scripts/run_ci.sh` GREEN (1229 → 1233; +4). Consultation **down-weighting** of contested
+  priors and **time-based staleness** are deliberate follow-ups (the latter has no clean recency
+  ordering in document-keyed priors). **Next per user: the Dempster combiner.**
+
 ### FSMGen suggestion — first-class LTL/MTL temporal properties in ISF + the SVA export logged as deferred (FSMGEN-LTL-MTL-SUGGESTION; TEMPORAL-RULE-SVA-RENDER deferred)
 - `FSMGEN-LTL-MTL-SUGGESTION` (CLOSED): on user direction, filed a **feature suggestion** in the
   tracked SpecForge→FSMGen feedback channel `docs/FSMGEN_FEEDBACK.md` ("Suggestion (2026-06-04)

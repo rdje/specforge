@@ -254,6 +254,27 @@ pub fn run(args: LearnPriorsArgs) -> Result<()> {
         corpus_memory.negative_knowledge_priors.len()
     );
 
+    // PRIOR-DECAY: surface cross-document contradictions (same key, conflicting
+    // values) the accrete-only harvest never revises. Advisory-only — reported,
+    // never auto-resolved.
+    let contested_priors = corpus_memory.contested_priors();
+    println!("contested_priors: {}", contested_priors.len());
+    for contested in &contested_priors {
+        let competing = contested
+            .competing_values
+            .iter()
+            .map(|value| format!("{}={}", value.value, value.support_count))
+            .collect::<Vec<_>>()
+            .join(" vs ");
+        println!(
+            "  contested {} [{:?}] '{}': {competing} (strongest: {})",
+            contested.family.as_str(),
+            contested.protocol_family,
+            contested.key,
+            contested.strongest_value,
+        );
+    }
+
     for artifact in corpus_memory
         .source_artifacts
         .iter()
