@@ -3,7 +3,8 @@
 ## Metadata
 
 - Tree ID: `SPEC-MINING-PROVENANCE`
-- Status: `active` (`.1` design done; `.2` = temporal trio + framing; `.3`+ = the rest)
+- Status: `done` (CLOSED `2026-06-04` — SpecForge named "forward specification mining"; a full
+  per-author adopt/defer ledger + synthesis; book framing + KM cards; advisory, CI green)
 - Roadmap lane: `R0`/`R15e` (research grounding / live-doc continuity)
 - Created: `2026-06-04`
 - Owner: repo-local workflow
@@ -106,10 +107,25 @@ IEEE PSL/SVA/AssertLLM/HLS), then a synthesis + close.
     `scripts/run_ci.sh` GREEN (1229; mdBook + KM gate pass).
 
 - ID: `SPEC-MINING-PROVENANCE.3`
-  Status: `pending`
+  Status: `done`
   Goal: extend the ledger to the remaining swept authors (batched), verified citations; then
     synthesize + CLOSE.
   Acceptance: full ledger; synthesis; tree CLOSED.
+  Verification: passed (`2026-06-04`) — `adopt-defer-ledger.md` extended to **all** remaining
+    swept author-clusters, each author with Take / Leave-out+why / Instantiated-at, reusing the
+    verified citations from the per-aspect grounding docs (Ammons-method/Daikon; Docling/
+    TableFormer/DocLayNet/PubTables-1M; OpenIE/ReVerb/Mintz/Zeng/KBP/Hogan; LayoutLM/Donut/
+    DocVQA/Dempster; GCD/Outlines/RAG/SNLI/Ji-hallucination/SelfCheckGPT/Garcez-Lamb; Yarowsky/
+    Riloff-Jones/NELL/Snorkel/Parisi; van-Rijsbergen/MUC/Cohen/Chao/Eick/Petersson; Chow/
+    El-Yaniv/Geifman/Vovk/Guo/Scheirer; RFC2119/NLP4RE/PROMISE/NoRBERT/ACE/Berry-Kamsties/
+    NASA-ARM; LLVM/MLIR/nanopass; PSL/SVA/AssertLLM/HLS). Added a **synthesis** (the cross-cutting
+    pattern: TAKE abstraction+vocabulary+eval-methodology+honesty; LEAVE OUT what needs
+    data/signals SpecForge lacks [traces/RTL/runs/trained models] + the backward direction;
+    deferred items are flagged future trees; already-adopted = Chao/weak-phrase/LTL/temporal-eval
+    closed trees). KM card `adopt-defer-ledger` written (KM now 7 facts / ~35 question keys).
+    BOOK-METHOD-DOC: the human-facing surface is the "forward specification mining" section in
+    `architecture-rationale.md` (added in `.2`) + the ledger it points to. Advisory (no code
+    change); mdBook + KM gate + full CI GREEN. Tree CLOSED.
 
 ## Current Frontier
 
@@ -117,7 +133,12 @@ IEEE PSL/SVA/AssertLLM/HLS), then a synthesis + close.
 | --- | --- | --- | --- |
 | 1 | `SPEC-MINING-PROVENANCE.1` | `done` | owned + designed (format + framing + priorities) |
 | 2 | `SPEC-MINING-PROVENANCE.2` | `done` | temporal trio + "forward specification mining" framing (README + book) + KM card (CI green) |
-| 3 | `SPEC-MINING-PROVENANCE.3` | `pending` | remaining swept authors → ledger; synthesis; close |
+| 3 | `SPEC-MINING-PROVENANCE.3` | `done` | all remaining swept authors → ledger + synthesis + KM card → **tree CLOSED** |
+
+**Tree CLOSED `2026-06-04`.** SpecForge is now named **forward specification mining** (README +
+book + KM), and `docs/research/grounding/adopt-defer-ledger.md` records, per author, what
+SpecForge *takes*, what it *leaves out (and why)*, and *where it is instantiated* — with a
+synthesis of the cross-cutting pattern. The deferred-adopt items are flagged future trees.
 
 ## Decisions
 
@@ -136,13 +157,15 @@ IEEE PSL/SVA/AssertLLM/HLS), then a synthesis + close.
 | --- | --- | --- | --- |
 | `2026-06-04` | `.1` | program scoped from the user's directive; 3-field ledger format + spec-mining framing (forward vs backward, Ammons POPL'02 verified) fixed; prioritization set; docs-only | `passed` |
 | `2026-06-04` | `.2` | `adopt-defer-ledger.md` (framing intro + Pnueli/GoldMine/Texada each Take/Leave-out+why/Instantiated-at, verified citations); "forward specification mining" adopted in README + architecture-rationale; KM card `spec-mining-framing` (KM 6 facts/30 keys); mdBook + KM gate + CI GREEN (1229) | `passed` |
+| `2026-06-04` | `.3` | ledger extended to ALL remaining swept author-clusters (Take/Leave-out+why/Instantiated-at, reused verified citations) + a cross-cutting synthesis; KM card `adopt-defer-ledger` (KM 7 facts); BOOK-METHOD-DOC = the architecture-rationale "forward specification mining" section + the ledger; advisory; mdBook + KM gate + CI GREEN; tree CLOSED | `passed` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `SPEC-MINING-PROVENANCE.1` | `SPEC-MINING-PROVENANCE.1 — own + design the spec-mining framing + per-author adopt/defer ledger` (`c26a9453`) | docs-only |
-| `SPEC-MINING-PROVENANCE.2` | `SPEC-MINING-PROVENANCE.2 — adopt the forward-spec-mining framing + temporal-trio adopt/defer ledger + KM card` | docs + framing; KM 6 facts; CI green 1229 |
+| `SPEC-MINING-PROVENANCE.2` | `SPEC-MINING-PROVENANCE.2 — adopt the forward-spec-mining framing + temporal-trio adopt/defer ledger + KM card` (`1b49b59c`) | docs + framing; KM 6 facts; CI green 1229 |
+| `SPEC-MINING-PROVENANCE.3` | `SPEC-MINING-PROVENANCE.3 — full per-author adopt/defer ledger + synthesis + KM card; close tree` | docs; KM 7 facts; advisory; CI green; tree CLOSED |
 
 ## Changelog
 
@@ -154,3 +177,9 @@ IEEE PSL/SVA/AssertLLM/HLS), then a synthesis + close.
   specification mining" adopted in README + `architecture-rationale.md`; KM card
   `spec-mining-framing` (KM 6 facts/30 keys); CI green (1229). Frontier → `.3` (remaining swept
   authors into the ledger, then synthesis + close).
+- `2026-06-04`: **Tree CLOSED.** `.3` done — the ledger now covers ALL swept author-clusters
+  (each Take/Leave-out+why/Instantiated-at, reusing verified citations) + a cross-cutting
+  synthesis; KM card `adopt-defer-ledger` added. SpecForge's relationship to every grounded
+  author is now recorded provenance, not archaeology. Deferred-adopt items are flagged future
+  trees (TEDS/GriTS, Dempster combiner, NLI verifier, per-relation gold scorer, κ/α agreement,
+  conformal calibration, MLIR-style stage verifier, `.isf`→PSL/SVA export, prior decay).

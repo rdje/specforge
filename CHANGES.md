@@ -2,6 +2,26 @@
 
 ## 2026-06-04
 
+### Spec-mining provenance — complete the per-author adopt/defer ledger + synthesis; tree CLOSED (SPEC-MINING-PROVENANCE.3)
+- `SPEC-MINING-PROVENANCE.3` (CLOSING leaf): extended `docs/research/grounding/adopt-defer-ledger.md`
+  to **all** remaining swept author-clusters — Ammons-method/Daikon; Docling/TableFormer/
+  DocLayNet/PubTables-1M; OpenIE/ReVerb/Mintz/Zeng/KBP/Hogan; LayoutLM/Donut/DocVQA/Dempster;
+  GCD/Outlines/RAG/SNLI/Ji-hallucination/SelfCheckGPT/Garcez-Lamb; Yarowsky/Riloff-Jones/NELL/
+  Snorkel/Parisi; van-Rijsbergen/MUC/Cohen-κ/Chao/Eick/Petersson; Chow/El-Yaniv/Geifman/Vovk/
+  Guo/Scheirer; RFC2119/NLP4RE/PROMISE/NoRBERT/ACE/Berry-Kamsties/NASA-ARM; LLVM/MLIR/nanopass;
+  PSL/SVA/AssertLLM/HLS — each author with **Take / Leave-out+why / Instantiated-at**, reusing
+  the verified citations from the per-aspect grounding docs.
+- Added a **synthesis**: the cross-cutting pattern is that SpecForge consistently *takes* the
+  abstraction + standard vocabulary + evaluation methodology + honesty stance, and consistently
+  *leaves out* what needs data/signals it lacks (traces, RTL, runs, trained models) and the
+  backward direction — applying the borrowed machinery **forward** (spec → intent); deferred
+  items are flagged future trees, and the already-adopted ones (Chao, weak phrases, LTL
+  rendering, temporal eval) are the closed trees. Added KM card `adopt-defer-ledger` (KM now 7
+  facts / 36 question keys); the book mirror is the "forward specification mining" section in
+  `architecture-rationale.md` (`.2`). Advisory (no code change); mdBook + KM gate + full CI
+  GREEN (1229). **Tree CLOSED** — SpecForge's relationship to every grounded author is now
+  recorded provenance, retrievable in one lookup.
+
 ### Spec-mining provenance — adopt the forward-spec-mining framing + temporal-trio ledger (SPEC-MINING-PROVENANCE.2)
 - `SPEC-MINING-PROVENANCE.2`: created `docs/research/grounding/adopt-defer-ledger.md` — a
   per-author provenance ledger that opens by **naming the discipline**: SpecForge does
