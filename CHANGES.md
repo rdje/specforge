@@ -2,6 +2,20 @@
 
 ## 2026-06-04
 
+### Decision 0005 — temporal behavior in LTL/MTL, not CTL or TLA+ (mine, don't model-check)
+- Recorded a design decision the user surfaced: SpecForge captures temporal behavior in
+  **LTL/MTL** (in use today — `temporal_rules` *are* the linear-time `G(antecedent →
+  consequent)` template; LTL `X` = next tick; a `cycle_window` is the Metric Temporal Logic
+  bounded-eventually `F[min,max]`; rendered by `ir/temporal_ltl.rs`; grounded in Pnueli /
+  GoldMine / Texada, all linear-time). **Not CTL** — branching-time path quantifiers (`A`/`E`)
+  do not match a spec's single intended *linear* behavior. **Not TLA+** — a full specification
+  + model-checking environment (Lamport), orthogonal to *mining* intent from a document;
+  conceivably a future *export* target (like the flagged `.isf`→PSL/SVA export), not planned.
+  Scope boundary reaffirmed: SpecForge **mines** temporal properties, it does **not**
+  model-check them (verification is downstream — FSMGen/sim — and out of scope). Added
+  `docs/decisions/0005-temporal-logic-ltl-mtl-not-ctl-tla.md` + INDEX row + KM card
+  `temporal-logic-choice`. Docs/decision-record only (no code change).
+
 ### Spec-mining provenance — complete the per-author adopt/defer ledger + synthesis; tree CLOSED (SPEC-MINING-PROVENANCE.3)
 - `SPEC-MINING-PROVENANCE.3` (CLOSING leaf): extended `docs/research/grounding/adopt-defer-ledger.md`
   to **all** remaining swept author-clusters — Ammons-method/Daikon; Docling/TableFormer/
