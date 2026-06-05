@@ -5716,6 +5716,15 @@ fn text_before_condition_marker(text: &str) -> &str {
 /// Collect all uppercase hardware signal tokens from a text fragment.
 /// Excludes logic-level values (HIGH/LOW), protocol state names (NONSEQ/SEQ/...),
 /// protocol family names (AHB/AXI/...), and document structure words.
+/// A logic-level word (`HIGH`/`LOW`/`TRUE`/`FALSE`/…) is a universal binary-logic VALUE — the
+/// centralized, owner-confirmed `normative_vocab` "how" — never a signal name, so it must not be
+/// collected as a constraint subject (ADR 0006; CONSTRAINT-EXTRACTION-V2.1).
+fn is_logic_level_token(tok: &str) -> bool {
+    let lower = tok.to_ascii_lowercase();
+    crate::ir::normative_vocab::LOGIC_HIGH_VALUES.contains(&lower.as_str())
+        || crate::ir::normative_vocab::LOGIC_LOW_VALUES.contains(&lower.as_str())
+}
+
 fn collect_subject_signal_tokens(text: &str) -> Vec<String> {
     text.split(|c: char| !(c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_'))
         .filter(|tok| {
@@ -5731,6 +5740,10 @@ fn collect_subject_signal_tokens(text: &str) -> Vec<String> {
                 // Width parameters (e.g. DATA_WIDTH, USER_RESP_WIDTH) are integrator
                 // constants, not constrained signals — they appear in table width columns.
                 && !tok.ends_with("_WIDTH")
+                // A logic-level word (HIGH/LOW/…) is a universal value, never a signal —
+                // closes the "tied/driven LOW" → "LOW must be stable" leak that the
+                // positional "must be <value>" exclusion misses (CONSTRAINT-EXTRACTION-V2.1).
+                && !is_logic_level_token(tok)
                 && !matches!(
                     *tok,
                     // Constraint VALUE names (HIGH/LOW/IDLE/NONSEQ/…) are no longer
@@ -7431,6 +7444,21 @@ mod tests {
             assert!(
                 !s2.contains(&"HIGH".to_string()),
                 "HIGH is the value, not a subject; got {s2:?}"
+            );
+        }
+
+        #[test]
+        fn logic_level_value_not_a_subject_without_must_be() {
+            // CONSTRAINT-EXTRACTION-V2.1: the real APB construction "driven LOW when … are
+            // LOW" produced a bogus "LOW must be stable" — LOW is a universal logic-level
+            // value, never a subject. The positional "must be <value>" exclusion does not
+            // fire here (no "must be"), so a logic-level word is excluded as a value.
+            let s = constraint_subjects(
+                "It is recommended that PSLVERR is driven LOW when PSEL, PENABLE, or PREADY are LOW",
+            );
+            assert!(
+                !s.contains(&"LOW".to_string()),
+                "LOW is a logic-level value, never a subject; got {s:?}"
             );
         }
 
