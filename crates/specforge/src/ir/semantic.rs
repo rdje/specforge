@@ -9692,9 +9692,16 @@ fn signal_constraint_kind_from_vlm_state(
     }
 
     let normalized = state.to_ascii_lowercase();
-    match normalized.as_str() {
-        "1" | "1'b1" | "high" | "hi" | "true" => Some((SignalConstraintKind::MustBeHigh, None)),
-        "0" | "1'b0" | "low" | "lo" | "false" => Some((SignalConstraintKind::MustBeLow, None)),
+    let value = normalized.as_str();
+    // Logic levels are universal binary-logic vocabulary (the "how", ADR 0006) — centralized
+    // in `normative_vocab` as the single authority, NOT a chip-spec name (see that module).
+    if crate::ir::normative_vocab::LOGIC_HIGH_VALUES.contains(&value) {
+        return Some((SignalConstraintKind::MustBeHigh, None));
+    }
+    if crate::ir::normative_vocab::LOGIC_LOW_VALUES.contains(&value) {
+        return Some((SignalConstraintKind::MustBeLow, None));
+    }
+    match value {
         "asserted" | "assert" => Some((SignalConstraintKind::MustBeAsserted, None)),
         "deasserted" | "deassert" => Some((SignalConstraintKind::MustBeDeasserted, None)),
         "x" | "z" | "unknown" | "don't care" | "dont care" => None,

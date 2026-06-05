@@ -127,3 +127,19 @@ pub(crate) const ACTIVE_READS_VERBS: &[&str] = &[
     // Corpus-mined: an actor that observes a signal.
     "polls", "poll", "accesses", "access",
 ];
+
+// --- Logic-level vocabulary (universal binary-logic "how", deliberately retained) ---
+//
+// Unlike signal/value names (derived from the document; ADR 0006), a *logic level* is not
+// any one spec's vocabulary: every digital specification assumes "high" = logic 1 and
+// "low" = logic 0. These are the common ways specs and HDL spell those two levels. They are
+// the irreducible **"how"** — `specforge` cannot lower `"X must be high"` to the correct
+// assertion without knowing high = 1, and a spec never *defines* that (it is assumed). So
+// this vocabulary is retained on purpose (ADR 0006's "universal how" boundary) and lives
+// here as the single authority — the only place logic-level spellings are recognized.
+
+/// Spellings that mean logic-high (1).
+pub(crate) const LOGIC_HIGH_VALUES: &[&str] = &["1", "1'b1", "high", "hi", "true"];
+
+/// Spellings that mean logic-low (0).
+pub(crate) const LOGIC_LOW_VALUES: &[&str] = &["0", "1'b0", "low", "lo", "false"];
