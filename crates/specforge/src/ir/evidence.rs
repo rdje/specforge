@@ -27,9 +27,10 @@ pub enum StatementClass {
     SourceFact,
     /// Sentence explicitly constraining a hardware signal to a specific logic value or
     /// protocol state. These are the most precise and directly actionable constraints.
-    /// Examples: "HTRANS must be IDLE when HREADY is LOW",
-    ///           "HWRITE shall remain HIGH throughout the burst",
-    ///           "HREADYOUT must be asserted when transfer is accepted".
+    /// Examples (shapes, not any spec's vocabulary):
+    ///   "<signal> must be <value> when <condition>",
+    ///   "<signal> shall remain <value> throughout the burst",
+    ///   "<signal> must be asserted when transfer is accepted".
     SignalValueConstraint,
     /// Sentence with `shall`/`must`/`shall not`/`required`/`prohibited` in a non-boilerplate
     /// section. General normative behavioral requirements not covered by a more specific class.
@@ -5683,7 +5684,8 @@ fn extract_signal_constraints(
 
         // The constraint's own value (the token after the normative verb) is not a
         // subject signal — exclude it positionally so value *names* need never be
-        // denylisted (ADR 0006). "HTRANS must be NONSEQ" → subject HTRANS, not NONSEQ.
+        // denylisted (ADR 0006). "<signal> must be <value>" → the subject is the
+        // signal, never the value.
         if let Some(value) = extract_protocol_state_value(&lowered) {
             subject_signals.retain(|s| !s.eq_ignore_ascii_case(&value));
         }
@@ -5883,7 +5885,7 @@ fn extract_condition_clause(text: &str) -> Option<String> {
 /// Extract a protocol state value from lowered text (IDLE, NONSEQ, SEQ, OKAY, etc.).
 /// Extract the value a constraint binds a signal to, **positionally** — the word
 /// the document places immediately after the normative "be"/"remain" verb
-/// (`"… must be NONSEQ"` → `"NONSEQ"`). Derived from the document at hand, with no
+/// (`"… must be <value>"` → `"<value>"`). Derived from the document at hand, with no
 /// hardcoded value vocabulary, so it works for any spec's value names (ADR 0006 —
 /// remember the *how*, not the names). Leading articles/binding fillers
 /// (`a`/`the`/`set`/`driven`/`to`/…) are skipped. Returns the value uppercased, or
@@ -5990,8 +5992,8 @@ fn extract_action_phrase(full_lowered: &str, consequent_lowered: &str) -> String
     ] {
         if consequent_lowered.contains(phrase) || full_lowered.contains(phrase) {
             // For a bare value-binding verb, append the value the document names
-            // (positionally): "… must be NONSEQ" → "must be nonseq", for ANY value,
-            // without listing one.
+            // (positionally): "… must be <value>" → "must be <value>", for ANY
+            // value, without listing one.
             let appended_value = if matches!(*phrase, "must be" | "shall be") {
                 extract_protocol_state_value(consequent_lowered)
                     .or_else(|| extract_protocol_state_value(full_lowered))
@@ -6101,7 +6103,7 @@ fn is_signal_value_constraint(text: &str) -> bool {
 
     // Step 1: Check for a value-binding phrase. These phrases capture logic levels,
     // stability, assertion, and passive forms. Protocol *encoding* values
-    // ("… must be NONSEQ") are deliberately NOT listed here — those sentences fall
+    // (a signal bound to a document-named value) are deliberately NOT listed here — those sentences fall
     // through to the dynamic extractor, which discovers the value from the
     // document's own enums/tables (ADR 0006: derive names, never hardcode them).
     let has_value_binding = contains_any(
@@ -6172,7 +6174,7 @@ fn is_signal_value_constraint(text: &str) -> bool {
             "shall not change",
             "must remain stable",
             "shall remain stable",
-            // Protocol encoding/state values ("… must be NONSEQ/IDLE/OKAY/…") are
+            // Protocol encoding/state values (a signal bound to a document-named value) are
             // detected positionally by `binds_uppercase_value` below — no value
             // names are hardcoded here (ADR 0006).
             "must be valid",

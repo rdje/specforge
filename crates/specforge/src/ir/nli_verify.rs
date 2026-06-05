@@ -112,8 +112,8 @@ pub fn verify_entailment(
 }
 
 /// Render a `SignalConstraintRecord` as a natural-language claim (the NLI
-/// hypothesis) — e.g. `PADDR must be stable`, `PSTRB must be LOW for read
-/// transfers`, `HTRANS must be IDLE`. The constraint's own `source_text` is the
+/// hypothesis) — e.g. `<signal> must be stable`, `<signal> must be <value> for
+/// read transfers`. The constraint's own `source_text` is the
 /// premise. Any `condition_text` is **carried into the claim** so a conditional
 /// constraint is judged against the same condition the source states (otherwise
 /// "PSTRB must be LOW" reads as not-entailed by "for read transfers, … LOW").

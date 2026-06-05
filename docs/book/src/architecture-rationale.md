@@ -94,35 +94,36 @@ So `specforge` follows one rule, and treats it as a hard correctness requirement
 > remember the particular names.**
 
 The *how* is the intelligence worth keeping: how to read a signal table, how normative English
-works (`must`, `shall`, `when`), how a sentence is shaped. The *names* — signal names like `PSEL`,
-value names like `NONSEQ`, protocol names like `AMBA` — are **read from the document in front of
-it, every time, and never stored in the code.**
+works (`must`, `shall`, `when`), how a sentence is shaped. The *names* — signal names, value and
+state names, protocol and vendor names — are **read from the document in front of it, every time,
+and never stored in the code.** (This section uses only placeholders and an obviously-invented
+token; deliberately, no real spec's vocabulary appears even as an example.)
 
 ### Finding the value by *position*, not by *name*
 
-Consider a value constraint:
+Consider a value constraint — `⟨signal⟩` is whatever signal the document names, `FOOBARBAZ` a value
+the tool has never seen:
 
 ```text
-HTRANS   must be   NONSEQ
-└─signal┘ └─verb─┘ └─value┘
+⟨signal⟩   must be   FOOBARBAZ
+└─signal─┘ └─verb──┘ └──value──┘
 ```
 
 Every value constraint has the same shape: a signal, a normative verb (`must be` / `shall be` /
 `must remain`), and then the value — and the value always lands in the *same grammatical slot*,
-right after the verb. So `specforge` does not ask *"is `NONSEQ` a value I know?"* It asks *"what
-word is sitting in the value slot?"* and takes whatever is there.
+right after the verb. So `specforge` does not ask *"is `FOOBARBAZ` a value I know?"* — it never has.
+It asks *"what word is sitting in the value slot?"* and takes whatever is there.
 
 |  | by **name** (the old, brittle way) | by **position** (how it works now) |
 | --- | --- | --- |
-| what it knows | a fixed list: `idle`, `nonseq`, `incr4`, … | "the value is the word after the normative verb" |
+| what it knows | a baked-in list of specific value names | "the value is the word after the normative verb" |
 | the question it asks | "is this word in my list?" | "is this word in the value slot?" |
 | a new spec's value | invisible — not in the list | found — it is whatever sits there |
 
-That is why a value `specforge` has never seen still extracts cleanly: from `"PSEL must be
-FOOBARBAZ"` it reads the value `FOOBARBAZ` without being told what `FOOBARBAZ` means. It learned the
-*grammar* (the how), not the *vocabulary* (the names). The same idea runs throughout extraction —
-validate a candidate signal against the signals *this document declares*, not against a list of one
-protocol's words.
+That is why a value `specforge` has never seen still extracts cleanly: it reads `FOOBARBAZ` as the
+value without being told what `FOOBARBAZ` means. It learned the *grammar* (the how), not the
+*vocabulary* (the names). The same idea runs throughout extraction — validate a candidate signal
+against the signals *this document declares*, not against a list of one protocol's words.
 
 ### Where the line sits
 
@@ -138,6 +139,47 @@ This rule is binding, not aspirational: it is recorded as an architecture decisi
 criterion. A more ambitious future option — letting a language model
 read the spec end-to-end — is captured but deliberately parked until the current approach is proven;
 even then it would generalize the *how* and still never memorize names.
+
+### The honest limit of pattern-matching — and what comes after
+
+It is worth naming the ceiling of the current approach plainly, because it is real. `specforge`
+recognizes a requirement by matching *grammar* — a normative verb (`must`/`shall`), a behavioral
+predicate (`asserted`/`stable`/`driven`), a sentence shape. That is deterministic, inspectable, and
+testable without any model. But it has a built-in blind spot: **it can only find what its patterns
+already know.** No pattern, no recall. Concretely, a grammar engine seeded on `must`/`shall` walks
+straight past:
+
+- **other ways to say "required"** — *"the controller **is required to** drive X"*, *"Y **needs
+  to** be stable"*;
+- **plain descriptive behavior with no obligation word at all** — *"PCLK **is sampled** on the
+  rising edge"*, *"the manager **drives** the address"* — which states a behavior without ever
+  saying `must`;
+- **imperatives** — *"**Set** the enable bit"*; and
+- **another language entirely** — a spec not written in English.
+
+This is the same seed-dependence in two places: the engine needs a list of verbs to *extract*, and
+even *growing* that list (mining a corpus, see `VERB-COVERAGE-CORPUS`) needs a seed to find the
+verbs in the first place. A bigger, corpus-derived list pushes the ceiling up — it does not remove
+it. **No seed, no recall.**
+
+What removes the ceiling is a different tool: a **language model** that recognizes *"this sentence
+states a signal's required behavior"* from meaning, with no seed words — across phrasings,
+imperatives, even languages. That is genuinely more powerful, and it is the parked future
+(`PURE-NLP-INTENT-EXTRACTION`). It is parked, not adopted, on purpose, because the model trades
+away exactly what the grammar engine guarantees:
+
+| pattern-matching (now) | language model (parked future) |
+| --- | --- |
+| deterministic, same answer every run | probabilistic; must be guarded |
+| every rule is readable in the code | competence hidden in weights |
+| tested with no model in the loop | needs the model to run |
+| cannot invent what is not on the page | can hallucinate — needs the entailment check |
+| bounded by its seed vocabulary | generalizes across phrasings and languages |
+
+So the order is deliberate: make the inspectable, deterministic engine genuinely excellent first —
+including a corpus-wide verb vocabulary so the ceiling is as high as pattern-matching allows — and
+only then let a model take over the *how* to reach the rest of the world's specs. Even then, the
+invariant holds: it would generalize the method and **still never memorize a name.**
 
 ## Why AI is bounded instead of central
 
