@@ -5961,17 +5961,14 @@ fn split_conditional_sentence(text: &str) -> (String, String) {
 
 /// Extract a normalized action phrase from the consequent clause of a conditional sentence.
 fn extract_action_phrase(full_lowered: &str, consequent_lowered: &str) -> String {
+    // Normative/behavioral grammar only (the "how"), longest-specific first. No
+    // value names — a specific value is read positionally and appended below, so
+    // no value vocabulary is hardcoded (ADR 0006).
     for phrase in &[
         "must not change",
         "shall not change",
         "must remain",
         "shall remain",
-        "must be idle",
-        "shall be idle",
-        "must be nonseq",
-        "shall be nonseq",
-        "must be seq",
-        "shall be seq",
         "must be asserted",
         "shall be asserted",
         "must be deasserted",
@@ -5992,6 +5989,18 @@ fn extract_action_phrase(full_lowered: &str, consequent_lowered: &str) -> String
         "shall",
     ] {
         if consequent_lowered.contains(phrase) || full_lowered.contains(phrase) {
+            // For a bare value-binding verb, append the value the document names
+            // (positionally): "… must be NONSEQ" → "must be nonseq", for ANY value,
+            // without listing one.
+            let appended_value = if matches!(*phrase, "must be" | "shall be") {
+                extract_protocol_state_value(consequent_lowered)
+                    .or_else(|| extract_protocol_state_value(full_lowered))
+            } else {
+                None
+            };
+            if let Some(value) = appended_value {
+                return format!("{phrase} {}", value.to_ascii_lowercase());
+            }
             return phrase.to_string();
         }
     }
@@ -6090,9 +6099,11 @@ fn detect_constraint_kind_from_substituted(text: &str) -> SignalConstraintKind {
 fn is_signal_value_constraint(text: &str) -> bool {
     let lowered = text.to_ascii_lowercase();
 
-    // Step 1: Check for a value-binding phrase.
-    // These phrases all indicate a signal is constrained to a specific logic level,
-    // stable state, or protocol encoding value.
+    // Step 1: Check for a value-binding phrase. These phrases capture logic levels,
+    // stability, assertion, and passive forms. Protocol *encoding* values
+    // ("… must be NONSEQ") are deliberately NOT listed here — those sentences fall
+    // through to the dynamic extractor, which discovers the value from the
+    // document's own enums/tables (ADR 0006: derive names, never hardcode them).
     let has_value_binding = contains_any(
         &lowered,
         &[
@@ -6161,19 +6172,9 @@ fn is_signal_value_constraint(text: &str) -> bool {
             "shall not change",
             "must remain stable",
             "shall remain stable",
-            // Protocol states (HTRANS, HBURST, HRESP, HSIZE encoding values)
-            "must be idle",
-            "shall be idle",
-            "must be nonseq",
-            "shall be nonseq",
-            "must be seq",
-            "shall be seq",
-            "must be busy",
-            "shall be busy",
-            "must be okay",
-            "shall be okay",
-            "must be error",
-            "shall be error",
+            // Protocol encoding/state values ("… must be NONSEQ/IDLE/OKAY/…") are
+            // detected positionally by `binds_uppercase_value` below — no value
+            // names are hardcoded here (ADR 0006).
             "must be valid",
             "shall be valid",
             "must be invalid",
