@@ -28,9 +28,9 @@ pub enum StatementClass {
     /// Sentence explicitly constraining a hardware signal to a specific logic value or
     /// protocol state. These are the most precise and directly actionable constraints.
     /// Examples (shapes, not any spec's vocabulary):
-    ///   "<signal> must be <value> when <condition>",
-    ///   "<signal> shall remain <value> throughout the burst",
-    ///   "<signal> must be asserted when transfer is accepted".
+    ///   `<signal> must be <value> when <condition>`,
+    ///   `<signal> shall remain <value> throughout the burst`,
+    ///   `<signal> must be asserted when transfer is accepted`.
     SignalValueConstraint,
     /// Sentence with `shall`/`must`/`shall not`/`required`/`prohibited` in a non-boilerplate
     /// section. General normative behavioral requirements not covered by a more specific class.
@@ -2626,11 +2626,36 @@ fn extract_actor_signal_relations(
         "presents",
         "applies",
         "places",
+        // Corpus-mined actor→signal verbs (VERB-COVERAGE-CORPUS): an actor that
+        // sources/changes a signal. "An actor <verb> a signal" reads naturally.
+        "transmits",
+        "forwards",
+        "responds",
+        "writes",
+        "clears",
+        "resets",
+        "toggles",
+        "releases",
+        "loads",
+        "stores",
+        "enables",
+        "disables",
+        "requests",
+        "acknowledges",
+        "grants",
+        "negates",
+        "controls",
+        "determines",
+        "masks",
+        "gates",
+        "pulls",
         "drive",
     ];
     const ACTIVE_READS_VERBS: &[&str] = &[
         "reads", "samples", "monitors", "accepts", "receives", "captures", "observes", "detects",
         "checks", "latches", "read", "sample", "monitor", "accept", "receive",
+        // Corpus-mined actor→signal observe verb.
+        "polls", "poll",
     ];
 
     let mut records = Vec::new();
@@ -7648,6 +7673,44 @@ mod tests {
                 && r.actor_name == "Manager"),
             "active 'drives SIGNAL' must extract (Manager, Drives, HTRANS), got: {:?}",
             relations
+        );
+    }
+
+    #[test]
+    fn corpus_mined_actor_verbs_extract_relations() {
+        // VERB-COVERAGE-CORPUS.2: corpus-mined actor→signal verbs — an actor that
+        // changes a signal is a Drives relation; one that observes it is Reads.
+        use super::{
+            EvidenceModality, ExtractedStatement, RelationKind, StatementClass,
+            extract_actor_signal_relations,
+        };
+        let signals = ["PSTRB".to_string(), "PWAKE".to_string()]
+            .into_iter()
+            .collect::<std::collections::HashSet<_>>();
+        let mk = |id: &str, t: &str| ExtractedStatement {
+            statement_id: id.to_string(),
+            text: t.to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        };
+        let stmts = vec![
+            mk("s1", "The Manager clears PSTRB before the read."),
+            mk("s2", "The Manager polls PWAKE every cycle."),
+        ];
+        let r = extract_actor_signal_relations(&stmts, &signals);
+        assert!(
+            r.iter().any(|x| x.actor_name == "Manager"
+                && matches!(x.relation, RelationKind::Drives)
+                && x.signal_name == "PSTRB"),
+            "actor 'clears SIGNAL' -> Drives; got {r:?}"
+        );
+        assert!(
+            r.iter().any(|x| x.actor_name == "Manager"
+                && matches!(x.relation, RelationKind::Reads)
+                && x.signal_name == "PWAKE"),
+            "actor 'polls SIGNAL' -> Reads; got {r:?}"
         );
     }
 

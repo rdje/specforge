@@ -78,8 +78,18 @@ normative-predicate vocabulary clearly exceeds the current lists (`reset`, `driv
   **new** behavioral verbs the engine lacks: `set`/`clear`/`reset`/`sample`/`release`/`mask`/`gate`/
   `enable`/`disable`/`toggle`/`latch`/`pull`/`capture`/`load`/`store`/`invalidate`/`activate`/… Read-
   only — nothing wired in; awaiting owner sanity pass (esp. the Rejected pile) before `.2`.
-- ID: `VERB-COVERAGE-CORPUS.2` · Status: `pending` · Goal: curate + integrate the signal-behavioral
-  gaps (mapped to constraint kinds); centralize the grammar vocabulary; re-verify; close.
+- ID: `VERB-COVERAGE-CORPUS.2` · Status: `in-progress` · Goal: integrate the verbs; centralize the
+  grammar vocabulary; re-verify; close.
+  Done (`2026-06-05`): **owner reframed the model** — the extraction path is "recognize actors +
+  signals + normative verbs, capture the `(actor —verb→ signal)` relations between them" = the KG;
+  the signal-vs-actor split is not the axis, the **relation kind** (Drives/Reads) is. First
+  integration slice: added the corpus-mined relationship verbs to `extract_actor_signal_relations`'
+  `ACTIVE_DRIVES_VERBS` (`set`/`clear`/`reset`/`toggle`/`negate`/`release`/`enable`/`disable`/`mask`/
+  `gate`/`pull`/`load`/`store`/`write`/`send`/`transmit`/`forward`/`respond`/`request`/`acknowledge`/
+  `grant`/`control`/`determine`/…) and `ACTIVE_READS_VERBS` (`poll`/`poll`). Rescued verbs the report
+  had wrongly rejected (`provide`/`apply`/`control`/`determine` — they ARE actor→signal edges).
+  +1 test (`corpus_mined_actor_verbs_extract_relations`: clears→Drives, polls→Reads). CI green 1258.
+  Remaining: value-pinning verbs → signal-constraint side; centralize the vocabulary.
 
 ## Current Frontier
 

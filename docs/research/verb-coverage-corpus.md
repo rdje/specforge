@@ -18,74 +18,57 @@
   variants collapsed, classified, diffed against the engine. Verbs are grammar, never names (ADR
   0006).
 
-## Two verb sets — signals AND actors
+## The verbs are actor → signal relationships (KG edges)
 
-SpecForge extracts behavior for **both** signals/pins/ports **and** actors, so the vocabulary has
-two halves: verbs for what a *signal* does (below) and verbs for what an *actor* does (the next
-section). Both are in scope.
+A signal never behaves on its own — **something is always *done to* it, and the doer is an actor.**
+So every behavioral verb is really an edge `actor —verb→ signal`, which is exactly what the
+**Knowledge Graph** represents (that is *why* the KG exists). The signal-vs-actor split is not the
+useful axis; the useful one is the **relation kind** — does the actor *source/change* the signal
+(**Drives**) or *observe* it (**Reads**)? The verb is the edge label, so richer verb coverage = a
+more complete KG. These go into the engine's relation extraction (`ACTIVE_DRIVES_VERBS` /
+`ACTIVE_READS_VERBS`), not a separate signal table.
 
-## KEEP — signal-level behaviors (not yet in the engine)
+## KEEP — Drives edges (actor sources / changes / controls a signal)
 
-The engine today recognizes: `asserted/deasserted`, `high/low`, `stable`, `change`, `hold`,
-`driven`, `tied`, `indicate`, `valid`. The corpus leans heavily on these too (good) — and on **these
-behaviors it does *not* yet cover** (number = how many of 82 specs use it):
+`set` · `clear` · `reset` · `toggle` · `negate` · `release` · `enable` · `disable` · `mask` ·
+`gate` · `pull` · `load` · `store` · `write` · `send` · `transmit` · `forward` · `respond` ·
+`request` · `acknowledge` · `grant` · `issue` · `initiate` · `control` · `determine` · `activate` ·
+`switch` · `generate` · `invalidate` · `increment`/`decrement` · `transition`
+*(already engine drive-verbs: `drive`, `assert`, `provide`, `apply`, `set`/`sets`, `source`,
+`output`, `supply`, `produce`, `present`, `place`, `return`)*
 
-| verb (family) | specs | what it constrains |
-| --- | --- | --- |
-| `set` / `clear` | 58 / 33 | a signal/bit set to 1 / cleared to 0 |
-| `reset` | 37 | a signal returns to its reset value |
-| `sample` / `sampled` | 28 | a signal is sampled on an edge (timing) |
-| `release` / `released` | 23 | a held/driven signal is released |
-| `mask` / `masked` | 13 | a signal/interrupt is masked |
-| `gate` / `gated` | 12 | a signal is gated (e.g. clock gating) |
-| `enable` / `disable` | 11 / 9 | a signal/feature enabled or disabled |
-| `toggle` / `toggled` | 9 | a signal toggles |
-| `latch` / `latched` | — | a value is latched |
-| `pull` (high/low) | 5 | a line is pulled high/low |
-| `capture` / `load` / `store` | 5 / 3 / 1 | a value captured/loaded/stored |
-| `invalidate` / `increment` / `decrement` | 5 / 4 / — | value/entry ops |
-| `activate` / `switch` (on/off) | 4 / 4 | a signal activated / switched |
-| `negate` | — | a signal negated (= deasserted) |
+## KEEP — Reads edges (actor observes / samples a signal)
 
-These are the clear wins — behavioral, recurrent, and structurally invisible to a `must`/`shall`
-regex because specs state them in the active voice (*"the master **drives**…"*, *"the value is
-**sampled**…"*).
+`sample` · `poll` · `check` · `receive` · `capture` · `detect` · `read` · `access`
+*(already engine read-verbs: `read`, `sample`, `monitor`, `accept`, `receive`, `capture`, `observe`,
+`detect`, `check`, `latch`)*
 
-## KEEP — actor-level behaviors
+> These were structurally invisible to a `must`/`shall` regex — specs state them in the active voice
+> (*"the master **drives** …"*, *"the completer **samples** …"*). `start`/`stop` are kept as
+> transaction-boundary actor verbs (a coarser edge than Drives/Reads).
 
-SpecForge models **actors** (Requester/Completer/Manager/Subordinate…), not just signals — so verbs
-for what an *actor does* are equally in scope. **(Owner correction, 2026-06-05 — the first pass was
-too signal-centric and wrongly rejected these.)** Rescued + kept:
+## REJECT — verbs that do NOT establish an actor → signal edge
 
-| verb | specs | role |
-| --- | --- | --- |
-| `send` / `receive` / `transmit` / `forward` | 31 / 6 / 6 / 4 | an actor sends/receives/forwards a transfer |
-| `respond` | 6 | an actor responds (e.g. with a completion) |
-| `check` | 6 | an actor checks/observes a signal |
-| `start` / `stop` | 9 / 5 | an actor starts/stops a transaction |
-| `poll` | 6 | an actor polls a signal |
-| `request` / `acknowledge` / `grant` / `issue` / `initiate` | — | handshake / transaction actor verbs |
+These describe the *spec or device*, not an actor acting on a signal — **skim for a mistake**:
+`use`/`used`, `support`, `describe`, `conform`, `define`, `ensure`, `contain`, `include`, `perform`,
+`take`, `execute`, `consider`, `follow`, `cause`, `allow`, `require`, `mean`, `count` (counter-only),
+and the modals/copulas `is`/`be`/`can`/`must`/`do`.
 
-Also kept (mixed signal/actor, from the earlier borderline): `transition`, `generate`, `detect`,
-`program`/`configure`, `read`/`write`/`access`.
-
-## REJECT — not behavioral (device requirements, generic, copulas)
-
-Dropped as device/system requirements, observations, or non-verbs — **skim for a mistake**:
-`use`/`used`, `support`, `describe`, `conform`, `define`, `provide`, `ensure`, `determine`,
-`contain`, `include`, `report`, `return`, `perform`, `take`, `control`, `execute`, `connect`,
-`treat`, `consider`, `follow`, `apply`, `cause`, `allow`, `require`, `mean`, `ignore` (a *don't-care*,
-not a constraint), `count` (too generic), and the modals/copulas `is`/`be`/`can`/`must`/`do`.
+**Rescued from an earlier wrong reject (they ARE actor→signal edges, → Drives):** `provide`,
+`apply`, `control`, `determine`, `report`. **Borderline, left out for now:** `ignore` (a *don't-care*
+edge), `connect` (a structural/connectivity relation, not Drives/Reads).
 
 ## Next (`.2`, after your nod)
 
-Map each accepted verb to its target — **two destinations, matching the two sets**:
-- **signal-level verbs** → signal constraint kinds (e.g. `set`→drive-to-1, `clear`→drive-to-0,
-  `sample`→a sampling-timing fact, `gate`/`mask`/`enable`/`disable`→assertion-style,
-  `hold`/`maintain`→stable);
-- **actor-level verbs** → the actor–signal relation / contract layer (e.g. `send`/`drive`→*drives*,
-  `receive`/`sample`→*observes/reads*, `respond`→*responds*, `start`/`stop`→transaction bounds).
+The extraction path is one model: **recognize actors + signals + normative verbs, and capture the
+`(actor —verb→ signal)` relations between them** — which *is* the Knowledge Graph. So integration is:
 
-Then **centralize** the now-much-larger normative vocabulary in one maintainable place and re-verify
-with the extraction suite. Grammar only; no names. (We don't need 100% precision here — enough
-coverage of real chip-spec verbs is the bar.)
+- **Add each verb to the relation extraction** (`ACTIVE_DRIVES_VERBS` / `ACTIVE_READS_VERBS`) — the
+  KG edge labels. **Done for the clear ones in this slice** (`set`/`clear`/`reset`/`toggle`/`send`/
+  `transmit`/`forward`/`respond`/`request`/`acknowledge`/`grant`/`control`/`determine`/`mask`/`gate`/
+  `pull`/`enable`/`disable`/`release`/`load`/`store`/`write`/… → Drives; `poll`/… → Reads).
+- Where a verb also pins a **value** (`set`→1, `clear`→0), feed the signal-constraint side too.
+- **Centralize** the now-much-larger normative-verb vocabulary in one maintainable place; re-verify
+  with the extraction suite.
+
+Grammar only; no names (ADR 0006). Enough coverage is the bar, not 100% precision — fine-tune later.
