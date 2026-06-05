@@ -197,6 +197,25 @@ pub fn run(args: EvalExtractionArgs) -> Result<()> {
             nm.wrong_direction, nm.wrong_actor
         );
     }
+
+    // Document-level fact recall (attribution-agnostic) — a gold fact found on ANY statement
+    // counts, revealing recall the per-statement closed-world scorer hides when the extractor
+    // attributes a fact to a different sentence than the gold.
+    let recall = eval::score_fact_recall(&items, &predicted);
+    if !recall.is_empty() {
+        println!("  -- document-level fact recall (attribution-agnostic) --");
+        for (task, (found, total)) in &recall {
+            let r = if *total > 0 {
+                *found as f64 / *total as f64
+            } else {
+                0.0
+            };
+            println!(
+                "    {:<22} recall={r:.3}  ({found}/{total} gold facts found anywhere)",
+                task.as_str()
+            );
+        }
+    }
     Ok(())
 }
 

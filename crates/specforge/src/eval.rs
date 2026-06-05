@@ -501,6 +501,40 @@ pub fn score_dataset(
     out
 }
 
+/// Document-level fact **recall** per task: a gold fact counts as found if it is predicted on
+/// ANY statement (attribution-agnostic). This reveals true recall when the per-statement
+/// closed-world scorer under-counts a fact the extractor attributes to a *different* sentence
+/// than the gold did — observed on the real APB relations: every gold edge is present in the
+/// EvidenceIR, none on the gold's own statement, so [`score_dataset`] reports R=0 while the
+/// extractor in fact found them all. Returns `(found, total_gold)`. Precision is omitted on
+/// purpose — the gold is a small labeled subset, so document-level precision is not meaningful.
+pub fn score_fact_recall(
+    items: &[EvalItem],
+    predicted: &PredictedKeys,
+) -> BTreeMap<EvalTask, (usize, usize)> {
+    // Union all predicted fact keys per task, across statements.
+    let mut pred_by_task: BTreeMap<EvalTask, BTreeSet<String>> = BTreeMap::new();
+    for ((task, _statement_id), keys) in predicted.iter() {
+        pred_by_task
+            .entry(*task)
+            .or_default()
+            .extend(keys.iter().cloned());
+    }
+    let empty = BTreeSet::new();
+    let mut out: BTreeMap<EvalTask, (usize, usize)> = BTreeMap::new();
+    for item in items {
+        let entry = out.entry(item.task).or_insert((0, 0));
+        let pred = pred_by_task.get(&item.task).unwrap_or(&empty);
+        for gold in &item.gold {
+            entry.1 += 1;
+            if pred.contains(&gold.canonical_key()) {
+                entry.0 += 1;
+            }
+        }
+    }
+    out
+}
+
 /// Per-relation-kind P/R/F1 for the `ActorSignalRelation` task — splits the keys by the
 /// relation kind (the middle field of `ACTOR|kind|SIGNAL`), so **Drives** and **Reads** are
 /// scored separately (other tasks are ignored). Keyed by `"drives"` / `"reads"`.
@@ -934,6 +968,46 @@ mod tests {
             "Manager drives HREADY is a flipped-direction near-miss of Manager reads HREADY"
         );
         assert_eq!(nm.wrong_actor, 0);
+    }
+
+    #[test]
+    fn document_level_recall_finds_facts_attributed_to_another_statement() {
+        // gold relation on s1; the extractor produced it on s2 (a different statement). The
+        // per-statement closed-world scorer misses it; document-level recall finds it — the
+        // real APB pattern (every gold edge present, none on the gold's own statement).
+        let items = vec![EvalItem {
+            task: EvalTask::ActorSignalRelation,
+            doc_key: "doc".to_string(),
+            statement_id: "s1".to_string(),
+            input_text: String::new(),
+            grounding: vec![],
+            gold: vec![GoldFact::Relation {
+                actor: "Manager".to_string(),
+                relation: "drives".to_string(),
+                signal: "HTRANS".to_string(),
+            }],
+            label_status: "agent_drafted".to_string(),
+            label_note: String::new(),
+        }];
+        let mut predicted: PredictedKeys = PredictedKeys::new();
+        index_relation_predictions(
+            &[relation_record(
+                "p1",
+                "Manager",
+                RelationKind::Drives,
+                "HTRANS",
+                &["s2"],
+            )],
+            &mut predicted,
+        );
+        // per-statement: the cross-attributed fact is a miss.
+        assert_eq!(
+            score_dataset(&items, &predicted)[&EvalTask::ActorSignalRelation].tp,
+            0
+        );
+        // document-level: found (1/1).
+        let recall = score_fact_recall(&items, &predicted);
+        assert_eq!(recall[&EvalTask::ActorSignalRelation], (1, 1));
     }
 
     #[test]
