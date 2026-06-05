@@ -501,6 +501,100 @@ pub fn score_dataset(
     out
 }
 
+/// Per-relation-kind P/R/F1 for the `ActorSignalRelation` task — splits the keys by the
+/// relation kind (the middle field of `ACTOR|kind|SIGNAL`), so **Drives** and **Reads** are
+/// scored separately (other tasks are ignored). Keyed by `"drives"` / `"reads"`.
+pub fn score_relations_by_kind(
+    items: &[EvalItem],
+    predicted: &PredictedKeys,
+) -> BTreeMap<String, Scorecard> {
+    let empty: BTreeSet<String> = BTreeSet::new();
+    let mut out: BTreeMap<String, Scorecard> = BTreeMap::new();
+    let kind_of = |k: &str| k.split('|').nth(1).unwrap_or("").to_string();
+    for item in items {
+        if item.task != EvalTask::ActorSignalRelation {
+            continue;
+        }
+        let gold: BTreeSet<String> = item.gold.iter().map(GoldFact::canonical_key).collect();
+        let pred = predicted
+            .get(&(item.task, item.statement_id.clone()))
+            .unwrap_or(&empty);
+        for g in &gold {
+            let card = out.entry(kind_of(g)).or_default();
+            card.gold_total += 1;
+            if pred.contains(g) {
+                card.tp += 1;
+            } else {
+                card.fn_count += 1;
+            }
+        }
+        for p in pred {
+            if !gold.contains(p) {
+                out.entry(kind_of(p)).or_default().fp += 1;
+            }
+        }
+    }
+    out
+}
+
+/// MUC-style near-misses for the `ActorSignalRelation` task: a missed gold relation that a
+/// prediction *almost* matched — same (actor, signal) but the direction flipped, or same
+/// (direction, signal) but a different actor named. More informative than counting these as
+/// plain FP + FN.
+#[derive(Default, Debug, Clone, PartialEq, Eq)]
+pub struct RelationNearMiss {
+    /// Right actor + signal, wrong direction (Drives vs Reads).
+    pub wrong_direction: usize,
+    /// Right direction + signal, a different actor named.
+    pub wrong_actor: usize,
+}
+
+/// Compute [`RelationNearMiss`] counts over the labeled relation statements.
+pub fn relation_near_misses(items: &[EvalItem], predicted: &PredictedKeys) -> RelationNearMiss {
+    let empty: BTreeSet<String> = BTreeSet::new();
+    let parts = |k: &str| -> (String, String, String) {
+        let mut it = k.split('|');
+        (
+            it.next().unwrap_or("").to_string(),
+            it.next().unwrap_or("").to_string(),
+            it.next().unwrap_or("").to_string(),
+        )
+    };
+    let mut nm = RelationNearMiss::default();
+    for item in items {
+        if item.task != EvalTask::ActorSignalRelation {
+            continue;
+        }
+        let gold: BTreeSet<String> = item.gold.iter().map(GoldFact::canonical_key).collect();
+        let pred = predicted
+            .get(&(item.task, item.statement_id.clone()))
+            .unwrap_or(&empty);
+        for g in &gold {
+            if pred.contains(g) {
+                continue;
+            }
+            let (ga, gr, gs) = parts(g);
+            let spurious: Vec<(String, String, String)> = pred
+                .iter()
+                .filter(|p| !gold.contains(*p))
+                .map(|p| parts(p))
+                .collect();
+            if spurious
+                .iter()
+                .any(|(pa, pr, ps)| *pa == ga && *ps == gs && *pr != gr)
+            {
+                nm.wrong_direction += 1;
+            } else if spurious
+                .iter()
+                .any(|(pa, pr, ps)| *pr == gr && *ps == gs && *pa != ga)
+            {
+                nm.wrong_actor += 1;
+            }
+        }
+    }
+    nm
+}
+
 /// Load a labeled eval dataset from `path`, validated and deterministically ordered.
 ///
 /// `path` may be either a **single `.json` file** containing a JSON array of items
@@ -715,6 +809,55 @@ mod tests {
         assert!((card.precision() - 0.5).abs() < 1e-9);
         assert!((card.recall() - 0.5).abs() < 1e-9);
         assert!((card.f1() - 0.5).abs() < 1e-9);
+    }
+
+    #[test]
+    fn per_kind_scoring_and_near_misses_split_relations() {
+        // gold s1: (Manager, Drives, HTRANS), (Manager, Reads, HREADY).
+        let items = vec![EvalItem {
+            task: EvalTask::ActorSignalRelation,
+            doc_key: "doc".to_string(),
+            statement_id: "s1".to_string(),
+            input_text: String::new(),
+            grounding: vec![],
+            gold: vec![
+                GoldFact::Relation {
+                    actor: "Manager".to_string(),
+                    relation: "drives".to_string(),
+                    signal: "HTRANS".to_string(),
+                },
+                GoldFact::Relation {
+                    actor: "Manager".to_string(),
+                    relation: "reads".to_string(),
+                    signal: "HREADY".to_string(),
+                },
+            ],
+            label_status: "agent_drafted".to_string(),
+            label_note: String::new(),
+        }];
+        // pred s1: exact (Manager drives HTRANS); and (Manager DRIVES HREADY) — a
+        // flipped-direction near-miss of the missed gold (Manager reads HREADY).
+        let mut predicted: PredictedKeys = PredictedKeys::new();
+        index_relation_predictions(
+            &[
+                relation_record("p1", "Manager", RelationKind::Drives, "HTRANS", &["s1"]),
+                relation_record("p2", "Manager", RelationKind::Drives, "HREADY", &["s1"]),
+            ],
+            &mut predicted,
+        );
+
+        let by_kind = score_relations_by_kind(&items, &predicted);
+        assert_eq!(by_kind["drives"].tp, 1, "Manager drives HTRANS matched");
+        assert_eq!(by_kind["drives"].fp, 1, "Manager drives HREADY spurious");
+        assert_eq!(by_kind["reads"].fn_count, 1, "Manager reads HREADY missed");
+        assert_eq!(by_kind["reads"].tp, 0);
+
+        let nm = relation_near_misses(&items, &predicted);
+        assert_eq!(
+            nm.wrong_direction, 1,
+            "Manager drives HREADY is a flipped-direction near-miss of Manager reads HREADY"
+        );
+        assert_eq!(nm.wrong_actor, 0);
     }
 
     #[test]

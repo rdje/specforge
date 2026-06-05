@@ -174,6 +174,29 @@ pub fn run(args: EvalExtractionArgs) -> Result<()> {
 
     let scores = eval::score_dataset(&items, &predicted);
     print!("{}", format_report(&scores, provider, &model));
+
+    // Per-relation-kind breakdown + MUC near-misses (relation task only).
+    let by_kind = eval::score_relations_by_kind(&items, &predicted);
+    if !by_kind.is_empty() {
+        println!("  -- relations by kind --");
+        for (kind, card) in &by_kind {
+            println!(
+                "    {:<8} P={:.3} R={:.3} F1={:.3}  (tp={} fp={} fn={})",
+                kind,
+                card.precision(),
+                card.recall(),
+                card.f1(),
+                card.tp,
+                card.fp,
+                card.fn_count,
+            );
+        }
+        let nm = eval::relation_near_misses(&items, &predicted);
+        println!(
+            "    near-miss  wrong_direction={} wrong_actor={}",
+            nm.wrong_direction, nm.wrong_actor
+        );
+    }
     Ok(())
 }
 
