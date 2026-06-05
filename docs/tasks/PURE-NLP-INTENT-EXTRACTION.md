@@ -51,7 +51,7 @@
   (bounded validation + dedup + never-panics), `nlp_extract_relations` (provider-backed, fail-open,
   hermetically mockable via `SPECFORGE_VLM_HELPER`). Opt-in/additive — the deterministic extractor
   stays the default. +3 tests; CI green 1262→1265.
-- ID: `PURE-NLP-INTENT-EXTRACTION.2` · Status: `pending` · Goal: the next increment, **re-scoped
+- ID: `PURE-NLP-INTENT-EXTRACTION.2` · Status: `done` · Goal: the next increment, **re-scoped
   after investigating the existing pipeline (`2026-06-05`).**
   **Key finding — the proposed increments largely ALREADY EXIST.** `commands/signal_resolve.rs` *is*
   the production bounded-LLM **relation** extractor: it runs over **all** normative sentences
@@ -66,8 +66,15 @@
   sentence recall** — teach `signal-resolve` to extract every relation a sentence states (a sentence
   like "the Manager drives PADDR and reads PREADY" currently yields one), reusing `.1`'s array parse
   + grounding so `.1` becomes used, not redundant. Verify with the eval A/B (recall up, precision
-  held by grounding). (Not started — flagged for owner: a production-command change, best done
-  focused, not at a long session's tail.)
+  held by grounding).
+  **DONE (`2026-06-05`):** implemented in `commands/signal_resolve.rs` — `build_relation_prompt` now
+  requests a JSON **array** (every relation the sentence states); a shared `relation_from_value` gate
+  + `classify_relation_responses` parse all grounded edges (ids `r14:<stmt>:<n>`, intra-response
+  dedup), and the run loop appends each (provenance-tagged `Nlp`, deduped vs existing). Removed the
+  superseded single-object classifier + `RelationOutcome` enum and converted their tests; +2
+  multi-relation tests. **Strictly additive recall** — an array of one is the old behavior, bounded
+  by the same anti-fabrication grounding gate. CI green 1270. (Real-APB check: end-to-end runs and
+  grounds correctly; whether a given spec hits a two-edge sentence is data-dependent.)
 
 ## Activation Checklist (gate — all met)
 
