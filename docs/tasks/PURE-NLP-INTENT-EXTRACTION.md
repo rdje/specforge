@@ -40,7 +40,7 @@
 
 ## Task Tree
 
-- ID: `PURE-NLP-INTENT-EXTRACTION` · Status: `active` · Children: `.1`
+- ID: `PURE-NLP-INTENT-EXTRACTION` · Status: `active` · Children: `.1` `.2`
 - ID: `PURE-NLP-INTENT-EXTRACTION.1` · Status: `done` · Goal: first increment — a **bounded-LLM
   relation extractor** (the cleanest task) establishing the pure-NLP path.
   Done (`2026-06-05`): new module `crates/specforge/src/ir/nlp_relation_extract.rs`. The model
@@ -51,9 +51,23 @@
   (bounded validation + dedup + never-panics), `nlp_extract_relations` (provider-backed, fail-open,
   hermetically mockable via `SPECFORGE_VLM_HELPER`). Opt-in/additive — the deterministic extractor
   stays the default. +3 tests; CI green 1262→1265.
-  Next increments (not yet started): wire as an opt-in mode in `signal-resolve`; an A/B harness vs
-  the pattern extractor on the eval set (using EVAL-RELATION-GRANULARITY's per-kind P/R/F1); a
-  bounded-LLM *constraint* extractor.
+- ID: `PURE-NLP-INTENT-EXTRACTION.2` · Status: `pending` · Goal: the next increment, **re-scoped
+  after investigating the existing pipeline (`2026-06-05`).**
+  **Key finding — the proposed increments largely ALREADY EXIST.** `commands/signal_resolve.rs` *is*
+  the production bounded-LLM **relation** extractor: it runs over **all** normative sentences
+  (`candidate_work`), asks the provider per sentence (`build_relation_prompt`), grounds the signal
+  against the declared set (anti-fabrication gate), tags `ExtractorTier::Nlp`, and dedups — exactly
+  the "model proposes, document decides" doctrine. `eval-extraction` already **A/Bs** it vs the
+  pattern baseline (`--provider skip`), reusing the same scorecards (now per-kind via
+  EVAL-RELATION-GRANULARITY). The bounded-LLM **constraint** path also exists (`nlp_enrich`). So
+  `nlp_relation_extract` (`.1`) substantially **duplicates** `signal-resolve`, with **one genuine
+  difference**: it parses *multiple* relations per sentence, while `signal-resolve` extracts exactly
+  one (`"a single actor→signal relation"`). **The real remaining increment: multi-relation-per-
+  sentence recall** — teach `signal-resolve` to extract every relation a sentence states (a sentence
+  like "the Manager drives PADDR and reads PREADY" currently yields one), reusing `.1`'s array parse
+  + grounding so `.1` becomes used, not redundant. Verify with the eval A/B (recall up, precision
+  held by grounding). (Not started — flagged for owner: a production-command change, best done
+  focused, not at a long session's tail.)
 
 ## Activation Checklist (gate — all met)
 
