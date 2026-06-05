@@ -5737,12 +5737,12 @@ fn collect_subject_signal_tokens(text: &str) -> Vec<String> {
                     // listed here — they are excluded positionally (the value is the
                     // token after the normative verb), so no value vocabulary is
                     // hardcoded (ADR 0006; PDF-AGNOSTIC-EXTRACTION.2).
+                    // Only document-independent tokens are listed here — no
+                    // protocol/vendor names (those were removed in
+                    // PDF-AGNOSTIC-EXTRACTION.3; ADR 0006).
                     // English quantifiers (never signal subjects).
                     "NONE" | "ALL" | "ANY" | "BOTH"
-                        // Protocol family and company names. TODO
-                        // PDF-AGNOSTIC-EXTRACTION.3: derive from the document's own
-                        // declared signals instead of hardcoding these.
-                        | "AMBA" | "AHB" | "AHB5" | "APB" | "AXI" | "CHI" | "ARM" | "AMD"
+                        // Generic technology abbreviations (document-independent).
                         | "RISC" | "IP" | "SoC"
                         // Document structure terms (document-independent).
                         | "NOTE" | "TABLE" | "FIGURE" | "CHAPTER" | "SECTION" | "REF"
@@ -5795,8 +5795,11 @@ fn extract_conditional_rules(
                         .chars()
                         .all(|c| c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_')
                     && !matches!(
+                        // Protocol encoding values (NONSEQ/SEQ/OKAY) removed — ADR 0006;
+                        // a value mis-picked as the consequent signal is filtered
+                        // downstream by `declared_signal_names`.
                         *tok,
-                        "HIGH" | "LOW" | "IDLE" | "BUSY" | "NONSEQ" | "SEQ" | "OKAY" | "ERROR"
+                        "HIGH" | "LOW" | "IDLE" | "BUSY" | "ERROR"
                     )
             })
             .map(|s| s.to_string());

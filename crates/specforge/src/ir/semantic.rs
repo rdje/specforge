@@ -6617,47 +6617,13 @@ fn signal_stop_words() -> BTreeSet<&'static str> {
         "CONNECT",
         "CONNECTION",
         "WAIVER",
-        // --- AMBA/ARM protocol family names (not hardware signal names) ---
-        "AMBA",
-        "AHB",
-        "AHB5",
-        "APB",
-        "APB3",
-        "APB4",
-        "AXI",
-        "AXI4",
-        "AXI5",
-        "ACE",
-        "ACE5",
-        "CHI",
-        "ATB",
-        "DTI",
-        "LTI",
-        "CXS",
-        "GFB",
-        "LPI",
-        "ASB",
-        "ASH",
-        "ACP",
-        // --- Company, organization, and standard body names ---
-        "ARM",
-        "AMD",
-        "INTEL",
-        "NVIDIA",
-        "QUALCOMM",
-        "SAMSUNG",
-        "TSMC",
-        "SIFIVE",
-        "RISC",
-        "MIPS",
-        "SYNOPSYS",
-        "CADENCE",
-        "MENTOR",
-        "SIEMENS",
-        "XILINX",
-        "ALTERA",
-        "LATTICE",
-        "MICROCHIP",
+        // NOTE: protocol family names (AMBA/AHB/AXI/CHI/…) and vendor names
+        // (ARM/AMD/INTEL/…) were REMOVED here — they are chip-spec-specific and
+        // hardcoding them violates ADR 0006 (PDF-AGNOSTIC-EXTRACTION.3). A token
+        // mis-discovered as a signal is filtered downstream against the document's
+        // own declared signals (`declared_signal_names`). Only document-independent
+        // standards/structure/digital tokens remain below.
+        // --- Standards bodies (universal, document-independent) ---
         "IEEE",
         "JEDEC",
         "IETF",
@@ -6692,12 +6658,7 @@ fn signal_stop_words() -> BTreeSet<&'static str> {
         "ABBREVIATION",
         "DEFINITION",
         "DESCRIPTION",
-        // --- Publication ID prefixes common in ARM/AMBA specifications ---
-        "IHI",
-        "DDI",
-        "DEN",
-        "DVI",
-        "AEI",
+        // (ARM/AMBA publication-ID prefixes removed — chip-spec-specific, ADR 0006.)
         // --- Timing diagram cycle/slot labels (T0–T9 are clock cycle markers, not signal names) ---
         "T0",
         "T1",
@@ -6714,16 +6675,7 @@ fn signal_stop_words() -> BTreeSet<&'static str> {
         "MS",
         "LSB",
         "MSB",
-        // --- AMBA AHB HTRANS encoding values (these are register-field values, not signal names) ---
-        "NONSEQ",
-        "NONSEQUENTIAL",
-        // --- AMBA AHB HBURST encoding values (burst type names, not signal names) ---
-        "INCR4",
-        "INCR8",
-        "INCR16",
-        "WRAP4",
-        "WRAP8",
-        "WRAP16",
+        // (AMBA HTRANS/HBURST encoding values removed — chip-spec-specific, ADR 0006.)
         // --- Interface/connection type names that appear as ALL CAPS context words ---
         "OC",
         // --- Memory technology type names (DRAM, SRAM etc. are memory arrays, not port signals) ---
@@ -20383,6 +20335,39 @@ mod tests {
             !super::looks_like_signal_token("Clk"),
             "mixed case should return false"
         );
+    }
+
+    #[test]
+    fn signal_stop_words_holds_no_chip_spec_vocabulary() {
+        // ADR 0006 guard (PDF-AGNOSTIC-EXTRACTION): the signal stop-word list must
+        // contain ZERO chip-spec-specific vocabulary — protocol family names, vendor
+        // names, or protocol encoding values. A token mis-discovered as a signal is
+        // filtered downstream against the document's own declared signals; the list
+        // must never hardcode one spec's words. (Forbidden tokens are concatenated so
+        // this guard can never trip on itself.)
+        let sw = super::signal_stop_words();
+        let forbidden = [
+            format!("AM{}", "BA"),
+            format!("AH{}", "B"),
+            format!("AP{}", "B"),
+            format!("AX{}", "I"),
+            format!("AC{}", "E"),
+            format!("CH{}", "I"),
+            "AR".to_string() + "M",
+            "AM".to_string() + "D",
+            "INT".to_string() + "EL",
+            "NON".to_string() + "SEQ",
+            "IN".to_string() + "CR4",
+            "WR".to_string() + "AP4",
+            "OK".to_string() + "AY",
+            "IH".to_string() + "I",
+        ];
+        for tok in &forbidden {
+            assert!(
+                !sw.iter().any(|w| *w == tok.as_str()),
+                "ADR 0006: '{tok}' is chip-spec-specific and must not be a hardcoded stop-word"
+            );
+        }
     }
 
     #[test]

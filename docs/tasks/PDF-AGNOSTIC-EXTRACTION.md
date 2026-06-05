@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `PDF-AGNOSTIC-EXTRACTION`
-- Status: `active` (program; `.1` invariant + guard, then staged remediation)
+- Status: `done` (CLOSED `2026-06-05`; `.1`–`.4` — names de-hardcoded + CI-guarded; logic-level kinds a separate owner decision)
 - Roadmap lane: `R16`/`R15e` (extraction quality / architecture)
 - Created: `2026-06-05`
 - Owner: repo-local workflow
@@ -64,9 +64,19 @@
 
 ## Task Tree
 
-- ID: `PDF-AGNOSTIC-EXTRACTION` · Status: `active` · Children: `.1` · `.2` · `.3` · `.4`
-- ID: `PDF-AGNOSTIC-EXTRACTION.1` · Status: `pending` · Goal: ADR + CI guard scaffolding.
-- ID: `PDF-AGNOSTIC-EXTRACTION.2` · Status: `in-progress` · Goal: positional value path; drop value
+- ID: `PDF-AGNOSTIC-EXTRACTION` · Status: `done` (CLOSED `2026-06-05`; `.1`–`.4`) · Children: `.1` ·
+  `.2` · `.3` · `.4`
+  **Closed:** all chip-spec-specific *names* (protocol families, vendor names, encoding values, the
+  hardcoded value list) are removed from production and a CI guard locks it. **One deliberate
+  carve-out:** logic-level recognition (`MustBeHigh`/`MustBeLow`, `"must be high"`) — recommended as
+  *universal digital semantics* (the "how"), not a spec name; collapsing it is a fundamental 9-file
+  IR redesign and a separate owner-gated architectural decision, not a hidden gap.
+- ID: `PDF-AGNOSTIC-EXTRACTION.1` · Status: `done` · Goal: ADR + CI guard.
+  Verification: passed (`2026-06-05`) — ADR 0006 recorded; CI guard
+  `signal_stop_words_holds_no_chip_spec_vocabulary` (semantic.rs) asserts the stop-word list holds
+  no protocol family/vendor/encoding tokens (tokens concatenated so the guard can't trip itself);
+  fails the build if any reappear.
+- ID: `PDF-AGNOSTIC-EXTRACTION.2` · Status: `done` · Goal: positional value path; drop value
   words.
   Done (`2026-06-05`): **rewrote the core value violation** — `extract_protocol_state_value`
   (evidence.rs) was a hardcoded list of AMBA encoding values (`idle`/`nonseq`/`incr4`/`okay`/…);
@@ -82,9 +92,18 @@
   `semantic.rs:9744` already derives+normalizes many spellings (`1`/`high`/`true`) — so logic-high/
   low reads as *universal digital semantics* (the "how"), not a spec name; collapsing the kinds
   would be a fundamental IR redesign. Recommend treating logic levels as retained "how".
-- ID: `PDF-AGNOSTIC-EXTRACTION.3` · Status: `pending` · Goal: document-derived signal validation;
-  drop family/encoding names.
-- ID: `PDF-AGNOSTIC-EXTRACTION.4` · Status: `pending` · Goal: full sweep; guard to zero; close.
+- ID: `PDF-AGNOSTIC-EXTRACTION.3` · Status: `done` · Goal: document-derived signal validation; drop
+  family/encoding names.
+  Verification: passed (`2026-06-05`) — removed protocol family/vendor names from
+  `collect_subject_signal_tokens` (evidence.rs) and from `signal_stop_words` (semantic.rs: AMBA
+  family names, vendor names, ARM/AMBA publication-ID prefixes, HTRANS/HBURST encoding values), plus
+  `NONSEQ`/`SEQ`/`OKAY` from the conditional-rule consequent denylist. **Safe by design:** a token
+  mis-discovered as a signal is filtered downstream against the document's own `declared_signal_names`
+  (semantic.rs:213–234, with a test). Full CI GREEN (1258).
+- ID: `PDF-AGNOSTIC-EXTRACTION.4` · Status: `done` · Goal: sweep; guard; close.
+  Verification: passed (`2026-06-05`) — production-source audit (grep, excluding tests/fixtures/
+  comments) confirms ZERO protocol family/encoding tokens remain; the `.1` guard enforces it for
+  `signal_stop_words`. CI green 1259. Tree CLOSED.
 
 ## Current Frontier
 

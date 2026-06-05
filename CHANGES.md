@@ -2,6 +2,23 @@
 
 ## 2026-06-05
 
+### PDF-independence: protocol/encoding names removed from extraction + CI guard; program CLOSED (PDF-AGNOSTIC-EXTRACTION.3–.4)
+- Finished the owner signoff criterion (ADR 0006 — zero hardcoded chip-spec vocabulary). `.3`:
+  removed protocol **family/vendor names** (`AMBA`/`AHB`/`AXI`/`CHI`/`ARM`/`AMD`/…), ARM/AMBA
+  **publication-ID prefixes** (`IHI`/`DDI`/…), and **HTRANS/HBURST encoding values**
+  (`NONSEQ`/`INCR4`/`WRAP8`/…) from `signal_stop_words` (semantic.rs), plus the family names from
+  `collect_subject_signal_tokens` and `NONSEQ`/`SEQ`/`OKAY` from the conditional-rule consequent
+  denylist (evidence.rs). **Safe by design:** a token mis-discovered as a signal is filtered
+  downstream against the document's own declared signals (`declared_signal_names`, semantic.rs:213–
+  234, with a test) — so for any spec with a signal table the precision is unchanged, and no spec's
+  vocabulary is baked in. `.1`/`.4`: a **CI guard** (`signal_stop_words_holds_no_chip_spec_vocabulary`)
+  asserts the stop-word list holds none of those tokens (forbidden tokens concatenated so the guard
+  can't match itself — it fails the build if any reappear), and a production-source audit confirms
+  zero protocol tokens remain. **One deliberate owner-gated carve-out:** logic-level recognition
+  (`MustBeHigh`/`MustBeLow`, `"must be high"`) is recommended as *universal digital semantics* (the
+  "how"), not a spec name; collapsing it is a fundamental 9-file IR redesign. Full `scripts/run_ci.sh`
+  GREEN (1258 → 1259). **Program CLOSED.**
+
 ### Corpus-mined verb coverage as actor→signal KG edges; centralized vocabulary (VERB-COVERAGE-CORPUS.1–.2)
 - The pattern extractor recognizes constraints/relations by matching verbs, so the verb list **is**
   the engine — an unrecognized verb is a dropped Knowledge-Graph edge. `.1`: **seedlessly mined the
