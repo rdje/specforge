@@ -111,9 +111,157 @@ pub fn verify_entailment(
     }
 }
 
+/// Render a `SignalConstraintRecord` as a natural-language claim (the NLI
+/// hypothesis) — e.g. `PADDR must be stable`, `PSTRB must be LOW`,
+/// `HTRANS must be IDLE`. The constraint's own `source_text` is the premise.
+pub fn constraint_claim_text(c: &crate::ir::source::SignalConstraintRecord) -> String {
+    use crate::ir::source::SignalConstraintKind as K;
+    // `MustNotChange` is inherently negative; the rest take the `negated` flag.
+    if matches!(c.constraint_kind, K::MustNotChange) {
+        return format!("{} must not change", c.subject_signal);
+    }
+    let verb = if c.negated { "must not" } else { "must" };
+    let what = match &c.constraint_kind {
+        K::MustBeHigh => "be HIGH".to_string(),
+        K::MustBeLow => "be LOW".to_string(),
+        K::MustBeAsserted => "be asserted".to_string(),
+        K::MustBeDeasserted => "be deasserted".to_string(),
+        K::MustBeStable => "be stable".to_string(),
+        K::MustHoldData => "hold its data".to_string(),
+        K::MustBeValue { value } => format!("be {value}"),
+        K::MustNotChange => unreachable!("handled above"),
+    };
+    format!("{} {verb} {what}", c.subject_signal)
+}
+
+/// A constraint the NLI verifier judged NOT entailed by its own source sentence
+/// — a likely hallucination / residual candidate.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct NliClaimFinding {
+    pub constraint_id: String,
+    pub subject_signal: String,
+    pub claim_text: String,
+    pub source_text: String,
+}
+
+/// Run the (injected) entailment verifier over each constraint — premise =
+/// `constraint.source_text`, hypothesis = `constraint_claim_text` — and collect
+/// the ones judged `NotEntailed` (likely hallucinations → residual candidates).
+/// `Entailed` is kept; `Unknown` **abstains** (a provider outage yields no
+/// findings, never a false flag). The verifier is a parameter, so this is fully
+/// testable with no provider or network — production passes a closure over
+/// [`verify_entailment`].
+pub fn nli_claim_findings(
+    constraints: &[crate::ir::source::SignalConstraintRecord],
+    verify: impl Fn(&str, &str) -> NliVerdict,
+) -> Vec<NliClaimFinding> {
+    constraints
+        .iter()
+        .filter_map(|c| {
+            let claim_text = constraint_claim_text(c);
+            match verify(&c.source_text, &claim_text) {
+                NliVerdict::NotEntailed => Some(NliClaimFinding {
+                    constraint_id: c.constraint_id.clone(),
+                    subject_signal: c.subject_signal.clone(),
+                    claim_text,
+                    source_text: c.source_text.clone(),
+                }),
+                NliVerdict::Entailed | NliVerdict::Unknown => None,
+            }
+        })
+        .collect()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+    fn cons(
+        id: &str,
+        subj: &str,
+        kind: SignalConstraintKind,
+        source: &str,
+    ) -> SignalConstraintRecord {
+        SignalConstraintRecord {
+            constraint_id: id.into(),
+            subject_signal: subj.into(),
+            constraint_kind: kind,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: source.into(),
+            supporting_statement_ids: vec![],
+            automation_confidence: crate::ir::source::AutomationConfidence::Medium,
+        }
+    }
+
+    #[test]
+    fn constraint_claim_text_renders_each_kind() {
+        use SignalConstraintKind as K;
+        assert_eq!(
+            constraint_claim_text(&cons("c", "PADDR", K::MustBeStable, "x")),
+            "PADDR must be stable"
+        );
+        assert_eq!(
+            constraint_claim_text(&cons("c", "PSTRB", K::MustBeLow, "x")),
+            "PSTRB must be LOW"
+        );
+        assert_eq!(
+            constraint_claim_text(&cons(
+                "c",
+                "HTRANS",
+                K::MustBeValue {
+                    value: "IDLE".into()
+                },
+                "x"
+            )),
+            "HTRANS must be IDLE"
+        );
+        assert_eq!(
+            constraint_claim_text(&cons("c", "HAUSER", K::MustNotChange, "x")),
+            "HAUSER must not change"
+        );
+    }
+
+    #[test]
+    fn nli_claim_findings_collects_only_not_entailed() {
+        use SignalConstraintKind as K;
+        let cs = vec![
+            cons(
+                "c1",
+                "PADDR",
+                K::MustBeStable,
+                "PADDR must be stable until the transfer completes.",
+            ),
+            cons(
+                "c2",
+                "PSEL",
+                K::MustBeAsserted,
+                "PBUSER must be valid when PSEL is asserted.",
+            ),
+        ];
+        // Mock verifier: the PSEL claim (a condition mistaken for an obligation)
+        // is NOT entailed; the PADDR one is.
+        let findings = nli_claim_findings(&cs, |_src, claim| {
+            if claim.contains("PSEL") {
+                NliVerdict::NotEntailed
+            } else {
+                NliVerdict::Entailed
+            }
+        });
+        assert_eq!(findings.len(), 1);
+        assert_eq!(findings[0].subject_signal, "PSEL");
+        assert_eq!(findings[0].claim_text, "PSEL must be asserted");
+    }
+
+    #[test]
+    fn nli_claim_findings_abstains_on_unknown() {
+        use SignalConstraintKind as K;
+        let cs = vec![cons("c1", "PADDR", K::MustBeStable, "x")];
+        // Unknown (provider down) → no findings; never a false flag.
+        assert!(nli_claim_findings(&cs, |_, _| NliVerdict::Unknown).is_empty());
+    }
 
     #[test]
     fn prompt_states_premise_hypothesis_and_the_one_word_format() {

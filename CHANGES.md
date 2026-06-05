@@ -2,6 +2,23 @@
 
 ## 2026-06-05
 
+### NLI entailment verifier — live `nli-verify` command + claim-set gate; tree CLOSED (NLI-ENTAILMENT-VERIFIER.3)
+- `NLI-ENTAILMENT-VERIFIER.3` (CLOSING leaf): the gate applied to a real claim set + a live
+  command. Added to `ir/nli_verify.rs`: `constraint_claim_text` (a `SignalConstraintRecord` → its
+  NLI hypothesis — "PADDR must be stable", "HTRANS must be IDLE", "X must not change") +
+  `NliClaimFinding` + `nli_claim_findings(constraints, verify: impl Fn(&str,&str)->NliVerdict)`
+  (premise = `constraint.source_text`; collects `NotEntailed`, keeps `Entailed`, abstains on
+  `Unknown`). **The verifier is injected as a closure**, so the gate is fully tested with **no
+  provider/network** (3 new tests: claim-text per kind; only-NotEntailed-collected;
+  abstain-on-Unknown). New **`specforge nli-verify <evidence_ir.json>`** command
+  (`commands/nli_verify.rs` + `Commands::NliVerify` + dispatch): loads an EvidenceIR, runs
+  `nli_claim_findings` over its `signal_constraints` with the real `verify_entailment`, and prints
+  the not-entailed claims (likely hallucinations); `--vlm-provider skip` no-ops, `--model`
+  overrides (default `qwen2.5:14b-instruct`). Book subsection refreshed with the command (per the
+  mdBook-sync rule); KM card updated. Full `scripts/run_ci.sh` GREEN (1247 → 1250; +3). Scoped to a
+  standalone command (additive) rather than churning `ValidateArgs`/`converge`; auto-routing
+  NotEntailed → residual inside `converge` is the documented follow-up. **Tree CLOSED.**
+
 ### NLI entailment verifier — the semantic grounding module (NLI-ENTAILMENT-VERIFIER.1–.2)
 - `NLI-ENTAILMENT-VERIFIER` (`.1` design + `.2` module): a *semantic* grounding gate (premise =
   source statement, hypothesis = extracted claim → keep only `ENTAILED`) that catches what

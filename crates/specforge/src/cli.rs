@@ -57,6 +57,8 @@ pub enum Commands {
     SignalResolve(SignalResolveArgs),
     /// Score the LLM extraction passes against a labeled dataset (precision/recall/F1)
     EvalExtraction(EvalExtractionArgs),
+    /// Verify an EvidenceIR's constraint claims by NLI entailment against their source sentences (text LLM)
+    NliVerify(NliVerifyArgs),
 }
 
 #[derive(Debug, Args)]
@@ -247,6 +249,19 @@ pub struct SignalResolveArgs {
 pub struct ValidateArgs {
     /// Path to any IR artifact (source_ir.json, evidence_ir.json, semantic_ir.json, intent_ir.json)
     pub artifact: std::path::PathBuf,
+}
+
+#[derive(Debug, Args)]
+pub struct NliVerifyArgs {
+    /// Path to an EvidenceIR JSON artifact whose constraint claims to verify
+    pub artifact: std::path::PathBuf,
+    /// Local text-LLM provider for the entailment check.
+    /// Defaults to `ollama`; pass `--vlm-provider skip` to no-op.
+    #[arg(long, value_enum, default_value = "ollama")]
+    pub vlm_provider: VlmProviderArg,
+    /// Text model override (default: `qwen2.5:14b-instruct`)
+    #[arg(long)]
+    pub model: Option<String>,
 }
 
 #[derive(Debug, Args)]

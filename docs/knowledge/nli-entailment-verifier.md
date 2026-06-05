@@ -29,6 +29,10 @@ reasoning, and the entailment framing beats free-form labeling — see
 helper).
 
 It catches the **condition-vs-obligation** hallucination a string-match gate misses (e.g. "PBUSER
-valid *when* PSEL asserted" ⇏ "PSEL must be asserted"). `NLI-ENTAILMENT-VERIFIER.2` is the module
-(no behavior change yet); the live pipeline wiring (run on extracted claims, route NotEntailed to a
-residual, surface a metric) is `.3`. See `docs/tasks/NLI-ENTAILMENT-VERIFIER.md`.
+valid *when* PSEL asserted" ⇏ "PSEL must be asserted"). `.2` is the module; `.3` shipped the gate
+applied to a claim set — `constraint_claim_text` (constraint → NLI hypothesis), `nli_claim_findings`
+(premise = `constraint.source_text`, verifier injected → fully testable with no provider), and the
+live **`specforge nli-verify <evidence_ir.json>`** command (reports the constraint claims the source
+does not entail; `--vlm-provider skip` no-ops; `--model` overrides). Auto-routing NotEntailed claims
+to residuals *inside* `converge` is the documented next extension. See
+`docs/tasks/NLI-ENTAILMENT-VERIFIER.md`.

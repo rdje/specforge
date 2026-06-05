@@ -137,7 +137,18 @@ Three things keep it honest and safe:
 
 This is "models propose, validation decides" made literal: the model's own claim is handed
 back to a model — but as a *checkable yes/no entailment question*, with the deterministic
-pipeline still holding the final say. *Authoritative tracking:*
+pipeline still holding the final say.
+
+You can run it directly:
+
+```bash
+specforge nli-verify path/to/evidence_ir.json
+```
+
+It reads an EvidenceIR, asks the text model whether each constraint's source sentence entails
+the constraint-as-a-claim, and lists the ones that are **not entailed** — the likely
+hallucinations worth a second look. Pass `--vlm-provider skip` to no-op (the gate abstains on
+everything) or `--model <name>` to override the default text model. *Authoritative tracking:*
 `docs/tasks/NLI-ENTAILMENT-VERIFIER.md`.
 
 ## Why provenance matters so much

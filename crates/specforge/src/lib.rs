@@ -31,5 +31,6 @@ pub fn run(cli: Cli) -> Result<()> {
         Commands::ExtractContracts(args) => commands::extract_contracts::run(args),
         Commands::SignalResolve(args) => commands::signal_resolve::run(args),
         Commands::EvalExtraction(args) => commands::eval_extraction::run(args),
+        Commands::NliVerify(args) => commands::nli_verify::run(args),
     }
 }

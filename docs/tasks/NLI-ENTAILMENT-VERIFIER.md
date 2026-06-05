@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `NLI-ENTAILMENT-VERIFIER`
-- Status: `active` (`.1` design; `.2` module; `.3` live wiring)
+- Status: `done` (CLOSED `2026-06-05`; `.1`–`.3` — module + claim-set gate + live `nli-verify` command)
 - Roadmap lane: `R16`/`R15e` (neuro-symbolic / bounded-LLM grounding)
 - Created: `2026-06-05`
 - Owner: repo-local workflow
@@ -95,7 +95,21 @@ requires Ollama.**
   subsection in `architecture-rationale.md` ("Checking a claim semantically — the NLI entailment
   gate"); KM card `nli-entailment-verifier`. Full `scripts/run_ci.sh` GREEN (1243→1247; +4). **No
   behavior change yet** (the live wiring is `.3`).
-- ID: `NLI-ENTAILMENT-VERIFIER.3` · Status: `pending` · Goal: live wiring + metric + close.
+- ID: `NLI-ENTAILMENT-VERIFIER.3` · Status: `done` · Goal: live wiring + close.
+  Verification: passed (`2026-06-05`) — the gate applied to a claim set + a live command. Added
+  to `ir/nli_verify.rs`: `constraint_claim_text` (a `SignalConstraintRecord` → its NLI hypothesis,
+  e.g. "PADDR must be stable" / "HTRANS must be IDLE" / "X must not change") + `NliClaimFinding` +
+  `nli_claim_findings(constraints, verify: impl Fn(&str,&str)->NliVerdict)` — premise =
+  `constraint.source_text`; collects `NotEntailed`, `Entailed` keeps, `Unknown` abstains. **The
+  verifier is injected as a closure → 3 new tests run with NO provider/network** (claim-text per
+  kind; only-NotEntailed-collected; abstain-on-Unknown). New **`specforge nli-verify
+  <evidence_ir.json>`** command (`commands/nli_verify.rs` + `Commands::NliVerify` + dispatch):
+  loads EvidenceIR, runs `nli_claim_findings` over `signal_constraints` with the real
+  `verify_entailment`, prints the not-entailed claims; `--vlm-provider skip` no-ops, `--model`
+  overrides. Book subsection refreshed (the `nli-verify` command, per the BOOK-METHOD-DOC rule);
+  KM card updated. Full `scripts/run_ci.sh` GREEN (1247→1250; +3). **Decision:** kept `.3` to a
+  standalone command (additive) rather than churning `ValidateArgs`/`converge`; auto-routing
+  NotEntailed → residual *inside* converge is a documented follow-up.
 
 ## Current Frontier
 
@@ -103,7 +117,13 @@ requires Ollama.**
 | --- | --- | --- | --- |
 | 1 | `NLI-ENTAILMENT-VERIFIER.1` | `done` | design + the validated model + hermetic-test plan |
 | 2 | `NLI-ENTAILMENT-VERIFIER.2` | `done` | `ir/nli_verify.rs` module + 4 tests + book + KM (CI green 1247; no Ollama dep) |
-| 3 | `NLI-ENTAILMENT-VERIFIER.3` | `pending` | live wiring (run on extracted claims → NotEntailed to residual + metric); close |
+| 3 | `NLI-ENTAILMENT-VERIFIER.3` | `done` | claim-set gate (`nli_claim_findings`) + live `nli-verify` command → **tree CLOSED** |
+
+**Tree CLOSED `2026-06-05`.** The NLI entailment grounding gate exists end-to-end: the verifier
+module (`.2`), the claim-set gate (`constraint_claim_text` + `nli_claim_findings`, verifier
+injected → hermetic), and the live `specforge nli-verify` command (`.3`). Text model
+`qwen2.5:14b-instruct`; fail-safe (Unknown→Abstain); no CI test needs Ollama; book + KM in sync.
+Follow-up: auto-route NotEntailed → residual inside `converge`.
 
 ## Decisions
 
@@ -117,6 +137,7 @@ requires Ollama.**
 | --- | --- | --- |
 | `NLI-ENTAILMENT-VERIFIER.1` | `NLI-ENTAILMENT-VERIFIER.1 — own + design the semantic entailment grounding gate` | docs-only |
 | `NLI-ENTAILMENT-VERIFIER.2` | `NLI-ENTAILMENT-VERIFIER.2 — ir/nli_verify.rs module (verdict + prompt + fail-closed parse + provider call) + book + KM` | +4 tests; CI green 1247; no Ollama dep |
+| `NLI-ENTAILMENT-VERIFIER.3` | `NLI-ENTAILMENT-VERIFIER.3 — claim-set gate (constraint_claim_text + nli_claim_findings) + live nli-verify command; book + KM; close tree` | +3 tests; CI green 1250 |
 
 ## Changelog
 
@@ -125,5 +146,9 @@ requires Ollama.**
 - `2026-06-05`: `.2` done — `ir/nli_verify.rs` module (`NliVerdict`/`NliGateAction`/`gate_action`/
   `entailment_prompt`/`parse_nli_verdict`/`verify_entailment`, fail-closed, `Unknown→Abstain`),
   4 pure unit tests (no Ollama dep), book subsection (`architecture-rationale.md`), KM card
-  `nli-entailment-verifier`. CI green 1247. No behavior change yet — `.3` wires it into the
-  extraction path (run on claims, route NotEntailed → residual, surface a metric) and closes.
+  `nli-entailment-verifier`. CI green 1247.
+- `2026-06-05`: **Tree CLOSED.** `.3` shipped the claim-set gate (`constraint_claim_text` +
+  `nli_claim_findings`, verifier injected → 3 hermetic tests) and the live `specforge nli-verify`
+  command (loads EvidenceIR, runs NLI over `signal_constraints`, reports not-entailed claims;
+  `--vlm-provider skip`/`--model`). Book + KM refreshed. CI green 1250. Auto-routing inside
+  `converge` is the noted follow-up.
