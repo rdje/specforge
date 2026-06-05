@@ -36,7 +36,12 @@
   leak. +1 test (real APB construction). CI green 1266. Agnostic (centralized universal "how", no
   chip-spec names).
 - ID: `CONSTRAINT-EXTRACTION-V2.2` · Status: `pending` · Goal: split multi-obligation table cells.
-- ID: `CONSTRAINT-EXTRACTION-V2.3` · Status: `pending` · Goal: `"which means"` condition handling.
+- ID: `CONSTRAINT-EXTRACTION-V2.3` · Status: `done` · Goal: `"which means"` condition handling.
+  Done (`2026-06-05`): `consequent_after_inference_marker` — for `"<antecedent>, which means
+  <obligation>"` (and `which implies`/`meaning that`) the subject is extracted from the **consequent**,
+  so the antecedent's trigger signal is not mis-attributed the obligation. Wired into
+  `extract_signal_constraints`' `subject_part`. +1 test (real APB `"PSEL is asserted, which means
+  PADDR/PWRITE/PWDATA must be valid"` → subject is the consequent signals, not PSEL). CI green 1267.
 
 ## Changelog
 

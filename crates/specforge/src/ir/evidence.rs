@@ -5514,9 +5514,12 @@ fn extract_signal_constraints(
         let lowered = text.to_ascii_lowercase();
 
         // Narrow to the sentence carrying the constraint verb (so unrelated earlier
-        // sentences/clauses don't contribute false subjects), THEN strip the trailing
-        // condition clause ("when X" / "until X" / "if X" / …).
-        let subject_part = text_before_condition_marker(constraint_bearing_sentence(text));
+        // sentences/clauses don't contribute false subjects), drop any leading antecedent
+        // ("<cond>, which means <obligation>"), THEN strip the trailing condition clause
+        // ("when X" / "until X" / "if X" / …).
+        let subject_part = text_before_condition_marker(consequent_after_inference_marker(
+            constraint_bearing_sentence(text),
+        ));
 
         // Collect ALL valid signal tokens from the subject part, creating one record each.
         // Fall back to scanning the full text if no signals found in the subject part.
@@ -5683,6 +5686,27 @@ fn constraint_bearing_sentence(text: &str) -> &str {
         let lowered = sentence.to_ascii_lowercase();
         if lowered.contains("must") || lowered.contains("shall") {
             return sentence;
+        }
+    }
+    text
+}
+
+/// If the sentence states an antecedent and then *infers* an obligation
+/// (`"<antecedent>, which means <obligation>"`), return the consequent — the obligation's
+/// subject lives there, not in the antecedent. Otherwise the text is returned unchanged.
+/// (CONSTRAINT-EXTRACTION-V2.3: real-APB `"PSEL is asserted, which means PADDR, PWRITE, and
+/// PWDATA must be valid"` previously yielded a bogus `"PSEL must be VALID"`.)
+fn consequent_after_inference_marker(text: &str) -> &str {
+    let lowered = text.to_ascii_lowercase();
+    for marker in [
+        " which means that ",
+        " which means ",
+        " which implies that ",
+        " which implies ",
+        ", meaning that ",
+    ] {
+        if let Some(pos) = lowered.find(marker) {
+            return text[pos + marker.len()..].trim_start();
         }
     }
     text
@@ -7459,6 +7483,26 @@ mod tests {
             assert!(
                 !s.contains(&"LOW".to_string()),
                 "LOW is a logic-level value, never a subject; got {s:?}"
+            );
+        }
+
+        #[test]
+        fn inference_antecedent_signal_is_not_the_obligation_subject() {
+            // CONSTRAINT-EXTRACTION-V2.3: "PSEL is asserted, which means PADDR/PWRITE/PWDATA
+            // must be valid" — PSEL is the antecedent (trigger), not the subject; the
+            // obligation is on the consequent signals.
+            let s = constraint_subjects(
+                "The select signal, PSEL, is asserted, which means that PADDR, PWRITE, and PWDATA must be valid",
+            );
+            assert!(
+                !s.contains(&"PSEL".to_string()),
+                "PSEL is the antecedent trigger, not the obligation subject; got {s:?}"
+            );
+            assert!(
+                s.contains(&"PADDR".to_string())
+                    || s.contains(&"PWRITE".to_string())
+                    || s.contains(&"PWDATA".to_string()),
+                "the consequent signals are the subjects; got {s:?}"
             );
         }
 
