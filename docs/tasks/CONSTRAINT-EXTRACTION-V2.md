@@ -3,7 +3,9 @@
 ## Metadata
 
 - Tree ID: `CONSTRAINT-EXTRACTION-V2`
-- Status: `done` (CLOSED `2026-06-05`; `.1`–`.3`)
+- Status: `active` — RE-OPENED `2026-06-05` after real-data re-measurement (see `.4`). `.1`–`.3` are
+  correct, unit-tested fixes that **did** land (clean constraints now appear on the APB spec), but
+  they do not fully clean real data — a deeper multi-pass / multi-source pipeline issue remains.
 - Roadmap lane: `R16`/`R15e` (extraction quality)
 - Created: `2026-06-05`
 - Parent context: `REEXTRACTION-REMEASURE` re-extracted the real APB spec (constraints 42→16) and the
@@ -28,7 +30,20 @@
 
 ## Task Tree
 
-- ID: `CONSTRAINT-EXTRACTION-V2` · Status: `done` (CLOSED `2026-06-05`) · Children: `.1` `.2` `.3`
+- ID: `CONSTRAINT-EXTRACTION-V2` · Status: `active` · Children: `.1` `.2` `.3` `.4`
+- ID: `CONSTRAINT-EXTRACTION-V2.4` · Status: `pending` · Goal: the deeper pipeline issues real-data
+  re-measurement revealed (the honest finding — a re-extract on the APB spec, not just unit tests).
+  **Findings (`2026-06-05`):** rebuilt the APB EvidenceIR with `.1`–`.3` applied → constraints **21**
+  (was 16 before `.1`–`.3`; went UP), with **2 `LOW`-subject**, **2 bullet-bleed conditions**, and
+  **5 duplicate `sigcon_` IDs** still present. Root causes: (a) **multi-pass extraction** —
+  `extract_signal_constraints` runs inside `for _pass in 0..max_passes` with `constraint_counter`
+  reset to 1 each pass → duplicate IDs and accumulated duplicate constraints; (b) a table cell yields
+  **multiple statements**, and a secondary derivation still produces garbled (un-bounded) conditions
+  + a `LOW` subject that `.1`/`.2`'s bounding does not reach (the primary path IS fixed — clean
+  `sigcon_0011/0012/0013` prove it); (c) the **dynamic tier** `extract_dynamic_signal_constraints`
+  computes `condition_text = extract_condition_clause(&statement.text)` un-bounded — needs the same
+  `constraint_bearing_sentence` bounding. **Next:** dedupe constraints across passes/tiers + stable
+  IDs; bound the dynamic tier's condition; trace the secondary table-cell statement derivation.
 - ID: `CONSTRAINT-EXTRACTION-V2.1` · Status: `done` · Goal: logic-level value never a subject.
   Done (`2026-06-05`): `is_logic_level_token` (references the centralized, owner-confirmed
   `normative_vocab::LOGIC_*_VALUES`) added to `collect_subject_signal_tokens`' filter — a logic-level
@@ -51,6 +66,11 @@
 ## Changelog
 
 - `2026-06-05`: Created — fixes the 3 bug classes `REEXTRACTION-REMEASURE` surfaced on real APB data.
-- `2026-06-05`: **CLOSED** — all 3 fixed, agnostic (centralized vocab / positional), +3 tests, CI
-  green 1268. `.1` logic-level word never a subject; `.2` multi-bullet cells bounded per obligation;
-  `.3` `"which means"` antecedent excluded from the subject.
+- `2026-06-05`: `.1`–`.3` landed — agnostic (centralized vocab / positional), +3 tests, CI green
+  1268. `.1` logic-level word never a subject; `.2` multi-bullet cells bounded per obligation; `.3`
+  `"which means"` antecedent excluded from the subject.
+- `2026-06-05`: **RE-OPENED after re-measurement.** Premature "closed" corrected — a re-extract on the
+  real APB spec (not just unit tests) showed the fixes land for the primary path but real data still
+  has 2 `LOW`-subject + 2 bullet-bleed + 5 duplicate-ID constraints. Deeper multi-pass / multi-source
+  pipeline work captured in `.4`. Lesson: re-measure on real data before declaring an extraction tree
+  done.
