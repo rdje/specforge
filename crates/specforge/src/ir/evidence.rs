@@ -4080,14 +4080,56 @@ fn apply_signal_polarity_to_constraints(
     }
 }
 
+/// Recognize a logic-level VALUE BINDING in an active construction the discovered-value /
+/// "must be `<value>`" path misses — e.g. "the Requester must drive PSTRB LOW", "X is tied
+/// HIGH". Returns the kind (`MustBeHigh`/`MustBeLow`) when a logic-level **word** (the
+/// universal "how", LOGIC-LEVEL-BOUNDARY) is the object of a value-binding verb. Gated two
+/// ways against over-generation: (1) a binding verb must be present, and (2) only alphabetic
+/// word forms (`high`/`low`/`hi`/`lo`/`true`/`false`) count — never the numeric `1`/`0`, which
+/// are ambiguous with bit indices. The last such word wins (the object position). `lowered`
+/// is the lowercased subject clause (the condition clause is already stripped by the caller).
+fn logic_level_binding_kind_from_text(lowered: &str) -> Option<SignalConstraintKind> {
+    const BIND_VERBS: &[&str] = &[
+        "drive", "driven", "drives", "set", "sets", "tied", "held", "pulled", "forced",
+    ];
+    // The bound level is the verb's OBJECT — it must sit within a few words *after* the bind
+    // verb, not a distant condition clause ("… driven correctly every cycle in which X is True").
+    const MAX_GAP: usize = 6;
+    let words: Vec<&str> = lowered
+        .split(|c: char| !c.is_ascii_alphanumeric())
+        .filter(|w| !w.is_empty())
+        .collect();
+    // Whole-word bind verb (so "set" does NOT match the substring in "reset").
+    let bind_pos = words.iter().position(|w| BIND_VERBS.contains(w))?;
+    let mut kind = None;
+    for (i, word) in words.iter().enumerate().skip(bind_pos + 1) {
+        if i - bind_pos > MAX_GAP {
+            break;
+        }
+        // Alphabetic word forms only (exclude numeric 1/0 — bit indices).
+        if word.len() < 2 || !word.chars().all(|c| c.is_ascii_alphabetic()) {
+            continue;
+        }
+        // "active low" / "active high" describes polarity, not a must-be constraint.
+        if i >= 1 && words[i - 1] == "active" {
+            continue;
+        }
+        if crate::ir::normative_vocab::LOGIC_HIGH_VALUES.contains(word) {
+            kind = Some(SignalConstraintKind::MustBeHigh);
+        } else if crate::ir::normative_vocab::LOGIC_LOW_VALUES.contains(word) {
+            kind = Some(SignalConstraintKind::MustBeLow);
+        }
+    }
+    kind
+}
+
 fn extract_dynamic_signal_constraints(
     statements: &[ExtractedStatement],
     counter: &mut usize,
     discovered_values: &HashSet<String>,
 ) -> Vec<SignalConstraintRecord> {
-    if discovered_values.is_empty() {
-        return Vec::new();
-    }
+    // NOTE: no early-return on empty `discovered_values` — the logic-level binding path
+    // ("drive <signal> LOW/HIGH") finds constraints even when a doc declares no enum values.
 
     let mut records = Vec::new();
     for statement in statements {
@@ -4096,12 +4138,31 @@ fn extract_dynamic_signal_constraints(
         }
 
         let lowered = statement.text.to_ascii_lowercase();
-        let Some(value) = extract_discovered_state_value_from_text(&lowered, discovered_values)
-        else {
+        let subject_part = text_before_condition_marker(&statement.text);
+
+        // The bound value is either a discovered enum value (`must be <value>` → MustBeValue),
+        // OR — in an active "drive/set/tied <signal> LOW/HIGH" construction the discovered-value
+        // path misses — a logic level (→ MustBeHigh/Low; the universal "how",
+        // LOGIC-LEVEL-BOUNDARY). The logic-level path is gated to binding verbs + the subject
+        // clause so a bare mention of HIGH/LOW does not over-generate
+        // (CONSTRAINT-EXTRACTION-V2 / drive-level recall).
+        let (constraint_kind, target_value) = if let Some(value) =
+            extract_discovered_state_value_from_text(&lowered, discovered_values)
+        {
+            (
+                SignalConstraintKind::MustBeValue {
+                    value: value.clone(),
+                },
+                Some(value),
+            )
+        } else if let Some(kind) =
+            logic_level_binding_kind_from_text(&subject_part.to_ascii_lowercase())
+        {
+            (kind, None)
+        } else {
             continue;
         };
 
-        let subject_part = text_before_condition_marker(&statement.text);
         let mut subject_signals =
             collect_subject_signal_tokens_with_discovered_values(subject_part, discovered_values);
         if subject_signals.is_empty() {
@@ -4132,10 +4193,8 @@ fn extract_dynamic_signal_constraints(
             records.push(SignalConstraintRecord {
                 constraint_id: format!("dyn_sigcon_{counter:04}"),
                 subject_signal,
-                constraint_kind: SignalConstraintKind::MustBeValue {
-                    value: value.clone(),
-                },
-                target_value: Some(value.clone()),
+                constraint_kind: constraint_kind.clone(),
+                target_value: target_value.clone(),
                 condition_text: condition_text.clone(),
                 negated,
                 source_text: statement.text.clone(),
@@ -7546,6 +7605,54 @@ mod tests {
                     );
                 }
             }
+        }
+
+        #[test]
+        fn drive_signal_level_binds_must_be_low_but_gates_false_positives() {
+            // The active "drive <signal> LOW" construction → a value constraint (the dynamic
+            // tier's discovered-value path misses it; logic levels are the universal "how").
+            // Gated: a distant condition level, a `set`-in-`reset` substring, and `active low`
+            // polarity must NOT bind (CONSTRAINT-EXTRACTION-V2 / drive-level recall).
+            use crate::ir::evidence::{
+                EvidenceModality, ExtractedStatement, StatementClass,
+                extract_dynamic_signal_constraints,
+            };
+            use crate::ir::source::SignalConstraintKind;
+            let mk = |id: &str, t: &str| ExtractedStatement {
+                statement_id: id.to_string(),
+                text: t.to_string(),
+                class: StatementClass::NormativeStatement,
+                modality: EvidenceModality::Text,
+                evidence_span_ids: vec![],
+                related_visual_evidence_ids: vec![],
+            };
+            let stmts = vec![
+                mk(
+                    "s1",
+                    "For read transfers, the Requester must drive all bits of PSTRB LOW.",
+                ),
+                mk(
+                    "s2",
+                    "Check signals are synchronous to PCLK and must be driven correctly every cycle in which the Check Enable term is True.",
+                ),
+                mk("s3", "Reset PRESETN is asynchronous active low."),
+            ];
+            let discovered: std::collections::HashSet<String> = std::collections::HashSet::new();
+            let mut counter = 0usize;
+            let recs = extract_dynamic_signal_constraints(&stmts, &mut counter, &discovered);
+            assert!(
+                recs.iter().any(|r| r.subject_signal == "PSTRB"
+                    && matches!(r.constraint_kind, SignalConstraintKind::MustBeLow)),
+                "drive PSTRB LOW -> PSTRB must_be_low; got {recs:?}"
+            );
+            assert!(
+                !recs.iter().any(|r| r.subject_signal == "PCLK"),
+                "PCLK 'True' is a distant condition, not a binding; got {recs:?}"
+            );
+            assert!(
+                !recs.iter().any(|r| r.subject_signal.starts_with("PRESET")),
+                "active-low polarity / 'set'-in-'reset' must not bind; got {recs:?}"
+            );
         }
 
         // ── CONSTRAINT-SUBJECT-PRECISION: the 3 over-extraction classes the
