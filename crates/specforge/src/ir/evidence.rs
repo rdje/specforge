@@ -830,6 +830,20 @@ impl EvidenceIr {
             return Ok(());
         }
 
+        // Idempotency guard: the carry-forward merge exists to PRESERVE LLM enrichments
+        // (`nlp_enrich`/`signal-resolve`, tagged `ExtractorTier::Nlp`) across re-builds. If the
+        // existing artifact carries no such facts, the fresh deterministic build fully
+        // supersedes it — skip the merge so re-running `evidence` after an extractor change does
+        // not ACCUMULATE stale deterministic facts (which bit a V2 re-measurement: 13 → 21 with
+        // duplicate ids). With LLM facts present the merge still runs to keep them.
+        if !existing
+            .fact_provenance
+            .iter()
+            .any(|prov| prov.producer == ExtractorTier::Nlp)
+        {
+            return Ok(());
+        }
+
         self.signal_alias_map.extend(existing.signal_alias_map);
         carry_forward_statement_classes(
             &mut self.extracted_statements,
@@ -10937,6 +10951,56 @@ mod tests {
             "negated must be true when lowered text contains 'cannot'"
         );
 
+        Ok(())
+    }
+
+    #[test]
+    fn carry_forward_skips_a_pure_deterministic_existing_artifact() -> Result<()> {
+        // Idempotency: re-building over an artifact that carries NO LLM-enriched (Nlp-tier)
+        // facts must not carry its (now-stale) deterministic facts forward — the fresh build
+        // supersedes it. (A V2 re-measurement accumulated stale constraints exactly this way:
+        // 13 → 21 with duplicate ids.)
+        use crate::ir::source::{
+            AutomationConfidence, SignalConstraintKind, SignalConstraintRecord,
+        };
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        fs::write(&source, "# Protocol\nSome content.\n")?;
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+
+        // Build once, inject a stale deterministic constraint, persist (no Nlp provenance).
+        let mut first = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        first.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "stale_sigcon".to_string(),
+            subject_signal: "GHOST".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeStable,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "stale".to_string(),
+            supporting_statement_ids: vec![],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        first.write_to_disk()?;
+
+        // Re-build over the existing artifact: the stale constraint must NOT survive.
+        let second = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        assert!(
+            !second
+                .signal_constraints
+                .iter()
+                .any(|c| c.constraint_id == "stale_sigcon"),
+            "a pure-deterministic existing artifact's stale constraint must not be carried forward"
+        );
         Ok(())
     }
 
