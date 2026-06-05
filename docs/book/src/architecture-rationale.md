@@ -80,6 +80,65 @@ The design goal is narrower and more realistic:
 
 That is a much stronger engineering target than trying to solve unrestricted language directly.
 
+## Why `specforge` never memorizes a spec's names
+
+`specforge` has to read *hundreds* of different chip-spec PDFs — AMBA today, NVMe and I²C and some
+vendor's in-house bus tomorrow — and keep working when any one of them is revised next year. (AMBA
+itself renamed "Master/Slave" to "Manager/Subordinate" between revisions; signal names and
+encodings drift all the time.) A tool with one spec's vocabulary baked into its code would be wrong
+for the next spec and brittle for the next revision of even the same one.
+
+So `specforge` follows one rule, and treats it as a hard correctness requirement:
+
+> **Be smart about *how* to extract things from a spec. Remember how to do it right — never
+> remember the particular names.**
+
+The *how* is the intelligence worth keeping: how to read a signal table, how normative English
+works (`must`, `shall`, `when`), how a sentence is shaped. The *names* — signal names like `PSEL`,
+value names like `NONSEQ`, protocol names like `AMBA` — are **read from the document in front of
+it, every time, and never stored in the code.**
+
+### Finding the value by *position*, not by *name*
+
+Consider a value constraint:
+
+```text
+HTRANS   must be   NONSEQ
+└─signal┘ └─verb─┘ └─value┘
+```
+
+Every value constraint has the same shape: a signal, a normative verb (`must be` / `shall be` /
+`must remain`), and then the value — and the value always lands in the *same grammatical slot*,
+right after the verb. So `specforge` does not ask *"is `NONSEQ` a value I know?"* It asks *"what
+word is sitting in the value slot?"* and takes whatever is there.
+
+|  | by **name** (the old, brittle way) | by **position** (how it works now) |
+| --- | --- | --- |
+| what it knows | a fixed list: `idle`, `nonseq`, `incr4`, … | "the value is the word after the normative verb" |
+| the question it asks | "is this word in my list?" | "is this word in the value slot?" |
+| a new spec's value | invisible — not in the list | found — it is whatever sits there |
+
+That is why a value `specforge` has never seen still extracts cleanly: from `"PSEL must be
+FOOBARBAZ"` it reads the value `FOOBARBAZ` without being told what `FOOBARBAZ` means. It learned the
+*grammar* (the how), not the *vocabulary* (the names). The same idea runs throughout extraction —
+validate a candidate signal against the signals *this document declares*, not against a list of one
+protocol's words.
+
+### Where the line sits
+
+The English the specs are *written in* — `must`, `shall`, `when`, `if` — is the language `specforge`
+reads, not a name owned by any spec, so it stays; that is part of the *how*. Anything that genuinely
+*belongs to a particular document* — its signals, its values, its protocol name — is derived from
+that document. Boundary cases (is some token a universal engineering concept, or a particular spec's
+word?) are decided deliberately, and when the convenient choice and the independence-preserving
+choice diverge, `specforge` chooses independence.
+
+This rule is binding, not aspirational: it is recorded as an architecture decision
+(`docs/decisions/0006-no-hardcoded-chip-spec-vocabulary.md`) and treated as a release-signoff
+criterion. A more ambitious future option — letting a language model
+read the spec end-to-end — is captured but deliberately parked until the current approach is proven;
+even then it would generalize the *how* and still never memorize names.
+
 ## Why AI is bounded instead of central
 
 AI is useful in `specforge`, but it should not be the final authority.
