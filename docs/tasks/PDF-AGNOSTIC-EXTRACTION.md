@@ -66,8 +66,22 @@
 
 - ID: `PDF-AGNOSTIC-EXTRACTION` · Status: `active` · Children: `.1` · `.2` · `.3` · `.4`
 - ID: `PDF-AGNOSTIC-EXTRACTION.1` · Status: `pending` · Goal: ADR + CI guard scaffolding.
-- ID: `PDF-AGNOSTIC-EXTRACTION.2` · Status: `pending` · Goal: positional value path; drop value
+- ID: `PDF-AGNOSTIC-EXTRACTION.2` · Status: `in-progress` · Goal: positional value path; drop value
   words.
+  Done (`2026-06-05`): **rewrote the core value violation** — `extract_protocol_state_value`
+  (evidence.rs) was a hardcoded list of AMBA encoding values (`idle`/`nonseq`/`incr4`/`okay`/…);
+  it now extracts the value **positionally** (token after the normative verb `must be`/`shall be`/
+  `must remain`, skipping articles/binding fillers), so a never-seen non-AMBA value is derived too.
+  Added positional **subject exclusion** (the constraint's own value is removed from the subject
+  set) and **dropped all value names** (`HIGH`/`LOW`/`IDLE`/`NONSEQ`/`OKAY`/`INCR`/…) from the
+  `collect_subject_signal_tokens` denylist — kept only quantifiers, family names (→`.3`),
+  doc-structure, roles. 2 new tests + reframed `excludes_logic_level_values` to the new mechanism.
+  Full CI GREEN (1256→1257). **Remaining in `.2`:** the conditional-rule consequent denylist
+  (`evidence.rs:5833`) still lists value names. **Flagged for owner (deeper, NOT done):** the
+  `MustBeHigh`/`MustBeLow` *kinds* are load-bearing logic-level semantics across 9 files, and
+  `semantic.rs:9744` already derives+normalizes many spellings (`1`/`high`/`true`) — so logic-high/
+  low reads as *universal digital semantics* (the "how"), not a spec name; collapsing the kinds
+  would be a fundamental IR redesign. Recommend treating logic levels as retained "how".
 - ID: `PDF-AGNOSTIC-EXTRACTION.3` · Status: `pending` · Goal: document-derived signal validation;
   drop family/encoding names.
 - ID: `PDF-AGNOSTIC-EXTRACTION.4` · Status: `pending` · Goal: full sweep; guard to zero; close.
@@ -96,3 +110,7 @@
 
 - `2026-06-05`: Created — owner signoff criterion; ADR 0006; staged program to derive all domain
   vocabulary from the document and guard against hardcoded spec tokens.
+- `2026-06-05`: `.2` increment — value path de-hardcoded in the core constraint extractor
+  (`extract_protocol_state_value` positional; subject value-exclusion; value names dropped from the
+  `collect_subject_signal_tokens` denylist). +2 tests; CI green 1257. Remaining: `5833` conditional
+  denylist; family-name denylists (`.3`); logic-level-kinds question flagged for owner.

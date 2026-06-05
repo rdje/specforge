@@ -5681,6 +5681,16 @@ fn extract_signal_constraints(
             }
         };
 
+        // The constraint's own value (the token after the normative verb) is not a
+        // subject signal — exclude it positionally so value *names* need never be
+        // denylisted (ADR 0006). "HTRANS must be NONSEQ" → subject HTRANS, not NONSEQ.
+        if let Some(value) = extract_protocol_state_value(&lowered) {
+            subject_signals.retain(|s| !s.eq_ignore_ascii_case(&value));
+        }
+        if subject_signals.is_empty() {
+            continue;
+        }
+
         // Extract condition clause: text after "when", "while", "during", "unless".
         let condition_text = extract_condition_clause(text);
 
@@ -5770,17 +5780,20 @@ fn collect_subject_signal_tokens(text: &str) -> Vec<String> {
                 && !tok.ends_with("_WIDTH")
                 && !matches!(
                     *tok,
-                    // Logic levels and protocol state values are never signal subjects.
-                    "HIGH" | "LOW" | "IDLE" | "BUSY" | "NONSEQ" | "SEQ" | "OKAY" | "ERROR"
-                        | "VALID" | "INVALID" | "NONE" | "ALL" | "ANY" | "BOTH"
-                        | "SINGLE" | "INCR" | "WRAP" | "RETRY" | "SPLIT"
-                        | "BYTE" | "HALF" | "WORD"
-                        // Protocol family and company names
+                    // Constraint VALUE names (HIGH/LOW/IDLE/NONSEQ/…) are no longer
+                    // listed here — they are excluded positionally (the value is the
+                    // token after the normative verb), so no value vocabulary is
+                    // hardcoded (ADR 0006; PDF-AGNOSTIC-EXTRACTION.2).
+                    // English quantifiers (never signal subjects).
+                    "NONE" | "ALL" | "ANY" | "BOTH"
+                        // Protocol family and company names. TODO
+                        // PDF-AGNOSTIC-EXTRACTION.3: derive from the document's own
+                        // declared signals instead of hardcoding these.
                         | "AMBA" | "AHB" | "AHB5" | "APB" | "AXI" | "CHI" | "ARM" | "AMD"
                         | "RISC" | "IP" | "SoC"
-                        // Document structure terms
+                        // Document structure terms (document-independent).
                         | "NOTE" | "TABLE" | "FIGURE" | "CHAPTER" | "SECTION" | "REF"
-                        // Role/component terms that appear uppercase in signal tables
+                        // Interface role/component terms (generic across protocols).
                         | "MANAGER" | "SUBORDINATE" | "DECODER" | "INITIATOR"
                         | "MASTER" | "SLAVE" | "TARGET" | "SOURCE"
                 )
@@ -5868,48 +5881,29 @@ fn extract_condition_clause(text: &str) -> Option<String> {
 }
 
 /// Extract a protocol state value from lowered text (IDLE, NONSEQ, SEQ, OKAY, etc.).
+/// Extract the value a constraint binds a signal to, **positionally** — the word
+/// the document places immediately after the normative "be"/"remain" verb
+/// (`"… must be NONSEQ"` → `"NONSEQ"`). Derived from the document at hand, with no
+/// hardcoded value vocabulary, so it works for any spec's value names (ADR 0006 —
+/// remember the *how*, not the names). Leading articles/binding fillers
+/// (`a`/`the`/`set`/`driven`/`to`/…) are skipped. Returns the value uppercased, or
+/// `None` if there is no binding phrase or no value word follows it.
 fn extract_protocol_state_value(lowered: &str) -> Option<String> {
-    for state in &[
-        // HTRANS encoding values
-        "idle",
-        "busy",
-        "nonseq",
-        "nonsequential",
-        "seq",
-        "sequential",
-        // HRESP values
-        "okay",
-        "error",
-        "retry",
-        "split",
-        // HBURST values
-        "single",
-        "incr",
-        "incr4",
-        "incr8",
-        "incr16",
-        "wrap4",
-        "wrap8",
-        "wrap16",
-        // HSIZE values
-        "byte",
-        "halfword",
-        "word",
-        // Generic
-        "valid",
-        "invalid",
-        "exclusive",
-    ] {
-        if contains_any(
-            lowered,
-            &[
-                &format!("must be {state}"),
-                &format!("shall be {state}"),
-                &format!("must remain {state}"),
-                &format!("shall remain {state}"),
-            ],
-        ) {
-            return Some(state.to_ascii_uppercase());
+    const BINDERS: &[&str] = &["must be ", "shall be ", "must remain ", "shall remain "];
+    // Words that are grammar/binding scaffolding, never the value itself.
+    const FILLERS: &[&str] = &[
+        "a", "an", "the", "set", "driven", "to", "equal", "held", "kept", "in", "at", "its",
+    ];
+    for binder in BINDERS {
+        let Some(pos) = lowered.find(binder) else {
+            continue;
+        };
+        let rest = &lowered[pos + binder.len()..];
+        let value = rest
+            .split(|c: char| !(c.is_ascii_alphanumeric() || c == '_'))
+            .find(|word| !word.is_empty() && !FILLERS.contains(word));
+        if let Some(value) = value {
+            return Some(value.to_ascii_uppercase());
         }
     }
     None
@@ -7292,8 +7286,31 @@ mod tests {
     mod nlp_classification {
         use super::super::{
             StatementClass, classify_statement, collect_subject_signal_tokens,
-            is_signal_value_constraint, text_before_condition_marker,
+            extract_protocol_state_value, is_signal_value_constraint, text_before_condition_marker,
         };
+
+        #[test]
+        fn constraint_value_is_derived_positionally_not_from_a_hardcoded_list() {
+            // ADR 0006: the value is whatever the document places after the normative
+            // verb, never matched against a baked-in vocabulary. A value the code has
+            // never seen (not AMBA, not any known protocol) is still extracted.
+            assert_eq!(
+                extract_protocol_state_value("psel must be foobarbaz"),
+                Some("FOOBARBAZ".to_string())
+            );
+            // Known protocol values still work — now via grammar position, not a list.
+            assert_eq!(
+                extract_protocol_state_value("htrans must be nonseq"),
+                Some("NONSEQ".to_string())
+            );
+            // Binding fillers ("set to") are skipped to reach the real value.
+            assert_eq!(
+                extract_protocol_state_value("x must be set to active"),
+                Some("ACTIVE".to_string())
+            );
+            // No normative binding phrase → no value.
+            assert_eq!(extract_protocol_state_value("the bus is idle"), None);
+        }
 
         // ── Level 1: NormativeStatement new vocabulary ──────────────────────
 
@@ -7435,17 +7452,28 @@ mod tests {
         }
 
         #[test]
-        fn collect_subject_signal_tokens_excludes_logic_level_values() {
-            // HIGH, LOW, IDLE etc. must never be treated as subject signals.
-            let signals = collect_subject_signal_tokens("HTRANS must be IDLE");
-            assert!(signals.contains(&"HTRANS".to_string()));
+        fn constraint_value_names_are_excluded_positionally_not_by_a_denylist() {
+            // A value (IDLE/HIGH/any) must never be a subject signal — but it is now
+            // excluded *positionally* (the token after the normative verb) in
+            // `extract_signal_constraints`, NOT by a hardcoded value denylist, so no
+            // value vocabulary is baked into the code (ADR 0006).
+            let s = constraint_subjects("HTRANS must be IDLE");
             assert!(
-                !signals.contains(&"IDLE".to_string()),
-                "IDLE is a value, not a signal"
+                s.contains(&"HTRANS".to_string()),
+                "HTRANS is the subject; got {s:?}"
             );
             assert!(
-                !signals.contains(&"HIGH".to_string()),
-                "HIGH is a logic level, not a signal"
+                !s.contains(&"IDLE".to_string()),
+                "IDLE is the value, not a subject; got {s:?}"
+            );
+            let s2 = constraint_subjects("PSEL must be HIGH");
+            assert!(
+                s2.contains(&"PSEL".to_string()),
+                "PSEL is the subject; got {s2:?}"
+            );
+            assert!(
+                !s2.contains(&"HIGH".to_string()),
+                "HIGH is the value, not a subject; got {s2:?}"
             );
         }
 
