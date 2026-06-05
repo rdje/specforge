@@ -18,7 +18,13 @@
   variants collapsed, classified, diffed against the engine. Verbs are grammar, never names (ADR
   0006).
 
-## KEEP — behavioral verbs NOT yet in the engine (the shortlist)
+## Two verb sets — signals AND actors
+
+SpecForge extracts behavior for **both** signals/pins/ports **and** actors, so the vocabulary has
+two halves: verbs for what a *signal* does (below) and verbs for what an *actor* does (the next
+section). Both are in scope.
+
+## KEEP — signal-level behaviors (not yet in the engine)
 
 The engine today recognizes: `asserted/deasserted`, `high/low`, `stable`, `change`, `hold`,
 `driven`, `tied`, `indicate`, `valid`. The corpus leans heavily on these too (good) — and on **these
@@ -45,32 +51,41 @@ These are the clear wins — behavioral, recurrent, and structurally invisible t
 regex because specs state them in the active voice (*"the master **drives**…"*, *"the value is
 **sampled**…"*).
 
-## BORDERLINE — my calls (please eyeball)
+## KEEP — actor-level behaviors
 
-| verb | specs | my call | why |
-| --- | --- | --- | --- |
-| `transition` | 13 | **keep** | a signal/state transition is edge behavior |
-| `generate` / `generated` | 10 | **keep** | a signal/pulse is generated |
-| `detect` / `detected` | 8 | **keep** | an edge/condition detected on a signal |
-| `indicate(s)` | 12 | keep (already in engine) | signal semantics |
-| `poll` | 6 | **keep** | a signal is polled |
-| `program` / `configure` | 8 / 4 | **keep** | a register/signal configured to a value |
-| `read` / `write` / `access` | 11 / 9 / 4 | **keep (weak)** | register-level value behavior |
-| `ignore` / `ignored` | 16 | **lean reject** | "input ignored" is a *don't-care*, not a constraint |
-| `send` / `receive` / `transmit` / `forward` | 31 / 6 / 6 / 4 | **reject** | message/data-transfer level, not signal value/timing |
-| `start` / `stop` / `count` | 9 / 5 / 4 | **reject** (too generic) | except in a clock/counter context |
+SpecForge models **actors** (Requester/Completer/Manager/Subordinate…), not just signals — so verbs
+for what an *actor does* are equally in scope. **(Owner correction, 2026-06-05 — the first pass was
+too signal-centric and wrongly rejected these.)** Rescued + kept:
 
-## REJECT — not signal behavior (sanity-check these)
+| verb | specs | role |
+| --- | --- | --- |
+| `send` / `receive` / `transmit` / `forward` | 31 / 6 / 6 / 4 | an actor sends/receives/forwards a transfer |
+| `respond` | 6 | an actor responds (e.g. with a completion) |
+| `check` | 6 | an actor checks/observes a signal |
+| `start` / `stop` | 9 / 5 | an actor starts/stops a transaction |
+| `poll` | 6 | an actor polls a signal |
+| `request` / `acknowledge` / `grant` / `issue` / `initiate` | — | handshake / transaction actor verbs |
 
-Device/system requirements, observations, or non-verbs — **deliberately dropped**:
+Also kept (mixed signal/actor, from the earlier borderline): `transition`, `generate`, `detect`,
+`program`/`configure`, `read`/`write`/`access`.
+
+## REJECT — not behavioral (device requirements, generic, copulas)
+
+Dropped as device/system requirements, observations, or non-verbs — **skim for a mistake**:
 `use`/`used`, `support`, `describe`, `conform`, `define`, `provide`, `ensure`, `determine`,
-`contain`, `include`, `report`, `respond`, `check`, `return`, `perform`, `take`, `control`,
-`execute`, `connect`, `treat`, `consider`, `follow`, `apply`, `cause`, `allow`, `require`, `mean`,
-and the modals/copulas `is`/`be`/`can`/`must`/`do`.
+`contain`, `include`, `report`, `return`, `perform`, `take`, `control`, `execute`, `connect`,
+`treat`, `consider`, `follow`, `apply`, `cause`, `allow`, `require`, `mean`, `ignore` (a *don't-care*,
+not a constraint), `count` (too generic), and the modals/copulas `is`/`be`/`can`/`must`/`do`.
 
 ## Next (`.2`, after your nod)
 
-Map each accepted verb to a constraint kind (e.g. `set`→drive-to-1, `clear`→drive-to-0,
-`sample`→a sampling-timing fact, `gate`/`mask`/`enable`/`disable`→assertion-style, `hold`/`maintain`
-→stable), **centralize** the now-much-larger normative vocabulary in one maintainable place, and
-re-verify with the extraction suite. Grammar only; no names.
+Map each accepted verb to its target — **two destinations, matching the two sets**:
+- **signal-level verbs** → signal constraint kinds (e.g. `set`→drive-to-1, `clear`→drive-to-0,
+  `sample`→a sampling-timing fact, `gate`/`mask`/`enable`/`disable`→assertion-style,
+  `hold`/`maintain`→stable);
+- **actor-level verbs** → the actor–signal relation / contract layer (e.g. `send`/`drive`→*drives*,
+  `receive`/`sample`→*observes/reads*, `respond`→*responds*, `start`/`stop`→transaction bounds).
+
+Then **centralize** the now-much-larger normative vocabulary in one maintainable place and re-verify
+with the extraction suite. Grammar only; no names. (We don't need 100% precision here — enough
+coverage of real chip-spec verbs is the bar.)
