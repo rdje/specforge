@@ -77,7 +77,7 @@ requires Ollama.**
 
 ## Task Tree
 
-- ID: `NLI-ENTAILMENT-VERIFIER` · Status: `active` · Children: `.1` · `.2` · `.3`
+- ID: `NLI-ENTAILMENT-VERIFIER` · Status: `done` (CLOSED `2026-06-05`) · Children: `.1` · `.2` · `.3`
 - ID: `NLI-ENTAILMENT-VERIFIER.1` · Status: `done` · Goal: own + design (this file).
   Verification: passed (`2026-06-05`) — architecture fixed (reuse `call_text_provider` + the
   `SPECFORGE_VLM_HELPER` hermetic hook; `NliVerdict`; fail-closed parse; the additive gate

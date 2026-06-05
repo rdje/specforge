@@ -35,7 +35,7 @@
 
 ## Task Tree
 
-- ID: `NLI-CLAIM-CONDITION` · Status: `active` · Children: `.1`
+- ID: `NLI-CLAIM-CONDITION` · Status: `done` (CLOSED `2026-06-05`) · Children: `.1`
 - ID: `NLI-CLAIM-CONDITION.1` · Status: `done` · Goal: carry the condition into the claim +
   test + re-run + record + close.
   Verification: passed (`2026-06-05`) — `constraint_claim_text` now appends `condition_text`

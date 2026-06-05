@@ -49,7 +49,7 @@ the flag path is thin glue).
 
 ## Task Tree
 
-- ID: `NLI-INTENT-GATE` · Status: `active` · Children: `.1` · `.2`
+- ID: `NLI-INTENT-GATE` · Status: `done` (CLOSED `2026-06-05`) · Children: `.1` · `.2`
 - ID: `NLI-INTENT-GATE.1` · Status: `done` · Goal: own + design (this file).
   Verification: passed (`2026-06-05`) — verified `IntentIr` has `actor_contracts` (with
   `provenance.source_text` + `obligation`) and `residual_decisions`; designed the post-build

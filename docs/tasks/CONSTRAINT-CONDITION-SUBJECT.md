@@ -39,7 +39,7 @@
 
 ## Task Tree
 
-- ID: `CONSTRAINT-CONDITION-SUBJECT` · Status: `active` · Children: `.1`
+- ID: `CONSTRAINT-CONDITION-SUBJECT` · Status: `done` (CLOSED `2026-06-05`) · Children: `.1`
 - ID: `CONSTRAINT-CONDITION-SUBJECT.1` · Status: `done` · Goal: the exclusion + test + close.
   Verification: passed (`2026-06-05`) — `extract_signal_constraints`' empty-subject fallback now
   excludes any token that appears in the condition clause

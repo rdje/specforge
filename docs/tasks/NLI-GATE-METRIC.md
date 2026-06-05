@@ -26,7 +26,7 @@
 
 ## Task Tree
 
-- ID: `NLI-GATE-METRIC` · Status: `active` · Children: `.1`
+- ID: `NLI-GATE-METRIC` · Status: `done` (CLOSED `2026-06-05`) · Children: `.1`
 - ID: `NLI-GATE-METRIC.1` · Status: `done` · Goal: the count helper + validate metric + test +
   book + close.
   Verification: passed (`2026-06-05`) — `ir/nli_verify.rs`: `NLI_RESIDUAL_PREFIX` const (reused in
