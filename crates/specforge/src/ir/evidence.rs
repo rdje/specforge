@@ -5647,8 +5647,12 @@ fn extract_signal_constraints(
             continue;
         }
 
-        // Extract condition clause: text after "when", "while", "during", "unless".
-        let condition_text = extract_condition_clause(text);
+        // Extract condition clause: text after "when", "while", "during", "unless" — from the
+        // SAME bounded obligation the subject came from, so a later table-cell bullet does not
+        // bleed into the condition (CONSTRAINT-EXTRACTION-V2.2).
+        let condition_text = extract_condition_clause(consequent_after_inference_marker(
+            constraint_bearing_sentence(text),
+        ));
 
         // Create one record per subject signal (multi-signal sentences).
         for subject_signal in subject_signals {
@@ -5682,7 +5686,11 @@ fn extract_signal_constraints(
 /// must be stable …" only the second sentence (the one with `must`) is the subject
 /// source, so PREADY/PCLK are not minted as `must_be_stable` subjects.
 fn constraint_bearing_sentence(text: &str) -> &str {
-    for sentence in text.split(['.', ';']) {
+    // Split on bullets (`•`) and newlines as well as `.`/`;`, so a multi-obligation table
+    // cell ("… • PAUSER must be valid when … • PAUSER must have the same value …") yields one
+    // obligation per clause rather than one constraint carrying the whole cell
+    // (CONSTRAINT-EXTRACTION-V2.2).
+    for sentence in text.split(['.', ';', '•', '\n']) {
         let lowered = sentence.to_ascii_lowercase();
         if lowered.contains("must") || lowered.contains("shall") {
             return sentence;
@@ -7504,6 +7512,40 @@ mod tests {
                     || s.contains(&"PWDATA".to_string()),
                 "the consequent signals are the subjects; got {s:?}"
             );
+        }
+
+        #[test]
+        fn multi_bullet_table_cell_condition_does_not_bleed() {
+            // CONSTRAINT-EXTRACTION-V2.2: a multi-obligation table cell must not carry a later
+            // bullet into one constraint's condition. The first obligation's condition is just
+            // "when PSELx is asserted", not the whole rest of the cell.
+            use crate::ir::evidence::{
+                EvidenceModality, ExtractedStatement, StatementClass, extract_signal_constraints,
+            };
+            let cell = "User-defined request attribute. • PAUSER must be valid when PSELx is asserted. • PAUSER must have the same value in the Setup and Access phase of a transfer.";
+            let stmt = ExtractedStatement {
+                statement_id: "s".to_string(),
+                text: cell.to_string(),
+                class: StatementClass::SignalValueConstraint,
+                modality: EvidenceModality::Text,
+                evidence_span_ids: vec![],
+                related_visual_evidence_ids: vec![],
+            };
+            let mut counter = 0usize;
+            let records = extract_signal_constraints(&[stmt], &mut counter);
+            assert!(
+                records.iter().any(|r| r.subject_signal == "PAUSER"),
+                "PAUSER extracted; got {records:?}"
+            );
+            for r in &records {
+                if let Some(cond) = &r.condition_text {
+                    let lc = cond.to_ascii_lowercase();
+                    assert!(
+                        !lc.contains("must have") && !cond.contains('•'),
+                        "condition must not bleed into the next bullet; got {cond:?}"
+                    );
+                }
+            }
         }
 
         // ── CONSTRAINT-SUBJECT-PRECISION: the 3 over-extraction classes the
