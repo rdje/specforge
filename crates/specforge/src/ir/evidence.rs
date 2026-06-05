@@ -2649,13 +2649,16 @@ fn extract_actor_signal_relations(
         "masks",
         "gates",
         "pulls",
+        "initiates",
+        "switches",
+        "invalidates",
         "drive",
     ];
     const ACTIVE_READS_VERBS: &[&str] = &[
         "reads", "samples", "monitors", "accepts", "receives", "captures", "observes", "detects",
         "checks", "latches", "read", "sample", "monitor", "accept", "receive",
-        // Corpus-mined actor→signal observe verb.
-        "polls", "poll",
+        // Corpus-mined actor→signal observe verbs.
+        "polls", "poll", "accesses", "access",
     ];
 
     let mut records = Vec::new();
