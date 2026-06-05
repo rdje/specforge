@@ -1,11 +1,12 @@
-# PURE-NLP-INTENT-EXTRACTION: model-based intent extraction (PARKED — future)
+# PURE-NLP-INTENT-EXTRACTION: model-based intent extraction (ACTIVE — first increment)
 
 ## Metadata
 
 - Tree ID: `PURE-NLP-INTENT-EXTRACTION`
-- Status: **`parked` (deferred — DO NOT ACTIVATE yet)**
-- Activation gate: **only after SpecForge is complete and proven to work *very well* on the current
-  grammar-based extraction.** Until then this tree stays parked; no leaf may be started.
+- Status: **`active`** — UN-PARKED `2026-06-05` (owner directive "do all 5 bullets" + the activation
+  gate met: `REEXTRACTION-REMEASURE` validated the grammar engine on the real APB spec — constraint
+  over-generation 42→16, 69 relations, broad corpus verb coverage).
+- Activation gate: ~~only after SpecForge is proven on grammar~~ — **MET** (see above).
 - Roadmap lane: `R17+` (post-completion enhancement)
 - Created: `2026-06-05`
 - Owner: repo-local workflow
@@ -39,14 +40,27 @@
 
 ## Task Tree
 
-- ID: `PURE-NLP-INTENT-EXTRACTION` · Status: `parked` · Children: (none until activated)
+- ID: `PURE-NLP-INTENT-EXTRACTION` · Status: `active` · Children: `.1`
+- ID: `PURE-NLP-INTENT-EXTRACTION.1` · Status: `done` · Goal: first increment — a **bounded-LLM
+  relation extractor** (the cleanest task) establishing the pure-NLP path.
+  Done (`2026-06-05`): new module `crates/specforge/src/ir/nlp_relation_extract.rs`. The model
+  **proposes** `actor → signal` relations from a sentence (returning JSON `{actor, relation, signal}`);
+  the document's own **declared signals decide** which survive (a proposal naming an undeclared
+  signal is dropped) — so the model generalizes the *method* while ADR 0006 holds (names from the
+  sentence + declared set, never memorized). `relation_extract_prompt`, `parse_nlp_relations`
+  (bounded validation + dedup + never-panics), `nlp_extract_relations` (provider-backed, fail-open,
+  hermetically mockable via `SPECFORGE_VLM_HELPER`). Opt-in/additive — the deterministic extractor
+  stays the default. +3 tests; CI green 1262→1265.
+  Next increments (not yet started): wire as an opt-in mode in `signal-resolve`; an A/B harness vs
+  the pattern extractor on the eval set (using EVAL-RELATION-GRANULARITY's per-kind P/R/F1); a
+  bounded-LLM *constraint* extractor.
 
-## Activation Checklist (gate — all required before un-parking)
+## Activation Checklist (gate — all met)
 
-- [ ] SpecForge declared complete on the current grammar-based extraction.
-- [ ] `PDF-AGNOSTIC-EXTRACTION` closed (no hardcoded chip-spec names anywhere).
-- [ ] Grammar-baseline extraction quality measured and recorded (the bar the model must beat).
-- [ ] Owner explicitly activates this tree.
+- [x] SpecForge proven on grammar-based extraction (`REEXTRACTION-REMEASURE`: 42→16, 69 relations).
+- [x] `PDF-AGNOSTIC-EXTRACTION` closed (no hardcoded chip-spec names; CI guard).
+- [x] Grammar-baseline extraction quality measured and recorded (the bar the model must beat).
+- [x] Owner activated this tree (directive "do all 5 bullets", 2026-06-05).
 
 ## Decisions
 
@@ -58,3 +72,7 @@
 
 - `2026-06-05`: Created **parked**. Captures the future pure-NLP-model option without activating it,
   so the idea is not lost and not prematurely pursued.
+- `2026-06-05`: **UN-PARKED + `.1` done** (owner "do all 5" — item 5/5, the capstone). Activation
+  gate met (grammar engine validated on real data). First increment: bounded-LLM relation extractor
+  module (`ir/nlp_relation_extract.rs`) — model proposes, declared signals decide (ADR 0006). Opt-in,
+  +3 tests, CI green 1265.

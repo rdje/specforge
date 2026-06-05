@@ -2,6 +2,31 @@
 
 ## 2026-06-05
 
+### "Do all 5" — completed the remaining backlog in a chosen order (owner directive)
+The owner authorized doing all 5 previously-deferred items, order chosen by value/dependency:
+1. **`EVAL-RELATION-GRANULARITY`** — per-relation-kind P/R/F1 (`score_relations_by_kind`) + MUC
+   near-miss diagnostic (`relation_near_misses`) in `crate::eval`, surfaced in `eval-extraction`.
+   Measurement first, so later changes are measurable.
+2. **`LOGIC-LEVEL-BOUNDARY`** — resolved the HIGH/LOW question honestly: a full collapse of
+   `MustBeHigh`/`MustBeLow` is **lossy** (drives `.isf` lowering), **9-file**, and **ill-posed** (a
+   spec assumes high=1, never defines it). Logic levels are universal binary-logic **"how"** —
+   recognized via a **convention-agnostic** spelling set (`1`/`0`/`high`/`low`/`true`/`false`/
+   `1'b1`/`1'b0`), centralized in `ir/normative_vocab.rs` as the single authority; ADR 0006 refined
+   (the forbidden thing is a spec's value vocabulary / one convention, not the universal concept).
+3. **`REEXTRACTION-REMEASURE`** — re-ingested the real APB spec through docling and re-extracted with
+   current code: **signal_constraints 42 → 16** (the session's de-hardcoding + condition-subject +
+   precision fixes resolved the over-generation), **69** actor→signal relations. Mapped the 3
+   remaining bug classes for a `CONSTRAINT-EXTRACTION-V2` follow-up.
+4. **`TABLE-GRITS-CONFORMAL`** — `grits_content` (GriTS-content positional table-structure F1) +
+   `conformal_threshold` (split-conformal risk-controlling accept threshold) in `crate::eval`, as
+   tested capability (gold/calibration data is a plug-in input).
+5. **`PURE-NLP-INTENT-EXTRACTION`** — UN-PARKED (activation gate met via item 3). First increment:
+   `ir/nlp_relation_extract.rs`, a **bounded-LLM relation extractor** — the model proposes
+   `actor→signal` triples; the document's declared signals decide which survive (ADR 0006). Opt-in,
+   hermetically testable, additive (the deterministic extractor stays default).
+
+All tested; full `scripts/run_ci.sh` GREEN (1259 → **1265**). NOT pushed.
+
 ### PDF-independence: protocol/encoding names removed from extraction + CI guard; program CLOSED (PDF-AGNOSTIC-EXTRACTION.3–.4)
 - Finished the owner signoff criterion (ADR 0006 — zero hardcoded chip-spec vocabulary). `.3`:
   removed protocol **family/vendor names** (`AMBA`/`AHB`/`AXI`/`CHI`/`ARM`/`AMD`/…), ARM/AMBA
