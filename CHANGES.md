@@ -2,6 +2,26 @@
 
 ## 2026-06-05
 
+### NLI intent gate — active demote-to-residual; tree CLOSED (NLI-INTENT-GATE.1–.2)
+- `NLI-INTENT-GATE` (user pick "→ (b)"): the NLI verifier made an **active** IntentIR gate — chosen
+  at the IntentIR stage because `residual_decisions` already live there (EvidenceIR has no residuals
+  home). A **post-build pass** on `IntentIr` (no `IntentIr::build` signature change). Added to
+  `ir/nli_verify.rs`: `obligation_claim_text(&ActorContract) -> Option<String>` (renders an
+  obligation as an NLI claim only when phrasable — `Drive`/`Stable`/`Eventually`/`HandshakeBarrier`/
+  `Mutex`; `Observe`/`Persist`/`Sequence`/`OrderedBefore`/non-signal `Eventually` → `None` =
+  **not gated**), `nli_gate_contracts(contracts, verify)` (premise = `contract.provenance.source_text`;
+  a `NotEntailed` contract is **demoted** — removed from `actor_contracts`, returned as a
+  `ResidualDecisionPacket` `nli_unentailed_<id>`; `Entailed`/`Unknown`/un-phrasable → kept), and
+  `apply_nli_gate(&mut IntentIr, verify)`. **Demote-not-delete:** a wrong verdict costs a review
+  item, not a lost fact; the gate can demote a borderline contract but can never invent one. The
+  verifier is **injected** → 3 new hermetic tests (claim render incl. `None`;
+  NotEntailed→demoted-to-residual; keep-un-phrasable/Unknown), **no Ollama**. Wired opt-in
+  **`specforge intent <semantic_ir.json> --nli-verify`** (`--vlm-provider`/`--model`; `skip`
+  no-ops; one `rescan_plan` constructor updated). Book subsection refreshed with the active gate
+  (per the mdBook-sync rule); KM card `nli-intent-gate`. Full `scripts/run_ci.sh` GREEN
+  (1250 → 1253; +3). **Tree CLOSED** — this is the path-(b) follow-up `NLI-ENTAILMENT-VERIFIER`
+  flagged.
+
 ### NLI entailment verifier — live `nli-verify` command + claim-set gate; tree CLOSED (NLI-ENTAILMENT-VERIFIER.3)
 - `NLI-ENTAILMENT-VERIFIER.3` (CLOSING leaf): the gate applied to a real claim set + a live
   command. Added to `ir/nli_verify.rs`: `constraint_claim_text` (a `SignalConstraintRecord` → its

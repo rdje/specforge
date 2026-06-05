@@ -148,8 +148,21 @@ specforge nli-verify path/to/evidence_ir.json
 It reads an EvidenceIR, asks the text model whether each constraint's source sentence entails
 the constraint-as-a-claim, and lists the ones that are **not entailed** — the likely
 hallucinations worth a second look. Pass `--vlm-provider skip` to no-op (the gate abstains on
-everything) or `--model <name>` to override the default text model. *Authoritative tracking:*
-`docs/tasks/NLI-ENTAILMENT-VERIFIER.md`.
+everything) or `--model <name>` to override the default text model.
+
+To make the gate *active* — not just a report — run it during IntentIR construction:
+
+```bash
+specforge intent semantic_ir.json --nli-verify
+```
+
+Now any contract whose source sentence doesn't entail it is **demoted into the residual
+decisions** rather than passed downstream as a trusted obligation. Demoted, not deleted: it
+becomes an honest "this needs review" item, so even a wrong verdict from the model costs a
+review, never a lost fact. The gate only touches contracts it can phrase as a clean claim, and
+abstains the moment the model is unavailable — so turning it on can *demote* a borderline
+contract to a residual, but it can never *invent* one. *Authoritative tracking:*
+`docs/tasks/NLI-ENTAILMENT-VERIFIER.md`, `docs/tasks/NLI-INTENT-GATE.md`.
 
 ## Why provenance matters so much
 

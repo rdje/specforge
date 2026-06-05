@@ -9,7 +9,22 @@ fn default_artifact_base_root() -> PathBuf {
 }
 
 pub fn run(args: IntentArgs) -> Result<()> {
-    let intent_ir = IntentIr::build(&args.semantic_ir, &default_artifact_base_root())?;
+    let mut intent_ir = IntentIr::build(&args.semantic_ir, &default_artifact_base_root())?;
+
+    // NLI-INTENT-GATE: opt-in semantic gate. Demote contracts whose source
+    // sentence does not entail them into `residual_decisions` (demote-not-delete).
+    // `skip`/un-phrasable/Unknown leave the contract untouched.
+    if args.nli_verify && !matches!(args.vlm_provider, crate::cli::VlmProviderArg::Skip) {
+        let provider = args.vlm_provider;
+        let model = args
+            .model
+            .clone()
+            .unwrap_or_else(|| crate::ir::nli_verify::DEFAULT_NLI_MODEL.to_string());
+        let demoted = crate::ir::nli_verify::apply_nli_gate(&mut intent_ir, |source, claim| {
+            crate::ir::nli_verify::verify_entailment(provider, &model, "", source, claim)
+        });
+        println!("nli_gate: model={model} demoted_contracts={demoted}");
+    }
 
     if args.dry_run {
         println!("command: intent");

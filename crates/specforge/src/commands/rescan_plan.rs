@@ -769,6 +769,9 @@ fn execute_invocation(
         RescanInvocation::Intent(semantic_ir) => intent::run(IntentArgs {
             semantic_ir: resolve_execution_path(semantic_ir, execution_root),
             dry_run: false,
+            nli_verify: false,
+            vlm_provider: crate::cli::VlmProviderArg::Skip,
+            model: None,
         }),
         RescanInvocation::Validate(artifact) => validate::run(ValidateArgs {
             artifact: resolve_execution_path(artifact, execution_root),

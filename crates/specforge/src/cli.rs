@@ -152,6 +152,17 @@ pub struct IntentArgs {
     /// Do not write IntentIR artifacts; print the computed IntentIR JSON instead
     #[arg(long)]
     pub dry_run: bool,
+    /// Run the NLI entailment gate: demote contracts whose source sentence does
+    /// not entail them into `residual_decisions` (opt-in; makes local LLM calls)
+    #[arg(long)]
+    pub nli_verify: bool,
+    /// Local text-LLM provider for the NLI gate (with `--nli-verify`).
+    /// Pass `--vlm-provider skip` to no-op.
+    #[arg(long, value_enum, default_value = "ollama")]
+    pub vlm_provider: VlmProviderArg,
+    /// Text model override for the NLI gate (default: `qwen2.5:14b-instruct`)
+    #[arg(long)]
+    pub model: Option<String>,
 }
 
 #[derive(Debug, Clone, Copy, ValueEnum)]

@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `NLI-INTENT-GATE`
-- Status: `active` (`.1` design; `.2` implement + close)
+- Status: `done` (CLOSED `2026-06-05`; `.1` design + `.2` active gate + `intent --nli-verify`)
 - Roadmap lane: `R16`/`R15e` (neuro-symbolic grounding)
 - Created: `2026-06-05`
 - Owner: repo-local workflow
@@ -55,14 +55,28 @@ the flag path is thin glue).
   `provenance.source_text` + `obligation`) and `residual_decisions`; designed the post-build
   demote-not-delete pass with `obligation_claim_text` (Option → only gate phrasable obligations)
   and an injected verifier (hermetic); the `intent --nli-verify` opt-in flag. Docs-only.
-- ID: `NLI-INTENT-GATE.2` · Status: `pending` · Goal: implement + wire + tests + book + KM + close.
+- ID: `NLI-INTENT-GATE.2` · Status: `done` · Goal: implement + wire + tests + book + KM + close.
+  Verification: passed (`2026-06-05`) — added to `ir/nli_verify.rs`: `obligation_claim_text`
+  (phrasable obligations → claim; `Observe`/`Persist`/`Sequence`/`OrderedBefore`/non-signal
+  `Eventually` → `None`/not-gated), `nli_gate_contracts(contracts, verify)` (premise =
+  `provenance.source_text`; `NotEntailed` → demoted to a `ResidualDecisionPacket`
+  `nli_unentailed_<id>`; Entailed/Unknown/un-phrasable kept), `apply_nli_gate(&mut IntentIr)`.
+  Verifier **injected** → 3 hermetic tests (claim render incl. `None`; demote-to-residual;
+  keep-un-phrasable/Unknown). Wired opt-in **`intent --nli-verify`** (`--vlm-provider`/`--model`;
+  one `rescan_plan` ctor site updated to `Skip`). Book subsection refreshed (active gate, per the
+  BOOK-METHOD-DOC rule); KM card `nli-intent-gate`. Full `scripts/run_ci.sh` GREEN (1250→1253; +3).
+  Demote-not-delete: a wrong verdict costs a review item, not a lost fact.
 
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `NLI-INTENT-GATE.1` | `done` | design (post-build demote-to-residual; phrasable-only; injected verifier) |
-| 2 | `NLI-INTENT-GATE.2` | `pending` | implement + `intent --nli-verify` + tests + book + KM + close |
+| 2 | `NLI-INTENT-GATE.2` | `done` | gate + `intent --nli-verify` + 3 tests + book + KM → **tree CLOSED** |
+
+**Tree CLOSED `2026-06-05`.** The NLI verifier is now an *active* IntentIR gate: `intent
+--nli-verify` demotes contracts whose source sentence doesn't entail them into `residual_decisions`
+(demote-not-delete, phrasable-only, opt-in, hermetic). CI green 1253; book + KM in sync.
 
 ## Decisions
 
@@ -75,8 +89,12 @@ the flag path is thin glue).
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `NLI-INTENT-GATE.1` | `NLI-INTENT-GATE.1 — own + design the active IntentIR NLI gate (demote to residual)` | docs-only |
+| `NLI-INTENT-GATE.2` | `NLI-INTENT-GATE.2 — active IntentIR NLI gate (obligation_claim_text + nli_gate_contracts + apply_nli_gate) + intent --nli-verify; book + KM; close` | +3 tests; CI green 1253 |
 
 ## Changelog
 
 - `2026-06-05`: Created — make the NLI verifier an *active* IntentIR gate (path b): demote
   NotEntailed contracts into `residual_decisions`, demote-not-delete, phrasable-only, opt-in.
+- `2026-06-05`: **Tree CLOSED.** `.2` shipped `obligation_claim_text` + `nli_gate_contracts` +
+  `apply_nli_gate` (verifier injected → 3 hermetic tests) and the opt-in `intent --nli-verify`
+  flag; book + KM refreshed. CI green 1253.

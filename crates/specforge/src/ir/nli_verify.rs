@@ -172,6 +172,96 @@ pub fn nli_claim_findings(
         .collect()
 }
 
+/// Render an `ActorContract`'s obligation as an NLI hypothesis — or `None` when
+/// the obligation cannot be phrased as a clean claim (in which case it is **not
+/// gated**, never NLI-checked against a claim we cannot state faithfully).
+pub fn obligation_claim_text(c: &crate::ir::contract::ActorContract) -> Option<String> {
+    use crate::ir::contract::{EventExpr, Obligation, Window};
+    let sig_of = |e: &EventExpr| -> Option<String> {
+        match e {
+            EventExpr::Edge { signal, .. } | EventExpr::Level { signal, .. } => {
+                Some(signal.clone())
+            }
+            EventExpr::HandshakeFire { valid, .. } => Some(valid.clone()),
+            EventExpr::Start | EventExpr::PhaseBoundary { .. } => None,
+        }
+    };
+    match &c.obligation {
+        Obligation::Drive { signal, value } => Some(format!("{signal} must be {value}")),
+        Obligation::Stable { signal, .. } => Some(format!("{signal} must be stable")),
+        Obligation::Eventually {
+            target,
+            window: Window::Within { max, .. },
+        } => sig_of(target).map(|s| format!("{s} must occur within {max} cycles")),
+        Obligation::HandshakeBarrier { valid, ready } => {
+            Some(format!("the {valid}/{ready} handshake must complete"))
+        }
+        Obligation::Mutex { a, b } => Some(format!("{a} and {b} are mutually exclusive")),
+        // Un-phrasable as a single clean claim → not gated.
+        Obligation::Eventually { .. }
+        | Obligation::Observe { .. }
+        | Obligation::Persist { .. }
+        | Obligation::Sequence { .. }
+        | Obligation::OrderedBefore { .. } => None,
+    }
+}
+
+/// Run the NLI gate over a contract set: each *phrasable* contract is verified
+/// (premise = its `provenance.source_text`), and `NotEntailed` ones are
+/// **demoted** — removed from the kept set and returned as
+/// `ResidualDecisionPacket`s. `Entailed`, `Unknown`, and un-phrasable contracts
+/// are **kept** (the existing pipeline stands). Verifier injected → hermetic.
+/// Demote-not-delete: a verifier error costs a review item, not a lost fact.
+pub fn nli_gate_contracts(
+    contracts: Vec<crate::ir::contract::ActorContract>,
+    verify: impl Fn(&str, &str) -> NliVerdict,
+) -> (
+    Vec<crate::ir::contract::ActorContract>,
+    Vec<crate::ir::source::ResidualDecisionPacket>,
+) {
+    let mut kept = Vec::new();
+    let mut residuals = Vec::new();
+    for c in contracts {
+        match obligation_claim_text(&c) {
+            Some(claim)
+                if matches!(
+                    verify(&c.provenance.source_text, &claim),
+                    NliVerdict::NotEntailed
+                ) =>
+            {
+                residuals.push(crate::ir::source::ResidualDecisionPacket {
+                    packet_id: format!("nli_unentailed_{}", c.contract_id),
+                    question: format!(
+                        "Does the source sentence support the contract claim '{claim}'?"
+                    ),
+                    why_unresolved: format!(
+                        "NLI: the source sentence does not entail the contract claim '{claim}' \
+                         — demoted to a residual for review (NLI-INTENT-GATE)"
+                    ),
+                    automation_confidence: c.automation_confidence,
+                    candidate_interpretations: vec![],
+                });
+            }
+            _ => kept.push(c),
+        }
+    }
+    (kept, residuals)
+}
+
+/// Apply the NLI gate to a built `IntentIr` in place: demote NotEntailed
+/// contracts into `residual_decisions`. Returns the number demoted.
+pub fn apply_nli_gate(
+    intent_ir: &mut crate::ir::intent::IntentIr,
+    verify: impl Fn(&str, &str) -> NliVerdict,
+) -> usize {
+    let contracts = std::mem::take(&mut intent_ir.actor_contracts);
+    let (kept, residuals) = nli_gate_contracts(contracts, verify);
+    let demoted = residuals.len();
+    intent_ir.actor_contracts = kept;
+    intent_ir.residual_decisions.extend(residuals);
+    demoted
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -312,5 +402,133 @@ mod tests {
         );
         // Unknown abstains — a provider outage must not break extraction.
         assert_eq!(gate_action(NliVerdict::Unknown), NliGateAction::Abstain);
+    }
+
+    // NLI-INTENT-GATE: obligation claim rendering + the demote-to-residual gate.
+
+    fn contract(
+        id: &str,
+        source: &str,
+        obligation: crate::ir::contract::Obligation,
+    ) -> crate::ir::contract::ActorContract {
+        use crate::ir::contract::{
+            ContractKind, ContractProvenance, EvidenceModality, LoweringDisposition,
+        };
+        use crate::ir::semantic::ClockEdge;
+        crate::ir::contract::ActorContract {
+            contract_id: id.into(),
+            source_rule_id: Some(id.into()),
+            actor_name: Some("A".into()),
+            kind: ContractKind::Guarantee,
+            guard: None,
+            guard_candidates: vec![],
+            obligation,
+            clock_signal: None,
+            edge: ClockEdge::Rising,
+            channel: None,
+            phase: None,
+            provenance: ContractProvenance {
+                supporting_statement_ids: vec![],
+                source_text: source.into(),
+                modality: EvidenceModality::Prose,
+            },
+            lowering: LoweringDisposition::Lowerable,
+            automation_confidence: crate::ir::source::AutomationConfidence::Medium,
+        }
+    }
+
+    #[test]
+    fn obligation_claim_text_renders_phrasable_and_none() {
+        use crate::ir::contract::Obligation;
+        let drive = contract(
+            "c1",
+            "x",
+            Obligation::Drive {
+                signal: "PADDR".into(),
+                value: "1".into(),
+            },
+        );
+        assert_eq!(
+            obligation_claim_text(&drive).as_deref(),
+            Some("PADDR must be 1")
+        );
+        // Observe is un-phrasable as a clean claim → None (not gated).
+        let observe = contract(
+            "c2",
+            "x",
+            Obligation::Observe {
+                signal: "PADDR".into(),
+            },
+        );
+        assert_eq!(obligation_claim_text(&observe), None);
+    }
+
+    #[test]
+    fn nli_gate_demotes_not_entailed_to_residual() {
+        use crate::ir::contract::Obligation;
+        let cs = vec![
+            contract(
+                "c1",
+                "PADDR must be stable.",
+                Obligation::Stable {
+                    signal: "PADDR".into(),
+                    during: crate::ir::contract::Window::SameCycle,
+                },
+            ),
+            contract(
+                "c2",
+                "PBUSER must be valid when PSEL is asserted.",
+                Obligation::Drive {
+                    signal: "PSEL".into(),
+                    value: "1".into(),
+                },
+            ),
+        ];
+        // Mock verifier: the PSEL contract (condition mistaken for an obligation)
+        // is NOT entailed; the PADDR one is.
+        let (kept, residuals) = nli_gate_contracts(cs, |_src, claim| {
+            if claim.contains("PSEL") {
+                NliVerdict::NotEntailed
+            } else {
+                NliVerdict::Entailed
+            }
+        });
+        assert_eq!(kept.len(), 1, "the entailed PADDR contract is kept");
+        assert_eq!(kept[0].contract_id, "c1");
+        assert_eq!(
+            residuals.len(),
+            1,
+            "the not-entailed PSEL contract is demoted"
+        );
+        assert_eq!(residuals[0].packet_id, "nli_unentailed_c2");
+        assert!(residuals[0].why_unresolved.contains("does not entail"));
+    }
+
+    #[test]
+    fn nli_gate_keeps_unphrasable_and_unknown() {
+        use crate::ir::contract::Obligation;
+        // Un-phrasable (Observe) → kept, verifier never consulted.
+        let observe = vec![contract(
+            "c1",
+            "x",
+            Obligation::Observe { signal: "S".into() },
+        )];
+        let (kept, residuals) = nli_gate_contracts(observe, |_, _| {
+            panic!("must not verify an un-phrasable obligation")
+        });
+        assert_eq!(kept.len(), 1);
+        assert!(residuals.is_empty());
+        // Unknown (provider down) → kept, never demoted.
+        let drive = vec![contract(
+            "c2",
+            "x",
+            Obligation::Drive {
+                signal: "S".into(),
+                value: "1".into(),
+            },
+        )];
+        let (kept2, residuals2) = nli_gate_contracts(drive, |_, _| NliVerdict::Unknown);
+        assert_eq!(kept2.len(), 1);
+        assert!(residuals2.is_empty());
     }
 }
