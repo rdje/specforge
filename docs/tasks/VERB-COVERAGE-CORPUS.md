@@ -70,8 +70,14 @@ normative-predicate vocabulary clearly exceeds the current lists (`reset`, `driv
 ## Task Tree
 
 - ID: `VERB-COVERAGE-CORPUS` · Status: `active` · Children: `.1` · `.2`
-- ID: `VERB-COVERAGE-CORPUS.1` · Status: `pending` · Goal: mine the 82-PDF corpus → provenance-
+- ID: `VERB-COVERAGE-CORPUS.1` · Status: `done` · Goal: mine the 82-PDF corpus → provenance-
   tagged verb frequency + a gap report vs the current lists (read-only artifact for owner review).
+  Verification: passed (`2026-06-05`) — full seedless LLM mine of all 82 PDFs (qwen2.5:14b, ~39 min)
+  → 640 grounded behavioral verbs; **Claude curated** (cross-model) into KEEP/BORDERLINE/REJECT and
+  diffed vs the engine. Reviewed artifact: `docs/research/verb-coverage-corpus.md`. Shortlist of
+  **new** behavioral verbs the engine lacks: `set`/`clear`/`reset`/`sample`/`release`/`mask`/`gate`/
+  `enable`/`disable`/`toggle`/`latch`/`pull`/`capture`/`load`/`store`/`invalidate`/`activate`/… Read-
+  only — nothing wired in; awaiting owner sanity pass (esp. the Rejected pile) before `.2`.
 - ID: `VERB-COVERAGE-CORPUS.2` · Status: `pending` · Goal: curate + integrate the signal-behavioral
   gaps (mapped to constraint kinds); centralize the grammar vocabulary; re-verify; close.
 
