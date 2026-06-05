@@ -595,6 +595,82 @@ pub fn relation_near_misses(items: &[EvalItem], predicted: &PredictedKeys) -> Re
     nm
 }
 
+/// GriTS-content (positional) similarity between a **gold** and **predicted** table, each
+/// given as rows of cell text (header rows ++ body rows). Returns a [`Scorecard`] over cells
+/// matched by identical `(row, col, normalized text)`: tp = cells present and equal in both,
+/// fp = predicted cells with no gold match, fn = gold cells missed. Empty/whitespace cells are
+/// ignored. This is the positional-alignment variant of GriTS_con — a sound first measure of
+/// table-structure extraction quality when row/column order is preserved (docling does). The
+/// full GriTS performs optimal 2-D alignment; positional matching is its lower bound.
+pub fn grits_content(gold_rows: &[Vec<String>], pred_rows: &[Vec<String>]) -> Scorecard {
+    let cells = |rows: &[Vec<String>]| -> BTreeSet<(usize, usize, String)> {
+        let mut out = BTreeSet::new();
+        for (r, row) in rows.iter().enumerate() {
+            for (c, cell) in row.iter().enumerate() {
+                let norm = cell.trim().to_ascii_lowercase();
+                if !norm.is_empty() {
+                    out.insert((r, c, norm));
+                }
+            }
+        }
+        out
+    };
+    let gold = cells(gold_rows);
+    let pred = cells(pred_rows);
+    let tp = gold.intersection(&pred).count();
+    Scorecard {
+        tp,
+        fp: pred.len() - tp,
+        fn_count: gold.len() - tp,
+        gold_total: gold.len(),
+        labeled_statements: 1,
+    }
+}
+
+/// A risk-controlled accept threshold from a split-conformal calibration set.
+#[derive(Debug, Clone, PartialEq)]
+pub struct ConformalThreshold {
+    /// Accept a prediction iff its confidence score `>= threshold`.
+    pub threshold: f64,
+    /// Fraction of the calibration set that would be accepted at this threshold.
+    pub coverage: f64,
+    /// Empirical error rate among the accepted calibration predictions.
+    pub empirical_error: f64,
+}
+
+/// Split-conformal risk-controlling threshold: given calibration `(confidence, is_correct)`
+/// pairs and a target error rate `alpha`, return the **lowest** score threshold whose accepted
+/// set (`score >= threshold`) has a conservative error bound `(errors + 1) / (n + 1) <= alpha`
+/// — i.e. the most coverage subject to the finite-sample risk guarantee. `None` if no threshold
+/// meets the bound. The `+1` is the standard conformal finite-sample correction.
+pub fn conformal_threshold(samples: &[(f64, bool)], alpha: f64) -> Option<ConformalThreshold> {
+    let mut taus: Vec<f64> = samples.iter().map(|(s, _)| *s).collect();
+    taus.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
+    taus.dedup_by(|a, b| (*a - *b).abs() < f64::EPSILON);
+    // Ascending tau → the first satisfying threshold has the largest accepted set (max coverage).
+    for &tau in &taus {
+        let accepted: Vec<bool> = samples
+            .iter()
+            .filter(|(s, _)| *s >= tau)
+            .map(|(_, ok)| *ok)
+            .collect();
+        if accepted.is_empty() {
+            continue;
+        }
+        let n = accepted.len();
+        let errors = accepted.iter().filter(|ok| !**ok).count();
+        let bound = (errors as f64 + 1.0) / (n as f64 + 1.0);
+        if bound <= alpha {
+            return Some(ConformalThreshold {
+                threshold: tau,
+                coverage: n as f64 / samples.len() as f64,
+                empirical_error: errors as f64 / n as f64,
+            });
+        }
+    }
+    None
+}
+
 /// Load a labeled eval dataset from `path`, validated and deterministically ordered.
 ///
 /// `path` may be either a **single `.json` file** containing a JSON array of items
@@ -858,6 +934,47 @@ mod tests {
             "Manager drives HREADY is a flipped-direction near-miss of Manager reads HREADY"
         );
         assert_eq!(nm.wrong_actor, 0);
+    }
+
+    #[test]
+    fn grits_content_scores_table_cell_matches() {
+        let gold = vec![
+            vec!["Signal".to_string(), "Width".to_string()],
+            vec!["PADDR".to_string(), "32".to_string()],
+        ];
+        // header matches; the (1,1) body cell differs (gold 32 vs pred 16).
+        let pred = vec![
+            vec!["Signal".to_string(), "Width".to_string()],
+            vec!["PADDR".to_string(), "16".to_string()],
+        ];
+        let card = super::grits_content(&gold, &pred);
+        assert_eq!(card.tp, 3, "Signal, Width, PADDR match");
+        assert_eq!(card.fn_count, 1, "gold (1,1)=32 missed");
+        assert_eq!(card.fp, 1, "pred (1,1)=16 spurious");
+        // F1 = 2*3 / (2*3 + 1 + 1) = 6/8.
+        assert!((card.f1() - 0.75).abs() < 1e-9);
+    }
+
+    #[test]
+    fn conformal_threshold_controls_risk() {
+        // Higher score ⇒ more likely correct.
+        let samples = vec![
+            (0.9, true),
+            (0.85, true),
+            (0.8, true),
+            (0.7, true),
+            (0.6, false),
+            (0.5, true),
+            (0.4, false),
+            (0.3, false),
+        ];
+        let t = super::conformal_threshold(&samples, 0.25).expect("a threshold exists");
+        // The lowest tau whose accepted set bounds risk is 0.7 (top 4, all correct).
+        assert!((t.threshold - 0.7).abs() < 1e-9);
+        assert!(t.empirical_error <= 0.25 + 1e-9);
+        assert!((t.coverage - 0.5).abs() < 1e-9);
+        // No threshold can meet alpha=0.01 (even the singleton top has bound 1/2).
+        assert!(super::conformal_threshold(&samples, 0.01).is_none());
     }
 
     #[test]
