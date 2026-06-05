@@ -2576,90 +2576,13 @@ fn extract_actor_signal_relations(
         return Vec::new();
     }
 
-    // Passive patterns: "{signal} is {verb} by|from {actor}"
-    const PASSIVE_DRIVES_VERBS: &[&str] = &[
-        "driven",
-        "asserted",
-        "provided",
-        "returned",
-        "sent",
-        "sourced",
-        "generated",
-        "issued",
-        "set",
-        "produced",
-        "supplied",
-        "output",
-        "outputted",
-        "activated",
-        "presented",
-        "placed",
-        "applied",
-    ];
-    const PASSIVE_READS_VERBS: &[&str] = &[
-        "read",
-        "sampled",
-        "monitored",
-        "accepted",
-        "received",
-        "captured",
-        "observed",
-        "detected",
-        "checked",
-        "latched",
-    ];
-    // Active patterns: "{actor} {verb} {signal}"  (verb immediately before signal)
-    const ACTIVE_DRIVES_VERBS: &[&str] = &[
-        "drives",
-        "asserts",
-        "provides",
-        "returns",
-        "sources",
-        "generates",
-        "issues",
-        "sets",
-        "produces",
-        "supplies",
-        "outputs",
-        "sends",
-        "activates",
-        "presents",
-        "applies",
-        "places",
-        // Corpus-mined actor→signal verbs (VERB-COVERAGE-CORPUS): an actor that
-        // sources/changes a signal. "An actor <verb> a signal" reads naturally.
-        "transmits",
-        "forwards",
-        "responds",
-        "writes",
-        "clears",
-        "resets",
-        "toggles",
-        "releases",
-        "loads",
-        "stores",
-        "enables",
-        "disables",
-        "requests",
-        "acknowledges",
-        "grants",
-        "negates",
-        "controls",
-        "determines",
-        "masks",
-        "gates",
-        "pulls",
-        "initiates",
-        "switches",
-        "invalidates",
-        "drive",
-    ];
-    const ACTIVE_READS_VERBS: &[&str] = &[
-        "reads", "samples", "monitors", "accepts", "receives", "captures", "observes", "detects",
-        "checks", "latches", "read", "sample", "monitor", "accept", "receive",
-        // Corpus-mined actor→signal observe verbs.
-        "polls", "poll", "accesses", "access",
-    ];
+    // The actor→signal relation verb vocabulary (the KG edge labels) is centralized
+    // in `normative_vocab` — the single place to add a relation verb
+    // (VERB-COVERAGE-CORPUS). Passive = `{signal} is {verb} by {actor}`; active =
+    // `{actor} {verb} {signal}`. Verbs are grammar, not names (ADR 0006).
+    use crate::ir::normative_vocab::{
+        ACTIVE_DRIVES_VERBS, ACTIVE_READS_VERBS, PASSIVE_DRIVES_VERBS, PASSIVE_READS_VERBS,
+    };
 
     let mut records = Vec::new();
     let mut counter = 1usize;
@@ -7687,9 +7610,13 @@ mod tests {
             EvidenceModality, ExtractedStatement, RelationKind, StatementClass,
             extract_actor_signal_relations,
         };
-        let signals = ["PSTRB".to_string(), "PWAKE".to_string()]
-            .into_iter()
-            .collect::<std::collections::HashSet<_>>();
+        let signals = [
+            "PSTRB".to_string(),
+            "PWAKE".to_string(),
+            "PWUSER".to_string(),
+        ]
+        .into_iter()
+        .collect::<std::collections::HashSet<_>>();
         let mk = |id: &str, t: &str| ExtractedStatement {
             statement_id: id.to_string(),
             text: t.to_string(),
@@ -7701,6 +7628,11 @@ mod tests {
         let stmts = vec![
             mk("s1", "The Manager clears PSTRB before the read."),
             mk("s2", "The Manager polls PWAKE every cycle."),
+            // passive form of a mined verb (the gap centralization closed)
+            mk(
+                "s3",
+                "PWUSER is masked by the Manager during the idle phase.",
+            ),
         ];
         let r = extract_actor_signal_relations(&stmts, &signals);
         assert!(
@@ -7714,6 +7646,11 @@ mod tests {
                 && matches!(x.relation, RelationKind::Reads)
                 && x.signal_name == "PWAKE"),
             "actor 'polls SIGNAL' -> Reads; got {r:?}"
+        );
+        assert!(
+            r.iter()
+                .any(|x| matches!(x.relation, RelationKind::Drives) && x.signal_name == "PWUSER"),
+            "passive 'SIGNAL is masked by ACTOR' -> Drives; got {r:?}"
         );
     }
 

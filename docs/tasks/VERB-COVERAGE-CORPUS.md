@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `VERB-COVERAGE-CORPUS`
-- Status: `active` (`.1` corpus mine + gap report; `.2` curate + integrate)
+- Status: `done` (CLOSED `2026-06-05`; `.1` LLM corpus mine + `.2` integrate as KG edges + centralize)
 - Roadmap lane: `R16`/`R15e` (extraction quality — grammar coverage)
 - Created: `2026-06-05`
 - Owner: repo-local workflow
@@ -69,7 +69,7 @@ normative-predicate vocabulary clearly exceeds the current lists (`reset`, `driv
 
 ## Task Tree
 
-- ID: `VERB-COVERAGE-CORPUS` · Status: `active` · Children: `.1` · `.2`
+- ID: `VERB-COVERAGE-CORPUS` · Status: `done` (CLOSED `2026-06-05`) · Children: `.1` · `.2`
 - ID: `VERB-COVERAGE-CORPUS.1` · Status: `done` · Goal: mine the 82-PDF corpus → provenance-
   tagged verb frequency + a gap report vs the current lists (read-only artifact for owner review).
   Verification: passed (`2026-06-05`) — full seedless LLM mine of all 82 PDFs (qwen2.5:14b, ~39 min)
@@ -78,7 +78,7 @@ normative-predicate vocabulary clearly exceeds the current lists (`reset`, `driv
   **new** behavioral verbs the engine lacks: `set`/`clear`/`reset`/`sample`/`release`/`mask`/`gate`/
   `enable`/`disable`/`toggle`/`latch`/`pull`/`capture`/`load`/`store`/`invalidate`/`activate`/… Read-
   only — nothing wired in; awaiting owner sanity pass (esp. the Rejected pile) before `.2`.
-- ID: `VERB-COVERAGE-CORPUS.2` · Status: `in-progress` · Goal: integrate the verbs; centralize the
+- ID: `VERB-COVERAGE-CORPUS.2` · Status: `done` · Goal: integrate the verbs; centralize the
   grammar vocabulary; re-verify; close.
   Done (`2026-06-05`): **owner reframed the model** — the extraction path is "recognize actors +
   signals + normative verbs, capture the `(actor —verb→ signal)` relations between them" = the KG;
@@ -89,7 +89,15 @@ normative-predicate vocabulary clearly exceeds the current lists (`reset`, `driv
   `grant`/`control`/`determine`/…) and `ACTIVE_READS_VERBS` (`poll`/`poll`). Rescued verbs the report
   had wrongly rejected (`provide`/`apply`/`control`/`determine` — they ARE actor→signal edges).
   +1 test (`corpus_mined_actor_verbs_extract_relations`: clears→Drives, polls→Reads). CI green 1258.
-  Remaining: value-pinning verbs → signal-constraint side; centralize the vocabulary.
+  **Centralized (`2026-06-05`):** moved all four relation-verb lists into a documented module
+  `crates/specforge/src/ir/normative_vocab.rs` (the single place to add a KG edge verb), referenced
+  from `extract_actor_signal_relations`; behavior-preserving (132 evidence tests unchanged). Noticed
+  + closed a gap: the **passive** lists lacked the new verbs' passive forms (`"X is cleared by …"`)
+  — added them, +1 passive test (`"X is masked by ACTOR"`→Drives). The extraction model documented
+  in the book (`architecture-rationale.md` — "What extraction actually recovers: actor → verb →
+  signal"). Full CI GREEN (1258). **CLOSED.** Deferred fine-tune-later (owner's "enough coverage is
+  the bar"): `set`→1 / `clear`→0 **value-pinning** (genuinely ambiguous `"is set"` vs `"is set to
+  X"`); further verb-precision tuning.
 
 ## Current Frontier
 
@@ -113,3 +121,9 @@ normative-predicate vocabulary clearly exceeds the current lists (`reset`, `driv
 
 - `2026-06-05`: Created — owner request; PoC confirmed feasible on I²C + Wishbone; plan to mine all
   82 specs into a provenance-tagged, owner-reviewed normative-verb vocabulary.
+- `2026-06-05`: **CLOSED.** `.1` = seedless LLM mine of all 82 specs (640 grounded verbs) + Claude
+  cross-model curation → reviewed report. `.2` = integrated the verbs as actor→signal KG edges
+  (the owner-reframed model: the verb list IS the engine, each verb a KG edge label), rescued
+  wrongly-rejected relationship verbs, centralized the four verb lists into `ir/normative_vocab.rs`,
+  closed the passive-form gap, and documented the extraction model in the book. CI green 1258.
+  Value-pinning + further precision deferred as fine-tune-later.

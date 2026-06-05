@@ -2,6 +2,26 @@
 
 ## 2026-06-05
 
+### Corpus-mined verb coverage as actor→signal KG edges; centralized vocabulary (VERB-COVERAGE-CORPUS.1–.2)
+- The pattern extractor recognizes constraints/relations by matching verbs, so the verb list **is**
+  the engine — an unrecognized verb is a dropped Knowledge-Graph edge. `.1`: **seedlessly mined the
+  owner's real 82-PDF corpus** (cross-vendor: I²C/Wishbone/CCIX/OpenCAPI/Intel/AMD/Avalon) with
+  `qwen2.5:14b-instruct` — using the parked pure-NLP model **offline / at build-time** to overcome
+  the modal-regex's seed-dependence (a head-to-head showed it recovers the active-voice/descriptive
+  verbs `must`/`shall` structurally miss: `drives`/`samples`/`asserts`/…). 640 grounded behavioral
+  verbs; Claude **cross-model curation** → reviewed report `docs/research/verb-coverage-corpus.md`.
+- `.2`: integrated the verbs as **actor→signal KG edges** — the owner reframed the model (a signal
+  never behaves on its own; *an actor always does something to it*; the triple `actor —verb→ signal`
+  IS the KG, each verb an edge label). Added the corpus-mined relationship verbs to
+  `extract_actor_signal_relations` (Drives: `set`/`clear`/`reset`/`toggle`/`send`/`transmit`/
+  `respond`/`control`/`mask`/`gate`/`pull`/…; Reads: `poll`/`access`/…), rescued relationship verbs
+  a first pass wrongly rejected. **Centralized** all four relation-verb lists into a documented
+  module `ir/normative_vocab.rs` (the single place to add a KG edge verb); behavior-preserving.
+  Closed a gap (the passive lists lacked the new verbs' `"X is cleared by …"` forms). Documented the
+  extraction model in the book (`architecture-rationale.md`). Grammar only, never names (ADR 0006).
+  +2 tests; full `scripts/run_ci.sh` GREEN (1258). Value-pinning (`set`→1) deferred as fine-tune-
+  later. **Tree CLOSED.**
+
 ### Constraint subject never a condition-clause signal — extraction fix; tree CLOSED (CONSTRAINT-CONDITION-SUBJECT.1)
 - Acting on the real-APB NLI finding (`nli-gate-real-apb-validation`): `extract_signal_constraints`'
   empty-subject **full-text fallback** could attribute a constraint to a signal that appears only
