@@ -37,8 +37,8 @@ single convention is presumed (addressing the owner's "a spec may use 1/0, H/L, 
 ## Verification
 
 Passed (`2026-06-05`) — behavior-preserving refactor (full lib suite unchanged at 1260; the logic-
-level normalization tests still pass). Full `scripts/run_ci.sh` GREEN. **Owner note:** this refines
-the earlier ADR draft that listed `HIGH`/`LOW` as forbidden — surfaced explicitly for confirmation.
+level normalization tests still pass). Full `scripts/run_ci.sh` GREEN. **Owner CONFIRMED the ADR
+refinement (`2026-06-05`)** — logic levels are universal "how", retained.
 
 ## Task Tree
 

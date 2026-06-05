@@ -3,6 +3,8 @@
 - Status: accepted
 - Date: 2026-06-05
 - Deciders: project owner (signoff criterion), repo-local workflow
+- Amendment (`2026-06-05`, **owner-confirmed**): logic levels are universal binary-logic "how", not a
+  spec name — see the *"Logic levels are how, not a name"* boundary below.
 
 ## Context
 
