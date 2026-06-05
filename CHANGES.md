@@ -2,6 +2,16 @@
 
 ## 2026-06-05
 
+### NLI gate metric — `nli_demoted_contracts` in validate; tree CLOSED (NLI-GATE-METRIC.1)
+- `NLI-GATE-METRIC` (user "→ surface an nli_* count"): surface the NLI intent gate's effect as a
+  **read-only validate metric**. `ir/nli_verify.rs` gains `NLI_RESIDUAL_PREFIX` (the
+  `nli_unentailed_` packet-id prefix, now reused inside `nli_gate_contracts`) and
+  `nli_demoted_count(&[ResidualDecisionPacket]) -> usize` (counts the gate's residual packets — no
+  LLM call, since the demotion is already recorded in the artifact). `validate_intent_ir` emits
+  `metric("nli_demoted_contracts", …)`, so `specforge validate <intent_ir.json>` reports how many
+  contracts the NLI gate demoted. +1 unit test (mixed packet ids → correct count); book mention in
+  `architecture-rationale.md`. Full `scripts/run_ci.sh` GREEN (1253 → 1254; +1). **Tree CLOSED.**
+
 ### NLI intent gate — active demote-to-residual; tree CLOSED (NLI-INTENT-GATE.1–.2)
 - `NLI-INTENT-GATE` (user pick "→ (b)"): the NLI verifier made an **active** IntentIR gate — chosen
   at the IntentIR stage because `residual_decisions` already live there (EvidenceIR has no residuals

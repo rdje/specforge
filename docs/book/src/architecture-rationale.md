@@ -161,8 +161,11 @@ decisions** rather than passed downstream as a trusted obligation. Demoted, not 
 becomes an honest "this needs review" item, so even a wrong verdict from the model costs a
 review, never a lost fact. The gate only touches contracts it can phrase as a clean claim, and
 abstains the moment the model is unavailable — so turning it on can *demote* a borderline
-contract to a residual, but it can never *invent* one. *Authoritative tracking:*
-`docs/tasks/NLI-ENTAILMENT-VERIFIER.md`, `docs/tasks/NLI-INTENT-GATE.md`.
+contract to a residual, but it can never *invent* one. And because each demotion is recorded in
+the artifact, `specforge validate <intent_ir.json>` surfaces how many the gate demoted as the
+**`nli_demoted_contracts`** metric — a read-only count that needs no model. *Authoritative
+tracking:* `docs/tasks/NLI-ENTAILMENT-VERIFIER.md`, `docs/tasks/NLI-INTENT-GATE.md`,
+`docs/tasks/NLI-GATE-METRIC.md`.
 
 ## Why provenance matters so much
 

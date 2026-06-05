@@ -230,7 +230,7 @@ pub fn nli_gate_contracts(
                 ) =>
             {
                 residuals.push(crate::ir::source::ResidualDecisionPacket {
-                    packet_id: format!("nli_unentailed_{}", c.contract_id),
+                    packet_id: format!("{NLI_RESIDUAL_PREFIX}{}", c.contract_id),
                     question: format!(
                         "Does the source sentence support the contract claim '{claim}'?"
                     ),
@@ -260,6 +260,19 @@ pub fn apply_nli_gate(
     intent_ir.actor_contracts = kept;
     intent_ir.residual_decisions.extend(residuals);
     demoted
+}
+
+/// Prefix on the `packet_id` of every residual the NLI gate creates.
+pub const NLI_RESIDUAL_PREFIX: &str = "nli_unentailed_";
+
+/// Count the residual decisions the NLI gate produced (read-only; no LLM call —
+/// the demotion is already recorded in the artifact). Powers the
+/// `nli_demoted_contracts` validate metric.
+pub fn nli_demoted_count(residuals: &[crate::ir::source::ResidualDecisionPacket]) -> usize {
+    residuals
+        .iter()
+        .filter(|r| r.packet_id.starts_with(NLI_RESIDUAL_PREFIX))
+        .count()
 }
 
 #[cfg(test)]
@@ -530,5 +543,24 @@ mod tests {
         let (kept2, residuals2) = nli_gate_contracts(drive, |_, _| NliVerdict::Unknown);
         assert_eq!(kept2.len(), 1);
         assert!(residuals2.is_empty());
+    }
+
+    #[test]
+    fn nli_demoted_count_only_counts_gate_residuals() {
+        use crate::ir::source::ResidualDecisionPacket;
+        let packet = |id: &str| ResidualDecisionPacket {
+            packet_id: id.into(),
+            question: "q".into(),
+            why_unresolved: "w".into(),
+            automation_confidence: crate::ir::source::AutomationConfidence::Medium,
+            candidate_interpretations: vec![],
+        };
+        let residuals = vec![
+            packet("nli_unentailed_c1"),
+            packet("temporal_residual_c2"), // a non-NLI residual must not count
+            packet("nli_unentailed_c3"),
+        ];
+        assert_eq!(nli_demoted_count(&residuals), 2);
+        assert_eq!(nli_demoted_count(&[]), 0);
     }
 }

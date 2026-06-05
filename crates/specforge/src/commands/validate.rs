@@ -6349,6 +6349,10 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
                 "negative_knowledge_corroboration_requirements",
                 negative_knowledge_prior_matches.len().to_string(),
             ),
+            metric(
+                "nli_demoted_contracts",
+                crate::ir::nli_verify::nli_demoted_count(&ir.residual_decisions).to_string(),
+            ),
             metric("overall_score", format!("{score:.0}")),
             metric("grade", grade.to_string()),
         ],
