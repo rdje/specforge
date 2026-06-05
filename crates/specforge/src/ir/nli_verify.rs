@@ -137,7 +137,30 @@ pub fn constraint_claim_text(c: &crate::ir::source::SignalConstraintRecord) -> S
         format!("{} {verb} {what}", c.subject_signal)
     };
     match c.condition_text.as_deref().map(str::trim) {
-        Some(cond) if !cond.is_empty() => format!("{base} {cond}"),
+        Some(cond) if !cond.is_empty() => {
+            // The condition clause is stored connective-stripped (`extract_condition_clause`
+            // returns the text *after* "when"/"while"/…), so appending it bare reads as broken
+            // English — "PAUSER must be VALID PSELx is asserted" — which the NLI judge flags on
+            // phrasing alone. Re-join with a connective ("when" by default) so the claim is a
+            // grammatical sentence; if the stored clause already begins with one, keep it.
+            // Subordinating conjunctions AND prepositions that already begin a grammatical
+            // condition phrase ("for read transfers", "during the access phase") — only a bare
+            // clause ("PSELx is asserted") needs a "when" prepended.
+            const CONNECTIVES: &[&str] = &[
+                "when", "while", "unless", "during", "if", "until", "after", "before", "for", "in",
+                "on", "at", "with", "without", "whenever", "once", "as",
+            ];
+            let first = cond
+                .split_whitespace()
+                .next()
+                .unwrap_or("")
+                .to_ascii_lowercase();
+            if CONNECTIVES.contains(&first.as_str()) {
+                format!("{base} {cond}")
+            } else {
+                format!("{base} when {cond}")
+            }
+        }
         _ => base,
     }
 }
@@ -356,6 +379,25 @@ mod tests {
         // An empty/whitespace condition adds nothing.
         c.condition_text = Some("  ".into());
         assert_eq!(constraint_claim_text(&c), "PSTRB must be LOW");
+    }
+
+    #[test]
+    fn constraint_claim_text_joins_a_bare_condition_clause_with_when() {
+        use SignalConstraintKind as K;
+        let mut c = cons("c", "PSEL", K::MustBeAsserted, "...");
+        // A bare clause (starts with a signal/noun) gets a "when" so the claim is grammatical
+        // (else the NLI judge flags "PSEL must be asserted PSELx is asserted" on phrasing alone).
+        c.condition_text = Some("PSELx is asserted".into());
+        assert_eq!(
+            constraint_claim_text(&c),
+            "PSEL must be asserted when PSELx is asserted"
+        );
+        // A clause already beginning with a connective/preposition is kept verbatim.
+        c.condition_text = Some("during the access phase".into());
+        assert_eq!(
+            constraint_claim_text(&c),
+            "PSEL must be asserted during the access phase"
+        );
     }
 
     #[test]
