@@ -2,6 +2,27 @@
 
 ## 2026-06-05
 
+### NLI entailment verifier — the semantic grounding module (NLI-ENTAILMENT-VERIFIER.1–.2)
+- `NLI-ENTAILMENT-VERIFIER` (`.1` design + `.2` module): a *semantic* grounding gate (premise =
+  source statement, hypothesis = extracted claim → keep only `ENTAILED`) that catches what
+  string-match grounding misses — a model reading a **condition** as an **obligation**
+  ("PBUSER valid *when* PSEL asserted" ⇏ "PSEL must be asserted"). New `crates/specforge/src/ir/
+  nli_verify.rs`: `NliVerdict {Entailed,NotEntailed,Unknown}` + `NliGateAction` + `gate_action`,
+  `entailment_prompt` (deterministic; states the condition-vs-obligation rule), `parse_nli_verdict`
+  (**fail-closed** to `Unknown`; `NOT_ENTAILED` beats a substring `ENTAILED`), and
+  `verify_entailment` (reuses `commands::llm_text::call_text_provider` + its `SPECFORGE_VLM_HELPER`
+  hermetic test hook; any provider error → `Unknown`). The gate is **additive + fail-safe**:
+  `NotEntailed` → route to a residual, `Entailed` → keep, **`Unknown` → abstain** (the existing
+  rule-based grounding stands — a provider outage must never nuke extraction). Default model
+  `qwen2.5:14b-instruct` (a **text** model, not the VLM — empirically validated viable for NLI,
+  5/6, where the entailment framing beats free-form labeling). 4 pure unit tests (prompt shape;
+  `NOT_ENTAILED`-beats-`ENTAILED`; fail-closed-on-garbage; additive/fail-safe gate) — **no CI test
+  depends on Ollama**. User-friendly book subsection ("Checking a claim semantically — the NLI
+  entailment gate") in `architecture-rationale.md`; KM card `nli-entailment-verifier`. Full
+  `scripts/run_ci.sh` GREEN (1243 → 1247; +4). **No behavior change yet** — `.3` wires it into the
+  extraction path (run on extracted claims, route NotEntailed → residual, surface a metric) and
+  closes the tree. Grounded in SNLI/Bowman + the hallucination-mitigation literature.
+
 ### Eval gold reliability — Cohen's κ 0.90 (gold is trustworthy); tree CLOSED (EVAL-GOLD-INTERANNOTATOR-AGREEMENT)
 - `EVAL-GOLD-INTERANNOTATOR-AGREEMENT` (CLOSED): the user unblocked the "is the eval answer-key
   trustworthy?" item. The `signal_constraint` gold (`seed_apb.json`) was single-source

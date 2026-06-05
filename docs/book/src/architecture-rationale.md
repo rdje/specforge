@@ -104,6 +104,42 @@ So the guiding rule is:
 
 The dedicated chapter [Multimodal Evidence And Visual Grounding](pipeline/multimodal-evidence.md) explains how visual assets, captions, and VLM observations enter that bounded flow.
 
+### Checking a claim *semantically* — the NLI entailment gate
+
+"Ground those hypotheses in the current document" used to mean a string check: does the
+claim's signal name appear near the source text? That catches a model inventing a signal
+out of thin air, but it misses a subtler — and more common — failure: reading a
+*condition* as an *obligation*. *"PBUSER must be valid **when** PSEL, PENABLE, and PREADY
+are asserted"* does not say PSEL must be asserted — PSEL being asserted is the *situation*,
+and the obligation is on PBUSER. A string match just sees "PSEL" and "asserted" and waves
+it through.
+
+The **NLI entailment verifier** closes that gap. NLI — Natural Language Inference — is the
+standard test of whether one sentence *entails* another. SpecForge treats the source
+statement as the premise and each extracted claim as the hypothesis, and asks a strong
+*text* model one well-posed question: *"does the source actually support this claim?"* A
+claim that adds, changes, contradicts, or turns a condition into an obligation is **not
+entailed**, and is routed to a residual decision instead of being trusted.
+
+Three things keep it honest and safe:
+
+- **It only ever strengthens.** A confident "not entailed" drops a claim to a residual; a
+  clear "entailed" keeps it. But if the model is unavailable or its answer is unclear, the
+  gate **abstains** — it leaves the existing rule-based grounding in charge. A model outage
+  can never silently delete what SpecForge extracted.
+- **It uses a *text* model, not the vision model.** Entailment is pure language reasoning
+  (negation, scope, condition-vs-obligation); vision is for figures and diagrams. We
+  measured this — the entailment framing markedly outperforms asking the same model to
+  re-label from scratch.
+- **It never makes the test suite depend on a running model.** The check rides the same
+  provider plumbing as the other LLM steps, including a hook that lets the suite mock the
+  model's answers — so the gate's logic is fully tested without ever needing Ollama.
+
+This is "models propose, validation decides" made literal: the model's own claim is handed
+back to a model — but as a *checkable yes/no entailment question*, with the deterministic
+pipeline still holding the final say. *Authoritative tracking:*
+`docs/tasks/NLI-ENTAILMENT-VERIFIER.md`.
+
 ## Why provenance matters so much
 
 Every promoted fact should stay tied to the evidence that justified it.

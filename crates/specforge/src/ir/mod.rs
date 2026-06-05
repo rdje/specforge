@@ -9,6 +9,7 @@ pub mod figure_region;
 pub mod fusion;
 pub mod intent;
 pub mod isf_ir;
+pub mod nli_verify;
 pub mod prior_memory;
 pub mod protocol_graph;
 pub mod semantic;

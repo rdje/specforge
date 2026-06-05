@@ -83,8 +83,18 @@ requires Ollama.**
   `SPECFORGE_VLM_HELPER` hermetic hook; `NliVerdict`; fail-closed parse; the additive gate
   semantics where `Unknown`→Abstain so an outage never breaks extraction; `qwen2.5:14b-instruct`
   validated viable). Docs-only.
-- ID: `NLI-ENTAILMENT-VERIFIER.2` · Status: `pending` · Goal: implement the module + tests + book
+- ID: `NLI-ENTAILMENT-VERIFIER.2` · Status: `done` · Goal: implement the module + tests + book
   + KM.
+  Verification: passed (`2026-06-05`) — `ir/nli_verify.rs` (`pub mod` registered): `NliVerdict`
+  + `NliGateAction` + `gate_action` (Entailed→Keep, NotEntailed→RouteResidual, **Unknown→Abstain**)
+  + `entailment_prompt` (states the condition-vs-obligation rule) + `parse_nli_verdict`
+  (fail-closed; `NOT_ENTAILED` beats substring `ENTAILED`) + `verify_entailment` (reuses
+  `call_text_provider` + `api_url`; provider error → Unknown). `DEFAULT_NLI_MODEL =
+  qwen2.5:14b-instruct`. 4 pure unit tests (prompt shape; NOT_ENTAILED-beats-ENTAILED;
+  fail-closed-on-garbage; additive/fail-safe gate) — **no Ollama dependency**. User-friendly book
+  subsection in `architecture-rationale.md` ("Checking a claim semantically — the NLI entailment
+  gate"); KM card `nli-entailment-verifier`. Full `scripts/run_ci.sh` GREEN (1243→1247; +4). **No
+  behavior change yet** (the live wiring is `.3`).
 - ID: `NLI-ENTAILMENT-VERIFIER.3` · Status: `pending` · Goal: live wiring + metric + close.
 
 ## Current Frontier
@@ -92,8 +102,8 @@ requires Ollama.**
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `NLI-ENTAILMENT-VERIFIER.1` | `done` | design + the validated model + hermetic-test plan |
-| 2 | `NLI-ENTAILMENT-VERIFIER.2` | `pending` | the pure+mock-tested module |
-| 3 | `NLI-ENTAILMENT-VERIFIER.3` | `pending` | live gate → residual; close |
+| 2 | `NLI-ENTAILMENT-VERIFIER.2` | `done` | `ir/nli_verify.rs` module + 4 tests + book + KM (CI green 1247; no Ollama dep) |
+| 3 | `NLI-ENTAILMENT-VERIFIER.3` | `pending` | live wiring (run on extracted claims → NotEntailed to residual + metric); close |
 
 ## Decisions
 
@@ -106,8 +116,14 @@ requires Ollama.**
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `NLI-ENTAILMENT-VERIFIER.1` | `NLI-ENTAILMENT-VERIFIER.1 — own + design the semantic entailment grounding gate` | docs-only |
+| `NLI-ENTAILMENT-VERIFIER.2` | `NLI-ENTAILMENT-VERIFIER.2 — ir/nli_verify.rs module (verdict + prompt + fail-closed parse + provider call) + book + KM` | +4 tests; CI green 1247; no Ollama dep |
 
 ## Changelog
 
 - `2026-06-05`: Created — a semantic NLI entailment gate (premise=source, hypothesis=claim → keep
   only ENTAILED), built on the validated `qwen2.5:14b-instruct`, additive + fail-safe + hermetic.
+- `2026-06-05`: `.2` done — `ir/nli_verify.rs` module (`NliVerdict`/`NliGateAction`/`gate_action`/
+  `entailment_prompt`/`parse_nli_verdict`/`verify_entailment`, fail-closed, `Unknown→Abstain`),
+  4 pure unit tests (no Ollama dep), book subsection (`architecture-rationale.md`), KM card
+  `nli-entailment-verifier`. CI green 1247. No behavior change yet — `.3` wires it into the
+  extraction path (run on claims, route NotEntailed → residual, surface a metric) and closes.
