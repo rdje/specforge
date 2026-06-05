@@ -215,6 +215,18 @@ pub fn run(args: EvalExtractionArgs) -> Result<()> {
                 task.as_str()
             );
         }
+        // Pinpoint the genuinely-missed gold facts (document-level) for review.
+        let missed = eval::missed_gold_facts(&items, &predicted);
+        for (task, keys) in &missed {
+            if !keys.is_empty() {
+                println!(
+                    "    MISSED {} ({}): {}",
+                    task.as_str(),
+                    keys.len(),
+                    keys.join("  ;  ")
+                );
+            }
+        }
     }
     Ok(())
 }

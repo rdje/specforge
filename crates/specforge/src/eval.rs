@@ -535,6 +535,35 @@ pub fn score_fact_recall(
     out
 }
 
+/// The gold facts NOT found anywhere in the predictions (document-level), per task — the
+/// complement of [`score_fact_recall`]. Returns each missed fact's canonical key, so a review
+/// can pinpoint *exactly* which gold fact the extractor misses (instead of unreliable manual
+/// key reconstruction). Deterministic order (gold order within each item).
+pub fn missed_gold_facts(
+    items: &[EvalItem],
+    predicted: &PredictedKeys,
+) -> BTreeMap<EvalTask, Vec<String>> {
+    let mut pred_by_task: BTreeMap<EvalTask, BTreeSet<String>> = BTreeMap::new();
+    for ((task, _statement_id), keys) in predicted.iter() {
+        pred_by_task
+            .entry(*task)
+            .or_default()
+            .extend(keys.iter().cloned());
+    }
+    let empty = BTreeSet::new();
+    let mut out: BTreeMap<EvalTask, Vec<String>> = BTreeMap::new();
+    for item in items {
+        let pred = pred_by_task.get(&item.task).unwrap_or(&empty);
+        for gold in &item.gold {
+            let key = gold.canonical_key();
+            if !pred.contains(&key) {
+                out.entry(item.task).or_default().push(key);
+            }
+        }
+    }
+    out
+}
+
 /// Per-relation-kind P/R/F1 for the `ActorSignalRelation` task — splits the keys by the
 /// relation kind (the middle field of `ACTOR|kind|SIGNAL`), so **Drives** and **Reads** are
 /// scored separately (other tasks are ignored). Keyed by `"drives"` / `"reads"`.
@@ -1008,6 +1037,47 @@ mod tests {
         // document-level: found (1/1).
         let recall = score_fact_recall(&items, &predicted);
         assert_eq!(recall[&EvalTask::ActorSignalRelation], (1, 1));
+    }
+
+    #[test]
+    fn missed_gold_facts_lists_the_unfound_gold() {
+        // two gold relations; only one is predicted anywhere → the other is listed missed.
+        let items = vec![EvalItem {
+            task: EvalTask::ActorSignalRelation,
+            doc_key: "doc".to_string(),
+            statement_id: "s1".to_string(),
+            input_text: String::new(),
+            grounding: vec![],
+            gold: vec![
+                GoldFact::Relation {
+                    actor: "Manager".to_string(),
+                    relation: "drives".to_string(),
+                    signal: "HTRANS".to_string(),
+                },
+                GoldFact::Relation {
+                    actor: "Manager".to_string(),
+                    relation: "reads".to_string(),
+                    signal: "HREADY".to_string(),
+                },
+            ],
+            label_status: "agent_drafted".to_string(),
+            label_note: String::new(),
+        }];
+        let mut predicted: PredictedKeys = PredictedKeys::new();
+        index_relation_predictions(
+            &[relation_record(
+                "p1",
+                "Manager",
+                RelationKind::Drives,
+                "HTRANS",
+                &["s9"],
+            )],
+            &mut predicted,
+        );
+        let missed = missed_gold_facts(&items, &predicted);
+        let m = &missed[&EvalTask::ActorSignalRelation];
+        assert_eq!(m.len(), 1, "only HREADY missed: {m:?}");
+        assert!(m[0].contains("HREADY"));
     }
 
     #[test]
