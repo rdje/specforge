@@ -24,9 +24,31 @@ normative-predicate vocabulary clearly exceeds the current lists (`reset`, `driv
 
 ## Design
 
-- **`.1` mine + report (read-only):** `pdftotext` all 82 PDFs (+`docling` fallback for hard ones);
-  extract normative predicate patterns (`must/shall/should/may/will (not) (be/remain/stay/driven/
-  held/…) <predicate>`); tally frequency with **per-spec provenance**. **Filter** to the
+- **`.1` mine + report (read-only):** `pdftotext` all 82 PDFs (+`docling` fallback for hard ones).
+  **Owner-flagged refinement (2026-06-05):** a single modal-seed regex
+  (`must/shall/should/may/will + <predicate>`) only finds the *modal-reachable* slice — it misses
+  (a) other normative phrasings (`is required to`, `needs to`, `has to`, `is to`, `is forbidden`,
+  imperatives), (b) **descriptive** behavior with no modal at all ("PSEL **is asserted**", "the
+  Manager **drives** HTRANS"), and (c) imperatives ("**Set** bit 3"). So mine from **two ends and
+  iterate**: anchor on a *broadened* normative-marker seed AND on the **behavioral verbs
+  themselves** (scan `asserted/driven/stable/sampled/latched/…` wherever they occur), then let
+  verbs found in one pass seed the next (co-occurrence). The seed-dependence is the inherent
+  pattern-matching ceiling — the parked pure-NLP model is what removes it. Tally frequency with
+  **per-spec provenance**.
+  - First (naive, modal-only) pass done `2026-06-05`: 45,224 occurrences / 1,867 distinct
+    predicates across all 82 PDFs; modal-reachable behavioral gap = `set`/`reset`/`cleared`/
+    `enabled`/`disabled`/`aligned`/`ignored`/`assert`/`updated`/`loaded`/… — useful but partial.
+  - **METHOD CHANGED (owner, `2026-06-05`): use the LLM (`qwen2.5:14b-instruct`) to mine verbs
+    seedlessly — OFFLINE/build-time only (the runtime stays deterministic pattern-matching; this is
+    the parked pure-NLP model in a bounded list-building role, fully on the bounded-LLM doctrine).**
+    Sample head-to-head (5 specs — I²C/Wishbone/OpenCAPI/Avalon/AMD IOMMU, 532 candidate sentences,
+    146s): LLM found 8 verbs the seed also found AND **23 the modal regex structurally could not**
+    (`driven`/`drives`/`asserts`/`sample`/`sampled`/`holds`/`pulls`/`released`/`remains`/`detects`/
+    `generates`/`matched`/`tested`/`transferred`/…) — the active-voice/descriptive forms that live
+    in sentences with no `must`/`shall`. Some noise (`defines`/`formed`/`reversed`) → curation +
+    owner review. Conclusion: LLM-mining clearly out-recalls the seed regex; it is the `.1` method.
+    Pipeline: `pdftotext` → broad signal-presence sentence pre-filter (not a verb seed) → batched
+    LLM verb extraction → ground each verb in the corpus → dedup + provenance → owner review. **Filter** to the
   *signal-behavioral* subset (what a *signal* does — asserted/driven/sampled/stable/reset/toggled/…)
   versus *device/system requirements* (`must conform/support/describe` — out of scope for signal
   constraints). Produce a gap report: corpus verbs **not** covered by the current extractor lists
