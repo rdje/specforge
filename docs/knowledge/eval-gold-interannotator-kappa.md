@@ -9,7 +9,7 @@ answers:
 date: 2026-06-05
 tags: [eval, gold, inter-annotator, kappa, reliability]
 evidence: crates/specforge/test_data/llm_eval/seed_apb.json; docs/tasks/EVAL-GOLD-INTERANNOTATOR-AGREEMENT.md
-reverify: python3 -c "see EVAL-GOLD-INTERANNOTATOR-AGREEMENT.md Method — re-run a blind second annotation and recompute"
+reverify: true  # MANUAL: re-run a blind second annotation per EVAL-GOLD-INTERANNOTATOR-AGREEMENT.md Method and recompute kappa (not an automatable grep)
 ---
 
 The `signal_constraint` eval gold (`seed_apb.json`, `label_status: agent_drafted`,
