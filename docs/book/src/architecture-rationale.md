@@ -181,6 +181,33 @@ including a corpus-wide verb vocabulary so the ceiling is as high as pattern-mat
 only then let a model take over the *how* to reach the rest of the world's specs. Even then, the
 invariant holds: it would generalize the method and **still never memorize a name.**
 
+## What extraction actually recovers: actor → verb → signal
+
+Strip the pipeline to its core and there is one job: read prose and recover **who does what to
+which signal.** A signal never behaves on its own — *something is always done to it, and the doer is
+an actor* (a Requester, a Completer, a clock). So the unit `specforge` hunts for is a triple:
+
+> **actor — verb → signal**
+
+— *"the Manager **drives** HTRANS"*, *"the Completer **samples** PREADY"*. That triple is an edge,
+and the collection of edges is the **Knowledge Graph**. That is *why* the KG exists: it is the
+natural shape of the thing being extracted.
+
+So recognition has three vocabularies and one assembly step:
+
+- **signals** — recovered from the document's own declarations (never hardcoded — see *"never
+  memorizes a spec's names"* above),
+- **actors** — the role entities that act,
+- **normative verbs** — the edge labels (`drives`, `samples`, `asserts`, `clears`, `polls`, …),
+- **the relation** — assembling the triple, typed by *kind*: does the actor **drive** the signal
+  (source/change it) or **read** it (observe/sample it)?
+
+This is why *the verb list is the engine*: a verb it doesn't recognize is an edge it cannot draw. So
+`specforge` keeps that list as broad as a real corpus of chip specs demands — the behavioral verbs
+are mined seedlessly across dozens of vendors' specifications — because **each missing verb is a
+missing edge in the graph.** And because verbs are *grammar*, not *names*, the list can grow without
+ever tying the tool to one spec.
+
 ## Why AI is bounded instead of central
 
 AI is useful in `specforge`, but it should not be the final authority.
