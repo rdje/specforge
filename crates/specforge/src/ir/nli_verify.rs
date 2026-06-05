@@ -112,26 +112,34 @@ pub fn verify_entailment(
 }
 
 /// Render a `SignalConstraintRecord` as a natural-language claim (the NLI
-/// hypothesis) — e.g. `PADDR must be stable`, `PSTRB must be LOW`,
-/// `HTRANS must be IDLE`. The constraint's own `source_text` is the premise.
+/// hypothesis) — e.g. `PADDR must be stable`, `PSTRB must be LOW for read
+/// transfers`, `HTRANS must be IDLE`. The constraint's own `source_text` is the
+/// premise. Any `condition_text` is **carried into the claim** so a conditional
+/// constraint is judged against the same condition the source states (otherwise
+/// "PSTRB must be LOW" reads as not-entailed by "for read transfers, … LOW").
 pub fn constraint_claim_text(c: &crate::ir::source::SignalConstraintRecord) -> String {
     use crate::ir::source::SignalConstraintKind as K;
     // `MustNotChange` is inherently negative; the rest take the `negated` flag.
-    if matches!(c.constraint_kind, K::MustNotChange) {
-        return format!("{} must not change", c.subject_signal);
-    }
-    let verb = if c.negated { "must not" } else { "must" };
-    let what = match &c.constraint_kind {
-        K::MustBeHigh => "be HIGH".to_string(),
-        K::MustBeLow => "be LOW".to_string(),
-        K::MustBeAsserted => "be asserted".to_string(),
-        K::MustBeDeasserted => "be deasserted".to_string(),
-        K::MustBeStable => "be stable".to_string(),
-        K::MustHoldData => "hold its data".to_string(),
-        K::MustBeValue { value } => format!("be {value}"),
-        K::MustNotChange => unreachable!("handled above"),
+    let base = if matches!(c.constraint_kind, K::MustNotChange) {
+        format!("{} must not change", c.subject_signal)
+    } else {
+        let verb = if c.negated { "must not" } else { "must" };
+        let what = match &c.constraint_kind {
+            K::MustBeHigh => "be HIGH".to_string(),
+            K::MustBeLow => "be LOW".to_string(),
+            K::MustBeAsserted => "be asserted".to_string(),
+            K::MustBeDeasserted => "be deasserted".to_string(),
+            K::MustBeStable => "be stable".to_string(),
+            K::MustHoldData => "hold its data".to_string(),
+            K::MustBeValue { value } => format!("be {value}"),
+            K::MustNotChange => unreachable!("handled above"),
+        };
+        format!("{} {verb} {what}", c.subject_signal)
     };
-    format!("{} {verb} {what}", c.subject_signal)
+    match c.condition_text.as_deref().map(str::trim) {
+        Some(cond) if !cond.is_empty() => format!("{base} {cond}"),
+        _ => base,
+    }
 }
 
 /// A constraint the NLI verifier judged NOT entailed by its own source sentence
@@ -325,6 +333,29 @@ mod tests {
             constraint_claim_text(&cons("c", "HAUSER", K::MustNotChange, "x")),
             "HAUSER must not change"
         );
+    }
+
+    #[test]
+    fn constraint_claim_text_carries_condition() {
+        use SignalConstraintKind as K;
+        // A conditional constraint must state its condition, so it is judged
+        // against the same condition the source states (precision; the real-APB
+        // run flagged "PSTRB must be LOW" purely because the claim dropped "for
+        // read transfers").
+        let mut c = cons(
+            "c",
+            "PSTRB",
+            K::MustBeLow,
+            "For read transfers, drive PSTRB LOW.",
+        );
+        c.condition_text = Some("for read transfers".into());
+        assert_eq!(
+            constraint_claim_text(&c),
+            "PSTRB must be LOW for read transfers"
+        );
+        // An empty/whitespace condition adds nothing.
+        c.condition_text = Some("  ".into());
+        assert_eq!(constraint_claim_text(&c), "PSTRB must be LOW");
     }
 
     #[test]

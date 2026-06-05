@@ -3,7 +3,7 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Regenerate with `knowledge-map/scripts/gen_knowledge_map.sh`.
 > Source of truth = YAML front-matter in: `docs/knowledge docs/decisions`. Edit the fact files, never this map.
 > A fact is any `.md` whose front-matter has a non-empty `answers:` list.
-> **18** facts · **88** question keys.
+> **19** facts · **92** question keys.
 
 ## Questions → fact
 
@@ -22,6 +22,7 @@
 - "does agreement between sources boost confidence" -> [dempster-fusion](docs/knowledge/dempster-fusion.md) · 2026-06-04 · reverify: `grep -n "fn dempster_corroborate_confidence" crates/specforge/src/ir/fusion.rs`
 - "does corpus prior memory only accrete" -> [contested-priors](docs/knowledge/contested-priors.md) · 2026-06-04 · reverify: `grep -n "fn contested_priors" crates/specforge/src/ir/prior_memory.rs`
 - "does every temporal_rule reach the .isf or a residual" -> [isf-temporal-lowering-no-silent-drop](docs/knowledge/isf-temporal-lowering-no-silent-drop.md) · 2026-06-04 · reverify: `grep -n "temporal_residuals" crates/specforge/src/ir/isf_ir.rs crates/specforge/src/ir/adapters.rs`
+- "does the NLI verifier actually catch real extraction errors" -> [nli-gate-real-apb-validation](docs/knowledge/nli-gate-real-apb-validation.md) · 2026-06-05 · reverify: `cargo run -p specforge --quiet -- nli-verify generated/evidence_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/evidence_ir.json --vlm-provider ollama --model qwen2.5:14b-instruct`
 - "how are temporal rules expressed as LTL or MTL" -> [temporal-rule-ltl-rendering](docs/knowledge/temporal-rule-ltl-rendering.md) · 2026-06-04 · reverify: `grep -n "fn temporal_rule_to_ltl" crates/specforge/src/ir/temporal_ltl.rs`
 - "how do I file an FSMGen bug report or feature request" -> [fsmgen-feedback-channel](docs/knowledge/fsmgen-feedback-channel.md) · 2026-06-04 · reverify: `ls docs/FSMGEN_FEEDBACK.md`
 - "how do I make the NLI verifier actively change extraction / demote claims" -> [nli-intent-gate](docs/knowledge/nli-intent-gate.md) · 2026-06-05 · reverify: `grep -n "fn apply_nli_gate\|fn nli_gate_contracts\|fn obligation_claim_text" crates/specforge/src/ir/nli_verify.rs`
@@ -37,6 +38,7 @@
 - "how is the NLI gate tested without Ollama" -> [nli-intent-gate](docs/knowledge/nli-intent-gate.md) · 2026-06-05 · reverify: `grep -n "fn apply_nli_gate\|fn nli_gate_contracts\|fn obligation_claim_text" crates/specforge/src/ir/nli_verify.rs`
 - "how was the eval gold checked for idiosyncrasy" -> [eval-gold-interannotator-kappa](docs/knowledge/eval-gold-interannotator-kappa.md) · 2026-06-05 · reverify: `python3 -c "see EVAL-GOLD-INTERANNOTATOR-AGREEMENT.md Method — re-run a blind second annotation and recompute`
 - "is SpecForge specification mining" -> [spec-mining-framing](docs/knowledge/spec-mining-framing.md) · 2026-06-04 · reverify: `grep -rn "forward specification mining" README.md docs/book/src/architecture-rationale.md`
+- "is SpecForge's constraint extraction over-generating" -> [nli-gate-real-apb-validation](docs/knowledge/nli-gate-real-apb-validation.md) · 2026-06-05 · reverify: `cargo run -p specforge --quiet -- nli-verify generated/evidence_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/evidence_ir.json --vlm-provider ollama --model qwen2.5:14b-instruct`
 - "is qwen2.5:14b-instruct good enough for NLI" -> [local-llm-for-text-reasoning](docs/knowledge/local-llm-for-text-reasoning.md) · 2026-06-05 · reverify: `ollama list  # qwen2.5:14b-instruct (text) + qwen2.5vl:7b (vision); re-run the NLI/kappa probes`
 - "is the LLM/VLM provider missing or not wired up" -> [llm-vlm-provider-default](docs/knowledge/llm-vlm-provider-default.md) · 2026-06-01 · reverify: `grep -n "qwen2.5vl" crates/specforge/src/commands/llm_text.rs`
 - "is the eval gold / answer key trustworthy or reliable" -> [eval-gold-interannotator-kappa](docs/knowledge/eval-gold-interannotator-kappa.md) · 2026-06-05 · reverify: `python3 -c "see EVAL-GOLD-INTERANNOTATOR-AGREEMENT.md Method — re-run a blind second annotation and recompute`
@@ -51,6 +53,7 @@
 - "torch MPS float64 error during ingest" -> [docling-device-cpu](docs/knowledge/docling-device-cpu.md) · 2026-06-01 · reverify: `grep -n DOCLING_DEVICE crates/specforge/src/ir/source/docling_backend.rs`
 - "was the (contract ... eventually ...) ISF clause removed" -> [fsmgen-temporal-isf-form](docs/knowledge/fsmgen-temporal-isf-form.md) · 2026-06-04 · reverify: `grep -n "assert (monitor (within" crates/specforge/src/ir/isf_ir.rs`
 - "what ISF form does SpecForge use for a bounded-eventually contract" -> [fsmgen-temporal-isf-form](docs/knowledge/fsmgen-temporal-isf-form.md) · 2026-06-04 · reverify: `grep -n "assert (monitor (within" crates/specforge/src/ir/isf_ir.rs`
+- "what did running nli-verify on a real spec find" -> [nli-gate-real-apb-validation](docs/knowledge/nli-gate-real-apb-validation.md) · 2026-06-05 · reverify: `cargo run -p specforge --quiet -- nli-verify generated/evidence_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/evidence_ir.json --vlm-provider ollama --model qwen2.5:14b-instruct`
 - "what does DOCLING_DEVICE do" -> [docling-device-cpu](docs/knowledge/docling-device-cpu.md) · 2026-06-01 · reverify: `grep -n DOCLING_DEVICE crates/specforge/src/ir/source/docling_backend.rs`
 - "what does SpecForge defer from conformal prediction NLI Dempster Snorkel NoRBERT" -> [adopt-defer-ledger](docs/knowledge/adopt-defer-ledger.md) · 2026-06-04 · reverify: `ls docs/research/grounding/adopt-defer-ledger.md`
 - "what does SpecForge take from Docling OpenIE LayoutLM Chao Chow LLVM MLIR GoldMine Texada Pnueli" -> [adopt-defer-ledger](docs/knowledge/adopt-defer-ledger.md) · 2026-06-04 · reverify: `ls docs/research/grounding/adopt-defer-ledger.md`
@@ -87,6 +90,7 @@
 - "why are modal verbs must shall should may not flagged as ambiguous" -> [ambiguity-weak-phrase-detector](docs/knowledge/ambiguity-weak-phrase-detector.md) · 2026-06-04 · reverify: `grep -n "fn weak_phrase_findings" crates/specforge/src/ir/ambiguity.rs`
 - "why are stability obligations residuals" -> [stable-obligation-phase-scoped-residual](docs/knowledge/stable-obligation-phase-scoped-residual.md) · 2026-06-04 · reverify: `grep -n "bare stability across tick phases" crates/specforge/src/ir/contract.rs`
 - "why does Docling re-ingest fail on Apple Silicon" -> [docling-device-cpu](docs/knowledge/docling-device-cpu.md) · 2026-06-01 · reverify: `grep -n DOCLING_DEVICE crates/specforge/src/ir/source/docling_backend.rs`
+- "why does condition_text matter for the NLI claim" -> [nli-gate-real-apb-validation](docs/knowledge/nli-gate-real-apb-validation.md) · 2026-06-05 · reverify: `cargo run -p specforge --quiet -- nli-verify generated/evidence_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/evidence_ir.json --vlm-provider ollama --model qwen2.5:14b-instruct`
 - "why doesn't SpecForge emit (contract eventually) anymore" -> [fsmgen-temporal-isf-form](docs/knowledge/fsmgen-temporal-isf-form.md) · 2026-06-04 · reverify: `grep -n "assert (monitor (within" crates/specforge/src/ir/isf_ir.rs`
 - "why doesn't SpecForge lower stability obligations to (assert (stable sig))" -> [stable-obligation-phase-scoped-residual](docs/knowledge/stable-obligation-phase-scoped-residual.md) · 2026-06-04 · reverify: `grep -n "bare stability across tick phases" crates/specforge/src/ir/contract.rs`
 - "why doesn't SpecForge use TLA+" -> [temporal-logic-choice](docs/knowledge/temporal-logic-choice.md) · 2026-06-04 · reverify: `grep -n "fn temporal_rule_to_ltl" crates/specforge/src/ir/temporal_ltl.rs`
@@ -205,6 +209,15 @@ _NLI entailment verifier — a semantic "does the source entail this claim?" gro
 - **evidence:** `crates/specforge/src/ir/nli_verify.rs`
 - **reverify:** `grep -n "fn verify_entailment" crates/specforge/src/ir/nli_verify.rs`
 - **source:** [`docs/knowledge/nli-entailment-verifier.md`](docs/knowledge/nli-entailment-verifier.md)
+
+### nli-gate-real-apb-validation
+_NLI gate validated on the real AMBA APB spec — it works, and it exposes constraint over-generation_
+
+- **answers:** does the NLI verifier actually catch real extraction errors | what did running nli-verify on a real spec find | is SpecForge's constraint extraction over-generating | why does condition_text matter for the NLI claim
+- **date:** 2026-06-05 · **status:** current
+- **evidence:** `crates/specforge/src/ir/nli_verify.rs`
+- **reverify:** `cargo run -p specforge --quiet -- nli-verify generated/evidence_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/evidence_ir.json --vlm-provider ollama --model qwen2.5:14b-instruct`
+- **source:** [`docs/knowledge/nli-gate-real-apb-validation.md`](docs/knowledge/nli-gate-real-apb-validation.md)
 
 ### nli-intent-gate
 _NLI intent gate — active demote-to-residual of un-entailed contracts (intent --nli-verify)_

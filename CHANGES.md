@@ -2,6 +2,20 @@
 
 ## 2026-06-05
 
+### NLI claim carries its condition — real-APB validation + precision fix; tree CLOSED (NLI-CLAIM-CONDITION.1)
+- Ran `nli-verify` on the **real AMBA APB EvidenceIR** (42 `signal_constraints`, qwen2.5:14b-instruct,
+  ~42 s) — first end-to-end run on real data. It flagged 36/42 not-entailed; inspection shows the
+  gate **works** and catches genuine mis-extractions (protocol *states* `ACCESS`/`SETUP`, *width
+  parameters* `USER_*_WIDTH`, the *clock* `PCLK`, and *condition signals* like "PSEL must be VALID"
+  pulled from "when PSEL is asserted, …"). So the run **validates the gate AND exposes that the
+  constraint extractor over-generates** (recorded for a future investigation). **Precision fix:**
+  `constraint_claim_text` dropped the constraint's `condition_text`, so a legitimately-conditional
+  constraint ("PSTRB must be LOW" from *"for read transfers, drive PSTRB LOW"*) read as not-entailed
+  purely because the claim was unconditional. It now **carries the condition** ("PSTRB must be LOW
+  for read transfers") — real-APB re-run drops **36 → 33** (conditional false-positives fixed, the
+  correct catches kept). +1 unit test; KM card `nli-gate-real-apb-validation`; book updated. CI
+  GREEN. **Tree CLOSED.**
+
 ### NLI gate metric — `nli_demoted_contracts` in validate; tree CLOSED (NLI-GATE-METRIC.1)
 - `NLI-GATE-METRIC` (user "→ surface an nli_* count"): surface the NLI intent gate's effect as a
   **read-only validate metric**. `ir/nli_verify.rs` gains `NLI_RESIDUAL_PREFIX` (the

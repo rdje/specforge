@@ -146,9 +146,13 @@ specforge nli-verify path/to/evidence_ir.json
 ```
 
 It reads an EvidenceIR, asks the text model whether each constraint's source sentence entails
-the constraint-as-a-claim, and lists the ones that are **not entailed** — the likely
-hallucinations worth a second look. Pass `--vlm-provider skip` to no-op (the gate abstains on
-everything) or `--model <name>` to override the default text model.
+the constraint-as-a-claim (carrying any stated *condition* into the claim — "PSTRB must be LOW
+**for read transfers**" — so a conditional constraint is judged fairly), and lists the ones that
+are **not entailed** — the likely hallucinations worth a second look. Run on the real AMBA APB
+spec it flags genuinely mis-extracted constraints: protocol *states* (`ACCESS`), *width
+parameters*, the *clock*, and *condition* signals that were never the obligation's subject. Pass
+`--vlm-provider skip` to no-op (the gate abstains on everything) or `--model <name>` to override
+the default text model.
 
 To make the gate *active* — not just a report — run it during IntentIR construction:
 
