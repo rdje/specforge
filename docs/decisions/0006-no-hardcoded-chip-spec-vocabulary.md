@@ -19,6 +19,11 @@ the tool) and **brittle** (it rots when any one spec changes its wording in a la
 
 ## Decision
 
+**Guiding principle (owner's words):** *"SpecForge should be smart about how to extract things from
+a chip-spec PDF — it should remember how to do things right, but it shouldn't remember particular
+names."* The **method** (how to read tables, normative grammar, structure) is the intelligence to
+keep; the **names** are read from the document, never stored.
+
 **No SpecForge production code may hardcode domain vocabulary that belongs to, or is derived from,
 any specific chip-spec PDF.** This includes, with no exceptions:
 
