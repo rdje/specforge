@@ -2,6 +2,21 @@
 
 ## 2026-06-05
 
+### Constraint subject never a condition-clause signal — extraction fix; tree CLOSED (CONSTRAINT-CONDITION-SUBJECT.1)
+- Acting on the real-APB NLI finding (`nli-gate-real-apb-validation`): `extract_signal_constraints`'
+  empty-subject **full-text fallback** could attribute a constraint to a signal that appears only
+  in the stripped condition clause — "The following signals must be valid **when PSEL is
+  asserted**" yielded a bogus "PSEL must be VALID" (PSEL is the *condition*). The fallback now
+  **excludes any token from the condition clause** (`&sentence[text_before_condition_marker(
+  sentence).len()..]`), a general protocol-agnostic fix; if that empties the subject set, no
+  constraint is emitted (correct — the real subject is an unresolvable forward-reference). +1 test
+  in the existing `CONSTRAINT-SUBJECT-PRECISION` section. **Honest finding:** that section already
+  fixes width-params, cross-sentence sweeping, and until/if conditions, so the generated EvidenceIR
+  artifacts the NLI run used are **stale** — much of the apparent "33/42 over-generation" is already
+  fixed in current code; this closes the one remaining forward-reference gap, and re-measuring
+  current extraction quality needs a re-extraction. Full `scripts/run_ci.sh` GREEN (1255 → 1256).
+  **Tree CLOSED.**
+
 ### NLI claim carries its condition — real-APB validation + precision fix; tree CLOSED (NLI-CLAIM-CONDITION.1)
 - Ran `nli-verify` on the **real AMBA APB EvidenceIR** (42 `signal_constraints`, qwen2.5:14b-instruct,
   ~42 s) — first end-to-end run on real data. It flagged 36/42 not-entailed; inspection shows the

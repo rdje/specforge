@@ -23,9 +23,13 @@ qwen2.5:14b-instruct, ~42 s) flagged **36/42** not-entailed on first run, **33/4
    - **condition signals constrained:** "PSEL must be VALID" extracted from *"when PSEL is
      asserted, the following signals must be valid"* — PSEL is the condition, the obligation is on
      the *other* signals (the condition-vs-obligation error the gate targets).
-   So the run **validates the gate AND exposes that the constraint extractor over-generates** —
-   that is a real extraction-quality finding worth its own future investigation (the deterministic
-   backbone keeps it from reaching `.isf`, but the EvidenceIR `signal_constraints` are noisy).
+   So the run **validates the gate AND surfaces constraint noise**. **Correction (same day, while
+   acting on it):** the generated EvidenceIR artifacts used here are **stale** — current code
+   (`CONSTRAINT-SUBJECT-PRECISION` tests in `evidence.rs`) *already* drops width-params, cross-
+   sentence sweeps, and until/if condition signals. So much of the apparent "33/42 over-generation"
+   is **already fixed**; `CONSTRAINT-CONDITION-SUBJECT` closed the one remaining gap (the
+   forward-reference fallback, "the following signals … when PSEL"). Measuring *current* extraction
+   quality needs a **re-extraction** + re-run, not the stale artifact.
 
 2. **A precision fix it surfaced:** `constraint_claim_text` originally dropped the constraint's
    `condition_text`, so a *legitimately*-conditional constraint ("PSTRB must be LOW" from *"for

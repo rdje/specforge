@@ -5570,7 +5570,21 @@ fn extract_signal_constraints(
         // Fall back to scanning the full text if no signals found in the subject part.
         let mut subject_signals = collect_subject_signal_tokens(subject_part);
         if subject_signals.is_empty() {
-            subject_signals = collect_subject_signal_tokens(text);
+            // The full-text fallback can otherwise grab a signal that appears ONLY in
+            // the stripped condition clause ("The following signals must be valid when
+            // PSEL is asserted") and mis-attribute the constraint to it. Exclude any
+            // token from the condition clause so the condition signal never becomes the
+            // subject (CONSTRAINT-CONDITION-SUBJECT; real-APB NLI finding).
+            let sentence = constraint_bearing_sentence(text);
+            let condition_clause = &sentence[text_before_condition_marker(sentence).len()..];
+            let condition_signals: std::collections::HashSet<String> =
+                collect_subject_signal_tokens(condition_clause)
+                    .into_iter()
+                    .collect();
+            subject_signals = collect_subject_signal_tokens(text)
+                .into_iter()
+                .filter(|tok| !condition_signals.contains(tok))
+                .collect();
         }
 
         if subject_signals.is_empty() {
@@ -7520,6 +7534,30 @@ mod tests {
             assert!(
                 !s.contains(&"PREADY".to_string()),
                 "PREADY (other sentence) is not a subject; got {s:?}"
+            );
+        }
+
+        #[test]
+        fn constraint_subject_excludes_condition_signal_on_forward_reference() {
+            // "The following signals must be valid when PSEL is asserted:" — the real
+            // subject is a forward-referenced list the extractor cannot resolve; PSEL
+            // is the CONDITION, not the subject. The empty-subject full-text fallback
+            // must not grab it (CONSTRAINT-CONDITION-SUBJECT; real-APB NLI finding).
+            let s =
+                constraint_subjects("The following signals must be valid when PSEL is asserted:");
+            assert!(
+                !s.contains(&"PSEL".to_string()),
+                "PSEL is the condition, not the subject; got {s:?}"
+            );
+            // A normal conditional constraint still resolves its real subject.
+            let s2 = constraint_subjects("PADDR must be stable when HREADY is LOW.");
+            assert!(
+                s2.contains(&"PADDR".to_string()),
+                "PADDR is the subject; got {s2:?}"
+            );
+            assert!(
+                !s2.contains(&"HREADY".to_string()),
+                "HREADY is the condition; got {s2:?}"
             );
         }
     }
