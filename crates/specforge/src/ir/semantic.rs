@@ -21099,6 +21099,38 @@ mod tests {
     }
 
     #[test]
+    fn temporal_condition_index_family_generalizes_across_specs() {
+        // WIRE-BASED-100.5c: the index-family resolver is GRAMMAR (the x-index convention),
+        // not an APB-specific name (ADR 0006) — it must work for AHB's `HSELx` exactly as for
+        // APB's `PSELx`. Un-indexed prose "HSEL" resolves to the declared "HSELX".
+        let known: BTreeSet<String> = ["HSELX", "HREADY"].iter().map(|s| s.to_string()).collect();
+        let handshake = super::HandshakeRoleContext::default();
+        let predicates = super::parse_temporal_condition_predicates(
+            "HSEL is asserted",
+            &known,
+            super::TickPhase::PreTick,
+            &handshake,
+        );
+        let asserted: BTreeSet<String> = predicates
+            .iter()
+            .filter_map(|p| match p {
+                super::TemporalPredicateRecord::SignalValue {
+                    signal_name, value, ..
+                } if value == "ASSERTED" => Some(signal_name.clone()),
+                _ => None,
+            })
+            .collect();
+        assert_eq!(
+            asserted,
+            ["HSELX"]
+                .iter()
+                .map(|s| s.to_string())
+                .collect::<BTreeSet<_>>(),
+            "the un-indexed 'HSEL' resolves to the declared 'HSELX' (cross-spec generality)"
+        );
+    }
+
+    #[test]
     fn temporal_condition_does_not_invent_a_signal_for_unknown_token() {
         // Guard: an un-indexed token with NO declared indexed family member is dropped,
         // never fabricated (resolve_indexed_signal_family is purely additive).

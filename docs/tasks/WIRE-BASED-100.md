@@ -259,6 +259,20 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   APB gold-100% preserved; full `scripts/run_ci.sh` green (1309 lib tests). The `eval-extraction
   seed_ahb.json` aggregate re-confirmation is re-ingest-gated (see KM `eval-scores-persisted-evidence`).
   Verification: see log. Commit: see log.
+- ID: `WIRE-BASED-100.5c` · Status: `done` · Goal: **de-risk the foundation + surface the cross-spec eval
+  blocker** (after the `.5b` stale-evidence discovery). **(1) APB foundation re-verified on FRESHLY-REBUILT
+  evidence** (`specforge evidence` + `semantic` rebuilt from the rebuildable APB `source_ir`, then
+  re-ran the evals): `signal_constraint`, `actor_signal_relation`, AND `temporal_rule` all **P=R=F1=1.000**
+  on current code — the APB milestone is NOT stale-inflated. **(2) Rebuildability audit (`2026-06-07`):**
+  among wire-based specs only **APB is REBUILDABLE** (normalized present); **AHB, AXI, AXI-Stream, RISC-V
+  debug are ALL `reclaimed`** (normalized source removed by artifact cleanup) and their PDFs are not in the
+  corpus → **fresh cross-spec eval is RE-INGEST-GATED** (needs the owner to supply the PDFs). CHI is
+  rebuildable but is packet-based (out of WIRE-BASED-100 scope). **(3) Cross-spec generality locked:** the
+  `.4` index-family resolver is grammar not an APB name (ADR 0006) — a hermetic test proves `HSEL`→`HSELX`
+  works exactly like `PSEL`→`PSELX`. **Honest status of `.5`:** the general extractor fixes (`.4`
+  index-family, `.5b` negated) apply cross-spec and are proven on APB (fresh eval) + AHB (hermetic); the
+  AHB/AXI/SWD eval AGGREGATES cannot be produced until those PDFs are re-ingested. KM
+  `[[eval-scores-persisted-evidence]]`. CI green (1310 lib tests).
 - ID: `WIRE-BASED-100.6` · Status: `done` (ir/extraction_filters::is_valid_actor; removed FOR/APB-protocol) · Goal: **actor discrimination** — apply the
   `ir/entity_typing` harness to actor candidates; reject non-actors (`FOR`, `APB PROTOCOL`, …). Closes
   the relation-precision fps. Same root as the CHI garbage-actor finding (`EXTRACTION-QUALITY-GAUGE`).

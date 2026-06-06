@@ -2,6 +2,18 @@
 
 ## 2026-06-07
 
+### `WIRE-BASED-100.5c` — APB foundation re-verified (fresh evidence) + cross-spec eval blocker surfaced
+After the `.5b` stale-evidence discovery, de-risked the whole milestone: rebuilt APB evidence + semantic
+FRESH from the rebuildable APB `source_ir` and re-ran the evals — `signal_constraint`,
+`actor_signal_relation`, and `temporal_rule` are ALL **P=R=F1=1.000** on current code, so the APB 100%
+milestone is genuinely current, not stale-inflated. **Rebuildability audit:** among wire-based specs only
+**APB is rebuildable** — AHB/AXI/AXI-Stream/RISC-V-debug all have `reclaimed` normalized sources and their
+PDFs are absent from the corpus, so **fresh cross-spec eval is RE-INGEST-GATED** (needs the owner to supply
+those PDFs; CHI is rebuildable but packet-based, out of scope). Locked the `.4` index-family resolver's
+cross-spec generality with a hermetic `HSEL→HSELX` test (it's grammar, not an APB name — ADR 0006). Net:
+the general extractor fixes apply cross-spec and are proven on APB (fresh) + AHB (hermetic); the AHB/AXI/SWD
+eval aggregates await re-ingest. CI green (**1310** lib tests).
+
 ### `WIRE-BASED-100.5b` — AHB constraint extraction correct (negated double-negative fix; `.5a` stale baseline corrected)
 Diagnosed the AHB `.5a` baseline and found a **stale-evidence trap**: the persisted AHB `evidence_ir.json`
 was built by PRE-fix code, and its normalized source has been reclaimed (artifact cleanup) so
