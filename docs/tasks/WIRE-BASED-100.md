@@ -81,6 +81,20 @@ facts correct — `.1` fixed id-drift, `.1b` credits valid sources, `.6` dropped
 — the filters are derived universal-language checks (ADR 0006) with tested guards. Next: `.2`/`.3`
 harden (value recall, full-doc completeness), then roll to AHB → AXI → SWD (`.5`).
 
+## Automatic detection — the heuristics are only a fast-path (owner requirement)
+
+The `.6`/`.7` filters use *derived universal-language* lists (function words, normative modals). They
+are ADR-0006-compliant (not chip names) but **incomplete** — they won't catch a garbage actor that
+isn't a function word, or a hallucination whose subject-sentence has a stray modal. For robustness
+across all wire-based specs the detection must be **automatic + general**, and the detectors already
+exist and were demonstrated on CHI:
+- **garbage actors → `ir/entity_typing`** (LLM types the token; on CHI typed `CMO`→transaction,
+  `AMBA`→boilerplate, `MTE`→feature — no fixed list);
+- **descriptive hallucinations → the NLI gate** (`ir/nli_verify`: source must *entail* the claim).
+
+The principled design is the **bounded-LLM hybrid**: cheap heuristics as a high-precision first pass,
+the LLM harness as the general fallback. `.6c`/`.7c` below.
+
 ## Task Tree
 
 - ID: `WIRE-BASED-100` · Status: `active` · Children: `.1`–`.5`
@@ -99,6 +113,12 @@ harden (value recall, full-doc completeness), then roll to AHB → AXI → SWD (
   Fix (no faking): credit a relation found on ANY *valid* declared source for that signal (table or
   prose), and treat multi-statement gold as a set — NOT "credit anywhere". Then APB relations hit 100%
   legitimately (the facts are all real + correctly extracted).
+- ID: `WIRE-BASED-100.6c` · Status: `pending` · Goal: AUTOMATIC garbage-actor detection — `.6` upgraded
+  from the heuristic list to the bounded-LLM hybrid (heuristic fast-path → `ir/entity_typing` LLM
+  judgment for the residual). Generalizes beyond function words / spec-meta-words.
+- ID: `WIRE-BASED-100.7c` · Status: `pending` · Goal: AUTOMATIC hallucination detection — `.7` upgraded
+  to the NLI gate (source must entail the claim) as the general fallback behind the clause-scoped
+  heuristic. Catches hallucinations the modal-check misses.
 - ID: `WIRE-BASED-100.2` · Status: `pending` · Goal: robust value-constraint extraction.
 - ID: `WIRE-BASED-100.3` · Status: `pending` · Goal: full-document completeness (complete gold / oracle).
 - ID: `WIRE-BASED-100.4` · Status: `pending` · Goal: temporal-rule completeness.
