@@ -75,10 +75,27 @@ pdfplumber misses).
   the SAME table (they disagree on what a table *is*), so content-matched 2-witness tables are rare —
   itself the finding, not a gap.
 
+## Adjudication loop — WIRED + exercised (`2026-06-06`)
+
+The full closed loop, with the agent as the evidence-grounded judge:
+1. `eval::gold_vs_prediction_mismatches(gold, prediction)` → the positions where docling disagrees
+   with the consensus gold (each a candidate docling error). Tested.
+2. `grits-consensus --adjudicate-out <queue.json>` → writes the disputed cells (`table_id, page,
+   row, col, consensus_gold, docling`).
+3. `scripts/grits_adjudicate.py <queue.json> <pdf> <dir>` → renders each disputed table's page so
+   the cells can be ruled against the SOURCE; attaches an `image` path per cell.
+4. **The agent reads the rendered image and rules** — never a correlated vote.
+
+**Exercised on the real APB:** the queue surfaced `table_0001` cells `(r4,c3)`/`(r5,c3)` — docling
+`"for​APB5"` vs the qwen2.5vl gold `"for APB5"`. Reading the rendered page-2 source: it prints
+`"for APB5"` (space present) → **docling WRONG on both (a space-drop / word-merge artifact)**. The
+cross-tool loop flagged a genuine docling extraction bug, and the agent confirmed it against ground
+truth.
+
 ## Task Tree
 
-- ID: `GRITS-CROSS-TOOL` · Status: `done` (metric unblocked + refined; `.1`–`.3` done) ·
-  Children: `.1` `.2` `.3`
+- ID: `GRITS-CROSS-TOOL` · Status: `done` (metric unblocked + refined + adjudication loop wired;
+  `.1`–`.3` done) · Children: `.1` `.2` `.3`
 - ID: `GRITS-CROSS-TOOL.1` · Status: `done` · Goal: independent pdfplumber witness extractor.
   Delivered + run on APB (13 tables); finding recorded.
 - ID: `GRITS-CROSS-TOOL.2` · Status: `done` · Goal: full harness (consensus machinery + command +

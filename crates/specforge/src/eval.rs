@@ -757,6 +757,32 @@ pub fn grits_against_consensus(
     }
 }
 
+/// The positions where the consensus `gold` and the `prediction` disagree — each docling's CANDIDATE
+/// ERROR, the adjudication queue. Per disputed `(row, col)`: the gold value and the prediction value
+/// (`None` = that side has no cell there). An evidence-grounded adjudicator renders the region and
+/// rules which matches the source. Cells where they agree are omitted.
+pub fn gold_vs_prediction_mismatches(
+    gold: &BTreeSet<(usize, usize, String)>,
+    prediction: &[Vec<String>],
+) -> Vec<(usize, usize, Option<String>, Option<String>)> {
+    let gold_pos: BTreeMap<(usize, usize), String> =
+        gold.iter().map(|(r, c, t)| ((*r, *c), t.clone())).collect();
+    let pred_pos: BTreeMap<(usize, usize), String> = grid_cells(prediction)
+        .into_iter()
+        .map(|(r, c, t)| ((r, c), t))
+        .collect();
+    let positions: BTreeSet<(usize, usize)> =
+        gold_pos.keys().chain(pred_pos.keys()).copied().collect();
+    positions
+        .into_iter()
+        .filter_map(|pos| {
+            let g = gold_pos.get(&pos).cloned();
+            let p = pred_pos.get(&pos).cloned();
+            (g != p).then_some((pos.0, pos.1, g, p))
+        })
+        .collect()
+}
+
 /// A risk-controlled accept threshold from a split-conformal calibration set.
 #[derive(Debug, Clone, PartialEq)]
 pub struct ConformalThreshold {
@@ -1205,6 +1231,31 @@ mod tests {
         assert_eq!(
             card.fp, 1,
             "docling's (1,1)=32 is not in the consensus gold"
+        );
+    }
+
+    #[test]
+    fn gold_vs_prediction_mismatches_lists_disputed_cells() {
+        let mut gold = BTreeSet::new();
+        gold.insert((0, 0, "a".to_string()));
+        gold.insert((1, 1, "x".to_string()));
+        // Prediction agrees at (0,0), differs at (1,1) (y vs x), adds a spurious (0,1).
+        let pred = vec![
+            vec!["a".to_string(), "z".to_string()],
+            vec![String::new(), "y".to_string()],
+        ];
+        let m = super::gold_vs_prediction_mismatches(&gold, &pred);
+        assert!(
+            m.contains(&(0, 1, None, Some("z".to_string()))),
+            "docling-only spurious cell flagged"
+        );
+        assert!(
+            m.contains(&(1, 1, Some("x".to_string()), Some("y".to_string()))),
+            "value disagreement flagged with both sides"
+        );
+        assert!(
+            !m.iter().any(|(r, c, _, _)| (*r, *c) == (0, 0)),
+            "the agreed cell is omitted"
         );
     }
 

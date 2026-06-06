@@ -286,6 +286,11 @@ pub struct GritsConsensusArgs {
     /// How many witnesses must agree for a cell to count as consensus gold (default 2).
     #[arg(long, default_value = "2")]
     pub min_agree: usize,
+    /// Also write an ADJUDICATION queue (JSON) of the cells where docling disagrees with the
+    /// consensus gold — each a candidate docling error for an evidence-grounded agent to rule on
+    /// (feed it to `scripts/grits_adjudicate.py` to render the regions).
+    #[arg(long)]
+    pub adjudicate_out: Option<std::path::PathBuf>,
 }
 
 #[derive(Debug, Args)]
