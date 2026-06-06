@@ -61,13 +61,20 @@ little label noise for two orders of magnitude more samples.)
 
 ## Task Tree
 
-- ID: `TABLE-GRITS-CONFORMAL` · Status: `active` (`.1` done; `.2` wired conformal, found the size gate)
-  · Children: `.1` `.2`
+- ID: `TABLE-GRITS-CONFORMAL` · Status: `active` (`.1`–`.3` done — conformal UNBLOCKED via the NLI
+  oracle; GriTS still needs an independent grid witness) · Children: `.1` `.2` `.3`
 - ID: `TABLE-GRITS-CONFORMAL.1` · Status: `done` · Goal: implement + test the two metrics as reusable
   capability. Verification above.
 - ID: `TABLE-GRITS-CONFORMAL.2` · Status: `done` · Goal: unblock conformal via the eval harness
-  (tier-agreement axis). Wired + tested (+1 test, `records_with_tier_counts`); empirically n=2 on APB
-  → the size gate is real; **next: the NLI-oracle labeling at scale**. CI green 1276.
+  (tier-agreement axis). Wired + tested; empirically n=2 on APB → the size gate is real.
+- ID: `TABLE-GRITS-CONFORMAL.3` · Status: `done` · Goal: the NLI-oracle conformal labeling (the size
+  unblock). `ir/nli_verify::nli_conformal_pass` runs ONE NLI pass producing both the not-entailed
+  findings AND `(tier_count, is_correct)` samples — the NLI verdict is the automatic correctness
+  oracle (no human gold), tier-agreement the confidence axis (`tier_count_by_fact_key`, shared in
+  `evidence.rs`). Surfaced in `nli-verify`. **Not circular** (axis ⟂ oracle). Demonstrated on APB:
+  **n=2 → n=14** (labels all facts, not just the 2 on labeled statements); no threshold at α=0.2
+  (14 facts, ~29% not-entailed — small/noisy), but the unblock is real — a corpus-scale doc (CHI:
+  hundreds of constraints) yields a robust threshold. +1 test. CI green 1277.
 
 ## Changelog
 

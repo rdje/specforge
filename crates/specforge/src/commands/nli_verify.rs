@@ -8,8 +8,8 @@
 
 use crate::cli::{NliVerifyArgs, VlmProviderArg};
 use crate::error::Result;
-use crate::ir::evidence::EvidenceIr;
-use crate::ir::nli_verify::{DEFAULT_NLI_MODEL, nli_claim_findings, verify_entailment};
+use crate::ir::evidence::{EvidenceIr, tier_count_by_fact_key};
+use crate::ir::nli_verify::{DEFAULT_NLI_MODEL, nli_conformal_pass, verify_entailment};
 
 pub fn run(args: NliVerifyArgs) -> Result<()> {
     let ir = EvidenceIr::load_from_path(&args.artifact)?;
@@ -31,16 +31,39 @@ pub fn run(args: NliVerifyArgs) -> Result<()> {
     println!("model: {model}");
 
     let provider = args.vlm_provider;
-    let findings = nli_claim_findings(&ir.signal_constraints, |source, claim| {
+    // One NLI pass → the not-entailed findings AND the NLI-oracle conformal samples
+    // (tier-agreement confidence axis; the NLI verdict is the automatic correctness label).
+    let tier_counts = tier_count_by_fact_key(&ir.fact_provenance);
+    let pass = nli_conformal_pass(&ir.signal_constraints, &tier_counts, |source, claim| {
         verify_entailment(provider, &model, "", source, claim)
     });
 
-    println!("not_entailed_claims: {}", findings.len());
-    for f in &findings {
+    println!("not_entailed_claims: {}", pass.not_entailed.len());
+    for f in &pass.not_entailed {
         println!(
             "  not-entailed [{}] {}: claim={:?}  source={:?}",
             f.constraint_id, f.subject_signal, f.claim_text, f.source_text
         );
+    }
+
+    // NLI-oracle split-conformal calibration — the gated-metric unblock: a calibrated accept
+    // threshold over tier-agreement, with the NLI verdict labeling each fact (no human gold).
+    if !pass.samples.is_empty() {
+        let alpha = 0.2;
+        println!(
+            "  -- NLI-oracle split-conformal (axis: tier-agreement; alpha={alpha}; n={}) --",
+            pass.samples.len()
+        );
+        match crate::eval::conformal_threshold(&pass.samples, alpha) {
+            Some(t) => println!(
+                "    accept tier>={:.0}: coverage={:.3}  empirical_error={:.3}",
+                t.threshold, t.coverage, t.empirical_error
+            ),
+            None => println!(
+                "    no tier threshold meets alpha={alpha} (n={})",
+                pass.samples.len()
+            ),
+        }
     }
     Ok(())
 }

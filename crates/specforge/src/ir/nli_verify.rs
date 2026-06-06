@@ -203,6 +203,50 @@ pub fn nli_claim_findings(
         .collect()
 }
 
+/// One NLI pass producing BOTH the not-entailed findings AND the conformal-calibration samples —
+/// `(tier_count, is_correct)` where the NLI verdict is the **correctness oracle** (`Entailed` →
+/// correct, `NotEntailed` → incorrect, `Unknown` → no label / abstain) and tier-agreement is the
+/// confidence axis. This is the NLI-oracle unblock for conformal calibration (TABLE-GRITS-CONFORMAL):
+/// it labels EVERY produced fact automatically, so a corpus run yields thousands of `(score,
+/// is_correct)` pairs instead of the handful a small per-statement human gold gives. It is *not
+/// circular* — tier-agreement (the axis) is independent of NLI (the oracle).
+#[derive(Debug, Default)]
+pub struct NliConformalPass {
+    pub not_entailed: Vec<NliClaimFinding>,
+    pub samples: Vec<(f64, bool)>,
+}
+
+/// Run the injected verifier once per constraint, collecting findings + calibration samples.
+/// `tier_counts` maps `signal_constraint_fact_key(c)` → number of distinct extractor tiers that
+/// found the fact. Verifier injected → fully testable without a provider.
+pub fn nli_conformal_pass(
+    constraints: &[crate::ir::source::SignalConstraintRecord],
+    tier_counts: &std::collections::HashMap<String, usize>,
+    verify: impl Fn(&str, &str) -> NliVerdict,
+) -> NliConformalPass {
+    let mut out = NliConformalPass::default();
+    for c in constraints {
+        let claim_text = constraint_claim_text(c);
+        let tier = *tier_counts
+            .get(&crate::ir::evidence::signal_constraint_fact_key(c))
+            .unwrap_or(&1) as f64;
+        match verify(&c.source_text, &claim_text) {
+            NliVerdict::Entailed => out.samples.push((tier, true)),
+            NliVerdict::NotEntailed => {
+                out.samples.push((tier, false));
+                out.not_entailed.push(NliClaimFinding {
+                    constraint_id: c.constraint_id.clone(),
+                    subject_signal: c.subject_signal.clone(),
+                    claim_text,
+                    source_text: c.source_text.clone(),
+                });
+            }
+            NliVerdict::Unknown => {}
+        }
+    }
+    out
+}
+
 /// Render an `ActorContract`'s obligation as an NLI hypothesis — or `None` when
 /// the obligation cannot be phrased as a clean claim (in which case it is **not
 /// gated**, never NLI-checked against a claim we cannot state faithfully).
@@ -437,6 +481,34 @@ mod tests {
         let cs = vec![cons("c1", "PADDR", K::MustBeStable, "x")];
         // Unknown (provider down) → no findings; never a false flag.
         assert!(nli_claim_findings(&cs, |_, _| NliVerdict::Unknown).is_empty());
+    }
+
+    #[test]
+    fn nli_conformal_pass_labels_samples_by_verdict_and_tier() {
+        use SignalConstraintKind as K;
+        let c1 = cons("c1", "PSEL", K::MustBeStable, "s"); // Entailed, tier 2
+        let c2 = cons("c2", "PADDR", K::MustBeStable, "s"); // NotEntailed, tier 1
+        let c3 = cons("c3", "PWDATA", K::MustBeStable, "s"); // Unknown → no sample
+        let mut tier_counts = std::collections::HashMap::new();
+        tier_counts.insert(crate::ir::evidence::signal_constraint_fact_key(&c1), 2);
+        // c2/c3 absent → tier 1.
+        let verify = |_src: &str, claim: &str| {
+            if claim.contains("PSEL") {
+                NliVerdict::Entailed
+            } else if claim.contains("PADDR") {
+                NliVerdict::NotEntailed
+            } else {
+                NliVerdict::Unknown
+            }
+        };
+        let pass = nli_conformal_pass(&[c1, c2, c3], &tier_counts, verify);
+        // findings: only the NotEntailed one.
+        assert_eq!(pass.not_entailed.len(), 1);
+        assert_eq!(pass.not_entailed[0].subject_signal, "PADDR");
+        // samples: (tier 2, correct) for PSEL, (tier 1, incorrect) for PADDR; PWDATA Unknown → none.
+        assert_eq!(pass.samples.len(), 2);
+        assert!(pass.samples.contains(&(2.0, true)));
+        assert!(pass.samples.contains(&(1.0, false)));
     }
 
     #[test]

@@ -280,6 +280,26 @@ pub fn actor_signal_relation_fact_key(relation: &ActorSignalRelation) -> String 
     )
 }
 
+/// Count the DISTINCT extractor tiers (`Pattern`/`Nlp`/`Vlm`) that recorded each fact, keyed by
+/// its provenance `canonical_key` — the agreement-confidence signal (a fact two tiers independently
+/// found is more trustworthy than one). A key absent from the map was seen by a single tier.
+pub fn tier_count_by_fact_key(
+    provenance: &[FactProvenanceRecord],
+) -> std::collections::HashMap<String, usize> {
+    let idx = |t: &ExtractorTier| match t {
+        ExtractorTier::Pattern => 0,
+        ExtractorTier::Nlp => 1,
+        ExtractorTier::Vlm => 2,
+    };
+    let mut seen: std::collections::HashMap<String, [bool; 3]> = std::collections::HashMap::new();
+    for p in provenance {
+        seen.entry(p.canonical_key.clone()).or_default()[idx(&p.producer)] = true;
+    }
+    seen.into_iter()
+        .map(|(k, flags)| (k, flags.iter().filter(|f| **f).count().max(1)))
+        .collect()
+}
+
 #[derive(Debug, Clone)]
 struct EvidencePriorGuidance {
     prior_memory_path: PathBuf,
