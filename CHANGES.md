@@ -1,5 +1,33 @@
 # CHANGES
 
+## 2026-06-06
+
+### Backlog unblock → the LLM-harness thesis → `WIRE-BASED-100` (APB gold-100%)
+Cleared the gated-on-data backlog and established the extraction direction, then drove APB to a
+demonstrated 100%:
+- **Conformal UNBLOCKED** (`TABLE-GRITS-CONFORMAL.3`) via the **NLI-oracle** — `nli_conformal_pass`
+  labels every fact automatically (NLI verdict = correctness oracle, tier-agreement axis; not circular).
+- **GriTS UNBLOCKED** (`GRITS-CROSS-TOOL`) via **independent-witness consensus** (pdfplumber + qwen2.5vl;
+  `scripts/grits_cross_tool.py` + `grits_adjudicate.py`, gitignored `.venv-eval`) + the **agent-adjudication
+  loop** (queue → render → the agent rules against the rendered source) — caught a real docling space-drop bug.
+- **The harness thesis** (LLM judges, Rust grounds, the document decides): `ir/entity_typing` +
+  `ir/condition_extract` + `ir/constraint_extract_llm` (LLM-primary extractor, REPLACE-not-patch —
+  CHI constraint precision **17%→64%**) + `ir/extraction_filters`.
+- **CHI domain correction** (owner): CHI is a packet/flit protocol — `DBID`/`TxnID` are FIELDS, not
+  signals (B2.4). `EXTRACTION-QUALITY-GAUGE` = an NLI-oracle per-doc quality gauge (CHI ~80% erroneous,
+  hand-validated 18/18).
+- **`WIRE-BASED-100`** (owner NON-NEGOTIABLE bar: 100% on wire-based specs APB/AHB/AXI/SWD): **APB
+  gold-100% ACHIEVED** — `eval-extraction seed_apb.json --provider skip` → constraints + relations
+  P=R=F1=1.000, demonstrated per-fact, no faking. `.1` content-anchored scoring (re-ingest-proof),
+  `.1b` source-tolerant recall, `.6`/`.6c` actor discrimination, `.7`/`.7c` normative gate (cheap
+  heuristic fast-path + **automatic** LLM fallback via `entity_typing`/NLI). `.3` completeness gauge:
+  APB is NOT *spec*-100% — the **signal catalog** (`table_0016/0017/0018`, ~35 signals) produces zero
+  records; capture-recapture degenerate (Pattern×Nlp disjoint).
+- **Governing principle** (owner, non-negotiable, `feedback_scoring_rigor`): every score objectively
+  measured + logically explained + demonstrated per-fact — no fake/gamed scoring.
+
+CI green 1271 → **1298**. 32 commits, **NOT pushed** (owner hold; threshold 200).
+
 ## 2026-06-05
 
 ### "Do all 5" — completed the remaining backlog in a chosen order (owner directive)
