@@ -61,6 +61,8 @@ pub enum Commands {
     NliVerify(NliVerifyArgs),
     /// Score docling's table extraction against a cross-tool witness consensus gold (GriTS; flags cells the witnesses split on for human review)
     GritsConsensus(GritsConsensusArgs),
+    /// Type a document's constraint subjects (signal/actor/transaction/…) via Rust-grounding + LLM-judgment, and report which would be filtered as non-signal
+    EntityType(EntityTypeArgs),
 }
 
 #[derive(Debug, Args)]
@@ -275,6 +277,21 @@ pub struct NliVerifyArgs {
     /// Text model override (default: `qwen2.5:14b-instruct`)
     #[arg(long)]
     pub model: Option<String>,
+}
+
+#[derive(Debug, Args)]
+pub struct EntityTypeArgs {
+    /// Path to an EvidenceIR JSON whose constraint subjects to type.
+    pub evidence_ir: std::path::PathBuf,
+    /// Text-LLM provider for the judgment step (default `ollama`; `skip` = grounding-only).
+    #[arg(long, value_enum, default_value = "ollama")]
+    pub vlm_provider: VlmProviderArg,
+    /// Text model override (default: `qwen2.5:14b-instruct`).
+    #[arg(long)]
+    pub model: Option<String>,
+    /// Only type the first N distinct subjects (0 = all).
+    #[arg(long, default_value = "0")]
+    pub max_subjects: usize,
 }
 
 #[derive(Debug, Args)]

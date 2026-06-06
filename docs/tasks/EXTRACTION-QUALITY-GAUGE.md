@@ -91,13 +91,37 @@ structurally mismatch that. Adequate on APB (simple, mostly unconditional); it b
 - `.4` **Dedup** constraints by (subject, kind, condition).
 - `.0` **Wire the gauge** into `converge`/CI as a per-doc quality report (the standing measurement).
 
+## `.1` prototype — built + measured (the architecture is validated)
+
+`ir/entity_typing.rs` + `entity-type` command embody the "human-SpecForge in Rust" structure: Rust
+**gathers** each token's grounding evidence (`gather_entity_evidence`), the **LLM judges**
+(`propose_entity_type_llm`), Rust **grounds** the judgment (`classify_entity` — the document overrides
+the model where authoritative, defers where silent), and the **enforcement gate**
+(`is_valid_signal_subject`) keeps only `Signal`-typed subjects. Document-grounded → works on any spec.
+Unit-tested (injected `propose`, no provider).
+
+**Measured on real CHI (66 distinct subjects):** typed **27/66 as non-signal** and filtered them —
+correctly: `B13/B14/B16`→structural_ref, `AMBA/LICENSEE`→boilerplate, `CMO/PCMO/DVMO`→transaction,
+`MTE/MEC/DVM`→feature, and crucially `TXSACTIVE` (the real signal the *catalogs missed*) **recovered**
+as signal by the LLM. So **we *can* harness the LLM for discrimination — the architecture holds.**
+
+**But discrimination alone is not sufficient.** Removing the 27 → drops **49/162 (30%)** constraints,
+**84% of which were NLI-not-entailed** (genuine garbage). Yet the gauge moves only **17% → 18%**,
+because the *kept* signal constraints are still ~82% not-entailed — they are real signals whose
+**conditions were dropped** (root cause #2). The path to a working SpecForge is to apply the SAME
+harness pattern to *each* error mode (`.2`–`.4`), not entity typing alone. One front proven; several
+remain.
+
 ## Task Tree
 
 - ID: `EXTRACTION-QUALITY-GAUGE` · Status: `active` · Children: `.0`–`.4`
 - ID: `EXTRACTION-QUALITY-GAUGE.gauge` · Status: `done` · Goal: establish the NLI-oracle not-entailed
   rate as a per-doc extraction-quality gauge; measure CHI (~83%) + APB (~29%), hand-validate (18/18).
-- ID: `EXTRACTION-QUALITY-GAUGE.1` · Status: `pending` · Goal: **entity discrimination** — derived
-  typed classifier (signal/actor/transaction/feature/state/ref/boilerplate) + enforcement. FOUNDATIONAL.
+- ID: `EXTRACTION-QUALITY-GAUGE.1` · Status: `done` (prototype) · Goal: **entity discrimination** —
+  derived typed classifier + LLM judgment + Rust grounding + enforcement. Built (`ir/entity_typing.rs`
+  + `entity-type` cmd, tested); measured on CHI: 27/66 subjects filtered correctly (TXSACTIVE
+  recovered), drops 30% of constraints (84% were wrong), gauge 17%→18%. Architecture validated;
+  follow-up = wire the gate into the real extractor path + improve fine sub-typing.
 - ID: `EXTRACTION-QUALITY-GAUGE.2` · Status: `pending` · Goal: conditional/temporal constraints first-class.
 - ID: `EXTRACTION-QUALITY-GAUGE.3` · Status: `pending` · Goal: permission/relational disambiguation.
 - ID: `EXTRACTION-QUALITY-GAUGE.4` · Status: `pending` · Goal: constraint dedup by (subject, kind, condition).

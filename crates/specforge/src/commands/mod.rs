@@ -4,6 +4,7 @@ pub mod converge;
 pub mod corpus_kb;
 pub mod doctor;
 pub mod enrich;
+pub mod entity_type;
 pub mod eval_extraction;
 pub mod evidence;
 pub mod extract_contracts;

@@ -3,6 +3,7 @@ pub mod ambiguity;
 pub mod completeness;
 pub mod contract;
 pub mod cve;
+pub mod entity_typing;
 pub mod evidence;
 pub mod fidelity;
 pub mod figure_region;
