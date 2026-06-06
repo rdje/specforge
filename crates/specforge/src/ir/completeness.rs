@@ -139,8 +139,9 @@ fn format_bit_range(low: u32, high: u32) -> String {
 // ── Region accounting (COMPLETENESS-REGION-ACCOUNTING) ─────────────────────────
 
 use crate::ir::evidence::{
-    ExtractorTier, FactKind, FactProvenanceRecord, TableSignalDeclarationProvenanceRecord,
-    is_hardware_signal_token, is_signal_synthesis_non_signal,
+    ExtractedStatement, ExtractorTier, FactKind, FactProvenanceRecord, StatementClass,
+    TableSignalDeclarationProvenanceRecord, is_hardware_signal_token,
+    is_signal_synthesis_non_signal,
 };
 use crate::ir::source::{StructuredTableRecord, TableKind, TimingConstraintRecord};
 use std::collections::HashSet;
@@ -287,6 +288,30 @@ fn densest_signal_name_column_tokens(table: &StructuredTableRecord) -> Vec<Strin
         }
     }
     best
+}
+
+/// Statement ids of `NormativeStatement`-classed statements whose obligation was
+/// NOT captured by any typed record — the genuine "partially-structured normative"
+/// residuals.
+///
+/// A statement can end at class `NormativeStatement` yet still have its obligation
+/// captured by a downstream extractor (e.g. the dynamic constraint path emits a
+/// `signal_constraint` from "the Requester must drive PSTRB LOW" but leaves the
+/// statement's class normative). Counting such a captured statement as a completeness
+/// miss is a false positive — `captured_statement_ids` (the union of
+/// `supporting_statement_ids` over the typed records) removes them. Strict:
+/// a normative statement no typed record cites stays a residual, so a genuine gap is
+/// never hidden (`WIRE-BASED-100.3b`; mirrors the duplicate-table coverage fix `.3a`).
+pub fn uncaptured_normative_statement_ids<'a>(
+    statements: &'a [ExtractedStatement],
+    captured_statement_ids: &HashSet<&str>,
+) -> Vec<&'a str> {
+    statements
+        .iter()
+        .filter(|stmt| matches!(stmt.class, StatementClass::NormativeStatement))
+        .map(|stmt| stmt.statement_id.as_str())
+        .filter(|id| !captured_statement_ids.contains(id))
+        .collect()
 }
 
 // ── Recall estimate (COMPLETENESS-RECALL-GAUGE) ────────────────────────────────
@@ -676,6 +701,54 @@ mod tests {
         ];
         let r = unexplained_intent_bearing_tables(&tables, &[], &[], &[], &HashSet::new());
         assert!(r.is_empty());
+    }
+
+    // ── prose residuals (captured-normative coverage) ───────────────────────
+
+    fn normative_stmt(id: &str) -> ExtractedStatement {
+        ExtractedStatement {
+            statement_id: id.to_string(),
+            class: StatementClass::NormativeStatement,
+            modality: crate::ir::evidence::EvidenceModality::Text,
+            text: format!("{id} text"),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        }
+    }
+
+    #[test]
+    fn captured_normative_statement_is_not_a_residual() {
+        // statement_0223 is class NormativeStatement but a typed constraint
+        // (dyn_sigcon_0015) cites it → captured, not a residual (WIRE-BASED-100.3b).
+        let stmts = vec![
+            normative_stmt("statement_0223"),
+            normative_stmt("statement_0370"),
+        ];
+        let captured: HashSet<&str> = ["statement_0223"].into_iter().collect();
+        let residuals = uncaptured_normative_statement_ids(&stmts, &captured);
+        assert_eq!(residuals, vec!["statement_0370"]); // only the uncaptured one remains
+    }
+
+    #[test]
+    fn uncaptured_normative_statement_stays_a_residual() {
+        // No typed record cites either → both are genuine residuals (no gap hidden).
+        let stmts = vec![
+            normative_stmt("statement_0223"),
+            normative_stmt("statement_0370"),
+        ];
+        let residuals = uncaptured_normative_statement_ids(&stmts, &HashSet::new());
+        assert_eq!(residuals.len(), 2);
+    }
+
+    #[test]
+    fn non_normative_statements_are_never_residuals() {
+        // A SourceFact is not a normative statement, so it is never counted here even
+        // when uncaptured.
+        let mut s = normative_stmt("statement_0001");
+        s.class = StatementClass::SourceFact;
+        let stmts = [s];
+        let residuals = uncaptured_normative_statement_ids(&stmts, &HashSet::new());
+        assert!(residuals.is_empty());
     }
 
     // ── recall estimate ────────────────────────────────────────────────────

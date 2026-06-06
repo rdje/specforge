@@ -3,7 +3,7 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Regenerate with `knowledge-map/scripts/gen_knowledge_map.sh`.
 > Source of truth = YAML front-matter in: `docs/knowledge docs/decisions`. Edit the fact files, never this map.
 > A fact is any `.md` whose front-matter has a non-empty `answers:` list.
-> **21** facts · **104** question keys.
+> **21** facts · **109** question keys.
 
 ## Questions → fact
 
@@ -43,6 +43,7 @@
 - "is SpecForge specification mining" -> [spec-mining-framing](docs/knowledge/spec-mining-framing.md) · 2026-06-04 · reverify: `grep -rn "forward specification mining" README.md docs/book/src/architecture-rationale.md`
 - "is SpecForge's constraint extraction over-generating" -> [nli-gate-real-apb-validation](docs/knowledge/nli-gate-real-apb-validation.md) · 2026-06-05 · reverify: `cargo run -p specforge --quiet -- nli-verify generated/evidence_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/evidence_ir.json --vlm-provider ollama --model qwen2.5:14b-instruct`
 - "is qwen2.5:14b-instruct good enough for NLI" -> [local-llm-for-text-reasoning](docs/knowledge/local-llm-for-text-reasoning.md) · 2026-06-05 · reverify: `ollama list  # qwen2.5:14b-instruct (text) + qwen2.5vl:7b (vision); re-run the NLI/kappa probes`
+- "is the APB PSTRB must be LOW constraint extracted" -> [apb-signal-catalog-fully-extracted](docs/knowledge/apb-signal-catalog-fully-extracted.md) · 2026-06-06 · reverify: `./target/debug/specforge validate generated/evidence_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/evidence_ir.json 2>/dev/null | sed -n '/Region Accounting/,/convergence:/p'`
 - "is the APB signal catalog extracted" -> [apb-signal-catalog-fully-extracted](docs/knowledge/apb-signal-catalog-fully-extracted.md) · 2026-06-06 · reverify: `./target/debug/specforge validate generated/evidence_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/evidence_ir.json 2>/dev/null | sed -n '/Region Accounting/,/convergence:/p'`
 - "is the LLM/VLM provider missing or not wired up" -> [llm-vlm-provider-default](docs/knowledge/llm-vlm-provider-default.md) · 2026-06-01 · reverify: `grep -n "qwen2.5vl" crates/specforge/src/commands/llm_text.rs`
 - "is the eval gold / answer key trustworthy or reliable" -> [eval-gold-interannotator-kappa](docs/knowledge/eval-gold-interannotator-kappa.md) · 2026-06-05 · reverify: `true  # MANUAL: re-run a blind second annotation per EVAL-GOLD-INTERANNOTATOR-AGREEMENT.md Method and recompute kappa (not an automatable grep)`
@@ -58,6 +59,7 @@
 - "torch MPS float64 error during ingest" -> [docling-device-cpu](docs/knowledge/docling-device-cpu.md) · 2026-06-01 · reverify: `grep -n DOCLING_DEVICE crates/specforge/src/ir/source/docling_backend.rs`
 - "was the (contract ... eventually ...) ISF clause removed" -> [fsmgen-temporal-isf-form](docs/knowledge/fsmgen-temporal-isf-form.md) · 2026-06-04 · reverify: `grep -n "assert (monitor (within" crates/specforge/src/ir/isf_ir.rs`
 - "what ISF form does SpecForge use for a bounded-eventually contract" -> [fsmgen-temporal-isf-form](docs/knowledge/fsmgen-temporal-isf-form.md) · 2026-06-04 · reverify: `grep -n "assert (monitor (within" crates/specforge/src/ir/isf_ir.rs`
+- "what are APB's remaining completeness candidate misses" -> [apb-signal-catalog-fully-extracted](docs/knowledge/apb-signal-catalog-fully-extracted.md) · 2026-06-06 · reverify: `./target/debug/specforge validate generated/evidence_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/evidence_ir.json 2>/dev/null | sed -n '/Region Accounting/,/convergence:/p'`
 - "what confidence axis correlates with extracted-constraint correctness" -> [conformal-tier-agreement-degenerate](docs/knowledge/conformal-tier-agreement-degenerate.md) · 2026-06-06 · reverify: `grep -n "tier_count_by_fact_key\|nli_conformal_pass" crates/specforge/src/ir/nli_verify.rs`
 - "what did running nli-verify on a real spec find" -> [nli-gate-real-apb-validation](docs/knowledge/nli-gate-real-apb-validation.md) · 2026-06-05 · reverify: `cargo run -p specforge --quiet -- nli-verify generated/evidence_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/evidence_ir.json --vlm-provider ollama --model qwen2.5:14b-instruct`
 - "what does DOCLING_DEVICE do" -> [docling-device-cpu](docs/knowledge/docling-device-cpu.md) · 2026-06-01 · reverify: `grep -n DOCLING_DEVICE crates/specforge/src/ir/source/docling_backend.rs`
@@ -67,6 +69,8 @@
 - "what does SpecForge take from the spec-mining literature and what does it leave out" -> [spec-mining-framing](docs/knowledge/spec-mining-framing.md) · 2026-06-04 · reverify: `grep -rn "forward specification mining" README.md docs/book/src/architecture-rationale.md`
 - "what does intent --nli-verify do" -> [nli-intent-gate](docs/knowledge/nli-intent-gate.md) · 2026-06-05 · reverify: `grep -n "fn apply_nli_gate\|fn nli_gate_contracts\|fn obligation_claim_text" crates/specforge/src/ir/nli_verify.rs`
 - "what does signal_table_covered_by_inventory do" -> [apb-signal-catalog-fully-extracted](docs/knowledge/apb-signal-catalog-fully-extracted.md) · 2026-06-06 · reverify: `./target/debug/specforge validate generated/evidence_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/evidence_ir.json 2>/dev/null | sed -n '/Region Accounting/,/convergence:/p'`
+- "what does uncaptured_normative_statement_ids do" -> [apb-signal-catalog-fully-extracted](docs/knowledge/apb-signal-catalog-fully-extracted.md) · 2026-06-06 · reverify: `./target/debug/specforge validate generated/evidence_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/evidence_ir.json 2>/dev/null | sed -n '/Region Accounting/,/convergence:/p'`
+- "what field holds the constrained signal name (signal_name vs subject_signal)" -> [apb-signal-catalog-fully-extracted](docs/knowledge/apb-signal-catalog-fully-extracted.md) · 2026-06-06 · reverify: `./target/debug/specforge validate generated/evidence_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/evidence_ir.json 2>/dev/null | sed -n '/Region Accounting/,/convergence:/p'`
 - "what fsmgen pin does SpecForge target for temporal properties" -> [fsmgen-temporal-isf-form](docs/knowledge/fsmgen-temporal-isf-form.md) · 2026-06-04 · reverify: `grep -n "assert (monitor (within" crates/specforge/src/ir/isf_ir.rs`
 - "what happens when the NLI provider is down" -> [nli-entailment-verifier](docs/knowledge/nli-entailment-verifier.md) · 2026-06-05 · reverify: `grep -n "fn verify_entailment" crates/specforge/src/ir/nli_verify.rs`
 - "what is SpecForge doing in academic or research terms" -> [spec-mining-framing](docs/knowledge/spec-mining-framing.md) · 2026-06-04 · reverify: `grep -rn "forward specification mining" README.md docs/book/src/architecture-rationale.md`
@@ -109,6 +113,7 @@
 - "why doesn't the temporal_rule eval reach precision 1.0" -> [temporal-eval-residual-fps-are-stale](docs/knowledge/temporal-eval-residual-fps-are-stale.md) · 2026-06-02 · reverify: `grep -n " when " crates/specforge/src/ir/evidence.rs`
 - "why is SpecForge called forward specification mining" -> [spec-mining-framing](docs/knowledge/spec-mining-framing.md) · 2026-06-04 · reverify: `grep -rn "forward specification mining" README.md docs/book/src/architecture-rationale.md`
 - "why is conformal calibration still blocked at CHI scale" -> [conformal-tier-agreement-degenerate](docs/knowledge/conformal-tier-agreement-degenerate.md) · 2026-06-06 · reverify: `grep -n "tier_count_by_fact_key\|nli_conformal_pass" crates/specforge/src/ir/nli_verify.rs`
+- "why is statement_0223 still a normative statement" -> [apb-signal-catalog-fully-extracted](docs/knowledge/apb-signal-catalog-fully-extracted.md) · 2026-06-06 · reverify: `./target/debug/specforge validate generated/evidence_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/evidence_ir.json 2>/dev/null | sed -n '/Region Accounting/,/convergence:/p'`
 - "why is the NLI framing better than free-form labeling" -> [local-llm-for-text-reasoning](docs/knowledge/local-llm-for-text-reasoning.md) · 2026-06-05 · reverify: `ollama list  # qwen2.5:14b-instruct (text) + qwen2.5vl:7b (vision); re-run the NLI/kappa probes`
 - "why not CTL for temporal behavior" -> [temporal-logic-choice](docs/knowledge/temporal-logic-choice.md) · 2026-06-04 · reverify: `grep -n "fn temporal_rule_to_ltl" crates/specforge/src/ir/temporal_ltl.rs`
 
@@ -135,7 +140,7 @@ _validate flags vague spec prose via the weak-phrase detector (ir/ambiguity.rs)_
 ### apb-signal-catalog-fully-extracted
 _APB signal catalog is fully extracted (35/35); tables 0016/0017/0018 are duplicate views, not misses_
 
-- **answers:** is the APB signal catalog extracted | are the APB signals PCLK PADDR PWDATA the parity-check PADDRCHK extracted | why do APB tables 0016 0017 0018 produce no signal records | what is the completeness gauge over-counting on APB | are APB tables 0016 0017 0018 a real catalog miss | where do the APB signal declarations come from (which table) | what does signal_table_covered_by_inventory do
+- **answers:** is the APB signal catalog extracted | are the APB signals PCLK PADDR PWDATA the parity-check PADDRCHK extracted | why do APB tables 0016 0017 0018 produce no signal records | what is the completeness gauge over-counting on APB | are APB tables 0016 0017 0018 a real catalog miss | where do the APB signal declarations come from (which table) | what does signal_table_covered_by_inventory do | is the APB PSTRB must be LOW constraint extracted | why is statement_0223 still a normative statement | what field holds the constrained signal name (signal_name vs subject_signal) | what does uncaptured_normative_statement_ids do | what are APB's remaining completeness candidate misses
 - **date:** 2026-06-06 · **status:** current
 - **evidence:** `docs/tasks/WIRE-BASED-100.md; crates/specforge/src/ir/completeness.rs (unexplained_intent_bearing_tables, signal_table_covered_by_inventory)`
 - **reverify:** `./target/debug/specforge validate generated/evidence_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/evidence_ir.json 2>/dev/null | sed -n '/Region Accounting/,/convergence:/p'`

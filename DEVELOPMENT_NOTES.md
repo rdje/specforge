@@ -42,6 +42,37 @@ row; the 2 prose residuals remain). +4 completeness unit tests (covered-by-inven
 Property-column-tie discrimination, unknown-signal negative; existing region-accounting/aggregate tests
 green). `cargo test -p specforge --lib` = **1301** passing; fmt + clippy clean; book + KM card updated.
 
+## 2026-06-06 — completeness gauge: a captured normative statement isn't a residual (WIRE-BASED-100.3b)
+
+**Integrity note first.** While scoping the next slice I mis-diagnosed APB's `statement_0223` ("the
+Requester must drive all bits of PSTRB LOW") as a value-constraint **recall** gap. The cause was my
+own **field-name error** — I queried the persisted EvidenceIR for `signal_name` when the
+`SignalConstraintRecord` field is `subject_signal`. Corrected: the constraint IS captured —
+`dyn_sigcon_0015` (`PSTRB must_be_low`, `supporting_statement_ids=[statement_0223]`) via the **dynamic**
+constraint extractor — and APB `eval-extraction --provider skip` already scores `signal_constraint
+P=R=F1=1.000` including this gold fact (`seed_apb.json statement_0221`). So there was no recall gap and
+no gold edit; `.2` had no APB-driven work. The task tree's `.2` note was corrected on the record.
+
+**Root cause (the real defect, sibling of `.3a`).** The `prose_residuals (partial normative)` component
+of the completeness summary was `classes["normative_statement"]` — a count by statement *class*. A
+statement can end at class `NormativeStatement` yet have its obligation captured downstream (the dynamic
+constraint path emits a `signal_constraint` but does not rewrite the statement's class). So
+`statement_0223` was double-counted: captured as a constraint AND flagged as an unstructured residual.
+
+**Fix.** `ir/completeness.rs::uncaptured_normative_statement_ids(statements, captured_statement_ids)`
+returns the `NormativeStatement` ids that NO typed record cites; `validate` builds
+`captured_statement_ids` from the union of `supporting_statement_ids` over `signal_constraints` +
+`conditional_rules` and counts the residuals from that. Strict: a normative statement no record cites
+stays a residual (no genuine gap hidden). Pure measurement change.
+
+**Verified.** APB `validate` candidate_misses **3 → 2** — both remaining genuine: `table_0018`
+(docling-garbled duplicate, signals trapped in header rows) and `statement_0370` (an EDC end-to-end
+system requirement with no per-signal fact — correctly left unstructured, never fabricated). +3
+completeness unit tests; the aggregate-sum invariant test still holds; full `scripts/run_ci.sh` green
+(**1304** lib tests). After `.3a` + `.3b` the APB completeness gauge reports only genuine review
+candidates — it became *accurate*, not gamed; the supervised signoff metric (gold-100%, catalog 35/35)
+is unchanged.
+
 ## 2026-05-29 session — FSMGen submodule refresh + ISF feature-adoption assessment (FSMGEN-REFRESH-INTEGRATE)
 
 Per user direction, bumped `subs/fsmgen` `9bfb9a20 → 88a7af9c` (+637

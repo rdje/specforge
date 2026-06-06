@@ -2659,7 +2659,26 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
         println!("  - {} matched \"{}\"", f.statement_id, f.phrase);
     }
 
-    let normative_count = classes.get("normative_statement").copied().unwrap_or(0);
+    // Prose residuals: normative statements still only partially structured. A statement
+    // can end at class NormativeStatement yet have its obligation captured by a typed record
+    // (e.g. the dynamic constraint path emits a signal_constraint but leaves the class
+    // normative) — those are NOT misses (WIRE-BASED-100.3b; mirrors the .3a duplicate-table
+    // coverage fix). Count only normative statements no typed record cites.
+    let captured_statement_ids: std::collections::HashSet<&str> = ir
+        .signal_constraints
+        .iter()
+        .flat_map(|c| c.supporting_statement_ids.iter().map(String::as_str))
+        .chain(
+            ir.conditional_rules
+                .iter()
+                .flat_map(|c| c.supporting_statement_ids.iter().map(String::as_str)),
+        )
+        .collect();
+    let normative_count = crate::ir::completeness::uncaptured_normative_statement_ids(
+        &ir.extracted_statements,
+        &captured_statement_ids,
+    )
+    .len();
 
     // Completeness summary: one honest headline aggregating the located-miss
     // signals the completeness detectors surfaced (framework §10). Pure

@@ -226,6 +226,22 @@ flagged for review — the honest result. Verified by unit tests (covered-by-
 inventory gold, the Property-column tie, an unknown-signal negative).
 *Authoritative tracking:* `docs/tasks/WIRE-BASED-100.md`.
 
+#### Captured requirements don't count as residuals (`WIRE-BASED-100.3b`)
+
+The same honesty applies to the **prose** side of the count. A sentence like "the
+Requester must drive PSTRB LOW" is recognized as a *normative* statement, and a
+downstream extractor turns it into a typed constraint (`PSTRB must be LOW`) — but
+the sentence keeps its "normative" label. The completeness summary used to count
+every normative-labelled sentence as a "partially-structured residual," so a
+requirement that *was* captured got double-counted as a gap. The fix: a normative
+statement counts as a residual only when **no** typed record (a constraint or a
+conditional rule) cites it. A requirement that produced a fact is captured, not a
+miss; a requirement nothing structured (e.g. a system-level "error correction is
+required end-to-end" with no per-signal obligation) correctly stays a residual for
+review — never fabricated into a fact. Together with the duplicate-table fix above,
+this makes the candidate-miss count *accurate*: on the AMBA APB spec it reports only
+the genuine review items, with zero false alarms.
+
 ### `COMPLETENESS-REPORT-SURFACE` — one completeness headline
 
 **What it gives you:** a `Completeness Summary` at the end of `validate` that

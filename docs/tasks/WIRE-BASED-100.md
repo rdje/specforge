@@ -119,21 +119,28 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
 - ID: `WIRE-BASED-100.7c` · Status: `done` (is_grounded_obligation_with + NLI gate; +test) · Goal: AUTOMATIC hallucination detection — `.7` upgraded
   to the NLI gate (source must entail the claim) as the general fallback behind the clause-scoped
   heuristic. Catches hallucinations the modal-check misses.
-- ID: `WIRE-BASED-100.2` · Status: `pending` · Goal: robust value-constraint extraction. **Scoped
-  (`2026-06-06`, post-`.3a`):** the remaining APB completeness items are the 2 prose residuals the gauge
-  now reports. Investigated both: (1) `statement_0223` "For read transfers, the Requester must drive all
-  bits of PSTRB LOW." is a **genuine value-constraint recall gap** — `is_signal_value_constraint` only
-  matches the passive `SIGNAL (must|shall) be VALUE` shape, not the **active `<actor> must drive <signal>
-  <LOGIC_LEVEL>`** shape, so it falls through to `NormativeStatement` and yields NO `PSTRB must_be LOW`
-  constraint (confirmed: zero PSTRB signal_constraints). Fix = recognize active drive-with-logic-level
-  obligations (logic-level vocab already centralized in `normative_vocab`, ADR-0006-safe per
-  `LOGIC-LEVEL-BOUNDARY`) → emit the constraint (+ the `Requester Drives PSTRB` relation, currently
-  actor=None). (2) `statement_0370` (EDC "required end-to-end") is an **honest non-wire residual** — a
-  system-level requirement with no per-signal fact; it must STAY a residual (structuring it would
-  fabricate). **Dependency / care (sensitive):** adding the PSTRB-LOW constraint introduces a fact NOT in
-  the κ=0.90-validated `seed_apb.json` gold, so this slice MUST also complete the gold (annotate the new
-  item) and re-run `eval-extraction --provider skip` to confirm APB gold-100% still holds (precision must
-  not drop). Own as its own careful cycle; do not rush the gold edit.
+- ID: `WIRE-BASED-100.2` · Status: `pending` · Goal: robust value-constraint extraction. **CORRECTION
+  (`2026-06-06`, supersedes the prior scoping note): the prior note was WRONG — a field-name error
+  (`signal_name` vs the real `subject_signal`) made me believe `statement_0223` "the Requester must drive
+  all bits of PSTRB LOW" produced no constraint. It DOES:** `dyn_sigcon_0015` = `PSTRB must_be_low`,
+  `supporting_statement_ids=[statement_0223]`, via the **dynamic** constraint extractor path — and APB
+  `eval-extraction --provider skip` already scores `signal_constraint P=R=F1=1.000` INCLUDING this gold
+  fact (`seed_apb.json statement_0221` gold = `PSTRB must_be_low`). So value-constraint recall is **not**
+  an APB gap and there is **no** gold edit to make. (`.2` stays a valid general goal for OTHER specs, but
+  has no APB-driven work; do not re-open it on the false PSTRB premise.) The real residual surfaced here is
+  the GAUGE counting a captured statement as a miss → `.3b`.
+- ID: `WIRE-BASED-100.3b` · Status: `done` · Goal: **completeness-gauge correctness — a captured
+  normative statement is not a prose residual.** The `prose_residuals (partial normative)` count was
+  `classes["normative_statement"]` (count by statement CLASS), so `statement_0223` was counted even though
+  a typed `signal_constraint` (`dyn_sigcon_0015`) already cites it — the dynamic extractor captured the
+  obligation but left the statement's class `NormativeStatement`. Fix (mirrors `.3a`, no faking): count a
+  `NormativeStatement` as a residual only when NO typed record (signal_constraint / conditional_rule)
+  cites its `statement_id` via `supporting_statement_ids`. `completeness::uncaptured_normative_statement_ids`
+  + wired in `validate`. **Achieved + demonstrated:** APB `validate` prose_residuals `2 → 1`,
+  candidate_misses `3 → 2` (the 2 remaining = `table_0018` docling-garbage + `statement_0370` honest
+  non-wire EDC requirement, both genuine); aggregate-sum invariant test still holds; +3 completeness unit
+  tests (captured→not-residual, uncaptured→residual, non-normative ignored); full `scripts/run_ci.sh`
+  green. Verification: see log. Commit: see log.
 - ID: `WIRE-BASED-100.3` · Status: `active` (gauge works; concrete gap found) · Goal: full-document
   completeness (gold-100% → spec-100%). **Findings (`2026-06-06`):** (a) capture-recapture
   (`completeness::recall_estimate`, Pattern×Nlp) is DEGENERATE on APB — the two tiers extract disjoint
@@ -188,6 +195,13 @@ recall, full-doc completeness) harden it; then roll the same set to AHB → AXI 
 
 ## Changelog
 
+- `2026-06-06` (`.3b` + `.2` correction): **Integrity correction** — a field-name error
+  (`signal_name` vs `subject_signal`) in my `.2` scoping had me believe `statement_0223`'s PSTRB-LOW
+  constraint was unextracted. It IS extracted (`dyn_sigcon_0015`, dynamic path); APB gold-100% already
+  includes it. So `.2` had no real APB work. The genuine residual was the GAUGE: it counted the
+  captured-but-normative-classed `statement_0223` as a prose-residual miss. `.3b` fixes that (count a
+  normative statement as a residual only when no typed record cites it) → APB candidate_misses **3 → 2**
+  (both remaining genuine: `table_0018` docling-garbage + `statement_0370` honest non-wire requirement).
 - `2026-06-06` (`.3a`): **Re-diagnosed `.3` and corrected the gauge.** Proved (per-table, from the live
   generated APB IR) the catalog is already 35/35 extracted incl. all `*CHK` signals; tables `0016/0017/0018`
   are docling-mangled DUPLICATE views whose signals are all already in the inventory. Fixed the

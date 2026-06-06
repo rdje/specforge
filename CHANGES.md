@@ -32,10 +32,21 @@ demonstrated 100%:
   covered; `0018` honestly stays flagged — docling trapped its signals in header rows; 2 prose residuals
   remain). No faking: corrected a demonstrable measurement false-positive, minted no duplicate records, read
   the inventory (never wrote it), did not force the garbled table to "covered". +4 completeness unit tests.
+- **`WIRE-BASED-100.3b` — completeness gauge: a captured normative statement is not a prose residual
+  (+ a `.2` integrity correction).** Investigating APB's 2 prose residuals I first mis-scoped `.2` as a
+  value-constraint recall gap — a **field-name error** (`signal_name` vs the real `subject_signal`) made
+  `statement_0223` "the Requester must drive all bits of PSTRB LOW" look unextracted. It IS extracted
+  (`dyn_sigcon_0015` = `PSTRB must_be_low`, dynamic path) and APB gold-100% already includes it. The real
+  defect (like `.3a`): the gauge counted `statement_0223` as a prose residual purely by CLASS, ignoring
+  that a typed constraint already cites it. Fix: `completeness::uncaptured_normative_statement_ids` counts
+  a `NormativeStatement` as a residual only when no typed record (signal_constraint/conditional_rule) cites
+  its `statement_id`. APB candidate_misses **3 → 2** — both remaining genuine (`table_0018` docling-garbage
+  + `statement_0370` honest non-wire EDC requirement). +3 unit tests. No faking: corrected a measurement
+  false-positive; the corrected `.2` note records the field-name mistake so it isn't re-derived.
 - **Governing principle** (owner, non-negotiable, `feedback_scoring_rigor`): every score objectively
   measured + logically explained + demonstrated per-fact — no fake/gamed scoring.
 
-CI green 1271 → **1301**. 33+ commits, **NOT pushed** (owner hold; threshold 200).
+CI green 1271 → **1304**. 36+ commits, **NOT pushed** (owner hold; threshold 200).
 
 ## 2026-06-05
 
