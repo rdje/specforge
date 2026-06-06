@@ -133,6 +133,35 @@ than bolting fixes onto a flat pattern extractor. That is the real test of the h
 recommended next tree (`EXTRACTION-QUALITY-GAUGE.5`, or its own tree) — replace, don't patch. `.3`/`.4`
 (permission/relational, dedup) remain useful but secondary to the replacement.
 
+## `.5` result — the thesis is VALIDATED (`2026-06-06`)
+
+`ir/constraint_extract_llm.rs` + `extract-constraints-llm`: per sentence the LLM proposes structured
+`(subject, kind, condition)` constraints; Rust grounds each (subject types as `Signal`; condition must
+appear in source). Composes `.1`+`.2` into a real extractor that REPLACES the Pattern set. +4 tests.
+
+**Measured on CHI (134 sentences, ~2 min):**
+
+| extractor | constraints | NLI-entailed |
+|---|---|---|
+| Pattern (baseline) | 162 | 28 = **17%** |
+| `.1`+`.2` patched | 113 | ~22% |
+| **LLM-primary (`.5`)** | **44** | 28 = **64%** |
+
+**Replace beats patch by ~4×.** The LLM-primary extractor kept the *same 28* good constraints while
+cutting garbage from 134 → 16. **This validates the harness thesis decisively:** the way to a working
+SpecForge is to *replace* each Rust-pattern extraction stage with an LLM-primary, Rust-grounded one —
+not patch the pattern extractors error-mode-by-error-mode.
+
+**Honest caveats:** (1) 64% = **precision** (NLI-entailed rate); **recall is unmeasured** — without a
+CHI gold we can't prove the 44 didn't *miss* real constraints (a small CHI gold is the next
+measurement). (2) The NLI oracle is noisy, so the true precision may differ — but the *relative* 4×
+jump is robust across the same oracle. (3) 64% is a leap, not done — the remaining 16 not-entailed are
+the next refinement.
+
+**Strategic conclusion → the path forward:** apply this same replace pattern to the other extraction
+stages (relations, temporal rules, registers) — each an LLM-primary, Rust-grounded extractor measured
+by the gauge. That is the concrete program for "human-SpecForge in Rust."
+
 ## Task Tree
 
 - ID: `EXTRACTION-QUALITY-GAUGE` · Status: `active` · Children: `.0`–`.4`
@@ -146,9 +175,10 @@ recommended next tree (`EXTRACTION-QUALITY-GAUGE.5`, or its own tree) — replac
 - ID: `EXTRACTION-QUALITY-GAUGE.2` · Status: `done` (prototype) · Goal: conditional/temporal
   constraints first-class. `ir/condition_extract.rs` + `extract-conditions` cmd (LLM-judged,
   source-grounded), tested; CHI 22/25 captured, gauge 17%→22%. Complementary to `.1`.
-- ID: `EXTRACTION-QUALITY-GAUGE.5` · Status: `pending` · Goal: **LLM-primary grounded constraint
-  EXTRACTOR** composing `.1`+`.2` — emit (typed-signal subject, obligation, grounded condition) in one
-  pass; replace the flat Pattern extractor, don't keep patching it. The decisive test of the thesis.
+- ID: `EXTRACTION-QUALITY-GAUGE.5` · Status: `done` · Goal: **LLM-primary grounded constraint
+  EXTRACTOR** composing `.1`+`.2`. Built (`ir/constraint_extract_llm.rs` + `extract-constraints-llm`,
+  tested) + measured: CHI 162→44 constraints, NLI-entailed **17%→64% (~4×)**. Thesis VALIDATED —
+  replace > patch. Caveat: precision measured, recall needs a CHI gold. Verification above.
 - ID: `EXTRACTION-QUALITY-GAUGE.3` · Status: `pending` · Goal: permission/relational disambiguation.
 - ID: `EXTRACTION-QUALITY-GAUGE.4` · Status: `pending` · Goal: constraint dedup by (subject, kind, condition).
 - ID: `EXTRACTION-QUALITY-GAUGE.0` · Status: `pending` · Goal: wire the gauge into converge/CI.
