@@ -55,8 +55,13 @@ eval robustness, completeness, and the other fact types.
 ## Task Tree
 
 - ID: `WIRE-BASED-100` · Status: `active` · Children: `.1`–`.5`
-- ID: `WIRE-BASED-100.1` · Status: `pending` · Goal: content-anchored evaluation (gold robust to
-  `statement_id` drift) — **the root fix** for the current per-statement failure.
+- ID: `WIRE-BASED-100.1` · Status: `done` · Goal: content-anchored evaluation (gold robust to
+  `statement_id` drift). `eval::best_statement_for_text`/`realign_gold_statement_ids` (re-resolve a gold
+  label to the current statement by `input_text` content-overlap ≥ 0.7; +2 tests incl. a **no-faking**
+  guard: low overlap → unresolved → a real miss). Wired into `eval-extraction` (always-on). **Demonstrated
+  on APB** (existing facts, no LLM): re-resolved 13/16 ids; **signal_constraint F1 0.500 → 0.923, R=1.000**;
+  **actor_signal_relation F1 0.000 → 0.400** (tp=2, fn=4). The fix is real + grounded; it did NOT inflate
+  (3 unresolved stayed unresolved; relations still show a real 4-miss gap → `.1b` next).
 - ID: `WIRE-BASED-100.2` · Status: `pending` · Goal: robust value-constraint extraction.
 - ID: `WIRE-BASED-100.3` · Status: `pending` · Goal: full-document completeness (complete gold / oracle).
 - ID: `WIRE-BASED-100.4` · Status: `pending` · Goal: temporal-rule completeness.

@@ -209,13 +209,44 @@ fn format_report(
 }
 
 pub fn run(args: EvalExtractionArgs) -> Result<()> {
-    let items = eval::load_eval_dataset(&args.dataset)?;
+    let loaded = eval::load_eval_dataset(&args.dataset)?;
     let provider = args.provider;
     let model = args
         .model
         .clone()
         .unwrap_or_else(|| crate::commands::llm_text::default_model(provider));
     let evidence_root = args.evidence_root.clone();
+
+    // WIRE-BASED-100.1 — content-anchored scoring: re-resolve each gold item's statement_id to the
+    // CURRENT evidence by matching its input_text (re-ingest drifts statement ids). The expected facts
+    // are unchanged; a label whose sentence is genuinely absent stays unresolved → a real miss.
+    let mut statements: Vec<(String, String)> = Vec::new();
+    for dk in loaded
+        .iter()
+        .map(|i| i.doc_key.clone())
+        .collect::<BTreeSet<_>>()
+    {
+        if let Ok(ir) =
+            EvidenceIr::load_from_path(&evidence_root.join(&dk).join("evidence_ir.json"))
+        {
+            statements.extend(
+                ir.extracted_statements
+                    .iter()
+                    .map(|s| (s.statement_id.clone(), s.text.clone())),
+            );
+        }
+    }
+    let realigned = eval::realign_gold_statement_ids(&loaded, &statements, 0.7);
+    let moved = realigned
+        .iter()
+        .zip(&loaded)
+        .filter(|(a, b)| a.statement_id != b.statement_id)
+        .count();
+    let items = realigned;
+    println!(
+        "content-anchored: re-resolved {moved}/{} gold statement ids to current evidence",
+        items.len()
+    );
 
     println!("command: eval-extraction");
     println!(

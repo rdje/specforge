@@ -783,6 +783,59 @@ pub fn gold_vs_prediction_mismatches(
         .collect()
 }
 
+/// Content-word set of a sentence (alphanumeric tokens > 2 chars, lowercased).
+fn content_words(text: &str) -> BTreeSet<String> {
+    text.split(|c: char| !c.is_ascii_alphanumeric())
+        .filter(|w| w.len() > 2)
+        .map(|w| w.to_ascii_lowercase())
+        .collect()
+}
+
+/// The current statement whose text best CONTAINS `input_text` (content-word overlap ≥ `min_overlap`),
+/// or `None` if none clears the bar. Re-resolves a gold label to the right statement after a re-ingest
+/// drifts `statement_id`s — WITHOUT faking: a label whose sentence is genuinely absent stays
+/// unresolved and will legitimately score as a miss. `WIRE-BASED-100.1`.
+pub fn best_statement_for_text(
+    input_text: &str,
+    statements: &[(String, String)],
+    min_overlap: f64,
+) -> Option<String> {
+    let target = content_words(input_text);
+    if target.is_empty() {
+        return None;
+    }
+    statements
+        .iter()
+        .filter_map(|(id, text)| {
+            let present = content_words(text);
+            let hits = target.iter().filter(|w| present.contains(*w)).count();
+            let overlap = hits as f64 / target.len() as f64;
+            (overlap >= min_overlap).then_some((id.clone(), overlap))
+        })
+        .max_by(|a, b| a.1.partial_cmp(&b.1).unwrap_or(std::cmp::Ordering::Equal))
+        .map(|(id, _)| id)
+}
+
+/// Re-resolve each gold item's `statement_id` to the current evidence via [`best_statement_for_text`].
+/// The expected facts stay UNCHANGED — only the stale pointer is corrected (re-ingest-proof scoring,
+/// no inflation).
+pub fn realign_gold_statement_ids(
+    items: &[EvalItem],
+    statements: &[(String, String)],
+    min_overlap: f64,
+) -> Vec<EvalItem> {
+    items
+        .iter()
+        .map(|item| {
+            let mut realigned = item.clone();
+            if let Some(sid) = best_statement_for_text(&item.input_text, statements, min_overlap) {
+                realigned.statement_id = sid;
+            }
+            realigned
+        })
+        .collect()
+}
+
 /// A risk-controlled accept threshold from a split-conformal calibration set.
 #[derive(Debug, Clone, PartialEq)]
 pub struct ConformalThreshold {
@@ -1256,6 +1309,46 @@ mod tests {
         assert!(
             !m.iter().any(|(r, c, _, _)| (*r, *c) == (0, 0)),
             "the agreed cell is omitted"
+        );
+    }
+
+    #[test]
+    fn best_statement_resolves_a_drifted_id_by_content() {
+        let statements = vec![
+            (
+                "s_old".to_string(),
+                "Figure 3-1 Write transfer with no wait states".to_string(),
+            ),
+            (
+                "s_new".to_string(),
+                "The Access phase of the write transfer is shown where PENABLE is asserted. \
+                 PREADY is asserted by the Completer at the rising edge."
+                    .to_string(),
+            ),
+        ];
+        // The gold sentence drifted off s_old (now a caption); content match re-resolves it to s_new.
+        let got = super::best_statement_for_text(
+            "PREADY is asserted by the Completer at the rising edge",
+            &statements,
+            0.7,
+        );
+        assert_eq!(got.as_deref(), Some("s_new"));
+    }
+
+    #[test]
+    fn best_statement_refuses_a_low_overlap_match_no_faking() {
+        let statements = vec![(
+            "s1".to_string(),
+            "Totally unrelated text about clock domains".to_string(),
+        )];
+        // No statement contains the gold sentence → None; the label legitimately scores as a miss.
+        assert_eq!(
+            super::best_statement_for_text(
+                "PSTRB must be driven low for read transfers",
+                &statements,
+                0.7
+            ),
+            None
         );
     }
 
