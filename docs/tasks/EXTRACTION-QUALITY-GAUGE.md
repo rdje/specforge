@@ -185,14 +185,23 @@ honestly-qualified) path to "human-SpecForge in Rust."
   EXTRACTOR** composing `.1`+`.2`. Built (`ir/constraint_extract_llm.rs` + `extract-constraints-llm`,
   tested) + measured: CHI 162→44 constraints, **precision 17%→64% (~4×)** but recall TRADED (covers
   41% of Pattern-good + 18 net-new). Thesis supported on precision; net-better needs a CHI gold.
-- ID: `EXTRACTION-QUALITY-GAUGE.6` · Status: `done` (targeted recall judgment) · Goal: settle
-  replace-vs-patch recall. Hand-judged the 13 missed Pattern-good constraints: **~5/8 sampled are
-  GENUINE misses** (`DBID`/`TxnID`/`ReturnNID`/`NSE`/`RetToSrc` "field must be 0 when inapplicable" —
-  the LLM didn't recognize protocol *fields* as signals + choked on terse table cells); ~3 correct-to-drop
-  (`MBZ`/`RME`/`REQ`). Verdict: **replace trades recall for precision — not a clean win.** Next = `.7`.
-- ID: `EXTRACTION-QUALITY-GAUGE.7` · Status: `pending` · Goal: close the recall gap — teach the
-  LLM-primary extractor to recognize protocol *fields* as signals + handle terse table-cell value
-  constraints; re-measure precision AND recall. Only then does replace dominate.
+- ID: `EXTRACTION-QUALITY-GAUGE.6` · Status: `done` (CORRECTED) · Goal: settle replace-vs-patch
+  recall. **Domain correction (owner + CHI B2.4):** CHI is a packet/flit protocol, NOT a wire bus —
+  `DBID`/`TxnID`/`ReturnNID` are *transaction-identifier FIELDS* (contents of flits), **not signals**.
+  So the LLM-primary extractor was **correct** to exclude them from *signal* constraints; my earlier
+  "genuine miss" verdict was wrong (the Pattern extractor had mis-typed fields *as* signals). The CHI
+  "recall loss" was largely **correct field-exclusion**, plus a smaller real gap.
+- ID: `EXTRACTION-QUALITY-GAUGE.7` · Status: `done` (clean test) · Goal: settle recall on a clean
+  WIRE-BASED spec (no signal/field confound). Ran `.5` on **APB** vs its gold: **recall 4/6 = 67%** —
+  the 2 misses (`PBUSER`/`PNSE` `must_be_value VALID`) **are** signals. So there IS a real, **localized
+  `must_be_value` recall gap** even on clean signals — separable from CHI's field issue. Two distinct
+  problems, both characterized. Next = `.8`.
+- ID: `EXTRACTION-QUALITY-GAUGE.8` · Status: `pending` · Goal: close the `must_be_value` recall gap in
+  the LLM-primary extractor (it under-extracts value constraints); re-measure on APB + AXI/AHB.
+- ID: `EXTRACTION-QUALITY-GAUGE.FIELD` · Status: `pending` · Goal: the SIGNAL-vs-FIELD ontology for
+  packet/flit protocols (CHI/CXL/PCIe-class) — model fields (flit contents) distinctly from signals
+  (physical wires), per the doc's own B16-Signals vs B2.x-Fields split. The real future target for
+  CHI-like PDFs (owner: "in fine we need to handle such cases too").
 - ID: `EXTRACTION-QUALITY-GAUGE.3` · Status: `pending` · Goal: permission/relational disambiguation.
 - ID: `EXTRACTION-QUALITY-GAUGE.4` · Status: `pending` · Goal: constraint dedup by (subject, kind, condition).
 - ID: `EXTRACTION-QUALITY-GAUGE.0` · Status: `pending` · Goal: wire the gauge into converge/CI.
