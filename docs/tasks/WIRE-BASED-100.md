@@ -177,7 +177,25 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   (tables `0016`/`0017` covered, `0018` honest residual, 2 prose preserved); +4 completeness unit tests
   (covered-by-inventory gold, Property-column-tie discrimination, unknown-signal negative, no-faking empty
   inventory via existing tests); `cargo test -p specforge --lib` green. Verification: see log. Commit: see log.
-- ID: `WIRE-BASED-100.4` · Status: `pending` · Goal: temporal-rule completeness.
+- ID: `WIRE-BASED-100.4` · Status: `pending` · Goal: temporal-rule completeness. **Measured + scoped
+  (`2026-06-06`, ground truth via `eval-extraction crates/specforge/test_data/llm_eval/seed_apb_temporal.json
+  --provider skip`):** `temporal_rule P=R=F1=0.333` (tp=1 fp=2 fn=2; gold=3). Per-fact diagnosis (fresh
+  SemanticIR, 26 rules):
+  - **tp** — `statement_0221` "the Requester must drive all bits of PSTRB LOW" → `edge=rising ants=[]
+    cons=[PSTRB drive+LOW]` MATCHES gold exactly.
+  - **fn+fp #1** — `statement_0285` "PNSE must be valid **when PSEL is asserted**": gold wants
+    `ants=[PSEL=ASSERTED]`; the extractor emits `ants=[] cons=[PNSE drive+VALID]` (the `when PSEL is
+    asserted` antecedent is DROPPED) → wrong key = 1 fp + the gold fact = 1 fn.
+  - **fn+fp #2** — `statement_0339` "PBUSER must be valid **when PSEL, PENABLE, and PREADY are asserted**":
+    gold wants all 3 antecedents; the extractor emits `ants=[PENABLE,PREADY]` — the **leading** `PSEL` is
+    dropped from the coordinated list → wrong key = 1 fp + 1 fn.
+  Root: single-signal `when X is asserted` antecedent capture + leading-signal drop in a `when A, B, and C
+  are asserted` list (note `TEMPORAL-ANTECEDENT-RECALL` fixed a coordinated-list *trailing-value*
+  distribution; this is a distinct leading-member drop). The matching rules are also produced from the
+  table-description versions, so prose-vs-table statement attribution may need checking. **Care:** the
+  temporal parser feeds MANY kg-bench temporal fixtures — every change must keep `kg-bench` green; do this
+  as its own careful measure→fix→remeasure cycle, not rushed. Fix in `ir/semantic.rs`
+  (`parse_temporal_condition_predicates` / antecedent capture).
 - ID: `WIRE-BASED-100.5` · Status: `pending` · Goal: cross-spec generalization (AHB/AXI/SWD).
 - ID: `WIRE-BASED-100.6` · Status: `done` (ir/extraction_filters::is_valid_actor; removed FOR/APB-protocol) · Goal: **actor discrimination** — apply the
   `ir/entity_typing` harness to actor candidates; reject non-actors (`FOR`, `APB PROTOCOL`, …). Closes
