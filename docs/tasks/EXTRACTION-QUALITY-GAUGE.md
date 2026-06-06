@@ -185,8 +185,14 @@ honestly-qualified) path to "human-SpecForge in Rust."
   EXTRACTOR** composing `.1`+`.2`. Built (`ir/constraint_extract_llm.rs` + `extract-constraints-llm`,
   tested) + measured: CHI 162→44 constraints, **precision 17%→64% (~4×)** but recall TRADED (covers
   41% of Pattern-good + 18 net-new). Thesis supported on precision; net-better needs a CHI gold.
-- ID: `EXTRACTION-QUALITY-GAUGE.6` · Status: `pending` · Goal: a small CHI **gold** → measure the
-  LLM-primary extractor's recall/F1 (settle replace-vs-patch); gates the full replace program.
+- ID: `EXTRACTION-QUALITY-GAUGE.6` · Status: `done` (targeted recall judgment) · Goal: settle
+  replace-vs-patch recall. Hand-judged the 13 missed Pattern-good constraints: **~5/8 sampled are
+  GENUINE misses** (`DBID`/`TxnID`/`ReturnNID`/`NSE`/`RetToSrc` "field must be 0 when inapplicable" —
+  the LLM didn't recognize protocol *fields* as signals + choked on terse table cells); ~3 correct-to-drop
+  (`MBZ`/`RME`/`REQ`). Verdict: **replace trades recall for precision — not a clean win.** Next = `.7`.
+- ID: `EXTRACTION-QUALITY-GAUGE.7` · Status: `pending` · Goal: close the recall gap — teach the
+  LLM-primary extractor to recognize protocol *fields* as signals + handle terse table-cell value
+  constraints; re-measure precision AND recall. Only then does replace dominate.
 - ID: `EXTRACTION-QUALITY-GAUGE.3` · Status: `pending` · Goal: permission/relational disambiguation.
 - ID: `EXTRACTION-QUALITY-GAUGE.4` · Status: `pending` · Goal: constraint dedup by (subject, kind, condition).
 - ID: `EXTRACTION-QUALITY-GAUGE.0` · Status: `pending` · Goal: wire the gauge into converge/CI.
