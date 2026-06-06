@@ -665,21 +665,80 @@ pub fn relation_near_misses(items: &[EvalItem], predicted: &PredictedKeys) -> Re
 /// ignored. This is the positional-alignment variant of GriTS_con — a sound first measure of
 /// table-structure extraction quality when row/column order is preserved (docling does). The
 /// full GriTS performs optimal 2-D alignment; positional matching is its lower bound.
-pub fn grits_content(gold_rows: &[Vec<String>], pred_rows: &[Vec<String>]) -> Scorecard {
-    let cells = |rows: &[Vec<String>]| -> BTreeSet<(usize, usize, String)> {
-        let mut out = BTreeSet::new();
-        for (r, row) in rows.iter().enumerate() {
-            for (c, cell) in row.iter().enumerate() {
-                let norm = cell.trim().to_ascii_lowercase();
-                if !norm.is_empty() {
-                    out.insert((r, c, norm));
-                }
+/// The non-empty cells of a table grid as `(row, col, normalized text)`.
+fn grid_cells(rows: &[Vec<String>]) -> BTreeSet<(usize, usize, String)> {
+    let mut out = BTreeSet::new();
+    for (r, row) in rows.iter().enumerate() {
+        for (c, cell) in row.iter().enumerate() {
+            let norm = cell.trim().to_ascii_lowercase();
+            if !norm.is_empty() {
+                out.insert((r, c, norm));
             }
         }
-        out
-    };
-    let gold = cells(gold_rows);
-    let pred = cells(pred_rows);
+    }
+    out
+}
+
+pub fn grits_content(gold_rows: &[Vec<String>], pred_rows: &[Vec<String>]) -> Scorecard {
+    let gold = grid_cells(gold_rows);
+    let pred = grid_cells(pred_rows);
+    let tp = gold.intersection(&pred).count();
+    Scorecard {
+        tp,
+        fp: pred.len() - tp,
+        fn_count: gold.len() - tp,
+        gold_total: gold.len(),
+        labeled_statements: 1,
+    }
+}
+
+/// Consensus table gold from N INDEPENDENT witness grids, plus the disagreement set. A cell is
+/// GOLD when at least `min_agree` witnesses place the same `(row, col, text)`; a position where the
+/// witnesses place DIFFERENT non-empty text (and no single value reaches `min_agree`) is a
+/// DISAGREEMENT → flagged for human review (the small set where the cheap automated witnesses
+/// split). This is weak-supervision / consensus *silver* gold — the κ inter-annotator idea applied
+/// cross-tool (pdfplumber + qwen2.5vl; GRITS-CROSS-TOOL).
+#[derive(Debug, Default, PartialEq, Eq)]
+pub struct WitnessConsensus {
+    /// Cells at least `min_agree` witnesses agree on — the silver gold.
+    pub gold: BTreeSet<(usize, usize, String)>,
+    /// Positions the witnesses split on (no value reached `min_agree`) — for human review.
+    pub disagreements: BTreeSet<(usize, usize)>,
+}
+
+/// Build the [`WitnessConsensus`] over `witnesses` at agreement level `min_agree` (use 2 for
+/// "both witnesses must agree").
+pub fn witness_consensus(witnesses: &[Vec<Vec<String>>], min_agree: usize) -> WitnessConsensus {
+    let mut tally: BTreeMap<(usize, usize), BTreeMap<String, usize>> = BTreeMap::new();
+    for w in witnesses {
+        for (r, c, text) in grid_cells(w) {
+            *tally.entry((r, c)).or_default().entry(text).or_default() += 1;
+        }
+    }
+    let mut out = WitnessConsensus::default();
+    for ((r, c), texts) in tally {
+        let (best_text, best_count) = texts
+            .iter()
+            .max_by_key(|(_, n)| **n)
+            .map(|(t, n)| (t.clone(), *n))
+            .expect("non-empty tally");
+        if best_count >= min_agree {
+            out.gold.insert((r, c, best_text));
+        } else if texts.len() > 1 {
+            out.disagreements.insert((r, c));
+        }
+    }
+    out
+}
+
+/// GriTS over a consensus gold cell-set vs a prediction grid (e.g. docling's). `tp` = gold cells
+/// the prediction reproduces, `fn` = gold cells missed, `fp` = prediction cells absent from the
+/// consensus gold.
+pub fn grits_against_consensus(
+    gold: &BTreeSet<(usize, usize, String)>,
+    prediction: &[Vec<String>],
+) -> Scorecard {
+    let pred = grid_cells(prediction);
     let tp = gold.intersection(&pred).count();
     Scorecard {
         tp,
@@ -1097,6 +1156,44 @@ mod tests {
         assert_eq!(card.fp, 1, "pred (1,1)=16 spurious");
         // F1 = 2*3 / (2*3 + 1 + 1) = 6/8.
         assert!((card.f1() - 0.75).abs() < 1e-9);
+    }
+
+    #[test]
+    fn witness_consensus_builds_gold_and_flags_disagreements() {
+        // Two independent witnesses (pdfplumber + qwen2.5vl style): they agree on the header +
+        // PADDR, and SPLIT on the width cell (1,1) — 32 vs 16.
+        let w1 = vec![
+            vec!["Signal".to_string(), "Width".to_string()],
+            vec!["PADDR".to_string(), "32".to_string()],
+        ];
+        let w2 = vec![
+            vec!["Signal".to_string(), "Width".to_string()],
+            vec!["PADDR".to_string(), "16".to_string()],
+        ];
+        let cons = super::witness_consensus(&[w1, w2], 2);
+        // Gold = the agreed cells; the split cell is NOT gold but IS a human-flag.
+        assert!(cons.gold.contains(&(0, 0, "signal".to_string())));
+        assert!(cons.gold.contains(&(1, 0, "paddr".to_string())));
+        assert!(
+            !cons.gold.iter().any(|(r, c, _)| (*r, *c) == (1, 1)),
+            "the split cell must not be gold"
+        );
+        assert!(
+            cons.disagreements.contains(&(1, 1)),
+            "(1,1) flagged for human review"
+        );
+        // docling (the system under test) scored against the consensus gold.
+        let docling = vec![
+            vec!["Signal".to_string(), "Width".to_string()],
+            vec!["PADDR".to_string(), "32".to_string()],
+        ];
+        let card = super::grits_against_consensus(&cons.gold, &docling);
+        assert_eq!(card.tp, 3, "Signal/Width/PADDR reproduced");
+        assert_eq!(card.fn_count, 0, "no consensus-gold cell missed");
+        assert_eq!(
+            card.fp, 1,
+            "docling's (1,1)=32 is not in the consensus gold"
+        );
     }
 
     #[test]

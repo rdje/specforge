@@ -59,6 +59,8 @@ pub enum Commands {
     EvalExtraction(EvalExtractionArgs),
     /// Verify an EvidenceIR's constraint claims by NLI entailment against their source sentences (text LLM)
     NliVerify(NliVerifyArgs),
+    /// Score docling's table extraction against a cross-tool witness consensus gold (GriTS; flags cells the witnesses split on for human review)
+    GritsConsensus(GritsConsensusArgs),
 }
 
 #[derive(Debug, Args)]
@@ -273,6 +275,17 @@ pub struct NliVerifyArgs {
     /// Text model override (default: `qwen2.5:14b-instruct`)
     #[arg(long)]
     pub model: Option<String>,
+}
+
+#[derive(Debug, Args)]
+pub struct GritsConsensusArgs {
+    /// Witness JSON produced by the cross-tool orchestrator:
+    /// `{"tables":[{"table_id","page","witnesses":[[[cell,..],..],..],"prediction":[[cell,..],..]}]}`
+    /// (witnesses = independent extractors e.g. pdfplumber + qwen2.5vl; prediction = docling).
+    pub witnesses_json: std::path::PathBuf,
+    /// How many witnesses must agree for a cell to count as consensus gold (default 2).
+    #[arg(long, default_value = "2")]
+    pub min_agree: usize,
 }
 
 #[derive(Debug, Args)]

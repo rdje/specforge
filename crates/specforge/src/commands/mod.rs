@@ -7,6 +7,7 @@ pub mod enrich;
 pub mod eval_extraction;
 pub mod evidence;
 pub mod extract_contracts;
+pub mod grits_consensus;
 pub mod ingest;
 pub mod inspect;
 pub mod intent;
