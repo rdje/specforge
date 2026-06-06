@@ -7187,10 +7187,17 @@ fn parse_temporal_condition_predicates(
         split_temporal_condition_clauses(normalized, known_signals)
             .into_iter()
             .filter_map(|clause| {
-                find_known_signal_name(&clause, known_signals).map(|signal| {
-                    let value = temporal_clause_value(&clause, &signal);
-                    (signal, value)
-                })
+                // Resolve the clause's signal: an exactly-declared name first, else an
+                // un-indexed prose reference to a declared indexed family member
+                // (e.g. prose "PSEL" → declared "PSELx"/"PSELX"). The fallback fires
+                // only when the bare token is not itself declared, so it is purely
+                // additive and uses the canonical declared identity (WIRE-BASED-100.4).
+                find_known_signal_name(&clause, known_signals)
+                    .or_else(|| resolve_indexed_signal_family(&clause, known_signals))
+                    .map(|signal| {
+                        let value = temporal_clause_value(&clause, &signal, known_signals);
+                        (signal, value)
+                    })
             })
             .collect();
 
@@ -7288,7 +7295,16 @@ fn split_temporal_condition_segment_on_and(
 /// DEASSERTED, or a symbolic value), or `None` if the clause is a bare signal mention with no
 /// value of its own. Check order is preserved from the original clause parser so a clause's
 /// own value is unchanged; the caller distributes a shared value to value-less clauses.
-fn temporal_clause_value(text: &str, signal_name: &str) -> Option<String> {
+///
+/// A token that is itself a signal — declared, or an un-indexed reference to a declared
+/// indexed family member (e.g. "PSEL" → "PSELx") — is never a value: a bare list member like
+/// "PSEL" must stay value-less so the shared list value distributes to it, not leak the prose
+/// token as a fake value (`WIRE-BASED-100.4`).
+fn temporal_clause_value(
+    text: &str,
+    signal_name: &str,
+    known_signals: &BTreeSet<String>,
+) -> Option<String> {
     if contains_phrase_case_insensitive(text, "LOW") {
         Some("LOW".to_string())
     } else if contains_phrase_case_insensitive(text, "HIGH") {
@@ -7298,7 +7314,11 @@ fn temporal_clause_value(text: &str, signal_name: &str) -> Option<String> {
     } else if contains_phrase_case_insensitive(text, "deasserted") {
         Some("DEASSERTED".to_string())
     } else {
-        extract_symbolic_value(text, Some(signal_name))
+        extract_symbolic_value(text, Some(signal_name)).filter(|candidate| {
+            let upper = candidate.to_ascii_uppercase();
+            !known_signals.contains(&upper)
+                && resolve_indexed_signal_family(candidate, known_signals).is_none()
+        })
     }
 }
 
@@ -9324,6 +9344,45 @@ fn contains_phrase_case_insensitive(text: &str, phrase: &str) -> bool {
     let text_lower = text.to_ascii_lowercase();
     let phrase_lower = phrase.to_ascii_lowercase();
     contains_text_phrase(&text_lower, &phrase_lower)
+}
+
+/// Resolve an un-indexed prose signal reference to its DECLARED indexed family
+/// member, using the universal index-suffix convention: a per-instance signal is
+/// written `PSELx` / `HSELx` (or numerically, `FOO0`/`FOO1`) in the declaration but
+/// referenced bare as `PSEL` / `HSEL` / `FOO` in prose. Returns the declared signal
+/// (e.g. `PSEL` → `PSELX`) so the IR uses one canonical identity everywhere — this is
+/// grammar (the `x`/digit index convention), never a hardcoded chip-spec name
+/// (ADR 0006). `WIRE-BASED-100.4`.
+///
+/// Fires ONLY for a candidate token that is not itself a known signal, so it is
+/// purely additive and can never override a real declaration. The trailing `X`
+/// marker matches the uppercased declared form of the lowercase-`x` instance index.
+fn resolve_indexed_signal_family(text: &str, known_signals: &BTreeSet<String>) -> Option<String> {
+    for token in text.split(|c: char| !(c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_')) {
+        if token.len() < 3
+            || !token
+                .chars()
+                .next()
+                .map(|c| c.is_ascii_uppercase())
+                .unwrap_or(false)
+        {
+            continue;
+        }
+        let upper = token.to_ascii_uppercase();
+        if known_signals.contains(&upper) {
+            continue; // already a declared signal — not an un-indexed family reference
+        }
+        for declared in known_signals {
+            if let Some(suffix) = declared.strip_prefix(upper.as_str()) {
+                let is_index_suffix = suffix == "X"
+                    || (!suffix.is_empty() && suffix.chars().all(|c| c.is_ascii_digit()));
+                if is_index_suffix {
+                    return Some(declared.clone());
+                }
+            }
+        }
+    }
+    None
 }
 
 fn contains_text_phrase(text: &str, phrase: &str) -> bool {
@@ -21000,6 +21059,60 @@ mod tests {
                 .map(|s| s.to_string())
                 .collect::<BTreeSet<_>>(),
             "all three coordinated signals carry the shared 'asserted' value"
+        );
+    }
+
+    #[test]
+    fn temporal_condition_canonicalizes_unindexed_select_to_declared_family() {
+        // WIRE-BASED-100.4: the doc declares the per-completer select as PSELx (→ PSELX) but
+        // prose writes the un-indexed "PSEL". The antecedent must resolve to the canonical
+        // declared PSELX so the IR uses one identity everywhere; the bare list members PENABLE
+        // and PREADY are declared and unaffected.
+        let known: BTreeSet<String> = ["PSELX", "PENABLE", "PREADY"]
+            .iter()
+            .map(|s| s.to_string())
+            .collect();
+        let handshake = super::HandshakeRoleContext::default();
+        let predicates = super::parse_temporal_condition_predicates(
+            "PSEL , PENABLE , and PREADY are asserted.",
+            &known,
+            super::TickPhase::PreTick,
+            &handshake,
+        );
+        let asserted: BTreeSet<String> = predicates
+            .iter()
+            .filter_map(|p| match p {
+                super::TemporalPredicateRecord::SignalValue {
+                    signal_name, value, ..
+                } if value == "ASSERTED" => Some(signal_name.clone()),
+                _ => None,
+            })
+            .collect();
+        assert_eq!(
+            asserted,
+            ["PENABLE", "PREADY", "PSELX"]
+                .iter()
+                .map(|s| s.to_string())
+                .collect::<BTreeSet<_>>(),
+            "the un-indexed 'PSEL' resolves to the declared 'PSELX'"
+        );
+    }
+
+    #[test]
+    fn temporal_condition_does_not_invent_a_signal_for_unknown_token() {
+        // Guard: an un-indexed token with NO declared indexed family member is dropped,
+        // never fabricated (resolve_indexed_signal_family is purely additive).
+        let known: BTreeSet<String> = ["PENABLE"].iter().map(|s| s.to_string()).collect();
+        let handshake = super::HandshakeRoleContext::default();
+        let predicates = super::parse_temporal_condition_predicates(
+            "WIDGET is asserted",
+            &known,
+            super::TickPhase::PreTick,
+            &handshake,
+        );
+        assert!(
+            predicates.is_empty(),
+            "no declared WIDGETx family → no predicate invented, got {predicates:?}"
         );
     }
 

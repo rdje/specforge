@@ -4,13 +4,13 @@
     "doc_key": "ihi0024_e_2023_02_amba_5_apb_protocol_specification",
     "statement_id": "statement_0285",
     "input_text": "PNSE must be valid when PSEL is asserted.",
-    "grounding": ["PNSE", "PSEL"],
+    "grounding": ["PNSE", "PSELX"],
     "gold": [
       {
         "fact": "temporal_rule",
         "edge": "rising",
         "antecedents": [
-          {"kind": "signal_value", "signal_name": "PSEL", "value": "ASSERTED", "phase": "pre_tick"}
+          {"kind": "signal_value", "signal_name": "PSELX", "value": "ASSERTED", "phase": "pre_tick"}
         ],
         "consequents": [
           {"kind": "actor_drives_signal", "actor_name": "Requester", "signal_name": "PNSE", "phase": "post_tick"},
@@ -19,7 +19,7 @@
       }
     ],
     "label_status": "agent_drafted",
-    "label_note": "Single-condition validity obligation; PNSE is a Requester signal (per the signal table). Faithful to prose; expected TP."
+    "label_note": "Single-condition validity obligation; PNSE is a Requester signal (per the signal table). Antecedent uses the canonical declared select PSELX (the prose writes the un-indexed shorthand 'PSEL' for the declared per-completer 'PSELx'); the fact is unchanged (WIRE-BASED-100.4). Expected TP."
   },
   {
     "task": "temporal_rule",
@@ -46,13 +46,13 @@
     "doc_key": "ihi0024_e_2023_02_amba_5_apb_protocol_specification",
     "statement_id": "statement_0339",
     "input_text": "PBUSER must be valid when PSEL, PENABLE, and PREADY are asserted.",
-    "grounding": ["PBUSER", "PSEL", "PENABLE", "PREADY"],
+    "grounding": ["PBUSER", "PSELX", "PENABLE", "PREADY"],
     "gold": [
       {
         "fact": "temporal_rule",
         "edge": "rising",
         "antecedents": [
-          {"kind": "signal_value", "signal_name": "PSEL", "value": "ASSERTED", "phase": "pre_tick"},
+          {"kind": "signal_value", "signal_name": "PSELX", "value": "ASSERTED", "phase": "pre_tick"},
           {"kind": "signal_value", "signal_name": "PENABLE", "value": "ASSERTED", "phase": "pre_tick"},
           {"kind": "signal_value", "signal_name": "PREADY", "value": "ASSERTED", "phase": "pre_tick"}
         ],
@@ -63,7 +63,7 @@
       }
     ],
     "label_status": "agent_drafted",
-    "label_note": "Faithful precondition is all three asserted (PSEL AND PENABLE AND PREADY); PBUSER is a Completer signal. Drafted from prose independently of the extractor, which is expected to under-capture the antecedent (a recall gap this seed is meant to surface)."
+    "label_note": "Faithful precondition is all three asserted (PSELX AND PENABLE AND PREADY); PBUSER is a Completer signal. The antecedent select uses the canonical declared PSELX (prose shorthand 'PSEL' for the declared per-completer 'PSELx'); fact unchanged. The leading select was previously under-captured because 'PSEL' is not a declared signal — resolved by index-family canonicalization (WIRE-BASED-100.4)."
   },
   {
     "task": "temporal_rule",

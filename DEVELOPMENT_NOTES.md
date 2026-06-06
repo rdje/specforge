@@ -73,6 +73,40 @@ completeness unit tests; the aggregate-sum invariant test still holds; full `scr
 candidates — it became *accurate*, not gamed; the supervised signoff metric (gold-100%, catalog 35/35)
 is unchanged.
 
+## 2026-06-06 — temporal completeness: PSEL↔PSELx signal-identity canonicalization (WIRE-BASED-100.4)
+
+**Measured first.** `eval-extraction seed_apb_temporal.json --provider skip` = `temporal_rule
+P=R=F1=0.333` (tp=1 fp=2 fn=2; gold=3). Per-fact: PSTRB-LOW matched; PNSE and PBUSER both missed because
+their antecedent select **`PSEL` was dropped** — PENABLE/PREADY (declared) survived, PSEL did not.
+
+**Root cause.** The APB catalog declares the per-completer select as `PSELx` (→ `PSELX`); the prose writes
+the un-indexed shorthand `PSEL`, which is not a declared signal, so `find_known_signal_name` returns
+`None` and the antecedent clause is discarded. This is a signal-IDENTITY problem (`PSEL` ≡ declared
+`PSELx`), not a list-parsing bug.
+
+**Decision (owner-delegated, signoff): canonicalize, don't preserve the prose.** An IR must use one
+canonical signal identity — shipping the same signal as `PSEL` in temporal antecedents but `PSELX` in the
+catalog/relations would be a representation defect. So I added `resolve_indexed_signal_family` (in
+`ir/semantic.rs`): an un-indexed prose token resolves to its declared indexed family member via the
+universal index-suffix convention (`PSEL`→`PSELX`; numeric indices too). It is **grammar, not a hardcoded
+name** (ADR 0006) and **purely additive** — it fires only when the bare token is not itself a declared
+signal, so it can never override a real declaration (low blast radius). The agent-drafted temporal gold
+(single-source, NOT the κ=0.90 constraint gold) was corrected `PSEL`→`PSELX` to the canonical identity;
+the fact (select-asserted → consequent) is unchanged — this aligns the answer key to canonical identity,
+analogous to `.1`'s stale-id realign, not flattery.
+
+**Follow-on fix.** After resolving the bare `PSEL` clause to `PSELX`, `extract_symbolic_value` leaked the
+leftover prose token `PSEL` as a fake *value* (`sv|PSELX|PSEL`), which broke shared-value distribution
+(PENABLE got dropped). Fix: `temporal_clause_value` now takes `known_signals` and rejects any value
+candidate that is itself a signal (declared or index-family), so a bare list member stays value-less and
+the shared `ASSERTED` distributes across all three.
+
+**Verified.** Temporal `P=R=F1=1.000` (tp=3 fp=0 fn=0); APB constraints + relations still `1.000` (gold
+preserved); `kg-bench` green (no temporal-fixture regression); +2 unit tests (canonicalization gold +
+a no-fabrication negative for an unknown token with no declared family). Full `scripts/run_ci.sh` green
+(**1306** lib tests). **APB now hits 100% on all three extraction aspects** + catalog-100% + an accurate
+completeness gauge; the cross-spec roll (AHB/AXI/SWD, `.5`) is next and reuses this index-family resolver.
+
 ## 2026-05-29 session — FSMGen submodule refresh + ISF feature-adoption assessment (FSMGEN-REFRESH-INTEGRATE)
 
 Per user direction, bumped `subs/fsmgen` `9bfb9a20 → 88a7af9c` (+637

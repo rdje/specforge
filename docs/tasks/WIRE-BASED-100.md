@@ -70,16 +70,20 @@ No low score is left unaddressed — each maps to a concrete, principled fix tha
 ## APB — 100% ACHIEVED (`2026-06-06`), demonstrated + provable
 
 ```
-signal_constraint      P=1.000 R=1.000 F1=1.000  (tp=6 fp=0 fn=0)
-actor_signal_relation  P=1.000 R=1.000 F1=1.000  (tp=5 fp=0 fn=0)
+signal_constraint      P=1.000 R=1.000 F1=1.000  (tp=6 fp=0 fn=0)   # seed_apb.json
+actor_signal_relation  P=1.000 R=1.000 F1=1.000  (tp=5 fp=0 fn=0)   # seed_apb.json
+temporal_rule          P=1.000 R=1.000 F1=1.000  (tp=3 fp=0 fn=0)   # seed_apb_temporal.json (.4)
 ```
 
-Reproducible: `specforge eval-extraction crates/specforge/test_data/llm_eval/seed_apb.json --provider
-skip` (the `-- source-tolerant + filtered (WIRE-BASED-100) --` block). Every point earned by making
-facts correct — `.1` fixed id-drift, `.1b` credits valid sources, `.6` dropped garbage actors (`FOR`,
-`APB protocol`), `.7` dropped the descriptive-clause hallucination (`PRDATA must_be_stable`). No faking
-— the filters are derived universal-language checks (ADR 0006) with tested guards. Next: `.2`/`.3`
-harden (value recall, full-doc completeness), then roll to AHB → AXI → SWD (`.5`).
+**APB is now 100% on ALL three extraction aspects** (constraints + relations + temporal), plus
+catalog-100% (35/35 signals, `.3a`) and an accurate completeness gauge (`.3a`+`.3b`: only genuine
+candidates remain). Reproducible: `specforge eval-extraction crates/specforge/test_data/llm_eval/seed_apb.json
+--provider skip` and `… seed_apb_temporal.json --provider skip` (the `-- source-tolerant + filtered
+(WIRE-BASED-100) --` blocks). Every point earned by making facts correct — `.1` fixed id-drift, `.1b`
+credits valid sources, `.6` dropped garbage actors (`FOR`, `APB protocol`), `.7` dropped the
+descriptive-clause hallucination (`PRDATA must_be_stable`), `.4` resolved the `PSEL`↔`PSELx` antecedent
+identity. No faking — derived universal-language checks + index-suffix grammar (ADR 0006) with tested
+guards. Next: roll the same bar to AHB → AXI → SWD (`.5`).
 
 ## Automatic detection — the heuristics are only a fast-path (owner requirement)
 
@@ -196,6 +200,28 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   temporal parser feeds MANY kg-bench temporal fixtures — every change must keep `kg-bench` green; do this
   as its own careful measure→fix→remeasure cycle, not rushed. Fix in `ir/semantic.rs`
   (`parse_temporal_condition_predicates` / antecedent capture).
+  **ROOT (`2026-06-06`, deeper):** both fn+fp are the antecedent signal `PSEL` being DROPPED because the
+  APB catalog declares the select as `PSELx` (→ `PSELX`); prose says `PSEL`, which is not a declared
+  signal, so `find_known_signal_name` returns `None` and the clause is discarded (PENABLE/PREADY ARE
+  declared, so they survive — exactly the observed `ants=[PENABLE,PREADY]`). This is a signal-IDENTITY
+  issue (`PSEL` ≡ the declared indexed `PSELx`), not a list-parsing bug. **Decision (owner-delegated
+  `2026-06-06`, signoff): canonicalize.** An IR must use ONE canonical signal identity; representing the
+  same signal as `PSEL` in temporal antecedents but `PSELX` in the catalog/relations is a defect, not
+  signoff. So resolve an un-indexed prose select reference to its DECLARED indexed family member via the
+  universal index-suffix convention (`PSEL`→`PSELX`, numeric indices too — grammar, not a hardcoded name,
+  ADR-0006-safe), and correct the agent-drafted (single-source, NOT the κ=0.90 constraint gold) temporal
+  gold's antecedent `PSEL`→`PSELX` to the canonical identity (the FACT — select-asserted → consequent — is
+  unchanged; this aligns the answer key to canonical signal identity, like `.1` aligned stale ids; not
+  flattery). `resolve_indexed_signal_family` fires ONLY when the bare token is not itself a known signal,
+  so it is purely additive (cannot override a real declaration) → low blast radius. Acceptance: temporal
+  `P=R=F1=1.000`; APB gold-100% (`seed_apb.json`) preserved; `kg-bench` green; `cargo test -p specforge
+  --lib` + full `scripts/run_ci.sh` green. **DONE + demonstrated (`2026-06-06`):** temporal
+  `P=R=F1=1.000` (tp=3 fp=0 fn=0); APB constraints + relations still `1.000`; `kg-bench` green; CI green
+  (**1306** lib tests). Two-part fix: (1) `resolve_indexed_signal_family` (prose `PSEL`→declared `PSELX`),
+  (2) a follow-on fix so a token that is itself a signal is never emitted as a *value* (`temporal_clause_value`
+  now takes `known_signals` — the bare list member `PSEL` stays value-less so the shared `ASSERTED`
+  distributes, instead of leaking `sv|PSELX|PSEL` and dropping PENABLE). +2 unit tests (canonicalization
+  gold + a no-fabrication negative). Verification: see log. Commit: see log.
 - ID: `WIRE-BASED-100.5` · Status: `pending` · Goal: cross-spec generalization (AHB/AXI/SWD).
 - ID: `WIRE-BASED-100.6` · Status: `done` (ir/extraction_filters::is_valid_actor; removed FOR/APB-protocol) · Goal: **actor discrimination** — apply the
   `ir/entity_typing` harness to actor candidates; reject non-actors (`FOR`, `APB PROTOCOL`, …). Closes

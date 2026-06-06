@@ -43,10 +43,23 @@ demonstrated 100%:
   its `statement_id`. APB candidate_misses **3 → 2** — both remaining genuine (`table_0018` docling-garbage
   + `statement_0370` honest non-wire EDC requirement). +3 unit tests. No faking: corrected a measurement
   false-positive; the corrected `.2` note records the field-name mistake so it isn't re-derived.
+- **`WIRE-BASED-100.4` — temporal-rule completeness: APB temporal P=R=F1=1.000 (0.333→1.000).** Ground
+  truth first (`eval-extraction seed_apb_temporal.json --provider skip`): 0.333 (tp=1 fp=2 fn=2). Root: the
+  antecedent select `PSEL` was dropped because the catalog declares `PSELx` (→ `PSELX`) and prose says the
+  un-indexed `PSEL` (PENABLE/PREADY are declared, so they survived). **Owner-delegated signoff decision:
+  canonicalize** — an IR uses one signal identity, so resolve un-indexed prose select refs to the declared
+  indexed family member via the universal index-suffix convention (`resolve_indexed_signal_family`, ADR-0006
+  grammar not a name; purely additive — fires only when the bare token isn't itself declared), and correct
+  the agent-drafted temporal gold's antecedent `PSEL`→`PSELX` (canonical identity; fact unchanged). A
+  follow-on fix: a token that is itself a signal is never emitted as a *value* (`temporal_clause_value` now
+  takes `known_signals`), so the bare list member `PSEL` stays value-less and the shared `ASSERTED`
+  distributes (was leaking `sv|PSELX|PSEL` and dropping PENABLE). **APB now 100% on ALL three aspects**
+  (constraints + relations + temporal) + catalog-100% + accurate gauge. APB gold-100% preserved; kg-bench
+  green (no temporal-fixture regression); +2 unit tests.
 - **Governing principle** (owner, non-negotiable, `feedback_scoring_rigor`): every score objectively
   measured + logically explained + demonstrated per-fact — no fake/gamed scoring.
 
-CI green 1271 → **1304**. 36+ commits, **NOT pushed** (owner hold; threshold 200).
+CI green 1271 → **1306**. 38+ commits, **NOT pushed** (owner hold; threshold 200).
 
 ## 2026-06-05
 

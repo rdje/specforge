@@ -62,6 +62,23 @@ The actor-grounded predicates are important because they connect timing obligati
 
 For example, if the graph says `Requester` drives `PSEL`, a temporal rule can express that actor responsibility instead of only saying `PSEL` changes.
 
+### Indexed signal families in antecedents
+
+Specs routinely declare a per-instance signal with an index — the bus select is
+declared `PSELx` (one per completer), but prose refers to it bare as `PSEL`
+("PNSE must be valid **when PSEL is asserted**"). The bare name is not literally a
+declared signal, so an antecedent that mentioned only `PSEL` used to be dropped —
+silently weakening the recovered condition (e.g. "when PSEL, PENABLE, and PREADY
+are asserted" would keep only PENABLE and PREADY).
+
+SpecForge now resolves an un-indexed prose reference to its declared indexed family
+member (`PSEL` → `PSELx`, including numeric indices like `FOO0`) using the universal
+`x`/digit index convention — so the temporal rule records the **same canonical signal
+identity** the catalog and the connectivity graph use, rather than a second spelling.
+This is grammar (the index convention), not a hardcoded signal name, and it is purely
+additive: it only fires when the bare token is not itself a declared signal, so it can
+never override a real declaration or invent a signal that has no declared family.
+
 ## Cycle windows
 
 A cycle window bounds timing.
