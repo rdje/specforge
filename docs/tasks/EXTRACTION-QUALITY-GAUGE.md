@@ -147,20 +147,26 @@ appear in source). Composes `.1`+`.2` into a real extractor that REPLACES the Pa
 | `.1`+`.2` patched | 113 | ~22% |
 | **LLM-primary (`.5`)** | **44** | 28 = **64%** |
 
-**Replace beats patch by ~4×.** The LLM-primary extractor kept the *same 28* good constraints while
-cutting garbage from 134 → 16. **This validates the harness thesis decisively:** the way to a working
-SpecForge is to *replace* each Rust-pattern extraction stage with an LLM-primary, Rust-grounded one —
-not patch the pattern extractors error-mode-by-error-mode.
+**PRECISION jumps ~4× (17%→64%)** — that part is robust. **But recall is traded, not free** (recall
+proxy, by subject+kind): the LLM-primary's 28 entailed are a *different* set from the Pattern's — it
+covers only **9/22 (41%)** of the Pattern's known-good constraints while finding **18 net-new**. The
+divergence is concentrated in `must_be_value` (the error-prone relational class — `DBID`, `TXNID`,
+`RETURNNID`… — the LLM mostly dropped; *some correctly* as relational mis-extractions the NLI happened
+to pass, *some* maybe genuine misses). So **replace buys large precision at some recall cost** — it
+does *not* strictly dominate the Pattern set.
 
-**Honest caveats:** (1) 64% = **precision** (NLI-entailed rate); **recall is unmeasured** — without a
-CHI gold we can't prove the 44 didn't *miss* real constraints (a small CHI gold is the next
-measurement). (2) The NLI oracle is noisy, so the true precision may differ — but the *relative* 4×
-jump is robust across the same oracle. (3) 64% is a leap, not done — the remaining 16 not-entailed are
-the next refinement.
+**Honest verdict:** the thesis "*replace can beat patch on quality*" is **supported on precision**
+(4×, robust across the same oracle), but "*replace IS net-better*" is **not settled** — that needs a
+small CHI **gold** to measure recall/F1. The earlier "kept the same 28" framing was wrong (same
+*count*, different *set*); corrected here. The remaining 16 not-entailed + the recall gap are the next
+work.
 
-**Strategic conclusion → the path forward:** apply this same replace pattern to the other extraction
-stages (relations, temporal rules, registers) — each an LLM-primary, Rust-grounded extractor measured
-by the gauge. That is the concrete program for "human-SpecForge in Rust."
+**Strategic conclusion → the path forward:** the harness pattern works and replace shows a large
+precision gain, so the program is to *replace* each extraction stage (relations, temporal rules,
+registers) with an LLM-primary, Rust-grounded extractor measured by the gauge — **but gate it on `.6`
+first** (a CHI gold to confirm recall isn't being sacrificed). Precision-without-recall would be a trap
+the gauge alone can't see. Settle that, then scale the replace program. That is the concrete (and
+honestly-qualified) path to "human-SpecForge in Rust."
 
 ## Task Tree
 
@@ -177,8 +183,10 @@ by the gauge. That is the concrete program for "human-SpecForge in Rust."
   source-grounded), tested; CHI 22/25 captured, gauge 17%→22%. Complementary to `.1`.
 - ID: `EXTRACTION-QUALITY-GAUGE.5` · Status: `done` · Goal: **LLM-primary grounded constraint
   EXTRACTOR** composing `.1`+`.2`. Built (`ir/constraint_extract_llm.rs` + `extract-constraints-llm`,
-  tested) + measured: CHI 162→44 constraints, NLI-entailed **17%→64% (~4×)**. Thesis VALIDATED —
-  replace > patch. Caveat: precision measured, recall needs a CHI gold. Verification above.
+  tested) + measured: CHI 162→44 constraints, **precision 17%→64% (~4×)** but recall TRADED (covers
+  41% of Pattern-good + 18 net-new). Thesis supported on precision; net-better needs a CHI gold.
+- ID: `EXTRACTION-QUALITY-GAUGE.6` · Status: `pending` · Goal: a small CHI **gold** → measure the
+  LLM-primary extractor's recall/F1 (settle replace-vs-patch); gates the full replace program.
 - ID: `EXTRACTION-QUALITY-GAUGE.3` · Status: `pending` · Goal: permission/relational disambiguation.
 - ID: `EXTRACTION-QUALITY-GAUGE.4` · Status: `pending` · Goal: constraint dedup by (subject, kind, condition).
 - ID: `EXTRACTION-QUALITY-GAUGE.0` · Status: `pending` · Goal: wire the gauge into converge/CI.
