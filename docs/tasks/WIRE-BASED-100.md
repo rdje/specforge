@@ -222,7 +222,29 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   now takes `known_signals` — the bare list member `PSEL` stays value-less so the shared `ASSERTED`
   distributes, instead of leaking `sv|PSELX|PSEL` and dropping PENABLE). +2 unit tests (canonicalization
   gold + a no-fabrication negative). Verification: see log. Commit: see log.
-- ID: `WIRE-BASED-100.5` · Status: `pending` · Goal: cross-spec generalization (AHB/AXI/SWD).
+- ID: `WIRE-BASED-100.5` · Status: `active` · Goal: cross-spec generalization (AHB → AXI → SWD).
+  Children: `.5a` (AHB constraint baseline) → more AHB facts → AXI → SWD. Reuses `.4` index-family
+  resolver (AHB `HSELx`), `.3a`/`.3b` gauge fixes, `.1`/`.6`/`.7` eval.
+- ID: `WIRE-BASED-100.5a` · Status: `done` · Goal: **AHB signal_constraint eval gold + measured
+  baseline** (measure-first, like the APB seed). Built `crates/specforge/test_data/llm_eval/seed_ahb.json`
+  from REAL AHB prose: 6 unambiguous positives (`HAUSER`/`HWUSER`/`HRUSER`/`HBUSER` must_be_value VALID;
+  `HAUSER`/`HWUSER` must_not_change) + 3 list-introducer negatives (`The following signals must be valid
+  when HTRANS is not IDLE` / `… when HREADY is HIGH and HRESP is LOW`). Agent-drafted (single-source,
+  pending review — like the APB temporal seed); facts labeled independently from the prose, not copied from
+  extractor output (verified each against the records). **Baseline (`2026-06-07`, `eval-extraction
+  seed_ahb.json --provider skip`): `signal_constraint P=0.364 R=0.667 F1=0.471` (tp=4 fp=7 fn=2; gold=6);
+  source-tolerant P=0.444.** content-anchored re-resolved 0/9 (ids current). **Two genuine findings → `.5b`:**
+  (1) **double-negative** — `must_not_change` records carry `negated=True` (the kind already encodes the
+  prohibition; `negated=True` inverts it to "may change"), so `HAUSER`/`HWUSER must_not_change` miss the
+  gold (2 FN + 2 FP); (2) **list-introducer condition-subject FPs** — `HTRANS`/`HREADY`/`HRESP` extracted as
+  constraint subjects from `The following signals must be valid when <X> …` (5 FP); the APB
+  condition-subject fix does not cover the AHB `when HTRANS is not IDLE` / `when HREADY is HIGH and HRESP is
+  LOW` pattern. Gold verified correct; both are real extractor defects. Relations + temporal AHB golds are
+  follow-on leaves.
+- ID: `WIRE-BASED-100.5b` · Status: `pending` · Goal: fix the two `.5a` AHB constraint findings to 100% —
+  (1) drop the redundant `negated=True` on kinds that already encode the negation (`MustNotChange`,
+  `MustBeDeasserted`, …); (2) suppress condition-signal-as-subject FPs for the `The following signals … when
+  <cond>` list-introducer pattern. Each fix must keep APB gold-100% + kg-bench green (general, not AHB-tuned).
 - ID: `WIRE-BASED-100.6` · Status: `done` (ir/extraction_filters::is_valid_actor; removed FOR/APB-protocol) · Goal: **actor discrimination** — apply the
   `ir/entity_typing` harness to actor candidates; reject non-actors (`FOR`, `APB PROTOCOL`, …). Closes
   the relation-precision fps. Same root as the CHI garbage-actor finding (`EXTRACTION-QUALITY-GAUGE`).

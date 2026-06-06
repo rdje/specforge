@@ -1,0 +1,104 @@
+[
+  {
+    "task": "signal_constraint",
+    "doc_key": "ihi0033_c_2021_09_amba_5_ahb_protocol_specification",
+    "statement_id": "statement_1013",
+    "input_text": "- The HAUSER signal must be valid during the address phase of a transfer.",
+    "grounding": ["HAUSER"],
+    "gold": [
+      {"fact": "constraint", "subject_signal": "HAUSER", "constraint_kind": "must_be_value", "target_value": "VALID"}
+    ],
+    "label_status": "agent_drafted",
+    "label_note": "Explicit validity obligation on HAUSER; the 'during the address phase' clause is a condition, not the subject. Expected TP."
+  },
+  {
+    "task": "signal_constraint",
+    "doc_key": "ihi0033_c_2021_09_amba_5_ahb_protocol_specification",
+    "statement_id": "statement_1015",
+    "input_text": "- The HWUSER signal must be valid during the data phase of a write transfer.",
+    "grounding": ["HWUSER"],
+    "gold": [
+      {"fact": "constraint", "subject_signal": "HWUSER", "constraint_kind": "must_be_value", "target_value": "VALID"}
+    ],
+    "label_status": "agent_drafted",
+    "label_note": "Explicit validity obligation on HWUSER. Expected TP."
+  },
+  {
+    "task": "signal_constraint",
+    "doc_key": "ihi0033_c_2021_09_amba_5_ahb_protocol_specification",
+    "statement_id": "statement_1017",
+    "input_text": "- The HRUSER signal must be valid during the data phase of a read transfer when HREADY signal is HIGH, unless HRESP signal is ERROR.",
+    "grounding": ["HRUSER", "HREADY", "HRESP"],
+    "gold": [
+      {"fact": "constraint", "subject_signal": "HRUSER", "constraint_kind": "must_be_value", "target_value": "VALID"}
+    ],
+    "label_status": "agent_drafted",
+    "label_note": "Validity obligation on HRUSER; HREADY/HRESP are condition signals, not the subject. Expected TP."
+  },
+  {
+    "task": "signal_constraint",
+    "doc_key": "ihi0033_c_2021_09_amba_5_ahb_protocol_specification",
+    "statement_id": "statement_1018",
+    "input_text": "- The HBUSER signal must be valid during the data phase of a read or write transfer when HREADY signal is HIGH, unless HRESP signal is ERROR",
+    "grounding": ["HBUSER", "HREADY", "HRESP"],
+    "gold": [
+      {"fact": "constraint", "subject_signal": "HBUSER", "constraint_kind": "must_be_value", "target_value": "VALID"}
+    ],
+    "label_status": "agent_drafted",
+    "label_note": "Validity obligation on HBUSER; HREADY/HRESP are condition signals. Expected TP."
+  },
+  {
+    "task": "signal_constraint",
+    "doc_key": "ihi0033_c_2021_09_amba_5_ahb_protocol_specification",
+    "statement_id": "statement_1014",
+    "input_text": "- The HAUSER signal must not change between cycles when HREADY is LOW, unless HRESP signal is ERROR.",
+    "grounding": ["HAUSER", "HREADY", "HRESP"],
+    "gold": [
+      {"fact": "constraint", "subject_signal": "HAUSER", "constraint_kind": "must_not_change"}
+    ],
+    "label_status": "agent_drafted",
+    "label_note": "Stability obligation (must not change) on HAUSER while HREADY is LOW; HREADY/HRESP are condition signals. Expected TP."
+  },
+  {
+    "task": "signal_constraint",
+    "doc_key": "ihi0033_c_2021_09_amba_5_ahb_protocol_specification",
+    "statement_id": "statement_1016",
+    "input_text": "- The HWUSER signal must not change between cycles of a write transfer when HREADY signal is LOW, unless HRESP signal is ERROR.",
+    "grounding": ["HWUSER", "HREADY", "HRESP"],
+    "gold": [
+      {"fact": "constraint", "subject_signal": "HWUSER", "constraint_kind": "must_not_change"}
+    ],
+    "label_status": "agent_drafted",
+    "label_note": "Stability obligation on HWUSER; HREADY/HRESP are condition signals. Expected TP."
+  },
+  {
+    "task": "signal_constraint",
+    "doc_key": "ihi0033_c_2021_09_amba_5_ahb_protocol_specification",
+    "statement_id": "statement_0873",
+    "input_text": "The following signals must be valid when HTRANS is not IDLE:",
+    "grounding": [],
+    "gold": [],
+    "label_status": "agent_drafted",
+    "label_note": "Negative: list-introducer header. HTRANS is the CONDITION ('when HTRANS is not IDLE'); the constrained signals are the following list items, not HTRANS. No constraint on HTRANS is extractable from this sentence (a HTRANS-as-subject constraint would be a false positive)."
+  },
+  {
+    "task": "signal_constraint",
+    "doc_key": "ihi0033_c_2021_09_amba_5_ahb_protocol_specification",
+    "statement_id": "statement_0886",
+    "input_text": "The following signals must be valid in the data phase of a write transaction when HREADY is HIGH and HRESP is LOW:",
+    "grounding": [],
+    "gold": [],
+    "label_status": "agent_drafted",
+    "label_note": "Negative: list-introducer header. HREADY/HRESP are condition signals ('when HREADY is HIGH and HRESP is LOW'); the constrained signals are the following list items. HREADY/HRESP-as-subject constraints would be false positives."
+  },
+  {
+    "task": "signal_constraint",
+    "doc_key": "ihi0033_c_2021_09_amba_5_ahb_protocol_specification",
+    "statement_id": "statement_0889",
+    "input_text": "The following signals must be valid in the data phase of a read transaction when HREADY is HIGH and HRESP is LOW:",
+    "grounding": [],
+    "gold": [],
+    "label_status": "agent_drafted",
+    "label_note": "Negative: list-introducer header (read transaction). HREADY/HRESP are condition signals; HREADY/HRESP-as-subject constraints would be false positives."
+  }
+]

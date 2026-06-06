@@ -1,5 +1,20 @@
 # CHANGES
 
+## 2026-06-07
+
+### `WIRE-BASED-100.5a` — AHB constraint eval gold + measured baseline (cross-spec roll begins)
+Measure-first start of `.5` (roll the APB bar to AHB → AXI → SWD). Built
+`crates/specforge/test_data/llm_eval/seed_ahb.json` from REAL AHB prose — 6 unambiguous positives
+(`HAUSER`/`HWUSER`/`HRUSER`/`HBUSER` must_be_value VALID; `HAUSER`/`HWUSER` must_not_change) + 3
+list-introducer negatives (`The following signals must be valid when HTRANS is not IDLE` / `… when HREADY
+is HIGH and HRESP is LOW`) — labeled independently from the prose, agent-drafted (single-source, pending
+review). **Baseline: `signal_constraint P=0.364 R=0.667 F1=0.471`** (tp=4 fp=7 fn=2; source-tolerant
+P=0.444). Two genuine findings (→ `.5b`): (1) `must_not_change` records carry a redundant `negated=True`
+(double-negative — the kind already encodes the prohibition) → 2 FN; (2) condition-signal-as-subject FPs
+(`HTRANS`/`HREADY`/`HRESP`) from the `The following signals … when <cond>` list-introducer pattern (the
+APB condition-subject fix doesn't cover it) → 5 FP. Gold verified correct against the records; no code
+change in this slice (measurement foundation only). No faking — the baseline is reported as-is.
+
 ## 2026-06-06
 
 ### Backlog unblock → the LLM-harness thesis → `WIRE-BASED-100` (APB gold-100%)
