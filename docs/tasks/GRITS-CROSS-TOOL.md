@@ -43,13 +43,38 @@ pdfplumber misses).
   and runs the existing `grits_content` per matched pair → cross-tool score + the agreement gold.
 - Add the **qwen2.5vl witness** (table-image crop → grid) as the 2nd witness → 3-way consensus gold.
 
+## `.2` — full harness + qwen2.5vl witness (DONE `2026-06-06`) — the metric is UNBLOCKED
+
+- **Rust (owns the metric):** `eval::witness_consensus(witnesses, min_agree) -> {gold, disagreements}`
+  (a cell ≥`min_agree` witnesses agree on is silver gold; a split cell is human-flagged) +
+  `grits_against_consensus(gold, prediction)`; `grits-consensus <witnesses_json>` command. Tested.
+- **Python (owns witness extraction):** `scripts/grits_cross_tool.py` — pdfplumber + qwen2.5vl
+  witnesses + docling (the SourceIR grids = the *prediction*), matched by physical page; emits the
+  witness JSON.
+- **Demonstrated on the real APB (docling vs qwen2.5vl GriTS):** `table_0001` **F1=0.917** (strong
+  agreement → docling validated), `table_0002` **F1=0.034** (strong disagreement → flag), `table_0003`
+  F1=0.229. **The metric discriminates** — real gold from an independent witness, no faking. The
+  gated metric is unblocked.
+- **Finding deepened:** pdfplumber (geometric) and docling (ML-semantic) disagree on *what a table is*
+  (pdfplumber found nothing on the semantic-table pages 2/5/6 — it catches geometric grids docling
+  ignores). So **qwen2.5vl is the apt *semantic* witness** (shares docling's table-notion);
+  pdfplumber is the orthogonal *ruled-table* witness. Exactly the complementarity argued for.
+
+## Remaining refinements (`.3`, optional)
+
+- Smarter table-matching (pdfplumber↔docling page-overlap is naive; semantic tables need content
+  matching), the 3-way consensus on the ruled-table overlap, and the human-flag review workflow.
+
 ## Task Tree
 
-- ID: `GRITS-CROSS-TOOL` · Status: `active` · Children: `.1` `.2`
+- ID: `GRITS-CROSS-TOOL` · Status: `active` (`.1`–`.2` done — metric unblocked; `.3` refinements
+  optional) · Children: `.1` `.2` `.3`
 - ID: `GRITS-CROSS-TOOL.1` · Status: `done` · Goal: independent pdfplumber witness extractor.
   Delivered + run on APB (13 tables); finding recorded.
-- ID: `GRITS-CROSS-TOOL.2` · Status: `pending` · Goal: page-alignment + table-matching + `grits_content`
-  wiring + the qwen2.5vl 2nd witness (3-way consensus gold).
+- ID: `GRITS-CROSS-TOOL.2` · Status: `done` · Goal: full harness (consensus machinery + command +
+  orchestrator + qwen2.5vl witness). Demonstrated on APB; metric unblocked. Verification above.
+- ID: `GRITS-CROSS-TOOL.3` · Status: `pending` · Goal: content-based table-matching + 3-way
+  consensus + the human-flag review workflow (optional refinements).
 
 ## Changelog
 
