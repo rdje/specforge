@@ -112,6 +112,27 @@ because the *kept* signal constraints are still ~82% not-entailed — they are r
 harness pattern to *each* error mode (`.2`–`.4`), not entity typing alone. One front proven; several
 remain.
 
+## `.2` result + the strategic pivot (`2026-06-06`)
+
+`ir/condition_extract.rs` + `extract-conditions` (Rust gathers → LLM judges the condition clause →
+Rust grounds it: a condition is kept only if ≥60% of its content words appear in the source — no
+hallucinated conditions; +4 tests). **Measured on CHI:** 25 candidates, **22 conditions captured +
+grounded (88%)**, and they flip correctly — `TXSACTIVE` constraints became NLI-entailed once their
+condition (`"before or in the same cycle in which the first flit…"`) was restored.
+
+**Trajectory (CHI NLI-entailed):** `17%` (neither) → `22%` (`.2`) → `.1`-only `18%` → **`.1`+`.2` `22%`**.
+Each front works; each moves the gauge a few points; they're complementary (`.2` fixes condition-drop,
+`.1` removes garbage nodes — `B13` got a condition but stays not-entailed because it's a spurious
+*subject*).
+
+**Strategic read:** patching the Pattern extractor error-mode-by-error-mode converges slowly — the
+base is ~80% wrong. The proven components (`.1` typed-grounded subjects, `.2` grounded conditions) are
+the pieces of a better answer: **compose them into an LLM-PRIMARY, Rust-grounded constraint
+*extractor*** that emits `(typed-signal subject, obligation, grounded condition)` in one pass, rather
+than bolting fixes onto a flat pattern extractor. That is the real test of the harness thesis and the
+recommended next tree (`EXTRACTION-QUALITY-GAUGE.5`, or its own tree) — replace, don't patch. `.3`/`.4`
+(permission/relational, dedup) remain useful but secondary to the replacement.
+
 ## Task Tree
 
 - ID: `EXTRACTION-QUALITY-GAUGE` · Status: `active` · Children: `.0`–`.4`
@@ -122,7 +143,12 @@ remain.
   + `entity-type` cmd, tested); measured on CHI: 27/66 subjects filtered correctly (TXSACTIVE
   recovered), drops 30% of constraints (84% were wrong), gauge 17%→18%. Architecture validated;
   follow-up = wire the gate into the real extractor path + improve fine sub-typing.
-- ID: `EXTRACTION-QUALITY-GAUGE.2` · Status: `pending` · Goal: conditional/temporal constraints first-class.
+- ID: `EXTRACTION-QUALITY-GAUGE.2` · Status: `done` (prototype) · Goal: conditional/temporal
+  constraints first-class. `ir/condition_extract.rs` + `extract-conditions` cmd (LLM-judged,
+  source-grounded), tested; CHI 22/25 captured, gauge 17%→22%. Complementary to `.1`.
+- ID: `EXTRACTION-QUALITY-GAUGE.5` · Status: `pending` · Goal: **LLM-primary grounded constraint
+  EXTRACTOR** composing `.1`+`.2` — emit (typed-signal subject, obligation, grounded condition) in one
+  pass; replace the flat Pattern extractor, don't keep patching it. The decisive test of the thesis.
 - ID: `EXTRACTION-QUALITY-GAUGE.3` · Status: `pending` · Goal: permission/relational disambiguation.
 - ID: `EXTRACTION-QUALITY-GAUGE.4` · Status: `pending` · Goal: constraint dedup by (subject, kind, condition).
 - ID: `EXTRACTION-QUALITY-GAUGE.0` · Status: `pending` · Goal: wire the gauge into converge/CI.
