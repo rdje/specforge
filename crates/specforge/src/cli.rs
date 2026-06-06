@@ -65,6 +65,8 @@ pub enum Commands {
     EntityType(EntityTypeArgs),
     /// Capture dropped conditions: for each unconditional constraint, extract its condition/temporal scope (LLM-judged, source-grounded) and populate `condition_text`
     ExtractConditions(ExtractConditionsArgs),
+    /// LLM-primary constraint extractor: re-extract (typed-signal subject, kind, grounded condition) per sentence and REPLACE the constraint set (the replace-vs-patch test)
+    ExtractConstraintsLlm(ExtractConstraintsLlmArgs),
 }
 
 #[derive(Debug, Args)]
@@ -279,6 +281,21 @@ pub struct NliVerifyArgs {
     /// Text model override (default: `qwen2.5:14b-instruct`)
     #[arg(long)]
     pub model: Option<String>,
+}
+
+#[derive(Debug, Args)]
+pub struct ExtractConstraintsLlmArgs {
+    /// Path to an EvidenceIR JSON; its `signal_constraints` are REPLACED by the LLM-primary set.
+    pub evidence_ir: std::path::PathBuf,
+    /// Text-LLM provider (default `ollama`; `skip` = no-op).
+    #[arg(long, value_enum, default_value = "ollama")]
+    pub vlm_provider: VlmProviderArg,
+    /// Text model override (default: `qwen2.5:14b-instruct`).
+    #[arg(long)]
+    pub model: Option<String>,
+    /// Only process the first N distinct source sentences (0 = all).
+    #[arg(long, default_value = "0")]
+    pub max_sentences: usize,
 }
 
 #[derive(Debug, Args)]

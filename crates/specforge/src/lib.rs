@@ -35,5 +35,6 @@ pub fn run(cli: Cli) -> Result<()> {
         Commands::GritsConsensus(args) => commands::grits_consensus::run(args),
         Commands::EntityType(args) => commands::entity_type::run(args),
         Commands::ExtractConditions(args) => commands::extract_conditions::run(args),
+        Commands::ExtractConstraintsLlm(args) => commands::extract_constraints_llm::run(args),
     }
 }
