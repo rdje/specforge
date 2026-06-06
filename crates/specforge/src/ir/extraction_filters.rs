@@ -75,9 +75,38 @@ pub fn is_normative_for_subject(source_text: &str, subject: &str) -> bool {
         .any(|s| s.contains(&subj) && NORMATIVE_MODALS.iter().any(|m| s.contains(m)))
 }
 
+/// `.6c` — AUTOMATIC garbage-actor detection (bounded-LLM hybrid): the cheap heuristic fast-rejects
+/// the obvious (function words, spec-meta names); otherwise the injected `classify` (production =
+/// `entity_typing`'s LLM) decides. Keeps only `Actor` (or `Unknown` → fail-safe on a provider
+/// outage). Generalizes beyond any fixed list. `classify` injected → unit-testable.
+pub fn is_valid_actor_with(
+    actor: &str,
+    classify: impl Fn(&str) -> crate::ir::entity_typing::EntityType,
+) -> bool {
+    use crate::ir::entity_typing::EntityType;
+    if !is_valid_actor(actor) {
+        return false;
+    }
+    matches!(classify(actor), EntityType::Actor | EntityType::Unknown)
+}
+
+/// `.7c` — AUTOMATIC hallucination detection: the injected `verify` (production = the NLI gate) is the
+/// general judge — a constraint is kept only if its source ENTAILS the claim. `NotEntailed` →
+/// dropped (hallucination); `Unknown` (provider down) → kept (fail-safe). `verify` injected →
+/// unit-testable.
+pub fn is_grounded_obligation_with(
+    source_text: &str,
+    claim: &str,
+    verify: impl Fn(&str, &str) -> crate::ir::nli_verify::NliVerdict,
+) -> bool {
+    verify(source_text, claim) != crate::ir::nli_verify::NliVerdict::NotEntailed
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::ir::entity_typing::EntityType;
+    use crate::ir::nli_verify::NliVerdict;
 
     #[test]
     fn rejects_function_word_and_meta_actors() {
@@ -116,5 +145,37 @@ mod tests {
             "For read transfers, the Requester must drive all bits of PSTRB LOW.",
             "PSTRB"
         ));
+    }
+
+    #[test]
+    fn auto_actor_hybrid_heuristic_then_llm() {
+        // Heuristic fast-reject (no LLM consulted) for the obvious garbage.
+        assert!(!is_valid_actor_with("For", |_| EntityType::Actor));
+        // Heuristic passes, but the LLM types it as a non-actor (e.g. a transaction) → rejected.
+        // This is the GENERALIZATION: it catches garbage no fixed list contains.
+        assert!(!is_valid_actor_with("WriteUnique", |_| {
+            EntityType::Transaction
+        }));
+        // A real actor the LLM affirms → kept.
+        assert!(is_valid_actor_with("Completer", |_| EntityType::Actor));
+        // Provider down (Unknown) → fail-safe keep (never drop on an outage).
+        assert!(is_valid_actor_with("Manager", |_| EntityType::Unknown));
+    }
+
+    #[test]
+    fn auto_obligation_uses_nli_entailment() {
+        // Source does not entail the claim → hallucination dropped (general, no modal-list reasoning).
+        assert!(!is_grounded_obligation_with(
+            "PRDATA is the read data bus.",
+            "PRDATA must be stable",
+            |_, _| NliVerdict::NotEntailed
+        ));
+        // Entailed → kept; Unknown (provider down) → fail-safe kept.
+        assert!(is_grounded_obligation_with("x", "y", |_, _| {
+            NliVerdict::Entailed
+        }));
+        assert!(is_grounded_obligation_with("x", "y", |_, _| {
+            NliVerdict::Unknown
+        }));
     }
 }

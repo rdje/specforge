@@ -113,10 +113,10 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   Fix (no faking): credit a relation found on ANY *valid* declared source for that signal (table or
   prose), and treat multi-statement gold as a set — NOT "credit anywhere". Then APB relations hit 100%
   legitimately (the facts are all real + correctly extracted).
-- ID: `WIRE-BASED-100.6c` · Status: `pending` · Goal: AUTOMATIC garbage-actor detection — `.6` upgraded
+- ID: `WIRE-BASED-100.6c` · Status: `done` (is_valid_actor_with + entity_typing; +test) · Goal: AUTOMATIC garbage-actor detection — `.6` upgraded
   from the heuristic list to the bounded-LLM hybrid (heuristic fast-path → `ir/entity_typing` LLM
   judgment for the residual). Generalizes beyond function words / spec-meta-words.
-- ID: `WIRE-BASED-100.7c` · Status: `pending` · Goal: AUTOMATIC hallucination detection — `.7` upgraded
+- ID: `WIRE-BASED-100.7c` · Status: `done` (is_grounded_obligation_with + NLI gate; +test) · Goal: AUTOMATIC hallucination detection — `.7` upgraded
   to the NLI gate (source must entail the claim) as the general fallback behind the clause-scoped
   heuristic. Catches hallucinations the modal-check misses.
 - ID: `WIRE-BASED-100.2` · Status: `pending` · Goal: robust value-constraint extraction.
