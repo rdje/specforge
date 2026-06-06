@@ -120,7 +120,16 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   to the NLI gate (source must entail the claim) as the general fallback behind the clause-scoped
   heuristic. Catches hallucinations the modal-check misses.
 - ID: `WIRE-BASED-100.2` · Status: `pending` · Goal: robust value-constraint extraction.
-- ID: `WIRE-BASED-100.3` · Status: `pending` · Goal: full-document completeness (complete gold / oracle).
+- ID: `WIRE-BASED-100.3` · Status: `active` (gauge works; concrete gap found) · Goal: full-document
+  completeness (gold-100% → spec-100%). **Findings (`2026-06-06`):** (a) capture-recapture
+  (`completeness::recall_estimate`, Pattern×Nlp) is DEGENERATE on APB — the two tiers extract disjoint
+  facts (zero overlap → "insufficient"), same root as the conformal degeneracy; (b) but the
+  region-accounting gauge in `validate` bounds the misses: **5 candidate misses on APB** — `table_0016/
+  0017/0018` are the **signal-declaration tables (~35 signals: PCLK/PADDR/…) producing NO record** (the
+  signal catalog is not extracted), + 2 prose residuals. So APB is **NOT spec-100%**; the gold sample
+  (6+6 constraints/relations) hid it. **Path to spec-100%:** extract the signal-declaration tables (a
+  4th fact type — signal declarations) + structure the 2 residuals; then re-run the gauge to 0 misses.
+  `.3a` next = the signal-table → signal-record extractor.
 - ID: `WIRE-BASED-100.4` · Status: `pending` · Goal: temporal-rule completeness.
 - ID: `WIRE-BASED-100.5` · Status: `pending` · Goal: cross-spec generalization (AHB/AXI/SWD).
 - ID: `WIRE-BASED-100.6` · Status: `done` (ir/extraction_filters::is_valid_actor; removed FOR/APB-protocol) · Goal: **actor discrimination** — apply the
