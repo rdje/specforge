@@ -702,8 +702,12 @@ pub fn grits_content(gold_rows: &[Vec<String>], pred_rows: &[Vec<String>]) -> Sc
 pub struct WitnessConsensus {
     /// Cells at least `min_agree` witnesses agree on — the silver gold.
     pub gold: BTreeSet<(usize, usize, String)>,
-    /// Positions the witnesses split on (no value reached `min_agree`) — for human review.
-    pub disagreements: BTreeSet<(usize, usize)>,
+    /// Positions the witnesses split on (no value reached `min_agree`), each carrying the COMPETING
+    /// `(text, witness_count)` pairs (most-supported first) — the actionable ADJUDICATION queue.
+    /// An adjudicator (an evidence-grounded agent, or a human) resolves each cell against the
+    /// rendered source — never by a correlated vote. This is the bounded-LLM principle: the
+    /// witnesses propose, the source decides.
+    pub disagreements: BTreeMap<(usize, usize), Vec<(String, usize)>>,
 }
 
 /// Build the [`WitnessConsensus`] over `witnesses` at agreement level `min_agree` (use 2 for
@@ -725,7 +729,11 @@ pub fn witness_consensus(witnesses: &[Vec<Vec<String>>], min_agree: usize) -> Wi
         if best_count >= min_agree {
             out.gold.insert((r, c, best_text));
         } else if texts.len() > 1 {
-            out.disagreements.insert((r, c));
+            // The witnesses split with no winner — queue the competing values for review,
+            // most-supported first (ties broken lexically for determinism).
+            let mut competing: Vec<(String, usize)> = texts.into_iter().collect();
+            competing.sort_by(|a, b| b.1.cmp(&a.1).then_with(|| a.0.cmp(&b.0)));
+            out.disagreements.insert((r, c), competing);
         }
     }
     out
@@ -1178,10 +1186,14 @@ mod tests {
             !cons.gold.iter().any(|(r, c, _)| (*r, *c) == (1, 1)),
             "the split cell must not be gold"
         );
-        assert!(
-            cons.disagreements.contains(&(1, 1)),
-            "(1,1) flagged for human review"
-        );
+        // (1,1) is flagged for human review, carrying BOTH competing values for adjudication.
+        let competing = cons
+            .disagreements
+            .get(&(1, 1))
+            .expect("(1,1) flagged for human review");
+        assert_eq!(competing.len(), 2, "both witness values queued");
+        let values: BTreeSet<&str> = competing.iter().map(|(t, _)| t.as_str()).collect();
+        assert!(values.contains("32") && values.contains("16"));
         // docling (the system under test) scored against the consensus gold.
         let docling = vec![
             vec!["Signal".to_string(), "Width".to_string()],

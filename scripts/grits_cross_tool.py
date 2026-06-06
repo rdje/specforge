@@ -72,6 +72,20 @@ def vlm_table_grid(pil_image):
         return None
 
 
+# Content-matching gate: a witness grid is only paired with a docling table when they share at
+# least this fraction of cells — so we compare the SAME table, never two unrelated grids on a page
+# (a witness below the gate is a *mismatch*, not a same-table disagreement).
+MIN_OVERLAP = 0.05
+
+
+def best_witness(grids, target):
+    """The candidate grid best overlapping `target`, or None if none clears the content gate."""
+    if not grids:
+        return None
+    g = max(grids, key=lambda g: overlap(g, target))
+    return g if overlap(g, target) >= MIN_OVERLAP else None
+
+
 def main():
     pdf_path, source_ir = sys.argv[1], sys.argv[2]
     use_vlm = "--vlm" in sys.argv
@@ -79,6 +93,7 @@ def main():
 
     docling = docling_tables(source_ir)
     out_tables = []
+    vlm_cache = {}  # page -> grid (render+VLM once per page)
     with pdfplumber.open(pdf_path) as pdf:
         # pdfplumber tables by physical page (1-based)
         pp_by_page = {}
@@ -91,14 +106,18 @@ def main():
         for dt in docling:
             page = dt["page"]
             witnesses = []
-            # pdfplumber witness: the table on this page best overlapping docling's grid (if any).
-            if page in pp_by_page:
-                witnesses.append(max(pp_by_page[page], key=lambda g: overlap(g, dt["grid"])))
-            # qwen2.5vl witness: runs on docling's page directly (vision shares the semantic
-            # notion of a table — the apt witness where pdfplumber finds only geometric grids).
+            # pdfplumber witness — content-matched to docling's grid (gated).
+            pp = best_witness(pp_by_page.get(page, []), dt["grid"])
+            if pp is not None:
+                witnesses.append(pp)
+            # qwen2.5vl witness — vision shares the SEMANTIC notion of a table; runs on docling's
+            # page directly (cached), then content-matched the same way.
             if use_vlm and page and 1 <= page <= len(pdf.pages):
-                vg = vlm_table_grid(pdf.pages[page - 1].to_image(resolution=150).original)
-                if vg:
+                if page not in vlm_cache:
+                    vlm_cache[page] = vlm_table_grid(
+                        pdf.pages[page - 1].to_image(resolution=150).original) or []
+                vg = best_witness([vlm_cache[page]] if vlm_cache[page] else [], dt["grid"])
+                if vg is not None:
                     witnesses.append(vg)
             if witnesses:
                 out_tables.append({

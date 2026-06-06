@@ -3,8 +3,9 @@
 //! GriTS was "gated on data" (no table-structure gold). The unblock (GRITS-CROSS-TOOL): build the
 //! gold from INDEPENDENT WITNESSES whose errors are uncorrelated with docling's — pdfplumber
 //! (geometric / content-stream) + qwen2.5vl (vision). A cell ≥`min_agree` witnesses agree on is
-//! silver gold; a cell they SPLIT on is flagged for human review (the small set worth a person's
-//! time). docling (the system under test) is then scored against that gold with `grits_content`.
+//! silver gold; a cell they SPLIT on is flagged for ADJUDICATION — resolved against the rendered
+//! source by an evidence-grounded agent (or a human), never by a correlated vote. docling (the
+//! system under test) is then scored against that gold with `grits_content`.
 //! You never grade a tool against itself — docling is the *prediction*, never a witness.
 //!
 //! Input is the witness JSON emitted by `scripts/grits_cross_tool.py` (which runs the witnesses +
@@ -72,6 +73,15 @@ pub fn run(args: GritsConsensusArgs) -> Result<()> {
             card.fn_count,
             consensus.disagreements.len()
         );
+        // The adjudication queue: the cells the witnesses split on, with the competing values so an
+        // evidence-grounded agent (or human) can resolve them (capped per table for readability).
+        for ((r, c), competing) in consensus.disagreements.iter().take(6) {
+            let values: Vec<String> = competing
+                .iter()
+                .map(|(text, n)| format!("{text:?}×{n}"))
+                .collect();
+            println!("      adjudicate (r{r},c{c}): {}", values.join("  vs  "));
+        }
     }
     println!(
         "=== aggregate (docling vs consensus gold): P={:.3} R={:.3} F1={:.3}  (gold={} tp={} fp={} fn={});  human-flag cells={} ===",

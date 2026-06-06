@@ -60,21 +60,31 @@ pdfplumber misses).
   ignores). So **qwen2.5vl is the apt *semantic* witness** (shares docling's table-notion);
   pdfplumber is the orthogonal *ruled-table* witness. Exactly the complementarity argued for.
 
-## Remaining refinements (`.3`, optional)
+## `.3` — refinements (DONE `2026-06-06`)
 
-- Smarter table-matching (pdfplumber↔docling page-overlap is naive; semantic tables need content
-  matching), the 3-way consensus on the ruled-table overlap, and the human-flag review workflow.
+- **Content-based matching:** the orchestrator now gates each witness by cell-overlap with the
+  docling table (`MIN_OVERLAP`) — a witness below the gate is a *mismatch*, never paired. So we always
+  compare the SAME table, and the VLM is cached per page.
+- **Adjudication queue (the human-flag workflow):** `WitnessConsensus.disagreements` now carries the
+  COMPETING `(text, witness_count)` per split cell (most-supported first); `grits-consensus` prints
+  `adjudicate (r,c): "a"×1 vs "b"×1`. **The adjudicator is an evidence-grounded *agent* (or a human)**
+  — resolves each against the rendered source, never a correlated vote (bounded-LLM: witnesses
+  propose, the source decides). Tested.
+- **3-way consensus:** the machinery supports `min_agree=2` (demonstrated by the synthetic 2-witness
+  test). *Real-APB* 3-way is sparse: with the content-gate on, pdfplumber and docling rarely extract
+  the SAME table (they disagree on what a table *is*), so content-matched 2-witness tables are rare —
+  itself the finding, not a gap.
 
 ## Task Tree
 
-- ID: `GRITS-CROSS-TOOL` · Status: `active` (`.1`–`.2` done — metric unblocked; `.3` refinements
-  optional) · Children: `.1` `.2` `.3`
+- ID: `GRITS-CROSS-TOOL` · Status: `done` (metric unblocked + refined; `.1`–`.3` done) ·
+  Children: `.1` `.2` `.3`
 - ID: `GRITS-CROSS-TOOL.1` · Status: `done` · Goal: independent pdfplumber witness extractor.
   Delivered + run on APB (13 tables); finding recorded.
 - ID: `GRITS-CROSS-TOOL.2` · Status: `done` · Goal: full harness (consensus machinery + command +
   orchestrator + qwen2.5vl witness). Demonstrated on APB; metric unblocked. Verification above.
-- ID: `GRITS-CROSS-TOOL.3` · Status: `pending` · Goal: content-based table-matching + 3-way
-  consensus + the human-flag review workflow (optional refinements).
+- ID: `GRITS-CROSS-TOOL.3` · Status: `done` · Goal: content-based matching + adjudication queue
+  (agent-as-judge) + 3-way consensus. Verification above.
 
 ## Changelog
 
