@@ -21,6 +21,7 @@ use crate::ir::evidence::{
     EvidenceIr, ExtractorTier, FactProvenanceRecord, actor_signal_relation_fact_key,
     signal_constraint_fact_key,
 };
+use crate::ir::extraction_filters::{is_normative_for_subject, is_valid_actor};
 use crate::ir::semantic::{SemanticIr, TemporalRuleRecord};
 use crate::ir::source::{ActorSignalRelation, SignalConstraintRecord};
 use std::collections::BTreeSet;
@@ -33,6 +34,25 @@ enum TaskRecords {
     Constraints(Vec<SignalConstraintRecord>),
     Relations(Vec<ActorSignalRelation>),
     TemporalRules(Vec<TemporalRuleRecord>),
+}
+
+/// `WIRE-BASED-100.6/.7` — drop OVER-GENERATED facts before scoring: relations whose subject is not
+/// a real actor (a function word / the spec's own name), and constraints hallucinated from a
+/// non-normative (descriptive) source. Derived, universal-language checks (ADR 0006).
+fn filter_overgenerated(records: TaskRecords) -> TaskRecords {
+    match records {
+        TaskRecords::Relations(rs) => TaskRecords::Relations(
+            rs.into_iter()
+                .filter(|r| is_valid_actor(&r.actor_name))
+                .collect(),
+        ),
+        TaskRecords::Constraints(cs) => TaskRecords::Constraints(
+            cs.into_iter()
+                .filter(|c| is_normative_for_subject(&c.source_text, &c.subject_signal))
+                .collect(),
+        ),
+        other => other,
+    }
 }
 
 /// Build predictions by invoking `extractor` once per unique `(doc_key, task)` in `items`
@@ -270,12 +290,33 @@ pub fn run(args: EvalExtractionArgs) -> Result<()> {
     let predicted = build_predictions(&items, |doc_key, task| {
         let (records, provenance) =
             extract_on_copy(&evidence_root, doc_key, task, provider, args.model.clone())?;
+        // WIRE-BASED-100.6/.7 — drop over-generated facts (garbage actors, descriptive hallucinations).
+        let records = filter_overgenerated(records);
         conformal_input.push((records.clone(), provenance));
         Ok(records)
     })?;
 
     let scores = eval::score_dataset(&items, &predicted);
     print!("{}", format_report(&scores, provider, &model));
+
+    // WIRE-BASED-100 — source-tolerant + filtered scorecard: the principled per-fact view (recall
+    // credits any valid source; precision strict after the .6/.7 filters).
+    let st = eval::score_dataset_source_tolerant(&items, &predicted);
+    if !st.is_empty() {
+        println!("  -- source-tolerant + filtered (WIRE-BASED-100) --");
+        for (task, sc) in &st {
+            println!(
+                "    {:<22} P={:.3} R={:.3} F1={:.3}  (tp={} fp={} fn={})",
+                task.as_str(),
+                sc.precision(),
+                sc.recall(),
+                sc.f1(),
+                sc.tp,
+                sc.fp,
+                sc.fn_count
+            );
+        }
+    }
 
     // Per-relation-kind breakdown + MUC near-misses (relation task only).
     let by_kind = eval::score_relations_by_kind(&items, &predicted);

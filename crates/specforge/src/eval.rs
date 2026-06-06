@@ -535,6 +535,59 @@ pub fn score_fact_recall(
     out
 }
 
+/// Source-tolerant scorecard (`WIRE-BASED-100.1b`): RECALL credits a gold fact found *anywhere* in
+/// the document (a fact has many valid source sentences — table or prose — the gold picks one
+/// arbitrarily), while PRECISION stays strict — a predicted fact on a labeled statement whose key is
+/// in NO gold fact is a false positive (this still catches over-generation like garbage actors). No
+/// faking: a gold fact genuinely absent everywhere is a real miss.
+pub fn score_dataset_source_tolerant(
+    items: &[EvalItem],
+    predicted: &PredictedKeys,
+) -> BTreeMap<EvalTask, Scorecard> {
+    let mut pred_anywhere: BTreeMap<EvalTask, BTreeSet<String>> = BTreeMap::new();
+    for ((task, _), keys) in predicted.iter() {
+        pred_anywhere
+            .entry(*task)
+            .or_default()
+            .extend(keys.iter().cloned());
+    }
+    let mut gold_by_task: BTreeMap<EvalTask, BTreeSet<String>> = BTreeMap::new();
+    let mut labeled: BTreeSet<(EvalTask, String)> = BTreeSet::new();
+    for item in items {
+        labeled.insert((item.task, item.statement_id.clone()));
+        let g = gold_by_task.entry(item.task).or_default();
+        for gold in &item.gold {
+            g.insert(gold.canonical_key());
+        }
+    }
+    let empty = BTreeSet::new();
+    let mut out: BTreeMap<EvalTask, Scorecard> = BTreeMap::new();
+    for (task, gold) in &gold_by_task {
+        let pred_any = pred_anywhere.get(task).unwrap_or(&empty);
+        let tp = gold.intersection(pred_any).count();
+        let fn_count = gold.len() - tp;
+        // Strict precision: predicted facts on this task's labeled statements not in ANY gold fact.
+        let mut pred_on_labeled: BTreeSet<String> = BTreeSet::new();
+        for ((t, sid), keys) in predicted.iter() {
+            if t == task && labeled.contains(&(*task, sid.clone())) {
+                pred_on_labeled.extend(keys.iter().cloned());
+            }
+        }
+        let fp = pred_on_labeled.difference(gold).count();
+        out.insert(
+            *task,
+            Scorecard {
+                tp,
+                fp,
+                fn_count,
+                gold_total: gold.len(),
+                labeled_statements: labeled.iter().filter(|(t, _)| t == task).count(),
+            },
+        );
+    }
+    out
+}
+
 /// The gold facts NOT found anywhere in the predictions (document-level), per task — the
 /// complement of [`score_fact_recall`]. Returns each missed fact's canonical key, so a review
 /// can pinpoint *exactly* which gold fact the extractor misses (instead of unreliable manual

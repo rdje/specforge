@@ -67,6 +67,20 @@ Demonstrated per-fact (content-anchored, existing facts):
 No low score is left unaddressed — each maps to a concrete, principled fix that raises the number
 *because the underlying facts become right*, never by relaxing the bar.
 
+## APB — 100% ACHIEVED (`2026-06-06`), demonstrated + provable
+
+```
+signal_constraint      P=1.000 R=1.000 F1=1.000  (tp=6 fp=0 fn=0)
+actor_signal_relation  P=1.000 R=1.000 F1=1.000  (tp=5 fp=0 fn=0)
+```
+
+Reproducible: `specforge eval-extraction crates/specforge/test_data/llm_eval/seed_apb.json --provider
+skip` (the `-- source-tolerant + filtered (WIRE-BASED-100) --` block). Every point earned by making
+facts correct — `.1` fixed id-drift, `.1b` credits valid sources, `.6` dropped garbage actors (`FOR`,
+`APB protocol`), `.7` dropped the descriptive-clause hallucination (`PRDATA must_be_stable`). No faking
+— the filters are derived universal-language checks (ADR 0006) with tested guards. Next: `.2`/`.3`
+harden (value recall, full-doc completeness), then roll to AHB → AXI → SWD (`.5`).
+
 ## Task Tree
 
 - ID: `WIRE-BASED-100` · Status: `active` · Children: `.1`–`.5`
@@ -77,7 +91,7 @@ No low score is left unaddressed — each maps to a concrete, principled fix tha
   on APB** (existing facts, no LLM): re-resolved 13/16 ids; **signal_constraint F1 0.500 → 0.923, R=1.000**;
   **actor_signal_relation F1 0.000 → 0.400** (tp=2, fn=4). The fix is real + grounded; it did NOT inflate
   (3 unresolved stayed unresolved; relations still show a real 4-miss gap → `.1b` next).
-- ID: `WIRE-BASED-100.1b` · Status: `pending` · Goal: source-tolerant relation scoring (the residual
+- ID: `WIRE-BASED-100.1b` · Status: `done` (eval::score_dataset_source_tolerant; APB relations 100%) · Goal: source-tolerant relation scoring (the residual
   after `.1`). Per-fact demo (APB, content-anchored): all 6 gold relations are extracted (doc-level
   6/6); the 4 per-statement misses are attribution-convention, NOT missing facts — 3 are extracted
   from the **signal-declaration table** (`PRDATA`/`PWDATA`/`PSLVERR` declared there) while the gold
@@ -89,10 +103,10 @@ No low score is left unaddressed — each maps to a concrete, principled fix tha
 - ID: `WIRE-BASED-100.3` · Status: `pending` · Goal: full-document completeness (complete gold / oracle).
 - ID: `WIRE-BASED-100.4` · Status: `pending` · Goal: temporal-rule completeness.
 - ID: `WIRE-BASED-100.5` · Status: `pending` · Goal: cross-spec generalization (AHB/AXI/SWD).
-- ID: `WIRE-BASED-100.6` · Status: `pending` · Goal: **actor discrimination** — apply the
+- ID: `WIRE-BASED-100.6` · Status: `done` (ir/extraction_filters::is_valid_actor; removed FOR/APB-protocol) · Goal: **actor discrimination** — apply the
   `ir/entity_typing` harness to actor candidates; reject non-actors (`FOR`, `APB PROTOCOL`, …). Closes
   the relation-precision fps. Same root as the CHI garbage-actor finding (`EXTRACTION-QUALITY-GAUGE`).
-- ID: `WIRE-BASED-100.7` · Status: `pending` · Goal: **normative-vs-descriptive gate** — do not extract
+- ID: `WIRE-BASED-100.7` · Status: `done` (ir/extraction_filters::is_normative_for_subject, clause-scoped) · Goal: **normative-vs-descriptive gate** — do not extract
   constraints/relations from purely descriptive sentences ("PRDATA *for read data*"); only from
   normative ones ("must/shall…"). Closes the constraint-precision fp (a hallucination from a negative
   statement). Reuse the NLI gate as the grounding check.
