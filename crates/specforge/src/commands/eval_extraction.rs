@@ -17,7 +17,10 @@ use crate::eval::{
     self, EvalItem, EvalTask, PredictedKeys, Scorecard, index_constraint_predictions,
     index_relation_predictions, index_temporal_rule_predictions,
 };
-use crate::ir::evidence::EvidenceIr;
+use crate::ir::evidence::{
+    EvidenceIr, ExtractorTier, FactProvenanceRecord, actor_signal_relation_fact_key,
+    signal_constraint_fact_key,
+};
 use crate::ir::semantic::{SemanticIr, TemporalRuleRecord};
 use crate::ir::source::{ActorSignalRelation, SignalConstraintRecord};
 use std::collections::BTreeSet;
@@ -25,6 +28,7 @@ use std::path::Path;
 
 /// The typed records produced for one `(doc, task)`. The two LLM tasks run the real
 /// extraction command; the temporal task builds the SemanticIR (deterministic parser).
+#[derive(Clone)]
 enum TaskRecords {
     Constraints(Vec<SignalConstraintRecord>),
     Relations(Vec<ActorSignalRelation>),
@@ -65,7 +69,7 @@ fn extract_on_copy(
     task: EvalTask,
     provider: VlmProviderArg,
     model: Option<String>,
-) -> Result<TaskRecords> {
+) -> Result<(TaskRecords, Vec<FactProvenanceRecord>)> {
     let source = evidence_root.join(doc_key).join("evidence_ir.json");
     let temp = tempfile::tempdir()?;
     let mut ir = EvidenceIr::load_from_path(&source)?;
@@ -86,7 +90,10 @@ fn extract_on_copy(
                 grounding_signals: None,
             })?;
             let enriched = EvidenceIr::load_from_path(&temp_path)?;
-            Ok(TaskRecords::Constraints(enriched.signal_constraints))
+            Ok((
+                TaskRecords::Constraints(enriched.signal_constraints),
+                enriched.fact_provenance,
+            ))
         }
         EvalTask::ActorSignalRelation => {
             crate::commands::signal_resolve::run(SignalResolveArgs {
@@ -98,7 +105,10 @@ fn extract_on_copy(
                 grounding_signals: None,
             })?;
             let enriched = EvidenceIr::load_from_path(&temp_path)?;
-            Ok(TaskRecords::Relations(enriched.actor_signal_relations))
+            Ok((
+                TaskRecords::Relations(enriched.actor_signal_relations),
+                enriched.fact_provenance,
+            ))
         }
         EvalTask::TemporalRule => {
             // Temporal rules come from the deterministic EvidenceIR->SemanticIR lowering, not
@@ -106,8 +116,63 @@ fn extract_on_copy(
             // from the temp copy — all artifacts confined to the temp dir, corpus untouched —
             // and read its temporal_rules.
             let semantic = SemanticIr::build(&temp_path, temp.path())?;
-            Ok(TaskRecords::TemporalRules(semantic.temporal_rules))
+            Ok((
+                TaskRecords::TemporalRules(semantic.temporal_rules),
+                Vec::new(),
+            ))
         }
+    }
+}
+
+/// Per produced record: `(eval_key, tier_count, statement_ids)`. `tier_count` = the number of
+/// DISTINCT extractor tiers (`Pattern`/`Nlp`/`Vlm`) whose `fact_provenance` recorded this fact —
+/// a real agreement-confidence axis (a fact found by two tiers is more trustworthy than one). The
+/// `eval_key` matches the gold's canonical key; the provenance key is a different format, so it is
+/// recomputed per record from the same record. Temporal rules carry no tier provenance.
+fn records_with_tier_counts(
+    records: &TaskRecords,
+    provenance: &[FactProvenanceRecord],
+) -> Vec<(EvalTask, String, usize, Vec<String>)> {
+    // tier presence (Pattern/Nlp/Vlm) per provenance key (ExtractorTier is not Hash → index it).
+    let tier_idx = |t: &ExtractorTier| match t {
+        ExtractorTier::Pattern => 0,
+        ExtractorTier::Nlp => 1,
+        ExtractorTier::Vlm => 2,
+    };
+    let mut seen: std::collections::HashMap<String, [bool; 3]> = std::collections::HashMap::new();
+    for p in provenance {
+        seen.entry(p.canonical_key.clone()).or_default()[tier_idx(&p.producer)] = true;
+    }
+    let count = |provkey: &str| {
+        seen.get(provkey)
+            .map(|flags| flags.iter().filter(|f| **f).count())
+            .unwrap_or(1)
+            .max(1)
+    };
+    match records {
+        TaskRecords::Constraints(cs) => cs
+            .iter()
+            .map(|c| {
+                (
+                    EvalTask::SignalConstraint,
+                    eval::signal_constraint_record_key(c),
+                    count(&signal_constraint_fact_key(c)),
+                    c.supporting_statement_ids.clone(),
+                )
+            })
+            .collect(),
+        TaskRecords::Relations(rs) => rs
+            .iter()
+            .map(|r| {
+                (
+                    EvalTask::ActorSignalRelation,
+                    eval::actor_signal_relation_record_key(r),
+                    count(&actor_signal_relation_fact_key(r)),
+                    r.source_statement_ids.clone(),
+                )
+            })
+            .collect(),
+        TaskRecords::TemporalRules(_) => Vec::new(),
     }
 }
 
@@ -168,8 +233,14 @@ pub fn run(args: EvalExtractionArgs) -> Result<()> {
         println!("note: --provider skip => deterministic pattern baseline (no LLM calls)");
     }
 
+    // Stash each (doc, task)'s records + fact_provenance during the scoring pass, so conformal
+    // calibration reuses the same extraction (no second LLM run).
+    let mut conformal_input: Vec<(TaskRecords, Vec<FactProvenanceRecord>)> = Vec::new();
     let predicted = build_predictions(&items, |doc_key, task| {
-        extract_on_copy(&evidence_root, doc_key, task, provider, args.model.clone())
+        let (records, provenance) =
+            extract_on_copy(&evidence_root, doc_key, task, provider, args.model.clone())?;
+        conformal_input.push((records.clone(), provenance));
+        Ok(records)
     })?;
 
     let scores = eval::score_dataset(&items, &predicted);
@@ -225,6 +296,56 @@ pub fn run(args: EvalExtractionArgs) -> Result<()> {
                     keys.len(),
                     keys.join("  ;  ")
                 );
+            }
+        }
+    }
+
+    // Split-conformal calibration — confidence axis = extractor-tier agreement (a fact found by
+    // more tiers is more trustworthy), label = whether the predicted fact is in gold. Reuses the
+    // labeled eval set (no new gold); the accept threshold is calibrated at a target error.
+    let gold_by_item: std::collections::BTreeMap<(EvalTask, String), BTreeSet<String>> = items
+        .iter()
+        .map(|i| {
+            (
+                (i.task, i.statement_id.clone()),
+                i.gold.iter().map(|g| g.canonical_key()).collect(),
+            )
+        })
+        .collect();
+    let mut samples_by_task: std::collections::BTreeMap<EvalTask, Vec<(f64, bool)>> =
+        std::collections::BTreeMap::new();
+    for (records, provenance) in &conformal_input {
+        for (task, eval_key, tier_count, stmt_ids) in records_with_tier_counts(records, provenance)
+        {
+            for sid in &stmt_ids {
+                let key = (task, sid.clone());
+                if let Some(gold) = gold_by_item.get(&key) {
+                    samples_by_task
+                        .entry(task)
+                        .or_default()
+                        .push((tier_count as f64, gold.contains(&eval_key)));
+                }
+            }
+        }
+    }
+    if !samples_by_task.is_empty() {
+        let alpha = 0.2;
+        println!("  -- split-conformal accept threshold (axis: tier-agreement; alpha={alpha}) --");
+        for (task, samples) in &samples_by_task {
+            match eval::conformal_threshold(samples, alpha) {
+                Some(t) => println!(
+                    "    {:<22} threshold={:.2}  coverage={:.3}  empirical_error={:.3}  (n={})",
+                    task.as_str(),
+                    t.threshold,
+                    t.coverage,
+                    t.empirical_error,
+                    samples.len()
+                ),
+                None => println!(
+                    "    {:<22} no threshold meets alpha={alpha}  (n={} — too few/noisy)",
+                    task.as_str(),
+                    samples.len()
+                ),
             }
         }
     }
@@ -422,5 +543,46 @@ mod tests {
         assert!(report.contains("P=1.000"));
         assert!(report.contains("R=1.000"));
         assert!(report.contains("F1=1.000"));
+    }
+
+    #[test]
+    fn records_with_tier_counts_counts_distinct_provenance_tiers() {
+        use crate::ir::evidence::{
+            ExtractorTier, FactKind, FactProvenanceRecord, signal_constraint_fact_key,
+        };
+        use crate::ir::source::SignalConstraintRecord;
+        let mk = |sig: &str| SignalConstraintRecord {
+            constraint_id: "c".to_string(),
+            subject_signal: sig.to_string(),
+            constraint_kind: SignalConstraintKind::MustBeStable,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: String::new(),
+            supporting_statement_ids: vec!["s1".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        };
+        let both = mk("PSEL"); // found by Pattern AND Nlp → tier 2
+        let one = mk("PADDR"); // found by Pattern only → tier 1
+        let prov = |t: ExtractorTier, c: &SignalConstraintRecord| FactProvenanceRecord {
+            producer: t,
+            fact_kind: FactKind::SignalConstraint,
+            canonical_key: signal_constraint_fact_key(c),
+        };
+        let provenance = vec![
+            prov(ExtractorTier::Pattern, &both),
+            prov(ExtractorTier::Nlp, &both),
+            prov(ExtractorTier::Pattern, &one),
+        ];
+        let recs = TaskRecords::Constraints(vec![both, one]);
+        let out = records_with_tier_counts(&recs, &provenance);
+        let tier = |needle: &str| {
+            out.iter()
+                .find(|(_, k, _, _)| k.contains(needle))
+                .unwrap()
+                .2
+        };
+        assert_eq!(tier("PSEL"), 2, "found by two tiers");
+        assert_eq!(tier("PADDR"), 1, "found by one tier");
     }
 }

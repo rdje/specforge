@@ -41,11 +41,33 @@ returns `None` at α=0.01). Full `scripts/run_ci.sh` GREEN (1260→1262).
 - A **calibration set** of confidence-scored predictions labeled correct/incorrect → `conformal_threshold`
   to set the gate's accept threshold at a target risk.
 
+## Unblock attempt — conformal wired to the eval harness (`.2`, `2026-06-06`)
+
+Per an owner discussion on unblocking the "gated on data" status: rather than fake gold, **derive the
+calibration from signals we already have**. Wired `conformal_threshold` into `eval-extraction` using
+**extractor-tier agreement** as the confidence axis (a fact found by `Pattern`+`Nlp` is more
+trustworthy than one tier — read from `fact_provenance`) and the **labeled eval set** as the
+correctness label. `records_with_tier_counts` recovers each record's `(eval_key, tier_count)` (the
+provenance key format differs, so it's recomputed per record). Surfaced in the report.
+
+**Honest finding (the real blocker, made concrete):** on the APB eval, this yields **n=2** samples —
+the closed-world *per-statement* matching only counts predictions landing on the 8 labeled
+statements, but the extractor attributes facts to *other* sentences (the same effect
+`EVAL-DOCUMENT-RECALL` exposed). So conformal is genuinely gated by **labeled-set size/coverage**, not
+by the metric. **The size-unblock is the NLI oracle:** run the NLI gate on *all* predictions to label
+them automatically (correct/incorrect) at corpus scale → thousands of `(tier_count, is_correct)`
+pairs → a robust calibration. (Reliable per-statement labels are too sparse; the NLI oracle trades a
+little label noise for two orders of magnitude more samples.)
+
 ## Task Tree
 
-- ID: `TABLE-GRITS-CONFORMAL` · Status: `done` · Children: `.1`
+- ID: `TABLE-GRITS-CONFORMAL` · Status: `active` (`.1` done; `.2` wired conformal, found the size gate)
+  · Children: `.1` `.2`
 - ID: `TABLE-GRITS-CONFORMAL.1` · Status: `done` · Goal: implement + test the two metrics as reusable
   capability. Verification above.
+- ID: `TABLE-GRITS-CONFORMAL.2` · Status: `done` · Goal: unblock conformal via the eval harness
+  (tier-agreement axis). Wired + tested (+1 test, `records_with_tier_counts`); empirically n=2 on APB
+  → the size gate is real; **next: the NLI-oracle labeling at scale**. CI green 1276.
 
 ## Changelog
 
