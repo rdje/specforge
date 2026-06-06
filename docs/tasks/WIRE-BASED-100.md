@@ -119,7 +119,21 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
 - ID: `WIRE-BASED-100.7c` · Status: `done` (is_grounded_obligation_with + NLI gate; +test) · Goal: AUTOMATIC hallucination detection — `.7` upgraded
   to the NLI gate (source must entail the claim) as the general fallback behind the clause-scoped
   heuristic. Catches hallucinations the modal-check misses.
-- ID: `WIRE-BASED-100.2` · Status: `pending` · Goal: robust value-constraint extraction.
+- ID: `WIRE-BASED-100.2` · Status: `pending` · Goal: robust value-constraint extraction. **Scoped
+  (`2026-06-06`, post-`.3a`):** the remaining APB completeness items are the 2 prose residuals the gauge
+  now reports. Investigated both: (1) `statement_0223` "For read transfers, the Requester must drive all
+  bits of PSTRB LOW." is a **genuine value-constraint recall gap** — `is_signal_value_constraint` only
+  matches the passive `SIGNAL (must|shall) be VALUE` shape, not the **active `<actor> must drive <signal>
+  <LOGIC_LEVEL>`** shape, so it falls through to `NormativeStatement` and yields NO `PSTRB must_be LOW`
+  constraint (confirmed: zero PSTRB signal_constraints). Fix = recognize active drive-with-logic-level
+  obligations (logic-level vocab already centralized in `normative_vocab`, ADR-0006-safe per
+  `LOGIC-LEVEL-BOUNDARY`) → emit the constraint (+ the `Requester Drives PSTRB` relation, currently
+  actor=None). (2) `statement_0370` (EDC "required end-to-end") is an **honest non-wire residual** — a
+  system-level requirement with no per-signal fact; it must STAY a residual (structuring it would
+  fabricate). **Dependency / care (sensitive):** adding the PSTRB-LOW constraint introduces a fact NOT in
+  the κ=0.90-validated `seed_apb.json` gold, so this slice MUST also complete the gold (annotate the new
+  item) and re-run `eval-extraction --provider skip` to confirm APB gold-100% still holds (precision must
+  not drop). Own as its own careful cycle; do not rush the gold edit.
 - ID: `WIRE-BASED-100.3` · Status: `active` (gauge works; concrete gap found) · Goal: full-document
   completeness (gold-100% → spec-100%). **Findings (`2026-06-06`):** (a) capture-recapture
   (`completeness::recall_estimate`, Pattern×Nlp) is DEGENERATE on APB — the two tiers extract disjoint
