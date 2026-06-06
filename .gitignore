@@ -7,3 +7,4 @@
 /.venv-docling/
 *.swp
 mutants.out*/
+.venv-eval/
