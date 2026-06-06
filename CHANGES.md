@@ -2,6 +2,23 @@
 
 ## 2026-06-07
 
+### `WIRE-BASED-100.5b` — AHB constraint extraction correct (negated double-negative fix; `.5a` stale baseline corrected)
+Diagnosed the AHB `.5a` baseline and found a **stale-evidence trap**: the persisted AHB `evidence_ir.json`
+was built by PRE-fix code, and its normalized source has been reclaimed (artifact cleanup) so
+`specforge evidence` can't rebuild it (AHB PDF not in the corpus → no re-ingest). Proven hermetically
+(isolated `extract_signal_constraints` + an instrumented build both yield 0 records for the
+`The following signals … when <cond>` list-introducers): **current code already suppresses those FPs** — the
+`.5a` list-introducer "finding" was stale, NOT a current defect (the APB condition-subject fix covers AHB).
+The one REAL current-code defect was a **double-negative**: `must not change` → `MustNotChange` AND
+`negated=true` (which would read as "may change"). Fix: drop the redundant `negated` flag on kinds that
+already encode the negation (`MustNotChange`/`MustBeDeasserted`) — general, not AHB-tuned. With it, current
+code extracts all 6 AHB gold constraint facts correctly and 0 list-introducer FPs → AHB constraints would be
+**100%** on fresh evidence. **Demonstrated hermetically** (3 `wire_based_100_5b` unit tests) since the eval
+can't be re-run until AHB is re-ingested. APB gold-100% preserved; kg-bench green; full `scripts/run_ci.sh`
+green (**1309** lib tests). No faking — the stale `.5a` finding was corrected on the record, not buried.
+New KM card `eval-scores-persisted-evidence` (the stale-evidence trap). NOTE: the prior `.5a` baseline
+P=0.364 was stale; the true current-code baseline on the gold is tp=4 fp=2 fn=2 (only the negated mismatch).
+
 ### `WIRE-BASED-100.5a` — AHB constraint eval gold + measured baseline (cross-spec roll begins)
 Measure-first start of `.5` (roll the APB bar to AHB → AXI → SWD). Built
 `crates/specforge/test_data/llm_eval/seed_ahb.json` from REAL AHB prose — 6 unambiguous positives

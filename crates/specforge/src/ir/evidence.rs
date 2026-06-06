@@ -5740,6 +5740,17 @@ fn extract_signal_constraints(
             continue;
         }
 
+        // A kind that already encodes its own negation (`MustNotChange`, `MustBeDeasserted`)
+        // must NOT also carry `negated = true`: the "not"/"de-" is part of the obligation, so a
+        // `negated` flag on top would read as a double negative ("must not change" → "may
+        // change"). `negated` is reserved for kinds whose plain form is affirmative
+        // (`MustBeAsserted`/`MustBeHigh`/…) inverted by an explicit "not" (WIRE-BASED-100.5b).
+        let negated = negated
+            && !matches!(
+                constraint_kind,
+                SignalConstraintKind::MustNotChange | SignalConstraintKind::MustBeDeasserted
+            );
+
         // Extract condition clause: text after "when", "while", "during", "unless" — from the
         // SAME bounded obligation the subject came from, so a later table-cell bullet does not
         // bleed into the condition (CONSTRAINT-EXTRACTION-V2.2).
@@ -11819,6 +11830,81 @@ mod tests {
             assert!(
                 ev.fact_provenance.iter().any(|p| p.canonical_key == key),
                 "every pattern constraint must have a provenance entry"
+            );
+        }
+    }
+}
+
+#[cfg(test)]
+mod wire_based_100_5b {
+    //! WIRE-BASED-100.5b — AHB constraint extraction is correct on current code:
+    //! `must not change` carries no redundant `negated` (the kind encodes it), validity
+    //! obligations resolve to `must_be_value VALID`, and a `The following signals … when
+    //! <cond>` list-introducer yields NO constraint (the condition signal is not a subject).
+    use super::*;
+
+    fn run(text: &str) -> Vec<SignalConstraintRecord> {
+        let stmts = vec![ExtractedStatement {
+            statement_id: "s".into(),
+            class: StatementClass::SignalValueConstraint,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        }];
+        let mut counter = 0usize;
+        extract_signal_constraints(&stmts, &mut counter)
+    }
+
+    #[test]
+    fn must_not_change_carries_no_redundant_negated() {
+        let recs = run(
+            "- The HAUSER signal must not change between cycles when HREADY is LOW, unless HRESP signal is ERROR.",
+        );
+        let r: Vec<_> = recs
+            .iter()
+            .filter(|r| r.subject_signal == "HAUSER")
+            .collect();
+        assert_eq!(r.len(), 1, "one HAUSER constraint, got {recs:?}");
+        assert!(matches!(
+            r[0].constraint_kind,
+            SignalConstraintKind::MustNotChange
+        ));
+        assert!(
+            !r[0].negated,
+            "MustNotChange already encodes the negation — negated must be false, not a double negative"
+        );
+    }
+
+    #[test]
+    fn validity_obligation_resolves_to_must_be_value_valid() {
+        let recs =
+            run("- The HWUSER signal must be valid during the data phase of a write transfer.");
+        let r: Vec<_> = recs
+            .iter()
+            .filter(|r| r.subject_signal == "HWUSER")
+            .collect();
+        assert_eq!(r.len(), 1, "one HWUSER constraint, got {recs:?}");
+        assert!(
+            matches!(&r[0].constraint_kind, SignalConstraintKind::MustBeValue { value } if value == "VALID"),
+            "got {:?}",
+            r[0].constraint_kind
+        );
+        assert!(!r[0].negated);
+    }
+
+    #[test]
+    fn list_introducer_condition_signal_is_not_a_subject() {
+        // The condition signal (HTRANS / HREADY / HRESP) must never become the constraint
+        // subject; the constrained signals are the following list items, not the condition.
+        for text in [
+            "The following signals must be valid when HTRANS is not IDLE:",
+            "The following signals must be valid in the data phase of a write transaction when HREADY is HIGH and HRESP is LOW:",
+        ] {
+            let recs = run(text);
+            assert!(
+                recs.is_empty(),
+                "list-introducer must yield no constraint, got {recs:?} for {text:?}"
             );
         }
     }

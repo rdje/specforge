@@ -73,6 +73,33 @@ completeness unit tests; the aggregate-sum invariant test still holds; full `scr
 candidates — it became *accurate*, not gamed; the supervised signoff metric (gold-100%, catalog 35/35)
 is unchanged.
 
+## 2026-06-07 — AHB constraints: negated double-negative fix + a stale-evidence trap (WIRE-BASED-100.5b)
+
+**A stale-evidence trap (the integrity headline).** The `.5a` AHB constraint baseline (`P=0.364`) was
+measured against the PERSISTED `evidence_ir.json`, which `eval-extraction` loads (it does not rebuild the
+base extraction — it only re-runs the Nlp tier on a temp copy). That file was built by PRE-fix code, and
+its normalized source was reclaimed by artifact cleanup, so `specforge evidence` errors on rebuild and the
+AHB PDF is not in the corpus (no re-ingest). I proved — via an isolated `extract_signal_constraints` call
+AND an instrumented full build (both emit 0 records for the `The following signals … when <cond>`
+list-introducers) — that **current code already suppresses those FPs**. So the `.5a` "list-introducer FP"
+finding was STALE, not a current defect (the APB condition-subject fix covers AHB). Corrected on the record
+(no fake findings). KM card `eval-scores-persisted-evidence` so the next session rebuilds before trusting a
+cross-spec baseline.
+
+**The one real defect — a double-negative.** `must not change` classified to `MustNotChange` AND set
+`negated = true` (from the "must not" token). But `MustNotChange` already encodes the prohibition, so
+`negated=true` on top reads as "may change" — and the eval key includes `negated`, so the AHB gold
+(`negated=false`) missed (2 FN + 2 FP). Fix in `extract_signal_constraints`: after the kind is known,
+`negated = negated && !matches!(kind, MustNotChange | MustBeDeasserted)` — reserve `negated` for kinds
+whose plain form is affirmative (`MustBeAsserted`/`MustBeHigh`/…) inverted by an explicit "not". General,
+not AHB-tuned; APB has no such gold facts so APB gold-100% is unaffected.
+
+**Demonstrated hermetically** (the eval is re-ingest-gated): 3 `wire_based_100_5b` unit tests over the
+exact AHB gold sentences lock must_not_change→no-redundant-negated, validity→`must_be_value VALID`, and
+list-introducer→no-constraint. With the fix, current code extracts all 6 AHB gold constraint facts
+correctly and 0 list-introducer FPs → AHB constraints would be 100% on fresh evidence. APB gold-100%
+preserved; kg-bench green; full `scripts/run_ci.sh` green (**1309** lib tests).
+
 ## 2026-06-06 — temporal completeness: PSEL↔PSELx signal-identity canonicalization (WIRE-BASED-100.4)
 
 **Measured first.** `eval-extraction seed_apb_temporal.json --provider skip` = `temporal_rule

@@ -239,12 +239,26 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   gold (2 FN + 2 FP); (2) **list-introducer condition-subject FPs** — `HTRANS`/`HREADY`/`HRESP` extracted as
   constraint subjects from `The following signals must be valid when <X> …` (5 FP); the APB
   condition-subject fix does not cover the AHB `when HTRANS is not IDLE` / `when HREADY is HIGH and HRESP is
-  LOW` pattern. Gold verified correct; both are real extractor defects. Relations + temporal AHB golds are
-  follow-on leaves.
-- ID: `WIRE-BASED-100.5b` · Status: `pending` · Goal: fix the two `.5a` AHB constraint findings to 100% —
-  (1) drop the redundant `negated=True` on kinds that already encode the negation (`MustNotChange`,
-  `MustBeDeasserted`, …); (2) suppress condition-signal-as-subject FPs for the `The following signals … when
-  <cond>` list-introducer pattern. Each fix must keep APB gold-100% + kg-bench green (general, not AHB-tuned).
+  LOW` pattern. Gold verified correct against the records.
+  **CORRECTION (`2026-06-07`, `.5b`): the `P=0.364` baseline measured STALE evidence.** The persisted AHB
+  `evidence_ir.json` was built by PRE-fix code; its normalized source has since been reclaimed (artifact
+  cleanup) so `specforge evidence` cannot rebuild it (and the AHB PDF is not currently in the corpus → no
+  re-ingest). Proven hermetically (isolated `extract_signal_constraints` + an instrumented build): CURRENT
+  code yields **0 records** for the `The following signals … when <cond>` list-introducers — finding (2)
+  was STALE, not a current defect (the APB condition-subject fix already covers AHB). The only REAL
+  current-code defect is finding (1), the negated double-negative. True current-code baseline on the gold:
+  tp=4 fp=2 fn=2 (only the `must_not_change` negated mismatch), not the stale 0.364.
+- ID: `WIRE-BASED-100.5b` · Status: `done` · Goal: fix the one REAL `.5a` AHB constraint defect → AHB
+  constraint extraction correct. **Done:** dropped the redundant `negated=True` on kinds that already
+  encode the negation (`MustNotChange`/`MustBeDeasserted`) in `extract_signal_constraints` (general, not
+  AHB-tuned). With it, current code extracts all 6 AHB gold constraint facts correctly (`HxUSER`
+  must_be_value VALID; `HAUSER`/`HWUSER` must_not_change, negated=false) and yields 0 list-introducer FPs →
+  AHB constraints would be **100%** on fresh evidence. **Demonstrated hermetically** (the eval can't be
+  re-run until AHB is re-ingested — normalized reclaimed): 3 unit tests (`wire_based_100_5b`) lock
+  must_not_change-no-redundant-negated, validity→must_be_value VALID, and list-introducer→no-constraint.
+  APB gold-100% preserved; full `scripts/run_ci.sh` green (1309 lib tests). The `eval-extraction
+  seed_ahb.json` aggregate re-confirmation is re-ingest-gated (see KM `eval-scores-persisted-evidence`).
+  Verification: see log. Commit: see log.
 - ID: `WIRE-BASED-100.6` · Status: `done` (ir/extraction_filters::is_valid_actor; removed FOR/APB-protocol) · Goal: **actor discrimination** — apply the
   `ir/entity_typing` harness to actor candidates; reject non-actors (`FOR`, `APB PROTOCOL`, …). Closes
   the relation-precision fps. Same root as the CHI garbage-actor finding (`EXTRACTION-QUALITY-GAUGE`).
