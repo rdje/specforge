@@ -62,6 +62,14 @@ eval robustness, completeness, and the other fact types.
   on APB** (existing facts, no LLM): re-resolved 13/16 ids; **signal_constraint F1 0.500 → 0.923, R=1.000**;
   **actor_signal_relation F1 0.000 → 0.400** (tp=2, fn=4). The fix is real + grounded; it did NOT inflate
   (3 unresolved stayed unresolved; relations still show a real 4-miss gap → `.1b` next).
+- ID: `WIRE-BASED-100.1b` · Status: `pending` · Goal: source-tolerant relation scoring (the residual
+  after `.1`). Per-fact demo (APB, content-anchored): all 6 gold relations are extracted (doc-level
+  6/6); the 4 per-statement misses are attribution-convention, NOT missing facts — 3 are extracted
+  from the **signal-declaration table** (`PRDATA`/`PWDATA`/`PSLVERR` declared there) while the gold
+  cites the prose; 1 is a **duplicate gold item** (relation on two sentences, extractor cites one).
+  Fix (no faking): credit a relation found on ANY *valid* declared source for that signal (table or
+  prose), and treat multi-statement gold as a set — NOT "credit anywhere". Then APB relations hit 100%
+  legitimately (the facts are all real + correctly extracted).
 - ID: `WIRE-BASED-100.2` · Status: `pending` · Goal: robust value-constraint extraction.
 - ID: `WIRE-BASED-100.3` · Status: `pending` · Goal: full-document completeness (complete gold / oracle).
 - ID: `WIRE-BASED-100.4` · Status: `pending` · Goal: temporal-rule completeness.
