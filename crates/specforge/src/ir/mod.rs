@@ -1,6 +1,7 @@
 pub mod adapters;
 pub mod ambiguity;
 pub mod completeness;
+pub mod condition_extract;
 pub mod contract;
 pub mod cve;
 pub mod entity_typing;

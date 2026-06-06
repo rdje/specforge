@@ -34,5 +34,6 @@ pub fn run(cli: Cli) -> Result<()> {
         Commands::NliVerify(args) => commands::nli_verify::run(args),
         Commands::GritsConsensus(args) => commands::grits_consensus::run(args),
         Commands::EntityType(args) => commands::entity_type::run(args),
+        Commands::ExtractConditions(args) => commands::extract_conditions::run(args),
     }
 }
