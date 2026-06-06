@@ -3,7 +3,7 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Regenerate with `knowledge-map/scripts/gen_knowledge_map.sh`.
 > Source of truth = YAML front-matter in: `docs/knowledge docs/decisions`. Edit the fact files, never this map.
 > A fact is any `.md` whose front-matter has a non-empty `answers:` list.
-> **19** facts · **92** question keys.
+> **20** facts · **97** question keys.
 
 ## Questions → fact
 
@@ -15,6 +15,7 @@
 - "default model for the ollama provider" -> [llm-vlm-provider-default](docs/knowledge/llm-vlm-provider-default.md) · 2026-06-01 · reverify: `grep -n "qwen2.5vl" crates/specforge/src/commands/llm_text.rs`
 - "did a second annotator validate seed_apb.json" -> [eval-gold-interannotator-kappa](docs/knowledge/eval-gold-interannotator-kappa.md) · 2026-06-05 · reverify: `true  # MANUAL: re-run a blind second annotation per EVAL-GOLD-INTERANNOTATOR-AGREEMENT.md Method and recompute kappa (not an automatable grep)`
 - "do text-reasoning tasks need a vision model" -> [local-llm-for-text-reasoning](docs/knowledge/local-llm-for-text-reasoning.md) · 2026-06-05 · reverify: `ollama list  # qwen2.5:14b-instruct (text) + qwen2.5vl:7b (vision); re-run the NLI/kappa probes`
+- "do the Pattern and Nlp extraction tiers find the same constraints" -> [conformal-tier-agreement-degenerate](docs/knowledge/conformal-tier-agreement-degenerate.md) · 2026-06-06 · reverify: `grep -n "tier_count_by_fact_key\|nli_conformal_pass" crates/specforge/src/ir/nli_verify.rs`
 - "does SpecForge detect implementation-defined or TBD or and/or" -> [ambiguity-weak-phrase-detector](docs/knowledge/ambiguity-weak-phrase-detector.md) · 2026-06-04 · reverify: `grep -n "fn weak_phrase_findings" crates/specforge/src/ir/ambiguity.rs`
 - "does SpecForge model-check temporal properties" -> [temporal-logic-choice](docs/knowledge/temporal-logic-choice.md) · 2026-06-04 · reverify: `grep -n "fn temporal_rule_to_ltl" crates/specforge/src/ir/temporal_ltl.rs`
 - "does SpecForge revise or decay priors" -> [contested-priors](docs/knowledge/contested-priors.md) · 2026-06-04 · reverify: `grep -n "fn contested_priors" crates/specforge/src/ir/prior_memory.rs`
@@ -45,6 +46,7 @@
 - "is the eval-extraction temporal precision 0.6 a real defect" -> [temporal-eval-residual-fps-are-stale](docs/knowledge/temporal-eval-residual-fps-are-stale.md) · 2026-06-02 · reverify: `grep -n " when " crates/specforge/src/ir/evidence.rs`
 - "is there a PSL or SVA export of temporal rules" -> [temporal-rule-ltl-rendering](docs/knowledge/temporal-rule-ltl-rendering.md) · 2026-06-04 · reverify: `grep -n "fn temporal_rule_to_ltl" crates/specforge/src/ir/temporal_ltl.rs`
 - "is there a lowering-completeness check for temporal rules" -> [isf-temporal-lowering-no-silent-drop](docs/knowledge/isf-temporal-lowering-no-silent-drop.md) · 2026-06-04 · reverify: `grep -n "temporal_residuals" crates/specforge/src/ir/isf_ir.rs crates/specforge/src/ir/adapters.rs`
+- "is tier-agreement a good confidence axis for conformal calibration" -> [conformal-tier-agreement-degenerate](docs/knowledge/conformal-tier-agreement-degenerate.md) · 2026-06-06 · reverify: `grep -n "tier_count_by_fact_key\|nli_conformal_pass" crates/specforge/src/ir/nli_verify.rs`
 - "qwen2.5vl vs qwen3-vl which model" -> [llm-vlm-provider-default](docs/knowledge/llm-vlm-provider-default.md) · 2026-06-01 · reverify: `grep -n "qwen2.5vl" crates/specforge/src/commands/llm_text.rs`
 - "should I build an isf lowering-completeness verifier for temporal rules" -> [isf-temporal-lowering-no-silent-drop](docs/knowledge/isf-temporal-lowering-no-silent-drop.md) · 2026-06-04 · reverify: `grep -n "temporal_residuals" crates/specforge/src/ir/isf_ir.rs crates/specforge/src/ir/adapters.rs`
 - "should I fix the PSEL valid when PSEL asserted temporal rule" -> [temporal-eval-residual-fps-are-stale](docs/knowledge/temporal-eval-residual-fps-are-stale.md) · 2026-06-02 · reverify: `grep -n " when " crates/specforge/src/ir/evidence.rs`
@@ -53,6 +55,7 @@
 - "torch MPS float64 error during ingest" -> [docling-device-cpu](docs/knowledge/docling-device-cpu.md) · 2026-06-01 · reverify: `grep -n DOCLING_DEVICE crates/specforge/src/ir/source/docling_backend.rs`
 - "was the (contract ... eventually ...) ISF clause removed" -> [fsmgen-temporal-isf-form](docs/knowledge/fsmgen-temporal-isf-form.md) · 2026-06-04 · reverify: `grep -n "assert (monitor (within" crates/specforge/src/ir/isf_ir.rs`
 - "what ISF form does SpecForge use for a bounded-eventually contract" -> [fsmgen-temporal-isf-form](docs/knowledge/fsmgen-temporal-isf-form.md) · 2026-06-04 · reverify: `grep -n "assert (monitor (within" crates/specforge/src/ir/isf_ir.rs`
+- "what confidence axis correlates with extracted-constraint correctness" -> [conformal-tier-agreement-degenerate](docs/knowledge/conformal-tier-agreement-degenerate.md) · 2026-06-06 · reverify: `grep -n "tier_count_by_fact_key\|nli_conformal_pass" crates/specforge/src/ir/nli_verify.rs`
 - "what did running nli-verify on a real spec find" -> [nli-gate-real-apb-validation](docs/knowledge/nli-gate-real-apb-validation.md) · 2026-06-05 · reverify: `cargo run -p specforge --quiet -- nli-verify generated/evidence_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/evidence_ir.json --vlm-provider ollama --model qwen2.5:14b-instruct`
 - "what does DOCLING_DEVICE do" -> [docling-device-cpu](docs/knowledge/docling-device-cpu.md) · 2026-06-01 · reverify: `grep -n DOCLING_DEVICE crates/specforge/src/ir/source/docling_backend.rs`
 - "what does SpecForge defer from conformal prediction NLI Dempster Snorkel NoRBERT" -> [adopt-defer-ledger](docs/knowledge/adopt-defer-ledger.md) · 2026-06-04 · reverify: `ls docs/research/grounding/adopt-defer-ledger.md`
@@ -95,8 +98,10 @@
 - "why doesn't SpecForge lower stability obligations to (assert (stable sig))" -> [stable-obligation-phase-scoped-residual](docs/knowledge/stable-obligation-phase-scoped-residual.md) · 2026-06-04 · reverify: `grep -n "bare stability across tick phases" crates/specforge/src/ir/contract.rs`
 - "why doesn't SpecForge use TLA+" -> [temporal-logic-choice](docs/knowledge/temporal-logic-choice.md) · 2026-06-04 · reverify: `grep -n "fn temporal_rule_to_ltl" crates/specforge/src/ir/temporal_ltl.rs`
 - "why doesn't fusion use the minimum confidence" -> [dempster-fusion](docs/knowledge/dempster-fusion.md) · 2026-06-04 · reverify: `grep -n "fn dempster_corroborate_confidence" crates/specforge/src/ir/fusion.rs`
+- "why doesn't the NLI-oracle conformal calibration produce a threshold" -> [conformal-tier-agreement-degenerate](docs/knowledge/conformal-tier-agreement-degenerate.md) · 2026-06-06 · reverify: `grep -n "tier_count_by_fact_key\|nli_conformal_pass" crates/specforge/src/ir/nli_verify.rs`
 - "why doesn't the temporal_rule eval reach precision 1.0" -> [temporal-eval-residual-fps-are-stale](docs/knowledge/temporal-eval-residual-fps-are-stale.md) · 2026-06-02 · reverify: `grep -n " when " crates/specforge/src/ir/evidence.rs`
 - "why is SpecForge called forward specification mining" -> [spec-mining-framing](docs/knowledge/spec-mining-framing.md) · 2026-06-04 · reverify: `grep -rn "forward specification mining" README.md docs/book/src/architecture-rationale.md`
+- "why is conformal calibration still blocked at CHI scale" -> [conformal-tier-agreement-degenerate](docs/knowledge/conformal-tier-agreement-degenerate.md) · 2026-06-06 · reverify: `grep -n "tier_count_by_fact_key\|nli_conformal_pass" crates/specforge/src/ir/nli_verify.rs`
 - "why is the NLI framing better than free-form labeling" -> [local-llm-for-text-reasoning](docs/knowledge/local-llm-for-text-reasoning.md) · 2026-06-05 · reverify: `ollama list  # qwen2.5:14b-instruct (text) + qwen2.5vl:7b (vision); re-run the NLI/kappa probes`
 - "why not CTL for temporal behavior" -> [temporal-logic-choice](docs/knowledge/temporal-logic-choice.md) · 2026-06-04 · reverify: `grep -n "fn temporal_rule_to_ltl" crates/specforge/src/ir/temporal_ltl.rs`
 
@@ -119,6 +124,15 @@ _validate flags vague spec prose via the weak-phrase detector (ir/ambiguity.rs)_
 - **evidence:** `crates/specforge/src/ir/ambiguity.rs; docs/book/src/quality/validation.md`
 - **reverify:** `grep -n "fn weak_phrase_findings" crates/specforge/src/ir/ambiguity.rs`
 - **source:** [`docs/knowledge/ambiguity-weak-phrase-detector.md`](docs/knowledge/ambiguity-weak-phrase-detector.md)
+
+### conformal-tier-agreement-degenerate
+_Tier-agreement is a degenerate conformal axis — the extraction tiers complement, they don't corroborate_
+
+- **answers:** why doesn't the NLI-oracle conformal calibration produce a threshold | is tier-agreement a good confidence axis for conformal calibration | do the Pattern and Nlp extraction tiers find the same constraints | what confidence axis correlates with extracted-constraint correctness | why is conformal calibration still blocked at CHI scale
+- **date:** 2026-06-06 · **status:** current
+- **evidence:** `docs/tasks/TABLE-GRITS-CONFORMAL.md`
+- **reverify:** `grep -n "tier_count_by_fact_key\|nli_conformal_pass" crates/specforge/src/ir/nli_verify.rs`
+- **source:** [`docs/knowledge/conformal-tier-agreement-degenerate.md`](docs/knowledge/conformal-tier-agreement-degenerate.md)
 
 ### contested-priors
 _SpecForge detects contested priors (same key, conflicting values across docs) — read-only_

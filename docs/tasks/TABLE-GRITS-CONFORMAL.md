@@ -59,10 +59,37 @@ them automatically (correct/incorrect) at corpus scale → thousands of `(tier_c
 pairs → a robust calibration. (Reliable per-statement labels are too sparse; the NLI oracle trades a
 little label noise for two orders of magnitude more samples.)
 
+## Conformal at CHI scale — the diagnostic (`.4`, `2026-06-06`)
+
+Ran the NLI-oracle conformal on CHI (enriched a write-redirected copy: 250 sentences via qwen2.5:14b
+→ 162 constraints; then `nli-verify`). **n=159** (vs APB's 14) — scale achieved. **Still no threshold
+at α=0.2**, but the diagnosis is now complete and the "scale fixes it" hypothesis is *falsified*:
+
+1. **Tier-agreement is a DEGENERATE axis on real docs.** Pattern and Nlp use the *same* key function
+   yet share **0 / 115** fact-keys on CHI — the tiers extract **disjoint** constraints (Pattern:
+   `B13`, `MTE`, `TXSACTIVE`…; Nlp: `RETURNTXNID`, `RETURNNID`…). They **complement** (cover different
+   facts), they don't **corroborate** (agree on the same fact). So nearly every fact is tier-1 → no
+   confidence variance. Scale can't help a degenerate axis.
+2. **The usable axis is *which* tier, and it DOES correlate with correctness:** Nlp constraints are
+   NLI-entailed **33%** (15/45) vs Pattern **11%** (13/117) — the LLM tier is ~3× more reliable than
+   the deterministic pattern tier on CHI's complex prose.
+3. **But base extraction quality is too low for conformal regardless:** even the best tier (Nlp, 33%)
+   is far above α=0.2; overall only **17%** (28/162) entailed. No high-confidence subset exists to
+   accept. Conformal needs a document whose extraction is good enough that *some* subset is ≥80%
+   correct — CHI isn't there.
+
+**Conclusion:** the conformal metric + NLI-oracle labeling are *sound and unblocked*; a *useful
+threshold* additionally needs (a) a non-degenerate axis (extraction-tier, not tier-agreement) and (b)
+adequate base extraction quality. The run reframed conformal as a **diagnostic** that surfaced a real
+**corpus-hardening** signal: the Pattern extractor is **89% NLI-not-entailed on CHI** (vs 29% on APB)
+— it over-generates on CHI's complex text. (Caveat: the NLI verdict is a *noisy* oracle; some
+not-entailed may be NLI false-negatives on complex claims — but the Pattern≪Nlp gap is a strong
+*relative* signal. See [[conformal-tier-agreement-degenerate]].)
+
 ## Task Tree
 
-- ID: `TABLE-GRITS-CONFORMAL` · Status: `active` (`.1`–`.3` done — conformal UNBLOCKED via the NLI
-  oracle; GriTS still needs an independent grid witness) · Children: `.1` `.2` `.3`
+- ID: `TABLE-GRITS-CONFORMAL` · Status: `active` (`.1`–`.4` done — conformal UNBLOCKED + diagnosed;
+  GriTS unblocked separately in `GRITS-CROSS-TOOL`) · Children: `.1` `.2` `.3` `.4`
 - ID: `TABLE-GRITS-CONFORMAL.1` · Status: `done` · Goal: implement + test the two metrics as reusable
   capability. Verification above.
 - ID: `TABLE-GRITS-CONFORMAL.2` · Status: `done` · Goal: unblock conformal via the eval harness
@@ -75,6 +102,12 @@ little label noise for two orders of magnitude more samples.)
   **n=2 → n=14** (labels all facts, not just the 2 on labeled statements); no threshold at α=0.2
   (14 facts, ~29% not-entailed — small/noisy), but the unblock is real — a corpus-scale doc (CHI:
   hundreds of constraints) yields a robust threshold. +1 test. CI green 1277.
+- ID: `TABLE-GRITS-CONFORMAL.4` · Status: `done` · Goal: run the NLI-oracle conformal at CHI scale.
+  **n=159** achieved; still no α=0.2 threshold — diagnosed: tier-agreement is a DEGENERATE axis (tiers
+  extract disjoint facts, 0/115 shared), the usable axis is extraction-tier (Nlp 33% vs Pattern 11%
+  entailed), and CHI base extraction is too low-quality for conformal (17% entailed overall). Reframed
+  conformal as a diagnostic; surfaced a corpus-hardening signal (Pattern 89% not-entailed on CHI).
+  Findings above; no code change (analysis only).
 
 ## Changelog
 
