@@ -52,6 +52,21 @@ eval robustness, completeness, and the other fact types.
 - **APB to 100%** (`.1`→`.4`) → **AHB** → **AXI** → **SWD**.
 - Broader protocol-class program (separate): **wire → serial (SWD) → packet (CHI)** (owner-set order).
 
+## Complete APB diagnosis — every score explained (the trees that close each)
+
+Demonstrated per-fact (content-anchored, existing facts):
+
+| score | value | gap, fully explained | closing tree |
+|---|---|---|---|
+| constraint recall (doc-level) | **6/6 = 100%** | — | ✓ |
+| relation recall (doc-level) | **6/6 = 100%** | — | ✓ |
+| relation **per-statement** | 0.40 | attribution-convention (3 from the signal-decl *table*, 1 duplicate gold) — all facts real | `.1b` source-tolerant scoring |
+| relation **precision** | fp=2 | **garbage actors** `FOR`, `APB PROTOCOL` (over-generation) | `.6` actor discrimination |
+| constraint **precision** | fp=1 | **hallucinated from a descriptive sentence** (`PRDATA must_be_stable` ← "PRDATA *for read data*"); statement_0186 is a correctly-labeled negative | `.7` normative-vs-descriptive gate |
+
+No low score is left unaddressed — each maps to a concrete, principled fix that raises the number
+*because the underlying facts become right*, never by relaxing the bar.
+
 ## Task Tree
 
 - ID: `WIRE-BASED-100` · Status: `active` · Children: `.1`–`.5`
@@ -74,6 +89,19 @@ eval robustness, completeness, and the other fact types.
 - ID: `WIRE-BASED-100.3` · Status: `pending` · Goal: full-document completeness (complete gold / oracle).
 - ID: `WIRE-BASED-100.4` · Status: `pending` · Goal: temporal-rule completeness.
 - ID: `WIRE-BASED-100.5` · Status: `pending` · Goal: cross-spec generalization (AHB/AXI/SWD).
+- ID: `WIRE-BASED-100.6` · Status: `pending` · Goal: **actor discrimination** — apply the
+  `ir/entity_typing` harness to actor candidates; reject non-actors (`FOR`, `APB PROTOCOL`, …). Closes
+  the relation-precision fps. Same root as the CHI garbage-actor finding (`EXTRACTION-QUALITY-GAUGE`).
+- ID: `WIRE-BASED-100.7` · Status: `pending` · Goal: **normative-vs-descriptive gate** — do not extract
+  constraints/relations from purely descriptive sentences ("PRDATA *for read data*"); only from
+  normative ones ("must/shall…"). Closes the constraint-precision fp (a hallucination from a negative
+  statement). Reuse the NLI gate as the grounding check.
+
+## Picked sequence to APB 100% (owner: "pick the next trees to achieve just that")
+
+`.1b` (relation recall → 100%) → `.6` (actor discrimination → relation precision) → `.7`
+(normative gate → constraint precision) → re-measure → a defensible APB 100%. Then `.2`/`.3` (value
+recall, full-doc completeness) harden it; then roll the same set to AHB → AXI → SWD (`.5`).
 
 ## Changelog
 
