@@ -10,6 +10,15 @@
   *wire-based* interface spec, where the design signals are literally wires on the bus (APB, AHB, AXI,
   SWD/ADI, …), unlike the packet/flit protocol CHI. Anything below 100% on a wire-based spec is a defect.
 
+## Governing principle — no fake scoring (owner, NON-NEGOTIABLE)
+
+Every score must be **objectively measured, logically explained, and demonstrated item-by-item** — a
+real number backed by per-fact evidence, never a headline asserted or an eval tuned to flatter. When
+the eval is corrected (e.g. `.1` content-anchored scoring), it fixes a *demonstrable* bug
+(`statement_id` drift) and the expected facts stay fixed — it re-resolves a stale pointer, it does NOT
+relax what a fact must be. A "100%" claim ships with the per-fact table that proves it. See
+[[feedback_scoring_rigor]].
+
 ## Where APB stands + the root finding
 
 - **Document-level recall: constraints 6/6, relations 6/6 = 100%** — extraction is COMPLETE and CORRECT.
