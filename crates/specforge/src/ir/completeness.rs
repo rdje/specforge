@@ -140,6 +140,7 @@ fn format_bit_range(low: u32, high: u32) -> String {
 
 use crate::ir::evidence::{
     ExtractorTier, FactKind, FactProvenanceRecord, TableSignalDeclarationProvenanceRecord,
+    is_hardware_signal_token, is_signal_synthesis_non_signal,
 };
 use crate::ir::source::{StructuredTableRecord, TableKind, TimingConstraintRecord};
 use std::collections::HashSet;
@@ -162,7 +163,10 @@ pub struct UnexplainedTableResidual {
 ///
 /// Coverage is resolved through the existing provenance, no fabrication:
 /// - SignalDescription → a `TableSignalDeclarationProvenanceRecord` citing the
-///   table's `table_id` directly;
+///   table's `table_id` directly, OR every hardware-signal token it carries is
+///   already in the declared-signal inventory (a redundant/duplicate presentation
+///   of signals captured from another table — see
+///   `signal_table_covered_by_inventory`);
 /// - RegisterMap → a `register_record` whose `register_id` embeds the `table_id`
 ///   (`reg_table_0026_000` ⊃ `table_0026`);
 /// - TimingParameter → a `timing_constraint` whose `constraint_id` embeds it
@@ -171,11 +175,17 @@ pub struct UnexplainedTableResidual {
 /// The `"{table_id}_"` marker (with the trailing underscore) is used for the
 /// embedded-id check so fixed-width ids like `table_0002` cannot spuriously match
 /// `table_0020`. Other table kinds are not accounted here.
+///
+/// `declared_signal_names` is the document's declared-signal inventory (uppercased
+/// names, e.g. from `collect_known_signal_names`); it lets the detector tell a
+/// genuine catalog miss from a duplicate-content table without fabricating any
+/// record (`WIRE-BASED-100.3a`).
 pub fn unexplained_intent_bearing_tables(
     tables: &[StructuredTableRecord],
     signal_provenance: &[TableSignalDeclarationProvenanceRecord],
     register_records: &[RegisterRecord],
     timing_constraints: &[TimingConstraintRecord],
+    declared_signal_names: &HashSet<String>,
 ) -> Vec<UnexplainedTableResidual> {
     let mut residuals = Vec::new();
     for table in tables {
@@ -185,7 +195,8 @@ pub fn unexplained_intent_bearing_tables(
                 "signal_description",
                 signal_provenance
                     .iter()
-                    .any(|p| p.table_id == table.table_id),
+                    .any(|p| p.table_id == table.table_id)
+                    || signal_table_covered_by_inventory(table, declared_signal_names),
             ),
             TableKind::RegisterMap => (
                 "register_map",
@@ -212,6 +223,70 @@ pub fn unexplained_intent_bearing_tables(
         }
     }
     residuals
+}
+
+/// Is every hardware signal this `SignalDescription` table carries already in the
+/// declared-signal inventory? If so the table is a redundant/duplicate
+/// presentation of signals captured elsewhere — covered, not a catalog miss —
+/// even when it produced no direct provenance record of its own.
+///
+/// The signal-name column is found by CONTENT, not header position: the body
+/// column with the most signal-shaped tokens. Real bus-spec tables are routinely
+/// column-mangled by the PDF backend (e.g. APB's AMBA-version matrix, where docling
+/// cyclically rotates the body so the `Signal` column lands last), so trusting the
+/// leftmost/header column would miss the names entirely. Strict by construction:
+/// returns `true` only when the table carries ≥1 signal token AND **every** token
+/// in that densest column is in the inventory — a table with even one signal absent
+/// from the inventory stays flagged, so a genuine miss is never hidden
+/// (`WIRE-BASED-100.3a`).
+fn signal_table_covered_by_inventory(
+    table: &StructuredTableRecord,
+    declared_signal_names: &HashSet<String>,
+) -> bool {
+    if declared_signal_names.is_empty() {
+        return false;
+    }
+    let tokens = densest_signal_name_column_tokens(table);
+    !tokens.is_empty() && tokens.iter().all(|t| declared_signal_names.contains(t))
+}
+
+/// The uppercased hardware-signal tokens in the body column carrying the most
+/// **distinct** signal-shaped tokens (the de-facto signal-name column, robust to
+/// PDF column misalignment). Returns that single column's distinct tokens.
+///
+/// Distinct count — not raw count — is the discriminator: a real signal-name
+/// column lists one distinct name per row, whereas a property/category column
+/// (e.g. APB's `Property` column repeating `Check_Type`) repeats a single value,
+/// so it loses even when it ties on raw cell count.
+fn densest_signal_name_column_tokens(table: &StructuredTableRecord) -> Vec<String> {
+    let col_count = table
+        .body_rows
+        .iter()
+        .map(|row| row.len())
+        .max()
+        .unwrap_or(0);
+    let mut best: Vec<String> = Vec::new();
+    for col in 0..col_count {
+        let mut tokens: Vec<String> = Vec::new();
+        for row in &table.body_rows {
+            let Some(cell) = row.get(col) else { continue };
+            let token = cell
+                .text
+                .split_whitespace()
+                .next()
+                .unwrap_or("")
+                .to_ascii_uppercase();
+            if is_hardware_signal_token(&token) && !is_signal_synthesis_non_signal(&token) {
+                tokens.push(token);
+            }
+        }
+        tokens.sort();
+        tokens.dedup();
+        if tokens.len() > best.len() {
+            best = tokens;
+        }
+    }
+    best
 }
 
 // ── Recall estimate (COMPLETENESS-RECALL-GAUGE) ────────────────────────────────
@@ -456,29 +531,120 @@ mod tests {
             automation_confidence: AutomationConfidence::Medium,
         }
     }
+    fn cell(text: &str) -> crate::ir::source::StructuredTableCellRecord {
+        crate::ir::source::StructuredTableCellRecord {
+            text: text.to_string(),
+            row_span: 1,
+            col_span: 1,
+            is_header: false,
+        }
+    }
+    /// A SignalDescription table with `body` rows (each row a slice of cell texts)
+    /// and no provenance of its own — used to exercise the covered-by-inventory path.
+    fn signal_table_with_body(table_id: &str, body: &[&[&str]]) -> StructuredTableRecord {
+        let body_rows: Vec<Vec<_>> = body
+            .iter()
+            .map(|row| row.iter().map(|t| cell(t)).collect())
+            .collect();
+        let col_count = body_rows.iter().map(|r| r.len()).max().unwrap_or(0) as u32;
+        StructuredTableRecord {
+            table_id: table_id.to_string(),
+            asset_id: format!("asset_{table_id}"),
+            page_id: None,
+            caption_text: None,
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![],
+            row_count: body_rows.len() as u32,
+            col_count,
+            body_rows,
+        }
+    }
+    fn inventory(names: &[&str]) -> HashSet<String> {
+        names.iter().map(|n| n.to_string()).collect()
+    }
 
     #[test]
     fn signal_table_with_provenance_is_covered() {
         let tables = vec![table("table_0005", TableKind::SignalDescription)];
         let provenance = vec![prov("HADDR", "table_0005")];
-        let r = unexplained_intent_bearing_tables(&tables, &provenance, &[], &[]);
+        let r = unexplained_intent_bearing_tables(&tables, &provenance, &[], &[], &HashSet::new());
         assert!(r.is_empty());
     }
 
     #[test]
     fn signal_table_without_provenance_is_unexplained() {
         let tables = vec![table("table_0009", TableKind::SignalDescription)];
-        let r = unexplained_intent_bearing_tables(&tables, &[], &[], &[]);
+        let r = unexplained_intent_bearing_tables(&tables, &[], &[], &[], &HashSet::new());
         assert_eq!(r.len(), 1);
         assert_eq!(r[0].table_id, "table_0009");
         assert_eq!(r[0].table_kind, "signal_description");
     }
 
     #[test]
+    fn signal_table_covered_by_inventory_when_all_signals_declared() {
+        // A duplicate-content signal table that produced NO provenance record, yet
+        // every signal it carries is already in the declared inventory — covered,
+        // not a catalog miss (WIRE-BASED-100.3a). The name column is the LAST one
+        // (PDF column rotation): the detector finds it by content density, not header.
+        let table = signal_table_with_body(
+            "table_0016",
+            &[
+                &["1", "-", "PCLK"],
+                &["ADDR_WIDTH", "-", "PADDR"],
+                &["DATA_WIDTH", "-", "PWDATA"],
+            ],
+        );
+        let inv = inventory(&["PCLK", "PADDR", "PWDATA", "PREADY"]);
+        let r = unexplained_intent_bearing_tables(&[table], &[], &[], &[], &inv);
+        assert!(r.is_empty(), "all signals are in the inventory → covered");
+    }
+
+    #[test]
+    fn property_column_does_not_outrank_signal_column_on_tie() {
+        // Real APB table_0017 shape: a `Property` column repeats "Check_Type" on every
+        // row, tying the (last) signal column on raw cell count. Distinct-count must
+        // pick the signal column (4 distinct names vs 1), so the table is covered.
+        let table = signal_table_with_body(
+            "table_0017",
+            &[
+                &["ADDR_WIDTH/8", "Check_Type", "C", "PADDRCHK"],
+                &["1", "Check_Type", "C", "PCTRLCHK"],
+                &["1", "Check_Type", "C", "PSELXCHK"],
+                &["1", "Check_Type", "C", "PENABLECHK"],
+            ],
+        );
+        let inv = inventory(&["PADDRCHK", "PCTRLCHK", "PSELXCHK", "PENABLECHK"]);
+        let r = unexplained_intent_bearing_tables(&[table], &[], &[], &[], &inv);
+        assert!(
+            r.is_empty(),
+            "the distinct signal column must beat the repeated Property column"
+        );
+    }
+
+    #[test]
+    fn signal_table_with_unknown_signal_stays_unexplained() {
+        // Strict: even ONE signal absent from the inventory keeps the table flagged,
+        // so a genuine catalog miss is never hidden by the covered-by-inventory path.
+        let table = signal_table_with_body(
+            "table_0042",
+            &[&["1", "PCLK"], &["1", "PADDR"], &["1", "PNEWSIG"]],
+        );
+        let inv = inventory(&["PCLK", "PADDR"]); // PNEWSIG missing
+        let r = unexplained_intent_bearing_tables(&[table], &[], &[], &[], &inv);
+        assert_eq!(
+            r.len(),
+            1,
+            "an uncovered signal must keep the table flagged"
+        );
+        assert_eq!(r[0].table_id, "table_0042");
+    }
+
+    #[test]
     fn register_table_covered_by_embedded_id() {
         let tables = vec![table("table_0026", TableKind::RegisterMap)];
         let regs = vec![reg_with_id("reg_table_0026_000")];
-        let r = unexplained_intent_bearing_tables(&tables, &[], &regs, &[]);
+        let r = unexplained_intent_bearing_tables(&tables, &[], &regs, &[], &HashSet::new());
         assert!(r.is_empty());
     }
 
@@ -487,7 +653,7 @@ mod tests {
         // table_0002 must NOT be considered covered by reg_table_0020_000.
         let tables = vec![table("table_0002", TableKind::RegisterMap)];
         let regs = vec![reg_with_id("reg_table_0020_000")];
-        let r = unexplained_intent_bearing_tables(&tables, &[], &regs, &[]);
+        let r = unexplained_intent_bearing_tables(&tables, &[], &regs, &[], &HashSet::new());
         assert_eq!(r.len(), 1);
         assert_eq!(r[0].table_id, "table_0002");
     }
@@ -496,7 +662,7 @@ mod tests {
     fn timing_table_covered_by_embedded_id() {
         let tables = vec![table("table_0022", TableKind::TimingParameter)];
         let timing = vec![timing_with_id("timing_table_0022_000")];
-        let r = unexplained_intent_bearing_tables(&tables, &[], &[], &timing);
+        let r = unexplained_intent_bearing_tables(&tables, &[], &[], &timing, &HashSet::new());
         assert!(r.is_empty());
     }
 
@@ -508,7 +674,7 @@ mod tests {
             table("table_0002", TableKind::FeatureMatrix),
             table("table_0003", TableKind::Unknown),
         ];
-        let r = unexplained_intent_bearing_tables(&tables, &[], &[], &[]);
+        let r = unexplained_intent_bearing_tables(&tables, &[], &[], &[], &HashSet::new());
         assert!(r.is_empty());
     }
 

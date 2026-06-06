@@ -125,11 +125,37 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   (`completeness::recall_estimate`, Pattern×Nlp) is DEGENERATE on APB — the two tiers extract disjoint
   facts (zero overlap → "insufficient"), same root as the conformal degeneracy; (b) but the
   region-accounting gauge in `validate` bounds the misses: **5 candidate misses on APB** — `table_0016/
-  0017/0018` are the **signal-declaration tables (~35 signals: PCLK/PADDR/…) producing NO record** (the
-  signal catalog is not extracted), + 2 prose residuals. So APB is **NOT spec-100%**; the gold sample
-  (6+6 constraints/relations) hid it. **Path to spec-100%:** extract the signal-declaration tables (a
-  4th fact type — signal declarations) + structure the 2 residuals; then re-run the gauge to 0 misses.
-  `.3a` next = the signal-table → signal-record extractor.
+  0017/0018` flagged as signal tables producing NO record, + 2 prose residuals.
+  **RE-DIAGNOSIS (`2026-06-06`, `.3a`) — the original "signal catalog is unextracted" premise was WRONG:**
+  the APB signal catalog is **already 100% extracted — 35/35 distinct signals, including ALL 14
+  parity-check `*CHK` signals** — sourced from the well-aligned `table_0004`/`0005` ("APB signal
+  descriptions", `Signal|Source|Width|Description`) and `table_0014` ("Check signal descriptions"). Tables
+  `0016/0017/0018` are **redundant duplicate presentations** of those same signals (the AMBA-version
+  matrix `Signal|Width|…|APB5|APB4|APB3|APB2`), badly column-mangled by docling (the body is cyclically
+  rotated so the `Signal` column lands LAST). Every hardware-signal token they carry is already in the
+  declared inventory. So they are **false candidate misses** — a gauge over-count, NOT a true catalog
+  miss. Building a "signal-table extractor" to mint records from them would only create DUPLICATE
+  declarations (faking a zeroed counter), violating the no-faking doctrine. **The honest fix (`.3a`):
+  correct the gauge** so a `SignalDescription` table is "covered" when every signal it carries is already
+  in the inventory (coverage, not fabrication) — mirrors `.1`'s "fix the measurement, don't relax the
+  bar". Drops the 2 cleanly-recoverable false misses → APB candidate_misses **5 → 3**: tables `0016`/`0017`
+  now correctly read as covered duplicates; `table_0018` HONESTLY stays flagged (docling garbled it —
+  signals trapped in its header rows, one unparseable body row), as do the 2 genuine prose residuals. The
+  detector is NOT contorted to force `0018` to "covered" (that would be faking); a docling re-ingest or a
+  future header-row-recovery leaf owns it. A future leaf may also add content-based column detection /
+  rotation handling to the EXTRACTOR for cross-spec specs where a misaligned table is the SOLE source of
+  signals (genuine miss, not duplicate) — deferred to `.5` where it adds information rather than redundancy.
+- ID: `WIRE-BASED-100.3a` · Status: `done` · Goal: **completeness-gauge correctness — recognize
+  duplicate-content signal tables as covered-by-inventory.** `completeness::unexplained_intent_bearing_tables`
+  takes the declared-signal inventory and marks a `SignalDescription` table covered when (direct provenance
+  cites it) OR (it carries ≥1 hardware-signal token and EVERY token in its **densest-by-distinct-count**
+  signal-name column is in the inventory — distinct count beats a repeated `Property` column, and is robust
+  to docling column rotation where the name column lands last). Strict by construction: a table with even one
+  signal absent from the inventory stays flagged (a real miss is never hidden). Wired in `validate` via
+  `collect_known_signal_names`. **Achieved + demonstrated:** APB `validate` candidate_misses `5 → 3`
+  (tables `0016`/`0017` covered, `0018` honest residual, 2 prose preserved); +4 completeness unit tests
+  (covered-by-inventory gold, Property-column-tie discrimination, unknown-signal negative, no-faking empty
+  inventory via existing tests); `cargo test -p specforge --lib` green. Verification: see log. Commit: see log.
 - ID: `WIRE-BASED-100.4` · Status: `pending` · Goal: temporal-rule completeness.
 - ID: `WIRE-BASED-100.5` · Status: `pending` · Goal: cross-spec generalization (AHB/AXI/SWD).
 - ID: `WIRE-BASED-100.6` · Status: `done` (ir/extraction_filters::is_valid_actor; removed FOR/APB-protocol) · Goal: **actor discrimination** — apply the
@@ -148,6 +174,13 @@ recall, full-doc completeness) harden it; then roll the same set to AHB → AXI 
 
 ## Changelog
 
+- `2026-06-06` (`.3a`): **Re-diagnosed `.3` and corrected the gauge.** Proved (per-table, from the live
+  generated APB IR) the catalog is already 35/35 extracted incl. all `*CHK` signals; tables `0016/0017/0018`
+  are docling-mangled DUPLICATE views whose signals are all already in the inventory. Fixed the
+  region-accounting over-count: a `SignalDescription` table is now "covered" when every signal it carries is
+  already declared (coverage, not fabrication). APB candidate_misses **5 → 3** (tables 0016/0017 covered;
+  0018 honestly stays flagged — docling garbled it). No-faking: corrected a demonstrable measurement
+  false-positive, did not relax any bar, mint duplicate records, nor force the garbled table to "covered".
 - `2026-06-06`: Created. Root finding — APB per-statement scores fail on a **stale gold**
   (`statement_id` drift after a re-ingest), NOT extraction: document-level recall is 100% and correctly
   attributed. Feature program to the owner's non-negotiable 100% bar laid out. See

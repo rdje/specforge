@@ -2610,6 +2610,11 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
     // no record is a candidate miss. Needs the upstream SourceIR for table kinds
     // (tables live on SourceIR); load best-effort via the carried path.
     let region_source = crate::ir::source::SourceIr::load_from_path(&ir.source_ir_path).ok();
+    // The declared-signal inventory lets the gauge tell a genuine catalog miss from a
+    // duplicate-content table whose signals are all already captured elsewhere
+    // (WIRE-BASED-100.3a) — coverage, never fabrication.
+    let declared_signal_names =
+        crate::ir::evidence::collect_known_signal_names(&ir.extracted_statements);
     let region_unexplained_tables = region_source
         .as_ref()
         .map(|src| {
@@ -2618,6 +2623,7 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
                 &ir.table_signal_declaration_provenance,
                 &ir.register_records,
                 &ir.timing_constraints,
+                &declared_signal_names,
             )
         })
         .unwrap_or_default();

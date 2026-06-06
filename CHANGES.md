@@ -20,13 +20,22 @@ demonstrated 100%:
   gold-100% ACHIEVED** — `eval-extraction seed_apb.json --provider skip` → constraints + relations
   P=R=F1=1.000, demonstrated per-fact, no faking. `.1` content-anchored scoring (re-ingest-proof),
   `.1b` source-tolerant recall, `.6`/`.6c` actor discrimination, `.7`/`.7c` normative gate (cheap
-  heuristic fast-path + **automatic** LLM fallback via `entity_typing`/NLI). `.3` completeness gauge:
-  APB is NOT *spec*-100% — the **signal catalog** (`table_0016/0017/0018`, ~35 signals) produces zero
-  records; capture-recapture degenerate (Pattern×Nlp disjoint).
+  heuristic fast-path + **automatic** LLM fallback via `entity_typing`/NLI).
+- **`WIRE-BASED-100.3a` — re-diagnosed `.3` and corrected the completeness gauge.** The `.3` note ("the
+  signal catalog is unextracted") was **wrong**: the APB catalog is **already 35/35 extracted** (incl. all
+  14 `*CHK` parity signals), from `table_0004`/`0005`/`0014`. `table_0016/0017/0018` are docling-mangled
+  **duplicate** views (the Signal column rotated to last) — their signals are all already in the inventory,
+  so flagging them was a gauge **over-count**, not a miss. Fix: `unexplained_intent_bearing_tables` now also
+  marks a `SignalDescription` table covered when every signal in its densest-by-distinct-count signal-name
+  column is already declared (content-based, rotation-proof; distinct count beats a repeated `Property`
+  column). Strict — one unknown signal keeps it flagged. APB `validate` candidate_misses **5 → 3** (0016/0017
+  covered; `0018` honestly stays flagged — docling trapped its signals in header rows; 2 prose residuals
+  remain). No faking: corrected a demonstrable measurement false-positive, minted no duplicate records, read
+  the inventory (never wrote it), did not force the garbled table to "covered". +4 completeness unit tests.
 - **Governing principle** (owner, non-negotiable, `feedback_scoring_rigor`): every score objectively
   measured + logically explained + demonstrated per-fact — no fake/gamed scoring.
 
-CI green 1271 → **1298**. 32 commits, **NOT pushed** (owner hold; threshold 200).
+CI green 1271 → **1301**. 33+ commits, **NOT pushed** (owner hold; threshold 200).
 
 ## 2026-06-05
 

@@ -8,6 +8,40 @@
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 - adapter target: `.isf` (sole adapter); `.fsm`/HDL are out of scope — FSMGen consumes `.isf` and owns scheduling/`.fsm`/HDL downstream (since `ISF-ONLY-CONSOLIDATION`, `2026-05-18`)
 
+## 2026-06-06 — completeness gauge: duplicate signal tables aren't misses (WIRE-BASED-100.3a)
+
+**Root cause / re-diagnosis.** `WIRE-BASED-100.3` had recorded that the APB signal catalog was
+unextracted because `table_0016/0017/0018` produced zero records. Meticulous inspection of the live
+generated IR disproved that: the APB catalog is **already 35/35 extracted** — every signal, including
+all 14 parity-check `*CHK` signals — from the well-aligned `table_0004`/`0005` ("APB signal
+descriptions") and `table_0014` ("Check signal descriptions"). Tables `0016/0017/0018` are *redundant
+duplicate* presentations (the AMBA version matrix), each badly column-mangled by docling: the body is
+cyclically rotated so the `Signal` column lands LAST and the leftmost column holds widths. The
+header-driven `name_col=0` therefore read a width (`"1"`), every row failed the signal-token test, and
+the tables yielded nothing — but their signals were all captured elsewhere.
+
+**Decision (no-faking).** Building a "signal-table extractor" to mint records from the duplicates would
+only create duplicate declarations to zero a counter — gaming. The honest fix is to make the
+**measurement** correct: a `SignalDescription` table is *covered* when every signal it carries is already
+in the document's declared inventory. This mirrors `WIRE-BASED-100.1`'s philosophy (fix the
+demonstrable measurement bug; never relax the bar).
+
+**Implementation.** `ir/completeness.rs::unexplained_intent_bearing_tables` gained a
+`declared_signal_names` parameter; `signal_table_covered_by_inventory` finds the signal-name column by
+**content** — the body column with the most *distinct* hardware-signal tokens (distinct count beats a
+repeated `Property` column that ties on raw count, and content detection survives the docling column
+rotation) — and returns covered iff that column is non-empty and *every* token is in the inventory
+(strict: one unknown signal keeps the table flagged, so a genuine miss is never hidden). `validate`
+builds the inventory via `collect_known_signal_names(&ir.extracted_statements)` (all three helpers made
+`pub(crate)`). Pure measurement change: no extraction behavior changed, the inventory is read never
+written.
+
+**Verified.** APB `validate` candidate_misses **5 → 3** (`table_0016`/`0017` covered; `table_0018`
+honestly stays flagged — docling trapped its signals in the header rows, leaving one unparseable body
+row; the 2 prose residuals remain). +4 completeness unit tests (covered-by-inventory gold,
+Property-column-tie discrimination, unknown-signal negative; existing region-accounting/aggregate tests
+green). `cargo test -p specforge --lib` = **1301** passing; fmt + clippy clean; book + KM card updated.
+
 ## 2026-05-29 session — FSMGen submodule refresh + ISF feature-adoption assessment (FSMGEN-REFRESH-INTEGRATE)
 
 Per user direction, bumped `subs/fsmgen` `9bfb9a20 → 88a7af9c` (+637

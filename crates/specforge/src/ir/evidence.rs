@@ -1665,7 +1665,7 @@ fn infer_visual_role(
 /// synthesized `Signal X is input/output` statements.  These come from signal
 /// description tables (High confidence) and are the known universe of signals
 /// we should look for in prose.
-fn collect_known_signal_names(
+pub(crate) fn collect_known_signal_names(
     statements: &[ExtractedStatement],
 ) -> std::collections::HashSet<String> {
     let mut names = std::collections::HashSet::new();
@@ -5577,7 +5577,7 @@ fn infer_signal_direction_from_section(
 
 /// Returns true if the token looks like a hardware signal name:
 /// all-uppercase with optional digits and underscores, at least 2 chars.
-fn is_hardware_signal_token(token: &str) -> bool {
+pub(crate) fn is_hardware_signal_token(token: &str) -> bool {
     token.len() >= 2
         && token
             .chars()
@@ -6308,7 +6308,7 @@ fn is_signal_value_constraint(text: &str) -> bool {
 /// or descriptive words rather than hardware signal names. These appear as first
 /// cells in some table formats (e.g. AMBA Table 2-1 / Table 2-5 where signal
 /// names are in the last column rather than the first).
-fn is_signal_synthesis_non_signal(token: &str) -> bool {
+pub(crate) fn is_signal_synthesis_non_signal(token: &str) -> bool {
     matches!(
         token,
         "MANAGER"

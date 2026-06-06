@@ -198,6 +198,34 @@ figure regions, and a unified coverage report, follow). Verified by unit tests
 precision) and a `validate` wiring test + `scripts/run_ci.sh`. *Authoritative
 tracking:* `docs/tasks/COMPLETENESS-REGION-ACCOUNTING.md`.
 
+#### Duplicate tables don't count as misses (`WIRE-BASED-100.3a`)
+
+**The trap this avoids:** a real spec often presents the *same* signals in more
+than one table — a detailed "Signal / Source / Width / Description" table, and
+elsewhere a compact version-matrix summary ("which signals exist in v5 vs v4 vs
+v3"). SpecForge captures the catalog from the detailed table; the summary table
+then produces no new record of its own. If the gauge flagged *that* as a miss it
+would be crying wolf — every signal it lists is already captured. Real PDFs make
+this worse: the table extractor sometimes shuffles a summary table's columns
+(the APB version matrix comes out with the signal-name column rotated to the
+*last* position), so the summary yields zero direct records purely as an artifact
+of layout, not a true gap.
+
+**What it does:** before flagging a `SignalDescription` table as unexplained, the
+gauge asks one more honest question — *is every signal this table lists already
+in the document's captured inventory?* If yes, the table is a duplicate
+presentation, not a miss, and it is not counted. The signal-name column is found
+by **content** (the column with the most distinct hardware-signal names), so the
+check survives the column-rotation artifact and is never fooled by a repeated
+"Property" value tying the count. It stays strict: if **even one** signal in that
+column is *not* in the inventory, the table is still flagged — a genuine catalog
+miss can never be hidden, and nothing is ever fabricated to make a counter look
+good (the inventory is read, never written). On the AMBA APB spec this drops two
+false "unexplained table" misses while leaving a genuinely garbled third table
+flagged for review — the honest result. Verified by unit tests (covered-by-
+inventory gold, the Property-column tie, an unknown-signal negative).
+*Authoritative tracking:* `docs/tasks/WIRE-BASED-100.md`.
+
 ### `COMPLETENESS-REPORT-SURFACE` — one completeness headline
 
 **What it gives you:** a `Completeness Summary` at the end of `validate` that
