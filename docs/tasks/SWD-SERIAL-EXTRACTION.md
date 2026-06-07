@@ -161,7 +161,9 @@ WDATA/RDATA — MISSING Start/Parity/Stop/Park, no direction/sequence/turnaround
 - `SWD-SERIAL-EXTRACTION.4d` — **DONE (line states).** Added `extract_swd_line_states` (extends
   `protocol_states` with `machine_name="SWD line state machine"`): the SWD LINE states are lowercase 1–2-word
   names introduced by a transition verb — "(enter|enters|into|leave|leaves) [the] `<name>` state". On fresh
-  ADI evidence: **Reset, Protocol error, Lockout, Dormant** (+ a "Line reset" near-dup). Verb-gated + a
+  ADI evidence: **Reset, Operating, Protocol error, Lockout, Dormant** (all 5 line states; the
+  "Line reset" near-dup is now collapsed into Reset via leading-qualifier stripping, and `operating` is
+  captured via the "to the `<adj>` operating state" phrasing — logic-level/verb garbage rejected). Verb-gated + a
   per-statement SWD-context gate (swd/sw-dp/line/target/interface/protocol) drops the processor "Debug
   state" (execution mode, not a line state). +2 hermetic tests; parallel buses emit 0 SWD-line states; CI
   green. **Edge timing** (target samples & drives SWDIO on the rising SWCLK edge, B4.3.1) is derivable from

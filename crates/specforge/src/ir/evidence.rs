@@ -7395,7 +7395,11 @@ fn extract_swd_line_states(statements: &[ExtractedStatement]) -> Vec<ProtocolSta
     let generic = |w: &str| {
         matches!(
             w,
-            "this"
+            // logic levels / verbs are not state names ("to the HIGH state", "to maintain the state")
+            "high"
+                | "low"
+                | "maintain"
+                | "this"
                 | "that"
                 | "current"
                 | "same"
@@ -7440,16 +7444,22 @@ fn extract_swd_line_states(statements: &[ExtractedStatement]) -> Vec<ProtocolSta
         for i in 0..words.len() {
             if !matches!(
                 words[i].to_ascii_lowercase().as_str(),
-                "enter" | "enters" | "into" | "leave" | "leaves"
+                "enter" | "enters" | "into" | "leave" | "leaves" | "to"
             ) {
                 continue;
             }
+            let is_to = words[i].eq_ignore_ascii_case("to");
             let mut k = i + 1;
-            if words
+            let had_article = words
                 .get(k)
-                .is_some_and(|w| w.eq_ignore_ascii_case("the") || w.eq_ignore_ascii_case("a"))
-            {
+                .is_some_and(|w| w.eq_ignore_ascii_case("the") || w.eq_ignore_ascii_case("a"));
+            if had_article {
                 k += 1;
+            }
+            // The broad "to" trigger requires "to the/a <name> state" (so "to maintain the state" and
+            // bare "to <verb>" are not mistaken for a state transition); the directional verbs do not.
+            if is_to && !had_article {
+                continue;
             }
             let mut name: Vec<String> = Vec::new();
             while k < words.len() && name.len() < 2 {
@@ -7470,6 +7480,30 @@ fn extract_swd_line_states(statements: &[ExtractedStatement]) -> Vec<ProtocolSta
                     .is_some_and(|w| w.eq_ignore_ascii_case("state"))
             {
                 continue;
+            }
+            // Strip a leading QUALIFIER from a 2-word name so adjectives/sequence-words collapse to the
+            // canonical state head: "line reset" → "reset" (dedups the Reset state), "required operating"
+            // → "operating". A genuine 2-word state name ("protocol error") has a non-qualifier head.
+            if name.len() == 2
+                && matches!(
+                    name[0].as_str(),
+                    "line"
+                        | "required"
+                        | "relevant"
+                        | "powerup"
+                        | "sel"
+                        | "normal"
+                        | "valid"
+                        | "default"
+                        | "initial"
+                        | "single"
+                        | "certain"
+                        | "particular"
+                        | "specific"
+                        | "appropriate"
+                )
+            {
+                name.remove(0);
             }
             let mut state_name = name.join(" ");
             if let Some(first) = state_name.get_mut(0..1) {
@@ -13996,5 +14030,69 @@ mod swd_serial_extraction_4d {
             .map(|s| s.state_name)
             .collect();
         assert!(!names.iter().any(|n| n == "Debug"), "got {names:?}");
+    }
+}
+
+#[cfg(test)]
+mod swd_serial_extraction_4d_tidy {
+    //! SWD-SERIAL-EXTRACTION.4d tidy — `to the <adj> operating state` captured; line-reset deduped;
+    //! logic-level / verb garbage rejected.
+    use super::*;
+
+    fn stmt(id: &str, text: &str) -> ExtractedStatement {
+        ExtractedStatement {
+            statement_id: id.to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        }
+    }
+
+    #[test]
+    fn operating_captured_dups_and_garbage_rejected() {
+        let stmts = vec![
+            stmt("c", "A packet request is sent over the SWD line interface."),
+            stmt(
+                "op",
+                "The debugger transitions the SWD target to the required operating state.",
+            ),
+            stmt(
+                "lr",
+                "The SWD interface enters line reset state on a line reset.",
+            ),
+            stmt("rs", "The SWD target must enter the reset state."),
+            stmt(
+                "hi",
+                "The pull-up resistor returns the SWD line to the HIGH state.",
+            ),
+            stmt(
+                "mt",
+                "This SWD pull-up can be relied on to maintain the state of the wire.",
+            ),
+        ];
+        let names: Vec<String> = extract_swd_line_states(&stmts)
+            .into_iter()
+            .map(|s| s.state_name)
+            .collect();
+        assert!(
+            names.contains(&"Operating".to_string()),
+            "operating captured: {names:?}"
+        );
+        assert!(
+            names.contains(&"Reset".to_string()),
+            "reset present: {names:?}"
+        );
+        // line-reset collapses into Reset (no separate "Line reset")
+        assert!(
+            !names.iter().any(|n| n == "Line reset"),
+            "line-reset deduped: {names:?}"
+        );
+        // logic level + verb are not states
+        assert!(
+            !names.iter().any(|n| n == "High" || n == "Maintain the"),
+            "garbage rejected: {names:?}"
+        );
     }
 }
