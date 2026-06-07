@@ -6957,6 +6957,23 @@ fn extract_serial_frame_fields(statements: &[ExtractedStatement]) -> Vec<SerialF
             );
         }
     }
+    // Single-bit CONTROL fields (`.4b`): Start/Stop/Parity/Park complete the packet request frame.
+    // Their definitions ("A single start bit …", "the Park bit …") carry no phase keyword, so they are
+    // mined OUTSIDE the phase gate and assigned the request phase (host-driven control bits).
+    for statement in statements {
+        for name in parse_control_bit_fields(&statement.text) {
+            upsert_serial_field(
+                &mut out,
+                &mut index_by_name,
+                &mut counter,
+                &name,
+                Some(1),
+                None,
+                Some(SerialFramePhase::Request),
+                &statement.statement_id,
+            );
+        }
+    }
     // ACK response values (`.3b`): the ACK field carries OK / WAIT / FAULT, recovered from the
     // "<value> response to a DPACC/APACC access" grammar. Empty when there is no ACK field or no
     // such statements (serde-skipped).
@@ -7112,6 +7129,56 @@ fn text_has_word(text: &str, word: &str) -> bool {
         i = start + 1;
     }
     false
+}
+
+/// SWD-SERIAL-EXTRACTION.4b — parse single-bit CONTROL fields defined as "A single `<name>` bit …"
+/// (Start/Stop/Parity) or "the `<Name>` bit …" (Park) → the field name. These complete the SWD packet
+/// request frame and are not bit-ranges or "the N bits …" lists. Grammar (a glossary definition), not
+/// names (ADR 0006); the name is taken from the definition itself.
+fn parse_control_bit_fields(text: &str) -> Vec<String> {
+    let mut out = Vec::new();
+    let words: Vec<&str> = text.split_whitespace().collect();
+    for i in 1..words.len() {
+        if !words[i]
+            .trim_matches([',', '.'])
+            .eq_ignore_ascii_case("bit")
+        {
+            continue;
+        }
+        let name = words[i - 1].trim_matches(|c: char| !c.is_ascii_alphanumeric());
+        if name.len() < 3 || name.len() > 7 || !name.chars().all(|c| c.is_ascii_alphabetic()) {
+            continue;
+        }
+        // Two specific, high-precision glossary/protocol-error phrasings only (the broad "<Word> bit"
+        // form over-matches register names in this register-heavy doc):
+        //   1. "A single <name> bit …"            (Start / Stop / Parity definitions)
+        //   2. "the <Name> bit is not 0b…"        (Stop / Park protocol-error conditions, B4.2.5)
+        let definition = i >= 2
+            && words[i - 2].eq_ignore_ascii_case("single")
+            && !name.eq_ignore_ascii_case("single");
+        let error_condition = i >= 2
+            && words[i - 2].eq_ignore_ascii_case("the")
+            && words
+                .get(i + 1)
+                .is_some_and(|w| w.eq_ignore_ascii_case("is"))
+            && words
+                .get(i + 2)
+                .is_some_and(|w| w.eq_ignore_ascii_case("not"));
+        if !(definition || error_condition) {
+            continue;
+        }
+        let mut cap = name.to_ascii_lowercase();
+        if let Some(first) = cap.get_mut(0..1) {
+            first.make_ascii_uppercase();
+        }
+        if is_signal_synthesis_non_signal(&cap.to_ascii_uppercase()) {
+            continue;
+        }
+        if !out.contains(&cap) {
+            out.push(cap);
+        }
+    }
+    out
 }
 
 /// Parse named single-bit fields from "the N bits X, Y and Z" prose → [X, Y, …]. Each list item the
@@ -13473,5 +13540,85 @@ mod swd_serial_extraction_4c {
             Some(SwdioDirection::TargetDrives),
             "read data driven by target"
         );
+    }
+}
+
+#[cfg(test)]
+mod swd_serial_extraction_4b {
+    //! SWD-SERIAL-EXTRACTION.4b — single-bit control fields (Start/Stop/Parity/Park) complete the frame.
+    use super::*;
+
+    fn stmt(id: &str, text: &str) -> ExtractedStatement {
+        ExtractedStatement {
+            statement_id: id.to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        }
+    }
+
+    #[test]
+    fn parses_named_control_bits_only() {
+        assert_eq!(
+            parse_control_bit_fields("A single start bit, with value 0b1 ."),
+            vec!["Start".to_string()]
+        );
+        assert_eq!(
+            parse_control_bit_fields(
+                "A single stop bit. In the synchronous SWD protocol, this bit is always 0b0 ."
+            ),
+            vec!["Stop".to_string()]
+        );
+        assert_eq!(
+            parse_control_bit_fields("A single parity bit for the preceding packet."),
+            vec!["Parity".to_string()]
+        );
+        assert_eq!(
+            parse_control_bit_fields("The Park bit is not 0b1 ."),
+            vec!["Park".to_string()]
+        );
+        // Register-heavy noise must NOT match (the broad "<Word> bit" form is rejected).
+        assert!(
+            parse_control_bit_fields("To clear the WDATAERR bit to 0b0 , write 0b1.").is_empty()
+        );
+        assert!(
+            parse_control_bit_fields("Each bit of the register is independently writable.")
+                .is_empty()
+        );
+        assert!(
+            parse_control_bit_fields("A single bit, indicating whether the access is a read.")
+                .is_empty()
+        );
+    }
+
+    #[test]
+    fn control_bits_join_the_request_frame() {
+        let stmts = vec![
+            stmt(
+                "d",
+                "The SWD interface uses a single bidirectional data pin, SWDIO.",
+            ),
+            stmt(
+                "r",
+                "An eight-bit write packet request, from the host to the target. APnDP, RnW are request bits.",
+            ),
+            stmt("s", "Start: A single start bit, with value 0b1 ."),
+            stmt(
+                "p",
+                "Park: A single bit. The Park bit is not 0b1 in a protocol error.",
+            ),
+        ];
+        let fields = extract_serial_frame_fields(&stmts);
+        let names: Vec<&str> = fields.iter().map(|f| f.name.as_str()).collect();
+        assert!(
+            names.contains(&"Start") && names.contains(&"Park"),
+            "got {names:?}"
+        );
+        // they are request-phase, host-driven (the host drives the packet request onto SWDIO)
+        let start = fields.iter().find(|f| f.name == "Start").unwrap();
+        assert_eq!(start.phase, Some(SerialFramePhase::Request));
+        assert_eq!(start.swdio_direction, Some(SwdioDirection::HostDrives));
     }
 }

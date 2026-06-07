@@ -144,9 +144,14 @@ WDATA/RDATA — MISSING Start/Parity/Stop/Park, no direction/sequence/turnaround
   evidence: A/DATAIN/APnDP/RnW=`host_drives`, ACK=`target_drives`, WDATA=`host_drives`, RDATA=`target_drives`
   (exactly the spec). Parallel buses emit 0 serial_frame_fields (no pollution); +3 hermetic tests; full
   `scripts/run_ci.sh` green. This is "drive commands / sample data on SWDIO via the FSM".
-- `SWD-SERIAL-EXTRACTION.4b` — the **SWD packet phase FSM** + transitions (request → Trn → ack → Trn → data),
-  distinct from the JTAG TAP FSM; + the missing fields Start/Parity/Stop/Park; + turnarounds; + response
-  branching (OK/WAIT/FAULT → 2- vs 3-phase).
+- `SWD-SERIAL-EXTRACTION.4b` — **partly DONE (missing fields).** Added `parse_control_bit_fields`: the
+  request-frame control bits **Start / Parity / Stop / Park** are now captured (1-bit, request phase,
+  host-driven) from two high-precision phrasings — "A single `<name>` bit …" (Start/Stop/Parity) and "the
+  `<Name>` bit is not 0b…" (Stop/Park protocol-error, B4.2.5) — the broad "`<Word>` bit" form is rejected
+  (it over-matched ~30 register names). **SWD packet request frame now complete:** A/DATAIN/APnDP/RnW/Start/
+  Parity/Stop/Park (host) · ACK (target) · WDATA (host)/RDATA (target), ordered, with SWDIO direction. +2
+  hermetic tests; parallel buses still 0; CI green. **Remaining `.4b`:** turnaround (Trn) markers, the
+  phase-transition FSM (request→Trn→ack→Trn→data), and response branching (OK→3-phase, WAIT/FAULT→2-phase).
 - `SWD-SERIAL-EXTRACTION.4d` — the **line state machine** (reset/operating/protocol-error/lockout/dormant) +
   edge timing (sample & drive on rising SWCLK, B4.3.1) + line-reset + parity/protocol-error rules.
 - `SWD-SERIAL-EXTRACTION.5` — DONE for the (minor) measurable scores: `seed_swd.json` constraint + relation

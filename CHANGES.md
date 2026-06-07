@@ -2,6 +2,16 @@
 
 ## 2026-06-07
 
+### `SWD-SERIAL-EXTRACTION.4b` (missing fields) — complete the SWD packet request frame
+Added `parse_control_bit_fields`: the request-frame control bits Start / Parity / Stop / Park are now
+captured (1-bit, request phase, host-driven) from two high-precision phrasings — "A single <name> bit ..."
+(Start/Stop/Parity) and "the <Name> bit is not 0b..." (Stop/Park protocol-error, B4.2.5). The broad
+"<Word> bit" form is rejected (it over-matched ~30 register names in this register-heavy doc). The SWD
+packet request frame is now complete (A/DATAIN/APnDP/RnW/Start/Parity/Stop/Park host-driven; ACK target;
+WDATA host / RDATA target; ordered, with SWDIO direction). +2 hermetic tests; parallel buses still emit 0
+serial_frame_fields; full scripts/run_ci.sh green. Remaining .4b: turnaround markers + phase-transition FSM
++ OK/WAIT/FAULT response branching.
+
 ### `SWD-SERIAL-EXTRACTION.4c` — per-phase SWDIO direction (drive commands / sample data via the FSM)
 Added `SwdioDirection {HostDrives, TargetDrives}` + `swdio_direction` on `SerialFrameField`;
 `extract_serial_frame_fields` derives it from the spec's own "from the <A> to the <B>" / "<A> to <B>,
