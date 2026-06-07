@@ -128,7 +128,11 @@ a stats-script regex bug — ingest OK; re-measure with the hardened helper.)
   register NAME from preceding heading (synthetic today — tables aren't in Docling's content_elements
   reading-order, so reliable association is deferred, not faked); block/base grouping; array/instance;
   parametric `size_expr` + cross-document width resolution.
-- `PDF-VARIANT-DIGESTION.2d` (deterministic) — TOC/revision/index NOISE filter (general structure).
+- `PDF-VARIANT-DIGESTION.2d` (deterministic) — **DONE**: `table_is_noise` flags non-data NOISE tables (table
+  of contents, list of tables/figures, revision history, section index) by general structure — dotted
+  page-leaders, contents/revision caption-or-header, or rows mostly prefixed by a section number (no chip
+  names). The VLM passes skip them (no wasted calls; CCIX has ~220 TOC tables) and `enrich` reports
+  `tables_skipped_as_noise`. +1 hermetic test; full CI green.
 - `PDF-VARIANT-DIGESTION.3` (Lever B) — prose ENTITY capture: extend prose signal capture + add prose
   ACTOR/AGENT capture (ground the agent model from prose, not only as a relation subject).
 

@@ -14,7 +14,8 @@ use crate::ir::semantic::InterfaceSignalSemanticRole;
 use crate::ir::source::{
     ActorSignalRelation, ConditionalRuleRecord, RegisterFieldEnumRecord, RegisterFieldRecord,
     RegisterRecord, RelationKind, SignalConstraintKind, SignalConstraintRecord,
-    StructuredTableCellRecord, TimingConstraintRecord, ValidationReportRecord, WidthHint,
+    StructuredTableCellRecord, StructuredTableRecord, TimingConstraintRecord,
+    ValidationReportRecord, WidthHint,
 };
 use crate::ir::source::{
     AutomationConfidence, DiagramKind, NormalizationStatus, SectionKind, SourceIr, TableKind,
@@ -8157,6 +8158,104 @@ fn register_is_bit_layout_grid(reg: &RegisterRecord) -> bool {
             .all(|f| f.field_name.trim().bytes().all(|b| b.is_ascii_digit()))
 }
 
+/// PDF-VARIANT-DIGESTION.2d — a NON-DATA noise table (table of contents, list of tables/figures, revision
+/// history, section index) that should stay unextracted. Recognized by GENERAL structural signals — dotted
+/// page-leaders, a contents/revision caption-or-header, or rows mostly prefixed by a section number — never
+/// chip names (ADR 0006). Used to skip wasted VLM work and to report a clean noise count.
+pub fn table_is_noise(table: &StructuredTableRecord) -> bool {
+    let all_cells = || {
+        table
+            .header_rows
+            .iter()
+            .chain(table.body_rows.iter())
+            .flat_map(|r| r.iter().map(|c| c.text.trim()))
+    };
+    if all_cells().next().is_none() {
+        return false;
+    }
+    // 1. Dotted page-leaders ("Preface . . . . . 1", "BOOT_BUS [177]....184").
+    let dotted = all_cells()
+        .filter(|c| c.contains("....") || c.matches(". .").count() >= 3)
+        .count();
+    if dotted >= 2 {
+        return true;
+    }
+    // 2. A contents / revision-history caption or header.
+    let mut blob = table
+        .caption_text
+        .clone()
+        .unwrap_or_default()
+        .to_ascii_lowercase();
+    if let Some(h) = table.header_rows.first() {
+        for c in h {
+            blob.push(' ');
+            blob.push_str(&c.text.to_ascii_lowercase());
+        }
+    }
+    if [
+        "table of contents",
+        "list of tables",
+        "list of figures",
+        "revision history",
+        "document history",
+    ]
+    .iter()
+    .any(|k| blob.contains(k))
+    {
+        return true;
+    }
+    let has = |k: &str| blob.contains(k);
+    if has("version")
+        && (has("issue date")
+            || has("comments")
+            || has("changes")
+            || (has("date") && has("description")))
+    {
+        return true;
+    }
+    // 3. Section-index rows: most first-column body cells start with a section number ("1.1.", "B4.2").
+    let firsts: Vec<&str> = table
+        .body_rows
+        .iter()
+        .filter_map(|r| r.first())
+        .map(|c| c.text.trim())
+        .filter(|s| !s.is_empty())
+        .collect();
+    if firsts.len() >= 3 {
+        let idx = firsts
+            .iter()
+            .filter(|s| looks_like_section_number(s))
+            .count();
+        if idx * 2 >= firsts.len() {
+            return true;
+        }
+    }
+    false
+}
+
+/// A leading section-number token like `1`, `1.1`, `5.3.`, `B4.2` — digits/dots (an optional leading letter),
+/// requiring at least one digit AND one dot so single numbers (a bit index) and bit ranges are not matched.
+fn looks_like_section_number(s: &str) -> bool {
+    let token = s
+        .split_whitespace()
+        .next()
+        .unwrap_or("")
+        .trim_end_matches('.');
+    if token.is_empty() {
+        return false;
+    }
+    let (mut has_digit, mut has_dot) = (false, false);
+    for ch in token.chars() {
+        match ch {
+            c if c.is_ascii_digit() => has_digit = true,
+            '.' => has_dot = true,
+            c if c.is_ascii_alphabetic() => {}
+            _ => return false,
+        }
+    }
+    has_digit && has_dot
+}
+
 /// Field width from a `[high:low]` range: `high - low + 1` when both bounds are present and ordered.
 fn bit_width_from_range(bits_high: Option<u32>, bits_low: Option<u32>) -> Option<u32> {
     match (bits_high, bits_low) {
@@ -8912,6 +9011,52 @@ mod tests {
         assert!(!super::register_is_bit_layout_grid(&reg(vec![mk("63:61")])));
         // an empty register is not a grid
         assert!(!super::register_is_bit_layout_grid(&reg(vec![])));
+    }
+
+    #[test]
+    fn noise_tables_detected_data_tables_not() {
+        let mk = |rows: Vec<Vec<&str>>, cap: Option<&str>| StructuredTableRecord {
+            table_id: "t".to_string(),
+            asset_id: "a".to_string(),
+            page_id: None,
+            caption_text: cap.map(String::from),
+            source_ref: None,
+            table_kind: TableKind::Unknown,
+            header_rows: vec![],
+            body_rows: rows
+                .iter()
+                .map(|r| r.iter().map(|c| make_table_cell(c, false)).collect())
+                .collect(),
+            row_count: rows.len() as u32,
+            col_count: rows.first().map(|r| r.len() as u32).unwrap_or(0),
+        };
+        // dotted page-leaders (table of contents)
+        assert!(super::table_is_noise(&mk(
+            vec![vec!["Preface........1"], vec!["1.1. Scope.....8"]],
+            None
+        )));
+        // section-index rows
+        assert!(super::table_is_noise(&mk(
+            vec![
+                vec!["1.1.", "Scope"],
+                vec!["1.2.", "Terms"],
+                vec!["5.3.", "Setup"]
+            ],
+            None
+        )));
+        // revision history via caption
+        assert!(super::table_is_noise(&mk(
+            vec![vec!["1.0", "First release"]],
+            Some("Revision History")
+        )));
+        // a real register-field table is NOT noise
+        assert!(!super::table_is_noise(&mk(
+            vec![
+                vec!["Field", "Description", "Access", "Reset"],
+                vec!["haltreq", "halt the hart", "R/W", "0"],
+            ],
+            None
+        )));
     }
 
     #[test]

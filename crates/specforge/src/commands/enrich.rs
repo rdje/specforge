@@ -113,6 +113,16 @@ pub fn run(args: EnrichArgs) -> Result<()> {
             println!("vlm_errors: {}", enriched.errors);
 
             source_ir.visual_assets = enriched.updated_assets;
+            // PDF-VARIANT-DIGESTION.2d — count non-data noise tables (TOC / revision / index) that the VLM
+            // passes skip, so they don't waste calls and the unknown count is reported honestly.
+            let noise_tables = source_ir
+                .structured_tables
+                .iter()
+                .filter(|t| {
+                    t.table_kind == TableKind::Unknown && crate::ir::evidence::table_is_noise(t)
+                })
+                .count();
+            println!("tables_skipped_as_noise: {noise_tables}");
             // PDF-VARIANT-DIGESTION.2b' — VLM grid repair: re-extract degenerate `unknown` tables (Docling
             // failed to structure them) from their images so the deterministic extractors can run.
             let (tables_repaired, repair_errors) = repair_degenerate_tables_via_vlm(
@@ -471,7 +481,9 @@ fn classify_unknown_tables_via_vlm(
         .structured_tables
         .iter()
         .enumerate()
-        .filter(|(_, t)| t.table_kind == TableKind::Unknown)
+        .filter(|(_, t)| {
+            t.table_kind == TableKind::Unknown && !crate::ir::evidence::table_is_noise(t)
+        })
         .filter_map(|(i, t)| {
             image_by_asset
                 .get(t.asset_id.as_str())
@@ -521,7 +533,11 @@ fn repair_degenerate_tables_via_vlm(
         .structured_tables
         .iter()
         .enumerate()
-        .filter(|(_, t)| t.table_kind == TableKind::Unknown && table_is_degenerate(t))
+        .filter(|(_, t)| {
+            t.table_kind == TableKind::Unknown
+                && table_is_degenerate(t)
+                && !crate::ir::evidence::table_is_noise(t)
+        })
         .filter_map(|(i, t)| {
             image_by_asset
                 .get(t.asset_id.as_str())

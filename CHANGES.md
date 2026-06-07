@@ -1,3 +1,11 @@
+### `PDF-VARIANT-DIGESTION.2d` — TOC/revision/index noise filter
+`table_is_noise` (evidence.rs) flags non-data NOISE tables — table of contents, list of tables/figures,
+revision history, section index — by general structure: dotted page-leaders ("Preface....1"), a
+contents/revision caption-or-header, or rows mostly prefixed by a section number ("1.1.", "B4.2"). No chip
+names (ADR 0006). The VLM passes (.2b/.2b') skip noise tables so they don't waste VLM calls (CCIX has ~220
+TOC tables) or get spuriously reclassified; `enrich` reports `tables_skipped_as_noise`. +1 hermetic test;
+full run_ci.sh green.
+
 ### `PDF-VARIANT-DIGESTION.2b'` — VLM grid repair (table extraction)
 ~10% of corpus tables (262) are degenerate — Docling failed to structure them (<=1 column), so no
 deterministic extractor can run. `enrich --vlm-provider` now runs repair_degenerate_tables_via_vlm: the VLM
