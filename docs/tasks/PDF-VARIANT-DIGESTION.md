@@ -159,6 +159,45 @@ grid-repair demo on a bits-bearing doc; giants' ingest budget; USB 3.2 evid-fail
   target.** Additive new surface (no eval impact; wire-based unaffected); +2 hermetic tests; full CI green.
   KM `prose-signal-capture`.
 
+## Planned next — from the corpus-sweep learnings (`2026-06-08`)
+
+The sweep proved BREADTH (66/74 in-scope docs yield extraction; 1,908 signals / 2,953 registers / 10,632
+fields / 3,077 relations) but only **4/74 (5%) have verified precision** (APB/AHB/AXI/SWD golds). The
+through-line for these leaves: make the breadth TRUSTWORTHY (objectively measured, no faking) before widening
+it further. Priority order ① → ⑤.
+
+- ID: `PDF-VARIANT-DIGESTION.4` · Status: `pending` · **① Correctness/precision verification of the broadened
+  extraction** (the 95% that is coverage-only). Children:
+  - ID: `PDF-VARIANT-DIGESTION.4a` · Status: `pending` · Goal: sample-gold the new surfaces (register fields,
+    prose signals) on ~5–8 diverse in-scope docs (CCIX, NVMe, RISC-V IOMMU/Debug, OpenCAPI, a GIC/CoreSight
+    TRM); score per-fact with WIRE-BASED-100 rigor. Accept: per-fact P/R/F1 reported per doc; gold facts
+    independently verified against the source (no faking, [[feedback_scoring_rigor]]).
+  - ID: `PDF-VARIANT-DIGESTION.4b` · Status: `pending` · Goal: automated proposer/verifier AUDIT — re-read a
+    random sample of extracted registers/signals against their table IMAGE with the VLM (the `.2b`
+    consistency gate run as an audit) → a corpus-scale precision ESTIMATE + a flagged-mismatch list. Accept:
+    a measured precision estimate over a stated sample size; garbage surfaced, not hidden.
+- ID: `PDF-VARIANT-DIGESTION.5` · Status: `pending` · **② Doc-class routing + per-doc completeness gauge.**
+  Children:
+  - ID: `PDF-VARIANT-DIGESTION.5a` · Status: `pending` · Goal: detect doc class (protocol / register /
+    interface / guide) from structure; apply class-appropriate surfaces; report GUIDES as "low structured
+    design-intent" honestly (not a 0 failure). Accept: each doc tagged with a class; the 8 zero-yield docs
+    correctly identified as guides / image-heavy, not silent misses.
+  - ID: `PDF-VARIANT-DIGESTION.5b` · Status: `pending` · Goal: per-doc COMPLETENESS gauge (every register has
+    fields? every signal a direction? unaccounted intent-bearing tables?) — extend the mandatory-width flag
+    into a coverage/quality report surfaced by `validate`. Accept: honest per-doc gap counts; no fabrication.
+- ID: `PDF-VARIANT-DIGESTION.6` · Status: `pending` · **③ VLM levers on the addressable zero-yield** — run
+  `.2b`/`.2b'` on the image-table-heavy zero docs (OpenCAPI PHY-mech / AFU). Accept: measured uplift (tables
+  reclassified/repaired → records) with 0 garbage (verification gate); honest report where the VLM also can't.
+- ID: `PDF-VARIANT-DIGESTION.7` · Status: `pending` · **④ Concrete defects from the sweep** — investigate +
+  fix the USB 3.2 evidence-build FAIL; adopt "measure from typed `evidence_ir/` artifacts" as the convention
+  (the sweep's `rel` variable-collision bug). (Giant-ingest chunking deferred — those were ISA, now out of
+  scope.)
+- ID: `PDF-VARIANT-DIGESTION.8` · Status: `pending` · **⑤ Broaden prose-actor capture** (only 16/74 today) —
+  add agent-definition forms and/or ground actors via relations. Accept: more docs with actors, `is_agent_noun`
+  gate keeps it garbage-free, no regression on the wire-based specs.
+
+In flight: `.2b'` NVMe grid-repair demo (background) — confirms VLM extraction end-to-end before `.6`.
+
 ## Decisions
 
 - Triage-first: measure what breaks across variants before building, so features target real gaps (the
