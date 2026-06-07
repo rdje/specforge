@@ -2,6 +2,8 @@
 
 Deterministic pipeline (ingest -> evidence, no VLM) over the corpus. 77 docs produced evidence.
 
+> **ISA / instruction-set specs are OUT OF SCOPE** (chip design uses hardware interface/register/protocol specs, not the software programming model). The 7 ISA-class PDFs (ARM A32/T32 & A64 instruction sets, A64 ISA Guide, ARM Architecture Registers, Intel SDM, AMD64 SDM, RISC-V Privileged) are excluded; most of the 5 ingest-timeouts were these. Effective corpus ~75.
+
 | doc_key | signals | registers | fields | actors | constraints | relations |
 |---|--:|--:|--:|--:|--:|--:|
 | 100336_0106_00_2019_02_08_gic_600_technical_reference_manual | 83 | 15 | 214 | 0 | 9 | 108 |
@@ -12,15 +14,12 @@ Deterministic pipeline (ingest -> evidence, no VLM) over the corpus. 77 docs pro
 | 101130_0002_02_2018_11_30_coresight_sdc_600_technical_reference_manual | 114 | 0 | 0 | 0 | 0 | 0 |
 | 101542_0102_08_2023_07_05_arm_mmu_700_technical_reference_manual | 384 | 13 | 91 | 0 | 7 | 25 |
 | 102196_0100_01_2022_05_05_aarch64_external_debug_guide | 0 | 0 | 0 | 0 | 0 | 0 |
-| 102374_0102_01_2023_12_05_a64_isa_guide | 0 | 0 | 0 | 0 | 0 | 0 |
 | 102520_0101_01_2025_09_15_introducing_coresight_debug_and_trace | 4 | 0 | 0 | 0 | 0 | 9 |
 | 109242_0100_01_2023_09_04_arm_smmu_software_guide | 0 | 0 | 0 | 0 | 0 | 0 |
 | 198123_0302_03_2025_04_22_generic_interrupt_controller_overview_guide | 0 | 0 | 0 | 0 | 0 | 0 |
 | 1_0_1_2026_02_22_risc_v_iommu_architecture_specification | 0 | 33 | 147 | 0 | 11 | 0 |
 | 1_0_2025_03_12_risc_v_advanced_interrupt_architecture | 0 | 0 | 0 | 2 | 0 | 0 |
 | 1_0_risc_v_debug_specification | 10 | 60 | 179 | 1 | 0 | 20 |
-| 20260120_risc_v_privileged_architecture | 0 | 39 | 3 | 8 | 7 | 0 |
-| 24593_3_42_2024_03_amd64_architecture_programmers_manual_volume_2_system_programming | 11 | 197 | 687 | 4 | 2 | 684 |
 | 48882_pub_3_10_2025_02_amd_io_virtualization_technology_iommu_specification | 3 | 11 | 0 | 0 | 0 | 64 |
 | 5_0_2024_08_intel_virtualization_technology_for_directed_io_specification | 0 | 103 | 318 | 2 | 4 | 0 |
 | 683091_18_1_2021_12_25_avalon_interface_specifications | 32 | 8 | 32 | 1 | 0 | 126 |

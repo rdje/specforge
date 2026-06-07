@@ -12,6 +12,8 @@ evidence: docs/corpus_coverage_2026-06-08.md (per-doc matrix); /tmp/corpus_cover
 reverify: "python3 over generated/evidence_ir/*/evidence_ir.json — count Signal-decls / register_records+fields / protocol_actors / signal_constraints / actor_signal_relations per doc-key"
 ---
 
+**ISA / instruction-set specs are OUT OF SCOPE** (owner `2026-06-08`: chip design uses hardware interface/register/protocol specs, not the software programming model — the 7 ISA-class PDFs are excluded; effective corpus ~75; their generated artifacts were removed; most of the 5 ingest-timeouts were these giant ISA manuals → moot).
+
 PDF-VARIANT-DIGESTION.1 re-triage: ran the DETERMINISTIC pipeline (ingest → evidence, no VLM; 480s/doc
 timeout, `normalized` reclaimed per doc) across the 82-PDF library to measure the Lever A+B uplift.
 
