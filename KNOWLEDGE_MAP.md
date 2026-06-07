@@ -3,7 +3,7 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Regenerate with `knowledge-map/scripts/gen_knowledge_map.sh`.
 > Source of truth = YAML front-matter in: `docs/knowledge docs/decisions`. Edit the fact files, never this map.
 > A fact is any `.md` whose front-matter has a non-empty `answers:` list.
-> **30** facts · **157** question keys.
+> **31** facts · **162** question keys.
 
 ## Questions → fact
 
@@ -14,8 +14,10 @@
 - "are temporal rules silently dropped when lowering IntentIR to .isf" -> [isf-temporal-lowering-no-silent-drop](docs/knowledge/isf-temporal-lowering-no-silent-drop.md) · 2026-06-04 · reverify: `grep -n "temporal_residuals" crates/specforge/src/ir/isf_ir.rs crates/specforge/src/ir/adapters.rs`
 - "are the APB signals PCLK PADDR PWDATA the parity-check PADDRCHK extracted" -> [apb-signal-catalog-fully-extracted](docs/knowledge/apb-signal-catalog-fully-extracted.md) · 2026-06-06 · reverify: `./target/debug/specforge validate generated/evidence_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/evidence_ir.json 2>/dev/null | sed -n '/Region Accounting/,/convergence:/p'`
 - "are the degenerate PSEL-header or WIDTH-subject temporal rules a live bug" -> [temporal-eval-residual-fps-are-stale](docs/knowledge/temporal-eval-residual-fps-are-stale.md) · 2026-06-02 · reverify: `grep -n " when " crates/specforge/src/ir/evidence.rs`
+- "can ISF model an explicit state machine / given FSM" -> [isf-no-explicit-fsm-abstraction](docs/knowledge/isf-no-explicit-fsm-abstraction.md) · 2026-06-07 · reverify: `grep -nE "IAL0|IAL1|scheduling-intent" subs/fsmgen/docs/ISF_PUBLIC_INTERFACE_CONTRACT.md | head`
 - "can SpecForge use FSMGen's (stable …) sampled-value predicate" -> [stable-obligation-phase-scoped-residual](docs/knowledge/stable-obligation-phase-scoped-residual.md) · 2026-06-04 · reverify: `grep -n "bare stability across tick phases" crates/specforge/src/ir/contract.rs`
 - "can WIRE-BASED-100 reach 100% on SWD the same way as the parallel buses" -> [swd-adi-not-signal-table-spec](docs/knowledge/swd-adi-not-signal-table-spec.md) · 2026-06-07 · reverify: `python3 -c "import json,re; e=json.load(open('generated/evidence_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/evidence_ir.json')); print(sorted({re.match(r'Signal (\w+)',s['text']).group(1) for s in e['extracted_statements'] if s['text'].startswith('Signal ')}))`
+- "can the SWD serial frame be modeled in ISF" -> [isf-no-explicit-fsm-abstraction](docs/knowledge/isf-no-explicit-fsm-abstraction.md) · 2026-06-07 · reverify: `grep -nE "IAL0|IAL1|scheduling-intent" subs/fsmgen/docs/ISF_PUBLIC_INTERFACE_CONTRACT.md | head`
 - "default model for the ollama provider" -> [llm-vlm-provider-default](docs/knowledge/llm-vlm-provider-default.md) · 2026-06-01 · reverify: `grep -n "qwen2.5vl" crates/specforge/src/commands/llm_text.rs`
 - "did a second annotator validate seed_apb.json" -> [eval-gold-interannotator-kappa](docs/knowledge/eval-gold-interannotator-kappa.md) · 2026-06-05 · reverify: `true  # MANUAL: re-run a blind second annotation per EVAL-GOLD-INTERANNOTATOR-AGREEMENT.md Method and recompute kappa (not an automatable grep)`
 - "do text-reasoning tasks need a vision model" -> [local-llm-for-text-reasoning](docs/knowledge/local-llm-for-text-reasoning.md) · 2026-06-05 · reverify: `ollama list  # qwen2.5:14b-instruct (text) + qwen2.5vl:7b (vision); re-run the NLI/kappa probes`
@@ -61,6 +63,7 @@
 - "how many signals does each AXI channel have" -> [axi-channel-structure](docs/knowledge/axi-channel-structure.md) · 2026-06-07 · reverify: `python3 -c "import json,re; e=json.load(open('generated/evidence_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/evidence_ir.json')); d={re.match(r'Signal (\w+)',s['text']).group(1) for s in e['extracted_statements'] if s['text'].startswith('Signal ')}; print(sorted(x for x in d if x.startswith('AW'))[:10])`
 - "how should an AXI gold or extraction be structured (per channel)" -> [axi-channel-structure](docs/knowledge/axi-channel-structure.md) · 2026-06-07 · reverify: `python3 -c "import json,re; e=json.load(open('generated/evidence_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/evidence_ir.json')); d={re.match(r'Signal (\w+)',s['text']).group(1) for s in e['extracted_statements'] if s['text'].startswith('Signal ')}; print(sorted(x for x in d if x.startswith('AW'))[:10])`
 - "how to get a fresh eval-extraction baseline for a spec" -> [eval-scores-persisted-evidence](docs/knowledge/eval-scores-persisted-evidence.md) · 2026-06-07 · reverify: `./target/debug/specforge evidence generated/source_ir/<doc_key>/source_ir.json   # errors if normalized was reclaimed`
+- "how to lower the JTAG TAP / SWD FSM to .isf" -> [isf-no-explicit-fsm-abstraction](docs/knowledge/isf-no-explicit-fsm-abstraction.md) · 2026-06-07 · reverify: `grep -nE "IAL0|IAL1|scheduling-intent" subs/fsmgen/docs/ISF_PUBLIC_INTERFACE_CONTRACT.md | head`
 - "how was AHB HREADY recovered for the temporal antecedent" -> [rotated-signal-table-extraction](docs/knowledge/rotated-signal-table-extraction.md) · 2026-06-07 · reverify: `./target/debug/specforge eval-extraction crates/specforge/test_data/llm_eval/seed_ahb_temporal.json --provider skip 2>/dev/null | grep temporal_rule`
 - "how was AXI constraint precision fixed" -> [axi-constraint-subject-must-be-declared](docs/knowledge/axi-constraint-subject-must-be-declared.md) · 2026-06-07 · reverify: `./target/debug/specforge eval-extraction crates/specforge/test_data/llm_eval/seed_axi.json --provider skip 2>/dev/null | grep -A1 source-tolerant`
 - "how was the eval gold checked for idiosyncrasy" -> [eval-gold-interannotator-kappa](docs/knowledge/eval-gold-interannotator-kappa.md) · 2026-06-05 · reverify: `true  # MANUAL: re-run a blind second annotation per EVAL-GOLD-INTERANNOTATOR-AGREEMENT.md Method and recompute kappa (not an automatable grep)`
@@ -75,6 +78,7 @@
 - "is the eval-extraction temporal precision 0.6 a real defect" -> [temporal-eval-residual-fps-are-stale](docs/knowledge/temporal-eval-residual-fps-are-stale.md) · 2026-06-02 · reverify: `grep -n " when " crates/specforge/src/ir/evidence.rs`
 - "is there a PSL or SVA export of temporal rules" -> [temporal-rule-ltl-rendering](docs/knowledge/temporal-rule-ltl-rendering.md) · 2026-06-04 · reverify: `grep -n "fn temporal_rule_to_ltl" crates/specforge/src/ir/temporal_ltl.rs`
 - "is there a lowering-completeness check for temporal rules" -> [isf-temporal-lowering-no-silent-drop](docs/knowledge/isf-temporal-lowering-no-silent-drop.md) · 2026-06-04 · reverify: `grep -n "temporal_residuals" crates/specforge/src/ir/isf_ir.rs crates/specforge/src/ir/adapters.rs`
+- "is there an ISF gap for SWD/JTAG and was a feature request raised" -> [isf-no-explicit-fsm-abstraction](docs/knowledge/isf-no-explicit-fsm-abstraction.md) · 2026-06-07 · reverify: `grep -nE "IAL0|IAL1|scheduling-intent" subs/fsmgen/docs/ISF_PUBLIC_INTERFACE_CONTRACT.md | head`
 - "is tier-agreement a good confidence axis for conformal calibration" -> [conformal-tier-agreement-degenerate](docs/knowledge/conformal-tier-agreement-degenerate.md) · 2026-06-06 · reverify: `grep -n "tier_count_by_fact_key\|nli_conformal_pass" crates/specforge/src/ir/nli_verify.rs`
 - "qwen2.5vl vs qwen3-vl which model" -> [llm-vlm-provider-default](docs/knowledge/llm-vlm-provider-default.md) · 2026-06-01 · reverify: `grep -n "qwen2.5vl" crates/specforge/src/commands/llm_text.rs`
 - "should I build an isf lowering-completeness verifier for temporal rules" -> [isf-temporal-lowering-no-silent-drop](docs/knowledge/isf-temporal-lowering-no-silent-drop.md) · 2026-06-04 · reverify: `grep -n "temporal_residuals" crates/specforge/src/ir/isf_ir.rs crates/specforge/src/ir/adapters.rs`
@@ -101,6 +105,7 @@
 - "what field holds the constrained signal name (signal_name vs subject_signal)" -> [apb-signal-catalog-fully-extracted](docs/knowledge/apb-signal-catalog-fully-extracted.md) · 2026-06-06 · reverify: `./target/debug/specforge validate generated/evidence_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/evidence_ir.json 2>/dev/null | sed -n '/Region Accounting/,/convergence:/p'`
 - "what fsmgen pin does SpecForge target for temporal properties" -> [fsmgen-temporal-isf-form](docs/knowledge/fsmgen-temporal-isf-form.md) · 2026-06-04 · reverify: `grep -n "assert (monitor (within" crates/specforge/src/ir/isf_ir.rs`
 - "what happens when the NLI provider is down" -> [nli-entailment-verifier](docs/knowledge/nli-entailment-verifier.md) · 2026-06-05 · reverify: `grep -n "fn verify_entailment" crates/specforge/src/ir/nli_verify.rs`
+- "what is IAL0 vs IAL1 (.fsm vs .isf)" -> [isf-no-explicit-fsm-abstraction](docs/knowledge/isf-no-explicit-fsm-abstraction.md) · 2026-06-07 · reverify: `grep -nE "IAL0|IAL1|scheduling-intent" subs/fsmgen/docs/ISF_PUBLIC_INTERFACE_CONTRACT.md | head`
 - "what is ProtocolStateRecord / protocol_states / DBGTAPSM" -> [swd-protocol-fsm-surface](docs/knowledge/swd-protocol-fsm-surface.md) · 2026-06-07 · reverify: `python3 -c "import json; e=json.load(open('generated/evidence_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/evidence_ir.json')); print([s['state_name'] for s in e.get('protocol_states',[])])`
 - "what is SerialFrameField / serial_frame_fields / SerialFramePhase" -> [swd-serial-frame-surface](docs/knowledge/swd-serial-frame-surface.md) · 2026-06-07 · reverify: `python3 -c "import json; e=json.load(open('generated/evidence_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/evidence_ir.json')); print([(f['name'],f.get('bit_width')) for f in e.get('serial_frame_fields',[])])`
 - "what is SpecForge doing in academic or research terms" -> [spec-mining-framing](docs/knowledge/spec-mining-framing.md) · 2026-06-04 · reverify: `grep -rn "forward specification mining" README.md docs/book/src/architecture-rationale.md`
@@ -292,6 +297,15 @@ _Un-indexed prose signal refs resolve to the declared indexed family member (PSE
 - **evidence:** `docs/tasks/WIRE-BASED-100.md; crates/specforge/src/ir/semantic.rs (resolve_indexed_signal_family, temporal_clause_value, parse_temporal_condition_predicates)`
 - **reverify:** `./target/debug/specforge eval-extraction crates/specforge/test_data/llm_eval/seed_apb_temporal.json --provider skip 2>/dev/null | sed -n '/Extraction eval/,/source-tolerant/p'`
 - **source:** [`docs/knowledge/indexed-signal-family-canonicalization.md`](docs/knowledge/indexed-signal-family-canonicalization.md)
+
+### isf-no-explicit-fsm-abstraction
+_ISF (IAL1) has no construct to DECLARE a given explicit FSM — feature request raised for SWD/JTAG_
+
+- **answers:** can ISF model an explicit state machine / given FSM | how to lower the JTAG TAP / SWD FSM to .isf | is there an ISF gap for SWD/JTAG and was a feature request raised | what is IAL0 vs IAL1 (.fsm vs .isf) | can the SWD serial frame be modeled in ISF
+- **date:** 2026-06-07 · **status:** current
+- **evidence:** `docs/fsmgen-issues/sf-isf-explicit-fsm-declaration/README.md; subs/fsmgen/docs/ISF_PUBLIC_INTERFACE_CONTRACT.md; subs/fsmgen/docs/ISF_DOWNSTREAM_INTEGRATION_SPEC.md (§11.4); docs/tasks/SWD-SERIAL-EXTRACTION.md (.6)`
+- **reverify:** `grep -nE "IAL0|IAL1|scheduling-intent" subs/fsmgen/docs/ISF_PUBLIC_INTERFACE_CONTRACT.md | head`
+- **source:** [`docs/knowledge/isf-no-explicit-fsm-abstraction.md`](docs/knowledge/isf-no-explicit-fsm-abstraction.md)
 
 ### isf-temporal-lowering-no-silent-drop
 _temporal_rules are never silently dropped in the IntentIR->.isf lowering (already guaranteed)_

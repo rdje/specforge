@@ -94,7 +94,20 @@ extraction approach distinct from the parallel-bus signal-table path.
   model an explicit FSM (states + transitions) elegantly for `.5` lowering — see the ISF-abstraction
   feature-request check (owner: no hacks; raise an ISF feature request if a gap exists).
 - ID: `SWD-SERIAL-EXTRACTION.5` · Status: `pending` · Goal: build the SWD constraint/relation/temporal golds
-  from real prose, measure, and fix to `P=R=F1=1.000` (per-fact), no parallel-bus regression.
+  from real prose, measure, and fix to `P=R=F1=1.000` (per-fact), no parallel-bus regression. Also produce
+  the SWD `.isf` to substantiate the `.6` ISF feature request with a concrete lowering attempt.
+- ID: `SWD-SERIAL-EXTRACTION.6` · Status: `done` (assessment + feature request raised; substantiation at
+  `.5`) · Goal: ensure ISF can model these protocols ELEGANTLY (owner directive: no hacks; raise a feature
+  request if a gap). **Finding:** ISF layering — `.fsm`=IAL0 (the *explicit* cycle-authored FSM),
+  `.isf`=IAL1 (*scheduling-intent* synthesized into `.fsm`). SpecForge emits IAL1. IAL1 has transactions/
+  stages/timing/rules + structured control flow (`when`/`while`/`switch`) but **no first-class construct to
+  DECLARE a given explicit FSM** (named states + labeled transitions) — yet the JTAG TAP is a *given*
+  16-state TMS-driven machine. Forcing it into a scheduling transaction (synthetic TMS + current-state
+  storage) is the forbidden hack. → **Feature request raised:** `docs/fsmgen-issues/sf-isf-explicit-fsm-declaration/`
+  (an IAL1 `(state-machine …)` declaration that lowers 1:1, OR a path to contribute IAL0 `.fsm` directly,
+  OR a non-hack worked example). **Serial frame is likely NOT a gap** — ISF has SPI/I2C serial fixtures +
+  shift registers + completion pulses; confirm at `.5`. Per the contract, parser-acceptance ≠ support, so
+  the FR is substantiated with a concrete `.isf` attempt at `.5`. KM `[[isf-no-explicit-fsm-abstraction]]`.
 
 ## Current frontier
 
@@ -102,9 +115,9 @@ extraction approach distinct from the parallel-bus signal-table path.
   completing the FSM topology; + dedup the `Test-Logic/Reset` separator variant. (`.4` done: DBGTAPSM + 9
   named states with actions.) Gated by the ISF-abstraction check (`.6`): the FSM must lower to ISF without
   hacks. Then `.5` SWD golds → 100%.
-- `SWD-SERIAL-EXTRACTION.6` (owner directive, NEW) — verify ISF has the abstractions to model these
-  protocols (serial frame + FSM states/transitions) ELEGANTLY; if not, raise an ISF **feature request**
-  (no hacks). See `docs/decisions/` feature-request note.
+- `SWD-SERIAL-EXTRACTION.4b` — FSM **transitions** (TMS-driven edges) + dedup the `Test-Logic/Reset`
+  separator variant. Then `.5` SWD golds → 100% (which substantiates the `.6` ISF feature request with a
+  concrete `.isf` lowering attempt).
 
 ## Decisions
 

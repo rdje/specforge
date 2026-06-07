@@ -2,6 +2,19 @@
 
 ## 2026-06-07
 
+### `SWD-SERIAL-EXTRACTION.6` — ISF-abstraction check + feature request (owner: no hacks)
+Owner directive: ISF must model these protocols elegantly; raise a feature request if an abstraction is
+missing — no hacks. **Assessment:** ISF layering is `.fsm`=IAL0 (the explicit cycle-authored FSM),
+`.isf`=IAL1 (scheduling-intent synthesized into `.fsm`); SpecForge emits IAL1. IAL1 has transactions/
+stages/timing/rules + structured control flow (`when`/`while`/`switch`) but **no first-class construct to
+DECLARE a given explicit FSM** (named states + labeled transitions) — yet the JTAG TAP is a given 16-state
+TMS-driven machine. Encoding it as a scheduling transaction would be the forbidden hack. **Feature request
+raised:** `docs/fsmgen-issues/sf-isf-explicit-fsm-declaration/` (IAL1 `(state-machine …)` that lowers 1:1,
+or a path to contribute IAL0 `.fsm`, or a non-hack worked example). The SWD serial frame is likely NOT a
+gap (ISF has SPI/I2C serial fixtures + shift registers); confirm at `.5`. Substantiation (concrete `.isf`
+attempt) deferred to `.5` per "parser acceptance ≠ support". KM `isf-no-explicit-fsm-abstraction`; standing
+principle saved (`feedback_isf_no_hacks`).
+
 ### `SWD-SERIAL-EXTRACTION.4` — extract the protocol FSM (the JTAG TAP / SWD state machine)
 Owner insight: "SWD like JTAG is also described using a FSM … critical to the proper understanding and
 implementation of SWD/JTAG" — and it is the heart of SpecForge's purpose (IntentIR → `.isf` → FSMGen builds
