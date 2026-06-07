@@ -30,6 +30,10 @@ I2C/CCIX/USB4 with 0 table signals. `synthesize_signal_declarations_from_prose` 
   (READ/WRITE/MODE/THE/HIGH/…); ADR 0006 (no chip names).
 
 Result: I2C 0 → 10 declared signals — SDA/SCL + Hs-mode SCLH/SDAH + USCL/USDA (real wires), plus a few real
-I2C acronyms (ACK/NACK/DDC/SDR). Wire-based specs unchanged. NEXT (`.3b`): prose ACTOR/AGENT capture ("A
-controller is the device which initiates …") — ground the agent model from prose, not only as a relation
-subject ([[project_pdf_variant_digestion]]).
+I2C acronyms (ACK/NACK/DDC/SDR). Wire-based specs unchanged.
+
+**Prose ACTOR/AGENT capture (`.3b`)** — `ProtocolActorRecord` + `extract_protocol_actors` capture agents a
+spec DEFINES in prose: "A <name> is the device which/that <capability>" and "considered a/the <name>".
+`is_agent_noun` rejects function/structural words (general; admits vendor agents like SMMU). I2C → 2 actors:
+controller (def "the device that initiates a data transfer … and generates the clock") + target. New
+additive surface; no eval impact. The agent model is now grounded from prose, not only as a relation subject.

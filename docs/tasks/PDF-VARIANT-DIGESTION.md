@@ -140,9 +140,13 @@ a stats-script regex bug — ingest OK; re-measure with the hardened helper.)
   universal denylist (READ/WRITE/MODE). **I2C: 0 → 10 declared signals** (SDA/SCL + Hs SCLH/SDAH + USCL/USDA
   + ACK/NACK/DDC/SDR). Wire-based specs stay 1.000; +3 hermetic tests; full CI green. I2C PDF added to
   `corpus/`. KM `prose-signal-capture`.
-- `PDF-VARIANT-DIGESTION.3b` (Lever B, prose ACTORS/AGENTS) — NEXT: capture the agents/roles a spec defines
-  in prose ("A controller is the device which initiates …", "is considered a target") — ground the actor
-  model from prose, not only as the inferred subject of a relation (owner `2026-06-07`).
+- `PDF-VARIANT-DIGESTION.3b` (Lever B, prose ACTORS/AGENTS) — **DONE**: new `ProtocolActorRecord` surface +
+  `extract_protocol_actors` capture agents a spec DEFINES in prose — "A <name> is the device which/that
+  <capability>" and "considered a/the <name>" — grounding the agent model from prose, not only as a relation
+  subject. `is_agent_noun` rejects function/structural words (general; admits vendor agents like SMMU). **I2C:
+  2 actors — controller (def: "the device that initiates a data transfer … and generates the clock") +
+  target.** Additive new surface (no eval impact; wire-based unaffected); +2 hermetic tests; full CI green.
+  KM `prose-signal-capture`.
 
 ## Decisions
 

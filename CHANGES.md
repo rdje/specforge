@@ -1,3 +1,11 @@
+### `PDF-VARIANT-DIGESTION.3b` — prose ACTOR/AGENT capture
+New ProtocolActorRecord surface + extract_protocol_actors capture the agents a spec DEFINES in prose:
+"A <name> is the device which/that <capability>" and "considered a/the <name>". is_agent_noun rejects
+function/structural words (general — admits vendor agents like SMMU; ADR 0006). I2C: 2 actors — controller
+(definition "the device that initiates a data transfer ... and generates the clock") + target — grounding the
+agent model from prose, not only as the inferred subject of a relation. Additive new surface (no eval impact;
+wire-based unaffected); +2 hermetic tests; full run_ci.sh green. KM prose-signal-capture.
+
 ### `PDF-VARIANT-DIGESTION.3a` — prose SIGNAL capture (parenthetical abbreviation)
 Some specs name signals only in prose, not tables (I2C/CCIX/USB4 had 0 table signals).
 synthesize_signal_declarations_from_prose gained the parenthetical form ("a serial data line (SDA)") on top

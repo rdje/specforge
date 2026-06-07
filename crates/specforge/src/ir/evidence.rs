@@ -198,6 +198,10 @@ pub struct EvidenceIr {
     /// Empty (serde-skipped) for documents without a described state machine.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub protocol_states: Vec<ProtocolStateRecord>,
+    /// PDF-VARIANT-DIGESTION.3b: protocol ACTORS/AGENTS a spec defines in prose (controller, target, …).
+    /// Empty (serde-skipped) for documents that do not define agents in prose.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub protocol_actors: Vec<ProtocolActorRecord>,
     /// SWD-SERIAL-EXTRACTION.4b: the SWD packet-protocol operations — the response-branched phase
     /// sequences (OK → 3-phase request/ack/data; WAIT/FAULT → 2-phase request/ack) + turnaround model.
     /// Empty (serde-skipped) for non-serial documents.
@@ -307,6 +311,24 @@ pub struct ProtocolStateRecord {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub action: Option<String>,
     /// Statements that evidenced this state.
+    #[serde(default)]
+    pub supporting_statement_ids: Vec<String>,
+}
+
+/// PDF-VARIANT-DIGESTION.3b — a protocol ACTOR/AGENT a spec DEFINES in prose ("A controller is the device
+/// which initiates a data transfer …", "any device addressed is considered a target"). Grounds the agent
+/// model from prose, not only as the inferred subject of a relation. General agent-definition grammar; no
+/// chip-spec names (ADR 0006).
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ProtocolActorRecord {
+    /// Stable id, e.g. `protocol_actor_0001`.
+    pub actor_id: String,
+    /// The agent / role name as written (e.g. `controller`, `target`, `host`).
+    pub name: String,
+    /// The defining clause, when captured ("the device which initiates a data transfer …").
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub definition: Option<String>,
+    /// Statements that evidenced this actor.
     #[serde(default)]
     pub supporting_statement_ids: Vec<String>,
 }
@@ -821,6 +843,8 @@ impl EvidenceIr {
         // of SWD/JTAG and what FSMGen builds. No-op for non-FSM/non-serial docs.
         let mut protocol_states = extract_protocol_states(&extracted_statements);
         protocol_states.extend(extract_swd_line_states(&extracted_statements));
+        // PDF-VARIANT-DIGESTION.3b — protocol actors/agents defined in prose.
+        let protocol_actors = extract_protocol_actors(&extracted_statements);
 
         // SWD-SERIAL-EXTRACTION.4b: recover the SWD packet operations (response branching: OK→3-phase,
         // WAIT/FAULT→2-phase, + turnaround model). No-op for non-serial docs.
@@ -876,6 +900,7 @@ impl EvidenceIr {
             fact_provenance,
             serial_frame_fields,
             protocol_states,
+            protocol_actors,
             swd_operations,
         };
         evidence_ir.carry_forward_existing_knowledge()?;
@@ -8380,6 +8405,121 @@ fn is_register_value_literal(s: &str) -> bool {
     false
 }
 
+/// PDF-VARIANT-DIGESTION.3b — capture protocol ACTORS/AGENTS a spec DEFINES in prose. Two general forms:
+/// "<NAME> is the device which/that <capability>" and "considered a/the/an <NAME>". NAME must be a plausible
+/// agent noun (alphabetic, not a function/structural word) — general agent-definition grammar, no chip names.
+fn extract_protocol_actors(statements: &[ExtractedStatement]) -> Vec<ProtocolActorRecord> {
+    let mut out = Vec::new();
+    let mut seen: BTreeSet<String> = BTreeSet::new();
+    let mut counter = 0usize;
+    for statement in statements {
+        let lower = statement.text.to_ascii_lowercase();
+        let mut found: Vec<(String, Option<String>)> = Vec::new();
+        // Form 1: "<NAME> is the device which/that <capability>".
+        for marker in [" is the device which ", " is the device that "] {
+            let Some(pos) = lower.find(marker) else {
+                continue;
+            };
+            let Some(name) = last_alpha_word(&statement.text[..pos]) else {
+                continue;
+            };
+            let def = statement.text[pos + marker.len()..]
+                .trim()
+                .trim_end_matches('.')
+                .to_string();
+            found.push((
+                name,
+                (!def.is_empty()).then(|| format!("the device that {def}")),
+            ));
+        }
+        // Form 2: "considered a/the/an <NAME>".
+        for marker in [" considered a ", " considered the ", " considered an "] {
+            let Some(pos) = lower.find(marker) else {
+                continue;
+            };
+            let Some(name) = first_alpha_word(&statement.text[pos + marker.len()..]) else {
+                continue;
+            };
+            found.push((name, None));
+        }
+        for (name, def) in found {
+            let key = name.to_ascii_lowercase();
+            if !is_agent_noun(&key) || !seen.insert(key.clone()) {
+                continue;
+            }
+            counter += 1;
+            out.push(ProtocolActorRecord {
+                actor_id: format!("protocol_actor_{counter:04}"),
+                name,
+                definition: def,
+                supporting_statement_ids: vec![statement.statement_id.clone()],
+            });
+        }
+    }
+    out
+}
+
+/// The last alphabetic word of `s` (the agent noun before "is the device …"), stripped of punctuation.
+fn last_alpha_word(s: &str) -> Option<String> {
+    s.split_whitespace()
+        .rev()
+        .map(|w| {
+            w.trim_matches(|c: char| !c.is_ascii_alphabetic())
+                .to_string()
+        })
+        .find(|w| w.len() >= 3)
+}
+
+/// The first alphabetic word of `s` (the agent noun after "considered a …"), stripped of punctuation.
+fn first_alpha_word(s: &str) -> Option<String> {
+    s.split_whitespace()
+        .map(|w| {
+            w.trim_matches(|c: char| !c.is_ascii_alphabetic())
+                .to_string()
+        })
+        .find(|w| w.len() >= 3)
+}
+
+/// Is `word` (lowercased) a plausible agent/role noun and not a function/structural word? Permissive enough
+/// to admit vendor-specific agents (smmu, requester, completer) but rejects articles/connectives and the
+/// non-agent nouns the patterns can otherwise pick up.
+fn is_agent_noun(word: &str) -> bool {
+    if word.len() < 3 || word.len() > 24 || !word.chars().all(|c| c.is_ascii_alphabetic()) {
+        return false;
+    }
+    !matches!(
+        word,
+        "the"
+            | "and"
+            | "for"
+            | "that"
+            | "which"
+            | "this"
+            | "these"
+            | "those"
+            | "each"
+            | "any"
+            | "all"
+            | "one"
+            | "two"
+            | "device"
+            | "devices"
+            | "bus"
+            | "data"
+            | "clock"
+            | "signal"
+            | "line"
+            | "same"
+            | "other"
+            | "such"
+            | "first"
+            | "second"
+            | "only"
+            | "both"
+            | "single"
+    )
+}
+
 /// Parse a bit-range string like "7:0", "[7:0]", or "31" into (bits_high, bits_low).
 fn parse_bit_range(text: &str) -> (Option<u32>, Option<u32>) {
     let cleaned: String = text
@@ -14530,6 +14670,46 @@ mod swd_serial_extraction_4 {
             "The Manager drives HTRANS during the data phase.",
         )];
         assert!(extract_protocol_states(&stmts).is_empty());
+    }
+
+    #[test]
+    fn extracts_actors_from_prose_definitions() {
+        // PDF-VARIANT-DIGESTION.3b — I2C-style agent definitions.
+        let stmts = vec![
+            stmt(
+                "c",
+                "A controller is the device which initiates a data transfer on the bus and generates the clock.",
+            ),
+            stmt(
+                "t",
+                "At that time, any device addressed is considered a target.",
+            ),
+        ];
+        let actors = extract_protocol_actors(&stmts);
+        let names: Vec<String> = actors.iter().map(|a| a.name.to_ascii_lowercase()).collect();
+        assert!(names.contains(&"controller".to_string()), "got {names:?}");
+        assert!(names.contains(&"target".to_string()), "got {names:?}");
+        // the defining capability clause is captured
+        assert!(
+            actors
+                .iter()
+                .any(|a| a.name.eq_ignore_ascii_case("controller")
+                    && a.definition
+                        .as_deref()
+                        .map(|d| d.contains("initiates"))
+                        .unwrap_or(false)),
+            "controller definition not captured: {actors:?}"
+        );
+    }
+
+    #[test]
+    fn actor_extraction_ignores_function_words() {
+        // "It is the device which …" must not yield an actor named "it".
+        let actors = extract_protocol_actors(&[stmt("x", "It is the device which is connected.")]);
+        assert!(
+            actors.iter().all(|a| !a.name.eq_ignore_ascii_case("it")),
+            "got {actors:?}"
+        );
     }
 }
 
