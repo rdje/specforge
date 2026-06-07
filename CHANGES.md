@@ -2,6 +2,15 @@
 
 ## 2026-06-07
 
+### `WIRE-BASED-100.5f` — AHB relation eval gold + measured baseline
+Added 6 relation items to `seed_ahb.json` from real AHB prose/tables (`Subordinate drives HRESP`/`HREADYOUT`;
+the 4 `*USER` drives, table-grounded, source-tolerant). **Baseline: `actor_signal_relation` source-tolerant
+`P=0.714 R=0.833 F1=0.769`** (tp=5 fp=2 fn=1; constraints stay 1.000). The 5 clean relations land; the gap
+is ACTOR RESOLUTION (`near-miss wrong_actor=2`): `(address, drives, HREADYOUT)` (anaphora "it"=Subordinate
+mis-resolved to the noun "address") and `(response it, drives, HRESP)` (garbage phrase) — same root as APB
+`.6`/`.6c` garbage-actor discrimination + pronoun-subject resolution → `.5g`. Gold faithful (the hard
+anaphora case included on purpose). Measurement slice (no code change).
+
 ### `WIRE-BASED-100.5e` — AHB constraints REAL 100% on freshly re-ingested evidence
 With the AHB PDF now in-repo (`.5d`), re-ingested it (`DOCLING_DEVICE=cpu`), rebuilt evidence+semantic,
 and re-ran the eval: **`signal_constraint P=1.000 R=1.000 F1=1.000`** (tp=6 fp=0 fn=0; gold=6),

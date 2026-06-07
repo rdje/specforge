@@ -306,6 +306,26 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   predicted. AHB constraints now match APB (real eval, not hermetic). Next (`.5f`): AHB relations +
   temporal golds (now measurable on fresh evidence), then AXI + SWD/ADI (corpus PDFs ready).
 
+- ID: `WIRE-BASED-100.5f` · Status: `done` · Goal: **AHB relation eval gold + measured baseline** (on
+  fresh AHB evidence). Added 6 relation items to `seed_ahb.json` from real AHB prose/tables: `Subordinate
+  drives HRESP` (0705), `Subordinate drives HREADYOUT` (0311), and the 4 `*USER` drives (`HAUSER`/`HWUSER`
+  Manager; `HRUSER`/`HBUSER` Subordinate, table-grounded, scored source-tolerant). **Baseline:
+  `actor_signal_relation` source-tolerant `P=0.714 R=0.833 F1=0.769`** (tp=5 fp=2 fn=1; constraints stay
+  `1.000`). **Finding → `.5g`:** the gap is ACTOR RESOLUTION, not the signals — the 2 FP + 1 FN are
+  `(address, drives, HREADYOUT)` (0311 — anaphora "it" = Subordinate mis-resolved to the noun "address")
+  and `(response it, drives, HRESP)` (0705 — "it must drive HRESP" → garbage phrase "response it"). The
+  correct `(Subordinate, drives, HRESP)` is also extracted (source-tolerant TP); `HREADYOUT`'s only
+  drive-actor is the wrong "address" → FN. Same root as APB `.6`/`.6c` (garbage-actor discrimination) +
+  pronoun-subject resolution. `near-miss wrong_actor=2` confirms it. Gold faithful (the hard anaphora 0311
+  included on purpose, not cherry-picked away).
+- ID: `WIRE-BASED-100.5g` · Status: `pending` · Goal: AHB relation actor discrimination → 100%. Reject
+  garbage/common-noun/phrase-fragment actors (`address`, `response it`) and resolve the pronoun subject to
+  the real actor (`Subordinate`); reuse the `.6`/`.6c` entity-typing harness (LLM general fallback) +
+  heuristic. General (ADR 0006), keep APB gold-100% + kg-bench green; re-measure on fresh AHB evidence.
+- ID: `WIRE-BASED-100.5h` · Status: `pending` · Goal: AHB temporal eval gold + to 100% (the third AHB
+  aspect), on fresh AHB evidence — build a temporal gold from AHB timing prose, measure, fix. Then roll
+  AXI + SWD/ADI (corpus PDFs ready) through the same constraint/relation/temporal sequence.
+
 ## Picked sequence to APB 100% (owner: "pick the next trees to achieve just that")
 
 `.1b` (relation recall → 100%) → `.6` (actor discrimination → relation precision) → `.7`

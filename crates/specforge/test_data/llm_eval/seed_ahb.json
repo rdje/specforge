@@ -100,5 +100,77 @@
     "gold": [],
     "label_status": "agent_drafted",
     "label_note": "Negative: list-introducer header (read transaction). HREADY/HRESP are condition signals; HREADY/HRESP-as-subject constraints would be false positives."
+  },
+  {
+    "task": "actor_signal_relation",
+    "doc_key": "ihi0033_c_2021_09_amba_5_ahb_protocol_specification",
+    "statement_id": "statement_0705",
+    "input_text": "When a Subordinate inserts a number of wait states prior to completing the response, it must drive HRESP to OKAY.",
+    "grounding": ["HRESP"],
+    "gold": [
+      {"fact": "relation", "actor": "Subordinate", "relation": "drives", "signal": "HRESP"}
+    ],
+    "label_status": "agent_drafted",
+    "label_note": "The Subordinate drives HRESP. Expected TP."
+  },
+  {
+    "task": "actor_signal_relation",
+    "doc_key": "ihi0033_c_2021_09_amba_5_ahb_protocol_specification",
+    "statement_id": "statement_0311",
+    "input_text": "After the Subordinate has sampled the address and control it can start to drive the appropriate HREADYOUT response.",
+    "grounding": ["HREADYOUT"],
+    "gold": [
+      {"fact": "relation", "actor": "Subordinate", "relation": "drives", "signal": "HREADYOUT"}
+    ],
+    "label_status": "agent_drafted",
+    "label_note": "The Subordinate drives HREADYOUT (the 'it' = the Subordinate). Harder anaphora case — included faithfully even though the extractor may mis-resolve the subject."
+  },
+  {
+    "task": "actor_signal_relation",
+    "doc_key": "ihi0033_c_2021_09_amba_5_ahb_protocol_specification",
+    "statement_id": "statement_1013",
+    "input_text": "- The HAUSER signal must be valid during the address phase of a transfer.",
+    "grounding": ["HAUSER"],
+    "gold": [
+      {"fact": "relation", "actor": "Manager", "relation": "drives", "signal": "HAUSER"}
+    ],
+    "label_status": "agent_drafted",
+    "label_note": "HAUSER is a Manager output (per the signal table Source column); scored source-tolerant (the drive relation is grounded by the table, not this sentence). Expected TP."
+  },
+  {
+    "task": "actor_signal_relation",
+    "doc_key": "ihi0033_c_2021_09_amba_5_ahb_protocol_specification",
+    "statement_id": "statement_1015",
+    "input_text": "- The HWUSER signal must be valid during the data phase of a write transfer.",
+    "grounding": ["HWUSER"],
+    "gold": [
+      {"fact": "relation", "actor": "Manager", "relation": "drives", "signal": "HWUSER"}
+    ],
+    "label_status": "agent_drafted",
+    "label_note": "HWUSER is a Manager output (signal table Source); source-tolerant. Expected TP."
+  },
+  {
+    "task": "actor_signal_relation",
+    "doc_key": "ihi0033_c_2021_09_amba_5_ahb_protocol_specification",
+    "statement_id": "statement_1017",
+    "input_text": "- The HRUSER signal must be valid during the data phase of a read transfer when HREADY signal is HIGH, unless HRESP signal is ERROR.",
+    "grounding": ["HRUSER"],
+    "gold": [
+      {"fact": "relation", "actor": "Subordinate", "relation": "drives", "signal": "HRUSER"}
+    ],
+    "label_status": "agent_drafted",
+    "label_note": "HRUSER is a Subordinate output (signal table Source); source-tolerant. Expected TP."
+  },
+  {
+    "task": "actor_signal_relation",
+    "doc_key": "ihi0033_c_2021_09_amba_5_ahb_protocol_specification",
+    "statement_id": "statement_1018",
+    "input_text": "- The HBUSER signal must be valid during the data phase of a read or write transfer when HREADY signal is HIGH, unless HRESP signal is ERROR",
+    "grounding": ["HBUSER"],
+    "gold": [
+      {"fact": "relation", "actor": "Subordinate", "relation": "drives", "signal": "HBUSER"}
+    ],
+    "label_status": "agent_drafted",
+    "label_note": "HBUSER is a Subordinate output (signal table Source); source-tolerant. Expected TP."
   }
 ]
