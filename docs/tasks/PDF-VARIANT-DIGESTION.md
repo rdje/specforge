@@ -118,3 +118,14 @@ a stats-script regex bug — ingest OK; re-measure with the hardened helper.)
 ## Changelog
 
 - `2026-06-07`: Created (owner high-priority directive — digest any chip-spec PDF). `.1` triage sweep in flight.
+
+## Tooling + multi-strategy (`2026-06-07`)
+
+PDF reading is multi-strategy, best-wins-per-PDF ([[?]]): **docling** (structured `content_elements`, the
+pipeline path) + **`scripts/pdf_text.py`** (raw text via pypdf) both read all 82 (incl. the 12
+permission-encrypted ones, which open with an empty password). The Claude Read tool is unreliable here and
+NOT fixable by a plugin (GitHub #38530) — use the two paths above. `scripts/decrypt_pdf.py` strips
+encryption for tools that need it. pypdf+cryptography installed in `.venv-docling`. KM
+`pdf-encryption-and-read-access`. **Lever A** is likewise multi-strategy: deterministic header-grammar
+classifier + the VLM (Qwen2.5VL) on unknown tables, best-wins-per-PDF.
+
