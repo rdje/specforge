@@ -1,46 +1,46 @@
 ---
 id: swd-intent-is-the-fsm-driving-swdio
-title: SWD's full intent IS its FSM walking SWDIO — host drives commands / samples returned data per state
+title: SWD's intent = its packet protocol + line state machine on SWDIO (read from spec Chapter B4)
 answers:
-  - "where does SWD's intent live (FSM, not constraints/relations)"
-  - "what must SpecForge derive to fully capture SWD"
-  - "how does SWD drive commands and capture data on SWDIO"
-  - "what are the SWD per-phase SWDIO directions (drive vs sample)"
-  - "what SWD intent gaps remain in SpecForge"
+  - "what is SWD's actual intent / protocol (from the spec)"
+  - "what are the SWD packet phases and per-phase SWDIO direction"
+  - "what is the SWD line state machine (reset/operating/protocol-error/lockout)"
+  - "what must SpecForge derive to fully capture SWD; what are the gaps"
+  - "is the SWD FSM the same as the JTAG TAP DBGTAPSM (no)"
 date: 2026-06-07
-tags: [swd, adi, fsm, swdio, intent, completeness, owner-guidance]
-evidence: corpus/.../IHI0074_A (SWD operation); generated/evidence_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification (statement_1946/1948); docs/tasks/SWD-SERIAL-EXTRACTION.md
-reverify: python3 -c "import json; e=json.load(open('generated/evidence_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/evidence_ir.json')); print(e['extracted_statements'][0] and [s['text'][:90] for s in e['extracted_statements'] if s['statement_id']=='statement_1948'])"
+tags: [swd, adi, fsm, swdio, protocol, intent, completeness]
+evidence: corpus/.../IHI0074_A Chapter B4 (read directly via docling content_elements, pages 110-128); generated/source_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification
+reverify: "python3 — dump source_ir content_elements for page_id page_0110..page_0128 (Chapter B4); the PDF itself is password-protected so the Read tool cannot open it — use the docling content_elements text."
 ---
 
-Owner (`2026-06-07`): "SWD full specification comes from its FSM description. An agent will use SWD to
-drive commands onto SWDIO using the FSM and return captured data still using the FSM on SWDIO." So SWD's
-intent does **not** live in the classic constraint/relation/temporal surfaces (those are sparse for the
-architecture-style ADI spec — SWD constraints+relations measure 100% but on a tiny clean set, and the lone
-temporal rule is noise). **SWD's intent IS the FSM that walks SWDIO.**
+Read directly from spec **Chapter B4 "The Serial Wire Debug Port (SW-DP)"** (the PDF is password-protected;
+docling's `content_elements` carry the faithful text). SWD's full intent is its protocol, which has TWO FSM
+levels — the host drives/samples SWDIO by walking them. **Two corrections to earlier loose framing:** (a)
+the SWD FSM is NOT the JTAG `DBGTAPSM` (that is the JTAG-DP TAP machine on TDI/TDO/TMS, B3.2.3 — captured in
+`.4` but a *different* thing); (b) per B4.3.1 the target both **samples and drives SWDIO on the RISING edge
+of SWCLK** (an earlier extraction said "falling" — the spec says rising).
 
-The SWD packet FSM (host perspective), each state with a SWDIO **direction**:
-- **Request** — host **drives** SWDIO: start, APnDP, RnW, A[2:3], parity, stop, park (8-bit packet request).
-- **Turnaround** — SWDIO tristates / changes direction.
-- **Acknowledge** — target **drives** SWDIO; host **samples** ACK[2:0] (OK/WAIT/FAULT).
-- **Turnaround** (write) — direction changes.
-- **Data** — write: host **drives** SWDIO (WDATA[0:31]+parity); read: target **drives**, host **samples**
-  (RDATA[0:31]+parity).
-Edge timing (`statement_1948`): the target **samples SWDIO on the rising edge of SWCLK** and **drives /
-stops driving on the falling edge**. Line states also exist (reset / operating / protocol-error).
+**1. Packet-operation micro-sequence (B4.1.1, B4.2)** — 2 or 3 phases, each with a SWDIO direction:
+- **Packet request** (host drives, 8 bits): `Start`(0b1) · `APnDP` · `RnW` · `A[2:3]` · `Parity` · `Stop`(0b0) · `Park`(0b1). All LSB-first.
+- **Turnaround (Trn)** — neither drives; length = `DLCR.TURNROUND` (default 1 cycle).
+- **Acknowledge** (target drives, 3 bits `ACK[0:2]`): `OK`=0b001, `WAIT`=0b010, `FAULT`=0b100 (not parity-covered).
+- **Data** (only on OK+data, or ORUNDETECT): write → `Trn` then host drives `WDATA[0:31]`+parity (then host keeps driving, no Trn); read → NO Trn, target drives `RDATA[0:31]`+parity, then `Trn` (host resumes).
+- Parity: even, over `APnDP+RnW+A[2:3]` (request) and over the 32 data bits.
+- Response branching: OK → 3-phase; WAIT/FAULT → 2-phase (data phase only if ORUNDETECT).
 
-**What SpecForge derives today:** SWD signals SWCLK/SWDIO (`[[prose-pin-appositive-signal-capture]]`); the
-packet FIELDS with phase + widths (`[[swd-serial-frame-surface]]`: A/ACK/APnDP/RnW/WDATA/RDATA/DATAIN); and
-the **JTAG** TAP states (`[[swd-protocol-fsm-surface]]`: DBGTAPSM — note this is the JTAG-DP FSM on
-TDI/TDO/TMS, NOT the SWD-on-SWDIO packet FSM).
+**2. Line state machine (B4.2.5, B4.3.3):** `reset` (entered by line reset = ≥50 SWCLK with SWDIO HIGH +
+≥2 idle; only DPIDR read [exits], switch sequences, or TARGETSEL write[v2] are valid) → `operating` →
+`protocol-error` (on Parity mismatch / Stop≠0 / Park≠1 / bad TURNROUND; target stops driving; exits on
+line reset or DPIDR read) → `lockout` (further errors; exits only on line reset); plus `dormant`(v2 powerup)
+and multi-drop `deselected`.
 
-**Gaps to FULLY derive SWD's intent (the work):**
-1. **Per-state SWDIO direction** — each frame field/phase needs `drive` vs `sample` and the actor
-   (host/target). Today `SerialFrameField` has phase but no SWDIO direction. (SWD-SERIAL-EXTRACTION.4c)
-2. **The SWD packet FSM** — the request→turnaround→ack→turnaround→data→park sequence as states with
-   transitions (distinct from the JTAG TAP FSM already captured). (.4b/.4c)
-3. **Line state machine** — reset / operating / protocol-error states. (.4d)
-4. **Edge timing** binding (sample on rising SWCLK, drive on falling). (.4d)
+**What SpecForge derives today:** SWCLK/SWDIO signals (`.2`); SOME packet bit-fields (`.3`: A, ACK, APnDP,
+RnW, WDATA, RDATA) — but MISSING Start/Parity/Stop/Park and with no direction/sequence/turnaround/branch;
+the JTAG TAP `DBGTAPSM` (`.4`, not the SWD FSM). **So SpecForge does NOT yet fully derive SWD's intent.**
 
-No FSMGen/ISF gap is involved (ISF expresses FSMs — `[[isf-fsm-via-switch-select]]`); this is SpecForge-side
-intent DERIVATION completeness.
+**Gaps (all derivable from the B4 prose docling extracted):** the SWD packet **phase sequence** + per-phase
+**SWDIO direction** (host vs target) + turnarounds + **response branching** (OK/WAIT/FAULT) + missing fields
+(Start/Parity/Stop/Park) + the **line state machine** (reset/operating/protocol-error/lockout/dormant) +
+edge timing + line-reset/parity rules. This is a new protocol-FSM derivation capability, beyond the current
+signal-table / constraint / relation / bit-field extractors. ISF can express it (`[[isf-fsm-via-switch-select]]`);
+SpecForge emits intent, FSMGen lowers. See `[[swd-serial-frame-surface]]`, `[[swd-protocol-fsm-surface]]`.

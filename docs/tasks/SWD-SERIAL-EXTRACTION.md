@@ -114,28 +114,37 @@ extraction approach distinct from the parallel-bus signal-table path.
   marked WITHDRAWN); serial frame also NOT a gap (ISF has shift registers / serial fixtures). KM
   `[[isf-fsm-via-switch-select]]`; lessons `[[feedback_verify_fsmgen_before_fr]]`, `[[feedback_isf_no_hacks]]`.
 
-## Reframe (owner `2026-06-07`): SWD's intent IS the FSM walking SWDIO
+## Reframe (owner `2026-06-07`, GROUNDED IN SPEC CHAPTER B4 read directly)
 
-SWD's full intent comes from its FSM — the host walks the FSM to **drive commands onto SWDIO** and
-**sample returned data from SWDIO** (KM `[[swd-intent-is-the-fsm-driving-swdio]]`). So the classic
-constraint/relation/temporal scores are NOT where SWD's intent lives (they are sparse; `seed_swd.json`
-shows constraint + relation `P=R=F1=1.000` on the small clean set, and the lone temporal rule is noise —
-not pursued). The work is to FULLY derive the FSM + per-state SWDIO I/O.
+Owner: "do not trust what I am saying, read and understand SWD's chip-spec PDF thoroughly." Done — read all
+of Chapter B4 (B4.1 About, B4.2 Operation, B4.3 Interface) via docling `content_elements` (the PDF is
+password-protected so the Read tool can't open it). **SWD's intent = its packet protocol + line state
+machine on SWDIO** (KM `[[swd-intent-is-the-fsm-driving-swdio]]`). The classic constraint/relation/temporal
+scores are NOT where SWD's intent lives (sparse; `seed_swd.json` constraint+relation `P=R=F1=1.000`, lone
+temporal rule = noise, not pursued). Two corrections to the loose framing: the SWD FSM is NOT the JTAG
+`DBGTAPSM` (`.4` captured the JTAG TAP machine — a different thing); and the target samples AND drives SWDIO
+on the RISING SWCLK edge (B4.3.1).
 
-What SpecForge derives today: SWD signals (`.2`); packet FIELDS with phase+width (`.3`/`.3b`); JTAG TAP
-states (`.4`, the JTAG-DP FSM — NOT the SWD-on-SWDIO packet FSM). Gaps → `.4c`/`.4b`/`.4d` below.
+**SWD intent precisely (B4):** packet micro-sequence — request(8b: Start/APnDP/RnW/A[2:3]/Parity/Stop/Park,
+host drives) → Trn → ack(3b ACK[0:2]: OK=0b001/WAIT=0b010/FAULT=0b100, target drives) → [write: Trn →
+WDATA[0:31]+par host drives; read: no Trn, RDATA[0:31]+par target drives, then Trn]; response branching
+(OK→3-phase, WAIT/FAULT→2-phase); even parity over request + over data; LSB-first. Line FSM:
+reset/operating/protocol-error/lockout/dormant/deselected (line reset = ≥50 SWDIO-HIGH + ≥2 idle).
 
-## Current frontier
+**What SpecForge derives today:** SWCLK/SWDIO signals (`.2`); SOME packet bit-fields (`.3`: A/ACK/APnDP/RnW/
+WDATA/RDATA — MISSING Start/Parity/Stop/Park, no direction/sequence/turnaround/branch); JTAG TAP `DBGTAPSM`
+(`.4`, not the SWD FSM). **SpecForge does NOT yet fully derive SWD's intent.**
 
-- `SWD-SERIAL-EXTRACTION.4c` (NEW, central) — **per-state SWDIO direction**: each frame field/phase needs
-  `drive` vs `sample` + actor (host drives request + write-data; target drives ack + read-data, host
-  samples). This is "drive commands / capture data on SWDIO via the FSM". Add a direction to
-  `SerialFrameField` (or the FSM states).
-- `SWD-SERIAL-EXTRACTION.4b` — the **SWD packet FSM** + transitions (request → turnaround → ack →
-  turnaround → data → park), distinct from the JTAG TAP FSM; + dedup the `Test-Logic/Reset` variant.
-- `SWD-SERIAL-EXTRACTION.4d` — line state machine (reset / operating / protocol-error) + edge timing
-  (sample on rising SWCLK, drive on falling — `statement_1948`).
-- `SWD-SERIAL-EXTRACTION.5` — DONE for the measurable scores: `seed_swd.json` constraint + relation
+## Current frontier (spec-grounded gaps)
+
+- `SWD-SERIAL-EXTRACTION.4c` (central) — **per-phase SWDIO direction** (host drives request + WDATA; target
+  drives ACK + RDATA; host samples) on the frame/state surface. The heart of "drive/sample SWDIO via the FSM".
+- `SWD-SERIAL-EXTRACTION.4b` — the **SWD packet phase FSM** + transitions (request → Trn → ack → Trn → data),
+  distinct from the JTAG TAP FSM; + the missing fields Start/Parity/Stop/Park; + turnarounds; + response
+  branching (OK/WAIT/FAULT → 2- vs 3-phase).
+- `SWD-SERIAL-EXTRACTION.4d` — the **line state machine** (reset/operating/protocol-error/lockout/dormant) +
+  edge timing (sample & drive on rising SWCLK, B4.3.1) + line-reset + parity/protocol-error rules.
+- `SWD-SERIAL-EXTRACTION.5` — DONE for the (minor) measurable scores: `seed_swd.json` constraint + relation
   `P=R=F1=1.000` (sparse clean set; garbage actors filtered). Temporal not pursued (SWD intent is the FSM).
 
 ## Decisions
