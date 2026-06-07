@@ -3,7 +3,7 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Regenerate with `knowledge-map/scripts/gen_knowledge_map.sh`.
 > Source of truth = YAML front-matter in: `docs/knowledge docs/decisions`. Edit the fact files, never this map.
 > A fact is any `.md` whose front-matter has a non-empty `answers:` list.
-> **27** facts · **143** question keys.
+> **28** facts · **147** question keys.
 
 ## Questions → fact
 
@@ -29,7 +29,9 @@
 - "does eval-extraction rebuild evidence or load the persisted file" -> [eval-scores-persisted-evidence](docs/knowledge/eval-scores-persisted-evidence.md) · 2026-06-07 · reverify: `./target/debug/specforge evidence generated/source_ir/<doc_key>/source_ir.json   # errors if normalized was reclaimed`
 - "does every temporal_rule reach the .isf or a residual" -> [isf-temporal-lowering-no-silent-drop](docs/knowledge/isf-temporal-lowering-no-silent-drop.md) · 2026-06-04 · reverify: `grep -n "temporal_residuals" crates/specforge/src/ir/isf_ir.rs crates/specforge/src/ir/adapters.rs`
 - "does the NLI verifier actually catch real extraction errors" -> [nli-gate-real-apb-validation](docs/knowledge/nli-gate-real-apb-validation.md) · 2026-06-05 · reverify: `cargo run -p specforge --quiet -- nli-verify generated/evidence_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/evidence_ir.json --vlm-provider ollama --model qwen2.5:14b-instruct`
+- "how are SWCLK and SWDIO captured if they are not in a signal table" -> [prose-pin-appositive-signal-capture](docs/knowledge/prose-pin-appositive-signal-capture.md) · 2026-06-07 · reverify: `python3 -c "import json,re; e=json.load(open('generated/evidence_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/evidence_ir.json')); d={re.match(r'Signal (\w+)',s['text']).group(1) for s in e['extracted_statements'] if s['text'].startswith('Signal ')}; print('SWCLK',('SWCLK' in d),'SWDIO',('SWDIO' in d))`
 - "how are per-instance indexed signals (PSELx HSELx) referenced in prose handled" -> [indexed-signal-family-canonicalization](docs/knowledge/indexed-signal-family-canonicalization.md) · 2026-06-06 · reverify: `./target/debug/specforge eval-extraction crates/specforge/test_data/llm_eval/seed_apb_temporal.json --provider skip 2>/dev/null | sed -n '/Extraction eval/,/source-tolerant/p'`
+- "how are serial/architecture spec interface signals added to the catalog" -> [prose-pin-appositive-signal-capture](docs/knowledge/prose-pin-appositive-signal-capture.md) · 2026-06-07 · reverify: `python3 -c "import json,re; e=json.load(open('generated/evidence_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/evidence_ir.json')); d={re.match(r'Signal (\w+)',s['text']).group(1) for s in e['extracted_statements'] if s['text'].startswith('Signal ')}; print('SWCLK',('SWCLK' in d),'SWDIO',('SWDIO' in d))`
 - "how are temporal rules expressed as LTL or MTL" -> [temporal-rule-ltl-rendering](docs/knowledge/temporal-rule-ltl-rendering.md) · 2026-06-04 · reverify: `grep -n "fn temporal_rule_to_ltl" crates/specforge/src/ir/temporal_ltl.rs`
 - "how did APB temporal reach 100% (WIRE-BASED-100.4)" -> [indexed-signal-family-canonicalization](docs/knowledge/indexed-signal-family-canonicalization.md) · 2026-06-06 · reverify: `./target/debug/specforge eval-extraction crates/specforge/test_data/llm_eval/seed_apb_temporal.json --provider skip 2>/dev/null | sed -n '/Extraction eval/,/source-tolerant/p'`
 - "how do I file an FSMGen bug report or feature request" -> [fsmgen-feedback-channel](docs/knowledge/fsmgen-feedback-channel.md) · 2026-06-04 · reverify: `ls docs/FSMGEN_FEEDBACK.md`
@@ -41,6 +43,7 @@
 - "how does SpecForge flag vague or ambiguous spec language" -> [ambiguity-weak-phrase-detector](docs/knowledge/ambiguity-weak-phrase-detector.md) · 2026-06-04 · reverify: `grep -n "fn weak_phrase_findings" crates/specforge/src/ir/ambiguity.rs`
 - "how does SpecForge relate to GoldMine Texada Pnueli Ammons" -> [spec-mining-framing](docs/knowledge/spec-mining-framing.md) · 2026-06-04 · reverify: `grep -rn "forward specification mining" README.md docs/book/src/architecture-rationale.md`
 - "how does SpecForge verify an extracted claim semantically / catch hallucination" -> [nli-entailment-verifier](docs/knowledge/nli-entailment-verifier.md) · 2026-06-05 · reverify: `grep -n "fn verify_entailment" crates/specforge/src/ir/nli_verify.rs`
+- "how does specforge declare a signal mentioned only in prose" -> [prose-pin-appositive-signal-capture](docs/knowledge/prose-pin-appositive-signal-capture.md) · 2026-06-07 · reverify: `python3 -c "import json,re; e=json.load(open('generated/evidence_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/evidence_ir.json')); d={re.match(r'Signal (\w+)',s['text']).group(1) for s in e['extracted_statements'] if s['text'].startswith('Signal ')}; print('SWCLK',('SWCLK' in d),'SWDIO',('SWDIO' in d))`
 - "how does specforge handle PSEL vs PSELx (or HSEL vs HSELx)" -> [indexed-signal-family-canonicalization](docs/knowledge/indexed-signal-family-canonicalization.md) · 2026-06-06 · reverify: `./target/debug/specforge eval-extraction crates/specforge/test_data/llm_eval/seed_apb_temporal.json --provider skip 2>/dev/null | sed -n '/Extraction eval/,/source-tolerant/p'`
 - "how does specforge handle a signal table whose name column is not first" -> [rotated-signal-table-extraction](docs/knowledge/rotated-signal-table-extraction.md) · 2026-06-07 · reverify: `./target/debug/specforge eval-extraction crates/specforge/test_data/llm_eval/seed_ahb_temporal.json --provider skip 2>/dev/null | grep temporal_rule`
 - "how does specforge reject non-signal constraint subjects (LICENSEE, AXI, RME, MPAM)" -> [axi-constraint-subject-must-be-declared](docs/knowledge/axi-constraint-subject-must-be-declared.md) · 2026-06-07 · reverify: `./target/debug/specforge eval-extraction crates/specforge/test_data/llm_eval/seed_axi.json --provider skip 2>/dev/null | grep -A1 source-tolerant`
@@ -96,6 +99,7 @@
 - "what is a contested prior" -> [contested-priors](docs/knowledge/contested-priors.md) · 2026-06-04 · reverify: `grep -n "fn contested_priors" crates/specforge/src/ir/prior_memory.rs`
 - "what is content-based name-column detection / rotation offset remapping" -> [rotated-signal-table-extraction](docs/knowledge/rotated-signal-table-extraction.md) · 2026-06-07 · reverify: `./target/debug/specforge eval-extraction crates/specforge/test_data/llm_eval/seed_ahb_temporal.json --provider skip 2>/dev/null | grep temporal_rule`
 - "what is index-family signal canonicalization" -> [indexed-signal-family-canonicalization](docs/knowledge/indexed-signal-family-canonicalization.md) · 2026-06-06 · reverify: `./target/debug/specforge eval-extraction crates/specforge/test_data/llm_eval/seed_apb_temporal.json --provider skip 2>/dev/null | sed -n '/Extraction eval/,/source-tolerant/p'`
+- "what is synthesize_signal_declarations_from_prose / the pin-appositive pattern" -> [prose-pin-appositive-signal-capture](docs/knowledge/prose-pin-appositive-signal-capture.md) · 2026-06-07 · reverify: `python3 -c "import json,re; e=json.load(open('generated/evidence_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/evidence_ir.json')); d={re.match(r'Signal (\w+)',s['text']).group(1) for s in e['extracted_statements'] if s['text'].startswith('Signal ')}; print('SWCLK',('SWCLK' in d),'SWDIO',('SWDIO' in d))`
 - "what is the AXI signal naming convention (channel prefix)" -> [axi-channel-structure](docs/knowledge/axi-channel-structure.md) · 2026-06-07 · reverify: `python3 -c "import json,re; e=json.load(open('generated/evidence_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/evidence_ir.json')); d={re.match(r'Signal (\w+)',s['text']).group(1) for s in e['extracted_statements'] if s['text'].startswith('Signal ')}; print(sorted(x for x in d if x.startswith('AW'))[:10])`
 - "what is the Dempster combiner in fusion" -> [dempster-fusion](docs/knowledge/dempster-fusion.md) · 2026-06-04 · reverify: `grep -n "fn dempster_corroborate_confidence" crates/specforge/src/ir/fusion.rs`
 - "what is the FSMGen issue bundle protocol" -> [fsmgen-feedback-channel](docs/knowledge/fsmgen-feedback-channel.md) · 2026-06-04 · reverify: `ls docs/FSMGEN_FEEDBACK.md`
@@ -332,6 +336,15 @@ _NLI intent gate — active demote-to-residual of un-entailed contracts (intent 
 - **evidence:** `crates/specforge/src/ir/nli_verify.rs`
 - **reverify:** `grep -n "fn apply_nli_gate\|fn nli_gate_contracts\|fn obligation_claim_text" crates/specforge/src/ir/nli_verify.rs`
 - **source:** [`docs/knowledge/nli-intent-gate.md`](docs/knowledge/nli-intent-gate.md)
+
+### prose-pin-appositive-signal-capture
+_Interface signals declared in prose ("a clock pin, SWCLK") are captured via the pin-appositive pattern_
+
+- **answers:** how are SWCLK and SWDIO captured if they are not in a signal table | how does specforge declare a signal mentioned only in prose | what is synthesize_signal_declarations_from_prose / the pin-appositive pattern | how are serial/architecture spec interface signals added to the catalog
+- **date:** 2026-06-07 · **status:** current
+- **evidence:** `docs/tasks/SWD-SERIAL-EXTRACTION.md (.2); crates/specforge/src/ir/evidence.rs (synthesize_signal_declarations_from_prose)`
+- **reverify:** `python3 -c "import json,re; e=json.load(open('generated/evidence_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/evidence_ir.json')); d={re.match(r'Signal (\w+)',s['text']).group(1) for s in e['extracted_statements'] if s['text'].startswith('Signal ')}; print('SWCLK',('SWCLK' in d),'SWDIO',('SWDIO' in d))`
+- **source:** [`docs/knowledge/prose-pin-appositive-signal-capture.md`](docs/knowledge/prose-pin-appositive-signal-capture.md)
 
 ### rotated-signal-table-extraction
 _Misaligned signal tables (name column rotated to last) are extracted by content-based column detection_

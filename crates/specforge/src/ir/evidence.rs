@@ -620,12 +620,19 @@ impl EvidenceIr {
         //   1. direct signal declarations from signal-description tables
         //   2. direct enum facts from tables already classified as encodings
         let mut table_signal_declaration_provenance = Vec::new();
-        let synthesized = synthesize_declarations_from_tables(
+        let mut synthesized = synthesize_declarations_from_tables(
             &source_ir,
             &mut statement_counter,
             prior_guidance.as_ref(),
             &mut table_signal_declaration_provenance,
         );
+        // SWD-SERIAL-EXTRACTION.2: also capture interface signals declared in PROSE (serial specs
+        // name the wire contract in an appositive — "a clock pin, SWCLK") so SWCLK/SWDIO enter the
+        // catalog. Additive; duplicates of table declarations dedupe downstream.
+        synthesized.extend(synthesize_signal_declarations_from_prose(
+            &extracted_statements,
+            &mut statement_counter,
+        ));
 
         // Extract system contract (clock + reset) from signal-description prose in tables.
         let contract_stmts = synthesize_system_contract_from_table_descriptions(
@@ -6505,6 +6512,8 @@ pub(crate) fn is_signal_synthesis_non_signal(token: &str) -> bool {
             | "IN"
             | "OUT"
             | "LEVEL"
+            // Cross-reference word ("… pin, see Figure B4-3") — not a signal name.
+            | "SEE"
     )
 }
 
@@ -6719,6 +6728,57 @@ fn synthesize_signal_declarations(
     }
 
     statements
+}
+
+/// SWD-SERIAL-EXTRACTION.2 — capture interface signals that a serial/architecture spec declares in
+/// PROSE rather than a signal-description table. The Arm Debug Interface introduces its wire contract
+/// in an appositive: "requires a clock pin, SWCLK", "a single bidirectional data pin, SWDIO". The
+/// pattern is "`<role>` pin, `<SIGNAL>`" — the noun "pin" immediately naming the signal across a comma.
+/// General/ADR-0006 (grammar, not names). Emits a width-1 declaration (a pin is a single wire) so the
+/// signal enters the declared catalog; duplicates of table-declared signals dedupe downstream.
+fn synthesize_signal_declarations_from_prose(
+    statements: &[ExtractedStatement],
+    statement_counter: &mut usize,
+) -> Vec<ExtractedStatement> {
+    let mut out = Vec::new();
+    let mut seen: BTreeSet<String> = BTreeSet::new();
+    for statement in statements {
+        let words: Vec<&str> = statement.text.split_whitespace().collect();
+        for i in 0..words.len() {
+            // The noun "pin", with or without a fused trailing comma.
+            if !words[i].trim_end_matches(',').eq_ignore_ascii_case("pin") {
+                continue;
+            }
+            // The signal token follows the comma: fused ("pin," SIG) or separate ("pin" "," SIG).
+            let cand = if words[i].ends_with(',') {
+                words.get(i + 1)
+            } else if words.get(i + 1).map(|w| *w == ",").unwrap_or(false) {
+                words.get(i + 2)
+            } else {
+                continue;
+            };
+            let Some(cand) = cand else { continue };
+            let token: String = cand
+                .trim_matches(|c: char| !c.is_ascii_alphanumeric() && c != '_')
+                .to_ascii_uppercase();
+            if !is_hardware_signal_token(&token)
+                || is_signal_synthesis_non_signal(&token)
+                || !seen.insert(token.clone())
+            {
+                continue;
+            }
+            *statement_counter += 1;
+            out.push(ExtractedStatement {
+                statement_id: format!("statement_{statement_counter:04}"),
+                class: StatementClass::SourceFact,
+                modality: EvidenceModality::Text,
+                text: format!("Signal {token} is width 1."),
+                evidence_span_ids: statement.evidence_span_ids.clone(),
+                related_visual_evidence_ids: vec![],
+            });
+        }
+    }
+    out
 }
 
 fn synthesize_encoding_declarations(
@@ -12422,5 +12482,57 @@ mod wire_based_100_5i {
             recs.iter().any(|r| r.subject_signal == "HADDR"),
             "with no catalog the filter must not drop the constraint, got {recs:?}"
         );
+    }
+}
+
+#[cfg(test)]
+mod swd_serial_extraction_2 {
+    //! SWD-SERIAL-EXTRACTION.2 — capture interface signals declared in prose ("a clock pin, SWCLK").
+    use super::*;
+
+    fn stmt(text: &str) -> ExtractedStatement {
+        ExtractedStatement {
+            statement_id: "s".to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        }
+    }
+
+    fn declared(statements: &[ExtractedStatement]) -> Vec<String> {
+        let mut c = 0usize;
+        synthesize_signal_declarations_from_prose(statements, &mut c)
+            .into_iter()
+            .filter_map(|s| s.text.strip_prefix("Signal ").map(|t| t.to_string()))
+            .filter_map(|t| t.split_whitespace().next().map(|w| w.to_string()))
+            .collect()
+    }
+
+    #[test]
+    fn captures_swclk_and_swdio_from_pin_appositive() {
+        let stmts = vec![
+            stmt("The SWD interface is synchronous, and requires a clock pin, SWCLK ."),
+            stmt("The SWD interface uses a single bidirectional data pin, SWDIO ."),
+        ];
+        let names = declared(&stmts);
+        assert!(names.contains(&"SWCLK".to_string()), "got {names:?}");
+        assert!(names.contains(&"SWDIO".to_string()), "got {names:?}");
+    }
+
+    #[test]
+    fn does_not_capture_cross_reference_after_pin() {
+        // "… pin, see Figure …" must not declare a signal SEE.
+        let names = declared(&[stmt(
+            "Drive the line before tristating the pin, see Figure B4-3 .",
+        )]);
+        assert!(!names.iter().any(|n| n == "SEE"), "got {names:?}");
+    }
+
+    #[test]
+    fn ignores_pin_not_followed_by_signal_token() {
+        let names = declared(&[stmt("The host parks the line before the turnaround pin.")]);
+        assert!(names.is_empty(), "got {names:?}");
     }
 }

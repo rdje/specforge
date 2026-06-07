@@ -45,9 +45,16 @@ extraction approach distinct from the parallel-bus signal-table path.
   register_map, 1 timing, 2 feature_matrix — the DP/AP register interface is in register_map/encoding tables;
   the bulk is architecture prose. Conclusion: SWD extraction is feasible with a serial/architecture-aware
   path; the decomposition below follows.
-- ID: `SWD-SERIAL-EXTRACTION.2` · Status: `pending` · Goal: capture `SWCLK`/`SWDIO` (and the JTAG pins) as
-  canonical interface signals from the prose "`<role>` pin, `<SIGNAL>`" pattern (general, ADR-0006 — grammar
-  not names), so they enter the declared catalog and become available to relations/temporal.
+- ID: `SWD-SERIAL-EXTRACTION.2` · Status: `done` · Goal: capture `SWCLK`/`SWDIO` (and the JTAG pins) as
+  canonical interface signals from the prose "`<role>` pin, `<SIGNAL>`" pattern. **Done:** added
+  `synthesize_signal_declarations_from_prose` (scans statements for the noun "pin" immediately naming a
+  signal across a comma — fused "pin," SIG or separate "pin" "," SIG; emits a width-1 declaration), wired
+  into `EvidenceIr` build alongside the table-declaration path (additive; dupes dedupe downstream).
+  ADR-0006 (grammar, not names). **Achieved on fresh evidence: `SWCLK`, `SWDIO`, and `NSRST` (a real ADI
+  system-reset) now declared** (were prose/figure-only); cross-ref "pin, see Figure" garbage suppressed by
+  adding `SEE` to `is_signal_synthesis_non_signal`. No parallel-bus regression (APB/AHB/AXI all still
+  1.000 on constraints + relations); +3 hermetic tests; full `scripts/run_ci.sh` green. KM
+  `[[prose-pin-appositive-signal-capture]]`.
 - ID: `SWD-SERIAL-EXTRACTION.3` · Status: `pending` · Goal: model the SWD serial-frame protocol
   (start/stop/park/turnaround/parity bits + WAIT/FAULT/OK ACK) as typed sequence/temporal facts.
 - ID: `SWD-SERIAL-EXTRACTION.4` · Status: `pending` · Goal: recover the DP/AP register-access interface from
@@ -57,7 +64,8 @@ extraction approach distinct from the parallel-bus signal-table path.
 
 ## Current frontier
 
-- `SWD-SERIAL-EXTRACTION.2` — capture SWCLK/SWDIO from prose (the foundation; relations/temporal depend on it).
+- `SWD-SERIAL-EXTRACTION.3` — model the SWD serial-frame protocol (start/stop/park/turnaround/parity bits +
+  WAIT/FAULT/OK ACK) as typed sequence/temporal facts. (`.2` done: SWCLK/SWDIO/NSRST now in the catalog.)
 
 ## Decisions
 
@@ -77,12 +85,15 @@ extraction approach distinct from the parallel-bus signal-table path.
 ## Verification log
 
 - `.1`: characterization done from the ingested ADI evidence (SWCLK/SWDIO prose, serial-frame prose, table-kind census).
+- `.2`: fresh ADI evidence rebuild shows SWCLK/SWDIO/NSRST declared, SEE suppressed; APB/AHB/AXI constraints+relations all 1.000; +3 hermetic tests; full `scripts/run_ci.sh` green (1323 lib tests).
 
 ## Commit log
 
 - `.1`: see the `SWD-SERIAL-EXTRACTION.1` commit (tree opened + research leaf).
+- `.2`: see the `SWD-SERIAL-EXTRACTION.2` commit (prose pin-appositive signal capture).
 
 ## Changelog
 
-- `2026-06-07`: Created (owner decision (a) from `WIRE-BASED-100.5j`). `.1` research/characterization done;
-  frontier = `.2` (capture SWCLK/SWDIO from prose).
+- `2026-06-07`: Created (owner decision (a) from `WIRE-BASED-100.5j`). `.1` research/characterization done.
+  `.2` done — SWCLK/SWDIO/NSRST captured from the prose "`<role>` pin, `<SIGNAL>`" appositive; frontier = `.3`
+  (serial-frame protocol model).

@@ -2,6 +2,16 @@
 
 ## 2026-06-07
 
+### `SWD-SERIAL-EXTRACTION.2` — capture SWCLK/SWDIO from prose (pin-appositive)
+Serial specs name the wire contract in prose ("requires a clock pin, SWCLK"; "a single bidirectional data
+pin, SWDIO"), so the table-only declaration path missed them. Added `synthesize_signal_declarations_from_prose`
+(scans for the noun "pin" naming a signal across a comma; emits a width-1 declaration), wired into
+`EvidenceIr` build (additive; dupes dedupe). ADR-0006 (grammar, not names). Result on fresh ADI evidence:
+**SWCLK, SWDIO, and NSRST (a real system-reset) now declared**; cross-ref "pin, see Figure" suppressed via
+`SEE` in `is_signal_synthesis_non_signal`. No parallel-bus regression (APB/AHB/AXI all still 1.000); +3
+hermetic tests; full `scripts/run_ci.sh` green (1323 lib tests). KM `prose-pin-appositive-signal-capture`.
+Frontier `.3`: serial-frame protocol model.
+
 ### `SWD-SERIAL-EXTRACTION` — dedicated serial-extraction tree opened (owner decision (a))
 Owner chose (a) from `WIRE-BASED-100.5j`: open a dedicated tree for the genuine path to SWD 100% (the
 parallel-bus signal-table model can't reach it). Created `docs/tasks/SWD-SERIAL-EXTRACTION.md` + registered
