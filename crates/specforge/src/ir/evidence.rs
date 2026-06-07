@@ -4275,6 +4275,10 @@ fn extract_dynamic_signal_constraints(
     // ("drive <signal> LOW/HIGH") finds constraints even when a doc declares no enum values.
 
     let mut records = Vec::new();
+    // Same catalog gate as the pattern path: a constraint subject must be a DECLARED signal, so
+    // property/config/doc-meta prose ("RME_Support must be False", "MPAM_WIDTH must be 11") is not
+    // mined as a signal constraint (WIRE-BASED-100.5i). Skipped when no signals are declared.
+    let declared_signals = collect_known_signal_names(statements);
     for statement in statements {
         if matches!(statement.class, StatementClass::SignalValueConstraint) {
             continue;
@@ -4313,6 +4317,9 @@ fn extract_dynamic_signal_constraints(
                 &statement.text,
                 discovered_values,
             );
+        }
+        if !declared_signals.is_empty() {
+            subject_signals.retain(|s| declared_signals.contains(s));
         }
         if subject_signals.is_empty() {
             continue;
@@ -5707,6 +5714,11 @@ fn extract_signal_constraints(
     counter: &mut usize,
 ) -> Vec<SignalConstraintRecord> {
     let mut records = Vec::new();
+    // The document's own declared-signal catalog decides what is a signal: a constraint subject
+    // must be a declared signal. This drops property/config/doc-meta prose mis-read as signal
+    // constraints (e.g. AXI "RME_Support must be False" → "RME"; "MPAM_WIDTH must be 11" → "MPAM";
+    // "granted to LICENSEE" → "LICENSEE") without any hardcoded list (ADR 0006). WIRE-BASED-100.5i.
+    let declared_signals = collect_known_signal_names(statements);
 
     for statement in statements {
         if !matches!(statement.class, StatementClass::SignalValueConstraint) {
@@ -5844,6 +5856,13 @@ fn extract_signal_constraints(
         // signal, never the value.
         if let Some(value) = extract_protocol_state_value(&lowered) {
             subject_signals.retain(|s| !s.eq_ignore_ascii_case(&value));
+        }
+        // Keep only subjects that are DECLARED signals — a property/config name or doc-meta token
+        // (AXI "RME_Support", "MPAM_WIDTH", "LICENSEE") is not in the catalog and is dropped
+        // (WIRE-BASED-100.5i). Skipped when the document declares no signals at all (e.g. a tiny
+        // fixture), so a no-catalog corpus is not silently emptied.
+        if !declared_signals.is_empty() {
+            subject_signals.retain(|s| declared_signals.contains(s));
         }
         if subject_signals.is_empty() {
             continue;
@@ -12247,6 +12266,84 @@ mod wire_based_100_5h {
         assert!(
             names.contains(&"PCLK") && names.contains(&"PADDR"),
             "got {names:?}"
+        );
+    }
+}
+
+#[cfg(test)]
+mod wire_based_100_5i {
+    //! WIRE-BASED-100.5i — a constraint subject must be a DECLARED signal: property/config/doc-meta
+    //! prose ("RME_Support must be False" → "RME") is not mined as a signal constraint, while a real
+    //! declared-signal constraint is kept. Gated on a non-empty catalog (tiny no-declaration fixtures
+    //! are unaffected).
+    use super::*;
+
+    fn stmt(id: &str, class: StatementClass, text: &str) -> ExtractedStatement {
+        ExtractedStatement {
+            statement_id: id.to_string(),
+            class,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        }
+    }
+
+    #[test]
+    fn property_subject_dropped_declared_signal_kept() {
+        let statements = vec![
+            // The document's catalog: ASKSTOP is a declared signal; RME is NOT (it's a property).
+            stmt(
+                "d1",
+                StatementClass::SourceFact,
+                "Signal ASKSTOP is output width 1.",
+            ),
+            stmt(
+                "c1",
+                StatementClass::SignalValueConstraint,
+                "ASKSTOP must be LOW during reset.",
+            ),
+            // dynamic path: "RME_Support must be False" → subject "RME", an undeclared property.
+            stmt(
+                "c2",
+                StatementClass::NormativeStatement,
+                "When GDI_Support is True, RME_Support must be False.",
+            ),
+        ];
+        let mut counter = 0usize;
+        let mut subjects: Vec<String> = extract_signal_constraints(&statements, &mut counter)
+            .into_iter()
+            .map(|r| r.subject_signal)
+            .collect();
+        let mut dyn_counter = 0usize;
+        subjects.extend(
+            extract_dynamic_signal_constraints(&statements, &mut dyn_counter, &HashSet::new())
+                .into_iter()
+                .map(|r| r.subject_signal),
+        );
+        assert!(
+            subjects.contains(&"ASKSTOP".to_string()),
+            "declared signal kept, got {subjects:?}"
+        );
+        assert!(
+            !subjects.iter().any(|s| matches!(s.as_str(), "RME" | "GDI")),
+            "undeclared property subjects must be dropped, got {subjects:?}"
+        );
+    }
+
+    #[test]
+    fn no_catalog_fixture_is_not_emptied() {
+        // No "Signal X" declaration → catalog empty → filter skipped (constraint still extracted).
+        let statements = vec![stmt(
+            "c1",
+            StatementClass::SignalValueConstraint,
+            "HADDR must be stable.",
+        )];
+        let mut counter = 0usize;
+        let recs = extract_signal_constraints(&statements, &mut counter);
+        assert!(
+            recs.iter().any(|r| r.subject_signal == "HADDR"),
+            "with no catalog the filter must not drop the constraint, got {recs:?}"
         );
     }
 }

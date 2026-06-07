@@ -350,6 +350,23 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   unchanged, unless-drop); full `scripts/run_ci.sh` green (1316 lib tests, kg-bench green). **AHB is now
   100% on ALL THREE aspects (constraints + relations + temporal), matching APB.** Closes the `.3a`-deferred
   misaligned-table extractor work. Next: AXI + SWD/ADI (corpus PDFs ready).
+- ID: `WIRE-BASED-100.5i` · Status: `done` (constraints; relations/temporal → `.5k`) · Goal: **AXI
+  constraints to 100%.** Re-ingested AXI (`corpus/.../IHI0022_L`, `DOCLING_DEVICE=cpu`); AXI is
+  channel-organized (AW/W/B/AR/R/AC, 310 signals — `[[axi-channel-structure]]`). Built `seed_axi.json`
+  (4 `must_be_low` activation/system positives + 3 property/doc-meta negatives). **Baseline 0.375** (recall
+  1.000, precision killed by property-prose FPs). **Root + fix:** AXI carries heavy property/config prose
+  ("RME_Support must be False", "MPAM_WIDTH must be 11", "granted to LICENSEE") whose subjects (`RME`/`GDI`/
+  `MPAM`/`LICENSEE`/`AXI`) are NOT declared signals (measured: 27/28 garbage non-declared, 18/18 real
+  declared). Fix: **a constraint subject must be a declared signal** (`collect_known_signal_names`),
+  applied in BOTH `extract_signal_constraints` AND `extract_dynamic_signal_constraints` (the AXI FPs were
+  `dyn_sigcon_`); ADR-0006-safe (the doc's own catalog), gated on a non-empty catalog (kg-bench safe).
+  **Achieved on fresh evidence: AXI `signal_constraint` source-tolerant `P=R=F1=1.000`** (tp=3 fp=0 fn=0).
+  No regression: APB/AHB constraints still 1.000 (PSTRB-LOW `dyn_sigcon_` survives); +2 hermetic tests;
+  full `scripts/run_ci.sh` green (1318 lib tests, kg-bench green). KM `[[axi-constraint-subject-must-be-declared]]`.
+- ID: `WIRE-BASED-100.5k` · Status: `pending` · Goal: AXI relations + temporal golds → 100% (AXI is large:
+  514 relations) per-channel; then SWD/ADI (`.5j`).
+- ID: `WIRE-BASED-100.5j` · Status: `pending` · Goal: **SWD/ADI to 100%** (the serial-debug wire-based
+  spec) — same playbook on `corpus/arm/debug/interfaces/adi/current/IHI0074_A_*.pdf`.
 
 ## Picked sequence to APB 100% (owner: "pick the next trees to achieve just that")
 

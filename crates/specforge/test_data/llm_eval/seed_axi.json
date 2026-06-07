@@ -1,0 +1,58 @@
+[
+  {
+    "task": "signal_constraint",
+    "doc_key": "ihi0022_l_2025_08_amba_axi_protocol_specification",
+    "statement_id": "statement_3954",
+    "input_text": "- ASKSTOP must be LOW when ACTIVATEACK is LOW.",
+    "grounding": ["ASKSTOP", "ACTIVATEACK"],
+    "gold": [
+      {"fact": "constraint", "subject_signal": "ASKSTOP", "constraint_kind": "must_be_low"}
+    ],
+    "label_status": "agent_drafted",
+    "label_note": "ASKSTOP must be LOW; ACTIVATEACK is the condition signal, not the subject. Expected TP."
+  },
+  {
+    "task": "signal_constraint",
+    "doc_key": "ihi0022_l_2025_08_amba_axi_protocol_specification",
+    "statement_id": "statement_3961",
+    "input_text": "- ACTIVATEREQ , ACTIVATEACK and ASKSTOP must be LOW during reset.",
+    "grounding": ["ACTIVATEREQ", "ACTIVATEACK", "ASKSTOP"],
+    "gold": [
+      {"fact": "constraint", "subject_signal": "ACTIVATEREQ", "constraint_kind": "must_be_low"},
+      {"fact": "constraint", "subject_signal": "ACTIVATEACK", "constraint_kind": "must_be_low"},
+      {"fact": "constraint", "subject_signal": "ASKSTOP", "constraint_kind": "must_be_low"}
+    ],
+    "label_status": "agent_drafted",
+    "label_note": "Three activation/system signals must be LOW during reset (multi-signal constraint). Expected 3 TP."
+  },
+  {
+    "task": "signal_constraint",
+    "doc_key": "ihi0022_l_2025_08_amba_axi_protocol_specification",
+    "statement_id": "statement_1465",
+    "input_text": "- When RME\\_Support is False, GDI\\_Support must be False.",
+    "grounding": [],
+    "gold": [],
+    "label_status": "agent_drafted",
+    "label_note": "Negative: a PROPERTY/config constraint, not a signal constraint. RME_Support / GDI_Support are configuration properties, not declared signals — RME/GDI-as-subject constraints are false positives."
+  },
+  {
+    "task": "signal_constraint",
+    "doc_key": "ihi0022_l_2025_08_amba_axi_protocol_specification",
+    "statement_id": "statement_3237",
+    "input_text": "When MPAM\\_Support is MPAM\\_9\\_1 and RME\\_Support is False, MPAM\\_WIDTH must be 11 and the mapping is as follows:",
+    "grounding": [],
+    "gold": [],
+    "label_status": "agent_drafted",
+    "label_note": "Negative: a PROPERTY-width configuration rule. MPAM_WIDTH / MPAM_Support / RME_Support are properties, not signals — MPAM/RME-as-subject constraints are false positives."
+  },
+  {
+    "task": "signal_constraint",
+    "doc_key": "ihi0022_l_2025_08_amba_axi_protocol_specification",
+    "statement_id": "statement_0052",
+    "input_text": "8. (iii) no right is granted to LICENSEE to sublicense the rights granted to LICENSEE under this Agreement.",
+    "grounding": [],
+    "gold": [],
+    "label_status": "agent_drafted",
+    "label_note": "Negative: front-matter licence prose. LICENSEE is not a signal — a LICENSEE constraint is a false positive (doc-meta noise)."
+  }
+]

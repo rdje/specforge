@@ -2,6 +2,19 @@
 
 ## 2026-06-07
 
+### `WIRE-BASED-100.5i` — AXI constraints 100%: a constraint subject must be a declared signal
+Rolled to AXI (re-ingested `corpus/.../IHI0022_L`; AXI is channel-organized AW/W/B/AR/R/AC, 310 signals).
+Built `seed_axi.json`; baseline 0.375 (recall 1.000, precision killed by AXI's heavy property/config prose
+— "RME_Support must be False", "MPAM_WIDTH must be 11", "granted to LICENSEE" — mis-read as signal
+constraints on subjects `RME`/`GDI`/`MPAM`/`LICENSEE`). Fix: **a constraint subject must be a declared
+signal** (`collect_known_signal_names` — the doc's own catalog; measured 27/28 garbage non-declared,
+18/18 real declared), applied in BOTH `extract_signal_constraints` and `extract_dynamic_signal_constraints`
+(the AXI FPs were `dyn_sigcon_`); ADR-0006-safe, gated on a non-empty catalog (kg-bench safe). Result: AXI
+`signal_constraint` source-tolerant `P=R=F1=1.000` (tp=3 fp=0 fn=0); APB/AHB constraints stay 1.000
+(PSTRB-LOW survives); +2 hermetic tests; full `scripts/run_ci.sh` green (1318 lib tests). New KM cards
+`axi-channel-structure`, `axi-constraint-subject-must-be-declared`. AXI relations/temporal = follow-on
+(`.5k`; AXI is large).
+
 ### `WIRE-BASED-100.5h` — AHB temporal 100%: rotation-aware extraction + `unless`-exception drop (AHB now fully matches APB)
 Built `seed_ahb_temporal.json` (4 items); baseline 0.500 traced to two defects, both fixed:
 1. **Content-based name-column detection** (the `.3a`-deferred EXTRACTOR fix): `synthesize_signal_declarations`
