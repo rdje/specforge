@@ -1,65 +1,53 @@
-# Feature request: ISF (IAL1) abstraction to declare a GIVEN explicit FSM (states + transitions)
+# WITHDRAWN — premature feature request (ISF already expresses FSM intent)
 
-- Type: **feature request** (design gap), not a bug repro bundle.
-- Raised by: `SWD-SERIAL-EXTRACTION.6` (SpecForge), `2026-06-07`.
-- Owner directive: "SPECFORGE need to make sure ISF has all the necessary abstractions to accurately
-  model all these bus interface protocols. If not, a feature request shall be raised. Modelling … shall
-  be elegant, seamless and shall by no means resort to hacks." (No-hack: `feedback_isf_no_hacks`.)
+- Status: **WITHDRAWN** `2026-06-07` (same day as raised). Do not action.
+- Reason for withdrawal: filed without thoroughly checking current FSMGen — the `subs/fsmgen` submodule
+  was **312 commits stale**, and the ISF model was read incompletely. Owner correction: "did you
+  thoroughly check what FSMGEN has to offer? … Only then can you make an informed decision to issue a
+  feature request"; "focus on ISF (.isf), not .fsm"; "SPECFORGE shall not bother cycle-scheduling, it
+  should leave that to FSMGEN. FSMGEN role is to lower ISF (.isf) to FSM (.fsm)."
 
-## Context
+## What the original request claimed (incorrectly)
 
-SpecForge now captures the SWD/JTAG protocol FSM as a first-class evidence surface
-(`EvidenceIr.protocol_states`, `ProtocolStateRecord`): the **DBGTAPSM** ("Debug TAP State Machine") with
-its named TAP states (Test-Logic-Reset, Run-Test/Idle, Capture-/Shift-/Update-IR, Capture-/Shift-/Update-DR)
-and per-state actions. JTAG's TAP controller is a **given, fixed 16-state machine** whose transitions are
-driven by TMS; SWD has an analogous line/protocol state machine. This FSM "is critical to the proper
-understanding and implementation of SWD/JTAG" (owner).
+That ISF (IAL1) has "no first-class construct to declare a given explicit FSM (named states + labeled
+transitions)", and therefore an ISF feature is needed to model the JTAG/SWD TAP FSM.
 
-To reach FSMGen, SpecForge lowers IntentIR → **`.isf` (IAL1)** → FSMGen → **`.fsm` (IAL0)**.
+## Why it is wrong (after updating the submodule + reading the current ISF book/contract/spec)
 
-## The gap
+1. **Division of labor.** SpecForge captures *intent* and emits `.isf` (IAL1); it does **not** do
+   cycle-scheduling or state synthesis. **FSMGen lowers `.isf` → `.fsm`** and owns scheduling/state
+   synthesis. So "the generated `.fsm` must have exactly the 16 TAP states" is FSMGen's lowering concern,
+   not a SpecForge/ISF expressibility gap.
+2. **ISF already has the FSM-intent constructs.** The shipped IAL1 surface includes **enums** (state-name
+   members), **`switch`** on enum/aggregate selectors, **`set`** scalar assignment, and bounded
+   **`while`/`until`** loops (which project through `transaction_loops` with decision/body/exit states).
+   These compose into the standard explicit-FSM idiom: an enum `state` variable + `switch (state)` +
+   `set state = next` inside a perpetual loop — exactly how a state machine is authored in any
+   intent/RTL language. "No register vocabulary; the scheduler decides storage" means the enum state
+   variable IS the elegant state representation. This is not a hack.
+3. **IAL2 (reserved, not shipped) is for *reusable protocol-level intent objects* ("APB read
+   transaction", "AXI burst")** — a convenience layer, not a prerequisite for expressing an FSM.
 
-Per the ISF public contract: **`.fsm` (IAL0) is "the explicit cycle-authored" FSM**, and **`.isf` (IAL1)
-is "scheduling-intent that lowers to reviewable IAL0 `.fsm`"**. IAL1's vocabulary is transactions, stages
-(ready/valid), timing, drives, rules/priorities, and *structured control flow within a transaction*
-(`when`/`while`/`until`/`repeat`, `switch`). FSMGen **synthesizes** the `.fsm` from that scheduling intent.
+## Conclusion — PROVEN, no feature request warranted
 
-There is **no first-class IAL1 construct to DECLARE a given explicit state machine** — a set of named
-states with labeled transition edges (e.g. `Shift-DR --TMS=1--> Exit1-DR`, `--TMS=0--> Shift-DR`). The
-explicit FSM is an IAL0 (`.fsm`) concept, but SpecForge emits IAL1 (`.isf`).
+Empirically verified against the current FSMGen (`subs/fsmgen` @ `d31b0b91`): a **6-state JTAG TAP-DR FSM**
+(Run-Test/Idle → Select-DR → Capture-DR → Shift-DR → Exit1-DR → Update-DR, with the correct TMS-driven
+edges) lowers cleanly — `./bin/fsmgen --strict --check --json` → `success: true` — using only shipped ISF
+constructs:
 
-For a protocol whose FSM is **given by the spec** (the JTAG TAP), the IAL1 paradigm is a poor fit:
-encoding a fixed 16-state TMS-driven graph as a scheduling-intent transaction (nested `while`/`switch`
-over a synthetic `tms` input, with synthetic storage tracking the "current state") would be a **hack** —
-it would launder a declarative state graph through a procedural scheduling surface, losing the 1:1
-state/transition identity the spec defines. The owner explicitly forbids that.
+```lisp
+(storage (var tap (width 3) (reset 0)))            ;; state register
+(transaction step (on start)
+  (switch tap (0 (select tap tms 1 0)) (1 (select tap tms 1 2)) ...) ;; per-state input-driven transitions
+  (complete done))
+(rule tick start (trigger step))                    ;; perpetual recurrence
+```
 
-## The request
+So `SWD-SERIAL-EXTRACTION.5` will express the TAP FSM with this idiom; SpecForge captures the intent and
+**FSMGen lowers `.isf` → `.fsm`** (SpecForge does not cycle-schedule). If — and only if — a future, richer
+FSM construct genuinely requires a hack on the **current** FSMGen, a substantiated request will be re-filed
+with a concrete failing `.isf` (per "parser acceptance ≠ support").
 
-An elegant IAL1 path to express a **given explicit FSM** that lowers identity-preservingly to the IAL0
-`.fsm`. Candidate shapes (for FSMGen owner to choose):
-
-1. A first-class ISF `(state-machine NAME (state S …) (transition S -> T (on COND)) …)` construct that
-   FSMGen lowers to the corresponding `.fsm` states/edges 1:1; or
-2. A documented, supported path for SpecForge to contribute a given `.fsm` (IAL0) directly for
-   given-FSM protocols, bypassing IAL1 synthesis; or
-3. Guidance that the TAP FSM SHOULD be expressed as IAL1 scheduling intent — with a worked, non-hack
-   example — if FSMGen considers that the intended modelling.
-
-## Serial frame — likely already covered (confirm at `.5`)
-
-The companion SWD serial-frame surface (`SerialFrameField`: ordered request/ack/data bit-fields with
-widths + ACK OK/WAIT/FAULT) appears representable with EXISTING ISF abstractions — the contract advertises
-SPI-like and I2C-like serial fixtures, explicit-width **shift registers**, bit selection, read-data
-shifting, and completion pulses. No feature request is raised for the serial frame yet; its clean
-lowering will be **confirmed (or escalated) at `SWD-SERIAL-EXTRACTION.5`** when the SWD `.isf` is produced.
-
-## Substantiation plan (per "parser acceptance ≠ support")
-
-At `.5`, attempt to lower the DBGTAPSM to `.isf`. If no non-hack IAL1 expression exists, attach a concrete
-`.isf` attempt + FSMGen `--strict --check` output here (env.txt / commands.sh / observed/, matching the
-other `sf-isf-*` bundles) to make this request exact and regression-anchorable. Until then this is the
-design-level gap statement.
-
-See KM `[[isf-no-explicit-fsm-abstraction]]`, `[[swd-protocol-fsm-surface]]`; contract
-`subs/fsmgen/docs/ISF_PUBLIC_INTERFACE_CONTRACT.md`.
+Lessons: `feedback_isf_no_hacks` (no hacks) and `feedback_verify_fsmgen_before_fr` — **update `subs/fsmgen`
+and EMPIRICALLY test (`--strict --check --json`) before asserting any FSMGen capability gap**. See KM
+`[[isf-fsm-via-switch-select]]`.

@@ -94,20 +94,25 @@ extraction approach distinct from the parallel-bus signal-table path.
   model an explicit FSM (states + transitions) elegantly for `.5` lowering — see the ISF-abstraction
   feature-request check (owner: no hacks; raise an ISF feature request if a gap exists).
 - ID: `SWD-SERIAL-EXTRACTION.5` · Status: `pending` · Goal: build the SWD constraint/relation/temporal golds
-  from real prose, measure, and fix to `P=R=F1=1.000` (per-fact), no parallel-bus regression. Also produce
-  the SWD `.isf` to substantiate the `.6` ISF feature request with a concrete lowering attempt.
-- ID: `SWD-SERIAL-EXTRACTION.6` · Status: `done` (assessment + feature request raised; substantiation at
-  `.5`) · Goal: ensure ISF can model these protocols ELEGANTLY (owner directive: no hacks; raise a feature
-  request if a gap). **Finding:** ISF layering — `.fsm`=IAL0 (the *explicit* cycle-authored FSM),
-  `.isf`=IAL1 (*scheduling-intent* synthesized into `.fsm`). SpecForge emits IAL1. IAL1 has transactions/
-  stages/timing/rules + structured control flow (`when`/`while`/`switch`) but **no first-class construct to
-  DECLARE a given explicit FSM** (named states + labeled transitions) — yet the JTAG TAP is a *given*
-  16-state TMS-driven machine. Forcing it into a scheduling transaction (synthetic TMS + current-state
-  storage) is the forbidden hack. → **Feature request raised:** `docs/fsmgen-issues/sf-isf-explicit-fsm-declaration/`
-  (an IAL1 `(state-machine …)` declaration that lowers 1:1, OR a path to contribute IAL0 `.fsm` directly,
-  OR a non-hack worked example). **Serial frame is likely NOT a gap** — ISF has SPI/I2C serial fixtures +
-  shift registers + completion pulses; confirm at `.5`. Per the contract, parser-acceptance ≠ support, so
-  the FR is substantiated with a concrete `.isf` attempt at `.5`. KM `[[isf-no-explicit-fsm-abstraction]]`.
+  from real prose, measure, and fix to `P=R=F1=1.000` (per-fact), no parallel-bus regression. Lower the
+  captured FSM (`protocol_states`) to `.isf` using the PROVEN idiom (storage state var + `switch` +
+  `select` per-state transition + `rule trigger`; KM `[[isf-fsm-via-switch-select]]`) and confirm it lowers
+  through FSMGen — no feature request needed.
+- ID: `SWD-SERIAL-EXTRACTION.6` · Status: `done` (re-done correctly; feature request WITHDRAWN) · Goal:
+  ensure ISF can model these protocols ELEGANTLY (owner: no hacks). **Initial mistake:** filed a feature
+  request claiming ISF can't declare an FSM — but off a `subs/fsmgen` submodule **312 commits stale** and
+  from reading alone. Owner corrected (3×): thoroughly check what FSMGen offers; focus on `.isf` not `.fsm`
+  (`.fsm` is too low-level); SpecForge doesn't cycle-schedule — FSMGen lowers `.isf` → `.fsm`; and "make
+  sure you really can't use the existing ISF … first". **Re-done:** updated the submodule to `d31b0b91`
+  (SpecForge's 41 isf/fsmgen tests still pass against it), read the current ISF book/contract/handoff, then
+  **EMPIRICALLY tested**. **PROVEN: ISF accurately describes an FSM** — a 6-state JTAG TAP-DR FSM (correct
+  TMS edges) lowers clean (`fsmgen --strict --check --json` → `success:true`) via the idiom `storage` state
+  var + `switch` on it + `(select st input NEXT_IF NEXT_ELSE)` per state + `(rule tick start (trigger
+  step))` for recurrence. Boundaries found: switch-in-`while` unsupported; competing per-transition rules
+  trip `isf_conflicting_rule_writes`; `select` is a transaction action not a rule action; `cond` nested in
+  a switch branch unsupported. → **Feature request WITHDRAWN** (`docs/fsmgen-issues/sf-isf-explicit-fsm-declaration/`
+  marked WITHDRAWN); serial frame also NOT a gap (ISF has shift registers / serial fixtures). KM
+  `[[isf-fsm-via-switch-select]]`; lessons `[[feedback_verify_fsmgen_before_fr]]`, `[[feedback_isf_no_hacks]]`.
 
 ## Current frontier
 

@@ -2,7 +2,19 @@
 
 ## 2026-06-07
 
-### `SWD-SERIAL-EXTRACTION.6` — ISF-abstraction check + feature request (owner: no hacks)
+### `SWD-SERIAL-EXTRACTION.6` (REDONE) — ISF CAN describe an FSM (proven); feature request WITHDRAWN
+Owner pushed back on a premature feature request (filed off a `subs/fsmgen` submodule **312 commits stale**,
+from reading alone): thoroughly check FSMGen; focus on `.isf` not `.fsm`; SpecForge doesn't cycle-schedule
+(FSMGen lowers `.isf`→`.fsm`); and verify you really can't use existing ISF first. Updated the submodule to
+`d31b0b91` (SpecForge's 41 isf/fsmgen tests still pass), read the current ISF book/contract/handoff, then
+**empirically tested**: a 6-state JTAG TAP-DR FSM (correct TMS edges) lowers clean (`fsmgen --strict --check
+--json` → `success:true`) via the idiom `storage` state var + `switch` + `(select st input A B)` per state +
+`(rule tick start (trigger step))`. So **ISF accurately describes a state machine — feature request
+WITHDRAWN** (no gap; serial frame also covered by shift registers). KM `isf-fsm-via-switch-select` (replaces
+the deleted, incorrect `isf-no-explicit-fsm-abstraction`); lessons `feedback_verify_fsmgen_before_fr`. The
+`subs/fsmgen` submodule pointer is bumped to the current `main`.
+
+### ~~`SWD-SERIAL-EXTRACTION.6` — ISF-abstraction check + feature request~~ (SUPERSEDED by the redo above)
 Owner directive: ISF must model these protocols elegantly; raise a feature request if an abstraction is
 missing — no hacks. **Assessment:** ISF layering is `.fsm`=IAL0 (the explicit cycle-authored FSM),
 `.isf`=IAL1 (scheduling-intent synthesized into `.fsm`); SpecForge emits IAL1. IAL1 has transactions/
