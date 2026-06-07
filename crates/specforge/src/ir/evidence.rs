@@ -780,6 +780,8 @@ impl EvidenceIr {
                 reg.size_bits = register_size_from_fields(&reg.fields);
             }
         }
+        // Drop bit-LAYOUT grids mis-read as registers (see `register_is_bit_layout_grid`).
+        register_records.retain(|reg| !register_is_bit_layout_grid(reg));
         let timing_constraints = synthesize_timing_constraints(&source_ir, prior_guidance.as_ref());
 
         // Replace the previous one-shot extraction with a monotone convergent loop:
@@ -8143,6 +8145,18 @@ fn register_size_from_fields(fields: &[RegisterFieldRecord]) -> Option<u32> {
         .map(|h| h + 1)
 }
 
+/// A register-DIAGRAM/bit-layout grid (table columns are bit POSITIONS `15|14|…|0`) mis-read as a
+/// register: every "field" is named by a bare number. A real register definition always has at least one
+/// named (non-numeric) field, so an all-numeric-field record is a layout grid, not a field definition.
+/// PDF-VARIANT-DIGESTION.2c no-garbage filter (general; no chip names).
+fn register_is_bit_layout_grid(reg: &RegisterRecord) -> bool {
+    !reg.fields.is_empty()
+        && reg
+            .fields
+            .iter()
+            .all(|f| f.field_name.trim().bytes().all(|b| b.is_ascii_digit()))
+}
+
 /// Field width from a `[high:low]` range: `high - low + 1` when both bounds are present and ordered.
 fn bit_width_from_range(bits_high: Option<u32>, bits_low: Option<u32>) -> Option<u32> {
     match (bits_high, bits_low) {
@@ -8859,6 +8873,45 @@ mod tests {
         assert!(super::parse_inline_field_enums("set bit 0 to enable the channel").is_empty());
         assert!(super::is_register_value_literal("2'b01"));
         assert!(!super::is_register_value_literal("0"));
+    }
+
+    #[test]
+    fn bit_layout_grids_are_detected_as_garbage() {
+        use crate::ir::source::{RegisterFieldRecord, RegisterRecord};
+        let mk = |name: &str| RegisterFieldRecord {
+            field_name: name.to_string(),
+            bits_high: None,
+            bits_low: None,
+            bit_width: None,
+            access_type: None,
+            reset_value: None,
+            description: None,
+            enumerated_values: vec![],
+        };
+        let reg = |fields: Vec<RegisterFieldRecord>| RegisterRecord {
+            register_id: "r".to_string(),
+            register_name: "R".to_string(),
+            offset_address: None,
+            size_bits: None,
+            fields,
+            supporting_statement_ids: vec![],
+            automation_confidence: AutomationConfidence::Medium,
+        };
+        // all-numeric field names = a bit-position grid (garbage)
+        assert!(super::register_is_bit_layout_grid(&reg(vec![
+            mk("14"),
+            mk("13"),
+            mk("12")
+        ])));
+        // a real register keeps at least one named field
+        assert!(!super::register_is_bit_layout_grid(&reg(vec![
+            mk("14"),
+            mk("haltreq")
+        ])));
+        // bit-RANGE names ("63:61") are not pure numbers → a legitimate bits-only field table
+        assert!(!super::register_is_bit_layout_grid(&reg(vec![mk("63:61")])));
+        // an empty register is not a grid
+        assert!(!super::register_is_bit_layout_grid(&reg(vec![])));
     }
 
     #[test]

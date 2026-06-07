@@ -101,9 +101,11 @@ a stats-script regex bug — ingest OK; re-measure with the hardened helper.)
   `name + offset(=bits_low, LSb) + width`; range/single-bit/offset+width all map) + `enumerated_values`
   (`RegisterFieldEnumRecord { value, meaning }`); access/reset stay FREE strings. Populated deterministically
   where data exists: width from `[high:low]`, register size from max field MSb, inline enums from
-  binary/hex/Verilog literals in descriptions (conservative — no bare-int false positives). +2 hermetic
-  tests; NVMe (45 bits-bearing field tables in source_ir) re-ingesting for the real-data width/enum demo.
-  Owner-confirmed model
+  binary/hex/Verilog literals in descriptions (conservative — no bare-int false positives). A no-garbage
+  filter drops bit-LAYOUT grids (register-diagram tables whose "fields" are bare bit numbers). +3 hermetic
+  tests. **Real-data demo: NVMe → 44 registers / 199 fields, all with `bit_width`** (3 bit-layout grids
+  filtered); RISC-V unaffected (60/179); APB/AHB/AXI/SWD stay 100%. NVMe added to `corpus/`. Owner-confirmed
+  model
   ([[project_flexible_register_model]]). REMAINING: register NAME from preceding heading (synthetic today —
   tables aren't in Docling's content_elements reading-order, so reliable association is deferred, not faked);
   block/base grouping; array/instance.
