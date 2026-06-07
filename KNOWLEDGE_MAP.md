@@ -3,7 +3,7 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Regenerate with `knowledge-map/scripts/gen_knowledge_map.sh`.
 > Source of truth = YAML front-matter in: `docs/knowledge docs/decisions`. Edit the fact files, never this map.
 > A fact is any `.md` whose front-matter has a non-empty `answers:` list.
-> **37** facts · **189** question keys.
+> **38** facts · **193** question keys.
 
 ## Questions → fact
 
@@ -70,6 +70,7 @@
 - "how is the NLI gate tested without Ollama" -> [nli-intent-gate](docs/knowledge/nli-intent-gate.md) · 2026-06-05 · reverify: `grep -n "fn apply_nli_gate\|fn nli_gate_contracts\|fn obligation_claim_text" crates/specforge/src/ir/nli_verify.rs`
 - "how is the SWD FSM/frame derivation scored (not constraints/relations/temporal)" -> [swd-derivation-scored-100](docs/knowledge/swd-derivation-scored-100.md) · 2026-06-07 · reverify: `./target/debug/specforge eval-extraction crates/specforge/test_data/llm_eval/seed_swd_derivation.json --provider skip 2>/dev/null | sed -n '/source-tolerant/,/document-level/p'`
 - "how many signals does each AXI channel have" -> [axi-channel-structure](docs/knowledge/axi-channel-structure.md) · 2026-06-07 · reverify: `python3 -c "import json,re; e=json.load(open('generated/evidence_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/evidence_ir.json')); d={re.match(r'Signal (\w+)',s['text']).group(1) for s in e['extracted_statements'] if s['text'].startswith('Signal ')}; print(sorted(x for x in d if x.startswith('AW'))[:10])`
+- "how much intent does SpecForge extract across the whole corpus" -> [corpus-coverage-sweep](docs/knowledge/corpus-coverage-sweep.md) · 2026-06-08 · reverify: `python3 over generated/evidence_ir/*/evidence_ir.json — count Signal-decls / register_records+fields / protocol_actors / signal_constraints / actor_signal_relations per doc-key`
 - "how should an AXI gold or extraction be structured (per channel)" -> [axi-channel-structure](docs/knowledge/axi-channel-structure.md) · 2026-06-07 · reverify: `python3 -c "import json,re; e=json.load(open('generated/evidence_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/evidence_ir.json')); d={re.match(r'Signal (\w+)',s['text']).group(1) for s in e['extracted_statements'] if s['text'].startswith('Signal ')}; print(sorted(x for x in d if x.startswith('AW'))[:10])`
 - "how to express the JTAG TAP / SWD FSM in .isf" -> [isf-fsm-via-switch-select](docs/knowledge/isf-fsm-via-switch-select.md) · 2026-06-07 · reverify: `write a state machine as (storage (var st ...)) + (transaction step (on start) (switch st (S (select st input A B))...) (complete done)) + (rule tick start (trigger step)); run subs/fsmgen/bin/fsmgen --strict --check --json FILE → success:true`
 - "how to get a fresh eval-extraction baseline for a spec" -> [eval-scores-persisted-evidence](docs/knowledge/eval-scores-persisted-evidence.md) · 2026-06-07 · reverify: `./target/debug/specforge evidence generated/source_ir/<doc_key>/source_ir.json   # errors if normalized was reclaimed`
@@ -137,6 +138,7 @@
 - "what is the FSMGen issue bundle protocol" -> [fsmgen-feedback-channel](docs/knowledge/fsmgen-feedback-channel.md) · 2026-06-04 · reverify: `ls docs/FSMGEN_FEEDBACK.md`
 - "what is the LTL form of a temporal_rule" -> [temporal-rule-ltl-rendering](docs/knowledge/temporal-rule-ltl-rendering.md) · 2026-06-04 · reverify: `grep -n "fn temporal_rule_to_ltl" crates/specforge/src/ir/temporal_ltl.rs`
 - "what is the NLI entailment verifier" -> [nli-entailment-verifier](docs/knowledge/nli-entailment-verifier.md) · 2026-06-05 · reverify: `grep -n "fn verify_entailment" crates/specforge/src/ir/nli_verify.rs`
+- "what is the PDF-VARIANT-DIGESTION whole-corpus coverage / re-triage" -> [corpus-coverage-sweep](docs/knowledge/corpus-coverage-sweep.md) · 2026-06-08 · reverify: `python3 over generated/evidence_ir/*/evidence_ir.json — count Signal-decls / register_records+fields / protocol_actors / signal_constraints / actor_signal_relations per doc-key`
 - "what is the SWD line state machine (reset/operating/protocol-error/lockout)" -> [swd-intent-is-the-fsm-driving-swdio](docs/knowledge/swd-intent-is-the-fsm-driving-swdio.md) · 2026-06-07 · reverify: `python3 — dump source_ir content_elements for page_id page_0110..page_0128 (Chapter B4); the PDF itself is password-protected so the Read tool cannot open it — use the docling content_elements text.`
 - "what is the VLM table strategy / PDF-VARIANT-DIGESTION.2b" -> [vlm-table-strategy](docs/knowledge/vlm-table-strategy.md) · 2026-06-07 · reverify: `./target/debug/specforge enrich generated/source_ir/<key>/source_ir.json --vlm-provider ollama --vlm-model qwen2.5vl:7b   # prints tables_reclassified_by_vlm`
 - "what is the ambiguous_statements metric in validate" -> [ambiguity-weak-phrase-detector](docs/knowledge/ambiguity-weak-phrase-detector.md) · 2026-06-04 · reverify: `grep -n "fn weak_phrase_findings" crates/specforge/src/ir/ambiguity.rs`
@@ -163,6 +165,8 @@
 - "where is the weak-phrase / NASA ARM ambiguity detector" -> [ambiguity-weak-phrase-detector](docs/knowledge/ambiguity-weak-phrase-detector.md) · 2026-06-04 · reverify: `grep -n "fn weak_phrase_findings" crates/specforge/src/ir/ambiguity.rs`
 - "which LLM or VLM does SpecForge use" -> [llm-vlm-provider-default](docs/knowledge/llm-vlm-provider-default.md) · 2026-06-01 · reverify: `grep -n "qwen2.5vl" crates/specforge/src/commands/llm_text.rs`
 - "which corpus PDFs are password/permission protected" -> [pdf-encryption-and-read-access](docs/knowledge/pdf-encryption-and-read-access.md) · 2026-06-07 · reverify: `.venv-docling/bin/python -c \"from pypdf import PdfReader; r=PdfReader('<pdf>'); print('enc',r.is_encrypted); r.decrypt('') if r.is_encrypted else 0; print(len(r.pages))\"`
+- "which corpus docs still yield nothing (the VLM frontier)" -> [corpus-coverage-sweep](docs/knowledge/corpus-coverage-sweep.md) · 2026-06-08 · reverify: `python3 over generated/evidence_ir/*/evidence_ir.json — count Signal-decls / register_records+fields / protocol_actors / signal_constraints / actor_signal_relations per doc-key`
+- "which docs fail to ingest (giants / timeouts)" -> [corpus-coverage-sweep](docs/knowledge/corpus-coverage-sweep.md) · 2026-06-08 · reverify: `python3 over generated/evidence_ir/*/evidence_ir.json — count Signal-decls / register_records+fields / protocol_actors / signal_constraints / actor_signal_relations per doc-key`
 - "which local model should SpecForge use for NLI or entailment verification" -> [local-llm-for-text-reasoning](docs/knowledge/local-llm-for-text-reasoning.md) · 2026-06-05 · reverify: `ollama list  # qwen2.5:14b-instruct (text) + qwen2.5vl:7b (vision); re-run the NLI/kappa probes`
 - "which local models are pulled and what are they for" -> [local-llm-for-text-reasoning](docs/knowledge/local-llm-for-text-reasoning.md) · 2026-06-05 · reverify: `ollama list  # qwen2.5:14b-instruct (text) + qwen2.5vl:7b (vision); re-run the NLI/kappa probes`
 - "why are modal verbs must shall should may not flagged as ambiguous" -> [ambiguity-weak-phrase-detector](docs/knowledge/ambiguity-weak-phrase-detector.md) · 2026-06-04 · reverify: `grep -n "fn weak_phrase_findings" crates/specforge/src/ir/ambiguity.rs`
@@ -261,6 +265,15 @@ _SpecForge detects contested priors (same key, conflicting values across docs) �
 - **evidence:** `crates/specforge/src/ir/prior_memory.rs; crates/specforge/src/commands/learn_priors.rs`
 - **reverify:** `grep -n "fn contested_priors" crates/specforge/src/ir/prior_memory.rs`
 - **source:** [`docs/knowledge/contested-priors.md`](docs/knowledge/contested-priors.md)
+
+### corpus-coverage-sweep
+_Whole-corpus coverage sweep (2026-06-08) — Lever A+B uplift measured across the 82-PDF library_
+
+- **answers:** how much intent does SpecForge extract across the whole corpus | what is the PDF-VARIANT-DIGESTION whole-corpus coverage / re-triage | which corpus docs still yield nothing (the VLM frontier) | which docs fail to ingest (giants / timeouts)
+- **date:** 2026-06-08 · **status:** current
+- **evidence:** `docs/corpus_coverage_2026-06-08.md (per-doc matrix); /tmp/corpus_coverage.tsv (raw)`
+- **reverify:** `python3 over generated/evidence_ir/*/evidence_ir.json — count Signal-decls / register_records+fields / protocol_actors / signal_constraints / actor_signal_relations per doc-key`
+- **source:** [`docs/knowledge/corpus-coverage-sweep.md`](docs/knowledge/corpus-coverage-sweep.md)
 
 ### dempster-fusion
 _SpecForge fuses agreeing-source confidence via Dempster corroboration (not min)_

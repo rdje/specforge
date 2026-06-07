@@ -84,6 +84,17 @@ The "unknown" tables are a MIX, so the raw count overstates the gap:
 OpenCAPI: 49 tables (27 unknown, 16 register_map, …), 0 signals/relations/constraints. (Wishbone stats hit
 a stats-script regex bug — ingest OK; re-measure with the hardened helper.)
 
+## Whole-corpus re-triage (`.1` re-run, `2026-06-08`) — Lever A+B uplift measured
+
+Ran the deterministic pipeline (ingest→evidence, no VLM) over all 82: **75 OK** (+Wishbone), **5 ingest
+timeouts** (giant ISA manuals — ARM A32/T32, A64, registers; Intel SDM; USB4 v2.0 — need a longer ingest
+budget), **1 evidence-fail** (USB 3.2 — bug). **Aggregate (vs the original triage where most non-AMBA docs
+were 0): 62 docs yield signals, 34 registers, 49 relations; totals 1,908 signals / 2,953 registers / 10,632
+fields / 3,077 relations.** #3 confirmed: CCIX (was 0 → sig/reg/fld/con/rel), I2C (sig 10), OpenCAPI, USB4
+CM/inter-domain all extract. ~9 OK docs still yield 0 (guides / ISA / image-table-heavy) = the VLM frontier
+(`.2b`/`.2b'`). Matrix `docs/corpus_coverage_2026-06-08.md`; KM `corpus-coverage-sweep`. NEXT: `#2` VLM
+grid-repair demo on a bits-bearing doc; giants' ingest budget; USB 3.2 evid-fail.
+
 ## Current frontier
 
 - `PDF-VARIANT-DIGESTION.2` (Lever A, deterministic strategy) — **DONE**: `synthesize_register_field_tables`
