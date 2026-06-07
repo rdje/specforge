@@ -6503,6 +6503,60 @@ fn synthesize_signal_declarations(
         .iter()
         .position(|h| h.contains("destination") || h.contains("dest"));
 
+    // ── Content-based name-column detection (rotation-aware) ────────────────────────
+    // The PDF backend sometimes rotates a signal table's body so the name column is NOT
+    // where the header says — e.g. AHB `table_0009` and APB `table_0016` put the Signal
+    // name in the LAST column with Width/Source/Destination shifted left. When a DIFFERENT
+    // column carries more distinct hardware-signal tokens than the header-designated name
+    // column, trust the content and remap the other header-derived columns by the same
+    // rotation offset, so a misaligned table that is the SOLE source of a signal (e.g. AHB
+    // HREADY) still gets extracted. Purely positional/structural — no signal name hardcoded
+    // (ADR 0006). WIRE-BASED-100.5h (the .3a-deferred extractor fix).
+    let col_count = table.body_rows.iter().map(|r| r.len()).max().unwrap_or(0);
+    let signal_token_distinct = |col: usize| -> usize {
+        let mut toks: Vec<String> = table
+            .body_rows
+            .iter()
+            .filter_map(|row| row.get(col))
+            .map(|cell| {
+                cell.text
+                    .split_whitespace()
+                    .next()
+                    .unwrap_or("")
+                    .to_ascii_uppercase()
+            })
+            .filter(|t| is_hardware_signal_token(t) && !is_signal_synthesis_non_signal(t))
+            .collect();
+        toks.sort();
+        toks.dedup();
+        toks.len()
+    };
+    let header_name_distinct = signal_token_distinct(name_col);
+    let (best_col, best_distinct) = (0..col_count)
+        .map(|col| (col, signal_token_distinct(col)))
+        .max_by_key(|&(_, distinct)| distinct)
+        .unwrap_or((name_col, header_name_distinct));
+    // Override only on a clear content disagreement (a different column is the real name
+    // column): aligned tables keep best_col == name_col → offset 0 → no behavior change.
+    let (name_col, offset) =
+        if best_col != name_col && best_distinct >= 2 && best_distinct > header_name_distinct {
+            (best_col, best_col as isize - name_col as isize)
+        } else {
+            (name_col, 0isize)
+        };
+    let remap = |col: Option<usize>| -> Option<usize> {
+        match col {
+            Some(c) if offset != 0 && col_count > 0 => {
+                Some(((c as isize + offset).rem_euclid(col_count as isize)) as usize)
+            }
+            other => other,
+        }
+    };
+    let width_col = remap(width_col);
+    let explicit_dir_col = remap(explicit_dir_col);
+    let source_col = remap(source_col);
+    let dest_col = remap(dest_col);
+
     let default_dir =
         infer_signal_direction_from_section(section_kind, section_title, prior_guidance);
 
@@ -12083,5 +12137,116 @@ mod wire_based_100_5g {
         // Guard: a normal noun subject still extracts as before (no regression).
         let rels = run("The Subordinate drives HRESP during the response phase.");
         assert!(drives(&rels, "HRESP").contains(&"Subordinate".to_string()));
+    }
+}
+
+#[cfg(test)]
+mod wire_based_100_5h {
+    //! WIRE-BASED-100.5h — content-based name-column detection: a signal table whose body is
+    //! rotated (Name column last, Width/Destination shifted) still yields declarations. This is
+    //! AHB table_0009's shape (the sole source of HREADY).
+    use super::*;
+    use crate::ir::source::{StructuredTableCellRecord, StructuredTableRecord};
+
+    fn cell(t: &str) -> StructuredTableCellRecord {
+        StructuredTableCellRecord {
+            text: t.to_string(),
+            row_span: 1,
+            col_span: 1,
+            is_header: false,
+        }
+    }
+    fn row(cells: &[&str]) -> Vec<StructuredTableCellRecord> {
+        cells.iter().map(|t| cell(t)).collect()
+    }
+
+    #[test]
+    fn rotated_signal_table_extracts_name_from_last_column() {
+        // header says Name|Destination|Width|Description, but the body is rotated so the name
+        // is in the LAST column (the AHB table_0009 pattern).
+        let table = StructuredTableRecord {
+            table_id: "table_0009".to_string(),
+            asset_id: "asset_0009".to_string(),
+            page_id: None,
+            caption_text: None,
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![row(&["Name", "Destination", "Width", "Description"])],
+            body_rows: vec![
+                row(&[
+                    "Manager",
+                    "1",
+                    "When HIGH, the HREADY signal indicates",
+                    "HREADY",
+                ]),
+                row(&["Manager", "1", "Transfer response", "HRESP"]),
+                row(&["Manager", "DATA_WIDTH", "Read data bus", "HRDATA"]),
+            ],
+            row_count: 3,
+            col_count: 4,
+        };
+        let mut counter = 0usize;
+        let mut prov = Vec::new();
+        let stmts = synthesize_signal_declarations(
+            &table,
+            SectionKind::Unknown,
+            "",
+            &mut counter,
+            None,
+            &mut prov,
+        );
+        let names: Vec<&str> = stmts
+            .iter()
+            .filter_map(|s| s.text.strip_prefix("Signal "))
+            .filter_map(|s| s.split_whitespace().next())
+            .collect();
+        assert!(
+            names.contains(&"HREADY"),
+            "rotated table must yield HREADY, got {names:?}"
+        );
+        assert!(names.contains(&"HRESP") && names.contains(&"HRDATA"));
+        assert!(
+            !names.iter().any(|n| n.eq_ignore_ascii_case("MANAGER")),
+            "the Destination actor must not become a signal, got {names:?}"
+        );
+    }
+
+    #[test]
+    fn aligned_signal_table_is_unchanged() {
+        // Guard: a normally-aligned table (name in col 0) is unaffected (offset 0).
+        let table = StructuredTableRecord {
+            table_id: "t".to_string(),
+            asset_id: "a".to_string(),
+            page_id: None,
+            caption_text: None,
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![row(&["Signal", "Source", "Width", "Description"])],
+            body_rows: vec![
+                row(&["PCLK", "Clock", "1", "Clock signal"]),
+                row(&["PADDR", "Requester", "ADDR_WIDTH", "Address bus"]),
+            ],
+            row_count: 2,
+            col_count: 4,
+        };
+        let mut counter = 0usize;
+        let mut prov = Vec::new();
+        let stmts = synthesize_signal_declarations(
+            &table,
+            SectionKind::Unknown,
+            "",
+            &mut counter,
+            None,
+            &mut prov,
+        );
+        let names: Vec<&str> = stmts
+            .iter()
+            .filter_map(|s| s.text.strip_prefix("Signal "))
+            .filter_map(|s| s.split_whitespace().next())
+            .collect();
+        assert!(
+            names.contains(&"PCLK") && names.contains(&"PADDR"),
+            "got {names:?}"
+        );
     }
 }

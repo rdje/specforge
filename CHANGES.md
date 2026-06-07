@@ -2,6 +2,22 @@
 
 ## 2026-06-07
 
+### `WIRE-BASED-100.5h` — AHB temporal 100%: rotation-aware extraction + `unless`-exception drop (AHB now fully matches APB)
+Built `seed_ahb_temporal.json` (4 items); baseline 0.500 traced to two defects, both fixed:
+1. **Content-based name-column detection** (the `.3a`-deferred EXTRACTOR fix): `synthesize_signal_declarations`
+   now finds the signal-name column by content (most distinct hardware-signal tokens) and remaps the other
+   header-derived columns by the rotation offset — so a docling-rotated table whose name is in the LAST
+   column (AHB `table_0009`) still extracts, recovering `HREADY` (its sole source). Fires only on a clear
+   content disagreement → aligned tables unchanged (offset 0).
+2. **`unless`/`except` exception drop** in `parse_temporal_condition_predicates`: "valid when HREADY is
+   HIGH, unless HRESP is ERROR" → antecedent `HREADY=HIGH` only (the exception is a negative caveat, not a
+   conjunctive condition; was wrongly adding `HRESP=ERROR`).
+Confirmed on fresh re-ingested evidence: **AHB `temporal_rule P=R=F1=1.000`** (tp=4 fp=0 fn=0). No
+regression — APB constraints/relations/temporal all still 1.000, AHB constraints/relations still 1.000;
++3 hermetic tests; full `scripts/run_ci.sh` green (1316 lib tests, kg-bench green). **AHB is now 100% on
+ALL THREE aspects (constraints + relations + temporal), matching APB.** Closes the `.3a`-deferred
+misaligned-table extractor work. KM card `rotated-signal-table-extraction`.
+
 ### `WIRE-BASED-100.5g` — AHB relations 100%: pronoun-subject anaphora resolution
 Fixed the AHB relation actor-resolution gap (`.5f`): `extract_subject_phrase` grabbed the last
 determiner+noun (`the address`/`the response`), ignoring the pronoun subject `it` closest to the verb.

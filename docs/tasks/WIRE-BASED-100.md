@@ -333,9 +333,23 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   F1=1.000`** (tp=6 fp=0 fn=0; `near-miss wrong_actor=0` — the garbage `address`/`response it` actors are
   gone, HREADYOUT/HRESP resolved to `Subordinate`). AHB constraints stay `1.000`. **AHB is now 100% on
   constraints AND relations** (real eval, fresh evidence), matching APB.
-- ID: `WIRE-BASED-100.5h` · Status: `pending` · Goal: AHB temporal eval gold + to 100% (the third AHB
-  aspect), on fresh AHB evidence — build a temporal gold from AHB timing prose, measure, fix. Then roll
-  AXI + SWD/ADI (corpus PDFs ready) through the same constraint/relation/temporal sequence.
+- ID: `WIRE-BASED-100.5h` · Status: `done` · Goal: AHB temporal eval gold + to 100% (the third AHB
+  aspect). Built `seed_ahb_temporal.json` (4 items: HAUSER/HWUSER valid [empty antecedent] + HRUSER/HBUSER
+  valid [when HREADY HIGH]). **Baseline 0.500** (tp=2 fp=2 fn=2) → root cause traced to TWO defects, both
+  fixed: **(1) the `.3a`-deferred EXTRACTOR fix — content-based name-column detection.** `synthesize_signal_declarations`
+  now finds the name column by CONTENT (the column with the most distinct hardware-signal tokens) and remaps
+  the other header-derived columns by the rotation offset, so a docling-rotated table whose name column is
+  last (AHB `table_0009`: `[Name|Destination|Width|Description]` header but the name in the LAST body column)
+  still extracts — recovering `HREADY` (its SOLE source) so the temporal antecedent `HREADY=HIGH` resolves.
+  Override fires only on a clear content disagreement → aligned tables unchanged (offset 0). **(2) `unless`/`except`
+  exception drop in `parse_temporal_condition_predicates`** — "valid when HREADY is HIGH, **unless HRESP is
+  ERROR**" → antecedent `HREADY=HIGH` only (the exception is a negative caveat, not a conjunctive condition;
+  was wrongly adding `HRESP=ERROR`). **Achieved + demonstrated on FRESH re-ingested evidence: AHB
+  `temporal_rule P=R=F1=1.000`** (tp=4 fp=0 fn=0). No regression: APB constraints/relations/temporal all
+  still `1.000`, AHB constraints/relations still `1.000`; +3 hermetic tests (rotated-table extract, aligned
+  unchanged, unless-drop); full `scripts/run_ci.sh` green (1316 lib tests, kg-bench green). **AHB is now
+  100% on ALL THREE aspects (constraints + relations + temporal), matching APB.** Closes the `.3a`-deferred
+  misaligned-table extractor work. Next: AXI + SWD/ADI (corpus PDFs ready).
 
 ## Picked sequence to APB 100% (owner: "pick the next trees to achieve just that")
 

@@ -7179,6 +7179,21 @@ fn parse_temporal_condition_predicates(
         .trim_start_matches("while ")
         .trim_start_matches("While ")
         .trim();
+    // Drop a trailing EXCEPTION clause ("… unless HRESP is ERROR", "… except when …"): an exception
+    // is a negative caveat, NOT a positive antecedent, so it must not be conjoined into the
+    // condition (e.g. "valid when HREADY is HIGH, unless HRESP is ERROR" → antecedent HREADY=HIGH
+    // only, not HREADY=HIGH AND HRESP=ERROR). WIRE-BASED-100.5h.
+    let normalized = {
+        let lowered = normalized.to_ascii_lowercase();
+        let cut = [" unless ", " except "]
+            .iter()
+            .filter_map(|m| lowered.find(m))
+            .min();
+        match cut {
+            Some(pos) => normalized[..pos].trim(),
+            None => normalized,
+        }
+    };
     // Parse each clause into (signal, optional value). A clause with a known signal but no
     // value of its own (a bare mention in a coordinated list, e.g. "PSEL" in
     // "PSEL, PENABLE, and PREADY are asserted") is kept with value=None so a single shared
@@ -21127,6 +21142,36 @@ mod tests {
                 .map(|s| s.to_string())
                 .collect::<BTreeSet<_>>(),
             "the un-indexed 'HSEL' resolves to the declared 'HSELX' (cross-spec generality)"
+        );
+    }
+
+    #[test]
+    fn temporal_condition_drops_unless_exception_clause() {
+        // WIRE-BASED-100.5h: "valid when HREADY is HIGH, unless HRESP is ERROR" → antecedent is
+        // HREADY=HIGH only; the "unless HRESP is ERROR" exception must NOT be conjoined.
+        let known: BTreeSet<String> = ["HREADY", "HRESP"].iter().map(|s| s.to_string()).collect();
+        let handshake = super::HandshakeRoleContext::default();
+        let predicates = super::parse_temporal_condition_predicates(
+            "HREADY signal is HIGH, unless HRESP signal is ERROR",
+            &known,
+            super::TickPhase::PreTick,
+            &handshake,
+        );
+        let pairs: BTreeSet<(String, String)> = predicates
+            .iter()
+            .filter_map(|p| match p {
+                super::TemporalPredicateRecord::SignalValue {
+                    signal_name, value, ..
+                } => Some((signal_name.clone(), value.clone())),
+                _ => None,
+            })
+            .collect();
+        assert_eq!(
+            pairs,
+            [("HREADY".to_string(), "HIGH".to_string())]
+                .into_iter()
+                .collect::<BTreeSet<_>>(),
+            "only HREADY=HIGH; the 'unless HRESP is ERROR' exception is dropped"
         );
     }
 

@@ -1,0 +1,86 @@
+[
+  {
+    "task": "temporal_rule",
+    "doc_key": "ihi0033_c_2021_09_amba_5_ahb_protocol_specification",
+    "statement_id": "statement_1011",
+    "input_text": "- The HAUSER signal must be valid during the address phase of a transfer.",
+    "grounding": ["HAUSER"],
+    "gold": [
+      {
+        "fact": "temporal_rule",
+        "edge": "rising",
+        "antecedents": [],
+        "consequents": [
+          {"kind": "actor_drives_signal", "actor_name": "Manager", "signal_name": "HAUSER", "phase": "post_tick"},
+          {"kind": "signal_value", "signal_name": "HAUSER", "value": "VALID", "phase": "post_tick"}
+        ]
+      }
+    ],
+    "label_status": "agent_drafted",
+    "label_note": "Address-phase validity obligation; the 'during the address phase' clause carries no signal-value predicate, so the antecedent is empty (faithful to the representable content). Manager drives HAUSER (table Source). Expected TP."
+  },
+  {
+    "task": "temporal_rule",
+    "doc_key": "ihi0033_c_2021_09_amba_5_ahb_protocol_specification",
+    "statement_id": "statement_1013",
+    "input_text": "- The HWUSER signal must be valid during the data phase of a write transfer.",
+    "grounding": ["HWUSER"],
+    "gold": [
+      {
+        "fact": "temporal_rule",
+        "edge": "rising",
+        "antecedents": [],
+        "consequents": [
+          {"kind": "actor_drives_signal", "actor_name": "Manager", "signal_name": "HWUSER", "phase": "post_tick"},
+          {"kind": "signal_value", "signal_name": "HWUSER", "value": "VALID", "phase": "post_tick"}
+        ]
+      }
+    ],
+    "label_status": "agent_drafted",
+    "label_note": "Data-phase validity obligation, no signal-value antecedent. Manager drives HWUSER. Expected TP."
+  },
+  {
+    "task": "temporal_rule",
+    "doc_key": "ihi0033_c_2021_09_amba_5_ahb_protocol_specification",
+    "statement_id": "statement_1015",
+    "input_text": "- The HRUSER signal must be valid during the data phase of a read transfer when HREADY signal is HIGH, unless HRESP signal is ERROR.",
+    "grounding": ["HRUSER", "HREADY", "HRESP"],
+    "gold": [
+      {
+        "fact": "temporal_rule",
+        "edge": "rising",
+        "antecedents": [
+          {"kind": "signal_value", "signal_name": "HREADY", "value": "HIGH", "phase": "pre_tick"}
+        ],
+        "consequents": [
+          {"kind": "actor_drives_signal", "actor_name": "Subordinate", "signal_name": "HRUSER", "phase": "post_tick"},
+          {"kind": "signal_value", "signal_name": "HRUSER", "value": "VALID", "phase": "post_tick"}
+        ]
+      }
+    ],
+    "label_status": "agent_drafted",
+    "label_note": "The timing condition is 'when HREADY signal is HIGH' (antecedent HREADY=HIGH). 'unless HRESP signal is ERROR' is an EXCEPTION, not the antecedent — the extractor must not use HRESP=ERROR as the condition. Subordinate drives HRUSER."
+  },
+  {
+    "task": "temporal_rule",
+    "doc_key": "ihi0033_c_2021_09_amba_5_ahb_protocol_specification",
+    "statement_id": "statement_1016",
+    "input_text": "- The HBUSER signal must be valid during the data phase of a read or write transfer when HREADY signal is HIGH, unless HRESP signal is ERROR.",
+    "grounding": ["HBUSER", "HREADY", "HRESP"],
+    "gold": [
+      {
+        "fact": "temporal_rule",
+        "edge": "rising",
+        "antecedents": [
+          {"kind": "signal_value", "signal_name": "HREADY", "value": "HIGH", "phase": "pre_tick"}
+        ],
+        "consequents": [
+          {"kind": "actor_drives_signal", "actor_name": "Subordinate", "signal_name": "HBUSER", "phase": "post_tick"},
+          {"kind": "signal_value", "signal_name": "HBUSER", "value": "VALID", "phase": "post_tick"}
+        ]
+      }
+    ],
+    "label_status": "agent_drafted",
+    "label_note": "Antecedent is HREADY=HIGH ('when HREADY signal is HIGH'); 'unless HRESP signal is ERROR' is an exception, not the condition. Subordinate drives HBUSER."
+  }
+]
