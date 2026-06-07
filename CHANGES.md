@@ -1,3 +1,12 @@
+### `PDF-VARIANT-DIGESTION.2b'` — VLM grid repair (table extraction)
+~10% of corpus tables (262) are degenerate — Docling failed to structure them (<=1 column), so no
+deterministic extractor can run. `enrich --vlm-provider` now runs repair_degenerate_tables_via_vlm: the VLM
+transcribes the table image to a JSON grid (build_table_extract_prompt -> parse_vlm_grid, serde_json, >=2
+columns) and REPLACES the degenerate header/body so the deterministic extractors run — best-wins at the
+STRUCTURE level (Docling grid vs VLM grid). Kind set only when the repaired header is structurally consistent
+(the .2b gate). Live demo: RISC-V -> 2 degenerate tables grid-repaired, 0 errors. +1 hermetic test
+(parse_vlm_grid); full run_ci.sh green; gated (skip = no-op). KM vlm-table-strategy.
+
 ### `PDF-VARIANT-DIGESTION.2b` — VLM table reclassification VERIFICATION gate (no-garbage)
 Live testing of the VLM table strategy on RISC-V showed the VLM OVER-classifies (it labelled register-field
 `Field|…|Access|Reset` and operation `Op|Address|Value` tables as `signal_description`, yielding garbage

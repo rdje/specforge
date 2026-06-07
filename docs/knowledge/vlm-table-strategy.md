@@ -43,5 +43,10 @@ This is "best-wins must be MEASURED, no faking" ([[feedback_scoring_rigor]]) —
 as the WIRE-BASED-100 garbage detection. +2 hermetic tests (`parse_vlm_table_kind`,
 `vlm_kind_structurally_consistent`).
 
-Next: VLM EXTRACTION (read rows/fields from the image into typed records as a `Vlm`-tier fact) where the
-deterministic extractor still yields nothing — also behind a verification gate.
+**VLM EXTRACTION / grid repair (`.2b'`).** ~10% of corpus tables (262) are *degenerate* — Docling failed to
+structure them (≤1 column). `repair_degenerate_tables_via_vlm` asks the VLM to TRANSCRIBE the table image to
+a JSON grid (`build_table_extract_prompt` → `parse_vlm_grid`, serde_json, ≥2 columns) and REPLACES the
+degenerate `header_rows`/`body_rows` so the deterministic extractors can run — best-wins at the STRUCTURE
+level (Docling grid vs VLM grid). Kind set only when the repaired header is structurally consistent (same
+gate). Run order: `ingest` → `enrich --vlm-provider ollama` (repair → classify) → `evidence`. Live demo:
+RISC-V → 2 degenerate tables grid-repaired, 0 errors. +1 hermetic test (`parse_vlm_grid`).

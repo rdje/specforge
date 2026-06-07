@@ -3,7 +3,9 @@ use std::process::Command;
 
 use crate::cli::{EnrichArgs, VlmProviderArg};
 use crate::error::{AppError, Result};
-use crate::ir::source::{DiagramKind, SourceIr, StructuredTableRecord, TableKind, VisualAsset};
+use crate::ir::source::{
+    DiagramKind, SourceIr, StructuredTableCellRecord, StructuredTableRecord, TableKind, VisualAsset,
+};
 
 /// Environment variable overriding the VLM helper script (for unit testing).
 const VLM_HELPER_ENV: &str = "SPECFORGE_VLM_HELPER";
@@ -110,9 +112,20 @@ pub fn run(args: EnrichArgs) -> Result<()> {
             );
             println!("vlm_errors: {}", enriched.errors);
 
-            // PDF-VARIANT-DIGESTION.2b — VLM table strategy: reclassify `unknown` tables from their
-            // rendered images (best-wins; confident deterministic kinds are untouched).
             source_ir.visual_assets = enriched.updated_assets;
+            // PDF-VARIANT-DIGESTION.2b' — VLM grid repair: re-extract degenerate `unknown` tables (Docling
+            // failed to structure them) from their images so the deterministic extractors can run.
+            let (tables_repaired, repair_errors) = repair_degenerate_tables_via_vlm(
+                &mut source_ir,
+                provider,
+                &model,
+                &api_url,
+                args.dry_run,
+            );
+            println!("tables_grid_repaired_by_vlm: {tables_repaired}");
+            println!("table_repair_errors: {repair_errors}");
+            // PDF-VARIANT-DIGESTION.2b — VLM table strategy: reclassify the remaining `unknown` tables from
+            // their rendered images (best-wins; confident deterministic kinds are untouched).
             let (tables_reclassified, table_errors) = classify_unknown_tables_via_vlm(
                 &mut source_ir,
                 provider,
@@ -323,7 +336,13 @@ fn parse_vlm_table_kind(content: &str) -> Option<TableKind> {
     let q1 = after[colon + 1..].find('"')?;
     let rest = &after[colon + 1 + q1 + 1..];
     let q2 = rest.find('"')?;
-    match &rest[..q2] {
+    map_vlm_kind(&rest[..q2])
+}
+
+/// Map a VLM `kind` label to a [`TableKind`] to APPLY. `None` for `register_field` (the deterministic
+/// grammar path recovers these from `unknown`) and `table_of_contents`/`other` (left unextracted).
+fn map_vlm_kind(s: &str) -> Option<TableKind> {
+    match s.trim() {
         "signal_description" => Some(TableKind::SignalDescription),
         "encoding" => Some(TableKind::Encoding),
         "timing_parameter" => Some(TableKind::TimingParameter),
@@ -331,6 +350,57 @@ fn parse_vlm_table_kind(content: &str) -> Option<TableKind> {
         "register_map" => Some(TableKind::RegisterMap),
         _ => None,
     }
+}
+
+/// PDF-VARIANT-DIGESTION.2b' — VLM table-EXTRACTION prompt: transcribe the table image to a JSON grid.
+fn build_table_extract_prompt() -> String {
+    "This is a table image from a chip-specification PDF. Transcribe it as STRICT JSON only, no prose: \
+{\"kind\": <one of \"signal_description\",\"register_field\",\"register_map\",\"encoding\",\
+\"timing_parameter\",\"feature_matrix\",\"table_of_contents\",\"other\">, \"columns\": [<column header \
+strings>], \"rows\": [[<cell strings, one per column>], ...]}. Preserve cell text verbatim."
+        .to_string()
+}
+
+/// Parse a VLM grid transcription `{"kind","columns":[..],"rows":[[..]]}` (tolerating ```json fences /
+/// prose) into `(kind, columns, rows)`. Requires ≥2 columns. PDF-VARIANT-DIGESTION.2b'.
+fn parse_vlm_grid(content: &str) -> Option<(String, Vec<String>, Vec<Vec<String>>)> {
+    let start = content.find('{')?;
+    let end = content.rfind('}')?;
+    if end < start {
+        return None;
+    }
+    let v: serde_json::Value = serde_json::from_str(&content[start..=end]).ok()?;
+    let kind = v
+        .get("kind")
+        .and_then(|k| k.as_str())
+        .unwrap_or("other")
+        .to_string();
+    let cell_str = |c: &serde_json::Value| match c {
+        serde_json::Value::String(s) => s.trim().to_string(),
+        serde_json::Value::Null => String::new(),
+        other => other.to_string(),
+    };
+    let columns: Vec<String> = v.get("columns")?.as_array()?.iter().map(cell_str).collect();
+    if columns.len() < 2 {
+        return None;
+    }
+    let rows: Vec<Vec<String>> = v
+        .get("rows")
+        .and_then(|r| r.as_array())
+        .map(|rows| {
+            rows.iter()
+                .filter_map(|r| r.as_array())
+                .map(|cells| cells.iter().map(cell_str).collect())
+                .collect()
+        })
+        .unwrap_or_default();
+    Some((kind, columns, rows))
+}
+
+/// A table Docling failed to structure: ≤1 column, or every body row has ≤1 cell.
+fn table_is_degenerate(table: &StructuredTableRecord) -> bool {
+    let max_cells = table.body_rows.iter().map(|r| r.len()).max().unwrap_or(0);
+    table.col_count <= 1 || max_cells <= 1
 }
 
 /// PDF-VARIANT-DIGESTION.2b — VERIFY a VLM-proposed table kind against the table's actual STRUCTURE before
@@ -427,6 +497,79 @@ fn classify_unknown_tables_via_vlm(
         }
     }
     (reclassified, errors)
+}
+
+/// PDF-VARIANT-DIGESTION.2b' — VLM table-EXTRACTION (grid repair). For each `unknown` table that Docling
+/// failed to STRUCTURE (`table_is_degenerate`) and that has a rendered image, ask the VLM to transcribe the
+/// grid from the image, then REPLACE the degenerate `header_rows`/`body_rows` with the VLM grid (≥2 columns)
+/// so the downstream deterministic extractors can run. Best-wins at the STRUCTURE level (Docling grid vs VLM
+/// grid). The kind is set only when structurally consistent (same gate as `.2b`). Returns `(repaired, errors)`.
+fn repair_degenerate_tables_via_vlm(
+    source_ir: &mut SourceIr,
+    provider: VlmProviderArg,
+    model: &str,
+    api_url: &str,
+    dry_run: bool,
+) -> (usize, usize) {
+    let image_by_asset: std::collections::HashMap<&str, &std::path::Path> = source_ir
+        .visual_assets
+        .iter()
+        .filter_map(|a| a.image_path.as_deref().map(|p| (a.asset_id.as_str(), p)))
+        .collect();
+    let prompt = build_table_extract_prompt();
+    let plan: Vec<(usize, std::path::PathBuf)> = source_ir
+        .structured_tables
+        .iter()
+        .enumerate()
+        .filter(|(_, t)| t.table_kind == TableKind::Unknown && table_is_degenerate(t))
+        .filter_map(|(i, t)| {
+            image_by_asset
+                .get(t.asset_id.as_str())
+                .map(|p| (i, p.to_path_buf()))
+        })
+        .collect();
+    let header_cell = |t: &str| StructuredTableCellRecord {
+        text: t.to_string(),
+        row_span: 1,
+        col_span: 1,
+        is_header: true,
+    };
+    let body_cell = |t: &str| StructuredTableCellRecord {
+        text: t.to_string(),
+        row_span: 1,
+        col_span: 1,
+        is_header: false,
+    };
+    let mut repaired = 0usize;
+    let mut errors = 0usize;
+    for (idx, image_path) in plan {
+        if dry_run {
+            continue;
+        }
+        match vlm_image_query(&image_path, &prompt, model, api_url, provider) {
+            Ok(content) => {
+                if let Some((kind_str, columns, rows)) = parse_vlm_grid(&content) {
+                    let table = &mut source_ir.structured_tables[idx];
+                    table.header_rows = vec![columns.iter().map(|c| header_cell(c)).collect()];
+                    table.body_rows = rows
+                        .iter()
+                        .map(|r| r.iter().map(|c| body_cell(c)).collect())
+                        .collect();
+                    table.col_count = columns.len() as u32;
+                    table.row_count = (rows.len() + 1) as u32;
+                    // Set kind only when the repaired grid's header is consistent with the VLM's claim.
+                    if let Some(kind) = map_vlm_kind(&kind_str)
+                        .filter(|&k| vlm_kind_structurally_consistent(table, k))
+                    {
+                        table.table_kind = kind;
+                    }
+                    repaired += 1;
+                }
+            }
+            Err(_) => errors += 1,
+        }
+    }
+    (repaired, errors)
 }
 
 /// POST a single image + text prompt to an OpenAI-compatible VLM endpoint (Ollama / OpenAI / LM Studio)
@@ -656,5 +799,18 @@ mod tests {
             &table(vec!["Offset", "Bits", "Field name", "Attributes"]),
             TableKind::RegisterMap
         ));
+    }
+
+    #[test]
+    fn vlm_grid_parsing_extracts_columns_and_rows() {
+        let content = "```json\n{\"kind\":\"register_field\",\"columns\":[\"Field\",\"Bits\",\
+\"Access\"],\"rows\":[[\"EN\",\"0\",\"RW\"],[\"MODE\",\"2:1\",\"RW\"]]}\n```";
+        let (kind, cols, rows) = parse_vlm_grid(content).unwrap();
+        assert_eq!(kind, "register_field");
+        assert_eq!(cols, vec!["Field", "Bits", "Access"]);
+        assert_eq!(rows, vec![vec!["EN", "0", "RW"], vec!["MODE", "2:1", "RW"]]);
+        // a single-column transcription is rejected (not a real grid)
+        assert!(parse_vlm_grid(r#"{"kind":"other","columns":["X"],"rows":[]}"#).is_none());
+        assert!(parse_vlm_grid("no json here").is_none());
     }
 }

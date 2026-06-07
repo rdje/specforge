@@ -105,8 +105,13 @@ a stats-script regex bug — ingest OK; re-measure with the hardened helper.)
   over-classifications (register-field / operation tables → `signal_description`) are rejected. Measured on
   RISC-V: without gate 22 reclassified (+9 real DMI signals but +5 garbage); WITH gate **1 reclassified → 9
   genuine DMI signals (`REQ_*/RSP_*`), 0 garbage**. +2 hermetic tests; full CI green. KM `vlm-table-strategy`.
-  NEXT (`.2b'`): VLM EXTRACTION (read rows/fields from the image into typed records as a `Vlm`-tier fact,
-  also gated) where the deterministic extractor still yields nothing.
+- `PDF-VARIANT-DIGESTION.2b'` (Lever A, VLM extraction) — **DONE**: VLM GRID REPAIR. ~10% of corpus tables
+  (262) are degenerate (Docling failed to structure them: ≤1 column). `enrich --vlm-provider` now runs
+  `repair_degenerate_tables_via_vlm` — the VLM transcribes the table image to a JSON grid
+  (`build_table_extract_prompt`/`parse_vlm_grid`, serde_json, ≥2 columns), REPLACING the degenerate
+  header/body so the deterministic extractors run (best-wins at the STRUCTURE level: Docling grid vs VLM
+  grid). Kind set only when the repaired header is structurally consistent (`.2b` gate). +1 hermetic test;
+  full CI green; gated (skip = no-op).
 - `PDF-VARIANT-DIGESTION.2c` (model flexibility) — **DONE (core)**: the register model now carries, all
   backward-compatible: `RegisterRecord.size_bits`; `RegisterFieldRecord.bit_width` (a field is
   `name + offset(=bits_low, LSb) + width`; range/single-bit/offset+width all map) + `enumerated_values`
