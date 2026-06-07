@@ -109,6 +109,20 @@ pub fn register_tiling_residuals(registers: &[RegisterRecord]) -> Vec<RegisterTi
     residuals
 }
 
+/// Names of registers whose mandatory bit-WIDTH is unresolved from this document.
+///
+/// A register is physical bit-storage, so a width ALWAYS exists — an absent `size_bits` is therefore a
+/// completeness GAP (the width is parametric, e.g. XLEN/DXLEN, or defined in another spec), not an
+/// optional/"don't care" attribute. Surfacing these is a register-specific completeness residual: every
+/// returned register is a known miss whose width must be sourced (parameter, cross-document, or design).
+pub fn registers_with_unresolved_width(registers: &[RegisterRecord]) -> Vec<String> {
+    registers
+        .iter()
+        .filter(|r| r.size_bits.is_none())
+        .map(|r| r.register_name.clone())
+        .collect()
+}
+
 /// Collapse the bits whose coverage count satisfies `pred` into contiguous
 /// `(low_bit, high_bit)` runs (absolute bit indices, offset by `min_low`).
 fn collect_runs(cover: &[u32], min_low: u32, pred: impl Fn(u32) -> bool) -> Vec<(u32, u32)> {
@@ -489,6 +503,16 @@ mod tests {
             vec![field("X", None, None), field("Y", None, Some(0))],
         )];
         assert!(register_tiling_residuals(&regs).is_empty());
+    }
+
+    #[test]
+    fn unresolved_register_width_is_flagged() {
+        // A register is physical bit-storage → width is mandatory; an unresolved width is a gap.
+        let mut sized = register("CTRL", vec![field("EN", Some(0), Some(0))]);
+        sized.size_bits = Some(32);
+        let no_width = register("STATUS", vec![field("BUSY", Some(0), Some(0))]); // size_bits None
+        let flagged = registers_with_unresolved_width(&[sized, no_width]);
+        assert_eq!(flagged, vec!["STATUS".to_string()]);
     }
 
     #[test]

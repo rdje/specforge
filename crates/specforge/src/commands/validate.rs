@@ -2593,10 +2593,19 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
         .iter()
         .filter(|r| r.kind == crate::ir::completeness::RegisterTilingKind::InteriorGap)
         .count();
+    // A register is physical bit-storage, so its width is mandatory; an unresolved width is a
+    // completeness gap (parametric/cross-document), not an optional field.
+    let registers_unresolved_width =
+        crate::ir::completeness::registers_with_unresolved_width(&ir.register_records);
     println!();
     println!("=== Register Tiling (closure invariant) ===");
     println!("  register_field_overlaps: {register_field_overlaps}");
     println!("  register_field_interior_gaps: {register_field_interior_gaps}");
+    println!(
+        "  registers_unresolved_width: {} / {}",
+        registers_unresolved_width.len(),
+        ir.register_records.len()
+    );
     for residual in register_tiling.iter().take(8) {
         println!(
             "  - {} {}: {}",
