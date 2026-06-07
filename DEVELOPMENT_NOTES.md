@@ -8,6 +8,41 @@
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 - adapter target: `.isf` (sole adapter); `.fsm`/HDL are out of scope — FSMGen consumes `.isf` and owns scheduling/`.fsm`/HDL downstream (since `ISF-ONLY-CONSOLIDATION`, `2026-05-18`)
 
+## 2026-06-08 — register-field per-fact eval surface (PDF-VARIANT-DIGESTION.4a.1)
+
+Context: the whole-corpus sweep proved breadth (1,908 signals / 2,953 registers / 10,632 fields / 3,077
+relations across ~75 docs) but only 4/74 docs have *verified precision* (the APB/AHB/AXI/SWD WIRE-BASED-100
+golds). `.4a` ("score the broadened register-field + prose-signal surfaces per-fact with WIRE-BASED-100
+rigor") had a real lower-level dependency: the eval scorer (`eval.rs`) only knew the six existing tasks
+(SignalConstraint / ActorSignalRelation / TemporalRule / SerialFrameField / SwdOperation / ProtocolState),
+none for register fields. So `.4a` was split (PNT split rule) and `.4a.1` builds the SURFACE first, before
+any gold.
+
+Implementation (additive; mirrors the deterministic SWD surfaces, which are also read straight from
+EvidenceIR rather than produced by an LLM):
+- `EvalTask::RegisterField` (+ `as_str` = `"register_field"`).
+- `GoldFact::RegisterField { register, field, bits_high?, bits_low?, bit_width? }` — a gold author writes the
+  bit extent in whichever form the source table uses (a `[high:low]` range OR an `offset (= bits_low) +
+  width`).
+- `register_field_bits(bits_high, bits_low, bit_width) -> (offset, width)` normalizes both forms to the same
+  `(offset = LSb, width)` identity (width = `bit_width`, else `high - low + 1`, else `None`), so the gold and
+  the produced record compute an identical key and a wrong bit extent scores as a miss.
+- `register_field_key(register, field, offset, width)` — `REGISTER|FIELD|offset|width`, names
+  uppercased+trimmed (chip register/field spellings match case-insensitively); access/reset are excluded from
+  identity (free-string vendor notation).
+- `register_field_record_key(&RegisterRecord, &RegisterFieldRecord)` (public) + `index_register_field_predictions`
+  (attributes each field to its owning register's `supporting_statement_ids`).
+- Runner (`commands/eval_extraction.rs`): `TaskRecords::RegisterFields(Vec<RegisterRecord>)` + an
+  `extract_on_copy` branch returning `ir.register_records` (no provider; register-field extraction is
+  deterministic at ingest/evidence time).
+
+Validation: 3 hermetic tests (`register_field_bits_normalizes_range_and_offset_width`,
+`register_field_gold_and_record_keys_match_for_the_same_fact`, `score_dataset_scores_register_fields_closed_world`);
+fmt + warning-deny clippy clean; `kg-bench` 151/151 (the deterministic pipeline is untouched); full lib suite
+1360 → 1363. No extraction-behavior change, so the APB/AHB/AXI/SWD eval and all KG fixtures are unaffected.
+The user-facing book note is deferred to `.4a.2` where it can carry a real measured number (the surface is
+latent until a gold seed ships).
+
 ## 2026-06-06 — completeness gauge: duplicate signal tables aren't misses (WIRE-BASED-100.3a)
 
 **Root cause / re-diagnosis.** `WIRE-BASED-100.3` had recorded that the APB signal catalog was

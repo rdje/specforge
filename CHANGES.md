@@ -1,3 +1,17 @@
+### `PDF-VARIANT-DIGESTION.4a.1` — register-field per-fact eval surface
+Precision-verification phase (① of "make the broadened breadth trustworthy"). `.4a` was split because the
+eval scorer had no register-field/declared-signal task — a real lower-level dependency. `.4a.1` adds the
+register-field surface to `eval.rs` + `commands/eval_extraction.rs`: `EvalTask::RegisterField`,
+`GoldFact::RegisterField {register, field, bits_high?, bits_low?, bit_width?}`, a canonical key normalized to
+`register|field|offset|width` (so a `[high:low]` range and an `offset+width` form share one identity, and a
+wrong bit extent scores as a miss), `register_field_record_key` + `index_register_field_predictions`, and an
+`extract_on_copy` branch reading the EvidenceIR `register_records` (deterministic — no LLM, like the SWD
+surfaces). Access/reset are intentionally excluded from identity (free-string vendor notation). Purely
+additive (no extraction-behavior change); APB/AHB/AXI/SWD eval unaffected. +3 hermetic tests (bit-extent
+normalizer, gold↔record key match incl. range≡offset+width + wrong-extent divergence + register-as-identity,
+closed-world scoring). fmt + warning-deny clippy + kg-bench (151/151) green; CI 1363. The user-facing book
+note lands with the first measured number in `.4a.2` (the surface is latent until a gold ships).
+
 ### `PDF-VARIANT-DIGESTION.3b` — prose ACTOR/AGENT capture
 New ProtocolActorRecord surface + extract_protocol_actors capture the agents a spec DEFINES in prose:
 "A <name> is the device which/that <capability>" and "considered a/the <name>". is_agent_noun rejects

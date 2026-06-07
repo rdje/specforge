@@ -27,7 +27,7 @@ use crate::ir::extraction_filters::{
 };
 use crate::ir::nli_verify::{constraint_claim_text, verify_entailment};
 use crate::ir::semantic::{SemanticIr, TemporalRuleRecord};
-use crate::ir::source::{ActorSignalRelation, SignalConstraintRecord};
+use crate::ir::source::{ActorSignalRelation, RegisterRecord, SignalConstraintRecord};
 use std::collections::BTreeSet;
 use std::path::Path;
 
@@ -42,6 +42,8 @@ enum TaskRecords {
     SerialFrameFields(Vec<crate::ir::evidence::SerialFrameField>),
     SwdOperations(Vec<crate::ir::evidence::SwdOperation>),
     ProtocolStates(Vec<crate::ir::evidence::ProtocolStateRecord>),
+    /// PDF-VARIANT-DIGESTION.4a.1 — deterministic register-field records read straight from EvidenceIR.
+    RegisterFields(Vec<RegisterRecord>),
 }
 
 /// `WIRE-BASED-100.6/.7` — drop OVER-GENERATED facts before scoring: relations whose subject is not
@@ -125,6 +127,9 @@ where
             TaskRecords::ProtocolStates(records) => {
                 eval::index_protocol_state_predictions(&records, &mut predicted)
             }
+            TaskRecords::RegisterFields(records) => {
+                eval::index_register_field_predictions(&records, &mut predicted)
+            }
         }
     }
     Ok(predicted)
@@ -200,6 +205,11 @@ fn extract_on_copy(
         EvalTask::ProtocolState => {
             Ok((TaskRecords::ProtocolStates(ir.protocol_states), Vec::new()))
         }
+        // PDF-VARIANT-DIGESTION.4a.1 — register fields are deterministic table-synthesized EvidenceIR
+        // records (no LLM / provider); read them straight from the (already-loaded) EvidenceIR.
+        EvalTask::RegisterField => {
+            Ok((TaskRecords::RegisterFields(ir.register_records), Vec::new()))
+        }
     }
 }
 
@@ -255,7 +265,8 @@ fn records_with_tier_counts(
         // SWD surfaces are single-tier (deterministic pattern records); no multi-tier provenance.
         TaskRecords::SerialFrameFields(_)
         | TaskRecords::SwdOperations(_)
-        | TaskRecords::ProtocolStates(_) => Vec::new(),
+        | TaskRecords::ProtocolStates(_)
+        | TaskRecords::RegisterFields(_) => Vec::new(),
     }
 }
 
@@ -594,8 +605,9 @@ mod tests {
             EvalTask::TemporalRule
             | EvalTask::SerialFrameField
             | EvalTask::SwdOperation
-            | EvalTask::ProtocolState => {
-                unreachable!("no temporal/SWD-surface items in this test")
+            | EvalTask::ProtocolState
+            | EvalTask::RegisterField => {
+                unreachable!("no temporal/SWD/register-field items in this test")
             }
         })
         .unwrap();

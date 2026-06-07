@@ -31,7 +31,8 @@ use crate::ir::semantic::{
     ClockEdge, CycleWindowRecord, TemporalPredicateRecord, TemporalRuleRecord, TickPhase,
 };
 use crate::ir::source::{
-    ActorSignalRelation, RelationKind, SignalConstraintKind, SignalConstraintRecord,
+    ActorSignalRelation, RegisterFieldRecord, RegisterRecord, RelationKind, SignalConstraintKind,
+    SignalConstraintRecord,
 };
 
 /// The LLM extraction tasks this eval covers.
@@ -50,6 +51,9 @@ pub enum EvalTask {
     SwdOperation,
     /// SWD-SERIAL-EXTRACTION.5 — a protocol FSM state (`ProtocolStateRecord`).
     ProtocolState,
+    /// PDF-VARIANT-DIGESTION.4a.1 — a register bit-field (a `RegisterFieldRecord` within a
+    /// `RegisterRecord`); identity is owning register + field name + bit offset/width.
+    RegisterField,
 }
 
 impl EvalTask {
@@ -62,6 +66,7 @@ impl EvalTask {
             EvalTask::SerialFrameField => "serial_frame_field",
             EvalTask::SwdOperation => "swd_operation",
             EvalTask::ProtocolState => "protocol_state",
+            EvalTask::RegisterField => "register_field",
         }
     }
 }
@@ -133,6 +138,21 @@ pub enum GoldFact {
         machine_name: Option<String>,
         state_name: String,
     },
+    /// A register bit-field (PDF-VARIANT-DIGESTION.4a.1): the owning register, the field name, and
+    /// the bit extent. Authored as a `[high:low]` range OR an `offset (= bits_low) + width`; both
+    /// normalize to the same `(offset, width)` identity, so a wrong bit extent scores as a miss.
+    /// Access/reset are deliberately NOT part of identity (free-string vendor notation — see
+    /// [`RegisterFieldRecord`]).
+    RegisterField {
+        register: String,
+        field: String,
+        #[serde(default)]
+        bits_high: Option<u32>,
+        #[serde(default)]
+        bits_low: Option<u32>,
+        #[serde(default)]
+        bit_width: Option<u32>,
+    },
 }
 
 impl GoldFact {
@@ -145,6 +165,7 @@ impl GoldFact {
             GoldFact::FrameField { .. } => EvalTask::SerialFrameField,
             GoldFact::SwdOperationFact { .. } => EvalTask::SwdOperation,
             GoldFact::ProtocolStateFact { .. } => EvalTask::ProtocolState,
+            GoldFact::RegisterField { .. } => EvalTask::RegisterField,
         }
     }
 
@@ -202,6 +223,16 @@ impl GoldFact {
                 machine_name,
                 state_name,
             } => protocol_state_key(machine_name.as_deref(), state_name),
+            GoldFact::RegisterField {
+                register,
+                field,
+                bits_high,
+                bits_low,
+                bit_width,
+            } => {
+                let (offset, width) = register_field_bits(*bits_high, *bits_low, *bit_width);
+                register_field_key(register, field, offset, width)
+            }
         }
     }
 }
@@ -248,6 +279,40 @@ fn protocol_state_key(machine_name: Option<&str>, state_name: &str) -> String {
         "{}|{}",
         machine_name.unwrap_or("").trim().to_ascii_lowercase(),
         state_name.trim().to_ascii_lowercase(),
+    )
+}
+
+/// Normalize a register field's bit extent to `(offset, width)` from whichever form is present, so a
+/// `[high:low]` range and an `offset + width` form yield the SAME identity (PDF-VARIANT-DIGESTION.4a.1).
+/// The offset is always `bits_low` (the LSb); the width is `bit_width` when present, else
+/// `bits_high - bits_low + 1` when both bounds are present, else `None` (an unresolved-width field).
+fn register_field_bits(
+    bits_high: Option<u32>,
+    bits_low: Option<u32>,
+    bit_width: Option<u32>,
+) -> (Option<u32>, Option<u32>) {
+    let width = bit_width.or(match (bits_high, bits_low) {
+        (Some(high), Some(low)) if high >= low => Some(high - low + 1),
+        _ => None,
+    });
+    (bits_low, width)
+}
+
+/// Canonical key for a register bit-field — identity is register + field + bit offset/width. Register
+/// and field names are uppercased+trimmed (chip register/field spellings are case-insensitive for
+/// matching); access/reset are intentionally excluded (free-string vendor notation).
+fn register_field_key(
+    register: &str,
+    field: &str,
+    offset: Option<u32>,
+    width: Option<u32>,
+) -> String {
+    format!(
+        "{}|{}|{}|{}",
+        register.trim().to_ascii_uppercase(),
+        field.trim().to_ascii_uppercase(),
+        offset.map(|o| o.to_string()).unwrap_or_default(),
+        width.map(|w| w.to_string()).unwrap_or_default(),
     )
 }
 
@@ -615,6 +680,29 @@ pub fn index_protocol_state_predictions(records: &[ProtocolStateRecord], into: &
             into.entry((EvalTask::ProtocolState, statement_id.clone()))
                 .or_default()
                 .insert(key.clone());
+        }
+    }
+}
+
+/// Canonical key for a produced register field — matches a gold `RegisterField`'s key
+/// (PDF-VARIANT-DIGESTION.4a.1). The owning register supplies the register name.
+pub fn register_field_record_key(register: &RegisterRecord, field: &RegisterFieldRecord) -> String {
+    let (offset, width) = register_field_bits(field.bits_high, field.bits_low, field.bit_width);
+    register_field_key(&register.register_name, &field.field_name, offset, width)
+}
+
+/// Index produced register fields by their owning register's supporting statements
+/// (PDF-VARIANT-DIGESTION.4a.1). Register fields are deterministic table-synthesized records (no
+/// LLM), so a field is attributed to every statement that supports its register record.
+pub fn index_register_field_predictions(records: &[RegisterRecord], into: &mut PredictedKeys) {
+    for register in records {
+        for field in &register.fields {
+            let key = register_field_record_key(register, field);
+            for statement_id in &register.supporting_statement_ids {
+                into.entry((EvalTask::RegisterField, statement_id.clone()))
+                    .or_default()
+                    .insert(key.clone());
+            }
         }
     }
 }
@@ -1267,6 +1355,159 @@ mod tests {
             gold_r.canonical_key(),
             actor_signal_relation_record_key(&record_r)
         );
+    }
+
+    fn register_record(
+        name: &str,
+        fields: Vec<RegisterFieldRecord>,
+        statements: &[&str],
+    ) -> RegisterRecord {
+        RegisterRecord {
+            register_id: "reg".to_string(),
+            register_name: name.to_string(),
+            offset_address: None,
+            size_bits: None,
+            fields,
+            supporting_statement_ids: statements.iter().map(|s| s.to_string()).collect(),
+            automation_confidence: AutomationConfidence::Medium,
+        }
+    }
+
+    fn register_field(
+        name: &str,
+        bits_high: Option<u32>,
+        bits_low: Option<u32>,
+        bit_width: Option<u32>,
+    ) -> RegisterFieldRecord {
+        RegisterFieldRecord {
+            field_name: name.to_string(),
+            bits_high,
+            bits_low,
+            bit_width,
+            access_type: None,
+            reset_value: None,
+            description: None,
+            enumerated_values: vec![],
+        }
+    }
+
+    #[test]
+    fn register_field_bits_normalizes_range_and_offset_width() {
+        // [3:1] range -> offset 1, width 3.
+        assert_eq!(
+            register_field_bits(Some(3), Some(1), None),
+            (Some(1), Some(3))
+        );
+        // offset + width form -> unchanged.
+        assert_eq!(
+            register_field_bits(None, Some(1), Some(3)),
+            (Some(1), Some(3))
+        );
+        // single-bit [5:5] -> offset 5, width 1.
+        assert_eq!(
+            register_field_bits(Some(5), Some(5), None),
+            (Some(5), Some(1))
+        );
+        // width-only (offset unresolved) -> width carried, offset None.
+        assert_eq!(register_field_bits(None, None, Some(8)), (None, Some(8)));
+        // explicit bit_width wins over a derivable range (they should agree; the explicit value rules).
+        assert_eq!(
+            register_field_bits(Some(3), Some(1), Some(3)),
+            (Some(1), Some(3))
+        );
+    }
+
+    #[test]
+    fn register_field_gold_and_record_keys_match_for_the_same_fact() {
+        // A `[high:low]` gold and an `offset + width` record for the same field share one identity,
+        // case-insensitively (PDF-VARIANT-DIGESTION.4a.1).
+        let gold = GoldFact::RegisterField {
+            register: "dmcontrol".to_string(),
+            field: "dmactive".to_string(),
+            bits_high: Some(0),
+            bits_low: Some(0),
+            bit_width: None,
+        };
+        let reg = register_record(
+            "DMCONTROL",
+            vec![register_field("DMACTIVE", None, Some(0), Some(1))],
+            &["statement_1"],
+        );
+        assert_eq!(
+            gold.canonical_key(),
+            register_field_record_key(&reg, &reg.fields[0]),
+            "range gold and offset+width record normalize to the same key"
+        );
+
+        // A wrong bit extent is a different fact (a miss), not a match.
+        let gold_wrong_width = GoldFact::RegisterField {
+            register: "DMCONTROL".to_string(),
+            field: "DMACTIVE".to_string(),
+            bits_high: None,
+            bits_low: Some(0),
+            bit_width: Some(2),
+        };
+        assert_ne!(
+            gold_wrong_width.canonical_key(),
+            register_field_record_key(&reg, &reg.fields[0])
+        );
+
+        // The owning register is part of identity — same field name, different register => different key.
+        let other_reg = register_record(
+            "DMSTATUS",
+            vec![register_field("DMACTIVE", None, Some(0), Some(1))],
+            &["s"],
+        );
+        assert_ne!(
+            register_field_record_key(&reg, &reg.fields[0]),
+            register_field_record_key(&other_reg, &other_reg.fields[0])
+        );
+    }
+
+    #[test]
+    fn score_dataset_scores_register_fields_closed_world() {
+        // One labeled register-table statement: gold = the two dmcontrol fields.
+        let item = EvalItem {
+            task: EvalTask::RegisterField,
+            doc_key: "riscv_debug".to_string(),
+            statement_id: "table_0007".to_string(),
+            input_text: String::new(),
+            grounding: vec![],
+            gold: vec![
+                GoldFact::RegisterField {
+                    register: "DMCONTROL".to_string(),
+                    field: "DMACTIVE".to_string(),
+                    bits_high: Some(0),
+                    bits_low: Some(0),
+                    bit_width: None,
+                },
+                GoldFact::RegisterField {
+                    register: "DMCONTROL".to_string(),
+                    field: "NDMRESET".to_string(),
+                    bits_high: Some(1),
+                    bits_low: Some(1),
+                    bit_width: None,
+                },
+            ],
+            label_status: "agent_drafted".to_string(),
+            label_note: String::new(),
+        };
+        // Produced for table_0007: DMACTIVE (TP) + a spurious HARTSELLO field (FP); NDMRESET missed (FN).
+        let reg = register_record(
+            "DMCONTROL",
+            vec![
+                register_field("DMACTIVE", None, Some(0), Some(1)),
+                register_field("HARTSELLO", Some(15), Some(6), None),
+            ],
+            &["table_0007"],
+        );
+        let mut predicted: PredictedKeys = PredictedKeys::new();
+        index_register_field_predictions(&[reg], &mut predicted);
+        let scores = score_dataset(&[item], &predicted);
+        let card = &scores[&EvalTask::RegisterField];
+        assert_eq!(card.tp, 1, "DMACTIVE matched");
+        assert_eq!(card.fn_count, 1, "NDMRESET missed");
+        assert_eq!(card.fp, 1, "HARTSELLO spurious");
     }
 
     #[test]

@@ -97,9 +97,9 @@ grid-repair demo on a bits-bearing doc; giants' ingest budget; USB 3.2 evid-fail
 
 ## Current frontier
 
-**ACTIVE FRONTIER (`2026-06-08`): `PDF-VARIANT-DIGESTION.4a.1`** — register-field per-fact eval surface, the
-first executable child of the `.4a` precision-verification split (see "Planned next"). The `.2`–`.3b` leaves
-below are DONE (Lever A + B); `.4`–`.8` are the "make the breadth trustworthy" program.
+**ACTIVE FRONTIER (`2026-06-08`): `PDF-VARIANT-DIGESTION.4a.2`** — RISC-V Debug register-field gold (FRESH
+re-ingest, per-fact P/R/F1, source-verified). `.4a.1` (register-field per-fact eval surface) is DONE. The
+`.2`–`.3b` leaves below are DONE (Lever A + B); `.4`–`.8` are the "make the breadth trustworthy" program.
 
 - `PDF-VARIANT-DIGESTION.2` (Lever A, deterministic strategy) — **DONE**: `synthesize_register_field_tables`
   recovers register-FIELD tables the classifier left `unknown` (header-in-body `Field|Description|Access|
@@ -180,7 +180,7 @@ it further. Priority order ① → ⑤.
     gold on FRESH re-ingested evidence (the eval scores persisted evidence — [[eval-scores-persisted-evidence]]).
     In-corpus docs that exercise the new surfaces: RISC-V Debug + NVMe (register fields, `.2`/`.2c`), I2C
     (prose signals, `.3a`). Children:
-    - ID: `PDF-VARIANT-DIGESTION.4a.1` · Status: `in_progress` · Goal: register-field per-fact EVAL SURFACE —
+    - ID: `PDF-VARIANT-DIGESTION.4a.1` · Status: `done` (`2026-06-08`) · Goal: register-field per-fact EVAL SURFACE —
       `EvalTask::RegisterField` + `GoldFact::RegisterField {register, field, bits_high?, bits_low?, bit_width?}`
       + a canonical key (normalize to `register|field|offset|width`) + `index_register_field_predictions` + an
       `extract_on_copy` branch reading EvidenceIR `register_records` (deterministic, like the SWD surfaces).
@@ -247,6 +247,13 @@ set, not the whole doc/corpus.
 ## Verification log
 
 - `.1`: triage sweep launched `2026-06-07` over 8 diverse families.
+- `.4a.1` (`2026-06-08`): register-field per-fact eval surface added to `eval.rs` + `commands/eval_extraction.rs`
+  (`EvalTask::RegisterField`, `GoldFact::RegisterField`, normalized `register|field|offset|width` key,
+  `index_register_field_predictions`, deterministic `extract_on_copy` branch over EvidenceIR `register_records`).
+  Additive — no extraction-behavior change. +3 hermetic tests (bit-extent normalizer; gold↔record key match incl.
+  range≡offset+width, wrong-extent divergence, register-as-identity; closed-world scoring). `cargo fmt --check`
+  clean, `cargo clippy -D warnings` clean, `kg-bench` 151/151, full lib suite 1360 → 1363. Book note deferred to
+  `.4a.2` (the surface is latent until a gold ships). Commit subject: `PDF-VARIANT-DIGESTION.4a.1`.
 
 ## Changelog
 
