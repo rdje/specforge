@@ -150,8 +150,14 @@ WDATA/RDATA — MISSING Start/Parity/Stop/Park, no direction/sequence/turnaround
   `<Name>` bit is not 0b…" (Stop/Park protocol-error, B4.2.5) — the broad "`<Word>` bit" form is rejected
   (it over-matched ~30 register names). **SWD packet request frame now complete:** A/DATAIN/APnDP/RnW/Start/
   Parity/Stop/Park (host) · ACK (target) · WDATA (host)/RDATA (target), ordered, with SWDIO direction. +2
-  hermetic tests; parallel buses still 0; CI green. **Remaining `.4b`:** turnaround (Trn) markers, the
-  phase-transition FSM (request→Trn→ack→Trn→data), and response branching (OK→3-phase, WAIT/FAULT→2-phase).
+  hermetic tests; parallel buses still 0; CI green. **`.4b` response branching — DONE:** added the
+  `SwdOperation` surface + `extract_swd_operations` deriving the response-branched phase sequences from
+  "a successful `<read|write>` operation consists of three phases" / "A `<WAIT|FAULT>` response … consists
+  of two phases" (B4.2) + the turnaround model from the write/read turnaround prose. On fresh ADI evidence:
+  **OK/write → 3-phase, Trn-before-data=true; OK/read → 3-phase, Trn-before-data=false; WAIT → 2-phase
+  no-data; FAULT → 2-phase no-data** (exactly the spec). +2 hermetic tests; parallel buses emit 0
+  swd_operations; CI green. The SWD packet protocol (fields + widths + phase + order + SWDIO direction +
+  response branching + turnaround) is now fully derived. **`.4b` DONE.**
 - `SWD-SERIAL-EXTRACTION.4d` — the **line state machine** (reset/operating/protocol-error/lockout/dormant) +
   edge timing (sample & drive on rising SWCLK, B4.3.1) + line-reset + parity/protocol-error rules.
 - `SWD-SERIAL-EXTRACTION.5` — DONE for the (minor) measurable scores: `seed_swd.json` constraint + relation

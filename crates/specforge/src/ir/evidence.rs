@@ -197,6 +197,38 @@ pub struct EvidenceIr {
     /// Empty (serde-skipped) for documents without a described state machine.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub protocol_states: Vec<ProtocolStateRecord>,
+    /// SWD-SERIAL-EXTRACTION.4b: the SWD packet-protocol operations — the response-branched phase
+    /// sequences (OK → 3-phase request/ack/data; WAIT/FAULT → 2-phase request/ack) + turnaround model.
+    /// Empty (serde-skipped) for non-serial documents.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub swd_operations: Vec<SwdOperation>,
+}
+
+/// SWD-SERIAL-EXTRACTION.4b: one SWD packet-protocol operation variant — a response branch of the packet
+/// FSM. OK responses carry a data phase (3 phases: request → acknowledge → data); WAIT/FAULT do not
+/// (2 phases). Derived from "a successful `<read|write>` operation consists of three phases" /
+/// "A `<WAIT|FAULT>` response … consists of two phases" prose (B4.2).
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct SwdOperation {
+    /// Stable id, e.g. `swd_operation_0001`.
+    pub operation_id: String,
+    /// The acknowledge response that selects this branch: `OK` / `WAIT` / `FAULT`.
+    pub response: String,
+    /// `read` or `write`; `None` when the operation applies to "a read or write" request.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub access: Option<String>,
+    /// Number of packet phases (2 = request+acknowledge; 3 = request+acknowledge+data).
+    pub phase_count: u32,
+    /// Whether a data-transfer phase follows the acknowledge (true for OK; false for WAIT/FAULT
+    /// unless overrun detection is enabled).
+    pub has_data_phase: bool,
+    /// Whether a turnaround period sits between the acknowledge and data phases (true for write —
+    /// host drives WDATA; false for read — target drives both ack and RDATA). `None` for 2-phase.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub turnaround_before_data: Option<bool>,
+    /// Statements that evidenced this operation.
+    #[serde(default)]
+    pub supporting_statement_ids: Vec<String>,
 }
 
 /// SWD-SERIAL-EXTRACTION.3: one field of a serial protocol frame (e.g. SWD `ACK[2:0]`, `WDATA[0:31]`,
@@ -764,6 +796,10 @@ impl EvidenceIr {
         // machine). The FSM is the heart of SWD/JTAG and what FSMGen builds. No-op for non-FSM docs.
         let protocol_states = extract_protocol_states(&extracted_statements);
 
+        // SWD-SERIAL-EXTRACTION.4b: recover the SWD packet operations (response branching: OK→3-phase,
+        // WAIT/FAULT→2-phase, + turnaround model). No-op for non-serial docs.
+        let swd_operations = extract_swd_operations(&extracted_statements);
+
         // PER-EXTRACTOR-FACT-TAGGING: tag every fact produced by the structural
         // pattern tier (the convergent build loop above) as `Pattern`, computed
         // before the move into the struct literal. The LLM tiers tag their finds
@@ -814,6 +850,7 @@ impl EvidenceIr {
             fact_provenance,
             serial_frame_fields,
             protocol_states,
+            swd_operations,
         };
         evidence_ir.carry_forward_existing_knowledge()?;
         evidence_ir.refresh_signal_semantic_hints()?;
@@ -7433,6 +7470,87 @@ fn parse_bit_range_fields(text: &str) -> Vec<(String, u32, u32)> {
     out
 }
 
+/// SWD-SERIAL-EXTRACTION.4b — recover the SWD packet-protocol operations (response branching): each
+/// "a successful `<read|write>` operation consists of three phases" / "A `<WAIT|FAULT>` response …
+/// consists of two phases" header becomes a `SwdOperation`. OK → 3-phase (has data); WAIT/FAULT →
+/// 2-phase. The turnaround-before-data flag comes from the write ("turnaround between the acknowledge
+/// phase and the WDATA") vs read ("no turnaround … between the acknowledge phase and the data") prose.
+/// Gated to serial documents. Grammar, not names (ADR 0006).
+fn extract_swd_operations(statements: &[ExtractedStatement]) -> Vec<SwdOperation> {
+    let is_serial_doc = statements.iter().any(|s| {
+        let l = s.text.to_ascii_lowercase();
+        l.contains("serial wire") || l.contains("packet request") || l.contains("swdio")
+    });
+    if !is_serial_doc {
+        return Vec::new();
+    }
+    let mut write_trn: Option<bool> = None;
+    let mut read_trn: Option<bool> = None;
+    for s in statements {
+        let l = s.text.to_ascii_lowercase();
+        if l.contains("turnaround period between the acknowledge phase and the") {
+            write_trn = Some(true);
+        }
+        if l.contains("no turnaround period between the acknowledge phase and the data") {
+            read_trn = Some(false);
+        }
+    }
+    let mut out = Vec::new();
+    let mut seen: BTreeSet<String> = BTreeSet::new();
+    let mut counter = 0usize;
+    for s in statements {
+        let l = s.text.to_ascii_lowercase();
+        let phase_count: u32 = if l.contains("consists of three phases") {
+            3
+        } else if l.contains("consists of two phases") {
+            2
+        } else {
+            continue;
+        };
+        let response = if l.contains("successful") || l.contains("ok response") {
+            "OK"
+        } else if l.contains("wait response") {
+            "WAIT"
+        } else if l.contains("fault response") {
+            "FAULT"
+        } else {
+            continue;
+        };
+        let has_read = l.contains("read");
+        let has_write = l.contains("write");
+        let access = match (has_read, has_write) {
+            (true, false) => Some("read"),
+            (false, true) => Some("write"),
+            _ => None,
+        };
+        let has_data_phase = phase_count == 3;
+        let turnaround_before_data = if has_data_phase {
+            match access {
+                Some("write") => write_trn,
+                Some("read") => read_trn,
+                _ => None,
+            }
+        } else {
+            None
+        };
+        let key = format!("{response}-{access:?}-{phase_count}");
+        if !seen.insert(key) {
+            continue;
+        }
+        counter += 1;
+        out.push(SwdOperation {
+            operation_id: format!("swd_operation_{counter:04}"),
+            response: response.to_string(),
+            access: access.map(|a| a.to_string()),
+            phase_count,
+            has_data_phase,
+            turnaround_before_data,
+            supporting_statement_ids: vec![s.statement_id.clone()],
+        });
+    }
+    out
+}
+
 fn synthesize_encoding_declarations(
     table: &crate::ir::source::StructuredTableRecord,
     section_title: &str,
@@ -13620,5 +13738,82 @@ mod swd_serial_extraction_4b {
         let start = fields.iter().find(|f| f.name == "Start").unwrap();
         assert_eq!(start.phase, Some(SerialFramePhase::Request));
         assert_eq!(start.swdio_direction, Some(SwdioDirection::HostDrives));
+    }
+}
+
+#[cfg(test)]
+mod swd_serial_extraction_4b_ops {
+    //! SWD-SERIAL-EXTRACTION.4b — SWD packet operations: response branching + turnaround model.
+    use super::*;
+
+    fn stmt(id: &str, text: &str) -> ExtractedStatement {
+        ExtractedStatement {
+            statement_id: id.to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        }
+    }
+
+    #[test]
+    fn derives_response_branching_and_turnaround() {
+        let stmts = vec![
+            stmt(
+                "ctx",
+                "The SWD interface uses a single bidirectional data pin, SWDIO. A packet request is sent.",
+            ),
+            stmt(
+                "wtrn",
+                "For a write request, there is a turnaround period between the acknowledge phase and the WDATA data transfer phase.",
+            ),
+            stmt(
+                "rtrn",
+                "For a read request, there is no turnaround period between the acknowledge phase and the data transfer phase.",
+            ),
+            stmt(
+                "w",
+                "Therefore, a successful write operation consists of three phases:",
+            ),
+            stmt(
+                "r",
+                "Therefore, a successful read operation consists of three phases:",
+            ),
+            stmt(
+                "wa",
+                "A WAIT response to a read or write packet request consists of two phases:",
+            ),
+            stmt(
+                "f",
+                "A FAULT response to a read or write packet request consists of two phases:",
+            ),
+        ];
+        let ops = extract_swd_operations(&stmts);
+        let find = |resp: &str, acc: Option<&str>| {
+            ops.iter()
+                .find(|o| o.response == resp && o.access.as_deref() == acc)
+                .cloned()
+        };
+        let wr = find("OK", Some("write")).expect("OK write");
+        assert!(
+            wr.phase_count == 3 && wr.has_data_phase && wr.turnaround_before_data == Some(true)
+        );
+        let rd = find("OK", Some("read")).expect("OK read");
+        assert!(
+            rd.phase_count == 3 && rd.has_data_phase && rd.turnaround_before_data == Some(false)
+        );
+        let wait = find("WAIT", None).expect("WAIT");
+        assert!(wait.phase_count == 2 && !wait.has_data_phase);
+        assert!(find("FAULT", None).is_some());
+    }
+
+    #[test]
+    fn non_serial_doc_has_no_operations() {
+        let stmts = vec![stmt(
+            "x",
+            "A write operation consists of three phases on the AHB bus.",
+        )];
+        assert!(extract_swd_operations(&stmts).is_empty());
     }
 }

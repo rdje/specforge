@@ -2,6 +2,16 @@
 
 ## 2026-06-07
 
+### `SWD-SERIAL-EXTRACTION.4b` (response branching) — the SWD packet FSM topology
+Added the `SwdOperation` surface + `extract_swd_operations`: the response-branched packet phase sequences
+derived from "a successful <read|write> operation consists of three phases" / "A <WAIT|FAULT> response ...
+consists of two phases" (B4.2), plus the turnaround model from the write/read turnaround prose. On fresh ADI
+evidence: OK/write -> 3-phase (turnaround_before_data=true); OK/read -> 3-phase (turnaround_before_data=false);
+WAIT -> 2-phase no-data; FAULT -> 2-phase no-data -- exactly the spec. +2 hermetic tests; parallel buses emit
+0 swd_operations; full scripts/run_ci.sh green. The SWD packet protocol is now fully derived (fields +
+widths + phase + order + SWDIO direction + response branching + turnaround). Remaining: .4d line state
+machine + edge timing.
+
 ### `SWD-SERIAL-EXTRACTION.4b` (missing fields) — complete the SWD packet request frame
 Added `parse_control_bit_fields`: the request-frame control bits Start / Parity / Stop / Park are now
 captured (1-bit, request phase, host-driven) from two high-precision phrasings — "A single <name> bit ..."

@@ -48,3 +48,9 @@ request fields + WDATA = `host_drives`; ACK + RDATA = `target_drives` (host samp
 "drive commands / sample returned data on SWDIO via the FSM" intent (`[[swd-intent-is-the-fsm-driving-swdio]]`).
 Next: `.4b` packet phase FSM + missing fields (Start/Parity/Stop/Park) + turnarounds + OK/WAIT/FAULT
 branching; `.4d` line state machine + edge timing.
+
+**`.4b` operations** added the `SwdOperation` surface (`extract_swd_operations`): the response-branched
+packet sequences — OK/write & OK/read → 3-phase (request→ack→data, with `turnaround_before_data` true for
+write / false for read); WAIT & FAULT → 2-phase (no data) — derived from "consists of three/two phases"
+prose (B4.2). So the SWD packet protocol is now fully derived: fields (widths/phase/order/SWDIO direction)
++ response branching + turnaround. Remaining for the full SWD intent: `.4d` line state machine + edge timing.
