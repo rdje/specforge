@@ -3,7 +3,7 @@ use std::process::Command;
 
 use crate::cli::{EnrichArgs, VlmProviderArg};
 use crate::error::{AppError, Result};
-use crate::ir::source::{DiagramKind, SourceIr, VisualAsset};
+use crate::ir::source::{DiagramKind, SourceIr, TableKind, VisualAsset};
 
 /// Environment variable overriding the VLM helper script (for unit testing).
 const VLM_HELPER_ENV: &str = "SPECFORGE_VLM_HELPER";
@@ -110,9 +110,21 @@ pub fn run(args: EnrichArgs) -> Result<()> {
             );
             println!("vlm_errors: {}", enriched.errors);
 
+            // PDF-VARIANT-DIGESTION.2b — VLM table strategy: reclassify `unknown` tables from their
+            // rendered images (best-wins; confident deterministic kinds are untouched).
+            source_ir.visual_assets = enriched.updated_assets;
+            let (tables_reclassified, table_errors) = classify_unknown_tables_via_vlm(
+                &mut source_ir,
+                provider,
+                &model,
+                &api_url,
+                args.dry_run,
+            );
+            println!("tables_reclassified_by_vlm: {tables_reclassified}");
+            println!("table_vlm_errors: {table_errors}");
+
             if !args.dry_run {
-                // Write updated SourceIR with enriched visual_assets.
-                source_ir.visual_assets = enriched.updated_assets;
+                // Write updated SourceIR with enriched visual_assets + VLM table classifications.
                 source_ir.write_to_disk()?;
                 println!(
                     "enriched_source_ir_path: {}",
@@ -288,16 +300,102 @@ fn call_vlm_for_asset(
 
     let caption = asset.caption_text.as_deref().unwrap_or("");
     let prompt = build_vlm_prompt(diagram_type, caption);
+    vlm_image_query(image_path, &prompt, model, api_url, provider)
+}
 
-    // Encode image as base64.
+/// PDF-VARIANT-DIGESTION.2b — VLM table-classification prompt (asks for STRICT JSON `{"kind": …}`).
+fn build_table_classify_prompt() -> String {
+    "This is a table image from a chip-specification PDF. Classify its role. Reply with STRICT JSON \
+only, no prose: {\"kind\": <one of \"signal_description\", \"register_field\", \"register_map\", \
+\"encoding\", \"timing_parameter\", \"feature_matrix\", \"table_of_contents\", \"other\">}."
+        .to_string()
+}
+
+/// Parse the VLM's `{"kind": "..."}` reply into a [`TableKind`] to APPLY. Returns `None` for kinds we do
+/// not reclassify on: `register_field` (the deterministic header-grammar path already recovers these from
+/// `unknown`), and `table_of_contents`/`other` (correctly left unextracted). Tolerates ```json fences and
+/// surrounding prose. PDF-VARIANT-DIGESTION.2b.
+fn parse_vlm_table_kind(content: &str) -> Option<TableKind> {
+    let lower = content.to_ascii_lowercase();
+    let key = lower.find("\"kind\"")?;
+    let after = &lower[key + 6..];
+    let colon = after.find(':')?;
+    let q1 = after[colon + 1..].find('"')?;
+    let rest = &after[colon + 1 + q1 + 1..];
+    let q2 = rest.find('"')?;
+    match &rest[..q2] {
+        "signal_description" => Some(TableKind::SignalDescription),
+        "encoding" => Some(TableKind::Encoding),
+        "timing_parameter" => Some(TableKind::TimingParameter),
+        "feature_matrix" => Some(TableKind::FeatureMatrix),
+        "register_map" => Some(TableKind::RegisterMap),
+        _ => None,
+    }
+}
+
+/// PDF-VARIANT-DIGESTION.2b — VLM table strategy (best-wins-per-PDF). For each `unknown`-kind table that
+/// has a rendered image, ask the VLM to classify its role and APPLY a recognized data kind, so the
+/// downstream deterministic extractors fire on tables the deterministic CLASSIFIER missed. Confident
+/// deterministic kinds are never overridden (only `unknown` tables are touched). Returns
+/// `(reclassified, errors)`. Mutates `source_ir.structured_tables` in place.
+fn classify_unknown_tables_via_vlm(
+    source_ir: &mut SourceIr,
+    provider: VlmProviderArg,
+    model: &str,
+    api_url: &str,
+    dry_run: bool,
+) -> (usize, usize) {
+    let image_by_asset: std::collections::HashMap<&str, &std::path::Path> = source_ir
+        .visual_assets
+        .iter()
+        .filter_map(|a| a.image_path.as_deref().map(|p| (a.asset_id.as_str(), p)))
+        .collect();
+    let prompt = build_table_classify_prompt();
+    let mut reclassified = 0usize;
+    let mut errors = 0usize;
+    // Resolve images up front (immutable borrow) before mutating the tables.
+    let plan: Vec<(usize, std::path::PathBuf)> = source_ir
+        .structured_tables
+        .iter()
+        .enumerate()
+        .filter(|(_, t)| t.table_kind == TableKind::Unknown)
+        .filter_map(|(i, t)| {
+            image_by_asset
+                .get(t.asset_id.as_str())
+                .map(|p| (i, p.to_path_buf()))
+        })
+        .collect();
+    for (idx, image_path) in plan {
+        if dry_run {
+            continue;
+        }
+        match vlm_image_query(&image_path, &prompt, model, api_url, provider) {
+            Ok(content) => {
+                if let Some(kind) = parse_vlm_table_kind(&content) {
+                    source_ir.structured_tables[idx].table_kind = kind;
+                    reclassified += 1;
+                }
+            }
+            Err(_) => errors += 1,
+        }
+    }
+    (reclassified, errors)
+}
+
+/// POST a single image + text prompt to an OpenAI-compatible VLM endpoint (Ollama / OpenAI / LM Studio)
+/// and return the assistant's message content. Shared by diagram enrichment and table classification
+/// (PDF-VARIANT-DIGESTION.2b).
+fn vlm_image_query(
+    image_path: &std::path::Path,
+    prompt: &str,
+    model: &str,
+    api_url: &str,
+    provider: VlmProviderArg,
+) -> Result<String> {
     let image_bytes = fs::read(image_path).map_err(AppError::Io)?;
     let image_b64 = base64_encode(&image_bytes);
+    let request_body = build_chat_request(model, prompt, &image_b64);
 
-    // Build the OpenAI-compatible chat completions request.
-    // All supported providers (Ollama, OpenAI, LM Studio) use this format.
-    let request_body = build_chat_request(model, &prompt, &image_b64);
-
-    // Determine extra headers (OpenAI requires Authorization).
     let mut cmd = Command::new("curl");
     cmd.arg("-s")
         .arg("-X")
@@ -305,7 +403,6 @@ fn call_vlm_for_asset(
         .arg(api_url)
         .arg("-H")
         .arg("Content-Type: application/json");
-
     if matches!(provider, VlmProviderArg::OpenAi) {
         let api_key =
             std::env::var("OPENAI_API_KEY").map_err(|_| AppError::MissingRuntimeDependency {
@@ -316,8 +413,6 @@ fn call_vlm_for_asset(
         cmd.arg("-H")
             .arg(format!("Authorization: Bearer {api_key}"));
     }
-
-    // Write request body to a temp file to avoid shell quoting issues.
     let tempdir = tempfile::tempdir()?;
     let request_path = tempdir.path().join("vlm_request.json");
     fs::write(&request_path, &request_body)?;
@@ -331,9 +426,7 @@ fn call_vlm_for_asset(
             stderr: String::from_utf8_lossy(&output.stderr).to_string(),
         });
     }
-
-    let response_text = String::from_utf8_lossy(&output.stdout).to_string();
-    extract_vlm_content(&response_text)
+    extract_vlm_content(&String::from_utf8_lossy(&output.stdout))
 }
 
 fn build_chat_request(model: &str, prompt: &str, image_b64: &str) -> String {
@@ -435,4 +528,43 @@ fn base64_encode(data: &[u8]) -> String {
         i += 3;
     }
     result
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn vlm_table_kind_parsing_maps_recognized_and_filters_the_rest() {
+        // recognized data kinds map (fenced json + surrounding prose tolerated)
+        assert_eq!(
+            parse_vlm_table_kind("```json\n{\"kind\": \"signal_description\"}\n```"),
+            Some(TableKind::SignalDescription)
+        );
+        assert_eq!(
+            parse_vlm_table_kind(r#"{"kind":"register_map"}"#),
+            Some(TableKind::RegisterMap)
+        );
+        assert_eq!(
+            parse_vlm_table_kind(r#"the answer is {"kind": "encoding"}."#),
+            Some(TableKind::Encoding)
+        );
+        assert_eq!(
+            parse_vlm_table_kind(r#"{"kind": "timing_parameter"}"#),
+            Some(TableKind::TimingParameter)
+        );
+        assert_eq!(
+            parse_vlm_table_kind(r#"{"kind": "feature_matrix"}"#),
+            Some(TableKind::FeatureMatrix)
+        );
+        // register_field is recovered by the deterministic grammar path → not reclassified here
+        assert_eq!(parse_vlm_table_kind(r#"{"kind": "register_field"}"#), None);
+        // noise kinds are left unextracted
+        assert_eq!(
+            parse_vlm_table_kind(r#"{"kind": "table_of_contents"}"#),
+            None
+        );
+        assert_eq!(parse_vlm_table_kind(r#"{"kind": "other"}"#), None);
+        assert_eq!(parse_vlm_table_kind("no json at all"), None);
+    }
 }

@@ -94,8 +94,15 @@ a stats-script regex bug — ingest OK; re-measure with the hardened helper.)
   fields** from previously-`unknown` tables; APB/AHB/AXI/SWD source-tolerant stay 1.000 (additive); +4
   hermetic tests; full `run_ci.sh` green. RISC-V Debug PDF copied into `corpus/`. KM
   `register-field-table-extraction`.
-- `PDF-VARIANT-DIGESTION.2b` (Lever A, VLM strategy) — NEXT: point Qwen2.5VL at rendered table images for
-  `unknown` tables; best-wins-per-PDF vs the deterministic classifier ([[feedback_multi_strategy_best_wins]]).
+- `PDF-VARIANT-DIGESTION.2b` (Lever A, VLM strategy) — **DONE (classification)**: Qwen2.5VL reads the
+  `table_region` images and reclassifies `unknown` tables (validated live — it read the RISC-V `dmcontrol`
+  table's kind + all 5 field names from the image). `enrich --vlm-provider ollama` now runs
+  `classify_unknown_tables_via_vlm` (shared `vlm_image_query`; `parse_vlm_table_kind`), best-wins (only
+  `unknown` tables touched; `register_field`/TOC/other not reapplied — grammar path / noise), writes
+  `table_kind` back so a re-run of `evidence` fires the deterministic extractor. Gated (`skip` = no-op);
+  encryption irrelevant (docling renders the images). +1 hermetic test; full CI green. KM
+  `vlm-table-strategy`. NEXT (`.2b'`): VLM EXTRACTION (read rows/fields from the image into typed records as
+  a `Vlm`-tier fact) where the deterministic extractor still yields nothing.
 - `PDF-VARIANT-DIGESTION.2c` (model flexibility) — **DONE (core)**: the register model now carries, all
   backward-compatible: `RegisterRecord.size_bits`; `RegisterFieldRecord.bit_width` (a field is
   `name + offset(=bits_low, LSb) + width`; range/single-bit/offset+width all map) + `enumerated_values`

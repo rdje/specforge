@@ -1,3 +1,14 @@
+### `PDF-VARIANT-DIGESTION.2b` — VLM table strategy (Qwen2.5VL), best-wins-per-PDF
+The deterministic header-grammar classifier is strategy 1; the VLM is strategy 2. docling renders a
+table_region image per table; Qwen2.5VL reads them directly (validated live: it returned the RISC-V dmcontrol
+table's kind + all 5 field names from the image). `enrich --vlm-provider ollama` now runs
+classify_unknown_tables_via_vlm (shared vlm_image_query; parse_vlm_table_kind) to reclassify `unknown` tables
+and write table_kind back, so a re-run of `evidence` fires the deterministic extractor for the now-known kind.
+Best-wins: only `unknown` tables are touched (confident deterministic kinds stand); register_field is left to
+the grammar path, TOC/other left unextracted. Gated behind --vlm-provider (skip = no-op); encryption is
+irrelevant (docling renders the images; no Read-tool dependency). +1 hermetic test; full run_ci.sh green. KM
+vlm-table-strategy; memory feedback_multi_strategy_best_wins.
+
 # CHANGES
 
 ## 2026-06-07

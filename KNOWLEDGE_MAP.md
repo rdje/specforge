@@ -3,7 +3,7 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Regenerate with `knowledge-map/scripts/gen_knowledge_map.sh`.
 > Source of truth = YAML front-matter in: `docs/knowledge docs/decisions`. Edit the fact files, never this map.
 > A fact is any `.md` whose front-matter has a non-empty `answers:` list.
-> **35** facts · **181** question keys.
+> **36** facts · **185** question keys.
 
 ## Questions → fact
 
@@ -29,6 +29,7 @@
 - "does SpecForge use LTL CTL or TLA+" -> [temporal-logic-choice](docs/knowledge/temporal-logic-choice.md) · 2026-06-04 · reverify: `grep -n "fn temporal_rule_to_ltl" crates/specforge/src/ir/temporal_ltl.rs`
 - "does agreement between sources boost confidence" -> [dempster-fusion](docs/knowledge/dempster-fusion.md) · 2026-06-04 · reverify: `grep -n "fn dempster_corroborate_confidence" crates/specforge/src/ir/fusion.rs`
 - "does corpus prior memory only accrete" -> [contested-priors](docs/knowledge/contested-priors.md) · 2026-06-04 · reverify: `grep -n "fn contested_priors" crates/specforge/src/ir/prior_memory.rs`
+- "does encryption block the VLM from reading tables (no)" -> [vlm-table-strategy](docs/knowledge/vlm-table-strategy.md) · 2026-06-07 · reverify: `./target/debug/specforge enrich generated/source_ir/<key>/source_ir.json --vlm-provider ollama --vlm-model qwen2.5vl:7b   # prints tables_reclassified_by_vlm`
 - "does eval-extraction rebuild evidence or load the persisted file" -> [eval-scores-persisted-evidence](docs/knowledge/eval-scores-persisted-evidence.md) · 2026-06-07 · reverify: `./target/debug/specforge evidence generated/source_ir/<doc_key>/source_ir.json   # errors if normalized was reclaimed`
 - "does every temporal_rule reach the .isf or a residual" -> [isf-temporal-lowering-no-silent-drop](docs/knowledge/isf-temporal-lowering-no-silent-drop.md) · 2026-06-04 · reverify: `grep -n "temporal_residuals" crates/specforge/src/ir/isf_ir.rs crates/specforge/src/ir/adapters.rs`
 - "does the NLI verifier actually catch real extraction errors" -> [nli-gate-real-apb-validation](docs/knowledge/nli-gate-real-apb-validation.md) · 2026-06-05 · reverify: `cargo run -p specforge --quiet -- nli-verify generated/evidence_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/evidence_ir.json --vlm-provider ollama --model qwen2.5:14b-instruct`
@@ -40,6 +41,7 @@
 - "how are per-state actions captured" -> [swd-protocol-fsm-surface](docs/knowledge/swd-protocol-fsm-surface.md) · 2026-06-07 · reverify: `python3 -c "import json; e=json.load(open('generated/evidence_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/evidence_ir.json')); print([s['state_name'] for s in e.get('protocol_states',[])])`
 - "how are serial/architecture spec interface signals added to the catalog" -> [prose-pin-appositive-signal-capture](docs/knowledge/prose-pin-appositive-signal-capture.md) · 2026-06-07 · reverify: `python3 -c "import json,re; e=json.load(open('generated/evidence_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/evidence_ir.json')); d={re.match(r'Signal (\w+)',s['text']).group(1) for s in e['extracted_statements'] if s['text'].startswith('Signal ')}; print('SWCLK',('SWCLK' in d),'SWDIO',('SWDIO' in d))`
 - "how are temporal rules expressed as LTL or MTL" -> [temporal-rule-ltl-rendering](docs/knowledge/temporal-rule-ltl-rendering.md) · 2026-06-04 · reverify: `grep -n "fn temporal_rule_to_ltl" crates/specforge/src/ir/temporal_ltl.rs`
+- "how are unknown tables reclassified by the VLM" -> [vlm-table-strategy](docs/knowledge/vlm-table-strategy.md) · 2026-06-07 · reverify: `./target/debug/specforge enrich generated/source_ir/<key>/source_ir.json --vlm-provider ollama --vlm-model qwen2.5vl:7b   # prints tables_reclassified_by_vlm`
 - "how did APB temporal reach 100% (WIRE-BASED-100.4)" -> [indexed-signal-family-canonicalization](docs/knowledge/indexed-signal-family-canonicalization.md) · 2026-06-06 · reverify: `./target/debug/specforge eval-extraction crates/specforge/test_data/llm_eval/seed_apb_temporal.json --provider skip 2>/dev/null | sed -n '/Extraction eval/,/source-tolerant/p'`
 - "how do I file an FSMGen bug report or feature request" -> [fsmgen-feedback-channel](docs/knowledge/fsmgen-feedback-channel.md) · 2026-06-04 · reverify: `ls docs/FSMGEN_FEEDBACK.md`
 - "how do I make the NLI verifier actively change extraction / demote claims" -> [nli-intent-gate](docs/knowledge/nli-intent-gate.md) · 2026-06-05 · reverify: `grep -n "fn apply_nli_gate\|fn nli_gate_contracts\|fn obligation_claim_text" crates/specforge/src/ir/nli_verify.rs`
@@ -57,6 +59,7 @@
 - "how does specforge model the JTAG TAP / SWD state machine (FSM)" -> [swd-protocol-fsm-surface](docs/knowledge/swd-protocol-fsm-surface.md) · 2026-06-07 · reverify: `python3 -c "import json; e=json.load(open('generated/evidence_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/evidence_ir.json')); print([s['state_name'] for s in e.get('protocol_states',[])])`
 - "how does specforge model the SWD serial frame / packet" -> [swd-serial-frame-surface](docs/knowledge/swd-serial-frame-surface.md) · 2026-06-07 · reverify: `python3 -c "import json; e=json.load(open('generated/evidence_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/evidence_ir.json')); print([(f['name'],f.get('bit_width')) for f in e.get('serial_frame_fields',[])])`
 - "how does specforge reject non-signal constraint subjects (LICENSEE, AXI, RME, MPAM)" -> [axi-constraint-subject-must-be-declared](docs/knowledge/axi-constraint-subject-must-be-declared.md) · 2026-06-07 · reverify: `./target/debug/specforge eval-extraction crates/specforge/test_data/llm_eval/seed_axi.json --provider skip 2>/dev/null | grep -A1 source-tolerant`
+- "how does the VLM understand tables / can a VLM read PDF tables" -> [vlm-table-strategy](docs/knowledge/vlm-table-strategy.md) · 2026-06-07 · reverify: `./target/debug/specforge enrich generated/source_ir/<key>/source_ir.json --vlm-provider ollama --vlm-model qwen2.5vl:7b   # prints tables_reclassified_by_vlm`
 - "how flexible is the register model / what register-table shapes are handled" -> [register-field-table-extraction](docs/knowledge/register-field-table-extraction.md) · 2026-06-07 · reverify: `./target/debug/specforge evidence generated/source_ir/1_0_risc_v_debug_specification/source_ir.json && python3 -c "import json;e=json.load(open('generated/evidence_ir/1_0_risc_v_debug_specification/evidence_ir.json'));print(len(e['register_records']),'regs',sum(len(r['fields']) for r in e['register_records']),'fields')`
 - "how is AXI organized / what are the AXI channels" -> [axi-channel-structure](docs/knowledge/axi-channel-structure.md) · 2026-06-07 · reverify: `python3 -c "import json,re; e=json.load(open('generated/evidence_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/evidence_ir.json')); d={re.match(r'Signal (\w+)',s['text']).group(1) for s in e['extracted_statements'] if s['text'].startswith('Signal ')}; print(sorted(x for x in d if x.startswith('AW'))[:10])`
 - "how is a claim's grounding checked beyond a string match" -> [nli-entailment-verifier](docs/knowledge/nli-entailment-verifier.md) · 2026-06-05 · reverify: `grep -n "fn verify_entailment" crates/specforge/src/ir/nli_verify.rs`
@@ -132,6 +135,7 @@
 - "what is the LTL form of a temporal_rule" -> [temporal-rule-ltl-rendering](docs/knowledge/temporal-rule-ltl-rendering.md) · 2026-06-04 · reverify: `grep -n "fn temporal_rule_to_ltl" crates/specforge/src/ir/temporal_ltl.rs`
 - "what is the NLI entailment verifier" -> [nli-entailment-verifier](docs/knowledge/nli-entailment-verifier.md) · 2026-06-05 · reverify: `grep -n "fn verify_entailment" crates/specforge/src/ir/nli_verify.rs`
 - "what is the SWD line state machine (reset/operating/protocol-error/lockout)" -> [swd-intent-is-the-fsm-driving-swdio](docs/knowledge/swd-intent-is-the-fsm-driving-swdio.md) · 2026-06-07 · reverify: `python3 — dump source_ir content_elements for page_id page_0110..page_0128 (Chapter B4); the PDF itself is password-protected so the Read tool cannot open it — use the docling content_elements text.`
+- "what is the VLM table strategy / PDF-VARIANT-DIGESTION.2b" -> [vlm-table-strategy](docs/knowledge/vlm-table-strategy.md) · 2026-06-07 · reverify: `./target/debug/specforge enrich generated/source_ir/<key>/source_ir.json --vlm-provider ollama --vlm-model qwen2.5vl:7b   # prints tables_reclassified_by_vlm`
 - "what is the ambiguous_statements metric in validate" -> [ambiguity-weak-phrase-detector](docs/knowledge/ambiguity-weak-phrase-detector.md) · 2026-06-04 · reverify: `grep -n "fn weak_phrase_findings" crates/specforge/src/ir/ambiguity.rs`
 - "what is the completeness gauge over-counting on APB" -> [apb-signal-catalog-fully-extracted](docs/knowledge/apb-signal-catalog-fully-extracted.md) · 2026-06-06 · reverify: `./target/debug/specforge validate generated/evidence_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/evidence_ir.json 2>/dev/null | sed -n '/Region Accounting/,/convergence:/p'`
 - "what is the constraint-subject-must-be-declared filter" -> [axi-constraint-subject-must-be-declared](docs/knowledge/axi-constraint-subject-must-be-declared.md) · 2026-06-07 · reverify: `./target/debug/specforge eval-extraction crates/specforge/test_data/llm_eval/seed_axi.json --provider skip 2>/dev/null | grep -A1 source-tolerant`
@@ -505,3 +509,12 @@ _Temporal rules render to standard LTL/MTL via ir/temporal_ltl.rs_
 - **evidence:** `crates/specforge/src/ir/temporal_ltl.rs; docs/book/src/domain/temporal-semantics.md`
 - **reverify:** `grep -n "fn temporal_rule_to_ltl" crates/specforge/src/ir/temporal_ltl.rs`
 - **source:** [`docs/knowledge/temporal-rule-ltl-rendering.md`](docs/knowledge/temporal-rule-ltl-rendering.md)
+
+### vlm-table-strategy
+_VLM (Qwen2.5VL) reads table images to reclassify "unknown" tables — the second, best-wins table strategy_
+
+- **answers:** how does the VLM understand tables / can a VLM read PDF tables | what is the VLM table strategy / PDF-VARIANT-DIGESTION.2b | how are unknown tables reclassified by the VLM | does encryption block the VLM from reading tables (no)
+- **date:** 2026-06-07 · **status:** current
+- **evidence:** `crates/specforge/src/commands/enrich.rs (vlm_image_query, build_table_classify_prompt, parse_vlm_table_kind, classify_unknown_tables_via_vlm)`
+- **reverify:** `./target/debug/specforge enrich generated/source_ir/<key>/source_ir.json --vlm-provider ollama --vlm-model qwen2.5vl:7b   # prints tables_reclassified_by_vlm`
+- **source:** [`docs/knowledge/vlm-table-strategy.md`](docs/knowledge/vlm-table-strategy.md)
