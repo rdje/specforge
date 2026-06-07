@@ -217,6 +217,11 @@ pub struct SerialFrameField {
     /// The frame phase this field belongs to (request / acknowledge / data), inferred from context.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub phase: Option<SerialFramePhase>,
+    /// Which actor drives the bidirectional data wire (SWDIO) during this field — derived from the
+    /// spec's "from the `<actor>` to the `<actor>`" / "`<actor>` to `<actor>`, following a read/write
+    /// request" prose (the host samples whatever the target drives). `None` if not stated. (`.4c`)
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub swdio_direction: Option<SwdioDirection>,
     /// Order of this field within the frame sequence (request bits → acknowledge → data), assigned
     /// by phase rank then first appearance. `None` if the field has no resolved phase. (`.3b`)
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -239,6 +244,17 @@ pub enum SerialFramePhase {
     Acknowledge,
     /// The data transfer phase (read/write data + parity).
     Data,
+}
+
+/// Which actor drives the bidirectional serial data wire (SWDIO) during a frame field/phase. The
+/// other actor samples it. SWD-SERIAL-EXTRACTION.4c.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum SwdioDirection {
+    /// The host (external debugger) drives the wire; the target samples (request + write data).
+    HostDrives,
+    /// The target (DP) drives the wire; the host samples (acknowledge + read data).
+    TargetDrives,
 }
 
 /// SWD-SERIAL-EXTRACTION.4: one state of a protocol FSM. SWD and JTAG are *defined* by a state machine
@@ -6960,6 +6976,42 @@ fn extract_serial_frame_fields(statements: &[ExtractedStatement]) -> Vec<SerialF
     for (rank, &i) in ordered.iter().enumerate() {
         out[i].order = Some(rank as u32);
     }
+    // Per-phase SWDIO direction (`.4c`): who DRIVES the wire per field/phase, derived from the spec's
+    // "from the <A> to the <B>" / "<A> to <B>, following a read/write request" prose. The data phase
+    // is direction-by-field (WDATA host-driven, RDATA target-driven), so resolve field-level first;
+    // request/acknowledge are phase-level.
+    let mut field_dir: BTreeMap<String, SwdioDirection> = BTreeMap::new();
+    let mut request_dir: Option<SwdioDirection> = None;
+    let mut acknowledge_dir: Option<SwdioDirection> = None;
+    for statement in statements {
+        let Some(actor) = swdio_source_actor(&statement.text) else {
+            continue;
+        };
+        let Some(dir) = swdio_direction_from_actor(&actor) else {
+            continue;
+        };
+        let lower = statement.text.to_ascii_lowercase();
+        // Field-level (data phase): a directional statement naming WDATA / RDATA (token-boundary).
+        for field in out.iter() {
+            if field.name.len() >= 3 && text_has_word(&statement.text, &field.name) {
+                field_dir.entry(field.name.clone()).or_insert(dir);
+            }
+        }
+        // Phase-level: the "packet request" / "acknowledge" descriptions.
+        if lower.contains("packet request") {
+            request_dir.get_or_insert(dir);
+        }
+        if lower.contains("acknowledge") {
+            acknowledge_dir.get_or_insert(dir);
+        }
+    }
+    for field in out.iter_mut() {
+        field.swdio_direction = field_dir.get(&field.name).copied().or(match field.phase {
+            Some(SerialFramePhase::Request) => request_dir,
+            Some(SerialFramePhase::Acknowledge) => acknowledge_dir,
+            _ => None,
+        });
+    }
     out
 }
 
@@ -6998,10 +7050,68 @@ fn upsert_serial_field(
         bit_width: width,
         bit_range,
         phase,
+        swdio_direction: None,
         order: None,
         response_values: Vec::new(),
         supporting_statement_ids: vec![stmt_id.to_string()],
     });
+}
+
+/// SWD-SERIAL-EXTRACTION.4c — the actor that SOURCES (drives) the wire in a directional statement:
+/// "from the `<A>` to the `<B>`" → `<A>`; "`<A>` to `<B>`, following a read/write request (FIELD)" →
+/// `<A>`. Returns the lowercase source actor token (host/debugger/target/dp), else `None`.
+fn swdio_source_actor(text: &str) -> Option<String> {
+    let lower = text.to_ascii_lowercase();
+    let clean = |t: &str| {
+        t.trim_matches(|c: char| !c.is_ascii_alphanumeric())
+            .to_ascii_lowercase()
+    };
+    if let Some(p) = lower.find("from the ") {
+        let rest = &lower[p + "from the ".len()..];
+        if rest.contains(" to the ") || rest.contains(" to ") {
+            return rest.split_whitespace().next().map(clean);
+        }
+    }
+    // "Target to host, following a read request (RDATA)." — the leading token is the source.
+    if lower.contains("following a") && lower.contains("request") && lower.contains(" to ") {
+        return text
+            .trim_start_matches(['-', ' '])
+            .split_whitespace()
+            .next()
+            .map(clean);
+    }
+    None
+}
+
+/// Map a source-actor token to who drives SWDIO (the host/debugger, or the target/DP). `.4c`.
+fn swdio_direction_from_actor(actor: &str) -> Option<SwdioDirection> {
+    match actor {
+        "host" | "debugger" => Some(SwdioDirection::HostDrives),
+        "target" | "dp" => Some(SwdioDirection::TargetDrives),
+        _ => None,
+    }
+}
+
+/// True if `word` occurs in `text` not surrounded by alphanumerics (a token-boundary match), so
+/// "WDATA" matches "WDATA[0:31]" but not a substring of a larger identifier. `.4c`.
+fn text_has_word(text: &str, word: &str) -> bool {
+    let bytes = text.as_bytes();
+    let wbytes = word.as_bytes();
+    if wbytes.is_empty() {
+        return false;
+    }
+    let mut i = 0;
+    while let Some(rel) = text[i..].find(word) {
+        let start = i + rel;
+        let end = start + word.len();
+        let before_ok = start == 0 || !bytes[start - 1].is_ascii_alphanumeric();
+        let after_ok = end >= bytes.len() || !bytes[end].is_ascii_alphanumeric();
+        if before_ok && after_ok {
+            return true;
+        }
+        i = start + 1;
+    }
+    false
 }
 
 /// Parse named single-bit fields from "the N bits X, Y and Z" prose → [X, Y, …]. Each list item the
@@ -13263,5 +13373,105 @@ mod swd_serial_extraction_4 {
             "The Manager drives HTRANS during the data phase.",
         )];
         assert!(extract_protocol_states(&stmts).is_empty());
+    }
+}
+
+#[cfg(test)]
+mod swd_serial_extraction_4c {
+    //! SWD-SERIAL-EXTRACTION.4c — per-phase SWDIO direction derived from the spec's directional prose.
+    use super::*;
+
+    fn stmt(id: &str, text: &str) -> ExtractedStatement {
+        ExtractedStatement {
+            statement_id: id.to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        }
+    }
+
+    #[test]
+    fn source_actor_and_direction() {
+        assert_eq!(
+            swdio_source_actor("from the host to the target").as_deref(),
+            Some("host")
+        );
+        assert_eq!(
+            swdio_source_actor("from the target to the host").as_deref(),
+            Some("target")
+        );
+        assert_eq!(
+            swdio_source_actor("Target to host, following a read request (RDATA).").as_deref(),
+            Some("target")
+        );
+        assert_eq!(
+            swdio_direction_from_actor("host"),
+            Some(SwdioDirection::HostDrives)
+        );
+        assert_eq!(
+            swdio_direction_from_actor("target"),
+            Some(SwdioDirection::TargetDrives)
+        );
+    }
+
+    #[test]
+    fn word_boundary_match() {
+        assert!(text_has_word("over the 32 data bits WDATA[0:31]", "WDATA"));
+        assert!(!text_has_word("MYWDATAX", "WDATA"));
+    }
+
+    #[test]
+    fn derives_per_phase_swdio_direction() {
+        let stmts = vec![
+            stmt(
+                "d",
+                "The SWD interface uses a single bidirectional data pin, SWDIO.",
+            ),
+            stmt(
+                "r",
+                "An eight-bit write packet request, from the host to the target. The four bits APnDP, RnW are part of the packet request.",
+            ),
+            stmt(
+                "a",
+                "A three-bit OK acknowledge response, from the target to the host. The bits shifted out are ACK[2:0].",
+            ),
+            stmt(
+                "w",
+                "A 33-bit WDATA[0:31] data transfer phase, from the host to the target.",
+            ),
+            stmt(
+                "rd",
+                "A 33-bit RDATA[0:31] data transfer phase, where data is transferred from the target to the host.",
+            ),
+        ];
+        let fields = extract_serial_frame_fields(&stmts);
+        let dir = |n: &str| {
+            fields
+                .iter()
+                .find(|f| f.name == n)
+                .and_then(|f| f.swdio_direction)
+        };
+        assert_eq!(
+            dir("APnDP"),
+            Some(SwdioDirection::HostDrives),
+            "request driven by host"
+        );
+        assert_eq!(
+            dir("ACK"),
+            Some(SwdioDirection::TargetDrives),
+            "ack driven by target"
+        );
+        assert_eq!(
+            dir("WDATA"),
+            Some(SwdioDirection::HostDrives),
+            "write data driven by host"
+        );
+        assert_eq!(
+            dir("RDATA"),
+            Some(SwdioDirection::TargetDrives),
+            "read data driven by target"
+        );
     }
 }

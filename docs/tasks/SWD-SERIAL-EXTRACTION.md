@@ -137,8 +137,13 @@ WDATA/RDATA — MISSING Start/Parity/Stop/Park, no direction/sequence/turnaround
 
 ## Current frontier (spec-grounded gaps)
 
-- `SWD-SERIAL-EXTRACTION.4c` (central) — **per-phase SWDIO direction** (host drives request + WDATA; target
-  drives ACK + RDATA; host samples) on the frame/state surface. The heart of "drive/sample SWDIO via the FSM".
+- `SWD-SERIAL-EXTRACTION.4c` — **DONE.** Added `SwdioDirection {HostDrives, TargetDrives}` + `swdio_direction`
+  on `SerialFrameField`; `extract_serial_frame_fields` derives it from the spec's own "from the `<A>` to the
+  `<B>`" / "`<A>` to `<B>`, following a read/write request" prose (`swdio_source_actor`), field-level for the
+  data phase (WDATA host / RDATA target) and phase-level for request/acknowledge. Achieved on fresh ADI
+  evidence: A/DATAIN/APnDP/RnW=`host_drives`, ACK=`target_drives`, WDATA=`host_drives`, RDATA=`target_drives`
+  (exactly the spec). Parallel buses emit 0 serial_frame_fields (no pollution); +3 hermetic tests; full
+  `scripts/run_ci.sh` green. This is "drive commands / sample data on SWDIO via the FSM".
 - `SWD-SERIAL-EXTRACTION.4b` — the **SWD packet phase FSM** + transitions (request → Trn → ack → Trn → data),
   distinct from the JTAG TAP FSM; + the missing fields Start/Parity/Stop/Park; + turnarounds; + response
   branching (OK/WAIT/FAULT → 2- vs 3-phase).

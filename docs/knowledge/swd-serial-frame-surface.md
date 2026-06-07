@@ -40,4 +40,11 @@ mixed-case `APnDP`/`RnW` (which fail `is_hardware_signal_token`) are captured at
 grammar (handles "OK or FAULT"), gated to DP/AP-access statements so broad "`<X>` response" noise
 (DP/CTI/ACK) is excluded → `[FAULT, OK, WAIT]`; (3) `order` by phase rank (request → acknowledge → data).
 Result: **7 ordered SWD frame fields** — A/DATAIN/APnDP/RnW [request], ACK([FAULT,OK,WAIT]) [acknowledge],
-WDATA/RDATA [data]. Next: `.4` DP/AP register interface, `.5` SWD golds → 100%.
+WDATA/RDATA [data].
+
+**`.4c` enrichment** added `swdio_direction` (`HostDrives`/`TargetDrives`) per field, derived from the spec's
+"from the `<A>` to the `<B>`" / "`<A>` to `<B>`, following a read/write request" prose (`swdio_source_actor`):
+request fields + WDATA = `host_drives`; ACK + RDATA = `target_drives` (host samples). This is the
+"drive commands / sample returned data on SWDIO via the FSM" intent (`[[swd-intent-is-the-fsm-driving-swdio]]`).
+Next: `.4b` packet phase FSM + missing fields (Start/Parity/Stop/Park) + turnarounds + OK/WAIT/FAULT
+branching; `.4d` line state machine + edge timing.

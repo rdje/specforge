@@ -2,6 +2,15 @@
 
 ## 2026-06-07
 
+### `SWD-SERIAL-EXTRACTION.4c` — per-phase SWDIO direction (drive commands / sample data via the FSM)
+Added `SwdioDirection {HostDrives, TargetDrives}` + `swdio_direction` on `SerialFrameField`;
+`extract_serial_frame_fields` derives it from the spec's own "from the <A> to the <B>" / "<A> to <B>,
+following a read/write request" prose (`swdio_source_actor`) — field-level for the data phase, phase-level
+for request/acknowledge. On fresh ADI evidence: request fields + WDATA = host_drives; ACK + RDATA =
+target_drives (host samples) — exactly the spec. Parallel buses emit 0 serial_frame_fields (no pollution);
++3 hermetic tests; full `scripts/run_ci.sh` green. KM `swd-serial-frame-surface`. Next: `.4b` packet phase
+FSM + missing fields + branching.
+
 ### `SWD-SERIAL-EXTRACTION.5` + reframe — SWD's intent IS the FSM walking SWDIO
 Owner: "SWD full specification comes from its FSM description — an agent drives commands onto SWDIO using the
 FSM and returns captured data still using the FSM on SWDIO." So SWD's intent is NOT in the classic
