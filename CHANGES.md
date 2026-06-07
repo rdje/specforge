@@ -2,6 +2,14 @@
 
 ## 2026-06-07
 
+### `WIRE-BASED-100.5e` — AHB constraints REAL 100% on freshly re-ingested evidence
+With the AHB PDF now in-repo (`.5d`), re-ingested it (`DOCLING_DEVICE=cpu`), rebuilt evidence+semantic,
+and re-ran the eval: **`signal_constraint P=1.000 R=1.000 F1=1.000`** (tp=6 fp=0 fn=0; gold=6),
+content-anchored 9/9. This closes the `.5b` stale-evidence gap — on FRESH evidence the `must_not_change`
+negated fix lands all 6 gold facts and the list-introducer pattern yields 0 FPs, exactly as the hermetic
+tests predicted. AHB constraints now match APB with a real eval (no longer hermetic-only). The
+corpus-PDF → re-ingest → fresh-eval pipeline is proven; AXI/SWD are next (their corpus PDFs are ready).
+
 ### `WIRE-BASED-100.5d` — wire-based source PDFs copied into the repo + git-tracked (owner directive)
 The `.5b`/`.5c` cross-spec blocker was missing source data (normalized reclaimed + PDFs not in-repo).
 Per owner directive, copied the 5 wire-based spec PDFs SpecForge uses into `corpus/` (mirroring the

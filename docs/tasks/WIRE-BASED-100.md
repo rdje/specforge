@@ -297,6 +297,15 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   (pre-existing markdown-path-policy violations) + the registry + agent memory, replaced with the
   `<owner local chip-doc corpus>` placeholder; the owner re-provides the path on request.**
 
+- ID: `WIRE-BASED-100.5e` · Status: `done` · Goal: **AHB re-ingest → fresh evidence → AHB constraints
+  REAL 100%** (the `.5b` fix demonstrated on live data, not just hermetic). Re-ingested the in-repo
+  `corpus/.../IHI0033_C_…AHB….pdf` (`DOCLING_DEVICE=cpu`), rebuilt `evidence`+`semantic`, re-ran the eval:
+  **`signal_constraint P=1.000 R=1.000 F1=1.000` (tp=6 fp=0 fn=0; gold=6)**, content-anchored 9/9 (ids
+  current). This closes the `.5b` stale-evidence gap: on FRESH evidence the `must_not_change` negated fix
+  lands all 6 gold facts and the list-introducer pattern yields 0 FPs — exactly as the hermetic tests
+  predicted. AHB constraints now match APB (real eval, not hermetic). Next (`.5f`): AHB relations +
+  temporal golds (now measurable on fresh evidence), then AXI + SWD/ADI (corpus PDFs ready).
+
 ## Picked sequence to APB 100% (owner: "pick the next trees to achieve just that")
 
 `.1b` (relation recall → 100%) → `.6` (actor discrimination → relation precision) → `.7`
