@@ -48,10 +48,51 @@ diagnostic when a construct is genuinely out of model.
   structures / missing catalogs). Output `/tmp/digest_triage.txt` → distilled into this tree + KM. Then
   decompose into per-class feature leaves prioritized by impact (how many of the 82 each unlocks).
 
+## Triage matrix (`.1`, `2026-06-07`, 8 diverse families — all INGEST cleanly; docling robust)
+
+| spec | tables unknown/total | signals | relations | constraints |
+|---|---|---|---|---|
+| Avalon (Intel interface) | 8/34 | 34 | 179 | 0 |
+| GIC-400 (ARM TRM) | 14/25 | 19 | 11 | 0 |
+| NXP I2C | 14/23 | 0 | 0 | 19 |
+| RISC-V Debug | 116/134 | 10 | 20 | 0 |
+| CCIX | 220/261 | 0 | 0 | 35 |
+| USB4 | 23/23 | 0 | 0 | 6 |
+| Wishbone / OpenCAPI | (ingest ok; stats pending) | | | |
+
+**Two dominant, genericity-preserving levers (structure/grammar, not names):**
+- **Lever A — table-kind classification.** "unknown" dominates (CCIX 220/261, RISC-V 116/134, USB4 23/23);
+  Avalon, which classifies well, yields 34 signals + 179 relations. Generalizing the table classifier lifts
+  every doc at once. #1 impact.
+- **Lever B — prose ENTITY capture: signals AND actors/agents** (owner `2026-06-07`). I2C/CCIX/USB4 show 0
+  signals AND 0 relations because their entities live in prose/figures, not classified tables. Extend the
+  prose-pin-appositive (`SWD-SERIAL-EXTRACTION.2`) to capture signals from more prose forms AND to ground
+  the ACTOR/AGENT model from prose ("the host debugger issues requests", "the Manager initiates", "the SMMU
+  translates", "the requesting agent") — not only as the inferred subject of a relation.
+
+## `.1` refinement (why tables are "unknown") — investigated `2026-06-07`
+
+The "unknown" tables are a MIX, so the raw count overstates the gap:
+- **Non-data noise** — TOC entries ("Preface … 1", "1.1. SCOPE 8"), chapter/section indexes, revision
+  history ("Version | Comments | Issue Date"), dotted page-leaders. These SHOULD stay unextracted (CCIX's
+  220 is largely its huge TOC). A general structural filter (page-number column, dotted leaders, "Table of
+  Contents"/"Chapter"/"Version…Issue Date" headers) cleans the signal + avoids noise extraction.
+- **Real data tables, unclassified** — e.g. RISC-V `Field | Description | Access | Reset` (register-field
+  tables), access legends, argument tables. These ARE intent and are dropped today. OpenCAPI shows the
+  upside (it classified 16 register_map → register intent captured).
+
+OpenCAPI: 49 tables (27 unknown, 16 register_map, …), 0 signals/relations/constraints. (Wishbone stats hit
+a stats-script regex bug — ingest OK; re-measure with the hardened helper.)
+
 ## Current frontier
 
-- `PDF-VARIANT-DIGESTION.1` — triage sweep (running). Next: read the matrix, pick the highest-impact
-  failure class, add the general feature, copy a regression PDF, measure, repeat.
+- `PDF-VARIANT-DIGESTION.2` (proposed first build, Lever A) — generalize table classification: (a) a
+  TOC/revision/index NOISE filter (general structure), and (b) a **register-field-table** classifier
+  (`Field/Bits/Name … Access/Reset/Offset/Value` header grammar → register/field intent). Both
+  structure/grammar (ADR 0006), additive, measured across the matrix; copy a regression PDF; keep
+  APB/AHB/AXI/SWD at 100%.
+- `PDF-VARIANT-DIGESTION.3` (Lever B) — prose ENTITY capture: extend prose signal capture + add prose
+  ACTOR/AGENT capture (ground the agent model from prose, not only as a relation subject).
 
 ## Decisions
 
