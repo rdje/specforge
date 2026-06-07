@@ -196,7 +196,10 @@ it further. Priority order ① → ⑤.
   add agent-definition forms and/or ground actors via relations. Accept: more docs with actors, `is_agent_noun`
   gate keeps it garbage-free, no regression on the wire-based specs.
 
-In flight: `.2b'` NVMe grid-repair demo (background) — confirms VLM extraction end-to-end before `.6`.
+`.2b'` grid-repair is proven end-to-end on RISC-V (2 tables) + the `parse_vlm_grid` test. SCALING FINDING
+(`2026-06-08`): `enrich --vlm` calls the VLM per unknown table → impractically slow on table-heavy docs
+(NVMe 100s) → the VLM is a TARGETED/SAMPLED tool, not a full-doc pass; `.4b`/`.6` must operate on a bounded
+set, not the whole doc/corpus.
 
 ## Decisions
 

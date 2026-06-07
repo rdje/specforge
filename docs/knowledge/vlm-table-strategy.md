@@ -50,3 +50,10 @@ degenerate `header_rows`/`body_rows` so the deterministic extractors can run —
 level (Docling grid vs VLM grid). Kind set only when the repaired header is structurally consistent (same
 gate). Run order: `ingest` → `enrich --vlm-provider ollama` (repair → classify) → `evidence`. Live demo:
 RISC-V → 2 degenerate tables grid-repaired, 0 errors. +1 hermetic test (`parse_vlm_grid`).
+
+**Scaling finding (`2026-06-08`):** `enrich --vlm` fires a VLM call per unknown/degenerate table (plus every
+diagram), so on TABLE-HEAVY docs (NVMe has 100s of tables) a full-doc pass is prohibitively slow. The VLM is
+therefore a TARGETED / SAMPLED tool, not a default full-doc pass: apply it to a specific doc's degenerate
+tables (`.6`) or a random audit sample (`.4b`), not the whole corpus. (The `.2b'` end-to-end grid-repair is
+proven on RISC-V — 2 tables repaired — and by the `parse_vlm_grid` hermetic test; NVMe full-enrich was
+stopped as impractically slow, confirming the targeted-only design.)
