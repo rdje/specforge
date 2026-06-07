@@ -106,9 +106,12 @@ a stats-script regex bug — ingest OK; re-measure with the hardened helper.)
   tests. **Real-data demo: NVMe → 44 registers / 199 fields, all with `bit_width`** (3 bit-layout grids
   filtered); RISC-V unaffected (60/179); APB/AHB/AXI/SWD stay 100%. NVMe added to `corpus/`. Owner-confirmed
   model
-  ([[project_flexible_register_model]]). REMAINING: register NAME from preceding heading (synthetic today —
-  tables aren't in Docling's content_elements reading-order, so reliable association is deferred, not faked);
-  block/base grouping; array/instance.
+  ([[project_flexible_register_model]]). **Width is MANDATORY (physical):** a register is bit-storage so a
+  width always exists; an unresolved `size_bits` is a COMPLETENESS GAP (parametric XLEN / cross-document),
+  not optional — `validate` reports `registers_unresolved_width` (RISC-V 60/60 vs NVMe 0/44). REMAINING:
+  register NAME from preceding heading (synthetic today — tables aren't in Docling's content_elements
+  reading-order, so reliable association is deferred, not faked); block/base grouping; array/instance;
+  parametric `size_expr` + cross-document width resolution.
 - `PDF-VARIANT-DIGESTION.2d` (deterministic) — TOC/revision/index NOISE filter (general structure).
 - `PDF-VARIANT-DIGESTION.3` (Lever B) — prose ENTITY capture: extend prose signal capture + add prose
   ACTOR/AGENT capture (ground the agent model from prose, not only as a relation subject).
