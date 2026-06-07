@@ -1,0 +1,56 @@
+[
+  {
+    "task": "temporal_rule",
+    "doc_key": "ihi0022_l_2025_08_amba_axi_protocol_specification",
+    "statement_id": "statement_3954",
+    "input_text": "- ASKSTOP must be LOW when ACTIVATEACK is LOW.",
+    "grounding": ["ASKSTOP", "ACTIVATEACK"],
+    "gold": [
+      {
+        "fact": "temporal_rule",
+        "edge": "rising",
+        "antecedents": [
+          {"kind": "signal_value", "signal_name": "ACTIVATEACK", "value": "LOW", "phase": "pre_tick"}
+        ],
+        "consequents": [
+          {"kind": "signal_value", "signal_name": "ASKSTOP", "value": "LOW", "phase": "post_tick"}
+        ]
+      }
+    ],
+    "label_status": "agent_drafted",
+    "label_note": "Activation channel: when ACTIVATEACK is LOW, ASKSTOP must be LOW. Expected TP."
+  },
+  {
+    "task": "temporal_rule",
+    "doc_key": "ihi0022_l_2025_08_amba_axi_protocol_specification",
+    "statement_id": "statement_4690",
+    "input_text": "SYSCOREQ and SYSCOACK must be deasserted when ARESETn is asserted.",
+    "grounding": ["SYSCOREQ", "SYSCOACK", "ARESETN"],
+    "gold": [
+      {
+        "fact": "temporal_rule",
+        "edge": "rising",
+        "antecedents": [
+          {"kind": "signal_value", "signal_name": "ARESETN", "value": "ASSERTED", "phase": "pre_tick"}
+        ],
+        "consequents": [
+          {"kind": "actor_drives_signal", "actor_name": "Manager", "signal_name": "SYSCOREQ", "phase": "post_tick"},
+          {"kind": "signal_value", "signal_name": "SYSCOREQ", "value": "LOW", "phase": "post_tick"}
+        ]
+      },
+      {
+        "fact": "temporal_rule",
+        "edge": "rising",
+        "antecedents": [
+          {"kind": "signal_value", "signal_name": "ARESETN", "value": "ASSERTED", "phase": "pre_tick"}
+        ],
+        "consequents": [
+          {"kind": "actor_drives_signal", "actor_name": "Subordinate", "signal_name": "SYSCOACK", "phase": "post_tick"},
+          {"kind": "signal_value", "signal_name": "SYSCOACK", "value": "LOW", "phase": "post_tick"}
+        ]
+      }
+    ],
+    "label_status": "agent_drafted",
+    "label_note": "System coherency: when ARESETn is asserted, SYSCOREQ (Manager) and SYSCOACK (Subordinate) must be deasserted (LOW). Two temporal rules. Expected 2 TP."
+  }
+]

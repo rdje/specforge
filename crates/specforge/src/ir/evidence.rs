@@ -6465,6 +6465,35 @@ pub(crate) fn is_signal_synthesis_non_signal(token: &str) -> bool {
             | "SIGNAL"
             | "PORT"
             | "PIN"
+            // Common English / description / logic words that pass `is_hardware_signal_token`
+            // (all-uppercase) but are never signal NAMES. They leak in when a scrambled
+            // signal-description table puts description prose in the name column (AXI
+            // table_0059/0187: "Signal THE is width AWPROT, ARPROT"). Universal-language words,
+            // not chip-spec names (ADR 0006) — same category as the role terms above.
+            // WIRE-BASED-100.5k.
+            | "THE"
+            | "THIS"
+            | "THAT"
+            | "WHEN"
+            | "WHERE"
+            | "WHICH"
+            | "AND"
+            | "OR"
+            | "FOR"
+            | "IF"
+            | "THEN"
+            | "WITH"
+            | "TRUE"
+            | "FALSE"
+            | "HIGH"
+            | "LOW"
+            | "ASSERTED"
+            | "DEASSERTED"
+            | "SECURE"
+            | "PHYSICAL"
+            | "PROTECTED"
+            | "INDICATES"
+            | "STREAM"
     )
 }
 
@@ -11885,9 +11914,34 @@ mod tests {
     }
 
     #[test]
+    fn is_signal_synthesis_non_signal_rejects_common_english_words() {
+        // WIRE-BASED-100.5k: common/description/logic words that pass `is_hardware_signal_token`
+        // (all-uppercase) but are never signal names — leaked from scrambled AXI tables
+        // ("Signal THE is width AWPROT, ARPROT").
+        for w in [
+            "THE",
+            "WHEN",
+            "AND",
+            "HIGH",
+            "LOW",
+            "SECURE",
+            "PHYSICAL",
+            "INDICATES",
+            "ASSERTED",
+        ] {
+            assert!(
+                is_signal_synthesis_non_signal(w),
+                "{w} must be rejected as a signal name"
+            );
+        }
+    }
+
+    #[test]
     fn is_signal_synthesis_non_signal_rejects_real_signals() {
-        assert!(!is_signal_synthesis_non_signal("HADDR"));
-        assert!(!is_signal_synthesis_non_signal("AWVALID"));
+        // Real signals must still pass (none of the added words collide with a real signal name).
+        for s in ["HADDR", "AWVALID", "ASKSTOP", "BCOMP", "AWPROT", "RDATA"] {
+            assert!(!is_signal_synthesis_non_signal(s), "{s} is a real signal");
+        }
     }
 
     #[test]

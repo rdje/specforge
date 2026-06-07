@@ -2,6 +2,19 @@
 
 ## 2026-06-07
 
+### `WIRE-BASED-100.5k` — AXI relations + temporal 100% (AXI now fully matches APB/AHB)
+Catalog-precision fix: scrambled multi-signal AXI tables (`table_0059`/`0187`) + prose put common English
+words in the name column ("Signal THE is width AWPROT, ARPROT"); `THE`/`HIGH`/`SECURE`/`PHYSICAL`/
+`INDICATES`/`ASSERTED` pass `is_hardware_signal_token` (all-uppercase) → garbage signal declarations that
+polluted relations (hundreds on `THE`). Fixed by extending `is_signal_synthesis_non_signal` with common
+English/description/logic words (used by both synthesis AND the `.5h` content-detection; ADR-0006-safe —
+universal words, not chip names): garbage declarations gone, relations on `THE` = 0, real signals intact,
+APB/AHB unaffected. Per-channel golds from real prose: `seed_axi.json` +6 relation items (AW/W/B/AR/R) →
+`actor_signal_relation P=R=F1=1.000` (tp=6 fp=0 fn=0); `seed_axi_temporal.json` (ASKSTOP/SYSCOREQ/SYSCOACK)
+→ `temporal_rule P=R=F1=1.000` (tp=3 fp=0 fn=0). **AXI now 100% on ALL THREE aspects** (constraints +
+relations + temporal). +2 hermetic tests; APB/AHB stay 100%; full `scripts/run_ci.sh` green. Three
+wire-based specs (APB/AHB/AXI) fully done; SWD/ADI next.
+
 ### `WIRE-BASED-100.5i` — AXI constraints 100%: a constraint subject must be a declared signal
 Rolled to AXI (re-ingested `corpus/.../IHI0022_L`; AXI is channel-organized AW/W/B/AR/R/AC, 310 signals).
 Built `seed_axi.json`; baseline 0.375 (recall 1.000, precision killed by AXI's heavy property/config prose

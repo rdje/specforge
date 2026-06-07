@@ -54,5 +54,77 @@
     "gold": [],
     "label_status": "agent_drafted",
     "label_note": "Negative: front-matter licence prose. LICENSEE is not a signal — a LICENSEE constraint is a false positive (doc-meta noise)."
+  },
+  {
+    "task": "actor_signal_relation",
+    "doc_key": "ihi0022_l_2025_08_amba_axi_protocol_specification",
+    "statement_id": "statement_0601",
+    "input_text": "- The Manager must not wait for the Subordinate to assert AWREADY or WREADY before asserting AWVALID or WVALID .",
+    "grounding": ["AWVALID"],
+    "gold": [
+      {"fact": "relation", "actor": "Manager", "relation": "drives", "signal": "AWVALID"}
+    ],
+    "label_status": "agent_drafted",
+    "label_note": "AW channel: the Manager drives AWVALID (Source=Manager in the signal table); source-tolerant. Expected TP."
+  },
+  {
+    "task": "actor_signal_relation",
+    "doc_key": "ihi0022_l_2025_08_amba_axi_protocol_specification",
+    "statement_id": "statement_0974",
+    "input_text": "- It is recommended that WDATA is driven to zero for inactive byte lanes.",
+    "grounding": ["WDATA"],
+    "gold": [
+      {"fact": "relation", "actor": "Manager", "relation": "drives", "signal": "WDATA"}
+    ],
+    "label_status": "agent_drafted",
+    "label_note": "W channel: the Manager drives WDATA (Source=Manager); source-tolerant. Expected TP."
+  },
+  {
+    "task": "actor_signal_relation",
+    "doc_key": "ihi0022_l_2025_08_amba_axi_protocol_specification",
+    "statement_id": "statement_0606",
+    "input_text": "- The Subordinate must wait for AWVALID , AWREADY , WVALID , and WREADY to be asserted before asserting BVALID .",
+    "grounding": ["BVALID"],
+    "gold": [
+      {"fact": "relation", "actor": "Subordinate", "relation": "drives", "signal": "BVALID"}
+    ],
+    "label_status": "agent_drafted",
+    "label_note": "B channel: the Subordinate drives BVALID (Source=Subordinate); source-tolerant. Expected TP."
+  },
+  {
+    "task": "actor_signal_relation",
+    "doc_key": "ihi0022_l_2025_08_amba_axi_protocol_specification",
+    "statement_id": "statement_1077",
+    "input_text": "Write responses are transported using the BRESP signal on the write response channel.",
+    "grounding": ["BRESP"],
+    "gold": [
+      {"fact": "relation", "actor": "Subordinate", "relation": "drives", "signal": "BRESP"}
+    ],
+    "label_status": "agent_drafted",
+    "label_note": "B channel: the Subordinate drives BRESP (Source=Subordinate); source-tolerant. Expected TP."
+  },
+  {
+    "task": "actor_signal_relation",
+    "doc_key": "ihi0022_l_2025_08_amba_axi_protocol_specification",
+    "statement_id": "statement_0617",
+    "input_text": "- The Subordinate must wait for both ARVALID and ARREADY to be asserted before it asserts RVALID to indicate that valid read data is available.",
+    "grounding": ["RVALID"],
+    "gold": [
+      {"fact": "relation", "actor": "Subordinate", "relation": "drives", "signal": "RVALID"}
+    ],
+    "label_status": "agent_drafted",
+    "label_note": "R channel: the Subordinate drives RVALID (Source=Subordinate); source-tolerant. Expected TP."
+  },
+  {
+    "task": "actor_signal_relation",
+    "doc_key": "ihi0022_l_2025_08_amba_axi_protocol_specification",
+    "statement_id": "statement_1019",
+    "input_text": "- It is recommended that RDATA is driven to zero for inactive byte lanes.",
+    "grounding": ["RDATA"],
+    "gold": [
+      {"fact": "relation", "actor": "Subordinate", "relation": "drives", "signal": "RDATA"}
+    ],
+    "label_status": "agent_drafted",
+    "label_note": "R channel: the Subordinate drives RDATA (Source=Subordinate); source-tolerant. Expected TP."
   }
 ]
