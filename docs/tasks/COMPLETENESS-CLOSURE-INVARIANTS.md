@@ -154,7 +154,7 @@ Symbol closure (`.3`) is descoped to a future careful, corpus-validated tree
 ## Real-corpus validation (`2026-05-31`)
 
 Ran the detector on a real downloaded spec (NXP I2C UM10204, via
-`/Users/richarddje/Documents/livework/chipdoc`, ingested with Docling 2.84.0 →
+`<owner local chip-doc corpus>`, ingested with Docling 2.84.0 →
 `evidence` → `validate`). Result: the register-tiling detector **fired on real
 data** — `register_field_overlaps: 1`, finding
 `evidence_register_field_overlaps` (Warning). Inspection of the offending

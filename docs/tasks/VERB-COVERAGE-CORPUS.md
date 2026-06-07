@@ -16,7 +16,7 @@
 
 ## Corpus (confirmed available)
 
-`/Users/richarddje/Documents/livework/chipdoc` — **82 PDFs, 564 MB**, cross-vendor: I²C (NXP),
+`<owner local chip-doc corpus>` — **82 PDFs, 564 MB**, cross-vendor: I²C (NXP),
 Wishbone (OpenCores), CCIX, OpenCAPI, Intel VT-d/SDM, AMD IOMMU, Avalon (Intel/Altera), … Tooling
 present: `pdftotext`, `docling`, `pymupdf`. **PoC done (2026-06-05):** mined two specs and the
 normative-predicate vocabulary clearly exceeds the current lists (`reset`, `driven`, `generate`,

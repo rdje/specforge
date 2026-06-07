@@ -11,7 +11,7 @@
 
 ## Goal
 
-Use the real downloaded corpus at `/Users/richarddje/Documents/livework/chipdoc`
+Use the real downloaded corpus at `<owner local chip-doc corpus>`
 (82 PDFs / 10 families, user-curated `2026-05-31`; PCIe is a known paywall gap)
 as a **standing hardening harness** for SpecForge. Run specs end-to-end
 (Docling → `SourceIR` → `EvidenceIR` [→ `Semantic` → `Intent` → `.isf`]) → run

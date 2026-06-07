@@ -6,7 +6,7 @@
 
 ## How it was produced (no seed)
 
-- Corpus: `/Users/richarddje/Documents/livework/chipdoc` — **82 PDFs, cross-vendor** (I²C, Wishbone,
+- Corpus: `<owner local chip-doc corpus>` — **82 PDFs, cross-vendor** (I²C, Wishbone,
   CCIX, OpenCAPI, Intel VT-d/SDM, AMD IOMMU, Avalon, USB, …).
 - `pdftotext` → broad **signal-presence** sentence pre-filter (a sentence with an uppercase
   signal-like token; *not* a verb seed) → up to 150 evenly-spaced sentences/spec.

@@ -1070,7 +1070,7 @@ All tested; full `scripts/run_ci.sh` GREEN (1259 → **1265**). NOT pushed.
 ## 2026-05-31
 
 ### CORPUS-HARDENING — SpecForge run on the real chip-doc corpus; VLM-in-the-loop recall demonstrated
-- User curated a real corpus (82 PDFs / 10 families at `~/Documents/livework/chipdoc`;
+- User curated a real corpus (82 PDFs / 10 families at `<owner local chip-doc corpus>`;
   PCIe a known paywall gap) and directed using it to harness SpecForge. Opened
   `CORPUS-HARDENING` as a standing hardening harness (run specs through Docling →
   `evidence` → `validate`, collect completeness signals, turn recurring real

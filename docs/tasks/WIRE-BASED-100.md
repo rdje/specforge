@@ -292,7 +292,10 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   `corpus/SOURCE_PDF_REGISTRY.md` mapping each `document_key` → repo PDF path → original path → class.
   Source PDFs are INPUTS (not generated artifacts) so this does not conflict with artifact-cleanup.
   Unblocks re-ingest → fresh evidence → real cross-spec eval (`specforge ingest corpus/…pdf`,
-  `DOCLING_DEVICE=cpu`). Memories: `feedback_source_pdfs_in_repo`, `reference_chipdoc_corpus`.
+  `DOCLING_DEVICE=cpu`). Memory: `feedback_source_pdfs_in_repo`. **Path-logging compliance (owner
+  directive `2026-06-07`): do NOT log the owner's library absolute path — scrubbed it from 7 tracked files
+  (pre-existing markdown-path-policy violations) + the registry + agent memory, replaced with the
+  `<owner local chip-doc corpus>` placeholder; the owner re-provides the path on request.**
 
 ## Picked sequence to APB 100% (owner: "pick the next trees to achieve just that")
 
