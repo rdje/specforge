@@ -86,11 +86,20 @@ a stats-script regex bug — ingest OK; re-measure with the hardened helper.)
 
 ## Current frontier
 
-- `PDF-VARIANT-DIGESTION.2` (proposed first build, Lever A) — generalize table classification: (a) a
-  TOC/revision/index NOISE filter (general structure), and (b) a **register-field-table** classifier
-  (`Field/Bits/Name … Access/Reset/Offset/Value` header grammar → register/field intent). Both
-  structure/grammar (ADR 0006), additive, measured across the matrix; copy a regression PDF; keep
-  APB/AHB/AXI/SWD at 100%.
+- `PDF-VARIANT-DIGESTION.2` (Lever A, deterministic strategy) — **DONE**: `synthesize_register_field_tables`
+  recovers register-FIELD tables the classifier left `unknown` (header-in-body `Field|Description|Access|
+  Reset`, `Bits|Type|Reset|Description`, …) → `RegisterRecord`s. Designed from a corpus survey of real
+  register-table shapes/access-notations/bit-formats ([[project_flexible_register_model]]); access/reset are
+  free strings, bit ranges parse zero-padded, header-echo legend rows dropped. **RISC-V Debug: 60 regs / 179
+  fields** from previously-`unknown` tables; APB/AHB/AXI/SWD source-tolerant stay 1.000 (additive); +4
+  hermetic tests; full `run_ci.sh` green. RISC-V Debug PDF copied into `corpus/`. KM
+  `register-field-table-extraction`.
+- `PDF-VARIANT-DIGESTION.2b` (Lever A, VLM strategy) — NEXT: point Qwen2.5VL at rendered table images for
+  `unknown` tables; best-wins-per-PDF vs the deterministic classifier ([[feedback_multi_strategy_best_wins]]).
+- `PDF-VARIANT-DIGESTION.2c` (model flexibility) — field VALUE ENUMERATIONS, register width/size, block/base
+  grouping, register NAME from preceding heading (synthetic today); free-form attributes
+  ([[project_flexible_register_model]]).
+- `PDF-VARIANT-DIGESTION.2d` (deterministic) — TOC/revision/index NOISE filter (general structure).
 - `PDF-VARIANT-DIGESTION.3` (Lever B) — prose ENTITY capture: extend prose signal capture + add prose
   ACTOR/AGENT capture (ground the agent model from prose, not only as a relation subject).
 

@@ -765,7 +765,14 @@ impl EvidenceIr {
         );
 
         // Synthesize typed register and timing records from structured tables.
-        let register_records = synthesize_register_records(&source_ir, prior_guidance.as_ref());
+        let mut register_records = synthesize_register_records(&source_ir, prior_guidance.as_ref());
+        // PDF-VARIANT-DIGESTION.2 — additionally recover register-FIELD tables the classifier left
+        // `unknown` (header-in-body `Field|Description|Access|Reset` etc.). Additive; wire-based specs
+        // (signal/constraint/relation/temporal surfaces) are untouched.
+        register_records.extend(synthesize_register_field_tables(
+            &source_ir,
+            prior_guidance.as_ref(),
+        ));
         let timing_constraints = synthesize_timing_constraints(&source_ir, prior_guidance.as_ref());
 
         // Replace the previous one-shot extraction with a monotone convergent loop:
@@ -7908,6 +7915,202 @@ fn synthesize_register_records(
     records
 }
 
+/// PDF-VARIANT-DIGESTION.2 — does this header row name a REGISTER-FIELD table? Such tables define the
+/// bit-fields of one register, one row per field: `Field|Description|Access|Reset`, `Bits|Name|Access|…`,
+/// `Bit|Field|Type|Reset`. Identity = a field/bit-name column AND an access OR reset column — universal
+/// register vocabulary (ADR 0006), specific enough to exclude signal/encoding/feature tables (which lack
+/// access+reset). Header cells are pre-lowercased.
+fn is_register_field_header(header: &[String]) -> bool {
+    let has_field = header.iter().any(|h| {
+        h.contains("field") || h == "name" || h == "bits" || h == "bit" || h.contains("bit name")
+    });
+    let has_access = header.iter().any(|h| {
+        h.contains("access") || h == "r/w" || h == "rw" || h == "type" || h.contains("attribut")
+    });
+    let has_reset = header
+        .iter()
+        .any(|h| h.contains("reset") || h.contains("default"));
+    has_field && (has_access || has_reset)
+}
+
+/// Strip "Table 6.1:" / "Figure" prefixes and trailing "register"/"fields" boilerplate from a caption to
+/// recover a register name; `None` when nothing usable remains.
+fn register_name_from_caption(caption: &str) -> Option<String> {
+    let mut s = caption.trim();
+    // drop a leading "Table N[.-]N :" / "Figure N :" label
+    if let Some(idx) = s.find(':') {
+        let head = s[..idx].to_ascii_lowercase();
+        if head.starts_with("table") || head.starts_with("figure") {
+            s = s[idx + 1..].trim();
+        }
+    }
+    let lowered = s.to_ascii_lowercase();
+    let trimmed = lowered
+        .trim_end_matches(|c: char| !c.is_alphanumeric())
+        .trim_end_matches("fields")
+        .trim_end_matches("field")
+        .trim_end_matches("register")
+        .trim();
+    // map back to the original-case slice of the same length-ish: just title-keep the original token run.
+    let kept = s
+        .split_whitespace()
+        .filter(|w| {
+            let wl = w.to_ascii_lowercase();
+            wl != "register" && wl != "fields" && wl != "field" && wl != "the"
+        })
+        .collect::<Vec<_>>()
+        .join(" ");
+    let result = if kept.trim().is_empty() {
+        trimmed.to_string()
+    } else {
+        kept.trim().to_string()
+    };
+    if result.is_empty() {
+        None
+    } else {
+        Some(result)
+    }
+}
+
+/// PDF-VARIANT-DIGESTION.2 (Lever A, deterministic strategy) — recover REGISTER-FIELD tables that the
+/// ingest classifier left `unknown`, most often because Docling did not mark the column-title row as a
+/// header so it lands in `body_rows[0]`. These field-definition tables are ubiquitous in TRMs / architecture
+/// / register specs (RISC-V, CoreSight, OpenCAPI). ADDITIVE: emits extra `RegisterRecord`s (one per table,
+/// rows → fields); never touches signal/constraint/relation extraction, so the wire-based specs are
+/// unaffected. Skips tables already handled by [`synthesize_register_records`]. Header GRAMMAR only.
+fn synthesize_register_field_tables(
+    source_ir: &SourceIr,
+    prior_guidance: Option<&EvidencePriorGuidance>,
+) -> Vec<RegisterRecord> {
+    let mut records: Vec<RegisterRecord> = Vec::new();
+    for table in &source_ir.structured_tables {
+        if matches!(
+            effective_table_kind(table, prior_guidance),
+            TableKind::RegisterMap
+        ) {
+            continue; // the row-per-register path owns these
+        }
+        // Resolve the header row: a Docling-marked header, else body_rows[0] (the common miss).
+        let header_in_body = table.header_rows.is_empty();
+        let header: Vec<String> = if header_in_body {
+            table.body_rows.first()
+        } else {
+            table.header_rows.first()
+        }
+        .map(|r| {
+            r.iter()
+                .map(|c| c.text.trim().to_ascii_lowercase())
+                .collect()
+        })
+        .unwrap_or_default();
+        if !is_register_field_header(&header) {
+            continue;
+        }
+        let body: Vec<&Vec<StructuredTableCellRecord>> = if header_in_body {
+            table.body_rows.iter().skip(1).collect()
+        } else {
+            table.body_rows.iter().collect()
+        };
+        if body.is_empty() {
+            continue;
+        }
+
+        let bits_col = header.iter().position(|h| {
+            h == "bits" || h == "bit" || h.contains("bit range") || h.contains("position")
+        });
+        // Name the field by its name column; for bits-only field tables (`Bits|Type|Reset|Description`)
+        // there is none, so fall back to the bit-range column, then column 0.
+        let field_col = header
+            .iter()
+            .position(|h| {
+                h.contains("field")
+                    || h == "name"
+                    || h.contains("identifier")
+                    || h.contains("bit name")
+            })
+            .or(bits_col)
+            .unwrap_or(0);
+        let access_col = header.iter().position(|h| {
+            h.contains("access") || h == "r/w" || h == "rw" || h == "type" || h.contains("attribut")
+        });
+        let reset_col = header
+            .iter()
+            .position(|h| h.contains("reset") || h.contains("default"));
+        let desc_col = header.iter().position(|h| {
+            h.contains("description")
+                || h.contains("function")
+                || h.contains("meaning")
+                || h.contains("notes")
+                || h.contains("full name")
+        });
+
+        let mut fields: Vec<RegisterFieldRecord> = Vec::new();
+        for row in &body {
+            let cell = |i: usize| {
+                row.get(i)
+                    .map(|c| c.text.trim().to_string())
+                    .filter(|s| !s.is_empty())
+            };
+            let field_name = match cell(field_col) {
+                Some(n) => n,
+                None => continue,
+            };
+            // A field row needs a real name token, not a sentence (legend/wrapped rows).
+            if field_name.split_whitespace().count() > 4 {
+                continue;
+            }
+            // Drop rows that merely echo a column title (a repeated/legend header landing in the body,
+            // e.g. a "Field|Description|Access|Reset" format-legend table) — general, not chip-specific.
+            if matches!(
+                field_name.to_ascii_lowercase().as_str(),
+                "field"
+                    | "bits"
+                    | "bit"
+                    | "reset"
+                    | "access"
+                    | "type"
+                    | "description"
+                    | "name"
+                    | "attributes"
+                    | "default"
+                    | "offset"
+                    | "identifier"
+            ) {
+                continue;
+            }
+            let (bits_high, bits_low) = bits_col
+                .and_then(|c| row.get(c))
+                .map(|c| parse_bit_range(&c.text))
+                .unwrap_or((None, None));
+            fields.push(RegisterFieldRecord {
+                field_name,
+                bits_high,
+                bits_low,
+                access_type: access_col.and_then(cell),
+                reset_value: reset_col.and_then(cell),
+                description: desc_col.and_then(cell),
+            });
+        }
+        if fields.is_empty() {
+            continue;
+        }
+        let register_name = table
+            .caption_text
+            .as_deref()
+            .and_then(register_name_from_caption)
+            .unwrap_or_else(|| format!("register_{}", table.table_id));
+        records.push(RegisterRecord {
+            register_id: format!("regfld_{}", table.table_id),
+            register_name,
+            offset_address: None,
+            fields,
+            supporting_statement_ids: Vec::new(),
+            automation_confidence: AutomationConfidence::Medium,
+        });
+    }
+    records
+}
+
 /// Parse a bit-range string like "7:0", "[7:0]", or "31" into (bits_high, bits_low).
 fn parse_bit_range(text: &str) -> (Option<u32>, Option<u32>) {
     let cleaned: String = text
@@ -8382,6 +8585,206 @@ mod tests {
         looks_like_structural_contents_entry_for_semantic_hint, numbered_list_prefix,
         parse_encoding_numeric_literal, signal_constraint_fact_key,
     };
+
+    // ── PDF-VARIANT-DIGESTION.2 — flexible register-field-table extraction ───────────────────
+    #[test]
+    fn register_field_header_recognizer_is_specific() {
+        let lower = |cols: &[&str]| {
+            cols.iter()
+                .map(|s| s.to_ascii_lowercase())
+                .collect::<Vec<_>>()
+        };
+        // register-field tables across the surveyed shapes: a field/bits column + access OR reset
+        assert!(super::is_register_field_header(&lower(&[
+            "Field",
+            "Description",
+            "Access",
+            "Reset"
+        ])));
+        assert!(super::is_register_field_header(&lower(&[
+            "Bits",
+            "Type",
+            "Reset",
+            "Description"
+        ])));
+        assert!(super::is_register_field_header(&lower(&[
+            "Offset",
+            "Bits",
+            "Field name",
+            "Description",
+            "Attributes"
+        ])));
+        // signal / encoding / feature tables must NOT match (no access/reset pairing)
+        assert!(!super::is_register_field_header(&lower(&[
+            "Signal",
+            "Source",
+            "Width",
+            "Description"
+        ])));
+        assert!(!super::is_register_field_header(&lower(&[
+            "Value",
+            "Description"
+        ])));
+        assert!(!super::is_register_field_header(&lower(&[
+            "Feature",
+            "Mandatory"
+        ])));
+    }
+
+    #[test]
+    fn register_name_from_caption_strips_label_and_boilerplate() {
+        assert_eq!(
+            super::register_name_from_caption("Table 6.1: DTMControl register fields").as_deref(),
+            Some("DTMControl")
+        );
+        assert_eq!(
+            super::register_name_from_caption("DMSTATUS Register").as_deref(),
+            Some("DMSTATUS")
+        );
+        assert!(super::register_name_from_caption("   ").is_none());
+    }
+
+    #[test]
+    fn register_field_table_header_in_body_extracts_fields() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let base = tempdir.path().join("generated").join("source_ir");
+        fs::write(
+            &source,
+            "# Registers\nThe DTMControl register controls the DTM.\n",
+        )?;
+        let mut source_ir = SourceIr::build(&source, &base)?;
+        // An UNKNOWN table whose column-title row Docling left in body_rows[0] (the common miss).
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_regfld".to_string(),
+            asset_id: "asset_regfld".to_string(),
+            page_id: None,
+            caption_text: Some("Table 6.1: DTMControl register fields".to_string()),
+            source_ref: None,
+            table_kind: TableKind::Unknown,
+            header_rows: vec![],
+            body_rows: vec![
+                vec![
+                    make_table_cell("Field", false),
+                    make_table_cell("Description", false),
+                    make_table_cell("Access", false),
+                    make_table_cell("Reset", false),
+                ],
+                vec![
+                    make_table_cell("dmireset", false),
+                    make_table_cell("Resets the DMI", false),
+                    make_table_cell("R/W", false),
+                    make_table_cell("0", false),
+                ],
+                vec![
+                    make_table_cell("idle", false),
+                    make_table_cell("Hint for idle cycles", false),
+                    make_table_cell("R", false),
+                    make_table_cell("0", false),
+                ],
+            ],
+            row_count: 3,
+            col_count: 4,
+        });
+        let recs = super::synthesize_register_field_tables(&source_ir, None);
+        assert_eq!(
+            recs.len(),
+            1,
+            "one register synthesized from the field table"
+        );
+        let reg = &recs[0];
+        assert_eq!(reg.register_name, "DTMControl");
+        let names: Vec<_> = reg.fields.iter().map(|f| f.field_name.as_str()).collect();
+        assert_eq!(
+            names,
+            vec!["dmireset", "idle"],
+            "field rows extracted, header-in-body skipped"
+        );
+        assert_eq!(reg.fields[0].access_type.as_deref(), Some("R/W"));
+        assert_eq!(reg.fields[0].reset_value.as_deref(), Some("0"));
+        assert_eq!(reg.fields[0].description.as_deref(), Some("Resets the DMI"));
+        Ok(())
+    }
+
+    #[test]
+    fn register_field_table_bits_only_shape_extracts_fields() -> Result<()> {
+        // `Bits|Type|Reset|Description` — no name column; the bit-range identifies the field, and
+        // zero-padded ranges ("02:00") must parse. Type is the access column.
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Registers\nThe CONTROL register.\n")?;
+        let mut source_ir = SourceIr::build(&source, &base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_bits".to_string(),
+            asset_id: "asset_bits".to_string(),
+            page_id: None,
+            caption_text: Some("CONTROL".to_string()),
+            source_ref: None,
+            table_kind: TableKind::Unknown,
+            header_rows: vec![vec![
+                make_table_cell("Bits", true),
+                make_table_cell("Type", true),
+                make_table_cell("Reset", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![vec![
+                make_table_cell("02:00", false),
+                make_table_cell("WARL", false),
+                make_table_cell("0", false),
+                make_table_cell("Mode select", false),
+            ]],
+            row_count: 2,
+            col_count: 4,
+        });
+        let recs = super::synthesize_register_field_tables(&source_ir, None);
+        assert_eq!(recs.len(), 1);
+        let f = &recs[0].fields[0];
+        assert_eq!(f.field_name, "02:00");
+        assert_eq!(
+            (f.bits_high, f.bits_low),
+            (Some(2), Some(0)),
+            "zero-padded range parses"
+        );
+        assert_eq!(
+            f.access_type.as_deref(),
+            Some("WARL"),
+            "free-form access kept"
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn register_field_extraction_ignores_signal_tables() -> Result<()> {
+        // A signal-description table must NOT be mis-read as a register-field table.
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Signals\nSignal PCLK.\n")?;
+        let mut source_ir = SourceIr::build(&source, &base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_sig".to_string(),
+            asset_id: "asset_sig".to_string(),
+            page_id: None,
+            caption_text: Some("Signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Width", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![vec![
+                make_table_cell("PCLK", false),
+                make_table_cell("1", false),
+                make_table_cell("Clock", false),
+            ]],
+            row_count: 2,
+            col_count: 3,
+        });
+        assert!(super::synthesize_register_field_tables(&source_ir, None).is_empty());
+        Ok(())
+    }
 
     fn make_table_cell(text: &str, is_header: bool) -> StructuredTableCellRecord {
         StructuredTableCellRecord {

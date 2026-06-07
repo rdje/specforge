@@ -2,6 +2,19 @@
 
 ## 2026-06-07
 
+### `PDF-VARIANT-DIGESTION.2` — recover register-FIELD tables (Lever A, deterministic)
+Many register tables in TRMs/architecture/register specs were classified `unknown` and dropped — usually
+because Docling left the column-title row in `body_rows[0]`. New `synthesize_register_field_tables` (evidence
+stage) resolves the header (marked row else body[0]), recognizes register-field tables by grammar (field/bits
+column + access/reset column; ADR 0006), and emits one `RegisterRecord`/table with a `RegisterFieldRecord`/row.
+Designed from a corpus survey of real shapes (`Field|Description|Access|Reset`, `Bits|Type|Reset|Description`,
+`Offset|Bits|Field name|…|Attributes`), access/reset notations (RO/RW/WARL/W1C/-/…), and bit formats (incl.
+zero-padded `02:00`). Additive — never touches signal/constraint/relation extraction; skips tables already
+handled by `synthesize_register_records`. RISC-V Debug: 60 registers / 179 fields recovered; APB/AHB/AXI/SWD
+source-tolerant stay 1.000; +4 hermetic tests; full run_ci.sh green. RISC-V Debug PDF added to corpus. KM
+`register-field-table-extraction`, `pdf-encryption-and-read-access`; memories `project_flexible_register_model`,
+`feedback_multi_strategy_best_wins`.
+
 ### `SWD-SERIAL-EXTRACTION.5` — score the SWD derivation to 100% (owner decision (a))
 SWD's intent is the FSM/frame, not constraints/relations/temporal — so `eval`/`eval-extraction` gained three
 new tasks: `serial_frame_field`, `swd_operation`, `protocol_state` (new EvalTask/GoldFact variants, canonical

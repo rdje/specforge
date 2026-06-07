@@ -3,7 +3,7 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Regenerate with `knowledge-map/scripts/gen_knowledge_map.sh`.
 > Source of truth = YAML front-matter in: `docs/knowledge docs/decisions`. Edit the fact files, never this map.
 > A fact is any `.md` whose front-matter has a non-empty `answers:` list.
-> **34** facts · **177** question keys.
+> **35** facts · **181** question keys.
 
 ## Questions → fact
 
@@ -47,6 +47,7 @@
 - "how does SpecForge combine confidence across modalities or sources" -> [dempster-fusion](docs/knowledge/dempster-fusion.md) · 2026-06-04 · reverify: `grep -n "fn dempster_corroborate_confidence" crates/specforge/src/ir/fusion.rs`
 - "how does SpecForge detect contradicting or conflicting priors" -> [contested-priors](docs/knowledge/contested-priors.md) · 2026-06-04 · reverify: `grep -n "fn contested_priors" crates/specforge/src/ir/prior_memory.rs`
 - "how does SpecForge emit temporal rules or a bounded-eventually into .isf" -> [fsmgen-temporal-isf-form](docs/knowledge/fsmgen-temporal-isf-form.md) · 2026-06-04 · reverify: `grep -n "assert (monitor (within" crates/specforge/src/ir/isf_ir.rs`
+- "how does SpecForge extract register fields from tables" -> [register-field-table-extraction](docs/knowledge/register-field-table-extraction.md) · 2026-06-07 · reverify: `./target/debug/specforge evidence generated/source_ir/1_0_risc_v_debug_specification/source_ir.json && python3 -c "import json;e=json.load(open('generated/evidence_ir/1_0_risc_v_debug_specification/evidence_ir.json'));print(len(e['register_records']),'regs',sum(len(r['fields']) for r in e['register_records']),'fields')`
 - "how does SpecForge flag vague or ambiguous spec language" -> [ambiguity-weak-phrase-detector](docs/knowledge/ambiguity-weak-phrase-detector.md) · 2026-06-04 · reverify: `grep -n "fn weak_phrase_findings" crates/specforge/src/ir/ambiguity.rs`
 - "how does SpecForge relate to GoldMine Texada Pnueli Ammons" -> [spec-mining-framing](docs/knowledge/spec-mining-framing.md) · 2026-06-04 · reverify: `grep -rn "forward specification mining" README.md docs/book/src/architecture-rationale.md`
 - "how does SpecForge verify an extracted claim semantically / catch hallucination" -> [nli-entailment-verifier](docs/knowledge/nli-entailment-verifier.md) · 2026-06-05 · reverify: `grep -n "fn verify_entailment" crates/specforge/src/ir/nli_verify.rs`
@@ -56,6 +57,7 @@
 - "how does specforge model the JTAG TAP / SWD state machine (FSM)" -> [swd-protocol-fsm-surface](docs/knowledge/swd-protocol-fsm-surface.md) · 2026-06-07 · reverify: `python3 -c "import json; e=json.load(open('generated/evidence_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/evidence_ir.json')); print([s['state_name'] for s in e.get('protocol_states',[])])`
 - "how does specforge model the SWD serial frame / packet" -> [swd-serial-frame-surface](docs/knowledge/swd-serial-frame-surface.md) · 2026-06-07 · reverify: `python3 -c "import json; e=json.load(open('generated/evidence_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/evidence_ir.json')); print([(f['name'],f.get('bit_width')) for f in e.get('serial_frame_fields',[])])`
 - "how does specforge reject non-signal constraint subjects (LICENSEE, AXI, RME, MPAM)" -> [axi-constraint-subject-must-be-declared](docs/knowledge/axi-constraint-subject-must-be-declared.md) · 2026-06-07 · reverify: `./target/debug/specforge eval-extraction crates/specforge/test_data/llm_eval/seed_axi.json --provider skip 2>/dev/null | grep -A1 source-tolerant`
+- "how flexible is the register model / what register-table shapes are handled" -> [register-field-table-extraction](docs/knowledge/register-field-table-extraction.md) · 2026-06-07 · reverify: `./target/debug/specforge evidence generated/source_ir/1_0_risc_v_debug_specification/source_ir.json && python3 -c "import json;e=json.load(open('generated/evidence_ir/1_0_risc_v_debug_specification/evidence_ir.json'));print(len(e['register_records']),'regs',sum(len(r['fields']) for r in e['register_records']),'fields')`
 - "how is AXI organized / what are the AXI channels" -> [axi-channel-structure](docs/knowledge/axi-channel-structure.md) · 2026-06-07 · reverify: `python3 -c "import json,re; e=json.load(open('generated/evidence_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/evidence_ir.json')); d={re.match(r'Signal (\w+)',s['text']).group(1) for s in e['extracted_statements'] if s['text'].startswith('Signal ')}; print(sorted(x for x in d if x.startswith('AW'))[:10])`
 - "how is a claim's grounding checked beyond a string match" -> [nli-entailment-verifier](docs/knowledge/nli-entailment-verifier.md) · 2026-06-05 · reverify: `grep -n "fn verify_entailment" crates/specforge/src/ir/nli_verify.rs`
 - "how is a fused contract's automation_confidence computed" -> [dempster-fusion](docs/knowledge/dempster-fusion.md) · 2026-06-04 · reverify: `grep -n "fn dempster_corroborate_confidence" crates/specforge/src/ir/fusion.rs`
@@ -122,6 +124,7 @@
 - "what is content-based name-column detection / rotation offset remapping" -> [rotated-signal-table-extraction](docs/knowledge/rotated-signal-table-extraction.md) · 2026-06-07 · reverify: `./target/debug/specforge eval-extraction crates/specforge/test_data/llm_eval/seed_ahb_temporal.json --provider skip 2>/dev/null | grep temporal_rule`
 - "what is in seed_swd_derivation.json" -> [swd-derivation-scored-100](docs/knowledge/swd-derivation-scored-100.md) · 2026-06-07 · reverify: `./target/debug/specforge eval-extraction crates/specforge/test_data/llm_eval/seed_swd_derivation.json --provider skip 2>/dev/null | sed -n '/source-tolerant/,/document-level/p'`
 - "what is index-family signal canonicalization" -> [indexed-signal-family-canonicalization](docs/knowledge/indexed-signal-family-canonicalization.md) · 2026-06-06 · reverify: `./target/debug/specforge eval-extraction crates/specforge/test_data/llm_eval/seed_apb_temporal.json --provider skip 2>/dev/null | sed -n '/Extraction eval/,/source-tolerant/p'`
+- "what is synthesize_register_field_tables" -> [register-field-table-extraction](docs/knowledge/register-field-table-extraction.md) · 2026-06-07 · reverify: `./target/debug/specforge evidence generated/source_ir/1_0_risc_v_debug_specification/source_ir.json && python3 -c "import json;e=json.load(open('generated/evidence_ir/1_0_risc_v_debug_specification/evidence_ir.json'));print(len(e['register_records']),'regs',sum(len(r['fields']) for r in e['register_records']),'fields')`
 - "what is synthesize_signal_declarations_from_prose / the pin-appositive pattern" -> [prose-pin-appositive-signal-capture](docs/knowledge/prose-pin-appositive-signal-capture.md) · 2026-06-07 · reverify: `python3 -c "import json,re; e=json.load(open('generated/evidence_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/evidence_ir.json')); d={re.match(r'Signal (\w+)',s['text']).group(1) for s in e['extracted_statements'] if s['text'].startswith('Signal ')}; print('SWCLK',('SWCLK' in d),'SWDIO',('SWDIO' in d))`
 - "what is the AXI signal naming convention (channel prefix)" -> [axi-channel-structure](docs/knowledge/axi-channel-structure.md) · 2026-06-07 · reverify: `python3 -c "import json,re; e=json.load(open('generated/evidence_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/evidence_ir.json')); d={re.match(r'Signal (\w+)',s['text']).group(1) for s in e['extracted_statements'] if s['text'].startswith('Signal ')}; print(sorted(x for x in d if x.startswith('AW'))[:10])`
 - "what is the Dempster combiner in fusion" -> [dempster-fusion](docs/knowledge/dempster-fusion.md) · 2026-06-04 · reverify: `grep -n "fn dempster_corroborate_confidence" crates/specforge/src/ir/fusion.rs`
@@ -184,6 +187,7 @@
 - "why was a property like RME_Support or MPAM_WIDTH extracted as a signal constraint" -> [axi-constraint-subject-must-be-declared](docs/knowledge/axi-constraint-subject-must-be-declared.md) · 2026-06-07 · reverify: `./target/debug/specforge eval-extraction crates/specforge/test_data/llm_eval/seed_axi.json --provider skip 2>/dev/null | grep -A1 source-tolerant`
 - "why was a signal not extracted from a signal table (e.g. AHB HREADY)" -> [rotated-signal-table-extraction](docs/knowledge/rotated-signal-table-extraction.md) · 2026-06-07 · reverify: `./target/debug/specforge eval-extraction crates/specforge/test_data/llm_eval/seed_ahb_temporal.json --provider skip 2>/dev/null | grep temporal_rule`
 - "why was the ISF explicit-FSM feature request withdrawn" -> [isf-fsm-via-switch-select](docs/knowledge/isf-fsm-via-switch-select.md) · 2026-06-07 · reverify: `write a state machine as (storage (var st ...)) + (transaction step (on start) (switch st (S (select st input A B))...) (complete done)) + (rule tick start (trigger step)); run subs/fsmgen/bin/fsmgen --strict --check --json FILE → success:true`
+- "why were RISC-V/TRM register tables unextracted (unknown table_kind)" -> [register-field-table-extraction](docs/knowledge/register-field-table-extraction.md) · 2026-06-07 · reverify: `./target/debug/specforge evidence generated/source_ir/1_0_risc_v_debug_specification/source_ir.json && python3 -c "import json;e=json.load(open('generated/evidence_ir/1_0_risc_v_debug_specification/evidence_ir.json'));print(len(e['register_records']),'regs',sum(len(r['fields']) for r in e['register_records']),'fields')`
 
 ## Facts (by id)
 
@@ -393,6 +397,15 @@ _Interface signals declared in prose ("a clock pin, SWCLK") are captured via the
 - **evidence:** `docs/tasks/SWD-SERIAL-EXTRACTION.md (.2); crates/specforge/src/ir/evidence.rs (synthesize_signal_declarations_from_prose)`
 - **reverify:** `python3 -c "import json,re; e=json.load(open('generated/evidence_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/evidence_ir.json')); d={re.match(r'Signal (\w+)',s['text']).group(1) for s in e['extracted_statements'] if s['text'].startswith('Signal ')}; print('SWCLK',('SWCLK' in d),'SWDIO',('SWDIO' in d))`
 - **source:** [`docs/knowledge/prose-pin-appositive-signal-capture.md`](docs/knowledge/prose-pin-appositive-signal-capture.md)
+
+### register-field-table-extraction
+_Register-FIELD tables (Field|…|Access|Reset) the classifier left "unknown" are recovered into RegisterRecords_
+
+- **answers:** how does SpecForge extract register fields from tables | why were RISC-V/TRM register tables unextracted (unknown table_kind) | what is synthesize_register_field_tables | how flexible is the register model / what register-table shapes are handled
+- **date:** 2026-06-07 · **status:** current
+- **evidence:** `crates/specforge/src/ir/evidence.rs (synthesize_register_field_tables, is_register_field_header, register_name_from_caption); docs/tasks/PDF-VARIANT-DIGESTION.md`
+- **reverify:** `./target/debug/specforge evidence generated/source_ir/1_0_risc_v_debug_specification/source_ir.json && python3 -c "import json;e=json.load(open('generated/evidence_ir/1_0_risc_v_debug_specification/evidence_ir.json'));print(len(e['register_records']),'regs',sum(len(r['fields']) for r in e['register_records']),'fields')`
+- **source:** [`docs/knowledge/register-field-table-extraction.md`](docs/knowledge/register-field-table-extraction.md)
 
 ### rotated-signal-table-extraction
 _Misaligned signal tables (name column rotated to last) are extracted by content-based column detection_
