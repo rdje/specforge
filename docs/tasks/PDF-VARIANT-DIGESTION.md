@@ -10,10 +10,14 @@
   at it, that's the dream, the aim … we should do everything we can to get as close as possible." Defer
   IntentIR→ISF lowering. (`project_pdf_variant_digestion` memory.)
 
-## Goal (the aim)
+## Goal (the aim — this is the ORIGINAL roadmap goal, not a pivot)
 
-SpecForge ingests and meaningfully extracts intent from **any chip-spec PDF** — across every vendor, doc
-type, and layout. The concrete near-term target is the **82-PDF library** (ARM AMBA/debug/system-IP/ISA/
+Per the README objective, SpecForge extracts intent from "**protocol, component, system, and
+software-interface specifications**" into a backend-independent `IntentIR` — i.e. **any chip-spec PDF** has
+always been the goal (forward specification mining). AMBA / `WIRE-BASED-100` was the FIRST *measured* class
+(a starting point to prove + per-fact-harden the extraction), never the target. This program pursues that
+original goal at full breadth. SpecForge ingests and meaningfully extracts intent from **any chip-spec
+PDF** — across every vendor, doc type, and layout. The concrete near-term target is the **82-PDF library** (ARM AMBA/debug/system-IP/ISA/
 TRMs, CXL/OpenCAPI/CCIX, USB-IF, RISC-V, Intel/AMD, JEDEC, NXP, NVMe, OpenCores) plus whatever the owner
 adds. "Digest" = ingest cleanly (no crash / handle protection) AND produce non-garbage typed extraction
 appropriate to the doc (signals/constraints/relations/temporal/FSM/registers/encodings), or an honest
