@@ -2,6 +2,17 @@
 
 ## 2026-06-07
 
+### `SWD-SERIAL-EXTRACTION.3b` — enrich the frame: named request bits, ACK values, ordering
+Added `order` + `response_values` to `SerialFrameField`. `parse_named_bit_list` mines "the N bits X, Y and
+Z" (prose explicitly labels them "bits" → grammar, not names) so the mixed-case `APnDP`/`RnW` request bits
+(which fail `is_hardware_signal_token`) are captured at width 1. `extract_ack_response_values` reads the ACK
+responses from "`<value>` response to a DPACC/APACC access" (handles "OK or FAULT"), gated to DP/AP-access
+statements so broad "`<X>` response" noise (DP/CTI/ACK) is excluded. A final pass assigns `order` by phase
+rank. Result on real ADI evidence: 7 ordered frame fields — A(2)/DATAIN(32)/APnDP(1)/RnW(1) [request],
+ACK(3, resp=[FAULT,OK,WAIT]) [acknowledge], WDATA(32)/RDATA(32) [data]. Parallel buses still 0
+serial_frame_fields + 100%; +3 hermetic tests; full `scripts/run_ci.sh` green (1330 lib tests). KM
+`swd-serial-frame-surface`. Frontier `.4` (DP/AP register interface).
+
 ### `SWD-SERIAL-EXTRACTION.3` — typed serial-frame field surface (owner decision (ii))
 The SWD transaction is a sequence protocol, so it gets its own typed surface. Added `SerialFrameField` +
 `SerialFramePhase` (Request/Acknowledge/Data) to `EvidenceIr` (serde-skip-if-empty → zero churn for

@@ -31,5 +31,13 @@ and is **double-gated**:
 Protocol vocabulary, not chip names (ADR 0006). Result on real ADI evidence: **5 clean frame fields** —
 `A`(2b, request), `ACK`(3b, acknowledge), `DATAIN`/`WDATA`/`RDATA`(32b, data) — zero noise; APB/AHB/AXI
 emit 0 `serial_frame_fields` and stay 100% on all three aspects (the surface is additive). Builds on
-`[[prose-pin-appositive-signal-capture]]` (`.2` captured SWCLK/SWDIO). Follow-on `.3b`: named single-bit
-request fields (APnDP/RnW), ACK response VALUES (OK/WAIT/FAULT), and the ordered field sequence.
+`[[prose-pin-appositive-signal-capture]]` (`.2` captured SWCLK/SWDIO).
+
+**`.3b` enrichment** added three things to the surface: (1) named single-bit request fields via
+`parse_named_bit_list` — "the N bits X, Y and Z" labels X/Y/Z as bits (grammar, not names), so the
+mixed-case `APnDP`/`RnW` (which fail `is_hardware_signal_token`) are captured at width 1; (2) the ACK
+`response_values` via `extract_ack_response_values` — the "`<value>` response to a DPACC/APACC access"
+grammar (handles "OK or FAULT"), gated to DP/AP-access statements so broad "`<X>` response" noise
+(DP/CTI/ACK) is excluded → `[FAULT, OK, WAIT]`; (3) `order` by phase rank (request → acknowledge → data).
+Result: **7 ordered SWD frame fields** — A/DATAIN/APnDP/RnW [request], ACK([FAULT,OK,WAIT]) [acknowledge],
+WDATA/RDATA [data]. Next: `.4` DP/AP register interface, `.5` SWD golds → 100%.

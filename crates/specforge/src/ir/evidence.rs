@@ -212,6 +212,13 @@ pub struct SerialFrameField {
     /// The frame phase this field belongs to (request / acknowledge / data), inferred from context.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub phase: Option<SerialFramePhase>,
+    /// Order of this field within the frame sequence (request bits → acknowledge → data), assigned
+    /// by phase rank then first appearance. `None` if the field has no resolved phase. (`.3b`)
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub order: Option<u32>,
+    /// Response values for a response field — the ACK field carries OK / WAIT / FAULT. (`.3b`)
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub response_values: Vec<String>,
     /// Statements that evidenced this field.
     #[serde(default)]
     pub supporting_statement_ids: Vec<String>,
@@ -6868,46 +6875,198 @@ fn extract_serial_frame_fields(statements: &[ExtractedStatement]) -> Vec<SerialF
         } else {
             None
         };
-        // Only mine bit-range fields from statements that are actually in a frame phase. A serial
-        // doc also cites unrelated bit-fields (register fields, bridged-bus signals like AxCACHE);
-        // the phase gate keeps the SWD FRAME fields and drops that noise.
+        // Only mine fields from statements that are actually in a frame phase. A serial doc also
+        // cites unrelated bit-fields (register fields, bridged-bus signals like AxCACHE); the phase
+        // gate keeps the SWD FRAME fields and drops that noise.
         if phase.is_none() {
             continue;
         }
+        // Bit-range fields: ACK[2:0], WDATA[0:31], A[2:3], …
         for (name, hi, lo) in parse_bit_range_fields(&statement.text) {
             let width = (hi as i64 - lo as i64).unsigned_abs() as u32 + 1;
-            if let Some(&idx) = index_by_name.get(&name) {
-                let field = &mut out[idx];
-                if width > field.bit_width.unwrap_or(0) {
-                    field.bit_width = Some(width);
-                    field.bit_range = Some((hi, lo));
-                }
-                if field.phase.is_none() {
-                    field.phase = phase;
-                }
-                if !field
-                    .supporting_statement_ids
-                    .contains(&statement.statement_id)
-                {
-                    field
-                        .supporting_statement_ids
-                        .push(statement.statement_id.clone());
-                }
-                continue;
-            }
-            counter += 1;
-            index_by_name.insert(name.clone(), out.len());
-            out.push(SerialFrameField {
-                field_id: format!("serial_field_{counter:04}"),
-                name,
-                bit_width: Some(width),
-                bit_range: Some((hi, lo)),
+            upsert_serial_field(
+                &mut out,
+                &mut index_by_name,
+                &mut counter,
+                &name,
+                Some(width),
+                Some((hi, lo)),
                 phase,
-                supporting_statement_ids: vec![statement.statement_id.clone()],
-            });
+                &statement.statement_id,
+            );
+        }
+        // Named single-bit request fields (`.3b`): "the four bits APnDP, RnW and A[2:3]" — APnDP/RnW
+        // are 1-bit fields the prose explicitly labels "bits" (grammar, not names — ADR 0006).
+        for name in parse_named_bit_list(&statement.text) {
+            upsert_serial_field(
+                &mut out,
+                &mut index_by_name,
+                &mut counter,
+                &name,
+                Some(1),
+                None,
+                phase,
+                &statement.statement_id,
+            );
         }
     }
+    // ACK response values (`.3b`): the ACK field carries OK / WAIT / FAULT, recovered from the
+    // "<value> response to a DPACC/APACC access" grammar. Empty when there is no ACK field or no
+    // such statements (serde-skipped).
+    if let Some(&idx) = index_by_name.get("ACK") {
+        out[idx].response_values = extract_ack_response_values(statements);
+    }
+    // Field ordering (`.3b`): the frame sequence is request bits → acknowledge → data. Order by phase
+    // rank, then first appearance (stable: `out` is already in appearance order).
+    let phase_rank = |p: &Option<SerialFramePhase>| match p {
+        Some(SerialFramePhase::Request) => 0,
+        Some(SerialFramePhase::Acknowledge) => 1,
+        Some(SerialFramePhase::Data) => 2,
+        None => 3,
+    };
+    let mut ordered: Vec<usize> = (0..out.len()).collect();
+    ordered.sort_by_key(|&i| (phase_rank(&out[i].phase), i));
+    for (rank, &i) in ordered.iter().enumerate() {
+        out[i].order = Some(rank as u32);
+    }
     out
+}
+
+/// Upsert a serial-frame field by name: widen the bit-width / fill phase / record the supporting
+/// statement on an existing field, or create a new one. (`SWD-SERIAL-EXTRACTION.3`/`.3b`)
+#[allow(clippy::too_many_arguments)]
+fn upsert_serial_field(
+    out: &mut Vec<SerialFrameField>,
+    index_by_name: &mut BTreeMap<String, usize>,
+    counter: &mut usize,
+    name: &str,
+    width: Option<u32>,
+    bit_range: Option<(u32, u32)>,
+    phase: Option<SerialFramePhase>,
+    stmt_id: &str,
+) {
+    if let Some(&idx) = index_by_name.get(name) {
+        let field = &mut out[idx];
+        if width.is_some_and(|w| w > field.bit_width.unwrap_or(0)) {
+            field.bit_width = width;
+            field.bit_range = bit_range;
+        }
+        if field.phase.is_none() {
+            field.phase = phase;
+        }
+        if !field.supporting_statement_ids.iter().any(|s| s == stmt_id) {
+            field.supporting_statement_ids.push(stmt_id.to_string());
+        }
+        return;
+    }
+    *counter += 1;
+    index_by_name.insert(name.to_string(), out.len());
+    out.push(SerialFrameField {
+        field_id: format!("serial_field_{counter:04}"),
+        name: name.to_string(),
+        bit_width: width,
+        bit_range,
+        phase,
+        order: None,
+        response_values: Vec::new(),
+        supporting_statement_ids: vec![stmt_id.to_string()],
+    });
+}
+
+/// Parse named single-bit fields from "the N bits X, Y and Z" prose → [X, Y, …]. Each list item the
+/// prose calls a "bit" is a field (grammar, not names — ADR 0006). Items written as a bit-range
+/// (`A[2:3]`) are skipped here (the range parser captures them). Plausible field tokens only: start
+/// with a letter, ≤16 alphanumerics.
+fn parse_named_bit_list(text: &str) -> Vec<String> {
+    let mut out = Vec::new();
+    let lower = text.to_ascii_lowercase();
+    let mut search_from = 0usize;
+    while let Some(rel) = lower[search_from..].find("bits ") {
+        let start = search_from + rel + "bits ".len();
+        // The list runs to the clause end (':' or '.').
+        let end = text[start..]
+            .find([':', '.'])
+            .map(|e| start + e)
+            .unwrap_or(text.len());
+        let clause = &text[start..end];
+        for piece in clause.split([',']).flat_map(|p| p.split(" and ")) {
+            let token = piece.trim();
+            if token.contains('[') || token.is_empty() {
+                continue;
+            }
+            let token = token.split_whitespace().next().unwrap_or("");
+            let cleaned: String = token
+                .chars()
+                .take_while(|c| c.is_ascii_alphanumeric())
+                .collect();
+            if cleaned.len() >= 2
+                && cleaned
+                    .chars()
+                    .next()
+                    .map(|c| c.is_ascii_uppercase())
+                    .unwrap_or(false)
+                && !is_signal_synthesis_non_signal(&cleaned.to_ascii_uppercase())
+            {
+                out.push(cleaned);
+            }
+        }
+        search_from = end;
+    }
+    out
+}
+
+/// Recover the response values of a serial acknowledge field. SWD states them as "<value> response to
+/// a DPACC or APACC access" (e.g. "WAIT response to a DPACC …", "OK or FAULT response to a …"), so the
+/// extraction is gated to DP/AP-access-response statements and reads the 1–2 value tokens immediately
+/// before "response" (handling the "X or Y" / "X/Y" list), excluding the access-type tokens themselves.
+/// Grammar, not a hardcoded value list (ADR 0006).
+fn extract_ack_response_values(statements: &[ExtractedStatement]) -> Vec<String> {
+    let mut values: Vec<String> = Vec::new();
+    let is_value_token = |t: &str| -> bool {
+        (2..=7).contains(&t.len())
+            && t.chars().all(|c| c.is_ascii_uppercase())
+            && !matches!(t, "DPACC" | "APACC" | "DP" | "AP")
+    };
+    let mut push = |t: &str| {
+        if is_value_token(t) && !values.iter().any(|v| v == t) {
+            values.push(t.to_string());
+        }
+    };
+    for statement in statements {
+        let lower = statement.text.to_ascii_lowercase();
+        // Only DP/AP access-response statements describe the ACK responses.
+        if !(lower.contains("dpacc") || lower.contains("apacc")) {
+            continue;
+        }
+        let words: Vec<&str> = statement.text.split_whitespace().collect();
+        for (i, w) in words.iter().enumerate() {
+            if !w.eq_ignore_ascii_case("response") || i == 0 {
+                continue;
+            }
+            // The value(s) directly before "response": "WAIT response", "OK or FAULT response",
+            // "OK/FAULT response". Walk back over value tokens joined by "or" / "/".
+            let mut j = i;
+            while j >= 1 {
+                let raw = words[j - 1];
+                if raw.eq_ignore_ascii_case("or") {
+                    j -= 1;
+                    continue;
+                }
+                for part in raw.split('/') {
+                    let tok = part.trim_matches(|c: char| !c.is_ascii_alphanumeric());
+                    push(tok);
+                }
+                // stop unless the token before is an "or" joiner
+                if j >= 2 && words[j - 2].eq_ignore_ascii_case("or") {
+                    j -= 1;
+                } else {
+                    break;
+                }
+            }
+        }
+    }
+    values.sort();
+    values
 }
 
 /// Parse `NAME[hi:lo]` bit-range fields from text → (name, hi, lo) for each. NAME is the identifier
@@ -12797,6 +12956,94 @@ mod swd_serial_extraction_3 {
         assert!(
             !fields.iter().any(|f| f.name == "AxCACHE"),
             "got {fields:?}"
+        );
+    }
+}
+
+#[cfg(test)]
+mod swd_serial_extraction_3b {
+    //! SWD-SERIAL-EXTRACTION.3b — named request bits, ACK response values, frame ordering.
+    use super::*;
+
+    fn stmt(id: &str, text: &str) -> ExtractedStatement {
+        ExtractedStatement {
+            statement_id: id.to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        }
+    }
+
+    #[test]
+    fn parses_named_bits_skipping_ranges() {
+        let bits = parse_named_bit_list(
+            "The parity check is made over the four bits APnDP, RnW and A[2:3]:",
+        );
+        assert_eq!(bits, vec!["APnDP".to_string(), "RnW".to_string()]);
+    }
+
+    #[test]
+    fn ack_response_values_are_clean() {
+        let stmts = vec![
+            stmt("a", "0b001 WAIT WAIT response to a DPACC or APACC access."),
+            stmt(
+                "b",
+                "0b010 OK or FAULT response to a DPACC or APACC access.",
+            ),
+            stmt("c", "The DP response to a CTI request is separate."),
+        ];
+        let vals = extract_ack_response_values(&stmts);
+        assert_eq!(
+            vals,
+            vec!["FAULT".to_string(), "OK".to_string(), "WAIT".to_string()]
+        );
+        assert!(
+            !vals.iter().any(|v| v == "DP" || v == "CTI"),
+            "no noise: {vals:?}"
+        );
+    }
+
+    #[test]
+    fn frame_fields_are_ordered_by_phase() {
+        let stmts = vec![
+            stmt(
+                "d",
+                "The SWD interface uses a single bidirectional data pin, SWDIO.",
+            ),
+            stmt(
+                "w",
+                "The parity check is made over the 32 data bits WDATA[0:31].",
+            ),
+            stmt(
+                "q",
+                "The four bits APnDP, RnW are part of the packet request.",
+            ),
+            stmt(
+                "a",
+                "The first three bits of data shifted out are ACK[2:0].",
+            ),
+        ];
+        let fields = extract_serial_frame_fields(&stmts);
+        let req = fields
+            .iter()
+            .find(|f| f.name == "APnDP")
+            .and_then(|f| f.order)
+            .unwrap();
+        let ack = fields
+            .iter()
+            .find(|f| f.name == "ACK")
+            .and_then(|f| f.order)
+            .unwrap();
+        let data = fields
+            .iter()
+            .find(|f| f.name == "WDATA")
+            .and_then(|f| f.order)
+            .unwrap();
+        assert!(
+            req < ack && ack < data,
+            "request<ack<data: req={req} ack={ack} data={data}"
         );
     }
 }
