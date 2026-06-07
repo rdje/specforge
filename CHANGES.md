@@ -1,3 +1,13 @@
+### `PDF-VARIANT-DIGESTION.2b` — VLM table reclassification VERIFICATION gate (no-garbage)
+Live testing of the VLM table strategy on RISC-V showed the VLM OVER-classifies (it labelled register-field
+`Field|…|Access|Reset` and operation `Op|Address|Value` tables as `signal_description`, yielding garbage
+"signals" FIELD/EXECUTE/HALT/TRIGGER). Added `vlm_kind_structurally_consistent`: a proposed kind is APPLIED
+only when the table HEADER is consistent with it (signal_description needs a name/signal column + a
+width/direction/source column and must not be a field+access/reset table). Measured: WITHOUT the gate, 22
+tables reclassified → +9 real DMI signals but +5 garbage; WITH the gate, 1 reclassified (the real DMI table)
+→ 9 genuine DMI signals (REQ_*/RSP_*), 0 garbage. The VLM proposes, structure disposes — best-wins MEASURED,
+no faking. +1 hermetic test; full run_ci.sh green. KM vlm-table-strategy.
+
 ### `PDF-VARIANT-DIGESTION.2b` — VLM table strategy (Qwen2.5VL), best-wins-per-PDF
 The deterministic header-grammar classifier is strategy 1; the VLM is strategy 2. docling renders a
 table_region image per table; Qwen2.5VL reads them directly (validated live: it returned the RISC-V dmcontrol

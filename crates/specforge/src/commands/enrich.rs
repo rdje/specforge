@@ -3,7 +3,7 @@ use std::process::Command;
 
 use crate::cli::{EnrichArgs, VlmProviderArg};
 use crate::error::{AppError, Result};
-use crate::ir::source::{DiagramKind, SourceIr, TableKind, VisualAsset};
+use crate::ir::source::{DiagramKind, SourceIr, StructuredTableRecord, TableKind, VisualAsset};
 
 /// Environment variable overriding the VLM helper script (for unit testing).
 const VLM_HELPER_ENV: &str = "SPECFORGE_VLM_HELPER";
@@ -333,6 +333,49 @@ fn parse_vlm_table_kind(content: &str) -> Option<TableKind> {
     }
 }
 
+/// PDF-VARIANT-DIGESTION.2b — VERIFY a VLM-proposed table kind against the table's actual STRUCTURE before
+/// applying it (the VLM proposes, structure disposes). The VLM over-classifies — e.g. it labels register-
+/// field tables (`Field|…|Access|Reset`) or operation/example tables (`Op|Address|Value`) as
+/// `signal_description`, which then yields garbage "signals". A reclassification is applied only when the
+/// table header is consistent with the proposed kind. Header GRAMMAR (ADR 0006); no chip names.
+fn vlm_kind_structurally_consistent(table: &StructuredTableRecord, kind: TableKind) -> bool {
+    let header: Vec<String> = table
+        .header_rows
+        .first()
+        .or_else(|| table.body_rows.first())
+        .map(|r| {
+            r.iter()
+                .map(|c| c.text.trim().to_ascii_lowercase())
+                .collect()
+        })
+        .unwrap_or_default();
+    let has = |kws: &[&str]| header.iter().any(|h| kws.iter().any(|k| h.contains(k)));
+    match kind {
+        // a signal table NAMES signals AND has a width/direction/source column — and is NOT a
+        // register-field table (field + access/reset), which the register grammar path owns.
+        TableKind::SignalDescription => {
+            has(&["signal", "name", "pin", "port"])
+                && has(&["width", "bits", "direction", "source", "destination"])
+                && !(has(&["field"]) && has(&["access", "reset"]))
+        }
+        TableKind::RegisterMap => {
+            has(&["offset", "address", "bits", "field"])
+                && has(&["access", "reset", "type", "attribut", "bits"])
+        }
+        TableKind::Encoding => has(&["value", "encoding", "code", "binary", "hex"]),
+        TableKind::TimingParameter => has(&["min", "max", "typ", "unit"]),
+        TableKind::FeatureMatrix => has(&[
+            "feature",
+            "property",
+            "capability",
+            "mandatory",
+            "optional",
+            "support",
+        ]),
+        _ => true,
+    }
+}
+
 /// PDF-VARIANT-DIGESTION.2b — VLM table strategy (best-wins-per-PDF). For each `unknown`-kind table that
 /// has a rendered image, ask the VLM to classify its role and APPLY a recognized data kind, so the
 /// downstream deterministic extractors fire on tables the deterministic CLASSIFIER missed. Confident
@@ -372,8 +415,12 @@ fn classify_unknown_tables_via_vlm(
         match vlm_image_query(&image_path, &prompt, model, api_url, provider) {
             Ok(content) => {
                 if let Some(kind) = parse_vlm_table_kind(&content) {
-                    source_ir.structured_tables[idx].table_kind = kind;
-                    reclassified += 1;
+                    // Apply only when the table structure is consistent with the proposed kind —
+                    // rejects the VLM's over-classifications (no-garbage; best-wins with verification).
+                    if vlm_kind_structurally_consistent(&source_ir.structured_tables[idx], kind) {
+                        source_ir.structured_tables[idx].table_kind = kind;
+                        reclassified += 1;
+                    }
                 }
             }
             Err(_) => errors += 1,
@@ -566,5 +613,48 @@ mod tests {
         );
         assert_eq!(parse_vlm_table_kind(r#"{"kind": "other"}"#), None);
         assert_eq!(parse_vlm_table_kind("no json at all"), None);
+    }
+
+    #[test]
+    fn vlm_kind_verification_rejects_overclassification() {
+        use crate::ir::source::StructuredTableCellRecord;
+        let cell = |t: &str| StructuredTableCellRecord {
+            text: t.to_string(),
+            row_span: 1,
+            col_span: 1,
+            is_header: true,
+        };
+        let table = |hdr: Vec<&str>| StructuredTableRecord {
+            table_id: "t".to_string(),
+            asset_id: "a".to_string(),
+            page_id: None,
+            caption_text: None,
+            source_ref: None,
+            table_kind: TableKind::Unknown,
+            header_rows: vec![hdr.iter().map(|h| cell(h)).collect()],
+            body_rows: vec![],
+            row_count: 1,
+            col_count: hdr.len() as u32,
+        };
+        // a genuine signal table is accepted
+        assert!(vlm_kind_structurally_consistent(
+            &table(vec!["Signal", "Width", "Source", "Description"]),
+            TableKind::SignalDescription
+        ));
+        // a register-field table mislabeled signal_description is REJECTED (no garbage signals)
+        assert!(!vlm_kind_structurally_consistent(
+            &table(vec!["Field", "Description", "Access", "Reset"]),
+            TableKind::SignalDescription
+        ));
+        // an operation/example table mislabeled signal_description is REJECTED
+        assert!(!vlm_kind_structurally_consistent(
+            &table(vec!["Op", "Address", "Value", "Comment"]),
+            TableKind::SignalDescription
+        ));
+        // a real register-map table is accepted
+        assert!(vlm_kind_structurally_consistent(
+            &table(vec!["Offset", "Bits", "Field name", "Attributes"]),
+            TableKind::RegisterMap
+        ));
     }
 }

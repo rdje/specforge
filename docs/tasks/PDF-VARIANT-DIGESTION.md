@@ -100,9 +100,13 @@ a stats-script regex bug — ingest OK; re-measure with the hardened helper.)
   `classify_unknown_tables_via_vlm` (shared `vlm_image_query`; `parse_vlm_table_kind`), best-wins (only
   `unknown` tables touched; `register_field`/TOC/other not reapplied — grammar path / noise), writes
   `table_kind` back so a re-run of `evidence` fires the deterministic extractor. Gated (`skip` = no-op);
-  encryption irrelevant (docling renders the images). +1 hermetic test; full CI green. KM
-  `vlm-table-strategy`. NEXT (`.2b'`): VLM EXTRACTION (read rows/fields from the image into typed records as
-  a `Vlm`-tier fact) where the deterministic extractor still yields nothing.
+  encryption irrelevant (docling renders the images). **VERIFICATION GATE** (`vlm_kind_structurally_consistent`):
+  the VLM proposes, structure disposes — a kind is applied only when the table header matches it, so the VLM's
+  over-classifications (register-field / operation tables → `signal_description`) are rejected. Measured on
+  RISC-V: without gate 22 reclassified (+9 real DMI signals but +5 garbage); WITH gate **1 reclassified → 9
+  genuine DMI signals (`REQ_*/RSP_*`), 0 garbage**. +2 hermetic tests; full CI green. KM `vlm-table-strategy`.
+  NEXT (`.2b'`): VLM EXTRACTION (read rows/fields from the image into typed records as a `Vlm`-tier fact,
+  also gated) where the deterministic extractor still yields nothing.
 - `PDF-VARIANT-DIGESTION.2c` (model flexibility) — **DONE (core)**: the register model now carries, all
   backward-compatible: `RegisterRecord.size_bits`; `RegisterFieldRecord.bit_width` (a field is
   `name + offset(=bits_low, LSb) + width`; range/single-bit/offset+width all map) + `enumerated_values`

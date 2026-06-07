@@ -30,6 +30,18 @@ ollama` → `evidence`.
 Conservative mapping (no over-reclassification): `register_field` → **not** reapplied (the deterministic
 grammar path `synthesize_register_field_tables` already recovers these from `unknown`); `table_of_contents`/
 `other` → left `unknown` (correctly unextracted). Reapplied kinds: signal_description, encoding,
-timing_parameter, feature_matrix, register_map. +1 hermetic test (`parse_vlm_table_kind`). Next: VLM
-EXTRACTION (read rows/fields from the image into typed records as a `Vlm`-tier fact) where the deterministic
-extractor still yields nothing.
+timing_parameter, feature_matrix, register_map.
+
+**Verification gate (the VLM proposes, structure disposes) — essential, no-garbage.** The VLM OVER-classifies:
+on RISC-V it labelled register-field (`Field|…|Access|Reset`) and operation (`Op|Address|Value`) tables as
+`signal_description`, which then yielded garbage "signals" (`FIELD/EXECUTE/HALT/TRIGGER`). So a proposed kind
+is APPLIED only when `vlm_kind_structurally_consistent` confirms the table HEADER matches that kind (e.g.
+signal_description needs a name/signal column AND a width/direction/source column AND is not a field+access/
+reset table). Measured on RISC-V: WITHOUT the gate, 22 reclassified → +9 real DMI signals but +5 garbage;
+WITH the gate, **1 reclassified (the real DMI table) → 9 genuine DMI signals (`REQ_*/RSP_*`), 0 garbage**.
+This is "best-wins must be MEASURED, no faking" ([[feedback_scoring_rigor]]) — same proposer/verifier pattern
+as the WIRE-BASED-100 garbage detection. +2 hermetic tests (`parse_vlm_table_kind`,
+`vlm_kind_structurally_consistent`).
+
+Next: VLM EXTRACTION (read rows/fields from the image into typed records as a `Vlm`-tier fact) where the
+deterministic extractor still yields nothing — also behind a verification gate.
