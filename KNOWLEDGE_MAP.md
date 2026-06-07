@@ -3,7 +3,7 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Regenerate with `knowledge-map/scripts/gen_knowledge_map.sh`.
 > Source of truth = YAML front-matter in: `docs/knowledge docs/decisions`. Edit the fact files, never this map.
 > A fact is any `.md` whose front-matter has a non-empty `answers:` list.
-> **31** facts · **162** question keys.
+> **32** facts · **167** question keys.
 
 ## Questions → fact
 
@@ -43,6 +43,7 @@
 - "how do I file an FSMGen bug report or feature request" -> [fsmgen-feedback-channel](docs/knowledge/fsmgen-feedback-channel.md) · 2026-06-04 · reverify: `ls docs/FSMGEN_FEEDBACK.md`
 - "how do I make the NLI verifier actively change extraction / demote claims" -> [nli-intent-gate](docs/knowledge/nli-intent-gate.md) · 2026-06-05 · reverify: `grep -n "fn apply_nli_gate\|fn nli_gate_contracts\|fn obligation_claim_text" crates/specforge/src/ir/nli_verify.rs`
 - "how do I run a Docling ingest or re-ingest on this machine" -> [docling-device-cpu](docs/knowledge/docling-device-cpu.md) · 2026-06-01 · reverify: `grep -n DOCLING_DEVICE crates/specforge/src/ir/source/docling_backend.rs`
+- "how does SWD drive commands and capture data on SWDIO" -> [swd-intent-is-the-fsm-driving-swdio](docs/knowledge/swd-intent-is-the-fsm-driving-swdio.md) · 2026-06-07 · reverify: `python3 -c "import json; e=json.load(open('generated/evidence_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/evidence_ir.json')); print(e['extracted_statements'][0] and [s['text'][:90] for s in e['extracted_statements'] if s['statement_id']=='statement_1948'])`
 - "how does SpecForge combine confidence across modalities or sources" -> [dempster-fusion](docs/knowledge/dempster-fusion.md) · 2026-06-04 · reverify: `grep -n "fn dempster_corroborate_confidence" crates/specforge/src/ir/fusion.rs`
 - "how does SpecForge detect contradicting or conflicting priors" -> [contested-priors](docs/knowledge/contested-priors.md) · 2026-06-04 · reverify: `grep -n "fn contested_priors" crates/specforge/src/ir/prior_memory.rs`
 - "how does SpecForge emit temporal rules or a bounded-eventually into .isf" -> [fsmgen-temporal-isf-form](docs/knowledge/fsmgen-temporal-isf-form.md) · 2026-06-04 · reverify: `grep -n "assert (monitor (within" crates/specforge/src/ir/isf_ir.rs`
@@ -88,7 +89,9 @@
 - "was the (contract ... eventually ...) ISF clause removed" -> [fsmgen-temporal-isf-form](docs/knowledge/fsmgen-temporal-isf-form.md) · 2026-06-04 · reverify: `grep -n "assert (monitor (within" crates/specforge/src/ir/isf_ir.rs`
 - "what ISF form does SpecForge use for a bounded-eventually contract" -> [fsmgen-temporal-isf-form](docs/knowledge/fsmgen-temporal-isf-form.md) · 2026-06-04 · reverify: `grep -n "assert (monitor (within" crates/specforge/src/ir/isf_ir.rs`
 - "what ISF idiom describes states and input-driven transitions" -> [isf-fsm-via-switch-select](docs/knowledge/isf-fsm-via-switch-select.md) · 2026-06-07 · reverify: `write a state machine as (storage (var st ...)) + (transaction step (on start) (switch st (S (select st input A B))...) (complete done)) + (rule tick start (trigger step)); run subs/fsmgen/bin/fsmgen --strict --check --json FILE → success:true`
+- "what SWD intent gaps remain in SpecForge" -> [swd-intent-is-the-fsm-driving-swdio](docs/knowledge/swd-intent-is-the-fsm-driving-swdio.md) · 2026-06-07 · reverify: `python3 -c "import json; e=json.load(open('generated/evidence_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/evidence_ir.json')); print(e['extracted_statements'][0] and [s['text'][:90] for s in e['extracted_statements'] if s['statement_id']=='statement_1948'])`
 - "what are APB's remaining completeness candidate misses" -> [apb-signal-catalog-fully-extracted](docs/knowledge/apb-signal-catalog-fully-extracted.md) · 2026-06-06 · reverify: `./target/debug/specforge validate generated/evidence_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/evidence_ir.json 2>/dev/null | sed -n '/Region Accounting/,/convergence:/p'`
+- "what are the SWD per-phase SWDIO directions (drive vs sample)" -> [swd-intent-is-the-fsm-driving-swdio](docs/knowledge/swd-intent-is-the-fsm-driving-swdio.md) · 2026-06-07 · reverify: `python3 -c "import json; e=json.load(open('generated/evidence_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/evidence_ir.json')); print(e['extracted_statements'][0] and [s['text'][:90] for s in e['extracted_statements'] if s['statement_id']=='statement_1948'])`
 - "what confidence axis correlates with extracted-constraint correctness" -> [conformal-tier-agreement-degenerate](docs/knowledge/conformal-tier-agreement-degenerate.md) · 2026-06-06 · reverify: `grep -n "tier_count_by_fact_key\|nli_conformal_pass" crates/specforge/src/ir/nli_verify.rs`
 - "what did running nli-verify on a real spec find" -> [nli-gate-real-apb-validation](docs/knowledge/nli-gate-real-apb-validation.md) · 2026-06-05 · reverify: `cargo run -p specforge --quiet -- nli-verify generated/evidence_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/evidence_ir.json --vlm-provider ollama --model qwen2.5:14b-instruct`
 - "what does DOCLING_DEVICE do" -> [docling-device-cpu](docs/knowledge/docling-device-cpu.md) · 2026-06-01 · reverify: `grep -n DOCLING_DEVICE crates/specforge/src/ir/source/docling_backend.rs`
@@ -123,6 +126,7 @@
 - "what is the inter-annotator agreement of the eval gold" -> [eval-gold-interannotator-kappa](docs/knowledge/eval-gold-interannotator-kappa.md) · 2026-06-05 · reverify: `true  # MANUAL: re-run a blind second annotation per EVAL-GOLD-INTERANNOTATOR-AGREEMENT.md Method and recompute kappa (not an automatable grep)`
 - "what model do converge / enrich / nlp-enrich use by default" -> [llm-vlm-provider-default](docs/knowledge/llm-vlm-provider-default.md) · 2026-06-01 · reverify: `grep -n "qwen2.5vl" crates/specforge/src/commands/llm_text.rs`
 - "what model does the NLI verifier use" -> [nli-entailment-verifier](docs/knowledge/nli-entailment-verifier.md) · 2026-06-05 · reverify: `grep -n "fn verify_entailment" crates/specforge/src/ir/nli_verify.rs`
+- "what must SpecForge derive to fully capture SWD" -> [swd-intent-is-the-fsm-driving-swdio](docs/knowledge/swd-intent-is-the-fsm-driving-swdio.md) · 2026-06-07 · reverify: `python3 -c "import json; e=json.load(open('generated/evidence_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/evidence_ir.json')); print(e['extracted_statements'][0] and [s['text'][:90] for s in e['extracted_statements'] if s['statement_id']=='statement_1948'])`
 - "what parts of the literature are deferred or flagged as future work" -> [adopt-defer-ledger](docs/knowledge/adopt-defer-ledger.md) · 2026-06-04 · reverify: `ls docs/research/grounding/adopt-defer-ledger.md`
 - "what research did SpecForge leave out and why" -> [adopt-defer-ledger](docs/knowledge/adopt-defer-ledger.md) · 2026-06-04 · reverify: `ls docs/research/grounding/adopt-defer-ledger.md`
 - "what signals belong to which AXI channel" -> [axi-channel-structure](docs/knowledge/axi-channel-structure.md) · 2026-06-07 · reverify: `python3 -c "import json,re; e=json.load(open('generated/evidence_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/evidence_ir.json')); d={re.match(r'Signal (\w+)',s['text']).group(1) for s in e['extracted_statements'] if s['text'].startswith('Signal ')}; print(sorted(x for x in d if x.startswith('AW'))[:10])`
@@ -132,6 +136,7 @@
 - "where do I log feedback or a suggestion to FSMGen" -> [fsmgen-feedback-channel](docs/knowledge/fsmgen-feedback-channel.md) · 2026-06-04 · reverify: `ls docs/FSMGEN_FEEDBACK.md`
 - "where do the APB signal declarations come from (which table)" -> [apb-signal-catalog-fully-extracted](docs/knowledge/apb-signal-catalog-fully-extracted.md) · 2026-06-06 · reverify: `./target/debug/specforge validate generated/evidence_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/evidence_ir.json 2>/dev/null | sed -n '/Region Accounting/,/convergence:/p'`
 - "where does .isf record dropped temporal obligations" -> [isf-temporal-lowering-no-silent-drop](docs/knowledge/isf-temporal-lowering-no-silent-drop.md) · 2026-06-04 · reverify: `grep -n "temporal_residuals" crates/specforge/src/ir/isf_ir.rs crates/specforge/src/ir/adapters.rs`
+- "where does SWD's intent live (FSM, not constraints/relations)" -> [swd-intent-is-the-fsm-driving-swdio](docs/knowledge/swd-intent-is-the-fsm-driving-swdio.md) · 2026-06-07 · reverify: `python3 -c "import json; e=json.load(open('generated/evidence_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/evidence_ir.json')); print(e['extracted_statements'][0] and [s['text'][:90] for s in e['extracted_statements'] if s['statement_id']=='statement_1948'])`
 - "where does the NLI gate route a not-entailed contract" -> [nli-intent-gate](docs/knowledge/nli-intent-gate.md) · 2026-06-05 · reverify: `grep -n "fn apply_nli_gate\|fn nli_gate_contracts\|fn obligation_claim_text" crates/specforge/src/ir/nli_verify.rs`
 - "where is the LTL renderer for temporal rules" -> [temporal-rule-ltl-rendering](docs/knowledge/temporal-rule-ltl-rendering.md) · 2026-06-04 · reverify: `grep -n "fn temporal_rule_to_ltl" crates/specforge/src/ir/temporal_ltl.rs`
 - "where is the SpecForge FSMGen feedback or handoff channel" -> [fsmgen-feedback-channel](docs/knowledge/fsmgen-feedback-channel.md) · 2026-06-04 · reverify: `ls docs/FSMGEN_FEEDBACK.md`
@@ -405,6 +410,15 @@ _SWD/ADI (IHI0074) is an architecture/serial spec — the parallel-bus signal-ta
 - **evidence:** `corpus/arm/debug/interfaces/adi/current/IHI0074_A_2017-03-09_Arm_Debug_Interface_v6_Architecture_Specification.pdf; generated/evidence_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification`
 - **reverify:** `python3 -c "import json,re; e=json.load(open('generated/evidence_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/evidence_ir.json')); print(sorted({re.match(r'Signal (\w+)',s['text']).group(1) for s in e['extracted_statements'] if s['text'].startswith('Signal ')}))`
 - **source:** [`docs/knowledge/swd-adi-not-signal-table-spec.md`](docs/knowledge/swd-adi-not-signal-table-spec.md)
+
+### swd-intent-is-the-fsm-driving-swdio
+_SWD's full intent IS its FSM walking SWDIO — host drives commands / samples returned data per state_
+
+- **answers:** where does SWD's intent live (FSM, not constraints/relations) | what must SpecForge derive to fully capture SWD | how does SWD drive commands and capture data on SWDIO | what are the SWD per-phase SWDIO directions (drive vs sample) | what SWD intent gaps remain in SpecForge
+- **date:** 2026-06-07 · **status:** current
+- **evidence:** `corpus/.../IHI0074_A (SWD operation); generated/evidence_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification (statement_1946/1948); docs/tasks/SWD-SERIAL-EXTRACTION.md`
+- **reverify:** `python3 -c "import json; e=json.load(open('generated/evidence_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/evidence_ir.json')); print(e['extracted_statements'][0] and [s['text'][:90] for s in e['extracted_statements'] if s['statement_id']=='statement_1948'])`
+- **source:** [`docs/knowledge/swd-intent-is-the-fsm-driving-swdio.md`](docs/knowledge/swd-intent-is-the-fsm-driving-swdio.md)
 
 ### swd-protocol-fsm-surface
 _The SWD/JTAG protocol FSM is a typed surface (ProtocolStateRecord) — states extracted from "<State> state" grammar_

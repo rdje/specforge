@@ -1,0 +1,26 @@
+[
+  {
+    "task": "signal_constraint",
+    "doc_key": "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification",
+    "statement_id": "statement_1247",
+    "input_text": "CSYSPWRUPACK must be asserted for as long as CSYSPWRUPREQ is asserted.",
+    "grounding": ["CSYSPWRUPACK", "CSYSPWRUPREQ"],
+    "gold": [
+      {"fact": "constraint", "subject_signal": "CSYSPWRUPACK", "constraint_kind": "must_be_asserted"}
+    ],
+    "label_status": "agent_drafted",
+    "label_note": "Power-up handshake: CSYSPWRUPACK must be asserted while CSYSPWRUPREQ is asserted. Expected TP."
+  },
+  {
+    "task": "actor_signal_relation",
+    "doc_key": "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification",
+    "statement_id": "statement_1946",
+    "input_text": "The SWD interface uses a single bidirectional data pin, SWDIO . The same signal is used for both host and target sourced signals.",
+    "grounding": ["SWDIO"],
+    "gold": [
+      {"fact": "relation", "actor": "target", "relation": "drives", "signal": "SWDIO"}
+    ],
+    "label_status": "agent_drafted",
+    "label_note": "SWDIO is the bidirectional serial data wire; the target sources (drives) it (and so does the host). Source-tolerant. Expected TP."
+  }
+]

@@ -2,6 +2,18 @@
 
 ## 2026-06-07
 
+### `SWD-SERIAL-EXTRACTION.5` + reframe — SWD's intent IS the FSM walking SWDIO
+Owner: "SWD full specification comes from its FSM description — an agent drives commands onto SWDIO using the
+FSM and returns captured data still using the FSM on SWDIO." So SWD's intent is NOT in the classic
+constraint/relation/temporal surfaces (sparse for this architecture-style spec). `.5` measured the
+measurable scores: `seed_swd.json` constraint (CSYSPWRUPACK must_be_asserted) + relation (target drives
+SWDIO) both `P=R=F1=1.000` (garbage actors filtered); the lone temporal rule is noise (garbage actor "then")
+and is NOT pursued (SWD intent is the FSM). Re-read the SWD operation (`statement_1948`: target samples
+SWDIO on rising SWCLK, drives on falling) and recorded the FSM-centric SWD intent model + the derivation
+gaps in KM `swd-intent-is-the-fsm-driving-swdio`. **Gaps to fully derive SWD's intent:** per-state SWDIO
+direction (drive/sample + host/target) `.4c`; the SWD packet FSM + transitions `.4b`; line states + edge
+timing `.4d`. What is derived today: signals (`.2`), packet fields (`.3`), JTAG TAP states (`.4`).
+
 ### `SWD-SERIAL-EXTRACTION.6` (REDONE) — ISF CAN describe an FSM (proven); feature request WITHDRAWN
 Owner pushed back on a premature feature request (filed off a `subs/fsmgen` submodule **312 commits stale**,
 from reading alone): thoroughly check FSMGen; focus on `.isf` not `.fsm`; SpecForge doesn't cycle-schedule

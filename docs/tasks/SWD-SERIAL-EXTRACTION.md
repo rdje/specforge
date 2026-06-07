@@ -114,15 +114,29 @@ extraction approach distinct from the parallel-bus signal-table path.
   marked WITHDRAWN); serial frame also NOT a gap (ISF has shift registers / serial fixtures). KM
   `[[isf-fsm-via-switch-select]]`; lessons `[[feedback_verify_fsmgen_before_fr]]`, `[[feedback_isf_no_hacks]]`.
 
+## Reframe (owner `2026-06-07`): SWD's intent IS the FSM walking SWDIO
+
+SWD's full intent comes from its FSM — the host walks the FSM to **drive commands onto SWDIO** and
+**sample returned data from SWDIO** (KM `[[swd-intent-is-the-fsm-driving-swdio]]`). So the classic
+constraint/relation/temporal scores are NOT where SWD's intent lives (they are sparse; `seed_swd.json`
+shows constraint + relation `P=R=F1=1.000` on the small clean set, and the lone temporal rule is noise —
+not pursued). The work is to FULLY derive the FSM + per-state SWDIO I/O.
+
+What SpecForge derives today: SWD signals (`.2`); packet FIELDS with phase+width (`.3`/`.3b`); JTAG TAP
+states (`.4`, the JTAG-DP FSM — NOT the SWD-on-SWDIO packet FSM). Gaps → `.4c`/`.4b`/`.4d` below.
+
 ## Current frontier
 
-- `SWD-SERIAL-EXTRACTION.4b` — FSM **transitions** (the TMS-driven edges: state → state on a condition),
-  completing the FSM topology; + dedup the `Test-Logic/Reset` separator variant. (`.4` done: DBGTAPSM + 9
-  named states with actions.) Gated by the ISF-abstraction check (`.6`): the FSM must lower to ISF without
-  hacks. Then `.5` SWD golds → 100%.
-- `SWD-SERIAL-EXTRACTION.4b` — FSM **transitions** (TMS-driven edges) + dedup the `Test-Logic/Reset`
-  separator variant. Then `.5` SWD golds → 100% (which substantiates the `.6` ISF feature request with a
-  concrete `.isf` lowering attempt).
+- `SWD-SERIAL-EXTRACTION.4c` (NEW, central) — **per-state SWDIO direction**: each frame field/phase needs
+  `drive` vs `sample` + actor (host drives request + write-data; target drives ack + read-data, host
+  samples). This is "drive commands / capture data on SWDIO via the FSM". Add a direction to
+  `SerialFrameField` (or the FSM states).
+- `SWD-SERIAL-EXTRACTION.4b` — the **SWD packet FSM** + transitions (request → turnaround → ack →
+  turnaround → data → park), distinct from the JTAG TAP FSM; + dedup the `Test-Logic/Reset` variant.
+- `SWD-SERIAL-EXTRACTION.4d` — line state machine (reset / operating / protocol-error) + edge timing
+  (sample on rising SWCLK, drive on falling — `statement_1948`).
+- `SWD-SERIAL-EXTRACTION.5` — DONE for the measurable scores: `seed_swd.json` constraint + relation
+  `P=R=F1=1.000` (sparse clean set; garbage actors filtered). Temporal not pursued (SWD intent is the FSM).
 
 ## Decisions
 
