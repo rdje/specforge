@@ -2,6 +2,16 @@
 
 ## 2026-06-07
 
+### `SWD-SERIAL-EXTRACTION` — dedicated serial-extraction tree opened (owner decision (a))
+Owner chose (a) from `WIRE-BASED-100.5j`: open a dedicated tree for the genuine path to SWD 100% (the
+parallel-bus signal-table model can't reach it). Created `docs/tasks/SWD-SERIAL-EXTRACTION.md` + registered
+in `docs/TASK_TREE.md`. `.1` research/characterization DONE: SWCLK/SWDIO ARE prose-describable ("a single
+bidirectional data pin, SWDIO"; "requires a clock pin, SWCLK"); the serial frame is described (start/stop/
+park/turnaround/parity bits, WAIT/FAULT/OK ACK); DP/AP interface is in register_map/encoding tables.
+Frontier `.2`: capture SWCLK/SWDIO from the prose "`<role>` pin, `<SIGNAL>`" pattern (general/ADR-0006).
+Decomposition `.2`–`.5` (capture signals → serial-frame model → DP/AP registers → golds→100%). No-faking:
+SWD 100% earned on a faithful gold. KM `swd-adi-not-signal-table-spec`.
+
 ### `WIRE-BASED-100.5j` — SWD/ADI: honest structural finding + garbage cleanup (SWD-100% deferred, not faked)
 Ingested the Arm Debug Interface v6 spec (IHI0074, the SWD/ADI spec). **Honest finding (no-faking):** it is
 an architecture/serial spec, NOT a parallel-bus signal-table spec — ~7032 statements (DAP, DP/AP registers,
