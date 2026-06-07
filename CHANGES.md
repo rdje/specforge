@@ -1,3 +1,13 @@
+### `PDF-VARIANT-DIGESTION.3a` — prose SIGNAL capture (parenthetical abbreviation)
+Some specs name signals only in prose, not tables (I2C/CCIX/USB4 had 0 table signals).
+synthesize_signal_declarations_from_prose gained the parenthetical form ("a serial data line (SDA)") on top
+of the pin appositive (.2). No-garbage guards (from live I2C runs): a sparse-catalog FALLBACK gate (the
+parenthetical runs only when <8 table signals, so table-rich AXI is untouched — fixed a 1.000->0.857 AXI
+constraint regression), an uppercase-acronym gate (rejects "(resulting from ...)"/"(Section ...)"), and the
+universal denylist (READ/WRITE/MODE). I2C: 0 -> 10 declared signals (SDA/SCL + Hs SCLH/SDAH + USCL/USDA +
+ACK/NACK/DDC/SDR). Wire-based specs stay 1.000 (no regression); +3 hermetic tests; full run_ci.sh green. I2C
+spec added to corpus. KM prose-signal-capture.
+
 ### `PDF-VARIANT-DIGESTION.2d` — TOC/revision/index noise filter
 `table_is_noise` (evidence.rs) flags non-data NOISE tables — table of contents, list of tables/figures,
 revision history, section index — by general structure: dotted page-leaders ("Preface....1"), a

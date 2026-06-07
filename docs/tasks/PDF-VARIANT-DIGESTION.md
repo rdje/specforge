@@ -133,8 +133,16 @@ a stats-script regex bug — ingest OK; re-measure with the hardened helper.)
   page-leaders, contents/revision caption-or-header, or rows mostly prefixed by a section number (no chip
   names). The VLM passes skip them (no wasted calls; CCIX has ~220 TOC tables) and `enrich` reports
   `tables_skipped_as_noise`. +1 hermetic test; full CI green.
-- `PDF-VARIANT-DIGESTION.3` (Lever B) — prose ENTITY capture: extend prose signal capture + add prose
-  ACTOR/AGENT capture (ground the agent model from prose, not only as a relation subject).
+- `PDF-VARIANT-DIGESTION.3a` (Lever B, prose SIGNALS) — **DONE**: `synthesize_signal_declarations_from_prose`
+  gained the parenthetical-abbreviation form ("a serial data line (SDA)") on top of the pin appositive (`.2`).
+  Guards (from live I2C runs): sparse-catalog FALLBACK gate (parenthetical runs only when <8 table signals —
+  AXI etc. untouched, fixed a 1.000→0.857 AXI regression), uppercase-acronym gate (rejects "(resulting…)"),
+  universal denylist (READ/WRITE/MODE). **I2C: 0 → 10 declared signals** (SDA/SCL + Hs SCLH/SDAH + USCL/USDA
+  + ACK/NACK/DDC/SDR). Wire-based specs stay 1.000; +3 hermetic tests; full CI green. I2C PDF added to
+  `corpus/`. KM `prose-signal-capture`.
+- `PDF-VARIANT-DIGESTION.3b` (Lever B, prose ACTORS/AGENTS) — NEXT: capture the agents/roles a spec defines
+  in prose ("A controller is the device which initiates …", "is considered a target") — ground the actor
+  model from prose, not only as the inferred subject of a relation (owner `2026-06-07`).
 
 ## Decisions
 

@@ -753,9 +753,16 @@ impl EvidenceIr {
         // SWD-SERIAL-EXTRACTION.2: also capture interface signals declared in PROSE (serial specs
         // name the wire contract in an appositive — "a clock pin, SWCLK") so SWCLK/SWDIO enter the
         // catalog. Additive; duplicates of table declarations dedupe downstream.
+        // The parenthetical prose form (`.3`) runs only as a FALLBACK when the table catalog is sparse
+        // (few/no signal-description tables) — so table-rich specs are untouched (no regression).
+        let table_signal_count = synthesized
+            .iter()
+            .filter(|s| s.text.starts_with("Signal "))
+            .count();
         synthesized.extend(synthesize_signal_declarations_from_prose(
             &extracted_statements,
             &mut statement_counter,
+            table_signal_count < 8,
         ));
 
         // Extract system contract (clock + reset) from signal-description prose in tables.
@@ -6671,6 +6678,11 @@ pub(crate) fn is_signal_synthesis_non_signal(token: &str) -> bool {
             | "LEVEL"
             // Cross-reference word ("… pin, see Figure B4-3") — not a signal name.
             | "SEE"
+            // Operation / access verbs that appear as parenthetical acronyms near a signal descriptor
+            // (PDF-VARIANT-DIGESTION.3) — modes/operations, never signal names. Universal vocabulary.
+            | "READ"
+            | "WRITE"
+            | "MODE"
     )
 }
 
@@ -6896,6 +6908,7 @@ fn synthesize_signal_declarations(
 fn synthesize_signal_declarations_from_prose(
     statements: &[ExtractedStatement],
     statement_counter: &mut usize,
+    enable_parenthetical: bool,
 ) -> Vec<ExtractedStatement> {
     let mut out = Vec::new();
     let mut seen: BTreeSet<String> = BTreeSet::new();
@@ -6922,6 +6935,66 @@ fn synthesize_signal_declarations_from_prose(
                 || is_signal_synthesis_non_signal(&token)
                 || !seen.insert(token.clone())
             {
+                continue;
+            }
+            *statement_counter += 1;
+            out.push(ExtractedStatement {
+                statement_id: format!("statement_{statement_counter:04}"),
+                class: StatementClass::SourceFact,
+                modality: EvidenceModality::Text,
+                text: format!("Signal {token} is width 1."),
+                evidence_span_ids: statement.evidence_span_ids.clone(),
+                related_visual_evidence_ids: vec![],
+            });
+        }
+        // PDF-VARIANT-DIGESTION.3 — parenthetical abbreviation form: a signal introduced in prose as
+        // "<descriptor> (NAME)", e.g. "a serial data line (SDA)", "serial clock (SCL)". A signal
+        // DESCRIPTOR (line/signal/clock/data/wire/bus/pin) must appear in the preceding words so arbitrary
+        // acronyms are not captured. Run only as a FALLBACK for sparse-catalog docs (`enable_parenthetical`):
+        // table-rich specs (AXI etc.) get their signals from tables, and prose capture there is redundant
+        // noise that can admit garbage constraints. General prose capture, universal vocabulary (ADR 0006).
+        if !enable_parenthetical {
+            continue;
+        }
+        for (i, w) in words.iter().enumerate() {
+            let Some(open) = w.find('(') else { continue };
+            let name: String = w[open + 1..]
+                .chars()
+                .take_while(|c| c.is_ascii_alphanumeric() || *c == '_')
+                .collect();
+            // Must be an UPPERCASE acronym (2–10 chars, ≥1 letter, no lowercase) — a signal abbreviation
+            // like SDA/SCL, not a lowercase word grabbed from "(resulting from …)".
+            if name.len() < 2
+                || name.len() > 10
+                || !name.chars().any(|c| c.is_ascii_alphabetic())
+                || name.chars().any(|c| c.is_ascii_lowercase())
+            {
+                continue;
+            }
+            let token = name.to_ascii_uppercase();
+            if !is_hardware_signal_token(&token) || is_signal_synthesis_non_signal(&token) {
+                continue;
+            }
+            let lo = i.saturating_sub(4);
+            let has_descriptor = words[lo..i].iter().any(|p| {
+                matches!(
+                    p.trim_matches(|c: char| !c.is_ascii_alphabetic())
+                        .to_ascii_lowercase()
+                        .as_str(),
+                    "line"
+                        | "lines"
+                        | "signal"
+                        | "signals"
+                        | "clock"
+                        | "data"
+                        | "wire"
+                        | "wires"
+                        | "bus"
+                        | "pin"
+                        | "pins"
+                )
+            });
+            if !has_descriptor || !seen.insert(token.clone()) {
                 continue;
             }
             *statement_counter += 1;
@@ -14155,7 +14228,7 @@ mod swd_serial_extraction_2 {
 
     fn declared(statements: &[ExtractedStatement]) -> Vec<String> {
         let mut c = 0usize;
-        synthesize_signal_declarations_from_prose(statements, &mut c)
+        synthesize_signal_declarations_from_prose(statements, &mut c, true)
             .into_iter()
             .filter_map(|s| s.text.strip_prefix("Signal ").map(|t| t.to_string()))
             .filter_map(|t| t.split_whitespace().next().map(|w| w.to_string()))
@@ -14180,6 +14253,23 @@ mod swd_serial_extraction_2 {
             "Drive the line before tristating the pin, see Figure B4-3 .",
         )]);
         assert!(!names.iter().any(|n| n == "SEE"), "got {names:?}");
+    }
+
+    #[test]
+    fn captures_signal_from_parenthetical_abbreviation() {
+        // PDF-VARIANT-DIGESTION.3 — I2C-style prose: "a serial data line (SDA) and a serial clock (SCL)".
+        let names = declared(&[stmt(
+            "Two bus lines are required: a serial data line (SDA) and a serial clock (SCL) .",
+        )]);
+        assert!(names.contains(&"SDA".to_string()), "got {names:?}");
+        assert!(names.contains(&"SCL".to_string()), "got {names:?}");
+    }
+
+    #[test]
+    fn parenthetical_without_signal_descriptor_is_ignored() {
+        // a bare parenthetical acronym with no signal descriptor nearby must NOT be captured.
+        let names = declared(&[stmt("The protocol (I2C) supports multiple controllers .")]);
+        assert!(!names.iter().any(|n| n == "I2C"), "got {names:?}");
     }
 
     #[test]
