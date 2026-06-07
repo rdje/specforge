@@ -2,6 +2,18 @@
 
 ## 2026-06-07
 
+### `WIRE-BASED-100.5g` — AHB relations 100%: pronoun-subject anaphora resolution
+Fixed the AHB relation actor-resolution gap (`.5f`): `extract_subject_phrase` grabbed the last
+determiner+noun (`the address`/`the response`), ignoring the pronoun subject `it` closest to the verb.
+New `resolve_pronoun_subject_anaphora` detects a bare `it`/`they` subject (skipping aux/modal/infinitive
+helpers) and resolves it to the clause's first canonical actor role (`is_canonical_actor_role` — generic
+protocol roles, ADR-0006 grammar not chip names), wired as a pre-check in `extract_subject_phrase`. This
+produces `(Subordinate, drives, HREADYOUT/HRESP)` AND removes the garbage `(address,…)`/`(response it,…)`
+in one move. Fires only on pronoun subjects → non-pronoun extraction unchanged. **Confirmed on fresh
+re-ingested AHB evidence: `actor_signal_relation` source-tolerant `P=R=F1=1.000`** (tp=6 fp=0 fn=0,
+`wrong_actor=0`); constraints stay 1.000 → **AHB now 100% on constraints AND relations**, matching APB.
+3 hermetic tests; APB gold-100% preserved; kg-bench green; full `scripts/run_ci.sh` green (1313 lib tests).
+
 ### `WIRE-BASED-100.5f` — AHB relation eval gold + measured baseline
 Added 6 relation items to `seed_ahb.json` from real AHB prose/tables (`Subordinate drives HRESP`/`HREADYOUT`;
 the 4 `*USER` drives, table-grounded, source-tolerant). **Baseline: `actor_signal_relation` source-tolerant

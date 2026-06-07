@@ -2972,6 +2972,108 @@ fn extract_actor_phrase(text: &str) -> Option<String> {
 ///
 /// Examples:
 ///   `"The Manager"` → `Some("Manager")`
+/// Generic protocol actor-role terms (universal role grammar, NOT chip-spec names — ADR 0006),
+/// used to resolve a pronoun subject's antecedent. Mirrors the role vocabulary already treated as
+/// non-signals in `is_signal_synthesis_non_signal`, broadened to the common cross-protocol roles.
+fn is_canonical_actor_role(word: &str) -> bool {
+    matches!(
+        word.to_ascii_lowercase().as_str(),
+        "manager"
+            | "subordinate"
+            | "requester"
+            | "completer"
+            | "initiator"
+            | "target"
+            | "master"
+            | "slave"
+            | "responder"
+            | "decoder"
+            | "arbiter"
+            | "interconnect"
+            | "bridge"
+            | "transmitter"
+            | "receiver"
+            | "producer"
+            | "consumer"
+            | "controller"
+            | "peripheral"
+            | "host"
+            | "device"
+            | "agent"
+    )
+}
+
+/// Anaphora: when the subject immediately governing the verb is a bare pronoun (`it`/`they`), the
+/// real agent is the clause's main subject — resolve it to the FIRST canonical actor role appearing
+/// before the pronoun. Returns `None` when the closest subject is not such a pronoun, or no actor
+/// role precedes it (so nothing is invented). Universal pronoun/role grammar, not a chip name
+/// (ADR 0006). `WIRE-BASED-100.5g` — fixes e.g. "After the Subordinate has sampled the address … it
+/// can start to drive HREADYOUT" (previously mis-read the noun "address" as the actor).
+fn resolve_pronoun_subject_anaphora(clause: &str) -> Option<String> {
+    // Auxiliary / modal / infinitive helpers between the subject and the verb (skipped to find the
+    // subject head closest to the verb). NB: the pronouns themselves are NOT listed here.
+    const HELPERS: &[&str] = &[
+        "can",
+        "may",
+        "might",
+        "must",
+        "should",
+        "could",
+        "would",
+        "will",
+        "shall",
+        "start",
+        "starts",
+        "started",
+        "then",
+        "also",
+        "to",
+        "be",
+        "is",
+        "are",
+        "has",
+        "have",
+        "had",
+        "now",
+        "only",
+        "first",
+        "immediately",
+        "always",
+        "subsequently",
+        "begin",
+        "begins",
+    ];
+    let tokens: Vec<&str> = clause.split_whitespace().collect();
+    let clean = |t: &str| {
+        t.trim_matches(|c: char| !c.is_ascii_alphabetic())
+            .to_ascii_lowercase()
+    };
+    // Subject head = the last content token (skipping helpers), i.e. closest to the verb.
+    let mut head_idx = None;
+    for idx in (0..tokens.len()).rev() {
+        let w = clean(tokens[idx]);
+        if w.is_empty() || HELPERS.contains(&w.as_str()) {
+            continue;
+        }
+        head_idx = Some(idx);
+        break;
+    }
+    let head_idx = head_idx?;
+    if !matches!(clean(tokens[head_idx]).as_str(), "it" | "they") {
+        return None;
+    }
+    // Antecedent = the first canonical actor role appearing before the pronoun (the main subject).
+    for token in &tokens[..head_idx] {
+        let w = clean(token);
+        if is_canonical_actor_role(&w) {
+            return normalize_relation_actor_name(
+                token.trim_matches(|c: char| !c.is_ascii_alphabetic()),
+            );
+        }
+    }
+    None
+}
+
 fn extract_subject_phrase(text: &str) -> Option<String> {
     const SKIP_WORDS: &[&str] = &[
         "the", "a", "an", "this", "that", "and", "or", "when", "if", ".", ",", ";", "(", ")", ":",
@@ -3058,6 +3160,13 @@ fn extract_subject_phrase(text: &str) -> Option<String> {
             subject_text = &subject_text[..relative_start];
             break;
         }
+    }
+
+    // Pronoun-subject anaphora: if the subject closest to the verb is a bare pronoun ("it"/"they"),
+    // resolve it to the clause's main actor before the determiner/backward heuristics pick a nearer
+    // noun by mistake (WIRE-BASED-100.5g).
+    if let Some(actor) = resolve_pronoun_subject_anaphora(subject_text) {
+        return Some(actor);
     }
 
     let words: Vec<&str> = subject_text.split_whitespace().collect();
@@ -11907,5 +12016,72 @@ mod wire_based_100_5b {
                 "list-introducer must yield no constraint, got {recs:?} for {text:?}"
             );
         }
+    }
+}
+
+#[cfg(test)]
+mod wire_based_100_5g {
+    //! WIRE-BASED-100.5g — pronoun-subject anaphora: a bare "it"/"they" subject resolves to the
+    //! clause's main actor, not a nearer noun (fixes AHB `(address, drives, HREADYOUT)` and
+    //! `(response it, drives, HRESP)` → `Subordinate`).
+    use super::*;
+    fn run(text: &str) -> Vec<ActorSignalRelation> {
+        let stmts = vec![ExtractedStatement {
+            statement_id: "s".into(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        }];
+        let mut known = std::collections::HashSet::new();
+        for s in ["HREADYOUT", "HRESP"] {
+            known.insert(s.to_string());
+        }
+        extract_actor_signal_relations(&stmts, &known)
+    }
+    fn drives(rels: &[ActorSignalRelation], sig: &str) -> Vec<String> {
+        rels.iter()
+            .filter(|r| r.signal_name == sig && matches!(r.relation, RelationKind::Drives))
+            .map(|r| r.actor_name.clone())
+            .collect()
+    }
+    #[test]
+    fn anaphora_it_resolves_to_main_actor_not_nearer_noun() {
+        let rels = run(
+            "After the Subordinate has sampled the address and control it can start to drive the appropriate HREADYOUT response.",
+        );
+        let actors = drives(&rels, "HREADYOUT");
+        assert!(
+            actors.contains(&"Subordinate".to_string()),
+            "the 'it' subject must resolve to Subordinate, got {actors:?}"
+        );
+        assert!(
+            !actors.iter().any(|a| a.eq_ignore_ascii_case("address")),
+            "the noun 'address' must not be the actor, got {actors:?}"
+        );
+    }
+    #[test]
+    fn anaphora_it_must_drive_resolves_to_subordinate() {
+        let rels = run(
+            "When a Subordinate inserts a number of wait states prior to completing the response, it must drive HRESP to OKAY.",
+        );
+        let actors = drives(&rels, "HRESP");
+        assert!(
+            actors.contains(&"Subordinate".to_string()),
+            "expected Subordinate, got {actors:?}"
+        );
+        assert!(
+            !actors
+                .iter()
+                .any(|a| a.to_ascii_lowercase().contains("response")),
+            "the garbage phrase 'response it' must not be the actor, got {actors:?}"
+        );
+    }
+    #[test]
+    fn non_pronoun_subject_is_unchanged() {
+        // Guard: a normal noun subject still extracts as before (no regression).
+        let rels = run("The Subordinate drives HRESP during the response phase.");
+        assert!(drives(&rels, "HRESP").contains(&"Subordinate".to_string()));
     }
 }

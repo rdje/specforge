@@ -318,10 +318,21 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   drive-actor is the wrong "address" → FN. Same root as APB `.6`/`.6c` (garbage-actor discrimination) +
   pronoun-subject resolution. `near-miss wrong_actor=2` confirms it. Gold faithful (the hard anaphora 0311
   included on purpose, not cherry-picked away).
-- ID: `WIRE-BASED-100.5g` · Status: `pending` · Goal: AHB relation actor discrimination → 100%. Reject
-  garbage/common-noun/phrase-fragment actors (`address`, `response it`) and resolve the pronoun subject to
-  the real actor (`Subordinate`); reuse the `.6`/`.6c` entity-typing harness (LLM general fallback) +
-  heuristic. General (ADR 0006), keep APB gold-100% + kg-bench green; re-measure on fresh AHB evidence.
+- ID: `WIRE-BASED-100.5g` · Status: `done` · Goal: AHB relation actor discrimination → 100%. **Root:
+  `extract_subject_phrase` picked the last determiner+noun (`the address`/`the response`), ignoring the
+  pronoun subject `it` closest to the verb.** Fix: pronoun-subject **anaphora** — `resolve_pronoun_subject_anaphora`
+  detects a bare `it`/`they` subject head (skipping aux/modal/infinitive helpers) and resolves it to the
+  clause's FIRST canonical actor role (`is_canonical_actor_role` — generic protocol roles, ADR-0006
+  grammar not chip names); wired as a pre-check in `extract_subject_phrase`. This produces the correct
+  `(Subordinate, drives, HREADYOUT/HRESP)` AND eliminates the garbage `(address,…)`/`(response it,…)` in
+  one move (fixes both the FP and the recall FN). Fires ONLY on pronoun subjects → non-pronoun extraction
+  unchanged (low blast radius). **Verified:** 3 hermetic tests (`wire_based_100_5g`: anaphora-it →
+  Subordinate ×2 + a non-pronoun no-regression guard); APB gold-100% preserved; kg-bench green; full
+  `scripts/run_ci.sh` green (1313 lib tests). **Real-eval CONFIRMED:** re-ingested AHB from `corpus/`,
+  rebuilt evidence+semantic, re-ran the eval → **`actor_signal_relation` source-tolerant `P=1.000 R=1.000
+  F1=1.000`** (tp=6 fp=0 fn=0; `near-miss wrong_actor=0` — the garbage `address`/`response it` actors are
+  gone, HREADYOUT/HRESP resolved to `Subordinate`). AHB constraints stay `1.000`. **AHB is now 100% on
+  constraints AND relations** (real eval, fresh evidence), matching APB.
 - ID: `WIRE-BASED-100.5h` · Status: `pending` · Goal: AHB temporal eval gold + to 100% (the third AHB
   aspect), on fresh AHB evidence — build a temporal gold from AHB timing prose, measure, fix. Then roll
   AXI + SWD/ADI (corpus PDFs ready) through the same constraint/relation/temporal sequence.
