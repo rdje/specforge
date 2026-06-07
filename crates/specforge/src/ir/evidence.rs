@@ -6943,13 +6943,11 @@ fn extract_serial_frame_fields(statements: &[ExtractedStatement]) -> Vec<SerialF
     let mut counter = 0usize;
     for statement in statements {
         let lower = statement.text.to_ascii_lowercase();
+        // Data phase is checked BEFORE request: a statement that names a data field (WDATA/RDATA/
+        // DATAIN) is about the data phase even when it also mentions "write requests"/RnW — e.g.
+        // "For write requests … the value in DATAIN[31:0] is written" is the DATA phase (`.5` fix).
         let phase = if lower.contains("acknowledge") || lower.contains("ack[") {
             Some(SerialFramePhase::Acknowledge)
-        } else if lower.contains("packet request")
-            || lower.contains("apndp")
-            || lower.contains("rnw")
-        {
-            Some(SerialFramePhase::Request)
         } else if lower.contains("data bits")
             || lower.contains("data phase")
             || lower.contains("wdata")
@@ -6958,6 +6956,11 @@ fn extract_serial_frame_fields(statements: &[ExtractedStatement]) -> Vec<SerialF
             || lower.contains("dataout")
         {
             Some(SerialFramePhase::Data)
+        } else if lower.contains("packet request")
+            || lower.contains("apndp")
+            || lower.contains("rnw")
+        {
+            Some(SerialFramePhase::Request)
         } else {
             None
         };
@@ -7376,7 +7379,30 @@ fn extract_protocol_states(statements: &[ExtractedStatement]) -> Vec<ProtocolSta
             });
         }
     }
-    out
+    // Dedup separator variants (`.5` fix): a docling-rendered "Test-Logic/Reset" is the same state as
+    // the canonical hyphenated "Test-Logic-Reset". Group by separator-normalized key ('/' → '-') and
+    // keep the variant with the most supporting statements (canonical), merging the rest's supports.
+    let mut by_norm: BTreeMap<String, usize> = BTreeMap::new();
+    let mut merged: Vec<ProtocolStateRecord> = Vec::new();
+    for rec in out {
+        let norm = rec.state_name.replace('/', "-").to_ascii_lowercase();
+        if let Some(&idx) = by_norm.get(&norm) {
+            let keep = &mut merged[idx];
+            for sid in &rec.supporting_statement_ids {
+                if !keep.supporting_statement_ids.contains(sid) {
+                    keep.supporting_statement_ids.push(sid.clone());
+                }
+            }
+            // Prefer the variant with more support as the canonical name.
+            if rec.supporting_statement_ids.len() > keep.supporting_statement_ids.len() {
+                keep.state_name = rec.state_name.clone();
+            }
+        } else {
+            by_norm.insert(norm, merged.len());
+            merged.push(rec);
+        }
+    }
+    merged
 }
 
 /// SWD-SERIAL-EXTRACTION.4d — extract the SWD LINE state machine (reset / operating / protocol-error /

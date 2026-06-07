@@ -24,6 +24,9 @@ use std::path::Path;
 use serde::{Deserialize, Serialize};
 
 use crate::error::{AppError, Result};
+use crate::ir::evidence::{
+    ProtocolStateRecord, SerialFrameField, SerialFramePhase, SwdOperation, SwdioDirection,
+};
 use crate::ir::semantic::{
     ClockEdge, CycleWindowRecord, TemporalPredicateRecord, TemporalRuleRecord, TickPhase,
 };
@@ -41,6 +44,12 @@ pub enum EvalTask {
     ActorSignalRelation,
     /// The deterministic temporal parser → `TemporalRuleRecord` (mined temporal rules).
     TemporalRule,
+    /// SWD-SERIAL-EXTRACTION.5 — a serial-protocol frame field (`SerialFrameField`).
+    SerialFrameField,
+    /// SWD-SERIAL-EXTRACTION.5 — a serial packet operation / response branch (`SwdOperation`).
+    SwdOperation,
+    /// SWD-SERIAL-EXTRACTION.5 — a protocol FSM state (`ProtocolStateRecord`).
+    ProtocolState,
 }
 
 impl EvalTask {
@@ -50,6 +59,9 @@ impl EvalTask {
             EvalTask::SignalConstraint => "signal_constraint",
             EvalTask::ActorSignalRelation => "actor_signal_relation",
             EvalTask::TemporalRule => "temporal_rule",
+            EvalTask::SerialFrameField => "serial_frame_field",
+            EvalTask::SwdOperation => "swd_operation",
+            EvalTask::ProtocolState => "protocol_state",
         }
     }
 }
@@ -94,6 +106,33 @@ pub enum GoldFact {
         #[serde(default, skip_serializing_if = "Option::is_none")]
         cycle_window: Option<CycleWindowRecord>,
     },
+    /// A serial-protocol frame field (SWD-SERIAL-EXTRACTION.5): name + bit-width + phase + the SWDIO
+    /// drive direction. Identity is the full tuple so a wrong width/phase/direction scores as a miss.
+    FrameField {
+        name: String,
+        #[serde(default)]
+        bit_width: Option<u32>,
+        #[serde(default)]
+        phase: Option<String>,
+        #[serde(default)]
+        swdio_direction: Option<String>,
+    },
+    /// A serial packet operation / response branch (SWD-SERIAL-EXTRACTION.5).
+    SwdOperationFact {
+        response: String,
+        #[serde(default)]
+        access: Option<String>,
+        phase_count: u32,
+        has_data_phase: bool,
+        #[serde(default)]
+        turnaround_before_data: Option<bool>,
+    },
+    /// A protocol FSM state (SWD-SERIAL-EXTRACTION.5): machine + state name.
+    ProtocolStateFact {
+        #[serde(default)]
+        machine_name: Option<String>,
+        state_name: String,
+    },
 }
 
 impl GoldFact {
@@ -103,6 +142,9 @@ impl GoldFact {
             GoldFact::Constraint { .. } => EvalTask::SignalConstraint,
             GoldFact::Relation { .. } => EvalTask::ActorSignalRelation,
             GoldFact::TemporalRule { .. } => EvalTask::TemporalRule,
+            GoldFact::FrameField { .. } => EvalTask::SerialFrameField,
+            GoldFact::SwdOperationFact { .. } => EvalTask::SwdOperation,
+            GoldFact::ProtocolStateFact { .. } => EvalTask::ProtocolState,
         }
     }
 
@@ -132,8 +174,81 @@ impl GoldFact {
                 consequents,
                 cycle_window,
             } => temporal_rule_key(*edge, antecedents, consequents, cycle_window.as_ref()),
+            GoldFact::FrameField {
+                name,
+                bit_width,
+                phase,
+                swdio_direction,
+            } => frame_field_key(
+                name,
+                *bit_width,
+                phase.as_deref(),
+                swdio_direction.as_deref(),
+            ),
+            GoldFact::SwdOperationFact {
+                response,
+                access,
+                phase_count,
+                has_data_phase,
+                turnaround_before_data,
+            } => swd_operation_key(
+                response,
+                access.as_deref(),
+                *phase_count,
+                *has_data_phase,
+                *turnaround_before_data,
+            ),
+            GoldFact::ProtocolStateFact {
+                machine_name,
+                state_name,
+            } => protocol_state_key(machine_name.as_deref(), state_name),
         }
     }
+}
+
+/// Canonical key for a serial-frame field — identity is name + width + phase + SWDIO direction.
+fn frame_field_key(
+    name: &str,
+    bit_width: Option<u32>,
+    phase: Option<&str>,
+    swdio_direction: Option<&str>,
+) -> String {
+    format!(
+        "{}|{}|{}|{}",
+        name.trim(),
+        bit_width.map(|w| w.to_string()).unwrap_or_default(),
+        phase.unwrap_or("").trim().to_ascii_lowercase(),
+        swdio_direction.unwrap_or("").trim().to_ascii_lowercase(),
+    )
+}
+
+/// Canonical key for a serial packet operation — identity is response + access + phase shape.
+fn swd_operation_key(
+    response: &str,
+    access: Option<&str>,
+    phase_count: u32,
+    has_data_phase: bool,
+    turnaround_before_data: Option<bool>,
+) -> String {
+    format!(
+        "{}|{}|{}|{}|{}",
+        response.trim().to_ascii_uppercase(),
+        access.unwrap_or("").trim().to_ascii_lowercase(),
+        phase_count,
+        has_data_phase,
+        turnaround_before_data
+            .map(|b| b.to_string())
+            .unwrap_or_default(),
+    )
+}
+
+/// Canonical key for a protocol FSM state — identity is machine + state name.
+fn protocol_state_key(machine_name: Option<&str>, state_name: &str) -> String {
+    format!(
+        "{}|{}",
+        machine_name.unwrap_or("").trim().to_ascii_lowercase(),
+        state_name.trim().to_ascii_lowercase(),
+    )
 }
 
 /// Stable snake-case string for a [`SignalConstraintKind`] (the per-value payload of
@@ -416,6 +531,88 @@ pub fn index_temporal_rule_predictions(records: &[TemporalRuleRecord], into: &mu
         let key = temporal_rule_record_key(record);
         for statement_id in &record.supporting_statement_ids {
             into.entry((EvalTask::TemporalRule, statement_id.clone()))
+                .or_default()
+                .insert(key.clone());
+        }
+    }
+}
+
+/// Stable snake-case string for a serial-frame phase.
+fn serial_phase_str(phase: SerialFramePhase) -> &'static str {
+    match phase {
+        SerialFramePhase::Request => "request",
+        SerialFramePhase::Acknowledge => "acknowledge",
+        SerialFramePhase::Data => "data",
+    }
+}
+
+/// Stable snake-case string for a SWDIO drive direction.
+fn swdio_direction_str(dir: SwdioDirection) -> &'static str {
+    match dir {
+        SwdioDirection::HostDrives => "host_drives",
+        SwdioDirection::TargetDrives => "target_drives",
+    }
+}
+
+/// Canonical key for a produced [`SerialFrameField`] — matches a gold `FrameField`'s key.
+pub fn serial_frame_field_record_key(record: &SerialFrameField) -> String {
+    frame_field_key(
+        &record.name,
+        record.bit_width,
+        record.phase.map(serial_phase_str),
+        record.swdio_direction.map(swdio_direction_str),
+    )
+}
+
+/// Canonical key for a produced [`SwdOperation`] — matches a gold `SwdOperationFact`'s key.
+pub fn swd_operation_record_key(record: &SwdOperation) -> String {
+    swd_operation_key(
+        &record.response,
+        record.access.as_deref(),
+        record.phase_count,
+        record.has_data_phase,
+        record.turnaround_before_data,
+    )
+}
+
+/// Canonical key for a produced [`ProtocolStateRecord`] — matches a gold `ProtocolStateFact`'s key.
+pub fn protocol_state_record_key(record: &ProtocolStateRecord) -> String {
+    protocol_state_key(record.machine_name.as_deref(), &record.state_name)
+}
+
+/// Index produced serial-frame fields by their supporting statements (SWD-SERIAL-EXTRACTION.5).
+pub fn index_serial_frame_field_predictions(
+    records: &[SerialFrameField],
+    into: &mut PredictedKeys,
+) {
+    for record in records {
+        let key = serial_frame_field_record_key(record);
+        for statement_id in &record.supporting_statement_ids {
+            into.entry((EvalTask::SerialFrameField, statement_id.clone()))
+                .or_default()
+                .insert(key.clone());
+        }
+    }
+}
+
+/// Index produced SWD operations by their supporting statements (SWD-SERIAL-EXTRACTION.5).
+pub fn index_swd_operation_predictions(records: &[SwdOperation], into: &mut PredictedKeys) {
+    for record in records {
+        let key = swd_operation_record_key(record);
+        for statement_id in &record.supporting_statement_ids {
+            into.entry((EvalTask::SwdOperation, statement_id.clone()))
+                .or_default()
+                .insert(key.clone());
+        }
+    }
+}
+
+/// Index produced protocol-FSM states by their supporting statements (SWD-SERIAL-EXTRACTION.5).
+pub fn index_protocol_state_predictions(records: &[ProtocolStateRecord], into: &mut PredictedKeys) {
+    for record in records {
+        let key = protocol_state_record_key(record);
+        for statement_id in &record.supporting_statement_ids {
+            into.entry((EvalTask::ProtocolState, statement_id.clone()))
                 .or_default()
                 .insert(key.clone());
         }

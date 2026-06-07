@@ -1,0 +1,501 @@
+[
+  {
+    "task": "serial_frame_field",
+    "doc_key": "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification",
+    "statement_id": "statement_1469",
+    "input_text": "The DPACC scan chain uses A[3:2], SELECT.DPBANKSEL and RnW to determine the address of the DP register to be accessed, as summarized in Table B3-5. For detailed",
+    "grounding": [
+      "A"
+    ],
+    "gold": [
+      {
+        "fact": "frame_field",
+        "name": "A",
+        "bit_width": 2,
+        "phase": "request",
+        "swdio_direction": "host_drives"
+      }
+    ],
+    "label_status": "agent_verified",
+    "label_note": "SWD frame field A verified vs spec B4.2/B3."
+  },
+  {
+    "task": "serial_frame_field",
+    "doc_key": "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification",
+    "statement_id": "statement_1494",
+    "input_text": "| JTAG DP Protocol Version | ACK[2:0] Encoding | Response | See: |",
+    "grounding": [
+      "ACK"
+    ],
+    "gold": [
+      {
+        "fact": "frame_field",
+        "name": "ACK",
+        "bit_width": 3,
+        "phase": "acknowledge",
+        "swdio_direction": "target_drives"
+      }
+    ],
+    "label_status": "agent_verified",
+    "label_note": "SWD frame field ACK verified vs spec B4.2/B3."
+  },
+  {
+    "task": "serial_frame_field",
+    "doc_key": "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification",
+    "statement_id": "statement_1515",
+    "input_text": "- For write requests, corresponding to RnW having a value of 0b0 , the value in DATAIN[31:0] is written to the selected register.",
+    "grounding": [
+      "DATAIN"
+    ],
+    "gold": [
+      {
+        "fact": "frame_field",
+        "name": "DATAIN",
+        "bit_width": 32,
+        "phase": "data"
+      }
+    ],
+    "label_status": "agent_verified",
+    "label_note": "SWD frame field DATAIN verified vs spec B4.2/B3."
+  },
+  {
+    "task": "serial_frame_field",
+    "doc_key": "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification",
+    "statement_id": "statement_1679",
+    "input_text": "The parity check is made over the four bits APnDP, RnW and A[2:3]:",
+    "grounding": [
+      "APnDP"
+    ],
+    "gold": [
+      {
+        "fact": "frame_field",
+        "name": "APnDP",
+        "bit_width": 1,
+        "phase": "request",
+        "swdio_direction": "host_drives"
+      }
+    ],
+    "label_status": "agent_verified",
+    "label_note": "SWD frame field APnDP verified vs spec B4.2/B3."
+  },
+  {
+    "task": "serial_frame_field",
+    "doc_key": "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification",
+    "statement_id": "statement_1679",
+    "input_text": "The parity check is made over the four bits APnDP, RnW and A[2:3]:",
+    "grounding": [
+      "RnW"
+    ],
+    "gold": [
+      {
+        "fact": "frame_field",
+        "name": "RnW",
+        "bit_width": 1,
+        "phase": "request",
+        "swdio_direction": "host_drives"
+      }
+    ],
+    "label_status": "agent_verified",
+    "label_note": "SWD frame field RnW verified vs spec B4.2/B3."
+  },
+  {
+    "task": "serial_frame_field",
+    "doc_key": "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification",
+    "statement_id": "statement_1682",
+    "input_text": "The parity check is made over the 32 data bits WDATA[0:31] or RDATA[0:31]:",
+    "grounding": [
+      "WDATA"
+    ],
+    "gold": [
+      {
+        "fact": "frame_field",
+        "name": "WDATA",
+        "bit_width": 32,
+        "phase": "data",
+        "swdio_direction": "host_drives"
+      }
+    ],
+    "label_status": "agent_verified",
+    "label_note": "SWD frame field WDATA verified vs spec B4.2/B3."
+  },
+  {
+    "task": "serial_frame_field",
+    "doc_key": "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification",
+    "statement_id": "statement_1682",
+    "input_text": "The parity check is made over the 32 data bits WDATA[0:31] or RDATA[0:31]:",
+    "grounding": [
+      "RDATA"
+    ],
+    "gold": [
+      {
+        "fact": "frame_field",
+        "name": "RDATA",
+        "bit_width": 32,
+        "phase": "data",
+        "swdio_direction": "target_drives"
+      }
+    ],
+    "label_status": "agent_verified",
+    "label_note": "SWD frame field RDATA verified vs spec B4.2/B3."
+  },
+  {
+    "task": "serial_frame_field",
+    "doc_key": "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification",
+    "statement_id": "statement_1715",
+    "input_text": "A single start bit, with value 0b1 .",
+    "grounding": [
+      "Start"
+    ],
+    "gold": [
+      {
+        "fact": "frame_field",
+        "name": "Start",
+        "bit_width": 1,
+        "phase": "request",
+        "swdio_direction": "host_drives"
+      }
+    ],
+    "label_status": "agent_verified",
+    "label_note": "SWD frame field Start verified vs spec B4.2/B3."
+  },
+  {
+    "task": "serial_frame_field",
+    "doc_key": "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification",
+    "statement_id": "statement_1729",
+    "input_text": "A single parity bit for the preceding packet. See Parity on page B4-112.",
+    "grounding": [
+      "Parity"
+    ],
+    "gold": [
+      {
+        "fact": "frame_field",
+        "name": "Parity",
+        "bit_width": 1,
+        "phase": "request",
+        "swdio_direction": "host_drives"
+      }
+    ],
+    "label_status": "agent_verified",
+    "label_note": "SWD frame field Parity verified vs spec B4.2/B3."
+  },
+  {
+    "task": "serial_frame_field",
+    "doc_key": "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification",
+    "statement_id": "statement_1731",
+    "input_text": "A single stop bit. In the synchronous SWD protocol, this bit is always 0b0 .",
+    "grounding": [
+      "Stop"
+    ],
+    "gold": [
+      {
+        "fact": "frame_field",
+        "name": "Stop",
+        "bit_width": 1,
+        "phase": "request",
+        "swdio_direction": "host_drives"
+      }
+    ],
+    "label_status": "agent_verified",
+    "label_note": "SWD frame field Stop verified vs spec B4.2/B3."
+  },
+  {
+    "task": "serial_frame_field",
+    "doc_key": "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification",
+    "statement_id": "statement_1811",
+    "input_text": "- The Park bit is not 0b1 .",
+    "grounding": [
+      "Park"
+    ],
+    "gold": [
+      {
+        "fact": "frame_field",
+        "name": "Park",
+        "bit_width": 1,
+        "phase": "request",
+        "swdio_direction": "host_drives"
+      }
+    ],
+    "label_status": "agent_verified",
+    "label_note": "SWD frame field Park verified vs spec B4.2/B3."
+  },
+  {
+    "task": "swd_operation",
+    "doc_key": "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification",
+    "statement_id": "statement_1751",
+    "input_text": "Therefore, a successful write operation consists of three phases:",
+    "grounding": [],
+    "gold": [
+      {
+        "fact": "swd_operation_fact",
+        "response": "OK",
+        "phase_count": 3,
+        "has_data_phase": true,
+        "access": "write",
+        "turnaround_before_data": true
+      }
+    ],
+    "label_status": "agent_verified",
+    "label_note": "SWD OK operation verified vs spec B4.2."
+  },
+  {
+    "task": "swd_operation",
+    "doc_key": "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification",
+    "statement_id": "statement_1761",
+    "input_text": "Therefore, a successful read operation consists of three phases:",
+    "grounding": [],
+    "gold": [
+      {
+        "fact": "swd_operation_fact",
+        "response": "OK",
+        "phase_count": 3,
+        "has_data_phase": true,
+        "access": "read",
+        "turnaround_before_data": false
+      }
+    ],
+    "label_status": "agent_verified",
+    "label_note": "SWD OK operation verified vs spec B4.2."
+  },
+  {
+    "task": "swd_operation",
+    "doc_key": "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification",
+    "statement_id": "statement_1777",
+    "input_text": "If the SW-DP is not able to process the request from the debugger immediately, it must issue a WAIT response. A WAIT response to a read or write packet request ",
+    "grounding": [],
+    "gold": [
+      {
+        "fact": "swd_operation_fact",
+        "response": "WAIT",
+        "phase_count": 2,
+        "has_data_phase": false
+      }
+    ],
+    "label_status": "agent_verified",
+    "label_note": "SWD WAIT operation verified vs spec B4.2."
+  },
+  {
+    "task": "swd_operation",
+    "doc_key": "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification",
+    "statement_id": "statement_1798",
+    "input_text": "A FAULT response to a read or write packet request consists of two phases:",
+    "grounding": [],
+    "gold": [
+      {
+        "fact": "swd_operation_fact",
+        "response": "FAULT",
+        "phase_count": 2,
+        "has_data_phase": false
+      }
+    ],
+    "label_status": "agent_verified",
+    "label_note": "SWD FAULT operation verified vs spec B4.2."
+  },
+  {
+    "task": "protocol_state",
+    "doc_key": "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification",
+    "statement_id": "statement_1380",
+    "input_text": "- When the DBGTAPSM goes through the Capture-IR state:",
+    "grounding": [],
+    "gold": [
+      {
+        "fact": "protocol_state_fact",
+        "state_name": "Capture-IR",
+        "machine_name": "DBGTAPSM"
+      }
+    ],
+    "label_status": "agent_verified",
+    "label_note": "protocol FSM state Capture-IR (DBGTAPSM) verified vs spec."
+  },
+  {
+    "task": "protocol_state",
+    "doc_key": "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification",
+    "statement_id": "statement_1384",
+    "input_text": "- While the DBGTAPSM is in the Shift-IR state, the IR scan chain advances one bit for each rising edge of TCK . On the first tick:",
+    "grounding": [],
+    "gold": [
+      {
+        "fact": "protocol_state_fact",
+        "state_name": "Shift-IR",
+        "machine_name": "DBGTAPSM"
+      }
+    ],
+    "label_status": "agent_verified",
+    "label_note": "protocol FSM state Shift-IR (DBGTAPSM) verified vs spec."
+  },
+  {
+    "task": "protocol_state",
+    "doc_key": "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification",
+    "statement_id": "statement_1390",
+    "input_text": "- When the DBGTAPSM goes through the Update-IR state, the value that is scanned into the IR scan chain is transferred into the Instruction Register.",
+    "grounding": [],
+    "gold": [
+      {
+        "fact": "protocol_state_fact",
+        "state_name": "Update-IR",
+        "machine_name": "DBGTAPSM"
+      }
+    ],
+    "label_status": "agent_verified",
+    "label_note": "protocol FSM state Update-IR (DBGTAPSM) verified vs spec."
+  },
+  {
+    "task": "protocol_state",
+    "doc_key": "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification",
+    "statement_id": "statement_1391",
+    "input_text": "- The value that is held in the Instruction Register selects a Data Register, and an associated DR scan chain. When the DBGTAPSM goes through the Capture-DR sta",
+    "grounding": [],
+    "gold": [
+      {
+        "fact": "protocol_state_fact",
+        "state_name": "Capture-DR",
+        "machine_name": "DBGTAPSM"
+      }
+    ],
+    "label_status": "agent_verified",
+    "label_note": "protocol FSM state Capture-DR (DBGTAPSM) verified vs spec."
+  },
+  {
+    "task": "protocol_state",
+    "doc_key": "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification",
+    "statement_id": "statement_1392",
+    "input_text": "This data is then shifted while the DBGTAPSM is in the Shift-DR state, in the same manner as the IR shift in the Shift-IR state.",
+    "grounding": [],
+    "gold": [
+      {
+        "fact": "protocol_state_fact",
+        "state_name": "Shift-DR",
+        "machine_name": "DBGTAPSM"
+      }
+    ],
+    "label_status": "agent_verified",
+    "label_note": "protocol FSM state Shift-DR (DBGTAPSM) verified vs spec."
+  },
+  {
+    "task": "protocol_state",
+    "doc_key": "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification",
+    "statement_id": "statement_1393",
+    "input_text": "- When the DBGTAPSM goes through the Update-DR state, the value that is scanned into the DR scan chain is transferred into the selected Data Register.",
+    "grounding": [],
+    "gold": [
+      {
+        "fact": "protocol_state_fact",
+        "state_name": "Update-DR",
+        "machine_name": "DBGTAPSM"
+      }
+    ],
+    "label_status": "agent_verified",
+    "label_note": "protocol FSM state Update-DR (DBGTAPSM) verified vs spec."
+  },
+  {
+    "task": "protocol_state",
+    "doc_key": "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification",
+    "statement_id": "statement_1394",
+    "input_text": "- When the DBGTAPSM is in the Run-Test/Idle state, no special actions occur. Debuggers can use this state as a true resting state.",
+    "grounding": [],
+    "gold": [
+      {
+        "fact": "protocol_state_fact",
+        "state_name": "Run-Test/Idle",
+        "machine_name": "DBGTAPSM"
+      }
+    ],
+    "label_status": "agent_verified",
+    "label_note": "protocol FSM state Run-Test/Idle (DBGTAPSM) verified vs spec."
+  },
+  {
+    "task": "protocol_state",
+    "doc_key": "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification",
+    "statement_id": "statement_1398",
+    "input_text": "The DBGTRSTn signal only resets the DBGTAP state machine and Instruction Register. DBGTRSTn asynchronously takes the DBGTAPSM to the Test-Logic-Reset state. As ",
+    "grounding": [],
+    "gold": [
+      {
+        "fact": "protocol_state_fact",
+        "state_name": "Test-Logic-Reset",
+        "machine_name": "DBGTAPSM"
+      }
+    ],
+    "label_status": "agent_verified",
+    "label_note": "protocol FSM state Test-Logic-Reset (DBGTAPSM) verified vs spec."
+  },
+  {
+    "task": "protocol_state",
+    "doc_key": "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification",
+    "statement_id": "statement_1815",
+    "input_text": "On detecting a protocol error, the target enters the protocol error state.",
+    "grounding": [],
+    "gold": [
+      {
+        "fact": "protocol_state_fact",
+        "state_name": "Protocol error",
+        "machine_name": "SWD line state machine"
+      }
+    ],
+    "label_status": "agent_verified",
+    "label_note": "protocol FSM state Protocol error (SWD line state machine) verified vs spec."
+  },
+  {
+    "task": "protocol_state",
+    "doc_key": "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification",
+    "statement_id": "statement_1823",
+    "input_text": "- If the target detects a valid packet header other than the read of the DP DPIDR register, or the target detects an IMPLEMENTATION DEFINED number of additional",
+    "grounding": [],
+    "gold": [
+      {
+        "fact": "protocol_state_fact",
+        "state_name": "Lockout",
+        "machine_name": "SWD line state machine"
+      }
+    ],
+    "label_status": "agent_verified",
+    "label_note": "protocol FSM state Lockout (SWD line state machine) verified vs spec."
+  },
+  {
+    "task": "protocol_state",
+    "doc_key": "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification",
+    "statement_id": "statement_1965",
+    "input_text": "When waiting for a packet header, if the target detects a sequence of 50 clock cycles with the data signal held HIGH, followed by at least two idle cycles, it m",
+    "grounding": [],
+    "gold": [
+      {
+        "fact": "protocol_state_fact",
+        "state_name": "Reset",
+        "machine_name": "SWD line state machine"
+      }
+    ],
+    "label_status": "agent_verified",
+    "label_note": "protocol FSM state Reset (SWD line state machine) verified vs spec."
+  },
+  {
+    "task": "protocol_state",
+    "doc_key": "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification",
+    "statement_id": "statement_2094",
+    "input_text": "To switch between JTAG and SWD operation, a debugger must first place the target into dormant state, and then transition to the required operating state.",
+    "grounding": [],
+    "gold": [
+      {
+        "fact": "protocol_state_fact",
+        "state_name": "Dormant",
+        "machine_name": "SWD line state machine"
+      }
+    ],
+    "label_status": "agent_verified",
+    "label_note": "protocol FSM state Dormant (SWD line state machine) verified vs spec."
+  },
+  {
+    "task": "protocol_state",
+    "doc_key": "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification",
+    "statement_id": "statement_2094",
+    "input_text": "To switch between JTAG and SWD operation, a debugger must first place the target into dormant state, and then transition to the required operating state.",
+    "grounding": [],
+    "gold": [
+      {
+        "fact": "protocol_state_fact",
+        "state_name": "Operating",
+        "machine_name": "SWD line state machine"
+      }
+    ],
+    "label_status": "agent_verified",
+    "label_note": "protocol FSM state Operating (SWD line state machine) verified vs spec."
+  }
+]

@@ -38,6 +38,10 @@ enum TaskRecords {
     Constraints(Vec<SignalConstraintRecord>),
     Relations(Vec<ActorSignalRelation>),
     TemporalRules(Vec<TemporalRuleRecord>),
+    /// SWD-SERIAL-EXTRACTION.5 — deterministic SWD surfaces read straight from EvidenceIR.
+    SerialFrameFields(Vec<crate::ir::evidence::SerialFrameField>),
+    SwdOperations(Vec<crate::ir::evidence::SwdOperation>),
+    ProtocolStates(Vec<crate::ir::evidence::ProtocolStateRecord>),
 }
 
 /// `WIRE-BASED-100.6/.7` — drop OVER-GENERATED facts before scoring: relations whose subject is not
@@ -112,6 +116,15 @@ where
             TaskRecords::TemporalRules(records) => {
                 index_temporal_rule_predictions(&records, &mut predicted)
             }
+            TaskRecords::SerialFrameFields(records) => {
+                eval::index_serial_frame_field_predictions(&records, &mut predicted)
+            }
+            TaskRecords::SwdOperations(records) => {
+                eval::index_swd_operation_predictions(&records, &mut predicted)
+            }
+            TaskRecords::ProtocolStates(records) => {
+                eval::index_protocol_state_predictions(&records, &mut predicted)
+            }
         }
     }
     Ok(predicted)
@@ -177,6 +190,16 @@ fn extract_on_copy(
                 Vec::new(),
             ))
         }
+        // SWD-SERIAL-EXTRACTION.5 — the SWD surfaces are deterministic EvidenceIR records (no LLM /
+        // provider); read them straight from the (already-loaded) EvidenceIR.
+        EvalTask::SerialFrameField => Ok((
+            TaskRecords::SerialFrameFields(ir.serial_frame_fields),
+            Vec::new(),
+        )),
+        EvalTask::SwdOperation => Ok((TaskRecords::SwdOperations(ir.swd_operations), Vec::new())),
+        EvalTask::ProtocolState => {
+            Ok((TaskRecords::ProtocolStates(ir.protocol_states), Vec::new()))
+        }
     }
 }
 
@@ -229,6 +252,10 @@ fn records_with_tier_counts(
             })
             .collect(),
         TaskRecords::TemporalRules(_) => Vec::new(),
+        // SWD surfaces are single-tier (deterministic pattern records); no multi-tier provenance.
+        TaskRecords::SerialFrameFields(_)
+        | TaskRecords::SwdOperations(_)
+        | TaskRecords::ProtocolStates(_) => Vec::new(),
     }
 }
 
@@ -564,7 +591,12 @@ mod tests {
                     "s3",
                 )]))
             }
-            EvalTask::TemporalRule => unreachable!("no temporal_rule items in this test"),
+            EvalTask::TemporalRule
+            | EvalTask::SerialFrameField
+            | EvalTask::SwdOperation
+            | EvalTask::ProtocolState => {
+                unreachable!("no temporal/SWD-surface items in this test")
+            }
         })
         .unwrap();
 

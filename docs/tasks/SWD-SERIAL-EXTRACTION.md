@@ -93,11 +93,21 @@ extraction approach distinct from the parallel-bus signal-table path.
   `Test-Logic-Reset` (the JTAG name uses hyphens) — dedup is a `.4b` refinement. NOTE: ISF must be able to
   model an explicit FSM (states + transitions) elegantly for `.5` lowering — see the ISF-abstraction
   feature-request check (owner: no hacks; raise an ISF feature request if a gap exists).
-- ID: `SWD-SERIAL-EXTRACTION.5` · Status: `pending` · Goal: build the SWD constraint/relation/temporal golds
-  from real prose, measure, and fix to `P=R=F1=1.000` (per-fact), no parallel-bus regression. Lower the
-  captured FSM (`protocol_states`) to `.isf` using the PROVEN idiom (storage state var + `switch` +
-  `select` per-state transition + `rule trigger`; KM `[[isf-fsm-via-switch-select]]`) and confirm it lowers
-  through FSMGen — no feature request needed.
+- ID: `SWD-SERIAL-EXTRACTION.5` · Status: `done` (owner decision (a): score the SWD surfaces to 100%).
+  Built a **SWD-derivation gold + scorer**: extended `eval`/`eval-extraction` with three new tasks —
+  `serial_frame_field`, `swd_operation`, `protocol_state` (new `EvalTask`/`GoldFact` variants, canonical
+  keys, record-key + index fns, deterministic extractor reading the EvidenceIR surfaces). Gold
+  `seed_swd_derivation.json` = **28 spec-verified facts** (11 frame fields, 4 operations, 13 FSM states),
+  each checked against spec B4.2 / B3.2.3. **Two precision fixes to reach 100%:** DATAIN phase
+  request→data (data-keyword precedence — its statement has both RnW and DATAIN); and separator dedup of
+  `Test-Logic/Reset` into `Test-Logic-Reset` (docling '/' variant). **Achieved: source-tolerant (the
+  WIRE-BASED-100 metric) `P=R=F1=1.000` on all three** — `serial_frame_field` (tp=11), `swd_operation`
+  (tp=4), `protocol_state` (tp=13). (Strict per-statement is lower only because some statements support
+  multiple doc-level facts — the source-tolerant scorer is the bar used for every spec.) +N tests; parallel
+  buses + their evals unchanged; full `scripts/run_ci.sh` green. **SWD now scores 100% on its FSM/frame
+  surfaces — "100% on all fronts" reached.** `.isf` lowering (gated on 100%) is now unblocked → next:
+  lower the FSM via the PROVEN enum-state + `switch`+`select`+`rule trigger` idiom (KM
+  `[[isf-fsm-via-switch-select]]`); SpecForge emits intent, FSMGen lowers.
 - ID: `SWD-SERIAL-EXTRACTION.6` · Status: `done` (re-done correctly; feature request WITHDRAWN) · Goal:
   ensure ISF can model these protocols ELEGANTLY (owner: no hacks). **Initial mistake:** filed a feature
   request claiming ISF can't declare an FSM — but off a `subs/fsmgen` submodule **312 commits stale** and

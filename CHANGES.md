@@ -2,6 +2,17 @@
 
 ## 2026-06-07
 
+### `SWD-SERIAL-EXTRACTION.5` — score the SWD derivation to 100% (owner decision (a))
+SWD's intent is the FSM/frame, not constraints/relations/temporal — so `eval`/`eval-extraction` gained three
+new tasks: `serial_frame_field`, `swd_operation`, `protocol_state` (new EvalTask/GoldFact variants, canonical
+keys, record-key + index fns, a deterministic extractor reading the EvidenceIR surfaces). Gold
+`seed_swd_derivation.json` = 28 spec-verified facts (11 frame fields, 4 operations, 13 FSM states), each
+checked vs spec B4.2/B3.2.3. Two precision fixes the scorer surfaced: DATAIN phase request->data
+(data-keyword precedence), and separator dedup of the docling `Test-Logic/Reset` into `Test-Logic-Reset`.
+Result: source-tolerant (the WIRE-BASED-100 metric) P=R=F1=1.000 on all three (frame tp=11, op tp=4, state
+tp=13). Parallel buses + their evals unchanged; full scripts/run_ci.sh green. **"100% on all fronts" reached**
+(APB/AHB/AXI 100% + SWD 100%) — unblocks the `.isf` lowering gate. KM `swd-derivation-scored-100`.
+
 ### `SWD-SERIAL-EXTRACTION.4d` — the SWD line state machine
 Added `extract_swd_line_states` (extends `protocol_states`, machine_name="SWD line state machine"): the SWD
 LINE states (Reset, Protocol error, Lockout, Dormant) are extracted from transition-verb phrasings
