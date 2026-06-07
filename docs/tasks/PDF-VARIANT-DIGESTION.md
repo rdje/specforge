@@ -96,9 +96,17 @@ a stats-script regex bug — ingest OK; re-measure with the hardened helper.)
   `register-field-table-extraction`.
 - `PDF-VARIANT-DIGESTION.2b` (Lever A, VLM strategy) — NEXT: point Qwen2.5VL at rendered table images for
   `unknown` tables; best-wins-per-PDF vs the deterministic classifier ([[feedback_multi_strategy_best_wins]]).
-- `PDF-VARIANT-DIGESTION.2c` (model flexibility) — field VALUE ENUMERATIONS, register width/size, block/base
-  grouping, register NAME from preceding heading (synthetic today); free-form attributes
-  ([[project_flexible_register_model]]).
+- `PDF-VARIANT-DIGESTION.2c` (model flexibility) — **DONE (core)**: the register model now carries, all
+  backward-compatible: `RegisterRecord.size_bits`; `RegisterFieldRecord.bit_width` (a field is
+  `name + offset(=bits_low, LSb) + width`; range/single-bit/offset+width all map) + `enumerated_values`
+  (`RegisterFieldEnumRecord { value, meaning }`); access/reset stay FREE strings. Populated deterministically
+  where data exists: width from `[high:low]`, register size from max field MSb, inline enums from
+  binary/hex/Verilog literals in descriptions (conservative — no bare-int false positives). +2 hermetic
+  tests; NVMe (45 bits-bearing field tables in source_ir) re-ingesting for the real-data width/enum demo.
+  Owner-confirmed model
+  ([[project_flexible_register_model]]). REMAINING: register NAME from preceding heading (synthetic today —
+  tables aren't in Docling's content_elements reading-order, so reliable association is deferred, not faked);
+  block/base grouping; array/instance.
 - `PDF-VARIANT-DIGESTION.2d` (deterministic) — TOC/revision/index NOISE filter (general structure).
 - `PDF-VARIANT-DIGESTION.3` (Lever B) — prose ENTITY capture: extend prose signal capture + add prose
   ACTOR/AGENT capture (ground the agent model from prose, not only as a relation subject).

@@ -2,6 +2,17 @@
 
 ## 2026-06-07
 
+### `PDF-VARIANT-DIGESTION.2c` — flexible register model (owner directive)
+A register/register-map model flexible enough for any chip-spec PDF. Backward-compatible additions:
+`RegisterRecord.size_bits`; `RegisterFieldRecord.bit_width` + `enumerated_values`
+(`RegisterFieldEnumRecord { value, meaning }`). A field is modelled as name + offset (= bits_low, the LSb) +
+width, so bit-range `[high:low]`, single-bit, and offset+width forms all map; access/reset stay FREE strings
+for any vendor notation. Populated deterministically where the data exists: field width from `[high:low]`,
+register size from the max field MSb, inline value enums parsed from binary/hex/Verilog literals in
+descriptions (conservative — bare integers and bit references are not mis-read). +2 hermetic tests; full
+run_ci.sh green; additive (no eval-surface change → APB/AHB/AXI/SWD stay 100%). Memory
+`project_flexible_register_model`; KM `register-field-table-extraction`.
+
 ### `PDF-VARIANT-DIGESTION.2` — recover register-FIELD tables (Lever A, deterministic)
 Many register tables in TRMs/architecture/register specs were classified `unknown` and dropped — usually
 because Docling left the column-title row in `body_rows[0]`. New `synthesize_register_field_tables` (evidence

@@ -412,9 +412,14 @@ mod tests {
             field_name: name.to_string(),
             bits_high: high,
             bits_low: low,
+            bit_width: match (high, low) {
+                (Some(h), Some(l)) if h >= l => Some(h - l + 1),
+                _ => None,
+            },
             access_type: None,
             reset_value: None,
             description: None,
+            enumerated_values: vec![],
         }
     }
 
@@ -423,6 +428,7 @@ mod tests {
             register_id: format!("reg_{name}"),
             register_name: name.to_string(),
             offset_address: None,
+            size_bits: None,
             fields,
             supporting_statement_ids: vec![],
             automation_confidence: AutomationConfidence::Medium,
@@ -538,6 +544,7 @@ mod tests {
             register_id: id.to_string(),
             register_name: id.to_string(),
             offset_address: None,
+            size_bits: None,
             fields: vec![],
             supporting_statement_ids: vec![],
             automation_confidence: AutomationConfidence::Medium,

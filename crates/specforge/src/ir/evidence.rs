@@ -12,9 +12,9 @@ use crate::ir::prior_memory::{
 };
 use crate::ir::semantic::InterfaceSignalSemanticRole;
 use crate::ir::source::{
-    ActorSignalRelation, ConditionalRuleRecord, RegisterFieldRecord, RegisterRecord, RelationKind,
-    SignalConstraintKind, SignalConstraintRecord, StructuredTableCellRecord,
-    TimingConstraintRecord, ValidationReportRecord, WidthHint,
+    ActorSignalRelation, ConditionalRuleRecord, RegisterFieldEnumRecord, RegisterFieldRecord,
+    RegisterRecord, RelationKind, SignalConstraintKind, SignalConstraintRecord,
+    StructuredTableCellRecord, TimingConstraintRecord, ValidationReportRecord, WidthHint,
 };
 use crate::ir::source::{
     AutomationConfidence, DiagramKind, NormalizationStatus, SectionKind, SourceIr, TableKind,
@@ -773,6 +773,13 @@ impl EvidenceIr {
             &source_ir,
             prior_guidance.as_ref(),
         ));
+        // Flexible-register-model (.2c): fill register width from field bit extents where the
+        // register-map path created the record incrementally without a size.
+        for reg in &mut register_records {
+            if reg.size_bits.is_none() {
+                reg.size_bits = register_size_from_fields(&reg.fields);
+            }
+        }
         let timing_constraints = synthesize_timing_constraints(&source_ir, prior_guidance.as_ref());
 
         // Replace the previous one-shot extraction with a monotone convergent loop:
@@ -7886,13 +7893,19 @@ fn synthesize_register_records(
                     .unwrap_or_default();
                 // Parse "7:0" or "[7:0]" into bits_high, bits_low.
                 let (bits_high, bits_low) = parse_bit_range(&bits_text);
+                let enumerated_values = desc
+                    .as_deref()
+                    .map(parse_inline_field_enums)
+                    .unwrap_or_default();
                 let field = RegisterFieldRecord {
                     field_name: name.clone(),
                     bits_high,
                     bits_low,
+                    bit_width: bit_width_from_range(bits_high, bits_low),
                     access_type: access,
                     reset_value: reset,
                     description: desc,
+                    enumerated_values,
                 };
                 // Try to attach to the last register, or create a new one.
                 if let Some(last) = records.last_mut() {
@@ -7905,6 +7918,7 @@ fn synthesize_register_records(
                 register_id: format!("reg_{}_{row_idx:03}", document_key(&table_id)),
                 register_name: name,
                 offset_address: offset,
+                size_bits: None,
                 fields: Vec::new(),
                 supporting_statement_ids: Vec::new(),
                 automation_confidence: AutomationConfidence::Medium,
@@ -8082,13 +8096,20 @@ fn synthesize_register_field_tables(
                 .and_then(|c| row.get(c))
                 .map(|c| parse_bit_range(&c.text))
                 .unwrap_or((None, None));
+            let description = desc_col.and_then(cell);
+            let enumerated_values = description
+                .as_deref()
+                .map(parse_inline_field_enums)
+                .unwrap_or_default();
             fields.push(RegisterFieldRecord {
                 field_name,
                 bits_high,
                 bits_low,
+                bit_width: bit_width_from_range(bits_high, bits_low),
                 access_type: access_col.and_then(cell),
                 reset_value: reset_col.and_then(cell),
-                description: desc_col.and_then(cell),
+                description,
+                enumerated_values,
             });
         }
         if fields.is_empty() {
@@ -8099,16 +8120,78 @@ fn synthesize_register_field_tables(
             .as_deref()
             .and_then(register_name_from_caption)
             .unwrap_or_else(|| format!("register_{}", table.table_id));
+        let size_bits = register_size_from_fields(&fields);
         records.push(RegisterRecord {
             register_id: format!("regfld_{}", table.table_id),
             register_name,
             offset_address: None,
+            size_bits,
             fields,
             supporting_statement_ids: Vec::new(),
             automation_confidence: AutomationConfidence::Medium,
         });
     }
     records
+}
+
+/// Register width = the maximum field bit extent + 1, when any field carries a high bit.
+fn register_size_from_fields(fields: &[RegisterFieldRecord]) -> Option<u32> {
+    fields
+        .iter()
+        .filter_map(|f| f.bits_high)
+        .max()
+        .map(|h| h + 1)
+}
+
+/// Field width from a `[high:low]` range: `high - low + 1` when both bounds are present and ordered.
+fn bit_width_from_range(bits_high: Option<u32>, bits_low: Option<u32>) -> Option<u32> {
+    match (bits_high, bits_low) {
+        (Some(h), Some(l)) if h >= l => Some(h - l + 1),
+        _ => None,
+    }
+}
+
+/// Parse inline field value ENUMERATIONS from a field description — conservatively, only
+/// binary/hex/Verilog value literals (`0b00: Idle`, `0x1 = Busy`, `2'b01: …`) so bit references and
+/// counts are not mis-read as enums. General (no chip names); empty when none. PDF-VARIANT-DIGESTION.2c.
+fn parse_inline_field_enums(desc: &str) -> Vec<RegisterFieldEnumRecord> {
+    let mut out = Vec::new();
+    for piece in desc.split([',', ';', '\n']) {
+        let piece = piece.trim();
+        let Some(sep) = piece.find([':', '=']) else {
+            continue;
+        };
+        let value = piece[..sep].trim();
+        let meaning = piece[sep + 1..].trim();
+        if meaning.is_empty() || meaning.len() > 80 || !is_register_value_literal(value) {
+            continue;
+        }
+        out.push(RegisterFieldEnumRecord {
+            value: value.to_string(),
+            meaning: meaning.to_string(),
+        });
+    }
+    out
+}
+
+/// Is `s` a register value literal: `0b<bin>`, `0x<hex>`, or `<width>'b<bin>`?
+fn is_register_value_literal(s: &str) -> bool {
+    let s = s.trim();
+    let lower = s.to_ascii_lowercase();
+    if let Some(rest) = lower.strip_prefix("0b") {
+        return !rest.is_empty() && rest.bytes().all(|b| b == b'0' || b == b'1');
+    }
+    if let Some(rest) = lower.strip_prefix("0x") {
+        return !rest.is_empty() && rest.bytes().all(|b| b.is_ascii_hexdigit());
+    }
+    if let Some(idx) = lower.find("'b") {
+        let (width, bin) = (&lower[..idx], &lower[idx + 2..]);
+        return !width.is_empty()
+            && width.bytes().all(|b| b.is_ascii_digit())
+            && !bin.is_empty()
+            && bin.bytes().all(|b| b == b'0' || b == b'1');
+    }
+    false
 }
 
 /// Parse a bit-range string like "7:0", "[7:0]", or "31" into (bits_high, bits_low).
@@ -8739,6 +8822,11 @@ mod tests {
         });
         let recs = super::synthesize_register_field_tables(&source_ir, None);
         assert_eq!(recs.len(), 1);
+        assert_eq!(
+            recs[0].size_bits,
+            Some(3),
+            "register width = max field MSb + 1"
+        );
         let f = &recs[0].fields[0];
         assert_eq!(f.field_name, "02:00");
         assert_eq!(
@@ -8746,12 +8834,31 @@ mod tests {
             (Some(2), Some(0)),
             "zero-padded range parses"
         );
+        assert_eq!(f.bit_width, Some(3), "field width = high - low + 1");
         assert_eq!(
             f.access_type.as_deref(),
             Some("WARL"),
             "free-form access kept"
         );
         Ok(())
+    }
+
+    #[test]
+    fn inline_field_enums_parse_only_value_literals() {
+        // binary/hex/Verilog literals become enums; bare integers / bit references / prose do not.
+        let e = super::parse_inline_field_enums("0b00: Idle, 0b01: Busy; 0x2 = Error");
+        let pairs: Vec<_> = e
+            .iter()
+            .map(|v| (v.value.as_str(), v.meaning.as_str()))
+            .collect();
+        assert_eq!(
+            pairs,
+            vec![("0b00", "Idle"), ("0b01", "Busy"), ("0x2", "Error")]
+        );
+        assert!(super::parse_inline_field_enums("0: disabled, 1: enabled").is_empty());
+        assert!(super::parse_inline_field_enums("set bit 0 to enable the channel").is_empty());
+        assert!(super::is_register_value_literal("2'b01"));
+        assert!(!super::is_register_value_literal("0"));
     }
 
     #[test]

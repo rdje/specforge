@@ -400,6 +400,10 @@ pub struct RegisterRecord {
     /// Byte offset from the block base address (hexadecimal string, e.g. "0x04").
     #[serde(skip_serializing_if = "Option::is_none")]
     pub offset_address: Option<String>,
+    /// Register width in bits when known (from a width column/caption, or the maximum field bit
+    /// extent). Flexible-register-model field (PDF-VARIANT-DIGESTION.2c).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub size_bits: Option<u32>,
     pub fields: Vec<RegisterFieldRecord>,
     pub supporting_statement_ids: Vec<String>,
     pub automation_confidence: AutomationConfidence,
@@ -409,17 +413,38 @@ pub struct RegisterRecord {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct RegisterFieldRecord {
     pub field_name: String,
+    /// Most-significant bit position of the field within the register.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub bits_high: Option<u32>,
+    /// Least-significant bit position — i.e. the field's OFFSET from the register's bit 0 (LSb).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub bits_low: Option<u32>,
-    /// Access type: RO, WO, RW, RC, RS, W1C, etc.
+    /// Field WIDTH in bits. A field is normally `(offset = bits_low, width)`; for a `[high:low]` range
+    /// this is `high - low + 1`, and a single-bit field has width 1. Flexible-register-model field
+    /// (PDF-VARIANT-DIGESTION.2c) so offset+width forms are representable, not only bit ranges.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub bit_width: Option<u32>,
+    /// Access type: RO, WO, RW, RC, RS, W1C, WARL, RAZ/WI, … — kept as a FREE string so any vendor's
+    /// notation is representable (flexible-register-model; PDF-VARIANT-DIGESTION.2c).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub access_type: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reset_value: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
+    /// Enumerated value encodings of this field (value → meaning), e.g. `0b00 → Idle`. Empty when the
+    /// field has no enumeration. Flexible-register-model field (PDF-VARIANT-DIGESTION.2c).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub enumerated_values: Vec<RegisterFieldEnumRecord>,
+}
+
+/// One enumerated value of a [`RegisterFieldRecord`] — a value literal and its meaning.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct RegisterFieldEnumRecord {
+    /// The value literal as written: `0b00`, `0x1`, `3`, `2'b01`, …
+    pub value: String,
+    /// What the value means.
+    pub meaning: String,
 }
 
 /// One timing constraint extracted from a timing parameter table.

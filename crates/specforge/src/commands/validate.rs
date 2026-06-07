@@ -7023,15 +7023,18 @@ mod tests {
             field_name: name.to_string(),
             bits_high: Some(hi),
             bits_low: Some(lo),
+            bit_width: Some(hi - lo + 1),
             access_type: None,
             reset_value: None,
             description: None,
+            enumerated_values: vec![],
         };
         // STATUS: fields [3:0] + [5:2] overlap on bits 2-3.
         evidence_ir.register_records = vec![RegisterRecord {
             register_id: "reg_status".to_string(),
             register_name: "STATUS".to_string(),
             offset_address: None,
+            size_bits: None,
             fields: vec![mk("A", 3, 0), mk("B", 5, 2)],
             supporting_statement_ids: vec![],
             automation_confidence: AutomationConfidence::Medium,

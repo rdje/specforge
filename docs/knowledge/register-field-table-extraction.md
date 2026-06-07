@@ -31,6 +31,16 @@ field; "Type" is the access col), `Offset|Bits|Field name|…|Attributes`; acces
 (legend rows) are dropped. Multi-strategy: the VLM (Qwen2.5VL on rendered table images) is the planned second
 strategy, best-wins-per-PDF ([[feedback_multi_strategy_best_wins]]).
 
-**Known follow-ups:** register NAME is synthetic (`register_table_NNNN`) when the table has no caption — the
-real name is often in a preceding heading (not yet wired); field VALUE ENUMERATIONS and register width/size
-are not yet modeled ([[project_flexible_register_model]]).
+**Flexible register model (.2c):** `RegisterRecord` carries `size_bits`; `RegisterFieldRecord` carries
+`bit_width` and `enumerated_values` (`RegisterFieldEnumRecord { value, meaning }`). A field is
+`name + offset (= bits_low, the LSb) + width` — range `[high:low]`, single bit, and offset+width forms all
+map; access/reset are FREE strings (any vendor notation). Populated deterministically where data exists:
+field width from `[high:low]`, register size from the max field MSb, inline enums parsed from binary/hex/
+Verilog literals in descriptions (`0b00: Idle`; bare-int and bit-reference forms are NOT mis-read). RISC-V's
+`Field|…` tables carry no inline bits (those live in separate layout tables) so width is honestly absent
+there; bits-bearing docs (e.g. NVMe, 45 such tables) populate it.
+
+**Known follow-ups:** register NAME from a preceding heading (synthetic `register_table_NNNN` today —
+Docling does not place tables in `content_elements` reading-order, so reliable heading association is deferred,
+not faked); block/base grouping; array/instance; cross-table field enum association
+([[project_flexible_register_model]]).
