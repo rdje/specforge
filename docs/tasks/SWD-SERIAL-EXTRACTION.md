@@ -77,16 +77,34 @@ extraction approach distinct from the parallel-bus signal-table path.
   `A`(2, request), `ACK`(3, acknowledge), `DATAIN`/`WDATA`/`RDATA`(32, data) — zero noise; parallel
   buses produce 0 `serial_frame_fields` and stay 100% on all 3 aspects. +4 hermetic tests; full
   `scripts/run_ci.sh` green. KM `[[swd-serial-frame-surface]]`.
-- ID: `SWD-SERIAL-EXTRACTION.4` · Status: `pending` · Goal: recover the DP/AP register-access interface from
-  the register_map/encoding tables (the architecture-side intent).
+- ID: `SWD-SERIAL-EXTRACTION.4` · Status: `done` (FSM states; transitions → `.4b`) · Goal: **extract the
+  protocol FSM (states).** Owner insight (`2026-06-07`): "SWD like JTAG is also described using a FSM …
+  that FSM is critical to the proper understanding and implementation of SWD/JTAG" — correct, and it is the
+  heart of SpecForge's purpose (IntentIR → `.isf` → FSMGen builds the `.fsm`). **Done:** added the typed
+  `ProtocolStateRecord` surface (machine_name + state_name + per-state action + supporting statements) to
+  `EvidenceIr` (serde-skip-if-empty); `extract_protocol_states` recognizes states by the "`<StateName>`
+  state" grammar (hyphen/slash-joined capitalized tokens — `looks_like_state_name`; grammar, not names,
+  ADR 0006), gated to documents describing a state machine ("state machine"/DBGTAPSM/"TAP controller");
+  captures the per-state action clause via `find_states_with_actions`. **Achieved on fresh ADI evidence:
+  the DBGTAPSM with 9 named TAP states + actions** — Capture-/Shift-/Update-IR, Capture-/Shift-/Update-DR,
+  Run-Test/Idle ("no special actions occur"), Test-Logic-Reset ("is the reset condition"). Parallel buses
+  emit 0 protocol_states and stay 100%; +4 hermetic tests; full `scripts/run_ci.sh` green. KM
+  `[[swd-protocol-fsm-surface]]`. Known minor artifact: a `Test-Logic/Reset` docling separator variant of
+  `Test-Logic-Reset` (the JTAG name uses hyphens) — dedup is a `.4b` refinement. NOTE: ISF must be able to
+  model an explicit FSM (states + transitions) elegantly for `.5` lowering — see the ISF-abstraction
+  feature-request check (owner: no hacks; raise an ISF feature request if a gap exists).
 - ID: `SWD-SERIAL-EXTRACTION.5` · Status: `pending` · Goal: build the SWD constraint/relation/temporal golds
   from real prose, measure, and fix to `P=R=F1=1.000` (per-fact), no parallel-bus regression.
 
 ## Current frontier
 
-- `SWD-SERIAL-EXTRACTION.4` — recover the DP/AP register-access interface from the register_map/encoding
-  tables (the architecture-side intent). (`.3`+`.3b` done: the serial-frame surface captures 7 ordered SWD
-  fields with bit-widths + ACK responses.) Then `.5` SWD golds → 100%.
+- `SWD-SERIAL-EXTRACTION.4b` — FSM **transitions** (the TMS-driven edges: state → state on a condition),
+  completing the FSM topology; + dedup the `Test-Logic/Reset` separator variant. (`.4` done: DBGTAPSM + 9
+  named states with actions.) Gated by the ISF-abstraction check (`.6`): the FSM must lower to ISF without
+  hacks. Then `.5` SWD golds → 100%.
+- `SWD-SERIAL-EXTRACTION.6` (owner directive, NEW) — verify ISF has the abstractions to model these
+  protocols (serial frame + FSM states/transitions) ELEGANTLY; if not, raise an ISF **feature request**
+  (no hacks). See `docs/decisions/` feature-request note.
 
 ## Decisions
 
@@ -109,6 +127,7 @@ extraction approach distinct from the parallel-bus signal-table path.
 - `.2`: fresh ADI evidence rebuild shows SWCLK/SWDIO/NSRST declared, SEE suppressed; APB/AHB/AXI constraints+relations all 1.000; +3 hermetic tests; full `scripts/run_ci.sh` green (1323 lib tests).
 - `.3`: fresh ADI evidence yields 5 clean frame fields (A/ACK/DATAIN/WDATA/RDATA with correct widths); parallel buses produce 0 serial_frame_fields and stay 100% on constraints+relations+temporal; +4 hermetic tests; full `scripts/run_ci.sh` green (1327 lib tests).
 - `.3b`: fresh ADI evidence yields 7 ordered frame fields (adds APnDP/RnW request bits + ACK resp=[FAULT,OK,WAIT] + order); parallel buses still 0 + 100%; +3 hermetic tests; full `scripts/run_ci.sh` green (1330 lib tests).
+- `.4`: fresh ADI evidence yields the DBGTAPSM with 9 named TAP states + per-state actions; parallel buses emit 0 protocol_states and stay 100%; +4 hermetic tests; full `scripts/run_ci.sh` green (1334 lib tests).
 
 ## Commit log
 
@@ -116,6 +135,7 @@ extraction approach distinct from the parallel-bus signal-table path.
 - `.2`: see the `SWD-SERIAL-EXTRACTION.2` commit (prose pin-appositive signal capture).
 - `.3`: see the `SWD-SERIAL-EXTRACTION.3` commit (typed serial-frame field surface).
 - `.3b`: see the `SWD-SERIAL-EXTRACTION.3b` commit (named request bits + ACK values + ordering).
+- `.4`: see the `SWD-SERIAL-EXTRACTION.4` commit (typed protocol-FSM state surface).
 
 ## Changelog
 

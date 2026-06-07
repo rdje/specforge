@@ -192,6 +192,11 @@ pub struct EvidenceIr {
     /// untouched. Empty (serde-skipped) for non-serial documents.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub serial_frame_fields: Vec<SerialFrameField>,
+    /// SWD-SERIAL-EXTRACTION.4: the protocol FSM states (the JTAG TAP / SWD line state machine). The
+    /// FSM is critical to understanding/implementing SWD/JTAG and is what FSMGen ultimately builds.
+    /// Empty (serde-skipped) for documents without a described state machine.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub protocol_states: Vec<ProtocolStateRecord>,
 }
 
 /// SWD-SERIAL-EXTRACTION.3: one field of a serial protocol frame (e.g. SWD `ACK[2:0]`, `WDATA[0:31]`,
@@ -234,6 +239,27 @@ pub enum SerialFramePhase {
     Acknowledge,
     /// The data transfer phase (read/write data + parity).
     Data,
+}
+
+/// SWD-SERIAL-EXTRACTION.4: one state of a protocol FSM. SWD and JTAG are *defined* by a state machine
+/// (the JTAG TAP controller / SWD line protocol) — and the FSM is the heart of SpecForge's purpose
+/// (IntentIR → `.isf` → FSMGen builds the `.fsm`). Each record is a named state with its machine and
+/// per-state action. Transitions (the TMS-driven edges) are `SWD-SERIAL-EXTRACTION.4b`.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ProtocolStateRecord {
+    /// Stable id, e.g. `protocol_state_0003`.
+    pub state_id: String,
+    /// The state machine this state belongs to (e.g. `DBGTAPSM`), when named.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub machine_name: Option<String>,
+    /// The state name as written (e.g. `Shift-DR`, `Run-Test/Idle`, `Test-Logic-Reset`).
+    pub state_name: String,
+    /// What happens in this state ("data is transferred from DBGTDI to DBGTDO …"), when stated.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub action: Option<String>,
+    /// Statements that evidenced this state.
+    #[serde(default)]
+    pub supporting_statement_ids: Vec<String>,
 }
 
 /// R15c: typed accounting for the EvidenceIR convergent anchored-rescan loop.
@@ -718,6 +744,10 @@ impl EvidenceIr {
         // a typed surface distinct from constraints/relations/temporal. No-op for parallel buses.
         let serial_frame_fields = extract_serial_frame_fields(&extracted_statements);
 
+        // SWD-SERIAL-EXTRACTION.4: recover the protocol FSM states (the JTAG TAP / SWD line state
+        // machine). The FSM is the heart of SWD/JTAG and what FSMGen builds. No-op for non-FSM docs.
+        let protocol_states = extract_protocol_states(&extracted_statements);
+
         // PER-EXTRACTOR-FACT-TAGGING: tag every fact produced by the structural
         // pattern tier (the convergent build loop above) as `Pattern`, computed
         // before the move into the struct literal. The LLM tiers tag their finds
@@ -767,6 +797,7 @@ impl EvidenceIr {
             convergence_report: Some(convergence_report),
             fact_provenance,
             serial_frame_fields,
+            protocol_states,
         };
         evidence_ir.carry_forward_existing_knowledge()?;
         evidence_ir.refresh_signal_semantic_hints()?;
@@ -7069,6 +7100,115 @@ fn extract_ack_response_values(statements: &[ExtractedStatement]) -> Vec<String>
     values
 }
 
+/// SWD-SERIAL-EXTRACTION.4 — extract the protocol FSM states (the JTAG TAP / SWD line state machine).
+/// Gated to documents that describe a state machine ("state machine" / DBGTAPSM / "TAP controller"), so
+/// non-FSM specs produce nothing. States are recognized by the "`<StateName>` state" grammar where the
+/// name is a hyphen/slash-joined capitalized token (Shift-DR, Run-Test/Idle, Test-Logic-Reset) — grammar,
+/// not names (ADR 0006). The per-state action is the clause that follows ("In the Shift-DR state, <action>").
+fn extract_protocol_states(statements: &[ExtractedStatement]) -> Vec<ProtocolStateRecord> {
+    let has_state_machine = statements.iter().any(|s| {
+        let l = s.text.to_ascii_lowercase();
+        l.contains("state machine") || l.contains("dbgtapsm") || l.contains("tap controller")
+    });
+    if !has_state_machine {
+        return Vec::new();
+    }
+    let machine_name = statements
+        .iter()
+        .any(|s| s.text.contains("DBGTAPSM"))
+        .then(|| "DBGTAPSM".to_string());
+    let mut out: Vec<ProtocolStateRecord> = Vec::new();
+    let mut index_by_name: BTreeMap<String, usize> = BTreeMap::new();
+    let mut counter = 0usize;
+    for statement in statements {
+        let lower = statement.text.to_ascii_lowercase();
+        // State-machine context: a statement that talks about the TAP / state machine / scan chain.
+        let in_context = lower.contains("dbgtapsm")
+            || lower.contains("tap")
+            || lower.contains("state machine")
+            || lower.contains("scan chain")
+            || lower.contains(" tck")
+            || lower.contains("instruction register")
+            || lower.contains("data register");
+        if !in_context {
+            continue;
+        }
+        for (name, action) in find_states_with_actions(&statement.text) {
+            if let Some(&idx) = index_by_name.get(&name) {
+                let state = &mut out[idx];
+                if state.action.is_none() {
+                    state.action = action;
+                }
+                if !state
+                    .supporting_statement_ids
+                    .contains(&statement.statement_id)
+                {
+                    state
+                        .supporting_statement_ids
+                        .push(statement.statement_id.clone());
+                }
+                continue;
+            }
+            counter += 1;
+            index_by_name.insert(name.clone(), out.len());
+            out.push(ProtocolStateRecord {
+                state_id: format!("protocol_state_{counter:04}"),
+                machine_name: machine_name.clone(),
+                state_name: name,
+                action,
+                supporting_statement_ids: vec![statement.statement_id.clone()],
+            });
+        }
+    }
+    out
+}
+
+/// Find FSM states in text via "`<StateName>` state" → (state_name, optional action clause). The state
+/// name is the hyphen/slash-joined capitalized token immediately before the word "state"; the action is
+/// the clause that follows a comma after it, up to the sentence end.
+fn find_states_with_actions(text: &str) -> Vec<(String, Option<String>)> {
+    let mut out = Vec::new();
+    let words: Vec<&str> = text.split_whitespace().collect();
+    for i in 1..words.len() {
+        if words[i].trim_end_matches([',', '.', ':', ';']) != "state" {
+            continue;
+        }
+        let cand = words[i - 1]
+            .trim_matches(|c: char| !(c.is_ascii_alphanumeric() || c == '-' || c == '/'));
+        if !looks_like_state_name(cand) {
+            continue;
+        }
+        let marker = format!("{cand} state");
+        let action = text.find(&marker).and_then(|p| {
+            let after = text[p + marker.len()..].trim_start();
+            let after = after.strip_prefix(',').unwrap_or(after).trim_start();
+            let end = after.find(". ").unwrap_or(after.len());
+            let clause = after[..end].trim().trim_end_matches('.').trim();
+            (clause.len() >= 4).then(|| clause.to_string())
+        });
+        out.push((cand.to_string(), action));
+    }
+    out
+}
+
+/// A protocol state name is a hyphen/slash-joined sequence of capitalized parts (e.g. `Shift-DR`,
+/// `Run-Test/Idle`, `Test-Logic-Reset`). Single plain words ("reset", "this") are not state names.
+fn looks_like_state_name(tok: &str) -> bool {
+    if !(tok.contains('-') || tok.contains('/')) {
+        return false;
+    }
+    let parts: Vec<&str> = tok.split(['-', '/']).collect();
+    parts.len() >= 2
+        && parts.iter().all(|p| {
+            !p.is_empty()
+                && p.chars()
+                    .next()
+                    .map(|c| c.is_ascii_uppercase())
+                    .unwrap_or(false)
+                && p.chars().all(|c| c.is_ascii_alphanumeric())
+        })
+}
+
 /// Parse `NAME[hi:lo]` bit-range fields from text → (name, hi, lo) for each. NAME is the identifier
 /// immediately before `[` (first char a letter); hi/lo are decimal indices (spaces tolerated).
 fn parse_bit_range_fields(text: &str) -> Vec<(String, u32, u32)> {
@@ -13045,5 +13185,83 @@ mod swd_serial_extraction_3b {
             req < ack && ack < data,
             "request<ack<data: req={req} ack={ack} data={data}"
         );
+    }
+}
+
+#[cfg(test)]
+mod swd_serial_extraction_4 {
+    //! SWD-SERIAL-EXTRACTION.4 — protocol FSM state extraction (the JTAG TAP / SWD line state machine).
+    use super::*;
+
+    fn stmt(id: &str, text: &str) -> ExtractedStatement {
+        ExtractedStatement {
+            statement_id: id.to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        }
+    }
+
+    #[test]
+    fn recognizes_state_names() {
+        assert!(looks_like_state_name("Shift-DR"));
+        assert!(looks_like_state_name("Run-Test/Idle"));
+        assert!(looks_like_state_name("Test-Logic-Reset"));
+        assert!(!looks_like_state_name("reset"));
+        assert!(!looks_like_state_name("this"));
+        assert!(!looks_like_state_name("low-level")); // lowercase parts → not a state
+    }
+
+    #[test]
+    fn extracts_state_and_action() {
+        let got = find_states_with_actions(
+            "In the Shift-DR state, data is transferred from DBGTDI to DBGTDO.",
+        );
+        assert_eq!(got.len(), 1);
+        assert_eq!(got[0].0, "Shift-DR");
+        assert_eq!(
+            got[0].1.as_deref(),
+            Some("data is transferred from DBGTDI to DBGTDO")
+        );
+    }
+
+    #[test]
+    fn extracts_tap_states_with_machine_name() {
+        let stmts = vec![
+            stmt(
+                "m",
+                "The debug port includes a Debug TAP State Machine (DBGTAPSM).",
+            ),
+            stmt(
+                "s",
+                "While the DBGTAPSM is in the Shift-IR state, the IR scan chain advances.",
+            ),
+            stmt(
+                "u",
+                "When the DBGTAPSM goes through the Update-DR state, the value is transferred.",
+            ),
+        ];
+        let states = extract_protocol_states(&stmts);
+        let names: Vec<&str> = states.iter().map(|s| s.state_name.as_str()).collect();
+        assert!(
+            names.contains(&"Shift-IR") && names.contains(&"Update-DR"),
+            "got {names:?}"
+        );
+        assert!(
+            states
+                .iter()
+                .all(|s| s.machine_name.as_deref() == Some("DBGTAPSM"))
+        );
+    }
+
+    #[test]
+    fn non_state_machine_doc_yields_nothing() {
+        let stmts = vec![stmt(
+            "x",
+            "The Manager drives HTRANS during the data phase.",
+        )];
+        assert!(extract_protocol_states(&stmts).is_empty());
     }
 }

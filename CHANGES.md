@@ -2,6 +2,18 @@
 
 ## 2026-06-07
 
+### `SWD-SERIAL-EXTRACTION.4` — extract the protocol FSM (the JTAG TAP / SWD state machine)
+Owner insight: "SWD like JTAG is also described using a FSM … critical to the proper understanding and
+implementation of SWD/JTAG" — and it is the heart of SpecForge's purpose (IntentIR → `.isf` → FSMGen builds
+the `.fsm`). Added the typed `ProtocolStateRecord` surface (machine_name + state_name + per-state action) to
+`EvidenceIr`; `extract_protocol_states` recognizes states by the "`<StateName>` state" grammar
+(hyphen/slash-joined capitalized tokens — `looks_like_state_name`; grammar, not names, ADR 0006), gated to
+documents describing a state machine. Result on real ADI evidence: the **DBGTAPSM** with **9 named TAP
+states + actions** (Capture-/Shift-/Update-IR, Capture-/Shift-/Update-DR, Run-Test/Idle, Test-Logic-Reset).
+Parallel buses emit 0 protocol_states and stay 100%; +4 hermetic tests; full `scripts/run_ci.sh` green (1334
+lib tests). KM `swd-protocol-fsm-surface`. Frontier `.4b` (FSM transitions) + `.6` (ensure ISF can model the
+FSM/serial-frame elegantly or raise an ISF feature request — owner: no hacks).
+
 ### `SWD-SERIAL-EXTRACTION.3b` — enrich the frame: named request bits, ACK values, ordering
 Added `order` + `response_values` to `SerialFrameField`. `parse_named_bit_list` mines "the N bits X, Y and
 Z" (prose explicitly labels them "bits" → grammar, not names) so the mixed-case `APnDP`/`RnW` request bits
