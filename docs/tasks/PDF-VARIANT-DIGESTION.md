@@ -97,6 +97,10 @@ grid-repair demo on a bits-bearing doc; giants' ingest budget; USB 3.2 evid-fail
 
 ## Current frontier
 
+**ACTIVE FRONTIER (`2026-06-08`): `PDF-VARIANT-DIGESTION.4a.1`** — register-field per-fact eval surface, the
+first executable child of the `.4a` precision-verification split (see "Planned next"). The `.2`–`.3b` leaves
+below are DONE (Lever A + B); `.4`–`.8` are the "make the breadth trustworthy" program.
+
 - `PDF-VARIANT-DIGESTION.2` (Lever A, deterministic strategy) — **DONE**: `synthesize_register_field_tables`
   recovers register-FIELD tables the classifier left `unknown` (header-in-body `Field|Description|Access|
   Reset`, `Bits|Type|Reset|Description`, …) → `RegisterRecord`s. Designed from a corpus survey of real
@@ -166,12 +170,34 @@ fields / 3,077 relations) but only **4/74 (5%) have verified precision** (APB/AH
 through-line for these leaves: make the breadth TRUSTWORTHY (objectively measured, no faking) before widening
 it further. Priority order ① → ⑤.
 
-- ID: `PDF-VARIANT-DIGESTION.4` · Status: `pending` · **① Correctness/precision verification of the broadened
+- ID: `PDF-VARIANT-DIGESTION.4` · Status: `active` · **① Correctness/precision verification of the broadened
   extraction** (the 95% that is coverage-only). Children:
-  - ID: `PDF-VARIANT-DIGESTION.4a` · Status: `pending` · Goal: sample-gold the new surfaces (register fields,
-    prose signals) on ~5–8 diverse in-scope docs (CCIX, NVMe, RISC-V IOMMU/Debug, OpenCAPI, a GIC/CoreSight
-    TRM); score per-fact with WIRE-BASED-100 rigor. Accept: per-fact P/R/F1 reported per doc; gold facts
-    independently verified against the source (no faking, [[feedback_scoring_rigor]]).
+  - ID: `PDF-VARIANT-DIGESTION.4a` · Status: `active` · Goal: sample-gold the new surfaces (register fields,
+    prose signals) on diverse in-scope docs whose PDFs are git-tracked in `corpus/` (so the gold is
+    reproducible + independently verifiable); score per-fact with WIRE-BASED-100 rigor. **SPLIT `2026-06-08`:**
+    the eval scorer (`eval.rs` / `commands/eval_extraction.rs`) has NO register-field or declared-signal task
+    yet — a real lower-level dependency, so the eval SURFACE is built first (additive, hermetic), THEN per-doc
+    gold on FRESH re-ingested evidence (the eval scores persisted evidence — [[eval-scores-persisted-evidence]]).
+    In-corpus docs that exercise the new surfaces: RISC-V Debug + NVMe (register fields, `.2`/`.2c`), I2C
+    (prose signals, `.3a`). Children:
+    - ID: `PDF-VARIANT-DIGESTION.4a.1` · Status: `in_progress` · Goal: register-field per-fact EVAL SURFACE —
+      `EvalTask::RegisterField` + `GoldFact::RegisterField {register, field, bits_high?, bits_low?, bit_width?}`
+      + a canonical key (normalize to `register|field|offset|width`) + `index_register_field_predictions` + an
+      `extract_on_copy` branch reading EvidenceIR `register_records` (deterministic, like the SWD surfaces).
+      Acceptance: additive (no extraction-behavior change); gold↔record key-match + closed-world scoring
+      hermetic tests; full `run_ci.sh` green; APB/AHB/AXI/SWD eval unaffected.
+    - ID: `PDF-VARIANT-DIGESTION.4a.2` · Status: `pending` · Goal: RISC-V Debug register-field gold — author an
+      independently source-verified gold for a bounded set of RISC-V Debug registers (e.g. `dmcontrol`,
+      `dmstatus`, `abstractcs`) from the `corpus/` PDF, FRESH re-ingest (`DOCLING_DEVICE=cpu`), measure per-fact
+      P/R/F1. Acceptance: each gold field checked against the source table (no faking, [[feedback_scoring_rigor]]).
+    - ID: `PDF-VARIANT-DIGESTION.4a.3` · Status: `pending` · Goal: NVMe register-field gold — same rigor on a
+      diverse vendor/layout (NVMe controller registers) from the `corpus/` PDF; measure per-fact P/R/F1.
+    - ID: `PDF-VARIANT-DIGESTION.4a.4` · Status: `pending` · Goal: declared-signal (prose-capture) per-fact EVAL
+      SURFACE — `EvalTask::DeclaredSignal` + `GoldFact::DeclaredSignal {signal, direction?}` + key + indexer +
+      an `extract_on_copy` branch reading the EvidenceIR signal inventory. Acceptance: additive; hermetic
+      tests; CI green.
+    - ID: `PDF-VARIANT-DIGESTION.4a.5` · Status: `pending` · Goal: I2C prose-signal gold — independently
+      source-verified gold for the I2C prose signals (SDA/SCL/…) from the `corpus/` PDF; measure per-fact P/R/F1.
   - ID: `PDF-VARIANT-DIGESTION.4b` · Status: `pending` · Goal: automated proposer/verifier AUDIT — re-read a
     random sample of extracted registers/signals against their table IMAGE with the VLM (the `.2b`
     consistency gate run as an audit) → a corpus-scale precision ESTIMATE + a flagged-mismatch list. Accept:
@@ -225,6 +251,11 @@ set, not the whole doc/corpus.
 ## Changelog
 
 - `2026-06-07`: Created (owner high-priority directive — digest any chip-spec PDF). `.1` triage sweep in flight.
+- `2026-06-08`: Split `.4a` (precision verification) into `.4a.1`–`.4a.5` — the eval scorer has no
+  register-field/declared-signal task yet (a real lower-level dependency, PNT split rule). `.4` + `.4a` →
+  `active`; `.4a.1` (register-field eval surface) → `in_progress` and onto the frontier. Scope kept to
+  in-corpus reproducible docs (RISC-V Debug, NVMe, I2C) so gold is independently verifiable, not the
+  owner-library-only CCIX/OpenCAPI/GIC.
 
 ## Tooling + multi-strategy (`2026-06-07`)
 
