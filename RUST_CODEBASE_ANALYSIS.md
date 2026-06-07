@@ -4,6 +4,38 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-06-08 ramp-up currency correction — command + IR-module + size + test inventory)
+
+State verified directly from the working tree at HEAD `67aee533` (fully pushed; `origin/main..HEAD`
+= 0). This entry refreshes four counts that drifted as the downstream extraction/eval/NLI command
+family and its supporting IR modules landed between `2026-05-30` and `2026-06-08`. Older dated
+sections below are preserved as historical record; where they cite smaller counts they are
+superseded by this entry. No architecture claim below is reversed — `IrStage` is still the same
+five stages, `.isf` via `IsfIr` is still the sole adapter target, and the Ollama+Qwen2.5VL
+LLM/VLM provider is still production-default.
+
+- **Command surface = 25 subcommands** (`crates/specforge/src/cli.rs` `enum Commands`, dispatched
+  in `lib.rs`), not 17. The 2026-05-30 entry's list of 17 predates the extraction/eval family added
+  since: `extract-contracts`, `signal-resolve`, `eval-extraction`, `nli-verify`, `grits-consensus`,
+  `entity-type`, `extract-conditions`, `extract-constraints-llm` (plus the already-listed core 17).
+  `commands/mod.rs` also carries `pub(crate) mod llm_text` (a shared text-chat transport helper, not
+  a subcommand).
+- **IR namespace = 24 modules** (`crates/specforge/src/ir/mod.rs`), not 14. Beyond the seven R16
+  modules, the measurement/extraction work added: `completeness`, `condition_extract`,
+  `constraint_extract_llm`, `entity_typing`, `extraction_filters`, `nli_verify`,
+  `nlp_relation_extract`, `normative_vocab`, `ambiguity`, `temporal_ltl` (plus `prior_memory` and
+  `adapters`). Still a typed layer over the four IR stages — no sixth stage.
+- **Whole `crates/specforge/src` ≈ 103,200 lines** (single workspace crate, edition 2024), up from
+  the ~88.7K cited on 2026-05-29.
+- **`cargo test -p specforge --lib` = 1360 passing, 0 failed, 0 ignored** (the canonical validation
+  command). Any earlier `1014`/`666` counts below are historical.
+- **Eval/gold infrastructure** (load-bearing for the active `PDF-VARIANT-DIGESTION` precision lane):
+  the pure scorer is `crates/specforge/src/eval.rs` (`EvalTask`/`GoldFact`/`score_dataset` +
+  `score_dataset_source_tolerant`); the runner is `commands/eval_extraction.rs`; committed gold
+  seeds live under `crates/specforge/test_data/llm_eval/seed_*.json`. A new surface is wired by
+  adding an `EvalTask` arm + a `GoldFact` variant + a canonical-key fn + a prediction indexer + an
+  `extract_on_copy` branch, mirrored by a `committed_*_seed_loads_and_validates` regression test.
+
 ## Session update (2026-05-30 ramp-up currency correction — LLM/VLM provider + command surface)
 
 State verified directly from the working tree. This entry corrects three stale
