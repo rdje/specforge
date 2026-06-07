@@ -37,3 +37,12 @@ Known minor artifact: a `Test-Logic/Reset` separator variant of `Test-Logic-Rese
 hyphenated JTAG name with a slash) — dedup is a `.4b` refinement. Follow-ons: `.4b` FSM **transitions**
 (TMS-driven edges); `.6` ensure **ISF can model the FSM elegantly** (states + transitions) or raise an ISF
 feature request (owner: no hacks). Builds on `[[swd-serial-frame-surface]]`, `[[prose-pin-appositive-signal-capture]]`.
+
+**`.4d` SWD line state machine** — `extract_swd_line_states` extends `protocol_states` with
+`machine_name="SWD line state machine"`: the SWD LINE states (Reset, Protocol error, Lockout, Dormant)
+are lowercase 1–2-word names introduced by a transition verb ("enters the protocol error state", "must
+enter the reset state", "into the dormant state"). Verb-gated + a per-statement SWD-context gate keeps
+these distinct from the processor "Debug state" (execution mode). Edge timing (target samples & drives
+SWDIO on the rising SWCLK edge, B4.3.1) is a derivable single fact (statement_1948). So the SWD protocol
+FSM is now derived at both levels: the packet micro-sequence (`[[swd-serial-frame-surface]]`) and the line
+macro-FSM.

@@ -158,8 +158,15 @@ WDATA/RDATA — MISSING Start/Parity/Stop/Park, no direction/sequence/turnaround
   no-data; FAULT → 2-phase no-data** (exactly the spec). +2 hermetic tests; parallel buses emit 0
   swd_operations; CI green. The SWD packet protocol (fields + widths + phase + order + SWDIO direction +
   response branching + turnaround) is now fully derived. **`.4b` DONE.**
-- `SWD-SERIAL-EXTRACTION.4d` — the **line state machine** (reset/operating/protocol-error/lockout/dormant) +
-  edge timing (sample & drive on rising SWCLK, B4.3.1) + line-reset + parity/protocol-error rules.
+- `SWD-SERIAL-EXTRACTION.4d` — **DONE (line states).** Added `extract_swd_line_states` (extends
+  `protocol_states` with `machine_name="SWD line state machine"`): the SWD LINE states are lowercase 1–2-word
+  names introduced by a transition verb — "(enter|enters|into|leave|leaves) [the] `<name>` state". On fresh
+  ADI evidence: **Reset, Protocol error, Lockout, Dormant** (+ a "Line reset" near-dup). Verb-gated + a
+  per-statement SWD-context gate (swd/sw-dp/line/target/interface/protocol) drops the processor "Debug
+  state" (execution mode, not a line state). +2 hermetic tests; parallel buses emit 0 SWD-line states; CI
+  green. **Edge timing** (target samples & drives SWDIO on the rising SWCLK edge, B4.3.1) is derivable from
+  `statement_1948` (documented; a typed timing surface deferred as a single fact). `operating` (the implicit
+  normal state) is phrased "transition to …" and not verb-captured — minor.
 - `SWD-SERIAL-EXTRACTION.5` — DONE for the (minor) measurable scores: `seed_swd.json` constraint + relation
   `P=R=F1=1.000` (sparse clean set; garbage actors filtered). Temporal not pursued (SWD intent is the FSM).
 

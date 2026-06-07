@@ -2,6 +2,16 @@
 
 ## 2026-06-07
 
+### `SWD-SERIAL-EXTRACTION.4d` — the SWD line state machine
+Added `extract_swd_line_states` (extends `protocol_states`, machine_name="SWD line state machine"): the SWD
+LINE states (Reset, Protocol error, Lockout, Dormant) are extracted from transition-verb phrasings
+"(enter|enters|into|leave|leaves) [the] <name> state", verb-gated + a per-statement SWD-context gate that
+drops the processor "Debug state" (execution mode, not a line state). On fresh ADI evidence: Reset /
+Protocol error / Lockout / Dormant (+ a Line reset near-dup). Edge timing (sample & drive on rising SWCLK,
+B4.3.1) is a derivable single fact (statement_1948). +2 hermetic tests; parallel buses emit 0 SWD-line
+states; full scripts/run_ci.sh green. The SWD protocol FSM is now derived at both levels (packet
+micro-sequence + line macro-FSM).
+
 ### `SWD-SERIAL-EXTRACTION.4b` (response branching) — the SWD packet FSM topology
 Added the `SwdOperation` surface + `extract_swd_operations`: the response-branched packet phase sequences
 derived from "a successful <read|write> operation consists of three phases" / "A <WAIT|FAULT> response ...

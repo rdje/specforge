@@ -792,9 +792,11 @@ impl EvidenceIr {
         // a typed surface distinct from constraints/relations/temporal. No-op for parallel buses.
         let serial_frame_fields = extract_serial_frame_fields(&extracted_statements);
 
-        // SWD-SERIAL-EXTRACTION.4: recover the protocol FSM states (the JTAG TAP / SWD line state
-        // machine). The FSM is the heart of SWD/JTAG and what FSMGen builds. No-op for non-FSM docs.
-        let protocol_states = extract_protocol_states(&extracted_statements);
+        // SWD-SERIAL-EXTRACTION.4/.4d: recover the protocol FSM states — the JTAG TAP states plus the
+        // SWD LINE state machine (reset/operating/protocol-error/lockout/dormant). The FSM is the heart
+        // of SWD/JTAG and what FSMGen builds. No-op for non-FSM/non-serial docs.
+        let mut protocol_states = extract_protocol_states(&extracted_statements);
+        protocol_states.extend(extract_swd_line_states(&extracted_statements));
 
         // SWD-SERIAL-EXTRACTION.4b: recover the SWD packet operations (response branching: OK→3-phase,
         // WAIT/FAULT→2-phase, + turnaround model). No-op for non-serial docs.
@@ -7377,6 +7379,118 @@ fn extract_protocol_states(statements: &[ExtractedStatement]) -> Vec<ProtocolSta
     out
 }
 
+/// SWD-SERIAL-EXTRACTION.4d — extract the SWD LINE state machine (reset / operating / protocol-error /
+/// lockout / dormant). Unlike the JTAG TAP states, these are lowercase 1–2-word names introduced by a
+/// transition verb: "(enter|enters|into|leave|leaves) [the] `<name>` state". The verb gate keeps real
+/// state transitions and rejects generic "the current/same state" mentions. Gated to serial documents.
+/// Grammar, not names (ADR 0006).
+fn extract_swd_line_states(statements: &[ExtractedStatement]) -> Vec<ProtocolStateRecord> {
+    let is_serial_doc = statements.iter().any(|s| {
+        let l = s.text.to_ascii_lowercase();
+        l.contains("serial wire") || l.contains("packet request") || l.contains("swdio")
+    });
+    if !is_serial_doc {
+        return Vec::new();
+    }
+    let generic = |w: &str| {
+        matches!(
+            w,
+            "this"
+                | "that"
+                | "current"
+                | "same"
+                | "known"
+                | "correct"
+                | "next"
+                | "previous"
+                | "given"
+                | "right"
+                | "wrong"
+                | "following"
+                | "above"
+                | "below"
+                | "new"
+                | "other"
+        )
+    };
+    let mut out: Vec<ProtocolStateRecord> = Vec::new();
+    let mut seen: BTreeSet<String> = BTreeSet::new();
+    let mut counter = 0usize;
+    for statement in statements {
+        // Per-statement SWD-interface context: the ADI doc also describes the PROCESSOR "Debug state"
+        // (execution mode) — gate to SWD/SW-DP line context so that is not mistaken for a line state.
+        let lower = statement.text.to_ascii_lowercase();
+        if !(lower.contains("swd")
+            || lower.contains("sw-dp")
+            || lower.contains("line")
+            || lower.contains("target")
+            || lower.contains("interface")
+            || lower.contains("protocol"))
+        {
+            continue;
+        }
+        let words: Vec<String> = statement
+            .text
+            .split_whitespace()
+            .map(|w| {
+                w.trim_matches(|c: char| !c.is_ascii_alphanumeric())
+                    .to_string()
+            })
+            .collect();
+        for i in 0..words.len() {
+            if !matches!(
+                words[i].to_ascii_lowercase().as_str(),
+                "enter" | "enters" | "into" | "leave" | "leaves"
+            ) {
+                continue;
+            }
+            let mut k = i + 1;
+            if words
+                .get(k)
+                .is_some_and(|w| w.eq_ignore_ascii_case("the") || w.eq_ignore_ascii_case("a"))
+            {
+                k += 1;
+            }
+            let mut name: Vec<String> = Vec::new();
+            while k < words.len() && name.len() < 2 {
+                let t = words[k].to_ascii_lowercase();
+                if t == "state" {
+                    break;
+                }
+                if t.len() >= 3 && t.chars().all(|c| c.is_ascii_alphabetic()) && !generic(&t) {
+                    name.push(t);
+                    k += 1;
+                } else {
+                    break;
+                }
+            }
+            if name.is_empty()
+                || !words
+                    .get(k)
+                    .is_some_and(|w| w.eq_ignore_ascii_case("state"))
+            {
+                continue;
+            }
+            let mut state_name = name.join(" ");
+            if let Some(first) = state_name.get_mut(0..1) {
+                first.make_ascii_uppercase();
+            }
+            if !seen.insert(state_name.clone()) {
+                continue;
+            }
+            counter += 1;
+            out.push(ProtocolStateRecord {
+                state_id: format!("swd_line_state_{counter:04}"),
+                machine_name: Some("SWD line state machine".to_string()),
+                state_name,
+                action: None,
+                supporting_statement_ids: vec![statement.statement_id.clone()],
+            });
+        }
+    }
+    out
+}
+
 /// Find FSM states in text via "`<StateName>` state" → (state_name, optional action clause). The state
 /// name is the hyphen/slash-joined capitalized token immediately before the word "state"; the action is
 /// the clause that follows a comma after it, up to the sentence end.
@@ -13815,5 +13929,72 @@ mod swd_serial_extraction_4b_ops {
             "A write operation consists of three phases on the AHB bus.",
         )];
         assert!(extract_swd_operations(&stmts).is_empty());
+    }
+}
+
+#[cfg(test)]
+mod swd_serial_extraction_4d {
+    //! SWD-SERIAL-EXTRACTION.4d — the SWD LINE state machine (reset/protocol-error/lockout/dormant).
+    use super::*;
+
+    fn stmt(id: &str, text: &str) -> ExtractedStatement {
+        ExtractedStatement {
+            statement_id: id.to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        }
+    }
+
+    #[test]
+    fn extracts_line_states_with_verb_and_context() {
+        let stmts = vec![
+            stmt(
+                "ctx",
+                "The SWD interface uses a single bidirectional data pin, SWDIO.",
+            ),
+            stmt(
+                "pe",
+                "On detecting a protocol error, the SW-DP target enters the protocol error state.",
+            ),
+            stmt(
+                "lo",
+                "If the target detects more errors, it enters the lockout state.",
+            ),
+            stmt(
+                "rs",
+                "When the SWD interface detects a line reset, it must enter the reset state.",
+            ),
+            stmt("dm", "The host places the target into the dormant state."),
+        ];
+        let states = extract_swd_line_states(&stmts);
+        let names: Vec<&str> = states.iter().map(|s| s.state_name.as_str()).collect();
+        for want in ["Protocol error", "Lockout", "Reset", "Dormant"] {
+            assert!(names.contains(&want), "missing {want}: got {names:?}");
+        }
+        assert!(
+            states
+                .iter()
+                .all(|s| s.machine_name.as_deref() == Some("SWD line state machine"))
+        );
+    }
+
+    #[test]
+    fn processor_debug_state_is_not_a_line_state() {
+        // No SWD context → the processor "Debug state" must not become a line state.
+        let stmts = vec![
+            stmt("c", "A packet request is sent over SWDIO."),
+            stmt(
+                "d",
+                "Facilities allow an external system to force the processor to enter Debug state.",
+            ),
+        ];
+        let names: Vec<String> = extract_swd_line_states(&stmts)
+            .into_iter()
+            .map(|s| s.state_name)
+            .collect();
+        assert!(!names.iter().any(|n| n == "Debug"), "got {names:?}");
     }
 }
