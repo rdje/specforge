@@ -5692,13 +5692,20 @@ fn infer_signal_direction_from_section(
 }
 
 /// Returns true if the token looks like a hardware signal name:
-/// all-uppercase with optional digits and underscores, at least 2 chars.
+/// all-uppercase with optional digits and underscores, at least 2 chars, and STARTING WITH A
+/// LETTER. The leading-letter rule drops binary/number literals like `0B0`/`0B1` (which pass the
+/// uppercase-or-digit test via the `B`) that a value cell otherwise mis-declares as a signal —
+/// real signal identifiers always start with a letter (WIRE-BASED-100.5j).
 pub(crate) fn is_hardware_signal_token(token: &str) -> bool {
     token.len() >= 2
         && token
             .chars()
+            .next()
+            .map(|c| c.is_ascii_uppercase())
+            .unwrap_or(false)
+        && token
+            .chars()
             .all(|c| c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_')
-        && token.chars().any(|c| c.is_ascii_uppercase())
 }
 
 /// Level 2 NLP — Extract `SignalConstraintRecord` entries from `SignalValueConstraint` sentences.
@@ -6494,6 +6501,10 @@ pub(crate) fn is_signal_synthesis_non_signal(token: &str) -> bool {
             | "PROTECTED"
             | "INDICATES"
             | "STREAM"
+            // Direction / generic words seen leaking from the ADI/SWD architecture spec.
+            | "IN"
+            | "OUT"
+            | "LEVEL"
     )
 }
 
@@ -11895,6 +11906,18 @@ mod tests {
     #[test]
     fn is_hardware_signal_token_rejects_no_uppercase_letter() {
         assert!(!is_hardware_signal_token("123_456"));
+    }
+
+    #[test]
+    fn is_hardware_signal_token_rejects_number_led_literals() {
+        // WIRE-BASED-100.5j: binary/number literals lead with a digit (they pass the
+        // uppercase-or-digit test via an embedded letter) — a value cell must not be a signal name.
+        assert!(!is_hardware_signal_token("0B0"));
+        assert!(!is_hardware_signal_token("0B1"));
+        assert!(!is_hardware_signal_token("0X1F"));
+        // A real signal that merely ends in a digit still passes (leads with a letter).
+        assert!(is_hardware_signal_token("HSEL0"));
+        assert!(is_hardware_signal_token("PSEL1"));
     }
 
     #[test]

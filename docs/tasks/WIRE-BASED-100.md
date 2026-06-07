@@ -378,8 +378,23 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   tests; APB/AHB stay 100%; full `scripts/run_ci.sh` green. KM `[[axi-channel-structure]]`,
   `[[axi-constraint-subject-must-be-declared]]`. Three wire-based specs (APB/AHB/AXI) fully done; SWD/ADI
   = `.5j`.
-- ID: `WIRE-BASED-100.5j` · Status: `pending` · Goal: **SWD/ADI to 100%** (the serial-debug wire-based
-  spec) — same playbook on `corpus/arm/debug/interfaces/adi/current/IHI0074_A_*.pdf`.
+- ID: `WIRE-BASED-100.5j` · Status: `deferred` (SWD-100% needs serial-specific extraction — a separate
+  research tree; garbage-cleanup precision fix DELIVERED) · Goal: SWD/ADI to 100%. Ingested
+  `corpus/.../IHI0074_A_*.pdf` (fresh key). **Honest finding (`2026-06-07`, no-faking):** SWD/ADI is an
+  **architecture/serial spec, not a parallel-bus signal-table spec** — ~7032 statements (DAP, DP/AP
+  registers, the SWD & JTAG serial protocols); the core **SWD wire contract `SWCLK`/`SWDIO` lives in
+  prose/figures, never a signal table → NOT declared** (SWCLK 13× / SWDIO 28× in prose, 0 declarations);
+  only ~9 real signals declared (JTAG `TCK`/`TDI`/`TDO`, `DBG*`, `NSRSTOUT`, `CSYSPWRUPACK`,
+  `PORTCONNECTED`). The parallel-bus playbook (signal tables → constraints/relations/temporal) does NOT
+  transfer. **Delivered:** a general garbage-cleanup precision fix — `is_hardware_signal_token` now
+  requires a leading LETTER (drops number-literals `0B0`/`0B1`/`0X1F` a value cell mis-declares), and
+  `is_signal_synthesis_non_signal` gained `IN`/`OUT`/`LEVEL` (direction/common words). Result: ADI garbage
+  declarations dropped (`0B0`/`0B1`/`IN` gone, the `IN`-actor relations gone); APB/AHB/AXI all still 100%
+  (no real signal leads with a digit); +1 hermetic test; full CI green. **Deferred:** SWD-100% to a future
+  serial-protocol/architecture extraction tree (capture SWCLK/SWDIO from prose+figures, model the serial
+  frame + DP/AP register interface) — NOT faked with a cherry-picked gold. KM `[[swd-adi-not-signal-table-spec]]`.
+  Consequence: 3 of 4 wire-based specs (the parallel buses APB/AHB/AXI) are at 100% all-3-aspects; the 4th
+  (serial SWD) is a different problem class, surfaced to the owner.
 
 ## Picked sequence to APB 100% (owner: "pick the next trees to achieve just that")
 

@@ -2,6 +2,21 @@
 
 ## 2026-06-07
 
+### `WIRE-BASED-100.5j` — SWD/ADI: honest structural finding + garbage cleanup (SWD-100% deferred, not faked)
+Ingested the Arm Debug Interface v6 spec (IHI0074, the SWD/ADI spec). **Honest finding (no-faking):** it is
+an architecture/serial spec, NOT a parallel-bus signal-table spec — ~7032 statements (DAP, DP/AP registers,
+SWD & JTAG serial protocols); the core SWD wires `SWCLK`/`SWDIO` live in prose/figures (13×/28× mentions, 0
+declarations), never a signal table; only ~9 real signals declared (JTAG TCK/TDI/TDO, DBG*, power). The
+parallel-bus playbook that took APB/AHB/AXI to 100% does NOT transfer. **Delivered** a general garbage-cleanup
+precision fix: `is_hardware_signal_token` now requires a leading LETTER (drops number-literals `0B0`/`0B1`/
+`0X1F` that value cells mis-declare as signals), and `is_signal_synthesis_non_signal` gained `IN`/`OUT`/
+`LEVEL`. ADI garbage declarations + `IN`-actor relations gone; **APB/AHB/AXI all still 100%** (no real
+signal leads with a digit); +1 hermetic test; full `scripts/run_ci.sh` green. **SWD-100% is DEFERRED** to a
+future serial-protocol/architecture extraction tree (capture SWCLK/SWDIO from prose+figures, model the
+serial frame + DP/AP register interface) — explicitly NOT faked with a cherry-picked gold. KM card
+`swd-adi-not-signal-table-spec`. Net: 3 of 4 wire-based specs (the parallel buses) at 100% all-3-aspects;
+the 4th (serial SWD) is a different problem class, surfaced to the owner.
+
 ### `WIRE-BASED-100.5k` — AXI relations + temporal 100% (AXI now fully matches APB/AHB)
 Catalog-precision fix: scrambled multi-signal AXI tables (`table_0059`/`0187`) + prose put common English
 words in the name column ("Signal THE is width AWPROT, ARPROT"); `THE`/`HIGH`/`SECURE`/`PHYSICAL`/
