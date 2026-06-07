@@ -185,6 +185,48 @@ pub struct EvidenceIr {
     /// built before this field existed.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub fact_provenance: Vec<FactProvenanceRecord>,
+    /// SWD-SERIAL-EXTRACTION.3: typed serial-frame fields recovered from a serial protocol's
+    /// frame description (the SWD packet request / acknowledge / data phases). Each field carries
+    /// its bit-width (from a `NAME[hi:lo]` range or a stated bit count) and, for the ACK field, the
+    /// response values (OK/WAIT/FAULT). Scoped to serial-protocol context so parallel-bus specs are
+    /// untouched. Empty (serde-skipped) for non-serial documents.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub serial_frame_fields: Vec<SerialFrameField>,
+}
+
+/// SWD-SERIAL-EXTRACTION.3: one field of a serial protocol frame (e.g. SWD `ACK[2:0]`, `WDATA[0:31]`,
+/// the `APnDP`/`RnW` request bits). The serial frame is a SEQUENCE protocol, not a clocked-edge rule,
+/// so it is a distinct typed surface from `signal_constraints`/`temporal_rules`.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct SerialFrameField {
+    /// Stable id, e.g. `serial_field_0003`.
+    pub field_id: String,
+    /// The field name as written (`ACK`, `WDATA`, `APnDP`, `RnW`, `A`, `DATAIN`).
+    pub name: String,
+    /// Bit-width in the frame (from `NAME[hi:lo]` ⇒ |hi-lo|+1, or a stated count). `None` if unstated.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub bit_width: Option<u32>,
+    /// The literal bit range `[high, low]` when the field was written as `NAME[hi:lo]`.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub bit_range: Option<(u32, u32)>,
+    /// The frame phase this field belongs to (request / acknowledge / data), inferred from context.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub phase: Option<SerialFramePhase>,
+    /// Statements that evidenced this field.
+    #[serde(default)]
+    pub supporting_statement_ids: Vec<String>,
+}
+
+/// The phase of a serial transaction a frame field belongs to.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum SerialFramePhase {
+    /// The host-to-target packet request (APnDP, RnW, address, parity).
+    Request,
+    /// The target-to-host acknowledge response (ACK: OK/WAIT/FAULT).
+    Acknowledge,
+    /// The data transfer phase (read/write data + parity).
+    Data,
 }
 
 /// R15c: typed accounting for the EvidenceIR convergent anchored-rescan loop.
@@ -665,6 +707,10 @@ impl EvidenceIr {
             prior_guidance.as_ref(),
         );
 
+        // SWD-SERIAL-EXTRACTION.3: recover the serial-frame fields (the SWD packet/ack/data frame),
+        // a typed surface distinct from constraints/relations/temporal. No-op for parallel buses.
+        let serial_frame_fields = extract_serial_frame_fields(&extracted_statements);
+
         // PER-EXTRACTOR-FACT-TAGGING: tag every fact produced by the structural
         // pattern tier (the convergent build loop above) as `Pattern`, computed
         // before the move into the struct literal. The LLM tiers tag their finds
@@ -713,6 +759,7 @@ impl EvidenceIr {
             validation_reports: Vec::new(),
             convergence_report: Some(convergence_report),
             fact_provenance,
+            serial_frame_fields,
         };
         evidence_ir.carry_forward_existing_knowledge()?;
         evidence_ir.refresh_signal_semantic_hints()?;
@@ -6781,6 +6828,135 @@ fn synthesize_signal_declarations_from_prose(
     out
 }
 
+/// SWD-SERIAL-EXTRACTION.3 — recover serial-frame fields (`NAME[hi:lo]` ⇒ width |hi-lo|+1) from a
+/// serial protocol's frame description (SWD packet request / acknowledge / data phases). Gated to
+/// serial documents (markers: "serial wire" / "packet request" / "shift-dr" / SWDIO / SWCLK) so
+/// parallel-bus specs — which also use WDATA/RDATA and the phrase "data phase" — produce nothing.
+/// Protocol vocabulary, not chip names (ADR 0006).
+fn extract_serial_frame_fields(statements: &[ExtractedStatement]) -> Vec<SerialFrameField> {
+    let is_serial_doc = statements.iter().any(|s| {
+        let l = s.text.to_ascii_lowercase();
+        l.contains("serial wire")
+            || l.contains("packet request")
+            || l.contains("shift-dr")
+            || l.contains("swdio")
+            || l.contains("swclk")
+    });
+    if !is_serial_doc {
+        return Vec::new();
+    }
+    let mut out: Vec<SerialFrameField> = Vec::new();
+    let mut index_by_name: BTreeMap<String, usize> = BTreeMap::new();
+    let mut counter = 0usize;
+    for statement in statements {
+        let lower = statement.text.to_ascii_lowercase();
+        let phase = if lower.contains("acknowledge") || lower.contains("ack[") {
+            Some(SerialFramePhase::Acknowledge)
+        } else if lower.contains("packet request")
+            || lower.contains("apndp")
+            || lower.contains("rnw")
+        {
+            Some(SerialFramePhase::Request)
+        } else if lower.contains("data bits")
+            || lower.contains("data phase")
+            || lower.contains("wdata")
+            || lower.contains("rdata")
+            || lower.contains("datain")
+            || lower.contains("dataout")
+        {
+            Some(SerialFramePhase::Data)
+        } else {
+            None
+        };
+        // Only mine bit-range fields from statements that are actually in a frame phase. A serial
+        // doc also cites unrelated bit-fields (register fields, bridged-bus signals like AxCACHE);
+        // the phase gate keeps the SWD FRAME fields and drops that noise.
+        if phase.is_none() {
+            continue;
+        }
+        for (name, hi, lo) in parse_bit_range_fields(&statement.text) {
+            let width = (hi as i64 - lo as i64).unsigned_abs() as u32 + 1;
+            if let Some(&idx) = index_by_name.get(&name) {
+                let field = &mut out[idx];
+                if width > field.bit_width.unwrap_or(0) {
+                    field.bit_width = Some(width);
+                    field.bit_range = Some((hi, lo));
+                }
+                if field.phase.is_none() {
+                    field.phase = phase;
+                }
+                if !field
+                    .supporting_statement_ids
+                    .contains(&statement.statement_id)
+                {
+                    field
+                        .supporting_statement_ids
+                        .push(statement.statement_id.clone());
+                }
+                continue;
+            }
+            counter += 1;
+            index_by_name.insert(name.clone(), out.len());
+            out.push(SerialFrameField {
+                field_id: format!("serial_field_{counter:04}"),
+                name,
+                bit_width: Some(width),
+                bit_range: Some((hi, lo)),
+                phase,
+                supporting_statement_ids: vec![statement.statement_id.clone()],
+            });
+        }
+    }
+    out
+}
+
+/// Parse `NAME[hi:lo]` bit-range fields from text → (name, hi, lo) for each. NAME is the identifier
+/// immediately before `[` (first char a letter); hi/lo are decimal indices (spaces tolerated).
+fn parse_bit_range_fields(text: &str) -> Vec<(String, u32, u32)> {
+    let bytes = text.as_bytes();
+    let mut out = Vec::new();
+    for (i, &b) in bytes.iter().enumerate() {
+        if b != b'[' {
+            continue;
+        }
+        let name_end = i;
+        let mut name_start = i;
+        while name_start > 0 {
+            let c = bytes[name_start - 1] as char;
+            if c.is_ascii_alphanumeric() || c == '_' {
+                name_start -= 1;
+            } else {
+                break;
+            }
+        }
+        let name = &text[name_start..name_end];
+        if name.is_empty()
+            || !name
+                .chars()
+                .next()
+                .map(|c| c.is_ascii_alphabetic())
+                .unwrap_or(false)
+        {
+            continue;
+        }
+        let Some(close) = text[i + 1..].find(']') else {
+            continue;
+        };
+        let inner = &text[i + 1..i + 1 + close];
+        let parts: Vec<&str> = inner.split(':').collect();
+        if parts.len() != 2 {
+            continue;
+        }
+        if let (Ok(hi), Ok(lo)) = (
+            parts[0].trim().parse::<u32>(),
+            parts[1].trim().parse::<u32>(),
+        ) {
+            out.push((name.to_string(), hi, lo));
+        }
+    }
+    out
+}
+
 fn synthesize_encoding_declarations(
     table: &crate::ir::source::StructuredTableRecord,
     section_title: &str,
@@ -12534,5 +12710,93 @@ mod swd_serial_extraction_2 {
     fn ignores_pin_not_followed_by_signal_token() {
         let names = declared(&[stmt("The host parks the line before the turnaround pin.")]);
         assert!(names.is_empty(), "got {names:?}");
+    }
+}
+
+#[cfg(test)]
+mod swd_serial_extraction_3 {
+    //! SWD-SERIAL-EXTRACTION.3 — typed serial-frame fields from NAME[hi:lo], gated to serial docs +
+    //! frame phases (so parallel buses and unrelated bit-fields produce nothing).
+    use super::*;
+
+    fn stmt(id: &str, text: &str) -> ExtractedStatement {
+        ExtractedStatement {
+            statement_id: id.to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        }
+    }
+
+    #[test]
+    fn parses_bit_ranges_and_widths() {
+        let f = parse_bit_range_fields("ACK[2:0] and WDATA[0:31] and A[2:3]");
+        assert_eq!(
+            f,
+            vec![
+                ("ACK".to_string(), 2, 0),
+                ("WDATA".to_string(), 0, 31),
+                ("A".to_string(), 2, 3),
+            ]
+        );
+    }
+
+    #[test]
+    fn extracts_swd_frame_fields_with_widths() {
+        let stmts = vec![
+            stmt(
+                "d",
+                "The SWD interface uses a single bidirectional data pin, SWDIO.",
+            ),
+            stmt(
+                "a",
+                "The first three bits of data that are shifted out are ACK[2:0].",
+            ),
+            stmt(
+                "w",
+                "The parity check is made over the 32 data bits WDATA[0:31].",
+            ),
+            stmt(
+                "r",
+                "The parity check is made over the 32 data bits RDATA[0:31].",
+            ),
+        ];
+        let fields = extract_serial_frame_fields(&stmts);
+        let by: std::collections::BTreeMap<_, _> = fields
+            .iter()
+            .map(|f| (f.name.as_str(), f.bit_width))
+            .collect();
+        assert_eq!(by.get("ACK"), Some(&Some(3)), "ACK is 3 bits");
+        assert_eq!(by.get("WDATA"), Some(&Some(32)), "WDATA is 32 bits");
+        assert_eq!(by.get("RDATA"), Some(&Some(32)), "RDATA is 32 bits");
+    }
+
+    #[test]
+    fn non_serial_document_yields_nothing() {
+        // A parallel-bus statement (no serial markers) → no frame fields, even with a bit-range.
+        let stmts = vec![stmt(
+            "h",
+            "HMASTER[3:0] indicates the master number during the data phase.",
+        )];
+        assert!(extract_serial_frame_fields(&stmts).is_empty());
+    }
+
+    #[test]
+    fn serial_doc_skips_non_frame_bit_fields() {
+        // A serial doc, but the bit-field statement is not in a frame phase → dropped.
+        let stmts = vec![
+            stmt("m", "The SWD interface uses the serial wire SWDIO pin."),
+            stmt(
+                "x",
+                "The cache attribute field AxCACHE[3:0] is bridged through.",
+            ),
+        ];
+        let fields = extract_serial_frame_fields(&stmts);
+        assert!(
+            !fields.iter().any(|f| f.name == "AxCACHE"),
+            "got {fields:?}"
+        );
     }
 }

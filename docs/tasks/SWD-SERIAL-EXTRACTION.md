@@ -55,8 +55,18 @@ extraction approach distinct from the parallel-bus signal-table path.
   adding `SEE` to `is_signal_synthesis_non_signal`. No parallel-bus regression (APB/AHB/AXI all still
   1.000 on constraints + relations); +3 hermetic tests; full `scripts/run_ci.sh` green. KM
   `[[prose-pin-appositive-signal-capture]]`.
-- ID: `SWD-SERIAL-EXTRACTION.3` · Status: `pending` · Goal: model the SWD serial-frame protocol
-  (start/stop/park/turnaround/parity bits + WAIT/FAULT/OK ACK) as typed sequence/temporal facts.
+- ID: `SWD-SERIAL-EXTRACTION.3` · Status: `done` (bit-field surface; ordered-sequence + named single
+  bits APnDP/RnW + ACK OK/WAIT/FAULT values → `.3b`) · Goal: model the SWD serial-frame protocol as a
+  NEW typed fact surface (owner decision (ii)). **Done:** added the `SerialFrameField` record +
+  `SerialFramePhase` enum (Request/Acknowledge/Data) to `EvidenceIr` (serde-skip-if-empty → zero churn
+  for non-serial docs); `extract_serial_frame_fields` mines `NAME[hi:lo]` bit-ranges (width = |hi-lo|+1),
+  **double-gated** — (1) document-level serial markers ("serial wire"/"packet request"/"shift-dr"/SWDIO/
+  SWCLK) so parallel buses produce 0, (2) per-statement frame phase (request/ack/data) so unrelated
+  bit-fields (register fields, bridged-bus `AxCACHE[3:0]`/`HMASTER[3:0]`) are dropped. Protocol
+  vocabulary, not chip names (ADR 0006). **Achieved on fresh ADI evidence: 5 clean frame fields** —
+  `A`(2, request), `ACK`(3, acknowledge), `DATAIN`/`WDATA`/`RDATA`(32, data) — zero noise; parallel
+  buses produce 0 `serial_frame_fields` and stay 100% on all 3 aspects. +4 hermetic tests; full
+  `scripts/run_ci.sh` green. KM `[[swd-serial-frame-surface]]`.
 - ID: `SWD-SERIAL-EXTRACTION.4` · Status: `pending` · Goal: recover the DP/AP register-access interface from
   the register_map/encoding tables (the architecture-side intent).
 - ID: `SWD-SERIAL-EXTRACTION.5` · Status: `pending` · Goal: build the SWD constraint/relation/temporal golds
@@ -64,8 +74,10 @@ extraction approach distinct from the parallel-bus signal-table path.
 
 ## Current frontier
 
-- `SWD-SERIAL-EXTRACTION.3` — model the SWD serial-frame protocol (start/stop/park/turnaround/parity bits +
-  WAIT/FAULT/OK ACK) as typed sequence/temporal facts. (`.2` done: SWCLK/SWDIO/NSRST now in the catalog.)
+- `SWD-SERIAL-EXTRACTION.3b` — enrich the frame surface: the named single-bit request fields (APnDP, RnW)
+  and the ACK response VALUES (OK/WAIT/FAULT), plus the ordered field sequence. (`.3` done: the
+  `SerialFrameField` bit-width surface captures A/ACK/DATAIN/WDATA/RDATA on real evidence.) Then `.4`
+  DP/AP register interface, `.5` SWD golds → 100%.
 
 ## Decisions
 
@@ -86,14 +98,17 @@ extraction approach distinct from the parallel-bus signal-table path.
 
 - `.1`: characterization done from the ingested ADI evidence (SWCLK/SWDIO prose, serial-frame prose, table-kind census).
 - `.2`: fresh ADI evidence rebuild shows SWCLK/SWDIO/NSRST declared, SEE suppressed; APB/AHB/AXI constraints+relations all 1.000; +3 hermetic tests; full `scripts/run_ci.sh` green (1323 lib tests).
+- `.3`: fresh ADI evidence yields 5 clean frame fields (A/ACK/DATAIN/WDATA/RDATA with correct widths); parallel buses produce 0 serial_frame_fields and stay 100% on constraints+relations+temporal; +4 hermetic tests; full `scripts/run_ci.sh` green (1327 lib tests).
 
 ## Commit log
 
 - `.1`: see the `SWD-SERIAL-EXTRACTION.1` commit (tree opened + research leaf).
 - `.2`: see the `SWD-SERIAL-EXTRACTION.2` commit (prose pin-appositive signal capture).
+- `.3`: see the `SWD-SERIAL-EXTRACTION.3` commit (typed serial-frame field surface).
 
 ## Changelog
 
 - `2026-06-07`: Created (owner decision (a) from `WIRE-BASED-100.5j`). `.1` research/characterization done.
-  `.2` done — SWCLK/SWDIO/NSRST captured from the prose "`<role>` pin, `<SIGNAL>`" appositive; frontier = `.3`
-  (serial-frame protocol model).
+  `.2` done — SWCLK/SWDIO/NSRST captured from the prose "`<role>` pin, `<SIGNAL>`" appositive.
+  `.3` done (owner decision (ii)) — new typed `SerialFrameField` surface (bit-widths from `NAME[hi:lo]`,
+  double-gated to serial docs + frame phases); 5 clean SWD frame fields; frontier = `.3b`.

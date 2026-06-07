@@ -2,6 +2,18 @@
 
 ## 2026-06-07
 
+### `SWD-SERIAL-EXTRACTION.3` — typed serial-frame field surface (owner decision (ii))
+The SWD transaction is a sequence protocol, so it gets its own typed surface. Added `SerialFrameField` +
+`SerialFramePhase` (Request/Acknowledge/Data) to `EvidenceIr` (serde-skip-if-empty → zero churn for
+non-serial docs); `extract_serial_frame_fields` mines `NAME[hi:lo]` bit-ranges (width = |hi-lo|+1),
+double-gated to (1) serial documents (markers: serial wire / packet request / shift-dr / SWDIO / SWCLK) so
+parallel buses produce 0, and (2) per-statement frame phases so unrelated bit-fields (register fields,
+bridged-bus AxCACHE/HMASTER) are dropped. Protocol vocabulary, not chip names (ADR 0006). Result on real
+ADI evidence: 5 clean frame fields — A(2b), ACK(3b), DATAIN/WDATA/RDATA(32b) — zero noise. Parallel buses
+emit 0 serial_frame_fields and stay 100% on all 3 aspects (additive surface). +4 hermetic tests; full
+`scripts/run_ci.sh` green (1327 lib tests). KM `swd-serial-frame-surface`. Frontier `.3b` (named request
+bits APnDP/RnW + ACK OK/WAIT/FAULT values + ordering).
+
 ### `SWD-SERIAL-EXTRACTION.2` — capture SWCLK/SWDIO from prose (pin-appositive)
 Serial specs name the wire contract in prose ("requires a clock pin, SWCLK"; "a single bidirectional data
 pin, SWDIO"), so the table-only declaration path missed them. Added `synthesize_signal_declarations_from_prose`

@@ -8,3 +8,6 @@
 *.swp
 mutants.out*/
 .venv-eval/
+
+# Claude Code local session state (transient)
+.claude/scheduled_tasks.json
