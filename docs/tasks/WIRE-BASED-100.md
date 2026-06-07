@@ -281,6 +281,19 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   normative ones ("must/shall…"). Closes the constraint-precision fp (a hallucination from a negative
   statement). Reuse the NLI gate as the grounding check.
 
+## `.5d` — durable in-repo source PDFs (owner directive `2026-06-07`)
+
+- ID: `WIRE-BASED-100.5d` · Status: `in_progress` · Goal: **copy the wire-based source PDFs into the repo
+  and git-track them** so the cross-spec roll is never blocked again by a reclaimed normalized source /
+  missing PDF (the `.5b`/`.5c` blocker). Owner directive (frustrated that a source path wasn't saved):
+  "copy them in this repo and git track them … only those you intend to use." Scope = the WIRE-BASED-100
+  specs I use (NOT the full 236 MB / 82-PDF chipdoc library): APB, AHB, AXI, AXI-Stream, SWD/ADI (~6.7 MB).
+  Copied into `corpus/` mirroring the chipdoc `<vendor>/<family>/…/current/` structure, plus a tracked
+  `corpus/SOURCE_PDF_REGISTRY.md` mapping each `document_key` → repo PDF path → original path → class.
+  Source PDFs are INPUTS (not generated artifacts) so this does not conflict with artifact-cleanup.
+  Unblocks re-ingest → fresh evidence → real cross-spec eval (`specforge ingest corpus/…pdf`,
+  `DOCLING_DEVICE=cpu`). Memories: `feedback_source_pdfs_in_repo`, `reference_chipdoc_corpus`.
+
 ## Picked sequence to APB 100% (owner: "pick the next trees to achieve just that")
 
 `.1b` (relation recall → 100%) → `.6` (actor discrimination → relation precision) → `.7`

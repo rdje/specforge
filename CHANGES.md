@@ -2,6 +2,16 @@
 
 ## 2026-06-07
 
+### `WIRE-BASED-100.5d` — wire-based source PDFs copied into the repo + git-tracked (owner directive)
+The `.5b`/`.5c` cross-spec blocker was missing source data (normalized reclaimed + PDFs not in-repo).
+Per owner directive, copied the 5 wire-based spec PDFs SpecForge uses into `corpus/` (mirroring the
+chipdoc `<vendor>/<family>/…/current/` structure) and git-tracked them (~6.7 MB): APB, AHB, AXI,
+AXI-Stream, SWD/ADI. Added `corpus/SOURCE_PDF_REGISTRY.md` mapping each `document_key` → repo PDF path →
+class, with re-ingest instructions. Scoped to "only those I intend to use" (NOT the 236 MB / 82-PDF
+library); more can be added as needed. Source PDFs are inputs, not generated artifacts → no conflict with
+artifact-cleanup. **Unblocks** re-ingest → fresh evidence → real cross-spec eval. Agent memories added
+(`feedback_source_pdfs_in_repo`, `reference_chipdoc_corpus`).
+
 ### `WIRE-BASED-100.5c` — APB foundation re-verified (fresh evidence) + cross-spec eval blocker surfaced
 After the `.5b` stale-evidence discovery, de-risked the whole milestone: rebuilt APB evidence + semantic
 FRESH from the rebuildable APB `source_ir` and re-ran the evals — `signal_constraint`,

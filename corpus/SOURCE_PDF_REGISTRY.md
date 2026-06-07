@@ -1,0 +1,31 @@
+# Source PDF registry
+
+Durable, git-tracked source PDFs for the specs SpecForge actively works with, so a re-ingest is
+always reproducible (artifact-cleanup reclaims the normalized source; without the PDF in-repo a
+re-ingest is impossible — this previously blocked the `WIRE-BASED-100` cross-spec eval). Source PDFs
+are **inputs**, not generated artifacts, so tracking them does not conflict with the artifact-cleanup
+directive.
+
+**Scope:** only the PDFs SpecForge intends to use (the WIRE-BASED-100 wire-based + serial-debug specs).
+The owner's full spec library (82 PDFs, ~236 MB) lives in a host-local `chipdoc` directory (path recorded
+in agent memory `reference_chipdoc_corpus`, not in the tracked tree) and is **not** copied wholesale into
+the repo. More specs may be added here when SpecForge needs them (owner: "you can use more if you need to").
+
+**Re-ingest** a spec to refresh its `source_ir`/normalized before measuring (the eval scores persisted
+evidence — see `docs/knowledge/eval-scores-persisted-evidence.md`):
+
+```bash
+DOCLING_DEVICE=cpu cargo run -p specforge -- ingest <repo PDF path>
+# then: specforge evidence … ; specforge semantic … ; specforge eval-extraction …
+```
+
+| document_key | class | repo path | original (chipdoc) |
+|---|---|---|---|
+| `ihi0024_e_2023_02_amba_5_apb_protocol_specification` | wire-bus (APB) | `corpus/arm/amba/core/apb/current/IHI0024_E_2023-02_AMBA_5_APB_Protocol_Specification.pdf` | `arm/amba/core/apb/current/` |
+| `ihi0033_c_2021_09_amba_5_ahb_protocol_specification` | wire-bus (AHB) | `corpus/arm/amba/core/ahb/current/IHI0033_C_2021-09_AMBA_5_AHB_Protocol_Specification.pdf` | `arm/amba/core/ahb/current/` |
+| `ihi0022_l_2025_08_amba_axi_protocol_specification` | wire-bus (AXI) | `corpus/arm/amba/core/axi/current/IHI0022_L_2025-08_AMBA_AXI_Protocol_Specification.pdf` | `arm/amba/core/axi/current/` |
+| `ihi0051_b_2021_04_amba_axi_stream_protocol_specification` | wire-bus (AXI-Stream) | `corpus/arm/amba/supporting/axi-stream/current/IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf` | `arm/amba/supporting/axi-stream/current/` |
+| `ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification` | serial-debug (SWD/ADI) | `corpus/arm/debug/interfaces/adi/current/IHI0074_A_2017-03-09_Arm_Debug_Interface_v6_Architecture_Specification.pdf` | `arm/debug/interfaces/adi/current/` |
+
+To add another spec: copy its PDF under `corpus/` mirroring the chipdoc structure, add a row here, and
+git-track it (owner directive `2026-06-07`).
