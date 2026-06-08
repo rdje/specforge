@@ -85,6 +85,36 @@ Likewise, negative-knowledge priors may make validation more alert to a repeated
 When that happens, validation can also mark the matched current conflict as rescan/corroboration guidance through `evidence_negative_knowledge_rescan_guidance`.
 Later `SemanticIR` and `IntentIR` validation carry the same caution idea forward for repeated conflict and residual shapes.
 
+## Capturing the agents a spec defines in prose
+
+A protocol is a conversation between *agents* — a manager and a subordinate, a host and a device, a controller
+and a target. Many specs never put those agents in a table; they introduce them in a sentence: *"A controller
+is the device that initiates a data transfer and generates the clock."* `EvidenceIR` captures those
+definitions as first-class `ProtocolActorRecord`s, so the agent model is grounded directly from the document's
+own words rather than only inferred as the subject of a relation.
+
+The grammar is deliberately general: *"`<NAME>` is a/an/the `<agent-class>` that/which `<capability>`"*, where
+`<agent-class>` is one of a small, generic set of agent/component words (device, component, agent, module,
+controller, manager, bridge, host, node, …) — never a chip, vendor, or protocol name. The defining
+"that/which" clause is what distinguishes a real definition from a passing "is a component **of** the system"
+mention.
+
+Broadening a grammar like this is exactly where false positives creep in, so the safety here is **structural**,
+not a hand-maintained list of forbidden words:
+
+- a trailing cross-reference such as *"An I/O controller (refer to section 3.1.2.1) is a controller that …"* is
+  stripped before the agent name is read, so the agent is "controller", not "section";
+- the name is only looked for inside the **current sentence**, so *"… host system. It is the entity that …"*
+  cannot reach back across the full stop and mis-name the system;
+- if a **preposition** sits in the subject — *"a use case **for** multiple HSEL signals is a peripheral that …"*
+  — the last noun ("signals") is a prepositional object, not the subject, so the sentence is skipped.
+
+These are closed, principled signals (punctuation, sentence boundaries, a closed class of prepositions), which
+is why the capture can widen across many documents without minting noise. On the corpus it lifts the number of
+documents with a recovered agent meaningfully, and every newly-recovered agent is a genuine one — a CPU core, a
+trace unit, a debug-access port, an interconnect manager — while the four wire-based reference specs are
+unaffected.
+
 ## Typical evidence-level failure modes
 
 - field tables leaking fake signals

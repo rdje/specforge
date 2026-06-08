@@ -8523,33 +8523,148 @@ fn is_register_value_literal(s: &str) -> bool {
     false
 }
 
-/// PDF-VARIANT-DIGESTION.3b — capture protocol ACTORS/AGENTS a spec DEFINES in prose. Two general forms:
-/// "<NAME> is the device which/that <capability>" and "considered a/the/an <NAME>". NAME must be a plausible
-/// agent noun (alphabetic, not a function/structural word) — general agent-definition grammar, no chip names.
+/// Generic AGENT-CLASS nouns a spec uses to DEFINE an agent in prose:
+/// `"<NAME> is a/an/the <agent-class> that/which <capability>"`. Curated to clear agent/
+/// component-class nouns only — no chip/vendor/protocol names (ADR 0006) — so a non-agent
+/// `"is a <X> that …"` (e.g. "is a signal that", "is a register that") cannot mint a false
+/// actor. `"device"` keeps the original `.3b` form working unchanged.
+const AGENT_CLASS_NOUNS: &[&str] = &[
+    "device",
+    "component",
+    "agent",
+    "module",
+    "entity",
+    "controller",
+    "manager",
+    "master",
+    "initiator",
+    "peripheral",
+    "bridge",
+    "engine",
+    "processor",
+    "host",
+    "node",
+    "subsystem",
+];
+
+/// The alphabetic core of a token, lowercased (punctuation stripped) — used to match the
+/// article / agent-class noun / relativizer tokens of an agent definition.
+fn alpha_lower(word: &str) -> String {
+    word.trim_matches(|c: char| !c.is_ascii_alphabetic())
+        .to_ascii_lowercase()
+}
+
+/// Strip a single trailing `"(…)"` group from `s` — e.g. a `"(refer to section 3.1.2.1)"`
+/// cross-reference that would otherwise make the NAME extraction pick the parenthetical's last
+/// word ("section") instead of the real agent ("An I/O controller (refer to …) is a controller
+/// that …" → the agent is "controller", not "section"). Returns the slice before the group.
+fn strip_trailing_parenthetical(s: &str) -> &str {
+    let trimmed = s.trim_end();
+    if trimmed.ends_with(')')
+        && let Some(open) = trimmed.rfind('(')
+    {
+        return &trimmed[..open];
+    }
+    trimmed
+}
+
+/// Parse `"<NAME> is a/an/the <agent-class> that/which <capability>"` agent definitions from
+/// prose (`PDF-VARIANT-DIGESTION.8`, generalizing the `.3b` literal `"is the device that/which"`
+/// to a curated set of generic agent-class nouns). One single forward pass over `" is "`
+/// occurrences; returns `(name, definition?)` per match. The caller gates NAME through
+/// `is_agent_noun` and dedups, so this stays a permissive grammar with the safety in the gate.
+/// General grammar, no chip/vendor names (ADR 0006).
+fn agent_definitions(text: &str) -> Vec<(String, Option<String>)> {
+    let lower = text.to_ascii_lowercase();
+    let mut out = Vec::new();
+    for (idx, _) in lower.match_indices(" is ") {
+        // NAME = the last alphabetic word before " is ", after (a) dropping a trailing
+        // "(refer to section …)" cross-reference and (b) confining the search to the current
+        // sentence — so an anaphoric "… host system. It is the entity that …" cannot reach back
+        // across the period and mis-name the antecedent ("system"). Gated by the caller.
+        let pre = strip_trailing_parenthetical(&text[..idx]);
+        let sentence = &pre[pre.rfind(['.', '!', '?']).map_or(0, |p| p + 1)..];
+        // A genuine definitional subject is a simple noun phrase ("A controller is …", "An I/O
+        // controller is …"). When a PREPOSITION sits between the sentence start and " is "
+        // (e.g. "A typical use case FOR multiple HSELx signals is a peripheral that …"), the
+        // last noun before " is " is a prepositional-phrase OBJECT ("signals"), not the
+        // subject — so the heuristic would mis-name it. Prepositions are a CLOSED grammatical
+        // class, so this is a principled structural guard, not an open-ended noun denylist.
+        if sentence.split_whitespace().any(|w| {
+            matches!(
+                alpha_lower(w).as_str(),
+                "of" | "for"
+                    | "in"
+                    | "on"
+                    | "with"
+                    | "to"
+                    | "from"
+                    | "by"
+                    | "at"
+                    | "per"
+                    | "into"
+                    | "onto"
+                    | "over"
+                    | "under"
+                    | "via"
+                    | "within"
+                    | "between"
+                    | "across"
+                    | "among"
+                    | "through"
+                    | "during"
+                    | "against"
+            )
+        }) {
+            continue;
+        }
+        let Some(name) = last_alpha_word(sentence) else {
+            continue;
+        };
+        let mut words = text[idx + 4..].split_whitespace().peekable();
+        // Optional leading article.
+        if words
+            .peek()
+            .is_some_and(|first| matches!(alpha_lower(first).as_str(), "a" | "an" | "the"))
+        {
+            words.next();
+        }
+        // An agent-class noun must follow — otherwise this is not an agent definition.
+        let Some(class_word) = words.next() else {
+            continue;
+        };
+        let class_l = alpha_lower(class_word);
+        if !AGENT_CLASS_NOUNS.contains(&class_l.as_str()) {
+            continue;
+        }
+        // A defining relative clause (`that` / `which`) confirms a definition, not a passing
+        // "is a component of …" part-of mention.
+        let Some(rel) = words.next() else {
+            continue;
+        };
+        if !matches!(alpha_lower(rel).as_str(), "that" | "which") {
+            continue;
+        }
+        let rest = words.collect::<Vec<_>>().join(" ");
+        let rest = rest.trim().trim_end_matches('.').trim().to_string();
+        let def = (!rest.is_empty()).then(|| format!("the {class_l} that {rest}"));
+        out.push((name, def));
+    }
+    out
+}
+
+/// PDF-VARIANT-DIGESTION.3b/.8 — capture protocol ACTORS/AGENTS a spec DEFINES in prose. Two general forms:
+/// "<NAME> is a/an/the <agent-class> which/that <capability>" (`.8` generalizes `.3b`'s literal "device" anchor
+/// to `AGENT_CLASS_NOUNS`) and "considered a/the/an <NAME>". NAME must be a plausible agent noun (alphabetic,
+/// not a function/structural word) — general agent-definition grammar, no chip names.
 fn extract_protocol_actors(statements: &[ExtractedStatement]) -> Vec<ProtocolActorRecord> {
     let mut out = Vec::new();
     let mut seen: BTreeSet<String> = BTreeSet::new();
     let mut counter = 0usize;
     for statement in statements {
         let lower = statement.text.to_ascii_lowercase();
-        let mut found: Vec<(String, Option<String>)> = Vec::new();
-        // Form 1: "<NAME> is the device which/that <capability>".
-        for marker in [" is the device which ", " is the device that "] {
-            let Some(pos) = lower.find(marker) else {
-                continue;
-            };
-            let Some(name) = last_alpha_word(&statement.text[..pos]) else {
-                continue;
-            };
-            let def = statement.text[pos + marker.len()..]
-                .trim()
-                .trim_end_matches('.')
-                .to_string();
-            found.push((
-                name,
-                (!def.is_empty()).then(|| format!("the device that {def}")),
-            ));
-        }
+        // Form 1: "<NAME> is a/an/the <agent-class> which/that <capability>".
+        let mut found: Vec<(String, Option<String>)> = agent_definitions(&statement.text);
         // Form 2: "considered a/the/an <NAME>".
         for marker in [" considered a ", " considered the ", " considered an "] {
             let Some(pos) = lower.find(marker) else {
@@ -15154,6 +15269,119 @@ mod swd_serial_extraction_4 {
         assert!(
             actors.iter().all(|a| !a.name.eq_ignore_ascii_case("it")),
             "got {actors:?}"
+        );
+    }
+
+    #[test]
+    fn extracts_actors_from_generalized_agent_class_nouns() {
+        // PDF-VARIANT-DIGESTION.8 — the same agent-definition grammar, now over a curated set of
+        // generic agent-class nouns beyond the literal "device" (no chip names, ADR 0006).
+        let stmts = vec![
+            stmt(
+                "s",
+                "The SMMU is a component that translates addresses on behalf of a device.",
+            ),
+            stmt(
+                "b",
+                "A bus bridge is the module which forwards transactions between domains.",
+            ),
+            stmt(
+                "m",
+                "The Manager is an agent that initiates read and write transactions.",
+            ),
+        ];
+        let actors = extract_protocol_actors(&stmts);
+        let names: Vec<String> = actors.iter().map(|a| a.name.to_ascii_lowercase()).collect();
+        assert!(names.contains(&"smmu".to_string()), "got {names:?}");
+        assert!(names.contains(&"bridge".to_string()), "got {names:?}");
+        assert!(names.contains(&"manager".to_string()), "got {names:?}");
+        // the generalized form still captures the defining capability clause
+        assert!(
+            actors.iter().any(|a| a.name.eq_ignore_ascii_case("smmu")
+                && a.definition
+                    .as_deref()
+                    .map(|d| d.contains("translates"))
+                    .unwrap_or(false)),
+            "smmu definition not captured: {actors:?}"
+        );
+    }
+
+    #[test]
+    fn rejects_non_agent_class_definitions() {
+        // A non-agent class noun ("signal", "value", "register") must NOT mint a false actor,
+        // even with the same "is a <X> that <capability>" shape — the allowlist is the gate.
+        let stmts = vec![
+            stmt("a", "PADDR is a signal that carries the transfer address."),
+            stmt("b", "The data width is a value that must be configured."),
+            stmt("c", "CTRL is a register that holds the control bits."),
+        ];
+        let actors = extract_protocol_actors(&stmts);
+        assert!(
+            actors.is_empty(),
+            "non-agent-class definitions must yield no actors: {actors:?}"
+        );
+    }
+
+    #[test]
+    fn rejects_part_of_mention_without_defining_clause() {
+        // "is a component of …" is a part-of mention, not an agent definition: with no
+        // defining "that"/"which" clause it must not be captured.
+        let actors = extract_protocol_actors(&[stmt(
+            "x",
+            "The address decoder is a component of the interconnect fabric.",
+        )]);
+        assert!(
+            actors.is_empty(),
+            "a part-of mention must not become an actor: {actors:?}"
+        );
+    }
+
+    #[test]
+    fn cross_reference_parenthetical_does_not_pollute_actor_name() {
+        // PDF-VARIANT-DIGESTION.8 — a "(refer to section …)" cross-reference before
+        // "is a <class> that" must NOT mint "section" as an actor (the real NVMe case); the
+        // real agent ("controller") is recovered, and "section" is denylisted as a
+        // document-structural noun (defense in depth).
+        let actors = extract_protocol_actors(&[stmt(
+            "n",
+            "An I/O controller (refer to section 3.1.2.1) is a controller that supports user-data commands.",
+        )]);
+        let names: Vec<String> = actors.iter().map(|a| a.name.to_ascii_lowercase()).collect();
+        assert!(!names.contains(&"section".to_string()), "got {names:?}");
+        assert!(names.contains(&"controller".to_string()), "got {names:?}");
+    }
+
+    #[test]
+    fn prepositional_object_is_not_mistaken_for_the_subject() {
+        // PDF-VARIANT-DIGESTION.8 — when a PREPOSITION ("for") sits in the subject, the last noun
+        // before "is" ("signals") is a prepositional-phrase object, not the agent. The real AHB
+        // case: "A typical use case for multiple HSELx signals is a peripheral that …".
+        let actors = extract_protocol_actors(&[stmt(
+            "h",
+            "A typical use case for multiple HSELx signals is a peripheral that has its registers at different locations.",
+        )]);
+        assert!(
+            actors
+                .iter()
+                .all(|a| !a.name.eq_ignore_ascii_case("signals")),
+            "a prepositional-phrase object must not become an actor: {actors:?}"
+        );
+    }
+
+    #[test]
+    fn anaphora_across_a_sentence_boundary_does_not_misname() {
+        // PDF-VARIANT-DIGESTION.8 — "… host system. It is the entity that …" must not reach back
+        // across the period and name the antecedent "system" (the real USB4 case); the NAME search
+        // is confined to the current sentence, and "It" is too short to be an agent → no actor.
+        let actors = extract_protocol_actors(&[stmt(
+            "u",
+            "A Connection Manager is part of a USB4 host system. It is the entity that discovers connected devices.",
+        )]);
+        assert!(
+            actors
+                .iter()
+                .all(|a| !a.name.eq_ignore_ascii_case("system")),
+            "an anaphor's antecedent across a sentence boundary must not become an actor: {actors:?}"
         );
     }
 }

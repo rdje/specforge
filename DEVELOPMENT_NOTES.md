@@ -80,6 +80,41 @@ APB one signal-direction gap with every table explained; RISC-V Debug held to it
 widths honestly unresolved (XLEN-parametric, the same gap the per-fact gold found); a GIC overview guide "not
 applicable". Additive, no extraction-behavior change; lib 1416 → 1421; +5 hermetic tests; kg-bench 151/151.
 
+## 2026-06-08 — Broaden prose-actor capture; robustness over a denylist (PDF-VARIANT-DIGESTION.8)
+
+`.8` widens how many documents recover their *agent model* from prose. The `.3b` capture only matched the literal
+"`<NAME>` is the device that/which …"; most specs phrase the same definition differently ("is a component that",
+"is an agent that", "is the module which"). The generalization is `agent_definitions(text)`: a single forward
+pass over "` is `" that reads `<NAME> is a/an/the <agent-class> {that|which} <capability>`, where `<agent-class>`
+is a small ALLOWLIST of generic agent/component words. An allowlist (not a denylist) is the conservative choice
+here — it fails safe toward *fewer* captures — and "unit"/"block" are deliberately left out because they double
+as data/structural words.
+
+The instructive part was the garbage. A first live pass over the (re-ingestable) corpus minted four false
+actors, and the reflex fix — a denylist of structural nouns ("section", "figure", …) — is exactly the kind of
+brittle, ever-growing list a reviewer rightly distrusts: it never ends and it encodes no real signal. Each false
+positive turned out to be **structural**, not lexical, so each got a structural fix instead:
+
+- *"An I/O controller (refer to section 3.1.2.1) is a controller that …"* named "section" — the last word before
+  "is" sat inside a parenthetical cross-reference. `strip_trailing_parenthetical` removes a trailing `(…)` group
+  first, and the real subject "controller" is recovered.
+- *"… host system. It is the entity that …"* named "system" — the subject of *this* sentence is the anaphor "It",
+  whose antecedent is in the previous sentence. Confining the name search to the current sentence (split on
+  `.!?`) makes "It" the only candidate; it is too short to be an agent, so the sentence yields nothing.
+- *"a use case for multiple HSEL signals is a peripheral that …"* named "signals" — "signals" is the object of the
+  preposition "for", not the grammatical subject. A simple definitional subject contains no preposition, and
+  prepositions are a **closed** grammatical class, so a "no preposition in the subject" guard is principled and
+  finite, unlike a noun denylist.
+
+With those three guards plus the conservative allowlist, the pre-existing `is_agent_noun` function-word list is
+left untouched — no growth. On the three documents that still have a `normalized/` bundle (so the real Rust
+extractor can run) the result is clean: NVMe goes 0 → 1 with the genuine "controller", I2C and RISC-V are
+unchanged. A faithful mirror of the grammar over the *persisted* statements of all 74 documents (the canonical
+number needs a re-ingest, since most `normalized/` bundles were reclaimed) projects 14 → 20 documents with a
+recovered agent, and every newly-recovered one is real — a CPU core, a trace unit, a debug-access port, an
+interconnect manager. The four wire-based reference specs recover no actors at all, so nothing regresses.
+Additive surface, no extraction-score change; lib 1421 → 1427, +6 hermetic tests, kg-bench 151/151.
+
 ## 2026-06-08 — Live measurement of the bit recovery, honest result (EXTRACTION-GAP-FIX.4b)
 
 `.4b` ran `.4a` against reality and reported truthfully: **the bit-extent metric did not move (still 0/179), and

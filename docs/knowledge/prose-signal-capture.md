@@ -6,9 +6,12 @@ answers:
   - "what is PDF-VARIANT-DIGESTION.3 prose entity capture"
   - "why do I2C/CCIX/USB4 have 0 table signals and how are they recovered"
   - "how is prose signal over-capture prevented (no garbage)"
-date: 2026-06-07
-tags: [prose, signals, extraction, pdf-variant-digestion, lever-b]
-evidence: crates/specforge/src/ir/evidence.rs (synthesize_signal_declarations_from_prose)
+  - "how does SpecForge capture protocol actors/agents defined in prose (.3b/.8 extract_protocol_actors)"
+  - "how is the agent-definition grammar kept garbage-free without a fragile noun denylist"
+  - "what are AGENT_CLASS_NOUNS / the parenthetical-strip / sentence-boundary / no-preposition guards"
+date: 2026-06-08
+tags: [prose, signals, actors, extraction, pdf-variant-digestion, lever-b]
+evidence: crates/specforge/src/ir/evidence.rs (synthesize_signal_declarations_from_prose, agent_definitions, extract_protocol_actors)
 reverify: ./target/debug/specforge evidence generated/source_ir/um10204_rev7_0_2021_i2c_bus_specification/source_ir.json && python3 -c "import json,re;e=json.load(open('generated/evidence_ir/um10204_rev7_0_2021_i2c_bus_specification/evidence_ir.json'));print(sorted({re.match(r'Signal (\w+)',x['text']).group(1) for x in e['extracted_statements'] if x['text'].startswith('Signal ')}))"
 ---
 
@@ -32,8 +35,24 @@ I2C/CCIX/USB4 with 0 table signals. `synthesize_signal_declarations_from_prose` 
 Result: I2C 0 → 10 declared signals — SDA/SCL + Hs-mode SCLH/SDAH + USCL/USDA (real wires), plus a few real
 I2C acronyms (ACK/NACK/DDC/SDR). Wire-based specs unchanged.
 
-**Prose ACTOR/AGENT capture (`.3b`)** — `ProtocolActorRecord` + `extract_protocol_actors` capture agents a
-spec DEFINES in prose: "A <name> is the device which/that <capability>" and "considered a/the <name>".
-`is_agent_noun` rejects function/structural words (general; admits vendor agents like SMMU). I2C → 2 actors:
-controller (def "the device that initiates a data transfer … and generates the clock") + target. New
-additive surface; no eval impact. The agent model is now grounded from prose, not only as a relation subject.
+**Prose ACTOR/AGENT capture (`.3b`, broadened by `.8`)** — `ProtocolActorRecord` + `extract_protocol_actors`
+capture agents a spec DEFINES in prose. `.8` generalized the `.3b` literal "is the device that/which" anchor to
+`agent_definitions(text)`: `"<NAME> is a/an/the <agent-class> {that|which} <capability>"` over a conservative
+generic agent-class ALLOWLIST `AGENT_CLASS_NOUNS` (device/component/agent/module/entity/controller/manager/
+master/initiator/peripheral/bridge/engine/processor/host/node/subsystem — the ambiguous "unit"/"block"
+EXCLUDED). Form 2 ("considered a/the/an <NAME>") unchanged; `is_agent_noun` (function-word denylist) UNCHANGED.
+
+**Garbage stays out via STRUCTURAL signals, NOT a growing noun denylist** (an expert reviewer flagged a
+structural-noun denylist as fragile → redesigned):
+- `strip_trailing_parenthetical` drops "(refer to section 3.1.2.1)" before the NAME → recovers the real
+  "controller", not "section";
+- the NAME search is confined to the CURRENT SENTENCE so "… host system. It is the entity that …" can't reach
+  back across the period and name "system";
+- a NO-PREPOSITION-in-subject guard (prepositions = a CLOSED grammatical class) rejects a prepositional-phrase
+  object: "a use case FOR multiple HSEL signals is a peripheral that …" → "signals" rejected.
+
+I2C → controller + target. `.8` lifts the corpus from 14 → 20 docs with a recovered agent (projected via a
+faithful mirror; canonical on the 3 un-reclaimed-`normalized` docs: NVMe 0→1 "controller"), every gained actor
+genuine (A76 core / ETM trace unit, CoreSight splitter, CCIX Transport port, AXI manager). Additive surface; no
+eval impact; APB/AHB/AXI/AXI-Stream/SWD recover 0 actors (clean). ADR 0006 (no chip names). KM
+[[prose-pin-appositive-signal-capture]].

@@ -97,10 +97,12 @@ grid-repair demo on a bits-bearing doc; giants' ingest budget; USB 3.2 evid-fail
 
 ## Current frontier
 
-**ACTIVE FRONTIER (`2026-06-08`): `PDF-VARIANT-DIGESTION.6`/`.7`/`.8`** — item ② (`.5`) is now COMPLETE.
-**`.5a` + `.5b` + `.5c` are DONE** — structural doc-class routing (protocol/register/interface/guide), the
-front-matter doc-type signal (true guide vs under-extracted spec), and the class-aware per-doc completeness gauge
-(`.5b`) are all live in `validate` with honest guide reporting. Live distribution over the 74 persisted docs: protocol 25 /
+**ACTIVE FRONTIER (`2026-06-08`): `PDF-VARIANT-DIGESTION.6`/`.7`** — item ② (`.5`) COMPLETE and `.8` (broaden
+prose-actor capture) DONE. **`.5a` + `.5b` + `.5c` are DONE** — structural doc-class routing
+(protocol/register/interface/guide), the front-matter doc-type signal (true guide vs under-extracted spec), and
+the class-aware per-doc completeness gauge (`.5b`) are all live in `validate` with honest guide reporting. **`.8`
+DONE** — robust structural agent-definition grammar broadens prose-actor capture (projected 14 → 20 docs,
+garbage-free, no denylist). Remaining: `.6` (VLM levers on zero-yield) / `.7` (USB 3.2 evidence-fail). Live distribution over the 74 persisted docs: protocol 25 /
 register 11 / interface 22 / guide 16; `.5c` further split the 16 guides into 11 TRUE guides + 5 UNDER-EXTRACTED
 specs (front-matter self-declares a spec → flagged for the VLM frontier `.6`, not silently dismissed). **`.4` (correctness/precision verification, item ①) is COMPLETE** — both
 `.4a` (per-fact gold on register fields + prose signals) and `.4b` (VLM proposer/verifier audit) done.
@@ -379,9 +381,32 @@ it further. Priority order ① → ⑤.
   fix the USB 3.2 evidence-build FAIL; adopt "measure from typed `evidence_ir/` artifacts" as the convention
   (the sweep's `rel` variable-collision bug). (Giant-ingest chunking deferred — those were ISA, now out of
   scope.)
-- ID: `PDF-VARIANT-DIGESTION.8` · Status: `pending` · **⑤ Broaden prose-actor capture** (only 16/74 today) —
-  add agent-definition forms and/or ground actors via relations. Accept: more docs with actors, `is_agent_noun`
-  gate keeps it garbage-free, no regression on the wire-based specs.
+- ID: `PDF-VARIANT-DIGESTION.8` · Status: `done` (`2026-06-08`) · **⑤ Broaden prose-actor capture**
+  (14/74 on the current persisted set) — add agent-definition forms. Accept: more docs with actors,
+  garbage-free, no regression on the wire-based specs.
+  **DONE — robust STRUCTURAL grammar (no fragile denylist; reviewer-flagged + redesigned).** Generalized the
+  `.3b` Form 1 (literal `"<NAME> is the device which/that <capability>"`) into `agent_definitions(text)`:
+  `"<NAME> is a/an/the <agent-class> {that|which} <capability>"` over a CONSERVATIVE generic agent-class
+  ALLOWLIST `AGENT_CLASS_NOUNS` (device/component/agent/module/entity/controller/manager/master/initiator/
+  peripheral/bridge/engine/processor/host/node/subsystem — the ambiguous data/structural words "unit"/"block"
+  deliberately EXCLUDED; an allowlist fails safe toward fewer captures). **First pass over-captured 4 garbage
+  actors on real data; an expert reviewer flagged a growing structural-noun DENYLIST as fragile → redesigned to
+  pure STRUCTURAL signals (no enumeration):** (1) `strip_trailing_parenthetical` drops a `"(refer to section
+  3.1.2.1)"` cross-ref before NAME extraction (recovers the real "controller", kills "section"); (2) the NAME
+  search is confined to the CURRENT SENTENCE so an anaphor `"… host system. It is the entity that …"` can't reach
+  back across a period (kills "system"); (3) a NO-PREPOSITION-in-subject guard (prepositions are a CLOSED
+  grammatical class, not an open noun list) rejects a prepositional-phrase object `"a use case FOR multiple HSELx
+  signals is a peripheral that …"` (kills "signals"). NAME still gated by the pre-existing `is_agent_noun`
+  function-word denylist (UNCHANGED — no growth) + deduped; Form 2 ("considered a/the/an <NAME>") unchanged.
+  Generic grammar, no chip/vendor names (ADR 0006). +6 hermetic tests (generalized class nouns; reject
+  non-agent-class; reject part-of; parenthetical cross-ref; prepositional-object; cross-sentence anaphora). fmt +
+  clippy `-D warnings` clean; lib 1421 → 1427; kg-bench 151/151. **VERIFIED on real data:** canonical (real Rust
+  extractor, the only 3 docs with un-reclaimed `normalized/`): NVMe 0→1 clean "controller" (section gone via the
+  parenthetical strip), I2C controller/target + RISC-V "trap" unchanged. Breadth PROJECTION (faithful Python
+  mirror of the grammar over persisted statements; canonical requires re-ingest of the 72 reclaimed-`normalized`
+  docs): **14 → 20 docs (+6)**, every newly-gained actor a genuine agent (A76 core / ETM trace unit, CoreSight
+  splitter, CCIX Transport port, AXI manager, CoreSight component) — verified per-item. APB/AHB/AXI/AXI-Stream/SWD
+  project 0 actors (clean; eval unaffected — actors are an additive surface, not scored).
 
 `.2b'` grid-repair is proven end-to-end on RISC-V (2 tables) + the `parse_vlm_grid` test. SCALING FINDING
 (`2026-06-08`): `enrich --vlm` calls the VLM per unknown table → impractically slow on table-heavy docs
@@ -468,8 +493,25 @@ set, not the whole doc/corpus.
   signals + 1/13 tables; GIC overview guide → not applicable. Book `quality/validation.md` subsection; KM
   `document-class-from-structure` updated. Commit subject: `PDF-VARIANT-DIGESTION.5b`.
 
+- `.8` (`2026-06-08`): broadened prose-actor capture via a ROBUST structural grammar. Generalized the `.3b`
+  literal "is the device that/which" anchor to `agent_definitions(text)` over a conservative agent-class
+  ALLOWLIST (no "unit"/"block"). An expert reviewer flagged an interim structural-noun DENYLIST as fragile →
+  redesigned to pure structural signals: `strip_trailing_parenthetical` (kills "section"), current-sentence-only
+  NAME search (kills cross-sentence anaphora "system"), and a no-preposition-in-subject guard (closed
+  grammatical class — kills the prepositional-phrase object "signals"). The pre-existing `is_agent_noun`
+  function-word denylist is UNCHANGED (no growth). +6 hermetic tests; fmt + clippy `-D warnings` clean; lib
+  1421 → 1427; kg-bench 151/151. Canonical real-extractor verify (3 docs with un-reclaimed normalized): NVMe
+  0→1 clean "controller"; I2C/RISC-V unchanged. Projection (Python mirror over persisted statements; canonical
+  needs re-ingest): 14 → 20 docs (+6), every gained actor genuine (A76 core / ETM unit, CoreSight splitter, CCIX
+  port, AXI manager, CoreSight component). APB/AHB/AXI/AXI-Stream/SWD project 0 actors (clean; additive — eval
+  unaffected). Commit subject: `PDF-VARIANT-DIGESTION.8`.
+
 ## Changelog
 
+- `2026-06-08`: `.8` (broaden prose-actor capture) DONE — robust structural agent-definition grammar (general
+  agent-class allowlist; parenthetical-strip + current-sentence + no-preposition guards instead of a fragile
+  structural-noun denylist, after expert review). Projected 14 → 20 docs with actors (+6), all genuine; NVMe
+  canonically 0→1 ("controller"); wire-based 0/clean. lib 1427; kg-bench 151/151. Frontier `.6`/`.7`.
 - `2026-06-08`: `.5b` (class-aware per-doc completeness gauge) DONE → `.5` (item ②) CLOSED. `validate <evidence>`
   now reports how COMPLETE the typed intent it produced is, judged per the `.5a` class: a guide is "not
   applicable" (never penalized for 0 registers); protocol/register/interface gauge each dimension only when its

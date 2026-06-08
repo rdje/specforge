@@ -1,3 +1,35 @@
+### `PDF-VARIANT-DIGESTION.8` — broaden prose-actor capture with a robust structural agent grammar
+Many specs introduce their agents only in prose ("A controller is the device that initiates a transfer…").
+`.8` broadens that capture so more documents recover their agent model — while staying garbage-free through
+**structural** signals rather than a fragile, ever-growing list of forbidden words.
+
+- Generalized the `.3b` literal "is the device that/which" anchor into `agent_definitions(text)`:
+  `"<NAME> is a/an/the <agent-class> {that|which} <capability>"` over a conservative generic agent-class
+  ALLOWLIST `AGENT_CLASS_NOUNS` (device/component/agent/module/entity/controller/manager/master/initiator/
+  peripheral/bridge/engine/processor/host/node/subsystem — the ambiguous data/structural words "unit"/"block"
+  deliberately excluded; an allowlist fails safe toward fewer captures). Form 2 ("considered a/the/an <NAME>")
+  and the pre-existing `is_agent_noun` function-word denylist are UNCHANGED. No chip/vendor names (ADR 0006).
+- **A first pass over-captured 4 garbage actors on real data; an expert reviewer flagged an interim
+  structural-noun DENYLIST as fragile, so the fix was redesigned to pure structural signals (no enumeration):**
+  (1) `strip_trailing_parenthetical` drops a "(refer to section 3.1.2.1)" cross-reference before the NAME →
+  recovers the real "controller", not "section"; (2) the NAME search is confined to the CURRENT SENTENCE so an
+  anaphor "… host system. It is the entity that …" cannot reach back across the period and name "system";
+  (3) a NO-PREPOSITION-in-subject guard (prepositions are a CLOSED grammatical class) rejects a
+  prepositional-phrase object: "a use case FOR multiple HSEL signals is a peripheral that …" → "signals"
+  rejected.
+- +6 hermetic tests (generalized class nouns; reject non-agent-class; reject part-of mention; parenthetical
+  cross-ref; prepositional object; cross-sentence anaphora). fmt + clippy `-D warnings` clean; full lib
+  1421 → 1427; kg-bench 151/151.
+- **Verified on real data.** Canonical (the real Rust extractor, the only 3 docs that retain a `normalized/`
+  bundle): NVMe 0 → 1 clean "controller" (the "section" garbage gone via the parenthetical strip), I2C
+  controller/target + RISC-V "trap" unchanged. Breadth projection (a faithful Python mirror of the grammar over
+  the persisted statements; the canonical number requires re-ingesting the 72 reclaimed-`normalized` docs):
+  **14 → 20 documents with a recovered agent (+6)**, every newly-gained actor verified genuine (A76 core / ETM
+  trace unit, CoreSight splitter, CCIX Transport port, AXI manager, CoreSight component). APB/AHB/AXI/AXI-Stream/
+  SWD project 0 actors (clean) — the actor surface is additive, so the wire-based eval scores are unaffected.
+- Book `pipeline/evidenceir.md` ("Capturing the agents a spec defines in prose"); KM `prose-signal-capture`
+  updated. `.8` DONE; PDF-VARIANT-DIGESTION frontier moves to `.6`/`.7`.
+
 ### `PDF-VARIANT-DIGESTION.5b` — class-aware per-document completeness gauge (closes item ② `.5`)
 The `.5a`/`.5c` work answers "what kind of document is this?". `.5b` answers the next honest question: "of the
 design intent we DID extract, how complete is it?" `validate <evidence>` now reports a per-document
