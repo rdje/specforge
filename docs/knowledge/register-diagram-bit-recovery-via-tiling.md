@@ -9,6 +9,8 @@ answers:
   - "why is the Docling table capture of a register diagram unreliable"
   - "what is recover-register-bits / how does the recover-register-bits command work"
   - "where is the tiling-gated register bit recovery implemented"
+  - "are the register-bit-recovery plumbing gaps (unknown diagrams, fragmented field tables) fixed"
+  - "why does recover-register-bits still recover 0 bits after the plumbing is complete"
 date: 2026-06-08
 tags: [registers, vlm, bit-layout, pdf-variant-digestion, extraction-gap-fix, honesty-guardrail]
 evidence: crates/specforge/src/ir/register_bits.rs; crates/specforge/src/commands/recover_register_bits.rs; docs/tasks/EXTRACTION-GAP-FIX.md; crates/specforge/test_data/llm_eval/seed_riscv_debug_registers.json
@@ -61,3 +63,17 @@ every real VLM error, but the metric stays flat because the local read isn't cle
 diagrams AND two upstream plumbing gaps block auto-resolution: the diagrams are ingest-classified `unknown` (not
 `RegisterBitfield`) and a register's field table is fragmented across several Docling tables. Closing the metric
 is the proposed follow-up (`.4c`): a stronger/sharper VLM read + those two plumbing fixes.
+
+**Both plumbing gaps NOW closed (`.4c` + `.4d`, `2026-06-08`):** `.4c` `consolidate_register_field_fragments`
+merges a register's Docling-split field tables into one record (a conservative all-field-names-distinct gate;
+[[register-field-table-defragmentation]]), so gate (b) has the full field set; `.4d`
+`resolve_diagram_image_for_register` now uses the unique image on a register's page regardless of `diagram_kind`
+(>1 image → residual, never guess), so register diagrams left `unknown` are found. The live RISC-V Debug run
+(`qwen2.5vl:7b`, all 44 de-fragmented registers) still recovers **0 / residuals 44 / zero fabrication**, but
+several registers now REACH the VLM and gate honestly (`residual_non_standard_width` for `hartinfo`/`sbcs`/`dpc`/
+`textra64`; `residual_name_mismatch`/`no_proposals` for `mcontrol`) instead of `.4b`'s uniform
+`residual_no_diagram` — the guardrail is validated **end-to-end** through the resolver, not only via direct probes.
+**So the `EXTRACTION-GAP-FIX.4` bit-recovery machinery is now COMPLETE and the metric boundary is PURELY VLM
+accuracy:** the local `qwen2.5vl:7b` is not accurate enough on these dense diagrams, and a stronger VLM (larger/
+cloud model, voting, image upscaling, sharper prompt) is the sole remaining lever — recovery still fabricates
+nothing.

@@ -224,18 +224,34 @@ fn resolve_diagram_image_for_register(
         ));
     }
 
-    // Otherwise: the unique register-bitfield diagram on the page (ambiguity → residual).
+    // Next: the unique register-bitfield diagram on the page (ambiguity → residual).
     let mut bitfields = candidates
         .iter()
         .filter(|a| matches!(a.diagram_kind, DiagramKind::RegisterBitfield));
-    let first = bitfields.next()?;
-    if bitfields.next().is_some() {
-        return None; // more than one — do not guess
+    if let Some(first) = bitfields.next() {
+        if bitfields.next().is_some() {
+            return None; // more than one RegisterBitfield — do not guess
+        }
+        return Some((
+            first.asset_id.clone(),
+            first.image_path.clone().expect("image_path filtered above"),
+        ));
     }
-    Some((
-        first.asset_id.clone(),
-        first.image_path.clone().expect("image_path filtered above"),
-    ))
+
+    // EXTRACTION-GAP-FIX.4d — gap #1: register bit-layout diagrams are routinely left
+    // `diagram_kind=unknown` by the ingest classifier, so the `RegisterBitfield`-only fallback above
+    // misses them. When the register's page carries EXACTLY ONE diagram image, it is unambiguously
+    // that register's layout, so use it regardless of `diagram_kind`. This never fabricates: the
+    // downstream tiling-width gate (a) and the field-name multiset gate (b) reject any wrong read,
+    // so a mis-resolved figure simply produces an honest residual. More than one image on the page
+    // stays a residual — we never guess which.
+    if let [only] = candidates.as_slice() {
+        return Some((
+            only.asset_id.clone(),
+            only.image_path.clone().expect("image_path filtered above"),
+        ));
+    }
+    None
 }
 
 /// Ask the diagram reader for the register's fields in MSB→LSB order. Honors the
@@ -517,6 +533,78 @@ mod tests {
         evidence_ir.write_to_disk().unwrap();
         let evidence_ir_path = evidence_ir.artifact_layout.evidence_ir_path.clone();
         (tempdir, evidence_ir_path)
+    }
+
+    /// Build a SourceIR with the register's source field table on page 5 and `image_count` diagram
+    /// images on that page, each of `kind`. Returns the SourceIR and a matching field-table register
+    /// (`regfld_T1` → table `T1`). Used to exercise `resolve_diagram_image_for_register` directly.
+    fn source_with_page_images(
+        kind: DiagramKind,
+        image_count: usize,
+    ) -> (tempfile::TempDir, SourceIr, RegisterRecord) {
+        let tempdir = tempdir().unwrap();
+        let source = tempdir.path().join("spec.md");
+        fs::write(&source, "# Spec\n").unwrap();
+        let base = tempdir.path().join("generated").join("source_ir");
+        let mut source_ir = SourceIr::build(&source, &base).unwrap();
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "T1".to_string(),
+            asset_id: "asset_table".to_string(),
+            page_id: Some("page_0005".to_string()),
+            caption_text: None,
+            source_ref: None,
+            table_kind: crate::ir::source::TableKind::Unknown,
+            header_rows: Vec::new(),
+            body_rows: Vec::new(),
+            row_count: 0,
+            col_count: 0,
+        });
+        for i in 0..image_count {
+            let img = tempdir.path().join(format!("pic_{i}.png"));
+            fs::write(&img, b"x").unwrap();
+            source_ir.visual_assets.push(VisualAsset {
+                asset_id: format!("pic_{i}"),
+                asset_kind: VisualAssetKind::Figure,
+                page_id: Some("page_0005".to_string()),
+                image_path: Some(img),
+                caption_text: None,
+                caption_source_path: None,
+                source_ref: None,
+                placeholder_text: None,
+                note: None,
+                diagram_kind: kind,
+            });
+        }
+        let register = RegisterRecord {
+            register_id: "regfld_T1".to_string(),
+            register_name: "dmcontrol".to_string(),
+            offset_address: None,
+            size_bits: None,
+            fields: vec![named_field("version")],
+            supporting_statement_ids: Vec::new(),
+            automation_confidence: AutomationConfidence::Medium,
+        };
+        (tempdir, source_ir, register)
+    }
+
+    #[test]
+    fn resolves_a_single_unknown_diagram_on_the_page() {
+        // EXTRACTION-GAP-FIX.4d — a register page with exactly ONE diagram image left `unknown` by the
+        // ingest classifier resolves to it, so the bit reader is not blocked by mis-classification.
+        let (_t, source_ir, register) = source_with_page_images(DiagramKind::Unknown, 1);
+        let resolved = resolve_diagram_image_for_register(&register, &source_ir);
+        assert_eq!(
+            resolved.map(|(id, _)| id),
+            Some("pic_0".to_string()),
+            "a single unknown-kind page image must resolve"
+        );
+    }
+
+    #[test]
+    fn two_unknown_images_on_the_page_stay_a_residual() {
+        // Never guess among several: two images on the page → honest residual, not a guess.
+        let (_t, source_ir, register) = source_with_page_images(DiagramKind::Unknown, 2);
+        assert!(resolve_diagram_image_for_register(&register, &source_ir).is_none());
     }
 
     #[test]

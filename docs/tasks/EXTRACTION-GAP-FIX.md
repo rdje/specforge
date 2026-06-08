@@ -230,6 +230,35 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
   gate (b) for the merged registers. Commit subject: `EXTRACTION-GAP-FIX.4c`. KM card
   `register-field-table-defragmentation`.
 
+- ID: `EXTRACTION-GAP-FIX.4d` · Status: `done` (`2026-06-08`) · Goal: **close `.4b` plumbing gap #1
+  — the `recover-register-bits` resolver skips register bit-layout diagrams the ingest classifier left
+  `diagram_kind=unknown`** (`resolve_diagram_image_for_register`'s fallback filters `RegisterBitfield` only). With
+  gap #2 (de-fragmentation, `.4c`) already fixed, this is the last plumbing piece. **Design:** after the existing
+  caption-name path and the unique-`RegisterBitfield` fallback, add a final safe path — when the register's page
+  carries EXACTLY ONE diagram image, use it regardless of `diagram_kind` (a single image on a register-definition
+  page is unambiguously that register's layout; >1 image stays a residual — never guess). Safe because the
+  downstream tiling-width gate (a) + name-match gate (b) still reject any wrong read → never a fabrication
+  (honesty guardrail). Hermetic test (an `unknown` single-page diagram resolves; two images → residual). Then RUN
+  LIVE (`--vlm-provider ollama`, `qwen2.5vl:7b` up) on the re-ingested/de-fragmented RISC-V Debug evidence and
+  re-measure bit-extent — EXPECTED honest outcome (per `.4b`): more registers now resolve to a diagram, the local
+  VLM still mis-sizes most dense reads → gate rejects → residual, so the metric stays ~0 with BOTH plumbing gaps
+  now closed and the ONLY remaining lever a stronger VLM (full honest program closure). ADR 0006; does not touch
+  the wire-based surface.
+  **DONE — exactly the expected honest outcome.** `resolve_diagram_image_for_register` gained a final safe path:
+  when a register's page carries EXACTLY ONE diagram image, use it regardless of `diagram_kind` (>1 → residual,
+  never guess). +2 hermetic tests (single `unknown` image resolves; two images → residual). fmt + clippy
+  `-D warnings` clean; full lib 1433 → 1435; kg-bench 151/151. **LIVE on the de-fragmented RISC-V Debug evidence
+  (`--vlm-provider ollama`, `qwen2.5vl:7b`, all 44 registers): registers_recovered 0, residuals 44, ZERO
+  fabrication** (evidence untouched). The KEY change vs `.4b`: several registers now RESOLVE a diagram and REACH
+  the VLM (`hartinfo`/`sbcs`/`dpc`/`textra64` → `residual_non_standard_width`; `mcontrol` → `residual_name_mismatch`
+  / `no_proposals`), instead of `.4b`'s uniform `residual_no_diagram` — so the guardrail is now validated
+  END-TO-END through the resolver (the local VLM reaches the diagram, mis-sizes it → gate (a) rejects → honest
+  residual), not only via direct probes. The registers still `residual_no_diagram` have 0 or >1 images on their
+  page (resolver correctly refuses to guess). **Both `.4b` plumbing gaps are now closed (`.4c` de-fragmentation +
+  `.4d` resolver); the EGF `.4` bit-recovery machinery is COMPLETE and the metric boundary is now PURELY VLM
+  accuracy** — the local `qwen2.5vl:7b` is not accurate enough on these dense diagrams; a stronger VLM is the
+  sole remaining lever (honest program closure). Commit subject: `EXTRACTION-GAP-FIX.4d`.
+
 ## Current frontier
 
 **ALL 4 quantified gaps now WORKED (`2026-06-08`); the tree is at an honest boundary.** `.1` (I2C prose
@@ -240,16 +269,23 @@ validated, but its metric is honestly UNCHANGED** (bit-extent 0/179): `.4a` buil
 correctly but makes width/reserved errors on these dense diagrams (dmcontrol sum 37, dmstatus sum 33), so the
 standard-width gate rejects → honest residual, **zero fabrication**; and two upstream plumbing gaps (diagrams
 classified `unknown` not `RegisterBitfield`; field tables fragmented across Docling tables) block auto-
-resolution. **`.4c` DE-FRAGMENTATION DONE (`2026-06-08`)** — `consolidate_register_field_fragments` merges a
-register's Docling-split field tables into one record behind a conservative all-field-names-distinct safety gate
-(RISC-V Debug 60→44 records, dmcontrol now complete with 13 fields; golds held; garbled/array-collapsed groups
-honestly left split). This closes plumbing gap #2 (and enables bit-recovery gate (b)). **REMAINING `.4c`
-follow-up:** plumbing gap #1 (classify register bit-layout diagrams as `RegisterBitfield`) + VLM-read robustness
-(voting / image upscaling / sharper prompt / stronger VLM) — both still gate the bit-extent metric, which stays
-the honest boundary (recovery fabricates nothing). **NEXT eligible work is in a sibling active tree**
-(`PDF-VARIANT-DIGESTION` frontier `.6`/`.7` — currently blocked on host-local PDFs; or `EXTRACTION-QUALITY-GAUGE`
-`.8`/`.FIELD`) — pick per PNT. Honesty guardrail throughout: read where the fact lives / trust only a clean read,
-else honest residual.
+resolution. **BOTH `.4b` plumbing gaps NOW CLOSED (`2026-06-08`):** `.4c` de-fragmentation
+(`consolidate_register_field_fragments` merges a register's Docling-split field tables behind a conservative
+all-field-names-distinct gate — RISC-V Debug 60→44 records, dmcontrol complete/13 fields, enables gate (b)) +
+`.4d` resolver (`resolve_diagram_image_for_register` now uses the unique image on a register's page regardless of
+`diagram_kind`, so register diagrams left `unknown` by the ingest classifier are found). **The EGF `.4`
+bit-recovery machinery is now COMPLETE and the metric boundary is PURELY VLM accuracy.** A live run on the
+de-fragmented RISC-V Debug evidence (`qwen2.5vl:7b`, all 44 registers) recovered 0 / residualed 44 with ZERO
+fabrication — but several registers now REACH the VLM and get gated `residual_non_standard_width` /
+`residual_name_mismatch` (vs `.4b`'s uniform `residual_no_diagram`), so the guardrail is validated end-to-end; the
+local VLM simply isn't accurate enough on these dense diagrams. **The SOLE remaining lever is a stronger VLM**
+(VLM-read robustness: a larger/cloud VLM, voting, image upscaling, sharper prompt) — the honest boundary holds
+(recovery fabricates nothing). **NEXT eligible work is in a sibling active tree** (`PDF-VARIANT-DIGESTION` frontier
+`.6`/`.7` — currently blocked on host-local PDFs; or `EXTRACTION-QUALITY-GAUGE` — its `.4` constraint-dedup proven
+NOT a clean win: AXI's same-`(subject,kind,value)` constraints mix conditional vs unconditional obligations whose
+condition lives only in `source_text`, so content-consolidation is unsafe and the byte-identical-safe dedup is
+negligible ~1-2/doc). Honesty guardrail throughout: read where the fact lives / trust only a clean read, else
+honest residual.
 
 ## Decisions
 
@@ -356,6 +392,16 @@ else honest residual.
   NVMe field-name 28/29, bit-structure 28/29; both unchanged. `.5b` gauge cleaner (dmcontrol once, complete). Also
   enables `recover-register-bits` gate (b) for merged registers. Wire-based unaffected (no register-field tables;
   consolidation can't touch constraints/relations/temporal). Commit subject: `EXTRACTION-GAP-FIX.4c`.
+- `.4d` (`2026-06-08`): **plumbing gap #1 closed — resolver finds register diagrams classified `unknown`.**
+  `resolve_diagram_image_for_register` gained a final safe path: when the register's page carries exactly ONE
+  diagram image, use it regardless of `diagram_kind` (>1 → residual, never guess); the downstream tiling +
+  name-match gates still reject any wrong read, so it never fabricates. +2 hermetic tests (single `unknown` image
+  resolves; two images → residual). fmt + clippy `-D warnings` clean; full lib 1433 → 1435; kg-bench 151/151.
+  **Live (RISC-V Debug, `qwen2.5vl:7b`, all 44 registers): recovered 0 / residuals 44, ZERO fabrication.** vs
+  `.4b`, several registers now reach the VLM and are gated `residual_non_standard_width`
+  (`hartinfo`/`sbcs`/`dpc`/`textra64`) or `residual_name_mismatch`/`no_proposals` (`mcontrol`) — guardrail
+  validated END-TO-END. Both plumbing gaps now closed (`.4c`+`.4d`); the EGF `.4` machinery is COMPLETE and the
+  metric boundary is purely VLM accuracy. Commit subject: `EXTRACTION-GAP-FIX.4d`.
 
 ## Commit log
 
@@ -365,6 +411,7 @@ else honest residual.
 - `.4a` → `EXTRACTION-GAP-FIX.4a — tiling-gated register-diagram bit recovery (pure core + recover-register-bits)`
 - `.4b` → `EXTRACTION-GAP-FIX.4b — live measurement: guardrail validated, metric unchanged 0/179, zero fabrication`
 - `.4c` → `EXTRACTION-GAP-FIX.4c — de-fragment split register-field tables (RISC-V 60→44 records; golds hold)`
+- `.4d` → `EXTRACTION-GAP-FIX.4d — resolver finds register diagrams classified unknown; machinery complete (metric VLM-gated)`
 
 ## Changelog
 
@@ -398,5 +445,12 @@ else honest residual.
   `consolidate_register_field_fragments` merges a register's Docling-split field tables into one record behind a
   conservative all-field-names-distinct safety gate (garbled/array-collapsed groups stay split — honesty
   guardrail). Live: RISC-V Debug 60 → 44 records (dmcontrol complete, 13 fields), NVMe 44 → 42; `.4a.2`/`.4a.3`
-  golds unchanged; `.5b` gauge cleaner; lib 1433; kg-bench 151/151. The remaining `.4c` plumbing (classify
-  register bit-layout diagrams as `RegisterBitfield`) + VLM-read robustness stay future.
+  golds unchanged; `.5b` gauge cleaner; lib 1433; kg-bench 151/151.
+- `2026-06-08`: `.4d` (resolver finds register diagrams classified `unknown` — the SECOND `.4b` plumbing gap)
+  DONE. `resolve_diagram_image_for_register` now uses the unique image on a register's page regardless of
+  `diagram_kind` (>1 → residual). Live RISC-V Debug run (`qwen2.5vl:7b`, 44 registers): recovered 0 / residuals
+  44, zero fabrication, but several registers now reach the VLM and gate honestly
+  (`residual_non_standard_width`/`residual_name_mismatch`) vs `.4b`'s uniform `residual_no_diagram` — guardrail
+  validated end-to-end. **BOTH plumbing gaps closed; the EGF `.4` bit-recovery machinery is COMPLETE and the
+  metric boundary is purely VLM accuracy — a stronger VLM is the sole remaining lever.** lib 1435; kg-bench
+  151/151.

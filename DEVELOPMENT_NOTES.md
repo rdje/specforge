@@ -140,6 +140,28 @@ against. Wire-based specs have no register-field tables, so it is a structural n
 touches `register_records` — never constraints, relations, or temporal rules. lib 1427 → 1433, +6 hermetic
 tests, kg-bench 151/151.
 
+## 2026-06-08 — The bit-recovery resolver finds `unknown` diagrams; the machinery is complete (EXTRACTION-GAP-FIX.4d)
+
+`.4b` named two plumbing gaps; `.4c` closed the field-table fragmentation, and `.4d` closes the other: the
+`recover-register-bits` resolver only looked at diagrams the ingest classifier tagged `RegisterBitfield`, but on
+RISC-V Debug the bit-layout diagrams come out `unknown`. The fix to `resolve_diagram_image_for_register` is a
+final safe path after the caption-name match and the unique-`RegisterBitfield` fallback: when a register's page
+carries *exactly one* diagram image, use it regardless of `diagram_kind` (more than one stays a residual — we
+never guess which). It is safe to be this permissive precisely because the downstream tiling-width gate and the
+field-name multiset gate still reject any wrong read, so a mis-resolved figure becomes an honest residual, never a
+fabricated bit.
+
+The live run is the interesting part, and it is exactly the honest outcome `.4` predicted: on the de-fragmented
+RISC-V Debug evidence the local `qwen2.5vl:7b` recovers 0 of 44 registers with zero fabrication — but the
+*reasons* are now richer than `.4b`'s uniform `residual_no_diagram`. Several registers (`hartinfo`, `sbcs`,
+`dpc`, `textra64`) now resolve a diagram, reach the VLM, and come back `residual_non_standard_width` (the model
+read them but the widths don't tile a standard register), and `mcontrol` comes back `residual_name_mismatch` /
+`no_proposals`. So the guardrail is now validated *end to end* through the real resolver, not only via the direct
+image probes of `.4b`. Both plumbing gaps are closed, so the `EXTRACTION-GAP-FIX.4` bit-recovery machinery is
+complete and the remaining boundary is purely the accuracy of the vision model: the local 7B model is not good
+enough on these dense diagrams, and a stronger VLM is the one lever left. lib 1433 → 1435, +2 hermetic tests,
+kg-bench 151/151.
+
 ## 2026-06-08 — Live measurement of the bit recovery, honest result (EXTRACTION-GAP-FIX.4b)
 
 `.4b` ran `.4a` against reality and reported truthfully: **the bit-extent metric did not move (still 0/179), and

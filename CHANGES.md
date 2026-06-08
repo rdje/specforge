@@ -1,3 +1,27 @@
+### `EXTRACTION-GAP-FIX.4d` — the bit-recovery resolver finds register diagrams left `unknown`; the `.4` machinery is complete
+`.4b` found two plumbing gaps blocking the register bit-recovery: (1) the resolver only looked at diagrams the
+ingest classifier tagged `RegisterBitfield`, and (2) a register's fields were fragmented across tables. `.4c`
+closed (2); `.4d` closes (1).
+
+- `resolve_diagram_image_for_register` (in `recover-register-bits`) gained a final safe path: after the
+  caption-name match and the unique-`RegisterBitfield` fallback, when the register's page carries **exactly one**
+  diagram image, use it regardless of `diagram_kind` (more than one → residual, never guess). Register diagrams
+  the ingest step left `unknown` are now found. Safe because the downstream tiling-width gate and field-name
+  multiset gate still reject any wrong read — a mis-resolved figure produces an honest residual, never a
+  fabricated bit. +2 hermetic tests (single `unknown` image resolves; two images → residual). fmt + clippy
+  `-D warnings` clean; full lib 1433 → 1435; kg-bench 151/151.
+- **Live (RISC-V Debug, `qwen2.5vl:7b`, all 44 de-fragmented registers): recovered 0 / residuals 44, ZERO
+  fabrication.** The metric is honestly unchanged — but the outcome is now richer than `.4b`'s uniform
+  `residual_no_diagram`: several registers (`hartinfo`/`sbcs`/`dpc`/`textra64`) now reach the VLM and are gated
+  `residual_non_standard_width`, and `mcontrol` is gated `residual_name_mismatch`/`no_proposals`. So the honesty
+  guardrail is validated **end-to-end** through the resolver, not only via direct image probes — the local VLM
+  reaches the diagram, mis-sizes it, and the gate rejects it.
+- **Both `.4b` plumbing gaps are now closed (`.4c` de-fragmentation + `.4d` resolver); the `EXTRACTION-GAP-FIX.4`
+  bit-recovery machinery is COMPLETE and the metric boundary is purely VLM accuracy** — the local `qwen2.5vl:7b`
+  is not accurate enough on these dense diagrams, and a stronger VLM (a larger/cloud model, voting, image
+  upscaling, a sharper prompt) is the sole remaining lever. Recovery still fabricates nothing. KM
+  `register-diagram-bit-recovery-via-tiling` updated.
+
 ### `EXTRACTION-GAP-FIX.4c` — de-fragment register-field tables a PDF backend split across several tables
 A PDF backend (Docling) often splits ONE register's field-definition table across several tables, so the
 evidence builder emitted several `RegisterRecord`s for one register (RISC-V Debug `dmcontrol` → 3 records of
