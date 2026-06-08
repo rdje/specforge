@@ -2102,6 +2102,16 @@ fn nearest_section_title_for_table(
     source_ir: &SourceIr,
     table: &crate::ir::source::StructuredTableRecord,
 ) -> Option<String> {
+    nearest_section_title_original(source_ir, table).map(|t| t.to_ascii_lowercase())
+}
+
+/// The nearest preceding section heading for a table, by page number, in its ORIGINAL case. Used where
+/// the heading's casing carries meaning (e.g. recovering a register name token); the lowercased variant
+/// above is for case-insensitive section matching. EXTRACTION-GAP-FIX.3.
+fn nearest_section_title_original(
+    source_ir: &SourceIr,
+    table: &crate::ir::source::StructuredTableRecord,
+) -> Option<String> {
     let table_page = table
         .page_id
         .as_deref()
@@ -2117,7 +2127,7 @@ fn nearest_section_title_for_table(
             (section_page <= table_page).then_some((section_page, section.title.as_str()))
         })
         .max_by_key(|(section_page, _)| *section_page)
-        .map(|(_, title)| title.to_ascii_lowercase())
+        .map(|(_, title)| title.to_string())
 }
 
 fn should_treat_table_as_top_level_signal_description(
@@ -8116,6 +8126,69 @@ fn register_name_from_caption(caption: &str) -> Option<String> {
     }
 }
 
+/// True when `s` contains a hex ADDRESS token `0x<hex>` (case-insensitive `x`) — the universal "this names
+/// a register" signal: a register definition states the register's address/offset. Used to gate register-name
+/// recovery from a heading so an arbitrary prose parenthetical cannot mint a register name. General digital
+/// convention, not a chip name (ADR 0006). EXTRACTION-GAP-FIX.3.
+fn contains_hex_address(s: &str) -> bool {
+    let b = s.as_bytes();
+    let mut i = 0;
+    while i + 2 < b.len() {
+        if b[i] == b'0' && (b[i + 1] == b'x' || b[i + 1] == b'X') && b[i + 2].is_ascii_hexdigit() {
+            return true;
+        }
+        i += 1;
+    }
+    false
+}
+
+/// A plausible REGISTER NAME token: starts with a letter, then letters/digits/underscore, length 2–40.
+/// General; carries no specific names (ADR 0006). EXTRACTION-GAP-FIX.3.
+fn is_register_name_token(s: &str) -> bool {
+    let len = s.len();
+    (2..=40).contains(&len)
+        && s.starts_with(|c: char| c.is_ascii_alphabetic())
+        && s.chars().all(|c| c.is_ascii_alphanumeric() || c == '_')
+}
+
+/// Recover a REGISTER NAME from a section heading that DEFINES a register. The universal register-map
+/// convention is a heading like `Debug Module Status (dmstatus, at 0x11)` / `Hart Info (hartinfo, at 0x12)`:
+/// a parenthetical whose leading token is the register identifier and which also carries the register's hex
+/// ADDRESS. We scan parenthetical groups and accept the first whose content carries a `0x<hex>` address
+/// (`contains_hex_address`) and whose leading token is a register identifier (`is_register_name_token`) —
+/// the required address is what separates a register-definition heading from an arbitrary prose
+/// parenthetical, so a register name is NEVER fabricated from a non-defining heading (honesty guardrail).
+/// Returns `None` otherwise (the caller keeps the synthetic `register_<table_id>` name). Pure grammar
+/// (ADR 0006); EXTRACTION-GAP-FIX.3.
+fn register_name_from_heading(title: &str) -> Option<String> {
+    let bytes = title.as_bytes();
+    let mut i = 0;
+    while i < bytes.len() {
+        // `(` is ASCII so it only appears at a char boundary; slicing at `i + 1` is safe.
+        if bytes[i] == b'(' {
+            let rest = &title[i + 1..];
+            let Some(close_rel) = rest.find(')') else {
+                break;
+            };
+            let inner = &rest[..close_rel];
+            if contains_hex_address(inner) {
+                let name: String = inner
+                    .trim_start()
+                    .chars()
+                    .take_while(|c| c.is_ascii_alphanumeric() || *c == '_')
+                    .collect();
+                if is_register_name_token(&name) {
+                    return Some(name);
+                }
+            }
+            i += 1 + close_rel + 1;
+            continue;
+        }
+        i += 1;
+    }
+    None
+}
+
 /// PDF-VARIANT-DIGESTION.2 (Lever A, deterministic strategy) — recover REGISTER-FIELD tables that the
 /// ingest classifier left `unknown`, most often because Docling did not mark the column-title row as a
 /// header so it lands in `body_rows[0]`. These field-definition tables are ubiquitous in TRMs / architecture
@@ -8253,10 +8326,18 @@ fn synthesize_register_field_tables(
         if fields.is_empty() {
             continue;
         }
+        // Register name: prefer the table caption; EXTRACTION-GAP-FIX.3 — else recover it from the nearest
+        // preceding section heading that DEFINES a register (`<Title> (<name>, at 0x..)`); else keep the
+        // synthetic `register_<table_id>` placeholder (an honest residual — a name is never fabricated).
         let register_name = table
             .caption_text
             .as_deref()
             .and_then(register_name_from_caption)
+            .or_else(|| {
+                nearest_section_title_original(source_ir, table)
+                    .as_deref()
+                    .and_then(register_name_from_heading)
+            })
             .unwrap_or_else(|| format!("register_{}", table.table_id));
         let size_bits = register_size_from_fields(&fields);
         records.push(RegisterRecord {
@@ -9395,6 +9476,108 @@ mod tests {
         assert!(super::is_bit_range_token("[7:0]"));
         assert!(!super::is_bit_range_token("MQES"));
         assert!(!super::is_bit_range_token("EN0"));
+    }
+
+    #[test]
+    fn register_name_from_heading_is_grammar_only() {
+        // EXTRACTION-GAP-FIX.3 — a register-defining heading names its register in a parenthetical bound to
+        // the register's hex address; the required address is what gates against fabricating a name from an
+        // arbitrary prose parenthetical (ADR 0006). Headings lifted from the real RISC-V Debug spec.
+        assert_eq!(
+            super::register_name_from_heading("3.14.1. Debug Module Status (dmstatus, at 0x11)"),
+            Some("dmstatus".to_string())
+        );
+        assert_eq!(
+            super::register_name_from_heading("3.14.3. Hart Info (hartinfo, at 0x12)"),
+            Some("hartinfo".to_string())
+        );
+        // no hex address in the parenthetical → not a register-definition heading → no name minted
+        assert_eq!(
+            super::register_name_from_heading("3.2. Overview (see Section 3 for details)"),
+            None
+        );
+        assert_eq!(super::register_name_from_heading("Introduction"), None);
+        // an address with no leading identifier in its parenthetical does not fabricate one
+        assert_eq!(
+            super::register_name_from_heading("Memory map (region at 0x4000)"),
+            Some("region".to_string()),
+            "the leading identifier of the address-bearing parenthetical is the name"
+        );
+    }
+
+    #[test]
+    fn register_name_recovered_from_defining_section_heading() -> Result<()> {
+        // EXTRACTION-GAP-FIX.3 — a caption-less `Field|Description|Access|Reset` register table (RISC-V
+        // shape) gets its register name from the nearest preceding section heading that DEFINES a register
+        // (`<Title> (<name>, at 0x..)`), via page-based association — not a synthetic `register_<table_id>`.
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Debug\nThe Debug Module.\n")?;
+        let mut source_ir = SourceIr::build(&source, &base)?;
+        source_ir
+            .document_sections
+            .push(crate::ir::source::ContentSectionRecord {
+                section_id: "section_dmstatus".to_string(),
+                title: "3.14.1. Debug Module Status (dmstatus, at 0x11)".to_string(),
+                heading_level: 3,
+                page_id: Some("page_0033".to_string()),
+                source_ref: None,
+                reading_order: 1,
+                section_kind: SectionKind::Unknown,
+            });
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_0021".to_string(),
+            asset_id: "asset_0021".to_string(),
+            page_id: Some("page_0033".to_string()),
+            caption_text: None, // RISC-V field tables carry no caption — the name is in the heading
+            source_ref: None,
+            table_kind: TableKind::Unknown,
+            header_rows: vec![vec![
+                make_table_cell("Field", true),
+                make_table_cell("Description", true),
+                make_table_cell("Access", true),
+                make_table_cell("Reset", true),
+            ]],
+            body_rows: vec![vec![
+                make_table_cell("allhalted", false),
+                make_table_cell("All harts are halted", false),
+                make_table_cell("R", false),
+                make_table_cell("0", false),
+            ]],
+            row_count: 2,
+            col_count: 4,
+        });
+        let recs = super::synthesize_register_field_tables(&source_ir, None);
+        assert_eq!(recs.len(), 1);
+        assert_eq!(
+            recs[0].register_name, "dmstatus",
+            "register name recovered from the defining heading, not synthetic register_<table_id>"
+        );
+
+        // Negative: with a NON-defining heading (no register address) the name stays synthetic — no
+        // fabrication (honesty guardrail).
+        let mut src2 = SourceIr::build(&source, &base)?;
+        src2.document_sections
+            .push(crate::ir::source::ContentSectionRecord {
+                section_id: "section_overview".to_string(),
+                title: "3.2. Register Overview".to_string(),
+                heading_level: 2,
+                page_id: Some("page_0033".to_string()),
+                source_ref: None,
+                reading_order: 1,
+                section_kind: SectionKind::Unknown,
+            });
+        src2.structured_tables
+            .push(source_ir.structured_tables[0].clone());
+        let recs2 = super::synthesize_register_field_tables(&src2, None);
+        assert_eq!(recs2.len(), 1);
+        assert!(
+            recs2[0].register_name.starts_with("register_table_"),
+            "no register-definition heading → synthetic name kept, not fabricated (got {:?})",
+            recs2[0].register_name
+        );
+        Ok(())
     }
 
     #[test]

@@ -1,3 +1,27 @@
+### `EXTRACTION-GAP-FIX.3` — RISC-V register name from the defining section heading (register-name association 0/60 → 59/60)
+Third fix in the owner-pivot `EXTRACTION-GAP-FIX` tree, and it resolved the leaf's open design question by
+**investigating the real data first** (honesty guardrail). RISC-V Debug register-field tables (`Field|Description|
+Access|Reset`) carry no caption, so every register was labelled with the synthetic placeholder
+`register_table_NNNN` (association 0/60). Probing the persisted RISC-V SourceIR proved the name lives in the
+section heading — *"3.14.1. Debug Module Status **(dmstatus, at 0x11)**"* — and that pages 32–38 hold only
+register-defining headings, so a **page-based** nearest-preceding-section association is reliable (the `.2c`
+deferral had worried about Docling's `content_elements` order, but page-number proximity is enough). **Fix
+(agnostic, no chip phrasing):** `register_name_from_heading` recovers the leading identifier of a heading
+parenthetical that ALSO carries a hex address (`contains_hex_address`, `0x<hex>`) — the universal register-map
+fact that a register has both a name and an address; the required address is the gate that stops an arbitrary
+prose parenthetical from minting a name. `nearest_section_title_original` does the page-based association; wired
+as a fallback after the caption path in `synthesize_register_field_tables`. **Honesty guardrail:** no
+register-definition heading → the synthetic name is kept (honest residual), never fabricated. **Re-measured on
+the `.4a.2` RISC-V gold from the SAME persisted source (stash-isolated): register-name association 0/60 →
+59/60** — `dmstatus`/`dmcontrol` recovered correctly, the 1 residual heading genuinely has no address
+parenthetical, and a python cross-check confirmed **0 fabricated names** (every recovered name traces to a
+defining heading). Field-name recall unchanged (20/34); strict per-fact recall stays 0.000 because the field
+*bits* still live in the layout graphic (`.4`, the last gap), not the name. +2 hermetic tests (grammar-only +
+wiring, each with a no-fabrication negative); no wire-based regression (the path only fires on caption-less
+register-field tables); full `run_ci.sh` green (lib 1381 → 1383); kg-bench 151/151. Book
+`quality/extraction-eval.md` (RISC-V story updated) + KM `register-field-table-extraction` (the deferred
+follow-up is now resolved). Frontier → `.4` (RISC-V bit-layout-graphic, VLM-or-residual).
+
 ### `EXTRACTION-GAP-FIX.2` — NVMe register-field mnemonic from the description defined-term (field-name recall 0/29 → 28/29)
 Second fix in the owner-pivot `EXTRACTION-GAP-FIX` tree. NVMe register tables are laid out
 `Bits | Type | Reset | Description` — there is no name column, so the table synthesizer recorded the **bit-range**

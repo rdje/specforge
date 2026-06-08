@@ -8,6 +8,8 @@ answers:
   - "how flexible is the register model / what register-table shapes are handled"
   - "how is a register-field mnemonic recovered when the name column is a bit-range (NVMe)"
   - "why is NVMe register field_name a bit-range and how is the mnemonic found in the description"
+  - "how is a register name recovered from a section heading (RISC-V dmstatus/dmcontrol)"
+  - "why were register names synthetic register_table_NNNN and how is the heading association done"
 date: 2026-06-08
 tags: [registers, tables, evidence, pdf-variant-digestion, lever-a]
 evidence: crates/specforge/src/ir/evidence.rs (synthesize_register_field_tables, is_register_field_header, register_name_from_caption); docs/tasks/PDF-VARIANT-DIGESTION.md
@@ -56,7 +58,21 @@ same persisted source): **field-name recall 0/29 → 28/29 = 0.966** (the lone m
 `(CRMS):` term in the source → honest residual), bit-structure recall held 27/29 → 28/29. No wire-based
 regression (the path only fires on bits-only register-field tables; APB/AHB/AXI/SWD have none).
 
-**Known follow-ups:** register NAME from a preceding heading (synthetic `register_table_NNNN` today —
-Docling does not place tables in `content_elements` reading-order, so reliable heading association is deferred,
-not faked); block/base grouping; array/instance; cross-table field enum association
-([[project_flexible_register_model]]).
+**Register-name-from-heading (EXTRACTION-GAP-FIX.3):** when a register-field table has no usable caption (the
+RISC-V Debug shape — `Field|Description|Access|Reset` with an empty caption), its register name lives in the
+preceding section heading, e.g. *"3.14.1. Debug Module Status (dmstatus, at 0x11)"*. `register_name_from_heading`
+recovers it = the leading identifier of a parenthetical that ALSO carries a hex ADDRESS (`contains_hex_address`,
+`0x<hex>`) — the universal register-map fact that a register has both a name and an address. The required
+address is the gate that stops an arbitrary prose parenthetical from minting a name. Association is **page-based**
+(`nearest_section_title_original` — the nearest preceding heading by page), which is reliable here even though
+Docling does not order tables in `content_elements`: each register subsection's heading and its field table sit
+on the same/adjacent page. Wired as a fallback after the caption path in `synthesize_register_field_tables`;
+absent a defining heading the synthetic `register_<table_id>` is kept (honest residual, never fabricated).
+Measured on the RISC-V Debug spec (`seed_riscv_debug_registers.json`, same persisted source): **register-name
+association 0/60 → 59/60** (the 1 residual heading has no register-address parenthetical), `dmstatus`/`dmcontrol`
+recovered correctly, **0 fabricated names** (every recovered name traces to a defining heading), field-name
+recall unchanged (20/34). Bit positions still live in the layout graphic (`.4`), so strict per-fact recall is
+gated on that, not on the name.
+
+**Known follow-ups:** register bit positions from the layout GRAPHIC (RISC-V — `EXTRACTION-GAP-FIX.4`); block/
+base grouping; array/instance; cross-table field enum association ([[project_flexible_register_model]]).

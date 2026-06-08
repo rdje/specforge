@@ -44,7 +44,7 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
 |---|---|---|
 | I2C prose over-capture | declared-signal precision 6/10 = 0.600 (ACK/NACK/DDC/SDR are not bus signals) — **CLOSED `.1` → 1.000** | `.4a.5` |
 | NVMe mnemonic-from-description | field-name recall 0/29 (the mnemonic lives in the DESCRIPTION; `field_name` is the bit-range) — **CLOSED `.2` → 28/29 = 0.966** | `.4a.3` |
-| RISC-V register-name | register-name association 0/60 (synthetic `register_<table_id>` — name is in the preceding heading) | `.4a.2` |
+| RISC-V register-name | register-name association 0/60 (synthetic `register_<table_id>` — name is in the preceding heading) — **CLOSED `.3` → 59/60, 0 false names** | `.4a.2` |
 | RISC-V bit-layout graphic | bit-extent 0/179 (bit positions live in the layout GRAPHIC, not the field table) | `.4a.2`, `.4b` (VLM flags "lacks bit positions") |
 
 ## Non-goals
@@ -99,12 +99,25 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
   existing register-field tests unchanged. No wire-based regression (the path only fires on bits-only
   register-field tables; APB/AHB/AXI/SWD have none); full `run_ci.sh` green (lib 1379 → 1381); kg-bench 151/151.
   Commit subject: `EXTRACTION-GAP-FIX.2`.
-- ID: `EXTRACTION-GAP-FIX.3` · Status: `pending` · Goal: **RISC-V register-name-from-heading** — associate a
-  register-field table's register name with the nearest preceding section heading / register-name caption
-  instead of the synthetic `register_<table_id>` (the `.2c`-deferred association; needs a reliable
-  reading-order or page/section anchor, structural + agnostic — do NOT fake). Re-measure on the `.4a.2` RISC-V
-  gold (register-name association 0/60 → higher). Accept: association up with no false names; no wire-based
-  regression; hermetic tests. (Harder — `.2c` deferred it for a real reading-order reason; may split.)
+- ID: `EXTRACTION-GAP-FIX.3` · Status: `done` (`2026-06-08`) · Goal: **RISC-V register-name-from-heading** —
+  associate a register-field table's register name with the preceding section heading instead of the synthetic
+  `register_<table_id>`. **DONE — the open question is resolved: a reliable PAGE-BASED structural anchor exists
+  (the `.2c` deferral was about `content_elements` reading-order, but page-number proximity is enough — each
+  register subsection's heading and its field table sit on the same/adjacent page).** Inspecting the persisted
+  RISC-V Debug SourceIR proved the name lives in a heading like *"3.14.1. Debug Module Status (dmstatus, at
+  0x11)"* — a parenthetical whose leading identifier is the register name and which also carries the register's
+  hex ADDRESS. `register_name_from_heading` recovers it; `contains_hex_address` (`0x<hex>`) is the gate that
+  separates a register-definition heading from an arbitrary prose parenthetical (so a name is NEVER fabricated);
+  `nearest_section_title_original` does the page-based association; wired as a fallback after the caption path in
+  `synthesize_register_field_tables`. The address co-occurrence is a UNIVERSAL register-map fact (name +
+  address), not a chip name — ADR 0006 preserved (no RISC-V phrasing hardcoded; works for any spec that names +
+  addresses registers in headings). **Honesty guardrail: no defining heading → synthetic name kept (residual),
+  never invented.** **Re-measured on the `.4a.2` RISC-V gold (same persisted source, stash-isolated): register-
+  name association 0/60 → 59/60** (`dmstatus`/`dmcontrol` correct; the 1 residual heading has no address
+  parenthetical), **0 fabricated names** (every recovered name traces to a defining heading — verified), field-
+  name recall unchanged 20/34. Strict per-fact recall stays 0.000 (bits 0/179 live in the layout graphic → `.4`,
+  not the name). +2 hermetic tests; no wire-based regression; full `run_ci.sh` green (lib 1381 → 1383); kg-bench
+  151/151. Commit subject: `EXTRACTION-GAP-FIX.3`.
 - ID: `EXTRACTION-GAP-FIX.4` · Status: `pending` · Goal: **RISC-V bit-layout-graphic parse** — recover bit
   positions for register fields whose bits live in the layout GRAPHIC, not the field table (the `.4b` audit's
   dominant flag). Likely a VLM/structural read of the register-diagram image, bounded/targeted (the `.2b`
@@ -116,14 +129,15 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
 
 ## Current frontier
 
-**ACTIVE FRONTIER (`2026-06-08`): `EXTRACTION-GAP-FIX.3`** — RISC-V register-name-from-heading (associate a
-register-field table's register name with the nearest preceding section heading / register-name caption instead
-of the synthetic `register_<table_id>`; the `.2c`-deferred association — needs a reliable reading-order or
-page/section anchor, structural + agnostic, do NOT fake). **`.1` DONE** — I2C prose precision 0.600 → 1.000 via
-the noun-phrase HEAD rule. **`.2` DONE** — NVMe mnemonic-from-description (parenthetical defined-term `(MQES):`
-recovery, the real structure, not the hypothesized leading-bare form), field-name recall 0/29 → 28/29 = 0.966.
-Then `.4` (RISC-V bit-graphic, hardest/VLM-or-residual). Remember the honesty guardrail: read where the fact
-lives, else honest residual. (`.3` is harder — `.2c` deferred it for a real reading-order reason; may split.)
+**ACTIVE FRONTIER (`2026-06-08`): `EXTRACTION-GAP-FIX.4`** — RISC-V bit-layout-graphic parse (recover bit
+positions for register fields whose bits live in the layout GRAPHIC, not the field table — the `.4b` audit's
+dominant flag; bit-extent 0/179). Likely a VLM/structural read of the register-diagram image, bounded/targeted,
+gated + agnostic. **If the graphic read cannot recover a field's bits, that field's bit-extent stays an honest
+completeness residual — bits are NEVER synthesized from a table that does not contain them.** This is the
+HARDEST leaf (VLM, may split). **`.1` DONE** (I2C prose precision 0.600 → 1.000). **`.2` DONE** (NVMe mnemonic
+from parenthetical defined-term, field-name 0/29 → 28/29). **`.3` DONE** (RISC-V register-name from the defining
+heading's `(name, at 0x..)` parenthetical, page-based association, register-name 0/60 → 59/60, 0 false names).
+Remember the honesty guardrail: read where the fact lives, else honest residual.
 
 ## Decisions
 
@@ -135,8 +149,12 @@ lives, else honest residual. (`.3` is harder — `.2c` deferred it for a real re
 
 ## Open questions
 
-- `.3` register-name: is a reliable structural heading→table association available (page anchor / caption /
-  reading-order), or does it need the VLM? (resolve when picked.)
+- `.3` register-name: **RESOLVED (`2026-06-08`)** — a reliable PAGE-BASED structural anchor exists. The `.2c`
+  deferral worried about `content_elements` reading-order, but page-number proximity (`nearest_section_title_*`)
+  is sufficient: a register's defining heading and its field table sit on the same/adjacent page. The register
+  name is the leading identifier of a heading parenthetical that ALSO carries a hex address (`(dmstatus, at
+  0x11)`), the address being the universal "this defines a register" gate. No VLM needed. Verified on pages
+  32–38 of RISC-V Debug (only register-defining headings there — no intervening noise) and 0 fabricated names.
 - `.4` bit-graphic: VLM transcription of the register-diagram image vs a structural bit-row parse? (resolve when picked.)
 
 ## Blockers
@@ -171,11 +189,27 @@ lives, else honest residual. (`.3` is harder — `.2c` deferred it for a real re
   description-parse metric (the prose is deterministic on the same PDF). fmt + clippy `-D warnings` clean; full
   lib suite 1379 → 1381; kg-bench 151/151. No wire-based regression (the path only fires on bits-only
   register-field tables; APB/AHB/AXI/SWD have none).
+- `.3` (`2026-06-08`): **Resolved the open question by INVESTIGATION first** — probed the persisted RISC-V Debug
+  SourceIR: register-field tables have empty captions; the register name lives in the section heading
+  *"3.14.1. Debug Module Status (dmstatus, at 0x11)"*; pages 32–38 carry only register-defining headings (no
+  intervening noise) so page-based nearest-preceding-section association is reliable. Implemented
+  `register_name_from_heading` (leading identifier of a parenthetical that also carries a `0x` address via
+  `contains_hex_address`; `is_register_name_token` shape gate), `nearest_section_title_original` (page-based,
+  original case), wired as a fallback after the caption path in `synthesize_register_field_tables`. Address-gated
+  so a prose parenthetical can't mint a name; ADR 0006 (no RISC-V phrasing). +2 hermetic tests
+  (`register_name_from_heading_is_grammar_only` incl. no-address/prose negatives;
+  `register_name_recovered_from_defining_section_heading` incl. a synthetic-name-kept negative). **Re-measured on
+  the `.4a.2` RISC-V gold from the SAME persisted source (stash-isolated): register-name association 0/60 →
+  59/60**, `dmstatus`/`dmcontrol` correct, **0 fabricated names** (python cross-check: every recovered name
+  traces to a defining heading with a `0x` address), field-name recall unchanged 20/34. Strict per-fact recall
+  stays 0.000 — bits are 0/179, in the layout graphic (`.4`). fmt + clippy `-D warnings` clean; full lib suite
+  1381 → 1383; kg-bench 151/151. No wire-based regression.
 
 ## Commit log
 
 - `.1` → `EXTRACTION-GAP-FIX.1 — I2C prose precision: noun-phrase head must be a wire noun (0.600 → 1.000)`
 - `.2` → `EXTRACTION-GAP-FIX.2 — NVMe mnemonic from description defined-term (field-name recall 0/29 → 28/29)`
+- `.3` → `EXTRACTION-GAP-FIX.3 — RISC-V register name from defining heading (register-name 0/60 → 59/60)`
 
 ## Changelog
 
@@ -184,5 +218,8 @@ lives, else honest residual. (`.3` is harder — `.2c` deferred it for a real re
   `.1` (I2C prose precision filter) DONE → precision 0.600 → 1.000.
 - `2026-06-08`: `.2` (NVMe mnemonic-from-description) DONE → field-name recall 0/29 → 28/29 = 0.966. The real
   structure was the parenthetical defined-term `(MQES):`, not the hypothesized leading-bare form; recovered it
-  in both register paths, honest residual for the one term-less field. Frontier moves to `.3` (RISC-V
-  register-name-from-heading).
+  in both register paths, honest residual for the one term-less field.
+- `2026-06-08`: `.3` (RISC-V register-name-from-heading) DONE → register-name association 0/60 → 59/60, 0 false
+  names. Open question resolved by investigation: page-based association to the defining heading's `(name, at
+  0x..)` parenthetical, gated by the hex address (no fabrication). Frontier moves to `.4` (RISC-V bit-graphic,
+  the last + hardest gap).

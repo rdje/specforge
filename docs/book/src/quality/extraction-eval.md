@@ -154,7 +154,7 @@ specforge eval-extraction crates/specforge/test_data/llm_eval/seed_riscv_debug_r
   -- register-field surface (measure & surface) --
     field-name recall (register-agnostic)   20/34 = 0.588
     bit-structure recall (register-scoped)  0/34 = 0.000
-    register-name association gap            0/60 extracted registers have a real (non-synthetic) name
+    register-name association gap            59/60 extracted registers have a real (non-synthetic) name
     bit-extent completeness gap              0/179 extracted fields carry a bit position
 ```
 
@@ -162,14 +162,19 @@ Read that top to bottom. On the real **RISC-V Debug Specification 1.0**, SpecFor
 field *names* well — **20 of 34** gold fields across the `dmstatus` and `dmcontrol` registers,
 which is **all 14 of `dmcontrol`** and 6 of `dmstatus`'s 20 (the spec splits `dmstatus`'s field
 table across three pages, and the PDF reader dropped the middle page's worth of rows — a real,
-located recall miss, not a mystery). But two things it does **not** yet recover: the register's
-real *name* (it reads the per-field table but not the heading above it, so every register is
-labelled with a placeholder like `register_table_0026`), and each field's *bit position* (those
-live in a bit-layout *graphic* above the table, which the reader doesn't parse). Because the
-strict identity needs all three, the per-fact precision/recall on this document is **0.000** — and
-that is the honest truth, not a failure of the eval. The decomposition is what makes the `0.000`
-*useful*: it says "the names are mostly there; the register association and the bit positions are
-the two things to fix next," instead of a single demoralising zero that hides where the value is.
+located recall miss, not a mystery). It now also recovers each register's real *name*: RISC-V puts
+the name not in the field table but in the section heading above it — *"3.14.1. Debug Module Status
+(dmstatus, at 0x11)"* — so the reader takes the name from the **nearest preceding heading that
+defines a register**, recognised by the universal tell that a register has both a name and an
+*address* (the parenthetical carries a `0x` offset). That took register-name association from
+`0/60` to `59/60` with **zero invented names** (the one hold-out has no address-bearing heading, so
+it honestly stays a placeholder rather than borrow a wrong name). The remaining gap is each field's
+*bit position*: those live in a bit-layout *graphic* above the table, which the reader does not yet
+parse. Because the strict identity needs the register, the name, **and** the bits, the per-fact
+precision/recall on this document is still **0.000** until the bit graphic is read — and that is the
+honest truth, not a failure of the eval. The decomposition is what makes the `0.000` *useful*: it
+says "the names are there and now the registers are named too; the bit positions are the one thing
+left to fix," instead of a single demoralising zero that hides where the value is.
 
 The gold is **transcribed independently from the spec's own register definitions** (the bit
 positions are read straight from each register's bit-layout graphic in the PDF, field by field),
@@ -214,9 +219,10 @@ same name and even the same extent must not be credited across the wrong registe
 register's page-split fragments (NVMe's 64-bit `CAP` table spans several of them).
 
 Two documents, the same measured surface, complementary failure modes: NVMe now gets bits, register
-names, *and* mnemonics; RISC-V Debug still gets field names but not their bit positions or the owning
-register's real name. Nothing is hidden behind a strict `0.000` — the decomposition says precisely
-what is fixed and what is left to fix for each.
+names, *and* mnemonics; RISC-V Debug gets field names *and* (now) the owning register's real name,
+with the field bit positions — which live in a layout graphic — the one piece left. Nothing is
+hidden behind a strict `0.000` — the decomposition says precisely what is fixed and what is left to
+fix for each.
 
 *Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.4a.1` added the register-field
 eval surface; `.4a.2` the RISC-V Debug gold; `.4a.3` the NVMe gold + register-scoped bit-structure

@@ -8,6 +8,38 @@
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 - adapter target: `.isf` (sole adapter); `.fsm`/HDL are out of scope — FSMGen consumes `.isf` and owns scheduling/`.fsm`/HDL downstream (since `ISF-ONLY-CONSOLIDATION`, `2026-05-18`)
 
+## 2026-06-08 — RISC-V register name from the defining section heading (EXTRACTION-GAP-FIX.3)
+
+`.3` was the leaf `.2c` had deferred ("Docling does not place tables in `content_elements` reading-order, so
+reliable heading association is deferred, not faked"), with an explicit open question: *is a reliable structural
+heading→table association available, or does it need the VLM?* The discipline here was **resolve the question by
+investigating the real data before writing any code** — and the investigation answered it cleanly.
+
+What the persisted RISC-V Debug SourceIR showed:
+- the register-field tables (`Field|Description|Access|Reset`) have **empty captions**, but carry a `page_id`;
+- the register name lives in the **section heading**: *"3.14.1. Debug Module Status (dmstatus, at 0x11)"*,
+  *"3.14.2. Debug Module Control (dmcontrol, at 0x10)"*, *"3.14.3. Hart Info (hartinfo, at 0x12)"*;
+- pages 32–38 contain **only register-defining headings** — no intervening prose subsections between a
+  register's heading and its field table.
+
+So the `content_elements` reading-order problem `.2c` flagged is real but irrelevant here: **page-number
+proximity** is a sufficient anchor. `nearest_section_title_original` (page-based, original case) picks the
+nearest preceding heading, and `register_name_from_heading` recovers the name = the leading identifier of a
+heading parenthetical that ALSO carries a hex address (`contains_hex_address`, `0x<hex>`). The **address
+co-occurrence is the gate**: a register, universally, has a name and an address, so "(identifier … 0x…)" is a
+register-definition heading, while an arbitrary prose parenthetical "(see Section 3)" has no address and is
+ignored — that is what makes the rule general (ADR 0006, no RISC-V phrasing baked in) AND safe against
+fabrication. Wired as a fallback *after* the caption path, so NVMe (caption-named) and other captioned register
+specs are untouched.
+
+Measurement (same source, stash-isolated): **register-name association 0/60 → 59/60**. I then ran a python
+cross-check asserting every recovered name traces back to a defining heading with a `0x` address → **0
+fabricated names**; `dmstatus`/`dmcontrol` correct; the lone residual (`register_table_0057`) has a heading with
+no address parenthetical, so it honestly stays synthetic. Field-name recall is unchanged (20/34) and strict
+per-fact recall stays 0.000 — because the field *bit positions* live in the layout graphic, which is
+`EXTRACTION-GAP-FIX.4`, the last and hardest gap. No wire-based regression: the fallback only fires on
+caption-less register-field tables, which the parallel-bus signal specs don't have.
+
 ## 2026-06-08 — NVMe register-field mnemonic from the description (EXTRACTION-GAP-FIX.2)
 
 The lesson, again, is **read where the fact actually lives before writing the fix** (the owner honesty
