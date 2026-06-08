@@ -97,9 +97,10 @@ grid-repair demo on a bits-bearing doc; giants' ingest budget; USB 3.2 evid-fail
 
 ## Current frontier
 
-**ACTIVE FRONTIER (`2026-06-08`): `PDF-VARIANT-DIGESTION.5b`** (per-doc completeness gauge). **`.5a` + `.5c` are
-DONE** — structural doc-class routing (protocol/register/interface/guide) + the front-matter doc-type signal are
-live in `validate` with honest guide reporting. Live distribution over the 74 persisted docs: protocol 25 /
+**ACTIVE FRONTIER (`2026-06-08`): `PDF-VARIANT-DIGESTION.6`/`.7`/`.8`** — item ② (`.5`) is now COMPLETE.
+**`.5a` + `.5b` + `.5c` are DONE** — structural doc-class routing (protocol/register/interface/guide), the
+front-matter doc-type signal (true guide vs under-extracted spec), and the class-aware per-doc completeness gauge
+(`.5b`) are all live in `validate` with honest guide reporting. Live distribution over the 74 persisted docs: protocol 25 /
 register 11 / interface 22 / guide 16; `.5c` further split the 16 guides into 11 TRUE guides + 5 UNDER-EXTRACTED
 specs (front-matter self-declares a spec → flagged for the VLM frontier `.6`, not silently dismissed). **`.4` (correctness/precision verification, item ①) is COMPLETE** — both
 `.4a` (per-fact gold on register fields + prose signals) and `.4b` (VLM proposer/verifier audit) done.
@@ -296,8 +297,11 @@ it further. Priority order ① → ⑤.
         which only the git-tracked re-ingested RISC-V/NVMe retain — a signal-bearing breadth audit on a fresh
         re-ingest is a noted follow-up). Book section refreshed with the real numbers; KM `extraction-audit-vlm`
         updated. Commit subject: `PDF-VARIANT-DIGESTION.4b.2`.
-- ID: `PDF-VARIANT-DIGESTION.5` · Status: `active` · **② Doc-class routing + per-doc completeness gauge.**
-  Children: `.5a` (done) · `.5c` (done) · `.5b` (completeness gauge — frontier)
+- ID: `PDF-VARIANT-DIGESTION.5` · Status: `done` (`2026-06-08`; all children `.5a`/`.5b`/`.5c` done) ·
+  **② Doc-class routing + per-doc completeness gauge.** Children: `.5a` (done) · `.5c` (done) · `.5b` (done).
+  Item ② COMPLETE — `validate <evidence>` now reports the document class, the front-matter self-declared type
+  (true guide vs under-extracted spec), AND a class-aware per-doc completeness gauge. Frontier moves to `.6`
+  (VLM levers on the addressable zero-yield) / `.7` (USB 3.2 evidence-fail) / `.8` (broaden prose-actor capture).
   - ID: `PDF-VARIANT-DIGESTION.5a` · Status: `done` (`2026-06-08`) · Goal: detect doc class (protocol / register /
     interface / guide) from structure; apply class-appropriate surfaces; report GUIDES as "low structured
     design-intent" honestly (not a 0 failure). Accept: each doc tagged with a class; the 8 zero-yield docs
@@ -338,9 +342,36 @@ it further. Priority order ① → ⑤.
     UNDER-EXTRACTED specs flagged for the VLM frontier** — RISC-V Advanced Interrupt *Architecture*, JESD235
     *JEDEC STANDARD* HBM, CoreSight Base System *Architecture* (+2). No wire-based regression. KM card
     `document-class-from-structure` updated.**
-  - ID: `PDF-VARIANT-DIGESTION.5b` · Status: `pending` · Goal: per-doc COMPLETENESS gauge (every register has
-    fields? every signal a direction? unaccounted intent-bearing tables?) — extend the mandatory-width flag
-    into a coverage/quality report surfaced by `validate`. Accept: honest per-doc gap counts; no fabrication.
+  - ID: `PDF-VARIANT-DIGESTION.5b` · Status: `done` (`2026-06-08`) · Goal: per-doc COMPLETENESS
+    gauge (every register has fields? every signal a direction? unaccounted intent-bearing tables?) — extend the
+    mandatory-width flag into a coverage/quality report surfaced by `validate`. Accept: honest per-doc gap
+    counts; no fabrication; class-aware. **DONE** — pure `document_completeness_gauge` + `DocumentCompletenessGauge`
+    / `CompletenessGap` in `ir/completeness.rs`; `validate <evidence>` prints a Document Completeness Gauge block +
+    `document_completeness_gaps` / `document_completeness_applicable` metrics + an Info `evidence_document_completeness`
+    finding. +5 hermetic tests (guide→not-applicable; register-doc held to fields+width; protocol-with-no-registers
+    shows no register gap; fully-attributed doc is complete; sample bounded). fmt + clippy `-D warnings` clean; lib
+    1416 → 1421; kg-bench 151/151; APB/AHB/AXI/SWD eval unaffected (additive). Live over persisted evidence: APB
+    (protocol) 1 gap (signals_without_direction 1/32, tables 0/8); RISC-V Debug (register) registers_unresolved_width
+    60/60 (XLEN-parametric, corroborates `.4a.2`) + all 60 registers have fields; Avalon (interface) signals 11/34 +
+    1/13 tables; GIC overview guide → not applicable (never penalized). Book `quality/validation.md` subsection; KM
+    `document-class-from-structure` updated.
+    **Design (`2026-06-08`):** a pure `crate::ir::completeness::document_completeness_gauge(class, registers,
+    declared_signal_count, signals_missing_direction, intent_bearing_table_count, unexplained_tables) ->
+    DocumentCompletenessGauge { class, applicable, gaps: Vec<CompletenessGap{kind, missing, total, sample}> }`.
+    CLASS-AWARE keyed off the `.5a` `DocumentClass`: a `Guide` is `applicable=false` (low structured
+    design-intent — nothing to gauge; the `.5c` under-extracted flag carries the "actually a spec" case), so a
+    guide is NEVER penalized for 0 registers/signals. For Register/Protocol/Interface, each dimension is gauged
+    only when its denominator (`total`) > 0 — so a protocol with no registers shows no register gap and a
+    register doc IS held to "every register has fields / a resolved width". Dimensions (all read off
+    already-built IR — pure observation, no fabrication): `registers_without_fields`,
+    `registers_unresolved_width` (reuses `registers_with_unresolved_width`), `signals_without_direction`
+    (declared inventory − `collect_signals_with_explicit_direction_declarations`, which already folds in
+    relation-derived directions), `unexplained_intent_bearing_tables` (reuses `unexplained_intent_bearing_tables`).
+    Each gap carries a bounded `sample` (≤8) of affected names/ids for review. Surfaced in `validate <evidence>`
+    as a console block + a `document_completeness_gaps` metric + an Info `evidence_document_completeness`
+    finding (Info, not Warning — an honest known-incomplete report, not a correctness error; matches the
+    severity-gating doctrine). Agnostic (ADR 0006 — no chip names; structural only). Keep APB/AHB/AXI/SWD at
+    100%; additive (no extraction-behavior change).
 - ID: `PDF-VARIANT-DIGESTION.6` · Status: `pending` · **③ VLM levers on the addressable zero-yield** — run
   `.2b`/`.2b'` on the image-table-heavy zero docs (OpenCAPI PHY-mech / AFU). Accept: measured uplift (tables
   reclassified/repaired → records) with 0 garbage (verification gate); honest report where the VLM also can't.
@@ -421,8 +452,35 @@ set, not the whole doc/corpus.
   JEDEC STANDARD HBM, CoreSight Base System Architecture, +2). KM card `document-class-from-structure` updated.
   Commit subject: `PDF-VARIANT-DIGESTION.5c`.
 
+- `.5b` (`2026-06-08`): class-aware per-doc completeness gauge landed — pure
+  `crate::ir::completeness::document_completeness_gauge` + `DocumentCompletenessGauge`/`CompletenessGap`.
+  Keyed off the `.5a` `DocumentClass`: `Guide` → `applicable=false` (never penalized for a missing surface);
+  Register/Protocol/Interface → each dimension gauged only when its denominator > 0. Dimensions read off
+  already-built IR (no fabrication): `registers_without_fields`, `registers_unresolved_width` (reuses the
+  mandatory-width flag), `signals_without_direction` (declared inventory minus
+  `collect_signals_with_explicit_direction_declarations`, now `pub(crate)`),
+  `unexplained_intent_bearing_tables`. `validate <evidence>` prints a Document Completeness Gauge block +
+  `document_completeness_gaps` / `document_completeness_applicable` metrics + an Info
+  `evidence_document_completeness` finding. +5 hermetic tests; `cargo fmt --check` + `cargo clippy -D warnings`
+  clean; full lib 1416 → 1421; kg-bench 151/151; APB/AHB/AXI/SWD eval unaffected (additive). Live over persisted
+  evidence: APB (protocol) 1 gap (1/32 signals_without_direction); RISC-V Debug (register) registers_unresolved_width
+  60/60 (XLEN-parametric — corroborates `.4a.2`) with all 60 registers carrying fields; Avalon (interface) 11/34
+  signals + 1/13 tables; GIC overview guide → not applicable. Book `quality/validation.md` subsection; KM
+  `document-class-from-structure` updated. Commit subject: `PDF-VARIANT-DIGESTION.5b`.
+
 ## Changelog
 
+- `2026-06-08`: `.5b` (class-aware per-doc completeness gauge) DONE → `.5` (item ②) CLOSED. `validate <evidence>`
+  now reports how COMPLETE the typed intent it produced is, judged per the `.5a` class: a guide is "not
+  applicable" (never penalized for 0 registers); protocol/register/interface gauge each dimension only when its
+  denominator > 0. Dimensions: registers_without_fields, registers_unresolved_width, signals_without_direction,
+  unexplained_intent_bearing_tables. +5 hermetic tests; lib 1421; kg-bench 151/151. Frontier moves to `.6`/`.7`/`.8`.
+- `2026-06-08`: `.5b` (class-aware per-doc completeness gauge) taken `in_progress`. PNT from the `.5c` close into
+  the `.5` frontier leaf. Design recorded on the `.5b` node: a pure `document_completeness_gauge` keyed off the
+  `.5a` `DocumentClass` (Guide → not applicable, so a guide is never penalized; Register/Protocol/Interface →
+  gauge each dimension only when its denominator > 0) over `registers_without_fields`,
+  `registers_unresolved_width`, `signals_without_direction`, `unexplained_intent_bearing_tables`, surfaced in
+  `validate <evidence>`. Honest gap counts, no fabrication (ADR 0006). Frontier stays `.5b` until landed.
 - `2026-06-08`: `.5c` (owner-suggested front-matter/ToC doc-type signal) DONE. `validate` now reads the
   document's early headings for a self-declared type and flags a structurally-empty doc that self-declares a
   spec as UNDER-EXTRACTED (not a true guide) → VLM frontier. Live: 16 guides split into 11 true + 5

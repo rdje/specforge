@@ -721,6 +721,147 @@ pub fn classify_document(census: DocumentClassCensus) -> DocumentClassification 
     }
 }
 
+// ── Per-document completeness gauge (PDF-VARIANT-DIGESTION.5b) ──────────────────
+
+/// Bounded number of affected item names/ids carried as a review sample per gap.
+const GAUGE_SAMPLE_CAP: usize = 8;
+
+/// One completeness dimension's result: how many extracted items of a given kind
+/// are MISSING a mandatory attribute, out of how many of that kind the extraction
+/// produced. Pure observation — every counted item is one the extraction itself
+/// produced but left incomplete; nothing is fabricated. `sample` is a bounded
+/// (≤ [`GAUGE_SAMPLE_CAP`]) list of affected item names/ids for human review.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct CompletenessGap {
+    /// Stable machine label, e.g. `registers_without_fields`.
+    pub kind: &'static str,
+    /// Items of this kind missing the mandatory attribute (the numerator).
+    pub missing: usize,
+    /// Items of this kind the extraction produced (the denominator).
+    pub total: usize,
+    /// A bounded sample (≤ [`GAUGE_SAMPLE_CAP`]) of affected item names/ids — never fabricated.
+    pub sample: Vec<String>,
+}
+
+/// A class-aware per-document completeness gauge (`PDF-VARIANT-DIGESTION.5b`): how
+/// complete is the typed intent the extraction DID produce, judged appropriately
+/// for the document's class.
+///
+/// The class (`PDF-VARIANT-DIGESTION.5a`) decides applicability so the gauge never
+/// punishes a document for lacking a surface it was never expected to carry: a
+/// `Guide` (low structured design-intent) is `applicable == false` — there is no
+/// design surface whose completeness to gauge, and the `.5c` under-extracted flag
+/// already carries the "actually an under-extracted spec" case. For the three
+/// design-document classes each dimension is gauged ONLY when its denominator is
+/// non-zero, so a protocol with no registers shows no register gap while a register
+/// document IS held to "every register has fields and a resolved width".
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct DocumentCompletenessGauge {
+    pub class: DocumentClass,
+    /// `false` for `Guide` — a low structured-design-intent document has no design
+    /// surface whose completeness to gauge (honest, not a penalty).
+    pub applicable: bool,
+    /// Per-dimension gaps, only for dimensions whose denominator (`total`) > 0.
+    pub gaps: Vec<CompletenessGap>,
+}
+
+impl DocumentCompletenessGauge {
+    /// Total incomplete items across every gauged dimension.
+    pub fn total_missing(&self) -> usize {
+        self.gaps.iter().map(|g| g.missing).sum()
+    }
+
+    /// `true` when the gauge applies AND found no incomplete item — a document whose
+    /// produced intent is fully attributed. A non-applicable (`Guide`) gauge is never
+    /// "complete": there was nothing to measure.
+    pub fn is_complete(&self) -> bool {
+        self.applicable && self.total_missing() == 0
+    }
+}
+
+/// Bounded review sample of the first ≤ [`GAUGE_SAMPLE_CAP`] items from `names`.
+fn gauge_sample<I: IntoIterator<Item = String>>(names: I) -> Vec<String> {
+    names.into_iter().take(GAUGE_SAMPLE_CAP).collect()
+}
+
+/// Build the class-aware per-document completeness gauge. Pure and deterministic:
+/// every count is read off already-built IR; the only judgement is the
+/// class-applicability gate and the "denominator > 0" inclusion rule — no chip,
+/// vendor, or protocol vocabulary (ADR 0006).
+///
+/// - `registers` — the document's register records (the field/width dimensions);
+/// - `declared_signal_count` — the size of the declared-signal inventory (the
+///   signal-direction denominator);
+/// - `signals_missing_direction` — declared signals with no resolved direction (the
+///   caller computes this as the inventory minus the directioned set; the evidence
+///   stage already folds relation-derived directions into that set);
+/// - `intent_bearing_table_count` — register/signal/timing tables the classifier
+///   recognized (the table-coverage denominator);
+/// - `unexplained_tables` — those intent-bearing tables that produced no record
+///   (from [`unexplained_intent_bearing_tables`]).
+pub fn document_completeness_gauge(
+    class: DocumentClass,
+    registers: &[RegisterRecord],
+    declared_signal_count: usize,
+    signals_missing_direction: &[String],
+    intent_bearing_table_count: usize,
+    unexplained_tables: &[UnexplainedTableResidual],
+) -> DocumentCompletenessGauge {
+    // A guide carries no design surface to gauge — never penalize it for absence.
+    if class == DocumentClass::Guide {
+        return DocumentCompletenessGauge {
+            class,
+            applicable: false,
+            gaps: Vec::new(),
+        };
+    }
+
+    let mut gaps = Vec::new();
+
+    if !registers.is_empty() {
+        let no_fields: Vec<&RegisterRecord> =
+            registers.iter().filter(|r| r.fields.is_empty()).collect();
+        gaps.push(CompletenessGap {
+            kind: "registers_without_fields",
+            missing: no_fields.len(),
+            total: registers.len(),
+            sample: gauge_sample(no_fields.iter().map(|r| r.register_name.clone())),
+        });
+
+        let unresolved_width = registers_with_unresolved_width(registers);
+        gaps.push(CompletenessGap {
+            kind: "registers_unresolved_width",
+            missing: unresolved_width.len(),
+            total: registers.len(),
+            sample: gauge_sample(unresolved_width),
+        });
+    }
+
+    if declared_signal_count > 0 {
+        gaps.push(CompletenessGap {
+            kind: "signals_without_direction",
+            missing: signals_missing_direction.len(),
+            total: declared_signal_count,
+            sample: gauge_sample(signals_missing_direction.iter().cloned()),
+        });
+    }
+
+    if intent_bearing_table_count > 0 {
+        gaps.push(CompletenessGap {
+            kind: "unexplained_intent_bearing_tables",
+            missing: unexplained_tables.len(),
+            total: intent_bearing_table_count,
+            sample: gauge_sample(unexplained_tables.iter().map(|t| t.table_id.clone())),
+        });
+    }
+
+    DocumentCompletenessGauge {
+        class,
+        applicable: true,
+        gaps,
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1436,5 +1577,143 @@ mod tests {
         assert_eq!(r.class, DocumentClass::Protocol);
         assert!(!r.under_extracted_spec);
         assert!(r.rationale.contains("self-declared: specification"));
+    }
+
+    // ── per-document completeness gauge (PDF-VARIANT-DIGESTION.5b) ───────────
+
+    fn unexplained(table_id: &str) -> UnexplainedTableResidual {
+        UnexplainedTableResidual {
+            table_id: table_id.to_string(),
+            table_kind: "register_map",
+            caption: None,
+        }
+    }
+
+    #[test]
+    fn gauge_is_not_applicable_for_a_guide() {
+        // A guide carries no design surface to gauge — even with stray registers/signals
+        // it is NEVER penalized; the honest report is "not applicable", not a 0% score.
+        let regs = vec![register("STRAY", vec![])];
+        let g = document_completeness_gauge(
+            DocumentClass::Guide,
+            &regs,
+            5,
+            &["X".to_string()],
+            3,
+            &[unexplained("table_0001")],
+        );
+        assert!(!g.applicable);
+        assert!(g.gaps.is_empty());
+        assert!(
+            !g.is_complete(),
+            "a non-applicable gauge is never 'complete'"
+        );
+    }
+
+    #[test]
+    fn register_doc_is_held_to_fields_and_width() {
+        // A register document IS held to "every register has fields and a resolved width".
+        let mut sized = register("CTRL", vec![field("EN", Some(0), Some(0))]);
+        sized.size_bits = Some(32);
+        let bare = register("STATUS", vec![]); // no fields, size_bits None
+        let regs = vec![sized, bare];
+        // No signal inventory and no intent-bearing tables → only register dimensions gauged.
+        let g = document_completeness_gauge(DocumentClass::Register, &regs, 0, &[], 0, &[]);
+        assert!(g.applicable);
+        let kinds: Vec<&str> = g.gaps.iter().map(|x| x.kind).collect();
+        assert_eq!(
+            kinds,
+            vec!["registers_without_fields", "registers_unresolved_width"]
+        );
+        let no_fields = g
+            .gaps
+            .iter()
+            .find(|x| x.kind == "registers_without_fields")
+            .unwrap();
+        assert_eq!((no_fields.missing, no_fields.total), (1, 2));
+        assert_eq!(no_fields.sample, vec!["STATUS".to_string()]);
+        let width = g
+            .gaps
+            .iter()
+            .find(|x| x.kind == "registers_unresolved_width")
+            .unwrap();
+        assert_eq!((width.missing, width.total), (1, 2));
+        assert_eq!(width.sample, vec!["STATUS".to_string()]);
+        assert_eq!(g.total_missing(), 2);
+    }
+
+    #[test]
+    fn protocol_doc_with_no_registers_shows_no_register_gap() {
+        // Class-appropriateness: a protocol with a signal inventory but zero registers is
+        // gauged ONLY on signal direction + table coverage — never a register gap.
+        let g = document_completeness_gauge(
+            DocumentClass::Protocol,
+            &[],
+            10,
+            &["PREADY".to_string(), "PSLVERR".to_string()],
+            4,
+            &[unexplained("table_0007")],
+        );
+        let kinds: Vec<&str> = g.gaps.iter().map(|x| x.kind).collect();
+        assert_eq!(
+            kinds,
+            vec![
+                "signals_without_direction",
+                "unexplained_intent_bearing_tables"
+            ]
+        );
+        let dir = g
+            .gaps
+            .iter()
+            .find(|x| x.kind == "signals_without_direction")
+            .unwrap();
+        assert_eq!((dir.missing, dir.total), (2, 10));
+        let tables = g
+            .gaps
+            .iter()
+            .find(|x| x.kind == "unexplained_intent_bearing_tables")
+            .unwrap();
+        assert_eq!((tables.missing, tables.total), (1, 4));
+        assert_eq!(tables.sample, vec!["table_0007".to_string()]);
+    }
+
+    #[test]
+    fn a_fully_attributed_design_doc_is_complete() {
+        // Every register has fields + width, every signal a direction, every table explained.
+        let mut sized = register("CTRL", vec![field("EN", Some(0), Some(0))]);
+        sized.size_bits = Some(8);
+        let g = document_completeness_gauge(DocumentClass::Register, &[sized], 3, &[], 2, &[]);
+        assert!(g.applicable);
+        assert_eq!(g.total_missing(), 0);
+        assert!(g.is_complete());
+        // The gauged dimensions are still PRESENT with missing == 0 so completeness is visible,
+        // not silently dropped.
+        assert!(
+            g.gaps
+                .iter()
+                .any(|x| x.kind == "registers_without_fields" && x.missing == 0)
+        );
+        assert!(
+            g.gaps
+                .iter()
+                .any(|x| x.kind == "signals_without_direction" && x.missing == 0)
+        );
+    }
+
+    #[test]
+    fn gauge_sample_is_bounded() {
+        // 12 field-less registers → the review sample is capped at GAUGE_SAMPLE_CAP (8),
+        // while the count itself stays exact.
+        let regs: Vec<RegisterRecord> = (0..12)
+            .map(|i| register(&format!("R{i}"), vec![]))
+            .collect();
+        let g = document_completeness_gauge(DocumentClass::Register, &regs, 0, &[], 0, &[]);
+        let no_fields = g
+            .gaps
+            .iter()
+            .find(|x| x.kind == "registers_without_fields")
+            .unwrap();
+        assert_eq!(no_fields.missing, 12);
+        assert_eq!(no_fields.sample.len(), GAUGE_SAMPLE_CAP);
     }
 }

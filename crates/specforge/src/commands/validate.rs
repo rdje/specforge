@@ -2832,6 +2832,73 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
     }
     println!("  rationale: {}", document_classification.rationale);
 
+    // Per-document completeness gauge (PDF-VARIANT-DIGESTION.5b): how complete is the
+    // typed intent the extraction DID produce, judged appropriately for the document
+    // class (.5a). Signals missing a direction = the declared inventory minus the
+    // set carrying an explicit/relation-derived direction declaration (the evidence
+    // stage already emits relation-derived directions as declarations). Pure
+    // observation, no fabrication; a Guide is "not applicable", never penalized.
+    let signals_with_direction =
+        crate::ir::evidence::collect_signals_with_explicit_direction_declarations(
+            &ir.extracted_statements,
+        );
+    let mut signals_missing_direction: Vec<String> = declared_signal_names
+        .iter()
+        .filter(|name| !signals_with_direction.contains(*name))
+        .cloned()
+        .collect();
+    signals_missing_direction.sort();
+    let intent_bearing_table_count = region_source
+        .as_ref()
+        .map(|src| {
+            src.structured_tables
+                .iter()
+                .filter(|t| {
+                    matches!(
+                        t.table_kind,
+                        crate::ir::source::TableKind::RegisterMap
+                            | crate::ir::source::TableKind::SignalDescription
+                            | crate::ir::source::TableKind::TimingParameter
+                    )
+                })
+                .count()
+        })
+        .unwrap_or(0);
+    let completeness_gauge = crate::ir::completeness::document_completeness_gauge(
+        document_classification.class,
+        &ir.register_records,
+        declared_signal_names.len(),
+        &signals_missing_direction,
+        intent_bearing_table_count,
+        &region_unexplained_tables,
+    );
+    println!();
+    println!("=== Document Completeness Gauge (class-aware; PDF-VARIANT-DIGESTION.5b) ===");
+    if completeness_gauge.applicable {
+        println!(
+            "  class: {} | total_gaps: {} | complete: {}",
+            completeness_gauge.class.as_str(),
+            completeness_gauge.total_missing(),
+            completeness_gauge.is_complete()
+        );
+        for gap in &completeness_gauge.gaps {
+            let sample = if gap.sample.is_empty() {
+                String::new()
+            } else {
+                format!(" (e.g. {})", gap.sample.join(", "))
+            };
+            println!(
+                "  - {}: {} / {} incomplete{sample}",
+                gap.kind, gap.missing, gap.total
+            );
+        }
+    } else {
+        println!(
+            "  class: {} → not applicable (low structured design-intent — no design surface to gauge)",
+            completeness_gauge.class.as_str()
+        );
+    }
+
     let missing_vlm_observation_related_ids = evidence_missing_vlm_observation_related_ids(ir);
     let structural_kg_missing_related_ids = evidence_structural_kg_missing_related_ids(ir);
     let normative_residual_statement_ids = evidence_normative_residual_statement_ids(ir);
@@ -2861,6 +2928,40 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             Vec::new(),
         ));
     }
+    // .5b: class-aware per-doc completeness gauge — how complete is the typed intent the
+    // extraction DID produce (every register has fields + a width, every signal a
+    // direction, every intent-bearing table accounted), judged appropriately for the class.
+    // Info severity: an honest known-incomplete report, not a correctness error (a guide is
+    // "not applicable", never penalized).
+    findings.push(finding(
+        "evidence_document_completeness",
+        ValidationFindingSeverity::Info,
+        "document_completeness",
+        if completeness_gauge.applicable {
+            let dims = completeness_gauge
+                .gaps
+                .iter()
+                .map(|g| format!("{} {}/{}", g.kind, g.missing, g.total))
+                .collect::<Vec<_>>()
+                .join("; ");
+            format!(
+                "document completeness gauge ({}): {} incomplete item(s){}",
+                completeness_gauge.class.as_str(),
+                completeness_gauge.total_missing(),
+                if dims.is_empty() {
+                    String::new()
+                } else {
+                    format!(" — {dims}")
+                }
+            )
+        } else {
+            format!(
+                "document completeness gauge: not applicable — {} (low structured design-intent)",
+                completeness_gauge.class.as_str()
+            )
+        },
+        Vec::new(),
+    ));
     if total == 0 {
         findings.push(finding(
             "evidence_no_extracted_statements",
@@ -3131,6 +3232,14 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             metric(
                 "document_type_declared",
                 document_classification.declared_type.as_str(),
+            ),
+            metric(
+                "document_completeness_applicable",
+                completeness_gauge.applicable.to_string(),
+            ),
+            metric(
+                "document_completeness_gaps",
+                completeness_gauge.total_missing().to_string(),
             ),
             metric(
                 "convergence_passes_run",

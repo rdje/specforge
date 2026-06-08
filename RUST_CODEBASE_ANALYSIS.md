@@ -29,10 +29,16 @@ LLM/VLM provider is still production-default.
   ranges from VLM-read `(name, width)` proposals by cumulative LSB tiling, attaching bits only when
   the widths tile a standard register width AND the names match the register's own field table (else
   an honest residual). Its production seam is the `recover-register-bits` command.
+  `completeness` also now owns the `PDF-VARIANT-DIGESTION.5a`/`.5b`/`.5c` document-quality surface: pure
+  `classify_document` (doc-class from a structural census), `front_matter_doc_type_hint`, and
+  `document_completeness_gauge` (a class-aware per-document completeness gauge — `DocumentCompletenessGauge`
+  / `CompletenessGap`, where a `Guide` is "not applicable" and the other classes gauge each dimension only
+  when its denominator > 0). Its production seam is `commands/validate.rs` (`document_class` /
+  `document_completeness_gaps` metrics + `evidence_document_*` findings).
 - **Whole `crates/specforge/src` ≈ 103,200 lines** (single workspace crate, edition 2024), up from
   the ~88.7K cited on 2026-05-29.
-- **`cargo test -p specforge --lib` = 1360 passing, 0 failed, 0 ignored** (the canonical validation
-  command). Any earlier `1014`/`666` counts below are historical.
+- **`cargo test -p specforge --lib` = 1421 passing, 0 failed, 0 ignored** (the canonical validation
+  command). Any earlier `1360`/`1014`/`666` counts below are historical.
 - **Eval/gold infrastructure** (load-bearing for the active `PDF-VARIANT-DIGESTION` precision lane):
   the pure scorer is `crates/specforge/src/eval.rs` (`EvalTask`/`GoldFact`/`score_dataset` +
   `score_dataset_source_tolerant`); the runner is `commands/eval_extraction.rs`; committed gold

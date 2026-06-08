@@ -1900,7 +1900,7 @@ pub(crate) fn collect_known_signal_names(
     names
 }
 
-fn collect_signals_with_explicit_direction_declarations(
+pub(crate) fn collect_signals_with_explicit_direction_declarations(
     statements: &[ExtractedStatement],
 ) -> std::collections::HashSet<String> {
     let mut names = std::collections::HashSet::new();

@@ -236,6 +236,47 @@ extraction rather than silent zeros. The hint (`front_matter_doc_type_hint`) is 
 unit-tested function over the front-matter text, and `validate` surfaces it as a
 `document_type_declared` metric.
 
+### How complete is what we extracted? — the class-aware completeness gauge
+
+Knowing a document's *class* answers "what kind of thing is this?". The next honest question
+is "of the design intent we *did* pull out, how much is fully formed?" A register the pipeline
+found but for which it never captured the field breakdown, a signal with no resolved
+direction, an intent-bearing table that produced no record — each is a real, locatable gap.
+Left unsaid, they make a partial extraction look finished. So `validate` reports a **per-document
+completeness gauge**: a short, honest tally of how complete the produced intent is.
+
+The crucial design choice is that the gauge is **class-aware**. It would be meaningless — and
+actively misleading — to hold a programming guide to "every register must have fields" when a
+guide has no registers by nature. So a document classed `guide` is reported as **not
+applicable**: there is no design surface whose completeness to gauge, and that is stated
+plainly rather than scored as a 0%. (If a "guide" is actually an under-extracted spec, the
+`.5c` warning above already flags it.) For the three design-document classes — protocol,
+register, interface — the gauge measures each dimension only when that dimension actually
+exists in the document. A protocol with no registers shows no register gap; a register
+document *is* held to "every register has fields and a resolved width". Nothing is invented:
+every counted item is one the extraction itself produced but left incomplete.
+
+The dimensions are:
+
+- **`registers_without_fields`** — registers captured as a bare entry with no field breakdown.
+- **`registers_unresolved_width`** — the mandatory-width flag: a register is physical
+  bit-storage, so an unresolved width is a real gap (parametric, e.g. XLEN, or defined in
+  another document), not an optional attribute.
+- **`signals_without_direction`** — declared signals with no resolved direction (input/output).
+- **`unexplained_intent_bearing_tables`** — register/signal/timing tables the classifier
+  recognized that nonetheless produced no record.
+
+Each gap reports `missing / total` plus a small sample of the affected names so a reviewer can
+go straight to them. `validate` prints a **Document Completeness Gauge** block and adds a
+`document_completeness_gaps` metric (and `document_completeness_applicable`). Across the corpus
+the gauge reads true to each document's character: AMBA APB comes out a protocol with a single
+signal-direction gap and every table explained; the RISC-V Debug *register* spec is held to its
+60 registers and honestly shows all 60 widths unresolved (they are XLEN-parametric — the same
+gap the per-fact gold measured); a GIC overview *guide* reads "not applicable". The gauge is a
+pure, unit-tested function (`document_completeness_gauge`) keyed off the document class, so it
+adds no extraction behavior — it only makes the existing incompleteness visible instead of
+silent.
+
 ## Closed task trees — how each was implemented and verified
 
 ### `PROVENANCE-HARDENING` — provenance fields always have assertions

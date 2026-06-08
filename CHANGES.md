@@ -1,3 +1,33 @@
+### `PDF-VARIANT-DIGESTION.5b` — class-aware per-document completeness gauge (closes item ② `.5`)
+The `.5a`/`.5c` work answers "what kind of document is this?". `.5b` answers the next honest question: "of the
+design intent we DID extract, how complete is it?" `validate <evidence>` now reports a per-document
+**completeness gauge** so a partial extraction no longer looks finished.
+
+- New pure `crate::ir::completeness::document_completeness_gauge(...) -> DocumentCompletenessGauge`
+  (`{class, applicable, gaps: Vec<CompletenessGap{kind, missing, total, sample}>}`). CLASS-AWARE, keyed off the
+  `.5a` `DocumentClass`: a `Guide` is `applicable=false` ("not applicable — low structured design-intent"), so a
+  guide is NEVER penalized for having 0 registers/signals; the `.5c` under-extracted flag already carries the
+  "actually a spec" case. For `Protocol`/`Register`/`Interface`, each dimension is gauged ONLY when its
+  denominator (`total`) > 0 — so a protocol with no registers shows no register gap while a register document IS
+  held to "every register has fields and a resolved width".
+- Dimensions, all read off already-built IR (pure observation — no fabrication): `registers_without_fields`,
+  `registers_unresolved_width` (reuses the mandatory-width flag), `signals_without_direction` (the declared
+  inventory minus `collect_signals_with_explicit_direction_declarations`, now `pub(crate)`, which already folds
+  in relation-derived directions), `unexplained_intent_bearing_tables`. Each gap carries a bounded (≤8) sample of
+  affected names/ids for review.
+- `validate <evidence-ir>` prints a Document Completeness Gauge block + `document_completeness_gaps` /
+  `document_completeness_applicable` metrics + an Info `evidence_document_completeness` finding (Info, not
+  Warning — an honest known-incomplete report, not a correctness error; matches the severity-gating doctrine).
+- +5 hermetic tests (guide → not-applicable; register-doc held to fields+width; protocol-with-no-registers shows
+  no register gap; fully-attributed doc is complete; sample bounded). `cargo fmt --check` + `cargo clippy
+  -D warnings` clean; full lib 1416 → 1421; kg-bench 151/151; APB/AHB/AXI/SWD eval unaffected (additive, no
+  extraction change). Agnostic — no chip/vendor names (ADR 0006).
+- Live over persisted evidence: APB (protocol) → 1 gap (`signals_without_direction 1/32`, tables 0/8); RISC-V
+  Debug (register) → `registers_unresolved_width 60/60` (XLEN-parametric, corroborating `.4a.2`) with all 60
+  registers carrying fields; Avalon (interface) → signals 11/34 + 1/13 tables; GIC overview guide → not
+  applicable. `.5` (doc-class routing + completeness gauge, item ②) CLOSED; frontier moves to `.6`/`.7`/`.8`.
+  Book `quality/validation.md` subsection; KM `document-class-from-structure` updated.
+
 ### `PDF-VARIANT-DIGESTION.5c` — front-matter doc-type signal (true guide vs under-extracted spec)
 Owner-directed refinement of `.5a`: a chip-spec PDF usually states what it IS in plain words in its early
 pages, so `validate` now reads the document's own front-matter to corroborate the structural class and, more

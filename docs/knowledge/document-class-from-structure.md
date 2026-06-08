@@ -11,9 +11,12 @@ answers:
   - "how does SpecForge read a PDF's front-matter / title / ToC to know its doc type"
   - "what is document_type_declared / front_matter_doc_type_hint"
   - "how is an under-extracted spec distinguished from a true guide (evidence_document_underextracted_spec)"
+  - "how complete is a document's extracted intent / what is the per-doc completeness gauge"
+  - "what is document_completeness_gauge / document_completeness_gaps / why is a guide not penalized"
+  - "how does validate report registers_without_fields / registers_unresolved_width / signals_without_direction / unexplained_intent_bearing_tables"
 date: 2026-06-08
 tags: [document-class, validate, completeness, pdf-variant-digestion, agnostic, adr-0006]
-evidence: crates/specforge/src/ir/completeness.rs (classify_document); docs/tasks/PDF-VARIANT-DIGESTION.md (.5a)
+evidence: crates/specforge/src/ir/completeness.rs (classify_document, document_completeness_gauge); docs/tasks/PDF-VARIANT-DIGESTION.md (.5a/.5b/.5c)
 reverify: "./target/debug/specforge validate generated/evidence_ir/um10204_rev7_0_2021_i2c_bus_specification/evidence_ir.json 2>/dev/null | grep -A2 'Document Class'   # → protocol"
 ---
 
@@ -57,3 +60,21 @@ the structural "guide" bucket honestly:** of the 16 guide-classed docs, **11 are
 guide/unknown) and **5 are UNDER-EXTRACTED specs** routed to the VLM frontier — RISC-V Advanced Interrupt
 *Architecture*, JESD235 *JEDEC STANDARD* HBM, CoreSight Base System *Architecture* (+2). So a real spec we
 failed to read is no longer silently dismissed as a low-intent guide.
+
+**`.5b` per-document completeness gauge:** keyed off the `.5a` class, `validate` also reports how COMPLETE the
+typed intent it DID produce is — pure `crate::ir::completeness::document_completeness_gauge(class, registers,
+declared_signal_count, signals_missing_direction, intent_bearing_table_count, unexplained_tables) ->
+DocumentCompletenessGauge { class, applicable, gaps: [CompletenessGap{kind, missing, total, sample}] }`.
+CLASS-AWARE so a document is never punished for a surface it was never expected to carry: a `guide` is
+`applicable=false` ("not applicable — low structured design-intent"), so it is NEVER scored 0% for having 0
+registers. For protocol/register/interface each dimension is gauged only when its denominator (`total`) > 0, so
+a protocol with no registers shows no register gap while a register doc IS held to "every register has fields and
+a resolved width". Dimensions (all read off already-built IR — no fabrication): `registers_without_fields`,
+`registers_unresolved_width` (the mandatory-width flag), `signals_without_direction` (declared inventory minus
+`collect_signals_with_explicit_direction_declarations`, which already folds in relation-derived directions),
+`unexplained_intent_bearing_tables`. Surfaced as a `document_completeness_gaps` + `document_completeness_applicable`
+metric and an Info `evidence_document_completeness` finding (Info: an honest known-incomplete report, not a
+correctness error). Live: APB → 1 gap (1/32 signals_without_direction, all tables explained); RISC-V Debug
+(register) → registers_unresolved_width 60/60 (XLEN-parametric, corroborates `.4a.2`), all 60 registers have
+fields; GIC overview guide → not applicable. Agnostic (ADR 0006); additive (no extraction change); APB/AHB/AXI/
+SWD unchanged; kg-bench 151/151; reverify: `./target/debug/specforge validate generated/evidence_ir/ihi0024_d_2021_04_amba_apb_protocol_specification/evidence_ir.json 2>/dev/null | grep -A6 'Completeness Gauge'`.

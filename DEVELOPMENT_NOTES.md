@@ -61,6 +61,25 @@ a WARNING routing it to the VLM frontier. Live, this split the 16 structural gui
 under-extracted specs** (RISC-V Advanced Interrupt Architecture, JESD235 JEDEC STANDARD HBM, CoreSight Base
 System Architecture, +2) — a real spec we under-read is no longer a silent zero.
 
+**`.5b` (done, same day) — class-aware per-document completeness gauge.** With "what kind of document is this?"
+answered, the next honest question is "of the design intent we DID produce, how much is fully formed?" `.5b`
+adds a pure `crate::ir::completeness::document_completeness_gauge(class, registers, declared_signal_count,
+signals_missing_direction, intent_bearing_table_count, unexplained_tables) -> DocumentCompletenessGauge`,
+surfaced by `validate <evidence>`. The design decision that makes it honest is **class-awareness**: it would be
+misleading to score a programming guide on "every register has fields" when a guide has no registers, so a
+`Guide` is reported `applicable=false` ("not applicable — low structured design-intent"), never a 0%. For the
+three design-document classes each dimension is measured only when its denominator > 0 (read off already-built
+IR, nothing invented): a protocol with no registers shows no register gap; a register document IS held to
+"every register has fields and a resolved width". The signal-direction dimension reuses the evidence stage's own
+direction view (`collect_signals_with_explicit_direction_declarations`, made `pub(crate)`), which already folds
+relation-derived directions into the declared set — so the gauge agrees with what the stage actually resolved
+rather than re-deriving it. Each gap reports `missing/total` plus a bounded ≤8 sample. The finding is **Info**,
+not Warning: a known-incomplete extraction is honest reporting, not a correctness error (and matches the
+severity-gating doctrine that warnings are reserved for real problems). Live it reads true to each document —
+APB one signal-direction gap with every table explained; RISC-V Debug held to its 60 registers with all 60
+widths honestly unresolved (XLEN-parametric, the same gap the per-fact gold found); a GIC overview guide "not
+applicable". Additive, no extraction-behavior change; lib 1416 → 1421; +5 hermetic tests; kg-bench 151/151.
+
 ## 2026-06-08 — Live measurement of the bit recovery, honest result (EXTRACTION-GAP-FIX.4b)
 
 `.4b` ran `.4a` against reality and reported truthfully: **the bit-extent metric did not move (still 0/179), and
