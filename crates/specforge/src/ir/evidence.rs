@@ -849,6 +849,17 @@ impl EvidenceIr {
         // of SWD/JTAG and what FSMGen builds. No-op for non-FSM/non-serial docs.
         let mut protocol_states = extract_protocol_states(&extracted_statements);
         protocol_states.extend(extract_swd_line_states(&extracted_statements));
+        // PDF-VARIANT-DIGESTION.9.3a — additive agnostic quoted-mode FSM path (CAN-style error-state
+        // FSMs the SWD/JTAG-shaped extractors above don't recognize). Dedup by state name so a doc
+        // matched by both paths keeps one record per state.
+        for state in extract_quoted_mode_states(&extracted_statements) {
+            if !protocol_states
+                .iter()
+                .any(|s| s.state_name.eq_ignore_ascii_case(&state.state_name))
+            {
+                protocol_states.push(state);
+            }
+        }
         // PDF-VARIANT-DIGESTION.3b — protocol actors/agents defined in prose.
         let protocol_actors = extract_protocol_actors(&extracted_statements);
 
@@ -7553,6 +7564,161 @@ fn extract_protocol_states(statements: &[ExtractedStatement]) -> Vec<ProtocolSta
         }
     }
     merged
+}
+
+/// PDF-VARIANT-DIGESTION.9.3a — a NEW, agnostic FSM path for protocols that define their states as
+/// single-quoted operational MODES of a generic actor ("a unit may be in one of three states: 'error
+/// active' / 'error passive' / 'bus off'"; "A node is 'error passive' when …"). The SWD/JTAG path
+/// (`extract_protocol_states` / `find_states_with_actions`) only recognizes `Capitalized-Hyphen state`
+/// names behind a TAP/scan-chain doc-gate, so it yields nothing on this shape.
+///
+/// Grammar (ADR 0006 — universal, no chip/protocol literals): a state is a single-quoted name of 1–3
+/// alphabetic words BOUND to a generic actor-noun (node/unit/station/device) in either the adjective
+/// form (`'<name>' <actor>`) or the predicate form (`<actor> <link-verb> '<name>'`). That actor-noun
+/// binding is exactly what separates a STATE (a *node* is 'error passive') from a quoted bit value (a
+/// *bit* is 'dominant') or a bus condition (the *bus* is 'idle'). Emitted only when ≥2 distinct names
+/// each recur in ≥2 statements (an FSM has several states; a lone quoted phrase is not one). A trailing
+/// `when <condition>` clause becomes the state's `action`. Nothing is fabricated — every state is a
+/// node-mode the prose literally quotes.
+fn extract_quoted_mode_states(statements: &[ExtractedStatement]) -> Vec<ProtocolStateRecord> {
+    let mut support: BTreeMap<String, Vec<String>> = BTreeMap::new();
+    let mut action_by_name: BTreeMap<String, String> = BTreeMap::new();
+    let mut order: Vec<String> = Vec::new();
+    for statement in statements {
+        for (name, action) in quoted_mode_states_in(&statement.text) {
+            let ids = support.entry(name.clone()).or_default();
+            if !ids.iter().any(|s| s == &statement.statement_id) {
+                ids.push(statement.statement_id.clone());
+            }
+            if !order.iter().any(|n| n == &name) {
+                order.push(name.clone());
+            }
+            if let Some(a) = action {
+                action_by_name.entry(name).or_insert(a);
+            }
+        }
+    }
+    // A real FSM state is referenced repeatedly; require ≥2 supporting statements per state.
+    let kept: Vec<String> = order
+        .into_iter()
+        .filter(|n| support.get(n).map(|v| v.len()).unwrap_or(0) >= 2)
+        .collect();
+    // An FSM has at least two states — a single recurring quoted phrase is not a state machine.
+    if kept.len() < 2 {
+        return Vec::new();
+    }
+    let mut out = Vec::with_capacity(kept.len());
+    for (i, name) in kept.iter().enumerate() {
+        out.push(ProtocolStateRecord {
+            state_id: format!("mode_state_{:04}", i + 1),
+            machine_name: None,
+            state_name: name.clone(),
+            action: action_by_name.get(name).cloned(),
+            supporting_statement_ids: support.remove(name).unwrap_or_default(),
+        });
+    }
+    out
+}
+
+/// PDF-VARIANT-DIGESTION.9.3a — find single-quoted operational-MODE names bound to a generic actor in one
+/// statement → `(normalized_name, optional "when …" transition clause)`. Grammar only (ADR 0006); the
+/// actor-noun binding keeps node-modes and drops quoted bit values / bus conditions.
+fn quoted_mode_states_in(text: &str) -> Vec<(String, Option<String>)> {
+    const ACTOR_NOUNS: &[&str] = &[
+        "node", "nodes", "unit", "units", "station", "stations", "device", "devices",
+    ];
+    const LINK_VERBS: &[&str] = &[
+        "is",
+        "are",
+        "be",
+        "becomes",
+        "become",
+        "called",
+        "named",
+        "considered",
+    ];
+    // Fold typographic single quotes to ASCII so one scan handles both renderings.
+    let norm: String = text
+        .chars()
+        .map(|c| {
+            if c == '\u{2018}' || c == '\u{2019}' {
+                '\''
+            } else {
+                c
+            }
+        })
+        .collect();
+    let lower_word = |w: &str| {
+        w.trim_matches(|c: char| !c.is_ascii_alphabetic())
+            .to_ascii_lowercase()
+    };
+    let mut out: Vec<(String, Option<String>)> = Vec::new();
+    let mut search = 0usize;
+    while let Some(open_rel) = norm[search..].find('\'') {
+        let open = search + open_rel;
+        let Some(close_rel) = norm[open + 1..].find('\'') else {
+            break;
+        };
+        let close = open + 1 + close_rel;
+        let name: String = norm[open + 1..close]
+            .split_whitespace()
+            .collect::<Vec<_>>()
+            .join(" ");
+        if !is_quoted_mode_state_name(&name) {
+            // Spurious opening quote (e.g. a contraction apostrophe) — re-scan from just past it so a
+            // real pair after it is still found.
+            search = open + 1;
+            continue;
+        }
+        let after = norm[close + 1..].trim_start();
+        let adjective = after
+            .split_whitespace()
+            .next()
+            .map(lower_word)
+            .is_some_and(|w| ACTOR_NOUNS.contains(&w.as_str()));
+        // Predicate: the word right before the quote is a link verb whose SUBJECT (the word before it)
+        // is an actor-noun — "a node is 'error passive'" (subject `node`), not "the bus to be 'bus
+        // idle'" (subject `to`).
+        let before_words: Vec<String> = norm[..open]
+            .split_whitespace()
+            .rev()
+            .take(2)
+            .map(lower_word)
+            .collect();
+        let predicate = before_words
+            .first()
+            .is_some_and(|v| LINK_VERBS.contains(&v.as_str()))
+            && before_words
+                .get(1)
+                .is_some_and(|s| ACTOR_NOUNS.contains(&s.as_str()));
+        if adjective || predicate {
+            let action = after.find("when ").map(|p| {
+                let clause = &after[p..];
+                let end = clause.find(". ").unwrap_or(clause.len());
+                clause[..end]
+                    .split_whitespace()
+                    .collect::<Vec<_>>()
+                    .join(" ")
+            });
+            out.push((name, action));
+        }
+        search = close + 1;
+    }
+    out
+}
+
+/// A quoted operational-mode state name is 1–3 alphabetic words (hyphens allowed) — e.g. `error active`,
+/// `bus off`. Rejects sentence fragments, numbers, and empty spans. (`PDF-VARIANT-DIGESTION.9.3a`)
+fn is_quoted_mode_state_name(name: &str) -> bool {
+    let words: Vec<&str> = name.split_whitespace().collect();
+    if words.is_empty() || words.len() > 3 {
+        return false;
+    }
+    words.iter().all(|w| {
+        !w.is_empty()
+            && w.chars().next().is_some_and(|c| c.is_ascii_alphabetic())
+            && w.chars().all(|c| c.is_ascii_alphabetic() || c == '-')
+    })
 }
 
 /// SWD-SERIAL-EXTRACTION.4d — extract the SWD LINE state machine (reset / operating / protocol-error /
@@ -15284,6 +15450,137 @@ mod swd_serial_extraction_3 {
             !fields.iter().any(|f| f.name == "AxCACHE"),
             "got {fields:?}"
         );
+    }
+}
+
+#[cfg(test)]
+mod pdf_variant_digestion_9_3a_fsm {
+    //! PDF-VARIANT-DIGESTION.9.3a — agnostic quoted-mode FSM extraction (CAN-style error-state FSMs).
+    use super::*;
+
+    fn stmt(id: &str, text: &str) -> ExtractedStatement {
+        ExtractedStatement {
+            statement_id: id.to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        }
+    }
+
+    #[test]
+    fn recovers_can_error_states_from_quoted_node_modes() {
+        // CAN-shaped prose: each state is a single-quoted operational mode of a node/unit/station.
+        let stmts = vec![
+            stmt(
+                "a",
+                "An 'error active' unit can normally take part in bus communication.",
+            ),
+            stmt(
+                "b",
+                "An 'error active' station detecting an error condition signals this.",
+            ),
+            stmt(
+                "c",
+                "An 'error passive' unit must not send an ACTIVE ERROR FLAG.",
+            ),
+            stmt(
+                "d",
+                "A node is 'error passive' when the TRANSMIT ERROR COUNT equals or exceeds 128. An error condition follows.",
+            ),
+            stmt(
+                "e",
+                "A 'bus off' unit is not allowed to have any influence on the bus.",
+            ),
+            stmt(
+                "f",
+                "A node is 'bus off' when the TRANSMIT ERROR COUNT is greater than or equal to 256.",
+            ),
+        ];
+        let states = extract_quoted_mode_states(&stmts);
+        let names: Vec<&str> = states.iter().map(|s| s.state_name.as_str()).collect();
+        assert!(names.contains(&"error active"), "got {names:?}");
+        assert!(names.contains(&"error passive"), "got {names:?}");
+        assert!(names.contains(&"bus off"), "got {names:?}");
+        assert_eq!(
+            states.len(),
+            3,
+            "exactly the three node modes; got {names:?}"
+        );
+        // The trailing `when …` clause is captured as the transition guard / action.
+        let passive = states
+            .iter()
+            .find(|s| s.state_name == "error passive")
+            .unwrap();
+        assert_eq!(
+            passive.action.as_deref(),
+            Some("when the TRANSMIT ERROR COUNT equals or exceeds 128"),
+        );
+    }
+
+    #[test]
+    fn rejects_quoted_bit_values_and_bus_conditions() {
+        // 'dominant'/'recessive' are bit VALUES (subject = bit) and 'bus idle' is a bus condition
+        // (subject = bus) — none is a node mode, so none becomes a state, even though all are quoted.
+        let stmts = vec![
+            stmt(
+                "a",
+                "When a RECEIVER detects a 'dominant' bit the count increases.",
+            ),
+            stmt(
+                "b",
+                "The stuff bit should have been 'recessive' but was monitored as 'dominant'.",
+            ),
+            stmt(
+                "c",
+                "An 'error passive' node may need the bus to be 'bus idle' for three bit times.",
+            ),
+            stmt("d", "The bit is 'recessive' during the idle phase."),
+        ];
+        let names: Vec<String> = extract_quoted_mode_states(&stmts)
+            .into_iter()
+            .map(|s| s.state_name)
+            .collect();
+        assert!(!names.iter().any(|n| n == "dominant"), "got {names:?}");
+        assert!(!names.iter().any(|n| n == "recessive"), "got {names:?}");
+        assert!(!names.iter().any(|n| n == "bus idle"), "got {names:?}");
+    }
+
+    #[test]
+    fn single_mode_is_not_a_state_machine() {
+        // One recurring mode is not an FSM (need ≥2 distinct states).
+        let stmts = vec![
+            stmt("a", "An 'error active' unit takes part in communication."),
+            stmt("b", "An 'error active' node sends an ACTIVE ERROR FLAG."),
+        ];
+        assert!(extract_quoted_mode_states(&stmts).is_empty());
+    }
+
+    #[test]
+    fn non_recurring_modes_are_dropped() {
+        // Two distinct modes that each appear only once → no recurrence → not promoted.
+        let stmts = vec![
+            stmt("a", "An 'error active' unit takes part."),
+            stmt(
+                "b",
+                "An 'error passive' unit must not send an ACTIVE ERROR FLAG.",
+            ),
+        ];
+        assert!(extract_quoted_mode_states(&stmts).is_empty());
+    }
+
+    #[test]
+    fn parallel_bus_prose_yields_no_modes() {
+        // APB/AHB-style prose quotes nothing as a node mode → 0 states (no corpus false positives).
+        let stmts = vec![
+            stmt(
+                "a",
+                "PSEL selects the completer and PENABLE indicates the access phase.",
+            ),
+            stmt("b", "The manager drives HADDR during the address phase."),
+        ];
+        assert!(extract_quoted_mode_states(&stmts).is_empty());
     }
 }
 

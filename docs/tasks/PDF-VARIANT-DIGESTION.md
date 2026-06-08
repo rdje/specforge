@@ -69,15 +69,36 @@ diagnostic when a construct is genuinely out of model.
   fault-confinement 22× / TEC 110× / REC 144×). Root: `extract_serial_frame_fields`/`extract_protocol_states`
   (evidence.rs) were tuned to SWD prose and don't generalize to CAN's frame-field-heading + FSM prose → lever
   `.9.3`. Commit: pending (this slice).
-- ID: `PDF-VARIANT-DIGESTION.9.3` · Status: `pending` · Goal: **CAN prose serial-frame + error-state-FSM
-  extraction lever** — generalize the prose `extract_serial_frame_fields` + `extract_protocol_states` (AGNOSTIC,
-  ADR 0006 — no `CAN`/`SOF`/`bus-off` literals; derive from the document's own frame-field headings + FSM-state
-  prose) so CAN's serial frame (SOF→Arbitration→Control→Data→CRC→ACK→EOF) and error-state FSM
-  (error-active→error-passive→bus-off) surface as typed `SerialFrameField` / `ProtocolStateRecord`. Acceptance:
-  CAN recovers the frame fields + FSM states (re-measured on a fresh evidence build), zero fabrication (only
-  what the prose states), **SWD/ADI serial extraction unchanged (still 100%)**, APB/AHB/AXI clean; hermetic
-  tests; full `run_ci.sh` green + kg-bench 151/151; book + KM refreshed. May split (`.9.3a` frame fields /
-  `.9.3b` FSM) if too broad for one signoff slice. Verification: pending. Commit: pending.
+- ID: `PDF-VARIANT-DIGESTION.9.3` · Status: `active` · Goal: **CAN prose serial-frame + error-state-FSM
+  extraction lever** — generalize the SWD-tuned prose extractors (AGNOSTIC, ADR 0006 — no `CAN`/`SOF`/`bus-off`
+  literals; derive from the document's own grammar) so CAN's serial frame + error-state FSM surface as typed
+  `SerialFrameField` / `ProtocolStateRecord`. Split into `.9.3a` (FSM, cleaner/more universal — do first) +
+  `.9.3b` (frame fields). Children: `.9.3a`, `.9.3b`.
+- ID: `PDF-VARIANT-DIGESTION.9.3a` · Status: `done` · Goal: **CAN error-state FSM via a new AGNOSTIC
+  quoted-mode-state extractor.** The existing `extract_protocol_states`/`find_states_with_actions` require the
+  SWD/JTAG shape (`Capitalized-Hyphen state`) and a TAP/scan-chain doc-gate → 0 on CAN. Add a new additive path
+  `extract_quoted_mode_states` keyed on a universal FSM grammar: a single-quoted name (1–3 words) bound to a
+  GENERIC actor-noun subject (node/unit/station/device) via adjective form (`'<name>' <actor>`) or predicate
+  form (`<actor> is|are|be|becomes|become '<name>'`), with recurrence ≥2 and ≥2 distinct states (an FSM has
+  multiple states). This naturally excludes quoted bit-values (`'dominant'`/`'recessive'`, subject = *bit*) and
+  bus conditions (`'bus idle'`, subject = *bus*). Capture the `when <condition>` transition clause as the
+  state's `action` when present; normalize internal whitespace; accept ASCII + typographic quotes. Acceptance:
+  CAN recovers `error active` / `error passive` / `bus off` as `ProtocolStateRecord`s (fresh evidence re-measure),
+  ZERO fabrication (only quoted node-modes the prose states), **SWD/ADI FSM extraction unchanged** (additive +
+  deduped), an in-corpus non-FSM doc (I2C) stays 0 protocol states; hermetic positive + negative tests; full
+  `run_ci.sh` green + kg-bench 151/151; book (`pipeline/evidenceir.md`) + KM refreshed. Verification: new
+  `extract_quoted_mode_states`/`quoted_mode_states_in`/`is_quoted_mode_state_name` (additive, deduped by name
+  after the SWD paths). **Live re-measure: CAN 0 → 3 states** (`error active` / `error passive` / `bus off`,
+  supports 8/18/4, honest `when …` actions), ZERO spurious. **No regression:** NVMe / I2C / RISC-V Debug stay 0
+  protocol_states; **re-ingested ADI/SWD gains 0 `mode_state_*`** and keeps its 13 SWD/JTAG states intact. 5 new
+  hermetic tests (positive + 4 negative) + 35 SWD tests pass; full `run_ci.sh` GREEN (fmt + clippy `-D warnings`
+  + lib 1440 → 1445 + rustdoc + docs); kg-bench 151/151; KM card `agnostic-quoted-mode-fsm` + book subsection.
+  Commit: pending (this slice).
+- ID: `PDF-VARIANT-DIGESTION.9.3b` · Status: `pending` · Goal: **CAN serial frame fields.** Generalize
+  `extract_serial_frame_fields` beyond the SWD `is_serial_doc` gate + request/ack/data `SerialFramePhase` model
+  to capture CAN's named frame-field sequence (SOF → Arbitration → Control → Data → CRC → ACK → EOF), agnostically
+  — likely needs a frame model that fits a generic field sequence (the SWD phase enum does not). Deferred behind
+  `.9.3a` (FSM is cleaner + more universal). Verification: pending. Commit: pending.
 - ID: `PDF-VARIANT-DIGESTION.1` · Status: `in_progress` · Goal: **triage sweep** — ingest a diverse sample
   (one per family: ARM-TRM GIC-400, Wishbone, NXP I2C, RISC-V Debug, CCIX, Avalon, USB4, OpenCAPI) through
   `ingest`→`evidence`, record ingest status + table-kind census + extraction stats, and identify the
@@ -143,9 +164,11 @@ correctly flags `document_class: guide` + `document_type_declared: specification
 VLM/prose frontier), and the honesty guardrail confirmed CAN's frame fields + error-state FSM ARE richly present in
 the prose (frame: SOF/Arbitration/Control/Data/CRC/ACK/EOF; FSM: error-active/passive/bus-off + TEC/REC). Root: the
 SWD-tuned prose extractors (`extract_serial_frame_fields`/`extract_protocol_states`) don't generalize to CAN's
-prose. **Active: `.9.3`** — generalize those extractors AGNOSTICALLY (ADR 0006) so CAN's serial frame + FSM surface
-as typed `SerialFrameField` / `ProtocolStateRecord`, with SWD/ADI staying 100%. SWP/SMBus/I2S follow as later `.9`
-leaves.
+prose. `.9.3` split into `.9.3a` (FSM) + `.9.3b` (frame). **`.9.3a` DONE** — new agnostic `extract_quoted_mode_states`
+recovers CAN's error-state FSM (`error active`/`error passive`/`bus off`) from quoted node-modes; CAN 0 → 3,
+zero spurious, ADI/SWD gains 0 `mode_state_*` (13 SWD states intact), NVMe/I2C/RISC-V 0; full `run_ci.sh` green +
+kg-bench 151/151. **Active: `.9.3b`** — CAN serial frame fields (SOF→…→EOF), agnostically (the SWD request/ack/data
+phase model doesn't fit; needs a generic frame-field-sequence model). Then PNT SWP/SMBus/I2S; `.6`/`.7` stay blocked.
 
 **(SUPERSEDED active note) `PDF-VARIANT-DIGESTION.6`/`.7`** — item ② (`.5`) COMPLETE and `.8` (broaden
 prose-actor capture) DONE. **`.5a` + `.5b` + `.5c` are DONE** — structural doc-class routing
@@ -482,6 +505,18 @@ set, not the whole doc/corpus.
 
 ## Verification log
 
+- `.9.3a` (`2026-06-08`): CAN error-state FSM via the new agnostic `extract_quoted_mode_states` (+
+  `quoted_mode_states_in` + `is_quoted_mode_state_name`), wired additively after the SWD FSM paths and deduped by
+  state name. Grammar (ADR 0006): single-quoted 1–3-word name bound to a generic actor-noun
+  (node/unit/station/device) via adjective (`'<name>' <actor>`) or predicate (`<actor> <link-verb> '<name>'`)
+  form, recurrence ≥2, ≥2 distinct states. Live re-build: **CAN `protocol_states` 0 → 3** (`error active` s8 /
+  `error passive` s18 / `bus off` s4; honest `when …` actions), zero spurious. **No regression:** rebuilt NVMe /
+  I2C / RISC-V Debug = 0 protocol_states; **re-ingested ADI/SWD = 0 `mode_state_*` + its 13 SWD/JTAG states
+  intact** (Capture/Shift/Update-IR/DR, Run-Test/Idle, Test-Logic-Reset, Reset, Operating, Protocol error,
+  Lockout, Dormant). Tests: 5 new hermetic (1 positive + 4 negative: bit-value/bus-condition reject, single-mode,
+  non-recurrence, parallel-bus) + 35 SWD serial pass. Full `scripts/run_ci.sh` GREEN (fmt + clippy `-D warnings`
+  + lib 1440 → 1445 + rustdoc + docs); kg-bench 151/151. KM card `agnostic-quoted-mode-fsm`; book subsection in
+  `pipeline/evidenceir.md`. Commit subject: `PDF-VARIANT-DIGESTION.9.3a`.
 - `.9.2` (`2026-06-08`): CAN 2.0 honest baseline. `DOCLING_DEVICE=cpu ingest` → 72 pages / 98 visual assets /
   `normalization_status: ready` / 0 residuals / `document_key: bosch_can_specification_2_0_1991`. `evidence` →
   269 section anchors / 751 statements / 98 visual / 6 links / 0 actor-signal relations. `validate` →
@@ -570,6 +605,12 @@ set, not the whole doc/corpus.
 
 ## Changelog
 
+- `2026-06-08`: `.9.3a` (CAN error-state FSM via agnostic quoted-mode extractor) DONE. Split `.9.3` →
+  `.9.3a` (FSM, done) + `.9.3b` (frame fields, pending). New additive `extract_quoted_mode_states` (grammar:
+  single-quoted name + generic actor-noun node/unit/station/device + recurrence ≥2 + ≥2 distinct states; ADR
+  0006). **CAN 0 → 3 states** (error active/passive/bus off), zero fabrication/spurious; NVMe/I2C/RISC-V Debug
+  stay 0; re-ingested ADI/SWD gains 0 `mode_state_*` (13 SWD states intact). 5 new tests; full `run_ci.sh` green
+  (lib 1440 → 1445); kg-bench 151/151; KM `agnostic-quoted-mode-fsm` + book subsection (`pipeline/evidenceir.md`).
 - `2026-06-08`: `.9.2` (CAN 2.0 honest baseline) DONE. Ingested CAN (72 pp / 98 visual / `ready` / 0 residuals),
   built evidence (269 anchors / 751 statements), validated. **Baseline: CAN is an honest UNDER-EXTRACTED spec** —
   deterministic yield 0 signals/registers/relations/constraints; the `.5a`/`.5c` machinery correctly flags it

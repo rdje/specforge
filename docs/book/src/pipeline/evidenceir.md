@@ -358,6 +358,43 @@ fabricated. The full operator-facing description is in the
 [commands chapter](../commands/quality-and-learning.md#recover-register-bits);
 *authoritative tracking:* `docs/tasks/EXTRACTION-GAP-FIX.md`.
 
+### `PDF-VARIANT-DIGESTION.9.3a` — recovering a protocol's state machine from prose
+
+A protocol's **state machine** is often the heart of what an implementer needs —
+and many specs never draw it as a clean table or diagram, they just *describe* it
+in prose. SpecForge already read one such shape: the JTAG/SWD style, where a state
+is a capitalized hyphenated name followed by the word *state* (`Shift-DR state`,
+`Test-Logic-Reset state`). But a whole family of serial protocols writes its states
+a completely different way, and that reader saw nothing in them.
+
+CAN is the clean example. Its fault-confinement FSM is defined like this: *"a unit
+may be in one of three states: `'error active'`, `'error passive'`, `'bus off'`"*,
+then *"a node is `'error passive'` when the transmit error count reaches 128"*. The
+states are **single-quoted operational modes of an actor** — there is no "`<Name>`
+state" phrasing at all — so the old reader recovered zero states from CAN.
+
+SpecForge now reads this second shape too. A state is recognized when a quoted
+short name is **bound to a generic actor** — a *node*, *unit*, *station*, or
+*device* — either as an adjective (`'error active'` **unit**) or as a predicate
+(a **node** *is* `'error passive'`). That one binding rule is what keeps it honest:
+it is exactly what separates a real state (a *node* is `'error passive'`) from a
+quoted **bit value** (a *bit* is `'dominant'`) or a quoted **bus condition** (the
+*bus* is `'idle'`) — neither of which is a node mode, so neither becomes a state.
+Two more rules block stray quotes: a name has to **recur** across at least two
+sentences, and a document has to yield **at least two distinct states** (a single
+quoted phrase is not a state machine). The trailing `when …` clause is kept as the
+state's transition condition. Nothing is invented — every state is a mode the prose
+literally quotes.
+
+The result on the CAN specification is its exact error-state FSM —
+`error active`, `error passive`, `bus off` — recovered from text, with no spurious
+states. The reader is purely additive: protocols that don't write states this way
+(the parallel buses, NVMe, I2C, RISC-V Debug) recover **zero** here and are
+unchanged, and the JTAG/SWD reader keeps its own states. This is the first prose
+lever in SpecForge's push to digest a new **serial-protocol class** (CAN, SWP,
+SMBus, I2S); frame-field recovery is its sibling follow-up. *Authoritative
+tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.9.3a`).
+
 ### `PER-EXTRACTOR-FACT-TAGGING` — who found which fact (recall-gauge groundwork)
 
 This is plumbing for a future **calibrated recall estimate**. To estimate how

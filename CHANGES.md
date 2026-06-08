@@ -1,3 +1,26 @@
+### `PDF-VARIANT-DIGESTION.9.3a` — recover CAN's error-state FSM from prose (a 2nd, agnostic FSM grammar)
+The `.9.2` baseline proved CAN's facts live in prose; this closes the FSM half. SpecForge's existing FSM reader
+(`extract_protocol_states` / `find_states_with_actions`) only recognizes the SWD/JTAG shape — a capitalized
+hyphenated name + the word *state* (`Shift-DR state`) behind a TAP/scan-chain gate — so it found **0** states in
+CAN, whose fault-confinement FSM instead quotes its states as operational modes of a node.
+
+- New additive `extract_quoted_mode_states` (`ir/evidence.rs`), wired after the two SWD paths and deduped by
+  state name. Grammar (ADR 0006 — universal, no `CAN`/`error`/`bus` literals): a state is a single-quoted 1–3-word
+  name **bound to a generic actor-noun** (node/unit/station/device) in adjective form (`'error active' unit`) or
+  predicate form (`a node is 'error passive'`). That actor binding is what separates a STATE (a *node* is 'error
+  passive') from a quoted bit value (a *bit* is 'dominant'/'recessive') or a bus condition (the *bus* is 'idle').
+  Two more gates: a name must recur in ≥2 statements and a doc must yield ≥2 distinct states. The trailing
+  `when …` clause is captured as the state's action. Distinct `mode_state_NNNN` ids (no collision with the SWD
+  paths).
+- **Live re-measure: CAN `protocol_states` 0 → 3** — `error active`, `error passive`, `bus off`, zero spurious,
+  honest source-grounded actions, nothing fabricated.
+- **No regression:** rebuilt NVMe / I2C / RISC-V Debug evidence → 0 protocol_states; **re-ingested ADI/SWD →
+  0 `mode_state_*` records and its 13 SWD/JTAG states unchanged** (the actor-noun gate excludes SWD's DP/target/
+  host actors). 5 new hermetic tests (1 positive + 4 negative) + 35 SWD tests pass.
+- Full `scripts/run_ci.sh` GREEN (fmt + warning-deny clippy + lib 1440 → 1445 + rustdoc + docs); kg-bench 151/151.
+  KM card `agnostic-quoted-mode-fsm`; user-facing book subsection in `pipeline/evidenceir.md`. Sibling `.9.3b`
+  (CAN frame fields) is next.
+
 ### `PDF-VARIANT-DIGESTION.9.2` — CAN 2.0 honest baseline: a genuine under-extracted serial spec
 Ingested CAN 2.0 (`DOCLING_DEVICE=cpu`; 72 pages, 98 visual assets, `ready`, 0 residuals,
 `document_key=bosch_can_specification_2_0_1991`), built EvidenceIR (269 anchors / 751 statements / 98 visual /
