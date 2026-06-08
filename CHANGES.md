@@ -1,3 +1,16 @@
+### `PDF-VARIANT-DIGESTION.4a.4` — declared-signal (prose-capture) per-fact eval surface
+The second new eval surface (mirrors `.4a.1`): measure the `.3a` prose-signal capture per fact. `eval.rs`:
+`EvalTask::DeclaredSignal` + `GoldFact::DeclaredSignal {signal, direction?}` + `declared_signal_key` (signal
+name + optional direction `input`/`output`/`internal`; a name-only gold matches a no-direction record, so a
+directional record makes a stronger claim than a name-only gold and does not match) + `declared_signal_record_key`
++ `index_declared_signal_predictions`. The canonical signal inventory lives on the SemanticIR
+(`interfaces[].signal_records`, `InterfaceSignalRecord` = signal_name + direction_hint), so the runner builds
+the SemanticIR on a temp copy (like the temporal-rule task) and pools every interface's signal_records.
+Purely additive — no extraction change; APB/AHB/AXI/SWD eval + kg-bench unaffected. +2 hermetic tests (gold↔
+record key match incl. direction discrimination + name-only vs directional; closed-world scoring). full
+`scripts/run_ci.sh` green (1371); kg-bench 151/151. Book note + the live I2C measurement land with `.4a.5`
+(the surface is latent until a gold ships).
+
 ### `PDF-VARIANT-DIGESTION.4a.3` — NVMe register-field gold + register-scoped bit-structure recall
 Second precision document for the register-field surface — and it fails the OPPOSITE way to RISC-V Debug.
 Authored `seed_nvme_registers.json` — CAP (15 fields) + CC (8) + CSTS (6) = 29, bit ranges + mnemonics

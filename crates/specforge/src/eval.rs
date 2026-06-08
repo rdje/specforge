@@ -28,7 +28,8 @@ use crate::ir::evidence::{
     ProtocolStateRecord, SerialFrameField, SerialFramePhase, SwdOperation, SwdioDirection,
 };
 use crate::ir::semantic::{
-    ClockEdge, CycleWindowRecord, TemporalPredicateRecord, TemporalRuleRecord, TickPhase,
+    ClockEdge, CycleWindowRecord, InterfaceSignalDirection, InterfaceSignalRecord,
+    TemporalPredicateRecord, TemporalRuleRecord, TickPhase,
 };
 use crate::ir::source::{
     ActorSignalRelation, RegisterFieldRecord, RegisterRecord, RelationKind, SignalConstraintKind,
@@ -54,6 +55,9 @@ pub enum EvalTask {
     /// PDF-VARIANT-DIGESTION.4a.1 — a register bit-field (a `RegisterFieldRecord` within a
     /// `RegisterRecord`); identity is owning register + field name + bit offset/width.
     RegisterField,
+    /// PDF-VARIANT-DIGESTION.4a.4 — a declared interface signal (`InterfaceSignalRecord`, the canonical
+    /// signal inventory, incl. prose-captured signals); identity is signal name + direction.
+    DeclaredSignal,
 }
 
 impl EvalTask {
@@ -67,6 +71,7 @@ impl EvalTask {
             EvalTask::SwdOperation => "swd_operation",
             EvalTask::ProtocolState => "protocol_state",
             EvalTask::RegisterField => "register_field",
+            EvalTask::DeclaredSignal => "declared_signal",
         }
     }
 }
@@ -153,6 +158,15 @@ pub enum GoldFact {
         #[serde(default)]
         bit_width: Option<u32>,
     },
+    /// A declared interface signal (PDF-VARIANT-DIGESTION.4a.4): the signal name and, optionally, its
+    /// direction (`input` / `output` / `internal`). When `direction` is absent the identity is
+    /// name-only, matching a produced record that also has no direction (prose capture often yields no
+    /// direction); when present, a wrong direction scores as a miss.
+    DeclaredSignal {
+        signal: String,
+        #[serde(default)]
+        direction: Option<String>,
+    },
 }
 
 impl GoldFact {
@@ -166,6 +180,7 @@ impl GoldFact {
             GoldFact::SwdOperationFact { .. } => EvalTask::SwdOperation,
             GoldFact::ProtocolStateFact { .. } => EvalTask::ProtocolState,
             GoldFact::RegisterField { .. } => EvalTask::RegisterField,
+            GoldFact::DeclaredSignal { .. } => EvalTask::DeclaredSignal,
         }
     }
 
@@ -232,6 +247,9 @@ impl GoldFact {
             } => {
                 let (offset, width) = register_field_bits(*bits_high, *bits_low, *bit_width);
                 register_field_key(register, field, offset, width)
+            }
+            GoldFact::DeclaredSignal { signal, direction } => {
+                declared_signal_key(signal, direction.as_deref())
             }
         }
     }
@@ -313,6 +331,26 @@ fn register_field_key(
         field.trim().to_ascii_uppercase(),
         offset.map(|o| o.to_string()).unwrap_or_default(),
         width.map(|w| w.to_string()).unwrap_or_default(),
+    )
+}
+
+/// Stable snake-case string for an interface-signal direction.
+fn interface_signal_direction_str(dir: InterfaceSignalDirection) -> &'static str {
+    match dir {
+        InterfaceSignalDirection::Input => "input",
+        InterfaceSignalDirection::Output => "output",
+        InterfaceSignalDirection::Internal => "internal",
+    }
+}
+
+/// Canonical key for a declared interface signal (PDF-VARIANT-DIGESTION.4a.4) — identity is the signal
+/// name (uppercased) plus the direction (lowercased, empty when absent). A name-only gold (no direction)
+/// matches a produced record that also has no direction.
+fn declared_signal_key(signal: &str, direction: Option<&str>) -> String {
+    format!(
+        "{}|{}",
+        signal.trim().to_ascii_uppercase(),
+        direction.unwrap_or("").trim().to_ascii_lowercase(),
     )
 }
 
@@ -825,6 +863,32 @@ pub fn register_bit_structure_recall(
         }
     }
     (found, total)
+}
+
+/// Canonical key for a produced declared interface signal — matches a gold `DeclaredSignal`'s key
+/// (PDF-VARIANT-DIGESTION.4a.4).
+pub fn declared_signal_record_key(record: &InterfaceSignalRecord) -> String {
+    declared_signal_key(
+        &record.signal_name,
+        record.direction_hint.map(interface_signal_direction_str),
+    )
+}
+
+/// Index produced declared interface signals by their supporting statements
+/// (PDF-VARIANT-DIGESTION.4a.4). The canonical signal inventory is deterministic (built by the
+/// EvidenceIR→SemanticIR lowering), so a signal is attributed to every statement that supports it.
+pub fn index_declared_signal_predictions(
+    records: &[InterfaceSignalRecord],
+    into: &mut PredictedKeys,
+) {
+    for record in records {
+        let key = declared_signal_record_key(record);
+        for statement_id in &record.supporting_statement_ids {
+            into.entry((EvalTask::DeclaredSignal, statement_id.clone()))
+                .or_default()
+                .insert(key.clone());
+        }
+    }
 }
 
 /// Precision / recall / F1 counts for one task.
@@ -1843,6 +1907,102 @@ mod tests {
                 }
             }
         }
+    }
+
+    fn declared_signal_record(
+        name: &str,
+        direction: Option<InterfaceSignalDirection>,
+        statements: &[&str],
+    ) -> InterfaceSignalRecord {
+        InterfaceSignalRecord {
+            signal_name: name.to_string(),
+            direction_hint: direction,
+            width_hint: None,
+            resolved_polarity: None,
+            semantic_tags: vec![],
+            semantic_candidates: vec![],
+            semantic_arbitration: None,
+            resolved_semantic_role: None,
+            semantic_grounding_strength: None,
+            semantic_consensus: None,
+            semantic_observations: vec![],
+            supporting_statement_ids: statements.iter().map(|s| s.to_string()).collect(),
+            supporting_table_ids: vec![],
+            automation_confidence: AutomationConfidence::Medium,
+        }
+    }
+
+    #[test]
+    fn declared_signal_gold_and_record_keys_match_for_the_same_fact() {
+        // Name-only gold (prose capture often has no direction) matches a record with no direction.
+        let gold = GoldFact::DeclaredSignal {
+            signal: "sda".to_string(),
+            direction: None,
+        };
+        let rec = declared_signal_record("SDA", None, &["s1"]);
+        assert_eq!(gold.canonical_key(), declared_signal_record_key(&rec));
+
+        // A directional gold matches a record with that direction (case-insensitive).
+        let gold_dir = GoldFact::DeclaredSignal {
+            signal: "PADDR".to_string(),
+            direction: Some("OUTPUT".to_string()),
+        };
+        let rec_dir =
+            declared_signal_record("paddr", Some(InterfaceSignalDirection::Output), &["s2"]);
+        assert_eq!(
+            gold_dir.canonical_key(),
+            declared_signal_record_key(&rec_dir)
+        );
+
+        // Direction discriminates: an input gold must NOT match an output record.
+        let gold_in = GoldFact::DeclaredSignal {
+            signal: "PADDR".to_string(),
+            direction: Some("input".to_string()),
+        };
+        assert_ne!(
+            gold_in.canonical_key(),
+            declared_signal_record_key(&rec_dir)
+        );
+
+        // A name-only gold does NOT match a record that carries a direction (the directional record
+        // makes a stronger claim than the name-only gold asserts).
+        assert_ne!(gold.canonical_key(), declared_signal_record_key(&rec_dir));
+    }
+
+    #[test]
+    fn score_dataset_scores_declared_signals_closed_world() {
+        // One labeled prose-capture statement: gold = {SDA, SCL} (no direction).
+        let item = EvalItem {
+            task: EvalTask::DeclaredSignal,
+            doc_key: "i2c".to_string(),
+            statement_id: "stmt_decl".to_string(),
+            input_text: String::new(),
+            grounding: vec![],
+            gold: vec![
+                GoldFact::DeclaredSignal {
+                    signal: "SDA".to_string(),
+                    direction: None,
+                },
+                GoldFact::DeclaredSignal {
+                    signal: "SCL".to_string(),
+                    direction: None,
+                },
+            ],
+            label_status: "human_reviewed".to_string(),
+            label_note: String::new(),
+        };
+        // Produced for stmt_decl: SDA (TP) + a spurious VDD (FP); SCL missed (FN).
+        let records = [
+            declared_signal_record("SDA", None, &["stmt_decl"]),
+            declared_signal_record("VDD", None, &["stmt_decl"]),
+        ];
+        let mut predicted: PredictedKeys = PredictedKeys::new();
+        index_declared_signal_predictions(&records, &mut predicted);
+        let scores = score_dataset(&[item], &predicted);
+        let card = &scores[&EvalTask::DeclaredSignal];
+        assert_eq!(card.tp, 1, "SDA matched");
+        assert_eq!(card.fn_count, 1, "SCL missed");
+        assert_eq!(card.fp, 1, "VDD spurious");
     }
 
     #[test]

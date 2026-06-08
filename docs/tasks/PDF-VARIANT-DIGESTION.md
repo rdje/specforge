@@ -97,11 +97,11 @@ grid-repair demo on a bits-bearing doc; giants' ingest budget; USB 3.2 evid-fail
 
 ## Current frontier
 
-**ACTIVE FRONTIER (`2026-06-08`): `PDF-VARIANT-DIGESTION.4a.4`** — declared-signal (prose-capture) per-fact eval
-surface (then `.4a.5` I2C prose-signal gold). `.4a.1` (eval surface) + `.4a.2` (RISC-V Debug: field-name recall
-0.588) + `.4a.3` (NVMe: bit-structure recall 0.931 — inverse failure) are DONE: register-field extraction is now
-measured per-fact across two opposite-shaped docs. The `.2`–`.3b` leaves below are DONE (Lever A + B); `.4`–`.8`
-are the "make the breadth trustworthy" program.
+**ACTIVE FRONTIER (`2026-06-08`): `PDF-VARIANT-DIGESTION.4a.5`** — I2C prose-signal gold (source-verified
+SDA/SCL/… from the `corpus/` I2C PDF; measure declared-signal recall + book note). `.4a.1`–`.4a.4` DONE:
+register-field surface measured across two opposite-shaped docs (RISC-V field-name recall 0.588; NVMe
+bit-structure recall 0.931); `.4a.4` added the declared-signal eval surface. The `.2`–`.3b` leaves below are
+DONE (Lever A + B); `.4`–`.8` are the "make the breadth trustworthy" program.
 
 - `PDF-VARIANT-DIGESTION.2` (Lever A, deterministic strategy) — **DONE**: `synthesize_register_field_tables`
   recovers register-FIELD tables the classifier left `unknown` (header-in-body `Field|Description|Access|
@@ -214,10 +214,18 @@ it further. Priority order ① → ⑤.
       199/199 → strict per-fact 0.000 on BOTH docs for OPPOSITE reasons (why two recall views are essential).
       Measured against verified-current persisted evidence (postdates last extraction commit; PDF git-tracked).
       +3 hermetic tests; book section + KM updated. Third fix leaf identified: extract mnemonic from description.
-    - ID: `PDF-VARIANT-DIGESTION.4a.4` · Status: `pending` · Goal: declared-signal (prose-capture) per-fact EVAL
+    - ID: `PDF-VARIANT-DIGESTION.4a.4` · Status: `done` (`2026-06-08`) · Goal: declared-signal (prose-capture) per-fact EVAL
       SURFACE — `EvalTask::DeclaredSignal` + `GoldFact::DeclaredSignal {signal, direction?}` + key + indexer +
       an `extract_on_copy` branch reading the EvidenceIR signal inventory. Acceptance: additive; hermetic
-      tests; CI green.
+      tests; CI green. **DONE:** added `EvalTask::DeclaredSignal` + `GoldFact::DeclaredSignal {signal,
+      direction?}` + `declared_signal_key` (name + optional direction; name-only gold matches a no-direction
+      record) + `declared_signal_record_key` + `index_declared_signal_predictions`. The canonical inventory
+      lives on SemanticIR (`interfaces[].signal_records`, `InterfaceSignalRecord` = name + `direction_hint`
+      Input/Output/Internal), so the runner branch builds SemanticIR on a temp copy (like the TemporalRule
+      task) and pools all interfaces' signal_records. Additive — no extraction change. +2 hermetic tests
+      (gold↔record key match incl. name-only/direction discrimination; closed-world scoring). full
+      `run_ci.sh` green (1371); kg-bench 151/151. Book note + the live I2C measurement land with `.4a.5`
+      (the surface is latent until a gold ships, mirroring `.4a.1`).
     - ID: `PDF-VARIANT-DIGESTION.4a.5` · Status: `pending` · Goal: I2C prose-signal gold — independently
       source-verified gold for the I2C prose signals (SDA/SCL/…) from the `corpus/` PDF; measure per-fact P/R/F1.
   - ID: `PDF-VARIANT-DIGESTION.4b` · Status: `pending` · Goal: automated proposer/verifier AUDIT — re-read a

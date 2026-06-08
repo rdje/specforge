@@ -8,6 +8,31 @@
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 - adapter target: `.isf` (sole adapter); `.fsm`/HDL are out of scope — FSMGen consumes `.isf` and owns scheduling/`.fsm`/HDL downstream (since `ISF-ONLY-CONSOLIDATION`, `2026-05-18`)
 
+## 2026-06-08 — declared-signal eval surface (PDF-VARIANT-DIGESTION.4a.4)
+
+The second new eval surface, mirroring `.4a.1` (register fields): measure the prose-signal capture (`.3a`,
+which recovered I2C SDA/SCL/… from prose) per fact. Investigation first: `synthesize_signal_declarations_from_prose`
+does not emit a dedicated typed record — it emits synthetic `ExtractedStatement`s that flow downstream into the
+canonical signal inventory, which lives on the **SemanticIR** as `interfaces[].signal_records`
+(`InterfaceSignalRecord` = `signal_name` + `direction_hint: Option<Input|Output|Internal>`). So the surface
+reads SemanticIR, not EvidenceIR.
+
+Implementation (additive; runner mirrors the temporal-rule task, which also builds SemanticIR on a temp copy):
+- `EvalTask::DeclaredSignal` (+ `as_str` `"declared_signal"`).
+- `GoldFact::DeclaredSignal { signal, direction? }` — direction is optional because prose capture frequently
+  yields no direction. `declared_signal_key(signal, direction)` = `NAME|direction` (direction empty when
+  absent). A name-only gold matches a no-direction record; a directional record (a stronger claim) does NOT
+  match a name-only gold, and a wrong direction is a miss.
+- `declared_signal_record_key(&InterfaceSignalRecord)` + `index_declared_signal_predictions`.
+- Runner (`commands/eval_extraction.rs`): `TaskRecords::DeclaredSignals(Vec<InterfaceSignalRecord>)` + an
+  `extract_on_copy` branch that builds the SemanticIR from the temp copy and pools every interface's
+  `signal_records` (provider unused — the inventory is deterministic).
+
+Validation: +2 hermetic tests (key match incl. direction discrimination + name-only/directional asymmetry;
+closed-world TP/FP/FN); fmt + warning-deny clippy clean; full lib suite 1369 → 1371; `kg-bench` 151/151. No
+extraction-behavior change. The book note + the live I2C gold/measurement are `.4a.5` (the surface is latent
+until a gold ships, same deferral as `.4a.1`). Runtime stays PDF-agnostic — the surface holds no signal names.
+
 ## 2026-06-08 — NVMe register-field gold + bit-structure recall (PDF-VARIANT-DIGESTION.4a.3)
 
 The second register-field document, NVMe Base Spec 2.0a, fails the INVERSE way to RISC-V Debug — and that is

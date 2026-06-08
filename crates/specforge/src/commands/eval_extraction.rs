@@ -26,7 +26,7 @@ use crate::ir::extraction_filters::{
     is_grounded_obligation_with, is_normative_for_subject, is_valid_actor, is_valid_actor_with,
 };
 use crate::ir::nli_verify::{constraint_claim_text, verify_entailment};
-use crate::ir::semantic::{SemanticIr, TemporalRuleRecord};
+use crate::ir::semantic::{InterfaceSignalRecord, SemanticIr, TemporalRuleRecord};
 use crate::ir::source::{ActorSignalRelation, RegisterRecord, SignalConstraintRecord};
 use std::collections::BTreeSet;
 use std::path::Path;
@@ -44,6 +44,8 @@ enum TaskRecords {
     ProtocolStates(Vec<crate::ir::evidence::ProtocolStateRecord>),
     /// PDF-VARIANT-DIGESTION.4a.1 — deterministic register-field records read straight from EvidenceIR.
     RegisterFields(Vec<RegisterRecord>),
+    /// PDF-VARIANT-DIGESTION.4a.4 — declared interface signals from the deterministic SemanticIR inventory.
+    DeclaredSignals(Vec<InterfaceSignalRecord>),
 }
 
 /// `WIRE-BASED-100.6/.7` — drop OVER-GENERATED facts before scoring: relations whose subject is not
@@ -130,6 +132,9 @@ where
             TaskRecords::RegisterFields(records) => {
                 eval::index_register_field_predictions(&records, &mut predicted)
             }
+            TaskRecords::DeclaredSignals(records) => {
+                eval::index_declared_signal_predictions(&records, &mut predicted)
+            }
         }
     }
     Ok(predicted)
@@ -210,6 +215,18 @@ fn extract_on_copy(
         EvalTask::RegisterField => {
             Ok((TaskRecords::RegisterFields(ir.register_records), Vec::new()))
         }
+        // PDF-VARIANT-DIGESTION.4a.4 — the canonical declared-signal inventory lives on the SemanticIR
+        // (interfaces[].signal_records), built deterministically from the EvidenceIR (no LLM / provider).
+        // Build it from the temp copy (artifacts confined to the temp dir, corpus untouched).
+        EvalTask::DeclaredSignal => {
+            let semantic = SemanticIr::build(&temp_path, temp.path())?;
+            let signals: Vec<InterfaceSignalRecord> = semantic
+                .interfaces
+                .iter()
+                .flat_map(|interface| interface.signal_records.iter().cloned())
+                .collect();
+            Ok((TaskRecords::DeclaredSignals(signals), Vec::new()))
+        }
     }
 }
 
@@ -266,7 +283,8 @@ fn records_with_tier_counts(
         TaskRecords::SerialFrameFields(_)
         | TaskRecords::SwdOperations(_)
         | TaskRecords::ProtocolStates(_)
-        | TaskRecords::RegisterFields(_) => Vec::new(),
+        | TaskRecords::RegisterFields(_)
+        | TaskRecords::DeclaredSignals(_) => Vec::new(),
     }
 }
 
@@ -652,8 +670,9 @@ mod tests {
             | EvalTask::SerialFrameField
             | EvalTask::SwdOperation
             | EvalTask::ProtocolState
-            | EvalTask::RegisterField => {
-                unreachable!("no temporal/SWD/register-field items in this test")
+            | EvalTask::RegisterField
+            | EvalTask::DeclaredSignal => {
+                unreachable!("no temporal/SWD/register-field/declared-signal items in this test")
             }
         })
         .unwrap();
