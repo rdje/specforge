@@ -118,14 +118,38 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
   name recall unchanged 20/34. Strict per-fact recall stays 0.000 (bits 0/179 live in the layout graphic → `.4`,
   not the name). +2 hermetic tests; no wire-based regression; full `run_ci.sh` green (lib 1381 → 1383); kg-bench
   151/151. Commit subject: `EXTRACTION-GAP-FIX.3`.
-- ID: `EXTRACTION-GAP-FIX.4` · Status: `pending` · Goal: **RISC-V bit-layout-graphic parse** — recover bit
-  positions for register fields whose bits live in the layout GRAPHIC, not the field table (the `.4b` audit's
-  dominant flag). Likely a VLM/structural read of the register-diagram image, bounded/targeted (the `.2b`
-  scaling finding), gated + agnostic. Re-measure on the `.4a.2` RISC-V gold (bit-extent 0/179 → higher).
-  Accept: bit-extent up with verified-correct positions (no fabrication); no wire-based regression. **If the
-  graphic read cannot recover a field's bits, that field's bit-extent stays an honest completeness residual —
-  bits are NEVER synthesized from a table that does not contain them** (the honesty guardrail above). (Hardest —
-  may split; the VLM is a targeted/sampled tool.)
+- ID: `EXTRACTION-GAP-FIX.4` · Status: `in_progress` (parent; SPLIT `2026-06-08`) · Goal: **RISC-V
+  bit-layout-graphic parse** — recover bit positions for register fields whose bits live in the layout GRAPHIC,
+  not the field table (bit-extent 0/179). **Investigation `2026-06-08` resolved the open question and produced a
+  validated design (the hard intellectual work of the leaf):**
+  - **The deterministic table path FABRICATES — rejected.** Docling captures the bit diagram as a table
+    (`table_0020` for dmstatus) but garbles it: the low half matches the gold exactly, the high half is wrong
+    (`ndmresetpending` captured bit 16, gold 24) and reserved-gap bits are dropped. Reconstructing from it would
+    synthesize wrong bits → violates the honesty guardrail. NOT used.
+  - **The bits live in the rendered diagram IMAGE** (`normalized/assets/table-0020.png`, `picture-0020.png`),
+    where the bit-position labels are correct and match the gold.
+  - **The local VLM (`qwen2.5vl:7b`) reads field NAMES + ORDER + per-field WIDTHS reliably, but misreads
+    absolute MSB positions of WIDE fields** (it grabs the wrong one of the two edge-numbers a wide cell prints,
+    e.g. `hartsello` → 16 instead of 25, cascading an off-by-N). Confirmed on BOTH dmstatus and dmcontrol.
+  - **DESIGN (validated): discard the VLM's absolute positions; reconstruct them from order + widths by
+    cumulative LSB tiling** (a register's fields tile it with no gaps — a structural law the VLM can't violate).
+    Verified in python against the gold: **dmcontrol → 14/14 exact** (`hartsello [25:16]`, `hartselhi [15:6]`,
+    …). A **tiling gate** keeps it honest: dmstatus's wide reserved field (width 7) is VLM-misread as width 1 →
+    widths sum to 26 ≠ 32 → **gate rejects → honest residual** (no fabrication), exactly the guardrail.
+  - Splits into `.4a` (build the tiling-gated VLM recovery) + `.4b` (live measurement on the `.4a.2` gold).
+- ID: `EXTRACTION-GAP-FIX.4a` · Status: `pending` · Goal: **build the tiling-gated register-diagram bit
+  recovery.** A VLM proposer reads `(field_name, width)` in MSB→LSB order off the register-diagram image (reuse
+  the existing VLM transport; default `--provider skip` → CI-safe no-op); a pure Rust core reconstructs bit
+  ranges by cumulative LSB tiling and ACCEPTS only when (a) the widths tile a standard register width (8/16/32/
+  64/128) and (b) the proposed field names match the register's field-definition table — else the bits stay an
+  honest residual. Attach recovered bits to the `RegisterFieldRecord`s. Hermetic tests on the real dmcontrol
+  (success, 14/14) and dmstatus (reserved-width misread → residual) data + name-mismatch reject; the live VLM is
+  NOT a CI dependency. Agnostic (ADR 0006 — structural tiling + the universal "fields tile a register" law, no
+  chip names). Accept: pure core + gate landed, fmt/clippy/tests green, no wire-based regression.
+- ID: `EXTRACTION-GAP-FIX.4b` · Status: `pending` · Goal: **live measurement** — run `.4a` with the live
+  `qwen2.5vl:7b` on the RISC-V Debug register diagrams and re-measure bit-extent on the `.4a.2` gold (expected:
+  dmcontrol's 14 recovered correct, dmstatus an honest residual → bit-extent 0/179 → higher, no fabrication).
+  Needs `ollama serve`. Report honest per-register numbers.
 
 ## Current frontier
 

@@ -1,3 +1,32 @@
+### `EXTRACTION-GAP-FIX.4` (investigation + design; SPLIT into `.4a`/`.4b`) — register bit positions from the diagram image via tiling reconstruction
+The last gap: RISC-V register field bit positions live in the bit-layout **graphic**, not the field table
+(bit-extent 0/179). This entry records the investigation that resolved the leaf's open question (VLM vs
+structural) with a **validated design**, and splits `.4` into a build (`.4a`) + a live measurement (`.4b`). No
+code change yet — this is the design milestone.
+
+Findings (all evidence-checked against the `.4a.2` gold):
+- **The deterministic table path FABRICATES → rejected.** Docling captures the diagram as a table
+  (`table_0020`) but garbles it — low half matches the gold, high half is wrong (`ndmresetpending` at bit 16,
+  gold 24), reserved-gap bits dropped. Reconstructing from it would synthesize wrong bits.
+- **The bits live in the rendered diagram IMAGE** (`table-0020.png`, `picture-0020.png`), where the labels are
+  correct and match the gold.
+- **`qwen2.5vl:7b` reads field NAMES + ORDER + per-field WIDTHS reliably, but misreads the absolute MSB of WIDE
+  fields** (a wide cell prints both edge-numbers, e.g. `25 … 16`, and the model grabs the wrong one, cascading
+  an off-by-N). Confirmed on both dmstatus and dmcontrol.
+- **DESIGN (validated in python vs the gold): discard the VLM's absolute positions; reconstruct them from order
+  + widths by cumulative LSB tiling** (a register's fields tile it with no gaps). `dmcontrol → 14/14 exact`
+  (`hartsello [25:16]`, `hartselhi [15:6]`, …). A **tiling gate** keeps it honest: dmstatus's wide *reserved*
+  field (width 7) is VLM-misread as width 1 → widths sum to 26 ≠ 32 → **gate rejects → honest residual**, never
+  a fabricated bit. So the fix is a smarter *use* of the VLM, not a bigger one; a stronger VLM is complementary
+  (it would rescue residual cases), not required for clean diagrams.
+
+`.4a` (next) builds the tiling-gated recovery: VLM proposes `(name, width)` in MSB→LSB order off the diagram
+image → Rust reconstructs by tiling → gate on *(widths tile a standard register size)* + *(names match the
+field-definition table)* → attach bits, else residual; default `--provider skip` (CI-safe), hermetic tests on
+the real dmcontrol (success) / dmstatus (residual). `.4b` is the live measurement. KM card
+`register-diagram-bit-recovery-via-tiling`; task tree `docs/tasks/EXTRACTION-GAP-FIX.md`. Docs-only; CI green
+(no code change); kg-bench unaffected.
+
 ### `EXTRACTION-GAP-FIX.3` — RISC-V register name from the defining section heading (register-name association 0/60 → 59/60)
 Third fix in the owner-pivot `EXTRACTION-GAP-FIX` tree, and it resolved the leaf's open design question by
 **investigating the real data first** (honesty guardrail). RISC-V Debug register-field tables (`Field|Description|

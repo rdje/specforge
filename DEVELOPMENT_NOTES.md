@@ -8,6 +8,41 @@
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 - adapter target: `.isf` (sole adapter); `.fsm`/HDL are out of scope — FSMGen consumes `.isf` and owns scheduling/`.fsm`/HDL downstream (since `ISF-ONLY-CONSOLIDATION`, `2026-05-18`)
 
+## 2026-06-08 — Register bit positions from the diagram image via tiling reconstruction (EXTRACTION-GAP-FIX.4 design)
+
+`.4` is the last and hardest gap: RISC-V register field bit positions live in the bit-layout **graphic**, not
+the field table. The discipline (again) was investigate-where-the-fact-lives before coding, and the
+investigation produced a clean, validated design — which is the substantive work of this leaf, recorded before
+the build (`.4a`).
+
+Three things the evidence settled (all checked against the `seed_riscv_debug_registers.json` gold):
+
+1. **The deterministic table capture is unusable — it would fabricate.** Docling captures the bit diagram as a
+   table (`table_0020` for dmstatus), but garbles it: the low half (bits 0–10) matches the gold exactly, the
+   high half is wrong (`ndmresetpending` captured at bit 16, gold 24), and the reserved-bit gaps vanish.
+   Reconstructing from it would synthesize wrong bits → straight against the honesty guardrail. Rejected.
+
+2. **The bits ARE in the rendered diagram image**, correctly. Viewing `table-0020.png` (dmstatus) and
+   `picture-0020.png` (dmcontrol) shows the bit-position labels matching the gold.
+
+3. **The local VLM reads names+order+widths reliably, but not absolute positions.** `qwen2.5vl:7b` transcribed
+   every field name in order, and the per-field widths, correctly — but it misreads the absolute MSB of *wide*
+   fields, because a wide cell prints both of its edge numbers (e.g. `25 … 16` for `hartsello`) and the model
+   picks the wrong one, which then cascades an off-by-N through the rest of the row. Confirmed on both dmstatus
+   and dmcontrol.
+
+The design follows directly: **don't trust the VLM's absolute positions — reconstruct them from order + widths
+by cumulative LSB tiling.** A register's fields tile it with no gaps; that structural law the VLM cannot
+violate. Walking the fields LSB→MSB and laying each down by its width recovers dmcontrol's bit ranges *exactly*
+(14/14 vs the gold — `hartsello [25:16]`, `hartselhi [15:6]`, `dmactive [0:0]`, …), even though the VLM's raw
+MSB numbers were wrong. A **tiling gate** is what keeps it honest: accept only when the widths tile a standard
+register width AND the field names match the field-definition table. dmstatus has a wide *reserved* field
+(width 7) that the VLM misreads as width 1, so its widths sum to 26 ≠ 32 → the gate rejects → honest residual,
+no fabricated bit. So a *better VLM* is complementary (it would rescue the residual cases by reading the
+reserved-field width), not required — structure does the heavy lifting and the current local model supplies the
+names+widths. `.4a` builds this (skip-default, hermetic tests on the real dmcontrol/dmstatus data); `.4b` is the
+live measurement. KM card: `register-diagram-bit-recovery-via-tiling`.
+
 ## 2026-06-08 — RISC-V register name from the defining section heading (EXTRACTION-GAP-FIX.3)
 
 `.3` was the leaf `.2c` had deferred ("Docling does not place tables in `content_elements` reading-order, so
