@@ -196,6 +196,40 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
     a VLM-read-robustness leaf — voting/upscaling/sharper prompt). Docs-only. Commit subject:
     `EXTRACTION-GAP-FIX.4b`.
 
+- ID: `EXTRACTION-GAP-FIX.4c` · Status: `done` (`2026-06-08`; de-fragmentation half; diagram-classification +
+  VLM-robustness stay future) · Goal: **de-fragment a register's field tables** — the first of the two `.4b` plumbing gaps (the other, classify register bit-layout diagrams as
+  `RegisterBitfield`, + VLM-read robustness stay future). On RISC-V Debug a register's fields are SPLIT across
+  multiple Docling tables → multiple `RegisterRecord`s for one register (dmcontrol `regfld_table_0023/0024/0025` =
+  1+5+7 fields; dcsr 4 records; mcontrol6 6) so no single record holds the full field set (blocks bit-recovery
+  gate (b) AND inflates the record count). **Design (`2026-06-08`):** a pure `consolidate_register_field_fragments`
+  that groups records by recovered `register_name` and merges a group ONLY through SAFETY GATES that leave the
+  real hazards un-merged (honesty guardrail — never fabricate a register's field set): (gate 1) no fragment has
+  an internal DUPLICATE field name (rejects the garbled mcontrol `regfld_table_0075` = `sizelo`×13), (gate 2) the
+  field-name sets are PAIRWISE DISJOINT across the group (rejects array-collapsed `sbaddress3`×4 all `address`,
+  `custom0`×3 all `data` — distinct registers `.3` mapped to one heading), and only real recovered names (not the
+  synthetic `register_<id>`, which is unique per record anyway). A safe merge unions the fields in fragment order
+  + unions `supporting_statement_ids`, emitted deterministically at the first fragment's position. Wired into the
+  base `evidence` build so a standalone `evidence` is de-fragmented (matches what the merged record needs).
+  VERIFY on RISC-V Debug (on-disk `normalized/`, in `corpus/`): dmcontrol/dcsr/mcontrol6 merge to one complete
+  record; sbaddress3/custom0/mcontrol stay split (honest); `.4a.2`/`.4a.3` golds hold (register-scoped recall
+  pools fragments → unchanged); NVMe distinct-name registers unaffected; APB/AHB/AXI/SWD have no register-field
+  tables → unaffected; kg-bench 151/151. ADR 0006 (structural, no chip names). Does NOT touch the wire-based
+  constraint surface.
+  **DONE — pure `consolidate_register_field_fragments` + `register_fragments_are_safe_to_merge` (the two safety
+  gates reduce to ONE test: all field names across the same-name group are distinct case-insensitively) +
+  `merge_register_fragments` (union fields in fragment order, union supporting ids, recompute width from the full
+  field set, emitted at the first fragment's position → deterministic order), wired into the base `evidence` build
+  after register synthesis. +6 hermetic tests on real shapes (dmcontrol 3→1/13 fields; garbled `sizelo`×13 blocks;
+  array `sbaddress3`×address blocks; distinct-name order preserved; singleton untouched; case-only repeat blocks).
+  fmt + clippy `-D warnings` clean; full lib 1427 → 1433; kg-bench 151/151. VERIFIED live on the on-disk/in-corpus
+  docs: **RISC-V Debug 60 → 44 register records** (16 fragments merged — dmcontrol now ONE record with all 13
+  fields; the hazards custom0/mcontrol/sbaddress3/icount/textra64 honestly stay split), **NVMe 44 → 42** (2 safe
+  merges; CAP/CC/PMRCAP conservatively left). Golds HOLD (`.4a.2` RISC-V field-name recall 20/34=0.588 unchanged,
+  register-name association 59/60→43/44 same ~0.98; `.4a.3` NVMe field-name 28/29, bit-structure 28/29 unchanged).
+  The `.5b` completeness gauge is visibly cleaner (dmcontrol once, complete). Also ENABLES `recover-register-bits`
+  gate (b) for the merged registers. Commit subject: `EXTRACTION-GAP-FIX.4c`. KM card
+  `register-field-table-defragmentation`.
+
 ## Current frontier
 
 **ALL 4 quantified gaps now WORKED (`2026-06-08`); the tree is at an honest boundary.** `.1` (I2C prose
@@ -206,13 +240,16 @@ validated, but its metric is honestly UNCHANGED** (bit-extent 0/179): `.4a` buil
 correctly but makes width/reserved errors on these dense diagrams (dmcontrol sum 37, dmstatus sum 33), so the
 standard-width gate rejects → honest residual, **zero fabrication**; and two upstream plumbing gaps (diagrams
 classified `unknown` not `RegisterBitfield`; field tables fragmented across Docling tables) block auto-
-resolution. **PROPOSED FOLLOW-UP (owner to confirm priority): `.4c`** — plumbing (classify register bit-layout
-diagrams as `RegisterBitfield` + de-fragment/merge a register's field tables) and/or VLM-read robustness
-(voting / image upscaling / sharper prompt / stronger VLM). Until then the honest boundary holds: the recovery
-fabricates nothing. **NEXT eligible work is in a sibling active tree** (`PDF-VARIANT-DIGESTION` frontier `.5a`
-doc-class routing; or `EXTRACTION-QUALITY-GAUGE` `.8`/`.FIELD`) — pick per PNT. Honesty guardrail throughout:
-read where the fact lives / trust only a clean read, else honest residual — `.4`'s two gates mechanize exactly
-that.
+resolution. **`.4c` DE-FRAGMENTATION DONE (`2026-06-08`)** — `consolidate_register_field_fragments` merges a
+register's Docling-split field tables into one record behind a conservative all-field-names-distinct safety gate
+(RISC-V Debug 60→44 records, dmcontrol now complete with 13 fields; golds held; garbled/array-collapsed groups
+honestly left split). This closes plumbing gap #2 (and enables bit-recovery gate (b)). **REMAINING `.4c`
+follow-up:** plumbing gap #1 (classify register bit-layout diagrams as `RegisterBitfield`) + VLM-read robustness
+(voting / image upscaling / sharper prompt / stronger VLM) — both still gate the bit-extent metric, which stays
+the honest boundary (recovery fabricates nothing). **NEXT eligible work is in a sibling active tree**
+(`PDF-VARIANT-DIGESTION` frontier `.6`/`.7` — currently blocked on host-local PDFs; or `EXTRACTION-QUALITY-GAUGE`
+`.8`/`.FIELD`) — pick per PNT. Honesty guardrail throughout: read where the fact lives / trust only a clean read,
+else honest residual.
 
 ## Decisions
 
@@ -306,6 +343,19 @@ that.
   error caught, nothing fabricated); the tiling math is proven by `.4a`'s hermetic 14/14. Closing the metric is
   the proposed follow-up `.4c` (classify register bitfield diagrams + de-fragment field tables + VLM-read
   robustness / stronger VLM). Docs-only (no code change).
+- `.4c` (`2026-06-08`): **de-fragmentation half of the `.4b` plumbing built + verified.** Pure
+  `consolidate_register_field_fragments` (groups register records by recovered name; merges a group only when
+  `register_fragments_are_safe_to_merge` = all field names across the group are distinct case-insensitively — the
+  two safety gates collapse to that one test; `merge_register_fragments` unions fields in fragment order + unions
+  supporting ids + recomputes width from the full set, emitted at the first fragment's position for deterministic
+  order), wired into the base `evidence` build after register synthesis. +6 hermetic tests on real RISC-V shapes.
+  fmt + clippy `-D warnings` clean; full lib 1427 → 1433; kg-bench 151/151. **Live (rebuilt on-disk evidence):
+  RISC-V Debug 60 → 44 records** (dmcontrol 3→1 with all 13 fields; dcsr/mcontrol6 merged; the hazards
+  custom0/mcontrol/sbaddress3/icount/textra64 honestly NOT merged), **NVMe 44 → 42**. **Golds held:** RISC-V
+  field-name recall 20/34=0.588 (register-agnostic → pooling-invariant), register-name 43/44 (~0.98, was 59/60);
+  NVMe field-name 28/29, bit-structure 28/29; both unchanged. `.5b` gauge cleaner (dmcontrol once, complete). Also
+  enables `recover-register-bits` gate (b) for merged registers. Wire-based unaffected (no register-field tables;
+  consolidation can't touch constraints/relations/temporal). Commit subject: `EXTRACTION-GAP-FIX.4c`.
 
 ## Commit log
 
@@ -314,6 +364,7 @@ that.
 - `.3` → `EXTRACTION-GAP-FIX.3 — RISC-V register name from defining heading (register-name 0/60 → 59/60)`
 - `.4a` → `EXTRACTION-GAP-FIX.4a — tiling-gated register-diagram bit recovery (pure core + recover-register-bits)`
 - `.4b` → `EXTRACTION-GAP-FIX.4b — live measurement: guardrail validated, metric unchanged 0/179, zero fabrication`
+- `.4c` → `EXTRACTION-GAP-FIX.4c — de-fragment split register-field tables (RISC-V 60→44 records; golds hold)`
 
 ## Changelog
 
@@ -343,3 +394,9 @@ that.
   All 4 originally-quantified gaps are now worked (`.1`/`.2`/`.3` with measured gains; `.4` machinery + measure
   + honest boundary). NEXT eligible PNT work is in a sibling active tree (`PDF-VARIANT-DIGESTION.5a` or
   `EXTRACTION-QUALITY-GAUGE`).
+- `2026-06-08`: `.4c` (de-fragment split register-field tables — the first `.4b` plumbing gap) DONE.
+  `consolidate_register_field_fragments` merges a register's Docling-split field tables into one record behind a
+  conservative all-field-names-distinct safety gate (garbled/array-collapsed groups stay split — honesty
+  guardrail). Live: RISC-V Debug 60 → 44 records (dmcontrol complete, 13 fields), NVMe 44 → 42; `.4a.2`/`.4a.3`
+  golds unchanged; `.5b` gauge cleaner; lib 1433; kg-bench 151/151. The remaining `.4c` plumbing (classify
+  register bit-layout diagrams as `RegisterBitfield`) + VLM-read robustness stay future.

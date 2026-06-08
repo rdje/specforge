@@ -115,6 +115,31 @@ recovered agent, and every newly-recovered one is real — a CPU core, a trace u
 interconnect manager. The four wire-based reference specs recover no actors at all, so nothing regresses.
 Additive surface, no extraction-score change; lib 1421 → 1427, +6 hermetic tests, kg-bench 151/151.
 
+## 2026-06-08 — De-fragmenting a split register, conservatively (EXTRACTION-GAP-FIX.4c)
+
+This closes the first of the two plumbing gaps `.4b` found: a PDF backend splits one register's field table
+across several tables, so the field reader emits several `RegisterRecord`s for one register (RISC-V `dmcontrol`
+came out as three records of 1+5+7 fields). `consolidate_register_field_fragments` (run at the end of the base
+`evidence` build) merges records that share a recovered register name back into one. The whole correctness
+question is *when is it safe to merge?*, and the answer is one strict test: **every field name across the group
+must be distinct (case-insensitively).** That single predicate is exactly the two failure modes the live data
+showed: a fragment that repeats a field name internally is a garbled bit-row (`mcontrol`'s `sizelo`×13), and two
+fragments that share a field name are almost always *different* registers an upstream heading-association
+collapsed onto one name (a `sbaddress0..3` array all named `sbaddress3`, each with one `address` field). Either
+way the group is left untouched — a register's field set is never synthesized to make it look complete (the
+owner honesty guardrail). A safe merge unions the fields in fragment order, unions the supporting statement ids,
+recomputes the width from the now-complete field set, and is emitted at the first fragment's position so the
+output order stays deterministic.
+
+The reassuring part is what *didn't* move. The `.4a.2`/`.4a.3` golds are register-scoped (they pool a register's
+fragments before scoring), so de-fragmentation is pooling-invariant by construction, and the live re-run
+confirmed it: RISC-V field-name recall 20/34, NVMe field-name and bit-structure 28/29 — all unchanged. What did
+change is the structure: RISC-V Debug 60 → 44 records with `dmcontrol` whole again, NVMe 44 → 42, the `.5b`
+gauge cleaner, and the `recover-register-bits` name-match gate finally has a complete field set to check the VLM
+against. Wire-based specs have no register-field tables, so it is a structural no-op there, and it only ever
+touches `register_records` — never constraints, relations, or temporal rules. lib 1427 → 1433, +6 hermetic
+tests, kg-bench 151/151.
+
 ## 2026-06-08 — Live measurement of the bit recovery, honest result (EXTRACTION-GAP-FIX.4b)
 
 `.4b` ran `.4a` against reality and reported truthfully: **the bit-extent metric did not move (still 0/179), and

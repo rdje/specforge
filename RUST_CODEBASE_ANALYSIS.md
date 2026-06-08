@@ -37,8 +37,8 @@ LLM/VLM provider is still production-default.
   `document_completeness_gaps` metrics + `evidence_document_*` findings).
 - **Whole `crates/specforge/src` ≈ 103,200 lines** (single workspace crate, edition 2024), up from
   the ~88.7K cited on 2026-05-29.
-- **`cargo test -p specforge --lib` = 1427 passing, 0 failed, 0 ignored** (the canonical validation
-  command). Any earlier `1421`/`1360`/`1014`/`666` counts below are historical.
+- **`cargo test -p specforge --lib` = 1433 passing, 0 failed, 0 ignored** (the canonical validation
+  command). Any earlier `1427`/`1421`/`1360`/`1014`/`666` counts below are historical.
 - **Eval/gold infrastructure** (load-bearing for the active `PDF-VARIANT-DIGESTION` precision lane):
   the pure scorer is `crates/specforge/src/eval.rs` (`EvalTask`/`GoldFact`/`score_dataset` +
   `score_dataset_source_tolerant`); the runner is `commands/eval_extraction.rs`; committed gold

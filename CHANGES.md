@@ -1,3 +1,33 @@
+### `EXTRACTION-GAP-FIX.4c` — de-fragment register-field tables a PDF backend split across several tables
+A PDF backend (Docling) often splits ONE register's field-definition table across several tables, so the
+evidence builder emitted several `RegisterRecord`s for one register (RISC-V Debug `dmcontrol` → 3 records of
+1+5+7 fields). That inflates the register count and blocks `recover-register-bits` gate (b), which needs a
+register's full field set in one record. `.4c` de-fragments them — conservatively, so it never fabricates a
+field set.
+
+- New pure `consolidate_register_field_fragments` (wired into the base `evidence` build after register
+  synthesis) groups records by recovered `register_name` and merges a group ONLY when
+  `register_fragments_are_safe_to_merge` holds: **all field names across the group are distinct
+  case-insensitively.** That single test IS the two safety gates — (1) no fragment repeats a field name
+  internally (rejects a garbled bit-row read as `sizelo`×13), and (2) the fragments are pairwise disjoint
+  (rejects distinct registers an upstream heading-association collapsed to one name, e.g. an array `sbaddressN`
+  all named `sbaddress3`). An ambiguous/garbled group is left exactly as it was (honesty guardrail).
+  `merge_register_fragments` unions the fields in fragment order, unions `supporting_statement_ids`, recomputes
+  the width from the full field set, and emits the merged record at the first fragment's position so output
+  order stays deterministic. ADR 0006 (structural, no chip names).
+- +6 hermetic tests on real RISC-V shapes (dmcontrol 3→1/13 fields; garbled `sizelo`×13 blocks; array
+  `sbaddress3` blocks; distinct-name order preserved; singleton untouched; case-only repeat blocks). fmt +
+  clippy `-D warnings` clean; full lib 1427 → 1433; kg-bench 151/151.
+- **Verified live** on the in-`corpus/` docs that retain a `normalized/` bundle: **RISC-V Debug 60 → 44
+  register records** (dmcontrol/dcsr/mcontrol6 merged complete; custom0/mcontrol/sbaddress3/icount/textra64
+  honestly left split), **NVMe 44 → 42**. The `.4a.2`/`.4a.3` golds are unchanged (register-scoped recall is
+  pooling-invariant: RISC-V field-name 20/34=0.588, NVMe field-name + bit-structure 28/29). The `.5b`
+  completeness gauge is visibly cleaner (dmcontrol once, complete), and the merge enables `recover-register-bits`
+  gate (b). Wire-based specs carry no register-field tables → structural no-op (and it only touches
+  `register_records`, never constraints/relations/temporal). Closes the first of the two `.4b` plumbing gaps;
+  classifying register bit-layout diagrams + VLM-read robustness stay future. KM
+  `register-field-table-defragmentation`.
+
 ### `PDF-VARIANT-DIGESTION.8` — broaden prose-actor capture with a robust structural agent grammar
 Many specs introduce their agents only in prose ("A controller is the device that initiates a transfer…").
 `.8` broadens that capture so more documents recover their agent model — while staying garbage-free through

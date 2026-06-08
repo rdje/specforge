@@ -312,6 +312,28 @@ genuine registers it raised zero false positives. Overlaps surface as a Warning,
 interior gaps as Info (a gap is a *candidate* missed field, not a proven defect).
 *Authoritative tracking:* `docs/tasks/COMPLETENESS-CLOSURE-INVARIANTS.md`.
 
+### `EXTRACTION-GAP-FIX.4c` — putting a split register back together
+
+PDF backends often break one register's field-definition table across several
+table fragments — a long register that spans a page boundary, say. The field
+reader then produces *several* register records for one register, each holding a
+slice of its fields. That inflates the register count and, worse, means no single
+record holds the register's whole field set (so the bit-recovery check below has
+nothing complete to match against).
+
+`EvidenceIR` de-fragments these: register records sharing the same recovered name
+are merged back into one. The safety rule is deliberately strict — a group is
+merged **only when every field name across it is distinct**. That one test is what
+keeps it honest. If a fragment repeats a field name (a garbled bit-row the backend
+read as the same field over and over), or if two fragments share a field name
+(which usually means they are actually *different* registers an upstream
+name-association lumped together — a register *array* like `sbaddress0..3`, for
+instance), the merge is refused and the fragments are left exactly as they were. A
+register's field set is never invented to make it look whole. On the RISC-V Debug
+spec this collapses 60 record fragments into 44 real registers — `dmcontrol`'s
+thirteen fields come back together in one record — while the genuinely ambiguous
+groups stay split and visible.
+
 ### `EXTRACTION-GAP-FIX.4a` — recovering bits that live only in the layout diagram
 
 The tiling law above checks a register that *has* bit positions. The mirror-image

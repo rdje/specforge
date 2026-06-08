@@ -812,6 +812,12 @@ impl EvidenceIr {
         }
         // Drop bit-LAYOUT grids mis-read as registers (see `register_is_bit_layout_grid`).
         register_records.retain(|reg| !register_is_bit_layout_grid(reg));
+        // EXTRACTION-GAP-FIX.4c — de-fragment a register whose field table a PDF backend split
+        // across several tables (one register → several `RegisterRecord`s). Conservative: only
+        // merges same-name fragments whose field names are ALL distinct, so garbled fragments and
+        // array-collapsed distinct registers stay un-merged (honesty guardrail — never fabricate a
+        // field set). Additive; wire-based specs carry no register-field tables, so unaffected.
+        consolidate_register_field_fragments(&mut register_records);
         let timing_constraints = synthesize_timing_constraints(&source_ir, prior_guidance.as_ref());
 
         // Replace the previous one-shot extraction with a monotone convergent loop:
@@ -8360,6 +8366,220 @@ fn register_size_from_fields(fields: &[RegisterFieldRecord]) -> Option<u32> {
         .filter_map(|f| f.bits_high)
         .max()
         .map(|h| h + 1)
+}
+
+/// De-fragment register-FIELD tables a PDF backend split across several tables, so ONE register's
+/// fields live in ONE `RegisterRecord` instead of several (EXTRACTION-GAP-FIX.4c). Conservative by
+/// construction: a same-`register_name` group is merged ONLY when its field names are ALL distinct
+/// (case-insensitively) across the whole group. That single test is exactly the two safety gates —
+/// (1) no fragment repeats a field name internally (rejects a garbled bit-row read as one field
+/// repeated, e.g. `sizelo`×13) and (2) the fragments are pairwise disjoint (rejects distinct
+/// registers an upstream heading-association collapsed to one name, e.g. an array `sbaddressN` all
+/// named `sbaddress3`, each carrying the same `address` field). So it never fabricates a field set
+/// (honesty guardrail): an ambiguous or garbled group is left exactly as it was. The merged record is
+/// emitted at the FIRST fragment's original position, so the output order stays deterministic.
+fn consolidate_register_field_fragments(records: &mut Vec<RegisterRecord>) {
+    use std::collections::HashMap;
+    // Group record indices by register name (insertion order is the records' own order).
+    let mut by_name: HashMap<String, Vec<usize>> = HashMap::new();
+    for (i, rec) in records.iter().enumerate() {
+        by_name
+            .entry(rec.register_name.clone())
+            .or_default()
+            .push(i);
+    }
+    let mut out: Vec<RegisterRecord> = Vec::with_capacity(records.len());
+    let mut consumed: Vec<bool> = vec![false; records.len()];
+    for i in 0..records.len() {
+        if consumed[i] {
+            continue;
+        }
+        let idxs = &by_name[&records[i].register_name];
+        if idxs.len() > 1 && register_fragments_are_safe_to_merge(idxs.iter().map(|&j| &records[j]))
+        {
+            out.push(merge_register_fragments(idxs.iter().map(|&j| &records[j])));
+            for &j in idxs {
+                consumed[j] = true;
+            }
+        } else {
+            out.push(records[i].clone());
+            consumed[i] = true;
+        }
+    }
+    *records = out;
+}
+
+/// True when the field names across a same-name register group are all distinct (case-insensitively)
+/// — the conservative safety test for [`consolidate_register_field_fragments`]. Any repeated field
+/// name (within one fragment or across them) means the group is garbled or collapses distinct
+/// registers, so it must NOT be merged.
+fn register_fragments_are_safe_to_merge<'a>(
+    fragments: impl Iterator<Item = &'a RegisterRecord>,
+) -> bool {
+    let mut seen = std::collections::HashSet::new();
+    for fragment in fragments {
+        for field in &fragment.fields {
+            if !seen.insert(field.field_name.to_ascii_lowercase()) {
+                return false;
+            }
+        }
+    }
+    true
+}
+
+/// Merge a verified-safe same-name register group into one record: the first fragment's identity and
+/// metadata, the UNION of fields in fragment order, the register width recomputed from the full field
+/// set (falling back to the first resolved fragment width), the first resolved `offset_address`, and
+/// the de-duplicated UNION of supporting statement ids.
+fn merge_register_fragments<'a>(
+    fragments: impl Iterator<Item = &'a RegisterRecord>,
+) -> RegisterRecord {
+    let mut iter = fragments;
+    let first = iter.next().expect("a group has at least one fragment");
+    let mut merged = first.clone();
+    let mut statement_ids: std::collections::BTreeSet<String> =
+        first.supporting_statement_ids.iter().cloned().collect();
+    for fragment in iter {
+        merged.fields.extend(fragment.fields.iter().cloned());
+        if merged.offset_address.is_none() {
+            merged.offset_address = fragment.offset_address.clone();
+        }
+        if merged.size_bits.is_none() {
+            merged.size_bits = fragment.size_bits;
+        }
+        statement_ids.extend(fragment.supporting_statement_ids.iter().cloned());
+    }
+    // The full field set can resolve a width the partial fragments could not.
+    merged.size_bits = register_size_from_fields(&merged.fields).or(merged.size_bits);
+    merged.supporting_statement_ids = statement_ids.into_iter().collect();
+    merged
+}
+
+#[cfg(test)]
+mod register_fragment_consolidation_4c {
+    use super::*;
+    use crate::ir::source::{AutomationConfidence, RegisterFieldRecord, RegisterRecord};
+
+    fn field(name: &str) -> RegisterFieldRecord {
+        RegisterFieldRecord {
+            field_name: name.to_string(),
+            bits_high: None,
+            bits_low: None,
+            bit_width: None,
+            access_type: None,
+            reset_value: None,
+            description: None,
+            enumerated_values: vec![],
+        }
+    }
+    fn frag(id: &str, name: &str, fields: &[&str]) -> RegisterRecord {
+        RegisterRecord {
+            register_id: id.to_string(),
+            register_name: name.to_string(),
+            offset_address: None,
+            size_bits: None,
+            fields: fields.iter().map(|f| field(f)).collect(),
+            supporting_statement_ids: vec![format!("stmt_{id}")],
+            automation_confidence: AutomationConfidence::Medium,
+        }
+    }
+
+    #[test]
+    fn disjoint_same_name_fragments_merge_into_one_record() {
+        // Real RISC-V dmcontrol shape: fields split across 3 Docling tables, all distinct → merge.
+        let mut recs = vec![
+            frag("regfld_table_0023", "dmcontrol", &["version"]),
+            frag(
+                "regfld_table_0024",
+                "dmcontrol",
+                &["haltreq", "resumereq", "hartreset"],
+            ),
+            frag(
+                "regfld_table_0025",
+                "dmcontrol",
+                &["hasel", "hartsello", "hartselhi"],
+            ),
+        ];
+        consolidate_register_field_fragments(&mut recs);
+        assert_eq!(recs.len(), 1);
+        assert_eq!(recs[0].register_name, "dmcontrol");
+        assert_eq!(recs[0].fields.len(), 7);
+        // Provenance is unioned, not lost.
+        assert_eq!(recs[0].supporting_statement_ids.len(), 3);
+    }
+
+    #[test]
+    fn internally_duplicated_fragment_blocks_the_merge() {
+        // Real RISC-V mcontrol shape: a garbled bit-row read as `sizelo` repeated → NOT merged
+        // (never fabricate a field set — honesty guardrail).
+        let mut recs = vec![
+            frag("regfld_table_0072", "mcontrol", &["maskmax", "sizehi"]),
+            frag(
+                "regfld_table_0075",
+                "mcontrol",
+                &["sizelo", "sizelo", "sizelo"],
+            ),
+        ];
+        let before = recs.clone();
+        consolidate_register_field_fragments(&mut recs);
+        assert_eq!(
+            recs, before,
+            "a garbled (internally duplicated) fragment must block the merge"
+        );
+    }
+
+    #[test]
+    fn array_collapsed_to_one_name_is_not_merged() {
+        // Real RISC-V shape: sbaddress0..3 each carry one `address` field but were all named
+        // `sbaddress3`; the repeated field name means distinct registers → NOT merged.
+        let mut recs = vec![
+            frag("regfld_table_0039", "sbaddress3", &["address"]),
+            frag("regfld_table_0040", "sbaddress3", &["address"]),
+        ];
+        let before = recs.clone();
+        consolidate_register_field_fragments(&mut recs);
+        assert_eq!(recs, before);
+    }
+
+    #[test]
+    fn distinct_named_registers_and_order_are_preserved() {
+        // Different names are never merged; output order follows first appearance, and a merged
+        // register lands at its FIRST fragment's position.
+        let mut recs = vec![
+            frag("r1", "CAP", &["mqes"]),
+            frag("r2", "dmcontrol", &["version"]),
+            frag("r3", "CC", &["en"]),
+            frag("r4", "dmcontrol", &["haltreq"]),
+        ];
+        consolidate_register_field_fragments(&mut recs);
+        let names: Vec<&str> = recs.iter().map(|r| r.register_name.as_str()).collect();
+        assert_eq!(names, vec!["CAP", "dmcontrol", "CC"]);
+        let dm = recs
+            .iter()
+            .find(|r| r.register_name == "dmcontrol")
+            .unwrap();
+        assert_eq!(dm.fields.len(), 2);
+    }
+
+    #[test]
+    fn singletons_are_untouched() {
+        let mut recs = vec![frag("r1", "CAP", &["mqes", "cqr"])];
+        let before = recs.clone();
+        consolidate_register_field_fragments(&mut recs);
+        assert_eq!(recs, before);
+    }
+
+    #[test]
+    fn case_insensitive_repeat_blocks_the_merge() {
+        // `EN` and `en` are the same field; a cross-fragment case-only repeat must block the merge.
+        let mut recs = vec![
+            frag("r1", "REG", &["EN", "MODE"]),
+            frag("r2", "REG", &["en"]),
+        ];
+        let before = recs.clone();
+        consolidate_register_field_fragments(&mut recs);
+        assert_eq!(recs, before);
+    }
 }
 
 /// A register-DIAGRAM/bit-layout grid (table columns are bit POSITIONS `15|14|…|0`) mis-read as a
