@@ -8,6 +8,48 @@
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 - adapter target: `.isf` (sole adapter); `.fsm`/HDL are out of scope — FSMGen consumes `.isf` and owns scheduling/`.fsm`/HDL downstream (since `ISF-ONLY-CONSOLIDATION`, `2026-05-18`)
 
+## 2026-06-08 — Document-class routing, grounded in real corpus data (PDF-VARIANT-DIGESTION.5a)
+
+`.5a` adds a structural **document-class** signal so `validate` can tell a genuine low-design-intent guide
+apart from a real specification we under-extracted, and report the former honestly rather than as a silent 0.
+
+The first draft of the classifier used `signal_constraints + conditional_rules` as the "behavioral" surface.
+Running it over the 74 persisted EvidenceIR artifacts immediately exposed why that is wrong: **`conditional_rules`
+is over-produced.** It fired 12× on the GIC interrupt-controller *overview guide*, 7× on the SMMU *software
+guide*, 78× on the RISC-V Debug *register* spec, and 250× on NVMe — i.e. it does not discriminate document
+class at all (every doc with normative prose produces "if X then Y" sentences). The honest fix was to drop
+`conditional_rules` from the decision entirely and route only on the **low-noise** surfaces: register records,
+signal constraints, actor-signal relations, the declared-signal inventory, and the FSM / serial-frame surfaces.
+The conditional-rule count is still carried in the census and shown in a guide's rationale (flagged "not
+class-determining") so the reasoning stays transparent. This is exactly the scoring-rigor / look-at-the-real-
+data discipline: the threshold model was corrected by measurement, not guessed.
+
+The decision is a four-way ordered rule, each step grounded in the measured shapes:
+
+1. **Register** — `registers ≥ 2` AND registers outnumber BOTH the connectivity surface (relations + declared
+   signals) AND the behavioral surface (signal constraints). RISC-V Debug (60 regs ≥ 30 connectivity, 0
+   constraints) and NVMe (46 regs ≥ 26 constraints) land here; AHB (21 regs but 108 connectivity) and SWD (33
+   regs but an FSM + 100 connectivity) correctly do *not*.
+2. **Protocol** — `signal_constraints ≥ 3`, or an FSM / serial frame exists. APB (14) / AHB (15) / AXI (107) /
+   AXI-Stream (13) / I²C (11) / CHI (13) all clear the constraint floor; SWD clears it via its 13 FSM states +
+   11 frame fields. Guides carry 0 → excluded. The floor is small because the data shows a clean gap (0 on
+   guides vs ≥11 on protocols).
+3. **Interface** — a signal inventory + connectivity at the floor, no behavior, not register-dominated. Avalon
+   (32 signals + 126 relations, 0 constraints), Wishbone, TileLink, OpenCAPI PHY.
+4. **Guide** — the honest floor: none of the above. The aarch64 external-debug guide, the cortex-a76 software
+   optimization guide, the GIC overview, the SMMU software guide, and the OpenCAPI definition/test-resource
+   notes all land here with their (near-zero) reliable-surface counts shown.
+
+The classifier (`crate::ir::completeness::classify_document`) is a pure function of a `DocumentClassCensus`,
+agnostic by construction (only generic numeric floors, no chip/vendor/protocol words — ADR 0006). `validate`
+computes the census from the live EvidenceIR, prints a **Document Class** section, adds a `document_class`
+metric, and always records an `evidence_document_class` Info finding so the class persists in the report.
+
+Live distribution over all 74 persisted docs: **protocol 25 / register 11 / interface 22 / guide 16.** A noted
+follow-up (`.5c`, owner-suggested) reads the document's own front-matter (title / ToC / preface — "usually
+clearly stated in the early pages of the first chapter") to corroborate the class and, crucially, to separate
+a *true* guide from a *specification we under-extracted* (an image/table-heavy spec → the VLM frontier).
+
 ## 2026-06-08 — Live measurement of the bit recovery, honest result (EXTRACTION-GAP-FIX.4b)
 
 `.4b` ran `.4a` against reality and reported truthfully: **the bit-extent metric did not move (still 0/179), and

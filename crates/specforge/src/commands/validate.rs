@@ -2770,10 +2770,49 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
         );
     }
 
+    // Document class (PDF-VARIANT-DIGESTION.5a): route by the dominant typed
+    // intent surface (registers / behavioral obligations / signal-inventory +
+    // connectivity / FSM / frame) so a low-design-intent doc (guide / narrative /
+    // image-heavy) is reported HONESTLY as such, not as a silent 0-yield miss.
+    // Pure + agnostic (small generic structural floors, no chip names — ADR 0006).
+    let document_classification =
+        crate::ir::completeness::classify_document(crate::ir::completeness::DocumentClassCensus {
+            registers: ir.register_records.len(),
+            register_fields: ir.register_records.iter().map(|r| r.fields.len()).sum(),
+            declared_signals: declared_signal_names.len(),
+            actor_signal_relations: ir.actor_signal_relations.len(),
+            signal_constraints: ir.signal_constraints.len(),
+            conditional_rules: ir.conditional_rules.len(),
+            protocol_actors: ir.protocol_actors.len(),
+            fsm_states: ir.protocol_states.len(),
+            serial_frame_fields: ir.serial_frame_fields.len(),
+            visual_evidence: ir.visual_evidence.len(),
+        });
+    println!();
+    println!("=== Document Class (structural routing; honest guide reporting) ===");
+    println!(
+        "  document_class: {}",
+        document_classification.class.as_str()
+    );
+    println!("  rationale: {}", document_classification.rationale);
+
     let missing_vlm_observation_related_ids = evidence_missing_vlm_observation_related_ids(ir);
     let structural_kg_missing_related_ids = evidence_structural_kg_missing_related_ids(ir);
     let normative_residual_statement_ids = evidence_normative_residual_statement_ids(ir);
     let mut findings = Vec::new();
+    // Always record the document class (PDF-VARIANT-DIGESTION.5a) so a guide / low
+    // structured-design-intent doc reads as an honest class, not a silent miss.
+    findings.push(finding(
+        "evidence_document_class",
+        ValidationFindingSeverity::Info,
+        "document_class",
+        format!(
+            "document classified as {} — {}",
+            document_classification.class.as_str(),
+            document_classification.rationale
+        ),
+        Vec::new(),
+    ));
     if total == 0 {
         findings.push(finding(
             "evidence_no_extracted_statements",
@@ -3040,6 +3079,7 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
                 "timing_constraints",
                 ir.timing_constraints.len().to_string(),
             ),
+            metric("document_class", document_classification.class.as_str()),
             metric(
                 "convergence_passes_run",
                 ir.convergence_report

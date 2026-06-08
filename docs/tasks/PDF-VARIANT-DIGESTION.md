@@ -97,9 +97,12 @@ grid-repair demo on a bits-bearing doc; giants' ingest budget; USB 3.2 evid-fail
 
 ## Current frontier
 
-**ACTIVE FRONTIER (`2026-06-08`): `PDF-VARIANT-DIGESTION.5a`** — doc-class routing + per-doc completeness gauge
-(detect protocol/register/interface/guide class from structure; report GUIDES as honest "low structured
-design-intent", not a 0 failure). **`.4` (correctness/precision verification, item ①) is COMPLETE** — both
+**ACTIVE FRONTIER (`2026-06-08`): `PDF-VARIANT-DIGESTION.5c`** (owner-suggested front-matter/ToC/preface doc-type
+signal), then `.5b` (per-doc completeness gauge). **`.5a` is DONE** — structural doc-class routing
+(protocol/register/interface/guide) live in `validate` with honest guide reporting; live distribution over the
+74 persisted docs: protocol 25 / register 11 / interface 22 / guide 16. `.5c` reads the document's own
+front-matter to corroborate the class and separate a TRUE guide from a spec we under-extracted (image-heavy →
+VLM frontier). **`.4` (correctness/precision verification, item ①) is COMPLETE** — both
 `.4a` (per-fact gold on register fields + prose signals) and `.4b` (VLM proposer/verifier audit) done.
 **`.4b` DONE** (`.4b.1` harness + `.4b.2` live measurement): the `audit-extraction` VLM audit gives a
 table-kind precision ESTIMATE that **discriminates extraction quality and independently corroborates `.4a`** —
@@ -294,12 +297,33 @@ it further. Priority order ① → ⑤.
         which only the git-tracked re-ingested RISC-V/NVMe retain — a signal-bearing breadth audit on a fresh
         re-ingest is a noted follow-up). Book section refreshed with the real numbers; KM `extraction-audit-vlm`
         updated. Commit subject: `PDF-VARIANT-DIGESTION.4b.2`.
-- ID: `PDF-VARIANT-DIGESTION.5` · Status: `pending` · **② Doc-class routing + per-doc completeness gauge.**
-  Children:
-  - ID: `PDF-VARIANT-DIGESTION.5a` · Status: `pending` · Goal: detect doc class (protocol / register /
+- ID: `PDF-VARIANT-DIGESTION.5` · Status: `active` · **② Doc-class routing + per-doc completeness gauge.**
+  Children: `.5a` (done) · `.5c` (front-matter signal) · `.5b` (completeness gauge)
+  - ID: `PDF-VARIANT-DIGESTION.5a` · Status: `done` (`2026-06-08`) · Goal: detect doc class (protocol / register /
     interface / guide) from structure; apply class-appropriate surfaces; report GUIDES as "low structured
     design-intent" honestly (not a 0 failure). Accept: each doc tagged with a class; the 8 zero-yield docs
-    correctly identified as guides / image-heavy, not silent misses.
+    correctly identified as guides / image-heavy, not silent misses. **DONE — pure
+    `crate::ir::completeness::classify_document(DocumentClassCensus) -> DocumentClassification`
+    (`{Protocol,Register,Interface,Guide}` + rationale), surfaced in `validate` as a `document_class` metric +
+    an `evidence_document_class` Info finding + a console "Document Class" block. Decision (low-noise surfaces
+    only): Register (registers dominate connectivity AND behavioral) → Protocol (`signal_constraints ≥ 3` or
+    FSM/serial-frame) → Interface (signal inventory + connectivity, no behavior) → Guide (honest floor).
+    REAL-DATA correction baked in: `conditional_rules` is OVER-PRODUCED (12× on the GIC overview guide, 78× on
+    RISC-V Debug, 250× on NVMe) → EXCLUDED from the decision (kept in census, flagged "not class-determining").
+    Agnostic (ADR 0006 — generic floors 2/3/3, no chip names). +11 hermetic tests (real APB/AHB/AXI/SWD/I2C/
+    NVMe/RISC-V/Avalon/guide shapes); fmt + clippy `-D warnings` clean; lib 1400 → 1410; kg-bench 151/151.
+    Live-verified over all 74 persisted evidence docs: protocol 25 / register 11 / interface 22 / guide 16 (the
+    software/overview/optimization guides correctly → guide). No wire-based regression. KM card
+    `document-class-from-structure`.**
+  - ID: `PDF-VARIANT-DIGESTION.5c` · Status: `pending` · Goal (owner-suggested `2026-06-08`): read the document's
+    OWN front-matter — title, table of contents, preface/about/scope of the first chapter ("usually clearly
+    stated in the early pages of the first chapter") — for a self-declared doc-TYPE signal (generic grammar:
+    guide/overview/manual/specification/architecture/protocol/datasheet words, NO chip/vendor names, ADR 0006).
+    Use it to (a) corroborate the `.5a` structural class, and (b) crucially separate a TRUE guide from a
+    SPECIFICATION we under-extracted (a doc whose structure is empty but whose title says "specification /
+    architecture / protocol / manual" is an image/table-heavy extraction GAP → the VLM frontier `.6`, NOT a
+    real guide). Accept: a title/front-matter doc-type hint surfaced in `validate`; structurally-empty docs whose
+    front-matter self-declares a spec are flagged as under-extracted (not silently called "guide").
   - ID: `PDF-VARIANT-DIGESTION.5b` · Status: `pending` · Goal: per-doc COMPLETENESS gauge (every register has
     fields? every signal a direction? unaccounted intent-bearing tables?) — extend the mandatory-width flag
     into a coverage/quality report surfaced by `validate`. Accept: honest per-doc gap counts; no fabrication.
@@ -360,8 +384,23 @@ set, not the whole doc/corpus.
   1.000, 0 flagged). Book `quality/extraction-eval.md` + KM `extraction-audit-vlm`. Commit subject:
   `PDF-VARIANT-DIGESTION.4b.1`.
 
+- `.5a` (`2026-06-08`): structural document-class classifier landed — pure
+  `crate::ir::completeness::classify_document` over a `DocumentClassCensus`, surfaced in `validate`
+  (`document_class` metric + `evidence_document_class` Info finding + console block). Real-data correction:
+  `conditional_rules` is over-produced (12× on GIC overview guide, 78× RISC-V, 250× NVMe) → excluded from the
+  decision; routes only on low-noise surfaces (registers / signal constraints / relations / declared signals /
+  FSM / frame). +11 hermetic tests. fmt + clippy `-D warnings` clean; full lib suite 1400 → 1410; kg-bench
+  151/151; APB/AHB/AXI/SWD eval unaffected (additive). Live-verified over all 74 persisted evidence docs:
+  protocol 25 / register 11 / interface 22 / guide 16. Book section `quality/validation.md`; KM card
+  `document-class-from-structure`. Commit subject: `PDF-VARIANT-DIGESTION.5a`.
+
 ## Changelog
 
+- `2026-06-08`: `.5a` (structural doc-class routing + honest guide reporting) DONE. `validate` now reports a
+  `protocol`/`register`/`interface`/`guide` class from the low-noise intent surfaces (conditional-rules
+  excluded as over-produced narrative noise — the real-data correction). Live distribution over 74 docs:
+  protocol 25 / register 11 / interface 22 / guide 16. Frontier moves to `.5c` (owner-suggested front-matter/ToC
+  doc-type signal — corroborate the class + separate a true guide from an under-extracted spec), then `.5b`.
 - `2026-06-07`: Created (owner high-priority directive — digest any chip-spec PDF). `.1` triage sweep in flight.
 - `2026-06-08`: Split `.4b` (proposer/verifier VLM audit) into `.4b.1` (audit harness — DONE) + `.4b.2` (live
   measurement — pending); `.4b` → `active`, frontier moves to `.4b.2`. Mirrors `.4a`'s eval-surface → per-doc
@@ -370,6 +409,13 @@ set, not the whole doc/corpus.
   qwen2.5vl:7b audit: RISC-V Debug 0.250/0.375 (bit-position gap, corroborates `.4a.2`), NVMe 0.750 (confirmed +
   caught a feature→timing misclassification, corroborates `.4a.3`). The audit estimate tracks gold quality
   (cross-validated). Frontier moves to `.5a` (doc-class routing + per-doc completeness gauge — item ②).
+- `2026-06-08`: `.5a` (doc-class routing + honest guide reporting) taken `in_progress`; `.5` → `active`. PNT
+  from the sibling `EXTRACTION-GAP-FIX` honest boundary into this HIGH-PRIORITY program's item ②. Design: a
+  pure `classify_document` over a structural census (registers / behavioral obligations / signal-inventory +
+  connectivity / FSM / frame) → `Protocol`/`Register`/`Interface`/`Guide`, with `Guide` as an HONEST floor for
+  low-structured-design-intent docs (not a silent 0-yield miss); surfaced in `validate` as a `document_class`
+  metric + an Info `evidence_document_class` finding. Agnostic (ADR 0006 — small generic structural floors, no
+  chip/vendor names).
 - `2026-06-08`: Split `.4a` (precision verification) into `.4a.1`–`.4a.5` — the eval scorer has no
   register-field/declared-signal task yet (a real lower-level dependency, PNT split rule). `.4` + `.4a` →
   `active`; `.4a.1` (register-field eval surface) → `in_progress` and onto the frontier. Scope kept to

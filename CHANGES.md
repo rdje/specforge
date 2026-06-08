@@ -1,3 +1,28 @@
+### `PDF-VARIANT-DIGESTION.5a` — document-class routing + honest guide reporting
+`validate` now classifies every EvidenceIR into one of four structural classes so a low-design-intent
+document (a guide / narrative / image-heavy datasheet) is reported HONESTLY as such instead of looking like a
+silent 0-yield extraction failure — the explicit `.5a` acceptance criterion.
+
+- New pure classifier `crate::ir::completeness::classify_document` over a `DocumentClassCensus` (registers /
+  register fields / declared signals / actor-signal relations / signal constraints / conditional rules / FSM
+  states / serial frame fields / visual evidence) → `DocumentClass` ∈ `{Protocol, Register, Interface, Guide}`
+  with a human-readable rationale. Decision order: **Register** (register records dominate both the
+  connectivity surface and the behavioral surface) → **Protocol** (signal constraints ≥ floor, or an FSM /
+  serial frame) → **Interface** (signal inventory + connectivity, no behavior) → **Guide** (the honest floor:
+  no reliable structured-intent surface).
+- **Real-data finding baked into the design:** the `conditional_rules` surface is OVER-PRODUCED narrative
+  prose — it fires 12× on a GIC overview *guide*, 78× on the RISC-V *register* doc, 250× on NVMe — so it does
+  not discriminate class and is deliberately EXCLUDED from the decision (kept in the census, shown in a guide's
+  rationale flagged "not class-determining"). The decision routes only on low-noise surfaces.
+- Surfaced in `validate`: a **Document Class** console section, a `document_class` metric, and an Info
+  `evidence_document_class` finding (always recorded, so a guide is a visible honest class, not a silent miss).
+- Agnostic (ADR 0006): only small generic numeric floors (no chip/vendor/protocol vocabulary). +11 hermetic
+  tests modelling the real APB/AHB/AXI/SWD/I2C/NVMe/RISC-V/Avalon/guide shapes. fmt + clippy `-D warnings`
+  clean; full lib suite 1400 → 1410; kg-bench 151/151. **Live-verified over all 74 persisted evidence docs:
+  protocol 25 / register 11 / interface 22 / guide 16** — every AMBA protocol + SWD + I2C → protocol; RISC-V
+  Debug / NVMe / CoreSight TRMs → register; Avalon / Wishbone / TileLink / OpenCAPI-PHY → interface; the
+  software/overview/optimization guides → guide.
+
 ### `EXTRACTION-GAP-FIX.4b` — live measurement (honest: guardrail validated, metric unchanged, zero fabrication)
 Ran the `.4a` recovery live with `qwen2.5vl:7b` on the re-ingested RISC-V Debug evidence and characterized the
 real-data behavior. Docs-only — no code change (ran the existing command + direct VLM probes).

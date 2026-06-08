@@ -155,6 +155,48 @@ It is also part of the project’s epistemology:
 
 The next chapters explain the benchmark harness and the prior-memory layer in more detail.
 
+## Document class — and why a guide is reported as a guide, not a silent failure
+
+SpecForge is built to digest **any** chip-spec PDF, and the corpus is genuinely mixed: bus
+protocols, register/CSR manuals, signal-interface specifications, and a long tail of
+programming guides, overviews, and optimization notes. Those last ones are not failures —
+they simply carry little *structured design intent*. The danger is that a guide that yields
+no signals and no registers looks **identical** to a real specification we failed to extract
+from. Both come out as "0", and a bare 0 quietly reads as "nothing here" when the honest
+statement is "this document is a narrative, not a contract."
+
+So `validate` now reports a **document class**, inferred purely from *which typed intent
+surfaces the extraction produced* — never from the document's name or vendor (the project's
+non-negotiable agnostic rule). Four classes:
+
+- **protocol** — the document encodes behaviour: signal constraints (*"PSTRB must be LOW"*),
+  or an explicit state machine / serial frame. APB, AHB, AXI, CHI, I²C, and SWD land here.
+- **register** — register/CSR records dominate; the primary design intent is a register map.
+  The RISC-V Debug spec and the NVMe base spec land here.
+- **interface** — a signal inventory plus actor-signal connectivity, but no behavioural
+  obligations. Avalon, Wishbone, and TileLink land here.
+- **guide** — the **honest floor**: no reliable structured-intent surface is present. A
+  programming guide, an architecture overview, an optimization note, or an image-only
+  datasheet. Reported as such — *"low structured design-intent … reported honestly, not a
+  silent miss"* — with its signal/register/relation/constraint counts shown so you can see it
+  was a genuine low-yield document, not a dropped one.
+
+One detail is worth calling out because it shaped the design. SpecForge's "conditional rule"
+extractor (*"if X then Y"*) is **over-produced** on narrative prose — a programming guide can
+carry a dozen conditional-rule sentences while containing zero signals, registers, or
+constraints. Counting those as "behaviour" would mislabel guides as protocols. So the
+classifier deliberately **excludes conditional rules from the decision** and routes only on
+the low-noise surfaces (registers, signal constraints, actor-signal relations, the
+declared-signal inventory, and the FSM / frame surfaces). The conditional-rule count is still
+shown in a guide's rationale, flagged as *"narrative … not class-determining"*, so the
+reasoning is transparent.
+
+The classifier (`crate::ir::completeness::classify_document`) is a pure, unit-tested function
+of a small structural census, with only generic numeric floors as constants — no chip,
+vendor, or protocol vocabulary. `validate` prints a **Document Class** section, adds a
+`document_class` metric, and records an `evidence_document_class` Info finding, so the class
+travels in the persisted validation report.
+
 ## Closed task trees — how each was implemented and verified
 
 ### `PROVENANCE-HARDENING` — provenance fields always have assertions

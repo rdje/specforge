@@ -416,6 +416,175 @@ pub fn signal_constraint_recall_estimate(
     recall_estimate(provenance, FactKind::SignalConstraint)
 }
 
+// ── Document class (PDF-VARIANT-DIGESTION.5a) ──────────────────────────────────
+
+/// The structural class of a chip-spec document, inferred ONLY from WHICH typed
+/// intent surfaces its staged extraction produced — never from a chip/vendor/
+/// protocol name (ADR 0006). The class routes class-appropriate reporting and,
+/// crucially, lets a document with little structured design-intent (a programming
+/// guide, an ISA narrative, an image-only datasheet) be reported HONESTLY as such
+/// instead of looking like a silent extraction failure.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum DocumentClass {
+    /// Behavioral spec: signal constraints / conditional rules / an explicit FSM /
+    /// a serial frame — the document encodes how signals behave over time.
+    Protocol,
+    /// Register/CSR-dominated: many register records are the document's primary
+    /// design-intent (a register map), with no dominant behavioral surface.
+    Register,
+    /// Signal-interface spec: a signal inventory + actor-signal connectivity, but
+    /// no behavioral obligations and not register-dominated.
+    Interface,
+    /// Low structured design-intent: little or no typed intent of any kind was
+    /// recovered (guide / narrative / image-heavy). An HONEST floor — reported as
+    /// such, never as a silent miss.
+    Guide,
+}
+
+impl DocumentClass {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Protocol => "protocol",
+            Self::Register => "register",
+            Self::Interface => "interface",
+            Self::Guide => "guide",
+        }
+    }
+}
+
+/// The structural census the document-class decision reads — one count per typed
+/// intent surface the staged extraction produces. Every count is observational
+/// (read off already-built IR, no fabrication); the classifier is a pure function
+/// of this census.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub struct DocumentClassCensus {
+    pub registers: usize,
+    pub register_fields: usize,
+    pub declared_signals: usize,
+    pub actor_signal_relations: usize,
+    pub signal_constraints: usize,
+    pub conditional_rules: usize,
+    pub protocol_actors: usize,
+    pub fsm_states: usize,
+    pub serial_frame_fields: usize,
+    pub visual_evidence: usize,
+}
+
+/// One document-class decision: the class, the census that drove it, and a
+/// human-readable rationale (the latter is what `validate` surfaces so a reader
+/// sees WHY a doc was classed — especially that a `Guide` is an honest low-intent
+/// call, not a silent miss).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct DocumentClassification {
+    pub class: DocumentClass,
+    pub rationale: String,
+    pub census: DocumentClassCensus,
+}
+
+/// Minimum register records before a document is "register-dominated". One stray
+/// register is not a register spec; a couple is the smallest honest threshold.
+const DOC_CLASS_REGISTER_MIN: usize = 2;
+/// Minimum signal constraints before a document counts as "behavioral" (protocol).
+/// On real corpus data behavioral specs carry ≥11 (APB 14, I2C 11, CHI 13) while
+/// guides carry 0 — a clean gap, so a small floor of 3 safely separates them
+/// without crediting one or two incidental constraints.
+const DOC_CLASS_BEHAVIORAL_MIN: usize = 3;
+/// Minimum signal-inventory + connectivity presence before a document is an
+/// "interface" rather than a guide. A couple of stray signal mentions is not an
+/// interface catalog.
+const DOC_CLASS_INTERFACE_MIN: usize = 3;
+
+/// Classify a document by the dominant typed intent surface its extraction
+/// produced. Pure, deterministic, and agnostic: the only constants are small
+/// generic structural floors (no chip/vendor/protocol vocabulary, ADR 0006).
+///
+/// Only LOW-NOISE surfaces drive the decision: register records, signal
+/// constraints, actor-signal relations, the declared-signal inventory, and the
+/// FSM / serial-frame surfaces. `conditional_rules` is deliberately EXCLUDED — on
+/// real corpus data it is over-produced narrative "if X then Y" prose that fires
+/// even on programming guides (GIC overview guide: 12; SMMU software guide: 7) and
+/// register docs (RISC-V Debug: 78; NVMe: 250), so it does not discriminate class.
+/// It stays in the census for transparency only.
+///
+/// Decision order (first match wins):
+/// 1. **Register** — register-dominated: at least `DOC_CLASS_REGISTER_MIN`
+///    register records, and they outnumber BOTH the connectivity surface
+///    (relations + declared signals) AND the behavioral surface (signal
+///    constraints). So RISC-V Debug (60 regs ≥ 30 connectivity) / NVMe (46 ≥ 26
+///    constraints) land here, while AHB/AXI/SWD (which carry registers but are
+///    connectivity/behavior-dominant) fall through.
+/// 2. **Protocol** — `signal_constraints ≥ DOC_CLASS_BEHAVIORAL_MIN`, or there is
+///    an FSM / a serial frame: the document encodes signal behavior over time.
+/// 3. **Interface** — a signal inventory + actor-signal connectivity at the floor,
+///    with no behavioral obligations and not register-dominated.
+/// 4. **Guide** — the HONEST floor: no reliable typed intent surface is present
+///    (guide / narrative / image-heavy), reported as such instead of as a silent
+///    0-yield miss.
+pub fn classify_document(census: DocumentClassCensus) -> DocumentClassification {
+    let interface_surface = census.actor_signal_relations + census.declared_signals;
+    let has_state_behavior = census.fsm_states > 0 || census.serial_frame_fields > 0;
+
+    let class = if census.registers >= DOC_CLASS_REGISTER_MIN
+        && census.registers >= interface_surface
+        && census.registers >= census.signal_constraints
+    {
+        DocumentClass::Register
+    } else if census.signal_constraints >= DOC_CLASS_BEHAVIORAL_MIN || has_state_behavior {
+        DocumentClass::Protocol
+    } else if interface_surface >= DOC_CLASS_INTERFACE_MIN {
+        DocumentClass::Interface
+    } else {
+        DocumentClass::Guide
+    };
+
+    let rationale = match class {
+        DocumentClass::Guide => {
+            let narrative = if census.conditional_rules > 0 {
+                format!(
+                    ", {} narrative conditional rules (over-produced, not class-determining)",
+                    census.conditional_rules
+                )
+            } else {
+                String::new()
+            };
+            let visual = if census.visual_evidence > 0 {
+                format!(", {} visual assets", census.visual_evidence)
+            } else {
+                String::new()
+            };
+            format!(
+                "low structured design-intent ({} signals, {} registers, {} relations, {} signal constraints{narrative}{visual}) — reported honestly, not a silent miss",
+                census.declared_signals,
+                census.registers,
+                census.actor_signal_relations,
+                census.signal_constraints,
+            )
+        }
+        DocumentClass::Register => format!(
+            "register-dominated ({} registers / {} fields; {} signal constraints, {interface_surface} connectivity edges)",
+            census.registers, census.register_fields, census.signal_constraints,
+        ),
+        DocumentClass::Protocol => format!(
+            "behavioral protocol ({} signal constraints, {} FSM states, {} frame fields, {} actors, {} relations)",
+            census.signal_constraints,
+            census.fsm_states,
+            census.serial_frame_fields,
+            census.protocol_actors,
+            census.actor_signal_relations,
+        ),
+        DocumentClass::Interface => format!(
+            "signal interface ({} signals, {} actor-signal relations; no behavioral obligations)",
+            census.declared_signals, census.actor_signal_relations,
+        ),
+    };
+
+    DocumentClassification {
+        class,
+        rationale,
+        census,
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -891,5 +1060,141 @@ mod tests {
         assert_eq!(est.estimated_recall_pct, 75);
         // Cross-kind isolation: a relation-only provenance yields no signal-constraint estimate.
         assert!(recall_estimate(&prov, FactKind::SignalConstraint).is_none());
+    }
+
+    // ── document class (PDF-VARIANT-DIGESTION.5a) ───────────────────────────
+
+    /// A census with everything zero except the named overrides — keeps each
+    /// classifier test focused on the one surface it exercises.
+    fn census(overrides: impl FnOnce(&mut DocumentClassCensus)) -> DocumentClassCensus {
+        let mut c = DocumentClassCensus::default();
+        overrides(&mut c);
+        c
+    }
+
+    #[test]
+    fn zero_yield_document_is_an_honest_guide() {
+        // The 8 zero-yield corpus docs (guides / ISA narratives / image-heavy):
+        // no typed intent of any kind → Guide, NOT a silent miss.
+        let r = classify_document(census(|c| c.visual_evidence = 40));
+        assert_eq!(r.class, DocumentClass::Guide);
+        assert!(
+            r.rationale.contains("low structured design-intent")
+                && r.rationale.contains("not a silent miss"),
+            "a guide must be reported honestly, not as a failure: {}",
+            r.rationale
+        );
+        // image-heavy guides note their visual assets so "guide vs image-heavy" is visible.
+        assert!(r.rationale.contains("40 visual assets"));
+    }
+
+    #[test]
+    fn a_couple_stray_signals_stay_a_guide() {
+        // Two stray signal mentions and nothing else is below the interface floor.
+        let r = classify_document(census(|c| c.declared_signals = 2));
+        assert_eq!(r.class, DocumentClass::Guide);
+    }
+
+    #[test]
+    fn register_dominated_document_is_register() {
+        // NVMe / RISC-V Debug shape: many register records, no behavioral surface.
+        let r = classify_document(census(|c| {
+            c.registers = 44;
+            c.register_fields = 199;
+        }));
+        assert_eq!(r.class, DocumentClass::Register);
+        assert!(r.rationale.contains("44 registers / 199 fields"));
+    }
+
+    #[test]
+    fn a_few_incidental_constraints_do_not_flip_a_register_doc() {
+        // 5 registers with 2 incidental constraints: registers ≥ behavioral → Register.
+        let r = classify_document(census(|c| {
+            c.registers = 5;
+            c.signal_constraints = 2;
+        }));
+        assert_eq!(r.class, DocumentClass::Register);
+    }
+
+    #[test]
+    fn registers_outnumbered_by_connectivity_and_behavior_are_protocol() {
+        // AHB shape (real data): 21 register records, but 66 relations + 42 signals
+        // of connectivity and 15 signal constraints dominate → Protocol, not Register.
+        let r = classify_document(census(|c| {
+            c.registers = 21;
+            c.signal_constraints = 15;
+            c.conditional_rules = 39;
+            c.actor_signal_relations = 66;
+            c.declared_signals = 42;
+        }));
+        assert_eq!(r.class, DocumentClass::Protocol);
+    }
+
+    #[test]
+    fn registers_with_an_fsm_are_protocol_not_register() {
+        // SWD shape (real data): 33 register records, but a serial frame + an FSM
+        // and 100 connectivity edges dominate → Protocol via the state surface.
+        let r = classify_document(census(|c| {
+            c.registers = 33;
+            c.signal_constraints = 2;
+            c.actor_signal_relations = 80;
+            c.declared_signals = 20;
+            c.fsm_states = 13;
+            c.serial_frame_fields = 11;
+        }));
+        assert_eq!(r.class, DocumentClass::Protocol);
+    }
+
+    #[test]
+    fn over_produced_conditional_rules_do_not_make_a_guide_a_protocol() {
+        // THE real-data finding: `conditional_rules` is over-produced narrative prose
+        // that fires even on programming guides (GIC overview guide: 12 conditional
+        // rules, zero of every reliable surface). It must NOT flip the class — the doc
+        // stays an honest Guide, and the rationale explains the noise.
+        let r = classify_document(census(|c| {
+            c.conditional_rules = 12;
+            c.visual_evidence = 44;
+        }));
+        assert_eq!(r.class, DocumentClass::Guide);
+        assert!(
+            r.rationale.contains("narrative conditional rules")
+                && r.rationale.contains("not class-determining"),
+            "the guide rationale must explain the conditional-rule noise: {}",
+            r.rationale
+        );
+    }
+
+    #[test]
+    fn behavioral_obligations_make_a_protocol() {
+        // APB / AHB / AXI / I2C shape: signal constraints (+ relations/actors).
+        let r = classify_document(census(|c| {
+            c.declared_signals = 30;
+            c.actor_signal_relations = 69;
+            c.signal_constraints = 16;
+            c.protocol_actors = 2;
+        }));
+        assert_eq!(r.class, DocumentClass::Protocol);
+    }
+
+    #[test]
+    fn an_fsm_or_frame_makes_a_protocol_without_constraints() {
+        // SWD shape: a serial frame + an FSM, no signal constraints — still Protocol.
+        let r = classify_document(census(|c| {
+            c.fsm_states = 9;
+            c.serial_frame_fields = 7;
+        }));
+        assert_eq!(r.class, DocumentClass::Protocol);
+    }
+
+    #[test]
+    fn signals_and_relations_without_behavior_are_an_interface() {
+        // Avalon shape: a signal inventory + dense connectivity, zero behavioral
+        // obligations, no registers → Interface (not Protocol, not a Guide).
+        let r = classify_document(census(|c| {
+            c.declared_signals = 34;
+            c.actor_signal_relations = 179;
+        }));
+        assert_eq!(r.class, DocumentClass::Interface);
+        assert!(r.rationale.contains("no behavioral obligations"));
     }
 }
