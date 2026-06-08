@@ -131,9 +131,18 @@ Driver: build cx → for each registered extractor where applies_to → run → 
 
 - `.2` scaffolding (types + registry + driver + manifest), migrate ZERO extractors (additive frame + tests).
 - `.3` migrate the **FSM cluster** first (worst offender + freshly touched) — byte-identical output gated by
-  kg-bench + the SWD/CAN/SWP re-measure.
+  kg-bench + the SWD/CAN/SWP re-measure. **DONE (`2026-06-09`).** The four FSM grammars are now
+  `Extractor<ProtocolStateRecord>` units (`fsm.jtag_tap` / `fsm.swd_line` / `fsm.quoted_mode` /
+  `fsm.transition_bound`) run by `protocol_state_surface` via the `.2` `run_surface` driver; the **four inline
+  dedup loops at the `build()` call site collapsed to one call** (~24 lines → 1). Grammar bodies UNCHANGED
+  (refactor of the wiring only). **Byte-identical proven on fresh-rebuilt evidence:** SWP 4
+  (`DEACTIVATED`/`ACTIVATED`/`SUSPENDED`/`HALT`, same ids), CAN 3 (`mode_state_*`), SWD/ADI 13 (8
+  `protocol_state_*` + 5 `swd_line_state_*`, same ids) — confirming the jtag↔swd_line uppercased-name dedup is
+  a no-op (no collision). SWD FSM eval `serial_frame_field`/`swd_operation`/`protocol_state` all
+  `P=R=F1=1.000`; kg-bench 151/151; full `run_ci.sh` green (lib 1452 → 1454). 2 new hermetic tests
+  (cross-grammar union + dedup; non-FSM prose → empty). First real consolidation; the pattern is proven.
 - `.4`+ migrate the remaining clusters (signals, registers, semantic hints, …) one slice each; retire the
-  god-orchestrator incrementally.
+  god-orchestrator incrementally. **Pending** — each migration is behavior-preserving + corpus-verified.
 
 ## Current frontier
 

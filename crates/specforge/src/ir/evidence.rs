@@ -6,6 +6,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::error::{AppError, Result};
 use crate::ir::IrStage;
+use crate::ir::extractor::{ExtractionContext, Extractor, run_surface};
 use crate::ir::prior_memory::{
     ActorTaxonomyRole, CorpusMemory, ProtocolFamily, is_meaningful_actor_term,
     normalize_actor_term, normalized_text_contains_term,
@@ -844,33 +845,13 @@ impl EvidenceIr {
         // a typed surface distinct from constraints/relations/temporal. No-op for parallel buses.
         let serial_frame_fields = extract_serial_frame_fields(&extracted_statements);
 
-        // SWD-SERIAL-EXTRACTION.4/.4d: recover the protocol FSM states — the JTAG TAP states plus the
-        // SWD LINE state machine (reset/operating/protocol-error/lockout/dormant). The FSM is the heart
-        // of SWD/JTAG and what FSMGen builds. No-op for non-FSM/non-serial docs.
-        let mut protocol_states = extract_protocol_states(&extracted_statements);
-        protocol_states.extend(extract_swd_line_states(&extracted_statements));
-        // PDF-VARIANT-DIGESTION.9.3a — additive agnostic quoted-mode FSM path (CAN-style error-state
-        // FSMs the SWD/JTAG-shaped extractors above don't recognize). Dedup by state name so a doc
-        // matched by both paths keeps one record per state.
-        for state in extract_quoted_mode_states(&extracted_statements) {
-            if !protocol_states
-                .iter()
-                .any(|s| s.state_name.eq_ignore_ascii_case(&state.state_name))
-            {
-                protocol_states.push(state);
-            }
-        }
-        // PDF-VARIANT-DIGESTION.9.7 — additive agnostic transition-bound single-word FSM path (SWP-style
-        // `<ALL-CAPS> state` machines that the SWD-hyphen and `.9.3a` quoted paths don't recognize). Dedup
-        // by state name after the paths above so a doc matched by several paths keeps one record per state.
-        for state in extract_transition_bound_states(&extracted_statements) {
-            if !protocol_states
-                .iter()
-                .any(|s| s.state_name.eq_ignore_ascii_case(&state.state_name))
-            {
-                protocol_states.push(state);
-            }
-        }
+        // SWD-SERIAL-EXTRACTION.4/.4d + PDF-VARIANT-DIGESTION.9.3a/.9.7: recover the protocol FSM states.
+        // EXTRACTOR-ARCHITECTURE.3 — the four FSM-state grammars (JTAG/SWD-hyphen, SWD line, quoted-mode,
+        // transition-bound single-word) now run through the unified `Extractor`/`run_surface` driver instead
+        // of four inline dedup loops here. Order = legacy precedence, key = uppercased state name → the
+        // merged inventory is byte-identical. The FSM is the heart of SWD/JTAG and what FSMGen builds; no-op
+        // for non-FSM/non-serial docs.
+        let protocol_states = protocol_state_surface(&extracted_statements);
         // PDF-VARIANT-DIGESTION.3b — protocol actors/agents defined in prose.
         let protocol_actors = extract_protocol_actors(&extracted_statements);
 
@@ -7916,6 +7897,75 @@ fn is_bare_state_name(tok: &str) -> bool {
         return false;
     }
     !DENY.contains(&tok.to_ascii_lowercase().as_str())
+}
+
+// EXTRACTOR-ARCHITECTURE.3 — the FSM-state cluster as a unified surface registry. The four state-grammar
+// readers are now `Extractor<ProtocolStateRecord>` units run by the shared `run_surface` driver instead of
+// four inline dedup-by-name loops at the `build()` call site. Each unit just calls its existing (unchanged)
+// grammar function — a refactor of the WIRING, not the grammars. Registry ORDER is the legacy precedence
+// (jtag → swd_line → quoted → transition) and the surface key is the uppercased state name (the legacy
+// `eq_ignore_ascii_case` cross-dedup), so the merged inventory is byte-identical to the previous call site.
+
+/// JTAG/SWD-hyphen states (`Shift-DR state`) behind the TAP/scan-chain doc-gate — see `extract_protocol_states`.
+struct JtagTapStateExtractor;
+impl Extractor<ProtocolStateRecord> for JtagTapStateExtractor {
+    fn name(&self) -> &'static str {
+        "fsm.jtag_tap"
+    }
+    fn run(&self, cx: &ExtractionContext<'_>) -> Vec<ProtocolStateRecord> {
+        extract_protocol_states(cx.statements)
+    }
+}
+
+/// SWD LINE states (reset / operating / protocol-error / lockout / dormant) — see `extract_swd_line_states`.
+struct SwdLineStateExtractor;
+impl Extractor<ProtocolStateRecord> for SwdLineStateExtractor {
+    fn name(&self) -> &'static str {
+        "fsm.swd_line"
+    }
+    fn run(&self, cx: &ExtractionContext<'_>) -> Vec<ProtocolStateRecord> {
+        extract_swd_line_states(cx.statements)
+    }
+}
+
+/// Quoted operational modes of a generic actor (`a node is 'error passive'`) — see `extract_quoted_mode_states`.
+struct QuotedModeStateExtractor;
+impl Extractor<ProtocolStateRecord> for QuotedModeStateExtractor {
+    fn name(&self) -> &'static str {
+        "fsm.quoted_mode"
+    }
+    fn run(&self, cx: &ExtractionContext<'_>) -> Vec<ProtocolStateRecord> {
+        extract_quoted_mode_states(cx.statements)
+    }
+}
+
+/// Single ALL-CAPS word + "state" in a transition/locative binding (`the DEACTIVATED state`) — see
+/// `extract_transition_bound_states`.
+struct TransitionBoundStateExtractor;
+impl Extractor<ProtocolStateRecord> for TransitionBoundStateExtractor {
+    fn name(&self) -> &'static str {
+        "fsm.transition_bound"
+    }
+    fn run(&self, cx: &ExtractionContext<'_>) -> Vec<ProtocolStateRecord> {
+        extract_transition_bound_states(cx.statements)
+    }
+}
+
+/// Run the full FSM-state surface registry through the unified driver. Behavior-identical to the legacy
+/// four-inline-loop merge at the `build()` call site: order jtag → swd_line → quoted → transition,
+/// first-wins dedup by uppercased state name. (`EXTRACTOR-ARCHITECTURE.3`)
+fn protocol_state_surface(statements: &[ExtractedStatement]) -> Vec<ProtocolStateRecord> {
+    let cx = ExtractionContext { statements };
+    let extractors: [&dyn Extractor<ProtocolStateRecord>; 4] = [
+        &JtagTapStateExtractor,
+        &SwdLineStateExtractor,
+        &QuotedModeStateExtractor,
+        &TransitionBoundStateExtractor,
+    ];
+    run_surface("protocol_states", &cx, &extractors, |state| {
+        state.state_name.to_ascii_uppercase()
+    })
+    .records
 }
 
 /// SWD-SERIAL-EXTRACTION.4d — extract the SWD LINE state machine (reset / operating / protocol-error /
@@ -15945,6 +15995,71 @@ mod pdf_variant_digestion_9_7_fsm {
         assert!(!is_bare_state_name("UNKNOWN")); // architectural pseudo-value
         assert!(!is_bare_state_name("A")); // too short
         assert!(!is_bare_state_name("123")); // no letter
+    }
+}
+
+#[cfg(test)]
+mod extractor_architecture_3_fsm_surface {
+    //! EXTRACTOR-ARCHITECTURE.3 — the FSM cluster, migrated onto the unified `Extractor`/`run_surface`
+    //! framework, unions its four grammars and dedups across them by uppercased state name (the legacy
+    //! behavior, now in one driver call). Corpus byte-identicality (SWP/SWD/CAN) is verified out-of-band;
+    //! this locks the cross-grammar union + dedup wiring hermetically.
+    use super::*;
+
+    fn stmt(id: &str, text: &str) -> ExtractedStatement {
+        ExtractedStatement {
+            statement_id: id.to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        }
+    }
+
+    #[test]
+    fn surface_unions_quoted_and_transition_grammars_and_dedups_by_name() {
+        // Quoted-mode grammar contributes `reset` + `active` (a node IS '<mode>'); transition-bound grammar
+        // contributes `RESET` + `HALT` (enters the <NAME> state). `RESET` collapses onto the earlier-in-order
+        // quoted `reset` (uppercased key), so the union is {reset, active, HALT} — proving both grammars feed
+        // ONE surface and the cross-grammar dedup matches the legacy first-wins-by-name behavior.
+        let stmts = vec![
+            stmt("a", "A node is 'reset' when the controller clears it."),
+            stmt("b", "A node is 'reset' until reinitialised."),
+            stmt("c", "A node is 'active' when participating."),
+            stmt("d", "A node is 'active' during normal operation."),
+            stmt("e", "The interface enters the RESET state on error."),
+            stmt("f", "It remains in the RESET state until cleared."),
+            stmt("g", "The interface enters the HALT state on fault."),
+            stmt("h", "It stays in the HALT state until reset."),
+        ];
+        let names: Vec<String> = protocol_state_surface(&stmts)
+            .into_iter()
+            .map(|s| s.state_name)
+            .collect();
+        assert!(names.contains(&"reset".to_string()), "got {names:?}");
+        assert!(names.contains(&"active".to_string()), "got {names:?}");
+        assert!(names.contains(&"HALT".to_string()), "got {names:?}");
+        // `RESET` (transition) must NOT appear as a second record — it deduped onto quoted `reset`.
+        assert!(!names.contains(&"RESET".to_string()), "got {names:?}");
+        assert_eq!(
+            names.len(),
+            3,
+            "union minus the one cross-grammar duplicate; got {names:?}"
+        );
+    }
+
+    #[test]
+    fn non_fsm_prose_yields_no_states_through_the_surface() {
+        // A parallel-bus snippet trips none of the four grammars → empty surface (no corpus false positives).
+        let stmts = vec![
+            stmt(
+                "a",
+                "PSEL selects the completer and PENABLE indicates the access phase.",
+            ),
+            stmt("b", "The manager drives HADDR during the address phase."),
+        ];
+        assert!(protocol_state_surface(&stmts).is_empty());
     }
 }
 

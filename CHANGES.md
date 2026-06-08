@@ -1,3 +1,19 @@
+### `EXTRACTOR-ARCHITECTURE.3` — migrate the FSM cluster onto the framework (byte-identical consolidation)
+The first real consolidation. The four FSM-state grammars — JTAG/SWD-hyphen, SWD line, quoted-mode (`.9.3a`),
+transition-bound single-word (`.9.7`) — are now `Extractor<ProtocolStateRecord>` units (`fsm.jtag_tap` /
+`fsm.swd_line` / `fsm.quoted_mode` / `fsm.transition_bound`) run by a `protocol_state_surface` helper through
+the `.2` `run_surface` driver. The **four inline dedup-by-name loops at the `EvidenceIr::build()` call site
+collapsed into a single driver call** (~24 lines → 1); registry order = legacy precedence, surface key =
+uppercased state name = the legacy `eq_ignore_ascii_case` dedup. The grammar function bodies are UNCHANGED —
+this refactors the wiring, not the grammars.
+
+**Byte-identical, proven on fresh-rebuilt evidence:** SWP 4 (`DEACTIVATED`/`ACTIVATED`/`SUSPENDED`/`HALT`,
+same ids), CAN 3 (`mode_state_*`), SWD/ADI 13 (8 `protocol_state_*` + 5 `swd_line_state_*`, same ids) —
+confirming the now-uniform jtag↔swd_line dedup is a no-op (no name collision). SWD FSM eval
+`serial_frame_field`/`swd_operation`/`protocol_state` all `P=R=F1=1.000`; kg-bench 151/151. 2 new hermetic
+tests (cross-grammar union + dedup; non-FSM prose → empty surface). full `run_ci.sh` GREEN (lib 1452 → 1454).
+`.4`+ migrate the remaining clusters one slice each.
+
 ### `EXTRACTOR-ARCHITECTURE.2` — land the unified extractor framework (scaffolding; no behavior change)
 Owner confirmed (`2026-06-09`) "consolidate, unify, as much as possible" → built the maximal-coherence frame
 in a new module `crates/specforge/src/ir/extractor.rs`:
