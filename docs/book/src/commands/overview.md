@@ -16,6 +16,7 @@ Current surface:
 - `nlp-enrich <evidence-ir> [--vlm-provider ollama|open-ai|lm-studio|skip] [--dry-run]`
 - `extract-contracts <evidence-ir> [--provider ollama|open-ai|lm-studio|skip] [--model <name>] [--dry-run] [--max-statements 0]`
 - `signal-resolve <evidence-ir> [--provider ollama|open-ai|lm-studio|skip] [--model <name>] [--dry-run] [--max-statements 0] [--grounding-signals <csv>]`
+- `recover-register-bits <evidence-ir> [--vlm-provider ollama|open-ai|lm-studio|skip] [--vlm-model <name>] [--dry-run]`
 - `validate <artifact>`
 - `kg-bench`
 - `project-validation <artifact>... [--rescan-vlm-provider auto-local|ollama|lm-studio|skip]`

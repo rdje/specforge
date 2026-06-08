@@ -242,6 +242,49 @@ They are still valuable, but `converge` is the preferred user-facing path when y
 
 `nlp-enrich` can learn prose aliases for signals during Form 2 reclassification, but it treats that alias map as evidence-sensitive state: markdown/list prefixes, link targets, and source-layout labels such as table, figure, and section markers are filtered before they can become reusable aliases.
 
+## `recover-register-bits`
+
+Some specifications draw a register's bit layout as a **picture** — a horizontal
+strip of labelled cells — and never repeat those bit numbers in the field table
+beside it. The deterministic table reader then recovers the field *names* but
+leaves every bit position empty, because the numbers simply are not in any text
+it can read. This command fills that gap *without guessing*.
+
+```text
+recover-register-bits <evidence-ir> [--vlm-provider ollama|open-ai|lm-studio|skip] [--vlm-model <name>] [--dry-run]
+```
+
+**How it works, and why you can trust it.** A vision model is good at reading the
+field *names*, their left-to-right *order*, and each cell's *width* off the
+diagram — but it is unreliable about the absolute bit *number* a wide cell starts
+at (a wide cell prints two edge numbers and the model often grabs the wrong one).
+So this command throws the model's bit numbers away and **reconstructs** them from
+a law the model cannot break: a register's fields tile it edge-to-edge from the
+most-significant bit down to bit 0, with no gaps and no overlap. Reading the
+widths MSB→LSB and laying them down from the top gives every field's exact range.
+
+The reconstruction is accepted **only** when it is provably grounded, by two gates:
+
+1. **The widths tile a standard register width** (8, 16, 32, 64, or 128 bits). If
+   the model misread one cell, the widths will not sum to a real register size,
+   and the result is rejected.
+2. **The names match the register's own field table.** If the model invented,
+   dropped, or renamed a field, the name sets disagree, and the result is
+   rejected.
+
+When either gate fails, the bit positions stay an **honest residual** — they are
+left empty, never filled with a guess. That is the whole point: on a register
+whose layout has reserved gaps the field table does not name (or whose wide
+reserved cell the model misreads), the gates fire and nothing is fabricated; on a
+register whose named fields tile every bit, the bits come back exactly. The
+command reports, per register, whether it `recovered` the bits or left a labelled
+residual, and writes the enriched `EvidenceIR` back only for the registers it
+recovered.
+
+Like the other enrichment commands it defaults to `--vlm-provider skip` (a no-op,
+so it is safe to wire into any run) and honors the `SPECFORGE_VLM_HELPER` test
+hook, so the live vision model is never required for the build or the tests.
+
 ## `extract-contracts` and `signal-resolve`
 
 These two commands ask a local LLM to read the *hard prose* a specification

@@ -7,10 +7,12 @@ answers:
   - "is a better VLM needed to read register bit-layout diagrams"
   - "how does the tiling gate keep register-bit recovery honest (no fabrication)"
   - "why is the Docling table capture of a register diagram unreliable"
+  - "what is recover-register-bits / how does the recover-register-bits command work"
+  - "where is the tiling-gated register bit recovery implemented"
 date: 2026-06-08
 tags: [registers, vlm, bit-layout, pdf-variant-digestion, extraction-gap-fix, honesty-guardrail]
-evidence: docs/tasks/EXTRACTION-GAP-FIX.md (.4 investigation); generated/source_ir/1_0_risc_v_debug_specification/normalized/assets/table-0020.png + picture-0020.png; crates/specforge/test_data/llm_eval/seed_riscv_debug_registers.json
-reverify: "view the diagram images table-0020.png (dmstatus) / picture-0020.png (dmcontrol); probe qwen2.5vl:7b for (name,width) per field; reconstruct ranges by cumulative LSB tiling and compare to seed_riscv_debug_registers.json — dmcontrol = 14/14, dmstatus widths sum != 32 (reserved field misread) -> residual"
+evidence: crates/specforge/src/ir/register_bits.rs; crates/specforge/src/commands/recover_register_bits.rs; docs/tasks/EXTRACTION-GAP-FIX.md; crates/specforge/test_data/llm_eval/seed_riscv_debug_registers.json
+reverify: cargo test -p specforge --lib register_bits
 ---
 
 Some register specs (RISC-V Debug) put each field's **bit position only in the register bit-layout
@@ -39,5 +41,13 @@ wide *reserved* field (width 7) is VLM-misread as width 1 → widths sum to 26 �
 never a fabricated bit. A stronger VLM is complementary (it would rescue residual cases by reading the
 reserved-field width correctly), not required for the clean diagrams.
 
-Implemented by `EXTRACTION-GAP-FIX.4a` (the tiling-gated recovery). General/agnostic (ADR 0006): the structural
-"fields tile a register" law, no chip names. See [[register-field-table-extraction]].
+**Implemented (`EXTRACTION-GAP-FIX.4a`, built `2026-06-08`):** pure core `ir/register_bits.rs`
+(`reconstruct_bits_by_tiling` + the two gates `proposal_names_match_fields`/standard-width +
+`recover_bits_for_register`) and the `recover-register-bits <evidence-ir>` command
+(`commands/recover_register_bits.rs`) — EvidenceIR-in/out, reads `(name,width)` off the register's
+`RegisterBitfield` diagram via the shared VLM image transport + the `SPECFORGE_VLM_HELPER` hermetic hook,
+default `--vlm-provider skip` no-op. Hermetic tests on the real dmcontrol (14/14)/dmstatus (residual)/
+name-mismatch (residual) data; the live VLM is never a CI dependency. General/agnostic (ADR 0006): only the
+structural "fields tile a register" law + universal register widths, no chip names in the runtime (see
+[[no-hardcoded-chip-vocabulary]]). Live bit-extent measurement on the gold is the follow-on leaf `.4b`. See
+[[register-field-table-extraction]].

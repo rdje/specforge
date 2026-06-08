@@ -69,6 +69,8 @@ pub enum Commands {
     ExtractConstraintsLlm(ExtractConstraintsLlmArgs),
     /// Audit the broadened table-driven extraction: re-read a bounded sample of intent-bearing tables against their image with the VLM (precision estimate + flagged mismatches)
     AuditExtraction(AuditExtractionArgs),
+    /// Recover register-field bit positions from a register-layout diagram (VLM reads names+widths MSB→LSB; bit ranges reconstructed by gated cumulative tiling, else honest residual)
+    RecoverRegisterBits(RecoverRegisterBitsArgs),
 }
 
 #[derive(Debug, Args)]
@@ -210,6 +212,21 @@ pub struct NlpEnrichArgs {
     /// in the EvidenceIR. Pass an empty string to disable grounding entirely.
     #[arg(long)]
     pub grounding_signals: Option<String>,
+}
+
+#[derive(Debug, Args)]
+pub struct RecoverRegisterBitsArgs {
+    /// Path to an EvidenceIR JSON artifact whose register fields lack bit positions
+    pub evidence_ir: PathBuf,
+    /// VLM provider that reads the register-layout diagram (default skip = CI-safe no-op)
+    #[arg(long, value_enum, default_value = "skip")]
+    pub vlm_provider: VlmProviderArg,
+    /// Model name override (default: qwen2.5vl:7b for ollama/lmstudio, gpt-4o for openai)
+    #[arg(long)]
+    pub vlm_model: Option<String>,
+    /// Read the diagrams and report outcomes without writing the EvidenceIR back to disk
+    #[arg(long)]
+    pub dry_run: bool,
 }
 
 #[derive(Debug, Args)]

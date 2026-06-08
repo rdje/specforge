@@ -137,15 +137,30 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
     …). A **tiling gate** keeps it honest: dmstatus's wide reserved field (width 7) is VLM-misread as width 1 →
     widths sum to 26 ≠ 32 → **gate rejects → honest residual** (no fabrication), exactly the guardrail.
   - Splits into `.4a` (build the tiling-gated VLM recovery) + `.4b` (live measurement on the `.4a.2` gold).
-- ID: `EXTRACTION-GAP-FIX.4a` · Status: `pending` · Goal: **build the tiling-gated register-diagram bit
-  recovery.** A VLM proposer reads `(field_name, width)` in MSB→LSB order off the register-diagram image (reuse
-  the existing VLM transport; default `--provider skip` → CI-safe no-op); a pure Rust core reconstructs bit
-  ranges by cumulative LSB tiling and ACCEPTS only when (a) the widths tile a standard register width (8/16/32/
-  64/128) and (b) the proposed field names match the register's field-definition table — else the bits stay an
-  honest residual. Attach recovered bits to the `RegisterFieldRecord`s. Hermetic tests on the real dmcontrol
-  (success, 14/14) and dmstatus (reserved-width misread → residual) data + name-mismatch reject; the live VLM is
-  NOT a CI dependency. Agnostic (ADR 0006 — structural tiling + the universal "fields tile a register" law, no
-  chip names). Accept: pure core + gate landed, fmt/clippy/tests green, no wire-based regression.
+- ID: `EXTRACTION-GAP-FIX.4a` · Status: `done` (`2026-06-08`) · Goal: **build the tiling-gated register-diagram
+  bit recovery.** **DONE exactly to the validated `.4` design.** New **pure core** `ir/register_bits.rs`:
+  `RegisterDiagramFieldProposal {field_name, width}`, `reconstruct_bits_by_tiling` (cumulative LSB tiling that
+  returns `None` unless the widths sum to a standard register width — gate (a)), `proposal_names_match_fields`
+  (exact MULTISET match against the register's own field table — gate (b); exact-not-subset so a hallucinated,
+  dropped, or renamed field is rejected), and `recover_bits_for_register` (attaches bits only when BOTH gates
+  pass and EVERY field is currently bits-missing — never overrides deterministic table extraction — else a typed
+  `RegisterBitRecoveryOutcome` residual). PURE: no I/O, no chip names (ADR 0006 — only the universal register
+  widths 8/16/32/64/128 + the "fields tile a register" structural law, in the same spirit as the logic-level
+  "how"). New **command** `recover-register-bits <evidence-ir> [--vlm-provider …] [--vlm-model …] [--dry-run]`
+  (`commands/recover_register_bits.rs`, EvidenceIR-in/out, mirrors `nlp-enrich`): loads the sibling SourceIR via
+  `EvidenceIr.source_ir_path`, maps each bits-missing register (`regfld_<table_id>`) → source table → page → a
+  `RegisterBitfield` visual asset on that page (caption-name preferred, refuses to guess among several), reads
+  `(name,width)` MSB→LSB via the shared `enrich::vlm_image_query` transport + the `SPECFORGE_VLM_HELPER` hermetic
+  hook, runs the gated core, writes back. Default `--vlm-provider skip` = CI-safe no-op; **the live VLM is NOT a
+  CI dependency**. Wiring the command makes the pure core production-reachable, so the helpers do not trip
+  `dead_code` under `-D warnings` (the noted hazard). **Hermetic tests use the REAL
+  `seed_riscv_debug_registers.json` data:** `dmcontrol` (14 named fields tile all 32 bits) → recovered exactly
+  (incl. `hartsello [25:16]`, `hartselhi [15:6]`); `dmstatus` (reserved gaps + the width-7 reserved field
+  misread as 1) → honest residual, zero bits; name-mismatch even when the widths tile 32 → residual; + parser,
+  helper-hook, skip-noop, and end-to-end command tests. fmt + clippy `-D warnings` clean; full lib suite 1383 →
+  **1400**; kg-bench 151/151; no wire-based regression (the path only fires on bits-missing register-field
+  tables; APB/AHB/AXI/SWD have none). Commit subject: `EXTRACTION-GAP-FIX.4a`. KM card
+  `register-diagram-bit-recovery-via-tiling`. Live measurement of the bit-extent metric is `.4b`.
 - ID: `EXTRACTION-GAP-FIX.4b` · Status: `pending` · Goal: **live measurement** — run `.4a` with the live
   `qwen2.5vl:7b` on the RISC-V Debug register diagrams and re-measure bit-extent on the `.4a.2` gold (expected:
   dmcontrol's 14 recovered correct, dmstatus an honest residual → bit-extent 0/179 → higher, no fabrication).
@@ -153,15 +168,15 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
 
 ## Current frontier
 
-**ACTIVE FRONTIER (`2026-06-08`): `EXTRACTION-GAP-FIX.4`** — RISC-V bit-layout-graphic parse (recover bit
-positions for register fields whose bits live in the layout GRAPHIC, not the field table — the `.4b` audit's
-dominant flag; bit-extent 0/179). Likely a VLM/structural read of the register-diagram image, bounded/targeted,
-gated + agnostic. **If the graphic read cannot recover a field's bits, that field's bit-extent stays an honest
-completeness residual — bits are NEVER synthesized from a table that does not contain them.** This is the
-HARDEST leaf (VLM, may split). **`.1` DONE** (I2C prose precision 0.600 → 1.000). **`.2` DONE** (NVMe mnemonic
-from parenthetical defined-term, field-name 0/29 → 28/29). **`.3` DONE** (RISC-V register-name from the defining
-heading's `(name, at 0x..)` parenthetical, page-based association, register-name 0/60 → 59/60, 0 false names).
-Remember the honesty guardrail: read where the fact lives, else honest residual.
+**ACTIVE FRONTIER (`2026-06-08`): `EXTRACTION-GAP-FIX.4b`** — live measurement of the tiling-gated bit recovery
+`.4a` built. Run `recover-register-bits` with the live `qwen2.5vl:7b` (needs `ollama serve`) on the RISC-V Debug
+register diagrams, then re-measure bit-extent on the `.4a.2` gold (expected: `dmcontrol`'s 14 bits recovered
+correct, `dmstatus` an honest residual → bit-extent 0/179 → higher, no fabrication). Report honest per-register
+numbers. The diagram images: `generated/source_ir/1_0_risc_v_debug_specification/normalized/assets/picture-0020.png`
+(dmcontrol), `table-0020.png` (dmstatus). **`.4a` DONE** (pure tiling-gated core + `recover-register-bits`
+command; dmcontrol 14/14 hermetic, dmstatus + name-mismatch residual; lib 1383 → 1400; no wire-based
+regression). **`.1`/`.2`/`.3` DONE.** Remember the honesty guardrail: read where the fact lives, else honest
+residual — `.4a`'s two gates are exactly that guardrail mechanized.
 
 ## Decisions
 
@@ -228,12 +243,30 @@ Remember the honesty guardrail: read where the fact lives, else honest residual.
   traces to a defining heading with a `0x` address), field-name recall unchanged 20/34. Strict per-fact recall
   stays 0.000 — bits are 0/179, in the layout graphic (`.4`). fmt + clippy `-D warnings` clean; full lib suite
   1381 → 1383; kg-bench 151/151. No wire-based regression.
+- `.4a` (`2026-06-08`): Built the validated `.4` design as TWO pieces — a pure gated core and its production
+  command. Pure core `ir/register_bits.rs`: `reconstruct_bits_by_tiling` lays MSB→LSB `(name,width)` proposals
+  down from an exclusive top counter so each field claims `[top-width, top-1]` (no underflow; the standard-width
+  gate guarantees the last lands on bit 0) and returns `None` unless the widths sum to 8/16/32/64/128 — gate
+  (a); `proposal_names_match_fields` is an exact multiset comparison against the register's own field table —
+  gate (b); `recover_bits_for_register` attaches bits only when both gates pass and every field is bits-missing,
+  else a typed residual. Command `commands/recover_register_bits.rs` resolves the register's `RegisterBitfield`
+  diagram on its page in the sibling SourceIR, reads `(name,width)` MSB→LSB via the shared image transport + the
+  `SPECFORGE_VLM_HELPER` hook, runs the core, writes back; default `--vlm-provider skip` no-op. Wired in
+  `cli.rs`/`lib.rs`/`commands/mod.rs`/`ir/mod.rs`. **Hermetic tests use the real `seed_riscv_debug_registers.json`
+  data:** dmcontrol 14 fields → 14/14 exact bits (`hartsello [25:16]`, `hartselhi [15:6]`); dmstatus
+  reserved-gap + width-7-misread → honest residual (0 bits); name-mismatch with tiling-valid widths → residual;
+  + parser/string-width/garbage, helper-hook proposer, end-to-end command, and skip-noop tests (17 new). ADR
+  0006 clean (only universal widths + the tiling law in the runtime; chip names only in test data). fmt + clippy
+  `-D warnings` clean (pure core production-reachable → no dead-code); full lib suite 1383 → **1400**; kg-bench
+  151/151; no wire-based regression. Live bit-extent measurement deferred to `.4b`. KM card
+  `register-diagram-bit-recovery-via-tiling`.
 
 ## Commit log
 
 - `.1` → `EXTRACTION-GAP-FIX.1 — I2C prose precision: noun-phrase head must be a wire noun (0.600 → 1.000)`
 - `.2` → `EXTRACTION-GAP-FIX.2 — NVMe mnemonic from description defined-term (field-name recall 0/29 → 28/29)`
 - `.3` → `EXTRACTION-GAP-FIX.3 — RISC-V register name from defining heading (register-name 0/60 → 59/60)`
+- `.4a` → `EXTRACTION-GAP-FIX.4a — tiling-gated register-diagram bit recovery (pure core + recover-register-bits)`
 
 ## Changelog
 
@@ -247,3 +280,10 @@ Remember the honesty guardrail: read where the fact lives, else honest residual.
   names. Open question resolved by investigation: page-based association to the defining heading's `(name, at
   0x..)` parenthetical, gated by the hex address (no fabrication). Frontier moves to `.4` (RISC-V bit-graphic,
   the last + hardest gap).
+- `2026-06-08`: `.4a` (tiling-gated register-diagram bit recovery) DONE → built the validated `.4` design. Pure
+  core `ir/register_bits.rs` (cumulative LSB tiling + two anti-fabrication gates: standard-width tiling +
+  exact field-name multiset match) and command `recover-register-bits` (EvidenceIR-in/out, VLM reads
+  `(name,width)` off the `RegisterBitfield` diagram via the shared transport + `SPECFORGE_VLM_HELPER` hook,
+  skip-default no-op). Hermetic tests on real dmcontrol (14/14 exact) + dmstatus (honest residual) +
+  name-mismatch (residual). lib 1383 → 1400; kg-bench 151/151; no wire-based regression; ADR 0006 clean.
+  Frontier moves to `.4b` (live measurement of bit-extent on the `.4a.2` gold; needs `ollama serve`).

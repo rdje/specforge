@@ -20,11 +20,15 @@ LLM/VLM provider is still production-default.
   `entity-type`, `extract-conditions`, `extract-constraints-llm` (plus the already-listed core 17).
   `commands/mod.rs` also carries `pub(crate) mod llm_text` (a shared text-chat transport helper, not
   a subcommand).
-- **IR namespace = 24 modules** (`crates/specforge/src/ir/mod.rs`), not 14. Beyond the seven R16
+- **IR namespace = 25 modules** (`crates/specforge/src/ir/mod.rs`), not 14. Beyond the seven R16
   modules, the measurement/extraction work added: `completeness`, `condition_extract`,
   `constraint_extract_llm`, `entity_typing`, `extraction_filters`, `nli_verify`,
-  `nlp_relation_extract`, `normative_vocab`, `ambiguity`, `temporal_ltl` (plus `prior_memory` and
-  `adapters`). Still a typed layer over the four IR stages — no sixth stage.
+  `nlp_relation_extract`, `normative_vocab`, `ambiguity`, `temporal_ltl`, `register_bits` (plus
+  `prior_memory` and `adapters`). Still a typed layer over the four IR stages — no sixth stage.
+  `register_bits` (EXTRACTION-GAP-FIX.4a) is a PURE gated core: it reconstructs register-field bit
+  ranges from VLM-read `(name, width)` proposals by cumulative LSB tiling, attaching bits only when
+  the widths tile a standard register width AND the names match the register's own field table (else
+  an honest residual). Its production seam is the `recover-register-bits` command.
 - **Whole `crates/specforge/src` ≈ 103,200 lines** (single workspace crate, edition 2024), up from
   the ~88.7K cited on 2026-05-29.
 - **`cargo test -p specforge --lib` = 1360 passing, 0 failed, 0 ignored** (the canonical validation

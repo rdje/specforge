@@ -18,6 +18,7 @@ pub mod nlp_relation_extract;
 pub mod normative_vocab;
 pub mod prior_memory;
 pub mod protocol_graph;
+pub mod register_bits;
 pub mod semantic;
 pub mod source;
 pub mod temporal_ltl;

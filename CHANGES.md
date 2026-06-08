@@ -1,3 +1,30 @@
+### `EXTRACTION-GAP-FIX.4a` — tiling-gated register-diagram bit recovery (build)
+Built the validated `.4` design: recover register-field bit positions that live only in the bit-layout
+GRAPHIC, never fabricating one.
+
+- New pure core `crates/specforge/src/ir/register_bits.rs`: `RegisterDiagramFieldProposal` (a
+  `(field_name, width)` read MSB→LSB off the diagram), `reconstruct_bits_by_tiling` (cumulative LSB
+  tiling — accepts only when the widths sum to a standard register width 8/16/32/64/128, gate (a)),
+  `proposal_names_match_fields` (exact multiset match against the register's own field table, gate (b)),
+  and `recover_bits_for_register` (attaches bits only when BOTH gates pass; else a typed, explicit
+  `RegisterBitRecoveryOutcome` residual — no fabrication). PURE: no I/O, no chip names (ADR 0006 — only
+  the universal "registers come in standard widths / fields tile a register" structural law).
+- New command `recover-register-bits <evidence-ir> [--vlm-provider …] [--vlm-model …] [--dry-run]`
+  (`crates/specforge/src/commands/recover_register_bits.rs`): resolves each bits-missing register's
+  bit-layout diagram image (a `RegisterBitfield` visual asset on the register's page in the sibling
+  SourceIR), asks the VLM for `(name, width)` MSB→LSB (reusing the shared image transport + the
+  `SPECFORGE_VLM_HELPER` hermetic hook), runs the gated core, and writes the EvidenceIR back. Default
+  `--vlm-provider skip` is a CI-safe no-op; the live VLM is never a CI dependency. Wired into `cli.rs` +
+  `lib.rs` + `commands/mod.rs` + `ir/mod.rs`.
+- Faithful hermetic tests on the REAL `seed_riscv_debug_registers.json` data: `dmcontrol`'s 14 named
+  fields tile all 32 bits → recovered exactly (incl. `hartsello [25:16]`, `hartselhi [15:6]`);
+  `dmstatus`'s reserved-gap layout and width misread → honest residual (no bits); a name-mismatch even
+  when the widths tile 32 → residual; plus parser, helper-hook, and end-to-end command tests.
+- Verification: fmt + clippy `-D warnings` clean (the pure core is production-reachable, so no dead-code
+  trip); full lib suite 1383 → **1400**; kg-bench 151/151; no wire-based regression (the path only
+  fires on bits-missing register-field tables; APB/AHB/AXI/SWD have none). Live measurement on the
+  `.4a.2` gold deferred to `.4b`.
+
 ### `EXTRACTION-GAP-FIX.4` (investigation + design; SPLIT into `.4a`/`.4b`) — register bit positions from the diagram image via tiling reconstruction
 The last gap: RISC-V register field bit positions live in the bit-layout **graphic**, not the field table
 (bit-extent 0/179). This entry records the investigation that resolved the leaf's open question (VLM vs

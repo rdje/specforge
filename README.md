@@ -53,6 +53,7 @@ Use it first for the project objective, document navigation, and the current imp
   - `signal-resolve <evidence-ir> [--provider ollama|open-ai|lm-studio|skip] [--model <m>] [--dry-run]`
   - `eval-extraction <dataset> [--provider ollama|open-ai|lm-studio|skip] [--model <m>] [--evidence-root <root>]`
   - `audit-extraction <source-ir> [--provider ollama|open-ai|lm-studio|skip] [--model <m>] [--sample <n>] [--seed <s>]`
+  - `recover-register-bits <evidence-ir> [--vlm-provider ollama|open-ai|lm-studio|skip] [--vlm-model <m>] [--dry-run]`
   - `validate <artifact>`
   - `adapt <intent-ir> --target isf --dry-run`
   - `adapt <intent-ir> --target isf`
@@ -65,6 +66,7 @@ Use it first for the project objective, document navigation, and the current imp
 - `specforge ingest` now computes and materializes `SourceIR` at `generated/source_ir/<document_key>/source_ir.json`
 - PDF re-ingest now stages normalization into `generated/source_ir/<document_key>/normalized.staging` and only swaps it into `normalized/` after backend success, so stale page/image leftovers from older runs do not accumulate and a failed rerun does not destroy the last good normalized bundle
 - `specforge evidence` now computes and materializes `EvidenceIR` at `generated/evidence_ir/<document_key>/evidence_ir.json`
+- `specforge recover-register-bits <evidence-ir>` now recovers register-field bit positions for registers whose bits live ONLY in the bit-layout GRAPHIC (not the field table): a VLM reads field names + per-field widths in MSB→LSB order off the diagram image, and a pure gated core reconstructs the absolute bit ranges by cumulative LSB tiling, accepting only when the widths tile a standard register width (8/16/32/64/128) AND the proposed names match the register's own field-definition table — otherwise the bits stay an honest residual and are never fabricated; default `--vlm-provider skip` is a CI-safe no-op and the live VLM is never a CI dependency (EXTRACTION-GAP-FIX.4a)
 - `specforge semantic` now computes and materializes `SemanticIR` at `generated/semantic_ir/<document_key>/semantic_ir.json`
 - `specforge intent` now computes and materializes `IntentIR` at `generated/intent_ir/<document_key>/intent_ir.json`
 - `specforge adapt --target isf` now computes and materializes a typed ISF adapter artifact at `generated/adapters/isf/<document_key>/adapter.json`

@@ -282,6 +282,30 @@ genuine registers it raised zero false positives. Overlaps surface as a Warning,
 interior gaps as Info (a gap is a *candidate* missed field, not a proven defect).
 *Authoritative tracking:* `docs/tasks/COMPLETENESS-CLOSURE-INVARIANTS.md`.
 
+### `EXTRACTION-GAP-FIX.4a` — recovering bits that live only in the layout diagram
+
+The tiling law above checks a register that *has* bit positions. The mirror-image
+problem is a register that has **none** — because the spec drew the bit layout as a
+picture and never repeated those numbers in the field table. The field reader then
+recovers the field names but cannot fill a single bit position; the numbers are in
+a modality (the image) it does not read. The honest baseline is to leave them
+empty rather than invent them.
+
+The `recover-register-bits` command closes that gap using the *same* tiling law as
+a reconstruction tool. A vision model reads the field **names**, their **order**,
+and each cell's **width** off the diagram — the things it reads reliably — while
+its (unreliable) absolute bit numbers are discarded. Because a register's fields
+tile it MSB→LSB with no gaps, the widths alone determine every field's exact range.
+
+It is gated so it can only *confirm*, never *guess*: the widths must sum to a
+standard register size (8/16/32/64/128) **and** the proposed names must match the
+register's own field table. A register whose 14 named fields tile all 32 bits
+comes back exact; a register with reserved gaps the table does not name, or a
+misread width, fails a gate and stays an honest residual — no bit is ever
+fabricated. The full operator-facing description is in the
+[commands chapter](../commands/quality-and-learning.md#recover-register-bits);
+*authoritative tracking:* `docs/tasks/EXTRACTION-GAP-FIX.md`.
+
 ### `PER-EXTRACTOR-FACT-TAGGING` — who found which fact (recall-gauge groundwork)
 
 This is plumbing for a future **calibrated recall estimate**. To estimate how

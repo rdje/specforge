@@ -8,6 +8,42 @@
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 - adapter target: `.isf` (sole adapter); `.fsm`/HDL are out of scope — FSMGen consumes `.isf` and owns scheduling/`.fsm`/HDL downstream (since `ISF-ONLY-CONSOLIDATION`, `2026-05-18`)
 
+## 2026-06-08 — Tiling-gated register-diagram bit recovery, built (EXTRACTION-GAP-FIX.4a)
+
+`.4a` builds the design `.4` validated. Two pieces, deliberately separated so the trust is auditable and
+the live VLM is never a CI dependency.
+
+**The pure core — `crates/specforge/src/ir/register_bits.rs`.** This is where every decision lives, and it
+does no I/O. `reconstruct_bits_by_tiling` takes the `(field_name, width)` proposals in MSB→LSB order and
+lays them down from an exclusive top counter (`remaining_top`, starting at the width sum) so each field
+claims `[remaining_top - width, remaining_top - 1]` — no subtraction underflows and the standard-width gate
+guarantees the last field lands on bit 0. It returns `None` (honest residual) unless the widths sum to a
+standard register width (8/16/32/64/128) — gate (a). `proposal_names_match_fields` does an exact multiset
+comparison of normalized names against the register's own field table — gate (b); exact (not subset) so a
+hallucinated, dropped, or renamed field is rejected, which is precisely what makes a reserved-gap register
+fail safely. `recover_bits_for_register` runs both gates and either attaches bits to every field (matched by
+normalized name) or returns a typed `RegisterBitRecoveryOutcome` residual. It only fires when *every* field
+is missing bits (the "bits live in the graphic" shape), so it never overrides deterministic table extraction.
+
+**The production seam — `commands/recover_register_bits.rs`.** An EvidenceIR-in/out command mirroring
+`nlp-enrich`. It loads the sibling SourceIR (via `EvidenceIr.source_ir_path`), and for each bits-missing
+register maps `register_id` (`regfld_<table_id>`) → the source table → its page → a `RegisterBitfield`
+visual asset on that page (preferring a caption that names the register; refusing to guess among several).
+The VLM proposer honors `SPECFORGE_VLM_HELPER` first (so tests are hermetic) and otherwise calls the shared
+`enrich::vlm_image_query` transport; the reply is parsed leniently (`parse_diagram_field_proposals` — slices
+the first `{`…last `}`, coerces numeric/string widths, drops blank names; an unreadable width becomes 0,
+which the tiling gate then rejects rather than guessing). Wiring this command is what makes the pure core
+production-reachable, so the helpers do not trip `dead_code` under `-D warnings`.
+
+**Why this is ADR-0006-clean.** No chip/protocol/vendor name appears anywhere in the runtime — the only
+constants are the universal register widths (structural "how", like logic levels) and the universal "fields
+tile a register" law. The names the gate compares against come from the document's own field table; the real
+chip names (`dmcontrol`/`dmstatus`/field names) live only in the hermetic *test* data, which is sourced
+verbatim from `seed_riscv_debug_registers.json`. Verification: dmcontrol → 14/14 exact (incl. the wide
+`hartsello [25:16]`/`hartselhi [15:6]`); dmstatus → residual (reserved gaps + width misread, both gates
+reject); name-mismatch → residual even when the widths tile 32. fmt + clippy `-D warnings` clean; lib
+1383 → 1400; kg-bench 151/151; no wire-based regression. Live measurement is `.4b`.
+
 ## 2026-06-08 — Register bit positions from the diagram image via tiling reconstruction (EXTRACTION-GAP-FIX.4 design)
 
 `.4` is the last and hardest gap: RISC-V register field bit positions live in the bit-layout **graphic**, not

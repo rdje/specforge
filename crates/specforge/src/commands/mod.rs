@@ -21,6 +21,7 @@ pub(crate) mod llm_text;
 pub mod nli_verify;
 pub mod nlp_enrich;
 pub mod project_validation;
+pub mod recover_register_bits;
 pub mod rescan_plan;
 pub mod semantic;
 pub mod signal_resolve;
