@@ -40,7 +40,25 @@ diagnostic when a construct is genuinely out of model.
 
 ## Task tree
 
-- ID: `PDF-VARIANT-DIGESTION` · Status: `active` · Children: `.1` (triage) + per-class feature leaves (TBD)
+- ID: `PDF-VARIANT-DIGESTION` · Status: `active` · Children: `.1` (triage) + per-class feature leaves (`.2`–`.8`) + `.9` (new serial-protocol class)
+- ID: `PDF-VARIANT-DIGESTION.9` · Status: `active` · Goal: **digest the new serial-protocol class** — the
+  owner downloaded new serial chip-spec PDFs (CAN, SWP, SMBus, I2S) and directed they be copied + git-tracked
+  into SpecForge. Import them, then ingest → extract → measure each, extending breadth+precision onto a
+  never-seen serial-protocol class (the SWD/ADI `SerialFrameField` + `ProtocolStateRecord` surfaces are the
+  relevant machinery). Honest baselines first (read where the fact lives or report a residual; ADR 0006;
+  APB/AHB/AXI/SWD stay 100%). Children: `.9.1`, `.9.2`.
+- ID: `PDF-VARIANT-DIGESTION.9.1` · Status: `pending` · Goal: import the selected serial specs
+  (CAN/SWP/SMBus/I2S) into `corpus/<vendor>/.../current/` + `SOURCE_PDF_REGISTRY.md`, git-tracked, so a
+  re-ingest is always reproducible (owner directive `2026-06-08`: "selected ones shall be copied and git
+  tracked in SPECFORGE repo"; [[feedback_source_pdfs_in_repo]] — do NOT record the owner's library path).
+  Acceptance: the PDFs copied under canonical vendor paths, registered, `git add`-tracked, each verified to
+  begin with a real PDF header. Verification: pending. Commit: pending.
+- ID: `PDF-VARIANT-DIGESTION.9.2` · Status: `pending` · Goal: **CAN 2.0 honest baseline** — ingest
+  (`DOCLING_DEVICE=cpu`) → evidence → validate on a never-seen serial protocol; record the document_class, the
+  class-aware completeness gauge, and the serial-frame / protocol-FSM / signal-inventory yield; state the
+  honest extraction gap (or honest "already digests well") and spin the next leaf from it. No fabrication (ADR
+  0006). Acceptance: baseline metrics recorded in this tree (+ KM card if a durable fact emerges); APB/AHB/AXI/SWD
+  unaffected. Verification: pending. Commit: pending.
 - ID: `PDF-VARIANT-DIGESTION.1` · Status: `in_progress` · Goal: **triage sweep** — ingest a diverse sample
   (one per family: ARM-TRM GIC-400, Wishbone, NXP I2C, RISC-V Debug, CCIX, Avalon, USB4, OpenCAPI) through
   `ingest`→`evidence`, record ingest status + table-kind census + extraction stats, and identify the
@@ -97,7 +115,15 @@ grid-repair demo on a bits-bearing doc; giants' ingest budget; USB 3.2 evid-fail
 
 ## Current frontier
 
-**ACTIVE FRONTIER (`2026-06-08`): `PDF-VARIANT-DIGESTION.6`/`.7`** — item ② (`.5`) COMPLETE and `.8` (broaden
+**OWNER-DIRECTED PIVOT (`2026-06-08`): `PDF-VARIANT-DIGESTION.9.1` → `.9.2`.** The owner unblocked the program
+by downloading a new **serial chip-spec class** (CAN / SWP / SMBus / I2S) and directed they be copied + git-tracked
+into SpecForge. This takes frontier priority over `.6`/`.7` (which stay blocked on host-local zero-yield / USB-3.2
+PDFs). Active leaf: `.9.1` (import the serial specs into `corpus/` + registry) → `.9.2` (CAN 2.0 honest baseline).
+Starting with CAN: the cleanest, most-structured serial frame protocol (SOF/ID/RTR/IDE/DLC/Data/CRC/ACK/EOF) plus a
+real protocol FSM (error-active → error-passive → bus-off) — it exercises BOTH the `SerialFrameField` and
+`ProtocolStateRecord` surfaces on a protocol SpecForge has never seen. SWP/SMBus/I2S follow as later `.9` leaves.
+
+**(SUPERSEDED active note) `PDF-VARIANT-DIGESTION.6`/`.7`** — item ② (`.5`) COMPLETE and `.8` (broaden
 prose-actor capture) DONE. **`.5a` + `.5b` + `.5c` are DONE** — structural doc-class routing
 (protocol/register/interface/guide), the front-matter doc-type signal (true guide vs under-extracted spec), and
 the class-aware per-doc completeness gauge (`.5b`) are all live in `validate` with honest guide reporting. **`.8`
@@ -508,6 +534,10 @@ set, not the whole doc/corpus.
 
 ## Changelog
 
+- `2026-06-08`: Added `.9` (new serial-protocol class) — owner unblocked the program by downloading new serial
+  chip-spec PDFs (CAN/SWP/SMBus/I2S) and directed they be copied + git-tracked into SpecForge. `.9.1` (import +
+  register) → `.9.2` (CAN 2.0 honest baseline) onto the frontier, ahead of the host-local-blocked `.6`/`.7`.
+  Owner directive: "selected ones shall be copied and git tracked in SPECFORGE repo." `.9.1` taken `in_progress`.
 - `2026-06-08`: `.8` (broaden prose-actor capture) DONE — robust structural agent-definition grammar (general
   agent-class allowlist; parenthetical-strip + current-sentence + no-preposition guards instead of a fragile
   structural-noun denylist, after expert review). Projected 14 → 20 docs with actors (+6), all genuine; NVMe

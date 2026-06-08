@@ -1,3 +1,18 @@
+### `PDF-VARIANT-DIGESTION.9.1` — import the new serial chip-spec class (CAN/SWP/SMBus/I2S) into the tracked corpus
+The owner unblocked the PVD breadth program by downloading a new **serial chip-spec class** and directed the
+selected PDFs be copied + git-tracked into SpecForge (`feedback_source_pdfs_in_repo`; the host-local library
+path is deliberately never recorded in any tracked file). Four serial specs imported under canonical vendor
+paths and registered in `corpus/SOURCE_PDF_REGISTRY.md`:
+
+- `corpus/bosch/can/current/Bosch_CAN_Specification_2.0_1991.pdf` (CAN 2.0, 72 pp)
+- `corpus/etsi/swp/current/ETSI_TS_102613_V16.0.0_2021-10_…_Single_Wire_Protocol_SWP.pdf` (SWP, 57 pp)
+- `corpus/smbus/current/SMBus_3.3.1_2024-10-20_System_Management_Bus_Specification.pdf` (SMBus 3.3.1, 83 pp)
+- `corpus/nxp/i2s/current/UM11732_v3_2022-02-17_I2S_Bus_Specification.pdf` (I2S, 20 pp)
+
+Each verified to begin with a real `%PDF-` header. Owned under the new task-tree node
+`PDF-VARIANT-DIGESTION.9` (`.9.1` import → `.9.2` CAN 2.0 honest baseline). No code change — corpus inputs
+only; APB/AHB/AXI/SWD unaffected.
+
 ### `EXTRACTION-GAP-FIX.4d` — the bit-recovery resolver finds register diagrams left `unknown`; the `.4` machinery is complete
 `.4b` found two plumbing gaps blocking the register bit-recovery: (1) the resolver only looked at diagrams the
 ingest classifier tagged `RegisterBitfield`, and (2) a register's fields were fragmented across tables. `.4c`

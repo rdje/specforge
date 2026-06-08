@@ -6,10 +6,11 @@ re-ingest is impossible — this previously blocked the `WIRE-BASED-100` cross-s
 are **inputs**, not generated artifacts, so tracking them does not conflict with the artifact-cleanup
 directive.
 
-**Scope:** only the PDFs SpecForge intends to use (the WIRE-BASED-100 wire-based + serial-debug specs).
-The owner keeps a larger host-local spec library and **provides its path on request** (it is deliberately
-not recorded here or in any tracked file). Only the PDFs SpecForge needs are copied in; more may be added
-when needed (owner: "you can use more if you need to").
+**Scope:** only the PDFs SpecForge intends to use (the WIRE-BASED-100 wire-based + serial-debug specs, the
+`PDF-VARIANT-DIGESTION` register/prose-signal specs, and the `PDF-VARIANT-DIGESTION.9` new serial-protocol
+class — CAN / SWP / SMBus / I2S). The owner keeps a larger host-local spec library and **provides its path on
+request** (it is deliberately not recorded here or in any tracked file). Only the PDFs SpecForge needs are
+copied in; more may be added when needed (owner: "you can use more if you need to").
 
 **Re-ingest** a spec to refresh its `source_ir`/normalized before measuring (the eval scores persisted
 evidence — see `docs/knowledge/eval-scores-persisted-evidence.md`):
@@ -29,9 +30,16 @@ DOCLING_DEVICE=cpu cargo run -p specforge -- ingest <repo PDF path>
 | `1_0_risc_v_debug_specification` | register/debug (RISC-V Debug) | `corpus/risc-v/debug/current/1.0_RISC_V_Debug_Specification.pdf` | `risc-v/debug/current/` |
 | `nvme_base_specification_2_0a_2021_07_26` | register (NVMe) | `corpus/nvm-express/nvme/current/NVMe-Base-Specification-2.0a-2021.07.26.pdf` | `nvm-express/nvme/current/` |
 | `um10204_rev7_0_2021_i2c_bus_specification` | prose-signal (I2C) | `corpus/nxp/i2c/current/UM10204_Rev7.0_2021_I2C-bus_Specification.pdf` | `nxp/i2c/current/` |
+| `bosch_can_specification_2_0_1991` | serial (CAN) | `corpus/bosch/can/current/Bosch_CAN_Specification_2.0_1991.pdf` | `bosch/can/current/` |
+| `etsi_ts_102613_v16_0_0_2021_10_smart_cards_uicc_clf_single_wire_protocol_swp` | serial / single-wire (SWP) | `corpus/etsi/swp/current/ETSI_TS_102613_V16.0.0_2021-10_Smart_Cards_UICC_CLF_Single_Wire_Protocol_SWP.pdf` | `etsi/swp/current/` |
+| `smbus_3_3_1_2024_10_20_system_management_bus_specification` | serial (SMBus) | `corpus/smbus/current/SMBus_3.3.1_2024-10-20_System_Management_Bus_Specification.pdf` | `smbus/current/` |
+| `um11732_v3_2022_02_17_i2s_bus_specification` | serial (I2S) | `corpus/nxp/i2s/current/UM11732_v3_2022-02-17_I2S_Bus_Specification.pdf` | `nxp/i2s/current/` |
 
-The three `PDF-VARIANT-DIGESTION` specs above were copied in when SpecForge gained a feature exercising
-them: RISC-V Debug + NVMe (register-field recovery `.2`/`.2c`), I2C (prose-signal capture `.3a`).
+The three register/prose-signal `PDF-VARIANT-DIGESTION` specs (RISC-V Debug + NVMe register-field recovery
+`.2`/`.2c`, I2C prose-signal capture `.3a`) and the four `PDF-VARIANT-DIGESTION.9` serial-protocol specs
+(CAN / SWP / SMBus / I2S — owner-downloaded serial chip-spec class, `2026-06-08`) were copied in to exercise
+the corresponding SpecForge extraction features. The `document_key` is each spec's normalized filename
+(lowercased, `-`/`.`/spaces → `_`); it is confirmed against `generated/source_ir/<key>/` on first ingest.
 
 To add another spec: copy its PDF under `corpus/` mirroring the source library's relative structure, add
 a row here, and git-track it (owner directive `2026-06-07`).
