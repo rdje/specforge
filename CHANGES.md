@@ -1,3 +1,19 @@
+### `PDF-VARIANT-DIGESTION.4a.5` — I2C prose-signal gold (closes `.4a`)
+Measured the prose-signal capture (`.3a`) on the real I2C-bus Specification, closing the `.4a`
+precision-verification subtree. Authored `seed_i2c_signals.json` — the COMPLETE set of I2C-bus physical
+signals (SDA/SCL §3.1.1, Hs-mode SDAH/SCLH §3.6, UFm USDA/USCL §3.2.1), each verified against UM10204's own
+"signals" sections. Added `declared_signal_complete_gold_precision` (document-level precision over the produced
+signal set + named false positives; valid only when the gold enumerates every true signal — the statement-
+scoped scorer can't see over-captures, since a spurious signal is attributed to its own synthesized statement).
+Additive — no extraction change. Measured (`--provider skip`): **recall 1.000** (all 6 genuine signals found,
+source-tolerant) but **precision 6/10 = 0.600** — four over-captures named: ACK/NACK (acknowledge *conditions*
+on SDA, §3.1.6, not wires), DDC (Display Data Channel, a different bus, §4.6), SDR (an I3C rate acronym). The
+gold excludes those with documented reasoning, so they surface as named false positives, pointing the next fix
+("tighten the prose acronym/condition filter") at exactly what to remove. +2 hermetic tests; book section
+("Declared signals — prose capture, perfect recall, leaky precision"); KM card. Full `scripts/run_ci.sh` green;
+kg-bench 151/151. `.4a` (correctness/precision verification) is now complete; next is `.4b` (VLM proposer/
+verifier audit).
+
 ### `PDF-VARIANT-DIGESTION.4a.4` — declared-signal (prose-capture) per-fact eval surface
 The second new eval surface (mirrors `.4a.1`): measure the `.3a` prose-signal capture per fact. `eval.rs`:
 `EvalTask::DeclaredSignal` + `GoldFact::DeclaredSignal {signal, direction?}` + `declared_signal_key` (signal

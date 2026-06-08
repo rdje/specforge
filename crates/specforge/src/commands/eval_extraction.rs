@@ -457,6 +457,43 @@ pub fn run(args: EvalExtractionArgs) -> Result<()> {
         );
     }
 
+    // PDF-VARIANT-DIGESTION.4a.5 — declared-signal document-level precision. The statement-scoped scorer
+    // can't see over-captures (a spurious signal is attributed to its own synthesized statement, not the
+    // labeled one), so when the gold ENUMERATES every true signal (a small fully-specified bus like I2C)
+    // report precision over the produced signal set and name the false positives. Recall is already
+    // surfaced by the document-level fact-recall section below.
+    if items.iter().any(|i| i.task == EvalTask::DeclaredSignal) {
+        let predicted_names: BTreeSet<String> = conformal_input
+            .iter()
+            .filter_map(|(records, _)| match records {
+                TaskRecords::DeclaredSignals(rs) => Some(rs),
+                _ => None,
+            })
+            .flatten()
+            .map(|r| r.signal_name.trim().to_ascii_uppercase())
+            .collect();
+        let (matched, predicted_total, false_positives) =
+            eval::declared_signal_complete_gold_precision(&items, &predicted_names);
+        let precision = if predicted_total > 0 {
+            matched as f64 / predicted_total as f64
+        } else {
+            0.0
+        };
+        println!(
+            "  -- declared-signal surface (complete-gold precision; PDF-VARIANT-DIGESTION.4a.5) --"
+        );
+        println!(
+            "    precision (assumes gold enumerates all signals)  {matched}/{predicted_total} = {precision:.3}"
+        );
+        if !false_positives.is_empty() {
+            println!(
+                "    false positives ({}): {}",
+                false_positives.len(),
+                false_positives.join(", ")
+            );
+        }
+    }
+
     // Per-relation-kind breakdown + MUC near-misses (relation task only).
     let by_kind = eval::score_relations_by_kind(&items, &predicted);
     if !by_kind.is_empty() {

@@ -891,6 +891,40 @@ pub fn index_declared_signal_predictions(
     }
 }
 
+/// Document-level PRECISION for a COMPLETE declared-signal gold (PDF-VARIANT-DIGESTION.4a.5): of the
+/// distinct signal NAMES the extractor produced, how many are in the gold? This is only meaningful when
+/// the gold ENUMERATES EVERY true signal of the document — valid for a small, fully-specified bus (e.g.
+/// I2C: `SDA`/`SCL` + mode variants), but it would miscount legitimate unlabeled signals as false
+/// positives on a doc whose gold is a sample. The statement-scoped precision in
+/// [`score_dataset_source_tolerant`] cannot see these over-captures because a spurious signal is
+/// attributed to its own synthesized statement, not the labeled one. `predicted_signal_names` are the
+/// uppercased names from the produced records. Returns `(matched, predicted_total, false_positive_names)`
+/// with the false positives sorted for a stable report.
+pub fn declared_signal_complete_gold_precision(
+    items: &[EvalItem],
+    predicted_signal_names: &BTreeSet<String>,
+) -> (usize, usize, Vec<String>) {
+    let gold: BTreeSet<String> = items
+        .iter()
+        .filter(|i| i.task == EvalTask::DeclaredSignal)
+        .flat_map(|i| i.gold.iter())
+        .filter_map(|f| match f {
+            GoldFact::DeclaredSignal { signal, .. } => Some(signal.trim().to_ascii_uppercase()),
+            _ => None,
+        })
+        .collect();
+    let matched = predicted_signal_names
+        .iter()
+        .filter(|n| gold.contains(*n))
+        .count();
+    let false_positives: Vec<String> = predicted_signal_names
+        .iter()
+        .filter(|n| !gold.contains(*n))
+        .cloned()
+        .collect();
+    (matched, predicted_signal_names.len(), false_positives)
+}
+
 /// Precision / recall / F1 counts for one task.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct Scorecard {
@@ -2003,6 +2037,71 @@ mod tests {
         assert_eq!(card.tp, 1, "SDA matched");
         assert_eq!(card.fn_count, 1, "SCL missed");
         assert_eq!(card.fp, 1, "VDD spurious");
+    }
+
+    #[test]
+    fn declared_signal_complete_gold_precision_names_false_positives() {
+        // Complete gold = {SDA, SCL}; extractor produced SDA, SCL + two over-captures (ACK, DDC).
+        let item = EvalItem {
+            task: EvalTask::DeclaredSignal,
+            doc_key: "i2c".to_string(),
+            statement_id: "s".to_string(),
+            input_text: String::new(),
+            grounding: vec![],
+            gold: vec![
+                GoldFact::DeclaredSignal {
+                    signal: "SDA".to_string(),
+                    direction: None,
+                },
+                GoldFact::DeclaredSignal {
+                    signal: "SCL".to_string(),
+                    direction: None,
+                },
+            ],
+            label_status: "human_reviewed".to_string(),
+            label_note: String::new(),
+        };
+        let predicted: BTreeSet<String> = ["SDA", "SCL", "ACK", "DDC"]
+            .iter()
+            .map(|s| s.to_string())
+            .collect();
+        let (matched, total, fps) = declared_signal_complete_gold_precision(&[item], &predicted);
+        assert_eq!(
+            (matched, total),
+            (2, 4),
+            "2 of 4 produced names are real signals"
+        );
+        assert_eq!(
+            fps,
+            vec!["ACK".to_string(), "DDC".to_string()],
+            "the two over-captures, sorted"
+        );
+    }
+
+    #[test]
+    fn committed_i2c_signal_seed_loads_and_validates() {
+        // The source-verified I2C prose-signal gold (PDF-VARIANT-DIGESTION.4a.5) must parse, validate, and
+        // enumerate the 6 genuine I2C-bus signals (SDA/SCL + Hs SDAH/SCLH + UFm USDA/USCL).
+        let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("test_data/llm_eval/seed_i2c_signals.json");
+        let items = load_eval_dataset(&path).expect("i2c signal seed loads + validates");
+        assert!(items.iter().all(|i| i.task == EvalTask::DeclaredSignal));
+        let signals: BTreeSet<String> = items
+            .iter()
+            .flat_map(|i| i.gold.iter())
+            .filter_map(|f| match f {
+                GoldFact::DeclaredSignal { signal, .. } => Some(signal.clone()),
+                _ => None,
+            })
+            .collect();
+        let expected: BTreeSet<String> = ["SDA", "SCL", "SDAH", "SCLH", "USDA", "USCL"]
+            .iter()
+            .map(|s| s.to_string())
+            .collect();
+        assert_eq!(
+            signals, expected,
+            "complete enumeration of the I2C-bus signals"
+        );
     }
 
     #[test]

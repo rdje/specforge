@@ -1,0 +1,19 @@
+[
+  {
+    "task": "declared_signal",
+    "doc_key": "um10204_rev7_0_2021_i2c_bus_specification",
+    "statement_id": "i2c_bus_signals",
+    "input_text": "Only two bus lines are required; a serial data line (SDA) and a serial clock line (SCL).",
+    "grounding": [],
+    "gold": [
+      { "fact": "declared_signal", "signal": "SDA" },
+      { "fact": "declared_signal", "signal": "SCL" },
+      { "fact": "declared_signal", "signal": "SDAH" },
+      { "fact": "declared_signal", "signal": "SCLH" },
+      { "fact": "declared_signal", "signal": "USDA" },
+      { "fact": "declared_signal", "signal": "USCL" }
+    ],
+    "label_status": "human_reviewed",
+    "label_note": "COMPLETE enumeration of the I2C-bus physical signals (lines) per UM10204 rev 7.0: SDA/SCL (standard, sec 3.1.1 'SDA and SCL signals', bidirectional), SDAH/SCLH (Hs-mode, sec 3.6 'the SDAH and SCLH signals'), USDA/USCL (UFm, sec 3.2.1 'USDA and USCL signals', unidirectional). Direction omitted: SDA/SCL/SDAH/SCLH are bidirectional (no single Input/Output) and the prose extractor yields none. Deliberately EXCLUDED as non-signals (interpretive boundary, documented for review): ACK/NACK (sec 3.1.6 — protocol conditions ON the SDA line, not separate wires), DDC (sec 4.6 — Display Data Channel, a different bus), SDR (an I3C standard-data-rate acronym). The set is complete, so document-level precision is meaningful here."
+  }
+]

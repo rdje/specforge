@@ -97,11 +97,13 @@ grid-repair demo on a bits-bearing doc; giants' ingest budget; USB 3.2 evid-fail
 
 ## Current frontier
 
-**ACTIVE FRONTIER (`2026-06-08`): `PDF-VARIANT-DIGESTION.4a.5`** — I2C prose-signal gold (source-verified
-SDA/SCL/… from the `corpus/` I2C PDF; measure declared-signal recall + book note). `.4a.1`–`.4a.4` DONE:
-register-field surface measured across two opposite-shaped docs (RISC-V field-name recall 0.588; NVMe
-bit-structure recall 0.931); `.4a.4` added the declared-signal eval surface. The `.2`–`.3b` leaves below are
-DONE (Lever A + B); `.4`–`.8` are the "make the breadth trustworthy" program.
+**ACTIVE FRONTIER (`2026-06-08`): `PDF-VARIANT-DIGESTION.4b`** — automated proposer/verifier VLM AUDIT (re-read
+a bounded random sample of extracted registers/signals against their table IMAGE with the VLM → a corpus-scale
+precision ESTIMATE + flagged-mismatch list). **`.4a` is DONE** (`.4a.1`–`.4a.5`): the register-field surface is
+measured on two opposite-shaped docs (RISC-V field-name recall 0.588; NVMe bit-structure recall 0.931) and the
+declared-signal surface on I2C (recall 1.000 / precision 0.600). Five extraction-fix targets are now quantified
+(RISC-V register-name + bit-graphic; NVMe mnemonic; I2C acronym/condition filter; …). The `.2`–`.3b` leaves
+below are DONE (Lever A + B); `.4`–`.8` are the "make the breadth trustworthy" program.
 
 - `PDF-VARIANT-DIGESTION.2` (Lever A, deterministic strategy) — **DONE**: `synthesize_register_field_tables`
   recovers register-FIELD tables the classifier left `unknown` (header-in-body `Field|Description|Access|
@@ -174,7 +176,7 @@ it further. Priority order ① → ⑤.
 
 - ID: `PDF-VARIANT-DIGESTION.4` · Status: `active` · **① Correctness/precision verification of the broadened
   extraction** (the 95% that is coverage-only). Children:
-  - ID: `PDF-VARIANT-DIGESTION.4a` · Status: `active` · Goal: sample-gold the new surfaces (register fields,
+  - ID: `PDF-VARIANT-DIGESTION.4a` · Status: `done` (`2026-06-08`; all children `.4a.1`–`.4a.5` done) · Goal: sample-gold the new surfaces (register fields,
     prose signals) on diverse in-scope docs whose PDFs are git-tracked in `corpus/` (so the gold is
     reproducible + independently verifiable); score per-fact with WIRE-BASED-100 rigor. **SPLIT `2026-06-08`:**
     the eval scorer (`eval.rs` / `commands/eval_extraction.rs`) has NO register-field or declared-signal task
@@ -226,8 +228,16 @@ it further. Priority order ① → ⑤.
       (gold↔record key match incl. name-only/direction discrimination; closed-world scoring). full
       `run_ci.sh` green (1371); kg-bench 151/151. Book note + the live I2C measurement land with `.4a.5`
       (the surface is latent until a gold ships, mirroring `.4a.1`).
-    - ID: `PDF-VARIANT-DIGESTION.4a.5` · Status: `pending` · Goal: I2C prose-signal gold — independently
+    - ID: `PDF-VARIANT-DIGESTION.4a.5` · Status: `done` (`2026-06-08`) · Goal: I2C prose-signal gold — independently
       source-verified gold for the I2C prose signals (SDA/SCL/…) from the `corpus/` PDF; measure per-fact P/R/F1.
+      **DONE (closes `.4a`):** authored `seed_i2c_signals.json` — the COMPLETE set of I2C-bus signals
+      (SDA/SCL §3.1.1, Hs SDAH/SCLH §3.6, UFm USDA/USCL §3.2.1), each verified against UM10204's "signals"
+      sections. Added `declared_signal_complete_gold_precision` (document-level precision over the produced
+      signal set + named false positives; valid only for a complete-enumeration gold — additive, no extraction
+      change). **Measured (`--provider skip`): recall 1.000** (all 6 genuine signals, source-tolerant) but
+      **precision 6/10 = 0.600** — 4 over-captures named: ACK/NACK (conditions on SDA, §3.1.6), DDC (different
+      bus, §4.6), SDR (I3C rate acronym). +2 hermetic tests; book section (declared signals) + KM card. Fix
+      leaf: tighten the prose acronym/condition filter (now quantified). Full `run_ci.sh` green; kg-bench green.
   - ID: `PDF-VARIANT-DIGESTION.4b` · Status: `pending` · Goal: automated proposer/verifier AUDIT — re-read a
     random sample of extracted registers/signals against their table IMAGE with the VLM (the `.2b`
     consistency gate run as an audit) → a corpus-scale precision ESTIMATE + a flagged-mismatch list. Accept:

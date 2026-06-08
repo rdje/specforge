@@ -8,6 +8,35 @@
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 - adapter target: `.isf` (sole adapter); `.fsm`/HDL are out of scope — FSMGen consumes `.isf` and owns scheduling/`.fsm`/HDL downstream (since `ISF-ONLY-CONSOLIDATION`, `2026-05-18`)
 
+## 2026-06-08 — I2C prose-signal gold: recall-perfect, precision-leaky (PDF-VARIANT-DIGESTION.4a.5)
+
+Closes `.4a`. Measures the prose-signal capture (`.3a`) on the real I2C bus. The genuine I2C-bus signals were
+read straight from UM10204's own "signals" sections: SDA/SCL (§3.1.1, bidirectional), SDAH/SCLH (Hs-mode,
+§3.6), USDA/USCL (UFm, §3.2.1) — six in total, the COMPLETE physical-signal set of a two-wire bus with two
+mode variants. Gold `seed_i2c_signals.json` enumerates exactly those six (direction omitted: SDA/SCL/SDAH/SCLH
+are bidirectional and the extractor yields none).
+
+Result (`--provider skip`, verified-current persisted evidence): the extractor produced 10 signal names —
+recall **1.000** (all six real signals; source-tolerant) but precision **6/10 = 0.600**. The four false
+positives are ACK, NACK (acknowledge/not-acknowledge *conditions* the transmitter makes on the SDA line, §3.1.6
+— not separate wires), DDC (Display Data Channel, a different bus, §4.6), and SDR (an I3C "standard data rate"
+acronym). The gold deliberately excludes those, with the reasoning recorded in the seed's label note, so they
+surface as named false positives. So prose capture is greedy: perfect recall, leaky precision on uppercase
+acronyms + protocol conditions — a quantified fix target (tighten the acronym/condition filter).
+
+Implementation note (why a dedicated precision helper): the statement-scoped scorer reports `fp=0` here
+because each spurious signal is attributed to its OWN synthesized declaration statement, not the one labelled
+sentence. So `declared_signal_complete_gold_precision(items, predicted_names) -> (matched, total, fp_names)`
+computes precision over the produced signal SET and names the false positives — valid ONLY when the gold
+enumerates every true signal (a small, fully-specified bus), which the surface labels explicitly. Recall is
+covered by the generic document-level fact-recall + source-tolerant views.
+
+Validation: +2 hermetic tests (precision helper names sorted false positives; committed I2C seed loads +
+enumerates the 6 signals); fmt + warning-deny clippy clean; full lib suite 1371 → 1373; `kg-bench` 151/151;
+full `scripts/run_ci.sh` green. `.4a` complete: register-field surface measured on RISC-V Debug (0.588) + NVMe
+(0.931), declared-signal surface on I2C (recall 1.000 / precision 0.600). Five extraction-fix targets now
+quantified across the three docs. Runtime stays PDF-agnostic — concrete names only in the gold + tests.
+
 ## 2026-06-08 — declared-signal eval surface (PDF-VARIANT-DIGESTION.4a.4)
 
 The second new eval surface, mirroring `.4a.1` (register fields): measure the prose-signal capture (`.3a`,
