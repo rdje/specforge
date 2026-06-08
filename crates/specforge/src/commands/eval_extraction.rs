@@ -393,6 +393,41 @@ pub fn run(args: EvalExtractionArgs) -> Result<()> {
         }
     }
 
+    // PDF-VARIANT-DIGESTION.4a.2 — register-field "measure & surface" view: the strict per-fact key
+    // (register|field|offset|width) is uninformative on docs whose register-field extraction recovers
+    // field NAMES but not the owning register name (synthetic) or bit extent. So report field-NAME recall
+    // (the part that works) SEPARATELY from the two completeness gaps, honestly, instead of one degenerate
+    // ~0 headline. Register records are deterministic, so they are the same across providers.
+    if items.iter().any(|i| i.task == EvalTask::RegisterField) {
+        let mut reg_records: Vec<RegisterRecord> = Vec::new();
+        for (records, _) in &conformal_input {
+            if let TaskRecords::RegisterFields(rs) = records {
+                reg_records.extend(rs.iter().cloned());
+            }
+        }
+        let field_names: BTreeSet<String> = reg_records
+            .iter()
+            .flat_map(|r| r.fields.iter())
+            .map(|f| f.field_name.trim().to_ascii_uppercase())
+            .collect();
+        let (found, total) = eval::register_field_name_recall(&items, &field_names);
+        let (named, total_regs, with_bits, total_fields) =
+            eval::register_field_completeness(&reg_records);
+        let name_recall = if total > 0 {
+            found as f64 / total as f64
+        } else {
+            0.0
+        };
+        println!("  -- register-field surface (measure & surface; PDF-VARIANT-DIGESTION.4a.2) --");
+        println!("    field-name recall (register-agnostic)   {found}/{total} = {name_recall:.3}");
+        println!(
+            "    register-name association gap           {named}/{total_regs} extracted registers have a real (non-synthetic) name"
+        );
+        println!(
+            "    bit-extent completeness gap             {with_bits}/{total_fields} extracted fields carry a bit position"
+        );
+    }
+
     // Per-relation-kind breakdown + MUC near-misses (relation task only).
     let by_kind = eval::score_relations_by_kind(&items, &predicted);
     if !by_kind.is_empty() {

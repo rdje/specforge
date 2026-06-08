@@ -97,9 +97,10 @@ grid-repair demo on a bits-bearing doc; giants' ingest budget; USB 3.2 evid-fail
 
 ## Current frontier
 
-**ACTIVE FRONTIER (`2026-06-08`): `PDF-VARIANT-DIGESTION.4a.2`** — RISC-V Debug register-field gold (FRESH
-re-ingest, per-fact P/R/F1, source-verified). `.4a.1` (register-field per-fact eval surface) is DONE. The
-`.2`–`.3b` leaves below are DONE (Lever A + B); `.4`–`.8` are the "make the breadth trustworthy" program.
+**ACTIVE FRONTIER (`2026-06-08`): `PDF-VARIANT-DIGESTION.4a.3`** — NVMe register-field gold (NVMe DID capture
+`bit_width` per `.2c`, so it yields a meaningful strict per-fact P/R/F1, unlike RISC-V Debug). `.4a.1` (eval
+surface) + `.4a.2` (RISC-V Debug gold: field-name recall 0.588, register-name + bit gaps surfaced) are DONE.
+The `.2`–`.3b` leaves below are DONE (Lever A + B); `.4`–`.8` are the "make the breadth trustworthy" program.
 
 - `PDF-VARIANT-DIGESTION.2` (Lever A, deterministic strategy) — **DONE**: `synthesize_register_field_tables`
   recovers register-FIELD tables the classifier left `unknown` (header-in-body `Field|Description|Access|
@@ -186,10 +187,20 @@ it further. Priority order ① → ⑤.
       `extract_on_copy` branch reading EvidenceIR `register_records` (deterministic, like the SWD surfaces).
       Acceptance: additive (no extraction-behavior change); gold↔record key-match + closed-world scoring
       hermetic tests; full `run_ci.sh` green; APB/AHB/AXI/SWD eval unaffected.
-    - ID: `PDF-VARIANT-DIGESTION.4a.2` · Status: `pending` · Goal: RISC-V Debug register-field gold — author an
+    - ID: `PDF-VARIANT-DIGESTION.4a.2` · Status: `done` (`2026-06-08`) · Goal: RISC-V Debug register-field gold — author an
       independently source-verified gold for a bounded set of RISC-V Debug registers (e.g. `dmcontrol`,
       `dmstatus`, `abstractcs`) from the `corpus/` PDF, FRESH re-ingest (`DOCLING_DEVICE=cpu`), measure per-fact
       P/R/F1. Acceptance: each gold field checked against the source table (no faking, [[feedback_scoring_rigor]]).
+      **DONE (measure & surface, owner directive):** authored `seed_riscv_debug_registers.json` — `dmstatus`
+      (20 fields) + `dmcontrol` (14 fields) = 34, bit positions transcribed from the spec's bit-layout
+      graphics (§3.14.1/3.14.2, RISC-V Debug 1.0). FRESH re-ingest + evidence rebuild. Added a register-agnostic
+      `register_field_name_recall` + `register_field_completeness` (additive measurement, no extraction change).
+      **Measured: field-name recall 20/34 = 0.588** (`dmcontrol` 14/14, `dmstatus` 6/20 — docling dropped the
+      middle page-fragment of the page-split `dmstatus` table); register-name association 0/60 (synthetic names);
+      bit-extent completeness 0/179 (bits live in the graphic, not the field table) → strict per-fact 0.000,
+      honestly surfaced not hidden. 14 misses independently verified as REAL (not gold-spelling drift). +3
+      hermetic tests; book section in `quality/extraction-eval.md`. Gaps → candidate fix leaves (register-name
+      heading association; bit-layout-graphic parsing).
     - ID: `PDF-VARIANT-DIGESTION.4a.3` · Status: `pending` · Goal: NVMe register-field gold — same rigor on a
       diverse vendor/layout (NVMe controller registers) from the `corpus/` PDF; measure per-fact P/R/F1.
     - ID: `PDF-VARIANT-DIGESTION.4a.4` · Status: `pending` · Goal: declared-signal (prose-capture) per-fact EVAL

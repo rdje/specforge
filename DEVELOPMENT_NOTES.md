@@ -8,6 +8,41 @@
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 - adapter target: `.isf` (sole adapter); `.fsm`/HDL are out of scope — FSMGen consumes `.isf` and owns scheduling/`.fsm`/HDL downstream (since `ISF-ONLY-CONSOLIDATION`, `2026-05-18`)
 
+## 2026-06-08 — RISC-V Debug register-field gold: measure & surface (PDF-VARIANT-DIGESTION.4a.2)
+
+Owner directive (when the extraction reality surfaced): **measure & surface the gap** — report field-NAME
+recall separately from the register-name-association + bit-extent completeness gaps, no extraction change in
+this leaf. So `.4a.2` is gold + measurement only.
+
+What the source actually looks like (RISC-V Debug Spec 1.0, §1.3.3 "Register Definition Format"): each
+register is a bit-layout *graphic* (bit indices + field + width) FOLLOWED by a `Field | Description | Access |
+Reset` table. The current extractor reads the per-field table (→ field names + access) but not the graphic
+(→ no bit positions) and not the heading above it (→ no real register name). Docling also splits a
+multi-page register's field table into one record per page fragment.
+
+Deliverables:
+- Gold `crates/specforge/test_data/llm_eval/seed_riscv_debug_registers.json` — `dmstatus` (20 named fields)
+  + `dmcontrol` (14), bit positions transcribed by hand from the spec's bit-layout graphics (reserved `0`
+  fields excluded). Independently verified against the source, not the extractor's output. `human_reviewed`.
+- `eval.rs` (additive, pure, tested): `register_field_name_recall(items, extracted_field_names) -> (found,
+  total)` (register-agnostic + bit-agnostic — credits a gold field whose NAME appears anywhere in the
+  extracted field set) and `register_field_completeness(records) -> (named_regs, total_regs, fields_with_bits,
+  total_fields)` (named = register_name not prefixed with SpecForge's own `register_table_` placeholder).
+- `commands/eval_extraction.rs`: a register-field "measure & surface" block printing the three numbers when
+  RegisterField items are present, reading the deterministic register records out of the stashed run.
+
+Measured fresh (re-ingest + evidence rebuild, `--provider skip`): field-name recall **20/34 = 0.588**
+(`dmcontrol` 14/14, `dmstatus` 6/20 — the dropped middle page fragment); register-name association **0/60**;
+bit-extent completeness **0/179**; strict per-fact **0.000**. The 14 misses were cross-checked against the
+extracted field set to confirm they are genuine recall misses, not gold-spelling mismatches (the apparent
+"near matches" were spurious single-letter fragments / different fields). Gaps → two candidate fix leaves
+(register-name heading association; bit-layout-graphic parsing) for a later tree, not this measurement leaf.
+
+Validation: +3 hermetic tests; fmt + warning-deny clippy clean; `kg-bench` 151/151; full `scripts/run_ci.sh`
+green. Doctrine note: the runtime stays PDF-agnostic — the measurement fns take names as parameters; the only
+concrete RISC-V names live in the gold answer-key (`test_data/`) and in `#[cfg(test)]` fixtures, never in
+runtime logic (the ADR-0006 `signal_stop_words_holds_no_chip_spec_vocabulary` guard is intact).
+
 ## 2026-06-08 — register-field per-fact eval surface (PDF-VARIANT-DIGESTION.4a.1)
 
 Context: the whole-corpus sweep proved breadth (1,908 signals / 2,953 registers / 10,632 fields / 3,077

@@ -26,6 +26,12 @@ DOCLING_DEVICE=cpu cargo run -p specforge -- ingest <repo PDF path>
 | `ihi0022_l_2025_08_amba_axi_protocol_specification` | wire-bus (AXI) | `corpus/arm/amba/core/axi/current/IHI0022_L_2025-08_AMBA_AXI_Protocol_Specification.pdf` | `arm/amba/core/axi/current/` |
 | `ihi0051_b_2021_04_amba_axi_stream_protocol_specification` | wire-bus (AXI-Stream) | `corpus/arm/amba/supporting/axi-stream/current/IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf` | `arm/amba/supporting/axi-stream/current/` |
 | `ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification` | serial-debug (SWD/ADI) | `corpus/arm/debug/interfaces/adi/current/IHI0074_A_2017-03-09_Arm_Debug_Interface_v6_Architecture_Specification.pdf` | `arm/debug/interfaces/adi/current/` |
+| `1_0_risc_v_debug_specification` | register/debug (RISC-V Debug) | `corpus/risc-v/debug/current/1.0_RISC_V_Debug_Specification.pdf` | `risc-v/debug/current/` |
+| `nvme_base_specification_2_0a_2021_07_26` | register (NVMe) | `corpus/nvm-express/nvme/current/NVMe-Base-Specification-2.0a-2021.07.26.pdf` | `nvm-express/nvme/current/` |
+| `um10204_rev7_0_2021_i2c_bus_specification` | prose-signal (I2C) | `corpus/nxp/i2c/current/UM10204_Rev7.0_2021_I2C-bus_Specification.pdf` | `nxp/i2c/current/` |
+
+The three `PDF-VARIANT-DIGESTION` specs above were copied in when SpecForge gained a feature exercising
+them: RISC-V Debug + NVMe (register-field recovery `.2`/`.2c`), I2C (prose-signal capture `.3a`).
 
 To add another spec: copy its PDF under `corpus/` mirroring the source library's relative structure, add
 a row here, and git-track it (owner directive `2026-06-07`).

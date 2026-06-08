@@ -1,0 +1,58 @@
+[
+  {
+    "task": "register_field",
+    "doc_key": "1_0_risc_v_debug_specification",
+    "statement_id": "dmstatus_0x11",
+    "input_text": "Debug Module Status (dmstatus, at 0x11)",
+    "grounding": [],
+    "gold": [
+      { "fact": "register_field", "register": "dmstatus", "field": "version", "bits_high": 3, "bits_low": 0 },
+      { "fact": "register_field", "register": "dmstatus", "field": "confstrptrvalid", "bits_high": 4, "bits_low": 4 },
+      { "fact": "register_field", "register": "dmstatus", "field": "hasresethaltreq", "bits_high": 5, "bits_low": 5 },
+      { "fact": "register_field", "register": "dmstatus", "field": "authbusy", "bits_high": 6, "bits_low": 6 },
+      { "fact": "register_field", "register": "dmstatus", "field": "authenticated", "bits_high": 7, "bits_low": 7 },
+      { "fact": "register_field", "register": "dmstatus", "field": "anyhalted", "bits_high": 8, "bits_low": 8 },
+      { "fact": "register_field", "register": "dmstatus", "field": "allhalted", "bits_high": 9, "bits_low": 9 },
+      { "fact": "register_field", "register": "dmstatus", "field": "anyrunning", "bits_high": 10, "bits_low": 10 },
+      { "fact": "register_field", "register": "dmstatus", "field": "allrunning", "bits_high": 11, "bits_low": 11 },
+      { "fact": "register_field", "register": "dmstatus", "field": "anyunavail", "bits_high": 12, "bits_low": 12 },
+      { "fact": "register_field", "register": "dmstatus", "field": "allunavail", "bits_high": 13, "bits_low": 13 },
+      { "fact": "register_field", "register": "dmstatus", "field": "anynonexistent", "bits_high": 14, "bits_low": 14 },
+      { "fact": "register_field", "register": "dmstatus", "field": "allnonexistent", "bits_high": 15, "bits_low": 15 },
+      { "fact": "register_field", "register": "dmstatus", "field": "anyresumeack", "bits_high": 16, "bits_low": 16 },
+      { "fact": "register_field", "register": "dmstatus", "field": "allresumeack", "bits_high": 17, "bits_low": 17 },
+      { "fact": "register_field", "register": "dmstatus", "field": "anyhavereset", "bits_high": 18, "bits_low": 18 },
+      { "fact": "register_field", "register": "dmstatus", "field": "allhavereset", "bits_high": 19, "bits_low": 19 },
+      { "fact": "register_field", "register": "dmstatus", "field": "impebreak", "bits_high": 22, "bits_low": 22 },
+      { "fact": "register_field", "register": "dmstatus", "field": "stickyunavail", "bits_high": 23, "bits_low": 23 },
+      { "fact": "register_field", "register": "dmstatus", "field": "ndmresetpending", "bits_high": 24, "bits_low": 24 }
+    ],
+    "label_status": "human_reviewed",
+    "label_note": "RISC-V Debug Spec 1.0 (Ratified 2025-02-21), section 3.14.1; bit positions transcribed from the register bit-layout graphic; access is R for every field (excluded from identity). 20 named fields; bits 20:21 and 25:31 are reserved (`0`) and intentionally not gold."
+  },
+  {
+    "task": "register_field",
+    "doc_key": "1_0_risc_v_debug_specification",
+    "statement_id": "dmcontrol_0x10",
+    "input_text": "Debug Module Control (dmcontrol, at 0x10)",
+    "grounding": [],
+    "gold": [
+      { "fact": "register_field", "register": "dmcontrol", "field": "dmactive", "bits_high": 0, "bits_low": 0 },
+      { "fact": "register_field", "register": "dmcontrol", "field": "ndmreset", "bits_high": 1, "bits_low": 1 },
+      { "fact": "register_field", "register": "dmcontrol", "field": "clrresethaltreq", "bits_high": 2, "bits_low": 2 },
+      { "fact": "register_field", "register": "dmcontrol", "field": "setresethaltreq", "bits_high": 3, "bits_low": 3 },
+      { "fact": "register_field", "register": "dmcontrol", "field": "clrkeepalive", "bits_high": 4, "bits_low": 4 },
+      { "fact": "register_field", "register": "dmcontrol", "field": "setkeepalive", "bits_high": 5, "bits_low": 5 },
+      { "fact": "register_field", "register": "dmcontrol", "field": "hartselhi", "bits_high": 15, "bits_low": 6 },
+      { "fact": "register_field", "register": "dmcontrol", "field": "hartsello", "bits_high": 25, "bits_low": 16 },
+      { "fact": "register_field", "register": "dmcontrol", "field": "hasel", "bits_high": 26, "bits_low": 26 },
+      { "fact": "register_field", "register": "dmcontrol", "field": "ackunavail", "bits_high": 27, "bits_low": 27 },
+      { "fact": "register_field", "register": "dmcontrol", "field": "ackhavereset", "bits_high": 28, "bits_low": 28 },
+      { "fact": "register_field", "register": "dmcontrol", "field": "hartreset", "bits_high": 29, "bits_low": 29 },
+      { "fact": "register_field", "register": "dmcontrol", "field": "resumereq", "bits_high": 30, "bits_low": 30 },
+      { "fact": "register_field", "register": "dmcontrol", "field": "haltreq", "bits_high": 31, "bits_low": 31 }
+    ],
+    "label_status": "human_reviewed",
+    "label_note": "RISC-V Debug Spec 1.0 (Ratified 2025-02-21), section 3.14.2; bit positions transcribed from the register bit-layout graphic. hartsello = bits 25:16 (10b), hartselhi = bits 15:6 (10b); all others single-bit. 14 named fields; access is per-field (WARZ/W1/WARL/R-W), excluded from identity."
+  }
+]

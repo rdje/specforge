@@ -1,3 +1,23 @@
+### `PDF-VARIANT-DIGESTION.4a.2` — RISC-V Debug register-field gold (measure & surface)
+First precision number for the broadened register-field surface, on the real RISC-V Debug Spec 1.0 (owner
+directive: *measure & surface the gap*, no extraction change). Authored `seed_riscv_debug_registers.json` —
+`dmstatus` (20 fields) + `dmcontrol` (14) = 34, with bit positions transcribed independently from the spec's
+own bit-layout graphics (§3.14.1/3.14.2), not from the extractor's output. Re-ingested the corpus PDF fresh
+(`DOCLING_DEVICE=cpu`) and rebuilt evidence. Added two additive, pure measurement helpers (no extraction
+change): `register_field_name_recall` (register-agnostic, bit-agnostic — the "what works" view) and
+`register_field_completeness` (the two gaps), surfaced in `eval-extraction`'s register-field block.
+
+Measured (deterministic, `--provider skip`): **field-name recall 20/34 = 0.588** (`dmcontrol` 14/14 = 100%;
+`dmstatus` 6/20 — docling dropped the middle page-fragment of the page-split `dmstatus` table); **register-name
+association 0/60** (the extractor reads the per-field table but not the heading above it → synthetic
+`register_table_*` names); **bit-extent completeness 0/179** (bit positions live in the layout graphic, not the
+field table). The strict per-fact `register|field|offset|width` score is therefore **0.000** — surfaced
+honestly via the decomposition rather than hidden, so the `0` reads as "names mostly there; fix register-name
+association + bit-graphic parsing next." The 14 field-name misses were independently verified as REAL
+(not gold-spelling drift). +3 hermetic tests (name-recall register/bit-agnostic; completeness synthetic-name +
+missing-bit counts; committed-seed loads/validates 34 fields). User-friendly book section added to
+`quality/extraction-eval.md`. Full `scripts/run_ci.sh` green; kg-bench 151/151.
+
 ### `PDF-VARIANT-DIGESTION.4a.1` — register-field per-fact eval surface
 Precision-verification phase (① of "make the broadened breadth trustworthy"). `.4a` was split because the
 eval scorer had no register-field/declared-signal task — a real lower-level dependency. `.4a.1` adds the

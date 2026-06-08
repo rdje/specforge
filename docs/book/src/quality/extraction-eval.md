@@ -131,3 +131,50 @@ agent-drafted pending human review.
 
 *Authoritative tracking:* `docs/tasks/TEMPORAL-RULE-EVAL.md` (the `.3` node records the
 producer-representation calibration against the 153 real APB temporal rules).
+
+## Register fields — measuring the breadth, and surfacing the gaps honestly
+
+As SpecForge learned to digest more kinds of chip-spec PDFs, it began recovering **register
+fields** — the named bit-fields inside a register, like `dmcontrol.haltreq` at bit 31. That is
+new ground far beyond the AMBA buses, and the honest question is: *how much of it is actually
+right?* So register fields became the eval's fourth measured surface.
+
+A register field's *identity* here is the full tuple — **owning register, field name, and bit
+extent** (offset + width). A `[31:31]` range and an `offset 31, width 1` form are normalised to
+the same identity, so a field scores as correct only when its register, name, **and** bit
+position all match. (Access type — `R`, `WARL`, `W1`, … — is deliberately left out of identity,
+because every vendor writes it differently and it is metadata, not the field's shape.)
+
+That strict bar immediately taught us something important, and rather than hide it behind a
+single number, the eval **decomposes** the register-field result into the part that works and the
+gaps it does not:
+
+```text
+specforge eval-extraction crates/specforge/test_data/llm_eval/seed_riscv_debug_registers.json
+  -- register-field surface (measure & surface) --
+    field-name recall (register-agnostic)   20/34 = 0.588
+    register-name association gap            0/60 extracted registers have a real (non-synthetic) name
+    bit-extent completeness gap              0/179 extracted fields carry a bit position
+```
+
+Read that top to bottom. On the real **RISC-V Debug Specification 1.0**, SpecForge recovers the
+field *names* well — **20 of 34** gold fields across the `dmstatus` and `dmcontrol` registers,
+which is **all 14 of `dmcontrol`** and 6 of `dmstatus`'s 20 (the spec splits `dmstatus`'s field
+table across three pages, and the PDF reader dropped the middle page's worth of rows — a real,
+located recall miss, not a mystery). But two things it does **not** yet recover: the register's
+real *name* (it reads the per-field table but not the heading above it, so every register is
+labelled with a placeholder like `register_table_0026`), and each field's *bit position* (those
+live in a bit-layout *graphic* above the table, which the reader doesn't parse). Because the
+strict identity needs all three, the per-fact precision/recall on this document is **0.000** — and
+that is the honest truth, not a failure of the eval. The decomposition is what makes the `0.000`
+*useful*: it says "the names are mostly there; the register association and the bit positions are
+the two things to fix next," instead of a single demoralising zero that hides where the value is.
+
+The gold is **transcribed independently from the spec's own register definitions** (the bit
+positions are read straight from each register's bit-layout graphic in the PDF, field by field),
+so it grades the extractor against the source of truth, never against the extractor's own output.
+This is the same discipline the AMBA buses are held to — measure first, per fact, no faking —
+applied to the much wider world of register-bearing specifications.
+
+*Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.4a.1` added the register-field
+eval surface; `.4a.2` authored the RISC-V Debug gold and recorded this measurement).

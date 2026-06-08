@@ -707,6 +707,65 @@ pub fn index_register_field_predictions(records: &[RegisterRecord], into: &mut P
     }
 }
 
+/// Register-field NAME recall (PDF-VARIANT-DIGESTION.4a.2) — register-agnostic and bit-agnostic: of the gold
+/// register-field NAMES, how many appear among the extracted field names anywhere in the document? This is
+/// the honest "what works" view for docs where the extractor recovers field names but not their owning
+/// register name (synthetic) or bit extent (both surfaced separately as completeness gaps), so the strict
+/// `register|field|offset|width` per-fact score is uninformative. `extracted_field_names` are uppercased
+/// field names from the produced `RegisterRecord`s. Returns `(found, total)`; a gold field counts once per
+/// `(register, field)` gold entry. Non-`RegisterField` items are ignored.
+pub fn register_field_name_recall(
+    items: &[EvalItem],
+    extracted_field_names: &BTreeSet<String>,
+) -> (usize, usize) {
+    let mut found = 0usize;
+    let mut total = 0usize;
+    for item in items {
+        if item.task != EvalTask::RegisterField {
+            continue;
+        }
+        for fact in &item.gold {
+            if let GoldFact::RegisterField { field, .. } = fact {
+                total += 1;
+                if extracted_field_names.contains(&field.trim().to_ascii_uppercase()) {
+                    found += 1;
+                }
+            }
+        }
+    }
+    (found, total)
+}
+
+/// Register-field completeness gaps for the "measure & surface" report (PDF-VARIANT-DIGESTION.4a.2): how
+/// many produced registers carry a real (non-synthetic) name, and how many produced fields carry any bit
+/// position. The table synthesizer assigns the placeholder name `register_<table_id>` (which begins with
+/// `register_table_`) when it cannot associate a register name from a heading — so a name with that prefix
+/// is the unresolved register-name-association gap. Returns
+/// `(named_registers, total_registers, fields_with_bits, total_fields)`.
+pub fn register_field_completeness(records: &[RegisterRecord]) -> (usize, usize, usize, usize) {
+    let total_registers = records.len();
+    let named_registers = records
+        .iter()
+        .filter(|r| !r.register_name.starts_with("register_table_"))
+        .count();
+    let mut total_fields = 0usize;
+    let mut fields_with_bits = 0usize;
+    for r in records {
+        for f in &r.fields {
+            total_fields += 1;
+            if f.bits_high.is_some() || f.bits_low.is_some() || f.bit_width.is_some() {
+                fields_with_bits += 1;
+            }
+        }
+    }
+    (
+        named_registers,
+        total_registers,
+        fields_with_bits,
+        total_fields,
+    )
+}
+
 /// Precision / recall / F1 counts for one task.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct Scorecard {
@@ -1508,6 +1567,135 @@ mod tests {
         assert_eq!(card.tp, 1, "DMACTIVE matched");
         assert_eq!(card.fn_count, 1, "NDMRESET missed");
         assert_eq!(card.fp, 1, "HARTSELLO spurious");
+    }
+
+    #[test]
+    fn register_field_name_recall_is_register_and_bit_agnostic() {
+        // Gold: dmcontrol.{haltreq, dmactive} + dmstatus.{authbusy}. Extracted (synthetic register name,
+        // no bits): HALTREQ, DMACTIVE present; AUTHBUSY missing. Name recall = 2/3, register/bits ignored.
+        let item_ctrl = EvalItem {
+            task: EvalTask::RegisterField,
+            doc_key: "d".to_string(),
+            statement_id: "s".to_string(),
+            input_text: String::new(),
+            grounding: vec![],
+            gold: vec![
+                GoldFact::RegisterField {
+                    register: "dmcontrol".to_string(),
+                    field: "haltreq".to_string(),
+                    bits_high: Some(31),
+                    bits_low: Some(31),
+                    bit_width: None,
+                },
+                GoldFact::RegisterField {
+                    register: "dmcontrol".to_string(),
+                    field: "dmactive".to_string(),
+                    bits_high: Some(0),
+                    bits_low: Some(0),
+                    bit_width: None,
+                },
+            ],
+            label_status: "human_reviewed".to_string(),
+            label_note: String::new(),
+        };
+        let item_stat = EvalItem {
+            task: EvalTask::RegisterField,
+            doc_key: "d".to_string(),
+            statement_id: "s2".to_string(),
+            input_text: String::new(),
+            grounding: vec![],
+            gold: vec![GoldFact::RegisterField {
+                register: "dmstatus".to_string(),
+                field: "authbusy".to_string(),
+                bits_high: Some(6),
+                bits_low: Some(6),
+                bit_width: None,
+            }],
+            label_status: "human_reviewed".to_string(),
+            label_note: String::new(),
+        };
+        // A non-register item must be ignored by the recall.
+        let other = EvalItem {
+            task: EvalTask::ActorSignalRelation,
+            doc_key: "d".to_string(),
+            statement_id: "s3".to_string(),
+            input_text: String::new(),
+            grounding: vec![],
+            gold: vec![GoldFact::Relation {
+                actor: "Manager".to_string(),
+                relation: "drives".to_string(),
+                signal: "HTRANS".to_string(),
+            }],
+            label_status: "human_reviewed".to_string(),
+            label_note: String::new(),
+        };
+        let extracted: BTreeSet<String> = ["HALTREQ", "DMACTIVE", "NDMRESET"]
+            .iter()
+            .map(|s| s.to_string())
+            .collect();
+        let (found, total) = register_field_name_recall(&[item_ctrl, item_stat, other], &extracted);
+        assert_eq!(
+            (found, total),
+            (2, 3),
+            "haltreq+dmactive found, authbusy missed; relation ignored"
+        );
+    }
+
+    #[test]
+    fn register_field_completeness_counts_synthetic_names_and_missing_bits() {
+        // One real-named register with bits, one synthetic-named register without bits.
+        let real = RegisterRecord {
+            register_id: "r1".to_string(),
+            register_name: "dmcontrol".to_string(),
+            offset_address: None,
+            size_bits: None,
+            fields: vec![register_field("dmactive", Some(0), Some(0), Some(1))],
+            supporting_statement_ids: vec![],
+            automation_confidence: AutomationConfidence::Medium,
+        };
+        let synthetic = RegisterRecord {
+            register_id: "r2".to_string(),
+            register_name: "register_table_0026".to_string(),
+            offset_address: None,
+            size_bits: None,
+            fields: vec![
+                register_field("haltreq", None, None, None),
+                register_field("resumereq", None, None, None),
+            ],
+            supporting_statement_ids: vec![],
+            automation_confidence: AutomationConfidence::Medium,
+        };
+        let (named, total_regs, with_bits, total_fields) =
+            register_field_completeness(&[real, synthetic]);
+        assert_eq!(named, 1, "only dmcontrol has a real (non-synthetic) name");
+        assert_eq!(total_regs, 2);
+        assert_eq!(with_bits, 1, "only dmactive carries a bit position");
+        assert_eq!(total_fields, 3);
+    }
+
+    #[test]
+    fn committed_riscv_register_seed_loads_and_validates() {
+        // The source-verified RISC-V Debug register-field gold (PDF-VARIANT-DIGESTION.4a.2) must parse,
+        // validate (every gold fact is a RegisterField for the register_field task), and cover dmstatus +
+        // dmcontrol with their full field counts (20 + 14 = 34).
+        let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("test_data/llm_eval/seed_riscv_debug_registers.json");
+        let items = load_eval_dataset(&path).expect("riscv register seed loads + validates");
+        assert_eq!(items.len(), 2, "two registers (dmstatus, dmcontrol)");
+        assert!(items.iter().all(|i| i.task == EvalTask::RegisterField));
+        let total_fields: usize = items.iter().map(|i| i.gold.len()).sum();
+        assert_eq!(total_fields, 34, "20 dmstatus + 14 dmcontrol gold fields");
+        // every gold fact is a RegisterField on a real (non-synthetic) register name
+        for item in &items {
+            for fact in &item.gold {
+                match fact {
+                    GoldFact::RegisterField { register, .. } => {
+                        assert!(!register.starts_with("register_table_"))
+                    }
+                    other => panic!("unexpected gold fact: {other:?}"),
+                }
+            }
+        }
     }
 
     #[test]
