@@ -1,3 +1,23 @@
+### `PDF-VARIANT-DIGESTION.9.2` — CAN 2.0 honest baseline: a genuine under-extracted serial spec
+Ingested CAN 2.0 (`DOCLING_DEVICE=cpu`; 72 pages, 98 visual assets, `ready`, 0 residuals,
+`document_key=bosch_can_specification_2_0_1991`), built EvidenceIR (269 anchors / 751 statements / 98 visual /
+0 actor-signal relations), and validated.
+
+- **Baseline:** the deterministic pipeline yields **0 signals / 0 registers / 0 relations / 0 signal
+  constraints** on CAN — 12 narrative conditional rules, 19 partially-structured prose residuals, 98 un-enriched
+  figures. The `.5a`/`.5c` machinery diagnoses this correctly: `document_class: guide` BUT front-matter
+  `document_type_declared: specification` → ⚠ **under-extracted spec** (route to the VLM/prose frontier, not a
+  true guide); the class-aware completeness gauge reports `not applicable` (guide).
+- **Honesty guardrail confirmed the facts ARE present** in CAN's prose (so this is genuine under-extraction, not
+  an empty doc): frame fields — START OF FRAME 15×, Arbitration 7×, Control 6×, Data 14×, CRC 49×, ACK 48×, EOF
+  12×, DLC 15×, IDENTIFIER 32×, RTR 14×; error-state FSM — error-active 8×, error-passive 19×, bus-off 8×,
+  fault-confinement 22×, TEC 110×, REC 144×.
+- **Root cause + next leaf:** the SWD-tuned prose extractors (`extract_serial_frame_fields` /
+  `extract_protocol_states`, `ir/evidence.rs`) don't generalize to CAN's frame-field-heading + FSM-state prose →
+  lever `.9.3` (generalize them AGNOSTICALLY, ADR 0006; SWD/ADI stays 100%).
+
+Docs-only slice (the generated CAN IR is git-ignored; the PDF + registry make it reproducible).
+
 ### `PDF-VARIANT-DIGESTION.9.1` — import the new serial chip-spec class (CAN/SWP/SMBus/I2S) into the tracked corpus
 The owner unblocked the PVD breadth program by downloading a new **serial chip-spec class** and directed the
 selected PDFs be copied + git-tracked into SpecForge (`feedback_source_pdfs_in_repo`; the host-local library

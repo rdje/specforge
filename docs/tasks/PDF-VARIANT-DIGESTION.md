@@ -46,19 +46,38 @@ diagnostic when a construct is genuinely out of model.
   into SpecForge. Import them, then ingest → extract → measure each, extending breadth+precision onto a
   never-seen serial-protocol class (the SWD/ADI `SerialFrameField` + `ProtocolStateRecord` surfaces are the
   relevant machinery). Honest baselines first (read where the fact lives or report a residual; ADR 0006;
-  APB/AHB/AXI/SWD stay 100%). Children: `.9.1`, `.9.2`.
-- ID: `PDF-VARIANT-DIGESTION.9.1` · Status: `pending` · Goal: import the selected serial specs
+  APB/AHB/AXI/SWD stay 100%). Children: `.9.1`, `.9.2`, `.9.3`.
+- ID: `PDF-VARIANT-DIGESTION.9.1` · Status: `done` · Goal: import the selected serial specs
   (CAN/SWP/SMBus/I2S) into `corpus/<vendor>/.../current/` + `SOURCE_PDF_REGISTRY.md`, git-tracked, so a
   re-ingest is always reproducible (owner directive `2026-06-08`: "selected ones shall be copied and git
   tracked in SPECFORGE repo"; [[feedback_source_pdfs_in_repo]] — do NOT record the owner's library path).
   Acceptance: the PDFs copied under canonical vendor paths, registered, `git add`-tracked, each verified to
-  begin with a real PDF header. Verification: pending. Commit: pending.
-- ID: `PDF-VARIANT-DIGESTION.9.2` · Status: `pending` · Goal: **CAN 2.0 honest baseline** — ingest
+  begin with a real PDF header. Verification: 4 PDFs copied + registered + `%PDF-`-verified; memory-arch + KM
+  hooks green. Commit: `c265062b` (`PDF-VARIANT-DIGESTION.9.1`).
+- ID: `PDF-VARIANT-DIGESTION.9.2` · Status: `done` · Goal: **CAN 2.0 honest baseline** — ingest
   (`DOCLING_DEVICE=cpu`) → evidence → validate on a never-seen serial protocol; record the document_class, the
   class-aware completeness gauge, and the serial-frame / protocol-FSM / signal-inventory yield; state the
   honest extraction gap (or honest "already digests well") and spin the next leaf from it. No fabrication (ADR
   0006). Acceptance: baseline metrics recorded in this tree (+ KM card if a durable fact emerges); APB/AHB/AXI/SWD
-  unaffected. Verification: pending. Commit: pending.
+  unaffected. Verification: clean ingest (72 pages / 98 visual assets / `ready` / 0 residuals); evidence 269
+  anchors / 751 statements / 98 visual / 0 KG relations. `validate` baseline = **`document_class: guide` but
+  `document_type_declared: specification` → ⚠ UNDER-EXTRACTED spec** (the `.5a`/`.5c` machinery fires correctly):
+  deterministic yield **0 signals / 0 registers / 0 relations / 0 constraints**, 12 narrative conditional rules,
+  98 un-enriched figures, 19 prose residuals. **Honesty-guardrail confirmed the facts ARE present in prose** —
+  frame fields (START OF FRAME 15× / Arbitration 7× / Control 6× / Data 14× / CRC 49× / ACK 48× / EOF 12× / DLC
+  15× / IDENTIFIER 32× / RTR 14×) and the error-state FSM (error-active 8× / error-passive 19× / bus-off 8× /
+  fault-confinement 22× / TEC 110× / REC 144×). Root: `extract_serial_frame_fields`/`extract_protocol_states`
+  (evidence.rs) were tuned to SWD prose and don't generalize to CAN's frame-field-heading + FSM prose → lever
+  `.9.3`. Commit: pending (this slice).
+- ID: `PDF-VARIANT-DIGESTION.9.3` · Status: `pending` · Goal: **CAN prose serial-frame + error-state-FSM
+  extraction lever** — generalize the prose `extract_serial_frame_fields` + `extract_protocol_states` (AGNOSTIC,
+  ADR 0006 — no `CAN`/`SOF`/`bus-off` literals; derive from the document's own frame-field headings + FSM-state
+  prose) so CAN's serial frame (SOF→Arbitration→Control→Data→CRC→ACK→EOF) and error-state FSM
+  (error-active→error-passive→bus-off) surface as typed `SerialFrameField` / `ProtocolStateRecord`. Acceptance:
+  CAN recovers the frame fields + FSM states (re-measured on a fresh evidence build), zero fabrication (only
+  what the prose states), **SWD/ADI serial extraction unchanged (still 100%)**, APB/AHB/AXI clean; hermetic
+  tests; full `run_ci.sh` green + kg-bench 151/151; book + KM refreshed. May split (`.9.3a` frame fields /
+  `.9.3b` FSM) if too broad for one signoff slice. Verification: pending. Commit: pending.
 - ID: `PDF-VARIANT-DIGESTION.1` · Status: `in_progress` · Goal: **triage sweep** — ingest a diverse sample
   (one per family: ARM-TRM GIC-400, Wishbone, NXP I2C, RISC-V Debug, CCIX, Avalon, USB4, OpenCAPI) through
   `ingest`→`evidence`, record ingest status + table-kind census + extraction stats, and identify the
@@ -115,13 +134,18 @@ grid-repair demo on a bits-bearing doc; giants' ingest budget; USB 3.2 evid-fail
 
 ## Current frontier
 
-**OWNER-DIRECTED PIVOT (`2026-06-08`): `PDF-VARIANT-DIGESTION.9.1` → `.9.2`.** The owner unblocked the program
+**OWNER-DIRECTED PIVOT (`2026-06-08`): ACTIVE LEAF `PDF-VARIANT-DIGESTION.9.3`.** The owner unblocked the program
 by downloading a new **serial chip-spec class** (CAN / SWP / SMBus / I2S) and directed they be copied + git-tracked
-into SpecForge. This takes frontier priority over `.6`/`.7` (which stay blocked on host-local zero-yield / USB-3.2
-PDFs). Active leaf: `.9.1` (import the serial specs into `corpus/` + registry) → `.9.2` (CAN 2.0 honest baseline).
-Starting with CAN: the cleanest, most-structured serial frame protocol (SOF/ID/RTR/IDE/DLC/Data/CRC/ACK/EOF) plus a
-real protocol FSM (error-active → error-passive → bus-off) — it exercises BOTH the `SerialFrameField` and
-`ProtocolStateRecord` surfaces on a protocol SpecForge has never seen. SWP/SMBus/I2S follow as later `.9` leaves.
+into SpecForge. This takes frontier priority over `.6`/`.7` (still blocked on host-local zero-yield / USB-3.2 PDFs).
+**`.9.1` (import + register, commit `c265062b`) DONE. `.9.2` (CAN 2.0 honest baseline) DONE** — CAN is an honest
+**UNDER-EXTRACTED spec**: deterministic yield 0 signals/registers/relations/constraints, the `.5a`/`.5c` machinery
+correctly flags `document_class: guide` + `document_type_declared: specification` → ⚠ under-extracted (route to
+VLM/prose frontier), and the honesty guardrail confirmed CAN's frame fields + error-state FSM ARE richly present in
+the prose (frame: SOF/Arbitration/Control/Data/CRC/ACK/EOF; FSM: error-active/passive/bus-off + TEC/REC). Root: the
+SWD-tuned prose extractors (`extract_serial_frame_fields`/`extract_protocol_states`) don't generalize to CAN's
+prose. **Active: `.9.3`** — generalize those extractors AGNOSTICALLY (ADR 0006) so CAN's serial frame + FSM surface
+as typed `SerialFrameField` / `ProtocolStateRecord`, with SWD/ADI staying 100%. SWP/SMBus/I2S follow as later `.9`
+leaves.
 
 **(SUPERSEDED active note) `PDF-VARIANT-DIGESTION.6`/`.7`** — item ② (`.5`) COMPLETE and `.8` (broaden
 prose-actor capture) DONE. **`.5a` + `.5b` + `.5c` are DONE** — structural doc-class routing
@@ -458,6 +482,18 @@ set, not the whole doc/corpus.
 
 ## Verification log
 
+- `.9.2` (`2026-06-08`): CAN 2.0 honest baseline. `DOCLING_DEVICE=cpu ingest` → 72 pages / 98 visual assets /
+  `normalization_status: ready` / 0 residuals / `document_key: bosch_can_specification_2_0_1991`. `evidence` →
+  269 section anchors / 751 statements / 98 visual / 6 links / 0 actor-signal relations. `validate` →
+  `document_class: guide`, `document_type_declared: specification`, ⚠ `under-extracted spec` warning (the
+  `.5a`/`.5c` routing fires correctly); 0 signals / 0 registers / 0 relations / 0 signal_constraints; 12
+  narrative conditional rules; completeness gauge `not applicable` (guide); 19 nlp prose residuals; 98 figures
+  with no VLM observations. Honesty-guardrail grep of the normalized md confirmed the facts ARE present in prose
+  (frame fields + error-state FSM counts above). Conclusion: genuine under-extraction, lever `.9.3`. Docs-only
+  slice (generated IR is git-ignored). Commit subject: `PDF-VARIANT-DIGESTION.9.2`.
+- `.9.1` (`2026-06-08`): imported CAN/SWP/SMBus/I2S under canonical `corpus/` vendor paths, registered in
+  `SOURCE_PDF_REGISTRY.md`, each verified to begin with `%PDF-`; memory-arch + knowledge-map pre-commit hooks
+  green. Commit `c265062b`.
 - `.1`: triage sweep launched `2026-06-07` over 8 diverse families.
 - `.4a.1` (`2026-06-08`): register-field per-fact eval surface added to `eval.rs` + `commands/eval_extraction.rs`
   (`EvalTask::RegisterField`, `GoldFact::RegisterField`, normalized `register|field|offset|width` key,
@@ -534,10 +570,18 @@ set, not the whole doc/corpus.
 
 ## Changelog
 
+- `2026-06-08`: `.9.2` (CAN 2.0 honest baseline) DONE. Ingested CAN (72 pp / 98 visual / `ready` / 0 residuals),
+  built evidence (269 anchors / 751 statements), validated. **Baseline: CAN is an honest UNDER-EXTRACTED spec** —
+  deterministic yield 0 signals/registers/relations/constraints; the `.5a`/`.5c` machinery correctly flags it
+  (`document_class: guide` + front-matter `specification` → ⚠ under-extracted, route to VLM/prose frontier). The
+  honesty guardrail confirmed the frame fields + error-state FSM ARE present in CAN's prose (SOF/Arbitration/
+  Control/Data/CRC/ACK/EOF; error-active/passive/bus-off + TEC/REC). Root: SWD-tuned prose extractors don't
+  generalize. Spun lever `.9.3` (generalize `extract_serial_frame_fields`/`extract_protocol_states`, agnostic).
+- `2026-06-08`: `.9.1` (import + register the 4 serial PDFs, git-tracked) DONE — commit `c265062b`.
 - `2026-06-08`: Added `.9` (new serial-protocol class) — owner unblocked the program by downloading new serial
   chip-spec PDFs (CAN/SWP/SMBus/I2S) and directed they be copied + git-tracked into SpecForge. `.9.1` (import +
-  register) → `.9.2` (CAN 2.0 honest baseline) onto the frontier, ahead of the host-local-blocked `.6`/`.7`.
-  Owner directive: "selected ones shall be copied and git tracked in SPECFORGE repo." `.9.1` taken `in_progress`.
+  register) → `.9.2` (CAN 2.0 honest baseline) → `.9.3` (prose serial-frame+FSM lever), ahead of the
+  host-local-blocked `.6`/`.7`. Owner directive: "selected ones shall be copied and git tracked in SPECFORGE repo."
 - `2026-06-08`: `.8` (broaden prose-actor capture) DONE — robust structural agent-definition grammar (general
   agent-class allowlist; parenthetical-strip + current-sentence + no-preposition guards instead of a fragile
   structural-noun denylist, after expert review). Projected 14 → 20 docs with actors (+6), all genuine; NVMe
