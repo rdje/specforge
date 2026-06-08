@@ -589,9 +589,9 @@ fn repair_degenerate_tables_via_vlm(
 }
 
 /// POST a single image + text prompt to an OpenAI-compatible VLM endpoint (Ollama / OpenAI / LM Studio)
-/// and return the assistant's message content. Shared by diagram enrichment and table classification
-/// (PDF-VARIANT-DIGESTION.2b).
-fn vlm_image_query(
+/// and return the assistant's message content. Shared by diagram enrichment, table classification
+/// (PDF-VARIANT-DIGESTION.2b), and the extraction audit (PDF-VARIANT-DIGESTION.4b.1).
+pub(crate) fn vlm_image_query(
     image_path: &std::path::Path,
     prompt: &str,
     model: &str,

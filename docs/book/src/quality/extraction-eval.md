@@ -254,3 +254,57 @@ assumption explicitly rather than reporting a precision that would be wrong on a
 
 *Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.4a.4` added the declared-signal eval
 surface; `.4a.5` authored the I2C gold and recorded recall 1.000 / precision 0.600).
+
+## Auditing the broadened extraction — a VLM precision estimate
+
+Authoring a hand-verified gold (the sections above) is the gold standard, but it does not
+scale: SpecForge now extracts registers, fields, and signals from many table shapes across
+the whole 82-PDF corpus, and only a handful of those documents have a gold. How trustworthy
+is the *rest*? The `audit-extraction` command gives an honest, automated **estimate** without
+authoring a gold per document.
+
+The idea is a **proposer/verifier audit**: the deterministic pipeline already *proposed* a
+classification for each table it extracted from; the VLM independently *verifies* it by
+re-reading the table's rendered image. For a bounded, reproducible sample of the
+intent-bearing tables in a `SourceIR`, the VLM is shown the picture and asked one structural
+question — "an extractor read this as a register / signal / encoding / timing table; looking
+only at the image, is that correct?" The fraction it confirms is a **table-kind precision
+estimate**, and every disagreement is printed by name as a flagged mismatch for a human to
+check. The VLM is an imperfect oracle, so this is deliberately an *estimate*, never a score —
+and nothing is hidden: a disagreement becomes a review item, not a silent deletion.
+
+By default the command is **plan-only** (`--provider skip`): it lists exactly which tables it
+*would* audit, making no VLM calls — useful for seeing the sample and as the CI-safe path.
+Add a provider to run the live audit:
+
+```text
+# plan-only — list the sampled intent-bearing tables (no VLM calls)
+specforge audit-extraction generated/source_ir/<key>/source_ir.json --sample 12
+
+# live — estimate precision over the sample with the local VLM
+specforge audit-extraction generated/source_ir/<key>/source_ir.json --sample 12 --provider ollama
+  ...
+  audited: 12
+  judged: 11
+  consistent: 10
+  vlm_errors: 1
+  table_kind_precision_estimate: 0.909
+  flagged_mismatches: 1
+  flagged: table_0184 page=page_0191 kind=signal reason="this looks like a register field table"
+```
+
+Two design choices keep it honest and **chip-spec-PDF-agnostic** (the project's non-negotiable
+signoff rule — no hardcoded chip vocabulary in the runtime). First, the sample is chosen and
+the verdict is judged **purely by table structure** — register/field/signal/encoding/timing
+are universal digital-design categories, and the VLM prompt carries no chip, vendor, or
+protocol names. Second, the VLM is a **targeted, sampled tool, not a full-document pass**: a
+VLM call per table is far too slow on a table-heavy spec, so the sample size and a seed are
+explicit and reproducible (the same `--seed` always picks the same tables).
+
+The estimate is named precisely — *table-kind* precision, the rate at which the VLM agrees a
+sampled table is the kind we extracted from. That catches the dominant false-positive mode for
+the broadened extraction (pulling records from a table that is not what we thought it was);
+it is not a per-field fact check, and the name says so.
+
+*Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.4b.1` built the audit
+harness; `.4b.2` records the live corpus-scale estimate).

@@ -8,6 +8,38 @@
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 - adapter target: `.isf` (sole adapter); `.fsm`/HDL are out of scope — FSMGen consumes `.isf` and owns scheduling/`.fsm`/HDL downstream (since `ISF-ONLY-CONSOLIDATION`, `2026-05-18`)
 
+## 2026-06-08 — VLM extraction-audit harness (PDF-VARIANT-DIGESTION.4b.1)
+
+The broadened table-driven extraction (`.2`/`.2b`/`.2c`) yields registers/fields/signals across the whole
+corpus, but only four wire-based specs have a gold. `.4b` estimates the precision of the rest *without* a
+per-document gold via a proposer/verifier audit; `.4b.1` builds the harness.
+
+Design choices and why:
+- **Table-level, not record-level.** Registers link to their source table only through a string-encoded
+  `register_id` (`regfld_<table_id>` for the field path, but `reg_<document_key(table_id)>_<row>` — a lossy
+  transform — for the register-map path), so a robust record→table reverse map does not exist. The task tree
+  scopes `.4b` as "the `.2b` consistency gate run as an audit", so the audit operates at the TABLE level
+  (which has a clean `asset_id` → `VisualAsset.image_path` link) and reuses the proven `.2b` infrastructure.
+  The metric is named *table-kind* precision so it never overclaims to be a per-field fact check.
+- **Selection mirrors extraction.** `audited_kind` recognizes an intent-bearing table by the SAME predicates
+  the extractors use — the confident data table-kinds plus `Unknown` tables matching `is_register_field_header`
+  (the `.2` register-field grammar, made `pub(crate)`) — so the audited set is exactly what the pipeline
+  consumes.
+- **Reproducible bounded sample.** The VLM is a targeted/sampled tool (the `.2b` scaling finding: a VLM call
+  per table is too slow on table-heavy docs), so the sample is bounded (`--sample`) and reproducible
+  (`--seed`) via an FNV-1a ordering of `table_id` — no `rand` dependency, deterministic across runs, and
+  seed-sensitive (verified on real RISC-V data).
+- **Honest aggregation.** `table_kind_precision_estimate = consistent / judged`; VLM/parse errors are excluded
+  from the denominator (not counted as agreement), and the estimate is `None` when nothing was judged — never
+  a number conjured from zero evidence. Every disagreement is a named flagged item, not a silent drop.
+- **Agnostic, enforced.** Structural selection + judgment, the runtime prompt carries no chip/vendor/protocol
+  names, and a hermetic test asserts none leak — upholding the owner's non-negotiable PDF-agnostic rule
+  (ADR 0006).
+
+Verified: 5 hermetic tests; plan-only on RISC-V Debug (78 intent-bearing tables) + I2C (7 timing tables);
+one live `--provider ollama` call proved image→prompt→curl→Ollama→parse end-to-end (`table_0080` consistent,
+estimate 1.000). Additive — APB/AHB/AXI/SWD eval + kg-bench unaffected; lib 1373 → 1378.
+
 ## 2026-06-08 — I2C prose-signal gold: recall-perfect, precision-leaky (PDF-VARIANT-DIGESTION.4a.5)
 
 Closes `.4a`. Measures the prose-signal capture (`.3a`) on the real I2C bus. The genuine I2C-bus signals were

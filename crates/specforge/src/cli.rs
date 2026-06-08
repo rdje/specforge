@@ -67,6 +67,8 @@ pub enum Commands {
     ExtractConditions(ExtractConditionsArgs),
     /// LLM-primary constraint extractor: re-extract (typed-signal subject, kind, grounded condition) per sentence and REPLACE the constraint set (the replace-vs-patch test)
     ExtractConstraintsLlm(ExtractConstraintsLlmArgs),
+    /// Audit the broadened table-driven extraction: re-read a bounded sample of intent-bearing tables against their image with the VLM (precision estimate + flagged mismatches)
+    AuditExtraction(AuditExtractionArgs),
 }
 
 #[derive(Debug, Args)]
@@ -484,6 +486,24 @@ pub struct EnrichArgs {
     /// Do not write enriched SourceIR; print the enrichment summary instead
     #[arg(long)]
     pub dry_run: bool,
+}
+
+#[derive(Debug, Args)]
+pub struct AuditExtractionArgs {
+    /// Path to a SourceIR JSON artifact whose table-driven extraction should be audited
+    pub source_ir: PathBuf,
+    /// VLM provider for the audit (default skip = plan-only: list the sampled tables, make no VLM calls)
+    #[arg(long, value_enum, default_value = "skip")]
+    pub provider: VlmProviderArg,
+    /// Model name override (default qwen2.5vl:7b for ollama/lmstudio, gpt-4o for openai)
+    #[arg(long)]
+    pub model: Option<String>,
+    /// Bounded sample size — the VLM is a targeted/sampled tool, not a full-doc pass
+    #[arg(long, default_value = "12")]
+    pub sample: usize,
+    /// Seed for the reproducible table sample (same seed → same sample)
+    #[arg(long, default_value = "0")]
+    pub seed: u64,
 }
 
 #[derive(Debug, Args)]

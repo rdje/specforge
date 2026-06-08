@@ -1,3 +1,27 @@
+### `PDF-VARIANT-DIGESTION.4b.1` — VLM extraction-audit harness (proposer/verifier precision estimate)
+Built the audit HARNESS for the broadened table-driven extraction: a new `audit-extraction <source-ir>`
+command that estimates the precision of the 95% of corpus extraction that has no gold, without authoring one
+per document. It is a **proposer/verifier audit** — the deterministic pipeline already *proposed* a table
+classification; the VLM (Qwen2.5VL) independently *verifies* it by re-reading the table's rendered image (the
+`.2b` consistency gate run as an AUDIT). `audited_kind` selects the intent-bearing tables by the SAME
+structural predicates the extractors use (`RegisterMap`/`SignalDescription`/`Encoding`/`TimingParameter` +
+`Unknown` tables matching `is_register_field_header`); `select_sample` takes a bounded, reproducible sample
+(`--sample`/`--seed`, FNV-1a ordering, no RNG dep); a kind-aware STRICT-JSON prompt asks "an extractor read
+this as a <kind> table — looking only at the image, is that correct?"; `parse_audit_verdict` reads
+`{consistent, reason}` (tolerant); `aggregate` → **`table_kind_precision_estimate` = consistent/judged**
+(errors out of the denominator, `None` when nothing judged — never a fabricated number) + a **named
+flagged-mismatch list** for human review. Default `--provider skip` = plan-only (lists the sample, no VLM
+calls; the CI-safe path). **Agnostic by construction** (ADR 0006 — the owner's non-negotiable signoff rule):
+structural selection + judgment, no chip/vendor/protocol names in the runtime prompt (a hermetic test asserts
+none leak), structural sampling. Reuses `enrich::vlm_image_query` (now `pub(crate)`) for the live transport.
++5 hermetic tests (classification, deterministic+seed-sensitive sampling, tolerant verdict parse,
+agnostic+STRICT-JSON prompt, precision/flag math). **Additive — no extraction-behavior change**; APB/AHB/AXI/SWD
+eval + kg-bench 151/151 unaffected; `cargo fmt --check` + `cargo clippy -D warnings` clean; full lib suite
+1373 → 1378. Plan-only verified on RISC-V Debug (78 intent-bearing tables) + I2C (7 timing tables); seed-1
+reshuffle confirmed on real data; one live `--provider ollama` call proved the execute path end-to-end
+(`table_0080` → consistent, estimate 1.000, 0 flagged). Split `.4b` → `.4b.1` (this, harness) + `.4b.2`
+(live measurement, next). Book section in `quality/extraction-eval.md`; KM card `extraction-audit-vlm`.
+
 ### `PDF-VARIANT-DIGESTION.4a.5` — I2C prose-signal gold (closes `.4a`)
 Measured the prose-signal capture (`.3a`) on the real I2C-bus Specification, closing the `.4a`
 precision-verification subtree. Authored `seed_i2c_signals.json` — the COMPLETE set of I2C-bus physical

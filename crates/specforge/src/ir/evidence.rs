@@ -8035,7 +8035,7 @@ fn synthesize_register_records(
 /// `Bit|Field|Type|Reset`. Identity = a field/bit-name column AND an access OR reset column — universal
 /// register vocabulary (ADR 0006), specific enough to exclude signal/encoding/feature tables (which lack
 /// access+reset). Header cells are pre-lowercased.
-fn is_register_field_header(header: &[String]) -> bool {
+pub(crate) fn is_register_field_header(header: &[String]) -> bool {
     let has_field = header.iter().any(|h| {
         h.contains("field") || h == "name" || h == "bits" || h == "bit" || h.contains("bit name")
     });

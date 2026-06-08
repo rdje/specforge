@@ -97,9 +97,13 @@ grid-repair demo on a bits-bearing doc; giants' ingest budget; USB 3.2 evid-fail
 
 ## Current frontier
 
-**ACTIVE FRONTIER (`2026-06-08`): `PDF-VARIANT-DIGESTION.4b`** — automated proposer/verifier VLM AUDIT (re-read
-a bounded random sample of extracted registers/signals against their table IMAGE with the VLM → a corpus-scale
-precision ESTIMATE + flagged-mismatch list). **`.4a` is DONE** (`.4a.1`–`.4a.5`): the register-field surface is
+**ACTIVE FRONTIER (`2026-06-08`): `PDF-VARIANT-DIGESTION.4b.2`** — the LIVE proposer/verifier VLM audit
+measurement (run `audit-extraction --provider ollama` over a bounded sample on RISC-V/NVMe + a breadth doc →
+per-doc table-kind precision ESTIMATE + flagged-mismatch list, recorded into the tree/book/KM). **`.4b.1` is
+DONE** (`2026-06-08`): the audit HARNESS — the `audit-extraction` command (structural sampler + kind-aware VLM
+audit prompt + tolerant verdict parser + precision-estimate/flagged-mismatch aggregator), additive + hermetic
+(5 tests), agnostic by construction (ADR 0006), plan-only by default; the live execute path is proven
+end-to-end. **`.4a` is DONE** (`.4a.1`–`.4a.5`): the register-field surface is
 measured on two opposite-shaped docs (RISC-V field-name recall 0.588; NVMe bit-structure recall 0.931) and the
 declared-signal surface on I2C (recall 1.000 / precision 0.600). Five extraction-fix targets are now quantified
 (RISC-V register-name + bit-graphic; NVMe mnemonic; I2C acronym/condition filter; …). The `.2`–`.3b` leaves
@@ -238,10 +242,35 @@ it further. Priority order ① → ⑤.
       **precision 6/10 = 0.600** — 4 over-captures named: ACK/NACK (conditions on SDA, §3.1.6), DDC (different
       bus, §4.6), SDR (I3C rate acronym). +2 hermetic tests; book section (declared signals) + KM card. Fix
       leaf: tighten the prose acronym/condition filter (now quantified). Full `run_ci.sh` green; kg-bench green.
-  - ID: `PDF-VARIANT-DIGESTION.4b` · Status: `pending` · Goal: automated proposer/verifier AUDIT — re-read a
+  - ID: `PDF-VARIANT-DIGESTION.4b` · Status: `active` · Goal: automated proposer/verifier AUDIT — re-read a
     random sample of extracted registers/signals against their table IMAGE with the VLM (the `.2b`
     consistency gate run as an audit) → a corpus-scale precision ESTIMATE + a flagged-mismatch list. Accept:
-    a measured precision estimate over a stated sample size; garbage surfaced, not hidden.
+    a measured precision estimate over a stated sample size; garbage surfaced, not hidden. **SPLIT
+    `2026-06-08`** into the audit HARNESS (`.4b.1`) and the live measurement (`.4b.2`) — the harness is an
+    independently reviewable, hermetic, additive capability; the live estimate depends on it + a running VLM
+    (mirrors `.4a`'s eval-surface → per-doc-gold split). Children:
+    - ID: `PDF-VARIANT-DIGESTION.4b.1` · Status: `done` (`2026-06-08`) · Goal: the audit HARNESS — a new
+      `audit-extraction <source-ir>` command that selects intent-bearing tables by STRUCTURE (the same
+      predicates the extractors use: `RegisterMap`/`SignalDescription`/`Encoding`/`TimingParameter` kinds +
+      `Unknown` tables matching `is_register_field_header`), takes a bounded reproducible sample
+      (`--sample`/`--seed`; FNV-1a order, no RNG dep), and (live) asks the VLM per table "an extractor read
+      this as a <kind> table — correct?" → a `table_kind_precision_estimate` (consistent/judged, errors
+      excluded, `None` when nothing judged) + a named flagged-mismatch list. Default `--provider skip` =
+      plan-only (lists the sample, no VLM calls; CI-safe). Agnostic by construction (ADR 0006): structural
+      selection/judgment, no chip names in the prompt (hermetic test asserts none leak), structural sampling.
+      **DONE:** `commands/audit_extraction.rs` (+ `vlm_image_query`/`is_register_field_header` made
+      `pub(crate)`); 5 hermetic tests (classification, deterministic+seed-sensitive sampling, tolerant verdict
+      parse, agnostic+STRICT-JSON prompt, precision/flag math). Additive — no extraction-behavior change;
+      APB/AHB/AXI/SWD eval + kg-bench 151/151 unaffected; full `run_ci.sh` green (lib 1373 → 1378). Plan-only
+      verified on RISC-V Debug (78 intent-bearing tables) + I2C (7 timing tables); seed reshuffle confirmed on
+      real data; ONE live VLM call proved the execute path end-to-end (`table_0080` → consistent, estimate
+      1.000, 0 flagged). Book section in `quality/extraction-eval.md`; KM card `extraction-audit-vlm`.
+    - ID: `PDF-VARIANT-DIGESTION.4b.2` · Status: `pending` · Goal: the live measurement — run
+      `audit-extraction --provider ollama` over a bounded sample on the in-corpus docs that exercise the
+      broadened extraction (RISC-V Debug / NVMe register fields; a register/signal doc for breadth), record
+      the table-kind precision ESTIMATE per doc + the flagged-mismatch list into this tree + the book + KM.
+      Accept: a measured estimate over a stated sample size per doc; every disagreement surfaced by name, not
+      hidden; the VLM kept to a bounded sample (the `.2b` scaling finding).
 - ID: `PDF-VARIANT-DIGESTION.5` · Status: `pending` · **② Doc-class routing + per-doc completeness gauge.**
   Children:
   - ID: `PDF-VARIANT-DIGESTION.5a` · Status: `pending` · Goal: detect doc class (protocol / register /
@@ -295,9 +324,25 @@ set, not the whole doc/corpus.
   clean, `cargo clippy -D warnings` clean, `kg-bench` 151/151, full lib suite 1360 → 1363. Book note deferred to
   `.4a.2` (the surface is latent until a gold ships). Commit subject: `PDF-VARIANT-DIGESTION.4a.1`.
 
+- `.4b.1` (`2026-06-08`): audit harness landed — `commands/audit_extraction.rs` (new `audit-extraction`
+  command) + `vlm_image_query`/`is_register_field_header` made `pub(crate)`. Structural sampler
+  (`audited_kind` mirrors the extractor predicates; `select_sample` FNV-1a deterministic, seed-sensitive),
+  kind-aware agnostic STRICT-JSON audit prompt, tolerant `{consistent,reason}` verdict parser,
+  `table_kind_precision_estimate` (consistent/judged, errors out of the denominator, `None` when nothing
+  judged) + named flagged-mismatch list. `--provider skip` plan-only default (CI-safe). +5 hermetic tests.
+  `cargo fmt --check` clean, `cargo clippy -D warnings` clean (dropped the `enum_variant_names` postfix),
+  full lib suite 1373 → 1378, kg-bench 151/151, APB/AHB/AXI/SWD eval unaffected (additive). Plan-only run on
+  RISC-V Debug (78 intent-bearing tables sampled 8) + I2C (7 timing tables); seed-1 reshuffle confirmed on
+  real data; ONE live `--provider ollama` call proved the execute path (`table_0080` → consistent, estimate
+  1.000, 0 flagged). Book `quality/extraction-eval.md` + KM `extraction-audit-vlm`. Commit subject:
+  `PDF-VARIANT-DIGESTION.4b.1`.
+
 ## Changelog
 
 - `2026-06-07`: Created (owner high-priority directive — digest any chip-spec PDF). `.1` triage sweep in flight.
+- `2026-06-08`: Split `.4b` (proposer/verifier VLM audit) into `.4b.1` (audit harness — DONE) + `.4b.2` (live
+  measurement — pending); `.4b` → `active`, frontier moves to `.4b.2`. Mirrors `.4a`'s eval-surface → per-doc
+  split (the harness is the lower-level dependency of the measurement).
 - `2026-06-08`: Split `.4a` (precision verification) into `.4a.1`–`.4a.5` — the eval scorer has no
   register-field/declared-signal task yet (a real lower-level dependency, PNT split rule). `.4` + `.4a` →
   `active`; `.4a.1` (register-field eval surface) → `in_progress` and onto the frontier. Scope kept to

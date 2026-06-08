@@ -52,6 +52,7 @@ Use it first for the project objective, document navigation, and the current imp
   - `extract-contracts <evidence-ir> [--provider ollama|open-ai|lm-studio|skip] [--model <m>] [--dry-run]`
   - `signal-resolve <evidence-ir> [--provider ollama|open-ai|lm-studio|skip] [--model <m>] [--dry-run]`
   - `eval-extraction <dataset> [--provider ollama|open-ai|lm-studio|skip] [--model <m>] [--evidence-root <root>]`
+  - `audit-extraction <source-ir> [--provider ollama|open-ai|lm-studio|skip] [--model <m>] [--sample <n>] [--seed <s>]`
   - `validate <artifact>`
   - `adapt <intent-ir> --target isf --dry-run`
   - `adapt <intent-ir> --target isf`
@@ -423,6 +424,8 @@ Use it first for the project objective, document navigation, and the current imp
   - `.isf` adapter preview/materialization command
 - `crates/specforge/src/commands/enrich.rs`
   - VLM-backed `SourceIR` visual enrichment command
+- `crates/specforge/src/commands/audit_extraction.rs`
+  - proposer/verifier VLM audit of the broadened table-driven extraction (bounded-sample precision estimate + flagged mismatches)
 - `crates/specforge/src/commands/validate.rs`
   - stage-aware validation and report back-annotation command
 - `crates/specforge/src/commands/project_validation.rs`
