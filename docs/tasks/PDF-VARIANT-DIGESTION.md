@@ -97,12 +97,11 @@ grid-repair demo on a bits-bearing doc; giants' ingest budget; USB 3.2 evid-fail
 
 ## Current frontier
 
-**ACTIVE FRONTIER (`2026-06-08`): `PDF-VARIANT-DIGESTION.5c`** (owner-suggested front-matter/ToC/preface doc-type
-signal), then `.5b` (per-doc completeness gauge). **`.5a` is DONE** — structural doc-class routing
-(protocol/register/interface/guide) live in `validate` with honest guide reporting; live distribution over the
-74 persisted docs: protocol 25 / register 11 / interface 22 / guide 16. `.5c` reads the document's own
-front-matter to corroborate the class and separate a TRUE guide from a spec we under-extracted (image-heavy →
-VLM frontier). **`.4` (correctness/precision verification, item ①) is COMPLETE** — both
+**ACTIVE FRONTIER (`2026-06-08`): `PDF-VARIANT-DIGESTION.5b`** (per-doc completeness gauge). **`.5a` + `.5c` are
+DONE** — structural doc-class routing (protocol/register/interface/guide) + the front-matter doc-type signal are
+live in `validate` with honest guide reporting. Live distribution over the 74 persisted docs: protocol 25 /
+register 11 / interface 22 / guide 16; `.5c` further split the 16 guides into 11 TRUE guides + 5 UNDER-EXTRACTED
+specs (front-matter self-declares a spec → flagged for the VLM frontier `.6`, not silently dismissed). **`.4` (correctness/precision verification, item ①) is COMPLETE** — both
 `.4a` (per-fact gold on register fields + prose signals) and `.4b` (VLM proposer/verifier audit) done.
 **`.4b` DONE** (`.4b.1` harness + `.4b.2` live measurement): the `audit-extraction` VLM audit gives a
 table-kind precision ESTIMATE that **discriminates extraction quality and independently corroborates `.4a`** —
@@ -298,7 +297,7 @@ it further. Priority order ① → ⑤.
         re-ingest is a noted follow-up). Book section refreshed with the real numbers; KM `extraction-audit-vlm`
         updated. Commit subject: `PDF-VARIANT-DIGESTION.4b.2`.
 - ID: `PDF-VARIANT-DIGESTION.5` · Status: `active` · **② Doc-class routing + per-doc completeness gauge.**
-  Children: `.5a` (done) · `.5c` (front-matter signal) · `.5b` (completeness gauge)
+  Children: `.5a` (done) · `.5c` (done) · `.5b` (completeness gauge — frontier)
   - ID: `PDF-VARIANT-DIGESTION.5a` · Status: `done` (`2026-06-08`) · Goal: detect doc class (protocol / register /
     interface / guide) from structure; apply class-appropriate surfaces; report GUIDES as "low structured
     design-intent" honestly (not a 0 failure). Accept: each doc tagged with a class; the 8 zero-yield docs
@@ -315,7 +314,7 @@ it further. Priority order ① → ⑤.
     Live-verified over all 74 persisted evidence docs: protocol 25 / register 11 / interface 22 / guide 16 (the
     software/overview/optimization guides correctly → guide). No wire-based regression. KM card
     `document-class-from-structure`.**
-  - ID: `PDF-VARIANT-DIGESTION.5c` · Status: `pending` · Goal (owner-suggested `2026-06-08`): read the document's
+  - ID: `PDF-VARIANT-DIGESTION.5c` · Status: `done` (`2026-06-08`) · Goal (owner-suggested `2026-06-08`): read the document's
     OWN front-matter — title, table of contents, preface/about/scope of the first chapter ("usually clearly
     stated in the early pages of the first chapter") — for a self-declared doc-TYPE signal (generic grammar:
     guide/overview/manual/specification/architecture/protocol/datasheet words, NO chip/vendor names, ADR 0006).
@@ -323,7 +322,22 @@ it further. Priority order ① → ⑤.
     SPECIFICATION we under-extracted (a doc whose structure is empty but whose title says "specification /
     architecture / protocol / manual" is an image/table-heavy extraction GAP → the VLM frontier `.6`, NOT a
     real guide). Accept: a title/front-matter doc-type hint surfaced in `validate`; structurally-empty docs whose
-    front-matter self-declares a spec are flagged as under-extracted (not silently called "guide").
+    front-matter self-declares a spec are flagged as under-extracted (not silently called "guide"). **DONE —
+    pure `front_matter_doc_type_hint(&str) -> DeclaredDocType {Guide,Specification,Unknown}` over generic
+    doc-type vocabulary (guide/tutorial/"learn the architecture"/application-note vs specification/architecture/
+    protocol/standard/datasheet/reference-manual; guide phrasings win over spec words so Arm's "Learn the
+    architecture …" series reads as a guide; "overview"/"introduction" EXCLUDED because every spec has those
+    chapters; whole-word match so "guidelines" ≠ "guide"). `classify_document` now takes the front-matter signal
+    and sets `under_extracted_spec = (class==Guide && declared==Specification)`. `validate` reads the title +
+    first 12 section headings off the sibling SourceIR (the `document_profile.title` is empty in practice → the
+    early headings carry the signal), prints `document_type_declared` + an under-extracted line, adds a
+    `document_type_declared` metric + a WARNING `evidence_document_underextracted_spec` finding. REALITY: the
+    document title is empty; the early first-chapter headings hold the type (owner was right). +6 hermetic tests
+    (real corpus framings). Agnostic (ADR 0006). fmt + clippy `-D warnings` clean; lib 1410 → 1416; kg-bench
+    151/151. **Live: of the 16 `guide`-classed docs, 11 are TRUE guides (declared guide/unknown) and 5 are
+    UNDER-EXTRACTED specs flagged for the VLM frontier** — RISC-V Advanced Interrupt *Architecture*, JESD235
+    *JEDEC STANDARD* HBM, CoreSight Base System *Architecture* (+2). No wire-based regression. KM card
+    `document-class-from-structure` updated.**
   - ID: `PDF-VARIANT-DIGESTION.5b` · Status: `pending` · Goal: per-doc COMPLETENESS gauge (every register has
     fields? every signal a direction? unaccounted intent-bearing tables?) — extend the mandatory-width flag
     into a coverage/quality report surfaced by `validate`. Accept: honest per-doc gap counts; no fabrication.
@@ -394,8 +408,25 @@ set, not the whole doc/corpus.
   protocol 25 / register 11 / interface 22 / guide 16. Book section `quality/validation.md`; KM card
   `document-class-from-structure`. Commit subject: `PDF-VARIANT-DIGESTION.5a`.
 
+- `.5c` (`2026-06-08`): front-matter doc-type signal landed — pure `front_matter_doc_type_hint` over generic
+  doc-type vocabulary (guide phrasings rank above spec words; "overview"/"introduction" excluded — every spec
+  has those chapters; whole-word match so "guidelines" ≠ "guide"); `classify_document` consumes it and sets
+  `under_extracted_spec = (class==Guide && declared==Specification)`. `validate` reads the title + first 12
+  section headings off the sibling SourceIR (the `document_profile.title` is empty in practice — the early
+  headings carry the signal, confirming the owner's point that the type is stated in the early pages), adds a
+  `document_type_declared` metric + a WARNING `evidence_document_underextracted_spec` finding + console lines.
+  +6 hermetic tests on real corpus framings. fmt + clippy `-D warnings` clean; full lib suite 1410 → 1416;
+  kg-bench 151/151; APB/AHB/AXI/SWD eval unaffected. Live: of the 16 `guide`-classed docs, 11 are TRUE guides +
+  5 are UNDER-EXTRACTED specs flagged for the VLM frontier (RISC-V Advanced Interrupt Architecture, JESD235
+  JEDEC STANDARD HBM, CoreSight Base System Architecture, +2). KM card `document-class-from-structure` updated.
+  Commit subject: `PDF-VARIANT-DIGESTION.5c`.
+
 ## Changelog
 
+- `2026-06-08`: `.5c` (owner-suggested front-matter/ToC doc-type signal) DONE. `validate` now reads the
+  document's early headings for a self-declared type and flags a structurally-empty doc that self-declares a
+  spec as UNDER-EXTRACTED (not a true guide) → VLM frontier. Live: 16 guides split into 11 true + 5
+  under-extracted. Frontier moves to `.5b` (per-doc completeness gauge).
 - `2026-06-08`: `.5a` (structural doc-class routing + honest guide reporting) DONE. `validate` now reports a
   `protocol`/`register`/`interface`/`guide` class from the low-noise intent surfaces (conditional-rules
   excluded as over-produced narrative noise — the real-data correction). Live distribution over 74 docs:

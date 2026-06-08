@@ -197,6 +197,45 @@ vendor, or protocol vocabulary. `validate` prints a **Document Class** section, 
 `document_class` metric, and records an `evidence_document_class` Info finding, so the class
 travels in the persisted validation report.
 
+### Reading what the document says it is — and catching a spec we under-extracted
+
+There is one failure the structural class cannot tell apart on its own: a document that comes
+out `guide` because it *is* a guide, versus one that comes out `guide` because it is a real
+specification we **failed to extract from** (a spec that is mostly diagrams and rendered
+tables — the part the deterministic pipeline can't yet read). Both are structurally empty;
+both would be reported as low-yield guides. The second one is a genuine miss hiding as an
+honest "guide", and silently calling it a guide would be the exact over-confidence we are
+trying to avoid.
+
+A chip-spec PDF almost always **states what it is, in plain words, in its early pages** — the
+title and the first-chapter headings. So `validate` reads that front-matter and infers a
+self-declared document type from generic vocabulary: *guide / tutorial / "learn the
+architecture" / application note* on one side, *specification / architecture / protocol /
+standard / datasheet / reference manual* on the other. (Guide phrasings deliberately win over
+spec words — Arm's "Learn the architecture …" series is a guide even though it contains
+"architecture" — and "overview" / "introduction" are excluded because every specification has
+an introduction chapter.) As always, the vocabulary is generic document-type words, never a
+chip, vendor, or protocol name.
+
+That self-declared type does two things. For a doc that already has a real structural class
+(protocol / register / interface) it is shown as corroboration in the rationale. For a doc
+that came out `guide`, it is the deciding signal:
+
+- declares a **guide** (or nothing recognizable) → a confirmed, honest low-intent guide.
+- declares a **specification / architecture / standard** → this is **not** a true guide. It is
+  a real design document we under-extracted, so `validate` raises a **Warning**
+  (`evidence_document_underextracted_spec`) routing it to the VLM frontier instead of letting
+  it pass as low-intent.
+
+Across the corpus this split is real: of the 16 documents that come out `guide` structurally,
+the front-matter confirms 11 as genuine guides (a CPU software-optimization guide, "Learn the
+architecture" notes, …) and flags 5 as under-extracted specifications — the RISC-V Advanced
+Interrupt *Architecture*, a *JEDEC STANDARD* HBM DRAM spec, the CoreSight Base System
+*Architecture*, and two more. Those five are now visible candidates for deeper (image-aware)
+extraction rather than silent zeros. The hint (`front_matter_doc_type_hint`) is a pure,
+unit-tested function over the front-matter text, and `validate` surfaces it as a
+`document_type_declared` metric.
+
 ## Closed task trees — how each was implemented and verified
 
 ### `PROVENANCE-HARDENING` — provenance fields always have assertions

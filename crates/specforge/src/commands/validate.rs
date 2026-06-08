@@ -2770,10 +2770,36 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
         );
     }
 
+    // Front-matter doc-type hint (PDF-VARIANT-DIGESTION.5c): a chip-spec PDF usually
+    // declares what it IS in plain words in its early pages (title + first-chapter
+    // headings). Read those from the sibling SourceIR (the document title is often
+    // empty in practice, so the early section headings carry the signal); generic
+    // doc-type vocabulary only, no chip/vendor names (ADR 0006). `Unknown` when the
+    // SourceIR is unavailable.
+    let front_matter_text = region_source
+        .as_ref()
+        .map(|src| {
+            let mut parts: Vec<String> = Vec::new();
+            if let Some(title) = src.document_profile.as_ref().and_then(|p| p.title.clone()) {
+                parts.push(title);
+            }
+            let mut sections: Vec<&crate::ir::source::ContentSectionRecord> =
+                src.document_sections.iter().collect();
+            sections.sort_by_key(|s| s.reading_order);
+            for section in sections.iter().take(12) {
+                parts.push(section.title.clone());
+            }
+            parts.join(" \n ")
+        })
+        .unwrap_or_default();
+    let declared_doc_type = crate::ir::completeness::front_matter_doc_type_hint(&front_matter_text);
+
     // Document class (PDF-VARIANT-DIGESTION.5a): route by the dominant typed
     // intent surface (registers / behavioral obligations / signal-inventory +
     // connectivity / FSM / frame) so a low-design-intent doc (guide / narrative /
     // image-heavy) is reported HONESTLY as such, not as a silent 0-yield miss.
+    // `.5c` adds the front-matter corroboration: a structurally low-yield doc that
+    // self-declares a specification is an under-extracted spec, not a true guide.
     // Pure + agnostic (small generic structural floors, no chip names — ADR 0006).
     let document_classification =
         crate::ir::completeness::classify_document(crate::ir::completeness::DocumentClassCensus {
@@ -2787,6 +2813,7 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             fsm_states: ir.protocol_states.len(),
             serial_frame_fields: ir.serial_frame_fields.len(),
             visual_evidence: ir.visual_evidence.len(),
+            declared_type: declared_doc_type,
         });
     println!();
     println!("=== Document Class (structural routing; honest guide reporting) ===");
@@ -2794,6 +2821,15 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
         "  document_class: {}",
         document_classification.class.as_str()
     );
+    println!(
+        "  document_type_declared (front-matter): {}",
+        document_classification.declared_type.as_str()
+    );
+    if document_classification.under_extracted_spec {
+        println!(
+            "  ⚠ under-extracted spec: front-matter self-declares a specification but extraction is low-yield → VLM frontier, NOT a true guide"
+        );
+    }
     println!("  rationale: {}", document_classification.rationale);
 
     let missing_vlm_observation_related_ids = evidence_missing_vlm_observation_related_ids(ir);
@@ -2813,6 +2849,18 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
         ),
         Vec::new(),
     ));
+    // .5c: a structurally low-yield doc whose OWN front-matter self-declares a
+    // specification is a real spec we under-extracted (image/table-heavy), not a true
+    // guide — flag it for the VLM frontier rather than letting it pass as low-intent.
+    if document_classification.under_extracted_spec {
+        findings.push(finding(
+            "evidence_document_underextracted_spec",
+            ValidationFindingSeverity::Warning,
+            "document_class",
+            "EvidenceIR is structurally low-yield (class guide), but the document's own front-matter self-declares a specification/architecture — likely an under-extracted (image/table-heavy) spec, not a true guide; candidate for VLM rescan",
+            Vec::new(),
+        ));
+    }
     if total == 0 {
         findings.push(finding(
             "evidence_no_extracted_statements",
@@ -3080,6 +3128,10 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
                 ir.timing_constraints.len().to_string(),
             ),
             metric("document_class", document_classification.class.as_str()),
+            metric(
+                "document_type_declared",
+                document_classification.declared_type.as_str(),
+            ),
             metric(
                 "convergence_passes_run",
                 ir.convergence_report

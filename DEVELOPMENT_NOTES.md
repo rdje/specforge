@@ -45,10 +45,21 @@ agnostic by construction (only generic numeric floors, no chip/vendor/protocol w
 computes the census from the live EvidenceIR, prints a **Document Class** section, adds a `document_class`
 metric, and always records an `evidence_document_class` Info finding so the class persists in the report.
 
-Live distribution over all 74 persisted docs: **protocol 25 / register 11 / interface 22 / guide 16.** A noted
-follow-up (`.5c`, owner-suggested) reads the document's own front-matter (title / ToC / preface — "usually
-clearly stated in the early pages of the first chapter") to corroborate the class and, crucially, to separate
-a *true* guide from a *specification we under-extracted* (an image/table-heavy spec → the VLM frontier).
+Live distribution over all 74 persisted docs: **protocol 25 / register 11 / interface 22 / guide 16.**
+
+**`.5c` (done, same day, owner-suggested):** reads the document's own front-matter (title + first ~12 section
+headings) to corroborate the class and, crucially, separate a *true* guide from a *specification we
+under-extracted*. A grounding check confirmed the owner's instinct precisely: `document_profile.title` is empty
+for every corpus doc, but the **early first-chapter HEADINGS carry the type verbatim** — "Software Optimization
+Guide", "Learn the architecture - …", "Protocol Specification", "JEDEC STANDARD", "The RISC-V Advanced Interrupt
+Architecture". So `front_matter_doc_type_hint` reads those headings, with two deliberate vocabulary choices:
+guide phrasings rank above spec words (Arm's "Learn the architecture …" guide series contains "architecture"
+yet is a guide), and "overview"/"introduction" are excluded (every spec has an introduction chapter — Avalon's
+first heading is literally "Introduction to the Avalon Interface", but Avalon is a spec). `classify_document`
+then sets `under_extracted_spec` when a structural `guide` self-declares a specification, and `validate` raises
+a WARNING routing it to the VLM frontier. Live, this split the 16 structural guides into **11 true guides + 5
+under-extracted specs** (RISC-V Advanced Interrupt Architecture, JESD235 JEDEC STANDARD HBM, CoreSight Base
+System Architecture, +2) — a real spec we under-read is no longer a silent zero.
 
 ## 2026-06-08 — Live measurement of the bit recovery, honest result (EXTRACTION-GAP-FIX.4b)
 

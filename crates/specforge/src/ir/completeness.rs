@@ -452,10 +452,109 @@ impl DocumentClass {
     }
 }
 
+/// What a document's OWN front-matter (title / table-of-contents / early first-chapter
+/// headings) declares itself to be — a self-description signal that complements the
+/// structural census (`PDF-VARIANT-DIGESTION.5c`). The owner's observation: a chip-spec
+/// PDF usually states its type in plain words in the early pages. Recognized via generic
+/// document-TYPE vocabulary only (guide / specification / architecture / standard / …) —
+/// never a chip/vendor/protocol-instance name (ADR 0006), the same agnostic-grammar spirit
+/// as the normative vocabulary.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub enum DeclaredDocType {
+    /// Self-declares a guide / overview / tutorial / application note / "learn the …".
+    Guide,
+    /// Self-declares a specification / architecture / protocol / standard / reference
+    /// manual / datasheet — a real design contract document.
+    Specification,
+    /// No recognizable document-type word in the front-matter (or no front-matter available).
+    #[default]
+    Unknown,
+}
+
+impl DeclaredDocType {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Guide => "guide",
+            Self::Specification => "specification",
+            Self::Unknown => "unknown",
+        }
+    }
+}
+
+/// Multi-word GUIDE phrases. Checked (and ranked) BEFORE the spec vocabulary because some
+/// guide framings legitimately contain a spec word — Arm's "Learn the architecture …"
+/// series and an "architecture overview" are guides, not architecture specs — so the guide
+/// reading must win. All are generic doc-type phrasings, no chip/vendor names (ADR 0006).
+const DECLARED_GUIDE_PHRASES: &[&str] = &[
+    "learn the architecture",
+    "optimization guide",
+    "programming guide",
+    "programmer's guide",
+    "programmers guide",
+    "user guide",
+    "user's guide",
+    "getting started",
+    "application note",
+    "white paper",
+    "reference design",
+    "quick start",
+    "usage model",
+];
+/// Single GUIDE words (matched as whole tokens so "design guidelines" does not trip "guide").
+/// Deliberately EXCLUDES "overview" / "introduction" — every specification has an
+/// introduction/overview chapter, so those do not declare the document a guide.
+const DECLARED_GUIDE_WORDS: &[&str] = &[
+    "guide", "guides", "tutorial", "primer", "handbook", "cookbook",
+];
+/// Multi-word SPECIFICATION phrases.
+const DECLARED_SPEC_PHRASES: &[&str] = &[
+    "reference manual",
+    "technical reference",
+    "register map",
+    "programmer's model",
+    "programmers model",
+    "data sheet",
+    "instruction set",
+];
+/// Single SPECIFICATION words (whole tokens).
+const DECLARED_SPEC_WORDS: &[&str] = &[
+    "specification",
+    "specifications",
+    "architecture",
+    "protocol",
+    "standard",
+    "datasheet",
+];
+
+/// Infer a document's self-declared type from its front-matter text (title + early
+/// section headings). Pure, agnostic grammar: only generic document-type vocabulary,
+/// no chip/vendor/protocol-instance names (ADR 0006). Guide framings win over spec
+/// framings on overlap (e.g. "Learn the architecture", "architecture overview"), so the
+/// guide vocabulary is checked first.
+pub fn front_matter_doc_type_hint(front_matter: &str) -> DeclaredDocType {
+    let lower = front_matter.to_ascii_lowercase();
+    let has_word = |word: &str| {
+        lower
+            .split(|c: char| !c.is_ascii_alphanumeric())
+            .any(|tok| tok == word)
+    };
+    if DECLARED_GUIDE_PHRASES.iter().any(|p| lower.contains(p))
+        || DECLARED_GUIDE_WORDS.iter().any(|w| has_word(w))
+    {
+        DeclaredDocType::Guide
+    } else if DECLARED_SPEC_PHRASES.iter().any(|p| lower.contains(p))
+        || DECLARED_SPEC_WORDS.iter().any(|w| has_word(w))
+    {
+        DeclaredDocType::Specification
+    } else {
+        DeclaredDocType::Unknown
+    }
+}
+
 /// The structural census the document-class decision reads — one count per typed
-/// intent surface the staged extraction produces. Every count is observational
-/// (read off already-built IR, no fabrication); the classifier is a pure function
-/// of this census.
+/// intent surface the staged extraction produces, plus the document's self-declared
+/// type from its front-matter (`.5c`). Every count is observational (read off
+/// already-built IR, no fabrication); the classifier is a pure function of this census.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub struct DocumentClassCensus {
     pub registers: usize,
@@ -468,6 +567,9 @@ pub struct DocumentClassCensus {
     pub fsm_states: usize,
     pub serial_frame_fields: usize,
     pub visual_evidence: usize,
+    /// The document's self-declared type from its own front-matter (`.5c`). Defaults to
+    /// `Unknown` when no front-matter is available (e.g. the SourceIR was reclaimed).
+    pub declared_type: DeclaredDocType,
 }
 
 /// One document-class decision: the class, the census that drove it, and a
@@ -479,6 +581,14 @@ pub struct DocumentClassification {
     pub class: DocumentClass,
     pub rationale: String,
     pub census: DocumentClassCensus,
+    /// The document's self-declared type from its front-matter (`.5c`).
+    pub declared_type: DeclaredDocType,
+    /// `true` when the structural class is `Guide` (no reliable intent surface) BUT the
+    /// document's own front-matter self-declares a specification/architecture/standard.
+    /// That combination is NOT a true low-intent guide — it is a real design document we
+    /// UNDER-EXTRACTED (typically image/table-heavy), so it routes to the VLM frontier
+    /// instead of being quietly dismissed as a guide.
+    pub under_extracted_spec: bool,
 }
 
 /// Minimum register records before a document is "register-dominated". One stray
@@ -537,6 +647,19 @@ pub fn classify_document(census: DocumentClassCensus) -> DocumentClassification 
         DocumentClass::Guide
     };
 
+    // Front-matter corroboration (`.5c`): a structurally low-yield doc whose OWN front-matter
+    // self-declares a specification/architecture/standard is not a true guide — it is a spec we
+    // under-extracted (image/table-heavy), to be routed to the VLM frontier, not dismissed.
+    let under_extracted_spec =
+        class == DocumentClass::Guide && census.declared_type == DeclaredDocType::Specification;
+
+    let declared_suffix = match (class, census.declared_type) {
+        // Guide cases carry their own bespoke phrasing below; non-guide classes get a short note.
+        (DocumentClass::Guide, _) => String::new(),
+        (_, DeclaredDocType::Unknown) => String::new(),
+        (_, declared) => format!("; self-declared: {}", declared.as_str()),
+    };
+
     let rationale = match class {
         DocumentClass::Guide => {
             let narrative = if census.conditional_rules > 0 {
@@ -552,20 +675,31 @@ pub fn classify_document(census: DocumentClassCensus) -> DocumentClassification 
             } else {
                 String::new()
             };
-            format!(
-                "low structured design-intent ({} signals, {} registers, {} relations, {} signal constraints{narrative}{visual}) — reported honestly, not a silent miss",
+            let body = format!(
+                "low structured design-intent ({} signals, {} registers, {} relations, {} signal constraints{narrative}{visual})",
                 census.declared_signals,
                 census.registers,
                 census.actor_signal_relations,
                 census.signal_constraints,
-            )
+            );
+            match census.declared_type {
+                DeclaredDocType::Specification => format!(
+                    "{body} — BUT the document's own front-matter self-declares a specification/architecture: likely an UNDER-EXTRACTED spec (image/table-heavy), not a true guide → route to VLM rescan, do not dismiss"
+                ),
+                DeclaredDocType::Guide => format!(
+                    "{body} — corroborated by the document's own guide/overview framing; reported honestly, not a silent miss"
+                ),
+                DeclaredDocType::Unknown => {
+                    format!("{body} — reported honestly, not a silent miss")
+                }
+            }
         }
         DocumentClass::Register => format!(
-            "register-dominated ({} registers / {} fields; {} signal constraints, {interface_surface} connectivity edges)",
+            "register-dominated ({} registers / {} fields; {} signal constraints, {interface_surface} connectivity edges){declared_suffix}",
             census.registers, census.register_fields, census.signal_constraints,
         ),
         DocumentClass::Protocol => format!(
-            "behavioral protocol ({} signal constraints, {} FSM states, {} frame fields, {} actors, {} relations)",
+            "behavioral protocol ({} signal constraints, {} FSM states, {} frame fields, {} actors, {} relations){declared_suffix}",
             census.signal_constraints,
             census.fsm_states,
             census.serial_frame_fields,
@@ -573,7 +707,7 @@ pub fn classify_document(census: DocumentClassCensus) -> DocumentClassification 
             census.actor_signal_relations,
         ),
         DocumentClass::Interface => format!(
-            "signal interface ({} signals, {} actor-signal relations; no behavioral obligations)",
+            "signal interface ({} signals, {} actor-signal relations; no behavioral obligations){declared_suffix}",
             census.declared_signals, census.actor_signal_relations,
         ),
     };
@@ -582,6 +716,8 @@ pub fn classify_document(census: DocumentClassCensus) -> DocumentClassification 
         class,
         rationale,
         census,
+        declared_type: census.declared_type,
+        under_extracted_spec,
     }
 }
 
@@ -1196,5 +1332,109 @@ mod tests {
         }));
         assert_eq!(r.class, DocumentClass::Interface);
         assert!(r.rationale.contains("no behavioral obligations"));
+    }
+
+    // ── front-matter doc-type hint (PDF-VARIANT-DIGESTION.5c) ────────────────
+
+    #[test]
+    fn front_matter_hint_recognizes_real_guide_framings() {
+        // Real early-heading strings from the corpus.
+        assert_eq!(
+            front_matter_doc_type_hint("Arm Cortex-A76 Software Optimization Guide"),
+            DeclaredDocType::Guide
+        );
+        // Arm's "Learn the architecture …" series is a GUIDE even though it contains
+        // "architecture" — the guide phrasing must win over the spec word.
+        assert_eq!(
+            front_matter_doc_type_hint("Learn the architecture - AArch64 external debug"),
+            DeclaredDocType::Guide
+        );
+        assert_eq!(
+            front_matter_doc_type_hint("USB4 Connection Manager Guide"),
+            DeclaredDocType::Guide
+        );
+    }
+
+    #[test]
+    fn front_matter_hint_recognizes_real_spec_framings() {
+        // Real early-heading strings from the corpus.
+        assert_eq!(
+            front_matter_doc_type_hint("AMBA APB Protocol Specification Release Information"),
+            DeclaredDocType::Specification
+        );
+        assert_eq!(
+            front_matter_doc_type_hint("The RISC-V Advanced Interrupt Architecture"),
+            DeclaredDocType::Specification
+        );
+        assert_eq!(
+            front_matter_doc_type_hint("JEDEC STANDARD High Bandwidth Memory (HBM) DRAM Scope"),
+            DeclaredDocType::Specification
+        );
+        // A spec's own "Introduction to …" chapter must NOT read as a guide.
+        assert_eq!(
+            front_matter_doc_type_hint(
+                "Avalon Interface Specifications Contents 1. Introduction to the Avalon Interface"
+            ),
+            DeclaredDocType::Specification
+        );
+    }
+
+    #[test]
+    fn front_matter_hint_is_unknown_without_a_doctype_word() {
+        assert_eq!(
+            front_matter_doc_type_hint("Release Information Proprietary Notice Change History"),
+            DeclaredDocType::Unknown
+        );
+        // Whole-word match: "guidelines" must NOT trip the "guide" word.
+        assert_eq!(
+            front_matter_doc_type_hint("Design Guidelines and Coding Rules"),
+            DeclaredDocType::Unknown
+        );
+    }
+
+    #[test]
+    fn structural_guide_with_spec_front_matter_is_flagged_under_extracted() {
+        // THE .5c value: a structurally low-yield doc whose OWN front-matter self-declares a
+        // specification/architecture is NOT a true guide — it is a spec we under-extracted
+        // (image/table-heavy), flagged for the VLM frontier, not dismissed.
+        let r = classify_document(census(|c| {
+            c.visual_evidence = 200; // image-heavy
+            c.declared_type = DeclaredDocType::Specification;
+        }));
+        assert_eq!(r.class, DocumentClass::Guide);
+        assert!(r.under_extracted_spec);
+        assert!(
+            r.rationale.contains("UNDER-EXTRACTED spec") && r.rationale.contains("VLM rescan"),
+            "an under-extracted spec must say so: {}",
+            r.rationale
+        );
+    }
+
+    #[test]
+    fn structural_guide_with_guide_front_matter_is_a_confirmed_guide() {
+        // A true guide: structurally empty AND self-declares a guide → confirmed, not flagged.
+        let r = classify_document(census(|c| {
+            c.conditional_rules = 12;
+            c.declared_type = DeclaredDocType::Guide;
+        }));
+        assert_eq!(r.class, DocumentClass::Guide);
+        assert!(!r.under_extracted_spec);
+        assert!(
+            r.rationale
+                .contains("corroborated by the document's own guide")
+        );
+    }
+
+    #[test]
+    fn non_guide_class_notes_the_declared_type_but_is_not_under_extracted() {
+        // A real protocol whose title says "specification" → corroboration only, never flagged.
+        let r = classify_document(census(|c| {
+            c.signal_constraints = 14;
+            c.actor_signal_relations = 69;
+            c.declared_type = DeclaredDocType::Specification;
+        }));
+        assert_eq!(r.class, DocumentClass::Protocol);
+        assert!(!r.under_extracted_spec);
+        assert!(r.rationale.contains("self-declared: specification"));
     }
 }

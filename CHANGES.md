@@ -1,3 +1,25 @@
+### `PDF-VARIANT-DIGESTION.5c` — front-matter doc-type signal (true guide vs under-extracted spec)
+Owner-directed refinement of `.5a`: a chip-spec PDF usually states what it IS in plain words in its early
+pages, so `validate` now reads the document's own front-matter to corroborate the structural class and, more
+importantly, separate a TRUE low-intent guide from a SPECIFICATION we under-extracted.
+
+- New pure `crate::ir::completeness::front_matter_doc_type_hint(&str) -> DeclaredDocType`
+  (`{Guide, Specification, Unknown}`) over generic document-type vocabulary only (guide / tutorial / "learn the
+  architecture" / application note … vs specification / architecture / protocol / standard / datasheet /
+  reference manual). Guide phrasings rank above spec words (so Arm's "Learn the architecture …" series reads as
+  a guide, not an architecture spec); "overview" / "introduction" are deliberately EXCLUDED (every spec has those
+  chapters); whole-word match so "guidelines" ≠ "guide". Agnostic — no chip/vendor names (ADR 0006).
+- `classify_document` now consumes the front-matter signal and sets
+  `under_extracted_spec = (class == Guide && declared == Specification)`. `validate` reads the title + first 12
+  section headings off the sibling SourceIR (the `document_profile.title` is empty in practice → the early
+  headings carry the signal, confirming the owner's point), prints `document_type_declared` + an under-extracted
+  line, adds a `document_type_declared` metric, and emits a WARNING `evidence_document_underextracted_spec`
+  finding so the doc routes to the VLM frontier instead of being dismissed as a guide.
+- +6 hermetic tests on real corpus framings. fmt + clippy `-D warnings` clean; full lib suite 1410 → 1416;
+  kg-bench 151/151. **Live over the 74 persisted docs: of the 16 classed `guide`, 11 are TRUE guides + 5 are
+  UNDER-EXTRACTED specs flagged for VLM rescan** — RISC-V Advanced Interrupt *Architecture*, JESD235 *JEDEC
+  STANDARD* HBM, CoreSight Base System *Architecture* (+2). No wire-based regression.
+
 ### `PDF-VARIANT-DIGESTION.5a` — document-class routing + honest guide reporting
 `validate` now classifies every EvidenceIR into one of four structural classes so a low-design-intent
 document (a guide / narrative / image-heavy datasheet) is reported HONESTLY as such instead of looking like a
