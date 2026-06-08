@@ -730,7 +730,7 @@ const GAUGE_SAMPLE_CAP: usize = 8;
 /// are MISSING a mandatory attribute, out of how many of that kind the extraction
 /// produced. Pure observation — every counted item is one the extraction itself
 /// produced but left incomplete; nothing is fabricated. `sample` is a bounded
-/// (≤ [`GAUGE_SAMPLE_CAP`]) list of affected item names/ids for human review.
+/// (≤ `GAUGE_SAMPLE_CAP`) list of affected item names/ids for human review.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CompletenessGap {
     /// Stable machine label, e.g. `registers_without_fields`.
@@ -739,7 +739,7 @@ pub struct CompletenessGap {
     pub missing: usize,
     /// Items of this kind the extraction produced (the denominator).
     pub total: usize,
-    /// A bounded sample (≤ [`GAUGE_SAMPLE_CAP`]) of affected item names/ids — never fabricated.
+    /// A bounded sample (≤ `GAUGE_SAMPLE_CAP`) of affected item names/ids — never fabricated.
     pub sample: Vec<String>,
 }
 
@@ -779,7 +779,7 @@ impl DocumentCompletenessGauge {
     }
 }
 
-/// Bounded review sample of the first ≤ [`GAUGE_SAMPLE_CAP`] items from `names`.
+/// Bounded review sample of the first ≤ `GAUGE_SAMPLE_CAP` items from `names`.
 fn gauge_sample<I: IntoIterator<Item = String>>(names: I) -> Vec<String> {
     names.into_iter().take(GAUGE_SAMPLE_CAP).collect()
 }
