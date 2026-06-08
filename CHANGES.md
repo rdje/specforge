@@ -1,3 +1,19 @@
+### `CORPUS-PATTERN-REUSE.1` — own the cross-PDF / vendor-clustered pattern-reuse direction (design; no code)
+Owner strategic directive (`2026-06-09`): recognize and reuse extraction patterns across PDFs; same-vendor
+docs tend to share organization (likely, not certain); think out-of-the-box (this is new, LLM/VLM-enabled).
+Captured as an owned design grounded in the EXISTING machinery (not greenfield):
+- **Derived vendor/layout fingerprint** as the cluster key (front-matter vocab, heading grammar, table-header
+  signatures, pub-ID format, layout metadata) — labelled by a *derived* id, never a hardcoded vendor name (ADR 0006).
+- The `EXTRACTOR-ARCHITECTURE` **`ExtractionManifest` is the per-doc behavioral fingerprint** to cluster on —
+  so the extractor-framework consolidation is the foundation for this plane.
+- A typed advisory **`ExtractionProfile`** in `CorpusMemory` keyed by the cluster, consumed via
+  `Extractor::applies_to`; **LLM/VLM as an offline corpus-level pattern miner** (propose → validate on held-out
+  docs → promote only validated), the proven `VERB-COVERAGE-CORPUS` shape.
+- **Invariant:** a reused pattern adjusts *attention*, never *truth* — the current document grounds every
+  fact; contested-prior detection (`PRIOR-DECAY`) flags deviation; recall up, fabrication impossible,
+  genericity preserved. Build (`.2`–`.4`) sequenced behind the extractor framework. New tree
+  `CORPUS-PATTERN-REUSE`; KM card `corpus-pattern-reuse`. Docs-only.
+
 ### `EXTRACTOR-ARCHITECTURE.3` — migrate the FSM cluster onto the framework (byte-identical consolidation)
 The first real consolidation. The four FSM-state grammars — JTAG/SWD-hyphen, SWD line, quoted-mode (`.9.3a`),
 transition-bound single-word (`.9.7`) — are now `Extractor<ProtocolStateRecord>` units (`fsm.jtag_tap` /
