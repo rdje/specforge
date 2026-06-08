@@ -215,7 +215,7 @@ hidden behind a strict `0.000` — the decomposition says precisely what to fix 
 eval surface; `.4a.2` the RISC-V Debug gold + field-name/completeness decomposition; `.4a.3` the
 NVMe gold + the register-scoped bit-structure recall).
 
-## Declared signals — prose capture, perfect recall, leaky precision
+## Declared signals — prose capture, measured then fixed to perfect
 
 Some specs name their signals only in prose, never in a table — the I2C bus is the classic case:
 "*Only two bus lines are required; a serial data line (SDA) and a serial clock line (SCL).*"
@@ -233,17 +233,27 @@ and the Ultra-Fast `USDA`/`USCL`, each verified against the spec's own "signals"
 specforge eval-extraction crates/specforge/test_data/llm_eval/seed_i2c_signals.json
   declared_signal        P=1.000 R=1.000 F1=1.000  (tp=6 fp=0 fn=0)   [source-tolerant]
   -- declared-signal surface (complete-gold precision) --
-    precision (assumes gold enumerates all signals)  6/10 = 0.600
-    false positives (4): ACK, DDC, NACK, SDR
+    precision (assumes gold enumerates all signals)  6/6 = 1.000
 ```
 
-Recall is **perfect** — all six real signals are found. But precision is **0.600**: the extractor also
-emitted four things that are *not* bus signals — `ACK` and `NACK` (the acknowledge/not-acknowledge
-*conditions* the transmitter creates on the SDA line, §3.1.6 — not separate wires), `DDC` (the Display
-Data Channel, a *different* bus, §4.6), and `SDR` (an I3C "standard data rate" acronym). The gold
-deliberately excludes those, with the reasoning recorded in its label note, so they surface as named
-false positives rather than being quietly accepted — which is exactly the point: it tells the next fix
-("tighten the prose acronym/condition filter") precisely what to remove.
+Recall is **perfect** (all six real signals) and precision is now **1.000** — but that precision is the
+*result of a fix*, and the story of how it got there is the point. When the gold was first authored,
+precision was **0.600**: the extractor also emitted four things that are *not* bus signals — `ACK` and
+`NACK` (the acknowledge/not-acknowledge *conditions* on the SDA line, §3.1.6 — not separate wires), `DDC`
+(the Display Data Channel, a *different* bus, §4.6), and `SDR` (an I3C "standard data rate" acronym). The
+gold deliberately excludes those, so they surfaced as named false positives rather than being quietly
+accepted — which told the next fix exactly what to remove.
+
+The fix is a small piece of **agnostic grammar**, not a denylist of those four tokens (the runtime never
+learns chip-specific names). Prose introduces a signal as "*&lt;descriptor&gt; (NAME)*", e.g. "serial data
+**line** (SDA)". The original rule accepted the abbreviation if *any* word in a short preceding window was
+a wire descriptor — but that let a non-wire noun phrase qualify whenever a descriptor appeared earlier in
+it: "An acknowledge clock **pulse** (ACK)" and "Not Acknowledge clock **pulse** (NACK)" qualified via
+`clock`; "Display Data **Channel** (DDC)" and "standard data **rate** (SDR)" via `data`. The fix requires
+the **head noun** — the word immediately before the abbreviation — to be the wire noun itself. The real
+lines keep their head (`SDA`→`line`, `USCL`→`clock`, `SDAH`→`data`); the over-captures don't (`ACK`→`pulse`,
+`DDC`→`channel`, `SDR`→`rate`), so all four drop while all six real signals stay. The same rule generalises
+to any spec: a parenthetical abbreviation is a signal only when its noun-phrase head is a wire.
 
 A subtlety worth understanding: the **complete-gold precision** is reported separately *because* the
 ordinary statement-scoped precision can't see these over-captures. Each spurious signal is attributed to
@@ -252,8 +262,8 @@ reports `fp=0`. Precision over the *produced signal set* only makes sense when t
 true signal — true for a small, fully-specified bus like I2C, which is why the surface labels the
 assumption explicitly rather than reporting a precision that would be wrong on a doc with a sampled gold.
 
-*Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.4a.4` added the declared-signal eval
-surface; `.4a.5` authored the I2C gold and recorded recall 1.000 / precision 0.600).
+*Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.4a.4`/`.4a.5` built the surface + the gold
+and measured 0.600); `docs/tasks/EXTRACTION-GAP-FIX.md` (`.1` fixed it to 1.000 via the head-noun rule).
 
 ## Auditing the broadened extraction — a VLM precision estimate
 

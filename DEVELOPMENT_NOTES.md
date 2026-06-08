@@ -8,6 +8,24 @@
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 - adapter target: `.isf` (sole adapter); `.fsm`/HDL are out of scope — FSMGen consumes `.isf` and owns scheduling/`.fsm`/HDL downstream (since `ISF-ONLY-CONSOLIDATION`, `2026-05-18`)
 
+## 2026-06-08 — I2C prose precision: the noun-phrase head rule (EXTRACTION-GAP-FIX.1)
+
+First fix in the `EXTRACTION-GAP-FIX` tree (owner pivot). The lesson is about *grounding a fix in the real
+prose before writing it*. The I2C declared-signal precision was 0.600 (four over-captures: ACK/NACK/DDC/SDR).
+Rather than guess a filter, I traced all ten parenthetical acronyms from the persisted I2C SourceIR/EvidenceIR
+to their exact sentences, which made the discriminator obvious:
+
+- real (keep): "serial data **line** (SDA)", "serial **clock** (USCL)", "high-speed **data** (SDAH)" — head = a wire noun
+- fake (drop): "acknowledge clock **pulse** (ACK)", "Display Data **Channel** (DDC)", "standard data **rate** (SDR)" — head = pulse/channel/rate
+
+The old rule scanned a 4-word window for *any* descriptor, so `clock`/`data` appearing earlier in a non-wire
+phrase falsely qualified it. The fix narrows that to the **immediate head noun** (same descriptor set), which
+is the agnostic grammar that actually separates a wire from a condition/other-bus/rate — and it generalises
+(no denylist of the four tokens; ADR 0006). Because the eval scores *persisted* evidence and I2C's
+`normalized/` had been reclaimed, the honest re-measurement required re-ingesting the git-tracked I2C PDF
+(`DOCLING_DEVICE=cpu`, 38 s) → rebuild evidence → eval: precision 0.600 → 1.000, recall 1.000 held. The
+hermetic test pins the exact ten contexts so the behaviour can't silently regress.
+
 ## 2026-06-08 — live VLM audit measurement (PDF-VARIANT-DIGESTION.4b.2, closes `.4b`/`.4`)
 
 Ran the `.4b.1` harness live to get the precision estimates. The headline is **cross-validation**: the VLM

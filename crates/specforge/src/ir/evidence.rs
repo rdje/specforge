@@ -6973,9 +6973,11 @@ fn synthesize_signal_declarations_from_prose(
             });
         }
         // PDF-VARIANT-DIGESTION.3 — parenthetical abbreviation form: a signal introduced in prose as
-        // "<descriptor> (NAME)", e.g. "a serial data line (SDA)", "serial clock (SCL)". A signal
-        // DESCRIPTOR (line/signal/clock/data/wire/bus/pin) must appear in the preceding words so arbitrary
-        // acronyms are not captured. Run only as a FALLBACK for sparse-catalog docs (`enable_parenthetical`):
+        // "<descriptor> (NAME)", e.g. "a serial data line (SDA)", "serial clock (USCL)". The noun-phrase
+        // HEAD (the word immediately before the abbreviation) must be a single-wire noun
+        // (line/signal/clock/data/wire/bus/pin) so arbitrary acronyms — and non-wire heads like a clock
+        // PULSE (ACK), a Data CHANNEL (DDC), or a data RATE (SDR) — are not captured (EXTRACTION-GAP-FIX.1).
+        // Run only as a FALLBACK for sparse-catalog docs (`enable_parenthetical`):
         // table-rich specs (AXI etc.) get their signals from tables, and prose capture there is redundant
         // noise that can admit garbage constraints. General prose capture, universal vocabulary (ADR 0006).
         if !enable_parenthetical {
@@ -7000,26 +7002,43 @@ fn synthesize_signal_declarations_from_prose(
             if !is_hardware_signal_token(&token) || is_signal_synthesis_non_signal(&token) {
                 continue;
             }
-            let lo = i.saturating_sub(4);
-            let has_descriptor = words[lo..i].iter().any(|p| {
-                matches!(
-                    p.trim_matches(|c: char| !c.is_ascii_alphabetic())
-                        .to_ascii_lowercase()
-                        .as_str(),
-                    "line"
-                        | "lines"
-                        | "signal"
-                        | "signals"
-                        | "clock"
-                        | "data"
-                        | "wire"
-                        | "wires"
-                        | "bus"
-                        | "pin"
-                        | "pins"
-                )
-            });
-            if !has_descriptor || !seen.insert(token.clone()) {
+            // EXTRACTION-GAP-FIX.1 — the noun-phrase HEAD (the word immediately before the "(NAME)", or
+            // the fused prefix in "line(NAME)") must itself be a single-wire noun — not merely SOME
+            // descriptor anywhere in a preceding window. A window admits non-signals whose head is not a
+            // wire: "An acknowledge clock pulse (ACK)" / "Display Data Channel (DDC)" / "standard data rate
+            // (SDR)" all contain a descriptor (clock/data) but their HEAD is pulse/channel/rate — a
+            // condition, another bus, a rate — not a wire. Requiring the head to be the wire noun keeps the
+            // real lines ("serial data line (SDA)", "serial clock (USCL)", "high-speed data (SDAH)") and
+            // drops those over-captures. General grammar, universal vocabulary (ADR 0006).
+            let head_word: Option<String> = if open > 0 {
+                Some(w[..open].to_string())
+            } else {
+                i.checked_sub(1)
+                    .and_then(|h| words.get(h))
+                    .map(|s| s.to_string())
+            };
+            let head_is_wire_noun = head_word
+                .as_deref()
+                .map(|p| {
+                    matches!(
+                        p.trim_matches(|c: char| !c.is_ascii_alphabetic())
+                            .to_ascii_lowercase()
+                            .as_str(),
+                        "line"
+                            | "lines"
+                            | "signal"
+                            | "signals"
+                            | "clock"
+                            | "data"
+                            | "wire"
+                            | "wires"
+                            | "bus"
+                            | "pin"
+                            | "pins"
+                    )
+                })
+                .unwrap_or(false);
+            if !head_is_wire_noun || !seen.insert(token.clone()) {
                 continue;
             }
             *statement_counter += 1;
@@ -14410,6 +14429,40 @@ mod swd_serial_extraction_2 {
         // a bare parenthetical acronym with no signal descriptor nearby must NOT be captured.
         let names = declared(&[stmt("The protocol (I2C) supports multiple controllers .")]);
         assert!(!names.iter().any(|n| n == "I2C"), "got {names:?}");
+    }
+
+    #[test]
+    fn parenthetical_head_must_be_a_wire_noun_i2c_precision() {
+        // EXTRACTION-GAP-FIX.1 — the exact real I2C-bus prose (UM10204). The 6 genuine bus signals each
+        // have a WIRE-NOUN head immediately before the abbreviation (line / clock / data) and must be
+        // captured; the over-captures have a non-wire head (clock PULSE / Data CHANNEL / data RATE) and
+        // must be dropped (precision 0.600 -> higher; recall held).
+        let names = declared(&[
+            stmt(
+                "Only two bus lines are required: a serial data line (SDA) and a serial clock line (SCL) .",
+            ),
+            stmt(
+                "The 2-wire push-pull driver consists of a UFm serial clock (USCL) and serial data (USDA) .",
+            ),
+            stmt(
+                "During Hs-mode transfer, the high-speed data (SDAH) and high-speed serial clock (SCLH) lines .",
+            ),
+            stmt("An acknowledge clock pulse (ACK) and a Not Acknowledge clock pulse (NACK) ."),
+            stmt("Display Data Channel (DDC) is an example interface ."),
+            stmt("I3C supports a multi-drop bus that supports standard data rate (SDR) ."),
+        ]);
+        for keep in ["SDA", "SCL", "USCL", "USDA", "SDAH", "SCLH"] {
+            assert!(
+                names.contains(&keep.to_string()),
+                "expected {keep} in {names:?}"
+            );
+        }
+        for drop in ["ACK", "NACK", "DDC", "SDR"] {
+            assert!(
+                !names.iter().any(|n| n == drop),
+                "non-wire-head over-capture {drop} must be dropped; got {names:?}"
+            );
+        }
     }
 
     #[test]

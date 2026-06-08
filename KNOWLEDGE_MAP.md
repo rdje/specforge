@@ -3,7 +3,7 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Regenerate with `knowledge-map/scripts/gen_knowledge_map.sh`.
 > Source of truth = YAML front-matter in: `docs/knowledge docs/decisions`. Edit the fact files, never this map.
 > A fact is any `.md` whose front-matter has a non-empty `answers:` list.
-> **41** facts · **211** question keys.
+> **41** facts · **212** question keys.
 
 ## Questions → fact
 
@@ -157,6 +157,7 @@
 - "what is the constraint-subject-must-be-declared filter" -> [axi-constraint-subject-must-be-declared](docs/knowledge/axi-constraint-subject-must-be-declared.md) · 2026-06-07 · reverify: `./target/debug/specforge eval-extraction crates/specforge/test_data/llm_eval/seed_axi.json --provider skip 2>/dev/null | grep -A1 source-tolerant`
 - "what is the declared-signal eval surface / EvalTask::DeclaredSignal" -> [prose-signal-capture-i2c-precision](docs/knowledge/prose-signal-capture-i2c-precision.md) · 2026-06-08 · reverify: `./target/debug/specforge eval-extraction crates/specforge/test_data/llm_eval/seed_i2c_signals.json --provider skip 2>&1 | grep -A2 "declared-signal surface`
 - "what is the inter-annotator agreement of the eval gold" -> [eval-gold-interannotator-kappa](docs/knowledge/eval-gold-interannotator-kappa.md) · 2026-06-05 · reverify: `true  # MANUAL: re-run a blind second annotation per EVAL-GOLD-INTERANNOTATOR-AGREEMENT.md Method and recompute kappa (not an automatable grep)`
+- "what is the parenthetical noun-phrase head rule / EXTRACTION-GAP-FIX.1" -> [prose-signal-capture-i2c-precision](docs/knowledge/prose-signal-capture-i2c-precision.md) · 2026-06-08 · reverify: `./target/debug/specforge eval-extraction crates/specforge/test_data/llm_eval/seed_i2c_signals.json --provider skip 2>&1 | grep -A2 "declared-signal surface`
 - "what is the register-field eval surface (EvalTask::RegisterField)" -> [register-field-eval-measure-and-surface](docs/knowledge/register-field-eval-measure-and-surface.md) · 2026-06-08 · reverify: `./target/debug/specforge eval-extraction crates/specforge/test_data/llm_eval/seed_riscv_debug_registers.json --provider skip 2>&1 | grep -A3 "register-field surface`
 - "what is the table-kind precision estimate and the flagged-mismatch list" -> [extraction-audit-vlm](docs/knowledge/extraction-audit-vlm.md) · 2026-06-08 · reverify: `./target/debug/specforge audit-extraction generated/source_ir/1_0_risc_v_debug_specification/source_ir.json --sample 8           # plan-only: lists 8 sampled intent-bearing tables, no VLM calls`
 - "what model do converge / enrich / nlp-enrich use by default" -> [llm-vlm-provider-default](docs/knowledge/llm-vlm-provider-default.md) · 2026-06-01 · reverify: `grep -n "qwen2.5vl" crates/specforge/src/commands/llm_text.rs`
@@ -185,7 +186,6 @@
 - "which docs fail to ingest (giants / timeouts)" -> [corpus-coverage-sweep](docs/knowledge/corpus-coverage-sweep.md) · 2026-06-08 · reverify: `python3 over generated/evidence_ir/*/evidence_ir.json — count Signal-decls / register_records+fields / protocol_actors / signal_constraints / actor_signal_relations per doc-key`
 - "which local model should SpecForge use for NLI or entailment verification" -> [local-llm-for-text-reasoning](docs/knowledge/local-llm-for-text-reasoning.md) · 2026-06-05 · reverify: `ollama list  # qwen2.5:14b-instruct (text) + qwen2.5vl:7b (vision); re-run the NLI/kappa probes`
 - "which local models are pulled and what are they for" -> [local-llm-for-text-reasoning](docs/knowledge/local-llm-for-text-reasoning.md) · 2026-06-05 · reverify: `ollama list  # qwen2.5:14b-instruct (text) + qwen2.5vl:7b (vision); re-run the NLI/kappa probes`
-- "why are ACK / NACK / DDC / SDR extracted as I2C signals" -> [prose-signal-capture-i2c-precision](docs/knowledge/prose-signal-capture-i2c-precision.md) · 2026-06-08 · reverify: `./target/debug/specforge eval-extraction crates/specforge/test_data/llm_eval/seed_i2c_signals.json --provider skip 2>&1 | grep -A2 "declared-signal surface`
 - "why are modal verbs must shall should may not flagged as ambiguous" -> [ambiguity-weak-phrase-detector](docs/knowledge/ambiguity-weak-phrase-detector.md) · 2026-06-04 · reverify: `grep -n "fn weak_phrase_findings" crates/specforge/src/ir/ambiguity.rs`
 - "why are stability obligations residuals" -> [stable-obligation-phase-scoped-residual](docs/knowledge/stable-obligation-phase-scoped-residual.md) · 2026-06-04 · reverify: `grep -n "bare stability across tick phases" crates/specforge/src/ir/contract.rs`
 - "why can't specforge evidence rebuild the evidence (normalized missing)" -> [eval-scores-persisted-evidence](docs/knowledge/eval-scores-persisted-evidence.md) · 2026-06-07 · reverify: `./target/debug/specforge evidence generated/source_ir/<doc_key>/source_ir.json   # errors if normalized was reclaimed`
@@ -217,6 +217,7 @@
 - "why was a property like RME_Support or MPAM_WIDTH extracted as a signal constraint" -> [axi-constraint-subject-must-be-declared](docs/knowledge/axi-constraint-subject-must-be-declared.md) · 2026-06-07 · reverify: `./target/debug/specforge eval-extraction crates/specforge/test_data/llm_eval/seed_axi.json --provider skip 2>/dev/null | grep -A1 source-tolerant`
 - "why was a signal not extracted from a signal table (e.g. AHB HREADY)" -> [rotated-signal-table-extraction](docs/knowledge/rotated-signal-table-extraction.md) · 2026-06-07 · reverify: `./target/debug/specforge eval-extraction crates/specforge/test_data/llm_eval/seed_ahb_temporal.json --provider skip 2>/dev/null | grep temporal_rule`
 - "why was the ISF explicit-FSM feature request withdrawn" -> [isf-fsm-via-switch-select](docs/knowledge/isf-fsm-via-switch-select.md) · 2026-06-07 · reverify: `write a state machine as (storage (var st ...)) + (transaction step (on start) (switch st (S (select st input A B))...) (complete done)) + (rule tick start (trigger step)); run subs/fsmgen/bin/fsmgen --strict --check --json FILE → success:true`
+- "why were ACK / NACK / DDC / SDR extracted as I2C signals (and how was it fixed)" -> [prose-signal-capture-i2c-precision](docs/knowledge/prose-signal-capture-i2c-precision.md) · 2026-06-08 · reverify: `./target/debug/specforge eval-extraction crates/specforge/test_data/llm_eval/seed_i2c_signals.json --provider skip 2>&1 | grep -A2 "declared-signal surface`
 - "why were RISC-V/TRM register tables unextracted (unknown table_kind)" -> [register-field-table-extraction](docs/knowledge/register-field-table-extraction.md) · 2026-06-07 · reverify: `./target/debug/specforge evidence generated/source_ir/1_0_risc_v_debug_specification/source_ir.json && python3 -c "import json;e=json.load(open('generated/evidence_ir/1_0_risc_v_debug_specification/evidence_ir.json'));print(len(e['register_records']),'regs',sum(len(r['fields']) for r in e['register_records']),'fields')`
 
 ## Facts (by id)
@@ -456,9 +457,9 @@ _Signals introduced in PROSE (not tables) are captured — pin appositive + pare
 - **source:** [`docs/knowledge/prose-signal-capture.md`](docs/knowledge/prose-signal-capture.md)
 
 ### prose-signal-capture-i2c-precision
-_Prose-signal capture is recall-perfect but precision-leaky on I2C (1.000 / 0.600) — over-captures conditions + acronyms_
+_Prose-signal capture on I2C — measured 0.600 precision then FIXED to 1.000 via the noun-phrase head rule_
 
-- **answers:** how good is prose signal capture / .3a quality | what is the I2C declared-signal recall / precision | why are ACK / NACK / DDC / SDR extracted as I2C signals | what is the declared-signal eval surface / EvalTask::DeclaredSignal | what is declared_signal_complete_gold_precision | where is the I2C signal gold seed
+- **answers:** how good is prose signal capture / .3a quality | what is the I2C declared-signal recall / precision | why were ACK / NACK / DDC / SDR extracted as I2C signals (and how was it fixed) | what is the declared-signal eval surface / EvalTask::DeclaredSignal | what is declared_signal_complete_gold_precision | where is the I2C signal gold seed | what is the parenthetical noun-phrase head rule / EXTRACTION-GAP-FIX.1
 - **date:** 2026-06-08 · **status:** current
 - **evidence:** `crates/specforge/src/eval.rs (EvalTask::DeclaredSignal, GoldFact::DeclaredSignal, declared_signal_record_key, index_declared_signal_predictions, declared_signal_complete_gold_precision); crates/specforge/src/commands/eval_extraction.rs (declared-signal surface); crates/specforge/test_data/llm_eval/seed_i2c_signals.json; docs/tasks/PDF-VARIANT-DIGESTION.md (.4a.4/.4a.5)`
 - **reverify:** `./target/debug/specforge eval-extraction crates/specforge/test_data/llm_eval/seed_i2c_signals.json --provider skip 2>&1 | grep -A2 "declared-signal surface`

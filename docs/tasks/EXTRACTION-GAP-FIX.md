@@ -62,13 +62,23 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
 ## Task tree
 
 - ID: `EXTRACTION-GAP-FIX` · Status: `active` · Children: `.1`–`.4`
-- ID: `EXTRACTION-GAP-FIX.1` · Status: `pending` · Goal: **I2C prose acronym/condition precision filter** —
-  tighten the prose signal capture (`synthesize_signal_declarations_from_prose`, `.3a`) so it stops emitting
-  entities that prose introduces as something OTHER than a bus wire: acknowledge/condition states (ACK/NACK),
-  acronyms naming a DIFFERENT bus/interface (DDC), and rate/mode acronyms (SDR). General grammar only — the
-  expansion must denote a wire (line/signal/clock/data/pin/bus), not a condition/rate/state — NEVER a denylist
-  of those specific tokens. Re-measure on the `.4a.5` I2C gold (precision 0.600 → higher; recall stays 1.000).
-  Accept: I2C precision up, recall held, APB/AHB/AXI declared-signal + kg-bench unaffected; hermetic tests.
+- ID: `EXTRACTION-GAP-FIX.1` · Status: `done` (`2026-06-08`) · Goal: **I2C prose acronym/condition precision
+  filter** — tighten the prose signal capture (`synthesize_signal_declarations_from_prose`, `.3a`) so it stops
+  emitting entities prose introduces as something OTHER than a bus wire. **DONE — the agnostic fix is a
+  noun-phrase HEAD rule:** the parenthetical form `"<descriptor> (NAME)"` required only that SOME word in a
+  4-word window be a descriptor, so a non-wire head still qualified — "An acknowledge clock **pulse** (ACK)"
+  and "Not Acknowledge clock **pulse** (NACK)" via `clock`, "Display Data **Channel** (DDC)" and "standard
+  data **rate** (SDR)" via `data`. The fix requires the IMMEDIATE head noun (the word right before the
+  abbreviation, or the fused prefix in `line(NAME)`) to be the wire noun (same descriptor set:
+  line/signal/clock/data/wire/bus/pin) — so the real lines survive (`serial data **line** (SDA)`, `serial
+  **clock** (USCL)`, `high-speed **data** (SDAH)`) and the four over-captures drop. **NO denylist of those
+  tokens** — pure general grammar (ADR 0006). **Re-measured on fresh re-ingested I2C evidence
+  (`DOCLING_DEVICE=cpu`) against the `.4a.5` gold: declared-signal complete-gold precision 0.600 → 1.000
+  (fp 4 → 0), recall held 1.000 (all 6 real signals: SDA/SCL/USCL/USDA/SDAH/SCLH).** +1 hermetic test
+  reproducing the exact 10 I2C prose contexts (6 kept / 4 dropped); existing parenthetical tests still pass.
+  No wire-based regression (the parenthetical path is disabled for ≥8-table-signal specs; SWD uses the
+  pin-appositive path); full `run_ci.sh` green (lib 1378 → 1379); kg-bench 151/151. Commit subject:
+  `EXTRACTION-GAP-FIX.1`.
 - ID: `EXTRACTION-GAP-FIX.2` · Status: `pending` · Goal: **NVMe mnemonic-from-description** — when a
   register-field table's name column is itself a bit-range (so `field_name` is e.g. `07:04`) and the
   description leads with a mnemonic token (`MQES: …` / `MQES –  …`), recover the mnemonic as the field
@@ -92,9 +102,11 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
 
 ## Current frontier
 
-**ACTIVE FRONTIER (`2026-06-08`): `EXTRACTION-GAP-FIX.1`** — the I2C prose acronym/condition precision filter
-(the most self-contained, lowest-agnostic-risk, gold-measurable first win; `.4a.5` named it). Then `.2`
-(NVMe mnemonic, structural), `.3` (RISC-V register-name, harder), `.4` (RISC-V bit-graphic, hardest/VLM).
+**ACTIVE FRONTIER (`2026-06-08`): `EXTRACTION-GAP-FIX.2`** — NVMe mnemonic-from-description (structural: when a
+register-field table's name column is itself a bit-range, recover the leading mnemonic token from the
+description). **`.1` DONE** — I2C prose precision 0.600 → 1.000 via the noun-phrase HEAD rule (agnostic, no
+denylist), recall held 1.000. Then `.3` (RISC-V register-name-from-heading, harder), `.4` (RISC-V bit-graphic,
+hardest/VLM-or-residual). Remember the honesty guardrail: read where the fact lives, else honest residual.
 
 ## Decisions
 
@@ -116,13 +128,21 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
 
 ## Verification log
 
-- (pending — first entry at `.1`.)
+- `.1` (`2026-06-08`): noun-phrase HEAD rule in `synthesize_signal_declarations_from_prose` (immediate head
+  noun must be a wire noun, replacing the 4-word descriptor window). Grounded in the real UM10204 prose
+  (traced all 10 parenthetical acronyms from the persisted I2C SourceIR/EvidenceIR). +1 hermetic test
+  (`parenthetical_head_must_be_a_wire_noun_i2c_precision`); 2 existing parenthetical tests still pass.
+  Re-ingested I2C (`DOCLING_DEVICE=cpu`, 38 s) → rebuilt evidence → `eval-extraction seed_i2c_signals.json`:
+  declared-signal complete-gold precision **0.600 → 1.000** (fp 4 → 0), recall **1.000** held. fmt +
+  clippy `-D warnings` clean; full lib suite 1378 → 1379; kg-bench 151/151. No wire-based regression
+  (parenthetical path disabled for ≥8-table-signal specs).
 
 ## Commit log
 
-- (pending.)
+- `.1` → `EXTRACTION-GAP-FIX.1 — I2C prose precision: noun-phrase head must be a wire noun (0.600 → 1.000)`
 
 ## Changelog
 
-- `2026-06-08`: Created (owner pivot — fix the `PDF-VARIANT-DIGESTION.4`-quantified extraction gaps). `.1`
-  (I2C prose precision filter) on the frontier.
+- `2026-06-08`: Created (owner pivot — fix the `PDF-VARIANT-DIGESTION.4`-quantified extraction gaps) + owner
+  honesty guardrail baked in (cannot extract what is not there → read the right modality, else residual).
+  `.1` (I2C prose precision filter) DONE → precision 0.600 → 1.000; frontier moves to `.2` (NVMe mnemonic).

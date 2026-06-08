@@ -1,3 +1,22 @@
+### `EXTRACTION-GAP-FIX.1` — I2C prose precision 0.600 → 1.000 (noun-phrase head must be a wire noun)
+First fix in the owner-pivot `EXTRACTION-GAP-FIX` tree (close the gaps `PDF-VARIANT-DIGESTION.4` quantified).
+The prose signal capture (`synthesize_signal_declarations_from_prose`, `.3a`) over-captured four I2C
+non-signals — `ACK`/`NACK` (acknowledge *conditions*, §3.1.6), `DDC` (a different bus, §4.6), `SDR` (an I3C
+rate acronym) — dropping precision to 0.600. Root cause (traced from the real UM10204 prose): the
+parenthetical form `"<descriptor> (NAME)"` accepted the abbreviation if ANY word in a 4-word window was a wire
+descriptor, so a non-wire **head noun** still qualified — "acknowledge clock **pulse** (ACK)" via `clock`,
+"Display Data **Channel** (DDC)" / "standard data **rate** (SDR)" via `data`. **Fix (agnostic, no denylist):**
+require the IMMEDIATE head noun (the word right before the abbreviation, or the fused prefix in `line(NAME)`)
+to be the wire noun itself (same set line/signal/clock/data/wire/bus/pin). The real lines keep their head
+(`SDA`→line, `USCL`→clock, `SDAH`→data); the four over-captures don't (pulse/channel/rate) → dropped. ADR 0006
+preserved — pure grammar, never the specific tokens. **Re-measured on fresh re-ingested I2C evidence
+(`DOCLING_DEVICE=cpu`) against the `.4a.5` gold: complete-gold precision 0.600 → 1.000 (fp 4 → 0), recall
+1.000 held** (all 6 real signals SDA/SCL/USCL/USDA/SDAH/SCLH). +1 hermetic test (the exact 10 UM10204 prose
+contexts: 6 kept / 4 dropped); existing parenthetical tests still pass. No wire-based regression (the
+parenthetical path is disabled for ≥8-table-signal specs; SWD uses the pin-appositive path); full
+`run_ci.sh` green (lib 1378 → 1379); kg-bench 151/151. Book `quality/extraction-eval.md` (measure→catch→fix
+story); KM `prose-signal-capture-i2c-precision` updated (fixed). Frontier → `.2` (NVMe mnemonic).
+
 ### `PDF-VARIANT-DIGESTION.4b.2` — live VLM audit measurement (closes `.4b` + `.4`)
 Ran the `.4b.1` harness live (qwen2.5vl:7b via Ollama, bounded sample 8/doc) on the in-corpus register specs.
 **The estimate DISCRIMINATES and independently corroborates the `.4a` golds:** RISC-V Debug → **0.250** (seed 0,
