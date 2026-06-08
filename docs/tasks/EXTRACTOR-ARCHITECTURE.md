@@ -90,7 +90,19 @@ elegantly** — growth is by accretion of free functions + call-site edits, whic
 every direction." The fix is a refactor (not a rewrite) that promotes the implicit strategy/merge/gate shape
 into a first-class, registered, inspectable framework. Verification: read-only; no code change. Commit: this slice.
 
-## `.2` — Proposed design: the `Extractor` framework (DESIGN, build pending owner confirm)
+## `.2` — The `Extractor` framework (owner-confirmed `2026-06-09`: "consolidate, unify, as much as possible")
+
+**Owner decision (`2026-06-09`):** "the extractor path needs to be consolidated, unified, as much as
+possible" → build the MAXIMAL-coherence shape (the trait + registry + driver below), not a light-touch
+variant. Build un-gated.
+**Status: `done` (`2026-06-09`).** Scaffolding landed in `crates/specforge/src/ir/extractor.rs`: the generic
+`Extractor<R>` trait (`name`/`tier`/`applies_to`/`run`), the borrowed `ExtractionContext` (carries only
+`statements` for now — grows one field per migrated cluster, no speculative fields), the single `run_surface`
+driver (gate → run → first-wins dedup by a per-surface key → manifest), and the inspectable
+`SurfaceRun`/`SurfaceManifest`/`ExtractionManifest` types. 4 hermetic driver tests (first-wins dedup,
+gate-skips-run, registry-order precedence, aggregate manifest). **ZERO extractors migrated → no behavior
+change**; `pub` lib API so no dead-code warning. fmt + clippy `-D warnings` clean; `run_ci.sh` green (lib
+1448 → 1452). `.3` migrates the FSM cluster onto it (byte-identical, the first real consolidation).
 
 ```
 ExtractionContext            // built ONCE: source_ir, statements, known signals/actors, alias map,

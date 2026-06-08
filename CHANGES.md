@@ -1,3 +1,22 @@
+### `EXTRACTOR-ARCHITECTURE.2` — land the unified extractor framework (scaffolding; no behavior change)
+Owner confirmed (`2026-06-09`) "consolidate, unify, as much as possible" → built the maximal-coherence frame
+in a new module `crates/specforge/src/ir/extractor.rs`:
+- `trait Extractor<R>` — one extractor unit per grammar/strategy, declaring `name` / `tier` (Pattern/Nlp/Vlm)
+  / an explicit `applies_to` gate / the `run` grammar. Generic over the record type, so each surface keeps
+  its own typed records (no lossy enum-of-everything).
+- `ExtractionContext` — the borrowed inputs built once; carries only `statements` today and grows one field
+  per migrated cluster (no speculative fields).
+- `run_surface` — THE driver: gate → run → first-wins dedup by a per-surface key → record an inspectable
+  `SurfaceRun` manifest. This replaces the per-surface hand-rolled merge loops (e.g. the four inline FSM
+  dedup loops): a surface's merge policy becomes just its key function, in one call. Registry order = precedence.
+- `SurfaceRun` / `SurfaceManifest` / `ExtractionManifest` — the "which extractors were eligible / fired / what
+  each contributed" view the audit found missing.
+
+The LLM/VLM tiers are the same frame (`tier=Nlp/Vlm` + a provider-availability `applies_to`). 4 hermetic
+driver tests (first-wins dedup, gate-skips-run, registry-order precedence, aggregate manifest). **ZERO
+extractors migrated — no behavior change** (additive `pub` API). Refactor not rewrite. full `run_ci.sh` GREEN
+(fmt + clippy `-D warnings` + lib 1448 → 1452 + rustdoc + mdBook). `.3` migrates the FSM cluster onto it.
+
 ### `EXTRACTOR-ARCHITECTURE.1` — audit the extractor path; design a coherent framework (no code change)
 Owner devil's-advocate review (`2026-06-09`): is the extraction path a coherent set of types/structures, or a
 fragile pile that grows erratically? Read-only audit of `crates/specforge/src/ir/evidence.rs` (16.6k lines).

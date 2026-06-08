@@ -8,6 +8,7 @@ pub mod cve;
 pub mod entity_typing;
 pub mod evidence;
 pub mod extraction_filters;
+pub mod extractor;
 pub mod fidelity;
 pub mod figure_region;
 pub mod fusion;
