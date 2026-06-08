@@ -1,3 +1,24 @@
+### `PDF-VARIANT-DIGESTION.4a.3` — NVMe register-field gold + register-scoped bit-structure recall
+Second precision document for the register-field surface — and it fails the OPPOSITE way to RISC-V Debug.
+Authored `seed_nvme_registers.json` — CAP (15 fields) + CC (8) + CSTS (6) = 29, bit ranges + mnemonics
+transcribed from the spec's `Bits | Type | Reset | Description` tables (NVMe Base 2.0a §3.1.3.1/.5/.6). NVMe
+captures the bit layout perfectly but puts the mnemonic in the DESCRIPTION (the `field_name` is the bit-range
+string), so the existing name-recall is ~0 for the wrong reason. Added `register_bit_structure_recall`
+(register-scoped via `register_name_has_token` whole-token match, mnemonic-agnostic, pools a register's
+page-split fragments; additive, no extraction change) — the "bits work" recall view, complementing the "names
+work" view. Register-scoped because `CAP.CSS` (44:37) and `CC.CSS` (6:4) share a mnemonic across registers.
+
+Measured (`--provider skip`, against verified-current persisted evidence — mtime postdates the last extraction
+commit; the corpus PDF is git-tracked so a re-ingest reproduces it): **bit-structure recall 27/29 = 0.931**
+(2 misses `CAP.CRMS` at the register top + `CC.EN` on its own page fragment, both verified REAL drops);
+field-name recall **0/29** (mnemonics in descriptions); register-name association **44/44**; bit-extent
+completeness **199/199**. So the strict per-fact score is **0.000** on BOTH RISC-V Debug and NVMe — for
+opposite reasons — which is exactly why the surface reports two independent recall views. +3 hermetic tests
+(`register_name_has_token` token-not-substring; bit-structure recall register-scoped + mnemonic-agnostic;
+committed NVMe seed loads/validates 29 fields). Book section extended (`quality/extraction-eval.md`); KM card
+updated. Full `scripts/run_ci.sh` green; kg-bench 151/151. Three fix leaves now quantified (RISC-V
+register-name + bit-graphic; NVMe mnemonic-from-description).
+
 ### `PDF-VARIANT-DIGESTION.4a.2` — RISC-V Debug register-field gold (measure & surface)
 First precision number for the broadened register-field surface, on the real RISC-V Debug Spec 1.0 (owner
 directive: *measure & surface the gap*, no extraction change). Authored `seed_riscv_debug_registers.json` —

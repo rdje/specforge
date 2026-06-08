@@ -411,6 +411,7 @@ pub fn run(args: EvalExtractionArgs) -> Result<()> {
             .map(|f| f.field_name.trim().to_ascii_uppercase())
             .collect();
         let (found, total) = eval::register_field_name_recall(&items, &field_names);
+        let (bits_found, bits_total) = eval::register_bit_structure_recall(&items, &reg_records);
         let (named, total_regs, with_bits, total_fields) =
             eval::register_field_completeness(&reg_records);
         let name_recall = if total > 0 {
@@ -418,8 +419,18 @@ pub fn run(args: EvalExtractionArgs) -> Result<()> {
         } else {
             0.0
         };
-        println!("  -- register-field surface (measure & surface; PDF-VARIANT-DIGESTION.4a.2) --");
+        let bit_recall = if bits_total > 0 {
+            bits_found as f64 / bits_total as f64
+        } else {
+            0.0
+        };
+        println!(
+            "  -- register-field surface (measure & surface; PDF-VARIANT-DIGESTION.4a.2/.4a.3) --"
+        );
         println!("    field-name recall (register-agnostic)   {found}/{total} = {name_recall:.3}");
+        println!(
+            "    bit-structure recall (register-scoped)  {bits_found}/{bits_total} = {bit_recall:.3}"
+        );
         println!(
             "    register-name association gap           {named}/{total_regs} extracted registers have a real (non-synthetic) name"
         );

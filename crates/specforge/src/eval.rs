@@ -766,6 +766,67 @@ pub fn register_field_completeness(records: &[RegisterRecord]) -> (usize, usize,
     )
 }
 
+/// True if `name` contains `upper_token` as a whole alphanumeric token (case-insensitive). Used to
+/// match a gold register's short name (e.g. `CAP`) to an extracted register whose name is a verbose
+/// caption (e.g. `Offset 0h: CAP - Controller Capabilities`) — and to pool the page-split fragments of
+/// one register, which all carry the same caption. Token, not substring, so `CAP` does not match
+/// `CAPABILITIES` and `CC` does not match `ACC`.
+fn register_name_has_token(name: &str, upper_token: &str) -> bool {
+    name.split(|c: char| !c.is_ascii_alphanumeric())
+        .any(|t| t.eq_ignore_ascii_case(upper_token))
+}
+
+/// Register-field BIT-STRUCTURE recall (PDF-VARIANT-DIGESTION.4a.3) — register-scoped and
+/// mnemonic-agnostic: of the gold bit-fields, how many `(offset, width)` extents are recovered in a
+/// register whose name token-matches the gold register? This is the honest "what works" view for docs
+/// (e.g. NVMe) where the extractor captures the bit layout correctly but the field `field_name` is the
+/// bit-range string rather than the mnemonic (which lives in the description) — the inverse failure of
+/// docs like RISC-V Debug. It is register-scoped because the same mnemonic/extent recurs across
+/// registers (e.g. NVMe `CAP.CSS` at 44:37 vs `CC.CSS` at 6:4), and it pools all page-split fragments
+/// of a register (all share the verbose caption). A gold field with no resolvable `(offset, width)` can
+/// never match. Returns `(found, total)`. Non-`RegisterField` items are ignored.
+pub fn register_bit_structure_recall(
+    items: &[EvalItem],
+    records: &[RegisterRecord],
+) -> (usize, usize) {
+    let mut found = 0usize;
+    let mut total = 0usize;
+    for item in items {
+        if item.task != EvalTask::RegisterField {
+            continue;
+        }
+        for fact in &item.gold {
+            if let GoldFact::RegisterField {
+                register,
+                bits_high,
+                bits_low,
+                bit_width,
+                ..
+            } = fact
+            {
+                total += 1;
+                let (g_off, g_w) = register_field_bits(*bits_high, *bits_low, *bit_width);
+                if g_off.is_none() || g_w.is_none() {
+                    continue; // an unbounded gold field cannot match a bit extent
+                }
+                let token = register.trim();
+                let hit = records.iter().any(|rec| {
+                    register_name_has_token(&rec.register_name, token)
+                        && rec.fields.iter().any(|f| {
+                            let (off, w) =
+                                register_field_bits(f.bits_high, f.bits_low, f.bit_width);
+                            off == g_off && w == g_w
+                        })
+                });
+                if hit {
+                    found += 1;
+                }
+            }
+        }
+    }
+    (found, total)
+}
+
 /// Precision / recall / F1 counts for one task.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct Scorecard {
@@ -1671,6 +1732,117 @@ mod tests {
         assert_eq!(total_regs, 2);
         assert_eq!(with_bits, 1, "only dmactive carries a bit position");
         assert_eq!(total_fields, 3);
+    }
+
+    #[test]
+    fn register_name_has_token_matches_whole_tokens_only() {
+        assert!(register_name_has_token(
+            "Offset 0h: CAP - Controller Capabilities",
+            "CAP"
+        ));
+        assert!(register_name_has_token(
+            "Offset 14h: CC - Controller Configuration",
+            "CC"
+        ));
+        // token, not substring: CAP must not match the word "Capabilities"
+        assert!(!register_name_has_token("Memory Page Capabilities", "CAP"));
+        // CC must not match "ACC"
+        assert!(!register_name_has_token("Access Control ACC", "CC"));
+    }
+
+    #[test]
+    fn register_bit_structure_recall_is_register_scoped_and_mnemonic_agnostic() {
+        // Gold: CAP.CSS at bits 44:37, CC.CSS at bits 6:4 (same mnemonic, different registers/extents).
+        let item = EvalItem {
+            task: EvalTask::RegisterField,
+            doc_key: "nvme".to_string(),
+            statement_id: "s".to_string(),
+            input_text: String::new(),
+            grounding: vec![],
+            gold: vec![
+                GoldFact::RegisterField {
+                    register: "CAP".to_string(),
+                    field: "CSS".to_string(),
+                    bits_high: Some(44),
+                    bits_low: Some(37),
+                    bit_width: None,
+                },
+                GoldFact::RegisterField {
+                    register: "CC".to_string(),
+                    field: "CSS".to_string(),
+                    bits_high: Some(6),
+                    bits_low: Some(4),
+                    bit_width: None,
+                },
+            ],
+            label_status: "human_reviewed".to_string(),
+            label_note: String::new(),
+        };
+        // Extracted: the CAP register (verbose caption, field_name is the bit-range, bits captured) has
+        // the 44:37 extent; the CC register has the 6:4 extent. Mnemonic-agnostic: field names differ.
+        let cap = register_record(
+            "Offset 0h: CAP - Controller Capabilities",
+            vec![register_field("44:37", Some(44), Some(37), None)],
+            &[],
+        );
+        let cc = register_record(
+            "Offset 14h: CC - Controller Configuration",
+            vec![register_field("06:04", Some(6), Some(4), None)],
+            &[],
+        );
+        let items = [item];
+        let (found, total) = register_bit_structure_recall(&items, &[cap.clone(), cc]);
+        assert_eq!(
+            (found, total),
+            (2, 2),
+            "both CSS extents recovered in the right register"
+        );
+
+        // Register scoping: if the CC register is MISSING the 6:4 extent, CAP's 44:37 must NOT cover it.
+        let cc_wrong = register_record(
+            "Offset 14h: CC - Controller Configuration",
+            vec![register_field("31:25", Some(31), Some(25), None)],
+            &[],
+        );
+        let (found2, total2) = register_bit_structure_recall(&items, &[cap, cc_wrong]);
+        assert_eq!(
+            (found2, total2),
+            (1, 2),
+            "CAP.CSS found; CC.CSS missed (not borrowed from CAP's 44:37)"
+        );
+    }
+
+    #[test]
+    fn committed_nvme_register_seed_loads_and_validates() {
+        // The source-verified NVMe register-field gold (PDF-VARIANT-DIGESTION.4a.3) must parse, validate,
+        // and cover CAP + CC + CSTS with their full field counts (15 + 8 + 6 = 29).
+        let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("test_data/llm_eval/seed_nvme_registers.json");
+        let items = load_eval_dataset(&path).expect("nvme register seed loads + validates");
+        assert_eq!(items.len(), 3, "three registers (CAP, CC, CSTS)");
+        assert!(items.iter().all(|i| i.task == EvalTask::RegisterField));
+        let total_fields: usize = items.iter().map(|i| i.gold.len()).sum();
+        assert_eq!(total_fields, 29, "15 CAP + 8 CC + 6 CSTS gold fields");
+        // every gold field carries a resolvable bit extent (NVMe gold is authored with bits)
+        for item in &items {
+            for fact in &item.gold {
+                if let GoldFact::RegisterField {
+                    bits_high,
+                    bits_low,
+                    bit_width,
+                    ..
+                } = fact
+                {
+                    let (off, w) = register_field_bits(*bits_high, *bits_low, *bit_width);
+                    assert!(
+                        off.is_some() && w.is_some(),
+                        "every NVMe gold field has an extent"
+                    );
+                } else {
+                    panic!("unexpected gold fact kind");
+                }
+            }
+        }
     }
 
     #[test]

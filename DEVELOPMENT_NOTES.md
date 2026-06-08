@@ -8,6 +8,41 @@
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 - adapter target: `.isf` (sole adapter); `.fsm`/HDL are out of scope — FSMGen consumes `.isf` and owns scheduling/`.fsm`/HDL downstream (since `ISF-ONLY-CONSOLIDATION`, `2026-05-18`)
 
+## 2026-06-08 — NVMe register-field gold + bit-structure recall (PDF-VARIANT-DIGESTION.4a.3)
+
+The second register-field document, NVMe Base Spec 2.0a, fails the INVERSE way to RISC-V Debug — and that is
+the load-bearing finding. NVMe lays registers out as `Bits | Type | Reset | Description`, so the table
+synthesizer captures: a real (caption-derived) register name (`Offset 0h: CAP - Controller Capabilities`),
+correct bit positions for every field (199/199), but the field `field_name` is the bit-range STRING (`"60:59"`)
+because the mnemonic (`CRMS`) lives in the description. RISC-V Debug was the mirror image (field names yes; bits
++ register names no). So the strict per-fact `register|field|offset|width` key is `0.000` on BOTH, for opposite
+reasons — which is precisely why a single number is useless here and two independent recall views are needed.
+
+Added (additive measurement, no extraction change):
+- `register_bit_structure_recall(items, records) -> (found, total)` — register-scoped, mnemonic-agnostic: a
+  gold `(offset, width)` extent counts if some register whose name TOKEN-matches the gold register has a field
+  at that extent. Register-scoped because the same mnemonic + extent recur across registers (NVMe `CAP.CSS`
+  44:37 vs `CC.CSS` 6:4 — crediting across registers would be wrong). It pools a register's page-split fragments
+  (NVMe's 64-bit `CAP` field table spans five records, all sharing the caption).
+- `register_name_has_token(name, token)` — whole-token (not substring) match, so `CAP` ∌ `CAPABILITIES` and
+  `CC` ∌ `ACC`.
+- `eval_extraction.rs` prints the bit-structure recall alongside the field-name recall + the two completeness
+  gaps.
+
+Gold `seed_nvme_registers.json`: CAP (15) + CC (8) + CSTS (6) = 29 fields, bit ranges + mnemonics transcribed
+by hand from the spec's register definition tables (reserved fields excluded). Measured against the persisted
+NVMe evidence, which is verified current-code (its mtime `2026-06-08T00:52` postdates the last
+`ir/evidence.rs` extraction commit `6f3f170b`, `2026-06-07 20:50`) — so no 450-page re-ingest was needed; the
+corpus PDF is git-tracked so a fresh re-ingest reproduces it. Result: **bit-structure recall 27/29 = 0.931**
+(2 misses independently confirmed real — `CAP.CRMS` at the top of the register, `CC.EN` an isolated single-row
+page fragment — both docling page-boundary drops); field-name recall 0/29; register-name 44/44; bit-extent
+199/199.
+
+Validation: +3 hermetic tests; fmt + warning-deny clippy clean (fixed a `cloned_ref_to_slice_refs` lint in a
+test); `kg-bench` 151/151; full `scripts/run_ci.sh` green. Three fix leaves are now quantified for a future
+extraction tree: RISC-V register-name-from-heading, RISC-V bit-layout-graphic parsing, NVMe
+mnemonic-from-description. Runtime stays PDF-agnostic — concrete names only in the gold answer-key + tests.
+
 ## 2026-06-08 — RISC-V Debug register-field gold: measure & surface (PDF-VARIANT-DIGESTION.4a.2)
 
 Owner directive (when the extraction reality surfaced): **measure & surface the gap** — report field-NAME

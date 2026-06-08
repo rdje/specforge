@@ -97,10 +97,11 @@ grid-repair demo on a bits-bearing doc; giants' ingest budget; USB 3.2 evid-fail
 
 ## Current frontier
 
-**ACTIVE FRONTIER (`2026-06-08`): `PDF-VARIANT-DIGESTION.4a.3`** — NVMe register-field gold (NVMe DID capture
-`bit_width` per `.2c`, so it yields a meaningful strict per-fact P/R/F1, unlike RISC-V Debug). `.4a.1` (eval
-surface) + `.4a.2` (RISC-V Debug gold: field-name recall 0.588, register-name + bit gaps surfaced) are DONE.
-The `.2`–`.3b` leaves below are DONE (Lever A + B); `.4`–`.8` are the "make the breadth trustworthy" program.
+**ACTIVE FRONTIER (`2026-06-08`): `PDF-VARIANT-DIGESTION.4a.4`** — declared-signal (prose-capture) per-fact eval
+surface (then `.4a.5` I2C prose-signal gold). `.4a.1` (eval surface) + `.4a.2` (RISC-V Debug: field-name recall
+0.588) + `.4a.3` (NVMe: bit-structure recall 0.931 — inverse failure) are DONE: register-field extraction is now
+measured per-fact across two opposite-shaped docs. The `.2`–`.3b` leaves below are DONE (Lever A + B); `.4`–`.8`
+are the "make the breadth trustworthy" program.
 
 - `PDF-VARIANT-DIGESTION.2` (Lever A, deterministic strategy) — **DONE**: `synthesize_register_field_tables`
   recovers register-FIELD tables the classifier left `unknown` (header-in-body `Field|Description|Access|
@@ -201,8 +202,18 @@ it further. Priority order ① → ⑤.
       honestly surfaced not hidden. 14 misses independently verified as REAL (not gold-spelling drift). +3
       hermetic tests; book section in `quality/extraction-eval.md`. Gaps → candidate fix leaves (register-name
       heading association; bit-layout-graphic parsing).
-    - ID: `PDF-VARIANT-DIGESTION.4a.3` · Status: `pending` · Goal: NVMe register-field gold — same rigor on a
+    - ID: `PDF-VARIANT-DIGESTION.4a.3` · Status: `done` (`2026-06-08`) · Goal: NVMe register-field gold — same rigor on a
       diverse vendor/layout (NVMe controller registers) from the `corpus/` PDF; measure per-fact P/R/F1.
+      **DONE:** authored `seed_nvme_registers.json` — CAP (15) + CC (8) + CSTS (6) = 29 fields, bit ranges +
+      mnemonics transcribed from the spec's `Bits|Type|Reset|Description` tables (§3.1.3.1/3.1.3.5/3.1.3.6).
+      Discovered NVMe is the **INVERSE failure** of RISC-V Debug → added `register_bit_structure_recall`
+      (register-scoped via `register_name_has_token`, mnemonic-agnostic, pools page-split fragments;
+      additive measurement, no extraction change). **Measured: bit-structure recall 27/29 = 0.931**
+      (2 misses `CAP.CRMS`/`CC.EN` at page-fragment boundaries, both REAL); field-name recall 0/29
+      (mnemonics live in the DESCRIPTION, `field_name` is the bit-range); register-name 44/44; bit-extent
+      199/199 → strict per-fact 0.000 on BOTH docs for OPPOSITE reasons (why two recall views are essential).
+      Measured against verified-current persisted evidence (postdates last extraction commit; PDF git-tracked).
+      +3 hermetic tests; book section + KM updated. Third fix leaf identified: extract mnemonic from description.
     - ID: `PDF-VARIANT-DIGESTION.4a.4` · Status: `pending` · Goal: declared-signal (prose-capture) per-fact EVAL
       SURFACE — `EvalTask::DeclaredSignal` + `GoldFact::DeclaredSignal {signal, direction?}` + key + indexer +
       an `extract_on_copy` branch reading the EvidenceIR signal inventory. Acceptance: additive; hermetic

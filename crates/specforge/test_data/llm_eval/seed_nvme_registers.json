@@ -1,0 +1,64 @@
+[
+  {
+    "task": "register_field",
+    "doc_key": "nvme_base_specification_2_0a_2021_07_26",
+    "statement_id": "cap_offset_0h",
+    "input_text": "Offset 0h: CAP - Controller Capabilities",
+    "grounding": [],
+    "gold": [
+      { "fact": "register_field", "register": "CAP", "field": "CRMS", "bits_high": 60, "bits_low": 59 },
+      { "fact": "register_field", "register": "CAP", "field": "NSSS", "bits_high": 58, "bits_low": 58 },
+      { "fact": "register_field", "register": "CAP", "field": "CMBS", "bits_high": 57, "bits_low": 57 },
+      { "fact": "register_field", "register": "CAP", "field": "PMRS", "bits_high": 56, "bits_low": 56 },
+      { "fact": "register_field", "register": "CAP", "field": "MPSMAX", "bits_high": 55, "bits_low": 52 },
+      { "fact": "register_field", "register": "CAP", "field": "MPSMIN", "bits_high": 51, "bits_low": 48 },
+      { "fact": "register_field", "register": "CAP", "field": "CPS", "bits_high": 47, "bits_low": 46 },
+      { "fact": "register_field", "register": "CAP", "field": "BPS", "bits_high": 45, "bits_low": 45 },
+      { "fact": "register_field", "register": "CAP", "field": "CSS", "bits_high": 44, "bits_low": 37 },
+      { "fact": "register_field", "register": "CAP", "field": "NSSRS", "bits_high": 36, "bits_low": 36 },
+      { "fact": "register_field", "register": "CAP", "field": "DSTRD", "bits_high": 35, "bits_low": 32 },
+      { "fact": "register_field", "register": "CAP", "field": "TO", "bits_high": 31, "bits_low": 24 },
+      { "fact": "register_field", "register": "CAP", "field": "AMS", "bits_high": 18, "bits_low": 17 },
+      { "fact": "register_field", "register": "CAP", "field": "CQR", "bits_high": 16, "bits_low": 16 },
+      { "fact": "register_field", "register": "CAP", "field": "MQES", "bits_high": 15, "bits_low": 0 }
+    ],
+    "label_status": "human_reviewed",
+    "label_note": "NVMe Base Spec 2.0a, Figure 36 (sec 3.1.3.1); 64-bit register; bit ranges + mnemonics transcribed from the Bits/Description columns. Reserved 63:61 and 23:19 excluded. NOTE CAP.CSS (44:37) is a DIFFERENT field from CC.CSS (6:4) — why the bit-structure recall is register-scoped."
+  },
+  {
+    "task": "register_field",
+    "doc_key": "nvme_base_specification_2_0a_2021_07_26",
+    "statement_id": "cc_offset_14h",
+    "input_text": "Offset 14h: CC - Controller Configuration",
+    "grounding": [],
+    "gold": [
+      { "fact": "register_field", "register": "CC", "field": "CRIME", "bits_high": 24, "bits_low": 24 },
+      { "fact": "register_field", "register": "CC", "field": "IOCQES", "bits_high": 23, "bits_low": 20 },
+      { "fact": "register_field", "register": "CC", "field": "IOSQES", "bits_high": 19, "bits_low": 16 },
+      { "fact": "register_field", "register": "CC", "field": "SHN", "bits_high": 15, "bits_low": 14 },
+      { "fact": "register_field", "register": "CC", "field": "AMS", "bits_high": 13, "bits_low": 11 },
+      { "fact": "register_field", "register": "CC", "field": "MPS", "bits_high": 10, "bits_low": 7 },
+      { "fact": "register_field", "register": "CC", "field": "CSS", "bits_high": 6, "bits_low": 4 },
+      { "fact": "register_field", "register": "CC", "field": "EN", "bits_high": 0, "bits_low": 0 }
+    ],
+    "label_status": "human_reviewed",
+    "label_note": "NVMe Base Spec 2.0a, Figure 46 (sec 3.1.3.5); 32-bit register; bit ranges + mnemonics from the Bits/Description columns. Reserved 31:25 and 3:1 excluded."
+  },
+  {
+    "task": "register_field",
+    "doc_key": "nvme_base_specification_2_0a_2021_07_26",
+    "statement_id": "csts_offset_1ch",
+    "input_text": "Offset 1Ch: CSTS - Controller Status",
+    "grounding": [],
+    "gold": [
+      { "fact": "register_field", "register": "CSTS", "field": "ST", "bits_high": 6, "bits_low": 6 },
+      { "fact": "register_field", "register": "CSTS", "field": "PP", "bits_high": 5, "bits_low": 5 },
+      { "fact": "register_field", "register": "CSTS", "field": "NSSRO", "bits_high": 4, "bits_low": 4 },
+      { "fact": "register_field", "register": "CSTS", "field": "SHST", "bits_high": 3, "bits_low": 2 },
+      { "fact": "register_field", "register": "CSTS", "field": "CFS", "bits_high": 1, "bits_low": 1 },
+      { "fact": "register_field", "register": "CSTS", "field": "RDY", "bits_high": 0, "bits_low": 0 }
+    ],
+    "label_status": "human_reviewed",
+    "label_note": "NVMe Base Spec 2.0a, Figure 47 (sec 3.1.3.6); 32-bit register; bit ranges + mnemonics from the Bits/Description columns. Reserved 31:7 excluded."
+  }
+]

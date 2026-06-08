@@ -153,6 +153,7 @@ gaps it does not:
 specforge eval-extraction crates/specforge/test_data/llm_eval/seed_riscv_debug_registers.json
   -- register-field surface (measure & surface) --
     field-name recall (register-agnostic)   20/34 = 0.588
+    bit-structure recall (register-scoped)  0/34 = 0.000
     register-name association gap            0/60 extracted registers have a real (non-synthetic) name
     bit-extent completeness gap              0/179 extracted fields carry a bit position
 ```
@@ -176,5 +177,40 @@ so it grades the extractor against the source of truth, never against the extrac
 This is the same discipline the AMBA buses are held to — measure first, per fact, no faking —
 applied to the much wider world of register-bearing specifications.
 
+### The same surface, a different document, the opposite failure
+
+The fourth line above — **bit-structure recall** — is the register-scoped, mnemonic-agnostic view:
+*ignoring* the field's name, did we recover a bit-field at the right offset and width inside the
+right register? On RISC-V Debug it is `0/34` (no bit positions captured at all). But run the very
+same eval against the **NVMe Base Specification 2.0a**, and the picture flips:
+
+```text
+specforge eval-extraction crates/specforge/test_data/llm_eval/seed_nvme_registers.json
+  -- register-field surface (measure & surface) --
+    field-name recall (register-agnostic)   0/29 = 0.000
+    bit-structure recall (register-scoped)  27/29 = 0.931
+    register-name association gap            44/44 extracted registers have a real (non-synthetic) name
+    bit-extent completeness gap             199/199 extracted fields carry a bit position
+```
+
+NVMe fails the **opposite** way to RISC-V Debug. Here SpecForge gets the register *names* (all 44,
+because NVMe tables carry a caption like *"Offset 0h: CAP – Controller Capabilities"* that the reader
+keeps) and the **bit layout is excellent** — `27/29` of the gold bit-fields land at exactly the
+right offset and width across the `CAP`, `CC`, and `CSTS` registers, with the two misses being a
+field at the very top of `CAP` and the `CC.EN` bit on its own page fragment (both real, located
+drops). What it does *not* get is the field's *mnemonic*: NVMe lays its registers out as
+`Bits | Type | Reset | Description`, so the reader records `"60:59"` as the field name and tucks the
+real name (`CRMS`) inside the description — hence field-name recall `0/29`. That is exactly why the
+surface reports **two** recall views: a field's identity can fail on its name or on its bit extent
+independently, and a single number would hide which. Bit-structure recall is *register-scoped* on
+purpose — `CAP.CSS` lives at bits 44:37 while `CC.CSS` lives at bits 6:4, so the same name and even
+the same extent must not be credited across the wrong register — and it pools a register's
+page-split fragments (NVMe's 64-bit `CAP` table spans five of them).
+
+Two documents, the same measured surface, inverse failure modes: RISC-V Debug gets names but not
+bits or register association; NVMe gets bits and register names but not mnemonics. Neither is
+hidden behind a strict `0.000` — the decomposition says precisely what to fix next for each.
+
 *Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.4a.1` added the register-field
-eval surface; `.4a.2` authored the RISC-V Debug gold and recorded this measurement).
+eval surface; `.4a.2` the RISC-V Debug gold + field-name/completeness decomposition; `.4a.3` the
+NVMe gold + the register-scoped bit-structure recall).

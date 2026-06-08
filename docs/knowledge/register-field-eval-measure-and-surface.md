@@ -5,8 +5,9 @@ answers:
   - "how is register-field extraction quality measured / scored"
   - "what is the register-field eval surface (EvalTask::RegisterField)"
   - "what is the RISC-V Debug register-field recall / precision"
-  - "why is the strict register-field per-fact score 0 on RISC-V Debug"
-  - "what is register_field_name_recall / register_field_completeness"
+  - "what is the NVMe register-field recall / precision"
+  - "why is the strict register-field per-fact score 0 on RISC-V Debug / NVMe"
+  - "what is register_field_name_recall / register_field_completeness / register_bit_structure_recall"
   - "where is the register-field gold seed"
 date: 2026-06-08
 tags: [eval, registers, pdf-variant-digestion, measure-and-surface, scoring-rigor]
@@ -25,12 +26,17 @@ read straight from `EvidenceIR.register_records` (deterministic, no LLM — like
 stays PDF-agnostic (ADR 0006): the scorer holds NO chip vocabulary — names arrive via the gold answer-key
 (`test_data/llm_eval/seed_*.json`) and the extracted records.
 
-**Measure & surface (`.4a.2`, owner directive):** on docs where the extractor recovers field NAMES but not the
-owning register name (synthetic) or the bit extent, the strict per-fact score is a degenerate ~0 that hides
-where the value is. So `eval-extraction` DECOMPOSES the register-field result into three honest numbers
-(`register_field_name_recall` is register- and bit-agnostic; `register_field_completeness` reports the gaps):
+**Measure & surface (`.4a.2`/`.4a.3`, owner directive):** the strict per-fact score is a degenerate ~0 on real
+docs — but for OPPOSITE reasons per doc — so `eval-extraction` DECOMPOSES the register-field result into four
+honest numbers (`register_field_name_recall` + `register_bit_structure_recall` are the two recall views;
+`register_field_completeness` reports the gaps):
 
-- **field-name recall** — gold field NAMES found anywhere in the extracted field set (the "what works" view).
+- **field-name recall** (register- and bit-agnostic) — gold field NAMES found anywhere in the extracted field
+  set (the "names work" view).
+- **bit-structure recall** (register-scoped, mnemonic-agnostic, `.4a.3`) — gold `(offset, width)` extents found
+  in a register whose name TOKEN-matches the gold register (`register_name_has_token`), pooling the register's
+  page-split fragments. Register-scoped because the same mnemonic/extent recurs across registers (NVMe
+  `CAP.CSS` 44:37 vs `CC.CSS` 6:4). This is the "bits work" view.
 - **register-name association gap** — registers with a real (non-`register_table_*`-placeholder) name.
 - **bit-extent completeness gap** — extracted fields carrying a bit position.
 
@@ -43,7 +49,17 @@ layout GRAPHIC above the table, which the reader does not parse) → strict per-
 hidden. The 14 name-misses were independently verified REAL (the apparent near-matches were spurious
 single-letter fragments / different registers' fields), so the recall is honest, not gold-spelling drift.
 
-**Two fix leaves identified (future tree, NOT measurement):** (1) associate the register NAME from the
-preceding heading; (2) parse the bit-layout graphic for field bit positions. Until then, RISC-V-Debug-class
-register extraction is name-level only — known and now quantified. NVMe is the contrasting case: it DID capture
-`bit_width` ([[register-field-table-extraction]]), so `.4a.3` golds it for a meaningful strict per-fact score.
+**NVMe Base Spec 2.0a result (`.4a.3`) — the INVERSE failure** (gold = CAP 15 + CC 8 + CSTS 6 = 29 fields, bit
+ranges + mnemonics transcribed from the `Bits | Type | Reset | Description` tables): **bit-structure recall
+27/29 = 0.931** (the 2 misses are `CAP.CRMS` at the register top + `CC.EN` on its own page fragment — both real
+drops); **field-name recall 0/29** (NVMe puts the mnemonic in the DESCRIPTION and the bit-range string in
+`field_name`); register-name association **44/44** (caption-derived names like `Offset 0h: CAP - …`);
+bit-extent completeness **199/199**. So NVMe captures bits + register names but not mnemonics — the exact
+inverse of RISC-V Debug (names but not bits/register-names). The strict per-fact score is `0.000` on BOTH, for
+opposite reasons, which is why the decomposition (two recall views) is essential. Measured against the
+verified-current persisted evidence (mtime postdates the last extraction commit; the corpus PDF is git-tracked
+so a fresh re-ingest reproduces it).
+
+**Fix leaves identified (future trees, NOT measurement):** (1) associate the register NAME from the preceding
+heading (RISC-V); (2) parse the bit-layout graphic for field bit positions (RISC-V); (3) extract the field
+MNEMONIC from the description (NVMe). Each is now quantified, so a fix can be measured against these golds.
