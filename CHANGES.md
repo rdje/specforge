@@ -1,3 +1,23 @@
+### `EXTRACTION-GAP-FIX.4b` — live measurement (honest: guardrail validated, metric unchanged, zero fabrication)
+Ran the `.4a` recovery live with `qwen2.5vl:7b` on the re-ingested RISC-V Debug evidence and characterized the
+real-data behavior. Docs-only — no code change (ran the existing command + direct VLM probes).
+
+- End-to-end live run (`recover-register-bits … --vlm-provider ollama`): all 60 register records →
+  `residual_no_diagram`, 0 fields written, evidence untouched → bit-extent stays 0/179. The command's resolution
+  never reaches the VLM because the bit-layout diagrams are ingest-classified `diagram_kind=unknown` (not
+  `RegisterBitfield`) and the field-definition tables are fragmented across Docling tables (no record holds a
+  register's full field set).
+- Direct live VLM probes (fed `picture-0020.png`/`table-0020.png` to `qwen2.5vl:7b` with the command prompt,
+  temp 0): the model reads field names + order correctly but makes width/reserved errors — dmcontrol gets a
+  spurious width-5 `reserved` cell (widths sum 37 ≠ 32); dmstatus is off by one (33 ≠ 32). Every erroneous read
+  fails the standard-width tiling gate → honest residual. So the local model's read on these dense diagrams is
+  not clean enough to pass the gate.
+- Conclusion: the tiling math is proven correct (`.4a` hermetic 14/14 on clean widths) and the honesty guardrail
+  is fully validated on real data (every real VLM error caught, nothing fabricated); the bit-extent metric is
+  honestly unchanged (0/179). Closing it is the proposed follow-up `.4c` (classify register bitfield diagrams +
+  de-fragment field tables + VLM-read robustness / a stronger VLM). No metric was faked. lib 1400; kg-bench
+  151/151 unchanged.
+
 ### `EXTRACTION-GAP-FIX.4a` — tiling-gated register-diagram bit recovery (build)
 Built the validated `.4` design: recover register-field bit positions that live only in the bit-layout
 GRAPHIC, never fabricating one.

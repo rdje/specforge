@@ -285,6 +285,22 @@ Like the other enrichment commands it defaults to `--vlm-provider skip` (a no-op
 so it is safe to wire into any run) and honors the `SPECFORGE_VLM_HELPER` test
 hook, so the live vision model is never required for the build or the tests.
 
+**Honest note on live behavior (as of `2026-06-08`).** The reconstruction *math*
+is proven — given clean widths it recovers a 32-bit register's 14 fields exactly.
+What is still maturing is the *read*: on real, dense register diagrams the local
+`qwen2.5vl:7b` reliably reads field names and order, but it sometimes mis-sizes a
+cell (e.g. inventing a narrow "reserved" gap, or an off-by-one width). When it
+does, the widths no longer sum to a standard register size, the first gate fires,
+and the command leaves an honest residual rather than a wrong bit. That is the
+intended behavior — the command is wired to *confirm, never guess* — so today, on
+the RISC-V Debug diagrams, it reports residuals rather than recovered bits. A
+sharper read (a stronger vision model, image upscaling, or a tighter prompt) is
+the lever that turns those residuals into recoveries; until then nothing is
+fabricated. Two upstream pieces also have to line up for the command to even reach
+a diagram: the register's bit-layout image must be classified as a register
+bit-field diagram, and the register's field table must be captured as one table
+(not split into fragments). Tracking: `docs/tasks/EXTRACTION-GAP-FIX.md`.
+
 ## `extract-contracts` and `signal-resolve`
 
 These two commands ask a local LLM to read the *hard prose* a specification

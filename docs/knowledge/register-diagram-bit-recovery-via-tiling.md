@@ -51,3 +51,13 @@ name-mismatch (residual) data; the live VLM is never a CI dependency. General/ag
 structural "fields tile a register" law + universal register widths, no chip names in the runtime (see
 [[no-hardcoded-chip-vocabulary]]). Live bit-extent measurement on the gold is the follow-on leaf `.4b`. See
 [[register-field-table-extraction]].
+
+**Live measurement (`.4b`, `2026-06-08`):** ran it live (`qwen2.5vl:7b`) on the re-ingested RISC-V Debug
+evidence → all 60 register records `residual_no_diagram`, bit-extent UNCHANGED at 0/179, zero fabrication.
+Direct VLM probes showed the local model reads field names+order correctly but mis-sizes cells (dmcontrol gets a
+spurious width-5 reserved → sum 37 ≠ 32; dmstatus off-by-one → 33 ≠ 32) → the standard-width gate rejects every
+slip → honest residual. So the tiling math is proven (hermetic 14/14 on clean widths) and the guardrail catches
+every real VLM error, but the metric stays flat because the local read isn't clean enough on these dense
+diagrams AND two upstream plumbing gaps block auto-resolution: the diagrams are ingest-classified `unknown` (not
+`RegisterBitfield`) and a register's field table is fragmented across several Docling tables. Closing the metric
+is the proposed follow-up (`.4c`): a stronger/sharper VLM read + those two plumbing fixes.

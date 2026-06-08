@@ -8,6 +8,36 @@
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 - adapter target: `.isf` (sole adapter); `.fsm`/HDL are out of scope — FSMGen consumes `.isf` and owns scheduling/`.fsm`/HDL downstream (since `ISF-ONLY-CONSOLIDATION`, `2026-05-18`)
 
+## 2026-06-08 — Live measurement of the bit recovery, honest result (EXTRACTION-GAP-FIX.4b)
+
+`.4b` ran `.4a` against reality and reported truthfully: **the bit-extent metric did not move (still 0/179), and
+that is the correct, non-fabricating outcome.** Three things the live run established.
+
+1. **End-to-end, the command fabricated nothing.** `recover-register-bits … --vlm-provider ollama` on the
+   re-ingested RISC-V Debug evidence (ollama up, `qwen2.5vl:7b` present) returned `residual_no_diagram` for all
+   60 register records and wrote nothing back. Two upstream reasons it never even reached the VLM: the bit-layout
+   diagrams are ingest-classified `diagram_kind=unknown` (the resolver looks for `RegisterBitfield`), and a
+   register's field-definition table is *fragmented* across several Docling tables (dmcontrol's fields are split
+   across `regfld_table_0023/0024/0025` = 1+5+7; dmstatus's record holds 5 of its 20 fields), so no single
+   `RegisterRecord` carries a register's full field set — gate (b) could not have matched even if a diagram
+   resolved.
+
+2. **The local VLM reads names well but not widths cleanly — and the gate caught every slip.** Probing
+   `qwen2.5vl:7b` directly on `picture-0020.png` (dmcontrol) and `table-0020.png` (dmstatus) with the command's
+   prompt (temp 0), the model transcribed the field *names and order* correctly but mis-sized cells: for
+   dmcontrol it inserted a spurious width-5 `reserved` cell between `hartsello` and `hartselhi` (where dmcontrol
+   has no gap) → widths summed to **37 ≠ 32**; for dmstatus an off-by-one → **33 ≠ 32**. In both cases the
+   standard-width gate (a) rejected the read → honest residual, no bit written. This is the guardrail doing
+   exactly its job against a real, plausible VLM error.
+
+3. **What this means.** The tiling *math* is proven (the `.4a` hermetic tests recover 14/14 from clean widths);
+   the gap is the *read*. The `.4` design's optimistic "dmcontrol 14/14 live" assumed clean widths — the live
+   local model on these dense diagrams is not there yet. As `.4` itself anticipated, a stronger VLM is the
+   complementary lever; alongside it sit two plumbing fixes (classify register bit-layout diagrams as
+   `RegisterBitfield`; merge a register's fragmented field tables). Those are the honest follow-up (`.4c`). The
+   important property held end-to-end: **SpecForge does not invent a bit it cannot read cleanly.** Docs-only, no
+   code change.
+
 ## 2026-06-08 — Tiling-gated register-diagram bit recovery, built (EXTRACTION-GAP-FIX.4a)
 
 `.4a` builds the design `.4` validated. Two pieces, deliberately separated so the trust is auditable and

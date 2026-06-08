@@ -118,10 +118,17 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
   name recall unchanged 20/34. Strict per-fact recall stays 0.000 (bits 0/179 live in the layout graphic → `.4`,
   not the name). +2 hermetic tests; no wire-based regression; full `run_ci.sh` green (lib 1381 → 1383); kg-bench
   151/151. Commit subject: `EXTRACTION-GAP-FIX.3`.
-- ID: `EXTRACTION-GAP-FIX.4` · Status: `in_progress` (parent; SPLIT `2026-06-08`) · Goal: **RISC-V
-  bit-layout-graphic parse** — recover bit positions for register fields whose bits live in the layout GRAPHIC,
-  not the field table (bit-extent 0/179). **Investigation `2026-06-08` resolved the open question and produced a
-  validated design (the hard intellectual work of the leaf):**
+- ID: `EXTRACTION-GAP-FIX.4` · Status: `done` at an HONEST BOUNDARY (`2026-06-08`; `.4a` built + `.4b`
+  measured) · Goal: **RISC-V bit-layout-graphic parse** — recover bit positions for register fields whose bits
+  live in the layout GRAPHIC, not the field table (bit-extent 0/179). **Outcome: the recovery MACHINERY is built
+  (`.4a`, hermetic 14/14 on clean widths) and LIVE-MEASURED (`.4b`), the honesty guardrail is fully validated on
+  real data (zero fabrication), but the bit-extent metric is UNCHANGED at 0/179** because the local `qwen2.5vl:7b`
+  read on these dense diagrams is not clean enough to pass the standard-width gate (spurious reserved cells /
+  off-by-one → sum ≠ 32 → honest residual) AND two upstream plumbing gaps block auto-resolution (diagrams
+  classified `unknown` not `RegisterBitfield`; field tables fragmented). Closing the metric is the proposed
+  follow-up `.4c` (plumbing + VLM-read robustness / stronger VLM). This is the owner's honesty guardrail in
+  action: you do not fabricate a bit you cannot read cleanly. **Investigation `2026-06-08` resolved the open
+  question and produced a validated design (the hard intellectual work of the leaf):**
   - **The deterministic table path FABRICATES — rejected.** Docling captures the bit diagram as a table
     (`table_0020` for dmstatus) but garbles it: the low half matches the gold exactly, the high half is wrong
     (`ndmresetpending` captured bit 16, gold 24) and reserved-gap bits are dropped. Reconstructing from it would
@@ -161,22 +168,51 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
   **1400**; kg-bench 151/151; no wire-based regression (the path only fires on bits-missing register-field
   tables; APB/AHB/AXI/SWD have none). Commit subject: `EXTRACTION-GAP-FIX.4a`. KM card
   `register-diagram-bit-recovery-via-tiling`. Live measurement of the bit-extent metric is `.4b`.
-- ID: `EXTRACTION-GAP-FIX.4b` · Status: `pending` · Goal: **live measurement** — run `.4a` with the live
-  `qwen2.5vl:7b` on the RISC-V Debug register diagrams and re-measure bit-extent on the `.4a.2` gold (expected:
-  dmcontrol's 14 recovered correct, dmstatus an honest residual → bit-extent 0/179 → higher, no fabrication).
-  Needs `ollama serve`. Report honest per-register numbers.
+- ID: `EXTRACTION-GAP-FIX.4b` · Status: `done` (`2026-06-08`) · Goal: **live measurement** — run `.4a` with the
+  live `qwen2.5vl:7b` on the RISC-V Debug register diagrams and re-measure bit-extent. **DONE — honest result:
+  the metric did NOT improve (bit-extent stays 0/179), and that is the CORRECT, non-fabricating outcome on this
+  data.** Three findings, all evidence-backed (no code change — ran the existing command + direct VLM probes):
+  - **End-to-end live run** (`recover-register-bits … --vlm-provider ollama` on the re-ingested RISC-V evidence,
+    `ollama` up, `qwen2.5vl:7b` present): **all 60 register records → `residual_no_diagram`, 0 fields written,
+    evidence untouched** — zero fabrication. The command's resolution does not reach the VLM because **(1)** the
+    bit-layout diagrams are ingest-classified `diagram_kind=unknown`, not `RegisterBitfield` (so the resolver's
+    diagram filter misses them), and **(2)** the field-definition tables are **FRAGMENTED** across multiple
+    Docling tables (dmcontrol split across `regfld_table_0023/0024/0025` = 1+5+7 fields; dmstatus only 5 of 20),
+    so no single `RegisterRecord` holds a register's full field set — gate (b) could not match even if a diagram
+    resolved.
+  - **Direct live VLM probes** (bypassing resolution — fed `picture-0020.png` (dmcontrol) and `table-0020.png`
+    (dmstatus) to `qwen2.5vl:7b` with the command's prompt, temp 0): the model reads the field **names + order
+    correctly** but makes **width/reserved errors** — dmcontrol: the 14 named widths are right but it inserts a
+    spurious width-5 `reserved` cell where there is no gap → widths sum **37 ≠ 32**; dmstatus: the reserved
+    cells appear but an off-by-one → sum **33 ≠ 32**. **Every erroneous read fails the standard-width tiling gate
+    (a) → honest residual.** So the local VLM's read on these dense diagrams is not clean enough to pass the
+    gate.
+  - **The guardrail is fully validated on real data:** every real VLM error (spurious reserved, off-by-one) was
+    caught by gate (a); nothing was fabricated; bit-extent held at 0/179. The tiling MATH is proven correct by
+    the `.4a` hermetic tests (14/14 on clean widths); the live LOCAL model simply does not produce clean enough
+    widths here. As `.4` anticipated, **a stronger VLM is the complementary lever** (it would rescue these
+    reads), alongside two upstream plumbing fixes: classify register bit-layout diagrams as `RegisterBitfield`,
+    and de-fragment/merge a register's field tables. Those are the honest follow-up (proposed `.4c` plumbing +
+    a VLM-read-robustness leaf — voting/upscaling/sharper prompt). Docs-only. Commit subject:
+    `EXTRACTION-GAP-FIX.4b`.
 
 ## Current frontier
 
-**ACTIVE FRONTIER (`2026-06-08`): `EXTRACTION-GAP-FIX.4b`** — live measurement of the tiling-gated bit recovery
-`.4a` built. Run `recover-register-bits` with the live `qwen2.5vl:7b` (needs `ollama serve`) on the RISC-V Debug
-register diagrams, then re-measure bit-extent on the `.4a.2` gold (expected: `dmcontrol`'s 14 bits recovered
-correct, `dmstatus` an honest residual → bit-extent 0/179 → higher, no fabrication). Report honest per-register
-numbers. The diagram images: `generated/source_ir/1_0_risc_v_debug_specification/normalized/assets/picture-0020.png`
-(dmcontrol), `table-0020.png` (dmstatus). **`.4a` DONE** (pure tiling-gated core + `recover-register-bits`
-command; dmcontrol 14/14 hermetic, dmstatus + name-mismatch residual; lib 1383 → 1400; no wire-based
-regression). **`.1`/`.2`/`.3` DONE.** Remember the honesty guardrail: read where the fact lives, else honest
-residual — `.4a`'s two gates are exactly that guardrail mechanized.
+**ALL 4 quantified gaps now WORKED (`2026-06-08`); the tree is at an honest boundary.** `.1` (I2C prose
+precision 0.600→1.000), `.2` (NVMe mnemonic 0/29→28/29), `.3` (RISC-V register-name 0/60→59/60) all produced
+measured metric gains. `.4` (RISC-V bit-layout-graphic) is **machinery-built + live-measured + guardrail-
+validated, but its metric is honestly UNCHANGED** (bit-extent 0/179): `.4a` built the tiling-gated recovery
+(hermetic 14/14 on clean widths) and `.4b` measured it live — the local `qwen2.5vl:7b` reads field names+order
+correctly but makes width/reserved errors on these dense diagrams (dmcontrol sum 37, dmstatus sum 33), so the
+standard-width gate rejects → honest residual, **zero fabrication**; and two upstream plumbing gaps (diagrams
+classified `unknown` not `RegisterBitfield`; field tables fragmented across Docling tables) block auto-
+resolution. **PROPOSED FOLLOW-UP (owner to confirm priority): `.4c`** — plumbing (classify register bit-layout
+diagrams as `RegisterBitfield` + de-fragment/merge a register's field tables) and/or VLM-read robustness
+(voting / image upscaling / sharper prompt / stronger VLM). Until then the honest boundary holds: the recovery
+fabricates nothing. **NEXT eligible work is in a sibling active tree** (`PDF-VARIANT-DIGESTION` frontier `.5a`
+doc-class routing; or `EXTRACTION-QUALITY-GAUGE` `.8`/`.FIELD`) — pick per PNT. Honesty guardrail throughout:
+read where the fact lives / trust only a clean read, else honest residual — `.4`'s two gates mechanize exactly
+that.
 
 ## Decisions
 
@@ -260,6 +296,16 @@ residual — `.4a`'s two gates are exactly that guardrail mechanized.
   `-D warnings` clean (pure core production-reachable → no dead-code); full lib suite 1383 → **1400**; kg-bench
   151/151; no wire-based regression. Live bit-extent measurement deferred to `.4b`. KM card
   `register-diagram-bit-recovery-via-tiling`.
+- `.4b` (`2026-06-08`): **Live measurement, honest result — metric UNCHANGED (0/179), zero fabrication.** End-to-end
+  live run (`recover-register-bits … --vlm-provider ollama`, `qwen2.5vl:7b`) → 60/60 register records
+  `residual_no_diagram`, evidence untouched (no diagram resolves: diagrams classified `unknown` not
+  `RegisterBitfield`; field tables fragmented across Docling tables so no record holds a register's full field
+  set). Direct VLM probes of `picture-0020.png`/`table-0020.png` (temp 0) → the model reads names+order
+  correctly but adds a spurious width-5 `reserved` (dmcontrol sum 37) / off-by-one (dmstatus sum 33) → gate (a)
+  rejects every erroneous read → honest residual. The guardrail is fully validated on real data (every real VLM
+  error caught, nothing fabricated); the tiling math is proven by `.4a`'s hermetic 14/14. Closing the metric is
+  the proposed follow-up `.4c` (classify register bitfield diagrams + de-fragment field tables + VLM-read
+  robustness / stronger VLM). Docs-only (no code change).
 
 ## Commit log
 
@@ -267,6 +313,7 @@ residual — `.4a`'s two gates are exactly that guardrail mechanized.
 - `.2` → `EXTRACTION-GAP-FIX.2 — NVMe mnemonic from description defined-term (field-name recall 0/29 → 28/29)`
 - `.3` → `EXTRACTION-GAP-FIX.3 — RISC-V register name from defining heading (register-name 0/60 → 59/60)`
 - `.4a` → `EXTRACTION-GAP-FIX.4a — tiling-gated register-diagram bit recovery (pure core + recover-register-bits)`
+- `.4b` → `EXTRACTION-GAP-FIX.4b — live measurement: guardrail validated, metric unchanged 0/179, zero fabrication`
 
 ## Changelog
 
@@ -287,3 +334,12 @@ residual — `.4a`'s two gates are exactly that guardrail mechanized.
   skip-default no-op). Hermetic tests on real dmcontrol (14/14 exact) + dmstatus (honest residual) +
   name-mismatch (residual). lib 1383 → 1400; kg-bench 151/151; no wire-based regression; ADR 0006 clean.
   Frontier moves to `.4b` (live measurement of bit-extent on the `.4a.2` gold; needs `ollama serve`).
+- `2026-06-08`: `.4b` (live measurement) DONE → **honest result: metric UNCHANGED (bit-extent 0/179), zero
+  fabrication.** The end-to-end live run residualed all 60 registers (diagrams classified `unknown`; field
+  tables fragmented), and direct VLM probes showed the local `qwen2.5vl:7b` reads names+order correctly but adds
+  spurious reserved cells / off-by-one widths (dmcontrol sum 37, dmstatus sum 33) → the standard-width gate
+  rejects → honest residual. The guardrail is fully validated on real data; closing the metric is the proposed
+  follow-up `.4c` (diagram classification + field-table de-fragmentation + VLM-read robustness / stronger VLM).
+  All 4 originally-quantified gaps are now worked (`.1`/`.2`/`.3` with measured gains; `.4` machinery + measure
+  + honest boundary). NEXT eligible PNT work is in a sibling active tree (`PDF-VARIANT-DIGESTION.5a` or
+  `EXTRACTION-QUALITY-GAUGE`).
