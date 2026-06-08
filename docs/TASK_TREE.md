@@ -24,6 +24,7 @@ evidence for one top-level task.
 
 | Tree | Status | Roadmap lane | Current frontier | File |
 | --- | --- | --- | --- | --- |
+| `EXTRACTOR-ARCHITECTURE` | `active` | `R0`/`R15`/`R16` | `.1` audit DONE `2026-06-09` (extractor path = ~60 free fns wired in one ~500-line `build()`; coherent IR target, ad-hoc producers, 4-sibling FSM cluster + inline dedup loops = the erratic-growth failure mode; FSM provenance partial; no run manifest). `.2` framework design complete (`Extractor` trait + `ExtractionContext` + per-surface `SurfacePolicy` + one driver + inspectable `ExtractionRun` manifest; LLM/VLM tiers are the same frame) — **build gated on one owner confirmation** of framework shape + aggressiveness. Migration is incremental + behavior-preserving (FSM cluster first, byte-identical via kg-bench/eval). Owner directive `2026-06-09`: "build a coherent whole that doesn't grow erratically." | [docs/tasks/EXTRACTOR-ARCHITECTURE.md](docs/tasks/EXTRACTOR-ARCHITECTURE.md) |
 | `PROVENANCE-HARDENING` | `done` | `R6` | — | [docs/tasks/PROVENANCE-HARDENING.md](docs/tasks/PROVENANCE-HARDENING.md) |
 | `R6-FSM-ADAPTER` | `superseded` | `R6` | — (superseded by `ISF-ONLY-CONSOLIDATION`) | [docs/tasks/R6-FSM-ADAPTER.md](docs/tasks/R6-FSM-ADAPTER.md) |
 | `R6-SOURCE-HARDENING` | `done` | `R6` | — | [docs/tasks/R6-SOURCE-HARDENING.md](docs/tasks/R6-SOURCE-HARDENING.md) |

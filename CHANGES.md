@@ -1,3 +1,23 @@
+### `EXTRACTOR-ARCHITECTURE.1` — audit the extractor path; design a coherent framework (no code change)
+Owner devil's-advocate review (`2026-06-09`): is the extraction path a coherent set of types/structures, or a
+fragile pile that grows erratically? Read-only audit of `crates/specforge/src/ir/evidence.rs` (16.6k lines).
+
+**Finding: the typed IR target is coherent; the producer layer is not.** ~60 free extractor/synthesizer
+functions clustered by surface (signals/relations/constraints/polarity/semantic-hints/FSM/registers/actors/
+timing/encoding), each with 1–4 strategy variants, all wired imperatively inside one ~500-line
+`EvidenceIr::build()` with hand-rolled per-surface merge/dedup and heterogeneous, implicit applicability
+gates. The **FSM cluster is the canonical failure mode** — four sibling functions glued by four separate
+inline dedup-by-name loops at the call site (the 4th added by `.9.7` this same session). Provenance is tagged
+for only 2 of ~10 surfaces; there is **no run manifest** (you can't ask which extractors fired or conflicted).
+
+**Design (build gated on one owner confirmation):** promote the implicit strategy/merge/gate shape into a
+first-class framework — an `Extractor` trait (`name`/`surface`/`tier`/`applies_to`/`run`) + one
+`ExtractionContext` + one `SurfacePolicy` per surface (key + conflict) + ONE driver that merges uniformly and
+emits an inspectable `ExtractionRun` manifest. New PDF families then grow by registering one unit in one
+place; the LLM/VLM tiers are the same frame. Refactor, not rewrite (grammars + IR are sound); migration is
+incremental + behavior-preserving (FSM cluster first, byte-identical via kg-bench + eval). New task-tree
+`EXTRACTOR-ARCHITECTURE`; KM card `extractor-path-architecture`. Docs-only; no code change this slice.
+
 ### `PDF-VARIANT-DIGESTION.9.7` — single-word `<NAME> state` FSM grammar (a 3rd, agnostic FSM reader)
 The `.9.4` SWP baseline predicted this as the highest-leverage lever; it delivered. SpecForge had two FSM
 readers — the SWD/JTAG hyphen shape (`Shift-DR state`) and `.9.3a`'s quoted-mode shape (`'error passive'`) —
