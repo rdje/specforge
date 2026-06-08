@@ -395,6 +395,45 @@ lever in SpecForge's push to digest a new **serial-protocol class** (CAN, SWP,
 SMBus, I2S); frame-field recovery is its sibling follow-up. *Authoritative
 tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.9.3a`).
 
+### `PDF-VARIANT-DIGESTION.9.7` — a state machine written as plain `<NAME> state`
+
+There turns out to be a *third* way protocols name their states, and the two
+readers above both missed it. The Single Wire Protocol (SWP) never says "state
+machine" or draws its FSM — it just narrates transitions: *"the terminal shall set
+SWP to the `DEACTIVATED` state"*, *"the CLF puts SWP into the `ACTIVATED` state"*,
+*"while in the `SUSPENDED` state …"*. The states are **single, ALL-CAPS words**
+followed by *state* — too plain for the JTAG/SWD reader (which needs a hyphenated
+name like `Shift-DR`) and not quoted, so `.9.3a` skipped them too. SWP's whole FSM
+went unread.
+
+The danger with matching a single word before *state* is obvious: a document also
+says "the security state", "the cache state", "the current state" — none of which
+is an FSM state. So this reader leans on one structural cue that an actual state
+always carries: **you enter it, leave it, or are in it**. A word is only taken as a
+state when it sits in `<trigger> [the] <NAME> state`, where the trigger is a
+transition or locative word — *enter*, *into*, *leave*, *exit*, *to*, *in*, *from*,
+*move*, *transition*, *return*, *remain*. That single binding is what tells a real
+state (*the interface moves into the* `SETUP` *state*) apart from a description (*the*
+`security` *state controls access*) or a machine name (*the JTAG TAP* `state machine`,
+which a guard explicitly drops). As with `.9.3a`, two more rules keep it honest — a
+name must **recur** across at least two sentences, and a document must yield **at
+least two distinct** such states — so the structural pattern *is* the "is this an
+FSM?" gate, with no need to trust the words "state machine" (which SWP never uses).
+A short denylist removes logic levels (`HIGH`/`LOW`) and the architectural
+pseudo-values `UNKNOWN`/`UNPREDICTABLE`, which are never states.
+
+On SWP this recovers exactly its interface FSM — `ACTIVATED`, `DEACTIVATED`,
+`SUSPENDED`, `HALT` — from text alone, where before there were none. And because the
+binding is so strict, it stays additive and honest across the corpus: the JTAG/SWD
+spec gains **nothing** (its noisy `TAP`/`JTAG` mentions never appear as a transition
+*into* a state), CAN keeps its `.9.3a` quoted states unchanged, and where a parallel
+bus genuinely *does* describe an operating machine — APB's `SETUP`/`ACCESS`, AXI's
+low-power `RUN`/`STOP`/`ACTIVATE`/`DEACTIVATE` — those real states are now captured
+too, a correctness gain that touches none of the scored constraint/relation/temporal
+surfaces. Across the tracked corpus, 18 documents (CHI, CXS, DTI, CCIX, CoreSight,
+eMMC, USB4, …) gain a genuine FSM surface from this one grammar. *Authoritative
+tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.9.7`).
+
 ### `PER-EXTRACTOR-FACT-TAGGING` — who found which fact (recall-gauge groundwork)
 
 This is plumbing for a future **calibrated recall estimate**. To estimate how
@@ -500,8 +539,8 @@ That dropped core interface signals on the floor.
 The fix reads the **driver from the description prose**, exactly as a human does:
 "Request Flit Valid. *The transmitter sets this signal HIGH* …" → the transmitter
 drives it → `output`; "*The receiver sets this signal HIGH* …" → `input`. Direction
-is framed relative to the channel transmitter (the subject of a "<X> channel
-interface signals" table). Crucially, this *adds* a direction where one is provable
+is framed relative to the channel transmitter (the subject of a `<X> channel
+interface signals` table). Crucially, this *adds* a direction where one is provable
 from the text — it does **not** relax the contract that a declaration needs a
 direction or width, and it does **not** fabricate one: a signal whose driver is not
 stated in prose (e.g. `REQFLITPEND`) is left as an **honest residual** rather than

@@ -860,6 +860,17 @@ impl EvidenceIr {
                 protocol_states.push(state);
             }
         }
+        // PDF-VARIANT-DIGESTION.9.7 — additive agnostic transition-bound single-word FSM path (SWP-style
+        // `<ALL-CAPS> state` machines that the SWD-hyphen and `.9.3a` quoted paths don't recognize). Dedup
+        // by state name after the paths above so a doc matched by several paths keeps one record per state.
+        for state in extract_transition_bound_states(&extracted_statements) {
+            if !protocol_states
+                .iter()
+                .any(|s| s.state_name.eq_ignore_ascii_case(&state.state_name))
+            {
+                protocol_states.push(state);
+            }
+        }
         // PDF-VARIANT-DIGESTION.3b — protocol actors/agents defined in prose.
         let protocol_actors = extract_protocol_actors(&extracted_statements);
 
@@ -7719,6 +7730,192 @@ fn is_quoted_mode_state_name(name: &str) -> bool {
             && w.chars().next().is_some_and(|c| c.is_ascii_alphabetic())
             && w.chars().all(|c| c.is_ascii_alphabetic() || c == '-')
     })
+}
+
+/// PDF-VARIANT-DIGESTION.9.7 — a THIRD agnostic FSM path for protocols that name their states as a single
+/// ALL-CAPS word followed by "state" (SWP's "the DEACTIVATED state", "into ACTIVATED state", "in the
+/// SUSPENDED state"). The SWD/JTAG path (`find_states_with_actions` / `looks_like_state_name`) requires a
+/// hyphen/slash-joined name behind a TAP/scan-chain doc-gate, and `.9.3a`'s quoted-mode path requires single
+/// quotes plus an actor-noun — so neither captures this shape.
+///
+/// Grammar (ADR 0006 — universal, no chip/protocol literals): a state is an ALL-CAPS token (≥2 chars, ≥1
+/// letter, hyphens allowed) appearing in `<TRIGGER> [the|a|an] <NAME> state`, where TRIGGER is a
+/// transition/locative word — a state one ENTERS, EXITS, or is IN. That binding is exactly what separates a
+/// STATE ("the interface moves into the SETUP state") from a machine name ("the JTAG TAP state machine":
+/// the word before the candidate is not a transition trigger, and an after-guard drops `<X> state machine`).
+///
+/// Two self-gates make the single-word match safe WITHOUT a keyword doc-gate (rejected because SWP never
+/// says "state machine"/"FSM"): each name must recur in ≥2 statements, and a doc must yield ≥2 distinct such
+/// states (one mode is not an FSM) — identical in spirit to `extract_quoted_mode_states`. Emitted only then.
+/// Nothing is fabricated — every state is an all-caps mode the prose literally enters/exits/holds.
+fn extract_transition_bound_states(statements: &[ExtractedStatement]) -> Vec<ProtocolStateRecord> {
+    let mut support: BTreeMap<String, Vec<String>> = BTreeMap::new();
+    let mut order: Vec<String> = Vec::new();
+    for statement in statements {
+        for name in transition_bound_state_names_in(&statement.text) {
+            let ids = support.entry(name.clone()).or_default();
+            if !ids.iter().any(|s| s == &statement.statement_id) {
+                ids.push(statement.statement_id.clone());
+            }
+            if !order.iter().any(|n| n == &name) {
+                order.push(name.clone());
+            }
+        }
+    }
+    // A real FSM state is referenced repeatedly; require ≥2 supporting statements per state.
+    let kept: Vec<String> = order
+        .into_iter()
+        .filter(|n| support.get(n).map(|v| v.len()).unwrap_or(0) >= 2)
+        .collect();
+    // An FSM has at least two states — a single recurring named state is not a state machine.
+    if kept.len() < 2 {
+        return Vec::new();
+    }
+    let mut out = Vec::with_capacity(kept.len());
+    for (i, name) in kept.iter().enumerate() {
+        out.push(ProtocolStateRecord {
+            state_id: format!("named_state_{:04}", i + 1),
+            machine_name: None,
+            state_name: name.clone(),
+            action: None,
+            supporting_statement_ids: support.remove(name).unwrap_or_default(),
+        });
+    }
+    out
+}
+
+/// PDF-VARIANT-DIGESTION.9.7 — find ALL-CAPS single-word state names bound to a transition/locative trigger
+/// in one statement. Grammar only (ADR 0006); the trigger binding plus the "state machine|diagram"
+/// after-guard keep machine names and incidental "state" mentions out.
+fn transition_bound_state_names_in(text: &str) -> Vec<String> {
+    const TRIGGERS: &[&str] = &[
+        "enter",
+        "enters",
+        "entered",
+        "entering",
+        "into",
+        "leave",
+        "leaves",
+        "left",
+        "leaving",
+        "exit",
+        "exits",
+        "exited",
+        "exiting",
+        "to",
+        "in",
+        "from",
+        "reach",
+        "reaches",
+        "reached",
+        "reaching",
+        "remain",
+        "remains",
+        "remained",
+        "remaining",
+        "stay",
+        "stays",
+        "stayed",
+        "staying",
+        "move",
+        "moves",
+        "moved",
+        "moving",
+        "transition",
+        "transitions",
+        "transitioned",
+        "transitioning",
+        "return",
+        "returns",
+        "returned",
+        "returning",
+        "put",
+        "puts",
+        "place",
+        "places",
+        "placed",
+    ];
+    const ARTICLES: &[&str] = &["the", "a", "an", "its", "this", "that"];
+    // "<X> state machine|diagram" names the MACHINE, not a state.
+    const AFTER_GUARD: &[&str] = &["machine", "machines", "diagram", "diagrams"];
+    fn strip(w: &str) -> &str {
+        w.trim_matches(|c: char| !c.is_ascii_alphanumeric())
+    }
+    fn lower(w: &str) -> String {
+        strip(w).to_ascii_lowercase()
+    }
+    let words: Vec<&str> = text.split_whitespace().collect();
+    let mut out = Vec::new();
+    for i in 2..words.len() {
+        if !strip(words[i]).eq_ignore_ascii_case("state") {
+            continue;
+        }
+        if words
+            .get(i + 1)
+            .is_some_and(|w| AFTER_GUARD.contains(&lower(w).as_str()))
+        {
+            continue;
+        }
+        let cand = strip(words[i - 1]);
+        if !is_bare_state_name(cand) {
+            continue;
+        }
+        // The trigger sits at i-2, or at i-3 when one article ("the"/"a"/…) separates it from the name.
+        let mut t = i - 2;
+        if ARTICLES.contains(&lower(words[t]).as_str()) {
+            if t == 0 {
+                continue;
+            }
+            t -= 1;
+        }
+        if TRIGGERS.contains(&lower(words[t]).as_str()) {
+            out.push(cand.to_string());
+        }
+    }
+    out
+}
+
+/// A bare (unquoted, single-word) FSM state name is an ALL-CAPS token of ≥2 chars (hyphens allowed, ≥1
+/// letter, first char a letter) — e.g. `ACTIVATED`, `DEACTIVATED`, `CL0`. Rejects lowercase/mixed-case words
+/// (those are `the <X> state` descriptions, not named states), logic levels / booleans, and the universal
+/// architectural pseudo-values UNKNOWN / UNPREDICTABLE. (`PDF-VARIANT-DIGESTION.9.7`)
+fn is_bare_state_name(tok: &str) -> bool {
+    const DENY: &[&str] = &[
+        "high",
+        "low",
+        "on",
+        "off",
+        "set",
+        "clear",
+        "true",
+        "false",
+        "none",
+        "all",
+        "any",
+        "each",
+        "both",
+        "same",
+        "current",
+        "next",
+        "previous",
+        "new",
+        "unknown",
+        "unpredictable",
+    ];
+    if tok.len() < 2 {
+        return false;
+    }
+    // ALL-CAPS: equal to its own uppercase (digits/hyphens map to themselves), with ≥1 ASCII letter.
+    if tok.to_ascii_uppercase() != tok || !tok.chars().any(|c| c.is_ascii_alphabetic()) {
+        return false;
+    }
+    if !tok.chars().next().is_some_and(|c| c.is_ascii_alphabetic()) {
+        return false;
+    }
+    if !tok.chars().all(|c| c.is_ascii_alphanumeric() || c == '-') {
+        return false;
+    }
+    !DENY.contains(&tok.to_ascii_lowercase().as_str())
 }
 
 /// SWD-SERIAL-EXTRACTION.4d — extract the SWD LINE state machine (reset / operating / protocol-error /
@@ -15581,6 +15778,173 @@ mod pdf_variant_digestion_9_3a_fsm {
             stmt("b", "The manager drives HADDR during the address phase."),
         ];
         assert!(extract_quoted_mode_states(&stmts).is_empty());
+    }
+}
+
+#[cfg(test)]
+mod pdf_variant_digestion_9_7_fsm {
+    //! PDF-VARIANT-DIGESTION.9.7 — transition-bound single-word (ALL-CAPS) FSM extraction (SWP-style
+    //! `<NAME> state` machines), additive to the SWD-hyphen and `.9.3a` quoted-mode paths.
+    use super::*;
+
+    fn stmt(id: &str, text: &str) -> ExtractedStatement {
+        ExtractedStatement {
+            statement_id: id.to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        }
+    }
+
+    #[test]
+    fn recovers_swp_style_allcaps_states_via_transition_binding() {
+        // SWP-shaped prose: each state is an ALL-CAPS word a node ENTERS / is IN / moves TO.
+        let stmts = vec![
+            stmt("a", "The CLF shall put SWP into the ACTIVATED state."),
+            stmt(
+                "b",
+                "On RF-field appearance the interface moves from the DEACTIVATED state to the ACTIVATED state.",
+            ),
+            stmt(
+                "c",
+                "The terminal shall set SWP to the DEACTIVATED state as defined in clause 8.3.",
+            ),
+            stmt(
+                "d",
+                "While in the SUSPENDED state the UICC keeps its context.",
+            ),
+            stmt(
+                "e",
+                "The interface enters the SUSPENDED state after an inactivity timeout.",
+            ),
+        ];
+        let states = extract_transition_bound_states(&stmts);
+        let names: Vec<&str> = states.iter().map(|s| s.state_name.as_str()).collect();
+        assert!(names.contains(&"ACTIVATED"), "got {names:?}");
+        assert!(names.contains(&"DEACTIVATED"), "got {names:?}");
+        assert!(names.contains(&"SUSPENDED"), "got {names:?}");
+        // Ids use a distinct prefix so they never collide with the other three FSM paths.
+        assert!(
+            states
+                .iter()
+                .all(|s| s.state_id.starts_with("named_state_")),
+            "got {:?}",
+            states.iter().map(|s| &s.state_id).collect::<Vec<_>>()
+        );
+    }
+
+    #[test]
+    fn after_guard_rejects_machine_and_diagram_names() {
+        // "<X> state machine" / "<X> state diagram" names the MACHINE, not a state — the candidate before
+        // "state" must NOT be promoted even though it is ALL-CAPS and there are two distinct such words.
+        let stmts = vec![
+            stmt("a", "The JTAG TAP state machine must be reset first."),
+            stmt(
+                "b",
+                "Enter the TAP state machine through the reset sequence.",
+            ),
+            stmt("c", "Refer to the DMA state diagram in figure 4."),
+            stmt("d", "The DMA state diagram shows every transition."),
+        ];
+        assert!(
+            extract_transition_bound_states(&stmts).is_empty(),
+            "machine/diagram names must not become states"
+        );
+    }
+
+    #[test]
+    fn requires_a_transition_binding() {
+        // ALL-CAPS words before "state" with NO transition/locative trigger are "the <X> state"
+        // descriptions, not entered states → nothing promoted.
+        let stmts = vec![
+            stmt("a", "The CONFIG state value is read from a register."),
+            stmt("b", "The CONFIG state determines behaviour."),
+            stmt("c", "A DEBUG state flag is also provided."),
+            stmt("d", "The DEBUG state flag is sticky."),
+        ];
+        assert!(extract_transition_bound_states(&stmts).is_empty());
+    }
+
+    #[test]
+    fn single_state_is_not_a_machine() {
+        // One recurring transition-bound state is not an FSM (need ≥2 distinct states).
+        let stmts = vec![
+            stmt("a", "The device enters the HALT state on error."),
+            stmt("b", "It remains in the HALT state until reset."),
+        ];
+        assert!(extract_transition_bound_states(&stmts).is_empty());
+    }
+
+    #[test]
+    fn non_recurring_states_are_dropped() {
+        // Two distinct states that each appear only once → no recurrence → not promoted.
+        let stmts = vec![
+            stmt("a", "The link moves into the ACTIVE state."),
+            stmt("b", "The link moves into the IDLE state."),
+        ];
+        assert!(extract_transition_bound_states(&stmts).is_empty());
+    }
+
+    #[test]
+    fn rejects_lowercase_logic_levels_and_pseudo_values() {
+        // Lowercase words are descriptions not named states; HIGH/LOW are logic levels; UNKNOWN /
+        // UNPREDICTABLE are universal architectural pseudo-values (the SWD/ADI noise) — all denylisted.
+        let stmts = vec![
+            stmt(
+                "a",
+                "The signal moves to the high state then to the low state.",
+            ),
+            stmt("b", "It returns to the high state and then the low state."),
+            stmt("c", "The register enters the UNKNOWN state on reset."),
+            stmt("d", "Behaviour in the UNKNOWN state is UNPREDICTABLE."),
+            stmt("e", "The pin moves into the idle state.."),
+        ];
+        assert!(
+            extract_transition_bound_states(&stmts).is_empty(),
+            "logic levels / lowercase / pseudo-values must not become states"
+        );
+    }
+
+    #[test]
+    fn parallel_bus_real_operating_states_are_honestly_captured() {
+        // APB DOES have an IDLE→SETUP→ACCESS operating FSM; capturing its named states from genuine
+        // transition prose is correct extraction (no scored-metric change), not a false positive.
+        let stmts = vec![
+            stmt(
+                "a",
+                "When a transfer is required, the interface moves into the SETUP state.",
+            ),
+            stmt(
+                "b",
+                "The interface only remains in the SETUP state for one clock.",
+            ),
+            stmt("c", "PENABLE is asserted in the ACCESS state."),
+            stmt(
+                "d",
+                "Exit from the ACCESS state is controlled by PREADY; it can stay in the ACCESS state.",
+            ),
+        ];
+        let names: Vec<String> = extract_transition_bound_states(&stmts)
+            .into_iter()
+            .map(|s| s.state_name)
+            .collect();
+        assert!(names.contains(&"SETUP".to_string()), "got {names:?}");
+        assert!(names.contains(&"ACCESS".to_string()), "got {names:?}");
+    }
+
+    #[test]
+    fn is_bare_state_name_classifies_correctly() {
+        assert!(is_bare_state_name("ACTIVATED"));
+        assert!(is_bare_state_name("CL0")); // letters + digit, all-caps
+        assert!(is_bare_state_name("BUS-OFF")); // hyphen allowed
+        assert!(!is_bare_state_name("Activated")); // mixed case
+        assert!(!is_bare_state_name("access")); // lowercase
+        assert!(!is_bare_state_name("HIGH")); // logic level (denylist)
+        assert!(!is_bare_state_name("UNKNOWN")); // architectural pseudo-value
+        assert!(!is_bare_state_name("A")); // too short
+        assert!(!is_bare_state_name("123")); // no letter
     }
 }
 

@@ -1,3 +1,29 @@
+### `PDF-VARIANT-DIGESTION.9.7` — single-word `<NAME> state` FSM grammar (a 3rd, agnostic FSM reader)
+The `.9.4` SWP baseline predicted this as the highest-leverage lever; it delivered. SpecForge had two FSM
+readers — the SWD/JTAG hyphen shape (`Shift-DR state`) and `.9.3a`'s quoted-mode shape (`'error passive'`) —
+and SWP's interface FSM is written a third way neither catches: a single ALL-CAPS word + *state*
+(`the DEACTIVATED state`, `into the ACTIVATED state`, `in the SUSPENDED state`).
+
+New additive sibling `extract_transition_bound_states` reads this shape. The cue that makes a single-word
+match safe — where "the security state" / "the current state" would otherwise flood it — is a
+**transition/locative binding**: a real state is one you ENTER / LEAVE / are IN, so a word is only taken
+inside `<trigger> [the] <NAME> state` (enter/into/leave/exit/to/in/from/move/transition/return/remain).
+`<NAME>` must be ALL-CAPS; an after-guard drops `<X> state machine|diagram`; a denylist removes logic levels
+(`HIGH`/`LOW`) and the pseudo-values `UNKNOWN`/`UNPREDICTABLE`; and (as `.9.3a`) a name must recur ≥2× with
+≥2 distinct states — that structural self-gate replaces a keyword doc-gate (rejected because SWP never says
+"state machine"). All grammar, no chip names (ADR 0006).
+
+The grammar was locked by probing it over all 80 persisted evidence docs **before** coding. Live re-measure:
+- **SWP `protocol_states` 0 → 4** — `DEACTIVATED` / `ACTIVATED` / `SUSPENDED` / `HALT`.
+- **No regression:** SWD/ADI keeps its 13 states (eval `serial_frame_field`/`swd_operation`/`protocol_state`
+  all `P=R=F1=1.000`); CAN keeps its 3 quoted `mode_state_*`; both gain 0 `named_state_*`.
+- **Breadth win:** 18 corpus docs gain a real FSM surface — CHI/CXS/DTI/CCIX/CoreSight/eMMC/USB4, plus the
+  parallel buses' own machines (APB `SETUP`/`ACCESS`, AXI low-power `RUN`/`STOP`/`ACTIVATE`/`DEACTIVATE`) — an
+  honest correctness gain that touches none of the scored constraint/relation/temporal surfaces.
+
+8 new hermetic tests; full `scripts/run_ci.sh` GREEN (fmt + clippy `-D warnings` + lib 1440 → 1448 + rustdoc +
+mdBook); kg-bench 151/151. Book subsection in `pipeline/evidenceir.md`; KM card `transition-bound-state-fsm`.
+
 ### `PDF-VARIANT-DIGESTION.9.4` — SWP honest baseline: each serial spec under-extracts differently
 Broadening the serial-class survey: ingested SWP (Single Wire Protocol; 147 anchors / 1303 statements / 82
 visual). SWP classes as a **protocol** (it extracts 11 signal constraints) but yields **0 signals / 0 FSM /

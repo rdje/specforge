@@ -8,6 +8,44 @@
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 - adapter target: `.isf` (sole adapter); `.fsm`/HDL are out of scope — FSMGen consumes `.isf` and owns scheduling/`.fsm`/HDL downstream (since `ISF-ONLY-CONSOLIDATION`, `2026-05-18`)
 
+## 2026-06-09 — A third agnostic FSM grammar: single-word `<NAME> state` (PDF-VARIANT-DIGESTION.9.7)
+
+`.9.7` closes the FSM gap the `.9.4` SWP baseline found. SpecForge now reads protocol state machines in three
+structurally distinct ways, each grammar-only (ADR 0006), each an independent additive extractor that the
+others don't perturb:
+
+1. `extract_protocol_states` / `find_states_with_actions` — the SWD/JTAG shape: a Capitalized-hyphen name +
+   *state* (`Shift-DR state`) behind a TAP/scan-chain doc-gate.
+2. `extract_quoted_mode_states` (`.9.3a`) — a single-quoted operational mode bound to an actor-noun
+   (`a node is 'error passive'`).
+3. `extract_transition_bound_states` (`.9.7`, NEW) — a single **ALL-CAPS** word + *state*
+   (`the DEACTIVATED state`), the shape SWP uses and the other two miss.
+
+**Why a transition binding, not a keyword doc-gate.** Matching one capitalized word before *state* is
+inherently risky: specs constantly write "the security state", "the cache state", "the current state" — none
+an FSM state. The discriminator is structural and universal: a real state is one you **enter, leave, or are
+in**. `transition_bound_state_names_in` accepts a candidate only inside `<trigger> [the|a|an] <NAME> state`
+where the trigger is a transition/locative word (enter/into/leave/exit/to/in/from/reach/remain/stay/move/
+transition/return/put/place). That single rule is what separates "the interface moves into the `SETUP`
+state" (a state) from "the `security` state controls access" (a description) and "the JTAG TAP `state
+machine`" (a machine name, also dropped by an after-token guard). `is_bare_state_name` enforces ALL-CAPS
+(≥2 chars, ≥1 letter, hyphens ok) and denylists logic levels (`HIGH`/`LOW`) plus the architectural
+pseudo-values `UNKNOWN`/`UNPREDICTABLE`. As in `.9.3a`, two self-gates — recur in ≥2 statements, ≥2 distinct
+states — make the structural pattern itself the "is this an FSM?" test, so no keyword doc-gate is needed
+(and a keyword gate was rejected outright because SWP never uses the phrase "state machine").
+
+**Method discipline.** The grammar was locked by probing the candidate rule over all 80 persisted evidence
+docs *before* writing Rust — measuring the real corpus-wide false-positive surface rather than guessing. The
+`capword` variant (any capitalized word) was rejected on the data (38 docs of `Security`/`Cache`/`Execution`
+garbage); the transition-bound ALL-CAPS variant cleanly admitted SWP and dropped SWD's `TAP`/`JTAG` noise.
+
+**Outcome.** SWP `protocol_states` 0 → 4 (`DEACTIVATED`/`ACTIVATED`/`SUSPENDED`/`HALT`). SWD/ADI unchanged
+(13 states, eval `P=R=F1=1.000`); CAN unchanged (3 quoted states); both gain 0 `named_state_*`. 18 corpus
+docs gain a real FSM surface, including the parallel buses' own machines (APB `SETUP`/`ACCESS`, AXI low-power
+`RUN`/`STOP`/`ACTIVATE`/`DEACTIVATE`) — an honest correctness gain orthogonal to the scored constraint/
+relation/temporal surfaces. Records carry a `named_state_NNNN` id so they never collide with the other three
+paths. 8 hermetic tests; full `run_ci.sh` green (lib 1448); kg-bench 151/151.
+
 ## 2026-06-08 — Document-class routing, grounded in real corpus data (PDF-VARIANT-DIGESTION.5a)
 
 `.5a` adds a structural **document-class** signal so `validate` can tell a genuine low-design-intent guide

@@ -115,11 +115,41 @@ diagnostic when a construct is genuinely out of model.
   prose, not a table → 0 captured → a prose-signal lever; (3) the 11 "signal_constraints" are mostly NOISE —
   layer/protocol acronyms (`UICC`/`SWP`/`CLF`/`SHDLC`/`RSET`/`CLT`) mis-captured as signal subjects → a
   constraint-subject precision lever. Spun future leaves `.9.7`–`.9.9` (below). Commit: pending (this slice).
-- ID: `PDF-VARIANT-DIGESTION.9.7` · Status: `proposed` · Goal: **single-word `<NAME> state` FSM grammar** —
+- ID: `PDF-VARIANT-DIGESTION.9.7` · Status: `in_progress` · Goal: **single-word `<NAME> state` FSM grammar** —
   generalize the SWD `<Name> state` path (`looks_like_state_name` + the TAP/scan-chain doc-gate) to also accept a
   single capitalized state word (`ACTIVATED state`, `DEACTIVATED state`) behind a safe generic FSM doc-gate, so
   SWP-class state machines surface, AGNOSTICALLY (ADR 0006) and without SWD/CAN regression or corpus false
-  positives. Verification: pending. Commit: pending.
+  positives.
+  **Design (empirically locked `2026-06-09` by probing the proposed grammar over ALL 80 persisted evidence
+  docs BEFORE coding — no guessing):** the discriminator that makes single-word matching safe is a
+  **transition/locative binding** (the analogue of `.9.3a`'s actor-noun binding): a state is an **all-caps**
+  token (≥2 chars, ≥1 letter, hyphens allowed) sitting in `<TRIGGER> [the|a|an] <NAME> state`, where TRIGGER ∈
+  {enter(s)/into/leave(s)/exit(s)/to/in/from/reach(es)/remain(s)/stay(s)/move(s)/transition(s)/return(s)/
+  put(s)/place(s)} — i.e. a state one ENTERS / EXITS / is IN. Two self-gates (same as `.9.3a`, NOT a keyword
+  gate): each name must **recur in ≥2 statements** and a doc must yield **≥2 distinct** such states (an FSM has
+  several states). A **keyword doc-gate ("state machine"/"FSM") was REJECTED** because SWP never uses those
+  phrases (0 hits) — the structural self-gate IS the "safe generic FSM gate". Defensive guards: an
+  after-token guard drops `<X> state machine|diagram` (X names the machine, not a state), a logic-level/booleans
+  denylist (HIGH/LOW/ON/OFF/SET/CLEAR/TRUE/FALSE/…), and ARM's architectural pseudo-values UNKNOWN/UNPREDICTABLE
+  (universal spec vocabulary, never states; ADR 0006-safe). Realized as an **additive sibling**
+  `extract_transition_bound_states` (deduped by name after the existing three paths) so the SWD/CAN extractors
+  are byte-for-byte untouched → zero regression by construction (the `.9.3a` engineering choice). **Probe
+  result:** SWP → `DEACTIVATED/ACTIVATED/SUSPENDED/HALT`; SWD/ADI → 0 (only `UNKNOWN` reaches ≥2 supports, 1
+  distinct < 2 — and now denylisted anyway); CAN → 0 from this path (keeps its 3 quoted-mode states);
+  APB → `SETUP/ACCESS` and AXI → `STOP/ACTIVATE/DEACTIVATE` (their REAL operating / low-power Q-Channel
+  states — honest improvement, no scored-metric change, no kg-bench `protocol_states` fixture exists); 18 docs
+  total gain a genuine FSM surface (CHI/CXS/DTI/CCIX/CoreSight/eMMC/USB4).
+  **Status: `done` (`2026-06-09`).** Implemented as the additive sibling `extract_transition_bound_states` +
+  `transition_bound_state_names_in` + `is_bare_state_name` (evidence.rs), wired + deduped after the three
+  existing FSM paths. **Live re-measure on fresh-rebuilt evidence: SWP `protocol_states` 0 → 4 `named_state_*`
+  (`DEACTIVATED`/`ACTIVATED`/`SUSPENDED`/`HALT`).** No regression: **SWD/ADI** keeps its 13 states (8
+  `protocol_state_*` + 5 `swd_line_state_*`), 0 `named_state_*` → SWD derivation eval `serial_frame_field` /
+  `swd_operation` / `protocol_state` all `P=R=F1=1.000`; **CAN** keeps its 3 `mode_state_*`, 0 `named_state_*`.
+  8 new hermetic tests (positive SWP, after-guard machine/diagram, requires-binding, single-state,
+  non-recurring, lowercase/logic-level/pseudo-value rejection, parallel-bus real-state capture,
+  `is_bare_state_name` unit). Full `scripts/run_ci.sh` GREEN (fmt + clippy `-D warnings` + lib 1440 → 1448 +
+  rustdoc + mdBook) + kg-bench 151/151. Book subsection in `pipeline/evidenceir.md`; KM card
+  `transition-bound-state-fsm` (KM 45 → 46 facts). Commit: pending (this slice).
 - ID: `PDF-VARIANT-DIGESTION.9.8` · Status: `proposed` · Goal: **SWP prose single-wire signal capture** —
   recover `S1`/`S2`/`SWIO`-class single-wire signals defined in prose (not in a signal table), agnostically.
   Verification: pending. Commit: pending.
@@ -200,9 +230,15 @@ breadth survey shows each serial spec under-extracts DIFFERENTLY and surfaced a 
 **`.9.7`** (single-word `<NAME> state` FSM grammar — captures SWP's `ACTIVATED`/`DEACTIVATED`, a 3rd grammar neither
 the SWD hyphen-path nor `.9.3a`'s quote-path catches), **`.9.8`** (SWP prose single-wire signals `S1`/`S2`/`SWIO`),
 **`.9.9`** (constraint-subject precision — drop layer/protocol acronyms `UICC`/`SWP`/`CLF`/`SHDLC` mis-read as signal
-subjects). **Frontier (any of, owner may steer):** `.9.7` (highest-leverage — one FSM grammar likely helps several
-serial specs) · `.9.3b` (CAN frame fields) · `.9.5`/`.9.6` (SMBus/I2S baselines). `.6`/`.7` stay blocked on
-host-local PDFs.
+subjects). **`.9.7` (single-word `<NAME> state` FSM grammar) DONE `2026-06-09`** — the predicted highest-leverage
+lever delivered: additive `extract_transition_bound_states` recovers SWP's interface FSM (`ACTIVATED`/`DEACTIVATED`/
+`SUSPENDED`/`HALT`, 0 → 4) via a transition/locative binding (a state is one you enter/leave/are-in), and the
+single grammar lifted **18 corpus docs** to a real FSM surface (CHI/CXS/DTI/CCIX/CoreSight/eMMC/USB4 + APB
+`SETUP`/`ACCESS` + AXI low-power `RUN`/`STOP`/`ACTIVATE`/`DEACTIVATE`) with SWD (13 states, eval 100%) and CAN
+(3 quoted states) byte-for-byte unchanged; `run_ci.sh` green (lib 1448) + kg-bench 151/151; KM
+`transition-bound-state-fsm`. **Frontier (any of, owner may steer):** `.9.8` (SWP prose single-wire signals
+`S1`/`S2`/`SWIO`) · `.9.3b` (CAN frame fields) · `.9.9` (constraint-acronym precision) · `.9.5`/`.9.6` (SMBus/I2S
+baselines). `.6`/`.7` (the older VLM-frontier / USB-3.2 leaves) stay blocked on host-local PDFs.
 
 **(SUPERSEDED active note) `PDF-VARIANT-DIGESTION.6`/`.7`** — item ② (`.5`) COMPLETE and `.8` (broaden
 prose-actor capture) DONE. **`.5a` + `.5b` + `.5c` are DONE** — structural doc-class routing
