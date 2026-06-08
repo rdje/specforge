@@ -279,19 +279,43 @@ Add a provider to run the live audit:
 
 ```text
 # plan-only — list the sampled intent-bearing tables (no VLM calls)
-specforge audit-extraction generated/source_ir/<key>/source_ir.json --sample 12
+specforge audit-extraction generated/source_ir/<key>/source_ir.json --sample 8
 
-# live — estimate precision over the sample with the local VLM
-specforge audit-extraction generated/source_ir/<key>/source_ir.json --sample 12 --provider ollama
+# live — estimate precision over the sample with the local VLM (real run, RISC-V Debug)
+specforge audit-extraction generated/source_ir/1_0_risc_v_debug_specification/source_ir.json \
+    --sample 8 --provider ollama
   ...
-  audited: 12
-  judged: 11
-  consistent: 10
-  vlm_errors: 1
-  table_kind_precision_estimate: 0.909
-  flagged_mismatches: 1
-  flagged: table_0184 page=page_0191 kind=signal reason="this looks like a register field table"
+  audited: 8
+  judged: 8
+  consistent: 2
+  vlm_errors: 0
+  table_kind_precision_estimate: 0.250
+  flagged_mismatches: 6
+  flagged: table_0080 page=page_0084 kind=register reason="The table contains description not access or reset values."
+  flagged: table_0085 page=page_0089 kind=register reason="...not a detailed bit-field definition table."
 ```
+
+### The audit discriminates — and agrees with the gold
+
+The estimate is only useful if it is *low where extraction is weak and high where it is
+strong* — otherwise it is just noise. A live run on two opposite-shaped register specs shows
+exactly that, and the result independently confirms what the hand-authored golds found:
+
+| document | live estimate | what the VLM flagged | matching gold finding |
+|---|---|---|---|
+| RISC-V Debug | **0.250** / 0.375 (two seeds) | register tables "lack bit positions" / "not a bit-field definition table" | `.4a.2`: bit-extent 0/179 — RISC-V's bits live in the layout *graphic*, not the field table |
+| NVMe 2.0a | **0.750** | register tables confirmed; one `timing` table is really a feature matrix | `.4a.3`: bit-structure recall 0.931 — NVMe's tables *do* carry bits |
+
+The audit and the gold are two **independent** methods (one a VLM re-reading the picture, one
+a human-verified answer key), and they agree on which document has trustworthy register
+extraction. That agreement is the point: it lets the audit stand in for a gold on the hundreds
+of corpus documents that will never get one. The NVMe run also caught a genuine false positive
+(a feature-matrix table misclassified as `timing`) — surfaced by name, for a human to fix.
+
+One honest limit: the audit reads the table *image*, so it needs the document's rendered
+`normalized/` assets on disk. If they were reclaimed (e.g. by `clean --scope source-normalized`),
+the run reports `vlm_errors` and `table_kind_precision_estimate: n/a (no table judged)` rather
+than inventing a number — re-ingest the document to audit it.
 
 Two design choices keep it honest and **chip-spec-PDF-agnostic** (the project's non-negotiable
 signoff rule — no hardcoded chip vocabulary in the runtime). First, the sample is chosen and

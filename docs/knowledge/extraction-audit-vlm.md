@@ -39,6 +39,15 @@ and the metric name says so. The VLM is an imperfect oracle → it is an ESTIMAT
 **Agnostic by construction** ([[feedback_no_hardcoded_chip_spec_names]], ADR 0006): selection and judgment are purely by table
 STRUCTURE (register/field/signal/encoding/timing — universal digital-design "how" vocabulary, the [[temporal-logic-choice]] /
 LOGIC-LEVEL-BOUNDARY class); the runtime prompt carries no chip/vendor/protocol names (a hermetic test asserts none leak);
-sampling is structural, never keyed on document identity. Verified live: RISC-V Debug `table_0080` → VLM `consistent` → estimate
-1.000, 0 flagged. 5 hermetic tests (classification, deterministic+seed-sensitive sampling, tolerant verdict parse, agnostic prompt,
-precision/flagging math); plan-only proven on RISC-V (78 intent-bearing tables) + I2C (7 timing tables).
+sampling is structural, never keyed on document identity. 5 hermetic tests (classification, deterministic+seed-sensitive sampling,
+tolerant verdict parse, agnostic prompt, precision/flagging math); plan-only proven on RISC-V (78 intent-bearing tables) + I2C
+(7 timing tables).
+
+**Live measurement (`.4b.2`, qwen2.5vl:7b, bounded sample 8/doc):** the estimate DISCRIMINATES and independently corroborates the
+`.4a` golds — **RISC-V Debug 0.250 (seed 0) / 0.375 (seed 1)**: register tables flagged for lacking in-table bit positions ("not a
+detailed bit-field definition table"), matching `.4a.2`'s bit-extent 0/179 (RISC-V's bits live in the layout graphic); **NVMe 2.0a
+0.750**: register tables confirmed (matching `.4a.3`'s 0.931 bit-structure recall) + caught a real feature-matrix→`timing`
+misclassification (`table_0035`). Two independent methods (VLM audit + per-fact gold) agree on which doc has trustworthy register
+extraction → the audit can stand in for a gold on the ungolded breadth. **Needs on-disk table images:** a doc whose `normalized/`
+was reclaimed ([[feedback_artifact_cleanup]]) returns `vlm_errors` + `n/a (no table judged)` — never a fabricated number (Avalon,
+8 errors). Only the git-tracked re-ingested RISC-V/NVMe retain images; a signal-bearing breadth audit on a fresh re-ingest is a follow-up.

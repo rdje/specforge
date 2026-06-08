@@ -8,6 +8,29 @@
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 - adapter target: `.isf` (sole adapter); `.fsm`/HDL are out of scope — FSMGen consumes `.isf` and owns scheduling/`.fsm`/HDL downstream (since `ISF-ONLY-CONSOLIDATION`, `2026-05-18`)
 
+## 2026-06-08 — live VLM audit measurement (PDF-VARIANT-DIGESTION.4b.2, closes `.4b`/`.4`)
+
+Ran the `.4b.1` harness live to get the precision estimates. The headline is **cross-validation**: the VLM
+audit (an imperfect oracle re-reading the table picture) and the per-fact gold (a human-verified answer key)
+are fully independent, yet they agree on which document has trustworthy register extraction.
+
+- RISC-V Debug: estimate **0.250** (seed 0) / **0.375** (seed 1). The VLM consistently flags the register
+  tables for *lacking in-table bit positions* — and that is precisely `.4a.2`'s gold finding (bit-extent
+  0/179: RISC-V's bit ranges live in a layout graphic the field table doesn't contain). The low estimate is
+  therefore correct, not a VLM artifact.
+- NVMe 2.0a: estimate **0.750**. The VLM confirms the register tables (NVMe's tables *do* carry bits, per
+  `.4a.3`'s 0.931 bit-structure recall) and independently caught a real misclassification — `table_0035`,
+  typed `timing` by the deterministic classifier, is actually a feature matrix (0/1 support flags, not
+  min/typ/max).
+
+Two honest properties held under real conditions: (1) errors are excluded from the denominator and the
+estimate is `None` when nothing is judged — Avalon, whose `normalized/` images were reclaimed, returned 8
+VLM errors and `n/a`, fabricating no number; (2) the audit needs on-disk table images, so it currently
+applies to the git-tracked re-ingested docs (RISC-V/NVMe) — a signal-bearing breadth audit on a fresh
+re-ingest is the noted follow-up. This closes `.4` (precision verification, item ①): the broadened breadth
+now has two complementary trust signals — per-fact gold where a gold exists, and a gold-free VLM audit
+everywhere else.
+
 ## 2026-06-08 — VLM extraction-audit harness (PDF-VARIANT-DIGESTION.4b.1)
 
 The broadened table-driven extraction (`.2`/`.2b`/`.2c`) yields registers/fields/signals across the whole

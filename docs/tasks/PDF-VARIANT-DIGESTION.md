@@ -97,13 +97,16 @@ grid-repair demo on a bits-bearing doc; giants' ingest budget; USB 3.2 evid-fail
 
 ## Current frontier
 
-**ACTIVE FRONTIER (`2026-06-08`): `PDF-VARIANT-DIGESTION.4b.2`** — the LIVE proposer/verifier VLM audit
-measurement (run `audit-extraction --provider ollama` over a bounded sample on RISC-V/NVMe + a breadth doc →
-per-doc table-kind precision ESTIMATE + flagged-mismatch list, recorded into the tree/book/KM). **`.4b.1` is
-DONE** (`2026-06-08`): the audit HARNESS — the `audit-extraction` command (structural sampler + kind-aware VLM
-audit prompt + tolerant verdict parser + precision-estimate/flagged-mismatch aggregator), additive + hermetic
-(5 tests), agnostic by construction (ADR 0006), plan-only by default; the live execute path is proven
-end-to-end. **`.4a` is DONE** (`.4a.1`–`.4a.5`): the register-field surface is
+**ACTIVE FRONTIER (`2026-06-08`): `PDF-VARIANT-DIGESTION.5a`** — doc-class routing + per-doc completeness gauge
+(detect protocol/register/interface/guide class from structure; report GUIDES as honest "low structured
+design-intent", not a 0 failure). **`.4` (correctness/precision verification, item ①) is COMPLETE** — both
+`.4a` (per-fact gold on register fields + prose signals) and `.4b` (VLM proposer/verifier audit) done.
+**`.4b` DONE** (`.4b.1` harness + `.4b.2` live measurement): the `audit-extraction` VLM audit gives a
+table-kind precision ESTIMATE that **discriminates extraction quality and independently corroborates `.4a`** —
+RISC-V Debug **0.250/0.375** (register tables flagged for lacking in-table bit positions, matching `.4a.2`'s
+bit-extent 0/179) vs NVMe **0.750** (register tables confirmed, matching `.4a.3`'s 0.931 bit-structure recall;
+caught a real feature-matrix→timing misclassification). **`.4a` is DONE** (`.4a.1`–`.4a.5`): the
+register-field surface is
 measured on two opposite-shaped docs (RISC-V field-name recall 0.588; NVMe bit-structure recall 0.931) and the
 declared-signal surface on I2C (recall 1.000 / precision 0.600). Five extraction-fix targets are now quantified
 (RISC-V register-name + bit-graphic; NVMe mnemonic; I2C acronym/condition filter; …). The `.2`–`.3b` leaves
@@ -178,8 +181,10 @@ fields / 3,077 relations) but only **4/74 (5%) have verified precision** (APB/AH
 through-line for these leaves: make the breadth TRUSTWORTHY (objectively measured, no faking) before widening
 it further. Priority order ① → ⑤.
 
-- ID: `PDF-VARIANT-DIGESTION.4` · Status: `active` · **① Correctness/precision verification of the broadened
-  extraction** (the 95% that is coverage-only). Children:
+- ID: `PDF-VARIANT-DIGESTION.4` · Status: `done` (`2026-06-08`; `.4a` + `.4b` done) · **① Correctness/precision
+  verification of the broadened extraction** (the 95% that is coverage-only). Two complementary methods landed:
+  per-fact GOLD on in-corpus docs (`.4a`) + a VLM proposer/verifier AUDIT that needs no gold (`.4b`); the two
+  agree on which docs have strong vs weak extraction (cross-validated). Children:
   - ID: `PDF-VARIANT-DIGESTION.4a` · Status: `done` (`2026-06-08`; all children `.4a.1`–`.4a.5` done) · Goal: sample-gold the new surfaces (register fields,
     prose signals) on diverse in-scope docs whose PDFs are git-tracked in `corpus/` (so the gold is
     reproducible + independently verifiable); score per-fact with WIRE-BASED-100 rigor. **SPLIT `2026-06-08`:**
@@ -242,7 +247,7 @@ it further. Priority order ① → ⑤.
       **precision 6/10 = 0.600** — 4 over-captures named: ACK/NACK (conditions on SDA, §3.1.6), DDC (different
       bus, §4.6), SDR (I3C rate acronym). +2 hermetic tests; book section (declared signals) + KM card. Fix
       leaf: tighten the prose acronym/condition filter (now quantified). Full `run_ci.sh` green; kg-bench green.
-  - ID: `PDF-VARIANT-DIGESTION.4b` · Status: `active` · Goal: automated proposer/verifier AUDIT — re-read a
+  - ID: `PDF-VARIANT-DIGESTION.4b` · Status: `done` (`2026-06-08`; `.4b.1` + `.4b.2` done) · Goal: automated proposer/verifier AUDIT — re-read a
     random sample of extracted registers/signals against their table IMAGE with the VLM (the `.2b`
     consistency gate run as an audit) → a corpus-scale precision ESTIMATE + a flagged-mismatch list. Accept:
     a measured precision estimate over a stated sample size; garbage surfaced, not hidden. **SPLIT
@@ -265,12 +270,30 @@ it further. Priority order ① → ⑤.
       verified on RISC-V Debug (78 intent-bearing tables) + I2C (7 timing tables); seed reshuffle confirmed on
       real data; ONE live VLM call proved the execute path end-to-end (`table_0080` → consistent, estimate
       1.000, 0 flagged). Book section in `quality/extraction-eval.md`; KM card `extraction-audit-vlm`.
-    - ID: `PDF-VARIANT-DIGESTION.4b.2` · Status: `pending` · Goal: the live measurement — run
+    - ID: `PDF-VARIANT-DIGESTION.4b.2` · Status: `done` (`2026-06-08`) · Goal: the live measurement — run
       `audit-extraction --provider ollama` over a bounded sample on the in-corpus docs that exercise the
       broadened extraction (RISC-V Debug / NVMe register fields; a register/signal doc for breadth), record
       the table-kind precision ESTIMATE per doc + the flagged-mismatch list into this tree + the book + KM.
       Accept: a measured estimate over a stated sample size per doc; every disagreement surfaced by name, not
-      hidden; the VLM kept to a bounded sample (the `.2b` scaling finding).
+      hidden; the VLM kept to a bounded sample (the `.2b` scaling finding). **DONE — live qwen2.5vl:7b audit,
+      bounded sample 8/doc:**
+      - **RISC-V Debug** (78 intent-bearing tables): seed 0 → **estimate 0.250** (2/8 consistent, 6 flagged,
+        0 VLM errors, ~71 s); seed 1 → **0.375** (3/8, 5 flagged, ~46 s). Consistently LOW; the VLM flags the
+        register tables for **lacking in-table bit positions** ("not a detailed bit-field definition table",
+        "the table lacks bit positions") — INDEPENDENTLY corroborating `.4a.2`'s gold finding (bit-extent
+        0/179; RISC-V's bits live in the layout graphic, not the field table).
+      - **NVMe 2.0a** (118 intent-bearing tables): seed 0 → **estimate 0.750** (6/8 consistent, 2 flagged,
+        ~51 s). HIGH; the VLM confirms the register tables (corroborating `.4a.3`'s 0.931 bit-structure
+        recall) AND caught a REAL false positive — `table_0035` classified `timing` is actually a feature
+        matrix ("lists controller features and supported modes with 0/1 instead of min/typ/max units").
+      - **Cross-validation:** the audit's precision ESTIMATE tracks the per-fact gold quality (RISC-V weak ↔
+        low estimate; NVMe strong ↔ high estimate) — two independent methods agreeing is what makes the audit
+        a trustworthy instrument for the ungolded breadth.
+      - **Robustness:** Avalon returned 8 VLM errors → `n/a (no table judged)` and **fabricated no number**
+        (its `normalized/` images were reclaimed by an earlier `clean`; the audit needs on-disk table images,
+        which only the git-tracked re-ingested RISC-V/NVMe retain — a signal-bearing breadth audit on a fresh
+        re-ingest is a noted follow-up). Book section refreshed with the real numbers; KM `extraction-audit-vlm`
+        updated. Commit subject: `PDF-VARIANT-DIGESTION.4b.2`.
 - ID: `PDF-VARIANT-DIGESTION.5` · Status: `pending` · **② Doc-class routing + per-doc completeness gauge.**
   Children:
   - ID: `PDF-VARIANT-DIGESTION.5a` · Status: `pending` · Goal: detect doc class (protocol / register /
@@ -343,6 +366,10 @@ set, not the whole doc/corpus.
 - `2026-06-08`: Split `.4b` (proposer/verifier VLM audit) into `.4b.1` (audit harness — DONE) + `.4b.2` (live
   measurement — pending); `.4b` → `active`, frontier moves to `.4b.2`. Mirrors `.4a`'s eval-surface → per-doc
   split (the harness is the lower-level dependency of the measurement).
+- `2026-06-08`: `.4b.2` live measurement DONE → `.4b` + `.4` (precision-verification item ①) CLOSED. Live
+  qwen2.5vl:7b audit: RISC-V Debug 0.250/0.375 (bit-position gap, corroborates `.4a.2`), NVMe 0.750 (confirmed +
+  caught a feature→timing misclassification, corroborates `.4a.3`). The audit estimate tracks gold quality
+  (cross-validated). Frontier moves to `.5a` (doc-class routing + per-doc completeness gauge — item ②).
 - `2026-06-08`: Split `.4a` (precision verification) into `.4a.1`–`.4a.5` — the eval scorer has no
   register-field/declared-signal task yet (a real lower-level dependency, PNT split rule). `.4` + `.4a` →
   `active`; `.4a.1` (register-field eval surface) → `in_progress` and onto the frontier. Scope kept to

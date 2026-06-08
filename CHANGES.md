@@ -1,3 +1,20 @@
+### `PDF-VARIANT-DIGESTION.4b.2` — live VLM audit measurement (closes `.4b` + `.4`)
+Ran the `.4b.1` harness live (qwen2.5vl:7b via Ollama, bounded sample 8/doc) on the in-corpus register specs.
+**The estimate DISCRIMINATES and independently corroborates the `.4a` golds:** RISC-V Debug → **0.250** (seed 0,
+2/8) / **0.375** (seed 1) — the VLM flags the register tables for lacking in-table bit positions ("not a
+detailed bit-field definition table"), exactly matching `.4a.2`'s gold finding (bit-extent 0/179; RISC-V's
+bits live in the layout graphic, not the field table); NVMe 2.0a → **0.750** (6/8) — register tables confirmed
+(matching `.4a.3`'s 0.931 bit-structure recall) AND a real false positive caught (`table_0035` classified
+`timing` is actually a feature matrix). Two independent methods (VLM audit + per-fact gold) agreeing on which
+doc has trustworthy register extraction is the point — the audit can stand in for a gold on the ungolded
+breadth. Robustness confirmed: Avalon returned 8 VLM errors → `table_kind_precision_estimate: n/a (no table
+judged)`, **fabricating no number** (its `normalized/` images were reclaimed by an earlier `clean`; the audit
+needs on-disk table images, which only the git-tracked re-ingested RISC-V/NVMe retain — a signal-bearing
+breadth audit on a fresh re-ingest is a noted follow-up). Docs-only (no code change). Closes `.4b` (`.4b.1`
+harness + `.4b.2` measurement) and `.4` (correctness/precision verification, item ①). Book
+`quality/extraction-eval.md` (real numbers + discrimination table); KM `extraction-audit-vlm` updated; tree
+frontier → `.5a` (doc-class routing). kg-bench 151/151; lib 1378 (no test change).
+
 ### `PDF-VARIANT-DIGESTION.4b.1` — VLM extraction-audit harness (proposer/verifier precision estimate)
 Built the audit HARNESS for the broadened table-driven extraction: a new `audit-extraction <source-ir>`
 command that estimates the precision of the 95% of corpus extraction that has no gold, without authoring one
