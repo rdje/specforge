@@ -8,6 +8,44 @@
 - stage model: `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 - adapter target: `.isf` (sole adapter); `.fsm`/HDL are out of scope — FSMGen consumes `.isf` and owns scheduling/`.fsm`/HDL downstream (since `ISF-ONLY-CONSOLIDATION`, `2026-05-18`)
 
+## 2026-06-08 — NVMe register-field mnemonic from the description (EXTRACTION-GAP-FIX.2)
+
+The lesson, again, is **read where the fact actually lives before writing the fix** (the owner honesty
+guardrail). The `.2` goal *hypothesized* the NVMe mnemonic would be a leading-bare token (`MQES: …`). Before
+touching code I inspected the persisted NVMe SourceIR (`structured_tables` 0035–0038, the CAP/CC/CSTS register
+tables) and found the actual structure is the universal defined-term form *"Maximum Queue Entries Supported
+**(MQES)**: …"* — the mnemonic is a **parenthetical** abbreviation, immediately before the first colon. Coding
+the hypothesized leading-bare form would have recovered nothing (and risked false positives on `RO:`/enum
+`00:`); coding the real form recovers it cleanly.
+
+Why field-name recall was `0/29`: NVMe tables are `Bits | Type | Reset | Description` with **no name column**,
+so the synthesizer's `field_col` falls back to the bits column and the field name becomes the bit-range string
+(`"60:59"`). The bits themselves parse fine (bit-structure recall was already 0.931) — only the *identity* was
+wrong.
+
+The fix (three small pure-grammar helpers in `ir/evidence.rs`, ADR 0006):
+- `is_bit_range_token(s)` — the name is a bit spec (only digits/`:`/brackets with ≥1 digit), so it cannot be a
+  real identifier.
+- `is_field_mnemonic_token(s)` — an uppercase-alphanumeric abbreviation (2–12 chars, starts with a letter).
+- `field_mnemonic_from_description(desc)` — the first `(<MNEMONIC>):` group; the **required colon** is what
+  distinguishes the field's own definition from a passing reference like `(CC.MPS)` or `(CRTO.CRWMT)` (which is
+  followed by `;`/space, not `:`).
+
+Gate: recover only when there is **no explicit name/field column** AND the captured name **is** a bit-range
+token — so real-name tables (RISC-V `Field|…`, the DTMControl test) are untouched. Applied in BOTH register
+paths (`synthesize_register_field_tables` for `unknown`/`timing` tables, `synthesize_register_records` for
+`RegisterMap` tables) because table classification can route a doc through either, and both carried the same
+latent bit-range-name bug.
+
+Measurement (scoring rigor — same source, isolated): rebuilt the NVMe EvidenceIR from the persisted SourceIR
+with and without the change (git-stash the one file), scored `eval-extraction seed_nvme_registers.json
+--provider skip`. **Field-name recall 0/29 → 28/29 = 0.966**; bit-structure recall held 27/29 → 28/29. The one
+miss, `CAP.CRMS`, genuinely has no `(CRMS):` term in this PDF's prose (the 60:59 row carries the CRWMS/CRIMS
+sub-mode descriptions) → an **honest residual**, not a defect, and never fabricated. The persisted source
+reproduced the exact `.4a.3` baseline, so a Docling re-ingest (deterministic on the same PDF) would not change
+the description prose the grammar reads — re-ingest was unnecessary for this metric. No wire-based regression:
+the path only fires on bits-only register-field tables, which the parallel-bus signal specs do not have.
+
 ## 2026-06-08 — I2C prose precision: the noun-phrase head rule (EXTRACTION-GAP-FIX.1)
 
 First fix in the `EXTRACTION-GAP-FIX` tree (owner pivot). The lesson is about *grounding a fix in the real

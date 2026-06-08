@@ -7960,10 +7960,10 @@ fn synthesize_register_records(
             .map(|r| r.iter().map(|c| c.text.to_ascii_lowercase()).collect())
             .unwrap_or_default();
 
-        let name_col = header
+        let explicit_name_col = header
             .iter()
-            .position(|h| h.contains("name") || h.contains("register") || h.contains("field"))
-            .unwrap_or(0);
+            .position(|h| h.contains("name") || h.contains("register") || h.contains("field"));
+        let name_col = explicit_name_col.unwrap_or(0);
         let offset_col = header
             .iter()
             .position(|h| h.contains("offset") || h.contains("address") || h.contains("addr"));
@@ -8017,8 +8017,18 @@ fn synthesize_register_records(
                     .as_deref()
                     .map(parse_inline_field_enums)
                     .unwrap_or_default();
+                // EXTRACTION-GAP-FIX.2 — with no dedicated name column the row's "name" is the bit-range;
+                // recover the field mnemonic from the description (`Full Name (MNEMONIC):`), else keep the
+                // bit-range as an honest residual (never fabricated).
+                let field_name = if explicit_name_col.is_none() && is_bit_range_token(&name) {
+                    desc.as_deref()
+                        .and_then(field_mnemonic_from_description)
+                        .unwrap_or_else(|| name.clone())
+                } else {
+                    name.clone()
+                };
                 let field = RegisterFieldRecord {
-                    field_name: name.clone(),
+                    field_name,
                     bits_high,
                     bits_low,
                     bit_width: bit_width_from_range(bits_high, bits_low),
@@ -8154,16 +8164,13 @@ fn synthesize_register_field_tables(
         });
         // Name the field by its name column; for bits-only field tables (`Bits|Type|Reset|Description`)
         // there is none, so fall back to the bit-range column, then column 0.
-        let field_col = header
-            .iter()
-            .position(|h| {
-                h.contains("field")
-                    || h == "name"
-                    || h.contains("identifier")
-                    || h.contains("bit name")
-            })
-            .or(bits_col)
-            .unwrap_or(0);
+        let explicit_field_col = header.iter().position(|h| {
+            h.contains("field") || h == "name" || h.contains("identifier") || h.contains("bit name")
+        });
+        let field_col = explicit_field_col.or(bits_col).unwrap_or(0);
+        // EXTRACTION-GAP-FIX.2 — with no dedicated name/field column the "name" is the bit-range string;
+        // the field MNEMONIC then lives in the description's defined-term prefix (`Full Name (MNEMONIC):`).
+        let name_is_bit_range_column = explicit_field_col.is_none() && bits_col.is_some();
         let access_col = header.iter().position(|h| {
             h.contains("access") || h == "r/w" || h == "rw" || h == "type" || h.contains("attribut")
         });
@@ -8217,6 +8224,17 @@ fn synthesize_register_field_tables(
                 .map(|c| parse_bit_range(&c.text))
                 .unwrap_or((None, None));
             let description = desc_col.and_then(cell);
+            // EXTRACTION-GAP-FIX.2 — recover the field mnemonic from the description when the "name" is a
+            // bit-range (no dedicated name column); if none is present, the bit-range stays as an honest
+            // residual — a mnemonic is never fabricated.
+            let field_name = if name_is_bit_range_column && is_bit_range_token(&field_name) {
+                description
+                    .as_deref()
+                    .and_then(field_mnemonic_from_description)
+                    .unwrap_or(field_name)
+            } else {
+                field_name
+            };
             let enumerated_values = description
                 .as_deref()
                 .map(parse_inline_field_enums)
@@ -8554,6 +8572,68 @@ fn parse_bit_range(text: &str) -> (Option<u32>, Option<u32>) {
     } else {
         (None, None)
     }
+}
+
+/// True when `s` is a BIT-RANGE token — only digits, `:`, brackets and whitespace, with at least one
+/// digit (`60:59`, `15:00`, `58`, `[7:0]`). Used to detect register-field tables whose "name" column is
+/// actually the bit specification (NVMe-style `Bits|Type|Reset|Description`), so the real field identity
+/// must be recovered from elsewhere. Pure grammar (ADR 0006); EXTRACTION-GAP-FIX.2.
+fn is_bit_range_token(s: &str) -> bool {
+    let s = s.trim();
+    !s.is_empty()
+        && s.bytes().any(|b| b.is_ascii_digit())
+        && s.chars()
+            .all(|c| c.is_ascii_digit() || matches!(c, ':' | '[' | ']' | ' ' | '\t'))
+}
+
+/// A register-field MNEMONIC: an uppercase alphanumeric abbreviation token (2–12 chars, starting with a
+/// letter, only ASCII uppercase letters and digits — e.g. `MQES`, `CSS`, `TO`, `MPSMAX`). General; carries
+/// no specific chip/protocol names (ADR 0006). EXTRACTION-GAP-FIX.2.
+fn is_field_mnemonic_token(s: &str) -> bool {
+    let s = s.trim();
+    let len = s.chars().count();
+    (2..=12).contains(&len)
+        && s.chars()
+            .next()
+            .map(|c| c.is_ascii_uppercase())
+            .unwrap_or(false)
+        && s.chars()
+            .all(|c| c.is_ascii_uppercase() || c.is_ascii_digit())
+}
+
+/// Recover a register-field MNEMONIC from its DESCRIPTION when the field's "name" column is actually a
+/// bit-range (NVMe-style `Bits|Type|Reset|Description` tables). The mnemonic is the parenthesized
+/// abbreviation in the universal defined-term prefix `Full Field Name (MNEMONIC): …` — the first
+/// `(<MNEMONIC>):` group where `<MNEMONIC>` is an uppercase alphanumeric token (the `:` is required so a
+/// passing reference like `(CC.MPS)` is not mistaken for the field's own definition). Returns `None` when
+/// the description carries no such defined term — then the caller keeps the bit-range as an honest
+/// residual; a mnemonic is NEVER fabricated (honesty guardrail). Pure grammar (ADR 0006);
+/// EXTRACTION-GAP-FIX.2.
+fn field_mnemonic_from_description(desc: &str) -> Option<String> {
+    // The field's own `(MNEMONIC):` marker sits at the start of the description (modulo cell-bleed from a
+    // prior row, which carries no `(X):`), so a bounded leading scan is enough and avoids matching an
+    // unrelated `(X):` deep in a long description.
+    let cap = desc.len().min(256);
+    let bytes = desc.as_bytes();
+    let mut i = 0;
+    while i < cap {
+        // `(` is ASCII, so it only ever appears at a char boundary; slicing at `i + 1` is safe.
+        if bytes[i] == b'(' {
+            let rest = &desc[i + 1..];
+            let Some(close_rel) = rest.find(')') else {
+                break;
+            };
+            let inner = rest[..close_rel].trim();
+            let after = rest[close_rel + 1..].trim_start();
+            if after.starts_with(':') && is_field_mnemonic_token(inner) {
+                return Some(inner.to_string());
+            }
+            i += 1 + close_rel + 1;
+            continue;
+        }
+        i += 1;
+    }
+    None
 }
 
 /// Synthesize `TimingConstraintRecord` entries from `timing_parameter` tables in `SourceIR`.
@@ -9186,6 +9266,135 @@ mod tests {
             "free-form access kept"
         );
         Ok(())
+    }
+
+    #[test]
+    fn register_field_bits_only_recovers_mnemonic_from_description() -> Result<()> {
+        // EXTRACTION-GAP-FIX.2 — NVMe-style `Bits|Type|Reset|Description` table: the "name" column is a
+        // bit-range, and the field MNEMONIC lives in the description's universal defined-term prefix
+        // `Full Field Name (MNEMONIC): …`. The mnemonic must become the field identity while the bit
+        // structure (from the Bits column) is preserved; a row with no defined term keeps the bit-range as
+        // an honest residual (never fabricated). Prose lifted from the real NVMe Base Spec 2.0a (CAP).
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Registers\nThe CAP register.\n")?;
+        let mut source_ir = SourceIr::build(&source, &base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_cap".to_string(),
+            asset_id: "asset_cap".to_string(),
+            page_id: None,
+            caption_text: Some("Offset 0h: CAP".to_string()),
+            source_ref: None,
+            table_kind: TableKind::Unknown,
+            header_rows: vec![vec![
+                make_table_cell("Bits", true),
+                make_table_cell("Type", true),
+                make_table_cell("Reset", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![
+                vec![
+                    make_table_cell("15:00", false),
+                    make_table_cell("RO", false),
+                    make_table_cell("Impl Spec", false),
+                    make_table_cell(
+                        "Maximum Queue Entries Supported (MQES): This field indicates the maximum \
+                         individual queue size that the controller supports.",
+                        false,
+                    ),
+                ],
+                vec![
+                    make_table_cell("44:37", false),
+                    make_table_cell("RO", false),
+                    make_table_cell("Impl Spec", false),
+                    make_table_cell(
+                        "Command Sets Supported (CSS): This field indicates the I/O Command Set(s) \
+                         that the controller supports.",
+                        false,
+                    ),
+                ],
+                vec![
+                    make_table_cell("31:24", false),
+                    make_table_cell("RO", false),
+                    make_table_cell("Impl Spec", false),
+                    make_table_cell(
+                        "Timeout (TO): worst-case time host software should wait.",
+                        false,
+                    ),
+                ],
+                vec![
+                    make_table_cell("23:19", false),
+                    make_table_cell("RO", false),
+                    make_table_cell("0h", false),
+                    // No defined-term prefix → mnemonic unrecoverable → bit-range stays a residual.
+                    make_table_cell("Reserved.", false),
+                ],
+            ],
+            row_count: 5,
+            col_count: 4,
+        });
+        let recs = super::synthesize_register_field_tables(&source_ir, None);
+        assert_eq!(
+            recs.len(),
+            1,
+            "one register synthesized from the field table"
+        );
+        let reg = &recs[0];
+        let names: Vec<_> = reg.fields.iter().map(|f| f.field_name.as_str()).collect();
+        assert_eq!(
+            names,
+            vec!["MQES", "CSS", "TO", "23:19"],
+            "mnemonics recovered from the description defined-term; the term-less row stays a residual"
+        );
+        assert_eq!(
+            (reg.fields[0].bits_high, reg.fields[0].bits_low),
+            (Some(15), Some(0)),
+            "bit structure preserved (recovery only renames the field)"
+        );
+        assert_eq!(
+            (reg.fields[1].bits_high, reg.fields[1].bits_low),
+            (Some(44), Some(37)),
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn field_mnemonic_recovery_is_grammar_only() {
+        // EXTRACTION-GAP-FIX.2 — the recovery is pure defined-term grammar (ADR 0006): it requires a
+        // parenthesized uppercase token IMMEDIATELY followed by a colon, and never fabricates.
+        assert_eq!(
+            super::field_mnemonic_from_description("Timeout (TO): worst case"),
+            Some("TO".to_string())
+        );
+        assert_eq!(
+            super::field_mnemonic_from_description(
+                "Region is not supported. Memory Page Size Maximum (MPSMAX): the max page size"
+            ),
+            Some("MPSMAX".to_string()),
+            "leading cell-bleed before the defined term is tolerated"
+        );
+        // a passing reference `(X)` not followed by a colon is not the field's own definition
+        assert_eq!(
+            super::field_mnemonic_from_description("set per the value in (CC.MPS) and others"),
+            None
+        );
+        // lowercase / multi-word parentheticals and bare numbers are not mnemonics
+        assert_eq!(
+            super::field_mnemonic_from_description("see note (1): refer to the table"),
+            None
+        );
+        assert_eq!(
+            super::field_mnemonic_from_description("the field (see below): description"),
+            None
+        );
+        assert_eq!(super::field_mnemonic_from_description("Reserved."), None);
+        // is_bit_range_token separates a bit spec from a real token
+        assert!(super::is_bit_range_token("15:00"));
+        assert!(super::is_bit_range_token("58"));
+        assert!(super::is_bit_range_token("[7:0]"));
+        assert!(!super::is_bit_range_token("MQES"));
+        assert!(!super::is_bit_range_token("EN0"));
     }
 
     #[test]

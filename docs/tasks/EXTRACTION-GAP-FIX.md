@@ -42,8 +42,8 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
 
 | gap | measured | where |
 |---|---|---|
-| I2C prose over-capture | declared-signal precision 6/10 = 0.600 (ACK/NACK/DDC/SDR are not bus signals) | `.4a.5` |
-| NVMe mnemonic-from-description | field-name recall 0/29 (the mnemonic lives in the DESCRIPTION; `field_name` is the bit-range) | `.4a.3` |
+| I2C prose over-capture | declared-signal precision 6/10 = 0.600 (ACK/NACK/DDC/SDR are not bus signals) — **CLOSED `.1` → 1.000** | `.4a.5` |
+| NVMe mnemonic-from-description | field-name recall 0/29 (the mnemonic lives in the DESCRIPTION; `field_name` is the bit-range) — **CLOSED `.2` → 28/29 = 0.966** | `.4a.3` |
 | RISC-V register-name | register-name association 0/60 (synthetic `register_<table_id>` — name is in the preceding heading) | `.4a.2` |
 | RISC-V bit-layout graphic | bit-extent 0/179 (bit positions live in the layout GRAPHIC, not the field table) | `.4a.2`, `.4b` (VLM flags "lacks bit positions") |
 
@@ -79,12 +79,26 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
   No wire-based regression (the parenthetical path is disabled for ≥8-table-signal specs; SWD uses the
   pin-appositive path); full `run_ci.sh` green (lib 1378 → 1379); kg-bench 151/151. Commit subject:
   `EXTRACTION-GAP-FIX.1`.
-- ID: `EXTRACTION-GAP-FIX.2` · Status: `pending` · Goal: **NVMe mnemonic-from-description** — when a
-  register-field table's name column is itself a bit-range (so `field_name` is e.g. `07:04`) and the
-  description leads with a mnemonic token (`MQES: …` / `MQES –  …`), recover the mnemonic as the field
-  identity (structural: leading uppercase/identifier token before a `:`/`–`/`-` separator; agnostic). Re-measure
-  on the `.4a.3` NVMe gold (field-name recall 0/29 → higher). Accept: NVMe field-name recall up, bit-structure
-  recall held, no wire-based regression; hermetic tests.
+- ID: `EXTRACTION-GAP-FIX.2` · Status: `done` (`2026-06-08`) · Goal: **NVMe mnemonic-from-description** — when
+  a register-field table's name column is itself a bit-range (so `field_name` is e.g. `07:04`), recover the
+  field mnemonic from the description. **DONE — but the real structure differed from the hypothesis (honesty
+  guardrail: read where the fact actually lives).** Inspecting the persisted NVMe SourceIR proved the mnemonic
+  is NOT a leading `MQES:` token; it is the parenthesized abbreviation in the universal defined-term prefix
+  `Full Field Name (MNEMONIC): …` (e.g. *"Maximum Queue Entries Supported (MQES): …"*). So the fix recovers the
+  first `(<MNEMONIC>):` group (uppercase-alphanumeric token, the `:` required so a passing reference like
+  `(CC.MPS)` is not picked) — `field_mnemonic_from_description` + `is_bit_range_token` + `is_field_mnemonic_token`
+  in `ir/evidence.rs`. Applied in BOTH register paths (`synthesize_register_field_tables` AND
+  `synthesize_register_records`) so it fires whichever path a doc's classification routes the table through.
+  Gate: only when there is no dedicated name/field column AND the captured name is a bit-range token. **NO
+  leading-bare-token path** — that form appears in no in-corpus gold and risks false positives (`RO:`, enum
+  `00:`), so the grounded parenthetical form is the only one implemented (scoring rigor). **Honesty guardrail:
+  no defined term → the bit-range stays as an honest residual, never fabricated.** **Re-measured on the
+  `.4a.3` NVMe gold (same persisted source, stash-isolated baseline): field-name recall 0/29 → 28/29 = 0.966
+  (the lone miss `CAP.CRMS` has no clean `(CRMS):` term in the source → verified-absent residual), bit-structure
+  recall held 27/29 → 28/29.** +2 hermetic tests (NVMe-style parenthetical recovery + grammar-only edge cases);
+  existing register-field tests unchanged. No wire-based regression (the path only fires on bits-only
+  register-field tables; APB/AHB/AXI/SWD have none); full `run_ci.sh` green (lib 1379 → 1381); kg-bench 151/151.
+  Commit subject: `EXTRACTION-GAP-FIX.2`.
 - ID: `EXTRACTION-GAP-FIX.3` · Status: `pending` · Goal: **RISC-V register-name-from-heading** — associate a
   register-field table's register name with the nearest preceding section heading / register-name caption
   instead of the synthetic `register_<table_id>` (the `.2c`-deferred association; needs a reliable
@@ -102,11 +116,14 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
 
 ## Current frontier
 
-**ACTIVE FRONTIER (`2026-06-08`): `EXTRACTION-GAP-FIX.2`** — NVMe mnemonic-from-description (structural: when a
-register-field table's name column is itself a bit-range, recover the leading mnemonic token from the
-description). **`.1` DONE** — I2C prose precision 0.600 → 1.000 via the noun-phrase HEAD rule (agnostic, no
-denylist), recall held 1.000. Then `.3` (RISC-V register-name-from-heading, harder), `.4` (RISC-V bit-graphic,
-hardest/VLM-or-residual). Remember the honesty guardrail: read where the fact lives, else honest residual.
+**ACTIVE FRONTIER (`2026-06-08`): `EXTRACTION-GAP-FIX.3`** — RISC-V register-name-from-heading (associate a
+register-field table's register name with the nearest preceding section heading / register-name caption instead
+of the synthetic `register_<table_id>`; the `.2c`-deferred association — needs a reliable reading-order or
+page/section anchor, structural + agnostic, do NOT fake). **`.1` DONE** — I2C prose precision 0.600 → 1.000 via
+the noun-phrase HEAD rule. **`.2` DONE** — NVMe mnemonic-from-description (parenthetical defined-term `(MQES):`
+recovery, the real structure, not the hypothesized leading-bare form), field-name recall 0/29 → 28/29 = 0.966.
+Then `.4` (RISC-V bit-graphic, hardest/VLM-or-residual). Remember the honesty guardrail: read where the fact
+lives, else honest residual. (`.3` is harder — `.2c` deferred it for a real reading-order reason; may split.)
 
 ## Decisions
 
@@ -136,13 +153,36 @@ hardest/VLM-or-residual). Remember the honesty guardrail: read where the fact li
   declared-signal complete-gold precision **0.600 → 1.000** (fp 4 → 0), recall **1.000** held. fmt +
   clippy `-D warnings` clean; full lib suite 1378 → 1379; kg-bench 151/151. No wire-based regression
   (parenthetical path disabled for ≥8-table-signal specs).
+- `.2` (`2026-06-08`): **First established WHERE the mnemonic lives** (honesty guardrail) — inspected the
+  persisted NVMe SourceIR (`structured_tables` 0035–0038, the CAP/CC/CSTS register tables) and proved the
+  mnemonic is the parenthesized abbreviation in the defined-term prefix `Full Field Name (MNEMONIC): …`, NOT
+  the leading-bare `MQES:` token the `.2` goal hypothesized. Implemented `field_mnemonic_from_description`
+  (first `(<uppercase-alnum>):` group; the colon required to reject passing refs like `(CC.MPS)`),
+  `is_bit_range_token`, `is_field_mnemonic_token` in `ir/evidence.rs`; wired into BOTH
+  `synthesize_register_field_tables` and `synthesize_register_records` behind a gate (no explicit name/field
+  column AND the captured name is a bit-range). Pure grammar (ADR 0006); no chip names; no denylist; no
+  leading-bare path (no in-corpus gold needs it, FP-risk). +2 hermetic tests
+  (`register_field_bits_only_recovers_mnemonic_from_description` reproducing the real CAP rows;
+  `field_mnemonic_recovery_is_grammar_only` for the edge cases incl. non-fabrication). **Re-measured on the
+  `.4a.3` NVMe gold from the SAME persisted SourceIR, stash-isolated baseline vs fixed:** field-name recall
+  **0/29 → 28/29 = 0.966** (lone miss `CAP.CRMS` — no clean `(CRMS):` term in the source → verified-absent
+  residual, not fabricated), bit-structure recall held **27/29 → 28/29**. The persisted SourceIR reproduced
+  the EXACT gold baseline (0/29, 27/29 bits), so it is a faithful basis and re-ingest is unnecessary for this
+  description-parse metric (the prose is deterministic on the same PDF). fmt + clippy `-D warnings` clean; full
+  lib suite 1379 → 1381; kg-bench 151/151. No wire-based regression (the path only fires on bits-only
+  register-field tables; APB/AHB/AXI/SWD have none).
 
 ## Commit log
 
 - `.1` → `EXTRACTION-GAP-FIX.1 — I2C prose precision: noun-phrase head must be a wire noun (0.600 → 1.000)`
+- `.2` → `EXTRACTION-GAP-FIX.2 — NVMe mnemonic from description defined-term (field-name recall 0/29 → 28/29)`
 
 ## Changelog
 
 - `2026-06-08`: Created (owner pivot — fix the `PDF-VARIANT-DIGESTION.4`-quantified extraction gaps) + owner
   honesty guardrail baked in (cannot extract what is not there → read the right modality, else residual).
-  `.1` (I2C prose precision filter) DONE → precision 0.600 → 1.000; frontier moves to `.2` (NVMe mnemonic).
+  `.1` (I2C prose precision filter) DONE → precision 0.600 → 1.000.
+- `2026-06-08`: `.2` (NVMe mnemonic-from-description) DONE → field-name recall 0/29 → 28/29 = 0.966. The real
+  structure was the parenthetical defined-term `(MQES):`, not the hypothesized leading-bare form; recovered it
+  in both register paths, honest residual for the one term-less field. Frontier moves to `.3` (RISC-V
+  register-name-from-heading).

@@ -1,3 +1,26 @@
+### `EXTRACTION-GAP-FIX.2` — NVMe register-field mnemonic from the description defined-term (field-name recall 0/29 → 28/29)
+Second fix in the owner-pivot `EXTRACTION-GAP-FIX` tree. NVMe register tables are laid out
+`Bits | Type | Reset | Description` — there is no name column, so the table synthesizer recorded the **bit-range**
+(`"60:59"`) as the field name and field-name recall measured `0/29`. **First established WHERE the mnemonic
+actually lives** (owner honesty guardrail): inspecting the persisted NVMe SourceIR proved the field's real name
+is the parenthesized abbreviation in the universal defined-term prefix *"Maximum Queue Entries Supported
+**(MQES)**: …"* — NOT the leading-bare `MQES:` token the `.2` goal had hypothesized. **Fix (agnostic, no
+denylist):** when there is no dedicated name/field column AND the captured name is a bit-range token,
+`field_mnemonic_from_description` recovers the mnemonic = the first `(<UPPERCASE-ALNUM>):` group in the
+description (the trailing colon is required so a passing reference like `(CC.MPS)` is not mistaken for the
+field's own definition). Wired into BOTH register paths (`synthesize_register_field_tables` and
+`synthesize_register_records`) so it fires whichever path a doc's classification routes the table through. ADR
+0006 preserved — pure grammar, never a chip name. **Honesty guardrail:** a description with no defined term
+keeps the bit-range as an honest residual — a mnemonic is never fabricated. **Re-measured on the `.4a.3` NVMe
+gold from the SAME persisted SourceIR (stash-isolated baseline vs fixed): field-name recall 0/29 → 28/29 =
+0.966** (the lone miss `CAP.CRMS` has no clean `(CRMS):` term in the source → verified-absent residual),
+bit-structure recall held 27/29 → 28/29. The persisted source reproduced the EXACT gold baseline (0/29, 27/29
+bits), so re-ingest is unnecessary for this description-parse metric. +2 hermetic tests (NVMe-style parenthetical
+recovery + grammar-only edge cases incl. non-fabrication); existing register-field tests unchanged. No
+wire-based regression (the path only fires on bits-only register-field tables; APB/AHB/AXI/SWD have none); full
+`run_ci.sh` green (lib 1379 → 1381); kg-bench 151/151. Book `quality/extraction-eval.md` (NVMe story updated to
+the fix); KM `register-field-table-extraction` updated. Frontier → `.3` (RISC-V register-name-from-heading).
+
 ### `EXTRACTION-GAP-FIX.1` — I2C prose precision 0.600 → 1.000 (noun-phrase head must be a wire noun)
 First fix in the owner-pivot `EXTRACTION-GAP-FIX` tree (close the gaps `PDF-VARIANT-DIGESTION.4` quantified).
 The prose signal capture (`synthesize_signal_declarations_from_prose`, `.3a`) over-captured four I2C
