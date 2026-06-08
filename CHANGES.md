@@ -1,3 +1,20 @@
+### `PDF-VARIANT-DIGESTION.9.4` — SWP honest baseline: each serial spec under-extracts differently
+Broadening the serial-class survey: ingested SWP (Single Wire Protocol; 147 anchors / 1303 statements / 82
+visual). SWP classes as a **protocol** (it extracts 11 signal constraints) but yields **0 signals / 0 FSM /
+0 frame / 0 actors**, and the new `.9.3a` quoted-mode FSM lever does **not** fire — SWP doesn't quote its states.
+
+The recon (honesty guardrail) shows the facts ARE present, just under-extracted in SWP-specific ways:
+- **FSM present, missed** — `ACTIVATED state` (8×), `DEACTIVATED state` (10×), `Reset State` (2×): a
+  **single capitalized word + "state"** grammar that neither the SWD reader (needs a hyphen/slash name) nor
+  `.9.3a` (needs quotes) catches → a third FSM grammar.
+- **Signals present, missed** — `S1` (56×), `S2` (41×), `SWIO` (38×) defined in prose, not a table → 0 captured.
+- **Constraint noise** — the 11 constraints are mostly layer/protocol acronyms (`UICC`/`SWP`/`CLF`/`SHDLC`/
+  `RSET`/`CLT`) mis-read as signal subjects → a precision gap that inflates the class.
+
+Recorded as lever backlog `.9.7` (single-word `<NAME> state` FSM grammar — highest leverage, likely helps several
+serial specs), `.9.8` (SWP prose single-wire signals), `.9.9` (constraint-subject acronym precision). Docs-only;
+the SWP PDF + registry make the baseline reproducible.
+
 ### `PDF-VARIANT-DIGESTION.9.3a` — recover CAN's error-state FSM from prose (a 2nd, agnostic FSM grammar)
 The `.9.2` baseline proved CAN's facts live in prose; this closes the FSM half. SpecForge's existing FSM reader
 (`extract_protocol_states` / `find_states_with_actions`) only recognizes the SWD/JTAG shape — a capitalized

@@ -46,7 +46,8 @@ diagnostic when a construct is genuinely out of model.
   into SpecForge. Import them, then ingest → extract → measure each, extending breadth+precision onto a
   never-seen serial-protocol class (the SWD/ADI `SerialFrameField` + `ProtocolStateRecord` surfaces are the
   relevant machinery). Honest baselines first (read where the fact lives or report a residual; ADR 0006;
-  APB/AHB/AXI/SWD stay 100%). Children: `.9.1`, `.9.2`, `.9.3`.
+  APB/AHB/AXI/SWD stay 100%). Children: `.9.1`, `.9.2`, `.9.3` (CAN frame), `.9.4` (SWP baseline), `.9.5` (SMBus),
+  `.9.6` (I2S), `.9.7` (single-word FSM grammar), `.9.8` (SWP prose signals), `.9.9` (constraint-acronym precision).
 - ID: `PDF-VARIANT-DIGESTION.9.1` · Status: `done` · Goal: import the selected serial specs
   (CAN/SWP/SMBus/I2S) into `corpus/<vendor>/.../current/` + `SOURCE_PDF_REGISTRY.md`, git-tracked, so a
   re-ingest is always reproducible (owner directive `2026-06-08`: "selected ones shall be copied and git
@@ -93,12 +94,39 @@ diagnostic when a construct is genuinely out of model.
   protocol_states; **re-ingested ADI/SWD gains 0 `mode_state_*`** and keeps its 13 SWD/JTAG states intact. 5 new
   hermetic tests (positive + 4 negative) + 35 SWD tests pass; full `run_ci.sh` GREEN (fmt + clippy `-D warnings`
   + lib 1440 → 1445 + rustdoc + docs); kg-bench 151/151; KM card `agnostic-quoted-mode-fsm` + book subsection.
-  Commit: pending (this slice).
+  Commit: `3d85543c`.
 - ID: `PDF-VARIANT-DIGESTION.9.3b` · Status: `pending` · Goal: **CAN serial frame fields.** Generalize
   `extract_serial_frame_fields` beyond the SWD `is_serial_doc` gate + request/ack/data `SerialFramePhase` model
   to capture CAN's named frame-field sequence (SOF → Arbitration → Control → Data → CRC → ACK → EOF), agnostically
   — likely needs a frame model that fits a generic field sequence (the SWD phase enum does not). Deferred behind
-  `.9.3a` (FSM is cleaner + more universal). Verification: pending. Commit: pending.
+  `.9.3a` (FSM is cleaner + more universal) and behind the breadth baselines `.9.4`–`.9.6` (measure-first across
+  the serial class before deepening one spec). Verification: pending. Commit: pending.
+- ID: `PDF-VARIANT-DIGESTION.9.4` · Status: `done` · Goal: **SWP (Single Wire Protocol) honest
+  baseline** — ingest (`DOCLING_DEVICE=cpu`) → evidence → validate; record document_class, completeness gauge,
+  and the signal / FSM / frame yield (including whether the new `.9.3a` quoted-mode FSM lever already fires on
+  SWP); state the honest gap and spin the next lever. No fabrication (ADR 0006). Acceptance: baseline metrics
+  recorded in this tree; APB/AHB/AXI/SWD unaffected. Verification: ingested (147 anchors / 1303 statements / 82
+  visual); `document_class: protocol` (11 signal_constraints), but **0 signals / 0 FSM / 0 frame / 0 actors /
+  0 relations** and the `.9.3a` quoted-mode lever does NOT fire (SWP doesn't quote its states). **Honest finding
+  — SWP under-extracts DIFFERENTLY than CAN, and the facts ARE present:** (1) SWP HAS an FSM (`ACTIVATED state`
+  ×8, `DEACTIVATED state` ×10, `Reset State` ×2, `S1 state`) but it's a **single capitalized word + "state"**
+  grammar that neither the SWD path (`looks_like_state_name` requires hyphen/slash) nor `.9.3a` (requires quotes)
+  captures → a THIRD FSM grammar lever; (2) SWP HAS single-wire signals (`S1` ×56, `S2` ×41, `SWIO` ×38) in
+  prose, not a table → 0 captured → a prose-signal lever; (3) the 11 "signal_constraints" are mostly NOISE —
+  layer/protocol acronyms (`UICC`/`SWP`/`CLF`/`SHDLC`/`RSET`/`CLT`) mis-captured as signal subjects → a
+  constraint-subject precision lever. Spun future leaves `.9.7`–`.9.9` (below). Commit: pending (this slice).
+- ID: `PDF-VARIANT-DIGESTION.9.7` · Status: `proposed` · Goal: **single-word `<NAME> state` FSM grammar** —
+  generalize the SWD `<Name> state` path (`looks_like_state_name` + the TAP/scan-chain doc-gate) to also accept a
+  single capitalized state word (`ACTIVATED state`, `DEACTIVATED state`) behind a safe generic FSM doc-gate, so
+  SWP-class state machines surface, AGNOSTICALLY (ADR 0006) and without SWD/CAN regression or corpus false
+  positives. Verification: pending. Commit: pending.
+- ID: `PDF-VARIANT-DIGESTION.9.8` · Status: `proposed` · Goal: **SWP prose single-wire signal capture** —
+  recover `S1`/`S2`/`SWIO`-class single-wire signals defined in prose (not in a signal table), agnostically.
+  Verification: pending. Commit: pending.
+- ID: `PDF-VARIANT-DIGESTION.9.9` · Status: `proposed` · Goal: **constraint-subject precision on protocol/
+  layer acronyms** — stop `UICC`/`SWP`/`CLF`/`SHDLC`-style document/layer acronyms from becoming `signal_constraint`
+  subjects (a precision gap that inflates `document_class`), agnostically, without regressing the wire-based 100%.
+  Verification: pending. Commit: pending.
 - ID: `PDF-VARIANT-DIGESTION.1` · Status: `in_progress` · Goal: **triage sweep** — ingest a diverse sample
   (one per family: ARM-TRM GIC-400, Wishbone, NXP I2C, RISC-V Debug, CCIX, Avalon, USB4, OpenCAPI) through
   `ingest`→`evidence`, record ingest status + table-kind census + extraction stats, and identify the
@@ -167,8 +195,14 @@ SWD-tuned prose extractors (`extract_serial_frame_fields`/`extract_protocol_stat
 prose. `.9.3` split into `.9.3a` (FSM) + `.9.3b` (frame). **`.9.3a` DONE** — new agnostic `extract_quoted_mode_states`
 recovers CAN's error-state FSM (`error active`/`error passive`/`bus off`) from quoted node-modes; CAN 0 → 3,
 zero spurious, ADI/SWD gains 0 `mode_state_*` (13 SWD states intact), NVMe/I2C/RISC-V 0; full `run_ci.sh` green +
-kg-bench 151/151. **Active: `.9.3b`** — CAN serial frame fields (SOF→…→EOF), agnostically (the SWD request/ack/data
-phase model doesn't fit; needs a generic frame-field-sequence model). Then PNT SWP/SMBus/I2S; `.6`/`.7` stay blocked.
+kg-bench 151/151. **`.9.4` (SWP baseline) DONE** — SWP is `document_class: protocol` but 0 signals/FSM/frame; the
+breadth survey shows each serial spec under-extracts DIFFERENTLY and surfaced a concrete lever backlog:
+**`.9.7`** (single-word `<NAME> state` FSM grammar — captures SWP's `ACTIVATED`/`DEACTIVATED`, a 3rd grammar neither
+the SWD hyphen-path nor `.9.3a`'s quote-path catches), **`.9.8`** (SWP prose single-wire signals `S1`/`S2`/`SWIO`),
+**`.9.9`** (constraint-subject precision — drop layer/protocol acronyms `UICC`/`SWP`/`CLF`/`SHDLC` mis-read as signal
+subjects). **Frontier (any of, owner may steer):** `.9.7` (highest-leverage — one FSM grammar likely helps several
+serial specs) · `.9.3b` (CAN frame fields) · `.9.5`/`.9.6` (SMBus/I2S baselines). `.6`/`.7` stay blocked on
+host-local PDFs.
 
 **(SUPERSEDED active note) `PDF-VARIANT-DIGESTION.6`/`.7`** — item ② (`.5`) COMPLETE and `.8` (broaden
 prose-actor capture) DONE. **`.5a` + `.5b` + `.5c` are DONE** — structural doc-class routing
@@ -505,6 +539,14 @@ set, not the whole doc/corpus.
 
 ## Verification log
 
+- `.9.4` (`2026-06-08`): SWP honest baseline. `DOCLING_DEVICE=cpu ingest` → 147 anchors / 1303 statements / 82
+  visual. `evidence` + `validate` → `document_class: protocol`; 0 signal_declarations / 0 protocol_states / 0
+  serial_frame_fields / 0 protocol_actors / 0 actor_signal_relations / 1 register_record; 11 signal_constraints.
+  Recon of the normalized md confirmed present-but-unextracted facts: FSM states `ACTIVATED state` (8×),
+  `DEACTIVATED state` (10×), `Reset State` (2×), `S1 state` (single-word `<NAME> state` grammar); signals `S1`
+  (56×), `S2` (41×), `SWIO` (38×) in prose; and the 11 constraints subject on acronyms `UICC`/`SWP`/`CLF`/`SHDLC`/
+  `RSET`/`CLT` (noise). Conclusion: under-extracted differently than CAN → levers `.9.7`/`.9.8`/`.9.9`. Docs-only
+  (generated IR git-ignored). Commit subject: `PDF-VARIANT-DIGESTION.9.4`.
 - `.9.3a` (`2026-06-08`): CAN error-state FSM via the new agnostic `extract_quoted_mode_states` (+
   `quoted_mode_states_in` + `is_quoted_mode_state_name`), wired additively after the SWD FSM paths and deduped by
   state name. Grammar (ADR 0006): single-quoted 1–3-word name bound to a generic actor-noun
@@ -605,6 +647,12 @@ set, not the whole doc/corpus.
 
 ## Changelog
 
+- `2026-06-08`: `.9.4` (SWP honest baseline) DONE. Ingested SWP (147 anchors / 1303 statements / 82 visual);
+  `document_class: protocol` (11 signal_constraints) but 0 signals/FSM/frame/actors; the `.9.3a` quoted-mode lever
+  does not fire. Honest breadth finding: SWP's facts ARE present but under-extracted differently — an FSM in a
+  single-word `<NAME> state` grammar (`ACTIVATED`/`DEACTIVATED`/`Reset`), single-wire signals in prose
+  (`S1`/`S2`/`SWIO`), and 11 noisy constraints from layer/protocol acronyms. Spun lever backlog `.9.7` (single-word
+  FSM grammar) / `.9.8` (SWP prose signals) / `.9.9` (constraint-acronym precision). Docs-only.
 - `2026-06-08`: `.9.3a` (CAN error-state FSM via agnostic quoted-mode extractor) DONE. Split `.9.3` →
   `.9.3a` (FSM, done) + `.9.3b` (frame fields, pending). New additive `extract_quoted_mode_states` (grammar:
   single-quoted name + generic actor-noun node/unit/station/device + recurrence ≥2 + ≥2 distinct states; ADR
