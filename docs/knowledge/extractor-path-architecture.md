@@ -53,14 +53,18 @@ HISTORICAL (the audit state), as is the four-inline-FSM-loops description. Still
 surfaces (constraints/relations/polarity/conditional-rules) and retiring the `build()` god-orchestrator;
 signal-declaration stays a deliberate stateful-assembly orchestrator (`.5`).
 
-**Status update (`2026-06-10`, post `.9b`):** SEVEN surfaces — signal polarity is the first
-**convergence-loop** surface on the framework: two observation strategies (`signal_polarity.prose` /
-`signal_polarity.tables`) run via `run_surface_concat` per fixed-point pass, with the unchanged per-signal
-accumulate-and-arbitrate post-pass (consensus → `SignalPolarityRecord`, disagreement →
-`SignalPolarityConflictRecord`); `ExtractionManifest::record`'s replace-per-surface-name semantics mean the
-manifest holds exactly the FINAL converged pass's run, no special casing. The `.9b` audit categorized the
-remaining converge-loop families: **relations** = concat + ordered post-passes (augment THEN dedup — the
-dedup must stay a post-pass because it runs after augmentation) → next migration; **constraints +
-conditional rules** = stateful-assembly (one per-pass `constraint_counter` mints ids ACROSS the three
-extractors, plus a cross-surface polarity post-pass) → keep their own in-loop orchestration, like the
-signal-declaration seed.
+**Status update (`2026-06-10`, post `.9b` + `.9c`):** EIGHT surfaces — the two migratable
+**convergence-loop** surfaces are on the framework. Signal polarity (`.9b`): two observation strategies
+(`signal_polarity.prose` / `signal_polarity.tables`) run via `run_surface_concat` per fixed-point pass,
+with the unchanged per-signal accumulate-and-arbitrate post-pass (consensus → `SignalPolarityRecord`,
+disagreement → `SignalPolarityConflictRecord`). Actor-signal relations (`.9c`): `relations.prose` +
+`relations.tables` (the table list is build-precomputed and re-emitted per pass) via `run_surface_concat`,
+then the two ORDERED legacy post-passes — check-signal augmentation over the full pre-dedup list, THEN
+first-wins dedup by `(actor, signal, is_drives)`; the dedup must stay a post-pass because it runs after
+augmentation. `ExtractionManifest::record`'s replace-per-surface-name semantics mean the manifest holds
+exactly the FINAL converged pass's run, no special casing — and it now distinguishes table-driven vs
+prose-driven relation recovery per document (AXI: 356 table + 20 prose → 348; SWD/I2C: pure prose).
+**Constraints + conditional rules** stay stateful-assembly by design (one per-pass `constraint_counter`
+mints ids ACROSS the three extractors, plus a cross-surface polarity post-pass) → their own in-loop
+orchestration, like the signal-declaration seed. Remaining: encode that constraint-family categorization
+in the `ir/extractor.rs` two-phase note + retire the `build()` god-orchestrator.

@@ -1,4 +1,25 @@
 # DEVELOPMENT_NOTES
+## `EXTRACTOR-ARCHITECTURE.9c` (`2026-06-10`) — actor-signal-relations onto the framework
+- Design was already fixed by the `.9b` audit; this slice is the execution. The one structural decision the
+  audit mandated: the relations dedup runs AFTER `augment_check_signal_relations_from_tables` in the legacy
+  wiring, so the surface uses `run_surface_concat` + both post-passes verbatim — NOT the driver's key-merge,
+  which would dedup before augmentation and change `relations_by_signal` (built from the un-deduped list).
+- The table strategy is interesting as a framework precedent: `extract_relations_from_signal_tables_with_prior_guidance`
+  depends only on `SourceIr`, so the build precomputes it ONCE outside the fixed-point loop and the
+  `ActorSignalRelationTableExtractor` unit just re-emits the borrowed slice per pass (`to_vec()`), exactly
+  matching the legacy per-pass `.iter().cloned()` extend — no recomputation regression, no behavior change.
+- Verification: 12-doc rebuild → non-manifest JSON md5-identical vs the post-`.9b` fixpoint baseline on
+  every doc. Manifest semantics verified against the artifacts (not asserted blindly): APB final 69 = 51
+  produced (44 table + 7 prose) − dedup drops + 32 augment-inherited `chk_asr_*` records (the APB5
+  parity-check signals PADDRCHK/PWDATACHK/…, confirmed by jq over the artifact); AHB carries 30; AXI 376
+  produced → 348 final is pure dedup (prose/table overlap). 2 hermetic tests: legacy-two-step equivalence
+  (a real `SourceIr` check-signal table fixture proving augment inheritance fires + first-wins keeps the
+  prose record over the table duplicate + per-strategy manifest counts) and empty-surface manifest honesty.
+  `run_ci.sh` green (lib 1497 → **1499**); kg-bench 151/151.
+- Status: EIGHT surfaces on the framework; the converge loop's migratable surfaces are done. Remaining in
+  the tree: encode the constraint-family stateful-assembly categorization into the `ir/extractor.rs`
+  two-phase doc note, then the god-orchestrator retirement assessment.
+
 ## `EXTRACTOR-ARCHITECTURE.9b` (`2026-06-10`) — converge-loop audit + signal-polarity onto the framework
 - Why now: PNT frontier — `.9a` left "the converge-loop surfaces" as the named remaining scope, under the
   owner's standing "consolidate, unify, as much as possible" confirmation. The fixed-point loop is a

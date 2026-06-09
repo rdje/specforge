@@ -4,11 +4,11 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
-## Session update (2026-06-10 extractor framework — converge-loop reach; subsystem now 7 surfaces)
+## Session update (2026-06-10 extractor framework — converge-loop reach; subsystem now 8 surfaces)
 
-`EXTRACTOR-ARCHITECTURE.2`–`.9b` built a subsystem this analysis had not yet captured (closing that gap
+`EXTRACTOR-ARCHITECTURE.2`–`.9c` built a subsystem this analysis had not yet captured (closing that gap
 here): the **unified extractor framework** in `crates/specforge/src/ir/extractor.rs`, now the wiring layer
-for SEVEN EvidenceIR surfaces.
+for EIGHT EvidenceIR surfaces.
 
 - The frame: a generic `Extractor<R>` trait (`name`/`tier`/`applies_to`/`run`), a borrowed
   `ExtractionContext` (grows one field per migrated cluster; currently carries `statements`), TWO drivers —
@@ -19,22 +19,25 @@ for SEVEN EvidenceIR surfaces.
   fingerprint the `CORPUS-PATTERN-REUSE` plane clusters on — the two subsystems compose.
 - Three explicit producer categories (the two-phase model, documented in `ir/extractor.rs`): key-merge
   surfaces (FSM states, semantic hints, serial-frame fields), concat surfaces (registers, actors,
-  SWD-operations, signal polarity), and stateful-assembly orchestrators that deliberately stay OFF the
-  drivers (the signal-declaration seed; the constraint family below).
-- `.9b` (this slice) extended the framework's reach into `converge_evidence_extractions` — the fixed-point
-  evidence loop: **signal polarity** is now two `Extractor<SignalPolarityObservationCandidate>` units
-  (`signal_polarity.prose` / `signal_polarity.tables`) run per pass via `run_surface_concat` plus the
-  unchanged accumulate-and-arbitrate post-pass (`arbitrate_signal_polarity_observations`); the loop threads
-  `&mut ExtractionManifest`, and `record()`'s replace-per-surface-name semantics make the manifest hold
-  exactly the final converged pass. Audit boundary for the rest of the loop: **relations** = concat +
-  augment-THEN-dedup post-passes (migratable, `.9c`); **constraints + conditional rules** = one per-pass
-  `constraint_counter` minting ids across three extractors + a cross-surface polarity post-pass —
-  stateful-assembly, kept as cohesive in-loop orchestration by design.
+  SWD-operations, signal polarity, actor-signal relations), and stateful-assembly orchestrators that
+  deliberately stay OFF the drivers (the signal-declaration seed; the constraint family below).
+- `.9b` + `.9c` (this session) extended the framework's reach into `converge_evidence_extractions` — the
+  fixed-point evidence loop: **signal polarity** is two `Extractor<SignalPolarityObservationCandidate>`
+  units (`signal_polarity.prose` / `signal_polarity.tables`) run per pass via `run_surface_concat` plus the
+  unchanged accumulate-and-arbitrate post-pass (`arbitrate_signal_polarity_observations`); **actor-signal
+  relations** is two `Extractor<ActorSignalRelation>` units (`relations.prose` / `relations.tables`, the
+  table list build-precomputed and re-emitted per pass) plus the two ORDERED legacy post-passes
+  (check-signal augmentation over the full pre-dedup list, THEN first-wins dedup — key-merging in the
+  driver would change the augment input). The loop threads `&mut ExtractionManifest`, and `record()`'s
+  replace-per-surface-name semantics make the manifest hold exactly the final converged pass. The remaining
+  loop family — **constraints + conditional rules** — is one per-pass `constraint_counter` minting ids
+  across three extractors + a cross-surface polarity post-pass: stateful-assembly, kept as cohesive
+  in-loop orchestration by design.
 - Verification doctrine for every migration slice: 12-doc intact-bundle rebuild, non-manifest JSON
   byte-identical (baseline double-run fixpoint first — guaranteed by the `EVIDENCE-DETERMINISM` fixes);
-  kg-bench 151/151; full `run_ci.sh`. Lib tests at **1497**.
-- Remaining seam risk: `EvidenceIr::build()` is still the ~500-line orchestrator; retiring it (after `.9c`)
-  is the tracked end-state of `EXTRACTOR-ARCHITECTURE`.
+  kg-bench 151/151; full `run_ci.sh`. Lib tests at **1499**.
+- Remaining seam risk: `EvidenceIr::build()` is still the ~500-line orchestrator; retiring it is the
+  tracked end-state of `EXTRACTOR-ARCHITECTURE`.
 
 ## Session update (2026-06-09 CorpusMemory schema v6 — extraction-profile priors, the 8th family)
 

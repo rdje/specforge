@@ -287,15 +287,44 @@ Driver: build cx → for each registered extractor where applies_to → run → 
   151/151; full `run_ci.sh` green (lib 1495 → **1497**); book `quality/validation.md` updated to the
   7-surface example + converge-loop manifest semantics; KM `extractor-path-architecture` status-updated.
 
+- `.9c` **migrate the actor-signal-relations converge-loop surface** · Status: `done` (`2026-06-10`).
+  Design already fixed by the `.9b` audit: relations = a CONCAT surface (prose strategy
+  `extract_actor_signal_relations` with per-pass `known_signals`; table strategy = the
+  build-precomputed `extract_relations_from_signal_tables_with_prior_guidance` list re-emitted per pass)
+  + two ORDERED post-passes — `augment_check_signal_relations_from_tables` (inherits check-signal
+  relations from the FULL pre-dedup merged list; does its own existing-key skip) THEN
+  `dedup_actor_signal_relations` (first-wins by `(actor, signal, is_drives)`). The dedup MUST stay a
+  post-pass: the driver's key-merge would dedup BEFORE augmentation and change augment's input
+  (`relations_by_signal` is built from the un-deduped list). New units `relations.prose` +
+  `relations.tables` → `actor_signal_relation_surface` via `run_surface_concat`, recorded per pass
+  (replace-semantics keep the final converged run — the `.9b` fixed-point manifest model). Verification =
+  the `.9a`/`.9b` method: 12-doc baseline (current evidence is the post-`.9b` fixpoint) → migrate →
+  rebuild → non-manifest byte-identical everywhere; hermetic legacy-equivalence + manifest-honesty tests;
+  kg-bench 151/151; full `run_ci.sh`.
+  **DONE (`2026-06-10`).** `ActorSignalRelationProseExtractor` (`relations.prose`) +
+  `ActorSignalRelationTableExtractor` (`relations.tables`, re-emitting the build-precomputed table list per
+  pass — exactly the legacy cloned extend) → `actor_signal_relation_surface` via `run_surface_concat`, then
+  the two ordered legacy post-passes verbatim (augment over the full pre-dedup `run.records`, then
+  `dedup_actor_signal_relations`); the in-loop block collapsed to one call. **Byte-identical proof: ALL 12
+  intact-bundle docs — post-`.9c` rebuild non-manifest JSON md5-identical vs the post-`.9b` fixpoint
+  baseline on every doc.** The manifest now tells the per-doc relation story honestly: AXI = table-dominant
+  (356 table + 20 prose → 348 final: dedup drops the prose/table overlap), APB 44+7→69 / AHB 21+16→66 /
+  AXI-Stream 22+10→54 (final exceeds produced where the augment post-pass adds check-signal `chk_asr_*`
+  records AFTER the driver counts — e.g. the APB parity-check signals), SWD/ADI 26 + I2C 17 pure prose,
+  RISC-V mixed 9+11→20, CAN/NVMe/SMBus/I2S honestly 0 — more fingerprint tokens for the profile plane. 2 hermetic
+  tests (legacy-two-step equivalence proving prose-wins-dedup + a REAL augment inheritance `chk_asr_*`
+  + per-strategy manifest counts; empty-surface manifest honesty). kg-bench 151/151; full `run_ci.sh`
+  green (lib 1497 → **1499**); book example updated to the 8-surface form; KM status updated.
+
 ## Current frontier
 
 `.1`–`.8` + `.9a` **done** — SIX surfaces registered and byte-identical-proven (FSM, semantic-hints,
 registers, actors, serial-frame, SWD-operations); `.9a`'s value was re-rated UP by the profile plane
 (`CORPUS-PATTERN-REUSE.3b.2`/`.3c`: manifests now feed learned extraction profiles). The framework
 (key-merge `run_surface` + concat `run_surface_concat` + own orchestrators for assembly) **emits a
-per-document run manifest** surfaced in `validate` — the CORPUS-PATTERN-REUSE fingerprint. **`.9b` done
-(`2026-06-10`): converge-loop audit (polarity = concat surface; relations = concat + ordered post-passes
-→ `.9c`; constraints/conditional-rules = stateful-assembly → stay own orchestrator) + the polarity
-migration — SEVEN surfaces registered, first converge-loop surface on the framework, 12-doc byte-identical,
-lib 1497.** Remaining: `.9c` relations · document the constraint-family stateful-assembly in the two-phase
-model · then retire the `build()` god-orchestrator. **Owner may steer scope.**
+per-document run manifest** surfaced in `validate` — the CORPUS-PATTERN-REUSE fingerprint. **`.9b` + `.9c`
+done (`2026-06-10`): the converge-loop audit + BOTH migratable fixed-point surfaces (polarity, relations)
+— EIGHT surfaces registered, all byte-identical-proven over the 12 intact-bundle docs; the manifest now
+distinguishes table-driven vs prose-driven relation recovery per document (AXI table-dominant; SWD/I2C
+pure prose).** Remaining: document the constraint-family stateful-assembly in the `ir/extractor.rs`
+two-phase note · then retire the `build()` god-orchestrator (assessment slice). **Owner may steer scope.**

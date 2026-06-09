@@ -1,3 +1,22 @@
+### `EXTRACTOR-ARCHITECTURE.9c` — the actor-signal-relations surface onto the framework (byte-identical)
+The second (and last) migratable converge-loop surface, with the design fixed by the `.9b` audit. New units:
+`relations.prose` (the active/passive normative-verb KG-edge grammar, per-pass statements + known signals) +
+`relations.tables` (the build-precomputed `Source`/`Destination` table relations, re-emitted per pass —
+exactly the legacy cloned extend) → `actor_signal_relation_surface` via `run_surface_concat`, then the two
+ORDERED legacy post-passes verbatim: check-signal augmentation over the full pre-dedup merged list (it must
+see every strategy's records), THEN first-wins dedup by `(actor, signal, is_drives)`. The dedup deliberately
+stays a post-pass — the driver's key-merge would dedup BEFORE augmentation and change its input.
+
+**Byte-identical proof: all 12 intact-bundle docs — non-manifest JSON md5-identical vs the post-`.9b`
+fixpoint baseline.** The manifest now tells each document's relation story honestly: AXI is table-dominant
+(356 table + 20 prose → 348 after dedup), APB/AHB/AXI-Stream mix with augment-inherited parity-check
+records (`chk_asr_*`: APB 32, AHB 30) added after the driver counts, SWD/ADI (26) and I2C (17) are pure
+prose, CAN/NVMe/SMBus/I2S honestly 0 — more distinguishing fingerprint tokens for the pattern-reuse profile
+plane. 2 hermetic tests (legacy-two-step equivalence proving prose-wins dedup + REAL augment inheritance +
+per-strategy manifest counts; empty-surface honesty). `run_ci.sh` green (lib **1499**); kg-bench 151/151;
+book manifest example updated to the 8-surface form; KM card status-updated. EIGHT surfaces on the
+framework; remaining: the constraint-family two-phase note + retiring the `build()` god-orchestrator.
+
 ### `EXTRACTOR-ARCHITECTURE.9b` — converge-loop audit + the signal-polarity surface onto the framework (byte-identical)
 The convergence loop — the fixed-point heart of the evidence build — was audited BEFORE coding (the `.5`
 method) and its three surface families categorized: **polarity** = a concat surface + per-signal

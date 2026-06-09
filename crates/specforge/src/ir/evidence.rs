@@ -10202,6 +10202,64 @@ fn dedup_actor_signal_relations(relations: Vec<ActorSignalRelation>) -> Vec<Acto
     deduped
 }
 
+/// EXTRACTOR-ARCHITECTURE.9c — the prose actor→signal relation strategy (the active/passive
+/// normative-verb KG-edge grammar from `normative_vocab` over the per-pass statements) as a registered
+/// `Extractor`. Reads the shared context's statements plus the per-pass known-signal set.
+struct ActorSignalRelationProseExtractor<'a> {
+    known_signals: &'a HashSet<String>,
+}
+impl Extractor<ActorSignalRelation> for ActorSignalRelationProseExtractor<'_> {
+    fn name(&self) -> &'static str {
+        "relations.prose"
+    }
+    fn run(&self, cx: &ExtractionContext<'_>) -> Vec<ActorSignalRelation> {
+        extract_actor_signal_relations(cx.statements, self.known_signals)
+    }
+}
+
+/// EXTRACTOR-ARCHITECTURE.9c — the signal-table `Source` / `Destination` column strategy as a registered
+/// `Extractor`. The relation list depends only on `SourceIr`, so the build precomputes it ONCE outside
+/// the fixed-point loop and this unit re-emits it per pass — exactly the legacy per-pass cloned extend.
+struct ActorSignalRelationTableExtractor<'a> {
+    table_relations: &'a [ActorSignalRelation],
+}
+impl Extractor<ActorSignalRelation> for ActorSignalRelationTableExtractor<'_> {
+    fn name(&self) -> &'static str {
+        "relations.tables"
+    }
+    fn run(&self, _cx: &ExtractionContext<'_>) -> Vec<ActorSignalRelation> {
+        self.table_relations.to_vec()
+    }
+}
+
+/// Run the actor-signal-relations surface through the unified concat driver (EXTRACTOR-ARCHITECTURE.9c),
+/// then apply the two ORDERED legacy post-passes: check-signal augmentation FIRST (it inherits relations
+/// for check signals from the full, still-undeduped merged list — `relations_by_signal` must see every
+/// strategy's records), THEN first-wins dedup by `(actor, signal, is_drives)`. The dedup deliberately
+/// stays a post-pass rather than the driver's key-merge: key-merging would dedup BEFORE augmentation and
+/// change what the augment step reads.
+///
+/// Called per pass of the convergence loop; `ExtractionManifest::record` replaces per surface name, so
+/// the manifest ends up holding exactly the FINAL (converged) pass's run.
+fn actor_signal_relation_surface(
+    source_ir: &SourceIr,
+    statements: &[ExtractedStatement],
+    known_signals: &HashSet<String>,
+    table_relations: &[ActorSignalRelation],
+    prior_guidance: Option<&EvidencePriorGuidance>,
+    manifest: &mut ExtractionManifest,
+) -> Vec<ActorSignalRelation> {
+    let cx = ExtractionContext { statements };
+    let prose = ActorSignalRelationProseExtractor { known_signals };
+    let tables = ActorSignalRelationTableExtractor { table_relations };
+    let extractors: [&dyn Extractor<ActorSignalRelation>; 2] = [&prose, &tables];
+    let run = run_surface_concat("actor_signal_relations", &cx, &extractors);
+    manifest.record(&run);
+    let augmented =
+        augment_check_signal_relations_from_tables(source_ir, &run.records, prior_guidance);
+    dedup_actor_signal_relations(augmented)
+}
+
 #[expect(
     clippy::type_complexity,
     reason = "evidence convergence returns the synchronized extraction families that must remain aligned"
@@ -10269,15 +10327,17 @@ fn converge_evidence_extractions(
         let conditional_rules =
             extract_conditional_rules(&extracted_statements, &mut constraint_counter);
 
-        let mut actor_signal_relations =
-            extract_actor_signal_relations(&extracted_statements, &known_signals);
-        actor_signal_relations.extend(table_relations.iter().cloned());
-        let actor_signal_relations = augment_check_signal_relations_from_tables(
+        // EXTRACTOR-ARCHITECTURE.9c — the relations surface runs through the unified concat driver with
+        // its two ordered post-passes (check-signal augmentation reads the full pre-dedup list, THEN
+        // first-wins dedup); recorded per pass, the manifest keeps the final (converged) pass's run.
+        let actor_signal_relations = actor_signal_relation_surface(
             source_ir,
-            &actor_signal_relations,
+            &extracted_statements,
+            &known_signals,
+            &table_relations,
             prior_guidance,
+            extraction_manifest,
         );
-        let actor_signal_relations = dedup_actor_signal_relations(actor_signal_relations);
 
         let already_declared =
             collect_signals_with_explicit_direction_declarations(&extracted_statements);
@@ -16798,6 +16858,197 @@ mod extractor_architecture_9b {
             .iter()
             .find(|s| s.surface == "signal_polarities")
             .expect("signal_polarities surface recorded");
+        assert_eq!(surface.eligible, 2);
+        assert_eq!(surface.entries.len(), 2);
+        assert_eq!(surface.entries[0].produced, 0);
+        assert_eq!(surface.entries[1].produced, 0);
+        Ok(())
+    }
+}
+
+#[cfg(test)]
+mod extractor_architecture_9c {
+    //! EXTRACTOR-ARCHITECTURE.9c — the actor-signal-relations observation surface runs through the
+    //! unified concat driver: strategy order (prose → tables) plus the two ORDERED legacy post-passes
+    //! (check-signal augmentation over the full pre-dedup list, THEN first-wins dedup) reproduce the
+    //! legacy in-loop wiring exactly, and the surface records an inspectable manifest entry.
+    use super::*;
+    use std::collections::HashSet;
+    use std::fs;
+    use tempfile::tempdir;
+
+    fn stmt(id: &str, text: &str) -> ExtractedStatement {
+        ExtractedStatement {
+            statement_id: id.to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        }
+    }
+
+    fn cell(text: &str, is_header: bool) -> StructuredTableCellRecord {
+        StructuredTableCellRecord {
+            text: text.to_string(),
+            row_span: 1,
+            col_span: 1,
+            is_header,
+        }
+    }
+
+    fn relation(
+        id: &str,
+        actor: &str,
+        signal: &str,
+        kind: RelationKind,
+        source_id: &str,
+    ) -> ActorSignalRelation {
+        ActorSignalRelation {
+            relation_id: id.to_string(),
+            actor_name: actor.to_string(),
+            signal_name: signal.to_string(),
+            relation: kind,
+            source_statement_ids: vec![source_id.to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        }
+    }
+
+    /// A minimal real `SourceIr` carrying one check-signal table (the augment post-pass input shape):
+    /// the check signal `PCHK` covers `PREQ`, so it must inherit PREQ's relations from the merged
+    /// pre-dedup list.
+    fn check_table_source_ir(dir: &std::path::Path) -> crate::error::Result<SourceIr> {
+        let source = dir.join("relations.md");
+        fs::write(&source, "# Relations\nSignal PREQ is input width 1.\n")?;
+        let mut source_ir = SourceIr::build(&source, &dir.join("generated").join("source_ir"))?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_check_signals".to_string(),
+            asset_id: "asset_check_signals".to_string(),
+            page_id: None,
+            caption_text: Some("Check signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                cell("Check Signal", true),
+                cell("Signals covered", true),
+            ]],
+            body_rows: vec![vec![cell("PCHK", false), cell("PREQ", false)]],
+            row_count: 1,
+            col_count: 2,
+        });
+        Ok(source_ir)
+    }
+
+    #[test]
+    fn actor_signal_relation_surface_matches_legacy_two_step() -> crate::error::Result<()> {
+        let dir = tempdir()?;
+        let source_ir = check_table_source_ir(dir.path())?;
+        // Prose grounds "Requester drives PREQ"; the table strategy re-emits a precomputed duplicate of
+        // that same relation (exercising the dedup post-pass) plus a distinct Reads relation.
+        let statements = vec![stmt("s01", "The Requester drives PREQ.")];
+        let known: HashSet<String> = ["PREQ".to_string()].into_iter().collect();
+        let table_relations = vec![
+            relation("tbl_0001", "Requester", "PREQ", RelationKind::Drives, "t01"),
+            relation("tbl_0002", "Completer", "PREQ", RelationKind::Reads, "t01"),
+        ];
+
+        // The legacy shape: prose extract → cloned table extend → augment (full pre-dedup list) → dedup.
+        let prose_relations = extract_actor_signal_relations(&statements, &known);
+        assert!(!prose_relations.is_empty(), "prose strategy must fire");
+        let mut legacy_merged = prose_relations.clone();
+        legacy_merged.extend(table_relations.iter().cloned());
+        let legacy_augmented =
+            augment_check_signal_relations_from_tables(&source_ir, &legacy_merged, None);
+        assert!(
+            legacy_augmented.len() > legacy_merged.len(),
+            "augment post-pass must inherit check-signal relations"
+        );
+        let legacy = dedup_actor_signal_relations(legacy_augmented);
+
+        let mut manifest = ExtractionManifest::default();
+        let surfaced = actor_signal_relation_surface(
+            &source_ir,
+            &statements,
+            &known,
+            &table_relations,
+            None,
+            &mut manifest,
+        );
+        assert_eq!(surfaced, legacy);
+
+        // The semantic outcome itself: the prose Drives wins over the table duplicate (first-wins keeps
+        // the prose record's ids), the distinct Reads survives, and PCHK inherits PREQ's relations.
+        let preq_drives: Vec<&ActorSignalRelation> = surfaced
+            .iter()
+            .filter(|r| {
+                r.signal_name == "PREQ"
+                    && r.actor_name == "Requester"
+                    && matches!(r.relation, RelationKind::Drives)
+            })
+            .collect();
+        assert_eq!(preq_drives.len(), 1, "duplicate Drives deduped");
+        assert_ne!(
+            preq_drives[0].relation_id, "tbl_0001",
+            "first-wins keeps the prose record, not the table duplicate"
+        );
+        assert!(
+            surfaced
+                .iter()
+                .any(|r| r.signal_name == "PREQ" && matches!(r.relation, RelationKind::Reads)),
+            "distinct table Reads relation survives"
+        );
+        assert!(
+            surfaced
+                .iter()
+                .any(|r| r.signal_name == "PCHK" && r.relation_id.starts_with("chk_asr_")),
+            "check signal inherits covered-signal relations via the augment post-pass"
+        );
+
+        // The manifest entry: concat driver, two strategies in registry order, kept == produced.
+        let surface = manifest
+            .surfaces
+            .iter()
+            .find(|s| s.surface == "actor_signal_relations")
+            .expect("actor_signal_relations surface recorded");
+        assert_eq!(surface.eligible, 2);
+        assert_eq!(surface.entries.len(), 2);
+        assert_eq!(surface.entries[0].name, "relations.prose");
+        assert_eq!(surface.entries[0].produced, prose_relations.len());
+        assert_eq!(surface.entries[0].kept, prose_relations.len());
+        assert_eq!(surface.entries[1].name, "relations.tables");
+        assert_eq!(surface.entries[1].produced, table_relations.len());
+        assert_eq!(surface.entries[1].kept, table_relations.len());
+        Ok(())
+    }
+
+    #[test]
+    fn actor_signal_relation_surface_records_manifest_entry_even_when_empty()
+    -> crate::error::Result<()> {
+        // A document with no relation-bearing prose, no table relations, and no check-signal tables
+        // keeps the surface visible in the manifest (eligible, fired nothing).
+        let dir = tempdir()?;
+        let source = dir.path().join("plain.md");
+        fs::write(&source, "# Plain\nSignal PWDATA is input width 32.\n")?;
+        let source_ir = SourceIr::build(&source, &dir.path().join("generated").join("source_ir"))?;
+        let statements = vec![stmt("s01", "PWDATA carries the write data payload.")];
+        let known: HashSet<String> = ["PWDATA".to_string()].into_iter().collect();
+
+        let mut manifest = ExtractionManifest::default();
+        let surfaced = actor_signal_relation_surface(
+            &source_ir,
+            &statements,
+            &known,
+            &[],
+            None,
+            &mut manifest,
+        );
+        assert!(surfaced.is_empty());
+
+        let surface = manifest
+            .surfaces
+            .iter()
+            .find(|s| s.surface == "actor_signal_relations")
+            .expect("actor_signal_relations surface recorded");
         assert_eq!(surface.eligible, 2);
         assert_eq!(surface.entries.len(), 2);
         assert_eq!(surface.entries[0].produced, 0);
