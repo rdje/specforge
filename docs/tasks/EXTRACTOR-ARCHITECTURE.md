@@ -332,6 +332,29 @@ Driver: build cx → for each registered extractor where applies_to → run → 
   ("not migration debt"). Full `run_ci.sh` green (rustdoc warning-deny passed; lib 1499 unchanged —
   doc-comment only).
 
+## `.10` — god-orchestrator retirement assessment (docs-only audit, `2026-06-10`)
+
+**Method:** read the post-`.9d` `build_with_prior_memory` end-to-end (now **449 lines**, was ~565 at the
+`.1` audit) and enumerated what remains inline vs extracted.
+
+**Finding: the `.1` complaint is RESOLVED for the surface-extraction phase.** Every typed surface is a
+one-call registration (8 surfaces on the drivers + the seed + the converge loop as named functions); no
+per-surface merge/dedup/gate logic remains inline; a new extractor is a one-place registration. What keeps
+`build()` at 449 lines is the **statement/visual ASSEMBLY phase inline**, by mass:
+1. ~45 lines load/validate/layout/identity (legitimate build-entry concerns; stays),
+2. ~45 lines visual-evidence assembly (items + VLM-note injection + caption-key/reference/page index maps),
+3. ~135 lines the markdown-block span/statement loop (spans, links, statements, boilerplate suppression,
+   classification — mints span/link/statement ids),
+4. ~50 lines caption/reference observation back-annotation + ~10 lines section page ranges,
+5. ~145 lines of one-call phase steps, fact-provenance tagging, the struct literal, carry-forward, refresh
+   (already thin).
+**Verdict: "retire the god-orchestrator" honestly means extracting blocks 2–4 — one cohesive
+assembly-phase function in the `.5` precedent style (`assemble_evidence_statements`-shaped: markdown blocks
++ visual assets → visual evidence, spans, links, statements, section page ranges) — leaving `build()` a
+thin ~200-line named-phase sequence.** That is ONE bounded byte-identical slice (`.10a`), not a redesign:
+the loop is already cohesive, it just lives inline. After `.10a` the tree's acceptance criteria are met
+end-to-end and the tree can close (book close-rule applies at `.N`).
+
 ## Current frontier
 
 `.1`–`.8` + `.9a` **done** — SIX surfaces registered and byte-identical-proven (FSM, semantic-hints,
@@ -344,5 +367,8 @@ done (`2026-06-10`): the converge-loop audit + BOTH migratable fixed-point surfa
 distinguishes table-driven vs prose-driven relation recovery per document (AXI table-dominant; SWD/I2C
 pure prose).** **`.9d` done (`2026-06-10`): the `ir/extractor.rs` module doc now encodes the full
 three-category model (members per driver mode, fixed-point recording semantics, post-pass order as
-contract, constraint family = design decision not debt).** Remaining: the `build()` god-orchestrator
-retirement (assessment slice first). **Owner may steer scope.**
+contract, constraint family = design decision not debt).** **`.10` assessment done (`2026-06-10`): the
+`.1` god-orchestrator complaint is RESOLVED for the surface-extraction phase (8 one-call registrations);
+the remaining inline mass is the ~230-line statement/visual assembly block → ONE bounded byte-identical
+extraction slice `.10a` (`assemble_evidence_statements`-shaped), then the tree's acceptance criteria are
+met and it can close.** Frontier: `.10a`. **Owner may steer scope.**

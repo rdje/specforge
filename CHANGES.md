@@ -1,3 +1,13 @@
+### `EXTRACTOR-ARCHITECTURE.10` — god-orchestrator retirement assessment (docs-only audit)
+Read the post-`.9d` `build_with_prior_memory` end-to-end (449 lines, was ~565 at the `.1` audit) and
+enumerated inline-vs-extracted. **The `.1` complaint is resolved for the surface-extraction phase**: all 8
+typed surfaces are one-call driver registrations, the seed and the converge loop are named functions, and no
+per-surface merge/dedup/gate logic remains inline. The remaining mass is the ~230-line statement/visual
+ASSEMBLY block (visual-evidence assembly + the markdown-block span/statement loop + caption/reference
+back-annotation + section page ranges). Verdict: one bounded byte-identical extraction slice (`.10a`,
+`assemble_evidence_statements`-shaped, the `.5` precedent) leaves `build()` a thin named-phase sequence —
+after which the tree's acceptance criteria are met end-to-end and it can close.
+
 ### `EXTRACTOR-ARCHITECTURE.9d` — the extractor module doc now encodes the three-category model (doc-only)
 The `ir/extractor.rs` "Two phases, two categories" note (written at `.5`) was stale — it still named actors
 and signal-polarity as remaining migrations. Rewritten as **"Two phases, three categories"** with the

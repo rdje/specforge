@@ -1,4 +1,16 @@
 # DEVELOPMENT_NOTES
+## `EXTRACTOR-ARCHITECTURE.10` (`2026-06-10`) — god-orchestrator retirement assessment (docs-only)
+- The honest measurement before declaring victory or doing more work: `build_with_prior_memory` is 449
+  lines post-`.9d`. By mass: ~45 load/validate/layout (stays — build-entry concerns), ~45 visual-evidence
+  assembly + index maps, ~135 the markdown-block span/statement loop (mints span/link/statement ids,
+  boilerplate suppression, classification), ~50 caption/reference observation back-annotation, ~10 section
+  page ranges, ~145 already-thin one-call phase steps + provenance tagging + struct literal + refresh.
+- The `.1` "god-orchestrator" complaint was about per-surface strategy invocation/merge/post-passes edited
+  inline for every new surface — that is GONE (8 one-call registrations). What remains inline is the
+  statement-ASSEMBLY phase, which the two-phase model says keeps cohesive orchestration — but at ~230
+  inline lines it should be a NAMED orchestrator (the `.5` `synthesize_signal_declaration_seed` precedent),
+  not anonymous build() mass. `.10a` = extract it byte-identically; then close the tree.
+
 ## `EXTRACTOR-ARCHITECTURE.9d` (`2026-06-10`) — extractor module doc: the three-category model (doc-only)
 - The `ir/extractor.rs` framework doc is the architectural reference future sessions read before touching
   the producer layer — the `.5`-era "two categories, actors/polarity remaining" text was actively
