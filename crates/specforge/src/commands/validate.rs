@@ -3179,6 +3179,45 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
         ));
     }
 
+    // EXTRACTOR-ARCHITECTURE.8 — surface the per-document extraction run manifest: which framework surfaces
+    // ran and which extractors actually fired (produced ≥1 kept record). A per-document behavioral
+    // fingerprint (the substrate CORPUS-PATTERN-REUSE clusters on) + the inspectable "which extractors fired"
+    // view the .1 audit found missing. Info: a neutral observation, not a finding of error.
+    let manifest_surface_count = ir.extraction_manifest.surfaces.len();
+    let manifest_fired_count: usize = ir
+        .extraction_manifest
+        .surfaces
+        .iter()
+        .flat_map(|surface| surface.entries.iter())
+        .filter(|entry| entry.eligible && entry.kept > 0)
+        .count();
+    if manifest_surface_count > 0 {
+        let manifest_summary = ir
+            .extraction_manifest
+            .surfaces
+            .iter()
+            .map(|surface| {
+                let fired: Vec<&str> = surface
+                    .entries
+                    .iter()
+                    .filter(|entry| entry.eligible && entry.kept > 0)
+                    .map(|entry| entry.name.as_str())
+                    .collect();
+                format!("{}[{}]", surface.surface, fired.join(","))
+            })
+            .collect::<Vec<_>>()
+            .join(" ");
+        findings.push(finding(
+            "evidence_extraction_manifest",
+            ValidationFindingSeverity::Info,
+            "extraction_manifest",
+            format!(
+                "extraction run manifest ({manifest_surface_count} framework surface(s), {manifest_fired_count} extractor(s) fired): {manifest_summary}"
+            ),
+            Vec::new(),
+        ));
+    }
+
     let report = ValidationReportRecord {
         report_id: format!("validation_evidence_ir_{artifact_fingerprint}"),
         validated_stage: IrStage::EvidenceIr,
@@ -3192,6 +3231,14 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
         grade: None,
         metrics: vec![
             metric("total_statements", total.to_string()),
+            metric(
+                "extraction_manifest_surfaces",
+                manifest_surface_count.to_string(),
+            ),
+            metric(
+                "extraction_extractors_fired",
+                manifest_fired_count.to_string(),
+            ),
             metric("nlp_coverage_pct", nlp_coverage.to_string()),
             metric(
                 "ambiguous_statements",

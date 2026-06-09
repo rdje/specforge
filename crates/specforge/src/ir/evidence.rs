@@ -6,7 +6,9 @@ use serde::{Deserialize, Serialize};
 
 use crate::error::{AppError, Result};
 use crate::ir::IrStage;
-use crate::ir::extractor::{ExtractionContext, Extractor, run_surface, run_surface_concat};
+use crate::ir::extractor::{
+    ExtractionContext, ExtractionManifest, Extractor, run_surface, run_surface_concat,
+};
 use crate::ir::prior_memory::{
     ActorTaxonomyRole, CorpusMemory, ProtocolFamily, is_meaningful_actor_term,
     normalize_actor_term, normalized_text_contains_term,
@@ -208,6 +210,13 @@ pub struct EvidenceIr {
     /// Empty (serde-skipped) for non-serial documents.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub swd_operations: Vec<SwdOperation>,
+    /// EXTRACTOR-ARCHITECTURE.8: the per-surface extraction run manifest — which extractors were eligible /
+    /// fired / produced / kept, for each surface that runs through the unified `run_surface(_concat)` driver
+    /// (FSM, semantic-hints, registers, actors). A per-document **behavioral fingerprint** (the substrate
+    /// `CORPUS-PATTERN-REUSE` clusters on), and the inspectable "which extractors fired" view the `.1` audit
+    /// found missing. Additive + serde-default for backward compatibility with older persisted artifacts.
+    #[serde(default)]
+    pub extraction_manifest: ExtractionManifest,
 }
 
 /// SWD-SERIAL-EXTRACTION.4b: one SWD packet-protocol operation variant — a response branch of the packet
@@ -786,10 +795,18 @@ impl EvidenceIr {
             prior_guidance.as_ref(),
         );
 
+        // EXTRACTOR-ARCHITECTURE.8 — collect each framework surface's run manifest into a per-document
+        // extraction fingerprint (which extractors fired / produced / kept), surfaced on `EvidenceIr`.
+        let mut extraction_manifest = ExtractionManifest::default();
+
         // EXTRACTOR-ARCHITECTURE.6 — the register-record surface (register-map + `unknown` field-table
         // strategies, concatenated via `run_surface_concat`, then the width / bit-layout-grid / fragment
         // post-passes) is now one cohesive surface function instead of inline orchestration. Behavior-identical.
-        let register_records = register_record_surface(&source_ir, prior_guidance.as_ref());
+        let register_records = register_record_surface(
+            &source_ir,
+            prior_guidance.as_ref(),
+            &mut extraction_manifest,
+        );
         let timing_constraints = synthesize_timing_constraints(&source_ir, prior_guidance.as_ref());
 
         // Replace the previous one-shot extraction with a monotone convergent loop:
@@ -822,18 +839,20 @@ impl EvidenceIr {
         // of four inline dedup loops here. Order = legacy precedence, key = uppercased state name → the
         // merged inventory is byte-identical. The FSM is the heart of SWD/JTAG and what FSMGen builds; no-op
         // for non-FSM/non-serial docs.
-        let protocol_states = protocol_state_surface(&extracted_statements);
+        let protocol_states =
+            protocol_state_surface(&extracted_statements, &mut extraction_manifest);
         // PDF-VARIANT-DIGESTION.3b — protocol actors/agents defined in prose.
         // EXTRACTOR-ARCHITECTURE.7 — protocol actors via the unified framework (single-strategy surface, run
         // through the concat driver for a uniform manifest entry; output byte-identical).
-        let protocol_actors = run_surface_concat(
+        let protocol_actors_run = run_surface_concat(
             "protocol_actors",
             &ExtractionContext {
                 statements: &extracted_statements,
             },
             &[&ProtocolActorExtractor],
-        )
-        .records;
+        );
+        extraction_manifest.record(&protocol_actors_run);
+        let protocol_actors = protocol_actors_run.records;
 
         // SWD-SERIAL-EXTRACTION.4b: recover the SWD packet operations (response branching: OK→3-phase,
         // WAIT/FAULT→2-phase, + turnaround model). No-op for non-serial docs.
@@ -891,8 +910,10 @@ impl EvidenceIr {
             protocol_states,
             protocol_actors,
             swd_operations,
+            extraction_manifest,
         };
         evidence_ir.carry_forward_existing_knowledge()?;
+        // refresh_signal_semantic_hints records the `signal_semantic_hints` surface into the manifest too.
         evidence_ir.refresh_signal_semantic_hints()?;
 
         Ok(evidence_ir)
@@ -992,6 +1013,10 @@ impl EvidenceIr {
         let source_ir = SourceIr::load_from_path(&self.source_ir_path)?;
         let prior_guidance =
             load_evidence_prior_guidance(self.prior_memory_path.as_deref(), &source_ir)?;
+        // EXTRACTOR-ARCHITECTURE.8 — record the semantic-hints surface manifest into the per-document
+        // fingerprint. Disjoint self-field borrows: the inputs are `&self.<field>` (shared) and the manifest
+        // is `&mut self.extraction_manifest` (a distinct field) — allowed. `record` is idempotent per surface
+        // name, so re-running a refresh replaces (not duplicates) the `signal_semantic_hints` entry.
         let (signal_semantic_hints, signal_semantic_conflicts) = synthesize_signal_semantic_hints(
             &source_ir,
             &self.extracted_statements,
@@ -999,6 +1024,7 @@ impl EvidenceIr {
             &self.signal_alias_map,
             &self.visual_evidence,
             prior_guidance.as_ref(),
+            &mut self.extraction_manifest,
         );
         self.signal_semantic_hints = signal_semantic_hints;
         self.signal_semantic_conflicts = signal_semantic_conflicts;
@@ -4937,6 +4963,7 @@ impl Extractor<SignalSemanticHintRecord> for SemanticHintVisualExtractor<'_> {
 /// Run the signal-semantic-hint surface registry through the unified driver. Behavior-identical to the
 /// legacy tables → prose → visual merge: first-wins dedup by `signal_semantic_hint_key`.
 /// (`EXTRACTOR-ARCHITECTURE.4`)
+#[allow(clippy::too_many_arguments)]
 fn signal_semantic_hint_surface(
     statements: &[ExtractedStatement],
     source_ir: &SourceIr,
@@ -4945,6 +4972,7 @@ fn signal_semantic_hint_surface(
     known_signals: &HashSet<String>,
     known_actor_names: &BTreeSet<String>,
     prior_guidance: Option<&EvidencePriorGuidance>,
+    manifest: &mut ExtractionManifest,
 ) -> Vec<SignalSemanticHintRecord> {
     let cx = ExtractionContext { statements };
     let tables = SemanticHintTableExtractor {
@@ -4967,15 +4995,17 @@ fn signal_semantic_hint_surface(
         prior_guidance,
     };
     let extractors: [&dyn Extractor<SignalSemanticHintRecord>; 3] = [&tables, &prose, &visual];
-    run_surface(
+    let run = run_surface(
         "signal_semantic_hints",
         &cx,
         &extractors,
         signal_semantic_hint_key,
-    )
-    .records
+    );
+    manifest.record(&run);
+    run.records
 }
 
+#[allow(clippy::too_many_arguments)]
 fn synthesize_signal_semantic_hints(
     source_ir: &SourceIr,
     statements: &[ExtractedStatement],
@@ -4983,6 +5013,7 @@ fn synthesize_signal_semantic_hints(
     signal_alias_map: &BTreeMap<String, String>,
     visual_evidence: &[VisualEvidenceItem],
     prior_guidance: Option<&EvidencePriorGuidance>,
+    manifest: &mut ExtractionManifest,
 ) -> (
     Vec<SignalSemanticHintRecord>,
     Vec<SignalSemanticConflictRecord>,
@@ -5005,6 +5036,7 @@ fn synthesize_signal_semantic_hints(
         &known_signals,
         &known_actor_names,
         prior_guidance,
+        manifest,
     );
     let conflicts = detect_signal_semantic_conflicts(&hints);
     (hints, conflicts)
@@ -8091,7 +8123,10 @@ impl Extractor<ProtocolStateRecord> for TransitionBoundStateExtractor {
 /// Run the full FSM-state surface registry through the unified driver. Behavior-identical to the legacy
 /// four-inline-loop merge at the `build()` call site: order jtag → swd_line → quoted → transition,
 /// first-wins dedup by uppercased state name. (`EXTRACTOR-ARCHITECTURE.3`)
-fn protocol_state_surface(statements: &[ExtractedStatement]) -> Vec<ProtocolStateRecord> {
+fn protocol_state_surface(
+    statements: &[ExtractedStatement],
+    manifest: &mut ExtractionManifest,
+) -> Vec<ProtocolStateRecord> {
     let cx = ExtractionContext { statements };
     let extractors: [&dyn Extractor<ProtocolStateRecord>; 4] = [
         &JtagTapStateExtractor,
@@ -8099,10 +8134,11 @@ fn protocol_state_surface(statements: &[ExtractedStatement]) -> Vec<ProtocolStat
         &QuotedModeStateExtractor,
         &TransitionBoundStateExtractor,
     ];
-    run_surface("protocol_states", &cx, &extractors, |state| {
+    let run = run_surface("protocol_states", &cx, &extractors, |state| {
         state.state_name.to_ascii_uppercase()
-    })
-    .records
+    });
+    manifest.record(&run);
+    run.records
 }
 
 /// SWD-SERIAL-EXTRACTION.4d — extract the SWD LINE state machine (reset / operating / protocol-error /
@@ -8536,6 +8572,7 @@ impl Extractor<RegisterRecord> for RegisterFieldTableExtractor<'_> {
 fn register_record_surface(
     source_ir: &SourceIr,
     prior_guidance: Option<&EvidencePriorGuidance>,
+    manifest: &mut ExtractionManifest,
 ) -> Vec<RegisterRecord> {
     let cx = ExtractionContext { statements: &[] };
     let map = RegisterMapExtractor {
@@ -8547,7 +8584,9 @@ fn register_record_surface(
         prior_guidance,
     };
     let extractors: [&dyn Extractor<RegisterRecord>; 2] = [&map, &field_table];
-    let mut records = run_surface_concat("register_records", &cx, &extractors).records;
+    let run = run_surface_concat("register_records", &cx, &extractors);
+    manifest.record(&run);
+    let mut records = run.records;
     // Flexible-register-model (PDF-VARIANT-DIGESTION.2c): fill register width from field bit extents where the
     // register-map path created the record incrementally without a size.
     for reg in &mut records {
@@ -16325,10 +16364,13 @@ mod extractor_architecture_3_fsm_surface {
             stmt("g", "The interface enters the HALT state on fault."),
             stmt("h", "It stays in the HALT state until reset."),
         ];
-        let names: Vec<String> = protocol_state_surface(&stmts)
-            .into_iter()
-            .map(|s| s.state_name)
-            .collect();
+        let names: Vec<String> = protocol_state_surface(
+            &stmts,
+            &mut crate::ir::extractor::ExtractionManifest::default(),
+        )
+        .into_iter()
+        .map(|s| s.state_name)
+        .collect();
         assert!(names.contains(&"reset".to_string()), "got {names:?}");
         assert!(names.contains(&"active".to_string()), "got {names:?}");
         assert!(names.contains(&"HALT".to_string()), "got {names:?}");
@@ -16351,7 +16393,13 @@ mod extractor_architecture_3_fsm_surface {
             ),
             stmt("b", "The manager drives HADDR during the address phase."),
         ];
-        assert!(protocol_state_surface(&stmts).is_empty());
+        assert!(
+            protocol_state_surface(
+                &stmts,
+                &mut crate::ir::extractor::ExtractionManifest::default()
+            )
+            .is_empty()
+        );
     }
 }
 

@@ -753,3 +753,32 @@ function over the statement text. Routing flagged statements into typed residual
 packets — rather than only noting them — is a deliberate future step.
 
 *Authoritative tracking:* `docs/tasks/AMBIGUITY-PHRASE-DETECTOR.md`.
+
+### `EXTRACTOR-ARCHITECTURE.8` — the extraction run manifest: which extractors fired on this document
+
+SpecForge derives each typed surface (FSM states, semantic hints, registers, actors) by running a small set
+of independent **extractor** strategies and merging their results. As of `EXTRACTOR-ARCHITECTURE`, those
+strategies are first-class units driven by one shared engine — and that engine records a **run manifest**:
+for every surface, which extractors were *eligible*, which *fired*, and how many records each produced and
+kept. `validate <evidence>` surfaces it as an Info finding plus two metrics
+(`extraction_manifest_surfaces`, `extraction_extractors_fired`), for example:
+
+```
+- [info:extraction_manifest] extraction run manifest (4 framework surface(s), 4 extractor(s) fired):
+  register_records[registers.field_table] protocol_states[] protocol_actors[actors.prose]
+  signal_semantic_hints[semantic_hints.tables,semantic_hints.prose]
+```
+
+Read that as: on this document, register records came from the field-table strategy (not the register-map
+one), no FSM strategy fired, actors came from prose, and signal meaning came from tables and prose (not from
+visual/VLM annotations).
+
+**Why this matters to you.** It answers a question that used to require reading the code — *"which part of
+the pipeline actually produced these facts, and which strategies found nothing here?"* — turning the
+extraction into something you can inspect per document. It is also a compact **behavioural fingerprint** of a
+document: two specs that fire the same strategies in the same proportions tend to be organised the same way.
+That is exactly the signal SpecForge's cross-document pattern-reuse plane clusters on, so a new spec can be
+recognised as "like ones we've seen" and benefit from what worked on them. The manifest is a faithful
+observation — it reports what ran, never inflates it — and it is deterministic for a given document.
+
+*Authoritative tracking:* `docs/tasks/EXTRACTOR-ARCHITECTURE.md` (`.8`); see also `docs/tasks/CORPUS-PATTERN-REUSE.md`.

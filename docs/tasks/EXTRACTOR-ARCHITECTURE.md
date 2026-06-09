@@ -194,14 +194,29 @@ Driver: build cx → for each registered extractor where applies_to → run → 
   (I2C: full evidence md5 unchanged, 2 actors preserved, deterministic double-run); kg-bench 151/151; full
   `run_ci.sh` green (lib 1456). The two sibling single-strategy top-level surfaces (`serial_frame_fields`,
   `swd_operations`) follow the same trivial pattern — register opportunistically.
-- `.8`+ the remaining surfaces: the two sibling single-strategy ones (serial-frame, operations — thin), and
+- `.8` **wire the `ExtractionManifest` into the output + `validate`** (owner pick `2026-06-09`: "(iii) for
+  now"). **DONE (`2026-06-09`).** Added `EvidenceIr.extraction_manifest: ExtractionManifest` (additive,
+  `#[serde(default)]`; serde derives on the manifest types — `name`/`surface` changed to owned `String` so
+  they round-trip). The 4 migrated surface helpers (FSM / semantic-hints / registers / actors) now thread a
+  `&mut ExtractionManifest` and `record()` their `SurfaceRun` (idempotent per surface name, so the
+  semantic-hints refresh path doesn't duplicate). `validate <evidence>` surfaces it: metrics
+  `extraction_manifest_surfaces` + `extraction_extractors_fired` plus an Info `evidence_extraction_manifest`
+  finding (e.g. `register_records[registers.field_table] protocol_actors[actors.prose]
+  signal_semantic_hints[semantic_hints.tables,semantic_hints.prose]`). Verified: RISC-V manifest populates
+  correctly + deterministic double-run; non-manifest output unchanged (helpers return the same `run.records`,
+  recording only borrows it); kg-bench 151/151; +2 tests (idempotent record + serde round-trip); full
+  `run_ci.sh` green (lib 1456 → 1457); book subsection in `quality/validation.md`. **This UNBLOCKS
+  `CORPUS-PATTERN-REUSE.2`** — the manifest IS the per-document behavioral fingerprint to cluster on.
+- `.9`+ the remaining surfaces: the two sibling single-strategy ones (serial-frame, operations — thin), and
   the **converge-loop surfaces** (constraints / relations / polarity / conditional-rules) — these live inside
   `converge_evidence_extractions`'s fixed-point loop, a distinct sub-problem (the loop itself is not a simple
   `run_surface`). Then retire the `build()` god-orchestrator. **Pending — owner may steer scope.**
 
 ## Current frontier
 
-`.1`–`.6` **done**. The framework + two driver modes are proven on three clusters (FSM, semantic-hints,
-registers), all byte-identical, on a now-deterministic build (`EVIDENCE-DETERMINISM`). Next: `.7` actors, then
-signal-polarity; then retire the god-orchestrator. `CORPUS-PATTERN-REUSE` builds on the run manifest once enough
-surfaces are migrated.
+`.1`–`.8` **done**. The framework (key-merge `run_surface` + concat `run_surface_concat` + own orchestrators
+for assembly), proven byte-identical across FSM/semantic-hints/registers/actors on a now-deterministic build,
+**now emits a per-document run manifest** surfaced in `validate` — the CORPUS-PATTERN-REUSE fingerprint. Next
+options (owner-steerable): `CORPUS-PATTERN-REUSE.2` (clustering on the manifest — now unblocked) · the thin
+remaining surfaces (`serial-frame`, `operations`) · the converge-loop surfaces · or pivot to PVD breadth
+(`.9.8`). Grinding the thin single-strategy registrations is low-value.

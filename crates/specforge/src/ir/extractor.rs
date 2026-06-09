@@ -46,6 +46,7 @@
 //! clean homes IS the coherent whole; the remaining surface clusters to migrate are actors and signal-polarity.
 
 use crate::ir::evidence::{ExtractedStatement, ExtractorTier};
+use serde::{Deserialize, Serialize};
 use std::collections::BTreeSet;
 
 /// The immutable inputs shared by every extractor, assembled once per `EvidenceIR` build.
@@ -89,10 +90,11 @@ pub trait Extractor<R> {
 }
 
 /// What one extractor was and did in a [`run_surface`] pass — the unit of the inspectable manifest.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ExtractorRunEntry {
-    /// The extractor's stable id ([`Extractor::name`]).
-    pub name: &'static str,
+    /// The extractor's stable id ([`Extractor::name`]). Owned `String` (not `&'static str`) so the manifest
+    /// round-trips through serde when persisted on `EvidenceIr`.
+    pub name: String,
     /// Its provenance tier ([`Extractor::tier`]).
     pub tier: ExtractorTier,
     /// Whether its [`Extractor::applies_to`] gate passed (a skipped extractor recorded `eligible: false`).
@@ -124,7 +126,7 @@ impl<R> SurfaceRun<R> {
     /// across every surface into one [`ExtractionManifest`] for `validate` / `audit-extraction` to surface.
     pub fn manifest(&self) -> SurfaceManifest {
         SurfaceManifest {
-            surface: self.surface,
+            surface: self.surface.to_string(),
             eligible: self.eligible,
             entries: self.entries.clone(),
         }
@@ -132,10 +134,10 @@ impl<R> SurfaceRun<R> {
 }
 
 /// The `R`-free manifest for a single surface (see [`SurfaceRun::manifest`]).
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct SurfaceManifest {
-    /// The surface label.
-    pub surface: &'static str,
+    /// The surface label. Owned `String` so the manifest round-trips through serde.
+    pub surface: String,
     /// How many registered extractors were eligible.
     pub eligible: usize,
     /// One entry per registered extractor, in registry order.
@@ -143,17 +145,23 @@ pub struct SurfaceManifest {
 }
 
 /// The whole-build manifest: one [`SurfaceManifest`] per surface, in build order. This is the inspectable
-/// "which extractors fired and what each contributed" view the audit found missing.
-#[derive(Debug, Clone, Default, PartialEq, Eq)]
+/// "which extractors fired and what each contributed" view the audit found missing — stored on `EvidenceIr`
+/// as a per-document behavioral fingerprint (the substrate `CORPUS-PATTERN-REUSE` clusters on).
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ExtractionManifest {
     /// Per-surface manifests, in the order the build ran the surfaces.
     pub surfaces: Vec<SurfaceManifest>,
 }
 
 impl ExtractionManifest {
-    /// Append one surface's manifest (called by the build after each [`run_surface`]).
+    /// Record one surface's manifest (called by the build after each `run_surface(_concat)`). **Idempotent
+    /// per surface name**: a later recording of the same surface REPLACES the earlier one, so re-running a
+    /// surface (e.g. a semantic-hints refresh) never duplicates its entry. Order is first-recorded, with a
+    /// replaced surface moving to the end.
     pub fn record<R>(&mut self, run: &SurfaceRun<R>) {
-        self.surfaces.push(run.manifest());
+        let manifest = run.manifest();
+        self.surfaces.retain(|s| s.surface != manifest.surface);
+        self.surfaces.push(manifest);
     }
 }
 
@@ -186,7 +194,7 @@ where
         let name = extractor.name();
         if !extractor.applies_to(cx) {
             entries.push(ExtractorRunEntry {
-                name,
+                name: name.to_string(),
                 tier,
                 eligible: false,
                 produced: 0,
@@ -205,7 +213,7 @@ where
             }
         }
         entries.push(ExtractorRunEntry {
-            name,
+            name: name.to_string(),
             tier,
             eligible: true,
             produced: produced_count,
@@ -239,7 +247,7 @@ pub fn run_surface_concat<R>(
         let name = extractor.name();
         if !extractor.applies_to(cx) {
             entries.push(ExtractorRunEntry {
-                name,
+                name: name.to_string(),
                 tier,
                 eligible: false,
                 produced: 0,
@@ -252,7 +260,7 @@ pub fn run_surface_concat<R>(
         let produced_count = produced.len();
         records.extend(produced);
         entries.push(ExtractorRunEntry {
-            name,
+            name: name.to_string(),
             tier,
             eligible: true,
             produced: produced_count,
@@ -443,5 +451,45 @@ mod tests {
         assert_eq!(run.entries[0].kept, 2);
         assert_eq!(run.entries[1].kept, 1, "no dedup → b's record kept");
         assert!(!run.entries[2].eligible, "gated extractor skipped, not run");
+    }
+
+    #[test]
+    fn record_is_idempotent_per_surface_and_round_trips_serde() {
+        // Recording the same surface twice REPLACES (does not duplicate) it — so a re-run (e.g. a
+        // semantic-hints refresh) keeps one entry per surface. Two distinct surfaces both retained.
+        let stmts: Vec<ExtractedStatement> = vec![];
+        let cx = ctx(&stmts);
+        let a = Fixed {
+            id: "a",
+            out: vec![toy("X")],
+        };
+        let b = Fixed {
+            id: "b",
+            out: vec![toy("Y"), toy("Z")],
+        };
+        let mut manifest = ExtractionManifest::default();
+        manifest.record(&run_surface("alpha", &cx, &[&a], key));
+        manifest.record(&run_surface("beta", &cx, &[&a], key));
+        manifest.record(&run_surface("alpha", &cx, &[&b], key)); // re-record alpha → replace
+        assert_eq!(
+            manifest
+                .surfaces
+                .iter()
+                .map(|s| s.surface.as_str())
+                .collect::<Vec<_>>(),
+            vec!["beta", "alpha"],
+            "alpha recorded once (replaced + moved to end), beta retained"
+        );
+        let alpha = manifest
+            .surfaces
+            .iter()
+            .find(|s| s.surface == "alpha")
+            .unwrap();
+        assert_eq!(alpha.entries[0].produced, 2, "alpha now reflects b's run");
+
+        // serde round-trips (it is persisted on EvidenceIr).
+        let json = serde_json::to_string(&manifest).unwrap();
+        let back: ExtractionManifest = serde_json::from_str(&json).unwrap();
+        assert_eq!(back, manifest);
     }
 }

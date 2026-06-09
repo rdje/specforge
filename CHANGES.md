@@ -1,3 +1,23 @@
+### `EXTRACTOR-ARCHITECTURE.8` — wire the extraction run manifest into the output + `validate` (the payoff)
+The framework's payoff, and the `CORPUS-PATTERN-REUSE` enabler. The migrated surfaces already produced a
+`SurfaceRun` manifest (which extractors were eligible / fired / produced / kept) but `build()` discarded it.
+Now each of the 4 migrated surfaces (FSM, semantic-hints, registers, actors) records its `SurfaceRun` into a
+new `EvidenceIr.extraction_manifest: ExtractionManifest` field (additive, `#[serde(default)]`; the manifest
+types gained serde derives, with `name`/`surface` as owned `String` to round-trip; `record()` is idempotent
+per surface name so the semantic-hints refresh path doesn't duplicate).
+
+`validate <evidence>` surfaces it: metrics `extraction_manifest_surfaces` + `extraction_extractors_fired`,
+plus an Info `evidence_extraction_manifest` finding, e.g.:
+`register_records[registers.field_table] protocol_states[] protocol_actors[actors.prose]
+signal_semantic_hints[semantic_hints.tables,semantic_hints.prose]`. That answers "which part of the pipeline
+produced these facts (and which strategies found nothing here)?" per document — and is a compact
+**behavioral fingerprint** of the document, exactly what `CORPUS-PATTERN-REUSE` clusters on.
+
+Verified: RISC-V manifest populates correctly + deterministic double-run; non-manifest output unchanged (the
+helpers return the same `run.records`, recording only borrows it); kg-bench 151/151; +2 tests (idempotent
+record + serde round-trip); full `run_ci.sh` green (lib 1456 → 1457); book subsection in `quality/validation.md`.
+**Unblocks `CORPUS-PATTERN-REUSE.2`** (the manifest is the per-document fingerprint).
+
 ### `EXTRACTOR-ARCHITECTURE.7` — register the protocol-actors surface (single-strategy, byte-identical)
 The protocol-actors surface (`extract_protocol_actors`, reads only `statements`) is now a registered
 `ProtocolActorExtractor` unit (`actors.prose`) run through `run_surface_concat`. A single-strategy
