@@ -1,3 +1,21 @@
+### `EXTRACTOR-ARCHITECTURE.9a` — register the serial-frame + SWD-operations surfaces (byte-identical)
+The two remaining thin top-level surfaces join the unified extractor framework — re-rated UP from the old
+"low-value" note because every registered surface now feeds the manifest → fingerprint → extraction-profile
+chain (`CORPUS-PATTERN-REUSE.3b.2`/`.3c`), and these are exactly the surfaces that distinguish serial/debug
+documents. Faithfulness was analyzed BEFORE coding: both serial-frame strategies already emit name-unique
+lists (the bit-range form upserts by name; the composition form keeps a `seen` set), so `run_surface` keyed
+by field name reproduces the prior "composition defers to bit-range names" merge exactly; `swd_operations`
+is single-strategy → `run_surface_concat` (the `.7` actors pattern).
+
+New units: `serial_frame.bit_range` + `serial_frame.composition` (→ `serial_frame_field_surface`) and
+`operations.prose` (→ `swd_operation_surface`); the hand-rolled merge in `build()` collapsed into the driver
+calls. **Byte-identical proof: all 12 intact-bundle docs rebuilt before/after — non-manifest JSON identical
+on every doc**; the manifest gains the two surfaces everywhere and fires exactly where it should (CAN →
+`serial_frame.composition`; SWD/ADI → `serial_frame.bit_range` + `operations.prose`; the 10 others honestly
+empty — "ran and found nothing" is distinct from "never ran"). 4 hermetic tests including a
+legacy-two-step-equivalence check. `run_ci.sh` green (lib **1495**); kg-bench 151/151; book manifest example
+updated to the 6-surface form; KM card status-updated.
+
 ### `CORPUS-PATTERN-REUSE.3c` — the manifest-population sweep (data lever; no code change)
 The recorded data lever executed: every repo-backed document now carries a real `extraction_manifest`.
 Evidence rebuilt for NVMe + I2C (intact bundles); APB/AHB/AXI/AXI-Stream re-ingested from their git-tracked

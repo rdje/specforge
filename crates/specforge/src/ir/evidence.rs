@@ -829,20 +829,14 @@ impl EvidenceIr {
             prior_guidance.as_ref(),
         );
 
-        // SWD-SERIAL-EXTRACTION.3: recover the serial-frame fields (the SWD packet/ack/data frame),
-        // a typed surface distinct from constraints/relations/temporal. No-op for parallel buses.
-        let mut serial_frame_fields = extract_serial_frame_fields(&extracted_statements);
-        // PDF-VARIANT-DIGESTION.9.3b — also recover a frame described as a prose COMPOSITION LIST (CAN's
-        // "composed of seven different bit fields: SOF, ARBITRATION FIELD, …"), a shape the SWD
-        // `is_serial_doc` path does not match. Additive + disjoint (CAN lacks the SWD markers; SWD lacks
-        // the composition shape), deduped by name defensively, so APB/AHB/AXI/SWD are untouched.
-        let swd_frame_field_names: BTreeSet<String> =
-            serial_frame_fields.iter().map(|f| f.name.clone()).collect();
-        for field in extract_composition_frame_fields(&extracted_statements) {
-            if !swd_frame_field_names.contains(&field.name) {
-                serial_frame_fields.push(field);
-            }
-        }
+        // SWD-SERIAL-EXTRACTION.3 + PDF-VARIANT-DIGESTION.9.3b: recover the serial-frame fields — the SWD
+        // packet/ack/data frame, or a frame described as a prose COMPOSITION LIST (CAN's "composed of seven
+        // different bit fields: SOF, ARBITRATION FIELD, …"). EXTRACTOR-ARCHITECTURE.9a — both strategies now
+        // run through the unified `run_surface` driver; first-wins key-merge on the field name reproduces
+        // the prior "composition defers to bit-range names" policy exactly because each strategy already
+        // emits a name-unique list. No-op for parallel buses.
+        let serial_frame_fields =
+            serial_frame_field_surface(&extracted_statements, &mut extraction_manifest);
 
         // SWD-SERIAL-EXTRACTION.4/.4d + PDF-VARIANT-DIGESTION.9.3a/.9.7: recover the protocol FSM states.
         // EXTRACTOR-ARCHITECTURE.3 — the four FSM-state grammars (JTAG/SWD-hyphen, SWD line, quoted-mode,
@@ -866,8 +860,9 @@ impl EvidenceIr {
         let protocol_actors = protocol_actors_run.records;
 
         // SWD-SERIAL-EXTRACTION.4b: recover the SWD packet operations (response branching: OK→3-phase,
-        // WAIT/FAULT→2-phase, + turnaround model). No-op for non-serial docs.
-        let swd_operations = extract_swd_operations(&extracted_statements);
+        // WAIT/FAULT→2-phase, + turnaround model). EXTRACTOR-ARCHITECTURE.9a — single-strategy surface run
+        // through the concat driver for a uniform manifest entry. No-op for non-serial docs.
+        let swd_operations = swd_operation_surface(&extracted_statements, &mut extraction_manifest);
 
         // PER-EXTRACTOR-FACT-TAGGING: tag every fact produced by the structural
         // pattern tier (the convergent build loop above) as `Pattern`, computed
@@ -7547,6 +7542,52 @@ fn extract_composition_frame_fields(statements: &[ExtractedStatement]) -> Vec<Se
     fields
 }
 
+/// EXTRACTOR-ARCHITECTURE.9a — the SWD-style bit-range/named-bit frame strategy as a registered
+/// `Extractor`. Its grammar self-gates on serial-doc markers, so no separate `applies_to` is needed.
+struct SerialFrameBitRangeExtractor;
+impl Extractor<SerialFrameField> for SerialFrameBitRangeExtractor {
+    fn name(&self) -> &'static str {
+        "serial_frame.bit_range"
+    }
+    fn run(&self, cx: &ExtractionContext<'_>) -> Vec<SerialFrameField> {
+        extract_serial_frame_fields(cx.statements)
+    }
+}
+
+/// EXTRACTOR-ARCHITECTURE.9a — the prose composition-list frame strategy (the CAN shape) as a registered
+/// `Extractor`. Disjoint from the bit-range strategy by construction (CAN lacks the SWD markers; SWD lacks
+/// the composition sentence), so the surface's key-merge is a defensive guarantee, not a load-bearing fix.
+struct SerialFrameCompositionExtractor;
+impl Extractor<SerialFrameField> for SerialFrameCompositionExtractor {
+    fn name(&self) -> &'static str {
+        "serial_frame.composition"
+    }
+    fn run(&self, cx: &ExtractionContext<'_>) -> Vec<SerialFrameField> {
+        extract_composition_frame_fields(cx.statements)
+    }
+}
+
+/// Run the serial-frame surface through the unified key-merge driver (EXTRACTOR-ARCHITECTURE.9a). Key =
+/// field name: both strategies emit name-unique lists (the bit-range form upserts by name; the composition
+/// form keeps a per-list `seen` set), so first-wins dedup is a no-op WITHIN each strategy and reproduces the
+/// prior cross-strategy policy — a composition field is dropped only when the bit-range form already
+/// produced that name — byte-for-byte.
+fn serial_frame_field_surface(
+    statements: &[ExtractedStatement],
+    manifest: &mut ExtractionManifest,
+) -> Vec<SerialFrameField> {
+    let cx = ExtractionContext { statements };
+    let extractors: [&dyn Extractor<SerialFrameField>; 2] = [
+        &SerialFrameBitRangeExtractor,
+        &SerialFrameCompositionExtractor,
+    ];
+    let run = run_surface("serial_frame_fields", &cx, &extractors, |field| {
+        field.name.clone()
+    });
+    manifest.record(&run);
+    run.records
+}
+
 /// A multi-word ALL-CAPS frame-field name like "START OF FRAME" / "ARBITRATION FIELD" — uppercase letters
 /// plus a few joiners only, with at least two uppercase letters (so a comma fragment, a lowercase word, or a
 /// stray "and" is rejected). (PDF-VARIANT-DIGESTION.9.3b)
@@ -8622,6 +8663,35 @@ fn parse_bit_range_fields(text: &str) -> Vec<(String, u32, u32)> {
 }
 
 /// SWD-SERIAL-EXTRACTION.4b — recover the SWD packet-protocol operations (response branching): each
+/// EXTRACTOR-ARCHITECTURE.9a — the SWD packet-operations surface as a registered `Extractor` (currently a
+/// single strategy; the concat driver is identity for one producer, as with the actors surface in `.7`).
+/// Registering it gives serial/debug documents a uniform manifest entry — a behavioral fingerprint token
+/// the CORPUS-PATTERN-REUSE profile plane consumes — and readies the surface for multi-strategy growth.
+struct SwdOperationExtractor;
+impl Extractor<SwdOperation> for SwdOperationExtractor {
+    fn name(&self) -> &'static str {
+        "operations.prose"
+    }
+    fn run(&self, cx: &ExtractionContext<'_>) -> Vec<SwdOperation> {
+        extract_swd_operations(cx.statements)
+    }
+}
+
+/// Run the SWD-operations surface through the concat driver for a uniform manifest entry
+/// (EXTRACTOR-ARCHITECTURE.9a). One producer → concat is identity → output unchanged.
+fn swd_operation_surface(
+    statements: &[ExtractedStatement],
+    manifest: &mut ExtractionManifest,
+) -> Vec<SwdOperation> {
+    let run = run_surface_concat(
+        "swd_operations",
+        &ExtractionContext { statements },
+        &[&SwdOperationExtractor],
+    );
+    manifest.record(&run);
+    run.records
+}
+
 /// "a successful `<read|write>` operation consists of three phases" / "A `<WAIT|FAULT>` response …
 /// consists of two phases" header becomes a `SwdOperation`. OK → 3-phase (has data); WAIT/FAULT →
 /// 2-phase. The turnaround-before-data flag comes from the write ("turnaround between the acknowledge
@@ -16388,6 +16458,118 @@ mod pdf_variant_digestion_9_8 {
             vec!["S2".to_string()]
         );
         assert!(definitional_signal_names("an interrupt is a signal").is_empty());
+    }
+}
+
+#[cfg(test)]
+mod extractor_architecture_9a {
+    //! EXTRACTOR-ARCHITECTURE.9a — the serial-frame and SWD-operations surfaces run through the unified
+    //! drivers: key-merge reproduces the "composition defers to bit-range names" policy and both surfaces
+    //! record inspectable manifest entries.
+    use super::*;
+
+    fn stmt(id: &str, text: &str) -> ExtractedStatement {
+        ExtractedStatement {
+            statement_id: id.to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        }
+    }
+
+    /// Statements that fire BOTH strategies with one overlapping name (`ACK`): the bit-range form (serial
+    /// doc marker + acknowledge phase + `ACK[2:0]`) and a composition list naming `ACK` and `CRC FIELD`.
+    fn overlapping_statements() -> Vec<ExtractedStatement> {
+        vec![
+            stmt(
+                "gate",
+                "The SWD interface uses a single bidirectional data pin, SWDIO.",
+            ),
+            stmt(
+                "ack",
+                "The first three bits shifted out are ACK[2:0] in the acknowledge phase.",
+            ),
+            stmt(
+                "comp",
+                "The frame is composed of two bit fields: ACK, CRC FIELD.",
+            ),
+        ]
+    }
+
+    #[test]
+    fn serial_frame_surface_composition_defers_to_bit_range_name() {
+        let statements = overlapping_statements();
+        let mut manifest = ExtractionManifest::default();
+        let fields = serial_frame_field_surface(&statements, &mut manifest);
+
+        let names: Vec<&str> = fields.iter().map(|f| f.name.as_str()).collect();
+        assert_eq!(names, vec!["ACK", "CRC FIELD"]);
+        // The surviving ACK is the bit-range strategy's record (it carries the literal bit range), proving
+        // first-wins precedence — the composition duplicate was dropped, not merged over it.
+        assert_eq!(fields[0].bit_range, Some((2, 0)));
+    }
+
+    #[test]
+    fn serial_frame_surface_records_per_strategy_manifest() {
+        let statements = overlapping_statements();
+        let mut manifest = ExtractionManifest::default();
+        serial_frame_field_surface(&statements, &mut manifest);
+
+        let surface = manifest
+            .surfaces
+            .iter()
+            .find(|s| s.surface == "serial_frame_fields")
+            .expect("serial_frame_fields surface recorded");
+        assert_eq!(surface.eligible, 2);
+        let by_name: std::collections::BTreeMap<&str, (usize, usize)> = surface
+            .entries
+            .iter()
+            .map(|e| (e.name.as_str(), (e.produced, e.kept)))
+            .collect();
+        assert_eq!(by_name["serial_frame.bit_range"], (1, 1));
+        // The composition strategy produced both names but kept only the non-overlapping one.
+        assert_eq!(by_name["serial_frame.composition"], (2, 1));
+    }
+
+    #[test]
+    fn serial_frame_surface_matches_legacy_two_step_merge() {
+        // The exact legacy policy, run directly: bit-range fields first, then composition fields whose
+        // name is not already present. The surface output must be identical.
+        let statements = overlapping_statements();
+        let mut legacy = extract_serial_frame_fields(&statements);
+        let names: BTreeSet<String> = legacy.iter().map(|f| f.name.clone()).collect();
+        for field in extract_composition_frame_fields(&statements) {
+            if !names.contains(&field.name) {
+                legacy.push(field);
+            }
+        }
+
+        let mut manifest = ExtractionManifest::default();
+        let surfaced = serial_frame_field_surface(&statements, &mut manifest);
+        assert_eq!(surfaced, legacy);
+    }
+
+    #[test]
+    fn swd_operation_surface_records_manifest_entry_even_when_empty() {
+        // A non-serial document keeps the surface visible in the manifest (eligible, fired nothing) —
+        // honest "ran and found nothing", distinct from "never ran".
+        let statements = vec![stmt("p", "PWDATA is driven by the requester.")];
+        let mut manifest = ExtractionManifest::default();
+        let operations = swd_operation_surface(&statements, &mut manifest);
+        assert!(operations.is_empty());
+
+        let surface = manifest
+            .surfaces
+            .iter()
+            .find(|s| s.surface == "swd_operations")
+            .expect("swd_operations surface recorded");
+        assert_eq!(surface.eligible, 1);
+        assert_eq!(surface.entries.len(), 1);
+        assert_eq!(surface.entries[0].name, "operations.prose");
+        assert_eq!(surface.entries[0].produced, 0);
+        assert_eq!(surface.entries[0].kept, 0);
     }
 }
 

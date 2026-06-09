@@ -42,3 +42,13 @@ merges uniformly and emits an inspectable `ExtractionRun` manifest. New PDF fami
 `applies_to`, "model proposes → declared signals/structure decide" as a shared post-filter). Migration is
 incremental + behavior-preserving (FSM cluster first, byte-identical via kg-bench + eval). Tracked in
 `docs/tasks/EXTRACTOR-ARCHITECTURE.md`; build gated on owner confirmation of the framework shape.
+
+**Status update (`2026-06-09`, post `.2`–`.8` + `.9a`):** the framework exists (`ir/extractor.rs`:
+`Extractor` trait + `run_surface` key-merge + `run_surface_concat` + `ExtractionManifest` persisted on
+`EvidenceIr` and surfaced in `validate`) and SIX surfaces are registered and byte-identical-proven: FSM
+(`.3`), semantic hints (`.4`), registers (`.6`, concat + post-passes), actors (`.7`), and serial-frame +
+SWD-operations (`.9a` — serial-frame is a clean key-merge by field name because both strategies emit
+name-unique lists; operations is single-strategy concat). The "no run manifest" claim above is therefore
+HISTORICAL (the audit state), as is the four-inline-FSM-loops description. Still open: the converge-loop
+surfaces (constraints/relations/polarity/conditional-rules) and retiring the `build()` god-orchestrator;
+signal-declaration stays a deliberate stateful-assembly orchestrator (`.5`).

@@ -1,4 +1,26 @@
 # DEVELOPMENT_NOTES
+## `EXTRACTOR-ARCHITECTURE.9a` (`2026-06-09`) — serial-frame + SWD-operations onto the framework
+- Why now: the `.8`-era frontier note called these thin registrations "low-value"; the profile plane changed
+  that calculus — every registered surface adds behavioral fingerprint tokens that the learned extraction
+  profiles consume, and serial-frame/operations are precisely the surfaces that distinguish SWD/CAN/SWP-class
+  docs from parallel buses.
+- Faithfulness analysis FIRST (the `.5` lesson — don't force a stateful assembly through the driver):
+  `extract_serial_frame_fields` is internally an upsert-by-name accumulator but RETURNS a finished
+  name-unique list, and `extract_composition_frame_fields` dedups by name internally — so the surface-level
+  merge ("append composition fields whose name the bit-range form didn't produce") is EXACTLY first-wins
+  key-merge by name, i.e. `run_surface(key = field.name)`. Intra-strategy dedup in the driver is provably a
+  no-op. No stateful-assembly trap here.
+- Implementation: `SerialFrameBitRangeExtractor`/`SerialFrameCompositionExtractor` +
+  `serial_frame_field_surface` (key-merge); `SwdOperationExtractor` + `swd_operation_surface` (concat,
+  single producer = identity). Both record into `EvidenceIr.extraction_manifest`; the `build()` call sites
+  collapsed to two helper calls.
+- Verification: byte-identical rebuild proof over ALL 12 intact-bundle docs (pre/post snapshots, manifest
+  field excluded since it gains the two new surfaces by design — the `.8` precedent): non-manifest JSON
+  identical everywhere; fired sets land correctly (CAN → composition; SWD/ADI → bit_range + operations.prose;
+  others empty-but-eligible). 4 hermetic tests incl. an explicit legacy-two-step-equivalence test.
+  `run_ci.sh` green (lib 1491 → **1495**); kg-bench 151/151. Book `quality/validation.md` example updated to
+  6 surfaces; KM `extractor-path-architecture` gained a dated status update (audit claims now historical).
+
 ## `CORPUS-PATTERN-REUSE.3c` (`2026-06-09`) — manifest-population sweep (data/no-code)
 - Scope: the data lever recorded in `.3b.1`/`.3b.2` — populate `extraction_manifest` corpus-wide so profile
   `fired:` unions stop being empty. No code change; only generated artifacts + docs.

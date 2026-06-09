@@ -211,12 +211,35 @@ Driver: build cx → for each registered extractor where applies_to → run → 
   the **converge-loop surfaces** (constraints / relations / polarity / conditional-rules) — these live inside
   `converge_evidence_extractions`'s fixed-point loop, a distinct sub-problem (the loop itself is not a simple
   `run_surface`). Then retire the `build()` god-orchestrator. **Pending — owner may steer scope.**
+- `.9a` **register the serial-frame + operations surfaces** · Status: `done` (`2026-06-09`). The
+  earlier "low-value" frontier note predates the profile plane: since `CORPUS-PATTERN-REUSE.3b.2`/`.3c`,
+  every registered surface feeds the manifest → fingerprint → extraction-profile chain, so serial/debug docs
+  (SWD/ADI, CAN, SWP) gain behavioral fingerprint tokens from exactly the surfaces that distinguish them.
+  Faithfulness analysis done BEFORE coding: `serial_frame_fields` is a clean key-merge surface — strategy 1
+  (`extract_serial_frame_fields`) upserts by name (unique names by construction) and strategy 2
+  (`extract_composition_frame_fields`) dedups by name internally, so `run_surface(key = name)` with order
+  [bit-range, composition] reproduces today's "composition defers to bit-range names" merge EXACTLY (the
+  `.5` stateful-assembly trap does not apply: both strategies return finished lists). `swd_operations` is a
+  single-strategy surface → `run_surface_concat`, the `.7` actors pattern.
+  **DONE (`2026-06-09`).** `SerialFrameBitRangeExtractor` (`serial_frame.bit_range`) +
+  `SerialFrameCompositionExtractor` (`serial_frame.composition`) → `serial_frame_field_surface` via
+  `run_surface` keyed by field name; `SwdOperationExtractor` (`operations.prose`) → `swd_operation_surface`
+  via `run_surface_concat`; both record into the manifest, `build()` call sites collapsed. **Byte-identical
+  proof: ALL 12 intact-bundle docs rebuilt before/after — non-manifest JSON identical on every doc**; the
+  manifest gains the two surfaces everywhere (by design, as in `.8`) and fires exactly where it should: CAN →
+  `serial_frame.composition`, SWD/ADI → `serial_frame.bit_range` + `operations.prose`, all 10 others honestly
+  empty. 4 hermetic tests (composition-defers-to-bit-range merge + per-strategy manifest counts +
+  legacy-two-step equivalence + empty-surface manifest honesty). `run_ci.sh` green (lib **1495**); kg-bench
+  151/151; book `quality/validation.md` example updated to the 6-surface manifest; KM
+  `extractor-path-architecture` status-updated. Remaining in `.9`+: the converge-loop surfaces, then retire
+  the god-orchestrator.
 
 ## Current frontier
 
-`.1`–`.8` **done**. The framework (key-merge `run_surface` + concat `run_surface_concat` + own orchestrators
-for assembly), proven byte-identical across FSM/semantic-hints/registers/actors on a now-deterministic build,
-**now emits a per-document run manifest** surfaced in `validate` — the CORPUS-PATTERN-REUSE fingerprint. Next
-options (owner-steerable): `CORPUS-PATTERN-REUSE.2` (clustering on the manifest — now unblocked) · the thin
-remaining surfaces (`serial-frame`, `operations`) · the converge-loop surfaces · or pivot to PVD breadth
-(`.9.8`). Grinding the thin single-strategy registrations is low-value.
+`.1`–`.8` + `.9a` **done** — SIX surfaces registered and byte-identical-proven (FSM, semantic-hints,
+registers, actors, serial-frame, SWD-operations); `.9a`'s value was re-rated UP by the profile plane
+(`CORPUS-PATTERN-REUSE.3b.2`/`.3c`: manifests now feed learned extraction profiles). The framework
+(key-merge `run_surface` + concat `run_surface_concat` + own orchestrators for assembly) **emits a
+per-document run manifest** surfaced in `validate` — the CORPUS-PATTERN-REUSE fingerprint. Remaining:
+the converge-loop surfaces (constraints / relations / polarity / conditional-rules — a distinct
+fixed-point sub-problem) · then retire the `build()` god-orchestrator. **Owner may steer scope.**
