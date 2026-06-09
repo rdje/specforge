@@ -5,12 +5,17 @@ use std::path::{Path, PathBuf};
 use crate::cli::LearnPriorsArgs;
 use crate::error::{AppError, Result};
 use crate::ir::IrStage;
+use crate::ir::corpus_cluster::{
+    DEFAULT_FINGERPRINT_SIMILARITY_THRESHOLD, DocumentFingerprint, derive_extraction_profiles,
+    document_fingerprint,
+};
 use crate::ir::evidence::EvidenceIr;
 use crate::ir::evidence::{SignalSemanticHintSourceKind, SignalSemanticTag};
 use crate::ir::intent::IntentIr;
 use crate::ir::prior_memory::{
     ActorTaxonomyPriorRecord, ActorTaxonomyRole, CorpusMemory, CorpusMemoryUpdatePolicyRecord,
-    NegativeKnowledgeKind, NegativeKnowledgePriorRecord, PriorSourceArtifactRecord, ProtocolFamily,
+    ExtractionProfileExtractorSupportRecord, ExtractionProfilePriorRecord, NegativeKnowledgeKind,
+    NegativeKnowledgePriorRecord, PriorSourceArtifactRecord, ProtocolFamily,
     SemanticModalityReliabilityPriorRecord, SemanticPhrasePriorRecord, TableShapePriorRecord,
     TemporalPhrasePriorRecord, VisualMotifPriorRecord,
     interface_signal_conflict_negative_knowledge_pattern, is_meaningful_actor_term,
@@ -144,6 +149,7 @@ pub fn run(args: LearnPriorsArgs) -> Result<()> {
         BTreeMap::<VisualMotifPriorKey, VisualMotifPriorAccumulator>::new();
     let mut negative_knowledge_priors =
         BTreeMap::<NegativeKnowledgePriorKey, NegativeKnowledgePriorAccumulator>::new();
+    let mut fingerprint_documents: Vec<(String, DocumentFingerprint)> = Vec::new();
 
     for artifact in &args.artifacts {
         let artifact_path = canonicalize_existing_path(artifact)?;
@@ -191,10 +197,20 @@ pub fn run(args: LearnPriorsArgs) -> Result<()> {
             protocol_family,
             &mut negative_knowledge_priors,
         );
+        // CORPUS-PATTERN-REUSE.3b.2: the extraction-profile harvest clusters the accepted
+        // documents' derived fingerprints, which live on the persisted EvidenceIR. A document
+        // whose evidence artifact cannot be reloaded simply contributes no fingerprint —
+        // honest absence, like the table-shape/visual-motif harvests above.
+        if let Some(evidence_ir) = load_evidence_ir_for_learning(&intent_ir) {
+            fingerprint_documents.push((
+                intent_ir.document_identity.document_key.clone(),
+                document_fingerprint(&evidence_ir),
+            ));
+        }
     }
 
     let corpus_memory = CorpusMemory {
-        schema_version: 5,
+        schema_version: 6,
         update_policy: CorpusMemoryUpdatePolicyRecord {
             advisory_only: true,
             requires_validated_intent_ir: true,
@@ -212,6 +228,7 @@ pub fn run(args: LearnPriorsArgs) -> Result<()> {
         table_shape_priors: materialize_table_shape_priors(table_shape_priors),
         visual_motif_priors: materialize_visual_motif_priors(visual_motif_priors),
         negative_knowledge_priors: materialize_negative_knowledge_priors(negative_knowledge_priors),
+        extraction_profile_priors: materialize_extraction_profile_priors(&fingerprint_documents),
     };
 
     let pretty_json = serde_json::to_string_pretty(&corpus_memory)?;
@@ -252,6 +269,10 @@ pub fn run(args: LearnPriorsArgs) -> Result<()> {
     println!(
         "negative_knowledge_priors: {}",
         corpus_memory.negative_knowledge_priors.len()
+    );
+    println!(
+        "extraction_profile_priors: {}",
+        corpus_memory.extraction_profile_priors.len()
     );
 
     // PRIOR-DECAY: surface cross-document contradictions (same key, conflicting
@@ -723,7 +744,7 @@ fn harvest_table_shape_priors(
     );
 }
 
-fn load_source_ir_for_learning(intent_ir: &IntentIr) -> Option<SourceIr> {
+fn load_evidence_ir_for_learning(intent_ir: &IntentIr) -> Option<EvidenceIr> {
     let semantic_ir = SemanticIr::load_from_path(&intent_ir.semantic_ir_path).ok()?;
     if !matches!(semantic_ir.stage, IrStage::SemanticIr) {
         return None;
@@ -732,6 +753,11 @@ fn load_source_ir_for_learning(intent_ir: &IntentIr) -> Option<SourceIr> {
     if !matches!(evidence_ir.stage, IrStage::EvidenceIr) {
         return None;
     }
+    Some(evidence_ir)
+}
+
+fn load_source_ir_for_learning(intent_ir: &IntentIr) -> Option<SourceIr> {
+    let evidence_ir = load_evidence_ir_for_learning(intent_ir)?;
     let source_ir = SourceIr::load_from_path(&evidence_ir.source_ir_path).ok()?;
     if !matches!(source_ir.stage, IrStage::SourceIr) {
         return None;
@@ -1137,6 +1163,39 @@ fn materialize_negative_knowledge_priors(
             strongest_automation_confidence: accumulator.strongest_automation_confidence,
         })
         .collect()
+}
+
+/// Materialize the 8th prior family (`CORPUS-PATTERN-REUSE.3b.2`): cluster the accepted
+/// documents' derived fingerprints at the same default threshold the `corpus-cluster`
+/// command uses, then persist one advisory profile per MULTI-member cluster — a cluster
+/// of one carries no reusable cross-document pattern, so singletons are never harvested.
+/// Deterministic: `derive_extraction_profiles` is key-sorted and the per-profile fields
+/// (signature, fired extractors, members) are already deterministically ordered.
+fn materialize_extraction_profile_priors(
+    fingerprint_documents: &[(String, DocumentFingerprint)],
+) -> Vec<ExtractionProfilePriorRecord> {
+    derive_extraction_profiles(
+        fingerprint_documents,
+        DEFAULT_FINGERPRINT_SIMILARITY_THRESHOLD,
+    )
+    .into_iter()
+    .filter(|profile| profile.members.len() >= 2)
+    .enumerate()
+    .map(|(index, profile)| ExtractionProfilePriorRecord {
+        prior_id: format!("extraction_profile_prior_{:04}", index + 1),
+        cluster_signature: profile.cluster_signature.into_iter().collect(),
+        fired_extractors: profile
+            .fired_extractors
+            .into_iter()
+            .map(|support| ExtractionProfileExtractorSupportRecord {
+                extractor_name: support.extractor_name,
+                member_support: support.member_support,
+            })
+            .collect(),
+        support_count: profile.members.len(),
+        supporting_document_keys: profile.members,
+    })
+    .collect()
 }
 
 fn observation_matches_role(
@@ -2562,6 +2621,90 @@ mod tests {
             &mut semantic_priors,
         );
         assert!(semantic_priors.is_empty());
+    }
+
+    #[test]
+    fn learn_priors_materializes_extraction_profile_priors_from_multi_member_clusters() {
+        // Two register-shaped documents cluster; the constraint-shaped document stays a
+        // singleton and must NOT become a profile (a cluster of one carries no reusable
+        // cross-document pattern). Fired-extractor support is the UNION with honest
+        // per-member counts, mirroring `derive_extraction_profiles`.
+        let reg_a: DocumentFingerprint = [
+            "shape:registers:b2",
+            "shape:protocol_states:b0",
+            "fired:registers.field_table",
+            "fired:registers.prose",
+        ]
+        .iter()
+        .map(|t| t.to_string())
+        .collect();
+        let reg_b: DocumentFingerprint = [
+            "shape:registers:b2",
+            "shape:protocol_states:b0",
+            "fired:registers.field_table",
+        ]
+        .iter()
+        .map(|t| t.to_string())
+        .collect();
+        let proto: DocumentFingerprint = ["shape:signal_constraints:b2", "shape:registers:b0"]
+            .iter()
+            .map(|t| t.to_string())
+            .collect();
+        let documents = vec![
+            ("doc_reg_a".to_string(), reg_a),
+            ("doc_proto".to_string(), proto),
+            ("doc_reg_b".to_string(), reg_b),
+        ];
+
+        let records = materialize_extraction_profile_priors(&documents);
+
+        assert_eq!(records.len(), 1, "only the multi-member cluster persists");
+        let record = &records[0];
+        assert_eq!(record.prior_id, "extraction_profile_prior_0001");
+        assert_eq!(record.support_count, 2);
+        assert_eq!(
+            record.supporting_document_keys,
+            vec!["doc_reg_a", "doc_reg_b"]
+        );
+        // The signature is the shared intersection — the partially-fired prose extractor
+        // is absent from it but preserved in the union with member support 1.
+        assert!(
+            record
+                .cluster_signature
+                .contains(&"fired:registers.field_table".to_string())
+        );
+        assert!(
+            !record
+                .cluster_signature
+                .contains(&"fired:registers.prose".to_string())
+        );
+        assert_eq!(
+            record.fired_extractors,
+            vec![
+                ExtractionProfileExtractorSupportRecord {
+                    extractor_name: "registers.field_table".to_string(),
+                    member_support: 2,
+                },
+                ExtractionProfileExtractorSupportRecord {
+                    extractor_name: "registers.prose".to_string(),
+                    member_support: 1,
+                },
+            ]
+        );
+    }
+
+    #[test]
+    fn extraction_profile_priors_empty_when_no_cluster_has_two_members() {
+        let a: DocumentFingerprint = ["shape:registers:b2"]
+            .iter()
+            .map(|t| t.to_string())
+            .collect();
+        let b: DocumentFingerprint = ["shape:signal_constraints:b2"]
+            .iter()
+            .map(|t| t.to_string())
+            .collect();
+        let documents = vec![("doc_a".to_string(), a), ("doc_b".to_string(), b)];
+        assert!(materialize_extraction_profile_priors(&documents).is_empty());
     }
 
     #[test]

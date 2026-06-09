@@ -4,6 +4,28 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-06-09 CorpusMemory schema v6 — extraction-profile priors, the 8th family)
+
+`CORPUS-PATTERN-REUSE.3b.2` extends the cross-document learning plane with one additive schema surface;
+no extraction-path or subsystem-boundary change.
+
+- `ir/prior_memory.rs`: `CorpusMemory` schema **v5 → v6**; new `#[serde(default)]`
+  `extraction_profile_priors: Vec<ExtractionProfilePriorRecord>` (older v5 stores remain loadable).
+  The record is deliberately NOT `ProtocolFamily`-scoped — its `cluster_signature` (the sorted,
+  ADR-0006-safe derived feature tokens from `ir/corpus_cluster.rs`) is itself the scope, since
+  vendor/layout families cross protocol-name lines. Lookup seam:
+  `CorpusMemory::extraction_profile_priors_for(&BTreeSet<String>)` — strict signature-subset match,
+  empty signatures skipped. The future consume seam (`.3b.3`) is bound to the recorded activate-only
+  contract (a profile may only enable an opt-in extractor, never disable a default-on one).
+- `commands/learn_priors.rs`: harvest seam — accepted artifacts' EvidenceIR fingerprints
+  (`load_evidence_ir_for_learning`, refactored out of `load_source_ir_for_learning` with no behavior
+  change) → pure `materialize_extraction_profile_priors` (multi-member clusters only) at the new shared
+  `ir::corpus_cluster::DEFAULT_FINGERPRINT_SIMILARITY_THRESHOLD` (= 0.6, also the `corpus-cluster`
+  CLI `--threshold` default via `default_value_t` — one constant, two surfaces, no drift).
+- Mechanical surface: 8 `schema_version` literals bumped, 9 exhaustive `CorpusMemory` literals + the
+  kg-bench `PriorMemoryPatch` extended. `cargo test -p specforge --lib` = **1491** passing; kg-bench
+  151/151.
+
 ## Session update (2026-06-08 ramp-up currency correction — command + IR-module + size + test inventory)
 
 State verified directly from the working tree at HEAD `67aee533` (fully pushed; `origin/main..HEAD`

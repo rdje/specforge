@@ -6936,7 +6936,7 @@ mod tests {
         artifact_path: PathBuf,
     ) -> CorpusMemory {
         CorpusMemory {
-            schema_version: 5,
+            schema_version: 6,
             update_policy: CorpusMemoryUpdatePolicyRecord {
                 advisory_only: true,
                 requires_validated_intent_ir: true,
@@ -6961,6 +6961,7 @@ mod tests {
             table_shape_priors: Vec::new(),
             visual_motif_priors: Vec::new(),
             negative_knowledge_priors,
+            extraction_profile_priors: Vec::new(),
         }
     }
 
@@ -6979,7 +6980,7 @@ mod tests {
         }
 
         let corpus_memory = CorpusMemory {
-            schema_version: 5,
+            schema_version: 6,
             update_policy: CorpusMemoryUpdatePolicyRecord {
                 advisory_only: true,
                 requires_validated_intent_ir: true,
@@ -7013,6 +7014,7 @@ mod tests {
             table_shape_priors: Vec::new(),
             visual_motif_priors: Vec::new(),
             negative_knowledge_priors: Vec::new(),
+            extraction_profile_priors: Vec::new(),
         };
         fs::write(
             &prior_memory_path,
@@ -7886,7 +7888,7 @@ mod tests {
         )?;
 
         let corpus_memory = CorpusMemory {
-            schema_version: 5,
+            schema_version: 6,
             update_policy: CorpusMemoryUpdatePolicyRecord {
                 advisory_only: true,
                 requires_validated_intent_ir: true,
@@ -7919,6 +7921,7 @@ mod tests {
                 supporting_document_keys: vec!["seed_doc".to_string()],
                 strongest_automation_confidence: AutomationConfidence::Medium,
             }],
+            extraction_profile_priors: Vec::new(),
         };
         fs::write(
             &prior_memory_path,

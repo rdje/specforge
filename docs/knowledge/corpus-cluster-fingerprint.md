@@ -10,10 +10,15 @@ answers:
   - "how do I see which ingested PDFs form structural families (the corpus-cluster command)"
   - "what is a ClusterExtractionProfile / derive_extraction_profiles (the per-cluster extraction profile)"
   - "why are the corpus-cluster extraction profiles mostly empty / 'none recorded yet'"
+  - "what is the ExtractionProfilePriorRecord 8th prior family / extraction_profile_priors in CorpusMemory"
+  - "how does learn-priors harvest extraction-profile priors (multi-member clusters only, schema v6)"
+  - "how are extraction-profile priors looked up (extraction_profile_priors_for signature-subset match)"
+  - "why is the extraction-profile prior family not scoped by ProtocolFamily"
+  - "where is the shared 0.6 fingerprint clustering threshold defined (DEFAULT_FINGERPRINT_SIMILARITY_THRESHOLD)"
 date: 2026-06-09
-tags: [corpus-pattern-reuse, clustering, fingerprint, vendor, extraction-manifest, adr-0006, evidence-ir]
-evidence: docs/tasks/CORPUS-PATTERN-REUSE.md (.2/.3a/.3b.1); crates/specforge/src/ir/corpus_cluster.rs; crates/specforge/src/commands/corpus_cluster.rs
-reverify: cargo test -p specforge --lib corpus_cluster; cargo run -p specforge -- corpus-cluster
+tags: [corpus-pattern-reuse, clustering, fingerprint, vendor, extraction-manifest, adr-0006, evidence-ir, prior-memory, learn-priors]
+evidence: docs/tasks/CORPUS-PATTERN-REUSE.md (.2/.3a/.3b.1/.3b.2); crates/specforge/src/ir/corpus_cluster.rs; crates/specforge/src/commands/corpus_cluster.rs; crates/specforge/src/ir/prior_memory.rs; crates/specforge/src/commands/learn_priors.rs
+reverify: cargo test -p specforge --lib corpus_cluster; cargo test -p specforge --lib extraction_profile; cargo run -p specforge -- corpus-cluster
 ---
 
 `CORPUS-PATTERN-REUSE.2` builds the clustering capability for the owner's vendor-pattern-reuse vision
@@ -64,3 +69,20 @@ strictly recall-additive and fabrication-impossible. Sequencing: `.3b.2` persist
 (8th prior family + `learn-priors` harvest); `.3b.3` is the activate-only consume via `applies_to` + the first
 opt-in extractor + a measured recall uplift. `.4` = an offline LLM/VLM cluster pattern miner.
 `[[corpus-pattern-reuse]]`.
+
+**`.3b.2` persisted the profiles as the 8th prior family (`2026-06-09`).** `CorpusMemory` (schema 5→6,
+`#[serde(default)]` so v5 stores stay loadable) gained `extraction_profile_priors:
+Vec<ExtractionProfilePriorRecord>` — per record: `cluster_signature` (sorted derived feature tokens; the
+lookup key), `fired_extractors` (the persisted twin `ExtractionProfileExtractorSupportRecord` of the union
+with per-member support), `support_count` (always ≥ 2; **singleton clusters are never harvested** — a cluster
+of one has no cross-document pattern), `supporting_document_keys`. Deliberately **NOT `ProtocolFamily`-scoped**:
+the ADR-0006-safe structural signature IS the scope (vendor/layout families cross protocol-name lines).
+Harvested in `learn-priors` from the accepted artifacts' EvidenceIR fingerprints (`load_evidence_ir_for_learning`)
+via pure `materialize_extraction_profile_priors`, clustered at the shared
+`corpus_cluster::DEFAULT_FINGERPRINT_SIMILARITY_THRESHOLD = 0.6` — the same const that backs the
+`corpus-cluster --threshold` default (`default_value_t`), so the families a user SEES are the families the
+store LEARNS. Lookup: `CorpusMemory::extraction_profile_priors_for(&fingerprint)` = strict signature-subset
+match (every signature token present in the document's own fingerprint; empty signatures skipped — they would
+match everything). Live (10 persisted IntentIR artifacts): 2 profiles persisted (a support-5 bus-protocol
+family containing both TileLink versions + I2C + HBM2 + GFB, and a support-2 CXS+Wishbone family), no vendor
+list, `fired_extractors` honestly empty until the re-ingest sweep.

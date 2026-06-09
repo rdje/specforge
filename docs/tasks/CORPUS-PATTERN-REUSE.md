@@ -142,7 +142,7 @@ gauges (did the profile reduce misses on held-out docs?).
   current document always wins; deviation is detected, not suppressed"); the safe contract is the inverse
   (a profile may only ACTIVATE a self-disabled opt-in extractor, never deactivate a default-on one), and no
   opt-in extractor exists yet. So the LEARN side (schema + harvest, zero extraction-path risk) lands first and
-  the CONSUME side (the delicate behavioral part) follows. · Children: `.3b.1`, `.3b.2`.
+  the CONSUME side (the delicate behavioral part) follows. · Children: `.3b.1`, `.3b.2`, `.3b.3`.
 - ID: `CORPUS-PATTERN-REUSE.3b.1` · Status: `done` (`2026-06-09`) · Goal: the typed advisory
   `ClusterExtractionProfile` + a pure `derive_extraction_profiles` derivation in `ir/corpus_cluster.rs`,
   **surfaced in the `corpus-cluster` command**. A profile carries the cluster's shared structural signature
@@ -162,11 +162,32 @@ gauges (did the profile reduce misses on held-out docs?).
   fabricated. 5 hermetic tests (union-with-support vs intersection, sparse-manifest, determinism, + 2 render).
   `run_ci.sh` green (lib **1486**) + kg-bench 151/151 + KM green. Verification: see Verification Log.
   Commit: see Commit Log.
-- ID: `CORPUS-PATTERN-REUSE.3b.2` · Status: `pending` (gated) · Goal: PERSIST profiles into `CorpusMemory` —
+- ID: `CORPUS-PATTERN-REUSE.3b.2` · Status: `done` (`2026-06-09`) · Goal: PERSIST profiles into `CorpusMemory` —
   the typed `ExtractionProfilePriorRecord` 8th prior family (`#[serde(default)]`, schema_version bump) +
   `learn-priors` harvest (cluster the accepted input artifacts, emit one advisory profile per multi-member
   cluster) + a `_for` lookup accessor. The broad-but-mechanical schema-integration slice (18 `CorpusMemory`
   literal sites), kept separate from `.3b.1`'s new logic. Additive, no extraction-path change.
+  **DONE (`2026-06-09`).** `ir/prior_memory.rs`: `ExtractionProfilePriorRecord` (cluster signature = the
+  vendor-name-free lookup key, deliberately NOT `ProtocolFamily`-scoped — the signature IS the scope; members;
+  `fired_extractors` union with per-member support via the persisted twin
+  `ExtractionProfileExtractorSupportRecord`; `support_count` always ≥ 2) + `#[serde(default)]`
+  `CorpusMemory.extraction_profile_priors` + `extraction_profile_priors_for(fingerprint)` strict
+  signature-subset lookup (empty signatures skipped — they would match everything). Schema bumped 5→6 at all
+  8 literal `schema_version` sites; the 9 exhaustive `CorpusMemory {` literals gained the field (the 7
+  `..make_test_corpus()` spread sites need nothing — `#[serde(default)]` keeps old stores loadable);
+  kg-bench `PriorMemoryPatch` gained a symmetric `extraction_profile_priors` patch field for future `.3b.3`
+  fixtures. `learn-priors`: accepted artifacts' EvidenceIR fingerprints collected via new
+  `load_evidence_ir_for_learning` (refactored out of `load_source_ir_for_learning`, no behavior change),
+  materialized by pure `materialize_extraction_profile_priors` (multi-member clusters only — a cluster of one
+  carries no cross-document pattern) at the NEW shared
+  `corpus_cluster::DEFAULT_FINGERPRINT_SIMILARITY_THRESHOLD = 0.6` (also wired into the `corpus-cluster`
+  CLI default via `default_value_t`, single source of truth — the families the user SEES are the families
+  the store LEARNS). Live: `learn-priors` over the 10 persisted IntentIR artifacts → 10 accepted,
+  `extraction_profile_priors: 2` (TileLink 1.7.1+1.8.0+I2C+HBM2+GFB support-5 family; CXS+Wishbone
+  support-2 family), `fired_extractors` honestly empty (evidence predates the `.8` manifest — the recorded
+  sparsity caveat), schema v6 persisted. 5 new hermetic tests (subset/partial/empty-signature lookup;
+  union-with-support multi-member materialization; singleton-only → empty). Verification: see Verification
+  Log. Commit: see Commit Log.
 - ID: `CORPUS-PATTERN-REUSE.3b.3` · Status: `pending` (gated) · Goal: the CONSUME side — plumb the persisted
   `ExtractionProfile` into `ExtractionContext`, implement the **activate-only** `applies_to` contract
   (a profile may only enable a self-disabled opt-in extractor for a doc whose fingerprint matches the cluster;
@@ -180,13 +201,14 @@ gauges (did the profile reduce misses on held-out docs?).
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `CORPUS-PATTERN-REUSE.3b.2` | `pending` | Persist profiles into `CorpusMemory` (8th prior family + `learn-priors` harvest) — the broad-but-mechanical schema slice. Next, after `.3b.1` (the typed profile + derivation) DONE. |
-| 2 | `CORPUS-PATTERN-REUSE.3b.3` | `pending` (gated) | The CONSUME side via the **activate-only** `applies_to` contract (Decisions `2026-06-09`); behavioral → needs a first opt-in extractor to activate. Wire-based 100% specs must not regress. |
-| 3 | `CORPUS-PATTERN-REUSE.4` | `pending` (gated) | Offline LLM/VLM cluster pattern miner with held-out precision validation. |
+| 1 | `CORPUS-PATTERN-REUSE.3b.3` | `pending` (gated) | The CONSUME side via the **activate-only** `applies_to` contract (Decisions `2026-06-09`); behavioral → needs a first opt-in extractor to activate. Wire-based 100% specs must not regress. |
+| 2 | `CORPUS-PATTERN-REUSE.4` | `pending` (gated) | Offline LLM/VLM cluster pattern miner with held-out precision validation. |
 
-`.3a` DONE — the `corpus-cluster` command surfaces the proven `.2` engine (read-only). `.3b` owner-go'd and
-split into `.3b.1` (learn/schema, in progress) + `.3b.2` (consume, gated on the activate-only contract + a
-first opt-in extractor). `.4` (offline miner) stays gated.
+`.3a` DONE (the `corpus-cluster` command), `.3b.1` DONE (typed profile + derivation + surfacing), `.3b.2`
+DONE (profiles persisted into `CorpusMemory` as the 8th prior family + `learn-priors` harvest + subset-match
+lookup). The learn side of `.3b` is complete; `.3b.3` (activate-only consume) needs a first opt-in extractor
+and stays gated, as does `.4` (offline miner). The corpus-wide re-ingest sweep remains the data lever that
+makes profiles' `fired_extractors` non-sparse.
 
 ## Decisions
 
@@ -220,13 +242,17 @@ first (no behavior change); `.3b`/`.4` (advisory consumption + offline miner) st
 | `2026-06-09` | `CORPUS-PATTERN-REUSE.3b.1` | `scripts/run_ci.sh` (fmt-check + clippy `-D warnings` + lib tests + rustdoc + mdBook) | green — lib **1486** passed / 0 failed |
 | `2026-06-09` | `CORPUS-PATTERN-REUSE.3b.1` | `cargo run -p specforge -- kg-bench` + KM check | 151/151 pass; KM green |
 | `2026-06-09` | `CORPUS-PATTERN-REUSE.3b.1` | live `corpus-cluster` profile surfacing over persisted corpus | union-with-support works (`registers.register_map (1), semantic_hints.prose (1)`); 3/14 families non-empty today (manifest sparse) — honestly reported `none recorded yet` elsewhere |
+| `2026-06-09` | `CORPUS-PATTERN-REUSE.3b.2` | `scripts/run_ci.sh` (fmt-check + clippy `-D warnings` + lib tests + rustdoc + mdBook) | green — lib **1491** passed / 0 failed |
+| `2026-06-09` | `CORPUS-PATTERN-REUSE.3b.2` | `cargo run -p specforge -- kg-bench` | 151/151 pass |
+| `2026-06-09` | `CORPUS-PATTERN-REUSE.3b.2` | live `learn-priors` over the 10 persisted IntentIR artifacts | 10 accepted; `extraction_profile_priors: 2` (support-5 + support-2 families, no vendor list); schema v6 persisted; `fired_extractors` honestly empty (pre-manifest evidence) |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `CORPUS-PATTERN-REUSE.3a` | `CORPUS-PATTERN-REUSE.3a — corpus-cluster command` | New read-only command surfacing the `.2` clustering engine; book + README + KM in sync |
-| `CORPUS-PATTERN-REUSE.3b.1` | `CORPUS-PATTERN-REUSE.3b.1 — per-cluster extraction profile` (this slice) | Typed `ClusterExtractionProfile` + `derive_extraction_profiles` + command surfacing; activate-only decision recorded; book + README + KM in sync |
+| `CORPUS-PATTERN-REUSE.3b.1` | `CORPUS-PATTERN-REUSE.3b.1 — per-cluster extraction profile` | Typed `ClusterExtractionProfile` + `derive_extraction_profiles` + command surfacing; activate-only decision recorded; book + README + KM in sync |
+| `CORPUS-PATTERN-REUSE.3b.2` | `CORPUS-PATTERN-REUSE.3b.2 — persist extraction profiles into CorpusMemory` (this slice) | 8th prior family (schema v6) + `learn-priors` harvest + signature-subset lookup; shared `0.6` threshold const; book + README + KM in sync |
 
 ## Changelog
 
@@ -240,3 +266,10 @@ first (no behavior change); `.3b`/`.4` (advisory consumption + offline miner) st
   **activate-only** honesty contract in Decisions, and implemented + closed `.3b.1` (`ClusterExtractionProfile`
   + `derive_extraction_profiles` + per-family `profile (fired extractors…)` line; lib 1486; honestly sparse
   today). Frontier advanced to `.3b.2`.
+- `2026-06-09`: Implemented + closed `.3b.2` (the LEARN-side persistence): `ExtractionProfilePriorRecord`
+  8th prior family in `CorpusMemory` (schema 5→6, `#[serde(default)]` so existing stores stay loadable),
+  `learn-priors` harvest via the accepted artifacts' EvidenceIR fingerprints (multi-member clusters only),
+  strict signature-subset `extraction_profile_priors_for` lookup, and the shared
+  `DEFAULT_FINGERPRINT_SIMILARITY_THRESHOLD` const unifying `corpus-cluster` and the harvest. Live: 10
+  IntentIR artifacts → 2 persisted profiles, no vendor list, sparsity reported honestly. `run_ci.sh` green
+  (lib 1491), kg-bench 151/151. Frontier advanced to `.3b.3` (gated on a first opt-in extractor) / `.4`.

@@ -76,6 +76,8 @@ pub struct CorpusMemory {
     pub visual_motif_priors: Vec<VisualMotifPriorRecord>,
     #[serde(default)]
     pub negative_knowledge_priors: Vec<NegativeKnowledgePriorRecord>,
+    #[serde(default)]
+    pub extraction_profile_priors: Vec<ExtractionProfilePriorRecord>,
 }
 
 impl CorpusMemory {
@@ -405,6 +407,30 @@ impl CorpusMemory {
         }
 
         None
+    }
+
+    /// Advisory extraction-profile lookup (`CORPUS-PATTERN-REUSE.3b.2`): the learned
+    /// profiles whose cluster signature the given document fingerprint fully exhibits
+    /// (signature ⊆ fingerprint). The signature is the ADR-0006-safe derived structural
+    /// key (see [`crate::ir::corpus_cluster`]) — never a vendor or protocol name — so
+    /// this family is deliberately NOT scoped by [`ProtocolFamily`]. Profiles with an
+    /// empty signature would match every document and are skipped as meaningless.
+    /// Consumption stays bounded by the activate-only contract (`.3b.3`): a matched
+    /// profile may only activate an opt-in extractor, never suppress a default-on one.
+    pub fn extraction_profile_priors_for(
+        &self,
+        document_fingerprint: &BTreeSet<String>,
+    ) -> Vec<&ExtractionProfilePriorRecord> {
+        self.extraction_profile_priors
+            .iter()
+            .filter(|prior| !prior.cluster_signature.is_empty())
+            .filter(|prior| {
+                prior
+                    .cluster_signature
+                    .iter()
+                    .all(|feature| document_fingerprint.contains(feature))
+            })
+            .collect()
     }
 
     fn resolve_actor_taxonomy_role<F>(
@@ -1189,6 +1215,42 @@ pub struct NegativeKnowledgePriorRecord {
     pub strongest_automation_confidence: AutomationConfidence,
 }
 
+/// One extractor strategy's support within a learned extraction-profile prior: how many
+/// of the originating cluster's member documents that strategy fired on (kept ≥ 1 record).
+/// The persisted twin of [`crate::ir::corpus_cluster::ProfileExtractorSupport`].
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ExtractionProfileExtractorSupportRecord {
+    /// The extractor strategy name as recorded by the run manifest, e.g. `registers.field_table`.
+    pub extractor_name: String,
+    /// How many of the cluster's member documents this extractor fired on.
+    pub member_support: usize,
+}
+
+/// An advisory per-cluster extraction profile (`CORPUS-PATTERN-REUSE.3b.2`) — the 8th
+/// prior family. Harvested (never authored) by `learn-priors`: the accepted artifacts'
+/// derived fingerprints are clustered ([`crate::ir::corpus_cluster`]) and each
+/// multi-member cluster contributes one profile recording "what tends to work for
+/// documents shaped like this". Keyed by the cluster's shared structural signature —
+/// ADR-0006-safe derived feature tokens, never a vendor name — and therefore not scoped
+/// by [`ProtocolFamily`] (the signature itself is the scope). Advisory-only: the consume
+/// side (`.3b.3`) may only ACTIVATE an opt-in extractor on a matching document, never
+/// deactivate a default-on one, so a profile adjusts where extraction looks, never what
+/// it concludes.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ExtractionProfilePriorRecord {
+    pub prior_id: String,
+    /// The cluster's shared structural signature (sorted derived feature tokens) — the lookup key.
+    pub cluster_signature: Vec<String>,
+    /// Extractor strategies that fired on ≥ 1 member, with per-member support, sorted by name.
+    /// Honestly empty while the corpus' `extraction_manifest` coverage is still sparse.
+    pub fired_extractors: Vec<ExtractionProfileExtractorSupportRecord>,
+    /// Number of member documents in the originating cluster (always ≥ 2 — singleton
+    /// clusters carry no reusable cross-document pattern and are never harvested).
+    pub support_count: usize,
+    #[serde(default)]
+    pub supporting_document_keys: Vec<String>,
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1652,7 +1714,80 @@ mod tests {
                 supporting_document_keys: vec![],
                 strongest_automation_confidence: AutomationConfidence::High,
             }],
+            extraction_profile_priors: vec![ExtractionProfilePriorRecord {
+                prior_id: "ep1".into(),
+                cluster_signature: vec![
+                    "shape:protocol_states:b0".into(),
+                    "shape:registers:b2".into(),
+                ],
+                fired_extractors: vec![ExtractionProfileExtractorSupportRecord {
+                    extractor_name: "registers.field_table".into(),
+                    member_support: 2,
+                }],
+                support_count: 2,
+                supporting_document_keys: vec!["doc_a".into(), "doc_b".into()],
+            }],
         }
+    }
+
+    // extraction_profile_priors_for unit tests (CORPUS-PATTERN-REUSE.3b.2)
+
+    #[test]
+    fn extraction_profile_priors_for_matches_when_signature_is_subset() {
+        let corpus = make_test_corpus();
+        // The document exhibits both signature features (plus extras) → the profile matches.
+        let fingerprint: BTreeSet<String> = [
+            "shape:protocol_states:b0",
+            "shape:registers:b2",
+            "shape:actors:b1",
+            "fired:registers.field_table",
+        ]
+        .iter()
+        .map(|t| t.to_string())
+        .collect();
+        let matched = corpus.extraction_profile_priors_for(&fingerprint);
+        assert_eq!(matched.len(), 1);
+        assert_eq!(matched[0].prior_id, "ep1");
+    }
+
+    #[test]
+    fn extraction_profile_priors_for_rejects_partial_signature_overlap() {
+        let corpus = make_test_corpus();
+        // Only one of the two signature features present → signature ⊄ fingerprint → no match.
+        let fingerprint: BTreeSet<String> = ["shape:registers:b2", "shape:actors:b1"]
+            .iter()
+            .map(|t| t.to_string())
+            .collect();
+        assert!(
+            corpus
+                .extraction_profile_priors_for(&fingerprint)
+                .is_empty()
+        );
+    }
+
+    #[test]
+    fn extraction_profile_priors_for_skips_empty_signature_profiles() {
+        // An empty signature would match every document; it must never be returned.
+        let corpus = CorpusMemory {
+            extraction_profile_priors: vec![ExtractionProfilePriorRecord {
+                prior_id: "ep_empty".into(),
+                cluster_signature: Vec::new(),
+                fired_extractors: Vec::new(),
+                support_count: 2,
+                supporting_document_keys: vec!["doc_a".into(), "doc_b".into()],
+            }],
+            ..make_test_corpus()
+        };
+        let fingerprint: BTreeSet<String> = ["shape:registers:b2"]
+            .iter()
+            .map(|t| t.to_string())
+            .collect();
+        assert!(
+            !corpus
+                .extraction_profile_priors_for(&fingerprint)
+                .iter()
+                .any(|prior| prior.prior_id == "ep_empty")
+        );
     }
 
     // PRIOR-DECAY: contested-prior detection (revision-on-contradiction)

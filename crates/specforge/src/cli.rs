@@ -418,7 +418,10 @@ pub struct CorpusClusterArgs {
     #[arg(long, default_value = "generated/evidence_ir")]
     pub evidence_root: std::path::PathBuf,
     /// Jaccard fingerprint-similarity threshold for grouping documents into one family (0.0–1.0)
-    #[arg(long, default_value = "0.6")]
+    #[arg(
+        long,
+        default_value_t = crate::ir::corpus_cluster::DEFAULT_FINGERPRINT_SIMILARITY_THRESHOLD
+    )]
     pub threshold: f64,
 }
 

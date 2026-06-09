@@ -1,4 +1,35 @@
 # DEVELOPMENT_NOTES
+## `CORPUS-PATTERN-REUSE.3b.2` (`2026-06-09`) — persist extraction profiles into `CorpusMemory` (8th prior family)
+- Scope: the broad-but-mechanical schema-integration slice deliberately split off `.3b.1`. Additive only —
+  no extraction-path change, no behavior change outside `learn-priors` output.
+- Schema (`ir/prior_memory.rs`): `ExtractionProfilePriorRecord { prior_id, cluster_signature: Vec<String>,
+  fired_extractors: Vec<ExtractionProfileExtractorSupportRecord>, support_count, supporting_document_keys }`
+  + `#[serde(default)] CorpusMemory.extraction_profile_priors`. Two deliberate shape decisions: (1) the family
+  is **not `ProtocolFamily`-scoped** — every other family keys by protocol family, but the cluster signature is
+  itself the ADR-0006-safe scope and vendor/layout families cross protocol-name lines; (2) `support_count` is
+  always ≥ 2 because **singleton clusters are never harvested** (a cluster of one has no cross-document
+  pattern to reuse — persisting it would just memorize one document's shape).
+- Lookup: `extraction_profile_priors_for(&BTreeSet<String>)` = strict signature-subset match (`all()` over the
+  signature tokens), skipping empty signatures (they would match every document). This is the contract `.3b.3`
+  consumes under the recorded activate-only decision.
+- Harvest (`commands/learn_priors.rs`): per accepted artifact, the EvidenceIR is reloaded via the new
+  `load_evidence_ir_for_learning` (refactored out of `load_source_ir_for_learning` — same chain, no behavior
+  change) and fingerprinted with the `.2` `document_fingerprint`; after the loop, pure
+  `materialize_extraction_profile_priors` clusters at `DEFAULT_FINGERPRINT_SIMILARITY_THRESHOLD` (new shared
+  const in `ir/corpus_cluster.rs`, now also the `corpus-cluster --threshold` clap `default_value_t` — one
+  source of truth so the user-visible families and the learned families never drift) and keeps multi-member
+  clusters. A document whose evidence chain cannot be reloaded contributes no fingerprint — honest absence,
+  same as the table-shape/visual-motif harvests.
+- Mechanical sweep: `schema_version` 5→6 at all 8 sites; `extraction_profile_priors` added to the 9 exhaustive
+  `CorpusMemory` literals (7 `..make_test_corpus()` spread sites needed nothing); kg-bench `PriorMemoryPatch`
+  gained the symmetric `#[serde(default)]` patch field so `.3b.3` fixtures can stage profiles.
+- Live: `learn-priors` over the 10 persisted IntentIR artifacts → `extraction_profile_priors: 2` (support-5:
+  TileLink 1.7.1 + 1.8.0 + I2C + HBM2 + GFB; support-2: CXS + Wishbone), schema v6 written, `fired_extractors`
+  honestly empty (pre-manifest evidence; re-ingest sweep = the data lever).
+- Verification: 5 new hermetic tests (3 lookup: subset match / partial-overlap reject / empty-signature skip;
+  2 materialization: multi-member union-with-support + singleton-only → empty). `run_ci.sh` green (lib 1491,
+  fmt + clippy `-D warnings` + rustdoc + mdBook); kg-bench 151/151; KM check green.
+
 ## `CORPUS-PATTERN-REUSE.3b.1` (`2026-06-09`) — per-cluster advisory extraction profile + the activate-only finding
 - Owner go on `.3b` (reuse a cluster's patterns on look-alike PDFs). Studying `ir/extractor.rs` surfaced a
   load-bearing honesty subtlety: `Extractor::applies_to` defaults `true` for every real extractor, so a profile

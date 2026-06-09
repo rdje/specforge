@@ -30,6 +30,12 @@ use std::collections::{BTreeMap, BTreeSet};
 /// documents are similar when their token sets overlap (Jaccard). No vendor/chip names — only shape.
 pub type DocumentFingerprint = BTreeSet<String>;
 
+/// Default Jaccard similarity threshold for attaching a document to a fingerprint cluster — the single
+/// source of truth shared by the `corpus-cluster` command (`--threshold` default) and the `learn-priors`
+/// extraction-profile harvest (`CORPUS-PATTERN-REUSE.3b.2`), so the families a user SEES via `corpus-cluster`
+/// are the same families the prior store learns from.
+pub const DEFAULT_FINGERPRINT_SIMILARITY_THRESHOLD: f64 = 0.6;
+
 /// Coarse, order-of-magnitude bucket for a surface's record count, so "44 registers" and "60 registers"
 /// fingerprint alike (both "lots") while "0" and "3" stay distinct. Buckets, not raw counts, keep the
 /// fingerprint robust to incidental count differences between same-family documents.

@@ -1,3 +1,27 @@
+### `CORPUS-PATTERN-REUSE.3b.2` — persist extraction profiles into `CorpusMemory` (the 8th prior family)
+The learn side of `.3b` completes: the per-cluster advisory extraction profiles derived in `.3b.1` are now
+PERSISTED in the typed prior store. `CorpusMemory` (schema 5→6; `#[serde(default)]` keeps existing v5 stores
+loadable) gains `extraction_profile_priors: Vec<ExtractionProfilePriorRecord>` — per record the cluster's
+vendor-name-free shared structural signature (the lookup key; deliberately NOT `ProtocolFamily`-scoped, ADR
+0006: the signature IS the scope), the member document keys, and the union of fired extractor strategies with
+per-member support (`ExtractionProfileExtractorSupportRecord`). `learn-priors` harvests the family by
+clustering the accepted artifacts' EvidenceIR fingerprints at the NEW shared
+`corpus_cluster::DEFAULT_FINGERPRINT_SIMILARITY_THRESHOLD = 0.6` (also now backing the `corpus-cluster
+--threshold` default via `default_value_t`, single source of truth — the families a user SEES are the families
+the store LEARNS) and persists **one profile per MULTI-member cluster only** — a cluster of one carries no
+cross-document pattern, so singletons are never harvested. Lookup is the strict signature-subset accessor
+`extraction_profile_priors_for` (every signature token must appear in the document's own fingerprint; empty
+signatures are skipped as match-everything noise).
+
+Live over the 10 persisted `IntentIR` artifacts: 10 accepted, **2 profiles persisted** — a support-5
+bus-protocol family (both TileLink versions + I2C + HBM2 + Generic Flash Bus, grouped purely on shared shape)
+and a support-2 CXS+Wishbone family — with `fired_extractors` honestly empty because those evidence artifacts
+predate the `EXTRACTOR-ARCHITECTURE.8` manifest (the recorded sparsity caveat; the corpus re-ingest sweep is
+the data lever). Consumption remains gated `.3b.3` under the recorded **activate-only** contract. Additive
+schema slice: 8 `schema_version` sites bumped, 9 exhaustive `CorpusMemory` literals + the kg-bench
+`PriorMemoryPatch` extended, zero extraction-path change. 5 new hermetic tests; `run_ci.sh` green (lib
+**1491**); kg-bench 151/151; KM green. Book, README, task tree, and the KM card updated.
+
 ### `CORPUS-PATTERN-REUSE.3b.1` — the per-cluster advisory extraction profile (owner go on `.3b`)
 The owner gave the go on `.3b` (reuse a cluster's extraction patterns on look-alike PDFs). Studying the
 extractor framework surfaced a critical honesty subtlety that reshaped the leaf: every real

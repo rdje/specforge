@@ -201,11 +201,38 @@ What it learns today:
 - table-shape priors
 - visual-motif priors
 - negative-knowledge priors
+- extraction-profile priors
 
 The safety rule is critical:
 
 - priors widen interpretation of the current document
 - priors do not directly author canonical truth
+
+Extraction-profile priors are the newest family: `learn-priors` clusters the accepted
+documents' derived structural fingerprints (the same vendor-name-free fingerprint
+`corpus-cluster` shows you, at the same default `0.6` threshold, so the families you
+*see* are the families the store *learns*) and persists one advisory profile per
+**multi-document** cluster — its shared structural signature, its member documents, and
+which extractor strategies fired across those members with per-member support. A
+single-document cluster is never persisted, because a cluster of one carries no
+*cross-document* pattern to reuse. For example, a run over ten validated `IntentIR`
+artifacts currently yields profiles like:
+
+```text
+extraction_profile_priors: 2
+  support 5: tilelink_1_7_1, tilelink_1_8_0, i2c_bus, hbm2_dram, generic_flash_bus
+  signature: shape:conditional_rules:b2, shape:protocol_states:b0, shape:relations:b2, ...
+```
+
+— the two TileLink versions fall into the same learned profile as other bus-protocol
+specs purely on shared shape, with no vendor list anywhere. The `fired_extractors`
+side of a profile is honestly empty for documents whose evidence predates the
+extraction run manifest; it fills in as the corpus is re-ingested. Looking a profile up
+later uses a strict subset rule (every signature feature must be present in the new
+document's own fingerprint), and the only consumption these profiles will ever be
+allowed is **activate-only**: a matching profile may switch on an opt-in extractor for
+a look, never switch off a default-on one — so a profile can add recall but can never
+suppress or fabricate a fact.
 
 Visual-motif priors remember recurring visual patterns, while negative-knowledge priors remember conflict and residual archetypes that should make future extraction more careful.
 Visual-motif priors now have a first bounded consumer: `EvidenceIR` may add a prior-memory classification observation for a current unknown visual asset when its local caption matches a unique learned motif.
@@ -282,8 +309,11 @@ Two design choices keep it trustworthy and generic:
   vendors it has never seen.
 - **Read-only and additive.** The command never rebuilds, mutates, or scores any
   IR, and it changes no extraction behavior. It is a *window* into the corpus
-  structure, not an action on it. Reusing a family's pattern to actually steer
-  extraction is a separate, deliberately gated step (`CORPUS-PATTERN-REUSE.3b`).
+  structure, not an action on it. The learn side of reuse now exists —
+  `learn-priors` persists each multi-document family as an advisory
+  extraction-profile prior (see above) — but actually steering extraction with a
+  profile remains a separate, deliberately gated, activate-only step
+  (`CORPUS-PATTERN-REUSE.3b.3`).
 
 The fingerprint is fully deterministic, so the same corpus always produces the
 same families — making this a stable thing to inspect and to build the reuse

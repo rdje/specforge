@@ -16,7 +16,7 @@ use crate::ir::evidence::{
 use crate::ir::intent::{IntentAssumption, IntentIr};
 use crate::ir::prior_memory::{
     ActorTaxonomyPriorRecord, CorpusMemory, CorpusMemoryUpdatePolicyRecord,
-    NegativeKnowledgePriorRecord, PriorSourceArtifactRecord,
+    ExtractionProfilePriorRecord, NegativeKnowledgePriorRecord, PriorSourceArtifactRecord,
     SemanticModalityReliabilityPriorRecord, SemanticPhrasePriorRecord, TableShapePriorRecord,
     TemporalPhrasePriorRecord, VisualMotifPriorRecord,
 };
@@ -100,6 +100,8 @@ struct PriorMemoryPatch {
     visual_motif_priors: Vec<VisualMotifPriorRecord>,
     #[serde(default)]
     negative_knowledge_priors: Vec<NegativeKnowledgePriorRecord>,
+    #[serde(default)]
+    extraction_profile_priors: Vec<ExtractionProfilePriorRecord>,
 }
 
 #[derive(Debug, Default, Deserialize)]
@@ -2434,7 +2436,7 @@ fn write_fixture_prior_memory(generated_root: &Path, patch: &PriorMemoryPatch) -
     }
 
     let corpus_memory = CorpusMemory {
-        schema_version: 5,
+        schema_version: 6,
         update_policy: CorpusMemoryUpdatePolicyRecord {
             advisory_only: true,
             requires_validated_intent_ir: true,
@@ -2459,6 +2461,7 @@ fn write_fixture_prior_memory(generated_root: &Path, patch: &PriorMemoryPatch) -
         table_shape_priors: patch.table_shape_priors.clone(),
         visual_motif_priors: patch.visual_motif_priors.clone(),
         negative_knowledge_priors: patch.negative_knowledge_priors.clone(),
+        extraction_profile_priors: patch.extraction_profile_priors.clone(),
     };
     fs::write(
         &prior_memory_path,
