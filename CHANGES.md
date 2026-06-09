@@ -1,3 +1,24 @@
+### `EXTRACTOR-ARCHITECTURE.5` — consolidate the signal-declaration seed; the two-phase model (byte-identical)
+Investigating "migrate the signals cluster" produced a key architectural finding: the signal-declaration
+cluster is **not** a `run_surface` merge-surface. It produces seed `ExtractedStatement`s (not typed records),
+mints synthetic ids via the **build-wide** `statement_counter`, emits a provenance side-output, has a
+cross-strategy fallback gate (`prose` only if `table_signal_count < 8`), and concatenates with no key-dedup —
+the **statement-ASSEMBLY phase**, distinct from the typed **surface-extraction phase** the framework serves.
+Forcing it through the dedup driver would be a hack (lose the side-output + gate, abuse the key).
+
+The honest consolidation: extract the seed orchestration out of the ~500-line `build()` into one cohesive
+`synthesize_signal_declaration_seed(...)` (table strategy + sparse-catalog prose fallback → seed statements +
+provenance), and document the **two-phase / two-category** model in `ir/extractor.rs` so the remaining
+migrations target the genuine merge-surfaces (registers, actors, polarity). Pure extraction — identical
+logic/order/counter threading.
+
+**Verification:** the full `evidence_ir.json` is BYTE-IDENTICAL on the 4 deterministic intact-bundle docs
+(RISC-V Debug table-signal path, I2C prose path, SWP, CAN); kg-bench 151/151; full `run_ci.sh` green (lib 1454).
+**Discovery:** SWD/ADI's evidence differed — root-caused to **pre-existing content-level non-determinism**
+(two runs of the *unchanged* `.4` code produce set-different `actor_signal_relations`/`extracted_statements`),
+NOT a `.5` regression. Spun a dedicated `EVIDENCE-DETERMINISM` tree (it undermines reproducibility + eval
+stability). `.6`+ migrate registers/actors/polarity.
+
 ### `EXTRACTOR-ARCHITECTURE.4` — migrate the semantic-hints cluster onto the framework (byte-identical)
 The second consolidation, and the one closest to the human-emulation north star: the three **meaning-inference**
 strategies — signal-description tables, prose / alias-grounded prose, and visual captions / VLM

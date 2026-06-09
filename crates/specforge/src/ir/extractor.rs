@@ -25,6 +25,22 @@
 //!
 //! This `.2` slice lands the frame and its tests; it migrates ZERO extractors (no behavior change). `.3`
 //! migrates the FSM cluster onto it, proving byte-identical output.
+//!
+//! ## Two phases, two categories (`.5`)
+//!
+//! `EvidenceIr::build()` has two distinct phases, and this framework serves only the second:
+//! 1. **Statement-assembly phase** — produce `ExtractedStatement`s (the main prose loop, the
+//!    signal-declaration seed, the system-contract synthesizer), minting synthetic ids via a build-wide
+//!    counter and feeding the convergence loop. These are *stateful, ordered, concatenated, sometimes with
+//!    side-outputs and cross-strategy gates* — they are NOT key-merged typed surfaces, so they keep their own
+//!    cohesive orchestrators (e.g. `synthesize_signal_declaration_seed`), not [`run_surface`].
+//! 2. **Surface-extraction phase** — derive typed surface records (FSM states, semantic hints, registers,
+//!    actors, …) from the assembled statements, each surface a set of independent strategies merged by a key.
+//!    THIS is what [`Extractor`] + [`run_surface`] unify.
+//!
+//! Forcing an assembly-phase seed through the merge driver would lose its side-output + fallback gate and
+//! abuse the dedup key — a hack. Keeping the two categories in two clean homes IS the coherent whole; the
+//! remaining surface clusters to migrate (registers, actors, polarity) are the genuine [`run_surface`] fits.
 
 use crate::ir::evidence::{ExtractedStatement, ExtractorTier};
 use std::collections::BTreeSet;

@@ -766,27 +766,18 @@ impl EvidenceIr {
         // This provides the first seed set for the convergent loop:
         //   1. direct signal declarations from signal-description tables
         //   2. direct enum facts from tables already classified as encodings
-        let mut table_signal_declaration_provenance = Vec::new();
-        let mut synthesized = synthesize_declarations_from_tables(
+        // EXTRACTOR-ARCHITECTURE.5 — the signal-declaration SEED (table-declaration strategy + a
+        // sparse-catalog prose fallback) is now one cohesive assembly-phase function instead of inline
+        // orchestration in this ~500-line builder. It produces seed statements for the convergence loop plus
+        // the table-declaration provenance side-output. This is the statement-ASSEMBLY phase, not the typed
+        // surface-extraction phase, so it keeps its own orchestrator rather than the `run_surface` merge
+        // driver (see the two-phase / two-category note in `ir/extractor.rs`).
+        let (synthesized, table_signal_declaration_provenance) = synthesize_signal_declaration_seed(
             &source_ir,
-            &mut statement_counter,
-            prior_guidance.as_ref(),
-            &mut table_signal_declaration_provenance,
-        );
-        // SWD-SERIAL-EXTRACTION.2: also capture interface signals declared in PROSE (serial specs
-        // name the wire contract in an appositive — "a clock pin, SWCLK") so SWCLK/SWDIO enter the
-        // catalog. Additive; duplicates of table declarations dedupe downstream.
-        // The parenthetical prose form (`.3`) runs only as a FALLBACK when the table catalog is sparse
-        // (few/no signal-description tables) — so table-rich specs are untouched (no regression).
-        let table_signal_count = synthesized
-            .iter()
-            .filter(|s| s.text.starts_with("Signal "))
-            .count();
-        synthesized.extend(synthesize_signal_declarations_from_prose(
             &extracted_statements,
             &mut statement_counter,
-            table_signal_count < 8,
-        ));
+            prior_guidance.as_ref(),
+        );
 
         // Extract system contract (clock + reset) from signal-description prose in tables.
         let contract_stmts = synthesize_system_contract_from_table_descriptions(
@@ -4578,6 +4569,51 @@ fn extract_dynamic_signal_constraints(
 /// `SourceIR` holds the raw cell grids; `EvidenceIR` produces typed statements;
 /// `SemanticIR` lifts from those statements using its existing parsers.
 ///
+/// EXTRACTOR-ARCHITECTURE.5 — the signal-declaration SEED stage of the statement-ASSEMBLY phase, lifted out
+/// of the ~500-line `EvidenceIr::build()` into one cohesive function. It runs the table-declaration strategy,
+/// then the prose-declaration strategy as a FALLBACK only when the table catalog is sparse (`< 8` signals),
+/// concatenating the results (no key-dedup — duplicates collapse downstream in the convergence loop) and
+/// returning the synthesized seed statements plus the table-declaration provenance side-output.
+///
+/// This is deliberately NOT a `run_surface` merge-surface extractor: it produces seed `ExtractedStatement`s
+/// (not typed surface records), mints synthetic statement ids via the build-wide counter, has a side-output,
+/// and uses a cross-strategy fallback gate — the signature of the assembly phase, distinct from the typed
+/// surface-extraction phase the `Extractor`/`run_surface` framework serves (see `ir/extractor.rs`). Forcing
+/// it through the dedup driver would lose the provenance output and the fallback gate; keeping it a cohesive
+/// assembly-phase function is the honest consolidation (shrinks the orchestrator, one home for the seed).
+fn synthesize_signal_declaration_seed(
+    source_ir: &SourceIr,
+    statements: &[ExtractedStatement],
+    statement_counter: &mut usize,
+    prior_guidance: Option<&EvidencePriorGuidance>,
+) -> (
+    Vec<ExtractedStatement>,
+    Vec<TableSignalDeclarationProvenanceRecord>,
+) {
+    let mut table_signal_declaration_provenance = Vec::new();
+    // SWD-SERIAL-EXTRACTION.2: the table strategy seeds direct signal declarations + enum facts from
+    // structured tables; the prose strategy (below) additionally captures interface signals declared in
+    // PROSE (e.g. an appositive "a clock pin, SWCLK"), so serial specs get SWCLK/SWDIO into the catalog.
+    let mut synthesized = synthesize_declarations_from_tables(
+        source_ir,
+        statement_counter,
+        prior_guidance,
+        &mut table_signal_declaration_provenance,
+    );
+    // The parenthetical prose form (`.3`) runs only as a FALLBACK when the table catalog is sparse
+    // (few/no signal-description tables) — so table-rich specs are untouched (no regression).
+    let table_signal_count = synthesized
+        .iter()
+        .filter(|s| s.text.starts_with("Signal "))
+        .count();
+    synthesized.extend(synthesize_signal_declarations_from_prose(
+        statements,
+        statement_counter,
+        table_signal_count < 8,
+    ));
+    (synthesized, table_signal_declaration_provenance)
+}
+
 /// Currently handles two table kinds:
 /// - `SignalDescription` → `Signal X is output/input [width N].` declarations
 /// - `Encoding` → `Enum <name> <member> = <value>.` declarations

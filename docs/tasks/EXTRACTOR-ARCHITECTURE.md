@@ -156,11 +156,24 @@ Driver: build cx → for each registered extractor where applies_to → run → 
   13 existing semantic-hint unit tests pass through the migrated path. full `run_ci.sh` green (lib 1454).
   (Follow-up noted: a test-only `SourceIr` constructor would let surface helpers be unit-tested in isolation;
   today they're covered by the markdown-built integration tests + the corpus diff.)
-- `.5`+ migrate the remaining clusters (signals — the biggest; registers; actors; constraints/polarity/
-  relations) one slice each; retire the god-orchestrator incrementally. **Pending.** NOTE for the signal/
-  register synthesizers: they thread a `&mut statement_counter` (mint synthetic statement ids), so the
-  `ExtractionContext` must grow a counter handle (interior-mut cell or a threaded handle) when migrating them —
-  the first cluster that mutates build state. Each migration stays behavior-preserving + corpus-verified.
+- `.5` the **signals cluster**. **DONE (`2026-06-09`) — with a key re-categorization finding.** Investigating
+  the signals cluster revealed it is NOT a `run_surface` merge-surface: it produces seed `ExtractedStatement`s
+  (not typed surface records), mints synthetic statement ids via the **build-wide** `statement_counter` (shared
+  with the main prose loop + the contract synthesizer), emits a provenance **side-output**, has a
+  **cross-strategy fallback gate** (prose runs only if `table_signal_count < 8`), and concatenates with **no
+  key-dedup**. That is the **statement-ASSEMBLY phase**, distinct from the typed **surface-extraction phase**
+  the `Extractor`/`run_surface` framework serves — so forcing it through the dedup driver would be a hack
+  (losing the side-output + gate, abusing the key). The honest consolidation: extract the seed orchestration
+  out of the ~500-line `build()` into one cohesive `synthesize_signal_declaration_seed(...)` (table strategy +
+  sparse-catalog prose fallback → seed statements + provenance), and DOCUMENT the **two-phase / two-category**
+  model in `ir/extractor.rs` so the remaining migrations target the genuine merge-surfaces. Pure extraction
+  (identical logic/order/counter threading). **Verification:** full `evidence_ir.json` BYTE-IDENTICAL on the 4
+  DETERMINISTIC intact-bundle docs (RISC-V Debug table-signal path, I2C prose path, SWP, CAN); kg-bench
+  151/151; lib 1454; full `run_ci.sh` green. **DISCOVERY:** SWD/ADI's evidence differed — root-caused to
+  **pre-existing CONTENT-level non-determinism** (two runs of the *unchanged* `.4` code produce set-different
+  `actor_signal_relations` + `extracted_statements`), NOT a `.5` regression. Spun a dedicated tree
+  `EVIDENCE-DETERMINISM` for it (it undermines reproducibility, eval-score stability, and the byte-identical
+  methodology). Remaining genuine merge-surfaces to migrate (`.6`+): **registers, actors, signal-polarity**.
 
 ## Current frontier
 
