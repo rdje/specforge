@@ -824,7 +824,16 @@ impl EvidenceIr {
         // for non-FSM/non-serial docs.
         let protocol_states = protocol_state_surface(&extracted_statements);
         // PDF-VARIANT-DIGESTION.3b — protocol actors/agents defined in prose.
-        let protocol_actors = extract_protocol_actors(&extracted_statements);
+        // EXTRACTOR-ARCHITECTURE.7 — protocol actors via the unified framework (single-strategy surface, run
+        // through the concat driver for a uniform manifest entry; output byte-identical).
+        let protocol_actors = run_surface_concat(
+            "protocol_actors",
+            &ExtractionContext {
+                statements: &extracted_statements,
+            },
+            &[&ProtocolActorExtractor],
+        )
+        .records;
 
         // SWD-SERIAL-EXTRACTION.4b: recover the SWD packet operations (response branching: OK→3-phase,
         // WAIT/FAULT→2-phase, + turnaround model). No-op for non-serial docs.
@@ -9481,6 +9490,21 @@ fn agent_definitions(text: &str) -> Vec<(String, Option<String>)> {
         out.push((name, def));
     }
     out
+}
+
+/// EXTRACTOR-ARCHITECTURE.7 — the protocol-actors surface as a registered `Extractor` (currently a single
+/// strategy). Running it through the `run_surface_concat` driver gives it a uniform run-manifest entry and
+/// readies it for future multi-strategy growth (more prose agent-definition forms plug in as additional
+/// units), consistent with the "digest more PDF variants" aim. One producer → concat is identity → output is
+/// byte-identical to the prior direct call.
+struct ProtocolActorExtractor;
+impl Extractor<ProtocolActorRecord> for ProtocolActorExtractor {
+    fn name(&self) -> &'static str {
+        "actors.prose"
+    }
+    fn run(&self, cx: &ExtractionContext<'_>) -> Vec<ProtocolActorRecord> {
+        extract_protocol_actors(cx.statements)
+    }
 }
 
 /// PDF-VARIANT-DIGESTION.3b/.8 — capture protocol ACTORS/AGENTS a spec DEFINES in prose. Two general forms:

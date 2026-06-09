@@ -186,8 +186,18 @@ Driver: build cx → for each registered extractor where applies_to → run → 
   md5-identical vs pre-`.6` AND deterministic double-run; kg-bench 151/151; +1 concat-driver test; full
   `run_ci.sh` green (lib 1455 → 1456). Now three categories are explicit: key-merge (`run_surface`: FSM,
   semantic-hints), concat (`run_surface_concat`: registers), stateful-assembly (own orchestrators: signal seed).
-- `.7`+ migrate **actors** and **signal-polarity** (the remaining surfaces); then retire the `build()`
-  god-orchestrator. **Pending.**
+- `.7` migrate the **protocol-actors** surface. **DONE (`2026-06-09`).** Actors is a SINGLE-strategy surface
+  (`extract_protocol_actors`, reads only `statements`); registered as a `ProtocolActorExtractor` unit
+  (`actors.prose`) run through `run_surface_concat`. A single-strategy registration gains no merge benefit but
+  gives a uniform run-manifest entry and readies the surface for future multi-strategy growth (more prose
+  agent-definition forms plug in as units) — aligned with the "digest more PDF variants" aim. Byte-identical
+  (I2C: full evidence md5 unchanged, 2 actors preserved, deterministic double-run); kg-bench 151/151; full
+  `run_ci.sh` green (lib 1456). The two sibling single-strategy top-level surfaces (`serial_frame_fields`,
+  `swd_operations`) follow the same trivial pattern — register opportunistically.
+- `.8`+ the remaining surfaces: the two sibling single-strategy ones (serial-frame, operations — thin), and
+  the **converge-loop surfaces** (constraints / relations / polarity / conditional-rules) — these live inside
+  `converge_evidence_extractions`'s fixed-point loop, a distinct sub-problem (the loop itself is not a simple
+  `run_surface`). Then retire the `build()` god-orchestrator. **Pending — owner may steer scope.**
 
 ## Current frontier
 

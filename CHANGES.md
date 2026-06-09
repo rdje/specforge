@@ -1,3 +1,13 @@
+### `EXTRACTOR-ARCHITECTURE.7` — register the protocol-actors surface (single-strategy, byte-identical)
+The protocol-actors surface (`extract_protocol_actors`, reads only `statements`) is now a registered
+`ProtocolActorExtractor` unit (`actors.prose`) run through `run_surface_concat`. A single-strategy
+registration gains no merge benefit but gives a uniform run-manifest entry and readies the surface for future
+multi-strategy growth (more prose agent-definition forms plug in as units) — aligned with the "digest more PDF
+variants" aim. Byte-identical (I2C full evidence md5 unchanged, 2 actors preserved, deterministic double-run);
+kg-bench 151/151; full `run_ci.sh` green (lib 1456). The sibling single-strategy surfaces (serial-frame,
+operations) follow the same trivial pattern; the converge-loop surfaces (constraints/relations/polarity) are a
+distinct sub-problem (inside the fixed-point loop).
+
 ### `EXTRACTOR-ARCHITECTURE.6` — migrate the registers cluster; add the concat driver mode (byte-identical)
 The third cluster migrated — and it taught the framework a second merge mode. Registers is a CONCAT surface:
 two strategies (register-map tables + `unknown` register-FIELD tables) produce disjoint `RegisterRecord`s
