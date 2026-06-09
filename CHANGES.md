@@ -1,3 +1,23 @@
+### `CORPUS-PATTERN-REUSE.3c` — the manifest-population sweep (data lever; no code change)
+The recorded data lever executed: every repo-backed document now carries a real `extraction_manifest`.
+Evidence rebuilt for NVMe + I2C (intact bundles); APB/AHB/AXI/AXI-Stream re-ingested from their git-tracked
+PDFs (`DOCLING_DEVICE=cpu`, staged normalization swap) and their evidence rebuilt; the four AMBA docs also got
+deterministic `semantic → intent → validate` chains (scores 72/62/80/67 — deterministic-only, honestly lower
+than historical VLM-enriched converge scores) so they join the `learn-priors` harvest.
+
+**Measured enrichment** (the `.3b.1`/`.3b.2` machinery, now fed): `corpus-cluster` 78 docs → 30 clusters /
+13 multi-document families (was 28/14 — fired tokens sharpen distinctions), non-empty family profiles 4→5;
+`learn-priors` 10→14 accepted artifacts, persisted profiles 2→**3** — the new AHB+AXI-Stream profile carries a
+full-support fired union (`semantic_hints.prose (2)`, `semantic_hints.tables (2)`, `registers.register_map
+(1)`) and the support-5 bus-protocol family gained I2C's `actors.prose`/`semantic_hints.prose`.
+
+**Wire-based guarantees re-verified on the FRESH evidence** (the only honest baseline —
+`eval-scores-persisted-evidence`): APB/AHB/AXI constraints + relations + temporal, I2C signals, and SWD all
+hold **1.000** on the WIRE-BASED-100 filtered metrics; NVMe `register_field` reads 0 with `--provider skip`
+because that dataset is the VLM-gated `recover-register-bits` surface (the deterministic register surface is
+intact at 42/42 registers with fields) — not a regression. kg-bench 151/151 after the sweep. Remaining
+sparsity (~66 docs with host-local sources) is honest scope until their PDFs are re-provided.
+
 ### `CORPUS-PATTERN-REUSE.3b.2` — persist extraction profiles into `CorpusMemory` (the 8th prior family)
 The learn side of `.3b` completes: the per-cluster advisory extraction profiles derived in `.3b.1` are now
 PERSISTED in the typed prior store. `CorpusMemory` (schema 5→6; `#[serde(default)]` keeps existing v5 stores

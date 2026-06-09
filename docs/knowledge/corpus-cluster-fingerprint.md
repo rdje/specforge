@@ -86,3 +86,13 @@ match (every signature token present in the document's own fingerprint; empty si
 match everything). Live (10 persisted IntentIR artifacts): 2 profiles persisted (a support-5 bus-protocol
 family containing both TileLink versions + I2C + HBM2 + GFB, and a support-2 CXS+Wishbone family), no vendor
 list, `fired_extractors` honestly empty until the re-ingest sweep.
+
+**`.3c` ran that sweep over every repo-backed doc (`2026-06-09`).** NVMe+I2C evidence rebuilt;
+APB/AHB/AXI/AXI-Stream re-ingested from the git-tracked corpus PDFs (`DOCLING_DEVICE=cpu`) + evidence rebuilt +
+deterministic semantic/intent/validate chains added so they enter the harvest. Measured: `corpus-cluster`
+28/14 → 30/13 clusters/multi (fired tokens make fingerprints MORE distinctive, so some shape-only families
+split); `learn-priors` 10→14 accepted, profiles 2→3 — the new AHB+AXI-Stream profile carries a FULL-support
+fired union (`semantic_hints.prose (2)`, `semantic_hints.tables (2)`). Wire-based re-verified on the fresh
+evidence: APB/AHB/AXI/SWD/I2C all 1.000 (WIRE-BASED-100 filtered); NVMe `register_field` 0 with
+`--provider skip` is the VLM-gated `recover-register-bits` dataset (register surface intact 42/42), not a
+regression. ~66 host-local-source docs stay manifest-less until their PDFs are re-provided.

@@ -194,6 +194,30 @@ gauges (did the profile reduce misses on held-out docs?).
   it may NEVER disable a default-on extractor — enforced structurally), contested-gated via
   `contested_priors()`, and demonstrate the first real activated extractor with a measured recall uplift on a
   held-out cluster member. Behavioral (touches the extractor path) → wire-based APB/AHB/AXI/SWD must stay 100%.
+- ID: `CORPUS-PATTERN-REUSE.3c` · Status: `done` (`2026-06-09`) · Goal: the **manifest-population
+  sweep** (the recorded data lever) — no code change. (1) Rebuild `evidence` for the persisted docs whose
+  normalized bundles are intact but whose evidence predates the `.8` manifest (NVMe, I2C). (2) Re-ingest
+  (`DOCLING_DEVICE=cpu`) the four git-tracked AMBA PDFs whose normalized bundles were reclaimed (APB `ihi0024_e`,
+  AHB `ihi0033_c`, AXI `ihi0022_l`, AXI-Stream `ihi0051_b`) and rebuild their `evidence`, so every repo-backed
+  doc carries an `extraction_manifest`. (3) Re-run `corpus-cluster` + `learn-priors` and record the measured
+  profile enrichment (before: profiles' `fired_extractors` empty). (4) Re-measure the wire-based eval on the
+  re-ingested specs (the standing 100% guarantee is only measurable after re-ingest —
+  `eval-scores-persisted-evidence`); any deviation is reported honestly, never hidden. Honest scope limit: the
+  ~66 evidence docs whose sources are host-local stay manifest-less until their PDFs are re-provided — partial
+  by design.
+  **DONE (`2026-06-09`).** All 6 docs re-ingested/rebuilt now carry real fired sets (e.g. AXI =
+  `registers.field_table, fsm.transition_bound, semantic_hints.tables, semantic_hints.prose`). Also built the
+  deterministic `semantic → intent → validate` chain for the 4 AMBA docs so they enter the `learn-priors`
+  harvest (scores 72/62/80/67 — deterministic-only, no VLM/NLP pass, honestly lower than historical converge
+  scores). **Measured enrichment:** `corpus-cluster` 78 docs → 30 clusters / 13 multi-doc (was 28/14 — fired
+  tokens sharpen distinctions), non-empty family profiles 4→5; `learn-priors` 10→14 accepted, profiles 2→**3**
+  — the NEW AHB+AXI-Stream profile carries a full-support behavioral union (`semantic_hints.prose (2)`,
+  `semantic_hints.tables (2)`, `registers.register_map (1)`) and the bus-protocol support-5 profile gained
+  I2C's `actors.prose`/`semantic_hints.prose`. **Wire-based guarantees re-verified on the FRESH evidence:**
+  APB/AHB/AXI constraints+relations+temporal, I2C signals, SWD all **1.000** on the WIRE-BASED-100 filtered
+  metrics; NVMe `register_field` reads 0 with `--provider skip` because that dataset is the VLM-gated
+  `recover-register-bits` surface (deterministic register surface intact: 42/42 registers with fields) — not
+  a regression. kg-bench 151/151 after the sweep. Verification: see Verification Log. Commit: see Commit Log.
 - ID: `CORPUS-PATTERN-REUSE.4` · Status: `pending` (gated) · Goal: offline LLM/VLM cluster pattern miner with
   held-out precision validation before promotion; recall-gauge-measured uplift on held-out docs.
 
@@ -206,9 +230,10 @@ gauges (did the profile reduce misses on held-out docs?).
 
 `.3a` DONE (the `corpus-cluster` command), `.3b.1` DONE (typed profile + derivation + surfacing), `.3b.2`
 DONE (profiles persisted into `CorpusMemory` as the 8th prior family + `learn-priors` harvest + subset-match
-lookup). The learn side of `.3b` is complete; `.3b.3` (activate-only consume) needs a first opt-in extractor
-and stays gated, as does `.4` (offline miner). The corpus-wide re-ingest sweep remains the data lever that
-makes profiles' `fired_extractors` non-sparse.
+lookup), `.3c` DONE (the manifest-population sweep over every repo-backed doc — profiles now carry real fired
+unions). The learn side of `.3b` is complete; `.3b.3` (activate-only consume) needs a first opt-in extractor
+and stays gated, as does `.4` (offline miner). Residual sparsity (~66 host-local-source docs) shrinks only
+when their PDFs are re-provided — honest scope, not debt.
 
 ## Decisions
 
@@ -245,6 +270,9 @@ first (no behavior change); `.3b`/`.4` (advisory consumption + offline miner) st
 | `2026-06-09` | `CORPUS-PATTERN-REUSE.3b.2` | `scripts/run_ci.sh` (fmt-check + clippy `-D warnings` + lib tests + rustdoc + mdBook) | green — lib **1491** passed / 0 failed |
 | `2026-06-09` | `CORPUS-PATTERN-REUSE.3b.2` | `cargo run -p specforge -- kg-bench` | 151/151 pass |
 | `2026-06-09` | `CORPUS-PATTERN-REUSE.3b.2` | live `learn-priors` over the 10 persisted IntentIR artifacts | 10 accepted; `extraction_profile_priors: 2` (support-5 + support-2 families, no vendor list); schema v6 persisted; `fired_extractors` honestly empty (pre-manifest evidence) |
+| `2026-06-09` | `CORPUS-PATTERN-REUSE.3c` | wire-based eval on FRESH re-ingested evidence (`--provider skip`) | APB/AHB/AXI constraints+relations+temporal, I2C signals, SWD: all 1.000 (WIRE-BASED-100 filtered); NVMe register_field 0 = VLM-gated dataset, register surface intact 42/42 |
+| `2026-06-09` | `CORPUS-PATTERN-REUSE.3c` | `corpus-cluster` + `learn-priors` before/after | clusters 28/14 → 30/13; non-empty family profiles 4→5; harvest 10→14 accepted, profiles 2→3; new AHB+AXI-Stream profile w/ full-support fired union |
+| `2026-06-09` | `CORPUS-PATTERN-REUSE.3c` | `cargo run -p specforge -- kg-bench` after the sweep | 151/151 pass |
 
 ## Commit Log
 
@@ -252,7 +280,8 @@ first (no behavior change); `.3b`/`.4` (advisory consumption + offline miner) st
 | --- | --- | --- |
 | `CORPUS-PATTERN-REUSE.3a` | `CORPUS-PATTERN-REUSE.3a — corpus-cluster command` | New read-only command surfacing the `.2` clustering engine; book + README + KM in sync |
 | `CORPUS-PATTERN-REUSE.3b.1` | `CORPUS-PATTERN-REUSE.3b.1 — per-cluster extraction profile` | Typed `ClusterExtractionProfile` + `derive_extraction_profiles` + command surfacing; activate-only decision recorded; book + README + KM in sync |
-| `CORPUS-PATTERN-REUSE.3b.2` | `CORPUS-PATTERN-REUSE.3b.2 — persist extraction profiles into CorpusMemory` (this slice) | 8th prior family (schema v6) + `learn-priors` harvest + signature-subset lookup; shared `0.6` threshold const; book + README + KM in sync |
+| `CORPUS-PATTERN-REUSE.3b.2` | `CORPUS-PATTERN-REUSE.3b.2 — persist extraction profiles into CorpusMemory` | 8th prior family (schema v6) + `learn-priors` harvest + signature-subset lookup; shared `0.6` threshold const; book + README + KM in sync |
+| `CORPUS-PATTERN-REUSE.3c` | `CORPUS-PATTERN-REUSE.3c — manifest-population sweep` (this slice) | Data/no-code: 6 repo-backed docs re-ingested/rebuilt with manifests; wire-based 100% re-verified on fresh evidence; profiles 2→3 with real fired unions |
 
 ## Changelog
 
@@ -273,3 +302,9 @@ first (no behavior change); `.3b`/`.4` (advisory consumption + offline miner) st
   `DEFAULT_FINGERPRINT_SIMILARITY_THRESHOLD` const unifying `corpus-cluster` and the harvest. Live: 10
   IntentIR artifacts → 2 persisted profiles, no vendor list, sparsity reported honestly. `run_ci.sh` green
   (lib 1491), kg-bench 151/151. Frontier advanced to `.3b.3` (gated on a first opt-in extractor) / `.4`.
+- `2026-06-09`: Owned + executed `.3c` (the manifest-population sweep, data/no-code): NVMe+I2C evidence
+  rebuilt; APB/AHB/AXI/AXI-Stream re-ingested (`DOCLING_DEVICE=cpu`) + evidence rebuilt + deterministic
+  semantic/intent/validate chains built so they join the harvest. Measured: profiles 2→3 (new AHB+AXI-Stream
+  family with full-support fired union), corpus-cluster non-empty profiles 4→5; wire-based 100% re-verified
+  on the FRESH evidence (APB/AHB/AXI/SWD/I2C all 1.000 filtered; NVMe register_field 0 = VLM-gated dataset,
+  not a regression); kg-bench 151/151. Remaining sparsity (~66 host-local docs) is honest scope, not debt.

@@ -1,4 +1,23 @@
 # DEVELOPMENT_NOTES
+## `CORPUS-PATTERN-REUSE.3c` (`2026-06-09`) — manifest-population sweep (data/no-code)
+- Scope: the data lever recorded in `.3b.1`/`.3b.2` — populate `extraction_manifest` corpus-wide so profile
+  `fired:` unions stop being empty. No code change; only generated artifacts + docs.
+- Cheap half: `specforge evidence` rebuild for the 2 intact-bundle docs whose evidence predated the `.8`
+  manifest (NVMe, I2C). Expensive half: `DOCLING_DEVICE=cpu` re-ingest of the 4 git-tracked AMBA PDFs whose
+  normalized bundles were reclaimed (APB/AHB/AXI/AXI-Stream; AXI ~3 min on this host, staged-swap safe), then
+  evidence rebuilds, then deterministic `semantic → intent → validate` chains so the AMBA docs enter the
+  `learn-priors` acceptance gate (validation 72/62/80/67 — deterministic-only, no VLM/NLP pass; honestly lower
+  than the historical VLM-enriched converge scores, and fine for the gate which rejects only Error findings).
+- Measured (the whole point — scoring rigor): corpus-cluster 28/14 → 30/13 clusters/multi (fired tokens make
+  fingerprints MORE distinctive, so some shape-only families split — expected, not a regression); non-empty
+  family profiles 4→5; learn-priors 10→14 accepted, profiles 2→3; the new AHB+AXI-Stream profile's union is
+  full-support (`semantic_hints.prose (2)`, `semantic_hints.tables (2)`) + partial `registers.register_map (1)`.
+- Guarantee re-check on FRESH evidence: APB/AHB/AXI (constraints/relations/temporal), I2C signals, SWD — all
+  1.000 WIRE-BASED-100 filtered. NVMe `register_field` 0/29 with `--provider skip` is the VLM-gated
+  `recover-register-bits` dataset (EXTRACTION-GAP-FIX.4a), NOT a rebuild regression — verified the rebuilt
+  evidence still carries 42/42 registers with fields. kg-bench 151/151 post-sweep.
+- Honest scope: ~66 of 78 evidence docs have host-local sources → they stay manifest-less until re-provided.
+
 ## `CORPUS-PATTERN-REUSE.3b.2` (`2026-06-09`) — persist extraction profiles into `CorpusMemory` (8th prior family)
 - Scope: the broad-but-mechanical schema-integration slice deliberately split off `.3b.1`. Additive only —
   no extraction-path change, no behavior change outside `learn-priors` output.
