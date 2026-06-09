@@ -1,3 +1,13 @@
+### `EXTRACTOR-ARCHITECTURE.9d` — the extractor module doc now encodes the three-category model (doc-only)
+The `ir/extractor.rs` "Two phases, two categories" note (written at `.5`) was stale — it still named actors
+and signal-polarity as remaining migrations. Rewritten as **"Two phases, three categories"** with the
+current truth: the live members of each driver mode (key-merge: FSM / semantic-hints / serial-frame, each
+with its key; concat: registers / actors / SWD-operations / signal-polarity / actor-signal-relations), the
+converge-loop fixed-point semantics (per-pass recording, replace-per-name → the manifest holds the final
+converged run), post-pass ORDER as part of a surface's contract (the relations augment-then-dedup), and the
+constraint family's stateful-assembly status as a deliberate design decision, not migration debt.
+Doc-comment-only; rustdoc warning-deny green; lib 1499 unchanged.
+
 ### `EXTRACTOR-ARCHITECTURE.9c` — the actor-signal-relations surface onto the framework (byte-identical)
 The second (and last) migratable converge-loop surface, with the design fixed by the `.9b` audit. New units:
 `relations.prose` (the active/passive normative-verb KG-edge grammar, per-pass statements + known signals) +

@@ -1,4 +1,13 @@
 # DEVELOPMENT_NOTES
+## `EXTRACTOR-ARCHITECTURE.9d` (`2026-06-10`) — extractor module doc: the three-category model (doc-only)
+- The `ir/extractor.rs` framework doc is the architectural reference future sessions read before touching
+  the producer layer — the `.5`-era "two categories, actors/polarity remaining" text was actively
+  misleading after `.7`/`.9b`/`.9c`. The doctrine point now encoded: the constraint family's
+  stateful-assembly status is a DESIGN DECISION (cross-surface id continuity + mid-sequence polarity
+  post-pass), so a future session doesn't mistake it for unfinished migration and force it through a
+  driver. Post-pass order (augment-THEN-dedup) is documented as part of a surface's contract. Doc-comment
+  only; rustdoc warning-deny green; lib 1499 unchanged.
+
 ## `EXTRACTOR-ARCHITECTURE.9c` (`2026-06-10`) — actor-signal-relations onto the framework
 - Design was already fixed by the `.9b` audit; this slice is the execution. The one structural decision the
   audit mandated: the relations dedup runs AFTER `augment_check_signal_relations_from_tables` in the legacy

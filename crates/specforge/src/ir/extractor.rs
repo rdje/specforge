@@ -26,7 +26,7 @@
 //! This `.2` slice lands the frame and its tests; it migrates ZERO extractors (no behavior change). `.3`
 //! migrates the FSM cluster onto it, proving byte-identical output.
 //!
-//! ## Two phases, two categories (`.5`)
+//! ## Two phases, three categories (`.5`, refined by the `.9b` converge-loop audit)
 //!
 //! `EvidenceIr::build()` has two distinct phases, and this framework serves only the second:
 //! 1. **Statement-assembly phase** — produce `ExtractedStatement`s (the main prose loop, the
@@ -34,16 +34,33 @@
 //!    counter and feeding the convergence loop. These are *stateful, ordered, concatenated, sometimes with
 //!    side-outputs and cross-strategy gates* — they are NOT key-merged typed surfaces, so they keep their own
 //!    cohesive orchestrators (e.g. `synthesize_signal_declaration_seed`), not [`run_surface`].
-//! 2. **Surface-extraction phase** — derive typed surface records (FSM states, semantic hints, registers,
-//!    actors, …) from the assembled statements, each surface a set of independent [`Extractor`] strategies.
-//!    THIS is what the framework unifies, with TWO merge modes the driver provides:
-//!    - [`run_surface`] — **key-dedup merge** (first-wins by a per-surface key): FSM states, semantic hints.
+//! 2. **Surface-extraction phase** — derive typed surface records from the assembled statements, each
+//!    surface a set of independent [`Extractor`] strategies. THIS is what the framework unifies, with TWO
+//!    merge modes the driver provides:
+//!    - [`run_surface`] — **key-dedup merge** (first-wins by a per-surface key): FSM states (by state
+//!      name), semantic hints (by hint key), serial-frame fields (by field name).
 //!    - [`run_surface_concat`] — **plain concatenation** (no dedup), for surfaces whose strategies produce
-//!      disjoint records merged by appending, with any post-passes run on the result: register records.
+//!      records merged by appending, with any post-passes run on the result in the surface helper:
+//!      register records, protocol actors, SWD operations, signal polarity, actor-signal relations.
 //!
-//! Forcing an assembly-phase seed through either merge driver would lose its side-output + fallback gate and
-//! mis-handle id-minting — a hack. Keeping assembly (own orchestrators) and surface (the two driver modes) in
-//! clean homes IS the coherent whole; the remaining surface clusters to migrate are actors and signal-polarity.
+//! A surface may live INSIDE the fixed-point convergence loop (`converge_evidence_extractions`): signal
+//! polarity and actor-signal relations re-run on every pass with the pass's statement set, and each pass
+//! re-records the surface — [`ExtractionManifest::record`] replaces per surface name, so the persisted
+//! manifest always holds exactly the FINAL, converged pass's run. Post-pass ORDER is part of a surface's
+//! contract: the relations surface augments check-signals over the full pre-dedup merged list and only
+//! THEN dedups, so its dedup stays a post-pass — key-merging in the driver would change the augment input.
+//!
+//! The third category stays deliberately OFF the drivers. Besides the assembly-phase seed, the converge
+//! loop's **constraint family** (`extract_signal_constraints` → `extract_dynamic_signal_constraints` →
+//! `extract_conditional_rules`) shares one per-pass counter that mints ids sequentially ACROSS those three
+//! extractors, with a cross-surface post-pass (`apply_signal_polarity_to_constraints`) applied
+//! mid-sequence — forcing that through a driver would break cross-surface id continuity. Stateful
+//! assembly keeps its own cohesive orchestration; that is a design decision, not migration debt.
+//!
+//! Forcing an assembly-phase producer through either merge driver would lose its side-outputs and
+//! mis-handle id-minting — a hack. Keeping assembly (own orchestrators) and surface extraction (the two
+//! driver modes) in clean homes IS the coherent whole: eight surfaces run on the drivers today, and a new
+//! PDF family grows by registering one unit in one place.
 
 use crate::ir::evidence::{ExtractedStatement, ExtractorTier};
 use serde::{Deserialize, Serialize};

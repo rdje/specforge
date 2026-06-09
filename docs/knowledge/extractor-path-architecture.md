@@ -66,5 +66,6 @@ exactly the FINAL converged pass's run, no special casing — and it now disting
 prose-driven relation recovery per document (AXI: 356 table + 20 prose → 348; SWD/I2C: pure prose).
 **Constraints + conditional rules** stay stateful-assembly by design (one per-pass `constraint_counter`
 mints ids ACROSS the three extractors, plus a cross-surface polarity post-pass) → their own in-loop
-orchestration, like the signal-declaration seed. Remaining: encode that constraint-family categorization
-in the `ir/extractor.rs` two-phase note + retire the `build()` god-orchestrator.
+orchestration, like the signal-declaration seed. The constraint-family categorization is now encoded in
+the `ir/extractor.rs` module doc ("Two phases, three categories", `.9d`). Remaining: the `build()`
+god-orchestrator retirement assessment.

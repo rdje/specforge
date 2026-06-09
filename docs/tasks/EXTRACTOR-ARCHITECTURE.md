@@ -316,6 +316,22 @@ Driver: build cx → for each registered extractor where applies_to → run → 
   + per-strategy manifest counts; empty-surface manifest honesty). kg-bench 151/151; full `run_ci.sh`
   green (lib 1497 → **1499**); book example updated to the 8-surface form; KM status updated.
 
+- `.9d` **refresh the `ir/extractor.rs` two-phase doc note** · Status: `done` (`2026-06-10`).
+  The module doc's "Two phases, two categories" section was written at `.5` and is stale: it still names
+  actors + signal-polarity as "remaining clusters to migrate" (both done) and predates the concat driver's
+  converge-loop reach. Update it to the current truth: THREE producer categories with their live members
+  (key-merge: FSM / semantic-hints / serial-frame · concat: registers / actors / SWD-operations /
+  signal-polarity / actor-signal-relations · stateful-assembly: signal-declaration seed + the constraint
+  family), the fixed-point manifest semantics (surfaces inside `converge_evidence_extractions` record per
+  pass; `record()` replace-per-name keeps the final converged run), and the `.9b` audit's
+  constraint-family categorization (cross-surface `constraint_counter` id-minting + mid-sequence polarity
+  post-pass → deliberately OFF the drivers). Doc-comment-only change; rustdoc is the gate.
+  **DONE (`2026-06-10`).** The section is now "Two phases, three categories": current members per driver
+  mode (key-merge ×3 with their keys, concat ×5), the converge-loop fixed-point recording semantics, the
+  relations post-pass ORDER as surface contract, and the constraint family as a deliberate design decision
+  ("not migration debt"). Full `run_ci.sh` green (rustdoc warning-deny passed; lib 1499 unchanged —
+  doc-comment only).
+
 ## Current frontier
 
 `.1`–`.8` + `.9a` **done** — SIX surfaces registered and byte-identical-proven (FSM, semantic-hints,
@@ -326,5 +342,7 @@ per-document run manifest** surfaced in `validate` — the CORPUS-PATTERN-REUSE 
 done (`2026-06-10`): the converge-loop audit + BOTH migratable fixed-point surfaces (polarity, relations)
 — EIGHT surfaces registered, all byte-identical-proven over the 12 intact-bundle docs; the manifest now
 distinguishes table-driven vs prose-driven relation recovery per document (AXI table-dominant; SWD/I2C
-pure prose).** Remaining: document the constraint-family stateful-assembly in the `ir/extractor.rs`
-two-phase note · then retire the `build()` god-orchestrator (assessment slice). **Owner may steer scope.**
+pure prose).** **`.9d` done (`2026-06-10`): the `ir/extractor.rs` module doc now encodes the full
+three-category model (members per driver mode, fixed-point recording semantics, post-pass order as
+contract, constraint family = design decision not debt).** Remaining: the `build()` god-orchestrator
+retirement (assessment slice first). **Owner may steer scope.**
