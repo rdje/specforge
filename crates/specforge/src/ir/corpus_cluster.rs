@@ -24,7 +24,7 @@
 //! priors (`CORPUS-PATTERN-REUSE.3`) and an offline LLM cluster-miner (`.4`) build on top of it.
 
 use crate::ir::evidence::EvidenceIr;
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 
 /// A document's derived fingerprint: an ADR-0006-safe SET of structural + behavioral feature tokens. Two
 /// documents are similar when their token sets overlap (Jaccard). No vendor/chip names — only shape.
@@ -139,6 +139,81 @@ pub fn cluster_documents(
     clusters
 }
 
+/// The `fired:` fingerprint-token prefix marking a behavioral (extractor-fired) feature (see
+/// [`document_fingerprint`]). Structural `shape:` tokens do not carry it.
+const FIRED_FEATURE_PREFIX: &str = "fired:";
+
+/// One extractor strategy's support within a cluster: how many of the cluster's members it fired on.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ProfileExtractorSupport {
+    /// The extractor strategy name — the part after the `fired:` prefix, e.g. `registers.field_table`.
+    pub extractor_name: String,
+    /// How many of the cluster's members this extractor fired on (kept ≥ 1 record on each).
+    pub member_support: usize,
+}
+
+/// An advisory per-cluster extraction profile (`CORPUS-PATTERN-REUSE.3b.1`).
+///
+/// Beyond a [`DocumentCluster`]'s shared (intersection) signature, this records the UNION of extractor
+/// strategies that fired across the cluster's members, each with its per-member support — i.e. "what tends to
+/// work for documents shaped like this", *including strategies that fired on only some members* (which the
+/// intersection signature drops). Advisory and ADR-0006-safe: keyed by the structural signature, never a
+/// vendor name. The consume side (`.3b.3`) may only ACTIVATE such a strategy on a matching new document, never
+/// suppress one (the activate-only contract) — a profile adjusts where extraction looks, never what it
+/// concludes. The `fired:` tokens are sparse corpus-wide until the `extraction_manifest` re-ingest sweep, so a
+/// profile is structural-signature-only until then.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ClusterExtractionProfile {
+    /// The cluster's shared structural signature (the features every member shares) — the vendor-free key.
+    pub cluster_signature: DocumentFingerprint,
+    /// The cluster's member document keys, in attachment order (the first is the representative).
+    pub members: Vec<String>,
+    /// Extractor strategies that fired on ≥1 member, with per-member support. Sorted by name (deterministic).
+    pub fired_extractors: Vec<ProfileExtractorSupport>,
+}
+
+/// Derive one advisory [`ClusterExtractionProfile`] per cluster from the same `(key, fingerprint)` corpus
+/// [`cluster_documents`] takes. For each cluster, the `fired:` tokens of its members are unioned and counted
+/// (per-extractor member support) — strictly more than the intersection signature alone. Pure +
+/// deterministic; no vendor names. Profiles are returned in [`cluster_documents`] order.
+pub fn derive_extraction_profiles(
+    documents: &[(String, DocumentFingerprint)],
+    threshold: f64,
+) -> Vec<ClusterExtractionProfile> {
+    let fingerprint_by_key: BTreeMap<&str, &DocumentFingerprint> = documents
+        .iter()
+        .map(|(key, fingerprint)| (key.as_str(), fingerprint))
+        .collect();
+    cluster_documents(documents, threshold)
+        .into_iter()
+        .map(|cluster| {
+            let mut support: BTreeMap<String, usize> = BTreeMap::new();
+            for member in &cluster.members {
+                let Some(fingerprint) = fingerprint_by_key.get(member.as_str()) else {
+                    continue;
+                };
+                for feature in fingerprint.iter() {
+                    if let Some(name) = feature.strip_prefix(FIRED_FEATURE_PREFIX) {
+                        *support.entry(name.to_string()).or_insert(0) += 1;
+                    }
+                }
+            }
+            let fired_extractors = support
+                .into_iter()
+                .map(|(extractor_name, member_support)| ProfileExtractorSupport {
+                    extractor_name,
+                    member_support,
+                })
+                .collect();
+            ClusterExtractionProfile {
+                cluster_signature: cluster.shared_features,
+                members: cluster.members,
+                fired_extractors,
+            }
+        })
+        .collect()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -228,6 +303,74 @@ mod tests {
             cluster_documents(&order1, 0.6),
             cluster_documents(&order2, 0.6),
             "key-sorted greedy clustering is independent of input order"
+        );
+    }
+
+    #[test]
+    fn profile_unions_fired_extractors_with_per_member_support() {
+        // Two register docs cluster (shared shape). Both fired `field_table`; only one fired `prose`.
+        // The intersection signature drops `fired:registers.prose`, but the PROFILE keeps it (support 1) —
+        // that is the value a profile adds over the shared signature alone.
+        let a = fp(&[
+            "shape:registers:b2",
+            "fired:registers.field_table",
+            "fired:registers.prose",
+        ]);
+        let b = fp(&["shape:registers:b2", "fired:registers.field_table"]);
+        let docs = vec![("reg_a".to_string(), a), ("reg_b".to_string(), b)];
+
+        let profiles = derive_extraction_profiles(&docs, 0.6);
+        assert_eq!(profiles.len(), 1, "the two register docs form one cluster");
+        let profile = &profiles[0];
+        assert_eq!(profile.members, vec!["reg_a", "reg_b"]);
+        // The shared signature (intersection) does NOT carry the prose extractor...
+        assert!(!profile.cluster_signature.contains("fired:registers.prose"));
+        // ...but the profile's union does, with honest per-member support.
+        assert_eq!(
+            profile.fired_extractors,
+            vec![
+                ProfileExtractorSupport {
+                    extractor_name: "registers.field_table".to_string(),
+                    member_support: 2,
+                },
+                ProfileExtractorSupport {
+                    extractor_name: "registers.prose".to_string(),
+                    member_support: 1,
+                },
+            ]
+        );
+    }
+
+    #[test]
+    fn profile_has_no_fired_extractors_when_manifest_absent() {
+        // Documents with only structural `shape:` tokens (no `extraction_manifest` yet) yield a profile with
+        // an empty fired-extractor set — honest, never fabricated.
+        let a = fp(&["shape:registers:b2", "shape:protocol_states:b0"]);
+        let b = fp(&["shape:registers:b2", "shape:protocol_states:b0"]);
+        let docs = vec![("a".to_string(), a), ("b".to_string(), b)];
+        let profiles = derive_extraction_profiles(&docs, 0.6);
+        assert_eq!(profiles.len(), 1);
+        assert!(profiles[0].fired_extractors.is_empty());
+        assert!(!profiles[0].cluster_signature.is_empty());
+    }
+
+    #[test]
+    fn profiles_are_deterministic_regardless_of_input_order() {
+        let reg = fp(&["shape:registers:b2", "fired:registers.field_table"]);
+        let proto = fp(&["shape:signal_constraints:b2", "fired:semantic_hints.prose"]);
+        let order1 = vec![
+            ("a".to_string(), reg.clone()),
+            ("b".to_string(), reg.clone()),
+            ("c".to_string(), proto.clone()),
+        ];
+        let order2 = vec![
+            ("c".to_string(), proto),
+            ("b".to_string(), reg.clone()),
+            ("a".to_string(), reg),
+        ];
+        assert_eq!(
+            derive_extraction_profiles(&order1, 0.6),
+            derive_extraction_profiles(&order2, 0.6)
         );
     }
 }

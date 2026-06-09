@@ -8,9 +8,11 @@ answers:
   - "do the emergent clusters actually track real vendor/layout families"
   - "why are the fired: behavioral features mostly empty in the clustering today"
   - "how do I see which ingested PDFs form structural families (the corpus-cluster command)"
+  - "what is a ClusterExtractionProfile / derive_extraction_profiles (the per-cluster extraction profile)"
+  - "why are the corpus-cluster extraction profiles mostly empty / 'none recorded yet'"
 date: 2026-06-09
 tags: [corpus-pattern-reuse, clustering, fingerprint, vendor, extraction-manifest, adr-0006, evidence-ir]
-evidence: docs/tasks/CORPUS-PATTERN-REUSE.md (.2/.3a); crates/specforge/src/ir/corpus_cluster.rs; crates/specforge/src/commands/corpus_cluster.rs
+evidence: docs/tasks/CORPUS-PATTERN-REUSE.md (.2/.3a/.3b.1); crates/specforge/src/ir/corpus_cluster.rs; crates/specforge/src/commands/corpus_cluster.rs
 reverify: cargo test -p specforge --lib corpus_cluster; cargo run -p specforge -- corpus-cluster
 ---
 
@@ -44,6 +46,21 @@ structural signature) plus the unique-shape singletons. It is **read-only and ad
 mutation, no extraction-behavior change — a *window* into corpus structure, deterministic. Live over the
 persisted corpus (78 docs, threshold 0.6): 28 clusters / 14 multi-doc families, no vendor list. Args:
 `--evidence-root <root>` (default `generated/evidence_ir`), `--threshold <0.0-1.0>` (default `0.6`).
-Still gated (`.3b`/`.4`): the advisory `ExtractionProfile` consumed via `Extractor::applies_to` (bounded,
-contested-gated — adjusts attention, never truth) + an offline LLM/VLM cluster pattern miner;
+**`.3b.1` added the advisory per-cluster extraction profile (`2026-06-09`):** pure
+`derive_extraction_profiles(&[(key, fingerprint)], threshold) -> Vec<ClusterExtractionProfile>` in
+`ir::corpus_cluster`. Per cluster it records the cluster's shared signature PLUS the UNION of `fired:` extractor
+strategies across members with per-member support (`ProfileExtractorSupport { extractor_name, member_support }`)
+— strictly more than the intersection signature, since it keeps a strategy that fired on only SOME members.
+Surfaced in the `corpus-cluster` command as a per-family `profile (fired extractors, member support): …` line.
+ADR-0006-safe (keyed by structure), read-only, zero extraction-path change. **Honestly sparse:** the `fired:`
+tokens only exist on docs (re)built since `EXTRACTOR-ARCHITECTURE.8`, so most families currently print
+`none recorded yet (run after a corpus re-ingest sweep)` rather than a guess — the re-ingest sweep fills them in.
+
+**Decided honesty contract for the consume side (`.3b` Decisions `2026-06-09`): ACTIVATE-ONLY.** A consumed
+profile may only *activate* an opt-in (self-disabled) extractor for a doc whose fingerprint matches the cluster
+— it may NEVER deactivate a default-on extractor (every real `Extractor::applies_to` defaults `true`, so gating
+it could only SUPPRESS a real extraction, which the genericity/honesty guardrails forbid). So a profile is
+strictly recall-additive and fabrication-impossible. Sequencing: `.3b.2` persists profiles into `CorpusMemory`
+(8th prior family + `learn-priors` harvest); `.3b.3` is the activate-only consume via `applies_to` + the first
+opt-in extractor + a measured recall uplift. `.4` = an offline LLM/VLM cluster pattern miner.
 `[[corpus-pattern-reuse]]`.

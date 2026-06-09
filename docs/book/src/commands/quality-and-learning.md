@@ -259,6 +259,19 @@ fingerprints overlap enough (Jaccard similarity ≥ `--threshold`, default `0.6`
 It prints each multi-document family with the feature tokens its members share,
 then the single-document (unique-shape) specs.
 
+For each multi-document family it also prints an advisory **extraction profile**:
+the *union* of extractor strategies that fired across the family's members, each
+with its per-member support (e.g. `registers.field_table (2), registers.prose
+(1)`). This is more than the shared signature above — the signature is the
+*intersection* (only features every member has), while the profile keeps a
+strategy even if it fired on only some members, because that is exactly the
+"what tends to work for documents shaped like this" knowledge the reuse plane
+wants. The profile is honestly **sparse today**: the "which strategies fired"
+information only exists on documents (re-)ingested recently, so most families
+currently print `none recorded yet (run after a corpus re-ingest sweep)` — and
+that is reported truthfully rather than guessed. As more of the corpus is
+re-ingested, the profiles fill in.
+
 Two design choices keep it trustworthy and generic:
 
 - **No vendor names anywhere.** The cluster key is the shared *structure*

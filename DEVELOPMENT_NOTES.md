@@ -1,4 +1,32 @@
 # DEVELOPMENT_NOTES
+## `CORPUS-PATTERN-REUSE.3b.1` (`2026-06-09`) — per-cluster advisory extraction profile + the activate-only finding
+- Owner go on `.3b` (reuse a cluster's patterns on look-alike PDFs). Studying `ir/extractor.rs` surfaced a
+  load-bearing honesty subtlety: `Extractor::applies_to` defaults `true` for every real extractor, so a profile
+  consumed via `applies_to` could only ever gate extractors OFF = **suppress** real extraction — forbidden by
+  the genericity/honesty guardrails. **Decision (recorded in the task tree Decisions): consumption is
+  ACTIVATE-ONLY** — a profile may only enable a self-disabled opt-in extractor on a matching doc, never disable
+  a default-on one → strictly recall-additive, fabrication-impossible. Consequence: no opt-in extractor exists
+  yet, so `.3b` was split and the LEARN/foundation side (`.3b.1`) lands first.
+- Slice scope (`.3b.1`): the typed profile + pure derivation + command surfacing — deliberately scoped to
+  **zero `CorpusMemory` churn** (persisting an 8th prior family means editing 18 literal-construction sites +
+  8 `schema_version` bumps, a broad mechanical change kept as its own slice `.3b.2`) and **zero extraction-path
+  change**.
+- Design (`ir/corpus_cluster.rs`): `ProfileExtractorSupport { extractor_name, member_support }` +
+  `ClusterExtractionProfile { cluster_signature, members, fired_extractors }` + pure
+  `derive_extraction_profiles(documents, threshold)`. It re-uses `cluster_documents`, then per cluster builds a
+  `BTreeMap<&str,&fingerprint>` lookup and unions the members' `fired:<name>` tokens into per-name member
+  support (sorted → deterministic). The UNION (vs the cluster's intersection signature) is the point: it keeps
+  a strategy that fired on only some members.
+- Command surfacing: `build_corpus_cluster_report` also stores the profiles; `render_report` looks each family's
+  profile up by representative (first member) and prints `profile (fired extractors, member support): …`, or
+  `none recorded yet (run after a corpus re-ingest sweep)` when the union is empty.
+- Honest caveat: the `fired:` tokens only exist on docs rebuilt since `EXTRACTOR-ARCHITECTURE.8` (~6 today), so
+  live over the corpus only 3/14 families show a non-empty profile — reported truthfully. The corpus re-ingest
+  sweep is the lever that fills profiles in; it does not change the correctness of the derivation.
+- Verification: 5 hermetic tests (`profile_unions_fired_extractors_with_per_member_support`,
+  `profile_has_no_fired_extractors_when_manifest_absent`, `profiles_are_deterministic…`, + 2 render). `run_ci.sh`
+  green (lib 1486); kg-bench 151/151; KM green. Live `corpus-cluster` confirms the union-with-support output.
+
 ## `CORPUS-PATTERN-REUSE.3a` (`2026-06-09`) — the `corpus-cluster` command (surface the `.2` clustering engine)
 - Motivation: `CORPUS-PATTERN-REUSE.2` built the derived-fingerprint clustering engine (`ir/corpus_cluster.rs`)
   and proved it over the persisted corpus in a throwaway probe, but it had no user-facing surface — the owner

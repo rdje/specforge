@@ -1,3 +1,31 @@
+### `CORPUS-PATTERN-REUSE.3b.1` — the per-cluster advisory extraction profile (owner go on `.3b`)
+The owner gave the go on `.3b` (reuse a cluster's extraction patterns on look-alike PDFs). Studying the
+extractor framework surfaced a critical honesty subtlety that reshaped the leaf: every real
+`Extractor::applies_to` defaults `true`, so a profile consumed via `applies_to` could only ever turn extractors
+*off* — i.e. **suppress** a real extraction — which the genericity/honesty guardrails forbid ("the current
+document always wins; deviation is detected, not suppressed"). The honest contract is the inverse — a profile
+may only *activate* a self-disabled opt-in extractor, never deactivate a default-on one — and no opt-in
+extractor exists yet. So `.3b` was split (Splitting Rules) and the **activate-only** decision recorded, with
+`.3b.1` landing the foundation: the typed profile + its derivation, surfaced read-only.
+
+`ir/corpus_cluster.rs` gains `ProfileExtractorSupport { extractor_name, member_support }`,
+`ClusterExtractionProfile { cluster_signature, members, fired_extractors }`, and a pure
+`derive_extraction_profiles(documents, threshold)`. Per cluster it records the shared structural signature PLUS
+the **union** of `fired:` extractor strategies across the cluster's members, each with per-member support —
+strictly more than the intersection signature (it keeps a strategy that fired on only *some* members), which is
+exactly the "what tends to work for docs shaped like this" knowledge the reuse plane wants. The `corpus-cluster`
+command prints a per-family `profile (fired extractors, member support): …` line, or
+`none recorded yet (run after a corpus re-ingest sweep)` when the `extraction_manifest` is not yet populated.
+
+Pure + deterministic + ADR-0006-safe (keyed by structure, never a vendor name); **zero `CorpusMemory` churn,
+zero extraction-path change**. Live over the corpus (78 docs): the union-with-support works
+(`registers.register_map (1), semantic_hints.prose (1)`), and honestly only 3/14 families have a non-empty
+profile today because `fired:` tokens exist only on the ~6 docs rebuilt since `EXTRACTOR-ARCHITECTURE.8` — the
+sparsity is reported truthfully, never fabricated, and the corpus re-ingest sweep is the lever that fills it in.
+5 hermetic tests (union-with-support vs intersection, sparse-manifest, determinism, + 2 render). `run_ci.sh`
+green (lib **1486**); kg-bench 151/151; KM green. Book, README, and KM card updated. Sequencing: `.3b.2`
+persists profiles into `CorpusMemory`; `.3b.3` is the activate-only consume via `applies_to`.
+
 ### `CORPUS-PATTERN-REUSE.3a` — the `corpus-cluster` command (surface the derived-fingerprint clustering engine)
 The `CORPUS-PATTERN-REUSE.2` clustering engine (`ir/corpus_cluster.rs`) could already group the persisted
 documents by a derived structural fingerprint, but only as an internal capability — there was no way for the

@@ -3,7 +3,7 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Regenerate with `knowledge-map/scripts/gen_knowledge_map.sh`.
 > Source of truth = YAML front-matter in: `docs/knowledge docs/decisions`. Edit the fact files, never this map.
 > A fact is any `.md` whose front-matter has a non-empty `answers:` list.
-> **53** facts · **292** question keys.
+> **53** facts · **294** question keys.
 
 ## Questions → fact
 
@@ -176,6 +176,7 @@
 - "what is SWD's actual intent / protocol (from the spec)" -> [swd-intent-is-the-fsm-driving-swdio](docs/knowledge/swd-intent-is-the-fsm-driving-swdio.md) · 2026-06-07 · reverify: `python3 — dump source_ir content_elements for page_id page_0110..page_0128 (Chapter B4); the PDF itself is password-protected so the Read tool cannot open it — use the docling content_elements text.`
 - "what is SerialFrameField / serial_frame_fields / SerialFramePhase" -> [swd-serial-frame-surface](docs/knowledge/swd-serial-frame-surface.md) · 2026-06-07 · reverify: `python3 -c "import json; e=json.load(open('generated/evidence_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/evidence_ir.json')); print([(f['name'],f.get('bit_width')) for f in e.get('serial_frame_fields',[])])`
 - "what is SpecForge doing in academic or research terms" -> [spec-mining-framing](docs/knowledge/spec-mining-framing.md) · 2026-06-04 · reverify: `grep -rn "forward specification mining" README.md docs/book/src/architecture-rationale.md`
+- "what is a ClusterExtractionProfile / derive_extraction_profiles (the per-cluster extraction profile)" -> [corpus-cluster-fingerprint](docs/knowledge/corpus-cluster-fingerprint.md) · 2026-06-09 · reverify: `cargo test -p specforge --lib corpus_cluster; cargo run -p specforge -- corpus-cluster`
 - "what is a contested prior" -> [contested-priors](docs/knowledge/contested-priors.md) · 2026-06-04 · reverify: `grep -n "fn contested_priors" crates/specforge/src/ir/prior_memory.rs`
 - "what is audit-extraction / PDF-VARIANT-DIGESTION.4b" -> [extraction-audit-vlm](docs/knowledge/extraction-audit-vlm.md) · 2026-06-08 · reverify: `./target/debug/specforge audit-extraction generated/source_ir/1_0_risc_v_debug_specification/source_ir.json --sample 8           # plan-only: lists 8 sampled intent-bearing tables, no VLM calls`
 - "what is consolidate_register_field_fragments / EXTRACTION-GAP-FIX.4c" -> [register-field-table-defragmentation](docs/knowledge/register-field-table-defragmentation.md) · 2026-06-08 · reverify: `./target/debug/specforge evidence generated/source_ir/1_0_risc_v_debug_specification/source_ir.json >/dev/null 2>&1 && python3 -c \"import json;r=json.load(open('generated/evidence_ir/1_0_risc_v_debug_specification/evidence_ir.json'))['register_records'];print(len(r),'records');print([len(x['fields']) for x in r if x['register_name']=='dmcontrol'])\"   # → 44 records, dmcontrol [13]`
@@ -250,6 +251,7 @@
 - "why are modal verbs must shall should may not flagged as ambiguous" -> [ambiguity-weak-phrase-detector](docs/knowledge/ambiguity-weak-phrase-detector.md) · 2026-06-04 · reverify: `grep -n "fn weak_phrase_findings" crates/specforge/src/ir/ambiguity.rs`
 - "why are sbaddress3 / custom0 / a garbled sizelo register NOT merged" -> [register-field-table-defragmentation](docs/knowledge/register-field-table-defragmentation.md) · 2026-06-08 · reverify: `./target/debug/specforge evidence generated/source_ir/1_0_risc_v_debug_specification/source_ir.json >/dev/null 2>&1 && python3 -c \"import json;r=json.load(open('generated/evidence_ir/1_0_risc_v_debug_specification/evidence_ir.json'))['register_records'];print(len(r),'records');print([len(x['fields']) for x in r if x['register_name']=='dmcontrol'])\"   # → 44 records, dmcontrol [13]`
 - "why are stability obligations residuals" -> [stable-obligation-phase-scoped-residual](docs/knowledge/stable-obligation-phase-scoped-residual.md) · 2026-06-04 · reverify: `grep -n "bare stability across tick phases" crates/specforge/src/ir/contract.rs`
+- "why are the corpus-cluster extraction profiles mostly empty / 'none recorded yet'" -> [corpus-cluster-fingerprint](docs/knowledge/corpus-cluster-fingerprint.md) · 2026-06-09 · reverify: `cargo test -p specforge --lib corpus_cluster; cargo run -p specforge -- corpus-cluster`
 - "why are the fired: behavioral features mostly empty in the clustering today" -> [corpus-cluster-fingerprint](docs/knowledge/corpus-cluster-fingerprint.md) · 2026-06-09 · reverify: `cargo test -p specforge --lib corpus_cluster; cargo run -p specforge -- corpus-cluster`
 - "why can't specforge evidence rebuild the evidence (normalized missing)" -> [eval-scores-persisted-evidence](docs/knowledge/eval-scores-persisted-evidence.md) · 2026-06-07 · reverify: `./target/debug/specforge evidence generated/source_ir/<doc_key>/source_ir.json   # errors if normalized was reclaimed`
 - "why did an EXTRACTOR-ARCHITECTURE byte-identical proof fail on SWD/ADI but pass on other docs" -> [evidence-build-nondeterminism](docs/knowledge/evidence-build-nondeterminism.md) · 2026-06-09 · reverify: `build evidence for ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification twice; md5 the two evidence_ir.json — they are now IDENTICAL (fixed by EVIDENCE-DETERMINISM.2; were content-different before)`
@@ -386,9 +388,9 @@ _SpecForge detects contested priors (same key, conflicting values across docs) �
 ### corpus-cluster-fingerprint
 _Vendor/layout clustering via a derived structural+behavioral fingerprint (corpus_cluster) — emergent families, no vendor list_
 
-- **answers:** how does SpecForge cluster chip-spec PDFs by vendor/layout without hardcoding vendor names | what is corpus_cluster / document_fingerprint / cluster_documents / DocumentCluster | what is the per-document fingerprint made of (structural shape + extraction_manifest fired set) | do the emergent clusters actually track real vendor/layout families | why are the fired: behavioral features mostly empty in the clustering today | how do I see which ingested PDFs form structural families (the corpus-cluster command)
+- **answers:** how does SpecForge cluster chip-spec PDFs by vendor/layout without hardcoding vendor names | what is corpus_cluster / document_fingerprint / cluster_documents / DocumentCluster | what is the per-document fingerprint made of (structural shape + extraction_manifest fired set) | do the emergent clusters actually track real vendor/layout families | why are the fired: behavioral features mostly empty in the clustering today | how do I see which ingested PDFs form structural families (the corpus-cluster command) | what is a ClusterExtractionProfile / derive_extraction_profiles (the per-cluster extraction profile) | why are the corpus-cluster extraction profiles mostly empty / 'none recorded yet'
 - **date:** 2026-06-09 · **status:** current
-- **evidence:** `docs/tasks/CORPUS-PATTERN-REUSE.md (.2/.3a); crates/specforge/src/ir/corpus_cluster.rs; crates/specforge/src/commands/corpus_cluster.rs`
+- **evidence:** `docs/tasks/CORPUS-PATTERN-REUSE.md (.2/.3a/.3b.1); crates/specforge/src/ir/corpus_cluster.rs; crates/specforge/src/commands/corpus_cluster.rs`
 - **reverify:** `cargo test -p specforge --lib corpus_cluster; cargo run -p specforge -- corpus-cluster`
 - **source:** [`docs/knowledge/corpus-cluster-fingerprint.md`](docs/knowledge/corpus-cluster-fingerprint.md)
 

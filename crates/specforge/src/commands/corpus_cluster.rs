@@ -17,8 +17,12 @@ use std::path::{Path, PathBuf};
 use crate::cli::CorpusClusterArgs;
 use crate::error::{AppError, Result};
 use crate::ir::IrStage;
-use crate::ir::corpus_cluster::{DocumentCluster, DocumentFingerprint, cluster_documents};
+use crate::ir::corpus_cluster::{
+    ClusterExtractionProfile, DocumentCluster, DocumentFingerprint, cluster_documents,
+    derive_extraction_profiles,
+};
 use crate::ir::evidence::EvidenceIr;
+use std::collections::BTreeMap;
 
 /// An evidence artifact that was found but could not contribute a fingerprint, with the honest reason.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -43,6 +47,8 @@ struct CorpusClusterReport {
     skipped: Vec<SkippedArtifact>,
     /// Clusters ordered for display: largest first, ties broken by representative key (deterministic).
     clusters: Vec<DocumentCluster>,
+    /// Advisory per-cluster extraction profiles (`.3b.1`), keyed for lookup by cluster representative.
+    profiles: Vec<ClusterExtractionProfile>,
 }
 
 impl CorpusClusterReport {
@@ -122,6 +128,7 @@ fn collect_corpus_documents(evidence_root: &Path) -> Result<LoadedCorpus> {
 /// representative key). Pure — no I/O — so ordering and summary counts are testable in isolation.
 fn build_corpus_cluster_report(loaded: LoadedCorpus, threshold: f64) -> CorpusClusterReport {
     let documents_loaded = loaded.documents.len();
+    let profiles = derive_extraction_profiles(&loaded.documents, threshold);
     let mut clusters = cluster_documents(&loaded.documents, threshold);
     // Display order: most-shared families first; ties by representative (first member) for determinism.
     clusters.sort_by(|a, b| {
@@ -136,6 +143,7 @@ fn build_corpus_cluster_report(loaded: LoadedCorpus, threshold: f64) -> CorpusCl
         documents_loaded,
         skipped: loaded.skipped,
         clusters,
+        profiles,
     }
 }
 
@@ -157,6 +165,18 @@ fn render_report(report: &CorpusClusterReport, evidence_root: &Path) -> String {
         "single_document_clusters: {}\n",
         report.single_document_clusters()
     ));
+
+    // Advisory profile lookup by cluster representative (first member) — `.3b.1`.
+    let profile_by_representative: BTreeMap<&str, &ClusterExtractionProfile> = report
+        .profiles
+        .iter()
+        .filter_map(|profile| {
+            profile
+                .members
+                .first()
+                .map(|representative| (representative.as_str(), profile))
+        })
+        .collect();
 
     let multi: Vec<&DocumentCluster> = report
         .clusters
@@ -181,6 +201,33 @@ fn render_report(report: &CorpusClusterReport, evidence_root: &Path) -> String {
                 index + 1,
                 cluster.members.len()
             ));
+            // Advisory extraction profile: the UNION of extractor strategies that fired across this family's
+            // members (with per-member support) — more than the shared signature above. Honestly sparse until
+            // the corpus-wide extraction_manifest sweep lands `fired:` tokens on every document.
+            let profile_line = cluster
+                .members
+                .first()
+                .and_then(|representative| profile_by_representative.get(representative.as_str()));
+            match profile_line {
+                Some(profile) if !profile.fired_extractors.is_empty() => {
+                    let fired = profile
+                        .fired_extractors
+                        .iter()
+                        .map(|support| {
+                            format!("{} ({})", support.extractor_name, support.member_support)
+                        })
+                        .collect::<Vec<_>>()
+                        .join(", ");
+                    out.push_str(&format!(
+                        "    profile (fired extractors, member support): {fired}\n"
+                    ));
+                }
+                _ => {
+                    out.push_str(
+                        "    profile (fired extractors): none recorded yet (run after a corpus re-ingest sweep)\n",
+                    );
+                }
+            }
             for member in &cluster.members {
                 out.push_str(&format!("    - {member}\n"));
             }
@@ -305,6 +352,40 @@ mod tests {
         assert!(rendered.contains("beta_reg"));
         assert!(rendered.contains("single-document clusters"));
         assert!(rendered.contains("gamma_proto"));
+    }
+
+    #[test]
+    fn render_shows_per_family_profile_fired_extractors() {
+        let reg = fp(&["shape:registers:b2", "fired:registers.field_table"]);
+        let report = report_for(
+            vec![
+                ("alpha_reg".to_string(), reg.clone()),
+                ("beta_reg".to_string(), reg),
+            ],
+            0.6,
+        );
+        let rendered = render_report(&report, Path::new("generated/evidence_ir"));
+        assert!(
+            rendered
+                .contains("profile (fired extractors, member support): registers.field_table (2)"),
+            "the family profile shows the union of fired extractors with member support; got:\n{rendered}"
+        );
+    }
+
+    #[test]
+    fn render_marks_profile_sparse_when_no_fired_tokens() {
+        // Documents whose fingerprints carry only structural `shape:` tokens (no extraction_manifest) → the
+        // profile is honestly reported as not-yet-recorded, never fabricated.
+        let shape_only = fp(&["shape:registers:b2", "shape:protocol_states:b0"]);
+        let report = report_for(
+            vec![
+                ("a".to_string(), shape_only.clone()),
+                ("b".to_string(), shape_only),
+            ],
+            0.6,
+        );
+        let rendered = render_report(&report, Path::new("generated/evidence_ir"));
+        assert!(rendered.contains("none recorded yet"));
     }
 
     #[test]
