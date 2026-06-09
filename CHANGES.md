@@ -1,3 +1,21 @@
+### `PDF-VARIANT-DIGESTION.9.10` (probe) — prose bus-line signal grammar: locked, gated on one owner decision
+Probe-first (the `.9.7`/`.9.8` discipline) for the SMBus/I2S prose-signal recall lever: ran the candidate
+grammars over ALL 78 persisted `evidence_ir` statement-text corpora before writing any code. Outcome:
+- **Form A — "the/The `<NAME>` line" — the corpus-safe winner.** Fires on only 5/78 docs (all 2-wire/serial
+  buses) and recovers exactly the missed signals — SMBus `SMBCLK`/`SMBDAT`/`SMBSUS#`, I2S `WS`, plus real bonus
+  signals on I2C (`SCL`/`SCLH`/`SDA`/`USCL`/`USDA`) and eMMC (`CMD`/`DAT`/`DAT0`). It fires on **ZERO** wire-based
+  docs (APB/AHB/AXI/SWD), so the wire-based byte-identical guarantee is structurally preserved.
+- **Form C — "`<NAME>` is a/an … signal" — REJECTED.** It fires on the wire-based docs (AXI `BRESP`/`RRESP`,
+  APB `PCLK`/`PPROT`/`PSLVERR`/`PSTRB`, AHB `HWSTRB`), which would change their output and break their 100%.
+- **Open design fork (gates the build):** Form A also captures power-supply rails `VDD`/`VSS` on the *measured*
+  I2C doc (declared-signal gold precision 0.600), so admitting them would regress a tracked score. The
+  recommended agnostic fix is to extend the existing universal-term denylist `is_signal_synthesis_non_signal`
+  (already holding universal hardware vocabulary like `CLOCK`/`RESET`/`PORT`/`PIN`) with the universal
+  supply-rail set — consistent with ADR 0006's "universal how, not a chip name" boundary. Because that touches a
+  non-negotiable (ADR 0006 + a measured score), the owner's steer is requested before coding.
+
+Docs-only probe checkpoint (no code change). The locked design + the fork are recorded in the `.9.10` task node.
+
 ### `PDF-VARIANT-DIGESTION.9.6` — I2S (NXP UM11732) honest baseline: 2/3 signals, dead timing tables
 Fourth serial-class baseline: first-ever ingest of NXP's I2S bus spec (14 pages / 27 visual / `ready` / 0
 residuals) → evidence (24 anchors / 152 spans / 154 statements) → `validate`. I2S classes as `guide` with

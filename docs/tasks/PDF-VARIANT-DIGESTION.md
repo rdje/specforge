@@ -194,7 +194,8 @@ diagnostic when a construct is genuinely out of model.
   regressing the table shapes that already work (SMBus yielded 84 timing_constraints). **Must be probe-locked
   over all persisted evidence docs BEFORE coding** (the `.9.7`/`.9.8` methodology). Honesty guardrail: residual
   over fabrication (a row with no recoverable symbol stays an honest residual). Spun from the `.9.6` I2S baseline.
-- ID: `PDF-VARIANT-DIGESTION.9.10` · Status: `proposed` · Goal: **SMBus-class prose bus-line signal grammar** —
+- ID: `PDF-VARIANT-DIGESTION.9.10` · Status: `in_progress` (probe DONE `2026-06-09`; implementation gated on one
+  owner decision — see below) · Goal: **SMBus-class prose bus-line signal grammar** —
   recover I2C/SMBus-derived 2-wire bus signals declared ONLY in prose (no signal table) — `SMBCLK`/`SMBDAT` as
   definite-article "the `<NAME>` line" / collective "`<NAME>` and `<NAME>` lines are <property>", and the
   active-low optional signals `SMBSUS#`/`SMBALERT#` as "`<NAME>#` is a/an <descriptor> signal" — AGNOSTICALLY
@@ -207,6 +208,33 @@ diagnostic when a construct is genuinely out of model.
   signal that was MISSED while `SCK`/`SD` from the same doc were captured — the probe must explain that asymmetry
   (likely the 2-letter all-caps token or the specific defining construction) and recover `WS` without
   fabrication. Spun from the `.9.5` SMBus baseline (extended by `.9.6`).
+  **PROBE (`2026-06-09`, faithful — ran the candidate grammars over ALL 78 persisted `evidence_ir`
+  statement-text corpora, the `.9.7`/`.9.8` method; NOT the 8 surviving normalized markdowns):**
+  - **FORM A — "the/The `<NAME>` line" (case-insensitive article, all-caps identifier, optional trailing `#`):
+    the WINNER.** Fires on only **5/78 docs**, all 2-wire/serial buses, and recovers exactly the missed signals:
+    SMBus → `SMBCLK`/`SMBDAT`/`SMBSUS#`; I2S → `WS` (the article was capitalized — "The WS line" — which a
+    case-sensitive probe would have missed); plus bonus real signals on I2C (`SCL`/`SCLH`/`SDA`/`USCL`/`USDA`)
+    and eMMC (`CMD`/`DAT`/`DAT0`). **Crucially it fires on ZERO wire-based docs (APB/AHB/AXI/SWD → NONE), so the
+    wire-based byte-identical invariant is structurally preserved.**
+  - **FORM B — "`<NAME>` and `<NAME>` lines" — a redundant subset of A** (SMBus → `SMBCLK`/`SMBDAT`); optional.
+  - **FORM C — "`<NAME>` is a/an [descriptor] signal" — REJECTED.** It fires on the WIRE-BASED docs (AXI →
+    `BRESP`/`RRESP`/`AWAKEUP`; APB → `PCLK`/`PPROT`/`PSLVERR`/`PSTRB`; AHB → `HWSTRB`), so it would change their
+    output and break their 100% byte-identical guarantee. (This is why SMBus's `SMBSUS#`/`SMBALERT#` "is a/an …
+    signal" definitions must NOT be harvested by a general copula — only the `#`-suffixed, `line`-anchored Form A.)
+  - **OPEN DESIGN FORK (gates the build):** Form A also captures **power-supply rails `VDD`/`VSS`** ("the VDD
+    line") on I2C/eMMC, and a stray `DLEN` on I2C. I2C is a **measured** doc (declared-signal gold precision
+    0.600), so admitting `VDD`/`VSS`/`DLEN` as signals would REGRESS a tracked score (scoring rigor — owner
+    non-negotiable). The agnostic fix is to extend the EXISTING universal-term denylist `is_signal_synthesis_non_signal`
+    (which already holds universal hardware vocabulary `CLOCK`/`RESET`/`PORT`/`PIN` — not chip names) with the
+    universal supply-rail set (`VDD`/`VSS`/`VCC`/`GND`/`VBAT`/…). That is consistent with the `CLOCK`/`RESET`
+    precedent and ADR 0006's "universal how, not a name" boundary — but because it touches a non-negotiable
+    (ADR 0006 + a measured score), the owner's explicit steer is requested before coding.
+  **Plan once decided:** add Form A as a 4th additive form in `synthesize_signal_declarations_from_prose` (under
+  the same `enable_parenthetical` sparse-catalog gate), via `is_hardware_signal_token` (strip a trailing `#`
+  for the check, keep it in the emitted name) + `is_signal_synthesis_non_signal` (extended); hermetic tests
+  (SMBus `SMBCLK`/`SMBDAT`/`SMBSUS#`, I2S `WS`, wire-based stays 0, power-rail excluded); full `run_ci.sh` +
+  kg-bench; re-measure I2C precision to PROVE no regression; book + KM. Honesty guardrail: residual over
+  fabrication.
 - ID: `PDF-VARIANT-DIGESTION.9.7` · Status: `in_progress` · Goal: **single-word `<NAME> state` FSM grammar** —
   generalize the SWD `<Name> state` path (`looks_like_state_name` + the TAP/scan-chain doc-gate) to also accept a
   single capitalized state word (`ACTIVATED state`, `DEACTIVATED state`) behind a safe generic FSM doc-gate, so
@@ -403,8 +431,14 @@ MISSED; 1 protocol_actor ("controller" — the `.8` grammar fires, better than S
 relations / 0 constraints; 1 conditional rule = NXP legal boilerplate noise; 0 timing_constraints despite 2
 `timing_parameter` tables (blank leading symbol-column shape)**. Honest finding: I2S under-extracts differently
 again → spun `.9.11` (blank-leading-column timing-table recovery) + folded `WS` into `.9.10`'s probe scope.
-**Frontier (any of, owner may steer):** `.9.10` (prose bus-line signals; SMBCLK/SMBDAT/SMBSUS#/SMBALERT# + I2S
-`WS`) · `.9.11` (blank-column timing tables) · `.9.8b` (SWIO contact-as-signal).
+**`.9.10` (prose bus-line signal grammar) PROBE DONE `2026-06-09`** — over all 78 persisted `evidence_ir` docs:
+Form A ("the/The `<NAME>` line") is the corpus-safe winner (5/78 docs, 0 wire-based, recovers SMBus
+`SMBCLK`/`SMBDAT`/`SMBSUS#` + I2S `WS` + bonus I2C/eMMC); Form C ("is a/an … signal") REJECTED (fires on
+APB/AHB/AXI → breaks byte-identical). **Implementation gated on ONE owner decision: how to treat power-supply
+rails `VDD`/`VSS` (Form A captures them on the MEASURED I2C doc → would regress its gold precision 0.600) —
+recommended: extend the existing universal-term denylist `is_signal_synthesis_non_signal` (CLOCK/RESET
+precedent; ADR-0006-safe universal supply vocabulary).** **Frontier (any of, owner may steer):** `.9.10` (gated
+on the power-rail decision above) · `.9.11` (blank-column timing tables) · `.9.8b` (SWIO contact-as-signal).
 `.6`/`.7` (the older VLM-frontier / USB-3.2 leaves) stay blocked on host-local PDFs.
 
 **(SUPERSEDED active note) `PDF-VARIANT-DIGESTION.6`/`.7`** — item ② (`.5`) COMPLETE and `.8` (broaden
@@ -742,6 +776,18 @@ set, not the whole doc/corpus.
 
 ## Verification log
 
+- `.9.10` PROBE (`2026-06-09`): faithful corpus-wide probe of the prose bus-line signal grammars over ALL 78
+  persisted `evidence_ir` statement-text corpora (the `.9.7`/`.9.8` method — NOT the 8 surviving normalized
+  markdowns; an early markdown-only, case-sensitive probe under-counted and missed I2S "The WS line"). Result:
+  **Form A "the/The `<NAME>` line" = corpus-safe winner** (5/78 docs, all 2-wire buses; SMBus `SMBCLK`/`SMBDAT`/
+  `SMBSUS#`, I2S `WS`, bonus I2C `SCL`/`SCLH`/`SDA`/`USCL`/`USDA` + eMMC `CMD`/`DAT`/`DAT0`; **0 wire-based hits
+  → byte-identical preserved**); Form B (collective lines) = redundant subset; **Form C "is a/an … signal" =
+  REJECTED** (fires on AXI `BRESP`/`RRESP`, APB `PCLK`/`PPROT`/`PSLVERR`/`PSTRB`, AHB `HWSTRB` → breaks
+  wire-based byte-identical). OPEN FORK gating the build: Form A captures power rails `VDD`/`VSS` on the MEASURED
+  I2C doc (gold precision 0.600) → admitting them regresses a tracked score; recommended agnostic fix = extend
+  the existing universal-term denylist `is_signal_synthesis_non_signal` (CLOCK/RESET precedent; universal supply
+  vocabulary, ADR-0006-safe) — surfaced to owner before coding. Docs-only checkpoint (probe finding recorded;
+  no code). Commit subject: `PDF-VARIANT-DIGESTION.9.10` (probe).
 - `.9.6` (`2026-06-09`): I2S (NXP UM11732) honest baseline (first-ever ingest of this spec). `DOCLING_DEVICE=cpu
   ingest` → 14 pages / 27 visual assets / `ready` / 0 residuals / `document_key:
   um11732_v3_2022_02_17_i2s_bus_specification`. `evidence` → 24 anchors / 152 spans / 27 visual / 14 links / 154
