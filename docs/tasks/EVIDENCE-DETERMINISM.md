@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `EVIDENCE-DETERMINISM`
-- Status: `active`
+- Status: `done` (`.1` diagnosis + `.2` fix DONE `2026-06-09`; EvidenceIR build reproducible on the corpus)
 - Roadmap lane: `R0` (correctness/reproducibility) / `R15e` (eval integrity)
 - Created: `2026-06-09`
 - Parent: surfaced by `EXTRACTOR-ARCHITECTURE.5` verification — a pure refactor's byte-identical check failed
@@ -44,17 +44,29 @@ synthesized statements minted in that order via the build-wide counter) and `fac
 deterministic docs, or (b) compare order-insensitively, until `.2` lands — recorded so future migration
 verification is not mis-read as a regression.
 
-## `.2`+ — Fix (pending)
+## `.2` — Fix (DONE `2026-06-09`)
 
-Replace the order-leaking iteration with a deterministic order (iterate a sorted view of `known_signals`, or
-make the relevant set a `BTreeSet`), audit the relation/statement-assembly path for other `HashSet`/`HashMap`
-iterations that leak into output (e.g. `relations_by_signal` `HashMap` @ ~ evidence.rs:2563), and VERIFY by
-double-run byte-identicality on SWD/ADI + re-checking that the relation multiset (and any eval score that
-reads it) is unchanged in CONTENT (only the chosen representative/order is now stable). Behavior-preserving in
-the multiset sense; a careful slice because it touches relation output that downstream surfaces consume.
+Two `HashSet`-iteration leaks found + fixed (both in `crates/specforge/src/ir/evidence.rs`):
+1. **`extract_actor_signal_relations`** iterated `known_signals: &HashSet<String>` directly → the relation
+   `asr_NNNN` ids + record order (+ the first-seen-wins dedup representative) depended on hash order. Fix:
+   sort once into a `Vec<&String>` before the statement loop, iterate that. The relation SET
+   (`(actor,signal,kind)` dedup keys) is invariant — verified the SWD key-set is unchanged (26 keys, == both
+   pre-fix runs); only ids/order/attribution become stable.
+2. **`derive_encoding_enum_name`** sorted candidates by `Reverse(len())` ONLY (a partial order) → same-length
+   names (`TDO`/`TDI`) stayed tied and a stable sort kept the non-deterministic HashSet order, so the chosen
+   enum name (`Enum <name> …` statements) was non-deterministic. Fix: a **total** order (length desc, then
+   name).
+
+**Verification:** ALL 6 intact-bundle docs (RISC-V Debug, I2C, SWP, CAN, NVMe, SWD/ADI) now **double-run
+byte-identical** (was: SWD content-different run-to-run); SWD eval `serial_frame_field`/`swd_operation`/
+`protocol_state` all `P=R=F1=1.000` (relation/frame/state surfaces unchanged); kg-bench 151/151; full
+`run_ci.sh` green (lib 1454 → 1455 — +1 determinism regression test: build a `HashSet` twice → identical
+relation output). Multiset-preserving (no fabrication; same facts, stable representative + order). KM card
+`evidence-build-nondeterminism` updated to the fixed state + the "never let HashSet order reach output" pattern.
 
 ## Current frontier
 
-`.1` diagnosis owned. `.2` (the deterministic-iteration fix) is the recommended next correctness step — it
-makes every future `EXTRACTOR-ARCHITECTURE` migration proof sound and stabilizes eval. Owner may sequence it
-against continuing the extractor migration (`EXTRACTOR-ARCHITECTURE.6`: registers/actors/polarity).
+`.1` diagnosis + `.2` fix DONE — the EvidenceIR build is now reproducible on the corpus. Tree effectively
+closed at its scope (a deeper exhaustive `HashSet`/`HashMap` audit across ALL surfaces could be a future leaf
+if a new non-determinism surfaces, but the corpus double-run is currently clean). Next program work returns to
+`EXTRACTOR-ARCHITECTURE.6` (migrate registers/actors/polarity — and now every byte-identical proof is sound).

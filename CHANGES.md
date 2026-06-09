@@ -1,3 +1,20 @@
+### `EVIDENCE-DETERMINISM.2` — make the EvidenceIR build reproducible (fix two HashSet-iteration leaks)
+Fixed the content-level non-determinism `.1` diagnosed. Two `HashSet`-iteration leaks in `ir/evidence.rs`:
+1. `extract_actor_signal_relations` iterated `known_signals: &HashSet<String>` directly → the relation
+   `asr_NNNN` ids + record order (+ the first-seen-wins dedup representative) depended on hash order. Fixed:
+   sort once into a `Vec<&String>` before the statement loop. The relation SET (`(actor,signal,kind)` keys)
+   is invariant — only ids/order/attribution become stable.
+2. `derive_encoding_enum_name` sorted candidates by `Reverse(len())` ONLY (a partial order) → same-length
+   names (`TDO`/`TDI`) stayed tied and a stable sort kept the non-deterministic HashSet order, so the chosen
+   enum name was non-deterministic. Fixed: a total order (length desc, then name).
+
+**Verification:** ALL 6 intact-bundle docs (RISC-V Debug, I2C, SWP, CAN, NVMe, SWD/ADI) now **double-run
+byte-identical** (was: SWD content-different run-to-run); SWD eval `serial_frame_field`/`swd_operation`/
+`protocol_state` all `P=R=F1=1.000`; kg-bench 151/151; +1 regression test (build a `HashSet` twice → identical
+relation output); full `run_ci.sh` green (lib 1454 → 1455). Multiset-preserving (no fabrication). This makes
+every future `EXTRACTOR-ARCHITECTURE` byte-identical proof sound + stabilizes eval scores (the scorer reads
+persisted evidence). KM `evidence-build-nondeterminism` updated to the fixed state + the anti-pattern.
+
 ### `EVIDENCE-DETERMINISM.1` — diagnose the EvidenceIR build's content-level non-determinism (no code)
 Surfaced by `EXTRACTOR-ARCHITECTURE.5`: a pure refactor's byte-identical check failed on SWD/ADI, and the
 investigation proved the EvidenceIR build is **non-deterministic at the content level** (independent of the

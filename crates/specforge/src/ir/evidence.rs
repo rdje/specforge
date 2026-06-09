@@ -2829,6 +2829,14 @@ fn extract_actor_signal_relations(
     let mut seen: std::collections::HashSet<(String, String, u8)> =
         std::collections::HashSet::new();
 
+    // EVIDENCE-DETERMINISM.2 — iterate the signals in a DETERMINISTIC (sorted) order. Iterating the
+    // `known_signals` HashSet directly made the relation `asr_NNNN` ids, the record order, and the
+    // first-seen dedup representative depend on hash-iteration order, so the build was non-deterministic
+    // run-to-run (`[[evidence-build-nondeterminism]]`). Sorting once here leaves the relation SET (the
+    // `(actor, signal, kind)` dedup keys) unchanged — only the order / ids / attribution become stable.
+    let mut sorted_signals: Vec<&String> = known_signals.iter().collect();
+    sorted_signals.sort_unstable();
+
     for stmt in statements {
         // Skip synthesized declarations and table rows
         if stmt.text.starts_with("Signal ")
@@ -2842,7 +2850,7 @@ fn extract_actor_signal_relations(
         let text = &stmt.text;
         let lowered = text.to_ascii_lowercase();
 
-        for signal in known_signals {
+        for &signal in &sorted_signals {
             let sig_lower = signal.to_ascii_lowercase();
             if !lowered.contains(&sig_lower) {
                 continue;
@@ -3750,8 +3758,13 @@ fn derive_encoding_enum_name(
             .collect::<Vec<_>>()
             .join(" ")
             .to_ascii_lowercase();
+        // EVIDENCE-DETERMINISM.2 — sort longest-first with an alphabetical tie-break. Sorting by length
+        // ALONE is a partial order: same-length candidates (e.g. `TDO`/`TDI`) stay tied and a stable sort
+        // then preserves the non-deterministic `known_signals` HashSet order, so the first matching name
+        // returned below was non-deterministic. A total order (length desc, then name) makes the chosen
+        // enum name reproducible without changing which names are eligible (`[[evidence-build-nondeterminism]]`).
         let mut ordered_signals: Vec<&String> = known_signals.iter().collect();
-        ordered_signals.sort_by_key(|signal| std::cmp::Reverse(signal.len()));
+        ordered_signals.sort_by(|a, b| b.len().cmp(&a.len()).then_with(|| a.cmp(b)));
 
         for signal in ordered_signals {
             let signal_lower = signal.to_ascii_lowercase();
@@ -16130,6 +16143,77 @@ mod pdf_variant_digestion_9_7_fsm {
         assert!(!is_bare_state_name("UNKNOWN")); // architectural pseudo-value
         assert!(!is_bare_state_name("A")); // too short
         assert!(!is_bare_state_name("123")); // no letter
+    }
+}
+
+#[cfg(test)]
+mod evidence_determinism {
+    //! EVIDENCE-DETERMINISM.2 — the EvidenceIR build must be reproducible. Rust's `HashSet` is per-instance
+    //! randomly seeded, so building the same logical inputs twice yields different iteration orders;
+    //! asserting identical extractor output across two fresh builds is a real non-determinism regression test.
+    use super::*;
+
+    fn stmt(id: &str, text: &str) -> ExtractedStatement {
+        ExtractedStatement {
+            statement_id: id.to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        }
+    }
+
+    #[test]
+    fn actor_signal_relations_are_deterministic_across_hashset_orderings() {
+        // One statement names TWO signals, so the relation order + `asr_NNNN` ids depend on the order
+        // signals are processed — which, before the fix, was the non-deterministic `known_signals` HashSet
+        // iteration order. Build the set + extract twice (fresh HashSets, independently seeded) and require
+        // byte-identical output (ids, order, attribution), not just set-equality.
+        let stmts = vec![stmt(
+            "s1",
+            "PSTRB is driven by the Manager and PWUSER is driven by the Manager.",
+        )];
+        let run = || {
+            let signals: std::collections::HashSet<String> = [
+                "PSTRB".to_string(),
+                "PWUSER".to_string(),
+                "PWAKE".to_string(),
+            ]
+            .into_iter()
+            .collect();
+            extract_actor_signal_relations(&stmts, &signals)
+        };
+        let a = run();
+        let b = run();
+        let proj = |rs: &[ActorSignalRelation]| {
+            rs.iter()
+                .map(|r| {
+                    (
+                        r.relation_id.clone(),
+                        r.actor_name.clone(),
+                        r.signal_name.clone(),
+                        format!("{:?}", r.relation),
+                    )
+                })
+                .collect::<Vec<_>>()
+        };
+        assert_eq!(
+            proj(&a),
+            proj(&b),
+            "relation ids + order must be deterministic across HashSet seedings"
+        );
+        // sanity: the statement really did yield the two relations that exercise the ordering
+        assert!(
+            a.iter().any(|r| r.signal_name == "PSTRB"),
+            "got {:?}",
+            proj(&a)
+        );
+        assert!(
+            a.iter().any(|r| r.signal_name == "PWUSER"),
+            "got {:?}",
+            proj(&a)
+        );
     }
 }
 
