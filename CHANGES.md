@@ -1,3 +1,21 @@
+### `CORPUS-PATTERN-REUSE.2` — derived vendor/layout fingerprint + unsupervised clustering (the vision, started)
+Building on the `.8` manifest, this lands the clustering capability for the owner's vendor-pattern-reuse
+vision — agnostically (ADR 0006: no vendor name; the cluster key IS the shared structure). Pure
+`crate::ir::corpus_cluster`: `document_fingerprint(&EvidenceIr)` emits a SET of feature tokens from the
+document's own IR — **structural shape** (coarse count bucket per surface, e.g. `shape:registers:b2`) plus
+**behavioral shape** (which extractors fired, from the `.8` `extraction_manifest`, e.g.
+`fired:registers.field_table`); `fingerprint_similarity` = Jaccard; `cluster_documents` = deterministic greedy
+agglomeration → `DocumentCluster { members, shared_features }`.
+
+4 hermetic tests (bucket math, Jaccard, cluster/split, order-independent determinism); full `run_ci.sh` green
+(lib 1457 → 1461). **Live demonstration over all 76 persisted evidence docs (threshold 0.6 → 29 clusters, 14
+multi-doc): emergent families track reality with NO vendor list** — the 3 CoreSight SoC-600 versions cluster,
+CCIX r1.0 ↔ r1.1 cluster, 7 AMBA protocol specs (APB d/e, Trace-bus, AXI-Stream, Generic-Flash, LTI) fall
+together on shared `relations:b2 + signal_constraints:b2`. Honest caveat: the `fired:` behavioral features
+were mostly absent (only ~6 docs rebuilt since `.8`), so clustering is currently structural-shape driven — a
+corpus-wide re-ingest sweep is the enrichment follow-up. KM card `corpus-cluster-fingerprint`. `.3` follow-ups:
+a `corpus-cluster` CLI command + the advisory `ExtractionProfile` consumed via `Extractor::applies_to`.
+
 ### `EXTRACTOR-ARCHITECTURE.8` — wire the extraction run manifest into the output + `validate` (the payoff)
 The framework's payoff, and the `CORPUS-PATTERN-REUSE` enabler. The migrated surfaces already produced a
 `SurfaceRun` manifest (which extractors were eligible / fired / produced / kept) but `build()` discarded it.

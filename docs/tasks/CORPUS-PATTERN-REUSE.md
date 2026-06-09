@@ -81,10 +81,35 @@ gauges (did the profile reduce misses on held-out docs?).
   vendor-clustered pattern-reuse direction as an owned design grounded in the existing prior plane + the
   extractor framework, with the genericity/honesty guardrails made explicit. Verification: docs-only; design
   recorded here + KM card `corpus-pattern-reuse`. Commit: this slice.
-- ID: `CORPUS-PATTERN-REUSE.2` · Status: `pending` (gated) · Goal: derived vendor/layout **fingerprint** +
+- ID: `CORPUS-PATTERN-REUSE.2` · Status: `in_progress` (`2026-06-09`; gate met by `EXTRACTOR-ARCHITECTURE.8` —
+  the `extraction_manifest` fingerprint now exists) · Goal: derived vendor/layout **fingerprint** +
   unsupervised clustering over the tracked corpus (structural signature + `ExtractionManifest`); measure that
-  emergent clusters track real vendor/layout families WITHOUT a vendor list. Gated on: the extractor-framework
-  migration maturing enough that the manifest is populated for the surfaces that matter.
+  emergent clusters track real vendor/layout families WITHOUT a vendor list.
+  **Design (this slice):** a pure `crate::ir::corpus_cluster` module. `document_fingerprint(&EvidenceIr) ->
+  BTreeSet<String>` emits ADR-0006-safe feature tokens derived from the document's own structure — coarse
+  count buckets per surface (`shape:registers:b2`, `shape:protocol_states:b0`, …) PLUS which extractors fired
+  (`fired:registers.field_table`, from the `.8` manifest). `fingerprint_similarity` = Jaccard of the feature
+  sets; `cluster_documents(&[(key, fp)], threshold)` = deterministic greedy agglomeration (sort by key →
+  attach to the first cluster whose representative is ≥ threshold-similar, else open a new one) → clusters with
+  their shared feature intersection. No vendor names anywhere (the cluster key is the shared structural
+  signature). The structural part works on every persisted doc; the behavioral (`fired:`) part enriches docs
+  rebuilt since `.8`. Verification: hermetic tests (synthetic fingerprints → expected clusters; determinism;
+  Jaccard math) + a live demonstration over the manifest-bearing docs recorded here + KM. A first-class
+  `corpus-cluster` CLI command + full-corpus re-ingest sweep is the `.3`/follow-up (this slice lands the
+  capability + proves the concept).
+  **DONE (`2026-06-09`).** Pure `crate::ir::corpus_cluster` (`document_fingerprint` / `fingerprint_similarity`
+  / `cluster_documents` + `DocumentCluster`), 4 hermetic tests (bucket math, Jaccard, similar-cluster/
+  dissimilar-split, order-independent determinism); `run_ci.sh` green (lib 1457 → 1461). **Live demonstration
+  over all 76 persisted evidence docs (probe replicating the exact fingerprint), threshold 0.6 → 29 clusters,
+  14 multi-doc.** Emergent families track reality WITHOUT any vendor list: the 3 CoreSight SoC-600 versions
+  cluster (identical shape); CCIX r1.0 ↔ r1.1 cluster; **7 AMBA protocol specs** (APB d/e, Trace-bus,
+  AXI-Stream, Generic-Flash, LTI) fall together on shared `relations:b2 + signal_constraints:b2`; AHB ↔ HBM2;
+  CHI ↔ I2C (actor+relation+constraint-heavy). **Honest coverage caveat:** the `fired:` behavioral features
+  were mostly absent (only ~6 docs rebuilt since `.8`), so the clustering is currently **structural-shape
+  driven** — yet it already recovers real families. Full behavioral enrichment needs a corpus-wide re-ingest
+  sweep (so every doc carries an `extraction_manifest`). KM card `corpus-cluster-fingerprint`.
+  Follow-ups (`.3`): a first-class `corpus-cluster` CLI command (run the Rust over the corpus, surfaced + book),
+  the re-ingest sweep, and the advisory `ExtractionProfile` consumed via `Extractor::applies_to`.
 - ID: `CORPUS-PATTERN-REUSE.3` · Status: `pending` (gated) · Goal: typed advisory `ExtractionProfile` in
   `CorpusMemory` keyed by cluster fingerprint; consumed via `Extractor::applies_to`; bounded + contested-gated.
 - ID: `CORPUS-PATTERN-REUSE.4` · Status: `pending` (gated) · Goal: offline LLM/VLM cluster pattern miner with

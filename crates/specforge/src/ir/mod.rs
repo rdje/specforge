@@ -4,6 +4,7 @@ pub mod completeness;
 pub mod condition_extract;
 pub mod constraint_extract_llm;
 pub mod contract;
+pub mod corpus_cluster;
 pub mod cve;
 pub mod entity_typing;
 pub mod evidence;
