@@ -1,4 +1,22 @@
 # DEVELOPMENT_NOTES
+## `PDF-VARIANT-DIGESTION.9.6` (`2026-06-09`) — I2S (NXP UM11732) honest baseline (measurement, no code change)
+- First-ever ingest (`DOCLING_DEVICE=cpu`) of `corpus/nxp/i2s/current/UM11732_v3_*.pdf` → `document_key:
+  um11732_v3_2022_02_17_i2s_bus_specification`: 14 pages / 27 visual / `ready` / 0 residuals. evidence = 24
+  anchors / 152 spans / 27 visual / 14 links / 154 statements.
+- `validate` → `document_class: guide`, `document_type_declared: specification` → ⚠ under-extracted spec.
+  Deterministic yield: 2 real signals (`SCK` + `SD`); `WS` (word select, 11×) MISSED; 1 protocol_actor
+  ("controller", prose — the `.8` grammar fires); 0 protocol_states / 0 serial_frame_fields / 0
+  actor_signal_relations / 0 signal_constraints / 0 register_records; 1 conditional rule = NXP legal boilerplate
+  noise; 0 timing_constraints despite 2 `timing_parameter` tables (`table_0004` / `table_0005`); 0
+  signal_semantic_hints / 0 signal_polarities.
+- Honesty-guardrail recon: I2S has NO signal table; `SCK`/`WS`/`SD` declared in prose ("the device generating
+  SCK and WS is the controller", "the WS line"). The 2 timing tables have a BLANK leading parameter/symbol
+  column header (`|  | MIN | TYP | MAX | CONDITION |`) → no symbol anchors the row → 0 records (SMBus's timing
+  tables yielded 84 — the difference is the header shape).
+- Conclusion: under-extracted DIFFERENTLY than CAN/SWP/SMBus → spun lever `.9.11` (blank-leading-column
+  timing-parameter table recovery, probe-locked; ADR 0006) + folded `WS` recall into `.9.10`. Docs-only slice
+  (generated IR git-ignored → APB/AHB/AXI/SWD trivially unaffected).
+
 ## `PDF-VARIANT-DIGESTION.9.5` (`2026-06-09`) — SMBus 3.3.1 honest baseline (measurement, no code change)
 - First-ever ingest (`DOCLING_DEVICE=cpu`) of `corpus/smbus/current/SMBus_3.3.1_*.pdf` → `document_key:
   smbus_3_3_1_2024_10_20_system_management_bus_specification`: 83 pages / 100 visual / `ready` / 0 residuals.

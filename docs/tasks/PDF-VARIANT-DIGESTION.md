@@ -162,6 +162,38 @@ diagnostic when a construct is genuinely out of model.
   positive from "two-**wire** bus" / "**wired**-AND" — a precision blemish, not a fabrication. (4) actors
   "controller" (296×) / "target" (280×) are heavily present but 0 protocol_actors → a prose-actor gap on the
   "bus controller"/"bus target" idiom. Spun future lever `.9.10` (below). Commit: pending (this slice).
+- ID: `PDF-VARIANT-DIGESTION.9.6` · Status: `done` (`2026-06-09`) · Goal: **I2S (NXP UM11732) honest baseline** —
+  ingest (`DOCLING_DEVICE=cpu`) → evidence → validate the never-before-ingested NXP I2S bus spec; record the
+  document_class, completeness gauge, and the signal / FSM / actor / relation / timing yield; state the honest
+  gap and spin the next lever. No fabrication (ADR 0006). Acceptance: baseline metrics recorded in this tree;
+  APB/AHB/AXI/SWD unaffected (docs-only slice — no code change). **Verification:** clean ingest (14 pages / 27
+  visual assets / `ready` / 0 residuals / `document_key: um11732_v3_2022_02_17_i2s_bus_specification`); evidence =
+  24 section anchors / 152 spans / 27 visual / 14 links / 154 statements. `validate` → **`document_class: guide`,
+  `document_type_declared: specification` → ⚠ UNDER-EXTRACTED spec** (the `.5a`/`.5c` machinery fires correctly,
+  as on CAN/SMBus). Deterministic yield: **2 real signals (`SCK` + `SD`)** captured from prose — but `WS` (word
+  select, the most-referenced signal at 11×) MISSED; **1 protocol_actor** (the `.8` prose-actor grammar fires →
+  "controller", from "the device generating SCK and WS is the controller" — better than SMBus's 0); 0
+  protocol_states / 0 serial_frame_fields / 0 actor_signal_relations / 0 signal_constraints / 0 register_records;
+  **1 conditional_rule which is NXP LEGAL-BOILERPLATE NOISE** ("otherwise agreed in a valid written individual
+  agreement …", correctly excluded from the doc-class decision); **0 timing_constraints despite 2 intent-bearing
+  `timing_parameter` tables** (`table_0004` / `table_0005`) → produced no record; 0 signal_semantic_hints / 0
+  signal_polarities; completeness gauge `not applicable` (guide). **Honest finding — I2S under-extracts
+  DIFFERENTLY AGAIN, and the facts ARE present:** (1) I2S has **no signal table** — its 3 lines (`SCK` serial
+  clock 5×, `WS` word-select 11×, `SD` serial data 2×) are declared in prose; `SCK`/`SD` were captured but `WS`
+  was MISSED (a prose-bus-line recall quirk — likely the 2-letter all-caps token vs the parenthetical/defining
+  construction — to be probed under `.9.10`'s family). (2) The 2 `timing_parameter` tables yield 0 records
+  because their **leading parameter/symbol column header is BLANK** (`|  | MIN | TYP | MAX | CONDITION |`), so no
+  symbol anchors the row (contrast: SMBus's timing tables yielded 84) → a blank-leading-column timing-table
+  recovery lever `.9.11`. (3) the lone conditional rule is legal boilerplate, not protocol semantics. Spun
+  future lever `.9.11` (below); `WS` recall folded into `.9.10`'s probe scope. Commit: pending (this slice).
+- ID: `PDF-VARIANT-DIGESTION.9.11` · Status: `proposed` · Goal: **blank-leading-column timing-parameter table
+  recovery** — recover timing parameters from `timing_parameter`-classified tables whose **parameter/symbol name
+  column header is BLANK** (the I2S `|  | MIN | TYP | MAX | CONDITION |` shape), where the symbol lives in the
+  first body cell of each row rather than under a labelled header, so they yield typed `timing_constraints`
+  instead of 0 records — AGNOSTICALLY (ADR 0006: read the row structure, never the parameter names) and without
+  regressing the table shapes that already work (SMBus yielded 84 timing_constraints). **Must be probe-locked
+  over all persisted evidence docs BEFORE coding** (the `.9.7`/`.9.8` methodology). Honesty guardrail: residual
+  over fabrication (a row with no recoverable symbol stays an honest residual). Spun from the `.9.6` I2S baseline.
 - ID: `PDF-VARIANT-DIGESTION.9.10` · Status: `proposed` · Goal: **SMBus-class prose bus-line signal grammar** —
   recover I2C/SMBus-derived 2-wire bus signals declared ONLY in prose (no signal table) — `SMBCLK`/`SMBDAT` as
   definite-article "the `<NAME>` line" / collective "`<NAME>` and `<NAME>` lines are <property>", and the
@@ -171,7 +203,10 @@ diagnostic when a construct is genuinely out of model.
   evidence docs BEFORE coding** (the `.9.7`/`.9.8` methodology) — `.9.8` already PROVED descriptor-apposition is
   corpus-toxic, so the descriptor-tolerant "is a/an X signal" form needs careful gating (the `#` suffix + a
   bounded descriptor allowlist or all-caps-identifier subject test). Honesty guardrail: residual over
-  fabrication. Spun from the `.9.5` SMBus baseline.
+  fabrication. Also in scope (from the `.9.6` I2S baseline): I2S's `WS` (word select, 11×) is a prose bus-line
+  signal that was MISSED while `SCK`/`SD` from the same doc were captured — the probe must explain that asymmetry
+  (likely the 2-letter all-caps token or the specific defining construction) and recover `WS` without
+  fabrication. Spun from the `.9.5` SMBus baseline (extended by `.9.6`).
 - ID: `PDF-VARIANT-DIGESTION.9.7` · Status: `in_progress` · Goal: **single-word `<NAME> state` FSM grammar** —
   generalize the SWD `<Name> state` path (`looks_like_state_name` + the TAP/scan-chain doc-gate) to also accept a
   single capitalized state word (`ACTIVATED state`, `DEACTIVATED state`) behind a safe generic FSM doc-gate, so
@@ -361,8 +396,15 @@ correct, like CAN). Deterministic yield **1 real signal (`SMBCLK`) + 1 noise (`W
 (21 fields)**. Honest finding: SMBus declares its bus signals (`SMBCLK`/`SMBDAT`/`SMBSUS#`/`SMBALERT#`) ONLY in
 prose (NO signal table) in idioms none of the existing grammars catch — the `.9.8` definitional copula misses
 the `#` active-low suffix + the descriptor word ("optional"/"wired-AND") — so 3/≥4 signals missed → a NEW
-prose-signal lever `.9.10` (probe-locked, spun). **Frontier (any of, owner may steer):** `.9.6` (I2S baseline)
-· `.9.10` (SMBus prose bus-line signal grammar) · `.9.8b` (SWIO contact-as-signal, abbreviation-expansion miner).
+prose-signal lever `.9.10` (probe-locked, spun). **`.9.6` (I2S NXP UM11732 honest baseline) DONE `2026-06-09`** —
+first-ever ingest (14 pp / 27 visual / `ready`); `document_class: guide` + `document_type_declared: specification`
+→ ⚠ UNDER-EXTRACTED spec. Yield **2 real signals (`SCK`+`SD`) captured from prose but `WS` (word select, 11×)
+MISSED; 1 protocol_actor ("controller" — the `.8` grammar fires, better than SMBus); 0 FSM / 0 frame / 0
+relations / 0 constraints; 1 conditional rule = NXP legal boilerplate noise; 0 timing_constraints despite 2
+`timing_parameter` tables (blank leading symbol-column shape)**. Honest finding: I2S under-extracts differently
+again → spun `.9.11` (blank-leading-column timing-table recovery) + folded `WS` into `.9.10`'s probe scope.
+**Frontier (any of, owner may steer):** `.9.10` (prose bus-line signals; SMBCLK/SMBDAT/SMBSUS#/SMBALERT# + I2S
+`WS`) · `.9.11` (blank-column timing tables) · `.9.8b` (SWIO contact-as-signal).
 `.6`/`.7` (the older VLM-frontier / USB-3.2 leaves) stay blocked on host-local PDFs.
 
 **(SUPERSEDED active note) `PDF-VARIANT-DIGESTION.6`/`.7`** — item ② (`.5`) COMPLETE and `.8` (broaden
@@ -700,6 +742,22 @@ set, not the whole doc/corpus.
 
 ## Verification log
 
+- `.9.6` (`2026-06-09`): I2S (NXP UM11732) honest baseline (first-ever ingest of this spec). `DOCLING_DEVICE=cpu
+  ingest` → 14 pages / 27 visual assets / `ready` / 0 residuals / `document_key:
+  um11732_v3_2022_02_17_i2s_bus_specification`. `evidence` → 24 anchors / 152 spans / 27 visual / 14 links / 154
+  statements. `validate` → `document_class: guide`, `document_type_declared: specification`, ⚠ `under-extracted
+  spec`. Deterministic yield: 2 real signals (`SCK` + `SD`, captured from prose) but `WS` (word select, 11×)
+  MISSED; 1 protocol_actor ("controller", prose — the `.8` grammar fires); 0 protocol_states / 0
+  serial_frame_fields / 0 actor_signal_relations / 0 signal_constraints / 0 register_records; 1 conditional rule
+  = NXP legal boilerplate noise ("otherwise agreed in a valid written individual agreement …"); 0
+  timing_constraints despite 2 `timing_parameter` tables (`table_0004` / `table_0005`) flagged unexplained; 0
+  signal_semantic_hints / 0 signal_polarities; completeness gauge `not applicable` (guide). Honesty-guardrail
+  recon: I2S has no signal table; `SCK` (5×) / `WS` (11×) / `SD` (2×) declared in prose ("the device generating
+  SCK and WS is the controller", "the WS line", "the WS signal"); the 2 timing tables have a BLANK leading
+  parameter/symbol column header (`|  | MIN | TYP | MAX | CONDITION |`) so no symbol anchors the row. Conclusion:
+  under-extracted differently than CAN/SWP/SMBus → spun `.9.11` (blank-leading-column timing-parameter table
+  recovery) + folded `WS` recall into `.9.10`'s probe scope. Docs-only slice (generated IR git-ignored; no code
+  change → APB/AHB/AXI/SWD trivially unaffected). Commit subject: `PDF-VARIANT-DIGESTION.9.6`.
 - `.9.5` (`2026-06-09`): SMBus 3.3.1 honest baseline (first-ever ingest of this spec). `DOCLING_DEVICE=cpu
   ingest` → 83 pages / 100 visual assets / `ready` / 0 residuals / `document_key:
   smbus_3_3_1_2024_10_20_system_management_bus_specification`. `evidence` → 139 anchors / 1076 spans / 100 visual
@@ -828,6 +886,13 @@ set, not the whole doc/corpus.
 
 ## Changelog
 
+- `2026-06-09`: `.9.6` (I2S NXP UM11732 honest baseline) DONE. First-ever ingest (14 pp / 27 visual / `ready` /
+  0 residuals) → evidence (24 anchors / 152 spans / 154 statements) → `validate`: `document_class: guide`,
+  `document_type_declared: specification` → ⚠ under-extracted spec. Yield 2 real signals (`SCK`+`SD`) captured
+  from prose, `WS` (11×) MISSED; 1 protocol_actor ("controller", `.8` grammar fires); 0 FSM/frame/relations/
+  constraints; 1 conditional rule = NXP legal boilerplate noise; 0 timing_constraints despite 2
+  `timing_parameter` tables (blank leading symbol column). Spun `.9.11` (blank-column timing-table recovery) +
+  folded `WS` into `.9.10`. Docs-only (no code change). Commit subject: `PDF-VARIANT-DIGESTION.9.6`.
 - `2026-06-09`: `.9.5` (SMBus 3.3.1 honest baseline) DONE. First-ever ingest (83 pp / 100 visual / `ready` / 0
   residuals) → evidence (139 anchors / 1076 spans / 1131 statements) → `validate`: `document_class: guide`,
   `document_type_declared: specification` → ⚠ under-extracted spec. Deterministic yield 1 real signal (`SMBCLK`)

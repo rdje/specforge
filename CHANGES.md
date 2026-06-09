@@ -1,3 +1,26 @@
+### `PDF-VARIANT-DIGESTION.9.6` — I2S (NXP UM11732) honest baseline: 2/3 signals, dead timing tables
+Fourth serial-class baseline: first-ever ingest of NXP's I2S bus spec (14 pages / 27 visual / `ready` / 0
+residuals) → evidence (24 anchors / 152 spans / 154 statements) → `validate`. I2S classes as `guide` with
+`document_type_declared: specification` → **⚠ under-extracted spec** (the `.5a`/`.5c` routing fires correctly).
+Deterministic yield: **2 real signals (`SCK` + `SD`) captured from prose, but `WS` (word select, the
+most-referenced signal at 11×) MISSED**; **1 protocol_actor** ("controller" — the `.8` prose-actor grammar fires,
+so I2S is better-covered than SMBus's 0); 0 FSM / 0 frame / 0 relations / 0 constraints; 0 register_records;
+**1 conditional rule that is NXP legal boilerplate noise** ("otherwise agreed in a valid written individual
+agreement …", correctly excluded from the class decision); **0 timing_constraints despite 2 intent-bearing
+`timing_parameter` tables**.
+
+The recon (honesty guardrail) shows the facts ARE present, under-extracted in yet another distinct way:
+- **No signal table** — `SCK` (5×) / `WS` (11×) / `SD` (2×) are declared only in prose ("the device generating
+  SCK and WS is the controller", "the WS line", "the WS signal"). `SCK`/`SD` were captured but `WS` was missed —
+  a prose-bus-line recall asymmetry (likely the 2-letter all-caps token vs the defining construction).
+- **Timing tables read as dead** — both `timing_parameter` tables have a **blank leading parameter/symbol column
+  header** (`|  | MIN | TYP | MAX | CONDITION |`), so no symbol anchors each row → 0 records (contrast: SMBus's
+  timing tables yielded 84).
+
+Recorded as lever backlog `.9.11` (blank-leading-column timing-parameter table recovery, probe-locked before
+coding) and folded the `WS` recall into `.9.10`'s probe scope. Docs-only (no code change); the I2S PDF + registry
+make the baseline reproducible.
+
 ### `PDF-VARIANT-DIGESTION.9.5` — SMBus 3.3.1 honest baseline: signals live in untabled prose
 Extending the serial-class survey to a third never-seen spec: first-ever ingest of SMBus 3.3.1 (83 pages / 100
 visual assets / `ready` / 0 residuals) → evidence (139 anchors / 1076 spans / 1131 statements) → `validate`.
