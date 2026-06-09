@@ -827,6 +827,7 @@ impl EvidenceIr {
             contract_stmts,
             &mut statement_counter,
             prior_guidance.as_ref(),
+            &mut extraction_manifest,
         );
 
         // SWD-SERIAL-EXTRACTION.3 + PDF-VARIANT-DIGESTION.9.3b: recover the serial-frame fields — the SWD
@@ -4151,21 +4152,81 @@ fn extract_signal_polarity_from_signal_tables(
     observations
 }
 
-fn collect_signal_polarity_facts(
+/// EXTRACTOR-ARCHITECTURE.9b — the prose active-level strategy (explicit asserted-when-level prose,
+/// collective active-LOW/HIGH prose, safe clause-local mixed forms) as a registered `Extractor`. The
+/// grammar self-gates: it emits nothing when no known signal carries polarity prose.
+struct SignalPolarityProseExtractor<'a> {
+    known_signals: &'a HashSet<String>,
+}
+impl Extractor<SignalPolarityObservationCandidate> for SignalPolarityProseExtractor<'_> {
+    fn name(&self) -> &'static str {
+        "signal_polarity.prose"
+    }
+    fn run(&self, cx: &ExtractionContext<'_>) -> Vec<SignalPolarityObservationCandidate> {
+        extract_signal_polarity_from_prose(cx.statements, self.known_signals)
+    }
+}
+
+/// EXTRACTOR-ARCHITECTURE.9b — the signal-table polarity strategy (active-level columns/cells in
+/// signal-description tables) as a registered `Extractor`. Reads the structured tables, not statements.
+struct SignalPolarityTableExtractor<'a> {
+    source_ir: &'a SourceIr,
+    known_signals: &'a HashSet<String>,
+    prior_guidance: Option<&'a EvidencePriorGuidance>,
+}
+impl Extractor<SignalPolarityObservationCandidate> for SignalPolarityTableExtractor<'_> {
+    fn name(&self) -> &'static str {
+        "signal_polarity.tables"
+    }
+    fn run(&self, _cx: &ExtractionContext<'_>) -> Vec<SignalPolarityObservationCandidate> {
+        extract_signal_polarity_from_signal_tables(
+            self.source_ir,
+            self.known_signals,
+            self.prior_guidance,
+        )
+    }
+}
+
+/// Run the signal-polarity surface through the unified concat driver (EXTRACTOR-ARCHITECTURE.9b), then
+/// arbitrate. Polarity is an OBSERVATION surface: the two strategies' candidates are concatenated in
+/// strategy order (prose, then tables — exactly the legacy collection order) and the per-signal
+/// accumulate-and-arbitrate post-pass decides consensus vs conflict; first-wins key-dedup would be wrong
+/// here because a same-polarity observation from a second source STRENGTHENS the record (merged ids) and
+/// a different-polarity observation must surface as an explicit conflict, never be dropped.
+///
+/// Called per pass of the convergence loop; `ExtractionManifest::record` replaces per surface name, so
+/// the manifest ends up holding exactly the FINAL (converged) pass's run.
+fn signal_polarity_surface(
     source_ir: &SourceIr,
     statements: &[ExtractedStatement],
     known_signals: &HashSet<String>,
     prior_guidance: Option<&EvidencePriorGuidance>,
+    manifest: &mut ExtractionManifest,
+) -> SignalPolarityFactCollection {
+    let cx = ExtractionContext { statements };
+    let prose = SignalPolarityProseExtractor { known_signals };
+    let tables = SignalPolarityTableExtractor {
+        source_ir,
+        known_signals,
+        prior_guidance,
+    };
+    let extractors: [&dyn Extractor<SignalPolarityObservationCandidate>; 2] = [&prose, &tables];
+    let run = run_surface_concat("signal_polarities", &cx, &extractors);
+    manifest.record(&run);
+    arbitrate_signal_polarity_observations(run.records)
+}
+
+/// The polarity arbitration post-pass: group the concatenated observation candidates per signal (merging
+/// same `(polarity, source_kind)` observations), then resolve — a single observed polarity becomes a
+/// `SignalPolarityRecord`; disagreement becomes an explicit `SignalPolarityConflictRecord` (ids minted in
+/// signal-name order). This is the unchanged body of the pre-`.9b` `collect_signal_polarity_facts`.
+fn arbitrate_signal_polarity_observations(
+    observations: Vec<SignalPolarityObservationCandidate>,
 ) -> SignalPolarityFactCollection {
     let mut observations_by_signal =
         BTreeMap::<String, Vec<SignalPolarityObservationRecord>>::new();
 
-    for observation in extract_signal_polarity_from_prose(statements, known_signals) {
-        record_signal_polarity_observation(&mut observations_by_signal, observation);
-    }
-    for observation in
-        extract_signal_polarity_from_signal_tables(source_ir, known_signals, prior_guidance)
-    {
+    for observation in observations {
         record_signal_polarity_observation(&mut observations_by_signal, observation);
     }
 
@@ -10152,6 +10213,7 @@ fn converge_evidence_extractions(
     contract_statements: Vec<ExtractedStatement>,
     statement_counter: &mut usize,
     prior_guidance: Option<&EvidencePriorGuidance>,
+    extraction_manifest: &mut ExtractionManifest,
 ) -> (
     Vec<ExtractedStatement>,
     Vec<SignalConstraintRecord>,
@@ -10185,11 +10247,14 @@ fn converge_evidence_extractions(
         let mut known_signals = signal_names_from_tables.clone();
         known_signals.extend(collect_known_signal_names(&extracted_statements));
         let discovered_values = collect_discovered_enum_values(&[extracted_statements.as_slice()]);
-        let signal_polarity = collect_signal_polarity_facts(
+        // EXTRACTOR-ARCHITECTURE.9b — the polarity observation surface runs through the unified concat
+        // driver; recorded per pass, the manifest keeps the final (converged) pass's run.
+        let signal_polarity = signal_polarity_surface(
             source_ir,
             &extracted_statements,
             &known_signals,
             prior_guidance,
+            extraction_manifest,
         );
 
         let mut constraint_counter = 1usize;
@@ -16570,6 +16635,174 @@ mod extractor_architecture_9a {
         assert_eq!(surface.entries[0].name, "operations.prose");
         assert_eq!(surface.entries[0].produced, 0);
         assert_eq!(surface.entries[0].kept, 0);
+    }
+}
+
+#[cfg(test)]
+mod extractor_architecture_9b {
+    //! EXTRACTOR-ARCHITECTURE.9b — the signal-polarity observation surface runs through the unified
+    //! concat driver: strategy order (prose → tables) plus the unchanged arbitration post-pass reproduce
+    //! the legacy `collect_signal_polarity_facts` exactly, and the surface records an inspectable
+    //! manifest entry whose per-strategy counts match what each grammar produced.
+    use super::*;
+    use std::collections::HashSet;
+    use std::fs;
+    use tempfile::tempdir;
+
+    fn stmt(id: &str, text: &str) -> ExtractedStatement {
+        ExtractedStatement {
+            statement_id: id.to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        }
+    }
+
+    fn cell(text: &str, is_header: bool) -> StructuredTableCellRecord {
+        StructuredTableCellRecord {
+            text: text.to_string(),
+            row_span: 1,
+            col_span: 1,
+            is_header,
+        }
+    }
+
+    /// A minimal real `SourceIr` carrying one signal-description table with polarity-bearing
+    /// descriptions: PRESETN declared active HIGH (conflicting with the active-low prose) and CS_N
+    /// declared active low (agreeing with the prose).
+    fn polarity_source_ir(dir: &std::path::Path) -> crate::error::Result<SourceIr> {
+        let source = dir.join("polarity.md");
+        fs::write(&source, "# Polarity\nSignal PRESETN is input width 1.\n")?;
+        let mut source_ir = SourceIr::build(&source, &dir.join("generated").join("source_ir"))?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_polarity_desc".to_string(),
+            asset_id: "asset_polarity_desc".to_string(),
+            page_id: None,
+            caption_text: Some("Signal descriptions".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![cell("Signal", true), cell("Description", true)]],
+            body_rows: vec![
+                vec![
+                    cell("PRESETN", false),
+                    cell("Active high reset input", false),
+                ],
+                vec![cell("CS_N", false), cell("Active low chip select", false)],
+            ],
+            row_count: 2,
+            col_count: 2,
+        });
+        Ok(source_ir)
+    }
+
+    fn polarity_statements() -> Vec<ExtractedStatement> {
+        vec![
+            stmt("s01", "PRESETN is an active low reset signal."),
+            stmt("s02", "CS_N is active LOW and ENABLE is active HIGH."),
+        ]
+    }
+
+    fn known_signals() -> HashSet<String> {
+        ["PRESETN", "CS_N", "ENABLE"]
+            .into_iter()
+            .map(str::to_string)
+            .collect()
+    }
+
+    #[test]
+    fn signal_polarity_surface_matches_legacy_two_step() -> crate::error::Result<()> {
+        let dir = tempdir()?;
+        let source_ir = polarity_source_ir(dir.path())?;
+        let statements = polarity_statements();
+        let known = known_signals();
+
+        // The legacy shape: run both strategies in collection order (prose, then tables), concatenate,
+        // arbitrate. Both strategies must actually fire for this equivalence to mean anything.
+        let prose_observations = extract_signal_polarity_from_prose(&statements, &known);
+        let table_observations =
+            extract_signal_polarity_from_signal_tables(&source_ir, &known, None);
+        assert!(!prose_observations.is_empty(), "prose strategy must fire");
+        assert!(!table_observations.is_empty(), "table strategy must fire");
+        let mut legacy_observations = prose_observations.clone();
+        legacy_observations.extend(table_observations.clone());
+        let legacy = arbitrate_signal_polarity_observations(legacy_observations);
+
+        let mut manifest = ExtractionManifest::default();
+        let surfaced =
+            signal_polarity_surface(&source_ir, &statements, &known, None, &mut manifest);
+        assert_eq!(surfaced.resolved, legacy.resolved);
+        assert_eq!(surfaced.resolved_records, legacy.resolved_records);
+        assert_eq!(surfaced.conflicts, legacy.conflicts);
+
+        // The semantic outcome itself: CS_N resolves active-low with prose AND table support (a second
+        // same-polarity source strengthens, never duplicates), ENABLE resolves active-high from prose
+        // alone, and PRESETN's prose/table disagreement stays an explicit conflict — never dropped.
+        assert_eq!(
+            surfaced.resolved.get("CS_N"),
+            Some(&SignalPolarity::ActiveLow)
+        );
+        assert_eq!(
+            surfaced.resolved.get("ENABLE"),
+            Some(&SignalPolarity::ActiveHigh)
+        );
+        let cs_n = surfaced
+            .resolved_records
+            .iter()
+            .find(|record| record.signal_name == "CS_N")
+            .expect("CS_N resolved record");
+        assert!(!cs_n.supporting_statement_ids.is_empty());
+        assert!(!cs_n.supporting_table_ids.is_empty());
+        assert_eq!(surfaced.conflicts.len(), 1);
+        assert_eq!(surfaced.conflicts[0].signal_name, "PRESETN");
+
+        // The manifest entry: concat driver, two strategies in registry order, kept == produced.
+        let surface = manifest
+            .surfaces
+            .iter()
+            .find(|s| s.surface == "signal_polarities")
+            .expect("signal_polarities surface recorded");
+        assert_eq!(surface.eligible, 2);
+        assert_eq!(surface.entries.len(), 2);
+        assert_eq!(surface.entries[0].name, "signal_polarity.prose");
+        assert_eq!(surface.entries[0].produced, prose_observations.len());
+        assert_eq!(surface.entries[0].kept, prose_observations.len());
+        assert_eq!(surface.entries[1].name, "signal_polarity.tables");
+        assert_eq!(surface.entries[1].produced, table_observations.len());
+        assert_eq!(surface.entries[1].kept, table_observations.len());
+        Ok(())
+    }
+
+    #[test]
+    fn signal_polarity_surface_records_manifest_entry_even_when_empty() -> crate::error::Result<()>
+    {
+        // A document with no polarity-bearing prose or tables keeps the surface visible in the manifest
+        // (eligible, fired nothing) — honest "ran and found nothing", distinct from "never ran".
+        let dir = tempdir()?;
+        let source = dir.path().join("plain.md");
+        fs::write(&source, "# Plain\nSignal PWDATA is input width 32.\n")?;
+        let source_ir = SourceIr::build(&source, &dir.path().join("generated").join("source_ir"))?;
+        let statements = vec![stmt("s01", "PWDATA is driven by the requester.")];
+        let known: HashSet<String> = ["PWDATA".to_string()].into_iter().collect();
+
+        let mut manifest = ExtractionManifest::default();
+        let surfaced =
+            signal_polarity_surface(&source_ir, &statements, &known, None, &mut manifest);
+        assert!(surfaced.resolved.is_empty());
+        assert!(surfaced.resolved_records.is_empty());
+        assert!(surfaced.conflicts.is_empty());
+
+        let surface = manifest
+            .surfaces
+            .iter()
+            .find(|s| s.surface == "signal_polarities")
+            .expect("signal_polarities surface recorded");
+        assert_eq!(surface.eligible, 2);
+        assert_eq!(surface.entries.len(), 2);
+        assert_eq!(surface.entries[0].produced, 0);
+        assert_eq!(surface.entries[1].produced, 0);
+        Ok(())
     }
 }
 

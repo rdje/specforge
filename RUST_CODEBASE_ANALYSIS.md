@@ -4,6 +4,38 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-06-10 extractor framework — converge-loop reach; subsystem now 7 surfaces)
+
+`EXTRACTOR-ARCHITECTURE.2`–`.9b` built a subsystem this analysis had not yet captured (closing that gap
+here): the **unified extractor framework** in `crates/specforge/src/ir/extractor.rs`, now the wiring layer
+for SEVEN EvidenceIR surfaces.
+
+- The frame: a generic `Extractor<R>` trait (`name`/`tier`/`applies_to`/`run`), a borrowed
+  `ExtractionContext` (grows one field per migrated cluster; currently carries `statements`), TWO drivers —
+  `run_surface` (first-wins key-dedup merge; registry order = precedence) and `run_surface_concat` (ordered
+  concatenation, post-passes stay in the surface helper) — and an inspectable
+  `SurfaceRun`/`SurfaceManifest`/`ExtractionManifest` chain persisted on `EvidenceIr.extraction_manifest`
+  (additive, `#[serde(default)]`) and surfaced by `validate`. The manifest is the per-document behavioral
+  fingerprint the `CORPUS-PATTERN-REUSE` plane clusters on — the two subsystems compose.
+- Three explicit producer categories (the two-phase model, documented in `ir/extractor.rs`): key-merge
+  surfaces (FSM states, semantic hints, serial-frame fields), concat surfaces (registers, actors,
+  SWD-operations, signal polarity), and stateful-assembly orchestrators that deliberately stay OFF the
+  drivers (the signal-declaration seed; the constraint family below).
+- `.9b` (this slice) extended the framework's reach into `converge_evidence_extractions` — the fixed-point
+  evidence loop: **signal polarity** is now two `Extractor<SignalPolarityObservationCandidate>` units
+  (`signal_polarity.prose` / `signal_polarity.tables`) run per pass via `run_surface_concat` plus the
+  unchanged accumulate-and-arbitrate post-pass (`arbitrate_signal_polarity_observations`); the loop threads
+  `&mut ExtractionManifest`, and `record()`'s replace-per-surface-name semantics make the manifest hold
+  exactly the final converged pass. Audit boundary for the rest of the loop: **relations** = concat +
+  augment-THEN-dedup post-passes (migratable, `.9c`); **constraints + conditional rules** = one per-pass
+  `constraint_counter` minting ids across three extractors + a cross-surface polarity post-pass —
+  stateful-assembly, kept as cohesive in-loop orchestration by design.
+- Verification doctrine for every migration slice: 12-doc intact-bundle rebuild, non-manifest JSON
+  byte-identical (baseline double-run fixpoint first — guaranteed by the `EVIDENCE-DETERMINISM` fixes);
+  kg-bench 151/151; full `run_ci.sh`. Lib tests at **1497**.
+- Remaining seam risk: `EvidenceIr::build()` is still the ~500-line orchestrator; retiring it (after `.9c`)
+  is the tracked end-state of `EXTRACTOR-ARCHITECTURE`.
+
 ## Session update (2026-06-09 CorpusMemory schema v6 — extraction-profile priors, the 8th family)
 
 `CORPUS-PATTERN-REUSE.3b.2` extends the cross-document learning plane with one additive schema surface;

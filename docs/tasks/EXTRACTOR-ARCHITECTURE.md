@@ -234,12 +234,68 @@ Driver: build cx → for each registered extractor where applies_to → run → 
   `extractor-path-architecture` status-updated. Remaining in `.9`+: the converge-loop surfaces, then retire
   the god-orchestrator.
 
+- `.9b` **converge-loop audit + migrate the signal-polarity surface** · Status: `done` (`2026-06-10`).
+  **Pre-coding faithfulness audit of `converge_evidence_extractions` (the `.5` method) — the three
+  converge-loop surface families categorize cleanly:**
+  1. **Signal polarity = a CONCAT surface + arbitration post-passes** (the `.6` registers pattern).
+     `collect_signal_polarity_facts` (single caller: the converge loop) runs two observation strategies —
+     `extract_signal_polarity_from_prose(statements, known_signals)` then
+     `extract_signal_polarity_from_signal_tables(source_ir, known_signals, prior_guidance)` — both returning
+     `Vec<SignalPolarityObservationCandidate>`, concatenated in that order into a per-signal
+     `BTreeMap` accumulator (`record_signal_polarity_observation` merges same `(polarity, source_kind)`
+     observations; insert order = strategy order, preserved exactly by `run_surface_concat` order
+     [prose, tables]), then arbitrated (single-polarity consensus → `SignalPolarityRecord`; disagreement →
+     `SignalPolarityConflictRecord` with ids minted in BTreeMap = signal-name order). Migration: two
+     `Extractor<SignalPolarityObservationCandidate>` units (`signal_polarity.prose` / `signal_polarity.tables`)
+     via `run_surface_concat`, arbitration stays the post-pass — output byte-identical by construction.
+  2. **Actor-signal relations = a CONCAT surface + ordered post-passes.** Prose strategy
+     (`extract_actor_signal_relations`, per-pass `known_signals`) + table strategy (precomputed
+     `extract_relations_from_signal_tables_with_prior_guidance`, cloned per pass), concatenated, THEN
+     `augment_check_signal_relations_from_tables` (reads the full pre-dedup list), THEN
+     `dedup_actor_signal_relations` (first-wins by `(actor, signal, is_drives)`). The dedup runs AFTER the
+     augment, so it must stay a post-pass — using the driver's key-merge would dedup BEFORE augment and
+     change what augment sees. → `.9c`.
+  3. **Constraints + conditional rules = STATEFUL-ASSEMBLY** (the `.5` category — own orchestrator, NOT the
+     driver). One per-pass `constraint_counter` mints sequential ids ACROSS three extractors
+     (`extract_signal_constraints` → `extract_dynamic_signal_constraints` → `extract_conditional_rules`),
+     plus a cross-surface post-pass (`apply_signal_polarity_to_constraints` consumes polarity's resolved
+     map between the second and third). Forcing them through the driver would break cross-surface id
+     continuity — they keep their cohesive in-loop orchestration, documented in the two-phase model.
+  **Manifest semantics for fixed-point surfaces:** the converge loop re-runs each surface every pass;
+  `ExtractionManifest::record` REPLACES per surface name, so per-pass recording leaves exactly the FINAL
+  pass's run in the manifest — the converged truth, no special casing. `converge_evidence_extractions`
+  gains a `&mut ExtractionManifest` parameter (the `.8` threading pattern).
+  **This slice migrates surface 1 (polarity); verification = the `.9a` method:** 12-doc intact-bundle
+  baseline rebuild (double-run fixpoint check) → migrate → rebuild → non-manifest JSON byte-identical on
+  every doc; the manifest gains `signal_polarities` everywhere by design; hermetic unit tests; kg-bench
+  151/151; full `run_ci.sh`.
+  **DONE (`2026-06-10`).** `SignalPolarityProseExtractor` (`signal_polarity.prose`) +
+  `SignalPolarityTableExtractor` (`signal_polarity.tables`) → `signal_polarity_surface` via
+  `run_surface_concat` (concat, NOT key-dedup — a same-polarity second source must STRENGTHEN the record
+  and a different-polarity observation must surface as a conflict, never be dropped) + the unchanged
+  arbitration body extracted as `arbitrate_signal_polarity_observations`; `converge_evidence_extractions`
+  threads `&mut ExtractionManifest` (the `.8` pattern) and records per pass — replace-per-surface-name
+  keeps exactly the final converged pass. The legacy single-caller `collect_signal_polarity_facts` is gone.
+  **Byte-identical proof: ALL 12 intact-bundle docs — baseline double-run fixpoint confirmed
+  (byte-identical), then post-`.9b` rebuild non-manifest JSON (`jq del(.extraction_manifest)`)
+  md5-identical on every doc.** The manifest gains `signal_polarities` everywhere and fires exactly where
+  polarity evidence lives: AXI 39 prose + 45 table observations → 44 resolved / 0 conflicts; APB 4+2→3;
+  AHB 2+1→1; AXI-Stream 1+0→1; SWD/ADI 4+1→3; SMBus 1+0→1; RISC-V/CAN/SWP/NVMe/I2C/I2S honestly 0 — new
+  distinguishing fingerprint tokens for the CORPUS-PATTERN-REUSE profile plane (the AMBA family now shares
+  fired `signal_polarity.*` tokens). 2 hermetic tests (legacy-two-step equivalence incl. conflict +
+  strengthen-not-duplicate + per-strategy manifest counts; empty-surface manifest honesty). kg-bench
+  151/151; full `run_ci.sh` green (lib 1495 → **1497**); book `quality/validation.md` updated to the
+  7-surface example + converge-loop manifest semantics; KM `extractor-path-architecture` status-updated.
+
 ## Current frontier
 
 `.1`–`.8` + `.9a` **done** — SIX surfaces registered and byte-identical-proven (FSM, semantic-hints,
 registers, actors, serial-frame, SWD-operations); `.9a`'s value was re-rated UP by the profile plane
 (`CORPUS-PATTERN-REUSE.3b.2`/`.3c`: manifests now feed learned extraction profiles). The framework
 (key-merge `run_surface` + concat `run_surface_concat` + own orchestrators for assembly) **emits a
-per-document run manifest** surfaced in `validate` — the CORPUS-PATTERN-REUSE fingerprint. Remaining:
-the converge-loop surfaces (constraints / relations / polarity / conditional-rules — a distinct
-fixed-point sub-problem) · then retire the `build()` god-orchestrator. **Owner may steer scope.**
+per-document run manifest** surfaced in `validate` — the CORPUS-PATTERN-REUSE fingerprint. **`.9b` done
+(`2026-06-10`): converge-loop audit (polarity = concat surface; relations = concat + ordered post-passes
+→ `.9c`; constraints/conditional-rules = stateful-assembly → stay own orchestrator) + the polarity
+migration — SEVEN surfaces registered, first converge-loop surface on the framework, 12-doc byte-identical,
+lib 1497.** Remaining: `.9c` relations · document the constraint-family stateful-assembly in the two-phase
+model · then retire the `build()` god-orchestrator. **Owner may steer scope.**

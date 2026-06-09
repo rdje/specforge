@@ -1,4 +1,39 @@
 # DEVELOPMENT_NOTES
+## `EXTRACTOR-ARCHITECTURE.9b` (`2026-06-10`) — converge-loop audit + signal-polarity onto the framework
+- Why now: PNT frontier — `.9a` left "the converge-loop surfaces" as the named remaining scope, under the
+  owner's standing "consolidate, unify, as much as possible" confirmation. The fixed-point loop is a
+  distinct sub-problem, so the audit came first (the `.5` lesson: categorize faithfully BEFORE coding).
+- Audit findings (now in the tree + KM): each pass of `converge_evidence_extractions` rebuilds the statement
+  set and re-runs all per-pass extractors from scratch; convergence = no new dynamic statements. Within a
+  pass: **polarity** = two `Vec<SignalPolarityObservationCandidate>` strategies concatenated in order
+  (prose, tables) into a per-signal `BTreeMap` accumulator, then arbitrated (consensus → record, disagreement
+  → conflict; ids in signal-name order) — a clean concat surface. **Relations** = prose strategy + precomputed
+  table strategy, concatenated, then `augment_check_signal_relations_from_tables` (reads the FULL pre-dedup
+  list) then `dedup_actor_signal_relations` — the dedup must remain a post-pass (driver key-merge would dedup
+  BEFORE augment and change its input). **Constraints + conditional rules** = one per-pass
+  `constraint_counter` minting sequential ids across `extract_signal_constraints` →
+  `extract_dynamic_signal_constraints` → `extract_conditional_rules`, plus
+  `apply_signal_polarity_to_constraints` consuming polarity's resolved map mid-sequence — stateful-assembly,
+  stays an own orchestrator.
+- Manifest semantics for fixed-point surfaces: `ExtractionManifest::record` REPLACES per surface name, so
+  recording on every pass leaves exactly the final converged pass's run — the design needed zero changes.
+- Implementation: `SignalPolarityProseExtractor` / `SignalPolarityTableExtractor` (borrowed per-pass inputs
+  on the structs, the semantic-hints pattern) + `signal_polarity_surface` (concat driver + record +
+  arbitrate); the arbitration body moved verbatim into `arbitrate_signal_polarity_observations`; the legacy
+  single-caller `collect_signal_polarity_facts` is gone; `converge_evidence_extractions` gained the
+  `&mut ExtractionManifest` param (the `.8` threading pattern); `build()` passes it through.
+- Why concat and not key-merge: polarity observations are evidence, not winners — a second same-polarity
+  source strengthens (ids merge in `record_signal_polarity_observation`), a different-polarity source must
+  become a `SignalPolarityConflictRecord`. First-wins dedup would silently eat both behaviors.
+- Verification: baseline 12-doc rebuild with committed code, double-run fixpoint BYTE-IDENTICAL (the
+  EVIDENCE-DETERMINISM guarantee holding); post-migration rebuild → `jq del(.extraction_manifest)`
+  md5-identical on all 12; manifest deltas semantically correct per doc (AXI 39+45→44 resolved/0 conflicts;
+  six docs honestly 0/0). 2 hermetic tests: legacy-two-step equivalence on a real `SourceIr` fixture
+  (prose+table agreement strengthening CS_N, prose-only ENABLE, prose/table conflict on PRESETN, per-strategy
+  manifest counts asserted against the actual strategy outputs) + empty-surface manifest honesty.
+  `run_ci.sh` green (lib 1495 → **1497**, the fmt gate caught one long assert line — `cargo fmt --all`);
+  kg-bench 151/151. Book: 7-surface manifest example + the converge-loop "final pass wins" explanation.
+
 ## `EXTRACTOR-ARCHITECTURE.9a` (`2026-06-09`) — serial-frame + SWD-operations onto the framework
 - Why now: the `.8`-era frontier note called these thin registrations "low-value"; the profile plane changed
   that calculus — every registered surface adds behavioral fingerprint tokens that the learned extraction

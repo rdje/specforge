@@ -1,3 +1,25 @@
+### `EXTRACTOR-ARCHITECTURE.9b` — converge-loop audit + the signal-polarity surface onto the framework (byte-identical)
+The convergence loop — the fixed-point heart of the evidence build — was audited BEFORE coding (the `.5`
+method) and its three surface families categorized: **polarity** = a concat surface + per-signal
+accumulate-and-arbitrate post-pass (migrated THIS slice); **relations** = a concat surface + ordered
+post-passes where the key-dedup runs AFTER an augmentation step, so it must stay a post-pass (next slice,
+`.9c`); **constraints + conditional rules** = stateful-assembly — one per-pass counter mints ids ACROSS the
+three extractors, so they keep their cohesive in-loop orchestration (the `.5` two-phase doctrine).
+
+New units: `signal_polarity.prose` + `signal_polarity.tables` → `signal_polarity_surface` via
+`run_surface_concat` — concat, NOT key-dedup, because polarity is an OBSERVATION surface: a same-polarity
+second source must STRENGTHEN the resolved record (merged supporting ids) and a different-polarity
+observation must surface as an explicit conflict, never be dropped. The unchanged arbitration body became
+`arbitrate_signal_polarity_observations`; `converge_evidence_extractions` threads the manifest and records
+per pass — `record()`'s replace-per-surface-name semantics keep exactly the FINAL converged pass, no special
+casing. **Byte-identical proof: all 12 intact-bundle docs (baseline double-run fixpoint first) —
+non-manifest JSON identical on every doc**; the manifest fires exactly where polarity evidence lives (AXI
+39 prose + 45 table observations → 44 resolved / 0 conflicts; APB/AHB/AXI-Stream/SWD/SMBus small counts;
+RISC-V/CAN/SWP/NVMe/I2C/I2S honestly 0) — new AMBA-distinguishing fingerprint tokens for the
+pattern-reuse profile plane. 2 hermetic tests (legacy-two-step equivalence incl. conflict + per-strategy
+manifest counts; empty-surface honesty). `run_ci.sh` green (lib **1497**); kg-bench 151/151; book manifest
+example updated to the 7-surface form + converge-loop semantics; KM card status-updated.
+
 ### `EXTRACTOR-ARCHITECTURE.9a` — register the serial-frame + SWD-operations surfaces (byte-identical)
 The two remaining thin top-level surfaces join the unified extractor framework — re-rated UP from the old
 "low-value" note because every registered surface now feeds the manifest → fingerprint → extraction-profile
