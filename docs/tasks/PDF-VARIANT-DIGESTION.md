@@ -217,6 +217,21 @@ diagnostic when a construct is genuinely out of model.
   clippy `-D warnings` + lib **1472 → 1475** + rustdoc + mdBook) + kg-bench 151/151 (no eval/fixture regressed →
   wire-based + SWD unaffected). KM `timing-table-trapped-row-recovery`; book subsection in
   `pipeline/evidenceir.md`. Commit: pending (this slice).
+- ID: `PDF-VARIANT-DIGESTION.9.12` · Status: `done` (CLOSED, investigate-only no-build) (`2026-06-09`) · Goal:
+  **triage the remaining serial-class `unexplained_intent_bearing_tables` and decide build-vs-residual honestly.**
+  The SMBus + I2S baselines flagged tables that "produced no record"; the conservative region-accounting can't
+  tell a real miss from a table with nothing typed to extract. Probe-checked each (read the persisted
+  `source_ir` structure, no code): **(1) SMBus `table_0022` (signal_description)** is a degenerate 2-cell
+  bitfield fragment (`MSB`/`LSB` under `Supported Protocols` / `SMBus Version Bits [3:0]`) — nothing real to
+  extract; **(2) SMBus `table_0042` (register_map)** is an ADDRESS-ASSIGNMENT table (`Target Address [7:1] |
+  R/W# | Description | Specification`), not a register-field layout — forcing it into register records would
+  fabricate; **(3) I2S `table_0005`** is a 3-level nested cross-tab (`TRANSMITTER`/`RECEIVER` × `LOWER`/`UPPER
+  LIMIT` × `MIN`/`MAX`, parameter in col 1, wrapping prose in col 0, mostly-empty value cells) whose core
+  parameters are ALREADY captured from the simpler `table_0004` by `.9.11`. **Decision: do NOT build — all three
+  are HONEST RESIDUALS** (residual over fabrication; the region-accounting flag is conservative by design). The
+  serial-class STRUCTURAL table levers are now exhausted (the buildable one, `.9.11` timing, is done); the only
+  remaining serial gaps are PROSE-signal capture (`.9.10`/`.9.8b`), which are parked behind participation-based
+  signal identity (`NLP-SHALLOW-PARSE`), not a list/case crutch. Docs-only (no code). Commit: pending (this slice).
 - ID: `PDF-VARIANT-DIGESTION.9.10` · Status: `in_progress` (probe DONE `2026-06-09`; implementation gated on one
   owner decision — see below) · Goal: **SMBus-class prose bus-line signal grammar** —
   recover I2C/SMBus-derived 2-wire bus signals declared ONLY in prose (no signal table) — `SMBCLK`/`SMBDAT` as
@@ -466,9 +481,14 @@ list to handle 100s of PDFs is a sign of weakness"; the clean fix needs particip
 `NLP-SHALLOW-PARSE`, not shipped with a list/case crutch.** **`.9.11` (header-trapped timing-table recovery)
 DONE `2026-06-09`** — structural recovery of timing data rows Docling trapped in `header_rows`; **I2S 0 → 5
 timing_constraints, SMBus held at 84**, nested/complex tables stay honest residuals; lib 1475, kg-bench 151/151.
-**Frontier (any of, owner may steer):** `.9.10` (PARKED behind the shallow-parser — participation-based signal
-identity, no list, no case) · `.9.8b` (SWIO contact-as-signal). `.6`/`.7` (the older VLM-frontier / USB-3.2
-leaves) stay blocked on host-local PDFs.
+**`.9.12` (CLOSED, investigate-only) DONE `2026-06-09`** — triaged the remaining serial `unexplained_intent_bearing_tables`:
+SMBus `table_0022` (degenerate bitfield), SMBus `table_0042` (address-assignment, not register fields), and I2S
+`table_0005` (3-level nested cross-tab, core params already from `table_0004`) are ALL honest residuals (do not
+build; residual over fabrication). **The serial-class STRUCTURAL table levers are now exhausted** (the buildable
+one, `.9.11`, is done); the remaining serial gaps are PROSE-signal (parked). **Frontier (any of, owner may
+steer):** `.9.10`/`.9.8b` (prose-signal — PARKED behind participation-based identity / `NLP-SHALLOW-PARSE`, no
+list/case) · broader-corpus structural table-shape probe (beyond serial) · `CORPUS-PATTERN-REUSE.3` (corpus-cluster
+CLI, on-#1). `.6`/`.7` (the older VLM-frontier / USB-3.2 leaves) stay blocked on host-local PDFs.
 
 **(SUPERSEDED active note) `PDF-VARIANT-DIGESTION.6`/`.7`** — item ② (`.5`) COMPLETE and `.8` (broaden
 prose-actor capture) DONE. **`.5a` + `.5b` + `.5c` are DONE** — structural doc-class routing
@@ -805,6 +825,13 @@ set, not the whole doc/corpus.
 
 ## Verification log
 
+- `.9.12` (`2026-06-09`, investigate-only no-build): triaged the remaining serial `unexplained_intent_bearing_tables`.
+  SMBus `table_0022` = degenerate 2-cell bitfield fragment (MSB/LSB); SMBus `table_0042` = address-assignment
+  table (`Target Address [7:1] | R/W# | Description | Specification`), not register fields; I2S `table_0005` =
+  3-level nested cross-tab whose core parameters are already captured by `.9.11`. All HONEST RESIDUALS (do not
+  build — forcing them fabricates; the region-accounting flag is conservative). Serial-class structural table
+  levers exhausted; remaining serial gaps are prose-signal (parked behind participation identity). Docs-only.
+  Commit subject: `PDF-VARIANT-DIGESTION.9.12`.
 - `.9.11` (`2026-06-09`): header-trapped timing-table recovery. Root cause (probe-locked): I2S `table_0004` /
   SMBus `table_0012` leave `body_rows` EMPTY because Docling marks each row-LABEL cell `is_header=true`, trapping
   the data rows in `header_rows` → the `body_rows.is_empty()` guard skipped the table → 0 records. Fix

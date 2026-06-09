@@ -1,3 +1,13 @@
+### `PDF-VARIANT-DIGESTION.9.12` — the remaining serial "unexplained" tables are honest residuals (no build)
+Probe-checked the serial-class tables the SMBus/I2S baselines flagged as `unexplained_intent_bearing_tables`,
+to decide build-vs-residual honestly. All three have nothing typed to recover: SMBus `table_0022` is a
+degenerate 2-cell bitfield fragment (`MSB`/`LSB`); SMBus `table_0042` is an address-assignment table (target
+addresses + R/W bit), not a register-field layout; I2S `table_0005` is a 3-level nested cross-tab whose core
+parameters were already captured from the simpler `table_0004` by `.9.11`. **Decision: do not build — forcing
+any of them would fabricate; they are correct honest residuals** (the region-accounting flag is conservative by
+design). The serial-class STRUCTURAL table levers are now exhausted; the only remaining serial gaps are
+prose-signal capture, parked behind participation-based signal identity. Docs-only (no code change).
+
 ### `PDF-VARIANT-DIGESTION.9.11` — recover timing tables whose rows were mistaken for headings
 A datasheet timing table can report **0** parameters even when it visibly has rows: the PDF converter marks each
 row's left-hand *name* cell as a header, which files the whole data row under `header_rows` and leaves
