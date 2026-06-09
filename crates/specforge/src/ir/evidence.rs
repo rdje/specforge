@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::error::{AppError, Result};
 use crate::ir::IrStage;
-use crate::ir::extractor::{ExtractionContext, Extractor, run_surface};
+use crate::ir::extractor::{ExtractionContext, Extractor, run_surface, run_surface_concat};
 use crate::ir::prior_memory::{
     ActorTaxonomyRole, CorpusMemory, ProtocolFamily, is_meaningful_actor_term,
     normalize_actor_term, normalized_text_contains_term,
@@ -786,30 +786,10 @@ impl EvidenceIr {
             prior_guidance.as_ref(),
         );
 
-        // Synthesize typed register and timing records from structured tables.
-        let mut register_records = synthesize_register_records(&source_ir, prior_guidance.as_ref());
-        // PDF-VARIANT-DIGESTION.2 — additionally recover register-FIELD tables the classifier left
-        // `unknown` (header-in-body `Field|Description|Access|Reset` etc.). Additive; wire-based specs
-        // (signal/constraint/relation/temporal surfaces) are untouched.
-        register_records.extend(synthesize_register_field_tables(
-            &source_ir,
-            prior_guidance.as_ref(),
-        ));
-        // Flexible-register-model (.2c): fill register width from field bit extents where the
-        // register-map path created the record incrementally without a size.
-        for reg in &mut register_records {
-            if reg.size_bits.is_none() {
-                reg.size_bits = register_size_from_fields(&reg.fields);
-            }
-        }
-        // Drop bit-LAYOUT grids mis-read as registers (see `register_is_bit_layout_grid`).
-        register_records.retain(|reg| !register_is_bit_layout_grid(reg));
-        // EXTRACTION-GAP-FIX.4c — de-fragment a register whose field table a PDF backend split
-        // across several tables (one register → several `RegisterRecord`s). Conservative: only
-        // merges same-name fragments whose field names are ALL distinct, so garbled fragments and
-        // array-collapsed distinct registers stay un-merged (honesty guardrail — never fabricate a
-        // field set). Additive; wire-based specs carry no register-field tables, so unaffected.
-        consolidate_register_field_fragments(&mut register_records);
+        // EXTRACTOR-ARCHITECTURE.6 — the register-record surface (register-map + `unknown` field-table
+        // strategies, concatenated via `run_surface_concat`, then the width / bit-layout-grid / fragment
+        // post-passes) is now one cohesive surface function instead of inline orchestration. Behavior-identical.
+        let register_records = register_record_surface(&source_ir, prior_guidance.as_ref());
         let timing_constraints = synthesize_timing_constraints(&source_ir, prior_guidance.as_ref());
 
         // Replace the previous one-shot extraction with a monotone convergent loop:
@@ -8504,6 +8484,75 @@ fn synthesize_encoding_declarations_for_enum(
     }
 
     statements
+}
+
+// EXTRACTOR-ARCHITECTURE.6 — the register-record surface as a unified registry. Its two strategies
+// (register-map tables, and `unknown` register-FIELD tables) are `Extractor<RegisterRecord>` units run by the
+// `run_surface_concat` driver: registers are a CONCAT surface — disjoint records from different table kinds
+// merged by plain concatenation, NOT a key-dedup. The three register-specific post-passes (width fill-in,
+// bit-layout-grid drop, fragment de-fragmentation) then run on the merged set in `register_record_surface`.
+// Each strategy carries its inputs (source + prior guidance) on its struct and does not read `statements`.
+
+/// Register records from `register_map`-classified tables — see `synthesize_register_records`.
+struct RegisterMapExtractor<'a> {
+    source_ir: &'a SourceIr,
+    prior_guidance: Option<&'a EvidencePriorGuidance>,
+}
+impl Extractor<RegisterRecord> for RegisterMapExtractor<'_> {
+    fn name(&self) -> &'static str {
+        "registers.register_map"
+    }
+    fn run(&self, _cx: &ExtractionContext<'_>) -> Vec<RegisterRecord> {
+        synthesize_register_records(self.source_ir, self.prior_guidance)
+    }
+}
+
+/// Register records recovered from `unknown` register-FIELD tables — see `synthesize_register_field_tables`.
+struct RegisterFieldTableExtractor<'a> {
+    source_ir: &'a SourceIr,
+    prior_guidance: Option<&'a EvidencePriorGuidance>,
+}
+impl Extractor<RegisterRecord> for RegisterFieldTableExtractor<'_> {
+    fn name(&self) -> &'static str {
+        "registers.field_table"
+    }
+    fn run(&self, _cx: &ExtractionContext<'_>) -> Vec<RegisterRecord> {
+        synthesize_register_field_tables(self.source_ir, self.prior_guidance)
+    }
+}
+
+/// Run the register-record surface: concat the two strategies via the unified `run_surface_concat` driver,
+/// then apply the register-specific post-passes (width fill-in from field extents, bit-layout-grid drop,
+/// fragment merge). Behavior-identical to the previous inline `build()` block. (`EXTRACTOR-ARCHITECTURE.6`)
+fn register_record_surface(
+    source_ir: &SourceIr,
+    prior_guidance: Option<&EvidencePriorGuidance>,
+) -> Vec<RegisterRecord> {
+    let cx = ExtractionContext { statements: &[] };
+    let map = RegisterMapExtractor {
+        source_ir,
+        prior_guidance,
+    };
+    let field_table = RegisterFieldTableExtractor {
+        source_ir,
+        prior_guidance,
+    };
+    let extractors: [&dyn Extractor<RegisterRecord>; 2] = [&map, &field_table];
+    let mut records = run_surface_concat("register_records", &cx, &extractors).records;
+    // Flexible-register-model (PDF-VARIANT-DIGESTION.2c): fill register width from field bit extents where the
+    // register-map path created the record incrementally without a size.
+    for reg in &mut records {
+        if reg.size_bits.is_none() {
+            reg.size_bits = register_size_from_fields(&reg.fields);
+        }
+    }
+    // Drop bit-LAYOUT grids mis-read as registers (see `register_is_bit_layout_grid`).
+    records.retain(|reg| !register_is_bit_layout_grid(reg));
+    // EXTRACTION-GAP-FIX.4c — de-fragment a register whose field table a PDF backend split across several
+    // tables. Conservative: only merges same-name fragments whose field names are ALL distinct (honesty
+    // guardrail — never fabricate a field set).
+    consolidate_register_field_fragments(&mut records);
+    records
 }
 
 /// Synthesize `RegisterRecord` entries from `register_map` tables captured in `SourceIR`.

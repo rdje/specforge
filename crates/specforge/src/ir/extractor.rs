@@ -35,12 +35,15 @@
 //!    side-outputs and cross-strategy gates* — they are NOT key-merged typed surfaces, so they keep their own
 //!    cohesive orchestrators (e.g. `synthesize_signal_declaration_seed`), not [`run_surface`].
 //! 2. **Surface-extraction phase** — derive typed surface records (FSM states, semantic hints, registers,
-//!    actors, …) from the assembled statements, each surface a set of independent strategies merged by a key.
-//!    THIS is what [`Extractor`] + [`run_surface`] unify.
+//!    actors, …) from the assembled statements, each surface a set of independent [`Extractor`] strategies.
+//!    THIS is what the framework unifies, with TWO merge modes the driver provides:
+//!    - [`run_surface`] — **key-dedup merge** (first-wins by a per-surface key): FSM states, semantic hints.
+//!    - [`run_surface_concat`] — **plain concatenation** (no dedup), for surfaces whose strategies produce
+//!      disjoint records merged by appending, with any post-passes run on the result: register records.
 //!
-//! Forcing an assembly-phase seed through the merge driver would lose its side-output + fallback gate and
-//! abuse the dedup key — a hack. Keeping the two categories in two clean homes IS the coherent whole; the
-//! remaining surface clusters to migrate (registers, actors, polarity) are the genuine [`run_surface`] fits.
+//! Forcing an assembly-phase seed through either merge driver would lose its side-output + fallback gate and
+//! mis-handle id-minting — a hack. Keeping assembly (own orchestrators) and surface (the two driver modes) in
+//! clean homes IS the coherent whole; the remaining surface clusters to migrate are actors and signal-polarity.
 
 use crate::ir::evidence::{ExtractedStatement, ExtractorTier};
 use std::collections::BTreeSet;
@@ -217,6 +220,53 @@ where
     }
 }
 
+/// Concatenation driver — like [`run_surface`] but with **no key-dedup**: each eligible extractor's records
+/// are appended in registry order. For a surface whose strategies produce disjoint typed records merged by
+/// plain concatenation rather than by a dedup key (e.g. register records from different table kinds). Records
+/// the same inspectable [`SurfaceRun`] manifest (`kept == produced` for each extractor, since nothing is
+/// dropped). Any per-surface post-processing (filtering, fragment merges) stays in the surface helper, run on
+/// the returned `records` — the driver only handles gate + run + concat + manifest.
+pub fn run_surface_concat<R>(
+    surface: &'static str,
+    cx: &ExtractionContext<'_>,
+    extractors: &[&dyn Extractor<R>],
+) -> SurfaceRun<R> {
+    let mut records: Vec<R> = Vec::new();
+    let mut entries: Vec<ExtractorRunEntry> = Vec::with_capacity(extractors.len());
+    let mut eligible = 0usize;
+    for extractor in extractors {
+        let tier = extractor.tier();
+        let name = extractor.name();
+        if !extractor.applies_to(cx) {
+            entries.push(ExtractorRunEntry {
+                name,
+                tier,
+                eligible: false,
+                produced: 0,
+                kept: 0,
+            });
+            continue;
+        }
+        eligible += 1;
+        let produced = extractor.run(cx);
+        let produced_count = produced.len();
+        records.extend(produced);
+        entries.push(ExtractorRunEntry {
+            name,
+            tier,
+            eligible: true,
+            produced: produced_count,
+            kept: produced_count,
+        });
+    }
+    SurfaceRun {
+        surface,
+        records,
+        eligible,
+        entries,
+    }
+}
+
 #[cfg(test)]
 mod tests {
     //! EXTRACTOR-ARCHITECTURE.2 — the framework drives gate/run/merge/manifest correctly. Uses a toy record
@@ -362,5 +412,36 @@ mod tests {
         assert_eq!(manifest.surfaces[0].surface, "toy");
         assert_eq!(manifest.surfaces[0].eligible, 1);
         assert_eq!(manifest.surfaces[0].entries[0].name, "a");
+    }
+
+    #[test]
+    fn concat_keeps_all_records_in_order_no_dedup() {
+        // The concat driver appends every eligible extractor's records in registry order, dropping nothing —
+        // even when two records share what would be a dedup key (`X` and `x`). A gated extractor is skipped.
+        let stmts: Vec<ExtractedStatement> = vec![];
+        let cx = ctx(&stmts);
+        let a = Fixed {
+            id: "a",
+            out: vec![toy("X"), toy("Y")],
+        };
+        let b = Fixed {
+            id: "b",
+            out: vec![toy("x")], // would dedup against a's "X" under run_surface; concat keeps it
+        };
+        let gated = Gated { id: "g" }; // its run() panics if called
+        let run = run_surface_concat("toy", &cx, &[&a, &b, &gated]);
+        assert_eq!(
+            run.records
+                .iter()
+                .map(|t| t.name.as_str())
+                .collect::<Vec<_>>(),
+            vec!["X", "Y", "x"],
+            "concat keeps every record in order (no dedup)"
+        );
+        assert_eq!(run.eligible, 2);
+        assert_eq!(run.entries[0].produced, 2);
+        assert_eq!(run.entries[0].kept, 2);
+        assert_eq!(run.entries[1].kept, 1, "no dedup → b's record kept");
+        assert!(!run.entries[2].eligible, "gated extractor skipped, not run");
     }
 }

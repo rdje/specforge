@@ -1,3 +1,21 @@
+### `EXTRACTOR-ARCHITECTURE.6` — migrate the registers cluster; add the concat driver mode (byte-identical)
+The third cluster migrated — and it taught the framework a second merge mode. Registers is a CONCAT surface:
+two strategies (register-map tables + `unknown` register-FIELD tables) produce disjoint `RegisterRecord`s
+merged by plain `.extend()` (no key-dedup), then three post-passes (width fill-in, bit-layout-grid drop,
+fragment de-fragmentation). So the framework gained **`run_surface_concat`** (ordered, no-dedup, same
+`SurfaceRun` manifest) beside the key-dedup `run_surface`.
+
+The two strategies became `Extractor<RegisterRecord>` units (`registers.register_map` / `registers.field_table`,
+inputs carried on the struct), run by `run_surface_concat` inside a `register_record_surface` helper that
+applies the post-passes; the inline `build()` block collapsed to one call. **Byte-identical proven on
+fresh-rebuilt evidence:** RISC-V Debug (44 registers) + NVMe (42 registers) full `evidence_ir.json`
+md5-identical vs pre-`.6` AND deterministic double-run; kg-bench 151/151; +1 concat-driver test; full
+`run_ci.sh` green (lib 1455 → 1456).
+
+Three extractor categories are now explicit + documented in `ir/extractor.rs`: **key-merge** (`run_surface`:
+FSM, semantic-hints), **concat** (`run_surface_concat`: registers), **stateful-assembly** (own orchestrators:
+the signal seed). `.7`+ migrate actors + signal-polarity, then retire the `build()` god-orchestrator.
+
 ### `EVIDENCE-DETERMINISM.2` — make the EvidenceIR build reproducible (fix two HashSet-iteration leaks)
 Fixed the content-level non-determinism `.1` diagnosed. Two `HashSet`-iteration leaks in `ir/evidence.rs`:
 1. `extract_actor_signal_relations` iterated `known_signals: &HashSet<String>` directly → the relation

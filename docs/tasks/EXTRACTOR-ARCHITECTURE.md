@@ -173,11 +173,25 @@ Driver: build cx → for each registered extractor where applies_to → run → 
   **pre-existing CONTENT-level non-determinism** (two runs of the *unchanged* `.4` code produce set-different
   `actor_signal_relations` + `extracted_statements`), NOT a `.5` regression. Spun a dedicated tree
   `EVIDENCE-DETERMINISM` for it (it undermines reproducibility, eval-score stability, and the byte-identical
-  methodology). Remaining genuine merge-surfaces to migrate (`.6`+): **registers, actors, signal-polarity**.
+  methodology). Remaining surface clusters to migrate (`.6`+): **registers, actors, signal-polarity**.
+- `.6` the **registers cluster**. **DONE (`2026-06-09`) — and added a second driver mode.** Registers is a
+  CONCAT surface (two strategies — register-map tables + `unknown` register-FIELD tables — producing disjoint
+  `RegisterRecord`s merged by plain `.extend()`, NOT a key-dedup, then three post-passes: width fill-in,
+  bit-layout-grid drop, fragment de-fragmentation). So the framework gained a second driver mode
+  **`run_surface_concat`** (ordered, no-dedup, same `SurfaceRun` manifest) beside the key-dedup `run_surface`.
+  The two strategies became `Extractor<RegisterRecord>` units (`registers.register_map` / `registers.field_table`,
+  inputs on the struct), run by `run_surface_concat` inside a `register_record_surface` helper that then applies
+  the three post-passes; the inline `build()` block collapsed to one call. **Byte-identical proven on
+  fresh-rebuilt evidence:** RISC-V Debug (44 registers) + NVMe (42 registers) full `evidence_ir.json`
+  md5-identical vs pre-`.6` AND deterministic double-run; kg-bench 151/151; +1 concat-driver test; full
+  `run_ci.sh` green (lib 1455 → 1456). Now three categories are explicit: key-merge (`run_surface`: FSM,
+  semantic-hints), concat (`run_surface_concat`: registers), stateful-assembly (own orchestrators: signal seed).
+- `.7`+ migrate **actors** and **signal-polarity** (the remaining surfaces); then retire the `build()`
+  god-orchestrator. **Pending.**
 
 ## Current frontier
 
-`.1` (audit) **done** this slice. `.2` (framework scaffolding) is **design-complete, build gated on one owner
-confirmation** of the framework shape (trait-registry vs. lighter manifest-only vs. data-driven pipeline) and
-how aggressive to be — recorded because committing to a load-bearing framework is the owner's architectural
-call (doing the refactor itself erratically would betray the very principle). No code change until confirmed.
+`.1`–`.6` **done**. The framework + two driver modes are proven on three clusters (FSM, semantic-hints,
+registers), all byte-identical, on a now-deterministic build (`EVIDENCE-DETERMINISM`). Next: `.7` actors, then
+signal-polarity; then retire the god-orchestrator. `CORPUS-PATTERN-REUSE` builds on the run manifest once enough
+surfaces are migrated.
