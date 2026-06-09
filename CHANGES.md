@@ -1,3 +1,26 @@
+### `PDF-VARIANT-DIGESTION.9.5` — SMBus 3.3.1 honest baseline: signals live in untabled prose
+Extending the serial-class survey to a third never-seen spec: first-ever ingest of SMBus 3.3.1 (83 pages / 100
+visual assets / `ready` / 0 residuals) → evidence (139 anchors / 1076 spans / 1131 statements) → `validate`.
+SMBus classes as `guide` with `document_type_declared: specification` → **⚠ under-extracted spec** (the `.5a`/`.5c`
+routing fires correctly, exactly as on CAN). Deterministic yield: **1 real signal (`SMBCLK`) + 1 noise (`WIRE`)**,
+0 FSM / 0 frame / 0 actors / 0 relations / 0 constraints, 26 conditional rules, **84 timing_constraints (strong —
+SMBus's timing-parameter tables read cleanly)**, 1 register table (21 fields).
+
+The recon (honesty guardrail) shows the facts ARE present, just under-extracted in an SMBus-specific way — and it
+is a NEW shape, distinct from CAN and SWP:
+- **No signal table at all** — SMBus declares its bus signals only in prose. `SMBCLK` (40×) and `SMBDAT` (32×)
+  appear as definite-article / collective lines ("the SMBCLK line", "Both SMBCLK and SMBDAT lines are
+  bi-directional"); the optional `SMBSUS#` (12×) / `SMBALERT#` (16×) as "SMBSUS# is an optional signal" /
+  "SMBALERT# is a wired-AND signal".
+- **The `.9.8` definitional copula misses them** — the `#` active-low suffix and the descriptor word between
+  "a/an" and "signal" both fall outside its grammar, so 3 of ≥4 signals are missed (only `SMBCLK` captured).
+- **`WIRE` is honest noise**, not fabrication — a false positive from "two-**wire** bus" / "**wired**-AND".
+- **Actors present, missed** — "controller" (296×) / "target" (280×) are everywhere but 0 protocol_actors.
+
+Recorded as lever backlog `.9.10` (SMBus-class prose bus-line signal grammar — definite-article / collective
+lines + the `#`-suffixed descriptor form, probe-locked before coding). Docs-only (no code change); the SMBus PDF
++ registry make the baseline reproducible.
+
 ### `PDF-VARIANT-DIGESTION.9.3b` — recover a frame described in prose (CAN's 7-field frame), honestly
 CAN describes its frame not as bit-ranges but as a prose **composition list** — "A DATA FRAME is composed of
 seven different bit fields: START OF FRAME, ARBITRATION FIELD, CONTROL FIELD, DATA FIELD, CRC FIELD, ACK FIELD,

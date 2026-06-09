@@ -1,4 +1,24 @@
 # DEVELOPMENT_NOTES
+## `PDF-VARIANT-DIGESTION.9.5` (`2026-06-09`) — SMBus 3.3.1 honest baseline (measurement, no code change)
+- First-ever ingest (`DOCLING_DEVICE=cpu`) of `corpus/smbus/current/SMBus_3.3.1_*.pdf` → `document_key:
+  smbus_3_3_1_2024_10_20_system_management_bus_specification`: 83 pages / 100 visual / `ready` / 0 residuals.
+  evidence = 139 anchors / 1076 spans / 100 visual / 163 links / 1131 statements.
+- `validate` → `document_class: guide`, `document_type_declared: specification` → ⚠ under-extracted spec.
+  Deterministic yield: 1 real signal (`SMBCLK`) + 1 noise (`WIRE`); 0 protocol_states / 0 serial_frame_fields /
+  0 protocol_actors / 0 actor_signal_relations / 0 signal_constraints; 26 conditional rules; 84 timing_constraints;
+  1 register_record (21 fields, unnamed); 1 signal_polarity (`SMBCLK` active_low); 1 signal_semantic_hint
+  (`SMBCLK` ready-like, dubious — from a STOP-condition definition); 3 unexplained intent-bearing tables
+  (`table_0012` timing_parameter / `table_0022` signal_description / `table_0042` register_map); converged in 2
+  passes.
+- Honesty-guardrail recon (grep of the normalized md): SMBus has NO signal table; `SMBCLK` (40×) / `SMBDAT`
+  (32×) are bi-directional bus lines declared only in prose, `SMBSUS#` (12×) / `SMBALERT#` (16×) as
+  "<NAME># is a/an <descriptor> signal". The `.9.8` definitional copula misses the `#` suffix + the descriptor
+  word, so 3/≥4 signals missed. `WIRE` traces to "two-wire"/"wired-AND" prose (honest noise). Actors
+  "controller" (296×) / "target" (280×) present but 0 protocol_actors.
+- Conclusion: under-extracted DIFFERENTLY than CAN/SWP → spun lever `.9.10` (SMBus-class prose bus-line signal
+  grammar, probe-locked before coding; ADR 0006). Docs-only slice (generated IR git-ignored → APB/AHB/AXI/SWD
+  trivially unaffected).
+
 ## `PDF-VARIANT-DIGESTION.9.3b` (`2026-06-09`) — CAN frame fields from a prose composition list
 - Root: CAN describes its frame as prose ("composed of seven bit fields: SOF, ARBITRATION FIELD, …"), not the
   SWD `NAME[hi:lo]` bit-ranges, so `extract_serial_frame_fields` (SWD-marker-gated) doesn't fire → CAN had 0.

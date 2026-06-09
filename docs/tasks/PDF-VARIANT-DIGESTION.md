@@ -134,6 +134,44 @@ diagnostic when a construct is genuinely out of model.
   prose, not a table → 0 captured → a prose-signal lever; (3) the 11 "signal_constraints" are mostly NOISE —
   layer/protocol acronyms (`UICC`/`SWP`/`CLF`/`SHDLC`/`RSET`/`CLT`) mis-captured as signal subjects → a
   constraint-subject precision lever. Spun future leaves `.9.7`–`.9.9` (below). Commit: pending (this slice).
+- ID: `PDF-VARIANT-DIGESTION.9.5` · Status: `done` (`2026-06-09`) · Goal: **SMBus 3.3.1 honest baseline** —
+  ingest (`DOCLING_DEVICE=cpu`) → evidence → validate the never-before-ingested SMBus spec; record the
+  document_class, the class-aware completeness gauge, and the signal / FSM / frame / actor / relation yield
+  (including whether the `.9.3a` quoted-mode, `.9.7` transition-bound, and `.9.8` definitional-signal levers
+  already fire on SMBus); state the honest gap and spin the next lever. No fabrication (ADR 0006). Acceptance:
+  baseline metrics recorded in this tree; APB/AHB/AXI/SWD unaffected (docs-only slice — no code change).
+  **Verification:** clean ingest (83 pages / 100 visual assets / `ready` / 0 residuals / `document_key:
+  smbus_3_3_1_2024_10_20_system_management_bus_specification`); evidence = 139 section anchors / 1076 spans / 100
+  visual / 163 links / 1131 statements. `validate` → **`document_class: guide`, `document_type_declared:
+  specification` → ⚠ UNDER-EXTRACTED spec** (the `.5a`/`.5c` machinery fires correctly, exactly as on CAN):
+  deterministic yield **1 real signal (`SMBCLK`) + 1 NOISE (`WIRE`)** [validate counts "2 signals"], **0 protocol_states /
+  0 serial_frame_fields / 0 protocol_actors / 0 actor_signal_relations / 0 signal_constraints**, 26 narrative
+  conditional rules, **84 timing_constraints (from tables — STRONG)**, 1 register_record (21 fields, unnamed),
+  1 signal_polarity (`SMBCLK` active_low), 1 signal_semantic_hint (`SMBCLK` ready-like, dubious — derived from a
+  STOP-condition definition); completeness gauge `not applicable` (guide); 3 unexplained intent-bearing tables
+  (`table_0012` timing_parameter, `table_0022` **signal_description** → produced no record, `table_0042`
+  register_map); 100 un-enriched figures; convergence converged in 2 passes (+52 new facts). **Honest finding —
+  SMBus under-extracts DIFFERENTLY AGAIN, and the facts ARE present:** (1) SMBus has **no signal table** (the
+  `| Signal |`/`| Pin |` header grep is empty) — its bus signals live ONLY in PROSE: `SMBCLK` (40×) / `SMBDAT`
+  (32×) as definite-article/collective "the SMBCLK line", "Both SMBCLK and SMBDAT lines are bi-directional",
+  plus the optional `SMBSUS#` (12×) / `SMBALERT#` (16×) as "`SMBSUS#` is an optional signal" / "`SMBALERT#` is a
+  wired-AND signal". Only `SMBCLK` was captured (1/≥4 recall); `SMBDAT`/`SMBSUS#`/`SMBALERT#` missed. (2) The
+  `.9.8` definitional copula (`<NAME> is a/an signal`) does NOT fire here because the `#` active-low suffix +
+  the descriptor word between "a/an" and "signal" ("optional", "wired-AND") both fall outside its grammar — so a
+  NEW prose-signal lever is genuinely needed (probe-locked, not a re-tune). (3) `WIRE` is an honest false
+  positive from "two-**wire** bus" / "**wired**-AND" — a precision blemish, not a fabrication. (4) actors
+  "controller" (296×) / "target" (280×) are heavily present but 0 protocol_actors → a prose-actor gap on the
+  "bus controller"/"bus target" idiom. Spun future lever `.9.10` (below). Commit: pending (this slice).
+- ID: `PDF-VARIANT-DIGESTION.9.10` · Status: `proposed` · Goal: **SMBus-class prose bus-line signal grammar** —
+  recover I2C/SMBus-derived 2-wire bus signals declared ONLY in prose (no signal table) — `SMBCLK`/`SMBDAT` as
+  definite-article "the `<NAME>` line" / collective "`<NAME>` and `<NAME>` lines are <property>", and the
+  active-low optional signals `SMBSUS#`/`SMBALERT#` as "`<NAME>#` is a/an <descriptor> signal" — AGNOSTICALLY
+  (ADR 0006: derive the names, never list them) and without SWD/CAN/SWP/wire-based regression or corpus false
+  positives, dropping the `WIRE` two-wire/wired-AND false positive. **Must be probe-locked over all persisted
+  evidence docs BEFORE coding** (the `.9.7`/`.9.8` methodology) — `.9.8` already PROVED descriptor-apposition is
+  corpus-toxic, so the descriptor-tolerant "is a/an X signal" form needs careful gating (the `#` suffix + a
+  bounded descriptor allowlist or all-caps-identifier subject test). Honesty guardrail: residual over
+  fabrication. Spun from the `.9.5` SMBus baseline.
 - ID: `PDF-VARIANT-DIGESTION.9.7` · Status: `in_progress` · Goal: **single-word `<NAME> state` FSM grammar** —
   generalize the SWD `<Name> state` path (`looks_like_state_name` + the TAP/scan-chain doc-gate) to also accept a
   single capitalized state word (`ACTIVATED state`, `DEACTIVATED state`) behind a safe generic FSM doc-gate, so
@@ -316,8 +354,15 @@ already enforces the invariant corpus-wide (76 docs / 0 non-declared constraint 
 **`.9.3b` (CAN frame fields) DONE `2026-06-09`** — `extract_composition_frame_fields` recovers CAN's frame
 STRUCTURE (0 → 7 ordered fields) from the prose composition list + honest directly-stated widths (CONTROL=6,
 ACK=2, rest residual `None`, no fabrication); only CAN fires (probe), SWD/AXI untouched; lib 1472, kg-bench
-151/151. **Frontier (any of, owner may steer):** `.9.5`/`.9.6` (SMBus/I2S baselines) · `.9.8b` (SWIO
-contact-as-signal, abbreviation-expansion miner).
+151/151. **`.9.5` (SMBus 3.3.1 honest baseline) DONE `2026-06-09`** — first-ever ingest (83 pp / 100 visual /
+`ready`); `document_class: guide` + `document_type_declared: specification` → ⚠ UNDER-EXTRACTED spec (machinery
+correct, like CAN). Deterministic yield **1 real signal (`SMBCLK`) + 1 noise (`WIRE`); 0 FSM / 0 frame /
+0 actors / 0 relations / 0 constraints; 26 conditional rules; 84 timing_constraints (strong); 1 register table
+(21 fields)**. Honest finding: SMBus declares its bus signals (`SMBCLK`/`SMBDAT`/`SMBSUS#`/`SMBALERT#`) ONLY in
+prose (NO signal table) in idioms none of the existing grammars catch — the `.9.8` definitional copula misses
+the `#` active-low suffix + the descriptor word ("optional"/"wired-AND") — so 3/≥4 signals missed → a NEW
+prose-signal lever `.9.10` (probe-locked, spun). **Frontier (any of, owner may steer):** `.9.6` (I2S baseline)
+· `.9.10` (SMBus prose bus-line signal grammar) · `.9.8b` (SWIO contact-as-signal, abbreviation-expansion miner).
 `.6`/`.7` (the older VLM-frontier / USB-3.2 leaves) stay blocked on host-local PDFs.
 
 **(SUPERSEDED active note) `PDF-VARIANT-DIGESTION.6`/`.7`** — item ② (`.5`) COMPLETE and `.8` (broaden
@@ -655,6 +700,26 @@ set, not the whole doc/corpus.
 
 ## Verification log
 
+- `.9.5` (`2026-06-09`): SMBus 3.3.1 honest baseline (first-ever ingest of this spec). `DOCLING_DEVICE=cpu
+  ingest` → 83 pages / 100 visual assets / `ready` / 0 residuals / `document_key:
+  smbus_3_3_1_2024_10_20_system_management_bus_specification`. `evidence` → 139 anchors / 1076 spans / 100 visual
+  / 163 links / 1131 statements. `validate` → `document_class: guide`, `document_type_declared: specification`,
+  ⚠ `under-extracted spec` warning (the `.5a`/`.5c` routing fires correctly). Deterministic yield: 1 real signal
+  (`SMBCLK`) + 1 NOISE (`WIRE`, from "two-wire"/"wired-AND") [validate counts "2 signals"]; 0 protocol_states /
+  0 serial_frame_fields / 0 protocol_actors / 0 actor_signal_relations / 0 signal_constraints; 26 conditional
+  rules; 84 timing_constraints (from tables — strong); 1 register_record (21 fields, unnamed); 1 signal_polarity
+  (`SMBCLK` active_low, medium); 1 signal_semantic_hint (`SMBCLK` ready-like, dubious — from a STOP-condition
+  definition); 3 unexplained intent-bearing tables (`table_0012` timing_parameter / `table_0022`
+  signal_description / `table_0042` register_map); completeness gauge `not applicable` (guide); converged in 2
+  passes (+52 facts). Honesty-guardrail recon of the normalized md confirmed present-but-unextracted facts:
+  `SMBCLK` (40×) / `SMBDAT` (32×) are bi-directional bus lines declared only in prose ("the SMBCLK line", "Both
+  SMBCLK and SMBDAT lines are bi-directional") with NO signal table; `SMBSUS#` (12×) / `SMBALERT#` (16×) are
+  optional signals declared as "SMBSUS# is an optional signal" / "SMBALERT# is a wired-AND signal" — the `.9.8`
+  definitional copula misses both the `#` active-low suffix and the descriptor word between "a/an" and "signal";
+  actors "controller" (296×) / "target" (280×) heavily present but 0 protocol_actors. Conclusion: under-extracted
+  differently than CAN/SWP → new prose bus-line signal lever `.9.10` (probe-locked). Docs-only slice (generated
+  IR git-ignored; no code change → APB/AHB/AXI/SWD trivially unaffected). Commit subject:
+  `PDF-VARIANT-DIGESTION.9.5`.
 - `.9.4` (`2026-06-08`): SWP honest baseline. `DOCLING_DEVICE=cpu ingest` → 147 anchors / 1303 statements / 82
   visual. `evidence` + `validate` → `document_class: protocol`; 0 signal_declarations / 0 protocol_states / 0
   serial_frame_fields / 0 protocol_actors / 0 actor_signal_relations / 1 register_record; 11 signal_constraints.
@@ -763,6 +828,14 @@ set, not the whole doc/corpus.
 
 ## Changelog
 
+- `2026-06-09`: `.9.5` (SMBus 3.3.1 honest baseline) DONE. First-ever ingest (83 pp / 100 visual / `ready` / 0
+  residuals) → evidence (139 anchors / 1076 spans / 1131 statements) → `validate`: `document_class: guide`,
+  `document_type_declared: specification` → ⚠ under-extracted spec. Deterministic yield 1 real signal (`SMBCLK`)
+  + 1 noise (`WIRE`); 0 FSM / 0 frame / 0 actors / 0 relations / 0 constraints; 26 conditional rules; 84
+  timing_constraints; 1 register table (21 fields). Honest finding: SMBus declares `SMBCLK`/`SMBDAT`/`SMBSUS#`/
+  `SMBALERT#` ONLY in prose (no signal table); the `.9.8` definitional copula misses the `#` active-low suffix +
+  the descriptor word, so 3/≥4 signals missed → new prose bus-line signal lever `.9.10` (probe-locked). Docs-only
+  (no code change). Commit subject: `PDF-VARIANT-DIGESTION.9.5`.
 - `2026-06-08`: `.9.4` (SWP honest baseline) DONE. Ingested SWP (147 anchors / 1303 statements / 82 visual);
   `document_class: protocol` (11 signal_constraints) but 0 signals/FSM/frame/actors; the `.9.3a` quoted-mode lever
   does not fire. Honest breadth finding: SWP's facts ARE present but under-extracted differently — an FSM in a
