@@ -7,10 +7,11 @@ answers:
   - "what is the per-document fingerprint made of (structural shape + extraction_manifest fired set)"
   - "do the emergent clusters actually track real vendor/layout families"
   - "why are the fired: behavioral features mostly empty in the clustering today"
+  - "how do I see which ingested PDFs form structural families (the corpus-cluster command)"
 date: 2026-06-09
 tags: [corpus-pattern-reuse, clustering, fingerprint, vendor, extraction-manifest, adr-0006, evidence-ir]
-evidence: docs/tasks/CORPUS-PATTERN-REUSE.md (.2); crates/specforge/src/ir/corpus_cluster.rs
-reverify: cargo test -p specforge --lib ir::corpus_cluster
+evidence: docs/tasks/CORPUS-PATTERN-REUSE.md (.2/.3a); crates/specforge/src/ir/corpus_cluster.rs; crates/specforge/src/commands/corpus_cluster.rs
+reverify: cargo test -p specforge --lib corpus_cluster; cargo run -p specforge -- corpus-cluster
 ---
 
 `CORPUS-PATTERN-REUSE.2` builds the clustering capability for the owner's vendor-pattern-reuse vision
@@ -34,6 +35,15 @@ multi-doc). Emergent families track reality with NO vendor list: the 3 CoreSight
 Generic-Flash, LTI) fall together on shared `relations:b2 + signal_constraints:b2`. **Coverage caveat:** the
 `fired:` behavioral tokens were mostly absent because only ~6 docs were rebuilt since `.8`, so today's
 clustering is **structural-shape driven** — yet already recovers real families; a corpus-wide re-ingest sweep
-(every doc carrying an `extraction_manifest`) is the enrichment follow-up. Next (`.3`): a `corpus-cluster` CLI
-command + the advisory `ExtractionProfile` consumed via `Extractor::applies_to` (bounded, contested-gated —
-adjusts attention, never truth; `[[corpus-pattern-reuse]]`).
+(every doc carrying an `extraction_manifest`) is the enrichment follow-up.
+
+**`.3a` shipped the user-facing surface (`2026-06-09`):** the `corpus-cluster` command
+(`crate::commands::corpus_cluster`) walks `generated/evidence_ir/<doc_key>/evidence_ir.json`, fingerprints +
+clusters every persisted doc with the `.2` engine, and prints the emergent families (members + shared
+structural signature) plus the unique-shape singletons. It is **read-only and additive** — no IR rebuild, no
+mutation, no extraction-behavior change — a *window* into corpus structure, deterministic. Live over the
+persisted corpus (78 docs, threshold 0.6): 28 clusters / 14 multi-doc families, no vendor list. Args:
+`--evidence-root <root>` (default `generated/evidence_ir`), `--threshold <0.0-1.0>` (default `0.6`).
+Still gated (`.3b`/`.4`): the advisory `ExtractionProfile` consumed via `Extractor::applies_to` (bounded,
+contested-gated — adjusts attention, never truth) + an offline LLM/VLM cluster pattern miner;
+`[[corpus-pattern-reuse]]`.

@@ -1,4 +1,30 @@
 # DEVELOPMENT_NOTES
+## `CORPUS-PATTERN-REUSE.3a` (`2026-06-09`) — the `corpus-cluster` command (surface the `.2` clustering engine)
+- Motivation: `CORPUS-PATTERN-REUSE.2` built the derived-fingerprint clustering engine (`ir/corpus_cluster.rs`)
+  and proved it over the persisted corpus in a throwaway probe, but it had no user-facing surface — the owner
+  could not SEE the emergent families. The book/README are the only window into the project, so a recognized-
+  pattern view is exactly what must be surfaced before `.3b`/`.4` consume the clusters.
+- Slice boundary: split `.3` first (Splitting Rules). `.3a` = read-only surfacing (zero extraction-path risk);
+  `.3b` = the behavioral advisory `ExtractionProfile` via `Extractor::applies_to` (gated, follows an owner go).
+  The two are independently reviewable and carry very different regression risk → separate leaves.
+- Design (`commands/corpus_cluster.rs`): three testable seams kept pure where possible —
+  `collect_corpus_documents(evidence_root)` walks `<root>/<doc_key>/evidence_ir.json` (sorted for determinism),
+  loads each readable `EvidenceIR`, derives its `.2` fingerprint, and records honest skips for unloadable or
+  wrong-stage artifacts (a dir with no `evidence_ir.json` is simply not a member, not a skip);
+  `build_corpus_cluster_report` (pure, no I/O) clusters via `cluster_documents` then orders families
+  largest-first with a deterministic key tie-break; `render_report` prints header counts, the multi-document
+  families (shared signature + members), then the unique-shape singletons. Args: `--evidence-root` (default
+  `generated/evidence_ir`), `--threshold` (default `0.6`).
+- Honesty/genericity: read-only and additive — no IR rebuild, no mutation, no extraction-behavior change. The
+  cluster key is the shared *structure*, never a vendor name (ADR 0006); families are emergent.
+- Verification: live over the persisted corpus (78 docs, threshold 0.6) → 28 clusters / 14 multi-document
+  families / 0 skipped, no vendor list (3 CoreSight SoC-600 TRM versions; 7 AMBA protocol specs; register-heavy
+  AMD-IOMMU/GIC/eMMC). 6 hermetic tests. `scripts/run_ci.sh` green (lib 1481); kg-bench 151/151; KM check green.
+- A test gotcha worth recording: a minimal `{"stage":"source_ir"}` does NOT deserialize into the `EvidenceIR`
+  schema, so the wrong-stage skip branch is in practice unreachable from a non-EvidenceIR JSON — such artifacts
+  hit the parse-failure skip branch ("failed to load: …"). Both branches are honest skips; the test asserts the
+  actual (parse-failure) path rather than a wrong-stage message.
+
 ## `PDF-VARIANT-DIGESTION.9.11` (`2026-06-09`) — header-trapped timing-table recovery (structural, no list/case)
 - Root cause (probe-locked): `synthesize_timing_constraints` (`ir/evidence.rs`) opened with
   `if table.body_rows.is_empty() { continue; }`. I2S `table_0004` / SMBus `table_0012` have `body_rows` EMPTY

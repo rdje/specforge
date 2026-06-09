@@ -41,6 +41,8 @@ pub enum Commands {
     ProjectValidation(ProjectValidationArgs),
     /// Inspect or execute a schema-v2 validation rescan plan
     RescanPlan(RescanPlanArgs),
+    /// Cluster the persisted EvidenceIR corpus by derived structural fingerprint and report emergent families
+    CorpusCluster(CorpusClusterArgs),
     /// Run tracked KG-quality fixtures against the staged pipeline
     KgBench(KgBenchArgs),
     /// Build a local cross-document prior store from validated IntentIR artifacts
@@ -411,6 +413,16 @@ pub struct RescanPlanArgs {
 }
 
 #[derive(Debug, Args)]
+pub struct CorpusClusterArgs {
+    /// Root holding each document's `<doc_key>/evidence_ir.json`
+    #[arg(long, default_value = "generated/evidence_ir")]
+    pub evidence_root: std::path::PathBuf,
+    /// Jaccard fingerprint-similarity threshold for grouping documents into one family (0.0–1.0)
+    #[arg(long, default_value = "0.6")]
+    pub threshold: f64,
+}
+
+#[derive(Debug, Args)]
 pub struct KgBenchArgs {
     /// Directory containing tracked KG-quality fixture directories
     #[arg(long, default_value = "crates/specforge/test_data/kg_quality")]
@@ -681,6 +693,17 @@ mod tests {
         assert!(matches!(args.scope, CleanScopeArg::SourceNormalized));
         assert_eq!(args.document_key, None);
         assert!(!args.execute);
+    }
+
+    #[test]
+    fn corpus_cluster_defaults_to_generated_evidence_root() {
+        let cli = Cli::parse_from(["specforge", "corpus-cluster"]);
+        let Commands::CorpusCluster(args) = cli.command else {
+            panic!("expected corpus-cluster command");
+        };
+
+        assert_eq!(args.evidence_root, PathBuf::from("generated/evidence_ir"));
+        assert!((args.threshold - 0.6).abs() < 1e-9);
     }
 
     #[test]

@@ -2,6 +2,7 @@ pub mod adapt;
 pub mod audit_extraction;
 pub mod clean;
 pub mod converge;
+pub mod corpus_cluster;
 pub mod corpus_kb;
 pub mod doctor;
 pub mod enrich;

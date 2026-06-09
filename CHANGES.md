@@ -1,3 +1,30 @@
+### `CORPUS-PATTERN-REUSE.3a` — the `corpus-cluster` command (surface the derived-fingerprint clustering engine)
+The `CORPUS-PATTERN-REUSE.2` clustering engine (`ir/corpus_cluster.rs`) could already group the persisted
+documents by a derived structural fingerprint, but only as an internal capability — there was no way for the
+owner to actually SEE the families. This slice surfaces it as a first-class, user-facing `corpus-cluster`
+command, because the book is the only window into the project and a recognized-pattern view of the corpus is
+exactly the kind of thing the owner needs to inspect before the reuse plane consumes it.
+
+New `commands/corpus_cluster.rs` (registered in `cli.rs`/`lib.rs`/`commands/mod.rs`): it walks
+`generated/evidence_ir/<document_key>/evidence_ir.json`, loads each readable `EvidenceIR`, derives its `.2`
+`document_fingerprint`, clusters look-alike documents with `cluster_documents` (Jaccard ≥ `--threshold`,
+default `0.6`), and prints the emergent multi-document families (members + the shared structural signature that
+makes them alike) followed by the unique-shape singletons. Unloadable/wrong-stage artifacts are recorded as
+honest skips; directories without an `evidence_ir.json` are simply not members.
+
+It is deliberately **read-only and additive** — no IR rebuild, no mutation, no extraction-behavior change — a
+window into corpus structure, not an action on it. The cluster key is the shared *structure* itself, never a
+baked-in vendor name (ADR 0006), so the families are emergent and this keeps working on any chip-spec PDF.
+Live over the persisted corpus (78 docs, threshold 0.6): **28 clusters / 14 multi-document families, 0 skipped,
+no vendor list** — the three CoreSight SoC-600 TRM versions form a family, the seven AMBA protocol specs fall
+together, register-heavy AMD-IOMMU ↔ GIC ↔ eMMC cluster.
+
+`.3` was split first (Splitting Rules): `.3a` (this read-only surfacing) vs `.3b` (the behavioral advisory
+`ExtractionProfile` consumed via `Extractor::applies_to`, gated). 6 hermetic tests (report ordering +
+determinism, render, missing-root error, unloadable-artifact skip, CLI defaults). `scripts/run_ci.sh` green
+(lib **1481**); kg-bench 151/151; KM check green. Book (`commands/quality-and-learning.md`,
+`commands/overview.md`), README, and KM card `corpus-cluster-fingerprint` updated.
+
 ### `PDF-VARIANT-DIGESTION.9.12` — the remaining serial "unexplained" tables are honest residuals (no build)
 Probe-checked the serial-class tables the SMBus/I2S baselines flagged as `unexplained_intent_bearing_tables`,
 to decide build-vs-residual honestly. All three have nothing typed to recover: SMBus `table_0022` is a

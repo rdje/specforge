@@ -234,6 +234,48 @@ The boundary is strict:
 - corpus KB pages can inform humans, future LLM sessions, benchmark design, and prior-candidate design
 - corpus KB pages cannot directly mutate canonical IR or become typed priors without a separate validation-gated promotion path
 
+## `corpus-cluster`
+
+Specifications from the same source tend to be *organised* the same way — the
+same kinds of tables in the same places, the same balance of registers versus
+timing rules versus prose. If `specforge` could recognise that a new PDF "looks
+like ones it has already digested," it could reuse what worked on those — which
+is how extraction quality should improve as the corpus grows. `corpus-cluster`
+is the first, honest step toward that: it groups the documents you have already
+ingested into **emergent families** and shows you the shared structure that
+defines each family, so you (and, later, the extractor) can see those patterns.
+
+```bash
+cargo run --manifest-path Cargo.toml -- corpus-cluster
+cargo run --manifest-path Cargo.toml -- corpus-cluster --evidence-root generated/evidence_ir --threshold 0.6
+```
+
+It reads every `generated/evidence_ir/<document_key>/evidence_ir.json` you have
+on disk, derives a small **structural fingerprint** for each one — a coarse
+count bucket per typed surface (registers, protocol states, signal constraints,
+actor→signal relations, actors, serial-frame fields, conditional rules) plus
+which extractor strategies actually fired — and clusters documents whose
+fingerprints overlap enough (Jaccard similarity ≥ `--threshold`, default `0.6`).
+It prints each multi-document family with the feature tokens its members share,
+then the single-document (unique-shape) specs.
+
+Two design choices keep it trustworthy and generic:
+
+- **No vendor names anywhere.** The cluster key is the shared *structure*
+  itself, never a baked-in "ARM"/"NXP"/"Intel" string (ADR 0006). The families
+  are emergent — e.g. the three versions of one technical reference manual fall
+  together because they share a shape, not because the tool was told they are
+  related — so this keeps working on any chip-spec PDF, including ones from
+  vendors it has never seen.
+- **Read-only and additive.** The command never rebuilds, mutates, or scores any
+  IR, and it changes no extraction behavior. It is a *window* into the corpus
+  structure, not an action on it. Reusing a family's pattern to actually steer
+  extraction is a separate, deliberately gated step (`CORPUS-PATTERN-REUSE.3b`).
+
+The fingerprint is fully deterministic, so the same corpus always produces the
+same families — making this a stable thing to inspect and to build the reuse
+plane on top of.
+
 ## `enrich` and `nlp-enrich`
 
 These are narrower enrichment entrypoints used when you want to operate on the staged pipeline more manually.

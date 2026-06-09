@@ -75,12 +75,18 @@ not to the provider's existence.
 The only genuinely upstream-absent piece is a typed PDF→`FigureRegion`
 raster/vector decoder (the VLM already reads diagram PNGs, just to text).
 
-### Current command surface = 17 commands (all live)
+### Current command surface (representative core; all live)
 `inspect`, `doctor`, `converge`, `ingest`, `evidence`, `semantic`, `intent`,
 `adapt`, `enrich`, `nlp_enrich`, `validate`, `project-validation`,
-`rescan-plan`, `kg-bench`, `learn-priors`, `corpus-kb`, `clean`
-(`crates/specforge/src/cli.rs`, dispatched in `lib.rs`). Any earlier command
-list in this file that omits `corpus_kb` / `clean` is superseded by this entry.
+`rescan-plan`, `kg-bench`, `learn-priors`, `corpus-cluster`, `corpus-kb`, `clean`
+(plus the LLM/eval surfaces `extract-contracts`, `signal-resolve`,
+`eval-extraction`, `nli-verify`, `entity-type`, `extract-conditions`,
+`extract-constraints-llm`, `audit-extraction`, `recover-register-bits`,
+`grits-consensus`). `corpus-cluster` (`commands/corpus_cluster.rs`,
+`CORPUS-PATTERN-REUSE.3a`) is a read-only inspection command that surfaces the
+pure `ir::corpus_cluster` derived-fingerprint clustering over the persisted
+`generated/evidence_ir` corpus — additive, no extraction-path change. The
+authoritative list is `crates/specforge/src/cli.rs`, dispatched in `lib.rs`.
 
 ### `.fsm` adapter sections are historical
 Any subsection below describing a `.fsm` adapter / HDL lowering as *present* in

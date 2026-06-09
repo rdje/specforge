@@ -110,14 +110,69 @@ gauges (did the profile reduce misses on held-out docs?).
   sweep (so every doc carries an `extraction_manifest`). KM card `corpus-cluster-fingerprint`.
   Follow-ups (`.3`): a first-class `corpus-cluster` CLI command (run the Rust over the corpus, surfaced + book),
   the re-ingest sweep, and the advisory `ExtractionProfile` consumed via `Extractor::applies_to`.
-- ID: `CORPUS-PATTERN-REUSE.3` · Status: `pending` (gated) · Goal: typed advisory `ExtractionProfile` in
+- ID: `CORPUS-PATTERN-REUSE.3` · Status: `active` (split `2026-06-09`) · Goal: surface the `.2` clustering
+  capability as a first-class command AND consume a per-cluster advisory profile in extraction. Split into the
+  user-facing surfacing (`.3a`, clean/additive, zero extraction-path risk) and the behavioral advisory
+  consumption (`.3b`, gated, touches the extractor path) because they are independently reviewable and carry
+  very different regression risk (Splitting Rules). · Children: `.3a`, `.3b`.
+- ID: `CORPUS-PATTERN-REUSE.3a` · Status: `done` (`2026-06-09`) · Goal: a first-class `corpus-cluster`
+  CLI command that walks the persisted `generated/evidence_ir/<doc_key>/evidence_ir.json` corpus, computes each
+  document's `document_fingerprint` (`.2`), clusters them with `cluster_documents` (`.2`), and reports the
+  emergent families (members + shared structural signature) so the owner can SEE the corpus structure the
+  reuse plane will exploit — additive, read-only, no vendor names, no extraction-path change.
+  **DONE (`2026-06-09`).** New `crate::commands::corpus_cluster` (registered in `cli.rs`/`lib.rs`/`mod.rs`):
+  `collect_corpus_documents` walks the evidence root, loads each readable EvidenceIR, derives its `.2`
+  fingerprint, and records honest skips for unloadable/wrong-stage artifacts (dirs without `evidence_ir.json`
+  are simply not members); `build_corpus_cluster_report` (pure) clusters + orders the families largest-first
+  (deterministic tie-break by representative key); `render_report` prints the header counts, the multi-document
+  families with their shared signature + members, then the unique-shape singletons. Args `--evidence-root`
+  (default `generated/evidence_ir`) + `--threshold` (default `0.6`). No IR rebuild/mutation, no extraction-path
+  change. **Live demonstration over the persisted corpus (78 docs, threshold 0.6): 28 clusters / 14 multi-doc
+  families, 0 skipped, NO vendor list** — the 3 CoreSight SoC-600 TRM versions form a family, the 7 AMBA
+  protocol specs (APB d/e, Trace-bus, AXI-Stream, Generic-Flash, LTI, OpenCAPI TL) fall together, register-heavy
+  AMD-IOMMU ↔ GIC ↔ eMMC cluster. 6 hermetic tests (report ordering/determinism, render, missing-root error,
+  unloadable-artifact skip, CLI defaults). `run_ci.sh` green (lib 1481) + kg-bench 151/151 + KM check green.
+  Verification: see Verification Log. Commit: see Commit Log.
+- ID: `CORPUS-PATTERN-REUSE.3b` · Status: `pending` (gated) · Goal: typed advisory `ExtractionProfile` in
   `CorpusMemory` keyed by cluster fingerprint; consumed via `Extractor::applies_to`; bounded + contested-gated.
 - ID: `CORPUS-PATTERN-REUSE.4` · Status: `pending` (gated) · Goal: offline LLM/VLM cluster pattern miner with
   held-out precision validation before promotion; recall-gauge-measured uplift on held-out docs.
 
 ## Current frontier
 
-`.1` design owned. The build (`.2`–`.4`) is **sequenced behind `EXTRACTOR-ARCHITECTURE`** — the run manifest
-is the behavioral fingerprint this plane clusters on, so the foundation comes first. Owner may steer the
-priority between (continue extractor consolidation → then this) vs. (prototype clustering now on the
-structural fingerprint alone). Recommended: foundation first.
+| Order | Leaf | Status | Why next |
+| --- | --- | --- | --- |
+| 1 | `CORPUS-PATTERN-REUSE.3b` | `pending` (gated) | Advisory per-cluster `ExtractionProfile` consumed via `Extractor::applies_to`; behavioral (touches the extractor path), so it follows the surfacing (`.3a` DONE) + an explicit owner go. |
+| 2 | `CORPUS-PATTERN-REUSE.4` | `pending` (gated) | Offline LLM/VLM cluster pattern miner with held-out precision validation. |
+
+`.3a` DONE — the `corpus-cluster` command surfaces the proven `.2` engine over the persisted corpus
+(read-only, no behavior change). `.3b`/`.4` (advisory consumption + offline miner) touch the extraction path,
+so they stay gated on an owner go.
+
+`.1` design owned; `.2` clustering engine DONE (works over the persisted corpus). The build (`.3`–`.4`) was
+**sequenced behind `EXTRACTOR-ARCHITECTURE`** — its run manifest is the behavioral fingerprint this plane
+clusters on — and that foundation is now in place (`.8` manifest exists). `.3a` surfaces the proven engine
+first (no behavior change); `.3b`/`.4` (advisory consumption + offline miner) stay gated on an owner go.
+
+## Verification Log
+
+| Date | Leaf | Checks | Result |
+| --- | --- | --- | --- |
+| `2026-06-09` | `CORPUS-PATTERN-REUSE.3a` | `scripts/run_ci.sh` (fmt-check + clippy `-D warnings` + lib tests + rustdoc + mdBook) | green — lib **1481** passed / 0 failed |
+| `2026-06-09` | `CORPUS-PATTERN-REUSE.3a` | `cargo run -p specforge -- kg-bench` | 151/151 pass |
+| `2026-06-09` | `CORPUS-PATTERN-REUSE.3a` | `knowledge-map/scripts/check_knowledge_map.sh` | green (facts valid, map in sync) |
+| `2026-06-09` | `CORPUS-PATTERN-REUSE.3a` | live `corpus-cluster` over persisted corpus (78 docs, threshold 0.6) | 28 clusters / 14 multi-doc families / 0 skipped; emergent families track real vendor/layout shape with no vendor list |
+
+## Commit Log
+
+| Leaf | Commit subject or reference | Notes |
+| --- | --- | --- |
+| `CORPUS-PATTERN-REUSE.3a` | `CORPUS-PATTERN-REUSE.3a — corpus-cluster command` (this slice) | New read-only command surfacing the `.2` clustering engine; book + README + KM in sync |
+
+## Changelog
+
+- `2026-06-09`: Split `.3` (was a single `pending` leaf) into the container `.3` + children `.3a` (the
+  user-facing `corpus-cluster` command — clean, additive, read-only) and `.3b` (the behavioral advisory
+  `ExtractionProfile` consumption — gated), per the Splitting Rules (independently reviewable, very different
+  regression risk). Implemented + closed `.3a` (new `corpus-cluster` command; live 78-doc demonstration;
+  `run_ci.sh` green lib 1481, kg-bench 151/151, KM green). Frontier advanced to `.3b`/`.4` (gated).
