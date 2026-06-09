@@ -468,6 +468,38 @@ inventing a third. The reader runs only as a fallback for table-poor documents, 
 table-rich buses (APB/AHB/AXI) and the serial-debug spec (SWD/ADI) are provably
 untouched. *Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.9.8`).
 
+### `PDF-VARIANT-DIGESTION.9.3b` — a frame described as a sentence, not a bit-range table
+
+The SWD reader recovers a packet frame written as bit-ranges (`ACK[2:0]`, `WDATA[0:31]`). Other protocols
+describe their frame in plain prose. CAN says: *"A DATA FRAME is composed of seven different bit fields: START
+OF FRAME, ARBITRATION FIELD, CONTROL FIELD, DATA FIELD, CRC FIELD, ACK FIELD, END OF FRAME"*, and then states
+each field's width unevenly, sentences apart (*"the CONTROL FIELD consists of six bits"*, *"the ACK FIELD is
+two bits long"*). There's no table to read, so the bit-range reader found nothing — CAN entered the pipeline
+with no frame at all.
+
+Two ideas make reading this both general and honest. First, **the composition list scopes the frame.** Only the
+fields named in *"composed of N … bit fields: …"* are taken as frame fields. That matters because CAN says "N
+bits" about *many* things that are **not** frame fields — error flags, the overload delimiter, intermission —
+and a naive "find every N-bit thing" reader would sweep them all in. Anchoring on the one sentence that
+enumerates the frame keeps exactly the seven real fields and nothing else; across the whole tracked corpus this
+shape fires on CAN alone.
+
+Second, **a width is recorded only when the prose states it directly for the field** — and the reader is
+deliberately strict about what "directly" means. *"The CONTROL FIELD consists of six bits"* gives the control
+field a width of 6; *"the ACK FIELD is two bits long"* gives the ack field 2. But *"the ARBITRATION FIELD
+consists of the 11 bit IDENTIFIER and the RTR-BIT"* does **not** make the arbitration field 11 bits — the
+"11 bit" there describes a *sub-field* (the identifier), and the arbitration field is actually wider. The
+reader distinguishes the two by requiring the plural *"N bits"* as the field's own count and rejecting the
+singular *"N bit \<noun\>"* modifier form, so it never attaches a subtly wrong number. The four fields whose
+widths CAN only gives anaphorically, variably, or for a sub-part (start-of-frame, data, CRC, end-of-frame) stay
+honest blanks rather than guesses — the same "a residual beats a fabrication" rule used everywhere in this
+stage.
+
+CAN now carries its full seven-field frame in order, with the two cleanly-stated widths filled and the rest
+left open. The reader is additive and disjoint from the bit-range path (CAN lacks the serial-wire markers that
+trigger it; the bit-range specs lack the composition sentence), so SWD keeps its frame unchanged and the
+parallel buses stay empty. *Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.9.3b`).
+
 ### `PER-EXTRACTOR-FACT-TAGGING` — who found which fact (recall-gauge groundwork)
 
 This is plumbing for a future **calibrated recall estimate**. To estimate how

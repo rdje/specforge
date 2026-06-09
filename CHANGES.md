@@ -1,3 +1,22 @@
+### `PDF-VARIANT-DIGESTION.9.3b` — recover a frame described in prose (CAN's 7-field frame), honestly
+CAN describes its frame not as bit-ranges but as a prose **composition list** — "A DATA FRAME is composed of
+seven different bit fields: START OF FRAME, ARBITRATION FIELD, CONTROL FIELD, DATA FIELD, CRC FIELD, ACK FIELD,
+END OF FRAME" — with widths stated unevenly, sentences apart. The SWD bit-range reader doesn't fire on this, so
+CAN had 0 frame fields. New additive `extract_composition_frame_fields` reuses the existing `SerialFrameField`
+surface (no struct change: `phase` left `None`, `order` = composition index, `bit_width` optional):
+- The **composition list scopes the frame** — only the enumerated fields are taken, so CAN's many non-frame
+  "N bits" mentions (ERROR FLAG / OVERLOAD DELIMITER / INTERMISSION) are excluded. Corpus-probed: only CAN
+  fires (0 false positives).
+- A width is recorded **only when directly stated** as a plural "<num> bits" count whose subject is the field
+  ("CONTROL FIELD consists of six bits" → 6; "ACK FIELD is two bits long" → 2), and the strict rule REJECTS
+  "the 11 bit IDENTIFIER" (a sub-field modifier) so ARBITRATION FIELD stays an honest `None` rather than a
+  wrong value — the honesty guardrail.
+
+**CAN serial_frame_fields 0 → 7 ordered** (CONTROL=6, ACK=2, the other four honest `None`). **No regression —
+SWD/ADI keeps its 11 bit-range frame fields, parallel buses stay 0** (additive + disjoint paths). 4 new
+hermetic tests; `scripts/run_ci.sh` GREEN (fmt + clippy `-D warnings` + lib **1472** + rustdoc + mdBook) +
+kg-bench 151/151. KM card `can-composition-frame-fields`; book subsection in `pipeline/evidenceir.md`.
+
 ### `PDF-VARIANT-DIGESTION.9.8` — capture a signal defined only in prose (SWP S1/S2), agnostically
 SWP (Single Wire Protocol) names its signals only in sentences, not a signal table, so the two existing prose
 readers (pin appositive, parenthetical abbreviation) walked past them and SWP entered the pipeline with **0

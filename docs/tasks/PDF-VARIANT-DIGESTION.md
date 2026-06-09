@@ -95,12 +95,31 @@ diagnostic when a construct is genuinely out of model.
   hermetic tests (positive + 4 negative) + 35 SWD tests pass; full `run_ci.sh` GREEN (fmt + clippy `-D warnings`
   + lib 1440 → 1445 + rustdoc + docs); kg-bench 151/151; KM card `agnostic-quoted-mode-fsm` + book subsection.
   Commit: `3d85543c`.
-- ID: `PDF-VARIANT-DIGESTION.9.3b` · Status: `pending` · Goal: **CAN serial frame fields.** Generalize
-  `extract_serial_frame_fields` beyond the SWD `is_serial_doc` gate + request/ack/data `SerialFramePhase` model
-  to capture CAN's named frame-field sequence (SOF → Arbitration → Control → Data → CRC → ACK → EOF), agnostically
-  — likely needs a frame model that fits a generic field sequence (the SWD phase enum does not). Deferred behind
-  `.9.3a` (FSM is cleaner + more universal) and behind the breadth baselines `.9.4`–`.9.6` (measure-first across
-  the serial class before deepening one spec). Verification: pending. Commit: pending.
+- ID: `PDF-VARIANT-DIGESTION.9.3b` · Status: `in_progress` · Goal: **CAN serial frame fields.** Capture CAN's
+  named frame-field sequence (SOF → Arbitration → Control → Data → CRC → ACK → EOF) agnostically.
+  **Design (probe-locked `2026-06-09` over all 76 persisted evidence docs BEFORE coding):** CAN names its frame
+  in a **composition list** — "A DATA FRAME is composed of seven different bit fields: START OF FRAME,
+  ARBITRATION FIELD, CONTROL FIELD, DATA FIELD, CRC FIELD, ACK FIELD, END OF FRAME" — with per-field widths in
+  scattered prose ("CONTROL FIELD consists of six bits", "ACK FIELD is two bits long"). The `SerialFrameField`
+  surface FITS without change: `phase` is optional (CAN's 7-field frame needn't use SWD's request/ack/data
+  phases → `None`), `order` holds the composition sequence, `bit_width` is optional. New additive
+  `extract_composition_frame_fields`: (1) the composition list SCOPES which fields are captured (so scattered
+  "N bits" mentions of non-frame items — ERROR FLAG / OVERLOAD DELIMITER / INTERMISSION — are excluded); (2) a
+  width is recorded ONLY when the field name is the direct subject of a **plural** "<num> bits" count, NEVER
+  when "<num> bit" modifies a sub-field ("the 11 bit IDENTIFIER" → ARBITRATION FIELD stays `None`, not a wrong
+  12-vs-11) — the HONESTY GUARDRAIL: residual over fabrication. Multi-word ALL-CAPS field names; number-word +
+  digit widths; ADR 0006 (grammar, no names). **Probe result: only CAN fires (0 corpus false positives); 7
+  ordered fields; widths CONTROL=6, ACK=2, the rest honest `None`** (SOF anaphoric, DATA variable, CRC/EOF
+  stated only for sub-parts). Additive (separate fn, disjoint from the SWD `is_serial_doc` path: CAN lacks the
+  SWD markers, SWD lacks the composition shape) → APB/AHB/AXI/SWD untouched. **Status: `done` (`2026-06-09`).**
+  Implemented as `extract_composition_frame_fields` + `is_frame_field_name` + `stated_frame_field_bit_width` +
+  `parse_count_word` (`ir/evidence.rs`), merged after the SWD path deduped by name. **Verification (fresh CAN
+  evidence rebuild off persisted source_ir, no Docling re-ingest): CAN `serial_frame_fields` 0 → 7 ordered**
+  (`START OF FRAME`/`ARBITRATION FIELD`/`CONTROL FIELD`=6/`DATA FIELD`/`CRC FIELD`/`ACK FIELD`=2/`END OF FRAME`,
+  order 0–6; widths only the two directly-stated, the rest honest `None`). **No regression — SWD/ADI keeps its
+  11 SWD-path frame fields, AXI 0** (corpus probe: only CAN fires). 4 new hermetic tests; `scripts/run_ci.sh`
+  GREEN (fmt + clippy `-D warnings` + lib **1472** + rustdoc + mdBook) + kg-bench 151/151. KM
+  `can-composition-frame-fields`; book subsection in `pipeline/evidenceir.md`. Commit: pending (this slice).
 - ID: `PDF-VARIANT-DIGESTION.9.4` · Status: `done` · Goal: **SWP (Single Wire Protocol) honest
   baseline** — ingest (`DOCLING_DEVICE=cpu`) → evidence → validate; record document_class, completeness gauge,
   and the signal / FSM / frame yield (including whether the new `.9.3a` quoted-mode FSM lever already fires on
@@ -294,8 +313,11 @@ SWD/ADI declared set byte-identical (no regression, proven by stash diff); SWIO 
 honest residual (`.9.8b`). `run_ci.sh` green (lib 1468) + kg-bench 151/151; KM `definitional-signal-capture`.
 **`.9.9` (constraint-acronym precision) CLOSED `2026-06-09`** — investigate-only: the declared-signal gate
 already enforces the invariant corpus-wide (76 docs / 0 non-declared constraint subjects), no build needed.
-**Frontier (any of, owner may steer):** `.9.3b` (CAN frame fields) · `.9.5`/`.9.6` (SMBus/I2S baselines) ·
-`.9.8b` (SWIO contact-as-signal, abbreviation-expansion miner).
+**`.9.3b` (CAN frame fields) DONE `2026-06-09`** — `extract_composition_frame_fields` recovers CAN's frame
+STRUCTURE (0 → 7 ordered fields) from the prose composition list + honest directly-stated widths (CONTROL=6,
+ACK=2, rest residual `None`, no fabrication); only CAN fires (probe), SWD/AXI untouched; lib 1472, kg-bench
+151/151. **Frontier (any of, owner may steer):** `.9.5`/`.9.6` (SMBus/I2S baselines) · `.9.8b` (SWIO
+contact-as-signal, abbreviation-expansion miner).
 `.6`/`.7` (the older VLM-frontier / USB-3.2 leaves) stay blocked on host-local PDFs.
 
 **(SUPERSEDED active note) `PDF-VARIANT-DIGESTION.6`/`.7`** — item ② (`.5`) COMPLETE and `.8` (broaden

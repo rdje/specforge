@@ -831,7 +831,18 @@ impl EvidenceIr {
 
         // SWD-SERIAL-EXTRACTION.3: recover the serial-frame fields (the SWD packet/ack/data frame),
         // a typed surface distinct from constraints/relations/temporal. No-op for parallel buses.
-        let serial_frame_fields = extract_serial_frame_fields(&extracted_statements);
+        let mut serial_frame_fields = extract_serial_frame_fields(&extracted_statements);
+        // PDF-VARIANT-DIGESTION.9.3b — also recover a frame described as a prose COMPOSITION LIST (CAN's
+        // "composed of seven different bit fields: SOF, ARBITRATION FIELD, …"), a shape the SWD
+        // `is_serial_doc` path does not match. Additive + disjoint (CAN lacks the SWD markers; SWD lacks
+        // the composition shape), deduped by name defensively, so APB/AHB/AXI/SWD are untouched.
+        let swd_frame_field_names: BTreeSet<String> =
+            serial_frame_fields.iter().map(|f| f.name.clone()).collect();
+        for field in extract_composition_frame_fields(&extracted_statements) {
+            if !swd_frame_field_names.contains(&field.name) {
+                serial_frame_fields.push(field);
+            }
+        }
 
         // SWD-SERIAL-EXTRACTION.4/.4d + PDF-VARIANT-DIGESTION.9.3a/.9.7: recover the protocol FSM states.
         // EXTRACTOR-ARCHITECTURE.3 — the four FSM-state grammars (JTAG/SWD-hyphen, SWD line, quoted-mode,
@@ -7469,6 +7480,161 @@ fn extract_serial_frame_fields(statements: &[ExtractedStatement]) -> Vec<SerialF
         });
     }
     out
+}
+
+/// PDF-VARIANT-DIGESTION.9.3b — recover a protocol's FRAME STRUCTURE from a prose COMPOSITION LIST ("A DATA
+/// FRAME is composed of seven different bit fields: START OF FRAME, ARBITRATION FIELD, …") plus per-field
+/// widths stated directly in prose ("CONTROL FIELD consists of six bits", "ACK FIELD is two bits long"). The
+/// composition list SCOPES which fields are captured, so scattered "N bits" mentions of non-frame items (ERROR
+/// FLAG / OVERLOAD DELIMITER / INTERMISSION) are excluded. A width is recorded ONLY when the field name is the
+/// direct subject of a PLURAL "<num> bits" count, NEVER when "<num> bit" modifies a sub-field ("the 11 bit
+/// IDENTIFIER") — so a width is never fabricated/mis-attributed (the honesty guardrail: a residual `None`
+/// beats a wrong value). Field names are multi-word ALL-CAPS noun phrases; the frame SEQUENCE is preserved as
+/// `order`; `phase` stays `None` (this frame model is a generic field sequence, not SWD's request/ack/data).
+/// General grammar, no chip names (ADR 0006). Self-gating on the composition shape — corpus-probed to fire
+/// only on the CAN-style frame description, zero false positives on the wire-based or other serial specs.
+fn extract_composition_frame_fields(statements: &[ExtractedStatement]) -> Vec<SerialFrameField> {
+    let mut fields: Vec<SerialFrameField> = Vec::new();
+    let mut seen: BTreeSet<String> = BTreeSet::new();
+    for (i, statement) in statements.iter().enumerate() {
+        let lower = statement.text.to_ascii_lowercase();
+        if !(lower.contains("composed of") && lower.contains("bit field")) {
+            continue;
+        }
+        // The field list sits after the colon — in this statement, or in the next one when the composition
+        // sentence ends at the colon.
+        let Some(colon) = statement.text.find(':') else {
+            continue;
+        };
+        let inline = statement.text[colon + 1..].trim();
+        let (list_text, list_stmt_id): (&str, String) = if inline.is_empty() {
+            match statements.get(i + 1) {
+                Some(next) => (next.text.as_str(), next.statement_id.clone()),
+                None => continue,
+            }
+        } else {
+            (inline, statement.statement_id.clone())
+        };
+        // The list ends at the first sentence boundary after the colon.
+        let head = list_text
+            .split_once(". ")
+            .map(|(h, _)| h)
+            .unwrap_or(list_text);
+        for raw in head.split(',') {
+            let name = raw.trim().trim_end_matches('.').trim();
+            if !is_frame_field_name(name) || !seen.insert(name.to_string()) {
+                continue;
+            }
+            let idx = fields.len();
+            let (bit_width, width_stmt_id) = stated_frame_field_bit_width(name, statements);
+            let mut supporting = vec![list_stmt_id.clone()];
+            if let Some(id) = width_stmt_id {
+                supporting.push(id);
+            }
+            fields.push(SerialFrameField {
+                field_id: format!("frame_field_{idx:04}"),
+                name: name.to_string(),
+                bit_width,
+                bit_range: None,
+                phase: None,
+                swdio_direction: None,
+                order: Some(idx as u32),
+                response_values: Vec::new(),
+                supporting_statement_ids: supporting,
+            });
+        }
+    }
+    fields
+}
+
+/// A multi-word ALL-CAPS frame-field name like "START OF FRAME" / "ARBITRATION FIELD" — uppercase letters
+/// plus a few joiners only, with at least two uppercase letters (so a comma fragment, a lowercase word, or a
+/// stray "and" is rejected). (PDF-VARIANT-DIGESTION.9.3b)
+fn is_frame_field_name(s: &str) -> bool {
+    let s = s.trim();
+    if s.len() < 2 || !s.starts_with(|c: char| c.is_ascii_uppercase()) {
+        return false;
+    }
+    let mut uppercase = 0usize;
+    for c in s.chars() {
+        if c.is_ascii_uppercase() {
+            uppercase += 1;
+        } else if !matches!(c, ' ' | '/' | '\'' | '-') {
+            return false;
+        }
+    }
+    uppercase >= 2
+}
+
+/// Recover a frame field's bit width when prose states it DIRECTLY as a plural "<num> bits" count whose
+/// subject is the field name ("CONTROL FIELD consists of six bits", "ACK FIELD is two bits long"). Rejects
+/// "<num> bit <noun>" ("consists of the 11 bit IDENTIFIER", where the count modifies a sub-field) and singular
+/// "a single … bit" forms, so a width is never mis-attributed (honesty guardrail). Returns the width and the
+/// supporting statement id. (PDF-VARIANT-DIGESTION.9.3b)
+fn stated_frame_field_bit_width(
+    name: &str,
+    statements: &[ExtractedStatement],
+) -> (Option<u32>, Option<String>) {
+    for statement in statements {
+        let Some(pos) = statement.text.find(name) else {
+            continue;
+        };
+        // Restrict to the clause that names the field, up to the first sentence end.
+        let clause = statement.text[pos + name.len()..]
+            .split_once(". ")
+            .map(|(h, _)| h)
+            .unwrap_or(&statement.text[pos + name.len()..]);
+        let words: Vec<&str> = clause.split_whitespace().collect();
+        for w in 0..words.len() {
+            if !(words[w].eq_ignore_ascii_case("of") || words[w].eq_ignore_ascii_case("is")) {
+                continue;
+            }
+            // Skip an optional determiner after the count verb.
+            let mut j = w + 1;
+            if words
+                .get(j)
+                .map(|t| matches!(t.to_ascii_lowercase().as_str(), "the" | "a" | "an"))
+                .unwrap_or(false)
+            {
+                j += 1;
+            }
+            let (Some(num_tok), Some(unit_tok)) = (words.get(j), words.get(j + 1)) else {
+                continue;
+            };
+            // The unit MUST be the plural "bits": a singular "bit" or a following noun means the count
+            // modifies a sub-field, not the frame field — reject to avoid a wrong width.
+            if unit_tok.trim_matches(|c: char| !c.is_ascii_alphabetic()) != "bits" {
+                continue;
+            }
+            if let Some(n) = parse_count_word(num_tok) {
+                return (Some(n), Some(statement.statement_id.clone()));
+            }
+        }
+    }
+    (None, None)
+}
+
+/// Parse an English count word or a digit string into a number ("single"/"one" → 1, "six" → 6, "11" → 11).
+/// Used for prose-stated frame-field widths (PDF-VARIANT-DIGESTION.9.3b).
+fn parse_count_word(tok: &str) -> Option<u32> {
+    let t = tok
+        .trim_matches(|c: char| !c.is_ascii_alphanumeric())
+        .to_ascii_lowercase();
+    match t.as_str() {
+        "single" | "one" => Some(1),
+        "two" => Some(2),
+        "three" => Some(3),
+        "four" => Some(4),
+        "five" => Some(5),
+        "six" => Some(6),
+        "seven" => Some(7),
+        "eight" => Some(8),
+        "nine" => Some(9),
+        "ten" => Some(10),
+        "eleven" => Some(11),
+        "twelve" => Some(12),
+        other => other.parse::<u32>().ok(),
+    }
 }
 
 /// Upsert a serial-frame field by name: widen the bit-width / fill phase / record the supporting
@@ -16062,6 +16228,106 @@ mod pdf_variant_digestion_9_8 {
             vec!["S2".to_string()]
         );
         assert!(definitional_signal_names("an interrupt is a signal").is_empty());
+    }
+}
+
+#[cfg(test)]
+mod pdf_variant_digestion_9_3b {
+    //! PDF-VARIANT-DIGESTION.9.3b — recover a frame STRUCTURE from a prose composition list (CAN's
+    //! "composed of seven bit fields: …") + per-field prose widths, honestly (no width fabrication).
+    use super::*;
+
+    fn stmt(id: &str, text: &str) -> ExtractedStatement {
+        ExtractedStatement {
+            statement_id: id.to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        }
+    }
+
+    fn can_statements() -> Vec<ExtractedStatement> {
+        // The exact CAN (Bosch CAN 2.0) prose shape: the composition sentence ends at the colon and the
+        // ordered field list is the following statement; widths are stated unevenly in later prose.
+        vec![
+            stmt(
+                "s01",
+                "A DATA FRAME is composed of seven different bit fields:",
+            ),
+            stmt(
+                "s02",
+                "START OF FRAME, ARBITRATION FIELD, CONTROL FIELD, DATA FIELD, CRC FIELD, ACK FIELD, END OF FRAME. The DATA FIELD can be of length zero.",
+            ),
+            stmt("s03", "The CONTROL FIELD consists of six bits."),
+            stmt(
+                "s04",
+                "The ACK FIELD is two bits long and contains the ACK SLOT and the ACK DELIMITER.",
+            ),
+            // A sub-field count that must NOT become the ARBITRATION FIELD's width (honesty guardrail).
+            stmt(
+                "s05",
+                "In Standard Format the ARBITRATION FIELD consists of the 11 bit IDENTIFIER and the RTR-BIT.",
+            ),
+        ]
+    }
+
+    #[test]
+    fn recovers_can_frame_structure_in_order() {
+        let fields = extract_composition_frame_fields(&can_statements());
+        let names: Vec<&str> = fields.iter().map(|f| f.name.as_str()).collect();
+        assert_eq!(
+            names,
+            vec![
+                "START OF FRAME",
+                "ARBITRATION FIELD",
+                "CONTROL FIELD",
+                "DATA FIELD",
+                "CRC FIELD",
+                "ACK FIELD",
+                "END OF FRAME",
+            ],
+            "frame sequence"
+        );
+        // Order is the composition sequence.
+        assert_eq!(fields[0].order, Some(0));
+        assert_eq!(fields[6].order, Some(6));
+    }
+
+    #[test]
+    fn records_only_directly_stated_widths() {
+        let fields = extract_composition_frame_fields(&can_statements());
+        let w = |name: &str| fields.iter().find(|f| f.name == name).unwrap().bit_width;
+        assert_eq!(w("CONTROL FIELD"), Some(6), "consists of six bits");
+        assert_eq!(w("ACK FIELD"), Some(2), "is two bits long");
+        // Honesty guardrail: "the 11 bit IDENTIFIER" must NOT become the ARBITRATION FIELD's width.
+        assert_eq!(w("ARBITRATION FIELD"), None);
+        // Unstated / anaphoric / variable widths stay honest residuals.
+        assert_eq!(w("START OF FRAME"), None);
+        assert_eq!(w("DATA FIELD"), None);
+    }
+
+    #[test]
+    fn does_not_fire_without_a_composition_list() {
+        let fields = extract_composition_frame_fields(&[
+            stmt("a", "The Requester drives PADDR during the setup phase."),
+            stmt("b", "PREADY is two bits wide."),
+        ]);
+        assert!(fields.is_empty(), "got {fields:?}");
+    }
+
+    #[test]
+    fn helper_units() {
+        assert!(is_frame_field_name("CONTROL FIELD"));
+        assert!(is_frame_field_name("START OF FRAME"));
+        assert!(!is_frame_field_name("and"));
+        assert!(!is_frame_field_name("A"));
+        assert!(!is_frame_field_name("the field"));
+        assert_eq!(parse_count_word("six"), Some(6));
+        assert_eq!(parse_count_word("single"), Some(1));
+        assert_eq!(parse_count_word("11"), Some(11));
+        assert_eq!(parse_count_word("recessive"), None);
     }
 }
 

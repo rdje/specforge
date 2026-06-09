@@ -1,4 +1,18 @@
 # DEVELOPMENT_NOTES
+## `PDF-VARIANT-DIGESTION.9.3b` (`2026-06-09`) — CAN frame fields from a prose composition list
+- Root: CAN describes its frame as prose ("composed of seven bit fields: SOF, ARBITRATION FIELD, …"), not the
+  SWD `NAME[hi:lo]` bit-ranges, so `extract_serial_frame_fields` (SWD-marker-gated) doesn't fire → CAN had 0.
+- Fix: additive `extract_composition_frame_fields` (`ir/evidence.rs`) + helpers `is_frame_field_name`,
+  `stated_frame_field_bit_width`, `parse_count_word`; merged after the SWD path, deduped by name. Reuses
+  `SerialFrameField` unchanged (`phase` None, `order` = composition index, `bit_width` Option).
+- Two design rules: (1) the composition list SCOPES the frame (only enumerated fields; excludes CAN's many
+  non-frame "N bits" mentions); (2) a width is recorded ONLY for a plural "<num> bits" count whose subject is
+  the field — REJECTS "the 11 bit IDENTIFIER" (sub-field modifier) so ARBITRATION FIELD stays None, not a wrong
+  value (honesty guardrail: residual over fabrication).
+- Probe-first (all 76 docs): only CAN's composition shape fires (0 false positives). Result: CAN 0 → 7 ordered
+  fields (CONTROL=6, ACK=2, rest honest None). No regression: SWD 11 bit-range fields intact, parallel buses 0.
+  4 tests; run_ci.sh green (lib 1472); kg-bench 151/151. KM `can-composition-frame-fields`.
+
 ## `PDF-VARIANT-DIGESTION.9.8` (`2026-06-09`) — definitional prose-signal capture (SWP S1/S2)
 - Root: SWP names its signals only in prose (no signal table); the two existing prose readers
   (pin-appositive, parenthetical) need a `pin,` / `(NAME)` anchor SWP doesn't use → SWP had 0 signals.
