@@ -190,10 +190,23 @@ diagnostic when a construct is genuinely out of model.
   abbreviation-table-I/O or `<NAME> signal` apposition; a dedicated `.9.8b` (abbreviation-expansion signal
   miner with a structural I/O-vs-concept discriminator to separate SWIO/`DAT*`/`CMD` from MMIO/DMA/IOVA) can
   revisit it if the owner wants the contact surfaced as a signal.
-- ID: `PDF-VARIANT-DIGESTION.9.9` · Status: `proposed` · Goal: **constraint-subject precision on protocol/
-  layer acronyms** — stop `UICC`/`SWP`/`CLF`/`SHDLC`-style document/layer acronyms from becoming `signal_constraint`
-  subjects (a precision gap that inflates `document_class`), agnostically, without regressing the wire-based 100%.
-  Verification: pending. Commit: pending.
+- ID: `PDF-VARIANT-DIGESTION.9.9` · Status: `done` (`2026-06-09`, CLOSED — already-enforced, no build) · Goal:
+  **constraint-subject precision on protocol/layer acronyms** — stop `UICC`/`SWP`/`CLF`/`SHDLC`-style
+  document/layer acronyms from becoming `signal_constraint` subjects (a precision gap that inflates
+  `document_class`), agnostically, without regressing the wire-based 100%.
+  **Investigation (`2026-06-09`, probe-first): the violation does NOT manifest in current canonical IR.** A
+  corpus-wide scan of all **76** persisted evidence docs found **0** `signal_constraints` whose `signal_name`
+  is not a declared signal of that document — i.e. the precision invariant the `.9.9` node targets is already
+  STRUCTURALLY enforced by the existing constraint-subject-must-be-a-declared-signal gate
+  (`extract_signal_constraints` → `collect_known_signal_names`; WIRE-BASED-100.5i). On SWP specifically:
+  `signal_constraints` is now **0** (the acronyms `UICC`/`SWP`/`CLF`/`SHDLC` aren't declared signals, and
+  `.9.8` declared only the real `S1`/`S2`), so document_class is NOT acronym-inflated (SWP classes `protocol`
+  off 4 FSM states + 5 relations, not fake constraints). The `.9.4` baseline's "11 noisy signal_constraints"
+  was a pre-`.9.8` / different-metric observation that no longer reproduces on a fresh current-code rebuild.
+  **Decision: do NOT build** — writing an acronym filter would be dead code guarding an invariant the declared-
+  signal gate already guarantees corpus-wide. Honest no-build close (precedent: `SYMBOL-CLOSURE-CORPUS-VALIDATION`,
+  `CONSTRAINT-CONDITION-SUBJECT` stale-artifact finding). Verification: corpus scan 76 docs / 0 violations.
+  Commit: pending (docs-only, this slice).
 - ID: `PDF-VARIANT-DIGESTION.1` · Status: `in_progress` · Goal: **triage sweep** — ingest a diverse sample
   (one per family: ARM-TRM GIC-400, Wishbone, NXP I2C, RISC-V Debug, CCIX, Avalon, USB4, OpenCAPI) through
   `ingest`→`evidence`, record ingest status + table-kind census + extraction stats, and identify the
@@ -279,8 +292,10 @@ required to be an all-uppercase identifier token) recovers SWP's two signals **`
 corpus garbage (descriptor-apposition and abbreviation-expansion alternatives both PROBE-REJECTED as toxic);
 SWD/ADI declared set byte-identical (no regression, proven by stash diff); SWIO is the shared C6 contact, an
 honest residual (`.9.8b`). `run_ci.sh` green (lib 1468) + kg-bench 151/151; KM `definitional-signal-capture`.
-**Frontier (any of, owner may steer):** `.9.3b` (CAN frame fields) · `.9.9` (constraint-acronym precision) ·
-`.9.5`/`.9.6` (SMBus/I2S baselines) · `.9.8b` (SWIO contact-as-signal, abbreviation-expansion miner).
+**`.9.9` (constraint-acronym precision) CLOSED `2026-06-09`** — investigate-only: the declared-signal gate
+already enforces the invariant corpus-wide (76 docs / 0 non-declared constraint subjects), no build needed.
+**Frontier (any of, owner may steer):** `.9.3b` (CAN frame fields) · `.9.5`/`.9.6` (SMBus/I2S baselines) ·
+`.9.8b` (SWIO contact-as-signal, abbreviation-expansion miner).
 `.6`/`.7` (the older VLM-frontier / USB-3.2 leaves) stay blocked on host-local PDFs.
 
 **(SUPERSEDED active note) `PDF-VARIANT-DIGESTION.6`/`.7`** — item ② (`.5`) COMPLETE and `.8` (broaden
