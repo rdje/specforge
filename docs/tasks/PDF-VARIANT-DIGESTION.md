@@ -150,9 +150,46 @@ diagnostic when a construct is genuinely out of model.
   `is_bare_state_name` unit). Full `scripts/run_ci.sh` GREEN (fmt + clippy `-D warnings` + lib 1440 → 1448 +
   rustdoc + mdBook) + kg-bench 151/151. Book subsection in `pipeline/evidenceir.md`; KM card
   `transition-bound-state-fsm` (KM 45 → 46 facts). Commit: pending (this slice).
-- ID: `PDF-VARIANT-DIGESTION.9.8` · Status: `proposed` · Goal: **SWP prose single-wire signal capture** —
-  recover `S1`/`S2`/`SWIO`-class single-wire signals defined in prose (not in a signal table), agnostically.
-  Verification: pending. Commit: pending.
+- ID: `PDF-VARIANT-DIGESTION.9.8` · Status: `done` (`2026-06-09`) · Goal: **SWP prose single-wire signal
+  capture** — recover `S1`/`S2`/`SWIO`-class single-wire signals defined in prose (not in a signal table),
+  agnostically.
+  **Design (empirically LOCKED `2026-06-09` by probing candidate grammars over ALL 80 persisted evidence docs
+  BEFORE coding — the `.9.7` methodology):** SWP names its signals only in PROSE, in four observed forms —
+  (1) copular DEFINITION "S1 is a signal in the voltage domain …", "S2 is a signal in the current domain …";
+  (2) glossary colon "S1: signal from the master to a slave", "S2: signal from the slave to the master";
+  (3) descriptor apposition "the signal S1" / "Signal S2" / "the SWIO signal"; (4) abbreviation-table
+  expansion "SWIO | Single Wire protocol Input/Output". The probe DECIDED among them:
+  - **descriptor apposition (`signal <NAME>` / `<NAME> signal`)** — REJECTED, corpus-toxic: bare `signal X`
+    yields IS/TO/NAMES/FROM/CONTROL/DATA across 30-47 docs; even a recurrence-self-gated variant floods
+    SWD/ADI (sparse-catalog, runs prose capture) with `AP/APB/ARM/DATA/OF/JTAG/HPROT/…`, which would regress
+    SWD's WIRE-BASED-100 100% (declared signals gate constraint/relation subjects). No.
+  - **abbreviation-expansion (I/O marker)** — REJECTED, not corpus-clean: gets SWIO + eMMC's real `DAT1-7`/
+    `CMD`, but also `MMIO`(7 docs)/`MEM`/`DMA`/`IOVA`/`IOTLB` (memory/addressing concepts whose expansion
+    merely contains "input/output"). No (a separate `.9.8b`/`.9.9`-adjacent surface if ever wanted).
+  - **definitional (copula + glossary-colon)** — ACCEPTED: with the candidate required to be an all-uppercase
+    identifier token (`is_hardware_signal_token` on the ORIGINAL token, so lowercase English subjects like
+    "an interrupt is a signal" / "it is a signal" can never qualify) the probe yields, corpus-wide over all
+    persisted evidence docs, EXACTLY `S1` + `S2` and ZERO garbage. This IS the SWP signal capture: SWP has
+    exactly two signals — S1 (voltage, master→slave) and S2 (current, slave→master) — both carried on the
+    shared **SWIO contact (C6)**. **SWIO is the physical contact, not a third logical signal** (lines 847/879:
+    "S1 shares the same electrical contact as S2 … (contact C6)"), and has no corpus-clean definitional form →
+    honest residual, never fabricated (HONESTY GUARDRAIL). Realized as a third additive form inside
+    `synthesize_signal_declarations_from_prose`, under the existing sparse-catalog fallback gate, so APB/AHB/
+    AXI (table-rich, never run prose) and SWD (sparse, but probe adds 0) are untouched. ADR 0006 (grammar, no
+    names). **Verification (`2026-06-09`): SWP declared signals 0 → `S1`/`S2`** (fresh evidence rebuild off
+    the intact persisted SWP `source_ir`, no Docling re-ingest). **No regression — proven by a before/after
+    `git stash` diff: SWD/ADI declared set BYTE-IDENTICAL** with vs without `.9.8` (`NSRST`/`SWCLK`/`SWDIO`/
+    `TCK`/`TDI`/`TDO`/`DBGTDI`/`DBGTDO`/`DBGTMS`/`NSRSTOUT`/`PORTCONNECTED`/`CSYSPWRUPACK` unchanged — the
+    pre-existing `LEVEL`/`level` noise is NOT from `.9.8` and is out of scope). Corpus-wide the new grammar
+    adds ONLY `S1`/`S2` (probe over all persisted evidence docs). 7 new hermetic tests (copula+colon capture,
+    lowercase-subject rejection, non-identifier colon-head rejection, non-signal-predicate ignore, denylist,
+    sparse-catalog gating, `definitional_signal_names` unit). `scripts/run_ci.sh` GREEN (fmt + clippy
+    `-D warnings` + lib **1468** + rustdoc + mdBook) + kg-bench 151/151. KM card `definitional-signal-capture`;
+    book subsection in `pipeline/evidenceir.md`. Commit: pending (this slice).
+  **Honest residual / follow-up:** SWIO (the shared C6 contact) — capturable only from the noisy
+  abbreviation-table-I/O or `<NAME> signal` apposition; a dedicated `.9.8b` (abbreviation-expansion signal
+  miner with a structural I/O-vs-concept discriminator to separate SWIO/`DAT*`/`CMD` from MMIO/DMA/IOVA) can
+  revisit it if the owner wants the contact surfaced as a signal.
 - ID: `PDF-VARIANT-DIGESTION.9.9` · Status: `proposed` · Goal: **constraint-subject precision on protocol/
   layer acronyms** — stop `UICC`/`SWP`/`CLF`/`SHDLC`-style document/layer acronyms from becoming `signal_constraint`
   subjects (a precision gap that inflates `document_class`), agnostically, without regressing the wire-based 100%.
@@ -236,9 +273,15 @@ lever delivered: additive `extract_transition_bound_states` recovers SWP's inter
 single grammar lifted **18 corpus docs** to a real FSM surface (CHI/CXS/DTI/CCIX/CoreSight/eMMC/USB4 + APB
 `SETUP`/`ACCESS` + AXI low-power `RUN`/`STOP`/`ACTIVATE`/`DEACTIVATE`) with SWD (13 states, eval 100%) and CAN
 (3 quoted states) byte-for-byte unchanged; `run_ci.sh` green (lib 1448) + kg-bench 151/151; KM
-`transition-bound-state-fsm`. **Frontier (any of, owner may steer):** `.9.8` (SWP prose single-wire signals
-`S1`/`S2`/`SWIO`) · `.9.3b` (CAN frame fields) · `.9.9` (constraint-acronym precision) · `.9.5`/`.9.6` (SMBus/I2S
-baselines). `.6`/`.7` (the older VLM-frontier / USB-3.2 leaves) stay blocked on host-local PDFs.
+`transition-bound-state-fsm`. **`.9.8` (SWP prose single-wire signals) DONE `2026-06-09`** — a third additive
+prose form (the definitional copula `<NAME> is a/an signal` + glossary colon `<NAME>: signal …`, candidate
+required to be an all-uppercase identifier token) recovers SWP's two signals **`S1`/`S2` (0 → 2)** with ZERO
+corpus garbage (descriptor-apposition and abbreviation-expansion alternatives both PROBE-REJECTED as toxic);
+SWD/ADI declared set byte-identical (no regression, proven by stash diff); SWIO is the shared C6 contact, an
+honest residual (`.9.8b`). `run_ci.sh` green (lib 1468) + kg-bench 151/151; KM `definitional-signal-capture`.
+**Frontier (any of, owner may steer):** `.9.3b` (CAN frame fields) · `.9.9` (constraint-acronym precision) ·
+`.9.5`/`.9.6` (SMBus/I2S baselines) · `.9.8b` (SWIO contact-as-signal, abbreviation-expansion miner).
+`.6`/`.7` (the older VLM-frontier / USB-3.2 leaves) stay blocked on host-local PDFs.
 
 **(SUPERSEDED active note) `PDF-VARIANT-DIGESTION.6`/`.7`** — item ② (`.5`) COMPLETE and `.8` (broaden
 prose-actor capture) DONE. **`.5a` + `.5b` + `.5c` are DONE** — structural doc-class routing

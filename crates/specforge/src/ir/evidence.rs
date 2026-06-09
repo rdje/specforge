@@ -7239,6 +7239,81 @@ fn synthesize_signal_declarations_from_prose(
                 related_visual_evidence_ids: vec![],
             });
         }
+        // PDF-VARIANT-DIGESTION.9.8 — definitional single-wire signal form: a signal a spec DEFINES in
+        // PROSE (not a table) via a copula "<NAME> is a/an signal …" or a glossary colon "<NAME>: signal
+        // …". SWP (ETSI TS 102 613) names its two single-wire signals only this way — "S1 is a signal in
+        // the voltage domain …", "S2 is a signal in the current domain …", "S1: signal from the master to a
+        // slave" — so the pin-appositive ("pin," anchor) and parenthetical ("(NAME)") forms above miss them.
+        // The definitional anchor is precise AND the candidate must be an all-uppercase identifier token
+        // (`is_hardware_signal_token` on the ORIGINAL token, so lowercase English subjects like "an interrupt
+        // is a signal" / "it is a signal" can never qualify): a probe over ALL persisted evidence docs yields
+        // EXACTLY S1/S2 with zero garbage. General grammar, universal vocabulary (ADR 0006). Runs under the
+        // same sparse-catalog fallback gate as the parenthetical form, so table-rich specs are untouched.
+        for name in definitional_signal_names(&statement.text) {
+            if is_signal_synthesis_non_signal(&name) || !seen.insert(name.clone()) {
+                continue;
+            }
+            *statement_counter += 1;
+            out.push(ExtractedStatement {
+                statement_id: format!("statement_{statement_counter:04}"),
+                class: StatementClass::SourceFact,
+                modality: EvidenceModality::Text,
+                text: format!("Signal {name} is width 1."),
+                evidence_span_ids: statement.evidence_span_ids.clone(),
+                related_visual_evidence_ids: vec![],
+            });
+        }
+    }
+    out
+}
+
+/// PDF-VARIANT-DIGESTION.9.8 — recover the NAME(s) of single-wire signal(s) a spec DEFINES in prose via a
+/// definitional copula (`<NAME> is a|an signal …`) or a glossary colon (`<NAME>: signal …`). Both anchors
+/// require the candidate to be an all-uppercase identifier token (`is_hardware_signal_token` on the ORIGINAL,
+/// un-cased token), so a lowercase English subject ("an interrupt is a signal", "it is a signal", "Note:
+/// signal …") can never qualify — the definitional structure plus the identifier shape keep it garbage-free
+/// (corpus-probed over all persisted evidence docs: SWP → S1/S2 only, zero garbage). General grammar, no chip
+/// names (ADR 0006).
+fn definitional_signal_names(text: &str) -> Vec<String> {
+    let mut out = Vec::new();
+    let words: Vec<&str> = text.split_whitespace().collect();
+    // Copula: "<NAME> is a|an signal" — the token immediately before "is a/an signal".
+    for i in 1..words.len() {
+        if !words[i].eq_ignore_ascii_case("is") {
+            continue;
+        }
+        let article = words
+            .get(i + 1)
+            .map(|w| w.eq_ignore_ascii_case("a") || w.eq_ignore_ascii_case("an"))
+            .unwrap_or(false);
+        let signal_noun = words
+            .get(i + 2)
+            .map(|w| {
+                w.trim_matches(|c: char| !c.is_ascii_alphanumeric())
+                    .eq_ignore_ascii_case("signal")
+            })
+            .unwrap_or(false);
+        if !(article && signal_noun) {
+            continue;
+        }
+        let tok = words[i - 1].trim_matches(|c: char| !c.is_ascii_alphanumeric() && c != '_');
+        if is_hardware_signal_token(tok) {
+            out.push(tok.to_string());
+        }
+    }
+    // Glossary colon: "<NAME>: signal …" — the single identifier token before the first colon, immediately
+    // followed by the descriptor noun "signal". A multi-word or lowercase head ("master: entity which …")
+    // fails `is_hardware_signal_token`, so only a clean glossary signal definition fires.
+    if let Some((head, rest)) = text.split_once(':') {
+        let head_tok = head.trim();
+        let rest_is_signal = rest
+            .split_whitespace()
+            .next()
+            .map(|w| w.eq_ignore_ascii_case("signal"))
+            .unwrap_or(false);
+        if rest_is_signal && is_hardware_signal_token(head_tok) {
+            out.push(head_tok.to_string());
+        }
     }
     out
 }
@@ -15869,6 +15944,124 @@ mod swd_serial_extraction_2 {
     fn ignores_pin_not_followed_by_signal_token() {
         let names = declared(&[stmt("The host parks the line before the turnaround pin.")]);
         assert!(names.is_empty(), "got {names:?}");
+    }
+}
+
+#[cfg(test)]
+mod pdf_variant_digestion_9_8 {
+    //! PDF-VARIANT-DIGESTION.9.8 — definitional single-wire signal capture: a signal DEFINED in prose via a
+    //! copula ("<NAME> is a/an signal …") or a glossary colon ("<NAME>: signal …"). SWP names S1/S2 only
+    //! this way; the candidate must be an all-uppercase identifier token so lowercase subjects can't leak.
+    use super::*;
+
+    fn stmt(text: &str) -> ExtractedStatement {
+        ExtractedStatement {
+            statement_id: "s".to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        }
+    }
+
+    fn declared(statements: &[ExtractedStatement], enable_parenthetical: bool) -> Vec<String> {
+        let mut c = 0usize;
+        synthesize_signal_declarations_from_prose(statements, &mut c, enable_parenthetical)
+            .into_iter()
+            .filter_map(|s| s.text.strip_prefix("Signal ").map(|t| t.to_string()))
+            .filter_map(|t| t.split_whitespace().next().map(|w| w.to_string()))
+            .collect()
+    }
+
+    #[test]
+    fn captures_swp_signals_from_copula_and_colon() {
+        // The exact SWP (ETSI TS 102 613) prose: S1/S2 are defined only in prose, not a signal table.
+        let names = declared(
+            &[
+                stmt(
+                    "S1 is a signal in the voltage domain to transmit data from the CLF to the UICC on SWIO.",
+                ),
+                stmt(
+                    "S2 is a signal in the current domain to transmit data from the UICC to the master.",
+                ),
+                stmt("S1: signal from the master to a slave"),
+                stmt("S2: signal from the slave to the master"),
+            ],
+            true,
+        );
+        assert!(names.contains(&"S1".to_string()), "got {names:?}");
+        assert!(names.contains(&"S2".to_string()), "got {names:?}");
+    }
+
+    #[test]
+    fn rejects_lowercase_subject_definitions() {
+        // A lowercase English subject must never become a signal — the identifier-shape guard, not a denylist.
+        let names = declared(
+            &[
+                stmt("An interrupt is a signal that requests attention from the processor."),
+                stmt("In this protocol it is a signal asserted by the controller."),
+            ],
+            true,
+        );
+        assert!(
+            names.is_empty(),
+            "lowercase subjects must not be captured; got {names:?}"
+        );
+    }
+
+    #[test]
+    fn colon_rejects_non_identifier_head() {
+        // The glossary-colon head must be a single uppercase identifier: "master: entity which …" and
+        // "Note: signal …" are not signal definitions.
+        let names = declared(
+            &[
+                stmt("master: entity which provides the S1 signal"),
+                stmt("Note: signal integrity must be maintained across the bus."),
+            ],
+            true,
+        );
+        assert!(names.is_empty(), "got {names:?}");
+    }
+
+    #[test]
+    fn copula_ignores_non_signal_predicate() {
+        // "<NAME> is transmitted/required" is NOT "<NAME> is a signal" — no capture.
+        let names = declared(
+            &[stmt(
+                "The signal S1 is transmitted by a digital modulation in the voltage domain.",
+            )],
+            true,
+        );
+        assert!(!names.iter().any(|n| n == "S1"), "got {names:?}");
+    }
+
+    #[test]
+    fn respects_synthesis_denylist() {
+        // Role/logic words that pass the identifier shape are still rejected by the shared denylist.
+        let names = declared(&[stmt("CLOCK is a signal used for synchronization.")], true);
+        assert!(!names.iter().any(|n| n == "CLOCK"), "got {names:?}");
+    }
+
+    #[test]
+    fn gated_off_for_table_rich_specs() {
+        // The definitional form runs only as a sparse-catalog fallback, like the parenthetical form, so a
+        // table-rich spec (which already has its signals from tables) is untouched.
+        let names = declared(&[stmt("S1 is a signal in the voltage domain.")], false);
+        assert!(names.is_empty(), "got {names:?}");
+    }
+
+    #[test]
+    fn definitional_signal_names_unit() {
+        assert_eq!(
+            definitional_signal_names("S1 is a signal in the voltage domain."),
+            vec!["S1".to_string()]
+        );
+        assert_eq!(
+            definitional_signal_names("S2: signal from the slave to the master"),
+            vec!["S2".to_string()]
+        );
+        assert!(definitional_signal_names("an interrupt is a signal").is_empty());
     }
 }
 

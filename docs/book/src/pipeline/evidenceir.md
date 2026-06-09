@@ -434,6 +434,40 @@ surfaces. Across the tracked corpus, 18 documents (CHI, CXS, DTI, CCIX, CoreSigh
 eMMC, USB4, …) gain a genuine FSM surface from this one grammar. *Authoritative
 tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.9.7`).
 
+### `PDF-VARIANT-DIGESTION.9.8` — a signal named only in a sentence, not a table
+
+Most specs list their wires in a signal table, and `EvidenceIR` reads them straight
+from there. Some don't. The Single Wire Protocol (SWP) introduces its two signals in
+running prose: *"S1 is a signal in the voltage domain …"*, *"S2 is a signal in the
+current domain …"*, and in a glossary line *"S1: signal from the master to a slave"*.
+With no table to read, the earlier prose readers — the pin appositive (*"a clock pin,
+SWCLK"*) and the parenthetical abbreviation (*"a serial data line (SDA)"*) — both
+walked right past them, and SWP entered the pipeline with **zero** signals.
+
+The temptation is to grab any word next to "signal" — but the chase is exactly the
+trap: a spec says *"control signal"*, *"these signals"*, *"the signal is asserted"*,
+*"signal integrity"* thousands of times, and almost none of those words is a signal
+*name*. So this reader does the opposite of greedy matching. It fires only on a
+sentence that **defines** a token as a signal — the copula *"&lt;NAME&gt; is a/an
+signal …"* or the glossary colon *"&lt;NAME&gt;: signal …"* — and it requires the
+candidate to be an **all-uppercase identifier token** (the same `is_hardware_signal_token`
+shape used everywhere else). That second rule is what keeps it clean without a
+hand-maintained word-blocklist: *"an interrupt is a signal"* and *"it is a signal"*
+never qualify, because `interrupt` and `it` aren't identifier-shaped. The grammar was
+locked the same way every grammar in this stage is — by **probing all of the stored
+documents before writing a line of code**: across the whole corpus this definitional
+reader yields exactly `S1` and `S2`, and nothing else.
+
+That precision is also the honesty boundary. SWP's third name, `SWIO`, is **not** a
+third signal — it's the single physical contact (C6) that *carries* S1 and S2 (*"S1
+shares the same electrical contact as S2"*). It has no definitional sentence, only a
+noisy abbreviation-table row whose "Input/Output" wording it shares with non-signals
+like `MMIO` and `DMA` in other documents. Rather than guess, SpecForge leaves the
+contact as an honest residual — capturing the two real signals it can prove, and not
+inventing a third. The reader runs only as a fallback for table-poor documents, so the
+table-rich buses (APB/AHB/AXI) and the serial-debug spec (SWD/ADI) are provably
+untouched. *Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.9.8`).
+
 ### `PER-EXTRACTOR-FACT-TAGGING` — who found which fact (recall-gauge groundwork)
 
 This is plumbing for a future **calibrated recall estimate**. To estimate how

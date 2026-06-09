@@ -1,4 +1,20 @@
 # DEVELOPMENT_NOTES
+## `PDF-VARIANT-DIGESTION.9.8` (`2026-06-09`) — definitional prose-signal capture (SWP S1/S2)
+- Root: SWP names its signals only in prose (no signal table); the two existing prose readers
+  (pin-appositive, parenthetical) need a `pin,` / `(NAME)` anchor SWP doesn't use → SWP had 0 signals.
+- Fix: third additive form `definitional_signal_names(text)` in `synthesize_signal_declarations_from_prose`
+  (`crates/specforge/src/ir/evidence.rs`) — copula `<NAME> is a/an signal` + glossary colon `<NAME>: signal`.
+  Garbage-free WITHOUT a denylist: the candidate must pass `is_hardware_signal_token` on the ORIGINAL
+  (un-cased) token, i.e. be an all-uppercase identifier — lowercase English subjects can't qualify.
+- Methodology (the load-bearing part): grammar locked by a corpus probe over ALL persisted evidence docs
+  BEFORE coding. The probe REJECTED the greedier alternatives on data — descriptor apposition
+  (`signal X`/`X signal`) is corpus-toxic and would flood SWD/ADI (regressing its WIRE-BASED-100 100%);
+  abbreviation-table I/O-expansion isn't corpus-clean (`MMIO`/`DMA`/`IOVA`). Definitional → exactly S1/S2.
+- Result: SWP signals 0 → S1/S2 (the complete capture; SWIO is the shared C6 contact, an honest residual,
+  never fabricated). No regression: before/after `git stash` diff → SWD/ADI declared set byte-identical.
+  7 new tests; `run_ci.sh` green (lib 1468); kg-bench 151/151. KM `definitional-signal-capture`.
+- Out of scope, noted: pre-existing `LEVEL`/`level` noise in the SWD declared set is NOT from `.9.8`.
+
 ## Current project direction
 - project name: `specforge`
 - CLI/binary name: `specforge`

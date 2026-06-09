@@ -1,3 +1,27 @@
+### `PDF-VARIANT-DIGESTION.9.8` — capture a signal defined only in prose (SWP S1/S2), agnostically
+SWP (Single Wire Protocol) names its signals only in sentences, not a signal table, so the two existing prose
+readers (pin appositive, parenthetical abbreviation) walked past them and SWP entered the pipeline with **0
+signals**. This adds a third additive form to `synthesize_signal_declarations_from_prose`,
+`definitional_signal_names`: a signal a spec **defines** via a copula (`<NAME> is a/an signal …`) or a glossary
+colon (`<NAME>: signal …`). The candidate must be an all-uppercase **identifier token**
+(`is_hardware_signal_token` on the original token), so lowercase English subjects — *"an interrupt is a
+signal"*, *"it is a signal"*, *"Note: signal integrity …"* — can never leak in, with no growing word-denylist.
+
+The grammar was **locked by probing every persisted evidence document before writing code** (the `.9.7`
+methodology), which also REJECTED the two greedier alternatives on the data: descriptor apposition
+(`signal X` / `X signal`) is corpus-toxic (`IS/TO/NAMES/FROM/CONTROL/DATA` across 30–47 docs, and floods
+SWD/ADI, regressing its 100%), and the abbreviation-table I/O-expansion is not corpus-clean (gets SWIO + real
+eMMC `DAT1-7`/`CMD` but also `MMIO`/`MEM`/`DMA`/`IOVA`). The definitional grammar yields, corpus-wide,
+**exactly `S1` + `S2` and zero garbage**.
+
+**SWP signals 0 → S1/S2** — the complete, correct capture: SWP has exactly two signals (S1 voltage,
+master→slave; S2 current, slave→master). **SWIO is the shared physical contact C6 that carries both, not a
+third logical signal** (*"S1 shares the same electrical contact as S2"*) — left as an honest residual, never
+fabricated (HONESTY GUARDRAIL). **No regression — proven by a before/after `git stash` diff: the SWD/ADI
+declared signal set is byte-identical** with vs without `.9.8`; table-rich APB/AHB/AXI never run prose capture.
+7 new hermetic tests; `scripts/run_ci.sh` GREEN (fmt + clippy `-D warnings` + lib **1468** + rustdoc + mdBook)
++ kg-bench 151/151. KM card `definitional-signal-capture`; book subsection in `pipeline/evidenceir.md`.
+
 ### `CORPUS-PATTERN-REUSE.2` — derived vendor/layout fingerprint + unsupervised clustering (the vision, started)
 Building on the `.8` manifest, this lands the clustering capability for the owner's vendor-pattern-reuse
 vision — agnostically (ADR 0006: no vendor name; the cluster key IS the shared structure). Pure
