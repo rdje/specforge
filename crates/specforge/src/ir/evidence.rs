@@ -9984,15 +9984,29 @@ fn synthesize_timing_constraints(
         .collect();
 
     for table in timing_tables {
-        if table.body_rows.is_empty() {
-            continue;
-        }
-
         let header: Vec<String> = table
             .header_rows
             .first()
             .map(|r| r.iter().map(|c| c.text.to_ascii_lowercase()).collect())
             .unwrap_or_default();
+
+        // PDF-VARIANT-DIGESTION.9.11 — recover data rows Docling trapped in `header_rows` by marking
+        // the row-LABEL cell `is_header=true` (e.g. I2S `table_0004`, SMBus `table_0012`, which leave
+        // `body_rows` empty so the table yields nothing). Past the first (column-header) row, a
+        // `header_rows` entry whose VALUE cells are all `is_header=false` and whose first cell is a
+        // non-empty label is really a DATA row. A genuine multi-row column header (a nested cross-tab
+        // whose value cells stay `is_header=true`, e.g. I2S `table_0005`) fails this and is left an
+        // honest residual. Purely structural — no parameter-name list, no case dependence (ADR 0006).
+        let recovered_rows = table.header_rows.iter().skip(1).filter(|row| {
+            row.len() >= 2
+                && !row[0].text.trim().is_empty()
+                && row.iter().skip(1).all(|cell| !cell.is_header)
+        });
+        let effective_rows: Vec<&Vec<StructuredTableCellRecord>> =
+            table.body_rows.iter().chain(recovered_rows).collect();
+        if effective_rows.is_empty() {
+            continue;
+        }
 
         let name_col = header
             .iter()
@@ -10009,7 +10023,7 @@ fn synthesize_timing_constraints(
         let desc_col = header.iter().position(|h| h.contains("description"));
 
         let table_id = table.table_id.clone();
-        for (row_idx, row) in table.body_rows.iter().enumerate() {
+        for (row_idx, row) in effective_rows.iter().enumerate() {
             let name = row
                 .get(name_col)
                 .map(|c| c.text.trim().to_string())
@@ -10541,6 +10555,151 @@ mod tests {
         assert_eq!(reg.fields[0].access_type.as_deref(), Some("R/W"));
         assert_eq!(reg.fields[0].reset_value.as_deref(), Some("0"));
         assert_eq!(reg.fields[0].description.as_deref(), Some("Resets the DMI"));
+        Ok(())
+    }
+
+    // PDF-VARIANT-DIGESTION.9.11 — a `timing_parameter` table whose row-label cell Docling marked
+    // `is_header=true` traps every data row in `header_rows`, leaving `body_rows` empty (I2S `table_0004`,
+    // SMBus `table_0012`). The structural recovery treats a `header_rows` entry past the column header
+    // whose VALUE cells are `is_header=false` as a data row, so the parameters + MIN/TYP/MAX are recovered.
+    #[test]
+    fn timing_table_data_trapped_in_header_rows_is_recovered() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Timing\nTarget receiver timing.\n")?;
+        let mut source_ir = SourceIr::build(&source, &base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_trapped".to_string(),
+            asset_id: "asset_trapped".to_string(),
+            page_id: None,
+            caption_text: Some("Target receiver timing (all values in ns)".to_string()),
+            source_ref: None,
+            table_kind: TableKind::TimingParameter,
+            // The real column header (blank leading cell; value labels are `is_header=true`) plus two
+            // data rows whose label cell is `is_header=true` and whose value cells are `is_header=false`.
+            header_rows: vec![
+                vec![
+                    make_table_cell("", false),
+                    make_table_cell("MIN", true),
+                    make_table_cell("TYP", true),
+                    make_table_cell("MAX", true),
+                ],
+                vec![
+                    make_table_cell("clock period T", true),
+                    make_table_cell("360", false),
+                    make_table_cell("400", false),
+                    make_table_cell("440", false),
+                ],
+                vec![
+                    make_table_cell("clock HIGH t HC", true),
+                    make_table_cell("110", false),
+                    make_table_cell("", false),
+                    make_table_cell("", false),
+                ],
+            ],
+            body_rows: vec![],
+            row_count: 3,
+            col_count: 4,
+        });
+        let recs = super::synthesize_timing_constraints(&source_ir, None);
+        assert_eq!(recs.len(), 2, "both trapped data rows recovered");
+        assert_eq!(recs[0].parameter_name, "clock period T");
+        assert_eq!(recs[0].min_value.as_deref(), Some("360"));
+        assert_eq!(recs[0].typ_value.as_deref(), Some("400"));
+        assert_eq!(recs[0].max_value.as_deref(), Some("440"));
+        assert_eq!(recs[1].parameter_name, "clock HIGH t HC");
+        assert_eq!(recs[1].min_value.as_deref(), Some("110"));
+        assert_eq!(
+            recs[1].typ_value, None,
+            "empty value cell stays None, not fabricated"
+        );
+        Ok(())
+    }
+
+    // PDF-VARIANT-DIGESTION.9.11 — a genuine multi-row COLUMN header (nested cross-tab, e.g. I2S
+    // `table_0005`'s TRANSMITTER/RECEIVER × LOWER/UPPER) keeps its value cells `is_header=true`, so the
+    // recovery must NOT mistake those header rows for data — the table stays an honest residual (0 records),
+    // never a fabricated parameter named "TRANSMITTER".
+    #[test]
+    fn timing_table_nested_column_header_is_not_recovered() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Timing\nCross-tab timing.\n")?;
+        let mut source_ir = SourceIr::build(&source, &base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_nested".to_string(),
+            asset_id: "asset_nested".to_string(),
+            page_id: None,
+            caption_text: None,
+            source_ref: None,
+            table_kind: TableKind::TimingParameter,
+            header_rows: vec![
+                vec![
+                    make_table_cell("", false),
+                    make_table_cell("TRANSMITTER", true),
+                    make_table_cell("RECEIVER", true),
+                ],
+                vec![
+                    make_table_cell("", false),
+                    make_table_cell("LOWER LIMIT", true),
+                    make_table_cell("UPPER LIMIT", true),
+                ],
+            ],
+            body_rows: vec![],
+            row_count: 2,
+            col_count: 3,
+        });
+        let recs = super::synthesize_timing_constraints(&source_ir, None);
+        assert!(
+            recs.is_empty(),
+            "nested column header stays an honest residual, no fabricated parameters"
+        );
+        Ok(())
+    }
+
+    // PDF-VARIANT-DIGESTION.9.11 — a normal timing table (data in `body_rows`, labelled header) is
+    // unchanged: the header-row recovery is purely additive and adds nothing here.
+    #[test]
+    fn timing_table_normal_body_rows_unchanged() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Timing\nBus timing.\n")?;
+        let mut source_ir = SourceIr::build(&source, &base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_normal".to_string(),
+            asset_id: "asset_normal".to_string(),
+            page_id: None,
+            caption_text: None,
+            source_ref: None,
+            table_kind: TableKind::TimingParameter,
+            header_rows: vec![vec![
+                make_table_cell("Symbol", true),
+                make_table_cell("Min", true),
+                make_table_cell("Max", true),
+            ]],
+            body_rows: vec![
+                vec![
+                    make_table_cell("t BUF", false),
+                    make_table_cell("1.3", false),
+                    make_table_cell("", false),
+                ],
+                vec![
+                    make_table_cell("t HD", false),
+                    make_table_cell("0.6", false),
+                    make_table_cell("", false),
+                ],
+            ],
+            row_count: 2,
+            col_count: 3,
+        });
+        let recs = super::synthesize_timing_constraints(&source_ir, None);
+        assert_eq!(recs.len(), 2, "both body rows extracted, nothing added");
+        assert_eq!(recs[0].parameter_name, "t BUF");
+        assert_eq!(recs[0].min_value.as_deref(), Some("1.3"));
+        assert_eq!(recs[1].parameter_name, "t HD");
         Ok(())
     }
 

@@ -1,4 +1,21 @@
 # DEVELOPMENT_NOTES
+## `PDF-VARIANT-DIGESTION.9.11` (`2026-06-09`) — header-trapped timing-table recovery (structural, no list/case)
+- Root cause (probe-locked): `synthesize_timing_constraints` (`ir/evidence.rs`) opened with
+  `if table.body_rows.is_empty() { continue; }`. I2S `table_0004` / SMBus `table_0012` have `body_rows` EMPTY
+  because Docling marks each row-LABEL cell `is_header=true`, trapping data rows in `header_rows`. Not a
+  name-column problem (`name_col` already defaults to 0).
+- Fix (additive, structural): `effective_rows = body_rows + header_rows[1..]` filtered to data-shaped rows
+  (`len ≥ 2 && first cell non-empty && row.iter().skip(1).all(|c| !c.is_header)`), then the unchanged
+  name/min/typ/max extraction. The `is_header` flag IS the discriminator: a genuine multi-row column header
+  (nested cross-tab) keeps `is_header=true` value cells → excluded → honest residual; the empty-first-cell guard
+  protects the real column-header row (`header_rows[0]`).
+- No list, no case dependence (ADR 0006 + [[feedback_avoid_denylists_prefer_structural]]).
+- Live: I2S `timing_constraints` 0 → 5 (clock period/HIGH/LOW, set-up, hold; empty cells stay None). SMBus held
+  at 84 (`table_0012` shape doesn't match → residual). 3 hermetic tests. `run_ci.sh` GREEN (lib 1472 → 1475);
+  kg-bench 151/151 (wire-based + SWD unaffected). KM `timing-table-trapped-row-recovery`; book subsection.
+- Note: `.9.10` (prose bus-line signals) PARKED — owner directive: no denylist ("a list to handle 100s of PDFs
+  is a sign of weakness"); the clean fix needs participation-based signal identity → the shallow-parser arm.
+
 ## `PDF-VARIANT-DIGESTION.9.6` (`2026-06-09`) — I2S (NXP UM11732) honest baseline (measurement, no code change)
 - First-ever ingest (`DOCLING_DEVICE=cpu`) of `corpus/nxp/i2s/current/UM11732_v3_*.pdf` → `document_key:
   um11732_v3_2022_02_17_i2s_bus_specification`: 14 pages / 27 visual / `ready` / 0 residuals. evidence = 24

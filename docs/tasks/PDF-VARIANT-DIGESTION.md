@@ -186,14 +186,37 @@ diagnostic when a construct is genuinely out of model.
   symbol anchors the row (contrast: SMBus's timing tables yielded 84) → a blank-leading-column timing-table
   recovery lever `.9.11`. (3) the lone conditional rule is legal boilerplate, not protocol semantics. Spun
   future lever `.9.11` (below); `WS` recall folded into `.9.10`'s probe scope. Commit: pending (this slice).
-- ID: `PDF-VARIANT-DIGESTION.9.11` · Status: `proposed` · Goal: **blank-leading-column timing-parameter table
-  recovery** — recover timing parameters from `timing_parameter`-classified tables whose **parameter/symbol name
-  column header is BLANK** (the I2S `|  | MIN | TYP | MAX | CONDITION |` shape), where the symbol lives in the
-  first body cell of each row rather than under a labelled header, so they yield typed `timing_constraints`
-  instead of 0 records — AGNOSTICALLY (ADR 0006: read the row structure, never the parameter names) and without
-  regressing the table shapes that already work (SMBus yielded 84 timing_constraints). **Must be probe-locked
-  over all persisted evidence docs BEFORE coding** (the `.9.7`/`.9.8` methodology). Honesty guardrail: residual
-  over fabrication (a row with no recoverable symbol stays an honest residual). Spun from the `.9.6` I2S baseline.
+- ID: `PDF-VARIANT-DIGESTION.9.11` · Status: `done` (`2026-06-09`) · Goal: **recover
+  timing-parameter tables whose data rows are trapped in `header_rows`** so they yield typed
+  `timing_constraints` instead of 0 records — AGNOSTICALLY (ADR 0006; structure only, no name list, no case
+  dependence) and without regressing the tables that already work. **PROBE (`2026-06-09`, root cause LOCKED — it
+  is NOT a blank-header problem):** `synthesize_timing_constraints` already defaults `name_col` to 0, so a blank
+  leading header is fine. The real blocker is upstream: in I2S `table_0004` (and SMBus `table_0012`) the data
+  rows are misclassified into `header_rows` because Docling marks the row-LABEL cell `is_header=true` (e.g.
+  `["clock period T"(hdr), "360", "400", "440", "T tr = 360"]`), leaving `body_rows` EMPTY → the
+  `body_rows.is_empty()` guard skips the whole table. **Structural discriminator (list-free, case-free):** a
+  `header_rows` entry PAST the first column-header row whose VALUE cells are `is_header=false` is a trapped DATA
+  row; a genuine multi-row column header (SMBus `table_0011`/`0013` 2nd header row; I2S `table_0005`'s nested
+  TRANSMITTER/RECEIVER × LOWER/UPPER cross-tab with `is_header=true` value cells) is NOT → stays an honest
+  residual (no fabrication). **Fix:** in `synthesize_timing_constraints`, build the effective data-row set =
+  `body_rows` + recovered trapped header-rows (header_rows after [0] whose non-label cells are `is_header=false`),
+  then process as today (name_col=0). Recovers I2S `table_0004` AND SMBus `table_0012` (bonus); SMBus's working
+  tables keep their `body_rows` untouched; the nested I2S `table_0005` stays a residual. Acceptance: I2S 0 → N
+  timing_constraints; SMBus ≥ 84 (no regression, only genuine gains); wire-based unaffected; hermetic tests
+  (trapped-row recovery + nested-header residual + normal-body unchanged); full `run_ci.sh` + kg-bench; book + KM.
+  Spun from the `.9.6` I2S baseline.
+  **Verification (`2026-06-09`):** implemented as an additive structural recovery in `synthesize_timing_constraints`
+  (`ir/evidence.rs`) — `effective_rows = body_rows + header_rows[1..] filtered to data-shaped rows`
+  (`len ≥ 2 && first cell non-empty && all value cells is_header=false`), then the existing name/min/typ/max
+  extraction (name_col already defaults to 0). **Live re-measure (fresh evidence rebuild off persisted
+  source_ir): I2S `timing_constraints` 0 → 5** (`clock period T` 360/400/440, `clock HIGH t HC` min 110,
+  `clock LOW t LC` min 110, `set-up time t sr` min 60, `hold time t htr` min 0 — empty value cells stay `None`,
+  not fabricated). **No regression: SMBus held at 84** (its `table_0012` shape doesn't match the data-row test →
+  stays an honest residual, never fabricated; nested I2S `table_0005` likewise residual). 3 new hermetic tests
+  (trapped-row recovery / nested-header residual / normal-body unchanged). Full `scripts/run_ci.sh` GREEN (fmt +
+  clippy `-D warnings` + lib **1472 → 1475** + rustdoc + mdBook) + kg-bench 151/151 (no eval/fixture regressed →
+  wire-based + SWD unaffected). KM `timing-table-trapped-row-recovery`; book subsection in
+  `pipeline/evidenceir.md`. Commit: pending (this slice).
 - ID: `PDF-VARIANT-DIGESTION.9.10` · Status: `in_progress` (probe DONE `2026-06-09`; implementation gated on one
   owner decision — see below) · Goal: **SMBus-class prose bus-line signal grammar** —
   recover I2C/SMBus-derived 2-wire bus signals declared ONLY in prose (no signal table) — `SMBCLK`/`SMBDAT` as
@@ -437,9 +460,15 @@ Form A ("the/The `<NAME>` line") is the corpus-safe winner (5/78 docs, 0 wire-ba
 APB/AHB/AXI → breaks byte-identical). **Implementation gated on ONE owner decision: how to treat power-supply
 rails `VDD`/`VSS` (Form A captures them on the MEASURED I2C doc → would regress its gold precision 0.600) —
 recommended: extend the existing universal-term denylist `is_signal_synthesis_non_signal` (CLOCK/RESET
-precedent; ADR-0006-safe universal supply vocabulary).** **Frontier (any of, owner may steer):** `.9.10` (gated
-on the power-rail decision above) · `.9.11` (blank-column timing tables) · `.9.8b` (SWIO contact-as-signal).
-`.6`/`.7` (the older VLM-frontier / USB-3.2 leaves) stay blocked on host-local PDFs.
+precedent; ADR-0006-safe universal supply vocabulary).** **OWNER STEER (`2026-06-09`): NO denylist — "using a
+list to handle 100s of PDFs is a sign of weakness"; the clean fix needs participation-based signal identity
+(driven/asserted/sampled binding), which needs the deterministic shallow-parser → `.9.10` PARKED behind
+`NLP-SHALLOW-PARSE`, not shipped with a list/case crutch.** **`.9.11` (header-trapped timing-table recovery)
+DONE `2026-06-09`** — structural recovery of timing data rows Docling trapped in `header_rows`; **I2S 0 → 5
+timing_constraints, SMBus held at 84**, nested/complex tables stay honest residuals; lib 1475, kg-bench 151/151.
+**Frontier (any of, owner may steer):** `.9.10` (PARKED behind the shallow-parser — participation-based signal
+identity, no list, no case) · `.9.8b` (SWIO contact-as-signal). `.6`/`.7` (the older VLM-frontier / USB-3.2
+leaves) stay blocked on host-local PDFs.
 
 **(SUPERSEDED active note) `PDF-VARIANT-DIGESTION.6`/`.7`** — item ② (`.5`) COMPLETE and `.8` (broaden
 prose-actor capture) DONE. **`.5a` + `.5b` + `.5c` are DONE** — structural doc-class routing
@@ -776,6 +805,18 @@ set, not the whole doc/corpus.
 
 ## Verification log
 
+- `.9.11` (`2026-06-09`): header-trapped timing-table recovery. Root cause (probe-locked): I2S `table_0004` /
+  SMBus `table_0012` leave `body_rows` EMPTY because Docling marks each row-LABEL cell `is_header=true`, trapping
+  the data rows in `header_rows` → the `body_rows.is_empty()` guard skipped the table → 0 records. Fix
+  (`synthesize_timing_constraints`, `ir/evidence.rs`, additive + structural, no list / no case): `effective_rows
+  = body_rows + header_rows[1..]` filtered to data-shaped rows (`len ≥ 2 && first cell non-empty && all value
+  cells is_header=false`); a genuine multi-row column header keeps `is_header=true` value cells → excluded →
+  honest residual. Live re-measure: **I2S `timing_constraints` 0 → 5** (clock period/HIGH/LOW, set-up, hold —
+  empty cells stay `None`); **SMBus held at 84** (its `table_0012` shape doesn't match → residual, no
+  fabrication). 3 hermetic tests (trapped-row / nested-header residual / normal-body unchanged). Full
+  `scripts/run_ci.sh` GREEN (fmt + clippy `-D warnings` + lib 1472 → 1475 + rustdoc + mdBook); kg-bench 151/151
+  (no eval/fixture regressed → wire-based + SWD unaffected). KM `timing-table-trapped-row-recovery`; book
+  subsection in `pipeline/evidenceir.md`. Commit subject: `PDF-VARIANT-DIGESTION.9.11`.
 - `.9.10` PROBE (`2026-06-09`): faithful corpus-wide probe of the prose bus-line signal grammars over ALL 78
   persisted `evidence_ir` statement-text corpora (the `.9.7`/`.9.8` method — NOT the 8 surviving normalized
   markdowns; an early markdown-only, case-sensitive probe under-counted and missed I2S "The WS line"). Result:
@@ -932,6 +973,12 @@ set, not the whole doc/corpus.
 
 ## Changelog
 
+- `2026-06-09`: `.9.11` (header-trapped timing-table recovery) DONE. Structural fix in
+  `synthesize_timing_constraints`: recover timing data rows Docling trapped in `header_rows` (row-label cell
+  `is_header=true` → empty `body_rows`). Additive, no list, no case. I2S 0 → 5 timing_constraints; SMBus held at
+  84 (complex tables stay honest residuals). 3 hermetic tests; `run_ci.sh` GREEN (lib 1475) + kg-bench 151/151.
+  Owner steer: `.9.10` parked behind the shallow-parser (no denylist — "a list to handle 100s of PDFs is a sign
+  of weakness"). Commit subject: `PDF-VARIANT-DIGESTION.9.11`.
 - `2026-06-09`: `.9.6` (I2S NXP UM11732 honest baseline) DONE. First-ever ingest (14 pp / 27 visual / `ready` /
   0 residuals) → evidence (24 anchors / 152 spans / 154 statements) → `validate`: `document_class: guide`,
   `document_type_declared: specification` → ⚠ under-extracted spec. Yield 2 real signals (`SCK`+`SD`) captured

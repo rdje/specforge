@@ -1,3 +1,24 @@
+### `PDF-VARIANT-DIGESTION.9.11` — recover timing tables whose rows were mistaken for headings
+A datasheet timing table can report **0** parameters even when it visibly has rows: the PDF converter marks each
+row's left-hand *name* cell as a header, which files the whole data row under `header_rows` and leaves
+`body_rows` empty — so `synthesize_timing_constraints` skipped the table entirely (I2S `table_0004`, SMBus
+`table_0012`). This is a structural-ingestion artifact, not a missing name column (`name_col` already defaults
+to 0).
+
+The fix reads the table by **structure**, not labels, and adds no list and no case dependence: the effective
+data-row set becomes `body_rows + header_rows[1..]` filtered to data-shaped rows — `len ≥ 2`, a non-empty first
+(label) cell, and **all value cells `is_header=false`**. A genuine multi-row column header (e.g. I2S
+`table_0005`'s nested `TRANSMITTER`/`RECEIVER` × `LOWER`/`UPPER LIMIT` cross-tab) keeps `is_header=true` value
+cells, so it fails the test and stays an **honest residual** — never a fabricated parameter named "TRANSMITTER".
+Empty value cells stay `None`.
+
+**I2S `timing_constraints` 0 → 5** (`clock period T` 360/400/440, `clock HIGH t HC` min 110, `clock LOW t LC`
+min 110, `set-up time t sr` min 60, `hold time t htr` min 0). **SMBus held at 84** (its `table_0012` shape
+doesn't match → residual, no garbage); the timing tables that already work are untouched. 3 hermetic tests
+(trapped-row recovery / nested-header residual / normal-body unchanged); full `scripts/run_ci.sh` GREEN (fmt +
+clippy `-D warnings` + lib **1472 → 1475** + rustdoc + mdBook) + kg-bench 151/151 (no eval/fixture regressed →
+wire-based + SWD unaffected). KM `timing-table-trapped-row-recovery`; book subsection in `pipeline/evidenceir.md`.
+
 ### `PDF-VARIANT-DIGESTION.9.10` (probe) — prose bus-line signal grammar: locked, gated on one owner decision
 Probe-first (the `.9.7`/`.9.8` discipline) for the SMBus/I2S prose-signal recall lever: ran the candidate
 grammars over ALL 78 persisted `evidence_ir` statement-text corpora before writing any code. Outcome:

@@ -500,6 +500,34 @@ left open. The reader is additive and disjoint from the bit-range path (CAN lack
 trigger it; the bit-range specs lack the composition sentence), so SWD keeps its frame unchanged and the
 parallel buses stay empty. *Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.9.3b`).
 
+### `PDF-VARIANT-DIGESTION.9.11` — a timing table whose rows got mistaken for headings
+
+A datasheet timing table is usually easy to read: a column for the parameter name, then `MIN` / `TYP` / `MAX`,
+one row per parameter. But the *shape* a PDF converter hands us doesn't always match the shape a human sees. In
+some specs (the I2S bus spec, and one of the SMBus timing tables) the converter looked at the left-hand column —
+the parameter *names* — decided it was a row of headings because it sits at the edge of the table, and filed the
+**entire row** under "table header." The numbers came along for the ride. The result: a table that visibly has
+five timing parameters reported **zero**, because the part of the code that reads data rows found the data-row
+list empty — every row had been re-labelled as a heading.
+
+The fix is to read the table by its *structure*, not its labels. Inside one of these tables, a real heading row
+and a real data row look different in one reliable way: in the heading row every cell is marked as a header
+(`MIN`, `TYP`, `MAX` are all column titles), whereas in a data row only the left-hand *name* cell is — the value
+cells next to it (`360`, `400`, `440`) are plain data. So when the data-row list comes up empty, the reader
+looks back through the rows that were filed as headings and rescues any whose value cells are plain data and
+whose first cell is a real label. Those are data rows wearing a heading's coat.
+
+This stays deliberately careful. A table that genuinely *does* have a two-level heading — for example a
+cross-tab with `TRANSMITTER` and `RECEIVER` spanning groups of columns — keeps real header cells all the way
+across, so it correctly fails the test and is left as an honest "couldn't read this one" rather than being
+forced into invented parameters. Empty value cells stay empty instead of being filled with a guess. Nothing
+about the rescue depends on the parameter *names* or their capitalisation — only on the table's structure — so
+it generalises to any spec with this layout instead of to a list of known tables.
+
+With this in place, the I2S spec went from **0 to 5** recovered timing parameters (clock period, clock-high and
+clock-low times, set-up and hold times, with their stated limits), while the timing tables that already read
+correctly are untouched. *Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.9.11`).
+
 ### `PER-EXTRACTOR-FACT-TAGGING` — who found which fact (recall-gauge groundwork)
 
 This is plumbing for a future **calibrated recall estimate**. To estimate how
