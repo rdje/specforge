@@ -4819,6 +4819,125 @@ fn synthesize_system_contract_from_table_descriptions(
     statements
 }
 
+// EXTRACTOR-ARCHITECTURE.4 — the signal-semantic-hint cluster as a unified surface registry. The three
+// meaning-inference strategies (signal-description tables, prose / alias-grounded prose, and visual captions /
+// VLM timing-diagram annotations — the LLM/VLM "read the meaning" surfaces) are now
+// `Extractor<SignalSemanticHintRecord>` units run by the shared `run_surface` driver, replacing the prior
+// hand-rolled "run tables, then dedup-append prose, then dedup-append visual" merge. Registry ORDER is the
+// legacy precedence (tables → prose → visual) and the surface key is `signal_semantic_hint_key` (the legacy
+// dedup key), so the merged inventory is behavior-identical. Each strategy reads exactly the inputs it needs,
+// carried on its extractor struct (the derived `known_signals`/`known_actor_names`, alias map, visual
+// evidence, source, prior guidance); the shared `ExtractionContext` supplies `statements` to the prose path.
+
+/// Meaning hints from signal-description tables — see `synthesize_signal_semantic_hints_from_tables`.
+struct SemanticHintTableExtractor<'a> {
+    source_ir: &'a SourceIr,
+    known_signals: &'a HashSet<String>,
+    known_actor_names: &'a BTreeSet<String>,
+    prior_guidance: Option<&'a EvidencePriorGuidance>,
+}
+impl Extractor<SignalSemanticHintRecord> for SemanticHintTableExtractor<'_> {
+    fn name(&self) -> &'static str {
+        "semantic_hints.tables"
+    }
+    fn run(&self, _cx: &ExtractionContext<'_>) -> Vec<SignalSemanticHintRecord> {
+        synthesize_signal_semantic_hints_from_tables(
+            self.source_ir,
+            self.known_signals,
+            self.known_actor_names,
+            self.prior_guidance,
+        )
+    }
+}
+
+/// Meaning hints from prose / alias-grounded prose — see `synthesize_signal_semantic_hints_from_prose`.
+struct SemanticHintProseExtractor<'a> {
+    signal_alias_map: &'a BTreeMap<String, String>,
+    known_signals: &'a HashSet<String>,
+    known_actor_names: &'a BTreeSet<String>,
+    prior_guidance: Option<&'a EvidencePriorGuidance>,
+}
+impl Extractor<SignalSemanticHintRecord> for SemanticHintProseExtractor<'_> {
+    fn name(&self) -> &'static str {
+        "semantic_hints.prose"
+    }
+    fn run(&self, cx: &ExtractionContext<'_>) -> Vec<SignalSemanticHintRecord> {
+        synthesize_signal_semantic_hints_from_prose(
+            cx.statements,
+            self.signal_alias_map,
+            self.known_signals,
+            self.known_actor_names,
+            self.prior_guidance,
+        )
+    }
+}
+
+/// Meaning hints from visual captions / VLM timing-diagram annotations — see
+/// `synthesize_signal_semantic_hints_from_visual_evidence`.
+struct SemanticHintVisualExtractor<'a> {
+    visual_evidence: &'a [VisualEvidenceItem],
+    signal_alias_map: &'a BTreeMap<String, String>,
+    known_signals: &'a HashSet<String>,
+    known_actor_names: &'a BTreeSet<String>,
+    prior_guidance: Option<&'a EvidencePriorGuidance>,
+}
+impl Extractor<SignalSemanticHintRecord> for SemanticHintVisualExtractor<'_> {
+    fn name(&self) -> &'static str {
+        "semantic_hints.visual"
+    }
+    fn run(&self, _cx: &ExtractionContext<'_>) -> Vec<SignalSemanticHintRecord> {
+        synthesize_signal_semantic_hints_from_visual_evidence(
+            self.visual_evidence,
+            self.signal_alias_map,
+            self.known_signals,
+            self.known_actor_names,
+            self.prior_guidance,
+        )
+    }
+}
+
+/// Run the signal-semantic-hint surface registry through the unified driver. Behavior-identical to the
+/// legacy tables → prose → visual merge: first-wins dedup by `signal_semantic_hint_key`.
+/// (`EXTRACTOR-ARCHITECTURE.4`)
+fn signal_semantic_hint_surface(
+    statements: &[ExtractedStatement],
+    source_ir: &SourceIr,
+    visual_evidence: &[VisualEvidenceItem],
+    signal_alias_map: &BTreeMap<String, String>,
+    known_signals: &HashSet<String>,
+    known_actor_names: &BTreeSet<String>,
+    prior_guidance: Option<&EvidencePriorGuidance>,
+) -> Vec<SignalSemanticHintRecord> {
+    let cx = ExtractionContext { statements };
+    let tables = SemanticHintTableExtractor {
+        source_ir,
+        known_signals,
+        known_actor_names,
+        prior_guidance,
+    };
+    let prose = SemanticHintProseExtractor {
+        signal_alias_map,
+        known_signals,
+        known_actor_names,
+        prior_guidance,
+    };
+    let visual = SemanticHintVisualExtractor {
+        visual_evidence,
+        signal_alias_map,
+        known_signals,
+        known_actor_names,
+        prior_guidance,
+    };
+    let extractors: [&dyn Extractor<SignalSemanticHintRecord>; 3] = [&tables, &prose, &visual];
+    run_surface(
+        "signal_semantic_hints",
+        &cx,
+        &extractors,
+        signal_semantic_hint_key,
+    )
+    .records
+}
+
 fn synthesize_signal_semantic_hints(
     source_ir: &SourceIr,
     statements: &[ExtractedStatement],
@@ -4837,38 +4956,18 @@ fn synthesize_signal_semantic_hints(
     );
     let known_signals =
         collect_known_signal_names_for_semantic_hints(source_ir, statements, prior_guidance);
-    let mut hints = synthesize_signal_semantic_hints_from_tables(
-        source_ir,
-        &known_signals,
-        &known_actor_names,
-        prior_guidance,
-    );
-    let mut seen = hints
-        .iter()
-        .map(signal_semantic_hint_key)
-        .collect::<BTreeSet<_>>();
-    for hint in synthesize_signal_semantic_hints_from_prose(
+    // EXTRACTOR-ARCHITECTURE.4 — the three meaning-inference strategies run through the unified `run_surface`
+    // driver (tables → prose → visual, first-wins dedup by `signal_semantic_hint_key`); conflict detection
+    // stays a post-merge step on the merged inventory.
+    let hints = signal_semantic_hint_surface(
         statements,
-        signal_alias_map,
-        &known_signals,
-        &known_actor_names,
-        prior_guidance,
-    ) {
-        if seen.insert(signal_semantic_hint_key(&hint)) {
-            hints.push(hint);
-        }
-    }
-    for hint in synthesize_signal_semantic_hints_from_visual_evidence(
+        source_ir,
         visual_evidence,
         signal_alias_map,
         &known_signals,
         &known_actor_names,
         prior_guidance,
-    ) {
-        if seen.insert(signal_semantic_hint_key(&hint)) {
-            hints.push(hint);
-        }
-    }
+    );
     let conflicts = detect_signal_semantic_conflicts(&hints);
     (hints, conflicts)
 }

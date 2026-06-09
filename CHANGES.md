@@ -1,3 +1,20 @@
+### `EXTRACTOR-ARCHITECTURE.4` — migrate the semantic-hints cluster onto the framework (byte-identical)
+The second consolidation, and the one closest to the human-emulation north star: the three **meaning-inference**
+strategies — signal-description tables, prose / alias-grounded prose, and visual captions / VLM
+timing-diagram annotations (the LLM/VLM "read the meaning" surfaces) — are now
+`Extractor<SignalSemanticHintRecord>` units (`semantic_hints.tables` / `.prose` / `.visual`) run by
+`signal_semantic_hint_surface` through the `.2` `run_surface` driver. The hand-rolled "run tables →
+dedup-append prose → dedup-append visual" merge collapsed to one driver call (order tables→prose→visual, key
+= `signal_semantic_hint_key`). Each strategy carries its own inputs on its extractor struct (derived
+`known_signals`/`known_actor_names`, alias map, visual evidence, source, prior guidance); the shared
+`ExtractionContext` supplies `statements` to the prose path. Conflict detection stays a post-merge step.
+
+**Byte-identical, proven on fresh-rebuilt evidence:** RISC-V Debug (5 hints), SWD/ADI (3), I2C (1) — the
+`signal_semantic_hints` + `signal_semantic_conflicts` surfaces md5-identical before/after; kg-bench 151/151
+(its table-based semantic-hint fixtures confirm the now-uniform within-strategy dedup drops no real record);
+the 13 existing semantic-hint unit tests pass through the migrated path. full `run_ci.sh` GREEN (lib 1454).
+`.5`+ migrate the remaining clusters (signals next — needs an `ExtractionContext` counter handle).
+
 ### `CORPUS-PATTERN-REUSE.1` — own the cross-PDF / vendor-clustered pattern-reuse direction (design; no code)
 Owner strategic directive (`2026-06-09`): recognize and reuse extraction patterns across PDFs; same-vendor
 docs tend to share organization (likely, not certain); think out-of-the-box (this is new, LLM/VLM-enabled).

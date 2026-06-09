@@ -141,8 +141,26 @@ Driver: build cx → for each registered extractor where applies_to → run → 
   a no-op (no collision). SWD FSM eval `serial_frame_field`/`swd_operation`/`protocol_state` all
   `P=R=F1=1.000`; kg-bench 151/151; full `run_ci.sh` green (lib 1452 → 1454). 2 new hermetic tests
   (cross-grammar union + dedup; non-FSM prose → empty). First real consolidation; the pattern is proven.
-- `.4`+ migrate the remaining clusters (signals, registers, semantic hints, …) one slice each; retire the
-  god-orchestrator incrementally. **Pending** — each migration is behavior-preserving + corpus-verified.
+- `.4` migrate the **semantic-hints cluster** (already a near-dispatcher — the easy-win second proof).
+  **DONE (`2026-06-09`).** The three meaning-inference strategies (signal-description tables, prose /
+  alias-grounded prose, visual captions / VLM timing-diagram annotations) are now
+  `Extractor<SignalSemanticHintRecord>` units (`semantic_hints.tables` / `.prose` / `.visual`) run by
+  `signal_semantic_hint_surface` via `run_surface`; the hand-rolled "run tables → dedup-append prose →
+  dedup-append visual" merge collapsed to one driver call (key = `signal_semantic_hint_key`, order =
+  tables→prose→visual). Each strategy carries its cluster-specific inputs (derived `known_signals`/
+  `known_actor_names`, alias map, visual evidence, source, prior guidance) on its extractor struct; the shared
+  `ExtractionContext` supplies `statements` to the prose path. Conflict detection stays a post-merge step.
+  **Byte-identical proven on fresh-rebuilt evidence:** RISC-V Debug (5 hints), SWD/ADI (3), I2C (1) — the
+  `signal_semantic_hints` + `signal_semantic_conflicts` surfaces md5-identical; kg-bench 151/151 (its
+  table-based semantic-hint fixtures confirm the now-uniform within-strategy dedup drops no real record); the
+  13 existing semantic-hint unit tests pass through the migrated path. full `run_ci.sh` green (lib 1454).
+  (Follow-up noted: a test-only `SourceIr` constructor would let surface helpers be unit-tested in isolation;
+  today they're covered by the markdown-built integration tests + the corpus diff.)
+- `.5`+ migrate the remaining clusters (signals — the biggest; registers; actors; constraints/polarity/
+  relations) one slice each; retire the god-orchestrator incrementally. **Pending.** NOTE for the signal/
+  register synthesizers: they thread a `&mut statement_counter` (mint synthetic statement ids), so the
+  `ExtractionContext` must grow a counter handle (interior-mut cell or a threaded handle) when migrating them —
+  the first cluster that mutates build state. Each migration stays behavior-preserving + corpus-verified.
 
 ## Current frontier
 
