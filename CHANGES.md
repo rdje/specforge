@@ -1,3 +1,18 @@
+### `EVIDENCE-DETERMINISM.1` — diagnose the EvidenceIR build's content-level non-determinism (no code)
+Surfaced by `EXTRACTOR-ARCHITECTURE.5`: a pure refactor's byte-identical check failed on SWD/ADI, and the
+investigation proved the EvidenceIR build is **non-deterministic at the content level** (independent of the
+refactor). Two runs of the IDENTICAL `.4` code on SWD/ADI produce **set-different** `actor_signal_relations` +
+`extracted_statements`; the 4 other intact-bundle docs (RISC-V/I2C/SWP/CAN) are deterministic — so it's the
+**relation-heavy prose** path.
+
+**Root cause:** `extract_actor_signal_relations` iterates `known_signals: &HashSet<String>` and a
+first-seen-wins `seen` dedup keeps **different representatives** depending on the non-deterministic `HashSet`
+iteration order → varies the surviving relation content (and, via the build-wide counter, relation-derived
+statements + ids). Matters for reproducibility, eval-score stability (the scorer reads persisted evidence),
+and the soundness of the byte-identical migration proofs. New tree `EVIDENCE-DETERMINISM`; KM card
+`evidence-build-nondeterminism`. `.2` fix = deterministic iteration (sorted view / `BTreeSet`),
+double-run-verified, multiset-preserving. Docs-only.
+
 ### `EXTRACTOR-ARCHITECTURE.5` — consolidate the signal-declaration seed; the two-phase model (byte-identical)
 Investigating "migrate the signals cluster" produced a key architectural finding: the signal-declaration
 cluster is **not** a `run_surface` merge-surface. It produces seed `ExtractedStatement`s (not typed records),
