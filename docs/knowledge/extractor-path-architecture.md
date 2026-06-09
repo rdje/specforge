@@ -67,5 +67,13 @@ prose-driven relation recovery per document (AXI: 356 table + 20 prose → 348; 
 **Constraints + conditional rules** stay stateful-assembly by design (one per-pass `constraint_counter`
 mints ids ACROSS the three extractors, plus a cross-surface polarity post-pass) → their own in-loop
 orchestration, like the signal-declaration seed. The constraint-family categorization is now encoded in
-the `ir/extractor.rs` module doc ("Two phases, three categories", `.9d`). Remaining: the `build()`
-god-orchestrator retirement assessment.
+the `ir/extractor.rs` module doc ("Two phases, three categories", `.9d`).
+
+**Status update (`2026-06-10`, post `.10`/`.10a` — TREE CLOSED):** the god-orchestrator is retired.
+`.10a` extracted the last inline mass — the ~243-line statement/visual assembly block — into
+`assemble_evidence_statements(...)` (+ `AssembledEvidenceStatements`), leaving `build_with_prior_memory`
+a **224-line thin named-phase sequence** (was ~565 at the `.1` audit). Proof was the strictest yet: all
+12 intact-bundle docs rebuilt FULLY byte-identical INCLUDING the manifest. The title-line claim of this
+card ("flat bank of ~60 free functions wired in one build()") is now fully HISTORICAL: the producer layer
+is 8 registered surfaces on two drivers + named assembly-phase orchestrators + an inspectable per-document
+run manifest. `EXTRACTOR-ARCHITECTURE` closed `2026-06-10` with all acceptance criteria met.

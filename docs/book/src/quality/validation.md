@@ -754,7 +754,7 @@ packets — rather than only noting them — is a deliberate future step.
 
 *Authoritative tracking:* `docs/tasks/AMBIGUITY-PHRASE-DETECTOR.md`.
 
-### `EXTRACTOR-ARCHITECTURE.8` — the extraction run manifest: which extractors fired on this document
+### `EXTRACTOR-ARCHITECTURE` — the unified extractor framework and its run manifest
 
 SpecForge derives each typed surface (FSM states, semantic hints, registers, actors, serial-frame fields,
 packet operations, signal polarity, actor–signal relations) by running a small set of independent
@@ -800,4 +800,20 @@ That is exactly the signal SpecForge's cross-document pattern-reuse plane cluste
 recognised as "like ones we've seen" and benefit from what worked on them. The manifest is a faithful
 observation — it reports what ran, never inflates it — and it is deterministic for a given document.
 
-*Authoritative tracking:* `docs/tasks/EXTRACTOR-ARCHITECTURE.md` (`.8`); see also `docs/tasks/CORPUS-PATTERN-REUSE.md`.
+**How it was built, and how you know it changed nothing.** The framework did not rewrite any extraction
+logic — the grammars that read your PDFs are exactly the ones that earned the wire-based 100% scores. What
+changed is the *wiring*: each strategy became a named, registered unit with an explicit applicability gate,
+run by one shared engine with two merge modes (first-wins key-merge, and ordered concatenation for surfaces
+whose post-passes need the full merged list). Surfaces that re-run inside SpecForge's fixed-point evidence
+loop (signal polarity, actor–signal relations) record on every pass, and the manifest keeps the final,
+converged run. A few producers stay deliberately off the engine where their behaviour is inherently
+sequential — for example the constraint family, whose record ids are minted across three extractors in
+order — because forcing them through a merge driver would change behaviour. Every migration step was
+verified the same way: rebuild the evidence for the full set of repo-backed specification PDFs before and
+after the change and require the output to be **byte-identical** (the tracked KG benchmark and the per-fact
+evaluation suites run on top of that). So the inspectability you get here cost nothing in extraction
+behaviour — the facts are the same facts.
+
+*Authoritative tracking:* `docs/tasks/EXTRACTOR-ARCHITECTURE.md` (tree complete: framework `.2`, eight
+migrated surfaces `.3`–`.9c`, the three-category model `.9d`, and the orchestrator consolidation `.10a`);
+see also `docs/tasks/CORPUS-PATTERN-REUSE.md`.

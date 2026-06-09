@@ -527,249 +527,24 @@ impl EvidenceIr {
         for anchor in &mut section_anchors {
             anchor.source_path = promoted_markdown_path.clone();
         }
-        let mut section_pages: Vec<Vec<u32>> = vec![Vec::new(); section_anchors.len()];
-
-        let visual_motif_signal_names =
-            collect_signal_names_from_tables(&source_ir, prior_guidance.as_ref())
-                .into_iter()
-                .collect::<BTreeSet<_>>();
-        let visual_motif_actor_names =
-            collect_known_actor_names_for_semantic_hints(&source_ir, &[], prior_guidance.as_ref());
-        let mut visual_evidence = build_visual_evidence_items(
-            &source_ir.visual_assets,
-            prior_guidance.as_ref(),
-            &visual_motif_signal_names,
-            &visual_motif_actor_names,
-        );
-        let asset_id_to_visual_index: HashMap<String, usize> = visual_evidence
-            .iter()
-            .enumerate()
-            .map(|(idx, item)| (item.asset_id.clone(), idx))
-            .collect();
-
-        // Inject VLM-derived observations from SourceIR visual asset notes.
-        // These are written by `specforge enrich --vlm-provider <provider>` and carry
-        // typed diagram extractions that downstream SemanticIR parses into records.
-        inject_vlm_observations(
-            &source_ir.visual_assets,
-            &mut visual_evidence,
-            &asset_id_to_visual_index,
-        );
-        let asset_id_to_visual_evidence_id: HashMap<String, String> = visual_evidence
-            .iter()
-            .map(|item| (item.asset_id.clone(), item.evidence_id.clone()))
-            .collect();
-        let caption_key_to_asset_id = build_caption_key_index(&source_ir.visual_assets);
-        let reference_patterns = build_reference_patterns(&source_ir.visual_assets);
-        let asset_id_to_page: HashMap<String, u32> = source_ir
-            .visual_assets
-            .iter()
-            .filter_map(|asset| {
-                asset
-                    .page_id
-                    .as_deref()
-                    .and_then(page_number_from_page_id)
-                    .map(|page| (asset.asset_id.clone(), page))
-            })
-            .collect();
-
-        let mut evidence_spans = Vec::new();
-        let mut evidence_links = Vec::new();
-        let mut extracted_statements = Vec::new();
-        let mut caption_support: HashMap<String, Vec<String>> = HashMap::new();
-        let mut reference_support: HashMap<String, Vec<ReferenceSupport>> = HashMap::new();
-
-        let mut link_counter = 1usize;
+        // EXTRACTOR-ARCHITECTURE.10a — the statement/visual ASSEMBLY phase (visual-evidence items +
+        // VLM-note injection, the markdown-block span/statement/link loop, caption/reference observation
+        // back-annotation, section page ranges) is one cohesive named orchestrator instead of ~230 inline
+        // lines. Pure code motion; `statement_counter` continues into the seed/contract synthesizers below.
         let mut statement_counter = 1usize;
-
-        for (span_counter, block) in (1usize..).zip(parsed_markdown.blocks.iter()) {
-            let span_id = format!("span_{span_counter:04}");
-
-            let section_index = section_index_for_line(&section_anchors, block.line_start);
-            let caption_asset_id = caption_key_to_asset_id
-                .get(&normalize_text_key(&block.text))
-                .cloned();
-
-            let mut linked_asset_ids = Vec::new();
-            let mut source_page = None;
-            let mut note = None;
-
-            if let Some(asset_id) = caption_asset_id.clone() {
-                linked_asset_ids.push(asset_id.clone());
-                source_page = asset_id_to_page.get(&asset_id).copied();
-                note = Some("caption".to_string());
-            } else {
-                for reference_hit in extract_reference_hits(&block.text, &reference_patterns) {
-                    linked_asset_ids.push(reference_hit.asset_id.clone());
-                    reference_support
-                        .entry(reference_hit.asset_id.clone())
-                        .or_default()
-                        .push(ReferenceSupport {
-                            supporting_span_id: span_id.clone(),
-                            display_reference_text: reference_hit.display_reference_text,
-                        });
-                }
-            }
-
-            let modality = if linked_asset_ids.is_empty() {
-                EvidenceModality::Text
-            } else {
-                EvidenceModality::Mixed
-            };
-
-            if let Some(asset_id) = caption_asset_id {
-                let visual_evidence_id = asset_id_to_visual_evidence_id.get(&asset_id).ok_or_else(
-                    || {
-                        AppError::InvalidStageArtifact(format!(
-                            "visual asset `{asset_id}` referenced by caption span is missing a matching visual evidence item"
-                        ))
-                    },
-                )?;
-                caption_support
-                    .entry(asset_id)
-                    .or_default()
-                    .push(span_id.clone());
-                evidence_links.push(EvidenceLink {
-                    link_id: format!("link_{link_counter:04}"),
-                    from_evidence_span_id: span_id.clone(),
-                    to_visual_evidence_id: visual_evidence_id.clone(),
-                    relation: EvidenceLinkKind::Describes,
-                });
-                link_counter += 1;
-            } else {
-                for asset_id in &linked_asset_ids {
-                    let visual_evidence_id =
-                        asset_id_to_visual_evidence_id.get(asset_id).ok_or_else(|| {
-                            AppError::InvalidStageArtifact(format!(
-                                "visual asset `{asset_id}` referenced by text span is missing a matching visual evidence item"
-                            ))
-                        })?;
-                    evidence_links.push(EvidenceLink {
-                        link_id: format!("link_{link_counter:04}"),
-                        from_evidence_span_id: span_id.clone(),
-                        to_visual_evidence_id: visual_evidence_id.clone(),
-                        relation: EvidenceLinkKind::Cites,
-                    });
-                    link_counter += 1;
-                }
-            }
-
-            let visual_asset_id = if linked_asset_ids.len() == 1 {
-                linked_asset_ids.first().cloned()
-            } else {
-                None
-            };
-            evidence_spans.push(EvidenceSpan {
-                span_id: span_id.clone(),
-                modality,
-                source_path: promoted_markdown_path.clone(),
-                source_page,
-                line_start: Some(block.line_start),
-                line_end: Some(block.line_end),
-                visual_asset_id,
-                note,
-            });
-
-            if let Some(section_index) = section_index
-                && let Some(source_page) = source_page
-            {
-                section_pages[section_index].push(source_page);
-            }
-
-            let related_visual_evidence_ids: Vec<String> = linked_asset_ids
-                .iter()
-                .filter_map(|asset_id| asset_id_to_visual_evidence_id.get(asset_id).cloned())
-                .collect();
-            // Layer A: suppress NormativeStatement for sentences inside boilerplate sections
-            // (introduction, legal, revision history, etc.) — these are compliance obligations,
-            // not hardware behavioral constraints.
-            let section_is_boilerplate = section_index
-                .map(|idx| is_boilerplate_section_title(&section_anchors[idx].title))
-                .unwrap_or(false);
-            let raw_class = classify_statement(&block.text);
-            let class = if section_is_boilerplate
-                && matches!(raw_class, StatementClass::NormativeStatement)
-            {
-                StatementClass::SourceFact
-            } else {
-                raw_class
-            };
-
-            extracted_statements.push(ExtractedStatement {
-                statement_id: format!("statement_{statement_counter:04}"),
-                class,
-                modality: if related_visual_evidence_ids.is_empty() {
-                    EvidenceModality::Text
-                } else {
-                    EvidenceModality::Mixed
-                },
-                text: block.text.clone(),
-                evidence_span_ids: vec![span_id],
-                related_visual_evidence_ids,
-            });
-            statement_counter += 1;
-        }
-
-        for (asset_id, span_ids) in caption_support {
-            if let Some(visual_index) = asset_id_to_visual_index.get(&asset_id).copied() {
-                let visual_item = &mut visual_evidence[visual_index];
-                let caption_text = visual_item.caption_text.clone();
-                if let Some(caption_text) = caption_text {
-                    let observation_id = format!(
-                        "obs_{}_{}",
-                        visual_item.asset_id,
-                        visual_item.observations.len() + 1
-                    );
-                    visual_item.observations.push(VisualObservation {
-                        observation_id,
-                        kind: VisualObservationKind::Caption,
-                        created_by: "source_document".to_string(),
-                        text: caption_text,
-                        supporting_span_ids: span_ids,
-                        automation_confidence: AutomationConfidence::High,
-                    });
-                }
-            }
-        }
-
-        for (asset_id, supports) in reference_support {
-            if let Some(visual_index) = asset_id_to_visual_index.get(&asset_id).copied() {
-                let mut support_span_ids = Vec::new();
-                let mut figure_reference_text = None;
-                for support in supports {
-                    support_span_ids.push(support.supporting_span_id);
-                    if figure_reference_text.is_none() {
-                        figure_reference_text = Some(support.display_reference_text);
-                    }
-                }
-                let visual_item = &mut visual_evidence[visual_index];
-                visual_item.figure_reference_text = figure_reference_text.clone();
-                if let Some(reference_text) = figure_reference_text {
-                    let observation_id = format!(
-                        "obs_{}_{}",
-                        visual_item.asset_id,
-                        visual_item.observations.len() + 1
-                    );
-                    visual_item.observations.push(VisualObservation {
-                        observation_id,
-                        kind: VisualObservationKind::FigureReference,
-                        created_by: "specforge_evidence_builder".to_string(),
-                        text: reference_text,
-                        supporting_span_ids: support_span_ids,
-                        automation_confidence: AutomationConfidence::Medium,
-                    });
-                }
-            }
-        }
-
-        for (index, pages) in section_pages.into_iter().enumerate() {
-            if let (Some(min_page), Some(max_page)) =
-                (pages.iter().min().copied(), pages.iter().max().copied())
-            {
-                section_anchors[index].page_start = Some(min_page);
-                section_anchors[index].page_end = Some(max_page);
-            }
-        }
+        let AssembledEvidenceStatements {
+            visual_evidence,
+            evidence_spans,
+            evidence_links,
+            extracted_statements,
+        } = assemble_evidence_statements(
+            &source_ir,
+            &parsed_markdown,
+            &promoted_markdown_path,
+            &mut section_anchors,
+            &mut statement_counter,
+            prior_guidance.as_ref(),
+        )?;
 
         // Synthesize typed declarations from structured table data in SourceIR.
         // This provides the first seed set for the convergent loop:
@@ -10200,6 +9975,281 @@ fn dedup_actor_signal_relations(relations: Vec<ActorSignalRelation>) -> Vec<Acto
         }
     }
     deduped
+}
+
+/// EXTRACTOR-ARCHITECTURE.10a — the statement/visual ASSEMBLY phase output: the visual-evidence
+/// items (with VLM-note observations injected), the per-block evidence spans and span→visual links, and
+/// the extracted statements the convergence loop consumes.
+struct AssembledEvidenceStatements {
+    visual_evidence: Vec<VisualEvidenceItem>,
+    evidence_spans: Vec<EvidenceSpan>,
+    evidence_links: Vec<EvidenceLink>,
+    extracted_statements: Vec<ExtractedStatement>,
+}
+
+/// EXTRACTOR-ARCHITECTURE.10a — the statement/visual ASSEMBLY phase as one cohesive named orchestrator
+/// (the `.5` `synthesize_signal_declaration_seed` precedent; pure code motion out of
+/// `build_with_prior_memory`). It walks the promoted markdown's blocks once, producing evidence spans,
+/// span→visual evidence links, and classified `ExtractedStatement`s (minting span/link/statement ids;
+/// `statement_counter` is the build-wide counter the later seed/contract synthesizers continue from),
+/// back-annotates caption and figure-reference observations onto the visual evidence, and fills the
+/// section page ranges in place. Statement-assembly phase: deliberately NOT a `run_surface` driver
+/// surface (see the two-phase note in `ir/extractor.rs`).
+fn assemble_evidence_statements(
+    source_ir: &SourceIr,
+    parsed_markdown: &ParsedMarkdown,
+    promoted_markdown_path: &Path,
+    section_anchors: &mut [SectionAnchor],
+    statement_counter: &mut usize,
+    prior_guidance: Option<&EvidencePriorGuidance>,
+) -> Result<AssembledEvidenceStatements> {
+    let mut section_pages: Vec<Vec<u32>> = vec![Vec::new(); section_anchors.len()];
+
+    let visual_motif_signal_names = collect_signal_names_from_tables(source_ir, prior_guidance)
+        .into_iter()
+        .collect::<BTreeSet<_>>();
+    let visual_motif_actor_names =
+        collect_known_actor_names_for_semantic_hints(source_ir, &[], prior_guidance);
+    let mut visual_evidence = build_visual_evidence_items(
+        &source_ir.visual_assets,
+        prior_guidance,
+        &visual_motif_signal_names,
+        &visual_motif_actor_names,
+    );
+    let asset_id_to_visual_index: HashMap<String, usize> = visual_evidence
+        .iter()
+        .enumerate()
+        .map(|(idx, item)| (item.asset_id.clone(), idx))
+        .collect();
+
+    // Inject VLM-derived observations from SourceIR visual asset notes.
+    // These are written by `specforge enrich --vlm-provider <provider>` and carry
+    // typed diagram extractions that downstream SemanticIR parses into records.
+    inject_vlm_observations(
+        &source_ir.visual_assets,
+        &mut visual_evidence,
+        &asset_id_to_visual_index,
+    );
+    let asset_id_to_visual_evidence_id: HashMap<String, String> = visual_evidence
+        .iter()
+        .map(|item| (item.asset_id.clone(), item.evidence_id.clone()))
+        .collect();
+    let caption_key_to_asset_id = build_caption_key_index(&source_ir.visual_assets);
+    let reference_patterns = build_reference_patterns(&source_ir.visual_assets);
+    let asset_id_to_page: HashMap<String, u32> = source_ir
+        .visual_assets
+        .iter()
+        .filter_map(|asset| {
+            asset
+                .page_id
+                .as_deref()
+                .and_then(page_number_from_page_id)
+                .map(|page| (asset.asset_id.clone(), page))
+        })
+        .collect();
+
+    let mut evidence_spans = Vec::new();
+    let mut evidence_links = Vec::new();
+    let mut extracted_statements = Vec::new();
+    let mut caption_support: HashMap<String, Vec<String>> = HashMap::new();
+    let mut reference_support: HashMap<String, Vec<ReferenceSupport>> = HashMap::new();
+
+    let mut link_counter = 1usize;
+
+    for (span_counter, block) in (1usize..).zip(parsed_markdown.blocks.iter()) {
+        let span_id = format!("span_{span_counter:04}");
+
+        let section_index = section_index_for_line(section_anchors, block.line_start);
+        let caption_asset_id = caption_key_to_asset_id
+            .get(&normalize_text_key(&block.text))
+            .cloned();
+
+        let mut linked_asset_ids = Vec::new();
+        let mut source_page = None;
+        let mut note = None;
+
+        if let Some(asset_id) = caption_asset_id.clone() {
+            linked_asset_ids.push(asset_id.clone());
+            source_page = asset_id_to_page.get(&asset_id).copied();
+            note = Some("caption".to_string());
+        } else {
+            for reference_hit in extract_reference_hits(&block.text, &reference_patterns) {
+                linked_asset_ids.push(reference_hit.asset_id.clone());
+                reference_support
+                    .entry(reference_hit.asset_id.clone())
+                    .or_default()
+                    .push(ReferenceSupport {
+                        supporting_span_id: span_id.clone(),
+                        display_reference_text: reference_hit.display_reference_text,
+                    });
+            }
+        }
+
+        let modality = if linked_asset_ids.is_empty() {
+            EvidenceModality::Text
+        } else {
+            EvidenceModality::Mixed
+        };
+
+        if let Some(asset_id) = caption_asset_id {
+            let visual_evidence_id = asset_id_to_visual_evidence_id.get(&asset_id).ok_or_else(
+                    || {
+                        AppError::InvalidStageArtifact(format!(
+                            "visual asset `{asset_id}` referenced by caption span is missing a matching visual evidence item"
+                        ))
+                    },
+                )?;
+            caption_support
+                .entry(asset_id)
+                .or_default()
+                .push(span_id.clone());
+            evidence_links.push(EvidenceLink {
+                link_id: format!("link_{link_counter:04}"),
+                from_evidence_span_id: span_id.clone(),
+                to_visual_evidence_id: visual_evidence_id.clone(),
+                relation: EvidenceLinkKind::Describes,
+            });
+            link_counter += 1;
+        } else {
+            for asset_id in &linked_asset_ids {
+                let visual_evidence_id =
+                        asset_id_to_visual_evidence_id.get(asset_id).ok_or_else(|| {
+                            AppError::InvalidStageArtifact(format!(
+                                "visual asset `{asset_id}` referenced by text span is missing a matching visual evidence item"
+                            ))
+                        })?;
+                evidence_links.push(EvidenceLink {
+                    link_id: format!("link_{link_counter:04}"),
+                    from_evidence_span_id: span_id.clone(),
+                    to_visual_evidence_id: visual_evidence_id.clone(),
+                    relation: EvidenceLinkKind::Cites,
+                });
+                link_counter += 1;
+            }
+        }
+
+        let visual_asset_id = if linked_asset_ids.len() == 1 {
+            linked_asset_ids.first().cloned()
+        } else {
+            None
+        };
+        evidence_spans.push(EvidenceSpan {
+            span_id: span_id.clone(),
+            modality,
+            source_path: promoted_markdown_path.to_path_buf(),
+            source_page,
+            line_start: Some(block.line_start),
+            line_end: Some(block.line_end),
+            visual_asset_id,
+            note,
+        });
+
+        if let Some(section_index) = section_index
+            && let Some(source_page) = source_page
+        {
+            section_pages[section_index].push(source_page);
+        }
+
+        let related_visual_evidence_ids: Vec<String> = linked_asset_ids
+            .iter()
+            .filter_map(|asset_id| asset_id_to_visual_evidence_id.get(asset_id).cloned())
+            .collect();
+        // Layer A: suppress NormativeStatement for sentences inside boilerplate sections
+        // (introduction, legal, revision history, etc.) — these are compliance obligations,
+        // not hardware behavioral constraints.
+        let section_is_boilerplate = section_index
+            .map(|idx| is_boilerplate_section_title(&section_anchors[idx].title))
+            .unwrap_or(false);
+        let raw_class = classify_statement(&block.text);
+        let class =
+            if section_is_boilerplate && matches!(raw_class, StatementClass::NormativeStatement) {
+                StatementClass::SourceFact
+            } else {
+                raw_class
+            };
+
+        extracted_statements.push(ExtractedStatement {
+            statement_id: format!("statement_{statement_counter:04}"),
+            class,
+            modality: if related_visual_evidence_ids.is_empty() {
+                EvidenceModality::Text
+            } else {
+                EvidenceModality::Mixed
+            },
+            text: block.text.clone(),
+            evidence_span_ids: vec![span_id],
+            related_visual_evidence_ids,
+        });
+        *statement_counter += 1;
+    }
+
+    for (asset_id, span_ids) in caption_support {
+        if let Some(visual_index) = asset_id_to_visual_index.get(&asset_id).copied() {
+            let visual_item = &mut visual_evidence[visual_index];
+            let caption_text = visual_item.caption_text.clone();
+            if let Some(caption_text) = caption_text {
+                let observation_id = format!(
+                    "obs_{}_{}",
+                    visual_item.asset_id,
+                    visual_item.observations.len() + 1
+                );
+                visual_item.observations.push(VisualObservation {
+                    observation_id,
+                    kind: VisualObservationKind::Caption,
+                    created_by: "source_document".to_string(),
+                    text: caption_text,
+                    supporting_span_ids: span_ids,
+                    automation_confidence: AutomationConfidence::High,
+                });
+            }
+        }
+    }
+
+    for (asset_id, supports) in reference_support {
+        if let Some(visual_index) = asset_id_to_visual_index.get(&asset_id).copied() {
+            let mut support_span_ids = Vec::new();
+            let mut figure_reference_text = None;
+            for support in supports {
+                support_span_ids.push(support.supporting_span_id);
+                if figure_reference_text.is_none() {
+                    figure_reference_text = Some(support.display_reference_text);
+                }
+            }
+            let visual_item = &mut visual_evidence[visual_index];
+            visual_item.figure_reference_text = figure_reference_text.clone();
+            if let Some(reference_text) = figure_reference_text {
+                let observation_id = format!(
+                    "obs_{}_{}",
+                    visual_item.asset_id,
+                    visual_item.observations.len() + 1
+                );
+                visual_item.observations.push(VisualObservation {
+                    observation_id,
+                    kind: VisualObservationKind::FigureReference,
+                    created_by: "specforge_evidence_builder".to_string(),
+                    text: reference_text,
+                    supporting_span_ids: support_span_ids,
+                    automation_confidence: AutomationConfidence::Medium,
+                });
+            }
+        }
+    }
+
+    for (index, pages) in section_pages.into_iter().enumerate() {
+        if let (Some(min_page), Some(max_page)) =
+            (pages.iter().min().copied(), pages.iter().max().copied())
+        {
+            section_anchors[index].page_start = Some(min_page);
+            section_anchors[index].page_end = Some(max_page);
+        }
+    }
+
+    Ok(AssembledEvidenceStatements {
+        visual_evidence,
+        evidence_spans,
+        evidence_links,
+        extracted_statements,
+    })
 }
 
 /// EXTRACTOR-ARCHITECTURE.9c — the prose actor→signal relation strategy (the active/passive

@@ -1,4 +1,24 @@
 # DEVELOPMENT_NOTES
+## `EXTRACTOR-ARCHITECTURE.10a` (`2026-06-10`) — assembly-block extraction; TREE CLOSED
+- Pure code motion executed mechanically (scripted line-range cut + splice) to eliminate transcription
+  drift over 243 lines, with surgical seam substitutions only: `prior_guidance.as_ref()` → the
+  already-a-ref param; `promoted_markdown_path.clone()` → `.to_path_buf()` (param is `&Path` — clippy
+  `ptr_arg` forbids `&PathBuf`); `section_index_for_line(&section_anchors, …)` → bare `section_anchors`
+  (`&mut [T]` coerces to `&[T]` at call position); `statement_counter += 1` → `*statement_counter += 1`
+  (the decl became the `&mut usize` param — id continuity into the seed/contract synthesizers preserved);
+  `&source_ir,`/`&source_ir)` → `source_ir` while `&source_ir.visual_assets` field borrows stay.
+- The seam was verified clean BEFORE cutting: grep proved none of the region-internal index maps
+  (`asset_id_to_visual_index`, `caption_key_to_asset_id`, `reference_patterns`, `asset_id_to_page`,
+  `asset_id_to_visual_evidence_id`), `link_counter`, `section_pages`, `parsed_markdown`, or
+  `promoted_markdown_path` are referenced after the region inside `build()`.
+- Proof: FULL byte-identity INCLUDING the manifest over all 12 intact-bundle docs (stricter than the
+  `.9b`/`.9c` non-manifest comparisons — this slice must change nothing at all). Lib 1499 (no new tests:
+  code motion; the markdown-built `EvidenceIr::build` integration tests exercise every moved line);
+  kg-bench 151/151; full `run_ci.sh` green.
+- Close audit recorded in the tree: acceptance criteria all met; honest scope notes (stateful-assembly
+  producers off the drivers BY DESIGN; the LLM post-build commands tag `fact_provenance` and are future
+  work owned by whichever tree next touches them — they are not `build()` producers).
+
 ## `EXTRACTOR-ARCHITECTURE.10` (`2026-06-10`) — god-orchestrator retirement assessment (docs-only)
 - The honest measurement before declaring victory or doing more work: `build_with_prior_memory` is 449
   lines post-`.9d`. By mass: ~45 load/validate/layout (stays — build-entry concerns), ~45 visual-evidence

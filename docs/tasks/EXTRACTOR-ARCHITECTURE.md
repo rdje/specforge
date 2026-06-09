@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `EXTRACTOR-ARCHITECTURE`
-- Status: `active`
+- Status: `done` (CLOSED `2026-06-10` — all acceptance criteria met; see the final audit under `.10a`)
 - Roadmap lane: `R0` (engineering coherence) / `R15`/`R16` (extraction breadth substrate)
 - Created: `2026-06-09`
 - Parent: owner directive (`2026-06-09`, devil's-advocate review) — "the extraction path seems fragile … it
@@ -355,6 +355,53 @@ thin ~200-line named-phase sequence.** That is ONE bounded byte-identical slice 
 the loop is already cohesive, it just lives inline. After `.10a` the tree's acceptance criteria are met
 end-to-end and the tree can close (book close-rule applies at `.N`).
 
+## `.10a` — extract the statement/visual assembly block (the closing slice)
+
+Status: `done` (`2026-06-10`). Per the `.10` verdict: move blocks 2–4 (~230 lines — visual-evidence
+assembly + index maps, the markdown-block span/statement loop, caption/reference observation
+back-annotation, section page ranges) out of `build_with_prior_memory` into ONE named assembly-phase
+orchestrator (the `.5` `synthesize_signal_declaration_seed` precedent — cohesive code motion, zero logic
+change). `build()` keeps: load/validate/layout, section-anchor construction, the named phase calls, the
+struct literal. Verification: 12-doc FULL byte-identical proof (this slice changes no extraction logic AND
+no manifest content, so the comparison includes the manifest — stricter than `.9b`/`.9c`); full existing
+suite (the markdown-built build tests exercise the moved code directly); kg-bench; `run_ci.sh`. On green:
+the tree's acceptance criteria are met → CLOSE the tree (BOOK-METHOD-DOC close-rule: refresh the
+EXTRACTOR-ARCHITECTURE book subsection in the close commit).
+
+**DONE (`2026-06-10`).** New `AssembledEvidenceStatements` struct + `assemble_evidence_statements(...)`
+(243 lines moved verbatim — surgical seam substitutions only: `prior_guidance` already-a-ref, `&Path` →
+`to_path_buf()`, `*statement_counter`, the counter decl became the `&mut usize` param the seed/contract
+synthesizers continue from; `section_anchors: &mut [SectionAnchor]` gets its page ranges filled in place).
+`build_with_prior_memory` **449 → 224 lines** — a thin named-phase sequence (load/validate → anchors →
+`assemble_evidence_statements` → `synthesize_signal_declaration_seed` → contract synthesis →
+`register_record_surface` → timing → `converge_evidence_extractions` → the post-converge surface calls →
+provenance tagging → struct literal → carry-forward → semantic-hints refresh). The `.1` god-orchestrator
+is RETIRED. **Verification: ALL 12 intact-bundle docs rebuilt — FULL byte-identical INCLUDING the
+manifest** (stricter than `.9b`/`.9c`: zero behavior + zero manifest change); full lib suite 1499 green
+(the markdown-built build tests exercise the moved code directly); kg-bench 151/151; full `run_ci.sh`
+green. Book close-rule satisfied: the `quality/validation.md` subsection upgraded to the tree-level story
+(framework + manifest + how-verified).
+
+## Acceptance criteria — final audit (close, `2026-06-10`)
+
+- ✅ Typed `Extractor` abstraction + `ExtractionContext` + per-surface merge policy + single driver (two
+  modes) + inspectable `ExtractionManifest`, all unit-tested (`.2` + driver tests; manifest serde +
+  idempotence tests in `.8`).
+- ✅ Each migrated cluster: same records out — every migration slice byte-identical-proven over the
+  persisted corpus (`.3` FSM, `.4` semantic-hints, `.6` registers, `.7` actors, `.9a` serial-frame +
+  operations, `.9b` polarity, `.9c` relations); call sites collapsed to one-call registrations; no inline
+  dedup loops remain; explicit `applies_to` per unit; uniform manifest provenance per surface.
+- ✅ Adding a new extractor is a one-place registration — demonstrated live by `.9a` (the `.9.3b`
+  composition grammar joined `serial_frame` as a second strategy in one registry edit).
+- ✅ Full `scripts/run_ci.sh` green at every slice; KM card `extractor-path-architecture` maintained with
+  dated status updates.
+- Honest scope notes: the stateful-assembly producers (signal-declaration seed, constraint family) stay
+  OFF the drivers by design (documented in the `ir/extractor.rs` three-category model, `.9d`/`.10`); LLM
+  tiers (`nlp-enrich`/`signal-resolve`) still tag provenance via `fact_provenance` rather than running as
+  registered units — adopting them onto the frame is future work owned by whichever tree next touches
+  those commands, not a gap in this tree's acceptance criteria (they are post-build commands, not
+  `EvidenceIr::build()` producers).
+
 ## Current frontier
 
 `.1`–`.8` + `.9a` **done** — SIX surfaces registered and byte-identical-proven (FSM, semantic-hints,
@@ -367,8 +414,8 @@ done (`2026-06-10`): the converge-loop audit + BOTH migratable fixed-point surfa
 distinguishes table-driven vs prose-driven relation recovery per document (AXI table-dominant; SWD/I2C
 pure prose).** **`.9d` done (`2026-06-10`): the `ir/extractor.rs` module doc now encodes the full
 three-category model (members per driver mode, fixed-point recording semantics, post-pass order as
-contract, constraint family = design decision not debt).** **`.10` assessment done (`2026-06-10`): the
-`.1` god-orchestrator complaint is RESOLVED for the surface-extraction phase (8 one-call registrations);
-the remaining inline mass is the ~230-line statement/visual assembly block → ONE bounded byte-identical
-extraction slice `.10a` (`assemble_evidence_statements`-shaped), then the tree's acceptance criteria are
-met and it can close.** Frontier: `.10a`. **Owner may steer scope.**
+contract, constraint family = design decision not debt).** **`.10` assessment + `.10a` assembly-block
+extraction done (`2026-06-10`): `build_with_prior_memory` 449 → 224 lines, FULL byte-identical incl.
+manifest over all 12 intact-bundle docs — the god-orchestrator is retired.** **TREE CLOSED
+(`2026-06-10`): all acceptance criteria met (final audit under `.10a`); book close-rule satisfied
+(`quality/validation.md` tree-level subsection).** No open frontier.

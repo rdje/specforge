@@ -1,3 +1,20 @@
+### `EXTRACTOR-ARCHITECTURE.10a` — assembly-block extraction; god-orchestrator retired; TREE CLOSED
+The closing slice. The ~243-line statement/visual assembly block (visual-evidence items + VLM-note
+injection, the markdown-block span/statement/link loop, caption/reference observation back-annotation,
+section page ranges) moved verbatim out of `build_with_prior_memory` into one cohesive named orchestrator,
+`assemble_evidence_statements(...)` + `AssembledEvidenceStatements` (the `.5` seed precedent; surgical seam
+substitutions only — the build-wide `statement_counter` became the `&mut usize` param the seed/contract
+synthesizers continue from). **`build_with_prior_memory` is now 224 lines (449 before the slice, ~565 at
+the `.1` audit) — a thin sequence of named phases.** Verification was the strictest in the tree: all 12
+intact-bundle docs rebuilt **FULLY byte-identical INCLUDING the extraction manifest** (zero behavior, zero
+manifest change); lib suite 1499 green; kg-bench 151/151; full `run_ci.sh`.
+
+**`EXTRACTOR-ARCHITECTURE` CLOSED (`2026-06-10`)** — all acceptance criteria met: typed
+`Extractor`/drivers/manifest unit-tested; 8 surfaces migrated byte-identically; one-place registration
+demonstrated live (`.9a`); CI green throughout; stateful-assembly producers stay off the drivers by
+documented design. Book close-rule satisfied: the `quality/validation.md` subsection upgraded to the
+tree-level story (framework + manifest + how-verified, why-before-what).
+
 ### `EXTRACTOR-ARCHITECTURE.10` — god-orchestrator retirement assessment (docs-only audit)
 Read the post-`.9d` `build_with_prior_memory` end-to-end (449 lines, was ~565 at the `.1` audit) and
 enumerated inline-vs-extracted. **The `.1` complaint is resolved for the surface-extraction phase**: all 8
