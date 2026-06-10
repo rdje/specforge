@@ -1,3 +1,27 @@
+### `LLM-PRIMARY-PROMOTION.3b` — temporal-derivation parity: the promotion replace now re-applies the build-path polarity refinement; AXI promoted, all three wire docs on the clean surface
+The probe pinned the single guilty factor per-item (the other two leaf candidates — antecedent
+recovery and actor grounding — were probed and CLEARED by construction): the evidence build
+polarity-refines `must_be_deasserted`→`must_be_low` via the document's resolved polarity
+(SYSCOREQ/SYSCOACK are persisted `active_high`) BEFORE persisting, while the post-build
+promotion replace skipped that refinement — so the promoted shape fed the typed temporal layer
+a symbolic `DEASSERTED` where the gold (and the build-path surface) say `LOW`. A synthetic
+/tmp evidence copy differing ONLY in those two kinds demonstrated the chain deterministically
+(derived rules identical to gold except the value). Fix: `pub(crate)
+evidence::apply_persisted_polarity_to_constraints` (resolved map from the artifact's persisted
+`signal_polarities` → the exact build-path refinement) called in `promote_constraints` BEFORE
+dedup so the canonical key sees the refined kind; ungrounded polarity keeps the symbolic kind
+— never guessed. +1 record-matrix test (lib 1546). **Live battery (clean protocol, Pattern
+baseline verified first): AXI promoted 102→54→50, `seed_axi_temporal` 3/3 = P=R=F1 1.000 on
+the promoted CANONICAL artifact** — plus seed_axi 4/4, APB/AHB 6/6 each, filtered relations
+1.000, apb/ahb temporal 3/3+4/4, SWD/I2C intact, kg-bench 154/154; gauge re-measured +
+persisted on the promoted surface (48.0% not-entailed vs 91.0% Pattern; honest note: the NLI
+judge lacks the polarity fact, so refined "must be LOW" claims read as not-entailed against
+"must be deasserted" sources — the per-item-verified gold gates outrank the heuristic gauge).
+APB/AHB scanned for latent unrefined records: zero. **Canonical state: APB+AHB+AXI all carry
+the promoted surface; the `.4` default-flip decision packet is UNBLOCKED.** Pre-existing
+residual observed (untouched by this slice): seed_nvme/seed_riscv register evals read 0 — the
+`.3c` evidence rebuild shifted their gold statement-id anchors (`eval-scores-persisted-evidence`).
+
 ### `LLM-PRIMARY-PROMOTION.3a` — the model-misspelled-subject snap (live-proven); a second gap (`.3b`) keeps AXI reverted
 The snap is live: a proposed constraint subject that does NOT occur in its own source sentence
 (the extractor's subjects are quotes) is snapped to the document's own token when the sentence

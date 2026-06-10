@@ -9,6 +9,9 @@ answers:
   - "what happens to the extraction-quality gauge when the constraint surface is replaced"
   - "how is a promoted constraint surface visible in the extraction manifest"
   - "is the LLM-primary promotion a recall improvement"
+  - "why did the promoted surface lose the AXI reset temporal rules (DEASSERTED vs LOW)"
+  - "does a replaced constraint surface get polarity refinement (apply_persisted_polarity_to_constraints)"
+  - "must a post-build signal_constraints replace re-apply build-path invariants"
 date: 2026-06-10
 tags: [extraction-quality, llm-primary, promotion, converge, constraints, manifest]
 evidence: crates/specforge/src/commands/extract_constraints_llm.rs (promote_constraints); crates/specforge/src/commands/converge.rs (maybe_promote_constraints); crates/specforge/src/ir/extractor.rs (record_surface_manifest); docs/tasks/LLM-PRIMARY-PROMOTION.md
@@ -54,5 +57,23 @@ token. NEW defect class: model-misspelled subject on an otherwise-grounded propo
 `.3a` document-grounded typo snap (edit distance 1, candidate must literally appear in the
 sentence AND pass signal typing, exactly one candidate — else the honest drop stands).
 Default-flip stays blocked until `.3a` re-clears AXI.
+
+`.3b` (`2026-06-10`) closed the SECOND AXI gap and put **all three wire docs (APB/AHB/AXI) on
+promoted canonical surfaces with every gold gate at 1.000**. Durable invariant: **a post-build
+`signal_constraints` replace MUST re-apply the build path's polarity refinement** — the build
+collapses `MustBeDeasserted`→`MustBeLow`/`MustBeHigh` via the document's resolved polarity
+(`apply_signal_polarity_to_constraints`) BEFORE persisting, so every kind consumer (the typed
+temporal layer, NLI gauge claim text, ISF adapter) assumes a refined surface; the promotion
+replace skipped it, so promoted AXI fed the temporal layer symbolic `DEASSERTED` where gold
+(and the document's persisted `active_high` records for SYSCOREQ/SYSCOACK) say `LOW` — both
+reset rules lost even with correct spellings. Fix: `pub(crate)
+evidence::apply_persisted_polarity_to_constraints` (resolved map from the artifact's persisted
+`signal_polarities`) called in `promote_constraints` BEFORE dedup (the canonical key sees the
+refined kind). Ungrounded polarity keeps the symbolic kind — never guessed. Probe method that
+pinned it: synthetic /tmp evidence copy differing ONLY in the two reset kinds → rules identical
+to gold except `DEASSERTED`≠`LOW`; antecedent parsing (`when `-stripping) and actor grounding
+(connectivity-derived) probed and CLEARED. Honest gauge note: refinement trades NLI-gauge
+optics for gold-gate correctness (the judge marks "must be LOW" not-entailed vs source "must
+be deasserted" — it lacks the polarity fact); AXI promoted gauge reads 48.0% vs 91.0% Pattern.
 Related: [[extraction-quality-gauge-standing]], [[llm-primary-condition-subject-gate]],
-[[llm-primary-permissive-frame-gate]].
+[[llm-primary-permissive-frame-gate]], [[model-misspelled-subject-snap]].

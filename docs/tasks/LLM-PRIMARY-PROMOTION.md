@@ -3,9 +3,8 @@
 ## Metadata
 
 - Tree ID: `LLM-PRIMARY-PROMOTION`
-- Status: `active` (`.1`–`.3a` DONE `2026-06-10`; `.3b` frontier — APB/AHB promoted +
-  gate-cleared, AXI reverted: the typo snap is live-proven but the temporal-derivation
-  parity gap blocks AXI promotion)
+- Status: `active` (`.1`–`.3b` DONE `2026-06-10`; `.4` frontier — APB/AHB/AXI ALL promoted +
+  gate-cleared on canonical artifacts; the default-flip decision packet is unblocked)
 - Roadmap lane: `R15e`/`R16` (extraction quality / production-readiness)
 - Created: `2026-06-10`
 - Parent context: `EXTRACTION-QUALITY-GAUGE.0`'s standing gauge made the gap VISIBLE: the
@@ -164,15 +163,47 @@
   both gates re-verified 1.000; 102 constraints). Measurement-protocol lesson recorded: an
   already-promoted artifact is NOT a valid promotion input — always restore the Pattern
   baseline first (one invalid intermediate run caught + discarded).
-- ID: `LLM-PRIMARY-PROMOTION.3b` · Status: `pending` · Goal: **temporal-derivation parity for
-  promoted constraints** — probe-first: diff per-item how the SemanticIR temporal layer
-  derives the two gold reset rules from the PATTERN surface (which passes) vs the LLM-primary
-  surface (which loses both, even with correct subjects/conditions: `must_be_deasserted` +
-  "when ARESETn is asserted"). Candidate factors to probe, not guess: consequent value
-  collapse (DEASSERTED→LOW needs grounded polarity), antecedent recovery from the
-  condition_text vs the Pattern records' statement linkage, supporting-statement ids feeding
-  actor grounding (`C:ads|MANAGER|…`). Then fix in whichever layer is honestly deficient and
-  re-run the FULL battery (seed_axi_temporal 3/3 on the promoted artifact = the `.4` unblock).
+- ID: `LLM-PRIMARY-PROMOTION.3b` · Status: `done` (`2026-06-10`, CODE + live battery) · Goal:
+  **temporal-derivation parity for promoted constraints** — probe-first per-item diff, then fix
+  the honestly deficient layer.
+  **Probe verdict (all three candidate factors checked, one guilty):** antecedent recovery has
+  parity (`parse_temporal_condition_predicates` strips a leading `when ` — both surfaces parse
+  "ARESETn is asserted" → `ARESETN ASSERTED pre_tick`); actor grounding has parity (the
+  `Manager`/`Subordinate` drive predicates come from `unique_producer_by_signal` over
+  `signal_connectivity`, untouched by promotion); **the guilty factor is consequent value
+  collapse: the build path polarity-refines `MustBeDeasserted`→`MustBeLow` via
+  `apply_signal_polarity_to_constraints` (SYSCOREQ/SYSCOACK are persisted `active_high` from
+  `table_0238`) BEFORE persisting, while the post-build promotion replace skipped that
+  refinement entirely — so the promoted shape fed the temporal layer a symbolic `DEASSERTED`
+  the gold (and the rest of the pipeline) knows as `LOW`.** Synthetic probe demonstrated the
+  chain deterministically: a /tmp evidence copy with ONLY the two reset kinds set to
+  `must_be_deasserted` derives rules identical to gold except value `DEASSERTED`≠`LOW`; the
+  canonical Pattern artifact derives `LOW`. The temporal layer is doctrine-correct (symbolic
+  stays symbolic when polarity is ungrounded) — the deficiency was the broken build-path
+  INVARIANT at the replace point, which also skewed every other kind consumer (NLI gauge claim
+  text, ISF adapter).
+  **Shipped:** `evidence::apply_persisted_polarity_to_constraints` (`pub(crate)` wrapper:
+  resolved map from persisted `signal_polarities` records → the same build-path refinement) +
+  the call in `promote_constraints` BEFORE dedup (the canonical dedup key sees the refined
+  kind). +1 record-matrix test (deasserted+AH→LOW, deasserted+AL→HIGH, asserted+AL→LOW,
+  ungrounded stays symbolic, value-kinds untouched); lib 1546. APB/AHB promoted artifacts
+  scanned: ZERO latent unrefined-with-grounded-polarity records — no re-promotion needed.
+  **Live battery (clean protocol: AXI verified at Pattern baseline first):** promotion
+  102→54→50 (reproducing `.3`/`.4` exactly); promoted records carry `SYSCOREQ`/`SYSCOACK`
+  `must_be_low` ("when ARESETn is asserted", statement_4690); downstream rebuilt;
+  **seed_axi_temporal 3/3 P=R=F1=1.000 on the promoted CANONICAL artifact — the `.4` unblock.**
+  Full battery green: seed_axi 4/4 + filtered relations 1.000; seed_apb 6/6 / seed_ahb 6/6 +
+  filtered relations 1.000; seed_apb_temporal 3/3; seed_ahb_temporal 4/4; seed_swd 1.000 ×4
+  surfaces; seed_i2c filtered 1.000; kg-bench 154/154. Gauge re-measured + persisted on the
+  promoted surface: 24/50 not-entailed (48.0%) vs 91.0% Pattern. HONEST gauge note: the
+  refinement trades NLI-gauge optics for gold-gate correctness — the NLI judge marks
+  "SYSCOACK must be LOW" not-entailed against source "must be deasserted" because it lacks the
+  document's polarity grounding; the per-item-verified gold gates outrank the heuristic gauge
+  (`feedback_scoring_rigor`). PRE-EXISTING residual observed (NOT this slice, untouched
+  artifacts + untouched eval code): seed_nvme/seed_riscv register evals read 0 because the
+  `.3c` evidence rebuild shifted statement-id anchors (`eval-scores-persisted-evidence`
+  gotcha) — a re-anchoring leaf belongs to the eval-fixture lane, not this tree.
+  **Canonical state: APB + AHB + AXI all PROMOTED with all gates green.**
 - ID: `LLM-PRIMARY-PROMOTION.4` · Status: `pending` · Goal: corpus sweep + tracked validation
   snapshot refresh + the default-flip decision packet (owner-visible: per-doc gauge deltas,
   gold-gate status, recommendation).
@@ -181,8 +212,7 @@
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `.3b` | `pending` | Temporal-derivation parity: why the gold reset rules derive from the Pattern surface but not the LLM-primary one (probe per-item, fails even for correctly-spelled SYSCOACK) |
-| 2 | `.4` | `pending` | Corpus evidence for the default-flip decision (needs `.3b` green on AXI) |
+| 1 | `.4` | `pending` | Corpus sweep + tracked validation snapshot refresh + the default-flip decision packet (UNBLOCKED — `.3b` green on AXI; all three wire docs promoted with gates 1.000) |
 
 ## Changelog
 
@@ -217,3 +247,18 @@
   BOTH gold reset rules from the LLM-primary shape (even correctly-spelled SYSCOACK), so AXI
   stays reverted (gates re-verified 1.000) and the default-flip stays blocked. lib 1545. See
   [[model-misspelled-subject-snap]].
+- `2026-06-10`: `.3b` DONE — temporal-derivation parity restored. Probe pinned the single
+  guilty factor per-item (synthetic /tmp shape-diff: only the constraint kind differs →
+  consequent `DEASSERTED`≠gold `LOW`): the post-build promotion replace skipped the build
+  path's polarity refinement; SYSCOREQ/SYSCOACK are persisted `active_high`, so the build
+  path collapses `must_be_deasserted`→`must_be_low` before any consumer reads the surface.
+  Fix = `apply_persisted_polarity_to_constraints` (evidence.rs `pub(crate)` wrapper over the
+  build-path refinement, fed by the artifact's persisted `signal_polarities`) called in
+  `promote_constraints` before dedup. Antecedent parsing and actor grounding were probed and
+  CLEARED (parity by construction). Live: AXI promoted 102→54→50, seed_axi_temporal 3/3 =
+  1.000 on the promoted canonical artifact, full battery green (constraints 1.000 ×3, filtered
+  relations 1.000, temporal 3/3+4/4+3/3, SWD/I2C intact, kg-bench 154/154); gauge 48.0%
+  not-entailed on the promoted surface (vs 91.0% Pattern) with the honest NLI-judge-lacks-
+  polarity note recorded. APB/AHB scanned for latent unrefined records: zero. **All three
+  wire docs now carry the promoted surface on canonical artifacts; `.4` unblocked.** lib 1546.
+  See [[llm-primary-promotion-stage]].

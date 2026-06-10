@@ -125,6 +125,15 @@ pub fn promote_constraints(
             }
         }
     }
+    // `.3b` — restore the build-path invariant on the replaced surface: refine
+    // asserted/deasserted kinds via the document's persisted resolved polarity, exactly as
+    // the build applies before persisting. Without this the promoted shape feeds the
+    // temporal layer a symbolic ASSERTED/DEASSERTED value the document already grounds to a
+    // level. Runs BEFORE dedup so the canonical dedup key sees the refined kind.
+    crate::ir::evidence::apply_persisted_polarity_to_constraints(
+        &mut new_constraints,
+        &ir.signal_polarities,
+    );
     // .4 — collapse exact-duplicate obligations (same subject, kind, value, condition),
     // merging the duplicates' supporting statements so provenance is preserved.
     let grounded = new_constraints.len();

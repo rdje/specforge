@@ -528,6 +528,21 @@ or a candidate the document does not declare — and no correction happens. A su
 appear in its sentence is never rewritten, so the snap can fix a typo but can never invent or
 substitute a name.
 
+The grounded set then gets the same **polarity refinement** the normal evidence build
+applies — another lesson the promotion gold gates taught. When a document grounds a signal's
+active level (a *"Active-High"* column in its own signal table, explicit polarity prose), the
+build pipeline collapses a symbolic *"must be deasserted"* into the concrete level it means —
+SYSCOREQ and SYSCOACK are declared active-high, so *"must be deasserted when ARESETn is
+asserted"* becomes **must be LOW** — before any downstream consumer reads the surface. A
+replaced surface has to honor that same invariant, or the typed temporal layer (and every
+other consumer of the constraint kind) suddenly sees a symbolic `DEASSERTED` where the rest
+of the pipeline — and the hand-validated gold — knows the document already said `LOW`. That
+exact gap is what the AXI temporal gate caught: the promoted surface lost both reset-rule
+facts purely because the replacement skipped the refinement. The refinement uses **only the
+document's own persisted polarity records** — a signal whose polarity the document never
+grounds keeps its symbolic asserted/deasserted kind, because turning "deasserted" into a
+voltage level without the document saying which way the signal is active would be a guess.
+
 Finally, the surviving set is **de-duplicated**: a specification often restates
 the same requirement in several places, and the same `(signal, kind, value,
 condition)` fact re-extracted from three statements becomes *one* record that

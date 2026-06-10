@@ -4431,6 +4431,26 @@ fn apply_signal_polarity_to_constraints(
     }
 }
 
+/// `LLM-PRIMARY-PROMOTION.3b` — re-apply the build path's polarity refinement to a REPLACED
+/// constraint surface, from the document's persisted resolved-polarity records. The in-build
+/// pipeline refines asserted/deasserted kinds through [`apply_signal_polarity_to_constraints`]
+/// before any consumer sees the surface; a post-build replace (constraint promotion) must
+/// restore the same invariant, or downstream kind consumers — the temporal layer, the NLI
+/// gauge claim text, the ISF adapter — receive an unrefined shape the build path never
+/// persists (live failure: the AXI reset rules derived `DEASSERTED` instead of the
+/// polarity-grounded `LOW`). Signals without a persisted resolved polarity keep their
+/// symbolic asserted/deasserted kind — refinement never guesses a level.
+pub(crate) fn apply_persisted_polarity_to_constraints(
+    constraints: &mut [SignalConstraintRecord],
+    signal_polarities: &[SignalPolarityRecord],
+) {
+    let resolved: HashMap<String, SignalPolarity> = signal_polarities
+        .iter()
+        .map(|record| (record.signal_name.clone(), record.polarity))
+        .collect();
+    apply_signal_polarity_to_constraints(constraints, &resolved);
+}
+
 /// Recognize a logic-level VALUE BINDING in an active construction the discovered-value /
 /// "must be `<value>`" path misses — e.g. "the Requester must drive PSTRB LOW", "X is tied
 /// HIGH". Returns the kind (`MustBeHigh`/`MustBeLow`) when a logic-level **word** (the
@@ -14906,6 +14926,85 @@ mod tests {
         );
 
         Ok(())
+    }
+
+    // LLM-PRIMARY-PROMOTION.3b — a REPLACED constraint surface (promotion) re-applies the
+    // build-path polarity refinement from the document's PERSISTED resolved records: a
+    // grounded active-high deassertion collapses to MustBeLow (the live AXI reset-rule
+    // shape the temporal gate caught), active-low inverts, an ungrounded signal keeps its
+    // symbolic kind (refinement never guesses a level), and non-level kinds are untouched.
+    #[test]
+    fn persisted_polarity_records_refine_replaced_constraint_surface() {
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let record = |id: &str, subject: &str, kind: SignalConstraintKind| SignalConstraintRecord {
+            constraint_id: id.to_string(),
+            subject_signal: subject.to_string(),
+            constraint_kind: kind,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: String::new(),
+            supporting_statement_ids: Vec::new(),
+            automation_confidence: AutomationConfidence::Medium,
+        };
+        let polarity =
+            |signal: &str, polarity: super::SignalPolarity| super::SignalPolarityRecord {
+                signal_name: signal.to_string(),
+                polarity,
+                supporting_statement_ids: Vec::new(),
+                supporting_table_ids: Vec::new(),
+                automation_confidence: AutomationConfidence::Medium,
+            };
+
+        let mut constraints = vec![
+            record("c0", "XREQ", SignalConstraintKind::MustBeDeasserted),
+            record("c1", "XACK_N", SignalConstraintKind::MustBeDeasserted),
+            record("c2", "XSEL_N", SignalConstraintKind::MustBeAsserted),
+            record("c3", "XFLOAT", SignalConstraintKind::MustBeDeasserted),
+            record(
+                "c4",
+                "XREQ",
+                SignalConstraintKind::MustBeValue {
+                    value: "IDLE".to_string(),
+                },
+            ),
+        ];
+        let polarities = vec![
+            polarity("XREQ", super::SignalPolarity::ActiveHigh),
+            polarity("XACK_N", super::SignalPolarity::ActiveLow),
+            polarity("XSEL_N", super::SignalPolarity::ActiveLow),
+        ];
+
+        super::apply_persisted_polarity_to_constraints(&mut constraints, &polarities);
+
+        assert_eq!(
+            constraints[0].constraint_kind,
+            SignalConstraintKind::MustBeLow,
+            "grounded active-high deassertion collapses to LOW (the AXI reset shape)"
+        );
+        assert_eq!(
+            constraints[1].constraint_kind,
+            SignalConstraintKind::MustBeHigh,
+            "grounded active-low deassertion collapses to HIGH"
+        );
+        assert_eq!(
+            constraints[2].constraint_kind,
+            SignalConstraintKind::MustBeLow,
+            "grounded active-low assertion collapses to LOW"
+        );
+        assert_eq!(
+            constraints[3].constraint_kind,
+            SignalConstraintKind::MustBeDeasserted,
+            "no persisted polarity keeps the symbolic kind — a level is never guessed"
+        );
+        assert_eq!(
+            constraints[4].constraint_kind,
+            SignalConstraintKind::MustBeValue {
+                value: "IDLE".to_string()
+            },
+            "non-level kinds are untouched by polarity refinement"
+        );
     }
 
     #[test]

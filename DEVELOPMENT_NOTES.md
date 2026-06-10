@@ -1,4 +1,44 @@
 # DEVELOPMENT_NOTES
+## `LLM-PRIMARY-PROMOTION.3b` (`2026-06-10`) — the promotion replace must re-apply build-path invariants (polarity refinement)
+- Probe method (per-item, no guessing): the leaf named three candidate factors. Two cleared by
+  code-reading parity: `parse_temporal_condition_predicates` strips a leading `when ` (both
+  surfaces' condition text parses to `ARESETN ASSERTED pre_tick`), and the
+  `Manager`/`Subordinate` drive consequents come from `unique_producer_by_signal` over
+  `signal_connectivity` (untouched by promotion). The third was guilty and was DEMONSTRATED,
+  not inferred: a /tmp copy of the canonical AXI EvidenceIR with ONLY `sigcon_0048/0049` kinds
+  flipped to `must_be_deasserted` (the LLM-primary shape) derives temporal rules identical to
+  gold except consequent `DEASSERTED`≠`LOW`; the canonical Pattern artifact derives `LOW`.
+- Root cause is an INVARIANT break, not a temporal-layer bug: the build path runs
+  `apply_signal_polarity_to_constraints` (resolved polarity: SYSCOREQ/SYSCOACK persisted
+  `active_high` from `table_0238`) before persisting, so every kind consumer — temporal layer,
+  NLI gauge claim text, ISF adapter — assumes a refined surface. The temporal layer's
+  symbolic-stays-symbolic behavior is doctrine-correct (polarity-aware collapse only under
+  grounded polarity). The post-build replace simply never restored the invariant.
+- Fix shape: `pub(crate) evidence::apply_persisted_polarity_to_constraints(constraints,
+  &ir.signal_polarities)` — rebuilds the resolved map from the artifact's PERSISTED resolved
+  records (exactly what the build persisted in `final_signal_polarities`) and delegates to the
+  same refinement; called in `promote_constraints` BEFORE `dedup_constraints` so the canonical
+  dedup key `(subject, kind, value, condition)` sees the refined kind (two model spellings of
+  one obligation merge correctly). Field constraints deliberately untouched — polarity is a
+  wire-level concept; fields are not signals.
+- APB/AHB latent-defect scan (per-item honesty): zero promoted records with an unrefined
+  asserted/deasserted kind AND a grounded subject polarity → no re-promotion needed there.
+- Live battery on the clean protocol (Pattern baseline verified: 102 constraints, no
+  `llm_primary` manifest entry): promotion reproduced 102→54→50 (4 merged) exactly; promoted
+  records `SYSCOREQ`/`SYSCOACK` `must_be_low` + "when ARESETn is asserted" + statement_4690
+  (snap + refinement composing); downstream rebuilt; seed_axi_temporal 3/3 (the `.4` unblock),
+  full battery green, kg-bench 154/154, lib 1546.
+- Honest gauge trade recorded: AXI promoted gauge reads 48.0% not-entailed (vs 36.0% in `.3`'s
+  pre-fix promoted run, 91.0% Pattern) — several refined `must be LOW` claims are marked
+  not-entailed against their `must be deasserted` sources because the NLI judge has no
+  polarity grounding. Gold gates (per-item verified) outrank the heuristic gauge
+  (`feedback_scoring_rigor`); the gauge keeps its flag-for-review role.
+- Pre-existing residual (NOT this slice; untouched artifacts + untouched eval code):
+  seed_nvme/seed_riscv register evals read 0/29 and 0/34 — the evidence artifacts DO carry the
+  registers (42/201 and 44/179) but the `.3c` evidence rebuild shifted statement-id anchors
+  (`eval-scores-persisted-evidence` gotcha). A re-anchoring leaf belongs to the eval-fixture
+  lane.
+
 ## `LLM-PRIMARY-PROMOTION.3a` (`2026-06-10`) — the subject snap; trigger = absence-from-sentence
 - First cut (typing-failure trigger) was WRONG and the per-item audit caught it: production
   `classify_entity` DEFERS to the always-Signal judge for an undeclared non-structural token,

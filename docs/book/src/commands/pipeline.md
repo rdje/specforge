@@ -178,9 +178,14 @@ The placement is deliberate. The convergence loop enforces a monotone knowledge 
 may never shrink pass-to-pass — and a promotion *is* a shrink by design (it replaces a noisy
 102-record surface with a clean ~50-record one). So promotion runs outside the loop, on the
 final artifact: stabilize → rescan step → promote → rebuild SemanticIR/IntentIR/adapter once →
-measure the quality gauge on the **promoted** surface. The swap is recorded in the extraction
-manifest (`constraints.llm_primary`), the field-scoped obligations keep routing to
-`message_field_constraints`, and the summary reports the before/after:
+measure the quality gauge on the **promoted** surface. The replacement preserves the build
+pipeline's invariants: the swap is recorded in the extraction manifest
+(`constraints.llm_primary`), the field-scoped obligations keep routing to
+`message_field_constraints`, and the grounded records get the same **polarity refinement** the
+normal evidence build applies (a symbolic "must be deasserted" collapses to the concrete level
+only when the document's own persisted polarity records ground it — see the
+[`extract-constraints-llm` section](quality-and-learning.md#extract-constraints-llm) for the
+AXI reset-rule case the gold gates caught). The summary reports the before/after:
 
 ```text
 constraint_promotion: 18 (Pattern) → 21 kept (LLM-primary; field constraints 0; downstream rebuilt)

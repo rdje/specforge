@@ -3,7 +3,7 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Regenerate with `knowledge-map/scripts/gen_knowledge_map.sh`.
 > Source of truth = YAML front-matter in: `docs/knowledge docs/decisions`. Edit the fact files, never this map.
 > A fact is any `.md` whose front-matter has a non-empty `answers:` list.
-> **63** facts · **363** question keys.
+> **63** facts · **366** question keys.
 
 ## Questions → fact
 
@@ -31,6 +31,7 @@
 - "does SpecForge model-check temporal properties" -> [temporal-logic-choice](docs/knowledge/temporal-logic-choice.md) · 2026-06-04 · reverify: `grep -n "fn temporal_rule_to_ltl" crates/specforge/src/ir/temporal_ltl.rs`
 - "does SpecForge revise or decay priors" -> [contested-priors](docs/knowledge/contested-priors.md) · 2026-06-04 · reverify: `grep -n "fn contested_priors" crates/specforge/src/ir/prior_memory.rs`
 - "does SpecForge use LTL CTL or TLA+" -> [temporal-logic-choice](docs/knowledge/temporal-logic-choice.md) · 2026-06-04 · reverify: `grep -n "fn temporal_rule_to_ltl" crates/specforge/src/ir/temporal_ltl.rs`
+- "does a replaced constraint surface get polarity refinement (apply_persisted_polarity_to_constraints)" -> [llm-primary-promotion-stage](docs/knowledge/llm-primary-promotion-stage.md) · 2026-06-10 · reverify: `cargo test -p specforge --lib promote_constraints_records 2>&1 | tail -2`
 - "does agreement between sources boost confidence" -> [dempster-fusion](docs/knowledge/dempster-fusion.md) · 2026-06-04 · reverify: `grep -n "fn dempster_corroborate_confidence" crates/specforge/src/ir/fusion.rs`
 - "does corpus prior memory only accrete" -> [contested-priors](docs/knowledge/contested-priors.md) · 2026-06-04 · reverify: `grep -n "fn contested_priors" crates/specforge/src/ir/prior_memory.rs`
 - "does encryption block the VLM from reading tables (no)" -> [vlm-table-strategy](docs/knowledge/vlm-table-strategy.md) · 2026-06-07 · reverify: `./target/debug/specforge enrich generated/source_ir/<key>/source_ir.json --vlm-provider ollama --vlm-model qwen2.5vl:7b   # prints tables_reclassified_by_vlm`
@@ -160,6 +161,7 @@
 - "is there a PSL or SVA export of temporal rules" -> [temporal-rule-ltl-rendering](docs/knowledge/temporal-rule-ltl-rendering.md) · 2026-06-04 · reverify: `grep -n "fn temporal_rule_to_ltl" crates/specforge/src/ir/temporal_ltl.rs`
 - "is there a lowering-completeness check for temporal rules" -> [isf-temporal-lowering-no-silent-drop](docs/knowledge/isf-temporal-lowering-no-silent-drop.md) · 2026-06-04 · reverify: `grep -n "temporal_residuals" crates/specforge/src/ir/isf_ir.rs crates/specforge/src/ir/adapters.rs`
 - "is tier-agreement a good confidence axis for conformal calibration" -> [conformal-tier-agreement-degenerate](docs/knowledge/conformal-tier-agreement-degenerate.md) · 2026-06-06 · reverify: `grep -n "tier_count_by_fact_key\|nli_conformal_pass" crates/specforge/src/ir/nli_verify.rs`
+- "must a post-build signal_constraints replace re-apply build-path invariants" -> [llm-primary-promotion-stage](docs/knowledge/llm-primary-promotion-stage.md) · 2026-06-10 · reverify: `cargo test -p specforge --lib promote_constraints_records 2>&1 | tail -2`
 - "qwen2.5vl vs qwen3-vl which model" -> [llm-vlm-provider-default](docs/knowledge/llm-vlm-provider-default.md) · 2026-06-01 · reverify: `grep -n "qwen2.5vl" crates/specforge/src/commands/llm_text.rs`
 - "should I build an isf lowering-completeness verifier for temporal rules" -> [isf-temporal-lowering-no-silent-drop](docs/knowledge/isf-temporal-lowering-no-silent-drop.md) · 2026-06-04 · reverify: `grep -n "temporal_residuals" crates/specforge/src/ir/isf_ir.rs crates/specforge/src/ir/adapters.rs`
 - "should I fix the PSEL valid when PSEL asserted temporal rule" -> [temporal-eval-residual-fps-are-stale](docs/knowledge/temporal-eval-residual-fps-are-stale.md) · 2026-06-02 · reverify: `grep -n " when " crates/specforge/src/ir/evidence.rs`
@@ -312,6 +314,7 @@
 - "why did seed_axi_temporal fail after constraint promotion and how was it fixed" -> [model-misspelled-subject-snap](docs/knowledge/model-misspelled-subject-snap.md) · 2026-06-10 · reverify: `cargo test -p specforge --lib snap_ 2>&1 | tail -2`
 - "why did the LLM-primary extractor lose SYSCOREQ from a coordinated-subject sentence" -> [model-misspelled-subject-snap](docs/knowledge/model-misspelled-subject-snap.md) · 2026-06-10 · reverify: `cargo test -p specforge --lib snap_ 2>&1 | tail -2`
 - "why did the LLM-primary extractor miss PBUSER / PNSE / HAUSER must_be_value VALID" -> [llm-primary-must-be-value-recall](docs/knowledge/llm-primary-must-be-value-recall.md) · 2026-06-10 · reverify: `cargo test -p specforge constraint_extract_llm 2>&1 | tail -2   # → 8 passed; full re-measure = the .8 redirected-copy protocol in docs/tasks/EXTRACTION-QUALITY-GAUGE.md`
+- "why did the promoted surface lose the AXI reset temporal rules (DEASSERTED vs LOW)" -> [llm-primary-promotion-stage](docs/knowledge/llm-primary-promotion-stage.md) · 2026-06-10 · reverify: `cargo test -p specforge --lib promote_constraints_records 2>&1 | tail -2`
 - "why do APB tables 0016 0017 0018 produce no signal records" -> [apb-signal-catalog-fully-extracted](docs/knowledge/apb-signal-catalog-fully-extracted.md) · 2026-06-06 · reverify: `./target/debug/specforge validate generated/evidence_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/evidence_ir.json 2>/dev/null | sed -n '/Region Accounting/,/convergence:/p'`
 - "why do FPs appear in eval that the current code does not produce" -> [eval-scores-persisted-evidence](docs/knowledge/eval-scores-persisted-evidence.md) · 2026-06-07 · reverify: `./target/debug/specforge evidence generated/source_ir/<doc_key>/source_ir.json   # errors if normalized was reclaimed`
 - "why do I2C/CCIX/USB4 have 0 table signals and how are they recovered" -> [prose-signal-capture](docs/knowledge/prose-signal-capture.md) · 2026-06-08 · reverify: `./target/debug/specforge evidence generated/source_ir/um10204_rev7_0_2021_i2c_bus_specification/source_ir.json && python3 -c "import json,re;e=json.load(open('generated/evidence_ir/um10204_rev7_0_2021_i2c_bus_specification/evidence_ir.json'));print(sorted({re.match(r'Signal (\w+)',x['text']).group(1) for x in e['extracted_statements'] if x['text'].startswith('Signal ')}))`
@@ -655,7 +658,7 @@ _Permissive-only frame gate is SUBJECT-SENTENCE-scoped — block-scoped modals o
 ### llm-primary-promotion-stage
 _converge --promote-constraints-llm replaces the Pattern constraint surface post-stability_
 
-- **answers:** how do I get the clean LLM-primary constraint surface onto the canonical artifacts | what does converge --promote-constraints-llm do and when does it run | why does constraint promotion run outside the convergence loop | why can't extract-constraints-llm run inside a converge pass | what happens to the extraction-quality gauge when the constraint surface is replaced | how is a promoted constraint surface visible in the extraction manifest | is the LLM-primary promotion a recall improvement
+- **answers:** how do I get the clean LLM-primary constraint surface onto the canonical artifacts | what does converge --promote-constraints-llm do and when does it run | why does constraint promotion run outside the convergence loop | why can't extract-constraints-llm run inside a converge pass | what happens to the extraction-quality gauge when the constraint surface is replaced | how is a promoted constraint surface visible in the extraction manifest | is the LLM-primary promotion a recall improvement | why did the promoted surface lose the AXI reset temporal rules (DEASSERTED vs LOW) | does a replaced constraint surface get polarity refinement (apply_persisted_polarity_to_constraints) | must a post-build signal_constraints replace re-apply build-path invariants
 - **date:** 2026-06-10 · **status:** current
 - **evidence:** `crates/specforge/src/commands/extract_constraints_llm.rs (promote_constraints); crates/specforge/src/commands/converge.rs (maybe_promote_constraints); crates/specforge/src/ir/extractor.rs (record_surface_manifest); docs/tasks/LLM-PRIMARY-PROMOTION.md`
 - **reverify:** `cargo test -p specforge --lib promote_constraints_records 2>&1 | tail -2`
