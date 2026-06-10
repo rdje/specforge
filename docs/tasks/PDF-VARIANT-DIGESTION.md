@@ -517,6 +517,64 @@ VT-d 152→103/318; RISC-V Debug 59→44/179) from the REAL gaps:
   recovered only when its rows actually parse as bit-range + field semantics — otherwise it
   stays an explicit residual (no fabrication).
 
+**`PDF-VARIANT-DIGESTION.10a` — `bit location` register-field vocabulary (CCIX family).**
+· Status: **DONE `2026-06-10`** (probe → measured design → build → live per-item verification).
+**Verification log:** lib tests 1546→1553 (7 new hermetic: gate vocabulary, identifier-shape,
+paren+frame, all four leading-identifier bleed gates, caption-offset grammar, full
+synthesize integration incl. the byte-location negative twin); kg-bench **154/154**; full
+`scripts/run_ci.sh` GREEN. **Old-vs-new dry-run parity sweep over ALL 12 intact-bundle
+docs (NVMe, RISC-V Debug, APB/AHB/AXI/AXI-Stream, SWD/ADI, I2C, SMBus, I2S, CAN, SWP):
+byte-IDENTICAL** — zero drift on every gold-measured doc, promoted canonical surfaces
+untouched. **Live run on the real persisted CCIX/CoreSight tables** (stub-markdown /tmp
+copies; canonical untouched — their normalized bundles are host-local-blocked like
+`.6`/`.7`): CCIX rev2.0 **8 regs/11 fields → 143 regs/389 fields** (259 named + 130 honest
+bit-range residuals, 40 registers with recovered byte offsets; e.g. `CCIX PL DVSEC Header
+at Byte Offset 04h` = CCID 15:0 RO / DVSECRevID 19:16 RO / DVSECLength 31:20 RO);
+CoreSight 0100/0200 upgrade EXACTLY the 13 predicted fields each (`ATDATA127`, `AFVALID`,
+`ID0_20_2F`…, bit positions preserved) and the predicted single residual mis-name exists
+exactly once corpus-wide (`register_table_0149`, page-wrap bleed). Canonical CCIX/CoreSight
+EvidenceIRs refresh whenever those PDFs are re-provided and re-ingested. Book:
+`pipeline/evidenceir.md` subsection; KM card `bit-location-register-field-vocabulary`.
+**Family probe over the persisted corpus:** 542 `bit location`-headed unknown tables exist
+ONLY in the 4 CCIX SourceIRs (0 outside — gate extension corpus-safe); 1,432 data rows;
+98.3% of bit cells parse as bit ranges. The register identity lives in the caption
+(`<Name> Register fields at Byte Offset 04h` / `<Name> Register at Byte Offset-0Ch`); the
+FIELD NAME is fused into the description cell as its leading identifier (`CCID This field
+indicates …`), beside `Reserved …` rows (395) and honest residual rows (`See Table 7-1 …`,
+wrapped continuation bleed). Why today yields 8 regs/11 fields per doc: the
+`is_register_field_header` gate misses (`bit location` ≠ `bit`/`bits`, no `field`/`name`
+cell), and in the `field description` variants the description column itself is taken as
+the name column, so sentence-length "names" die at the >4-words gate.
+**Measured design (every gate demonstrated per-item on the corpus):**
+  1. gate + bits-column vocabulary unified: a bit-POSITION header (`bits`/`bit`/`bit
+     range`/`position`/`bit location`) counts as the field/bits column evidence
+     (probe P2: the full unified vocabulary newly admits ONLY the 542 CCIX tables);
+  2. a name-ish header that also contains `description` is a DESCRIPTION column, never the
+     field-name column (probe P1: only the 52 CCIX `field description` tables change);
+  3. mnemonic recovery on the existing bit-range-name path gains two grammar forms after
+     the untouched `(MNEMONIC):` form: **paren+frame** `Full Name (Ident) This
+     field/bit/value/register …` (9/doc, recovers mixed-case `SevNocomm`/`LogLen` class) and
+     **leading-identifier** `<Ident> This field …` gated by: identifier-shaped token (not a
+     plain Titlecase/lowercase English word — `See`/`Indicates`/`Error` rejected), ≠ the
+     row's own access cell (`RO Reserved bit …` bleed), remainder not `Reserved…`-led,
+     unique among the table's leading tokens (kills ADI `ASCII Identity code` ×3), and no
+     LATER mid-cell defined-term `<Ident> This field` (kills `… (except FLR).
+     LinkCreditSendEnable This field …` continuation bleed);
+  4. caption locator `… at Byte Offset <tok>` → `offset_address` (verbatim token; `from …
+     through …` ranges stay None — never collapsed to a guessed point).
+**Measured outcome:** CCIX ×4: 9 form1 + 208–249 form2 mnemonics/doc (vs 11 fields TOTAL
+today); CoreSight 0100/0200 TRMs: +13 genuine each (`ATDATA127`, `ID0_20_2F`, `ATREADYS` —
+all eyeballed); NVMe (63 residual rows), RISC-V, ADI, SWP, I2C: UNCHANGED by construction
+(probe-proven 0 new accepts). Known residuals (honest, quantified): ONE wrong-name row
+corpus-wide (rev2.0 `table_0149` — `CCIX` from HAQREQ continuation bleed with no
+defined-term marker; locally indistinguishable from a genuine row, documented not gamed);
+the `attibutes` typo family (4 tables) stays residual (typo vocabulary is a list — not
+added); `byte location \| size \| register description` tables (~60) are register-AT-OFFSET
+structures, NOT bit fields — treating byte offsets as bit ranges would fabricate, so they
+stay residual (future lever: map them to register-map records). Side effect noted:
+`audit-extraction` uses the same gate for its sampling labels — classification labels
+shift on CCIX-class tables only.
+
 **(SUPERSEDED active note) `PDF-VARIANT-DIGESTION.6`/`.7`** — item ② (`.5`) COMPLETE and `.8` (broaden
 prose-actor capture) DONE. **`.5a` + `.5b` + `.5c` are DONE** — structural doc-class routing
 (protocol/register/interface/guide), the front-matter doc-type signal (true guide vs under-extracted spec), and

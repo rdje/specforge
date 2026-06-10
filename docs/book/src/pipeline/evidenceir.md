@@ -528,6 +528,45 @@ With this in place, the I2S spec went from **0 to 5** recovered timing parameter
 clock-low times, set-up and hold times, with their stated limits), while the timing tables that already read
 correctly are untouched. *Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.9.11`).
 
+### `PDF-VARIANT-DIGESTION.10a` — a register table whose field names hide inside the description
+
+A corpus-wide census of every table the ingest classifier left "unknown" pointed at one family as the
+single biggest untapped register source: tables headed `Bit Location | Register Description | Attributes`
+(the CCIX base specifications carry ~150 of them *each*, across four tracked versions — about 600 tables).
+The rows clearly describe register fields — `15:0`, *"CCID This field indicates the CCIX Consortium ID
+value…"*, `RO` — but the reader recovered almost nothing from them (8 registers and 11 fields per
+document), for two reasons. First, the header never says `Field` or `Name`, so the table didn't look like
+a register-field table at all. Second, and more interesting: these tables have **no name column**. The
+field's name is fused into the description cell as its first word, the way a dictionary entry starts with
+the word being defined.
+
+The first half of the fix is vocabulary: `Bit Location` joins `Bits` / `Bit Range` / `Position` as
+bit-position column titles, and a column titled `Register Description` or `Field Description` is treated
+as a *description*, never as the name column. The second half is reading the dictionary-entry shape
+honestly. A field name is accepted from the front of a description only when it actually looks like an
+identifier (`DVSECRevID`, `ID0_20_2F`) rather than an English word (*"See Table 7-1…"*, *"Indicates
+the…"* stay residuals), and four bleed shapes measured on the real corpus are filtered out: a leading
+token that merely repeats the row's own access value (`RO Reserved bit…`), a remainder that is really a
+*Reserved* definition, a token that leads several rows of the same table (a real mnemonic is unique; a
+repeated one is prose), and a wrapped cell whose *real* definition starts mid-text with its own
+*"`SomeName` This field…"* marker — there the bleed prefix must not become the name. Specs that write the
+defined term in parentheses — *"Log Length (LogLen) This field describes…"* — get their own reading, and
+the caption's *"…at Byte Offset 04h"* locator finally lands in the register's offset instead of being
+ignored (a *"from … through …"* range is never collapsed to a guessed point).
+
+Every gate was measured per-item over the persisted corpus before any code changed, and the live result
+matches the measurement exactly: the CCIX 2.0 document goes from **8 registers / 11 fields to
+143 registers / 389 fields**, 259 of them with real names and 130 kept as honest bit-range residuals
+(`Reserved` rows, cross-references), with 40 registers carrying recovered byte offsets. Two CoreSight
+manuals upgrade exactly 13 fields each from bit-range placeholders to their real names (`ATDATA127`,
+`AFVALID`, the `ID0_…` filter bits). Everything else is untouched — all 12 rebuildable corpus documents
+(NVMe, RISC-V Debug, the AMBA buses, SWD, I²C, SMBus, I²S, CAN, SWP) rebuild **byte-identical**, and the
+known residual is quantified rather than hidden: exactly one row corpus-wide keeps a wrong name (a
+page-wrap bleed indistinguishable from a real row without page-level context), and the ~60
+`Byte Location | Size | Register Description` tables are register-*placement* maps, not bit-field tables —
+forcing byte offsets into bit ranges would fabricate, so they stay explicit residuals for a future leaf.
+*Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.10a`).
+
 ### `EXTRACTION-QUALITY-GAUGE.FIELD.2` — message fields are intent too, but they are not signals
 
 Packet and flit protocols (the CHI family is the canonical example) describe two very different kinds of named

@@ -9342,9 +9342,27 @@ fn synthesize_register_records(
 /// `Bit|Field|Type|Reset`. Identity = a field/bit-name column AND an access OR reset column — universal
 /// register vocabulary (ADR 0006), specific enough to exclude signal/encoding/feature tables (which lack
 /// access+reset). Header cells are pre-lowercased.
+/// A bit-POSITION column header — the universal vocabulary register tables use for the column
+/// carrying a field's bit extent (`Bits`, `Bit`, `Bit Range`, `Position`, `Bit Location`).
+/// Shared by the register-field gate and the bits-column resolver so the two cannot drift.
+/// Pure header grammar (ADR 0006); PDF-VARIANT-DIGESTION.10a.
+fn is_bit_position_header(h: &str) -> bool {
+    h == "bits"
+        || h == "bit"
+        || h.contains("bit range")
+        || h.contains("position")
+        || h.contains("bit location")
+}
+
 pub(crate) fn is_register_field_header(header: &[String]) -> bool {
+    // A name-ish header that ALSO says `description` is a description column, never field-name
+    // evidence (`Register Description` / `Field Description` carry the name fused into prose —
+    // the bit-position column is the structural anchor there). PDF-VARIANT-DIGESTION.10a.
     let has_field = header.iter().any(|h| {
-        h.contains("field") || h == "name" || h == "bits" || h == "bit" || h.contains("bit name")
+        (h.contains("field") && !h.contains("description"))
+            || h == "name"
+            || h.contains("bit name")
+            || is_bit_position_header(h)
     });
     let has_access = header.iter().any(|h| {
         h.contains("access") || h == "r/w" || h == "rw" || h == "type" || h.contains("attribut")
@@ -9500,13 +9518,15 @@ fn synthesize_register_field_tables(
             continue;
         }
 
-        let bits_col = header.iter().position(|h| {
-            h == "bits" || h == "bit" || h.contains("bit range") || h.contains("position")
-        });
+        let bits_col = header.iter().position(|h| is_bit_position_header(h));
         // Name the field by its name column; for bits-only field tables (`Bits|Type|Reset|Description`)
-        // there is none, so fall back to the bit-range column, then column 0.
+        // there is none, so fall back to the bit-range column, then column 0. A `field description`
+        // header is a DESCRIPTION column, not the name column (PDF-VARIANT-DIGESTION.10a).
         let explicit_field_col = header.iter().position(|h| {
-            h.contains("field") || h == "name" || h.contains("identifier") || h.contains("bit name")
+            (h.contains("field") && !h.contains("description"))
+                || h == "name"
+                || h.contains("identifier")
+                || h.contains("bit name")
         });
         let field_col = explicit_field_col.or(bits_col).unwrap_or(0);
         // EXTRACTION-GAP-FIX.2 — with no dedicated name/field column the "name" is the bit-range string;
@@ -9525,6 +9545,41 @@ fn synthesize_register_field_tables(
                 || h.contains("notes")
                 || h.contains("full name")
         });
+
+        // PDF-VARIANT-DIGESTION.10a — pre-pass for the leading-identifier mnemonic form's
+        // per-table uniqueness gate: a genuine mnemonic leads exactly ONE row's description;
+        // a token leading several rows of the same table is prose, and every such row keeps
+        // its honest bit-range residual name.
+        let mut leading_token_rows: std::collections::HashMap<String, usize> =
+            std::collections::HashMap::new();
+        if name_is_bit_range_column {
+            for row in &body {
+                let name = row.get(field_col).map(|c| c.text.trim()).unwrap_or("");
+                let desc = desc_col
+                    .and_then(|i| row.get(i))
+                    .map(|c| c.text.trim())
+                    .unwrap_or("");
+                if !is_bit_range_token(name) || desc.is_empty() {
+                    continue;
+                }
+                if field_mnemonic_from_description(desc).is_some()
+                    || desc
+                        .get(..8)
+                        .is_some_and(|p| p.eq_ignore_ascii_case("reserved"))
+                {
+                    continue;
+                }
+                if let Some(tok) = desc
+                    .split_whitespace()
+                    .next()
+                    .and_then(identifier_shaped_token)
+                {
+                    *leading_token_rows
+                        .entry(tok.to_ascii_lowercase())
+                        .or_default() += 1;
+                }
+            }
+        }
 
         let mut fields: Vec<RegisterFieldRecord> = Vec::new();
         for row in &body {
@@ -9565,13 +9620,17 @@ fn synthesize_register_field_tables(
                 .map(|c| parse_bit_range(&c.text))
                 .unwrap_or((None, None));
             let description = desc_col.and_then(cell);
-            // EXTRACTION-GAP-FIX.2 — recover the field mnemonic from the description when the "name" is a
-            // bit-range (no dedicated name column); if none is present, the bit-range stays as an honest
-            // residual — a mnemonic is never fabricated.
+            let access_type = access_col.and_then(cell);
+            // EXTRACTION-GAP-FIX.2 / PDF-VARIANT-DIGESTION.10a — recover the field mnemonic from
+            // the description when the "name" is a bit-range (no dedicated name column); if no
+            // grammar form fires, the bit-range stays as an honest residual — a mnemonic is never
+            // fabricated.
             let field_name = if name_is_bit_range_column && is_bit_range_token(&field_name) {
                 description
                     .as_deref()
-                    .and_then(field_mnemonic_from_description)
+                    .and_then(|d| {
+                        recover_field_mnemonic(d, access_type.as_deref(), &leading_token_rows)
+                    })
                     .unwrap_or(field_name)
             } else {
                 field_name
@@ -9585,7 +9644,7 @@ fn synthesize_register_field_tables(
                 bits_high,
                 bits_low,
                 bit_width: bit_width_from_range(bits_high, bits_low),
-                access_type: access_col.and_then(cell),
+                access_type,
                 reset_value: reset_col.and_then(cell),
                 description,
                 enumerated_values,
@@ -9608,10 +9667,16 @@ fn synthesize_register_field_tables(
             })
             .unwrap_or_else(|| format!("register_{}", table.table_id));
         let size_bits = register_size_from_fields(&fields);
+        // PDF-VARIANT-DIGESTION.10a — the caption's own `at Byte Offset …` locator clause is the
+        // register's offset; absent or range-shaped locators leave the offset honestly empty.
+        let offset_address = table
+            .caption_text
+            .as_deref()
+            .and_then(register_offset_from_caption);
         records.push(RegisterRecord {
             register_id: format!("regfld_{}", table.table_id),
             register_name,
-            offset_address: None,
+            offset_address,
             size_bits,
             fields,
             supporting_statement_ids: Vec::new(),
@@ -10327,6 +10392,201 @@ fn field_mnemonic_from_description(desc: &str) -> Option<String> {
         i += 1;
     }
     None
+}
+
+/// An identifier-SHAPED token (`CCID`, `DVSECRevID`, `ID0_20_2F`): 2–40 chars, letter-led, ASCII
+/// alphanumeric/underscore — and NOT a plain Titlecase or lowercase English word, which is prose
+/// (`See`, `Indicates`, `Error`). Leading/trailing parens and trailing `.`/`:` punctuation are
+/// shed first. Case is used only as word-vs-identifier SHAPE evidence here, never as a
+/// per-document spelling convention. Pure grammar (ADR 0006); PDF-VARIANT-DIGESTION.10a.
+fn identifier_shaped_token(raw: &str) -> Option<String> {
+    let t = raw
+        .trim_end_matches(['.', ':'])
+        .trim_matches(|c| c == '(' || c == ')');
+    if !(2..=40).contains(&t.chars().count()) {
+        return None;
+    }
+    let first = t.chars().next()?;
+    if !first.is_ascii_alphabetic() || !t.chars().all(|c| c.is_ascii_alphanumeric() || c == '_') {
+        return None;
+    }
+    let rest_alphas: Vec<char> = t
+        .chars()
+        .skip(1)
+        .filter(|c| c.is_ascii_alphabetic())
+        .collect();
+    let plain_titlecase = first.is_ascii_uppercase()
+        && !rest_alphas.is_empty()
+        && rest_alphas.iter().all(|c| c.is_ascii_lowercase());
+    let plain_lowercase =
+        first.is_ascii_lowercase() && rest_alphas.iter().all(|c| c.is_ascii_lowercase());
+    if plain_titlecase || plain_lowercase {
+        return None;
+    }
+    Some(t.to_string())
+}
+
+/// True when `words` opens with the universal definitional frame `This field/bit/value/register …`
+/// (singular noun, case-tolerant `This`). The second word is compared by its leading alphabetic
+/// run, so trailing punctuation (`field.`) matches while `fields` does not.
+fn is_definitional_frame(words: &[&str]) -> bool {
+    let Some(first) = words.first() else {
+        return false;
+    };
+    if !first.eq_ignore_ascii_case("this") {
+        return false;
+    }
+    let Some(second) = words.get(1) else {
+        return false;
+    };
+    let head: String = second
+        .chars()
+        .take_while(|c| c.is_ascii_alphabetic())
+        .collect();
+    matches!(
+        head.to_ascii_lowercase().as_str(),
+        "field" | "bit" | "value" | "register"
+    )
+}
+
+/// The mid-cell defined-term marker: the first identifier-shaped word immediately followed by the
+/// definitional frame. In a wrapped/continuation cell the REAL definition starts mid-cell
+/// (`… (except FLR). LinkCreditSendEnable This field controls …`), so a leading token that is not
+/// itself framed must yield to it. PDF-VARIANT-DIGESTION.10a.
+fn midcell_defined_term(words: &[&str]) -> Option<String> {
+    for i in 0..words.len().saturating_sub(2) {
+        if is_definitional_frame(&words[i + 1..])
+            && let Some(t) = identifier_shaped_token(words[i])
+        {
+            return Some(t);
+        }
+    }
+    None
+}
+
+/// PDF-VARIANT-DIGESTION.10a — the paren+frame defined-term form: `Full Name (Ident) This
+/// field …`. Complements the `(MNEMONIC):` form for mixed-case defined terms (the
+/// `SevNocomm` / `LogLen` class); the definitional frame after the closing paren is required so a
+/// passing reference like `(RAID) is required to be unique` never becomes the definition.
+fn field_identifier_from_paren_frame(desc: &str) -> Option<String> {
+    let cap = desc.len().min(512);
+    let bytes = desc.as_bytes();
+    let mut i = 0;
+    while i < cap {
+        // `(` is ASCII, so it only ever appears at a char boundary; slicing at `i + 1` is safe.
+        if bytes[i] == b'(' {
+            let rest = &desc[i + 1..];
+            let Some(close_rel) = rest.find(')') else {
+                break;
+            };
+            let inner = rest[..close_rel].trim();
+            if !inner.contains(char::is_whitespace)
+                && let Some(t) = identifier_shaped_token(inner)
+            {
+                let after: Vec<&str> = rest[close_rel + 1..].split_whitespace().collect();
+                if is_definitional_frame(&after) {
+                    return Some(t);
+                }
+            }
+            i += 1 + close_rel + 1;
+            continue;
+        }
+        i += 1;
+    }
+    None
+}
+
+/// PDF-VARIANT-DIGESTION.10a — the gated leading-identifier mnemonic form (`CCID This field
+/// indicates …`), for description cells that fuse the field name into the prose. Every gate was
+/// measured per-item over the persisted corpus (see the task tree): identifier SHAPE (plain
+/// English words rejected), the row's own access-cell value (column-bleed like `RO Reserved
+/// bit …`), a `Reserved…`-led remainder (reserved-row bleed), per-table leading-token uniqueness
+/// (a repeated leading token is prose), and the mid-cell defined-term bleed test (the real
+/// definition starting mid-cell outranks a bleed prefix). `None` keeps the honest bit-range
+/// residual name — a mnemonic is never fabricated.
+fn leading_field_identifier(
+    desc: &str,
+    access_cell: Option<&str>,
+    leading_token_rows: &std::collections::HashMap<String, usize>,
+) -> Option<String> {
+    let mut parts = desc.splitn(2, char::is_whitespace);
+    let tok = identifier_shaped_token(parts.next()?)?;
+    let rest = parts.next().unwrap_or("").trim_start();
+    if access_cell.is_some_and(|a| a.eq_ignore_ascii_case(&tok)) {
+        return None;
+    }
+    if rest
+        .get(..8)
+        .is_some_and(|p| p.eq_ignore_ascii_case("reserved"))
+    {
+        return None;
+    }
+    if leading_token_rows
+        .get(&tok.to_ascii_lowercase())
+        .copied()
+        .unwrap_or(0)
+        > 1
+    {
+        return None;
+    }
+    let words: Vec<&str> = rest.split_whitespace().collect();
+    if !is_definitional_frame(&words)
+        && let Some(mid) = midcell_defined_term(&words)
+        && !mid.eq_ignore_ascii_case(&tok)
+    {
+        return None;
+    }
+    Some(tok)
+}
+
+/// PDF-VARIANT-DIGESTION.10a — full mnemonic recovery for the bit-range-name path: the untouched
+/// `(MNEMONIC):` defined-term form first (EXTRACTION-GAP-FIX.2 behavior preserved), then the
+/// paren+frame form, then the gated leading-identifier form. A `Reserved…`-led description never
+/// reaches the new forms. `None` keeps the bit-range as the honest residual field name.
+fn recover_field_mnemonic(
+    desc: &str,
+    access_cell: Option<&str>,
+    leading_token_rows: &std::collections::HashMap<String, usize>,
+) -> Option<String> {
+    if let Some(m) = field_mnemonic_from_description(desc) {
+        return Some(m);
+    }
+    if desc
+        .get(..8)
+        .is_some_and(|p| p.eq_ignore_ascii_case("reserved"))
+    {
+        return None;
+    }
+    if let Some(m) = field_identifier_from_paren_frame(desc) {
+        return Some(m);
+    }
+    leading_field_identifier(desc, access_cell, leading_token_rows)
+}
+
+/// PDF-VARIANT-DIGESTION.10a — recover a register's byte offset from the universal caption
+/// locator clause `… at Byte Offset 04h` / `… at Byte Offset-0Ch`. The offset token is kept
+/// verbatim (honest provenance, no radix normalization); a `from … through …` RANGE locator
+/// yields `None` — a span is never collapsed to a guessed point.
+fn register_offset_from_caption(caption: &str) -> Option<String> {
+    let lower = caption.to_ascii_lowercase();
+    if lower.contains("through byte offset") {
+        return None;
+    }
+    let pos = lower.find("byte offset")?;
+    let tail = caption[pos + "byte offset".len()..]
+        .trim_start()
+        .trim_start_matches(['-', '\u{2013}'])
+        .trim_start();
+    let token: String = tail
+        .chars()
+        .take_while(|c| c.is_ascii_alphanumeric())
+        .collect();
+    // A real offset token carries at least one digit (`04h`, `0x44`, `12`); a plain word after
+    // "byte offset" is prose, not a locator value.
+    if token.is_empty() || !token.chars().any(|c| c.is_ascii_digit()) {
+        return None;
+    }
+    Some(token)
 }
 
 /// Synthesize `TimingConstraintRecord` entries from `timing_parameter` tables in `SourceIR`.
@@ -11196,6 +11456,301 @@ mod tests {
             Some("DMSTATUS")
         );
         assert!(super::register_name_from_caption("   ").is_none());
+    }
+
+    // ── PDF-VARIANT-DIGESTION.10a — `bit location` register-field vocabulary ─────────────────
+    #[test]
+    fn bit_location_register_field_header_gate() {
+        let lower = |cols: &[&str]| {
+            cols.iter()
+                .map(|s| s.to_ascii_lowercase())
+                .collect::<Vec<_>>()
+        };
+        // the bit-position column is field evidence even when the name is fused into prose
+        assert!(super::is_register_field_header(&lower(&[
+            "Bit Location",
+            "Register Description",
+            "Attributes"
+        ])));
+        assert!(super::is_register_field_header(&lower(&[
+            "Bit Location",
+            "Field Description",
+            "Attributes",
+            "M/O"
+        ])));
+        // a byte-offset structure layout is a register-AT-OFFSET table, NOT a bit-field table
+        assert!(!super::is_register_field_header(&lower(&[
+            "Byte Location",
+            "Size (Bytes)",
+            "Register Description",
+            "Attributes",
+            "M/O"
+        ])));
+        // a `field description` column alone is description evidence, not field-name evidence
+        assert!(!super::is_register_field_header(&lower(&[
+            "Field Description",
+            "Attributes"
+        ])));
+    }
+
+    #[test]
+    fn identifier_shaped_token_rejects_plain_english_words() {
+        for ok in [
+            "CCID",
+            "DVSECRevID",
+            "ID0_20_2F",
+            "ESMModeSupported.",
+            "(SevNocomm)",
+        ] {
+            assert!(
+                super::identifier_shaped_token(ok).is_some(),
+                "{ok} should be identifier-shaped"
+            );
+        }
+        for prose in ["See", "Indicates", "value", "A", "Error", "this"] {
+            assert!(
+                super::identifier_shaped_token(prose).is_none(),
+                "{prose} is prose, not an identifier"
+            );
+        }
+    }
+
+    #[test]
+    fn paren_frame_defined_term_requires_definitional_frame() {
+        assert_eq!(
+            super::field_identifier_from_paren_frame(
+                "Severity Logging Mask (SevLogMask) This field enables masking."
+            )
+            .as_deref(),
+            Some("SevLogMask")
+        );
+        // a passing reference is not a definition
+        assert!(
+            super::field_identifier_from_paren_frame(
+                "The Request AgentID (RAID) is required to be unique."
+            )
+            .is_none()
+        );
+        // a dotted cross-reference is not an identifier
+        assert!(
+            super::field_identifier_from_paren_frame("(CC.MPS) This field is related.").is_none()
+        );
+    }
+
+    #[test]
+    fn leading_field_identifier_gates_measured_bleed_shapes() {
+        use std::collections::HashMap;
+        let unique: HashMap<String, usize> = HashMap::new();
+        // the genuine fused-name shape
+        assert_eq!(
+            super::leading_field_identifier(
+                "XQID This field indicates the queue identifier value.",
+                None,
+                &unique
+            )
+            .as_deref(),
+            Some("XQID")
+        );
+        // access-column bleed: the leading token is the row's own access value
+        assert!(
+            super::leading_field_identifier(
+                "RW2 Controls the widget enable behavior.",
+                Some("RW2"),
+                &unique
+            )
+            .is_none()
+        );
+        assert_eq!(
+            super::leading_field_identifier(
+                "RW2 Controls the widget enable behavior.",
+                Some("RO"),
+                &unique
+            )
+            .as_deref(),
+            Some("RW2")
+        );
+        // reserved-row bleed: the remainder is a Reserved definition
+        assert!(
+            super::leading_field_identifier(
+                "XYZ1 Reserved bits for future allocation.",
+                None,
+                &unique
+            )
+            .is_none()
+        );
+        // continuation bleed: the REAL definition starts mid-cell with its own defined term
+        assert!(
+            super::leading_field_identifier(
+                "CCIX2 Device initializes to 0b after reset. LinkCtl5 This field controls sending.",
+                None,
+                &unique
+            )
+            .is_none()
+        );
+        // per-table uniqueness: a token leading several rows of one table is prose
+        let repeated: HashMap<String, usize> = HashMap::from([("ascii".to_string(), 2)]);
+        assert!(
+            super::leading_field_identifier("ASCII Identity code chunk.", None, &repeated)
+                .is_none()
+        );
+        let once: HashMap<String, usize> = HashMap::from([("ascii".to_string(), 1)]);
+        assert_eq!(
+            super::leading_field_identifier("ASCII Identity code chunk.", None, &once).as_deref(),
+            Some("ASCII")
+        );
+    }
+
+    #[test]
+    fn recover_field_mnemonic_keeps_existing_form_first_and_reserved_residual() {
+        let empty: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
+        // EXTRACTION-GAP-FIX.2 defined-term form is untouched and still wins
+        assert_eq!(
+            super::recover_field_mnemonic(
+                "Memory Queue Entry Size (MQES): the maximum size.",
+                None,
+                &empty
+            )
+            .as_deref(),
+            Some("MQES")
+        );
+        // a Reserved row never reaches the new forms
+        assert!(super::recover_field_mnemonic("Reserved and Preserved", None, &empty).is_none());
+        assert_eq!(
+            super::recover_field_mnemonic(
+                "Control Mode (CtlMode) This field selects the mode.",
+                None,
+                &empty
+            )
+            .as_deref(),
+            Some("CtlMode")
+        );
+    }
+
+    #[test]
+    fn register_offset_from_caption_locator_grammar() {
+        assert_eq!(
+            super::register_offset_from_caption(
+                "Table 6-1: XDVS Header Register fields at Byte Offset 04h"
+            )
+            .as_deref(),
+            Some("04h")
+        );
+        assert_eq!(
+            super::register_offset_from_caption("XCTL Register at Byte Offset-0Ch").as_deref(),
+            Some("0Ch")
+        );
+        // a range locator is never collapsed to a guessed point
+        assert!(
+            super::register_offset_from_caption(
+                "X Structure Register fields from Byte Offset 00h through Byte Offset 0Ch"
+            )
+            .is_none()
+        );
+        // prose after the words "byte offset" is not a locator value
+        assert!(
+            super::register_offset_from_caption("The Byte Offsets vary by structure.").is_none()
+        );
+        assert!(super::register_offset_from_caption("XCTL register fields").is_none());
+    }
+
+    #[test]
+    fn bit_location_description_fused_table_extracts_fields() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Registers\nThe XDVS header registers.\n")?;
+        let mut source_ir = SourceIr::build(&source, &base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_bitloc".to_string(),
+            asset_id: "asset_bitloc".to_string(),
+            page_id: None,
+            caption_text: Some(
+                "Table 6-1: XDVS Header Register fields at Byte Offset 04h".to_string(),
+            ),
+            source_ref: None,
+            table_kind: TableKind::Unknown,
+            header_rows: vec![vec![
+                make_table_cell("Bit Location", true),
+                make_table_cell("Register Description", true),
+                make_table_cell("Attributes", true),
+            ]],
+            body_rows: vec![
+                vec![
+                    make_table_cell("15:0", false),
+                    make_table_cell(
+                        "XQID This field indicates the queue identifier value.",
+                        false,
+                    ),
+                    make_table_cell("RO", false),
+                ],
+                vec![
+                    make_table_cell("19:16", false),
+                    make_table_cell("Reserved and Zero", false),
+                    make_table_cell("RsvdZ", false),
+                ],
+                vec![
+                    make_table_cell("27:20", false),
+                    make_table_cell("See Table 9-9 for definition of this field", false),
+                    make_table_cell("RO", false),
+                ],
+                vec![
+                    make_table_cell("31:28", false),
+                    make_table_cell("Control Mode (CtlMode) This field selects the mode.", false),
+                    make_table_cell("RW", false),
+                ],
+            ],
+            row_count: 5,
+            col_count: 3,
+        });
+        // the byte-offset structure-layout twin must stay an honest residual (no bit fields)
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_byteloc".to_string(),
+            asset_id: "asset_byteloc".to_string(),
+            page_id: None,
+            caption_text: Some("Table 7-6: XPER Error Type Structure".to_string()),
+            source_ref: None,
+            table_kind: TableKind::Unknown,
+            header_rows: vec![vec![
+                make_table_cell("Byte Location", true),
+                make_table_cell("Size (Bytes)", true),
+                make_table_cell("Register Description", true),
+                make_table_cell("Attributes", true),
+                make_table_cell("M/O", true),
+            ]],
+            body_rows: vec![vec![
+                make_table_cell("4", false),
+                make_table_cell("1", false),
+                make_table_cell("FRUID This field indicates a generic identifier.", false),
+                make_table_cell("RO", false),
+                make_table_cell("M", false),
+            ]],
+            row_count: 2,
+            col_count: 5,
+        });
+        let recs = super::synthesize_register_field_tables(&source_ir, None);
+        assert_eq!(
+            recs.len(),
+            1,
+            "only the bit-location table is a field table"
+        );
+        let reg = &recs[0];
+        assert_eq!(reg.register_name, "XDVS Header at Byte Offset 04h");
+        assert_eq!(reg.offset_address.as_deref(), Some("04h"));
+        assert_eq!(reg.size_bits, Some(32));
+        let names: Vec<&str> = reg.fields.iter().map(|f| f.field_name.as_str()).collect();
+        // fused mnemonic + paren+frame recovered; Reserved and cross-reference rows stay
+        // honest bit-range residuals
+        assert_eq!(names, vec!["XQID", "19:16", "27:20", "CtlMode"]);
+        assert_eq!(reg.fields[0].bits_high, Some(15));
+        assert_eq!(reg.fields[0].bits_low, Some(0));
+        assert_eq!(reg.fields[0].access_type.as_deref(), Some("RO"));
+        assert_eq!(
+            reg.fields[1].description.as_deref(),
+            Some("Reserved and Zero")
+        );
+        assert_eq!(reg.fields[3].bits_high, Some(31));
+        assert_eq!(reg.fields[3].bits_low, Some(28));
+        Ok(())
     }
 
     #[test]

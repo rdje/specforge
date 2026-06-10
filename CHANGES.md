@@ -1,3 +1,22 @@
+### `PDF-VARIANT-DIGESTION.10a` — the `bit location` register-field vocabulary: field names fused into description cells now extract (CCIX-class, ~600 tables)
+The `.10p`-isolated biggest gap is closed. `bit location | register/field description |
+attributes` tables carry NO name column — the field name leads the description cell
+(`CCID This field indicates …`). New structural grammar (ADR 0006, measured per-item on the
+real corpus BEFORE coding): `bit location` joins a SHARED bit-position header vocabulary
+(gate + bits-column resolver cannot drift); a name-ish header containing `description` is
+never the name column; mnemonic recovery gains a paren+frame form (`Full Name (Ident) This
+field …`) and a four-gated leading-identifier form (identifier shape; ≠ row's own access
+cell; remainder not `Reserved…`; unique per table; no mid-cell defined-term bleed); the
+caption locator `at Byte Offset 04h` lands in `offset_address` (ranges never collapse).
+**Live: CCIX rev2.0 8 regs/11 fields → 143 regs/389 fields** (259 named + 130 honest
+bit-range residuals, 40 offsets); CoreSight 0100/0200 upgrade exactly the 13 predicted
+fields each (`ATDATA127`, `ID0_20_2F`…). **ALL 12 intact-bundle docs old-vs-new dry-run
+byte-IDENTICAL** (NVMe/RISC-V/AMBA/SWD/serial untouched; promoted surfaces untouched);
+exactly ONE residual mis-name corpus-wide (page-wrap bleed, quantified); byte-location
+placement tables stay honest residuals (byte→bit would fabricate). lib 1553 (7 new),
+kg-bench 154/154, full CI green. Book: `pipeline/evidenceir.md`; KM
+`bit-location-register-field-vocabulary`.
+
 ### `PDF-VARIANT-DIGESTION.10p` — the broader-corpus structural table-shape probe: register-shaped unknown tables are the next big digestion lever (probe-only; no code)
 Census over all 77 persisted SourceIRs: 7,012 `unknown`-kind structured tables; the dominant
 header signatures are register-field variants (~2,000 tables, all structural vocabulary —

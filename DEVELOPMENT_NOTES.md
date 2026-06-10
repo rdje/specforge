@@ -1,4 +1,26 @@
 # DEVELOPMENT_NOTES
+## `PDF-VARIANT-DIGESTION.10a` (`2026-06-10`) — probe-first grammar design, and the verification protocol for docs without normalized bundles
+- Method: every gate of the leading-identifier mnemonic form was simulated over the real
+  persisted SourceIR tables BEFORE coding, with candidate gates measured against each other
+  per-item. A "domain-noun in remainder" gate looked principled but cost ~73 genuine CCIX
+  recoveries; per-table leading-token uniqueness caught the same ADI `ASCII` false positives
+  at zero recall cost. The strict "any mid-cell sentence-start identifier" bleed rule
+  over-rejected ~25 genuine rows/doc (spec prose legitimately starts sentences with the
+  protocol acronym); requiring the mid-cell identifier to carry its own `This field` frame
+  kept all of them while still killing real page-wrap bleed.
+- Verification with cleaned bundles: CCIX/CoreSight normalized bundles are host-local-blocked,
+  so canonical rebuilds are impossible — but `evidence --dry-run` on a /tmp copy of the
+  persisted `source_ir.json` whose `normalization_plan.promoted_markdown_path` points at a
+  stub `.md` runs the REAL implementation over the REAL persisted tables (register synthesis
+  reads only `structured_tables`; prose surfaces aren't the measurement). Old-vs-new binary
+  parity (HEAD worktree build) is the oracle for "nothing else changed": canonical
+  `evidence_ir.json` files are NOT a valid diff target because they carry post-build
+  mutations (promotion, persisted gauges, validation backannotations).
+- One measured residual accepted and documented rather than over-fit: a page-wrap bleed row
+  whose real definition carries no defined-term marker is locally indistinguishable from a
+  genuine row (`register_table_0149` → `CCIX`); 1 wrong name vs 259 correct on the measured
+  doc. A name-specific filter would violate the no-lists doctrine.
+
 ## `LLM-PRIMARY-PROMOTION.4` (`2026-06-10`) — the sweep method and what the per-item audits taught
 - Sweep harness: per doc — (1) standing Pattern gauge on canonical via `nli-verify` (skipped
   when already persisted), (2) copy `evidence_ir.json` to /tmp with `artifact_layout`
