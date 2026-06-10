@@ -513,7 +513,9 @@ VT-d 152→103/318; RISC-V Debug 59→44/179) from the REAL gaps:
   wire-docs + register golds stay green): `.10a` the `bit location`-keyed register/field
   vocabulary (CCIX family, ~600 tables across 4 docs — biggest single unlock); `.10b` the
   two-column `bits \| description` shape (AMD IOMMU + relatives, ~290); `.10c` the
-  `name \| function` column synonym (GIC-600 +4 docs, ~129).
+  `name \| function` column synonym (GIC-600 +4 docs, ~129); `.10d` the offset-suffixed
+  dword-relative bit-cell family (`31:28 +04`; 41 AMD tables / 184 rows — spun from the
+  `.10b` quantified residuals).
   **`.10b` first probe pass (`2026-06-10`): the family is AMD IOMMU 160 + NVMe 130 + eMMC 1 —
   NVMe is a GOLD-measured doc, so any gate change hits its measured surface; AND the rows
   describe in-memory STRUCTURE entries (AMD Device Table Entry "Field Definitions"
@@ -781,7 +783,89 @@ docs overlap only on TMC, whose single 2-col table yields 0 records); `bit(s)` j
 shared bit-position header vocabulary (one matcher, `.10a` principle). The `.10b` 2-col
 behavior is LOCKED through the refactor by its own tests + the NVMe-216/AMD-82 re-proof.
 
-**(SUPERSEDED active note) `PDF-VARIANT-DIGESTION.6`/`.7`** — item ② (`.5`) COMPLETE and `.8` (broaden
+**`PDF-VARIANT-DIGESTION.10d` — the offset-suffixed dword-relative bit-cell family.**
+· Status: **`active`** (opened `2026-06-11`; probe-first per doctrine — NO code before the
+probe closes the design). Spun from the `.10b` quantified residuals: **41 AMD tables /
+184 rows** whose bit cells carry a byte-offset suffix (`31:28 +04` = bits 31:28 of the
+dword at byte offset `+04` within the containing structure). The `.10b` STRICT cell parser
+rejects the WHOLE table on any such cell BY DESIGN (capturing `31:28` while dropping the
+`+04` would misplace the field — fabrication), so today these tables are honest residuals.
+**The leaf's two recorded questions (decide from the probe, per-item):**
+  1. **Derivation honesty:** the absolute bit position `offset*8 + bit` is DERIVABLE
+     arithmetic from two document-stated numbers (the `EXTRACTION-GAP-FIX.4a` cumulative-
+     tiling precedent: arithmetic on document-stated values is not fabrication) — but the
+     `.10b` `bit_range` is documented as "the literal `(high, low)` position". Decide:
+     derive absolute positions into `bit_range`, OR keep the literal dword-relative range
+     plus a separate additive offset field (both document-stated, zero interpretation).
+     The probe decides by measuring which reading the documents themselves ground (do
+     sibling captioned/structure facts state absolute positions? do offsets tile?).
+  2. **Typed home:** expected = the `.10b` structure surface
+     (`message_field_records`, strategy family `message_fields.bit_position_table` or a
+     sibling strategy) — same in-memory-structure class, same no-access/reset evidence;
+     confirm against the 41 tables' captions per-item (any register-evidence captions
+     route per the `.10c` per-table caption rule instead).
+**PROBE DONE (`2026-06-11`, per-item over the persisted corpus — both questions answered):**
+**(Q1 — derivation honesty: LITERAL capture wins.)** The description bracket-slices are
+field-VALUE slices, NOT positions (`Store Data[63:32]` at `31:0 +12`; `DomainID[15:0]` at
+`15:0 +04` — 54 of 66 bracket-slice rows MISMATCH `offset*8+bit`; the 12 matches are
+value-aligned continuations like `Store Address[51:32]` at `19:0 +04`, which DO ground the
+little-endian dword packing). So the typed capture is the document's literal statement:
+dword-relative `bit_range` + a NEW additive `byte_offset: Option<u32>` (serde-skipped;
+None on every existing strategy) — never an overwritten "absolute" range; the absolute
+position stays consumer-derivable arithmetic. **(Q2 — typed home: the `.10b` structure
+surface, confirmed.)** The rows describe 16-byte in-memory COMMAND/EVENT-LOG/PPR-LOG
+entries (`COMPLETION_WAIT`, `IO_PAGE_FAULT Event Log Buffer Entry`…), zero access/reset
+anywhere; captions are the `.10b` caption family verbatim (`Table NN: <NAME> Fields
+(Continued)` → strip label + `(Continued)` + trailing `Fields`).
+**Census (strict grammar `^\d+(:\d+)? \+\d+$`): corpus-safe — AMD-ONLY, 43 tables / 309
+rows**; every non-AMD `+`-cell is SYMBOLIC (`13+ ITSnum`, `15+HL:16`, `9+N` — GIC-600 13,
+NVMe 11, USB4 4, USB3.2 2 rows, all correctly rejected by the digits-only suffix). Offset
+spellings exactly `{+00:90, +04:141, +08:54, +12:24}` — DECIMAL dword offsets (`+12` not
+hex; semantics proven by the Store Data continuation). **Gate (`.10b` gate + union
+pure|offset cell grammar, whole-table rejection stands): 40/43 PASS / 287 eligible rows**;
+honest FAILs: `table_0127`/`table_0128` (3-col conditional-description headers
+`Description, RX=0 | RX=1`) + `table_0132` (malformed `16: +04` cell — one bad eligible
+cell rejects the table, the `.10b` rule). `table_0126` carries one offset-LESS `17` row
+mid-table → that row records `byte_offset: None` (literal honest absence, never inferred
+from neighbors). **Chains (offset-aware): adjacency = the (offset asc, bit desc)
+lexicographic successor** — two measured forms: same-dword `next_hi == prev_lo - 1` (14
+joins) and next-dword `prev_lo == 0 → next_hi == 31, offset increases` (1 join:
+`INVALIDATE_IOTLB_PAGES` `(0,15,0)→(4,31,28)`); the capless-HEAD-adopts-captioned-tail
+direction is the existing `.10b` DTE pattern (`table_0077` capless + `table_0078`
+`COMPLETION_WAIT Fields (Continued)`). Walk result: **16 labeled chains / 30 tables / 217
+rows extract; 8 lost-caption chains (10 tables, ~70 rows) stay honest residuals** (the
+re-ingest lever; zero ambiguous adoptions — fresh structures restart at `(+00, 31:x)`,
+never the successor of a mid-structure end).
+**The name forms ARE the unlock** (existing mnemonic chain recovers ~0 on offset rows —
+no record without a name, so `.10d` without them is an empty slice). Three description-fused
+forms measured corpus-wide over every family-eligible description cell (`.10a` CCIX
+bit-location + 2-col families): **Form D bracket-slice** `<Ident>[hi(:lo)]` + `.`/`:`
+boundary — 95 fires, AMD-ONLY, every fire a genuine name (`GuestID[15:0]:`,
+`Vector[8:0] .`); **Form E colon-gloss** `<Ident>: <gloss>` — 221 AMD + 1 NVMe
+(`AttrV:`, `vImuEn:`, `f: flush queue`; NVMe `Operation:` genuine); **Form F ident-dot**
+`<Ident> . <gloss>` — 65 AMD + 20 CCIX (`ESMEnable .`, `LinkReachTarget .` — currently
+name-LESS `.10a` residuals, genuinely named). ZERO `Note:`-style/prose bleed in any
+family. Gate decisions for the build (eyeball the full fire sets per-item before coding):
+(a) under the bracket-slice frame the plain-English-word rejection is OVERRIDDEN
+(`Address[31:12].` IS the field's name — 25 rows, all genuine; the frame is the
+structural anchor the bare leading-identifier form lacked); (b) single-letter names
+(`f`/`i`/`s`/`S`/`I` — 9 rows) accepted ONLY with the colon/dot frame; (c) `.10a`
+per-table-uniqueness + mid-cell-bleed gates ported to all three forms. Expected yield:
+**~16 new containers / ~73–107 named fields** on AMD offset rows (D 16 + E 34 + F 23
+identifier-shaped, +25 frame-overridden, +9 singles; 67 Reserved skips, 25 opcode
+value-rows (`01h . COMPLETION_WAIT command number.`) + 36 name-less = honest residuals).
+**Measured cross-surface deltas (the shared-chain extension improves earlier slices —
+document, per-item verify, re-measure golds):** `.10b` AMD plain rows gain D/E/F names
+(the documented 82 fields GROW — `GDeviceID[15:0]:` class was an explicit `.10b`
+residual); NVMe possibly +1 (`Operation:` — verify its table passes the gate); `.10a`
+CCIX versions gain ~5–10 Form-F names each out of their honest residual pool; NVMe
+register gold expected UNCHANGED (different surface — re-measure to prove). Build
+verification plan: 12-doc parity (manifest-only delta), NVMe-216/AMD-82 re-proof with
+documented deltas only, register golds + battery + kg-bench + full `scripts/run_ci.sh`,
+stub-protocol live AMD run with per-item eyeball of all 16 chains. Honest boundary
+unchanged: symbolic cells, two-word names (`Store Address` — 4 rows), value-rows, and
+lost-caption chains stay residuals; `byte_offset` is recorded verbatim-literal, never
+inferred.
 prose-actor capture) DONE. **`.5a` + `.5b` + `.5c` are DONE** — structural doc-class routing
 (protocol/register/interface/guide), the front-matter doc-type signal (true guide vs under-extracted spec), and
 the class-aware per-doc completeness gauge (`.5b`) are all live in `validate` with honest guide reporting. **`.8`
