@@ -35,4 +35,6 @@ descriptors. Consumed by `.FIELD.3` (`2026-06-10`, same day): `EntityType::Field
 `EntityEvidence.declared_in_field_table` ground a declared field deterministically (no LLM call;
 signal-table declaration outranks) and `is_valid_signal_subject(Field)` is false — the
 `DBID`/`TxnID` class can no longer be a constraint subject ([[packet-field-table-declaration]]). kg-bench keys: `message_field_count` / `message_fields_include`
-(`bit_width`, `bit_width_absent`) / `message_field_names_exclude`.
+(`bit_width`, `bit_width_absent`) / `message_field_names_exclude`. `.FIELD.4` (same day) routes
+field-subject OBLIGATIONS to the parallel `message_field_constraints` surface instead of
+dropping them ([[message-field-constraints-surface]]).

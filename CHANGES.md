@@ -1,3 +1,22 @@
+### `EXTRACTION-QUALITY-GAUGE.FIELD.4` — `message_field_constraints`: field obligations are routed, not dropped
+Field-subject obligations now have a typed home: the parallel `message_field_constraints` EvidenceIR
+surface (decision: separate surface over a subject-kind discriminator, so downstream
+`signal_constraints` consumers keep seeing wires only by construction). `ground_constraint_typed`
+dispatches on the `.FIELD.3` entity type AFTER the shared grounding gates — condition-only-subject,
+permissive-frame, source-grounded value recovery, condition grounding — so a field obligation gets no
+discipline discount; `dedup_merge_by` generalizes the provenance-merging dedup over both surfaces;
+`extract-constraints-llm` replaces both surfaces and reports them separately. Measured live (persisted
+CHI evidence, redirected-copy protocol, catalog injected from the real `.FIELD.2` extractor over
+persisted SourceIR — 106 fields): baseline mis-types `TagOp`/`PBHA` `must_be_value 0` as signal
+constraints; with the catalog the signal surface is exactly the 4 real flit-valid wires and the 2
+field obligations land field-scoped with containers + merged provenance (twice-stated TagOp = one
+record, both statement ids). Wire controls at exact prior volumes (APB 20 / AHB 12 / AXI 54→50),
+zero field constraints, eval P=R=F1=1.000 ×3, recall 16/16. +5 tests + end-to-end extension (lib
+1532); kg-bench 153/153; `run_ci.sh` green. Honest residuals: field-presence kind (MPAM "must be
+included" — probed, model outputs `[]`), full fresh-yield CHI re-measure needs PDF re-provision,
+validate integration deferred. Book: EvidenceIR `.FIELD.4` subsection + extract-constraints-llm
+routing rewrite. KM `message-field-constraints-surface`.
+
 ### `EXTRACTION-QUALITY-GAUGE.FIELD.3` — `EntityType::Field`: declared fields are grounded OUT of signal subjects
 Entity typing now knows the field class: `EntityEvidence.declared_in_field_table` reads the new
 `message_field_records` catalog, and `classify_entity` grounds a declared field as `Field`

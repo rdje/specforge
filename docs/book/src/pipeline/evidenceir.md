@@ -559,10 +559,35 @@ CCIX 47–51 — while every register document (RISC-V Debug, the IOMMU and MMU 
 wire-based bus (APB/AHB/AXI, SWD) yields exactly zero and is otherwise byte-identical to before. Two tracked
 benchmark fixtures lock both directions: fields land in `message_field_records` and never in the signal
 inventory, and a register-shaped table never produces message fields even when its caption says "message
-fields". This inventory is the foundation the signal-vs-field ontology builds on next: with declared fields
-known, the entity-typing gate can ground a field *out* of signal constraints deterministically — and a later
-slice can give field obligations their own constraint surface instead of dropping them.
+fields". This inventory is the foundation the signal-vs-field ontology builds on: with declared fields known,
+the entity-typing gate grounds a field *out* of signal constraints deterministically — and the field-constraint
+surface below gives field obligations their own typed home instead of dropping them.
 *Authoritative tracking:* `docs/tasks/EXTRACTION-QUALITY-GAUGE.md` (`.FIELD.2`).
+
+### `EXTRACTION-QUALITY-GAUGE.FIELD.4` — obligations on fields get their own constraint surface
+
+Knowing that `TagOp` is a message field keeps it *out* of signal constraints — but the specification still
+says things about it that an implementer must honor: *"For all other REQ channel messages, the TagOp field is
+inapplicable and **must be 0**"* is a real requirement. Dropping it because its subject is not a wire would
+trade one extraction error (mis-typing) for another (silent loss). So the evidence layer carries a parallel
+surface, **`message_field_constraints`**: typed obligations whose subject is a declared message field. Each
+record holds the field name, the containers the document declares that field in (the same field legitimately
+recurs across channels — `TagOp` lives in the Request channel, the Response packet, and the Data packet), the
+same constraint-kind vocabulary signal constraints use (what a requirement can *say* is the same; what it is
+*about* differs), the grounded condition and value, and the statements it came from. A separate surface —
+rather than a "field" flag on signal constraints — means every downstream consumer of `signal_constraints`
+keeps seeing wires only, by construction.
+
+The discipline is identical on both surfaces: a field obligation must survive the condition-subject guard, the
+permissive-frame guard, source-grounded value recovery, and provenance-merging de-duplication, exactly like a
+signal constraint. Measured live on the persisted CHI artifact the split is visibly right: the four flit-valid
+wires (`REQFLITV`/`RSPFLITV`/`SNPFLITV`/`DATFLITV`) stay signal constraints, the `TagOp`/`PBHA` content rules
+become field records with their channel provenance (the twice-stated `TagOp` fact merged into one record
+carrying both statements), and every wire-based document (APB/AHB/AXI) carries an empty field surface with its
+signal results unchanged. One boundary is recorded honestly rather than guessed at: a field *presence*
+requirement (*"the MPAM field must be included on the REQ and SNP channels"*) has no slot in the
+constraint-kind vocabulary yet, so such sentences currently yield nothing — a candidate future kind.
+*Authoritative tracking:* `docs/tasks/EXTRACTION-QUALITY-GAUGE.md` (`.FIELD.4`).
 
 ### `PER-EXTRACTOR-FACT-TAGGING` — who found which fact (recall-gauge groundwork)
 

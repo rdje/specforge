@@ -1,4 +1,42 @@
 # DEVELOPMENT_NOTES
+## `EXTRACTION-QUALITY-GAUGE.FIELD.4` (`2026-06-10`) — `message_field_constraints` routing
+- Decision: PARALLEL surface (`EvidenceIr.message_field_constraints`, serde-additive, skip-if-empty)
+  over a subject-kind discriminator — downstream `signal_constraints` consumers (eval keys,
+  nli-verify, semantic carry-through, ISF adapter) keep seeing wires only by construction.
+- `ir/evidence.rs`: `MessageFieldConstraintRecord` = field-scoped sibling of `SignalConstraintRecord`
+  (subject_field, catalog `containers` provenance — encounter order, NOT identity — shared
+  `SignalConstraintKind` vocabulary, condition/value/negated/source/statements/confidence). Build
+  initializes empty; only `extract-constraints-llm` populates (carry-forward untouched — same
+  semantics as the LLM-replaced signal surface).
+- `ir/constraint_extract_llm.rs`: `GroundedConstraint::{Signal,Field}` + `ground_constraint_typed`
+  — subject typing FIRST (Signal | Field pass, all else drop), then the SHARED gates in unchanged
+  order (`.3a` condition-only, `.3b` permissive-frame, `.8` value recovery, `.2` condition
+  grounding), then variant construction. `ground_constraint` kept as the signal-only delegating
+  view (existing tests + behavior preserved: field subject → None). `dedup_merge_by` generic core
+  (first-wins, lookup-only map — `EVIDENCE-DETERMINISM`-safe) now backs both `dedup_constraints`
+  and `dedup_field_constraints` (key subject+kind+value+negation+condition, same normalization as
+  the eval key).
+- `commands/extract_constraints_llm.rs`: routes by variant, separate `llm_fieldcon_NNNN` counter,
+  replaces BOTH surfaces, separate report line.
+- Measurement (corpus-safe; `/tmp/eqg-field4`, deleted post-commit): persisted CHI evidence has 13
+  Pattern constraints (6 wires + 5 junk `REQ must_be_value` rows whose sentences obligate
+  TagOp/PBHA/MPAM FIELDS); catalog injected into the redirected copy from the REAL `.FIELD.2`
+  extractor via the new `#[ignore]`d `message_field_catalog_dump_local_measurement`
+  (`SPECFORGE_MEASURE_SOURCE_IR=<source_ir.json>`, repo-root-relative paths resolved; 106 fields =
+  the `.FIELD.2` sweep exactly). Baseline (no catalog): TagOp+PBHA mis-typed as signal constraints.
+  With catalog: signal surface = exactly REQFLITV/RSPFLITV/SNPFLITV/DATFLITV `must_be_high`; field
+  surface = TagOp (3 containers, 2 statement ids merged) + PBHA. Wire controls: extract on
+  redirected APB/AHB/AXI copies + `eval-extraction --provider skip` → volumes exactly the
+  `.3b`/`.4` state (20/12/54→50), zero field constraints, P=R=F1=1.000 ×3, doc recall 16/16,
+  conformal empirical_error 0.000.
+- MPAM residual probed live (temp 0, exact prompt): "the MPAM field must be included on the REQ and
+  SNP channels" → model outputs `[]` — a PRESENCE requirement with no kind slot (the `.8`
+  root-cause shape). Future kind only via the probe-first method. NOTE: the extraction prompt
+  deliberately keeps "wire/pin/field" — the model proposes field subjects so Rust types and routes.
+- Tests: +5 pure (`field_subject_grounds…`, gates, invented-subject, signal-only view, field dedup)
+  + `.FIELD.3` end-to-end extended through the REAL entity-typing composition. lib 1532; kg-bench
+  153/153; run_ci.sh exit 0.
+
 ## `EXTRACTION-QUALITY-GAUGE.FIELD.3` (`2026-06-10`) — `EntityType::Field` grounding
 - `ir/entity_typing.rs`: `Field` variant (+parse/as_str), `declared_in_field_table` gathered from
   `message_field_records` (uppercase compare, same convention as the signal-table ground); grounding

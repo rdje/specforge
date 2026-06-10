@@ -13,8 +13,14 @@ for NINE EvidenceIR surfaces. The ninth (`EXTRACTION-QUALITY-GAUGE.FIELD.2`, sam
 packet/flit protocols' declared message fields from container-captioned field-titled tables, with the
 register surface keeping priority over shared `Field` columns via `is_register_field_header` (the
 one-place discriminator). It is the first surface whose extractor reads ONLY `SourceIr.structured_tables`
-and persists a new typed inventory (`EvidenceIr.message_field_records`) consumed by the upcoming
-entity-typing ground (`EntityType::Field`).
+and persists a new typed inventory (`EvidenceIr.message_field_records`) consumed by the entity-typing
+ground (`EntityType::Field`, `.FIELD.3`) and — via `.FIELD.4` — by the LLM-primary constraint extractor:
+`ir/constraint_extract_llm.rs` now grounds into a typed `GroundedConstraint::{Signal,Field}` dispatch
+(`ground_constraint_typed`; shared gates, subject-type routing; `ground_constraint` kept as the
+signal-only view) and the parallel `EvidenceIr.message_field_constraints` surface
+(`MessageFieldConstraintRecord`: field subject + catalog containers + the shared
+`SignalConstraintKind` vocabulary) keeps the canonical signal surface wires-only by construction,
+with `dedup_merge_by` as the generic provenance-merging dedup core behind both surfaces.
 
 - The frame: a generic `Extractor<R>` trait (`name`/`tier`/`applies_to`/`run`), a borrowed
   `ExtractionContext` (grows one field per migrated cluster; currently carries `statements`), TWO drivers —

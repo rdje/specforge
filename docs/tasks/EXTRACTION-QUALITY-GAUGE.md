@@ -311,12 +311,49 @@ honestly-qualified) path to "human-SpecForge in Rust."
   rejected as signal subject; lib 1527); kg-bench 153/153; `run_ci.sh` GREEN. Live CHI constraint
   re-measure stays bound to `.FIELD.4` (CHI normalized bundle cleaned; PDF host-local).
   Book: the `extract-constraints-llm` section now documents the deterministic field rejection.
-- ID: `EXTRACTION-QUALITY-GAUGE.FIELD.4` · Status: `pending` · Goal: **capture the intent** —
-  field-subject obligations become field-scoped constraints instead of dropped (decide at
-  implementation: a parallel `field_constraints` surface vs a subject-kind discriminator; a
-  separate surface keeps the canonical signal surface clean), then the CHI-class gauge re-measure
-  (caveat: CHI's `normalized/` bundle is cleaned and its PDF is host-local — request re-provision,
-  or re-measure on persisted artifacts where possible).
+- ID: `EXTRACTION-QUALITY-GAUGE.FIELD.4` · Status: `done` (`2026-06-10`) · Goal: **capture the
+  intent** — field-subject obligations become field-scoped constraints instead of dropped, plus
+  the CHI-class re-measure on persisted artifacts. **DECISION: a parallel
+  `message_field_constraints` EvidenceIR surface, NOT a subject-kind discriminator on
+  `SignalConstraintRecord`** — a discriminator would force every downstream signal-constraint
+  consumer (eval canonical keys, nli-verify, semantic carry-through, the ISF adapter) to filter
+  by kind or silently keep treating fields as wires, which is the exact mis-typing this tree
+  exists to kill; a separate surface keeps the canonical signal surface wires-only by
+  construction. Shipped: `MessageFieldConstraintRecord` (subject_field + catalog `containers`
+  provenance + the SHARED `SignalConstraintKind` vocabulary — what a requirement can SAY is the
+  same, what it is ABOUT differs — + same condition/value/statement provenance shape) beside
+  `MessageFieldRecord`; serde-additive `EvidenceIr.message_field_constraints` (old artifacts
+  load; empty surface serializes to nothing); `ground_constraint_typed` in
+  `ir/constraint_extract_llm.rs` dispatches on the `.FIELD.3` entity type AFTER the shared gates
+  (`.3a` condition-only, `.3b` permissive-frame, `.8` value recovery, `.2` condition grounding —
+  a field obligation passes the SAME discipline, fixture-locked), with `ground_constraint` kept
+  as the signal-only view (a field subject still never reaches `signal_constraints`);
+  `dedup_merge_by` generalizes the `.4` provenance-merging dedup over both surfaces
+  (`dedup_field_constraints` keyed subject+kind+value+negation+condition; containers are catalog
+  provenance, not identity); `extract-constraints-llm` routes Field records to the new surface
+  (replace semantics, `llm_fieldcon_NNNN` ids, separate report line). +5 pure tests + the
+  `.FIELD.3` end-to-end test extended through the REAL entity-typing composition (lib 1532);
+  kg-bench 153/153. **Measured live (qwen2.5:14b-instruct temp 0; persisted CHI evidence via the
+  `.8` redirected-copy protocol; catalog injected from the REAL `.FIELD.2` extractor over
+  persisted SourceIR — 106 fields, reproducing `.FIELD.2` exactly; new `#[ignore]`d
+  `message_field_catalog_dump_local_measurement` harness): BASELINE (no catalog) mis-types
+  `TagOp must_be_value 0` + `PBHA must_be_value 0` as SIGNAL constraints; WITH CATALOG the
+  signal surface is EXACTLY the document's 4 real flit-valid wires
+  (`REQFLITV`/`RSPFLITV`/`SNPFLITV`/`DATFLITV` `must_be_high`, conditions preserved) and the 2
+  field obligations land in `message_field_constraints` with containers (`TagOp` → Request
+  channel/Response packet/Data packet) and merged provenance (the twice-stated TagOp fact = ONE
+  record, both statement ids; dedup 3→2). The Pattern artifact's 5 junk `REQ must_be_value`
+  records are gone in both runs. Wire controls (extract-constraints-llm on redirected
+  APB/AHB/AXI copies + `eval-extraction --provider skip`): volumes EXACTLY the `.3b`/`.4` state
+  (APB 20, AHB 12, AXI 54→50 w/ 4 merged), zero field constraints, P=R=F1=1.000 ×3, doc-level
+  recall 16/16, conformal empirical_error 0.000.** Honest residuals: (a) field PRESENCE
+  requirements ("the MPAM field must be included on the REQ and SNP channels") have no
+  constraint-kind slot — probed live, model outputs `[]` (the `.8` root-cause shape; a future
+  probed kind-vocabulary slice, NOT guessed); (b) the FULL fresh-yield CHI gauge re-measure
+  (the original 162-constraint vintage) still needs re-ingest — PDF host-local, request
+  re-provision; (c) validate/document-class integration of the field surfaces stays deliberately
+  deferred (same as `.FIELD.2`). Book: `pipeline/evidenceir.md` `.FIELD.4` subsection +
+  `commands/quality-and-learning.md` routing rewrite. KM [[message-field-constraints-surface]].
 - ID: `EXTRACTION-QUALITY-GAUGE.3` · Status: `active` (split `2026-06-10`) · Goal: permission/relational
   disambiguation. Split after `.8` measured the residual FP ledger: ALL three labeled-statement FPs are
   the **condition-subject-read-as-obligation** class — APB `PSELx must_be_high` (if-clause), AHB
@@ -413,6 +450,17 @@ honestly-qualified) path to "human-SpecForge in Rust."
   conditions stay distinct facts; eval unchanged at P=R=F1=1.000 ×3. The original `.gauge`
   duplication taxonomy (~30% on CHI) now has its mechanism in place for the CHI-class re-measure
   once `.FIELD` lands.
+- `2026-06-10`: `.FIELD.4` DONE — field obligations are CAPTURED, not dropped: the parallel
+  `message_field_constraints` surface (decision: separate surface over a subject-kind
+  discriminator — downstream `signal_constraints` consumers keep seeing wires only, by
+  construction), `ground_constraint_typed` routing field-typed subjects through the SAME
+  grounding gates, provenance-merging dedup generalized over both surfaces. Measured live on
+  persisted CHI (catalog injected from the real `.FIELD.2` extractor): signal surface = exactly
+  the 4 flit-valid wires; `TagOp`/`PBHA` content rules = 2 field records with channel containers
+  and merged provenance; wire controls APB/AHB/AXI at exact prior volumes, zero field
+  constraints, P=R=F1=1.000 ×3. Residuals: field-presence kind (MPAM "must be included" —
+  probed `[]`), full fresh-yield CHI re-measure (needs re-ingest), validate integration
+  deferred. See [[message-field-constraints-surface]].
 - `2026-06-10`: `.FIELD.3` DONE — `EntityType::Field` grounded on the `message_field_records`
   catalog: a declared field types as `Field` deterministically (no LLM call) and is rejected as a
   signal-constraint subject; signal-table declarations outrank; the conflated "wire/pin/field"

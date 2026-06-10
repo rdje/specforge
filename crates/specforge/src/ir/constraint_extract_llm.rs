@@ -10,6 +10,7 @@
 use crate::cli::VlmProviderArg;
 use crate::commands::llm_text::{api_url, call_text_provider};
 use crate::ir::entity_typing::{EntityType, is_valid_signal_subject};
+use crate::ir::evidence::MessageFieldConstraintRecord;
 use crate::ir::source::{AutomationConfidence, SignalConstraintKind, SignalConstraintRecord};
 use serde::Deserialize;
 
@@ -188,19 +189,37 @@ pub fn is_permissive_only_subject_frame(subject: &str, source_text: &str) -> boo
     saw_permissive
 }
 
-/// Ground one proposed constraint into a record, or drop it. `type_subject` is injected (production
-/// = entity typing) so this is testable with no provider; `is_grounded` guards the condition.
+/// A grounded constraint, typed by what its subject IS (`.FIELD.4`): an obligation on a wire
+/// lands in the canonical signal surface; an obligation on a declared message field ("the TagOp
+/// field … must be 0b00") lands in the field-scoped surface instead of polluting the signal
+/// inventory or being silently dropped.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum GroundedConstraint {
+    Signal(SignalConstraintRecord),
+    Field(MessageFieldConstraintRecord),
+}
+
+/// Ground one proposed constraint into a typed record, or drop it. Every gate is SHARED between
+/// the signal and field outcomes — a field obligation must pass the same discipline (`.3a`
+/// condition-only subject, `.3b` permissive frame, `.8` value recovery, `.2` condition
+/// grounding); only the subject's entity type decides which surface the record belongs to.
+/// `type_subject` is injected (production = entity typing) so this is testable with no provider;
+/// `field_containers` reports the catalog containers declaring a field subject (provenance).
 #[allow(clippy::too_many_arguments)]
-pub fn ground_constraint(
+pub fn ground_constraint_typed(
     raw: &RawConstraint,
     sentence: &str,
     statement_id: &str,
-    constraint_id: &str,
+    signal_constraint_id: &str,
+    field_constraint_id: &str,
     type_subject: impl Fn(&str) -> EntityType,
     is_grounded: impl Fn(&str, &str) -> bool,
-) -> Option<SignalConstraintRecord> {
-    // .1 — the subject must type as a Signal (the model may not invent non-signal subjects).
-    if !is_valid_signal_subject(type_subject(&raw.subject)) {
+    field_containers: impl Fn(&str) -> Vec<String>,
+) -> Option<GroundedConstraint> {
+    // .1/.FIELD.3 — the subject must type as a Signal or a declared Field (the model may not
+    // invent subjects; actors, transactions, table refs, boilerplate are all dropped).
+    let subject_type = type_subject(&raw.subject);
+    if !is_valid_signal_subject(subject_type) && subject_type != EntityType::Field {
         return None;
     }
     // .3a — a subject that appears only inside the sentence's conditional clauses is the
@@ -233,44 +252,79 @@ pub fn ground_constraint(
         .as_ref()
         .map(|c| c.trim().to_string())
         .filter(|c| !c.is_empty() && !c.eq_ignore_ascii_case("none") && is_grounded(c, sentence));
-    Some(SignalConstraintRecord {
-        constraint_id: constraint_id.to_string(),
-        subject_signal: raw.subject.trim().to_string(),
-        constraint_kind,
-        target_value: effective_value,
-        condition_text,
-        negated: false,
-        source_text: sentence.to_string(),
-        supporting_statement_ids: vec![statement_id.to_string()],
-        automation_confidence: AutomationConfidence::Medium,
+    Some(if subject_type == EntityType::Field {
+        GroundedConstraint::Field(MessageFieldConstraintRecord {
+            constraint_id: field_constraint_id.to_string(),
+            subject_field: raw.subject.trim().to_string(),
+            containers: field_containers(&raw.subject),
+            constraint_kind,
+            target_value: effective_value,
+            condition_text,
+            negated: false,
+            source_text: sentence.to_string(),
+            supporting_statement_ids: vec![statement_id.to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        })
+    } else {
+        GroundedConstraint::Signal(SignalConstraintRecord {
+            constraint_id: signal_constraint_id.to_string(),
+            subject_signal: raw.subject.trim().to_string(),
+            constraint_kind,
+            target_value: effective_value,
+            condition_text,
+            negated: false,
+            source_text: sentence.to_string(),
+            supporting_statement_ids: vec![statement_id.to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        })
     })
 }
 
-/// `.4` — collapse exact-duplicate constraints by (subject, kind incl. value, negation,
-/// condition): the same obligation re-extracted from the same or another sentence yields ONE
-/// record, and the duplicates' supporting statements are merged into the kept record so
-/// provenance is preserved, never lost. First occurrence wins (stable ids and order; the map is
-/// lookup-only, so no hash-iteration order can reach the output — `EVIDENCE-DETERMINISM`).
-pub fn dedup_constraints(records: Vec<SignalConstraintRecord>) -> Vec<SignalConstraintRecord> {
+/// Ground one proposed constraint into a SIGNAL record, or drop it — the signal-only view of
+/// [`ground_constraint_typed`] (a field-typed subject yields `None` here; callers that want the
+/// field surface use the typed function).
+pub fn ground_constraint(
+    raw: &RawConstraint,
+    sentence: &str,
+    statement_id: &str,
+    constraint_id: &str,
+    type_subject: impl Fn(&str) -> EntityType,
+    is_grounded: impl Fn(&str, &str) -> bool,
+) -> Option<SignalConstraintRecord> {
+    match ground_constraint_typed(
+        raw,
+        sentence,
+        statement_id,
+        constraint_id,
+        constraint_id,
+        type_subject,
+        is_grounded,
+        |_| Vec::new(),
+    )? {
+        GroundedConstraint::Signal(rec) => Some(rec),
+        GroundedConstraint::Field(_) => None,
+    }
+}
+
+/// `.4` — the shared dedup core: collapse records with an identical canonical key into the FIRST
+/// occurrence (stable ids and order; the map is lookup-only, so no hash-iteration order can reach
+/// the output — `EVIDENCE-DETERMINISM`), merging the duplicates' supporting statements into the
+/// kept record so provenance is preserved, never lost.
+fn dedup_merge_by<T>(
+    records: Vec<T>,
+    key_of: impl Fn(&T) -> String,
+    supporting_ids: impl Fn(&mut T) -> &mut Vec<String>,
+) -> Vec<T> {
     use std::collections::HashMap;
-    let mut kept: Vec<SignalConstraintRecord> = Vec::new();
+    let mut kept: Vec<T> = Vec::new();
     let mut index_by_key: HashMap<String, usize> = HashMap::new();
-    for rec in records {
-        let condition = rec
-            .condition_text
-            .as_deref()
-            .unwrap_or("")
-            .trim()
-            .to_ascii_lowercase();
-        let key = format!(
-            "{}|{condition}",
-            crate::eval::signal_constraint_record_key(&rec)
-        );
+    for mut rec in records {
+        let key = key_of(&rec);
         match index_by_key.get(&key) {
             Some(&i) => {
-                for sid in rec.supporting_statement_ids {
-                    if !kept[i].supporting_statement_ids.contains(&sid) {
-                        kept[i].supporting_statement_ids.push(sid);
+                for sid in std::mem::take(supporting_ids(&mut rec)) {
+                    if !supporting_ids(&mut kept[i]).contains(&sid) {
+                        supporting_ids(&mut kept[i]).push(sid);
                     }
                 }
             }
@@ -281,6 +335,54 @@ pub fn dedup_constraints(records: Vec<SignalConstraintRecord>) -> Vec<SignalCons
         }
     }
     kept
+}
+
+/// Normalized condition component of a dedup key.
+fn condition_key(condition_text: Option<&str>) -> String {
+    condition_text.unwrap_or("").trim().to_ascii_lowercase()
+}
+
+/// `.4` — collapse exact-duplicate SIGNAL constraints by (subject, kind incl. value, negation,
+/// condition): the same obligation re-extracted from the same or another sentence yields ONE
+/// record carrying every supporting statement.
+pub fn dedup_constraints(records: Vec<SignalConstraintRecord>) -> Vec<SignalConstraintRecord> {
+    dedup_merge_by(
+        records,
+        |rec| {
+            format!(
+                "{}|{}",
+                crate::eval::signal_constraint_record_key(rec),
+                condition_key(rec.condition_text.as_deref())
+            )
+        },
+        |rec| &mut rec.supporting_statement_ids,
+    )
+}
+
+/// `.FIELD.4` — the same provenance-merging dedup for FIELD constraints, keyed by (field subject,
+/// kind incl. value, negation, condition). The subject key is the field name — containers are
+/// catalog provenance for the same declared field, not part of the obligation's identity.
+pub fn dedup_field_constraints(
+    records: Vec<MessageFieldConstraintRecord>,
+) -> Vec<MessageFieldConstraintRecord> {
+    dedup_merge_by(
+        records,
+        |rec| {
+            let value = match &rec.constraint_kind {
+                SignalConstraintKind::MustBeValue { value } => Some(value.as_str()),
+                _ => rec.target_value.as_deref(),
+            };
+            format!(
+                "{}|{}|{}|{}|{}",
+                rec.subject_field.trim().to_ascii_uppercase(),
+                crate::eval::constraint_kind_str(&rec.constraint_kind),
+                rec.negated,
+                value.unwrap_or("").trim().to_ascii_uppercase(),
+                condition_key(rec.condition_text.as_deref())
+            )
+        },
+        |rec| &mut rec.supporting_statement_ids,
+    )
 }
 
 /// Default text model.
@@ -730,6 +832,204 @@ mod tests {
                 value: "NONSEQ".into()
             }
         );
+    }
+
+    #[test]
+    fn field_subject_grounds_to_a_field_constraint_with_catalog_containers() {
+        // `.FIELD.4` — the persisted CHI shape: an obligation on the TagOp FIELD routes to the
+        // field-scoped surface (subject typed by the `.FIELD.3` catalog), with the catalog's
+        // containers as provenance — never into signal_constraints.
+        let raw = RawConstraint {
+            subject: "TagOp".into(),
+            kind: "must_be_value".into(),
+            condition: Some("For all other REQ channel messages".into()),
+            value: Some("0b00".into()),
+        };
+        let got = ground_constraint_typed(
+            &raw,
+            "For all other REQ channel messages, the TagOp field is inapplicable and must \
+             be 0b00.",
+            "s1",
+            "c-signal",
+            "c-field",
+            |_| EntityType::Field,
+            is_grounded_in_source,
+            |name| {
+                assert_eq!(name, "TagOp");
+                vec!["Request channel".to_string()]
+            },
+        )
+        .expect("a declared-field obligation must ground");
+        let GroundedConstraint::Field(rec) = got else {
+            panic!("a field subject must yield a field-scoped record");
+        };
+        assert_eq!(rec.constraint_id, "c-field");
+        assert_eq!(rec.subject_field, "TagOp");
+        assert_eq!(rec.containers, vec!["Request channel".to_string()]);
+        assert_eq!(
+            rec.constraint_kind,
+            SignalConstraintKind::MustBeValue {
+                value: "0b00".into()
+            }
+        );
+        assert_eq!(
+            rec.condition_text.as_deref(),
+            Some("For all other REQ channel messages")
+        );
+    }
+
+    #[test]
+    fn field_constraints_pass_the_same_grounding_gates() {
+        // `.FIELD.4` — a field obligation gets NO discipline discount. A field subject that
+        // appears only in a conditional clause is the condition's subject (.3a)…
+        let when_clause = RawConstraint {
+            subject: "TagOp".into(),
+            kind: "must_be_high".into(),
+            condition: None,
+            value: None,
+        };
+        assert!(
+            ground_constraint_typed(
+                &when_clause,
+                "XDATAV must be HIGH when the TagOp field is zero.",
+                "s1",
+                "cs",
+                "cf",
+                |_| EntityType::Field,
+                is_grounded_in_source,
+                |_| Vec::new(),
+            )
+            .is_none(),
+            "the .3a condition-only gate applies to field subjects too"
+        );
+        // …and a permissively-framed field proposal cannot ground a must_* obligation (.3b).
+        let recommended = RawConstraint {
+            subject: "TagOp".into(),
+            kind: "must_be_value".into(),
+            condition: None,
+            value: Some("0b00".into()),
+        };
+        assert!(
+            ground_constraint_typed(
+                &recommended,
+                "It is recommended that the TagOp field is set to 0b00.",
+                "s1",
+                "cs",
+                "cf",
+                |_| EntityType::Field,
+                is_grounded_in_source,
+                |_| Vec::new(),
+            )
+            .is_none(),
+            "the .3b permissive-frame gate applies to field subjects too"
+        );
+    }
+
+    #[test]
+    fn typed_grounding_still_drops_an_invented_subject() {
+        // Neither a signal nor a declared field — a transaction name stays out of BOTH surfaces.
+        let raw = RawConstraint {
+            subject: "ReadNoSnp".into(),
+            kind: "must_be_asserted".into(),
+            condition: None,
+            value: None,
+        };
+        let got = ground_constraint_typed(
+            &raw,
+            "A ReadNoSnp transaction must be issued first.",
+            "s1",
+            "cs",
+            "cf",
+            |_| EntityType::Transaction,
+            is_grounded_in_source,
+            |_| Vec::new(),
+        );
+        assert!(got.is_none(), "a non-signal, non-field subject is dropped");
+    }
+
+    #[test]
+    fn the_signal_only_view_still_drops_a_field_subject() {
+        // `ground_constraint` is the signal-only view: a field-typed subject never lands in
+        // the signal surface (the `.FIELD.3` behavior, preserved through the `.FIELD.4` split).
+        let raw = RawConstraint {
+            subject: "DBID".into(),
+            kind: "must_not_change".into(),
+            condition: None,
+            value: None,
+        };
+        let got = ground_constraint(
+            &raw,
+            "The DBID field must not change.",
+            "s1",
+            "c1",
+            |_| EntityType::Field,
+            is_grounded_in_source,
+        );
+        assert!(got.is_none(), "a field is not a signal-constraint subject");
+    }
+
+    fn field_record(
+        id: &str,
+        subject: &str,
+        kind: SignalConstraintKind,
+        condition: Option<&str>,
+        stmt: &str,
+    ) -> MessageFieldConstraintRecord {
+        MessageFieldConstraintRecord {
+            constraint_id: id.to_string(),
+            subject_field: subject.to_string(),
+            containers: vec!["Request channel".to_string()],
+            constraint_kind: kind,
+            target_value: None,
+            condition_text: condition.map(str::to_string),
+            negated: false,
+            source_text: String::new(),
+            supporting_statement_ids: vec![stmt.to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        }
+    }
+
+    #[test]
+    fn dedup_field_constraints_collapses_duplicates_and_merges_provenance() {
+        // `.FIELD.4` — the same `.4` provenance-merging dedup, on the field surface.
+        let records = vec![
+            field_record(
+                "f1",
+                "TagOp",
+                SignalConstraintKind::MustBeValue {
+                    value: "0b00".into(),
+                },
+                None,
+                "s1",
+            ),
+            field_record(
+                "f2",
+                "TagOp",
+                SignalConstraintKind::MustBeValue {
+                    value: "0b00".into(),
+                },
+                None,
+                "s2",
+            ),
+            field_record(
+                "f3",
+                "TagOp",
+                SignalConstraintKind::MustBeValue {
+                    value: "0b00".into(),
+                },
+                Some("when tags are present"),
+                "s3",
+            ),
+        ];
+        let out = dedup_field_constraints(records);
+        assert_eq!(out.len(), 2, "different condition = a different fact");
+        assert_eq!(out[0].constraint_id, "f1", "first occurrence wins");
+        assert_eq!(
+            out[0].supporting_statement_ids,
+            vec!["s1".to_string(), "s2".to_string()],
+            "duplicate provenance merged, never lost"
+        );
+        assert_eq!(out[1].constraint_id, "f3");
     }
 
     #[test]

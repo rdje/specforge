@@ -442,18 +442,43 @@ the "replace, don't patch" thesis from the extraction-quality program. Where the
 deterministic Pattern extractor matches phrasings it knows, this command hands each
 constraint-bearing sentence to a local text model and asks for the *structured*
 requirement — `(subject, kind, condition, value)` — then lets Rust ground every
-field before anything is kept: the subject must type as a real **signal** (entity
-typing — a table reference, feature name, transaction type, or *message field* is
-rejected), the kind must parse, and a condition survives only if the source
-sentence actually contains it. What the model proposes but cannot ground is
-dropped, never invented. The message-field rejection is fully deterministic on
-packet protocols: a name the document declares in its own field tables (`TxnID`,
-`DBID` — the `message_field_records` inventory) types as a **field** with no model
-call at all, while a name declared in a signal table always stays a signal. Only
-names the document declares in *neither* place reach the model's judgment, and the
-probe-tested boundary there is phrasing: prose that says *"the ReturnNID field"*
-types as a field, a bare mention may not — which is exactly why the declared
-catalog, not the model, carries the ontology.
+field before anything is kept: the subject must type as a real **signal** or as a
+document-declared **message field** (entity typing — a table reference, feature
+name, or transaction type is rejected), the kind must parse, and a condition
+survives only if the source sentence actually contains it. What the model
+proposes but cannot ground is dropped, never invented. The field typing is fully
+deterministic on packet protocols: a name the document declares in its own field
+tables (`TxnID`, `DBID` — the `message_field_records` inventory) types as a
+**field** with no model call at all, while a name declared in a signal table
+always stays a signal. Only names the document declares in *neither* place reach
+the model's judgment, and the probe-tested boundary there is phrasing: prose that
+says *"the ReturnNID field"* types as a field, a bare mention may not — which is
+exactly why the declared catalog, not the model, carries the ontology.
+
+What happens to a field-typed subject changed with the field-constraint surface:
+it is no longer *dropped*, it is **routed**. An obligation whose subject is a
+declared message field — *"For all other REQ channel messages, the TagOp field is
+inapplicable and must be 0"* — is real protocol intent, just intent about message
+*content* rather than about a wire. Such a record now lands in the artifact's
+`message_field_constraints` surface, carrying the field name, the containers the
+document declares it in (`TagOp` lives in the Request channel, Response packet,
+and Data packet), the same typed kind/condition/value as a signal constraint, and
+full statement provenance. Crucially, a field obligation gets **no discipline
+discount**: it passes through exactly the same grounding gates as a signal
+constraint — the condition-subject guard, the permissive-frame guard, the
+source-grounded value recovery, and the provenance-merging de-duplication —
+before it is kept. Measured live on the persisted CHI artifact (its field catalog
+re-derived from the persisted tables by the real extractor): the signal surface
+collapses to exactly the document's four real flit-valid wires
+(`REQFLITV`/`RSPFLITV`/`SNPFLITV`/`DATFLITV`), while the `TagOp` and `PBHA`
+obligations — previously either junk "signal" constraints or silent drops — come
+out as two field-scoped records, the twice-stated `TagOp` fact merged into one
+record carrying both statements. The wire-based controls are untouched: APB, AHB,
+and AXI re-measure at their exact prior volumes with zero field constraints and
+perfect labeled scores. One boundary stays honest: a field *presence* requirement
+(*"the MPAM field must be included on the REQ and SNP channels"*) has no slot in
+the constraint-kind vocabulary yet, and the model stays silent on such sentences —
+a candidate future kind, recorded as a residual rather than guessed at.
 
 One more guard runs on the subject itself. In *"ASKSTOP must be LOW **when
 ACTIVATEACK is LOW**"*, only ASKSTOP carries an obligation — ACTIVATEACK merely
@@ -485,7 +510,8 @@ lists all three supporting statements — the duplicate noise goes away while
 every scrap of provenance is kept. Facts that differ in their condition stay
 separate records, because a different condition is a different requirement.
 Heads up before you run it: it **replaces** the artifact's `signal_constraints`
-in place — point it at a copy if you want to keep the Pattern set side by side.
+and `message_field_constraints` in place — point it at a copy if you want to
+keep the Pattern set side by side.
 
 One honest subtlety the program learned the hard way: a specification's
 *validity* requirement — "PBUSER **must be valid** when PSEL, PENABLE, and PREADY

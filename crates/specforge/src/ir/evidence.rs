@@ -203,6 +203,15 @@ pub struct EvidenceIr {
     /// Empty (serde-skipped) for documents that declare no message-field tables.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub message_field_records: Vec<MessageFieldRecord>,
+    /// EXTRACTION-QUALITY-GAUGE.FIELD.4: typed obligations on declared MESSAGE FIELDS ("the TagOp
+    /// field is inapplicable and must be 0b00"). A field obligation is protocol intent on flit/
+    /// message CONTENT, not on a wire — so it lives in its own surface instead of either polluting
+    /// `signal_constraints` (the CHI mis-typing class) or being silently dropped by the
+    /// signal-subject gate. Populated by `extract-constraints-llm` when a grounded subject types
+    /// as `EntityType::Field` against the `message_field_records` catalog.
+    /// Empty (serde-skipped) for documents without field-subject obligations.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub message_field_constraints: Vec<MessageFieldConstraintRecord>,
     /// SWD-SERIAL-EXTRACTION.4: the protocol FSM states (the JTAG TAP / SWD line state machine). The
     /// FSM is critical to understanding/implementing SWD/JTAG and is what FSMGen ultimately builds.
     /// Empty (serde-skipped) for documents without a described state machine.
@@ -316,6 +325,41 @@ pub struct MessageFieldRecord {
     /// the record its first declaration created).
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub supporting_table_ids: Vec<String>,
+}
+
+/// EXTRACTION-QUALITY-GAUGE.FIELD.4 — one typed obligation on a declared MESSAGE FIELD
+/// ("For all other REQ channel messages, the TagOp field is inapplicable and must be 0b00").
+/// Structurally the field-scoped sibling of [`SignalConstraintRecord`]: the constraint-kind
+/// vocabulary (`must_be_value`, `must_not_change`, …) is shared — what a requirement can SAY is
+/// the same; what it is ABOUT differs — and the subject is a catalog-declared field, never a
+/// wire. Grounded through the exact same gates as signal constraints (entity typing,
+/// condition-only-subject, permissive-frame, source-grounded value/condition).
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct MessageFieldConstraintRecord {
+    /// Stable id, e.g. `llm_fieldcon_0003`.
+    pub constraint_id: String,
+    /// The declared message field being constrained (`TagOp`, `DBID`), as the source wrote it.
+    pub subject_field: String,
+    /// The containers the `message_field_records` catalog declares this field in (a field name
+    /// legitimately recurs across containers — `QoS` in every channel). Catalog provenance, in
+    /// catalog encounter order; empty only when the subject was field-typed without a catalog
+    /// declaration.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub containers: Vec<String>,
+    /// What the field must do or be (the shared constraint-kind vocabulary).
+    pub constraint_kind: SignalConstraintKind,
+    /// The specific target value/state, if applicable (e.g. `0b00`).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub target_value: Option<String>,
+    /// The condition clause, if present (e.g. "For all other REQ channel messages").
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub condition_text: Option<String>,
+    /// Whether the constraint was negated (`must not`, `shall not`).
+    pub negated: bool,
+    /// The original sentence this record was extracted from.
+    pub source_text: String,
+    pub supporting_statement_ids: Vec<String>,
+    pub automation_confidence: AutomationConfidence,
 }
 
 /// The phase of a serial transaction a frame field belongs to.
@@ -736,6 +780,7 @@ impl EvidenceIr {
             fact_provenance,
             serial_frame_fields,
             message_field_records,
+            message_field_constraints: Vec::new(),
             protocol_states,
             protocol_actors,
             swd_operations,
@@ -11589,7 +11634,83 @@ mod tests {
         });
         assert_eq!(ty, crate::ir::entity_typing::EntityType::Field);
         assert!(!crate::ir::entity_typing::is_valid_signal_subject(ty));
+        // …and the .FIELD.4 composition: a proposed obligation on that declared field grounds
+        // into the field-scoped surface — with the REAL entity-typing path deciding the route
+        // and the catalog providing the container provenance — never into signal_constraints.
+        let raw = crate::ir::constraint_extract_llm::RawConstraint {
+            subject: "TxnID".to_string(),
+            kind: "must_be_value".to_string(),
+            condition: None,
+            value: Some("0b00".to_string()),
+        };
+        let sentence = "The TxnID field must be 0b00.";
+        let grounded = crate::ir::constraint_extract_llm::ground_constraint_typed(
+            &raw,
+            sentence,
+            "stmt_0001",
+            "llm_sigcon_0000",
+            "llm_fieldcon_0000",
+            |s| {
+                crate::ir::entity_typing::classify_entity(
+                    &crate::ir::entity_typing::gather_entity_evidence(
+                        s,
+                        &evidence_ir,
+                        &[sentence.to_string()],
+                    ),
+                    |_| crate::ir::entity_typing::EntityType::Signal,
+                )
+            },
+            crate::ir::condition_extract::is_grounded_in_source,
+            |name| {
+                evidence_ir
+                    .message_field_records
+                    .iter()
+                    .filter(|f| f.name.eq_ignore_ascii_case(name.trim()))
+                    .map(|f| f.container.clone())
+                    .collect()
+            },
+        )
+        .expect("a declared-field obligation must ground");
+        let crate::ir::constraint_extract_llm::GroundedConstraint::Field(rec) = grounded else {
+            panic!("a declared-field subject must route to the field surface");
+        };
+        assert_eq!(rec.constraint_id, "llm_fieldcon_0000");
+        assert_eq!(rec.subject_field, "TxnID");
+        assert_eq!(rec.containers, vec!["Request message".to_string()]);
         Ok(())
+    }
+
+    /// Local measurement harness, NOT a CI test (`--ignored`): dumps the real message-field
+    /// extractor's records for ONE persisted SourceIR as a JSON array on stdout, so a `.FIELD.4`
+    /// re-measure can inject the catalog into a REDIRECTED evidence copy of a document whose
+    /// normalized bundle is gone (the surface is pure over `SourceIR`; the persisted packet-doc
+    /// evidence artifacts predate `message_field_records`).
+    /// Run: `SPECFORGE_MEASURE_SOURCE_IR=generated/source_ir/<key>/source_ir.json \
+    ///   cargo test -p specforge --lib message_field_catalog_dump -- --ignored --nocapture`
+    #[test]
+    #[ignore = "local measurement: reads a developer-local persisted SourceIR"]
+    fn message_field_catalog_dump_local_measurement() {
+        let Ok(path) = std::env::var("SPECFORGE_MEASURE_SOURCE_IR") else {
+            eprintln!(
+                "set SPECFORGE_MEASURE_SOURCE_IR to a persisted source_ir.json — nothing to dump"
+            );
+            return;
+        };
+        // A relative path is repo-root-relative (tests run with the crate dir as CWD).
+        let path = if Path::new(&path).is_absolute() {
+            PathBuf::from(&path)
+        } else {
+            Path::new(env!("CARGO_MANIFEST_DIR"))
+                .join("../..")
+                .join(&path)
+        };
+        let raw = fs::read_to_string(&path).expect("readable SourceIR");
+        let source_ir: SourceIr = serde_json::from_str(&raw).expect("parseable SourceIR");
+        let fields = super::extract_container_message_fields(&source_ir, None);
+        println!(
+            "{}",
+            serde_json::to_string(&fields).expect("serializable records")
+        );
     }
 
     /// Local measurement harness, NOT a CI test (`--ignored`): runs the real message-field
