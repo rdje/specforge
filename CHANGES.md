@@ -1,3 +1,18 @@
+### `LLM-PRIMARY-PROMOTION.1` — promotion of the clean constraint surface DESIGNED (probe-first, docs-only)
+New tree, born directly from the `.0` standing gauge's key finding (canonical artifacts still
+carry the Pattern surface at AHB 60% / AXI 91% NLI-not-entailed while the cleaned LLM-primary
+surface — P=R=F1=1.000 ×3, 16/16 recall — lives only on /tmp measurement copies). In-code
+probes locked the design before any code: converge's monotone fact-count guard FORBIDS an
+in-loop replace, so promotion is post-stability (stable → rescan → promote → one downstream
+rebuild → gauge measures the PROMOTED surface); downstream consumer set enumerated
+(semantic carry + temporal layer, intent, ISF adapter, learn-priors temporal harvest,
+corpus fingerprints); recall universe honestly bounded to Pattern's sentence set (refinement,
+not discovery); provider-off stays Pattern by construction. Decisions: opt-in converge flag
+first with the default-flip as a separate owner-visible decision backed by the `.4` corpus
+sweep; manifest-recorded `constraints.llm_primary`; gold gates = wire-doc eval 1.000 on the
+promoted canonical artifacts + WIRE-BASED-100 intact + serial-class no-regression +
+provider-free CI byte-stable. Frontier: `.2` (the opt-in converge stage).
+
 ### `EXTRACTION-QUALITY-GAUGE.0` — the extraction-quality gauge is a STANDING persisted measurement
 The NLI-oracle gauge (fraction of signal constraints whose own source does NOT entail them) now
 survives the terminal and rides the standard loop: `nli-verify` back-annotates a first-class
