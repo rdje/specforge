@@ -31,7 +31,8 @@ Live corpus yield (real extractor, `#[ignore]`d sweep test): CHI **106 fields / 
 CHI-C2C 149/143/189 (widths 89/93/164), CCIX 1.x 47/50/51, CXS 1 — zero on every register/wire
 doc (12-doc stash-diff byte-identical except the additive manifest entry). Residual shapes for
 later strategies: CCIX 2.0 `Bit Location|Field Description`, OpenCAPI `Operand mnemonic`, USB
-descriptors. Consumed next by [[packet-field-table-declaration]]'s `.FIELD.3` plan: ground
-`EntityType::Field` on this catalog so field subjects are excluded from signal constraints
-deterministically. kg-bench keys: `message_field_count` / `message_fields_include`
+descriptors. Consumed by `.FIELD.3` (`2026-06-10`, same day): `EntityType::Field` +
+`EntityEvidence.declared_in_field_table` ground a declared field deterministically (no LLM call;
+signal-table declaration outranks) and `is_valid_signal_subject(Field)` is false — the
+`DBID`/`TxnID` class can no longer be a constraint subject ([[packet-field-table-declaration]]). kg-bench keys: `message_field_count` / `message_fields_include`
 (`bit_width`, `bit_width_absent`) / `message_field_names_exclude`.

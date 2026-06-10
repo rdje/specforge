@@ -443,9 +443,17 @@ deterministic Pattern extractor matches phrasings it knows, this command hands e
 constraint-bearing sentence to a local text model and asks for the *structured*
 requirement — `(subject, kind, condition, value)` — then lets Rust ground every
 field before anything is kept: the subject must type as a real **signal** (entity
-typing — a table reference, feature name, or transaction type is rejected), the
-kind must parse, and a condition survives only if the source sentence actually
-contains it. What the model proposes but cannot ground is dropped, never invented.
+typing — a table reference, feature name, transaction type, or *message field* is
+rejected), the kind must parse, and a condition survives only if the source
+sentence actually contains it. What the model proposes but cannot ground is
+dropped, never invented. The message-field rejection is fully deterministic on
+packet protocols: a name the document declares in its own field tables (`TxnID`,
+`DBID` — the `message_field_records` inventory) types as a **field** with no model
+call at all, while a name declared in a signal table always stays a signal. Only
+names the document declares in *neither* place reach the model's judgment, and the
+probe-tested boundary there is phrasing: prose that says *"the ReturnNID field"*
+types as a field, a bare mention may not — which is exactly why the declared
+catalog, not the model, carries the ontology.
 
 One more guard runs on the subject itself. In *"ASKSTOP must be LOW **when
 ACTIVATEACK is LOW**"*, only ASKSTOP carries an obligation — ACTIVATEACK merely

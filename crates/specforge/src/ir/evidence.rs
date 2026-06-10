@@ -11536,6 +11536,62 @@ mod tests {
         Ok(())
     }
 
+    #[test]
+    fn evidence_build_populates_message_fields_and_grounds_entity_typing() -> Result<()> {
+        // End-to-end: a field table on the persisted SourceIR survives into
+        // `EvidenceIr.message_field_records`, and entity typing grounds the declared field
+        // deterministically (case-insensitive) so it can never become a signal-constraint
+        // subject (EXTRACTION-QUALITY-GAUGE.FIELD.2 + .FIELD.3).
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        fs::write(&source, "# Protocol\nSignal XMSGV is output width 1.\n")?;
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_fields".to_string(),
+            asset_id: "table_fields".to_string(),
+            page_id: None,
+            caption_text: Some("Table 2.1: Request message fields".to_string()),
+            source_ref: None,
+            table_kind: TableKind::Unknown,
+            header_rows: vec![vec![
+                make_table_cell("Field", true),
+                make_table_cell("Width (bits)", true),
+            ]],
+            body_rows: vec![vec![
+                make_table_cell("TxnID", false),
+                make_table_cell("12", false),
+            ]],
+            row_count: 2,
+            col_count: 2,
+        });
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        assert_eq!(evidence_ir.message_field_records.len(), 1);
+        assert_eq!(evidence_ir.message_field_records[0].name, "TxnID");
+        assert_eq!(evidence_ir.message_field_records[0].bit_width, Some(12));
+        assert_eq!(
+            evidence_ir.message_field_records[0].container,
+            "Request message"
+        );
+        let ev = crate::ir::entity_typing::gather_entity_evidence(
+            "TXNID",
+            &evidence_ir,
+            &["TxnID must be unique.".to_string()],
+        );
+        assert!(ev.declared_in_field_table, "the catalog grounds the token");
+        let ty = crate::ir::entity_typing::classify_entity(&ev, |_| {
+            crate::ir::entity_typing::EntityType::Signal
+        });
+        assert_eq!(ty, crate::ir::entity_typing::EntityType::Field);
+        assert!(!crate::ir::entity_typing::is_valid_signal_subject(ty));
+        Ok(())
+    }
+
     /// Local measurement harness, NOT a CI test (`--ignored`): runs the real message-field
     /// extractor over every persisted `generated/source_ir/*/source_ir.json` and prints per-doc
     /// counts, so the corpus yield can be re-measured live (packet docs whose normalized bundles

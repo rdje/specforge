@@ -1,4 +1,20 @@
 # DEVELOPMENT_NOTES
+## `EXTRACTION-QUALITY-GAUGE.FIELD.3` (`2026-06-10`) — `EntityType::Field` grounding
+- `ir/entity_typing.rs`: `Field` variant (+parse/as_str), `declared_in_field_table` gathered from
+  `message_field_records` (uppercase compare, same convention as the signal-table ground); grounding
+  order in `classify_entity`: signal-table → Signal, ELSE field-table → Field (authoritative, no LLM),
+  else structural-ref negative, else LLM. `is_valid_signal_subject` untouched (Signal-only) — Field is
+  rejected by construction.
+- Prompt: class set + definitions split (`signal = a physical wire/pin`, `field = a named portion of
+  a packet/flit/message payload (not a wire)`), new `Declared in a message-field table:` line.
+- Live probes pre-ship (qwen2.5:14b-instruct, temp 0, /api/chat): TXSACTIVE→signal,
+  LICENSEE→boilerplate, CMO→transaction (controls held); ReturnNID undeclared = phrasing-dependent
+  ("the ReturnNID field…"→field; bare→signal) — recorded as the honest LLM boundary; declared
+  fields never reach the LLM.
+- Tests: declared-field→Field-even-if-LLM-says-signal, both-tables→Signal, parse("field"), plus the
+  end-to-end lock in `ir/evidence.rs` (field table on persisted SourceIR → catalog → gather →
+  classify → rejected subject). lib 1527; kg-bench 153/153; run_ci.sh exit 0.
+
 ## `EXTRACTION-QUALITY-GAUGE.FIELD.2` (`2026-06-10`) — `message_field_records` surface
 - `ir/evidence.rs`: `MessageFieldRecord` + `extract_container_message_fields` (pure over `SourceIr`)
   + `message_field_surface` (`run_surface`, key container+name, manifest `message_fields`); wired in

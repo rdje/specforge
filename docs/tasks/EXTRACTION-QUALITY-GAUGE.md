@@ -291,12 +291,26 @@ honestly-qualified) path to "human-SpecForge in Rust."
   CCIX 2.0 `Bit Location|Field Description`, OpenCAPI `Operand mnemonic`, USB descriptor tables
   (no container bigram) = later strategies; validate/document-class integration deliberately
   deferred. Book: `pipeline/evidenceir.md` subsection. KM [[message-field-records-surface]].
-- ID: `EXTRACTION-QUALITY-GAUGE.FIELD.3` · Status: `pending` · Goal: **discriminate** —
-  `EntityType::Field` + `EntityEvidence.declared_in_field_table` + grounding rule (declared in a
-  field table and not in a signal table → authoritatively `Field`; signal-table declaration
-  outranks when both); fix the conflated prompt (field = a named portion of a packet/flit/message
-  payload); `is_valid_signal_subject(Field) == false` → the `DBID`/`TxnID` class is grounded OUT of
-  signal constraints deterministically, no LLM call needed for declared fields.
+- ID: `EXTRACTION-QUALITY-GAUGE.FIELD.3` · Status: `done` (`2026-06-10`) · Goal: **discriminate** —
+  the ontology is now in the entity-typing gate. Shipped (`ir/entity_typing.rs`):
+  `EntityType::Field` (parse accepts `field`; `as_str` = `field`),
+  `EntityEvidence.declared_in_field_table` gathered from the NEW `message_field_records` catalog
+  (case-insensitive), grounding rule in `classify_entity` — declared in a field table and in no
+  signal table → authoritatively `Field` with NO LLM call; a signal-table declaration outranks
+  when a name is in both; `is_valid_signal_subject(Field) == false`, so the `DBID`/`TxnID` class
+  can never be a constraint/relation subject. The conflated prompt defect (`.FIELD.1`) is fixed:
+  `signal = a physical wire/pin`, `field = a named portion of a packet/flit/message payload (not a
+  wire)`, plus a `Declared in a message-field table:` evidence line. All three consumers
+  (`extract-constraints-llm`, `entity-type`, `eval-extraction`) inherit through
+  `gather_entity_evidence`. **Probed live (qwen2.5:14b-instruct, temp 0) before shipping (the `.8`
+  method): controls UNCHANGED — `TXSACTIVE`→signal (the `.1` recovery preserved),
+  `LICENSEE`→boilerplate, `CMO`→transaction; undeclared-field boundary characterized honestly —
+  "the ReturnNID field …" phrasing → `field`, a bare field-word-free mention → `signal` (same as
+  pre-slice; the deterministic catalog, not the model, carries declared fields).** +3 unit tests +
+  1 end-to-end test (field table on persisted SourceIR → `message_field_records` → typed `Field` →
+  rejected as signal subject; lib 1527); kg-bench 153/153; `run_ci.sh` GREEN. Live CHI constraint
+  re-measure stays bound to `.FIELD.4` (CHI normalized bundle cleaned; PDF host-local).
+  Book: the `extract-constraints-llm` section now documents the deterministic field rejection.
 - ID: `EXTRACTION-QUALITY-GAUGE.FIELD.4` · Status: `pending` · Goal: **capture the intent** —
   field-subject obligations become field-scoped constraints instead of dropped (decide at
   implementation: a parallel `field_constraints` surface vs a subject-kind discriminator; a
@@ -399,6 +413,13 @@ honestly-qualified) path to "human-SpecForge in Rust."
   conditions stay distinct facts; eval unchanged at P=R=F1=1.000 ×3. The original `.gauge`
   duplication taxonomy (~30% on CHI) now has its mechanism in place for the CHI-class re-measure
   once `.FIELD` lands.
+- `2026-06-10`: `.FIELD.3` DONE — `EntityType::Field` grounded on the `message_field_records`
+  catalog: a declared field types as `Field` deterministically (no LLM call) and is rejected as a
+  signal-constraint subject; signal-table declarations outrank; the conflated "wire/pin/field"
+  prompt is split. Probed live pre-ship: entity-judgment controls unchanged
+  (TXSACTIVE/LICENSEE/CMO), undeclared-field boundary honestly characterized (phrasing-dependent —
+  why the catalog, not the model, carries the ontology). lib 1527; kg-bench 153/153. Remaining:
+  `.FIELD.4` field-scoped constraints + the CHI-class gauge re-measure.
 - `2026-06-10`: `.FIELD.2` DONE — `message_field_records` is live: packet/flit protocols' declared
   message fields now have a first-class typed home (CHI 106 / C2C up to 189 with real widths /
   CCIX ~50 — measured with the real extractor over the persisted corpus), the register surface

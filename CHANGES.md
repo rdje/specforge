@@ -1,3 +1,16 @@
+### `EXTRACTION-QUALITY-GAUGE.FIELD.3` — `EntityType::Field`: declared fields are grounded OUT of signal subjects
+Entity typing now knows the field class: `EntityEvidence.declared_in_field_table` reads the new
+`message_field_records` catalog, and `classify_entity` grounds a declared field as `Field`
+authoritatively — no LLM call, never a valid signal-constraint subject (the CHI `DBID`/`TxnID` class is
+now excluded deterministically); a signal-table declaration outranks when a name is in both. The
+conflated entity prompt ("signal = a wire/pin/field") is split: signal = physical wire/pin, field =
+packet/flit/message payload portion. Probed live before shipping (temp 0): TXSACTIVE/LICENSEE/CMO
+judgments unchanged; the undeclared-field boundary is phrasing-dependent and honestly recorded — the
+declared catalog, not the model, carries the ontology. All consumers (extract-constraints-llm,
+entity-type, eval-extraction) inherit via `gather_entity_evidence`. +4 tests incl. an end-to-end
+SourceIR→EvidenceIR→typed-Field→rejected-subject lock (lib 1527); kg-bench 153/153; `run_ci.sh` green;
+book extract-constraints-llm section updated. CHI live re-measure stays with `.FIELD.4`.
+
 ### `EXTRACTION-QUALITY-GAUGE.FIELD.2` — `message_field_records`: packet/flit message fields get a typed home
 New EvidenceIR surface via the extractor framework (`message_fields.container_field_table`, manifest
 entry, key = container+name): field-titled tables whose caption anchors "fields" to a container noun

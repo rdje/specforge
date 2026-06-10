@@ -25,6 +25,9 @@ use crate::ir::evidence::EvidenceIr;
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum EntityType {
     Signal,
+    /// A MESSAGE FIELD — a named portion of a packet/flit/message payload (`TxnID`, `DBID`).
+    /// Protocol intent, but NOT a signal: no wire, no direction (EXTRACTION-QUALITY-GAUGE.FIELD.3).
+    Field,
     Actor,
     Transaction,
     Feature,
@@ -41,6 +44,7 @@ impl EntityType {
     pub fn as_str(self) -> &'static str {
         match self {
             EntityType::Signal => "signal",
+            EntityType::Field => "field",
             EntityType::Actor => "actor",
             EntityType::Transaction => "transaction",
             EntityType::Feature => "feature",
@@ -59,6 +63,7 @@ impl EntityType {
         {
             let t = match w {
                 "signal" => Some(EntityType::Signal),
+                "field" => Some(EntityType::Field),
                 "actor" | "component" | "agent" => Some(EntityType::Actor),
                 "transaction" => Some(EntityType::Transaction),
                 "feature" => Some(EntityType::Feature),
@@ -85,6 +90,9 @@ pub struct EntityEvidence {
     pub token: String,
     /// Declared in a pin/port/signal table (`table_signal_declaration_provenance`) — authoritative.
     pub declared_in_signal_table: bool,
+    /// Declared in a message-field table (`message_field_records`) — authoritative for `Field`
+    /// when the signal tables are silent (EXTRACTION-QUALITY-GAUGE.FIELD.3).
+    pub declared_in_field_table: bool,
     /// Semantic tags the document attached to it (`signal_semantic_hints`).
     pub semantic_hint_tags: Vec<String>,
     /// Appears as the ACTOR (subject of a normative verb) in a relation.
@@ -109,6 +117,10 @@ pub fn gather_entity_evidence(
         .table_signal_declaration_provenance
         .iter()
         .any(|d| d.signal_name.trim().to_ascii_uppercase() == up);
+    let declared_field = ir
+        .message_field_records
+        .iter()
+        .any(|f| f.name.trim().to_ascii_uppercase() == up);
     let semantic_hint_tags: Vec<String> = ir
         .signal_semantic_hints
         .iter()
@@ -131,6 +143,7 @@ pub fn gather_entity_evidence(
     EntityEvidence {
         token: token.to_string(),
         declared_in_signal_table: declared,
+        declared_in_field_table: declared_field,
         semantic_hint_tags,
         appears_as_actor,
         appears_as_signal,
@@ -147,8 +160,16 @@ pub fn classify_entity(
     propose: impl Fn(&EntityEvidence) -> EntityType,
 ) -> EntityType {
     // POSITIVE ground: declared in a signal table → authoritatively a Signal (the doc says so).
+    // A signal-table declaration outranks a field-table one when a name appears in both.
     if ev.declared_in_signal_table {
         return EntityType::Signal;
+    }
+    // POSITIVE ground: declared in a message-field table (and in no signal table) →
+    // authoritatively a Field — flit/message content, not a wire. This grounds the CHI-class
+    // `DBID`/`TxnID` vocabulary OUT of signal subjects without consulting the LLM at all
+    // (EXTRACTION-QUALITY-GAUGE.FIELD.3).
+    if ev.declared_in_field_table {
+        return EntityType::Field;
     }
     // NEGATIVE ground: appears only as a structural reference and never as a signal → not a signal.
     if ev.structural_ref_context && !ev.appears_as_signal {
@@ -175,14 +196,16 @@ pub fn entity_prompt(ev: &EntityEvidence) -> String {
         .collect::<Vec<_>>()
         .join("\n");
     format!(
-        "Classify a token from a chip-design specification as EXACTLY ONE of: signal, actor, \
-         transaction, feature, state, structural_ref, boilerplate, value.\n\
-         signal = a wire/pin/field carrying a value; actor = a component that acts \
+        "Classify a token from a chip-design specification as EXACTLY ONE of: signal, field, \
+         actor, transaction, feature, state, structural_ref, boilerplate, value.\n\
+         signal = a physical wire/pin carrying a value; field = a named portion of a \
+         packet/flit/message payload (not a wire); actor = a component that acts \
          (manager/requester, completer, node); transaction = a named protocol operation; feature = \
          a capability; state = a protocol state; structural_ref = a Table/Figure/Section reference; \
          boilerplate = a legal/front-matter term; value = a literal value.\n\n\
          Token: {}\n\
          Declared in a signal table: {}\n\
+         Declared in a message-field table: {}\n\
          Document semantic tags: {:?}\n\
          Used as the actor (subject) of a requirement: {}\n\
          Used as the signal (object) of a requirement: {}\n\
@@ -190,6 +213,7 @@ pub fn entity_prompt(ev: &EntityEvidence) -> String {
          Answer with ONE word.",
         ev.token,
         ev.declared_in_signal_table,
+        ev.declared_in_field_table,
         ev.semantic_hint_tags,
         ev.appears_as_actor,
         ev.appears_as_signal,
@@ -239,6 +263,34 @@ mod tests {
     }
 
     #[test]
+    fn declared_field_is_grounded_to_field_without_asking_the_llm() {
+        // EXTRACTION-QUALITY-GAUGE.FIELD.3 — the CHI-class fix: DBID is declared in a
+        // message-field table, so it is authoritatively a Field even when the LLM (or the old
+        // conflated prompt) would call it a signal — and a Field is never a valid signal subject.
+        let mut e = ev("DBID");
+        e.declared_in_field_table = true;
+        let t = classify_entity(&e, |_| EntityType::Signal);
+        assert_eq!(t, EntityType::Field);
+        assert!(
+            !is_valid_signal_subject(t),
+            "a field is not a signal subject"
+        );
+    }
+
+    #[test]
+    fn signal_table_declaration_outranks_field_table_declaration() {
+        // A name declared in BOTH a signal table and a field table stays a Signal — the
+        // signal-table declaration is the stronger, wire-level authority.
+        let mut e = ev("XDATA");
+        e.declared_in_signal_table = true;
+        e.declared_in_field_table = true;
+        assert_eq!(
+            classify_entity(&e, |_| EntityType::Boilerplate),
+            EntityType::Signal
+        );
+    }
+
+    #[test]
     fn structural_reference_is_grounded_out_even_if_the_llm_guesses_signal() {
         let mut e = ev("B13");
         e.structural_ref_context = true; // "Table B13.25"
@@ -265,6 +317,7 @@ mod tests {
     #[test]
     fn parse_is_fail_safe() {
         assert_eq!(EntityType::parse("Signal."), EntityType::Signal);
+        assert_eq!(EntityType::parse("field"), EntityType::Field);
         assert_eq!(
             EntityType::parse("a transaction type"),
             EntityType::Transaction
