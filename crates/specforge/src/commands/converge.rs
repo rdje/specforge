@@ -103,6 +103,12 @@ pub fn run(args: ConvergeArgs) -> Result<()> {
             rescan_plan.arbitration_status()
         );
     }
+    if let Some(gauge) = report.extraction_quality.as_ref() {
+        println!(
+            "extraction_quality_gauge: {}",
+            crate::commands::nli_verify::gauge_summary_line(gauge)
+        );
+    }
     println!(
         "next_step_hint: run `specforge validate {}` for a stage-aware report",
         report.paths.intent_ir_path.display()
@@ -218,12 +224,14 @@ fn run_convergence(args: ConvergeArgs) -> Result<ConvergenceReport> {
             if snapshot == *previous {
                 println!("convergence: stable after pass {pass}");
                 let rescan_plan = maybe_run_rescan_plan(&args, &paths, &snapshot)?;
+                let extraction_quality = measure_extraction_quality(&args, &paths)?;
                 return Ok(ConvergenceReport {
                     converged: true,
                     passes_run: pass,
                     final_snapshot: snapshot,
                     paths,
                     rescan_plan,
+                    extraction_quality,
                 });
             }
         }
@@ -286,6 +294,41 @@ fn maybe_run_rescan_plan(
         regression_review_required,
         neutral_change_review_required,
     }))
+}
+
+/// EXTRACTION-QUALITY-GAUGE.0 — the standing per-document quality measurement: after the loop
+/// stabilizes (and after any rescan-plan step, so the gauge describes the FINAL artifact), run one
+/// NLI pass over the persisted EvidenceIR's signal constraints and back-annotate the
+/// extraction-quality gauge. Shares the exact implementation with `nli-verify`
+/// ([`crate::commands::nli_verify::measure_and_persist_gauge`]). Skipped (honest `None`) when
+/// `--nlp-provider skip` — the gauge needs the text LLM, and CI never depends on a live provider.
+fn measure_extraction_quality(
+    args: &ConvergeArgs,
+    paths: &PipelineArtifactPaths,
+) -> Result<Option<crate::ir::evidence::ExtractionQualityGaugeRecord>> {
+    if matches!(args.nlp_provider, VlmProviderArg::Skip) {
+        return Ok(None);
+    }
+    let model = args
+        .nlp_model
+        .clone()
+        .unwrap_or_else(|| crate::ir::nli_verify::DEFAULT_NLI_MODEL.to_string());
+    let outcome = crate::commands::nli_verify::measure_and_persist_gauge(
+        &paths.evidence_ir_path,
+        args.nlp_provider,
+        &model,
+    )?;
+    println!(
+        "extraction_quality_gauge: {}",
+        crate::commands::nli_verify::gauge_summary_line(&outcome.record)
+    );
+    // A pass that labeled nothing is not a measurement (provider unreachable mid-run) —
+    // report the absence instead of pretending a vacuous gauge was recorded.
+    if !outcome.persisted {
+        println!("extraction_quality_gauge_persisted: false (nothing labeled)");
+        return Ok(None);
+    }
+    Ok(Some(outcome.record))
 }
 
 fn provider_name(provider: VlmProviderArg) -> &'static str {
@@ -366,6 +409,10 @@ struct ConvergenceReport {
     final_snapshot: KnowledgeSnapshot,
     paths: PipelineArtifactPaths,
     rescan_plan: Option<ConvergenceRescanPlanReport>,
+    /// EXTRACTION-QUALITY-GAUGE.0: the post-stability NLI extraction-quality gauge measured over
+    /// the FINAL EvidenceIR (after any rescan-plan step) and persisted into the artifact. `None`
+    /// when `--nlp-provider skip` (the gauge needs the text LLM) or when the pass labeled nothing.
+    extraction_quality: Option<crate::ir::evidence::ExtractionQualityGaugeRecord>,
 }
 
 #[derive(Debug, Clone)]

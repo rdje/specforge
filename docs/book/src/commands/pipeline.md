@@ -159,6 +159,26 @@ The stable convergence snapshot is the convergence result.
 Post-rescan validation changes are reported as `changed_requires_validation_review` until validation and evidence arbitration say they are safe to promote.
 The convergence summary also exposes review-required counters split across possible-improvement, regression, and neutral artifact-change verdicts from the persisted recommendation execution summaries.
 
+### The standing extraction-quality gauge
+
+After the loop stabilizes (and after any rescan step, so the measurement describes the *final*
+artifact), `converge` runs one NLI pass over the persisted EvidenceIR's signal constraints —
+"does each constraint's own source sentence entail it?" — and back-annotates the result into
+the artifact as its `extraction_quality_gauge`. The convergence summary then ends with the
+per-document quality report:
+
+```text
+extraction_quality_gauge: not_entailed 1/1 labeled (100.0%), abstained 0 (model qwen2.5:14b-instruct)
+```
+
+So every full pipeline run finishes with a standing measurement of how trustworthy its
+extracted constraint surface is, and `specforge validate <evidence_ir.json>` re-reports it
+afterwards without needing a model. The step needs the text LLM, so `--nlp-provider skip`
+skips it honestly (no gauge is fabricated), and a pass that labeled nothing — provider
+unreachable mid-run — is never persisted. See the
+[validation chapter](../quality/validation.md) for how the gauge is reported and when its
+warnings fire.
+
 ## `clean`
 
 ```bash

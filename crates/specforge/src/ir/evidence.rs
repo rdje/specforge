@@ -175,6 +175,12 @@ pub struct EvidenceIr {
     pub signal_alias_map: BTreeMap<String, String>,
     #[serde(default)]
     pub validation_reports: Vec<ValidationReportRecord>,
+    /// EXTRACTION-QUALITY-GAUGE.0: the persisted NLI-oracle extraction-quality gauge for the
+    /// current `signal_constraints` surface — back-annotated by `nli-verify` and re-measured by
+    /// `converge` after stabilization. `None` until measured; a rebuild drops it (a new surface
+    /// requires a fresh measurement). Measurement metadata, never extraction truth.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub extraction_quality_gauge: Option<ExtractionQualityGaugeRecord>,
     /// R15c: report of the monotone anchored-rescan loop that built this
     /// EvidenceIR. Makes the convergent extraction first-class — how many passes
     /// ran, how many *genuinely new* (deduplicated) facts each pass recovered,
@@ -360,6 +366,37 @@ pub struct MessageFieldConstraintRecord {
     pub source_text: String,
     pub supporting_statement_ids: Vec<String>,
     pub automation_confidence: AutomationConfidence,
+}
+
+/// EXTRACTION-QUALITY-GAUGE.0 — the persisted per-document extraction-quality gauge: the result of
+/// one NLI-oracle pass over `signal_constraints` ("does the source sentence entail this constraint
+/// as a claim?"). The not-entailed fraction is a cheap, automatic production-readiness signal that
+/// discriminates sharply across documents (a simple peripheral bus vs. a dense conditional
+/// interconnect spec). It is a **measurement record about** the extraction, not extraction truth:
+/// the NLI oracle is noisy (some not-entailed verdicts are NLI false-negatives on complex claims),
+/// so consumers treat it as an estimate and `validate` reports it as findings/metrics, never as a
+/// reason to mutate the constraint surface. Re-building the EvidenceIR drops the gauge by
+/// construction (a new surface honestly requires a fresh measurement); `converge` re-measures
+/// after stabilization, which keeps the standing report fresh.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ExtractionQualityGaugeRecord {
+    /// The text model that judged entailment (e.g. `qwen2.5:14b-instruct`).
+    pub model: String,
+    /// Size of the `signal_constraints` surface when the gauge was measured. A mismatch with the
+    /// current surface marks the gauge stale (see `gauge_is_stale`).
+    pub constraints_total: usize,
+    /// Constraints whose claim the source sentence entails (NLI-verified).
+    pub entailed: usize,
+    /// Constraints whose claim the source sentence does NOT entail — likely extraction errors
+    /// (spurious subject, dropped condition, permission read as obligation, …).
+    pub not_entailed: usize,
+    /// Constraints the oracle could not label (provider error / unclear answer). Honest
+    /// no-label — never counted as entailed or not-entailed.
+    pub abstained: usize,
+    /// The `constraint_id`s judged not entailed, in constraint encounter order — the per-item
+    /// review-routing list behind the aggregate.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub not_entailed_constraint_ids: Vec<String>,
 }
 
 /// The phase of a serial transaction a frame field belongs to.
@@ -776,6 +813,9 @@ impl EvidenceIr {
             actor_signal_relations,
             signal_alias_map: BTreeMap::new(),
             validation_reports: Vec::new(),
+            // A fresh build is a fresh constraint surface — any prior gauge no longer
+            // describes it, so the measurement honestly starts absent.
+            extraction_quality_gauge: None,
             convergence_report: Some(convergence_report),
             fact_provenance,
             serial_frame_fields,

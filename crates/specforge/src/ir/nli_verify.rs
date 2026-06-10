@@ -247,6 +247,47 @@ pub fn nli_conformal_pass(
     out
 }
 
+/// Build the persistable per-document extraction-quality gauge from ONE completed NLI pass
+/// (`EXTRACTION-QUALITY-GAUGE.0`) — derived from [`nli_conformal_pass`]'s output, so persisting
+/// the gauge never costs a second sweep of LLM calls. Counts are exact projections of the pass:
+/// `entailed`/`not_entailed` are the labeled verdicts, `abstained` is every constraint the oracle
+/// could not label (provider error / unclear answer), and the not-entailed ids keep the per-item
+/// review routing behind the aggregate (constraint encounter order — deterministic).
+pub fn gauge_from_conformal_pass(
+    pass: &NliConformalPass,
+    constraints_total: usize,
+    model: &str,
+) -> crate::ir::evidence::ExtractionQualityGaugeRecord {
+    crate::ir::evidence::ExtractionQualityGaugeRecord {
+        model: model.to_string(),
+        constraints_total,
+        entailed: pass.samples.iter().filter(|(_, ok)| *ok).count(),
+        not_entailed: pass.not_entailed.len(),
+        abstained: constraints_total.saturating_sub(pass.samples.len()),
+        not_entailed_constraint_ids: pass
+            .not_entailed
+            .iter()
+            .map(|f| f.constraint_id.clone())
+            .collect(),
+    }
+}
+
+/// Whether a persisted gauge still describes the artifact's current `signal_constraints`
+/// surface. Stale when the surface size changed since measurement, or when a recorded
+/// not-entailed constraint id no longer exists — the latter catches a same-size REPLACEMENT of
+/// the surface (`extract-constraints-llm` re-keys ids to `llm_sigcon_*`). A stale gauge is still
+/// reported by `validate`, but flagged so nobody mistakes an old measurement for a current one.
+pub fn gauge_is_stale(
+    gauge: &crate::ir::evidence::ExtractionQualityGaugeRecord,
+    constraints: &[crate::ir::source::SignalConstraintRecord],
+) -> bool {
+    gauge.constraints_total != constraints.len()
+        || gauge
+            .not_entailed_constraint_ids
+            .iter()
+            .any(|id| !constraints.iter().any(|c| &c.constraint_id == id))
+}
+
 /// Render an `ActorContract`'s obligation as an NLI hypothesis — or `None` when
 /// the obligation cannot be phrased as a clean claim (in which case it is **not
 /// gated**, never NLI-checked against a claim we cannot state faithfully).
@@ -509,6 +550,62 @@ mod tests {
         assert_eq!(pass.samples.len(), 2);
         assert!(pass.samples.contains(&(2.0, true)));
         assert!(pass.samples.contains(&(1.0, false)));
+    }
+
+    #[test]
+    fn gauge_from_conformal_pass_projects_counts_and_ids() {
+        use SignalConstraintKind as K;
+        let c1 = cons("c1", "PSEL", K::MustBeStable, "s"); // Entailed
+        let c2 = cons("c2", "PADDR", K::MustBeStable, "s"); // NotEntailed
+        let c3 = cons("c3", "PWDATA", K::MustBeStable, "s"); // Unknown → abstained
+        let verify = |_src: &str, claim: &str| {
+            if claim.contains("PSEL") {
+                NliVerdict::Entailed
+            } else if claim.contains("PADDR") {
+                NliVerdict::NotEntailed
+            } else {
+                NliVerdict::Unknown
+            }
+        };
+        let pass = nli_conformal_pass(&[c1, c2, c3], &std::collections::HashMap::new(), verify);
+        let gauge = gauge_from_conformal_pass(&pass, 3, "test-model");
+        assert_eq!(gauge.model, "test-model");
+        assert_eq!(gauge.constraints_total, 3);
+        assert_eq!(gauge.entailed, 1);
+        assert_eq!(gauge.not_entailed, 1);
+        assert_eq!(
+            gauge.abstained, 1,
+            "the Unknown verdict is an honest no-label"
+        );
+        assert_eq!(gauge.not_entailed_constraint_ids, vec!["c2".to_string()]);
+    }
+
+    #[test]
+    fn gauge_is_stale_on_count_change_or_replaced_ids() {
+        use SignalConstraintKind as K;
+        let constraints = vec![
+            cons("c1", "PSEL", K::MustBeStable, "s"),
+            cons("c2", "PADDR", K::MustBeStable, "s"),
+        ];
+        let gauge = crate::ir::evidence::ExtractionQualityGaugeRecord {
+            model: "m".into(),
+            constraints_total: 2,
+            entailed: 1,
+            not_entailed: 1,
+            abstained: 0,
+            not_entailed_constraint_ids: vec!["c2".into()],
+        };
+        // Same surface → fresh.
+        assert!(!gauge_is_stale(&gauge, &constraints));
+        // Surface size changed → stale.
+        assert!(gauge_is_stale(&gauge, &constraints[..1]));
+        // Same size but the measured ids were replaced (the extract-constraints-llm
+        // re-key case) → stale.
+        let replaced = vec![
+            cons("llm_sigcon_0000", "PSEL", K::MustBeStable, "s"),
+            cons("llm_sigcon_0001", "PADDR", K::MustBeStable, "s"),
+        ];
+        assert!(gauge_is_stale(&gauge, &replaced));
     }
 
     #[test]

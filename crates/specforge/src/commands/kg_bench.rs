@@ -72,6 +72,11 @@ struct EvidenceIrPatch {
     refresh_signal_semantic_hints: bool,
     #[serde(default)]
     signal_constraints: Vec<crate::ir::source::SignalConstraintRecord>,
+    /// EXTRACTION-QUALITY-GAUGE.0: stage a persisted NLI extraction-quality gauge so tracked
+    /// fixtures can lock the provider-free `validate` reporting surface (metrics + findings)
+    /// without any live LLM dependency.
+    #[serde(default)]
+    extraction_quality_gauge: Option<crate::ir::evidence::ExtractionQualityGaugeRecord>,
 }
 
 #[derive(Debug, Default, Deserialize)]
@@ -652,6 +657,9 @@ fn run_fixture(fixture_path: &Path) -> Result<KgBenchFixtureOutcome> {
         evidence_ir
             .signal_constraints
             .extend(patch.signal_constraints.iter().cloned());
+        if let Some(gauge) = patch.extraction_quality_gauge.as_ref() {
+            evidence_ir.extraction_quality_gauge = Some(gauge.clone());
+        }
     }
     evidence_ir.write_to_disk()?;
     let evidence_report = if fixture

@@ -156,6 +156,13 @@ raster/vector decoder (the VLM already reads diagram PNGs, just to text).
 pure `ir::corpus_cluster` derived-fingerprint clustering over the persisted
 `generated/evidence_ir` corpus — additive, no extraction-path change. The
 authoritative list is `crates/specforge/src/cli.rs`, dispatched in `lib.rs`.
+`nli-verify` is no longer print-only (`EXTRACTION-QUALITY-GAUGE.0`,
+`2026-06-10`): it back-annotates a persisted `extraction_quality_gauge` record
+onto the EvidenceIR via `commands/nli_verify.rs::measure_and_persist_gauge` —
+the same helper `converge` calls after stabilization for the standing
+per-document quality report — and `validate` reports the persisted gauge
+provider-free (metrics + Info/Warning findings; pure builders
+`gauge_from_conformal_pass` / `gauge_is_stale` in `ir/nli_verify.rs`).
 
 ### `.fsm` adapter sections are historical
 Any subsection below describing a `.fsm` adapter / HDL lowering as *present* in

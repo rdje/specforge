@@ -1,3 +1,26 @@
+### `EXTRACTION-QUALITY-GAUGE.0` — the extraction-quality gauge is a STANDING persisted measurement
+The NLI-oracle gauge (fraction of signal constraints whose own source does NOT entail them) now
+survives the terminal and rides the standard loop: `nli-verify` back-annotates a first-class
+`extraction_quality_gauge` record onto the EvidenceIR (model, entailed/not-entailed/abstained,
+exact not-entailed ids; built from the ONE existing NLI pass — no second LLM sweep; an
+all-abstained vacuous pass is never persisted), `converge` re-measures after stabilization via
+the shared `measure_and_persist_gauge` and prints the per-doc gauge in its summary, and
+`validate` reports it provider-free: `extraction_quality_labeled/_not_entailed/_abstained/
+_not_entailed_pct` metrics (honest `n/a` until measured), an Info finding carrying the
+not-entailed ids, a scale-free majority-erroneous Warning (not_entailed×2 > labeled), and a
+staleness Warning when the surface changed since measurement (count mismatch OR a measured id
+gone — catches the extract-constraints-llm id re-keying replace). Rebuilds drop the gauge by
+construction (fresh surface ⇒ fresh measurement). Live: APB 4/14 (28.6%, Info only — reproduces
+the recorded ~29%), AHB 9/15 (60%), degraded CHI 9/13 (69%), AXI 91/100+2 abstained (91%) — all
+three majority-flagged, making visible that the CANONICAL artifacts still carry the Pattern
+surface (the cleaned `.3a`/`.3b`/`.4` LLM-primary surfaces were never promoted off the /tmp
+measurement copies — the natural follow-up lever); I2S converge end-to-end demo (2 passes →
+gauge 1/1: `SCK must_be_asserted` read from an edge-synchronization permission sentence,
+correctly flagged). +5 tests (lib 1537) + kg fixture `extraction_quality_gauge_persisted_gold`
+(kg-bench 154/154, incl. the exactly-half-is-NOT-majority boundary); `run_ci.sh` green. Book:
+validation standing-gauge section, EvidenceIR `.0` subsection, converge subsection, validate
+metric list, architecture-rationale NLI extension. KM `extraction-quality-gauge-standing`.
+
 ### `EXTRACTION-QUALITY-GAUGE.FIELD.4` — `message_field_constraints`: field obligations are routed, not dropped
 Field-subject obligations now have a typed home: the parallel `message_field_constraints` EvidenceIR
 surface (decision: separate surface over a subject-kind discriminator, so downstream

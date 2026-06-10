@@ -277,6 +277,50 @@ pure, unit-tested function (`document_completeness_gauge`) keyed off the documen
 adds no extraction behavior — it only makes the existing incompleteness visible instead of
 silent.
 
+### How *correct* is what we extracted? — the standing extraction-quality gauge
+
+Completeness asks "did we get everything?"; the natural sibling question is "**is what we got
+actually right?**" SpecForge answers it with the NLI-oracle extraction-quality gauge (the
+entailment check described in the [architecture rationale](../architecture-rationale.md)): for
+every extracted signal constraint, a text model is asked whether the constraint's own source
+sentence *entails* the constraint-as-a-claim. The fraction judged **not entailed** is a cheap,
+automatic estimate of how erroneous the constraint surface is — and it is now a **standing,
+persisted measurement**, not a one-off terminal report:
+
+- **`specforge nli-verify <evidence_ir.json>`** runs the measurement and back-annotates an
+  `extraction_quality_gauge` record into the artifact (model, counts, and the exact ids of the
+  not-entailed constraints).
+- **`specforge converge`** re-runs the same measurement automatically after the pipeline
+  stabilizes, so every full run ends with a fresh per-document quality report in its summary.
+- **`specforge validate <evidence_ir.json>`** then reports the persisted gauge **without
+  needing any model**: an `Extraction-Quality Gauge` block, the metrics
+  `extraction_quality_labeled`, `extraction_quality_not_entailed`,
+  `extraction_quality_abstained`, and `extraction_quality_not_entailed_pct` (all `n/a` until a
+  measurement exists — never a fabricated verdict), and an Info finding whose `related_ids` are
+  the not-entailed constraint ids, so review goes straight to the items.
+
+Two warnings keep the report honest:
+
+- **`evidence_extraction_quality_majority_not_entailed`** fires when *more than half* of the
+  labeled constraints are not entailed — a scale-free "more wrong than right" line, not a
+  corpus-tuned threshold. Live on the persisted corpus this separates documents exactly as the
+  hand-validated measurements did: AMBA APB sits at 4/14 (28.6%, Info only), while the
+  pattern-extracted AXI surface reads 91/100 (91%) and is flagged as majority-erroneous — the
+  honest statement that its canonical constraint surface still carries the old pattern
+  extractor's quality.
+- **`evidence_extraction_quality_gauge_stale`** fires when the constraint surface changed since
+  the measurement (different count, or a measured constraint id that no longer exists — which
+  is exactly what happens when `extract-constraints-llm` replaces the surface). A stale gauge
+  is still shown, but never allowed to masquerade as a current one.
+
+Like every gauge in this chapter, it observes and reports — it never mutates extraction truth.
+A measurement that labeled nothing (model unreachable, every verdict unknown) is not persisted
+at all, so a dead provider can never erase a real prior measurement. The whole reporting path
+is provider-free and fixture-locked in the tracked KG benchmark
+(`extraction_quality_gauge_persisted_gold`), and the NLI oracle itself remains a *noisy*
+estimate — treat the number as a signal for review priority, not as ground truth.
+*Authoritative tracking:* `docs/tasks/EXTRACTION-QUALITY-GAUGE.md` (leaf `.0`).
+
 ## Closed task trees — how each was implemented and verified
 
 ### `PROVENANCE-HARDENING` — provenance fields always have assertions

@@ -1,4 +1,49 @@
 # DEVELOPMENT_NOTES
+## `EXTRACTION-QUALITY-GAUGE.0` (`2026-06-10`) — the standing persisted extraction-quality gauge
+- PNT decision rationale: `.3c` (the other frontier pick) has NO measurable target on persisted
+  artifacts — its relational-vs-value class was observed on CHI (re-ingest needs the host-local
+  PDF re-provided) and the wire docs' FP ledger is clean (P=1.000 ×3). `.0` is fully doable
+  against persisted artifacts and closes the tree's original `.0`–`.4` backlog.
+- `ir/evidence.rs`: `ExtractionQualityGaugeRecord` (model, constraints_total,
+  entailed/not_entailed/abstained, not_entailed_constraint_ids) + serde-additive
+  `EvidenceIr.extraction_quality_gauge: Option<…>` (skip-if-none; old artifacts load). Fresh
+  builds set `None` and `carry_forward_existing_knowledge` never carries it — rebuild ⇒
+  measurement honestly absent until re-measured. Derived fractions are computed, never stored.
+- `ir/nli_verify.rs`: `gauge_from_conformal_pass` (pure projection of the ONE existing
+  `nli_conformal_pass` — entailed = true samples, abstained = total − samples; encounter-order
+  ids, no hash iteration) + `gauge_is_stale` (count mismatch OR a recorded not-entailed id no
+  longer present — the id check catches a same-size REPLACE because `extract-constraints-llm`
+  re-keys to `llm_sigcon_*`).
+- `commands/nli_verify.rs`: `measure_and_persist_gauge(path, provider, model) -> GaugeOutcome`
+  {record, pass, persisted} — loads, one pass, persists via `write_to_disk` (honors redirected
+  `artifact_layout`, same back-annotation semantics as `validate`); `persisted == false` when
+  labeled == 0 (a vacuous all-Unknown pass must never overwrite a real measurement). The command
+  prints per-item not-entailed claims, the conformal block, the gauge summary
+  (`gauge_summary_line`, shared), and the persisted/not-persisted status. `skip` stays a strict
+  no-op (artifact untouched).
+- `commands/converge.rs`: `measure_extraction_quality` at the STABLE branch, after
+  `maybe_run_rescan_plan` (the gauge must describe the FINAL artifact, including any executed
+  replays); model = `--nlp-model` else `DEFAULT_NLI_MODEL`; `--nlp-provider skip` ⇒ honest
+  `None`. `ConvergenceReport.extraction_quality` + summary print.
+- `commands/validate.rs` (evidence stage): print block beside the completeness gauge;
+  4 metrics (`n/a` when never measured — the `recall_estimate_pct` precedent, CI-safe); Info
+  finding `evidence_extraction_quality_gauge` with `related_ids` = not-entailed ids; Warning
+  `evidence_extraction_quality_majority_not_entailed` iff labeled > 0 && not_entailed×2 >
+  labeled (scale-free majority line — deliberately NOT a corpus-tuned threshold; exactly half
+  does not fire, fixture-locked); Warning `evidence_extraction_quality_gauge_stale` via
+  `gauge_is_stale`. Honest absence: no gauge ⇒ no finding, never a fabricated verdict.
+- kg-bench: `EvidenceIrPatch.extraction_quality_gauge` patch + fixture
+  `extraction_quality_gauge_persisted_gold` (2 patched constraints + matching gauge; locks the
+  4 metric values incl. pct `50.0`, the Info finding, and excludes both warnings) — 154/154.
+- Measurement notes: APB gauge ids `sigcon_0007/0008/0010` + `dyn_sigcon_0015` verified present
+  in the artifact and identical to the pre-code probe run; AXI 102 constraints → 100 labeled +
+  2 abstained (two Unknown verdicts on complex claims — honest no-label, not counted either
+  way). The 91%/60%/69% majority results are the PATTERN surfaces' quality (canonical artifacts
+  were never switched to the LLM-primary extractor output) — promoting that surface is the
+  obvious next lever, now visible in the standing report. NLI oracle noise caveat applies
+  throughout (some not-entailed are judge false-negatives; CHI hand-validation showed the
+  signal is largely real).
+
 ## `EXTRACTION-QUALITY-GAUGE.FIELD.4` (`2026-06-10`) — `message_field_constraints` routing
 - Decision: PARALLEL surface (`EvidenceIr.message_field_constraints`, serde-additive, skip-if-empty)
   over a subject-kind discriminator — downstream `signal_constraints` consumers (eval keys,

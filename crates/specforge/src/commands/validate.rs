@@ -2899,6 +2899,61 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
         );
     }
 
+    // EXTRACTION-QUALITY-GAUGE.0 — the persisted NLI extraction-quality gauge, reported
+    // provider-free from the artifact (the measurement itself is recorded by `nli-verify` /
+    // `converge`; `validate` never calls an LLM).
+    let extraction_quality_stale = ir
+        .extraction_quality_gauge
+        .as_ref()
+        .is_some_and(|gauge| crate::ir::nli_verify::gauge_is_stale(gauge, &ir.signal_constraints));
+    println!();
+    println!("=== Extraction-Quality Gauge (NLI-oracle; EXTRACTION-QUALITY-GAUGE.0) ===");
+    match ir.extraction_quality_gauge.as_ref() {
+        Some(gauge) => {
+            println!(
+                "  {}",
+                crate::commands::nli_verify::gauge_summary_line(gauge)
+            );
+            if extraction_quality_stale {
+                println!(
+                    "  staleness: the constraint surface changed since measurement — re-run `nli-verify`"
+                );
+            }
+        }
+        None => println!(
+            "  not measured — run `nli-verify <evidence_ir>` (or `converge` with a text provider) to record it"
+        ),
+    }
+    let extraction_quality_labeled_count = ir
+        .extraction_quality_gauge
+        .as_ref()
+        .map(|gauge| gauge.entailed + gauge.not_entailed);
+    let extraction_quality_labeled = extraction_quality_labeled_count
+        .map(|labeled| labeled.to_string())
+        .unwrap_or_else(|| "n/a".to_string());
+    let extraction_quality_not_entailed = ir
+        .extraction_quality_gauge
+        .as_ref()
+        .map(|gauge| gauge.not_entailed.to_string())
+        .unwrap_or_else(|| "n/a".to_string());
+    let extraction_quality_abstained = ir
+        .extraction_quality_gauge
+        .as_ref()
+        .map(|gauge| gauge.abstained.to_string())
+        .unwrap_or_else(|| "n/a".to_string());
+    let extraction_quality_not_entailed_pct = ir
+        .extraction_quality_gauge
+        .as_ref()
+        .map(|gauge| {
+            let labeled = gauge.entailed + gauge.not_entailed;
+            if labeled == 0 {
+                "n/a".to_string()
+            } else {
+                format!("{:.1}", gauge.not_entailed as f64 * 100.0 / labeled as f64)
+            }
+        })
+        .unwrap_or_else(|| "n/a".to_string());
+
     let missing_vlm_observation_related_ids = evidence_missing_vlm_observation_related_ids(ir);
     let structural_kg_missing_related_ids = evidence_structural_kg_missing_related_ids(ir);
     let normative_residual_statement_ids = evidence_normative_residual_statement_ids(ir);
@@ -2962,6 +3017,63 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
         },
         Vec::new(),
     ));
+    // EXTRACTION-QUALITY-GAUGE.0 — the persisted NLI extraction-quality gauge as findings.
+    // Honest absence: no gauge → no finding (CI and provider-free runs never fabricate a
+    // quality verdict). The not-entailed ids ride as related_ids so review can go per-item.
+    if let Some(gauge) = ir.extraction_quality_gauge.as_ref() {
+        let labeled = gauge.entailed + gauge.not_entailed;
+        let pct = if labeled == 0 {
+            String::new()
+        } else {
+            format!(
+                " ({:.1}%)",
+                gauge.not_entailed as f64 * 100.0 / labeled as f64
+            )
+        };
+        findings.push(finding(
+            "evidence_extraction_quality_gauge",
+            ValidationFindingSeverity::Info,
+            "extraction_quality",
+            format!(
+                "NLI extraction-quality gauge (model {}): {}/{} labeled constraint claim(s) not \
+                 entailed by their own source{pct}, {} abstained — a noisy automatic estimate of \
+                 extraction quality, not ground truth",
+                gauge.model, gauge.not_entailed, labeled, gauge.abstained
+            ),
+            gauge.not_entailed_constraint_ids.clone(),
+        ));
+        // Scale-free "more wrong than right" line: a majority-not-entailed surface is the
+        // far-from-production shape (the dense conditional-spec class), whatever the corpus.
+        if labeled > 0 && gauge.not_entailed * 2 > labeled {
+            findings.push(finding(
+                "evidence_extraction_quality_majority_not_entailed",
+                ValidationFindingSeverity::Warning,
+                "extraction_quality",
+                format!(
+                    "most labeled constraint claims ({}/{}) are NOT entailed by their own source \
+                     — the extracted constraint surface is majority-erroneous on this document \
+                     and far from production quality; review the related constraint ids",
+                    gauge.not_entailed, labeled
+                ),
+                gauge.not_entailed_constraint_ids.clone(),
+            ));
+        }
+        if extraction_quality_stale {
+            findings.push(finding(
+                "evidence_extraction_quality_gauge_stale",
+                ValidationFindingSeverity::Warning,
+                "extraction_quality",
+                format!(
+                    "the persisted extraction-quality gauge measured a {}-constraint surface that \
+                     has since changed ({} constraint(s) now) — the quality report no longer \
+                     describes this artifact; re-run `nli-verify` (or `converge`) to re-measure",
+                    gauge.constraints_total,
+                    ir.signal_constraints.len()
+                ),
+                Vec::new(),
+            ));
+        }
+    }
     if total == 0 {
         findings.push(finding(
             "evidence_no_extracted_statements",
@@ -3365,6 +3477,16 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
                     .as_ref()
                     .map(|r| r.chao_estimated_remaining_misses.to_string())
                     .unwrap_or_else(|| "n/a".to_string()),
+            ),
+            metric("extraction_quality_labeled", extraction_quality_labeled),
+            metric(
+                "extraction_quality_not_entailed",
+                extraction_quality_not_entailed,
+            ),
+            metric("extraction_quality_abstained", extraction_quality_abstained),
+            metric(
+                "extraction_quality_not_entailed_pct",
+                extraction_quality_not_entailed_pct,
             ),
             metric(
                 "table_signal_declaration_provenance",
@@ -7200,6 +7322,155 @@ mod tests {
             vec!["polarity_conflict_0001".to_string()]
         );
 
+        Ok(())
+    }
+
+    // EXTRACTION-QUALITY-GAUGE.0 — local constraint factory for the gauge tests.
+    fn gauge_test_constraint(id: &str, subject: &str) -> SignalConstraintRecord {
+        SignalConstraintRecord {
+            constraint_id: id.to_string(),
+            subject_signal: subject.to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: format!("{subject} must be asserted."),
+            supporting_statement_ids: Vec::new(),
+            automation_confidence: AutomationConfidence::Medium,
+        }
+    }
+
+    fn gauge_test_evidence_ir(tempdir: &tempfile::TempDir) -> Result<EvidenceIr> {
+        let source = tempdir.path().join("gauge.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        fs::write(&source, "# Spec\nSome content.\n")?;
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        // A controlled constraint surface so gauge freshness is exact.
+        evidence_ir.signal_constraints = vec![
+            gauge_test_constraint("c1", "XREQ"),
+            gauge_test_constraint("c2", "XACK"),
+            gauge_test_constraint("c3", "XDONE"),
+        ];
+        Ok(evidence_ir)
+    }
+
+    #[test]
+    fn validate_evidence_ir_extraction_quality_gauge_absent_is_honest() -> Result<()> {
+        let tempdir = tempdir()?;
+        let evidence_ir = gauge_test_evidence_ir(&tempdir)?;
+        assert!(evidence_ir.extraction_quality_gauge.is_none());
+        let report = validate_evidence_ir(&evidence_ir, "gauge_absent".to_string());
+
+        // Never-measured → "n/a" metrics and NO gauge findings (no fabricated verdict).
+        assert_eq!(
+            metric_value(&report, "extraction_quality_labeled"),
+            Some("n/a")
+        );
+        assert_eq!(
+            metric_value(&report, "extraction_quality_not_entailed_pct"),
+            Some("n/a")
+        );
+        assert!(!has_finding(&report, "evidence_extraction_quality_gauge"));
+        assert!(!has_finding(
+            &report,
+            "evidence_extraction_quality_majority_not_entailed"
+        ));
+        assert!(!has_finding(
+            &report,
+            "evidence_extraction_quality_gauge_stale"
+        ));
+        Ok(())
+    }
+
+    #[test]
+    fn validate_evidence_ir_reports_extraction_quality_gauge() -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut evidence_ir = gauge_test_evidence_ir(&tempdir)?;
+        evidence_ir.extraction_quality_gauge =
+            Some(crate::ir::evidence::ExtractionQualityGaugeRecord {
+                model: "test-model".to_string(),
+                constraints_total: 3,
+                entailed: 2,
+                not_entailed: 1,
+                abstained: 0,
+                not_entailed_constraint_ids: vec!["c2".to_string()],
+            });
+        let report = validate_evidence_ir(&evidence_ir, "gauge_fresh".to_string());
+
+        assert_eq!(
+            metric_value(&report, "extraction_quality_labeled"),
+            Some("3")
+        );
+        assert_eq!(
+            metric_value(&report, "extraction_quality_not_entailed"),
+            Some("1")
+        );
+        assert_eq!(
+            metric_value(&report, "extraction_quality_abstained"),
+            Some("0")
+        );
+        assert_eq!(
+            metric_value(&report, "extraction_quality_not_entailed_pct"),
+            Some("33.3")
+        );
+        let gauge_finding = report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == "evidence_extraction_quality_gauge")
+            .expect("expected the extraction-quality gauge finding");
+        assert_eq!(gauge_finding.related_ids, vec!["c2".to_string()]);
+        assert!(gauge_finding.summary.contains("test-model"));
+        // Minority not-entailed + a fresh surface → no warnings.
+        assert!(!has_finding(
+            &report,
+            "evidence_extraction_quality_majority_not_entailed"
+        ));
+        assert!(!has_finding(
+            &report,
+            "evidence_extraction_quality_gauge_stale"
+        ));
+        Ok(())
+    }
+
+    #[test]
+    fn validate_evidence_ir_flags_majority_not_entailed_and_stale_gauge() -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut evidence_ir = gauge_test_evidence_ir(&tempdir)?;
+        // The gauge measured a 4-constraint surface (majority not entailed); the artifact
+        // now carries 3 constraints and one measured id is gone — both warnings must fire.
+        evidence_ir.extraction_quality_gauge =
+            Some(crate::ir::evidence::ExtractionQualityGaugeRecord {
+                model: "test-model".to_string(),
+                constraints_total: 4,
+                entailed: 1,
+                not_entailed: 3,
+                abstained: 0,
+                not_entailed_constraint_ids: vec![
+                    "c1".to_string(),
+                    "c2".to_string(),
+                    "old_c4".to_string(),
+                ],
+            });
+        let report = validate_evidence_ir(&evidence_ir, "gauge_stale_majority".to_string());
+
+        assert_eq!(
+            metric_value(&report, "extraction_quality_not_entailed_pct"),
+            Some("75.0")
+        );
+        assert!(has_finding(
+            &report,
+            "evidence_extraction_quality_majority_not_entailed"
+        ));
+        assert!(has_finding(
+            &report,
+            "evidence_extraction_quality_gauge_stale"
+        ));
         Ok(())
     }
 

@@ -299,6 +299,39 @@ the artifact, `specforge validate <intent_ir.json>` surfaces how many the gate d
 tracking:* `docs/tasks/NLI-ENTAILMENT-VERIFIER.md`, `docs/tasks/NLI-INTENT-GATE.md`,
 `docs/tasks/NLI-GATE-METRIC.md`.
 
+### The measurement survives the terminal — the persisted extraction-quality gauge
+
+A measurement that only scrolls past in a terminal is gone the moment the window closes. So
+`nli-verify` now also **persists** what it measured into the EvidenceIR itself, as the
+document's **extraction-quality gauge**: which model judged, how many constraints were checked,
+how many the source entailed, how many it did *not*, how many the oracle abstained on, and the
+exact ids of the not-entailed constraints so review can go straight to the items. The fraction
+of constraints the source does not entail is a cheap, automatic production-readiness signal —
+it discriminates sharply between a simple peripheral bus (a quarter flagged) and a dense,
+deeply conditional spec (the large majority flagged).
+
+Three honesty rules govern the persisted gauge:
+
+- **It is a measurement *about* the extraction, never extraction truth.** Persisting it changes
+  no constraint, no relation, no canonical fact. The NLI oracle is also *noisy* — some
+  not-entailed verdicts are the judge stumbling on a complex claim — so everything downstream
+  reports it as an estimate.
+- **A vacuous pass is not a measurement.** If the model was unreachable and every verdict came
+  back unknown, nothing is persisted — a dead provider must never overwrite a real prior
+  measurement with an empty one.
+- **A stale gauge says so.** Rebuilding the EvidenceIR drops the gauge (a new constraint
+  surface honestly requires a new measurement), and if the surface changed under a persisted
+  gauge — different count, or a measured constraint id that no longer exists —
+  `specforge validate` flags the gauge as stale instead of letting an old number masquerade as
+  current.
+
+`specforge converge` completes the loop: after the pipeline stabilizes (and after any rescan
+step), it re-runs the same measurement over the *final* EvidenceIR and prints the per-document
+gauge in its convergence summary — so every full pipeline run ends with a standing,
+provider-measured quality report, and `specforge validate <evidence_ir.json>` re-reports it
+afterwards without needing any model at all. *Authoritative tracking:*
+`docs/tasks/EXTRACTION-QUALITY-GAUGE.md` (leaf `.0`).
+
 ## Why provenance matters so much
 
 Every promoted fact should stay tied to the evidence that justified it.

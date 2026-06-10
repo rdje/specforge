@@ -416,13 +416,81 @@ honestly-qualified) path to "human-SpecForge in Rust."
   cycle…" — genuinely different facts, correctly NOT merged; the no-condition ×2 shape from the
   earlier run is locked by unit test instead). Eval stays P=R=F1=1.000 on all three (scoring uses
   key sets — the win is canonical-artifact cleanliness + merged provenance).**
-- ID: `EXTRACTION-QUALITY-GAUGE.0` · Status: `pending` · Goal: wire the gauge into converge/CI.
+- ID: `EXTRACTION-QUALITY-GAUGE.0` · Status: `done` (`2026-06-10`; PNT pick — `.3c`'s
+  relational-vs-value class has no measurable target on persisted artifacts: it was observed on CHI,
+  whose fresh re-measure needs the host-local PDF re-provided, and the wire docs' FP ledger is
+  currently clean at P=1.000 ×3) · Goal: wire the gauge into converge/CI as the STANDING per-doc
+  quality report. **Shipped exactly per design (below) + verified live.** Verification
+  (`2026-06-10`): +5 pure tests (2 `ir/nli_verify` builder/staleness + 3 `validate` reporting; lib
+  1532→1537) + kg fixture `extraction_quality_gauge_persisted_gold` (kg-bench 153→**154/154**;
+  locks metrics, Info finding, exactly-half-is-NOT-majority boundary, warnings excluded).
+  **Live wire docs (qwen2.5:14b-instruct):** APB 4/14 not-entailed (28.6% — reproduces the
+  tree's recorded ~29%; Info only; persisted ids `sigcon_0007/0008/0010`+`dyn_sigcon_0015` all
+  verified present in the artifact, metrics back-annotated `28.6`), AHB 9/15 (60.0% — Warning
+  fires), degraded persisted CHI 9/13 (69.2% — Warning), AXI 91/100 labeled + 2 abstained
+  (91.0% — Warning). KEY HONEST FINDING the standing gauge makes visible: the CANONICAL
+  artifacts still carry the PATTERN surface (the `.3a`/`.3b`/`.4` cleaned LLM-primary surfaces
+  live only on /tmp redirected measurement copies — promoting them is the natural follow-up
+  lever). **Live converge end-to-end (I2S, vlm skip + nlp ollama, DOCLING_DEVICE=cpu):** 2
+  passes stable → gauge measured post-stability, persisted (`nlp3_sigcon_0001`), printed at the
+  stable branch AND in the convergence summary; per-item read: `SCK must_be_asserted` extracted
+  from an edge-synchronization *permission* sentence = genuine mis-extraction, correctly
+  flagged. `run_ci.sh` GREEN. Book: `quality/validation.md` standing-gauge section,
+  `pipeline/evidenceir.md` `.0` subsection, `commands/pipeline.md` converge subsection,
+  `commands/quality-and-learning.md` validate list, `architecture-rationale.md` NLI section
+  extension. KM [[extraction-quality-gauge-standing]]. Design:
+  - **Persist the measurement** — today `nli-verify` is print-only, so the gauge dies with the
+    terminal. New additive `EvidenceIr.extraction_quality_gauge: Option<ExtractionQualityGaugeRecord>`
+    (`#[serde(default, skip_serializing_if = Option::is_none)]` — old artifacts load; absent
+    serializes to nothing): `model`, `constraints_total` (signal-constraint surface size at
+    measurement), `entailed`, `not_entailed`, `abstained` (Unknown verdicts — honest no-label),
+    `not_entailed_constraint_ids` (review routing). Derived fractions are computed, never stored.
+    Pure builder `gauge_from_conformal_pass` in `ir/nli_verify.rs` reuses the ONE existing NLI pass
+    (`nli_conformal_pass`) — no second sweep of LLM calls. Encounter-order ids only
+    (`EVIDENCE-DETERMINISM`: no hash-iteration order reaches output).
+  - **`nli-verify` persists it** (same back-annotation semantics as `validate`:
+    `ir.write_to_disk()` honors the recorded `artifact_layout`, so the redirected-copy measurement
+    protocol keeps working). `--vlm-provider skip` stays a strict no-op.
+  - **`converge` measures it after stability** — at the stable branch (after the rescan-plan step,
+    so the gauge describes the FINAL artifact), when `--nlp-provider` is not `skip`, via a shared
+    `measure_and_persist_gauge` helper (one implementation for both commands); summary prints the
+    per-doc gauge. Evidence rebuilds drop the field to `None` by construction
+    (`carry_forward_existing_knowledge` never carries it) — a rebuilt surface honestly requires a
+    fresh measurement, and converge provides exactly that.
+  - **`validate` reports it (the CI-safe surface — no provider needed, reads the persisted record):**
+    metrics `extraction_quality_labeled` / `extraction_quality_not_entailed` /
+    `extraction_quality_abstained` / `extraction_quality_not_entailed_pct` (`n/a` when never
+    measured — the `recall_estimate_pct` precedent); Info finding `evidence_extraction_quality_gauge`
+    (related_ids = the not-entailed constraint ids); Warning
+    `evidence_extraction_quality_majority_not_entailed` when not_entailed > labeled/2 (scale-free
+    "more wrong than right" line — the CHI-class shape, no magic corpus-tuned threshold); Warning
+    `evidence_extraction_quality_gauge_stale` when the constraint surface changed since measurement
+    (count mismatch OR a recorded not-entailed id no longer present — catches the
+    `extract-constraints-llm` replace case whose ids are re-keyed).
+  - **Tracked lock**: kg-bench `EvidenceIrPatch` gains an optional gauge patch + a fixture locking
+    the validate metrics/finding; pure unit tests cover builder counts, staleness, majority warning,
+    and honest absence.
+  Acceptance: live gauge persisted + validated on the persisted wire docs (APB/AHB/AXI) and on a
+  CHI-class doc (the Warning shape); full `run_ci.sh` GREEN; book (nli-verify, validate, converge,
+  EvidenceIR pages) + README + KM card.
 
 ## Changelog
 
 - `2026-06-06`: Created. Gauge established (NLI-oracle not-entailed rate); CHI measured at ~80%
   erroneous (hand-validated 18/18), taxonomy recorded; fix backlog opened. See
   [[conformal-tier-agreement-degenerate]] and `docs/tasks/TABLE-GRITS-CONFORMAL.md`.
+- `2026-06-10`: `.0` DONE — the gauge is now a STANDING persisted measurement: `nli-verify`
+  back-annotates `extraction_quality_gauge` onto the EvidenceIR (never persisting a vacuous
+  all-abstained pass), `converge` re-measures it after stabilization via the shared
+  `measure_and_persist_gauge` and prints it in the convergence summary, and `validate` reports
+  it provider-free (`extraction_quality_*` metrics with honest `n/a`, Info finding carrying the
+  not-entailed ids, scale-free majority-erroneous Warning, staleness Warning on surface change).
+  Live: APB 28.6% Info-only vs AHB 60% / CHI 69% / AXI 91% majority-flagged — the canonical
+  Pattern surfaces' quality is now visible (the cleaned LLM-primary surfaces were never promoted
+  off the /tmp measurement copies); I2S converge demo took the measurement end-to-end.
+  kg-bench 154/154; lib 1537. See [[extraction-quality-gauge-standing]]. The original `.0`–`.4`
+  backlog is now fully closed; remaining open leaf = `.3c` (relational-vs-value + descriptive
+  frames; needs a measurable target — CHI re-ingest or a probed corpus example).
 - `2026-06-10`: `.8` DONE — the `must_be_value` recall gap is closed. Root cause: the prompt could
   not express a validity requirement (model emits `[]`), compounded by two silent `parse_kind`
   drops. Fix: prompt states the `must_be_value`+`VALID` convention; Rust recovers an un-echoed

@@ -29,6 +29,11 @@ It reports things like:
 - semantic conflicts
 - residual decisions
 - overall score
+- the persisted NLI extraction-quality gauge (`extraction_quality_labeled` /
+  `extraction_quality_not_entailed` / `extraction_quality_abstained` /
+  `extraction_quality_not_entailed_pct` — `n/a` until `nli-verify` or `converge` has measured
+  the document, plus a majority-erroneous warning and a staleness warning; see the
+  [validation chapter](../quality/validation.md))
 
 ## `project-validation`
 

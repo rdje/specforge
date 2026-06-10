@@ -589,6 +589,34 @@ requirement (*"the MPAM field must be included on the REQ and SNP channels"*) ha
 constraint-kind vocabulary yet, so such sentences currently yield nothing — a candidate future kind.
 *Authoritative tracking:* `docs/tasks/EXTRACTION-QUALITY-GAUGE.md` (`.FIELD.4`).
 
+### `EXTRACTION-QUALITY-GAUGE.0` — the artifact carries its own quality measurement
+
+Every surface above is about extracting more, and extracting it correctly. This one is about
+**knowing how correct the result actually is** — per document, automatically, and in a way that
+survives the terminal session that measured it. The EvidenceIR now carries an optional
+`extraction_quality_gauge` record: the result of one NLI pass that asked, for every signal
+constraint, whether the constraint's own source sentence *entails* it. The record holds the
+judging model, how many constraints were entailed / not entailed / abstained-on, and the exact
+ids of the not-entailed ones — so a reviewer opens the artifact and goes straight to the
+suspect items.
+
+The honesty rules are strict, because a quality number is exactly the kind of thing that goes
+stale or gets gamed:
+
+- the gauge is **measurement metadata, never extraction truth** — persisting it changes no
+  constraint and no canonical fact, and the NLI oracle is reported everywhere as a *noisy*
+  estimate;
+- **rebuilding the EvidenceIR drops it** — a new constraint surface requires a new measurement
+  (`converge` takes one automatically after every stabilized run);
+- a pass that **labeled nothing is not persisted** — a dead model never overwrites a real
+  measurement with a vacuous one;
+- and `validate` flags a gauge whose surface has **changed underneath it** as stale instead of
+  reporting an old number as current.
+
+`nli-verify` writes it, `converge` refreshes it after stabilization, and `validate` reports it
+model-free — see the [validation chapter](../quality/validation.md) for the metrics and
+warnings. *Authoritative tracking:* `docs/tasks/EXTRACTION-QUALITY-GAUGE.md` (leaf `.0`).
+
 ### `PER-EXTRACTOR-FACT-TAGGING` — who found which fact (recall-gauge groundwork)
 
 This is plumbing for a future **calibrated recall estimate**. To estimate how

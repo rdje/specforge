@@ -1,0 +1,63 @@
+{
+  "name": "extraction_quality_gauge_persisted_gold",
+  "source": "source.md",
+  "evidence_ir_patch": {
+    "signal_constraints": [
+      {
+        "constraint_id": "fixture_sigcon_0001",
+        "subject_signal": "XREQ",
+        "constraint_kind": {
+          "kind": "must_be_asserted"
+        },
+        "target_value": null,
+        "condition_text": null,
+        "negated": false,
+        "source_text": "XREQ must be asserted to start a transfer.",
+        "supporting_statement_ids": [],
+        "automation_confidence": "medium"
+      },
+      {
+        "constraint_id": "fixture_sigcon_0002",
+        "subject_signal": "XACK",
+        "constraint_kind": {
+          "kind": "must_be_asserted"
+        },
+        "target_value": null,
+        "condition_text": null,
+        "negated": false,
+        "source_text": "XACK can be asserted by the completer.",
+        "supporting_statement_ids": [],
+        "automation_confidence": "medium"
+      }
+    ],
+    "extraction_quality_gauge": {
+      "model": "fixture-nli-model",
+      "constraints_total": 2,
+      "entailed": 1,
+      "not_entailed": 1,
+      "abstained": 0,
+      "not_entailed_constraint_ids": [
+        "fixture_sigcon_0002"
+      ]
+    }
+  },
+  "expectations": {
+    "validation": {
+      "evidence": {
+        "finding_ids_include": [
+          "evidence_extraction_quality_gauge"
+        ],
+        "finding_ids_exclude": [
+          "evidence_extraction_quality_majority_not_entailed",
+          "evidence_extraction_quality_gauge_stale"
+        ],
+        "metric_values": {
+          "extraction_quality_labeled": "2",
+          "extraction_quality_not_entailed": "1",
+          "extraction_quality_abstained": "0",
+          "extraction_quality_not_entailed_pct": "50.0"
+        }
+      }
+    }
+  }
+}
