@@ -584,6 +584,103 @@ stay residual (future lever: map them to register-map records). Side effect note
 `audit-extraction` uses the same gate for its sampling labels — classification labels
 shift on CCIX-class tables only.
 
+**`PDF-VARIANT-DIGESTION.10b` — the two-column `bits | description` STRUCTURE-field family.**
+· Status: **DONE `2026-06-10`** (probe → typed-home decision → measured design → build →
+live per-item verification).
+**Verification log:** lib tests 1553→1557 (4 new hermetic: strict cell parser incl. the
+`318:32` fabrication case; container-label grammar incl. the ref-must-carry-a-digit guard;
+full surface integration with the DTE-shaped capless-head chain, fresh-structure
+non-adoption, 3-cell value-row skip, Reserved skip, offset/symbolic whole-table rejection,
+kind-gate exclusion, cross-strategy id density; the sense-guard + label-disagreement chain
+fixture); kg-bench **154/154**; full `scripts/run_ci.sh` GREEN. **Old-vs-new dry-run parity
+over ALL 12 intact-bundle docs: every extraction surface byte-identical; the ONLY delta
+anywhere is `extraction_manifest` gaining exactly the new registered-extractor entry**
+(by design — the framework records eligible entries for all registered extractors; the
+manifest IS the behavioral fingerprint), **plus NVMe's additive `message_field_records`
+0 → 216**. NVMe register gold re-measured before/after IDENTICAL (0.966/0.966 register-field
+views, 42/42 named, 201/201 with bit positions — the documented gold-authoring state); full
+battery green (constraints 1.000×3, filtered relations 1.000×4, temporal 3/3+4/4+3/3,
+SWD/I2C/RISC-V at documented states). **Live: NVMe 216 fields / 113 containers (`CID` at
+`31:16` of `Command Dword 0` …); AMD (stub-copy protocol, canonical untouched) 82 / 15 with
+the stitched DTE carrying 31 fields (`Mode0FC` 247 → `IV` 128 → … → `V` 0 across 9
+fragments); USB 3.2 / USB4 / TMC ddi0461 / eMMC = 0 records each (measured — their
+value-encoding rows recover no names, correctly).** Canonical NVMe evidence deliberately
+NOT rebuilt this slice: a rebuild drops its standing Pattern gauge (the owner-visible
+`LLM-PRIMARY-PROMOTION.4` sweep state) and re-measurement needs the live NLI provider — the
+additive refresh rides the next gauge-bearing sweep. Book: `pipeline/evidenceir.md`
+subsection (+ a drift-guard clause in the FIELD.2 subsection: its zero-yield claim is
+scoped to the field-titled reader); KM `bit-position-structure-field-extraction`.
+Follow-on levers recorded: the 41 offset-suffixed AMD tables (`31:28 +04`, dword-relative —
+an offset-aware future leaf) and NVMe `table_0447` (one symbolic row).
+**Family census** (measured with the `.10a` unified bit-position header vocabulary; effective
+2-column header = bit-position word + a `description`-containing word, consecutive `col_span`
+duplicates collapsed): **334 `unknown`-kind tables across 6 docs** — AMD IOMMU 163, NVMe 156
+(a GOLD-measured doc), USB 3.2 ×10 (plus 4 already `signal_description`-classified, untouched
+by kind-gate), USB4 inter-domain ×3, CoreSight TMC ddi0461 ×1, eMMC ×1. Wire-based docs carry
+ZERO family tables (byte-identity by construction).
+**TYPED-HOME DECISION (the leaf's first question): `message_field_records`** — the existing
+"structured content fields, NOT wires" surface — via a NEW second extractor strategy
+`message_fields.bit_position_table`; **NOT the register surface**. Why: the rows describe
+in-memory STRUCTURE entries (AMD Device Table Entry, NVMe command dwords / queue entries /
+data structures), the family carries no access/reset vocabulary anywhere (claiming MMIO
+register semantics would fabricate them), and the register surface — including NVMe's measured
+register gold — stays byte-identical by construction. The message-field module doc already
+reserves "field shapes without a field-name column … for later strategies"; this is that
+strategy. `MessageFieldRecord` gains an additive `bit_range: Option<(u32, u32)>`
+(serde-skipped; `SerialFrameField` precedent) — old artifacts load unchanged and the existing
+field-titled strategy emits `None`, so CHI-class docs stay byte-identical.
+**Measured gates (each demonstrated per-item over the persisted family):**
+  1. table gate: effective table kind `unknown`, effective 2-column header (bit-position
+     vocabulary + `description`-containing), ≥1 eligible row, and **ALL eligible rows'
+     bit cells strict-parse** as pure bit positions (`255:248`, `247`, `[7:4]` — a NEW strict
+     cell parser; the lenient `parse_bit_range` would mis-read NVMe's symbolic
+     `31 + (Element Length*8) :32` as `318:32`). Eligible row = exactly 2 effective cells —
+     NVMe's 196 three-cell value-encoding sub-rows and 2 footnote rows self-exclude.
+     Measured: AMD 122/163 tables pass (the 41 failures are the offset-suffixed family),
+     NVMe 155/156 (the 1 failure is `table_0447`, one symbolic row — its 5 good rows stay
+     honest residuals), and every small-doc table passes-but-yields-0-names (below);
+  2. container from the caption: strip a leading `Table|Figure <ref> [:.-–]` label, a trailing
+     `(Continued)` marker, then a trailing `Field Definitions` / `Field Descriptions` /
+     `Fields` suffix (`Device Table Entry (DTE) Field Definitions (Continued)` → `Device Table
+     Entry (DTE)`; mid-label `Fields, PR=0` qualifiers are kept — `PR=0` vs `PR=1` are distinct
+     containers). NO structure-noun requirement: the probe showed caption nouns mislead
+     (`Reservation Register - Command Dword 10` is a COMMAND name, not an MMIO register) and
+     the SHAPE gate + name grammar already carry the precision (structural over lists);
+  3. caption-less fragment chains: a capless family table joins the preceding chain ONLY on
+     **bit-exact adjacency** (descending `first_hi == prev_last_lo - 1`, or the ascending
+     mirror) with page distance ≤ 1 and caption-label agreement; chain container = the
+     captioned members' shared label; **a chain with no captioned member yields nothing**.
+     Measured: the AMD DTE chain alternates capless/`(Continued)` fragments with EXACT
+     adjacency at every hop (255:248→…→208 | 207→…→185 | … → 1→0; the chain HEAD `table_0025`
+     is itself capless, so chains must form by adjacency first, container second); corpus-wide
+     23 AMD capless fragments adopt exactly, 80 do NOT (fresh 31:0/63:0 structures restart at
+     a width boundary — zero ambiguous "below-but-gap" cases), NVMe 1 adopts (`table_0367`) /
+     7 stay residual, USB ascending splinters adopt-then-yield-0-names;
+  4. field names REUSE the `.10a` mnemonic chain `recover_field_mnemonic` verbatim (access
+     cell = None): NVMe rows carry the untouched `Full Name (MNEMONIC):` form (215 named:
+     `CID`, `SQID`, `PSDT`, `PRP1`…), AMD rows carry the gated leading-identifier form
+     (313 named: `Mode0FC`, `vImuEn`, `GuestPagingMode`, `SysMgt`, `IntCtl`…) — zero new
+     name grammar needed, zero suspicious accepts in the per-item eyeball; `Reserved…`-led
+     rows are SKIPPED (padding is not a named field; 156 AMD + 98 NVMe), and a row with no
+     recoverable name yields no record (honest absence).
+**Quantified honest residuals (documented, not gamed):** the dword-relative offset-suffixed
+cells (`31:28 +04`; 184 rows / 41 AMD tables — capturing the bit range while dropping the
+`+04` byte offset would MISREPRESENT absolute position; a future offset-aware lever);
+capless chains with no captioned member (80 AMD + 7 NVMe lost-caption tables); name-less
+parsed rows (140 AMD / 58 NVMe — including the `GDeviceID[15:0]:` bracket-slice leading form
+and the `GCR3 …` repeated-leading-token amphiboly the `.10a` uniqueness gate rightly rejects);
+NVMe `table_0447`'s 5 good rows (one symbolic sibling row fails the all-rows gate); the
+small-doc value-encoding tables (eMMC power-class codes, USB suspend options, TMC
+scatter-gather) pass the shape gate but recover 0 names → 0 records, correctly.
+**Build-safety facts (verified in code before building):** `message_field_records` is consumed
+only by LLM-gated opt-in paths (`extract-constraints-llm` entity typing) and kg-bench — the
+deterministic Pattern `signal_constraints` surface never reads it; `validate` has zero
+`message_field` consumption, so `document_class` / completeness gauges are unchanged;
+registering extractor #2 on the surface adds a manifest `ExtractorRunEntry` on EVERY doc, so
+the parity claim is: all extraction surfaces byte-identical on the 11 other intact docs with
+ONLY the manifest gaining the new entry; NVMe additionally gains additive
+`message_field_records`/`bit_range` content. NVMe register-gold eval re-measured before/after.
+
 **(SUPERSEDED active note) `PDF-VARIANT-DIGESTION.6`/`.7`** — item ② (`.5`) COMPLETE and `.8` (broaden
 prose-actor capture) DONE. **`.5a` + `.5b` + `.5c` are DONE** — structural doc-class routing
 (protocol/register/interface/guide), the front-matter doc-type signal (true guide vs under-extracted spec), and

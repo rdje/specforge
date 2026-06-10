@@ -1,4 +1,38 @@
 # DEVELOPMENT_NOTES
+## `PDF-VARIANT-DIGESTION.10b` (`2026-06-10`) — the typed-home decision method, and what the chain probe proved
+- The leaf's FIRST question was representational, not extractive: the two-column
+  `bits | description` rows are in-memory STRUCTURE entries, not MMIO registers. The
+  decision was made on three verifiable facts: (1) the family carries zero access/reset
+  vocabulary corpus-wide (register semantics would be invented); (2) the message-field
+  module doc had already reserved "field shapes without a field-name column" for later
+  strategies — this IS that strategy; (3) `message_field_records` is consumed only by
+  LLM-gated opt-in paths (entity typing for `extract-constraints-llm`) and kg-bench, so the
+  deterministic Pattern surfaces — including NVMe's measured register gold — cannot move.
+- The chain probe settled fragment adoption before any code: capless family tables split
+  cleanly into 23 bit-exact continuations and 80 fresh structures with ZERO
+  "below-but-gap" cases — so the adjacency gate could be exact-or-nothing, no tolerance
+  parameter to tune. The DTE chain HEAD being itself caption-less forced the algorithm
+  shape: chains form by adjacency first, containers come from captioned members second,
+  and an all-capless chain honestly yields nothing (that single rule keeps the 80 fresh
+  structures out with no list).
+- A cross-sense false-positive was caught in design, not production: a descending chain
+  ending at bit 0 would "ascend" into a fresh `31:1`-led table under the pure adjacency
+  predicate (`low 1 == high 0 + 1`); the sense guard (a chain never reverses its own row
+  direction) kills it and is fixture-locked.
+- Strict-parser lesson re-confirmed: the lenient `parse_bit_range` digit-filter reads
+  NVMe's symbolic `31 + (Element Length*8) :32` as `318:32` — bit-position TRUTH needs a
+  parser that rejects, not salvages. Whole-table rejection on one bad cell is the honest
+  scope: the 41 offset-suffixed AMD tables (`31:28 +04`, dword-relative) wait for an
+  offset-aware leaf rather than shipping misplaced positions.
+- Manifest semantics noted for future extractor additions: the framework records an entry
+  for EVERY registered extractor (eligible or not), so registering a strategy changes every
+  doc's manifest bytes BY DESIGN — the parity claim for such slices is "all extraction
+  surfaces byte-identical; manifest delta = exactly the new entry", proven per-item with a
+  filtered diff, not raw byte equality.
+- Canonical NVMe evidence deliberately NOT rebuilt: a rebuild drops the standing Pattern
+  gauge (the owner-visible LLM-PRIMARY-PROMOTION.4 sweep state) and re-measuring needs the
+  live NLI provider; the additive refresh rides the next gauge-bearing sweep.
+
 ## `PDF-VARIANT-DIGESTION.10a` (`2026-06-10`) — probe-first grammar design, and the verification protocol for docs without normalized bundles
 - Method: every gate of the leading-identifier mnemonic form was simulated over the real
   persisted SourceIR tables BEFORE coding, with candidate gates measured against each other

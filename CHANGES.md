@@ -1,3 +1,28 @@
+### `PDF-VARIANT-DIGESTION.10b` — two-column `bits | description` tables are STRUCTURE layouts: they now extract as message fields with literal bit ranges (AMD/NVMe-class, 334 tables)
+The second `.10p` family is closed, with the leaf's typed-home question answered first: the
+rows describe IN-MEMORY STRUCTURES (AMD 256-bit Device Table Entry, NVMe command dwords /
+queue entries), carry NO access/reset vocabulary anywhere, and therefore extract into
+`message_field_records` ("structured content fields, not wires") via a NEW second strategy
+`message_fields.bit_position_table` — NOT the register surface (MMIO semantics would be
+fabricated; the NVMe register gold stays byte-identical by construction).
+`MessageFieldRecord` gains additive `bit_range: Option<(u32,u32)>`. Measured gates: a
+STRICT cell parser (any symbolic `31 + (Element Length*8) :32` or offset-suffixed
+`31:28 +04` cell rejects the WHOLE table — the lenient parser would fabricate `318:32`);
+caption-less page fragments join chains only on BIT-EXACT adjacency within one page
+(corpus: 23 adopt exactly, 80 fresh structures never do, zero gray cases; the AMD DTE
+chain stitches 9 fragments from a caption-less HEAD, 247→0) and all-capless chains yield
+nothing; names reuse the `.10a` `recover_field_mnemonic` grammar verbatim. **Live: NVMe
+0 → 216 fields / 113 containers (`CID` at `31:16` of `Command Dword 0`); AMD 0 → 82 / 15
+(stitched DTE = 31 fields)**; USB 3.2/USB4/TMC/eMMC = honest 0 (value-encoding rows recover
+no names). ALL 12 intact docs: every extraction surface byte-identical (only the manifest
+records the new strategy); NVMe register gold re-measured IDENTICAL (0.966/0.966, 42/42,
+201/201); full battery green (constraints 1.000×3, filtered relations 1.000, temporal
+3/3+4/4+3/3, SWD/I2C). Honest residuals quantified: 41 offset-suffixed AMD tables (future
+offset-aware leaf), `SnoopAttribute` (mid-cell bleed-guard trade), canonical NVMe rebuild
+deferred to the next gauge-bearing sweep (a rebuild drops the standing Pattern gauge).
+lib 1557 (4 new), kg-bench 154/154, full CI green. Book: `pipeline/evidenceir.md`; KM
+`bit-position-structure-field-extraction`.
+
 ### `PDF-VARIANT-DIGESTION.10a` — the `bit location` register-field vocabulary: field names fused into description cells now extract (CCIX-class, ~600 tables)
 The `.10p`-isolated biggest gap is closed. `bit location | register/field description |
 attributes` tables carry NO name column — the field name leads the description cell

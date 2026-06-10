@@ -12,7 +12,12 @@ for NINE EvidenceIR surfaces. The ninth (`EXTRACTION-QUALITY-GAUGE.FIELD.2`, sam
 `message_fields` — a key-merge surface (`MessageFieldRecord`, key = container+name) extracting
 packet/flit protocols' declared message fields from container-captioned field-titled tables, with the
 register surface keeping priority over shared `Field` columns via `is_register_field_header` (the
-one-place discriminator). It is the first surface whose extractor reads ONLY `SourceIr.structured_tables`
+one-place discriminator). `PDF-VARIANT-DIGESTION.10b` (2026-06-10) gave the surface its second
+strategy, `message_fields.bit_position_table`: two-column `bits | description` tables declaring in-memory
+STRUCTURE layouts (AMD DTE, NVMe command dwords) extract through a strict pure-bit-cell parser plus a
+bit-exact caption-less fragment-chain stitcher, and `MessageFieldRecord` gained an additive
+`bit_range: Option<(u32, u32)>`; `field_id`s are now assigned at the surface level after the key-merge so
+they stay unique across strategies. It is the first surface whose extractor reads ONLY `SourceIr.structured_tables`
 and persists a new typed inventory (`EvidenceIr.message_field_records`) consumed by the entity-typing
 ground (`EntityType::Field`, `.FIELD.3`) and — via `.FIELD.4` — by the LLM-primary constraint extractor:
 `ir/constraint_extract_llm.rs` now grounds into a typed `GroundedConstraint::{Signal,Field}` dispatch

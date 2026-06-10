@@ -567,6 +567,47 @@ page-wrap bleed indistinguishable from a real row without page-level context), a
 forcing byte offsets into bit ranges would fabricate, so they stay explicit residuals for a future leaf.
 *Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.10a`).
 
+### `PDF-VARIANT-DIGESTION.10b` — two-column bit-layout tables describe structures, not registers
+
+The second family the corpus census isolated looks deceptively like a register table: just two columns,
+`Bits | Description`, one bit range per row — 334 such tables across six documents, with the AMD IOMMU
+specification carrying 163 and the NVMe base specification 156. But reading the rows shows they are not
+registers at all. They describe **in-memory structures**: AMD's 256-bit Device Table Entry, NVMe's command
+dwords and completion-queue entries, page-table and interrupt-table entries. Nothing in the family carries
+the access/reset vocabulary that makes something a register — and pretending otherwise would *fabricate*
+MMIO semantics the documents never wrote. So these rows go where structured content already lives: the
+message-field inventory (`message_field_records`), as a second reading strategy beside the field-titled one
+below. Each recovered field carries its container, its name, and — new with this family — its literal bit
+position (`Command Identifier (CID)` at bits `31:16` of `Command Dword 0`; `vImuEn` at bit `207` of the
+`Device Table Entry (DTE)`).
+
+Three measured gates make the reading honest. First, a **strict cell parser**: a bit cell is accepted only
+when it is *purely* a bit position (`255:248`, `247`, `[7:4]`) — AMD's dword-relative cells (`31:28 +04`)
+and NVMe's symbolic ones (`31 + (Element Length*8):32`) reject the *whole* table, because capturing the
+range while dropping the offset would misrepresent where the field actually sits. Second, the **fragment
+chain**: AMD splits its Device Table Entry across nine page fragments, most of them caption-less — and the
+chain head itself has no caption. A caption-less fragment is adopted only on *bit-exact adjacency* (its
+first row continues exactly where the previous fragment stopped, `207` after a fragment ending at `208`)
+within one page, and a chain takes its container name from its captioned members. Measured over the corpus
+this is unambiguous: 23 caption-less fragments continue exactly, 80 fresh structures restart at a width
+boundary and adopt nothing — there is no gray zone in between. Third, field names reuse the same
+dictionary-entry grammar the register reader gained in `.10a` (`Full Name (CID): …` and the gated leading
+identifier `vImuEn: virtualize IOMMU enabled…`), so `Reserved` padding and prose-led rows yield nothing
+rather than a wrong name.
+
+Live, NVMe gains **216 typed fields across 113 containers** and AMD **82 across 15** (the stitched DTE
+alone carries 31), while the four smaller documents in the family (USB 3.2, USB4 inter-domain, a CoreSight
+TMC manual, eMMC) yield exactly **zero** — their matching tables are value-encoding tables whose rows
+recover no field names, which is the correct honest outcome. Everything else is provably untouched: all 12
+rebuildable corpus documents rebuild with every extraction surface **byte-identical** (the only difference
+anywhere is the run manifest recording that the new strategy exists), and NVMe's measured register gold
+re-measures exactly its documented state. The known residuals are quantified, not hidden: the 41
+offset-suffixed AMD tables await an offset-aware future leaf, caption-less chains with no captioned member
+stay unread, and one true name (`SnoopAttribute`) is sacrificed to the mid-cell bleed guard because its own
+description later says *"…guest PTE. This field is meaningful…"* — the gate that protects every wrapped
+cell from a false name rejects this one true one, a trade the per-item audit makes explicitly.
+*Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.10b`).
+
 ### `EXTRACTION-QUALITY-GAUGE.FIELD.2` — message fields are intent too, but they are not signals
 
 Packet and flit protocols (the CHI family is the canonical example) describe two very different kinds of named
@@ -595,7 +636,9 @@ register reader, never to this one; and a caption has to anchor its "fields" to 
 all. Measured over the whole persisted corpus, that combination fires **only** on the packet-protocol family —
 CHI recovers **106 fields across its 4 channels**, the CHI chip-to-chip specs 143–189 fields with most widths,
 CCIX 47–51 — while every register document (RISC-V Debug, the IOMMU and MMU manuals, NVMe, eMMC) and every
-wire-based bus (APB/AHB/AXI, SWD) yields exactly zero and is otherwise byte-identical to before. Two tracked
+wire-based bus (APB/AHB/AXI, SWD) yields exactly zero *through this field-titled reader* and is otherwise
+byte-identical to before (NVMe and the AMD IOMMU manual now contribute fields through the separate
+bit-position strategy of `.10b` above — same surface, different table shape). Two tracked
 benchmark fixtures lock both directions: fields land in `message_field_records` and never in the signal
 inventory, and a register-shaped table never produces message fields even when its caption says "message
 fields". This inventory is the foundation the signal-vs-field ontology builds on: with declared fields known,
