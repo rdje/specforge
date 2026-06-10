@@ -1,3 +1,23 @@
+### `EXTRACTION-QUALITY-GAUGE.8` — must_be_value recall gap CLOSED (10/16 → 16/16 gold facts)
+The `.7` clean-test gap is closed at its root. Probed live BEFORE coding (qwen2.5:14b-instruct, temp 0,
+the exact persisted sentences): the extraction prompt's kind vocabulary could not express a *validity*
+requirement — for "PNSE/PBUSER must be valid when …" the model output `[]`, so the whole requirement
+vanished before Rust grounding ever ran; two silent `parse_kind` drops compounded it (`must_be_valid`
+unknown; `must_be_value` with no echoed value). Fix (generic, no chip names, no lists): the prompt now
+states the typed convention ("<signal> must be valid" = `must_be_value` + `VALID` — the Pattern
+extractor's own output shape), `parse_kind` accepts the `must_be_valid`/`valid` spellings, and
+`ground_constraint` recovers an un-echoed value from the SOURCE sentence by reusing
+`extract_protocol_state_value` (the Pattern extractor's binder grammar, now `pub(crate)`) — grounded or
+honestly dropped, never fabricated. +4 pure tests (lib 1503).
+
+**Measured** (pre→post, redirected evidence copies, eval canonical keys, doc-level gold-fact recall):
+APB **4/6 → 6/6** (pre-fix independently reproduced `.7`), AHB **2/6 → 6/6** (all four misses were
+`H*USER must_be_value VALID`; condition-junk FPs dropped 2→1), AXI control **4/4 → 4/4** (strict
+3/4 → 4/4). Every pre-fix miss was a `must_be_value VALID` fact; every one is recovered. FP ledger net
+unchanged (3→3), all in the open `.3` condition/permission class. Book: `commands/quality-and-learning.md`
+gained the `extract-constraints-llm` section; README CLI list de-drifted (the four research commands);
+KM card `llm-primary-must-be-value-recall`.
+
 ### `EXTRACTOR-ARCHITECTURE.10a` — assembly-block extraction; god-orchestrator retired; TREE CLOSED
 The closing slice. The ~243-line statement/visual assembly block (visual-evidence items + VLM-note
 injection, the markdown-block span/statement/link loop, caption/reference observation back-annotation,

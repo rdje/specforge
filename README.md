@@ -51,6 +51,10 @@ Use it first for the project objective, document navigation, and the current imp
   - `nlp-enrich <evidence-ir> [--vlm-provider ollama|open-ai|lm-studio|skip] [--dry-run]`
   - `extract-contracts <evidence-ir> [--provider ollama|open-ai|lm-studio|skip] [--model <m>] [--dry-run]`
   - `signal-resolve <evidence-ir> [--provider ollama|open-ai|lm-studio|skip] [--model <m>] [--dry-run]`
+  - `nli-verify <evidence-ir> [--vlm-provider ollama|open-ai|lm-studio|skip] [--model <m>]`
+  - `entity-type <evidence-ir> [--vlm-provider ollama|open-ai|lm-studio|skip] [--model <m>] [--max-subjects <n>]`
+  - `extract-conditions <evidence-ir> [--vlm-provider ollama|open-ai|lm-studio|skip] [--model <m>] [--max-constraints <n>]`
+  - `extract-constraints-llm <evidence-ir> [--vlm-provider ollama|open-ai|lm-studio|skip] [--model <m>] [--max-sentences <n>]`
   - `eval-extraction <dataset> [--provider ollama|open-ai|lm-studio|skip] [--model <m>] [--evidence-root <root>]`
   - `audit-extraction <source-ir> [--provider ollama|open-ai|lm-studio|skip] [--model <m>] [--sample <n>] [--seed <s>]`
   - `recover-register-bits <evidence-ir> [--vlm-provider ollama|open-ai|lm-studio|skip] [--vlm-model <m>] [--dry-run]`

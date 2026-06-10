@@ -196,8 +196,35 @@ honestly-qualified) path to "human-SpecForge in Rust."
   the 2 misses (`PBUSER`/`PNSE` `must_be_value VALID`) **are** signals. So there IS a real, **localized
   `must_be_value` recall gap** even on clean signals — separable from CHI's field issue. Two distinct
   problems, both characterized. Next = `.8`.
-- ID: `EXTRACTION-QUALITY-GAUGE.8` · Status: `pending` · Goal: close the `must_be_value` recall gap in
-  the LLM-primary extractor (it under-extracts value constraints); re-measure on APB + AXI/AHB.
+- ID: `EXTRACTION-QUALITY-GAUGE.8` · Status: `done` (`2026-06-10`) · Goal: close the `must_be_value`
+  recall gap in the LLM-primary extractor; re-measure on APB + AXI/AHB. **Root cause (probed live
+  BEFORE coding, qwen2.5:14b-instruct temp 0 on the exact persisted sentences):** (1) the extraction
+  prompt's kind vocabulary cannot express a *validity* requirement — for both gold sentences
+  ("PNSE/PBUSER must be valid when …") the model outputs `[]`, so the whole requirement vanishes
+  before grounding ever runs; (2) two silent-drop paths compound it: `parse_kind` rejects the model's
+  natural `must_be_valid` spelling, and rejects `must_be_value` with no echoed value (`value?`). The
+  gold convention (= the Pattern extractor's own output) is `must_be_value` + `VALID`. **Fix
+  (generic, no chip names, no lists):** (a) the prompt states the typed convention ("a validity
+  requirement — <signal> must be valid — is kind must_be_value with value VALID"; probed pre-code:
+  both misses recover, asserted-control + negative-control unchanged); (b) Rust backstop —
+  `parse_kind` accepts the `must_be_valid`/`valid` spellings, and `ground_constraint` recovers a
+  value the model named but did not echo from the SOURCE sentence by reusing
+  `extract_protocol_state_value` (the Pattern extractor's own binder grammar, now `pub(crate)` —
+  grounded, never fabricated; unrecoverable → honest drop); (c) +4 pure tests (injected, no
+  provider; lib 1503). **Measured (pre-fix vs post-fix, same redirected-copy protocol, eval
+  canonical keys, document-level gold-fact recall):** APB **4/6 → 6/6** (pre-fix independently
+  reproduced the `.7` number; both misses = `PNSE`/`PBUSER` `must_be_value VALID`), AHB **2/6 →
+  6/6** (all four pre-fix misses were `HAUSER`/`HWUSER`/`HRUSER`/`HBUSER` `must_be_value VALID`;
+  labeled-statement FPs *dropped* 2→1 — the pre-fix condition-junk `HREADY must_be_high` +
+  `HRESP must_not_change` read out of the HRUSER sentence is gone), AXI (zero `must_be_value` gold —
+  the no-regression control) **4/4 → 4/4** doc-level and **3/4 → 4/4** strict (the prompt change
+  un-suppressed the conditional `ASKSTOP must be LOW when ACTIVATEACK is LOW` statement). **Total:
+  10/16 → 16/16 gold constraint facts; every one of the six pre-fix misses was a `must_be_value
+  VALID` fact and every one is recovered.** Honest FP ledger (all in the open `.3`
+  condition/permission class, net 3→3): APB `PSELx must_be_high` unchanged pre/post; AHB 2→1; AXI
+  0→1 (`ACTIVATEACK must_be_value LOW` — the model reads the *when*-clause subject as a second
+  obligation on the newly-extracted statement). LLM-primary volumes: APB 12→21, AHB 11→16, AXI
+  54→59 (vs Pattern 14/15/102).
 - ID: `EXTRACTION-QUALITY-GAUGE.FIELD` · Status: `pending` · Goal: the SIGNAL-vs-FIELD ontology for
   packet/flit protocols (CHI/CXL/PCIe-class) — model fields (flit contents) distinctly from signals
   (physical wires), per the doc's own B16-Signals vs B2.x-Fields split. The real future target for
@@ -211,3 +238,10 @@ honestly-qualified) path to "human-SpecForge in Rust."
 - `2026-06-06`: Created. Gauge established (NLI-oracle not-entailed rate); CHI measured at ~80%
   erroneous (hand-validated 18/18), taxonomy recorded; fix backlog opened. See
   [[conformal-tier-agreement-degenerate]] and `docs/tasks/TABLE-GRITS-CONFORMAL.md`.
+- `2026-06-10`: `.8` DONE — the `must_be_value` recall gap is closed. Root cause: the prompt could
+  not express a validity requirement (model emits `[]`), compounded by two silent `parse_kind`
+  drops. Fix: prompt states the `must_be_value`+`VALID` convention; Rust recovers an un-echoed
+  value from the source sentence via the Pattern extractor's own binder grammar. Measured
+  pre→post: APB 4/6→6/6, AHB 2/6→6/6, AXI 4/4→4/4 (control) — 10/16→16/16 gold facts, FP ledger
+  net unchanged (the residual FP class is `.3` condition/permission work). See
+  [[llm-primary-must-be-value-recall]].

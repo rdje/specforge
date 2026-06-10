@@ -6354,7 +6354,9 @@ fn extract_condition_clause(text: &str) -> Option<String> {
 /// remember the *how*, not the names). Leading articles/binding fillers
 /// (`a`/`the`/`set`/`driven`/`to`/…) are skipped. Returns the value uppercased, or
 /// `None` if there is no binding phrase or no value word follows it.
-fn extract_protocol_state_value(lowered: &str) -> Option<String> {
+/// `pub(crate)`: the LLM-primary constraint extractor reuses this same binder grammar to
+/// recover a value the model named but did not echo (`EXTRACTION-QUALITY-GAUGE.8`).
+pub(crate) fn extract_protocol_state_value(lowered: &str) -> Option<String> {
     const BINDERS: &[&str] = &["must be ", "shall be ", "must remain ", "shall remain "];
     // Words that are grammar/binding scaffolding, never the value itself.
     const FILLERS: &[&str] = &[

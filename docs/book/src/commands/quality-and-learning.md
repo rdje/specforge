@@ -430,3 +430,39 @@ across them; only the per-command prompt, response parsing, and response-token
 budget differ. (`enrich` honors the same `SPECFORGE_VLM_HELPER` test-hook and
 provider-flag convention, but keeps its own image-capable transport because it
 sends diagrams, not text.)
+
+## `extract-constraints-llm` (research lane)
+
+```text
+extract-constraints-llm <evidence-ir> [--vlm-provider ollama|open-ai|lm-studio|skip] [--model <name>] [--max-sentences 0]
+```
+
+This is the **LLM-primary, Rust-grounded constraint extractor** — the live test of
+the "replace, don't patch" thesis from the extraction-quality program. Where the
+deterministic Pattern extractor matches phrasings it knows, this command hands each
+constraint-bearing sentence to a local text model and asks for the *structured*
+requirement — `(subject, kind, condition, value)` — then lets Rust ground every
+field before anything is kept: the subject must type as a real **signal** (entity
+typing — a table reference, feature name, or transaction type is rejected), the
+kind must parse, and a condition survives only if the source sentence actually
+contains it. What the model proposes but cannot ground is dropped, never invented.
+Heads up before you run it: it **replaces** the artifact's `signal_constraints`
+in place — point it at a copy if you want to keep the Pattern set side by side.
+
+One honest subtlety the program learned the hard way: a specification's
+*validity* requirement — "PBUSER **must be valid** when PSEL, PENABLE, and PREADY
+are asserted" — fits none of the obvious kinds (asserted, stable, high, low), and
+a model given no way to express a sentence stays silent about *all* of it. The
+typed convention is that "must be valid" is a **value constraint with the value
+`VALID`**, the same shape the deterministic extractor produces. The prompt states
+that convention outright, and if the model names a value constraint without
+echoing the value, Rust recovers the value **from the source sentence itself**
+(the same "must be ⟨value⟩" reading the Pattern extractor uses) — recovered from
+the document or dropped, never guessed.
+
+Measured against the hand-validated AMBA gold (document-level fact recall,
+before → after that convention landed): APB **4/6 → 6/6**, AHB **2/6 → 6/6**, and
+AXI — which has no validity facts in gold, so it serves as the no-regression
+control — steady at **4/4**. Every one of the six previous misses was a
+"must be valid" fact, and every one is now recovered. *Authoritative tracking:*
+`docs/tasks/EXTRACTION-QUALITY-GAUGE.md`.

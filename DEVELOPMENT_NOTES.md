@@ -1,4 +1,35 @@
 # DEVELOPMENT_NOTES
+## `EXTRACTION-QUALITY-GAUGE.8` (`2026-06-10`) — must_be_value recall gap closed at root
+- Probe-first method (the `.9.7`/`.9.8`/`.9.11` discipline): before touching code, the exact persisted
+  source sentences for every missed gold fact were replayed against the production prompt (Ollama
+  qwen2.5:14b-instruct, temperature 0, same OpenAI-compatible transport). The model output `[]` for both
+  APB validity sentences — proving the failure was prompt-expressibility, NOT Rust grounding, and that a
+  parse-side alias alone could never fire (nothing arrives to parse). The candidate prompt amendment was
+  probed the same way before landing: both misses recover; an asserted-kind control and a
+  presence-rule negative control are unchanged.
+- Root cause chain: (1) the kind menu had no slot for a validity requirement → the model self-filters
+  the entire sentence; (2) `parse_kind` rejected the natural `must_be_valid` spelling; (3) `parse_kind`
+  rejected `must_be_value` with no echoed value (`value?` silent drop).
+- Fix in `ir/constraint_extract_llm.rs`: `extraction_prompt` states the typed convention ("<signal>
+  must be valid" = `must_be_value` + value `VALID` — exactly what the Pattern extractor produces via
+  `extract_protocol_state_value`, and what the gold `label_note`s document); `parse_kind` accepts
+  `must_be_valid`/`valid`; `ground_constraint` computes an *effective value* — the model's echoed value
+  if present, else (value-kind only) a value recovered from the source sentence via
+  `extract_protocol_state_value` (made `pub(crate)` in `ir/evidence.rs`; reuse, not duplication). An
+  unrecoverable value still drops the constraint — grounded or dropped, never fabricated.
+- Measurement protocol (corpus-safe): `extract-constraints-llm` writes to the path stored INSIDE the
+  artifact, so evidence copies had their `artifact_layout` redirected before the run (the
+  `eval-extraction extract_on_copy` precedent). Pre-fix binary obtained via `git stash` of the two code
+  files; pre and post scored identically via `eval-extraction --provider skip --evidence-root <copies>`.
+- Numbers (doc-level gold-fact recall): APB 4/6 → 6/6 (pre-fix reproduced `.7` exactly, misses =
+  `PNSE`/`PBUSER` `must_be_value VALID`); AHB 2/6 → 6/6 (misses were the four `H*USER` VALID facts;
+  labeled-statement FPs 2 → 1 — the HRUSER-sentence condition-junk pair vanished); AXI 4/4 → 4/4
+  doc-level, 3/4 → 4/4 strict (the conditional ASKSTOP statement is no longer suppressed), one new FP
+  `ACTIVATEACK must_be_value LOW` (when-clause subject read as obligation — the `.3` class). LLM-primary
+  volumes: APB 12→21, AHB 11→16, AXI 54→59 (vs Pattern 14/15/102).
+- Honest residual: the FP class that remains (condition/permission-as-obligation) is the already-open
+  `.3` leaf; `.8` deliberately did not widen into it.
+
 ## `EXTRACTOR-ARCHITECTURE.10a` (`2026-06-10`) — assembly-block extraction; TREE CLOSED
 - Pure code motion executed mechanically (scripted line-range cut + splice) to eliminate transcription
   drift over 243 lines, with surgical seam substitutions only: `prior_guidance.as_ref()` → the
