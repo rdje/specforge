@@ -252,9 +252,31 @@ honestly-qualified) path to "human-SpecForge in Rust."
   tier-agreement threshold now calibrates on all three (empirical_error 0.000).** The three killed
   FPs, per item: APB `PSELx must_be_high` (if-clause), AHB `HRESP must_be_value ERROR`
   (unless-clause), AXI `ACTIVATEACK must_be_value LOW` (when-clause).
-- ID: `EXTRACTION-QUALITY-GAUGE.3b` · Status: `pending` · Goal: permission-vs-obligation gate
-  ("recommended"/"permitted"/"can"/"may" frames — e.g. the measured unlabeled `HPROT[0] must_be_high`
-  from "It is recommended that…") + relational-vs-value disambiguation ("set to the same value as").
+- ID: `EXTRACTION-QUALITY-GAUGE.3b` · Status: `done` (`2026-06-10`) · Goal: permission-vs-obligation
+  gate. **Probed (the AHB sentences read against source):** `HPROT[0] must_be_high` ← "It is
+  **recommended** that a Manager sets HPROT[0] HIGH…" (no must/shall) and `HSEL must_be_high` +
+  `HTRANS must_be_value IDLE` ← "An alternative implementation **would be** for HSEL to be tied
+  HIGH…" (hypothetical) are frame errors; but `HEXOKAY must_be_deasserted` ← "It is **permitted**
+  for a Manager … the Exclusive Write transfer **must** fail and HEXOKAY **must** be deasserted"
+  is a REAL conditional obligation behind a permissive lead-in. **Shipped gate:
+  `is_permissive_only_subject_frame` — scoped to the SENTENCES CONTAINING THE SUBJECT** (same
+  split as `is_normative_for_subject`): a permissive frame word
+  (recommended/permitted/permissible/optional/may/can/could/would — word-boundary, universal
+  normative vocabulary) in a subject-sentence with NO mandatory frame (must/shall) in any
+  subject-sentence → drop; mandatory present → keep outright. **The per-item audit killed the
+  first cut again**: a BLOCK-scoped check over-killed AHB 15→8 — the incidental "Although an OKAY
+  response **can** be given in a single cycle" softened the ERROR-procedure sentences and wrongly
+  dropped `HRESP`×2 + `HREADYOUT`×2; sentence-scoping restores them (15→12 = exactly the three
+  frame errors; over-kill shape test-locked). **Measured (refined gate, the `.8`/`.3a` protocol):
+  AHB 15→12 with precisely `HPROT[0]`/`HSEL`/`HTRANS-IDLE` removed and `HRESP`/`HREADYOUT`/
+  `HEXOKAY`/`H*USER` all kept; APB 20 and AXI 54 unchanged (controls); all three docs stay
+  P=R=F1=1.000 against the EXTENDED gold.** Honest scoring note: the eval-time WIRE-BASED-100
+  filter (`is_normative_for_subject`) already masked this FP class from the labeled gauge — the
+  `.3b` win is at the CANONICAL ARTIFACT level (the EvidenceIR downstream consumers read is now
+  clean of frame errors), and the two new AHB gold NEGATIVE items (statements `0561`/`0678`,
+  `agent_drafted`) are regression armor if the eval-time filter ever weakens. +6 pure tests (lib
+  1517). Relational-vs-value ("set to the same value as") and descriptive-narration frames stay a
+  later sub-slice (`.3c`, pending).
 - ID: `EXTRACTION-QUALITY-GAUGE.4` · Status: `pending` · Goal: constraint dedup by (subject, kind, condition).
 - ID: `EXTRACTION-QUALITY-GAUGE.0` · Status: `pending` · Goal: wire the gauge into converge/CI.
 
@@ -276,3 +298,11 @@ honestly-qualified) path to "human-SpecForge in Rust."
   two first-cut defects (span crossing sentence ends; gerund action-coordination misread as a
   condition) before commit. See [[llm-primary-condition-subject-gate]]. Open: `.3b`
   permission-vs-obligation + relational-vs-value.
+- `2026-06-10`: `.3b` DONE — the permissive-only frame gate (subject-sentence-scoped) removes the
+  probed recommendation/hypothetical frame errors from the CANONICAL artifact (AHB 15→12, exactly
+  `HPROT[0]`/`HSEL`/`HTRANS-IDLE`; `HEXOKAY`'s mandatory clause and the ERROR-procedure
+  `HRESP`/`HREADYOUT` records survive); APB/AXI controls unchanged; eval stays perfect on the
+  extended gold (+2 AHB negatives = regression armor). The per-item audit again killed the first
+  cut (block-scoped modal check over-killed 15→8 via an incidental "can"). See
+  [[llm-primary-permissive-frame-gate]]. Remaining: `.3c` relational-vs-value +
+  descriptive-narration frames.

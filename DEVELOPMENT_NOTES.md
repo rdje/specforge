@@ -1,4 +1,22 @@
 # DEVELOPMENT_NOTES
+## `EXTRACTION-QUALITY-GAUGE.3b` (`2026-06-10`) — permissive-only frame gate (sentence-scoped)
+- `is_permissive_only_subject_frame(subject, source_text)`: split the block on `.;\n•` (the same
+  convention as `is_normative_for_subject`); for each sentence containing the subject
+  (identifier-boundary `token_occurrences`): must/shall present → return false (mandatory wins);
+  permissive token present (recommended/permitted/permissible/optional/may/can/could/would) → mark.
+  Return the mark. Neither-framed (descriptive) sentences keep their proposals — this gate only
+  kills on an EXPLICIT permissive frame; the descriptive class is `.3c`.
+- First cut was block-scoped and the per-item audit (AHB volume 15→8, not 15→12) caught the over-kill
+  before commit: incidental "can" in the OKAY sentence contaminated the ERROR-procedure records.
+  Same lesson as `.3a`: never ship on aggregate labeled scores alone — the labeled eval stayed
+  perfect through BOTH the defective and the corrected gate (the eval-time filter masks the class),
+  only the artifact-level per-item diff exposed the difference.
+- Measured (refined): AHB 15→12 (exactly the 3 frame errors; HEXOKAY/HRESP/HREADYOUT survive), APB
+  20 / AXI 54 unchanged, eval P=R=F1=1.000 on all three with the extended gold. Gold extension:
+  seed_ahb.json +2 signal_constraint NEGATIVE items (statements 0561 recommended-HPROT[0],
+  0678 alternative-HSEL/HTRANS; agent_drafted, label_notes state the frame rationale).
+- Gates: lib 1517; clippy warning-deny clean; kg-bench 151/151; run_ci.sh green (this commit).
+
 ## `EXTRACTION-QUALITY-GAUGE.3a` (`2026-06-10`) — condition-only-subject gate (perfect labeled scores)
 - Gate: `is_condition_only_subject(subject, sentence)` — identifier-boundary occurrences
   (`token_occurrences`) vs the union of subordinate-clause spans (`conditional_clause_spans`); all

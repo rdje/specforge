@@ -458,6 +458,17 @@ grammar: a subject that also appears in the main clause is kept, a clause never
 leaks past the end of its own sentence, and *"while **driving** HREADYOUT LOW"*
 is recognized as a prescribed concurrent action — an obligation on HREADYOUT —
 rather than a condition.
+
+The *framing* of the sentence is checked the same way. *"It is **recommended**
+that a Manager sets HPROT[0] HIGH"* and *"An alternative implementation **would
+be** for HSEL to be tied HIGH"* state a recommendation and a hypothetical — not
+obligations — so a "must be HIGH" proposal from them is dropped. Two details
+keep this honest: a mandatory clause always wins (*"It is permitted to issue an
+Exclusive Write … in this case HEXOKAY **must** be deasserted"* keeps its very
+real obligation), and the frame is judged only in the **sentences that mention
+the subject** — an incidental *"an OKAY response **can** be given in a single
+cycle"* elsewhere in the paragraph does not soften the ERROR-procedure
+requirements that follow it.
 Heads up before you run it: it **replaces** the artifact's `signal_constraints`
 in place — point it at a copy if you want to keep the Pattern set side by side.
 

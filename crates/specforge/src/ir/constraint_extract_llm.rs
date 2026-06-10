@@ -146,6 +146,48 @@ fn conditional_clause_spans(lowered: &str) -> Vec<(usize, usize)> {
     spans
 }
 
+/// `.3b` — is `subject` framed PERMISSIVELY-ONLY in its source block? "It is recommended that
+/// … `HPROT[0]` HIGH", "An alternative implementation would be for HSEL to be tied HIGH" state a
+/// recommendation, an option, or a hypothetical — not an obligation — so a `must_*` proposal on
+/// that subject is frame-ungrounded. The check is **scoped to the sentences containing the
+/// subject** (same sentence split as `is_normative_for_subject`): a mandatory frame
+/// (must/shall) in any subject-sentence grounds the proposal and wins outright ("… HEXOKAY
+/// **must** be deasserted" behind an "It is permitted …" lead-in), and frame words in
+/// *other* sentences of the block never contaminate this subject ("Although an OKAY response
+/// **can** be given in a single cycle" does not soften the ERROR-procedure sentences that
+/// follow). Universal normative vocabulary only (no signal/chip names, ADR 0006).
+pub fn is_permissive_only_subject_frame(subject: &str, source_text: &str) -> bool {
+    const PERMISSIVE: &[&str] = &[
+        "recommended",
+        "permitted",
+        "permissible",
+        "optional",
+        "may",
+        "can",
+        "could",
+        "would",
+    ];
+    let needle = subject.trim().to_ascii_lowercase();
+    if needle.is_empty() {
+        return false;
+    }
+    let mut saw_permissive = false;
+    for sentence in source_text.split(['.', ';', '\n', '•']) {
+        let lowered = sentence.to_ascii_lowercase();
+        let has_token = |word: &str| !token_occurrences(&lowered, word).is_empty();
+        if token_occurrences(&lowered, &needle).is_empty() {
+            continue;
+        }
+        if has_token("must") || has_token("shall") {
+            return false;
+        }
+        if PERMISSIVE.iter().any(|w| has_token(w)) {
+            saw_permissive = true;
+        }
+    }
+    saw_permissive
+}
+
 /// Ground one proposed constraint into a record, or drop it. `type_subject` is injected (production
 /// = entity typing) so this is testable with no provider; `is_grounded` guards the condition.
 #[allow(clippy::too_many_arguments)]
@@ -164,6 +206,11 @@ pub fn ground_constraint(
     // .3a — a subject that appears only inside the sentence's conditional clauses is the
     // condition's subject, not an obligation's (condition-read-as-obligation) — drop.
     if is_condition_only_subject(&raw.subject, sentence) {
+        return None;
+    }
+    // .3b — a subject framed permissively-only in its source sentences (recommendation/
+    // option/hypothetical, no mandatory clause) cannot ground a must_* obligation — drop.
+    if is_permissive_only_subject_frame(&raw.subject, sentence) {
         return None;
     }
     // .8 — a value-kind constraint whose value the model did not echo is no longer silently
@@ -330,6 +377,83 @@ mod tests {
         assert!(!is_condition_only_subject("PWAKEUP", s));
         assert!(is_condition_only_subject("PSELx", s));
         assert!(is_condition_only_subject("PREADY", s));
+    }
+
+    #[test]
+    fn recommendation_frame_is_permissive_only_for_its_subject() {
+        // `.3b` — the probed AHB shape: a recommendation is not an obligation.
+        let s = "It is recommended that a Manager sets HPROT[0] HIGH, to indicate a data \
+                 access unless the access is specifically known to be an instruction access.";
+        assert!(is_permissive_only_subject_frame("HPROT[0]", s));
+    }
+
+    #[test]
+    fn hypothetical_alternative_frame_is_permissive_only_for_both_subjects() {
+        // `.3b` — the probed AHB shape: an alternative-implementation hypothetical.
+        let s = "An alternative implementation would be for HSEL to be tied HIGH on the \
+                 Subordinates and the interconnect to override HTRANS to IDLE for unselected \
+                 Subordinates.";
+        assert!(is_permissive_only_subject_frame("HSEL", s));
+        assert!(is_permissive_only_subject_frame("HTRANS", s));
+    }
+
+    #[test]
+    fn permissive_lead_in_with_a_mandatory_subject_sentence_is_kept() {
+        // `.3b` — the probed HEXOKAY shape: "permitted" frames the option, but the subject's
+        // own sentence carries a REAL mandatory obligation; the proposal must be kept.
+        let s = "It is permitted for a Manager to issue an Exclusive Write transfer, which \
+                 has not been preceded by an Exclusive Read transfer in the same Exclusive \
+                 access sequence. In this case, the Exclusive Write transfer must fail and \
+                 the HEXOKAY response signal must be deasserted.";
+        assert!(!is_permissive_only_subject_frame("HEXOKAY", s));
+    }
+
+    #[test]
+    fn incidental_modal_in_another_sentence_does_not_contaminate_the_subject() {
+        // `.3b` — the measured over-kill the per-item audit caught: "can" in the OKAY
+        // sentence must not soften the ERROR-procedure sentences describing HRESP/HREADYOUT.
+        let s = "Although an OKAY response can be given in a single cycle, the ERROR response \
+                 requires two cycles. To start the ERROR response, the Subordinate drives \
+                 HRESP HIGH to indicate ERROR while driving HREADYOUT LOW to extend the \
+                 transfer for one extra cycle.";
+        assert!(!is_permissive_only_subject_frame("HRESP", s));
+        assert!(!is_permissive_only_subject_frame("HREADYOUT", s));
+    }
+
+    #[test]
+    fn plain_obligation_sentence_is_not_permissive_only() {
+        assert!(!is_permissive_only_subject_frame(
+            "PBUSER",
+            "PBUSER must be valid when PSEL, PENABLE, and PREADY are asserted."
+        ));
+        // No frame vocabulary at all — also not permissive-only (the descriptive class is
+        // out of scope for this gate).
+        assert!(!is_permissive_only_subject_frame(
+            "PREADY",
+            "PREADY is asserted by the Completer."
+        ));
+    }
+
+    #[test]
+    fn ground_constraint_drops_a_permissive_only_frame_proposal() {
+        let raw = RawConstraint {
+            subject: "HPROT".into(),
+            kind: "must_be_high".into(),
+            condition: None,
+            value: None,
+        };
+        let got = ground_constraint(
+            &raw,
+            "It is recommended that a Manager sets HPROT[0] HIGH, to indicate a data access.",
+            "s1",
+            "c1",
+            |_| EntityType::Signal,
+            is_grounded_in_source,
+        );
+        assert!(
+            got.is_none(),
+            "a recommendation must not become an obligation"
+        );
     }
 
     #[test]

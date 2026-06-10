@@ -1,3 +1,22 @@
+### `EXTRACTION-QUALITY-GAUGE.3b` — permissive-frame gate (subject-sentence-scoped): the canonical artifact is clean
+A `must_*` proposal from a permissively-framed source ("It is recommended that a Manager sets HPROT[0]
+HIGH", "An alternative implementation would be for HSEL to be tied HIGH") is a frame error. The gate
+(`is_permissive_only_subject_frame`) drops it — designed by three probed shapes: mandatory wins ("It is
+permitted ... HEXOKAY must be deasserted" keeps its real obligation); the frame is judged ONLY in the
+sentences containing the subject (the first, block-scoped cut over-killed AHB 15→8 — an incidental
+"Although an OKAY response can be given in a single cycle" softened the ERROR-procedure sentences and
+wrongly dropped HRESP×2/HREADYOUT×2 — caught by the per-item audit, sentence-scoping restores them);
+frame vocabulary is universal normative language only (recommended/permitted/permissible/optional/may/
+can/could/would vs must/shall — ADR 0006), and a NEITHER-framed descriptive sentence is kept (`.3c`).
+
+**Measured** (refined gate, the `.8`/`.3a` protocol): AHB 15→12 — exactly `HPROT[0]`/`HSEL`/
+`HTRANS-IDLE` removed, `HRESP`/`HREADYOUT`/`HEXOKAY`/`H*USER` all kept; APB 20 / AXI 54 unchanged
+(controls); all three docs stay P=R=F1=1.000 against the EXTENDED gold (seed_ahb +2 NEGATIVE items,
+statements 0561/0678). Honest note: the eval-time WIRE-BASED-100 filter already masked this class from
+the labeled gauge — the `.3b` win is at the CANONICAL ARTIFACT level (downstream SemanticIR/IntentIR
+no longer consume the frame errors), and the new gold negatives are regression armor. +6 pure tests
+(lib 1517); kg-bench 151/151. KM card `llm-primary-permissive-frame-gate`; book section extended.
+
 ### `EXTRACTION-QUALITY-GAUGE.3a` — condition-only-subject gate: APB/AHB/AXI all P=R=F1=1.000
 The entire residual FP class from `.8` (condition-read-as-obligation: APB `PSELx`, AHB `HRESP ERROR`,
 AXI `ACTIVATEACK LOW` — each the subject of a when/if/unless clause proposed as an obligation) is
