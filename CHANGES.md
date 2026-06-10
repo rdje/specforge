@@ -40,8 +40,12 @@ judge lacks the polarity fact, so refined "must be LOW" claims read as not-entai
 "must be deasserted" sources — the per-item-verified gold gates outrank the heuristic gauge).
 APB/AHB scanned for latent unrefined records: zero. **Canonical state: APB+AHB+AXI all carry
 the promoted surface; the `.4` default-flip decision packet is UNBLOCKED.** Pre-existing
-residual observed (untouched by this slice): seed_nvme/seed_riscv register evals read 0 — the
-`.3c` evidence rebuild shifted their gold statement-id anchors (`eval-scores-persisted-evidence`).
+observation (untouched by this slice; CORRECTED same-day): the seed_nvme/seed_riscv strict
+register evals read 0.000 — their documented gold-authoring-time state
+(`PDF-VARIANT-DIGESTION.4a.2`/`.4a.3`: representation gaps by design; the honest measurement
+lives in the dedicated register-field views, NVMe now 0.966 field-name recall with 42/42 real
+names + 201/201 bit extents, IMPROVED since authoring). The first reading ("`.3c` shifted
+statement-id anchors") was an aggregate-only misread; nothing regressed.
 
 ### `LLM-PRIMARY-PROMOTION.3a` — the model-misspelled-subject snap (live-proven); a second gap (`.3b`) keeps AXI reverted
 The snap is live: a proposed constraint subject that does NOT occur in its own source sentence

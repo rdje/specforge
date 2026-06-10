@@ -60,11 +60,19 @@
   not-entailed against their `must be deasserted` sources because the NLI judge has no
   polarity grounding. Gold gates (per-item verified) outrank the heuristic gauge
   (`feedback_scoring_rigor`); the gauge keeps its flag-for-review role.
-- Pre-existing residual (NOT this slice; untouched artifacts + untouched eval code):
-  seed_nvme/seed_riscv register evals read 0/29 and 0/34 — the evidence artifacts DO carry the
-  registers (42/201 and 44/179) but the `.3c` evidence rebuild shifted statement-id anchors
-  (`eval-scores-persisted-evidence` gotcha). A re-anchoring leaf belongs to the eval-fixture
-  lane.
+- Pre-existing observation (NOT this slice; untouched artifacts + untouched eval code), and
+  CORRECTED same-day after a full-output re-read: the seed_nvme/seed_riscv STRICT register
+  evals read 0.000 — which is their documented state since gold authoring
+  (`PDF-VARIANT-DIGESTION.4a.2`/`.4a.3`: strict 0.000 on BOTH docs for OPPOSITE
+  representation reasons, BY DESIGN; the honest measurement is the dedicated register-field
+  views). Those views have since IMPROVED: NVMe field-name recall 28/29 = 0.966 with 42/42
+  real register names and 201/201 bit extents (was 27/29 + 0/44 synthetic names at
+  authoring); RISC-V Debug holds 0.588 with the bits-in-graphic residual (the opt-in
+  `recover-register-bits` VLM lane exists for it). The first reading ("`.3c` shifted
+  statement-id anchors") was an aggregate-only misread of the battery's headline lines —
+  the exact failure mode the session lesson warns about, caught by reading the FULL eval
+  output. Nothing regressed; the remaining strict-eval lever is the already-identified
+  mnemonic-from-description extraction.
 
 ## `LLM-PRIMARY-PROMOTION.3a` (`2026-06-10`) — the subject snap; trigger = absence-from-sentence
 - First cut (typing-failure trigger) was WRONG and the per-item audit caught it: production

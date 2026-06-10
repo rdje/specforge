@@ -202,8 +202,12 @@
   document's polarity grounding; the per-item-verified gold gates outrank the heuristic gauge
   (`feedback_scoring_rigor`). PRE-EXISTING residual observed (NOT this slice, untouched
   artifacts + untouched eval code): seed_nvme/seed_riscv register evals read 0 because the
-  `.3c` evidence rebuild shifted statement-id anchors (`eval-scores-persisted-evidence`
-  gotcha) — a re-anchoring leaf belongs to the eval-fixture lane, not this tree.
+  strict register tuple has never matched — 0.000 at gold-authoring time BY DOCUMENTED DESIGN
+  (`PDF-VARIANT-DIGESTION.4a.2`/`.4a.3`: mnemonic-vs-long-name representation; graphic-borne
+  bits), with the honest measurement in the dedicated register-field views, which have since
+  IMPROVED (NVMe field-name recall 28/29 = 0.966, 42/42 real register names, 201/201 bit
+  extents). CORRECTED `2026-06-10` — the first reading ("`.3c` shifted statement-id anchors")
+  was an aggregate-only misread of the battery output; nothing regressed.
   **Canonical state: APB + AHB + AXI all PROMOTED with all gates green.**
 - ID: `LLM-PRIMARY-PROMOTION.4` · Status: `done` (`2026-06-10`, measurements + docs — no code)
   · Goal: corpus sweep + tracked validation snapshot refresh + the default-flip decision
