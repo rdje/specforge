@@ -246,6 +246,43 @@ pub fn ground_constraint(
     })
 }
 
+/// `.4` — collapse exact-duplicate constraints by (subject, kind incl. value, negation,
+/// condition): the same obligation re-extracted from the same or another sentence yields ONE
+/// record, and the duplicates' supporting statements are merged into the kept record so
+/// provenance is preserved, never lost. First occurrence wins (stable ids and order; the map is
+/// lookup-only, so no hash-iteration order can reach the output — `EVIDENCE-DETERMINISM`).
+pub fn dedup_constraints(records: Vec<SignalConstraintRecord>) -> Vec<SignalConstraintRecord> {
+    use std::collections::HashMap;
+    let mut kept: Vec<SignalConstraintRecord> = Vec::new();
+    let mut index_by_key: HashMap<String, usize> = HashMap::new();
+    for rec in records {
+        let condition = rec
+            .condition_text
+            .as_deref()
+            .unwrap_or("")
+            .trim()
+            .to_ascii_lowercase();
+        let key = format!(
+            "{}|{condition}",
+            crate::eval::signal_constraint_record_key(&rec)
+        );
+        match index_by_key.get(&key) {
+            Some(&i) => {
+                for sid in rec.supporting_statement_ids {
+                    if !kept[i].supporting_statement_ids.contains(&sid) {
+                        kept[i].supporting_statement_ids.push(sid);
+                    }
+                }
+            }
+            None => {
+                index_by_key.insert(key, kept.len());
+                kept.push(rec);
+            }
+        }
+    }
+    kept
+}
+
 /// Default text model.
 pub const DEFAULT_EXTRACT_MODEL: &str = "qwen2.5:14b-instruct";
 
@@ -377,6 +414,87 @@ mod tests {
         assert!(!is_condition_only_subject("PWAKEUP", s));
         assert!(is_condition_only_subject("PSELx", s));
         assert!(is_condition_only_subject("PREADY", s));
+    }
+
+    fn record(
+        id: &str,
+        subject: &str,
+        kind: SignalConstraintKind,
+        condition: Option<&str>,
+        stmt: &str,
+    ) -> SignalConstraintRecord {
+        SignalConstraintRecord {
+            constraint_id: id.to_string(),
+            subject_signal: subject.to_string(),
+            constraint_kind: kind,
+            target_value: None,
+            condition_text: condition.map(str::to_string),
+            negated: false,
+            source_text: String::new(),
+            supporting_statement_ids: vec![stmt.to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        }
+    }
+
+    #[test]
+    fn dedup_collapses_exact_duplicates_and_merges_provenance() {
+        // `.4` — the measured AHB shape: HRESP must_be_high re-extracted from the same block.
+        let records = vec![
+            record("c1", "HRESP", SignalConstraintKind::MustBeHigh, None, "s1"),
+            record("c2", "HRESP", SignalConstraintKind::MustBeHigh, None, "s2"),
+        ];
+        let out = dedup_constraints(records);
+        assert_eq!(out.len(), 1);
+        assert_eq!(out[0].constraint_id, "c1", "first occurrence wins");
+        assert_eq!(
+            out[0].supporting_statement_ids,
+            vec!["s1".to_string(), "s2".to_string()],
+            "duplicate provenance merged, never lost"
+        );
+    }
+
+    #[test]
+    fn dedup_keeps_records_with_different_conditions_or_values() {
+        let records = vec![
+            record(
+                "c1",
+                "PWUSER",
+                SignalConstraintKind::MustNotChange,
+                Some("when HREADY is LOW"),
+                "s1",
+            ),
+            record(
+                "c2",
+                "PWUSER",
+                SignalConstraintKind::MustNotChange,
+                None,
+                "s2",
+            ),
+            record(
+                "c3",
+                "HTRANS",
+                SignalConstraintKind::MustBeValue {
+                    value: "IDLE".into(),
+                },
+                None,
+                "s3",
+            ),
+            record(
+                "c4",
+                "HTRANS",
+                SignalConstraintKind::MustBeValue {
+                    value: "NONSEQ".into(),
+                },
+                None,
+                "s4",
+            ),
+        ];
+        let out = dedup_constraints(records);
+        assert_eq!(
+            out.len(),
+            4,
+            "different condition / value = different facts"
+        );
     }
 
     #[test]

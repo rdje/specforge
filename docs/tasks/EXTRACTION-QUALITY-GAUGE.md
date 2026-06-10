@@ -277,7 +277,20 @@ honestly-qualified) path to "human-SpecForge in Rust."
   `agent_drafted`) are regression armor if the eval-time filter ever weakens. +6 pure tests (lib
   1517). Relational-vs-value ("set to the same value as") and descriptive-narration frames stay a
   later sub-slice (`.3c`, pending).
-- ID: `EXTRACTION-QUALITY-GAUGE.4` · Status: `pending` · Goal: constraint dedup by (subject, kind, condition).
+- ID: `EXTRACTION-QUALITY-GAUGE.4` · Status: `done` (`2026-06-10`) · Goal: constraint dedup by
+  (subject, kind, condition) in the LLM-primary extractor. Shipped: pure `dedup_constraints` —
+  canonical key = the eval's `signal_constraint_record_key` (subject + kind incl. value + negation)
+  plus the normalized condition; first record kept (stable ids/order), duplicates'
+  `supporting_statement_ids` merged in so provenance is preserved, never lost; lookup-only map (no
+  hash-iteration order reaches output — `EVIDENCE-DETERMINISM`); called once in
+  `extract-constraints-llm` after grounding, which now prints `grounded → deduped (N merged)`.
+  +2 pure tests (lib 1519). **Measured live (3 docs): AXI 54→50 — `AWIDUNQ must_be_asserted (if
+  present)` re-extracted from 3 statements collapsed to ONE record carrying all 3 statement ids,
+  same for `WTAGUPDATE must_be_deasserted`; APB 20→20 and AHB 12→12 this run (this run's two AHB
+  `HRESP` records carry DIFFERENT conditions — "To start the ERROR response" vs "In the next
+  cycle…" — genuinely different facts, correctly NOT merged; the no-condition ×2 shape from the
+  earlier run is locked by unit test instead). Eval stays P=R=F1=1.000 on all three (scoring uses
+  key sets — the win is canonical-artifact cleanliness + merged provenance).**
 - ID: `EXTRACTION-QUALITY-GAUGE.0` · Status: `pending` · Goal: wire the gauge into converge/CI.
 
 ## Changelog
@@ -306,3 +319,9 @@ honestly-qualified) path to "human-SpecForge in Rust."
   cut (block-scoped modal check over-killed 15→8 via an incidental "can"). See
   [[llm-primary-permissive-frame-gate]]. Remaining: `.3c` relational-vs-value +
   descriptive-narration frames.
+- `2026-06-10`: `.4` DONE — `dedup_constraints` (subject+kind+value+negation+condition key,
+  provenance-merging, determinism-safe) in `extract-constraints-llm`. Live: AXI 54→50 (two
+  triple-stated facts each collapsed to one record carrying all three statement ids); different
+  conditions stay distinct facts; eval unchanged at P=R=F1=1.000 ×3. The original `.gauge`
+  duplication taxonomy (~30% on CHI) now has its mechanism in place for the CHI-class re-measure
+  once `.FIELD` lands.

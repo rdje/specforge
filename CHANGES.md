@@ -1,3 +1,14 @@
+### `EXTRACTION-QUALITY-GAUGE.4` — provenance-merging constraint dedup (AXI 54→50 live)
+The LLM-primary set is now de-duplicated by (subject, kind incl. value, negation, condition): the
+first record wins, duplicates' supporting statements merge into it — duplicate noise removed, all
+provenance kept, different conditions stay distinct facts (a different condition is a different
+requirement). Determinism-safe (lookup-only map). Live: AXI 54→50 — `AWIDUNQ must_be_asserted (if
+present)` and `WTAGUPDATE must_be_deasserted` each re-stated by 3 statements collapsed to single
+records carrying all three ids; APB/AHB had no exact duplicates this run (AHB's two HRESP records
+carry different conditions — correctly kept; the no-condition duplicate shape is unit-locked). Eval
+stays P=R=F1=1.000 ×3. +2 tests (lib 1519); kg-bench 151/151. KM `llm-primary-constraint-dedup`;
+book section gained the dedup paragraph.
+
 ### `EXTRACTION-QUALITY-GAUGE.3b` — permissive-frame gate (subject-sentence-scoped): the canonical artifact is clean
 A `must_*` proposal from a permissively-framed source ("It is recommended that a Manager sets HPROT[0]
 HIGH", "An alternative implementation would be for HSEL to be tied HIGH") is a frame error. The gate

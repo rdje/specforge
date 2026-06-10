@@ -8,7 +8,7 @@ use crate::cli::{ExtractConstraintsLlmArgs, VlmProviderArg};
 use crate::error::Result;
 use crate::ir::condition_extract::is_grounded_in_source;
 use crate::ir::constraint_extract_llm::{
-    DEFAULT_EXTRACT_MODEL, ground_constraint, propose_constraints_llm,
+    DEFAULT_EXTRACT_MODEL, dedup_constraints, ground_constraint, propose_constraints_llm,
 };
 use crate::ir::entity_typing::{EntityType, classify_entity, gather_entity_evidence};
 use crate::ir::evidence::EvidenceIr;
@@ -75,9 +75,17 @@ pub fn run(args: ExtractConstraintsLlmArgs) -> Result<()> {
             }
         }
     }
+    // .4 — collapse exact-duplicate obligations (same subject, kind, value, condition),
+    // merging the duplicates' supporting statements so provenance is preserved.
+    let grounded = new_constraints.len();
+    let new_constraints = dedup_constraints(new_constraints);
     let after = new_constraints.len();
     ir.signal_constraints = new_constraints;
     ir.write_to_disk()?;
-    println!("constraints: {before} (Pattern) → {after} (LLM-primary, grounded); written to disk");
+    println!(
+        "constraints: {before} (Pattern) → {grounded} (LLM-primary, grounded) → {after} \
+         (deduped; {merged} duplicate record(s) merged); written to disk",
+        merged = grounded - after
+    );
     Ok(())
 }

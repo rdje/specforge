@@ -469,6 +469,13 @@ real obligation), and the frame is judged only in the **sentences that mention
 the subject** — an incidental *"an OKAY response **can** be given in a single
 cycle"* elsewhere in the paragraph does not soften the ERROR-procedure
 requirements that follow it.
+
+Finally, the surviving set is **de-duplicated**: a specification often restates
+the same requirement in several places, and the same `(signal, kind, value,
+condition)` fact re-extracted from three statements becomes *one* record that
+lists all three supporting statements — the duplicate noise goes away while
+every scrap of provenance is kept. Facts that differ in their condition stay
+separate records, because a different condition is a different requirement.
 Heads up before you run it: it **replaces** the artifact's `signal_constraints`
 in place — point it at a copy if you want to keep the Pattern set side by side.
 

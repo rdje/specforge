@@ -1,4 +1,14 @@
 # DEVELOPMENT_NOTES
+## `EXTRACTION-QUALITY-GAUGE.4` (`2026-06-10`) — constraint dedup
+- `dedup_constraints`: key = eval `signal_constraint_record_key` + normalized condition; first
+  occurrence kept; `supporting_statement_ids` unioned (order-preserving contains-check). Lookup-only
+  HashMap (EVIDENCE-DETERMINISM: no iteration order reaches output). Called once post-grounding in
+  `extract-constraints-llm`; output line now reports `Pattern → grounded → deduped (N merged)`.
+- Per-item live audit: AXI merged AWIDUNQ(if present)×3→1 (stmts 2647/3159/3847) and
+  WTAGUPDATE×3→1 (stmts 3368/3369/3371). AHB 12→12 — its two HRESP must_be_high records carry
+  DIFFERENT conditions this run ("To start the ERROR response" vs "In the next cycle…"): correctly
+  not merged. Eval P=R=F1=1.000 ×3 (scoring is key-set based, so dedup is score-neutral by design).
+
 ## `EXTRACTION-QUALITY-GAUGE.3b` (`2026-06-10`) — permissive-only frame gate (sentence-scoped)
 - `is_permissive_only_subject_frame(subject, source_text)`: split the block on `.;\n•` (the same
   convention as `is_normative_for_subject`); for each sentence containing the subject
