@@ -1,3 +1,31 @@
+### `PDF-VARIANT-DIGESTION.10c` — three-column `bits | name | function` TRM tables: the caption decides register vs structure (GIC-600 15→33 regs, MMU-700 13→63, TMC 2→30)
+The third `.10p` family (270 tables / 11 docs, NO access/reset vocabulary) extracts with
+the typed home decided PER TABLE by the document's own caption vocabulary, on a unified
+bit-layout machinery (`collect_bit_layout_tables` + `stitch_bit_layout_chains` — ONE
+collector for the `.10b` 2-col and `.10c` 3-col shapes, so chain adjacency always tests
+the true document predecessor; the `.10b` lock tests + NVMe-216-byte-identical parity
+prove the refactor moved nothing). Register-grounded captions (`TCU_CTRL register bit
+descriptions`; single-ident `GICD_CTLR bit assignments`; array forms `GICD_CHIPR<n>` and
+space-written `TCU_NODE_CTRL n`; a plain Titlecase head like NVMe's command name
+`Reservation Register` NEVER qualifies) yield ONE caption-named RegisterRecord per chain
+via the new third register strategy `registers.bit_assignment_table` — access/reset
+honestly absent, `-`/empty names keep bit-range residuals, `(continued)` re-starts
+consolidate through the `.4c` merge. Structure captions (`Root-Entry Format`,
+`LPI Configuration table entry bit assignments`) route to the `.10b` message-field
+strategy with explicit name cells (colon-fused `CTP: Context-table Pointer` → `CTP`;
+`R: Reserved` skips). THREE measured rejections shaped the design: nearest-heading
+adoption REJECTED (1 safe vs 15 bit-overlapping wrong, page-granular headings);
+sentence-period labels are caption BLEED (2/314, both GIC-400 prose); `Continued from
+previous page` is no label (1/314 — freeing those fragments to chain bit-exactly is how
+`C2C_Prop*Tx1` collected its 22 fields). A register-WORDED caption grounding no ident
+stays residual on BOTH surfaces (the MMU-700 leak class, found live and killed). **Live:
+GIC-600 15→33 regs (+18/79 fields), MMU-700 13→63 (+50/180), TMC ddi0461 2→30 (+28/87),
+SDC-600 0→5, GIC-400 +1, CHI-C2C-b +5 property registers; VT-d +15 structure fields.**
+Parity: 12 intact docs manifest-only; battery + golds at documented states; lib 1560
+(3 new), kg-bench 154/154, full CI green. Residuals quantified: 68+ lost-caption capless
+chains (re-ingest lever), 15 heading-overlap tables, `RES0` kept (the document's own
+name). Book: `pipeline/evidenceir.md`; KM `bit-assignment-register-table-extraction`.
+
 ### `PDF-VARIANT-DIGESTION.10b` — two-column `bits | description` tables are STRUCTURE layouts: they now extract as message fields with literal bit ranges (AMD/NVMe-class, 334 tables)
 The second `.10p` family is closed, with the leaf's typed-home question answered first: the
 rows describe IN-MEMORY STRUCTURES (AMD 256-bit Device Table Entry, NVMe command dwords /

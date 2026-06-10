@@ -682,7 +682,40 @@ ONLY the manifest gaining the new entry; NVMe additionally gains additive
 `message_field_records`/`bit_range` content. NVMe register-gold eval re-measured before/after.
 
 **`PDF-VARIANT-DIGESTION.10c` — the `bits | name | function/description` three-column family.**
-· Status: `in_progress` (`2026-06-10`: full probe pass DONE — recorded here; build next).
+· Status: **DONE `2026-06-10`** (probe → bucket design → unified-collector build → live
+per-item verification; the heading lever probe-REJECTED).
+**Verification log:** lib tests 1557→1560 (3 new: caption register-name grammar incl. the
+`<n>`/space-`n` array forms and the Titlecase/`Reservation Register` protection; the strict
+footnote-letter parser; the full chains-route integration — caption-named register chain
+with capless fragment + footnote cell + `-`→bit-range residual + Reserved kept +
+`(continued)` `.4c` merge + structure-side colon-form names + register-worded-unnamed
+residual); kg-bench **154/154**; full `scripts/run_ci.sh` GREEN. **Parity: ALL 12 intact
+docs manifest-only delta (the `registers.bit_assignment_table` entry); NVMe's 216 message
+fields BYTE-IDENTICAL through the unified-collector refactor** (the `.10b` lock tests +
+sweep prove the 2-col path unmoved); golds at documented states (constraints 1.000×3,
+filtered relations 1.000×4, temporal 3/3+4/4+3/3, NVMe 0.966/0.966 + 42/42 + 201/201,
+RISC-V 0.588/0.000 authoring state, I2C 6/6). **Live (stub protocol, canonical untouched):
+GIC-600 15→33 regs (+18/79 fields: `GICD_CTLR`, `GICD_TYPER`, array `GICD_CHIPR<n>`…);
+MMU-700 13→63 (+50/180: `TCU_CTRL`…, space-`n` arrays `TCU_NODE_CTRL n`); TMC ddi0461 2→30
+(+28/87: `RSZ`, `RRP`, `CTL`…); SDC-600 0→5 (+5/25); GIC-400 +1 (`GICC_IIDR`); CHI-C2C-b +5
+property registers (`C2C_Prop*Tx1` 22 fields via a chained `Continued from previous page`
+fragment). Structure side: VT-d +15 message fields (`Root-Entry Format` `CTP`/`P`,
+Scalable-mode entries — colon-form name cells `CTP: Context-table Pointer`); C2C Rx1
+container 21.** Two measured caption gates added during live verification (per-item, then
+fixture-locked): a label ending with a sentence period is caption BLEED (2 of 314 family
+captions, both GIC-400 prose) and a `Continued from previous page` label is no label at
+all (1 of 314 — the fragment then chains bit-exactly to its true home, which is HOW
+`C2C_Prop*Tx1` got its 22 fields); a register-WORDED caption that grounds no identifier is
+register-shaped-but-unnamed → residual on BOTH surfaces (the MMU-700 space-`n` leak found
+live and killed, then the space-`n` grammar recovered those 2 registers properly).
+**Honest residuals (quantified):** 68+ capless chains with no labeled member (lost-caption
+register tables — the re-ingest lever); 15 same-heading-but-bit-OVERLAPPING capless tables
+(why the heading lever was rejected); `RES0`-named fields kept (the document's own declared
+name); `C2C_Prop*Rx1 field positions` lands as a structure container because its caption —
+unlike its `B15.76` sibling — omits the word register (evidence-honest; re-provided PDFs
+may improve captions). GOTCHA recorded: `cargo test` does NOT rebuild the bin — measure
+live runs only with a freshly `cargo build`-copied binary (one stale-binary misread caught
+same-session).
 **Census** (effective 3-column `unknown`-kind header: bit-position vocabulary + name-ish
 (`name`/`field`/`field name`/`bit name`) + `function`/`description`/`meaning`/`notes`, NO
 access/reset anywhere): **270 tables across 11 docs** — GIC-600 71, MMU-700 66, CoreSight
@@ -726,6 +759,27 @@ footnote-letter micro-grammar is a measured maybe.
 except… NONE of the 12 intact docs carry the family — SMBus does (6 tables: 4 capless +
 value-encoding shapes) so SMBus golds/timing 84 must be re-measured), stub-protocol live
 runs on GIC-600/MMU-700/TMC/VT-d, all register golds + battery, kg-bench, full CI.
+**BUILD DESIGN (closed by the second probe pass, `2026-06-10`):** (1) the HEADING lever is
+REJECTED BY MEASUREMENT — same-heading adoption adds exactly 1 safe table corpus-wide and
+would wrongly adopt 15 bit-OVERLAPPING tables (page-granular headings mis-assign when
+registers share pages); the `.10b` bit-exact adjacency rule stands UNCHANGED, and captioned
+`(continued)` tables need no chain at all (the existing `.4c` same-name register fragment
+merge consolidates them). (2) Caption register-name grammar measured: 116 captioned tables
+yield a register ident (ident-before-`register`: `TCU_CTRL`, `RSZ`; single-ident before
+`bit assignments`: `GICD_CTLR`; `<n>` array idents `GICD_CHIPR<n>` via extended ident
+charset); honest misses = space-`n` forms (2), prose-bleed (1), and the LPI/SMBus captions
+which correctly fall through to the STRUCTURE side (no single-ident head). (3) The 101
+empty-bit-cell rows are VALUE-ENCODING sub-rows (name cell holds `0`/`1` enums) — skipped,
+not counted against the gate; 9 footnote-letter cells (`[31:0] a`) parse via a strict
+bracketed-range+single-letter form, 3-col rows only. (4) ARCHITECTURE: a unified
+`collect_bit_layout_tables` collector (2-col + 3-col family scan) + ONE chain pass + label
+routing (`Register(name)` chains → a third register-surface strategy
+`registers.bit_assignment_table`, one RegisterRecord per chain, access/reset honestly
+absent; `Container(label)` chains → the existing `message_fields.bit_position_table`
+strategy, explicit name column for 3-col rows) — corpus-proven parity-safe (2-col and 3-col
+docs overlap only on TMC, whose single 2-col table yields 0 records); `bit(s)` joins the
+shared bit-position header vocabulary (one matcher, `.10a` principle). The `.10b` 2-col
+behavior is LOCKED through the refactor by its own tests + the NVMe-216/AMD-82 re-proof.
 
 **(SUPERSEDED active note) `PDF-VARIANT-DIGESTION.6`/`.7`** — item ② (`.5`) COMPLETE and `.8` (broaden
 prose-actor capture) DONE. **`.5a` + `.5b` + `.5c` are DONE** — structural doc-class routing

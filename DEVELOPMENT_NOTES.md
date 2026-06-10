@@ -1,4 +1,29 @@
 # DEVELOPMENT_NOTES
+## `PDF-VARIANT-DIGESTION.10c` (`2026-06-10`) — measured rejections, the unified collector, and two live-caught leak classes
+- The defining method moment: the heading-anchoring lever LOOKED principled (TRMs head
+  each register section) and was rejected purely by per-item measurement — page-granular
+  nearest-heading adoption rescues 1 capless table corpus-wide and wrongly merges 15 whose
+  bit ranges OVERLAP the predecessor (two registers sharing a page). Bit-exact adjacency
+  stays the only caption-free joiner. Probe numbers, not plausibility, decide gates.
+- The unified collector refactor (ONE family scan for 2-col + 3-col so adjacency always
+  tests the true document predecessor) was proven parity-safe in advance: the only doc
+  carrying both shapes is TMC, whose single 2-col table yields 0 records; the `.10b` lock
+  tests plus the NVMe-216-byte-identical sweep then proved it empirically.
+- Two leak classes were caught in LIVE verification, per-item, and fixture-locked: (a) a
+  register-WORDED caption that grounds no identifier (`TCU_NODE_CTRL n register …`) fell
+  through to the structure-container path — register-shaped-but-unnamed must be residual
+  on BOTH surfaces, and the space-`n` array grammar then recovered those 2 registers
+  properly; (b) caption BLEED (`shows the bit assignments.`) and the C2C `Continued from
+  previous page` form became garbage containers — measured over all 314 family captions
+  (2 period-bleeds, 1 Continued form), both gates are clean structural discriminators,
+  and freeing the Continued fragments let them chain to their true homes.
+- VT-d's name cells fuse mnemonic and full name (`CTP: Context-table Pointer`) — the
+  colon-form is the explicit-name-cell sibling of the `.10a` dictionary-entry grammar,
+  with `R: Reserved` skipping like any Reserved row.
+- GOTCHA (stale-binary class, caught same-session): `cargo test` does NOT rebuild the
+  `specforge` bin; a live measurement after a code change must copy a binary from a fresh
+  `cargo build`, or it silently measures the previous build.
+
 ## `PDF-VARIANT-DIGESTION.10b` (`2026-06-10`) — the typed-home decision method, and what the chain probe proved
 - The leaf's FIRST question was representational, not extractive: the two-column
   `bits | description` rows are in-memory STRUCTURE entries, not MMIO registers. The

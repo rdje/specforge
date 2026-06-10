@@ -608,6 +608,46 @@ description later says *"…guest PTE. This field is meaningful…"* — the gat
 cell from a false name rejects this one true one, a trade the per-item audit makes explicitly.
 *Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.10b`).
 
+### `PDF-VARIANT-DIGESTION.10c` — three-column bit tables: the caption decides register versus structure
+
+The third family from the corpus census is the classic ARM-TRM table: `Bits | Name | Function` (or
+`Bits | Field | Description`), three columns and — again — no access/reset vocabulary anywhere. 270 such
+tables across eleven documents, and unlike the two-column family they split *by meaning*: most describe
+**registers** (`Table 4-21: TCU_CTRL register bit descriptions`, `Table 4-3 GICD_CTLR bit assignments`),
+but some describe **in-memory structures** (Intel VT-d's `Root-Entry Format`, the GIC architecture's
+`LPI Configuration table entry bit assignments`). The reader decides per table, from the document's own
+caption vocabulary. A caption grounds a register when an identifier-shaped name sits right before the word
+*register*, or alone before the locution *bit assignments* — including the array conventions
+`GICD_CHIPR<n>` and the space-written `TCU_NODE_CTRL n`. A plain English word there does not count:
+NVMe's *"Reservation Register"* is the name of a *command* (the act of registering a reservation), and
+`Reservation` being an ordinary Titlecase word is exactly what keeps it from becoming a phantom register.
+A multi-word head like *"LPI Configuration table entry"* is structure, not register, evidence — those
+fields join the structure inventory of `.10b`, where VT-d's entry formats also land (their fused name
+cells, `CTP: Context-table Pointer`, yield the mnemonic).
+
+Register-captioned chains become real registers: one caption-named `RegisterRecord` per chain, fields
+from the name column with their bit extents, access and reset left honestly empty (the tables never state
+them — the completeness gauge reports the absence instead of the reader inventing it). Page fragments
+reuse the `.10b` chain rule — bit-exact adjacency only. The tempting alternative, adopting a caption-less
+fragment because it sits under the same section heading, was **rejected by measurement**: headings are
+only page-granular in the ingest data, and the probe showed same-heading adoption would rescue exactly one
+table corpus-wide while wrongly merging fifteen whose bit ranges overlap. Two more caption gates earned
+their place the same way: a "label" that ends in a sentence period is caption bleed (two of 314 family
+captions, both prose like *"shows the bit assignments."*), and *"Continued from previous page"* is not a
+label at all — freeing such fragments to chain into their true home is precisely how one chip-to-chip
+property register collected its full 22 fields. A register-*worded* caption that grounds no identifier
+stays an honest residual on both surfaces, rather than being re-housed as a fake structure.
+
+Live, the TRM class finally opens up: the GIC-600 manual goes from 15 to 33 registers (gaining
+`GICD_CTLR`, `GICD_TYPER`, the `GICD_CHIPR<n>` array…), the MMU-700 from 13 to 63 (+180 fields), the
+CoreSight TMC from 2 to 30, the SDC-600 from 0 to 5, and VT-d gains 15 typed structure fields — while
+all 12 rebuildable corpus documents keep every extraction surface byte-identical (the run manifest alone
+records the new strategy) and the NVMe/AMD results of `.10b` re-verify unchanged through the shared
+machinery. The honest residual is also clear: 68+ caption-less fragment chains have no labeled member at
+all (their captions were lost in ingest), so the registers they describe stay absent until a better ingest
+recovers the captions — absence, never invention.
+*Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.10c`).
+
 ### `EXTRACTION-QUALITY-GAUGE.FIELD.2` — message fields are intent too, but they are not signals
 
 Packet and flit protocols (the CHI family is the canonical example) describe two very different kinds of named

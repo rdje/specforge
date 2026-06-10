@@ -7944,6 +7944,15 @@ fn bit_position_container_label(caption: &str) -> Option<String> {
             words.remove(0);
         }
     }
+    // a bare continuation caption (`Table B15.74 Continued from previous page`) carries no
+    // label of its own — the bit-exact chain owns such fragments (same convention as the
+    // field-titled reader's caption grammar)
+    if words
+        .first()
+        .is_some_and(|w| w.eq_ignore_ascii_case("continued"))
+    {
+        return None;
+    }
     if words
         .last()
         .is_some_and(|w| w.eq_ignore_ascii_case("(continued)"))
@@ -7966,7 +7975,13 @@ fn bit_position_container_label(caption: &str) -> Option<String> {
         words.pop();
     }
     let label = words.join(" ");
-    if label.is_empty() { None } else { Some(label) }
+    // a label ending with a sentence period is caption BLEED (prose like `shows the bit
+    // assignments.`), not a title — measured: 2 of 314 family captions, both bleed
+    if label.is_empty() || label.ends_with('.') {
+        None
+    } else {
+        Some(label)
+    }
 }
 
 /// The numeric page index of a table's `page_id` (`page_0066` → `66`), for the fragment-chain
@@ -7986,28 +8001,186 @@ enum BitPositionSense {
     Unknown,
 }
 
-fn bit_position_sense(rows: &[(u32, u32, String)]) -> BitPositionSense {
+fn bit_position_sense(rows: &[BitLayoutRow]) -> BitPositionSense {
     if rows.len() < 2 {
         return BitPositionSense::Unknown;
     }
     let first = &rows[0];
     let last = &rows[rows.len() - 1];
-    if first.1 > last.0 {
+    if first.low > last.high {
         BitPositionSense::Descending
-    } else if first.0 < last.1 {
+    } else if first.high < last.low {
         BitPositionSense::Ascending
     } else {
         BitPositionSense::Unknown
     }
 }
 
-/// One shape-qualified bit-position table, parsed for chain construction.
-struct BitPositionTable<'a> {
+/// PDF-VARIANT-DIGESTION.10c — the THREE-column bit-layout header (`Bits | Name | Function`
+/// / `Bits | Field | Description`): bit-position vocabulary + a name-titled column + a
+/// function/description/meaning/notes column — and NO register-access vocabulary anywhere
+/// (a table with Access/Reset columns belongs to [`is_register_field_header`], which needs
+/// them and so can never claim this shape). TRMs use this layout both for REGISTER bit
+/// assignments and for in-memory structure formats; the CAPTION decides the typed home
+/// (see [`bit_assignment_register_name`]).
+fn bit_assignment_layout_header(table: &StructuredTableRecord) -> bool {
+    let Some(first) = table.header_rows.first() else {
+        return false;
+    };
+    let cells = effective_row_cells(first);
+    let [bits, name, desc] = cells.as_slice() else {
+        return false;
+    };
+    let name = name.to_ascii_lowercase();
+    let desc = desc.to_ascii_lowercase();
+    is_bit_position_header(&bits.to_ascii_lowercase())
+        && matches!(name.as_str(), "name" | "field" | "field name" | "bit name")
+        && (desc.contains("description")
+            || desc.contains("function")
+            || desc.contains("meaning")
+            || desc.contains("notes"))
+}
+
+/// A REGISTER-identifier token from a bit-layout caption (`TCU_CTRL`, `RSZ`,
+/// `GICD_CHIPR<n>`, `C2C_Prop*Uniform1`): letter-led, ASCII alphanumeric plus `_`/`<`/`>`/
+/// `*` (the TRM array-register and wildcard-family conventions) — and NOT a plain
+/// Titlecase/lowercase English word (`Reservation`, `shows` stay prose). Case is used as
+/// identifier-SHAPE evidence only, never as a spelling convention (ADR 0006).
+fn bit_assignment_register_ident(raw: &str) -> Option<String> {
+    let t = raw.trim().trim_end_matches([',', ':']);
+    if !(2..=40).contains(&t.chars().count()) {
+        return None;
+    }
+    let first = t.chars().next()?;
+    if !first.is_ascii_alphabetic()
+        || !t
+            .chars()
+            .all(|c| c.is_ascii_alphanumeric() || matches!(c, '_' | '<' | '>' | '*'))
+    {
+        return None;
+    }
+    let rest_alphas: Vec<char> = t
+        .chars()
+        .skip(1)
+        .filter(|c| c.is_ascii_alphabetic())
+        .collect();
+    let plain_titlecase = first.is_ascii_uppercase()
+        && !rest_alphas.is_empty()
+        && rest_alphas.iter().all(|c| c.is_ascii_lowercase());
+    let plain_lowercase =
+        first.is_ascii_lowercase() && rest_alphas.iter().all(|c| c.is_ascii_lowercase());
+    if plain_titlecase || plain_lowercase {
+        return None;
+    }
+    Some(t.to_string())
+}
+
+/// PDF-VARIANT-DIGESTION.10c — does this caption GROUND a register? The two TRM
+/// conventions, measured per-item over the 270-table family: an identifier immediately
+/// before the word `register` (`TCU_CTRL register bit descriptions`, `RSZ Register bit
+/// assignments`), or a SINGLE identifier heading the locution `bit
+/// assignments|descriptions|fields` (`GICD_CTLR bit assignments`). A multi-word head
+/// (`LPI Configuration table entry bit assignments`) is NOT register evidence — such
+/// captions fall through to the structure-container path. Returns the register name;
+/// `None` when the caption grounds nothing (a name is never fabricated).
+fn bit_assignment_register_name(caption: &str) -> Option<String> {
+    let mut words: Vec<&str> = caption.split_whitespace().collect();
+    if words.len() >= 2
+        && (words[0].eq_ignore_ascii_case("table") || words[0].eq_ignore_ascii_case("figure"))
+        && words[1].bytes().any(|b| b.is_ascii_digit())
+    {
+        words.drain(..2);
+        if words
+            .first()
+            .is_some_and(|w| matches!(*w, "-" | "\u{2013}" | ":" | "."))
+        {
+            words.remove(0);
+        }
+    }
+    if words
+        .last()
+        .is_some_and(|w| w.eq_ignore_ascii_case("(continued)"))
+    {
+        words.pop();
+    }
+    let lower: Vec<String> = words
+        .iter()
+        .map(|w| {
+            w.trim_matches(|c: char| !c.is_ascii_alphanumeric())
+                .to_ascii_lowercase()
+        })
+        .collect();
+    if let Some(pos) = lower.iter().position(|w| w == "register") {
+        if pos > 0 {
+            if let Some(name) = bit_assignment_register_ident(words[pos - 1]) {
+                return Some(name);
+            }
+            // the space-separated array-index convention (`TCU_NODE_CTRL n register …`):
+            // a single lowercase index letter after a real register ident keeps the
+            // document's own spelling verbatim
+            if pos >= 2
+                && words[pos - 1].len() == 1
+                && words[pos - 1].chars().all(|c| c.is_ascii_lowercase())
+                && let Some(base) = bit_assignment_register_ident(words[pos - 2])
+            {
+                return Some(format!("{base} {}", words[pos - 1]));
+            }
+        }
+        return None;
+    }
+    let assignment = lower.windows(2).position(|w| {
+        w[0] == "bit" && matches!(w[1].as_str(), "assignments" | "descriptions" | "fields")
+    });
+    if assignment == Some(1) {
+        return bit_assignment_register_ident(words[0]);
+    }
+    None
+}
+
+/// PDF-VARIANT-DIGESTION.10c — a bracketed bit range with ONE trailing lowercase footnote
+/// letter (`[31:0] a`), the TRM table-footnote convention. Accepted on three-column rows
+/// only — the two-column `.10b` strictness is unchanged.
+fn parse_bit_position_with_footnote(cell: &str) -> Option<(u32, u32)> {
+    let s = cell.trim();
+    let (head, tail) = s.rsplit_once(' ')?;
+    let tail = tail.trim();
+    if tail.len() == 1
+        && tail.chars().all(|c| c.is_ascii_lowercase())
+        && head.starts_with('[')
+        && head.ends_with(']')
+    {
+        return parse_pure_bit_position(head);
+    }
+    None
+}
+
+/// The typed-home label of a bit-layout chain (PDF-VARIANT-DIGESTION.10c): a caption that
+/// GROUNDS a register routes the chain to the register surface; any other caption labels a
+/// structure CONTAINER for the message-field surface; a caption-less table carries `None`
+/// and can only join a labeled chain through bit-exact adjacency.
+#[derive(Debug, Clone, PartialEq, Eq)]
+enum BitLayoutLabel {
+    Register(String),
+    Container(String),
+    None,
+}
+
+/// One parsed row of a bit-layout table: the bit extent, the explicit name cell when the
+/// table has one (three-column family; `None` for the two-column shape where the name is
+/// fused into the description), and the description cell.
+struct BitLayoutRow {
+    high: u32,
+    low: u32,
+    name: Option<String>,
+    description: String,
+}
+
+/// One shape-qualified bit-layout table, parsed for chain construction.
+struct BitLayoutTable<'a> {
     table: &'a StructuredTableRecord,
-    label: Option<String>,
+    label: BitLayoutLabel,
     page: Option<u32>,
-    /// `(high, low, description)` per eligible row, in row order.
-    rows: Vec<(u32, u32, String)>,
+    rows: Vec<BitLayoutRow>,
 }
 
 /// PDF-VARIANT-DIGESTION.10b — may `next` continue the chain ending at `prev`? Requires page
@@ -8016,8 +8189,10 @@ struct BitPositionTable<'a> {
 /// Measured per-item: the 23 true AMD continuations are ALL bit-exact, the 80 fresh
 /// structures restart at a width boundary and never qualify, and the sense guard kills the
 /// one cross-sense coincidence class (a fresh `31:1`-led table after a chain ending at bit
-/// 0 would otherwise "ascend" from it).
-fn bit_position_chain_adjacent(prev: &BitPositionTable<'_>, next: &BitPositionTable<'_>) -> bool {
+/// 0 would otherwise "ascend" from it). The `.10c` heading-anchoring alternative was
+/// REJECTED by measurement: it would add 1 safe adoption corpus-wide against 15
+/// bit-overlapping wrong ones.
+fn bit_position_chain_adjacent(prev: &BitLayoutTable<'_>, next: &BitLayoutTable<'_>) -> bool {
     let page_ok = match (prev.page, next.page) {
         (Some(a), Some(b)) => b >= a && b - a <= 1,
         _ => false,
@@ -8034,9 +8209,160 @@ fn bit_position_chain_adjacent(prev: &BitPositionTable<'_>, next: &BitPositionTa
         prev_sense != BitPositionSense::Ascending && next_sense != BitPositionSense::Ascending;
     let no_descending =
         prev_sense != BitPositionSense::Descending && next_sense != BitPositionSense::Descending;
-    let descending_join = no_ascending && prev_last.1 > 0 && next_first.0 == prev_last.1 - 1;
-    let ascending_join = no_descending && next_first.1 == prev_last.0 + 1;
+    let descending_join = no_ascending && prev_last.low > 0 && next_first.high == prev_last.low - 1;
+    let ascending_join = no_descending && next_first.low == prev_last.high + 1;
     descending_join || ascending_join
+}
+
+/// Do two chain labels agree? `None` joins anything (a caption-less fragment); labels of
+/// the same kind compare case-insensitively; a Register label never merges with a
+/// Container label — the typed homes stay disjoint by construction.
+fn bit_layout_labels_agree(chain: &BitLayoutLabel, next: &BitLayoutLabel) -> bool {
+    match (chain, next) {
+        (_, BitLayoutLabel::None) | (BitLayoutLabel::None, _) => true,
+        (BitLayoutLabel::Register(a), BitLayoutLabel::Register(b)) => a.eq_ignore_ascii_case(b),
+        (BitLayoutLabel::Container(a), BitLayoutLabel::Container(b)) => a.eq_ignore_ascii_case(b),
+        _ => false,
+    }
+}
+
+/// PDF-VARIANT-DIGESTION.10b/.10c — collect every shape-qualified bit-layout table
+/// (two-column `bits | description` and three-column `bits | name | function/description`)
+/// in document order, with parsed rows and the caption-derived typed-home label. ONE
+/// collector for both shapes so chain adjacency is always tested against the table's true
+/// document predecessor. Row gates: eligible rows must strict-parse (a single symbolic or
+/// offset-suffixed cell like `31:28 +04` keeps the WHOLE table residual); a three-column
+/// row with an EMPTY bit cell is a value-encoding sub-row (the name cell holds `0`/`1`
+/// enums) and is skipped without counting against the gate; the two-column row rules are
+/// exactly the `.10b` ones (locked by its tests).
+fn collect_bit_layout_tables<'a>(
+    source_ir: &'a SourceIr,
+    prior_guidance: Option<&EvidencePriorGuidance>,
+) -> Vec<BitLayoutTable<'a>> {
+    let mut tables: Vec<BitLayoutTable<'a>> = Vec::new();
+    for table in &source_ir.structured_tables {
+        if !matches!(
+            effective_table_kind(table, prior_guidance),
+            TableKind::Unknown
+        ) {
+            continue;
+        }
+        let two_column = bit_position_layout_header(table);
+        let three_column = !two_column && bit_assignment_layout_header(table);
+        if !two_column && !three_column {
+            continue;
+        }
+        let mut rows: Vec<BitLayoutRow> = Vec::new();
+        let mut all_parse = true;
+        for row in &table.body_rows {
+            let cells = effective_row_cells(row);
+            if two_column {
+                let [bits, desc] = cells.as_slice() else {
+                    continue;
+                };
+                match parse_pure_bit_position(bits) {
+                    Some((high, low)) if !desc.is_empty() => rows.push(BitLayoutRow {
+                        high,
+                        low,
+                        name: None,
+                        description: desc.clone(),
+                    }),
+                    _ => {
+                        all_parse = false;
+                        break;
+                    }
+                }
+            } else {
+                let [bits, name, desc] = cells.as_slice() else {
+                    continue;
+                };
+                if bits.is_empty() {
+                    continue; // value-encoding sub-row: the name cell holds enum values
+                }
+                match parse_pure_bit_position(bits)
+                    .or_else(|| parse_bit_position_with_footnote(bits))
+                {
+                    Some((high, low)) => rows.push(BitLayoutRow {
+                        high,
+                        low,
+                        name: (!name.is_empty()).then(|| name.clone()),
+                        description: desc.clone(),
+                    }),
+                    _ => {
+                        all_parse = false;
+                        break;
+                    }
+                }
+            }
+        }
+        if !all_parse || rows.is_empty() {
+            continue;
+        }
+        let caption = table.caption_text.as_deref().unwrap_or("");
+        let mentions_register = caption.split_whitespace().any(|w| {
+            w.trim_matches(|c: char| !c.is_ascii_alphanumeric())
+                .eq_ignore_ascii_case("register")
+        });
+        let label = if three_column && let Some(register) = bit_assignment_register_name(caption) {
+            BitLayoutLabel::Register(register)
+        } else if three_column && mentions_register {
+            // a register-worded caption that grounds no identifier is register-SHAPED but
+            // unnamed — an honest residual, never re-housed as a structure container
+            BitLayoutLabel::None
+        } else if let Some(container) = bit_position_container_label(caption) {
+            BitLayoutLabel::Container(container)
+        } else {
+            BitLayoutLabel::None
+        };
+        tables.push(BitLayoutTable {
+            label,
+            page: bit_position_table_page(table),
+            rows,
+            table,
+        });
+    }
+    tables
+}
+
+/// A stitched bit-layout chain: the typed-home label plus member indices into the
+/// collector's table vector, in document order.
+struct BitLayoutChain {
+    label: BitLayoutLabel,
+    members: Vec<usize>,
+}
+
+/// PDF-VARIANT-DIGESTION.10b/.10c — chain construction (document order): a table joins the
+/// most recent chain only on bit-exact adjacency AND label agreement; otherwise it starts a
+/// new chain. Chains form by adjacency FIRST and take their label from their first labeled
+/// member (the AMD DTE chain HEAD is itself caption-less).
+fn stitch_bit_layout_chains(tables: &[BitLayoutTable<'_>]) -> Vec<BitLayoutChain> {
+    let mut chains: Vec<BitLayoutChain> = Vec::new();
+    for (index, parsed) in tables.iter().enumerate() {
+        let joined = match chains.last_mut() {
+            Some(chain) => {
+                let last_member = &tables[*chain.members.last().expect("chains are non-empty")];
+                if bit_layout_labels_agree(&chain.label, &parsed.label)
+                    && bit_position_chain_adjacent(last_member, parsed)
+                {
+                    chain.members.push(index);
+                    if matches!(chain.label, BitLayoutLabel::None) {
+                        chain.label = parsed.label.clone();
+                    }
+                    true
+                } else {
+                    false
+                }
+            }
+            None => false,
+        };
+        if !joined {
+            chains.push(BitLayoutChain {
+                label: parsed.label.clone(),
+                members: vec![index],
+            });
+        }
+    }
+    chains
 }
 
 /// PDF-VARIANT-DIGESTION.10b — extract structure fields from two-column `bits | description`
@@ -8051,108 +8377,40 @@ fn extract_bit_position_structure_fields(
     source_ir: &SourceIr,
     prior_guidance: Option<&EvidencePriorGuidance>,
 ) -> Vec<MessageFieldRecord> {
-    // 1. Shape gate: `unknown`-kind, two-column bit-position header, ≥1 eligible row, and ALL
-    //    eligible rows (exactly two effective cells) strict-parsing — a single symbolic or
-    //    offset-suffixed cell (`31:28 +04`) keeps the whole table residual. Rows with another
-    //    effective cell count (nested value-encoding sub-rows, footnotes) are not eligible
-    //    and do not count against the gate.
-    let mut tables: Vec<BitPositionTable<'_>> = Vec::new();
-    for table in &source_ir.structured_tables {
-        if !matches!(
-            effective_table_kind(table, prior_guidance),
-            TableKind::Unknown
-        ) {
-            continue;
-        }
-        if !bit_position_layout_header(table) {
-            continue;
-        }
-        let mut rows: Vec<(u32, u32, String)> = Vec::new();
-        let mut all_parse = true;
-        for row in &table.body_rows {
-            let cells = effective_row_cells(row);
-            let [bits, desc] = cells.as_slice() else {
-                continue;
-            };
-            match parse_pure_bit_position(bits) {
-                Some((high, low)) if !desc.is_empty() => rows.push((high, low, desc.clone())),
-                _ => {
-                    all_parse = false;
-                    break;
-                }
-            }
-        }
-        if !all_parse || rows.is_empty() {
-            continue;
-        }
-        tables.push(BitPositionTable {
-            label: table
-                .caption_text
-                .as_deref()
-                .and_then(bit_position_container_label),
-            page: bit_position_table_page(table),
-            rows,
-            table,
-        });
-    }
-
-    // 2. Chain construction (document order): a table joins the most recent chain only on
-    //    bit-exact adjacency AND caption-label agreement; otherwise it starts a new chain.
-    struct Chain {
-        label: Option<String>,
-        members: Vec<usize>,
-    }
-    let mut chains: Vec<Chain> = Vec::new();
-    for (index, parsed) in tables.iter().enumerate() {
-        let joined = match chains.last_mut() {
-            Some(chain) => {
-                let last_member = &tables[*chain.members.last().expect("chains are non-empty")];
-                let label_agrees = match (&chain.label, &parsed.label) {
-                    (Some(a), Some(b)) => a.eq_ignore_ascii_case(b),
-                    _ => true,
-                };
-                if label_agrees && bit_position_chain_adjacent(last_member, parsed) {
-                    chain.members.push(index);
-                    if chain.label.is_none() {
-                        chain.label = parsed.label.clone();
-                    }
-                    true
-                } else {
-                    false
-                }
-            }
-            None => false,
-        };
-        if !joined {
-            chains.push(Chain {
-                label: parsed.label.clone(),
-                members: vec![index],
-            });
-        }
-    }
-
-    // 3. Emission: only labeled chains yield records; identity is (container, name) with a
-    //    re-declaration merging its table id into the first record (the existing
-    //    message-field continuation policy). Deterministic: encounter order, BTreeMap index.
+    let tables = collect_bit_layout_tables(source_ir, prior_guidance);
+    let chains = stitch_bit_layout_chains(&tables);
+    // Emission: only Container-labeled chains yield message fields (Register-labeled chains
+    // belong to the register surface; an all-caption-less chain yields nothing). Identity is
+    // (container, name) with a re-declaration merging its table id into the first record
+    // (the existing message-field continuation policy). Deterministic: encounter order,
+    // BTreeMap index.
     let mut records: Vec<MessageFieldRecord> = Vec::new();
     let mut index_by_key: BTreeMap<(String, String), usize> = BTreeMap::new();
     for chain in &chains {
-        let Some(label) = &chain.label else { continue };
+        let BitLayoutLabel::Container(label) = &chain.label else {
+            continue;
+        };
         for &member in &chain.members {
             let parsed = &tables[member];
-            // Per-TABLE leading-token uniqueness pre-pass — the same gate semantics as the
-            // register-surface path: a token leading several rows of one table is prose.
+            // Per-TABLE leading-token uniqueness pre-pass for fused-name rows — the same
+            // gate semantics as the register-surface path: a token leading several rows of
+            // one table is prose. Rows with an explicit name column never participate.
             let mut leading_token_rows: std::collections::HashMap<String, usize> =
                 std::collections::HashMap::new();
-            for (_, _, desc) in &parsed.rows {
-                if field_mnemonic_from_description(desc).is_some()
-                    || desc
+            for row in &parsed.rows {
+                if row.name.is_some() {
+                    continue;
+                }
+                if field_mnemonic_from_description(&row.description).is_some()
+                    || row
+                        .description
                         .get(..8)
                         .is_some_and(|p| p.eq_ignore_ascii_case("reserved"))
                 {
                     continue;
                 }
-                if let Some(token) = desc
+                if let Some(token) = row
+                    .description
                     .split_whitespace()
                     .next()
                     .and_then(identifier_shaped_token)
@@ -8162,9 +8420,38 @@ fn extract_bit_position_structure_fields(
                         .or_default() += 1;
                 }
             }
-            for (high, low, desc) in &parsed.rows {
-                let Some(name) = recover_field_mnemonic(desc, None, &leading_token_rows) else {
-                    continue;
+            for row in &parsed.rows {
+                let name = match &row.name {
+                    // explicit name column (three-column family): `-` placeholders and
+                    // `Reserved` padding are honest skips, never fields; a fused
+                    // `CTP: Context-table Pointer` cell yields its leading mnemonic
+                    // (`R: Reserved` skips like any Reserved row)
+                    Some(explicit) => {
+                        if explicit == "-" || explicit.eq_ignore_ascii_case("reserved") {
+                            continue;
+                        }
+                        match explicit.split_once(':') {
+                            Some((head, rest)) if is_message_field_name(head.trim()) => {
+                                if rest
+                                    .trim()
+                                    .get(..8)
+                                    .is_some_and(|p| p.eq_ignore_ascii_case("reserved"))
+                                    || rest.trim().eq_ignore_ascii_case("reserved")
+                                {
+                                    continue;
+                                }
+                                head.trim().to_string()
+                            }
+                            _ => explicit.clone(),
+                        }
+                    }
+                    // two-column family: recover the fused name through the `.10a` chain
+                    None => {
+                        match recover_field_mnemonic(&row.description, None, &leading_token_rows) {
+                            Some(name) => name,
+                            None => continue,
+                        }
+                    }
                 };
                 if !is_message_field_name(&name) {
                     continue;
@@ -8184,9 +8471,9 @@ fn extract_bit_position_structure_fields(
                     field_id: String::new(),
                     name,
                     container: label.clone(),
-                    bit_width: Some(high - low + 1),
-                    bit_range: Some((*high, *low)),
-                    description: Some(desc.clone()),
+                    bit_width: Some(row.high - row.low + 1),
+                    bit_range: Some((row.high, row.low)),
+                    description: (!row.description.is_empty()).then(|| row.description.clone()),
                     supporting_table_ids: vec![parsed.table.table_id.clone()],
                 });
             }
@@ -8195,8 +8482,79 @@ fn extract_bit_position_structure_fields(
     records
 }
 
-/// PDF-VARIANT-DIGESTION.10b — the bit-position structure-layout strategy as a registered
-/// `Extractor`; see [`extract_bit_position_structure_fields`].
+/// PDF-VARIANT-DIGESTION.10c — registers from REGISTER-captioned bit-layout chains: one
+/// `RegisterRecord` per chain, named by the caption (`TCU_CTRL register bit descriptions`
+/// → `TCU_CTRL`; the caption IS the register declaration, the same evidence class as
+/// `register_name_from_caption`). Access/reset stay honestly absent — the family carries no
+/// such vocabulary, and absence is reported by the completeness gauges rather than
+/// invented. A `-` or empty name cell keeps the bit-range as its honest residual field
+/// name; a sentence-shaped or letter-free name cell yields no field. Caption-only repeats
+/// (`(continued)` tables that restart a chain) consolidate downstream through the same-name
+/// register fragment merge (`EXTRACTION-GAP-FIX.4c`).
+fn extract_bit_assignment_registers(
+    source_ir: &SourceIr,
+    prior_guidance: Option<&EvidencePriorGuidance>,
+) -> Vec<RegisterRecord> {
+    let tables = collect_bit_layout_tables(source_ir, prior_guidance);
+    let chains = stitch_bit_layout_chains(&tables);
+    let mut records: Vec<RegisterRecord> = Vec::new();
+    for chain in &chains {
+        let BitLayoutLabel::Register(register_name) = &chain.label else {
+            continue;
+        };
+        let mut fields: Vec<RegisterFieldRecord> = Vec::new();
+        for &member in &chain.members {
+            let parsed = &tables[member];
+            for row in &parsed.rows {
+                let name_cell = row.name.as_deref().unwrap_or("");
+                let field_name = if name_cell.is_empty() || name_cell == "-" {
+                    // honest residual name — the `.10a` bit-range convention
+                    format!("{}:{}", row.high, row.low)
+                } else if name_cell.split_whitespace().count() > 4
+                    || !name_cell.chars().any(|c| c.is_ascii_alphabetic())
+                {
+                    continue; // a sentence or a value-legend cell is not a field name
+                } else {
+                    name_cell.to_string()
+                };
+                let description = (!row.description.is_empty()).then(|| row.description.clone());
+                let enumerated_values = description
+                    .as_deref()
+                    .map(parse_inline_field_enums)
+                    .unwrap_or_default();
+                fields.push(RegisterFieldRecord {
+                    field_name,
+                    bits_high: Some(row.high),
+                    bits_low: Some(row.low),
+                    bit_width: bit_width_from_range(Some(row.high), Some(row.low)),
+                    access_type: None,
+                    reset_value: None,
+                    description,
+                    enumerated_values,
+                });
+            }
+        }
+        if fields.is_empty() {
+            continue;
+        }
+        let first = &tables[chain.members[0]];
+        records.push(RegisterRecord {
+            register_id: format!("regbit_{}", first.table.table_id),
+            register_name: register_name.clone(),
+            offset_address: None,
+            size_bits: register_size_from_fields(&fields),
+            fields,
+            supporting_statement_ids: Vec::new(),
+            automation_confidence: AutomationConfidence::Medium,
+        });
+    }
+    records
+}
+
+/// PDF-VARIANT-DIGESTION.10b/.10c — the bit-position structure-layout strategy as a
+/// registered `Extractor` (two-column fused-name tables AND three-column explicit-name
+/// tables whose caption does NOT ground a register); see
+/// [`extract_bit_position_structure_fields`].
 struct BitPositionTableExtractor<'a> {
     source_ir: &'a SourceIr,
     prior_guidance: Option<&'a EvidencePriorGuidance>,
@@ -8207,6 +8565,21 @@ impl Extractor<MessageFieldRecord> for BitPositionTableExtractor<'_> {
     }
     fn run(&self, _cx: &ExtractionContext<'_>) -> Vec<MessageFieldRecord> {
         extract_bit_position_structure_fields(self.source_ir, self.prior_guidance)
+    }
+}
+
+/// PDF-VARIANT-DIGESTION.10c — registers from register-captioned bit-layout chains as a
+/// registered `Extractor`; see [`extract_bit_assignment_registers`].
+struct BitAssignmentRegisterExtractor<'a> {
+    source_ir: &'a SourceIr,
+    prior_guidance: Option<&'a EvidencePriorGuidance>,
+}
+impl Extractor<RegisterRecord> for BitAssignmentRegisterExtractor<'_> {
+    fn name(&self) -> &'static str {
+        "registers.bit_assignment_table"
+    }
+    fn run(&self, _cx: &ExtractionContext<'_>) -> Vec<RegisterRecord> {
+        extract_bit_assignment_registers(self.source_ir, self.prior_guidance)
     }
 }
 
@@ -9570,7 +9943,11 @@ fn register_record_surface(
         source_ir,
         prior_guidance,
     };
-    let extractors: [&dyn Extractor<RegisterRecord>; 2] = [&map, &field_table];
+    let bit_assignment = BitAssignmentRegisterExtractor {
+        source_ir,
+        prior_guidance,
+    };
+    let extractors: [&dyn Extractor<RegisterRecord>; 3] = [&map, &field_table, &bit_assignment];
     let run = run_surface_concat("register_records", &cx, &extractors);
     manifest.record(&run);
     let mut records = run.records;
@@ -9732,6 +10109,7 @@ fn synthesize_register_records(
 fn is_bit_position_header(h: &str) -> bool {
     h == "bits"
         || h == "bit"
+        || h == "bit(s)"
         || h.contains("bit range")
         || h.contains("position")
         || h.contains("bit location")
@@ -12802,6 +13180,213 @@ mod tests {
             .expect("message_fields surface recorded");
         assert_eq!(entry.entries[1].name, "message_fields.bit_position_table");
         assert_eq!(entry.entries[1].produced, 4);
+        Ok(())
+    }
+
+    #[test]
+    fn bit_assignment_register_name_grammar() {
+        let name = super::bit_assignment_register_name;
+        // ident before the word `register`
+        assert_eq!(
+            name("Table 4-21: TCU_CTRL register bit descriptions").as_deref(),
+            Some("TCU_CTRL")
+        );
+        assert_eq!(
+            name("Table 3-2 RSZ Register bit assignments").as_deref(),
+            Some("RSZ")
+        );
+        // single ident heading `bit assignments`, incl. the `<n>` array-register form
+        assert_eq!(
+            name("Table 4-3 GICD_CTLR bit assignments (continued)").as_deref(),
+            Some("GICD_CTLR")
+        );
+        assert_eq!(
+            name("GICD_CHIPR<n> bit assignments").as_deref(),
+            Some("GICD_CHIPR<n>")
+        );
+        // the space-separated array-index convention keeps the document's spelling
+        assert_eq!(
+            name("Table 3-13: TCU_NODE_CTRL n register bit descriptions").as_deref(),
+            Some("TCU_NODE_CTRL n")
+        );
+        // a plain Titlecase word is prose, not a register ident — the NVMe command-name
+        // class (`Reservation Register`) must NOT become a register
+        assert_eq!(name("Reservation Register - Command Dword 10"), None);
+        // a multi-word head before `bit assignments` is structure, not register evidence
+        assert_eq!(
+            name("Table 5-1 LPI Configuration table entry bit assignments"),
+            None
+        );
+        // caption prose bleed grounds nothing
+        assert_eq!(name("shows the bit assignments."), None);
+        assert_eq!(name(""), None);
+    }
+
+    #[test]
+    fn parse_bit_position_with_footnote_strict() {
+        let p = super::parse_bit_position_with_footnote;
+        assert_eq!(p("[31:0] a"), Some((31, 0)));
+        assert_eq!(p("[1:0] b"), Some((1, 0)));
+        assert_eq!(p("[31:0] ab"), None, "one footnote letter only");
+        assert_eq!(p("31:0 a"), None, "the range must be bracketed");
+        assert_eq!(p("[31:0] A"), None, "footnote letters are lowercase");
+        assert_eq!(p("[31:0]"), None, "no footnote → the pure parser owns it");
+    }
+
+    #[test]
+    fn bit_assignment_chains_route_registers_and_structures() -> Result<()> {
+        // PDF-VARIANT-DIGESTION.10c end-to-end: a register-captioned chain (captioned head +
+        // caption-less adjacent fragment) becomes ONE caption-named RegisterRecord; a
+        // `(continued)` re-start consolidates through the `.4c` same-name merge; a
+        // structure-captioned three-column table yields message fields with explicit names
+        // and NEVER registers; `-`/Reserved/value-sub-rows are honest skips.
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# TRM\nRegister bit assignments.\n")?;
+        let mut source_ir = SourceIr::build(&source, &base)?;
+        let layout_table =
+            |id: &str, page: &str, caption: Option<&str>, rows: &[&[&str]]| StructuredTableRecord {
+                table_id: id.to_string(),
+                asset_id: id.to_string(),
+                page_id: Some(page.to_string()),
+                caption_text: caption.map(|c| c.to_string()),
+                source_ref: None,
+                table_kind: TableKind::Unknown,
+                header_rows: vec![vec![
+                    make_table_cell("Bits", true),
+                    make_table_cell("Name", true),
+                    make_table_cell("Function", true),
+                ]],
+                body_rows: rows
+                    .iter()
+                    .map(|r| r.iter().map(|c| make_table_cell(c, false)).collect())
+                    .collect(),
+                row_count: rows.len() as u32 + 1,
+                col_count: 3,
+            };
+        // register chain: captioned head + caption-less bit-exact fragment
+        source_ir.structured_tables.push(layout_table(
+            "reg_head",
+            "page_0010",
+            Some("Table 4-3 WDGCTL bit assignments"),
+            &[
+                &["31:16", "KEY", "Write key."],
+                &["[15:8] a", "WIN", "Window value with a table footnote."],
+                &["7:4", "-", "Reserved."],
+            ],
+        ));
+        source_ir.structured_tables.push(layout_table(
+            "reg_frag",
+            "page_0011",
+            None,
+            &[
+                &["3:1", "Reserved", "Software must write zero."],
+                &["0", "EN", "Enable bit."],
+            ],
+        ));
+        // a `(continued)` re-start far below (NOT adjacent): same register name → `.4c`
+        // merges it into the same record because the field sets are disjoint
+        source_ir.structured_tables.push(layout_table(
+            "reg_cont",
+            "page_0013",
+            Some("Table 4-3 WDGCTL bit assignments (continued)"),
+            &[&["63:32", "EXT", "Extension field."]],
+        ));
+        // a structure-captioned table: explicit-name message fields, never a register;
+        // the empty-bit value sub-row is skipped without killing the table; a fused
+        // `Mnemonic: Full Name` cell yields its mnemonic and `R: Reserved` skips
+        source_ir.structured_tables.push({
+            let mut t = layout_table(
+                "struct_entry",
+                "page_0020",
+                Some("Figure 9-1. Root-Entry Format"),
+                &[
+                    &[
+                        "63:12",
+                        "CTP: Context-table Pointer",
+                        "Pointer to the context table.",
+                    ],
+                    &["11:4", "R: Reserved", "Reserved. Must be 0."],
+                ],
+            );
+            t.body_rows.push(vec![
+                make_table_cell("", false),
+                make_table_cell("0", false),
+                make_table_cell("Entry is not present.", false),
+            ]);
+            t
+        });
+        // a register-WORDED caption that grounds no identifier is register-shaped but
+        // unnamed: an honest residual on BOTH surfaces, never re-housed as a container
+        source_ir.structured_tables.push(layout_table(
+            "reg_unnamed",
+            "page_0030",
+            Some("Secure access register bit descriptions"),
+            &[&["31:0", "LOCKVAL", "Lock value."]],
+        ));
+        let mut manifest = super::ExtractionManifest::default();
+        let registers = super::register_record_surface(&source_ir, None, &mut manifest);
+        let from_bits: Vec<&crate::ir::source::RegisterRecord> = registers
+            .iter()
+            .filter(|r| r.register_id.starts_with("regbit_"))
+            .collect();
+        assert_eq!(
+            from_bits.len(),
+            1,
+            "chain + continued merge into ONE register"
+        );
+        let reg = from_bits[0];
+        assert_eq!(reg.register_name, "WDGCTL");
+        let field_view: Vec<(&str, Option<u32>, Option<u32>)> = reg
+            .fields
+            .iter()
+            .map(|f| (f.field_name.as_str(), f.bits_high, f.bits_low))
+            .collect();
+        assert_eq!(
+            field_view,
+            vec![
+                ("KEY", Some(31), Some(16)),
+                ("WIN", Some(15), Some(8)),
+                ("7:4", Some(7), Some(4)),
+                ("Reserved", Some(3), Some(1)),
+                ("EN", Some(0), Some(0)),
+                ("EXT", Some(63), Some(32)),
+            ],
+            "caption-named register: footnote bit cell parses, `-` keeps the honest \
+             bit-range residual name, Reserved rows stay, the fragment chain joins"
+        );
+        assert_eq!(
+            reg.offset_address, None,
+            "no offset evidence → honestly absent"
+        );
+        assert!(
+            reg.fields
+                .iter()
+                .all(|f| f.access_type.is_none() && f.reset_value.is_none()),
+            "access/reset are never invented for this family"
+        );
+        // the structure table went to the message-field surface, not the register surface
+        let mut mf_manifest = super::ExtractionManifest::default();
+        let fields = super::message_field_surface(&source_ir, None, &mut mf_manifest);
+        let view: Vec<(&str, &str)> = fields
+            .iter()
+            .map(|f| (f.container.as_str(), f.name.as_str()))
+            .collect();
+        assert_eq!(
+            view,
+            vec![("Root-Entry Format", "CTP")],
+            "structure-captioned three-column tables yield explicit-name message fields \
+             (the fused `CTP: …` cell yields its mnemonic, `R: Reserved` skips); \
+             register-captioned chains and register-worded unnamed captions never do"
+        );
+        assert_eq!(fields[0].bit_range, Some((63, 12)));
+        assert!(
+            !registers
+                .iter()
+                .any(|r| r.register_id == "regbit_reg_unnamed"),
+            "a register-worded caption without an identifier yields no register either"
+        );
         Ok(())
     }
 
