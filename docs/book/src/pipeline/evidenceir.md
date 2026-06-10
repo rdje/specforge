@@ -602,10 +602,11 @@ recover no field names, which is the correct honest outcome. Everything else is 
 rebuildable corpus documents rebuild with every extraction surface **byte-identical** (the only difference
 anywhere is the run manifest recording that the new strategy exists), and NVMe's measured register gold
 re-measures exactly its documented state. The known residuals are quantified, not hidden: the 41
-offset-suffixed AMD tables await an offset-aware future leaf, caption-less chains with no captioned member
-stay unread, and one true name (`SnoopAttribute`) is sacrificed to the mid-cell bleed guard because its own
-description later says *"…guest PTE. This field is meaningful…"* — the gate that protects every wrapped
-cell from a false name rejects this one true one, a trade the per-item audit makes explicitly.
+offset-suffixed AMD tables awaited an offset-aware reading (delivered by `.10d` below), caption-less chains
+with no captioned member stay unread, and one true name (`SnoopAttribute`) is sacrificed to the mid-cell
+bleed guard because its own description later says *"…guest PTE. This field is meaningful…"* — the gate
+that protects every wrapped cell from a false name rejects this one true one, a trade the per-item audit
+makes explicitly.
 *Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.10b`).
 
 ### `PDF-VARIANT-DIGESTION.10c` — three-column bit tables: the caption decides register versus structure
@@ -647,6 +648,54 @@ machinery. The honest residual is also clear: 68+ caption-less fragment chains h
 all (their captions were lost in ingest), so the registers they describe stay absent until a better ingest
 recovers the captions — absence, never invention.
 *Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.10c`).
+
+### `PDF-VARIANT-DIGESTION.10d` — dword-relative bit cells: keep the offset, never derive the position
+
+Some structure tables don't number their bits from the top of the structure. AMD's IOMMU commands and
+event-log entries are 16-byte records documented one **dword at a time**: a bit cell reads `31:28 +04`,
+meaning bits 31:28 *of the dword at byte offset 4*. The `.10b` reader deliberately rejected whole tables
+containing such cells — capturing `31:28` while silently dropping the `+04` would have placed the field in
+the wrong dword — so 43 tables (309 rows) sat as honest residuals. This slice reads them, and the first
+question it had to answer was *what an honest capture even looks like*.
+
+The tempting move is to derive an absolute position: bit 28 of the dword at byte 4 "is" bit 60 of the
+entry. The corpus said no. The probe cross-checked every row whose description carries its own bracket
+notation (`Store Data[63:32]`, `DomainID[15:0]`) and found those brackets are **value slices, not
+positions** — 54 of 66 disagree with the would-be derived position. Deriving and storing absolute bits
+would have made the IR silently contradict the document's own notation on most rows. So each field keeps
+the document's literal statement, in two parts: the dword-relative `bit_range` *and* a new `byte_offset`
+field. Anyone downstream who needs an absolute ordering can compute `byte_offset × 8 + bit` — the IR
+itself never asserts more than the page does. The same literalism handles a quirk found mid-table: one row
+lost its `+04` suffix in ingest, and that field records its bit range with `byte_offset` honestly *absent*
+rather than inferred from its neighbors.
+
+The cell grammar is strict the same way `.10b`'s is: digits, an optional colon, whitespace, `+`, decimal
+digits — nothing else. That single shape decision keeps every other `+` cell in the corpus rejected
+(GIC-600's register-count formulas like `4 + (ITSnum × 2)`, NVMe's variable-length `15+HL:16`, USB's
+`9+N`), measured per-item before the parser was written. Page-fragment chains extend naturally: a
+continuation now matches when its first row is the *(offset ascending, bit descending)* successor of the
+previous fragment's last row — either the next bit down in the same dword, or bit 31 of the next dword
+after the previous one closed at bit 0 — and the two position conventions never chain into each other.
+Two name forms, also probe-measured against the whole corpus, unlock the rows themselves: the **verbatim
+bracket-slice name** (`DeviceID[15:0] .` — kept with its slice, so `Address[31:0]` and `Address[63:32]`
+stay the two distinct statements the document made; the bracket-plus-boundary frame is strong enough to
+admit plain English heads like `Vector` and `Destination` that the bare leading-identifier form rightly
+rejects) and the **framed single letter** (`f: flush queue`, `U . The U bit…` — a lone letter is a name
+only inside a colon or dot frame, once per table). A caption marker fused by lost spacing
+(`… Fields(Continued)`) — caught live in the per-item audit — is now stripped by both caption readers, so
+the fragment it labels merges into its true family.
+
+Live, the AMD-class document goes from **82 to 217 message fields across 30 containers** — `COMPLETION_WAIT`
+gains its `f`/`i`/`s` control bits at `+00`, `IO_PAGE_FAULT` its full 16-field entry through
+`Address[63:32]` at `31:0 +12`, and the bracket-slice form also names 21 previously-residual rows on
+ordinary `.10b` tables (`GDeviceID[15:0]`, the page-table `A`/`D`/`G`/`U` bits) — with **zero**
+pre-existing records changed and every other extraction surface byte-identical. All 12 rebuildable corpus
+documents rebuild **fully byte-identical** (no new strategy was registered; the family rides the existing
+bit-position reader with a wider literal grammar). What stays out is documented: opcode value rows
+(`01h . COMPLETION_WAIT command number.` states a value, not a field name), two-word heads
+(`Store Address[31:3]`), one malformed-cell table, two conditional-layout tables whose description column
+forks on a mode bit, and eight caption-less chains whose captions ingest lost — absence, never invention.
+*Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.10d`).
 
 ### `EXTRACTION-QUALITY-GAUGE.FIELD.2` — message fields are intent too, but they are not signals
 

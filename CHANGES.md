@@ -1,3 +1,44 @@
+### `PDF-VARIANT-DIGESTION.10d` — dword-relative offset-suffixed bit cells (`31:28 +04`): literal `bit_range` + `byte_offset`, never a derived absolute (AMD-class 82→217 fields)
+The `.10b`-spun offset-suffix family (43 tables / 309 rows, corpus-wide ONE document; all
+other corpus `+`-cells are symbolic and stay rejected) now extracts. The probe's core
+honesty finding: description brackets are field-VALUE slices, not positions
+(`Store Data[63:32]` at `31:0 +12`; 54/66 mismatch `offset*8+bit`) — so each field keeps
+the document's LITERAL statement, dword-relative `bit_range` plus a NEW additive
+`MessageFieldRecord.byte_offset: Option<u32>` (serde-skipped), and an absolute position is
+never derived (consumers compute `byte_offset*8 + bit` where they need ordering). A row
+whose offset was lost in ingest records `byte_offset` honestly ABSENT, never inferred from
+neighbors. The strict cell grammar (`digits[:digits]`, whitespace, `+`, decimal digits)
+was measured per-item against every corpus `+`-cell before coding (GIC-600
+`4 + (ITSnum × 2)`, NVMe `15+HL:16`, USB `9+N`, malformed `16: +04` all reject). Chains
+extend to the `(offset asc, bit desc)` successor — same-dword `next_hi == prev_lo - 1`
+(14 measured joins) + next-dword `prev_lo==0 → next_hi==31, offset exactly +4` (1) — with
+a forward-order guard, both boundary rows required to carry offsets, and the pure/offset
+conventions never joining each other. Name recovery gains two corpus-measured
+description-fused forms in the shared mnemonic chain: the VERBATIM bracket-slice name
+(`DeviceID[15:0] .` — slice kept, `Address[31:0]`/`Address[63:32]` stay distinct; the
+bracket+boundary frame admits English heads `Vector`/`Destination` the bare form rightly
+rejects) and the framed SINGLE LETTER (`f:`/`U .` — frame required, per-table uniqueness
+via 1-char count keys disjoint from the existing 2–40-char keys). Probe-assertion
+CORRECTED by code reading: the existing leading-identifier form already recovers
+multi-char colon/dot heads (`AttrV:`, `VCmd .`, CCIX `ESMEnable .`) — the offset tables
+yielded 0 purely because the CELL gate rejected them, so the CCIX/NVMe deltas are ZERO
+(sweep-proven). One live finding fixed + fixture-locked: a `(Continued)` marker FUSED to
+the previous word by lost spacing (`Fields(Continued)`) is now stripped by both caption
+readers (`trim_continued_marker`), merging the fragment into its true family. Live (stub
+protocol, canonical untouched, re-verified on the final binary): **82 → 217 message
+fields / 15 → 30 containers (+135, 114 with `byte_offset`), ZERO pre-existing records
+changed**, every other surface byte-identical; per-item eyeball of all 135 clean
+(`COMPLETION_WAIT` `f`/`i`/`s`@+00, `IO_PAGE_FAULT` 16 fields, `PAGE_SERVICE_REQUEST` 11
+incl. `PPRtag@9:0+04`; +21 bracket-slice names on pure `.10b` tables incl. the documented
+`GDeviceID[15:0]` residual class). 12-doc parity: FULLY byte-identical — zero deltas, not
+even the manifest (deliberate: the family rides the existing
+`message_fields.bit_position_table` strategy, no new extractor). Golds locked by the
+byte-identity (canonical artifacts + eval code untouched). Honest residuals quantified: 8
+lost-caption capless chains (re-ingest lever), 25 opcode value-rows, two-word heads,
+1 malformed-cell + 2 conditional-layout tables. lib 1560→1564; kg-bench 154/154; full CI
+GREEN. KM `offset-suffixed-dword-relative-bit-cells` (+ `.10b` card un-staled); book
+`pipeline/evidenceir.md` `.10d` subsection.
+
 ### `PDF-VARIANT-DIGESTION.10c` — three-column `bits | name | function` TRM tables: the caption decides register vs structure (GIC-600 15→33 regs, MMU-700 13→63, TMC 2→30)
 The third `.10p` family (270 tables / 11 docs, NO access/reset vocabulary) extracts with
 the typed home decided PER TABLE by the document's own caption vocabulary, on a unified

@@ -7,7 +7,7 @@ answers:
   - "where do in-memory structure layouts (queue entries, table entries, dwords) live in EvidenceIR"
   - "how are caption-less page fragments of a split table stitched together"
   - "what is the bit-exact adjacency chain rule"
-  - "why does a symbolic or offset-suffixed bit cell reject the whole table"
+  - "why does a symbolic bit cell reject the whole table"
   - "what does MessageFieldRecord.bit_range mean and when is it set"
   - "why does adding an extractor change every doc's extraction manifest"
 date: 2026-06-10
@@ -31,7 +31,9 @@ Gates (each measured per-item BEFORE coding): (1) STRICT cell parser
 `parse_pure_bit_position` — pure `255:248`/`247`/`[7:4]` only; the lenient
 `parse_bit_range` digit-filter would read NVMe's `31 + (Element Length*8) :32` as
 `318:32` (fabrication); ANY failing eligible row rejects the WHOLE table (eligible row =
-exactly 2 effective cells; NVMe's 3-cell value-encoding sub-rows are skipped, not counted).
+exactly 2 effective cells; NVMe's 3-cell value-encoding sub-rows are skipped, not counted);
+since `.10d`, dword-relative offset cells (`31:28 +04`) parse through their own strict
+grammar instead of failing — see [[offset-suffixed-dword-relative-bit-cells]].
 (2) Container = caption label after `Table|Figure <ref>` + trailing `(Continued)` +
 trailing `Field Definitions/Descriptions/Fields` strip; NO structure-noun requirement
 (probe: `Reservation Register - Command Dword 10` names a COMMAND — caption nouns mislead;
@@ -50,9 +52,8 @@ tables recover no names — correct). All 12 intact docs: every extraction surfa
 byte-identical; the only delta is the manifest's new registered-extractor entry (the
 framework records eligible entries for ALL registered extractors — adding one changes
 every doc's manifest bytes BY DESIGN; it is the behavioral fingerprint). NVMe register
-gold re-measured identical (0.966/0.966, 42/42, 201/201). Honest residuals: 41
-offset-suffixed AMD tables (`31:28 +04` — dword-relative; future offset-aware leaf),
-capless chains without captions, `SnoopAttribute` (its own description later contains
+gold re-measured identical (0.966/0.966, 42/42, 201/201). Honest residuals: capless chains without captions (the 41 offset-suffixed AMD tables
+were unlocked by `.10d` — [[offset-suffixed-dword-relative-bit-cells]]), `SnoopAttribute` (its own description later contains
 `…PTE. This field…` → the mid-cell bleed guard rightly yields; 1 true name traded for the
 wrapped-cell protection). Canonical NVMe evidence NOT rebuilt this slice — a rebuild drops
 the standing Pattern gauge (LLM-PRIMARY-PROMOTION.4 state); refresh rides the next

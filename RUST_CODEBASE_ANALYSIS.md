@@ -21,7 +21,17 @@ they stay unique across strategies. `PDF-VARIANT-DIGESTION.10c` (same day) unifi
 machinery (`collect_bit_layout_tables` + `stitch_bit_layout_chains`: one 2-col/3-col family scan, one
 bit-exact chain pass, label-kind routing) and added a THIRD register-surface strategy
 (`registers.bit_assignment_table`: caption-named registers from TRM `bits|name|function` chains, with
-access/reset honestly absent). It is the first surface whose extractor reads ONLY `SourceIr.structured_tables`
+access/reset honestly absent). `PDF-VARIANT-DIGESTION.10d` (2026-06-11) widened the same strategy's
+literal grammar — no new extractor — for dword-relative offset-suffixed cells:
+`parse_offset_suffixed_bit_position` beside the pure parser (2-col arm only), an additive
+`MessageFieldRecord.byte_offset: Option<u32>` + `BitLayoutRow.byte_offset` carrying the offset verbatim
+(absolute positions deliberately never derived — description brackets are value slices), a dword-relative
+chain-adjacency branch in `bit_position_chain_adjacent` (the `(offset asc, bit desc)` successor with a
+`dword_rows_forward` guard; conventions never cross-join), two new forms in the shared
+`recover_field_mnemonic` chain (`bracket_slice_field_name` — verbatim names incl. the slice;
+`single_letter_framed_name` — colon/dot frame + per-table uniqueness through
+`fused_name_lead_count_key`, whose 1-char keys are disjoint from the existing 2–40-char keys), and a
+shared `trim_continued_marker` handling `(Continued)` markers fused to the previous caption word. It is the first surface whose extractor reads ONLY `SourceIr.structured_tables`
 and persists a new typed inventory (`EvidenceIr.message_field_records`) consumed by the entity-typing
 ground (`EntityType::Field`, `.FIELD.3`) and — via `.FIELD.4` — by the LLM-primary constraint extractor:
 `ir/constraint_extract_llm.rs` now grounds into a typed `GroundedConstraint::{Signal,Field}` dispatch

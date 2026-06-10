@@ -327,9 +327,21 @@ pub struct MessageFieldRecord {
     /// PDF-VARIANT-DIGESTION.10b: the field's literal bit position `(high, low)` within its
     /// container, when declared by a bit-position layout table (`255:248` → `(255, 248)`, a
     /// single `247` → `(247, 247)`). `None` for fields declared by width-column tables — a
-    /// position is never derived from a width (honest absence).
+    /// position is never derived from a width (honest absence). When `byte_offset` is set the
+    /// range is DWORD-RELATIVE, exactly as the document wrote it.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub bit_range: Option<(u32, u32)>,
+    /// PDF-VARIANT-DIGESTION.10d: the literal byte-offset suffix of a dword-relative
+    /// bit-position cell (`31:28 +04` → `bit_range` `(31, 28)`, `byte_offset` `4`): the bit
+    /// range is relative to the dword at this byte offset within the containing structure —
+    /// the document's own statement, verbatim (offsets are decimal in the measured family).
+    /// `None` when the cell carried no offset. An ABSOLUTE position is never derived here:
+    /// the description's `Name[hi:lo]` slices are field-VALUE slices, not positions
+    /// (measured: 54 of 66 mismatch `offset*8 + bit`), so the IR stays evidence-literal and
+    /// consumers may compute `byte_offset * 8 + bit` themselves where they need an absolute
+    /// ordering.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub byte_offset: Option<u32>,
     /// The declared description text, when the table carries a description column.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
@@ -7817,6 +7829,7 @@ fn extract_container_message_fields(
                 container: container.clone(),
                 bit_width,
                 bit_range: None,
+                byte_offset: None,
                 description,
                 supporting_table_ids: vec![table.table_id.clone()],
             });
@@ -7889,6 +7902,33 @@ fn parse_pure_bit_position(cell: &str) -> Option<(u32, u32)> {
     }
 }
 
+/// PDF-VARIANT-DIGESTION.10d — parse an OFFSET-SUFFIXED dword-relative bit-position cell
+/// (`31:28 +04`, `2 +00`, `31:0 +12`) into `(high, low, byte_offset)`: the bit range within
+/// the dword at the given DECIMAL byte offset of the containing structure. Strict by the
+/// same doctrine as [`parse_pure_bit_position`], measured per-item over the whole corpus:
+/// the bit part must be a pure unbracketed range followed by whitespace, and the offset
+/// part must be digits only — so every symbolic suffix cell stays rejected (`13+` and
+/// `4 + (ITSnum × 2)` lack the whitespace-then-digits shape, `15+HL:16` / `9+N` carry
+/// letters, `16: +04` has a dangling colon). The measured family is the only corpus carrier
+/// of this shape (43 tables, one document; offsets `{00, 04, 08, 12}`).
+fn parse_offset_suffixed_bit_position(cell: &str) -> Option<(u32, u32, u32)> {
+    let s = cell.trim();
+    let (bits, offset) = s.split_once('+')?;
+    if !bits.ends_with(|c: char| c.is_ascii_whitespace()) {
+        return None;
+    }
+    let bits = bits.trim();
+    if bits.starts_with('[') || bits.ends_with(']') {
+        return None; // brackets are not part of this family's convention
+    }
+    let offset = offset.trim();
+    if offset.is_empty() || offset.len() > 4 || !offset.bytes().all(|b| b.is_ascii_digit()) {
+        return None;
+    }
+    let (high, low) = parse_pure_bit_position(bits)?;
+    Some((high, low, offset.parse().ok()?))
+}
+
 /// The effective cells of a table row: trimmed text with CONSECUTIVE duplicate cells
 /// collapsed (a Docling spanning cell is repeated once per spanned column).
 fn effective_row_cells(row: &[StructuredTableCellRecord]) -> Vec<String> {
@@ -7953,12 +7993,7 @@ fn bit_position_container_label(caption: &str) -> Option<String> {
     {
         return None;
     }
-    if words
-        .last()
-        .is_some_and(|w| w.eq_ignore_ascii_case("(continued)"))
-    {
-        words.pop();
-    }
+    trim_continued_marker(&mut words);
     let norm = |w: &str| {
         w.trim_matches(|c: char| !c.is_ascii_alphanumeric())
             .to_ascii_lowercase()
@@ -7981,6 +8016,27 @@ fn bit_position_container_label(caption: &str) -> Option<String> {
         None
     } else {
         Some(label)
+    }
+}
+
+/// Strip a trailing `(Continued)` continuation marker from a caption's word list — as its
+/// own word, or fused to the previous word by lost caption spacing (`… Fields(Continued)`,
+/// PDF-VARIANT-DIGESTION.10d: the same document writes the same marker both ways). Pure
+/// spacing grammar, shared by the container-label and register-name caption readers.
+fn trim_continued_marker(words: &mut Vec<&str>) {
+    const MARKER: &str = "(continued)";
+    let Some(last) = words.last() else {
+        return;
+    };
+    if last.eq_ignore_ascii_case(MARKER) {
+        words.pop();
+    } else if last.len() > MARKER.len()
+        && let Some(split) = last.len().checked_sub(MARKER.len())
+        && let (Some(head), Some(tail)) = (last.get(..split), last.get(split..))
+        && tail.eq_ignore_ascii_case(MARKER)
+    {
+        let idx = words.len() - 1;
+        words[idx] = head;
     }
 }
 
@@ -8097,12 +8153,7 @@ fn bit_assignment_register_name(caption: &str) -> Option<String> {
             words.remove(0);
         }
     }
-    if words
-        .last()
-        .is_some_and(|w| w.eq_ignore_ascii_case("(continued)"))
-    {
-        words.pop();
-    }
+    trim_continued_marker(&mut words);
     let lower: Vec<String> = words
         .iter()
         .map(|w| {
@@ -8167,10 +8218,13 @@ enum BitLayoutLabel {
 
 /// One parsed row of a bit-layout table: the bit extent, the explicit name cell when the
 /// table has one (three-column family; `None` for the two-column shape where the name is
-/// fused into the description), and the description cell.
+/// fused into the description), and the description cell. `byte_offset` carries the literal
+/// dword-relative offset suffix when the bit cell had one (`31:28 +04`;
+/// PDF-VARIANT-DIGESTION.10d) — the bit extent is then relative to that dword, not absolute.
 struct BitLayoutRow {
     high: u32,
     low: u32,
+    byte_offset: Option<u32>,
     name: Option<String>,
     description: String,
 }
@@ -8183,6 +8237,20 @@ struct BitLayoutTable<'a> {
     rows: Vec<BitLayoutRow>,
 }
 
+/// PDF-VARIANT-DIGESTION.10d — are a table's dword-relative rows in FORWARD layout order
+/// (byte offset ascending, bit position descending within each dword — the only order the
+/// measured family uses)? Rows without an offset are position-incomplete and stay out of
+/// the check. A table that violates this order never proves chain adjacency.
+fn dword_rows_forward(rows: &[BitLayoutRow]) -> bool {
+    let positioned: Vec<(u32, u32, u32)> = rows
+        .iter()
+        .filter_map(|r| Some((r.byte_offset?, r.high, r.low)))
+        .collect();
+    positioned
+        .windows(2)
+        .all(|w| w[1].0 > w[0].0 || (w[1].0 == w[0].0 && w[1].1 < w[0].2))
+}
+
 /// PDF-VARIANT-DIGESTION.10b — may `next` continue the chain ending at `prev`? Requires page
 /// distance ≤ 1 AND **bit-exact adjacency** in a direction both tables' own row senses
 /// permit: descending (`next.first_high == prev.last_low - 1`) or the ascending mirror.
@@ -8192,6 +8260,15 @@ struct BitLayoutTable<'a> {
 /// 0 would otherwise "ascend" from it). The `.10c` heading-anchoring alternative was
 /// REJECTED by measurement: it would add 1 safe adoption corpus-wide against 15
 /// bit-overlapping wrong ones.
+///
+/// `.10d`: DWORD-RELATIVE tables (rows carrying a `byte_offset`) chain on the
+/// `(offset ascending, bit descending)` lexicographic successor instead — same dword with
+/// `next.first_high == prev.last_low - 1` (14 measured joins), or the next dword exactly
+/// `+4` with the previous dword closed at bit 0 and the next opening at bit 31 (1 measured
+/// join). Both tables' offset rows must be in forward layout order, both boundary rows must
+/// carry their offsets (a boundary row whose offset was lost proves nothing), and the two
+/// position conventions never join each other — a pure-cell table is never adjacent to a
+/// dword-relative one.
 fn bit_position_chain_adjacent(prev: &BitLayoutTable<'_>, next: &BitLayoutTable<'_>) -> bool {
     let page_ok = match (prev.page, next.page) {
         (Some(a), Some(b)) => b >= a && b - a <= 1,
@@ -8203,6 +8280,22 @@ fn bit_position_chain_adjacent(prev: &BitLayoutTable<'_>, next: &BitLayoutTable<
     let (Some(prev_last), Some(next_first)) = (prev.rows.last(), next.rows.first()) else {
         return false;
     };
+    let offset_bearing = |rows: &[BitLayoutRow]| rows.iter().any(|r| r.byte_offset.is_some());
+    if offset_bearing(&prev.rows) || offset_bearing(&next.rows) {
+        let (Some(prev_offset), Some(next_offset)) =
+            (prev_last.byte_offset, next_first.byte_offset)
+        else {
+            return false;
+        };
+        if !(dword_rows_forward(&prev.rows) && dword_rows_forward(&next.rows)) {
+            return false;
+        }
+        let same_dword =
+            next_offset == prev_offset && prev_last.low > 0 && next_first.high == prev_last.low - 1;
+        let next_dword =
+            next_offset == prev_offset + 4 && prev_last.low == 0 && next_first.high == 31;
+        return same_dword || next_dword;
+    }
     let prev_sense = bit_position_sense(&prev.rows);
     let next_sense = bit_position_sense(&next.rows);
     let no_ascending =
@@ -8226,14 +8319,16 @@ fn bit_layout_labels_agree(chain: &BitLayoutLabel, next: &BitLayoutLabel) -> boo
     }
 }
 
-/// PDF-VARIANT-DIGESTION.10b/.10c — collect every shape-qualified bit-layout table
+/// PDF-VARIANT-DIGESTION.10b/.10c/.10d — collect every shape-qualified bit-layout table
 /// (two-column `bits | description` and three-column `bits | name | function/description`)
 /// in document order, with parsed rows and the caption-derived typed-home label. ONE
 /// collector for both shapes so chain adjacency is always tested against the table's true
-/// document predecessor. Row gates: eligible rows must strict-parse (a single symbolic or
-/// offset-suffixed cell like `31:28 +04` keeps the WHOLE table residual); a three-column
-/// row with an EMPTY bit cell is a value-encoding sub-row (the name cell holds `0`/`1`
-/// enums) and is skipped without counting against the gate; the two-column row rules are
+/// document predecessor. Row gates: eligible rows must strict-parse (a single SYMBOLIC cell
+/// like `15+HL:16` keeps the WHOLE table residual); a two-column cell may carry the
+/// dword-relative offset suffix (`31:28 +04` → [`parse_offset_suffixed_bit_position`],
+/// `.10d`) — the offset is captured literally, never silently dropped; a three-column row
+/// with an EMPTY bit cell is a value-encoding sub-row (the name cell holds `0`/`1` enums)
+/// and is skipped without counting against the gate; the two-column pure-cell rules are
 /// exactly the `.10b` ones (locked by its tests).
 fn collect_bit_layout_tables<'a>(
     source_ir: &'a SourceIr,
@@ -8260,10 +8355,17 @@ fn collect_bit_layout_tables<'a>(
                 let [bits, desc] = cells.as_slice() else {
                     continue;
                 };
-                match parse_pure_bit_position(bits) {
-                    Some((high, low)) if !desc.is_empty() => rows.push(BitLayoutRow {
+                let parsed = parse_pure_bit_position(bits)
+                    .map(|(high, low)| (high, low, None))
+                    .or_else(|| {
+                        parse_offset_suffixed_bit_position(bits)
+                            .map(|(high, low, offset)| (high, low, Some(offset)))
+                    });
+                match parsed {
+                    Some((high, low, byte_offset)) if !desc.is_empty() => rows.push(BitLayoutRow {
                         high,
                         low,
+                        byte_offset,
                         name: None,
                         description: desc.clone(),
                     }),
@@ -8285,6 +8387,7 @@ fn collect_bit_layout_tables<'a>(
                     Some((high, low)) => rows.push(BitLayoutRow {
                         high,
                         low,
+                        byte_offset: None,
                         name: (!name.is_empty()).then(|| name.clone()),
                         description: desc.clone(),
                     }),
@@ -8409,15 +8512,8 @@ fn extract_bit_position_structure_fields(
                 {
                     continue;
                 }
-                if let Some(token) = row
-                    .description
-                    .split_whitespace()
-                    .next()
-                    .and_then(identifier_shaped_token)
-                {
-                    *leading_token_rows
-                        .entry(token.to_ascii_lowercase())
-                        .or_default() += 1;
+                if let Some(key) = fused_name_lead_count_key(&row.description) {
+                    *leading_token_rows.entry(key).or_default() += 1;
                 }
             }
             for row in &parsed.rows {
@@ -8473,6 +8569,7 @@ fn extract_bit_position_structure_fields(
                     container: label.clone(),
                     bit_width: Some(row.high - row.low + 1),
                     bit_range: Some((row.high, row.low)),
+                    byte_offset: row.byte_offset,
                     description: (!row.description.is_empty()).then(|| row.description.clone()),
                     supporting_table_ids: vec![parsed.table.table_id.clone()],
                 });
@@ -10330,14 +10427,8 @@ fn synthesize_register_field_tables(
                 {
                     continue;
                 }
-                if let Some(tok) = desc
-                    .split_whitespace()
-                    .next()
-                    .and_then(identifier_shaped_token)
-                {
-                    *leading_token_rows
-                        .entry(tok.to_ascii_lowercase())
-                        .or_default() += 1;
+                if let Some(key) = fused_name_lead_count_key(desc) {
+                    *leading_token_rows.entry(key).or_default() += 1;
                 }
             }
         }
@@ -11300,10 +11391,86 @@ fn leading_field_identifier(
     Some(tok)
 }
 
+/// PDF-VARIANT-DIGESTION.10d — the BRACKET-SLICE leading name form (`DeviceID[15:0] .`,
+/// `GuestID[15:0]: This …`, `Address[31:12]. Address to invalidate.`): a letter-led token
+/// carrying a literal `[hi(:lo)]` slice, immediately bounded by `.` or `:` (attached to the
+/// token or the very next word). The name is kept VERBATIM including its slice — the slice
+/// is the document's own field-VALUE qualifier (`Address[31:0]` and `Address[63:32]` are
+/// two distinct row statements about one logical field; collapsing them to a bare `Address`
+/// would misstate both rows). The bracket-plus-boundary frame is structural evidence strong
+/// enough to admit plain English heads (`Address`, `Vector`, `Destination`) that the bare
+/// leading-identifier form rightly rejects — measured per-item: every corpus fire of this
+/// shape is a genuine field name, and all fires sit in one document family.
+fn bracket_slice_field_name(desc: &str) -> Option<String> {
+    let mut words = desc.split_whitespace();
+    let token = words.next()?;
+    let trimmed = token.trim_end_matches(['.', ':']);
+    let boundary_attached = trimmed.len() != token.len();
+    let open = trimmed.find('[')?;
+    if !trimmed.ends_with(']')
+        || !trimmed[open..].bytes().any(|b| b.is_ascii_digit())
+        || !is_message_field_name(trimmed)
+    {
+        return None;
+    }
+    if boundary_attached || matches!(words.next(), Some(".") | Some(":")) {
+        return Some(trimmed.to_string());
+    }
+    None
+}
+
+/// PDF-VARIANT-DIGESTION.10d — the SINGLE-LETTER framed name form (`f: flush queue .`,
+/// `S: size. …`, `U . The U bit …`, `I . interrupt. …`): one ASCII letter immediately
+/// followed by an attached `:` or a standalone `.` separator word. A single letter has no
+/// identifier SHAPE of its own, so the frame is required (a bare `f flush queue` stays an
+/// honest residual) and the per-table leading-token uniqueness gate applies like any other
+/// fused-name form — a letter leading several rows of one table is prose, not a name.
+fn single_letter_framed_name(
+    desc: &str,
+    leading_token_rows: &std::collections::HashMap<String, usize>,
+) -> Option<String> {
+    let mut words = desc.split_whitespace();
+    let first = words.next()?;
+    let (letter, colon_attached) = match first.strip_suffix(':') {
+        Some(head) => (head, true),
+        None => (first, false),
+    };
+    if letter.chars().count() != 1 || !letter.chars().all(|c| c.is_ascii_alphabetic()) {
+        return None;
+    }
+    if !colon_attached && words.next() != Some(".") {
+        return None;
+    }
+    if leading_token_rows
+        .get(&letter.to_ascii_lowercase())
+        .copied()
+        .unwrap_or(0)
+        > 1
+    {
+        return None;
+    }
+    Some(letter.to_string())
+}
+
+/// The per-table uniqueness COUNT key of a description's leading token, shared by the
+/// fused-name pre-passes: the identifier-shaped token (`.10a` leading-identifier form) or
+/// the single-letter head (`.10d` framed-letter form; the 1-char key space is disjoint from
+/// the 2–40-char identifier keys, so counting letters never disturbs the existing gate).
+fn fused_name_lead_count_key(desc: &str) -> Option<String> {
+    let first = desc.split_whitespace().next()?;
+    if let Some(token) = identifier_shaped_token(first) {
+        return Some(token.to_ascii_lowercase());
+    }
+    let letter = first.strip_suffix(':').unwrap_or(first);
+    (letter.chars().count() == 1 && letter.chars().all(|c| c.is_ascii_alphabetic()))
+        .then(|| letter.to_ascii_lowercase())
+}
+
 /// PDF-VARIANT-DIGESTION.10a — full mnemonic recovery for the bit-range-name path: the untouched
 /// `(MNEMONIC):` defined-term form first (EXTRACTION-GAP-FIX.2 behavior preserved), then the
-/// paren+frame form, then the gated leading-identifier form. A `Reserved…`-led description never
-/// reaches the new forms. `None` keeps the bit-range as the honest residual field name.
+/// `.10d` bracket-slice form, then the paren+frame form, then the gated leading-identifier
+/// form, then the `.10d` framed single-letter form. A `Reserved…`-led description never
+/// reaches the newer forms. `None` keeps the bit-range as the honest residual field name.
 fn recover_field_mnemonic(
     desc: &str,
     access_cell: Option<&str>,
@@ -11318,10 +11485,16 @@ fn recover_field_mnemonic(
     {
         return None;
     }
+    if let Some(m) = bracket_slice_field_name(desc) {
+        return Some(m);
+    }
     if let Some(m) = field_identifier_from_paren_frame(desc) {
         return Some(m);
     }
-    leading_field_identifier(desc, access_cell, leading_token_rows)
+    if let Some(m) = leading_field_identifier(desc, access_cell, leading_token_rows) {
+        return Some(m);
+    }
+    single_letter_framed_name(desc, leading_token_rows)
 }
 
 /// PDF-VARIANT-DIGESTION.10a — recover a register's byte offset from the universal caption
@@ -12966,8 +13139,8 @@ mod tests {
         assert_eq!(super::parse_pure_bit_position("15:00"), Some((15, 0)));
         assert_eq!(super::parse_pure_bit_position(" 31 : 28 "), Some((31, 28)));
         assert_eq!(super::parse_pure_bit_position("0"), Some((0, 0)));
-        // the dword-relative offset-suffix family stays residual — capturing the range while
-        // dropping `+04` would misrepresent absolute position
+        // the dword-relative offset-suffix family is NOT a pure cell — it parses only through
+        // its own `.10d` parser, which keeps the offset instead of dropping it
         assert_eq!(super::parse_pure_bit_position("31:28 +04"), None);
         // the lenient digit-filter would read this symbolic cell as `318:32` — fabrication
         assert_eq!(
@@ -12983,12 +13156,103 @@ mod tests {
     }
 
     #[test]
+    fn parse_offset_suffixed_bit_position_strict_gates() {
+        // PDF-VARIANT-DIGESTION.10d — dword-relative offset cells parse with their literal
+        // decimal byte offset; every symbolic/malformed corpus shape rejects.
+        let parse = super::parse_offset_suffixed_bit_position;
+        assert_eq!(parse("31:28 +04"), Some((31, 28, 4)));
+        assert_eq!(parse("2 +00"), Some((2, 2, 0)));
+        assert_eq!(parse("31:0 +12"), Some((31, 0, 12)));
+        assert_eq!(parse(" 19:0  + 04 "), Some((19, 0, 4)));
+        // a dangling colon is a malformed cell, not a single-bit statement
+        assert_eq!(parse("16: +04"), None);
+        // symbolic suffixes (register-count formulas, variable lengths, index expressions)
+        assert_eq!(parse("13+"), None);
+        assert_eq!(parse("4 + (ITSnum × 2)"), None);
+        assert_eq!(parse("15+HL:16"), None);
+        assert_eq!(parse("9+N"), None);
+        assert_eq!(parse("20+"), None);
+        // no whitespace before `+` is not the measured convention
+        assert_eq!(parse("31:28+04"), None);
+        // brackets and non-decimal offset tokens are not part of the family
+        assert_eq!(parse("[31:0] +04"), None);
+        assert_eq!(parse("31:28 +04h"), None);
+        // a pure cell carries no offset
+        assert_eq!(parse("31:28"), None);
+    }
+
+    #[test]
+    fn bracket_slice_field_name_grammar() {
+        // PDF-VARIANT-DIGESTION.10d — the bracket-slice leading form keeps the document's
+        // name VERBATIM including its value-slice qualifier.
+        let name = super::bracket_slice_field_name;
+        assert_eq!(name("DeviceID[15:0] ."), Some("DeviceID[15:0]".to_string()));
+        assert_eq!(
+            name("GuestID[15:0]: This GuestID is a 16 bit value."),
+            Some("GuestID[15:0]".to_string())
+        );
+        // the bracket-plus-boundary frame admits plain English heads the bare
+        // leading-identifier form rightly rejects
+        assert_eq!(
+            name("Address[31:12]. Address to invalidate."),
+            Some("Address[31:12]".to_string())
+        );
+        assert_eq!(
+            name("Vector[8:0] . Used to calculate the address."),
+            Some("Vector[8:0]".to_string())
+        );
+        // a two-word head is not a single bracket-sliced token — honest residual
+        assert_eq!(name("Store Address[31:3] . The lower portion."), None);
+        // a slash head is not a field-name token
+        assert_eq!(name("D/P[15:0]: DomainID/PASID[15:0]."), None);
+        // no `.`/`:` boundary after the slice — prose, not a fused name
+        assert_eq!(name("Address[31:12] follows in prose"), None);
+        // a slice with no digit grounds nothing
+        assert_eq!(name("X1[:] ."), None);
+    }
+
+    #[test]
+    fn single_letter_framed_name_grammar() {
+        // PDF-VARIANT-DIGESTION.10d — single letters are names only inside a colon/dot frame,
+        // and the per-table uniqueness gate applies.
+        let empty = std::collections::HashMap::new();
+        let name = super::single_letter_framed_name;
+        assert_eq!(
+            name("f: flush queue . 0=all previous commands.", &empty),
+            Some("f".to_string())
+        );
+        assert_eq!(
+            name("U . The U bit in the I/O page table entry.", &empty),
+            Some("U".to_string())
+        );
+        assert_eq!(
+            name("S: size. 0=the size is 4 Kbytes.", &empty),
+            Some("S".to_string())
+        );
+        // no frame → no name (a bare letter is prose)
+        assert_eq!(name("f flush queue without frame", &empty), None);
+        // digits and multi-char tokens are not this form
+        assert_eq!(name("0: zero encoding.", &empty), None);
+        assert_eq!(name("GN: guest/nested.", &empty), None);
+        // a letter leading several rows of one table is prose, not a name
+        let mut repeated = std::collections::HashMap::new();
+        repeated.insert("i".to_string(), 2usize);
+        assert_eq!(name("i: completion interrupt.", &repeated), None);
+    }
+
+    #[test]
     fn bit_position_container_label_grammar() {
         let label = super::bit_position_container_label;
         // the AMD `(Continued)` + `Field Definitions` family
         assert_eq!(
             label("Table 7: Device Table Entry (DTE) Field Definitions (Continued)").as_deref(),
             Some("Device Table Entry (DTE)")
+        );
+        // the marker FUSED to the previous word by lost caption spacing (`.10d`): the same
+        // document writes `… Fields (Continued)` and `… Fields(Continued)` for one family
+        assert_eq!(
+            label("Table 39: PREFETCH_IOMMU_PAGES Fields(Continued)").as_deref(),
+            Some("PREFETCH_IOMMU_PAGES")
         );
         // figure-ref prefix strip
         assert_eq!(
@@ -13024,7 +13288,8 @@ mod tests {
         // PDF-VARIANT-DIGESTION.10b end-to-end: the AMD-DTE-shaped chain (caption-less HEAD +
         // `(Continued)` captioned member + caption-less tail joined by bit-exact adjacency),
         // a fresh caption-less structure that must NOT adopt, the NVMe-shaped value-encoding
-        // sub-rows, and the two whole-table residual classes (offset-suffix, symbolic cell).
+        // sub-rows, the `.10d` dword-relative offset row (captured WITH its literal
+        // byte_offset), and the symbolic-cell whole-table residual class.
         let tempdir = tempdir()?;
         let source = tempdir.path().join("spec.md");
         let base = tempdir.path().join("generated").join("source_ir");
@@ -13109,7 +13374,7 @@ mod tests {
             ]);
             t
         });
-        // offset-suffixed cells keep the WHOLE table residual
+        // a dword-relative offset-suffixed cell extracts WITH its literal byte offset (`.10d`)
         source_ir.structured_tables.push(bits_table(
             "bits_offset",
             "page_0030",
@@ -13138,7 +13403,13 @@ mod tests {
         ));
         let mut manifest = super::ExtractionManifest::default();
         let fields = super::message_field_surface(&source_ir, None, &mut manifest);
-        type FieldView<'a> = (&'a str, &'a str, Option<(u32, u32)>, Option<u32>);
+        type FieldView<'a> = (
+            &'a str,
+            &'a str,
+            Option<(u32, u32)>,
+            Option<u32>,
+            Option<u32>,
+        );
         let view: Vec<FieldView<'_>> = fields
             .iter()
             .map(|f| {
@@ -13147,6 +13418,7 @@ mod tests {
                     f.name.as_str(),
                     f.bit_range,
                     f.bit_width,
+                    f.byte_offset,
                 )
             })
             .collect();
@@ -13157,19 +13429,35 @@ mod tests {
                     "Widget Table Entry (WTE)",
                     "HeadCtl",
                     Some((255, 248)),
-                    Some(8)
+                    Some(8),
+                    None
                 ),
-                ("Widget Table Entry (WTE)", "FNA", Some((239, 232)), Some(8)),
+                (
+                    "Widget Table Entry (WTE)",
+                    "FNA",
+                    Some((239, 232)),
+                    Some(8),
+                    None
+                ),
                 (
                     "Widget Table Entry (WTE)",
                     "TailCfg",
                     Some((230, 200)),
-                    Some(31)
+                    Some(31),
+                    None
                 ),
-                ("Command Dword 0", "CID", Some((31, 16)), Some(16)),
+                ("Command Dword 0", "CID", Some((31, 16)), Some(16), None),
+                (
+                    "Prefix Payload",
+                    "OffName",
+                    Some((31, 28)),
+                    Some(4),
+                    Some(4)
+                ),
             ],
-            "chain members share the captioned container; fresh/offset/symbolic/classified \
-             tables and Reserved rows stay honest residuals"
+            "chain members share the captioned container; the dword-relative row keeps its \
+             literal bit range AND byte offset; fresh/symbolic/classified tables and \
+             Reserved rows stay honest residuals"
         );
         assert_eq!(fields[0].field_id, "message_field_0000");
         assert_eq!(fields[3].field_id, "message_field_0003");
@@ -13179,7 +13467,7 @@ mod tests {
             .find(|s| s.surface == "message_fields")
             .expect("message_fields surface recorded");
         assert_eq!(entry.entries[1].name, "message_fields.bit_position_table");
-        assert_eq!(entry.entries[1].produced, 4);
+        assert_eq!(entry.entries[1].produced, 5);
         Ok(())
     }
 
@@ -13386,6 +13674,138 @@ mod tests {
                 .iter()
                 .any(|r| r.register_id == "regbit_reg_unnamed"),
             "a register-worded caption without an identifier yields no register either"
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn dword_relative_offset_tables_chain_and_extract_with_byte_offsets() -> Result<()> {
+        // PDF-VARIANT-DIGESTION.10d end-to-end, the AMD command/event-entry shape: a
+        // caption-less HEAD + a `(Continued)` captioned member joined SAME-dword
+        // (`19 == 20 - 1` at `+04`) + a caption-less tail joined NEXT-dword
+        // (`+04` closed at bit 0 → `+08` opens at bit 31); inside, every measured name and
+        // residual class — framed single letters, verbatim bracket-slice names (English
+        // heads admitted by the frame), a paren-colon mnemonic, an offset-LESS row keeping
+        // `byte_offset: None` (honest absence, never inferred from neighbors), a two-word
+        // bracket head, a value/opcode row, and a Reserved row. A fresh offset structure
+        // restarting at `+00` must NOT adopt, and being caption-less it yields nothing.
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Spec\nCommand layouts.\n")?;
+        let mut source_ir = SourceIr::build(&source, &base)?;
+        let bits_table =
+            |id: &str, page: &str, caption: Option<&str>, rows: &[&[&str]]| StructuredTableRecord {
+                table_id: id.to_string(),
+                asset_id: id.to_string(),
+                page_id: Some(page.to_string()),
+                caption_text: caption.map(|c| c.to_string()),
+                source_ref: None,
+                table_kind: TableKind::Unknown,
+                header_rows: vec![vec![
+                    make_table_cell("Bits", true),
+                    make_table_cell("Description", true),
+                ]],
+                body_rows: rows
+                    .iter()
+                    .map(|r| r.iter().map(|c| make_table_cell(c, false)).collect())
+                    .collect(),
+                row_count: rows.len() as u32 + 1,
+                col_count: 2,
+            };
+        source_ir.structured_tables.push(bits_table(
+            "cmd_head",
+            "page_0124",
+            None,
+            &[
+                &[
+                    "31:3 +00",
+                    "Store Address[31:3] . The lower portion of the SPA.",
+                ],
+                &["2 +00", "f: flush queue . 0=all previous commands finish."],
+                &["1 +00", "i: completion interrupt . 0=no interrupt is set."],
+                &["0 +00", "s: completion store . 0=no store is written."],
+                &["31:28 +04", "01h . COMPLETION_WAIT command number."],
+                &["27:20 +04", "Reserved."],
+            ],
+        ));
+        source_ir.structured_tables.push(bits_table(
+            "cmd_cont",
+            "page_0125",
+            Some("Table 34: COMPLETION_WAIT Fields (Continued)"),
+            &[
+                &[
+                    "19:4 +04",
+                    "QueueID[15:0] . The QueueID limits outstanding work.",
+                ],
+                &["3", "MixCtl: mixed control. This row lost its offset."],
+                &["2:0 +04", "Error Flags (EFL): error flag bits."],
+            ],
+        ));
+        source_ir.structured_tables.push(bits_table(
+            "cmd_tail",
+            "page_0125",
+            None,
+            &[&["31:0 +08", "DataVal[31:0]: the data value dword."]],
+        ));
+        // a fresh offset structure restarts at `+00` — never the successor of `+08` — and a
+        // caption-less chain with no labeled member yields nothing
+        source_ir.structured_tables.push(bits_table(
+            "cmd_fresh",
+            "page_0126",
+            None,
+            &[
+                &["31:16 +00", "Reserved."],
+                &["15:0 +00", "DeviceID[15:0] ."],
+            ],
+        ));
+        let mut manifest = super::ExtractionManifest::default();
+        let fields = super::message_field_surface(&source_ir, None, &mut manifest);
+        type FieldView<'a> = (
+            &'a str,
+            &'a str,
+            Option<(u32, u32)>,
+            Option<u32>,
+            Option<u32>,
+        );
+        let view: Vec<FieldView<'_>> = fields
+            .iter()
+            .map(|f| {
+                (
+                    f.container.as_str(),
+                    f.name.as_str(),
+                    f.bit_range,
+                    f.byte_offset,
+                    f.bit_width,
+                )
+            })
+            .collect();
+        assert_eq!(
+            view,
+            vec![
+                ("COMPLETION_WAIT", "f", Some((2, 2)), Some(0), Some(1)),
+                ("COMPLETION_WAIT", "i", Some((1, 1)), Some(0), Some(1)),
+                ("COMPLETION_WAIT", "s", Some((0, 0)), Some(0), Some(1)),
+                (
+                    "COMPLETION_WAIT",
+                    "QueueID[15:0]",
+                    Some((19, 4)),
+                    Some(4),
+                    Some(16)
+                ),
+                ("COMPLETION_WAIT", "MixCtl", Some((3, 3)), None, Some(1)),
+                ("COMPLETION_WAIT", "EFL", Some((2, 0)), Some(4), Some(3)),
+                (
+                    "COMPLETION_WAIT",
+                    "DataVal[31:0]",
+                    Some((31, 0)),
+                    Some(8),
+                    Some(32)
+                ),
+            ],
+            "the dword-relative chain spans same-dword and next-dword joins; bit ranges and \
+             byte offsets stay literal; the two-word bracket head, the opcode value row, \
+             Reserved rows, and the fresh caption-less structure stay honest residuals"
         );
         Ok(())
     }

@@ -1,4 +1,40 @@
 # DEVELOPMENT_NOTES
+## `PDF-VARIANT-DIGESTION.10d` (`2026-06-11`) — value-slices vs positions, the probe correction, and the fused-marker live catch
+- The defining honesty moment: the obvious "derive absolute bit = offset*8 + bit" move was
+  killed by a per-item cross-check — description brackets (`Store Data[63:32]`,
+  `DomainID[15:0]`) are slices of the FIELD's value, not positions (54/66 mismatch the
+  derivation; the 12 matches are value-aligned continuations that merely ground the dword
+  packing). Storing derived absolutes would make the IR contradict the document's own
+  notation on most rows. Literal `bit_range` + additive `byte_offset` instead; derivation
+  stays with the consumer.
+- A probe assertion was CORRECTED by reading the code before building: the checkpoint
+  claimed "the existing chain recovers ~0 on offset rows", but `identifier_shaped_token`
+  trims a trailing `:`, so the existing leading-identifier form already names `AttrV:` /
+  `VCmd .` / CCIX `ESMEnable .` heads once a table passes the CELL gate — the offset
+  tables yielded 0 purely because of the gate. The genuinely new grammar shrank to the
+  bracket-slice form + framed single letters, and the predicted CCIX/NVMe deltas became
+  ZERO (sweep-proven byte-identical). Lesson: probe censuses measure candidate REGEXES;
+  what the existing code already does must be read, not assumed.
+- The bracket-slice form keeps names VERBATIM with their slice (`Address[31:0]` and
+  `Address[63:32]` are two distinct row statements about one logical field) — collapsing
+  to a bare head under the (container, name) dedup would have silently merged them into
+  one record with the first dword's range, a partial-truth. Verbatim capture dissolves
+  the merge problem instead of gating around it.
+- Single-letter uniqueness rides the existing per-table count map with 1-char keys —
+  disjoint from the 2–40-char identifier keys by construction, so the existing gate's
+  behavior is provably untouched without a parallel mechanism.
+- Live catch (per-item eyeball, then fixed + fixture-locked): `Table 39:
+  PREFETCH_IOMMU_PAGES Fields(Continued)` fuses the continuation marker to the previous
+  word — the label grammar minted a bogus `… Fields(Continued)` container until a shared
+  `trim_continued_marker` (both caption readers) stripped the fused form; the fragment
+  then merged into `PREFETCH_IOMMU_PAGES`. The same document writes the same marker both
+  ways; aggregate counts would never have surfaced it.
+- Verification economics: with the 12-doc dry-run parity FULLY byte-identical (no new
+  extractor registered → not even a manifest delta) and canonical artifacts + eval code
+  untouched, the gold scores are locked BY CONSTRUCTION — byte-identity is a stronger
+  proof than re-running eval on identical inputs. The final post-fmt/clippy binary was
+  still re-swept (stale-binary doctrine) before claiming the numbers.
+
 ## `PDF-VARIANT-DIGESTION.10c` (`2026-06-10`) — measured rejections, the unified collector, and two live-caught leak classes
 - The defining method moment: the heading-anchoring lever LOOKED principled (TRMs head
   each register section) and was rejected purely by per-item measurement — page-granular

@@ -784,12 +784,79 @@ shared bit-position header vocabulary (one matcher, `.10a` principle). The `.10b
 behavior is LOCKED through the refactor by its own tests + the NVMe-216/AMD-82 re-proof.
 
 **`PDF-VARIANT-DIGESTION.10d` — the offset-suffixed dword-relative bit-cell family.**
-· Status: **`active`** (opened `2026-06-11`; probe-first per doctrine — NO code before the
-probe closes the design). Spun from the `.10b` quantified residuals: **41 AMD tables /
+· Status: **DONE `2026-06-11`** (probe → measured design → build → live per-item
+verification; one live finding fixed and fixture-locked: the fused `Fields(Continued)`
+caption). Spun from the `.10b` quantified residuals: **41 AMD tables /
 184 rows** whose bit cells carry a byte-offset suffix (`31:28 +04` = bits 31:28 of the
 dword at byte offset `+04` within the containing structure). The `.10b` STRICT cell parser
 rejects the WHOLE table on any such cell BY DESIGN (capturing `31:28` while dropping the
-`+04` would misplace the field — fabrication), so today these tables are honest residuals.
+`+04` would misplace the field — fabrication), so before this slice those tables were
+honest residuals.
+**Verification log (build):** lib tests 1560→1564 (4 new hermetic: the offset-cell parser
+gates incl. every measured corpus rejection shape — `16: +04`, `13+`, `4 + (ITSnum × 2)`,
+`15+HL:16`, `9+N`, `20+`, no-space `31:28+04`, bracketed, `04h`-suffixed; the
+bracket-slice name grammar incl. the English-head admission, two-word/slash/boundary-less
+/digit-less rejections; the framed single-letter grammar incl. frame requirement and
+per-table uniqueness; the end-to-end dword-relative chain — same-dword + next-dword joins,
+literal `byte_offset` on records, the offset-LESS row keeping `byte_offset: None`, opcode
+value-row/Reserved/two-word/fresh-restart residuals; plus the `.10b` lock test updated to
+the `.10d` contract and the fused-`(Continued)` label case); kg-bench **154/154**; full
+`scripts/run_ci.sh` GREEN. **Old-vs-new dry-run parity over ALL 12 intact-bundle docs:
+byte-IDENTICAL — zero deltas, not even the manifest** (the offset family rides the
+EXISTING `message_fields.bit_position_table` strategy: same family, wider literal grammar
+— a deliberate decision, no new extractor registered, so the corpus fingerprint vocabulary
+is unchanged). **Live AMD (stub protocol, canonical untouched, re-verified on the final
+post-fmt binary): 82 → 217 message fields, 15 → 30 containers, +135 fields of which 114
+carry `byte_offset`, ZERO pre-existing records changed, every other surface
+(registers 8, timing 62, constraints/relations 0) byte-identical.** Per-item eyeball of
+all 135: 16 offset-bearing containers (`COMPLETION_WAIT` `f`/`i`/`s` at `+00`;
+`ILLEGAL_DEV_TABLE_ENTRY` 13 fields `VCmd`→`Address[63:32]@31:0+12`; `IO_PAGE_FAULT` 16;
+`PAGE_SERVICE_REQUEST` 11 incl. `PPRtag@9:0+04`; `INVALIDATE_IOTLB_PAGES` 10 incl.
+`Maxpend[7:0]@31:24+00`), the table_0126 bare-`17` row lands as `US@17:17` with
+`byte_offset` honestly ABSENT (never inferred from neighbors), and the D-form names
+previously-residual rows on PURE `.10b` tables (+21: DTE `GuestID[15:0]`/`GDeviceID[15:0]`
+— the documented `.10b` residual class; IRTE `Vector[8:0]`/`Destination[7:0]` English
+heads under the bracket frame; page-table `A`/`D`/`G`/`U` single-letter bits).
+`INVALIDATE_IOMMU_ALL` and `Guest_Event_Fault` rows recover no names → no records
+(honest, probe-predicted). **Live finding (caught per-item, then fixed + tested):** the
+`Table 39: PREFETCH_IOMMU_PAGES Fields(Continued)` caption fuses the marker to the
+previous word (lost spacing) — the label grammar initially minted a bogus
+`PREFETCH_IOMMU_PAGES Fields(Continued)` container; a shared `trim_continued_marker`
+(applied to BOTH caption readers — container label and `.10c` register name) now strips
+the fused form, and the fragment merges into `PREFETCH_IOMMU_PAGES` (7 fields).
+**Probe-assertion CORRECTION (from code reading before building):** the probe checkpoint
+overstated "the existing chain recovers ~0 on offset rows" — the existing
+leading-identifier form (whose `identifier_shaped_token` trims a trailing `:`) already
+recovers the multi-char colon/dot heads (`AttrV:`, `VCmd .`, CCIX `ESMEnable .`) once a
+table passes the CELL gate; the offset tables yielded 0 purely because the gate rejected
+them. The genuinely NEW grammar is therefore narrower than the probe's D/E/F framing:
+**Form D bracket-slice** (`DeviceID[15:0] .` → verbatim name incl. the value-slice
+qualifier — `Address[31:0]` and `Address[63:32]` stay distinct records; English heads
+admitted by the bracket+boundary frame) and **framed SINGLE LETTERS** (`f:`/`U .` —
+colon/dot frame required, per-table uniqueness via the count-key extension whose 1-char
+keys are disjoint from the existing 2–40-char keys by construction). Consequently the
+predicted `.10a` CCIX delta is ZERO (those rows were already named) — confirmed by the
+sweep: CCIX outputs byte-identical. NVMe `Operation:` (Titlecase English, colon-only
+frame) is rejected by the identifier-shape gate → NVMe byte-identical too, documented
+honest residual.
+**Build shape:** additive `MessageFieldRecord.byte_offset: Option<u32>` (serde-skipped;
+old artifacts load unchanged); `parse_offset_suffixed_bit_position` beside the pure parser
+(union grammar in the 2-col collector arm only — the 3-col family carries no offsets);
+`BitLayoutRow.byte_offset`; chain adjacency gains the dword-relative branch — the
+`(offset asc, bit desc)` lexicographic successor (same-dword `next_hi == prev_lo - 1`,
+14 measured joins; next-dword `prev_lo == 0 → next_hi == 31, offset exactly +4`, 1
+measured join), a `dword_rows_forward` order guard, BOTH boundary rows must carry offsets,
+and the two position conventions never join each other; `recover_field_mnemonic` gains
+forms D and framed-singles in the shared chain (register path included — corpus-measured
+AMD-only, proven by the sweep). Golds on the 12 swept docs are locked by the byte-identity
+(canonical artifacts untouched — the standing Pattern gauges survive by construction;
+eval code untouched). **Honest residuals (quantified, unchanged class):** the 8
+lost-caption capless chains (tables 0079, 0080+0081, 0088, 0093, 0116+0117, 0121, 0129,
+0146 — the re-ingest lever); 0127/0128 (3-col conditional `Description, RX=0|RX=1`
+headers) and 0132 (malformed `16: +04` cell) whole-table FAILs; 25 opcode value-rows
+(`01h . COMPLETION_WAIT command number.`); two-word heads (`Store Address[31:3]`, `Type.`,
+`Src .`, `Inval:`); name-less parsed rows. KM card
+`offset-suffixed-dword-relative-bit-cells`; book `pipeline/evidenceir.md` subsection.
 **The leaf's two recorded questions (decide from the probe, per-item):**
   1. **Derivation honesty:** the absolute bit position `offset*8 + bit` is DERIVABLE
      arithmetic from two document-stated numbers (the `EXTRACTION-GAP-FIX.4a` cumulative-
