@@ -513,7 +513,16 @@ VT-d 152→103/318; RISC-V Debug 59→44/179) from the REAL gaps:
   wire-docs + register golds stay green): `.10a` the `bit location`-keyed register/field
   vocabulary (CCIX family, ~600 tables across 4 docs — biggest single unlock); `.10b` the
   two-column `bits \| description` shape (AMD IOMMU + relatives, ~290); `.10c` the
-  `name \| function` column synonym (GIC-600 +4 docs, ~129). Honest boundary: a shape is
+  `name \| function` column synonym (GIC-600 +4 docs, ~129).
+  **`.10b` first probe pass (`2026-06-10`): the family is AMD IOMMU 160 + NVMe 130 + eMMC 1 —
+  NVMe is a GOLD-measured doc, so any gate change hits its measured surface; AND the rows
+  describe in-memory STRUCTURE entries (AMD Device Table Entry "Field Definitions"
+  page-fragments with caption-less continuations; NVMe queue/data structures), NOT MMIO
+  registers — `.10b` must first decide the typed home (register surface vs a structure
+  surface) and design a gate WITHOUT access/reset vocabulary (two columns have none;
+  candidate anchors: the "Field Definitions" caption family, all-rows-bit-range column
+  shape, fragment continuation merging). Heavier design slice than `.10a` — full
+  probe-first treatment in a fresh leaf, golds re-measured.** Honest boundary: a shape is
   recovered only when its rows actually parse as bit-range + field semantics — otherwise it
   stays an explicit residual (no fabrication).
 
