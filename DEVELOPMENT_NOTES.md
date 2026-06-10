@@ -1,4 +1,30 @@
 # DEVELOPMENT_NOTES
+## `LLM-PRIMARY-PROMOTION.3a` (`2026-06-10`) — the subject snap; trigger = absence-from-sentence
+- First cut (typing-failure trigger) was WRONG and the per-item audit caught it: production
+  `classify_entity` DEFERS to the always-Signal judge for an undeclared non-structural token,
+  so the `SYCOREQ` typo typed as Signal and grounded as a phantom record (my `.3` grep for
+  'SYSCO' missed it — `SYCOREQ` doesn't contain that substring; per-item lesson: grep the
+  actual spelling space, not the expected one). The phantom died at the SemanticIR
+  declared-signal filter — that is where the temporal rules vanished.
+- Shipped trigger: subject has ZERO identifier-boundary occurrences in its own source sentence
+  (subjects are quotes by construction) → snap iff exactly one declared signal-shaped sentence
+  token within one case-insensitive edit (`is_snap_candidate_token`: ≥4 chars, leading upper,
+  ≤1 lowercase — `ARESETn`; `within_one_edit_ignore_case`; candidate must type Signal/Field).
+  Never rewrites a subject that occurs in its sentence; unsnappable keeps pre-fix behavior.
+  Hook is BEFORE typing in `ground_constraint_typed` (let-chain; the clippy
+  too-many-arguments allow stays on the function). +5 tests incl. the deferring-judge shape.
+- Live proof (clean protocol): promoted AXI carries `SYSCOREQ must_be_deasserted | when
+  ARESETn is asserted` (document spelling). Snap works.
+- `.3b` finding: seed_axi_temporal still 1/3 (fp=2) — BOTH gold reset rules lost incl.
+  correctly-spelled SYSCOACK → the gap is temporal-derivation parity (Pattern surface derives
+  `…drives SYSCO* → LOW post_tick rising ARESETN ASSERTED`; the LLM-primary shape does not).
+  Probe candidates (do NOT guess): DEASSERTED→LOW polarity collapse, antecedent recovery from
+  condition_text vs Pattern statement linkage, supporting-statement ids feeding actor
+  grounding. AXI reverted (102 constraints; both gates 1.000).
+- Measurement-protocol rule now explicit: restore the Pattern baseline BEFORE any promotion
+  measurement — an already-promoted artifact is not a valid input (one invalid intermediate
+  run discarded).
+
 ## `LLM-PRIMARY-PROMOTION.3` (`2026-06-10`) — gate battery: APB+AHB cleared; AXI caught + reverted
 - Method: promote the persisted CANONICAL AHB/AXI artifacts via the standalone command (same
   `promote_constraints` core as the converge stage — `.2` already proved the converge

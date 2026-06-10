@@ -516,6 +516,18 @@ the subject** — an incidental *"an OKAY response **can** be given in a single
 cycle"* elsewhere in the paragraph does not soften the ERROR-procedure
 requirements that follow it.
 
+One last guard handles a failure the promotion gold gates caught in the wild: the model
+occasionally **misspells** a subject it otherwise read perfectly — *"SYSCOREQ and SYSCOACK
+must be deasserted when ARESETn is asserted"* came back with a `SYCOREQ` record (one letter
+dropped). Such a phantom name would ground and then silently vanish downstream where canonical
+stages keep only declared signals. The extractor's subjects are supposed to be *quotes from
+the sentence*, so a proposed subject that does not occur in its own source sentence is treated
+as suspect: if the sentence contains **exactly one** declared, signal-shaped token within one
+character edit of it, the subject is snapped to the document's own spelling; any ambiguity —
+or a candidate the document does not declare — and no correction happens. A subject that does
+appear in its sentence is never rewritten, so the snap can fix a typo but can never invent or
+substitute a name.
+
 Finally, the surviving set is **de-duplicated**: a specification often restates
 the same requirement in several places, and the same `(signal, kind, value,
 condition)` fact re-extracted from three statements becomes *one* record that

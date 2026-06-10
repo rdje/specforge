@@ -1,3 +1,24 @@
+### `LLM-PRIMARY-PROMOTION.3a` — the model-misspelled-subject snap (live-proven); a second gap (`.3b`) keeps AXI reverted
+The snap is live: a proposed constraint subject that does NOT occur in its own source sentence
+(the extractor's subjects are quotes) is snapped to the document's own token when the sentence
+holds exactly ONE declared, signal-shaped candidate within one character edit
+(`snap_subject_to_sentence_token` + helpers in `ir/constraint_extract_llm.rs`, hooked in
+`ground_constraint_typed` BEFORE typing; a subject occurring in its sentence is never
+rewritten; +5 tests, lib 1545). **Root-cause correction (supersedes the `.3` reading):**
+production typing DEFERS to the LLM judge for undeclared tokens, so the `SYCOREQ` typo had
+*grounded as a phantom record* and died at the SemanticIR declared-signal filter — the
+per-item audit killed the typing-failure-triggered first cut (green unit tests, failed live
+gate); absence-from-sentence is the shipped trigger, with a deferring-judge regression test
+locking the production shape. **Live proof on the clean protocol** (Pattern baseline restored
+→ promote): the promoted AXI artifact carries `SYSCOREQ must_be_deasserted when ARESETn is
+asserted` under the document's spelling. **Honest residual → `.3b`:** the temporal gate still
+fails (tp=1 fp=2) and now demonstrably NOT from the typo — both gold reset rules are lost
+including the always-correctly-spelled SYSCOACK: the SemanticIR temporal derivation does not
+reproduce the gold rule shape from the LLM-primary record shape (it did from Pattern). AXI
+reverted again (gates re-verified 1.000); APB/AHB stay promoted+green; default-flip blocked on
+`.3b`. Protocol lesson recorded: an already-promoted artifact is not a valid promotion input
+(one invalid intermediate measurement caught + discarded). KM `model-misspelled-subject-snap`.
+
 ### `LLM-PRIMARY-PROMOTION.3` — gate battery on promoted canonical artifacts: APB+AHB cleared, AXI gate CAUGHT a defect and was reverted
 The honest verification slice. The persisted canonical AHB/AXI artifacts were promoted via the
 same shared core the converge stage uses, downstream rebuilt, and the full gold-gate battery

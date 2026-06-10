@@ -205,6 +205,106 @@ pub enum GroundedConstraint {
 /// grounding); only the subject's entity type decides which surface the record belongs to.
 /// `type_subject` is injected (production = entity typing) so this is testable with no provider;
 /// `field_containers` reports the catalog containers declaring a field subject (provenance).
+/// `LLM-PRIMARY-PROMOTION.3a` candidate shape: an identifier token that plausibly IS a signal
+/// spelling — length ≥ 4, leading uppercase, at most one lowercase character (the `ARESETn`
+/// naming convention), everything else uppercase/digit/underscore. Deliberately only a SHAPE
+/// filter to keep prose words out of consideration: the load-bearing gate is that a candidate
+/// must additionally type as a valid subject against the document's own catalogs.
+fn is_snap_candidate_token(token: &str) -> bool {
+    token.len() >= 4
+        && token.chars().next().is_some_and(|c| c.is_ascii_uppercase())
+        && token.chars().all(|c| c.is_ascii_alphanumeric() || c == '_')
+        && token.chars().filter(|c| c.is_ascii_lowercase()).count() <= 1
+}
+
+/// Case-insensitive "exactly one edit away" (one substitution, insertion, or deletion).
+/// Equal-ignoring-case strings return `false` — there is nothing to fix, and the caller only
+/// reaches here after the proposed spelling already failed to ground.
+fn within_one_edit_ignore_case(a: &str, b: &str) -> bool {
+    let a: Vec<char> = a.chars().map(|c| c.to_ascii_lowercase()).collect();
+    let b: Vec<char> = b.chars().map(|c| c.to_ascii_lowercase()).collect();
+    if a == b {
+        return false;
+    }
+    let (short, long) = if a.len() <= b.len() {
+        (&a, &b)
+    } else {
+        (&b, &a)
+    };
+    match long.len() - short.len() {
+        0 => {
+            short
+                .iter()
+                .zip(long.iter())
+                .filter(|(x, y)| x != y)
+                .count()
+                == 1
+        }
+        1 => {
+            // One insertion in `long`: walk both, allowing exactly one skip in `long`.
+            let (mut i, mut j, mut skipped) = (0usize, 0usize, false);
+            while i < short.len() && j < long.len() {
+                if short[i] == long[j] {
+                    i += 1;
+                    j += 1;
+                } else if skipped {
+                    return false;
+                } else {
+                    skipped = true;
+                    j += 1;
+                }
+            }
+            true
+        }
+        _ => false,
+    }
+}
+
+/// `LLM-PRIMARY-PROMOTION.3a` — document-grounded recovery of a MODEL-MISSPELLED subject. The
+/// model sometimes emits a one-character-off spelling of a signal it otherwise read perfectly
+/// (probed live: `SYCOREQ` for the sentence's coordinated `SYSCOREQ and SYSCOACK must be
+/// deasserted…`, temp 0, reproducible). A misspelled record either dies downstream at the
+/// SemanticIR declared-signal filter (silent recall loss — the measured AXI temporal-gate
+/// failure) or survives as a phantom name. The trigger is *the proposal does not occur in its
+/// own source sentence*: this extractor's subjects are quotes from the sentence, so an absent
+/// subject is suspect per se. Snap it to the document's OWN token iff every one of these holds:
+/// - the candidate literally appears in the source sentence as a signal-shaped identifier
+///   token (`is_snap_candidate_token`),
+/// - it types as a valid subject (Signal, or a declared Field) against the document,
+/// - it is within ONE edit of the proposal (case-insensitive), and
+/// - it is the ONLY such candidate — any ambiguity and no snap happens.
+///
+/// Nothing is fabricated: the correction target is the sentence's own text, and the corrected
+/// subject still passes every downstream grounding gate. No name lists (ADR 0006).
+pub fn snap_subject_to_sentence_token(
+    proposed: &str,
+    sentence: &str,
+    type_subject: impl Fn(&str) -> EntityType,
+) -> Option<String> {
+    let proposed = proposed.trim();
+    if proposed.len() < 4 {
+        return None;
+    }
+    let mut candidates: Vec<String> = Vec::new();
+    for token in sentence.split(|c: char| !(c.is_ascii_alphanumeric() || c == '_')) {
+        if !is_snap_candidate_token(token) || candidates.iter().any(|c| c == token) {
+            continue;
+        }
+        if !within_one_edit_ignore_case(proposed, token) {
+            continue;
+        }
+        let token_type = type_subject(token);
+        if is_valid_signal_subject(token_type) || token_type == EntityType::Field {
+            candidates.push(token.to_string());
+        }
+    }
+    if candidates.len() == 1 {
+        candidates.pop()
+    } else {
+        None
+    }
+}
+
 #[allow(clippy::too_many_arguments)]
 pub fn ground_constraint_typed(
     raw: &RawConstraint,
@@ -216,20 +316,36 @@ pub fn ground_constraint_typed(
     is_grounded: impl Fn(&str, &str) -> bool,
     field_containers: impl Fn(&str) -> Vec<String>,
 ) -> Option<GroundedConstraint> {
+    // LLM-PRIMARY-PROMOTION.3a — a subject the model did NOT copy from its own source
+    // sentence is suspect (the extractor's subjects are quotes): when the sentence holds
+    // exactly one declared token within one edit of it, the model misspelled that token —
+    // snap to the document's own spelling BEFORE typing. A subject that does occur in the
+    // sentence is never rewritten.
+    let mut subject = raw.subject.trim().to_string();
+    if subject.len() >= 4
+        && token_occurrences(
+            &sentence.to_ascii_lowercase(),
+            &subject.to_ascii_lowercase(),
+        )
+        .is_empty()
+        && let Some(snapped) = snap_subject_to_sentence_token(&subject, sentence, &type_subject)
+    {
+        subject = snapped;
+    }
     // .1/.FIELD.3 — the subject must type as a Signal or a declared Field (the model may not
     // invent subjects; actors, transactions, table refs, boilerplate are all dropped).
-    let subject_type = type_subject(&raw.subject);
+    let subject_type = type_subject(&subject);
     if !is_valid_signal_subject(subject_type) && subject_type != EntityType::Field {
         return None;
     }
     // .3a — a subject that appears only inside the sentence's conditional clauses is the
     // condition's subject, not an obligation's (condition-read-as-obligation) — drop.
-    if is_condition_only_subject(&raw.subject, sentence) {
+    if is_condition_only_subject(&subject, sentence) {
         return None;
     }
     // .3b — a subject framed permissively-only in its source sentences (recommendation/
     // option/hypothetical, no mandatory clause) cannot ground a must_* obligation — drop.
-    if is_permissive_only_subject_frame(&raw.subject, sentence) {
+    if is_permissive_only_subject_frame(&subject, sentence) {
         return None;
     }
     // .8 — a value-kind constraint whose value the model did not echo is no longer silently
@@ -255,8 +371,8 @@ pub fn ground_constraint_typed(
     Some(if subject_type == EntityType::Field {
         GroundedConstraint::Field(MessageFieldConstraintRecord {
             constraint_id: field_constraint_id.to_string(),
-            subject_field: raw.subject.trim().to_string(),
-            containers: field_containers(&raw.subject),
+            subject_field: subject.clone(),
+            containers: field_containers(&subject),
             constraint_kind,
             target_value: effective_value,
             condition_text,
@@ -268,7 +384,7 @@ pub fn ground_constraint_typed(
     } else {
         GroundedConstraint::Signal(SignalConstraintRecord {
             constraint_id: signal_constraint_id.to_string(),
-            subject_signal: raw.subject.trim().to_string(),
+            subject_signal: subject.clone(),
             constraint_kind,
             target_value: effective_value,
             condition_text,
@@ -832,6 +948,171 @@ mod tests {
                 value: "NONSEQ".into()
             }
         );
+    }
+
+    // LLM-PRIMARY-PROMOTION.3a — the model-misspelled-subject snap.
+
+    #[test]
+    fn misspelled_subject_snaps_to_the_sentences_own_token() {
+        // The probed live shape: the coordinated-subject sentence loses SYSCOREQ because the
+        // model writes `SYCOREQ`; the snap recovers the document's own spelling and the
+        // grounded record carries the CORRECT subject (with its condition intact).
+        let type_subject = |s: &str| {
+            if s == "SYSCOREQ" || s == "SYSCOACK" {
+                EntityType::Signal
+            } else {
+                EntityType::Boilerplate
+            }
+        };
+        let raw = RawConstraint {
+            subject: "SYCOREQ".into(),
+            kind: "must_be_deasserted".into(),
+            condition: Some("when ARESETn is asserted".into()),
+            value: None,
+        };
+        let got = ground_constraint_typed(
+            &raw,
+            "SYSCOREQ and SYSCOACK must be deasserted when ARESETn is asserted.",
+            "s1",
+            "cs",
+            "cf",
+            type_subject,
+            is_grounded_in_source,
+            |_| Vec::new(),
+        )
+        .expect("a one-edit misspelling of the sentence's own declared token must snap");
+        let GroundedConstraint::Signal(rec) = got else {
+            panic!("a signal-typed snap must yield a signal record");
+        };
+        assert_eq!(
+            rec.subject_signal, "SYSCOREQ",
+            "the DOCUMENT's spelling wins"
+        );
+        assert_eq!(
+            rec.condition_text.as_deref(),
+            Some("when ARESETn is asserted")
+        );
+        assert_eq!(rec.constraint_kind, SignalConstraintKind::MustBeDeasserted);
+    }
+
+    #[test]
+    fn snap_fires_even_when_a_deferring_judge_would_accept_the_typo() {
+        // The PRODUCTION shape that the first cut missed: entity typing DEFERS to the LLM
+        // judge for an undeclared, non-structural token, so the misspelled `SYCOREQ` types as
+        // Signal and would ground as a phantom name (dying later at the SemanticIR
+        // declared-signal filter — the measured AXI temporal-gate failure). The trigger is
+        // therefore absence-from-sentence, not typing failure.
+        let raw = RawConstraint {
+            subject: "SYCOREQ".into(),
+            kind: "must_be_deasserted".into(),
+            condition: Some("when ARESETn is asserted".into()),
+            value: None,
+        };
+        let got = ground_constraint_typed(
+            &raw,
+            "SYSCOREQ and SYSCOACK must be deasserted when ARESETn is asserted.",
+            "s1",
+            "cs",
+            "cf",
+            |_| EntityType::Signal, // the deferring judge: everything "is" a signal
+            is_grounded_in_source,
+            |_| Vec::new(),
+        )
+        .expect("the snap corrects the spelling before typing");
+        let GroundedConstraint::Signal(rec) = got else {
+            panic!("signal record expected");
+        };
+        assert_eq!(
+            rec.subject_signal, "SYSCOREQ",
+            "the document's spelling wins over the model's typo"
+        );
+    }
+
+    #[test]
+    fn snap_requires_an_unambiguous_candidate() {
+        // Two sentence tokens are both one edit away and both type as signals — ambiguous,
+        // so the honest drop stands.
+        let type_subject = |s: &str| {
+            if s == "XREQB" || s == "XREQC" {
+                EntityType::Signal
+            } else {
+                EntityType::Boilerplate
+            }
+        };
+        assert_eq!(
+            snap_subject_to_sentence_token(
+                "XREQA",
+                "XREQB and XREQC must be asserted.",
+                type_subject
+            ),
+            None
+        );
+        // With exactly one candidate the snap succeeds.
+        assert_eq!(
+            snap_subject_to_sentence_token("XREQA", "XREQB must be asserted.", type_subject)
+                .as_deref(),
+            Some("XREQB")
+        );
+    }
+
+    #[test]
+    fn snap_is_bounded_to_one_edit_and_real_token_shapes() {
+        let type_subject = |s: &str| {
+            if s == "SYSCOREQ" || s == "When" {
+                EntityType::Signal
+            } else {
+                EntityType::Boilerplate
+            }
+        };
+        // More than one edit away → no snap.
+        assert_eq!(
+            snap_subject_to_sentence_token("SYREQ", "SYSCOREQ must be deasserted.", type_subject),
+            None
+        );
+        // A short proposal never snaps (too loose at < 4 chars).
+        assert_eq!(
+            snap_subject_to_sentence_token("REQ", "XREQ must be asserted.", type_subject),
+            None
+        );
+        // A prose-shaped token ("When" — mostly lowercase) is never a candidate, even if a
+        // pathological typing closure would accept it.
+        assert_eq!(
+            snap_subject_to_sentence_token("Whan", "When XREQ is HIGH.", type_subject),
+            None
+        );
+        // Equal-ignoring-case is not a typo (typing already had its chance) → no snap.
+        assert_eq!(
+            snap_subject_to_sentence_token("syscoreq", "SYSCOREQ must be deasserted.", |_| {
+                EntityType::Boilerplate
+            }),
+            None
+        );
+    }
+
+    #[test]
+    fn snap_never_rewrites_a_groundable_subject() {
+        // A subject that types fine is used verbatim even with a near-twin in the sentence.
+        let raw = RawConstraint {
+            subject: "SYSCOACK".into(),
+            kind: "must_be_deasserted".into(),
+            condition: None,
+            value: None,
+        };
+        let got = ground_constraint_typed(
+            &raw,
+            "SYSCOREQ and SYSCOACK must be deasserted.",
+            "s1",
+            "cs",
+            "cf",
+            |_| EntityType::Signal,
+            is_grounded_in_source,
+            |_| Vec::new(),
+        )
+        .expect("a groundable subject grounds");
+        let GroundedConstraint::Signal(rec) = got else {
+            panic!("signal record expected");
+        };
+        assert_eq!(rec.subject_signal, "SYSCOACK");
     }
 
     #[test]

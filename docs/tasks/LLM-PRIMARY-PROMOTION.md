@@ -3,9 +3,9 @@
 ## Metadata
 
 - Tree ID: `LLM-PRIMARY-PROMOTION`
-- Status: `active` (`.1` design + `.2` opt-in stage + `.3` gate verification DONE `2026-06-10`;
-  `.3a` frontier — APB/AHB promoted + gate-cleared, AXI reverted pending the
-  coordinated-subject typo fix)
+- Status: `active` (`.1`–`.3a` DONE `2026-06-10`; `.3b` frontier — APB/AHB promoted +
+  gate-cleared, AXI reverted: the typo snap is live-proven but the temporal-derivation
+  parity gap blocks AXI promotion)
 - Roadmap lane: `R15e`/`R16` (extraction quality / production-readiness)
 - Created: `2026-06-10`
 - Parent context: `EXTRACTION-QUALITY-GAUGE.0`'s standing gauge made the gap VISIBLE: the
@@ -138,15 +138,41 @@
     constraint fed the temporal rules). Gauge re-measured on the restored Pattern surface so
     the standing report stays honest. APB + AHB keep their promoted surfaces (all their gates
     green).
-- ID: `LLM-PRIMARY-PROMOTION.3a` · Status: `pending` · Goal: **coordinated-subject typo
-  recovery** — a deterministic, document-grounded backstop for the model-misspelled-subject
-  class: when a proposed subject fails entity typing, snap it to the UNAMBIGUOUS declared
-  signal token that (a) literally appears in the source sentence, (b) passes
-  `is_valid_signal_subject`, and (c) is within edit distance 1 of the proposal (uppercase
-  identifiers, length ≥ 4, exactly ONE candidate — else honest drop stands). No lists, no
-  fabrication: the correction target is the document's own sentence token. Probe-first; then
-  re-promote AXI and re-run the FULL `.3` gate battery (seed_axi_temporal must be 3/3 on the
-  promoted artifact).
+- ID: `LLM-PRIMARY-PROMOTION.3a` · Status: `done` (`2026-06-10`; CODE + live proof of the
+  snap; the gate battery then exposed a SECOND, separate gap → `.3b`) · Goal:
+  **model-misspelled-subject recovery** — a deterministic, document-grounded backstop.
+  **ROOT-CAUSE CORRECTION (supersedes the `.3` reading "entity typing rightly rejects"):**
+  production typing DEFERS to the LLM judge for an undeclared non-structural token, so the
+  `SYCOREQ` typo *typed as Signal and grounded* — a phantom-name record that died silently at
+  the SemanticIR declared-signal filter. The per-item audit killed the first cut AGAIN: a
+  snap hooked on *typing failure* never fires in production (green unit tests, failed live
+  gate); the shipped trigger is **absence-from-sentence** — this extractor's subjects are
+  quotes, so a proposed subject with zero identifier-boundary occurrences in its own source
+  sentence is suspect per se. Shipped (`ir/constraint_extract_llm.rs`):
+  `snap_subject_to_sentence_token` (+ `is_snap_candidate_token` ≥4 chars/leading-upper/≤1
+  lowercase; `within_one_edit_ignore_case`; exactly ONE candidate that types as Signal/Field
+  or no snap) hooked in `ground_constraint_typed` BEFORE typing; a subject occurring in its
+  sentence is never rewritten. +5 tests incl. the deferring-judge production-shape regression
+  (lib 1545); fmt/clippy/rustdoc green. **Live proof (clean protocol: Pattern baseline
+  restored → promote): the promoted AXI artifact now carries `SYSCOREQ must_be_deasserted
+  when ARESETn is asserted` under the DOCUMENT's spelling** (pre-fix: the `SYCOREQ` phantom).
+  **But the temporal gate STILL fails (tp=1 fp=2): both gold reset rules are missed — INCLUDING
+  the always-correctly-spelled SYSCOACK — so the residual gap is NOT the typo: the SemanticIR
+  temporal derivation does not reproduce the gold rule shape (`MANAGER/SUBORDINATE drives
+  SYSCO* → LOW post_tick of rising ARESETN ASSERTED`) from the LLM-primary record shape,
+  while it did from the Pattern surface.** → `.3b`. AXI REVERTED again (Pattern baseline;
+  both gates re-verified 1.000; 102 constraints). Measurement-protocol lesson recorded: an
+  already-promoted artifact is NOT a valid promotion input — always restore the Pattern
+  baseline first (one invalid intermediate run caught + discarded).
+- ID: `LLM-PRIMARY-PROMOTION.3b` · Status: `pending` · Goal: **temporal-derivation parity for
+  promoted constraints** — probe-first: diff per-item how the SemanticIR temporal layer
+  derives the two gold reset rules from the PATTERN surface (which passes) vs the LLM-primary
+  surface (which loses both, even with correct subjects/conditions: `must_be_deasserted` +
+  "when ARESETn is asserted"). Candidate factors to probe, not guess: consequent value
+  collapse (DEASSERTED→LOW needs grounded polarity), antecedent recovery from the
+  condition_text vs the Pattern records' statement linkage, supporting-statement ids feeding
+  actor grounding (`C:ads|MANAGER|…`). Then fix in whichever layer is honestly deficient and
+  re-run the FULL battery (seed_axi_temporal 3/3 on the promoted artifact = the `.4` unblock).
 - ID: `LLM-PRIMARY-PROMOTION.4` · Status: `pending` · Goal: corpus sweep + tracked validation
   snapshot refresh + the default-flip decision packet (owner-visible: per-doc gauge deltas,
   gold-gate status, recommendation).
@@ -155,8 +181,8 @@
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `.3a` | `pending` | The gate-caught defect: coordinated-subject typo recovery (probe-first), then re-promote AXI + full gate battery |
-| 2 | `.4` | `pending` | Corpus evidence for the default-flip decision (needs `.3a` green on AXI) |
+| 1 | `.3b` | `pending` | Temporal-derivation parity: why the gold reset rules derive from the Pattern surface but not the LLM-primary one (probe per-item, fails even for correctly-spelled SYSCOACK) |
+| 2 | `.4` | `pending` | Corpus evidence for the default-flip decision (needs `.3b` green on AXI) |
 
 ## Changelog
 
@@ -183,3 +209,11 @@
   surface). The defect is a new bounded class → `.3a` (document-grounded typo snap, edit
   distance 1, unambiguous-candidate-only). WIRE-BASED-100 stands intact on all canonical
   artifacts.
+- `2026-06-10`: `.3a` DONE — the model-misspelled-subject snap is live (trigger =
+  absence-from-sentence, NOT typing failure: production typing defers to the LLM judge and the
+  typo grounded as a phantom name dying at the SemanticIR declared-signal filter — the audit
+  killed the typing-failure first cut). Snap live-proven: promoted AXI carries SYSCOREQ under
+  the document's spelling. The full battery then exposed `.3b`: the temporal derivation loses
+  BOTH gold reset rules from the LLM-primary shape (even correctly-spelled SYSCOACK), so AXI
+  stays reverted (gates re-verified 1.000) and the default-flip stays blocked. lib 1545. See
+  [[model-misspelled-subject-snap]].
