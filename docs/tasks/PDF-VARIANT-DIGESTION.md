@@ -681,6 +681,52 @@ the parity claim is: all extraction surfaces byte-identical on the 11 other inta
 ONLY the manifest gaining the new entry; NVMe additionally gains additive
 `message_field_records`/`bit_range` content. NVMe register-gold eval re-measured before/after.
 
+**`PDF-VARIANT-DIGESTION.10c` — the `bits | name | function/description` three-column family.**
+· Status: `in_progress` (`2026-06-10`: full probe pass DONE — recorded here; build next).
+**Census** (effective 3-column `unknown`-kind header: bit-position vocabulary + name-ish
+(`name`/`field`/`field name`/`bit name`) + `function`/`description`/`meaning`/`notes`, NO
+access/reset anywhere): **270 tables across 11 docs** — GIC-600 71, MMU-700 66, CoreSight
+TMC ddi0461 55, Intel VT-d 39, SDC-600 16, CHI-C2C ihi0098_b 8, SMBus 6, GIC-400 5, GIC
+arch 2, SMMU arch 1, OpenCAPI 1. Signatures: `bits|name|function` 145, `bits|name|
+description` 68, `bits|field|description` 48, rest singletons. These tables fail BOTH
+current gates by design: `is_register_field_header` needs access/reset; the field-titled
+message reader needs a container caption.
+**Caption-evidence buckets (per-item over all 270):** `REGISTER-WORD` 88 (caption literally
+says register: MMU-700 `TCU_CTRL register bit descriptions` 51, TMC `RSZ Register bit
+assignments` 32, C2C 5) · `BITASSIGN-REGIDENT` 28 (`GICD_CTLR bit assignments` — single
+register-shaped identifier before the universal TRM locution `bit assignments`; GIC-600 21,
+SDC-600 6, GIC-400 1) + 4 `BITASSIGN-OTHER` incl. the `<n>` ARRAY-register idents
+(`GICD_CHIPR<n>`, `GICT_ERR<n>STATUS`) · `STRUCT-NOUN` 13 (VT-d `Root-Entry Format` /
+`Scalable-mode Context-Entry Format` 11 — in-memory STRUCTURES, the `.10b` class, here WITH
+an explicit name column) · `CAPLESS` 133 · prose-bleed/continued 3.
+**TYPED-HOME DIRECTION (per-table, by the document's own caption vocabulary):** the
+register-evidence buckets (REGISTER-WORD + BITASSIGN-REGIDENT(+`<n>`)) go to the REGISTER
+surface with the caption as the register-name source — the same evidence class as
+`register_name_from_caption`/EXTRACTION-GAP-FIX.3 (a TRM caption `X register bit
+descriptions` IS a register declaration; access/reset stay honestly absent on the fields).
+The STRUCT-NOUN bucket extends the `.10b` bit-position message-field strategy with an
+explicit-name-column variant (VT-d's Root/Context entries are the same in-memory-structure
+class as AMD's DTE). Collision check DONE: the existing register records on these TRMs are
+SUMMARY-caption records (GIC-600's 15 = `… registers summary` tables; `GICD_CTLR` etc. do
+NOT exist yet) — the new path CREATES registers, no double-count; same-name fragment merge
+stays safe by the `.4c` distinct-fields rule.
+**Chain probe (capless adoption, .10b protocol):** adjacency is NOT sufficient here —
+EXACT/NOT per doc: MMU-700 12/3, VT-d 11/17, GIC-600 9/39, TMC 2/17(+2 below-gap). The many
+NOT cases are lost-caption tables for DIFFERENT registers (each register's table is small),
+so the `.10c` chain design needs caption-`(continued)` family anchoring AND/OR
+nearest-heading anchoring (TRMs head each register section `4.3.2 GICD_CTLR…`) — probe the
+heading lever per-item BEFORE building; bit-exact adjacency remains the only
+caption-free joiner (never guess).
+**Row/name quality (measured):** strict-parse rows GIC-600 301 (12 noparse) / MMU-700 205
+(3) / TMC 156 (99: 93 EMPTY bit cells = wrapped continuation rows + 6 `[31:0] a`
+footnote-letter suffix) / VT-d 290 (40). Name cells: explicit column, no fused-name grammar
+needed; `-` placeholder names (89 on GIC-600) and `Reserved` rows are honest skips; a
+footnote-letter micro-grammar is a measured maybe.
+**Verification plan:** 12-doc parity (register surface byte-identity expected everywhere
+except… NONE of the 12 intact docs carry the family — SMBus does (6 tables: 4 capless +
+value-encoding shapes) so SMBus golds/timing 84 must be re-measured), stub-protocol live
+runs on GIC-600/MMU-700/TMC/VT-d, all register golds + battery, kg-bench, full CI.
+
 **(SUPERSEDED active note) `PDF-VARIANT-DIGESTION.6`/`.7`** — item ② (`.5`) COMPLETE and `.8` (broaden
 prose-actor capture) DONE. **`.5a` + `.5b` + `.5c` are DONE** — structural doc-class routing
 (protocol/register/interface/guide), the front-matter doc-type signal (true guide vs under-extracted spec), and
