@@ -1,4 +1,23 @@
 # DEVELOPMENT_NOTES
+## `EXTRACTION-QUALITY-GAUGE.FIELD.1` (`2026-06-10`) — signal-vs-field ontology design (probe-first)
+- Probe method: walked all 49 persisted `generated/source_ir/*/source_ir.json` with
+  `structured_tables`, bucketing first-header-row signatures; then per-doc field-name extraction from
+  field-titled name columns vs the evidence artifacts' signal surfaces.
+- Two populations share the field-titled column: packet docs (CHI 36 / CHI-C2C 21–124 / CXS / DTI /
+  USB — message fields, captions "…channel/packet/message fields", widths in bits when present) and
+  register docs (RISC-V Debug 57× `Field|Description|Access|Reset`, VT-d 102×
+  `Bits|Access|Default|Field|Description`). Discriminator = register-access vocabulary columns, not
+  caption/name lists.
+- CHI's 36 field tables are ALL `table_kind: unknown` → currently inert; CHI evidence declares 28
+  signals (REQFLITV-class, correct) and zero fields — the `DBID`/`TxnID` garbage entered via prose
+  with no declared-field catalog to ground it out.
+- Defect found: `entity_prompt` defines `signal = a wire/pin/field carrying a value` — the conflation
+  lives in the judgment prompt itself; `.FIELD.3` splits it (`EntityType::Field`,
+  `declared_in_field_table` ground, signal-table outranks when both).
+- Surface design (`.FIELD.2`): `MessageFieldRecord` (name, caption-derived container, optional
+  width-in-bits, declaring-table provenance) via the `run_surface` framework + manifest entry +
+  kg-bench gold/negative pair (field table vs register-shaped table).
+
 ## `EXTRACTION-QUALITY-GAUGE.4` (`2026-06-10`) — constraint dedup
 - `dedup_constraints`: key = eval `signal_constraint_record_key` + normalized condition; first
   occurrence kept; `supporting_statement_ids` unioned (order-preserving contains-check). Lookup-only

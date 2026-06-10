@@ -225,10 +225,58 @@ honestly-qualified) path to "human-SpecForge in Rust."
   0→1 (`ACTIVATEACK must_be_value LOW` — the model reads the *when*-clause subject as a second
   obligation on the newly-extracted statement). LLM-primary volumes: APB 12→21, AHB 11→16, AXI
   54→59 (vs Pattern 14/15/102).
-- ID: `EXTRACTION-QUALITY-GAUGE.FIELD` · Status: `pending` · Goal: the SIGNAL-vs-FIELD ontology for
-  packet/flit protocols (CHI/CXL/PCIe-class) — model fields (flit contents) distinctly from signals
-  (physical wires), per the doc's own B16-Signals vs B2.x-Fields split. The real future target for
-  CHI-like PDFs (owner: "in fine we need to handle such cases too").
+- ID: `EXTRACTION-QUALITY-GAUGE.FIELD` · Status: `active` (designed `2026-06-10`, split `.1`–`.4`) ·
+  Goal: the SIGNAL-vs-FIELD ontology for packet/flit protocols (CHI/CXL/PCIe-class) — model fields
+  (flit/message contents) distinctly from signals (physical wires), per the doc's own
+  signals-vs-fields split. The real future target for CHI-like PDFs (owner: "in fine we need to
+  handle such cases too").
+- ID: `EXTRACTION-QUALITY-GAUGE.FIELD.1` · Status: `done` (`2026-06-10`, design + corpus probe,
+  docs-only) · Goal: ground the ontology in how the corpus actually declares fields BEFORE coding
+  (the `.9.7`/`.9.8` method). **Probed all 49 persisted SourceIRs with structured tables.** Findings:
+  - **The document's own table-header vocabulary types its rows** — fields are declared in tables
+    whose name column is field-titled (`Field` / `Field name`), signals in `Signal`-titled tables.
+    CHI: **36 field tables** (captions "Request channel fields" / "Response packet fields" / "Snoop
+    request fields" / "Data packet fields"; shapes `Field|Description`,
+    `Field|Affects structure|Description`) yielding **79 distinct field names** — including the
+    exact `.gauge`/`.6` mis-typing class (`DBID`, `TxnID`, `ReturnNID`, `Addr`, `Opcode`...); its
+    signals live in `Signal|Description` tables captioned "<channel> interface signals"
+    (`REQFLITV`, `REQFLITPEND`, `REQLCRDV`...). CHI-C2C: 21–124 field tables, with widths
+    (`Field name|Width (bits)|Value`). CXS: "Packet control fields". DTI/USB carry the shape too.
+  - **Two populations share the field-titled column** — packet docs (message fields) AND register
+    docs (RISC-V Debug 57× `Field|Description|Access|Reset`, Intel VT-d 102×
+    `Bits|Access|Default|Field|Description`). **Discriminator (structural, no name lists):
+    register-access vocabulary columns (`Access`/`Reset`/`Default`) and/or in-register bit-position
+    columns mark a REGISTER-field table** (already owned by the register surface); a field-titled
+    table without them declares MESSAGE fields.
+  - **Today the field tables are inert**: all 36 CHI field tables are `table_kind: unknown` — fields
+    have NO typed home, so field obligations in prose can only become wrong signal constraints or
+    be dropped. That is root cause #1's deepest layer.
+  - **Defect discovered:** `entity_prompt` (`ir/entity_typing.rs`) literally defines
+    `signal = a wire/pin/field carrying a value` — the ontology is conflated at the LLM judgment
+    point itself.
+  - **Out of first scope (honest residual):** CCIX declares fields as `Bit Location|Field
+    Description` (name embedded in prose) and OpenCAPI as `Operand mnemonic|Field width|Description`
+    — different strategies later, per multi-strategy/best-wins.
+- ID: `EXTRACTION-QUALITY-GAUGE.FIELD.2` · Status: `pending` · Goal: **capture** — a first-class
+  `message_field_records` EvidenceIR surface (`MessageFieldRecord`: id, name, container label
+  derived from the declaring table's caption, optional width-in-bits when a width column exists
+  (honest `None` otherwise), declaring-table provenance), extracted from field-titled tables that
+  are NOT register-shaped; registered through the `run_surface` extractor framework (manifest
+  entry); kg-bench gold (field table + signal table → fields land in `message_field_records`, NOT
+  in signal inventory) + negative (register-style `Field|...|Access|Reset` table → zero message
+  fields).
+- ID: `EXTRACTION-QUALITY-GAUGE.FIELD.3` · Status: `pending` · Goal: **discriminate** —
+  `EntityType::Field` + `EntityEvidence.declared_in_field_table` + grounding rule (declared in a
+  field table and not in a signal table → authoritatively `Field`; signal-table declaration
+  outranks when both); fix the conflated prompt (field = a named portion of a packet/flit/message
+  payload); `is_valid_signal_subject(Field) == false` → the `DBID`/`TxnID` class is grounded OUT of
+  signal constraints deterministically, no LLM call needed for declared fields.
+- ID: `EXTRACTION-QUALITY-GAUGE.FIELD.4` · Status: `pending` · Goal: **capture the intent** —
+  field-subject obligations become field-scoped constraints instead of dropped (decide at
+  implementation: a parallel `field_constraints` surface vs a subject-kind discriminator; a
+  separate surface keeps the canonical signal surface clean), then the CHI-class gauge re-measure
+  (caveat: CHI's `normalized/` bundle is cleaned and its PDF is host-local — request re-provision,
+  or re-measure on persisted artifacts where possible).
 - ID: `EXTRACTION-QUALITY-GAUGE.3` · Status: `active` (split `2026-06-10`) · Goal: permission/relational
   disambiguation. Split after `.8` measured the residual FP ledger: ALL three labeled-statement FPs are
   the **condition-subject-read-as-obligation** class — APB `PSELx must_be_high` (if-clause), AHB
@@ -325,3 +373,13 @@ honestly-qualified) path to "human-SpecForge in Rust."
   conditions stay distinct facts; eval unchanged at P=R=F1=1.000 ×3. The original `.gauge`
   duplication taxonomy (~30% on CHI) now has its mechanism in place for the CHI-class re-measure
   once `.FIELD` lands.
+- `2026-06-10`: `.FIELD.1` DONE (design + corpus probe, docs-only) — the signal-vs-field ontology is
+  grounded in the documents' own table-header vocabulary: field-titled name columns declare fields
+  (CHI: 36 tables / 79 names incl. the `DBID`/`TxnID` mis-typing class; CHI-C2C carries widths),
+  `Signal`-titled tables declare signals; register-field tables are discriminated structurally by
+  register-access columns (`Access`/`Reset`/`Default`), no name lists (ADR 0006). CHI's field
+  tables are currently `table_kind: unknown` → inert, so fields have no typed home — and
+  `entity_prompt` itself conflates field into signal ("a wire/pin/field"). Split: `.FIELD.2`
+  capture surface → `.FIELD.3` entity-type grounding → `.FIELD.4` field-scoped constraints +
+  CHI-class re-measure. CCIX/OpenCAPI field shapes are honest later strategies. See
+  [[packet-field-table-declaration]].

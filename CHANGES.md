@@ -1,3 +1,15 @@
+### `EXTRACTION-QUALITY-GAUGE.FIELD.1` — signal-vs-field ontology DESIGNED (corpus-probed, docs-only)
+The packet/flit-protocol field ontology is grounded before any code (the probe-first method): fields
+are declared in field-titled tables (CHI: 36 tables / 79 names including the `DBID`/`TxnID` class the
+gauge caught mis-typed as signals; CHI-C2C carries widths), signals in `Signal`-titled tables — the
+document's own header vocabulary types its rows, no name lists (ADR 0006). Register-field tables that
+share the `Field` column are discriminated structurally by register-access columns
+(`Access`/`Reset`/`Default`). Today CHI's field tables are `table_kind: unknown` → inert (fields have
+no typed home), and `entity_prompt` itself conflates field into signal ("a wire/pin/field"). Split:
+`.FIELD.2` capture surface (`message_field_records`) → `.FIELD.3` `EntityType::Field` grounding →
+`.FIELD.4` field-scoped constraints + CHI-class re-measure. CCIX/OpenCAPI shapes are honest later
+strategies. KM `packet-field-table-declaration`.
+
 ### `EXTRACTION-QUALITY-GAUGE.4` — provenance-merging constraint dedup (AXI 54→50 live)
 The LLM-primary set is now de-duplicated by (subject, kind incl. value, negation, condition): the
 first record wins, duplicates' supporting statements merge into it — duplicate noise removed, all
