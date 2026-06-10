@@ -229,7 +229,32 @@ honestly-qualified) path to "human-SpecForge in Rust."
   packet/flit protocols (CHI/CXL/PCIe-class) — model fields (flit contents) distinctly from signals
   (physical wires), per the doc's own B16-Signals vs B2.x-Fields split. The real future target for
   CHI-like PDFs (owner: "in fine we need to handle such cases too").
-- ID: `EXTRACTION-QUALITY-GAUGE.3` · Status: `pending` · Goal: permission/relational disambiguation.
+- ID: `EXTRACTION-QUALITY-GAUGE.3` · Status: `active` (split `2026-06-10`) · Goal: permission/relational
+  disambiguation. Split after `.8` measured the residual FP ledger: ALL three labeled-statement FPs are
+  the **condition-subject-read-as-obligation** class — APB `PSELx must_be_high` (if-clause), AHB
+  `HRESP must_be_value ERROR` (unless-clause), AXI `ACTIVATEACK must_be_value LOW` (when-clause).
+- ID: `EXTRACTION-QUALITY-GAUGE.3a` · Status: `done` (`2026-06-10`) · Goal: a deterministic
+  **condition-only-subject gate** in the LLM-primary grounding path: a proposed constraint whose
+  subject appears ONLY inside subordinate conditional clauses of the source sentence
+  (when/if/unless/while/until/after/before/whenever/provided-that/as-long-as — universal grammar, no
+  name lists) is the condition's subject, not an obligation's, and is dropped
+  (`is_condition_only_subject` + `conditional_clause_spans` + `token_occurrences` in
+  `ir/constraint_extract_llm.rs`, called from `ground_constraint` after signal typing). **The
+  per-item audit caught two real defects in the first cut before they could ship** — (1) clause
+  spans ran past sentence-final punctuation and swallowed the NEXT sentence's main clause; (2)
+  "while **driving** HREADYOUT LOW" is action *coordination* (the obligation IS on HREADYOUT), not a
+  condition — fixed by terminating spans at `.!?` too and by skipping marker+gerund clauses; the
+  defective first cut wrongly dropped AHB's two `HREADYOUT` records, the corrected gate restores
+  them while still killing all three target FPs (both behaviors fixture-locked in tests). +8 pure
+  tests total (lib 1511). **Measured (the `.8` redirected-copy protocol; post-`.8` numbers = the
+  baseline): APB P 0.857→1.000, AHB P 0.857→1.000, AXI P 0.800→1.000, recall HELD at 16/16 —
+  every doc now scores P=R=F1=1.000 on the labeled constraint task, and the split-conformal
+  tier-agreement threshold now calibrates on all three (empirical_error 0.000).** The three killed
+  FPs, per item: APB `PSELx must_be_high` (if-clause), AHB `HRESP must_be_value ERROR`
+  (unless-clause), AXI `ACTIVATEACK must_be_value LOW` (when-clause).
+- ID: `EXTRACTION-QUALITY-GAUGE.3b` · Status: `pending` · Goal: permission-vs-obligation gate
+  ("recommended"/"permitted"/"can"/"may" frames — e.g. the measured unlabeled `HPROT[0] must_be_high`
+  from "It is recommended that…") + relational-vs-value disambiguation ("set to the same value as").
 - ID: `EXTRACTION-QUALITY-GAUGE.4` · Status: `pending` · Goal: constraint dedup by (subject, kind, condition).
 - ID: `EXTRACTION-QUALITY-GAUGE.0` · Status: `pending` · Goal: wire the gauge into converge/CI.
 
@@ -245,3 +270,9 @@ honestly-qualified) path to "human-SpecForge in Rust."
   pre→post: APB 4/6→6/6, AHB 2/6→6/6, AXI 4/4→4/4 (control) — 10/16→16/16 gold facts, FP ledger
   net unchanged (the residual FP class is `.3` condition/permission work). See
   [[llm-primary-must-be-value-recall]].
+- `2026-06-10`: `.3a` DONE — the condition-only-subject gate kills the entire measured
+  condition-read-as-obligation FP class: **APB/AHB/AXI all P=R=F1=1.000 on the labeled constraint
+  task** (FPs 3→0, recall held 16/16, conformal calibrates on all three). The per-item audit caught
+  two first-cut defects (span crossing sentence ends; gerund action-coordination misread as a
+  condition) before commit. See [[llm-primary-condition-subject-gate]]. Open: `.3b`
+  permission-vs-obligation + relational-vs-value.

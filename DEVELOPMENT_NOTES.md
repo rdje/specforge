@@ -1,4 +1,24 @@
 # DEVELOPMENT_NOTES
+## `EXTRACTION-QUALITY-GAUGE.3a` (`2026-06-10`) — condition-only-subject gate (perfect labeled scores)
+- Gate: `is_condition_only_subject(subject, sentence)` — identifier-boundary occurrences
+  (`token_occurrences`) vs the union of subordinate-clause spans (`conditional_clause_spans`); all
+  occurrences covered → condition's subject → `ground_constraint` drops the proposal. Marker list =
+  universal clause grammar only; no signal/chip vocabulary (ADR 0006); absent subject → `false`
+  (entity typing owns that case). Precision-first: the gate only KILLS when confident.
+- Two first-cut defects caught by the mandatory per-item audit (never ship on aggregate scores):
+  (1) spans terminated at `,;:` only and ran past `.` into the next sentence's main clause;
+  (2) marker+gerund ("while driving HREADYOUT LOW") is action coordination — obligation on the
+  gerund's object — not a condition. Fixes: spans end at `.!?` too; first word after the marker
+  ending `-ing` → no span. The defective cut dropped AHB `HREADYOUT must_be_low/high` (restored by
+  the corrected gate); all three target FPs stay killed. Both shapes test-locked (16 module tests).
+- Measured per doc (post-`.8` → post-`.3a`, labeled constraint statements): APB tp6 fp1 → tp6 fp0;
+  AHB tp6 fp1 → tp6 fp0; AXI tp4 fp1 → tp4 fp0. Doc-level fact recall stays 6/6, 6/6, 4/4.
+  Conformal (tier-agreement, alpha=0.2) now finds threshold=1.00 / coverage=1.000 /
+  empirical_error=0.000 on all three (was "no threshold" / degenerate before).
+- LLM-primary volumes with the gate: APB 20, AHB 15, AXI 54 (vs Pattern 14/15/102).
+- Method note: the superseded defective-gate measurement run was discarded and the full 3-doc
+  measurement re-run with the corrected gate — numbers above are from the corrected build only.
+
 ## `EXTRACTION-QUALITY-GAUGE.8` (`2026-06-10`) — must_be_value recall gap closed at root
 - Probe-first method (the `.9.7`/`.9.8`/`.9.11` discipline): before touching code, the exact persisted
   source sentences for every missed gold fact were replayed against the production prompt (Ollama

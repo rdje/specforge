@@ -1,3 +1,25 @@
+### `EXTRACTION-QUALITY-GAUGE.3a` — condition-only-subject gate: APB/AHB/AXI all P=R=F1=1.000
+The entire residual FP class from `.8` (condition-read-as-obligation: APB `PSELx`, AHB `HRESP ERROR`,
+AXI `ACTIVATEACK LOW` — each the subject of a when/if/unless clause proposed as an obligation) is
+killed by a deterministic grounding gate: a proposed subject whose every identifier-boundary occurrence
+lies inside a subordinate conditional clause (when/whenever/if/unless/while/until/after/before/
+provided-that/as-long-as — universal clause grammar, no signal vocabulary, ADR 0006) is the condition's
+subject, not an obligation's → dropped. A subject with any main-clause occurrence is kept.
+
+**The per-item audit caught two first-cut defects before commit**: clause spans crossed sentence-final
+punctuation (swallowing the next sentence's main clause), and "while driving HREADYOUT LOW" — a marker
+followed by a gerund — is prescribed concurrent ACTION (the obligation IS on HREADYOUT), not a
+condition. Fixed (spans end at `.!?`; marker+gerund yields no span); the wrongly-dropped AHB
+`HREADYOUT` records came back while all three target FPs stayed dead; both behaviors test-locked.
++8 pure tests (lib 1511).
+
+**Measured** (post-`.8` baseline → post-`.3a`, same redirected-copy protocol): APB P 0.857→**1.000**,
+AHB P 0.857→**1.000**, AXI P 0.800→**1.000**, recall HELD 16/16 — the labeled constraint task is now
+**perfect on all three docs** and the split-conformal tier-agreement threshold calibrates on each
+(empirical_error 0.000). Remaining error work split to `.3b` (permission-vs-obligation frames +
+relational-vs-value). Book: the `extract-constraints-llm` section gained the condition-subject guard
+story + refreshed numbers; KM card `llm-primary-condition-subject-gate`.
+
 ### `EXTRACTION-QUALITY-GAUGE.8` — must_be_value recall gap CLOSED (10/16 → 16/16 gold facts)
 The `.7` clean-test gap is closed at its root. Probed live BEFORE coding (qwen2.5:14b-instruct, temp 0,
 the exact persisted sentences): the extraction prompt's kind vocabulary could not express a *validity*

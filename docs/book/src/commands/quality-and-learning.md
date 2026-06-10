@@ -446,6 +446,18 @@ field before anything is kept: the subject must type as a real **signal** (entit
 typing — a table reference, feature name, or transaction type is rejected), the
 kind must parse, and a condition survives only if the source sentence actually
 contains it. What the model proposes but cannot ground is dropped, never invented.
+
+One more guard runs on the subject itself. In *"ASKSTOP must be LOW **when
+ACTIVATEACK is LOW**"*, only ASKSTOP carries an obligation — ACTIVATEACK merely
+names the *situation* — yet a model happily proposes a constraint on both. The
+grounding pass therefore checks where the subject lives in the sentence: a
+subject that appears **only inside subordinate conditional clauses**
+(when/if/unless/while/until and kin) is the condition's subject, not an
+obligation's, and the proposal is dropped. The check is careful about real
+grammar: a subject that also appears in the main clause is kept, a clause never
+leaks past the end of its own sentence, and *"while **driving** HREADYOUT LOW"*
+is recognized as a prescribed concurrent action — an obligation on HREADYOUT —
+rather than a condition.
 Heads up before you run it: it **replaces** the artifact's `signal_constraints`
 in place — point it at a copy if you want to keep the Pattern set side by side.
 
@@ -464,5 +476,9 @@ Measured against the hand-validated AMBA gold (document-level fact recall,
 before → after that convention landed): APB **4/6 → 6/6**, AHB **2/6 → 6/6**, and
 AXI — which has no validity facts in gold, so it serves as the no-regression
 control — steady at **4/4**. Every one of the six previous misses was a
-"must be valid" fact, and every one is now recovered. *Authoritative tracking:*
+"must be valid" fact, and every one is now recovered. With the condition-subject
+guard added on top, the extractor currently scores **perfect precision, recall,
+and F1 (1.000)** on the labeled constraint statements of all three documents —
+the three remaining false positives, each a condition read as an obligation,
+are gone, and recall stayed intact. *Authoritative tracking:*
 `docs/tasks/EXTRACTION-QUALITY-GAUGE.md`.

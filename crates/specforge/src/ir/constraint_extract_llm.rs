@@ -54,6 +54,98 @@ fn is_value_kind(kind: &str) -> bool {
     )
 }
 
+/// Subordinate-clause introducers (universal English clause grammar — no signal/chip vocabulary,
+/// ADR 0006). Each takes a clause whose subject states a *situation*, not an obligation.
+const CONDITION_CLAUSE_MARKERS: &[&str] = &[
+    "when ",
+    "whenever ",
+    "if ",
+    "unless ",
+    "while ",
+    "until ",
+    "after ",
+    "before ",
+    "provided that ",
+    "as long as ",
+];
+
+/// `.3a` — does `subject` appear ONLY inside subordinate conditional clauses of `sentence`?
+/// Such a token is the *condition's* subject — "ASKSTOP must be LOW **when ACTIVATEACK is
+/// LOW**" obligates ASKSTOP, never ACTIVATEACK — so a constraint proposed on it is a
+/// condition-read-as-obligation error and must be dropped. A subject with any occurrence in
+/// the main clause (e.g. `PWAKEUP must remain asserted … if PWAKEUP and PSELx are asserted`)
+/// is kept. Returns `false` when the subject does not occur at all (other gates own that).
+pub fn is_condition_only_subject(subject: &str, sentence: &str) -> bool {
+    let lowered = sentence.to_ascii_lowercase();
+    let needle = subject.trim().to_ascii_lowercase();
+    if needle.is_empty() {
+        return false;
+    }
+    let occurrences = token_occurrences(&lowered, &needle);
+    if occurrences.is_empty() {
+        return false;
+    }
+    let spans = conditional_clause_spans(&lowered);
+    occurrences
+        .iter()
+        .all(|&(start, end)| spans.iter().any(|&(cs, ce)| start >= cs && end <= ce))
+}
+
+/// Identifier-boundary occurrences of `needle` in `haystack` (both lowercased) as byte ranges.
+fn token_occurrences(haystack: &str, needle: &str) -> Vec<(usize, usize)> {
+    let is_ident = |c: char| c.is_ascii_alphanumeric() || c == '_';
+    let mut out = Vec::new();
+    let mut from = 0;
+    while let Some(pos) = haystack[from..].find(needle) {
+        let start = from + pos;
+        let end = start + needle.len();
+        let before_ok = haystack[..start]
+            .chars()
+            .next_back()
+            .is_none_or(|c| !is_ident(c));
+        let after_ok = haystack[end..].chars().next().is_none_or(|c| !is_ident(c));
+        if before_ok && after_ok {
+            out.push((start, end));
+        }
+        from = start + 1;
+    }
+    out
+}
+
+/// Byte spans of every subordinate conditional clause: from a word-boundary clause marker to
+/// the next clause punctuation (`,` `;` `:`) or sentence end (`.` `!` `?`). A marker followed
+/// by a gerund (`while driving HREADYOUT LOW …`) introduces a concurrent *action* — the
+/// obligation lives on its object — not a condition, and yields no span. Overlaps are fine —
+/// only the union matters to the caller.
+fn conditional_clause_spans(lowered: &str) -> Vec<(usize, usize)> {
+    let is_ident = |c: char| c.is_ascii_alphanumeric() || c == '_';
+    let mut spans = Vec::new();
+    for marker in CONDITION_CLAUSE_MARKERS {
+        let mut from = 0;
+        while let Some(pos) = lowered[from..].find(marker) {
+            let start = from + pos;
+            let boundary_ok = lowered[..start]
+                .chars()
+                .next_back()
+                .is_none_or(|c| !is_ident(c));
+            let first_word = lowered[start + marker.len()..]
+                .split(|c: char| !is_ident(c))
+                .find(|w| !w.is_empty())
+                .unwrap_or_default();
+            let is_action_coordination = first_word.ends_with("ing");
+            if boundary_ok && !is_action_coordination {
+                let rest = &lowered[start..];
+                let end = rest
+                    .find([',', ';', ':', '.', '!', '?'])
+                    .map_or(lowered.len(), |p| start + p);
+                spans.push((start, end));
+            }
+            from = start + marker.len();
+        }
+    }
+    spans
+}
+
 /// Ground one proposed constraint into a record, or drop it. `type_subject` is injected (production
 /// = entity typing) so this is testable with no provider; `is_grounded` guards the condition.
 #[allow(clippy::too_many_arguments)]
@@ -67,6 +159,11 @@ pub fn ground_constraint(
 ) -> Option<SignalConstraintRecord> {
     // .1 — the subject must type as a Signal (the model may not invent non-signal subjects).
     if !is_valid_signal_subject(type_subject(&raw.subject)) {
+        return None;
+    }
+    // .3a — a subject that appears only inside the sentence's conditional clauses is the
+    // condition's subject, not an obligation's (condition-read-as-obligation) — drop.
+    if is_condition_only_subject(&raw.subject, sentence) {
         return None;
     }
     // .8 — a value-kind constraint whose value the model did not echo is no longer silently
@@ -204,6 +301,91 @@ mod tests {
             is_grounded_in_source,
         );
         assert!(got.is_none(), "a non-signal subject must be dropped");
+    }
+
+    #[test]
+    fn condition_only_subject_when_clause_is_detected_and_obligation_subject_is_not() {
+        // `.3a` — the measured AXI FP shape: the when-clause subject is not an obligation.
+        let s = "- ASKSTOP must be LOW when ACTIVATEACK is LOW.";
+        assert!(is_condition_only_subject("ACTIVATEACK", s));
+        assert!(!is_condition_only_subject("ASKSTOP", s));
+    }
+
+    #[test]
+    fn condition_only_subject_unless_clause_is_detected() {
+        // `.3a` — the measured AHB FP shape: both the when- and the unless-clause subjects.
+        let s = "The HAUSER signal must not change between cycles when HREADY is LOW, \
+                 unless HRESP signal is ERROR.";
+        assert!(is_condition_only_subject("HRESP", s));
+        assert!(is_condition_only_subject("HREADY", s));
+        assert!(!is_condition_only_subject("HAUSER", s));
+    }
+
+    #[test]
+    fn subject_in_both_main_and_conditional_clause_is_kept() {
+        // `.3a` — the measured APB shape: PWAKEUP recurs in the if-clause but its main-clause
+        // occurrence keeps it; PSELx exists only in the if-clause and is dropped.
+        let s = "- PWAKEUP must remain asserted until PREADY is asserted if PWAKEUP and \
+                 PSELx are asserted in the same cycle.";
+        assert!(!is_condition_only_subject("PWAKEUP", s));
+        assert!(is_condition_only_subject("PSELx", s));
+        assert!(is_condition_only_subject("PREADY", s));
+    }
+
+    #[test]
+    fn gerund_action_coordination_is_not_a_condition_and_spans_stop_at_sentence_end() {
+        // The measured AHB ERROR-response shape: "while driving HREADYOUT LOW" prescribes a
+        // concurrent ACTION on HREADYOUT (no condition span), and the next sentence's
+        // main-clause "HREADYOUT is driven HIGH" must not be swallowed by any earlier span.
+        let s = "To start the ERROR response, the Subordinate drives HRESP HIGH to indicate \
+                 ERROR while driving HREADYOUT LOW to extend the transfer for one extra cycle. \
+                 In the next cycle HREADYOUT is driven HIGH to end the transfer.";
+        assert!(!is_condition_only_subject("HREADYOUT", s));
+        assert!(!is_condition_only_subject("HRESP", s));
+    }
+
+    #[test]
+    fn condition_span_does_not_cross_into_the_next_sentence() {
+        // "when ACTIVATEACK is LOW." ends the span at the period: the next sentence's
+        // main-clause PREADY occurrence stays uncovered.
+        let s = "ASKSTOP must be LOW when ACTIVATEACK is LOW. PREADY must be HIGH.";
+        assert!(is_condition_only_subject("ACTIVATEACK", s));
+        assert!(!is_condition_only_subject("PREADY", s));
+    }
+
+    #[test]
+    fn unconditional_sentence_never_marks_a_condition_only_subject() {
+        let s = "For read transfers, the Requester must drive all bits of PSTRB LOW.";
+        assert!(!is_condition_only_subject("PSTRB", s));
+        // Absent subject: not this gate's call (entity typing owns it).
+        assert!(!is_condition_only_subject("PREADY", s));
+    }
+
+    #[test]
+    fn leading_conditional_clause_is_detected() {
+        let s = "When PSEL is asserted, PENABLE must also be asserted.";
+        assert!(is_condition_only_subject("PSEL", s));
+        assert!(!is_condition_only_subject("PENABLE", s));
+    }
+
+    #[test]
+    fn ground_constraint_drops_a_condition_only_subject() {
+        // End-to-end: the model proposes the when-clause subject as a second obligation.
+        let raw = RawConstraint {
+            subject: "ACTIVATEACK".into(),
+            kind: "must_be_value".into(),
+            condition: Some("when ACTIVATEACK is LOW".into()),
+            value: Some("LOW".into()),
+        };
+        let got = ground_constraint(
+            &raw,
+            "- ASKSTOP must be LOW when ACTIVATEACK is LOW.",
+            "s1",
+            "c1",
+            |_| EntityType::Signal,
+            is_grounded_in_source,
+        );
+        assert!(got.is_none(), "a condition-only subject must be dropped");
     }
 
     #[test]
