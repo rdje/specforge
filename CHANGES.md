@@ -1,3 +1,26 @@
+### `LLM-PRIMARY-PROMOTION.2` — `converge --promote-constraints-llm`: the clean constraint surface, promoted opt-in
+The promotion stage is live. The LLM-primary replacement core is extracted as
+`promote_constraints` (the `extract-constraints-llm` command is now a thin printing wrapper),
+and every replace now leaves two honest trails: the swap is manifest-recorded as
+`constraints.llm_primary` (new `ExtractionManifest::record_surface_manifest`, same
+replace-per-surface semantics — the fingerprint/cluster plane sees promoted documents) and any
+persisted NLI gauge is dropped (its measured constraint ids are definitively gone). `converge
+--promote-constraints-llm` (default OFF; with `--nlp-provider skip` it errors EARLY — an opt-in
+that silently does nothing is worse) runs the replacement post-stability — after the rescan
+step, before the gauge, so the standing gauge measures the PROMOTED surface — then rebuilds
+Semantic → Intent → adapter once and reports `constraint_promotion:` in the summary. Probed
+placement rationale (`.1`): the convergence loop's monotone fact-count guard forbids an
+in-loop shrink. Live APB end-to-end (git-tracked corpus PDF, vlm skip + nlp ollama,
+DOCLING_DEVICE=cpu): stabilized in 2 passes (18 Pattern+NLP3 constraints) → promotion
+**18 → 21 grounded → 21 kept** (on APB the promoted surface GROWS — the `.8` validity recovery
+reads facts the pattern grammar mis-read; the shrink shape is the dense-spec class) → gauge on
+the promoted surface **23.8% not-entailed vs 28.6%** on the old Pattern artifact → **eval gate
+HELD on the promoted canonical artifact**: P=R=F1=1.000 (6/6), WIRE-BASED-100 filtered
+relations 1.000, doc-level recall 6/6, conformal empirical_error 0.000. +3 tests (lib 1540);
+kg-bench 154/154; `run_ci.sh` green. Book: converge flags row + promotion subsection with the
+real transcript; `extract-constraints-llm` no longer "research lane". KM
+`llm-primary-promotion-stage`. Next: `.3` AHB/AXI + serial no-regression sweep.
+
 ### `LLM-PRIMARY-PROMOTION.1` — promotion of the clean constraint surface DESIGNED (probe-first, docs-only)
 New tree, born directly from the `.0` standing gauge's key finding (canonical artifacts still
 carry the Pattern surface at AHB 60% / AXI 91% NLI-not-entailed while the cleaned LLM-primary

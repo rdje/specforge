@@ -436,14 +436,22 @@ budget differ. (`enrich` honors the same `SPECFORGE_VLM_HELPER` test-hook and
 provider-flag convention, but keeps its own image-capable transport because it
 sends diagrams, not text.)
 
-## `extract-constraints-llm` (research lane)
+## `extract-constraints-llm`
 
 ```text
 extract-constraints-llm <evidence-ir> [--vlm-provider ollama|open-ai|lm-studio|skip] [--model <name>] [--max-sentences 0]
 ```
 
 This is the **LLM-primary, Rust-grounded constraint extractor** — the live test of
-the "replace, don't patch" thesis from the extraction-quality program. Where the
+the "replace, don't patch" thesis from the extraction-quality program. It is no
+longer only a research lane: `converge --promote-constraints-llm` runs the same
+replacement automatically after the pipeline stabilizes (see the
+[pipeline commands page](pipeline.md)), the surface swap is **recorded in the
+extraction manifest** as `constraints.llm_primary` (no silent surface changes —
+the fingerprint and clustering plane can see which documents carry the promoted
+surface), and any persisted extraction-quality gauge is **dropped on replace**
+(the old measurement's constraint ids are definitively gone, so keeping it would
+report a number about a surface that no longer exists). Where the
 deterministic Pattern extractor matches phrasings it knows, this command hands each
 constraint-bearing sentence to a local text model and asks for the *structured*
 requirement — `(subject, kind, condition, value)` — then lets Rust ground every

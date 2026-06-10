@@ -135,6 +135,7 @@ Full surface and defaults (authoritative source: `crates/specforge/src/cli.rs`
 | `--nlp-provider <ollama\|open-ai\|lm-studio\|skip>` | `ollama` | LLM provider for Level 3 NLP backannotation; `skip` opts out |
 | `--nlp-model <name>` | (provider default) | Model-name override for NLP Level 3 backannotation |
 | `--nlp-max-sentences <n>` | `0` | Max sentences sent to NLP Level 3 per pass (`0` = all) |
+| `--promote-constraints-llm` | off | After stabilization, replace the Pattern signal-constraint surface with the LLM-primary grounded extractor's result and rebuild the downstream stages once (requires a live `--nlp-provider`) |
 | `--prior-memory <path>` | `generated/prior_memory/corpus_memory.json` | Advisory local prior-memory store consulted during extraction when present |
 | `--rescan-plan <path>` | (none) | Optional schema-v2 validation rescan plan to inspect after convergence stabilizes |
 | `--execute-rescan-plan` | off | Execute whitelisted recommendations from `--rescan-plan` after stabilization |
@@ -158,6 +159,47 @@ This remains an arbitration surface, not an auto-fix path.
 The stable convergence snapshot is the convergence result.
 Post-rescan validation changes are reported as `changed_requires_validation_review` until validation and evidence arbitration say they are safe to promote.
 The convergence summary also exposes review-required counters split across possible-improvement, regression, and neutral artifact-change verdicts from the persisted recommendation execution summaries.
+
+### Promoting the LLM-primary constraint surface (opt-in)
+
+The deterministic Pattern extractor finds constraint-bearing sentences well, but reads many of
+them wrong — the standing quality gauge (below) measures its surfaces as majority-erroneous on
+dense documents. The **LLM-primary grounded extractor** (`extract-constraints-llm`) re-reads
+exactly those sentences and keeps only what Rust can ground: typed signal/field subjects,
+source-grounded conditions and values, condition-subject and permissive-frame gates, and
+provenance-merging de-duplication. `--promote-constraints-llm` runs that replacement
+automatically **after the loop stabilizes**:
+
+```bash
+cargo run --manifest-path Cargo.toml -- converge /path/to/spec.pdf --target isf --promote-constraints-llm
+```
+
+The placement is deliberate. The convergence loop enforces a monotone knowledge guard — facts
+may never shrink pass-to-pass — and a promotion *is* a shrink by design (it replaces a noisy
+102-record surface with a clean ~50-record one). So promotion runs outside the loop, on the
+final artifact: stabilize → rescan step → promote → rebuild SemanticIR/IntentIR/adapter once →
+measure the quality gauge on the **promoted** surface. The swap is recorded in the extraction
+manifest (`constraints.llm_primary`), the field-scoped obligations keep routing to
+`message_field_constraints`, and the summary reports the before/after:
+
+```text
+constraint_promotion: 18 (Pattern) → 21 kept (LLM-primary; field constraints 0; downstream rebuilt)
+extraction_quality_gauge: not_entailed 5/21 labeled (23.8%), abstained 0 (model qwen2.5:14b-instruct)
+```
+
+(Real output from an end-to-end AMBA APB run. Note the promoted surface can even be *larger*
+than the Pattern one — on APB the grounded extractor recovers validity requirements the
+pattern grammar mis-read — while still gauging *cleaner*; the "shrink" case is the dense-spec
+shape, where a hundred noisy records collapse to a clean half.)
+
+Two honesty properties: the flag **requires** a live `--nlp-provider` (an explicit opt-in that
+silently did nothing would be worse than an error), and a provider-free run never promotes —
+the deterministic Pattern surface remains the provider-free default, byte-stable in CI. The
+promotion's recall universe is the Pattern surface's own sentences (it re-reads what Pattern
+found; it does not discover new sentences), so it is a precision play measured by the gauge,
+not a recall claim. Promotion is opt-in while the corpus evidence accumulates; flipping the
+default is tracked as a separate, explicitly-measured decision
+(`docs/tasks/LLM-PRIMARY-PROMOTION.md`).
 
 ### The standing extraction-quality gauge
 

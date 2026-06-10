@@ -115,6 +115,12 @@ pub struct ConvergeArgs {
     /// Maximum number of sentences to send to NLP Level 3 per pass (0 = all)
     #[arg(long, default_value = "0")]
     pub nlp_max_sentences: usize,
+    /// After convergence stabilizes, promote the LLM-primary grounded constraint extractor over
+    /// the final EvidenceIR: REPLACE the Pattern signal-constraint surface with the typed,
+    /// condition-grounded, frame-gated result, rebuild the downstream stages once, and measure
+    /// the quality gauge on the promoted surface. Opt-in; requires a live `--nlp-provider`.
+    #[arg(long)]
+    pub promote_constraints_llm: bool,
     /// Advisory local prior-memory store to consult during extraction when present
     #[arg(long, default_value = "generated/prior_memory/corpus_memory.json")]
     pub prior_memory: PathBuf,

@@ -103,6 +103,12 @@ pub fn run(args: ConvergeArgs) -> Result<()> {
             rescan_plan.arbitration_status()
         );
     }
+    if let Some(promotion) = report.promotion.as_ref() {
+        println!(
+            "constraint_promotion: {} (Pattern) → {} kept (LLM-primary; field constraints {}; downstream rebuilt)",
+            promotion.pattern_before, promotion.kept, promotion.field_kept
+        );
+    }
     if let Some(gauge) = report.extraction_quality.as_ref() {
         println!(
             "extraction_quality_gauge: {}",
@@ -121,6 +127,14 @@ fn run_convergence(args: ConvergeArgs) -> Result<ConvergenceReport> {
     if args.execute_rescan_plan && args.rescan_plan.is_none() {
         return Err(AppError::InvalidStageArtifact(
             "--execute-rescan-plan requires --rescan-plan <path>".to_string(),
+        ));
+    }
+
+    // An explicit promotion opt-in that could silently do nothing is worse than an error:
+    // the LLM-primary extractor needs the text provider, so fail before the long run starts.
+    if args.promote_constraints_llm && matches!(args.nlp_provider, VlmProviderArg::Skip) {
+        return Err(AppError::InvalidStageArtifact(
+            "--promote-constraints-llm requires a live --nlp-provider (not skip)".to_string(),
         ));
     }
 
@@ -224,6 +238,9 @@ fn run_convergence(args: ConvergeArgs) -> Result<ConvergenceReport> {
             if snapshot == *previous {
                 println!("convergence: stable after pass {pass}");
                 let rescan_plan = maybe_run_rescan_plan(&args, &paths, &snapshot)?;
+                // Promotion (when opted in) runs BEFORE the gauge, so the standing quality
+                // measurement describes the surface the artifacts actually carry.
+                let promotion = maybe_promote_constraints(&args, &paths)?;
                 let extraction_quality = measure_extraction_quality(&args, &paths)?;
                 return Ok(ConvergenceReport {
                     converged: true,
@@ -231,6 +248,7 @@ fn run_convergence(args: ConvergeArgs) -> Result<ConvergenceReport> {
                     final_snapshot: snapshot,
                     paths,
                     rescan_plan,
+                    promotion,
                     extraction_quality,
                 });
             }
@@ -294,6 +312,60 @@ fn maybe_run_rescan_plan(
         regression_review_required,
         neutral_change_review_required,
     }))
+}
+
+/// LLM-PRIMARY-PROMOTION.2 — the opt-in post-stability constraint promotion: replace the final
+/// EvidenceIR's Pattern `signal_constraints` with the LLM-primary grounded surface
+/// ([`crate::commands::extract_constraints_llm::promote_constraints`] — typed subjects, grounded
+/// conditions, condition-only-subject + permissive-frame gates, provenance-merging dedup,
+/// manifest-recorded as `constraints.llm_primary`), then rebuild the downstream stages ONCE so
+/// `SemanticIR`/`IntentIR`/the adapter carry the promoted surface. Runs OUTSIDE the convergence
+/// loop by design: the loop's monotone fact-count guard forbids an in-loop shrink, and replacing
+/// 102 Pattern records with ~50 clean ones IS a shrink (`LLM-PRIMARY-PROMOTION.1`).
+fn maybe_promote_constraints(
+    args: &ConvergeArgs,
+    paths: &PipelineArtifactPaths,
+) -> Result<Option<crate::commands::extract_constraints_llm::ConstraintPromotionReport>> {
+    if !args.promote_constraints_llm {
+        return Ok(None);
+    }
+    // Guarded at run_convergence entry; defensive here so the helper is safe standalone.
+    if matches!(args.nlp_provider, VlmProviderArg::Skip) {
+        return Ok(None);
+    }
+    let model = args
+        .nlp_model
+        .clone()
+        .unwrap_or_else(|| crate::ir::constraint_extract_llm::DEFAULT_EXTRACT_MODEL.to_string());
+    println!("--- constraint promotion (LLM-primary, post-stability) ---");
+    let report = crate::commands::extract_constraints_llm::promote_constraints(
+        &paths.evidence_ir_path,
+        args.nlp_provider,
+        &model,
+        args.nlp_max_sentences,
+    )?;
+    println!(
+        "promotion: constraints {} (Pattern) → {} grounded → {} kept ({} sentence(s); field constraints {} → {})",
+        report.pattern_before,
+        report.grounded,
+        report.kept,
+        report.sentences,
+        report.field_grounded,
+        report.field_kept
+    );
+    // One downstream rebuild so the canonical stages carry the promoted surface.
+    let semantic_ir = SemanticIr::build(&paths.evidence_ir_path, &semantic_artifact_base_root())?;
+    semantic_ir.write_to_disk()?;
+    let intent_ir = IntentIr::build(&paths.semantic_ir_path, &intent_artifact_base_root())?;
+    intent_ir.write_to_disk()?;
+    let adapter_artifact = AdapterArtifact::build(
+        &paths.intent_ir_path,
+        args.target.into(),
+        &adapter_artifact_base_root(),
+    )?;
+    adapter_artifact.write_to_disk()?;
+    println!("promotion: downstream stages rebuilt (semantic → intent → adapter)");
+    Ok(Some(report))
 }
 
 /// EXTRACTION-QUALITY-GAUGE.0 — the standing per-document quality measurement: after the loop
@@ -409,9 +481,13 @@ struct ConvergenceReport {
     final_snapshot: KnowledgeSnapshot,
     paths: PipelineArtifactPaths,
     rescan_plan: Option<ConvergenceRescanPlanReport>,
+    /// LLM-PRIMARY-PROMOTION.2: the opt-in post-stability constraint promotion report. `None`
+    /// unless `--promote-constraints-llm` ran.
+    promotion: Option<crate::commands::extract_constraints_llm::ConstraintPromotionReport>,
     /// EXTRACTION-QUALITY-GAUGE.0: the post-stability NLI extraction-quality gauge measured over
-    /// the FINAL EvidenceIR (after any rescan-plan step) and persisted into the artifact. `None`
-    /// when `--nlp-provider skip` (the gauge needs the text LLM) or when the pass labeled nothing.
+    /// the FINAL EvidenceIR (after any rescan-plan step and any constraint promotion) and
+    /// persisted into the artifact. `None` when `--nlp-provider skip` (the gauge needs the text
+    /// LLM) or when the pass labeled nothing.
     extraction_quality: Option<crate::ir::evidence::ExtractionQualityGaugeRecord>,
 }
 
@@ -930,6 +1006,7 @@ mod tests {
             nlp_provider: VlmProviderArg::Ollama,
             nlp_model: Some("mock".to_string()),
             nlp_max_sentences: 0,
+            promote_constraints_llm: false,
             prior_memory: tempdir
                 .path()
                 .join("generated")
@@ -994,6 +1071,7 @@ mod tests {
             nlp_provider: VlmProviderArg::Skip,
             nlp_model: None,
             nlp_max_sentences: 0,
+            promote_constraints_llm: false,
             prior_memory: PathBuf::from("generated/prior_memory/corpus_memory.json"),
             rescan_plan: None,
             execute_rescan_plan: true,
@@ -1004,6 +1082,33 @@ mod tests {
         assert!(
             err.to_string()
                 .contains("--execute-rescan-plan requires --rescan-plan <path>")
+        );
+    }
+
+    #[test]
+    fn converge_rejects_promotion_without_nlp_provider() {
+        // An explicit promotion opt-in must never silently do nothing: the flag with
+        // `--nlp-provider skip` errors before any source work starts.
+        let err = run_convergence(ConvergeArgs {
+            source: PathBuf::from("missing.md"),
+            target: AdapterTargetArg::Isf,
+            max_iterations: 1,
+            vlm_provider: VlmProviderArg::Skip,
+            vlm_model: None,
+            nlp_provider: VlmProviderArg::Skip,
+            nlp_model: None,
+            nlp_max_sentences: 0,
+            promote_constraints_llm: true,
+            prior_memory: PathBuf::from("generated/prior_memory/corpus_memory.json"),
+            rescan_plan: None,
+            execute_rescan_plan: false,
+            rescan_plan_limit: 0,
+        })
+        .unwrap_err();
+
+        assert!(
+            err.to_string()
+                .contains("--promote-constraints-llm requires a live --nlp-provider")
         );
     }
 

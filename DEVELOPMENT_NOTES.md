@@ -1,4 +1,32 @@
 # DEVELOPMENT_NOTES
+## `LLM-PRIMARY-PROMOTION.2` (`2026-06-10`) — the opt-in converge constraint-promotion stage
+- `commands/extract_constraints_llm.rs`: core extracted as
+  `promote_constraints(path, provider, model, max_sentences) -> ConstraintPromotionReport`
+  (pattern_before / sentences / grounded / kept / field_grounded / field_kept); `run` = thin
+  printing wrapper, behavior identical. TWO new replace effects (apply to the standalone
+  command too): (1) manifest entry — surface `signal_constraints`, extractor
+  `constraints.llm_primary`, tier Nlp, produced/kept — via NEW
+  `ExtractionManifest::record_surface_manifest` (`record` delegates to it; replace-per-surface
+  semantics shared + test-locked); (2) `extraction_quality_gauge = None` on replace — the
+  measured ids are definitively gone; keeping the record would report a number about a surface
+  that no longer exists (converge re-measures immediately; standalone leaves honest absence).
+- `cli.rs`: `ConvergeArgs.promote_constraints_llm` (default OFF). `converge.rs`: early
+  validation (flag + `--nlp-provider skip` → `InvalidStageArtifact` BEFORE any source work);
+  `maybe_promote_constraints` at the stable branch ordered rescan → promote → downstream
+  rebuild (Semantic → Intent → adapter once) → gauge; summary `constraint_promotion:` line.
+  Placement forced by the loop's monotone fact-count guard (probed `.1`).
+- Tests (+3, lib 1540): flag-without-provider early error; promotion on an empty surface
+  (0 sentences = 0 provider calls) records the manifest entry + drops a staged stale gauge;
+  `record_surface_manifest` replace semantics.
+- Live APB end-to-end (corpus PDF, vlm skip + nlp ollama, DOCLING_DEVICE=cpu, ~9 min):
+  2 passes stable (18 constraints) → promote 18→21 grounded→21 kept over 15 sentences, 0 field
+  constraints → gauge 5/21 (23.8%) vs 28.6% pre-promotion → eval on the promoted CANONICAL
+  artifact: signal_constraint P=R=F1=1.000, WIRE-BASED-100 filtered relations 1.000, doc-level
+  recall 6/6, conformal 0.000. HONEST FINDING: on APB promotion GROWS the surface (validity
+  recoveries) — the shrink shape is the dense-spec class; the placement argument is
+  direction-independent. Comparability caveat: 28.6% was measured on the older persisted
+  artifact (14 records, pre-re-ingest); directionally cleaner, not a strict A/B.
+
 ## `EXTRACTION-QUALITY-GAUGE.0` (`2026-06-10`) — the standing persisted extraction-quality gauge
 - PNT decision rationale: `.3c` (the other frontier pick) has NO measurable target on persisted
   artifacts — its relational-vs-value class was observed on CHI (re-ingest needs the host-local

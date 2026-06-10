@@ -176,7 +176,14 @@ impl ExtractionManifest {
     /// surface (e.g. a semantic-hints refresh) never duplicates its entry. Order is first-recorded, with a
     /// replaced surface moving to the end.
     pub fn record<R>(&mut self, run: &SurfaceRun<R>) {
-        let manifest = run.manifest();
+        self.record_surface_manifest(run.manifest());
+    }
+
+    /// Record a directly-constructed [`SurfaceManifest`] with the same replace-per-surface-name
+    /// semantics as [`Self::record`]. Used by post-build promotion stages (e.g. the LLM-primary
+    /// constraint promotion, `LLM-PRIMARY-PROMOTION.2`) that replace a surface outside the
+    /// `run_surface(_concat)` drivers but must still leave an inspectable manifest trail.
+    pub fn record_surface_manifest(&mut self, manifest: SurfaceManifest) {
         self.surfaces.retain(|s| s.surface != manifest.surface);
         self.surfaces.push(manifest);
     }
@@ -508,5 +515,44 @@ mod tests {
         let json = serde_json::to_string(&manifest).unwrap();
         let back: ExtractionManifest = serde_json::from_str(&json).unwrap();
         assert_eq!(back, manifest);
+    }
+
+    #[test]
+    fn record_surface_manifest_shares_replace_semantics() {
+        // The directly-constructed entry point (used by post-build promotion stages) must
+        // behave exactly like `record`: same-name replace, distinct names retained.
+        let direct = |surface: &str, produced: usize| SurfaceManifest {
+            surface: surface.to_string(),
+            eligible: 1,
+            entries: vec![ExtractorRunEntry {
+                name: "constraints.llm_primary".to_string(),
+                tier: ExtractorTier::Nlp,
+                eligible: true,
+                produced,
+                kept: produced,
+            }],
+        };
+        let mut manifest = ExtractionManifest::default();
+        manifest.record_surface_manifest(direct("signal_constraints", 3));
+        manifest.record_surface_manifest(direct("other", 1));
+        manifest.record_surface_manifest(direct("signal_constraints", 5)); // replace
+        assert_eq!(
+            manifest
+                .surfaces
+                .iter()
+                .map(|s| s.surface.as_str())
+                .collect::<Vec<_>>(),
+            vec!["other", "signal_constraints"]
+        );
+        assert_eq!(
+            manifest
+                .surfaces
+                .iter()
+                .find(|s| s.surface == "signal_constraints")
+                .unwrap()
+                .entries[0]
+                .produced,
+            5
+        );
     }
 }
