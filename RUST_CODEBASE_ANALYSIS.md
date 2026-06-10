@@ -4,11 +4,17 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
-## Session update (2026-06-10 extractor framework — converge-loop reach; subsystem now 8 surfaces)
+## Session update (2026-06-10 extractor framework — converge-loop reach; subsystem now 9 surfaces)
 
 `EXTRACTOR-ARCHITECTURE.2`–`.9c` built a subsystem this analysis had not yet captured (closing that gap
 here): the **unified extractor framework** in `crates/specforge/src/ir/extractor.rs`, now the wiring layer
-for EIGHT EvidenceIR surfaces.
+for NINE EvidenceIR surfaces. The ninth (`EXTRACTION-QUALITY-GAUGE.FIELD.2`, same day) is
+`message_fields` — a key-merge surface (`MessageFieldRecord`, key = container+name) extracting
+packet/flit protocols' declared message fields from container-captioned field-titled tables, with the
+register surface keeping priority over shared `Field` columns via `is_register_field_header` (the
+one-place discriminator). It is the first surface whose extractor reads ONLY `SourceIr.structured_tables`
+and persists a new typed inventory (`EvidenceIr.message_field_records`) consumed by the upcoming
+entity-typing ground (`EntityType::Field`).
 
 - The frame: a generic `Extractor<R>` trait (`name`/`tier`/`applies_to`/`run`), a borrowed
   `ExtractionContext` (grows one field per migrated cluster; currently carries `statements`), TWO drivers —
@@ -18,7 +24,7 @@ for EIGHT EvidenceIR surfaces.
   (additive, `#[serde(default)]`) and surfaced by `validate`. The manifest is the per-document behavioral
   fingerprint the `CORPUS-PATTERN-REUSE` plane clusters on — the two subsystems compose.
 - Three explicit producer categories (the two-phase model, documented in `ir/extractor.rs`): key-merge
-  surfaces (FSM states, semantic hints, serial-frame fields), concat surfaces (registers, actors,
+  surfaces (FSM states, semantic hints, serial-frame fields, message fields), concat surfaces (registers, actors,
   SWD-operations, signal polarity, actor-signal relations), and stateful-assembly orchestrators that
   deliberately stay OFF the drivers (the signal-declaration seed; the constraint family below).
 - `.9b` + `.9c` (this session) extended the framework's reach into `converge_evidence_extractions` — the

@@ -196,6 +196,13 @@ pub struct EvidenceIr {
     /// untouched. Empty (serde-skipped) for non-serial documents.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub serial_frame_fields: Vec<SerialFrameField>,
+    /// EXTRACTION-QUALITY-GAUGE.FIELD.2: typed MESSAGE FIELDS of packet/flit protocols (CHI-class),
+    /// recovered from container-captioned field-titled tables ("Request channel fields" with a
+    /// `Field` name column). A field is flit/message content, not a wire — keeping this inventory
+    /// first-class is what lets signal surfaces reject field subjects instead of mis-typing them.
+    /// Empty (serde-skipped) for documents that declare no message-field tables.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub message_field_records: Vec<MessageFieldRecord>,
     /// SWD-SERIAL-EXTRACTION.4: the protocol FSM states (the JTAG TAP / SWD line state machine). The
     /// FSM is critical to understanding/implementing SWD/JTAG and is what FSMGen ultimately builds.
     /// Empty (serde-skipped) for documents without a described state machine.
@@ -279,6 +286,36 @@ pub struct SerialFrameField {
     /// Statements that evidenced this field.
     #[serde(default)]
     pub supporting_statement_ids: Vec<String>,
+}
+
+/// EXTRACTION-QUALITY-GAUGE.FIELD.2 — one declared MESSAGE FIELD: a named portion of a protocol
+/// message/packet/flit payload, declared by a container-captioned, field-titled structured table
+/// ("Table B2.2: Request channel fields" with a `Field` name column). Fields are protocol intent,
+/// but they are NOT signals — no wire, no direction — so they get their own typed home instead of
+/// polluting the signal surfaces (the CHI `DBID`/`TxnID` mis-typing class).
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct MessageFieldRecord {
+    /// Stable id, e.g. `message_field_0003`.
+    pub field_id: String,
+    /// The field name exactly as declared (`TxnID`, `Opcode`, `Addr[51:6]`).
+    pub name: String,
+    /// The message/packet container named by the declaring table's caption, with a trailing
+    /// "fields" word stripped (`Request channel fields` → `Request channel`). The same field name
+    /// legitimately recurs across containers (`QoS` in every channel), so identity is
+    /// (container, name).
+    pub container: String,
+    /// Width in bits when the declaring table carries exactly one unqualified width column
+    /// (`Width (bits)` / `Bits`) and the cell is a plain count or `[hi:lo]` range. `None` when
+    /// unstated or variant-dependent — honest absence, never guessed.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub bit_width: Option<u32>,
+    /// The declared description text, when the table carries a description column.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+    /// The structured tables that declared this field (a caption-continuation table merges into
+    /// the record its first declaration created).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub supporting_table_ids: Vec<String>,
 }
 
 /// The phase of a serial transaction a frame field belongs to.
@@ -582,6 +619,15 @@ impl EvidenceIr {
             prior_guidance.as_ref(),
             &mut extraction_manifest,
         );
+        // EXTRACTION-QUALITY-GAUGE.FIELD.2 — the message-field surface: packet/flit protocols
+        // declare flit/message FIELDS (CHI's `TxnID`/`DBID` class) in container-captioned
+        // field-titled tables. Fields are typed intent but NOT signals; this inventory is their
+        // first-class home, and the register surface keeps priority over shared `Field` columns.
+        let message_field_records = message_field_surface(
+            &source_ir,
+            prior_guidance.as_ref(),
+            &mut extraction_manifest,
+        );
         let timing_constraints = synthesize_timing_constraints(&source_ir, prior_guidance.as_ref());
 
         // Replace the previous one-shot extraction with a monotone convergent loop:
@@ -689,6 +735,7 @@ impl EvidenceIr {
             convergence_report: Some(convergence_report),
             fact_provenance,
             serial_frame_fields,
+            message_field_records,
             protocol_states,
             protocol_actors,
             swd_operations,
@@ -7405,6 +7452,309 @@ impl Extractor<SerialFrameField> for SerialFrameCompositionExtractor {
     }
 }
 
+// ---------------------------------------------------------------------------------------------
+// EXTRACTION-QUALITY-GAUGE.FIELD.2 — the MESSAGE-FIELD surface: packet/flit protocols (CHI-class)
+// declare their message/packet/flit FIELDS in field-titled tables whose caption names the container
+// ("Table B2.2: Request channel fields", a `Field` name column). The document's own vocabulary
+// types its rows — no name lists (ADR 0006). Register docs share the field-titled column; the
+// discriminator is structural and lives in ONE place: a field-titled table that
+// `is_register_field_header` claims (register-access vocabulary: Access/Reset/Default/Type
+// columns) belongs to the register surface, never here. Tables without a container caption
+// (USB descriptors, restriction/status tables) and field shapes without a field-name column
+// (CCIX `Bit Location|Field Description`, OpenCAPI `Operand mnemonic`) stay honest residuals
+// for later strategies.
+// ---------------------------------------------------------------------------------------------
+
+/// Universal protocol container nouns a caption may attach to "field(s)". This is grammar
+/// vocabulary (like the clause markers or the normative must/shall set), not a chip/vendor name
+/// list: it names what KIND of thing carries fields, never which protocol.
+const MESSAGE_CONTAINER_NOUNS: [&str; 8] = [
+    "channel", "packet", "message", "flit", "header", "frame", "request", "response",
+];
+
+/// Parse a table caption into (`table ref`, `container label`).
+///
+/// - `Table B2.2: Request channel fields` → `(Some("B2.2"), Some("Request channel"))`
+/// - `Table B2.2 Continued from previous page` → `(Some("B2.2"), None)` — a continuation
+///   carries the ref of the table it continues and inherits that table's container.
+/// - A label is recognized only when a [`MESSAGE_CONTAINER_NOUNS`] word appears at distance one
+///   or two before a "field(s)" word ("Request channel fields", "Packet control fields"), so
+///   register/descriptor captions like "Address Fields in Remappable Interrupt Request Format"
+///   or "Mode Register 0" never qualify. A trailing "fields" word is stripped from the label.
+pub(crate) fn message_field_caption_parts(caption: &str) -> (Option<String>, Option<String>) {
+    let words: Vec<&str> = caption.split_whitespace().collect();
+    let (table_ref, rest) = if words.len() >= 2 && words[0].eq_ignore_ascii_case("table") {
+        let reference = words[1].trim_end_matches([':', '.']).to_string();
+        (Some(reference), &words[2..])
+    } else {
+        (None, &words[..])
+    };
+    if rest
+        .first()
+        .is_some_and(|w| w.eq_ignore_ascii_case("continued"))
+    {
+        return (table_ref, None);
+    }
+    let normalized: Vec<String> = rest
+        .iter()
+        .map(|w| {
+            w.trim_matches(|c: char| !c.is_ascii_alphanumeric())
+                .to_ascii_lowercase()
+        })
+        .collect();
+    let container_hit = normalized.iter().enumerate().any(|(i, w)| {
+        (w == "field" || w == "fields")
+            && (1..=2).any(|back| {
+                i.checked_sub(back)
+                    .is_some_and(|j| MESSAGE_CONTAINER_NOUNS.contains(&normalized[j].as_str()))
+            })
+    });
+    if !container_hit {
+        return (table_ref, None);
+    }
+    let mut label_words: Vec<&str> = rest.to_vec();
+    if normalized
+        .last()
+        .is_some_and(|w| w == "field" || w == "fields")
+    {
+        label_words.pop();
+    }
+    let label = label_words.join(" ");
+    if label.is_empty() {
+        return (table_ref, None);
+    }
+    (table_ref, Some(label))
+}
+
+/// The exact field-titled name column (`Field` / `Field name`) — deliberately NOT a
+/// `contains("field")` match, so merged columns like `Field Description` (CCIX) do not
+/// masquerade as a name column.
+fn message_field_name_column(header: &[String]) -> Option<usize> {
+    header
+        .iter()
+        .position(|h| matches!(h.trim(), "field" | "field name"))
+}
+
+/// The single unqualified width column (`Width` / `Width (bits)` / `Bits`), if exactly one
+/// exists. Two width-ish columns, or a qualified one (`Width (bits) ReqS`), mean the width is
+/// variant-dependent — then NO width is read (honest absence over a guessed variant).
+fn single_exact_width_column(header: &[String]) -> Option<usize> {
+    let mut found = None;
+    for (index, h) in header.iter().enumerate() {
+        let compact: String = h.chars().filter(|c| !c.is_whitespace()).collect();
+        if matches!(compact.as_str(), "width" | "width(bits)" | "bits") {
+            if found.is_some() {
+                return None;
+            }
+            found = Some(index);
+        }
+    }
+    found
+}
+
+/// Columns of a message-field DECLARATION table: the field-titled name column, plus at least a
+/// description or width column (restriction/status tables like `Field name|Restriction` or
+/// `Field|Value|Status` reference fields, they do not declare them). A table the register surface
+/// claims (`is_register_field_header` — register-access vocabulary) is never a message-field
+/// table: that priority IS the signal-vs-field/register discriminator, kept in one place.
+fn message_field_declaration_columns(
+    header: &[String],
+) -> Option<(usize, Option<usize>, Option<usize>)> {
+    let name_col = message_field_name_column(header)?;
+    if is_register_field_header(header) {
+        return None;
+    }
+    let desc_col = header.iter().position(|h| h.contains("description"));
+    // Declaration EVIDENCE accepts any width-ish column (including per-variant qualified ones
+    // like `Width (bits) ReqS`); a width VALUE is only ever read from the single exact column.
+    let has_width_evidence = header
+        .iter()
+        .any(|h| h.contains("width") || h.trim() == "bits");
+    if desc_col.is_none() && !has_width_evidence {
+        return None;
+    }
+    let width_col = single_exact_width_column(header);
+    Some((name_col, width_col, desc_col))
+}
+
+/// A declared field name: one identifier token (`TxnID`, `RsvdZero`, `Atomic_Transactions_Rx`),
+/// optionally with a literal bit-slice suffix (`Addr[51:6]`, `RSVDC[15:0]`). Case is NOT part of
+/// the gate — message fields are conventionally MixedCase, unlike all-caps signal tokens.
+pub(crate) fn is_message_field_name(name: &str) -> bool {
+    let name = name.trim();
+    if name.is_empty() || name.len() > 40 {
+        return false;
+    }
+    let (head, bracket) = match name.find('[') {
+        Some(i) => (&name[..i], Some(&name[i..])),
+        None => (name, None),
+    };
+    let mut chars = head.chars();
+    let Some(first) = chars.next() else {
+        return false;
+    };
+    if !first.is_ascii_alphabetic() || !chars.all(|c| c.is_ascii_alphanumeric() || c == '_') {
+        return false;
+    }
+    match bracket {
+        None => true,
+        Some(b) => b
+            .strip_prefix('[')
+            .and_then(|rest| rest.strip_suffix(']'))
+            .is_some_and(|inner| {
+                !inner.is_empty() && inner.chars().all(|c| c.is_ascii_digit() || c == ':')
+            }),
+    }
+}
+
+/// Width-in-bits from a width cell: a plain count (`12`) or a literal `[hi:lo]` / `hi:lo` range
+/// (→ `|hi-lo|+1`). Anything else (`4 or 8`, prose) is `None` — never guessed.
+fn parse_message_field_width(cell: &str) -> Option<u32> {
+    let s = cell.trim().trim_start_matches('[').trim_end_matches(']');
+    if let Ok(n) = s.parse::<u32>() {
+        return (n > 0 && n <= 4096).then_some(n);
+    }
+    let (hi, lo) = s.split_once(':')?;
+    let hi: u32 = hi.trim().parse().ok()?;
+    let lo: u32 = lo.trim().parse().ok()?;
+    Some(hi.abs_diff(lo) + 1)
+}
+
+/// Walk the structured tables in document order and collect the declared message fields.
+/// Identity is (container, name) — `QoS` recurs per channel as distinct records; a continuation
+/// table's re-declaration merges its table id into the first record (first declaration wins for
+/// width/description). Deterministic: encounter order, lookup-only maps (no hash iteration
+/// reaches output — `EVIDENCE-DETERMINISM`).
+fn extract_container_message_fields(
+    source_ir: &SourceIr,
+    prior_guidance: Option<&EvidencePriorGuidance>,
+) -> Vec<MessageFieldRecord> {
+    let mut records: Vec<MessageFieldRecord> = Vec::new();
+    let mut index_by_key: BTreeMap<(String, String), usize> = BTreeMap::new();
+    let mut label_by_ref: BTreeMap<String, String> = BTreeMap::new();
+    for table in &source_ir.structured_tables {
+        if matches!(
+            effective_table_kind(table, prior_guidance),
+            TableKind::RegisterMap
+        ) {
+            continue; // the register surface owns register tables outright
+        }
+        let caption = table.caption_text.as_deref().unwrap_or("");
+        let (table_ref, own_label) = message_field_caption_parts(caption);
+        if let (Some(reference), Some(label)) = (&table_ref, &own_label) {
+            label_by_ref
+                .entry(reference.clone())
+                .or_insert_with(|| label.clone());
+        }
+        let container = match own_label.or_else(|| {
+            table_ref
+                .as_ref()
+                .and_then(|reference| label_by_ref.get(reference).cloned())
+        }) {
+            Some(c) => c,
+            None => continue,
+        };
+        let header_in_body = table.header_rows.is_empty();
+        let header: Vec<String> = if header_in_body {
+            table.body_rows.first()
+        } else {
+            table.header_rows.first()
+        }
+        .map(|row| {
+            row.iter()
+                .map(|c| c.text.trim().to_ascii_lowercase())
+                .collect()
+        })
+        .unwrap_or_default();
+        let Some((name_col, width_col, desc_col)) = message_field_declaration_columns(&header)
+        else {
+            continue;
+        };
+        let body: Vec<&Vec<StructuredTableCellRecord>> = if header_in_body {
+            table.body_rows.iter().skip(1).collect()
+        } else {
+            table.body_rows.iter().collect()
+        };
+        for row in body {
+            let cell = |i: usize| {
+                row.get(i)
+                    .map(|c| c.text.trim().to_string())
+                    .filter(|s| !s.is_empty())
+            };
+            let Some(name) = cell(name_col) else {
+                continue;
+            };
+            if !is_message_field_name(&name) {
+                continue;
+            }
+            let key = (container.to_ascii_lowercase(), name.to_ascii_uppercase());
+            if let Some(&existing) = index_by_key.get(&key) {
+                let record = &mut records[existing];
+                if !record.supporting_table_ids.contains(&table.table_id) {
+                    record.supporting_table_ids.push(table.table_id.clone());
+                }
+                continue;
+            }
+            let bit_width = width_col
+                .and_then(&cell)
+                .and_then(|c| parse_message_field_width(&c));
+            let description = desc_col.and_then(&cell);
+            index_by_key.insert(key, records.len());
+            records.push(MessageFieldRecord {
+                field_id: String::new(),
+                name,
+                container: container.clone(),
+                bit_width,
+                description,
+                supporting_table_ids: vec![table.table_id.clone()],
+            });
+        }
+    }
+    for (index, record) in records.iter_mut().enumerate() {
+        record.field_id = format!("message_field_{index:04}");
+    }
+    records
+}
+
+/// Message fields from container-captioned field-titled tables — see
+/// [`extract_container_message_fields`].
+struct MessageFieldTableExtractor<'a> {
+    source_ir: &'a SourceIr,
+    prior_guidance: Option<&'a EvidencePriorGuidance>,
+}
+impl Extractor<MessageFieldRecord> for MessageFieldTableExtractor<'_> {
+    fn name(&self) -> &'static str {
+        "message_fields.container_field_table"
+    }
+    fn run(&self, _cx: &ExtractionContext<'_>) -> Vec<MessageFieldRecord> {
+        extract_container_message_fields(self.source_ir, self.prior_guidance)
+    }
+}
+
+/// Run the message-field surface through the unified `run_surface` driver (key = (container,
+/// name), the surface identity) and record its manifest entry. Self-gating: zero records on
+/// documents without container-captioned field tables.
+fn message_field_surface(
+    source_ir: &SourceIr,
+    prior_guidance: Option<&EvidencePriorGuidance>,
+    manifest: &mut ExtractionManifest,
+) -> Vec<MessageFieldRecord> {
+    let cx = ExtractionContext { statements: &[] };
+    let extractor = MessageFieldTableExtractor {
+        source_ir,
+        prior_guidance,
+    };
+    let extractors: [&dyn Extractor<MessageFieldRecord>; 1] = [&extractor];
+    let run = run_surface("message_fields", &cx, &extractors, |field| {
+        (
+            field.container.to_ascii_lowercase(),
+            field.name.to_ascii_uppercase(),
+        )
+    });
+    manifest.record(&run);
+    run.records
+}
+
 /// Run the serial-frame surface through the unified key-merge driver (EXTRACTOR-ARCHITECTURE.9a). Key =
 /// field name: both strategies emit name-unique lists (the bit-range form upserts by name; the composition
 /// form keeps a per-list `seen` set), so first-wins dedup is a no-op WITHIN each strategy and reproduces the
@@ -10947,6 +11297,351 @@ mod tests {
         assert_eq!(recs[0].parameter_name, "t BUF");
         assert_eq!(recs[0].min_value.as_deref(), Some("1.3"));
         assert_eq!(recs[1].parameter_name, "t HD");
+        Ok(())
+    }
+
+    #[test]
+    fn message_field_caption_parts_parse_label_ref_and_continuation() {
+        use super::message_field_caption_parts as parts;
+        // EXTRACTION-QUALITY-GAUGE.FIELD.2 — real corpus caption shapes (probed 2026-06-10).
+        assert_eq!(
+            parts("Table B2.2: Request channel fields"),
+            (
+                Some("B2.2".to_string()),
+                Some("Request channel".to_string())
+            )
+        );
+        // a continuation carries the ref of the table it continues, and no label of its own
+        assert_eq!(
+            parts("Table B2.2 Continued from previous page"),
+            (Some("B2.2".to_string()), None)
+        );
+        // the container noun may sit at distance two before "fields" (CXS "Packet control fields")
+        assert_eq!(
+            parts("Table 4-1 Packet control fields"),
+            (Some("4-1".to_string()), Some("Packet control".to_string()))
+        );
+        // register/descriptor captions never qualify: "fields"/"field" without a container anchor
+        assert_eq!(
+            parts("Table 13. Address Fields in Remappable Interrupt Request Format").1,
+            None,
+            "'fields' anchored to 'address', not a container noun"
+        );
+        assert_eq!(
+            parts("Table 12-19 Component Identification Registers").1,
+            None
+        );
+        assert_eq!(parts("Table 8 Mode Register 0 (MR0)").1, None);
+        // a caption without a "Table" prefix still recognizes its container
+        assert_eq!(
+            parts("Request message fields"),
+            (None, Some("Request message".to_string()))
+        );
+        // a mid-caption container bigram qualifies and keeps the full label
+        // (C2C "CHI message fields not included in C2C messages")
+        let (_, label) = parts("Table B5.1: CHI message fields not included in C2C messages");
+        assert_eq!(
+            label.as_deref(),
+            Some("CHI message fields not included in C2C messages")
+        );
+    }
+
+    #[test]
+    fn message_field_declaration_header_gates() {
+        let h = |cells: &[&str]| -> Vec<String> {
+            cells.iter().map(|c| c.to_ascii_lowercase()).collect()
+        };
+        // CHI: `Field|Affects structure|Description` → name 0, no width column, description 2
+        assert_eq!(
+            super::message_field_declaration_columns(&h(&[
+                "Field",
+                "Affects structure",
+                "Description"
+            ])),
+            Some((0, None, Some(2)))
+        );
+        // C2C: `Field name|Width (bits)|Value` → the single exact width column is readable
+        assert_eq!(
+            super::message_field_declaration_columns(&h(&["Field name", "Width (bits)", "Value"])),
+            Some((0, Some(1), None))
+        );
+        // per-variant qualified widths are declaration EVIDENCE but carry no readable width VALUE
+        assert_eq!(
+            super::message_field_declaration_columns(&h(&[
+                "Common",
+                "Field name",
+                "Width (bits) ReqS",
+                "ReqL"
+            ])),
+            Some((1, None, None))
+        );
+        // register-access vocabulary → the REGISTER surface owns the table, never message fields
+        assert_eq!(
+            super::message_field_declaration_columns(&h(&[
+                "Field",
+                "Description",
+                "Access",
+                "Reset"
+            ])),
+            None
+        );
+        // restriction / value-status tables reference fields, they do not declare them
+        assert_eq!(
+            super::message_field_declaration_columns(&h(&["Field name", "Restriction"])),
+            None
+        );
+        assert_eq!(
+            super::message_field_declaration_columns(&h(&["Field", "Value", "Status"])),
+            None
+        );
+        // a merged "Field Description" column (CCIX shape) is NOT a field-name column
+        assert_eq!(
+            super::message_field_declaration_columns(&h(&[
+                "Bit Location",
+                "Field Description",
+                "Attributes"
+            ])),
+            None
+        );
+    }
+
+    #[test]
+    fn message_field_name_and_width_honesty_gates() {
+        assert!(super::is_message_field_name("TxnID"));
+        assert!(super::is_message_field_name("RsvdZero"));
+        assert!(super::is_message_field_name("Atomic_Transactions_Rx"));
+        assert!(super::is_message_field_name("Addr[51:6]"));
+        assert!(super::is_message_field_name("RSVDC[15:0]"));
+        assert!(!super::is_message_field_name(""));
+        assert!(
+            !super::is_message_field_name("128"),
+            "a width value leaking into a name column is not a field"
+        );
+        assert!(
+            !super::is_message_field_name("Quality of Service"),
+            "prose is not a name token"
+        );
+        assert!(
+            !super::is_message_field_name("X[a:b]"),
+            "a bit slice is digits and ':' only"
+        );
+
+        assert_eq!(super::parse_message_field_width("12"), Some(12));
+        assert_eq!(super::parse_message_field_width("[51:6]"), Some(46));
+        assert_eq!(super::parse_message_field_width("51:6"), Some(46));
+        assert_eq!(
+            super::parse_message_field_width("4 or 8"),
+            None,
+            "a variant-dependent width stays an honest None"
+        );
+        assert_eq!(super::parse_message_field_width("0"), None);
+    }
+
+    #[test]
+    fn message_field_surface_extracts_container_fields_with_continuation_merge() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Protocol\nMessage field declarations.\n")?;
+        let mut source_ir = SourceIr::build(&source, &base)?;
+        let field_table =
+            |id: &str, caption: &str, header: &[&str], rows: &[&[&str]]| StructuredTableRecord {
+                table_id: id.to_string(),
+                asset_id: id.to_string(),
+                page_id: None,
+                caption_text: Some(caption.to_string()),
+                source_ref: None,
+                table_kind: TableKind::Unknown,
+                header_rows: vec![header.iter().map(|c| make_table_cell(c, true)).collect()],
+                body_rows: rows
+                    .iter()
+                    .map(|r| r.iter().map(|c| make_table_cell(c, false)).collect())
+                    .collect(),
+                row_count: rows.len() as u32 + 1,
+                col_count: header.len() as u32,
+            };
+        // CHI-shaped request-channel declaration plus its continuation page re-declaring TxnID.
+        source_ir.structured_tables.push(field_table(
+            "table_req",
+            "Table B2.2: Request channel fields",
+            &["Field", "Affects structure", "Description"],
+            &[
+                &["QoS", "No", "Quality of Service priority."],
+                &["TxnID", "No", "Transaction identifier."],
+            ],
+        ));
+        source_ir.structured_tables.push(field_table(
+            "table_req_cont",
+            "Table B2.2 Continued from previous page",
+            &["Field", "Affects structure", "Description"],
+            &[
+                &["TxnID", "No", "Transaction identifier (continued listing)."],
+                &["Opcode", "Yes", "Request opcode."],
+            ],
+        ));
+        // A second container re-using a field name → a DISTINCT record (identity is
+        // container+name). C2C width shape: the exact width column is read; ranges tile.
+        source_ir.structured_tables.push(field_table(
+            "table_rsp",
+            "Table B4.3: Response message fields",
+            &["Field name", "Width (bits)", "Value"],
+            &[
+                &["QoS", "4", ""],
+                &["Addr", "[51:6]", ""],
+                &["Mixed", "4 or 8", ""],
+            ],
+        ));
+        let mut manifest = super::ExtractionManifest::default();
+        let fields = super::message_field_surface(&source_ir, None, &mut manifest);
+        let view: Vec<(&str, &str, Option<u32>)> = fields
+            .iter()
+            .map(|f| (f.container.as_str(), f.name.as_str(), f.bit_width))
+            .collect();
+        assert_eq!(
+            view,
+            vec![
+                ("Request channel", "QoS", None),
+                ("Request channel", "TxnID", None),
+                ("Request channel", "Opcode", None),
+                ("Response message", "QoS", Some(4)),
+                ("Response message", "Addr", Some(46)),
+                ("Response message", "Mixed", None),
+            ],
+            "document order, container-scoped identity, honest widths"
+        );
+        // The continuation's TxnID re-declaration merged its table id into the first record.
+        let txnid = fields.iter().find(|f| f.name == "TxnID").expect("TxnID");
+        assert_eq!(
+            txnid.supporting_table_ids,
+            vec!["table_req".to_string(), "table_req_cont".to_string()],
+            "continuation provenance merges, never duplicates the record"
+        );
+        assert_eq!(
+            txnid.description.as_deref(),
+            Some("Transaction identifier."),
+            "the first declaration wins width/description"
+        );
+        assert_eq!(fields[0].field_id, "message_field_0000");
+        // The surface records an inspectable manifest entry like every framework surface.
+        let entry = manifest
+            .surfaces
+            .iter()
+            .find(|s| s.surface == "message_fields")
+            .expect("message_fields surface recorded");
+        assert_eq!(
+            entry.entries[0].name,
+            "message_fields.container_field_table"
+        );
+        assert_eq!(entry.entries[0].produced, 6);
+        Ok(())
+    }
+
+    /// Local measurement harness, NOT a CI test (`--ignored`): runs the real message-field
+    /// extractor over every persisted `generated/source_ir/*/source_ir.json` and prints per-doc
+    /// counts, so the corpus yield can be re-measured live (packet docs whose normalized bundles
+    /// were cleaned cannot rebuild full EvidenceIR, but this surface is pure over `SourceIR`).
+    /// Run: `cargo test -p specforge --lib message_field_corpus_sweep -- --ignored --nocapture`
+    #[test]
+    #[ignore = "local measurement: walks the developer-local generated/source_ir corpus"]
+    fn message_field_corpus_sweep_local_measurement() {
+        let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../generated/source_ir");
+        let Ok(entries) = fs::read_dir(&root) else {
+            eprintln!("no local corpus at {} — nothing to measure", root.display());
+            return;
+        };
+        let mut paths: Vec<PathBuf> = entries
+            .flatten()
+            .map(|e| e.path().join("source_ir.json"))
+            .filter(|p| p.is_file())
+            .collect();
+        paths.sort();
+        for path in paths {
+            let Ok(raw) = fs::read_to_string(&path) else {
+                continue;
+            };
+            let Ok(source_ir) = serde_json::from_str::<SourceIr>(&raw) else {
+                eprintln!("{}: SKIP (older schema)", path.display());
+                continue;
+            };
+            let fields = super::extract_container_message_fields(&source_ir, None);
+            if fields.is_empty() {
+                continue;
+            }
+            let mut containers: Vec<&str> = fields.iter().map(|f| f.container.as_str()).collect();
+            containers.dedup();
+            let with_width = fields.iter().filter(|f| f.bit_width.is_some()).count();
+            println!(
+                "{}: {} fields / {} containers / {} with width",
+                path.parent()
+                    .and_then(|p| p.file_name())
+                    .map(|n| n.to_string_lossy())
+                    .unwrap_or_default(),
+                fields.len(),
+                containers.len(),
+                with_width,
+            );
+        }
+    }
+
+    #[test]
+    fn message_fields_never_claim_register_or_signal_tables() -> Result<()> {
+        // The sharp discriminator negative: a table whose CAPTION says "message fields" but whose
+        // columns carry register-access vocabulary belongs to the REGISTER surface (priority is
+        // the one-place discriminator); a signal table has no field-titled column at all.
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Registers\nThe COMMAND register.\n")?;
+        let mut source_ir = SourceIr::build(&source, &base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_reg".to_string(),
+            asset_id: "table_reg".to_string(),
+            page_id: None,
+            caption_text: Some("Table 9: Command message fields".to_string()),
+            source_ref: None,
+            table_kind: TableKind::Unknown,
+            header_rows: vec![vec![
+                make_table_cell("Field", true),
+                make_table_cell("Description", true),
+                make_table_cell("Access", true),
+                make_table_cell("Reset", true),
+            ]],
+            body_rows: vec![vec![
+                make_table_cell("CMD_EN", false),
+                make_table_cell("Command enable.", false),
+                make_table_cell("RW", false),
+                make_table_cell("0", false),
+            ]],
+            row_count: 2,
+            col_count: 4,
+        });
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_sig".to_string(),
+            asset_id: "table_sig".to_string(),
+            page_id: None,
+            caption_text: Some("Table B13.2: REQ channel interface signals".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![vec![
+                make_table_cell("REQFLITV", false),
+                make_table_cell("Request Flit Valid.", false),
+            ]],
+            row_count: 2,
+            col_count: 2,
+        });
+        let mut manifest = super::ExtractionManifest::default();
+        let fields = super::message_field_surface(&source_ir, None, &mut manifest);
+        assert!(
+            fields.is_empty(),
+            "register-vocabulary and signal tables yield ZERO message fields, got {fields:?}"
+        );
+        // ...and the register surface DOES claim the register-shaped table.
+        let regs = super::synthesize_register_field_tables(&source_ir, None);
+        assert_eq!(regs.len(), 1, "the register surface owns the shared shape");
         Ok(())
     }
 

@@ -528,6 +528,42 @@ With this in place, the I2S spec went from **0 to 5** recovered timing parameter
 clock-low times, set-up and hold times, with their stated limits), while the timing tables that already read
 correctly are untouched. *Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.9.11`).
 
+### `EXTRACTION-QUALITY-GAUGE.FIELD.2` — message fields are intent too, but they are not signals
+
+Packet and flit protocols (the CHI family is the canonical example) describe two very different kinds of named
+things. **Signals** are physical wires — declared in tables like *"REQ channel interface signals"* with names
+like `REQFLITV`. **Fields** are portions of the *message payload* that travels over those wires — declared in
+tables like *"Request channel fields"* with names like `TxnID`, `Opcode`, or `DBID`. A field has no direction
+and no pin; treating one as a signal produces exactly the garbage constraints the extraction-quality gauge
+caught on CHI (a `DBID must_be_value` "signal requirement" about something that is not a signal at all).
+Until now those field tables were simply invisible: the fields had no typed home, so the only way field names
+entered the pipeline was *wrongly*, through prose.
+
+The reader leans on the document's own vocabulary, twice. First, **the table header names what its rows are**:
+a table whose name column is titled `Field` / `Field name` declares fields, just as a `Signal`-titled column
+declares signals. Second, **the caption names the container**: *"Table B2.2: Request channel fields"* says these
+are fields *of the request channel*, and a follow-on page captioned *"Table B2.2 Continued from previous page"*
+carries the same table number, so its rows merge into the same container instead of becoming strays. The same
+field name can appear in several containers (`QoS` exists in every CHI channel) and each is honestly its own
+record. A width is recorded only when the table carries a single, unqualified width column — a per-variant
+width (*"Width (bits) ReqS"*) stays an honest blank rather than a guessed pick.
+
+One subtlety makes this safe on *non*-packet documents: register specifications also write `Field` columns
+(a register is made of bit-fields). The discriminator is structural and lives in one place — a field-titled
+table that also carries register-access vocabulary (`Access` / `Reset` / `Default` columns) belongs to the
+register reader, never to this one; and a caption has to anchor its "fields" to a real container word
+(*channel*, *packet*, *message*, *flit*, *header*, *frame*, *request*, *response*) before anything is read at
+all. Measured over the whole persisted corpus, that combination fires **only** on the packet-protocol family —
+CHI recovers **106 fields across its 4 channels**, the CHI chip-to-chip specs 143–189 fields with most widths,
+CCIX 47–51 — while every register document (RISC-V Debug, the IOMMU and MMU manuals, NVMe, eMMC) and every
+wire-based bus (APB/AHB/AXI, SWD) yields exactly zero and is otherwise byte-identical to before. Two tracked
+benchmark fixtures lock both directions: fields land in `message_field_records` and never in the signal
+inventory, and a register-shaped table never produces message fields even when its caption says "message
+fields". This inventory is the foundation the signal-vs-field ontology builds on next: with declared fields
+known, the entity-typing gate can ground a field *out* of signal constraints deterministically — and a later
+slice can give field obligations their own constraint surface instead of dropping them.
+*Authoritative tracking:* `docs/tasks/EXTRACTION-QUALITY-GAUGE.md` (`.FIELD.2`).
+
 ### `PER-EXTRACTOR-FACT-TAGGING` — who found which fact (recall-gauge groundwork)
 
 This is plumbing for a future **calibrated recall estimate**. To estimate how

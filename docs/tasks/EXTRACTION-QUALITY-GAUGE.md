@@ -257,14 +257,40 @@ honestly-qualified) path to "human-SpecForge in Rust."
   - **Out of first scope (honest residual):** CCIX declares fields as `Bit Location|Field
     Description` (name embedded in prose) and OpenCAPI as `Operand mnemonic|Field width|Description`
     — different strategies later, per multi-strategy/best-wins.
-- ID: `EXTRACTION-QUALITY-GAUGE.FIELD.2` · Status: `pending` · Goal: **capture** — a first-class
-  `message_field_records` EvidenceIR surface (`MessageFieldRecord`: id, name, container label
-  derived from the declaring table's caption, optional width-in-bits when a width column exists
-  (honest `None` otherwise), declaring-table provenance), extracted from field-titled tables that
-  are NOT register-shaped; registered through the `run_surface` extractor framework (manifest
-  entry); kg-bench gold (field table + signal table → fields land in `message_field_records`, NOT
-  in signal inventory) + negative (register-style `Field|...|Access|Reset` table → zero message
-  fields).
+- ID: `EXTRACTION-QUALITY-GAUGE.FIELD.2` · Status: `done` (`2026-06-10`) · Goal: **capture** — the
+  first-class `message_field_records` EvidenceIR surface. Shipped (`ir/evidence.rs`):
+  `MessageFieldRecord` (id, name, container, optional `bit_width`, optional description,
+  `supporting_table_ids` provenance) + `message_field_surface` via the `run_surface` framework
+  (key = container+name; manifest entry `message_fields`; extractor
+  `message_fields.container_field_table`). Gates, all structural: (1) name column is EXACTLY
+  `Field`/`Field name` (a merged CCIX `Field Description` column never qualifies); (2) the
+  one-place register discriminator — `is_register_field_header` (Access/Reset/Default/Type
+  vocabulary) claims the table for the REGISTER surface, never here; (3) the caption must anchor
+  "field(s)" to a container noun at distance ≤2 (`channel|packet|message|flit|header|frame|
+  request|response` — grammar vocabulary, not a name list), so register/descriptor captions
+  ("Address Fields in Remappable Interrupt Request Format", "Mode Register 0") never fire;
+  (4) continuation captions ("Table B2.2 Continued from previous page") inherit the container via
+  the table-ref token and MERGE provenance into the first record; (5) width read only from a
+  SINGLE unqualified width column (`Width (bits)`/`Bits`), plain count or `[hi:lo]` range —
+  per-variant `Width (bits) ReqS` stays honest `None`; (6) restriction/status tables
+  (`Field name|Restriction`, `Field|Value|Status`) declare nothing. Deterministic (encounter
+  order, lookup-only maps). **Measured live (real Rust extractor over all persisted SourceIRs, the
+  `#[ignore]`d `message_field_corpus_sweep_local_measurement` harness): fires ONLY on the
+  packet-protocol family — CHI 106 fields / 4 containers (Request channel / Response packet /
+  Snoop request / Data packet; `TxnID`, `DBID`, `Opcode`... — the exact `.gauge` mis-typing class,
+  now typed), CHI-C2C 149/143/189 fields (89/93/164 with width), CCIX 1.x 47/50/51 (~95% with
+  width), CXS 1; zero on every register/wire doc.** No-regression PROVEN: git-stash before/after
+  rebuild of all 12 intact-bundle docs (incl. RISC-V Debug's 60 register field-tables, AXI's MPAM
+  sub-field tables, SMBus) — byte-identical except the additive `message_fields` manifest entry,
+  zero message fields each. +6 pure tests (lib 1524) + kg-bench fixtures
+  `message_field_table_gold` (fields in `message_field_records` with widths + honest-absence lock,
+  NOT in canonical signal inventory) and `message_field_register_table_negative` (register-vocab
+  table captioned "message fields" → zero) with new kg-bench assertion keys
+  `message_field_count`/`message_fields_include` (incl. `bit_width_absent`)/
+  `message_field_names_exclude` — kg-bench 153/153. `run_ci.sh` GREEN. Honest residuals recorded:
+  CCIX 2.0 `Bit Location|Field Description`, OpenCAPI `Operand mnemonic`, USB descriptor tables
+  (no container bigram) = later strategies; validate/document-class integration deliberately
+  deferred. Book: `pipeline/evidenceir.md` subsection. KM [[message-field-records-surface]].
 - ID: `EXTRACTION-QUALITY-GAUGE.FIELD.3` · Status: `pending` · Goal: **discriminate** —
   `EntityType::Field` + `EntityEvidence.declared_in_field_table` + grounding rule (declared in a
   field table and not in a signal table → authoritatively `Field`; signal-table declaration
@@ -373,6 +399,12 @@ honestly-qualified) path to "human-SpecForge in Rust."
   conditions stay distinct facts; eval unchanged at P=R=F1=1.000 ×3. The original `.gauge`
   duplication taxonomy (~30% on CHI) now has its mechanism in place for the CHI-class re-measure
   once `.FIELD` lands.
+- `2026-06-10`: `.FIELD.2` DONE — `message_field_records` is live: packet/flit protocols' declared
+  message fields now have a first-class typed home (CHI 106 / C2C up to 189 with real widths /
+  CCIX ~50 — measured with the real extractor over the persisted corpus), the register surface
+  keeps priority over shared `Field` columns (12-doc stash-diff byte-identical except the additive
+  manifest entry), and the gold/negative fixture pair locks both directions (kg-bench 153/153,
+  lib 1524). Next: `.FIELD.3` grounds `EntityType::Field` on this catalog.
 - `2026-06-10`: `.FIELD.1` DONE (design + corpus probe, docs-only) — the signal-vs-field ontology is
   grounded in the documents' own table-header vocabulary: field-titled name columns declare fields
   (CHI: 36 tables / 79 names incl. the `DBID`/`TxnID` mis-typing class; CHI-C2C carries widths),

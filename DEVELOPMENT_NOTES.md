@@ -1,4 +1,31 @@
 # DEVELOPMENT_NOTES
+## `EXTRACTION-QUALITY-GAUGE.FIELD.2` (`2026-06-10`) — `message_field_records` surface
+- `ir/evidence.rs`: `MessageFieldRecord` + `extract_container_message_fields` (pure over `SourceIr`)
+  + `message_field_surface` (`run_surface`, key container+name, manifest `message_fields`); wired in
+  `build_with_prior_memory` right after the register surface; persisted additively
+  (`#[serde(default, skip_serializing_if)]`, schema unchanged — the serial-frame precedent).
+- Gate composition, each in one place: exact-name column (`field`/`field name`), register priority
+  (`is_register_field_header` reused — Access/Reset/Default/Type), caption container bigram at
+  distance ≤2 (`MESSAGE_CONTAINER_NOUNS`, fixes CXS "Packet control fields" without re-admitting
+  VT-d "Address Fields in … Request Format"), continuation inheritance via `Table <ref>` token with
+  provenance merge (first declaration wins width/description), single-unqualified-width rule
+  (`Width (bits) ReqS` ⇒ honest `None`), declaration requirement (description or width evidence —
+  `Field name|Restriction` / `Field|Value|Status` reference tables stay out).
+- Probe-first method (the `.9.7`/`.9.8` discipline): python criterion v1 over-captured the register
+  population (MMU-700 157, VT-d 55, HBM2 mode registers, GIC ID registers); v2 (container bigram)
+  is surgical — only CHI/C2C/CCIX-1.x/CXS fire. The Rust extractor reproduces v2: live sweep
+  (`message_field_corpus_sweep_local_measurement`, `#[ignore]`d, walks local `generated/`) reads
+  CHI 106/4, C2C 149/143/189, CCIX 47/50/51, CXS 1.
+- No-regression proof: `git stash` → old binary rebuilds 12 intact-bundle docs → pop → new binary
+  rebuilds → JSON diff: byte-identical except the additive `message_fields` manifest entry; zero
+  message fields on all 12 (RISC-V Debug's 60 register field-tables and AXI's MPAM sub-field
+  tables are the live negatives).
+- kg-bench: `message_field_count` / `message_fields_include` (with `bit_width` lock and
+  `bit_width_absent` honesty lock) / `message_field_names_exclude` + fixtures
+  `message_field_table_gold` (incl. canonical `signal_names_exclude` for the field names) and
+  `message_field_register_table_negative` (register-vocab table captioned "message fields" → 0).
+  153/153. `run_ci.sh` exit 0 (lib 1524).
+
 ## `EXTRACTION-QUALITY-GAUGE.FIELD.1` (`2026-06-10`) — signal-vs-field ontology design (probe-first)
 - Probe method: walked all 49 persisted `generated/source_ir/*/source_ir.json` with
   `structured_tables`, bucketing first-header-row signatures; then per-doc field-name extraction from

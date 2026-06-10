@@ -1,3 +1,17 @@
+### `EXTRACTION-QUALITY-GAUGE.FIELD.2` — `message_field_records`: packet/flit message fields get a typed home
+New EvidenceIR surface via the extractor framework (`message_fields.container_field_table`, manifest
+entry, key = container+name): field-titled tables whose caption anchors "fields" to a container noun
+(channel/packet/message/flit/header/frame/request/response — grammar, not names) yield typed
+`MessageFieldRecord`s (name, container, honest optional width, description, table provenance);
+continuation pages merge by table-ref; the register surface keeps priority over shared `Field`
+columns via the one-place `is_register_field_header` discriminator. Measured live over the persisted
+corpus: fires ONLY on the packet family — CHI 106 fields / 4 channels (the `TxnID`/`DBID` gauge
+class, now typed), CHI-C2C up to 189 with real widths, CCIX ~50, CXS 1 — and 12-doc stash-diff
+proves every register/wire doc byte-identical except the additive manifest entry. +6 tests (lib
+1524); kg-bench 153/153 with the new gold/negative fixture pair + `message_field_*` assertion keys;
+`run_ci.sh` green. Book: EvidenceIR chapter subsection. KM `message-field-records-surface`.
+Residuals recorded: CCIX-2.0/OpenCAPI/USB shapes; `.FIELD.3` grounds `EntityType::Field` next.
+
 ### `EXTRACTION-QUALITY-GAUGE.FIELD.1` — signal-vs-field ontology DESIGNED (corpus-probed, docs-only)
 The packet/flit-protocol field ontology is grounded before any code (the probe-first method): fields
 are declared in field-titled tables (CHI: 36 tables / 79 names including the `DBID`/`TxnID` class the

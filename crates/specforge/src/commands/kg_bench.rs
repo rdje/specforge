@@ -121,6 +121,12 @@ struct EvidenceStageExpectations {
     table_signal_declaration_provenance_count: Option<usize>,
     #[serde(default)]
     table_signal_declaration_provenance_include: Vec<ExpectedTableSignalDeclarationProvenance>,
+    /// EXTRACTION-QUALITY-GAUGE.FIELD.2 — lock the typed message-field inventory.
+    message_field_count: Option<usize>,
+    #[serde(default)]
+    message_fields_include: Vec<ExpectedMessageField>,
+    #[serde(default)]
+    message_field_names_exclude: Vec<String>,
 }
 
 #[derive(Debug, Default, Deserialize)]
@@ -269,6 +275,19 @@ struct ExpectedTableSignalDeclarationProvenance {
     table_id: String,
     #[serde(default)]
     statement_text: Option<String>,
+}
+
+/// EXTRACTION-QUALITY-GAUGE.FIELD.2 — one expected MESSAGE FIELD. Identity is (container, name);
+/// `bit_width` locks a declared width when given, and `bit_width_absent` locks the honest-absence
+/// behavior (an unstated or variant-dependent width must stay `None`, never guessed).
+#[derive(Debug, Deserialize)]
+struct ExpectedMessageField {
+    name: String,
+    container: String,
+    #[serde(default)]
+    bit_width: Option<u32>,
+    #[serde(default)]
+    bit_width_absent: bool,
 }
 
 #[derive(Debug, Deserialize)]
@@ -882,6 +901,60 @@ fn evaluate_evidence_expectations(
             }
         }
     }
+
+    // EXTRACTION-QUALITY-GAUGE.FIELD.2 — the typed message-field inventory.
+    assert_optional_count(
+        label,
+        "message_field_count",
+        expectations.message_field_count,
+        evidence_ir.message_field_records.len(),
+        failures,
+    );
+    for expectation in &expectations.message_fields_include {
+        let record = evidence_ir
+            .message_field_records
+            .iter()
+            .find(|r| r.name == expectation.name && r.container == expectation.container);
+        let Some(record) = record else {
+            failures.push(format!(
+                "{label}: expected `message_fields_include` to contain field `{}` in container `{}`, but actual fields were {:?}",
+                expectation.name,
+                expectation.container,
+                evidence_ir
+                    .message_field_records
+                    .iter()
+                    .map(|r| format!("{}::{}", r.container, r.name))
+                    .collect::<Vec<_>>()
+            ));
+            continue;
+        };
+        if let Some(expected_width) = expectation.bit_width
+            && record.bit_width != Some(expected_width)
+        {
+            failures.push(format!(
+                "{label}: expected message field `{}` in `{}` to declare bit_width {expected_width}, got {:?}",
+                expectation.name, expectation.container, record.bit_width
+            ));
+        }
+        if expectation.bit_width_absent && record.bit_width.is_some() {
+            failures.push(format!(
+                "{label}: expected message field `{}` in `{}` to carry NO bit_width (honest absence), got {:?}",
+                expectation.name, expectation.container, record.bit_width
+            ));
+        }
+    }
+    let message_field_names: BTreeSet<String> = evidence_ir
+        .message_field_records
+        .iter()
+        .map(|r| r.name.clone())
+        .collect();
+    assert_excludes(
+        label,
+        "message_field_names_exclude",
+        &expectations.message_field_names_exclude,
+        &message_field_names,
+        failures,
+    );
 }
 
 #[expect(

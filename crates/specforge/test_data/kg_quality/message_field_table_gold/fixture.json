@@ -1,0 +1,200 @@
+{
+  "name": "message_field_table_gold",
+  "source": "source.md",
+  "source_ir_patch": {
+    "structured_tables": [
+      {
+        "table_id": "table_request_fields",
+        "asset_id": "table_request_fields",
+        "page_id": null,
+        "caption_text": "Table 2.1: Request message fields",
+        "source_ref": null,
+        "table_kind": "unknown",
+        "header_rows": [
+          [
+            {
+              "text": "Field",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Width (bits)",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Description",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            }
+          ]
+        ],
+        "body_rows": [
+          [
+            {
+              "text": "XTXNID",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "12",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Transaction identifier for the request.",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ],
+          [
+            {
+              "text": "XQOS",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "4",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Quality of service priority.",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ],
+          [
+            {
+              "text": "XADDR",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "4 or 8",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Address carried by the request message.",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ]
+        ],
+        "row_count": 3,
+        "col_count": 3
+      },
+      {
+        "table_id": "table_request_fields_cont",
+        "asset_id": "table_request_fields_cont",
+        "page_id": null,
+        "caption_text": "Table 2.1 Continued from previous page",
+        "source_ref": null,
+        "table_kind": "unknown",
+        "header_rows": [
+          [
+            {
+              "text": "Field",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Width (bits)",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Description",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            }
+          ]
+        ],
+        "body_rows": [
+          [
+            {
+              "text": "XOPCODE",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "6",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Request opcode.",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ]
+        ],
+        "row_count": 1,
+        "col_count": 3
+      }
+    ]
+  },
+  "expectations": {
+    "evidence": {
+      "message_field_count": 4,
+      "message_fields_include": [
+        {
+          "name": "XTXNID",
+          "container": "Request message",
+          "bit_width": 12
+        },
+        {
+          "name": "XOPCODE",
+          "container": "Request message",
+          "bit_width": 6
+        },
+        {
+          "name": "XADDR",
+          "container": "Request message",
+          "bit_width_absent": true
+        }
+      ]
+    },
+    "semantic": {
+      "signal_names_include": [
+        "XMSGV"
+      ],
+      "signal_names_exclude": [
+        "XTXNID",
+        "XQOS",
+        "XADDR",
+        "XOPCODE"
+      ]
+    },
+    "intent": {
+      "signal_names_include": [
+        "XMSGV"
+      ],
+      "signal_names_exclude": [
+        "XTXNID",
+        "XQOS",
+        "XADDR",
+        "XOPCODE"
+      ]
+    }
+  }
+}
