@@ -486,9 +486,36 @@ SMBus `table_0022` (degenerate bitfield), SMBus `table_0042` (address-assignment
 `table_0005` (3-level nested cross-tab, core params already from `table_0004`) are ALL honest residuals (do not
 build; residual over fabrication). **The serial-class STRUCTURAL table levers are now exhausted** (the buildable
 one, `.9.11`, is done); the remaining serial gaps are PROSE-signal (parked). **Frontier (any of, owner may
-steer):** `.9.10`/`.9.8b` (prose-signal — PARKED behind participation-based identity / `NLP-SHALLOW-PARSE`, no
-list/case) · broader-corpus structural table-shape probe (beyond serial) · `CORPUS-PATTERN-REUSE.3` (corpus-cluster
+steer):** `.10` (corpus register-table-shape recovery — probe DONE `2026-06-10`, build sub-leaves below) ·
+`.9.10`/`.9.8b` (prose-signal — PARKED behind participation-based identity / `NLP-SHALLOW-PARSE`, no
+list/case) · `CORPUS-PATTERN-REUSE.3` (corpus-cluster
 CLI, on-#1). `.6`/`.7` (the older VLM-frontier / USB-3.2 leaves) stay blocked on host-local PDFs.
+
+**`PDF-VARIANT-DIGESTION.10` — corpus register-table-shape recovery (the broader-corpus
+structural probe, run `2026-06-10`).** · Status: `in_progress` (`.10p` probe DONE; build
+sub-leaves pending, probe-first per family). The corpus-wide census over all 77 persisted
+SourceIRs: **7,012 `unknown`-kind structured tables**, and the top normalized header
+signatures are overwhelmingly REGISTER-FIELD variants (~2,000 tables) — all structural
+header vocabulary, zero chip names (ADR 0006). Crossing each doc's register-shaped
+unknown-table count against its extracted register yield separates healthy docs (extraction
+works without the kind label: CoreSight-0701 598→833 regs/2,978 fields; NVMe 199→42/201;
+VT-d 152→103/318; RISC-V Debug 59→44/179) from the REAL gaps:
+  | doc | reg-shaped unknown tables | extracted regs/fields | dominant unexplained signature |
+  | --- | --- | --- | --- |
+  | AMD IOMMU 48882 | 167 | 11/**0** | `bits \| description` (+287-count family ×3 docs) |
+  | CCIX ×4 versions | ~151 each | 8/11 each | `bit location \| register description \| attributes` (481 corpus-wide) + `byte location \| size \| register description \| attributes \| m/o` |
+  | CoreSight TMC ddi0461 | 56 | 2/50 | `bits \| name \| description` family |
+  | GIC-600 TRM | 72 | 15/214 | `bits \| name \| function` (129 corpus-wide, 5 docs) |
+  | MMU-700 TRM | 68 | 13/91 | `bits \| name \| description` (68) |
+  | CHI C2C (ihi0098) | 84 | 76/315 | `bits \| field \| description \| access type \| reset` (65) — partial |
+  | CHI G (ihi0050) | 28 | **0/0** | degraded ingest (host-local re-provide blocks full fix) |
+  Build sub-leaves (each probe-first on ITS family, structural only, no lists/case,
+  wire-docs + register golds stay green): `.10a` the `bit location`-keyed register/field
+  vocabulary (CCIX family, ~600 tables across 4 docs — biggest single unlock); `.10b` the
+  two-column `bits \| description` shape (AMD IOMMU + relatives, ~290); `.10c` the
+  `name \| function` column synonym (GIC-600 +4 docs, ~129). Honest boundary: a shape is
+  recovered only when its rows actually parse as bit-range + field semantics — otherwise it
+  stays an explicit residual (no fabrication).
 
 **(SUPERSEDED active note) `PDF-VARIANT-DIGESTION.6`/`.7`** — item ② (`.5`) COMPLETE and `.8` (broaden
 prose-actor capture) DONE. **`.5a` + `.5b` + `.5c` are DONE** — structural doc-class routing

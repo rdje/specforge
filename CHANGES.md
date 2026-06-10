@@ -1,3 +1,18 @@
+### `PDF-VARIANT-DIGESTION.10p` — the broader-corpus structural table-shape probe: register-shaped unknown tables are the next big digestion lever (probe-only; no code)
+Census over all 77 persisted SourceIRs: 7,012 `unknown`-kind structured tables; the dominant
+header signatures are register-field variants (~2,000 tables, all structural vocabulary —
+ADR 0006). Crossing per-doc register-shaped-unknown counts against extracted register yield
+proves extraction does NOT need the kind label (CoreSight-0701 598→833/2,978; NVMe
+199→42/201) and isolates the REAL vocabulary gaps: **AMD IOMMU 167 tables → 0 fields; the
+CCIX family ×4 ~151 each → 11 fields each** (`bit location | register description |
+attributes`, 481 corpus-wide), CoreSight TMC/GIC-600/MMU-700 partial. Owned as
+`PDF-VARIANT-DIGESTION.10` with build sub-leaves `.10a` (CCIX `bit location` vocabulary,
+≈600 tables — biggest single unlock), `.10b` (AMD two-column `bits | description`, ≈290),
+`.10c` (`name | function` synonym, ≈129) — each probe-first, recovery only when rows
+genuinely parse, residual otherwise. KM `corpus-register-table-shape-gap`. Also this slice:
+standing artifact cleanup reclaimed **27.2 GiB** (`cargo clean`, 46k stale dep files;
+rebuild + tests green after).
+
 ### `LLM-PRIMARY-PROMOTION.4` — the corpus sweep + the owner-visible default-flip decision packet (measurements + docs; no code)
 Twelve docs swept across classes (dense/mid AMBA, register, memory, capability, serial, TRM,
 tiny-surface) under the corpus-safe protocol: canonical artifacts received only the standing
