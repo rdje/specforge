@@ -1,4 +1,20 @@
 # DEVELOPMENT_NOTES
+## `PDF-VARIANT-DIGESTION.11` (`2026-06-11`) — the vacuous-corpus probe and the discipline of measured NO-decisions
+- The probe's most useful output was a zero: NO persisted evidence doc carries the
+  message-field surface (the docs that would — NVMe, AMD, CHI-class — were deliberately
+  never rebuilt). That zero reframed the slice: the class-census and gauge questions
+  CANNOT be answered on canonical data, only on the two real dry-runs — and n=2 is not a
+  measurement basis for a new classifier arm. Scope shrank to reporting, with both
+  non-integrations recorded as MEASURED decisions plus an explicit revisit trigger
+  (the re-ingest sweep), not as omissions.
+- The "fields without bit positions" gauge dimension looked obviously right and was
+  rejected on honesty grounds: CHI-class field tables are width-only — the document
+  itself states no positions, so the dimension would systematically count honest
+  document absence as extraction failure. A completeness gauge must never demand
+  evidence the document does not contain.
+- The inventory finding is emitted only when the surface is non-empty: absence is not an
+  event, and 76 unchanged validation reports should not each grow a zero-count finding.
+
 ## `PDF-VARIANT-DIGESTION.10d` (`2026-06-11`) — value-slices vs positions, the probe correction, and the fused-marker live catch
 - The defining honesty moment: the obvious "derive absolute bit = offset*8 + bit" move was
   killed by a per-item cross-check — description brackets (`Store Data[63:32]`,

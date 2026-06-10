@@ -933,6 +933,58 @@ stub-protocol live AMD run with per-item eyeball of all 16 chains. Honest bounda
 unchanged: symbolic cells, two-word names (`Store Address` — 4 rows), value-rows, and
 lost-caption chains stay residuals; `byte_offset` is recorded verbatim-literal, never
 inferred.
+
+**`PDF-VARIANT-DIGESTION.11` — `validate` integration of the `message_field_*` surfaces.**
+· Status: **DONE `2026-06-11`** (probe → measured scope decisions → build → live CLI
+verification). The deferred lever
+recorded since `.10b`: `validate <evidence-ir>` has ZERO `message_field` consumption —
+the AMD-class 217-field / NVMe 216-field inventories (`message_field_records`, now with
+`bit_range`/`byte_offset`) and the `message_field_constraints` surface are invisible to
+the user-facing report, the `document_class` decision, and the per-document completeness
+gauge. A structure-heavy document (command/queue/descriptor layouts) currently looks like
+a low-intent doc to the classifier even when its message-field surface is rich.
+**Scope (decide from the probe, bounded):** (1) report honest metrics on the evidence
+report — field count, container count, `with_bit_range`, `with_byte_offset`,
+`message_field_constraints` count — plus an Info finding; (2) `document_class`: decide BY
+MEASUREMENT whether `message_field_records` should join the census (it is a LOW-NOISE
+table-derived surface like registers — but the persisted-corpus impact must be measured
+per-doc: which docs reclassify, and is each reclassification more honest? A guide must
+never become `protocol` from noise; the `.5a` exclusion of `conditional_rules` is the
+precedent for rejecting a surface); (3) completeness gauge: class-aware gaps for the
+field surface — only dimensions the probe shows are real. CAVEAT recorded: most persisted
+canonical evidence predates `.10b` (canonical NVMe deliberately NOT rebuilt — standing
+Pattern gauge), so the corpus census must distinguish "surface absent because never
+rebuilt" from "honest zero"; the class decision must not penalize either.
+**PROBE RESULT (decisive):** ZERO of the 78 persisted evidence docs carry any
+`message_field` surface (22 have manifests, i.e. were rebuilt since the framework — the
+field-bearing docs simply were never rebuilt after FIELD.2/`.10b`: canonical NVMe keeps
+its standing gauge, CHI/AMD bundles are host-local). The only real field-bearing data is
+the AMD/NVMe dry-runs. **Measured scope decisions:** (1) metrics + Info finding = BUILD;
+(2) `document_class` census = NO CHANGE — measured on the two real docs, NEITHER would
+reclassify (AMD is `interface`, 64 connectivity edges; NVMe is `register`, 42 regs), and
+with n=2 any new classifier arm is overfitting (`feedback_genericity_guardrail`; the
+`.5a` `conditional_rules` exclusion is the precedent) — REVISIT TRIGGER recorded: when
+the corpus re-ingest sweep rebuilds field-bearing docs at scale, re-measure per-doc;
+(3) completeness gauge = NO CHANGE — a width-only field table states no positions, so a
+"fields without bit positions" dimension would mislabel honest document absence as an
+extraction gap (fabricated expectation).
+**Verification log:** lib tests 1564→1565 (1 new hermetic: the inventory metrics +
+finding through the REAL pipeline from a `.10b`/`.10d`-shaped table — counts 2 fields /
+1 container / 2 with bit_range / 1 with byte_offset, summary text locked; plus the
+absence case extended onto the provenance test — zeros and NO finding when the surface
+is empty); kg-bench **154/154**; full `scripts/run_ci.sh` GREEN. **Live CLI verification
+(temp-root build, canonical untouched, post-fmt binary):** NVMe evidence rebuilt into a
+/tmp root reports `message_field_records (from tables): 216 / containers: 113 /
+with_bit_range: 216 / with_byte_offset: 0 / message_field_constraints: 0`, the
+`[info:message_fields]` inventory finding renders with the honest counts, and the
+manifest line shows `message_fields[message_fields.bit_position_table]` fired. New
+validate surface: 5 metrics (`message_field_records`, `message_field_containers`,
+`message_fields_with_bit_range`, `message_fields_with_byte_offset`,
+`message_field_constraints`) + the `evidence_message_field_inventory` Info finding
+(emitted only when the surface is non-empty — absence is not an event). KM card
+`message-field-validate-integration`; book `quality/validation.md` note.
+
+**(SUPERSEDED active note) `PDF-VARIANT-DIGESTION.6`/`.7`** — item ② (`.5`) COMPLETE and `.8` (broaden
 prose-actor capture) DONE. **`.5a` + `.5b` + `.5c` are DONE** — structural doc-class routing
 (protocol/register/interface/guide), the front-matter doc-type signal (true guide vs under-extracted spec), and
 the class-aware per-doc completeness gauge (`.5b`) are all live in `validate` with honest guide reporting. **`.8`

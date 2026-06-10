@@ -1,3 +1,22 @@
+### `PDF-VARIANT-DIGESTION.11` — `validate` reports the message-field surfaces; class census and completeness gauge stay measured no-changes
+`validate <evidence-ir>` now surfaces the typed message-field inventory: 5 metrics
+(`message_field_records`, `message_field_containers`, `message_fields_with_bit_range`,
+`message_fields_with_byte_offset`, `message_field_constraints`) + an
+`evidence_message_field_inventory` Info finding emitted only when the surface is
+non-empty. Probe was decisive: ZERO of the 78 persisted evidence docs carry the surface
+(field-bearing docs never rebuilt — canonical NVMe keeps its standing gauge; CHI/AMD
+host-local), so the scope decisions were measured on the two real dry-run docs: (1)
+document_class census UNCHANGED — AMD stays `interface` (64 connectivity edges), NVMe
+stays `register` (42 regs); with n=2 a new classifier arm is overfitting (the `.5a`
+conditional_rules exclusion precedent); revisit trigger = the corpus re-ingest sweep; (2)
+completeness gauge UNCHANGED — width-only field tables state no positions, so a
+"fields without positions" gap would mislabel honest document absence as an extraction
+failure. Live CLI verification: temp-root NVMe rebuild reports 216 fields / 113
+containers + the inventory finding; manifest shows `message_fields.bit_position_table`
+fired. lib 1564→1565; kg-bench 154/154; full CI GREEN. KM
+`message-field-validate-integration`; book `quality/validation.md` note; README validate
+bullet.
+
 ### `PDF-VARIANT-DIGESTION.10d` — dword-relative offset-suffixed bit cells (`31:28 +04`): literal `bit_range` + `byte_offset`, never a derived absolute (AMD-class 82→217 fields)
 The `.10b`-spun offset-suffix family (43 tables / 309 rows, corpus-wide ONE document; all
 other corpus `+`-cells are symbolic and stay rejected) now extracts. The probe's core

@@ -2453,6 +2453,35 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
         "  table_signal_declaration_provenance: {}",
         ir.table_signal_declaration_provenance.len()
     );
+    // PDF-VARIANT-DIGESTION.11 — the message-field surfaces (structured content fields,
+    // not wires) belong on the user-facing report like every other typed inventory.
+    let message_field_containers = ir
+        .message_field_records
+        .iter()
+        .map(|r| r.container.to_ascii_lowercase())
+        .collect::<std::collections::BTreeSet<_>>()
+        .len();
+    let message_fields_with_bit_range = ir
+        .message_field_records
+        .iter()
+        .filter(|r| r.bit_range.is_some())
+        .count();
+    let message_fields_with_byte_offset = ir
+        .message_field_records
+        .iter()
+        .filter(|r| r.byte_offset.is_some())
+        .count();
+    println!(
+        "  message_field_records (from tables): {}",
+        ir.message_field_records.len()
+    );
+    println!("    containers: {message_field_containers}");
+    println!("    with_bit_range: {message_fields_with_bit_range}");
+    println!("    with_byte_offset: {message_fields_with_byte_offset}");
+    println!(
+        "  message_field_constraints: {}",
+        ir.message_field_constraints.len()
+    );
     println!(
         "  signal_polarity_conflicts: {}",
         ir.signal_polarity_conflicts.len()
@@ -2983,6 +3012,30 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             Vec::new(),
         ));
     }
+    // PDF-VARIANT-DIGESTION.11 — surface the message-field inventory as an honest Info
+    // finding when it exists (structured content fields, not wires: command/queue/packet
+    // layouts). Deliberately NOT part of the document-class census: measured over the two
+    // real field-bearing documents, neither would reclassify (both are register/interface
+    // dominated already), and with n=2 any new classifier arm would be overfitting —
+    // revisit when the corpus re-ingest sweep rebuilds field-bearing docs at scale. Also
+    // deliberately NOT a completeness-gauge dimension: a width-only field table states no
+    // positions, so "fields without bit positions" would mislabel honest absence as a gap.
+    if !ir.message_field_records.is_empty() || !ir.message_field_constraints.is_empty() {
+        findings.push(finding(
+            "evidence_message_field_inventory",
+            ValidationFindingSeverity::Info,
+            "message_fields",
+            format!(
+                "typed message-field inventory: {} field(s) across {} container(s) ({} with literal bit positions, {} dword-relative with byte offsets); {} field-scoped constraint(s)",
+                ir.message_field_records.len(),
+                message_field_containers,
+                message_fields_with_bit_range,
+                message_fields_with_byte_offset,
+                ir.message_field_constraints.len()
+            ),
+            Vec::new(),
+        ));
+    }
     // .5b: class-aware per-doc completeness gauge — how complete is the typed intent the
     // extraction DID produce (every register has fields + a width, every signal a
     // direction, every intent-bearing table accounted), judged appropriately for the class.
@@ -3491,6 +3544,26 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             metric(
                 "table_signal_declaration_provenance",
                 ir.table_signal_declaration_provenance.len().to_string(),
+            ),
+            metric(
+                "message_field_records",
+                ir.message_field_records.len().to_string(),
+            ),
+            metric(
+                "message_field_containers",
+                message_field_containers.to_string(),
+            ),
+            metric(
+                "message_fields_with_bit_range",
+                message_fields_with_bit_range.to_string(),
+            ),
+            metric(
+                "message_fields_with_byte_offset",
+                message_fields_with_byte_offset.to_string(),
+            ),
+            metric(
+                "message_field_constraints",
+                ir.message_field_constraints.len().to_string(),
             ),
             metric(
                 "signal_polarity_conflicts",
@@ -7829,6 +7902,100 @@ mod tests {
         assert_eq!(
             metric_value(&report, "table_signal_declaration_provenance"),
             Some("3")
+        );
+
+        // PDF-VARIANT-DIGESTION.11 — a doc with NO message-field surface reports honest
+        // zeros and emits NO inventory finding (absence is not an event).
+        assert_eq!(metric_value(&report, "message_field_records"), Some("0"));
+        assert_eq!(metric_value(&report, "message_field_containers"), Some("0"));
+        assert_eq!(
+            metric_value(&report, "message_fields_with_bit_range"),
+            Some("0")
+        );
+        assert_eq!(
+            metric_value(&report, "message_fields_with_byte_offset"),
+            Some("0")
+        );
+        assert_eq!(
+            metric_value(&report, "message_field_constraints"),
+            Some("0")
+        );
+        assert!(!has_finding(&report, "evidence_message_field_inventory"));
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_evidence_ir_reports_message_field_inventory() -> Result<()> {
+        // PDF-VARIANT-DIGESTION.11 — the message-field surfaces reach the user-facing
+        // report: counts (fields, containers, literal bit positions, dword-relative byte
+        // offsets, field-scoped constraints) plus the Info inventory finding. Built
+        // through the REAL pipeline from a `.10b`/`.10d`-shaped bit-position table.
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("message_field_inventory.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        fs::write(&source, "# Spec\nStructure layouts.\n")?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "bits_layout".to_string(),
+            asset_id: "bits_layout".to_string(),
+            page_id: Some("page_0010".to_string()),
+            caption_text: Some("Table 9: Widget Entry Fields".to_string()),
+            source_ref: None,
+            table_kind: TableKind::Unknown,
+            header_rows: vec![vec![
+                make_table_cell("Bits", true),
+                make_table_cell("Description", true),
+            ]],
+            body_rows: vec![
+                vec![
+                    make_table_cell("31:16", false),
+                    make_table_cell("Widget Identifier (WID): the identifier.", false),
+                ],
+                vec![
+                    make_table_cell("15:0 +04", false),
+                    make_table_cell("QueueID[15:0] . Limits outstanding work.", false),
+                ],
+            ],
+            row_count: 3,
+            col_count: 2,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        assert_eq!(evidence_ir.message_field_records.len(), 2);
+
+        let report = validate_evidence_ir(&evidence_ir, "message_field_inventory".to_string());
+        assert_eq!(metric_value(&report, "message_field_records"), Some("2"));
+        assert_eq!(metric_value(&report, "message_field_containers"), Some("1"));
+        assert_eq!(
+            metric_value(&report, "message_fields_with_bit_range"),
+            Some("2")
+        );
+        assert_eq!(
+            metric_value(&report, "message_fields_with_byte_offset"),
+            Some("1")
+        );
+        assert_eq!(
+            metric_value(&report, "message_field_constraints"),
+            Some("0")
+        );
+        assert!(has_finding(&report, "evidence_message_field_inventory"));
+        let summary = report
+            .findings
+            .iter()
+            .find(|f| f.finding_id == "evidence_message_field_inventory")
+            .map(|f| f.summary.as_str())
+            .unwrap_or_default();
+        assert!(
+            summary.contains("2 field(s) across 1 container(s)")
+                && summary.contains("1 dword-relative"),
+            "inventory summary carries the honest counts: {summary}"
         );
 
         Ok(())

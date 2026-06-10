@@ -277,6 +277,19 @@ pure, unit-tested function (`document_completeness_gauge`) keyed off the documen
 adds no extraction behavior — it only makes the existing incompleteness visible instead of
 silent.
 
+The typed **message-field inventory** (the in-memory structure and packet-field surface built
+by the bit-position and field-titled table readers) is also on the report: five metrics —
+`message_field_records`, `message_field_containers`, `message_fields_with_bit_range`,
+`message_fields_with_byte_offset`, `message_field_constraints` — plus an
+`evidence_message_field_inventory` Info finding when the surface is non-empty (an NVMe rebuild
+reports *"216 field(s) across 113 container(s), 216 with literal bit positions"*). Two
+deliberate non-integrations keep the report honest: the inventory does **not** join the
+document-class decision (measured on the real field-bearing documents, neither would change
+class, and generalizing from two data points would be exactly the kind of overfitting the
+class rules avoid), and it does **not** add a completeness-gauge dimension (a width-only field
+table states no bit positions — counting "fields without positions" as a gap would mislabel
+the document's own honest absence as an extraction failure).
+
 ### How *correct* is what we extracted? — the standing extraction-quality gauge
 
 Completeness asks "did we get everything?"; the natural sibling question is "**is what we got
