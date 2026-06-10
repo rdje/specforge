@@ -38,13 +38,14 @@ sentence does NOT entail them) is a STANDING persisted measurement, not a one-of
   mismatch OR a measured id gone — catches `extract-constraints-llm`'s id re-keying replace).
   Locked by kg fixture `extraction_quality_gauge_persisted_gold` + 5 unit tests.
 
-**Live finding (2026-06-10, qwen2.5:14b-instruct):** the CANONICAL persisted artifacts still
-carry the Pattern extractor's surface — the cleaned LLM-primary surfaces (`.3a`/`.3b`/`.4`,
-P=1.000 ×3) were only ever measured on /tmp redirected copies, never promoted. The gauge makes
-that visible: APB 4/14 (28.6%, Info only), AHB 9/15 (60%), degraded CHI 9/13 (69%), AXI 91/100
-(91%) — all three majority-flagged. I2S end-to-end converge demo: 2 passes, gauge 1/1
+**Live findings (2026-06-10, qwen2.5:14b-instruct):** the gauge first made visible that the
+canonical artifacts carried the Pattern surface — APB 28.6% (Info only), AHB 60%, degraded CHI
+69%, AXI 91% (majority-flagged) — which spawned the `LLM-PRIMARY-PROMOTION` tree. After its
+`.2`/`.3`: APB and AHB canonical artifacts carry the PROMOTED surface (gauges 23.8% / 33.3%),
+AXI was reverted to Pattern pending the `.3a` coordinated-subject typo fix (its gauge honestly
+re-reads 91/100 — reproduced EXACTLY across two independent measurements, a strong
+oracle-reproducibility datapoint). I2S end-to-end converge demo: 2 passes, gauge 1/1
 not-entailed (`SCK must_be_asserted` read from an edge-synchronization permission sentence — a
-genuine mis-extraction, correctly flagged). Promoting the LLM-primary surface into canonical
-artifacts is the obvious follow-up lever this gauge now motivates.
+genuine mis-extraction, correctly flagged). See [[llm-primary-promotion-stage]].
 Related: [[llm-primary-condition-subject-gate]], [[llm-primary-permissive-frame-gate]],
 [[conformal-tier-agreement-degenerate]], [[nli-gate-real-apb-validation]].

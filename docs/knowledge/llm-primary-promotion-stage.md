@@ -40,13 +40,19 @@ Semantic → Intent → adapter ONCE. Load-bearing mechanics:
 - Default-flip is a SEPARATE owner-visible decision gated on the `.4` corpus sweep
   (`docs/tasks/LLM-PRIMARY-PROMOTION.md`); until then promotion is per-run opt-in.
 
-Live (`2026-06-10`, APB end-to-end converge with `--vlm-provider skip --nlp-provider ollama
---promote-constraints-llm`): stabilized in 2 passes (Pattern+NLP3 surface 18 records) →
-promotion 18 → 21 grounded → 21 kept over 15 sentences (on APB the promoted surface GROWS —
-the `.8` validity recovery reads facts the pattern grammar mis-read; the shrink case is the
-dense-spec shape) → gauge on the promoted surface 5/21 not-entailed (23.8%, vs 28.6% on the
-old Pattern artifact) → eval gate HELD on the promoted canonical artifact:
-signal_constraint P=R=F1=1.000 (6/6), WIRE-BASED-100 filtered relations 1.000, doc-level
-recall 6/6, conformal empirical_error 0.000.
+Live (`2026-06-10`): APB end-to-end converge (`--promote-constraints-llm`): 2 passes → 18 → 21
+kept (on APB the promoted surface GROWS — validity recoveries; the shrink case is the
+dense-spec shape) → gauge 23.8% vs 28.6% → all gates HELD. `.3` canonical-artifact battery:
+AHB 15→12 kept, gauge 60.0%→33.3%, ALL gates 1.000 → **APB+AHB canonical artifacts now carry
+the promoted surface**. AXI 102→50 kept, gauge 91.0%→36.0%, BUT seed_axi_temporal FAILED
+(1/3) → **AXI REVERTED** (Pattern surface restored, gates re-verified 1.000, gauge re-measured
+— exactly 91/100 again, a strong oracle-reproducibility datapoint). Root cause of the AXI
+gate failure (probed temp 0, ×2 identical): the coordinated-subject sentence "SYSCOREQ and
+SYSCOACK must be deasserted when ARESETn is asserted." — the model emits both records but
+MISSPELLS the first subject (`SYCOREQ`), and entity typing rightly rejects the undeclared
+token. NEW defect class: model-misspelled subject on an otherwise-grounded proposal; fix =
+`.3a` document-grounded typo snap (edit distance 1, candidate must literally appear in the
+sentence AND pass signal typing, exactly one candidate — else the honest drop stands).
+Default-flip stays blocked until `.3a` re-clears AXI.
 Related: [[extraction-quality-gauge-standing]], [[llm-primary-condition-subject-gate]],
 [[llm-primary-permissive-frame-gate]].

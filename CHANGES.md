@@ -1,3 +1,22 @@
+### `LLM-PRIMARY-PROMOTION.3` — gate battery on promoted canonical artifacts: APB+AHB cleared, AXI gate CAUGHT a defect and was reverted
+The honest verification slice. The persisted canonical AHB/AXI artifacts were promoted via the
+same shared core the converge stage uses, downstream rebuilt, and the full gold-gate battery
+run. **Cleared:** AHB 15→12 kept (gauge 60.0%→33.3% not-entailed) with seed_ahb 1.000 +
+filtered relations 1.000 + seed_ahb_temporal 1.000; APB (from `.2`) all green; seed_swd serial
+control intact; the /tmp redirected-copy measurements reproduced EXACTLY on canonical
+artifacts (15→12, 102→54→50 w/ 4 merged). **Caught:** AXI (102→50 kept, gauge 91.0%→36.0%)
+FAILED seed_axi_temporal at 1/3 — the coordinated-subject sentence "SYSCOREQ and SYSCOACK
+must be deasserted when ARESETn is asserted." loses SYSCOREQ because the model MISSPELLS it
+(`SYCOREQ`, temp 0, ×2 reproducible) and entity typing rightly rejects the undeclared token —
+the grounding gate worked as designed; recall lost to a one-character model typo. **Action:**
+AXI REVERTED to the Pattern surface (clean rebuild — zero Nlp provenance → full supersede),
+both AXI gates re-verified 1.000 (confirming causality: the dropped constraint fed the
+temporal rules), gauge re-measured on the restored surface (exactly 91/100 again — strong
+NLI-oracle reproducibility). WIRE-BASED-100 stands intact on every canonical artifact. New
+bounded fix leaf `.3a`: document-grounded typo snap (edit-distance-1, candidate must literally
+appear in the sentence AND pass signal typing, unambiguous-only). Default-flip (`.4`) stays
+blocked until `.3a` re-clears AXI. KM cards updated.
+
 ### `LLM-PRIMARY-PROMOTION.2` — `converge --promote-constraints-llm`: the clean constraint surface, promoted opt-in
 The promotion stage is live. The LLM-primary replacement core is extracted as
 `promote_constraints` (the `extract-constraints-llm` command is now a thin printing wrapper),

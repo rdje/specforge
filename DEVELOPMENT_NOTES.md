@@ -1,4 +1,29 @@
 # DEVELOPMENT_NOTES
+## `LLM-PRIMARY-PROMOTION.3` (`2026-06-10`) — gate battery: APB+AHB cleared; AXI caught + reverted
+- Method: promote the persisted CANONICAL AHB/AXI artifacts via the standalone command (same
+  `promote_constraints` core as the converge stage — `.2` already proved the converge
+  integration end-to-end on APB), rebuild semantic+intent, run the full gate battery
+  (seed_ahb/axi + the three temporal datasets + seed_swd as serial control), then nli-verify
+  gauges. Measurements-only slice: no code change.
+- Reproducibility datapoints worth keeping: the canonical promotions reproduced the /tmp
+  redirected-copy numbers EXACTLY (AHB 15→12; AXI 102→54→50 with 4 merged), and the restored
+  AXI gauge re-read EXACTLY 91/100 across two independent NLI passes (temp 0).
+- The AXI failure anatomy: gold temporal facts SYSCOREQ/SYSCOACK-LOW-after-ARESETN live in
+  the coordinated-subject sentence "SYSCOREQ and SYSCOACK must be deasserted when ARESETn is
+  asserted."; the model (probed temp 0 ×2) emits BOTH records but writes `SYCOREQ` (one `S`
+  dropped); `classify_entity` rejects the undeclared token → only the SYSCOACK constraint
+  survives → the semantic temporal layer loses both SYSCOREQ rules (rule derivation needs the
+  constraint). The grounding philosophy held (nothing fabricated); the defect is recall lost
+  to a model typo — fix class `.3a` = snap-to-document-token (edit distance 1, candidate must
+  LITERALLY appear in the source sentence + pass `is_valid_signal_subject`, exactly one
+  candidate or the honest drop stands; no name lists — ADR 0006).
+- Revert procedure validated: evidence rebuild from persisted SourceIR is a CLEAN full
+  supersede when the artifact carries zero Nlp fact-provenance (`carry_forward_existing_knowledge`
+  idempotency guard) — confirmed: 102 constraints back, both AXI gates 1.000, which also
+  proves the temporal misses were promotion-caused.
+- Canonical state after `.3`: APB + AHB carry PROMOTED surfaces (all gates green, gauges
+  23.8% / 33.3%); AXI carries Pattern (gauge honestly 91.0%) until `.3a`.
+
 ## `LLM-PRIMARY-PROMOTION.2` (`2026-06-10`) — the opt-in converge constraint-promotion stage
 - `commands/extract_constraints_llm.rs`: core extracted as
   `promote_constraints(path, provider, model, max_sentences) -> ConstraintPromotionReport`

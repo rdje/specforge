@@ -3,7 +3,9 @@
 ## Metadata
 
 - Tree ID: `LLM-PRIMARY-PROMOTION`
-- Status: `active` (`.1` design + `.2` opt-in stage DONE `2026-06-10`; `.3` frontier)
+- Status: `active` (`.1` design + `.2` opt-in stage + `.3` gate verification DONE `2026-06-10`;
+  `.3a` frontier — APB/AHB promoted + gate-cleared, AXI reverted pending the
+  coordinated-subject typo fix)
 - Roadmap lane: `R15e`/`R16` (extraction quality / production-readiness)
 - Created: `2026-06-10`
 - Parent context: `EXTRACTION-QUALITY-GAUGE.0`'s standing gauge made the gap VISIBLE: the
@@ -107,10 +109,44 @@
   surface" subsection (real output transcript) + `extract-constraints-llm` section updated
   (no longer research-only; manifest + gauge-drop semantics); README bullet. KM
   [[llm-primary-promotion-stage]]. AHB/AXI + serial no-regression sweep = `.3` as planned.
-- ID: `LLM-PRIMARY-PROMOTION.3` · Status: `pending` · Goal: wire-doc end-to-end verification
-  on promoted canonical artifacts — eval 1.000 + 16/16 held, temporal/relations re-scored
-  (WIRE-BASED-100 intact), serial-class no-regression sweep, gauge before/after recorded
-  per document.
+- ID: `LLM-PRIMARY-PROMOTION.3` · Status: `done` (`2026-06-10`) · Goal: wire-doc end-to-end
+  verification on promoted canonical artifacts — eval 1.000 + 16/16 held, temporal/relations
+  re-scored (WIRE-BASED-100 intact), serial-class no-regression sweep, gauge before/after
+  recorded per document. **HONEST VERDICT: the gates CLEARED APB+AHB and CAUGHT a real
+  promotion recall defect on AXI — exactly what gold gates exist for. AXI was REVERTED.**
+  - Promoted the persisted CANONICAL AHB/AXI artifacts via the standalone command (same
+    shared `promote_constraints` core the converge stage uses; converge integration itself was
+    `.2`-proven end-to-end on APB): AHB 15→12 kept and AXI 102→54→50 kept — **reproducing the
+    earlier /tmp redirected-copy measurements EXACTLY** (`.3b`: 15→12; `.4`: 54→50 w/ 4
+    merged). Gauges on promoted surfaces: **AHB 60.0% → 33.3%** not-entailed, **AXI 91.0% →
+    36.0%**.
+  - **Gold gates:** seed_ahb P=R=F1=1.000 (6/6) + filtered relations 1.000 + doc recall 6/6 ✓;
+    seed_axi constraints 1.000 (4/4) + filtered relations 1.000 ✓; seed_ahb_temporal 1.000
+    (4/4) ✓; seed_apb_temporal 1.000 (3/3) ✓; seed_swd 1.000 (untouched serial control) ✓;
+    **seed_axi_temporal FAILED on the promoted artifact: 1/3** — the SYSCOREQ/SYSCOACK
+    reset-condition temporal rules lost.
+  - **Per-item root cause (probed live, temp 0, ×2 identical):** the source sentence is the
+    coordinated-subject "SYSCOREQ and SYSCOACK must be deasserted when ARESETn is asserted.";
+    the model emits BOTH records but **misspells the first subject `SYCOREQ`** (one `S`
+    dropped); entity typing then correctly rejects the undeclared token — the grounding gate
+    worked as designed (no fabricated subject), recall lost to a one-character model typo.
+    The surviving SYSCOACK record is correct. NEW defect class: **model-misspelled subject on
+    an otherwise-grounded proposal** → fix leaf `.3a`.
+  - **Revert executed + verified:** AXI evidence rebuilt from persisted SourceIR (zero Nlp
+    fact-provenance → clean full supersede), semantic+intent rebuilt; seed_axi 1.000 AND
+    seed_axi_temporal 1.000 (3/3) RESTORED — also confirming causality (the dropped SYSCOREQ
+    constraint fed the temporal rules). Gauge re-measured on the restored Pattern surface so
+    the standing report stays honest. APB + AHB keep their promoted surfaces (all their gates
+    green).
+- ID: `LLM-PRIMARY-PROMOTION.3a` · Status: `pending` · Goal: **coordinated-subject typo
+  recovery** — a deterministic, document-grounded backstop for the model-misspelled-subject
+  class: when a proposed subject fails entity typing, snap it to the UNAMBIGUOUS declared
+  signal token that (a) literally appears in the source sentence, (b) passes
+  `is_valid_signal_subject`, and (c) is within edit distance 1 of the proposal (uppercase
+  identifiers, length ≥ 4, exactly ONE candidate — else honest drop stands). No lists, no
+  fabrication: the correction target is the document's own sentence token. Probe-first; then
+  re-promote AXI and re-run the FULL `.3` gate battery (seed_axi_temporal must be 3/3 on the
+  promoted artifact).
 - ID: `LLM-PRIMARY-PROMOTION.4` · Status: `pending` · Goal: corpus sweep + tracked validation
   snapshot refresh + the default-flip decision packet (owner-visible: per-doc gauge deltas,
   gold-gate status, recommendation).
@@ -119,8 +155,8 @@
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `.3` | `pending` | AHB/AXI promoted-artifact gold gates + serial no-regression sweep |
-| 2 | `.4` | `pending` | Corpus evidence for the default-flip decision |
+| 1 | `.3a` | `pending` | The gate-caught defect: coordinated-subject typo recovery (probe-first), then re-promote AXI + full gate battery |
+| 2 | `.4` | `pending` | Corpus evidence for the default-flip decision (needs `.3a` green on AXI) |
 
 ## Changelog
 
@@ -137,3 +173,13 @@
   28.6% → 23.8% not-entailed, eval gate held at P=R=F1=1.000 + 6/6 doc recall on the promoted
   canonical artifact. See [[llm-primary-promotion-stage]]. Next: `.3` (AHB/AXI + serial
   sweep).
+- `2026-06-10`: `.3` DONE — the gold-gate battery on promoted CANONICAL artifacts: APB+AHB
+  CLEARED (all gates 1.000; gauges 60.0%→33.3% AHB; /tmp measurements reproduced exactly),
+  serial control intact; **AXI CAUGHT a real promotion recall defect** (seed_axi_temporal
+  1/3 — the coordinated-subject sentence "SYSCOREQ and SYSCOACK must be deasserted when
+  ARESETn is asserted." loses SYSCOREQ because the model misspells it `SYCOREQ` at temp 0,
+  ×2 reproducible, and entity typing rightly rejects the undeclared token). AXI REVERTED
+  (clean Pattern rebuild; both AXI gates re-verified 1.000; gauge re-measured on the restored
+  surface). The defect is a new bounded class → `.3a` (document-grounded typo snap, edit
+  distance 1, unambiguous-candidate-only). WIRE-BASED-100 stands intact on all canonical
+  artifacts.
