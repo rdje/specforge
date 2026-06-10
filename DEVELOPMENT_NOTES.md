@@ -1,4 +1,31 @@
 # DEVELOPMENT_NOTES
+## `LLM-PRIMARY-PROMOTION.4` (`2026-06-10`) — the sweep method and what the per-item audits taught
+- Sweep harness: per doc — (1) standing Pattern gauge on canonical via `nli-verify` (skipped
+  when already persisted), (2) copy `evidence_ir.json` to /tmp with `artifact_layout`
+  REDIRECTED (both `artifact_root` and `evidence_ir_path` — `write_to_disk` targets the
+  layout path, so redirection is what keeps canonical safe), (3) `extract-constraints-llm`
+  on the copy, (4) `nli-verify` on the copy, (5) JSON-diff reporting. ~25 min of local LLM
+  time for 12 docs.
+- The recall-cost audit needed TWO passes to be honest: the naive
+  (subject, kind, value) signature match flagged 10 "entailed-and-dropped" records, but 4 of
+  them were kind-synonym or better-form keeps (HBM2 `CKE must_be_value LOW` → two
+  condition-grounded `must_be_low` records; `must_not_change` vs `must_be_stable` class).
+  Per-item re-check against the promoted copies is what separated the 3 genuine losses from
+  the artifact of my own matching. Same lesson as the session's (5×): per-item, never
+  aggregate-only — including for one's own measurement scripts.
+- The 3 genuine losses share recognizable shapes, which is what makes them levers rather
+  than mysteries: `| ARBURST | Burst type must be INCR. |` (the table-cell row's grammatical
+  subject is a description noun — the signal name is the row key) and a coordinated
+  three-subject stability sentence. The AXI-Stream residue (87.5% still flagged
+  post-promotion) is the dual shape: RIGHT facts whose CONDITIONS the model omitted
+  ("during reset", "when TLAST is LOW") — recoverable from the source sentence exactly the
+  way `.8` recovers values.
+- Validator-version drift bit the tracked snapshot: last refreshed `2026-04-10`, and the
+  validator has since gained the rescan-guidance lane, temporal-conflict surfaces, and
+  completeness gauges — the untouched AXI-Stream artifact re-scores 90→67 under today's
+  validator. Composite scores are comparable only within a validator version; gold gates +
+  gauges are the cross-version instruments.
+
 ## `LLM-PRIMARY-PROMOTION.3b` (`2026-06-10`) — the promotion replace must re-apply build-path invariants (polarity refinement)
 - Probe method (per-item, no guessing): the leaf named three candidate factors. Two cleared by
   code-reading parity: `parse_temporal_condition_predicates` strips a leading `when ` (both

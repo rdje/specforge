@@ -3,8 +3,9 @@
 ## Metadata
 
 - Tree ID: `LLM-PRIMARY-PROMOTION`
-- Status: `active` (`.1`–`.3b` DONE `2026-06-10`; `.4` frontier — APB/AHB/AXI ALL promoted +
-  gate-cleared on canonical artifacts; the default-flip decision packet is unblocked)
+- Status: `active, awaiting owner decision` (`.1`–`.4` DONE `2026-06-10`; `.5` = the
+  default-flip execution, OWNER-GATED on the `.4` decision packet below; engineering
+  frontier otherwise exhausted — R1–R4 lever candidates recorded in the packet)
 - Roadmap lane: `R15e`/`R16` (extraction quality / production-readiness)
 - Created: `2026-06-10`
 - Parent context: `EXTRACTION-QUALITY-GAUGE.0`'s standing gauge made the gap VISIBLE: the
@@ -74,7 +75,7 @@
 
 ## Task Tree
 
-- ID: `LLM-PRIMARY-PROMOTION` · Status: `active` · Children: `.1`–`.4`
+- ID: `LLM-PRIMARY-PROMOTION` · Status: `active, awaiting owner decision` · Children: `.1`–`.5`
 - ID: `LLM-PRIMARY-PROMOTION.1` · Status: `done` (`2026-06-10`, design + in-code probes,
   docs-only) · Goal: ground the promotion design in the actual converge invariant, downstream
   consumer set, recall universe, and provider-off semantics BEFORE coding (probe-first method).
@@ -204,15 +205,98 @@
   `.3c` evidence rebuild shifted statement-id anchors (`eval-scores-persisted-evidence`
   gotcha) — a re-anchoring leaf belongs to the eval-fixture lane, not this tree.
   **Canonical state: APB + AHB + AXI all PROMOTED with all gates green.**
-- ID: `LLM-PRIMARY-PROMOTION.4` · Status: `pending` · Goal: corpus sweep + tracked validation
-  snapshot refresh + the default-flip decision packet (owner-visible: per-doc gauge deltas,
-  gold-gate status, recommendation).
+- ID: `LLM-PRIMARY-PROMOTION.4` · Status: `done` (`2026-06-10`, measurements + docs — no code)
+  · Goal: corpus sweep + tracked validation snapshot refresh + the default-flip decision
+  packet. **The packet is below (§ Default-flip decision packet); the flip itself is the
+  owner's call (`.5`).** Sweep protocol: canonical artifacts received only the standing
+  Pattern-gauge measurement (`nli-verify`, the EXTRACTION-QUALITY-GAUGE.0 design); promotion
+  ran exclusively on REDIRECTED /tmp copies (`artifact_layout` patched) — zero canonical
+  mutation outside the three gold-gated wire docs. 12 docs swept across classes (dense/mid
+  AMBA, register, memory, capability, serial, TRM, tiny-surface). Tracked snapshot refreshed
+  (`project-validation` over the four wire IntentIRs) — the prior snapshot was TWO MONTHS
+  stale (2026-04-10); composite scores dropped (e.g. untouched AXI-Stream 90→67) because the
+  CURRENT validator sees far more surfaces than April's — validator-version drift, proven by
+  the untouched-artifact control, NOT a promotion effect; scores are not comparable across
+  validator versions.
+
+## Default-flip decision packet (`.4`, owner-visible — decision pending at `.5`)
+
+**Question:** should `converge --promote-constraints-llm` become the DEFAULT for live-NLP
+converge runs (provider-free runs always stay Pattern by construction)?
+
+**Per-doc gauge evidence (Pattern → promoted, % = not-entailed of labeled; records before→after):**
+
+| Doc (class) | Pattern | Promoted | Records |
+| --- | --- | --- | --- |
+| AXI L (wire, gold-gated, CANONICAL) | 91.0% | 48.0% | 102→50 |
+| APB E (wire, gold-gated, CANONICAL) | 28.6% | 23.8% | 18→21 |
+| AHB C (wire, gold-gated, CANONICAL) | 60.0% | 33.3% | 15→12 |
+| DTI (dense AMBA) | 99.1% | 73.3% | 114→30 |
+| AXI+ACE H.c (dense AMBA) | 80.9% | 44.4% | 94→63 |
+| LTI (mid AMBA) | 90.2% | 65.7% | 41→35 |
+| Low-power IF (mid AMBA) | 86.7% | 52.9% | 30→17 |
+| GFB (mid AMBA) | 80.0% | 64.3% | 20→14 |
+| CHI G (degraded ingest) | 69.2% | 16.7% | 13→6 |
+| APB D (older version) | 30.8% | 21.1% | 13→19 |
+| AXI-Stream (wire) | 100% | 87.5% | 13→8 |
+| OpenCAPI 4.0 (capability) | 100% | 25.0% | 15→8 |
+| HBM2 (memory) | 85.7% | 40.0% | 14→20 |
+| NVMe 2.0a (register) | 88.5% | 50.0% | 26→2 |
+| I2C (serial) | 72.7% | 0.0% | 11→2 |
+| I2S (serial, 1 known-bad record) | 100% | n/a (0 records) | 1→0 |
+| CoreSight SoC-600 0701 (TRM) | 50.0% | 100% | 2→2 |
+
+The gauge improves on **14 of 15** measurable docs. The two apparent counterexamples dissolve
+per-item: I2S's single Pattern record was a genuine flagged mis-extraction (`SCK`) whose drop
+is correct; CoreSight's promoted records are BETTER-attributed (Pattern blamed `ATB` for facts
+about `araddr_m`/`awaddr_m` — promotion fixes the subjects) and the 2/2 flag is the judge
+correctly catching a granularity overstatement (source says "some of the LOWER BITS are tied
+LOW"; the constraint vocabulary has no bit-subrange slot — residual R4 below).
+
+**Gold-gate status:** all three gated wire docs promoted on canonical artifacts with
+constraints P=R=F1=1.000, filtered relations 1.000, temporal 3/3+4/4+3/3, WIRE-BASED-100
+intact, kg-bench 154/154 (`.2`/`.3`/`.3b`).
+
+**Recall cost, quantified per-item (not assumed):** for every swept doc, each gauge-ENTAILED
+Pattern record was checked against the promoted surface. 10 flagged; per-item audit: 4 were
+kept in equal-or-better form (HBM2's `CKE` gains two grounded conditions), 1 drop is correct
+(the CoreSight misattribution), **3 are genuine signal-fact losses — all on the ungated
+AXI+ACE doc** (`ACADDR must_not_change` from a coordinated stability sentence; `ARBURST INCR`
++ `ARLEN 0x00` from `| ARBURST | Burst type must be INCR. |` table-cell rows where the cell's
+grammatical subject is "Burst type", not the signal), and 2 are NVMe capsule FIELDS
+(`ELEN`/`RECFMT`, bit-ranges 31:16/41:40) that Pattern mis-typed as wires — their honest home
+is field routing, not the signal surface (residual R3). Net: ~3 genuine losses across 12
+swept docs, against Pattern error mass like DTI's 113/114.
+
+**Residual levers surfaced by the sweep (bounded, each probe-first):**
+- R1 table-cell-row subjects: recover the signal name from the row-leading cell when the
+  sentence's grammatical subject is a description noun (the ARBURST/ARLEN class).
+- R2 source-grounded condition recovery: when the model omits the condition, recover it from
+  the sentence the same way `.8` recovers values (the AXI-Stream class — correct facts
+  flagged for missing "during reset" / "for a transfer to occur" / "when TLAST is LOW").
+- R3 register-class field routing: capsule/command field obligations on docs without a
+  message-field catalog currently drop instead of routing (the NVMe `ELEN`/`RECFMT` class).
+- R4 bit-subrange constraint vocabulary: "the lower N bits are tied LOW" has no typed slot
+  (the CoreSight class) — candidate future kind.
+
+**Recommendation:** FLIP the default for live-NLP converge runs. The gauge improves on every
+honestly-measurable doc across all classes; the quantified recall cost is ~3 facts on one
+ungated doc with recognizable shapes (R1/R2 recover them); the gold gates remain the
+regression net on gated docs; the standing gauge keeps flagging the residue; provider-free
+CI is untouched by construction. The alternative (stay opt-in until R1/R2 land) trades the
+corpus-wide error-mass reduction for ~3 recoverable facts — a poor trade, but the flip is
+deliberately the owner's call per the `.1` decision record. → `.5`.
+
+- ID: `LLM-PRIMARY-PROMOTION.5` · Status: `pending` (OWNER-GATED) · Goal: execute the owner's
+  default-flip decision (flip `--promote-constraints-llm` default for live-NLP runs, or keep
+  opt-in and schedule R1/R2 first). Blocked on: owner reads the `.4` packet. R1–R4 are
+  unowned lever candidates until then.
 
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `.4` | `pending` | Corpus sweep + tracked validation snapshot refresh + the default-flip decision packet (UNBLOCKED — `.3b` green on AXI; all three wire docs promoted with gates 1.000) |
+| 1 | `.5` | `pending (OWNER-GATED)` | Execute the owner's default-flip decision — the `.4` packet recommends FLIP; R1–R4 levers are the alternative-path prerequisites if the owner prefers staying opt-in |
 
 ## Changelog
 
@@ -262,3 +346,11 @@
   polarity note recorded. APB/AHB scanned for latent unrefined records: zero. **All three
   wire docs now carry the promoted surface on canonical artifacts; `.4` unblocked.** lib 1546.
   See [[llm-primary-promotion-stage]].
+- `2026-06-10`: `.4` DONE — the corpus sweep (12 docs, redirected copies only; canonical
+  untouched outside the gated wire docs), the per-item recall-cost quantification (~3 genuine
+  losses, all on one ungated doc, recognizable shapes → levers R1/R2), the two-month-stale
+  tracked snapshot refreshed (validator-version drift proven by the untouched AXI-Stream
+  control 90→67 — scores are not comparable across validator versions), and the
+  owner-visible default-flip decision packet written (recommendation: FLIP; the gauge
+  improves on 14/15 measurable docs and the 15th dissolves per-item). `.5` = owner-gated
+  flip execution. R1–R4 lever candidates recorded in the packet.

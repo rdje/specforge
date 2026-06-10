@@ -1,3 +1,24 @@
+### `LLM-PRIMARY-PROMOTION.4` — the corpus sweep + the owner-visible default-flip decision packet (measurements + docs; no code)
+Twelve docs swept across classes (dense/mid AMBA, register, memory, capability, serial, TRM,
+tiny-surface) under the corpus-safe protocol: canonical artifacts received only the standing
+Pattern-gauge measurement; promotion ran exclusively on REDIRECTED /tmp copies. **The gauge
+improves on 14 of 15 measurable docs** (DTI 99.1%→73.3% at 114→30 records; CHI 69.2%→16.7%;
+OpenCAPI 100%→25%; HBM2 85.7%→40% while GROWING 14→20; I2C 72.7%→0%); the two apparent
+counterexamples dissolve per-item (I2S's one record was a known-bad drop-correct; CoreSight's
+promoted records fix Pattern's wrong `ATB` subject and the 2/2 flag is a real granularity
+overstatement — no bit-subrange slot in the vocabulary). **Recall cost quantified per-item,
+not assumed:** every gauge-ENTAILED Pattern record was checked against its promoted surface —
+of 10 flagged, 4 kept in equal-or-better form, 1 drop correct, **3 genuine losses all on the
+ungated AXI+ACE doc** (a coordinated stability sentence + two `| ARBURST | Burst type must be
+INCR. |` table-cell rows), 2 are NVMe capsule FIELDS Pattern had mis-typed as wires. Four
+bounded lever candidates recorded (table-cell-row subjects; source-grounded condition
+recovery; register-class field routing; bit-subrange vocabulary). The two-month-stale
+`VALIDATION_SNAPSHOT.md` was refreshed (last refresh `2026-04-10`): composite scores dropped
+on ALL four wire docs including untouched AXI-Stream (90→67) — proven validator-version
+drift, not a promotion effect; scores are not comparable across validator versions.
+**Packet recommendation: FLIP the default for live-NLP converge runs** (provider-free stays
+Pattern by construction); the flip itself is `.5`, OWNER-GATED.
+
 ### `LLM-PRIMARY-PROMOTION.3b` — temporal-derivation parity: the promotion replace now re-applies the build-path polarity refinement; AXI promoted, all three wire docs on the clean surface
 The probe pinned the single guilty factor per-item (the other two leaf candidates — antecedent
 recovery and actor grounding — were probed and CLEARED by construction): the evidence build
