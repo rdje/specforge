@@ -1194,7 +1194,25 @@ AWDOMAIN w2, AWSNOOP w4, CRRESP w5, CDDATA wV, 4×BROADCAST* w1 — per-item ver
 the probe) land at the host-local re-ingest sweep; expected post-re-ingest: ACE 36→34
 via gap-fill provenance + inventory coverage.
 **`.12b` — the presence-CONDITION typed surface** · Status: `pending` (design census DONE
-`2026-06-11`; build next — PNT frontier). The 21+1 presence matrices carry CONFIGURATION
+`2026-06-11`; **corpus-wide GATE census DONE `2026-06-11` — the structural gate
+(signal-worded first header + ≥2 all-code variant columns over identifier-led body+trapped
+rows) fires on 33 tables / 7 docs: the 22 known PLUS 11 verified-per-item new candidates**;
+build next — PNT frontier). NEW per-item findings that shape the build: (a) the
+ATB/AHB/APB version-matrix family (ATB 0016; AHB 0033-0035 — a GOLD doc; APB_d 0013-0015;
+APB_e 0016-0017) is cyclically ROTATED — the signal name lands in the LAST column while
+the header says col 0, so presence capture MUST reuse the `.5h` content-based rotation
+detection and remap variant labels by the same offset, or refuse when the remap is not
+clean (fused `Y Y` cells in APB_d 0013 / APB_e 0016 mark unclean rotations — refuse those
+rows); (b) ACE mid-chain fragments 0272/0273 are clean UNROTATED body-row matrices whose
+LAST variant column is a fused two-label header (`ACE5-Lite ACE5-LiteACP`) with
+consistently fused two-code cells (`OC N`) — a measured pairwise split (N label tokens ↔
+N code tokens) recovers them literally; cells that do not pair-split stay refused;
+(c) ACE 0279 is the clean matrix tail (3 `*CHK` rows incl. an `I` source); (d) integrity
+gates from the APB garble class: refuse the whole table when the content-densest signal
+column ≠ the header-designated signal column AND no clean cyclic remap exists, and refuse
+any table where ≥2 columns carry ≥2 signal tokens each with no consistent rotation
+(the split-spill `table_0018` shape — its rows are individually refused by the per-row
+code rule anyway). The 21+1 presence matrices carry CONFIGURATION
 intent no existing surface types: per-variant signal presence (`AWSUBSYSID` is `O` in
 AXI5, `N` in ACE5-LiteACP) plus property-conditioned existence (`SUBSYSID_WIDTH > 0` —
 AXI 157 condition rows / 73 distinct exprs, LTI 23/15). **Design census (measured
