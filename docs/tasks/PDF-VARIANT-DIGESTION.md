@@ -1110,8 +1110,9 @@ validate surface: 5 metrics (`message_field_records`, `message_field_containers`
 `message-field-validate-integration`; book `quality/validation.md` note.
 
 **`PDF-VARIANT-DIGESTION.12` — header-trapped SIGNAL tables (the `.9.11` lever's signal
-sibling; AXI/ACE/APB/LTI presence matrices).** · Status: `pending` (census probe DONE
-`2026-06-11`; per-item probe + build next — PNT pick for the next session). Found while
+sibling; AXI/ACE/APB/LTI presence matrices).** · Status: `in_progress` (census probe DONE
+`2026-06-11`; **per-item probe DONE `2026-06-11` — all 4 items measured, leaf split
+`.12a` build (this slice) + `.12b` presence surface (next)**). Found while
 surveying the WIRE-BASED-100.3 residual ledger: APB `table_0018` ("signals trapped in its
 header rows") is not an isolated docling artifact — the corpus census (signal-worded
 first header row, ≥2 header rows, ≤1 body row, rows recovering under the EXACT `.9.11`
@@ -1124,23 +1125,57 @@ SUBSYSID_WIDTH > 0 || O || N` rows: signal + presence-property + per-class Y/N/O
 ACE ihi0022_h_c 5 / 134 (incl. the `Signal matrix` caption); LTI ihi0089 2 / 44;
 APB ihi0024_e 1 / 3 (`PWDATACHK`/`PREADYCHK`/`PBUSERCHK` — the exact `.3a` ledger
 residual). 4 of the AXI tables are `unknown`-kind `Continued from previous page`
-fragments of the captioned `B2.2`/`B2.3` chains.
-**Remaining probe (per-item, BEFORE building):** (1) new-vs-already-declared — diff every
-recovered token against the doc's CANONICAL declared inventory (the persisted promoted
-AXI/APB artifacts; the probe's `interface_signals` key read 0 — resolve the right
-key/artifact first); the APB `.3a` precedent says presence matrices may be pure
-duplicates (then the win is honest coverage-gauge accounting + provenance, NOT new
-records — never mint duplicates); (2) what the current gauges say about these 21 tables
-(`unexplained_intent_bearing_tables` / candidate-miss ledger entries per doc); (3) typed
-capture decision: name-only declaration vs coverage-marking vs presence-CONDITION intent
-(`SUBSYSID_WIDTH > 0` property-conditioned presence is real intent — decide measured);
-(4) the `Continued from previous page` fragments chain to their captioned heads (the
-`.10c` machinery precedent). **GOLD-SAFETY BAR (non-negotiable):** AXI + APB are
+fragments of the captioned `B2.2`/`B2.3` chains. Census identifier gate is CASE-SOFT by
+measurement: the strict all-caps probe undercounted by exactly `ARESETn`/`RESETn` and the
+9 `Ax*` generics (19 tables/475 tokens → 21/487 at ≥60%-uppercase participation).
+**Per-item probe RESULTS (`2026-06-11`, all 4 items):**
+(1) **new-vs-declared** — the right keys: evidence-level inventory =
+`collect_known_signal_names` over `extracted_statements` ("Signal X is …" declarations);
+canonical = SemanticIR `interfaces[].signal_records[].signal_name` (the earlier probe's
+`interface_signals` key does not exist — AXI canonical reads 289 names through the right
+key). Diff per doc: **AXI 306/306 covered** (297 literal in the evidence inventory + 9
+`Ax*` generic-name rows whose AW/AR expansions are BOTH declared, 18/18 verified;
+`signal_alias_map` is EMPTY so the generics have no grounded literal expansion — A13.3
+stays an honest residual until `.12b` captures its rows literally); **APB 3/3 covered**
+(the `.3a` duplicate-presentation precedent CONFIRMED); **ACE 9 genuinely NEW wires**
+(`AWBAR` w2, `AWDOMAIN` w2, `AWSNOOP` w4, `CRRESP` w5, `CDDATA` wV, 4×`BROADCAST*` w1 —
+the matrix carries real `Width|Source|Default` declaration columns); **LTI 3 NEW**
+(`LASECSID`/`LASID`/`LASSIDV`) but C5.1 carries NO width/direction columns → no honest
+declaration content (their existence grounds via `.12b` presence capture).
+(2) **gauge state** — 17/21 tables are flagged `unexplained_intent_bearing_tables`
+candidate misses (within AXI 39 / ACE 39 / LTI 5 / APB 1); the 4 AXI `unknown`-kind
+fragments are INVISIBLE to the gauge (non-accounted kind) — an honesty gap the build
+closes. The gauge recomputes at VALIDATE time from persisted records + tables, so
+coverage-rule fixes reach the promoted AXI/APB artifacts WITHOUT any rebuild.
+(3) **typed capture (measured)** — presence-CONDITION intent is real at scale: AXI 157
+condition-bearing rows / 73 distinct property expressions (`SUBSYSID_WIDTH > 0`,
+`AXI_Transport == Ready`), LTI 23/15 → a NEW typed surface, split to **`.12b`**; ACE's 9
+new wires mint through the EXISTING declaration content rules (width column present);
+APB `table_0018` is cell-fused/rotated garble (signal names land in different columns,
+cells fuse `PRDATACHK DATA_WIDTH/8`) → coverage-marking only, never typed capture from
+its rows. Duplicates NEVER mint: the trapped-row declaration pass is gap-fill GATED on
+"name absent from the already-built declared inventory".
+(4) **chaining** — 9/9 AXI `Continued from previous page` fragments resolve to their
+captioned heads by caption parent-number (`Table B2.2 …` ↔ `Table B2.2: Summary …`) +
+EXACT first-header-row signature match (measured; incl. all 4 `unknown`-kind). LTI's
+sub-header row (`A A.b|B|C|D`, value cells `is_header=true`) is correctly REFUSED by the
+`.9.11` rule — genuine multi-row headers stay headers.
+**`.12a` BUILD (this slice):** (i) continuation-kind inheritance for `unknown` fragments
+(caption parent-number + exact header signature → head's kind, evidence-level only, never
+mutating SourceIR); (ii) trapped-row-aware coverage (`densest_signal_name_column_tokens`
+sees `.9.11`-recovered rows) → APB 1→0 (the LAST unexplained table on the gold doc),
+AXI 39→32 (B2.2+B2.3 covered, A13.3 honest), ACE 39→34, LTI stays 5 (3 unknown names —
+honest until `.12b`); (iii) gap-fill declaration synthesis from trapped rows (existing
+width/direction content rules, inventory-gated) → ACE +8-9 declarations w/ width.
+**`.12b` (next):** the presence-CONDITION typed surface (signal × interface-class/version
+presence codes + optional property condition — 180 condition rows measured).
+**GOLD-SAFETY BAR (non-negotiable):** AXI + APB are
 gold-measured docs with PROMOTED canonical surfaces and standing Pattern gauges — every
 gold gate must re-measure at its documented state; additive-only; restore-the-Pattern-
 baseline protocol does NOT apply here (no promotion measurement) but canonical artifacts
-are NOT rebuilt without re-measuring the gauges they carry. Cross-link:
-`WIRE-BASED-100.3` (this leaf owns its `table_0018` residual line).
+are NOT rebuilt without re-measuring the gauges they carry (live verification = temp-root
+rebuilds from persisted SourceIR, canonical untouched — the `.10b`/`.10e` protocol).
+Cross-link: `WIRE-BASED-100.3` (this leaf owns its `table_0018` residual line).
 
 **(SUPERSEDED active note) `PDF-VARIANT-DIGESTION.6`/`.7`** — item ② (`.5`) COMPLETE and `.8` (broaden
 prose-actor capture) DONE. **`.5a` + `.5b` + `.5c` are DONE** — structural doc-class routing
