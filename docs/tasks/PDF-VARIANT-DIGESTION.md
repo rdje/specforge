@@ -1193,10 +1193,35 @@ kg-bench 154/154, full `run_ci.sh` GREEN. RESIDUAL: the ACE +9 declarations (AWB
 AWDOMAIN w2, AWSNOOP w4, CRRESP w5, CDDATA wV, 4×BROADCAST* w1 — per-item verified in
 the probe) land at the host-local re-ingest sweep; expected post-re-ingest: ACE 36→34
 via gap-fill provenance + inventory coverage.
-**`.12b` (frontier, next):** the presence-CONDITION typed surface (signal ×
-interface-class/version presence codes + optional property condition — 180 condition
-rows measured: AXI 157/73 distinct exprs, LTI 23/15; also the typed home that explains
-A13.3's literal generic rows and LTI's 3 width-less new wires).
+**`.12b` — the presence-CONDITION typed surface** · Status: `pending` (design census DONE
+`2026-06-11`; build next — PNT frontier). The 21+1 presence matrices carry CONFIGURATION
+intent no existing surface types: per-variant signal presence (`AWSUBSYSID` is `O` in
+AXI5, `N` in ACE5-LiteACP) plus property-conditioned existence (`SUBSYSID_WIDTH > 0` —
+AXI 157 condition rows / 73 distinct exprs, LTI 23/15). **Design census (measured
+`2026-06-11`, all 22 tables incl. LTI `table_0080`): 489 identifier-led data rows; 465
+(95.1%) are WELL-FORMED — every variant cell a single 1-2-uppercase-letter code or `-`
+(vocabulary: N 893, O 816, C 289, Y 205, OC 142, YS 54, OO 23, NS 17, YM 12, OI 6, OM 4 —
+codes stay LITERAL strings, never interpreted; the legend prose differs per doc); 24 rows
+malformed (fused `N N`/`C N`/`OM OM`, rotated `LTI_CACHE_SUPPORT O`, empty) → FULL-ROW
+refusal, honest residuals (the APB 0018 / LTI 0080 garble class).** Typed shape (decide
+final names at build): a new additive EvidenceIR surface (the `message_field_records`
+precedent — `#[serde(default)]`, schema-stable) of records `{signal_name (literal case),
+presence_condition: Option<literal expr> (None when '-'), variant_presence: [{variant_label
+(literal column header; LTI's fused sub-header `A A.b` stays literal), code (literal)}],
+table_id provenance}`; the A13.3 `Ax*` generic rows capture LITERALLY (the doc's own
+generic-name convention — never expanded, the alias map is empty). Gates: the table
+qualifies structurally (signal-worded first header + variant columns + `.9.11`/body data
+rows — NO caption-word list beyond the existing structural census rule); per-row capture
+only when the name cell is identifier-led AND every variant cell parses as a single code
+or `-`; rows with a Width/Source column (the ACE matrix) still capture presence ALONGSIDE
+the `.12a` declaration gap-fill (different intent, different surface). Open build items:
+validate metrics + Info finding (the `.11` pattern: emitted only when non-empty);
+residual accounting (a presence-captured table is EXPLAINED — wire into
+`unexplained_intent_bearing_tables` like provenance; expected post-build: AXI 32→24-25,
+LTI 6→3-4, ACE 36→34); kg-bench fixture pair (gold + malformed-refusal negative);
+GOLD-SAFETY unchanged (additive surface; AXI gold+promoted — no canonical rebuild
+without gauge re-measure; 13-doc old-vs-new parity must hold except the new surface +
+manifest on docs that carry matrices).
 **GOLD-SAFETY BAR (non-negotiable):** AXI + APB are
 gold-measured docs with PROMOTED canonical surfaces and standing Pattern gauges — every
 gold gate must re-measure at its documented state; additive-only; restore-the-Pattern-
