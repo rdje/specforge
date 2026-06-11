@@ -1,3 +1,37 @@
+### `PDF-VARIANT-DIGESTION.12a` — header-trapped SIGNAL tables: shared trapped-row rule, continuation-kind inheritance, inventory-gated gap-fill; APB's last unexplained table closes
+The 21-table / 487-token header-trapped signal-table family (AXI `B2.2`/`B2.3`, ACE
+`Signal matrix`, LTI `C5.1`, APB `B-3` — presence matrices whose every data row Docling
+trapped in `header_rows`) now participates in extraction and accounting honestly, on the
+back of the four-item per-item probe (commit `2b2db10e`). Three structural moves
+(ADR 0006, no name lists, case-soft): (1) the `.9.11` trapped-row rule now has ONE shared
+definition (`recovered_trapped_data_rows`; timing recovery refactored onto it — pure code
+motion) consumed by timing, the signal gap-fill, and the coverage check, so they cannot
+drift; (2) an `unknown`-kind `Continued from previous page` fragment inherits its
+captioned chain head's kind only when the caption-stated parent reference AND the exact
+first-header-row signature both ground the join (`continuation_inherited_table_heads`,
+measured 9/9 on AXI; consumed by the gap-fill, the unexplained-table accounting, and
+validate's denominator so numerator/denominator agree; SourceIR never mutated); (3) a
+trapped-row declaration gap-fill (`synthesize_trapped_row_signal_declarations`, run LAST
+in the seed so its inventory gate sees the complete declared universe) mints only under
+the body-row content rules (direction or width) AND only for undeclared names —
+duplicates are coverage-marked (`densest_signal_name_column_tokens` chains trapped rows,
+one-unknown-keeps-it-flagged strictness unchanged), never re-minted. Measured on
+canonical artifacts (validate-time, no rebuild): **APB 1→0 unexplained tables — the
+`WIRE-BASED-100.3` `table_0018` residual closes on the gold doc**; AXI 39→32 of 94→98
+(four previously INVISIBLE `unknown` fragments accounted, all covered); ACE 39→36;
+**LTI 5→6, honestly UP** — `table_0080`, a third C5.1 fragment with cell-fused rows
+carrying LTVALID/LTCREDIT/LTCTAG cache-channel presence, was invisible and is now a
+real accounted candidate miss. 13/13 intact bundles old-vs-new `evidence --dry-run`
+BYTE-IDENTICAL (zero extraction-behavior change on the rebuildable corpus, gold docs
+included); standing extraction-quality gauges re-display at documented states. The ACE
++9 wires (AWBAR/AWDOMAIN/AWSNOOP/CRRESP/CDDATA/4×BROADCAST*, per-item verified
+widths) land at the host-local re-ingest sweep. +7 hermetic tests; lib 1567→1574;
+kg-bench 154/154; full CI GREEN. KM `header-trapped-signal-table-recovery` (+ the APB
+catalog card's stale `table_0018` lines corrected); book `quality/validation.md`
+completeness-gauge subsection extended; README `.12a` bullet. Frontier: `.12b` — the
+presence-CONDITION typed surface (180 measured rows; AXI 157/73 distinct property
+expressions, LTI 23/15).
+
 ### `PDF-VARIANT-DIGESTION.10e` — byte-location placement tables are in-memory STRUCTURE layouts (hypothesis overturned); CCIX-class +35–45 fields / 4–6 containers per version
 The `.10a`-recorded hypothesis ("register-AT-OFFSET placement maps → register-map
 records") was OVERTURNED by the per-item probe: the `byte location | size (bytes) |

@@ -4660,6 +4660,18 @@ fn synthesize_signal_declaration_seed(
         statement_counter,
         table_signal_count < 8,
     ));
+    // PDF-VARIANT-DIGESTION.12a — gap-fill from header-trapped signal-table rows, LAST: the
+    // inventory gate must see the complete declared universe (base statements + table seed + prose
+    // fallback) so a duplicate presentation can never re-mint.
+    let mut known_signal_names = collect_known_signal_names(statements);
+    known_signal_names.extend(collect_known_signal_names(&synthesized));
+    synthesized.extend(synthesize_trapped_row_signal_declarations(
+        source_ir,
+        &known_signal_names,
+        statement_counter,
+        prior_guidance,
+        &mut table_signal_declaration_provenance,
+    ));
     (synthesized, table_signal_declaration_provenance)
 }
 
@@ -7130,6 +7142,209 @@ fn synthesize_signal_declarations(
             evidence_span_ids: vec![],
             related_visual_evidence_ids: vec![],
         });
+    }
+
+    statements
+}
+
+/// PDF-VARIANT-DIGESTION.12a — gap-fill signal declarations from the data rows Docling trapped in
+/// a signal table's `header_rows` (the `.9.11` structural rule, shared definition above). Header-
+/// trapped signal tables are usually PRESENCE MATRICES that restate an already-declared catalog
+/// (then this pass mints nothing — the completeness coverage marks them explained instead), but on
+/// some documents a trapped matrix is the ONLY surviving structured source of a wire (a snoop/
+/// barrier channel whose dedicated description tables Docling mangled differently): those rows
+/// carry real `Width`/`Source` declaration columns and would otherwise be silent misses.
+///
+/// Two gates keep this strictly additive:
+/// - CONTENT: a row mints only under the body-row path's own rules — a recoverable direction or
+///   width (a name-only presence row states no declaration content, so it never fabricates one);
+/// - INVENTORY: a row whose signal is ALREADY in the declared inventory mints nothing — duplicate
+///   presentations are coverage-marked, never re-minted (the WIRE-BASED-100.3a precedent).
+///
+/// `unknown`-kind continuation fragments participate through their chain head's kind+qualification
+/// (`continuation_inherited_table_heads`); the head itself must pass the same top-level
+/// signal-table gate as the body-row path. No rotation remap: the trapped-row family carries its
+/// header row intact (the trap is row-level), and a cell-fused rotated stray is already neutralized
+/// by the two gates.
+fn synthesize_trapped_row_signal_declarations(
+    source_ir: &SourceIr,
+    known_signal_names: &std::collections::HashSet<String>,
+    statement_counter: &mut usize,
+    prior_guidance: Option<&EvidencePriorGuidance>,
+    table_signal_declaration_provenance: &mut Vec<TableSignalDeclarationProvenanceRecord>,
+) -> Vec<ExtractedStatement> {
+    let mut statements = Vec::new();
+    if source_ir.structured_tables.is_empty() {
+        return statements;
+    }
+
+    let inherited_heads = continuation_inherited_table_heads(&source_ir.structured_tables);
+
+    // Same page → section context lookup as the body-row table pass.
+    let mut page_to_section: BTreeMap<u32, (SectionKind, String)> = BTreeMap::new();
+    for section in &source_ir.document_sections {
+        if let Some(page_num) = section
+            .page_id
+            .as_deref()
+            .and_then(page_number_from_page_id)
+        {
+            page_to_section.insert(page_num, (section.section_kind, section.title.clone()));
+        }
+    }
+
+    for table in &source_ir.structured_tables {
+        // A fragment qualifies through its chain HEAD: the head carries the caption and the
+        // classified kind, so the head is what the top-level signal-table gate must judge.
+        let gate_table = inherited_heads
+            .get(&table.table_id)
+            .map(|&head_index| &source_ir.structured_tables[head_index])
+            .unwrap_or(table);
+        if !should_treat_table_as_top_level_signal_description(
+            source_ir,
+            gate_table,
+            prior_guidance,
+        ) {
+            continue;
+        }
+        let trapped_rows: Vec<&Vec<StructuredTableCellRecord>> =
+            recovered_trapped_data_rows(table).collect();
+        if trapped_rows.is_empty() {
+            continue;
+        }
+
+        let header_texts: Vec<String> = table
+            .header_rows
+            .first()
+            .map(|row| row.iter().map(|c| c.text.to_ascii_lowercase()).collect())
+            .unwrap_or_default();
+        let name_col: usize = header_texts
+            .iter()
+            .position(|h| {
+                h.contains("signal")
+                    || h.contains("name")
+                    || h.contains("port")
+                    || h.contains("pin")
+            })
+            .unwrap_or(0);
+        let width_col = header_texts
+            .iter()
+            .position(|h| h.contains("width") || h.contains("size") || h.contains("bits"));
+        let explicit_dir_col = header_texts.iter().position(|h| h.contains("direction"));
+        let source_col = header_texts
+            .iter()
+            .position(|h| h.contains("source") || h.contains("driver"));
+        let dest_col = header_texts
+            .iter()
+            .position(|h| h.contains("destination") || h.contains("dest"));
+
+        let table_page = table
+            .page_id
+            .as_deref()
+            .and_then(page_number_from_page_id)
+            .unwrap_or(0);
+        let (section_kind, section_title) = page_to_section
+            .range(..=table_page)
+            .next_back()
+            .map(|(_, v)| v.clone())
+            .unwrap_or((SectionKind::Unknown, String::new()));
+        let default_dir =
+            infer_signal_direction_from_section(section_kind, &section_title, prior_guidance);
+
+        for row in trapped_rows {
+            let Some(name_cell) = row.get(name_col) else {
+                continue;
+            };
+            let token = name_cell
+                .text
+                .split_whitespace()
+                .next()
+                .unwrap_or("")
+                .to_ascii_uppercase();
+            if !is_hardware_signal_token(&token) || is_signal_synthesis_non_signal(&token) {
+                continue;
+            }
+            // INVENTORY gate: duplicates are coverage-marked, never re-minted.
+            if known_signal_names.contains(&token) {
+                continue;
+            }
+
+            let direction = explicit_dir_col
+                .and_then(|col| row.get(col))
+                .and_then(|cell| {
+                    let t = cell.text.to_ascii_lowercase();
+                    if t.contains("output") {
+                        Some("output")
+                    } else if t.contains("input") {
+                        Some("input")
+                    } else {
+                        None
+                    }
+                })
+                .or_else(|| {
+                    source_col.and_then(|col| row.get(col)).and_then(|cell| {
+                        infer_signal_direction_from_actor_text(
+                            &cell.text,
+                            RelationTableColumnKind::SourceLike,
+                            prior_guidance,
+                        )
+                    })
+                })
+                .or_else(|| {
+                    dest_col.and_then(|col| row.get(col)).and_then(|cell| {
+                        infer_signal_direction_from_actor_text(
+                            &cell.text,
+                            RelationTableColumnKind::DestinationLike,
+                            prior_guidance,
+                        )
+                    })
+                })
+                .or_else(|| {
+                    row.iter()
+                        .enumerate()
+                        .filter(|(col, _)| *col != name_col)
+                        .map(|(_, cell)| cell.text.as_str())
+                        .max_by_key(|text| text.len())
+                        .and_then(infer_signal_direction_from_description_prose)
+                })
+                .or(default_dir);
+            let width: Option<WidthHint> =
+                infer_signal_table_row_width_hint(row, &header_texts, width_col);
+
+            // CONTENT gate: identical to the body-row path — no direction AND no width is not a
+            // declaration, however real the name looks.
+            let text = match (direction, &width) {
+                (Some(dir), Some(WidthHint::Numeric(bits))) => {
+                    format!("Signal {token} is {dir} width {bits}.")
+                }
+                (Some(dir), Some(WidthHint::Parametric(expr))) => {
+                    format!("Signal {token} is {dir} width {expr}.")
+                }
+                (Some(dir), None) => format!("Signal {token} is {dir}."),
+                (None, Some(WidthHint::Numeric(bits))) => {
+                    format!("Signal {token} is width {bits}.")
+                }
+                (None, Some(WidthHint::Parametric(expr))) => {
+                    format!("Signal {token} is width {expr}.")
+                }
+                _ => continue,
+            };
+
+            *statement_counter += 1;
+            let statement_id = format!("statement_{statement_counter:04}");
+            table_signal_declaration_provenance.push(TableSignalDeclarationProvenanceRecord {
+                statement_id: statement_id.clone(),
+                signal_name: token.clone(),
+                table_id: table.table_id.clone(),
+            });
+            statements.push(ExtractedStatement {
+                statement_id,
+                class: StatementClass::SourceFact,
+                modality: EvidenceModality::Text,
+                text,
+                evidence_span_ids: vec![],
+                related_visual_evidence_ids: vec![],
+            });
+        }
     }
 
     statements
@@ -11870,6 +12085,95 @@ fn register_offset_from_caption(caption: &str) -> Option<String> {
 }
 
 /// Synthesize `TimingConstraintRecord` entries from `timing_parameter` tables in `SourceIR`.
+/// PDF-VARIANT-DIGESTION.9.11/.12a — the data rows Docling trapped in `header_rows` by marking the
+/// row-LABEL cell `is_header=true` (which leaves `body_rows` empty so the table yields nothing).
+/// Past the first (column-header) row, a `header_rows` entry whose VALUE cells are all
+/// `is_header=false` and whose first cell is a non-empty label is really a DATA row. A genuine
+/// multi-row column header (a nested cross-tab whose value cells stay `is_header=true`, e.g. a
+/// sub-label row) fails this and is left an honest residual. Purely structural — no name list, no
+/// case dependence (ADR 0006). This is the SINGLE definition of the rule: the timing recovery
+/// (`.9.11`), the signal-table gap-fill, and the completeness coverage (`.12a`) all share it so
+/// they cannot drift.
+pub(crate) fn recovered_trapped_data_rows(
+    table: &crate::ir::source::StructuredTableRecord,
+) -> impl Iterator<Item = &Vec<StructuredTableCellRecord>> {
+    table.header_rows.iter().skip(1).filter(|row| {
+        row.len() >= 2
+            && !row[0].text.trim().is_empty()
+            && row.iter().skip(1).all(|cell| !cell.is_header)
+    })
+}
+
+/// PDF-VARIANT-DIGESTION.12a — the caption-stated table reference of a continuation fragment or a
+/// captioned head. `Table B2.2 Continued from previous page` → `(Some("B2.2"), true)`;
+/// `Table B2.2: Summary of signal presence …` → `(Some("B2.2"), false)`; a caption that does not
+/// open with `Table <ref>` carries no reference. Word-shape only (ADR 0006).
+fn caption_table_ref(caption: Option<&str>) -> Option<(String, bool)> {
+    let words: Vec<&str> = caption?.split_whitespace().collect();
+    if words.len() < 2 || !words[0].eq_ignore_ascii_case("table") {
+        return None;
+    }
+    let reference = words[1].trim_end_matches([':', '.']).to_string();
+    let is_continuation = words
+        .get(2)
+        .is_some_and(|w| w.eq_ignore_ascii_case("continued"));
+    Some((reference, is_continuation))
+}
+
+/// PDF-VARIANT-DIGESTION.12a — map each `unknown`-kind continuation fragment to the INDEX of its
+/// captioned chain head, so the fragment can inherit the head's classified kind. Docling keeps most
+/// `Continued from previous page` fragments on their family's kind, but drops some to `unknown`
+/// (e.g. 4 of the 9 fragments of one AXI signal-presence chain) — which makes them invisible to
+/// both extraction and the completeness accounting. The join is grounded twice before inheriting:
+/// the fragment's caption states its parent table reference (`Table B2.2 Continued …`), and the
+/// nearest PRECEDING non-continuation table with that same reference must carry the EXACT same
+/// first-header-row signature (measured 9/9 on the discovering corpus). A same-reference head whose
+/// kind is itself `unknown`, or whose header signature differs, inherits nothing — honest residual
+/// over guessing (ADR 0006: structure only, no table-name vocabulary).
+pub(crate) fn continuation_inherited_table_heads(
+    tables: &[crate::ir::source::StructuredTableRecord],
+) -> HashMap<String, usize> {
+    let first_header_signature = |t: &crate::ir::source::StructuredTableRecord| -> Vec<String> {
+        t.header_rows
+            .first()
+            .map(|row| {
+                row.iter()
+                    .map(|c| c.text.trim().to_ascii_lowercase())
+                    .collect()
+            })
+            .unwrap_or_default()
+    };
+    let mut heads: HashMap<String, usize> = HashMap::new();
+    for (idx, table) in tables.iter().enumerate() {
+        if !matches!(table.table_kind, TableKind::Unknown) {
+            continue;
+        }
+        let Some((parent_ref, true)) = caption_table_ref(table.caption_text.as_deref()) else {
+            continue;
+        };
+        let fragment_signature = first_header_signature(table);
+        if fragment_signature.is_empty() {
+            continue;
+        }
+        for (head_index, head) in tables[..idx].iter().enumerate().rev() {
+            let Some((head_ref, false)) = caption_table_ref(head.caption_text.as_deref()) else {
+                continue;
+            };
+            if head_ref != parent_ref {
+                continue;
+            }
+            // The nearest same-reference captioned head decides — match or not.
+            if !matches!(head.table_kind, TableKind::Unknown)
+                && first_header_signature(head) == fragment_signature
+            {
+                heads.insert(table.table_id.clone(), head_index);
+            }
+            break;
+        }
+    }
+    heads
+}
+
 fn synthesize_timing_constraints(
     source_ir: &SourceIr,
     prior_guidance: Option<&EvidencePriorGuidance>,
@@ -11893,20 +12197,14 @@ fn synthesize_timing_constraints(
             .map(|r| r.iter().map(|c| c.text.to_ascii_lowercase()).collect())
             .unwrap_or_default();
 
-        // PDF-VARIANT-DIGESTION.9.11 — recover data rows Docling trapped in `header_rows` by marking
-        // the row-LABEL cell `is_header=true` (e.g. I2S `table_0004`, SMBus `table_0012`, which leave
-        // `body_rows` empty so the table yields nothing). Past the first (column-header) row, a
-        // `header_rows` entry whose VALUE cells are all `is_header=false` and whose first cell is a
-        // non-empty label is really a DATA row. A genuine multi-row column header (a nested cross-tab
-        // whose value cells stay `is_header=true`, e.g. I2S `table_0005`) fails this and is left an
-        // honest residual. Purely structural — no parameter-name list, no case dependence (ADR 0006).
-        let recovered_rows = table.header_rows.iter().skip(1).filter(|row| {
-            row.len() >= 2
-                && !row[0].text.trim().is_empty()
-                && row.iter().skip(1).all(|cell| !cell.is_header)
-        });
-        let effective_rows: Vec<&Vec<StructuredTableCellRecord>> =
-            table.body_rows.iter().chain(recovered_rows).collect();
+        // PDF-VARIANT-DIGESTION.9.11 — recover data rows Docling trapped in `header_rows`
+        // (e.g. I2S `table_0004`, SMBus `table_0012`); the shared `.12a` rule definition keeps
+        // this recovery, the signal-table gap-fill, and the coverage accounting from drifting.
+        let effective_rows: Vec<&Vec<StructuredTableCellRecord>> = table
+            .body_rows
+            .iter()
+            .chain(recovered_trapped_data_rows(table))
+            .collect();
         if effective_rows.is_empty() {
             continue;
         }
@@ -13237,6 +13535,269 @@ mod tests {
         assert_eq!(recs[0].parameter_name, "t BUF");
         assert_eq!(recs[0].min_value.as_deref(), Some("1.3"));
         assert_eq!(recs[1].parameter_name, "t HD");
+        Ok(())
+    }
+
+    // PDF-VARIANT-DIGESTION.12a — an `unknown`-kind `Continued from previous page` fragment
+    // inherits its captioned chain head's kind ONLY when the caption-stated parent reference AND
+    // the exact first-header-row signature both ground the join; any mismatch inherits nothing.
+    #[test]
+    fn continuation_fragment_inherits_chain_head_kind() {
+        let table =
+            |id: &str, kind: TableKind, caption: &str, headers: &[&str]| StructuredTableRecord {
+                table_id: id.to_string(),
+                asset_id: format!("asset_{id}"),
+                page_id: None,
+                caption_text: (!caption.is_empty()).then(|| caption.to_string()),
+                source_ref: None,
+                table_kind: kind,
+                header_rows: vec![headers.iter().map(|h| make_table_cell(h, true)).collect()],
+                body_rows: vec![],
+                row_count: 0,
+                col_count: headers.len() as u32,
+            };
+        let sig = &["Signal", "AXI5", "AXI5- Lite"][..];
+        let tables = vec![
+            table(
+                "table_head",
+                TableKind::SignalDescription,
+                "Table B2.3: Summary of check signal presence for each interface class",
+                sig,
+            ),
+            // an intermediate continuation that KEPT its kind — not a head, never matched as one
+            table(
+                "table_mid",
+                TableKind::SignalDescription,
+                "Table B2.3 Continued from previous page",
+                sig,
+            ),
+            table(
+                "table_frag",
+                TableKind::Unknown,
+                "Table B2.3 Continued from previous page",
+                sig,
+            ),
+            // header signature differs from the head → no inheritance
+            table(
+                "table_frag_othersig",
+                TableKind::Unknown,
+                "Table B2.3 Continued from previous page",
+                &["Property", "Values"],
+            ),
+            // parent reference has no captioned head anywhere → no inheritance
+            table(
+                "table_frag_orphan",
+                TableKind::Unknown,
+                "Table Z9.9 Continued from previous page",
+                sig,
+            ),
+            // not a continuation caption → never inherits, however similar the header
+            table("table_plain_unknown", TableKind::Unknown, "", sig),
+        ];
+        let heads = super::continuation_inherited_table_heads(&tables);
+        assert_eq!(heads.get("table_frag"), Some(&0), "grounded join inherits");
+        assert!(
+            !heads.contains_key("table_mid"),
+            "known kind never remapped"
+        );
+        assert!(!heads.contains_key("table_frag_othersig"));
+        assert!(!heads.contains_key("table_frag_orphan"));
+        assert!(!heads.contains_key("table_plain_unknown"));
+
+        // A same-reference head whose kind is itself `unknown` grounds nothing.
+        let tables_unknown_head = vec![
+            table(
+                "table_uhead",
+                TableKind::Unknown,
+                "Table C1.1: Some matrix",
+                sig,
+            ),
+            table(
+                "table_ufrag",
+                TableKind::Unknown,
+                "Table C1.1 Continued from previous page",
+                sig,
+            ),
+        ];
+        let heads = super::continuation_inherited_table_heads(&tables_unknown_head);
+        assert!(
+            heads.is_empty(),
+            "an unclassified head inherits nothing — honest residual over guessing"
+        );
+    }
+
+    // PDF-VARIANT-DIGESTION.12a — the header-trapped gap-fill mints a declaration ONLY for a
+    // signal absent from the declared inventory (duplicates are coverage-marked, never re-minted)
+    // and ONLY when the row carries real declaration content (a width or direction column).
+    #[test]
+    fn trapped_row_signal_gap_fill_mints_only_undeclared_signals() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Interface\nThe interface signal matrix.\n")?;
+        let mut source_ir = SourceIr::build(&source, &base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_matrix".to_string(),
+            asset_id: "asset_matrix".to_string(),
+            page_id: None,
+            caption_text: Some("Table G2-3 Signal matrix".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            // Column header row, then data rows trapped by the header-marked label cell.
+            header_rows: vec![
+                vec![
+                    make_table_cell("Signal", true),
+                    make_table_cell("Width", true),
+                    make_table_cell("Source", true),
+                    make_table_cell("Default", true),
+                ],
+                vec![
+                    make_table_cell("XVALID", true),
+                    make_table_cell("1", false),
+                    make_table_cell("M", false),
+                    make_table_cell("-", false),
+                ],
+                vec![
+                    make_table_cell("XSNOOP", true),
+                    make_table_cell("4", false),
+                    make_table_cell("M", false),
+                    make_table_cell("0b0000", false),
+                ],
+            ],
+            body_rows: vec![],
+            row_count: 2,
+            col_count: 4,
+        });
+        let known: std::collections::HashSet<String> = ["XVALID".to_string()].into();
+        let mut counter = 100usize;
+        let mut provenance = Vec::new();
+        let stmts = super::synthesize_trapped_row_signal_declarations(
+            &source_ir,
+            &known,
+            &mut counter,
+            None,
+            &mut provenance,
+        );
+        assert_eq!(stmts.len(), 1, "only the undeclared signal mints");
+        assert_eq!(stmts[0].text, "Signal XSNOOP is width 4.");
+        assert_eq!(provenance.len(), 1);
+        assert_eq!(provenance[0].signal_name, "XSNOOP");
+        assert_eq!(provenance[0].table_id, "table_matrix");
+        Ok(())
+    }
+
+    // PDF-VARIANT-DIGESTION.12a — a presence matrix row (no width/direction column) states no
+    // declaration content: even a genuinely undeclared signal mints NOTHING from it — its
+    // existence is `.12b` presence intent, not a fabricated declaration.
+    #[test]
+    fn trapped_row_presence_matrix_mints_nothing() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Interface\nSignal presence summary.\n")?;
+        let mut source_ir = SourceIr::build(&source, &base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_presence".to_string(),
+            asset_id: "asset_presence".to_string(),
+            page_id: None,
+            caption_text: Some(
+                "Table B2.2: Summary of signal presence for each interface class".to_string(),
+            ),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![
+                vec![
+                    make_table_cell("Signal", true),
+                    make_table_cell("Presence", true),
+                    make_table_cell("AXI5", true),
+                ],
+                vec![
+                    make_table_cell("XNEWSIG", true),
+                    make_table_cell("PROP_WIDTH > 0", false),
+                    make_table_cell("O", false),
+                ],
+            ],
+            body_rows: vec![],
+            row_count: 1,
+            col_count: 3,
+        });
+        let known = std::collections::HashSet::new();
+        let mut counter = 0usize;
+        let mut provenance = Vec::new();
+        let stmts = super::synthesize_trapped_row_signal_declarations(
+            &source_ir,
+            &known,
+            &mut counter,
+            None,
+            &mut provenance,
+        );
+        assert!(
+            stmts.is_empty() && provenance.is_empty(),
+            "no width/direction content → no declaration, however real the name"
+        );
+        Ok(())
+    }
+
+    // PDF-VARIANT-DIGESTION.12a — an `unknown`-kind continuation fragment participates in the
+    // gap-fill through its chain head's kind and top-level qualification.
+    #[test]
+    fn trapped_row_gap_fill_reaches_unknown_continuation_fragment() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Interface\nThe split signal matrix.\n")?;
+        let mut source_ir = SourceIr::build(&source, &base)?;
+        let header = |texts: &[&str]| -> Vec<StructuredTableCellRecord> {
+            texts.iter().map(|t| make_table_cell(t, true)).collect()
+        };
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_msig_head".to_string(),
+            asset_id: "asset_msig_head".to_string(),
+            page_id: None,
+            caption_text: Some("Table G9-1: Signal matrix".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![header(&["Signal", "Width", "Source"])],
+            body_rows: vec![],
+            row_count: 0,
+            col_count: 3,
+        });
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_msig_frag".to_string(),
+            asset_id: "asset_msig_frag".to_string(),
+            page_id: None,
+            caption_text: Some("Table G9-1 Continued from previous page".to_string()),
+            source_ref: None,
+            table_kind: TableKind::Unknown,
+            header_rows: vec![
+                header(&["Signal", "Width", "Source"]),
+                vec![
+                    make_table_cell("XRESP", true),
+                    make_table_cell("5", false),
+                    make_table_cell("M", false),
+                ],
+            ],
+            body_rows: vec![],
+            row_count: 1,
+            col_count: 3,
+        });
+        let known = std::collections::HashSet::new();
+        let mut counter = 0usize;
+        let mut provenance = Vec::new();
+        let stmts = super::synthesize_trapped_row_signal_declarations(
+            &source_ir,
+            &known,
+            &mut counter,
+            None,
+            &mut provenance,
+        );
+        assert_eq!(
+            stmts.len(),
+            1,
+            "the fragment extracts through its chain head"
+        );
+        assert_eq!(stmts[0].text, "Signal XRESP is width 5.");
+        assert_eq!(provenance[0].table_id, "table_msig_frag");
         Ok(())
     }
 

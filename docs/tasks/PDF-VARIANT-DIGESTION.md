@@ -1160,15 +1160,43 @@ captioned heads by caption parent-number (`Table B2.2 …` ↔ `Table B2.2: Summ
 EXACT first-header-row signature match (measured; incl. all 4 `unknown`-kind). LTI's
 sub-header row (`A A.b|B|C|D`, value cells `is_header=true`) is correctly REFUSED by the
 `.9.11` rule — genuine multi-row headers stay headers.
-**`.12a` BUILD (this slice):** (i) continuation-kind inheritance for `unknown` fragments
-(caption parent-number + exact header signature → head's kind, evidence-level only, never
-mutating SourceIR); (ii) trapped-row-aware coverage (`densest_signal_name_column_tokens`
-sees `.9.11`-recovered rows) → APB 1→0 (the LAST unexplained table on the gold doc),
-AXI 39→32 (B2.2+B2.3 covered, A13.3 honest), ACE 39→34, LTI stays 5 (3 unknown names —
-honest until `.12b`); (iii) gap-fill declaration synthesis from trapped rows (existing
-width/direction content rules, inventory-gated) → ACE +8-9 declarations w/ width.
-**`.12b` (next):** the presence-CONDITION typed surface (signal × interface-class/version
-presence codes + optional property condition — 180 condition rows measured).
+**`.12a` BUILD — DONE `2026-06-11`:** (i) **continuation-kind inheritance**
+(`continuation_inherited_table_heads` in `ir/evidence.rs`): an `unknown`-kind fragment
+inherits its captioned chain head's kind only when the caption-stated parent reference AND
+the exact first-header-row signature both ground the join (evidence-level view only —
+SourceIR is never mutated; an unclassified or signature-mismatched head inherits nothing);
+consumed by the gap-fill, `unexplained_intent_bearing_tables`, and the validate
+denominator (`intent_bearing_table_count`) so numerator and denominator cannot disagree.
+(ii) **trapped-row-aware coverage**: the `.9.11` rule now has ONE shared definition
+(`recovered_trapped_data_rows` — timing recovery refactored onto it, pure code motion)
+and `densest_signal_name_column_tokens` chains it after `body_rows`, same strictness.
+(iii) **gap-fill declaration synthesis** (`synthesize_trapped_row_signal_declarations`,
+runs LAST in the seed so the inventory gate sees the complete declared universe): mints
+under the body-row path's own content rules (direction or width — a presence-only row
+states no declaration) AND only for names absent from the inventory (duplicates are
+coverage-marked, never re-minted); fragments qualify through their chain head's
+top-level gate. **MEASURED (final post-fmt binary):** 13/13 intact bundles old-vs-new
+`evidence --dry-run` BYTE-IDENTICAL (gap-fill mints nothing on the rebuildable corpus —
+exactly the probe's prediction; zero extraction-behavior change on every gold doc);
+validate-time gauges on canonical artifacts: **APB 1→0 (the `table_0018` WIRE-BASED-100.3
+residual CLOSES — 0/9 unexplained on the gold doc)**, AXI 39→32 of 94→98 (B2.2+B2.3
+chains covered incl. the 4 newly-accounted `unknown` fragments; A13.3 stays honest),
+ACE 39→36 (3 all-declared `*CHK` matrices covered; the 2 matrices carrying the 9 new
+wires stay flagged until re-ingest), **LTI 5→6 — the honesty gap closing: `table_0080`
+(a third C5.1 fragment, exact header match, cell-fused body rows carrying
+LTVALID/LTCREDIT/LTCTAG cache-channel presence) was INVISIBLE to the gauge and is now an
+accounted, honestly-flagged candidate miss**; standing extraction-quality gauges
+re-display at documented states (APB 5/21 qwen2.5:14b-instruct); +7 hermetic tests
+(inheritance grounding/refusals; gap-fill mints-only-undeclared, presence-row refusal,
+fragment-reach; trapped coverage covered/strict-flagged; fragment accounting); lib 1574,
+kg-bench 154/154, full `run_ci.sh` GREEN. RESIDUAL: the ACE +9 declarations (AWBAR w2,
+AWDOMAIN w2, AWSNOOP w4, CRRESP w5, CDDATA wV, 4×BROADCAST* w1 — per-item verified in
+the probe) land at the host-local re-ingest sweep; expected post-re-ingest: ACE 36→34
+via gap-fill provenance + inventory coverage.
+**`.12b` (frontier, next):** the presence-CONDITION typed surface (signal ×
+interface-class/version presence codes + optional property condition — 180 condition
+rows measured: AXI 157/73 distinct exprs, LTI 23/15; also the typed home that explains
+A13.3's literal generic rows and LTI's 3 width-less new wires).
 **GOLD-SAFETY BAR (non-negotiable):** AXI + APB are
 gold-measured docs with PROMOTED canonical surfaces and standing Pattern gauges — every
 gold gate must re-measure at its documented state; additive-only; restore-the-Pattern-

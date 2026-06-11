@@ -2880,11 +2880,20 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
     let intent_bearing_table_count = region_source
         .as_ref()
         .map(|src| {
+            // PDF-VARIANT-DIGESTION.12a — the same effective-kind view as the unexplained-table
+            // accounting: an `unknown` continuation fragment counts under its chain head's kind,
+            // so the gauge's numerator and denominator cannot disagree about which tables exist.
+            let inherited_heads =
+                crate::ir::evidence::continuation_inherited_table_heads(&src.structured_tables);
             src.structured_tables
                 .iter()
                 .filter(|t| {
+                    let effective_kind = inherited_heads
+                        .get(&t.table_id)
+                        .map(|&head_index| src.structured_tables[head_index].table_kind)
+                        .unwrap_or(t.table_kind);
                     matches!(
-                        t.table_kind,
+                        effective_kind,
                         crate::ir::source::TableKind::RegisterMap
                             | crate::ir::source::TableKind::SignalDescription
                             | crate::ir::source::TableKind::TimingParameter

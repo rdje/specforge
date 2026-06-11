@@ -64,6 +64,19 @@ with `dedup_merge_by` as the generic provenance-merging dedup core behind both s
   surfaces (FSM states, semantic hints, serial-frame fields, message fields), concat surfaces (registers, actors,
   SWD-operations, signal polarity, actor-signal relations), and stateful-assembly orchestrators that
   deliberately stay OFF the drivers (the signal-declaration seed; the constraint family below).
+- `PDF-VARIANT-DIGESTION.12a` (2026-06-11) extended the signal-declaration seed with a trapped-row
+  GAP-FILL pass (`synthesize_trapped_row_signal_declarations`, run LAST so its inventory gate sees the
+  complete declared universe — base statements + table seed + prose fallback): it consumes the now-SHARED
+  `.9.11` trapped-row rule (`recovered_trapped_data_rows` — the timing extractor refactored onto the same
+  single definition) and the new `continuation_inherited_table_heads` view (an `unknown`-kind
+  `Continued from previous page` fragment resolves to its captioned chain head via caption parent-reference
+  + exact first-header-signature; pub(crate), also consumed by `completeness::unexplained_intent_bearing_tables`
+  and validate's `intent_bearing_table_count` so the gauge's numerator and denominator share one kind view;
+  SourceIR itself is never mutated). The completeness coverage (`densest_signal_name_column_tokens`) chains
+  trapped rows after `body_rows` with unchanged one-unknown-keeps-it-flagged strictness. Deliberate
+  consistency note: the gap-fill registers NO manifest strategy — the seed is a stateful-assembly
+  orchestrator off the framework drivers by design, and on the entire rebuildable corpus the pass is a
+  measured no-op (13/13 old-vs-new byte-identical).
 - `.9b` + `.9c` (this session) extended the framework's reach into `converge_evidence_extractions` — the
   fixed-point evidence loop: **signal polarity** is two `Extractor<SignalPolarityObservationCandidate>`
   units (`signal_polarity.prose` / `signal_polarity.tables`) run per pass via `run_surface_concat` plus the

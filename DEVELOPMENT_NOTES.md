@@ -1,4 +1,33 @@
 # DEVELOPMENT_NOTES
+## `PDF-VARIANT-DIGESTION.12a` (`2026-06-11`) — a completeness fix whose honest direction is BOTH ways
+- The headline deltas went down (APB 1→0, AXI 39→32, ACE 39→36) — but the most
+  doctrine-confirming result went UP: LTI 5→6, because the continuation-kind inheritance
+  surfaced `table_0080`, a C5.1 fragment that had been INVISIBLE to the accounting
+  (unknown kind = unaccounted) and genuinely carries uncaptured cache-channel presence.
+  A gauge fix that can only lower numbers is a gauge being gamed; this one moved each doc
+  in whichever direction the page's truth pointed.
+- The probe's wrong-key lesson generalizes: the earlier census read `interface_signals`
+  (a key that does not exist) and concluded canonical inventory = 0. Resolve the REAL key
+  (`interfaces[].signal_records[].signal_name`; evidence-level =
+  `collect_known_signal_names` over statements) before concluding anything from a zero.
+  A zero read through the wrong key looks identical to a real absence.
+- Sequencing the gap-fill LAST in the declaration seed is what makes "never mint
+  duplicates" structural rather than aspirational: its inventory gate sees base
+  statements + table seed + prose fallback, so the only way a presence-matrix row can
+  mint is for the name to be absent from the entire declared universe. On the 13
+  rebuildable docs that gate reduced the gap-fill to a no-op — byte-identical old-vs-new
+  — exactly what the probe predicted (all trapped tokens already declared); its positive
+  path (ACE's 9 matrix-only wires with real Width/Source cells) is locked by hermetic
+  tests and waits for the host-local re-ingest.
+- Sharing `recovered_trapped_data_rows` between timing, gap-fill, and coverage is the
+  `.10a` one-matcher lesson re-applied: when two consumers encode the same structural
+  rule separately, they WILL drift; the refactor cost was one function extraction and the
+  timing tests didn't move.
+- Case-soft confirmation in the wild: the census's strict all-caps identifier gate
+  undercounted by exactly `ARESETn`/`RESETn` and the `Ax*` generics — the ≥60%-uppercase
+  participation rule recovered the leaf's exact 21/487 census. Letter case is a
+  readability convention, not an identity test (`feedback_case_is_soft_not_critical`).
+
 ## `PDF-VARIANT-DIGESTION.10e` (`2026-06-11`) — the probe that overturned its own leaf's premise
 - The leaf was spun from MEMORY/`.10a` notes that already "knew" the answer: byte-location
   tables = register-at-offset placement maps, typed home = register-map records. The very

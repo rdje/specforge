@@ -203,9 +203,18 @@ pub fn unexplained_intent_bearing_tables(
     declared_signal_names: &HashSet<String>,
 ) -> Vec<UnexplainedTableResidual> {
     let mut residuals = Vec::new();
+    // PDF-VARIANT-DIGESTION.12a — an `unknown`-kind continuation fragment is accounted under its
+    // captioned chain head's kind (caption parent-reference + exact header signature), so a
+    // page-split intent-bearing table cannot hide from this accounting just because Docling
+    // dropped a fragment's classification.
+    let inherited_heads = crate::ir::evidence::continuation_inherited_table_heads(tables);
     for table in tables {
         let marker = format!("{}_", table.table_id);
-        let (kind_str, covered) = match table.table_kind {
+        let effective_kind = inherited_heads
+            .get(&table.table_id)
+            .map(|&head_index| tables[head_index].table_kind)
+            .unwrap_or(table.table_kind);
+        let (kind_str, covered) = match effective_kind {
             TableKind::SignalDescription => (
                 "signal_description",
                 signal_provenance
@@ -274,16 +283,21 @@ fn signal_table_covered_by_inventory(
 /// (e.g. APB's `Property` column repeating `Check_Type`) repeats a single value,
 /// so it loses even when it ties on raw cell count.
 fn densest_signal_name_column_tokens(table: &StructuredTableRecord) -> Vec<String> {
-    let col_count = table
+    // PDF-VARIANT-DIGESTION.12a — the data rows Docling trapped in `header_rows` (the shared
+    // `.9.11` structural rule) carry signals too: a presence matrix whose every row-label cell is
+    // header-marked has NO body rows, so without them a fully-redundant duplicate presentation
+    // could never be recognized as covered. Same strictness applies — one unknown signal anywhere
+    // in the densest column keeps the table flagged.
+    let data_rows: Vec<&Vec<crate::ir::source::StructuredTableCellRecord>> = table
         .body_rows
         .iter()
-        .map(|row| row.len())
-        .max()
-        .unwrap_or(0);
+        .chain(crate::ir::evidence::recovered_trapped_data_rows(table))
+        .collect();
+    let col_count = data_rows.iter().map(|row| row.len()).max().unwrap_or(0);
     let mut best: Vec<String> = Vec::new();
     for col in 0..col_count {
         let mut tokens: Vec<String> = Vec::new();
-        for row in &table.body_rows {
+        for row in &data_rows {
             let Some(cell) = row.get(col) else { continue };
             let token = cell
                 .text
@@ -1122,6 +1136,113 @@ mod tests {
             r.is_empty(),
             "the distinct signal column must beat the repeated Property column"
         );
+    }
+
+    fn hcell(text: &str) -> crate::ir::source::StructuredTableCellRecord {
+        crate::ir::source::StructuredTableCellRecord {
+            text: text.to_string(),
+            row_span: 1,
+            col_span: 1,
+            is_header: true,
+        }
+    }
+    /// PDF-VARIANT-DIGESTION.12a — a SignalDescription table whose data rows Docling trapped in
+    /// `header_rows` (label cell header-marked, value cells not), leaving `body_rows` empty.
+    fn signal_table_with_trapped_rows(
+        table_id: &str,
+        caption: Option<&str>,
+        kind: TableKind,
+        header: &[&str],
+        trapped: &[&[&str]],
+    ) -> StructuredTableRecord {
+        let mut header_rows: Vec<Vec<_>> = vec![header.iter().map(|t| hcell(t)).collect()];
+        header_rows.extend(trapped.iter().map(|row| {
+            row.iter()
+                .enumerate()
+                .map(|(i, t)| if i == 0 { hcell(t) } else { cell(t) })
+                .collect::<Vec<_>>()
+        }));
+        StructuredTableRecord {
+            table_id: table_id.to_string(),
+            asset_id: format!("asset_{table_id}"),
+            page_id: None,
+            caption_text: caption.map(|c| c.to_string()),
+            source_ref: None,
+            table_kind: kind,
+            header_rows,
+            row_count: trapped.len() as u32,
+            col_count: header.len() as u32,
+            body_rows: vec![],
+        }
+    }
+
+    #[test]
+    fn header_trapped_signal_table_covered_by_inventory() {
+        // PDF-VARIANT-DIGESTION.12a — a presence matrix whose every data row is header-trapped has
+        // NO body rows; the coverage must read the recovered rows or a fully-redundant duplicate
+        // presentation could never be recognized as covered.
+        let table = signal_table_with_trapped_rows(
+            "table_0266",
+            Some("Table B2.2: Summary of signal presence for each interface class"),
+            TableKind::SignalDescription,
+            &["Signal", "Presence", "AXI5"],
+            &[&["PCLK", "-", "Y"], &["PADDR", "-", "Y"]],
+        );
+        let inv = inventory(&["PCLK", "PADDR"]);
+        let r = unexplained_intent_bearing_tables(&[table], &[], &[], &[], &inv);
+        assert!(r.is_empty(), "all trapped signals declared → covered");
+    }
+
+    #[test]
+    fn header_trapped_signal_table_with_unknown_signal_stays_flagged() {
+        // Strictness is unchanged by the trapped-row recovery: one unknown signal anywhere in the
+        // densest column keeps the table flagged, so a genuine miss is never hidden.
+        let table = signal_table_with_trapped_rows(
+            "table_0078",
+            Some("Table C5.1: Summary of signal presence"),
+            TableKind::SignalDescription,
+            &["Signal", "Presence", "Issue"],
+            &[&["PCLK", "-", "Y"], &["PNEWSIG", "-", "O"]],
+        );
+        let inv = inventory(&["PCLK"]);
+        let r = unexplained_intent_bearing_tables(&[table], &[], &[], &[], &inv);
+        assert_eq!(
+            r.len(),
+            1,
+            "an uncovered trapped signal keeps the table flagged"
+        );
+    }
+
+    #[test]
+    fn unknown_continuation_fragment_accounted_under_chain_head_kind() {
+        // PDF-VARIANT-DIGESTION.12a — an `unknown` continuation fragment of a signal table joins
+        // the accounting under the head's kind (it can no longer hide from the gauge); whether it
+        // is covered then follows the normal inventory rule.
+        let head = signal_table_with_trapped_rows(
+            "table_head",
+            Some("Table B2.3: Summary of check signal presence"),
+            TableKind::SignalDescription,
+            &["Signal", "AXI5"],
+            &[&["PADDRCHK", "O"]],
+        );
+        let frag = signal_table_with_trapped_rows(
+            "table_frag",
+            Some("Table B2.3 Continued from previous page"),
+            TableKind::Unknown,
+            &["Signal", "AXI5"],
+            &[&["PNEWCHK", "O"]],
+        );
+        // The fragment carries an undeclared signal: it must now surface as a candidate miss.
+        let inv = inventory(&["PADDRCHK"]);
+        let r =
+            unexplained_intent_bearing_tables(&[head.clone(), frag.clone()], &[], &[], &[], &inv);
+        assert_eq!(r.len(), 1, "the fragment is accounted and flagged");
+        assert_eq!(r[0].table_id, "table_frag");
+        assert_eq!(r[0].table_kind, "signal_description");
+        // Once its signal is declared, the same fragment is covered.
+        let inv = inventory(&["PADDRCHK", "PNEWCHK"]);
+        let r = unexplained_intent_bearing_tables(&[head, frag], &[], &[], &[], &inv);
+        assert!(r.is_empty(), "declared fragment signals → covered");
     }
 
     #[test]

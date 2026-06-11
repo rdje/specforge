@@ -277,6 +277,28 @@ pure, unit-tested function (`document_completeness_gauge`) keyed off the documen
 adds no extraction behavior — it only makes the existing incompleteness visible instead of
 silent.
 
+Two structural quirks of real PDFs used to distort that table accounting, and both are now
+handled honestly. First, **header-trapped data rows**: the PDF backend sometimes marks every
+row-label cell of a table as a header cell, leaving the table's `body_rows` empty — common in
+the multi-page *signal presence* matrices bus specs use to summarize which signals exist in
+which interface class. Such a matrix usually restates signals that are already declared
+elsewhere, so the coverage check now reads those recovered rows (the same structural rule the
+timing extractor uses — one shared definition, so the two can never drift) and recognizes a
+fully-redundant presentation as *covered* instead of flagging it forever. The strictness is
+unchanged: one signal in the matrix that is *not* already declared keeps the table flagged as a
+real candidate miss. Second, **continuation fragments that lost their classification**: a table
+split across pages appears as a captioned head (*"Table B2.2: Summary of signal presence…"*)
+plus `Continued from previous page` fragments, and the backend occasionally drops a fragment's
+table kind to `unknown` — which silently removed it from the accounting altogether. A fragment
+now inherits its head's kind when two independent facts ground the join: the fragment's own
+caption states the parent table reference, *and* its first header row matches the head's
+exactly. On the AMBA AXI spec this honesty pass closed seven of the flagged presence-matrix
+tables (all their signals were already declared), brought four previously invisible fragments
+into the accounting, and on AMBA APB it explained the last unexplained table — while on the LTI
+spec the same pass *raised* the count by one, because a garbled presence fragment that had been
+invisible genuinely carries uncaptured signal-presence content. Both directions are the same
+property: the gauge reports what is actually there.
+
 The typed **message-field inventory** (the in-memory structure and packet-field surface built
 by the bit-position and field-titled table readers) is also on the report: five metrics —
 `message_field_records`, `message_field_containers`, `message_fields_with_bit_range`,
