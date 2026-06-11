@@ -934,6 +934,87 @@ unchanged: symbolic cells, two-word names (`Store Address` — 4 rows), value-ro
 lost-caption chains stay residuals; `byte_offset` is recorded verbatim-literal, never
 inferred.
 
+**`PDF-VARIANT-DIGESTION.10e` — the `byte location | size (bytes) | register description`
+placement-table family (CCIX-class).** · Status: `in_progress` (probe DONE `2026-06-11`;
+build next). Spun from the `.10a` quantified residuals, which recorded the hypothesis
+"register-AT-OFFSET placement maps → future lever: map them to register-map records".
+**PROBE RESULT (per-item over the persisted corpus): the recorded hypothesis is
+OVERTURNED — these are NOT register placement maps.** The family is **exactly 60 tables,
+CCIX-ONLY (15 per version × 4), 236 raw rows** (census gate: effective `unknown`-kind
+header carrying a `byte location` column + a `size`-led column + a `description`-containing
+column; two signature variants `attributes`/`attribute` — the column is never required).
+Every caption is a STRUCTURE caption (`CCIX PER Memory Error Type Structure`, `Cache/ATC/
+Port/Link/Agent Internal Error Type Structure`, `Vendor-Specific Log Info`) — **0 of 60
+captions carry the word register**; the rows describe byte-granular fields of in-memory/
+in-log error-record structures (CPER-style), with `M/O` (mandatory/optional) record
+vocabulary. Per the `.10c` caption-evidence rule the typed home is the **`.10b` structure
+surface (`message_field_records`)** via a NEW third strategy
+`message_fields.byte_location_table` — claiming MMIO register semantics would fabricate
+(the `Attributes` RO/RsvdZ column does not outvote the document's own caption; FIELD.2's
+access-column routing predates the stronger `.10c` per-table caption doctrine).
+**Row grammar (measured per-item, 236 rows):** 228 eligible (first cell a decimal int —
+the byte location); 8 wrapped-prose rows (non-int first cell: continuation text of the
+PREVIOUS row's description) are row-level skips, NOT whole-table rejections (unlike the
+`.10b` bit-cell rule: a wrapped row carries no placement data, so skipping cannot
+misplace anything); sizes 200 int + 28 symbolic (`(indicated by VenLen)` variable-length
+tails → width honestly absent); 24 `Reserved and Zero` padding skips.
+**Capture shape (decided by precedent, recorded):** `byte_offset` = the literal byte
+location (additive doc amendment: with `bit_range: None` the offset is the FIELD's own
+byte offset within its container — the `.10d` dword-relative reading needs `bit_range:
+Some`); `bit_width = size_bytes × 8` for plain-int size cells (exact unit arithmetic on a
+document-stated value — the same class as `.10b`'s `high - low + 1`, and unlike the `.10d`
+position derivation it cannot misrepresent), `None` on symbolic sizes; `bit_range` stays
+`None` (no bit positions are stated — never derived). No schema change.
+**Name forms (census over all 204 non-Reserved eligible rows — OTHER = 0):** paren+frame
+12 (`Card or Channel Number (Chan) This field …` → the existing shared form yields the
+document's own mnemonic `Chan`/`Mod`/`VenLen`); **head-before-definitional-frame 189**
+(NEW, family-LOCAL): the field name is the text before the measured frame set `This
+field/bit/value/register/structure …` / `This is …` / `All subsequent fields …`
+(`Validation Bits`, `Operation Type`, `Memory Pool Generic Memory Type Capability`, `Row`,
+`Set`, `Way` — multi-word English heads the bare leading-identifier form rightly rejects),
+gated: ≤8 words, starts with a letter, and NO sentence period inside the head (the `.10c`
+period-is-bleed precedent — kills exactly the 2 measured wrapped-bleed captures `All other
+values are reserved. Cache Error Type|Operation Type`, which stay honest residuals rather
+than minting a post-period grammar); bare-short-cell 3 (`Device`, `Memory Error Type` ×2 —
+the description page-wrapped away; ≤6 words, no period, not Reserved-led). The form is
+deliberately NOT added to the shared `recover_field_mnemonic` chain: the family gate
+admits only these 60 tables corpus-wide (leak-proof by construction), and the shared
+bare leading-identifier form would TRUNCATE measured heads whose first token is
+identifier-shaped (`FRU ID`→`FRU`, `CCIX Message`→`CCIX`, `ATC Instance ID`→`ATC`), so
+the family-local chain runs paren+frame → head-before-frame → bare-short and never the
+bare-identifier form.
+**Chains (byte-exact adjacency, measured over all 4 versions — zero gap/ambiguous cases):**
+a capless table joins the open chain iff page distance ≤ 1 AND its first eligible offset
+== the chain end (last eligible row's `offset + int size`); a symbolic-size tail closes
+the chain (end unknowable → nothing adopts after it — measured: every symbolic size is a
+genuine variable-length structure tail); fresh structures always restart at offset 0;
+every captioned table starts at 0 (no head-adoption case exists in this family). 31 of 31
+capless continuations join EXACT; chain label via the existing `.10b`
+`bit_position_container_label` caption reader (no `Fields` suffix in this family → the
+label is the full structure name verbatim); a chain with no captioned member yields
+nothing. GUARD (measured-zero, future-doc honesty): a caption that grounds a register
+identifier per the `.10c` caption grammar yields NOTHING for its chain (unmeasured
+territory stays residual rather than mislabeled as a structure).
+**Quantified honest residuals:** the lost-caption chains — Port `7-9` in ALL four versions
+(caption lost in ingest; ~2 tables / ~7 rows each), plus r1.0a's ATC `7-8` + Log-Info
+`7-12` and rev1.1's Cache `7-7` (the re-ingest lever, same class as `.10b`/`.10c`); the 2
+period-bleed rows; the 8 wrapped-prose rows; 24 Reserved skips. Expected yield ≈ 40–50
+fields / 4–6 containers per version (≈190 fields across the 4 CCIX docs).
+**Build-safety facts (verified in code before building):** `is_bit_position_header` does
+NOT match `byte location` (no current gate touches the family — the `.10a` negative-twin
+test locks the register-surface exclusion); the field-titled reader needs a
+fields-anchoring caption (these say `Structure`/`Log Info`) — the family is extracted by
+NOTHING today; none of the 12 intact-bundle docs carry the family (census), so parity =
+byte-identical everywhere with ONLY the manifest gaining the new strategy entry (the
+`.10b`/`.10c` precedent); canonical CCIX EvidenceIRs are host-local-blocked → live
+verification = the `.10a` stub-copy protocol, canonical untouched.
+**Verification plan:** hermetic tests (gate incl. negative twins, name forms incl. the 2
+bleed rejections + truncation-hazard cases, symbolic-size width absence, chain joins +
+closed-tail + capless-chain-yields-nothing + register-caption guard); 12-doc parity
+sweep (manifest-only delta); `.10b`/`.10d` NVMe-216/AMD-217 dry-run re-proof unchanged;
+register golds + battery + kg-bench + full `scripts/run_ci.sh`; stub-protocol live run on
+all 4 CCIX versions with per-item eyeball of every container/field; book + KM card.
+
 **`PDF-VARIANT-DIGESTION.11` — `validate` integration of the `message_field_*` surfaces.**
 · Status: **DONE `2026-06-11`** (probe → measured scope decisions → build → live CLI
 verification). The deferred lever
