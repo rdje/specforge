@@ -1336,16 +1336,38 @@ ingest (`DOCLING_DEVICE=cpu`, staged-swap protects `normalized/`, `source_ir` ne
 deleted before success) → `evidence` → `validate` → gauge re-measure where applicable.
 **GOLD-SAFETY:** none of the 10 is a gold or promoted doc; the 12 corpus golds are
 untouched by this sweep. Slices:
-- `.13a` · `in_progress` · import the 10 PDFs into `corpus/` (mirroring the library's
+- `.13a` · `done` (commit `94468930`) · import the 10 PDFs into `corpus/` (mirroring the library's
   vendor layout: `arm/amba/core/axi/legacy/`, `arm/amba/core/chi/current/`,
   `arm/amba/supporting/atb/current/`, `arm/amba/specialized/lti/current/`,
   `arm/amba/core/apb/legacy/`, `cxl/ccix/current/`, `amd/system-ip/iommu/current/`) +
   `SOURCE_PDF_REGISTRY.md` rows. Filenames kept verbatim so the derived `document_key`s
   match the persisted artifacts exactly (verified per-item for all 10 before import).
-- `.13b` · `pending` · the 4 AMBA matrix docs (ACE/LTI/ATB/APB_d): re-ingest + evidence
+- `.13b` · `in_progress` · the 4 AMBA matrix docs (ACE/LTI/ATB/APB_d): re-ingest + evidence
   rebuild + measure — presence records mint on canonical, the ACE +9 wires mint via the
   `.12a` gap-fill (per-item width verification against the probe record), accounting
-  deltas recorded, ACE/LTI/APB_d gauges re-measured live.
+  deltas recorded, ACE/LTI/APB_d gauges re-measured live. APB_d/ATB/LTI landed pre-crash
+  (session `2026-06-11d`, artifacts re-verified per-item post-crash); ACE blocked by `.13b.1`.
+- `.13b.1` · `in_progress` · BLOCKER fix (surfaced resuming `.13b` after the host crash):
+  the ACE evidence rebuild is jetsam-SIGKILLed (17.2 GB max RSS / 80.3 GB peak footprint,
+  419 s, exit 137 on a 24 GB host). Root cause measured per-item with a throwaway
+  instrumented worktree probe (never committed): `replace_term_with_placeholder`
+  (`crates/specforge/src/ir/prior_memory.rs`) copies non-matching bytes via
+  `bytes[index] as char`, mangling every non-ASCII UTF-8 byte into a 2-byte char;
+  `normalize_prior_phrase` chains ONE full replacement pass per MULTI-WORD term, so each
+  pass re-doubles the previously mangled bytes — exponential growth in the number of
+  multi-word signal/actor replacement terms. ACE's semantic-hints surface derives 173
+  multi-word actor names (AXI: 3), far past the ~30 doublings that reach tens of GB, and
+  the `•`-bearing `Signal | Width | Description` cells of `table_0201` trigger it — ONE
+  `infer_signal_semantic_tags_from_description` call hangs for minutes growing the string
+  until the kernel kills the process (sampled stacks: 100% in `normalize_prior_phrase`;
+  the tables loop up to that row completes in 10 ms). Every other persisted doc carries
+  too few multi-word terms to detonate, which is why the defect stayed invisible. FIX:
+  char-correct copying in `replace_term_with_placeholder` (byte-for-byte identical
+  behavior on pure-ASCII inputs; non-ASCII text preserved verbatim instead of mojibake;
+  a match is only taken on char boundaries) + hermetic regression tests (non-ASCII
+  preservation, no-growth under chained multi-word passes, replacement still fires beside
+  non-ASCII). Verify: focused tests + kg-bench + full CI, intact-bundle byte-stability
+  re-proof, then the ACE rebuild must complete and `.13b` resumes.
 - `.13c` · `pending` · CHI: re-ingest + rebuild + gauge re-measure; report the
   field/constraint surfaces now on canonical; hand the `EXTRACTION-QUALITY-GAUGE.3c`
   unblock back to its tree.
