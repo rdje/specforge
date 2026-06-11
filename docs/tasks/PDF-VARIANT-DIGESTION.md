@@ -1312,6 +1312,49 @@ at the host-local re-ingest via the `.12a` gap-fill), APB_e `table_0018` (split-
 inventory-covered), ACE `table_0270` "Key for Signal Matrix" legend (Code|Meaning — a
 pre-existing non-matrix residual this slice deliberately does not touch).
 
+**`.13` — corpus re-ingest sweep (owner-unblocked `2026-06-11`)** · Status: `in_progress`
+(`.13a` import landing). The owner granted the host-local spec library on request (the
+path is deliberately NOT recorded in any tracked file — `feedback_source_pdfs_in_repo`;
+PDFs are copied into `corpus/` and git-tracked there, registry-listed with library-relative
+source paths only). This leaf lands the RECORDED pending re-ingest wins — the docs whose
+`normalized/` bundles artifact-cleanup reclaimed, making evidence rebuilds impossible
+until their PDFs live in-repo. Bounded scope, 10 PDFs (~45 MB): ACE `IHI0022_H.c`
+(the `.12a` +9 wires AWBAR/AWDOMAIN/AWSNOOP/CRRESP/CDDATA/4×BROADCAST* mint via gap-fill;
+presence records on 0271/0272/0273/0274/0276–0279; expected accounting 35→down), LTI
+`IHI0089_D` (presence records on 0078/0079; garbled 0080 stays refused), ATB `IHI0032_C`
++ APB_d `IHI0024_D` (presence records on their rotated version matrices), CHI `IHI0050_G`
+(unblocks `EXTRACTION-QUALITY-GAUGE.3c` — that measurement stays owned by its own tree),
+CCIX ×4 + AMD IOMMU (the `.10a`/`.10d`/`.10e` message-field surfaces finally land on
+CANONICAL artifacts; triggers the `.11` recorded revisit — re-measure the
+`document_class` census per-doc once field-bearing docs exist at scale). **GAUGE
+SAFETY (verified per-doc before any rebuild):** ACE 76/94, LTI 37/41, APB_d 4/13, CHI
+9/13 carry standing `qwen2.5:14b-instruct` gauges — an evidence rebuild DROPS a gauge by
+construction, so each gauge doc gets a fresh `nli-verify` re-measure after its rebuild
+(Ollama verified live with `qwen2.5:14b-instruct` + `qwen2.5vl:7b`); ATB/CCIX×4/AMD
+carry none; NONE of the 10 has persisted semantic/intent stages, so the sweep is
+ingest (`DOCLING_DEVICE=cpu`, staged-swap protects `normalized/`, `source_ir` never
+deleted before success) → `evidence` → `validate` → gauge re-measure where applicable.
+**GOLD-SAFETY:** none of the 10 is a gold or promoted doc; the 12 corpus golds are
+untouched by this sweep. Slices:
+- `.13a` · `in_progress` · import the 10 PDFs into `corpus/` (mirroring the library's
+  vendor layout: `arm/amba/core/axi/legacy/`, `arm/amba/core/chi/current/`,
+  `arm/amba/supporting/atb/current/`, `arm/amba/specialized/lti/current/`,
+  `arm/amba/core/apb/legacy/`, `cxl/ccix/current/`, `amd/system-ip/iommu/current/`) +
+  `SOURCE_PDF_REGISTRY.md` rows. Filenames kept verbatim so the derived `document_key`s
+  match the persisted artifacts exactly (verified per-item for all 10 before import).
+- `.13b` · `pending` · the 4 AMBA matrix docs (ACE/LTI/ATB/APB_d): re-ingest + evidence
+  rebuild + measure — presence records mint on canonical, the ACE +9 wires mint via the
+  `.12a` gap-fill (per-item width verification against the probe record), accounting
+  deltas recorded, ACE/LTI/APB_d gauges re-measured live.
+- `.13c` · `pending` · CHI: re-ingest + rebuild + gauge re-measure; report the
+  field/constraint surfaces now on canonical; hand the `EXTRACTION-QUALITY-GAUGE.3c`
+  unblock back to its tree.
+- `.13d` · `pending` · CCIX ×4 + AMD: re-ingest + rebuild; the message-field surfaces
+  land on canonical (expected ≈161 CCIX fields across versions, AMD 217/30 per the
+  `.10d`/`.10e` measurements — re-verify live, never assume); run the `.11` revisit:
+  re-measure `document_class` over the now-field-bearing docs and record whether the
+  census decision stands (it must be a MEASURED confirmation either way).
+
 **(SUPERSEDED active note) `PDF-VARIANT-DIGESTION.6`/`.7`** — item ② (`.5`) COMPLETE and `.8` (broaden
 prose-actor capture) DONE. **`.5a` + `.5b` + `.5c` are DONE** — structural doc-class routing
 (protocol/register/interface/guide), the front-matter doc-type signal (true guide vs under-extracted spec), and

@@ -1,3 +1,22 @@
+### `PDF-VARIANT-DIGESTION.13a` — corpus re-ingest sweep unblocked: 10 owner-granted PDFs imported + registered (ACE / APB-legacy / ATB / LTI / CHI / CCIX ×4 / AMD IOMMU)
+The owner granted the host-local spec library on request (path deliberately not recorded
+in any tracked file — `feedback_source_pdfs_in_repo`), unblocking the recorded re-ingest
+wins. `.13a` copies the 10 needed PDFs (~35 MB) into `corpus/` mirroring the library's
+vendor layout (`arm/amba/core/axi/legacy/`, `arm/amba/core/chi/current/`, `cxl/ccix/
+current/`, `amd/system-ip/iommu/current/`, …), git-tracks them, and registers each in
+`corpus/SOURCE_PDF_REGISTRY.md`. Filenames are kept VERBATIM and every derived
+`document_key` was verified per-item against the persisted `generated/source_ir/<key>/`
+artifacts before import (10/10 match — the re-ingest will land on the existing canonical
+chain, not beside it). Gauge safety pre-verified: ACE 76/94, LTI 37/41, APB_d 4/13, CHI
+9/13 carry standing `qwen2.5:14b-instruct` gauges (a rebuild drops them → each gets a
+live `nli-verify` re-measure; Ollama verified up with the exact model); ATB/CCIX×4/AMD
+carry none; none of the 10 has persisted semantic/intent stages; none is gold/promoted.
+New leaf `.13` (in `docs/tasks/PDF-VARIANT-DIGESTION.md`) owns the sweep: `.13b` the 4
+AMBA matrix docs (presence records + the ACE +9 wires via the `.12a` gap-fill), `.13c`
+CHI (unblocks `EXTRACTION-QUALITY-GAUGE.3c`), `.13d` CCIX ×4 + AMD (message-field
+surfaces land on canonical + the `.11` document_class revisit re-measure). Data/docs-only
+slice — no code change; memory-architecture check + docs CI green.
+
 ### `PDF-VARIANT-DIGESTION.12b` — the presence-CONDITION typed surface: signal-presence matrices captured document-literally; AXI 306 rows / 157 conditioned
 The presence matrices the `.12a` accounting made visible now have their typed home: a new
 additive EvidenceIR surface **`signal_presence_records`** — one record per matrix row,
