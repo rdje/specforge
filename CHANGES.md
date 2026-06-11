@@ -1,3 +1,43 @@
+### `PDF-VARIANT-DIGESTION.12b` — the presence-CONDITION typed surface: signal-presence matrices captured document-literally; AXI 306 rows / 157 conditioned
+The presence matrices the `.12a` accounting made visible now have their typed home: a new
+additive EvidenceIR surface **`signal_presence_records`** — one record per matrix row,
+`{signal_name (literal case, `Ax*` generics never expanded), presence_condition
+(verbatim expression, `-` = honest None), variant_presence [{variant_label, code}],
+table_id}` — with the 1–2-letter codes kept LITERAL and never interpreted (each document
+defines its own legend in prose; ADR 0006). ONE shared pure capture
+(`capture_signal_presence_rows`) implements the measured per-item rules: the structural
+gate (signal-worded first header + ≥2 all-code columns over identifier-led body+trapped
+rows), the `.5h` content-based rotation remap (AMBA version matrices put the signal name
+LAST), literal sub-header version axes (LTI `A A.b`), the measured fused-pair split
+(`ACE5-Lite ACE5-LiteACP` ↔ `OC N`, pairwise ONLY when every identifier-led row pairs),
+and refusal over guessing (fused `Y Y` cell → whole-row refusal; row labels spilled
+across two columns with no consistent rotation → whole-table refusal — the APB
+`table_0018` shape). It is consumed by BOTH the registered extractor
+`signal_presence.matrix_table` (content-key dedup merges page-break re-listed rows
+first-wins) and the completeness coverage at validate time (STRICT: ≥1 captured row AND
+zero refused — partial capture never hides a miss). Presence records NEVER mint signals.
+Gate-census corrections recorded per-item: the gate fires on **36 tables / 8 docs**
+(+ AXI-Stream 0015–0017, genuine version matrices the census sweep missed, content
+verified; LTI `table_0080` does NOT fire — its garble leaves one clean code column);
+AXI condition census reproduced EXACT (157/73), the 24 malformed rows reproduced EXACT
+(ACE 0275's 21 + APB 0018's 3), the `.12` LTI 23/15 corrected to 31 rows / 17 exprs.
+Measured live: 12/12 rebuildable bundles old-vs-new `evidence --dry-run` byte-identical
+except the new surface + manifest entry; records on exactly the 4 matrix docs — **AXI
+306 (157 conditioned / 73 exprs), APB 20 (0018 refused whole), AHB 40, AXI-Stream 22** —
+spot-verified per-item (`AWSUBSYSID` `SUBSYSID_WIDTH > 0` O-in-AXI5/N-in-ACE5-LiteACP,
+APB `PADDRCHK` Check_Type C/N/N/N, `AxMMUATST` Version 1=C only). Canonical accounting
+(validate-time, NO rebuild): AXI 32→31 (A13.3 closes), ACE 36→35 (`0271` closes; `0275`
+stays — the garble class the census itself refused), LTI 6→4 (0078/0079 close; 0080
+stays), AHB/APB/ATB/AXI-Stream unchanged. Every wire-based gold re-measures 1.000
+(APB/AHB/AXI constraints+relations+temporal, SWD incl. derivation, I2C declared); APB
+standing gauge re-displays 5/21 `qwen2.5:14b-instruct`. `validate` gains 4 metrics + the
+`evidence_signal_presence_inventory` Info finding (non-empty only); kg-bench gains the
+`signal_presence_*` expectation surface + the `signal_presence_matrix_gold` /
+`signal_presence_malformed_refusal_negative` fixture pair (capture + refusals +
+never-mints-signals). +9 hermetic tests; lib 1574→1583; kg-bench 154→156; full CI GREEN.
+KM `signal-presence-matrix-capture`; book `pipeline/evidenceir.md` section +
+`quality/validation.md` accounting note; README `.12b` bullet.
+
 ### `PDF-VARIANT-DIGESTION.12a` — header-trapped SIGNAL tables: shared trapped-row rule, continuation-kind inheritance, inventory-gated gap-fill; APB's last unexplained table closes
 The 21-table / 487-token header-trapped signal-table family (AXI `B2.2`/`B2.3`, ACE
 `Signal matrix`, LTI `C5.1`, APB `B-3` — presence matrices whose every data row Docling

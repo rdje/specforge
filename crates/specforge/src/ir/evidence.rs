@@ -209,6 +209,14 @@ pub struct EvidenceIr {
     /// Empty (serde-skipped) for documents that declare no message-field tables.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub message_field_records: Vec<MessageFieldRecord>,
+    /// PDF-VARIANT-DIGESTION.12b: typed SIGNAL-PRESENCE rows from presence matrices — tables that
+    /// state, per interface class / protocol version / agent side, whether each signal exists
+    /// (`Y`/`N`/`O`/`C`/… codes), optionally conditioned on a configuration property
+    /// (`SUBSYSID_WIDTH > 0`). Presence is CONFIGURATION intent, not a declaration: these records
+    /// never mint signals, and every name/condition/code is document-literal, never interpreted.
+    /// Empty (serde-skipped) for documents without presence matrices.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub signal_presence_records: Vec<SignalPresenceRecord>,
     /// EXTRACTION-QUALITY-GAUGE.FIELD.4: typed obligations on declared MESSAGE FIELDS ("the TagOp
     /// field is inapplicable and must be 0b00"). A field obligation is protocol intent on flit/
     /// message CONTENT, not on a wire — so it lives in its own surface instead of either polluting
@@ -393,6 +401,47 @@ pub struct MessageFieldConstraintRecord {
     pub source_text: String,
     pub supporting_statement_ids: Vec<String>,
     pub automation_confidence: AutomationConfidence,
+}
+
+/// PDF-VARIANT-DIGESTION.12b — one cell of a signal-presence matrix's variant axis: the literal
+/// column label (an interface class, a protocol version, an agent side — whatever the document's
+/// own matrix header says) and the literal presence code the document states for it (`Y`, `N`,
+/// `O`, `C`, `OC`, …). Codes are kept as literal strings and NEVER interpreted: each document
+/// defines its own code legend in nearby prose, so assigning meaning here would fabricate.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
+pub struct VariantPresenceEntry {
+    /// The variant column's label, exactly as the matrix header wrote it — including a literal
+    /// fused sub-header (`A A.b`) and the split halves of a measured fused-pair header.
+    pub variant_label: String,
+    /// The literal 1–2-uppercase-letter presence code stated for this variant. A `-` cell states
+    /// no code and yields no entry.
+    pub code: String,
+}
+
+/// PDF-VARIANT-DIGESTION.12b — one row of a SIGNAL-PRESENCE MATRIX: a table whose first header
+/// cell is signal-worded and whose variant columns carry only short uppercase presence codes
+/// (`Y`/`N`/`O`/`C`/`OC`/…) per signal ("Summary of signal presence for each interface class",
+/// AMBA-style version/agent matrices). The row states CONFIGURATION intent no other surface
+/// types: per-variant signal presence plus an optional property-conditioned existence expression
+/// (`SUBSYSID_WIDTH > 0`). Everything is captured document-LITERALLY — the signal name keeps its
+/// case (a generic `Ax*` row stays generic, never expanded), the condition expression and the
+/// codes are verbatim strings — because interpreting any of them would fabricate semantics the
+/// document defines only in its own prose legend.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct SignalPresenceRecord {
+    /// Stable id, e.g. `presence_0003`.
+    pub presence_id: String,
+    /// The signal name exactly as the row wrote it (literal case — `ARESETn`, generic `AxVALID`).
+    pub signal_name: String,
+    /// The literal presence-condition expression from the matrix's Presence/Property column
+    /// (`SUBSYSID_WIDTH > 0`, `Check_Type`). `None` when the cell is `-`/empty or the matrix has
+    /// no such column — honest absence, never inferred.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub presence_condition: Option<String>,
+    /// One entry per variant column that states a code for this signal (a `-` cell is omitted).
+    pub variant_presence: Vec<VariantPresenceEntry>,
+    /// The structured table (page fragment) that carried this row.
+    pub table_id: String,
 }
 
 /// EXTRACTION-QUALITY-GAUGE.0 — the persisted per-document extraction-quality gauge: the result of
@@ -736,6 +785,11 @@ impl EvidenceIr {
             prior_guidance.as_ref(),
             &mut extraction_manifest,
         );
+        // PDF-VARIANT-DIGESTION.12b — the signal-presence surface: presence matrices state which
+        // signals exist per interface class / protocol version / agent side, with literal codes
+        // and property-conditioned existence. Configuration intent, not declarations — these
+        // records never mint signals (the `.12a` gap-fill owns declaration content).
+        let signal_presence_records = signal_presence_surface(&source_ir, &mut extraction_manifest);
         let timing_constraints = synthesize_timing_constraints(&source_ir, prior_guidance.as_ref());
 
         // Replace the previous one-shot extraction with a monotone convergent loop:
@@ -847,6 +901,7 @@ impl EvidenceIr {
             fact_provenance,
             serial_frame_fields,
             message_field_records,
+            signal_presence_records,
             message_field_constraints: Vec::new(),
             protocol_states,
             protocol_actors,
@@ -9274,6 +9329,52 @@ fn message_field_surface(
     run.records
 }
 
+/// PDF-VARIANT-DIGESTION.12b — the signal-presence matrix strategy as a registered `Extractor`;
+/// see [`capture_signal_presence_rows`] (the single shared gate/capture definition).
+struct SignalPresenceMatrixExtractor<'a> {
+    source_ir: &'a SourceIr,
+}
+impl Extractor<SignalPresenceRecord> for SignalPresenceMatrixExtractor<'_> {
+    fn name(&self) -> &'static str {
+        "signal_presence.matrix_table"
+    }
+    fn run(&self, _cx: &ExtractionContext<'_>) -> Vec<SignalPresenceRecord> {
+        self.source_ir
+            .structured_tables
+            .iter()
+            .flat_map(|table| capture_signal_presence_rows(table).records)
+            .collect()
+    }
+}
+
+/// Run the signal-presence surface through the unified `run_surface` driver and record its
+/// manifest entry. Self-gating: zero records on documents without presence matrices. The merge
+/// key is the full row CONTENT (name, condition, variant entries) and deliberately NOT the
+/// table id: a page-break continuation that re-lists a row restates the same document fact, so
+/// first-wins dedup keeps one record (the first declaring fragment's provenance) while a
+/// same-signal row with a different condition or different codes stays a distinct record.
+/// `presence_id`s are assigned after the merge so they stay dense and stable.
+fn signal_presence_surface(
+    source_ir: &SourceIr,
+    manifest: &mut ExtractionManifest,
+) -> Vec<SignalPresenceRecord> {
+    let cx = ExtractionContext { statements: &[] };
+    let extractor = SignalPresenceMatrixExtractor { source_ir };
+    let extractors: [&dyn Extractor<SignalPresenceRecord>; 1] = [&extractor];
+    let mut run = run_surface("signal_presence", &cx, &extractors, |record| {
+        (
+            record.signal_name.clone(),
+            record.presence_condition.clone(),
+            record.variant_presence.clone(),
+        )
+    });
+    manifest.record(&run);
+    for (index, record) in run.records.iter_mut().enumerate() {
+        record.presence_id = format!("presence_{index:04}");
+    }
+    run.records
+}
+
 /// Run the serial-frame surface through the unified key-merge driver (EXTRACTOR-ARCHITECTURE.9a). Key =
 /// field name: both strategies emit name-unique lists (the bit-range form upserts by name; the composition
 /// form keeps a per-list `seen` set), so first-wins dedup is a no-op WITHIN each strategy and reproduces the
@@ -12174,6 +12275,381 @@ pub(crate) fn continuation_inherited_table_heads(
     heads
 }
 
+/// PDF-VARIANT-DIGESTION.12b — a literal 1–2-uppercase-letter presence code (`Y`, `N`, `O`, `C`,
+/// `OC`, `YS`, …). Purely a SHAPE test: the code vocabulary differs per document (each matrix
+/// defines its own legend in nearby prose), so no code list is hardcoded and no code is ever
+/// interpreted (ADR 0006).
+fn is_presence_code(cell: &str) -> bool {
+    let len = cell.chars().count();
+    (1..=2).contains(&len) && cell.chars().all(|c| c.is_ascii_uppercase())
+}
+
+/// PDF-VARIANT-DIGESTION.12b — the CASE-SOFT identifier rule for presence-matrix row labels:
+/// starts with an uppercase ASCII letter, identifier characters only, and ≥60% of its letters
+/// uppercase. Deliberately softer than [`is_hardware_signal_token`] (which requires ALL-caps):
+/// the `.12` census measured that the strict rule undercounts exactly the mixed-case reset names
+/// (`ARESETn`) and a document's own generic-name convention (`AxVALID`) — letter case is a soft
+/// readability convention, so participation (mostly-uppercase) decides, not strict case.
+fn is_presence_identifier(token: &str) -> bool {
+    if token.len() < 2 {
+        return false;
+    }
+    let mut chars = token.chars();
+    if !chars.next().is_some_and(|c| c.is_ascii_uppercase()) {
+        return false;
+    }
+    if !token.chars().all(|c| c.is_ascii_alphanumeric() || c == '_') {
+        return false;
+    }
+    let letters = token.chars().filter(|c| c.is_ascii_alphabetic()).count();
+    let uppercase = token.chars().filter(|c| c.is_ascii_uppercase()).count();
+    letters > 0 && uppercase * 5 >= letters * 3
+}
+
+/// PDF-VARIANT-DIGESTION.12b — what one table contributed to the signal-presence surface, plus
+/// the refusal accounting the completeness gauge needs (every identifier-led data row either
+/// captures or refuses, so the row total is `records.len() + refused_rows`). A table counts as
+/// presence-EXPLAINED only when it captured at least one row and refused none — one uncaptured
+/// row keeps it flagged (the `WIRE-BASED-100.3a` strictness), so a genuine miss is never hidden
+/// behind partial capture.
+pub(crate) struct SignalPresenceTableCapture {
+    /// The captured rows (`presence_id` is assigned later, at the surface merge).
+    pub records: Vec<SignalPresenceRecord>,
+    /// Identifier-led rows refused per-row or by a whole-table integrity gate.
+    pub refused_rows: usize,
+}
+
+/// PDF-VARIANT-DIGESTION.12b — capture the signal-presence rows of ONE structured table, or
+/// nothing when the table is not a presence matrix. This is the SINGLE definition shared by the
+/// `signal_presence.matrix_table` extractor and the completeness coverage (the `.12a` no-drift
+/// principle), pure over the table record.
+///
+/// The structural gate (measured corpus-wide, 36 matrix tables / 8 documents; no caption-word or
+/// chip-name vocabulary — ADR 0006):
+/// - the FIRST header cell is signal-worded, and
+/// - over the identifier-led data rows (body rows + the rows Docling trapped in `header_rows` —
+///   the shared `.9.11`/`.12a` rule), at least TWO columns carry nothing but presence codes
+///   (`Y`/`OC`/…), `-`, or empties.
+///
+/// Capture rules, all measured per-item on the discovering corpus before coding:
+/// - **Rotation** (the `.5h` content-based remap): when a different column carries more distinct
+///   identifier row-labels than the header-designated one, the body is cyclically rotated
+///   (AMBA-style version matrices put the signal name LAST) — every header-designated column is
+///   remapped by the same offset.
+/// - **Integrity (split-spill)**: a row label appearing in a column on rows whose name-column
+///   cell is NOT an identifier means labels live in ≥2 columns with no consistent rotation (the
+///   garbled split-spill shape) — the WHOLE table is refused, because no per-row attribution can
+///   be trusted.
+/// - **Column roles** are header-designated: the condition column says `presence`/`property`;
+///   declaration columns (signal/width/default/source/destination/direction vocabulary) belong
+///   to the `.12a` declaration surface; everything else is a variant column. A variant label is
+///   the LAST header row's non-empty cell (a genuine sub-header like `A A.b` stays literal).
+/// - **Fused-pair columns**: a multi-token variant header (`V2A V2B`) whose every identifier-led
+///   cell carries exactly that many codes (`OC N`) splits pairwise — label tokens ↔ code tokens.
+///   Anything less consistent stays single-label, and its fused cells refuse their rows.
+/// - **Per-row capture**: the name cell must be identifier-led and EVERY variant cell must parse
+///   as a single code, a clean pair-split, or `-` (no code stated → no entry). One unparseable
+///   cell refuses the whole row — misattributing a shifted code would state a wrong fact.
+pub(crate) fn capture_signal_presence_rows(
+    table: &crate::ir::source::StructuredTableRecord,
+) -> SignalPresenceTableCapture {
+    let empty = SignalPresenceTableCapture {
+        records: Vec::new(),
+        refused_rows: 0,
+    };
+    // Gate precondition: a signal-worded FIRST header cell.
+    let Some(first_header_row) = table.header_rows.first() else {
+        return empty;
+    };
+    let Some(first_header_cell) = first_header_row.first() else {
+        return empty;
+    };
+    if !first_header_cell
+        .text
+        .to_ascii_lowercase()
+        .contains("signal")
+    {
+        return empty;
+    }
+
+    let first_token = |cell: &StructuredTableCellRecord| -> String {
+        cell.text
+            .split_whitespace()
+            .next()
+            .unwrap_or("")
+            .to_string()
+    };
+
+    // Data rows = body rows + header-trapped data rows (the shared `.9.11`/`.12a` rule).
+    let data_rows: Vec<&Vec<StructuredTableCellRecord>> = table
+        .body_rows
+        .iter()
+        .chain(recovered_trapped_data_rows(table))
+        .collect();
+    if data_rows.is_empty() {
+        return empty;
+    }
+    let col_count = data_rows.iter().map(|row| row.len()).max().unwrap_or(0);
+
+    // Header-ish rows: the first header row plus any later header row that is NOT a trapped data
+    // row — i.e. the genuine (possibly multi-row) column header, where variant labels live.
+    let is_trapped_shape = |row: &Vec<StructuredTableCellRecord>| -> bool {
+        row.len() >= 2
+            && !row[0].text.trim().is_empty()
+            && row.iter().skip(1).all(|cell| !cell.is_header)
+    };
+    let header_view: Vec<&Vec<StructuredTableCellRecord>> = table
+        .header_rows
+        .first()
+        .into_iter()
+        .chain(
+            table
+                .header_rows
+                .iter()
+                .skip(1)
+                .filter(|row| !is_trapped_shape(row)),
+        )
+        .collect();
+
+    // Content-resolved name column (the `.5h` rotation detection, with the case-soft rule):
+    // the column carrying the most DISTINCT identifier-shaped row labels is the real name
+    // column; aligned tables keep the header-designated one (offset 0, no behavior change).
+    let distinct_identifiers = |col: usize| -> usize {
+        let mut tokens: Vec<String> = data_rows
+            .iter()
+            .filter_map(|row| row.get(col))
+            .map(&first_token)
+            .filter(|tok| is_presence_identifier(tok))
+            .collect();
+        tokens.sort();
+        tokens.dedup();
+        tokens.len()
+    };
+    let header_name_col = first_header_row
+        .iter()
+        .position(|cell| {
+            let lowered = cell.text.to_ascii_lowercase();
+            lowered.contains("signal")
+                || lowered.contains("name")
+                || lowered.contains("port")
+                || lowered.contains("pin")
+        })
+        .unwrap_or(0);
+    let header_name_distinct = distinct_identifiers(header_name_col);
+    let (best_col, best_distinct) = (0..col_count)
+        .map(|col| (col, distinct_identifiers(col)))
+        // Strictly-greater keeps the FIRST maximal column — deterministic on ties.
+        .fold((header_name_col, header_name_distinct), |best, cand| {
+            if cand.1 > best.1 { cand } else { best }
+        });
+    let (name_col, offset) = if best_col != header_name_col
+        && best_distinct >= 2
+        && best_distinct > header_name_distinct
+    {
+        (best_col, best_col as isize - header_name_col as isize)
+    } else {
+        (header_name_col, 0isize)
+    };
+
+    let identifier_led: Vec<&Vec<StructuredTableCellRecord>> = data_rows
+        .iter()
+        .filter(|row| {
+            row.get(name_col)
+                .is_some_and(|cell| is_presence_identifier(&first_token(cell)))
+        })
+        .copied()
+        .collect();
+    let identifier_rows = identifier_led.len();
+    if identifier_rows == 0 {
+        return empty;
+    }
+
+    // GATE: at least two all-code columns over the identifier-led rows.
+    let all_code_columns = (0..col_count)
+        .filter(|&col| col != name_col)
+        .filter(|&col| {
+            let cells: Vec<&str> = identifier_led
+                .iter()
+                .filter_map(|row| row.get(col))
+                .map(|cell| cell.text.trim())
+                .collect();
+            !cells.is_empty()
+                && cells
+                    .iter()
+                    .all(|text| matches!(*text, "-" | "") || is_presence_code(text))
+                && cells.iter().any(|text| is_presence_code(text))
+        })
+        .count();
+    if all_code_columns < 2 {
+        return empty;
+    }
+
+    // INTEGRITY (split-spill): identifier row-labels in a non-name column on rows whose name
+    // cell is NOT an identifier — labels live in two places with no consistent rotation, so no
+    // per-row attribution can be trusted. Refuse the whole table (rows stay honest residuals).
+    for col in (0..col_count).filter(|&col| col != name_col) {
+        let mut orphans: Vec<String> = data_rows
+            .iter()
+            .filter(|row| {
+                !row.get(name_col)
+                    .is_some_and(|cell| is_presence_identifier(&first_token(cell)))
+            })
+            .filter_map(|row| row.get(col))
+            .map(&first_token)
+            .filter(|tok| is_presence_identifier(tok))
+            .collect();
+        orphans.sort();
+        orphans.dedup();
+        if orphans.len() >= 2 {
+            return SignalPresenceTableCapture {
+                records: Vec::new(),
+                refused_rows: identifier_rows,
+            };
+        }
+    }
+
+    // Column roles, in HEADER space (remapped to data space through the rotation offset).
+    let header_cols = first_header_row.len();
+    let header_words = |col: usize| -> String {
+        header_view
+            .iter()
+            .filter_map(|row| row.get(col))
+            .map(|cell| cell.text.to_ascii_lowercase())
+            .collect::<Vec<_>>()
+            .join(" ")
+    };
+    let label_at = |col: usize| -> String {
+        header_view
+            .iter()
+            .rev()
+            .filter_map(|row| row.get(col))
+            .map(|cell| cell.text.trim())
+            .find(|text| !text.is_empty())
+            .unwrap_or("")
+            .to_string()
+    };
+    let condition_col = (0..header_cols).find(|&col| {
+        col != header_name_col && {
+            let words = header_words(col);
+            words.contains("presence") || words.contains("property")
+        }
+    });
+    // Declaration vocabulary marks the `.12a` declaration columns (width/source/… — a different
+    // intent, captured by the declaration surface); the leftover columns ARE the variant matrix.
+    const DECLARATION_HEADER_WORDS: [&str; 15] = [
+        "signal",
+        "name",
+        "port",
+        "pin",
+        "width",
+        "size",
+        "bits",
+        "default",
+        "presence",
+        "property",
+        "source",
+        "driver",
+        "destination",
+        "dest",
+        "direction",
+    ];
+    let variant_cols: Vec<usize> = (0..header_cols)
+        .filter(|&col| col != header_name_col && Some(col) != condition_col)
+        .filter(|&col| {
+            let words = header_words(col);
+            !DECLARATION_HEADER_WORDS
+                .iter()
+                .any(|word| words.contains(word))
+        })
+        .collect();
+    let data_col = |header_col: usize| -> usize {
+        if offset != 0 && col_count > 0 {
+            ((header_col as isize + offset).rem_euclid(col_count as isize)) as usize
+        } else {
+            header_col
+        }
+    };
+
+    // Fused-pair columns: a multi-token label whose EVERY identifier-led cell carries exactly
+    // that many codes splits pairwise; anything less consistent stays a single literal label.
+    let fused_labels = |col: usize| -> Option<Vec<String>> {
+        let tokens: Vec<String> = label_at(col)
+            .split_whitespace()
+            .map(str::to_string)
+            .collect();
+        if tokens.len() < 2 {
+            return None;
+        }
+        let consistent = identifier_led.iter().all(|row| {
+            row.get(data_col(col)).is_some_and(|cell| {
+                let codes: Vec<&str> = cell.text.split_whitespace().collect();
+                codes.len() == tokens.len() && codes.iter().all(|code| is_presence_code(code))
+            })
+        });
+        consistent.then_some(tokens)
+    };
+    let fused: std::collections::BTreeMap<usize, Vec<String>> = variant_cols
+        .iter()
+        .filter_map(|&col| fused_labels(col).map(|labels| (col, labels)))
+        .collect();
+
+    let mut records: Vec<SignalPresenceRecord> = Vec::new();
+    let mut refused_rows = 0usize;
+    'row: for row in &identifier_led {
+        let signal_name = first_token(row.get(name_col).expect("identifier-led row has name cell"));
+        let presence_condition = condition_col
+            .and_then(|col| row.get(data_col(col)))
+            .map(|cell| cell.text.trim().to_string())
+            .filter(|text| !text.is_empty() && text != "-");
+        let mut variant_presence: Vec<VariantPresenceEntry> = Vec::new();
+        for &col in &variant_cols {
+            let Some(cell) = row.get(data_col(col)) else {
+                refused_rows += 1;
+                continue 'row;
+            };
+            let text = cell.text.trim();
+            if let Some(labels) = fused.get(&col) {
+                let codes: Vec<&str> = text.split_whitespace().collect();
+                if codes.len() == labels.len() && codes.iter().all(|code| is_presence_code(code)) {
+                    for (label, code) in labels.iter().zip(codes) {
+                        variant_presence.push(VariantPresenceEntry {
+                            variant_label: label.clone(),
+                            code: code.to_string(),
+                        });
+                    }
+                } else {
+                    refused_rows += 1;
+                    continue 'row;
+                }
+            } else if text == "-" {
+                // The document states no code for this variant — no entry, honest absence.
+            } else if is_presence_code(text) {
+                variant_presence.push(VariantPresenceEntry {
+                    variant_label: label_at(col),
+                    code: text.to_string(),
+                });
+            } else {
+                // Fused/empty/garbled cell under a single-label column: attribution cannot be
+                // trusted, so the WHOLE row is refused (capturing the rest would misstate).
+                refused_rows += 1;
+                continue 'row;
+            }
+        }
+        records.push(SignalPresenceRecord {
+            presence_id: String::new(),
+            signal_name,
+            presence_condition,
+            variant_presence,
+            table_id: table.table_id.clone(),
+        });
+    }
+
+    SignalPresenceTableCapture {
+        records,
+        refused_rows,
+    }
+}
+
 fn synthesize_timing_constraints(
     source_ir: &SourceIr,
     prior_guidance: Option<&EvidencePriorGuidance>,
@@ -13798,6 +14274,301 @@ mod tests {
         );
         assert_eq!(stmts[0].text, "Signal XRESP is width 5.");
         assert_eq!(provenance[0].table_id, "table_msig_frag");
+        Ok(())
+    }
+
+    /// PDF-VARIANT-DIGESTION.12b — convenience: a presence-matrix table from compact row specs.
+    /// `trapped` rows land in `header_rows` with a header-marked label cell (the Docling trap
+    /// shape); `body` rows land in `body_rows`.
+    fn presence_table(
+        id: &str,
+        headers: &[&str],
+        trapped: &[&[&str]],
+        body: &[&[&str]],
+    ) -> StructuredTableRecord {
+        let mut header_rows: Vec<Vec<StructuredTableCellRecord>> =
+            vec![headers.iter().map(|t| make_table_cell(t, true)).collect()];
+        for row in trapped {
+            let mut cells = vec![make_table_cell(row[0], true)];
+            cells.extend(row[1..].iter().map(|t| make_table_cell(t, false)));
+            header_rows.push(cells);
+        }
+        StructuredTableRecord {
+            table_id: id.to_string(),
+            asset_id: format!("asset_{id}"),
+            page_id: None,
+            caption_text: None,
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows,
+            body_rows: body
+                .iter()
+                .map(|row| row.iter().map(|t| make_table_cell(t, false)).collect())
+                .collect(),
+            row_count: (trapped.len() + body.len()) as u32,
+            col_count: headers.len() as u32,
+        }
+    }
+
+    // PDF-VARIANT-DIGESTION.12b — a header-trapped presence matrix captures literally: names
+    // keep their case (incl. the document's own generic-name convention), the condition
+    // expression is verbatim with `-` as honest absence, codes stay literal strings, and a `-`
+    // variant cell yields no entry.
+    #[test]
+    fn presence_capture_reads_trapped_matrix_literally() {
+        let table = presence_table(
+            "table_presence",
+            &["Signal", "Presence", "V1", "V2", "V3"],
+            &[
+                &["XCLK", "-", "Y", "Y", "Y"],
+                &["XREQ", "XREQ_WIDTH > 0", "O", "N", "Y"],
+                &["XxDAT", "-", "OC", "N", "-"],
+                &["ARESETn", "-", "Y", "Y", "Y"],
+            ],
+            &[],
+        );
+        let capture = super::capture_signal_presence_rows(&table);
+        assert_eq!(capture.refused_rows, 0);
+        assert_eq!(capture.records.len(), 4);
+        let req = &capture.records[1];
+        assert_eq!(req.signal_name, "XREQ");
+        assert_eq!(req.presence_condition.as_deref(), Some("XREQ_WIDTH > 0"));
+        assert_eq!(
+            req.variant_presence
+                .iter()
+                .map(|v| (v.variant_label.as_str(), v.code.as_str()))
+                .collect::<Vec<_>>(),
+            vec![("V1", "O"), ("V2", "N"), ("V3", "Y")]
+        );
+        let generic = &capture.records[2];
+        assert_eq!(
+            generic.signal_name, "XxDAT",
+            "the generic row stays literal, never expanded or upper-cased"
+        );
+        assert!(
+            generic.presence_condition.is_none(),
+            "`-` is honest absence"
+        );
+        assert_eq!(
+            generic.variant_presence.len(),
+            2,
+            "a `-` variant cell states no code and yields no entry"
+        );
+        assert_eq!(capture.records[3].signal_name, "ARESETn");
+        assert_eq!(capture.records[0].table_id, "table_presence");
+    }
+
+    // PDF-VARIANT-DIGESTION.12b — a cyclically rotated version matrix (signal name in the LAST
+    // column, the `.5h` shape) remaps every header-designated column by the same offset; a row
+    // whose remapped variant cell is fused (`Y Y`) or empty is refused whole, never misread.
+    #[test]
+    fn presence_capture_remaps_rotated_matrix_and_refuses_fused_rows() {
+        let table = presence_table(
+            "table_rotated",
+            &["Signal", "Width", "Property", "V1", "V2", "V3"],
+            &[],
+            &[
+                &["1", "-", "Y", "Y", "Y", "XACLK"],
+                &["1", "-", "", "Y Y", "Y", "XARST"],
+                &["8", "Check_Type", "O", "N", "N", "XDATA"],
+            ],
+        );
+        let capture = super::capture_signal_presence_rows(&table);
+        assert_eq!(capture.refused_rows, 1, "the fused `Y Y` row is refused");
+        assert_eq!(capture.records.len(), 2);
+        let aclk = &capture.records[0];
+        assert_eq!(aclk.signal_name, "XACLK");
+        assert!(aclk.presence_condition.is_none());
+        assert_eq!(
+            aclk.variant_presence
+                .iter()
+                .map(|v| (v.variant_label.as_str(), v.code.as_str()))
+                .collect::<Vec<_>>(),
+            vec![("V1", "Y"), ("V2", "Y"), ("V3", "Y")],
+            "variant labels remap by the rotation offset"
+        );
+        let data = &capture.records[1];
+        assert_eq!(data.signal_name, "XDATA");
+        assert_eq!(
+            data.presence_condition.as_deref(),
+            Some("Check_Type"),
+            "the condition column remaps too"
+        );
+        assert_eq!(
+            data.variant_presence
+                .iter()
+                .map(|v| (v.variant_label.as_str(), v.code.as_str()))
+                .collect::<Vec<_>>(),
+            vec![("V1", "O"), ("V2", "N"), ("V3", "N")]
+        );
+    }
+
+    // PDF-VARIANT-DIGESTION.12b — a fused two-label variant header whose EVERY identifier-led
+    // cell carries exactly two codes splits pairwise (label tokens ↔ code tokens); an
+    // inconsistently fused table (single-token label over fused cells) refuses those rows.
+    #[test]
+    fn presence_capture_splits_consistent_fused_pair_columns() {
+        let fused = presence_table(
+            "table_fused",
+            &["Signal", "V1", "V2A V2B", "V3"],
+            &[],
+            &[&["XFUSE0", "Y", "OC N", "N"], &["XFUSE1", "N", "C N", "Y"]],
+        );
+        let capture = super::capture_signal_presence_rows(&fused);
+        assert_eq!(capture.refused_rows, 0);
+        assert_eq!(capture.records.len(), 2);
+        assert_eq!(
+            capture.records[0]
+                .variant_presence
+                .iter()
+                .map(|v| (v.variant_label.as_str(), v.code.as_str()))
+                .collect::<Vec<_>>(),
+            vec![("V1", "Y"), ("V2A", "OC"), ("V2B", "N"), ("V3", "N")],
+            "the fused pair splits pairwise, labels and codes both literal"
+        );
+
+        // The garble twin: the header fuses ONE pair but the cells fuse under a DIFFERENT
+        // single-token label — per-row refusal, never a misattributed split.
+        let garbled = presence_table(
+            "table_garbled_fuse",
+            &["Signal", "V1A V1B", "V2", "V3"],
+            &[],
+            &[&["XGARB0", "Y", "N N", "N"], &["XGARB1", "C", "N N", "N"]],
+        );
+        let capture = super::capture_signal_presence_rows(&garbled);
+        assert_eq!(capture.records.len(), 0, "every row carries a fused cell");
+        assert_eq!(capture.refused_rows, 2);
+    }
+
+    // PDF-VARIANT-DIGESTION.12b — split-spill integrity: row labels living in TWO columns with
+    // no consistent rotation (the garbled `table_0018` shape) refuse the WHOLE table — no
+    // per-row attribution can be trusted, even for rows that would parse.
+    #[test]
+    fn presence_capture_refuses_split_spill_tables_whole() {
+        let table = presence_table(
+            "table_spill",
+            &["Signal", "Width", "Property", "V1", "V2"],
+            &[
+                &["XSPILLA", "-", "C", "N", "N"],
+                &["1", "C", "N", "N", "XSPILLB"],
+                &["XSPILLC", "-", "C", "N", "N"],
+                &["2", "C", "N", "", "XSPILLD"],
+            ],
+            &[],
+        );
+        let capture = super::capture_signal_presence_rows(&table);
+        assert_eq!(capture.records.len(), 0);
+        assert_eq!(
+            capture.refused_rows, 2,
+            "the whole table is refused, parseable rows included"
+        );
+    }
+
+    // PDF-VARIANT-DIGESTION.12b — a genuine sub-header row (value cells header-marked) carries
+    // the variant labels and stays literal, fused spelling included (`A A.b`); an ordinary
+    // signal-description table (one code-ish column or none) never fires the gate.
+    #[test]
+    fn presence_capture_reads_sub_header_labels_and_gates_non_matrices() {
+        let mut table = presence_table(
+            "table_subheader",
+            &["Signal", "Presence", "Issue", "Issue", "", ""],
+            &[
+                &["XADDR", "-", "Y", "Y", "Y", "N"],
+                &["XTRANS", "XTRANS_EN", "O", "O", "N", "N"],
+            ],
+            &[],
+        );
+        // The genuine sub-header: label cells header-marked, first cell empty — NOT a data row.
+        table.header_rows.insert(
+            1,
+            vec![
+                make_table_cell("", false),
+                make_table_cell("", false),
+                make_table_cell("A A.b", true),
+                make_table_cell("B", true),
+                make_table_cell("C", true),
+                make_table_cell("D", true),
+            ],
+        );
+        let capture = super::capture_signal_presence_rows(&table);
+        assert_eq!(capture.records.len(), 2);
+        assert_eq!(
+            capture.records[0]
+                .variant_presence
+                .iter()
+                .map(|v| v.variant_label.as_str())
+                .collect::<Vec<_>>(),
+            vec!["A A.b", "B", "C", "D"],
+            "sub-header labels win and the fused spelling stays literal"
+        );
+
+        // An ordinary declaration table never fires the gate (≥2 all-code columns required).
+        let plain = presence_table(
+            "table_plain",
+            &["Signal", "Width", "Direction", "Description"],
+            &[],
+            &[&["XVALID", "1", "Output", "The valid strobe."]],
+        );
+        let capture = super::capture_signal_presence_rows(&plain);
+        assert_eq!(capture.records.len(), 0);
+        assert_eq!(capture.refused_rows, 0, "not a matrix — no accounting");
+    }
+
+    // PDF-VARIANT-DIGESTION.12b — the surface merge dedups a page-break re-listed row by full
+    // CONTENT (first fragment's provenance wins), keeps same-signal rows that state different
+    // conditions/codes, and assigns dense ids after the merge.
+    #[test]
+    fn presence_surface_dedups_relisted_rows_by_content() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Interface\nThe presence matrices.\n")?;
+        let mut source_ir = SourceIr::build(&source, &base)?;
+        source_ir.structured_tables.push(presence_table(
+            "table_head",
+            &["Signal", "Presence", "V1", "V2"],
+            &[&["XPROT", "XPROT_EN", "Y", "O"], &["XPROT", "-", "Y", "Y"]],
+            &[],
+        ));
+        // The continuation fragment re-lists the head's last row, then continues.
+        source_ir.structured_tables.push(presence_table(
+            "table_cont",
+            &["Signal", "Presence", "V1", "V2"],
+            &[&["XPROT", "-", "Y", "Y"], &["XNEXT", "-", "N", "Y"]],
+            &[],
+        ));
+        let mut manifest = crate::ir::extractor::ExtractionManifest::default();
+        let records = super::signal_presence_surface(&source_ir, &mut manifest);
+        assert_eq!(
+            records.len(),
+            3,
+            "the re-listed identical row dedups; the differently-conditioned row stays"
+        );
+        assert_eq!(records[0].signal_name, "XPROT");
+        assert_eq!(records[0].presence_condition.as_deref(), Some("XPROT_EN"));
+        assert_eq!(records[1].signal_name, "XPROT");
+        assert_eq!(
+            records[1].table_id, "table_head",
+            "first-wins keeps the first declaring fragment's provenance"
+        );
+        assert_eq!(records[2].signal_name, "XNEXT");
+        assert_eq!(records[2].table_id, "table_cont");
+        assert_eq!(
+            records
+                .iter()
+                .map(|r| r.presence_id.as_str())
+                .collect::<Vec<_>>(),
+            vec!["presence_0000", "presence_0001", "presence_0002"],
+            "ids are dense and assigned after the merge"
+        );
+        let surface = manifest
+            .surfaces
+            .iter()
+            .find(|s| s.surface == "signal_presence")
+            .expect("manifest records the surface");
+        assert_eq!(surface.entries[0].name, "signal_presence.matrix_table");
+        assert_eq!(surface.entries[0].produced, 4);
+        assert_eq!(surface.entries[0].kept, 3);
         Ok(())
     }
 

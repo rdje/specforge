@@ -220,7 +220,8 @@ pub fn unexplained_intent_bearing_tables(
                 signal_provenance
                     .iter()
                     .any(|p| p.table_id == table.table_id)
-                    || signal_table_covered_by_inventory(table, declared_signal_names),
+                    || signal_table_covered_by_inventory(table, declared_signal_names)
+                    || signal_presence_capture_covers(table),
             ),
             TableKind::RegisterMap => (
                 "register_map",
@@ -272,6 +273,18 @@ fn signal_table_covered_by_inventory(
     }
     let tokens = densest_signal_name_column_tokens(table);
     !tokens.is_empty() && tokens.iter().all(|t| declared_signal_names.contains(t))
+}
+
+/// PDF-VARIANT-DIGESTION.12b — is this table a presence matrix whose rows the signal-presence
+/// surface captures COMPLETELY? Runs the exact shared gate/capture definition
+/// ([`crate::ir::evidence::capture_signal_presence_rows`]) at validate time, so the coverage
+/// reaches promoted artifacts without any rebuild (the `.12a` precedent). STRICT by
+/// construction: at least one captured row AND zero refused rows — a matrix with even one
+/// fused/garbled row the capture refused stays flagged, so partial capture never hides a
+/// genuine miss (`WIRE-BASED-100.3a`).
+fn signal_presence_capture_covers(table: &StructuredTableRecord) -> bool {
+    let capture = crate::ir::evidence::capture_signal_presence_rows(table);
+    !capture.records.is_empty() && capture.refused_rows == 0
 }
 
 /// The uppercased hardware-signal tokens in the body column carrying the most
@@ -1210,6 +1223,51 @@ mod tests {
             r.len(),
             1,
             "an uncovered trapped signal keeps the table flagged"
+        );
+    }
+
+    #[test]
+    fn presence_captured_matrix_is_explained_without_inventory() {
+        // PDF-VARIANT-DIGESTION.12b — a presence matrix whose rows the signal-presence surface
+        // captures COMPLETELY is explained even when its signals are absent from the declared
+        // inventory (a generic-name family like `AxVALID` has no literal declaration anywhere):
+        // the presence capture IS the typed record the accounting was asking for.
+        let table = signal_table_with_trapped_rows(
+            "table_0188",
+            Some("Table A13.3: Signal presence"),
+            TableKind::SignalDescription,
+            &["Signal", "Presence", "V1", "V2"],
+            &[
+                &["AxVALID", "-", "Y", "O"],
+                &["AxADDR", "XADDR_WIDTH > 0", "O", "N"],
+            ],
+        );
+        let r = unexplained_intent_bearing_tables(&[table], &[], &[], &[], &HashSet::new());
+        assert!(
+            r.is_empty(),
+            "a fully presence-captured matrix is explained"
+        );
+    }
+
+    #[test]
+    fn partially_refused_presence_matrix_stays_flagged() {
+        // Strictness (WIRE-BASED-100.3a): one refused row (a fused `Y Y` cell the capture
+        // honestly refuses) keeps the matrix flagged — partial capture never hides a miss.
+        let table = signal_table_with_trapped_rows(
+            "table_0016",
+            None,
+            TableKind::SignalDescription,
+            &["Signal", "Presence", "V1", "V2", "V3"],
+            &[
+                &["XCLK", "-", "Y", "Y", "Y"],
+                &["XRST", "-", "Y Y", "", "Y"],
+            ],
+        );
+        let r = unexplained_intent_bearing_tables(&[table], &[], &[], &[], &HashSet::new());
+        assert_eq!(
+            r.len(),
+            1,
+            "a refused row keeps the matrix an honest candidate miss"
         );
     }
 

@@ -1,0 +1,491 @@
+{
+  "name": "signal_presence_matrix_gold",
+  "source": "source.md",
+  "source_ir_patch": {
+    "structured_tables": [
+      {
+        "table_id": "table_presence_trapped",
+        "asset_id": "table_presence_trapped",
+        "page_id": null,
+        "caption_text": "Table 4.1: Summary of signal presence for each interface class",
+        "source_ref": null,
+        "table_kind": "signal_description",
+        "header_rows": [
+          [
+            {
+              "text": "Signal",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Presence",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "V1",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "V2",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "V3",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            }
+          ],
+          [
+            {
+              "text": "XCLK",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "-",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Y",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Y",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Y",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ],
+          [
+            {
+              "text": "XREQ",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "XREQ_WIDTH > 0",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "O",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "N",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Y",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ],
+          [
+            {
+              "text": "XxDAT",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "-",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "OC",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "N",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "-",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ]
+        ],
+        "body_rows": [],
+        "row_count": 3,
+        "col_count": 5
+      },
+      {
+        "table_id": "table_presence_rotated",
+        "asset_id": "table_presence_rotated",
+        "page_id": null,
+        "caption_text": null,
+        "source_ref": null,
+        "table_kind": "signal_description",
+        "header_rows": [
+          [
+            {
+              "text": "Signal",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Property",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "V1",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "V2",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            }
+          ]
+        ],
+        "body_rows": [
+          [
+            {
+              "text": "-",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Y",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Y",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "XRCLK",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ],
+          [
+            {
+              "text": "Check_Type",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "C",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "N",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "XRCHK",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ],
+          [
+            {
+              "text": "-",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "O",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "-",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "XRDAT",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ]
+        ],
+        "row_count": 3,
+        "col_count": 4
+      },
+      {
+        "table_id": "table_presence_fused",
+        "asset_id": "table_presence_fused",
+        "page_id": null,
+        "caption_text": null,
+        "source_ref": null,
+        "table_kind": "signal_description",
+        "header_rows": [
+          [
+            {
+              "text": "Signal",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "V1",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "V2A V2B",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "V3",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            }
+          ]
+        ],
+        "body_rows": [
+          [
+            {
+              "text": "XFUSE0",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Y",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "OC N",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "N",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ],
+          [
+            {
+              "text": "XFUSE1",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "N",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "C N",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Y",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ]
+        ],
+        "row_count": 2,
+        "col_count": 4
+      }
+    ]
+  },
+  "expectations": {
+    "evidence": {
+      "signal_presence_count": 8,
+      "signal_presence_include": [
+        {
+          "signal": "XREQ",
+          "condition": "XREQ_WIDTH > 0",
+          "variants": [
+            {
+              "label": "V1",
+              "code": "O"
+            },
+            {
+              "label": "V2",
+              "code": "N"
+            },
+            {
+              "label": "V3",
+              "code": "Y"
+            }
+          ]
+        },
+        {
+          "signal": "XCLK",
+          "condition_absent": true,
+          "variants": [
+            {
+              "label": "V1",
+              "code": "Y"
+            },
+            {
+              "label": "V2",
+              "code": "Y"
+            },
+            {
+              "label": "V3",
+              "code": "Y"
+            }
+          ]
+        },
+        {
+          "signal": "XxDAT",
+          "condition_absent": true,
+          "variants": [
+            {
+              "label": "V1",
+              "code": "OC"
+            },
+            {
+              "label": "V2",
+              "code": "N"
+            }
+          ]
+        },
+        {
+          "signal": "XRCHK",
+          "condition": "Check_Type",
+          "variants": [
+            {
+              "label": "V1",
+              "code": "C"
+            },
+            {
+              "label": "V2",
+              "code": "N"
+            }
+          ]
+        },
+        {
+          "signal": "XRDAT",
+          "condition_absent": true,
+          "variants": [
+            {
+              "label": "V1",
+              "code": "O"
+            }
+          ]
+        },
+        {
+          "signal": "XFUSE0",
+          "variants": [
+            {
+              "label": "V1",
+              "code": "Y"
+            },
+            {
+              "label": "V2A",
+              "code": "OC"
+            },
+            {
+              "label": "V2B",
+              "code": "N"
+            },
+            {
+              "label": "V3",
+              "code": "N"
+            }
+          ]
+        }
+      ]
+    },
+    "semantic": {
+      "signal_names_include": [
+        "XPVALID"
+      ],
+      "signal_names_exclude": [
+        "XREQ",
+        "XCLK",
+        "XXDAT",
+        "XRCHK",
+        "XRCLK",
+        "XRDAT",
+        "XFUSE0",
+        "XFUSE1"
+      ]
+    },
+    "intent": {
+      "signal_names_include": [
+        "XPVALID"
+      ],
+      "signal_names_exclude": [
+        "XREQ",
+        "XCLK",
+        "XXDAT",
+        "XRCHK",
+        "XRCLK",
+        "XRDAT",
+        "XFUSE0",
+        "XFUSE1"
+      ]
+    }
+  }
+}

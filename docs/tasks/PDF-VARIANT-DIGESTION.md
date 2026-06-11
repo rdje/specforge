@@ -1193,11 +1193,11 @@ kg-bench 154/154, full `run_ci.sh` GREEN. RESIDUAL: the ACE +9 declarations (AWB
 AWDOMAIN w2, AWSNOOP w4, CRRESP w5, CDDATA wV, 4×BROADCAST* w1 — per-item verified in
 the probe) land at the host-local re-ingest sweep; expected post-re-ingest: ACE 36→34
 via gap-fill provenance + inventory coverage.
-**`.12b` — the presence-CONDITION typed surface** · Status: `pending` (design census DONE
-`2026-06-11`; **corpus-wide GATE census DONE `2026-06-11` — the structural gate
+**`.12b` — the presence-CONDITION typed surface** · Status: **DONE `2026-06-11`** (design
+census DONE `2026-06-11`; **corpus-wide GATE census DONE `2026-06-11` — the structural gate
 (signal-worded first header + ≥2 all-code variant columns over identifier-led body+trapped
 rows) fires on 33 tables / 7 docs: the 22 known PLUS 11 verified-per-item new candidates**;
-build next — PNT frontier). NEW per-item findings that shape the build: (a) the
+BUILD landed `2026-06-11`, full log after the design text below). NEW per-item findings that shape the build: (a) the
 ATB/AHB/APB version-matrix family (ATB 0016; AHB 0033-0035 — a GOLD doc; APB_d 0013-0015;
 APB_e 0016-0017) is cyclically ROTATED — the signal name lands in the LAST column while
 the header says col 0, so presence capture MUST reuse the `.5h` content-based rotation
@@ -1247,6 +1247,70 @@ baseline protocol does NOT apply here (no promotion measurement) but canonical a
 are NOT rebuilt without re-measuring the gauges they carry (live verification = temp-root
 rebuilds from persisted SourceIR, canonical untouched — the `.10b`/`.10e` protocol).
 Cross-link: `WIRE-BASED-100.3` (this leaf owns its `table_0018` residual line).
+**`.12b` BUILD — DONE `2026-06-11`.** What landed: (i) the additive EvidenceIR surface
+`signal_presence_records` — `SignalPresenceRecord { presence_id, signal_name (literal
+case), presence_condition: Option<literal expr> (None when '-'), variant_presence:
+[{variant_label (literal, incl. fused sub-headers and pair-split halves), code (literal
+1–2-uppercase-letter string, NEVER interpreted)}], table_id }` (`#[serde(default)]` +
+skip-if-empty — schema-stable, the `message_field_records` precedent); (ii) ONE shared
+pure capture (`capture_signal_presence_rows` in `ir/evidence.rs`) implementing gate +
+`.5h` rotation remap + split-spill integrity (orphan identifiers in a second column →
+whole-table refusal) + measured fused-pair split (N label tokens ↔ N code tokens in
+EVERY identifier-led row, else single-label and fused cells refuse their rows) + per-row
+all-code capture, consumed by BOTH the registered extractor `signal_presence.matrix_table`
+(`run_surface`, content-key dedup so page-break re-listed rows merge first-wins, ids
+post-merge) and the completeness coverage (validate-time like `.12a` — STRICT: ≥1
+captured row AND zero refused, so partial capture never hides a miss); (iii) validate:
+4 metrics (`signal_presence_records`/`_signals`/`_conditioned`/`_variant_labels`) +
+console block + `evidence_signal_presence_inventory` Info finding (non-empty only — the
+`.11` pattern); (iv) kg-bench expectation surface (`signal_presence_count`/`_include`
+with per-variant label↔code locks and condition/condition-absent/`_signal_names_exclude`)
++ fixture pair `signal_presence_matrix_gold` (trapped + rotated + fused-pair tables; also
+locks presence NEVER mints canonical signals) and
+`signal_presence_malformed_refusal_negative` (fused `Y Y` row refusal + split-spill
+whole-table refusal). **GATE-CENSUS CORRECTIONS (measured per-item before coding):** the
+structural gate fires on **36 tables / 8 docs**, not 33/7 — the +3 are AXI-Stream
+`ihi0051_b` 0015–0017, genuine rotated version matrices the census sweep missed
+(per-item verified against the document: `TVALID` Y/Y, `TDATA` C/O under the
+`Tdata_Width` property, `TWAKEUP` C/N, the `*CHK` matrices C/N), and LTI `table_0080`
+does NOT fire the gate (only one clean code column survives its garble; same honest
+outcome — its rows were the census's malformed class). Pre-code probe re-derivations:
+AXI condition census EXACT (157 rows / 73 distinct exprs), ACE known-5 = 134 tokens
+EXACT (0271/0275/0276/0277/0278), the 24 malformed rows EXACT (ACE 0275's 21
+inconsistently-fused + APB 0018's per-row 3), APB_d 0013 1 + APB_e 0016 2 fused-row
+refusals EXACT; the `.12` LTI 23/15 condition numbers did NOT reproduce under the design
+rules — corrected measurement: 31 condition rows / 17 distinct exprs over 0078+0079
+(29 distinct condition-bearing names). **MEASURED (final post-fmt binary):** 12/12
+rebuildable corpus bundles old-vs-new `evidence --dry-run` — every byte identical EXCEPT
+the new surface + the manifest's `signal_presence` entry (`.12a` counted 13 bundles; one
+normalized bundle has since been reclaimed, today's rebuildable universe is 12); records
+mint ONLY on the 4 matrix docs — **AXI 306 rows (157 conditioned / 73 exprs — the census
+numbers live), APB_e 20 (0018 refused whole), AHB 40, AXI-Stream 22** — and the 8
+non-matrix docs read honest zero. Spot-checked per-item against the documents: the
+leaf's own worked example (`AWSUBSYSID` cond `SUBSYSID_WIDTH > 0`, O in AXI5 / N in
+ACE5-LiteACP), `AWREADY` cond `AXI_Transport == Ready` O/Y/Y/Y/Y, APB `PADDRCHK`
+Check_Type C/N/N/N, `PPROT` O/O/N/N, AHB `HCTRLCHK2` Exclusive_Transfers C/C, the A13.3
+`Ax*` family literal with per-version codes (`AxMMUATST` Version 1=C only — later-version
+`-` cells honestly omitted). **Residual accounting (validate-time on canonical artifacts,
+NO rebuild):** AXI 32→31 (`table_0188` A13.3 closes — the generic rows' typed home; the
+predicted 24-25 band over-counted because the B2.2/B2.3 chains were ALREADY
+`.12a`-inventory-covered — presence now double-covers them), ACE 36→35 (`table_0271`
+closes — the AWBAR/AWDOMAIN/AWSNOOP fragment; `table_0275` stays honestly flagged: its
+21 rows are exactly the garble class the design census itself refused, so the predicted
+34 was internally inconsistent with the census — measurement settles it), LTI 6→4
+(0078+0079 close; 0080 stays), APB_e/APB_d/ATB/AXI-Stream 0→0, AHB 4→4 (its matrices
+were already inventory-covered; the 4 are non-matrix residuals). **GOLD-SAFETY
+re-measured:** APB/AHB/AXI signal-constraint + relation + temporal golds all 1.000, SWD
+1.000 (incl. derivation 11/4/13), I2C declared-signal 1.000, APB standing
+extraction-quality gauge re-displays 5/21 `qwen2.5:14b-instruct`; canonical artifacts
+NOT rebuilt (presence records land on canonical surfaces at the next rebuild/re-ingest;
+the accounting already reaches them through the validate-time rule). +9 hermetic tests
+(lib 1574→1583); kg-bench **156/156**; fmt + clippy `-D warnings` clean; full
+`scripts/run_ci.sh` GREEN. RESIDUALS owned here: ACE `table_0275` + LTI `table_0080`
+(garble class — full-row/whole-table refusals; their 6 + 3 new wires' declarations land
+at the host-local re-ingest via the `.12a` gap-fill), APB_e `table_0018` (split-spill,
+inventory-covered), ACE `table_0270` "Key for Signal Matrix" legend (Code|Meaning — a
+pre-existing non-matrix residual this slice deliberately does not touch).
 
 **(SUPERSEDED active note) `PDF-VARIANT-DIGESTION.6`/`.7`** — item ② (`.5`) COMPLETE and `.8` (broaden
 prose-actor capture) DONE. **`.5a` + `.5b` + `.5c` are DONE** — structural doc-class routing

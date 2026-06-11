@@ -2482,6 +2482,34 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
         "  message_field_constraints: {}",
         ir.message_field_constraints.len()
     );
+    // PDF-VARIANT-DIGESTION.12b — the signal-presence surface (presence matrices: per-variant
+    // signal existence with literal codes + property-conditioned presence) on the user-facing
+    // report like every other typed inventory.
+    let signal_presence_signals = ir
+        .signal_presence_records
+        .iter()
+        .map(|r| r.signal_name.as_str())
+        .collect::<std::collections::BTreeSet<_>>()
+        .len();
+    let signal_presence_conditioned = ir
+        .signal_presence_records
+        .iter()
+        .filter(|r| r.presence_condition.is_some())
+        .count();
+    let signal_presence_variant_labels = ir
+        .signal_presence_records
+        .iter()
+        .flat_map(|r| r.variant_presence.iter())
+        .map(|v| v.variant_label.as_str())
+        .collect::<std::collections::BTreeSet<_>>()
+        .len();
+    println!(
+        "  signal_presence_records (from matrices): {}",
+        ir.signal_presence_records.len()
+    );
+    println!("    signals: {signal_presence_signals}");
+    println!("    conditioned: {signal_presence_conditioned}");
+    println!("    variant_labels: {signal_presence_variant_labels}");
     println!(
         "  signal_polarity_conflicts: {}",
         ir.signal_polarity_conflicts.len()
@@ -3045,6 +3073,25 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             Vec::new(),
         ));
     }
+    // PDF-VARIANT-DIGESTION.12b — surface the signal-presence inventory as an honest Info
+    // finding when it exists (presence matrices: configuration intent — which signals exist
+    // per interface class / protocol version / agent side). Emitted only when non-empty:
+    // absence is not an event (the `.11` pattern).
+    if !ir.signal_presence_records.is_empty() {
+        findings.push(finding(
+            "evidence_signal_presence_inventory",
+            ValidationFindingSeverity::Info,
+            "signal_presence",
+            format!(
+                "typed signal-presence inventory: {} matrix row(s) across {} signal(s) ({} property-conditioned, {} variant label(s)); names, conditions, and presence codes are document-literal, never interpreted",
+                ir.signal_presence_records.len(),
+                signal_presence_signals,
+                signal_presence_conditioned,
+                signal_presence_variant_labels
+            ),
+            Vec::new(),
+        ));
+    }
     // .5b: class-aware per-doc completeness gauge — how complete is the typed intent the
     // extraction DID produce (every register has fields + a width, every signal a
     // direction, every intent-bearing table accounted), judged appropriately for the class.
@@ -3573,6 +3620,22 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             metric(
                 "message_field_constraints",
                 ir.message_field_constraints.len().to_string(),
+            ),
+            metric(
+                "signal_presence_records",
+                ir.signal_presence_records.len().to_string(),
+            ),
+            metric(
+                "signal_presence_signals",
+                signal_presence_signals.to_string(),
+            ),
+            metric(
+                "signal_presence_conditioned",
+                signal_presence_conditioned.to_string(),
+            ),
+            metric(
+                "signal_presence_variant_labels",
+                signal_presence_variant_labels.to_string(),
             ),
             metric(
                 "signal_polarity_conflicts",
@@ -7930,6 +7993,111 @@ mod tests {
             Some("0")
         );
         assert!(!has_finding(&report, "evidence_message_field_inventory"));
+
+        // PDF-VARIANT-DIGESTION.12b — a doc with NO presence matrices reports honest zeros
+        // and emits NO presence-inventory finding (absence is not an event).
+        assert_eq!(metric_value(&report, "signal_presence_records"), Some("0"));
+        assert_eq!(metric_value(&report, "signal_presence_signals"), Some("0"));
+        assert_eq!(
+            metric_value(&report, "signal_presence_conditioned"),
+            Some("0")
+        );
+        assert_eq!(
+            metric_value(&report, "signal_presence_variant_labels"),
+            Some("0")
+        );
+        assert!(!has_finding(&report, "evidence_signal_presence_inventory"));
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_evidence_ir_reports_signal_presence_inventory() -> Result<()> {
+        // PDF-VARIANT-DIGESTION.12b — the signal-presence surface reaches the user-facing
+        // report: counts (rows, distinct signals, property-conditioned rows, distinct variant
+        // labels) plus the Info inventory finding. Built through the REAL pipeline from a
+        // header-trapped presence matrix (the discovering corpus shape).
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("signal_presence_inventory.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        fs::write(&source, "# Spec\nSignal presence matrices.\n")?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        let trapped_row = |cells: &[&str]| -> Vec<crate::ir::source::StructuredTableCellRecord> {
+            cells
+                .iter()
+                .enumerate()
+                .map(|(i, t)| make_table_cell(t, i == 0))
+                .collect()
+        };
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "presence_matrix".to_string(),
+            asset_id: "presence_matrix".to_string(),
+            page_id: Some("page_0004".to_string()),
+            caption_text: Some("Table 3: Summary of signal presence".to_string()),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![
+                vec![
+                    make_table_cell("Signal", true),
+                    make_table_cell("Presence", true),
+                    make_table_cell("V1", true),
+                    make_table_cell("V2", true),
+                ],
+                trapped_row(&["XMAT0", "-", "Y", "O"]),
+                trapped_row(&["XMAT1", "XMAT_EN == 1", "O", "N"]),
+                trapped_row(&["XMAT1", "-", "Y", "-"]),
+            ],
+            body_rows: vec![],
+            row_count: 3,
+            col_count: 4,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        assert_eq!(evidence_ir.signal_presence_records.len(), 3);
+
+        let report = validate_evidence_ir(&evidence_ir, "signal_presence_inventory".to_string());
+        assert_eq!(metric_value(&report, "signal_presence_records"), Some("3"));
+        assert_eq!(metric_value(&report, "signal_presence_signals"), Some("2"));
+        assert_eq!(
+            metric_value(&report, "signal_presence_conditioned"),
+            Some("1")
+        );
+        assert_eq!(
+            metric_value(&report, "signal_presence_variant_labels"),
+            Some("2")
+        );
+        assert!(has_finding(&report, "evidence_signal_presence_inventory"));
+        let summary = report
+            .findings
+            .iter()
+            .find(|f| f.finding_id == "evidence_signal_presence_inventory")
+            .map(|f| f.summary.as_str())
+            .unwrap_or_default();
+        assert!(
+            summary.contains("3 matrix row(s) across 2 signal(s)")
+                && summary.contains("1 property-conditioned")
+                && summary.contains("never interpreted"),
+            "inventory summary carries the honest counts: {summary}"
+        );
+        // The presence-captured matrix is EXPLAINED in the region accounting (it produced its
+        // typed records), so it must not appear among the unexplained intent-bearing tables.
+        let unexplained = crate::ir::completeness::unexplained_intent_bearing_tables(
+            &source_ir.structured_tables,
+            &evidence_ir.table_signal_declaration_provenance,
+            &evidence_ir.register_records,
+            &evidence_ir.timing_constraints,
+            &std::collections::HashSet::new(),
+        );
+        assert!(
+            unexplained.is_empty(),
+            "a fully presence-captured matrix is explained: {unexplained:?}"
+        );
 
         Ok(())
     }

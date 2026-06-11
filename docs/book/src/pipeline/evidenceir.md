@@ -743,6 +743,44 @@ re-ingest recovers the caption), two more structures lost captions in individual
 period-bleed rows above stay name-less — absence, never invention.
 *Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.10e`).
 
+### `PDF-VARIANT-DIGESTION.12b` — presence matrices: which signals exist, in which variant, under what condition
+
+Bus specifications routinely answer a question no other table answers: *does this signal exist at all in your
+configuration?* They answer it with a **presence matrix** — a table like *"Summary of signal presence for each
+interface class"* whose rows are signals and whose columns are protocol variants (interface classes, spec
+versions, or the two agent sides), with short letter codes in the cells: `AWSUBSYSID` is `O` in AXI5 but `N`
+in ACE5-LiteACP, and it only exists at all when `SUBSYSID_WIDTH > 0`. That is *configuration intent*: it tells
+an RTL or VIP author which ports their flavor of the interface actually has. Until now no typed surface
+carried it — the matrices were either invisible (their rows are usually header-trapped, the `.12a` story) or
+merely "covered" as redundant restatements.
+
+The EvidenceIR now carries a **`signal_presence_records`** surface: one record per matrix row, holding the
+signal name exactly as written (a generic-name row like `AxVALID` stays generic — the document's own
+convention, never expanded), the literal presence-condition expression from the matrix's `Presence`/`Property`
+column (`SUBSYSID_WIDTH > 0`, `Check_Type`; a `-` cell is honest absence), and one `(variant label, code)`
+entry per variant column. The codes are **kept as literal strings and never interpreted** — every document
+defines its own legend in nearby prose (`O` = optional here, `OC` = optional-conditional there), so assigning
+meaning in code would fabricate semantics. The capture survives the messy ways real PDFs render these tables,
+each rule measured per-item on the discovering corpus before any code: cyclically *rotated* bodies (the signal
+name lands in the last column while the header says first — every column remaps by the same offset), genuine
+*sub-header* rows (the LTI version axis `A A.b | B | C | D` stays literal), and *fused pair* columns (a header
+fused to `ACE5-Lite ACE5-LiteACP` over cells fused to `OC N` splits pairwise — but only when **every** row
+carries exactly matching code counts). Anything less trustworthy refuses rather than guesses: a fused `Y Y`
+cell refuses its whole row, and a table whose row labels spill across two columns with no consistent rotation
+refuses entirely — a misattributed code would state that a port exists in a variant where it does not.
+
+Measured over the rebuildable corpus, the surface fires on exactly the four matrix-bearing documents — **AXI
+306 rows (157 of them carrying 73 distinct presence-condition expressions), APB 20, AHB 40, AXI-Stream 22** —
+and every other document reads an honest zero with its extraction byte-identical to before. The completeness
+accounting now treats a fully captured matrix as *explained* (it produced its typed records), which closed the
+AXI generic-signal family (`A13.3`) and both LTI presence fragments without any rebuild, while the garbled
+fragments (an ACE page whose header fused one column pair but whose cells fused a different one) stay honestly
+flagged as candidate misses. Two tracked benchmark fixtures lock both directions — literal capture including
+the pairwise split, and the refusals — plus the load-bearing honesty property that presence records **never
+mint signals**: existence-in-a-variant is configuration intent about a name, not a wire declaration (the
+`.12a` gap-fill owns declaration content, with its own width/direction evidence rules).
+*Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.12b`).
+
 ### `EXTRACTION-QUALITY-GAUGE.FIELD.2` — message fields are intent too, but they are not signals
 
 Packet and flit protocols (the CHI family is the canonical example) describe two very different kinds of named

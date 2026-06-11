@@ -1,4 +1,41 @@
 # DEVELOPMENT_NOTES
+## `PDF-VARIANT-DIGESTION.12b` (`2026-06-11`) — re-derive the census before trusting it; the gate found 3 tables the census sweep missed
+- The pre-code probe re-derived every census number from the persisted corpus before any
+  Rust was written. Three of four families reproduced EXACTLY (AXI 157 condition rows /
+  73 distinct expressions; ACE known-5 = 134 tokens; the 24 malformed rows = ACE 0275's
+  21 + APB 0018's per-row 3) — and the exceptions were real findings, not noise: the
+  gate fires on 36 tables / 8 docs, not the recorded 33/7, because AXI-Stream
+  `0015–0017` are genuine rotated version matrices the census sweep missed (content
+  verified against the document: `TVALID` Y/Y, `TWAKEUP` C/N), and LTI `table_0080`
+  never fires the gate at all (its garble leaves a single clean code column). A census
+  is a measurement, not an oracle — re-derive it with the build's own rules and record
+  the corrections per-item.
+- Both residual-prediction bands from the census session were wrong in instructive ways,
+  and measurement settled them: AXI "32→24-25" assumed the B2.2/B2.3 chains were still
+  flagged, but `.12a`'s inventory rule had already covered them (presence now
+  double-covers — the honest delta is the A13.3 generic family alone, 32→31); ACE
+  "36→34" assumed both new-wire matrices would close, but `table_0275`'s 21 rows are
+  exactly the fused-garble class the same census counted as full-row refusals — a
+  prediction can be internally inconsistent with its own census, and only the per-item
+  measurement notices.
+- The fused-pair split is deliberately all-or-nothing per column: a multi-token header
+  splits pairwise only when EVERY identifier-led row carries exactly matching code
+  counts. ACE `0275` is why — its header fuses one column pair while its cells fuse a
+  DIFFERENT one, so any lenient split would misattribute codes one column over. The
+  all-rows consistency requirement turns that page into honest refusals instead of 21
+  wrong facts.
+- Refusal asymmetry worth keeping: a fused cell refuses its ROW (local damage, trusted
+  neighbors), but row labels in two columns refuse the whole TABLE — rotation is the
+  only structure that explains labels living elsewhere, and if no single offset explains
+  them, no per-row attribution can be trusted, including rows that would parse cleanly
+  (APB `table_0018`'s `PREADYCHK` row parses; capturing it would still be a guess about
+  a broken grid).
+- Presence is configuration intent about a NAME, not a wire declaration — the surface
+  never mints signals, and the kg-bench gold locks that property explicitly. Keeping
+  "which variant has this port" separate from "this port exists with width W" is what
+  lets the matrix capture stay literal (codes uninterpreted) while declarations keep
+  their evidence rules (`.12a` width/direction gates).
+
 ## `PDF-VARIANT-DIGESTION.12a` (`2026-06-11`) — a completeness fix whose honest direction is BOTH ways
 - The headline deltas went down (APB 1→0, AXI 39→32, ACE 39→36) — but the most
   doctrine-confirming result went UP: LTI 5→6, because the continuation-kind inheritance

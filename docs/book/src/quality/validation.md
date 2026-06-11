@@ -299,6 +299,21 @@ spec the same pass *raised* the count by one, because a garbled presence fragmen
 invisible genuinely carries uncaptured signal-presence content. Both directions are the same
 property: the gauge reports what is actually there.
 
+Those presence matrices now also have their own typed surface (`signal_presence_records` — see
+the [EvidenceIR chapter](../pipeline/evidenceir.md)), and the accounting consumes it directly: a
+matrix whose every identifier-led row was captured into presence records counts as *explained*
+even when its signals appear nowhere else (the AXI generic-name family `AxVALID`/`AxADDR`… has
+no literal declaration anywhere, yet its matrix is no longer a candidate miss because its
+content now lives in typed records). The strictness mirrors the inventory rule: one row the
+capture refused — a fused cell, a garbled fragment — keeps the whole table flagged, so partial
+capture never hides a miss. Measured on the canonical artifacts without any rebuild, this
+closed the AXI generic family (32→31 unexplained), one ACE snoop-channel fragment (36→35), and
+both LTI presence fragments (6→4), while the garble-class fragments stay honestly flagged. The
+report itself gains four metrics — `signal_presence_records`, `signal_presence_signals`,
+`signal_presence_conditioned`, `signal_presence_variant_labels` — and an
+`evidence_signal_presence_inventory` Info finding emitted only when the surface is non-empty
+(absence is not an event).
+
 The typed **message-field inventory** (the in-memory structure and packet-field surface built
 by the bit-position and field-titled table readers) is also on the report: five metrics —
 `message_field_records`, `message_field_containers`, `message_fields_with_bit_range`,

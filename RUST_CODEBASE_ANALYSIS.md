@@ -4,6 +4,27 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-06-11 — tenth framework surface: `signal_presence`)
+
+`PDF-VARIANT-DIGESTION.12b` registered the TENTH EvidenceIR surface on the extractor framework:
+`signal_presence` (`SignalPresenceRecord` — literal-case signal name, verbatim
+`presence_condition: Option<String>`, literal `(variant_label, code)` entries, table provenance), a
+key-merge surface whose key is the full row CONTENT (name + condition + variant entries, deliberately
+NOT the table id, so page-break re-listed rows dedup first-wins) with `presence_id`s assigned post-merge.
+Like `message_fields` it reads ONLY `SourceIr.structured_tables`; unlike every other surface its entire
+gate/capture pipeline is ONE shared pure function (`capture_signal_presence_rows` in `ir/evidence.rs`:
+structural gate → `.5h`-style content-rotation remap → split-spill integrity (orphan row-labels in a
+second column ⇒ whole-table refusal) → header-designated column roles (presence/property = condition;
+declaration vocabulary excluded) → all-rows-consistent fused-pair label/code splitting → per-row
+all-code capture), consumed by BOTH the extractor and
+`completeness::signal_presence_capture_covers` (validate-time coverage, strict ≥1-captured/0-refused) —
+the `.12a` one-definition-no-drift pattern applied to a whole capture pipeline rather than a single
+row rule. The surface mints records only (no statements, no ids shared with the assembly phase), which
+is what made the 12-bundle byte-identity parity proof exact: every non-matrix doc differs only by the
+manifest's new `signal_presence` entry. kg-bench gained the `signal_presence_*` expectation surface
+(count / include with per-variant label↔code locks / name excludes) and a gold + malformed-refusal
+fixture pair.
+
 ## Session update (2026-06-10 extractor framework — converge-loop reach; subsystem now 9 surfaces)
 
 `EXTRACTOR-ARCHITECTURE.2`–`.9c` built a subsystem this analysis had not yet captured (closing that gap

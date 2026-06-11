@@ -132,6 +132,12 @@ struct EvidenceStageExpectations {
     message_fields_include: Vec<ExpectedMessageField>,
     #[serde(default)]
     message_field_names_exclude: Vec<String>,
+    /// PDF-VARIANT-DIGESTION.12b — lock the typed signal-presence inventory.
+    signal_presence_count: Option<usize>,
+    #[serde(default)]
+    signal_presence_include: Vec<ExpectedSignalPresence>,
+    #[serde(default)]
+    signal_presence_signal_names_exclude: Vec<String>,
 }
 
 #[derive(Debug, Default, Deserialize)]
@@ -293,6 +299,26 @@ struct ExpectedMessageField {
     bit_width: Option<u32>,
     #[serde(default)]
     bit_width_absent: bool,
+}
+
+/// PDF-VARIANT-DIGESTION.12b — one expected signal-presence row: the literal signal name, an
+/// optional literal condition expression (or an explicit honest-absence assertion), and the
+/// literal (variant label, code) entries the captured row must carry.
+#[derive(Debug, Deserialize)]
+struct ExpectedSignalPresence {
+    signal: String,
+    #[serde(default)]
+    condition: Option<String>,
+    #[serde(default)]
+    condition_absent: bool,
+    #[serde(default)]
+    variants: Vec<ExpectedVariantPresence>,
+}
+
+#[derive(Debug, Deserialize)]
+struct ExpectedVariantPresence {
+    label: String,
+    code: String,
 }
 
 #[derive(Debug, Deserialize)]
@@ -961,6 +987,75 @@ fn evaluate_evidence_expectations(
         "message_field_names_exclude",
         &expectations.message_field_names_exclude,
         &message_field_names,
+        failures,
+    );
+
+    // PDF-VARIANT-DIGESTION.12b — the typed signal-presence inventory.
+    assert_optional_count(
+        label,
+        "signal_presence_count",
+        expectations.signal_presence_count,
+        evidence_ir.signal_presence_records.len(),
+        failures,
+    );
+    for expectation in &expectations.signal_presence_include {
+        let candidates: Vec<_> = evidence_ir
+            .signal_presence_records
+            .iter()
+            .filter(|r| r.signal_name == expectation.signal)
+            .collect();
+        let record = candidates.iter().find(|record| {
+            let condition_ok = match (&expectation.condition, expectation.condition_absent) {
+                (Some(expected), _) => record.presence_condition.as_deref() == Some(expected),
+                (None, true) => record.presence_condition.is_none(),
+                (None, false) => true,
+            };
+            condition_ok
+                && expectation.variants.iter().all(|expected| {
+                    record.variant_presence.iter().any(|entry| {
+                        entry.variant_label == expected.label && entry.code == expected.code
+                    })
+                })
+        });
+        if record.is_none() {
+            failures.push(format!(
+                "{label}: expected `signal_presence_include` to contain signal `{}` (condition {:?}{}, variants {:?}), but actual rows for that signal were {:?}",
+                expectation.signal,
+                expectation.condition,
+                if expectation.condition_absent {
+                    ", required absent"
+                } else {
+                    ""
+                },
+                expectation
+                    .variants
+                    .iter()
+                    .map(|v| format!("{}={}", v.label, v.code))
+                    .collect::<Vec<_>>(),
+                candidates
+                    .iter()
+                    .map(|r| format!(
+                        "condition {:?}, variants {:?}",
+                        r.presence_condition,
+                        r.variant_presence
+                            .iter()
+                            .map(|v| format!("{}={}", v.variant_label, v.code))
+                            .collect::<Vec<_>>()
+                    ))
+                    .collect::<Vec<_>>()
+            ));
+        }
+    }
+    let signal_presence_names: BTreeSet<String> = evidence_ir
+        .signal_presence_records
+        .iter()
+        .map(|r| r.signal_name.clone())
+        .collect();
+    assert_excludes(
+        label,
+        "signal_presence_signal_names_exclude",
+        &expectations.signal_presence_signal_names_exclude,
+        &signal_presence_names,
         failures,
     );
 }
