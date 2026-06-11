@@ -1,3 +1,31 @@
+### `PDF-VARIANT-DIGESTION.10e` — byte-location placement tables are in-memory STRUCTURE layouts (hypothesis overturned); CCIX-class +35–45 fields / 4–6 containers per version
+The `.10a`-recorded hypothesis ("register-AT-OFFSET placement maps → register-map
+records") was OVERTURNED by the per-item probe: the `byte location | size (bytes) |
+register description [| attribute(s) | m/o]` family (exactly 60 tables corpus-wide, one
+CCIX-class family × 4 versions) carries 0 register-worded captions — every caption names
+an in-memory error-record STRUCTURE (`CCIX PER Memory Error Type Structure`,
+`Vendor-Specific Log Info`), so the typed home is `message_field_records` via the NEW
+third strategy `message_fields.byte_location_table` (the `.10c` caption-decides rule;
+minting MMIO registers would fabricate). Capture is literal: `byte_offset` = the stated
+byte location (unambiguous beside `bit_range: None`; doc contract amended), `bit_width` =
+plain-count size × 8 (exact unit arithmetic; symbolic `(indicated by VenLen)` sizes stay
+honestly width-less). Names are the document's own MULTI-WORD heads before the
+definitional frame (`Validation Bits`, `FRU ID`) via a family-LOCAL grammar — the shared
+bare-identifier form would truncate (`FRU ID`→`FRU`, `CCIX Message`→`CCIX`); a trailing
+parenthesized mnemonic outranks the head (`(Chan)`) and is trusted past wrapped-cell
+bleed like the shared mid-cell form; sentence-period heads are bleed → refused (2 rows,
+honest residuals). Caption-less fragments chain on byte-exact adjacency
+(`next_offset == prev_offset + size`; 31/31 measured joins; variable-length tails close
+the chain; fresh structures restart at 0). Live (stub protocol, canonical untouched,
+final post-fmt binary): rev2.0 0→45 / 6 containers, r1.0 47→92 (+45/6), r1.0a 50→86
+(+36/4), rev1.1 51→86 (+35/5) — every pre-existing record preserved bit-for-bit; the
+lost-caption chains (Port 7-9 in all four versions; ATC + Log Info in r1.0a; Cache in
+rev1.1) stay honest residuals (the re-ingest lever). 12-doc old-vs-new parity: every
+extraction surface byte-identical, manifest-only delta (the new strategy entry). lib
+1565→1567; kg-bench 154/154; full CI GREEN. KM `byte-location-structure-field-extraction`
+(+ the `.10a` card's residual line corrected); book `pipeline/evidenceir.md` `.10e`
+subsection + the `.10a` closing corrected; README `.10e` bullet.
+
 ### `PDF-VARIANT-DIGESTION.11` — `validate` reports the message-field surfaces; class census and completeness gauge stay measured no-changes
 `validate <evidence-ir>` now surfaces the typed message-field inventory: 5 metrics
 (`message_field_records`, `message_field_containers`, `message_fields_with_bit_range`,

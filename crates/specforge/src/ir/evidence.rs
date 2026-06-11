@@ -312,7 +312,10 @@ pub struct SerialFrameField {
 pub struct MessageFieldRecord {
     /// Stable id, e.g. `message_field_0003`.
     pub field_id: String,
-    /// The field name exactly as declared (`TxnID`, `Opcode`, `Addr[51:6]`).
+    /// The field name exactly as declared (`TxnID`, `Opcode`, `Addr[51:6]`) — including the
+    /// document's own MULTI-WORD phrase name when the declaring family states names that way
+    /// (`Validation Bits`, `FRU ID` in byte-location placement tables;
+    /// PDF-VARIANT-DIGESTION.10e).
     pub name: String,
     /// The message/packet container named by the declaring table's caption, with a trailing
     /// "fields" word stripped (`Request channel fields` → `Request channel`). The same field name
@@ -320,8 +323,11 @@ pub struct MessageFieldRecord {
     /// (container, name).
     pub container: String,
     /// Width in bits when the declaring table carries exactly one unqualified width column
-    /// (`Width (bits)` / `Bits`) and the cell is a plain count or `[hi:lo]` range. `None` when
-    /// unstated or variant-dependent — honest absence, never guessed.
+    /// (`Width (bits)` / `Bits`) and the cell is a plain count or `[hi:lo]` range, or when a
+    /// byte-quantified size column states a plain count (`Size (Bytes)` `4` → `32`;
+    /// PDF-VARIANT-DIGESTION.10e — exact unit arithmetic on a document-stated value, the same
+    /// class as `high - low + 1`). `None` when unstated, variant-dependent, or symbolic
+    /// (`(indicated by VenLen)`) — honest absence, never guessed.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub bit_width: Option<u32>,
     /// PDF-VARIANT-DIGESTION.10b: the field's literal bit position `(high, low)` within its
@@ -339,7 +345,10 @@ pub struct MessageFieldRecord {
     /// the description's `Name[hi:lo]` slices are field-VALUE slices, not positions
     /// (measured: 54 of 66 mismatch `offset*8 + bit`), so the IR stays evidence-literal and
     /// consumers may compute `byte_offset * 8 + bit` themselves where they need an absolute
-    /// ordering.
+    /// ordering. PDF-VARIANT-DIGESTION.10e: with `bit_range: None` the offset is instead the
+    /// FIELD's own literal starting byte offset within its container, as stated by a
+    /// byte-location placement table (`Byte Location` `4` → `4`) — the two readings are
+    /// disjoint by construction (`bit_range` is always `Some` on the dword-relative family).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub byte_offset: Option<u32>,
     /// The declared description text, when the table carries a description column.
@@ -8579,6 +8588,322 @@ fn extract_bit_position_structure_fields(
     records
 }
 
+/// PDF-VARIANT-DIGESTION.10e — does this table carry the byte-location placement header
+/// (the `Byte Location | Size (Bytes) | Register Description [| Attribute(s) | M/O]`
+/// family)? Resolved by header position: a `byte location`-containing column, a `size`-led
+/// column, and a `description`-containing column must all be present and distinct; the
+/// attribute / M-O columns are never required (both `Attributes` and `Attribute` occur in
+/// the measured family). Measured corpus-wide: exactly the 60 CCIX-class structure-layout
+/// tables match — no other persisted table carries the trio, and `byte location` matches
+/// neither the bit-position vocabulary nor the register-field gate, so the families stay
+/// disjoint by construction.
+fn byte_location_layout_columns(table: &StructuredTableRecord) -> Option<(usize, usize, usize)> {
+    let first = table.header_rows.first()?;
+    let cells = effective_row_cells(first);
+    let lower: Vec<String> = cells.iter().map(|c| c.to_ascii_lowercase()).collect();
+    let location = lower.iter().position(|c| c.contains("byte location"))?;
+    let size = lower.iter().position(|c| c.starts_with("size"))?;
+    let description = lower.iter().position(|c| c.contains("description"))?;
+    (location != size && size != description && location != description).then_some((
+        location,
+        size,
+        description,
+    ))
+}
+
+/// One eligible row of a byte-location placement table: the field's literal starting byte
+/// offset within its structure, the literal size in bytes when the cell is a plain count
+/// (a symbolic `(indicated by VenLen)` variable-length tail stays `None` — honest
+/// absence), and the description cell carrying the fused field name.
+struct ByteLocationRow {
+    byte_offset: u32,
+    size_bytes: Option<u32>,
+    description: String,
+}
+
+/// One shape-qualified byte-location placement table, parsed for chain construction. The
+/// label vocabulary is shared with the bit-layout machinery, but a `Register` label here
+/// routes NOWHERE: a register-grounding caption on this family is measured-zero territory
+/// and stays an honest residual rather than being mislabeled as a structure container.
+struct ByteLocationTable<'a> {
+    table: &'a StructuredTableRecord,
+    label: BitLayoutLabel,
+    page: Option<u32>,
+    rows: Vec<ByteLocationRow>,
+}
+
+/// PDF-VARIANT-DIGESTION.10e — collect every shape-qualified byte-location placement table
+/// in document order. Row gates (measured per-item, 236 rows corpus-wide): an eligible row's
+/// location cell is a plain decimal byte offset (228 rows); a non-numeric location cell is a
+/// WRAPPED-PROSE row — continuation text of the previous row's description — and is a
+/// row-level skip, NOT a whole-table rejection (unlike the `.10b` bit-cell rule: a wrapped
+/// row states no placement, so skipping it cannot misplace anything). A plain-count size
+/// cell is kept in bytes; anything else is `None`.
+fn collect_byte_location_tables<'a>(
+    source_ir: &'a SourceIr,
+    prior_guidance: Option<&EvidencePriorGuidance>,
+) -> Vec<ByteLocationTable<'a>> {
+    let mut tables: Vec<ByteLocationTable<'a>> = Vec::new();
+    for table in &source_ir.structured_tables {
+        if !matches!(
+            effective_table_kind(table, prior_guidance),
+            TableKind::Unknown
+        ) {
+            continue;
+        }
+        let Some((location_col, size_col, description_col)) = byte_location_layout_columns(table)
+        else {
+            continue;
+        };
+        let mut rows: Vec<ByteLocationRow> = Vec::new();
+        for row in &table.body_rows {
+            let cells = effective_row_cells(row);
+            let Some(byte_offset) = cells
+                .get(location_col)
+                .and_then(|c| c.trim().parse::<u32>().ok())
+            else {
+                continue; // wrapped-prose continuation row: no placement stated
+            };
+            let Some(description) = cells.get(description_col).filter(|c| !c.is_empty()) else {
+                continue;
+            };
+            let size_bytes = cells
+                .get(size_col)
+                .and_then(|c| c.trim().parse::<u32>().ok())
+                .filter(|&s| s > 0 && s <= 4096);
+            rows.push(ByteLocationRow {
+                byte_offset,
+                size_bytes,
+                description: description.clone(),
+            });
+        }
+        if rows.is_empty() {
+            continue;
+        }
+        let caption = table.caption_text.as_deref().unwrap_or("");
+        let mentions_register = caption.split_whitespace().any(|w| {
+            w.trim_matches(|c: char| !c.is_ascii_alphanumeric())
+                .eq_ignore_ascii_case("register")
+        });
+        // a register-worded caption on this family is measured-zero (0 of 60) and
+        // unmeasured territory: it is never re-housed as a structure container (the same
+        // honesty rule as the `.10c` register-worded-but-unnamed case)
+        let label = if mentions_register {
+            BitLayoutLabel::None
+        } else if let Some(container) = bit_position_container_label(caption) {
+            BitLayoutLabel::Container(container)
+        } else {
+            BitLayoutLabel::None
+        };
+        tables.push(ByteLocationTable {
+            label,
+            page: bit_position_table_page(table),
+            rows,
+            table,
+        });
+    }
+    tables
+}
+
+/// PDF-VARIANT-DIGESTION.10e — may `next` continue the byte-location chain ending at
+/// `prev`? Page distance ≤ 1 AND **byte-exact adjacency**: next's first byte offset equals
+/// prev's last offset plus its plain-count size. A symbolic-size tail (a variable-length
+/// structure end) leaves the chain end unknowable, so nothing may adopt after it — measured:
+/// every symbolic size in the family is a genuine variable-length tail. Fresh structures
+/// always restart at offset 0 and can never equal a predecessor end (sizes are positive).
+/// Measured per-item over all four corpus versions: 31 of 31 true continuations are
+/// byte-exact, zero gap or ambiguous cases.
+fn byte_location_chain_adjacent(
+    prev: &ByteLocationTable<'_>,
+    next: &ByteLocationTable<'_>,
+) -> bool {
+    let (Some(prev_page), Some(next_page)) = (prev.page, next.page) else {
+        return false;
+    };
+    if next_page < prev_page || next_page - prev_page > 1 {
+        return false;
+    }
+    let Some(last) = prev.rows.last() else {
+        return false;
+    };
+    let Some(size) = last.size_bytes else {
+        return false;
+    };
+    let Some(first) = next.rows.first() else {
+        return false;
+    };
+    first.byte_offset == last.byte_offset + size
+}
+
+/// PDF-VARIANT-DIGESTION.10e — chain construction (document order, the bit-layout policy):
+/// a table joins the most recent chain only on byte-exact adjacency AND label agreement;
+/// otherwise it starts a new chain. Every captioned table in the measured family starts its
+/// structure at offset 0, so heads are captioned (or honestly lost) and only caption-less
+/// fragments ever join.
+fn stitch_byte_location_chains(tables: &[ByteLocationTable<'_>]) -> Vec<BitLayoutChain> {
+    let mut chains: Vec<BitLayoutChain> = Vec::new();
+    for (index, parsed) in tables.iter().enumerate() {
+        let joined = match chains.last_mut() {
+            Some(chain) => {
+                let last_member = &tables[*chain.members.last().expect("chains are non-empty")];
+                if bit_layout_labels_agree(&chain.label, &parsed.label)
+                    && byte_location_chain_adjacent(last_member, parsed)
+                {
+                    chain.members.push(index);
+                    if matches!(chain.label, BitLayoutLabel::None) {
+                        chain.label = parsed.label.clone();
+                    }
+                    true
+                } else {
+                    false
+                }
+            }
+            None => false,
+        };
+        if !joined {
+            chains.push(BitLayoutChain {
+                label: parsed.label.clone(),
+                members: vec![index],
+            });
+        }
+    }
+    chains
+}
+
+/// PDF-VARIANT-DIGESTION.10e — the field name of a byte-location placement row. The name is
+/// fused into the description cell, but unlike the `.10a` bit families the heads are the
+/// document's own MULTI-WORD phrase names (`Validation Bits`, `Operation Type`, `FRU ID`),
+/// so the shared bare leading-identifier form would TRUNCATE them (measured: `FRU ID` →
+/// `FRU`, `CCIX Message` → `CCIX`, `ATC Instance ID` → `ATC`) — this chain is family-local
+/// and never calls it. The family gate admits only the 60 measured tables corpus-wide, so
+/// the grammar cannot leak. Forms, measured per-item over all 204 non-Reserved eligible
+/// rows (zero unmatched):
+///   1. head-before-definitional-frame: the text before the first measured frame
+///      (`This field/bit/value/register/structure …`, `This is …`, `All subsequent
+///      fields …`), gated to ≤ 8 words, letter-led, and NO sentence period inside the head
+///      (the `.10c` period-is-bleed rule — kills exactly the two measured wrapped-bleed
+///      captures, `All other values are reserved. Cache Error Type|Operation Type`, which
+///      stay honest residuals rather than minting a post-period grammar);
+///   2. when that head ENDS with a single parenthesized token immediately before the frame
+///      (`Card or Channel Number (Chan) This field …`), the field is named by that token —
+///      the document's own short mnemonic outranks the long head (the `.10a` rule). The
+///      identifier-SHAPE gate of the shared paren+frame form is relaxed family-locally:
+///      plain Titlecase mnemonics (`Chan`, `Mod`) are this family's own convention, and the
+///      trailing-paren position plus the frame carry the precision the shape gate provides
+///      elsewhere (the `.10d` frame-override precedent). Like the shared form — and unlike
+///      the multi-word head capture — this anchor is trusted even PAST wrapped-cell bleed
+///      (`All other values are reserved. Card or Channel Number (Chan) This field …` →
+///      `Chan`): the paren+frame position is the row's own definition wherever the
+///      page-wrap put the prose;
+///   3. a bare short cell (≤ 6 words, same letter/period gates): the description
+///      page-wrapped into the next fragment and the cell IS the name (`Memory Error Type`).
+///
+/// A `Reserved…`-led row is padding, never a field.
+fn byte_location_field_name(description: &str) -> Option<String> {
+    let description = description.trim();
+    if description
+        .get(..8)
+        .is_some_and(|p| p.eq_ignore_ascii_case("reserved"))
+    {
+        return None;
+    }
+    const FRAMES: [&str; 7] = [
+        "This field",
+        "This bit",
+        "This value",
+        "This register",
+        "This structure",
+        "This is",
+        "All subsequent fields",
+    ];
+    let frame_at = FRAMES.iter().filter_map(|f| description.find(f)).min();
+    let (head, max_words) = match frame_at {
+        Some(0) => return None, // the cell starts at the frame: wrapped prose, no head
+        Some(i) => (description[..i].trim_end(), 8),
+        None => (description, 6), // bare-short candidate: the whole cell is the name
+    };
+    if frame_at.is_some()
+        && head.ends_with(')')
+        && let Some(open) = head.rfind('(')
+    {
+        let inner = head[open + 1..head.len() - 1].trim();
+        if (2..=40).contains(&inner.chars().count())
+            && inner
+                .chars()
+                .next()
+                .is_some_and(|c| c.is_ascii_alphabetic())
+            && inner.chars().all(|c| c.is_ascii_alphanumeric() || c == '_')
+        {
+            return Some(inner.to_string());
+        }
+    }
+    if head.is_empty()
+        || !head.chars().next().is_some_and(|c| c.is_ascii_alphabetic())
+        || head.contains('.')
+        || head.split_whitespace().count() > max_words
+    {
+        return None;
+    }
+    Some(head.split_whitespace().collect::<Vec<_>>().join(" "))
+}
+
+/// PDF-VARIANT-DIGESTION.10e — structure fields from byte-location placement tables (the
+/// `Byte Location | Size (Bytes) | Register Description` family). The probe overturned the
+/// recorded `.10a` hypothesis: these are NOT register-at-offset placement maps — every
+/// measured caption is a STRUCTURE caption (`CCIX PER Memory Error Type Structure`,
+/// `Vendor-Specific Log Info`; 0 of 60 say register) and the rows are byte-granular fields
+/// of in-memory error-record structures, so the typed home is `message_field_records` per
+/// the `.10c` caption-evidence rule (the RO/RsvdZ `Attribute` column does not outvote the
+/// document's own caption). Each record keeps the document's literal statement:
+/// `byte_offset` = the stated byte location, `bit_width` = the plain-count byte size × 8
+/// (exact unit arithmetic), `bit_range` honestly `None` (no bit positions are stated —
+/// never derived). A chain with no captioned member, a `Reserved…` row, and a row with no
+/// recoverable name all yield nothing — honest residuals, never fabricated.
+fn extract_byte_location_structure_fields(
+    source_ir: &SourceIr,
+    prior_guidance: Option<&EvidencePriorGuidance>,
+) -> Vec<MessageFieldRecord> {
+    let tables = collect_byte_location_tables(source_ir, prior_guidance);
+    let chains = stitch_byte_location_chains(&tables);
+    let mut records: Vec<MessageFieldRecord> = Vec::new();
+    let mut index_by_key: BTreeMap<(String, String), usize> = BTreeMap::new();
+    for chain in &chains {
+        let BitLayoutLabel::Container(label) = &chain.label else {
+            continue;
+        };
+        for &member in &chain.members {
+            let parsed = &tables[member];
+            for row in &parsed.rows {
+                let Some(name) = byte_location_field_name(&row.description) else {
+                    continue;
+                };
+                let key = (label.to_ascii_lowercase(), name.to_ascii_uppercase());
+                if let Some(&existing) = index_by_key.get(&key) {
+                    let record = &mut records[existing];
+                    if !record.supporting_table_ids.contains(&parsed.table.table_id) {
+                        record
+                            .supporting_table_ids
+                            .push(parsed.table.table_id.clone());
+                    }
+                    continue;
+                }
+                index_by_key.insert(key, records.len());
+                records.push(MessageFieldRecord {
+                    field_id: String::new(),
+                    name,
+                    container: label.clone(),
+                    bit_width: row.size_bytes.map(|bytes| bytes * 8),
+                    bit_range: None,
+                    byte_offset: Some(row.byte_offset),
+                    description: Some(row.description.clone()),
+                    supporting_table_ids: vec![parsed.table.table_id.clone()],
+                });
+            }
+        }
+    }
+    records
+}
+
 /// PDF-VARIANT-DIGESTION.10c — registers from REGISTER-captioned bit-layout chains: one
 /// `RegisterRecord` per chain, named by the caption (`TCU_CTRL register bit descriptions`
 /// → `TCU_CTRL`; the caption IS the register declaration, the same evidence class as
@@ -8665,6 +8990,22 @@ impl Extractor<MessageFieldRecord> for BitPositionTableExtractor<'_> {
     }
 }
 
+/// PDF-VARIANT-DIGESTION.10e — the byte-location placement-table strategy as a registered
+/// `Extractor` (the `Byte Location | Size (Bytes) | Register Description` structure-layout
+/// family); see [`extract_byte_location_structure_fields`].
+struct ByteLocationTableExtractor<'a> {
+    source_ir: &'a SourceIr,
+    prior_guidance: Option<&'a EvidencePriorGuidance>,
+}
+impl Extractor<MessageFieldRecord> for ByteLocationTableExtractor<'_> {
+    fn name(&self) -> &'static str {
+        "message_fields.byte_location_table"
+    }
+    fn run(&self, _cx: &ExtractionContext<'_>) -> Vec<MessageFieldRecord> {
+        extract_byte_location_structure_fields(self.source_ir, self.prior_guidance)
+    }
+}
+
 /// PDF-VARIANT-DIGESTION.10c — registers from register-captioned bit-layout chains as a
 /// registered `Extractor`; see [`extract_bit_assignment_registers`].
 struct BitAssignmentRegisterExtractor<'a> {
@@ -8699,7 +9040,12 @@ fn message_field_surface(
         source_ir,
         prior_guidance,
     };
-    let extractors: [&dyn Extractor<MessageFieldRecord>; 2] = [&extractor, &bit_position];
+    let byte_location = ByteLocationTableExtractor {
+        source_ir,
+        prior_guidance,
+    };
+    let extractors: [&dyn Extractor<MessageFieldRecord>; 3] =
+        [&extractor, &bit_position, &byte_location];
     let mut run = run_surface("message_fields", &cx, &extractors, |field| {
         (
             field.container.to_ascii_lowercase(),
@@ -13468,6 +13814,286 @@ mod tests {
             .expect("message_fields surface recorded");
         assert_eq!(entry.entries[1].name, "message_fields.bit_position_table");
         assert_eq!(entry.entries[1].produced, 5);
+        Ok(())
+    }
+
+    #[test]
+    fn byte_location_field_name_forms_and_gates() {
+        let name = super::byte_location_field_name;
+        // form 1 — the shared paren+frame mnemonic outranks the long head (the `.10a` rule)
+        assert_eq!(
+            name("Card or Channel Number (Chan) This field indicates the card or channel."),
+            Some("Chan".to_string())
+        );
+        assert_eq!(
+            name("Vendor Info Length (VenLen) This field indicates the length."),
+            Some("VenLen".to_string())
+        );
+        // form 2 — head-before-frame keeps the document's FULL multi-word name; the shared
+        // bare leading-identifier form would truncate every one of these (measured hazard)
+        assert_eq!(
+            name("FRU ID This field indicates a generic instance ID."),
+            Some("FRU ID".to_string())
+        );
+        assert_eq!(
+            name("CCIX Message This field indicates the raw CCIX message."),
+            Some("CCIX Message".to_string())
+        );
+        assert_eq!(
+            name("ATC Instance ID This field indicates the instance number."),
+            Some("ATC Instance ID".to_string())
+        );
+        assert_eq!(
+            name("Validation Bits All subsequent fields will have a validation bit."),
+            Some("Validation Bits".to_string())
+        );
+        assert_eq!(
+            name("Vendor-Specific Info Structure This is a variable length structure."),
+            Some("Vendor-Specific Info Structure".to_string())
+        );
+        // a sentence period inside the head is wrapped-cell BLEED (the `.10c` rule): the two
+        // measured corpus captures stay honest residuals
+        assert_eq!(
+            name("All other values are reserved. Cache Error Type This field indicates the type."),
+            None
+        );
+        // … but the trailing paren+frame anchor is trusted PAST bleed, like the shared
+        // mid-cell form: the mnemonic is the row's own definition wherever the wrap put it
+        assert_eq!(
+            name(
+                "All other values are reserved. Card or Channel Number (Chan) This field \
+                 indicates the channel."
+            ),
+            Some("Chan".to_string())
+        );
+        // the cell starting AT the frame is wrapped prose with no head
+        assert_eq!(name("This field indicates the type of error."), None);
+        // form 3 — a bare short cell IS the name (description page-wrapped away)
+        assert_eq!(
+            name("Memory Error Type"),
+            Some("Memory Error Type".to_string())
+        );
+        // bare cells longer than the measured bound are prose, not names
+        assert_eq!(
+            name("The order of the validation bits follows the order of fields"),
+            None
+        );
+        // Reserved-led rows are padding, never fields
+        assert_eq!(name("Reserved and Zero"), None);
+        // a head over the measured word bound is prose
+        assert_eq!(
+            name("one two three four five six seven eight nine This field indicates."),
+            None
+        );
+        // letter-led gate
+        assert_eq!(name("0x00 This field indicates."), None);
+    }
+
+    #[test]
+    fn byte_location_surface_extracts_structure_fields_with_byte_chains() -> Result<()> {
+        // PDF-VARIANT-DIGESTION.10e end-to-end: a captioned structure HEAD + a caption-less
+        // byte-adjacent continuation (joins), a symbolic-size variable-length tail (width
+        // honestly absent, chain closed to further adoption), a caption-less fresh structure
+        // (yields nothing), a register-worded caption (measured-zero territory, yields
+        // nothing), wrapped-prose and Reserved rows skipped, and the `Attribute` singular
+        // header variant.
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Spec\nByte-granular structure layouts.\n")?;
+        let mut source_ir = SourceIr::build(&source, &base)?;
+        let byte_table = |id: &str,
+                          page: &str,
+                          caption: Option<&str>,
+                          attribute_header: &str,
+                          rows: &[&[&str]],
+                          kind: TableKind| {
+            StructuredTableRecord {
+                table_id: id.to_string(),
+                asset_id: id.to_string(),
+                page_id: Some(page.to_string()),
+                caption_text: caption.map(|c| c.to_string()),
+                source_ref: None,
+                table_kind: kind,
+                header_rows: vec![vec![
+                    make_table_cell("Byte Location", true),
+                    make_table_cell("Size (Bytes)", true),
+                    make_table_cell("Register Description", true),
+                    make_table_cell(attribute_header, true),
+                    make_table_cell("M/O", true),
+                ]],
+                body_rows: rows
+                    .iter()
+                    .map(|r| r.iter().map(|c| make_table_cell(c, false)).collect())
+                    .collect(),
+                row_count: rows.len() as u32 + 1,
+                col_count: 5,
+            }
+        };
+        // captioned structure HEAD: paren+frame mnemonic, Reserved padding skip
+        source_ir.structured_tables.push(byte_table(
+            "byte_head",
+            "page_0010",
+            Some("Table 7-6: CCIX PER Memory Error Type Structure"),
+            "Attributes",
+            &[
+                &[
+                    "0",
+                    "4",
+                    "Validation Bits All subsequent fields will have a validation bit.",
+                    "RO",
+                    "M",
+                ],
+                &["4", "1", "Reserved and Zero", "RsvdZ", "M"],
+                &[
+                    "5",
+                    "1",
+                    "Card or Channel Number (Chan) This field indicates the channel.",
+                    "RO",
+                    "O",
+                ],
+            ],
+            TableKind::Unknown,
+        ));
+        // caption-less continuation: byte-exact adjacency (5 + 1 = 6) joins the chain; a
+        // wrapped-prose row (non-numeric location) is a row-level skip; the symbolic-size
+        // tail keeps its byte offset with width honestly absent and CLOSES the chain
+        source_ir.structured_tables.push(byte_table(
+            "byte_tail",
+            "page_0011",
+            None,
+            "Attributes",
+            &[
+                &[
+                    "",
+                    "fields in that same table follow the same order.",
+                    "",
+                    "",
+                    "",
+                ],
+                &[
+                    "6",
+                    "2",
+                    "FRU ID This field indicates a generic instance ID.",
+                    "RO",
+                    "O",
+                ],
+                &[
+                    "8",
+                    "(indicated by VenLen)",
+                    "Vendor-Specific Log Info This is a variable length field.",
+                    "RO",
+                    "O",
+                ],
+            ],
+            TableKind::Unknown,
+        ));
+        // a fresh caption-less structure may NOT adopt (and a capless chain yields nothing)
+        source_ir.structured_tables.push(byte_table(
+            "byte_capless",
+            "page_0012",
+            None,
+            "Attribute",
+            &[&[
+                "0",
+                "4",
+                "Lost Head This field indicates a lost-caption structure.",
+                "RO",
+                "M",
+            ]],
+            TableKind::Unknown,
+        ));
+        // a register-worded caption is measured-zero territory: never re-housed as a
+        // structure container
+        source_ir.structured_tables.push(byte_table(
+            "byte_register_worded",
+            "page_0013",
+            Some("Table 9: Widget Control Register Layout"),
+            "Attribute",
+            &[&[
+                "0",
+                "4",
+                "Guarded Field This field indicates register territory.",
+                "RO",
+                "M",
+            ]],
+            TableKind::Unknown,
+        ));
+        // an already-classified table is never claimed (kind gate)
+        source_ir.structured_tables.push(byte_table(
+            "byte_classified",
+            "page_0014",
+            Some("Table 10: Classified Structure"),
+            "Attributes",
+            &[&[
+                "0",
+                "4",
+                "Classified Field This field indicates an owned table.",
+                "RO",
+                "M",
+            ]],
+            TableKind::SignalDescription,
+        ));
+        let mut manifest = super::ExtractionManifest::default();
+        let fields = super::message_field_surface(&source_ir, None, &mut manifest);
+        type FieldView<'a> = (&'a str, &'a str, Option<u32>, Option<u32>);
+        let view: Vec<FieldView<'_>> = fields
+            .iter()
+            .map(|f| {
+                (
+                    f.container.as_str(),
+                    f.name.as_str(),
+                    f.bit_width,
+                    f.byte_offset,
+                )
+            })
+            .collect();
+        assert_eq!(
+            view,
+            vec![
+                (
+                    "CCIX PER Memory Error Type Structure",
+                    "Validation Bits",
+                    Some(32),
+                    Some(0)
+                ),
+                (
+                    "CCIX PER Memory Error Type Structure",
+                    "Chan",
+                    Some(8),
+                    Some(5)
+                ),
+                (
+                    "CCIX PER Memory Error Type Structure",
+                    "FRU ID",
+                    Some(16),
+                    Some(6)
+                ),
+                (
+                    "CCIX PER Memory Error Type Structure",
+                    "Vendor-Specific Log Info",
+                    None,
+                    Some(8)
+                ),
+            ],
+            "the byte-adjacent caption-less fragment shares the captioned container; sizes \
+             convert exactly to bits with symbolic sizes honestly absent; Reserved, \
+             wrapped-prose, capless-chain, register-worded, and classified tables yield \
+             nothing"
+        );
+        assert!(fields.iter().all(|f| f.bit_range.is_none()));
+        assert_eq!(fields[0].field_id, "message_field_0000");
+        assert_eq!(
+            fields[2].supporting_table_ids,
+            vec!["byte_tail".to_string()]
+        );
+        let entry = manifest
+            .surfaces
+            .iter()
+            .find(|s| s.surface == "message_fields")
+            .expect("message_fields surface recorded");
+        assert_eq!(entry.entries[2].name, "message_fields.byte_location_table");
+        assert_eq!(entry.entries[2].produced, 4);
         Ok(())
     }
 

@@ -35,7 +35,10 @@ per-item on the real corpus BEFORE coding; (4) the caption locator `at Byte Offs
 Measured: CCIX rev2.0 8 regs/11 fields → 143/389 (40 with offsets); CoreSight 0100/0200
 +13 genuine names each; ALL 12 intact-bundle docs byte-identical (old-vs-new dry-run);
 exactly ONE residual mis-name corpus-wide (`register_table_0149`, bleed without a marker).
-Honest boundary: `byte location | size | register description` tables are register-AT-OFFSET
-placement maps, NOT bit fields (byte→bit would fabricate) — future leaf; the `attibutes`
-typo family (4 tables) stays residual (typo vocabulary is a list). Related:
+Honest boundary: `byte location | size | register description` tables are NOT bit fields
+(byte→bit would fabricate) — refused here; the `.10e` probe later showed they are in-memory
+STRUCTURE layouts (0/60 register-worded captions), now extracted by
+[[byte-location-structure-field-extraction]] (the "register-AT-OFFSET placement map"
+hypothesis this card previously recorded was overturned by per-item measurement); the
+`attibutes` typo family (4 tables) stays residual (typo vocabulary is a list). Related:
 [[register-field-table-extraction]], [[eval-scores-persisted-evidence]].

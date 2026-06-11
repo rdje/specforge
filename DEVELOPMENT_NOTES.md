@@ -1,4 +1,34 @@
 # DEVELOPMENT_NOTES
+## `PDF-VARIANT-DIGESTION.10e` (`2026-06-11`) — the probe that overturned its own leaf's premise
+- The leaf was spun from MEMORY/`.10a` notes that already "knew" the answer: byte-location
+  tables = register-at-offset placement maps, typed home = register-map records. The very
+  first per-item pass killed that premise — 0 of 60 captions say register; all 60 name
+  in-memory error-record structures. Probe-first exists exactly for this: had the build
+  started from the recorded hypothesis, SpecForge would have minted MMIO registers a
+  document never describes. A recorded hypothesis is a question for the probe, never an
+  answer for the build.
+- The family HAS an `Attribute` column with RO/RsvdZ vocabulary — the old FIELD.2 routing
+  instinct (access vocabulary → register surface) pulls one way, the `.10c` caption rule
+  the other. The caption rule won because it is the document's own self-description, and
+  the per-table evidence here is unanimous; the access-column instinct was the weaker,
+  older doctrine. Worth remembering when the two cues disagree again.
+- Name truncation as a measured hazard class: the shared bare leading-identifier form
+  would have silently shortened `FRU ID` to `FRU` and `CCIX Message` to `CCIX` — names
+  that LOOK plausible and would have passed every aggregate check. Only the per-item head
+  census exposed it. Family-local grammar (justified by the leak-proof header gate) beats
+  widening a shared form whose gates encode different families' measured shapes.
+- The wrapped-bleed asymmetry is deliberate: a multi-word head containing a sentence
+  period is refused (you cannot tell where the bleed ends and the name starts), but a
+  trailing `(Mnemonic)` immediately before the definitional frame is trusted PAST bleed —
+  the same trust the shared paren form already grants mid-cell, because the anchor is the
+  row's own definition regardless of what the page-wrap dragged in front of it. One
+  refusal rule, one recovery rule, both measured (2 refusals, 1 recovery corpus-wide).
+- `bit_width = size_bytes × 8` vs a new literal `byte_size` field: unit conversion cannot
+  misrepresent (unlike the `.10d` position derivation, wrong on 54/66 rows), it is the
+  same arithmetic class as `high - low + 1`, and it spares the schema a near-duplicate
+  width field. Literalism is about never asserting more than the page states — exact unit
+  arithmetic asserts exactly as much.
+
 ## `PDF-VARIANT-DIGESTION.11` (`2026-06-11`) — the vacuous-corpus probe and the discipline of measured NO-decisions
 - The probe's most useful output was a zero: NO persisted evidence doc carries the
   message-field surface (the docs that would — NVMe, AMD, CHI-class — were deliberately

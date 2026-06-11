@@ -31,7 +31,19 @@ chain-adjacency branch in `bit_position_chain_adjacent` (the `(offset asc, bit d
 `recover_field_mnemonic` chain (`bracket_slice_field_name` — verbatim names incl. the slice;
 `single_letter_framed_name` — colon/dot frame + per-table uniqueness through
 `fused_name_lead_count_key`, whose 1-char keys are disjoint from the existing 2–40-char keys), and a
-shared `trim_continued_marker` handling `(Continued)` markers fused to the previous caption word. It is the first surface whose extractor reads ONLY `SourceIr.structured_tables`
+shared `trim_continued_marker` handling `(Continued)` markers fused to the previous caption word.
+`PDF-VARIANT-DIGESTION.10e` (2026-06-11) added the surface's THIRD strategy,
+`message_fields.byte_location_table`: `byte location | size (bytes) | register description` placement
+tables (probe-overturned: in-memory STRUCTURE layouts, not register maps) extract through a family-local
+collector (`byte_location_layout_columns` header-position gate, row-level wrapped-prose skips unlike the
+`.10b` whole-table rule), a byte-exact chain pass (`byte_location_chain_adjacent`:
+`next_offset == prev_offset + size`, symbolic-size tails close the chain) reusing `BitLayoutLabel` /
+`bit_layout_labels_agree` / `bit_position_container_label`, and a family-LOCAL name grammar
+(`byte_location_field_name`: head-before-definitional-frame multi-word names, trailing-paren mnemonic
+trusted past bleed, period-is-bleed refusal — deliberately NOT the shared `recover_field_mnemonic`
+chain, which would truncate `FRU ID`→`FRU`); `byte_offset` doubles as the field's own byte offset when
+`bit_range` is `None` (doc contract amended; the two readings are disjoint by construction) and
+`bit_width` converts plain-count byte sizes exactly (×8). It is the first surface whose extractor reads ONLY `SourceIr.structured_tables`
 and persists a new typed inventory (`EvidenceIr.message_field_records`) consumed by the entity-typing
 ground (`EntityType::Field`, `.FIELD.3`) and — via `.FIELD.4` — by the LLM-primary constraint extractor:
 `ir/constraint_extract_llm.rs` now grounds into a typed `GroundedConstraint::{Signal,Field}` dispatch

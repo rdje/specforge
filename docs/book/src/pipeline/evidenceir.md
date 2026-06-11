@@ -563,8 +563,10 @@ manuals upgrade exactly 13 fields each from bit-range placeholders to their real
 (NVMe, RISC-V Debug, the AMBA buses, SWD, I²C, SMBus, I²S, CAN, SWP) rebuild **byte-identical**, and the
 known residual is quantified rather than hidden: exactly one row corpus-wide keeps a wrong name (a
 page-wrap bleed indistinguishable from a real row without page-level context), and the ~60
-`Byte Location | Size | Register Description` tables are register-*placement* maps, not bit-field tables —
-forcing byte offsets into bit ranges would fabricate, so they stay explicit residuals for a future leaf.
+`Byte Location | Size | Register Description` tables were refused outright — forcing their byte offsets
+into bit ranges would fabricate. That refusal was right twice over: when the follow-up leaf probed those
+tables per-item, their captions turned out to describe in-memory *structures*, not registers at all, and
+they are now read honestly into the message-field inventory (see the `.10e` section below).
 *Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.10a`).
 
 ### `PDF-VARIANT-DIGESTION.10b` — two-column bit-layout tables describe structures, not registers
@@ -696,6 +698,50 @@ bit-position reader with a wider literal grammar). What stays out is documented:
 (`Store Address[31:3]`), one malformed-cell table, two conditional-layout tables whose description column
 forks on a mode bit, and eight caption-less chains whose captions ingest lost — absence, never invention.
 *Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.10d`).
+
+### `PDF-VARIANT-DIGESTION.10e` — byte-location tables: the probe overturned the working hypothesis
+
+This slice is a small case study in why SpecForge probes before it builds. When the `.10a` register work
+refused the `Byte Location | Size (Bytes) | Register Description` tables (turning byte offsets into bit
+ranges would fabricate), the working hypothesis it recorded was "these are register-*placement* maps —
+a future leaf should turn each row into a register at an offset." The future leaf arrived, probed all 60
+tables per-item across the four CCIX-class document versions, and found the hypothesis was wrong: **not
+one of the 60 captions says "register."** Every caption names an in-memory record — *"CCIX PER Memory
+Error Type Structure"*, *"Cache Error Type Structure"*, *"Vendor-Specific Log Info"* — and the rows are
+the byte-granular fields of those structures (an error log's FRU ID at byte 4, its `Length` at byte 6),
+complete with mandatory/optional record vocabulary. Minting MMIO registers from them would have invented
+hardware that the document never describes. So the typed home follows the same caption-decides rule as
+the `.10c` work: these fields land in the **message-field inventory**, beside the other "structured
+content, not wires" layouts.
+
+The capture stays literal. Each field records the byte offset exactly as stated (`byte_offset: 4`) and
+its width converted exactly from the stated size (`Size (Bytes)` `4` → 32 bits — unit arithmetic, the
+same class as computing a width from a bit range; a symbolic size like *"(indicated by VenLen)"* is a
+variable-length tail and keeps its width honestly absent). No bit positions are stated, so none are
+derived — `bit_range` stays empty, and the byte-offset reading is unambiguous precisely because of that.
+
+The field names live fused at the front of each description cell, but unlike the `.10a` families these
+are the document's own **multi-word English names** — *Validation Bits*, *Operation Type*, *FRU ID* —
+exactly the shape the shared identifier grammar rightly rejects elsewhere (and would truncate here:
+`FRU ID` would become `FRU`). The family therefore gets its own measured grammar, leak-proof because the
+header gate admits only these tables: the name is the text before the universal definitional frame
+(*"… This field indicates …"*), a head ending in the document's own parenthesized mnemonic prefers it
+(*"Card or Channel Number (Chan) This field…"* → `Chan` — trusted even past wrapped-cell bleed, like the
+shared mid-cell form), and a bare short cell whose description page-wrapped away is itself the name. A
+head containing a sentence period is wrapped-cell bleed and is refused — the two corpus rows shaped that
+way stay honest residuals rather than receiving stitched-together names.
+
+Page fragments chain by **byte-exact adjacency**: a caption-less fragment continues a structure only when
+its first byte offset is exactly the previous fragment's last offset plus that field's size — measured 31
+of 31 true continuations, zero ambiguous joins, with fresh structures always restarting at byte 0 and
+variable-length tails closing their chain to further adoption. Live, the four CCIX-class versions gain
+**35–45 byte-location fields across 4–6 structure containers each** (≈161 fields total) with zero
+pre-existing records changed, and all 12 rebuildable corpus documents keep every extraction surface
+byte-identical (the run manifest alone records the new strategy). The residual ledger is explicit: the
+Port error structure lost its caption in ingest in all four versions (its chain extracts nothing until a
+re-ingest recovers the caption), two more structures lost captions in individual versions, and the two
+period-bleed rows above stay name-less — absence, never invention.
+*Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.10e`).
 
 ### `EXTRACTION-QUALITY-GAUGE.FIELD.2` — message fields are intent too, but they are not signals
 

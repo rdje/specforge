@@ -935,8 +935,9 @@ lost-caption chains stay residuals; `byte_offset` is recorded verbatim-literal, 
 inferred.
 
 **`PDF-VARIANT-DIGESTION.10e` — the `byte location | size (bytes) | register description`
-placement-table family (CCIX-class).** · Status: `in_progress` (probe DONE `2026-06-11`;
-build next). Spun from the `.10a` quantified residuals, which recorded the hypothesis
+placement-table family (CCIX-class).** · Status: **DONE `2026-06-11`** (probe `531c10cd` →
+measured design → build → live per-item verification; one post-probe grammar decision made
+during live verification, below). Spun from the `.10a` quantified residuals, which recorded the hypothesis
 "register-AT-OFFSET placement maps → future lever: map them to register-map records".
 **PROBE RESULT (per-item over the persisted corpus): the recorded hypothesis is
 OVERTURNED — these are NOT register placement maps.** The family is **exactly 60 tables,
@@ -1014,6 +1015,49 @@ closed-tail + capless-chain-yields-nothing + register-caption guard); 12-doc par
 sweep (manifest-only delta); `.10b`/`.10d` NVMe-216/AMD-217 dry-run re-proof unchanged;
 register golds + battery + kg-bench + full `scripts/run_ci.sh`; stub-protocol live run on
 all 4 CCIX versions with per-item eyeball of every container/field; book + KM card.
+**BUILD + VERIFICATION LOG (DONE `2026-06-11`):** lib tests 1565→1567 (2 new hermetic:
+the full name-form grammar — paren-mnemonic incl. the bleed-recovery case, all three
+truncation-hazard heads kept whole, both period-bleed refusals, frame-at-start, bare-short
+accept + too-long reject, Reserved, letter-led; and the end-to-end surface test —
+captioned head + byte-adjacent capless join, wrapped-prose row skip, symbolic-size tail
+with honest `bit_width: None` closing the chain, capless fresh chain → nothing,
+register-worded caption → nothing, kind-gate exclusion, `Attribute` singular variant,
+manifest entry `message_fields.byte_location_table` produced=4); kg-bench **154/154**;
+full `scripts/run_ci.sh` GREEN. **Implementation shape:** family-local collector
+(`byte_location_layout_columns` header-position gate — `byte location` + `size`-led +
+`description`-containing, distinct; attribute/M-O never required), row-level wrapped-prose
+skips (deliberately NOT the `.10b` whole-table rule — a wrapped row states no placement,
+skipping cannot misplace), `BitLayoutLabel`/`bit_layout_labels_agree`/
+`bit_position_container_label` reuse with the `.10c` register-worded honesty guard,
+byte-exact stitcher (`byte_location_chain_adjacent`), family-local
+`byte_location_field_name` (NEVER the shared `recover_field_mnemonic` — truncation
+hazard), `MessageFieldRecord` doc contracts amended additively (name multi-word note;
+`byte_offset` dual reading disjoint on `bit_range`; `bit_width` byte-size×8 arithmetic).
+**POST-PROBE GRAMMAR DECISION (made during live per-item verification):** r1.0a's wrapped
+cells fuse the previous row's trailing enum sentence ahead of the row's own definition
+(`All other values are reserved. Card or Channel Number (Chan) This field …`) — the
+probe's PAREN regex had admitted that row, the build's stricter period gate initially
+refused all 3 bleed rows. Decision: the trailing paren+frame anchor is trusted PAST bleed
+(it is the row's own definition wherever the wrap put the prose — the exact trust the
+shared mid-cell paren form grants), recovering `Chan@11` in r1.0a; the 2 head-only bleed
+rows stay refused (no anchor separates bleed from name). Fixture-locked both ways.
+**Live (stub protocol, canonical untouched, final post-fmt binary): rev2.0 0→45 fields /
+6 containers; r1.0 47→92 (+45/6); r1.0a 50→86 (+36/4 — ATC + Log Info captions lost in
+this version); rev1.1 51→86 (+35/5 — Cache caption lost); every pre-existing record
+preserved bit-for-bit (old-vs-new record-set diff per doc); per-item eyeball of all 161
+fields clean** (`Validation Bits@0/32b`, `FRU ID@4/8b`, `Chan@11/8b`, `Mod@12/16b`,
+`CCIX Message@12/256b`, `Vendor-Specific Log Info@35` width-less, `VenLen@0/16b`); the
+only differing top-level keys per doc = `message_field_records` + `extraction_manifest`.
+**12-doc old-vs-new parity sweep: every extraction surface byte-identical on all 12
+intact docs; the ONLY delta is the manifest's new `message_fields.byte_location_table`
+entry (eligible, produced 0)** — golds locked by byte-identity (canonical artifacts +
+eval code untouched). Residual reconciliation: 204 non-Reserved eligible rows = 161
+extracted + ~40 in lost-caption chains (Port 7-9 ×4, ATC+LogInfo r1.0a, Cache rev1.1 —
+the re-ingest lever) + 2 period-bleed + Chan recovered; 24 Reserved + 8 wrapped-prose
+rows skipped by design. Book: `pipeline/evidenceir.md` `.10e` subsection + the `.10a`
+closing corrected; KM card `byte-location-structure-field-extraction` + the `.10a` card
+residual line corrected; README `.10e` bullet; RUST_CODEBASE_ANALYSIS third-strategy
+note.
 
 **`PDF-VARIANT-DIGESTION.11` — `validate` integration of the `message_field_*` surfaces.**
 · Status: **DONE `2026-06-11`** (probe → measured scope decisions → build → live CLI
