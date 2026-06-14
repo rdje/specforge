@@ -266,12 +266,73 @@ addressed by the disk-bounding leaves below.
   Commit: `MEMORY-BOUNDED-INGEST.4b`
 
 - ID: `MEMORY-BOUNDED-INGEST.4c`
-  Status: `proposed`
-  Goal: adaptive batch sizing under SUSTAINED memory pressure — shrink the batch / spill more to disk
-  so a constrained host still completes with byte-identical output, just slower (speed flexes, quality
-  invariant).
-  Verification: `pending`
-  Commit: `pending`
+  Status: `done`
+  Goal: size each page-range batch to the HOST's memory so a constrained machine completes the ingest
+  (slower, full fidelity) instead of being aborted by the `.4a` RAM guard — speed flexes, quality
+  invariant. The fixed 64-page batch (`.1`) is right for a 24 GB host but too large for a small one:
+  a 4 GB container holding a 64-page batch + the layout/table models would cross the danger ceiling
+  and the guard would kill the ingest every time, no matter how patient the operator is.
+  Design (decided; mirrors the `.4a`/`.4b` no-new-dep + pure-fn + injected-reader pattern):
+  - **Signal = TOTAL physical RAM, NOT free memory.** Free memory jitters run-to-run, which would
+    make the chosen batch size — and therefore the cross-batch boundary artifacts — non-deterministic,
+    violating the repo's determinism doctrine (`[[evidence-build-nondeterminism]]`). Total physical
+    RAM is a per-machine CONSTANT, so the batch size is a deterministic function of the machine: the
+    SAME machine always picks the SAME batch → re-ingest is reproducible. Transient pressure from
+    co-tenant processes stays the `.4a` RAM guard's job (the unchanged hard backstop). A future `.4d`
+    could add true mid-run shrink if a host that is fine at start but degrades mid-run ever proves a
+    real need; today the guard backstops that case.
+  - **`SPECFORGE_INGEST_BATCH_PAGES` becomes a CEILING** (default 64, unchanged for the common case);
+    adaptive sizing only ever LOWERS it on a small machine. An operator who pins it still caps the
+    batch, and `SPECFORGE_INGEST_ADAPTIVE_BATCH=off`/`none`/`disabled` forces the fixed ceiling (the
+    exact `.1` behavior). A floor (`DEFAULT_INGEST_MIN_BATCH_PAGES = 8`) keeps a batch from going
+    absurdly small.
+  - **Banded by total RAM** (discrete → jitter-free; target keeps a 64-page-batch peak of ~4.8 GB
+    from the `.2` CHI datum near ~30 % of RAM): `>= 16 GB -> ceiling (64)`, `8-16 GB ->
+    min(ceiling, 32)`, `4-8 GB -> min(ceiling, 16)`, `< 4 GB -> floor (8, clamped <= ceiling)`. Every
+    current verification host (>= 16 GB, incl. the 24 GB dev host) lands on the ceiling, so CHI (`.2`)
+    and all gold/intact docs re-ingest BYTE-IDENTICAL; only genuinely small machines get a smaller
+    batch.
+  - **Rust owns the decision, Python is unchanged.** `materialize_pdf` reads total RAM via a no-dep
+    platform reader (`sysctl -n hw.memsize` on macOS, `/proc/meminfo` `MemTotal` on Linux; pure
+    parsers gated `#[cfg(any(target_os, test))]`), computes the effective batch via a pure
+    `adaptive_batch_pages(total_mb, ceiling, floor)`, and sets the child's
+    `SPECFORGE_INGEST_BATCH_PAGES` env to that value. The Python helper already reads that env, so no
+    Python logic changes; it stays the single place batching happens. The RAM reader is injected
+    (`&dyn Fn() -> Option<u64>`) for host-safe DI tests, exactly like the guard's `used_percent_fn`.
+    `None` (unreadable RAM) -> ceiling (permissive — behave as today, never make a run WORSE on
+    missing data).
+  - **Honest claim** (correcting the leaf's earlier "byte-identical output" shorthand): output is
+    byte-identical on any machine large enough to use the full ceiling batch (>= 16 GB — every host
+    we verify on). A genuinely small machine uses a smaller batch and COMPLETES where the prior
+    behavior was an outright abort — full per-page fidelity, with only the same class of benign
+    cross-batch boundary artifact `.1` already documented vs single-pass, and no prior successful
+    baseline on such a host to diverge from. "Spill more to disk" is already covered by `.3` (skip
+    per-page PNGs) and the future `.5` (summary streaming); `.4c` delivers the batch-shrink lever.
+  Acceptance: a small machine completes a large-doc ingest at a smaller batch (proven via DI with an
+  injected RAM reader, no real small host needed — the `.4a` methodology); a >= 16 GB host re-ingests
+  byte-identical (ceiling unchanged); `off` forces the fixed ceiling; full `run_ci.sh` green +
+  kg-bench; book + KM updated.
+  Verification: `done (2026-06-14)` — implemented exactly as designed in `docling_backend.rs`: pure
+  `adaptive_batch_pages(total_mb, ceiling, floor)` (banded ladder clamped to `[floor, ceiling]`),
+  `parse_adaptive_batch_enabled` (default on; `off`/`none`/`disabled`/`disable` → off; garbage → on),
+  `parse_batch_pages_ceiling` (default 64, `>= 1`), `BatchSizePolicy::from_env` +
+  `effective_pages(&dyn Fn() -> Option<u64>)` (injected reader), no-dep total-RAM readers
+  (`read_macos_total_memory_mb` via `sysctl -n hw.memsize` + pure `parse_sysctl_memsize_bytes`;
+  `read_linux_total_memory_mb` via `/proc/meminfo` `MemTotal` + pure `parse_linux_meminfo_total_mb`;
+  both pure parsers gated `#[cfg(any(target_os, test))]`). `materialize_pdf` computes the effective
+  batch and sets the child's `SPECFORGE_INGEST_BATCH_PAGES` env (Python helper unchanged). The 3
+  source.rs stub-helper ingest tests pin `SPECFORGE_INGEST_ADAPTIVE_BATCH=off` for hot-CI determinism.
+  **+7 unit tests** (toggle parse, ceiling parse+floor, RAM-band ladder incl. None/floor/ceiling clamp
+  + small-ceiling cap, macOS `sysctl` + Linux `MemTotal` parsers, `from_env`, injected-reader
+  `effective_pages` ample/small/none/disabled); lib **1604 → 1611**; clippy `-D warnings` clean.
+  **Live (24 GB dev host, throwaway CAN copy forced large `SPECFORGE_INGEST_BATCH_THRESHOLD=1`):** (A)
+  adaptive-on (→ 64) is `diff -r` BYTE-IDENTICAL to (B) `SPECFORGE_INGEST_ADAPTIVE_BATCH=off` (fixed
+  64) — both batched (2 batches), page PNGs skipped, 98 region crops; (C) ceiling 32 → effective 32 →
+  3 batches `[[1,32],[33,64],[65,72]]`, same 72 pages / 98 region assets (lever works end-to-end,
+  fidelity intact). Throwaway bundle removed after measurement. Full `scripts/run_ci.sh` GREEN +
+  kg-bench. Book: SourceIR "Sizing the batch to the host" + troubleshooting note; KM card
+  `ingest-adaptive-batch-sizing`.
+  Commit: `MEMORY-BOUNDED-INGEST.4c`
 
 - ID: `MEMORY-BOUNDED-INGEST.5`
   Status: `proposed`
@@ -286,8 +347,8 @@ addressed by the disk-bounding leaves below.
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `MEMORY-BOUNDED-INGEST.4c` | `proposed` | **NEXT** — adaptive batch sizing under sustained pressure (slower, identical output) |
-| 2 | `MEMORY-BOUNDED-INGEST.5` | `proposed` | bound summary / `source_ir.json` + O(pages) per-page JSONs at extreme page counts |
+| 1 | `MEMORY-BOUNDED-INGEST.5` | `proposed` | **NEXT** — bound summary / `source_ir.json` + O(pages) per-page JSONs at extreme page counts |
+| — | `MEMORY-BOUNDED-INGEST.4c` | `done` | total-RAM-banded adaptive batch sizing — DONE `2026-06-14` (small machine completes at a smaller batch; >= 16 GB byte-identical, live-proven; `SPECFORGE_INGEST_ADAPTIVE_BATCH`; +7 tests) |
 | — | `MEMORY-BOUNDED-INGEST.4b` | `done` | disk pre-flight — DONE `2026-06-14` (source-size-scaled free-disk gate via no-dep `df -P -k`; typed `IngestAbortedForDisk`; runs before staging; +8 tests) |
 | — | `MEMORY-BOUNDED-INGEST.4a` | `done` | built-in autonomous RAM guard — DONE `2026-06-14` (spawn+poll+kill in `materialize_pdf`; no new dep; typed `IngestAbortedForMemory`; +9 tests) |
 | — | `MEMORY-BOUNDED-INGEST.3b` | `proposed` | targeted on-demand single-page render (deferred/YAGNI — no consumer reads page images today) |
@@ -370,6 +431,7 @@ RAM dimension (`.1`/`.2`) + DISK dimension (`.3`) now both delivered.
 | `2026-06-14` | `MEMORY-BOUNDED-INGEST.3` | py_compile + full `run_ci.sh` (1587) + 4-mode live CAN ingest (throwaway key) + stash-rebuild byte-identity | GREEN; (A) default 72 PNGs == old-code byte-identical; (B) SAVE=0 → 0 PNGs, region crops byte-identical, source_ir identical bar `page_image_path`; (C) force-large default → auto-skip+batched; (D) large+SAVE=1 → keep; per-page PNGs 21 MB vs 1.8 MB crops |
 | `2026-06-14` | `MEMORY-BOUNDED-INGEST.4a` | full `run_ci.sh` (1596) + kg-bench (156/156) + 9 new DI/parser unit tests | GREEN — pre-spawn abort / mid-run kill / completes all proven via injected reader (no real pressure); macOS+Linux memory parsers unit-tested on both platforms; stub-helper ingest tests deterministic with the guard off; clippy `-D warnings` clean (fixed one `trim_split_whitespace`) |
 | `2026-06-14` | `MEMORY-BOUNDED-INGEST.4b` | full `run_ci.sh` (1604) + kg-bench (156/156) + 8 new pure/`df`-backed unit tests | GREEN — source-size scaling, POSIX `df` parse (macOS+Linux), gate above/below/unreadable, ancestor walk, `from_env`, and a real `df`-backed refuse/disabled pair; fixed `collapsible_if` (let-chain) + a PATH-spawn test race (spawning tests now hold `env_var_lock()`) |
+| `2026-06-14` | `MEMORY-BOUNDED-INGEST.4c` | full `run_ci.sh` (1611) + kg-bench + 7 new pure/DI unit tests + live 24 GB throwaway-CAN A/B/C | GREEN — RAM-band ladder (None/floor/ceiling clamp + small-ceiling cap), macOS `sysctl` + Linux `MemTotal` parsers, `from_env`, injected-reader `effective_pages`; live: adaptive-on (→64) `diff -r` BYTE-IDENTICAL to `off` (fixed 64); ceiling 32 → 3 batches, same 72p/98 assets (lever works, fidelity intact) |
 
 ## Commit Log
 
@@ -380,6 +442,7 @@ RAM dimension (`.1`/`.2`) + DISK dimension (`.3`) now both delivered.
 | `MEMORY-BOUNDED-INGEST.3` | `MEMORY-BOUNDED-INGEST.3` | disk-footprint bounding — skip persisting per-page PNGs for large docs (generate-in-memory for region crops, skip the disk write); `SPECFORGE_INGEST_SAVE_PAGE_IMAGES` override |
 | `MEMORY-BOUNDED-INGEST.4a` | `MEMORY-BOUNDED-INGEST.4a` | built-in autonomous RAM guard — sample+spawn+poll+kill in `materialize_pdf`; no new dep (`memory_pressure`/`/proc/meminfo`); typed `AppError::IngestAbortedForMemory`; `SPECFORGE_INGEST_RAM_ABORT_PERCENT` (85) / `SPECFORGE_INGEST_RAM_SAMPLE_SECS` (2); +9 tests, lib 1596 |
 | `MEMORY-BOUNDED-INGEST.4b` | `MEMORY-BOUNDED-INGEST.4b` | disk pre-flight before staging — source-size-scaled free-disk gate (base 128 MB + src×4) via no-dep `df -P -k`; typed `AppError::IngestAbortedForDisk`; `SPECFORGE_INGEST_MIN_FREE_DISK_MB` (estimate / floor / off); +8 tests, lib 1604 |
+| `MEMORY-BOUNDED-INGEST.4c` | `MEMORY-BOUNDED-INGEST.4c` | total-RAM-banded adaptive batch sizing — `SPECFORGE_INGEST_BATCH_PAGES` becomes a ceiling, lowered by a jitter-free RAM ladder; no-dep total-RAM readers (`sysctl hw.memsize` / `/proc/meminfo MemTotal`); Rust sets the child env, Python unchanged; `SPECFORGE_INGEST_ADAPTIVE_BATCH` toggle; +7 tests, lib 1611 |
 
 ## Changelog
 
@@ -436,3 +499,23 @@ RAM dimension (`.1`/`.2`) + DISK dimension (`.3`) now both delivered.
   `env_var_lock()`); full `run_ci.sh` green + kg-bench 156/156. Book "Pre-flight disk check" +
   troubleshooting entry; KM card `ingest-disk-preflight`. `.4c` (adaptive batch) / `.5` (summary
   streaming) remain.
+- `2026-06-14`: `.4c` DONE — total-RAM-banded adaptive page-range batch sizing. The fixed 64-page
+  batch (`.1`) is too large for a small machine: a 64-page batch + the Docling models crosses the
+  danger ceiling, so the `.4a` guard kills the ingest every time. `.4c` sizes the batch to the host so
+  a constrained machine COMPLETES (slower, smaller batches) instead of aborting — speed flexes,
+  quality invariant. The signal is TOTAL physical RAM, deliberately NOT free memory: total RAM is a
+  per-machine constant, so the batch (and the run's output) is deterministic per-machine (free memory
+  jitters → non-deterministic boundaries, violating the determinism doctrine); transient pressure
+  stays the `.4a` guard's job. `SPECFORGE_INGEST_BATCH_PAGES` becomes a CEILING that adaptive sizing
+  only lowers via a jitter-free RAM ladder (`>= 16 GB` → ceiling, `8–16 GB` → ≤32, `4–8 GB` → ≤16,
+  `< 4 GB` → floor 8; target ~30 % of RAM per 64-page-batch peak from the `.2` CHI datum). Rust owns
+  the decision (pure `adaptive_batch_pages` + `BatchSizePolicy::from_env` + injected-reader
+  `effective_pages`; no-dep total-RAM readers `sysctl -n hw.memsize` / `/proc/meminfo` `MemTotal`,
+  pure parsers gated `#[cfg(any(target_os, test))]`) and sets the child's `SPECFORGE_INGEST_BATCH_PAGES`
+  — the Docling helper is unchanged. `SPECFORGE_INGEST_ADAPTIVE_BATCH=off` forces the fixed ceiling;
+  unreadable RAM keeps the ceiling. Every `>= 16 GB` host (incl. the 24 GB dev host) lands on the 64
+  ceiling → re-ingests byte-identical (live-proven: adaptive-on vs `off` `diff -r` identical; ceiling
+  32 → 3 batches, same 72p/98 assets). +7 unit tests, lib 1604 → 1611; full `run_ci.sh` green +
+  kg-bench. Book "Sizing the batch to the host" + troubleshooting note; KM card
+  `ingest-adaptive-batch-sizing`. `.5` (summary streaming) remains; a true mid-run shrink (`.4d`) only
+  if a host that degrades mid-run ever proves a real need (the guard backstops it today).

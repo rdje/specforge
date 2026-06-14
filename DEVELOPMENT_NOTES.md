@@ -1,4 +1,45 @@
 # DEVELOPMENT_NOTES
+## `MEMORY-BOUNDED-INGEST.4c` (`2026-06-14`) — total-RAM-banded adaptive page-range batch sizing
+- **Problem:** `.1` batches at a fixed 64 pages. On a small machine a 64-page batch + the Docling
+  layout/table models crosses the danger ceiling, so the `.4a` RAM guard kills the ingest *every*
+  time — patience cannot help. The fix is to make the batch size adaptive to the machine so a
+  constrained host completes (slower), not aborts. Owner directive: speed flexes, quality invariant.
+- **Signal = TOTAL physical RAM, deliberately NOT free memory (the key design call).** Free memory
+  jitters run-to-run; if it drove the batch size, the cross-batch boundary artifacts (the `.1`
+  benign boundary split) would vary run-to-run on the same machine — non-deterministic output, which
+  violates the determinism doctrine the `EVIDENCE-DETERMINISM` tree established (KM
+  `evidence-build-nondeterminism`). Total physical RAM is a per-machine CONSTANT, so the batch is a
+  deterministic function of the machine: same machine → same batch → reproducible re-ingest.
+  Transient pressure from co-tenant processes is left to the `.4a` guard (the hard backstop). A true
+  mid-run shrink (react to pressure *during* a run) is a possible future `.4d`; today the guard
+  backstops that, and total-RAM sizing handles the "restricted environment = small machine" case the
+  owner actually targets.
+- **`SPECFORGE_INGEST_BATCH_PAGES` is now a CEILING** (default 64). Adaptive sizing only ever LOWERS
+  it; an operator who pins it still caps the batch, and `SPECFORGE_INGEST_ADAPTIVE_BATCH=off` forces
+  the fixed ceiling (exact `.1` behavior). Floor = `DEFAULT_INGEST_MIN_BATCH_PAGES` (8), clamped
+  `<=` ceiling so it can never exceed it.
+- **Bands (discrete → jitter-free):** `>= 16 GB` → ceiling, `8–16 GB` → `min(ceiling, 32)`, `4–8 GB`
+  → `min(ceiling, 16)`, `< 4 GB` → floor. Chosen to keep a 64-page-batch peak (~4.8 GB, the `.2` CHI
+  datum) near ~30 % of RAM. Discrete bands (not a continuous `RAM × frac / per-page` formula) avoid
+  implying a precision the ~75 MB/page constant doesn't have, and the band edges (16/8/4 GB) are
+  memorable. Every current verification host (`>= 16 GB`) lands on the ceiling → byte-identical.
+- **Rust owns the decision; Python unchanged.** Pure `adaptive_batch_pages(total_mb, ceiling, floor)`
+  + `BatchSizePolicy { adaptive, ceiling_pages, floor_pages }::from_env()` +
+  `effective_pages(&dyn Fn() -> Option<u64>)` (injected reader = the `.4a` DI pattern). No-dep total-RAM
+  readers: macOS `sysctl -n hw.memsize` → `parse_sysctl_memsize_bytes`; Linux `/proc/meminfo`
+  `MemTotal` → `parse_linux_meminfo_total_mb` (reuses `parse_meminfo_kb`); both pure, gated
+  `#[cfg(any(target_os, test))]` so they unit-test on either platform. `materialize_pdf` computes the
+  effective batch and `.env(INGEST_BATCH_PAGES_ENV, …)` on the child — the helper already reads that
+  env (`batch_pages = max(1, _env_int("SPECFORGE_INGEST_BATCH_PAGES", 64))`), so on a `>= 16 GB` host
+  the child sees the same 64 it would have defaulted to → no behavioral change.
+- **`None` (unreadable RAM) → ceiling** (permissive — never worse than today on missing data), mirroring
+  the `.4a`/`.4b` "stay inert on missing data" rule.
+- **Verification:** +7 unit tests; live on the 24 GB dev host with a throwaway forced-large CAN copy:
+  adaptive-on (→64) `diff -r` BYTE-IDENTICAL to adaptive-off (fixed 64); ceiling 32 → 3 batches,
+  same 72 pages / 98 region assets (lever works end-to-end, fidelity intact). Throwaway removed.
+  Full `run_ci.sh` green + kg-bench. The 3 stub-helper ingest tests pin
+  `SPECFORGE_INGEST_ADAPTIVE_BATCH=off` for hot-CI determinism parity with the `.4a`/`.4b` guards.
+
 ## `MEMORY-BOUNDED-INGEST.4b` (`2026-06-14`) — disk pre-flight before `materialize_pdf` staging
 - The pre-flight's RAM dimension is already `.4a` (pre-spawn memory sample). `.4b` adds the DISK
   dimension and nothing else, to avoid duplicating the RAM check.

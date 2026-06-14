@@ -67,6 +67,25 @@ bundle. CI also surfaced a latent test concurrency bug (PATH-lookup spawns racin
 `inspect_docling_runtime` `PATH=""` tests) now fixed by holding `env_var_lock()` in the spawning tests.
 Verified by full `run_ci.sh` (lib 1596 → **1604**, +8 tests) + kg-bench 156/156.
 
+`MEMORY-BOUNDED-INGEST.4c` made the page-range batch size adaptive to the host. `materialize_pdf`
+now resolves an effective batch via `BatchSizePolicy::from_env().effective_pages(&current_total_memory_mb)`
+and sets it on the child's `SPECFORGE_INGEST_BATCH_PAGES` env (the Docling helper already reads it, so
+the Python side is unchanged — Rust is the single decision point). The decision is a pure, deterministic
+function of **total physical RAM** (a per-machine constant — deliberately not free memory, which would
+jitter the batch boundaries and break the determinism doctrine): `adaptive_batch_pages(total_mb,
+ceiling, floor)` clamps a discrete RAM-band ladder (`>= 16 GB` → ceiling, `8–16 GB` → ≤32, `4–8 GB` →
+≤16, `< 4 GB` → floor 8) into `[floor, ceiling]`. `SPECFORGE_INGEST_BATCH_PAGES` is reinterpreted as a
+ceiling (Rust now reads it too, via `parse_batch_pages_ceiling`); `SPECFORGE_INGEST_ADAPTIVE_BATCH`
+(`parse_adaptive_batch_enabled`) forces the fixed ceiling. Total RAM is read with no new dependency
+(`sysctl -n hw.memsize` on macOS, `/proc/meminfo` `MemTotal` on Linux; pure parsers
+`parse_sysctl_memsize_bytes` / `parse_linux_meminfo_total_mb` gated `#[cfg(any(target_os, test))]`), and
+the reader is injected (`&dyn Fn() -> Option<u64>`) for host-safe DI tests — mirroring `.4a`. No new
+error surface (sizing never errors — the `.4a` guard remains the hard backstop). **Architecture note:**
+this is the second Rust-side ingest change in the tree; `>= 16 GB` hosts resolve the unchanged 64
+ceiling so all gold/intact docs stay byte-identical, while a small machine completes at a smaller batch
+(speed flexes, quality invariant). Verified by full `run_ci.sh` (lib 1604 → **1611**, +7 tests) +
+kg-bench, and live-proven byte-identity (adaptive-on vs `off`) on the 24 GB dev host.
+
 ## Session update (2026-06-14 — prior-memory UTF-8 OOM blocker fixed; lib 1587)
 
 `PDF-VARIANT-DIGESTION.13b.1` fixed a latent correctness/OOM defect in

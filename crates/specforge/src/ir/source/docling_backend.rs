@@ -45,6 +45,29 @@ const DEFAULT_INGEST_DISK_SIZE_MULTIPLIER: u64 = 4;
 /// memory-sample interval) so a fast ingest is noticed promptly while memory is sampled only every
 /// `INGEST_RAM_SAMPLE_SECS`.
 const RAM_GUARD_POLL_INTERVAL: Duration = Duration::from_millis(50);
+
+/// Page-range batch size CEILING (MEMORY-BOUNDED-INGEST.1/.4c). Adaptive sizing (`.4c`) only ever
+/// LOWERS this on a small machine; the Docling helper reads the same env, and `materialize_pdf` sets
+/// the child's value to the resolved effective size. Kept in sync with the Python helper default.
+const INGEST_BATCH_PAGES_ENV: &str = "SPECFORGE_INGEST_BATCH_PAGES";
+const DEFAULT_INGEST_BATCH_PAGES: usize = 64;
+/// Whether ingest auto-sizes the batch down to the host's TOTAL physical RAM (default on). Set
+/// `off`/`none`/`disabled` to force the fixed ceiling (the exact `.1` behavior). Total RAM is a
+/// per-machine constant, so the chosen batch — and the run's output — stays deterministic
+/// per-machine (free memory would jitter run-to-run; see the `evidence-build-nondeterminism` KM
+/// card), while transient pressure stays the `.4a` RAM guard's job.
+const INGEST_ADAPTIVE_BATCH_ENV: &str = "SPECFORGE_INGEST_ADAPTIVE_BATCH";
+/// Floor below which adaptive sizing never shrinks the batch (clamped to `<=` the ceiling).
+const DEFAULT_INGEST_MIN_BATCH_PAGES: usize = 8;
+/// Total-RAM bands (MB) for adaptive batch sizing: at/above the full band the ceiling is used; the
+/// mid/low bands cap the batch at progressively smaller sizes so a 64-page-batch peak (~4.8 GB, the
+/// `.2` CHI datum) stays near ~30 % of RAM; below the low band the floor is used.
+const ADAPTIVE_BATCH_FULL_CEILING_MIN_MB: u64 = 16 * 1024;
+const ADAPTIVE_BATCH_MID_MIN_MB: u64 = 8 * 1024;
+const ADAPTIVE_BATCH_LOW_MIN_MB: u64 = 4 * 1024;
+const ADAPTIVE_BATCH_MID_PAGES: usize = 32;
+const ADAPTIVE_BATCH_LOW_PAGES: usize = 16;
+
 const PATH_PYTHON_CANDIDATES: &[&str] = &[
     "python3.11",
     "python3.12",
@@ -1249,6 +1272,136 @@ fn parse_meminfo_kb(rest: &str) -> Option<f64> {
     rest.split_whitespace().next()?.parse::<f64>().ok()
 }
 
+/// Read the host's TOTAL physical RAM (MB) via the platform's own tool — no new dependency, matching
+/// the `.4a` reader's philosophy. `None` on an unsupported OS or a failed read, in which case
+/// adaptive batch sizing keeps the ceiling (behave exactly as today on missing data).
+fn current_total_memory_mb() -> Option<u64> {
+    #[cfg(target_os = "macos")]
+    {
+        read_macos_total_memory_mb()
+    }
+    #[cfg(target_os = "linux")]
+    {
+        read_linux_total_memory_mb()
+    }
+    #[cfg(not(any(target_os = "macos", target_os = "linux")))]
+    {
+        None
+    }
+}
+
+#[cfg(target_os = "macos")]
+fn read_macos_total_memory_mb() -> Option<u64> {
+    let output = Command::new("sysctl")
+        .arg("-n")
+        .arg("hw.memsize")
+        .output()
+        .ok()?;
+    if !output.status.success() {
+        return None;
+    }
+    parse_sysctl_memsize_bytes(&String::from_utf8_lossy(&output.stdout))
+}
+
+/// Parse `sysctl -n hw.memsize` output (total physical memory in bytes) into MB.
+#[cfg(any(target_os = "macos", test))]
+fn parse_sysctl_memsize_bytes(text: &str) -> Option<u64> {
+    let bytes = text.trim().parse::<u64>().ok()?;
+    Some(bytes / (1024 * 1024))
+}
+
+#[cfg(target_os = "linux")]
+fn read_linux_total_memory_mb() -> Option<u64> {
+    parse_linux_meminfo_total_mb(&fs::read_to_string("/proc/meminfo").ok()?)
+}
+
+/// Parse `/proc/meminfo` `MemTotal:` (kB) into MB.
+#[cfg(any(target_os = "linux", test))]
+fn parse_linux_meminfo_total_mb(text: &str) -> Option<u64> {
+    for line in text.lines() {
+        if let Some(rest) = line.strip_prefix("MemTotal:") {
+            return parse_meminfo_kb(rest).map(|kb| (kb / 1024.0) as u64);
+        }
+    }
+    None
+}
+
+/// Parse the adaptive-batch toggle: absent/empty/garbage -> enabled (a typo never silently disables
+/// the safeguard); `off`/`none`/`disabled`/`disable` -> disabled.
+fn parse_adaptive_batch_enabled(raw: Option<&str>) -> bool {
+    !matches!(
+        raw.map(|value| value.trim().to_ascii_lowercase())
+            .as_deref(),
+        Some("off" | "none" | "disabled" | "disable")
+    )
+}
+
+/// Parse the batch-pages ceiling, defaulting to 64 and requiring `>= 1` (an absent/garbage/zero
+/// value yields the historical default), so the ceiling is always a usable batch size.
+fn parse_batch_pages_ceiling(raw: Option<&str>) -> usize {
+    raw.and_then(|value| value.trim().parse::<usize>().ok())
+        .filter(|pages| *pages >= 1)
+        .unwrap_or(DEFAULT_INGEST_BATCH_PAGES)
+}
+
+/// Resolve the effective page-range batch size from the host's TOTAL physical RAM. Total RAM is a
+/// per-machine constant (unlike free memory, which jitters run-to-run and would make cross-batch
+/// boundary artifacts non-deterministic — see the `evidence-build-nondeterminism` KM card), so the
+/// SAME machine always resolves the SAME batch and re-ingest stays reproducible. Discrete bands keep
+/// a 64-page-batch peak (~4.8 GB, the `.2` CHI datum) near ~30 % of RAM. `total_mb == None`
+/// (unreadable) -> ceiling, so a host whose RAM cannot be read behaves exactly as today.
+fn adaptive_batch_pages(total_mb: Option<u64>, ceiling: usize, floor: usize) -> usize {
+    let ceiling = ceiling.max(1);
+    let floor = floor.clamp(1, ceiling);
+    let Some(total_mb) = total_mb else {
+        return ceiling;
+    };
+    let banded = if total_mb >= ADAPTIVE_BATCH_FULL_CEILING_MIN_MB {
+        ceiling
+    } else if total_mb >= ADAPTIVE_BATCH_MID_MIN_MB {
+        ADAPTIVE_BATCH_MID_PAGES
+    } else if total_mb >= ADAPTIVE_BATCH_LOW_MIN_MB {
+        ADAPTIVE_BATCH_LOW_PAGES
+    } else {
+        floor
+    };
+    banded.clamp(floor, ceiling)
+}
+
+/// Resolves the page-range batch size handed to the Docling subprocess before launch.
+#[derive(Debug, Clone, Copy)]
+struct BatchSizePolicy {
+    /// Whether to auto-size the batch down to the host's total RAM (off -> fixed ceiling).
+    adaptive: bool,
+    /// Upper bound on the batch size (also the value used when adaptive is off / RAM unreadable).
+    ceiling_pages: usize,
+    /// Lower bound adaptive sizing never shrinks below (clamped to `<=` the ceiling).
+    floor_pages: usize,
+}
+
+impl BatchSizePolicy {
+    fn from_env() -> Self {
+        Self {
+            adaptive: parse_adaptive_batch_enabled(
+                env::var(INGEST_ADAPTIVE_BATCH_ENV).ok().as_deref(),
+            ),
+            ceiling_pages: parse_batch_pages_ceiling(
+                env::var(INGEST_BATCH_PAGES_ENV).ok().as_deref(),
+            ),
+            floor_pages: DEFAULT_INGEST_MIN_BATCH_PAGES,
+        }
+    }
+
+    /// The batch size to hand the Docling helper: the ceiling when adaptive is off, else the
+    /// total-RAM-banded size from `total_mb_fn` (injected so tests need no real hardware).
+    fn effective_pages(self, total_mb_fn: &dyn Fn() -> Option<u64>) -> usize {
+        if !self.adaptive {
+            return self.ceiling_pages.max(1);
+        }
+        adaptive_batch_pages(total_mb_fn(), self.ceiling_pages, self.floor_pages)
+    }
+}
+
 /// Run the backend command under the RAM guard: sample memory once before spawning (don't even
 /// launch a heavy ingest if the host is already in danger), then poll the child while sampling
 /// memory on the configured cadence, killing the child and returning a typed error on breach.
@@ -1521,6 +1674,16 @@ pub fn materialize_pdf(
         .arg(&summary_output_path)
         .arg("--document-key")
         .arg(document_key);
+
+    // Size the page-range batch to the host (MEMORY-BOUNDED-INGEST.4c). On a small machine the fixed
+    // 64-page batch can be too large to convert under the RAM guard, so adaptive sizing lowers it
+    // deterministically off TOTAL physical RAM and the child uses that value (the Python helper
+    // already reads SPECFORGE_INGEST_BATCH_PAGES, so setting it on the child is the whole wiring). A
+    // >= 16 GB host resolves the unchanged 64 ceiling, so its normalized bundle stays byte-identical.
+    let batch_pages = BatchSizePolicy::from_env().effective_pages(&current_total_memory_mb);
+    backend_command
+        .command
+        .env(INGEST_BATCH_PAGES_ENV, batch_pages.to_string());
 
     let guard = RamGuardConfig::from_env();
     let status = run_backend_with_ram_guard(
@@ -1852,14 +2015,17 @@ mod tests {
     use tempfile::tempdir;
 
     use super::{
-        DOCLING_PYTHON_ENV, DiskPreflightRequirement, DoclingRuntimeCandidateStatus,
-        DoclingRuntimeSource, INGEST_MIN_FREE_DISK_MB_ENV, INGEST_RAM_ABORT_PERCENT_ENV,
-        INGEST_RAM_SAMPLE_SECS_ENV, RamGuardConfig, check_disk_preflight,
+        BatchSizePolicy, DOCLING_PYTHON_ENV, DiskPreflightRequirement,
+        DoclingRuntimeCandidateStatus, DoclingRuntimeSource, INGEST_ADAPTIVE_BATCH_ENV,
+        INGEST_BATCH_PAGES_ENV, INGEST_MIN_FREE_DISK_MB_ENV, INGEST_RAM_ABORT_PERCENT_ENV,
+        INGEST_RAM_SAMPLE_SECS_ENV, RamGuardConfig, adaptive_batch_pages, check_disk_preflight,
         estimate_required_disk_mb, inspect_docling_runtime, nearest_existing_ancestor,
-        parse_df_available_kb, parse_disk_preflight_requirement, parse_leading_number,
+        parse_adaptive_batch_enabled, parse_batch_pages_ceiling, parse_df_available_kb,
+        parse_disk_preflight_requirement, parse_leading_number, parse_linux_meminfo_total_mb,
         parse_linux_meminfo_used_percent, parse_macos_memory_pressure_used_percent,
-        parse_meminfo_kb, parse_ram_abort_percent, parse_ram_sample_secs, preflight_ingest_disk,
-        run_backend_with_ram_guard, should_abort_for_memory,
+        parse_meminfo_kb, parse_ram_abort_percent, parse_ram_sample_secs,
+        parse_sysctl_memsize_bytes, preflight_ingest_disk, run_backend_with_ram_guard,
+        should_abort_for_memory,
     };
     use crate::error::{AppError, Result};
     use crate::test_support::env_var_lock;
@@ -2121,6 +2287,107 @@ printf '{"ready": false, "python_version": "3.14.0", "error": "ModuleNotFoundErr
             let config = RamGuardConfig::from_env();
             assert_eq!(config.ceiling_percent, Some(85.0));
         }
+    }
+
+    #[test]
+    fn parse_adaptive_batch_enabled_defaults_on_and_honors_disable() {
+        // Absent / empty / unknown -> enabled (a typo never silently disables the safeguard).
+        assert!(parse_adaptive_batch_enabled(None));
+        assert!(parse_adaptive_batch_enabled(Some("")));
+        assert!(parse_adaptive_batch_enabled(Some("on")));
+        assert!(parse_adaptive_batch_enabled(Some("garbage")));
+        // Explicit disable spellings (case/space-insensitive).
+        assert!(!parse_adaptive_batch_enabled(Some("off")));
+        assert!(!parse_adaptive_batch_enabled(Some("  NONE ")));
+        assert!(!parse_adaptive_batch_enabled(Some("disabled")));
+        assert!(!parse_adaptive_batch_enabled(Some("disable")));
+    }
+
+    #[test]
+    fn parse_batch_pages_ceiling_defaults_and_floors() {
+        assert_eq!(parse_batch_pages_ceiling(None), 64);
+        assert_eq!(parse_batch_pages_ceiling(Some("")), 64);
+        assert_eq!(parse_batch_pages_ceiling(Some("garbage")), 64);
+        assert_eq!(parse_batch_pages_ceiling(Some("0")), 64);
+        assert_eq!(parse_batch_pages_ceiling(Some("  32 ")), 32);
+        assert_eq!(parse_batch_pages_ceiling(Some("128")), 128);
+    }
+
+    #[test]
+    fn adaptive_batch_pages_bands_by_total_ram() {
+        // Unreadable RAM keeps the ceiling (permissive — behave as today).
+        assert_eq!(adaptive_batch_pages(None, 64, 8), 64);
+        // >= 16 GB -> ceiling (the verified path; re-ingest byte-identical).
+        assert_eq!(adaptive_batch_pages(Some(24 * 1024), 64, 8), 64);
+        assert_eq!(adaptive_batch_pages(Some(16 * 1024), 64, 8), 64);
+        // 8-16 GB -> 32; 4-8 GB -> 16; < 4 GB -> floor.
+        assert_eq!(adaptive_batch_pages(Some(12 * 1024), 64, 8), 32);
+        assert_eq!(adaptive_batch_pages(Some(6 * 1024), 64, 8), 16);
+        assert_eq!(adaptive_batch_pages(Some(2 * 1024), 64, 8), 8);
+        // A small ceiling caps every band (operator pinned a smaller batch).
+        assert_eq!(adaptive_batch_pages(Some(24 * 1024), 16, 8), 16);
+        assert_eq!(adaptive_batch_pages(Some(12 * 1024), 16, 8), 16);
+        // Floor is clamped to the ceiling so it can never exceed it.
+        assert_eq!(adaptive_batch_pages(Some(3 * 1024), 4, 8), 4);
+    }
+
+    #[test]
+    fn parse_sysctl_memsize_bytes_reads_total_mb() {
+        // 24 GiB and 16 GiB in bytes.
+        assert_eq!(parse_sysctl_memsize_bytes("25769803776\n"), Some(24 * 1024));
+        assert_eq!(
+            parse_sysctl_memsize_bytes("  17179869184 "),
+            Some(16 * 1024)
+        );
+        assert_eq!(parse_sysctl_memsize_bytes("not-a-number"), None);
+    }
+
+    #[test]
+    fn parse_linux_meminfo_total_mb_reads_total() {
+        let meminfo =
+            "MemTotal:       16384000 kB\nMemFree:          1000 kB\nMemAvailable: 8000000 kB\n";
+        // 16384000 kB / 1024 = 16000 MB.
+        assert_eq!(parse_linux_meminfo_total_mb(meminfo), Some(16000));
+        assert_eq!(parse_linux_meminfo_total_mb("MemFree: 100 kB\n"), None);
+    }
+
+    #[test]
+    fn batch_size_policy_reads_env() {
+        let _env_lock = env_var_lock();
+        {
+            let _adaptive = EnvVarGuard::unset(INGEST_ADAPTIVE_BATCH_ENV);
+            let _ceiling = EnvVarGuard::set_path(INGEST_BATCH_PAGES_ENV, Path::new("48"));
+            let policy = BatchSizePolicy::from_env();
+            assert!(policy.adaptive);
+            assert_eq!(policy.ceiling_pages, 48);
+        }
+        {
+            let _adaptive = EnvVarGuard::set_path(INGEST_ADAPTIVE_BATCH_ENV, Path::new("off"));
+            let _ceiling = EnvVarGuard::unset(INGEST_BATCH_PAGES_ENV);
+            let policy = BatchSizePolicy::from_env();
+            assert!(!policy.adaptive);
+            assert_eq!(policy.ceiling_pages, 64);
+        }
+    }
+
+    #[test]
+    fn batch_size_policy_effective_pages_uses_injected_reader() {
+        // Adaptive on: ample RAM -> ceiling; small RAM -> smaller; unreadable -> ceiling.
+        let ample = BatchSizePolicy {
+            adaptive: true,
+            ceiling_pages: 64,
+            floor_pages: 8,
+        };
+        assert_eq!(ample.effective_pages(&|| Some(24u64 * 1024)), 64);
+        assert_eq!(ample.effective_pages(&|| Some(6u64 * 1024)), 16);
+        assert_eq!(ample.effective_pages(&|| None), 64);
+        // Adaptive off: always the ceiling regardless of RAM.
+        let fixed = BatchSizePolicy {
+            adaptive: false,
+            ceiling_pages: 64,
+            floor_pages: 8,
+        };
+        assert_eq!(fixed.effective_pages(&|| Some(2u64 * 1024)), 64);
     }
 
     #[cfg(unix)]

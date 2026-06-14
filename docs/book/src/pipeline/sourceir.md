@@ -97,14 +97,55 @@ Two environment variables tune this (defaults are chosen so every normal documen
 single-pass path):
 
 - `SPECFORGE_INGEST_BATCH_THRESHOLD` — page count above which batching activates (default `512`).
-- `SPECFORGE_INGEST_BATCH_PAGES` — pages per batch when batching (default `64`). Smaller batches
-  use less peak memory and run slower; on a very memory-constrained host, lower this.
+- `SPECFORGE_INGEST_BATCH_PAGES` — the **ceiling** on pages per batch when batching (default `64`).
+  Smaller batches use less peak memory and run slower; adaptive sizing (see *Sizing the batch to the
+  host* below) may lower the actual batch beneath this on a small machine, and you can lower the
+  ceiling yourself on a constrained host.
 
 What does *not* change with batching: the document profile, structured tables, content elements,
 sections, and figure/table images are the same complete, full-resolution capture you would get
 from a single pass. The only observable difference is that a running page-header that Docling
 happens to merge across a page boundary in single-pass mode may appear as two separate boilerplate
 elements — never a loss of signals, tables, or intent.
+
+## Sizing the batch to the host
+
+The batch size above has a sensible default (64 pages) tuned for a typical workstation — but the
+*right* batch for a 4 GB container is not the right batch for a 32 GB server. A batch that is too
+large for a small machine would push it past the memory safeguard's ceiling and the ingest would be
+aborted every time, no matter how patient you are. So SpecForge **sizes each batch to the machine it
+is running on**, automatically.
+
+The signal it uses is the host's **total physical RAM** — deliberately *not* the momentary free
+memory. Total RAM is a fixed property of the machine, so the chosen batch size is the same on every
+run: the *same machine always ingests the same way*, which keeps results reproducible. (Reacting to
+moment-to-moment free memory would make the batching — and so the exact output at batch boundaries —
+wobble from run to run; transient pressure from other programs is instead handled by the memory
+safeguard above.)
+
+The sizing is a simple, conservative ladder, chosen to keep a batch's peak memory near a safe
+fraction of RAM:
+
+- **≥ 16 GB** — the full ceiling (64 by default). Every normal workstation and server lands here, so
+  its ingest is **byte-for-byte identical** to before.
+- **8–16 GB** — at most 32 pages per batch.
+- **4–8 GB** — at most 16 pages per batch.
+- **< 4 GB** — a floor of 8 pages per batch.
+
+On a small machine the ingest therefore *completes* — slower, in more and smaller batches — where a
+fixed large batch would have been aborted. This is the project's standing rule made concrete:
+**speed flexes, quality does not.** Every page is still converted at full fidelity; only the working
+batch shrinks. (As with single-pass vs. batched, a smaller batch can place a benign boilerplate
+boundary slightly differently — never a loss of signals, tables, or intent. A machine large enough
+for the full batch has no such difference at all.)
+
+One environment variable controls it:
+
+- `SPECFORGE_INGEST_ADAPTIVE_BATCH` — on by default; set it to `off` (or `none`/`disabled`) to force
+  the fixed `SPECFORGE_INGEST_BATCH_PAGES` ceiling regardless of host RAM (the original behavior).
+
+If SpecForge cannot read the host's total RAM for any reason, it keeps the ceiling — never making a
+run *worse* on missing information.
 
 ## Bounded disk footprint of very large PDFs
 

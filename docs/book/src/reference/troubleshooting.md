@@ -77,7 +77,10 @@ Nothing was lost: the new bundle is staged and only swapped in on success, so yo
 
 For very large PDFs, lowering `SPECFORGE_INGEST_BATCH_PAGES` (smaller batches use less peak memory)
 is usually the better fix than raising the ceiling — it keeps the safeguard on while still letting
-the document finish, just more slowly.
+the document finish, just more slowly. SpecForge already does this for you automatically, sizing the
+batch down on machines with less total RAM (see *Sizing the batch to the host* in the SourceIR
+chapter); lowering the ceiling pushes it smaller still. If you ever need to pin the batch regardless
+of host RAM, set `SPECFORGE_INGEST_ADAPTIVE_BATCH=off`.
 
 ## `ingest` stops with "ingest aborted before launching" (not enough disk)
 

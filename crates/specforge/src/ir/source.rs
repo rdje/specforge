@@ -1367,6 +1367,10 @@ EOF
         // false-abort the stub-helper ingest (MEMORY-BOUNDED-INGEST.4b).
         let _disk_guard =
             EnvVarGuard::set_path("SPECFORGE_INGEST_MIN_FREE_DISK_MB", Path::new("off"));
+        // Pin adaptive batch sizing off so the child's batch-pages env is a fixed value regardless of
+        // the CI host's total RAM (MEMORY-BOUNDED-INGEST.4c); the stub helper ignores it either way.
+        let _batch_guard =
+            EnvVarGuard::set_path("SPECFORGE_INGEST_ADAPTIVE_BATCH", Path::new("off"));
         let mut source_ir = SourceIr::build(&source, &artifact_base)?;
 
         source_ir.materialize()?;
@@ -1532,6 +1536,10 @@ EOF
         // false-abort the stub-helper ingest (MEMORY-BOUNDED-INGEST.4b).
         let _disk_guard =
             EnvVarGuard::set_path("SPECFORGE_INGEST_MIN_FREE_DISK_MB", Path::new("off"));
+        // Pin adaptive batch sizing off so the child's batch-pages env is a fixed value regardless of
+        // the CI host's total RAM (MEMORY-BOUNDED-INGEST.4c); the stub helper ignores it either way.
+        let _batch_guard =
+            EnvVarGuard::set_path("SPECFORGE_INGEST_ADAPTIVE_BATCH", Path::new("off"));
         let mut source_ir = SourceIr::build(&source, &artifact_base)?;
         source_ir.materialize()?;
         source_ir.write_to_disk()?;
@@ -1584,6 +1592,10 @@ exit 7
         // false-abort the stub-helper ingest (MEMORY-BOUNDED-INGEST.4b).
         let _disk_guard =
             EnvVarGuard::set_path("SPECFORGE_INGEST_MIN_FREE_DISK_MB", Path::new("off"));
+        // Pin adaptive batch sizing off so the child's batch-pages env is a fixed value regardless of
+        // the CI host's total RAM (MEMORY-BOUNDED-INGEST.4c); the stub helper ignores it either way.
+        let _batch_guard =
+            EnvVarGuard::set_path("SPECFORGE_INGEST_ADAPTIVE_BATCH", Path::new("off"));
         let mut source_ir = SourceIr::build(&source, &artifact_base)?;
         let error = source_ir
             .materialize()
