@@ -1,3 +1,26 @@
+### `PDF-VARIANT-DIGESTION.13b` — ACE measurement completes the 4-doc AMBA-matrix sweep on canonical artifacts
+With `.13b.1` unblocking it, ACE (`ihi0022_h_c…`) was re-measured this session, completing the
+`.13b` leaf (APB_d / ATB / LTI had landed pre-crash). The fresh `evidence` rebuild completes at
+52.3 MB max RSS (no OOM) and materializes the `.12b` / `.12a` surfaces on the canonical ACE
+artifact for the first time:
+- **201 `signal_presence_records`** on exactly tables 0271/0272/0273/0274/0276/0277/0278/0279
+  (0275 honestly refused — the garble class), 59 property-conditioned.
+- **+9 wires minted via the `.12a` header-trapped gap-fill, per-item-verified widths:** AWBAR 2,
+  AWDOMAIN 2, AWSNOOP 4, CRRESP 5, CDDATA V, BROADCASTATOMIC / BROADCASTCACHEMAINT /
+  BROADCASTINNER / BROADCASTOUTER 1 (CRRESPCHK 1 / CDDATACHK DATA_WIDTH/8 already existed).
+- `validate`: `document_class: protocol` / declared `specification`; **`unexplained_intent_bearing_tables`
+  35 → 30** on the freshly materialized surface; the signal-presence inventory finding fires
+  (201 rows / 201 signals / 59 conditioned / 6 variant labels); the manifest fires
+  `signal_presence.matrix_table`.
+- **Gauge re-measured live** (`nli-verify --vlm-provider ollama --model qwen2.5:14b-instruct`):
+  **78/97 not-entailed (80.4%), 19 entailed, 0 abstained** — consistent with the standing
+  pre-`.12b` 76/94 (~80%; ACE is a dense coherency-extension Pattern surface, majority-flagged),
+  re-persisted on canonical.
+
+This is a measurement slice: `generated/` is untracked, and the presence / gap-fill code shipped
+in `.12a` / `.12b`, so the commit records the ACE results in the task tree and live docs only —
+no code change. Frontier advances to `.13c` (CHI) and `.13d` (CCIX ×4 + AMD).
+
 ### `PDF-VARIANT-DIGESTION.13b.1` — blocker fix: UTF-8 byte-as-char mangling in prior-phrase normalization (the ACE evidence-build OOM)
 The `.13b` ACE evidence rebuild was jetsam-SIGKILLed (17.2 GB max RSS, 419 s, exit 137).
 Root cause, measured per-item with a throwaway instrumented probe: `replace_term_with_placeholder`

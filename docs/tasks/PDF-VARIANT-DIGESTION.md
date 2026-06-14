@@ -1342,14 +1342,26 @@ untouched by this sweep. Slices:
   `arm/amba/core/apb/legacy/`, `cxl/ccix/current/`, `amd/system-ip/iommu/current/`) +
   `SOURCE_PDF_REGISTRY.md` rows. Filenames kept verbatim so the derived `document_key`s
   match the persisted artifacts exactly (verified per-item for all 10 before import).
-- `.13b` · `in_progress` · the 4 AMBA matrix docs (ACE/LTI/ATB/APB_d): re-ingest + evidence
+- `.13b` · `done` · the 4 AMBA matrix docs (ACE/LTI/ATB/APB_d): re-ingest + evidence
   rebuild + measure — presence records mint on canonical, the ACE +9 wires mint via the
   `.12a` gap-fill (per-item width verification against the probe record), accounting
   deltas recorded, ACE/LTI/APB_d gauges re-measured live. APB_d/ATB/LTI landed pre-crash
   (session `2026-06-11d`, artifacts re-verified per-item post-crash); ACE was blocked by
-  `.13b.1` — now **UNBLOCKED** (`.13b.1` fixed the OOM; ACE evidence completes in 21 s /
-  56 MB), so the ACE measurement slice (accounting deltas / +9 gap-fill wires / presence
-  records / gauge re-measure) is next.
+  `.13b.1` — fixed, then measured this session.
+  **ACE DONE (`2026-06-14`):** fresh `evidence` rebuild completes (52.3 MB max RSS, no OOM).
+  **201 `signal_presence_records`** on exactly tables 0271/0272/0273/0274/0276/0277/0278/0279
+  (0275 honestly refused — the garble class), 59 property-conditioned. **+9 wires minted via
+  the `.12a` gap-fill, per-item-verified widths:** AWBAR w2, AWDOMAIN w2, AWSNOOP w4, CRRESP w5,
+  CDDATA wV, BROADCASTATOMIC/BROADCASTCACHEMAINT/BROADCASTINNER/BROADCASTOUTER w1 (CRRESPCHK w1
+  / CDDATACHK w DATA_WIDTH/8 already existed). `validate`: `document_class: protocol` /
+  declared `specification`; **`unexplained_intent_bearing_tables` 35 → 30** on the freshly
+  materialized canonical surface; signal-presence inventory finding fires (201 rows / 201 signals
+  / 59 conditioned / 6 variant labels); manifest fires `signal_presence.matrix_table`. **Gauge
+  re-measured live** (`nli-verify --vlm-provider ollama --model qwen2.5:14b-instruct`):
+  **78/97 not-entailed (80.4%), 19 entailed, 0 abstained** — consistent with the standing
+  pre-`.12b` 76/94 (~80%; ACE is a dense coherency-extension Pattern surface, majority-flagged),
+  re-persisted on canonical. `generated/` is untracked, so this slice commits the recorded
+  measurements only (the presence + gap-fill code shipped in `.12a`/`.12b`).
 - `.13b.1` · `done` · BLOCKER fix (surfaced resuming `.13b` after the host crash):
   the ACE evidence rebuild is jetsam-SIGKILLed (17.2 GB max RSS / 80.3 GB peak footprint,
   419 s, exit 137 on a 24 GB host). Root cause measured per-item with a throwaway
@@ -1728,6 +1740,16 @@ set, not the whole doc/corpus.
 
 ## Verification log
 
+- `.13b` (`2026-06-14`, ACE measurement — completes the 4-doc leaf): fresh `evidence` rebuild
+  of ACE (`ihi0022_h_c…`) completes at 52.3 MB max RSS (no OOM). **201 `signal_presence_records`**
+  on tables 0271–0274 / 0276–0279 (0275 refused), 59 conditioned. **+9 gap-fill wires** minted
+  with per-item-verified widths (AWBAR 2, AWDOMAIN 2, AWSNOOP 4, CRRESP 5, CDDATA V, 4×BROADCAST*
+  1). `validate`: `unexplained_intent_bearing_tables` 35→30, `document_class: protocol` / declared
+  `specification`, presence inventory finding fires, manifest fires `signal_presence.matrix_table`.
+  **Gauge re-measured live** (qwen2.5:14b-instruct): 78/97 not-entailed (80.4%) / 19 entailed / 0
+  abstained — consistent with the standing 76/94. APB_d/ATB/LTI were done+verified pre-crash;
+  ACE was gated by `.13b.1` (fixed this session). Measurement-only slice (`generated/` untracked;
+  no code change). Commit subject: `PDF-VARIANT-DIGESTION.13b`.
 - `.13b.1` (`2026-06-14`, BLOCKER fix): char-correct UTF-8 copy in
   `replace_term_with_placeholder` (`crates/specforge/src/ir/prior_memory.rs`) replacing the
   `bytes[index] as char` per-byte copy that mangled non-ASCII into mojibake and, chained one
@@ -1914,6 +1936,12 @@ set, not the whole doc/corpus.
 
 ## Changelog
 
+- `2026-06-14`: `.13b` (4 AMBA matrix docs) DONE — ACE measurement completed the leaf. ACE
+  evidence rebuilt (52.3 MB, no OOM): 201 signal_presence_records on 0271–0274/0276–0279 (0275
+  refused, 59 conditioned); +9 gap-fill wires minted with verified widths; unexplained tables
+  35→30; gauge re-measured 78/97 not-entailed (qwen2.5:14b-instruct). APB_d/ATB/LTI were done
+  pre-crash. Measurement-only (no code; `generated/` untracked). Commit subject:
+  `PDF-VARIANT-DIGESTION.13b`.
 - `2026-06-14`: `.13b.1` (BLOCKER fix) DONE. `replace_term_with_placeholder`
   (`crates/specforge/src/ir/prior_memory.rs`) now copies one whole UTF-8 char in its `else`
   arm instead of `bytes[index] as char`; the old per-byte copy mangled non-ASCII into
