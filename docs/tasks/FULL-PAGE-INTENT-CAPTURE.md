@@ -66,7 +66,7 @@ BEFORE coding" method (`PDF-VARIANT-DIGESTION.9.x`).
   Children: `.1` (probe), `.2` (mechanism design — gated on `.1`)
 
 - ID: `FULL-PAGE-INTENT-CAPTURE.1`
-  Status: `pending`
+  Status: `in_progress`
   Goal: **probe-first gap measurement (NO code change to the pipeline).** Over the persisted
   `generated/source_ir/*` corpus, measure per-document how much page content is captured by NEITHER
   the structured text/table/section elements NOR the figure/table region crops. Candidate signals
@@ -100,11 +100,25 @@ BEFORE coding" method (`PDF-VARIANT-DIGESTION.9.x`).
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `FULL-PAGE-INTENT-CAPTURE.1` | `pending` | **NEXT** — measure the gap on the persisted corpus before deciding to build anything (probe-first, no code) |
+| 1 | `FULL-PAGE-INTENT-CAPTURE.1` | `in_progress` | **ACTIVE** — recon done (no bboxes in persisted summary → two-stage method decided); next = run the count/density proxy corpus-wide, then bbox-area + eyeball on the flagged subset → GO/NO-GO report |
 | 2 | `FULL-PAGE-INTENT-CAPTURE.2` | `proposed` | mechanism design, GATED on a `.1` GO |
 
 ## Decisions
 
+- `2026-06-14` (`.1` recon): **The persisted SourceIR summary carries NO bounding boxes** — its
+  `page_artifacts` (page_id/number/dims), `visual_assets` (kind/page_id/caption/diagram_kind),
+  `content_elements` (kind/text/page_id/reading_order), and `structured_tables` records expose only
+  counts, page-ids, and reading order; no element/region coordinates. So true page-*area* coverage is
+  NOT computable from the persisted summary alone. The Docling raw `*.backend.json` (`export_to_dict`)
+  DOES retain element `prov` bounding boxes, but those files are large (CHI's normalized bundle was
+  528 MB), so a blind corpus-wide raw parse would stress RAM (`[[feedback_ram_ceiling_monitor]]`).
+  **Chosen `.1` method (resource-bounded, two-stage):** (1) a CHEAP count/density proxy over all 79
+  persisted SourceIR docs — per page, captured `content_elements` + `visual_assets`, flagging pages
+  with visual density (figures/diagrams) but sparse captured elements, or `unknown`-`diagram_kind`
+  regions — to surface CANDIDATE under-captured pages corpus-wide; then (2) the rigorous bbox-area
+  "uncovered page area" measurement from the raw `prov` boxes + a bounded human eyeball
+  (re-ingest one or two flagged docs with `SPECFORGE_INGEST_SAVE_PAGE_IMAGES=1`) on the FLAGGED
+  SUBSET only. Corpus 79 source_ir docs persisted as of this recon.
 - `2026-06-14`: **Probe-first, not build-first.** Owner asked (after `MEMORY-BOUNDED-INGEST.4c`) to
   scope whether SpecForge uses the full scope of a page's information. The disciplined answer is to
   MEASURE the gap on the persisted corpus before committing to a whole-page VLM path — a NO-GO
