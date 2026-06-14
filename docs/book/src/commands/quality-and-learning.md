@@ -574,3 +574,73 @@ and F1 (1.000)** on the labeled constraint statements of all three documents —
 the three remaining false positives, each a condition read as an obligation,
 are gone, and recall stayed intact. *Authoritative tracking:*
 `docs/tasks/EXTRACTION-QUALITY-GAUGE.md`.
+
+## `entity-type`
+
+```text
+entity-type <evidence-ir> [--vlm-provider ollama|open-ai|lm-studio|skip] [--model <name>] [--max-subjects 0]
+```
+
+This is the diagnostic that answers a blunt question: *are the subjects of this
+document's constraints actually signals?* It exists because the extraction-quality
+program found that they are not always — on a packet protocol like CHI, names such
+as `TxnID` and `DBID` are message **fields**, not wires, and a naive constraint
+extractor will happily mint "`DBID` must be …" records that pollute the signal
+surface. `entity-type` makes that error visible and measurable before it reaches
+canonical IR.
+
+It runs the same **LLM-judges, Rust-grounds** harness the constraint extractor
+uses, only pointed at one question. For each distinct constraint subject in the
+artifact, Rust first gathers that token's grounding evidence — the sentences it
+appears in, and whether the document declares it in a signal table or a field
+table — then the local text model proposes a type, Rust grounds that judgment
+against the evidence, and a final enforcement gate keeps only the subjects that
+type as a real **signal**. The command prints the type breakdown, how many
+subjects it would keep versus filter, and a sample of the filtered ones (the
+spurious non-signal subjects), so you can see exactly which "constraints" were
+about something other than a wire.
+
+It is **read-only** — it never rewrites the artifact, it only reports. The
+ontology it measures here is the same one the `extract-constraints-llm` promotion
+enforces deterministically (a name the document declares in its own field tables
+types as a field with *no* model call at all), so `entity-type` is the way to
+inspect that typing on an artifact you already have. `--vlm-provider skip` makes
+it grounding-only: with no model to ask, ungrounded tokens stay `Unknown` rather
+than being guessed, which keeps the command honest and CI-safe. `--model`
+overrides the default text model (`qwen2.5:14b-instruct`), and `--max-subjects`
+caps how many distinct subjects are typed (`0` = all). *Authoritative tracking:*
+`docs/tasks/EXTRACTION-QUALITY-GAUGE.md` (`.1`).
+
+## `extract-conditions`
+
+```text
+extract-conditions <evidence-ir> [--vlm-provider ollama|open-ai|lm-studio|skip] [--model <name>] [--max-constraints 0]
+```
+
+A flat requirement is often a *broken* requirement. When the document says
+"PSTRB must be LOW **for read transfers**" but the extracted record keeps only
+"PSTRB must be LOW", the claim has quietly become stronger than the
+specification — and an entailment check will rightly flag it. `extract-conditions`
+repairs that class of loss: it recovers the dropped condition clause and attaches
+it to the constraint, so the obligation says exactly what the document says, no
+more.
+
+It is the second member of the extraction-quality harness, and it works exactly
+like its sibling — Rust hands the model the source sentence and the bare
+obligation, the model proposes the condition clause, and Rust **grounds** the
+proposal against the source before keeping it: a condition the model invents but
+the sentence does not contain is dropped, never written. The captured, grounded
+condition lands in the constraint's `condition_text`, and the command reports how
+many candidates it considered and how many conditions it captured.
+
+Two guards keep it cheap and safe. It only spends a model call on a constraint
+that is **still flat** *and* whose source sentence actually carries a condition
+cue (`when`, `until`, `before`, `after`, `while`, `unless`, `whenever`, `once`,
+`during`, `provided`, `if`, `on receiving`, `in the same cycle`) — an
+already-conditional constraint or a sentence with no cue is left untouched. Unlike
+`entity-type`, this command **modifies the artifact in place** (it writes the
+updated EvidenceIR back to disk), so point it at a copy if you want to keep the
+original side by side. `--vlm-provider skip` is a no-op, `--model` overrides the
+default text model (`qwen2.5:14b-instruct`), and `--max-constraints` caps how many
+candidates are processed (`0` = all). *Authoritative tracking:*
+`docs/tasks/EXTRACTION-QUALITY-GAUGE.md` (`.2`).

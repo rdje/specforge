@@ -1,4 +1,26 @@
 # DEVELOPMENT_NOTES
+## `BOOK-COMMAND-COVERAGE.1` (`2026-06-14`) — document the 2 CLI commands missing from the mdBook (DONE)
+- **Why:** session-start README→roadmap→codebase→mdBook re-read (the mandated bootstrap) found a
+  book↔code command-surface drift. The book is the owner's only window into the tool and zero-drift is
+  a non-negotiable doctrine, so a documented-but-uncovered command is a real (if small) defect.
+- **Verification discipline applied:** a delegated mdBook review reported "5 commands missing". Per the
+  standing lesson "re-derive a census with the build's own rules before trusting it", a direct book
+  grep was run: only **2** are genuinely absent (`entity-type` 0 files, `extract-conditions` 0 files);
+  `nli-verify` (4 files), `eval-extraction` (1), `audit-extraction` (2) are covered. The aggregate claim
+  was wrong by 3 — per-item verification caught it before any wasted documentation work.
+- **Implementation:** both missing commands are the LLM-judges/Rust-grounds members of the
+  `EXTRACTION-QUALITY-GAUGE` harness (`.1` entity typing, `.2` condition capture), so they were added to
+  `docs/book/src/commands/quality-and-learning.md` immediately after their `extract-constraints-llm`
+  sibling, matching the chapter's user-friendly why-before-what prose + usage-fence + honest-boundary
+  style. Command facts were read from the source (`commands/entity_type.rs`, `commands/extract_conditions.rs`,
+  `cli.rs` arg structs) — entity-type is read-only/diagnostic; extract-conditions writes the IR in place,
+  guards LLM calls behind condition cues, and grounds before keeping.
+- **Verification:** `mdbook build docs/book` succeeds; book grep confirms ≥1 file per command;
+  `scripts/check_memory_architecture.sh` green. Documentation-only — no Rust touched, so no lib/test/CI
+  delta (lib stays 1611). Owning tree `docs/tasks/BOOK-COMMAND-COVERAGE.md`. Spun-out follow-up: the
+  separate `ROADMAP.md` lane-hierarchy drift (recent applied trees absent from the R-lanes; R15e
+  understated).
+
 ## `PDF-VARIANT-DIGESTION.13d` (`2026-06-14`) — CCIX×4 landing + `.11` document_class revisit (DONE)
 - **CCIX ×4 re-ingest (bounded path, same as AMD):** `r1.0` (400p) / `r1.0a` (346p) / `rev1.1` (404p)
   / `rev2.0` (336p), `SPECFORGE_INGEST_BATCH_THRESHOLD=128` → 64-page batches, `DOCLING_DEVICE=cpu`,

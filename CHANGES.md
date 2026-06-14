@@ -1,3 +1,25 @@
+### `BOOK-COMMAND-COVERAGE.1` — document the two CLI commands missing from the mdBook (DONE)
+Session-start re-read of README/roadmap/codebase/mdBook surfaced a book↔code command-surface drift
+(the book is the owner's only window into the tool; zero-drift is non-negotiable). A delegated review
+claimed "5 commands missing"; objective verification (book grep) cut that to the real **2**:
+`entity-type` (0 book files) and `extract-conditions` (0 book files) — `nli-verify`, `eval-extraction`,
+and `audit-extraction` were already covered. Both missing commands are the LLM-judges/Rust-grounds
+members of the `EXTRACTION-QUALITY-GAUGE` harness, so they were documented in
+`docs/book/src/commands/quality-and-learning.md` immediately after their `extract-constraints-llm`
+sibling, in the book's user-friendly why-before-what style:
+- **`entity-type <evidence-ir>`** (`.1`) — types each distinct constraint *subject*; the gate keeps only
+  `Signal`-typed subjects; reports the breakdown + which would be filtered (read-only; CHI's
+  `TxnID`/`DBID`-are-fields lesson). Flags `--vlm-provider` (default `ollama`; `skip`=grounding-only),
+  `--model` (`qwen2.5:14b-instruct`), `--max-subjects`.
+- **`extract-conditions <evidence-ir>`** (`.2`) — recovers dropped condition clauses onto flat
+  constraints, grounded against the source, into `condition_text` (**modifies the IR in place**; only
+  spends an LLM call on condition-cue sentences). Same flags + `--max-constraints`; `skip`=no-op.
+
+Documentation-only — no runtime/CLI change. `mdbook build docs/book` succeeds; book grep now shows
+≥1 file per command. The separate `ROADMAP.md` lane-hierarchy drift (recent applied trees not in the
+R-lane structure; R15e status understated) is recorded as a spun-out follow-up, not this slice's scope.
+Owning tree: `docs/tasks/BOOK-COMMAND-COVERAGE.md`.
+
 ### `PDF-VARIANT-DIGESTION.13d` — land AMD + CCIX×4 message-field/register surfaces on canonical (DONE)
 The `.10a`/`.10d`/`.10e` extractors were only ever measured on `/tmp` copies of AMD/CCIX (their
 `normalized/` bundles had been artifact-cleanup-reclaimed). `.13d` lands them on the canonical corpus
