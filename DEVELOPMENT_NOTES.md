@@ -1,4 +1,44 @@
 # DEVELOPMENT_NOTES
+## `MEMORY-BOUNDED-INGEST.5` (`2026-06-15`) — summary / `source_ir.json` streaming: measured DEFER (probe-first, docs-only)
+- **Why:** the owner's non-negotiable size-immunity directive (bounded RAM+DISK at
+  10 MB→3 GB+, never crash the host). `.1`–`.4c` bounded every ingest cost; `.5` (the
+  tree's last open frontier) asked whether the accumulated summary / `source_ir.json`
+  itself grows unbounded with page count. Resume pointer pre-flagged it as "likely a
+  measured DEFER, the guard backstops it" — so the honest first step is measurement,
+  not speculative streaming code.
+- **Method (probe-first, read-only, RAM-safe):** measured `source_ir.json` byte size
+  vs `document_profile.page_count` across all **78 persisted artifacts** (no Docling,
+  no model — just `os.path.getsize` + the persisted profiles), then read the downstream
+  load path. Least-squares fit: `bytes ≈ -51,492 + 9,312 × pages` (≈ **9.3 KB/page**,
+  n=78; worst observed **17,755 B/page** on a figure-dense 40-page doc). Dominated by
+  `content_elements` (~13/page) + `page_artifacts` (1/page); `structured_tables` /
+  `document_sections` / `visual_assets` add smaller O(content) terms.
+- **Data:** library max = CoreSight SoC-600 TRM **842 p → 9.9 MB** (largest absolute),
+  GIC-600 arch **930 p → 7.0 MB** (most pages). Extrapolation: 2,000 p → ~18 MB,
+  10,000 p → ~89 MB, 50,000 p → ~444 MB, 100,000 p → ~0.9 GB mean / ~1.65 GB worst.
+- **Verdict — measured DEFER, no code:** (1) at every realistic chip-spec size the
+  artifact is trivially bounded (≤ 9.9 MB library-wide), so streaming/chunked summary
+  assembly has nothing to bound and would only risk the `.1`/`.3`/`.4c` byte-identical
+  guarantees (YAGNI). (2) The leaf aimed at the wrong surface: ingest-side accumulator
+  growth is already backstopped by the `.4a` RAM guard (clean abort → **host-crash
+  invariant satisfied**) and the dominant O(pages) *disk* cost (per-page PNGs, 192 MB on
+  CHI) by `.3`; per-page JSON sidecars are tiny. (3) The genuinely unbounded-at-extreme
+  cost is the **downstream full-file deserialize**: `SourceIr::load_from_path`
+  (`ir/source.rs:573`) = `serde_json::from_str(&fs::read_to_string(path)?)` reads the
+  whole file into a `String` then fully materializes the `SourceIr` struct (≈2–4× the
+  JSON in Rust), with **no RAM guard** on `evidence`/`semantic`/`intent` — a hypothetical
+  100,000-page doc would need ~2–6 GB just to LOAD. That regime is never realistically
+  hit (largest real load = 10 MB JSON → ~30 MB struct), so it is tracked as `.5a`
+  (deferred-until-triggered, mirroring `.3b`'s YAGNI posture).
+- **Re-open trigger:** a real document whose `source_ir.json` would exceed a RAM-safe
+  bound (≈ > 20,000–50,000 pages / > ~200–500 MB) — none exists in the 82-doc library
+  or plausibly in chip-spec reality.
+- **How verified:** read-only measurement reproducible via the KM card's `reverify`
+  one-liner; downstream load-path confirmed by reading `ir/source.rs:573`; memory-arch
+  gate + KM derive-and-diff + `mdbook build` green; no Rust change so no `cargo` gate
+  needed. KM card `source-ir-size-scaling`; book "How large is the `source_ir.json`
+  itself?" subsection in `pipeline/sourceir.md`.
+
 ## `ROADMAP-TASKTREE-COVERAGE.6` (`2026-06-15`) — post-`.5` ROADMAP↔tree alignment refresh (DONE; docs-only)
 - **Why:** the standing no-drift doctrine (ROADMAP↔code↔mdBook locked). The `.5`
   lock was `2026-05-31`; the whole post-R16 extraction-quality / digestion /

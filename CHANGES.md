@@ -1,3 +1,31 @@
+### `MEMORY-BOUNDED-INGEST.5` — summary / `source_ir.json` streaming: measured DEFER (probe-first, docs-only)
+The size-immunity program (`.1`–`.4c`) bounded every *ingest* cost; the open `.5`
+frontier asked whether the accumulated summary / `source_ir.json` itself grows
+unbounded with page count. **Probe-first measurement (read-only, RAM-safe — no
+Docling, no model) settled it as a DEFER.** Measured `source_ir.json` size vs page
+count across all **78 persisted artifacts**: the file is **O(pages) at a linear
+~9.3 KB/page** (least-squares slope `9,312` B/page, n=78; worst `17,755` B/page on
+a figure-dense doc), dominated by `content_elements` (~13/page) + `page_artifacts`.
+The whole **82-doc library tops out at 930 p → 7.0 MB and 842 p → 9.9 MB**; even a
+hypothetical 2,000-page spec is only ~18 MB.
+
+**Three findings → DEFER (no code):** (1) at every realistic chip-spec size the
+cost is trivial, so the proposed streaming/chunked summary assembly has nothing to
+bound and would only risk the `.1`/`.3`/`.4c` byte-identical guarantees (YAGNI);
+(2) the leaf aimed at the wrong surface — ingest-side assembly is already
+backstopped by the `.4a` RAM guard (host-crash invariant satisfied) and per-page-PNG
+disk by `.3`; (3) the genuinely unbounded-at-extreme cost is instead the
+**downstream full-file deserialize** — `SourceIr::load_from_path` (`ir/source.rs:573`)
+does `serde_json::from_str(&fs::read_to_string(path)?)`, reading the whole artifact
+into a `String` then fully materializing it (≈2–4× JSON bytes in Rust) with **no RAM
+guard** on `evidence`/`semantic`/`intent`. That only matters at tens of thousands of
+pages no chip-spec PDF reaches → spun the honest follow-up `.5a` (deferred-until-
+triggered, mirroring `.3b`). Re-open trigger recorded; tree stays `active` as a
+standing size-immunity tree with a measured-exhausted buildable frontier. KM card
+`source-ir-size-scaling`; book `pipeline/sourceir.md` "How large is the `source_ir.json`
+itself?" note. Docs-only — memory-arch + KM derive-and-diff + `mdbook build` green;
+no Rust change. Owning tree: `docs/tasks/MEMORY-BOUNDED-INGEST.md` (`.5`).
+
 ### `ROADMAP-TASKTREE-COVERAGE.6` — post-`.5` ROADMAP↔tree alignment refresh (DONE; docs-only)
 The `.5` alignment lock swept R0–R16 on `2026-05-31`; **40+ task trees landed
 since** and a measured `grep` proved **0/8 headline post-lock programs**

@@ -176,6 +176,27 @@ environment variable overrides the decision explicitly:
   documents), `0` to never persist them (even for small ones). Unset, the default is "persist at or
   below `SPECFORGE_INGEST_BATCH_THRESHOLD`, skip above it."
 
+## How large is the `source_ir.json` itself?
+
+The page rasters were the *heavy* artifact; the `source_ir.json` that describes the document — its
+typed text elements, tables, sections, and page records — is comparatively tiny. It does grow with
+the document, though, so it is worth being honest about how much. Measured across the whole reference
+library, the file scales **linearly at roughly 9 KB per page** (mostly the per-page list of typed
+content elements). In practice that means:
+
+- the largest real chip spec in the library — an 842-page technical reference manual — produces a
+  `source_ir.json` of about **10 MB**; a 930-page architecture spec, about 7 MB;
+- a hypothetical 2,000-page manual would be on the order of ~18 MB — still trivial to hold and to
+  re-read.
+
+So for **every realistic specification** the typed artifact is comfortably bounded, and there is no
+need to stream or chunk its assembly. The honest caveat is at the far extreme: the downstream stages
+(`evidence`, `semantic`, `intent`) read the whole `source_ir.json` into memory at once, so a document
+of *tens of thousands* of pages would eventually make that load itself large. No chip-spec PDF comes
+close to that, so SpecForge tracks it as a known, deferred boundary rather than pre-engineering for a
+size that does not occur — the same "build it when a real document needs it" discipline used for the
+on-demand page-image path above.
+
 ## Autonomous host-memory safeguard
 
 Bounded batching and bounded disk make ingestion *predictable* — but a host can still be under

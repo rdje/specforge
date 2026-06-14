@@ -6,7 +6,7 @@
 - Status: `active`
 - Roadmap lane: `R2`/`R8` (SourceIR ingestion / Tier-1 capture robustness)
 - Created: `2026-06-14`
-- Last updated: `2026-06-14`
+- Last updated: `2026-06-15`
 - Owner: repo-local workflow
 
 ## Goal
@@ -335,11 +335,50 @@ addressed by the disk-bounding leaves below.
   Commit: `MEMORY-BOUNDED-INGEST.4c`
 
 - ID: `MEMORY-BOUNDED-INGEST.5`
-  Status: `proposed`
+  Status: `deferred`
   Goal: bound the in-RAM + on-disk size of the accumulated summary / `source_ir.json` itself for
   extreme page counts (the lightweight records still grow with page count). Evaluate streaming /
   chunked summary assembly so even a 10000-page doc holds bounded summary state.
   Acceptance: summary assembly memory + `source_ir.json` size stay bounded at extreme page counts.
+  Verification: `deferred (2026-06-15)` — **probe-first measurement → measured DEFER (no build now,
+  re-open on an explicit trigger).** Measured `source_ir.json` size vs page count across all 78
+  persisted artifacts (read-only, RAM-safe — no Docling, no model): the file is O(pages), dominated by
+  `content_elements` (~13 elements/page) + `page_artifacts` (1/page), growing at a **linear ~9.3 KB
+  per page** (least-squares slope `9,312` B/page over n=78; worst observed `17,755` B/page on a
+  figure-dense 40-page opencapi doc). Largest persisted: CoreSight SoC-600 TRM 842 p → 9.9 MB; GIC-600
+  arch 930 p → 7.0 MB. Extrapolation: 2,000 p → ~18 MB, 10,000 p → ~89 MB, 50,000 p → ~444 MB,
+  100,000 p → ~0.9 GB mean / ~1.65 GB worst.
+  **Three findings settle DEFER:** (1) **At every realistic chip-spec size the cost is trivial** —
+  the whole 82-doc library tops out at 930 p / 9.9 MB; even a 2,000-page spec is ~18 MB, far under any
+  RAM/disk danger. The streaming/chunked-assembly work `.5` proposes has nothing to bound at realistic
+  sizes and would risk the `.1`/`.3`/`.4c` byte-identical guarantees for zero realistic benefit (YAGNI).
+  (2) **The leaf's framing aimed at the wrong surface.** The ingest-side summary accumulator is already
+  backstopped by the `.4a` RAM guard (clean abort before the danger zone — the host-crash invariant is
+  satisfied), and the dominant O(pages) *disk* cost (per-page PNGs, 192 MB on CHI) is already bounded
+  by `.3`; the per-page JSON sidecars are tiny. The genuinely unbounded-at-extreme cost is instead the
+  **downstream full-file deserialize**: `SourceIr::load_from_path` (`ir/source.rs:573`) does
+  `serde_json::from_str(&fs::read_to_string(path)?)` — the whole `source_ir.json` is read into a
+  `String` then fully materialized into the `SourceIr` struct (≈2–4× the JSON bytes in Rust), with NO
+  RAM guard on `evidence`/`semantic`/`intent`. So a hypothetical 100,000-page doc would need ~2–6 GB
+  just to LOAD downstream. (3) **That gap is far off and unguarded only in the never-realistically-hit
+  regime** — at the largest real load (10 MB JSON → ~30 MB struct) it is a non-issue. Recorded the
+  corrected binding constraint as `.5a` (deferred-until-triggered, mirroring `.3b`). **Re-open trigger:**
+  a real document whose `source_ir.json` would exceed a RAM-safe bound (≈ > 20,000–50,000 pages, i.e.
+  > ~200–500 MB) — none exists in the library or plausibly in chip-spec reality. Probe-only, no code.
+  Commit: `MEMORY-BOUNDED-INGEST.5`
+
+- ID: `MEMORY-BOUNDED-INGEST.5a`
+  Status: `proposed`
+  Goal: (follow-up surfaced by the `.5` measurement; build only if the `.5` trigger fires) make the
+  **downstream** stages that load `source_ir.json` (`evidence`/`semantic`/`intent`, via
+  `SourceIr::load_from_path`) size-bounded at extreme page counts — either a streaming/`from_reader`
+  deserialize, a section-at-a-time load, or a downstream-load RAM pre-check mirroring the `.4a` ingest
+  guard — so the host-crash invariant extends past ingest to every stage that holds the O(pages)
+  artifact. Deferred (YAGNI) because today the largest real load is a 10 MB JSON (~30 MB struct) and
+  the genuine risk only appears at tens of thousands of pages, which no chip-spec PDF reaches.
+  Acceptance: a downstream stage loading an extreme-page-count `source_ir.json` stays bounded in RAM
+  (or refuses with a typed diagnostic + intact prior artifacts), proven via DI/synthetic input without
+  a real giant doc; realistic docs (≤ corpus max) behave byte-identically.
   Verification: `pending`
   Commit: `pending`
 
@@ -347,7 +386,9 @@ addressed by the disk-bounding leaves below.
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `MEMORY-BOUNDED-INGEST.5` | `proposed` | **NEXT** — bound summary / `source_ir.json` + O(pages) per-page JSONs at extreme page counts |
+| — | (none buildable) | — | **Frontier measured-exhausted `2026-06-15`.** All concrete leaves are `done` or measured-`deferred`; the tree stays `active` as a STANDING size-immunity tree (owner's "any size" goal), re-opened only by a `.5`/`.5a` trigger (a real doc whose `source_ir.json` would exceed a RAM-safe bound, ≈ > 20,000 pages) or a new large-doc failure mode. |
+| — | `MEMORY-BOUNDED-INGEST.5` | `deferred` | summary / `source_ir.json` streaming — measured DEFER `2026-06-15` (O(pages) at ~9.3 KB/page; ≤ 9.9 MB across the whole 82-doc library; ingest backstopped by `.4a`, disk by `.3`; the real far-off gap is the downstream full-serde load → `.5a`) |
+| — | `MEMORY-BOUNDED-INGEST.5a` | `proposed` | downstream-load bounding (`SourceIr::load_from_path` full deserialize) — YAGNI-deferred until the `.5` trigger fires |
 | — | `MEMORY-BOUNDED-INGEST.4c` | `done` | total-RAM-banded adaptive batch sizing — DONE `2026-06-14` (small machine completes at a smaller batch; >= 16 GB byte-identical, live-proven; `SPECFORGE_INGEST_ADAPTIVE_BATCH`; +7 tests) |
 | — | `MEMORY-BOUNDED-INGEST.4b` | `done` | disk pre-flight — DONE `2026-06-14` (source-size-scaled free-disk gate via no-dep `df -P -k`; typed `IngestAbortedForDisk`; runs before staging; +8 tests) |
 | — | `MEMORY-BOUNDED-INGEST.4a` | `done` | built-in autonomous RAM guard — DONE `2026-06-14` (spawn+poll+kill in `materialize_pdf`; no new dep; typed `IngestAbortedForMemory`; +9 tests) |
@@ -409,6 +450,22 @@ RAM dimension (`.1`/`.2`) + DISK dimension (`.3`) now both delivered.
   `rendered_image.path` become honest `None`; the page's full-res `width_px`/`height_px`/`dpi` stay
   recorded (so on-demand regeneration in `.3b` is well-defined). No Rust struct change: both path
   fields are already `Option<PathBuf>`.
+- `2026-06-15` (`.5`): **`source_ir.json` size is O(pages) at ~9.3 KB/page — bounded for every
+  realistic chip spec, so summary streaming is a measured DEFER.** Measured across all 78 persisted
+  artifacts: size is dominated by `content_elements` (~13/page) + `page_artifacts` (1/page); a
+  least-squares fit gives `bytes ≈ -51,492 + 9,312 × pages` (worst observed 17,755 B/page on a
+  figure-dense doc). The 82-doc library tops out at 930 p / 9.9 MB; a hypothetical 2,000-page spec is
+  only ~18 MB. The two unbounded *ingest* costs are already handled — peak conversion RAM by `.1`/`.2`
+  (+ the `.4a` guard's clean abort = host-crash invariant satisfied) and per-page-PNG disk by `.3` —
+  and the per-page JSON sidecars are tiny. So the `.5`-proposed streaming/chunked summary assembly has
+  nothing to bound at realistic sizes and would only risk the byte-identical guarantees.
+- `2026-06-15` (`.5` → `.5a`): **The real far-off binding constraint is the downstream full-file
+  deserialize, not ingest-side assembly.** `SourceIr::load_from_path` (`ir/source.rs:573`) is
+  `serde_json::from_str(&fs::read_to_string(path)?)` — the whole artifact is read into a `String` then
+  fully materialized (≈2–4× the JSON in Rust), with NO RAM guard on `evidence`/`semantic`/`intent`.
+  Only at tens of thousands of pages (≈ > 200–500 MB JSON → multi-GB load) would this matter, which no
+  chip-spec PDF reaches; tracked honestly as `.5a` (deferred-until-triggered, mirroring `.3b`'s YAGNI
+  posture). Re-open trigger: a real doc whose `source_ir.json` would cross a RAM-safe bound.
 
 ## Open Questions
 
@@ -432,6 +489,7 @@ RAM dimension (`.1`/`.2`) + DISK dimension (`.3`) now both delivered.
 | `2026-06-14` | `MEMORY-BOUNDED-INGEST.4a` | full `run_ci.sh` (1596) + kg-bench (156/156) + 9 new DI/parser unit tests | GREEN — pre-spawn abort / mid-run kill / completes all proven via injected reader (no real pressure); macOS+Linux memory parsers unit-tested on both platforms; stub-helper ingest tests deterministic with the guard off; clippy `-D warnings` clean (fixed one `trim_split_whitespace`) |
 | `2026-06-14` | `MEMORY-BOUNDED-INGEST.4b` | full `run_ci.sh` (1604) + kg-bench (156/156) + 8 new pure/`df`-backed unit tests | GREEN — source-size scaling, POSIX `df` parse (macOS+Linux), gate above/below/unreadable, ancestor walk, `from_env`, and a real `df`-backed refuse/disabled pair; fixed `collapsible_if` (let-chain) + a PATH-spawn test race (spawning tests now hold `env_var_lock()`) |
 | `2026-06-14` | `MEMORY-BOUNDED-INGEST.4c` | full `run_ci.sh` (1611) + kg-bench + 7 new pure/DI unit tests + live 24 GB throwaway-CAN A/B/C | GREEN — RAM-band ladder (None/floor/ceiling clamp + small-ceiling cap), macOS `sysctl` + Linux `MemTotal` parsers, `from_env`, injected-reader `effective_pages`; live: adaptive-on (→64) `diff -r` BYTE-IDENTICAL to `off` (fixed 64); ceiling 32 → 3 batches, same 72p/98 assets (lever works, fidelity intact) |
+| `2026-06-15` | `MEMORY-BOUNDED-INGEST.5` | read-only size-vs-pages measurement over 78 persisted `source_ir.json` (no Docling/model) + downstream load-path code read + memory-arch + KM derive-and-diff + `mdbook build` | MEASURED DEFER — size O(pages) ~9.3 KB/page (fit slope 9,312 B/page, n=78; worst 17,755), library max 930 p / 9.9 MB; ingest backstopped by `.4a`/`.3`; corrected binding constraint = downstream `SourceIr::load_from_path` full serde (`ir/source.rs:573`) → `.5a` deferred-until-triggered; docs-only, no Rust change |
 
 ## Commit Log
 
@@ -443,6 +501,7 @@ RAM dimension (`.1`/`.2`) + DISK dimension (`.3`) now both delivered.
 | `MEMORY-BOUNDED-INGEST.4a` | `MEMORY-BOUNDED-INGEST.4a` | built-in autonomous RAM guard — sample+spawn+poll+kill in `materialize_pdf`; no new dep (`memory_pressure`/`/proc/meminfo`); typed `AppError::IngestAbortedForMemory`; `SPECFORGE_INGEST_RAM_ABORT_PERCENT` (85) / `SPECFORGE_INGEST_RAM_SAMPLE_SECS` (2); +9 tests, lib 1596 |
 | `MEMORY-BOUNDED-INGEST.4b` | `MEMORY-BOUNDED-INGEST.4b` | disk pre-flight before staging — source-size-scaled free-disk gate (base 128 MB + src×4) via no-dep `df -P -k`; typed `AppError::IngestAbortedForDisk`; `SPECFORGE_INGEST_MIN_FREE_DISK_MB` (estimate / floor / off); +8 tests, lib 1604 |
 | `MEMORY-BOUNDED-INGEST.4c` | `MEMORY-BOUNDED-INGEST.4c` | total-RAM-banded adaptive batch sizing — `SPECFORGE_INGEST_BATCH_PAGES` becomes a ceiling, lowered by a jitter-free RAM ladder; no-dep total-RAM readers (`sysctl hw.memsize` / `/proc/meminfo MemTotal`); Rust sets the child env, Python unchanged; `SPECFORGE_INGEST_ADAPTIVE_BATCH` toggle; +7 tests, lib 1611 |
+| `MEMORY-BOUNDED-INGEST.5` | `MEMORY-BOUNDED-INGEST.5` | measured DEFER — `source_ir.json` is O(pages) ~9.3 KB/page (library max 9.9 MB), ingest backstopped by `.4a`/`.3`; streaming is YAGNI at realistic sizes; far-off binding constraint = downstream full-serde load → spun `.5a` (deferred); docs-only + KM card `source-ir-size-scaling` |
 
 ## Changelog
 
@@ -519,3 +578,18 @@ RAM dimension (`.1`/`.2`) + DISK dimension (`.3`) now both delivered.
   kg-bench. Book "Sizing the batch to the host" + troubleshooting note; KM card
   `ingest-adaptive-batch-sizing`. `.5` (summary streaming) remains; a true mid-run shrink (`.4d`) only
   if a host that degrades mid-run ever proves a real need (the guard backstops it today).
+- `2026-06-15`: `.5` DEFERRED (measured, probe-first, no code). Measured `source_ir.json` size vs page
+  count over all 78 persisted artifacts (read-only, RAM-safe): the file is O(pages) at a linear
+  ~9.3 KB/page (least-squares slope 9,312 B/page, n=78; worst 17,755 B/page), dominated by
+  `content_elements` + `page_artifacts`. The whole 82-doc library tops out at 930 p / 9.9 MB; even a
+  2,000-page spec is ~18 MB — so the proposed streaming/chunked summary assembly has nothing to bound
+  at any realistic size and would only risk the `.1`/`.3`/`.4c` byte-identical guarantees (YAGNI).
+  Found that the leaf aimed at the wrong surface: ingest-side assembly is already backstopped by the
+  `.4a` RAM guard (host-crash invariant satisfied) and per-page-PNG disk by `.3`; the genuinely
+  unbounded-at-extreme cost is the **downstream full-file deserialize** `SourceIr::load_from_path`
+  (`ir/source.rs:573`, `serde_json::from_str(&fs::read_to_string(path)?)`, ≈2–4× JSON in Rust, no RAM
+  guard on `evidence`/`semantic`/`intent`), which only matters at tens of thousands of pages no
+  chip-spec PDF reaches — spun the honest follow-up `.5a` (deferred-until-triggered, mirroring `.3b`).
+  Tree stays `active` as a standing size-immunity tree with a measured-exhausted buildable frontier;
+  re-open trigger recorded. KM card `source-ir-size-scaling`; book `pipeline/sourceir.md` size-scaling
+  note. Docs-only — memory-arch + KM derive-and-diff + `mdbook build` green; no Rust change.
