@@ -200,6 +200,37 @@ These metrics help distinguish:
 - visual semantics exist, but conflict with text/table evidence
 - visual evidence genuinely strengthens a canonical role
 
+## Does SpecForge read the whole page?
+
+A natural question: a page is captured through structured **text/table/section elements** and
+through **figure/table region crops** fed to the VLM — but *nothing* reads the raw full-page
+image. Does intent-bearing content slip through the cracks between segmented regions?
+
+We measured this on the persisted corpus rather than guessing. Two stages:
+
+- a corpus-wide proxy over **79 documents / 14,762 pages**, which found only **170 fully-blank
+  pages (1.15%)** — and those turn out to be print-layout blank versos and part-divider pages;
+- a rigorous pixel-level audit over 16 documents (spanning AMBA wire specs, serial-bus specs, and
+  large register/protocol specs) measuring the fraction of **ink that falls outside every
+  segmented region**.
+
+The finding: when you exclude light-gray callout shading and anti-aliasing, **genuine dark
+text and line-art outside all segmented regions is ≤5% in the worst document and essentially
+zero in most** (e.g. 0.00–0.05% on the AMBA AXI / LTI / RISC-V debug specs). A by-hand review of
+the worst pages confirmed that what lies outside the regions is always **decoration**
+(section-heading underline rules, full-page border boxes, table grid lines), **callout-box
+shading** (the box *text* is still captured as a body element), or **page furniture** (running
+headers, copyright footers, page numbers) — never lost design intent.
+
+So SpecForge already uses the full scope of a page's *intent-bearing* visual information: body
+text, tables, and figures are segmented into the typed surfaces, figures are cropped and routed
+to the VLM, and the residual outside those regions is cosmetic. The full method and per-document
+numbers are recorded in `docs/research/full-page-capture-gap.md`. A whole-page VLM pass was
+deliberately **not** built — it would add non-determinism and significant memory/disk cost
+(a 900-page document is exactly the size-immunity frontier) in exchange for almost no
+recoverable intent. (Whether the VLM then *reads a captured figure correctly* is a separate
+question about VLM quality, not about whether the page content was captured.)
+
 ## What users should inspect
 
 When debugging visual behavior, inspect:

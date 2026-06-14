@@ -3,7 +3,8 @@
 ## Metadata
 
 - Tree ID: `FULL-PAGE-INTENT-CAPTURE`
-- Status: `active`
+- Status: `done` (CLOSED `2026-06-14`, **NO-GO** — `.1` measured the gap; SpecForge already
+  uses the full scope of a page's intent-bearing visual information; `.2` stays unbuilt)
 - Roadmap lane: `R16`/`R15e` (intent capture / completeness)
 - Created: `2026-06-14`
 - Last updated: `2026-06-14`
@@ -66,7 +67,7 @@ BEFORE coding" method (`PDF-VARIANT-DIGESTION.9.x`).
   Children: `.1` (probe), `.2` (mechanism design — gated on `.1`)
 
 - ID: `FULL-PAGE-INTENT-CAPTURE.1`
-  Status: `in_progress`
+  Status: `done` (`2026-06-14`, **NO-GO**) — report `docs/research/full-page-capture-gap.md`
   Goal: **probe-first gap measurement (NO code change to the pipeline).** Over the persisted
   `generated/source_ir/*` corpus, measure per-document how much page content is captured by NEITHER
   the structured text/table/section elements NOR the figure/table region crops. Candidate signals
@@ -81,11 +82,17 @@ BEFORE coding" method (`PDF-VARIANT-DIGESTION.9.x`).
   tree closes NO-GO — that is a valid, valuable outcome.
   Acceptance: the report exists with per-document measured numbers + sample + recommendation; no
   pipeline/IR code changed; deterministic (same corpus → same report); wire-based docs untouched.
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `done` — `docs/research/full-page-capture-gap.md` landed with corpus-wide Stage 1
+  numbers (79 docs / 14,762 pages: 170 fully-blank = 1.15%, 16,180 "unknown" crops = NOT a gap),
+  rigorous Stage 2 ink-outside-bbox over 16 backend docs (dark px-weighted-outside ≤5% worst-case,
+  ≈0 typical), and a 5-page eyeball sample — every "escape" resolves to decoration/shading/furniture
+  /blank-divider. NO pipeline/IR code touched; deterministic; probe scripts throwaway (/tmp only).
+  Recommendation: **NO-GO**. `scripts/check_memory_architecture.sh` + mdBook build green.
+  Commit: `FULL-PAGE-INTENT-CAPTURE.1 — measured gap report (NO-GO)`
 
 - ID: `FULL-PAGE-INTENT-CAPTURE.2`
-  Status: `proposed`
+  Status: `not_started` (GATED on a `.1` GO — `.1` returned **NO-GO**, so `.2` stays unbuilt;
+  re-open only if a future doc class empirically shows dark content escaping all boxes on a real page)
   Goal: (GATED on a `.1` GO) design the grounded, bounded, deterministic whole-page capture mechanism
   — likely a whole-page VLM read whose proposals are gated against the document's own declared
   surfaces (ADR 0006), emitted as a typed evidence surface with honest residuals, respecting the
@@ -100,11 +107,34 @@ BEFORE coding" method (`PDF-VARIANT-DIGESTION.9.x`).
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `FULL-PAGE-INTENT-CAPTURE.1` | `in_progress` | **ACTIVE** — recon done (no bboxes in persisted summary → two-stage method decided); next = run the count/density proxy corpus-wide, then bbox-area + eyeball on the flagged subset → GO/NO-GO report |
-| 2 | `FULL-PAGE-INTENT-CAPTURE.2` | `proposed` | mechanism design, GATED on a `.1` GO |
+| — | `FULL-PAGE-INTENT-CAPTURE.1` | `done` (**NO-GO**) | report `docs/research/full-page-capture-gap.md` landed; measured the gap corpus-wide + pixel-level — no material intent-bearing content escapes both paths |
+| — | `FULL-PAGE-INTENT-CAPTURE.2` | `not_started` | GATED on a `.1` GO; `.1` returned NO-GO → unbuilt. **Tree CLOSED.** |
+
+**TREE CLOSED `2026-06-14` (NO-GO).** The owner's question is answered with measured evidence:
+SpecForge already uses the full scope of a page's intent-bearing visual information. The honest
+residual outside Docling's segmented regions is decoration (heading rules, page borders, table
+grid lines), admonition shading, header/footer furniture, and blank divider pages — not lost
+intent. Building a whole-page VLM pass would trade non-determinism + RAM/disk cost for ≈zero
+recoverable intent.
 
 ## Decisions
 
+- `2026-06-14` (`.1` result, **NO-GO**): the rigorous measurement landed. **Stage 1** over all 79
+  persisted docs (14,762 pages): only **170 pages (1.15%) are fully-blank** to both summary paths,
+  and the 16,180 "unknown `diagram_kind`" crops are NOT a gap (the region IS cropped + VLM-fed; the
+  kind just defaults to unknown without a caption). **Stage 2** ink-outside-bbox over 16
+  backend-available docs (raster decoded from the embedded base64; bboxes from raw `prov`): the
+  **dark-ink (<150) px-weighted-outside aggregate is ≤5% worst-case (AHB/ARM-Debug/AXI+ACE) and ≈0
+  typical** (RISC-V-Debug 0.0000, AXI 0.0002, LTI 0.0005, I2C 0.0006, CAN 0.001). The large
+  *all-ink* numbers (CAN mean 0.146, LTI max 0.420) are entirely light-gray admonition shading +
+  decorative borders/rules + furniture, which vanish under the dark threshold. **5-page eyeball**
+  (LTI p49, CAN p72, SWP p7, APB_d p12, plus the fully-blank divider class) confirms every escape is
+  decoration/shading/furniture/blank-page — never content. The LTI "Note" callout body text is a
+  captured `body_text` element (only the gray box fill was outside boxes). **Honest limits:** CHI's
+  raster is absent (bounded-ingest path doesn't embed it — content still captured as elements/tables);
+  62 docs lack a backend JSON so the pixel stage covered 16, but those 16 include the two highest
+  fully-blank-count docs with rasters (AXI+ACE 27, ARM-Debug 15) and all three classes. RAM stayed
+  ≥48% free (kill line never approached). Report: `docs/research/full-page-capture-gap.md`.
 - `2026-06-14` (`.1` recon): **The persisted SourceIR summary carries NO bounding boxes** — its
   `page_artifacts` (page_id/number/dims), `visual_assets` (kind/page_id/caption/diagram_kind),
   `content_elements` (kind/text/page_id/reading_order), and `structured_tables` records expose only
@@ -138,22 +168,27 @@ BEFORE coding" method (`PDF-VARIANT-DIGESTION.9.x`).
 
 ## Blockers
 
-- None. (`.2` is gated on the `.1` GO/NO-GO outcome.)
+- None. (`.2` was gated on the `.1` GO/NO-GO outcome; `.1` returned NO-GO → tree closed.)
 
 ## Verification Log
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
-| `2026-06-14` | `FULL-PAGE-INTENT-CAPTURE.1` | `pending` | `pending` |
+| `2026-06-14` | `FULL-PAGE-INTENT-CAPTURE.1` | read-only probe (no code); `scripts/check_memory_architecture.sh`; mdBook build | **done** — report landed, NO-GO; deterministic; corpus untouched; RAM ≥48% free throughout |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
-| `FULL-PAGE-INTENT-CAPTURE.1` | `pending` | `pending` |
+| `FULL-PAGE-INTENT-CAPTURE.1` | `FULL-PAGE-INTENT-CAPTURE.1 — measured gap report (NO-GO)` | docs-only; report + tree + live docs + book note; no pipeline/IR code |
 
 ## Changelog
 
 - `2026-06-14`: Created task tree (owner-directed, `2026-06-14`, after `MEMORY-BOUNDED-INGEST.4c`):
   scope whether SpecForge uses the full scope of a page's visual information. Probe-first `.1` (measure
   the gap on the persisted corpus, no code) → `.2` mechanism design gated on a GO.
+- `2026-06-14`: `.1` **done (NO-GO)** + **tree CLOSED**. Measured the gap two ways (Stage 1 corpus
+  proxy over 79 docs / 14,762 pages; Stage 2 rigorous ink-outside-bbox over 16 backend docs) plus a
+  5-page eyeball. No material intent-bearing content escapes both capture paths; the residual is
+  decoration/shading/furniture/blank pages. Report `docs/research/full-page-capture-gap.md`; book note
+  in `docs/book/src/pipeline/multimodal-evidence.md`. `.2` stays unbuilt.

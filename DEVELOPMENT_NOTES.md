@@ -1,4 +1,44 @@
 # DEVELOPMENT_NOTES
+## `FULL-PAGE-INTENT-CAPTURE.1` (`2026-06-14`) — measured full-page intent-capture gap (NO-GO)
+- **Question (owner):** does SpecForge use the full scope of a page's visual information, or is
+  intent-bearing content slipping through because no consumer reads the raw full-page raster?
+- **Method = measurement, not code (probe-first; no pipeline/IR change).** The persisted
+  `source_ir.json` summary carries no bboxes, so true area coverage needs the raw Docling
+  `*.backend.json` (`export_to_dict`), which retains element `prov` bboxes AND embeds the page raster
+  as base64 PNG. Two stages, resource-bounded:
+  - **Stage 1** cheap proxy over all 79 docs / 14,762 pages: per-page element/table/crop counts →
+    flag structurally-blank (0 elements & 0 tables) and fully-blank (also 0 crops) pages. Result:
+    **170 fully-blank pages (1.15%)**; **16,180 "unknown diagram_kind" crops are NOT a gap** (region
+    cropped + VLM-fed; kind defaults to unknown without a caption).
+  - **Stage 2** ink-outside-bbox over the 16 backend-available docs (RAM-monitored, smallest-first,
+    abort-if-free%<25): per page, decode the raster, count ink (<245) and dark ink (<150), build the
+    union of all texts+pictures+tables bboxes (BOTTOMLEFT origin, y-flip, 2 px dilation), measure the
+    fraction of ink outside every box. **Dark-ink px-weighted-outside ≤5% worst-case, ≈0 typical**
+    (RISC-V-Debug 0.0000 / AXI 0.0002 / LTI 0.0005 / I2C 0.0006 / CAN 0.001). The big all-ink figures
+    are shading + borders/rules + furniture, gone under the dark threshold.
+- **Why dark-ink is the clean signal:** my <245 "ink" threshold catches light-gray admonition-box
+  fill and anti-aliasing; that inflates all-ink-outside on shaded/ruled pages without any lost content.
+  The <150 dark threshold isolates genuine text/line-art. Elevated dark-ink-outside *fractions* on a
+  few docs (AHB/ARM-Debug ~0.045 weighted) trace entirely to **sparse fully-blank divider pages**
+  (1,807–2,442 dark px each = header/footer furniture only; `picture_region=False`), where furniture is
+  a large fraction of a tiny absolute — not a capture gap.
+- **5-page eyeball (overlay paints escaped ink red):** LTI p49 = gray "Note" box shading + table rules
+  + chapter/copyright furniture (the Note body text IS a captured `body_text` element); CAN p72 =
+  1991 decorative full-page border + header/footer grid; SWP p7 = two red section-heading underline
+  rules + footer "ETSI"; APB_d p12 = a print blank verso (furniture only). Every escape is cosmetic.
+- **Conclusion: NO-GO; tree CLOSED.** SpecForge already uses the full scope of a page's intent-bearing
+  visual information. `.2` (whole-page VLM) stays unbuilt — non-determinism + RAM/disk cost (a 930-page
+  doc is the size-immunity frontier) for ≈zero recoverable intent. Re-open only if a future doc class
+  empirically shows dark content escaping all boxes on a real page.
+- **Honest limits:** CHI's `pages` raster is absent (it was ingested via the bounded batched path,
+  which doesn't embed per-page rasters; content still captured as elements/tables); 62 docs lack a
+  backend JSON, so the pixel stage covered 16 — but those include the two highest fully-blank-count docs
+  with rasters (AXI+ACE 27, ARM-Debug 15) and all three document classes. The pixel metric is a
+  high-recall proxy (sees only raster ink). Probe scripts were throwaway (`/tmp`, never committed).
+- **Files:** report `docs/research/full-page-capture-gap.md`; tree `docs/tasks/FULL-PAGE-INTENT-CAPTURE.md`
+  + index; book note `docs/book/src/pipeline/multimodal-evidence.md`; KM card
+  `docs/knowledge/full-page-capture-gap.md`. RAM stayed ≥48% free throughout.
+
 ## `MEMORY-BOUNDED-INGEST.4c` (`2026-06-14`) — total-RAM-banded adaptive page-range batch sizing
 - **Problem:** `.1` batches at a fixed 64 pages. On a small machine a 64-page batch + the Docling
   layout/table models crosses the danger ceiling, so the `.4a` RAM guard kills the ingest *every*

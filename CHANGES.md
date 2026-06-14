@@ -1,3 +1,32 @@
+### `FULL-PAGE-INTENT-CAPTURE.1` — measured full-page intent-capture gap (NO-GO), tree CLOSED
+Owner-directed (`2026-06-14`, after `MEMORY-BOUNDED-INGEST.4c`): does SpecForge use the full scope of a
+page's visual information, or is intent-bearing content slipping through because nothing reads the full
+page? Answered with **measurement, not code** (probe-first; no pipeline/IR change), matching the
+`PDF-VARIANT-DIGESTION.9.x` discipline.
+
+- **Stage 1 — corpus proxy over all 79 persisted docs (14,762 pages)** from the `source_ir.json`
+  summaries: per-page element/table/crop counts. Only **170 pages (1.15%) are fully-blank** to both
+  capture paths (structured elements + region crops); the 16,180 `diagram_kind = unknown` crops are NOT
+  a gap (the region IS cropped and fed to the VLM — the kind defaults to unknown without a disambiguating
+  caption).
+- **Stage 2 — rigorous ink-outside-bbox** over the 16 backend-available docs (raster decoded from the
+  Docling backend JSON's embedded base64; bboxes from raw `prov`; RAM-monitored, smallest-first). The
+  honest **dark-ink (<150) px-weighted-outside aggregate is ≤5% worst-case and ≈0 typical**
+  (RISC-V-Debug 0.0000, AXI 0.0002, LTI 0.0005). The large *all-ink* numbers (CAN mean 0.146, LTI max
+  0.420) are entirely light-gray admonition shading + decorative borders/rules + furniture, which vanish
+  under the dark threshold.
+- **5-page eyeball** (LTI p49 / CAN p72 / SWP p7 / APB_d p12 / fully-blank dividers): every escape is
+  decoration (heading rules, full-page borders, table grid), callout-box shading (the text is still a
+  captured `body_text` element), header/footer furniture, or a genuine blank divider — never lost intent.
+- **Conclusion: NO-GO.** SpecForge already uses the full scope of a page's intent-bearing visual
+  information; the residual outside Docling's segmented regions is cosmetic, not intent. `.2` (whole-page
+  VLM capture) stays unbuilt — it would add non-determinism + RAM/disk cost for ≈zero recoverable intent.
+- Honest limits: CHI's raster is absent (bounded-ingest path doesn't embed it; content still captured as
+  elements/tables); 62 docs lack a backend JSON so the pixel stage covered 16, but those include the two
+  highest fully-blank-count docs with rasters (AXI+ACE 27, ARM-Debug 15) and all three document classes.
+- Docs-only: report `docs/research/full-page-capture-gap.md`, tree + index + live docs, book note in
+  `pipeline/multimodal-evidence.md`, KM card `full-page-capture-gap`. RAM stayed ≥48% free throughout.
+
 ### `MEMORY-BOUNDED-INGEST.4c` — size each page-range batch to the host's total RAM so a small machine completes
 The `.1` batching mechanism uses a fixed 64-page batch — right for a 24 GB host, too large for a
 small one (a 64-page batch + the layout/table models would cross the danger ceiling, so the `.4a`
