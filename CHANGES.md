@@ -1,3 +1,47 @@
+### `LLM-PRIMARY-PROMOTION.5` — FLIP: LLM-primary constraint promotion is now the converge default (DONE; tree CLOSED)
+The owner authorized the default flip recommended by the `.4` decision packet (the quality gauge
+improved on 14/15 measurable corpus docs and all three wire-doc gold gates held on canonical
+artifacts). Executed in this owner-authorized fresh session:
+
+**Code (the flip).** `converge` now promotes the LLM-primary grounded constraint surface over the
+final EvidenceIR **by default whenever a live `--nlp-provider` is used**. A new
+`should_promote_constraints(args)` gate in `commands/converge.rs` returns true iff
+`nlp_provider != skip && !no_promote_constraints_llm`; `maybe_promote_constraints` consults it
+(replacing the old `if !args.promote_constraints_llm`). A new `--no-promote-constraints-llm` CLI
+flag (`conflicts_with` the old on-flag) is the explicit opt-out that keeps the deterministic
+Pattern surface even with a live provider. The retained `--promote-constraints-llm` flag is now
+redundant-but-accepted and still drives the early "requires a live --nlp-provider" error when
+paired with `--nlp-provider skip` (an explicit opt-in that silently does nothing is worse than an
+error). **Provider-free runs never promote by construction**, so CI / `kg-bench` / provider-free
+converge are byte-identical to before the flip. +3 unit tests; lib 1611 → **1614**; full
+`scripts/run_ci.sh` GREEN (fmt-check, clippy -D, tests -D, rustdoc -D, mdBook, memory-arch,
+knowledge-map).
+
+**Gold gates re-verified GREEN on CANONICAL artifacts (fresh release binary):**
+- wire-doc eval `--provider skip` ×3 — APB/AHB/AXI `signal_constraint` **P=R=F1=1.000**;
+  WIRE-BASED-100 filtered relations **1.000**; doc-level constraint recall **16/16** (6+6+4);
+  conformal `empirical_error=0.000`. All three carry the `constraints.llm_primary` manifest.
+- WIRE-BASED-100 temporal — `seed_apb_temporal` **3/3**, `seed_ahb_temporal` **4/4**,
+  `seed_axi_temporal` **3/3** = 1.000.
+- serial-class no-regression — `seed_swd` constraints/relations **1.000**, `seed_swd_derivation`
+  frame/operation/state **1.000**, `seed_i2c_signals` declared **1.000**.
+- **kg-bench 156/156**; a both-`skip` provider-free converge converged with **no
+  `constraint_promotion:` line** (promotion did not fire — Pattern surface preserved).
+- **LIVE end-to-end proof of the flipped default:** `converge <APB.pdf> --vlm-provider skip
+  --nlp-provider ollama --nlp-model qwen2.5:14b-instruct` with **no promote flag** fired promotion
+  automatically (`constraint_promotion: 26 (Pattern) → 22 kept`; gauge on the promoted surface
+  6/22 = 27.3%); the freshly default-promoted canonical APB then re-gated `seed_apb` **1.000**
+  (6/6 recall, `empirical_error=0.000`) and `seed_apb_temporal` **3/3 = 1.000**.
+
+**RAM safety honored** (non-negotiable owner protocol): the live 14B run peaked at ≥42% free
+(model on GPU, well under the 85%-used kill line); the canonical APB was backed up to `/tmp` so a
+bad run was discardable; an armed RAM watchdog reported no danger. The "restore Pattern baseline
+first" protocol is automatically satisfied for full `converge` runs (it rebuilds evidence
+Pattern-first from `source_ir` each pass; that protocol applies to the standalone
+`promote_constraints` command). Docs synced: README bullet, `commands/pipeline.md` (default-on
+subsection + flags table) and `commands/quality-and-learning.md`. R1–R4 recall levers stay
+recorded as future candidates. Owning tree: `docs/tasks/LLM-PRIMARY-PROMOTION.md` (CLOSED).
+
 ### `BOOK-COMMAND-COVERAGE.1` — document the two CLI commands missing from the mdBook (DONE)
 Session-start re-read of README/roadmap/codebase/mdBook surfaced a book↔code command-surface drift
 (the book is the owner's only window into the tool; zero-drift is non-negotiable). A delegated review

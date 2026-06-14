@@ -1,4 +1,44 @@
 # DEVELOPMENT_NOTES
+## `LLM-PRIMARY-PROMOTION.5` (`2026-06-14`) — FLIP: LLM-primary constraint promotion is the converge default (DONE; tree CLOSED)
+- **Why:** the `.4` decision packet recommended FLIP (gauge improved on 14/15 measurable corpus
+  docs; all three wire-doc gold gates held on canonical artifacts) and the owner authorized it,
+  deferring execution to a fresh session for signoff sharpness (live 14B converge runs + the full
+  gold-gate battery). This is that fresh session.
+- **Design (minimal, contract-preserving):** rather than invert the existing boolean, a small
+  pure gate `should_promote_constraints(args) = nlp_provider != skip && !no_promote_constraints_llm`
+  centralizes the decision. `maybe_promote_constraints` calls it (was `if !args.promote_constraints_llm`).
+  A new `--no-promote-constraints-llm` flag (`conflicts_with = "promote_constraints_llm"`) is the
+  explicit opt-out; the old `--promote-constraints-llm` is retained as redundant-but-accepted so
+  existing scripts/tests keep working AND it still drives the early "requires a live
+  `--nlp-provider`" error (an explicit opt-in that silently no-ops is worse than an error — the
+  `converge_rejects_promotion_without_nlp_provider` test still holds). **Provider-free runs
+  (`--nlp-provider skip`) never reach promotion**, so the deterministic pipeline is byte-identical
+  to before the flip by construction — not by argument.
+- **Why provider-free is safe without a byte-diff against the old binary:** the only code path
+  change is the promotion gate, and for `nlp_provider == skip` the gate is false, exactly as the
+  old `!args.promote_constraints_llm` default was false → `maybe_promote_constraints` returns
+  `None` identically. The unit test `promotion_stays_off_for_provider_free_runs` locks this, and a
+  live both-`skip` converge confirmed it (converged with no `constraint_promotion:` line).
+- **Test impact:** the existing rescan-plan converge test uses a live mock NLP provider and asserts
+  the Pattern constraint surface; it now sets `no_promote_constraints_llm: true` to stay focused on
+  what it tests (the now-default promotion would otherwise replace that surface). +3 new gate tests.
+- **Verification:** full `scripts/run_ci.sh` GREEN (lib 1611 → 1614). Gold gates on a fresh release
+  binary, `--provider skip` over canonical artifacts: APB/AHB/AXI constraints P=R=F1=1.000 +
+  WIRE-BASED-100 relations 1.000 + temporal 3/3+4/4+3/3, doc recall 16/16, conformal
+  empirical_error 0.000; serial SWD/SWD-deriv/I2C 1.000; kg-bench 156/156. **Live end-to-end:** a
+  flagless `converge` on APB with qwen2.5:14b promoted by default (26→22 kept) and the freshly
+  default-promoted canonical APB re-gated 1.000 (constraints + temporal).
+- **Measurement protocol & RAM:** full `converge` rebuilds evidence Pattern-first from `source_ir`
+  each pass, so the "restore Pattern baseline before measuring" rule (which exists for the
+  standalone `promote_constraints` command that would double-promote a persisted promoted artifact)
+  is automatically satisfied for a converge run. The 14B peaked at ≥42% free (on GPU; under the
+  85%-used kill line); canonical APB was backed up to /tmp (discardable bad run); a RAM watchdog
+  monitored the run hands-free.
+- **Residuals (unchanged, future candidates):** R1 table-cell-row subjects, R2 source-grounded
+  condition recovery, R3 register-class field routing, R4 bit-subrange constraint vocabulary — the
+  ~3 ungated-doc recall losses the `.4` sweep quantified. Owning tree (CLOSED):
+  `docs/tasks/LLM-PRIMARY-PROMOTION.md`.
+
 ## `BOOK-COMMAND-COVERAGE.1` (`2026-06-14`) — document the 2 CLI commands missing from the mdBook (DONE)
 - **Why:** session-start README→roadmap→codebase→mdBook re-read (the mandated bootstrap) found a
   book↔code command-surface drift. The book is the owner's only window into the tool and zero-drift is

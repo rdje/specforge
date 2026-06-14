@@ -115,12 +115,21 @@ pub struct ConvergeArgs {
     /// Maximum number of sentences to send to NLP Level 3 per pass (0 = all)
     #[arg(long, default_value = "0")]
     pub nlp_max_sentences: usize,
-    /// After convergence stabilizes, promote the LLM-primary grounded constraint extractor over
-    /// the final EvidenceIR: REPLACE the Pattern signal-constraint surface with the typed,
-    /// condition-grounded, frame-gated result, rebuild the downstream stages once, and measure
-    /// the quality gauge on the promoted surface. Opt-in; requires a live `--nlp-provider`.
+    /// LLM-PRIMARY-PROMOTION.5: promotion is now ON BY DEFAULT for live-NLP converge runs.
+    /// After convergence stabilizes, the LLM-primary grounded constraint extractor REPLACES the
+    /// Pattern signal-constraint surface with the typed, condition-grounded, frame-gated result,
+    /// rebuilds the downstream stages once, and measures the quality gauge on the promoted
+    /// surface. This flag is now redundant-but-accepted (explicit on, kept for compatibility);
+    /// it still triggers the early "requires a live --nlp-provider" error when paired with
+    /// `--nlp-provider skip` (an explicit opt-in that silently does nothing is worse than an
+    /// error). Use `--no-promote-constraints-llm` to opt out.
     #[arg(long)]
     pub promote_constraints_llm: bool,
+    /// Opt OUT of the now-default LLM-primary constraint promotion and keep the deterministic
+    /// Pattern signal-constraint surface even when a live `--nlp-provider` is used. Provider-free
+    /// runs (`--nlp-provider skip`) already stay on the Pattern surface by construction.
+    #[arg(long, conflicts_with = "promote_constraints_llm")]
+    pub no_promote_constraints_llm: bool,
     /// Advisory local prior-memory store to consult during extraction when present
     #[arg(long, default_value = "generated/prior_memory/corpus_memory.json")]
     pub prior_memory: PathBuf,

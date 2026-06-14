@@ -3,9 +3,10 @@
 ## Metadata
 
 - Tree ID: `LLM-PRIMARY-PROMOTION`
-- Status: `active` (`.1`–`.4` DONE `2026-06-10`; **owner AUTHORIZED the FLIP `2026-06-14`** —
-  `.5` is un-gated and ready to execute, deferred to a fresh session for signoff sharpness;
-  R1–R4 lever candidates recorded in the packet)
+- Status: `done` (CLOSED `2026-06-14`) (`.1`–`.4` DONE `2026-06-10`; **`.5` FLIP EXECUTED
+  `2026-06-14`** in the owner-authorized fresh session — `converge` now promotes the LLM-primary
+  constraint surface by default for live-NLP runs, every gold gate re-verified GREEN on canonical
+  artifacts; R1–R4 recall levers stay recorded as future candidates)
 - Roadmap lane: `R15e`/`R16` (extraction quality / production-readiness)
 - Created: `2026-06-10`
 - Parent context: `EXTRACTION-QUALITY-GAUGE.0`'s standing gauge made the gap VISIBLE: the
@@ -291,22 +292,51 @@ CI is untouched by construction. The alternative (stay opt-in until R1/R2 land) 
 corpus-wide error-mass reduction for ~3 recoverable facts — a poor trade, but the flip is
 deliberately the owner's call per the `.1` decision record. → `.5`.
 
-- ID: `LLM-PRIMARY-PROMOTION.5` · Status: `pending` (OWNER-AUTHORIZED `2026-06-14` — un-gated;
-  ready to execute) · Goal: execute the owner's default-flip decision = **FLIP**. Make
-  `converge --promote-constraints-llm` the DEFAULT for live-NLP runs (provider-free runs stay
-  Pattern by construction; keep the flag/an explicit opt-out). Then RE-VERIFY the gold gates on
-  CANONICAL artifacts: wire-doc eval P=R=F1=1.000 ×3 + 16/16 doc recall, WIRE-BASED-100
-  (constraints/relations/temporal), serial-class no-regression (SWD/CAN/SWP/SMBus/I2S),
-  kg-bench, provider-free CI byte-stable. **PROTOCOL (2× burned): restore the Pattern baseline
-  BEFORE any promotion measurement.** Needs live Ollama (qwen2.5:14b-instruct) for the converge
-  gold-gate runs → RAM care: `ollama stop` before any ingest, watch RAM, autonomous-kill ≥85%
-  used. R1–R4 levers stay future candidates (recover the ~3 ungated-doc recall losses).
+- ID: `LLM-PRIMARY-PROMOTION.5` · Status: `done` (`2026-06-14`, CODE + full live gold-gate
+  battery) · Goal: execute the owner's default-flip decision = **FLIP**.
+  **Shipped (code):** promotion is now the DEFAULT for live-NLP converge runs. A new
+  `should_promote_constraints(args)` gate in `commands/converge.rs` returns true iff
+  `nlp_provider != skip && !no_promote_constraints_llm`; `maybe_promote_constraints` consults it
+  (replacing the old `if !args.promote_constraints_llm`). New CLI flag
+  `--no-promote-constraints-llm` (`conflicts_with` the old on-flag) is the explicit opt-out; the
+  retained `--promote-constraints-llm` is now redundant-but-accepted and still drives the early
+  "requires a live --nlp-provider" error when paired with `--nlp-provider skip` (an explicit
+  opt-in that silently does nothing is worse than an error). Provider-free runs (`--nlp-provider
+  skip`) never promote by construction → CI/kg-bench/provider-free converge are untouched.
+  +3 unit tests (`promotion_is_default_on_for_live_nlp`, `..._stays_off_for_provider_free_runs`,
+  `..._can_be_opted_out_with_a_live_provider`); the rescan-plan test opts out explicitly to keep
+  its Pattern assertions. lib 1611 → **1614**; full `scripts/run_ci.sh` GREEN (fmt-check,
+  clippy -D, tests -D, rustdoc -D, mdBook, memory-arch, knowledge-map).
+  **Gold gates RE-VERIFIED GREEN on CANONICAL artifacts (fresh release bin):**
+  - wire-doc eval `--provider skip` ×3: APB/AHB/AXI `signal_constraint` **P=R=F1=1.000**;
+    WIRE-BASED-100 filtered relations **1.000**; doc-level constraint recall **16/16** (6+6+4);
+    conformal `empirical_error=0.000`.
+  - WIRE-BASED-100 temporal: `seed_apb_temporal` **3/3**, `seed_ahb_temporal` **4/4**,
+    `seed_axi_temporal` **3/3** = 1.000 (all three wire docs carry the `constraints.llm_primary`
+    manifest, reproducing the `.3b` promoted-canonical state).
+  - serial-class no-regression `--provider skip`: `seed_swd` constraints/relations **1.000**,
+    `seed_swd_derivation` frame/operation/state **1.000**, `seed_i2c_signals` declared **1.000**.
+  - **kg-bench 156/156**; provider-free converge byte-stable (a both-`skip` run converged with
+    **no `constraint_promotion:` line** — promotion did not fire).
+  - **LIVE end-to-end proof of the flipped default:** `converge <APB.pdf> --vlm-provider skip
+    --nlp-provider ollama --nlp-model qwen2.5:14b-instruct` with **NO promote flag** fired
+    promotion automatically (summary: `constraint_promotion: 26 (Pattern) → 22 kept`, downstream
+    rebuilt, gauge measured on the promoted surface 6/22 = 27.3%); the freshly default-promoted
+    canonical APB then re-gated `seed_apb` **P=R=F1=1.000** (6/6 recall, empirical_error 0.000)
+    and `seed_apb_temporal` **3/3 = 1.000**.
+  **PROTOCOL honored:** `converge` rebuilds evidence Pattern-first from `source_ir` each pass, so
+  the live run started from a clean Pattern baseline by construction (no manual restore needed —
+  the "restore Pattern baseline first" rule applies to the standalone `promote_constraints`
+  command, which double-promotes a persisted promoted artifact). **RAM stayed safe** throughout
+  (≥42% free at the 14B peak — model on GPU, well under the 85%-used kill line; canonical APB
+  backed up to /tmp so a bad run was discardable; an armed RAM watchdog reported no danger).
+  R1–R4 recall levers stay future candidates (recover the ~3 ungated-doc recall losses).
 
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `.5` | `pending (OWNER-AUTHORIZED — FLIP)` | Owner authorized the FLIP `2026-06-14` ("do each in turn, you know what needs to be done"); `.4` packet recommended it. Execute the default flip + re-verify all gold gates on canonical artifacts. Deferred to a FRESH session for signoff sharpness (heavy: live 14B converge runs + full gold-gate battery). |
+| — | — | `tree CLOSED 2026-06-14` | `.5` FLIP executed in the owner-authorized fresh session; every gold gate re-verified GREEN on canonical artifacts (constraints 1.000 ×3, WIRE-BASED-100 relations + temporal 1.000, serial no-regression, kg-bench 156/156, provider-free byte-stable) plus a live end-to-end default-trigger proof on APB. No frontier remains. Future (separate trees if pursued): the R1–R4 recall levers in the `.4` packet. |
 
 ## Changelog
 
@@ -370,3 +400,17 @@ deliberately the owner's call per the `.1` decision record. → `.5`.
   sharpness (the flip needs repeated live qwen2.5:14b converge runs + the full gold-gate
   battery on canonical artifacts), with the repo left handoff-ready — see `MEMORY.md` for the
   precise resume plan + RAM-safety protocol. No code changed in this handoff commit.
+- `2026-06-14`: **`.5` DONE — FLIP EXECUTED; TREE CLOSED.** In the owner-authorized fresh
+  session: `converge` now promotes the LLM-primary constraint surface BY DEFAULT for live-NLP
+  runs (`should_promote_constraints` gate; provider-free stays Pattern by construction;
+  `--no-promote-constraints-llm` opt-out; old `--promote-constraints-llm` retained,
+  redundant-but-accepted). lib 1611 → 1614; full `run_ci.sh` GREEN. Gold gates re-verified GREEN
+  on canonical artifacts: wire-doc constraints 1.000 ×3 + doc recall 16/16, WIRE-BASED-100
+  relations + temporal (3/3+4/4+3/3) 1.000, serial-class no-regression (SWD/SWD-derivation/I2C)
+  1.000, kg-bench 156/156, provider-free converge byte-stable (no promotion fired). LIVE proof:
+  a flagless `converge` on APB with a live 14B fired promotion automatically (26→22 kept) and
+  the freshly default-promoted canonical APB re-gated 1.000 (constraints + temporal). RAM safe
+  throughout (≥42% free at the 14B peak). R1–R4 recall levers remain future candidates. Book
+  close-rule satisfied: the `commands/pipeline.md` "Promoting the LLM-primary constraint surface"
+  subsection now documents the default-on behavior + the `--no-promote-constraints-llm` opt-out.
+  See [[llm-primary-promotion-stage]].

@@ -314,7 +314,16 @@ fn maybe_run_rescan_plan(
     }))
 }
 
-/// LLM-PRIMARY-PROMOTION.2 — the opt-in post-stability constraint promotion: replace the final
+/// LLM-PRIMARY-PROMOTION.5 — promotion is now the DEFAULT for live-NLP converge runs. It runs
+/// when a live `--nlp-provider` is used UNLESS the operator opts out with
+/// `--no-promote-constraints-llm`. Provider-free runs (`--nlp-provider skip`) stay on the
+/// deterministic Pattern surface by construction (so CI/kg-bench/provider-free converge are
+/// untouched), and the retained `--promote-constraints-llm` flag is now redundant-but-accepted.
+fn should_promote_constraints(args: &ConvergeArgs) -> bool {
+    !matches!(args.nlp_provider, VlmProviderArg::Skip) && !args.no_promote_constraints_llm
+}
+
+/// LLM-PRIMARY-PROMOTION.2 — the post-stability constraint promotion: replace the final
 /// EvidenceIR's Pattern `signal_constraints` with the LLM-primary grounded surface
 /// ([`crate::commands::extract_constraints_llm::promote_constraints`] — typed subjects, grounded
 /// conditions, condition-only-subject + permissive-frame gates, provenance-merging dedup,
@@ -326,10 +335,11 @@ fn maybe_promote_constraints(
     args: &ConvergeArgs,
     paths: &PipelineArtifactPaths,
 ) -> Result<Option<crate::commands::extract_constraints_llm::ConstraintPromotionReport>> {
-    if !args.promote_constraints_llm {
+    if !should_promote_constraints(args) {
         return Ok(None);
     }
-    // Guarded at run_convergence entry; defensive here so the helper is safe standalone.
+    // `should_promote_constraints` already excludes `--nlp-provider skip`; defensive here so the
+    // helper stays safe if called standalone.
     if matches!(args.nlp_provider, VlmProviderArg::Skip) {
         return Ok(None);
     }
@@ -1007,6 +1017,9 @@ mod tests {
             nlp_model: Some("mock".to_string()),
             nlp_max_sentences: 0,
             promote_constraints_llm: false,
+            // This test exercises the rescan-plan path and asserts the Pattern constraint
+            // surface; opt out of the now-default LLM-primary promotion so it stays focused.
+            no_promote_constraints_llm: true,
             prior_memory: tempdir
                 .path()
                 .join("generated")
@@ -1072,6 +1085,7 @@ mod tests {
             nlp_model: None,
             nlp_max_sentences: 0,
             promote_constraints_llm: false,
+            no_promote_constraints_llm: false,
             prior_memory: PathBuf::from("generated/prior_memory/corpus_memory.json"),
             rescan_plan: None,
             execute_rescan_plan: true,
@@ -1099,6 +1113,7 @@ mod tests {
             nlp_model: None,
             nlp_max_sentences: 0,
             promote_constraints_llm: true,
+            no_promote_constraints_llm: false,
             prior_memory: PathBuf::from("generated/prior_memory/corpus_memory.json"),
             rescan_plan: None,
             execute_rescan_plan: false,
@@ -1110,6 +1125,63 @@ mod tests {
             err.to_string()
                 .contains("--promote-constraints-llm requires a live --nlp-provider")
         );
+    }
+
+    /// LLM-PRIMARY-PROMOTION.5: a minimal `ConvergeArgs` for exercising the promotion-decision
+    /// gate without touching the filesystem or a provider.
+    fn promotion_decision_args(
+        nlp_provider: VlmProviderArg,
+        promote_constraints_llm: bool,
+        no_promote_constraints_llm: bool,
+    ) -> ConvergeArgs {
+        ConvergeArgs {
+            source: PathBuf::from("unused.md"),
+            target: AdapterTargetArg::Isf,
+            max_iterations: 1,
+            vlm_provider: VlmProviderArg::Skip,
+            vlm_model: None,
+            nlp_provider,
+            nlp_model: None,
+            nlp_max_sentences: 0,
+            promote_constraints_llm,
+            no_promote_constraints_llm,
+            prior_memory: PathBuf::from("generated/prior_memory/corpus_memory.json"),
+            rescan_plan: None,
+            execute_rescan_plan: false,
+            rescan_plan_limit: 0,
+        }
+    }
+
+    #[test]
+    fn promotion_is_default_on_for_live_nlp() {
+        // The LLM-PRIMARY-PROMOTION.5 flip: a live `--nlp-provider` with no extra flags promotes
+        // the LLM-primary constraint surface by default.
+        assert!(should_promote_constraints(&promotion_decision_args(
+            VlmProviderArg::Ollama,
+            false,
+            false,
+        )));
+    }
+
+    #[test]
+    fn promotion_stays_off_for_provider_free_runs() {
+        // Provider-free converge stays on the deterministic Pattern surface by construction, so
+        // CI / kg-bench / provider-free runs are untouched by the flip.
+        assert!(!should_promote_constraints(&promotion_decision_args(
+            VlmProviderArg::Skip,
+            false,
+            false,
+        )));
+    }
+
+    #[test]
+    fn promotion_can_be_opted_out_with_a_live_provider() {
+        // `--no-promote-constraints-llm` keeps the Pattern surface even when a live provider runs.
+        assert!(!should_promote_constraints(&promotion_decision_args(
+            VlmProviderArg::Ollama,
+            false,
+            true,
+        )));
     }
 
     #[test]

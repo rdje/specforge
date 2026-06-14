@@ -444,8 +444,10 @@ extract-constraints-llm <evidence-ir> [--vlm-provider ollama|open-ai|lm-studio|s
 
 This is the **LLM-primary, Rust-grounded constraint extractor** — the live test of
 the "replace, don't patch" thesis from the extraction-quality program. It is no
-longer only a research lane: `converge --promote-constraints-llm` runs the same
-replacement automatically after the pipeline stabilizes (see the
+longer only a research lane: as of the measured default flip
+(`LLM-PRIMARY-PROMOTION.5`), `converge` runs this same replacement **automatically
+after the pipeline stabilizes whenever a live `--nlp-provider` is used** (provider-free
+runs stay on the Pattern surface; `--no-promote-constraints-llm` opts out — see the
 [pipeline commands page](pipeline.md)), the surface swap is **recorded in the
 extraction manifest** as `constraints.llm_primary` (no silent surface changes —
 the fingerprint and clustering plane can see which documents carry the promoted

@@ -136,7 +136,8 @@ Full surface and defaults (authoritative source: `crates/specforge/src/cli.rs`
 | `--nlp-provider <ollama\|open-ai\|lm-studio\|skip>` | `ollama` | LLM provider for Level 3 NLP backannotation; `skip` opts out |
 | `--nlp-model <name>` | (provider default) | Model-name override for NLP Level 3 backannotation |
 | `--nlp-max-sentences <n>` | `0` | Max sentences sent to NLP Level 3 per pass (`0` = all) |
-| `--promote-constraints-llm` | off | After stabilization, replace the Pattern signal-constraint surface with the LLM-primary grounded extractor's result and rebuild the downstream stages once (requires a live `--nlp-provider`) |
+| `--promote-constraints-llm` | (now default-on for live NLP) | Redundant-but-accepted explicit opt-in. After stabilization, replace the Pattern signal-constraint surface with the LLM-primary grounded extractor's result and rebuild the downstream stages once. With `--nlp-provider skip` it still errors (an explicit opt-in that does nothing is worse than an error) |
+| `--no-promote-constraints-llm` | off | Opt OUT of the now-default promotion and keep the deterministic Pattern surface even with a live `--nlp-provider`. (Provider-free runs already stay Pattern by construction.) |
 | `--prior-memory <path>` | `generated/prior_memory/corpus_memory.json` | Advisory local prior-memory store consulted during extraction when present |
 | `--rescan-plan <path>` | (none) | Optional schema-v2 validation rescan plan to inspect after convergence stabilizes |
 | `--execute-rescan-plan` | off | Execute whitelisted recommendations from `--rescan-plan` after stabilization |
@@ -161,19 +162,32 @@ The stable convergence snapshot is the convergence result.
 Post-rescan validation changes are reported as `changed_requires_validation_review` until validation and evidence arbitration say they are safe to promote.
 The convergence summary also exposes review-required counters split across possible-improvement, regression, and neutral artifact-change verdicts from the persisted recommendation execution summaries.
 
-### Promoting the LLM-primary constraint surface (opt-in)
+### Promoting the LLM-primary constraint surface (default for live-NLP runs)
 
 The deterministic Pattern extractor finds constraint-bearing sentences well, but reads many of
 them wrong — the standing quality gauge (below) measures its surfaces as majority-erroneous on
 dense documents. The **LLM-primary grounded extractor** (`extract-constraints-llm`) re-reads
 exactly those sentences and keeps only what Rust can ground: typed signal/field subjects,
 source-grounded conditions and values, condition-subject and permissive-frame gates, and
-provenance-merging de-duplication. `--promote-constraints-llm` runs that replacement
-automatically **after the loop stabilizes**:
+provenance-merging de-duplication. As of the corpus-wide measured default flip
+(`LLM-PRIMARY-PROMOTION.5`), `converge` runs that replacement **automatically after the loop
+stabilizes whenever a live `--nlp-provider` is used** — no flag needed:
 
 ```bash
-cargo run --manifest-path Cargo.toml -- converge /path/to/spec.pdf --target isf --promote-constraints-llm
+cargo run --manifest-path Cargo.toml -- converge /path/to/spec.pdf --target isf
 ```
+
+Two boundaries keep this safe and predictable. **Provider-free runs stay on the Pattern
+surface by construction** — `--nlp-provider skip` never promotes, so CI, `kg-bench`, and any
+deterministic provider-free pipeline are byte-identical to before the flip. And the promotion
+can be **explicitly opted out** when you want the raw Pattern surface with a live provider:
+
+```bash
+cargo run --manifest-path Cargo.toml -- converge /path/to/spec.pdf --target isf --no-promote-constraints-llm
+```
+
+(The old `--promote-constraints-llm` flag is still accepted — it is now redundant with the
+default, and still errors fast if paired with `--nlp-provider skip`.)
 
 The placement is deliberate. The convergence loop enforces a monotone knowledge guard — facts
 may never shrink pass-to-pass — and a promotion *is* a shrink by design (it replaces a noisy
