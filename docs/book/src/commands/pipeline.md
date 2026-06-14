@@ -28,7 +28,8 @@ For Markdown, it mostly promotes the existing source.
 For PDF, it performs structured normalization and materializes:
 
 - promoted markdown
-- page images
+- page images (persisted for normal documents; skipped for very large ones to bound disk — see
+  [Bounded disk footprint of very large PDFs](../pipeline/sourceir.md#bounded-disk-footprint-of-very-large-pdfs))
 - page metadata sidecars
 - visual asset crops
 - backend metadata and raw JSON

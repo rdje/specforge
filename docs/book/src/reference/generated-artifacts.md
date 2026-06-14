@@ -43,7 +43,8 @@ Depending on the input and backend path, these can include:
 
 - promoted markdown
 - page metadata
-- page images
+- page images (persisted for normal documents; skipped for very large ones to bound disk — see
+  the [SourceIR chapter](../pipeline/sourceir.md#bounded-disk-footprint-of-very-large-pdfs))
 - visual asset crops
 - normalized backend dumps
 - backend diagnostics

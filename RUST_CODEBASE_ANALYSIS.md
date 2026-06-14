@@ -22,6 +22,17 @@ exact single-pass call (byte-identical, proven). No SourceIR schema change; the 
 manifest is unchanged. Verified by full `run_ci.sh` (1587) + a temp-14p single-pass-byte-identity /
 batched-correctness proof; the CHI 585p memory proof under the RAM guard is `MEMORY-BOUNDED-INGEST.2`.
 
+`MEMORY-BOUNDED-INGEST.3` added the **disk** dimension in the same helper: a new `_env_flag` plus a
+`save_page_images` decision threaded into `process_converted_document`. Page images are still
+generated in memory (region cropping reads them via `PictureItem/TableItem.get_image`), but the
+per-page PNG `.save()` is skipped for large docs — so ingest disk is O(assets), not O(pages). The
+gate defaults to "persist at/below `SPECFORGE_INGEST_BATCH_THRESHOLD`, skip above it" (small docs
+byte-identical) and is overridable via `SPECFORGE_INGEST_SAVE_PAGE_IMAGES=1/0`. When skipped,
+`page_image_path`/`rendered_image.path` are `None` while `width_px`/`height_px`/`dpi` stay recorded.
+**No Rust type change** — both `PageArtifact` path fields are already `Option<PathBuf>`, so a null
+deserializes cleanly. The investigation behind it confirmed no downstream consumer reads page images
+(only `VisualAsset.image_path` region crops), so this is a pure, zero-fidelity-loss disk win.
+
 ## Session update (2026-06-14 — prior-memory UTF-8 OOM blocker fixed; lib 1587)
 
 `PDF-VARIANT-DIGESTION.13b.1` fixed a latent correctness/OOM defect in

@@ -44,6 +44,22 @@ def _env_int(name, default):
         return default
 
 
+def _env_flag(name, default):
+    """Read a bool-ish env var, falling back to `default` on absence/garbage.
+
+    Accepts 1/true/yes/on and 0/false/no/off (case-insensitive). Any other
+    value falls back to `default`, so a typo never silently flips behavior.
+    """
+    raw = (os.environ.get(name) or "").strip().lower()
+    if not raw:
+        return default
+    if raw in ("1", "true", "yes", "on"):
+        return True
+    if raw in ("0", "false", "no", "off"):
+        return False
+    return default
+
+
 def detect_pdf_page_count(pdf_path):
     """Cheaply count PDF pages without running the Docling pipeline.
 
@@ -455,13 +471,22 @@ class _IngestAccumulator:
 
 
 def process_converted_document(
-    doc, acc, page_image_root, visual_asset_root, markdown_path, backend_raw_output_path
+    doc,
+    acc,
+    page_image_root,
+    visual_asset_root,
+    markdown_path,
+    backend_raw_output_path,
+    save_page_images=True,
 ):
     """Extract one converted Docling document (the whole doc in single-pass mode,
     or one page-range batch in bounded-memory mode) into the shared accumulators.
-    Page and figure/table images are saved to disk here so the heavy image data
-    can be freed with the batch. The logic is identical to the historical
-    single-pass extraction; only the accumulators are externalized."""
+    Figure/table region images are always saved to disk here so the heavy image
+    data can be freed with the batch. The full-res per-page image is always
+    GENERATED (region cropping below crops from it) but only PERSISTED when
+    `save_page_images` is set — see the disk-footprint note below. The logic is
+    otherwise identical to the historical single-pass extraction; only the
+    accumulators are externalized."""
     from docling_core.types.doc import PictureItem, TableItem
 
     # ── Page artifacts ─────────────────────────────────────────────────────────
@@ -471,7 +496,20 @@ def process_converted_document(
         page_image_path = page_image_root / f"page-{page_number:04d}.png"
         page_metadata_path = page_image_root / f"page-{page_number:04d}.json"
 
-        page.image.pil_image.save(page_image_path, format="PNG")
+        # Disk-footprint bounding (MEMORY-BOUNDED-INGEST.3): the full-res page
+        # image is always generated in memory (the figure/table region crops
+        # below read it via element.get_image(doc)), but persisting one PNG per
+        # page is O(pages) and writes tens of GB on multi-thousand-page PDFs. No
+        # downstream consumer reads the per-page PNG — only figure/table region
+        # images are read — so on large docs we skip the write entirely while
+        # keeping every region image full-res and intact. The page's full-res
+        # dimensions are still recorded, so the image is well-defined for
+        # on-demand regeneration if a consumer ever needs it.
+        if save_page_images:
+            page.image.pil_image.save(page_image_path, format="PNG")
+            saved_image_path = as_posix(page_image_path)
+        else:
+            saved_image_path = None
 
         page_record = {
             "page_id": page_id,
@@ -481,7 +519,7 @@ def process_converted_document(
                 "height": getattr(page.size, "height", None),
             },
             "rendered_image": {
-                "path": as_posix(page_image_path),
+                "path": saved_image_path,
                 "width_px": int(round(page.image.size.width)),
                 "height_px": int(round(page.image.size.height)),
                 "dpi": int(round(page.image.dpi)) if page.image.dpi is not None else None,
@@ -497,7 +535,7 @@ def process_converted_document(
             {
                 "page_id": page_id,
                 "page_number": page_number,
-                "page_image_path": as_posix(page_image_path),
+                "page_image_path": saved_image_path,
                 "layout_metadata_path": as_posix(page_metadata_path),
                 "width_px": int(round(page.image.size.width)),
                 "height_px": int(round(page.image.size.height)),
@@ -709,7 +747,15 @@ def main():
     threshold = _env_int("SPECFORGE_INGEST_BATCH_THRESHOLD", 512)
     batch_pages = max(1, _env_int("SPECFORGE_INGEST_BATCH_PAGES", 64))
     total_pages = detect_pdf_page_count(input_path)
-    if total_pages is not None and total_pages > threshold:
+    large_doc = total_pages is not None and total_pages > threshold
+    # Disk-footprint bounding (MEMORY-BOUNDED-INGEST.3): a doc large enough to
+    # need batched RAM bounding is exactly the doc whose per-page full-res PNGs
+    # would blow up disk (O(pages) -> tens of GB). No consumer reads page images
+    # (only figure/table region images), so by default we do NOT persist them
+    # for large docs. Small docs keep the historical bundle byte-identical.
+    # Override explicitly with SPECFORGE_INGEST_SAVE_PAGE_IMAGES=1/0.
+    save_page_images = _env_flag("SPECFORGE_INGEST_SAVE_PAGE_IMAGES", not large_doc)
+    if large_doc:
         page_batches = [
             (lo, min(lo + batch_pages - 1, total_pages))
             for lo in range(1, total_pages + 1, batch_pages)
@@ -722,6 +768,14 @@ def main():
         )
     else:
         page_batches = [None]
+    if not save_page_images:
+        print(
+            "docling: per-page full-res images are generated in memory for "
+            "figure/table region cropping but NOT persisted to disk "
+            "(MEMORY-BOUNDED-INGEST.3 disk-footprint bounding: O(assets), not "
+            "O(pages)); set SPECFORGE_INGEST_SAVE_PAGE_IMAGES=1 to keep them",
+            file=sys.stderr,
+        )
 
     acc = _IngestAccumulator()
     markdown_parts = []
@@ -739,6 +793,7 @@ def main():
             visual_asset_root,
             markdown_path,
             backend_raw_output_path,
+            save_page_images,
         )
         markdown_parts.append(doc.export_to_markdown(image_mode=ImageRefMode.REFERENCED))
         raw_batches.append(doc.export_to_dict())

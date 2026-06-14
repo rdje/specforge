@@ -1,4 +1,37 @@
 # DEVELOPMENT_NOTES
+## `MEMORY-BOUNDED-INGEST.3` (`2026-06-14`) — disk-footprint bounding: generate page images in memory, skip persisting them for large docs
+- Second dimension of size-immunity (RAM was `.1`/`.2`). The dominant disk cost of the `normalized/`
+  bundle is one full-res PNG per page (`O(pages)`). A read-only sweep of `crates/specforge/src`
+  proved **nothing downstream reads the per-page PNG**: `enrich`, `audit-extraction`,
+  `recover-register-bits` all read only figure/table **region** crops (`VisualAsset.image_path`); the
+  IR stages + `validate`/`converge` only count `page_artifacts`. So persisting page rasters is pure
+  disk waste.
+- **Key subtlety that picked the mechanism:** region crops are cropped from the **in-memory** page
+  image (`PictureItem/TableItem.get_image(doc)` in the helper). So I must NOT disable
+  `generate_page_images` (that would break region cropping and lose load-bearing crops — a quality
+  regression). The only disposable cost is the explicit `page.image.pil_image.save(...)` write. Hence:
+  **generate-in-memory, skip-persist.**
+- Implementation (Python helper only; no Rust logic change — both path fields are already
+  `Option<PathBuf>`, so a `null` deserializes cleanly): `_env_flag(name, default)` (bool-ish, falls
+  back on garbage so a typo never flips behavior) + a `save_page_images` decision in `main`
+  (`_env_flag("SPECFORGE_INGEST_SAVE_PAGE_IMAGES", not large_doc)`, where `large_doc` is the existing
+  batching gate) threaded into `process_converted_document`. When false: skip the `.save()`, set
+  `page_image_path`/`rendered_image.path` to `None`, but still record `width_px`/`height_px`/`dpi`
+  from the in-memory `page.image` (so the raster is well-defined for on-demand regen — tracked as
+  `.3b`, deferred/YAGNI since no consumer needs it today).
+- **Gate, don't rewrite (same discipline as `.1`):** default persists at/below
+  `SPECFORGE_INGEST_BATCH_THRESHOLD` and skips above it, so all current gold/intact docs (≤500p) keep
+  the EXACT historical write path → byte-identical. Proven by stash-rebuild: new-code default ingest
+  of CAN == old-code default ingest, bit-for-bit `source_ir.json`.
+- **Verification matrix** (throwaway CAN copy, never touches gold; CPU; RAM ≤15% used): A default →
+  72 PNGs + paths set (==old code); B `SAVE=0` → 0 PNGs, 98 region crops byte-identical to A,
+  `source_ir.json`==A once `page_image_path` neutralized; C `BATCH_THRESHOLD=1` default → auto-skip +
+  batched; D large + `SAVE=1` → keep. Disk on CAN: 21 MB page PNGs vs 1.8 MB crops dropped. Full
+  `run_ci.sh` green (1587). KM `page-image-disk-bounding`; book "Bounded disk footprint" subsection.
+- The helper's skip diagnostic prints to its own stderr, which the Rust caller only surfaces on
+  failure (same as `.1`'s batching message). The user-visible honest signal is `page_image_path: null`
+  in the artifact.
+
 ## `MEMORY-BOUNDED-INGEST.1` (`2026-06-14`) — page-range batching bounds ingest memory; small docs stay byte-identical by gating, not rewriting
 - The 24 GB host crashed/rebooted in the 90→93% used-RAM danger zone (owner directive, reinforced
   repeatedly). The CHI re-ingest (`.13c`) was the trigger: the Docling helper held a full-res image

@@ -106,6 +106,35 @@ from a single pass. The only observable difference is that a running page-header
 happens to merge across a page boundary in single-pass mode may appear as two separate boilerplate
 elements — never a loss of signals, tables, or intent.
 
+## Bounded disk footprint of very large PDFs
+
+Memory is not the only resource a giant PDF can exhaust — disk is the other. The single largest
+thing the normalized bundle writes is a **full-resolution image of every page**: one PNG per page.
+On a thousand-page manual that is tens of gigabytes of page rasters alone — even though nothing
+downstream ever reads them. SpecForge's vision steps (`enrich`, `audit-extraction`,
+`recover-register-bits`) only ever read the *figure and table region crops*, never the full-page
+rasters.
+
+So for large documents SpecForge keeps each page image only long enough to crop those region
+images out of it, then **does not persist the page raster to disk**. The effect:
+
+- ingest disk grows with the number of *figures and tables* (`O(assets)`), not the number of
+  *pages* (`O(pages)`) — a thousand-page PDF no longer writes a thousand page PNGs;
+- every figure/table region image is still captured at **full resolution** — nothing the pipeline
+  reads is lost;
+- the page artifact still records the page's full-resolution dimensions, so the raster stays
+  well-defined and can be re-rendered on demand if a future consumer ever needs it; the
+  `page_image_path` is simply reported as absent rather than pointing at a file.
+
+As with bounded memory, this is **quality-invariant** — only the on-disk working set shrinks. By
+default page rasters are persisted for normal documents (so small documents stay byte-for-byte
+unchanged) and skipped for large ones, using the same threshold that triggers batching. One
+environment variable overrides the decision explicitly:
+
+- `SPECFORGE_INGEST_SAVE_PAGE_IMAGES` — `1` to always persist per-page rasters (even for large
+  documents), `0` to never persist them (even for small ones). Unset, the default is "persist at or
+  below `SPECFORGE_INGEST_BATCH_THRESHOLD`, skip above it."
+
 ## Typical `SourceIR` failure modes
 
 The main risks at this stage are structural, not semantic.

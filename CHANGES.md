@@ -1,3 +1,35 @@
+### `MEMORY-BOUNDED-INGEST.3` — DISK-footprint bounding: large PDFs no longer persist a full-res PNG per page
+Second dimension of PDF-size immunity (after RAM in `.1`/`.2`): **disk**. The single largest thing
+the `normalized/` bundle writes is a full-resolution image of every page — one PNG per page,
+`O(pages)` (CAN 72p = 21 MB of page PNGs vs 1.8 MB of figure/table crops; CHI 585p = 528 MB; a
+multi-thousand-page doc writes tens of GB). A read-only investigation of `crates/specforge/src`
+established that **no downstream consumer reads the per-page PNG**: every vision step (`enrich`,
+`audit-extraction`, `recover-register-bits`) reads only the figure/table **region** crops
+(`VisualAsset.image_path`); the IR stages and `validate`/`converge` only *count* page artifacts. But
+those region crops are cropped from the **in-memory** page image (`PictureItem/TableItem.get_image`),
+so the page image must still be generated — disabling generation would break region cropping and lose
+load-bearing crops (a quality regression).
+
+Fix: the Docling helper now **generates page images in memory (region cropping unaffected) but skips
+persisting the per-page PNG to disk** for large docs (`_env_flag` + a `save_page_images` gate threaded
+into `process_converted_document`). Ingest disk becomes `O(assets)`, not `O(pages)`; every region crop
+stays full-resolution; `page_image_path`/`rendered_image.path` become an honest `None` while the
+page's full-res `width_px`/`height_px`/`dpi` stay recorded (so the raster is well-defined for on-demand
+regeneration). Default: skip above `SPECFORGE_INGEST_BATCH_THRESHOLD` (same gate as batching), persist
+at/below it (small docs stay byte-identical); override explicitly with
+`SPECFORGE_INGEST_SAVE_PAGE_IMAGES=1/0`. **Quality-invariant — only the on-disk working set shrinks.**
+
+Verified live on a throwaway CAN copy (72p, key never collides with gold), CPU device, RAM ≤15% used:
+(A) default → 72 page PNGs, all `page_image_path` set, **byte-identical to the same ingest with the
+change git-stashed (old code)**; (B) `SAVE=0` → 0 page PNGs, the 98 region crops byte-identical to (A),
+`source_ir.json` identical to (A) once `page_image_path` is neutralized (the only field that changes);
+(C) `BATCH_THRESHOLD=1` (force large) default → AUTO-skip + batched, crops intact; (D) large + `SAVE=1`
+→ override keeps the 72 PNGs. py_compile + full `scripts/run_ci.sh` GREEN (lib 1587, clippy/rustdoc
+warning-denied, mdBook, memory-arch, KM sync). No Rust struct change (both path fields already
+`Option<PathBuf>`). Book: SourceIR "Bounded disk footprint" subsection + ingest/artifacts/troubleshooting
+notes; KM card `page-image-disk-bounding`. The `MEMORY-BOUNDED-INGEST` tree now has both RAM (`.1`/`.2`)
+and DISK (`.3`) dimensions delivered; `.4` restricted-env and `.5` summary-streaming remain.
+
 ### `MEMORY-BOUNDED-INGEST.2` — CHI (585p) proves bounded-memory ingestion end-to-end (peak 20% used)
 The 585-page CHI Architecture Spec — which OOM-killed the single-pass ingest twice (17.2 GB RSS /
 SIGKILL) — was ingested through the new batched path (10 batches × 64 pages, `DOCLING_DEVICE=cpu`)

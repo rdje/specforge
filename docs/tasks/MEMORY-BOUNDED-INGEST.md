@@ -101,17 +101,54 @@ addressed by the disk-bounding leaves below.
   Commit: `MEMORY-BOUNDED-INGEST.2`
 
 - ID: `MEMORY-BOUNDED-INGEST.3`
-  Status: `proposed`
+  Status: `done`
   Goal: bound the **DISK** footprint of the `normalized/` bundle for very large PDFs **without any
   fidelity loss** (the dominant cost is the full-res PNG per page — a multi-thousand-page doc can
-  write tens of GB). Quality-preserving lever: defer per-page full-res image generation to
-  **on-demand** (rendered full-res at `enrich` time only for the pages a consumer actually reads)
-  instead of eagerly for every page at ingest — so ingest disk is O(assets), not O(pages), and any
-  page image, when needed, is still full resolution. Keep figure/table region images and all typed
-  SourceIR surfaces intact. NO lossy levers (no lower resolution / detail-dropping compression /
-  page or table skipping). PDF-agnostic.
-  Acceptance: a huge-page-count doc ingests within a bounded disk budget; any page image that is
-  later produced is byte-for-byte the full-res image; small docs unchanged.
+  write tens of GB). **Codebase investigation (read-only, recorded in Decisions) settled the
+  mechanism precisely:** the per-page full-res PNG (`normalized/pages/page-NNNN.png`,
+  `PageArtifact.page_image_path`) is read by **NO** downstream consumer — `enrich`,
+  `audit-extraction`, and `recover-register-bits` all read only figure/table REGION images
+  (`VisualAsset.image_path`); the IR stages and `validate` only COUNT page artifacts. BUT the
+  Docling helper crops those region images from the in-memory page image (`element.get_image(doc)`),
+  so the page image must still be **generated**. Quality-preserving lever: keep
+  `generate_page_images=True` (region cropping unaffected, region images stay full-res on disk) but
+  **skip PERSISTING the per-page PNG to disk for large docs** — so ingest disk is O(assets), not
+  O(pages), with zero fidelity loss; `page_image_path` becomes an honest `None` while the page's
+  full-res dimensions stay recorded. Gated by the same large-doc condition as batching
+  (default: skip when `pages > SPECFORGE_INGEST_BATCH_THRESHOLD`), explicitly overridable via
+  `SPECFORGE_INGEST_SAVE_PAGE_IMAGES=1/0`. Small docs keep the EXACT historical bundle
+  (byte-identical). NO lossy levers (no lower resolution / detail-dropping compression / page or
+  table skipping). PDF-agnostic.
+  Acceptance: a large-page-count doc ingests with no per-page PNGs on disk (disk O(assets)) while
+  every figure/table region image stays full-res and byte-identical to the saved-mode run; small
+  docs (≤ threshold) re-ingest byte-identical; explicit override works both ways; `run_ci.sh` green.
+  Verification: `done (2026-06-14)` — implemented in the Docling helper as a generate-in-memory /
+  skip-persist gate (`_env_flag` + `save_page_images` passed into `process_converted_document`;
+  `page.image.pil_image.save()` and the recorded `page_image_path`/`rendered_image.path` are skipped
+  when `save_page_images` is false; `width_px`/`height_px`/`dpi` still recorded). py_compile OK; full
+  `scripts/run_ci.sh` GREEN (lib 1587, clippy/rustdoc warning-denied, mdBook, memory-arch, KM sync).
+  Live-verified on a throwaway CAN copy (72p, key `diskbound_probe_can`, never touched gold), CPU
+  device, RAM ≤15% used: **(A)** default → 72 page PNGs, all `page_image_path` set, AND **byte-identical
+  to the same ingest with the change git-stashed (old code)** — small-doc path unchanged; **(B)**
+  `SPECFORGE_INGEST_SAVE_PAGE_IMAGES=0` → 0 page PNGs, 98 region crops byte-identical to (A),
+  `source_ir.json` identical to (A) once `page_image_path` is neutralized (only field that changes);
+  **(C)** `SPECFORGE_INGEST_BATCH_THRESHOLD=1` (force large) default → AUTO-skip (0 PNGs) + batched,
+  region crops intact; **(D)** large + `SAVE=1` → override KEEP (72 PNGs). Disk: per-page PNGs were
+  21 MB vs 1.8 MB region crops on CAN — skip drops the O(pages) cost, scaling on big docs. Throwaway
+  bundle removed after measurement.
+  Commit: `MEMORY-BOUNDED-INGEST.3`
+
+- ID: `MEMORY-BOUNDED-INGEST.3b`
+  Status: `proposed`
+  Goal: (follow-up, build only if a real consumer needs it) provide a targeted **on-demand
+  single-page full-res render** path so a specific page image can be reproduced without a full
+  re-ingest, satisfying "any page image later produced is byte-for-byte full-res" with surgical
+  cost. Tracked honestly because `.3` stops persisting page images; today NO consumer reads page
+  images (only region images), so this is deferred (YAGNI) rather than built speculatively. Until
+  then, a page image can still be reproduced full-res by re-ingesting with
+  `SPECFORGE_INGEST_SAVE_PAGE_IMAGES=1`.
+  Acceptance: a `render-page`-style path emits the full-res PNG for one requested page, byte-for-byte
+  identical to the eager-ingest image; bounded RAM/disk.
   Verification: `pending`
   Commit: `pending`
 
@@ -142,9 +179,12 @@ addressed by the disk-bounding leaves below.
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `MEMORY-BOUNDED-INGEST.3` | `proposed` | DISK-footprint bounding (the next size-immunity lever; owner emphasized disk + 3 GB files) |
-| 2 | `MEMORY-BOUNDED-INGEST.4` | `proposed` | restricted-env graceful degradation (slower, never lower quality) |
-| 3 | `MEMORY-BOUNDED-INGEST.5` | `proposed` | bound summary / `source_ir.json` at extreme page counts |
+| 1 | `MEMORY-BOUNDED-INGEST.4` | `proposed` | restricted-env graceful degradation (slower, never lower quality) |
+| 2 | `MEMORY-BOUNDED-INGEST.5` | `proposed` | bound summary / `source_ir.json` at extreme page counts |
+| — | `MEMORY-BOUNDED-INGEST.3b` | `proposed` | targeted on-demand single-page render (deferred/YAGNI — no consumer reads page images today) |
+
+`.3` (DISK-footprint bounding — skip persisting per-page PNGs for large docs) `done` 2026-06-14;
+RAM dimension (`.1`/`.2`) + DISK dimension (`.3`) now both delivered.
 
 `.1` (RAM page-range batching) `done` 2026-06-14; `.2` (CHI 585p proof, peak 20% used) `done`
 2026-06-14 — `PDF-VARIANT-DIGESTION.13c` is now unblocked.
@@ -175,6 +215,24 @@ addressed by the disk-bounding leaves below.
 - `2026-06-14`: **Safety** — every verification re-ingest runs under the autonomous RAM guard
   (kill at ≥85% used; below the 90% danger floor), one heavy job at a time, model unloaded during
   ingests (`[[feedback_ram_ceiling_monitor]]`).
+- `2026-06-14` (`.3`): **Page-image consumer investigation (read-only)** — exhaustive search of
+  `crates/specforge/src` found `PageArtifact.page_image_path` is read by **no** downstream consumer.
+  Every VLM-backed command reads only figure/table REGION images via `VisualAsset.image_path`:
+  `enrich` (`commands/enrich.rs` — region crops only), `audit-extraction`
+  (`commands/audit_extraction.rs` — table-region lookup), `recover-register-bits`
+  (`commands/recover_register_bits.rs` — `DiagramKind::RegisterBitfield` region assets). The IR
+  stages (`evidence`/`semantic`/`intent`) and `validate`/`converge` only COUNT `page_artifacts`,
+  never open the images. So skipping page-image PERSISTENCE is a pure, zero-fidelity-loss disk win.
+- `2026-06-14` (`.3`): **Mechanism — generate-in-memory, skip-persist (NOT disable generation).**
+  The Docling helper crops region images from the in-memory page image
+  (`PictureItem/TableItem.get_image(doc)` in `docling_backend.rs`), so `generate_page_images=True`
+  must stay (disabling it would break region cropping and LOSE load-bearing region images — a
+  quality regression). The disk cost is the explicit `page.image.pil_image.save(...)` write only.
+  `.3` therefore keeps generation and skips the `.save()` for large docs, leaving region images
+  full-res and intact while dropping the O(pages) PNG disk cost. `page_image_path`/
+  `rendered_image.path` become honest `None`; the page's full-res `width_px`/`height_px`/`dpi` stay
+  recorded (so on-demand regeneration in `.3b` is well-defined). No Rust struct change: both path
+  fields are already `Option<PathBuf>`.
 
 ## Open Questions
 
@@ -194,13 +252,15 @@ addressed by the disk-bounding leaves below.
 | --- | --- | --- | --- |
 | `2026-06-14` | `MEMORY-BOUNDED-INGEST.1` | py_compile + `cargo build` + full `run_ci.sh` (1587) + temp-14p before/after | GREEN; (A) single-pass BYTE-IDENTICAL; (B) batched complete+correct (`page_no` absolute, surfaces match, one benign boilerplate-header boundary split) |
 | `2026-06-14` | `MEMORY-BOUNDED-INGEST.2` | CHI (585p) ingest under the autonomous RAM guard | GREEN — completed rc=0, NOT killed, PEAK used 20%; source_ir complete (585p/368 tables, abs unique page nums), 528 MB normalized, ~19 min |
+| `2026-06-14` | `MEMORY-BOUNDED-INGEST.3` | py_compile + full `run_ci.sh` (1587) + 4-mode live CAN ingest (throwaway key) + stash-rebuild byte-identity | GREEN; (A) default 72 PNGs == old-code byte-identical; (B) SAVE=0 → 0 PNGs, region crops byte-identical, source_ir identical bar `page_image_path`; (C) force-large default → auto-skip+batched; (D) large+SAVE=1 → keep; per-page PNGs 21 MB vs 1.8 MB crops |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `MEMORY-BOUNDED-INGEST.1` | `MEMORY-BOUNDED-INGEST.1` | page-range batched ingestion behind a 512p gate (`9cb16985`) |
-| `MEMORY-BOUNDED-INGEST.2` | `MEMORY-BOUNDED-INGEST.2` | CHI 585p ingested under the RAM guard, peak 20% used |
+| `MEMORY-BOUNDED-INGEST.2` | `MEMORY-BOUNDED-INGEST.2` | CHI 585p ingested under the RAM guard, peak 20% used (`1ef6a1b4`) |
+| `MEMORY-BOUNDED-INGEST.3` | `MEMORY-BOUNDED-INGEST.3` | disk-footprint bounding — skip persisting per-page PNGs for large docs (generate-in-memory for region crops, skip the disk write); `SPECFORGE_INGEST_SAVE_PAGE_IMAGES` override |
 
 ## Changelog
 
@@ -217,3 +277,13 @@ addressed by the disk-bounding leaves below.
   528 MB normalized, ~19 min, quality intact. `PDF-VARIANT-DIGESTION.13c` unblocked. Tree stays
   active for the size-immunity program: `.3` DISK (on-demand full-res page images) / `.4`
   restricted-env / `.5` summary streaming.
+- `2026-06-14`: `.3` DONE — DISK-footprint bounding. Read-only investigation found NO downstream
+  consumer reads the per-page full-res PNG (only figure/table region crops are read), but region
+  crops are cropped from the in-memory page image, so generation must stay. Implemented
+  generate-in-memory / skip-persist in the Docling helper (`_env_flag` + `save_page_images` gate):
+  large docs no longer write `page-NNNN.png` (disk O(assets) not O(pages)); region crops stay
+  full-res; `page_image_path` becomes honest `None` with dimensions retained. Default skips above
+  `SPECFORGE_INGEST_BATCH_THRESHOLD`, persists at/below (small docs byte-identical); override via
+  `SPECFORGE_INGEST_SAVE_PAGE_IMAGES=1/0`. Verified A/B/C/D on a throwaway CAN copy + stash-rebuild
+  byte-identity; full CI green (1587). Book + KM card `page-image-disk-bounding` added. Both the RAM
+  (`.1`/`.2`) and DISK (`.3`) dimensions of size-immunity are now delivered; `.4`/`.5` remain.

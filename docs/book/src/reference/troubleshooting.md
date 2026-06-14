@@ -82,6 +82,12 @@ Remember what that means:
 - deleting them preserves `source_ir.json` by default
 - if you later need page images, visual crops, or backend dumps again, rerun `ingest` or `converge`
 
+For very large PDFs the heaviest part of the bundle — a full-resolution image of every page — is
+already **not persisted** by default (only the figure/table region crops are), so a giant document's
+`normalized/` stays bounded at ingest time. See
+[Bounded disk footprint of very large PDFs](../pipeline/sourceir.md#bounded-disk-footprint-of-very-large-pdfs);
+override with `SPECFORGE_INGEST_SAVE_PAGE_IMAGES=1` if you specifically want every page raster kept.
+
 If one document is no longer relevant and you want a full local reset for it:
 
 ```bash
