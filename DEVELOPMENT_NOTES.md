@@ -1,4 +1,57 @@
 # DEVELOPMENT_NOTES
+## `MEMORY-BOUNDED-INGEST.4a` (`2026-06-14`) — built-in autonomous RAM guard in `materialize_pdf`
+- Problem: the autonomous RAM guard that made the `.2`/`.3` big-PDF ingests safe was an **external
+  shell wrapper** (sample memory, `kill` on breach). It only protected runs where someone remembered
+  to wrap the command. `.4a` makes it a first-class part of `ingest` itself, encoding the owner's
+  non-negotiable "kill at ≥85% used; never crash the host" rule into the tool.
+- **No new dependency** (deliberate — keeps the crate at 4 deps and reads the *same* metric the owner
+  watches in a system monitor). `current_used_memory_percent()` shells the platform's own tool:
+  macOS `read_macos_used_memory_percent` runs `memory_pressure` and `parse_macos_memory_pressure_used_percent`
+  reads the "System-wide memory free percentage: N%" line (used = 100 − free); Linux
+  `read_linux_used_memory_percent` reads `/proc/meminfo` and `parse_linux_meminfo_used_percent` computes
+  used% = (1 − MemAvailable/MemTotal) × 100; any other target → `None` (guard inert, never aborts on
+  missing data). The platform **readers** are `#[cfg(target_os = "…")]`; the **pure text parsers** are
+  `#[cfg(any(target_os = "…", test))]` so they compile-and-test on BOTH platforms (the `test` cfg keeps
+  them live under `cargo test` on macOS *and* Linux) without tripping `dead_code` in a non-test build of
+  the other platform.
+- Mechanism — `run_backend_with_ram_guard(command, display_name, &guard, stdout_path, stderr_path,
+  used_percent_fn)`, called from `materialize_pdf` in place of the blocking `command.output()`:
+  1. **pre-spawn sample** — if already over the ceiling, return the typed error WITHOUT spawning (don't
+     even launch a heavy ingest on an already-stressed host; verified by the test asserting no stdout
+     file is created);
+  2. redirect child stdout/stderr to temp **files** (not pipes) — polling a child while its pipe buffer
+     fills would deadlock; files sidestep that and are read back via `render_backend_output_files` only on
+     the error path;
+  3. **poll** `child.try_wait()` on a short fixed cadence (`RAM_GUARD_POLL_INTERVAL` = 50 ms) so a fast
+     ingest returns promptly, but **sample memory only every `sample_interval`** (an `Instant` elapsed
+     gate) so `memory_pressure` isn't shelled 20×/s on a long run;
+  4. on breach: `child.kill()` + `child.wait()` + typed error.
+  `ram_breach(guard, fn)` flattens the three guard conditions (active ceiling? reading available? at/above
+  ceiling?) into one `Option<(used, ceiling)>` so both the pre-spawn and in-loop checks read cleanly and
+  clippy's `collapsible_if` stays quiet.
+- **Testability** — the reader is injected as `&dyn Fn() -> Option<f64>`, so the three behaviors are proven
+  with NO real pressure: pre-spawn abort (reader `99`, child `sleep 30` → returns fast, never spawns),
+  mid-run kill (reader `10`-then-`99` via a `Cell`, child `sleep 30` → killed within ms; pre-spawn consumes
+  the `10`, the first in-loop sample gets the `99`), and completes (reader `10`, child `true` → `Ok` success).
+  Tests construct `RamGuardConfig` directly with a 0 ms `sample_interval` so the in-loop sample fires
+  immediately and the kill is deterministic. Pure-parser + `from_env` + `should_abort_for_memory` tests round
+  out the +9.
+- Safety/correctness — on abort `materialize_pdf` cleans only `normalized.staging` (via `inspect_err`), so
+  the staged-swap guarantee holds: the last-good `normalized/` + `source_ir.json` are never touched. New
+  `AppError::IngestAbortedForMemory { program, used_percent, ceiling_percent }` (`error.rs`) has an actionable
+  Display. Config parsing is conservative: `parse_ram_abort_percent` defaults to 85, treats
+  `off`/`none`/`disabled`/`disable` and any value outside `(0, 100)` as disabled, and falls back to the
+  default on garbage (a typo never silently disables the safeguard); `parse_ram_sample_secs` floors at 1 s.
+- **Determinism gotcha:** the 3 `source.rs` stub-helper ingest tests now flow through the guard with the REAL
+  reader at the default 85%; on a hot CI host (>85% used) the pre-spawn sample could false-abort them, so each
+  sets `SPECFORGE_INGEST_RAM_ABORT_PERCENT=off` (via the existing `EnvVarGuard`, under `env_var_lock`). With the
+  guard off the pre-spawn sample is skipped and behavior is identical to the old blocking path — assertions
+  unchanged.
+- Verified: full `scripts/run_ci.sh` GREEN (1596 lib tests; clippy `-D warnings` after fixing one
+  `trim_split_whitespace`; rustdoc; mdBook) + kg-bench 156/156. Book: SourceIR "Autonomous host-memory
+  safeguard" + troubleshooting entry; KM card `ingest-ram-guard`. Frontier: `.4b` pre-flight / `.4c` adaptive
+  batch.
+
 ## `MEMORY-BOUNDED-INGEST.3` (`2026-06-14`) — disk-footprint bounding: generate page images in memory, skip persisting them for large docs
 - Second dimension of size-immunity (RAM was `.1`/`.2`). The dominant disk cost of the `normalized/`
   bundle is one full-res PNG per page (`O(pages)`). A read-only sweep of `crates/specforge/src`

@@ -1358,6 +1358,11 @@ EOF
         }
 
         let _env_guard = EnvVarGuard::set_path("SPECFORGE_DOCLING_HELPER", &helper);
+        // Disable the built-in RAM guard so a hot CI host (>85% used) cannot false-abort the
+        // stub-helper ingest; behavior is then identical to the pre-guard blocking path
+        // (MEMORY-BOUNDED-INGEST.4a).
+        let _ram_guard =
+            EnvVarGuard::set_path("SPECFORGE_INGEST_RAM_ABORT_PERCENT", Path::new("off"));
         let mut source_ir = SourceIr::build(&source, &artifact_base)?;
 
         source_ir.materialize()?;
@@ -1514,6 +1519,11 @@ EOF
         }
 
         let _env_guard = EnvVarGuard::set_path("SPECFORGE_DOCLING_HELPER", &helper);
+        // Disable the built-in RAM guard so a hot CI host (>85% used) cannot false-abort the
+        // stub-helper ingest; behavior is then identical to the pre-guard blocking path
+        // (MEMORY-BOUNDED-INGEST.4a).
+        let _ram_guard =
+            EnvVarGuard::set_path("SPECFORGE_INGEST_RAM_ABORT_PERCENT", Path::new("off"));
         let mut source_ir = SourceIr::build(&source, &artifact_base)?;
         source_ir.materialize()?;
         source_ir.write_to_disk()?;
@@ -1557,6 +1567,11 @@ exit 7
         }
 
         let _env_guard = EnvVarGuard::set_path("SPECFORGE_DOCLING_HELPER", &helper);
+        // Disable the built-in RAM guard so a hot CI host (>85% used) cannot false-abort the
+        // stub-helper ingest; behavior is then identical to the pre-guard blocking path
+        // (MEMORY-BOUNDED-INGEST.4a).
+        let _ram_guard =
+            EnvVarGuard::set_path("SPECFORGE_INGEST_RAM_ABORT_PERCENT", Path::new("off"));
         let mut source_ir = SourceIr::build(&source, &artifact_base)?;
         let error = source_ir
             .materialize()

@@ -4,7 +4,7 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
-## Session update (2026-06-14 — bounded-memory big-PDF ingestion in the Docling backend)
+## Session update (2026-06-14 — bounded-memory/disk big-PDF ingestion + built-in RAM guard in the Docling backend)
 
 `MEMORY-BOUNDED-INGEST.1` reworked the embedded Docling helper inside
 `ir/source/docling_backend.rs` so very large PDFs ingest with bounded peak memory. The two
@@ -32,6 +32,26 @@ byte-identical) and is overridable via `SPECFORGE_INGEST_SAVE_PAGE_IMAGES=1/0`. 
 **No Rust type change** — both `PageArtifact` path fields are already `Option<PathBuf>`, so a null
 deserializes cleanly. The investigation behind it confirmed no downstream consumer reads page images
 (only `VisualAsset.image_path` region crops), so this is a pure, zero-fidelity-loss disk win.
+
+`MEMORY-BOUNDED-INGEST.4a` made the autonomous RAM guard a first-class Rust subsystem (the `.1`/`.3`
+work was Python-helper-only; this is the first Rust-side change in the tree). `materialize_pdf` no
+longer calls the blocking `command.output()` directly — it builds a `RamGuardConfig` from the
+environment and runs the backend through `run_backend_with_ram_guard(command, display_name, &guard,
+stdout_path, stderr_path, used_percent_fn)`: a pre-spawn memory sample, then spawn with stdout/stderr
+redirected to temp files, then a poll loop (`child.try_wait()` every 50 ms, memory sampled every
+`sample_interval`) that `kill()`s the child and returns a typed error on breach. The memory reader is
+injected (`&dyn Fn() -> Option<f64>`) so the abort/kill/complete branches are unit-tested with no real
+pressure; production wires `current_used_memory_percent` (a no-dependency `memory_pressure` /
+`/proc/meminfo` reader, pure text parsers gated `#[cfg(any(target_os = "…", test))]`). **New public
+error surface:** `error.rs` gains `AppError::IngestAbortedForMemory { program, used_percent,
+ceiling_percent }` with an actionable Display — the typed boundary now distinguishes a self-protective
+memory abort from a generic `ExternalCommandFailed`. **Architecture/risk note:** the ingest path can no
+longer crash the host on memory pressure — it fails closed with the staged-swap intact (only
+`normalized.staging` is discarded on abort). Behavior with headroom is unchanged except the child's
+stdout/stderr move from pipes to temp files (`render_backend_output_files` mirrors the old
+`render_command_output` formatting for error reporting). Config: `SPECFORGE_INGEST_RAM_ABORT_PERCENT`
+(85; off/out-of-range disables), `SPECFORGE_INGEST_RAM_SAMPLE_SECS` (2, floor 1). Verified by full
+`run_ci.sh` (lib 1587 → **1596**, +9 tests) + kg-bench 156/156.
 
 ## Session update (2026-06-14 — prior-memory UTF-8 OOM blocker fixed; lib 1587)
 

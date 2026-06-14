@@ -1,3 +1,42 @@
+### `MEMORY-BOUNDED-INGEST.4a` — built-in autonomous RAM guard: ingest aborts cleanly before it could crash the host
+Closes the gap the size-immunity program left open: the autonomous RAM guard used to verify the big-PDF
+ingests (`.2`/`.3`) was an **external shell wrapper** an operator had to remember to apply. It is now a
+**first-class, built-in** ingest safeguard. While the Docling subprocess runs, `specforge` itself samples
+system memory and aborts the ingest cleanly before the host crosses a configurable danger ceiling —
+directly encoding the owner's non-negotiable "kill at ≥85% used; never crash the host" rule into the tool.
+
+**No new dependency** (the crate stays at 4 deps): memory is read via the platform's OWN tool, matching the
+exact metric the owner monitors — macOS runs `memory_pressure` and parses the "free percentage" line
+(used = 100 − free); Linux reads `/proc/meminfo` (used% = (1 − MemAvailable/MemTotal) × 100); any other OS
+leaves the guard inert. The text parsers are PURE functions gated `#[cfg(any(target_os = "…", test))]` so
+they unit-test on both platforms with no dead-code on either.
+
+**Mechanism** (`docling_backend::run_backend_with_ram_guard`, called from `materialize_pdf` in place of the
+blocking `command.output()`): sample once BEFORE spawn (don't even launch a heavy ingest if the host is
+already in danger), then spawn with the child's stdout/stderr redirected to temp FILES (so polling can
+never deadlock on a full pipe buffer), poll `child.try_wait()` on a short fixed cadence (50 ms) and sample
+memory only every `SPECFORGE_INGEST_RAM_SAMPLE_SECS` (default 2, floor 1); on breach `child.kill()` +
+`wait()` and return a typed error. The memory reader is **injected** (`&dyn Fn() -> Option<f64>`) so every
+branch — pre-spawn abort, mid-run kill, clean completion — is tested with NO real memory pressure. Because
+the bundle is built in `normalized.staging` and only swapped in on success, an abort discards only the
+in-flight tree — the **last-good `normalized/` + `source_ir.json` stay intact**.
+
+New typed `AppError::IngestAbortedForMemory { program, used_percent, ceiling_percent }` with an actionable
+Display (host preserved; free memory / raise the ceiling / set it off). Config:
+`SPECFORGE_INGEST_RAM_ABORT_PERCENT` (default `85`; `off`/`none`/`disabled` or any value `<=0` / `>=100`
+disables the guard; unparseable text falls back to the default), `SPECFORGE_INGEST_RAM_SAMPLE_SECS`
+(default `2`, floor `1`). A healthy ingest with headroom is byte-identical to before — only the child's
+stdout/stderr move from pipes to temp files; `source_ir.json` is unaffected.
+
+**Determinism fix:** the 3 `source.rs` stub-helper ingest tests now run through the guard with the REAL
+reader at the default 85% — a hot CI host (>85% used) could false-abort them — so they set
+`SPECFORGE_INGEST_RAM_ABORT_PERCENT=off` via the existing `EnvVarGuard`/`env_var_lock` pattern; behavior is
+then identical to the pre-guard blocking path (assertions unchanged). **+9 unit tests**, lib **1587 → 1596**.
+Full `scripts/run_ci.sh` GREEN (memory-arch, KM in-sync, fmt, clippy `-D warnings` — fixed one
+`trim_split_whitespace`, 1596 tests, rustdoc, mdBook) + kg-bench **156/156**. Book: SourceIR "Autonomous
+host-memory safeguard" subsection + a troubleshooting entry; KM card `ingest-ram-guard`. The RAM dimension
+of size-immunity is now built into the tool itself; `.4b` (pre-flight) / `.4c` (adaptive batch) remain.
+
 ### `MEMORY-BOUNDED-INGEST.3` — DISK-footprint bounding: large PDFs no longer persist a full-res PNG per page
 Second dimension of PDF-size immunity (after RAM in `.1`/`.2`): **disk**. The single largest thing
 the `normalized/` bundle writes is a full-resolution image of every page — one PNG per page,

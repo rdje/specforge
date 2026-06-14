@@ -20,6 +20,11 @@ pub enum AppError {
     },
     InvalidBackendOutput(String),
     InvalidStageArtifact(String),
+    IngestAbortedForMemory {
+        program: String,
+        used_percent: f64,
+        ceiling_percent: f64,
+    },
 }
 
 impl fmt::Display for AppError {
@@ -55,6 +60,21 @@ impl fmt::Display for AppError {
             }
             Self::InvalidBackendOutput(message) => write!(f, "invalid backend output: {message}"),
             Self::InvalidStageArtifact(message) => write!(f, "invalid stage artifact: {message}"),
+            Self::IngestAbortedForMemory {
+                program,
+                used_percent,
+                ceiling_percent,
+            } => {
+                write!(
+                    f,
+                    "ingest aborted to protect the host: system memory was {used_percent:.0}% used, \
+                     at or above the {ceiling_percent:.0}% safety ceiling, while running {program}. \
+                     The host was preserved and the previous normalized bundle is intact. \
+                     Free memory and retry, raise the ceiling with \
+                     SPECFORGE_INGEST_RAM_ABORT_PERCENT=<percent>, or disable the guard with \
+                     SPECFORGE_INGEST_RAM_ABORT_PERCENT=off."
+                )
+            }
         }
     }
 }

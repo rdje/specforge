@@ -2,7 +2,8 @@ use std::env;
 use std::fs;
 use std::io::ErrorKind;
 use std::path::{Path, PathBuf};
-use std::process::{Command, Output};
+use std::process::{Command, ExitStatus, Output};
+use std::time::{Duration, Instant};
 
 use serde::Deserialize;
 use tempfile::tempdir;
@@ -18,6 +19,20 @@ const DOCLING_HELPER_ENV: &str = "SPECFORGE_DOCLING_HELPER";
 pub const DOCLING_PYTHON_ENV: &str = "SPECFORGE_DOCLING_PYTHON";
 pub const DEFAULT_DOCLING_BOOTSTRAP_SCRIPT: &str = "scripts/bootstrap_docling.sh";
 pub const DEFAULT_DOCLING_VENV_DIR: &str = ".venv-docling";
+
+/// Used-memory percentage at or above which an in-flight ingest is aborted to protect the host.
+/// Default is the owner's non-negotiable safety policy (kill at ≥85% used, below the 90% danger
+/// floor). Set to `off`/`none`/`disabled` (or any value `<= 0` / `>= 100`) to disable the guard;
+/// any other value is parsed as a percentage, and unparseable text falls back to the default.
+const INGEST_RAM_ABORT_PERCENT_ENV: &str = "SPECFORGE_INGEST_RAM_ABORT_PERCENT";
+/// Seconds between system-memory samples while the Docling subprocess runs (default 2, floor 1).
+const INGEST_RAM_SAMPLE_SECS_ENV: &str = "SPECFORGE_INGEST_RAM_SAMPLE_SECS";
+const DEFAULT_INGEST_RAM_ABORT_PERCENT: f64 = 85.0;
+const DEFAULT_INGEST_RAM_SAMPLE_SECS: u64 = 2;
+/// Cadence at which the in-flight child is polled for completion. Kept short (independent of the
+/// memory-sample interval) so a fast ingest is noticed promptly while memory is sampled only every
+/// `INGEST_RAM_SAMPLE_SECS`.
+const RAM_GUARD_POLL_INTERVAL: Duration = Duration::from_millis(50);
 const PATH_PYTHON_CANDIDATES: &[&str] = &[
     "python3.11",
     "python3.12",
@@ -1057,6 +1072,239 @@ struct PythonProbePayload {
     error: Option<String>,
 }
 
+/// Autonomous host-memory safeguard applied while the Docling subprocess runs.
+///
+/// `specforge` samples system memory and aborts the ingest cleanly before the host crosses a
+/// configurable danger ceiling, directly encoding the owner's "never crash the host" rule into the
+/// tool rather than relying on an external shell wrapper.
+#[derive(Debug, Clone, Copy)]
+struct RamGuardConfig {
+    /// Used-memory percentage at or above which the ingest is aborted; `None` disables the guard.
+    ceiling_percent: Option<f64>,
+    /// Interval between system-memory samples while the subprocess runs.
+    sample_interval: Duration,
+}
+
+impl RamGuardConfig {
+    fn from_env() -> Self {
+        Self {
+            ceiling_percent: parse_ram_abort_percent(
+                env::var(INGEST_RAM_ABORT_PERCENT_ENV).ok().as_deref(),
+            ),
+            sample_interval: parse_ram_sample_secs(
+                env::var(INGEST_RAM_SAMPLE_SECS_ENV).ok().as_deref(),
+            ),
+        }
+    }
+}
+
+/// Parse the abort-percentage env value into an active ceiling (`Some`) or a disabled guard
+/// (`None`). Absent/empty → default; `off`/`none`/`disabled`/`disable` → disabled; a value outside
+/// `(0, 100)` → disabled (a guard that can never or always fire is meaningless); unparseable text
+/// falls back to the default rather than silently disabling the safeguard.
+fn parse_ram_abort_percent(raw: Option<&str>) -> Option<f64> {
+    let Some(value) = raw else {
+        return Some(DEFAULT_INGEST_RAM_ABORT_PERCENT);
+    };
+    let trimmed = value.trim();
+    if trimmed.is_empty() {
+        return Some(DEFAULT_INGEST_RAM_ABORT_PERCENT);
+    }
+    if matches!(
+        trimmed.to_ascii_lowercase().as_str(),
+        "off" | "none" | "disabled" | "disable"
+    ) {
+        return None;
+    }
+    match trimmed.parse::<f64>() {
+        Ok(percent) if percent > 0.0 && percent < 100.0 => Some(percent),
+        Ok(_) => None,
+        Err(_) => Some(DEFAULT_INGEST_RAM_ABORT_PERCENT),
+    }
+}
+
+/// Parse the sample-interval env value into a `Duration`, flooring at one second and falling back
+/// to the default when absent or unparseable.
+fn parse_ram_sample_secs(raw: Option<&str>) -> Duration {
+    let secs = raw
+        .and_then(|value| value.trim().parse::<u64>().ok())
+        .map(|value| value.max(1))
+        .unwrap_or(DEFAULT_INGEST_RAM_SAMPLE_SECS);
+    Duration::from_secs(secs)
+}
+
+/// The abort decision is a single comparison, isolated so it is trivially unit-tested.
+fn should_abort_for_memory(used_percent: f64, ceiling_percent: f64) -> bool {
+    used_percent >= ceiling_percent
+}
+
+/// Resolve a memory breach: returns `(used, ceiling)` only when the guard is active, a reading is
+/// available, and the reading is at or above the ceiling. Flattening the three conditions here
+/// keeps the spawn/poll loop readable.
+fn ram_breach(
+    guard: &RamGuardConfig,
+    used_percent_fn: &dyn Fn() -> Option<f64>,
+) -> Option<(f64, f64)> {
+    let ceiling = guard.ceiling_percent?;
+    let used = used_percent_fn()?;
+    should_abort_for_memory(used, ceiling).then_some((used, ceiling))
+}
+
+/// Read the host's current used-memory percentage via the platform's own tool — matching the exact
+/// metric the owner monitors — so the guard needs no extra crate dependency. Returns `None` when
+/// the reading is unavailable (unsupported OS, or the tool failed), in which case the guard stays
+/// inert rather than aborting on missing data.
+fn current_used_memory_percent() -> Option<f64> {
+    #[cfg(target_os = "macos")]
+    {
+        read_macos_used_memory_percent()
+    }
+    #[cfg(target_os = "linux")]
+    {
+        read_linux_used_memory_percent()
+    }
+    #[cfg(not(any(target_os = "macos", target_os = "linux")))]
+    {
+        None
+    }
+}
+
+#[cfg(target_os = "macos")]
+fn read_macos_used_memory_percent() -> Option<f64> {
+    let output = Command::new("memory_pressure").output().ok()?;
+    if !output.status.success() {
+        return None;
+    }
+    parse_macos_memory_pressure_used_percent(&String::from_utf8_lossy(&output.stdout))
+}
+
+/// Parse `memory_pressure` output: the "System-wide memory free percentage: 85%" line gives the
+/// free percentage; used = 100 − free.
+#[cfg(any(target_os = "macos", test))]
+fn parse_macos_memory_pressure_used_percent(text: &str) -> Option<f64> {
+    for line in text.lines() {
+        if !line.to_ascii_lowercase().contains("free percentage") {
+            continue;
+        }
+        let after_colon = line.rsplit(':').next().unwrap_or(line);
+        let free = parse_leading_number(after_colon)?;
+        if (0.0..=100.0).contains(&free) {
+            return Some(100.0 - free);
+        }
+    }
+    None
+}
+
+/// Extract the leading numeric token (e.g. `85` from ` 85%`) from a trimmed string.
+#[cfg(any(target_os = "macos", test))]
+fn parse_leading_number(text: &str) -> Option<f64> {
+    let digits: String = text
+        .trim()
+        .chars()
+        .take_while(|character| character.is_ascii_digit() || *character == '.')
+        .collect();
+    digits.parse::<f64>().ok()
+}
+
+#[cfg(target_os = "linux")]
+fn read_linux_used_memory_percent() -> Option<f64> {
+    parse_linux_meminfo_used_percent(&fs::read_to_string("/proc/meminfo").ok()?)
+}
+
+/// Parse `/proc/meminfo`: used% = (1 − MemAvailable/MemTotal) × 100.
+#[cfg(any(target_os = "linux", test))]
+fn parse_linux_meminfo_used_percent(text: &str) -> Option<f64> {
+    let mut mem_total: Option<f64> = None;
+    let mut mem_available: Option<f64> = None;
+    for line in text.lines() {
+        if let Some(rest) = line.strip_prefix("MemTotal:") {
+            mem_total = parse_meminfo_kb(rest);
+        } else if let Some(rest) = line.strip_prefix("MemAvailable:") {
+            mem_available = parse_meminfo_kb(rest);
+        }
+    }
+    let total = mem_total?;
+    let available = mem_available?;
+    if total <= 0.0 {
+        return None;
+    }
+    Some(((1.0 - (available / total)) * 100.0).clamp(0.0, 100.0))
+}
+
+/// Read the leading kB count from a `/proc/meminfo` value (e.g. `   16384256 kB`).
+#[cfg(any(target_os = "linux", test))]
+fn parse_meminfo_kb(rest: &str) -> Option<f64> {
+    rest.split_whitespace().next()?.parse::<f64>().ok()
+}
+
+/// Run the backend command under the RAM guard: sample memory once before spawning (don't even
+/// launch a heavy ingest if the host is already in danger), then poll the child while sampling
+/// memory on the configured cadence, killing the child and returning a typed error on breach.
+/// Child stdout/stderr are redirected to files (not pipes) so polling can never deadlock on a full
+/// pipe buffer. The memory reader is injected (`used_percent_fn`) so tests exercise every branch
+/// without real memory pressure.
+fn run_backend_with_ram_guard(
+    command: &mut Command,
+    display_name: &str,
+    guard: &RamGuardConfig,
+    stdout_path: &Path,
+    stderr_path: &Path,
+    used_percent_fn: &dyn Fn() -> Option<f64>,
+) -> Result<ExitStatus> {
+    if let Some((used, ceiling)) = ram_breach(guard, used_percent_fn) {
+        return Err(AppError::IngestAbortedForMemory {
+            program: display_name.to_string(),
+            used_percent: used,
+            ceiling_percent: ceiling,
+        });
+    }
+
+    command
+        .stdout(fs::File::create(stdout_path)?)
+        .stderr(fs::File::create(stderr_path)?);
+    let mut child = command.spawn()?;
+
+    let mut last_sample = Instant::now();
+    loop {
+        if let Some(status) = child.try_wait()? {
+            return Ok(status);
+        }
+        if last_sample.elapsed() >= guard.sample_interval {
+            last_sample = Instant::now();
+            if let Some((used, ceiling)) = ram_breach(guard, used_percent_fn) {
+                let _ = child.kill();
+                let _ = child.wait();
+                return Err(AppError::IngestAbortedForMemory {
+                    program: display_name.to_string(),
+                    used_percent: used,
+                    ceiling_percent: ceiling,
+                });
+            }
+        }
+        std::thread::sleep(RAM_GUARD_POLL_INTERVAL);
+    }
+}
+
+/// Render captured stdout/stderr (written to files by the guarded runner) for an error message,
+/// mirroring [`render_command_output`]'s formatting for piped `Output`.
+fn render_backend_output_files(stdout_path: &Path, stderr_path: &Path) -> String {
+    let stdout = fs::read_to_string(stdout_path)
+        .unwrap_or_default()
+        .trim()
+        .to_string();
+    let stderr = fs::read_to_string(stderr_path)
+        .unwrap_or_default()
+        .trim()
+        .to_string();
+
+    match (stdout.is_empty(), stderr.is_empty()) {
+        (false, false) => format!("stdout: {stdout}; stderr: {stderr}"),
+        (false, true) => format!("stdout: {stdout}"),
+        (true, false) => format!("stderr: {stderr}"),
+        (true, true) => "no stdout or stderr captured".to_string(),
+    }
+}
+
 pub fn materialize_pdf(
     source_path: &Path,
     promoted_markdown_path: &Path,
@@ -1086,6 +1334,8 @@ pub fn materialize_pdf(
 
     let tempdir = tempdir()?;
     let summary_output_path = tempdir.path().join("docling_summary.json");
+    let backend_stdout_path = tempdir.path().join("docling_stdout.log");
+    let backend_stderr_path = tempdir.path().join("docling_stderr.log");
     let mut backend_command = build_backend_command(tempdir.path())?;
     backend_command
         .command
@@ -1106,13 +1356,26 @@ pub fn materialize_pdf(
         .arg("--document-key")
         .arg(document_key);
 
-    let output = backend_command.command.output()?;
-    if !output.status.success() {
+    let guard = RamGuardConfig::from_env();
+    let status = run_backend_with_ram_guard(
+        &mut backend_command.command,
+        &backend_command.display_name,
+        &guard,
+        &backend_stdout_path,
+        &backend_stderr_path,
+        &current_used_memory_percent,
+    )
+    .inspect_err(|_| {
+        // The staged-swap means the last-good `normalized/` + `source_ir.json` are untouched;
+        // only the in-flight staging tree is discarded so the host is left clean.
+        let _ = cleanup_path_if_exists(&staged_normalized_root);
+    })?;
+    if !status.success() {
         cleanup_path_if_exists(&staged_normalized_root)?;
         return Err(AppError::ExternalCommandFailed {
             program: backend_command.display_name,
-            exit_code: output.status.code(),
-            stderr: render_command_output(&output),
+            exit_code: status.code(),
+            stderr: render_backend_output_files(&backend_stdout_path, &backend_stderr_path),
         });
     }
 
@@ -1414,16 +1677,22 @@ fn render_command_output(output: &Output) -> String {
 
 #[cfg(test)]
 mod tests {
+    use std::cell::Cell;
     use std::fs;
     use std::path::{Path, PathBuf};
+    use std::process::Command;
+    use std::time::{Duration, Instant};
 
     use tempfile::tempdir;
 
     use super::{
         DOCLING_PYTHON_ENV, DoclingRuntimeCandidateStatus, DoclingRuntimeSource,
-        inspect_docling_runtime,
+        INGEST_RAM_ABORT_PERCENT_ENV, INGEST_RAM_SAMPLE_SECS_ENV, RamGuardConfig,
+        inspect_docling_runtime, parse_leading_number, parse_linux_meminfo_used_percent,
+        parse_macos_memory_pressure_used_percent, parse_meminfo_kb, parse_ram_abort_percent,
+        parse_ram_sample_secs, run_backend_with_ram_guard, should_abort_for_memory,
     };
-    use crate::error::Result;
+    use crate::error::{AppError, Result};
     use crate::test_support::env_var_lock;
 
     struct EnvVarGuard {
@@ -1589,6 +1858,211 @@ printf '{"ready": false, "python_version": "3.14.0", "error": "ModuleNotFoundErr
             DoclingRuntimeCandidateStatus::ImportFailed
         );
 
+        Ok(())
+    }
+
+    #[test]
+    fn parse_ram_abort_percent_handles_default_disable_and_bounds() {
+        // Absent / empty / whitespace → owner-policy default.
+        assert_eq!(parse_ram_abort_percent(None), Some(85.0));
+        assert_eq!(parse_ram_abort_percent(Some("")), Some(85.0));
+        assert_eq!(parse_ram_abort_percent(Some("   ")), Some(85.0));
+        // Real percentages in (0, 100).
+        assert_eq!(parse_ram_abort_percent(Some("90")), Some(90.0));
+        assert_eq!(parse_ram_abort_percent(Some(" 72.5 ")), Some(72.5));
+        // Explicit disable words.
+        assert_eq!(parse_ram_abort_percent(Some("off")), None);
+        assert_eq!(parse_ram_abort_percent(Some("NONE")), None);
+        assert_eq!(parse_ram_abort_percent(Some("disabled")), None);
+        assert_eq!(parse_ram_abort_percent(Some("disable")), None);
+        // Out-of-range values disable a guard that could never / always fire.
+        assert_eq!(parse_ram_abort_percent(Some("0")), None);
+        assert_eq!(parse_ram_abort_percent(Some("100")), None);
+        assert_eq!(parse_ram_abort_percent(Some("150")), None);
+        assert_eq!(parse_ram_abort_percent(Some("-5")), None);
+        // Garbage falls back to the default rather than silently disabling the safeguard.
+        assert_eq!(parse_ram_abort_percent(Some("garbage")), Some(85.0));
+    }
+
+    #[test]
+    fn parse_ram_sample_secs_floors_and_defaults() {
+        assert_eq!(parse_ram_sample_secs(None), Duration::from_secs(2));
+        assert_eq!(parse_ram_sample_secs(Some("5")), Duration::from_secs(5));
+        assert_eq!(parse_ram_sample_secs(Some("0")), Duration::from_secs(1));
+        assert_eq!(parse_ram_sample_secs(Some("nope")), Duration::from_secs(2));
+    }
+
+    #[test]
+    fn should_abort_for_memory_is_at_or_above_ceiling() {
+        assert!(should_abort_for_memory(85.0, 85.0));
+        assert!(should_abort_for_memory(91.0, 85.0));
+        assert!(!should_abort_for_memory(84.9, 85.0));
+    }
+
+    #[test]
+    fn parses_macos_memory_pressure_free_percentage() {
+        assert_eq!(parse_leading_number(" 85%"), Some(85.0));
+        assert_eq!(
+            parse_macos_memory_pressure_used_percent("System-wide memory free percentage: 85%\n"),
+            Some(15.0)
+        );
+        let verbose = "The system has pages free etc.\n\
+             System-wide memory free percentage: 3%\n";
+        assert_eq!(
+            parse_macos_memory_pressure_used_percent(verbose),
+            Some(97.0)
+        );
+        assert_eq!(
+            parse_macos_memory_pressure_used_percent("no percentage line here"),
+            None
+        );
+    }
+
+    #[test]
+    fn parses_linux_meminfo_available_fraction() {
+        assert_eq!(parse_meminfo_kb("   16384000 kB"), Some(16384000.0));
+        let text = "MemTotal:       16384000 kB\n\
+             MemFree:         1000000 kB\n\
+             MemAvailable:    4096000 kB\n";
+        let used = parse_linux_meminfo_used_percent(text).expect("used percent");
+        assert!((used - 75.0).abs() < 1e-9, "used was {used}");
+        // Missing MemAvailable → no reading rather than a wrong one.
+        assert_eq!(parse_linux_meminfo_used_percent("MemTotal: 100 kB\n"), None);
+    }
+
+    #[test]
+    fn ram_guard_config_reads_env() {
+        let _env_lock = env_var_lock();
+        {
+            let _percent = EnvVarGuard::set_path(INGEST_RAM_ABORT_PERCENT_ENV, Path::new("70"));
+            let _secs = EnvVarGuard::set_path(INGEST_RAM_SAMPLE_SECS_ENV, Path::new("5"));
+            let config = RamGuardConfig::from_env();
+            assert_eq!(config.ceiling_percent, Some(70.0));
+            assert_eq!(config.sample_interval, Duration::from_secs(5));
+        }
+        {
+            let _percent = EnvVarGuard::set_path(INGEST_RAM_ABORT_PERCENT_ENV, Path::new("off"));
+            let _secs = EnvVarGuard::unset(INGEST_RAM_SAMPLE_SECS_ENV);
+            let config = RamGuardConfig::from_env();
+            assert_eq!(config.ceiling_percent, None);
+            assert_eq!(config.sample_interval, Duration::from_secs(2));
+        }
+        {
+            let _percent = EnvVarGuard::unset(INGEST_RAM_ABORT_PERCENT_ENV);
+            let config = RamGuardConfig::from_env();
+            assert_eq!(config.ceiling_percent, Some(85.0));
+        }
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn ram_guard_aborts_before_spawn_when_already_over_ceiling() -> Result<()> {
+        let tempdir = tempdir()?;
+        let stdout_path = tempdir.path().join("out.log");
+        let stderr_path = tempdir.path().join("err.log");
+        let guard = RamGuardConfig {
+            ceiling_percent: Some(85.0),
+            sample_interval: Duration::from_millis(0),
+        };
+        let mut command = Command::new("sleep");
+        command.arg("30");
+        let reader = || Some(99.0);
+
+        let error = run_backend_with_ram_guard(
+            &mut command,
+            "sleep 30",
+            &guard,
+            &stdout_path,
+            &stderr_path,
+            &reader,
+        )
+        .expect_err("should abort before spawning a heavy ingest");
+
+        match error {
+            AppError::IngestAbortedForMemory {
+                used_percent,
+                ceiling_percent,
+                ..
+            } => {
+                assert_eq!(used_percent, 99.0);
+                assert_eq!(ceiling_percent, 85.0);
+            }
+            other => panic!("unexpected error: {other:?}"),
+        }
+        // Never spawned: no child output files were created.
+        assert!(!stdout_path.exists());
+        Ok(())
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn ram_guard_kills_child_when_memory_breaches_mid_run() -> Result<()> {
+        let tempdir = tempdir()?;
+        let stdout_path = tempdir.path().join("out.log");
+        let stderr_path = tempdir.path().join("err.log");
+        let guard = RamGuardConfig {
+            ceiling_percent: Some(85.0),
+            sample_interval: Duration::from_millis(0),
+        };
+        let mut command = Command::new("sleep");
+        command.arg("30");
+        // Safe before spawn (10%), then a breach (99%) on the first in-flight sample.
+        let calls = Cell::new(0u32);
+        let reader = || {
+            let n = calls.get();
+            calls.set(n + 1);
+            if n == 0 { Some(10.0) } else { Some(99.0) }
+        };
+
+        let start = Instant::now();
+        let error = run_backend_with_ram_guard(
+            &mut command,
+            "sleep 30",
+            &guard,
+            &stdout_path,
+            &stderr_path,
+            &reader,
+        )
+        .expect_err("should kill the child on a mid-run breach");
+        assert!(
+            start.elapsed() < Duration::from_secs(5),
+            "kill should be prompt, took {:?}",
+            start.elapsed()
+        );
+
+        match error {
+            AppError::IngestAbortedForMemory { used_percent, .. } => {
+                assert_eq!(used_percent, 99.0)
+            }
+            other => panic!("unexpected error: {other:?}"),
+        }
+        Ok(())
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn ram_guard_returns_status_when_child_completes() -> Result<()> {
+        let tempdir = tempdir()?;
+        let stdout_path = tempdir.path().join("out.log");
+        let stderr_path = tempdir.path().join("err.log");
+        let guard = RamGuardConfig {
+            ceiling_percent: Some(85.0),
+            sample_interval: Duration::from_millis(0),
+        };
+        let mut command = Command::new("true");
+        let reader = || Some(10.0);
+
+        let status = run_backend_with_ram_guard(
+            &mut command,
+            "true",
+            &guard,
+            &stdout_path,
+            &stderr_path,
+            &reader,
+        )?;
+
+        assert!(status.success());
+        assert!(stdout_path.exists());
         Ok(())
     }
 }

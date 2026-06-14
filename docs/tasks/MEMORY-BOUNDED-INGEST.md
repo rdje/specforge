@@ -168,7 +168,7 @@ addressed by the disk-bounding leaves below.
   Commit: `pending`
 
 - ID: `MEMORY-BOUNDED-INGEST.4a`
-  Status: `proposed` (NEXT — designed `2026-06-14`, ready to implement in a fresh session)
+  Status: `done`
   Goal: make the autonomous RAM guard a **first-class, built-in** ingest safeguard (today it is an
   external shell wrapper I have to remember to apply). While the Docling subprocess runs, `specforge`
   itself samples system memory and aborts the ingest CLEANLY before the host crosses a configurable
@@ -206,8 +206,26 @@ addressed by the disk-bounding leaves below.
   would cross the ceiling (verified via DI, no real pressure); a normal small-doc ingest stays
   byte-identical (`source_ir.json` unaffected — only stdout/stderr move to files; summary unchanged);
   stub-helper tests deterministic; full `run_ci.sh` green; book + KM updated.
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `done (2026-06-14)` — implemented exactly as designed.
+  `error.rs`: new `AppError::IngestAbortedForMemory { program, used_percent, ceiling_percent }` +
+  actionable Display (host preserved; free memory / raise ceiling / set off). `docling_backend.rs`:
+  `RamGuardConfig::from_env` (pure parsers `parse_ram_abort_percent` — default 85 / `off`·`none`·
+  `disabled`·out-of-`(0,100)` → disabled / garbage → default; `parse_ram_sample_secs` — default 2 s,
+  floor 1 s); `should_abort_for_memory` = `used >= ceiling`; no-dep platform readers
+  (`memory_pressure` free% on macOS, `/proc/meminfo` MemAvailable on Linux) with PURE text parsers
+  gated `#[cfg(any(target_os = "…", test))]` so they unit-test on both platforms with no dead-code;
+  `run_backend_with_ram_guard` = pre-spawn sample → spawn with stdout/stderr → temp FILES → poll
+  `try_wait` every 50 ms (`RAM_GUARD_POLL_INTERVAL`), sample memory every `sample_interval`, on
+  breach `kill()`+`wait()`+typed error; reader injected (`&dyn Fn() -> Option<f64>`) for host-safe
+  DI tests; `materialize_pdf` swaps the blocking `.output()` for the guard, cleaning only the staged
+  tree on abort (last-good bundle untouched), and renders error stdout/stderr from the files.
+  The 3 source.rs stub-helper ingest tests set `SPECFORGE_INGEST_RAM_ABORT_PERCENT=off` (determinism
+  on a hot CI host). **+9 unit tests** (3 pure-parser, macOS+Linux memory parsers, `from_env`,
+  pre-spawn abort / mid-run kill / completes via DI); lib **1587 → 1596**. Full `scripts/run_ci.sh`
+  GREEN (memory-arch, KM in-sync, fmt, clippy `-D warnings`, 1596 tests, rustdoc, mdBook) + kg-bench
+  **156/156**. Book: `pipeline/sourceir.md` "Autonomous host-memory safeguard" + troubleshooting
+  entry; KM card `ingest-ram-guard`.
+  Commit: `MEMORY-BOUNDED-INGEST.4a`
 
 - ID: `MEMORY-BOUNDED-INGEST.4b`
   Status: `proposed`
@@ -238,11 +256,14 @@ addressed by the disk-bounding leaves below.
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `MEMORY-BOUNDED-INGEST.4a` | `proposed` | **NEXT — fully designed, ready to implement.** Built-in autonomous RAM guard (owner's non-negotiable "never crash the host"); design captured under the `.4a` node + Decisions |
-| 2 | `MEMORY-BOUNDED-INGEST.4b` | `proposed` | richer pre-flight RAM/disk check (fail fast before launching) |
-| 3 | `MEMORY-BOUNDED-INGEST.4c` | `proposed` | adaptive batch sizing under sustained pressure (slower, identical output) |
-| 4 | `MEMORY-BOUNDED-INGEST.5` | `proposed` | bound summary / `source_ir.json` + O(pages) per-page JSONs at extreme page counts |
+| 1 | `MEMORY-BOUNDED-INGEST.4b` | `proposed` | **NEXT** — richer pre-flight RAM/disk check (fail fast before launching) |
+| 2 | `MEMORY-BOUNDED-INGEST.4c` | `proposed` | adaptive batch sizing under sustained pressure (slower, identical output) |
+| 3 | `MEMORY-BOUNDED-INGEST.5` | `proposed` | bound summary / `source_ir.json` + O(pages) per-page JSONs at extreme page counts |
+| — | `MEMORY-BOUNDED-INGEST.4a` | `done` | built-in autonomous RAM guard — DONE `2026-06-14` (spawn+poll+kill in `materialize_pdf`; no new dep; typed `IngestAbortedForMemory`; +9 tests) |
 | — | `MEMORY-BOUNDED-INGEST.3b` | `proposed` | targeted on-demand single-page render (deferred/YAGNI — no consumer reads page images today) |
+
+`.4a` (built-in autonomous RAM guard — `specforge` samples host memory while Docling runs and aborts
+cleanly before crossing the ceiling, host preserved + prior bundle intact) `done` 2026-06-14.
 
 `.3` (DISK-footprint bounding — skip persisting per-page PNGs for large docs) `done` 2026-06-14;
 RAM dimension (`.1`/`.2`) + DISK dimension (`.3`) now both delivered.
@@ -314,6 +335,7 @@ RAM dimension (`.1`/`.2`) + DISK dimension (`.3`) now both delivered.
 | `2026-06-14` | `MEMORY-BOUNDED-INGEST.1` | py_compile + `cargo build` + full `run_ci.sh` (1587) + temp-14p before/after | GREEN; (A) single-pass BYTE-IDENTICAL; (B) batched complete+correct (`page_no` absolute, surfaces match, one benign boilerplate-header boundary split) |
 | `2026-06-14` | `MEMORY-BOUNDED-INGEST.2` | CHI (585p) ingest under the autonomous RAM guard | GREEN — completed rc=0, NOT killed, PEAK used 20%; source_ir complete (585p/368 tables, abs unique page nums), 528 MB normalized, ~19 min |
 | `2026-06-14` | `MEMORY-BOUNDED-INGEST.3` | py_compile + full `run_ci.sh` (1587) + 4-mode live CAN ingest (throwaway key) + stash-rebuild byte-identity | GREEN; (A) default 72 PNGs == old-code byte-identical; (B) SAVE=0 → 0 PNGs, region crops byte-identical, source_ir identical bar `page_image_path`; (C) force-large default → auto-skip+batched; (D) large+SAVE=1 → keep; per-page PNGs 21 MB vs 1.8 MB crops |
+| `2026-06-14` | `MEMORY-BOUNDED-INGEST.4a` | full `run_ci.sh` (1596) + kg-bench (156/156) + 9 new DI/parser unit tests | GREEN — pre-spawn abort / mid-run kill / completes all proven via injected reader (no real pressure); macOS+Linux memory parsers unit-tested on both platforms; stub-helper ingest tests deterministic with the guard off; clippy `-D warnings` clean (fixed one `trim_split_whitespace`) |
 
 ## Commit Log
 
@@ -322,6 +344,7 @@ RAM dimension (`.1`/`.2`) + DISK dimension (`.3`) now both delivered.
 | `MEMORY-BOUNDED-INGEST.1` | `MEMORY-BOUNDED-INGEST.1` | page-range batched ingestion behind a 512p gate (`9cb16985`) |
 | `MEMORY-BOUNDED-INGEST.2` | `MEMORY-BOUNDED-INGEST.2` | CHI 585p ingested under the RAM guard, peak 20% used (`1ef6a1b4`) |
 | `MEMORY-BOUNDED-INGEST.3` | `MEMORY-BOUNDED-INGEST.3` | disk-footprint bounding — skip persisting per-page PNGs for large docs (generate-in-memory for region crops, skip the disk write); `SPECFORGE_INGEST_SAVE_PAGE_IMAGES` override |
+| `MEMORY-BOUNDED-INGEST.4a` | `MEMORY-BOUNDED-INGEST.4a` | built-in autonomous RAM guard — sample+spawn+poll+kill in `materialize_pdf`; no new dep (`memory_pressure`/`/proc/meminfo`); typed `AppError::IngestAbortedForMemory`; `SPECFORGE_INGEST_RAM_ABORT_PERCENT` (85) / `SPECFORGE_INGEST_RAM_SAMPLE_SECS` (2); +9 tests, lib 1596 |
 
 ## Changelog
 
@@ -348,3 +371,19 @@ RAM dimension (`.1`/`.2`) + DISK dimension (`.3`) now both delivered.
   `SPECFORGE_INGEST_SAVE_PAGE_IMAGES=1/0`. Verified A/B/C/D on a throwaway CAN copy + stash-rebuild
   byte-identity; full CI green (1587). Book + KM card `page-image-disk-bounding` added. Both the RAM
   (`.1`/`.2`) and DISK (`.3`) dimensions of size-immunity are now delivered; `.4`/`.5` remain.
+- `2026-06-14`: `.4a` DONE — built-in autonomous RAM guard. The guard that was an external shell
+  wrapper is now first-class: `specforge` itself samples host memory while the Docling subprocess
+  runs and aborts cleanly before crossing a configurable danger ceiling (owner's non-negotiable
+  "kill at ≥85% used; never crash the host"). No new dependency — reads the platform's own metric
+  (`memory_pressure` free% on macOS, `/proc/meminfo` MemAvailable on Linux); pure text parsers gated
+  `#[cfg(any(target_os = "…", test))]` so they unit-test on both platforms. `materialize_pdf` swaps
+  the blocking `.output()` for `run_backend_with_ram_guard` (pre-spawn sample → spawn with
+  stdout/stderr → temp files → poll `try_wait` every 50 ms, sample memory every `sample_interval`,
+  kill on breach), an injected reader (`&dyn Fn() -> Option<f64>`) making the abort/kill/complete
+  branches host-safe to test; on abort only the staged tree is discarded (last-good `normalized/` +
+  `source_ir.json` intact). New typed `AppError::IngestAbortedForMemory` with an actionable Display.
+  Config: `SPECFORGE_INGEST_RAM_ABORT_PERCENT` (85; `off`/out-of-range → disabled),
+  `SPECFORGE_INGEST_RAM_SAMPLE_SECS` (2, floor 1). The 3 stub-helper ingest tests set the guard off
+  for hot-CI determinism. +9 unit tests, lib 1587 → 1596; full `run_ci.sh` green + kg-bench 156/156.
+  Book "Autonomous host-memory safeguard" + troubleshooting entry; KM card `ingest-ram-guard`.
+  `.4b` (pre-flight) / `.4c` (adaptive batch) remain.

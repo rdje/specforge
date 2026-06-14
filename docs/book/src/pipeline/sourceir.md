@@ -135,6 +135,38 @@ environment variable overrides the decision explicitly:
   documents), `0` to never persist them (even for small ones). Unset, the default is "persist at or
   below `SPECFORGE_INGEST_BATCH_THRESHOLD`, skip above it."
 
+## Autonomous host-memory safeguard
+
+Bounded batching and bounded disk make ingestion *predictable* — but a host can still be under
+memory pressure for reasons that have nothing to do with SpecForge (other applications, a model
+loaded in the background). To guarantee that ingesting a document **never crashes the machine**,
+SpecForge watches the host's own memory while the Docling step runs and stops *itself* before the
+system reaches a danger level — no external babysitting required.
+
+How it works, in plain terms:
+
+- before launching the heavy conversion, and then at a steady interval while it runs, SpecForge
+  reads the system's used-memory percentage using the platform's own tool (`memory_pressure` on
+  macOS, `/proc/meminfo` on Linux) — the same number you would watch in a system monitor;
+- if used memory reaches the safety ceiling, SpecForge **cleanly aborts the ingest**: it stops the
+  Docling subprocess and reports a clear, typed error explaining what happened and how to proceed;
+- the host is preserved, and so is your data — because the new bundle is built in a staging area and
+  only swapped in on success, an abort leaves the **previous good `normalized/` bundle and
+  `source_ir.json` completely intact**. You lose only the unfinished run, never prior work.
+
+The default ceiling is **85% used** — deliberately below the point where a desktop host starts to
+thrash and risks a reboot. Two environment variables tune the safeguard:
+
+- `SPECFORGE_INGEST_RAM_ABORT_PERCENT` — the used-memory percentage at which to abort (default
+  `85`). Set it to `off` (or `none`/`disabled`) to turn the guard off entirely; values outside the
+  `0–100` range also disable it.
+- `SPECFORGE_INGEST_RAM_SAMPLE_SECS` — how often to re-check memory while ingesting (default `2`
+  seconds, minimum `1`).
+
+This is a *safety* feature, not a quality trade-off: a healthy ingest on a host with headroom runs
+exactly as before. The guard only ever acts when continuing would put the whole machine at risk —
+and when it does, it fails honestly and reversibly rather than taking the host down with it.
+
 ## Typical `SourceIR` failure modes
 
 The main risks at this stage are structural, not semantic.

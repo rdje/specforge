@@ -54,6 +54,31 @@ If you see an evidence or converge run get killed with no diagnostic on a build 
 this fix, update to a current build — the normalization now copies text correctly and the
 build completes with normal memory use. Nothing about the input PDF needs to change.
 
+## `ingest` stops with "ingest aborted to protect the host"
+
+This is **intentional and safe** — the opposite of the silent OOM kill above. While ingesting a
+PDF, SpecForge watches the host's memory and stops itself before the machine reaches a danger
+level, so a heavy document can never crash the host. When it acts, you will see a typed error like:
+
+```
+ingest aborted to protect the host: system memory was 86% used, at or above the 85% safety
+ceiling, while running <docling helper>. The host was preserved and the previous normalized
+bundle is intact. ...
+```
+
+Nothing was lost: the new bundle is staged and only swapped in on success, so your previous good
+`normalized/` and `source_ir.json` are untouched. To proceed, do one of:
+
+- **free memory** and rerun (close other applications; if a local model is loaded, `ollama stop`
+  it first so ingest has the RAM to itself), or
+- **raise the ceiling** if you know the host can take it: `SPECFORGE_INGEST_RAM_ABORT_PERCENT=90`, or
+- **disable the guard** for a one-off run on a host you are watching yourself:
+  `SPECFORGE_INGEST_RAM_ABORT_PERCENT=off`.
+
+For very large PDFs, lowering `SPECFORGE_INGEST_BATCH_PAGES` (smaller batches use less peak memory)
+is usually the better fix than raising the ceiling — it keeps the safeguard on while still letting
+the document finish, just more slowly.
+
 ## Generated artifacts are missing
 
 Remember that `generated/` is local and untracked.
