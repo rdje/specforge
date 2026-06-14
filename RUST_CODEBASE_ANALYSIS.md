@@ -4,7 +4,7 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
-## Session update (2026-06-14 — bounded-memory/disk big-PDF ingestion + built-in RAM guard in the Docling backend)
+## Session update (2026-06-14 — bounded-memory/disk big-PDF ingestion + built-in RAM guard + disk pre-flight in the Docling backend)
 
 `MEMORY-BOUNDED-INGEST.1` reworked the embedded Docling helper inside
 `ir/source/docling_backend.rs` so very large PDFs ingest with bounded peak memory. The two
@@ -52,6 +52,20 @@ stdout/stderr move from pipes to temp files (`render_backend_output_files` mirro
 `render_command_output` formatting for error reporting). Config: `SPECFORGE_INGEST_RAM_ABORT_PERCENT`
 (85; off/out-of-range disables), `SPECFORGE_INGEST_RAM_SAMPLE_SECS` (2, floor 1). Verified by full
 `run_ci.sh` (lib 1587 → **1596**, +9 tests) + kg-bench 156/156.
+
+`MEMORY-BOUNDED-INGEST.4b` added the disk pre-flight as the first statement of `materialize_pdf`
+(before any staging dir, so a refusal touches nothing). New error surface
+`AppError::IngestAbortedForDisk { path, free_mb, required_mb }`. The requirement scales off the cheap
+pre-ingest signal Rust has — the source PDF file size — via `estimate_required_disk_mb` (128 base +
+source_mb × 4); a precise estimate is ill-posed pre-ingest (asset count unknown; page count only in
+the subprocess). Free disk is read via no-dep POSIX `df -P -k` (`available_disk_mb` +
+`parse_df_available_kb`), permissive when unreadable (`check_disk_preflight` only refuses on a reading
+below the requirement). Config knob `SPECFORGE_INGEST_MIN_FREE_DISK_MB` → `DiskPreflightRequirement`
+(estimate / fixed floor / off). **Architecture note:** ingestion now pre-flights both resources (RAM
+via `.4a`'s pre-spawn sample, disk via `.4b`) before launching, and fails closed with an intact prior
+bundle. CI also surfaced a latent test concurrency bug (PATH-lookup spawns racing the
+`inspect_docling_runtime` `PATH=""` tests) now fixed by holding `env_var_lock()` in the spawning tests.
+Verified by full `run_ci.sh` (lib 1596 → **1604**, +8 tests) + kg-bench 156/156.
 
 ## Session update (2026-06-14 — prior-memory UTF-8 OOM blocker fixed; lib 1587)
 

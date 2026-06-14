@@ -1,4 +1,41 @@
 # DEVELOPMENT_NOTES
+## `MEMORY-BOUNDED-INGEST.4b` (`2026-06-14`) — disk pre-flight before `materialize_pdf` staging
+- The pre-flight's RAM dimension is already `.4a` (pre-spawn memory sample). `.4b` adds the DISK
+  dimension and nothing else, to avoid duplicating the RAM check.
+- **Placement:** the check is the FIRST statement of `materialize_pdf`, before
+  `fs::create_dir_all(&artifact_layout.artifact_root)` and before any staging directory. So a refusal
+  has created/destroyed nothing — the prior bundle is trivially intact (stronger than the staged-swap,
+  which is the backstop for failures that happen *after* work starts).
+- **Why source size, not page count (the key design call):** a precise per-doc bundle estimate is
+  ill-posed pre-ingest — the figure/table asset count is unknown, and the page count is computed only
+  inside the Docling subprocess (`detect_pdf_page_count`). Getting it in Rust would mean re-parsing the
+  PDF (a new dep), shelling a tool, or replicating the helper's threshold logic (drift). The cheap
+  signal Rust already has is `fs::metadata(source).len()`. `estimate_required_disk_mb(bytes) = 128 +
+  (bytes / 1MiB) × 4`, saturating. ×4 is conservative; `.3` makes large-doc bundles closer to
+  `O(source)`, and the staged-swap covers the imprecise middle. This is the honest engineering answer
+  (don't fabricate an estimate we can't compute) and matches the project's "honest residual" doctrine.
+- **No new dependency:** `available_disk_mb` shells POSIX `df -P -k <path>` (the `-P` flag forces a
+  single-line data row on BOTH macOS BSD df and Linux GNU df, so the column layout is fixed and
+  Available is field index 3). `parse_df_available_kb` is a pure parser (skips the `Filesystem` header,
+  takes the first row whose field 3 parses as `u64` KB), unit-tested on both platforms' sample output.
+  `nearest_existing_ancestor` gives `df` a real target before the artifact root exists (first ingest).
+- **Permissive on missing data:** `check_disk_preflight` refuses ONLY when a free reading exists and is
+  below the requirement; `free_mb == None` (df missing/unparseable) → `Ok`. Never refuse on missing
+  information — same principle as the RAM guard going inert on an unreadable platform.
+- **Config:** one knob `SPECFORGE_INGEST_MIN_FREE_DISK_MB` → `DiskPreflightRequirement` via
+  `parse_disk_preflight_requirement`: unset/empty/garbage → `EstimateFromSource`;
+  `off`/`none`/`disabled`/`disable`/`0` → `Disabled`; positive int → `Floor(mb)`. New typed
+  `AppError::IngestAbortedForDisk { path, free_mb, required_mb }` with an actionable Display.
+- **Two things CI caught (good):** (1) clippy `collapsible_if` on the nested `if let` in
+  `parse_df_available_kb` → collapsed to an edition-2024 let-chain; (2) a REAL test concurrency bug —
+  the `#[cfg(unix)]` tests that spawn `df`/`sleep`/`true` resolve the binary via PATH, and the
+  `inspect_docling_runtime` tests set `PATH=""` under `env_var_lock()`; without the lock the spawns
+  raced and intermittently failed `NotFound`. Fix: the spawning tests now take `env_var_lock()` too.
+  (This same race latently affected the `.4a` runner tests; fixing it here hardened both.)
+- Verified: full `scripts/run_ci.sh` GREEN (1604 lib tests; clippy `-D warnings`; rustdoc; mdBook) +
+  kg-bench 156/156. +8 unit tests. Book "Pre-flight disk check" + troubleshooting entry; KM card
+  `ingest-disk-preflight`. Frontier: `.4c` adaptive batch sizing / `.5` summary streaming.
+
 ## `MEMORY-BOUNDED-INGEST.4a` (`2026-06-14`) — built-in autonomous RAM guard in `materialize_pdf`
 - Problem: the autonomous RAM guard that made the `.2`/`.3` big-PDF ingests safe was an **external
   shell wrapper** (sample memory, `kill` on breach). It only protected runs where someone remembered

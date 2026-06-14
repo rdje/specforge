@@ -79,6 +79,29 @@ For very large PDFs, lowering `SPECFORGE_INGEST_BATCH_PAGES` (smaller batches us
 is usually the better fix than raising the ceiling — it keeps the safeguard on while still letting
 the document finish, just more slowly.
 
+## `ingest` stops with "ingest aborted before launching" (not enough disk)
+
+Also intentional and safe. Before reading a PDF, SpecForge checks that the target filesystem has
+enough free space for the run, scaled off the source PDF's size, and refuses up front rather than
+filling the disk partway through. Because the check runs before any staging directory is created,
+**nothing was written** — your previous normalized bundle is untouched. The message names the free
+space and the estimated need:
+
+```
+ingest aborted before launching: only 90 MB free on the filesystem at <path>, below the 328 MB
+this ingest is estimated to need. No work was started and any previous normalized bundle is
+intact. ...
+```
+
+To proceed, do one of:
+
+- **free disk space** (the `clean` command reclaims local generated artifacts — see "Generated
+  artifacts are eating disk space" below) and rerun;
+- **set an explicit floor** if you know the run will fit in less than the estimate:
+  `SPECFORGE_INGEST_MIN_FREE_DISK_MB=120`;
+- **disable the pre-flight** for a run on a host you are managing yourself:
+  `SPECFORGE_INGEST_MIN_FREE_DISK_MB=off`.
+
 ## Generated artifacts are missing
 
 Remember that `generated/` is local and untracked.

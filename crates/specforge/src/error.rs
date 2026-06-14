@@ -25,6 +25,11 @@ pub enum AppError {
         used_percent: f64,
         ceiling_percent: f64,
     },
+    IngestAbortedForDisk {
+        path: String,
+        free_mb: u64,
+        required_mb: u64,
+    },
 }
 
 impl fmt::Display for AppError {
@@ -73,6 +78,20 @@ impl fmt::Display for AppError {
                      Free memory and retry, raise the ceiling with \
                      SPECFORGE_INGEST_RAM_ABORT_PERCENT=<percent>, or disable the guard with \
                      SPECFORGE_INGEST_RAM_ABORT_PERCENT=off."
+                )
+            }
+            Self::IngestAbortedForDisk {
+                path,
+                free_mb,
+                required_mb,
+            } => {
+                write!(
+                    f,
+                    "ingest aborted before launching: only {free_mb} MB free on the filesystem at \
+                     {path}, below the {required_mb} MB this ingest is estimated to need. No work \
+                     was started and any previous normalized bundle is intact. Free disk space and \
+                     retry, set an explicit floor with SPECFORGE_INGEST_MIN_FREE_DISK_MB=<mb>, or \
+                     disable the pre-flight check with SPECFORGE_INGEST_MIN_FREE_DISK_MB=off."
                 )
             }
         }

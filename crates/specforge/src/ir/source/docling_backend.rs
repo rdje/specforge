@@ -29,6 +29,18 @@ const INGEST_RAM_ABORT_PERCENT_ENV: &str = "SPECFORGE_INGEST_RAM_ABORT_PERCENT";
 const INGEST_RAM_SAMPLE_SECS_ENV: &str = "SPECFORGE_INGEST_RAM_SAMPLE_SECS";
 const DEFAULT_INGEST_RAM_ABORT_PERCENT: f64 = 85.0;
 const DEFAULT_INGEST_RAM_SAMPLE_SECS: u64 = 2;
+
+/// Minimum free disk (MB) the ingest pre-flight requires before launching. Unset → estimate from
+/// the source PDF size; a positive integer → a fixed MB floor; `off`/`none`/`disabled`/`0` →
+/// disabled. The pre-flight runs before any staging directory is created, so a refusal touches
+/// nothing on disk.
+const INGEST_MIN_FREE_DISK_MB_ENV: &str = "SPECFORGE_INGEST_MIN_FREE_DISK_MB";
+/// Base free-disk headroom (MB) the size-scaled estimate always requires (markdown + backend raw
+/// JSON + figure/table region crops), on top of the source-size multiple.
+const DEFAULT_INGEST_DISK_BASE_HEADROOM_MB: u64 = 128;
+/// Multiple of the source PDF size the estimate adds to the base headroom (conservative — the `.3`
+/// disk bounding makes a large doc's bundle closer to `O(source)` than this assumes).
+const DEFAULT_INGEST_DISK_SIZE_MULTIPLIER: u64 = 4;
 /// Cadence at which the in-flight child is polled for completion. Kept short (independent of the
 /// memory-sample interval) so a fast ingest is noticed promptly while memory is sampled only every
 /// `INGEST_RAM_SAMPLE_SECS`.
@@ -1305,6 +1317,149 @@ fn render_backend_output_files(stdout_path: &Path, stderr_path: &Path) -> String
     }
 }
 
+/// How much free disk the ingest pre-flight requires before launching.
+///
+/// A precise per-document bundle-size estimate is ill-posed pre-ingest (the figure/table asset
+/// count is unknown, and the page count is only computed inside the Docling subprocess), so the
+/// pre-flight scales off the one cheap pre-ingest signal Rust already has — the **source PDF file
+/// size** — with a conservative base headroom, plus the staged-swap as the backstop for the
+/// imprecise middle ground. `EstimateFromSource` is the default; an explicit `Floor` overrides it
+/// with a fixed MB requirement; `Disabled` turns the check off.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum DiskPreflightRequirement {
+    Disabled,
+    Floor(u64),
+    EstimateFromSource,
+}
+
+impl DiskPreflightRequirement {
+    fn from_env() -> Self {
+        parse_disk_preflight_requirement(env::var(INGEST_MIN_FREE_DISK_MB_ENV).ok().as_deref())
+    }
+
+    /// The required free MB for this document, or `None` when the check is disabled.
+    fn required_mb(self, source_bytes: u64) -> Option<u64> {
+        match self {
+            Self::Disabled => None,
+            Self::Floor(mb) => Some(mb),
+            Self::EstimateFromSource => Some(estimate_required_disk_mb(source_bytes)),
+        }
+    }
+}
+
+/// Parse the disk-preflight env value: absent/empty/garbage → estimate from source size (never
+/// silently disable on a typo); `off`/`none`/`disabled`/`disable`/`0` → disabled; a positive
+/// integer → a fixed MB floor.
+fn parse_disk_preflight_requirement(raw: Option<&str>) -> DiskPreflightRequirement {
+    let Some(value) = raw else {
+        return DiskPreflightRequirement::EstimateFromSource;
+    };
+    let trimmed = value.trim();
+    if trimmed.is_empty() {
+        return DiskPreflightRequirement::EstimateFromSource;
+    }
+    if matches!(
+        trimmed.to_ascii_lowercase().as_str(),
+        "off" | "none" | "disabled" | "disable"
+    ) {
+        return DiskPreflightRequirement::Disabled;
+    }
+    match trimmed.parse::<u64>() {
+        Ok(0) => DiskPreflightRequirement::Disabled,
+        Ok(mb) => DiskPreflightRequirement::Floor(mb),
+        Err(_) => DiskPreflightRequirement::EstimateFromSource,
+    }
+}
+
+/// Conservative free-disk estimate from the source PDF size: a base headroom (markdown, backend raw
+/// JSON, region crops) plus a multiple of the source size. Deliberately an upper-ish bound — the
+/// `.3` disk bounding makes a large doc's bundle closer to `O(source)` than the multiplier assumes,
+/// so the gate stays conservative without precise per-asset accounting. Saturating throughout.
+fn estimate_required_disk_mb(source_bytes: u64) -> u64 {
+    let source_mb = source_bytes / (1024 * 1024);
+    DEFAULT_INGEST_DISK_BASE_HEADROOM_MB
+        .saturating_add(source_mb.saturating_mul(DEFAULT_INGEST_DISK_SIZE_MULTIPLIER))
+}
+
+/// Parse `df -P -k` output (POSIX single-line rows: `Filesystem 1024-blocks Used Available Capacity
+/// Mounted-on`) and return the Available 1K-blocks (field index 3) of the first data row.
+fn parse_df_available_kb(text: &str) -> Option<u64> {
+    for line in text.lines() {
+        let trimmed = line.trim();
+        if trimmed.is_empty() || trimmed.starts_with("Filesystem") {
+            continue;
+        }
+        let fields: Vec<&str> = trimmed.split_whitespace().collect();
+        if let Some(available) = fields.get(3)
+            && let Ok(kb) = available.parse::<u64>()
+        {
+            return Some(kb);
+        }
+    }
+    None
+}
+
+/// Read free disk (MB) on the filesystem holding `path` via the platform's POSIX `df` (no new
+/// dependency). `-P` forces single-line rows; `-k` reports 1K blocks. `None` when `df` is
+/// unavailable or unparseable — in which case the pre-flight stays inert rather than refusing on
+/// missing data.
+fn available_disk_mb(path: &Path) -> Option<u64> {
+    let output = Command::new("df")
+        .arg("-P")
+        .arg("-k")
+        .arg(path)
+        .output()
+        .ok()?;
+    if !output.status.success() {
+        return None;
+    }
+    parse_df_available_kb(&String::from_utf8_lossy(&output.stdout)).map(|kb| kb / 1024)
+}
+
+/// Walk up from `path` to the nearest ancestor that exists, so `df` has a real target even before
+/// the artifact root is created (first ingest). Falls back to the current directory.
+fn nearest_existing_ancestor(path: &Path) -> PathBuf {
+    let mut current = path;
+    loop {
+        if current.exists() {
+            return current.to_path_buf();
+        }
+        match current.parent() {
+            Some(parent) => current = parent,
+            None => return PathBuf::from("."),
+        }
+    }
+}
+
+/// Pure gate: refuse when a free reading is available and below the requirement; stay permissive
+/// when free disk is unreadable (`None`) so missing data never blocks a legitimate ingest.
+fn check_disk_preflight(target: &Path, required_mb: u64, free_mb: Option<u64>) -> Result<()> {
+    match free_mb {
+        Some(free) if free < required_mb => Err(AppError::IngestAbortedForDisk {
+            path: target.display().to_string(),
+            free_mb: free,
+            required_mb,
+        }),
+        _ => Ok(()),
+    }
+}
+
+/// Pre-flight the ingest's disk need before any staging directory is created (so a refusal touches
+/// nothing — the prior bundle is trivially intact). Reads free disk on the artifact root's
+/// filesystem and compares against the size-scaled requirement.
+fn preflight_ingest_disk(
+    artifact_root: &Path,
+    source_bytes: u64,
+    requirement: DiskPreflightRequirement,
+) -> Result<()> {
+    let Some(required_mb) = requirement.required_mb(source_bytes) else {
+        return Ok(());
+    };
+    let target = nearest_existing_ancestor(artifact_root);
+    let free_mb = available_disk_mb(&target);
+    check_disk_preflight(&target, required_mb, free_mb)
+}
+
 pub fn materialize_pdf(
     source_path: &Path,
     promoted_markdown_path: &Path,
@@ -1312,6 +1467,17 @@ pub fn materialize_pdf(
     artifact_layout: &SourceArtifactLayout,
     document_key: &str,
 ) -> Result<DoclingBackendSummary> {
+    // Pre-flight disk BEFORE creating any staging directory, so a refusal leaves the prior
+    // normalized bundle and source_ir.json untouched.
+    let source_bytes = fs::metadata(source_path)
+        .map(|meta| meta.len())
+        .unwrap_or(0);
+    preflight_ingest_disk(
+        &artifact_layout.artifact_root,
+        source_bytes,
+        DiskPreflightRequirement::from_env(),
+    )?;
+
     fs::create_dir_all(&artifact_layout.artifact_root)?;
 
     let staged_normalized_root = artifact_layout.artifact_root.join("normalized.staging");
@@ -1686,11 +1852,14 @@ mod tests {
     use tempfile::tempdir;
 
     use super::{
-        DOCLING_PYTHON_ENV, DoclingRuntimeCandidateStatus, DoclingRuntimeSource,
-        INGEST_RAM_ABORT_PERCENT_ENV, INGEST_RAM_SAMPLE_SECS_ENV, RamGuardConfig,
-        inspect_docling_runtime, parse_leading_number, parse_linux_meminfo_used_percent,
-        parse_macos_memory_pressure_used_percent, parse_meminfo_kb, parse_ram_abort_percent,
-        parse_ram_sample_secs, run_backend_with_ram_guard, should_abort_for_memory,
+        DOCLING_PYTHON_ENV, DiskPreflightRequirement, DoclingRuntimeCandidateStatus,
+        DoclingRuntimeSource, INGEST_MIN_FREE_DISK_MB_ENV, INGEST_RAM_ABORT_PERCENT_ENV,
+        INGEST_RAM_SAMPLE_SECS_ENV, RamGuardConfig, check_disk_preflight,
+        estimate_required_disk_mb, inspect_docling_runtime, nearest_existing_ancestor,
+        parse_df_available_kb, parse_disk_preflight_requirement, parse_leading_number,
+        parse_linux_meminfo_used_percent, parse_macos_memory_pressure_used_percent,
+        parse_meminfo_kb, parse_ram_abort_percent, parse_ram_sample_secs, preflight_ingest_disk,
+        run_backend_with_ram_guard, should_abort_for_memory,
     };
     use crate::error::{AppError, Result};
     use crate::test_support::env_var_lock;
@@ -1997,6 +2166,8 @@ printf '{"ready": false, "python_version": "3.14.0", "error": "ModuleNotFoundErr
     #[cfg(unix)]
     #[test]
     fn ram_guard_kills_child_when_memory_breaches_mid_run() -> Result<()> {
+        // Hold the env lock: spawning by PATH lookup races with tests that set PATH="".
+        let _env_lock = env_var_lock();
         let tempdir = tempdir()?;
         let stdout_path = tempdir.path().join("out.log");
         let stderr_path = tempdir.path().join("err.log");
@@ -2039,9 +2210,169 @@ printf '{"ready": false, "python_version": "3.14.0", "error": "ModuleNotFoundErr
         Ok(())
     }
 
+    #[test]
+    fn parse_disk_preflight_requirement_modes() {
+        assert_eq!(
+            parse_disk_preflight_requirement(None),
+            DiskPreflightRequirement::EstimateFromSource
+        );
+        assert_eq!(
+            parse_disk_preflight_requirement(Some("")),
+            DiskPreflightRequirement::EstimateFromSource
+        );
+        assert_eq!(
+            parse_disk_preflight_requirement(Some("   ")),
+            DiskPreflightRequirement::EstimateFromSource
+        );
+        assert_eq!(
+            parse_disk_preflight_requirement(Some("off")),
+            DiskPreflightRequirement::Disabled
+        );
+        assert_eq!(
+            parse_disk_preflight_requirement(Some("NONE")),
+            DiskPreflightRequirement::Disabled
+        );
+        assert_eq!(
+            parse_disk_preflight_requirement(Some("disabled")),
+            DiskPreflightRequirement::Disabled
+        );
+        assert_eq!(
+            parse_disk_preflight_requirement(Some("0")),
+            DiskPreflightRequirement::Disabled
+        );
+        assert_eq!(
+            parse_disk_preflight_requirement(Some(" 500 ")),
+            DiskPreflightRequirement::Floor(500)
+        );
+        // Garbage estimates from source rather than silently disabling the safeguard.
+        assert_eq!(
+            parse_disk_preflight_requirement(Some("lots")),
+            DiskPreflightRequirement::EstimateFromSource
+        );
+    }
+
+    #[test]
+    fn estimate_required_disk_mb_scales_with_source_size() {
+        // Base headroom only when the source is sub-MB.
+        assert_eq!(estimate_required_disk_mb(0), 128);
+        // 10 MB source → 128 + 10*4.
+        assert_eq!(estimate_required_disk_mb(10 * 1024 * 1024), 168);
+        // 100 MB source → 128 + 100*4.
+        assert_eq!(estimate_required_disk_mb(100 * 1024 * 1024), 528);
+    }
+
+    #[test]
+    fn disk_preflight_requirement_resolves_required_mb() {
+        assert_eq!(DiskPreflightRequirement::Disabled.required_mb(999), None);
+        assert_eq!(
+            DiskPreflightRequirement::Floor(750).required_mb(10 * 1024 * 1024),
+            Some(750)
+        );
+        assert_eq!(
+            DiskPreflightRequirement::EstimateFromSource.required_mb(0),
+            Some(128)
+        );
+    }
+
+    #[test]
+    fn parse_df_available_kb_reads_posix_rows() {
+        let macos = "Filesystem 1024-blocks      Used Available Capacity  Mounted on\n\
+             /dev/disk1s1 488245288 123456789 360000000      26%    /\n";
+        assert_eq!(parse_df_available_kb(macos), Some(360_000_000));
+        let linux = "Filesystem     1024-blocks      Used Available Capacity Mounted on\n\
+             /dev/sda1         41251136  12345678  26805458      32% /\n";
+        assert_eq!(parse_df_available_kb(linux), Some(26_805_458));
+        // Header only / nonsense → no reading.
+        assert_eq!(
+            parse_df_available_kb("Filesystem 1024-blocks Used Available Capacity Mounted on\n"),
+            None
+        );
+        assert_eq!(parse_df_available_kb("not df output"), None);
+    }
+
+    #[test]
+    fn check_disk_preflight_refuses_only_below_requirement() {
+        let path = Path::new("/tmp");
+        // Below requirement → typed refusal carrying the numbers.
+        match check_disk_preflight(path, 500, Some(100)) {
+            Err(AppError::IngestAbortedForDisk {
+                free_mb,
+                required_mb,
+                ..
+            }) => {
+                assert_eq!(free_mb, 100);
+                assert_eq!(required_mb, 500);
+            }
+            other => panic!("expected disk refusal, got {other:?}"),
+        }
+        // At/above requirement → ok.
+        assert!(check_disk_preflight(path, 500, Some(500)).is_ok());
+        assert!(check_disk_preflight(path, 500, Some(900)).is_ok());
+        // Unreadable free disk → permissive (never refuse on missing data).
+        assert!(check_disk_preflight(path, 500, None).is_ok());
+    }
+
+    #[test]
+    fn nearest_existing_ancestor_walks_up_to_a_real_dir() -> Result<()> {
+        let tempdir = tempdir()?;
+        let missing = tempdir.path().join("a").join("b").join("c");
+        assert_eq!(nearest_existing_ancestor(&missing), tempdir.path());
+        assert_eq!(nearest_existing_ancestor(tempdir.path()), tempdir.path());
+        Ok(())
+    }
+
+    #[test]
+    fn disk_preflight_requirement_reads_env() {
+        let _env_lock = env_var_lock();
+        {
+            let _floor = EnvVarGuard::set_path(INGEST_MIN_FREE_DISK_MB_ENV, Path::new("750"));
+            assert_eq!(
+                DiskPreflightRequirement::from_env(),
+                DiskPreflightRequirement::Floor(750)
+            );
+        }
+        {
+            let _off = EnvVarGuard::set_path(INGEST_MIN_FREE_DISK_MB_ENV, Path::new("off"));
+            assert_eq!(
+                DiskPreflightRequirement::from_env(),
+                DiskPreflightRequirement::Disabled
+            );
+        }
+        {
+            let _unset = EnvVarGuard::unset(INGEST_MIN_FREE_DISK_MB_ENV);
+            assert_eq!(
+                DiskPreflightRequirement::from_env(),
+                DiskPreflightRequirement::EstimateFromSource
+            );
+        }
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn preflight_ingest_disk_refuses_impossible_floor_and_allows_disabled() -> Result<()> {
+        // Hold the env lock: `df` is spawned by PATH lookup, which races with tests that set PATH="".
+        let _env_lock = env_var_lock();
+        let tempdir = tempdir()?;
+        // A floor no real filesystem can satisfy → refuse, with the prior bundle untouched (nothing
+        // was created — the check runs before any staging).
+        match preflight_ingest_disk(tempdir.path(), 0, DiskPreflightRequirement::Floor(u64::MAX)) {
+            Err(AppError::IngestAbortedForDisk { required_mb, .. }) => {
+                assert_eq!(required_mb, u64::MAX)
+            }
+            other => panic!("expected disk refusal, got {other:?}"),
+        }
+        // Disabled never refuses regardless of free space.
+        assert!(
+            preflight_ingest_disk(tempdir.path(), 0, DiskPreflightRequirement::Disabled).is_ok()
+        );
+        Ok(())
+    }
+
     #[cfg(unix)]
     #[test]
     fn ram_guard_returns_status_when_child_completes() -> Result<()> {
+        // Hold the env lock: spawning by PATH lookup races with tests that set PATH="".
+        let _env_lock = env_var_lock();
         let tempdir = tempdir()?;
         let stdout_path = tempdir.path().join("out.log");
         let stderr_path = tempdir.path().join("err.log");

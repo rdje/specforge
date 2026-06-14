@@ -1363,6 +1363,10 @@ EOF
         // (MEMORY-BOUNDED-INGEST.4a).
         let _ram_guard =
             EnvVarGuard::set_path("SPECFORGE_INGEST_RAM_ABORT_PERCENT", Path::new("off"));
+        // Likewise disable the disk pre-flight so a CI host that happens to be low on disk cannot
+        // false-abort the stub-helper ingest (MEMORY-BOUNDED-INGEST.4b).
+        let _disk_guard =
+            EnvVarGuard::set_path("SPECFORGE_INGEST_MIN_FREE_DISK_MB", Path::new("off"));
         let mut source_ir = SourceIr::build(&source, &artifact_base)?;
 
         source_ir.materialize()?;
@@ -1524,6 +1528,10 @@ EOF
         // (MEMORY-BOUNDED-INGEST.4a).
         let _ram_guard =
             EnvVarGuard::set_path("SPECFORGE_INGEST_RAM_ABORT_PERCENT", Path::new("off"));
+        // Likewise disable the disk pre-flight so a CI host that happens to be low on disk cannot
+        // false-abort the stub-helper ingest (MEMORY-BOUNDED-INGEST.4b).
+        let _disk_guard =
+            EnvVarGuard::set_path("SPECFORGE_INGEST_MIN_FREE_DISK_MB", Path::new("off"));
         let mut source_ir = SourceIr::build(&source, &artifact_base)?;
         source_ir.materialize()?;
         source_ir.write_to_disk()?;
@@ -1572,6 +1580,10 @@ exit 7
         // (MEMORY-BOUNDED-INGEST.4a).
         let _ram_guard =
             EnvVarGuard::set_path("SPECFORGE_INGEST_RAM_ABORT_PERCENT", Path::new("off"));
+        // Likewise disable the disk pre-flight so a CI host that happens to be low on disk cannot
+        // false-abort the stub-helper ingest (MEMORY-BOUNDED-INGEST.4b).
+        let _disk_guard =
+            EnvVarGuard::set_path("SPECFORGE_INGEST_MIN_FREE_DISK_MB", Path::new("off"));
         let mut source_ir = SourceIr::build(&source, &artifact_base)?;
         let error = source_ir
             .materialize()

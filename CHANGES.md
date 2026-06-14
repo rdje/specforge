@@ -1,3 +1,37 @@
+### `MEMORY-BOUNDED-INGEST.4b` — disk pre-flight: ingest refuses before launching a run the filesystem cannot finish
+The pre-flight's RAM dimension was already delivered by `.4a` (the guard's pre-spawn sample won't
+even launch a heavy ingest on a host already over the memory ceiling), so `.4b` adds the genuinely
+missing dimension: **disk**. The check runs at the very FIRST statement of `materialize_pdf` — before
+any staging directory is created — so a refusal touches nothing on disk and any previous normalized
+bundle + `source_ir.json` are trivially intact.
+
+A precise per-document bundle-size estimate is **ill-posed pre-ingest**: the figure/table asset count
+is unknown, and the page count is only computed inside the Docling subprocess, so Rust has no cheap
+pre-ingest page count without re-parsing the PDF (a dependency / drift / an extra subprocess). The one
+cheap signal Rust already has is the **source PDF file size**, so the requirement scales off it:
+`required_mb = 128 (base headroom for markdown / backend raw JSON / region crops) + source_mb × 4`
+(deliberately conservative — the `.3` disk bounding makes a large doc's bundle closer to `O(source)`
+than ×4 assumes; the staged-swap is the backstop for the imprecise middle ground).
+
+**No new dependency:** free disk is read via POSIX `df -P -k <path>` (`-P` forces single-line rows;
+Available is field index 3), parsed by a pure `parse_df_available_kb` unit-tested on macOS+Linux
+output. When `df` is unavailable/unparseable the check stays permissive — it never refuses on missing
+data (mirrors the RAM guard). New typed `AppError::IngestAbortedForDisk { path, free_mb, required_mb }`
+with an actionable Display. Single knob `SPECFORGE_INGEST_MIN_FREE_DISK_MB`: unset → size estimate; a
+positive integer → a fixed MB floor (overrides the estimate); `off`/`none`/`disabled`/`0` → disabled;
+garbage → estimate (never silently disable on a typo).
+
+**+8 unit tests** (parser modes, source-size scaling, `required_mb` resolution, POSIX `df` parse for
+both platforms, the gate above/below/unreadable, the ancestor walk, `from_env`, and a real
+`df`-backed `preflight_ingest_disk` refuse/disabled pair); lib **1596 → 1604**. The 3 stub-helper
+ingest tests also set the pre-flight off for hot-CI determinism. Fixed a `collapsible_if` clippy lint
+(let-chain) and a real test concurrency bug found by CI: the unix tests that spawn `df`/`sleep`/`true`
+by PATH lookup race with the `inspect_docling_runtime` tests that set `PATH=""`, so the spawning tests
+now hold `env_var_lock()`. Full `scripts/run_ci.sh` GREEN + kg-bench **156/156**. Book: SourceIR
+"Pre-flight disk check" subsection + a troubleshooting entry; KM card `ingest-disk-preflight`. The
+size-immunity program now pre-flights both resources (RAM `.4a` / disk `.4b`); `.4c` adaptive batch /
+`.5` summary streaming remain.
+
 ### `MEMORY-BOUNDED-INGEST.4a` — built-in autonomous RAM guard: ingest aborts cleanly before it could crash the host
 Closes the gap the size-immunity program left open: the autonomous RAM guard used to verify the big-PDF
 ingests (`.2`/`.3`) was an **external shell wrapper** an operator had to remember to apply. It is now a

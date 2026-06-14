@@ -167,6 +167,33 @@ This is a *safety* feature, not a quality trade-off: a healthy ingest on a host 
 exactly as before. The guard only ever acts when continuing would put the whole machine at risk —
 and when it does, it fails honestly and reversibly rather than taking the host down with it.
 
+## Pre-flight disk check
+
+The memory guard above protects the host *while* ingesting. SpecForge also looks ahead *before*
+ingesting: a quick disk pre-flight that refuses to start a run the filesystem cannot finish, instead
+of filling the disk partway through. It runs at the very start of materialization — **before any
+staging directory is created** — so a refusal touches nothing on disk and any previous normalized
+bundle is left completely intact.
+
+How much disk does an ingest need? Precisely, that depends on how many figures and tables the
+document has, which isn't known until after it has been read. Rather than guess at a number it
+can't compute, SpecForge scales the requirement off the one cheap signal it *does* have up front —
+the **source PDF's file size** — with generous headroom: roughly `128 MB + (4 × the source size)`.
+It then reads the free space on the target filesystem (using the system's own `df`, no extra
+dependency) and, if there isn't enough, stops with a clear typed error naming the free space, the
+estimated need, and how to proceed. If it can't read the free space for any reason, it stays out of
+the way and lets the ingest proceed — it never refuses a run on missing information.
+
+One environment variable tunes it:
+
+- `SPECFORGE_INGEST_MIN_FREE_DISK_MB` — a number sets an explicit fixed free-MB floor (overriding
+  the size-based estimate); `off` (or `none`/`disabled`/`0`) turns the pre-flight off entirely.
+  Unset, it uses the size-based estimate.
+
+(The RAM half of "check resources before launching" is already covered by the memory guard's
+pre-spawn sample described above — it won't even start a heavy ingest on a host that is already
+over the memory ceiling.)
+
 ## Typical `SourceIR` failure modes
 
 The main risks at this stage are structural, not semantic.
