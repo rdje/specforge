@@ -1,4 +1,35 @@
 # DEVELOPMENT_NOTES
+## `EXTRACTION-QUALITY-GAUGE.3d` (`2026-06-14`) — relational-value constraint gate (DONE; `.3` program complete)
+- **Why:** the `.3c` probe surfaced a second class — an inter-signal/field equality ("X must be equal
+  to the value of Y") that the value-binding paths mis-mint as a garbage `must_be_value` (a truncated
+  value off a condition token: DTI's `BYPASS`/`STRW`/`EL3 must_be_value "E"`). The constraint
+  vocabulary has no "equals another operand" slot.
+- **Two extractors, not one (per-item audit caught it):** the DTI 15 are `dyn_sigcon_*`
+  (`extract_dynamic_signal_constraints`), but the NVMe relational record is `sigcon_0004`
+  (`extract_signal_constraints` — a SECOND, separate must_be_value extractor). The first NVMe rebuild
+  attempt showed the relational record SURVIVING (gate only in the dynamic path), which exposed the
+  second mint site. The gate is now an early refuse in BOTH loops.
+- **Gate design:** pure `is_relational_equality_constraint(text)` keys on the phrases "… the value
+  of …" / "the same value as …" / "matches the value of …" / "takes the value of …" — these
+  unambiguously reference ANOTHER operand's value. Deliberately NOT bare "equal to": a literal
+  binding "must be equal to 0" carries no "value of <other>" and is left untouched (tested). Universal
+  phrasing (ADR 0006). +2 pure tests (relational refused; literal/non-relational kept).
+- **Decision:** refuse (honest residual). A typed `MustEqual{other}` kind was the alternative but no
+  downstream consumer needs inter-signal equality yet, so minting a wrong `must_be_value` is strictly
+  worse than an honest gap.
+- **Verification:** lib 1620→1622; full `run_ci.sh` GREEN; kg-bench 156/156. NVMe rebuilt 26→21 (all
+  5 relational records gone, 0 remaining). DTI's 15 `dyn_sigcon_*` would clear identically, but DTI's
+  `normalized/` bundle was artifact-reclaimed and DTI is host-local (not in the git corpus) — so its
+  canonical cleanup rides the next DTI re-ingest; the gate is proven by the NVMe end-to-end rebuild +
+  the unit tests. **Gold-safe** per-item on gated-Pattern rebuilds of all four wire docs
+  (backup/restore — non-destructive): APB/AHB/AXI constraints 1.000 + WIRE-BASED-100 relations 1.000 +
+  temporal 3/3+4/4+3/3; SWD constraints/relations 1.000 + SWD-derivation operation/state/frame 1.000.
+- **Out of scope:** NVMe `must_be_stable` "This field indicates the identifier…" rows are a
+  descriptive-*field*-cell shape (not relational) minted by yet another path — a candidate future
+  gate, noted but not built here. Book: `pipeline/evidenceir.md` `.3d` paragraph. **The `.3`
+  constraint-precision program (`.3a`/`.3b`/`.3c`/`.3d`) is complete.** Owning tree:
+  `docs/tasks/EXTRACTION-QUALITY-GAUGE.md`.
+
 ## `EXTRACTION-QUALITY-GAUGE.3c` (`2026-06-14`) — descriptive-narration constraint gate (DONE)
 - **Why:** the `.13c` CHI gauge made the class visible — the deterministic Pattern extractor's
   `logic_level_binding_kind_from_text` mints `MustBeHigh/Low` from "`<actor>` sets `<signal>`

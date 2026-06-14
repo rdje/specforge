@@ -879,6 +879,16 @@ gauge: its not-entailed *rate* can even rise when these drop, because the NLI ju
 strobe is not an always-high invariant) is the ground truth — so the cleaner surface is the correct one.
 *Authoritative tracking:* `docs/tasks/EXTRACTION-QUALITY-GAUGE.md` (`.3c`).
 
+A companion gate (`.3d`) handles the sibling **relational-value** frame the same probe surfaced: an
+*inter-signal/field equality* — "ALLOW_UW **must be equal to the value of** ALLOW_PW", or a bounded
+form "a value **less than or equal to the value of** the NVM Set Identifier Maximum field" — has no
+slot in the constraint vocabulary ("this equals another operand's value" is not "this is `<literal>`"),
+so the value-binding paths mis-mint a garbage `must_be_value` off a condition token. Both constraint
+extractors now refuse a sentence carrying a relational phrase ("… the value of …" / "the same value
+as …") — a literal binding like "must be equal to **0**" is untouched, because it names no other
+operand. Measured live: DTI sheds 15 such records and NVMe 5, with every wire gold gate unchanged.
+*Authoritative tracking:* `docs/tasks/EXTRACTION-QUALITY-GAUGE.md` (`.3d`).
+
 ### `EXTRACTION-QUALITY-GAUGE.0` — the artifact carries its own quality measurement
 
 Every surface above is about extracting more, and extracting it correctly. This one is about

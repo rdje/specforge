@@ -1,3 +1,29 @@
+### `EXTRACTION-QUALITY-GAUGE.3d` — relational-value constraint gate (DONE; `.3` precision program complete)
+The sibling of `.3c`: an *inter-signal/field equality* — "ALLOW_UW **must be equal to the value of**
+ALLOW_PW", or the bounded "a value **less than or equal to the value of** the NVM Set Identifier
+Maximum field" — has no slot in the constraint vocabulary ("equals another operand's value" ≠ "is
+`<literal>`"), so both value-binding extractors mis-mint a garbage `must_be_value` off a condition
+token (DTI's `<token> must_be_value "E"` with wrong subjects `BYPASS`/`STRW`/`EL3`).
+
+**Shipped:** pure `is_relational_equality_constraint(text)` in `ir/evidence.rs` — keys on "… the
+value of …" / "the same value as …" (never bare "equal to", so a literal "equal to 0" is untouched)
+— wired as an early refuse in BOTH `extract_dynamic_signal_constraints` (`dyn_sigcon_*`, the DTI 15)
+AND `extract_signal_constraints` (`sigcon_*`, the NVMe 5 — a second extractor the per-item audit
+caught minting the same garbage). Refuse → honest residual (a typed `MustEqual{other}` kind was the
+alternative, deferred — no consumer needs inter-signal equality yet). Universal phrasing (ADR 0006).
++2 pure tests; lib 1620 → **1622**; full `run_ci.sh` GREEN; kg-bench 156/156.
+
+**Verified:** NVMe rebuilt 26 → 21 (all 5 relational records gone). DTI's 15 `dyn_sigcon_*` clear
+identically but its `normalized/` bundle was artifact-reclaimed (canonical cleanup rides the next DTI
+re-ingest; the gate is proven by the NVMe rebuild + unit tests). **Gold-safe** per-item on
+gated-Pattern rebuilds of ALL four wire docs (backup/restore, non-destructive): APB/AHB/AXI
+constraints 1.000 + WIRE-BASED-100 relations 1.000 + temporal 3/3+4/4+3/3; SWD constraints/relations
+1.000 + SWD-derivation operation/state/frame 1.000. NVMe `must_be_stable` field-description cells are
+a separate descriptive-field-cell shape (future gate), not relational. Book: `pipeline/evidenceir.md`
+`.3d` paragraph. **The `.3` constraint-precision program is complete** (`.3a` condition-subject /
+`.3b` permissive-frame / `.3c` descriptive-narration / `.3d` relational-value). Owning tree:
+`docs/tasks/EXTRACTION-QUALITY-GAUGE.md`.
+
 ### `EXTRACTION-QUALITY-GAUGE.3c` — descriptive-narration constraint gate (DONE)
 A signal's *description* is not an *invariant*. The deterministic Pattern extractor read
 "`<actor>` sets `<signal>` HIGH/LOW" as a value binding — right for an obligation ("the Requester

@@ -455,16 +455,31 @@ honestly-qualified) path to "human-SpecForge in Rust."
   re-run the corpus probe for the exact removed-constraint diff (audit every drop), gold eval ×3 +
   SWD `--provider skip` stay 1.000, kg-bench green, full `run_ci.sh`, CHI gauge re-measured on the
   cleaned surface. Universal grammar only (ADR 0006 — no name lists).
-- ID: `EXTRACTION-QUALITY-GAUGE.3d` · Status: `proposed` (`2026-06-14`, spun from the `.3c` probe) ·
-  Goal: the **relational-value frame** — the second `.3c` class the corpus probe surfaced. ~15 DTI
-  records (`ihi0088_g`) where "ALLOW_UW **must be equal to the value of** ALLOW_PW" is mangled into
-  `<token> must_be_value "E"` (garbage value, wrong subjects `BYPASS`/`STRW`/`EL3`): an *equality
-  between two signals/fields* has no typed slot in the constraint-kind vocabulary, so the Pattern
-  path mis-binds it. Decision pending: either a deterministic gate that refuses to mint a
-  `must_be_value` from a "equal to the value of <other>" relational sentence (honest residual), or a
-  new typed `MustEqual { other }` kind. Probe-first per-item over the persisted corpus, gold-safe
-  (no wire-doc match), like `.3c`. NVMe "This field indicates …" rows that the probe also surfaced
-  are a descriptive *field*-cell shape, not relational — out of scope here.
+- ID: `EXTRACTION-QUALITY-GAUGE.3d` · Status: `done` (`2026-06-14`, CODE + gold battery; spun from
+  the `.3c` probe) · Goal: the **relational-value frame** — the second `.3c` class the corpus probe
+  surfaced. An *inter-signal/field equality* ("ALLOW_UW **must be equal to the value of** ALLOW_PW",
+  or the bounded "a value **less than or equal to the value of** the NVM Set Identifier Maximum
+  field") has no slot in the constraint-kind vocabulary, so BOTH value-binding paths mis-mint a
+  garbage `must_be_value` (a truncated value lifted off a condition token — DTI's `<token>
+  must_be_value "E"` with wrong subjects `BYPASS`/`STRW`/`EL3`). **SHIPPED:** pure
+  `is_relational_equality_constraint(text)` (keys on "… the value of …" / "the same value as …" —
+  NOT bare "equal to", so a literal "equal to 0" is untouched), wired as an early refuse in BOTH
+  `extract_dynamic_signal_constraints` (`dyn_sigcon_*`, the DTI 15) AND `extract_signal_constraints`
+  (`sigcon_*`, the NVMe 5 — a SECOND extractor the per-item audit caught: the NVMe relational record
+  was minted there, not by the dynamic path). Decision: refuse → honest residual (a typed
+  `MustEqual{other}` kind was the alternative, deferred — no consumer needs inter-signal equality
+  yet). +2 pure tests; lib 1620 → **1622**; full `run_ci.sh` GREEN; kg-bench 156/156. **Verified:**
+  NVMe rebuilt 26 → **21** (all 5 relational records gone, 0 remaining) — DTI's 15 `dyn_sigcon_*`
+  would clear identically but its `normalized/` bundle was artifact-reclaimed (canonical cleanup
+  rides the next DTI re-ingest; gate proven by the NVMe rebuild + unit tests). **Gold-safe** per-item
+  on gated-Pattern rebuilds of ALL four wire docs (backup/restore, non-destructive): APB/AHB/AXI
+  constraints 1.000 + WIRE-BASED-100 relations 1.000 + temporal 3/3+4/4+3/3; SWD constraints/
+  relations 1.000 + SWD-derivation operation/state/frame 1.000 — probe-confirmed gold-safe (no
+  wire-doc obligation is a relational equality). NVMe `must_be_stable` field-description cells
+  (`This field indicates …`) are a SEPARATE descriptive-field-cell shape (a future gate), not
+  relational. Book: `pipeline/evidenceir.md` `.3d` paragraph. **The `.3` constraint-precision program
+  (`.3a` condition-subject / `.3b` permissive-frame / `.3c` descriptive-narration / `.3d`
+  relational-value) is now complete.**
 - ID: `EXTRACTION-QUALITY-GAUGE.4` · Status: `done` (`2026-06-10`) · Goal: constraint dedup by
   (subject, kind, condition) in the LLM-primary extractor. Shipped: pure `dedup_constraints` —
   canonical key = the eval's `signal_constraint_record_key` (subject + kind incl. value + negation)
@@ -539,6 +554,16 @@ honestly-qualified) path to "human-SpecForge in Rust."
 
 ## Changelog
 
+- `2026-06-14`: **`.3d` DONE** — the relational-value frame gate ships, completing the `.3`
+  constraint-precision program. Pure `is_relational_equality_constraint` (keys on "… the value of …"
+  / "the same value as …", never bare "equal to") refuses an inter-signal/field equality in BOTH
+  value-binding extractors (`extract_dynamic_signal_constraints` `dyn_sigcon_*` = DTI's 15, AND
+  `extract_signal_constraints` `sigcon_*` = NVMe's 5, a second extractor the per-item audit caught).
+  +2 tests, lib 1620→1622, full `run_ci.sh` GREEN, kg-bench 156/156. Live: NVMe 26→21 (5 relational
+  gone); DTI 15 `dyn_sigcon_*` clear identically but its bundle was artifact-reclaimed (rides next
+  re-ingest). All wire gold gates 1.000 on gated-Pattern rebuilds (backup/restore). Honest residual
+  over a fabricated `must_be_value` (a `MustEqual{other}` typed kind deferred — no consumer needs
+  it). Book `.3d` paragraph. See [[extraction-quality-gauge-standing]].
 - `2026-06-14`: **`.3c` DONE** — the descriptive-narration frame gate ships. Pure
   `is_descriptive_narration_binding` in the Pattern path (`extract_dynamic_signal_constraints`)
   drops a logic-level binding that is actor-action narration, not an invariant: an action verb

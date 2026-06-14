@@ -4639,6 +4639,28 @@ fn is_descriptive_narration_binding(text: &str) -> bool {
     words.contains(&"figure") && words.contains(&"shows")
 }
 
+/// EXTRACTION-QUALITY-GAUGE.3d — recognize an inter-signal/field EQUALITY ("X must be equal to the
+/// value of Y"). The constraint vocabulary has no slot for "this signal/field equals another", so
+/// the deterministic value-binding path mis-mints a garbage `must_be_value` from such a sentence
+/// (a truncated value lifted off a condition token). Returns `true` → the caller refuses the whole
+/// sentence (an honest residual is correct; a fabricated wrong fact is not).
+///
+/// Keyed on the relational phrase "… the value of …" / "the same value as …" (which unambiguously
+/// references ANOTHER operand's value), NOT on bare "equal to" — a literal binding like "must be
+/// equal to 0" carries no "value of <other>" and is left untouched. Universal phrasing (ADR 0006 —
+/// no signal/vendor names). Probe-confirmed gold-safe: no APB/AHB/AXI/SWD constraint matches.
+fn is_relational_equality_constraint(text: &str) -> bool {
+    let lowered = text.to_ascii_lowercase();
+    const RELATIONAL: &[&str] = &[
+        "equal to the value of",
+        "the same value as",
+        "matches the value of",
+        "takes the value of",
+        "takes the same value of",
+    ];
+    RELATIONAL.iter().any(|phrase| lowered.contains(phrase))
+}
+
 fn extract_dynamic_signal_constraints(
     statements: &[ExtractedStatement],
     counter: &mut usize,
@@ -4659,6 +4681,14 @@ fn extract_dynamic_signal_constraints(
 
         let lowered = statement.text.to_ascii_lowercase();
         let subject_part = text_before_condition_marker(&statement.text);
+
+        // EXTRACTION-QUALITY-GAUGE.3d: an inter-signal/field EQUALITY ("ALLOW_UW must be equal to
+        // the value of ALLOW_PW") has no typed slot in the constraint vocabulary, so the
+        // value-binding path mis-mints a garbage `must_be_value` (a truncated value off a condition
+        // token). Refuse the whole sentence (honest residual) rather than fabricate a wrong fact.
+        if is_relational_equality_constraint(&statement.text) {
+            continue;
+        }
 
         // The bound value is either a discovered enum value (`must be <value>` → MustBeValue),
         // OR — in an active "drive/set/tied <signal> LOW/HIGH" construction the discovered-value
@@ -6276,6 +6306,13 @@ fn extract_signal_constraints(
         }
         let text = &statement.text;
         let lowered = text.to_ascii_lowercase();
+
+        // EXTRACTION-QUALITY-GAUGE.3d: an inter-signal/field EQUALITY ("X must be (less than or)
+        // equal to the value of Y") has no typed slot — refuse it here too (this pattern path mints
+        // the same garbage as the dynamic path otherwise). Honest residual over a fabricated fact.
+        if is_relational_equality_constraint(text) {
+            continue;
+        }
 
         // Narrow to the sentence carrying the constraint verb (so unrelated earlier
         // sentences/clauses don't contribute false subjects), drop any leading antecedent
@@ -16832,7 +16869,8 @@ mod tests {
         use super::super::{
             StatementClass, classify_statement, collect_subject_signal_tokens,
             extract_protocol_state_value, is_descriptive_narration_binding,
-            is_signal_value_constraint, text_before_condition_marker,
+            is_relational_equality_constraint, is_signal_value_constraint,
+            text_before_condition_marker,
         };
 
         #[test]
@@ -16965,6 +17003,32 @@ mod tests {
             // No "this signal" / timing anchor / figure marker → conservative keep (no over-kill).
             assert!(!is_descriptive_narration_binding(
                 "The reset controller drives RESET HIGH on power-up."
+            ));
+        }
+
+        // EXTRACTION-QUALITY-GAUGE.3d — the relational-equality gate.
+        #[test]
+        fn relational_equality_is_refused() {
+            // Inter-signal/field equality — no typed slot, so the whole sentence is refused.
+            assert!(is_relational_equality_constraint(
+                "When BYPASS is 1 and BP_TYPE = DPTBypass, ALLOW_UW must be equal to the value of ALLOW_PW."
+            ));
+            assert!(is_relational_equality_constraint(
+                "When the value of STRW is EL3, this bit must be equal to the value of ALLOW_PX."
+            ));
+            assert!(is_relational_equality_constraint(
+                "This field shall indicate a value that is the same value as the NVM Set Identifier field."
+            ));
+        }
+
+        #[test]
+        fn literal_value_binding_is_not_relational() {
+            // "equal to 0" is a literal binding (must_be_value 0), not an inter-signal equality.
+            assert!(!is_relational_equality_constraint(
+                "For read transfers, PSTRB must be equal to 0."
+            ));
+            assert!(!is_relational_equality_constraint(
+                "PSEL must be HIGH during the access phase."
             ));
         }
 
