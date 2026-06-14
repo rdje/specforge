@@ -1089,7 +1089,15 @@ the AMD/NVMe dry-runs. **Measured scope decisions:** (1) metrics + Info finding 
 reclassify (AMD is `interface`, 64 connectivity edges; NVMe is `register`, 42 regs), and
 with n=2 any new classifier arm is overfitting (`feedback_genericity_guardrail`; the
 `.5a` `conditional_rules` exclusion is the precedent) — REVISIT TRIGGER recorded: when
-the corpus re-ingest sweep rebuilds field-bearing docs at scale, re-measure per-doc;
+the corpus re-ingest sweep rebuilds field-bearing docs at scale, re-measure per-doc.
+**REVISIT DONE (`2026-06-14`, via `.13d`): the census decision STANDS — NO new arm.**
+Five field-bearing docs now exist on canonical: AMD-IOMMU (217 fields/30 containers) →
+`interface`; CCIX×4 (r1.0 92 / r1.0a 86 / rev1.1 86 / rev2.0 45 fields; 131–143 recovered
+registers each) → `register` ×4. Message-field richness did NOT cluster into a new class
+nor force a misclassification — each doc classifies honestly on its DOMINANT typed surface
+(AMD on signals/relations, CCIX on its large register map), so a `message_field` classifier
+arm would still be overfitting (n=5, splitting 1 interface / 4 register). Measured
+confirmation either way, as required;
 (3) completeness gauge = NO CHANGE — a width-only field table states no positions, so a
 "fields without bit positions" dimension would mislabel honest document absence as an
 extraction gap (fabricated expectation).
@@ -1399,7 +1407,7 @@ untouched by this sweep. Slices:
 - `.13c` · `pending` · CHI: re-ingest + rebuild + gauge re-measure; report the
   field/constraint surfaces now on canonical; hand the `EXTRACTION-QUALITY-GAUGE.3c`
   unblock back to its tree.
-- `.13d` · `in_progress` · CCIX ×4 + AMD: re-ingest + rebuild; the message-field surfaces
+- `.13d` · `done` (`2026-06-14`) · CCIX ×4 + AMD: re-ingest + rebuild; the message-field surfaces
   land on canonical (expected ≈161 CCIX fields across versions, AMD 217/30 per the
   `.10d`/`.10e` measurements — re-verify live, never assume); run the `.11` revisit:
   re-measure `document_class` over the now-field-bearing docs and record whether the
@@ -1424,10 +1432,19 @@ untouched by this sweep. Slices:
     message-field document-class arm is not yet motivated; revisit stays open pending the CCIX×4
     data points (need the family at scale before deciding — `.11` overfitting guard). `generated/`
     is untracked → this records the measurement; the extractor code shipped in `.10d`/`.10e`.
-  - **CCIX ×4 · pending** · re-ingest + rebuild each (`ccix_base_specification` r1.0 / r1.0a /
-    rev1.1 / rev2.0; normalized bundles reclaimed → re-ingest required), land the
-    `.10a`/`.10e` byte/bit-location field surfaces on canonical, then complete the `.11`
-    `document_class` revisit over the now-complete field-bearing set (AMD + CCIX×4).
+  - **CCIX ×4 DONE (`2026-06-14`):** all four re-ingested via the bounded batched path
+    (threshold=128/64-page batches, cpu, `.4a` guard) — exit 0 each, ~3–4 min each, staged-swap
+    clean, RAM stayed ≥41% free, no OOM. Evidence rebuilds bounded (CPU, fast). **Canonical
+    message-field + register surfaces landed, matching the `.10a`/`.10e` measurements:**
+    r1.0 = 92 fields / 11 containers / 131 registers; r1.0a = 86 / 10 / 131; rev1.1 = 86 / 11 / 132;
+    rev2.0 = 45 / 6 / 143. **byte_offset fields total 45+36+35+45 = 161 = the `.10e` "≈161 fields"
+    figure EXACTLY**; rev2.0's 143 registers = the `.10a` "143 registers" figure. All four
+    `validate` → `document_class: register` (dominant surface = the recovered register map).
+  - **`.11` `document_class` revisit COMPLETE — decision STANDS, NO new arm.** Five field-bearing
+    docs now on canonical: AMD (217 fields) → `interface`; CCIX×4 (86–92 fields, 131–143 regs) →
+    `register` ×4. Field richness did not cluster into a new class nor force a misclassification —
+    each classifies on its dominant surface, so a message-field classifier arm would be overfitting
+    (n=5, 1 interface / 4 register). Measured confirmation; no code change. **`.13d` complete.**
 
 **(SUPERSEDED active note) `PDF-VARIANT-DIGESTION.6`/`.7`** — item ② (`.5`) COMPLETE and `.8` (broaden
 prose-actor capture) DONE. **`.5a` + `.5b` + `.5c` are DONE** — structural doc-class routing

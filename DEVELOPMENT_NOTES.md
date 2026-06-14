@@ -1,4 +1,28 @@
 # DEVELOPMENT_NOTES
+## `PDF-VARIANT-DIGESTION.13d` (`2026-06-14`) — CCIX×4 landing + `.11` document_class revisit (DONE)
+- **CCIX ×4 re-ingest (bounded path, same as AMD):** `r1.0` (400p) / `r1.0a` (346p) / `rev1.1` (404p)
+  / `rev2.0` (336p), `SPECFORGE_INGEST_BATCH_THRESHOLD=128` → 64-page batches, `DOCLING_DEVICE=cpu`,
+  built-in `.4a` RAM guard. Exit 0 each, ~3–4 min each, staged-swap clean, RAM ≥41% free throughout,
+  no OOM across ~1486 pages. Evidence rebuilds bounded (CPU, fast). A second live confirmation that the
+  `MEMORY-BOUNDED-INGEST.4a`–`.4c` guards hold on big docs.
+- **Canonical surfaces (match `.10a`/`.10e` exactly):** message fields 92/86/86/45; containers
+  11/10/11/6; recovered registers 131/131/132/143; byte_offset fields 45/36/35/45. **Totals: 161
+  byte-offset fields = the `.10e` "≈161 fields" figure; rev2.0 143 registers = the `.10a` "143
+  registers" figure.** bit_range=0 for all CCIX (the CCIX byte-location family uses byte_offset, not
+  bit_range — consistent with `.10e`). All four `validate` → `document_class: register`.
+- **`.11` `document_class` revisit — the deliverable, decision STANDS (no new arm).** The `.11`
+  trigger ("re-measure per-doc once field-bearing docs exist at scale") is satisfied: 5 field-bearing
+  docs on canonical (AMD 217 fields → `interface`; CCIX×4 → `register` ×4). Message-field richness does
+  NOT predict a distinct class — AMD (most fields) is `interface` via its signal/relation surface, CCIX
+  (fewer fields, many registers) is `register` via its register map. Adding a message-field classifier
+  arm would split 1/4 across the existing classes = overfitting (`feedback_genericity_guardrail`,
+  n=5). No code change; README `.11` bullet updated to record the completed revisit.
+- **Verification standard:** the per-doc aggregates match the `.10a`/`.10e` gold-time measurements
+  (161 byte-offset total, 143 registers); the extractor itself was gold-verified at `.10a`/`.10e`.
+  `generated/` untracked → commit records the measurement + the `.11` conclusion.
+- **`.13` sweep status:** `.13a`/`.13b`/`.13b.1`/`.13d` done; only `.13c` (CHI re-ingest + 14B gauge
+  re-measure) remains — deferred (heavy 14B, RAM-serialize, `ollama stop` first).
+
 ## `PDF-VARIANT-DIGESTION.13d` (`2026-06-14`) — AMD-IOMMU message-field surface on canonical
 - **Why:** the `.10d`/`.10e` message-field extractors (dword-relative + byte-location families) were
   only ever measured on `/tmp` copies for AMD/CCIX, because those docs' `normalized/` bundles were

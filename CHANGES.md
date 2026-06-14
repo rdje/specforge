@@ -1,7 +1,22 @@
-### `PDF-VARIANT-DIGESTION.13d` (AMD-IOMMU) — land the message-field surface on canonical
-The `.10d`/`.10e` message-field extractors were only ever measured on `/tmp` copies of AMD/CCIX
-(their `normalized/` bundles had been artifact-cleanup-reclaimed). `.13d` lands them on the canonical
-corpus. AMD-IOMMU done this session:
+### `PDF-VARIANT-DIGESTION.13d` — land AMD + CCIX×4 message-field/register surfaces on canonical (DONE)
+The `.10a`/`.10d`/`.10e` extractors were only ever measured on `/tmp` copies of AMD/CCIX (their
+`normalized/` bundles had been artifact-cleanup-reclaimed). `.13d` lands them on the canonical corpus
+by re-ingest+rebuild, and runs the `.11` `document_class` revisit.
+
+**CCIX ×4 (done):** all four (`r1.0` / `r1.0a` / `rev1.1` / `rev2.0`) re-ingested via the bounded
+batched path (exit 0 each, ~3–4 min, staged-swap clean, RAM ≥41% free, no OOM). Canonical surfaces:
+92/86/86/45 message fields + 131/131/132/143 recovered registers respectively; **byte-offset fields
+total 161 = the `.10e` "≈161" figure exactly; rev2.0's 143 registers = the `.10a` "143 registers"
+figure.** All four `validate` → `document_class: register` (dominant surface = the register map).
+
+**`.11` `document_class` revisit (the deliverable) — decision STANDS, NO new arm.** Five field-bearing
+docs now on canonical: AMD (217 fields) → `interface`; CCIX×4 (86–92 fields, 131–143 registers) →
+`register` ×4. Message-field richness did not cluster into a new class nor force a misclassification —
+each classifies honestly on its dominant surface, so a message-field classifier arm would be
+overfitting (n=5, 1 interface / 4 register). Measured confirmation; no code change. README `.11` bullet
+updated to record the completed revisit.
+
+AMD-IOMMU portion (committed earlier in this session as `481fb870`):
 
 - **Re-ingest via the bounded path** (`SPECFORGE_INGEST_BATCH_THRESHOLD=128` → 64-page batches,
   `DOCLING_DEVICE=cpu`, built-in `.4a` RAM guard). RAM stayed ≥49% free, no OOM, staged-swap clean —
