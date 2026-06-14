@@ -1,4 +1,38 @@
 # DEVELOPMENT_NOTES
+## `PDF-VARIANT-DIGESTION.13d` (`2026-06-14`) — AMD-IOMMU message-field surface on canonical
+- **Why:** the `.10d`/`.10e` message-field extractors (dword-relative + byte-location families) were
+  only ever measured on `/tmp` copies for AMD/CCIX, because those docs' `normalized/` bundles were
+  artifact-cleanup-reclaimed. `.13d` lands the surfaces on the canonical corpus (re-ingest → rebuild
+  → validate). The persisted AMD evidence was confirmed stale/pre-`.10` (`message_field_records: None`,
+  manifest `None`, 11 registers).
+- **Re-ingest dependency:** `evidence` requires the `promoted_markdown_path` FILE (evidence.rs:692
+  errors if missing). AMD's normalized bundle was gone → evidence could not rebuild from source_ir.json
+  alone → re-ingest genuinely required (no shortcut).
+- **RAM-safe execution (validates the size-immunity work):** AMD is 310p, below the default 512p
+  single-pass threshold, so single-pass would hold ~310 full-res page images at once (the same shape
+  that OOM'd CHI 585p at 17 GB). Forced the bounded path with `SPECFORGE_INGEST_BATCH_THRESHOLD=128`
+  → 64-page batches, `DOCLING_DEVICE=cpu` (`project_docling_mps_cpu`), built-in `.4a` RAM guard at 85%.
+  Result: RAM stayed ≥49% free, no OOM, staged-swap clean. This is a real end-to-end exercise of
+  `MEMORY-BOUNDED-INGEST.4a`–`.4c` on a big doc.
+- **Evidence rebuild bounded:** peak RSS 41 MB (the `.13b.1` `replace_term_with_placeholder` UTF-8 fix
+  holds; AMD's multi-word terms no longer detonate).
+- **Result (live, matches `.10d`/`.10e` exactly):** 217 `message_field_records` / 30 distinct
+  containers; 217 with literal `bit_range`, 114 dword-relative with `byte_offset`. Containers are real
+  AMD structures (Device Table Entry 33, IO_PAGE_FAULT Event Log Buffer Entry 16,
+  ILLEGAL_DEV_TABLE_ENTRY 13, RMP_PAGE_FAULT 11, PAGE_SERVICE_REQUEST PPR Log 11). `register_records`
+  11→8: the `.10e` rule routes in-memory structure tables to message-fields rather than minting fake
+  MMIO registers — an improvement, not a regression.
+- **`.11` document_class revisit (datum #1):** AMD `validate` → `document_class: interface` (3 signals,
+  98 actor-signal relations, no behavioral obligations), self-declared `specification`. Its 217 message
+  fields did NOT reclassify it, confirming the `.11` reasoning that message-field richness alone does
+  not warrant a new document-class arm — but the decision stays open until the CCIX×4 field-bearing
+  docs land (the README's "revisit at scale / two-data-points-is-overfitting" guard).
+- **Verification standard:** the 217/30/114 aggregate matches the `.10d` gold-time measurement exactly,
+  and the top containers are the expected AMD structures (the extractor itself was gold-verified at
+  `.10d`/`.10e`). `generated/` is untracked → the commit records the measurement; no Rust changed.
+- **Remaining `.13d`:** CCIX ×4 re-ingest + rebuild (same bounded path), then the conclusive `.11`
+  revisit over AMD + CCIX×4.
+
 ## `FULL-PAGE-INTENT-CAPTURE.1` (`2026-06-14`) — measured full-page intent-capture gap (NO-GO)
 - **Question (owner):** does SpecForge use the full scope of a page's visual information, or is
   intent-bearing content slipping through because no consumer reads the raw full-page raster?

@@ -1399,11 +1399,35 @@ untouched by this sweep. Slices:
 - `.13c` · `pending` · CHI: re-ingest + rebuild + gauge re-measure; report the
   field/constraint surfaces now on canonical; hand the `EXTRACTION-QUALITY-GAUGE.3c`
   unblock back to its tree.
-- `.13d` · `pending` · CCIX ×4 + AMD: re-ingest + rebuild; the message-field surfaces
+- `.13d` · `in_progress` · CCIX ×4 + AMD: re-ingest + rebuild; the message-field surfaces
   land on canonical (expected ≈161 CCIX fields across versions, AMD 217/30 per the
   `.10d`/`.10e` measurements — re-verify live, never assume); run the `.11` revisit:
   re-measure `document_class` over the now-field-bearing docs and record whether the
   census decision stands (it must be a MEASURED confirmation either way).
+  - **AMD-IOMMU DONE (`2026-06-14`):** re-ingest via the bounded batched path
+    (`SPECFORGE_INGEST_BATCH_THRESHOLD=128` → 64-page batches, `DOCLING_DEVICE=cpu`,
+    built-in `.4a` RAM guard) — **staged-swap clean, RAM stayed ≥49% free throughout, no
+    OOM** (a live end-to-end validation of the `MEMORY-BOUNDED-INGEST.4a`–`.4c` guards on a
+    310p doc). source_ir: 310p / 354 tables / 416 figures / 2060 elements. Evidence rebuild
+    bounded (**peak RSS 41 MB** — the `.13b.1` UTF-8 fix holds). **Message-field surface now
+    on CANONICAL evidence: 217 `message_field_records` / 30 containers** (217 with literal
+    `bit_range`, 114 dword-relative with `byte_offset`) — **matches the `.10d`/`.10e`
+    measurement EXACTLY** (217/30, 114 byte-offset). Top containers are real AMD structures
+    (Device Table Entry 33 fields, IO_PAGE_FAULT log entry 16, ILLEGAL_DEV_TABLE_ENTRY 13).
+    `register_records` 11 (stale pre-`.10`) → **8** — CORRECT `.10e` behavior (in-memory
+    structure tables route to message-fields instead of fabricating MMIO registers), not a
+    regression. `validate`: `document_class: interface` / declared `specification`;
+    message-field inventory finding fires (217/30, 114 byte-offset); manifest fires
+    `message_fields.bit_position_table` (+ register_map / relations.prose / semantic_hints.prose).
+    **`.11` revisit datum #1:** AMD carries 217 fields yet classifies `interface` (3 signals /
+    98 relations / no behavioral obligations) — its field richness did NOT reclassify it, so a
+    message-field document-class arm is not yet motivated; revisit stays open pending the CCIX×4
+    data points (need the family at scale before deciding — `.11` overfitting guard). `generated/`
+    is untracked → this records the measurement; the extractor code shipped in `.10d`/`.10e`.
+  - **CCIX ×4 · pending** · re-ingest + rebuild each (`ccix_base_specification` r1.0 / r1.0a /
+    rev1.1 / rev2.0; normalized bundles reclaimed → re-ingest required), land the
+    `.10a`/`.10e` byte/bit-location field surfaces on canonical, then complete the `.11`
+    `document_class` revisit over the now-complete field-bearing set (AMD + CCIX×4).
 
 **(SUPERSEDED active note) `PDF-VARIANT-DIGESTION.6`/`.7`** — item ② (`.5`) COMPLETE and `.8` (broaden
 prose-actor capture) DONE. **`.5a` + `.5b` + `.5c` are DONE** — structural doc-class routing

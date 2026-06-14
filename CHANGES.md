@@ -1,3 +1,25 @@
+### `PDF-VARIANT-DIGESTION.13d` (AMD-IOMMU) — land the message-field surface on canonical
+The `.10d`/`.10e` message-field extractors were only ever measured on `/tmp` copies of AMD/CCIX
+(their `normalized/` bundles had been artifact-cleanup-reclaimed). `.13d` lands them on the canonical
+corpus. AMD-IOMMU done this session:
+
+- **Re-ingest via the bounded path** (`SPECFORGE_INGEST_BATCH_THRESHOLD=128` → 64-page batches,
+  `DOCLING_DEVICE=cpu`, built-in `.4a` RAM guard). RAM stayed ≥49% free, no OOM, staged-swap clean —
+  a live end-to-end validation of the `MEMORY-BOUNDED-INGEST.4a`–`.4c` guards on a 310p doc. source_ir:
+  310p / 354 tables / 416 figures.
+- **Evidence rebuild bounded** — peak RSS 41 MB (the `.13b.1` UTF-8 fix holds).
+- **Canonical evidence now carries 217 `message_field_records` / 30 containers** (217 literal
+  `bit_range`, 114 dword-relative `byte_offset`) — matches the `.10d`/`.10e` measurement exactly. Top
+  containers: Device Table Entry (33), IO_PAGE_FAULT Event Log Buffer Entry (16),
+  ILLEGAL_DEV_TABLE_ENTRY (13). `register_records` 11→8 = correct `.10e` non-fabrication (in-memory
+  structure tables route to message-fields, not fake MMIO registers).
+- **`validate`:** `document_class: interface` / declared `specification`; message-field inventory
+  finding fires (217/30, 114 byte-offset); manifest fires `message_fields.bit_position_table`.
+- **`.11` revisit datum #1:** 217 fields did not reclassify AMD off `interface` → a message-field
+  document-class arm stays unmotivated; the revisit completes once CCIX×4 land (overfitting guard).
+- Docs-only commit (`generated/` is untracked; the extractor code shipped in `.10d`/`.10e`). Remaining
+  `.13d`: CCIX ×4 re-ingest + the conclusive `.11` revisit.
+
 ### `FULL-PAGE-INTENT-CAPTURE.1` — measured full-page intent-capture gap (NO-GO), tree CLOSED
 Owner-directed (`2026-06-14`, after `MEMORY-BOUNDED-INGEST.4c`): does SpecForge use the full scope of a
 page's visual information, or is intent-bearing content slipping through because nothing reads the full
