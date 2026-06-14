@@ -1,4 +1,24 @@
 # DEVELOPMENT_NOTES
+## `ROADMAP-TASKTREE-COVERAGE.6` (`2026-06-15`) — post-`.5` ROADMAP↔tree alignment refresh (DONE; docs-only)
+- **Why:** the standing no-drift doctrine (ROADMAP↔code↔mdBook locked). The `.5`
+  lock was `2026-05-31`; the whole post-R16 extraction-quality / digestion /
+  size-immunity program landed afterward. Measured: `grep -c` over `ROADMAP.md`
+  returned 0 for all 8 headline trees, yet R6/R7 lanes carry inline `task tree:`
+  references — a real cross-reference drift; and `## Immediate next milestone` was
+  months stale.
+- **Fix (docs-only):** one consolidated "Applied task trees since the
+  `2026-05-31` alignment lock" subsection at the end of `## Major workstreams`,
+  grouping the headline programs by lane and pointing to `docs/TASK_TREE.md` as
+  the AUTHORITATIVE live index — deliberately NOT copying all ~50 tree rows into
+  the roadmap (the `ROADMAP-TASKTREE-COVERAGE` Non-Goal: no roadmap↔tree
+  duplication). Plus a current-frontier bullet prepended to `## Immediate next
+  milestone`. Owned by re-opening the closed umbrella for a single `.6` leaf,
+  re-CLOSED on completion.
+- **Verification:** no code/book change (ROADMAP.md is a root continuity doc, not
+  an mdBook source) → `scripts/check_memory_architecture.sh` (the pre-commit gate)
+  is the appropriate check; full `run_ci.sh` not warranted for a root-doc-only
+  edit. `docs/TASK_TREE.md` stays the canonical live tree index.
+
 ## `EXTRACTION-QUALITY-GAUGE.3e` (`2026-06-15`) — descriptive-field-cell spurious-subject gate (DONE)
 - **Why:** the `.gauge`'s largest error class ("Spurious subject") and the `.3d`-recorded candidate
   future leaf. In a register/structure field-definition cell the deterministic value-binding path

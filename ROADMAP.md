@@ -1359,6 +1359,51 @@
   - prose+waveform extraction precision/recall improves against that
     score on the real corpus, with disagreement preserved as residual
 
+### Applied task trees since the `2026-05-31` alignment lock (R15e / R16 / R8 lanes)
+- `ROADMAP-TASKTREE-COVERAGE.5` swept R0–R16 on `2026-05-31`; the programs below
+  landed AFTER it and continue the R15e (extraction quality / production
+  readiness), R16 (design-intent capture), and R8/R2 (ingest robustness) lanes.
+- The lanes above name selected owning trees inline (the `R6`/`R7` convention);
+  **`docs/TASK_TREE.md` (the Active Task Trees table) is the AUTHORITATIVE,
+  always-current index of every applied task tree and its live status** — this
+  roadmap deliberately does not duplicate all ~50 rows (cf. the
+  `ROADMAP-TASKTREE-COVERAGE` Non-Goal "NOT duplicating the roadmap into the
+  trees"). Headline programs since the lock, by lane:
+  - **R15e/R16 — extraction quality:** `EXTRACTION-QUALITY-GAUGE` (active — the
+    NLI-oracle quality gauge + the `.3a`–`.3e` constraint-precision program +
+    `.FIELD` signal-vs-field ontology + the standing `.0` gauge);
+    `WIRE-BASED-100` (active — the owner's non-negotiable 100%-on-wire-specs bar,
+    APB/AHB/AXI/SWD); `LLM-PRIMARY-PROMOTION` (done/closed — LLM-primary grounded
+    constraint promotion is the converge default for live-NLP runs); plus the
+    measurement/eval micro-trees (`LLM-EXTRACTION-EVAL`, `EVAL-*`,
+    `TEMPORAL-RULE-EVAL`, `NLI-*`, `CONSTRAINT-*`).
+  - **R15/R16 — digestion breadth (HIGH-PRIORITY: digest as many chip-spec PDF
+    variants as possible):** `PDF-VARIANT-DIGESTION` (active — table-kind +
+    prose-entity capture, the corpus re-ingest sweep, message-field surfaces);
+    `EXTRACTION-GAP-FIX` (active — convert measured weakness into capability);
+    `CORPUS-PATTERN-REUSE` (active — cross-document extraction-profile priors);
+    `SWD-SERIAL-EXTRACTION` (done — the serial/architecture path the parallel-bus
+    model can't reach); `PDF-AGNOSTIC-EXTRACTION` / `VERB-COVERAGE-CORPUS` (done —
+    ADR-0006 zero-hardcoded-names signoff + the normative-verb KG vocabulary);
+    `NLP-SHALLOW-PARSE` / `PURE-NLP-INTENT-EXTRACTION` (the in-Rust shallow-parse
+    NLP arm — owner-gated on build scope).
+  - **R8/R2 — ingest robustness & PDF-size immunity:** `MEMORY-BOUNDED-INGEST`
+    (active — page-range batching, the autonomous host-RAM guard, disk pre-flight,
+    total-RAM-banded adaptive batching, disk-footprint bounding; SpecForge stays
+    bounded in RAM AND DISK and never crashes the host, 10 MB→3 GB+).
+  - **R0/R16 — architecture, completeness, governance:** `EXTRACTOR-ARCHITECTURE`
+    + `EVIDENCE-DETERMINISM` (done — the `Extractor`/`run_surface` framework +
+    deterministic builds); `FULL-PAGE-INTENT-CAPTURE` (done, NO-GO — measured that
+    SpecForge already uses the full scope of a page's intent-bearing visual
+    information); `LITERATURE-GROUNDING` / `SPEC-MINING-PROVENANCE` (done —
+    "forward specification mining" framing + the adopt/defer ledger);
+    `MEMORY-ARCHITECTURE-DOC` / `KNOWLEDGE-MAP-ADOPTION` / `BOOK-COMMAND-COVERAGE`
+    (done — durable-memory standard, the question-keyed Knowledge Map, mdBook
+    command-surface lock).
+- Owned by `ROADMAP-TASKTREE-COVERAGE.6` (the post-`.5` alignment refresh) — the
+  standing ROADMAP↔code↔mdBook no-drift discipline still holds; `docs/TASK_TREE.md`
+  remains the canonical live record.
+
 ## Recommended implementation order
 1. **`R16`: SOTA design-intent capture — PROGRAM COMPLETE** (`2026-05-20`;
    `R16-INTENT-CAPTURE` umbrella CLOSED `2026-05-29`). All six sub-trees
@@ -1384,6 +1429,19 @@
 11. The adapter family begins and ends at `.isf`; `.fsm`/HDL are owned by FSMGen (downstream of `.isf`), not SpecForge
 
 ## Immediate next milestone
+- **Current active frontier (`2026-06`, post-R16):** the work has moved from the
+  R16 capture program onto **extraction QUALITY + corpus DIGESTION BREADTH +
+  ingest SIZE-IMMUNITY** (see "Applied task trees since the alignment lock" above
+  and `docs/TASK_TREE.md` for live status): the `EXTRACTION-QUALITY-GAUGE`
+  constraint-precision program (`.3a`–`.3e` gates + the standing NLI quality
+  gauge) holding the `WIRE-BASED-100` 100%-on-wire-specs bar; the
+  `PDF-VARIANT-DIGESTION` push to digest as many chip-spec PDF variants as
+  possible (the owner's HIGH-PRIORITY aim) with `EXTRACTION-GAP-FIX` turning
+  measured gaps into capability; and `MEMORY-BOUNDED-INGEST` keeping SpecForge
+  bounded in RAM and disk and host-crash-safe on 10 MB→3 GB+ PDFs. The
+  owner-gated next decisions are the `NLP-SHALLOW-PARSE` build scope (the in-Rust
+  shallow-parse NLP arm) and a flip-consistent corpus-wide canonical promotion
+  sweep. The R16/R15 forward items below remain the longer-horizon frontier.
 - `R16`: **PROGRAM COMPLETE** — the six sub-trees are delivered and the
   `R16-INTENT-CAPTURE` umbrella is closed (`2026-05-29`). The program
   built the mechanical-to-lower typed target, the objective

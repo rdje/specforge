@@ -1,3 +1,25 @@
+### `ROADMAP-TASKTREE-COVERAGE.6` — post-`.5` ROADMAP↔tree alignment refresh (DONE; docs-only)
+The `.5` alignment lock swept R0–R16 on `2026-05-31`; **40+ task trees landed
+since** and a measured `grep` proved **0/8 headline post-lock programs**
+(EXTRACTION-QUALITY-GAUGE / WIRE-BASED-100 / PDF-VARIANT-DIGESTION /
+EXTRACTION-GAP-FIX / CORPUS-PATTERN-REUSE / MEMORY-BOUNDED-INGEST /
+LLM-PRIMARY-PROMOTION / EXTRACTOR-ARCHITECTURE) were referenced anywhere in
+`ROADMAP.md` — while the R6/R7 lanes DO list their owning trees (`task tree: …`).
+A real cross-reference drift, plus a months-stale `## Immediate next milestone`
+(still R16-program-complete framing).
+
+**Fixed (docs-only, faithful to the `ROADMAP-TASKTREE-COVERAGE` Non-Goal "NOT
+duplicating the roadmap into the trees"):** a single consolidated "Applied task
+trees since the `2026-05-31` alignment lock" subsection that names the headline
+programs **by lane** (R15e/R16 extraction quality, R15/R16 digestion breadth,
+R8/R2 ingest size-immunity, R0/R16 architecture/governance) and points to
+`docs/TASK_TREE.md` as the **authoritative live index** (no ~50-row copy); plus a
+current-frontier refresh of `## Immediate next milestone` (now names the active
+extraction-quality / corpus-digestion / size-immunity programs). No code/book
+change (ROADMAP is a root doc, not in the mdBook) → memory-arch gate is the
+appropriate check. Owning tree: `docs/tasks/ROADMAP-TASKTREE-COVERAGE.md` (`.6`;
+umbrella re-CLOSED).
+
 ### `EXTRACTION-QUALITY-GAUGE.3e` — descriptive-field-cell spurious-subject gate (DONE)
 The deepest of the `.3` precision classes — the original "spurious subject" error the quality gauge
 first flagged. In a register/structure spec a field is *defined* by a table cell that narrates what it

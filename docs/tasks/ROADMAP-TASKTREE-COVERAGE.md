@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `ROADMAP-TASKTREE-COVERAGE`
-- Status: `done`
+- Status: `done` (re-CLOSED `2026-06-15` after the `.6` post-`.5` alignment refresh)
 - Roadmap lane: `R0` (governance / continuity doctrine)
 - Created: `2026-05-31`
-- Last updated: `2026-05-31`
+- Last updated: `2026-06-15`
 - Owner: repo-local workflow
 
 ## Goal
@@ -72,7 +72,7 @@ it (drift flagged + reconciled).
 - ID: `ROADMAP-TASKTREE-COVERAGE`
   Status: `done`
   Goal: whole-roadmap task-tree ownership + audit + alignment lock
-  Children: `.1`, `.2`, `.3`, `.4`, `.5`
+  Children: `.1`, `.2`, `.3`, `.4`, `.5`, `.6`
 
 - ID: `ROADMAP-TASKTREE-COVERAGE.1`
   Status: `done`
@@ -189,13 +189,40 @@ it (drift flagged + reconciled).
     failed; rustdoc warnings-denied + mdBook built). Umbrella CLOSED.
   Commit: `see Commit Log`
 
+- ID: `ROADMAP-TASKTREE-COVERAGE.6`
+  Status: `done` (`2026-06-15`)
+  Goal: >
+    Post-`.5` alignment refresh. The `.5` lock swept R0–R16 on `2026-05-31`;
+    40+ task trees have landed SINCE (the EXTRACTION-QUALITY-GAUGE /
+    WIRE-BASED-100 / PDF-VARIANT-DIGESTION / EXTRACTION-GAP-FIX /
+    CORPUS-PATTERN-REUSE / EXTRACTOR-ARCHITECTURE / MEMORY-BOUNDED-INGEST /
+    LLM-PRIMARY-PROMOTION / FULL-PAGE-INTENT-CAPTURE programs), and a measured
+    grep proved ZERO of them are referenced anywhere in `ROADMAP.md` — while the
+    R6/R7 lanes DO list their owning trees (`task tree: ...`), so the
+    cross-reference convention had drifted for the R15e/R16/R8-era work. Also the
+    `## Immediate next milestone` section was months stale (still R16-program-
+    complete framing; no mention of the active extraction-quality / corpus-
+    digestion / size-immunity programs). FIX (docs-only, faithful to the tree's
+    own Non-Goal "NOT duplicating the roadmap into the trees"): a single
+    consolidated "Applied task trees since the alignment lock" subsection that
+    names the headline programs by lane and points to `docs/TASK_TREE.md` as the
+    AUTHORITATIVE live index (not a copy of all 40 rows), plus a current-frontier
+    refresh of `## Immediate next milestone`. No code/book change → focused
+    memory-arch gate (the pre-commit hook); full `run_ci.sh` not warranted for a
+    root-doc-only change.
+  Acceptance: ROADMAP names the post-`.5` headline programs + points to the canonical index; `Immediate next milestone` reflects the actual current frontier; memory-arch gate green; umbrella re-CLOSED.
+  Verification: `see Verification Log`
+  Commit: `see Commit Log`
+
 ## Current Frontier
 
-**Umbrella CLOSED `2026-05-31`** — the whole roadmap is task-tree-owned +
-audited, and ROADMAP ↔ codebase ↔ mdBook are aligned (two drifts reconciled,
-full CI green). The only `active` descendant is
-`R15C-R15G-LEARNING-PLANE-BACKFILL` (tracks the still-open R15c–g lanes);
-advancing any of its remaining scope is a future owned tree.
+**Umbrella re-CLOSED `2026-06-15`** (first closed `2026-05-31`) — the whole
+roadmap is task-tree-owned + audited, and ROADMAP ↔ codebase ↔ mdBook are
+aligned. `.6` refreshed the post-`.5` drift (40+ trees had landed since the lock
+with ZERO ROADMAP cross-reference; `Immediate next milestone` was months stale).
+The only `active` descendant is `R15C-R15G-LEARNING-PLANE-BACKFILL` (tracks the
+still-open R15c–g lanes); advancing any of its remaining scope is a future owned
+tree. `docs/TASK_TREE.md` remains the authoritative live tree index.
 
 | Order | Leaf | Status | Why |
 | --- | --- | --- | --- |
@@ -204,6 +231,7 @@ advancing any of its remaining scope is a future owned tree.
 | 3 | `ROADMAP-TASKTREE-COVERAGE.3` | `done` | R8–R13 owned + audited (`R8-R13-EXTRACTION-BACKFILL`) |
 | 4 | `ROADMAP-TASKTREE-COVERAGE.4` | `done` | R15c–R15g owned + audited (`R15C-R15G-LEARNING-PLANE-BACKFILL`, stays active) |
 | 5 | `ROADMAP-TASKTREE-COVERAGE.5` | `done` | alignment lock done (2 drifts reconciled); umbrella CLOSED |
+| 6 | `ROADMAP-TASKTREE-COVERAGE.6` | `done` | post-`.5` alignment refresh — lane→tree pointer for the R15e/R16/R8-era programs + canonical-index pointer + `Immediate next milestone` refresh; umbrella re-CLOSED |
 
 ## Decisions
 
@@ -233,6 +261,7 @@ advancing any of its remaining scope is a future owned tree.
 | `2026-05-31` | `ROADMAP-TASKTREE-COVERAGE.3` | `R8-R13-EXTRACTION-BACKFILL` created (R8–R13 as audited leaves); delivering symbols/commands + book pages verified per milestone (R9 Mostly-Done residual noted); ROADMAP §R8–R13 criteria met; registered; docs-only | `passed` |
 | `2026-05-31` | `ROADMAP-TASKTREE-COVERAGE.4` | `R15C-R15G-LEARNING-PLANE-BACKFILL` created (stays `active`; R15c–g as `in_progress` leaves); delivered surface audited (semantic/conflict surfaces; `kg-bench` + 153 fixtures; `learn-priors`/CorpusMemory; `corpus-kb`/11 families) + remaining scope captured + book-covered; registered; docs-only | `passed` |
 | `2026-05-31` | `ROADMAP-TASKTREE-COVERAGE.5` | alignment sweep R0–R16+R15b–g (every milestone owned + book-covered); 2 drifts reconciled code-is-truth — (1) added `extract-contracts`+`signal-resolve` to the book command reference (now 19/19); (2) rewrote the fictitious "8-finding `.fsm` adapter validator" claim to the real `.isf`-only 6-finding surface; standing no-drift discipline recorded; full `scripts/run_ci.sh` GREEN (1169/0); umbrella CLOSED | `passed` |
+| `2026-06-15` | `ROADMAP-TASKTREE-COVERAGE.6` | measured the post-`.5` drift (`grep` proved 0/8 headline post-lock trees referenced in `ROADMAP.md` while R6/R7 lanes list theirs); added a consolidated "Applied task trees since the alignment lock" subsection (headline programs by lane + pointer to the canonical `docs/TASK_TREE.md` index — no row duplication per the tree Non-Goal) + refreshed the stale `Immediate next milestone`; docs-only (root doc, not in the book), memory-arch gate green; umbrella re-CLOSED | `passed` |
 
 ## Commit Log
 
@@ -243,9 +272,25 @@ advancing any of its remaining scope is a future owned tree.
 | `ROADMAP-TASKTREE-COVERAGE.3` | `ROADMAP-TASKTREE-COVERAGE.3 — backfill+audit R8–R13 extraction-SOTA milestones` | created `R8-R13-EXTRACTION-BACKFILL`; all delivered + audited (R9 residual noted) |
 | `ROADMAP-TASKTREE-COVERAGE.4` | `ROADMAP-TASKTREE-COVERAGE.4 — backfill+audit R15c–R15g learning/eval/corpus lanes` | created `R15C-R15G-LEARNING-PLANE-BACKFILL` (stays active); delivered surface audited + remaining scope captured |
 | `ROADMAP-TASKTREE-COVERAGE.5` | `ROADMAP-TASKTREE-COVERAGE.5 — ROADMAP↔code↔mdBook alignment lock + close umbrella` | 2 drifts reconciled (command surface + `.fsm`-validator claim); full CI green; umbrella CLOSED |
+| `ROADMAP-TASKTREE-COVERAGE.6` | `ROADMAP-TASKTREE-COVERAGE.6 — post-.5 ROADMAP↔tree alignment refresh` | docs-only; lane→tree pointer for the R15e/R16/R8-era programs + canonical-index pointer + `Immediate next milestone` refresh; umbrella re-CLOSED |
 
 ## Changelog
 
+- `2026-06-15`: `.6` — post-`.5` alignment refresh (umbrella re-opened then
+  re-CLOSED). A measured grep proved ZERO of the 8 headline trees that landed
+  since the `2026-05-31` lock (EXTRACTION-QUALITY-GAUGE / WIRE-BASED-100 /
+  PDF-VARIANT-DIGESTION / EXTRACTION-GAP-FIX / CORPUS-PATTERN-REUSE /
+  MEMORY-BOUNDED-INGEST / LLM-PRIMARY-PROMOTION / EXTRACTOR-ARCHITECTURE) were
+  referenced anywhere in `ROADMAP.md`, while the R6/R7 lanes DO list their owning
+  trees — a real cross-reference drift. Fixed docs-only and faithfully to the
+  tree's Non-Goal (no roadmap↔tree row duplication): a single consolidated
+  "Applied task trees since the alignment lock" subsection naming the headline
+  programs by lane and pointing to `docs/TASK_TREE.md` as the AUTHORITATIVE live
+  index; plus a current-frontier refresh of the months-stale `Immediate next
+  milestone` (now names the active extraction-quality / corpus-digestion /
+  size-immunity programs). No code/book change → memory-arch gate (pre-commit
+  hook) is the appropriate check; full `run_ci.sh` not warranted for a root-doc
+  edit. Umbrella re-CLOSED.
 - `2026-05-31`: `.5` — ROADMAP↔code↔mdBook alignment lock. Swept R0–R16+R15b–g
   (every milestone owned + book-covered). Reconciled 2 real drifts code-is-truth:
   added `extract-contracts`+`signal-resolve` to the book command reference (now
