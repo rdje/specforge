@@ -1,3 +1,19 @@
+### `MEMORY-BOUNDED-INGEST.2` — CHI (585p) proves bounded-memory ingestion end-to-end (peak 20% used)
+The 585-page CHI Architecture Spec — which OOM-killed the single-pass ingest twice (17.2 GB RSS /
+SIGKILL) — was ingested through the new batched path (10 batches × 64 pages, `DOCLING_DEVICE=cpu`)
+under an **autonomous RAM guard** (samples `memory_pressure` every 2 s, auto-kills the ingest at
+≥84% used to protect the host). Result: **completed cleanly (rc=0, not killed), PEAK memory at just
+20% used** — a ~70-point margin below the 90% reboot danger zone. The resulting `source_ir` is
+complete and faithful: profile 585 pages / 368 tables / 122 figures / 7799 content elements / 1202
+sections (matching the prior single-pass profile), **585 page artifacts with absolute, unique page
+numbers 1–585** (no cross-batch id collisions), 585 page PNGs on disk, 528 MB normalized bundle.
+Wall time ~19 min (multi-pass, slower than a single pass would be) — the "speed flexes, quality
+intact" contract in action. Ollama's model was unloaded during the ingest (Docling and the 14B
+model are never run concurrently on this host). `PDF-VARIANT-DIGESTION.13c` (CHI evidence rebuild +
+validate + gauge) is now unblocked. The `MEMORY-BOUNDED-INGEST` tree stays active for the rest of
+the size-immunity program: `.3` DISK-footprint bounding (on-demand full-res page images, no fidelity
+loss), `.4` restricted-environment graceful slowdown, `.5` summary streaming.
+
 ### `MEMORY-BOUNDED-INGEST.1` — bounded-memory ingestion of very large PDFs (page-range batching)
 Owner-directed (`2026-06-14`, after the CHI `.13c` re-ingest was memory-killed twice on the 24 GB
 host): big PDFs must ingest without exhausting RAM and crashing/rebooting the machine. Root cause —

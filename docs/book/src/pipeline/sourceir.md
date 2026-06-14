@@ -80,6 +80,32 @@ Remaining work there is mostly:
 
 not broad new concept invention.
 
+## Bounded-memory ingestion of very large PDFs
+
+Chip-spec PDFs get big — hundreds to thousands of pages. SpecForge ingests them with **bounded
+memory** so a large document can never exhaust the host's RAM and crash it. The principle is
+simple and strict: **a bigger file may take longer, but it never lowers quality and never risks
+the host.**
+
+How it works: for documents above a page threshold, the Docling backend converts the PDF in
+**bounded page ranges** rather than all at once. Each range is rendered, its page images and
+structured records are written to disk, and that range's heavy data is freed before the next —
+so peak memory stays proportional to the *batch size*, not the *page count*. Documents at or
+below the threshold use the original single-pass conversion unchanged.
+
+Two environment variables tune this (defaults are chosen so every normal document keeps the
+single-pass path):
+
+- `SPECFORGE_INGEST_BATCH_THRESHOLD` — page count above which batching activates (default `512`).
+- `SPECFORGE_INGEST_BATCH_PAGES` — pages per batch when batching (default `64`). Smaller batches
+  use less peak memory and run slower; on a very memory-constrained host, lower this.
+
+What does *not* change with batching: the document profile, structured tables, content elements,
+sections, and figure/table images are the same complete, full-resolution capture you would get
+from a single pass. The only observable difference is that a running page-header that Docling
+happens to merge across a page boundary in single-pass mode may appear as two separate boilerplate
+elements — never a loss of signals, tables, or intent.
+
 ## Typical `SourceIR` failure modes
 
 The main risks at this stage are structural, not semantic.

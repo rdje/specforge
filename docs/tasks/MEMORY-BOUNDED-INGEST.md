@@ -83,14 +83,22 @@ addressed by the disk-bounding leaves below.
   Commit: `MEMORY-BOUNDED-INGEST.1`
 
 - ID: `MEMORY-BOUNDED-INGEST.2`
-  Status: `in_progress`
+  Status: `done`
   Goal: verify on CHI (585p) end-to-end under the autonomous RAM guard — ingest completes with
   bounded peak RAM, `normalized/` + `source_ir.json` materialize; re-prove small-doc
   byte-identity on a gold doc; then unblock `PDF-VARIANT-DIGESTION.13c`.
   Acceptance: CHI ingest succeeds under the ≥85%-used kill ceiling; a gold doc re-ingests
   byte-identical; measurements recorded.
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `done (2026-06-14)` — CHI (`ihi0050_g`, 585p) ingested via the batched path
+  (10 batches × 64p, `DOCLING_DEVICE=cpu`) under an autonomous RAM guard (2s sample, kill at
+  ≥84% used): **completed rc=0, NOT killed, PEAK memory_pressure used = 20%** (vs the
+  single-pass OOM at 17.2 GB RSS / SIGKILL); swap unchanged; RAM 83% free after. source_ir
+  complete + faithful — profile 585p / 368 tables / 122 figures / 7799 elements / 1202 sections
+  (matches the prior single-pass profile), 585 page artifacts with ABSOLUTE unique page numbers
+  1–585 (no cross-batch collisions), backend raw = batched envelope, 585 page PNGs on disk,
+  normalized 528 MB. ~19 min wall (multi-pass, slower — quality intact). Small-doc byte-identity
+  was already proven in `.1` (temp-14p before/after). `PDF-VARIANT-DIGESTION.13c` UNBLOCKED.
+  Commit: `MEMORY-BOUNDED-INGEST.2`
 
 - ID: `MEMORY-BOUNDED-INGEST.3`
   Status: `proposed`
@@ -134,9 +142,12 @@ addressed by the disk-bounding leaves below.
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `MEMORY-BOUNDED-INGEST.2` | `in_progress` | verify on CHI (585p) under the RAM guard, then unblock `.13c` |
+| 1 | `MEMORY-BOUNDED-INGEST.3` | `proposed` | DISK-footprint bounding (the next size-immunity lever; owner emphasized disk + 3 GB files) |
+| 2 | `MEMORY-BOUNDED-INGEST.4` | `proposed` | restricted-env graceful degradation (slower, never lower quality) |
+| 3 | `MEMORY-BOUNDED-INGEST.5` | `proposed` | bound summary / `source_ir.json` at extreme page counts |
 
-`.1` (implement) `done` 2026-06-14.
+`.1` (RAM page-range batching) `done` 2026-06-14; `.2` (CHI 585p proof, peak 20% used) `done`
+2026-06-14 — `PDF-VARIANT-DIGESTION.13c` is now unblocked.
 
 ## Decisions
 
@@ -182,14 +193,14 @@ addressed by the disk-bounding leaves below.
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-06-14` | `MEMORY-BOUNDED-INGEST.1` | py_compile + `cargo build` + full `run_ci.sh` (1587) + temp-14p before/after | GREEN; (A) single-pass BYTE-IDENTICAL; (B) batched complete+correct (`page_no` absolute, surfaces match, one benign boilerplate-header boundary split) |
-| `2026-06-14` | `MEMORY-BOUNDED-INGEST.2` | CHI (585p) ingest under the autonomous RAM guard | `pending` |
+| `2026-06-14` | `MEMORY-BOUNDED-INGEST.2` | CHI (585p) ingest under the autonomous RAM guard | GREEN — completed rc=0, NOT killed, PEAK used 20%; source_ir complete (585p/368 tables, abs unique page nums), 528 MB normalized, ~19 min |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
-| `MEMORY-BOUNDED-INGEST.1` | `MEMORY-BOUNDED-INGEST.1` | page-range batched ingestion behind a 512p gate |
-| `MEMORY-BOUNDED-INGEST.2` | `pending` | `pending` |
+| `MEMORY-BOUNDED-INGEST.1` | `MEMORY-BOUNDED-INGEST.1` | page-range batched ingestion behind a 512p gate (`9cb16985`) |
+| `MEMORY-BOUNDED-INGEST.2` | `MEMORY-BOUNDED-INGEST.2` | CHI 585p ingested under the RAM guard, peak 20% used |
 
 ## Changelog
 
@@ -199,4 +210,10 @@ addressed by the disk-bounding leaves below.
   (`_IngestAccumulator` + `process_converted_document` + `detect_pdf_page_count` + `_env_int`;
   single-pass unchanged ≤512p, batched >512p freeing each batch). py_compile + full CI green;
   temp-14p proof: single-pass byte-identical, batched complete/correct (one benign boilerplate
-  boundary split). `.2` (CHI under the RAM guard) in progress.
+  boundary split). Commit `9cb16985`.
+- `2026-06-14`: `.2` DONE — CHI (585p) ingested via the batched path under the autonomous RAM
+  guard: completed rc=0, NOT killed, PEAK memory_pressure used = 20% (vs the single-pass OOM at
+  17.2 GB / SIGKILL); source_ir complete + faithful (585p / 368 tables / abs unique page numbers),
+  528 MB normalized, ~19 min, quality intact. `PDF-VARIANT-DIGESTION.13c` unblocked. Tree stays
+  active for the size-immunity program: `.3` DISK (on-demand full-res page images) / `.4`
+  restricted-env / `.5` summary streaming.
