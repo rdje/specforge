@@ -1,4 +1,49 @@
 # DEVELOPMENT_NOTES
+## 3-lever ownership/scope slice (`2026-06-15`) — own + scope all three owner-directed forward levers; handoff-ready (docs-only)
+- **Why:** at the exhausted clean-frontier decision point I surfaced the three owner-gated
+  forward levers; the owner replied "do all these … when/if all are task-tree tracked then
+  make SPECFORGE handoff ready." The doctrine forbids code change without an owning tree, and
+  this session was context-heavy — fully implementing three big levers (one RAM-heavy 14B)
+  here would risk a non-handoff-ready half-state (the exact opposite of the ask). So the
+  deliverable is: OWN + SCOPE all three with a concrete first leaf each, then hand off.
+- **(1) NLP-SHALLOW-PARSE — scope decision (owner-delegated).** The owner explicitly handed me
+  the call ("build the full arm, a bounded consolidation slice, or keep parked — you decide").
+  Chose **GO, BOUNDED, gaps-first** on the spike evidence: generic SVO recovers only 3–8% of the
+  mature hand grammars and a real statistical tagger (nltk) added ~nothing over a hand-rolled
+  one, so POS quality is not the bottleneck and the full academic ladder is low-value
+  speculation. The genuinely-new, value-bearing pieces the spike isolated are `.2h` (passive +
+  verb-sense — fixes real direction errors like AXI `manager Reads ARID` when ARID is
+  manager-DRIVEN) and `.2f` (coordination). Frontier `.2h` → `.2f` → `.3` (assembler through the
+  grounding gate); `.2a`/`.2b`/`.2c`/`.2d`/`.2e`/`.2g`/`.2i` → `deferred` (mostly already exist;
+  build one only if measured as a bottleneck). GO-not-park because `.2h` is a real *precision*
+  win independent of the recall verdict, and the owner directed pursuing the lever. Hard gates
+  unchanged: wire-based 100%, deterministic, offline, additive-until-proven.
+- **(2) CANONICAL-PROMOTION-SWEEP — new tree.** `LLM-PRIMARY-PROMOTION` (the FLIP) is CLOSED;
+  applying it to canonical artifacts is distinct forward work with its own RAM-safety +
+  review-gating obligations, so it earns its own tree (no-code-without-ownership). Captured: the
+  goal (land the default promotion on canonical, not just `/tmp`), the RAM-safety protocol
+  (per-doc sequential, model serialized vs Docling, ≥85%-used kill — the binding operational
+  constraint), the review-gating (`R7-VALIDATION` `promotion_status` — canonical mutation is
+  never auto-approved), and the wire-doc strict-battery gate (the `.3` AXI precedent caught a
+  real defect → revert). Frontier `.1` = non-wire pilot to lock the protocol before any
+  wire-critical mutation.
+- **(3) CORPUS-PATTERN-REUSE.3b.3 — resolved the "design open" blocker.** The activate-only
+  consume contract (decided `2026-06-09`) needs a FIRST self-disabled opt-in extractor to have
+  anything to activate. Decision: select it **measurement-first** (`.3b.3a`), not invent it —
+  criteria = helpful-on-one-cluster + noisy-default-on (the property that *justifies* opt-in) +
+  bounded/grounded/no-denylist (ADR 0006). Leading candidate: the parked
+  `PDF-VARIANT-DIGESTION.9.10` prose bus-line lever — parked corpus-wide precisely because a
+  universal version needs a forbidden denylist, but cluster-scoped to the serial/SMBus family
+  where it is safe it becomes a textbook activate-only extractor (an elegant reuse of a parked
+  lever). Split into `.3b.3a` (select, read-only) → `.3b.3b` (build self-disabled + plumb the
+  profile into `ExtractionContext` + structural activate-only `applies_to` + held-out uplift,
+  wire-based 100% a hard gate, every non-matching doc byte-identical by construction).
+- **How verified:** docs-only across the three trees + the new tree + the TASK_TREE index + the
+  live docs; memory-arch self-check + KM derive-and-diff green; no Rust change so no cargo gate.
+  Handoff: a fresh session picks any of `.2h` / `.1` pilot / `.3b.3a` (recommended: start with
+  the low-RAM `.2h` or read-only `.3b.3a`; save the 14B `CANONICAL-PROMOTION-SWEEP.1` for a
+  RAM-headroom session).
+
 ## `MEMORY-BOUNDED-INGEST.5` (`2026-06-15`) — summary / `source_ir.json` streaming: measured DEFER (probe-first, docs-only)
 - **Why:** the owner's non-negotiable size-immunity directive (bounded RAM+DISK at
   10 MB→3 GB+, never crash the host). `.1`–`.4c` bounded every ingest cost; `.5` (the

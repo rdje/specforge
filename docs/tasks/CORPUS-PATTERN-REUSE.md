@@ -188,12 +188,37 @@ gauges (did the profile reduce misses on held-out docs?).
   sparsity caveat), schema v6 persisted. 5 new hermetic tests (subset/partial/empty-signature lookup;
   union-with-support multi-member materialization; singleton-only → empty). Verification: see Verification
   Log. Commit: see Commit Log.
-- ID: `CORPUS-PATTERN-REUSE.3b.3` · Status: `pending` (gated) · Goal: the CONSUME side — plumb the persisted
-  `ExtractionProfile` into `ExtractionContext`, implement the **activate-only** `applies_to` contract
-  (a profile may only enable a self-disabled opt-in extractor for a doc whose fingerprint matches the cluster;
-  it may NEVER disable a default-on extractor — enforced structurally), contested-gated via
-  `contested_priors()`, and demonstrate the first real activated extractor with a measured recall uplift on a
-  held-out cluster member. Behavioral (touches the extractor path) → wire-based APB/AHB/AXI/SWD must stay 100%.
+- ID: `CORPUS-PATTERN-REUSE.3b.3` · Status: `active` (design captured `2026-06-15`; split into selection +
+  build) · Goal: the CONSUME side — plumb the persisted `ExtractionProfile` into `ExtractionContext`, implement
+  the **activate-only** `applies_to` contract (a profile may only enable a self-disabled opt-in extractor for a
+  doc whose fingerprint matches the cluster; it may NEVER disable a default-on extractor — enforced
+  structurally), contested-gated via `contested_priors()`, and demonstrate the first real activated extractor
+  with a measured recall uplift on a held-out cluster member. Behavioral (touches the extractor path) →
+  wire-based APB/AHB/AXI/SWD must stay 100%. **The blocker was "needs a FIRST opt-in extractor (design open)";
+  design now captured in Decisions `2026-06-15` + split into `.3b.3a` (select the candidate, measurement-first)
+  → `.3b.3b` (build it self-disabled + plumb the activate-only contract + measure uplift).** · Children:
+  `.3b.3a`, `.3b.3b`.
+- ID: `CORPUS-PATTERN-REUSE.3b.3a` · Status: `pending` (frontier) · Goal: **SELECT + justify the first opt-in
+  extractor, measurement-first (read-only, no extraction-path change).** Using the `corpus-cluster` profiles
+  (which extractors fire per derived family) + the persisted corpus, find a candidate construction that is
+  (a) measurably HELPFUL on one derived cluster, (b) too NOISY/unsafe to run default-on corpus-wide (which is
+  exactly WHY it must be opt-in — justifying the activate-only machinery), and (c) bounded + deterministic +
+  grounded (ADR 0006, no denylist). Strong candidate to evaluate FIRST: the `PDF-VARIANT-DIGESTION.9.10` prose
+  bus-line signal lever — PARKED corpus-wide precisely because a universal version needs a forbidden denylist,
+  but if scoped to ONLY the cluster where it is measurably safe (the serial-protocol / SMBus-class family) it
+  becomes a textbook activate-only extractor: default-off (noisy elsewhere), activated only for the matching
+  fingerprint. Output: a one-candidate decision with the measured "helps family X / noisy elsewhere" evidence,
+  or an honest "no safe candidate yet" with what is missing. Acceptance: a justified candidate (or honest
+  no-go) recorded with measurement; no code/extraction-path change.
+- ID: `CORPUS-PATTERN-REUSE.3b.3b` · Status: `pending` (gated on `.3b.3a`) · Goal: **BUILD the selected opt-in
+  extractor self-disabled (`applies_to` defaults `false`) + plumb the persisted `ExtractionProfile` into
+  `ExtractionContext` + implement the structurally-enforced activate-only `applies_to` (enable iff the doc
+  fingerprint is a subset-match of the cluster signature AND the prior is not contested) + measure recall uplift
+  on a HELD-OUT cluster member.** Behavioral → wire-based APB/AHB/AXI/SWD must stay 100% (hard gate); the
+  opt-in extractor emits nothing on a non-matching doc by construction (so the byte-identical guarantee on every
+  current doc holds until a matching cluster is seen). Acceptance: the extractor activates only for its cluster
+  (proven by a fixture pair + a held-out live doc), raises recall there without fabricating, leaves every other
+  doc byte-identical, wire-based 100% intact, `kg-bench` green.
 - ID: `CORPUS-PATTERN-REUSE.3c` · Status: `done` (`2026-06-09`) · Goal: the **manifest-population
   sweep** (the recorded data lever) — no code change. (1) Rebuild `evidence` for the persisted docs whose
   normalized bundles are intact but whose evidence predates the `.8` manifest (NVMe, I2C). (2) Re-ingest
@@ -225,8 +250,9 @@ gauges (did the profile reduce misses on held-out docs?).
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `CORPUS-PATTERN-REUSE.3b.3` | `pending` (gated) | The CONSUME side via the **activate-only** `applies_to` contract (Decisions `2026-06-09`); behavioral → needs a first opt-in extractor to activate. Wire-based 100% specs must not regress. |
-| 2 | `CORPUS-PATTERN-REUSE.4` | `pending` (gated) | Offline LLM/VLM cluster pattern miner with held-out precision validation. |
+| 1 | `CORPUS-PATTERN-REUSE.3b.3a` | `pending` | **SELECT the first opt-in extractor, measurement-first (read-only).** Resolves the long-standing "needs a first opt-in extractor (design open)" blocker. Find a construction that helps one derived cluster but is too noisy default-on (strong candidate: the parked `PDF-VARIANT-DIGESTION.9.10` prose bus-line lever, scoped to its safe family). No code/extraction-path change. |
+| 2 | `CORPUS-PATTERN-REUSE.3b.3b` | `pending` (gated) | BUILD the selected extractor self-disabled + activate-only consume contract + measured held-out uplift. Behavioral → wire-based 100% must not regress. |
+| 3 | `CORPUS-PATTERN-REUSE.4` | `pending` (gated) | Offline LLM/VLM cluster pattern miner with held-out precision validation. |
 
 `.3a` DONE (the `corpus-cluster` command), `.3b.1` DONE (typed profile + derivation + surfacing), `.3b.2`
 DONE (profiles persisted into `CorpusMemory` as the 8th prior family + `learn-priors` harvest + subset-match
@@ -250,6 +276,19 @@ when their PDFs are re-provided — honest scope, not debt.
 - `2026-06-09`: **Profiles are harvested, not authored.** `.3b.1` derives profiles by clustering the accepted
   `learn-priors` input artifacts' `.2` fingerprints and aggregating per cluster — the same accrete-from-
   validated-IntentIR discipline as the other 7 prior families; advisory-only, contested-aware.
+- `2026-06-15`: **First-opt-in-extractor design + selection criteria (resolves the `.3b.3` "design open"
+  blocker; owner-directed "do all these").** The consume side has always needed a FIRST self-disabled opt-in
+  extractor for the activate-only contract to have anything to activate. Decision: SELECT it measurement-first
+  (`.3b.3a`) rather than inventing one — the right candidate is a construction that is (a) measurably helpful on
+  exactly one derived cluster, (b) too noisy/unsafe to run default-on corpus-wide (this is the property that
+  *justifies* opt-in — a universally-safe extractor should just be default-on), and (c) bounded + deterministic
+  + grounded with NO denylist (ADR 0006, `[[feedback_avoid_denylists_prefer_structural]]`). Leading candidate:
+  the **`PDF-VARIANT-DIGESTION.9.10` prose bus-line signal lever**, parked corpus-wide precisely because a
+  universal version needs a forbidden denylist — but cluster-scoped to the serial-protocol/SMBus family where it
+  is safe, it is a textbook activate-only extractor (default-off, fingerprint-activated). This elegantly turns a
+  parked lever into the reuse-plane's first consumer. Build is `.3b.3b` (self-disabled extractor + plumb profile
+  into `ExtractionContext` + structural activate-only `applies_to` + held-out uplift), wire-based 100% a hard
+  gate, every non-matching doc byte-identical by construction.
 
 `.1` design owned; `.2` clustering engine DONE (works over the persisted corpus). The build (`.3`–`.4`) was
 **sequenced behind `EXTRACTOR-ARCHITECTURE`** — its run manifest is the behavioral fingerprint this plane
@@ -308,3 +347,10 @@ first (no behavior change); `.3b`/`.4` (advisory consumption + offline miner) st
   family with full-support fired union), corpus-cluster non-empty profiles 4→5; wire-based 100% re-verified
   on the FRESH evidence (APB/AHB/AXI/SWD/I2C all 1.000 filtered; NVMe register_field 0 = VLM-gated dataset,
   not a regression); kg-bench 151/151. Remaining sparsity (~66 host-local docs) is honest scope, not debt.
+- `2026-06-15`: **Resolved the `.3b.3` "design open" blocker (owner-directed "do all these").** Captured the
+  first-opt-in-extractor selection criteria (helpful-on-one-cluster + noisy-default-on + bounded/grounded/no-
+  denylist) + the leading candidate (the parked `PDF-VARIANT-DIGESTION.9.10` prose bus-line lever, cluster-
+  scoped to its safe serial/SMBus family) in Decisions, and split `.3b.3` into `.3b.3a` (select the candidate,
+  measurement-first, read-only) → `.3b.3b` (build it self-disabled + plumb the activate-only consume contract +
+  measure held-out uplift, wire-based 100% a hard gate). Frontier advanced to `.3b.3a`. Docs-only ownership
+  slice — no code/extraction-path change; ready for fresh-session `.3b.3a` measurement.

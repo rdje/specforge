@@ -6,7 +6,7 @@
 - Status: `active`
 - Roadmap lane: `R16`/`R15e` (extraction)
 - Created: `2026-06-09`
-- Last updated: `2026-06-09`
+- Last updated: `2026-06-15`
 - Owner: repo-local workflow
 
 ## Goal
@@ -125,23 +125,24 @@ The build leaves below own each pipeline component (owner directive `2026-06-09`
 the owner's go after the tempered spike result, then built incrementally and measured against the hand grammars
 (wire-based APB/AHB/AXI/SWD stay 100%). See the Component map for the tool per leaf.
 
-- ID: `NLP-SHALLOW-PARSE.2a` · Status: `proposed` · Goal: **domain-aware tokenizer** — keep `ARVALID`/`S1`/
+- ID: `NLP-SHALLOW-PARSE.2a` · Status: `deferred` (scope-bounded `2026-06-15` — mostly exists; not the spike bottleneck) · Goal: **domain-aware tokenizer** — keep `ARVALID`/`S1`/
   `WDATA[31:0]`/`1'b1`/`C6` as single tokens; hand-roll + tiny `unicode-segmentation` for boundaries.
-- ID: `NLP-SHALLOW-PARSE.2b` · Status: `proposed` · Goal: **sentence segmenter** — spec-aware splitting that
+- ID: `NLP-SHALLOW-PARSE.2b` · Status: `deferred` (scope-bounded `2026-06-15`) · Goal: **sentence segmenter** — spec-aware splitting that
   survives `e.g.`/`1.2.3`/bit-ranges; hand-roll.
-- ID: `NLP-SHALLOW-PARSE.2c` · Status: `proposed` · Goal: **POS tagger** — deterministic lexicon+rule tagger
+- ID: `NLP-SHALLOW-PARSE.2c` · Status: `deferred` (scope-bounded `2026-06-15` — spike: heavy tagger adds ~0) · Goal: **POS tagger** — deterministic lexicon+rule tagger
   seeded by the declared-signal/actor/verb catalogs (the spike showed a heavy statistical tagger adds ~nothing
   here); hand-roll, no model download.
-- ID: `NLP-SHALLOW-PARSE.2d` · Status: `proposed` · Goal: **lemmatizer / morphology** — map verb inflections
+- ID: `NLP-SHALLOW-PARSE.2d` · Status: `deferred` (scope-bounded `2026-06-15` — exists: `normative_vocab.rs`) · Goal: **lemmatizer / morphology** — map verb inflections
   to one edge label; extend `normative_vocab.rs` + tiny `rust-stemmers` (Snowball) for unseen inflections.
-- ID: `NLP-SHALLOW-PARSE.2e` · Status: `proposed` · Goal: **NP/VP chunker** over POS tags; hand-roll.
-- ID: `NLP-SHALLOW-PARSE.2f` · Status: `proposed` · Goal: **clause split + coordination** — distribute
-  "X, which connects to Y, drives Z and W"; hand-roll.
-- ID: `NLP-SHALLOW-PARSE.2g` · Status: `proposed` · Goal: **negation / modality** — `must not`/`shall`/`may`;
+- ID: `NLP-SHALLOW-PARSE.2e` · Status: `deferred` (scope-bounded `2026-06-15`) · Goal: **NP/VP chunker** over POS tags; hand-roll.
+- ID: `NLP-SHALLOW-PARSE.2f` · Status: `pending` (frontier — second value piece) · Goal: **clause split +
+  coordination** — distribute "X, which connects to Y, drives Z and W"; hand-roll.
+- ID: `NLP-SHALLOW-PARSE.2g` · Status: `deferred` (scope-bounded `2026-06-15` — exists: constraint negation) · Goal: **negation / modality** — `must not`/`shall`/`may`;
   extend the existing constraint-negation handling.
-- ID: `NLP-SHALLOW-PARSE.2h` · Status: `proposed` · Goal: **light dependency (passive + verb sense)** — the
-  genuinely-new capability; fixes the spike's direction errors ("Y is driven by X" ↔ "X drives Y"); hand-roll.
-- ID: `NLP-SHALLOW-PARSE.2i` · Status: `proposed` · Goal: **grounding NER gate** — formalize the existing
+- ID: `NLP-SHALLOW-PARSE.2h` · Status: `pending` (frontier — FIRST value piece, the decided scope) · Goal:
+  **light dependency (passive + verb sense)** — the genuinely-new capability; fixes the spike's direction
+  errors ("Y is driven by X" ↔ "X drives Y"); hand-roll.
+- ID: `NLP-SHALLOW-PARSE.2i` · Status: `deferred` (scope-bounded `2026-06-15` — already strong: declared-signal catalog) · Goal: **grounding NER gate** — formalize the existing
   declared-signal/actor catalog as the explicit gate the parser proposes into (ADR 0006); largely exists.
 - ID: `NLP-SHALLOW-PARSE.3` · Status: `proposed` · Goal: **SVO assembler + Extractor-tier integration** —
   wire `.2a`–`.2i` into ONE `Extractor` (the `EXTRACTOR-ARCHITECTURE` framework) emitting `ActorSignalRelation`
@@ -151,7 +152,10 @@ the owner's go after the tempered spike result, then built incrementally and mea
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `NLP-SHALLOW-PARSE.2a`–`.3` | `proposed` | Spike `.1` done (architecture sound but a consolidation play, not a recall revolution). Owner go/no-go on building the tier given the tempered result; then build incrementally, measured against the hand grammars on the 100% specs. |
+| 1 | `NLP-SHALLOW-PARSE.2h` | `pending` | **SCOPE DECIDED `2026-06-15` (owner-delegated): BOUNDED, gaps-first — build the genuinely-new value pieces, NOT the full 9-component stack.** `.2h` (passive-voice + verb-sense direction) is FIRST: it is the one piece the spike flagged as *missing* ("none — the new capability") AND it fixes a real precision bug the spike exposed (direction errors — AXI `manager Reads ARID` when ARID is manager-DRIVEN). Self-contained, hand-rolled, reuses existing tokenization/`normative_vocab`/grounding. Wire-based APB/AHB/AXI/SWD stay 100% (hard gate); deterministic + offline. |
+| 2 | `NLP-SHALLOW-PARSE.2f` | `pending` | clause split + coordination distribution — the second real gap the spike found ("X, which connects to Y, drives Z and W"). Build after `.2h`, measured against the hand grammars. |
+| 3 | `NLP-SHALLOW-PARSE.3` | `proposed` | SVO assembler — wire `.2h`/`.2f` (+ the reused existing pieces) into ONE `Extractor` through the grounding gate; retire a hand grammar ONLY when SVO provably ≥ it. |
+| — | `.2a`/`.2b`/`.2c`/`.2d`/`.2e`/`.2g`/`.2i` | `deferred` | **Scope-bounded out (`2026-06-15`):** the spike proved POS quality is NOT the bottleneck (hand-roll ≈ nltk) and these mostly already exist in scattered form (tokenizer `is_hardware_signal_token`, lemmatizer `normative_vocab.rs`, grounding gate = the declared-signal catalog). Build a specific one ONLY if measurement during `.2h`/`.2f`/`.3` shows it is the concrete bottleneck — not speculatively. |
 
 ## Decisions
 
@@ -167,12 +171,29 @@ the owner's go after the tempered spike result, then built incrementally and mea
   risk, so SpecForge needs almost no download: mostly hand-rolled deterministic Rust + at most two tiny
   pure-Rust crates (`rust-stemmers`, `unicode-segmentation`). Heavy ML (spaCy/BERT/nlprule) rejected for size
   + determinism. Measurement-only nltk venv (`.venv-nlp`, 54 MB) used then deleted.
+- `2026-06-15`: **SCOPE DECIDED (owner-delegated `2026-06-15`: "build the full arm, a bounded consolidation
+  slice, or keep parked — you decide" + "do all these"): GO, BOUNDED, gaps-first.** Build only the two
+  spike-identified value-bearing pieces — `.2h` (passive-voice + verb-sense direction, the one piece the spike
+  marked "none — the new capability" AND the fix for the spike's measured direction errors) then `.2f`
+  (coordination distribution) — wired into ONE `Extractor` (`.3`) through the EXISTING grounding gate, reusing
+  the already-present tokenization (`is_hardware_signal_token`) / lemmatizer (`normative_vocab.rs`) / grounding
+  (declared-signal catalog). The full 9-component academic NLP ladder (`.2a`/`.2b`/`.2c`/`.2e`/`.2g`/`.2i` and
+  the duplicate-of-existing `.2d`) is DEFERRED — the spike proved POS quality is NOT the bottleneck (hand-roll
+  ≈ nltk) and generic SVO recovers only 3–8% of the hand grammars, so building the full stack speculatively
+  would be effort against a lukewarm, measured payoff (quality-over-speed / measured-need discipline). Rationale
+  for GO-not-park: the owner explicitly directed pursuing all three forward levers, and `.2h` delivers a real
+  *precision* win (correct drive/read direction) independent of the recall verdict. **Hard gates (unchanged):**
+  wire-based APB/AHB/AXI/SWD stay 100% on all scored surfaces; deterministic (double-run byte-identical);
+  offline (no model download, runtime stays pure-Rust); retire a hand grammar ONLY when SVO provably ≥ it
+  (additive until proven). A deferred ladder leaf is built ONLY if measurement during `.2h`/`.2f`/`.3` shows it
+  is the concrete bottleneck — never speculatively.
 
 ## Open Questions
 
-- Given the spike result (consolidation, not a recall leap), does the owner want to build the full tier now,
-  build only the highest-value pieces (`.2h` passive/verb-sense + `.2f` coordination, which the spike showed
-  are the real gaps), or redirect the energy to the higher-leverage table/VLM arm? (Owner go/no-go — frontier.)
+- ~~Given the spike result (consolidation, not a recall leap), does the owner want to build the full tier now,
+  build only the highest-value pieces (`.2h`/`.2f`), or redirect?~~ **RESOLVED `2026-06-15`** (owner delegated
+  the call; see Decisions): GO, BOUNDED, gaps-first — `.2h` then `.2f` then the `.3` assembler; the full ladder
+  deferred-unless-measured. The frontier is now `.2h`.
 
 ## Blockers
 
@@ -194,3 +215,11 @@ the owner's go after the tempered spike result, then built incrementally and mea
 
 - `2026-06-09`: Created task tree; owner-directed NLP arm; owned each of the ~9 pipeline components as leaves
   (`.2a`–`.3`); ran + recorded the `.1` spike (honest 3–8% finding); size-conscious tooling decision.
+- `2026-06-15`: **SCOPE DECIDED (owner-delegated).** Resolved the build-scope Open Question: GO, BOUNDED,
+  gaps-first — frontier set to `.2h` (passive/verb-sense direction, the spike's genuinely-new piece + a real
+  precision fix) → `.2f` (coordination) → `.3` (assembler); the full academic NLP ladder
+  (`.2a`/`.2b`/`.2c`/`.2d`/`.2e`/`.2g`/`.2i`) marked `deferred` (scope-bounded — POS quality is not the spike
+  bottleneck; mostly already exists), built only if measurement proves a specific piece is the bottleneck.
+  Hard gates unchanged (wire-based 100%, deterministic, offline, additive-until-proven). Docs-only ownership
+  slice — no production code yet (the `.2h` build is the first code slice, for a fresh session). Handoff:
+  ready for `.2h` implementation.

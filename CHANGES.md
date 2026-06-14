@@ -1,3 +1,45 @@
+### 3-lever ownership/scope slice — own + scope all three owner-directed forward levers; handoff-ready (docs-only)
+The owner reviewed the exhausted clean PNT frontier and directed pursuing **all three**
+owner-gated forward levers ("do all these"), then "when/if all are task-tree tracked …
+make sure SPECFORGE is handoff ready." Per the non-negotiable no-code-without-an-owning-
+tree doctrine — and because this session was context-heavy and rushing three substantial
+levers (one RAM-heavy 14B) would leave a non-handoff-ready half-state — this slice **owns
++ scopes** all three and hands off for fresh-session execution. **No code changed.**
+
+**(1) `NLP-SHALLOW-PARSE` — scope DECIDED (owner-delegated the call).** GO, BOUNDED,
+gaps-first: frontier `.2h` (passive-voice + verb-sense direction — the one piece the spike
+marked "the new capability" AND the fix for the spike's measured direction errors) → `.2f`
+(coordination) → `.3` (assembler), reusing the existing tokenization / `normative_vocab` /
+grounding. The full 9-component academic NLP ladder (`.2a`/`.2b`/`.2c`/`.2d`/`.2e`/`.2g`/`.2i`)
+is `deferred` — the spike proved POS quality is not the bottleneck (hand-roll ≈ nltk) and
+generic SVO recovers only 3–8% of the hand grammars, so building it speculatively is effort
+against a lukewarm payoff. Hard gates unchanged (wire-based 100%, deterministic, offline,
+additive-until-proven). The Open Question is resolved; `.2h` is the first code slice.
+
+**(2) `CANONICAL-PROMOTION-SWEEP` — NEW tree** (predecessor `LLM-PRIMARY-PROMOTION` is
+CLOSED). Land the now-DEFAULT LLM-primary constraint promotion across the corpus's
+**canonical** artifacts (the `.4` packet proved the gauge improves on 14/15 docs, but only
+on `/tmp` copies). Reuses the promotion mechanism; owns the RAM-safe + review-gated
+execution: per-document **sequential** (RAM-heavy 14B — one heavy job at a time, model
+serialized vs Docling, autonomous kill ≥85% used, never the 90→93% reboot zone), canonical
+mutation stays review-gated (`R7-VALIDATION` `promotion_status`), wire docs promote ONLY
+with the full `WIRE-BASED-100` gold battery re-verified 1.000 on canonical (else reverted).
+Frontier `.1` = a non-wire pilot to lock the per-doc protocol before any wire mutation.
+
+**(3) `CORPUS-PATTERN-REUSE.3b.3` — "design open" blocker RESOLVED.** The activate-only
+consume contract has always needed a FIRST self-disabled opt-in extractor. Captured the
+selection criteria (helpful-on-one-cluster + noisy-default-on + bounded/grounded/no-denylist)
+and the leading candidate — the parked `PDF-VARIANT-DIGESTION.9.10` prose bus-line lever,
+cluster-scoped to its safe serial/SMBus family (a textbook activate-only extractor:
+default-off because noisy corpus-wide, activated only for the matching fingerprint). Split
+`.3b.3` into `.3b.3a` (select the candidate, measurement-first, read-only) → `.3b.3b` (build
+self-disabled + plumb the activate-only contract + measure held-out uplift, wire-based 100%
+a hard gate). Frontier advanced to `.3b.3a`.
+
+Docs-only across the three trees + the new tree + the TASK_TREE index + the live docs;
+memory-arch + KM derive-and-diff gates green; no Rust change. SPECFORGE is handoff-ready —
+a fresh session picks any of the three first leaves (`.2h` / `.1` pilot / `.3b.3a`).
+
 ### `MEMORY-BOUNDED-INGEST.5` — summary / `source_ir.json` streaming: measured DEFER (probe-first, docs-only)
 The size-immunity program (`.1`–`.4c`) bounded every *ingest* cost; the open `.5`
 frontier asked whether the accumulated summary / `source_ir.json` itself grows
