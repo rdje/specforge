@@ -163,6 +163,65 @@ addressed by the disk-bounding leaves below.
   Acceptance: ingestion never OOM-crashes the host; under restriction it completes with the SAME
   output (just slower / smaller batches), or — only if truly impossible — fails with a typed
   diagnostic and an intact prior `normalized/` (staged-swap).
+  Children: `.4a`, `.4b`, `.4c`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `MEMORY-BOUNDED-INGEST.4a`
+  Status: `proposed` (NEXT — designed `2026-06-14`, ready to implement in a fresh session)
+  Goal: make the autonomous RAM guard a **first-class, built-in** ingest safeguard (today it is an
+  external shell wrapper I have to remember to apply). While the Docling subprocess runs, `specforge`
+  itself samples system memory and aborts the ingest CLEANLY before the host crosses a configurable
+  danger ceiling — directly encoding the owner's non-negotiable "kill at ≥85% used; never crash the
+  host" rule into the tool.
+  Design (decided; no code written yet — working tree is clean):
+  - **No new dependency** (crate stays at 4 deps): read memory via the platform's OWN tool, matching
+    the exact metric the owner monitors. macOS → run `memory_pressure`, parse "free percentage", used
+    = 100 − free. Linux → read `/proc/meminfo`, used% = (1 − MemAvailable/MemTotal)×100. Other OS →
+    unreadable → guard inert (warn once). All parsers are PURE fns (unit-tested on sample text).
+  - **Mechanism** in `docling_backend::materialize_pdf`: replace the blocking `command.output()` with
+    spawn + a poll loop — `child.try_wait()` + sample memory every `SPECFORGE_INGEST_RAM_SAMPLE_SECS`
+    (default 2) — redirecting child stdout/stderr to temp FILES (avoids pipe-fill deadlock while
+    polling). Sample ONCE before spawn too (don't even launch a heavy ingest if already in danger).
+    On breach: `child.kill()`, then `cleanup_path_if_exists(staged_normalized_root)` (the staged-swap
+    means the last-good `normalized/` + `source_ir.json` are untouched) and return a typed error.
+  - **Config**: `SPECFORGE_INGEST_RAM_ABORT_PERCENT` (default **85** = owner policy; `off`/`none`/
+    `>=100`/`<=0` → disabled; garbage → default), `SPECFORGE_INGEST_RAM_SAMPLE_SECS` (default 2, min 1).
+  - **New** `AppError::IngestAbortedForMemory { program, used_percent, ceiling_percent }` with an
+    actionable Display (host preserved; free memory / raise the ceiling / set it off). Add the Display
+    arm (only `impl Display` matches AppError exhaustively; `main.rs` just prints it).
+  - **Testability (host-safe)**: factor `run_backend_with_ram_guard(command, &guard, stdout_path,
+    stderr_path, used_percent_fn)` with the reader as a generic `Fn() -> Option<f64>` (DI). Tests:
+    pure parsers + `should_abort_for_memory(used, ceiling)=used>=ceiling` + `RamGuardConfig::from_env`;
+    pre-spawn abort (reader=99 + `sleep 30` child → returns fast, never spawns); mid-run kill (reader
+    10-then-99 via a `Cell` + `sleep 30` child → killed quickly); completes (reader=10 + `true`). Tests
+    build `RamGuardConfig` directly with a millisecond sample so they run fast. NO real memory pressure.
+  - **CRITICAL determinism fix**: the existing source.rs stub-helper ingest tests
+    (`pdf_source_ir_materialization_uses_backend_helper_and_writes_manifests`,
+    `..._replaces_stale_normalized_artifacts`, `..._failed_materialization_keeps_existing...`) now run
+    through the guard with the REAL reader at default 85% — a hot CI machine (>85% used) could
+    false-abort them. They MUST set `SPECFORGE_INGEST_RAM_ABORT_PERCENT=off` via the existing
+    `EnvVarGuard` pattern (under `env_var_lock`) so behavior is identical to before (assertions unchanged).
+  Acceptance: ingest aborts cleanly with the typed error + an intact prior `normalized/` when memory
+  would cross the ceiling (verified via DI, no real pressure); a normal small-doc ingest stays
+  byte-identical (`source_ir.json` unaffected — only stdout/stderr move to files; summary unchanged);
+  stub-helper tests deterministic; full `run_ci.sh` green; book + KM updated.
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `MEMORY-BOUNDED-INGEST.4b`
+  Status: `proposed`
+  Goal: richer PRE-FLIGHT resource check — estimate the ingest's RAM/disk need from the cheap page
+  count and check available disk + RAM before launching; fail fast with an actionable typed
+  diagnostic (and an intact prior bundle) rather than starting work that cannot finish.
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `MEMORY-BOUNDED-INGEST.4c`
+  Status: `proposed`
+  Goal: adaptive batch sizing under SUSTAINED memory pressure — shrink the batch / spill more to disk
+  so a constrained host still completes with byte-identical output, just slower (speed flexes, quality
+  invariant).
   Verification: `pending`
   Commit: `pending`
 
@@ -179,8 +238,10 @@ addressed by the disk-bounding leaves below.
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `MEMORY-BOUNDED-INGEST.4` | `proposed` | restricted-env graceful degradation (slower, never lower quality) |
-| 2 | `MEMORY-BOUNDED-INGEST.5` | `proposed` | bound summary / `source_ir.json` at extreme page counts |
+| 1 | `MEMORY-BOUNDED-INGEST.4a` | `proposed` | **NEXT — fully designed, ready to implement.** Built-in autonomous RAM guard (owner's non-negotiable "never crash the host"); design captured under the `.4a` node + Decisions |
+| 2 | `MEMORY-BOUNDED-INGEST.4b` | `proposed` | richer pre-flight RAM/disk check (fail fast before launching) |
+| 3 | `MEMORY-BOUNDED-INGEST.4c` | `proposed` | adaptive batch sizing under sustained pressure (slower, identical output) |
+| 4 | `MEMORY-BOUNDED-INGEST.5` | `proposed` | bound summary / `source_ir.json` + O(pages) per-page JSONs at extreme page counts |
 | — | `MEMORY-BOUNDED-INGEST.3b` | `proposed` | targeted on-demand single-page render (deferred/YAGNI — no consumer reads page images today) |
 
 `.3` (DISK-footprint bounding — skip persisting per-page PNGs for large docs) `done` 2026-06-14;
