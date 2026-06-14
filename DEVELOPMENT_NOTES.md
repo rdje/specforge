@@ -1,4 +1,31 @@
 # DEVELOPMENT_NOTES
+## `PDF-VARIANT-DIGESTION.13c` (`2026-06-14`) — CHI rebuild + gauge re-measure on canonical (DONE; `.13` sweep complete)
+- **Why:** the last leaf of the `.13` corpus re-ingest sweep — get CHI's current-code field/constraint
+  surfaces onto canonical and re-measure the quality gauge, to unblock `EXTRACTION-QUALITY-GAUGE.3c`
+  (which needed a measurable CHI target).
+- **No re-ingest:** CHI's `source_ir.json` + 528 MB `normalized/` bundle from `.2` were intact, so
+  `specforge evidence <chi-source-ir>` rebuilt the canonical EvidenceIR directly (the heavy 585p
+  Docling path was unnecessary). RAM stayed ≥78% free — the `.13b.1` UTF-8 byte-as-char fix holds on
+  a 585p doc (section_anchors 1202 / spans 10624 / statements 11708, bounded).
+- **What changed on canonical:** `message_field_records` 0 (stale) → **106 across 4 containers** (the
+  manifest's `message_fields.container_field_table` strategy fired — the `.FIELD.2` "CHI ~106" figure
+  finally on canonical, where the prior persisted evidence predated the field extractor). 0 fields with
+  literal bit positions: CHI's flit fields are width/role tables, so honest. signal_constraints 13,
+  conditional_rules 190, relations 79. Downstream rebuilt (semantic 87 actors / intent 2388 behaviors)
+  so the canonical chain is consistent with the refreshed evidence.
+- **Gauge:** `nli-verify --vlm-provider ollama --model qwen2.5:14b-instruct` (~13 NLI calls, light) →
+  9/13 not-entailed (69.2%), persisted + `validate`-reported. The not-entailed list is the concrete
+  `.3c` corpus material: (1) **field obligations mis-attributed to channels** by the Pattern path
+  (`TagOp`/`PBHA` "must be 0" → "REQ must be 0"; MPAM "must be included" → "REQ must be I"), which the
+  `.FIELD.4` field-routing + the now-default `LLM-PRIMARY-PROMOTION.5` promotion clean (the `.4` sweep
+  measured CHI 69.2%→16.7% promoted); (2) **descriptive narration read as an invariant** ("the receiver
+  sets REQLCRDV HIGH" → "REQLCRDV must be HIGH").
+- **Scope discipline:** this is a measurement + canonical-refresh leaf; it does NOT promote CHI (a
+  flip-consistent canonical-CHI promotion via converge is a natural follow-up, not required here). No
+  Rust change → no `run_ci`/book change; the pre-commit memory-arch + knowledge-map gates still run.
+  `generated/` is git-ignored, so the canonical refresh is local; the commit is docs-only. Owning tree:
+  `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.13` sweep complete).
+
 ## `LLM-PRIMARY-PROMOTION.5` (`2026-06-14`) — FLIP: LLM-primary constraint promotion is the converge default (DONE; tree CLOSED)
 - **Why:** the `.4` decision packet recommended FLIP (gauge improved on 14/15 measurable corpus
   docs; all three wire-doc gold gates held on canonical artifacts) and the owner authorized it,

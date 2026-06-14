@@ -476,9 +476,18 @@ honestly-qualified) path to "human-SpecForge in Rust."
 
 ## Changelog
 
-- `2026-06-06`: Created. Gauge established (NLI-oracle not-entailed rate); CHI measured at ~80%
-  erroneous (hand-validated 18/18), taxonomy recorded; fix backlog opened. See
-  [[conformal-tier-agreement-degenerate]] and `docs/tasks/TABLE-GRITS-CONFORMAL.md`.
+- `2026-06-14`: **`.3c` UNBLOCKED** by `PDF-VARIANT-DIGESTION.13c` — the "needs a measurable
+  target (CHI re-ingest)" gap is closed. CHI evidence rebuilt on canonical from its intact `.2`
+  source bundle (no re-ingest) and the gauge re-measured with `qwen2.5:14b-instruct`: **9/13
+  not-entailed (69.2%)**, persisted + `validate`-reported. The not-entailed set is the concrete
+  `.3c` corpus material — two crisp error classes on the Pattern surface: (1) **field obligations
+  mis-attributed to channels** (`TagOp`/`PBHA` "must be 0" → "REQ must be 0"; MPAM "must be
+  included" → "REQ must be I"), which the `.FIELD.4` field-routing + the now-default
+  `LLM-PRIMARY-PROMOTION.5` promotion clean (the `.4` sweep measured CHI 69.2%→16.7% promoted);
+  and (2) **descriptive narration read as an invariant** ("the receiver sets REQLCRDV HIGH" →
+  "REQLCRDV must be HIGH"). CHI's typed flit-field inventory also landed on canonical via the
+  rebuild (`message_field_records` 0→106). `.3c` (relational-vs-value + descriptive frames) can now
+  proceed against this measured target.
 - `2026-06-10`: `.0` DONE — the gauge is now a STANDING persisted measurement: `nli-verify`
   back-annotates `extraction_quality_gauge` onto the EvidenceIR (never persisting a vacuous
   all-abstained pass), `converge` re-measures it after stabilization via the shared

@@ -1,3 +1,28 @@
+### `PDF-VARIANT-DIGESTION.13c` — CHI rebuild + gauge re-measure on canonical; `.13` sweep complete (DONE)
+The last leaf of the `.13` corpus re-ingest sweep. CHI (`ihi0050_g`, 585p) had its `source_ir.json`
+plus 528 MB `normalized/` bundle intact from `.2`, so **no 585p re-ingest was needed** — `specforge
+evidence` rebuilt the canonical EvidenceIR from the persisted source (RAM stayed ≥78% free; the
+`.13b.1` UTF-8 fix holds on a 585p doc).
+
+- **Field surface landed on CANONICAL: `message_field_records` 0 (stale) → 106 across 4 containers**
+  (the `.FIELD.2` "CHI ~106" figure; the manifest's `message_fields.container_field_table` strategy
+  fired). 0 with literal bit positions — CHI's flit fields are width/role tables (honest).
+- Constraint surface: 13 Pattern `signal_constraints`, 190 conditional_rules, 79 relations; downstream
+  rebuilt (semantic 87 actors, intent 2388 behaviors) so the canonical chain is consistent.
+- **Gauge re-measured (qwen2.5:14b-instruct, ~13 NLI calls): 9/13 not-entailed (69.2%)**, persisted +
+  reported by `validate` (majority-erroneous warning). The not-entailed set is the concrete
+  `EXTRACTION-QUALITY-GAUGE.3c` material — two crisp Pattern-surface error classes: (1) field
+  obligations mis-attributed to channels (`TagOp`/`PBHA` "must be 0" → "REQ must be 0"; MPAM "must be
+  included" → "REQ must be I"); (2) descriptive narration read as an invariant ("the receiver sets
+  REQLCRDV HIGH" → "REQLCRDV must be HIGH"). With the now-default `LLM-PRIMARY-PROMOTION.5` promotion
+  these route to `message_field_constraints` / get gated (the `.4` sweep measured CHI 69.2%→16.7%
+  promoted) — a flip-consistent canonical-CHI promotion is a natural follow-up, not required here.
+
+`validate` also: document_class=protocol; completeness 20 gaps (signals_without_direction 17/28,
+unexplained_tables 3/27). **No Rust change** (pure measurement + canonical refresh) — no `run_ci`/book
+change. **`.13` sweep COMPLETE** (`.13a`/`.13b`/`.13b.1`/`.13c`/`.13d`). `EXTRACTION-QUALITY-GAUGE.3c`
+is UNBLOCKED. Owning tree: `docs/tasks/PDF-VARIANT-DIGESTION.md`.
+
 ### `LLM-PRIMARY-PROMOTION.5` — FLIP: LLM-primary constraint promotion is now the converge default (DONE; tree CLOSED)
 The owner authorized the default flip recommended by the `.4` decision packet (the quality gauge
 improved on 14/15 measurable corpus docs and all three wire-doc gold gates held on canonical

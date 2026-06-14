@@ -1404,9 +1404,29 @@ untouched by this sweep. Slices:
   it OOMs pre-fix): all 15 non-ACE intact bundles BYTE-IDENTICAL** → the fix is a pure no-op
   on the intact corpus. **ACE evidence now COMPLETES: 21 s / 56 MB max RSS** (was 419 s /
   17.2 GB RSS / SIGKILL exit 137). KM card `prior-phrase-utf8-byte-as-char`.
-- `.13c` · `pending` · CHI: re-ingest + rebuild + gauge re-measure; report the
-  field/constraint surfaces now on canonical; hand the `EXTRACTION-QUALITY-GAUGE.3c`
-  unblock back to its tree.
+- `.13c` · `done` (`2026-06-14`) · CHI: rebuild + gauge re-measure; report the field/constraint
+  surfaces now on canonical; hand the `EXTRACTION-QUALITY-GAUGE.3c` unblock back. **No re-ingest
+  needed** — CHI's `source_ir.json` + 528 MB `normalized/` bundle from `.2` were intact, so
+  `specforge evidence` rebuilt from the persisted source (RAM stayed ≥78% free — the `.13b.1`
+  UTF-8 fix holds on a 585p doc; section_anchors 1202 / evidence_spans 10624 / extracted_statements
+  11708). **Field surface now on CANONICAL: `message_field_records` 0 (stale) → 106 across 4
+  containers** (the `.FIELD.2` "CHI ~106" figure lands — the manifest's
+  `message_fields.container_field_table` strategy fired; 0 with literal bit positions — CHI's flit
+  fields are width/role tables, honest). Constraint surface: 13 Pattern signal_constraints,
+  conditional_rules 190, relations 79; downstream rebuilt (semantic 87 actors, intent 2388
+  behaviors) so the canonical chain is consistent. **Gauge re-measured (qwen2.5:14b-instruct,
+  ~13 NLI calls): 9/13 not-entailed (69.2%)**, persisted + reported by `validate` (majority-
+  erroneous warning). The not-entailed list is exactly the `EXTRACTION-QUALITY-GAUGE.3c` material:
+  field obligations mis-attributed to channels by the Pattern path (`TagOp`/`PBHA` "must be 0" →
+  "REQ must be 0"; MPAM "must be included" → "REQ must be I") + descriptive behaviors read as
+  invariants ("the receiver sets REQLCRDV HIGH" → "REQLCRDV must be HIGH"). With the
+  `LLM-PRIMARY-PROMOTION.5` flip now the converge default, a CHI converge would route the field
+  obligations to `message_field_constraints` and clean the channel surface (the `.4` sweep measured
+  CHI 69.2%→16.7% promoted) — that canonical CHI promotion is a natural flip-consistent follow-up,
+  not required by this measurement leaf. **`.13` corpus sweep COMPLETE** (`.13a` import · `.13b`
+  AMBA-matrix + ACE · `.13b.1` UTF-8 fix · `.13c` CHI · `.13d` CCIX×4 + AMD all done). validate
+  also: document_class=protocol; completeness 20 gaps (signals_without_direction 17/28,
+  unexplained_tables 3/27). EXTRACTION-QUALITY-GAUGE.3c is UNBLOCKED.
 - `.13d` · `done` (`2026-06-14`) · CCIX ×4 + AMD: re-ingest + rebuild; the message-field surfaces
   land on canonical (expected ≈161 CCIX fields across versions, AMD 217/30 per the
   `.10d`/`.10e` measurements — re-verify live, never assume); run the `.11` revisit:
