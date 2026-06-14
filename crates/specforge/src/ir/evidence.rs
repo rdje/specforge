@@ -4661,6 +4661,90 @@ fn is_relational_equality_constraint(text: &str) -> bool {
     RELATIONAL.iter().any(|phrase| lowered.contains(phrase))
 }
 
+/// EXTRACTION-QUALITY-GAUGE.3e — recognize a SPURIOUS constraint subject lifted from the DESCRIPTIVE
+/// BODY of a register/structure field-definition cell. Such a cell narrates what the field IS — its
+/// own name PRECEDES a `"This field <descriptive-verb>"` marker ("… Controller Base Address (CBA):
+/// **This field specifies** …") while value-meaning tokens appear only AFTER it ("… **This field
+/// indicates** … A value of FFFFh indicates …", "MemPoolSpcificMemTypeCap **This field indicates** …
+/// 1h: Indicates SRAM Memory Type"). The deterministic value-binding path lifts one of those body
+/// tokens (`FFFF`, `SRAM`/`DDR`, `CCIX`/`PCI`) as the subject and mints a garbage `must_be_*` whose
+/// subject is not a wire/field at all (the `.gauge` "Spurious subject" class, root cause #1). Returns
+/// `true` for a `(text, subject)` pair → the caller drops THAT subject (an honest residual; a real
+/// obligation, if any, rides the field's own mnemonic, which the gate keeps).
+///
+/// Conservative + structurally decidable (the `.3a`–`.3d` over-kill-guard lesson): fires ONLY when
+///   1. `subject` is a plain identifier (alphanumeric/underscore) — a bracketed/dotted subject is
+///      never touched;
+///   2. the source carries a descriptive field-cell marker — the phrase `this field` immediately
+///      followed by a DESCRIPTIVE narration verb (`indicates`/`specifies`/`describes`/`contains`/
+///      `defines`/`represents`/`reports`/`identifies`/`provides`), never the obligation lead
+///      `this field shall/must/should …` (so a real field obligation is untouched);
+///   3. the subject does NOT occur (identifier-boundary, case-insensitive) BEFORE that marker — i.e.
+///      it is not part of the field's name. A subject that DOES appear before (the field's own
+///      mnemonic) is a legitimate subject and is kept.
+///
+/// Universal grammar only (ADR 0006 — no signal/field/vendor name lists). Probe-confirmed over the
+/// 78-doc persisted corpus: drops exactly the 9 spurious-subject errors (CCIX ×8 + NVMe `FFFF`), keeps
+/// the 6 real field records (NVMe `CBA`×2/`SANICAP`/`HMDLLA`/`HMDLAL`/`ELEN`), and matches ZERO
+/// APB/AHB/AXI/SWD constraints (wire docs declare no `"This field"` cells).
+fn is_descriptive_field_cell_spurious_subject(text: &str, subject: &str) -> bool {
+    let is_ident = |c: char| c.is_ascii_alphanumeric() || c == '_';
+    // (1) only a plain-identifier subject is ever in scope (never a bracketed/dotted token).
+    if subject.is_empty() || !subject.chars().all(is_ident) {
+        return false;
+    }
+    let lowered = text.to_ascii_lowercase();
+    // (2) locate the FIRST descriptive field-cell marker: "this field <descriptive-verb>".
+    const DESCRIPTIVE_VERBS: &[&str] = &[
+        "indicates",
+        "specifies",
+        "describes",
+        "contains",
+        "defines",
+        "represents",
+        "reports",
+        "identifies",
+        "provides",
+    ];
+    const MARKER: &str = "this field ";
+    let mut from = 0usize;
+    let marker_pos = loop {
+        let Some(pos) = lowered[from..].find(MARKER) else {
+            return false;
+        };
+        let at = from + pos;
+        let after = lowered[at + MARKER.len()..].trim_start();
+        let descriptive = DESCRIPTIVE_VERBS.iter().any(|verb| {
+            after
+                .strip_prefix(verb)
+                .is_some_and(|rest| rest.chars().next().is_none_or(|c| !is_ident(c)))
+        });
+        if descriptive {
+            break at;
+        }
+        from = at + MARKER.len();
+    };
+    // (3) keep when the subject appears (identifier-boundary) BEFORE the marker — it is the field's
+    // own name; otherwise it was lifted from the descriptive body → spurious.
+    let subject_lc = subject.to_ascii_lowercase();
+    let before = &lowered[..marker_pos];
+    let mut scan = 0usize;
+    while let Some(pos) = before[scan..].find(subject_lc.as_str()) {
+        let start = scan + pos;
+        let end = start + subject_lc.len();
+        let before_ok = before[..start]
+            .chars()
+            .next_back()
+            .is_none_or(|c| !is_ident(c));
+        let after_ok = before[end..].chars().next().is_none_or(|c| !is_ident(c));
+        if before_ok && after_ok {
+            return false;
+        }
+        scan = start + 1;
+    }
+    true
+}
+
 fn extract_dynamic_signal_constraints(
     statements: &[ExtractedStatement],
     counter: &mut usize,
@@ -4732,6 +4816,10 @@ fn extract_dynamic_signal_constraints(
         if !declared_signals.is_empty() {
             subject_signals.retain(|s| declared_signals.contains(s));
         }
+        // EXTRACTION-QUALITY-GAUGE.3e: drop a subject lifted from the DESCRIPTIVE BODY of a
+        // field-definition cell ("… This field indicates … A value of FFFFh …" → `FFFF`); the
+        // field's own mnemonic (which precedes the "This field <verb>" marker) is kept.
+        subject_signals.retain(|s| !is_descriptive_field_cell_spurious_subject(&statement.text, s));
         if subject_signals.is_empty() {
             continue;
         }
@@ -6451,6 +6539,10 @@ fn extract_signal_constraints(
         if !declared_signals.is_empty() {
             subject_signals.retain(|s| declared_signals.contains(s));
         }
+        // EXTRACTION-QUALITY-GAUGE.3e: drop a subject lifted from the descriptive body of a
+        // field-definition cell (CCIX `SRAM`/`DDR` enum-value names, NVMe `FFFF` hex literal); the
+        // field's own leading mnemonic precedes the "This field <verb>" marker and is kept.
+        subject_signals.retain(|s| !is_descriptive_field_cell_spurious_subject(text, s));
         if subject_signals.is_empty() {
             continue;
         }
@@ -16868,9 +16960,9 @@ mod tests {
     mod nlp_classification {
         use super::super::{
             StatementClass, classify_statement, collect_subject_signal_tokens,
-            extract_protocol_state_value, is_descriptive_narration_binding,
-            is_relational_equality_constraint, is_signal_value_constraint,
-            text_before_condition_marker,
+            extract_protocol_state_value, is_descriptive_field_cell_spurious_subject,
+            is_descriptive_narration_binding, is_relational_equality_constraint,
+            is_signal_value_constraint, text_before_condition_marker,
         };
 
         #[test]
@@ -17029,6 +17121,56 @@ mod tests {
             ));
             assert!(!is_relational_equality_constraint(
                 "PSEL must be HIGH during the access phase."
+            ));
+        }
+
+        // EXTRACTION-QUALITY-GAUGE.3e — the descriptive-field-cell spurious-subject gate.
+        #[test]
+        fn descriptive_field_cell_body_token_is_dropped() {
+            // Subject lifted from the descriptive body (after "This field <verb>") — spurious.
+            // NVMe: a hex literal `FFFF` from "A value of FFFFh indicates …".
+            assert!(is_descriptive_field_cell_spurious_subject(
+                "| 09:08 | Capacity Adjustment Factor: This field indicates the capacity adjustment factor for this Endurance Group. A value of FFFFh indicates that value and all higher values.",
+                "FFFF"
+            ));
+            // CCIX: an enum-value memory-type name `SRAM` from "1h: Indicates SRAM Memory Type".
+            assert!(is_descriptive_field_cell_spurious_subject(
+                "| 6:4 | MemPoolSpcificMemTypeCap This field indicates this Memory Pool's Specific Memory Type Capability. 1h: Indicates SRAM Memory Type. 2h: Indicates DDR Memory Type.",
+                "SRAM"
+            ));
+            // CCIX: a protocol acronym `CCIX` from "This field describes the CCIX Device's …".
+            assert!(is_descriptive_field_cell_spurious_subject(
+                "| 2:0 | MultiPortDevCap This field describes the CCIX Device's multi-port capability.",
+                "CCIX"
+            ));
+        }
+
+        #[test]
+        fn descriptive_field_cell_own_mnemonic_is_kept() {
+            // The field's own leading mnemonic precedes the marker — a legitimate subject, kept.
+            assert!(!is_descriptive_field_cell_spurious_subject(
+                "| 63:12 | RW | 0h | Controller Base Address (CBA): This field specifies the 52 most significant bits of the 64-bit base address.",
+                "CBA"
+            ));
+            // Even with a later "This field shall …", the FIRST marker is descriptive and ELEN
+            // precedes it → kept.
+            assert!(!is_descriptive_field_cell_spurious_subject(
+                "| 31:16 | Element Length (ELEN): This field specifies the length of the Element Value field in bytes. This field shall be 0h when deleting an entry.",
+                "ELEN"
+            ));
+        }
+
+        #[test]
+        fn non_field_cell_text_is_never_touched() {
+            // No "This field <descriptive-verb>" marker → gate never fires (wire-doc obligation).
+            assert!(!is_descriptive_field_cell_spurious_subject(
+                "PADDR, PWDATA, and PWRITE must be stable when PSEL is asserted and PENABLE is LOW.",
+                "PADDR"
+            ));
+            // An obligation lead ("This field shall …") is not a descriptive marker → not touched.
+            assert!(!is_descriptive_field_cell_spurious_subject(
+                "Reserved (RSVD): This field shall be cleared to 0h.",
+                "RSVD"
             ));
         }
 

@@ -889,6 +889,26 @@ as …") — a literal binding like "must be equal to **0**" is untouched, becau
 operand. Measured live: DTI sheds 15 such records and NVMe 5, with every wire gold gate unchanged.
 *Authoritative tracking:* `docs/tasks/EXTRACTION-QUALITY-GAUGE.md` (`.3d`).
 
+A third companion gate (`.3e`) handles the **descriptive-field-cell spurious-subject** frame — the
+deepest of the three, and the original "spurious subject" error the quality gauge first flagged. In a
+register or structure spec, a field is *defined* by a table cell that narrates what it is: *"Controller
+Base Address (CBA): **This field specifies** the 52 most significant bits …"*, *"MemPoolSpcificMemTypeCap
+**This field indicates** … 1h: Indicates SRAM Memory Type."* The field's own name sits in front of the
+phrase "This field …"; the words *after* it are description — enumerated value meanings (`SRAM`, `DDR`),
+protocol names (`CCIX`, `PCI`), even a bare hex literal (`FFFF` from "A value of FFFFh indicates …").
+The deterministic extractor would sometimes grab one of *those* trailing tokens as the constraint's
+subject and mint a `must_be_*` about a thing that is not a wire or a field at all. The gate is a clean
+structural test (universal grammar, no name lists — ADR 0006): inside a *"This field `<descriptive-verb>`"*
+cell — `indicates`/`specifies`/`describes`/`contains`/… , never the obligation lead "This field **shall**" —
+the subject must appear *before* the phrase, i.e. be part of the field's name. A subject that shows up
+only *after* it was lifted from the description, so it is dropped; the field's real mnemonic (which does
+appear before, like `CBA`/`SANICAP`/`ELEN`) is always kept, along with any genuine "… shall …"
+obligation it carries. Measured live: CCIX sheds 8 such records (the `SRAM`/`DDR`/`NVDIMM`/`HBM`/`CCIX`/
+`PCI` enum-name subjects) and NVMe its lone `FFFF`, while every wire-based gold gate (APB/AHB/AXI
+constraints and temporal, SWD frame/operation/state) stays at 1.000 and `kg-bench` stays green —
+probe-confirmed gold-safe, because a wire spec declares its signals in signal tables, never in
+"This field …" cells. *Authoritative tracking:* `docs/tasks/EXTRACTION-QUALITY-GAUGE.md` (`.3e`).
+
 ### `EXTRACTION-QUALITY-GAUGE.0` — the artifact carries its own quality measurement
 
 Every surface above is about extracting more, and extracting it correctly. This one is about

@@ -1,4 +1,44 @@
 # DEVELOPMENT_NOTES
+## `EXTRACTION-QUALITY-GAUGE.3e` (`2026-06-15`) — descriptive-field-cell spurious-subject gate (DONE)
+- **Why:** the `.gauge`'s largest error class ("Spurious subject") and the `.3d`-recorded candidate
+  future leaf. In a register/structure field-definition cell the deterministic value-binding path
+  lifts a token from the descriptive BODY ("This field indicates … A value of FFFFh …" → `FFFF`;
+  "… 1h: Indicates SRAM Memory Type" → `SRAM`) as the constraint subject and mints a `must_be_*` about
+  a non-wire/non-field token.
+- **Probe-first (read-only, no 14B, all 78 persisted evidence docs / every signal_constraint's
+  source_text):** the class = 15 records matching a `"this field <verb>"` marker, in exactly 2
+  register-structure docs — CCIX r1.0a ×8 + NVMe ×7. Per-item audit: the field's own mnemonic ALWAYS
+  precedes the marker (`(CBA): This field specifies …`), value-meaning tokens appear only AFTER it
+  (`SRAM`/`DDR`/`FFFF`/`CCIX`). 9 errors (subject only-after) vs 6 legit (subject-before).
+- **Gate design:** pure `is_descriptive_field_cell_spurious_subject(text, subject)`. (1) subject must
+  be a plain identifier (alphanumeric/underscore) — a bracketed/dotted subject is never touched;
+  (2) find the FIRST `"this field "` + a DESCRIPTIVE verb (`indicates`/`specifies`/`describes`/
+  `contains`/`defines`/`represents`/`reports`/`identifies`/`provides`) — never the obligation lead
+  "this field shall/must/should …"; (3) keep iff the subject occurs (identifier-boundary,
+  case-insensitive, using the `is_none_or` word-boundary idiom) BEFORE that marker, else drop. Wired
+  as `subject_signals.retain(…)` in BOTH `extract_signal_constraints` (`sigcon_*` — all 9 errors) AND
+  `extract_dynamic_signal_constraints` (`dyn_sigcon_*` — future-proofing; the 4 NVMe dynamic keeps stay
+  kept by the before-marker rule). Universal grammar (ADR 0006). +3 pure tests (drop / keep-own-mnemonic
+  / never-touch-non-field-or-obligation-lead).
+- **Decision:** refuse → honest residual. Recovering the CORRECT subject of a "the field must indicate
+  0h"-style obligation (whose subject is the field mnemonic, not the body token) is a separate recall
+  concern — this is a precision gate.
+- **Verification:** `cargo fmt` clean; warning-deny clippy clean; lib 1622→1625; kg-bench 156/156;
+  full `run_ci.sh` GREEN. Live (fresh release bin): NVMe 21→20 (drops exactly `sigcon_0004 FFFF
+  must_be_stable`; `CBA`×2/`SANICAP`/`HMDLLA`/`HMDLAL`/`ELEN` + the `ANA…` `must_not_change` sentence
+  kept; NVMe semantic+intent rebuilt to stay coherent), CCIX r1.0a 23→15 (drops the 8
+  `CCIX`/`PCI`/`SRAM`/`DDR`/`NVDIMM`/`HBM`/`SAMA`/`CCIX` subjects); corpus residual 0. **Gold-safe**
+  per-item on gated-Pattern rebuilds of all four wire docs (backup/restore — non-destructive):
+  APB/AHB/AXI constraints + relations 1.000 + temporal 3/3+4/4+3/3; SWD constraints/relations 1.000 +
+  SWD-derivation frame 11/11 / operation 4/4 / state 13/13. Probe-confirmed gold-safe: a wire spec
+  declares signals in signal tables, never in "This field" cells (0 wire-doc matches corpus-wide).
+- **Out of scope (honest residual):** the non-"This field" `DDR`/`NVDIMM` `must_be_stable` table rows
+  (a different structural shape — would need its own structural signal, never a denylist,
+  `feedback_avoid_denylists_prefer_structural`); and the `SANICAP`/`ELEN` reset-value reads whose
+  subject IS the field mnemonic (defensible records, left alone by the precision gate). Book:
+  `pipeline/evidenceir.md` `.3e` paragraph. **The `.3` constraint-precision program
+  (`.3a`/`.3b`/`.3c`/`.3d`/`.3e`) is complete.** Owning tree: `docs/tasks/EXTRACTION-QUALITY-GAUGE.md`.
+
 ## `EXTRACTION-QUALITY-GAUGE.3d` (`2026-06-14`) — relational-value constraint gate (DONE; `.3` program complete)
 - **Why:** the `.3c` probe surfaced a second class — an inter-signal/field equality ("X must be equal
   to the value of Y") that the value-binding paths mis-mint as a garbage `must_be_value` (a truncated

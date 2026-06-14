@@ -1,3 +1,39 @@
+### `EXTRACTION-QUALITY-GAUGE.3e` — descriptive-field-cell spurious-subject gate (DONE)
+The deepest of the `.3` precision classes — the original "spurious subject" error the quality gauge
+first flagged. In a register/structure spec a field is *defined* by a table cell that narrates what it
+is: `"… Controller Base Address (CBA): This field specifies the 52 most significant bits …"`,
+`"MemPoolSpcificMemTypeCap This field indicates … 1h: Indicates SRAM Memory Type."` The field's own
+name sits *before* the phrase "This field …"; the words *after* it are description — enumerated value
+meanings (`SRAM`/`DDR`/`NVDIMM`/`HBM`), protocol acronyms (`CCIX`/`PCI`), even a bare hex literal
+(`FFFF` from "A value of FFFFh indicates …"). The deterministic value-binding path sometimes grabbed
+one of those trailing tokens as the constraint subject and minted a `must_be_*` about a thing that is
+not a wire or a field at all.
+
+**Probe-first** (read-only, no 14B, all 78 persisted evidence docs): the class = 15 records / 2
+register-structure docs (CCIX r1.0a ×8, NVMe ×7); per-item audit → 9 spurious-subject errors (subject
+appears only AFTER the marker) and 6 legitimate field records (subject IS the cell's own leading
+mnemonic, appears BEFORE the marker, with a real `shall` obligation).
+
+**Shipped:** pure `is_descriptive_field_cell_spurious_subject(text, subject)` in `ir/evidence.rs`,
+wired as a `subject_signals.retain(…)` in BOTH value-binding extractors (`extract_signal_constraints`
+`sigcon_*` — where all 9 errors mint — and `extract_dynamic_signal_constraints` `dyn_sigcon_*`).
+Structural discriminator (universal grammar, ADR 0006 — no name lists): inside a `"this field
+<descriptive-verb>"` cell (`indicates`/`specifies`/`describes`/… , never the obligation lead "this
+field shall/must/should"), a subject that does NOT occur (identifier-boundary, case-insensitive)
+BEFORE the marker was lifted from the descriptive body → dropped; a subject that DOES appear before
+(the field's own mnemonic, `CBA`/`SANICAP`/`ELEN`) is kept. Refuse → honest residual. +3 pure tests;
+lib 1622 → **1625**; full `run_ci.sh` GREEN; kg-bench 156/156.
+
+**Verified:** NVMe rebuilt 21 → 20 (lone `FFFF` gone; semantic+intent rebuilt to stay coherent),
+CCIX r1.0a 23 → 15 (8 enum/protocol subjects gone); corpus residual 0; the non-"This field"
+`DDR`/`NVDIMM` table rows correctly UNTOUCHED (scope discipline — a different structural shape, no
+denylist). **Gold-safe** per-item on gated-Pattern rebuilds of ALL four wire docs (backup/restore,
+non-destructive): APB/AHB/AXI constraints + relations 1.000 + temporal 3/3+4/4+3/3; SWD
+constraints/relations 1.000 + SWD-derivation frame 11/11 / operation 4/4 / state 13/13. Book:
+`pipeline/evidenceir.md` `.3e` paragraph. **The `.3` constraint-precision program is complete**
+(`.3a` condition-subject / `.3b` permissive-frame / `.3c` descriptive-narration / `.3d`
+relational-value / `.3e` descriptive-field-cell). Owning tree: `docs/tasks/EXTRACTION-QUALITY-GAUGE.md`.
+
 ### `EXTRACTION-QUALITY-GAUGE.3d` — relational-value constraint gate (DONE; `.3` precision program complete)
 The sibling of `.3c`: an *inter-signal/field equality* — "ALLOW_UW **must be equal to the value of**
 ALLOW_PW", or the bounded "a value **less than or equal to the value of** the NVM Set Identifier

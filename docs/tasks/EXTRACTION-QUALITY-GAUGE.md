@@ -480,6 +480,57 @@ honestly-qualified) path to "human-SpecForge in Rust."
   relational. Book: `pipeline/evidenceir.md` `.3d` paragraph. **The `.3` constraint-precision program
   (`.3a` condition-subject / `.3b` permissive-frame / `.3c` descriptive-narration / `.3d`
   relational-value) is now complete.**
+- ID: `EXTRACTION-QUALITY-GAUGE.3e` · Status: `done` (`2026-06-15`, CODE + full gold battery; PNT pick
+  — the candidate future leaf `.3d` recorded: the NVMe `must_be_stable` "This field indicates …"
+  descriptive-field-cell class, a decidable, probe-first, no-14B sibling of `.3c`/`.3d`) · Goal: the
+  **descriptive-field-cell spurious-subject** gate.
+  **SHIPPED:** pure `is_descriptive_field_cell_spurious_subject(text, subject)` in `ir/evidence.rs`,
+  wired as a `subject_signals.retain(…)` in BOTH value-binding extractors (`extract_signal_constraints`
+  `sigcon_*` — where all 9 errors mint — AND `extract_dynamic_signal_constraints` `dyn_sigcon_*`, so a
+  future doc on the dynamic path is covered; the dynamic NVMe keeps stay kept). The gate fires ONLY
+  when: the subject is a plain identifier; the source carries a `"this field <descriptive-verb>"`
+  marker (`indicates`/`specifies`/`describes`/`contains`/`defines`/`represents`/`reports`/`identifies`/
+  `provides` — never the obligation lead "this field shall/must/should"); AND the subject does NOT
+  occur (identifier-boundary, case-insensitive) BEFORE the marker (= it is not the field's own name).
+  +3 pure tests (drop / keep-own-mnemonic / never-touch-non-field); lib **1622 → 1625**; `cargo fmt`
+  clean; warning-deny clippy clean. **Verified (fresh release bin, canonical rebuilds):** NVMe 21 → 20
+  (drops exactly `sigcon_0004 FFFF must_be_stable`; the 4 dynamic-path keeps `SANICAP`/`HMDLLA`/
+  `HMDLAL`/`ELEN` + `CBA`×2 + the real `ANA…` `must_not_change` sentence all kept; NVMe semantic+intent
+  rebuilt to stay coherent), CCIX r1.0a 23 → 15 (drops exactly the 8 descriptive-cell subjects
+  `CCIX`/`PCI`/`SRAM`/`DDR`/`NVDIMM`/`HBM`/`SAMA`/`CCIX`; the non-"This field" `HAC`/`HAM`/`DDR`/
+  `NVDIMM`/… table rows correctly UNTOUCHED — scope discipline). **Corpus residual = 0** (no
+  descriptive-field-cell spurious-subject record remains in the 78-doc corpus). **Gold-safe (live
+  battery, gated-Pattern rebuilds of all four wire docs with backup/restore — non-destructive):**
+  APB/AHB/AXI constraints **1.000** + relations **1.000** + temporal **3/3+4/4+3/3**; SWD constraints/
+  relations **1.000** + SWD-derivation frame **11/11**/operation **4/4**/state **13/13**; kg-bench
+  **156/156**. Refuse → honest residual (the field's real obligation, if any, rides its own mnemonic;
+  recovering the correct subject of a `"the field must indicate 0h"`-style obligation is a separate
+  recall concern, not this precision gate). The out-of-scope `DDR`/`NVDIMM` `must_be_stable` table rows
+  that lack a "This field" marker are an honest residual (a different structural shape; no denylist —
+  `feedback_avoid_denylists_prefer_structural`). Book: `pipeline/evidenceir.md` `.3e` paragraph. A register/structure field-definition cell narrates what the field IS — the
+  field's own name PRECEDES a `"This field <descriptive-verb>"` marker, while value-meaning tokens
+  appear only AFTER it (memory-type names `SRAM`/`DDR`/`NVDIMM`/`HBM`, protocol acronyms `CCIX`/`PCI`,
+  a hex literal `FFFF`, a truncated `SAMA`). The deterministic constraint path lifts one of those body
+  tokens as the subject and mints a garbage `must_be_*` whose subject is not a wire/field at all
+  (`.gauge` root cause #1, the "Spurious subject" class — largest). **Probe-first (read-only, no 14B,
+  over all 78 persisted evidence docs, `source_text` of every signal_constraint):** the class =
+  **15 records / 2 register-structure docs** whose `source_text` carries a `"This field <verb>"`
+  descriptive marker — CCIX r1.0a ×8 (`MultiPortDevCap`/`MemPoolSpcificMemTypeCap`/`MemPoolAddrCap`
+  cells → subjects `CCIX`/`PCI`/`SRAM`/`DDR`/`NVDIMM`/`HBM`/`SAMA`) + NVMe ×7. **Per-item audit:**
+  the **9** whose subject appears ONLY AFTER the marker are genuine spurious-subject errors (8 CCIX +
+  NVMe `sigcon_0004` `FFFF`); the **6** whose subject is the cell's own leading mnemonic
+  (`(CBA):`/`(SANICAP):`/`(HMDLLA):`/`(HMDLAL):`/`(ELEN):` — appears BEFORE the marker, with a real
+  `shall` obligation) are legitimate and MUST be kept. **Discriminator (structural, ADR 0006 — no name
+  lists):** in a `"This field <descriptive-verb>"` cell, the subject must appear (whole word,
+  case-insensitive) BEFORE the marker (= it is the field's name) → keep; a subject appearing only
+  after it was lifted from the descriptive body → spurious → drop. All 9 errors are minted in
+  `extract_signal_constraints` (`sigcon_*`); gate wired into BOTH value-binding extractors (mirrors
+  `.3d`) so a future doc on the dynamic path is covered too — the 4 dynamic-path NVMe keeps stay kept
+  by the before-marker rule. **Gold-safe by the probe: ZERO APB/AHB/AXI/SWD constraints match** (wire
+  docs declare no `"This field"` cells; obligations are phrased "X must be …"). Verify: NVMe rebuild
+  21→20 (FFFF gone), CCIX r1.0a rebuild 23→15 (8 gone), wire gold ×4 stay 1.000 on gated-Pattern
+  rebuilds, kg-bench green, full `run_ci.sh`. Refuse → honest residual (the field's real obligation,
+  if any, rides its own mnemonic — recall of the correct subject is a separate concern).
 - ID: `EXTRACTION-QUALITY-GAUGE.4` · Status: `done` (`2026-06-10`) · Goal: constraint dedup by
   (subject, kind, condition) in the LLM-primary extractor. Shipped: pure `dedup_constraints` —
   canonical key = the eval's `signal_constraint_record_key` (subject + kind incl. value + negation)
@@ -554,6 +605,19 @@ honestly-qualified) path to "human-SpecForge in Rust."
 
 ## Changelog
 
+- `2026-06-15`: **`.3e` DONE** — the descriptive-field-cell spurious-subject gate ships (PNT pick; the
+  `.3d`-recorded candidate future leaf). Pure `is_descriptive_field_cell_spurious_subject(text, subject)`
+  in `ir/evidence.rs`, wired into BOTH value-binding extractors as a `subject_signals.retain(…)`: inside
+  a `"this field <descriptive-verb>"` field-definition cell, a subject that does NOT appear before the
+  marker (i.e. is not the field's own name) was lifted from the descriptive body — a spurious subject
+  (`SRAM`/`DDR`/`CCIX`/`FFFF`) — and is dropped; the field's own mnemonic (`CBA`/`SANICAP`/`ELEN`,
+  appearing before) is kept. Universal grammar, no name lists (ADR 0006). +3 tests, lib 1622→**1625**,
+  `run_ci.sh` GREEN, kg-bench 156/156. Live: NVMe 21→20 (lone `FFFF`), CCIX r1.0a 23→15 (8 enum/protocol
+  subjects); corpus residual 0; the non-"This field" `DDR`/`NVDIMM` table rows correctly untouched
+  (scope discipline). Gold-safe per-item on gated-Pattern rebuilds of all four wire docs (backup/restore):
+  APB/AHB/AXI constraints+relations+temporal 1.000, SWD constraints/relations + derivation frame/op/state
+  1.000. Refuse → honest residual. Book `pipeline/evidenceir.md` `.3e` paragraph. See
+  [[extraction-quality-gauge-standing]].
 - `2026-06-14`: **`.3d` DONE** — the relational-value frame gate ships, completing the `.3`
   constraint-precision program. Pure `is_relational_equality_constraint` (keys on "… the value of …"
   / "the same value as …", never bare "equal to") refuses an inter-signal/field equality in BOTH
