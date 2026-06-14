@@ -854,9 +854,19 @@ fn replace_term_with_placeholder(text: &str, term: &str, placeholder: &str) -> S
         {
             result.push_str(placeholder);
             index += term_bytes.len();
+        } else if let Some(ch) = text[index..].chars().next() {
+            // Copy one full UTF-8 character verbatim. `bytes[index] as char` mangled
+            // every non-ASCII multi-byte sequence into per-byte mojibake; because
+            // `normalize_prior_phrase` chains one replacement pass per multi-word term,
+            // that mojibake re-doubled each pass — exponential growth that OOM-killed
+            // the ACE evidence build (PDF-VARIANT-DIGESTION.13b.1). `index` always sits
+            // on a char boundary (it advances by `term_bytes.len()` past an ASCII match
+            // or by one whole char here), so this slice is valid; on pure-ASCII input it
+            // is byte-for-byte identical to the old per-byte copy.
+            result.push(ch);
+            index += ch.len_utf8();
         } else {
-            result.push(bytes[index] as char);
-            index += 1;
+            break;
         }
     }
 
@@ -1419,6 +1429,67 @@ mod tests {
         // boundary. Mutant changes index+len→index*len=0 (always boundary).
         let result = replace_term_with_placeholder("barbaz", "bar", "XXX");
         assert_eq!(result, "barbaz");
+    }
+
+    // PDF-VARIANT-DIGESTION.13b.1 — UTF-8 byte-as-char mangling regression tests.
+
+    #[test]
+    fn replace_term_preserves_non_ascii_only_text_verbatim() {
+        // The old `bytes[index] as char` copy split every multi-byte UTF-8
+        // sequence into per-byte mojibake; a no-match pass must now copy the
+        // text back byte-for-byte unchanged.
+        let result = replace_term_with_placeholder("• café — résumé •", "signal", "<signal>");
+        assert_eq!(result, "• café — résumé •");
+    }
+
+    #[test]
+    fn replace_term_preserves_non_ascii_and_still_fires() {
+        // The replacement still matches beside non-ASCII content, and the
+        // surrounding multi-byte characters survive verbatim.
+        let result = replace_term_with_placeholder("signal • café résumé", "signal", "<signal>");
+        assert_eq!(result, "<signal> • café résumé");
+    }
+
+    #[test]
+    fn replace_term_chained_non_matching_passes_do_not_grow_non_ascii() {
+        // The ACE detonation: `normalize_prior_phrase` chains one
+        // `replace_term_with_placeholder` pass per multi-word term over a
+        // `•`-bearing cell. The old per-byte copy re-doubled the bullet's
+        // mojibake each pass (exponential, OOM). With verbatim char copy a
+        // non-matching pass is a no-op, so 40 chained passes (well past the
+        // ~30 doublings that reached tens of GB) cannot grow the string.
+        let original = "the • marker stays put".to_string();
+        let mut text = original.clone();
+        for n in 0..40 {
+            let term = format!("nonmatch term {n}");
+            text = replace_term_with_placeholder(&text, &term, "<signal>");
+        }
+        assert_eq!(
+            text, original,
+            "chained non-matching passes must be a no-op"
+        );
+        assert!(text.contains('•'), "non-ASCII char must survive verbatim");
+    }
+
+    #[test]
+    fn normalize_prior_phrase_stays_bounded_with_many_multiword_terms_and_non_ascii() {
+        // End-to-end reproduction of the ACE `table_0201` shape: a `•`-bearing
+        // description normalized against 173 multi-word actor names (the count
+        // ACE's semantic-hints surface derives). Pre-fix this grew the string
+        // by one re-doubling pass per multi-word term until the kernel killed
+        // the process; post-fix it stays bounded and the bullet is preserved.
+        let signal_names = std::collections::BTreeSet::new();
+        let actor_names: std::collections::BTreeSet<String> =
+            (0..173).map(|n| format!("multi word actor {n}")).collect();
+        let input = "the • bullet describes coherent request behaviour";
+        let normalized = normalize_prior_phrase(input, &signal_names, &actor_names);
+        assert!(
+            normalized.len() <= input.len() * 2,
+            "normalized phrase exploded: {} bytes from {} input bytes",
+            normalized.len(),
+            input.len()
+        );
+        assert!(normalized.contains('•'), "non-ASCII char must survive");
     }
 
     // is_meaningful_actor_term unit tests

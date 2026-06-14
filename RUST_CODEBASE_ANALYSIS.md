@@ -4,6 +4,25 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-06-14 — prior-memory UTF-8 OOM blocker fixed; lib 1587)
+
+`PDF-VARIANT-DIGESTION.13b.1` fixed a latent correctness/OOM defect in
+`ir/prior_memory.rs::replace_term_with_placeholder`: its non-matching copy did
+`result.push(bytes[index] as char)` (a Latin-1 cast, not a UTF-8 decode), mangling every
+multi-byte character into per-byte mojibake that roughly doubled in length; because
+`normalize_prior_phrase` chains one pass per multi-word replacement term, the mangling
+re-doubled `2^N` in the multi-word-term count. On a real corpus doc (ACE — 173 multi-word
+actor names + a `•`-bearing signal-table cell) this drove the `evidence` build to 17.2 GB RSS
+and an OS SIGKILL, blocking the whole `.13b` corpus re-ingest sweep. The `else` arm now copies
+one whole UTF-8 char (`text[index..].chars().next()` → `push(ch)` → `index += ch.len_utf8()`),
+byte-for-byte identical to the old copy on pure-ASCII input. **Risk-picture update:** the only
+non-CI-tested path that could OOM the pipeline on a real document is now closed; the prior-memory
+subsystem is unchanged in shape (no schema/boundary/public-surface change — it is a one-function
+fix plus 4 hermetic regression tests). `cargo test -p specforge --lib` = **1587** passing;
+kg-bench 156/156; full `run_ci.sh` GREEN. Byte-stability re-proof: 15/15 non-ACE intact bundles
+byte-identical pre-fix vs post-fix; ACE evidence now completes (21 s / 56 MB). KM card
+`prior-phrase-utf8-byte-as-char`.
+
 ## Session update (2026-06-11 — tenth framework surface: `signal_presence`)
 
 `PDF-VARIANT-DIGESTION.12b` registered the TENTH EvidenceIR surface on the extractor framework:

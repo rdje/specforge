@@ -1346,8 +1346,11 @@ untouched by this sweep. Slices:
   rebuild + measure — presence records mint on canonical, the ACE +9 wires mint via the
   `.12a` gap-fill (per-item width verification against the probe record), accounting
   deltas recorded, ACE/LTI/APB_d gauges re-measured live. APB_d/ATB/LTI landed pre-crash
-  (session `2026-06-11d`, artifacts re-verified per-item post-crash); ACE blocked by `.13b.1`.
-- `.13b.1` · `in_progress` · BLOCKER fix (surfaced resuming `.13b` after the host crash):
+  (session `2026-06-11d`, artifacts re-verified per-item post-crash); ACE was blocked by
+  `.13b.1` — now **UNBLOCKED** (`.13b.1` fixed the OOM; ACE evidence completes in 21 s /
+  56 MB), so the ACE measurement slice (accounting deltas / +9 gap-fill wires / presence
+  records / gauge re-measure) is next.
+- `.13b.1` · `done` · BLOCKER fix (surfaced resuming `.13b` after the host crash):
   the ACE evidence rebuild is jetsam-SIGKILLed (17.2 GB max RSS / 80.3 GB peak footprint,
   419 s, exit 137 on a 24 GB host). Root cause measured per-item with a throwaway
   instrumented worktree probe (never committed): `replace_term_with_placeholder`
@@ -1368,6 +1371,19 @@ untouched by this sweep. Slices:
   preservation, no-growth under chained multi-word passes, replacement still fires beside
   non-ASCII). Verify: focused tests + kg-bench + full CI, intact-bundle byte-stability
   re-proof, then the ACE rebuild must complete and `.13b` resumes.
+  **DONE (`2026-06-14`):** the `else` arm of `replace_term_with_placeholder` now copies one
+  whole UTF-8 char (`text[index..].chars().next()` → `push(ch)` → `index += ch.len_utf8()`)
+  instead of `push(bytes[index] as char)`; `index` is always on a char boundary (it advances
+  by an ASCII match's `term_bytes.len()` or by one whole char), so on pure-ASCII input it is
+  byte-for-byte identical to the old copy. +4 hermetic tests (non-ASCII-only verbatim;
+  replacement-fires-beside-non-ASCII; 40 chained non-matching passes are a no-op; the
+  end-to-end `normalize_prior_phrase` ACE-shape stays bounded with 173 multi-word actor
+  terms + a `•`). Verified: lib 1583→**1587**; kg-bench **156/156**; full `run_ci.sh` GREEN
+  (fmt/clippy-deny/rustdoc/mdBook/memory-arch/knowledge-map). **Byte-stability re-proof
+  (pre-fix vs post-fix fresh `evidence --dry-run` — the clean isolation; ACE excluded because
+  it OOMs pre-fix): all 15 non-ACE intact bundles BYTE-IDENTICAL** → the fix is a pure no-op
+  on the intact corpus. **ACE evidence now COMPLETES: 21 s / 56 MB max RSS** (was 419 s /
+  17.2 GB RSS / SIGKILL exit 137). KM card `prior-phrase-utf8-byte-as-char`.
 - `.13c` · `pending` · CHI: re-ingest + rebuild + gauge re-measure; report the
   field/constraint surfaces now on canonical; hand the `EXTRACTION-QUALITY-GAUGE.3c`
   unblock back to its tree.
@@ -1712,6 +1728,17 @@ set, not the whole doc/corpus.
 
 ## Verification log
 
+- `.13b.1` (`2026-06-14`, BLOCKER fix): char-correct UTF-8 copy in
+  `replace_term_with_placeholder` (`crates/specforge/src/ir/prior_memory.rs`) replacing the
+  `bytes[index] as char` per-byte copy that mangled non-ASCII into mojibake and, chained one
+  pass per multi-word term in `normalize_prior_phrase`, re-doubled it exponentially (the ACE
+  OOM). +4 hermetic regression tests. lib 1583→**1587**; kg-bench **156/156**; full
+  `scripts/run_ci.sh` GREEN. **Byte-stability re-proof:** pre-fix vs post-fix fresh
+  `evidence --dry-run` over the 15 non-ACE intact bundles = **all BYTE-IDENTICAL** (ACE
+  excluded — it OOMs pre-fix), so the fix is a pure no-op on the intact corpus. **ACE
+  evidence rebuild now COMPLETES: 21 s / 56 MB max RSS** (was 419 s / 17.2 GB RSS / SIGKILL
+  exit 137) — blocker resolved, `.13b` ACE measurement unblocked. KM card
+  `prior-phrase-utf8-byte-as-char`. Commit subject: `PDF-VARIANT-DIGESTION.13b.1`.
 - `.9.12` (`2026-06-09`, investigate-only no-build): triaged the remaining serial `unexplained_intent_bearing_tables`.
   SMBus `table_0022` = degenerate 2-cell bitfield fragment (MSB/LSB); SMBus `table_0042` = address-assignment
   table (`Target Address [7:1] | R/W# | Description | Specification`), not register fields; I2S `table_0005` =
@@ -1887,6 +1914,15 @@ set, not the whole doc/corpus.
 
 ## Changelog
 
+- `2026-06-14`: `.13b.1` (BLOCKER fix) DONE. `replace_term_with_placeholder`
+  (`crates/specforge/src/ir/prior_memory.rs`) now copies one whole UTF-8 char in its `else`
+  arm instead of `bytes[index] as char`; the old per-byte copy mangled non-ASCII into
+  mojibake and, chained one pass per multi-word term by `normalize_prior_phrase`, re-doubled
+  it exponentially — the ACE evidence build hit 17.2 GB RSS / 419 s / SIGKILL. Byte-identical
+  on pure-ASCII by construction. +4 hermetic tests; lib 1583→1587; kg-bench 156/156; full
+  `run_ci.sh` GREEN. Byte-stability re-proof: 15/15 non-ACE intact bundles BYTE-IDENTICAL
+  pre-fix vs post-fix. ACE evidence now completes (21 s / 56 MB) → `.13b` ACE measurement
+  unblocked. KM `prior-phrase-utf8-byte-as-char`. Commit subject: `PDF-VARIANT-DIGESTION.13b.1`.
 - `2026-06-09`: `.9.11` (header-trapped timing-table recovery) DONE. Structural fix in
   `synthesize_timing_constraints`: recover timing data rows Docling trapped in `header_rows` (row-label cell
   `is_header=true` → empty `body_rows`). Additive, no list, no case. I2S 0 → 5 timing_constraints; SMBus held at

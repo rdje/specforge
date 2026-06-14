@@ -1,3 +1,31 @@
+### `PDF-VARIANT-DIGESTION.13b.1` — blocker fix: UTF-8 byte-as-char mangling in prior-phrase normalization (the ACE evidence-build OOM)
+The `.13b` ACE evidence rebuild was jetsam-SIGKILLed (17.2 GB max RSS, 419 s, exit 137).
+Root cause, measured per-item with a throwaway instrumented probe: `replace_term_with_placeholder`
+(`crates/specforge/src/ir/prior_memory.rs`) copied each non-matching position with
+`result.push(bytes[index] as char)` — a Latin-1 cast, not a UTF-8 decode, so every multi-byte
+character (e.g. `•`) was split into per-byte mojibake that roughly doubled its byte length.
+`normalize_prior_phrase` calls that function once per multi-word replacement term, chaining the
+passes, so the mojibake re-doubled each pass — `2^N` growth in the number of multi-word terms.
+ACE's semantic-hints surface derives 173 multi-word actor names (AXI: 3) and a `•`-bearing
+`Signal | Width | Description` cell, so one `infer_signal_semantic_tags_from_description` call
+grew a string until the kernel killed the process; every other persisted doc carried too few
+multi-word terms to detonate, which is why the defect stayed invisible.
+
+Fix: the `else` arm now copies one whole UTF-8 character
+(`text[index..].chars().next()` → `push(ch)` → `index += ch.len_utf8()`); `index` always sits
+on a char boundary, so on pure-ASCII input the output is byte-for-byte identical to the old copy
+and non-ASCII text is preserved verbatim. +4 hermetic regression tests (non-ASCII-only verbatim,
+replacement-fires-beside-non-ASCII, 40 chained non-matching passes are a no-op, and the
+end-to-end `normalize_prior_phrase` ACE-shape stays bounded with 173 multi-word actor terms + a
+`•`).
+
+Verification: lib 1583 → **1587**; kg-bench **156/156**; full `scripts/run_ci.sh` GREEN
+(fmt / warning-deny Clippy / rustdoc / mdBook / memory-architecture / knowledge-map). **Byte-stability
+re-proof** — pre-fix vs post-fix fresh `evidence --dry-run` over the 15 non-ACE intact bundles =
+**all BYTE-IDENTICAL** (ACE excluded because it OOMs pre-fix), so the fix is a pure no-op on the
+intact corpus. **ACE evidence now COMPLETES: 21 s / 56 MB max RSS**, unblocking the `.13b` ACE
+measurement slice. Knowledge-Map card `prior-phrase-utf8-byte-as-char`; book troubleshooting note.
+
 ### `PDF-VARIANT-DIGESTION.13a` — corpus re-ingest sweep unblocked: 10 owner-granted PDFs imported + registered (ACE / APB-legacy / ATB / LTI / CHI / CCIX ×4 / AMD IOMMU)
 The owner granted the host-local spec library on request (path deliberately not recorded
 in any tracked file — `feedback_source_pdfs_in_repo`), unblocking the recorded re-ingest

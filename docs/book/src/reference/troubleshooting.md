@@ -39,6 +39,21 @@ The right next step is usually:
 2. inspect the new `validation_report.json`
 3. compare findings, not just the top-line score
 
+## `evidence` or `converge` is killed by the operating system (out of memory)
+
+This is fixed in current builds; the note is here for anyone who hit it on an older one.
+
+A large document that declares many multi-word actor names *and* contains non-ASCII
+characters (for example a `•` bullet inside a signal-description cell) could drive the
+cross-document prior-normalization step to grow a string without bound, until the OS killed
+the process (a hard kill, not a Rust panic — so there was no error message). The cause was a
+text-copy bug in prior-phrase normalization that mangled non-ASCII bytes and compounded the
+mangling once per actor name.
+
+If you see an evidence or converge run get killed with no diagnostic on a build from before
+this fix, update to a current build — the normalization now copies text correctly and the
+build completes with normal memory use. Nothing about the input PDF needs to change.
+
 ## Generated artifacts are missing
 
 Remember that `generated/` is local and untracked.

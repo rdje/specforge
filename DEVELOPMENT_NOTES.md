@@ -1,4 +1,36 @@
 # DEVELOPMENT_NOTES
+## `PDF-VARIANT-DIGESTION.13b.1` (`2026-06-14`) — `byte as char` is a Latin-1 cast, and chained rewrite passes turn a linear size bug exponential
+- The ACE evidence rebuild died by OS jetsam (17.2 GB RSS / 419 s / SIGKILL exit 137), not by
+  panic — so there was no Rust error to read. The continuity checkpoint had already root-caused
+  it with a throwaway instrumented worktree probe (sampled stacks 100% in
+  `normalize_prior_phrase`; the tables loop up to the guilty row completed in ~10 ms). Two
+  compounding facts produced the blowup:
+  - `replace_term_with_placeholder`'s `else` arm copied non-matching input with
+    `result.push(bytes[index] as char)`. `u8 as char` is a Unicode-scalar cast from a single
+    byte, i.e. a Latin-1 interpretation — NOT a UTF-8 decode. A 3-byte char like `•`
+    (`E2 80 A2`) became three scalars (`U+00E2 U+0080 U+00A2`), each of which re-encodes to two
+    UTF-8 bytes, so the character's byte length roughly doubled on every pass.
+  - `normalize_prior_phrase` invokes that function once per *multi-word* replacement term,
+    chained (each pass over the previous pass's output). With N multi-word terms over a string
+    that contains a non-ASCII char, the mojibake re-doubles N times → `2^N` growth. ACE derives
+    173 multi-word actor names (AXI derives 3) and table_0201 carries a `•`, so one call grew a
+    string into the tens of GB. The defect stayed invisible because every other persisted doc
+    carried too few multi-word terms to detonate, and every test used ASCII names.
+- Fix: copy one whole UTF-8 character in the `else` arm —
+  `text[index..].chars().next()` → `result.push(ch)` → `index += ch.len_utf8()`. The matcher
+  still uses byte comparison (`eq_ignore_ascii_case`) and byte-indexed word boundaries, which is
+  sound because `index` only ever advances by an ASCII match's `term_bytes.len()` or by one whole
+  char, so it always sits on a char boundary (the slice is valid, and an ASCII term can never
+  match a UTF-8 continuation byte). On pure-ASCII input the output is byte-for-byte identical to
+  the old per-byte copy — which is why the byte-stability re-proof over the 15 non-ACE intact
+  bundles came back ALL BYTE-IDENTICAL (pre-fix vs post-fix fresh `evidence --dry-run`).
+- Verification discipline that mattered here: the clean isolation of the fix's effect is
+  pre-fix-fresh vs post-fix-fresh (both drop `validation_reports`/`extraction_quality_gauge`
+  identically and are built from the same code modulo the one function), NOT fresh-vs-persisted
+  (which is confounded by those dropped keys and by persisted artifacts predating `.12b`). ACE is
+  excluded from the pre-fix sweep on purpose — running it pre-fix is the 17 GB OOM. lib 1587;
+  kg-bench 156/156; full CI green. Anti-pattern recorded in KM `prior-phrase-utf8-byte-as-char`.
+
 ## `PDF-VARIANT-DIGESTION.12b` (`2026-06-11`) — re-derive the census before trusting it; the gate found 3 tables the census sweep missed
 - The pre-code probe re-derived every census number from the persisted corpus before any
   Rust was written. Three of four families reproduced EXACTLY (AXI 157 condition rows /
